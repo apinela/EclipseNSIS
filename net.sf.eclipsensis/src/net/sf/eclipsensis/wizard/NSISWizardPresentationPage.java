@@ -10,29 +10,21 @@
 package net.sf.eclipsensis.wizard;
 
 import java.io.File;
-import java.util.ResourceBundle;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 
 import javax.sound.sampled.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.dialogs.ColorEditor;
-import net.sf.eclipsensis.util.ColorManager;
-import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.WinAPI;
+import net.sf.eclipsensis.util.*;
 import net.sf.eclipsensis.wizard.settings.NSISWizardSettings;
-import net.sf.eclipsensis.wizard.util.MasterSlaveController;
-import net.sf.eclipsensis.wizard.util.MasterSlaveEnabler;
-import net.sf.eclipsensis.wizard.util.NSISWizardDialogUtil;
+import net.sf.eclipsensis.wizard.util.*;
 
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.widgets.Control;
 
@@ -614,8 +606,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
                 gc.setFont(previewFont);
                 gc.drawString(previewText, mBGPreviewTextLocation.x, mBGPreviewTextLocation.y, true);
                 
-                RGB rgb = new RGB(255 & ~botRGB.red, 255 & ~botRGB.green, 255 & ~botRGB.blue);
-                gc.setForeground(ColorManager.getColor(rgb));
+                gc.setForeground(ColorManager.getNegativeColor(botRGB));
                 gc.setFont(messageFont);
                 gc.drawString(EclipseNSISPlugin.getResourceString("background.preview.escape.message"),10,rect.y+rect.height-20,true); //$NON-NLS-1$
             }

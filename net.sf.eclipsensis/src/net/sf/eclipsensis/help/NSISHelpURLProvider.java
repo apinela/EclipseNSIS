@@ -9,37 +9,23 @@
  *******************************************************************************/
 package net.sf.eclipsensis.help;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.text.html.parser.ParserDelegator;
 
-import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.IEclipseNSISPluginListener;
-import net.sf.eclipsensis.INSISConstants;
+import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.settings.NSISPreferences;
-import net.sf.eclipsensis.util.CaseInsensitiveMap;
-import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.WinAPI;
+import net.sf.eclipsensis.util.*;
 
 import org.eclipse.ui.help.WorkbenchHelp;
 
 public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListener
 {
+    private static final String CHMLINK_JS = "chmlink.js"; //$NON-NLS-1$
     private static final String NSIS_HELP_FORMAT = new StringBuffer("/").append( //$NON-NLS-1$
                                     INSISConstants.PLUGIN_NAME).append("/").append( //$NON-NLS-1$
                                     INSISConstants.NSIS_HELP_PREFIX).append(
@@ -199,14 +185,14 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
                         }
                         
                         //Fix the chmlink.js
-                        File chmlinkJs = new File(helpLocation,"chmlink.js");
+                        File chmlinkJs = new File(helpLocation,CHMLINK_JS);
                         if(chmlinkJs.exists()) {
                             chmlinkJs.delete();
                         }
                         PrintWriter writer = null;
                         BufferedReader reader= null;
                         try {
-                            reader= new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("chmlink.js")));
+                            reader= new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(CHMLINK_JS)));
                             writer = new PrintWriter(new BufferedWriter(new FileWriter(chmlinkJs)));
                             String line;
                             while ((line=reader.readLine()) != null) {

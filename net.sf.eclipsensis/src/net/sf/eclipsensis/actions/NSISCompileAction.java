@@ -110,8 +110,8 @@ public class NSISCompileAction extends NSISScriptAction
     protected class NSISCompileRunnable implements Runnable, INSISConsoleLineProcessor
     {
         protected String mOutputExeName = null;
-        protected boolean warningsMode = false;
-        protected boolean errorMode = false;
+        protected boolean mWarningMode = false;
+        protected boolean mErrorMode = false;
         
         public void run()
         {
@@ -147,17 +147,17 @@ public class NSISCompileAction extends NSISScriptAction
                     line = NSISConsoleLine.warning(text);
                 }
                 else if(lText.endsWith(" warning:") || lText.endsWith(" warnings:")) { //$NON-NLS-1$ //$NON-NLS-2$
-                    warningsMode = true;
+                    mWarningMode = true;
                     line = NSISConsoleLine.warning(text);
                 }
                 else if(MakeNSISRunner.MAKENSIS_SYNTAX_ERROR_PATTERN.matcher(lText).matches()) {
-                    errorMode = true;
+                    mErrorMode = true;
                     line = NSISConsoleLine.error(text);
                 }
-                else if(errorMode) {
+                else if(mErrorMode) {
                     line = NSISConsoleLine.error(text);
                 }
-                else if(warningsMode) {
+                else if(mWarningMode) {
                     line = NSISConsoleLine.warning(text);
                 }
                 else {
@@ -188,8 +188,8 @@ public class NSISCompileAction extends NSISScriptAction
         public void reset()
         {
             mOutputExeName = null;
-            warningsMode = false;
-            errorMode = false;
+            mWarningMode = false;
+            mErrorMode = false;
         }
     }
 }

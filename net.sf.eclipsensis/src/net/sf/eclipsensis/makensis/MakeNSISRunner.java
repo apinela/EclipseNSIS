@@ -13,33 +13,18 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.IEclipseNSISPluginListener;
-import net.sf.eclipsensis.INSISConstants;
-import net.sf.eclipsensis.console.INSISConsoleLineProcessor;
-import net.sf.eclipsensis.console.NSISConsole;
-import net.sf.eclipsensis.console.NSISConsoleLine;
-import net.sf.eclipsensis.console.NSISConsoleWriter;
-import net.sf.eclipsensis.settings.NSISPreferences;
-import net.sf.eclipsensis.settings.NSISProperties;
-import net.sf.eclipsensis.settings.NSISSettings;
+import net.sf.eclipsensis.*;
+import net.sf.eclipsensis.console.*;
+import net.sf.eclipsensis.settings.*;
 import net.sf.eclipsensis.util.CaseInsensitiveMap;
 import net.sf.eclipsensis.util.Common;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
@@ -412,11 +397,13 @@ public class MakeNSISRunner implements INSISConstants
                         }
                     }
                     catch(CoreException cex) {
+                        cex.printStackTrace();
                     }
                     try {
                         file.getProject().refreshLocal(IResource.DEPTH_INFINITE,null);
                     }
                     catch(CoreException cex) {
+                        cex.printStackTrace();
                     }
                 }
                 catch(IOException ioe){

@@ -11,25 +11,22 @@ package net.sf.eclipsensis.editor;
 
 import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.editor.codeassist.*;
+import net.sf.eclipsensis.editor.template.NSISTemplateCompletionProcessor;
 import net.sf.eclipsensis.editor.text.*;
 import net.sf.eclipsensis.settings.INSISPreferenceConstants;
-import net.sf.eclipsensis.util.ColorManager;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.*;
-import org.eclipse.jface.text.contentassist.ContentAssistant;
-import org.eclipse.jface.text.contentassist.IContentAssistant;
+import org.eclipse.jface.text.contentassist.*;
 import org.eclipse.jface.text.information.IInformationPresenter;
 import org.eclipse.jface.text.information.InformationPresenter;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.presentation.PresentationReconciler;
 import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
 import org.eclipse.jface.text.rules.IToken;
-import org.eclipse.jface.text.source.IAnnotationHover;
-import org.eclipse.jface.text.source.ISourceViewer;
-import org.eclipse.jface.text.source.SourceViewerConfiguration;
+import org.eclipse.jface.text.source.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.widgets.Display;
 
 public class NSISSourceViewerConfiguration extends SourceViewerConfiguration implements INSISConstants, INSISPreferenceConstants
 {
@@ -109,9 +106,10 @@ public class NSISSourceViewerConfiguration extends SourceViewerConfiguration imp
         if(!mPreviewMode) {
             assistant = new ContentAssistant();
             assistant.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
-            NSISCompletionProcessor completionProcessor = new NSISCompletionProcessor();
+            IContentAssistProcessor completionProcessor = new NSISTemplateCompletionProcessor();
             assistant.setContentAssistProcessor(completionProcessor,
                                                 IDocument.DEFAULT_CONTENT_TYPE);
+            completionProcessor = new NSISCompletionProcessor();
             assistant.setContentAssistProcessor(completionProcessor,
                                                 NSISPartitionScanner.NSIS_STRING);
     
@@ -119,7 +117,28 @@ public class NSISSourceViewerConfiguration extends SourceViewerConfiguration imp
             assistant.setAutoActivationDelay(100);
             assistant.setProposalPopupOrientation(IContentAssistant.PROPOSAL_OVERLAY);
             assistant.setContextInformationPopupOrientation(IContentAssistant.CONTEXT_INFO_ABOVE);
-            assistant.setContextInformationPopupBackground(ColorManager.getColor(new RGB(150, 150, 0)));
+            assistant.setContextInformationPopupBackground(Display.getCurrent().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+        }
+        return assistant;
+    }
+
+    /*
+     * (non-Javadoc) Method declared on SourceViewerConfiguration
+     */
+    public IContentAssistant getInsertTemplateAssistant(ISourceViewer sourceViewer)
+    {
+        ContentAssistant assistant = null;
+        if(!mPreviewMode) {
+            assistant = new ContentAssistant();
+            assistant.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
+            IContentAssistProcessor completionProcessor = new NSISTemplateCompletionProcessor(true);
+            assistant.setContentAssistProcessor(completionProcessor,
+                                                IDocument.DEFAULT_CONTENT_TYPE);
+    
+            assistant.enableAutoActivation(false);
+            assistant.setProposalPopupOrientation(IContentAssistant.PROPOSAL_OVERLAY);
+            assistant.setContextInformationPopupOrientation(IContentAssistant.CONTEXT_INFO_ABOVE);
+            assistant.setContextInformationPopupBackground(Display.getCurrent().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
         }
         return assistant;
     }

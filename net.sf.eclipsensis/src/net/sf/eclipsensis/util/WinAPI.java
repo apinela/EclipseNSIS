@@ -29,12 +29,13 @@ public class WinAPI
     private static native void init();
     public static native long SetWindowLong(long hWnd, int nIndex, long dwNewLong);
     public static native long GetWindowLong(long hWnd, int nIndex);
-    public static native boolean SetLayeredWindowAttributes(long hwnd, int red, int green, int blue, 
+    public static native boolean SetLayeredWindowAttributes(long hWnd, int red, int green, int blue, 
                                                             int bAlpha, long dwFlags);
     
-    public static native String RegQueryStrValue(long hRootKey, String sSubKey, String sValue);
+    public static native String RegQueryStrValue(long hRootKey, String pszSubKey, String pszValue);
     public static native long GetDesktopWindow();
     public static native long HtmlHelp(long hwndCaller, String  pszFile, int uCommand, long dwData);
     public static native int GetUserDefaultLangID();
     public static native String ExtractHtmlHelpAndTOC(String pszFile, String pszFolder);
+    public static native String[] GetPluginExports(String pszPluginFile);
 }

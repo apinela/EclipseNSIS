@@ -9,48 +9,24 @@
  *******************************************************************************/
 package net.sf.eclipsensis.wizard.settings.dialogs;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
+import java.util.*;
 import java.util.List;
-import java.util.ResourceBundle;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.util.ImageManager;
-import net.sf.eclipsensis.viewer.CollectionContentProvider;
-import net.sf.eclipsensis.viewer.CollectionLabelProvider;
-import net.sf.eclipsensis.viewer.TableViewerUpDownMover;
+import net.sf.eclipsensis.viewer.*;
 import net.sf.eclipsensis.wizard.NSISWizardDisplayValues;
 import net.sf.eclipsensis.wizard.settings.NSISInstallFiles;
 import net.sf.eclipsensis.wizard.util.NSISWizardDialogUtil;
 
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ControlAdapter;
-import org.eclipse.swt.events.ControlEvent;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.*;
 
 public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
 {
@@ -268,7 +244,7 @@ public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
             }
         });
         
-        final Combo c1 = NSISWizardDialogUtil.createCombo(composite,NSISKeywords.PREDEFINED_PATH_VARIABLES,mStore.getString("destination"), //$NON-NLS-1$
+        final Combo c1 = NSISWizardDialogUtil.createCombo(composite,NSISKeywords.PATH_CONSTANTS_AND_VARIABLES,mStore.getString("destination"), //$NON-NLS-1$
                                                          false,"wizard.destination.label",true,null,false); //$NON-NLS-1$
         c1.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e)

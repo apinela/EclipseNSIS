@@ -9,9 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.editor;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.ResourceBundle;
+import java.util.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
@@ -19,9 +17,7 @@ import net.sf.eclipsensis.actions.NSISAction;
 import net.sf.eclipsensis.actions.NSISScriptAction;
 import net.sf.eclipsensis.editor.codeassist.NSISInformationControlCreator;
 import net.sf.eclipsensis.editor.codeassist.NSISInformationProvider;
-import net.sf.eclipsensis.editor.outline.NSISContentOutlinePage;
-import net.sf.eclipsensis.editor.outline.NSISOutlineContentProvider;
-import net.sf.eclipsensis.editor.outline.NSISOutlineElement;
+import net.sf.eclipsensis.editor.outline.*;
 import net.sf.eclipsensis.editor.text.NSISPartitionScanner;
 import net.sf.eclipsensis.editor.text.NSISTextUtility;
 import net.sf.eclipsensis.settings.INSISPreferenceConstants;
@@ -30,16 +26,9 @@ import net.sf.eclipsensis.util.ImageManager;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IInformationControlCreator;
-import org.eclipse.jface.text.ITextSelection;
-import org.eclipse.jface.text.ITextViewerExtension5;
-import org.eclipse.jface.text.Position;
-import org.eclipse.jface.text.Region;
+import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.information.InformationPresenter;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.IVerticalRuler;
@@ -47,21 +36,14 @@ import org.eclipse.jface.text.source.projection.ProjectionSupport;
 import org.eclipse.jface.text.source.projection.ProjectionViewer;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IActionDelegate;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.editors.text.TextEditor;
-import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
-import org.eclipse.ui.texteditor.TextEditorAction;
-import org.eclipse.ui.texteditor.TextOperationAction;
+import org.eclipse.ui.texteditor.*;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
 public class NSISEditor extends TextEditor implements INSISConstants, IPropertyChangeListener, ISelectionChangedListener
@@ -187,6 +169,10 @@ public class NSISEditor extends TextEditor implements INSISConstants, IPropertyC
         a.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
         setAction("ContentAssistProposal", a); //$NON-NLS-1$
         
+        a = new TextOperationAction(resourceBundle,"insert.template.",this,NSISSourceViewer.INSERT_TEMPLATE,true); //$NON-NLS-1$
+        a.setActionDefinitionId(INSERT_TEMPLATE_COMMAND_ID);
+        setAction("NSISInsertTemplate", a); //$NON-NLS-1$
+
         a = new TextOperationAction(resourceBundle,"goto.help.",this,NSISSourceViewer.GOTO_HELP,true); //$NON-NLS-1$
         a.setActionDefinitionId(GOTO_HELP_COMMAND_ID);
         setAction("NSISGotoHelp", a); //$NON-NLS-1$
@@ -295,7 +281,7 @@ public class NSISEditor extends TextEditor implements INSISConstants, IPropertyC
         super.editorContextMenuAboutToShow(menu);
         menu.add(new Separator());
         addAction(menu, "ContentAssistProposal"); //$NON-NLS-1$
-        addAction(menu, "NSISTemplateProposal"); //$NON-NLS-1$
+        addAction(menu, "NSISInsertTemplate"); //$NON-NLS-1$
         menu.add(new Separator());
         addAction(menu, "NSISTabsToSpaces"); //$NON-NLS-1$
         addAction(menu, "NSISToggleComment"); //$NON-NLS-1$
@@ -319,7 +305,10 @@ public class NSISEditor extends TextEditor implements INSISConstants, IPropertyC
         
         ISourceViewer viewer= new NSISSourceViewer(parent, ruler, getOverviewRuler(), isOverviewRulerVisible(), styles);
         // ensure decoration support has been created and configured.
-        getSourceViewerDecorationSupport(viewer); 
+        SourceViewerDecorationSupport decorationSupport = getSourceViewerDecorationSupport(viewer);
+        decorationSupport.setCharacterPairMatcher(new NSISCharacterPairMatcher());
+        decorationSupport.setMatchingCharacterPainterPreferenceKeys(INSISPreferenceConstants.MATCHING_DELIMITERS,
+                                                                    INSISPreferenceConstants.MATCHING_DELIMITERS_COLOR);
         return viewer;
     }
     

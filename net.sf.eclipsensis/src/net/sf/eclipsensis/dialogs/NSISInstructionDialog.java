@@ -9,9 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.dialogs;
 
-import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.IEclipseNSISPluginListener;
-import net.sf.eclipsensis.INSISConstants;
+import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.help.INSISKeywordsListener;
 import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.util.Common;
@@ -19,19 +17,10 @@ import net.sf.eclipsensis.util.Common;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.*;
 
 public class NSISInstructionDialog extends Dialog implements IDialogConstants
 {

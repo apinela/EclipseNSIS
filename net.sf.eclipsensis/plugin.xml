@@ -38,7 +38,17 @@
       <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.eclipse.ui.views"/>
       <import plugin="org.eclipse.help"/>
-      <import plugin="org.eclipse.ui.forms"/>
+      <import plugin="org.eclipse.jdt"/>
+      <import plugin="org.eclipse.jdt.core"/>
+      <import plugin="org.eclipse.jdt.debug"/>
+      <import plugin="org.eclipse.jdt.debug.ui"/>
+      <import plugin="org.eclipse.jdt.doc.isv"/>
+      <import plugin="org.eclipse.jdt.doc.user"/>
+      <import plugin="org.eclipse.jdt.junit"/>
+      <import plugin="org.eclipse.jdt.junit.runtime"/>
+      <import plugin="org.eclipse.jdt.launching"/>
+      <import plugin="org.eclipse.jdt.source"/>
+      <import plugin="org.eclipse.jdt.ui"/>
    </requires>
 
    <extension
@@ -58,7 +68,8 @@
             icon="%editor.icon"
             contributorClass="net.sf.eclipsensis.editor.NSISActionContributor"
             class="net.sf.eclipsensis.editor.NSISEditor"
-            id="net.sf.eclipsensis.editor.NSISEditor">
+            id="net.sf.eclipsensis.editor.NSISEditor"
+            symbolicFontName="net.sf.eclipsensis.editor.Font">
       </editor>
    </extension>
    <extension
@@ -324,6 +335,16 @@
          id="net.sf.eclipsensis.NSISCategory">
       </category>
       <command
+         name="template.proposal.name"
+         description="%template.proposal.description"
+         id="net.sf.eclipsensis.commands.NSISInsertTemplate"
+         categoryId="net.sf.eclipsensis.NSISCategory"/>
+      <keyBinding
+          keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
+          commandId="net.sf.eclipsensis.commands.NSISInsertTemplate"
+          contextId="net.sf.eclipsensis.NSISEditorScope"
+          keySequence="Ctrl+T"/>
+      <command
          name="%goto.help.name"
          description="%goto.help.description"
          id="net.sf.eclipsensis.commands.NSISGotoHelp"
@@ -424,5 +445,156 @@
             category="net.sf.eclipsensis"
             name="%wizard.name"
             id="net.sf.eclipsensis.wizard.NSISWizard"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editors.templates">
+      <contextType
+            name="%nsis.contextType.name"
+            class="net.sf.eclipsensis.editor.template.NSISTemplateContextType"
+            id="net.sf.eclipsensis.editor.template.NSISTemplateContextType">
+      </contextType>
+      <template
+            name="%function.name"
+            icon="icons/template.gif"
+            description="%function.description"
+            contextTypeId="net.sf.eclipsensis.editor.template.NSISTemplateContextType"
+            id="net.sf.eclipsensis.editor.template.nsis.Function">
+         <pattern>Function %name%&#13;&#10;FunctionEnd&#13;&#10;</pattern>
+      </template>
+      <template
+            name="%section.name"
+            icon="icons/template.gif"
+            description="%section.description"
+            contextTypeId="net.sf.eclipsensis.editor.template.NSISTemplateContextType"
+            id="net.sf.eclipsensis.editor.template.nsis.Section">
+         <pattern>Section %name%&#13;&#10;SectionEnd&#13;&#10;</pattern>
+      </template>
+      <template
+            name="%page.name"
+            icon="icons/template.gif"
+            description="%page.description"
+            contextTypeId="net.sf.eclipsensis.editor.template.NSISTemplateContextType"
+            id="net.sf.eclipsensis.editor.template.nsis.Page">
+         <pattern>Page %pagetype%&#13;&#10;</pattern>
+      </template>
+      <template
+            name="%pageex.name"
+            icon="icons/template.gif"
+            description="%pageex.description"
+            contextTypeId="net.sf.eclipsensis.editor.template.NSISTemplateContextType"
+            id="net.sf.eclipsensis.editor.template.nsis.PageEx">
+         <pattern>PageEx %pagetype%&#13;&#10;PageExEnd&#13;&#10;</pattern>
+      </template>
+      <resolver
+            name="%nsis.resolvers.register.name"
+            type="register"
+            icon="icons/nsis.gif"
+            description="%nsis.resolvers.register.description"
+            contextTypeId="net.sf.eclipsensis.editor.template.NSISTemplateContextType"
+            class="net.sf.eclipsensis.editor.template.resolvers.NSISRegisterVariableResolver">
+      </resolver>
+      <resolver
+            name="%nsis.resolvers.pathconst.name"
+            type="pathconst"
+            icon="icons/nsis.gif"
+            description="%nsis.resolvers.pathconst.description"
+            contextTypeId="net.sf.eclipsensis.editor.template.NSISTemplateContextType"
+            class="net.sf.eclipsensis.editor.template.resolvers.NSISPathConstantVariableResolver">
+      </resolver>
+      <resolver
+            name="%nsis.resolvers.pathvar.name"
+            type="pathvar"
+            icon="icons/nsis.gif"
+            description="%nsis.resolvers.pathvar.description"
+            contextTypeId="net.sf.eclipsensis.editor.template.NSISTemplateContextType"
+            class="net.sf.eclipsensis.editor.template.resolvers.NSISPathVariableVariableResolver">
+      </resolver>
+      <resolver
+            name="%nsis.resolvers.predefine.name"
+            type="predefine"
+            icon="icons/nsis.gif"
+            description="%nsis.resolvers.predefine.description"
+            contextTypeId="net.sf.eclipsensis.editor.template.NSISTemplateContextType"
+            class="net.sf.eclipsensis.editor.template.resolvers.NSISPredefineVariableResolver">
+      </resolver>
+      <resolver
+            name="%nsis.resolvers.percent.name"
+            type="percent"
+            icon="icons/nsis.gif"
+            description="%nsis.resolvers.percent.description"
+            contextTypeId="net.sf.eclipsensis.editor.template.NSISTemplateContextType"
+            class="net.sf.eclipsensis.editor.template.resolvers.NSISPercentVariableResolver">
+      </resolver>
+      <resolver
+            name="%nsis.resolvers.pagetype.name"
+            type="pagetype"
+            icon="icons/nsis.gif"
+            description="%nsis.resolvers.pagetype.description"
+            contextTypeId="net.sf.eclipsensis.editor.template.NSISTemplateContextType"
+            class="net.sf.eclipsensis.editor.template.resolvers.NSISPagetypeVariableResolver">
+      </resolver>
+   </extension>
+   <extension
+      point="org.eclipse.ui.themes">
+      <themeElementCategory 
+             label="%nsis.theme.category.name"
+             id="net.sf.eclipsensis.themes.NSIS">
+             <description>
+                %nsis.theme.category.description
+             </description>
+      </themeElementCategory>
+      <themeElementCategory 
+             label="%nsis.console.theme.category.name"
+             id="net.sf.eclipsensis.themes.NSISConsole"
+             parentId= "net.sf.eclipsensis.themes.NSIS">
+             <description>
+                %nsis.console.theme.category.description
+             </description>
+      </themeElementCategory>
+      <fontDefinition
+          label="%nsis.editor.font.name"
+          defaultsTo="org.eclipse.jface.textfont"
+          categoryId="net.sf.eclipsensis.themes.NSIS"
+          id="net.sf.eclipsensis.editor.Font">
+          <description>
+             %nsis.editor.font.description
+          </description>
+      </fontDefinition>
+      <fontDefinition
+          label="%nsis.console.font.name"
+          defaultsTo="org.eclipse.jface.textfont"
+          categoryId="net.sf.eclipsensis.themes.NSISConsole"
+          id="net.sf.eclipsensis.console.Font">
+          <description>
+             %nsis.console.font.description
+          </description>
+      </fontDefinition>
+      <colorDefinition
+          label="%nsis.console.error.color.name"
+          defaultsTo="ERROR_COLOR"
+          categoryId="net.sf.eclipsensis.themes.NSISConsole"
+          id="net.sf.eclipsensis.console.ErrorColor">
+          <description>
+             %nsis.console.error.color.description
+          </description>
+      </colorDefinition>
+      <colorDefinition
+          label="%nsis.console.warning.color.name"
+          value="255,127,0"
+          categoryId="net.sf.eclipsensis.themes.NSISConsole"
+          id="net.sf.eclipsensis.console.WarningColor">
+          <description>
+             %nsis.console.warning.color.description
+          </description>
+      </colorDefinition>
+      <colorDefinition
+          label="%nsis.console.info.color.name"
+          value="COLOR_BLUE"
+          categoryId="net.sf.eclipsensis.themes.NSISConsole"
+          id="net.sf.eclipsensis.console.InfoColor">
+          <description>
+             %nsis.console.info.color.description
+          </description>
+      </colorDefinition>
    </extension>
 </plugin>

@@ -9,9 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.settings;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceStore;

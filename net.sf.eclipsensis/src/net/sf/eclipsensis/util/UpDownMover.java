@@ -9,9 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.util;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public abstract class UpDownMover
 {

@@ -9,9 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.help;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.swing.text.MutableAttributeSet;
 import javax.swing.text.html.HTMLEditorKit;

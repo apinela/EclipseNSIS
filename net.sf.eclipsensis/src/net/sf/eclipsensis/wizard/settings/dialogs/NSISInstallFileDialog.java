@@ -74,7 +74,7 @@ public class NSISInstallFileDialog extends AbstractNSISInstallItemDialog
                 setComplete(validate());
             }
         });
-        final Combo c1 = NSISWizardDialogUtil.createCombo(composite,NSISKeywords.PREDEFINED_PATH_VARIABLES,mStore.getString("destination"), //$NON-NLS-1$
+        final Combo c1 = NSISWizardDialogUtil.createCombo(composite,NSISKeywords.PATH_CONSTANTS_AND_VARIABLES,mStore.getString("destination"), //$NON-NLS-1$
                                                          false,"wizard.destination.label",true,null,false); //$NON-NLS-1$
         c1.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e)

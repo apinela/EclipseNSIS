@@ -15,24 +15,19 @@ import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.util.ImageManager;
 
-import org.eclipse.jface.action.IMenuListener;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.*;
 import org.eclipse.ui.editors.text.TextEditorActionContributor;
-import org.eclipse.ui.texteditor.ITextEditor;
-import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
-import org.eclipse.ui.texteditor.RetargetTextEditorAction;
+import org.eclipse.ui.texteditor.*;
 
 /**
  * Contributes interesting NSIS actions to the desktop's Edit menu and the toolbar.
  */
 public class NSISActionContributor extends TextEditorActionContributor implements INSISConstants
 {
+    protected RetargetTextEditorAction mInsertTemplate;
 	protected RetargetTextEditorAction mContentAssistProposal;
     protected RetargetTextEditorAction mTabsToSpaces;
     protected RetargetTextEditorAction mToggleComment;
@@ -52,6 +47,9 @@ public class NSISActionContributor extends TextEditorActionContributor implement
 		ResourceBundle bundle = EclipseNSISPlugin.getDefault().getResourceBundle();
         mContentAssistProposal= new RetargetTextEditorAction(bundle, "content.assist.proposal."); //$NON-NLS-1$
 		mContentAssistProposal.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
+
+        mInsertTemplate= new RetargetTextEditorAction(bundle, "insert.template."); //$NON-NLS-1$
+        mInsertTemplate.setActionDefinitionId(INSERT_TEMPLATE_COMMAND_ID);
         
         mTabsToSpaces= new RetargetTextEditorAction(bundle, "tabs.to.spaces."); //$NON-NLS-1$
         mTabsToSpaces.setActionDefinitionId(TABS_TO_SPACES_COMMAND_ID);
@@ -93,6 +91,7 @@ public class NSISActionContributor extends TextEditorActionContributor implement
 		if (editMenu != null) {
 			editMenu.add(new Separator());
 			editMenu.add(mContentAssistProposal);
+            editMenu.add(mInsertTemplate);
             editMenu.add(new Separator());
             editMenu.add(mTabsToSpaces);
             editMenu.add(mToggleComment);
@@ -128,6 +127,7 @@ public class NSISActionContributor extends TextEditorActionContributor implement
 		}
 
 		mContentAssistProposal.setAction(getAction(editor, "ContentAssistProposal")); //$NON-NLS-1$
+        mInsertTemplate.setAction(getAction(editor, "NSISInsertTemplate")); //$NON-NLS-1$
         mTabsToSpaces.setAction(getAction(editor, "NSISTabsToSpaces")); //$NON-NLS-1$
         mToggleComment.setAction(getAction(editor, "NSISToggleComment")); //$NON-NLS-1$
         mAddBlockComment.setAction(getAction(editor, "NSISAddBlockComment")); //$NON-NLS-1$

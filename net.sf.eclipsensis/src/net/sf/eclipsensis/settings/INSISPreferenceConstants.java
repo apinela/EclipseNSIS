@@ -60,6 +60,9 @@ public interface INSISPreferenceConstants
     public static final String SELECTION_BACKGROUND_DEFAULT_COLOR=AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_BACKGROUND_DEFAULT_COLOR;
     public static final String USE_SPACES_FOR_TABS = "useSpacesForTabs"; //$NON-NLS-1$
     
+    public final static String MATCHING_DELIMITERS = "matchingDelimiters"; //$NON-NLS-1$
+    public final static String MATCHING_DELIMITERS_COLOR = "matchingDelimitersColor"; //$NON-NLS-1$
+
     public static final String COMMENTS_STYLE = "commentsStyle"; //$NON-NLS-1$
     public static final String COMPILETIME_COMMANDS_STYLE = "compiletimeCommandsStyle"; //$NON-NLS-1$
     public static final String INSTALLER_ATTRIBUTES_STYLE = "installerAttributesStyle"; //$NON-NLS-1$
@@ -73,4 +76,9 @@ public interface INSISPreferenceConstants
     public static final String CALLBACKS_STYLE = "callbacksStyle"; //$NON-NLS-1$
     public static final String STRINGS_STYLE = "stringsStyle"; //$NON-NLS-1$
     public static final String NUMBERS_STYLE = "numbersStyle"; //$NON-NLS-1$
+    
+    public static final String CONSOLE_FONT = "net.sf.eclipsensis.console.Font"; //$NON-NLS-1$
+    public static final String CONSOLE_INFO_COLOR = "net.sf.eclipsensis.console.InfoColor"; //$NON-NLS-1$
+    public static final String CONSOLE_WARNING_COLOR = "net.sf.eclipsensis.console.WarningColor"; //$NON-NLS-1$
+    public static final String CONSOLE_ERROR_COLOR = "net.sf.eclipsensis.console.ErrorColor"; //$NON-NLS-1$
 }

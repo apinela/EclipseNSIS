@@ -22,10 +22,7 @@ public class NSISCompletionProcessor implements IContentAssistProcessor
      */
     public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int documentOffset)
     {
-        if(documentOffset > 0 ) {
-            return NSISInformationUtility.getCompletionsAtOffset(viewer,documentOffset-1);
-        }
-        return null;
+        return NSISInformationUtility.getCompletionsAtOffset(viewer,documentOffset);
     }
 
     /*
@@ -41,7 +38,7 @@ public class NSISCompletionProcessor implements IContentAssistProcessor
      */
     public char[] getCompletionProposalAutoActivationCharacters()
     {
-        return new char[] { '.', '/','$','!' };
+        return NSISInformationUtility.getCompletionProposalAutoActivationCharacters();
     }
 
     /* (non-Javadoc)

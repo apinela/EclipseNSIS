@@ -14,28 +14,13 @@ import java.util.Stack;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
-import net.sf.eclipsensis.editor.text.NSISPartitionScanner;
-import net.sf.eclipsensis.editor.text.NSISRegionScanner;
-import net.sf.eclipsensis.editor.text.NSISScanner;
-import net.sf.eclipsensis.editor.text.NSISTextUtility;
+import net.sf.eclipsensis.editor.text.*;
 import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.util.ImageManager;
 
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.BadPositionCategoryException;
-import org.eclipse.jface.text.DefaultPositionUpdater;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IPositionUpdater;
-import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.ITypedRegion;
-import org.eclipse.jface.text.Position;
-import org.eclipse.jface.text.Region;
-import org.eclipse.jface.text.TypedRegion;
-import org.eclipse.jface.text.rules.ICharacterScanner;
-import org.eclipse.jface.text.rules.IRule;
-import org.eclipse.jface.text.rules.IToken;
-import org.eclipse.jface.text.rules.Token;
+import org.eclipse.jface.text.*;
+import org.eclipse.jface.text.rules.*;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.projection.ProjectionAnnotation;
@@ -261,9 +246,11 @@ public class NSISOutlineContentProvider implements ITreeContentProvider, INSISCo
                 }
                 try {
                     if(nsisToken != null) {
-                        Position position = new Position(nsisToken.mRegion.getOffset(),nsisToken.mRegion.getLength());
+                        IRegion region2 = nsisToken.getRegion();
+                        Position position = new Position(region2.getOffset(),region2.getLength());
                         StringBuffer name = new StringBuffer(""); //$NON-NLS-1$
-                        switch(nsisToken.mType) {
+                        int type = nsisToken.getType();
+                        switch(type) {
                             case DEFINE:
                             case IFDEF:
                             case IFNDEF:
@@ -302,14 +289,25 @@ public class NSISOutlineContentProvider implements ITreeContentProvider, INSISCo
                                         rule = new NSISOutlineRule(regionType.equals(NSISPartitionScanner.NSIS_STRING), false);
                                         NSISRegionScanner regionScanner = new NSISRegionScanner(document, region);
 
+                                        inner:
                                         while(true) {
                                             IToken token = rule.evaluate(regionScanner);
                                             data = (NSISOutlineTextData) token.getData();
-                                            if(!Common.isEmpty(data.mName)) {
-                                                temp = data.mName;
+                                            String name2 = data.getName();
+                                            if(!Common.isEmpty(name2)) {
+                                                temp = name2;
+                                            }
+                                            else {
+                                                if(regionScanner.getOffset() > newEnd) {
+                                                    k++;
+                                                    if(k < typedRegions.length) {
+                                                        region = typedRegions[k];
+                                                    }
+                                                    break inner;
+                                                }
                                             }
                                             if(temp != null) {
-                                                if(nsisToken.mType == SECTION) {
+                                                if(type == SECTION) {
                                                     if(regionType.equals(IDocument.DEFAULT_CONTENT_TYPE)) {
                                                         if(temp.equalsIgnoreCase("/o")) { //$NON-NLS-1$
                                                             continue;
@@ -328,7 +326,7 @@ public class NSISOutlineContentProvider implements ITreeContentProvider, INSISCo
                                                         break outer;
                                                     }
                                                 }
-                                                if(nsisToken.mType == SECTIONGROUP) {
+                                                if(type == SECTIONGROUP) {
                                                     if(regionType.equals(IDocument.DEFAULT_CONTENT_TYPE)) {
                                                         if(temp.equalsIgnoreCase("/e")) { //$NON-NLS-1$
                                                             continue;
@@ -347,7 +345,7 @@ public class NSISOutlineContentProvider implements ITreeContentProvider, INSISCo
                                                         break outer;
                                                     }
                                                 }
-                                                else if(nsisToken.mType == PAGE) {
+                                                else if(type == PAGE) {
                                                     if( (regionType.equals(IDocument.DEFAULT_CONTENT_TYPE) && temp.equalsIgnoreCase("custom"))|| //$NON-NLS-1$
                                                          temp.substring(1,temp.length()-1).equalsIgnoreCase("custom")) { //$NON-NLS-1$
                                                         name.append(temp);
@@ -365,7 +363,8 @@ public class NSISOutlineContentProvider implements ITreeContentProvider, INSISCo
                                                     break outer;
                                                 }
                                             }
-                                            newOffset = data.mRegion.getOffset()+data.mRegion.getLength();
+                                            ITypedRegion region3 = data.getRegion();
+                                            newOffset = region3.getOffset()+region3.getLength();
                                             newEnd = typedRegions[k].getOffset()+typedRegions[k].getLength();
                                             if(newOffset < newEnd) {
                                                 region = new TypedRegion(newOffset, newEnd-newOffset,typedRegions[j].getType());
@@ -384,9 +383,9 @@ public class NSISOutlineContentProvider implements ITreeContentProvider, INSISCo
                             default:
                                 break;
                         }
-                        NSISOutlineElement element = new NSISOutlineElement(nsisToken.mType, name.toString(), position);
+                        NSISOutlineElement element = new NSISOutlineElement(type, name.toString(), position);
                         element.setPosition(getLinePosition(nsisLines[i]));
-                        switch(nsisToken.mType) {
+                        switch(type) {
                             case DEFINE:
                                 addLine(document, current, element);
                                 break;
@@ -724,8 +723,8 @@ public class NSISOutlineContentProvider implements ITreeContentProvider, INSISCo
     
     private class NSISOutlineData
     {
-        int mType;
-        IRegion mRegion;
+        private int mType;
+        private IRegion mRegion;
         
         /**
          * @param type
@@ -735,6 +734,22 @@ public class NSISOutlineContentProvider implements ITreeContentProvider, INSISCo
         {
             mType = type;
             mRegion = region;
+        }
+        
+        /**
+         * @return Returns the region.
+         */
+        public IRegion getRegion()
+        {
+            return mRegion;
+        }
+        
+        /**
+         * @return Returns the type.
+         */
+        public int getType()
+        {
+            return mType;
         }
     }
 
@@ -751,6 +766,20 @@ public class NSISOutlineContentProvider implements ITreeContentProvider, INSISCo
         {
             mName = name;
             mRegion = region;
+        }
+        /**
+         * @return Returns the name.
+         */
+        public String getName()
+        {
+            return mName;
+        }
+        /**
+         * @return Returns the region.
+         */
+        public ITypedRegion getRegion()
+        {
+            return mRegion;
         }
     }
 }

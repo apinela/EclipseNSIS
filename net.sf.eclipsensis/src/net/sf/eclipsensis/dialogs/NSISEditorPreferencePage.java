@@ -9,18 +9,14 @@
  *******************************************************************************/
 package net.sf.eclipsensis.dialogs;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.text.MessageFormat;
 import java.util.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.editor.*;
 import net.sf.eclipsensis.editor.text.NSISSyntaxStyle;
-import net.sf.eclipsensis.settings.INSISPreferenceConstants;
-import net.sf.eclipsensis.settings.NSISPreferences;
-import net.sf.eclipsensis.settings.PreferenceStoreWrapper;
+import net.sf.eclipsensis.settings.*;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -45,6 +41,7 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
     private final String[][] mAppearanceColorListModel= {
         {EclipseNSISPlugin.getResourceString("line.number.foreground.color"), LINE_NUMBER_RULER_COLOR, null}, //$NON-NLS-1$
         {EclipseNSISPlugin.getResourceString("current.line.highlight.color"), CURRENT_LINE_COLOR, null}, //$NON-NLS-1$
+        {EclipseNSISPlugin.getResourceString("matching.delimiters.color"), MATCHING_DELIMITERS_COLOR, null}, //$NON-NLS-1$
         {EclipseNSISPlugin.getResourceString("print.margin.color"), PRINT_MARGIN_COLOR, null}, //$NON-NLS-1$
         {EclipseNSISPlugin.getResourceString("selection.foreground.color"), SELECTION_FOREGROUND_COLOR, SELECTION_FOREGROUND_DEFAULT_COLOR}, //$NON-NLS-1$
         {EclipseNSISPlugin.getResourceString("selection.background.color"), SELECTION_BACKGROUND_COLOR, SELECTION_BACKGROUND_DEFAULT_COLOR}, //$NON-NLS-1$
@@ -197,6 +194,9 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
                 
         label= EclipseNSISPlugin.getResourceString("show.print.margin"); //$NON-NLS-1$
         addCheckBox(appearanceComposite, label, PRINT_MARGIN, 0);
+        
+        label= EclipseNSISPlugin.getResourceString("show.matching.delimiters"); //$NON-NLS-1$
+        addCheckBox(appearanceComposite, label, MATCHING_DELIMITERS, 0);
 
         label= EclipseNSISPlugin.getResourceString("accessibility.disable.custom.carets"); //$NON-NLS-1$
         final Button customCaretButton= addCheckBox(appearanceComposite, label, USE_CUSTOM_CARETS, 0);

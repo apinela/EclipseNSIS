@@ -101,7 +101,7 @@ public class NSISWizardSettings implements INSISWizardConstants, Serializable
         /* (non-Javadoc)
          * @see net.sf.eclipsensis.wizard.settings.AbstractNSISInstallGroup#resetChildTypes()
          */
-        public void resetChildTypes()
+        public void setChildTypes()
         {
             mChildTypes.clear();
             mChildTypes.add(NSISSection.TYPE);

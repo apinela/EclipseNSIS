@@ -77,15 +77,15 @@ public class NSISPartitionScanner extends RuleBasedPartitionScanner implements N
      */
     private static class EmptyCommentRule extends NSISWordRule implements IPredicateRule {
         
-        private IToken fSuccessToken;
+        private IToken mSuccessToken;
         /**
          * Constructor for EmptyCommentRule.
          * @param defaultToken
          */
         public EmptyCommentRule(IToken successToken) {
             super(new EmptyCommentDetector());
-            fSuccessToken= successToken;
-            addWord("/**/", fSuccessToken); //$NON-NLS-1$
+            mSuccessToken= successToken;
+            addWord("/**/", mSuccessToken); //$NON-NLS-1$
         }
         
         /*
@@ -99,7 +99,7 @@ public class NSISPartitionScanner extends RuleBasedPartitionScanner implements N
          * @see IPredicateRule#getSuccessToken()
          */
         public IToken getSuccessToken() {
-            return fSuccessToken;
+            return mSuccessToken;
         }
     }
 

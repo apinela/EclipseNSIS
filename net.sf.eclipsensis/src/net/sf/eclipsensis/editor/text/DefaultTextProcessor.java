@@ -11,9 +11,7 @@ package net.sf.eclipsensis.editor.text;
 
 import net.sf.eclipsensis.INSISConstants;
 
-import org.eclipse.jface.text.rules.ICharacterScanner;
-import org.eclipse.jface.text.rules.IToken;
-import org.eclipse.jface.text.rules.Token;
+import org.eclipse.jface.text.rules.*;
 
 
 public class DefaultTextProcessor implements INSISTextProcessor, INSISConstants

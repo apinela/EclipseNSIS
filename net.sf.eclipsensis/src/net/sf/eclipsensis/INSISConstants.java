@@ -30,12 +30,14 @@ public interface INSISConstants
     public static final String LANGUAGE_FILES_EXTENSION = ".nlf"; //$NON-NLS-1$
     public static final String MUI_LANGUAGE_FILES_EXTENSION = ".nsh"; //$NON-NLS-1$
     public static final String RESOURCE_BUNDLE = "net.sf.eclipsensis.EclipseNSISPluginResources"; //$NON-NLS-1$
+    public static final String MESSAGE_BUNDLE = "net.sf.eclipsensis.EclipseNSISPluginMessages"; //$NON-NLS-1$
     public static final String CONSOLE_ID = "net.sf.eclipsensis.console.NSISConsole"; //$NON-NLS-1$
     public static final String PROBLEM_ID = "net.sf.eclipsensis.NSISCompileProblem"; //$NON-NLS-1$
     public static final String NSIS_EDITOR_CONTEXT_ID = "net.sf.eclipsensis.NSISEditorScope"; //$NON-NLS-1$
     public static final String COMPILE_ACTION_ID = "net.sf.eclipsensis.actions.NSISCompileAction"; //$NON-NLS-1$
     public static final String COMPILE_TEST_ACTION_ID = "net.sf.eclipsensis.actions.NSISCompileTestAction"; //$NON-NLS-1$
 
+    public static final String INSERT_TEMPLATE_COMMAND_ID = "net.sf.eclipsensis.commands.NSISInsertTemplate"; //$NON-NLS-1$
     public static final String GOTO_HELP_COMMAND_ID = "net.sf.eclipsensis.commands.NSISGotoHelp"; //$NON-NLS-1$
     public static final String STICKY_HELP_COMMAND_ID = "net.sf.eclipsensis.commands.NSISStickyHelp"; //$NON-NLS-1$
     public static final String INSERT_FILE_COMMAND_ID = "net.sf.eclipsensis.commands.NSISInsertFile"; //$NON-NLS-1$
@@ -58,4 +60,7 @@ public interface INSISConstants
     public static final int DEFAULT_NSIS_TEXT_LIMIT = 1024;
     
     public static final String UNINSTALL_SECTION_NAME = "Uninstall"; //$NON-NLS-1$
+    
+    public static final String NSIS_PLUGINS_LOCATION = "Plugins"; //$NON-NLS-1$
+    public static final String NSIS_PLUGINS_EXTENSION = ".dll"; //$NON-NLS-1$
 }

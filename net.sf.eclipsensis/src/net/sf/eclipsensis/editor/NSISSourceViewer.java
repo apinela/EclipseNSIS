@@ -9,19 +9,14 @@
  *******************************************************************************/
 package net.sf.eclipsensis.editor;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
+import java.util.*;
 import java.util.List;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.editor.codeassist.NSISInformationUtility;
 import net.sf.eclipsensis.editor.text.NSISPartitionScanner;
 import net.sf.eclipsensis.editor.text.NSISTextUtility;
-import net.sf.eclipsensis.help.INSISKeywordsListener;
-import net.sf.eclipsensis.help.NSISHelpURLProvider;
-import net.sf.eclipsensis.help.NSISKeywords;
+import net.sf.eclipsensis.help.*;
 import net.sf.eclipsensis.settings.INSISPreferenceConstants;
 import net.sf.eclipsensis.settings.IPropertyAdaptable;
 import net.sf.eclipsensis.util.ColorManager;
@@ -29,20 +24,10 @@ import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.BadPartitioningException;
-import org.eclipse.jface.text.DefaultLineTracker;
-import org.eclipse.jface.text.DocumentCommand;
-import org.eclipse.jface.text.IAutoEditStrategy;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IDocumentExtension3;
-import org.eclipse.jface.text.ILineTracker;
-import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.ITypedRegion;
+import org.eclipse.jface.text.*;
+import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.presentation.IPresentationDamager;
-import org.eclipse.jface.text.source.IOverviewRuler;
-import org.eclipse.jface.text.source.IVerticalRuler;
-import org.eclipse.jface.text.source.SourceViewerConfiguration;
+import org.eclipse.jface.text.source.*;
 import org.eclipse.jface.text.source.projection.ProjectionViewer;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -50,29 +35,17 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.ColorDialog;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.DirectoryDialog;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.swt.widgets.ScrollBar;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IFileEditorInput;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
 
 
 public class NSISSourceViewer extends ProjectionViewer implements IPropertyChangeListener, INSISKeywordsListener
 {
-    public static final int GOTO_HELP = 1000;
+    public static final int INSERT_TEMPLATE = 1000;
+    public static final int GOTO_HELP = INSERT_TEMPLATE + 1;
     public static final int INSERT_FILE = GOTO_HELP + 1;
     public static final int INSERT_DIRECTORY = INSERT_FILE + 1;
     public static final int INSERT_COLOR = INSERT_DIRECTORY + 1;
@@ -88,6 +61,8 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
     private String[] mConfiguredContentTypes = null;
     private HashSet mPropertyQueue = new HashSet();
     private SelectionAdapter mSelAdapter = null;
+    private IContentAssistant mInsertTemplateAssistant = null;
+    private boolean mInsertTemplateAssistantInstalled = false;
 
    /**
      * @param parent
@@ -193,6 +168,11 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
                 prependAutoEditStrategy(mAutoIndentStrategy,mConfiguredContentTypes[i]);
                 prependAutoEditStrategy(mTabConversionStrategy,mConfiguredContentTypes[i]);
             }
+            mInsertTemplateAssistant = ((NSISSourceViewerConfiguration)configuration).getInsertTemplateAssistant(this);
+            if(mInsertTemplateAssistant != null) {
+                mInsertTemplateAssistant.install(this);
+                mInsertTemplateAssistantInstalled = true;
+            }
         }
         final StyledText st = getTextWidget();
         if(st != null) {
@@ -282,6 +262,12 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
                 }
             }
         }
+        if (mInsertTemplateAssistant != null) {
+            mInsertTemplateAssistant.uninstall();
+            mInsertTemplateAssistantInstalled= false;
+            mInsertTemplateAssistant= null;
+        }
+
         mAutoIndentStrategy = null;
         mTabConversionStrategy = null;
         if(mPreferenceStore != null) {
@@ -364,6 +350,31 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
     }
 
     /* (non-Javadoc)
+     * @see org.eclipse.jface.text.ITextOperationTargetExtension#enableOperation(int, boolean)
+     */
+    public void enableOperation(int operation, boolean enable)
+    {
+        switch(operation) {
+            case INSERT_TEMPLATE:
+                if (mInsertTemplateAssistant == null) {
+                    return;
+                }
+                if (enable) {
+                    if (!mInsertTemplateAssistantInstalled) {
+                        mInsertTemplateAssistant.install(this);
+                        mInsertTemplateAssistantInstalled= true;
+                    }
+                } 
+                else if (mInsertTemplateAssistantInstalled) {
+                    mInsertTemplateAssistant.uninstall();
+                    mInsertTemplateAssistantInstalled= false;
+                }
+                break;
+            default:
+                super.enableOperation(operation, enable);
+        }
+    }
+    /* (non-Javadoc)
      * @see org.eclipse.jface.text.ITextOperationTarget#canDoOperation(int)
      */
     public boolean canDoOperation(int operation)
@@ -371,6 +382,8 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
         switch(operation) {
             case GOTO_HELP:
                 return (fInformationPresenter != null);
+            case INSERT_TEMPLATE:
+                return mInsertTemplateAssistant != null && mInsertTemplateAssistantInstalled && isEditable();
             case INSERT_FILE:
             case INSERT_DIRECTORY:
             case INSERT_COLOR:
@@ -378,7 +391,7 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
             case TOGGLE_COMMENT:
             case REMOVE_BLOCK_COMMENT:
             case ADD_BLOCK_COMMENT:
-                return true;
+                return isEditable();
             default:
                 return super.canDoOperation(operation);
         }
@@ -394,6 +407,11 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
             case GOTO_HELP:
             {
                 doGotoHelp();
+                return;
+            }
+            case INSERT_TEMPLATE:
+            {
+                mInsertTemplateAssistant.showPossibleCompletions();
                 return;
             }
             case INSERT_FILE:

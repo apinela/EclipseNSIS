@@ -11,9 +11,7 @@ package net.sf.eclipsensis.editor.text;
 
 import net.sf.eclipsensis.INSISConstants;
 
-import org.eclipse.jface.text.rules.ICharacterScanner;
-import org.eclipse.jface.text.rules.IRule;
-import org.eclipse.jface.text.rules.IToken;
+import org.eclipse.jface.text.rules.*;
 
 public class NSISTextProcessorRule implements IRule, INSISConstants
 {

@@ -65,16 +65,10 @@ public class NSISSectionGroup extends AbstractNSISInstallGroup
         NSISInstallElementFactory.register(TYPE, NSISSectionGroup.class);
     }
 
-    public NSISSectionGroup()
-    {
-        super();
-        resetChildTypes();
-    }
-
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.wizard.settings.AbstractNSISInstallGroup#resetChildTypes()
      */
-    public void resetChildTypes()
+    public void setChildTypes()
     {
         mChildTypes.clear();
         mChildTypes.add(NSISSection.TYPE);

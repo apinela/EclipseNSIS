@@ -14,9 +14,7 @@ import java.util.Comparator;
 
 import net.sf.eclipsensis.util.Common;
 
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.*;
 
 
 public class NSISRegionScanner implements NSISScanner

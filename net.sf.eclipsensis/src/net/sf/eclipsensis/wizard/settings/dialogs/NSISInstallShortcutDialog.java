@@ -10,8 +10,7 @@
 package net.sf.eclipsensis.wizard.settings.dialogs;
 
 import java.text.Collator;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 import java.util.List;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
@@ -28,18 +27,10 @@ import net.sf.eclipsensis.wizard.util.NSISWizardDialogUtil;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.*;
 
 public class NSISInstallShortcutDialog extends AbstractNSISInstallItemDialog implements INSISWizardConstants
 {
@@ -85,7 +76,7 @@ public class NSISInstallShortcutDialog extends AbstractNSISInstallItemDialog imp
                                                           false,"wizard.location.label",true,null,true); //$NON-NLS-1$
         gd = (GridData)c1.getLayoutData();
         gd.horizontalAlignment = GridData.FILL;
-        ArrayList input = new ArrayList(Arrays.asList(NSISKeywords.PREDEFINED_PATH_VARIABLES));
+        ArrayList input = new ArrayList(Arrays.asList(NSISKeywords.PATH_CONSTANTS_AND_VARIABLES));
         String temp = EclipseNSISPlugin.getResourceString("wizard.additional.shortcut.locations",""); //$NON-NLS-1$ //$NON-NLS-2$
         if(!Common.isEmpty(temp)) {
             String[] additionalPaths = Common.tokenize(temp,','); //$NON-NLS-1$

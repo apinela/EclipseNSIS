@@ -9,9 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.wizard.settings;
 
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.help.NSISKeywords;
@@ -40,16 +38,10 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
         NSISInstallElementFactory.register(TYPE, NSISInstallFiles.class);
     }
 
-    public NSISInstallFiles()
-    {
-        super();
-        resetChildTypes();
-    }
-
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.wizard.settings.AbstractNSISInstallGroup#resetChildTypes()
      */
-    public void resetChildTypes()
+    public void setChildTypes()
     {
         mChildTypes.clear();
         mChildTypes.add(FILEITEM_TYPE);

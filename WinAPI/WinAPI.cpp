@@ -66,9 +66,11 @@ JNIEXPORT jstring JNICALL Java_net_sf_eclipsensis_util_WinAPI_RegQueryStrValue(J
     DWORD type;
     DWORD cbData;
 
+    char *str1 = (char *)pEnv->GetStringUTFChars(sSubKey, 0);
+    char *str2 = (char *)pEnv->GetStringUTFChars(sValue, 0);
     if(ERROR_SUCCESS == RegOpenKeyEx((HKEY)hRootKey,
-                                     _T((char *)pEnv->GetStringUTFChars(sSubKey, 0)),0, KEY_QUERY_VALUE, &hKey)) {
-        if(ERROR_SUCCESS == RegQueryValueEx(hKey, _T(""), 0, &type, NULL, &cbData)) {
+                                     _T(str1),0, KEY_QUERY_VALUE, &hKey)) {
+        if(ERROR_SUCCESS == RegQueryValueEx(hKey, _T(str2), 0, &type, NULL, &cbData)) {
             value = (TCHAR *)GlobalAlloc(GPTR, cbData*sizeof(TCHAR));
             if(ERROR_SUCCESS == RegQueryValueEx(hKey, _T(""), 0, &type, (LPBYTE)value, &cbData)) {
                 result = pEnv->NewStringUTF(value);
@@ -77,6 +79,8 @@ JNIEXPORT jstring JNICALL Java_net_sf_eclipsensis_util_WinAPI_RegQueryStrValue(J
         }
         RegCloseKey(hKey);
     }
+    pEnv->ReleaseStringUTFChars(sSubKey, str1);
+    pEnv->ReleaseStringUTFChars(sValue, str2);
 
     return result;
 }
@@ -88,13 +92,14 @@ JNIEXPORT jlong JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetDesktopWindow(JNI
 
 JNIEXPORT jlong JNICALL Java_net_sf_eclipsensis_util_WinAPI_HtmlHelp(JNIEnv *pEnv, jclass jClass, jlong hwndCaller, jstring pszFile, jint uCommand, jlong dwData)
 {
+    jlong result = 0;
     if(pszFile) {
-        TCHAR *file = _T((char *)pEnv->GetStringUTFChars(pszFile, 0));
-        return (jlong)HtmlHelp((HWND)hwndCaller, file, (UINT)uCommand, (DWORD)dwData) ;
+        char *str = (char *)pEnv->GetStringUTFChars(pszFile, 0);
+        TCHAR *file = _T(str);
+        result = (jlong)HtmlHelp((HWND)hwndCaller, file, (UINT)uCommand, (DWORD)dwData);
+        pEnv->ReleaseStringUTFChars(pszFile, str);
     }
-    else {
-        return 0;
-    }
+    return result;
 }
 
 JNIEXPORT jint JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetUserDefaultLangID(JNIEnv *pEnv, jclass jClass)
@@ -105,22 +110,95 @@ JNIEXPORT jint JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetUserDefaultLangID(
 JNIEXPORT jstring JNICALL Java_net_sf_eclipsensis_util_WinAPI_ExtractHtmlHelpAndTOC(JNIEnv *pEnv, jclass jClass, jstring pszFile, jstring pszFolder)
 {
     jstring result = NULL;
-	HRESULT hr = CoInitialize(NULL);
+    HRESULT hr = CoInitialize(NULL);
 
     if(hr == S_OK || hr == S_FALSE) {
         TCHAR *tocFile = NULL;
         tocFile = (TCHAR *)GlobalAlloc(GPTR, MAX_PATH*sizeof(TCHAR));
 
-        if(ExtractHtmlHelpAndTOC(_T((char *)pEnv->GetStringUTFChars(pszFile, 0)),
-	                             _T((char *)pEnv->GetStringUTFChars(pszFolder, 0)),
-                                 tocFile) == S_OK) {
+        char *str1 = (char *)pEnv->GetStringUTFChars(pszFile, 0);
+        char *str2 = (char *)pEnv->GetStringUTFChars(pszFolder, 0);
+        if(ExtractHtmlHelpAndTOC(_T(str1), _T(str2), tocFile) == S_OK) {
             result = pEnv->NewStringUTF(tocFile);
         }
+
         GlobalFree(tocFile);
-		if(hr == S_OK) {
-	        CoUninitialize();
-		}
+        pEnv->ReleaseStringUTFChars(pszFile, str1);
+        pEnv->ReleaseStringUTFChars(pszFolder, str2);
+
+        if(hr == S_OK) {
+            CoUninitialize();
+        }
     }
 
+    return result;
+}
+
+JNIEXPORT jobjectArray JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetPluginExports(JNIEnv *pEnv, jclass jClass, jstring pszPluginFile)
+{
+    jobjectArray result = NULL;
+
+    if(pszPluginFile) {
+        char *str =  (char *)pEnv->GetStringUTFChars(pszPluginFile, 0);
+        
+        TCHAR *pluginFile = _T(str);
+        unsigned char* dlldata    = 0;
+        long dlldatalen = 0;
+        bool loaded = false;
+        
+        FILE* dll = fopen(pluginFile,"rb");
+        if (dll) {
+            fseek(dll,0,SEEK_END);
+            dlldatalen = ftell(dll);
+            fseek(dll,0,SEEK_SET);
+            if (dlldatalen > 0) {
+                dlldata = new unsigned char[dlldatalen];
+                if (dlldata)
+                {
+                    size_t bytesread = fread((void*)dlldata,1,dlldatalen,dll);
+                    if ((long)bytesread == dlldatalen) {
+                        loaded = true;
+                    }
+                }
+            }
+            fclose(dll);
+        }
+        
+        if (loaded) {
+            PIMAGE_NT_HEADERS NTHeaders = PIMAGE_NT_HEADERS(dlldata + PIMAGE_DOS_HEADER(dlldata)->e_lfanew);
+            if (NTHeaders->Signature == IMAGE_NT_SIGNATURE) {
+                if (NTHeaders->FileHeader.Characteristics & IMAGE_FILE_DLL) {
+                    if (NTHeaders->OptionalHeader.NumberOfRvaAndSizes > IMAGE_DIRECTORY_ENTRY_EXPORT) {
+                
+                        DWORD ExportDirVA = NTHeaders->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_EXPORT].VirtualAddress;
+                        DWORD ExportDirSize = NTHeaders->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_EXPORT].Size;
+                        PIMAGE_SECTION_HEADER sections = IMAGE_FIRST_SECTION(NTHeaders);
+                
+                        for (int i = 0; i < NTHeaders->FileHeader.NumberOfSections; i++) {
+                            if (sections[i].VirtualAddress <= ExportDirVA
+                                && sections[i].VirtualAddress+sections[i].Misc.VirtualSize >= ExportDirVA+ExportDirSize) {
+                                PIMAGE_EXPORT_DIRECTORY exports = PIMAGE_EXPORT_DIRECTORY(dlldata + sections[i].PointerToRawData + ExportDirVA - sections[i].VirtualAddress);
+                                unsigned long *names = (unsigned long*)((unsigned long)exports + (char *)exports->AddressOfNames - ExportDirVA);
+
+								jclass stringClass = pEnv->FindClass("java/lang/String");
+								result = pEnv->NewObjectArray(exports->NumberOfNames, stringClass, NULL);
+
+                                for (unsigned long j = 0; j < exports->NumberOfNames; j++) {
+                                    char *name = (char*)exports + names[j] - ExportDirVA;
+                                    pEnv->SetObjectArrayElement(result, j, pEnv->NewStringUTF(name));
+                                }
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        if (dlldata) {
+            delete[] dlldata;
+        }
+        
+        pEnv->ReleaseStringUTFChars(pszPluginFile, str);
+    }
     return result;
 }

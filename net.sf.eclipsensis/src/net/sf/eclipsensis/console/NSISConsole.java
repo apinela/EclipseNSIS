@@ -10,73 +10,49 @@
 package net.sf.eclipsensis.console;
 
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.actions.NSISCancelAction;
 import net.sf.eclipsensis.makensis.IMakeNSISRunListener;
 import net.sf.eclipsensis.makensis.MakeNSISRunner;
+import net.sf.eclipsensis.settings.INSISPreferenceConstants;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.util.ImageManager;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.ActionContributionItem;
-import org.eclipse.jface.action.IMenuListener;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.IToolBarManager;
-import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.util.OpenStrategy;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IColorProvider;
-import org.eclipse.jface.viewers.IDoubleClickListener;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.ITableLabelProvider;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.resource.*;
+import org.eclipse.jface.util.*;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.dnd.Clipboard;
-import org.eclipse.swt.dnd.TextTransfer;
-import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IEditorReference;
-import org.eclipse.ui.IFileEditorInput;
-import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.swt.dnd.*;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.ide.IGotoMarker;
 import org.eclipse.ui.part.ViewPart;
 
-public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRunListener
+public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRunListener,
+                                                     INSISPreferenceConstants, IPropertyChangeListener  
+
 {
     private static NSISConsole cConsole = null;
     
+    private Color mInfoColor = null;
+    private Color mWarningColor = null;
+    private Color mErrorColor = null;
+    
+    private Font mFont = null;
+    private Font mUnderlineFont = null;
+
 	private TableViewer mViewer;
 	private Action mCopyAction;
     private Action mSelectAllAction;
@@ -86,10 +62,13 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
     private ArrayList mErrors = new ArrayList();
     private ArrayList mWarnings = new ArrayList();
     private HashSet mListeners = new HashSet();
-    private boolean mDisposed = false;
+    private boolean mDisposed = true;
     private Clipboard mClipboard = null;
     private Display mDisplay = null;
     private boolean mIsCompiling = false;
+    private ColorRegistry mColorRegistry = null;
+    private FontRegistry mFontRegistry = null;
+    private NSISConsoleMouseListener mMouseListener = null;
 
     public static NSISConsole getConsole()
     {
@@ -103,6 +82,7 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
                                 PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(CONSOLE_ID);
                             }
                             catch(PartInitException pie) {
+                                pie.printStackTrace();
                             }
                         }
                     });
@@ -119,28 +99,78 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
     {
         cConsole = this;
 	}
-    
-    public void clear()
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
+     */
+    public void propertyChange(PropertyChangeEvent event)
     {
-        mContent.clear();
-        mErrors.clear();
-        mWarnings.clear();
-        if(Thread.currentThread() == mDisplay.getThread()) {
-            _clear();
+        String property = event.getProperty();
+        boolean changed = false;
+        int type = -1;
+        if(property.equals(CONSOLE_INFO_COLOR)) {
+            mInfoColor = mColorRegistry.get(property);
+            type = NSISConsoleLine.INFO;
         }
-        else {
-            mDisplay.asyncExec(
-                    new Runnable() {
-                        public void run()
-                        {
-                            _clear();
-                        }
-                    }
-            );
+        else if(property.equals(CONSOLE_WARNING_COLOR)) {
+            mWarningColor = mColorRegistry.get(property);
+            type = NSISConsoleLine.WARNING;
+        }
+        else if(property.equals(CONSOLE_WARNING_COLOR)) {
+            mErrorColor = mColorRegistry.get(property);
+            type = NSISConsoleLine.ERROR;
+        }
+        else if(property.equals(CONSOLE_FONT)) {
+            mFont = mFontRegistry.get(CONSOLE_FONT);
+            makeUnderlineFont();
+            mViewer.update(mContent.toArray(),null);
+        }
+        if(type != -1) {
+            for (Iterator iter = mContent.iterator(); iter.hasNext();) {
+                NSISConsoleLine element = (NSISConsoleLine)iter.next();
+                if(element.getType() == type) {
+                    mViewer.update(element, null);
+                }
+            }
         }
     }
     
-    private void _clear()
+    /**
+     * 
+     */
+    private void makeUnderlineFont()
+    {
+        FontData fontData = mFont.getFontData()[0];
+        fontData.data.lfUnderline = 1;
+        if(mUnderlineFont != null) {
+            mUnderlineFont.dispose();
+        }
+        mUnderlineFont = new Font(mDisplay, fontData);
+    }
+
+    public void clear()
+    {
+        if(!mDisposed) {
+            mContent.clear();
+            mErrors.clear();
+            mWarnings.clear();
+            if(Thread.currentThread() == mDisplay.getThread()) {
+                internalClear();
+            }
+            else {
+                mDisplay.asyncExec(
+                        new Runnable() {
+                            public void run()
+                            {
+                                internalClear();
+                            }
+                        }
+                );
+            }
+        }
+    }
+    
+    private void internalClear()
     {
         mViewer.refresh();
         mClearAction.setEnabled(false);
@@ -157,26 +187,37 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
             mWarnings.add(line);
         }
         if(Thread.currentThread() == mDisplay.getThread()) {
-            _add(line);
+            internalAdd(line);
         }
         else {
             mDisplay.asyncExec(
                     new Runnable() {
                         public void run()
                         {
-                            _add(line);
+                            internalAdd(line);
                         }
                     }
             );
         }
     }
     
-    private void _add(final NSISConsoleLine line)
+    private void internalAdd(final NSISConsoleLine line)
     {
-        mViewer.add(line);
-        mViewer.reveal(line);
-        mClearAction.setEnabled(true);
-        mSelectAllAction.setEnabled(true);
+        synchronized(mViewer) {
+            mViewer.add(line);
+//            if(line.getFile() != null && line.getLineNum() >= 0) {
+//                Table table = mViewer.getTable();
+//                int n = table.getItemCount();
+//                TableItem item = table.getItem(n-1);
+//                String text = item.getText();
+//                GC gc = new GC(table);
+//                Point p = gc.stringExtent(text);
+//                Point location = table.
+//            }
+            mViewer.reveal(line);
+            mClearAction.setEnabled(true);
+            mSelectAllAction.setEnabled(true);
+        }
     }
     
     /**
@@ -201,17 +242,35 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
 	 */
 	public void createPartControl(Composite parent) {
         mDisplay = parent.getDisplay();
+        
+        mColorRegistry = JFaceResources.getColorRegistry();
+        mInfoColor = mColorRegistry.get(CONSOLE_INFO_COLOR);
+        mWarningColor = mColorRegistry.get(CONSOLE_WARNING_COLOR);
+        mErrorColor = mColorRegistry.get(CONSOLE_ERROR_COLOR);
+        mColorRegistry.addListener(this);
+        
+        mFontRegistry = JFaceResources.getFontRegistry();
+        mFont = mFontRegistry.get(CONSOLE_FONT);
+        makeUnderlineFont();
+        mFontRegistry.addListener(this);
+        
         mClipboard = new Clipboard(mDisplay);
 		mViewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+        mMouseListener = new NSISConsoleMouseListener(mViewer);
+        
+        Table table = mViewer.getTable();
+        table.setFont(mFont);
+        table.addMouseListener(mMouseListener);
+        table.addMouseMoveListener(mMouseListener);
 		mViewer.setContentProvider(new NSISConsoleContentProvider());
 		mViewer.setLabelProvider(new NSSConsoleLabelProvider());
 		mViewer.setInput(getViewSite());
 		makeActions();
 		hookContextMenu();
         hookSelectionChangedAction();
-		hookDoubleClickAction();
 		contributeToActionBars();
         MakeNSISRunner.addListener(this);
+        mDisposed = false;
 	}
 
 	private void hookContextMenu() {
@@ -376,48 +435,38 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
         cancelActionDelegate.init(mCancelAction);
 	}
 
-	private void hookDoubleClickAction() {
-		mViewer.addDoubleClickListener(new IDoubleClickListener() {
-			public void doubleClick(DoubleClickEvent event) {
-                ISelection selection = mViewer.getSelection();
-                if(selection instanceof IStructuredSelection) {
-                    Object obj = ((IStructuredSelection)selection).getFirstElement();
-                    if(obj !=null && obj instanceof NSISConsoleLine) {
-                        NSISConsoleLine line = (NSISConsoleLine)obj;
-                        IFile file = line.getFile();
-                        int lineNum = line.getLineNum();
-                        if(file != null && lineNum > 0) {
-                            IEditorReference[] editorRefs = getSite().getPage().getEditorReferences();
-                            if (Common.isEmptyArray(editorRefs)) {
-                                for (int i = 0; i < editorRefs.length; i++) {
-                                    IEditorPart editor = editorRefs[i].getEditor(false);
-                                    if(editor != null) {
-                                        IEditorInput input = editor.getEditorInput();
-                                        if (input instanceof IFileEditorInput) {
-                                            if (file.equals(((IFileEditorInput) input).getFile())) {
-                                                getSite().getPage().activate(editor);
-                                                IGotoMarker igm = (IGotoMarker)editor.getAdapter(IGotoMarker.class);
-                                                if(igm != null) {
-                                                    igm.gotoMarker(new DummyMarker(file,lineNum));
-                                                }
-                                                return;
-                                            }
-                                        }
-                                    }
+    private void gotoMarker(NSISConsoleLine line)
+    {
+        IFile file = line.getFile();
+        int lineNum = line.getLineNum();
+        if(file != null && lineNum > 0) {
+            IEditorReference[] editorRefs = getSite().getPage().getEditorReferences();
+            if (Common.isEmptyArray(editorRefs)) {
+                for (int i = 0; i < editorRefs.length; i++) {
+                    IEditorPart editor = editorRefs[i].getEditor(false);
+                    if(editor != null) {
+                        IEditorInput input = editor.getEditorInput();
+                        if (input instanceof IFileEditorInput) {
+                            if (file.equals(((IFileEditorInput) input).getFile())) {
+                                getSite().getPage().activate(editor);
+                                IGotoMarker igm = (IGotoMarker)editor.getAdapter(IGotoMarker.class);
+                                if(igm != null) {
+                                    igm.gotoMarker(new DummyMarker(file,lineNum));
                                 }
-                            }
-                            try {
-                                IDE.openEditor(getSite().getPage(), new DummyMarker(file,lineNum), OpenStrategy.activateOnOpen());
-                            }
-                            catch (PartInitException e) {
-                                e.printStackTrace();
+                                return;
                             }
                         }
                     }
                 }
-			}
-		});
-	}
+            }
+            try {
+                IDE.openEditor(getSite().getPage(), new DummyMarker(file,lineNum), OpenStrategy.activateOnOpen());
+            }
+            catch (PartInitException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
     private void hookSelectionChangedAction() {
         mViewer.addSelectionChangedListener(new ISelectionChangedListener() {
@@ -428,7 +477,7 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
         });
     }
 
-	private void showMessage(String message) {
+    private void showMessage(String message) {
 		MessageDialog.openInformation(
 			mViewer.getControl().getShell(),
 			getTitle(),
@@ -447,13 +496,17 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
      */
     public void dispose()
     {
-        super.dispose();
+        mColorRegistry.removeListener(this);
+        mColorRegistry = null;
+        mFontRegistry.removeListener(this);
+        mFontRegistry = null;
         MakeNSISRunner.removeListener(this);
         cConsole = null;
         if(mClipboard != null) {
             mClipboard.dispose();
             mClipboard = null;
         }
+        super.dispose();
         mDisposed = true;
     }
     
@@ -479,23 +532,21 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
         }
     }
     
-    private class NSSConsoleLabelProvider extends LabelProvider implements ITableLabelProvider, IColorProvider 
+    private class NSSConsoleLabelProvider extends LabelProvider implements IFontProvider, ITableLabelProvider, IColorProvider
     {
-        private Color blue = null;
-        private Color orange = null;
-        private Color red = null;
-        private Color white = null;
-
-        /**
-         * 
+        /* (non-Javadoc)
+         * @see org.eclipse.jface.viewers.IFontProvider#getFont(java.lang.Object)
          */
-        public NSSConsoleLabelProvider()
+        public Font getFont(Object element)
         {
-            super();
-            blue = new Color(mDisplay, 0,0,255);
-            orange = new Color(mDisplay, 255,128,0);
-            red = new Color(mDisplay,255,0,0);
-            white = new Color(mDisplay, 255,255,255);
+            Font font = mFont;
+            if(element instanceof NSISConsoleLine) {
+                NSISConsoleLine line = (NSISConsoleLine)element;
+                if(line.getFile() != null && line.getLineNum() >= 0) {
+                    font = mUnderlineFont;
+                }
+            }
+            return font;
         }
         
         public String getColumnText(Object obj, int index) {
@@ -506,29 +557,11 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
         }
 
         /* (non-Javadoc)
-         * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
-         */
-        public void dispose()
-        {
-            super.dispose();
-            blue.dispose();
-            orange.dispose();
-            red.dispose();
-            white.dispose();
-        }
-        
-        /* (non-Javadoc)
          * @see org.eclipse.jface.viewers.IColorProvider#getBackground(java.lang.Object)
          */
         public Color getBackground(Object element)
         {
-            if(element instanceof NSISConsoleLine) {
-                NSISConsoleLine line = (NSISConsoleLine)element;
-                if(line.getType() == NSISConsoleLine.ERROR && line.getFile() != null && line.getLineNum() > 0) {
-                    return red;
-                }
-            }
-            return white;
+            return null;
         }
         
         /* (non-Javadoc)
@@ -541,25 +574,20 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
                 NSISConsoleLine line = (NSISConsoleLine)element;
                 switch(line.getType()) {
                     case NSISConsoleLine.INFO:
-                        color = blue;
+                        color = mInfoColor;
                         break;
                     case NSISConsoleLine.WARNING:
-                        color = orange;
+                        color = mWarningColor;
                         break;
                     case NSISConsoleLine.ERROR:
-                        if(line.getFile() != null && line.getLineNum() > 0) {
-                            color = white;
-                        }
-                        else {
-                            color = red;
-                        }
+                        color = mErrorColor;
                         break;
                     default:
-                        color = blue;
+                        color = mInfoColor;
                 }
             }
             else {
-                color = blue;
+                color = mInfoColor;
             }
             return color;
         }
@@ -743,6 +771,78 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
         public Object getAdapter(Class adapter)
         {
             return null;
+        }
+    }
+    
+    private class NSISConsoleMouseListener extends MouseAdapter implements MouseMoveListener
+    {
+        private boolean mMouseDown = false;
+        private boolean mDragging = false;
+        private TableViewer mTableViewer = null;
+        
+        public NSISConsoleMouseListener(TableViewer tableViewer)
+        {
+            mTableViewer = tableViewer;
+        }
+        
+        public void mouseDown(MouseEvent e)
+        {
+            if (e.button != 1) {
+                return;
+            }
+            mMouseDown = true;
+        }
+        
+        private NSISConsoleLine getLine(Point p)
+        {
+            NSISConsoleLine line = null;
+            TableItem item = mTableViewer.getTable().getItem(p);
+            if(item != null) {
+                int i = mTableViewer.getTable().indexOf(item);
+                if(i >= 0 && i < mContent.size()) {
+                    line = (NSISConsoleLine)mContent.get(i);
+                }
+            }
+            
+            return line;
+        }
+        
+        public void mouseUp(MouseEvent e) 
+        {
+            mMouseDown = false;
+            Table table = mTableViewer.getTable();
+
+            NSISConsoleLine line = getLine(new Point(e.x,e.y));
+            if (mDragging) {
+                mDragging = false;
+                if (line != null) {
+                    table.setCursor(mDisplay.getSystemCursor(SWT.CURSOR_HAND));
+                }
+            } 
+            else if(line != null && line.getFile() != null && line.getLineNum() >= 0) {
+                table.setCursor(mDisplay.getSystemCursor(SWT.CURSOR_WAIT));
+                gotoMarker(line);
+                table.setCursor(null);
+            }
+        }
+        
+        public void mouseMove(MouseEvent e) 
+        {
+            Table table = mTableViewer.getTable();
+            if (mMouseDown) {
+                if (!mDragging) {
+                    table.setCursor(null);
+                }
+                mDragging = true;
+                return;
+            }
+            NSISConsoleLine line = getLine(new Point(e.x,e.y));
+            if (line != null && line.getFile() != null && line.getLineNum() >= 0) {
+                table.setCursor(mDisplay.getSystemCursor(SWT.CURSOR_HAND));
+            }
+            else {
+                table.setCursor(null);
+            }
         }
     }
 }

@@ -13,9 +13,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.*;
 
 public class MasterSlaveController extends SelectionAdapter
 {

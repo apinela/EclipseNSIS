@@ -11,47 +11,18 @@
 
 package net.sf.eclipsensis.util;
 
-import java.beans.BeanInfo;
-import java.beans.IntrospectionException;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
-import java.io.Reader;
-import java.io.Writer;
+import java.beans.*;
+import java.io.*;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.text.BreakIterator;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.MissingResourceException;
-import java.util.Properties;
-import java.util.ResourceBundle;
-import java.util.StringTokenizer;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.sf.eclipsensis.help.NSISKeywords;
 
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -270,6 +241,58 @@ public class Common
             throw new IllegalArgumentException();
         }
     }
+    
+    public static Object joinArrays(Object[] arrays)
+    {
+        Object newArray = null;
+        if(!isEmptyArray(arrays)) {
+            Class clasz = null;
+            int count = 0;
+            int[] lengths = new int[arrays.length];
+            for (int i = 0; i < arrays.length; i++) {
+                if(arrays[i] != null) {
+                    Class arrayClass = arrays[i].getClass();
+                    if(arrayClass.isArray()) {
+                        lengths[i] = Array.getLength(arrays[i]);
+                        count += lengths[i];
+                        if(clasz == null) {
+                            clasz = arrayClass.getComponentType(); 
+                        }
+                        else {
+                            Class clasz2 = arrayClass.getComponentType();
+                            if(!clasz2.equals(clasz)) {
+                                if(clasz.isAssignableFrom(clasz2)) {
+                                    continue;
+                                }
+                                else if(clasz2.isAssignableFrom(clasz)) {
+                                    clasz = clasz2;
+                                }
+                                else {
+                                    clasz = Object.class;
+                                }
+                            }
+                        }
+                    }
+                    else {
+                        throw new IllegalArgumentException();
+                    }
+                }
+                else {
+                    lengths[i] = 0;
+                }
+            }
+            
+            newArray = Array.newInstance(clasz, count);
+            int n = 0;
+            for (int i = 0; i < arrays.length; i++) {
+                if(lengths[i] > 0) {
+                    System.arraycopy(arrays[i],0,newArray,n,lengths[i]);
+                    n += lengths[i];
+                }
+            }
+        }
+        return newArray;
+    }
 
     /**
      * Append one array to another
@@ -292,7 +315,7 @@ public class Common
      */
     public static Object appendArray(Object oldArray, Object newArray, int startIndex, int length) 
     {
-        if (newArray == null)
+        if (isEmptyArray(newArray))
         {
             return oldArray;
         }
@@ -300,7 +323,7 @@ public class Common
         if(!newClass.isArray()) {
             throw new IllegalArgumentException();
         }
-        if(oldArray == null) {
+        if(isEmptyArray(oldArray)) {
             return cloneArray(newArray);
         }
         Class oldClass = oldArray.getClass();
@@ -552,8 +575,8 @@ public class Common
             prefix = pathName.substring(0,n);
         }
         if(!Common.isEmpty(prefix)) {
-            for(int i=0; i<NSISKeywords.PREDEFINED_PATH_VARIABLES.length; i++) {
-                if(NSISKeywords.PREDEFINED_PATH_VARIABLES[i].equalsIgnoreCase(prefix)) {
+            for(int i=0; i<NSISKeywords.PATH_CONSTANTS_AND_VARIABLES.length; i++) {
+                if(NSISKeywords.PATH_CONSTANTS_AND_VARIABLES[i].equalsIgnoreCase(prefix)) {
                     if(!Common.isEmpty(suffix)) {
                         Matcher matcher = cValidNSISPrefixedPathNameSuffix.matcher(suffix);
                         return matcher.matches();

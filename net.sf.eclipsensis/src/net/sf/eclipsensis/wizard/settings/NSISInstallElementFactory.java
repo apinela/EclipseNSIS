@@ -58,7 +58,7 @@ public class NSISInstallElementFactory
     
     public static void unregister(String type, Class clasz)
     {
-        if(!cElementMap.containsKey(type) && ((NSISInstallElementDescriptor)cElementMap.get(type)).clasz.equals(clasz)) {
+        if(!cElementMap.containsKey(type) && ((NSISInstallElementDescriptor)cElementMap.get(type)).getElementClass().equals(clasz)) {
             cElementMap.remove(type);
         }
     }
@@ -68,7 +68,7 @@ public class NSISInstallElementFactory
         NSISInstallElementDescriptor descriptor = (NSISInstallElementDescriptor)cElementMap.get(type);
         if(descriptor != null) {
             try {
-                INSISInstallElement element = (INSISInstallElement)descriptor.constructor.newInstance(EMPTY_OBJECT_ARRAY);
+                INSISInstallElement element = (INSISInstallElement)descriptor.getConstructor().newInstance(EMPTY_OBJECT_ARRAY);
                 element.setSettings(settings);
                 return element;
             }
@@ -82,24 +82,56 @@ public class NSISInstallElementFactory
     {
         NSISInstallElementDescriptor descriptor = (NSISInstallElementDescriptor)cElementMap.get(type);
         if(descriptor != null) {
-            return descriptor.image;
+            return descriptor.getImage();
         }
         return null;
     }
     
     private static class NSISInstallElementDescriptor
     {
-        public Image image;
-        public Class clasz;
-        public String name;
-        public Constructor constructor;
+        public Image mImage;
+        public Class mElementClass;
+        public String mName;
+        public Constructor mConstructor;
         
         public NSISInstallElementDescriptor(Class clasz) throws SecurityException, NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException
         {
-            this.clasz = clasz;
-            constructor = clasz.getConstructor(EMPTY_CLASS_ARRAY);
-            INSISInstallElement instance = (INSISInstallElement)constructor.newInstance(EMPTY_OBJECT_ARRAY);
-            image = instance.getImage();
+            mElementClass = clasz;
+            mConstructor = clasz.getConstructor(EMPTY_CLASS_ARRAY);
+            INSISInstallElement instance = (INSISInstallElement)mConstructor.newInstance(EMPTY_OBJECT_ARRAY);
+            mImage = instance.getImage();
+        }
+        
+        /**
+         * @return Returns the class.
+         */
+        public Class getElementClass()
+        {
+            return mElementClass;
+        }
+        
+        /**
+         * @return Returns the constructor.
+         */
+        public Constructor getConstructor()
+        {
+            return mConstructor;
+        }
+        
+        /**
+         * @return Returns the image.
+         */
+        public Image getImage()
+        {
+            return mImage;
+        }
+        
+        /**
+         * @return Returns the name.
+         */
+        public String getName()
+        {
+            return mName;
         }
     }
 }

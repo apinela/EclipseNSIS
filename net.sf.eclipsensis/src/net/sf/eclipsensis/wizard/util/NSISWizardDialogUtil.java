@@ -405,7 +405,7 @@ public class NSISWizardDialogUtil
         layout.marginWidth = 0;
         composite.setLayout(layout);
         
-        final Combo c2 = createCombo(composite,1,NSISKeywords.PREDEFINED_PATH_VARIABLES,value,false,enabled,masterSlaveController);
+        final Combo c2 = createCombo(composite,1,NSISKeywords.PATH_CONSTANTS_AND_VARIABLES,value,false,enabled,masterSlaveController);
         gd = (GridData)c2.getLayoutData();
         gd.grabExcessHorizontalSpace = true;
         gd.horizontalAlignment = GridData.FILL;

@@ -10,62 +10,24 @@
 package net.sf.eclipsensis.wizard;
 
 import java.text.MessageFormat;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
+import java.util.*;
 import java.util.List;
-import java.util.ResourceBundle;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.ImageManager;
-import net.sf.eclipsensis.util.UpDownMover;
-import net.sf.eclipsensis.wizard.settings.AbstractNSISInstallGroup;
-import net.sf.eclipsensis.wizard.settings.INSISInstallElement;
-import net.sf.eclipsensis.wizard.settings.NSISInstallElementFactory;
-import net.sf.eclipsensis.wizard.settings.NSISInstallElementLabelProvider;
-import net.sf.eclipsensis.wizard.settings.NSISInstallElementTreeContentProvider;
-import net.sf.eclipsensis.wizard.settings.NSISSection;
-import net.sf.eclipsensis.wizard.settings.NSISSectionGroup;
-import net.sf.eclipsensis.wizard.settings.NSISWizardSettings;
+import net.sf.eclipsensis.util.*;
+import net.sf.eclipsensis.wizard.settings.*;
 import net.sf.eclipsensis.wizard.util.NSISWizardDialogUtil;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.ITreeViewerListener;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TreeExpansionEvent;
-import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Item;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.swt.widgets.ToolBar;
-import org.eclipse.swt.widgets.ToolItem;
-import org.eclipse.swt.widgets.Tree;
-import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.swt.widgets.*;
 
 public class NSISWizardContentsPage extends AbstractNSISWizardPage
 {

@@ -9,22 +9,14 @@
  *******************************************************************************/
 package net.sf.eclipsensis.settings;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Random;
 
 import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.util.Common;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.ISynchronizer;
-import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.QualifiedName;
 

@@ -11,11 +11,7 @@ package net.sf.eclipsensis.wizard;
 
 import java.text.Collator;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Locale;
-import java.util.ResourceBundle;
+import java.util.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.help.NSISKeywords;
@@ -26,32 +22,15 @@ import net.sf.eclipsensis.util.ImageManager;
 import net.sf.eclipsensis.viewer.CollectionContentProvider;
 import net.sf.eclipsensis.viewer.ListViewerUpDownMover;
 import net.sf.eclipsensis.wizard.settings.NSISWizardSettings;
-import net.sf.eclipsensis.wizard.util.MasterSlaveController;
-import net.sf.eclipsensis.wizard.util.MasterSlaveEnabler;
-import net.sf.eclipsensis.wizard.util.NSISWizardDialogUtil;
+import net.sf.eclipsensis.wizard.util.*;
 
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.ListViewer;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.widgets.List;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Text;
 
 public class NSISWizardAttributesPage extends AbstractNSISWizardPage
 {
@@ -501,7 +480,7 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
 
         NSISWizardSettings settings = mWizard.getSettings();
         
-        final Combo c = NSISWizardDialogUtil.createCombo(group, NSISKeywords.PREDEFINED_PATH_VARIABLES, 
+        final Combo c = NSISWizardDialogUtil.createCombo(group, NSISKeywords.PATH_CONSTANTS_AND_VARIABLES, 
                               settings.getInstallDir(), false, "installation.directory.label", //$NON-NLS-1$
                               true, null, true);
         GridData gd = (GridData)c.getLayoutData();

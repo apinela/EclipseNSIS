@@ -1,0 +1,168 @@
+/*******************************************************************************
+ * Copyright (c) 2004, 2005 Sunil Kamath (IcemanK).
+ * All rights reserved.
+ * This program is made available under the terms of the Common Public License
+ * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     Sunil Kamath (IcemanK) - initial API and implementation
+ *******************************************************************************/
+package net.sf.eclipsensis.editor.template;
+
+import java.util.*;
+
+import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.util.CaseInsensitiveMap;
+
+import org.eclipse.jface.text.templates.*;
+
+public class NSISTemplateTranslator extends TemplateTranslator
+{
+    private static final int TEXT = 0;
+    private static final int ESCAPE = 1;
+    private static final int IDENTIFIER = 2;
+    
+    private static final char IDENTIFIER_BOUNDARY = '%';
+    
+    private String mErrorMessage = null;
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.text.templates.TemplateTranslator#getErrorMessage()
+     */
+    public String getErrorMessage()
+    {
+        return mErrorMessage;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.text.templates.TemplateTranslator#translate(java.lang.String)
+     */
+    public TemplateBuffer translate(String string) throws TemplateException
+    {
+        StringBuffer buffer = new StringBuffer(""); //$NON-NLS-1$
+        
+        int state= TEXT;
+        mErrorMessage= null;
+        Map map = new CaseInsensitiveMap();
+        
+        int n=0;
+        int offset = -1;
+        outer:
+        for (int i= 0; i != string.length(); i++) {
+            char ch= string.charAt(i);
+            
+            switch (state) {
+            case TEXT:
+                switch (ch) {
+                    case IDENTIFIER_BOUNDARY:
+                        state= ESCAPE;
+                        break;
+                    default:
+                        buffer.append(ch);
+                        n++;
+                        break;
+                }
+                break;
+            case ESCAPE:
+                switch (ch) {
+                    case IDENTIFIER_BOUNDARY:
+                        buffer.append(ch);
+                        n++;
+                        state= TEXT;
+                        break;
+                    default:
+                        if(!Character.isLetter(ch)) {
+                            mErrorMessage= EclipseNSISPlugin.getResourceString("template.invalid.variable.character.error"); //$NON-NLS-1$
+                            throw new TemplateException(mErrorMessage);
+                        }
+                        offset = n;
+                        state= IDENTIFIER;
+                        buffer.append(ch);
+                        n++;
+                }
+                break;
+            case IDENTIFIER:
+                switch (ch) {
+                case IDENTIFIER_BOUNDARY:
+                    String name = buffer.substring(offset,n);
+                    List list = (List)map.get(name);
+                    if(list == null) {
+                        list = new ArrayList();
+                        map.put(name,list);
+                    }
+                    list.add(new Integer(offset));
+                    state= TEXT;
+                    break;
+                default:
+                    if (!Character.isLetterOrDigit(ch) && ch != '_') {
+                        // illegal identifier character
+                        mErrorMessage= EclipseNSISPlugin.getResourceString("template.invalid.variable.character.error"); //$NON-NLS-1$
+                        throw new TemplateException(mErrorMessage);
+                    }
+                    buffer.append(ch);
+                    n++;
+                    break;
+                }
+                break;
+            }
+        }
+        
+        switch (state) {
+            case TEXT:
+                break;
+            default:
+                throw new TemplateException(EclipseNSISPlugin.getResourceString("template.incomplete.variable.error")); //$NON-NLS-1$
+        }           
+        
+        String translatedString= buffer.toString();
+        TemplateVariable[] variables= new TemplateVariable[map.size()];
+        int i=0;
+        for(Iterator iter=map.keySet().iterator(); iter.hasNext(); ) {
+            String name = (String)iter.next();
+            List list = (List)map.get(name);
+            int[] offsets = new int[list.size()];
+            for (int j = 0; j < offsets.length; j++) {
+                offsets[j] = ((Integer)list.get(j)).intValue();
+            }
+            variables[i++] = createVariable(name, name, offsets);
+        }
+
+        return new TemplateBuffer(translatedString, variables);
+    }
+
+    private TemplateVariable[] findVariables(String string, int[] offsets, int[] lengths) {
+
+        Map map= new HashMap();
+        
+        for (int i= 0; i != offsets.length; i++) {
+            int offset= offsets[i];
+            int length= lengths[i];
+            
+            String content= string.substring(offset, offset + length);
+            Vector vector= (Vector) map.get(content);
+            if (vector == null) {
+                vector= new Vector();
+                map.put(content, vector);
+            }           
+            vector.add(new Integer(offset));
+        }
+        
+        TemplateVariable[] variables= new TemplateVariable[map.size()];
+        int k= 0;
+        
+        Set keys= map.keySet();
+        for (Iterator i= keys.iterator(); i.hasNext(); ) {
+            String name= (String) i.next();         
+            Vector vector= (Vector) map.get(name);
+            
+            int[] offsets_= new int[vector.size()];
+            for (int j= 0; j != offsets_.length; j++)
+                offsets_[j]= ((Integer) vector.get(j)).intValue();
+                
+            variables[k]= createVariable(name, name, offsets_);
+            k++;
+        }
+        
+        return variables;
+    }
+}

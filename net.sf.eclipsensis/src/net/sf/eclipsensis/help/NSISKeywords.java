@@ -9,31 +9,18 @@
  *******************************************************************************/
 package net.sf.eclipsensis.help;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
-import java.util.Set;
+import java.io.*;
+import java.util.*;
 
-import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.IEclipseNSISPluginListener;
+import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.settings.INSISPreferenceConstants;
 import net.sf.eclipsensis.settings.NSISPreferences;
-import net.sf.eclipsensis.util.CaseInsensitiveMap;
-import net.sf.eclipsensis.util.CaseInsensitiveSet;
-import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.Version;
+import net.sf.eclipsensis.util.*;
 
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
-public class NSISKeywords
+public class NSISKeywords implements INSISConstants
 {
     public static String[] ALL_KEYWORDS;
     public static String[] SINGLELINE_COMPILETIME_COMMANDS;
@@ -41,13 +28,24 @@ public class NSISKeywords
     public static String[] INSTALLER_ATTRIBUTES;
     public static String[] COMMANDS;
     public static String[] INSTRUCTIONS;
+    public static String[] INSTALLER_PAGES;
     public static String[] INSTRUCTION_PARAMETERS;
     public static String[] INSTRUCTION_OPTIONS;
-    public static String[] PREDEFINED_PATH_VARIABLES;
-    public static String[] PREDEFINED_VARIABLES;
     public static String[] CALLBACKS;
+    public static String[] PATH_CONSTANTS_AND_VARIABLES;
+    public static String[] ALL_CONSTANTS_AND_VARIABLES;
+    public static String[] REGISTERS;
+    public static String[] PATH_VARIABLES;
+    public static String[] VARIABLES;
+    public static String[] ALL_VARIABLES;
+    public static String[] PATH_CONSTANTS;
+    public static String[] STRING_CONSTANTS;
+    public static String[] ALL_CONSTANTS;
+    public static String[] PREDEFINES;
+    public static String[] PLUGINS;
     
     private static Map cKeywordsMap = new CaseInsensitiveMap();
+    private static Map cPluginsMap = null;
     private static Set cAllKeywordsSet = new CaseInsensitiveSet();
     private static ArrayList cListeners = new ArrayList();
     private static IPropertyChangeListener cPropertyChangeListener  = new IPropertyChangeListener() {
@@ -55,6 +53,7 @@ public class NSISKeywords
         public void propertyChange(PropertyChangeEvent event)
         {
             if(INSISPreferenceConstants.NSIS_HOME.equals(event.getProperty())) {
+                loadPlugins();
                 loadKeywords();
             }
         }
@@ -69,8 +68,85 @@ public class NSISKeywords
     
     static {
         loadKeywords();
+        loadPlugins();
         NSISPreferences.getPreferences().getPreferenceStore().addPropertyChangeListener(cPropertyChangeListener);
         EclipseNSISPlugin.getDefault().addListener(cShutdownListener);
+    }
+    
+    private static void loadPlugins()
+    {
+        String nsisHome = NSISPreferences.getPreferences().getNSISHome();
+        if(!Common.isEmpty(nsisHome)) {
+            File nsisHomeDir = new File(nsisHome);
+            if(nsisHomeDir.exists() && nsisHomeDir.isDirectory()) {
+                File nsisPluginsDir = new File(nsisHomeDir, NSIS_PLUGINS_LOCATION);
+                if(nsisPluginsDir.exists() && nsisPluginsDir.isDirectory()) {
+                    File[] pluginFiles = nsisPluginsDir.listFiles(new FileFilter() {
+                        private String mExtension = NSIS_PLUGINS_EXTENSION.toLowerCase();
+                        public boolean accept(File pathname)
+                        {
+                            if(pathname.isFile()) {
+                                String name = pathname.getName().toLowerCase();
+                                return name.endsWith(mExtension);
+                            }
+                            return false;
+                        }
+                        
+                    });
+                    boolean changed = false;
+                    File cacheFile = new File(EclipseNSISPlugin.getPluginStateLocation(),NSISKeywords.class.getName()+".Plugins.ser"); //$NON-NLS-1$
+                    if(cacheFile.exists()) {
+                        try {
+                            cPluginsMap = (Map)Common.readObject(cacheFile);
+                        }
+                        catch (Exception e) {
+                            cPluginsMap = null;
+                        }
+                    }
+                    if(cPluginsMap == null) {
+                        cPluginsMap = new CaseInsensitiveMap();
+                        changed = true;
+                    }
+
+                    int length = NSIS_PLUGINS_EXTENSION.length();
+                    CaseInsensitiveSet set = new CaseInsensitiveSet();
+                    for (int i = 0; i < pluginFiles.length; i++) {
+                        String name = pluginFiles[i].getName();
+                        name = name.substring(0,name.length()-length);
+                        set.add(name);
+                        PluginInfo pi = (PluginInfo)cPluginsMap.get(name);
+                        if(pi == null || pi.getTimeStamp() != pluginFiles[i].lastModified()) {
+                            String[] exports = WinAPI.GetPluginExports(pluginFiles[i].getAbsolutePath());
+                            Arrays.sort(exports, String.CASE_INSENSITIVE_ORDER);
+                            pi = new PluginInfo(name, exports,
+                                                pluginFiles[i].lastModified());
+                            cPluginsMap.put(name, pi);
+                            changed = true;
+                        }
+                    }
+                    if(cPluginsMap.size() != pluginFiles.length) {
+                        for (Iterator iter = cPluginsMap.entrySet().iterator(); iter.hasNext();) {
+                            Map.Entry entry = (Map.Entry)iter.next();
+                            if(set.contains(entry.getKey())) {
+                                iter.remove();
+                                changed = true;
+                            }
+                        }
+                    }
+
+                    if(changed) {
+                        try {
+                            Common.writeObject(cacheFile, cPluginsMap);
+                        }
+                        catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    PLUGINS = (String[])cPluginsMap.keySet().toArray(Common.EMPTY_STRING_ARRAY);
+                    Arrays.sort(PLUGINS, String.CASE_INSENSITIVE_ORDER);
+                }
+            }
+        }
     }
     
     private static void loadKeywords()
@@ -85,14 +161,18 @@ public class NSISKeywords
         } catch (MissingResourceException x) {
             bundle = null;
         }
-
-        Map predefinedPathVariables = new CaseInsensitiveMap();
-        Map predefinedVariables = new CaseInsensitiveMap();
+        Map registers = new CaseInsensitiveMap();
+        Map pathVariables = new CaseInsensitiveMap();
+        Map variables = new CaseInsensitiveMap();
+        Map pathConstants = new CaseInsensitiveMap();
+        Map stringConstants = new CaseInsensitiveMap();
+        Map predefines = new CaseInsensitiveMap();
         Map singlelineCompiletimeCommands = new CaseInsensitiveMap();
         Map multilineCompiletimeCommands = new CaseInsensitiveMap();
         Map installerAttributes = new CaseInsensitiveMap();
         Map commands = new CaseInsensitiveMap();
         Map instructions = new CaseInsensitiveMap();
+        Map installerPages = new CaseInsensitiveMap();
         Map instructionParameters = new CaseInsensitiveMap();
         Map instructionOptions = new CaseInsensitiveMap();
         Map callbacks = new CaseInsensitiveMap();
@@ -127,11 +207,23 @@ public class NSISKeywords
                     String[] values = Common.loadArrayProperty(bundle,key);
                     if(!Common.isEmptyArray(values)) {
                         Map map = null;
-                        if(name.equals("predefined.path.variables")) { //$NON-NLS-1$
-                            map = predefinedPathVariables;
+                        if(name.equals("registers")) { //$NON-NLS-1$
+                            map = registers;
                         }
-                        else if(name.equals("predefined.variables")) { //$NON-NLS-1$
-                            map = predefinedVariables;
+                        else if(name.equals("path.variables")) { //$NON-NLS-1$
+                            map = pathVariables;
+                        }
+                        else if(name.equals("variables")) { //$NON-NLS-1$
+                            map = variables;
+                        }
+                        else if(name.equals("path.constants")) { //$NON-NLS-1$
+                            map = pathConstants;
+                        }
+                        else if(name.equals("string.constants")) { //$NON-NLS-1$
+                            map = stringConstants;
+                        }
+                        else if(name.equals("predefines")) { //$NON-NLS-1$
+                            map = predefines;
                         }
                         else if(name.equals("singleline.compiletime.commands")) { //$NON-NLS-1$
                             map = singlelineCompiletimeCommands;
@@ -147,6 +239,9 @@ public class NSISKeywords
                         }
                         else if(name.equals("instructions")) { //$NON-NLS-1$
                             map = instructions;
+                        }
+                        else if(name.equals("installer.pages")) { //$NON-NLS-1$
+                            map = installerPages;
                         }
                         else if(name.equals("instruction.parameters")) { //$NON-NLS-1$
                             map = instructionParameters;
@@ -180,27 +275,65 @@ public class NSISKeywords
             }
         }
         
-        cKeywordsMap.putAll(predefinedPathVariables);
-        cKeywordsMap.putAll(predefinedVariables);
+        cKeywordsMap.putAll(registers);
+        cKeywordsMap.putAll(pathVariables);
+        cKeywordsMap.putAll(variables);
+        cKeywordsMap.putAll(pathConstants);
+        cKeywordsMap.putAll(stringConstants);
+        cKeywordsMap.putAll(predefines);
         cKeywordsMap.putAll(singlelineCompiletimeCommands);
         cKeywordsMap.putAll(multilineCompiletimeCommands);
         cKeywordsMap.putAll(installerAttributes);
         cKeywordsMap.putAll(commands);
         cKeywordsMap.putAll(instructions);
+        cKeywordsMap.putAll(installerPages);
         cKeywordsMap.putAll(instructionParameters);
         cKeywordsMap.putAll(instructionOptions);
         cKeywordsMap.putAll(callbacks);
         
         String[] temp = Common.EMPTY_STRING_ARRAY;
-        Set set = getValidKeywords(predefinedPathVariables);
+
+        Set set = getValidKeywords(registers);
         cAllKeywordsSet.addAll(set);
-        temp = (String[])Common.appendArray(temp, (PREDEFINED_PATH_VARIABLES = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
+        temp = (String[])Common.appendArray(temp, (REGISTERS = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
+        Arrays.sort(REGISTERS, String.CASE_INSENSITIVE_ORDER);
         
-        set = getValidKeywords(predefinedVariables);
+        set = getValidKeywords(pathVariables);
         cAllKeywordsSet.addAll(set);
-        temp = (String[])Common.appendArray(temp, (String[])set.toArray(Common.EMPTY_STRING_ARRAY));
-        PREDEFINED_VARIABLES = (String[])temp.clone();
-        Arrays.sort(PREDEFINED_VARIABLES, String.CASE_INSENSITIVE_ORDER);
+        temp = (String[])Common.appendArray(temp, (PATH_VARIABLES = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
+        Arrays.sort(PATH_VARIABLES, String.CASE_INSENSITIVE_ORDER);
+
+        set = getValidKeywords(variables);
+        cAllKeywordsSet.addAll(set);
+        temp = (String[])Common.appendArray(temp, (VARIABLES = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
+        Arrays.sort(VARIABLES, String.CASE_INSENSITIVE_ORDER);
+
+        set = getValidKeywords(pathConstants);
+        cAllKeywordsSet.addAll(set);
+        temp = (String[])Common.appendArray(temp, (PATH_CONSTANTS = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
+        Arrays.sort(PATH_CONSTANTS, String.CASE_INSENSITIVE_ORDER);
+
+        set = getValidKeywords(stringConstants);
+        cAllKeywordsSet.addAll(set);
+        temp = (String[])Common.appendArray(temp, (STRING_CONSTANTS = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
+        Arrays.sort(STRING_CONSTANTS, String.CASE_INSENSITIVE_ORDER);
+
+        set = getValidKeywords(predefines);
+        cAllKeywordsSet.addAll(set);
+        temp = (String[])Common.appendArray(temp, (PREDEFINES = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
+        Arrays.sort(PREDEFINES, String.CASE_INSENSITIVE_ORDER);
+
+        PATH_CONSTANTS_AND_VARIABLES = (String[])Common.joinArrays(new Object[]{PATH_CONSTANTS, PATH_VARIABLES});
+        Arrays.sort(PATH_CONSTANTS_AND_VARIABLES, String.CASE_INSENSITIVE_ORDER);
+
+        ALL_CONSTANTS = (String[])Common.joinArrays(new Object[]{PATH_CONSTANTS, STRING_CONSTANTS});
+        Arrays.sort(ALL_CONSTANTS, String.CASE_INSENSITIVE_ORDER);
+
+        ALL_VARIABLES = (String[])Common.joinArrays(new Object[]{PATH_CONSTANTS_AND_VARIABLES, VARIABLES});
+        Arrays.sort(ALL_VARIABLES, String.CASE_INSENSITIVE_ORDER);
+
+        ALL_CONSTANTS_AND_VARIABLES = (String[])Common.joinArrays(new Object[]{ALL_CONSTANTS, ALL_VARIABLES, PREDEFINES});
+        Arrays.sort(ALL_CONSTANTS_AND_VARIABLES, String.CASE_INSENSITIVE_ORDER);
         
         set = getValidKeywords(singlelineCompiletimeCommands);
         cAllKeywordsSet.addAll(set);
@@ -222,10 +355,16 @@ public class NSISKeywords
         cAllKeywordsSet.addAll(set);
         temp = (String[])Common.appendArray(temp, (INSTRUCTIONS = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
 
+        set = getValidKeywords(installerPages);
+        cAllKeywordsSet.addAll(set);
+        temp = (String[])Common.appendArray(temp, (INSTALLER_PAGES = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
+        Arrays.sort(INSTALLER_PAGES, String.CASE_INSENSITIVE_ORDER);
+
         set = getValidKeywords(instructionParameters);
         cAllKeywordsSet.addAll(set);
         temp = (String[])Common.appendArray(temp, (INSTRUCTION_PARAMETERS = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
-
+        INSTRUCTION_PARAMETERS = (String[])Common.appendArray(INSTRUCTION_PARAMETERS, INSTALLER_PAGES);
+        
         set = getValidKeywords(instructionOptions);
         cAllKeywordsSet.addAll(set);
         temp = (String[])Common.appendArray(temp, (INSTRUCTION_OPTIONS = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
@@ -321,13 +460,13 @@ public class NSISKeywords
         public boolean hasPotentialMatch()
         {
             if(mText != null) {
-                for(int i=Math.max(mPotentialMatchIndex,0); i<PREDEFINED_VARIABLES.length; i++) {
-                    int n = PREDEFINED_VARIABLES[i].compareToIgnoreCase(mText);
+                for(int i=Math.max(mPotentialMatchIndex,0); i<ALL_CONSTANTS_AND_VARIABLES.length; i++) {
+                    int n = ALL_CONSTANTS_AND_VARIABLES[i].compareToIgnoreCase(mText);
                     if(n < 0) {
                         continue;
                     }
                     else if(n >= 0) {
-                        if(PREDEFINED_VARIABLES[i].regionMatches(true,0,mText,0,mText.length())) {
+                        if(ALL_CONSTANTS_AND_VARIABLES[i].regionMatches(true,0,mText,0,mText.length())) {
                             mPotentialMatchIndex = i;
                             return true;
                         }
@@ -340,7 +479,63 @@ public class NSISKeywords
         
         public boolean isMatch()
         {
-            return (mPotentialMatchIndex >= 0 && PREDEFINED_VARIABLES[mPotentialMatchIndex].equalsIgnoreCase(mText));
+            return (mPotentialMatchIndex >= 0 && ALL_CONSTANTS_AND_VARIABLES[mPotentialMatchIndex].equalsIgnoreCase(mText));
+        }
+    }
+    
+    public static String[] getPluginExports(String name)
+    {
+        PluginInfo pi = (PluginInfo)cPluginsMap.get(name);
+        if(pi != null) {
+            return pi.getExports();
+        }
+        else {
+            return Common.EMPTY_STRING_ARRAY;
+        }
+    }
+
+    private static class PluginInfo implements Serializable
+    {
+        private static final long serialVersionUID = 3815184021913290871L;
+
+        private long mTimeStamp;
+        private String mName;
+        private String[] mExports;
+        
+        /**
+         * @param name
+         * @param exports
+         * @param timeStamp
+         */
+        public PluginInfo(String name, String[] exports, long timeStamp)
+        {
+            mName = name;
+            mExports = exports;
+            mTimeStamp = timeStamp;
+        }
+        
+        /**
+         * @return Returns the exports.
+         */
+        public String[] getExports()
+        {
+            return mExports;
+        }
+        
+        /**
+         * @return Returns the name.
+         */
+        public String getName()
+        {
+            return mName;
+        }
+        
+        /**
+         * @return Returns the timeStamp.
+         */
+        public long getTimeStamp()
+        {
+            return mTimeStamp;
         }
     }
 }

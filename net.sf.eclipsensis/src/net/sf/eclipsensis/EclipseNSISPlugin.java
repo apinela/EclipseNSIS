@@ -11,10 +11,7 @@ package net.sf.eclipsensis;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+import java.util.*;
 
 import net.sf.eclipsensis.dialogs.NSISPreferencePage;
 import net.sf.eclipsensis.editor.template.NSISTemplateContextType;
@@ -24,9 +21,7 @@ import net.sf.eclipsensis.settings.NSISPreferences;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.util.WinAPI;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.templates.ContextTypeRegistry;
 import org.eclipse.jface.text.templates.persistence.TemplateStore;
@@ -64,7 +59,7 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
 		super();
 		cPlugin = this;
 		try {
-			mResourceBundle = ResourceBundle.getBundle(RESOURCE_BUNDLE);
+			mResourceBundle = new EclipseNSISPluginResourceBundle();
 		} catch (MissingResourceException x) {
 			mResourceBundle = null;
 		}
@@ -253,6 +248,98 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
     {
         if(!mListeners.contains(listener)) {
             mListeners.add(listener);
+        }
+    }
+    
+    private class EclipseNSISPluginResourceBundle extends ResourceBundle
+    {
+        private ResourceBundle mResources = null;
+        private ResourceBundle mMessages = null;
+        private final Locale EMPTY_LOCALE = new Locale("","",""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        
+        public EclipseNSISPluginResourceBundle()
+        {
+            super();
+            try {
+                mResources = ResourceBundle.getBundle(RESOURCE_BUNDLE);
+            } catch (MissingResourceException x) {
+                mResources = null;
+            }
+            try {
+                mMessages = ResourceBundle.getBundle(MESSAGE_BUNDLE);
+            } catch (MissingResourceException x) {
+                mMessages = null;
+            }
+        }
+
+        /* (non-Javadoc)
+         * @see java.util.ResourceBundle#getKeys()
+         */
+        public Enumeration getKeys()
+        {
+            ArrayList list = null;
+            if(mResources != null) {
+                list = Collections.list(mResources.getKeys());
+            }
+            if(mMessages != null) {
+                if(list == null) {
+                    list = Collections.list(mMessages.getKeys());
+                }
+                else {
+                    list.addAll(Collections.list(mMessages.getKeys()));
+                }
+            }
+            if(list != null) {
+                return Collections.enumeration(list);
+            }
+            else {
+                return Collections.enumeration(Collections.EMPTY_LIST);
+            }
+        }
+
+        /* (non-Javadoc)
+         * @see java.util.ResourceBundle#handleGetObject(java.lang.String)
+         */
+        protected Object handleGetObject(String key)
+        {
+            if(mResources != null) {
+                try {
+                    return mResources.getObject(key);
+                }
+                catch(MissingResourceException mre) {
+                }
+            }
+            if(mMessages != null) {
+                try {
+                    return mMessages.getObject(key);
+                }
+                catch(MissingResourceException mre) {
+                }
+            }
+            return null;
+        }
+        
+        /* (non-Javadoc)
+         * @see java.util.ResourceBundle#getLocale()
+         */
+        public Locale getLocale()
+        {
+            if(mMessages != null) {
+                return mMessages.getLocale();
+            }
+            else if(mResources != null) {
+                return mResources.getLocale();
+            }
+            else {
+                return EMPTY_LOCALE;
+            }
+        }
+
+        /* (non-Javadoc)
+         * @see java.util.ResourceBundle#setParent(java.util.ResourceBundle)
+         */
+        protected void setParent(ResourceBundle parent)
+        {
         }
     }
 }

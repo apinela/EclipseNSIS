@@ -13,9 +13,7 @@ import net.sf.eclipsensis.editor.NSISEditor;
 import net.sf.eclipsensis.help.INSISKeywordsListener;
 import net.sf.eclipsensis.help.NSISKeywords;
 
-import org.eclipse.jface.viewers.IContentProvider;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -128,6 +126,7 @@ public class NSISContentOutlinePage extends ContentOutlinePage implements INSISK
             Control control = viewer.getControl();
             if (control != null && !control.isDisposed()) {
                 control.setRedraw(false);
+                viewer.setInput(null);
                 viewer.setInput(mInput);
                 viewer.expandAll();
                 control.setRedraw(true);

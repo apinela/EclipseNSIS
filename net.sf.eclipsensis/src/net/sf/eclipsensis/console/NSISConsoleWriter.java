@@ -9,9 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.console;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 
 import net.sf.eclipsensis.makensis.MakeNSISProcess;
 
@@ -57,6 +55,7 @@ public class NSISConsoleWriter implements Runnable
             br.close();
         }
         catch(Exception ex) {
+            ex.printStackTrace();
             mConsole.add(NSISConsoleLine.error(ex.getMessage()));
         }
     }

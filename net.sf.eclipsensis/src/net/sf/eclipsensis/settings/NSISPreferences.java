@@ -14,17 +14,18 @@ import java.io.IOException;
 import java.util.Properties;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.IEclipseNSISPluginListener;
 import net.sf.eclipsensis.editor.text.NSISSyntaxStyle;
-import net.sf.eclipsensis.util.ColorManager;
-import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.NSISValidator;
-import net.sf.eclipsensis.util.Version;
+import net.sf.eclipsensis.util.*;
 
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.resource.StringConverter;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.editors.text.EditorsUI;
 
-public class NSISPreferences extends NSISSettings
+public class NSISPreferences extends NSISSettings implements IPropertyChangeListener, IEclipseNSISPluginListener
 {
     private IPreferenceStore mPreferenceStore = null;
     private File mNSISExe = null;
@@ -157,7 +158,42 @@ public class NSISPreferences extends NSISSettings
         initializeEditorPreference(SELECTION_BACKGROUND_COLOR,defaultStore,String.class);
         initializeEditorPreference(SELECTION_BACKGROUND_DEFAULT_COLOR,defaultStore,Boolean.class);
 
+        initializePreference(MATCHING_DELIMITERS,Boolean.TRUE);
+        initializePreference(MATCHING_DELIMITERS_COLOR,StringConverter.asString(new RGB(128,128,128)));
+
         initializePreference(USE_SPACES_FOR_TABS,Boolean.TRUE);
+        
+        String[] linkedModelPrefs = {"slave.","focus.","master.","exit."}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+        String[] linkedModelPrefSuffixes = { "text","text.style","color"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        for (int i = 0; i < linkedModelPrefs.length; i++) {
+            String prefix = "linked."+linkedModelPrefs[i]; //$NON-NLS-1$
+            for (int j = 0; j < linkedModelPrefSuffixes.length; j++) {
+                String preference = prefix + linkedModelPrefSuffixes[j];
+                initializePreference(preference, defaultStore.getString(preference));
+            }
+        }
+        defaultStore.addPropertyChangeListener(this);
+    }
+    
+    public void propertyChange(PropertyChangeEvent event)
+    {
+        String name = event.getProperty();
+        if(name.startsWith("linked.") && mPreferenceStore.contains(name)) { //$NON-NLS-1$
+            mPreferenceStore.setValue(name, event.getNewValue().toString());
+        }
+    }
+
+    /* (non-Javadoc)
+     * @see net.sf.eclipsensis.IEclipseNSISPluginListener#stopped()
+     */
+    public void stopped()
+    {
+        try {
+            EditorsUI.getPreferenceStore().removePropertyChangeListener(this);
+        }
+        catch(Exception e) {
+            e.printStackTrace();
+        }
     }
     
     private void initializeSyntaxPreference(String name, RGB foreground, RGB background, boolean bold, boolean italic)

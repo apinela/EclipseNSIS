@@ -9,9 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.wizard.settings;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
+import java.util.*;
 
 import net.sf.eclipsensis.util.Common;
 
@@ -24,6 +22,14 @@ public abstract class AbstractNSISInstallGroup implements INSISInstallElement
     protected INSISInstallElement mParent = null;
     protected NSISWizardSettings mSettings = null;
     private transient boolean mExpanded = true;
+    
+    /**
+     * 
+     */
+    public AbstractNSISInstallGroup()
+    {
+        setChildTypes();
+    }
     
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#isRemovable()
@@ -158,7 +164,7 @@ public abstract class AbstractNSISInstallGroup implements INSISInstallElement
     
     public final void resetChildTypes(boolean recursive)
     {
-        resetChildTypes();
+        setChildTypes();
         if(recursive) {
             if(!Common.isEmptyCollection(mChildren)) {
                 for (Iterator iter = mChildren.iterator(); iter.hasNext();) {
@@ -171,5 +177,5 @@ public abstract class AbstractNSISInstallGroup implements INSISInstallElement
         }
     }
     
-    public abstract void resetChildTypes();
+    public abstract void setChildTypes();
 }

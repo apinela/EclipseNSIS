@@ -12,11 +12,7 @@ package net.sf.eclipsensis.dialogs;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
+import java.util.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
@@ -30,24 +26,11 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseMoveListener;
-import org.eclipse.swt.events.TraverseEvent;
-import org.eclipse.swt.events.TraverseListener;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Cursor;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 public class NSISAboutDialog extends Dialog implements INSISConstants
@@ -121,7 +104,7 @@ public class NSISAboutDialog extends Dialog implements INSISConstants
     }
 
     protected Control createDialogArea(Composite parent) {
-        Display display = getShell().getDisplay();
+        final Display display = getShell().getDisplay();
         Color background = JFaceColors.getBannerBackground(display);
         Color foreground = JFaceColors.getBannerForeground(display);
         
@@ -164,14 +147,11 @@ public class NSISAboutDialog extends Dialog implements INSISConstants
             foreground = JFaceColors.getHyperlinkText(display);
             for (Iterator iter = cLinks.iterator(); iter.hasNext();) {
                 Link link = (Link)iter.next();
-                StyleRange styleRange = new StyleRange(link.mRange[0], link.mRange[1], foreground, background);
-                mStyleRanges.put(styleRange,link.mUri);
+                StyleRange styleRange = new StyleRange(link.getRange()[0], link.getRange()[1], foreground, background);
+                mStyleRanges.put(styleRange,link.getURI());
                 text.setStyleRange(styleRange);
             }
         }
-        
-        final Cursor handCursor = display.getSystemCursor(SWT.CURSOR_HAND);
-        final Cursor busyCursor = display.getSystemCursor(SWT.CURSOR_WAIT);
         
         text.addMouseListener(new MouseAdapter() {
             public void mouseDown(MouseEvent e) {
@@ -187,11 +167,11 @@ public class NSISAboutDialog extends Dialog implements INSISConstants
                 if (mDragging) {
                     mDragging = false;
                     if (link != null) {
-                        text.setCursor(handCursor);
+                        text.setCursor(display.getSystemCursor(SWT.CURSOR_HAND));
                     }
                 } 
                 else if (link != null) { 
-                    text.setCursor(busyCursor);
+                    text.setCursor(display.getSystemCursor(SWT.CURSOR_WAIT));
                     openLink(link);
                     StyleRange selectionRange = getCurrentStyleRange(text);
                     text.setSelectionRange(selectionRange.start, selectionRange.length);
@@ -219,7 +199,7 @@ public class NSISAboutDialog extends Dialog implements INSISConstants
                     text.setCursor(null);
                 }
                 else if (getLinkAtOffset(offset) != null) {
-                    text.setCursor(handCursor);
+                    text.setCursor(display.getSystemCursor(SWT.CURSOR_HAND));
                 }
                 else {
                     text.setCursor(null);
@@ -234,7 +214,7 @@ public class NSISAboutDialog extends Dialog implements INSISConstants
 
                     String link = getLinkAtOffset(offset);
                     if (link != null) {    
-                        text.setCursor(busyCursor);
+                        text.setCursor(display.getSystemCursor(SWT.CURSOR_WAIT));
                         openLink(link);
                         StyleRange selectionRange = getCurrentStyleRange(text);
                         if(selectionRange != null) {
@@ -546,7 +526,7 @@ public class NSISAboutDialog extends Dialog implements INSISConstants
     private static class Link
     {
         private int[] mRange;
-        private String mUri;
+        private String mURI;
         
         /**
          * @param range
@@ -556,7 +536,7 @@ public class NSISAboutDialog extends Dialog implements INSISConstants
         {
             super();
             mRange = range;
-            mUri = uri;
+            mURI = uri;
         }
         
         /**
@@ -570,9 +550,9 @@ public class NSISAboutDialog extends Dialog implements INSISConstants
         /**
          * @return Returns the uri.
          */
-        public String getUri()
+        public String getURI()
         {
-            return mUri;
+            return mURI;
         }
     }
 }

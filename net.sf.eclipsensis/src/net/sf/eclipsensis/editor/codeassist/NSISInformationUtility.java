@@ -9,36 +9,33 @@
  *******************************************************************************/
 package net.sf.eclipsensis.editor.codeassist;
 
-import java.util.ArrayList;
+import java.util.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
-import net.sf.eclipsensis.editor.text.DefaultTextProcessor;
-import net.sf.eclipsensis.editor.text.INSISTextProcessor;
-import net.sf.eclipsensis.editor.text.NSISPartitionScanner;
-import net.sf.eclipsensis.editor.text.NSISRegionScanner;
-import net.sf.eclipsensis.editor.text.NSISScanner;
-import net.sf.eclipsensis.editor.text.NSISTextProcessorRule;
-import net.sf.eclipsensis.editor.text.NSISTextUtility;
+import net.sf.eclipsensis.editor.text.*;
 import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.util.ImageManager;
 
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.ITextViewer;
-import org.eclipse.jface.text.ITypedRegion;
-import org.eclipse.jface.text.Region;
+import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.contentassist.CompletionProposal;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
-import org.eclipse.jface.text.rules.ICharacterScanner;
-import org.eclipse.jface.text.rules.IToken;
-import org.eclipse.jface.text.rules.Token;
+import org.eclipse.jface.text.rules.*;
 import org.eclipse.swt.graphics.Image;
 
 public class NSISInformationUtility implements INSISConstants
 {
-    private static final Image KEYWORD_IMAGE = ImageManager.getImage(EclipseNSISPlugin.getResourceString("nsis.icon"));
+    public static final ICompletionProposal[] EMPTY_COMPLETION_PROPOSAL_ARRAY = new ICompletionProposal[0];
+    private static final char[] COMPLETION_AUTO_ACTIVATION_CHARS = { '.', '/','$','!',':' };
+    private static final Image KEYWORD_IMAGE = ImageManager.getImage(EclipseNSISPlugin.getResourceString("keyword.icon")); //$NON-NLS-1$
+    private static final Image PLUGIN_IMAGE = ImageManager.getImage(EclipseNSISPlugin.getResourceString("plugin.icon")); //$NON-NLS-1$
+    private static final Comparator mCompletionProposalComparator = new Comparator() {
+        public int compare(Object o1, Object o2)
+        {
+            return (((ICompletionProposal)o1).getDisplayString()).compareToIgnoreCase(((ICompletionProposal)o2).getDisplayString());
+        }
+    };
 
     public static IRegion getInformationRegionAtOffset(ITextViewer textViewer, int offset, boolean forUsage)
     {
@@ -105,15 +102,20 @@ public class NSISInformationUtility implements INSISConstants
                                 if(type.equals(NSISPartitionScanner.NSIS_STRING)) {
                                     rule.setTextProcessor(new EntireStringProcessor());
                                     token = rule.evaluate(scanner);
-                                    if(!token.isUndefined()) {
-                                        return (IRegion)token.getData();
+                                    if(token.isUndefined()) {
+                                        break;
                                     }
                                 }
                                 else {
                                     rule.setTextProcessor(new AnyWordProcessor(offset));
                                     token = rule.evaluate(scanner);
                                     if(token.isUndefined()) {
-                                        break;
+                                        scanner.reset();
+                                        rule.setTextProcessor(new PluginProcessor(offset));
+                                        token = rule.evaluate(scanner);
+                                        if(token.isUndefined()) {
+                                            break;
+                                        }
                                     }
                                 }
                             }
@@ -129,43 +131,94 @@ public class NSISInformationUtility implements INSISConstants
         return NSISTextUtility.EMPTY_REGION;
     }
 
+    public static char[] getCompletionProposalAutoActivationCharacters()
+    {
+        return COMPLETION_AUTO_ACTIVATION_CHARS;
+    }
+    
     public static ICompletionProposal[] getCompletionsAtOffset(ITextViewer viewer, int offset)
     {
-        IDocument doc = viewer.getDocument();
-        ITypedRegion[][] nsisLine = NSISTextUtility.getNSISLines(doc, offset);
-        IRegion region = internalGetInformationRegionAtOffset(doc, offset, nsisLine, true);
-        if(region == null || region.equals(NSISTextUtility.EMPTY_REGION)) {
-            region = internalGetInformationRegionAtOffset(doc, offset, nsisLine, false);
-        }
-        if(region != null || !region.equals(NSISTextUtility.EMPTY_REGION)) {
-            if(region.getOffset()+region.getLength() > offset) {
-                region = new Region(region.getOffset(),offset-region.getOffset()+1);
+        if(offset > 0) {
+            offset--;
+            IDocument doc = viewer.getDocument();
+            ITypedRegion[][] nsisLine = NSISTextUtility.getNSISLines(doc, offset);
+            IRegion region = internalGetInformationRegionAtOffset(doc, offset, nsisLine, true);
+            if(region == null || region.equals(NSISTextUtility.EMPTY_REGION)) {
+                region = internalGetInformationRegionAtOffset(doc, offset, nsisLine, false);
             }
-            String text = NSISTextUtility.getRegionText(doc,region);
-            if(!Common.isEmpty(text)) {
-                int textlen = text.length();
-                ArrayList list = new ArrayList();
-                for(int i=0; i<NSISKeywords.ALL_KEYWORDS.length; i++) {
-                    int n = NSISKeywords.ALL_KEYWORDS[i].compareToIgnoreCase(text);
-                    if(n >= 0) {
-                        if(NSISKeywords.ALL_KEYWORDS[i].regionMatches(true,0,text,0,textlen)) {
-                            list.add(new CompletionProposal(NSISKeywords.ALL_KEYWORDS[i],
-                                                            region.getOffset(),
-                                                            offset-region.getOffset()+1,
-                                                            NSISKeywords.ALL_KEYWORDS[i].length(),
-                                                            KEYWORD_IMAGE, 
-                                                            null, null, null));
-                        }
-                        else {
-                            break;
+            if(region != null || !region.equals(NSISTextUtility.EMPTY_REGION)) {
+                if(region.getOffset()+region.getLength() > offset) {
+                    region = new Region(region.getOffset(),offset-region.getOffset()+1);
+                }
+                String text = NSISTextUtility.getRegionText(doc,region);
+                if(!Common.isEmpty(text)) {
+                    ArrayList list = new ArrayList();
+                    int pos = text.indexOf("::"); //$NON-NLS-1$
+                    if(pos > 0) {
+                        String pluginName = text.substring(0,pos);
+                        text = text.substring(pos+2);
+                        String[] exports = NSISKeywords.getPluginExports(pluginName);
+                        int textlen = text.length();
+                        for (int i = 0; i < exports.length; i++) {
+                            if(!Common.isEmpty(text)) {
+                                if((exports[i].compareToIgnoreCase(text) < 0) ||
+                                    !exports[i].regionMatches(true,0,text,0,textlen)) {
+                                    continue;
+                                }
+                            }
+                            list.add(new CompletionProposal(exports[i],
+                                    region.getOffset()+pos+2,
+                                    textlen,
+                                    exports[i].length(),
+                                    PLUGIN_IMAGE, 
+                                    null, null, null));
+                            
                         }
                     }
-                    continue;
+                    else {
+                        int textlen = text.length();
+                        for(int i=0; i<NSISKeywords.ALL_KEYWORDS.length; i++) {
+                            int n = NSISKeywords.ALL_KEYWORDS[i].compareToIgnoreCase(text);
+                            if(n >= 0) {
+                                if(NSISKeywords.ALL_KEYWORDS[i].regionMatches(true,0,text,0,textlen)) {
+                                    list.add(new CompletionProposal(NSISKeywords.ALL_KEYWORDS[i],
+                                                                    region.getOffset(),
+                                                                    offset-region.getOffset()+1,
+                                                                    NSISKeywords.ALL_KEYWORDS[i].length(),
+                                                                    KEYWORD_IMAGE, 
+                                                                    null, null, null));
+                                }
+                                else {
+                                    break;
+                                }
+                            }
+                            continue;
+                        }
+                        for(int i=0; i<NSISKeywords.PLUGINS.length; i++) {
+                            int n = NSISKeywords.PLUGINS[i].compareToIgnoreCase(text);
+                            if(n >= 0) {
+                                if(NSISKeywords.PLUGINS[i].regionMatches(true,0,text,0,textlen)) {
+                                    list.add(new CompletionProposal(NSISKeywords.PLUGINS[i],
+                                                                    region.getOffset(),
+                                                                    offset-region.getOffset()+1,
+                                                                    NSISKeywords.PLUGINS[i].length(),
+                                                                    PLUGIN_IMAGE, 
+                                                                    null, null, null));
+                                }
+                                else {
+                                    break;
+                                }
+                            }
+                            continue;
+                        }
+                    }
+                    ICompletionProposal[] completionProposals = (ICompletionProposal[])list.toArray(EMPTY_COMPLETION_PROPOSAL_ARRAY);
+                    Arrays.sort(completionProposals, mCompletionProposalComparator);
+                    return completionProposals;
                 }
-                return (ICompletionProposal[])list.toArray(new ICompletionProposal[0]);
             }
         }
-        return null;
+        return EMPTY_COMPLETION_PROPOSAL_ARRAY;
     }
 
     private static class VariablesAndSymbolsProcessor extends AnyWordProcessor
@@ -338,7 +391,7 @@ public class NSISInformationUtility implements INSISConstants
                 b = (c == '_' || c == '/');
                 if(!b) {
                     if(!testComplete()) {
-                        return isValid(c);
+                        return super.isValid(c);
                     }
                 }
                 else {
@@ -419,6 +472,44 @@ public class NSISInformationUtility implements INSISConstants
         {
             super.setScanner(scanner);
             mFirstNonWhitespaceOffset = -1;
+        }
+    }
+
+    private static class PluginProcessor extends UsageWordProcessor
+    {
+        /**
+         * @param offset
+         */
+        public PluginProcessor(int offset)
+        {
+            super(offset);
+        }
+    
+        /* (non-Javadoc)
+         * @see net.sf.eclipsensis.editor.codeassist.NSISTextUtility.INSISTextProcessor#isValid(int)
+         */
+        public boolean isValid(int c)
+        {
+            if(!Character.isWhitespace((char)c)) {
+                if(mFirstNonWhitespaceOffset < 0) {
+                    if(Character.isLetterOrDigit((char)c)) {
+                        mFirstNonWhitespaceOffset = ((NSISScanner)mScanner).getOffset()-1;
+                    }
+                    else {
+                        return false;
+                    }
+                }
+                else if(!Character.isLetterOrDigit((char)c)) {
+                    if(c == ':') {
+                        String temp=mBuffer.toString();
+                        return ((temp.indexOf(c) < 0) || (temp.endsWith(":") && !temp.endsWith("::"))); //$NON-NLS-1$ //$NON-NLS-2$
+                    }
+                    return false;
+                }
+                mBuffer.append((char)c);
+                return true;
+            }
+            return (mFirstNonWhitespaceOffset < 0);
         }
     }
 
