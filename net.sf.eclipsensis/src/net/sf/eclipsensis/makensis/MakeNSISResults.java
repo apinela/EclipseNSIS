@@ -14,6 +14,7 @@ import java.util.*;
 public class MakeNSISResults
 {
     public static final int RETURN_SUCCESS = 0;
+    public static final int RETURN_CANCEL = -1;
     
     private int mReturnCode = RETURN_SUCCESS;
     private String mOutputFileName = null;

@@ -20,6 +20,7 @@ public interface INSISConstants
     public static final String PLUGIN_CONTEXT_PREFIX = PLUGIN_NAME + "."; //$NON-NLS-1$
     public static final String NSIS_EDITOR_CONTEXT = PLUGIN_CONTEXT_PREFIX + "nsis_editor_context"; //$NON-NLS-1$
     
+    public static final String HTMLHELP_ID = "net.sf.eclipsensis.help.NSISHTMLHelp"; //$NON-NLS-1$
     public static final String PLUGIN_HELP_LOCATION_PREFIX = "help/"; //$NON-NLS-1$
     public static final String DOCS_LOCATION_PREFIX = "Docs/"; //$NON-NLS-1$
     public static final String CACHED_HELP_LOCATION = PLUGIN_HELP_LOCATION_PREFIX+DOCS_LOCATION_PREFIX; //$NON-NLS-1$

@@ -181,43 +181,47 @@
                id="net.sf.eclipsensis.actions.NSISPreferencesAction">
          </action>
          <action
-               label="%cancel.action.name"
-               icon="%cancel.action.icon"
                disabledIcon="%cancel.action.disabledicon"
-               class="net.sf.eclipsensis.actions.NSISCancelAction"
-               tooltip="%cancel.action.tooltip"
-               menubarPath="net.sf.eclipsensis.Menu/net.sf.eclipsensis.Group"
                toolbarPath="net.sf.eclipsensis.Group"
+               label="%cancel.action.name"
+               definitionId="net.sf.eclipsensis.commands.NSISCancel"
+               tooltip="%cancel.action.tooltip"
+               class="net.sf.eclipsensis.actions.NSISCancelAction"
+               icon="%cancel.action.icon"
+               menubarPath="net.sf.eclipsensis.Menu/net.sf.eclipsensis.Group"
                id="net.sf.eclipsensis.actions.NSISCancelAction">
          </action>
          <action
-               label="%compile.test.action.name"
-               icon="%compile.test.action.icon"
                disabledIcon="%compile.test.action.disabledicon"
-               class="net.sf.eclipsensis.actions.NSISCompileTestAction"
-               tooltip="%compile.test.action.tooltip"
-               menubarPath="net.sf.eclipsensis.Menu/net.sf.eclipsensis.Group"
                toolbarPath="net.sf.eclipsensis.Group"
+               label="%compile.test.action.name"
+               definitionId="net.sf.eclipsensis.commands.NSISCompileTest"
+               tooltip="%compile.test.action.tooltip"
+               class="net.sf.eclipsensis.actions.NSISCompileTestAction"
+               icon="%compile.test.action.icon"
+               menubarPath="net.sf.eclipsensis.Menu/net.sf.eclipsensis.Group"
                id="net.sf.eclipsensis.actions.NSISCompileTestAction">
          </action>
          <action
-               label="%test.action.name"
-               icon="%test.action.icon"
                disabledIcon="%test.action.disabledicon"
-               class="net.sf.eclipsensis.actions.NSISTestAction"
-               tooltip="%test.action.tooltip"
-               menubarPath="net.sf.eclipsensis.Menu/net.sf.eclipsensis.Group"
                toolbarPath="net.sf.eclipsensis.Group"
+               label="%test.action.name"
+               definitionId="net.sf.eclipsensis.commands.NSISTest"
+               tooltip="%test.action.tooltip"
+               class="net.sf.eclipsensis.actions.NSISTestAction"
+               icon="%test.action.icon"
+               menubarPath="net.sf.eclipsensis.Menu/net.sf.eclipsensis.Group"
                id="net.sf.eclipsensis.actions.NSISTestAction">
          </action>
          <action
-               label="%compile.action.name"
-               icon="%compile.action.icon"
                disabledIcon="%compile.action.disabledicon"
-               class="net.sf.eclipsensis.actions.NSISCompileAction"
-               tooltip="%compile.action.tooltip"
-               menubarPath="net.sf.eclipsensis.Menu/net.sf.eclipsensis.Group"
                toolbarPath="net.sf.eclipsensis.Group"
+               label="%compile.action.name"
+               definitionId="net.sf.eclipsensis.commands.NSISCompile"
+               tooltip="%compile.action.tooltip"
+               class="net.sf.eclipsensis.actions.NSISCompileAction"
+               icon="%compile.action.icon"
+               menubarPath="net.sf.eclipsensis.Menu/net.sf.eclipsensis.Group"
                id="net.sf.eclipsensis.actions.NSISCompileAction">
          </action>
       </editorContribution>            
@@ -343,8 +347,8 @@
          id="net.sf.eclipsensis.NSISCategory">
       </category>
       <command
-         name="template.proposal.name"
-         description="%template.proposal.description"
+         name="%insert.template.name"
+         description="%insert.template.description"
          id="net.sf.eclipsensis.commands.NSISInsertTemplate"
          categoryId="net.sf.eclipsensis.NSISCategory"/>
       <keyBinding
@@ -437,6 +441,46 @@
           commandId="net.sf.eclipsensis.commands.NSISRemoveBlockComment"
           contextId="net.sf.eclipsensis.NSISEditorScope"
           keySequence="%remove.block.comment.keysequence"/>
+      <command
+         name="%compile.name"
+         description="%compile.description"
+         id="net.sf.eclipsensis.commands.NSISCompile"
+         categoryId="net.sf.eclipsensis.NSISCategory"/>
+      <keyBinding
+          keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
+          commandId="net.sf.eclipsensis.commands.NSISCompile"
+          contextId="net.sf.eclipsensis.NSISEditorScope"
+          keySequence="%compile.keysequence"/>
+      <command
+         name="%compile.test.name"
+         description="%compile.test.description"
+         id="net.sf.eclipsensis.commands.NSISCompileTest"
+         categoryId="net.sf.eclipsensis.NSISCategory"/>
+      <keyBinding
+          keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
+          commandId="net.sf.eclipsensis.commands.NSISCompileTest"
+          contextId="net.sf.eclipsensis.NSISEditorScope"
+          keySequence="%compile.test.keysequence"/>
+      <command
+         name="%test.name"
+         description="%test.description"
+         id="net.sf.eclipsensis.commands.NSISTest"
+         categoryId="net.sf.eclipsensis.NSISCategory"/>
+      <keyBinding
+          keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
+          commandId="net.sf.eclipsensis.commands.NSISTest"
+          contextId="net.sf.eclipsensis.NSISEditorScope"
+          keySequence="%test.keysequence"/>
+      <command
+         name="%cancel.name"
+         description="%cancel.description"
+         id="net.sf.eclipsensis.commands.NSISCancel"
+         categoryId="net.sf.eclipsensis.NSISCategory"/>
+      <keyBinding
+          keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
+          commandId="net.sf.eclipsensis.commands.NSISCancel"
+          contextId="net.sf.eclipsensis.NSISEditorScope"
+          keySequence="%cancel.keysequence"/>
    </extension>
    <extension
          point="org.eclipse.help.contexts">
