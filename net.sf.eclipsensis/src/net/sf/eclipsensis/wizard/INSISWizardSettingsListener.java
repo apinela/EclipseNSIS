@@ -9,7 +9,9 @@
  *******************************************************************************/
 package net.sf.eclipsensis.wizard;
 
-public interface INSISWizardSettingsListener
+import java.util.EventListener;
+
+public interface INSISWizardSettingsListener extends EventListener
 {
     public void settingsChanged();
 }

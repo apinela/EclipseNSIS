@@ -12,6 +12,9 @@ package net.sf.eclipsensis.wizard.settings;
 import java.text.MessageFormat;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.IEclipseNSISPluginListener;
+import net.sf.eclipsensis.help.INSISKeywordsListener;
+import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.util.ImageManager;
 import net.sf.eclipsensis.wizard.settings.dialogs.NSISSectionDialog;
 
@@ -23,10 +26,25 @@ public class NSISSection extends AbstractNSISInstallGroup
 {
 	private static final long serialVersionUID = -971949137266423189L;
 
-    public static final String TYPE = EclipseNSISPlugin.getResourceString("wizard.section.type"); //$NON-NLS-1$
+    public static String TYPE = null;
 
     private static Image cImage = ImageManager.getImage(EclipseNSISPlugin.getResourceString("wizard.section.icon")); //$NON-NLS-1$
     private static String cFormat = EclipseNSISPlugin.getResourceString("wizard.section.format"); //$NON-NLS-1$
+
+    private static INSISKeywordsListener cKeywordsListener  = new INSISKeywordsListener() {
+
+        public void keywordsChanged()
+        {
+            loadType();
+        }
+        
+    };
+    private static IEclipseNSISPluginListener cShutdownListener = new IEclipseNSISPluginListener() {
+        public void stopped()
+        {
+            NSISKeywords.removeKeywordsListener(cKeywordsListener);
+        }
+    };
     
     private String mDescription = null;
     private String mName = null;
@@ -35,12 +53,32 @@ public class NSISSection extends AbstractNSISInstallGroup
     private boolean mDefaultUnselected = false;
 
     static {
+        loadType();
+        EclipseNSISPlugin.getDefault().addListener(cShutdownListener);
+        NSISKeywords.addKeywordsListener(cKeywordsListener);
+    }
+    
+    private static void loadType()
+    {
+        if(TYPE != null) {
+            NSISInstallElementFactory.unregister(TYPE, NSISSection.class);
+        }
+        TYPE = NSISKeywords.getKeyword(EclipseNSISPlugin.getResourceString("wizard.section.type")); //$NON-NLS-1$
         NSISInstallElementFactory.register(TYPE, NSISSection.class);
     }
     
     public NSISSection()
     {
         super();
+        resetChildTypes();
+    }
+
+    /* (non-Javadoc)
+     * @see net.sf.eclipsensis.wizard.settings.AbstractNSISInstallGroup#resetChildTypes()
+     */
+    public void resetChildTypes()
+    {
+        mChildTypes.clear();
         mChildTypes.add(NSISInstallFile.TYPE);
         mChildTypes.add(NSISInstallFiles.TYPE);
         mChildTypes.add(NSISInstallDirectory.TYPE);
@@ -62,7 +100,7 @@ public class NSISSection extends AbstractNSISInstallGroup
      */
     public String getDisplayName()
     {
-        return MessageFormat.format(cFormat,new Object[]{mName}).trim();
+        return MessageFormat.format(cFormat,new Object[]{mName,TYPE}).trim();
     }
 
     /* (non-Javadoc)

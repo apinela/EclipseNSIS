@@ -98,6 +98,14 @@ JNIEXPORT jlong JNICALL Java_net_sf_eclipsensis_util_WinAPI_HtmlHelp
 JNIEXPORT jint JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetUserDefaultLangID
   (JNIEnv *, jclass);
 
+/*
+ * Class:     net_sf_eclipsensis_util_WinAPI
+ * Method:    ExtractHtmlHelpTOC
+ * Signature: (Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+ */
+JNIEXPORT jstring JNICALL Java_net_sf_eclipsensis_util_WinAPI_ExtractHtmlHelpTOC
+  (JNIEnv *, jclass, jstring, jstring);
+
 #ifdef __cplusplus
 }
 #endif

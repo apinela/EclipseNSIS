@@ -11,50 +11,51 @@
 #include <windowsx.h>
 #include <tchar.h>
 #include "htmlhelp.h"
+#include "ITStorage.h"
 #include "net_sf_eclipsensis_util_WinAPI.h"
 
 typedef BOOL (_stdcall *_tSetLayeredWindowAttributesProc)(HWND hwnd, // handle to the layered window
-  COLORREF crKey,      // specifies the color key
-  BYTE bAlpha,         // value for the blend function
-  DWORD dwFlags        // action
+    COLORREF crKey,      // specifies the color key
+    BYTE bAlpha,         // value for the blend function
+    DWORD dwFlags        // action
 );
 _tSetLayeredWindowAttributesProc SetLayeredWindowAttributesProc;
 
 JNIEXPORT void JNICALL Java_net_sf_eclipsensis_util_WinAPI_init(JNIEnv *pEnv, jclass jClass)
 {
-	if(LOBYTE(LOWORD(GetVersion())) >= 5) {
-		HANDLE user32 = GetModuleHandle("user32");
-		SetLayeredWindowAttributesProc = (_tSetLayeredWindowAttributesProc) GetProcAddress((HINSTANCE)user32, "SetLayeredWindowAttributes");
-	}
-	else {
-		SetLayeredWindowAttributesProc = NULL;
-	}
+    if(LOBYTE(LOWORD(GetVersion())) >= 5) {
+        HANDLE user32 = GetModuleHandle("user32");
+        SetLayeredWindowAttributesProc = (_tSetLayeredWindowAttributesProc) GetProcAddress((HINSTANCE)user32, "SetLayeredWindowAttributes");
+    }
+    else {
+        SetLayeredWindowAttributesProc = NULL;
+    }
 }
 
 JNIEXPORT jlong JNICALL Java_net_sf_eclipsensis_util_WinAPI_SetWindowLong(JNIEnv *pEnv, jclass jClass, jlong hWnd, jint nIndex, jlong dwNewLong)
 {
-	return SetWindowLong((HWND)hWnd, nIndex, (LONG)dwNewLong);
+    return SetWindowLong((HWND)hWnd, nIndex, (LONG)dwNewLong);
 }
 
 JNIEXPORT jlong JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetWindowLong(JNIEnv *pEnv, jclass jClass, jlong hWnd, jint nIndex)
 {
-	return GetWindowLong((HWND)hWnd, nIndex);
+    return GetWindowLong((HWND)hWnd, nIndex);
 }
 
 JNIEXPORT jboolean JNICALL Java_net_sf_eclipsensis_util_WinAPI_SetLayeredWindowAttributes(JNIEnv *pEnv, jclass jClass, jlong hWnd, jint crRed, jint crGreen, jint crBlue, jint bAlpha, jlong dwFlags)
 {
-	if(SetLayeredWindowAttributesProc) {
-		if ( dwFlags == net_sf_eclipsensis_util_WinAPI_LWA_COLORKEY ) {
-			return( SetLayeredWindowAttributesProc((HWND)hWnd, (COLORREF)RGB(crRed,crGreen,crBlue),
-											   (BYTE)bAlpha, (DWORD)dwFlags ));
-		}
-		else {
-			return( SetLayeredWindowAttributesProc((HWND)hWnd, NULL, (BYTE)bAlpha, (DWORD)dwFlags ));
-		}
-	}
-	else {
-		return TRUE;
-	}
+    if(SetLayeredWindowAttributesProc) {
+        if ( dwFlags == net_sf_eclipsensis_util_WinAPI_LWA_COLORKEY ) {
+            return( SetLayeredWindowAttributesProc((HWND)hWnd, (COLORREF)RGB(crRed,crGreen,crBlue),
+                                               (BYTE)bAlpha, (DWORD)dwFlags ));
+        }
+        else {
+            return( SetLayeredWindowAttributesProc((HWND)hWnd, NULL, (BYTE)bAlpha, (DWORD)dwFlags ));
+        }
+    }
+    else {
+        return TRUE;
+    }
 }
 
 JNIEXPORT jstring JNICALL Java_net_sf_eclipsensis_util_WinAPI_RegQueryStrValue(JNIEnv *pEnv, jclass jClass, jlong hRootKey, jstring sSubKey, jstring sValue)
@@ -72,31 +73,54 @@ JNIEXPORT jstring JNICALL Java_net_sf_eclipsensis_util_WinAPI_RegQueryStrValue(J
             if(ERROR_SUCCESS == RegQueryValueEx(hKey, _T(""), 0, &type, (LPBYTE)value, &cbData)) {
                 result = pEnv->NewStringUTF(value);
             }
-    		GlobalFree(value);
+            GlobalFree(value);
         }
         RegCloseKey(hKey);
-	}
+    }
 
     return result;
 }
 
 JNIEXPORT jlong JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetDesktopWindow(JNIEnv *pEnv, jclass jClass)
 {
-	return (jlong)GetDesktopWindow();
+    return (jlong)GetDesktopWindow();
 }
 
 JNIEXPORT jlong JNICALL Java_net_sf_eclipsensis_util_WinAPI_HtmlHelp(JNIEnv *pEnv, jclass jClass, jlong hwndCaller, jstring pszFile, jint uCommand, jlong dwData)
 {
-	if(pszFile) {
-		TCHAR *file = _T((char *)pEnv->GetStringUTFChars(pszFile, 0));
-		return (jlong)HtmlHelp((HWND)hwndCaller, file, (UINT)uCommand, (DWORD)dwData) ;
-	}
-	else {
-	    return 0;
-	}
+    if(pszFile) {
+        TCHAR *file = _T((char *)pEnv->GetStringUTFChars(pszFile, 0));
+        return (jlong)HtmlHelp((HWND)hwndCaller, file, (UINT)uCommand, (DWORD)dwData) ;
+    }
+    else {
+        return 0;
+    }
 }
 
 JNIEXPORT jint JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetUserDefaultLangID(JNIEnv *pEnv, jclass jClass)
 {
     return GetUserDefaultLangID();
+}
+
+JNIEXPORT jstring JNICALL Java_net_sf_eclipsensis_util_WinAPI_ExtractHtmlHelpTOC(JNIEnv *pEnv, jclass jClass, jstring pszFile, jstring pszFolder)
+{
+    jstring result = NULL;
+	HRESULT hr = CoInitialize(NULL);
+
+    if(hr == S_OK || hr == S_FALSE) {
+        TCHAR *tocFile = NULL;
+        tocFile = (TCHAR *)GlobalAlloc(GPTR, MAX_PATH*sizeof(TCHAR));
+
+        if(ExtractTOC(_T((char *)pEnv->GetStringUTFChars(pszFile, 0)),
+                      _T((char *)pEnv->GetStringUTFChars(pszFolder, 0)),
+                      tocFile) == S_OK) {
+            result = pEnv->NewStringUTF(tocFile);
+        }
+        GlobalFree(tocFile);
+		if(hr == S_OK) {
+	        CoUninitialize();
+		}
+    }
+
+    return result;
 }

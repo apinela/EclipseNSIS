@@ -18,6 +18,7 @@ import java.util.Iterator;
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.util.ColorManager;
 import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.wizard.settings.AbstractNSISInstallGroup;
 import net.sf.eclipsensis.wizard.settings.NSISWizardSettings;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -116,6 +117,9 @@ public class NSISWizard extends Wizard implements INewWizard, INSISWizardConstan
     {
         mSettings = (NSISWizardSettings)Common.readObjectFromXMLFile(new File(cTemplateFolder,templateName+WIZARD_TEMPLATE_EXTENSION));
         mSettings.setWizard(this);
+        AbstractNSISInstallGroup installer = (AbstractNSISInstallGroup)mSettings.getInstaller();
+        installer.setExpanded(true,true);
+        installer.resetChildTypes(true);
         mTemplateName = templateName;
         for(Iterator iter=mSettingsListeners.iterator(); iter.hasNext(); ) {
             ((INSISWizardSettingsListener)iter.next()).settingsChanged();

@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 
+import net.sf.eclipsensis.util.Common;
+
 public abstract class AbstractNSISInstallGroup implements INSISInstallElement
 {
 	private static final long serialVersionUID = 6871218426689788748L;
@@ -21,7 +23,8 @@ public abstract class AbstractNSISInstallGroup implements INSISInstallElement
     protected ArrayList mChildren = new ArrayList();
     protected INSISInstallElement mParent = null;
     protected NSISWizardSettings mSettings = null;
-
+    private transient boolean mExpanded = true;
+    
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#isRemovable()
      */
@@ -117,4 +120,56 @@ public abstract class AbstractNSISInstallGroup implements INSISInstallElement
     {
         return mSettings;
     }
+    
+    /**
+     * @return Returns the expanded.
+     */
+    public boolean isExpanded()
+    {
+        return mExpanded;
+    }
+    
+    /**
+     * @param expanded The expanded to set.
+     */
+    public void setExpanded(boolean expanded)
+    {
+        setExpanded(expanded, false);
+    }
+    
+    /**
+     * @param expanded The expanded to set.
+     * @param recursive Perform recursively
+     */
+    public void setExpanded(boolean expanded, boolean recursive)
+    {
+        mExpanded = expanded;
+        if(recursive) {
+            if(!Common.isEmptyCollection(mChildren)) {
+                for (Iterator iter = mChildren.iterator(); iter.hasNext();) {
+                    INSISInstallElement child = (INSISInstallElement)iter.next();
+                    if(child instanceof AbstractNSISInstallGroup) {
+                        ((AbstractNSISInstallGroup)child).setExpanded(expanded, recursive);
+                    }
+                }
+            }
+        }
+    }
+    
+    public final void resetChildTypes(boolean recursive)
+    {
+        resetChildTypes();
+        if(recursive) {
+            if(!Common.isEmptyCollection(mChildren)) {
+                for (Iterator iter = mChildren.iterator(); iter.hasNext();) {
+                    INSISInstallElement child = (INSISInstallElement)iter.next();
+                    if(child instanceof AbstractNSISInstallGroup) {
+                        ((AbstractNSISInstallGroup)child).resetChildTypes(recursive);
+                    }
+                }
+            }
+        }
+    }
+    
+    public abstract void resetChildTypes();
 }

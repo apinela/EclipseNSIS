@@ -14,6 +14,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.util.ImageManager;
 import net.sf.eclipsensis.wizard.settings.dialogs.NSISInstallFilesDialog;
@@ -31,7 +32,7 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
     public static final String FILEITEM_TYPE = "Files FileItem"; //$NON-NLS-1$
     private static final Image cItemImage = ImageManager.getImage(EclipseNSISPlugin.getResourceString("wizard.file.icon")); //$NON-NLS-1$
     
-    private String mDestination = "$INSTDIR"; //$NON-NLS-1$
+    private String mDestination = NSISKeywords.getKeyword("$INSTDIR"); //$NON-NLS-1$
     private int mOverwriteMode = OVERWRITE_ON;
     public static final char SEPARATOR = '\0'; 
 
@@ -42,6 +43,15 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
     public NSISInstallFiles()
     {
         super();
+        resetChildTypes();
+    }
+
+    /* (non-Javadoc)
+     * @see net.sf.eclipsensis.wizard.settings.AbstractNSISInstallGroup#resetChildTypes()
+     */
+    public void resetChildTypes()
+    {
+        mChildTypes.clear();
         mChildTypes.add(FILEITEM_TYPE);
     }
 

@@ -9,8 +9,10 @@
  *******************************************************************************/
 package net.sf.eclipsensis.wizard;
 
+import java.util.EventListener;
 
-public interface INSISWizardPageListener
+
+public interface INSISWizardPageListener extends EventListener
 {
     public void aboutToShow();
     

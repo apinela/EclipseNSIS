@@ -10,6 +10,7 @@
 package net.sf.eclipsensis.wizard.settings;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.util.ImageManager;
 import net.sf.eclipsensis.wizard.settings.dialogs.NSISInstallShortcutDialog;
@@ -153,7 +154,8 @@ public class NSISInstallShortcut extends AbstractNSISInstallItem
     {
         super.setSettings(settings);
         if(!Common.isEmpty(getSettings().getStartMenuGroup()) && Common.isEmpty(mLocation)) {
-            mLocation = "$SMPROGRAMS\\"+getSettings().getStartMenuGroup(); //$NON-NLS-1$
+            mLocation = new StringBuffer(NSISKeywords.getKeyword("$SMPROGRAMS")).append("\\").append( //$NON-NLS-1$ //$NON-NLS-2$
+                    getSettings().getStartMenuGroup()).toString(); //$NON-NLS-1$
         }
     }
 }

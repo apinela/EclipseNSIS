@@ -278,8 +278,10 @@ public class NSISWizardDialogUtil
     {
         GridLayout layout = (GridLayout)parent.getLayout();
         Combo c = new Combo(parent, SWT.DROP_DOWN | (isReadOnly?SWT.READ_ONLY:SWT.NONE));
-        for (int i = 0; i < items.length; i++) {
-            c.add(items[i]);
+        if(!Common.isEmptyArray(items)) {
+            for (int i = 0; i < items.length; i++) {
+                c.add(items[i]);
+            }
         }
         c.setText(selectedItem);
     
@@ -317,7 +319,7 @@ public class NSISWizardDialogUtil
     
         GridLayout layout = (GridLayout)parent.getLayout();
         parent = new Composite(parent,SWT.NONE);
-        GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING                      );
+        GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
         gd.horizontalSpan = layout.numColumns - 1;
         parent.setLayoutData(gd);
         layout = new GridLayout(items.length,true);

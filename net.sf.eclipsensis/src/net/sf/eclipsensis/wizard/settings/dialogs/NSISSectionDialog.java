@@ -15,17 +15,25 @@ import java.util.List;
 import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.settings.NSISPreferences;
 import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.wizard.INSISWizardConstants;
 import net.sf.eclipsensis.wizard.settings.NSISSection;
 import net.sf.eclipsensis.wizard.util.MasterSlaveController;
-import net.sf.eclipsensis.wizard.util.MasterSlaveEnabler;
 import net.sf.eclipsensis.wizard.util.NSISWizardDialogUtil;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.VerifyEvent;
+import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 
 public class NSISSectionDialog extends AbstractNSISInstallItemDialog
 {
@@ -78,7 +86,7 @@ public class NSISSectionDialog extends AbstractNSISInstallItemDialog
                 text = buf.toString();
                 if(text.length() > 0) {
                     char c = text.charAt(0);
-                    if(text.equalsIgnoreCase("uninstall") || //$NON-NLS-1$
+                    if(text.equalsIgnoreCase(INSISConstants.UNINSTALL_SECTION_NAME) || //$NON-NLS-1$
                        (text.length()>=3 && text.substring(0,3).equalsIgnoreCase("un.")) || //$NON-NLS-1$
                        Character.isWhitespace(c) || c == '!' || c == '-') {
                         e.doit = false;
@@ -153,28 +161,28 @@ public class NSISSectionDialog extends AbstractNSISInstallItemDialog
             }
         });
         ((GridData)cb3.getLayoutData()).horizontalSpan = 1;
-        final boolean canEnable;
-        if(mItem.getSettings().getInstallerType() == INSISWizardConstants.INSTALLER_TYPE_SILENT) {
-            cb3.setSelection(false);
-            cb3.setEnabled(false);
-            canEnable = false;
-        }
-        else {
-            canEnable = true;
-        }
+//        final boolean canEnable;
+//        if(mItem.getSettings().getInstallerType() == INSISWizardConstants.INSTALLER_TYPE_SILENT) {
+//            cb3.setSelection(false);
+//            cb3.setEnabled(false);
+//            canEnable = false;
+//        }
+//        else {
+//            canEnable = true;
+//        }
 
-        MasterSlaveEnabler mse = new MasterSlaveEnabler() {
-            /* (non-Javadoc)
-             * @see net.sf.eclipsensis.wizard.util.MasterSlaveEnabler#canEnable(org.eclipse.swt.widgets.Control)
-             */
-            public boolean canEnable(Control control)
-            {
-                return canEnable;
-            }
-        };
-        m.setEnabler(cb3,mse);
-        
-        m.updateSlaves();
+//        MasterSlaveEnabler mse = new MasterSlaveEnabler() {
+//            /* (non-Javadoc)
+//             * @see net.sf.eclipsensis.wizard.util.MasterSlaveEnabler#canEnable(org.eclipse.swt.widgets.Control)
+//             */
+//            public boolean canEnable(Control control)
+//            {
+//                return canEnable;
+//            }
+//        };
+//        m.setEnabler(cb3,mse);
+//        
+//        m.updateSlaves();
         return composite;
     }
     

@@ -14,6 +14,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.makensis.MakeNSISRunner;
 import net.sf.eclipsensis.util.ColorManager;
 import net.sf.eclipsensis.util.ImageManager;
@@ -56,7 +57,7 @@ public class NSISWizardSettings implements INSISWizardConstants, Serializable
     private boolean mEnableLanguageSupport = false;
     private ArrayList mLanguages = new ArrayList();
     private boolean mSelectLanguage = false;
-    private String mInstallDir = "$PROGRAMFILES\\" + mName; //$NON-NLS-1$
+    private String mInstallDir = new StringBuffer(NSISKeywords.getKeyword("$PROGRAMFILES")).append("\\").append(mName).toString(); //$NON-NLS-1$ //$NON-NLS-2$
     private boolean mChangeInstallDir = true;
     private boolean mCreateStartMenuGroup = false;
     private String mStartMenuGroup = mName;
@@ -89,14 +90,22 @@ public class NSISWizardSettings implements INSISWizardConstants, Serializable
         
         {
             setSettings(NSISWizardSettings.this);
-            mChildTypes.add(NSISSection.TYPE);
-            mChildTypes.add(NSISSectionGroup.TYPE);
             mFormat = EclipseNSISPlugin.getResourceString("wizard.installer.format"); //$NON-NLS-1$
             NSISSection section = (NSISSection)NSISInstallElementFactory.create(mSettings,NSISSection.TYPE);
             section.setName(EclipseNSISPlugin.getResourceString("main.section.name")); //$NON-NLS-1$
             section.setDescription(EclipseNSISPlugin.getResourceString("main.section.description")); //$NON-NLS-1$
             section.setHidden(true);
             addChild(section);
+        }
+
+        /* (non-Javadoc)
+         * @see net.sf.eclipsensis.wizard.settings.AbstractNSISInstallGroup#resetChildTypes()
+         */
+        public void resetChildTypes()
+        {
+            mChildTypes.clear();
+            mChildTypes.add(NSISSection.TYPE);
+            mChildTypes.add(NSISSectionGroup.TYPE);
         }
 
         /* (non-Javadoc)

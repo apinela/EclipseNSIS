@@ -12,6 +12,7 @@ package net.sf.eclipsensis.wizard;
 import java.util.ResourceBundle;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.wizard.settings.NSISWizardSettings;
 import net.sf.eclipsensis.wizard.util.MasterSlaveController;
@@ -107,8 +108,9 @@ public class NSISWizardGeneralPage extends AbstractNSISWizardPage
 
                String newName = ((Text)e.widget).getText();
                String installDir = settings.getInstallDir();
-               if(Common.isEmpty(installDir) || installDir.equalsIgnoreCase("$PROGRAMFILES\\"+settings.getName())) { //$NON-NLS-1$
-                   settings.setInstallDir("$PROGRAMFILES\\"+newName); //$NON-NLS-1$
+               String programFiles = NSISKeywords.getKeyword("$PROGRAMFILES"); //$NON-NLS-1$
+               if(Common.isEmpty(installDir) || installDir.equalsIgnoreCase(new StringBuffer(programFiles).append("\\").append(settings.getName()).toString())) { //$NON-NLS-1$
+                   settings.setInstallDir(new StringBuffer(programFiles).append("\\").append(newName).toString()); //$NON-NLS-1$
                }
                String startMenuGroup = settings.getStartMenuGroup();
                if(Common.isEmpty(startMenuGroup) || startMenuGroup.equalsIgnoreCase(settings.getName())) {

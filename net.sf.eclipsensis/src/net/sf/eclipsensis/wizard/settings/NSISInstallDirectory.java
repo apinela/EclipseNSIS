@@ -10,6 +10,7 @@
 package net.sf.eclipsensis.wizard.settings;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.util.ImageManager;
 import net.sf.eclipsensis.wizard.settings.dialogs.NSISInstallDirectoryDialog;
 
@@ -26,7 +27,7 @@ public class NSISInstallDirectory extends AbstractNSISInstallItem implements INS
     private static final Image cRecursiveFolderImage = ImageManager.getImage(EclipseNSISPlugin.getResourceString("wizard.recursive.directory.icon")); //$NON-NLS-1$
     
     private String mName = null;
-    private String mDestination = "$INSTDIR"; //$NON-NLS-1$
+    private String mDestination = NSISKeywords.getKeyword("$INSTDIR"); //$NON-NLS-1$
     private int mOverwriteMode = OVERWRITE_ON;
     private boolean mRecursive = false;
     

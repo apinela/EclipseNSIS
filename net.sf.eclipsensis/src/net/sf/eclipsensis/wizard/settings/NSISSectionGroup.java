@@ -12,6 +12,9 @@ package net.sf.eclipsensis.wizard.settings;
 import java.text.MessageFormat;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.IEclipseNSISPluginListener;
+import net.sf.eclipsensis.help.INSISKeywordsListener;
+import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.util.ImageManager;
 import net.sf.eclipsensis.wizard.settings.dialogs.NSISSectionGroupDialog;
 
@@ -23,9 +26,24 @@ public class NSISSectionGroup extends AbstractNSISInstallGroup
 {
 	private static final long serialVersionUID = 5806218807884563902L;
 
-    public static final String TYPE = EclipseNSISPlugin.getResourceString("wizard.sectiongroup.type"); //$NON-NLS-1$
+    public static String TYPE = null;
     private static String cFormat = EclipseNSISPlugin.getResourceString("wizard.sectiongroup.format"); //$NON-NLS-1$
     private static final Image cImage = ImageManager.getImage(EclipseNSISPlugin.getResourceString("wizard.sectiongroup.icon")); //$NON-NLS-1$
+
+    private static INSISKeywordsListener cKeywordsListener  = new INSISKeywordsListener() {
+
+        public void keywordsChanged()
+        {
+            loadType();
+        }
+        
+    };
+    private static IEclipseNSISPluginListener cShutdownListener = new IEclipseNSISPluginListener() {
+        public void stopped()
+        {
+            NSISKeywords.removeKeywordsListener(cKeywordsListener);
+        }
+    };
 
     private String mDescription= ""; //$NON-NLS-1$
     private String mCaption = ""; //$NON-NLS-1$
@@ -33,12 +51,32 @@ public class NSISSectionGroup extends AbstractNSISInstallGroup
     private boolean mIsBold = false;
 
     static {
-        NSISInstallElementFactory.register(TYPE, NSISSectionGroup.class);
+        loadType();
+        EclipseNSISPlugin.getDefault().addListener(cShutdownListener);
+        NSISKeywords.addKeywordsListener(cKeywordsListener);
     }
     
+    private static void loadType()
+    {
+        if(TYPE != null) {
+            NSISInstallElementFactory.unregister(TYPE, NSISSectionGroup.class);
+        }
+        TYPE = NSISKeywords.getKeyword(EclipseNSISPlugin.getResourceString("wizard.sectiongroup.type")); //$NON-NLS-1$
+        NSISInstallElementFactory.register(TYPE, NSISSectionGroup.class);
+    }
+
     public NSISSectionGroup()
     {
         super();
+        resetChildTypes();
+    }
+
+    /* (non-Javadoc)
+     * @see net.sf.eclipsensis.wizard.settings.AbstractNSISInstallGroup#resetChildTypes()
+     */
+    public void resetChildTypes()
+    {
+        mChildTypes.clear();
         mChildTypes.add(NSISSection.TYPE);
     }
 
@@ -63,7 +101,7 @@ public class NSISSectionGroup extends AbstractNSISInstallGroup
      */
     public String getDisplayName()
     {
-        return MessageFormat.format(cFormat, new Object[]{mCaption});
+        return MessageFormat.format(cFormat, new Object[]{mCaption,TYPE});
     }
 
     public boolean edit(Composite composite)

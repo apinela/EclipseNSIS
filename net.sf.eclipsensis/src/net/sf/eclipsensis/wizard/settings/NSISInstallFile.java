@@ -10,6 +10,7 @@
 package net.sf.eclipsensis.wizard.settings;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.util.ImageManager;
 import net.sf.eclipsensis.wizard.settings.dialogs.NSISInstallFileDialog;
 
@@ -25,7 +26,7 @@ public class NSISInstallFile extends AbstractNSISInstallItem implements INSISIns
     private static final Image cImage = ImageManager.getImage(EclipseNSISPlugin.getResourceString("wizard.file.icon")); //$NON-NLS-1$
     
     private String mName = null;
-    private String mDestination = "$INSTDIR"; //$NON-NLS-1$
+    private String mDestination = NSISKeywords.getKeyword("$INSTDIR"); //$NON-NLS-1$
     private int mOverwriteMode = OVERWRITE_ON; 
 
     static {

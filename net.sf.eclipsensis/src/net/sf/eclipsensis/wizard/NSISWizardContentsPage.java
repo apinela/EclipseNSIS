@@ -21,6 +21,7 @@ import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.util.ImageManager;
 import net.sf.eclipsensis.util.UpDownMover;
+import net.sf.eclipsensis.wizard.settings.AbstractNSISInstallGroup;
 import net.sf.eclipsensis.wizard.settings.INSISInstallElement;
 import net.sf.eclipsensis.wizard.settings.NSISInstallElementFactory;
 import net.sf.eclipsensis.wizard.settings.NSISInstallElementLabelProvider;
@@ -35,8 +36,10 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITreeViewerListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TreeExpansionEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
@@ -274,14 +277,15 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
             protected void updateElements(List elements, List move, boolean isDown)
             {
                 INSISInstallElement parent = getSelectionParent(move);
-                if(parent != null) {
+                if(parent != null && parent instanceof AbstractNSISInstallGroup) {
                     parent.removeAllChildren();
                     for (Iterator iter = elements.iterator(); iter.hasNext();) {
                         INSISInstallElement element = (INSISInstallElement)iter.next();
                         parent.addChild(element);
                     }
-                    mTreeViewer.refresh(parent);
-                    mTreeViewer.expandToLevel(parent, TreeViewer.ALL_LEVELS);
+                    mTreeViewer.refresh(parent,true);
+                    expandGroup((AbstractNSISInstallGroup)parent);
+//                    mTreeViewer.expandToLevel(parent, TreeViewer.ALL_LEVELS);
                     if(!Common.isEmptyCollection(move)) {
                         mTreeViewer.setSelection(new StructuredSelection(move));
                         mTreeViewer.reveal(move.get(isDown?move.size()-1:0));
@@ -289,6 +293,20 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
                 }
             }
             
+            private void expandGroup(AbstractNSISInstallGroup group)
+            {
+                if(mTreeViewer.getExpandedState(group) != group.isExpanded()) {
+                    mTreeViewer.setExpandedState(group,group.isExpanded());
+                }
+                INSISInstallElement[] children = group.getChildren();
+                if(!Common.isEmptyArray(children)) {
+                    for (int i = 0; i < children.length; i++) {
+                        if(children[i] instanceof AbstractNSISInstallGroup) {
+                            expandGroup((AbstractNSISInstallGroup)children[i]);
+                        }
+                    }
+                }
+            }
         };
         mover.setInput(tv);
         
@@ -334,10 +352,32 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
             }
         });
         
+        tv.addTreeListener(new ITreeViewerListener() {
+            public void setState(TreeExpansionEvent event, boolean state)
+            {
+                Object element = event.getElement();
+                if(element instanceof AbstractNSISInstallGroup) {
+                    ((AbstractNSISInstallGroup)element).setExpanded(state);
+                }
+            }
+            
+            public void treeCollapsed(TreeExpansionEvent event)
+            {
+                setState(event, false);
+            }
+
+            public void treeExpanded(TreeExpansionEvent event)
+            {
+                setState(event, true);
+            }
+        });
+        
         mWizard.addSettingsListener(new INSISWizardSettingsListener() {
             public void settingsChanged()
             {
-                tv.setInput(mWizard.getSettings());
+                NSISWizardSettings settings2 = mWizard.getSettings();
+                tv.setInput(settings2);
+                tv.expandToLevel(settings2.getInstaller(), TreeViewer.ALL_LEVELS);
             }});
 
         SelectionAdapter editSelectionAdapter = new SelectionAdapter() {
