@@ -22,9 +22,9 @@ import net.sf.eclipsensis.util.CaseInsensitiveMap;
 
 public class NSISHelpTOCParserCallback extends HTMLEditorKit.ParserCallback
 {
-    private static final String ATTR_VALUE_TEXT_SITEMAP="text/sitemap";
-    private static final String ATTR_VALUE_LOCAL="Local";
-    private static final String ATTR_VALUE_NAME="Name";
+    private static final String ATTR_VALUE_TEXT_SITEMAP="text/sitemap"; //$NON-NLS-1$
+    private static final String ATTR_VALUE_LOCAL="Local"; //$NON-NLS-1$
+    private static final String ATTR_VALUE_NAME="Name"; //$NON-NLS-1$
     
     private Map mTopicMap = null;
     private Map mKeywordHelpMap = new CaseInsensitiveMap();

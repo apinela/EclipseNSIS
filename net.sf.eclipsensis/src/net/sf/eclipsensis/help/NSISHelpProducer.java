@@ -22,6 +22,8 @@ import org.eclipse.help.IHelpContentProducer;
 
 public class NSISHelpProducer implements IHelpContentProducer, INSISConstants
 {
+    private NSISHelpURLProvider mHelpURLProvider = NSISHelpURLProvider.getInstance();
+    
     /* (non-Javadoc)
      * @see org.eclipse.help.IHelpContentProducer#getInputStream(java.lang.String, java.lang.String, java.util.Locale)
      */
@@ -44,7 +46,8 @@ public class NSISHelpProducer implements IHelpContentProducer, INSISConstants
                     }
                 }
                 return new ByteArrayInputStream(MessageFormat.format(EclipseNSISPlugin.getResourceString("missing.docs.help.format"), //$NON-NLS-1$
-                                                new Object[]{nsisDir.getAbsolutePath()}).getBytes());
+                                                new Object[]{nsisDir.getAbsolutePath(),PLUGIN_NAME,
+                                                             NSISLiveHelpAction.class.getName()}).getBytes());
             }
             else {
                 return new ByteArrayInputStream(MessageFormat.format(EclipseNSISPlugin.getResourceString("unconfigured.docs.help.format"), //$NON-NLS-1$

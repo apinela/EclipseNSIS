@@ -31,6 +31,7 @@ import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.editor.NSISEditor;
 import net.sf.eclipsensis.help.NSISKeywords;
+import net.sf.eclipsensis.help.NSISUsageProvider;
 import net.sf.eclipsensis.lang.NSISLanguage;
 import net.sf.eclipsensis.lang.NSISLanguageManager;
 import net.sf.eclipsensis.makensis.MakeNSISRunner;
@@ -90,6 +91,8 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
     private static final int INDENT_INCREMENT_LENGTH = 4;
     private static final String INDENT_INCREMENT = "    "; //$NON-NLS-1$
     
+    private boolean mNewRmDirUsage = false;
+    
     private NSISWizardSettings mSettings = null;
     private PrintWriter mWriter = null;
     private IProgressMonitor mMonitor = null;
@@ -100,6 +103,13 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
     public NSISWizardScriptGenerator(NSISWizardSettings settings)
     {
         mSettings = settings;
+        String usage = NSISUsageProvider.getUsage(getKeyword("RmDir")); //$NON-NLS-1$
+        if(!Common.isEmpty(usage)) {
+            usage = usage.toUpperCase();
+            String search = new StringBuffer(getKeyword("/r")).append("|").append( //$NON-NLS-1$ //$NON-NLS-2$
+                                getKeyword("/REBOOTOK")).toString().toUpperCase(); //$NON-NLS-1$
+            mNewRmDirUsage = (usage.indexOf(search) < 0);
+        }
     }
 
     private void updateMonitorTask(String resource, Object arg, int flag)
@@ -987,10 +997,17 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
                     if(installDirectory.isRecursive()) {
                         section.addElement(new NSISScriptInstruction("File",new String[]{getKeyword("/r"),name})); //$NON-NLS-1$ //$NON-NLS-2$
                         if(unSection != null) {
-                            unSection.addElement(0,new NSISScriptInstruction("RmDir", //$NON-NLS-1$
-                                                                        new String[]{getKeyword("/r"), //$NON-NLS-1$
-                                                                                     getKeyword("/REBOOTOK"), //$NON-NLS-1$
-                                                                                     outdir}));
+                            if(mNewRmDirUsage) {
+                                unSection.addElement(0,new NSISScriptInstruction("RmDir", //$NON-NLS-1$
+                                                                            new String[]{getKeyword("/r"), //$NON-NLS-1$
+                                                                                         getKeyword("/REBOOTOK"), //$NON-NLS-1$
+                                                                                         outdir}));
+                            }
+                            else {
+                                unSection.addElement(0,new NSISScriptInstruction("RmDir", //$NON-NLS-1$
+                                                                            new String[]{getKeyword("/r"), //$NON-NLS-1$
+                                                                                         outdir}));
+                            }
                         }
                     }
                     else {

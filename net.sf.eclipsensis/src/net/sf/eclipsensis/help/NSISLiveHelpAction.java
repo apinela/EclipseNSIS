@@ -10,17 +10,21 @@
 package net.sf.eclipsensis.help;
 
 import net.sf.eclipsensis.dialogs.NSISPreferencePage;
+import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.help.ILiveHelpAction;
 import org.eclipse.swt.widgets.Display;
 
 public class NSISLiveHelpAction implements ILiveHelpAction
 {
+    private String mData = null;
+    
     /* (non-Javadoc)
      * @see org.eclipse.help.ILiveHelpAction#setInitializationString(java.lang.String)
      */
     public void setInitializationString(String data)
     {
+        mData = data;
     }
 
     /* (non-Javadoc)
@@ -30,7 +34,16 @@ public class NSISLiveHelpAction implements ILiveHelpAction
     {
         Display.getDefault().syncExec(new Runnable() {
             public void run() {
-                NSISPreferencePage.show();
+                if(mData == null) {
+                    NSISPreferencePage.show();
+                }
+                else {
+                    NSISHelpURLProvider helpURLProvider = NSISHelpURLProvider.getInstance();
+                    String chmURL = helpURLProvider.convertDocHelpURLToCHMHelpURL(mData);
+                    if(!Common.isEmpty(chmURL)) {
+                        helpURLProvider.openCHMHelpURL(chmURL);
+                    }
+                }
             }});
     }
 }

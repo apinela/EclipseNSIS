@@ -48,7 +48,7 @@ import org.eclipse.ui.PlatformUI;
 public class NSISPreferencePage	extends NSISSettingsPage
 {
     private static File cNSISHomesListFile = new File(EclipseNSISPlugin.getPluginStateLocation(),
-                                                NSISPreferencePage.class.getName()+".NSISHomesList.xml"); //$NON-NLS-1$
+                                                NSISPreferencePage.class.getName()+".NSISHomesList.ser"); //$NON-NLS-1$
     private ComboViewer mNSISHome = null;
     private Button mUseDocsHelp = null;
     
@@ -108,7 +108,7 @@ public class NSISPreferencePage	extends NSISSettingsPage
         if(cNSISHomesListFile.exists()) {
             Collection temp;
             try {
-                temp = (Collection)Common.readObjectFromXMLFile(cNSISHomesListFile);
+                temp = (Collection)Common.readObject(cNSISHomesListFile);
             }
             catch (Exception e1) {
                 temp = new CaseInsensitiveSet();
@@ -222,7 +222,7 @@ public class NSISPreferencePage	extends NSISSettingsPage
         if(!nsisHomes.contains(home)) {
             nsisHomes.add(home);
             try {
-                Common.writeObjectToXMLFile(cNSISHomesListFile,nsisHomes);
+                Common.writeObject(cNSISHomesListFile,nsisHomes);
             }
             catch (IOException e) {
                 e.printStackTrace();

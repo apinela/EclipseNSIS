@@ -15,16 +15,21 @@ import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.EOFException;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
 import java.lang.reflect.Array;
@@ -69,71 +74,112 @@ public class Common
     private static Pattern cValidFileName = Pattern.compile("(\\.?[A-Za-z0-9\\$%\\'`\\-@\\{\\}~\\!#\\(\\&_\\^\\x20])+"); //$NON-NLS-1$
     private static Pattern cValidURL = Pattern.compile("(?:(?:ftp|https?):\\/\\/)?(?:[a-z0-9](?:[-a-z0-9]*[a-z0-9])?\\.)+(?:com|edu|biz|org|gov|int|info|mil|net|name|museum|coop|aero|[a-z][a-z])\\b(?:\\d+)?(?:\\/[^;\"'<>()\\[\\]{}\\s\\x7f-\\xff]*(?:[.,?]+[^;\"'<>()\\[\\]{}\\s\\x7f-\\xff]+)*)?"); //$NON-NLS-1$
 
-    public static Object readObjectFromXMLFile(File file) throws IOException, ClassNotFoundException
+    public static Object readObjectXML(File file) throws IOException, ClassNotFoundException
     {
-        return readObjectFromXML(new BufferedReader(new FileReader(file)));
+        return readObjectXML(new BufferedReader(new FileReader(file)));
     }
 
-    public static Object readObjectFromXML(Reader reader) throws IOException, ClassNotFoundException
+    public static Object readObjectXML(Reader reader) throws IOException, ClassNotFoundException
     {
         ArrayList objectList = new ArrayList();
         ObjectInputStream ois = null;
         try {
             ois = cXStream.createObjectInputStream(reader);
-            while(true) {
-                try {
-                    Object o = ois.readObject();
-                    objectList.add(o);
-                }
-                catch(EOFException eofe) {
-                    break;
-                }
-            }
+            return ois.readObject();
         }
         finally {
-            if(ois != null) {
-                ois.close();
-            }
-        }
-        if(objectList.size() > 0) {
-            if(objectList.size() == 1) {
-                return objectList.get(0);
-            }
-            else {
-                return objectList.toArray();
-            }
-        }
-        else {
-            return null;
+            closeIO(ois);
+            closeIO(reader);
         }
     }
 
-    public static void writeObjectToXMLFile(File file, Object object) throws IOException
+    public static void writeObjectXML(File file, Object object) throws IOException
     {
-        writeObjectToXML(new BufferedWriter(new FileWriter(file)), object);
+        writeObjectXML(new BufferedWriter(new FileWriter(file)), object);
     }
 
-    public static void writeObjectToXML(Writer writer, Object object) throws IOException
+    public static void writeObjectXML(Writer writer, Object object) throws IOException
     {
         if(object != null) {
             ObjectOutputStream oos = null;
     
             try {
                 oos = cXStream.createObjectOutputStream(writer);
-                if(object.getClass().isArray()) {
-                    int n = Array.getLength(object);
-                    for(int i=0; i<n; i++) {
-                        oos.writeObject(Array.get(object,i));
-                    }
-                }
-                else {
-                    oos.writeObject(object);
-                }
+                oos.writeObject(object);
             }
             finally {
-                if(oos != null) {
-                    oos.close();
+                closeIO(oos);
+                closeIO(writer);
+            }
+        }
+    }
+
+
+    public static Object readObject(File file) throws IOException, ClassNotFoundException
+    {
+        return readObject(new BufferedInputStream(new FileInputStream(file)));
+    }
+
+    public static Object readObject(InputStream inputStream) throws IOException, ClassNotFoundException
+    {
+        ArrayList objectList = new ArrayList();
+        ObjectInputStream ois = null;
+        try {
+            if(!(inputStream instanceof BufferedInputStream)) {
+                inputStream = new BufferedInputStream(inputStream);
+            }
+            ois = new ObjectInputStream(inputStream);
+            return ois.readObject();
+        }
+        finally {
+            closeIO(ois);
+            closeIO(inputStream);
+        }
+    }
+    
+    public static void closeIO(Object object)
+    {
+        if(object != null) {
+            try {
+                if(object instanceof InputStream) {
+                    ((InputStream)object).close();
                 }
+                else if(object instanceof OutputStream) {
+                    ((OutputStream)object).close();
+                }
+                else if(object instanceof Reader) {
+                    ((Reader)object).close();
+                }
+                else if(object instanceof Writer) {
+                    ((Writer)object).close();
+                }
+            }
+            catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static void writeObject(File file, Object object) throws IOException
+    {
+        writeObject(new BufferedOutputStream(new FileOutputStream(file)), object);
+    }
+
+    public static void writeObject(OutputStream outputStream, Object object) throws IOException
+    {
+        if(object != null) {
+            ObjectOutputStream oos = null;
+    
+            try {
+                if(!(outputStream instanceof BufferedOutputStream)) {
+                    outputStream = new BufferedOutputStream(outputStream);
+                }
+                oos = new ObjectOutputStream(outputStream);
+                oos.writeObject(object);
+            }
+            finally {
+                closeIO(oos);
+                closeIO(outputStream);
             }
         }
     }

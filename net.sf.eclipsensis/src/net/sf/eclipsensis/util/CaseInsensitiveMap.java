@@ -9,14 +9,17 @@
  *******************************************************************************/
 package net.sf.eclipsensis.util;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-public class CaseInsensitiveMap implements Map
+public class CaseInsensitiveMap implements Map, Serializable
 {
+	private static final long serialVersionUID = 7710930539504135243L;
+
     private Map mValueMap = new HashMap();
     private Map mKeyMap = new HashMap();
 

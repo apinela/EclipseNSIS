@@ -9,6 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.util;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -16,8 +17,10 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-public class CaseInsensitiveSet implements Set
+public class CaseInsensitiveSet implements Set, Serializable
 {
+	private static final long serialVersionUID = -3353276139904582714L;
+
     private Map mValueMap = new HashMap();
     private HashSet mSet = new HashSet();
 

@@ -109,13 +109,13 @@ public class NSISWizard extends Wizard implements INewWizard, INSISWizardConstan
 
     void saveTemplate(String templateName) throws IOException
     {
-        Common.writeObjectToXMLFile(new File(cTemplateFolder,templateName+WIZARD_TEMPLATE_EXTENSION), mSettings);
+        Common.writeObjectXML(new File(cTemplateFolder,templateName+WIZARD_TEMPLATE_EXTENSION), mSettings);
         mTemplateName = templateName;
     }
     
     void loadTemplate(String templateName) throws IOException, ClassNotFoundException
     {
-        mSettings = (NSISWizardSettings)Common.readObjectFromXMLFile(new File(cTemplateFolder,templateName+WIZARD_TEMPLATE_EXTENSION));
+        mSettings = (NSISWizardSettings)Common.readObjectXML(new File(cTemplateFolder,templateName+WIZARD_TEMPLATE_EXTENSION));
         mSettings.setWizard(this);
         AbstractNSISInstallGroup installer = (AbstractNSISInstallGroup)mSettings.getInstaller();
         installer.setExpanded(true,true);

@@ -17,11 +17,10 @@ import java.util.regex.Pattern;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
+import net.sf.eclipsensis.makensis.MakeNSISRunner;
 
 public class NSISValidator implements INSISConstants
 {
-    public static final String MAKENSIS_VERSION_OPTION = "/VERSION"; //$NON-NLS-1$
-    public static final String MAKENSIS_HDRINFO_OPTION = "/HDRINFO"; //$NON-NLS-1$
     private static Version EMPTY_VERSION = new Version("0"); //$NON-NLS-1$
     public static Version MINIMUM_NSIS_VERSION = new Version(EclipseNSISPlugin.getResourceString("minimum.nsis.version")); //$NON-NLS-1$
     private static Pattern cVersionPattern = Pattern.compile("v(\\d+(?:\\.\\d+)?(?:[A-Za-z]+\\d*)?)"); //$NON-NLS-1$
@@ -47,7 +46,7 @@ public class NSISValidator implements INSISConstants
     {
         Properties props = new Properties();
         String exeName = nsisEXE.getAbsoluteFile().getAbsolutePath();
-        String[] output = Common.runProcessWithOutput(new String[]{exeName,MAKENSIS_HDRINFO_OPTION}, //$NON-NLS-1$
+        String[] output = Common.runProcessWithOutput(new String[]{exeName,MakeNSISRunner.MAKENSIS_HDRINFO_OPTION}, //$NON-NLS-1$
                                                      nsisEXE.getParentFile(),1);
         if(!Common.isEmptyArray(output)) {
             for (int i = 0; i < output.length; i++) {
@@ -81,7 +80,7 @@ public class NSISValidator implements INSISConstants
     {
         Version version = null;
         String exeName = exeFile.getAbsoluteFile().getAbsolutePath();
-        String[] output = Common.runProcessWithOutput(new String[]{exeName,MAKENSIS_VERSION_OPTION}, //$NON-NLS-1$
+        String[] output = Common.runProcessWithOutput(new String[]{exeName,MakeNSISRunner.MAKENSIS_VERSION_OPTION}, //$NON-NLS-1$
                                                exeFile.getParentFile());
         if(!Common.isEmptyArray(output)) {
             for (int i = 0; i < output.length; i++) {

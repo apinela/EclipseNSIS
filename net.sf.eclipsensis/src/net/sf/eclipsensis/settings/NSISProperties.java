@@ -9,15 +9,13 @@
  *******************************************************************************/
 package net.sf.eclipsensis.settings;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.Reader;
-import java.io.Writer;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Random;
 
@@ -241,15 +239,13 @@ public class NSISProperties extends NSISSettings implements INSISConstants
         QualifiedName qname = getQualifiedName(name);
         ISynchronizer synchronizer = ResourcesPlugin.getWorkspace().getSynchronizer();
         synchronizer.add(qname);
-        Reader r = null;
+        InputStream is = null;
         try {
             byte[] bytes = synchronizer.getSyncInfo(qname,mFile);
             if(!Common.isEmptyArray(bytes)) {
                 ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
-                r = new BufferedReader(new InputStreamReader(bais));
-                Object object = Common.readObjectFromXML(r);
-                r.close();
-                r = null;
+                is = new BufferedInputStream(bais);
+                Object object = Common.readObject(is);
                 return object;
             }
         }
@@ -257,14 +253,7 @@ public class NSISProperties extends NSISSettings implements INSISConstants
             e.printStackTrace();
         }
         finally {
-            if(r != null) {
-                try {
-                    r.close();
-                }
-                catch (IOException e1) {
-                    e1.printStackTrace();
-                }
-            }
+            Common.closeIO(is);
         }
         return null;
     }
@@ -279,13 +268,13 @@ public class NSISProperties extends NSISSettings implements INSISConstants
             ISynchronizer synchronizer = ResourcesPlugin.getWorkspace().getSynchronizer();
             synchronizer.add(qname);
             if(object != null) {
-                Writer w = null;
+                OutputStream os = null;
                 try {
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                    w = new BufferedWriter(new OutputStreamWriter(baos));
-                    Common.writeObjectToXML(w,object);
-                    w.close();
-                    w = null;
+                    os = new BufferedOutputStream(baos);
+                    Common.writeObject(os,object);
+                    os.close();
+                    os = null;
                     synchronizer.setSyncInfo(qname,mFile,baos.toByteArray());
                     return;
                 }
@@ -293,14 +282,7 @@ public class NSISProperties extends NSISSettings implements INSISConstants
                     ioe.printStackTrace();
                 }
                 finally {
-                    if(w != null) {
-                        try {
-                            w.close();
-                        }
-                        catch (IOException e1) {
-                            e1.printStackTrace();
-                        }
-                    }
+                    Common.closeIO(os);
                 }
             }
             synchronizer.setSyncInfo(qname,mFile,null);

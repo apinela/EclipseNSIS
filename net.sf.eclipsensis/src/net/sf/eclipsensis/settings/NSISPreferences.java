@@ -353,7 +353,7 @@ public class NSISPreferences extends NSISSettings
         }
         else {
             try {
-                Common.writeObjectToXMLFile(objectFile, object);
+                Common.writeObject(objectFile, object);
                 setValue(name,fileName);
             }
             catch(IOException ioe) {
@@ -370,7 +370,7 @@ public class NSISPreferences extends NSISSettings
         Object object = null;
         if(objectFile.exists()) {
             try {
-                object = Common.readObjectFromXMLFile(objectFile);
+                object = Common.readObject(objectFile);
             }
             catch (Exception e) {
                 object = null;
@@ -382,6 +382,6 @@ public class NSISPreferences extends NSISSettings
     
     private String makeSettingFileName(String name)
     {
-        return new StringBuffer(getClass().getName()).append(".").append(name).append(".xml").toString(); //$NON-NLS-1$ //$NON-NLS-2$
+        return new StringBuffer(getClass().getName()).append(".").append(name).append(".ser").toString(); //$NON-NLS-1$ //$NON-NLS-2$
     }
 }

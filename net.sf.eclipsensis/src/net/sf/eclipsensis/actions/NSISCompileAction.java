@@ -172,7 +172,7 @@ public class NSISCompileAction extends NSISScriptAction
                             line.setLineNum(Integer.parseInt(matcher.group(2)));
                         }
                     }
-                    else if(!text.endsWith("warnings:")) { //$NON-NLS-1$ 
+                    else if(!text.endsWith("warnings:") && !text.endsWith("warning:")) { //$NON-NLS-1$ //$NON-NLS-2$ 
                         line.setFile(mFile);
                         line.setLineNum(1);
                     }

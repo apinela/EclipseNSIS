@@ -39,5 +39,5 @@ public interface INSISWizardConstants
     public static final int SHORTCUT_URL = 0;
     public static final int SHORTCUT_INSTALLELEMENT = 1;
     
-    public static final String WIZARD_TEMPLATE_EXTENSION=".nst"; //$NON-NLS-1$
+    public static final String WIZARD_TEMPLATE_EXTENSION=".xml"; //$NON-NLS-1$
 }
