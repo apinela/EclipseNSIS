@@ -77,20 +77,13 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
                 public void run()
                 {
                     try {
-                        IViewPart view = null;
                         IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-                        IViewReference[] viewRefs = activePage.getViewReferences(); 
-                        for (int i = 0; i < viewRefs.length; i++) {
-                            if(viewRefs[i].getId().equals(CONSOLE_ID)) {
-                                view = viewRefs[i].getView(true);
-                                break;
-                            }
-                        }
+                        IViewPart view = activePage.findView(CONSOLE_ID);
                         if(view == null) {
-                            activePage.showView(CONSOLE_ID);
+                            activePage.showView(CONSOLE_ID, null, IWorkbenchPage.VIEW_VISIBLE);
                         }
                         else {
-                            activePage.activate(view);
+                            activePage.bringToTop(view);
                         }
                     }
                     catch(PartInitException pie) {
@@ -194,7 +187,7 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
     {
         mViewer.refresh();
         boolean state = (mViewer.getTable().getItemCount() > 0);
-        mClearAction.setEnabled(state);
+        mClearAction.setEnabled(state && !mIsCompiling);
         mSelectAllAction.setEnabled(state);
     }
     
@@ -209,7 +202,7 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
     {
         mViewer.refresh(false);
         mViewer.reveal(line);
-        mClearAction.setEnabled(true);
+        mClearAction.setEnabled(!mIsCompiling);
         mSelectAllAction.setEnabled(true);
     }
     
@@ -307,14 +300,10 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
 
 	private void fillLocalPullDown(IMenuManager manager) 
     {
+        manager.add(mCancelAction);
         manager.add(mCopyAction);
         manager.add(mSelectAllAction);
-        if(mIsCompiling) {
-            manager.add(mCancelAction);
-        }
-        else {
-            manager.add(mClearAction);
-        }
+        manager.add(mClearAction);
 	}
 
 	private void fillContextMenu(IMenuManager manager) 
@@ -327,14 +316,10 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
 	
 	private void fillLocalToolBar(IToolBarManager manager) 
     {
+        manager.add(mCancelAction);
         manager.add(mCopyAction);
         manager.add(mSelectAllAction);
-        if(mIsCompiling) {
-            manager.add(mCancelAction);
-        }
-        else {
-            manager.add(mClearAction);
-        }
+        manager.add(mClearAction);
 	}
 
     /* (non-Javadoc)
@@ -360,28 +345,8 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
                 IActionBars bars = getViewSite().getActionBars();
                 final IToolBarManager toolBarManager = bars.getToolBarManager();
                 IMenuManager menuManager = bars.getMenuManager();
-                if(isCompiling) {
-                    mCancelAction.setEnabled(true);
-                    ActionContributionItem actionContributionItem = new ActionContributionItem(mClearAction);
-                    menuManager.remove(actionContributionItem);
-                    toolBarManager.remove(actionContributionItem);
-                    menuManager.add(mCancelAction);
-                    toolBarManager.add(mCancelAction);
-                }
-                else {
-                    mCancelAction.setEnabled(false);
-                    ActionContributionItem actionContributionItem = new ActionContributionItem(mCancelAction);
-                    menuManager.remove(actionContributionItem);
-                    toolBarManager.remove(actionContributionItem);
-                    menuManager.add(mClearAction);
-                    toolBarManager.add(mClearAction);
-                }
-                mDisplay.asyncExec(new Runnable() {
-                    public void run()
-                    {
-                        toolBarManager.update(true);
-                    }
-                });
+                mCancelAction.setEnabled(isCompiling);
+                mClearAction.setEnabled(!isCompiling && mModel.getContents().size() > 0);
             }
             mIsCompiling = isCompiling;
         }
