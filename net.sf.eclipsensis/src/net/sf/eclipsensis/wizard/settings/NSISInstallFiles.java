@@ -1,8 +1,8 @@
 /*******************************************************************************
- * Copyright (c) 2004 Sunil Kamath (IcemanK).
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which is available at http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2004, 2005 Sunil Kamath (IcemanK).
+ * All rights reserved.
+ * This program is made available under the terms of the Common Public License
+ * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
@@ -22,8 +22,10 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 
-public class NSISInstallFiles extends AbstractNSISInstallGroup
+public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISInstallFileSystemObject
 {
+	private static final long serialVersionUID = 1293912008528238512L;
+
     public static final String TYPE = EclipseNSISPlugin.getResourceString("wizard.files.type"); //$NON-NLS-1$
     private static final Image cImage = ImageManager.getImage(EclipseNSISPlugin.getResourceString("wizard.files.icon")); //$NON-NLS-1$
     public static final String FILEITEM_TYPE = "Files FileItem"; //$NON-NLS-1$
@@ -172,6 +174,8 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup
     
     public class FileItem extends AbstractNSISInstallItem
     {
+        private static final long serialVersionUID = 3744853352840436396L;
+
         private String mName = null;
         
         private FileItem(String name)

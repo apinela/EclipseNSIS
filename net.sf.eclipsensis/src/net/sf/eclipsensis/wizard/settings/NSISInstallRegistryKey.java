@@ -1,8 +1,8 @@
 /*******************************************************************************
- * Copyright (c) 2004 Sunil Kamath (IcemanK).
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which is available at http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2004, 2005 Sunil Kamath (IcemanK).
+ * All rights reserved.
+ * This program is made available under the terms of the Common Public License
+ * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
@@ -20,6 +20,8 @@ import org.eclipse.swt.widgets.Composite;
 
 public class NSISInstallRegistryKey extends AbstractNSISInstallItem
 {
+	private static final long serialVersionUID = 1525071202238497310L;
+
     public static final String TYPE = EclipseNSISPlugin.getResourceString("wizard.regkey.type"); //$NON-NLS-1$
     private static final Image cImage = ImageManager.getImage(EclipseNSISPlugin.getResourceString("wizard.regkey.icon")); //$NON-NLS-1$
     

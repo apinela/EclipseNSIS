@@ -1,8 +1,8 @@
 /*******************************************************************************
- * Copyright (c) 2004 Sunil Kamath (IcemanK).
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which is available at http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2004, 2005 Sunil Kamath (IcemanK).
+ * All rights reserved.
+ * This program is made available under the terms of the Common Public License
+ * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
@@ -10,6 +10,7 @@
 package net.sf.eclipsensis.settings;
 
 import java.util.HashMap;
+import java.util.Random;
 
 import net.sf.eclipsensis.INSISConstants;
 
@@ -24,6 +25,8 @@ public class NSISProperties extends NSISSettings implements INSISConstants
 
     private IFile mFile = null;
     private boolean mUseDefaults = true;
+    
+    private static Random cRandom = new Random();
     
     static {
         cQualifiedNames.put(USE_DEFAULTS, new QualifiedName(PLUGIN_NAME,USE_DEFAULTS));
@@ -216,5 +219,23 @@ public class NSISProperties extends NSISSettings implements INSISConstants
     protected void removeString(String name)
     {
         setPersistentProperty(getQualifiedName(name), null);
+    }
+    
+    /* (non-Javadoc)
+     * @see net.sf.eclipsensis.settings.NSISSettings#loadObject(java.lang.String)
+     */
+    protected Object loadObject(String settingName)
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    
+    /* (non-Javadoc)
+     * @see net.sf.eclipsensis.settings.NSISSettings#storeObject(java.lang.String, java.lang.Object)
+     */
+    protected void storeObject(String settingName, Object object)
+    {
+        // TODO Auto-generated method stub
+
     }
 }

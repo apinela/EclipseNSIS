@@ -1,8 +1,8 @@
 /*******************************************************************************
- * Copyright (c) 2004 Sunil Kamath (IcemanK).
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which is available at http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2004, 2005 Sunil Kamath (IcemanK).
+ * All rights reserved.
+ * This program is made available under the terms of the Common Public License
+ * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
@@ -34,6 +34,7 @@ public interface INSISConstants
     public static final String PROBLEM_ID = "net.sf.eclipsensis.NSISCompileProblem"; //$NON-NLS-1$
     public static final String NSIS_EDITOR_CONTEXT_ID = "net.sf.eclipsensis.NSISEditorScope"; //$NON-NLS-1$
     public static final String COMPILE_ACTION_ID = "net.sf.eclipsensis.actions.NSISCompileAction"; //$NON-NLS-1$
+    public static final String COMPILE_TEST_ACTION_ID = "net.sf.eclipsensis.actions.NSISCompileTestAction"; //$NON-NLS-1$
 
     public static final String GOTO_HELP_COMMAND_ID = "net.sf.eclipsensis.commands.NSISGotoHelp"; //$NON-NLS-1$
     public static final String STICKY_HELP_COMMAND_ID = "net.sf.eclipsensis.commands.NSISStickyHelp"; //$NON-NLS-1$
@@ -41,6 +42,9 @@ public interface INSISConstants
     public static final String INSERT_DIRECTORY_COMMAND_ID = "net.sf.eclipsensis.commands.NSISInsertDirectory"; //$NON-NLS-1$
     public static final String INSERT_COLOR_COMMAND_ID = "net.sf.eclipsensis.commands.NSISInsertColor"; //$NON-NLS-1$
     public static final String TABS_TO_SPACES_COMMAND_ID = "net.sf.eclipsensis.commands.NSISTabsToSpaces"; //$NON-NLS-1$
+    public static final String TOGGLE_COMMENT_COMMAND_ID = "net.sf.eclipsensis.commands.NSISToggleComment"; //$NON-NLS-1$
+    public static final String ADD_BLOCK_COMMENT_COMMAND_ID = "net.sf.eclipsensis.commands.NSISAddBlockComment"; //$NON-NLS-1$
+    public static final String REMOVE_BLOCK_COMMENT_COMMAND_ID = "net.sf.eclipsensis.commands.NSISRemoveBlockComment"; //$NON-NLS-1$
     
     public static final QualifiedName NSIS_COMPILE_TIMESTAMP = new QualifiedName(PLUGIN_NAME,"nsisCompileTimestamp"); //$NON-NLS-1$
     public static final QualifiedName NSIS_EXE_NAME = new QualifiedName(PLUGIN_NAME,"nsisEXEName"); //$NON-NLS-1$

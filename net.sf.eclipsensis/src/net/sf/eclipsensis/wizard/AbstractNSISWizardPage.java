@@ -1,8 +1,8 @@
 /*******************************************************************************
- * Copyright (c) 2004 Sunil Kamath (IcemanK).
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which is available at http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2004, 2005 Sunil Kamath (IcemanK).
+ * All rights reserved.
+ * This program is made available under the terms of the Common Public License
+ * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
@@ -16,18 +16,18 @@ import java.util.Iterator;
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.util.ImageManager;
-import net.sf.eclipsensis.wizard.settings.NSISWizardSettings;
 
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.events.VerifyListener;
 
 public abstract class AbstractNSISWizardPage extends WizardPage implements INSISWizardConstants
 {
-    protected NSISWizardSettings mSettings = null;
     protected static final int WIDTH_HINT;
     private ArrayList mListeners = new ArrayList();
+    protected NSISWizard mWizard = null;
 
     static {
         int widthHint;
@@ -55,11 +55,10 @@ public abstract class AbstractNSISWizardPage extends WizardPage implements INSIS
     
     private static ImageDescriptor cImage = ImageManager.getImageDescriptor(EclipseNSISPlugin.getResourceString("wizard.title.image")); //$NON-NLS-1$
     
-	public AbstractNSISWizardPage(NSISWizardSettings settings, String pageName, String title, String description) 
+	public AbstractNSISWizardPage(String pageName, String title, String description) 
     {
 		super(pageName,title,cImage);
         setDescription(description);
-		mSettings = settings;
 	}
     
     protected String getArrayStringResource(String[] array, int index, String defaultString)
@@ -91,13 +90,13 @@ public abstract class AbstractNSISWizardPage extends WizardPage implements INSIS
         return validateEmptyOrValidPathName(pathname, true, new String[]{null,messageResource});
     }
 
-    protected boolean validateNSISPrefixedPathName(String pathname, String[] messageResources)
+    protected boolean validateNSISPathName(String pathname, String[] messageResources)
     {
         if(Common.isEmpty(pathname)) {
             setErrorMessage(getArrayStringResource(messageResources,0,"empty.pathname.error")); //$NON-NLS-1$
             return false;
         }
-        else if(!Common.isValidNSISPrefixedPathName(pathname)) {
+        else if(!Common.isValidNSISPathName(pathname)) {
             setErrorMessage(getFormattedArrayStringResource(messageResources,1,"invalid.nsis.pathname.error",new String[]{pathname})); //$NON-NLS-1$
             return false;
         }
@@ -192,6 +191,15 @@ public abstract class AbstractNSISWizardPage extends WizardPage implements INSIS
         mListeners.remove(listener);
     }
     
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.wizard.IWizardPage#setWizard(org.eclipse.jface.wizard.IWizard)
+     */
+    public void setWizard(IWizard newWizard)
+    {
+        super.setWizard(newWizard);
+        mWizard = (NSISWizard)newWizard;
+    }
+
     protected class NSISWizardPageAdapter implements INSISWizardPageListener
     {
         /* (non-Javadoc)
@@ -208,4 +216,6 @@ public abstract class AbstractNSISWizardPage extends WizardPage implements INSIS
         {
         }
     }
+
+    public abstract boolean validatePage(int flag);
 }

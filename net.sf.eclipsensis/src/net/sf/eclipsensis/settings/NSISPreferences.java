@@ -1,8 +1,8 @@
 /*******************************************************************************
- * Copyright (c) 2004 Sunil Kamath (IcemanK).
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which is available at http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2004, 2005 Sunil Kamath (IcemanK).
+ * All rights reserved.
+ * This program is made available under the terms of the Common Public License
+ * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
@@ -10,11 +10,13 @@
 package net.sf.eclipsensis.settings;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Properties;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.editor.text.NSISSyntaxStyle;
 import net.sf.eclipsensis.util.ColorManager;
+import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.util.NSISValidator;
 
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -97,7 +99,7 @@ public class NSISPreferences extends NSISSettings
         initializePreference(NOCD,(getDefaultNoCD()?Boolean.TRUE:Boolean.FALSE));
         initializePreference(VERBOSITY,new Integer(getDefaultVerbosity()));
         initializePreference(COMPRESSOR,new Integer(getDefaultCompressor()));
-        initializePreference(INSTRUCTIONS,new Integer(0)); //$NON-NLS-1$
+        initializePreference(INSTRUCTIONS,""); //$NON-NLS-1$
         initializePreference(SYMBOLS,""); //$NON-NLS-1$
         
         setNSISHome(mPreferenceStore.getString(NSIS_HOME));
@@ -315,5 +317,52 @@ public class NSISPreferences extends NSISSettings
     public String getNSISOption(String option)
     {
         return mNSISOptions.getProperty(option);
+    }
+    
+    protected void storeObject(String settingName, Object object)
+    {
+        String fileName = getString(settingName);
+        if(Common.isEmpty(fileName)) {
+            fileName = makeSettingsFileName(settingName);
+        }
+        File objectFile = new File(cPluginStateLocation,fileName);
+        if(object == null) {
+            if(objectFile.exists()) {
+                objectFile.delete();
+            }
+            setValue(settingName,"");
+        }
+        else {
+            try {
+                Common.writeObjectToFile(objectFile, object);
+                setValue(settingName,fileName);
+            }
+            catch(IOException ioe) {
+                setValue(settingName,"");
+                System.out.println(ioe);
+            }
+        }
+    }
+
+    protected Object loadObject(String settingName)
+    {
+        String fileName = getString(settingName);
+        File objectFile = new File(cPluginStateLocation,fileName);
+        Object object = null;
+        if(objectFile.exists()) {
+            try {
+                object = Common.readObjectFromFile(objectFile);
+            }
+            catch (Exception e) {
+                object = null;
+            }
+        }
+        
+        return object;
+    }
+    
+    private String makeSettingsFileName(String settingName)
+    {
+        return new StringBuffer(getClass().getName()).append(".").append(settingName).append(".xml").toString(); //$NON-NLS-1$
     }
 }

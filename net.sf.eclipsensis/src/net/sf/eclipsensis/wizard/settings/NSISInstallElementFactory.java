@@ -1,8 +1,8 @@
 /*******************************************************************************
- * Copyright (c) 2004 Sunil Kamath (IcemanK).
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which is available at http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2004, 2005 Sunil Kamath (IcemanK).
+ * All rights reserved.
+ * This program is made available under the terms of the Common Public License
+ * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
@@ -26,13 +26,16 @@ public class NSISInstallElementFactory
     private static final Object[] EMPTY_OBJECT_ARRAY = new Object[0];
     
     static {
-        String[] classList = Common.loadArrayProperty(EclipseNSISPlugin.getDefault().getResourceBundle(),"preload.nsisinstallelements"); //$NON-NLS-1$
-        for (int i = 0; i < classList.length; i++) {
-            try {
-                Class clasz = Class.forName(classList[i]);
-            }
-            catch(Exception e)
-            {
+        EclipseNSISPlugin plugin = EclipseNSISPlugin.getDefault();
+        if(plugin != null) {
+            String[] classList = Common.loadArrayProperty(plugin.getResourceBundle(),"preload.nsisinstallelements"); //$NON-NLS-1$
+            for (int i = 0; i < classList.length; i++) {
+                try {
+                    Class clasz = Class.forName(classList[i]);
+                }
+                catch(Exception e)
+                {
+                }
             }
         }
     }

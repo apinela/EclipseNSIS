@@ -1,8 +1,8 @@
 /*******************************************************************************
- * Copyright (c) 2004 Sunil Kamath (IcemanK).
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which is available at http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2004, 2005 Sunil Kamath (IcemanK).
+ * All rights reserved.
+ * This program is made available under the terms of the Common Public License
+ * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
@@ -29,11 +29,10 @@ public class NSISInstallDirectoryDialog extends AbstractNSISInstallItemDialog
     private static ArrayList cProperties = new ArrayList();
     
     static {
-        cProperties.add("copyFolderContents"); //$NON-NLS-1$
         cProperties.add("destination"); //$NON-NLS-1$
-        cProperties.add("recursive"); //$NON-NLS-1$
         cProperties.add("name"); //$NON-NLS-1$
         cProperties.add("overwriteMode"); //$NON-NLS-1$
+        cProperties.add("recursive"); //$NON-NLS-1$
     }
 
     public NSISInstallDirectoryDialog(Shell parentShell, NSISInstallDirectory item)
@@ -91,33 +90,15 @@ public class NSISInstallDirectoryDialog extends AbstractNSISInstallItemDialog
                 mStore.setValue("overwrite",c2.getSelectionIndex()); //$NON-NLS-1$
             }
         });
-
-        Composite composite2 = new Composite(parent, SWT.NONE);
-        gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-        gd.horizontalSpan = 3;
-        composite2.setLayoutData(gd);
         
-        layout = new GridLayout(2,true);
-        layout.marginHeight = 0;
-        layout.marginWidth = 0;
-        composite2.setLayout(layout);
-        
-        final Button cb1 = NSISWizardDialogUtil.createCheckBox(composite2,"wizard.recursive.label",mStore.getBoolean("recursive"),true,null,false); //$NON-NLS-1$ //$NON-NLS-2$
+        final Button cb1 = NSISWizardDialogUtil.createCheckBox(composite,"wizard.recursive.label",mStore.getBoolean("recursive"),true,null,false); //$NON-NLS-1$ //$NON-NLS-2$
         cb1.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 mStore.setValue("recursive",cb1.getSelection()); //$NON-NLS-1$
             }
         });
-        ((GridData)cb1.getLayoutData()).horizontalSpan = 1;
-        
-        final Button cb2 = NSISWizardDialogUtil.createCheckBox(composite2,"wizard.copy.folder.contents.label",mStore.getBoolean("copyFolderContents"),true,null,false); //$NON-NLS-1$ //$NON-NLS-2$
-        cb2.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
-                mStore.setValue("copyFolderContents",cb2.getSelection()); //$NON-NLS-1$
-            }
-        });
-        ((GridData)cb2.getLayoutData()).horizontalSpan = 1;
-        
+        ((GridData)cb1.getLayoutData()).horizontalSpan = 2;
+
         return composite;
     }
     
@@ -126,6 +107,6 @@ public class NSISInstallDirectoryDialog extends AbstractNSISInstallItemDialog
      */
     protected boolean validate()
     {
-        return Common.isValidPath(mStore.getString("name")) && Common.isValidNSISPrefixedPathName(mStore.getString("destination")); //$NON-NLS-1$ //$NON-NLS-2$
+        return Common.isValidPath(mStore.getString("name")) && Common.isValidNSISPathName(mStore.getString("destination")); //$NON-NLS-1$ //$NON-NLS-2$
     }
 }

@@ -1,18 +1,23 @@
 /*******************************************************************************
- * Copyright (c) 2004 Sunil Kamath (IcemanK).
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which is available at http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2004, 2005 Sunil Kamath (IcemanK).
+ * All rights reserved.
+ * This program is made available under the terms of the Common Public License
+ * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
 package net.sf.eclipsensis.wizard;
 
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.util.ColorManager;
+import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.wizard.settings.NSISWizardSettings;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -28,8 +33,29 @@ public class NSISWizard extends Wizard implements INewWizard, INSISWizardConstan
 {
     private NSISWizardSettings mSettings = new NSISWizardSettings();
     private String mWindowTitle = ""; //$NON-NLS-1$
+    private String mTemplateName = ""; //$NON-NLS-1$
+    private ArrayList mSettingsListeners = new ArrayList();
+    private static File cTemplateFolder = null;
     
-	/**
+    static {
+        cTemplateFolder = new File(EclipseNSISPlugin.getPluginStateLocation(),"wizard");
+        if(cTemplateFolder.exists()) {
+            if(!cTemplateFolder.isDirectory()) {
+                cTemplateFolder.delete();
+            }
+        }
+        cTemplateFolder.mkdirs();
+    }
+
+    /**
+     * @return Returns the templateFolder.
+     */
+    public static File getTemplateFolder()
+    {
+        return cTemplateFolder;
+    }
+
+    /**
 	 * Constructor for NSISWizard.
 	 */
 	public NSISWizard() 
@@ -39,6 +65,7 @@ public class NSISWizard extends Wizard implements INewWizard, INSISWizardConstan
         mWindowTitle = EclipseNSISPlugin.getResourceString("wizard.window.title"); //$NON-NLS-1$
         setWindowTitle(mWindowTitle);
         setTitleBarColor(ColorManager.WHITE);
+        mSettings.setWizard(this);
 	}
 	
 	/**
@@ -48,12 +75,12 @@ public class NSISWizard extends Wizard implements INewWizard, INSISWizardConstan
 	public void addPages() 
     {
         if(EclipseNSISPlugin.getDefault().isConfigured()) {
-    		addPage(new NSISWizardWelcomePage(mSettings));
-            addPage(new NSISWizardGeneralPage(mSettings));
-            addPage(new NSISWizardAttributesPage(mSettings));
-            addPage(new NSISWizardPresentationPage(mSettings));
-            addPage(new NSISWizardContentsPage(mSettings));
-            addPage(new NSISWizardCompletionPage(mSettings));
+    		addPage(new NSISWizardWelcomePage());
+            addPage(new NSISWizardGeneralPage());
+            addPage(new NSISWizardAttributesPage());
+            addPage(new NSISWizardPresentationPage());
+            addPage(new NSISWizardContentsPage());
+            addPage(new NSISWizardCompletionPage());
         }
         else {
             String error = EclipseNSISPlugin.getResourceString("wizard.unconfigured.error"); //$NON-NLS-1$
@@ -63,7 +90,44 @@ public class NSISWizard extends Wizard implements INewWizard, INSISWizardConstan
         }
 	}
 
-	public boolean performFinish() 
+    /**
+     * @return Returns the settings.
+     */
+    public NSISWizardSettings getSettings()
+    {
+        return mSettings;
+    }
+   
+    /**
+     * @return Returns the templateName.
+     */
+    public String getTemplateName()
+    {
+        return mTemplateName;
+    }
+
+    void saveTemplate(String templateName) throws IOException
+    {
+        Common.writeObjectToFile(new File(cTemplateFolder,templateName+WIZARD_TEMPLATE_EXTENSION), mSettings);
+        mTemplateName = templateName;
+    }
+    
+    void loadTemplate(String templateName) throws IOException, ClassNotFoundException
+    {
+        mSettings = (NSISWizardSettings)Common.readObjectFromFile(new File(cTemplateFolder,templateName+WIZARD_TEMPLATE_EXTENSION));
+        mSettings.setWizard(this);
+        mTemplateName = templateName;
+        for(Iterator iter=mSettingsListeners.iterator(); iter.hasNext(); ) {
+            ((INSISWizardSettingsListener)iter.next()).settingsChanged();
+        }
+        IWizardPage[] pages = getPages();
+        for (int i = 0; i < pages.length; i++) {
+            ((AbstractNSISWizardPage)pages[i]).validatePage(0xFFFF);
+        }
+        getContainer().updateButtons();
+    }
+
+    public boolean performFinish() 
     {
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException
@@ -128,6 +192,16 @@ public class NSISWizard extends Wizard implements INewWizard, INSISWizardConstan
             prevPage = super.getNextPage(prevPage);
         }
         return prevPage;
+    }
+
+    public void addSettingsListener(INSISWizardSettingsListener listener)
+    {
+        mSettingsListeners.add(listener);
+    }
+
+    public void removeSettingsListener(INSISWizardSettingsListener listener)
+    {
+        mSettingsListeners.remove(listener);
     }
 
     /* (non-Javadoc)

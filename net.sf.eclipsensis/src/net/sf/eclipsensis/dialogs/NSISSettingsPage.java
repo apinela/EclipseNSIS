@@ -1,8 +1,8 @@
 /*******************************************************************************
- * Copyright (c) 2004 Sunil Kamath (IcemanK).
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which is available at http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2004, 2005 Sunil Kamath (IcemanK).
+ * All rights reserved.
+ * This program is made available under the terms of the Common Public License
+ * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
@@ -10,7 +10,12 @@
 package net.sf.eclipsensis.dialogs;
 
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
@@ -18,15 +23,38 @@ import net.sf.eclipsensis.makensis.MakeNSISRunner;
 import net.sf.eclipsensis.settings.INSISPreferenceConstants;
 import net.sf.eclipsensis.settings.NSISSettings;
 import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.viewer.*;
+import net.sf.eclipsensis.util.ImageManager;
+import net.sf.eclipsensis.viewer.CollectionContentProvider;
+import net.sf.eclipsensis.viewer.CollectionLabelProvider;
+import net.sf.eclipsensis.viewer.MapContentProvider;
+import net.sf.eclipsensis.viewer.MapLabelProvider;
+import net.sf.eclipsensis.viewer.TableViewerUpDownMover;
 
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.IContentProvider;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.ControlAdapter;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.TabFolder;
+import org.eclipse.swt.widgets.TabItem;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.dialogs.PropertyPage;
@@ -135,6 +163,7 @@ public abstract class NSISSettingsPage	extends PropertyPage implements IWorkbenc
         if(state) {
             //Hack to properly enable the buttons
             mInstructions.setSelection(mInstructions.getSelection());
+            mSymbols.setSelection(mSymbols.getSelection());
         }
         TabItem[] tabItems = mFolder.getItems();
         for(int i=1; i<tabItems.length; i++) {
@@ -216,12 +245,11 @@ public abstract class NSISSettingsPage	extends PropertyPage implements IWorkbenc
         return combo;
     }
 
-    protected TableViewer createTableViewer(Composite composite, Object input, IContentProvider contentProvider,
+    protected TableViewer createTableViewer(Composite composite, final Object input, IContentProvider contentProvider,
                                             ILabelProvider labelProvider, String description, String[] columnNames, 
-                                            String addText, String addTooltip, String editText, 
-                                            String editTooltip, String removeText, String removeTooltip,
+                                            String addTooltip, String editTooltip, String removeTooltip,
                                             SelectionAdapter addAdapter, SelectionAdapter editAdapter,
-                                            SelectionAdapter removeAdapter)
+                                            SelectionAdapter removeAdapter, final TableViewerUpDownMover mover)
     {
         GridLayout layout = new GridLayout(2,false);
         composite.setLayout(layout);
@@ -242,34 +270,56 @@ public abstract class NSISSettingsPage	extends PropertyPage implements IWorkbenc
                 tableColumn.setText(columnNames[i]);
             }
         }
-
-        data = new GridData(GridData.FILL_BOTH);
-        data.verticalSpan = 3;
-        table.setLayoutData(data);
-        Button addButton = createButton(composite,addText,addTooltip);
-        if(addAdapter != null) {
-            addButton.addSelectionListener(addAdapter);
-        }
-        final Button editButton = createButton(composite,editText,editTooltip);
-        editButton.setEnabled(false);
-        if(editAdapter != null) {
-            editButton.addSelectionListener(editAdapter);
-        }
-        final Button removeButton = createButton(composite,removeText,removeTooltip);
-        removeButton.setEnabled(false);
-        if(removeAdapter != null) {
-            removeButton.addSelectionListener(removeAdapter);
-        }
-        
         TableViewer viewer = new TableViewer(table);
         viewer.setContentProvider((contentProvider==null?new WorkbenchContentProvider():contentProvider));
         viewer.setLabelProvider((labelProvider == null?new WorkbenchLabelProvider():labelProvider));
         viewer.setInput(input);
+        mover.setInput(viewer);
+
+        data = new GridData(GridData.FILL_BOTH);
+        data.verticalSpan = 5;
+        table.setLayoutData(data);
+        Button addButton = createButton(composite,ImageManager.getImage(EclipseNSISPlugin.getResourceString("add.icon")),addTooltip);
+        if(addAdapter != null) {
+            addButton.addSelectionListener(addAdapter);
+        }
+        final Button editButton = createButton(composite,ImageManager.getImage(EclipseNSISPlugin.getResourceString("edit.icon")),editTooltip);
+        editButton.setEnabled(false);
+        if(editAdapter != null) {
+            editButton.addSelectionListener(editAdapter);
+        }
+        final Button removeButton = createButton(composite,ImageManager.getImage(EclipseNSISPlugin.getResourceString("delete.icon")),removeTooltip);
+        removeButton.setEnabled(false);
+        if(removeAdapter != null) {
+            removeButton.addSelectionListener(removeAdapter);
+        }
+        final Button upButton = createButton(composite,ImageManager.getImage(EclipseNSISPlugin.getResourceString("up.icon")),
+                                                       EclipseNSISPlugin.getResourceString("up.tooltip"));
+        upButton.setEnabled(mover.canMoveUp());
+        upButton.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) 
+            {
+                mover.moveUp();
+            }
+        });
+        
+        final Button downButton = createButton(composite,ImageManager.getImage(EclipseNSISPlugin.getResourceString("down.icon")),
+                                                         EclipseNSISPlugin.getResourceString("down.tooltip"));
+        downButton.setEnabled(mover.canMoveDown());
+        downButton.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) 
+            {
+                mover.moveDown();
+            }
+        });
+        
         viewer.addSelectionChangedListener(new ISelectionChangedListener() {
             public void selectionChanged(SelectionChangedEvent event) {
                 IStructuredSelection selection = (IStructuredSelection)event.getSelection();
                 removeButton.setEnabled((selection != null && !selection.isEmpty()));
                 editButton.setEnabled((selection != null && selection.size()==1));
+                upButton.setEnabled(mover.canMoveUp());
+                downButton.setEnabled(mover.canMoveDown());
             }
         });
 
@@ -290,10 +340,15 @@ public abstract class NSISSettingsPage	extends PropertyPage implements IWorkbenc
         return viewer;
     }
     
-    protected Button createButton(Composite parent, String text, String tooltipText)
+    protected Button createButton(Composite parent, Object object, String tooltipText)
     {
         Button button = new Button(parent, SWT.PUSH | SWT.CENTER);
-        button.setText(text);
+        if(object instanceof Image) {
+            button.setImage((Image)object);
+        }
+        else {
+            button.setText(object.toString());
+        }
         button.setToolTipText(tooltipText);
         GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_BEGINNING);
         button.setLayoutData(data);
@@ -328,18 +383,45 @@ public abstract class NSISSettingsPage	extends PropertyPage implements IWorkbenc
                 mSymbols.refresh();
             }
         };
+
+        TableViewerUpDownMover mover = new TableViewerUpDownMover() {
+
+            protected List getAllElements()
+            {
+                return new ArrayList(((LinkedHashMap)((TableViewer)getInput()).getInput()).entrySet());
+            }
+
+            protected List getMoveElements()
+            {
+                IStructuredSelection sel = (IStructuredSelection)((TableViewer)getInput()).getSelection();
+                if(!sel.isEmpty()) {
+                    return sel.toList();
+                }
+                else {
+                    return new ArrayList();
+                }
+            }
+
+            protected void updateStructuredViewerInput(Object input, List elements)
+            {
+                ((LinkedHashMap)input).clear();
+                for(Iterator iter=elements.iterator(); iter.hasNext(); ) {
+                    Map.Entry entry = (Map.Entry)iter.next();
+                    ((LinkedHashMap)input).put(entry.getKey(),entry.getValue());
+                }
+            }
+            
+        };
+        
         mSymbols = createTableViewer(composite, mSettings.getSymbols(), new MapContentProvider(), new MapLabelProvider(),
                                      EclipseNSISPlugin.getResourceString("symbols.description"), //$NON-NLS-1$
                                      new String[] {
                                          EclipseNSISPlugin.getResourceString("symbols.name.text"), //$NON-NLS-1$
                                          EclipseNSISPlugin.getResourceString("symbols.value.text")}, //$NON-NLS-1$
-                                     EclipseNSISPlugin.getResourceString("symbols.add.text"), //$NON-NLS-1$
-                                     EclipseNSISPlugin.getResourceString("symbols.add.tooltip"), //$NON-NLS-1$
-                                     EclipseNSISPlugin.getResourceString("symbols.edit.text"), //$NON-NLS-1$
-                                     EclipseNSISPlugin.getResourceString("symbols.edit.tooltip"), //$NON-NLS-1$
-                                     EclipseNSISPlugin.getResourceString("symbols.remove.text"), //$NON-NLS-1$
-                                     EclipseNSISPlugin.getResourceString("symbols.remove.tooltip"), //$NON-NLS-1$
-                                     addAdapter,editAdapter,removeAdapter);
+                                         EclipseNSISPlugin.getResourceString("symbols.add.tooltip"), //$NON-NLS-1$
+                                         EclipseNSISPlugin.getResourceString("symbols.edit.tooltip"), //$NON-NLS-1$
+                                         EclipseNSISPlugin.getResourceString("symbols.remove.tooltip"), //$NON-NLS-1$
+                                     addAdapter,editAdapter,removeAdapter, mover);
         return composite;
     }
 
@@ -371,17 +453,38 @@ public abstract class NSISSettingsPage	extends PropertyPage implements IWorkbenc
             }
         };
 
+        TableViewerUpDownMover mover = new TableViewerUpDownMover() {
+
+            protected List getAllElements()
+            {
+                return (ArrayList)((TableViewer)getInput()).getInput();
+            }
+
+            protected List getMoveElements()
+            {
+                IStructuredSelection sel = (IStructuredSelection)((TableViewer)getInput()).getSelection();
+                if(!sel.isEmpty()) {
+                    return sel.toList();
+                }
+                else {
+                    return new ArrayList();
+                }
+            }
+
+            protected void updateStructuredViewerInput(Object input, List elements)
+            {
+                ((ArrayList)input).clear();
+                ((ArrayList)input).addAll(elements);
+            }
+        };
         mInstructions = createTableViewer(composite, mSettings.getInstructions(),
                                       new CollectionContentProvider(), new CollectionLabelProvider(),
                                       EclipseNSISPlugin.getResourceString("instructions.description"), //$NON-NLS-1$
                                       new String[]{EclipseNSISPlugin.getResourceString("instructions.instruction.text")}, //$NON-NLS-1$
-                                      EclipseNSISPlugin.getResourceString("instructions.add.text"), //$NON-NLS-1$
                                       EclipseNSISPlugin.getResourceString("instructions.add.tooltip"), //$NON-NLS-1$
-                                      EclipseNSISPlugin.getResourceString("instructions.edit.text"), //$NON-NLS-1$
                                       EclipseNSISPlugin.getResourceString("instructions.edit.tooltip"), //$NON-NLS-1$
-                                      EclipseNSISPlugin.getResourceString("instructions.remove.text"), //$NON-NLS-1$
                                       EclipseNSISPlugin.getResourceString("instructions.remove.tooltip"), //$NON-NLS-1$
-                                      addAdapter,editAdapter,removeAdapter);
+                                      addAdapter,editAdapter,removeAdapter, mover);
         ((GridLayout)composite.getLayout()).marginWidth = 0;
         GridData data = new GridData(GridData.FILL_BOTH);
         composite.setLayoutData(data);
@@ -402,7 +505,7 @@ public abstract class NSISSettingsPage	extends PropertyPage implements IWorkbenc
             mSettings.setVerbosity(mVerbosity.getSelectionIndex());
             mSettings.setCompressor(mCompressor.getSelectionIndex());
             mSettings.setInstructions((ArrayList)mInstructions.getInput());
-            mSettings.setSymbols((Properties)mSymbols.getInput());
+            mSettings.setSymbols((LinkedHashMap)mSymbols.getInput());
             mSettings.store(); 
             return true;
         }

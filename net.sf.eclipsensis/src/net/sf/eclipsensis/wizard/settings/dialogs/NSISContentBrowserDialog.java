@@ -1,8 +1,8 @@
 /*******************************************************************************
- * Copyright (c) 2004 Sunil Kamath (IcemanK).
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which is available at http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2004, 2005 Sunil Kamath (IcemanK).
+ * All rights reserved.
+ * This program is made available under the terms of the Common Public License
+ * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
@@ -91,7 +91,7 @@ public class NSISContentBrowserDialog extends Dialog
         ViewerFilter vf = new ViewerFilter() {
             private HashSet mTypes = new HashSet(Arrays.asList(new String[]{
                                                     NSISWizardSettings.INSTALLER_TYPE,
-                                                    NSISSubSection.TYPE,
+                                                    NSISSectionGroup.TYPE,
                                                     NSISSection.TYPE,
                                                     NSISInstallDirectory.TYPE,
                                                     NSISInstallFile.TYPE,
@@ -102,15 +102,7 @@ public class NSISContentBrowserDialog extends Dialog
             public boolean select(Viewer viewer, Object parentElement, Object element)
             {
                 if(element instanceof INSISInstallElement) {
-                    INSISInstallElement installElement = (INSISInstallElement)element;
-                    if(mTypes.contains(installElement.getType())) {
-                        if(installElement instanceof NSISInstallDirectory) {
-                            return !((NSISInstallDirectory)installElement).isCopyFolderContents();
-                        }
-                        else {
-                            return true;
-                        }
-                    }
+                    return mTypes.contains(((INSISInstallElement)element).getType());
                 }
                 return false;
             }

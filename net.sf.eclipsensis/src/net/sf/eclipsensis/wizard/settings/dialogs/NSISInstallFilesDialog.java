@@ -1,32 +1,55 @@
 /*******************************************************************************
- * Copyright (c) 2004 Sunil Kamath (IcemanK).
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which is available at http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2004, 2005 Sunil Kamath (IcemanK).
+ * All rights reserved.
+ * This program is made available under the terms of the Common Public License
+ * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
 package net.sf.eclipsensis.wizard.settings.dialogs;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.ImageManager;
 import net.sf.eclipsensis.viewer.CollectionContentProvider;
 import net.sf.eclipsensis.viewer.CollectionLabelProvider;
+import net.sf.eclipsensis.viewer.TableViewerUpDownMover;
 import net.sf.eclipsensis.wizard.NSISWizardDisplayValues;
 import net.sf.eclipsensis.wizard.settings.NSISInstallFiles;
 import net.sf.eclipsensis.wizard.util.NSISWizardDialogUtil;
 
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.ControlAdapter;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
 
 public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
 {
@@ -96,6 +119,43 @@ public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
         TableColumn tableColumn = new TableColumn(table,SWT.LEFT,0);
         tableColumn.setText(EclipseNSISPlugin.getResourceString("wizard.file.name.label")); //$NON-NLS-1$
         
+        final TableViewer viewer = new TableViewer(table);
+        viewer.setContentProvider(new CollectionContentProvider());
+        viewer.setLabelProvider(new CollectionLabelProvider());
+        viewer.setInput(mFiles);
+        
+        final TableViewerUpDownMover mover = new TableViewerUpDownMover(){
+            protected List getAllElements()
+            {
+                Collection collection = (Collection)((TableViewer)getInput()).getInput();
+                if(collection instanceof List) {
+                    return (List)collection;
+                }
+                else {
+                    return new ArrayList(collection);
+                }
+            }
+
+            protected List getMoveElements()
+            {
+                IStructuredSelection sel = (IStructuredSelection)((TableViewer)getInput()).getSelection();
+                if(!sel.isEmpty()) {
+                    return sel.toList();
+                }
+                else {
+                    return new ArrayList();
+                }
+            }
+
+            protected void updateStructuredViewerInput(Object input, List elements)
+            {
+                ((Collection)input).clear();
+                ((Collection)input).addAll(elements);
+            }
+        };
+
+        mover.setInput(viewer);
+        
         composite2 = new Composite(composite2, SWT.NONE);
         gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
         gd.horizontalSpan = 1;
@@ -107,20 +167,31 @@ public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
         composite2.setLayout(layout);
 
         final Button addButton = new Button(composite2,SWT.PUSH);
-        addButton.setText(EclipseNSISPlugin.getResourceString("wizard.add.files.label")); //$NON-NLS-1$
+        addButton.setToolTipText(EclipseNSISPlugin.getResourceString("wizard.add.files.tooltip")); //$NON-NLS-1$
+        addButton.setImage(ImageManager.getImage(EclipseNSISPlugin.getResourceString("add.icon"))); //$NON-NLS-1$
         gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_BEGINNING);
         addButton.setLayoutData(gd);
 
         final Button removeButton = new Button(composite2,SWT.PUSH);
-        removeButton.setText(EclipseNSISPlugin.getResourceString("wizard.remove.files.label")); //$NON-NLS-1$
+        removeButton.setToolTipText(EclipseNSISPlugin.getResourceString("wizard.remove.files.tooltip")); //$NON-NLS-1$
+        removeButton.setImage(ImageManager.getImage(EclipseNSISPlugin.getResourceString("delete.icon"))); //$NON-NLS-1$
         gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_BEGINNING);
         removeButton.setLayoutData(gd);
         removeButton.setEnabled(false);
-
-        final TableViewer viewer = new TableViewer(table);
-        viewer.setContentProvider(new CollectionContentProvider());
-        viewer.setLabelProvider(new CollectionLabelProvider());
-        viewer.setInput(mFiles);
+        
+        final Button upButton = new Button(composite2,SWT.PUSH);
+        gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_BEGINNING);
+        upButton.setLayoutData(gd);
+        upButton.setImage(ImageManager.getImage(EclipseNSISPlugin.getResourceString("up.icon"))); //$NON-NLS-1$
+        upButton.setToolTipText(EclipseNSISPlugin.getResourceString("up.tooltip")); //$NON-NLS-1$
+        upButton.setEnabled(mover.canMoveUp());
+        
+        final Button downButton = new Button(composite2,SWT.PUSH);
+        gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_BEGINNING);
+        downButton.setLayoutData(gd);
+        downButton.setImage(ImageManager.getImage(EclipseNSISPlugin.getResourceString("down.icon"))); //$NON-NLS-1$
+        downButton.setToolTipText(EclipseNSISPlugin.getResourceString("down.tooltip")); //$NON-NLS-1$
+        downButton.setEnabled(mover.canMoveDown());
 
         final ResourceBundle bundle = EclipseNSISPlugin.getDefault().getResourceBundle();
         addButton.addSelectionListener(new SelectionAdapter() {
@@ -159,10 +230,26 @@ public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
             }
         });
         
+        upButton.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent se) 
+            {
+                mover.moveUp();
+            }
+        });
+        
+        downButton.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent se) 
+            {
+                mover.moveDown();
+            }
+        });
+
         viewer.addSelectionChangedListener(new ISelectionChangedListener() {
             public void selectionChanged(SelectionChangedEvent event) {
                 IStructuredSelection selection = (IStructuredSelection)event.getSelection();
                 removeButton.setEnabled((selection != null && !selection.isEmpty()));
+                upButton.setEnabled(mover.canMoveUp());
+                downButton.setEnabled(mover.canMoveDown());
             }
         });
 
@@ -180,7 +267,6 @@ public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
             }
         });
         
-
         final Combo c1 = NSISWizardDialogUtil.createCombo(composite,NSISKeywords.PREDEFINED_PATH_VARIABLES,mStore.getString("destination"), //$NON-NLS-1$
                                                          false,"wizard.destination.label",true,null,false); //$NON-NLS-1$
         c1.addModifyListener(new ModifyListener() {
@@ -201,7 +287,7 @@ public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
         });
         return composite;
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.Dialog#okPressed()
      */
@@ -224,6 +310,6 @@ public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
      */
     protected boolean validate()
     {
-        return mFiles.size() > 0 && Common.isValidNSISPrefixedPathName(mStore.getString("destination")); //$NON-NLS-1$
+        return mFiles.size() > 0 && Common.isValidNSISPathName(mStore.getString("destination")); //$NON-NLS-1$
     }
 }

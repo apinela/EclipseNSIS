@@ -1,8 +1,8 @@
 /*******************************************************************************
- * Copyright (c) 2004 Sunil Kamath (IcemanK).
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which is available at http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2004, 2005 Sunil Kamath (IcemanK).
+ * All rights reserved.
+ * This program is made available under the terms of the Common Public License
+ * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
@@ -25,7 +25,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 
 public class NSISLanguageManager implements IPropertyChangeListener
 {
-    private static final String DEFINE_MUI_LANGNAME = "!DEFINE MUI_LANGNAME ";
+    private static final String DEFINE_MUI_LANGNAME = "!DEFINE MUI_LANGNAME "; //$NON-NLS-1$
     private static NSISLanguageManager cInstance = null;
     private static IEclipseNSISPluginListener cShutdownListener = new IEclipseNSISPluginListener() {
         public void stopped()
@@ -65,9 +65,9 @@ public class NSISLanguageManager implements IPropertyChangeListener
     {
         try {
             ResourceBundle bundle = ResourceBundle.getBundle(NSISLanguageManager.class.getName());
-            mLocaleLanguageMap = Common.loadMapProperty(bundle,"locale.language.map");
-            mLanguageIdLocaleMap = Common.loadMapProperty(bundle,"langid.locale.map");
-            mDefaultLanguageId = Integer.valueOf(bundle.getString("default.langid"));
+            mLocaleLanguageMap = Common.loadMapProperty(bundle,"locale.language.map"); //$NON-NLS-1$
+            mLanguageIdLocaleMap = Common.loadMapProperty(bundle,"langid.locale.map"); //$NON-NLS-1$
+            mDefaultLanguageId = Integer.valueOf(bundle.getString("default.langid")); //$NON-NLS-1$
         }
         catch(Exception ex) {
             mDefaultLanguageId = new Integer(1033);
@@ -175,7 +175,7 @@ public class NSISLanguageManager implements IPropertyChangeListener
                                 }
                             }
                             NSISLanguage language = new NSISLanguage(name,displayName,langId);
-                            mLanguageMap.put(name,language);
+                            mLanguageMap.put(name.toUpperCase(),language);
                             mLanguageMap.put(new Integer(langId),language);
                             mLanguages.add(language);
                         }
@@ -201,10 +201,10 @@ public class NSISLanguageManager implements IPropertyChangeListener
         if(lang == null) {
             Locale locale = Locale.getDefault();
             //Try the user's language
-            lang = (NSISLanguage)mLanguageMap.get(locale.getDisplayLanguage(Locale.US));
+            lang = (NSISLanguage)mLanguageMap.get(locale.getDisplayLanguage(Locale.US).toUpperCase());
             if(lang == null) {
                 //See if this is one of the specially mapped locales
-                lang = (NSISLanguage)mLanguageMap.get(mLocaleLanguageMap.get(locale.toString()));
+                lang = (NSISLanguage)mLanguageMap.get(((String)mLocaleLanguageMap.get(locale.toString())).toUpperCase());
                 if(lang == null) {
                     //Try the default lang id
                     lang = (NSISLanguage)mLanguageMap.get(mDefaultLanguageId);
@@ -219,11 +219,27 @@ public class NSISLanguageManager implements IPropertyChangeListener
         return lang;
     }
     
+    public Locale getDefaultLocale()
+    {
+        return getLocaleForLangId(mDefaultLanguageId.intValue());
+    }
+    
+    public NSISLanguage getLanguage(String name)
+    {
+        return (NSISLanguage)mLanguageMap.get(name.toUpperCase());
+    }
+
     public Locale getLocaleForLangId(int langId)
     {
         Locale locale = null;
+        int defaultLangId = mDefaultLanguageId.intValue();
         String strLangId = Integer.toString(langId);
+
         Object obj = mLanguageIdLocaleMap.get(strLangId);
+        if(obj == null && langId != defaultLangId) {
+            obj = getLocaleForLangId(defaultLangId);
+            mLanguageIdLocaleMap.put(strLangId,obj);
+        }
         if(obj != null) {
             if(obj instanceof Locale) {
                 locale = (Locale)obj;
@@ -239,10 +255,10 @@ public class NSISLanguageManager implements IPropertyChangeListener
     private Locale parseLocale(String localeText)
     {
         Locale locale = null;
-        StringTokenizer st = new StringTokenizer(localeText,"_");
+        StringTokenizer st = new StringTokenizer(localeText,"_"); //$NON-NLS-1$
         int n = st.countTokens();
         if(n > 0) {
-            n = Math.max(n,3);
+            n = Math.min(n,3);
             String[] tokens = new String[n];
             for (int i = 0; i < tokens.length; i++) {
                 tokens[i] = st.nextToken();

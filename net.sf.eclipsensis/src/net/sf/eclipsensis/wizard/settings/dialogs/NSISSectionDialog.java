@@ -1,8 +1,8 @@
 /*******************************************************************************
- * Copyright (c) 2004 Sunil Kamath (IcemanK).
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which is available at http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2004, 2005 Sunil Kamath (IcemanK).
+ * All rights reserved.
+ * This program is made available under the terms of the Common Public License
+ * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
@@ -73,13 +73,13 @@ public class NSISSectionDialog extends AbstractNSISInstallItemDialog
             public void verifyText(VerifyEvent e) 
             {
                 String text = ((Text)e.widget).getText();
-                StringBuffer buf = new StringBuffer("");
+                StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
                 buf.append(text.substring(0,e.start)).append(e.text).append(text.substring(e.end));
                 text = buf.toString();
                 if(text.length() > 0) {
                     char c = text.charAt(0);
-                    if(text.equalsIgnoreCase("uninstall") ||
-                       (text.length()>=3 && text.substring(0,3).equalsIgnoreCase("un.")) ||
+                    if(text.equalsIgnoreCase("uninstall") || //$NON-NLS-1$
+                       (text.length()>=3 && text.substring(0,3).equalsIgnoreCase("un.")) || //$NON-NLS-1$
                        Character.isWhitespace(c) || c == '!' || c == '-') {
                         e.doit = false;
                         return;
@@ -191,8 +191,8 @@ public class NSISSectionDialog extends AbstractNSISInstallItemDialog
      */
     protected void okPressed()
     {
-        if(Common.isEmpty(mStore.getString("name"))) {
-            mStore.setValue("hidden",true);
+        if(Common.isEmpty(mStore.getString("name"))) { //$NON-NLS-1$
+            mStore.setValue("hidden",true); //$NON-NLS-1$
         }
         super.okPressed();
     }

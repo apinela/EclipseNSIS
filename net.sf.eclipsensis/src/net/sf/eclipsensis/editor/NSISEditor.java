@@ -1,8 +1,8 @@
-/*******************************************************************************
- * Copyright (c) 2004 Sunil Kamath (IcemanK).
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which is available at http://www.eclipse.org/legal/cpl-v10.html
+/*****************************************************************************
+ * Copyright (c) 2004, 2005 Sunil Kamath (IcemanK).
+ * All rights reserved.
+ * This program is made available under the terms of the Common Public License
+ * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
@@ -34,7 +34,12 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.text.*;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IInformationControlCreator;
+import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.text.ITextViewerExtension5;
+import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.information.InformationPresenter;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.IVerticalRuler;
@@ -42,7 +47,12 @@ import org.eclipse.jface.text.source.projection.ProjectionSupport;
 import org.eclipse.jface.text.source.projection.ProjectionViewer;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IActionDelegate;
@@ -76,7 +86,13 @@ public class NSISEditor extends TextEditor implements INSISConstants, IPropertyC
     {
         Object source = event.getSource();
         ISelection selection = event.getSelection();
-        if(source.equals(getSourceViewer())) {
+        ISourceViewer sourceViewer = getSourceViewer();
+        if(source.equals(sourceViewer)) {
+            IAction action = getAction("NSISAddBlockComment"); //$NON-NLS-1$
+            if(action != null) {
+                action.setEnabled(sourceViewer.getSelectedRange().y > 0);
+            }
+    
             if(mOutlineContentProvider != null) {
                 ITextSelection textSelection = (ITextSelection)selection;
                 IStructuredSelection sel = StructuredSelection.EMPTY;
@@ -193,6 +209,18 @@ public class NSISEditor extends TextEditor implements INSISConstants, IPropertyC
         a = new TextOperationAction(resourceBundle,"tabs.to.spaces.",this,NSISSourceViewer.TABS_TO_SPACES,false); //$NON-NLS-1$
         a.setActionDefinitionId(TABS_TO_SPACES_COMMAND_ID);
         setAction("NSISTabsToSpaces", a); //$NON-NLS-1$
+
+        a = new TextOperationAction(resourceBundle,"toggle.comment.",this,NSISSourceViewer.TOGGLE_COMMENT,false); //$NON-NLS-1$
+        a.setActionDefinitionId(TOGGLE_COMMENT_COMMAND_ID);
+        setAction("NSISToggleComment", a); //$NON-NLS-1$
+
+        a = new TextOperationAction(resourceBundle,"add.block.comment.",this,NSISSourceViewer.ADD_BLOCK_COMMENT,false); //$NON-NLS-1$
+        a.setActionDefinitionId(ADD_BLOCK_COMMENT_COMMAND_ID);
+        setAction("NSISAddBlockComment", a); //$NON-NLS-1$
+
+        a = new TextOperationAction(resourceBundle,"remove.block.comment.",this,NSISSourceViewer.REMOVE_BLOCK_COMMENT,false); //$NON-NLS-1$
+        a.setActionDefinitionId(REMOVE_BLOCK_COMMENT_COMMAND_ID);
+        setAction("NSISRemoveBlockComment", a); //$NON-NLS-1$
     }
     
     public void dispose() {
@@ -261,7 +289,14 @@ public class NSISEditor extends TextEditor implements INSISConstants, IPropertyC
     protected void editorContextMenuAboutToShow(IMenuManager menu) {
         super.editorContextMenuAboutToShow(menu);
         addAction(menu, "ContentAssistProposal"); //$NON-NLS-1$
+        menu.add(new Separator());
         addAction(menu, "NSISTabsToSpaces"); //$NON-NLS-1$
+        addAction(menu, "NSISToggleComment"); //$NON-NLS-1$
+        addAction(menu, "NSISAddBlockComment"); //$NON-NLS-1$
+        IAction action = getAction("NSISAddBlockComment"); //$NON-NLS-1$
+        action.setEnabled(getSourceViewer().getSelectedRange().y > 0);
+
+        addAction(menu, "NSISRemoveBlockComment"); //$NON-NLS-1$
         menu.add(new Separator());
         addAction(menu, "NSISInsertFile"); //$NON-NLS-1$
         addAction(menu, "NSISInsertDirectory"); //$NON-NLS-1$

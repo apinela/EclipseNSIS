@@ -1,8 +1,8 @@
 /*******************************************************************************
- * Copyright (c) 2004 Sunil Kamath (IcemanK).
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which is available at http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2004, 2005 Sunil Kamath (IcemanK).
+ * All rights reserved.
+ * This program is made available under the terms of the Common Public License
+ * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
@@ -16,6 +16,7 @@ import net.sf.eclipsensis.dialogs.ColorEditor;
 import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.util.ImageManager;
+import net.sf.eclipsensis.wizard.NSISWizard;
 import net.sf.eclipsensis.wizard.settings.*;
 import net.sf.eclipsensis.wizard.settings.dialogs.NSISContentBrowserDialog;
 
@@ -40,7 +41,6 @@ public class NSISWizardDialogUtil
 
     public static Label createLabel(Composite parent, String labelResource, boolean enabled, MasterSlaveController masterSlaveController, boolean isRequired)
     {
-        GridLayout layout = (GridLayout)parent.getLayout();
         Label l = new Label(parent,SWT.LEFT|SWT.WRAP);
         if(labelResource != null) {
             l.setText(EclipseNSISPlugin.getResourceString(labelResource));
@@ -388,7 +388,7 @@ public class NSISWizardDialogUtil
      * @param isRequired
      * @return
      */
-    public static Combo createContentBrowser(Composite parent, String labelResource, String value, final NSISWizardSettings settings, boolean enabled, MasterSlaveController masterSlaveController, boolean isRequired)
+    public static Combo createContentBrowser(Composite parent, String labelResource, String value, final NSISWizard wizard, boolean enabled, MasterSlaveController masterSlaveController, boolean isRequired)
     {
         parent = checkParentLayoutColumns(parent,3);
         int numColumns = ((GridLayout)parent.getLayout()).numColumns;
@@ -415,7 +415,7 @@ public class NSISWizardDialogUtil
         b.setLayoutData(gd);
         b.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
-                NSISContentBrowserDialog dialog = new NSISContentBrowserDialog(b.getShell(),settings);
+                NSISContentBrowserDialog dialog = new NSISContentBrowserDialog(b.getShell(),wizard.getSettings());
                 if(dialog.open() == Window.OK) {
                     INSISInstallElement element = dialog.getSelectedElement();
                     StringBuffer text = new StringBuffer(""); //$NON-NLS-1$
@@ -436,14 +436,12 @@ public class NSISWizardDialogUtil
                         text.append(new File(((NSISInstallFile)element).getName()).getName());
                     }
                     else if(element instanceof NSISInstallDirectory) {
-                        if(!((NSISInstallDirectory)element).isCopyFolderContents()) {
-                            String destination = ((NSISInstallDirectory)element).getDestination();
-                            text.append(destination);
-                            if(!destination.endsWith("\\")) { //$NON-NLS-1$
-                                text.append("\\"); //$NON-NLS-1$
-                            }
-                            text.append(new File(((NSISInstallDirectory)element).getName()).getName());
+                        String destination = ((NSISInstallDirectory)element).getDestination();
+                        text.append(destination);
+                        if(!destination.endsWith("\\")) { //$NON-NLS-1$
+                            text.append("\\"); //$NON-NLS-1$
                         }
+                        text.append(new File(((NSISInstallDirectory)element).getName()).getName());
                     }
                     c2.setText(text.toString());
                 }

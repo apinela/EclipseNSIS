@@ -1,22 +1,24 @@
 /*******************************************************************************
- * Copyright (c) 2004 Sunil Kamath (IcemanK).
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which is available at http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2004, 2005 Sunil Kamath (IcemanK).
+ * All rights reserved.
+ * This program is made available under the terms of the Common Public License
+ * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
 package net.sf.eclipsensis.help;
 
-import java.util.*;
+import java.util.Enumeration;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.IEclipseNSISPluginListener;
 import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.settings.INSISPreferenceConstants;
 import net.sf.eclipsensis.settings.NSISPreferences;
-import net.sf.eclipsensis.util.CaseInsensitiveProperties;
+import net.sf.eclipsensis.util.CaseInsensitiveMap;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.util.WinAPI;
 
@@ -33,8 +35,8 @@ public class NSISHelpURLProvider implements INSISConstants, IPropertyChangeListe
     private final String mCHMHelpPrefix;
     private final String mCHMHelpSuffix;
 
-    private Properties mDocsHelpURLs = new CaseInsensitiveProperties();
-    private Properties mCHMHelpURLs = new CaseInsensitiveProperties();
+    private CaseInsensitiveMap mDocsHelpURLs = new CaseInsensitiveMap();
+    private CaseInsensitiveMap mCHMHelpURLs = new CaseInsensitiveMap();
     
     private ResourceBundle mBundle;
     
@@ -113,7 +115,7 @@ public class NSISHelpURLProvider implements INSISConstants, IPropertyChangeListe
                     for (int i = 1; i < ids.length; i++) {
                         buf.append(".").append(ids[i]); //$NON-NLS-1$
                     }
-                    mDocsHelpURLs.setProperty(key, buf.toString());
+                    mDocsHelpURLs.put(key, buf.toString());
                 }
             }
         }
@@ -140,7 +142,7 @@ public class NSISHelpURLProvider implements INSISConstants, IPropertyChangeListe
                         for (int i = 1; i < ids.length; i++) {
                             buf.append(".").append(ids[i]); //$NON-NLS-1$
                         }
-                        mCHMHelpURLs.setProperty(key, buf.toString());
+                        mCHMHelpURLs.put(key, buf.toString());
                     }
                 }
             }
@@ -151,10 +153,10 @@ public class NSISHelpURLProvider implements INSISConstants, IPropertyChangeListe
     {
         if(!Common.isEmpty(keyWord)) {
             if(useDocHelp) {
-                return mDocsHelpURLs.getProperty(keyWord);
+                return (String)mDocsHelpURLs.get(keyWord);
             }
             else {
-                return mCHMHelpURLs.getProperty(keyWord);
+                return (String)mCHMHelpURLs.get(keyWord);
             }
         }
         else {

@@ -1,8 +1,8 @@
 /*******************************************************************************
- * Copyright (c) 2004 Sunil Kamath (IcemanK).
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which is available at http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2004, 2005 Sunil Kamath (IcemanK).
+ * All rights reserved.
+ * This program is made available under the terms of the Common Public License
+ * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
@@ -14,6 +14,8 @@ import java.util.LinkedHashSet;
 
 public abstract class AbstractNSISInstallGroup implements INSISInstallElement
 {
+	private static final long serialVersionUID = 6871218426689788748L;
+
     protected LinkedHashSet mChildTypes = new LinkedHashSet();
     protected ArrayList mChildren = new ArrayList();
     protected INSISInstallElement mParent = null;

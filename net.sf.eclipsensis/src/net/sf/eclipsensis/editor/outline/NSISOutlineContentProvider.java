@@ -1,8 +1,8 @@
 /*******************************************************************************
- * Copyright (c) 2004 Sunil Kamath (IcemanK).
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which is available at http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2004, 2005 Sunil Kamath (IcemanK).
+ * All rights reserved.
+ * This program is made available under the terms of the Common Public License
+ * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
@@ -50,9 +50,9 @@ public class NSISOutlineContentProvider implements ITreeContentProvider, INSISCo
     public static final int FUNCTIONEND = FUNCTION+1;
     public static final int SECTION = FUNCTIONEND+1;
     public static final int SECTIONEND = SECTION+1;
-    public static final int SUBSECTION = SECTIONEND+1;
-    public static final int SUBSECTIONEND = SUBSECTION+1;
-    public static final int PAGE = SUBSECTIONEND+1;
+    public static final int SECTIONGROUP = SECTIONEND+1;
+    public static final int SECTIONGROUPEND = SECTIONGROUP+1;
+    public static final int PAGE = SECTIONGROUPEND+1;
     public static final int PAGEEX = PAGE+1;
     public static final int PAGEEXEND = PAGEEX+1;
     
@@ -61,7 +61,7 @@ public class NSISOutlineContentProvider implements ITreeContentProvider, INSISCo
     public static final String[] OUTLINE_KEYWORDS = {"!define", "!ifdef", "!ifndef", "!ifmacrodef",  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
                                                     "!ifnmacrodef", "!endif", "!macro", "!macroend",  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
                                                     "Function", "FunctionEnd", "Section", "SectionEnd",  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-                                                    "SubSection", "SubSectionEnd", "Page", "PageEx",  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                                                    "SectionGroup", "SectionGroupEnd", "Page", "PageEx",  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
                                                     "Pageexend"}; //$NON-NLS-1$
     
     public static final Image[] OUTLINE_IMAGES = new Image[OUTLINE_KEYWORDS.length];
@@ -245,7 +245,7 @@ public class NSISOutlineContentProvider implements ITreeContentProvider, INSISCo
                             case MACRO:
                             case FUNCTION:
                             case SECTION:
-                            case SUBSECTION:
+                            case SECTIONGROUP:
                             case PAGE:
                             case PAGEEX:
                                 if(j < typedRegions.length) {
@@ -262,69 +262,94 @@ public class NSISOutlineContentProvider implements ITreeContentProvider, INSISCo
                                             region = typedRegions[k];
                                         }
                                     }
+                                    outer:
                                     while(k<typedRegions.length) {
                                         String regionType = region.getType();
                                         NSISOutlineTextData data;
                                         String temp = null;
-                                        if(regionType.equals(NSISPartitionScanner.NSIS_STRING)) {
-                                            NSISOutlineRule rule = new NSISOutlineRule(true, false);
-                                            IToken token = rule.evaluate(new NSISRegionScanner(document, region));
+                                        if(!regionType.equals(NSISPartitionScanner.NSIS_STRING) &&
+                                           !regionType.equals(IDocument.DEFAULT_CONTENT_TYPE)) {
+                                            break;
+                                        }
+                                        NSISOutlineRule rule = null;
+                                        rule = new NSISOutlineRule(regionType.equals(NSISPartitionScanner.NSIS_STRING), false);
+                                        NSISRegionScanner regionScanner = new NSISRegionScanner(document, region);
+
+                                        while(true) {
+                                            IToken token = rule.evaluate(regionScanner);
                                             data = (NSISOutlineTextData) token.getData();
                                             if(!Common.isEmpty(data.mName)) {
                                                 temp = data.mName;
                                             }
-                                        }
-                                        else if(regionType.equals(IDocument.DEFAULT_CONTENT_TYPE)) {
-                                            NSISOutlineRule rule = new NSISOutlineRule(false, false);
-                                            IToken token = rule.evaluate(new NSISRegionScanner(document, region));
-                                            data = (NSISOutlineTextData) token.getData();
-                                            temp = data.mName;
-                                        }
-                                        else {
-                                            break;
-                                        }
-                                        if(temp != null) {
-                                            if(nsisToken.mType == SECTION) {
-                                                if( (regionType.equals(IDocument.DEFAULT_CONTENT_TYPE) && !temp.equalsIgnoreCase("/o")) || //$NON-NLS-1$
-                                                    !temp.substring(1,temp.length()-1).equalsIgnoreCase("/o")) { //$NON-NLS-1$
-                                                    name.append(temp);
-                                                    break;
+                                            if(temp != null) {
+                                                if(nsisToken.mType == SECTION) {
+                                                    if(regionType.equals(IDocument.DEFAULT_CONTENT_TYPE)) {
+                                                        if(temp.equalsIgnoreCase("/o")) { //$NON-NLS-1$
+                                                            continue;
+                                                        }
+                                                    }
+                                                    else {
+                                                        if(temp.substring(1,temp.length()-1).equalsIgnoreCase("/o")) { //$NON-NLS-1$
+                                                            continue;
+                                                        }
+                                                    }
+                                                    if(temp.startsWith("-") || temp.startsWith("!")) { //$NON-NLS-1$ //$NON-NLS-2$
+                                                        temp = temp.substring(1);
+                                                    }
+                                                    if(temp.length() > 0) {
+                                                        name.append(temp);
+                                                        break outer;
+                                                    }
+                                                }
+                                                if(nsisToken.mType == SECTIONGROUP) {
+                                                    if(regionType.equals(IDocument.DEFAULT_CONTENT_TYPE)) {
+                                                        if(temp.equalsIgnoreCase("/e")) { //$NON-NLS-1$
+                                                            continue;
+                                                        }
+                                                    }
+                                                    else {
+                                                        if(temp.substring(1,temp.length()-1).equalsIgnoreCase("/e")) { //$NON-NLS-1$
+                                                            continue;
+                                                        }
+                                                    }
+                                                    if(temp.startsWith("!")) { //$NON-NLS-1$
+                                                        temp = temp.substring(1);
+                                                    }
+                                                    if(temp.length() > 0) {
+                                                        name.append(temp);
+                                                        break outer;
+                                                    }
+                                                }
+                                                else if(nsisToken.mType == PAGE) {
+                                                    if( (regionType.equals(IDocument.DEFAULT_CONTENT_TYPE) && temp.equalsIgnoreCase("custom"))|| //$NON-NLS-1$
+                                                         temp.substring(1,temp.length()-1).equalsIgnoreCase("custom")) { //$NON-NLS-1$
+                                                        name.append(temp);
+                                                    }
+                                                    else {
+                                                        if(name.length() > 0) {
+                                                            name.append(" "); //$NON-NLS-1$
+                                                        }
+                                                        name.append(temp);
+                                                        break outer;
+                                                    }
                                                 }
                                                 else {
-                                                    if(!temp.substring(1,temp.length()-1).equalsIgnoreCase("/o")) { //$NON-NLS-1$
-                                                        name.append(temp);
-                                                        break;
-                                                    }
+                                                    name.append(temp);
+                                                    break outer;
                                                 }
                                             }
-                                            else if(nsisToken.mType == PAGE) {
-                                                if( (regionType.equals(IDocument.DEFAULT_CONTENT_TYPE) && temp.equalsIgnoreCase("custom"))|| //$NON-NLS-1$
-                                                     temp.substring(1,temp.length()-1).equalsIgnoreCase("custom")) { //$NON-NLS-1$
-                                                    name.append(temp);
-                                                }
-                                                else {
-                                                    if(name.length() > 0) {
-                                                        name.append(" "); //$NON-NLS-1$
-                                                    }
-                                                    name.append(temp);
-                                                    break;
-                                                }
+                                            newOffset = data.mRegion.getOffset()+data.mRegion.getLength();
+                                            newEnd = typedRegions[k].getOffset()+typedRegions[k].getLength();
+                                            if(newOffset < newEnd) {
+                                                region = new TypedRegion(newOffset, newEnd-newOffset,typedRegions[j].getType());
                                             }
                                             else {
-                                                name.append(temp);
-                                                break;
+                                                k++;
+                                                if(k < typedRegions.length) {
+                                                    region = typedRegions[k];
+                                                }
                                             }
-                                        }
-                                        newOffset = data.mRegion.getOffset()+data.mRegion.getLength();
-                                        newEnd = typedRegions[k].getOffset()+typedRegions[k].getLength();
-                                        if(newOffset < newEnd) {
-                                            region = new TypedRegion(newOffset, newEnd-newOffset,typedRegions[j].getType());
-                                        }
-                                        else {
-                                            k++;
-                                            if(k < typedRegions.length) {
-                                                region = typedRegions[k];
-                                            }
+                                            break;
                                         }
                                     }
                                 }
@@ -354,7 +379,7 @@ public class NSISOutlineContentProvider implements ITreeContentProvider, INSISCo
                                                      new int[]{MACRO});
                                 break;
                             case FUNCTION:
-                                current = openElement(current, element, new int[]{SECTION,SUBSECTION,FUNCTION});
+                                current = openElement(current, element, new int[]{SECTION,SECTIONGROUP,FUNCTION});
                                 break;
                             case FUNCTIONEND:
                                 current = closeElement(document, current, element, 
@@ -367,12 +392,12 @@ public class NSISOutlineContentProvider implements ITreeContentProvider, INSISCo
                                 current = closeElement(document, current, element, 
                                                      new int[]{SECTION});
                                 break;
-                            case SUBSECTION:
-                                current = openElement(current, element, new int[]{SECTION,SUBSECTION,FUNCTION});
+                            case SECTIONGROUP:
+                                current = openElement(current, element, new int[]{SECTION,SECTIONGROUP,FUNCTION});
                                 break;
-                            case SUBSECTIONEND:
+                            case SECTIONGROUPEND:
                                 current = closeElement(document, current, element, 
-                                                     new int[]{SUBSECTION});
+                                                     new int[]{SECTIONGROUP});
                                 break;
                             case PAGE:
                                 if(current.getType() == ROOT) {
@@ -380,7 +405,7 @@ public class NSISOutlineContentProvider implements ITreeContentProvider, INSISCo
                                 }
                                 break;
                             case PAGEEX:
-                                current = openElement(current, element, new int[]{SECTION,SUBSECTION,FUNCTION});
+                                current = openElement(current, element, new int[]{SECTION,SECTIONGROUP,FUNCTION});
                                 break;
                             case PAGEEXEND:
                                 current = closeElement(document, current, element, 
@@ -635,7 +660,7 @@ public class NSISOutlineContentProvider implements ITreeContentProvider, INSISCo
             return createToken(text,offset,offset2-offset);
         }
         
-        protected IToken createToken(String text, int startOffset, int endOffset)
+        protected IToken createToken(String text, int startOffset, int length)
         {
             if(mMatchKeywords) {
                 if(text.length()==0 && !mIsString) {
@@ -661,11 +686,11 @@ public class NSISOutlineContentProvider implements ITreeContentProvider, INSISCo
                         }
                     }
     
-                    return (type == -1?Token.UNDEFINED:new Token(new NSISOutlineData(type, new Region(startOffset,endOffset))));
+                    return (type == -1?Token.UNDEFINED:new Token(new NSISOutlineData(type, new Region(startOffset,length))));
                 }
             }
             else {
-                return new Token(new NSISOutlineTextData(text, new TypedRegion(startOffset,endOffset,(mIsString?NSISPartitionScanner.NSIS_STRING:IDocument.DEFAULT_CONTENT_TYPE))));
+                return new Token(new NSISOutlineTextData(text, new TypedRegion(startOffset,length,(mIsString?NSISPartitionScanner.NSIS_STRING:IDocument.DEFAULT_CONTENT_TYPE))));
             }
         }
     }

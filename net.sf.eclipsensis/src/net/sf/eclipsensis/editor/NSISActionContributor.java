@@ -1,8 +1,8 @@
 /*******************************************************************************
- * Copyright (c) 2004 Sunil Kamath (IcemanK).
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which is available at http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2004, 2005 Sunil Kamath (IcemanK).
+ * All rights reserved.
+ * This program is made available under the terms of the Common Public License
+ * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
@@ -15,8 +15,11 @@ import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.util.ImageManager;
 
+import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
@@ -32,6 +35,9 @@ public class NSISActionContributor extends TextEditorActionContributor implement
 {
 	protected RetargetTextEditorAction mContentAssistProposal;
     protected RetargetTextEditorAction mTabsToSpaces;
+    protected RetargetTextEditorAction mToggleComment;
+    protected RetargetTextEditorAction mAddBlockComment;
+    protected RetargetTextEditorAction mRemoveBlockComment;
     protected RetargetTextEditorAction mInsertFile;
     protected RetargetTextEditorAction mInsertDirectory;
     protected RetargetTextEditorAction mInsertColor;
@@ -49,6 +55,15 @@ public class NSISActionContributor extends TextEditorActionContributor implement
         
         mTabsToSpaces= new RetargetTextEditorAction(bundle, "tabs.to.spaces."); //$NON-NLS-1$
         mTabsToSpaces.setActionDefinitionId(TABS_TO_SPACES_COMMAND_ID);
+        
+        mToggleComment= new RetargetTextEditorAction(bundle, "toggle.comment."); //$NON-NLS-1$
+        mToggleComment.setActionDefinitionId(TOGGLE_COMMENT_COMMAND_ID);
+        
+        mAddBlockComment= new RetargetTextEditorAction(bundle, "add.block.comment."); //$NON-NLS-1$
+        mAddBlockComment.setActionDefinitionId(ADD_BLOCK_COMMENT_COMMAND_ID);
+        
+        mRemoveBlockComment= new RetargetTextEditorAction(bundle, "remove.block.comment."); //$NON-NLS-1$
+        mRemoveBlockComment.setActionDefinitionId(REMOVE_BLOCK_COMMENT_COMMAND_ID);
         
         mInsertFile= new RetargetTextEditorAction(bundle, "insert.file."); //$NON-NLS-1$
         mInsertFile.setImageDescriptor(ImageManager.getImageDescriptor(bundle.getString("insert.file.image"))); //$NON-NLS-1$
@@ -72,19 +87,35 @@ public class NSISActionContributor extends TextEditorActionContributor implement
 	public void init(IActionBars bars) 
     {
 		super.init(bars);
-		
+        
 		IMenuManager menuManager= bars.getMenuManager();
 		IMenuManager editMenu= menuManager.findMenuUsingPath(IWorkbenchActionConstants.M_EDIT);
 		if (editMenu != null) {
 			editMenu.add(new Separator());
 			editMenu.add(mContentAssistProposal);
+            editMenu.add(new Separator());
             editMenu.add(mTabsToSpaces);
+            editMenu.add(mToggleComment);
+            editMenu.add(mAddBlockComment);
+            editMenu.add(mRemoveBlockComment);
             editMenu.add(new Separator());
             editMenu.add(mInsertFile);
             editMenu.add(mInsertDirectory);
             editMenu.add(mInsertColor);
 //			editMenu.add(mContentAssistTip);
-		}	
+		}
+        editMenu.addMenuListener(new IMenuListener() {
+            public void menuAboutToShow(IMenuManager manager)
+            {
+                IEditorPart editor = getActiveEditorPart();
+                if(editor != null && editor instanceof NSISEditor) {
+                    ISelection sel = ((NSISEditor)editor).getSelectionProvider().getSelection();
+                    if(sel instanceof ITextSelection) {
+                        mAddBlockComment.setEnabled(((ITextSelection)sel).getLength() > 0);
+                    }
+                }
+            }
+        });
 	}
 	
 	private void doSetActiveEditor(IEditorPart part) 
@@ -92,14 +123,19 @@ public class NSISActionContributor extends TextEditorActionContributor implement
 		super.setActiveEditor(part);
 
 		ITextEditor editor= null;
-		if (part instanceof ITextEditor)
+		if (part instanceof ITextEditor) {
 			editor= (ITextEditor) part;
+		}
 
 		mContentAssistProposal.setAction(getAction(editor, "ContentAssistProposal")); //$NON-NLS-1$
         mTabsToSpaces.setAction(getAction(editor, "NSISTabsToSpaces")); //$NON-NLS-1$
+        mToggleComment.setAction(getAction(editor, "NSISToggleComment")); //$NON-NLS-1$
+        mAddBlockComment.setAction(getAction(editor, "NSISAddBlockComment")); //$NON-NLS-1$
+        mRemoveBlockComment.setAction(getAction(editor, "NSISRemoveBlockComment")); //$NON-NLS-1$
         mInsertFile.setAction(getAction(editor, "NSISInsertFile")); //$NON-NLS-1$
         mInsertDirectory.setAction(getAction(editor, "NSISInsertDirectory")); //$NON-NLS-1$
         mInsertColor.setAction(getAction(editor, "NSISInsertColor")); //$NON-NLS-1$
+        
 //		mContentAssistTip.setAction(getAction(editor, "ContentAssistTip")); //$NON-NLS-1$
 	}
 	

@@ -1,8 +1,8 @@
 /*******************************************************************************
- * Copyright (c) 2004 Sunil Kamath (IcemanK).
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which is available at http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2004, 2005 Sunil Kamath (IcemanK).
+ * All rights reserved.
+ * This program is made available under the terms of the Common Public License
+ * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
@@ -10,7 +10,12 @@
 package net.sf.eclipsensis.console;
 
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
@@ -24,10 +29,28 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.action.*;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.ActionContributionItem;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.util.OpenStrategy;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IColorProvider;
+import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
@@ -37,9 +60,17 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorReference;
+import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.ide.IGotoMarker;
 import org.eclipse.ui.part.ViewPart;
 
 public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRunListener
@@ -51,9 +82,9 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
     private Action mSelectAllAction;
 	private Action mClearAction;
     private Action mCancelAction;
-	private Action mDoubleClickAction;
-    private ArrayList mContent = new ArrayList();
+	private ArrayList mContent = new ArrayList();
     private ArrayList mErrors = new ArrayList();
+    private ArrayList mWarnings = new ArrayList();
     private HashSet mListeners = new HashSet();
     private boolean mDisposed = false;
     private Clipboard mClipboard = null;
@@ -93,6 +124,7 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
     {
         mContent.clear();
         mErrors.clear();
+        mWarnings.clear();
         if(Thread.currentThread() == mDisplay.getThread()) {
             _clear();
         }
@@ -120,6 +152,9 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
         mContent.add(line);
         if(line.getType() == NSISConsoleLine.ERROR) {
             mErrors.add(line);
+        }
+        else if(line.getType() == NSISConsoleLine.WARNING) {
+            mWarnings.add(line);
         }
         if(Thread.currentThread() == mDisplay.getThread()) {
             _add(line);
@@ -150,6 +185,14 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
     public List getErrors()
     {
         return (mErrors==null?null:Collections.unmodifiableList(mErrors));
+    }
+
+    /**
+     * @return Returns the warnings.
+     */
+    public List getWarnings()
+    {
+        return (mWarnings==null?null:Collections.unmodifiableList(mWarnings));
     }
 
 	/**
@@ -331,45 +374,47 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
                 },EclipseNSISPlugin.getResourceString("cancel.action.name"),EclipseNSISPlugin.getResourceString("cancel.action.tooltip"),EclipseNSISPlugin.getResourceString("cancel.action.icon"),EclipseNSISPlugin.getResourceString("cancel.action.disabled.icon"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
                 null,false);
         cancelActionDelegate.init(mCancelAction);
-
-		mDoubleClickAction = new Action() {
-			public void run() {
-				ISelection selection = mViewer.getSelection();
-                if(selection instanceof IStructuredSelection) {
-    				Object obj = ((IStructuredSelection)selection).getFirstElement();
-                    if(obj !=null && obj instanceof NSISConsoleLine) {
-                        NSISConsoleLine line = (NSISConsoleLine)obj;
-                        IFile file = line.getFile();
-                        int lineNum = line.getLineNum();
-                        if(file != null && lineNum > 0) {
-                            IEditorPart editor = getSite().getPage().getActiveEditor();
-                            if (editor != null) {
-                                IEditorInput input = editor.getEditorInput();
-                                if (input instanceof IFileEditorInput) {
-                                    if (file.equals(((IFileEditorInput) input).getFile())) {
-                                        getSite().getPage().activate(editor);
-                                    }
-                                }
-                            }
-                            else {
-                                try {
-                                    IDE.openEditor(getSite().getPage(), new DummyMarker(file,lineNum), OpenStrategy.activateOnOpen());
-                                }
-                                catch (PartInitException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        }
-                    }
-                }
-			}
-		};
 	}
 
 	private void hookDoubleClickAction() {
 		mViewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
-				mDoubleClickAction.run();
+                ISelection selection = mViewer.getSelection();
+                if(selection instanceof IStructuredSelection) {
+                    Object obj = ((IStructuredSelection)selection).getFirstElement();
+                    if(obj !=null && obj instanceof NSISConsoleLine) {
+                        NSISConsoleLine line = (NSISConsoleLine)obj;
+                        IFile file = line.getFile();
+                        int lineNum = line.getLineNum();
+                        if(file != null && lineNum > 0) {
+                            IEditorReference[] editorRefs = getSite().getPage().getEditorReferences();
+                            if (Common.isEmptyArray(editorRefs)) {
+                                for (int i = 0; i < editorRefs.length; i++) {
+                                    IEditorPart editor = editorRefs[i].getEditor(false);
+                                    if(editor != null) {
+                                        IEditorInput input = editor.getEditorInput();
+                                        if (input instanceof IFileEditorInput) {
+                                            if (file.equals(((IFileEditorInput) input).getFile())) {
+                                                getSite().getPage().activate(editor);
+                                                IGotoMarker igm = (IGotoMarker)editor.getAdapter(IGotoMarker.class);
+                                                if(igm != null) {
+                                                    igm.gotoMarker(new DummyMarker(file,lineNum));
+                                                }
+                                                return;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            try {
+                                IDE.openEditor(getSite().getPage(), new DummyMarker(file,lineNum), OpenStrategy.activateOnOpen());
+                            }
+                            catch (PartInitException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }
 			}
 		});
 	}

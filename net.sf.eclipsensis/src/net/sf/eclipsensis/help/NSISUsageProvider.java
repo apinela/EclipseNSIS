@@ -1,19 +1,19 @@
 /*******************************************************************************
- * Copyright (c) 2004 Sunil Kamath (IcemanK).
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which is available at http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2004, 2005 Sunil Kamath (IcemanK).
+ * All rights reserved.
+ * This program is made available under the terms of the Common Public License
+ * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
 package net.sf.eclipsensis.help;
 
-import java.util.Properties;
+import java.util.Map;
 
 import net.sf.eclipsensis.settings.INSISPreferenceConstants;
 import net.sf.eclipsensis.settings.NSISPreferences;
-import net.sf.eclipsensis.util.CaseInsensitiveProperties;
+import net.sf.eclipsensis.util.CaseInsensitiveMap;
 import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -21,7 +21,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 
 public class NSISUsageProvider
 {
-    private static Properties cUsages = new CaseInsensitiveProperties();
+    private static Map cUsages = new CaseInsensitiveMap();
     private static String cLineSeparator;
     private static NSISPreferences cPreferences = NSISPreferences.getPreferences();
     private static IPropertyChangeListener cPropertyChangeListener;
@@ -43,7 +43,7 @@ public class NSISUsageProvider
     public static String getUsage(String keyWord)
     {
         if(!Common.isEmpty(keyWord)) {
-            return cUsages.getProperty(keyWord);
+            return (String)cUsages.get(keyWord);
         }
         else {
             return null;
@@ -72,7 +72,7 @@ public class NSISUsageProvider
                             String usage = buf.toString();
                             int n = usage.indexOf(" "); //$NON-NLS-1$
                             String keyword = (n > 0?usage.substring(0,n):usage);
-                            cUsages.setProperty(keyword,usage);
+                            cUsages.put(keyword,usage);
                             buf = new StringBuffer(line);
                         }
                     }
@@ -81,7 +81,7 @@ public class NSISUsageProvider
                     String usage = buf.toString();
                     int n = usage.indexOf(" "); //$NON-NLS-1$
                     String keyword = (n > 0?usage.substring(0,n):usage);
-                    cUsages.setProperty(keyword,usage);
+                    cUsages.put(keyword,usage);
                 }
             }
         }

@@ -1,8 +1,8 @@
 /*******************************************************************************
- * Copyright (c) 2004 Sunil Kamath (IcemanK).
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which is available at http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2004, 2005 Sunil Kamath (IcemanK).
+ * All rights reserved.
+ * This program is made available under the terms of the Common Public License
+ * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
@@ -13,17 +13,19 @@ import java.text.MessageFormat;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.util.ImageManager;
-import net.sf.eclipsensis.wizard.settings.dialogs.NSISSubSectionDialog;
+import net.sf.eclipsensis.wizard.settings.dialogs.NSISSectionGroupDialog;
 
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 
-public class NSISSubSection extends AbstractNSISInstallGroup
+public class NSISSectionGroup extends AbstractNSISInstallGroup
 {
-    public static final String TYPE = EclipseNSISPlugin.getResourceString("wizard.subsection.type"); //$NON-NLS-1$
-    private static String cFormat = EclipseNSISPlugin.getResourceString("wizard.subsection.format"); //$NON-NLS-1$
-    private static final Image cImage = ImageManager.getImage(EclipseNSISPlugin.getResourceString("wizard.subsection.icon")); //$NON-NLS-1$
+	private static final long serialVersionUID = 5806218807884563902L;
+
+    public static final String TYPE = EclipseNSISPlugin.getResourceString("wizard.sectiongroup.type"); //$NON-NLS-1$
+    private static String cFormat = EclipseNSISPlugin.getResourceString("wizard.sectiongroup.format"); //$NON-NLS-1$
+    private static final Image cImage = ImageManager.getImage(EclipseNSISPlugin.getResourceString("wizard.sectiongroup.icon")); //$NON-NLS-1$
 
     private String mDescription= ""; //$NON-NLS-1$
     private String mCaption = ""; //$NON-NLS-1$
@@ -31,10 +33,10 @@ public class NSISSubSection extends AbstractNSISInstallGroup
     private boolean mIsBold = false;
 
     static {
-        NSISInstallElementFactory.register(TYPE, NSISSubSection.class);
+        NSISInstallElementFactory.register(TYPE, NSISSectionGroup.class);
     }
     
-    public NSISSubSection()
+    public NSISSectionGroup()
     {
         super();
         mChildTypes.add(NSISSection.TYPE);
@@ -66,7 +68,7 @@ public class NSISSubSection extends AbstractNSISInstallGroup
 
     public boolean edit(Composite composite)
     {
-        return new NSISSubSectionDialog(composite.getShell(),this).open() == Window.OK;
+        return new NSISSectionGroupDialog(composite.getShell(),this).open() == Window.OK;
     }
 
     /* (non-Javadoc)

@@ -1,8 +1,8 @@
 /*******************************************************************************
- * Copyright (c) 2004 Sunil Kamath (IcemanK).
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which is available at http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2004, 2005 Sunil Kamath (IcemanK).
+ * All rights reserved.
+ * This program is made available under the terms of the Common Public License
+ * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
@@ -15,7 +15,7 @@ import java.util.List;
 import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.settings.NSISPreferences;
 import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.wizard.settings.NSISSubSection;
+import net.sf.eclipsensis.wizard.settings.NSISSectionGroup;
 import net.sf.eclipsensis.wizard.util.NSISWizardDialogUtil;
 
 import org.eclipse.swt.SWT;
@@ -24,7 +24,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 
-public class NSISSubSectionDialog extends AbstractNSISInstallItemDialog
+public class NSISSectionGroupDialog extends AbstractNSISInstallItemDialog
 {
     private static ArrayList cProperties = new ArrayList();
     
@@ -35,7 +35,7 @@ public class NSISSubSectionDialog extends AbstractNSISInstallItemDialog
         cProperties.add("expanded"); //$NON-NLS-1$
     }
 
-    public NSISSubSectionDialog(Shell parentShell, NSISSubSection item)
+    public NSISSectionGroupDialog(Shell parentShell, NSISSectionGroup item)
     {
         super(parentShell, item);
     }
@@ -76,12 +76,12 @@ public class NSISSubSectionDialog extends AbstractNSISInstallItemDialog
             public void verifyText(VerifyEvent e) 
             {
                 String text = ((Text)e.widget).getText();
-                StringBuffer buf = new StringBuffer("");
+                StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
                 buf.append(text.substring(0,e.start)).append(e.text).append(text.substring(e.end));
                 text = buf.toString();
                 if(text.length() > 0) {
                     char c = text.charAt(0);
-                    if((text.length()>=3 && text.substring(0,3).equalsIgnoreCase("un.")) ||
+                    if((text.length()>=3 && text.substring(0,3).equalsIgnoreCase("un.")) || //$NON-NLS-1$
                         Character.isWhitespace(c) || c == '!') {
                         e.doit = false;
                         return;

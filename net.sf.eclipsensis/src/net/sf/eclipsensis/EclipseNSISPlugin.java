@@ -1,15 +1,19 @@
 /*******************************************************************************
- * Copyright (c) 2004 Sunil Kamath (IcemanK).
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which is available at http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2004, 2005 Sunil Kamath (IcemanK).
+ * All rights reserved.
+ * This program is made available under the terms of the Common Public License
+ * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
 package net.sf.eclipsensis;
 
-import java.util.*;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
 import net.sf.eclipsensis.dialogs.NSISPreferencePage;
 import net.sf.eclipsensis.settings.NSISPreferences;
@@ -35,6 +39,7 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
 	public static final String NSIS_REG_SUBKEY = "SOFTWARE\\NSIS"; //$NON-NLS-1$
     public static final String NSIS_REG_VALUE = ""; //$NON-NLS-1$
     private static EclipseNSISPlugin cPlugin;
+    private static File cStateLocation = null;
     
 	private ArrayList mListeners = new ArrayList();
 	private ResourceBundle mResourceBundle = null;
@@ -55,7 +60,7 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
 		}
 	}
 
-    /**
+	/**
 	 * This method is called upon plug-in activation
 	 */
 	public void start(BundleContext context) throws Exception {
@@ -128,6 +133,21 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
 	public static EclipseNSISPlugin getDefault() {
 		return cPlugin;
 	}
+    
+    public static File getPluginStateLocation()
+    {
+        if(cStateLocation == null) {
+            synchronized(EclipseNSISPlugin.class) {
+                if(cStateLocation == null) {
+                    EclipseNSISPlugin plugin = EclipseNSISPlugin.getDefault();
+                    if(plugin != null) {
+                        cStateLocation = plugin.getStateLocation().toFile();
+                    }                    
+                }
+            }
+        }
+        return cStateLocation;
+    }
 
 	/**
 	 * Returns the string from the plugin's resource bundle,
@@ -142,12 +162,16 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
      * or the default value if not found.
      */
     public static String getResourceString(String key, String defaultValue) {
-        ResourceBundle bundle = EclipseNSISPlugin.getDefault().getResourceBundle();
-        try {
-            return (bundle != null) ? bundle.getString(key) : defaultValue;
-        } catch (MissingResourceException e) {
-            return defaultValue;
+        EclipseNSISPlugin plugin = EclipseNSISPlugin.getDefault();
+        if(plugin != null) {
+            ResourceBundle bundle = plugin.getResourceBundle();
+            try {
+                return (bundle != null) ? bundle.getString(key) : defaultValue;
+            }
+            catch (MissingResourceException e) {
+            }
         }
+        return defaultValue;
     }
 
 	/**

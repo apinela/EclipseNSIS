@@ -1,8 +1,8 @@
 /*******************************************************************************
- * Copyright (c) 2004 Sunil Kamath (IcemanK).
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which is available at http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2004, 2005 Sunil Kamath (IcemanK).
+ * All rights reserved.
+ * This program is made available under the terms of the Common Public License
+ * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
@@ -19,7 +19,8 @@ import org.eclipse.swt.graphics.Image;
 
 public class ImageManager
 {
-    private static ImageRegistry cImageRegistry = EclipseNSISPlugin.getDefault().getImageRegistry();
+    private static EclipseNSISPlugin cPlugin = EclipseNSISPlugin.getDefault();
+    private static ImageRegistry cImageRegistry = (cPlugin != null?cPlugin.getImageRegistry():null);
 
     public synchronized static ImageDescriptor getImageDescriptor(String location)
     {
@@ -32,21 +33,24 @@ public class ImageManager
      */
     private static URL makeLocationURL(String location)
     {
-        if(Common.isEmpty(location)) {
+        if(cPlugin == null || Common.isEmpty(location)) {
             return null;
         }
         else {
-            return EclipseNSISPlugin.getDefault().getBundle().getEntry(location);
+            return cPlugin.getBundle().getEntry(location);
         }
     }
 
     public synchronized static ImageDescriptor getImageDescriptor(URL url)
     {
         String urlString = (url != null?url.toString():""); //$NON-NLS-1$
-        ImageDescriptor imageDescriptor = cImageRegistry.getDescriptor(urlString);
-        if(imageDescriptor == null) {
-            imageDescriptor = createImageDescriptor(url);
-            cImageRegistry.put(urlString, imageDescriptor);
+        ImageDescriptor imageDescriptor = null;
+        if(cImageRegistry != null) {
+            imageDescriptor = cImageRegistry.getDescriptor(urlString);
+            if(imageDescriptor == null) {
+                imageDescriptor = createImageDescriptor(url);
+                cImageRegistry.put(urlString, imageDescriptor);
+            }
         }
         
         return imageDescriptor;

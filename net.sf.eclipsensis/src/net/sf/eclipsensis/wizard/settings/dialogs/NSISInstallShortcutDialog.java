@@ -1,8 +1,8 @@
 /*******************************************************************************
- * Copyright (c) 2004 Sunil Kamath (IcemanK).
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which is available at http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2004, 2005 Sunil Kamath (IcemanK).
+ * All rights reserved.
+ * This program is made available under the terms of the Common Public License
+ * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
@@ -120,7 +120,7 @@ public class NSISInstallShortcutDialog extends AbstractNSISInstallItemDialog imp
             }
         });
         
-        final Combo c2 = NSISWizardDialogUtil.createContentBrowser(composite, "wizard.path.label", mStore.getString("path"), mItem.getSettings(), true, m2, true); //$NON-NLS-1$ //$NON-NLS-2$
+        final Combo c2 = NSISWizardDialogUtil.createContentBrowser(composite, "wizard.path.label", mStore.getString("path"), mItem.getSettings().getWizard(), true, m2, true); //$NON-NLS-1$ //$NON-NLS-2$
 
         c2.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e)
@@ -141,9 +141,9 @@ public class NSISInstallShortcutDialog extends AbstractNSISInstallItemDialog imp
      */
     protected boolean validate()
     {
-        if(Common.isValidNSISPrefixedPathName(mStore.getString("location")) && Common.isValidFileName(mStore.getString("name"))) { //$NON-NLS-1$ //$NON-NLS-2$
+        if(Common.isValidNSISPathName(mStore.getString("location")) && Common.isValidFileName(mStore.getString("name"))) { //$NON-NLS-1$ //$NON-NLS-2$
             int n = mStore.getInt("shortcutType"); //$NON-NLS-1$
-            if((n == SHORTCUT_INSTALLELEMENT && Common.isValidNSISPrefixedPathName(mStore.getString("path")))|| //$NON-NLS-1$
+            if((n == SHORTCUT_INSTALLELEMENT && Common.isValidNSISPathName(mStore.getString("path")))|| //$NON-NLS-1$
                (n == SHORTCUT_URL && Common.isValidURL(mStore.getString("url")))) { //$NON-NLS-1$
                 return true;
             }

@@ -1,8 +1,8 @@
 /*******************************************************************************
- * Copyright (c) 2004 Sunil Kamath (IcemanK).
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which is available at http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2004, 2005 Sunil Kamath (IcemanK).
+ * All rights reserved.
+ * This program is made available under the terms of the Common Public License
+ * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
@@ -40,13 +40,12 @@ public class NSISWizardGeneralPage extends AbstractNSISWizardPage
 
     
     /**
-     * @param settings
      * @param pageName
      * @param title
      */
-    public NSISWizardGeneralPage(NSISWizardSettings settings)
+    public NSISWizardGeneralPage()
     {
-        super(settings, NAME, EclipseNSISPlugin.getResourceString("wizard.general.title"), //$NON-NLS-1$
+        super(NAME, EclipseNSISPlugin.getResourceString("wizard.general.title"), //$NON-NLS-1$
               EclipseNSISPlugin.getResourceString("wizard.general.description")); //$NON-NLS-1$
     }
 
@@ -60,14 +59,16 @@ public class NSISWizardGeneralPage extends AbstractNSISWizardPage
         }
     }
 
-    private boolean validatePage(int flag)
+    public boolean validatePage(int flag)
     {
+        NSISWizardSettings settings = mWizard.getSettings();
+
         boolean b = ((flag & APPNAME_CHECK) == 0 || validateAppName()) && 
-               ((flag & PUBURL_CHECK) == 0 || validateEmptyOrValidURL(mSettings.getUrl(),null)) &&
-               ((flag & INSTFILE_CHECK) == 0 || validatePathName(mSettings.getOutFile(),cInstallFileErrors)) &&
-               ((flag & INSTICON_CHECK) == 0 || validateEmptyOrValidFile(mSettings.getIcon(),null)) &&
-               ((flag & UNINSTFILE_CHECK) == 0 || !mSettings.isCreateUninstaller() || validateFileName(mSettings.getUninstallFile(),cUninstallFileErrors)) &&
-               ((flag & UNINSTICON_CHECK) == 0 || !mSettings.isCreateUninstaller() || validateEmptyOrValidFile(mSettings.getUninstallIcon(),null));
+               ((flag & PUBURL_CHECK) == 0 || validateEmptyOrValidURL(settings.getUrl(),null)) &&
+               ((flag & INSTFILE_CHECK) == 0 || validatePathName(settings.getOutFile(),cInstallFileErrors)) &&
+               ((flag & INSTICON_CHECK) == 0 || validateEmptyOrValidFile(settings.getIcon(),null)) &&
+               ((flag & UNINSTFILE_CHECK) == 0 || !settings.isCreateUninstaller() || validateFileName(settings.getUninstallFile(),cUninstallFileErrors)) &&
+               ((flag & UNINSTICON_CHECK) == 0 || !settings.isCreateUninstaller() || validateEmptyOrValidFile(settings.getUninstallIcon(),null));
         setPageComplete(b);
         if(b) {
             setErrorMessage(null);
@@ -96,83 +97,96 @@ public class NSISWizardGeneralPage extends AbstractNSISWizardPage
     private void createApplicationGroup(Composite parent)
     {
         Group group = NSISWizardDialogUtil.createGroup(parent, 2, "application.group.label", null, true); //$NON-NLS-1$
+        NSISWizardSettings settings = mWizard.getSettings();
 
-        Text t = NSISWizardDialogUtil.createText(group, mSettings.getName(), "application.name.label", true, null, true); //$NON-NLS-1$
+        final Text t = NSISWizardDialogUtil.createText(group, settings.getName(), "application.name.label", true, null, true); //$NON-NLS-1$
         t.addModifyListener(new ModifyListener(){
            public void modifyText(ModifyEvent e)
            {
+               NSISWizardSettings settings = mWizard.getSettings();
+
                String newName = ((Text)e.widget).getText();
-               String installDir = mSettings.getInstallDir();
-               if(Common.isEmpty(installDir) || installDir.equalsIgnoreCase("$PROGRAMFILES\\"+mSettings.getName())) { //$NON-NLS-1$
-                   mSettings.setInstallDir("$PROGRAMFILES\\"+newName); //$NON-NLS-1$
+               String installDir = settings.getInstallDir();
+               if(Common.isEmpty(installDir) || installDir.equalsIgnoreCase("$PROGRAMFILES\\"+settings.getName())) { //$NON-NLS-1$
+                   settings.setInstallDir("$PROGRAMFILES\\"+newName); //$NON-NLS-1$
                }
-               String startMenuGroup = mSettings.getStartMenuGroup();
-               if(Common.isEmpty(startMenuGroup) || startMenuGroup.equalsIgnoreCase(mSettings.getName())) {
-                   mSettings.setStartMenuGroup(newName);
+               String startMenuGroup = settings.getStartMenuGroup();
+               if(Common.isEmpty(startMenuGroup) || startMenuGroup.equalsIgnoreCase(settings.getName())) {
+                   settings.setStartMenuGroup(newName);
                }
-               mSettings.setName(newName);
+               settings.setName(newName);
                validateField(APPNAME_CHECK);
            }
         });
         
-        t = NSISWizardDialogUtil.createText(group, mSettings.getVersion(), "application.version.label", true, null, false); //$NON-NLS-1$
-        t.addModifyListener(new ModifyListener(){
+        final Text t2 = NSISWizardDialogUtil.createText(group, settings.getVersion(), "application.version.label", true, null, false); //$NON-NLS-1$
+        t2.addModifyListener(new ModifyListener(){
            public void modifyText(ModifyEvent e)
            {
-               mSettings.setVersion(((Text)e.widget).getText());
+               mWizard.getSettings().setVersion(((Text)e.widget).getText());
            }
         });
 
-        t = NSISWizardDialogUtil.createText(group, mSettings.getCompany(), "publisher.name.label", true, null, false); //$NON-NLS-1$
-        t.addModifyListener(new ModifyListener(){
+        final Text t3 = NSISWizardDialogUtil.createText(group, settings.getCompany(), "publisher.name.label", true, null, false); //$NON-NLS-1$
+        t3.addModifyListener(new ModifyListener(){
            public void modifyText(ModifyEvent e)
            {
-               mSettings.setCompany(((Text)e.widget).getText());
+               mWizard.getSettings().setCompany(((Text)e.widget).getText());
            }
         });
 
-        t = NSISWizardDialogUtil.createText(group, mSettings.getUrl(), "publisher.url.label", true, null, false); //$NON-NLS-1$
-        t.addModifyListener(new ModifyListener(){
+        final Text t4 = NSISWizardDialogUtil.createText(group, settings.getUrl(), "publisher.url.label", true, null, false); //$NON-NLS-1$
+        t4.addModifyListener(new ModifyListener(){
            public void modifyText(ModifyEvent e)
            {
-               mSettings.setUrl(((Text)e.widget).getText());
+               mWizard.getSettings().setUrl(((Text)e.widget).getText());
                validateField(PUBURL_CHECK);
            }
         });
-        
+
+        mWizard.addSettingsListener(new INSISWizardSettingsListener() {
+            public void settingsChanged()
+            {
+                NSISWizardSettings settings = mWizard.getSettings();
+                t.setText(settings.getName());
+                t2.setText(settings.getVersion());
+                t3.setText(settings.getCompany());
+                t4.setText(settings.getUrl());
+            }});
     }
 
     private void createInstallerGroup(Composite parent)
     {
         Group group = NSISWizardDialogUtil.createGroup(parent, 3, "installer.group.label", null, true); //$NON-NLS-1$
-        
+        NSISWizardSettings settings = mWizard.getSettings();
+
         ResourceBundle bundle = EclipseNSISPlugin.getDefault().getResourceBundle();
-        Text t = NSISWizardDialogUtil.createFileBrowser(group, mSettings.getOutFile(), true, 
+        final Text t = NSISWizardDialogUtil.createFileBrowser(group, settings.getOutFile(), true, 
                                    Common.loadArrayProperty(bundle,"installer.file.filternames"),  //$NON-NLS-1$
                                    Common.loadArrayProperty(bundle,"installer.file.filters"), "installer.file.label", //$NON-NLS-1$ //$NON-NLS-2$
                                    true, null,true);
         t.addModifyListener(new ModifyListener(){
            public void modifyText(ModifyEvent e)
            {
-               mSettings.setOutFile(((Text)e.widget).getText());
+               mWizard.getSettings().setOutFile(((Text)e.widget).getText());
                validateField(INSTFILE_CHECK);
            }
         });
     
-        final Text t2 = NSISWizardDialogUtil.createImageBrowser(group, mSettings.getIcon(), new Point(36,36), 
+        final Text t2 = NSISWizardDialogUtil.createImageBrowser(group, settings.getIcon(), new Point(36,36), 
                                           Common.loadArrayProperty(bundle,"installer.icon.filternames"),  //$NON-NLS-1$
                                           Common.loadArrayProperty(bundle,"installer.icon.filters"), "installer.icon.label", //$NON-NLS-1$ //$NON-NLS-2$ 
                                           true, null, false);
         t2.addModifyListener(new ModifyListener(){
            public void modifyText(ModifyEvent e)
            {
-               mSettings.setIcon(t2.getText());
+               mWizard.getSettings().setIcon(t2.getText());
                validateField(INSTICON_CHECK);
            }
         });
     
-        Button[] radio = NSISWizardDialogUtil.createRadioGroup(group, NSISWizardDisplayValues.INSTALLER_TYPE_NAMES, 
-                                           mSettings.getInstallerType(),"installer.type.label", //$NON-NLS-1$
+        final Button[] radio = NSISWizardDialogUtil.createRadioGroup(group, NSISWizardDisplayValues.INSTALLER_TYPE_NAMES, 
+                                           settings.getInstallerType(),"installer.type.label", //$NON-NLS-1$
                                            true, null,false);
         SelectionAdapter sa = new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e)
@@ -180,7 +194,7 @@ public class NSISWizardGeneralPage extends AbstractNSISWizardPage
                 Button button = (Button)e.widget;
                 if(button.getSelection()) {
                     Integer index = (Integer)button.getData();
-                    mSettings.setInstallerType(index.intValue());
+                    mWizard.getSettings().setInstallerType(index.intValue());
                 }
             }
         };
@@ -188,60 +202,96 @@ public class NSISWizardGeneralPage extends AbstractNSISWizardPage
             radio[i].addSelectionListener(sa);
         }
 
-        Combo c = NSISWizardDialogUtil.createCombo(group, NSISWizardDisplayValues.COMPRESSOR_TYPE_NAMES, 
-                        mSettings.getCompressorType(),true,"compressor.label", //$NON-NLS-1$
+        final Combo c = NSISWizardDialogUtil.createCombo(group, NSISWizardDisplayValues.COMPRESSOR_TYPE_NAMES, 
+                        settings.getCompressorType(),true,"compressor.label", //$NON-NLS-1$
                         true, null,false);
         c.addSelectionListener(new SelectionAdapter() {
         public void widgetSelected(SelectionEvent e)
         {
-          mSettings.setCompressorType(((Combo)e.widget).getSelectionIndex());
+            mWizard.getSettings().setCompressorType(((Combo)e.widget).getSelectionIndex());
         }
         });
+
+        mWizard.addSettingsListener(new INSISWizardSettingsListener() {
+            public void settingsChanged()
+            {
+                NSISWizardSettings settings = mWizard.getSettings();
+                t.setText(settings.getOutFile());
+                t2.setText(settings.getIcon());
+                int n = settings.getInstallerType();
+                if(!Common.isEmptyArray(radio)) {
+                    for (int i = 0; i < radio.length; i++) {
+                        radio[i].setSelection((i == n));
+                    }
+                }
+                n = settings.getCompressorType();
+                if(n >= 0 && n < NSISWizardDisplayValues.COMPRESSOR_TYPE_NAMES.length) {
+                    c.setText(NSISWizardDisplayValues.COMPRESSOR_TYPE_NAMES[n]);
+                }
+                else {
+                    c.clearSelection();
+                    c.setText(""); //$NON-NLS-1$
+                }
+            }});
     }
 
     private void createUninstallerGroup(Composite parent)
     {
+        NSISWizardSettings settings = mWizard.getSettings();
+
         Group group = NSISWizardDialogUtil.createGroup(parent, 3, "uninstaller.group.label", null, true); //$NON-NLS-1$
-        final Button b = NSISWizardDialogUtil.createCheckBox(group,"create.uninstaller.label",mSettings.isCreateUninstaller(), //$NON-NLS-1$
+        final Button b = NSISWizardDialogUtil.createCheckBox(group,"create.uninstaller.label",settings.isCreateUninstaller(), //$NON-NLS-1$
                                         true, null, false);
         b.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) 
             {
                 boolean selection = b.getSelection();
-                mSettings.setCreateUninstaller(selection);
+                mWizard.getSettings().setCreateUninstaller(selection);
                 validatePage(ALL_CHECK);
             }
         });
         
-        MasterSlaveController m = new MasterSlaveController(b);
+        final MasterSlaveController m = new MasterSlaveController(b);
         
         ResourceBundle bundle = EclipseNSISPlugin.getDefault().getResourceBundle();
-        Text t = NSISWizardDialogUtil.createText(group, mSettings.getUninstallFile(), "uninstaller.file.label", true, //$NON-NLS-1$
+        final Text t = NSISWizardDialogUtil.createText(group, settings.getUninstallFile(), "uninstaller.file.label", true, //$NON-NLS-1$
                             m,true);
         t.addModifyListener(new ModifyListener(){
            public void modifyText(ModifyEvent e)
            {
-               mSettings.setUninstallFile(((Text)e.widget).getText());
+               mWizard.getSettings().setUninstallFile(((Text)e.widget).getText());
                validateField(UNINSTFILE_CHECK);
            }
         });
     
-        final Text t2 = NSISWizardDialogUtil.createImageBrowser(group, mSettings.getIcon(), new Point(36,36), 
+        final Text t2 = NSISWizardDialogUtil.createImageBrowser(group, settings.getUninstallIcon(), new Point(36,36), 
                                           Common.loadArrayProperty(bundle,"uninstaller.icon.filternames"),  //$NON-NLS-1$
                                           Common.loadArrayProperty(bundle,"uninstaller.icon.filters"), "uninstaller.icon.label", //$NON-NLS-1$ //$NON-NLS-2$ 
                                           true, m, false);
         t2.addModifyListener(new ModifyListener(){
            public void modifyText(ModifyEvent e)
            {
-               mSettings.setUninstallIcon(t2.getText());
+               mWizard.getSettings().setUninstallIcon(t2.getText());
                validateField(UNINSTICON_CHECK);
            }
         });
+
+        m.updateSlaves();
+
+        mWizard.addSettingsListener(new INSISWizardSettingsListener() {
+            public void settingsChanged()
+            {
+                NSISWizardSettings settings = mWizard.getSettings();
+                b.setSelection(settings.isCreateUninstaller());
+                t.setText(settings.getUninstallFile());
+                t2.setText(settings.getUninstallIcon());
+                m.updateSlaves();
+            }});
     }
     
     private boolean validateAppName()
     {
-        if(!Common.isEmpty(mSettings.getName())) {
+        if(!Common.isEmpty(mWizard.getSettings().getName())) {
             return true;
         }
         else {

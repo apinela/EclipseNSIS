@@ -1,19 +1,68 @@
 /*******************************************************************************
- * Copyright (c) 2004 Sunil Kamath (IcemanK).
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ * Copyright (c) 2004, 2005 Sunil Kamath (IcemanK).
+ * All rights reserved.
+ * This program is made available under the terms of the Common Public License
+ * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
+ *
+ *******************************************************************************
+ *
+ * XStream License
+ * XStream is open source software, made available under a BSD license.
+ * Copyright (c) 2003-2005, Joe Walnes
+ * All rights reserved.
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ * Redistributions of source code must retain the above copyright notice, this
+ * list of conditions and the following disclaimer. Redistributions in binary
+ * form must reproduce the above copyright notice, this list of conditions and
+ * the following disclaimer in the documentation and/or other materials provided
+ * with the distribution.
+ * Neither the name of XStream nor the names of its contributors may be used to
+ * endorse or promote products derived from this software without specific prior
+ * written permission.
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ *
  *******************************************************************************/
 package net.sf.eclipsensis.util;
 
-import java.beans.*;
-import java.io.*;
+import java.beans.BeanInfo;
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Reader;
+import java.io.Writer;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Properties;
+import java.util.ResourceBundle;
+import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -26,20 +75,62 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.preference.IPreferenceStore;
 
-
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.DomDriver;
 
 public class Common
 {
     public static final String[] EMPTY_STRING_ARRAY = new String[0];
-    
+
+    private static XStream cXStream = new XStream(new DomDriver());
+
     private static String[] cEnv = null;
-    private static final String cPathSeparator = System.getProperty("file.separator");
-    private static final String cOnePathLevelUp = ".." + cPathSeparator;
-    
+    private static final String cPathSeparator = System.getProperty("file.separator"); //$NON-NLS-1$
+    private static final String cOnePathLevelUp = ".." + cPathSeparator; //$NON-NLS-1$
+
     private static Pattern cValidPathName = Pattern.compile("([A-Za-z]:)?\\\\?(((\\.?[A-Za-z0-9\\$%\\'`\\-@\\{\\}~\\!#\\(\\&_\\^\\x20])+|\\.{1,2}+)\\\\)*(\\.?[A-Za-z0-9\\$%\\'`\\-@\\{\\}~\\!#\\(\\&_\\^\\x20])+"); //$NON-NLS-1$
     private static Pattern cValidNSISPrefixedPathNameSuffix = Pattern.compile("\\\\(((\\.?[A-Za-z0-9\\$%\\'`\\-@\\{\\}~\\!#\\(\\&_\\^\\x20])+|\\.{1,2}+)\\\\)*(\\.?[A-Za-z0-9\\$%\\'`\\-@\\{\\}~\\!#\\(\\&_\\^\\x20])+"); //$NON-NLS-1$
     private static Pattern cValidFileName = Pattern.compile("(\\.?[A-Za-z0-9\\$%\\'`\\-@\\{\\}~\\!#\\(\\&_\\^\\x20])+"); //$NON-NLS-1$
     private static Pattern cValidURL = Pattern.compile("(?:(?:ftp|https?):\\/\\/)?(?:[a-z0-9](?:[-a-z0-9]*[a-z0-9])?\\.)+(?:com|edu|biz|org|gov|int|info|mil|net|name|museum|coop|aero|[a-z][a-z])\\b(?:\\d+)?(?:\\/[^;\"'<>()\\[\\]{}\\s\\x7f-\\xff]*(?:[.,?]+[^;\"'<>()\\[\\]{}\\s\\x7f-\\xff]+)*)?"); //$NON-NLS-1$
+
+    public static Object readObjectFromFile(File file) throws IOException, ClassNotFoundException
+    {
+        return readObject(new BufferedReader(new FileReader(file)));
+    }
+
+    public static Object readObject(Reader reader) throws IOException, ClassNotFoundException
+    {
+        ObjectInputStream ois = null;
+        try {
+            ois = cXStream.createObjectInputStream(reader);
+            return ois.readObject();
+        }
+        finally {
+            if(ois != null) {
+                ois.close();
+            }
+        }
+    }
+
+    public static void writeObjectToFile(File file, Object object) throws IOException
+    {
+        writeObject(new BufferedWriter(new FileWriter(file)), object);
+    }
+
+    public static void writeObject(Writer writer, Object object) throws IOException
+    {
+        ObjectOutputStream oos = null;
+
+        try {
+            oos = cXStream.createObjectOutputStream(writer);
+            oos.writeObject(object);
+        }
+        finally {
+            if(oos != null) {
+                oos.close();
+            }
+        }
+    }
 
     public static boolean isEmpty(String string)
     {
@@ -85,7 +176,7 @@ public class Common
                     Process proc = null;
                     Runtime runtime = Runtime.getRuntime();
                     String osName = System.getProperty("os.name").toLowerCase(); //$NON-NLS-1$
-            
+
                     if (osName.indexOf("windows") >= 0) { //$NON-NLS-1$
                         if (osName.indexOf("windows 9") >= 0) { //$NON-NLS-1$
                             proc = runtime.exec("command.com /c set"); //$NON-NLS-1$
@@ -125,7 +216,7 @@ public class Common
     {
         return runProcessWithOutput(cmdArray, workDir, 0);
     }
-    
+
     public static String[] runProcessWithOutput(String[] cmdArray, File workDir, int validReturnCode)
     {
         String[] output = null;
@@ -146,10 +237,10 @@ public class Common
             e.printStackTrace();
             output = null;
         }
-        
+
         return output;
     }
-    
+
     public static String leftPad(String text, int length, char padChar)
     {
         if(text.length() < length) {
@@ -162,7 +253,7 @@ public class Common
         }
         return text;
     }
-    
+
     public static String[] tokenize(String text, char separator)
     {
         ArrayList list = new ArrayList();
@@ -209,10 +300,10 @@ public class Common
         if(bundle != null) {
             String property = bundle.getString(propertyName);
             if(!isEmpty(property)) {
-                StringTokenizer st = new StringTokenizer(property,",");
+                StringTokenizer st = new StringTokenizer(property,","); //$NON-NLS-1$
                 while(st.hasMoreTokens()) {
                     String token = st.nextToken();
-                    int n=token.indexOf("=");
+                    int n=token.indexOf("="); //$NON-NLS-1$
                     if(n > 0) {
                         String key = token.substring(0,n).trim();
                         String value = null;
@@ -227,17 +318,18 @@ public class Common
         return map;
     }
 
-    public static boolean isValidNSISPrefixedPathName(String pathName)
+    public static boolean isValidNSISPathName(String pathName)
     {
         int n = pathName.indexOf('\\');
         String suffix = null;
+        String prefix = null;
         if(n >= 0) {
             suffix = pathName.substring(n);
-            pathName = pathName.substring(0,n);
+            prefix = pathName.substring(0,n);
         }
-        if(!Common.isEmpty(pathName)) {
+        if(!Common.isEmpty(prefix)) {
             for(int i=0; i<NSISKeywords.PREDEFINED_PATH_VARIABLES.length; i++) {
-                if(NSISKeywords.PREDEFINED_PATH_VARIABLES[i].equalsIgnoreCase(pathName)) {
+                if(NSISKeywords.PREDEFINED_PATH_VARIABLES[i].equalsIgnoreCase(prefix)) {
                     if(!Common.isEmpty(suffix)) {
                         Matcher matcher = cValidNSISPrefixedPathNameSuffix.matcher(suffix);
                         return matcher.matches();
@@ -246,7 +338,7 @@ public class Common
                 }
             }
         }
-        return false;
+        return isValidPathName(pathName);
     }
 
     public static boolean isValidPathName(String pathName)
@@ -332,7 +424,7 @@ public class Common
             BeanInfo beanInfo = Introspector.getBeanInfo(bean.getClass());
             PropertyDescriptor[] pd = beanInfo.getPropertyDescriptors();
             Object[] args = new Object[1];
-    
+
             for (int i = 0; i < pd.length; i++) {
                 String name = pd[i].getName();
                 if(properties.contains(name)) {
@@ -374,7 +466,7 @@ public class Common
         }
     }
 
-    public static boolean stringsAreEqual(String str1, String str2, boolean ignoreCase) 
+    public static boolean stringsAreEqual(String str1, String str2, boolean ignoreCase)
     {
         return ((str1 == null && str2 == null) ||
                 (str1 !=null && str2 != null && (ignoreCase?str1.equalsIgnoreCase(str2):str1.equals(str2))));
@@ -387,18 +479,18 @@ public class Common
             IPath reference = (resource instanceof IContainer?(IContainer)resource:((IFile)resource).getParent()).getLocation();
             if(reference.isAbsolute() && childPath.isAbsolute()) {
               if(stringsAreEqual(reference.getDevice(), childPath.getDevice(), true)) {
-                  StringBuffer buf = new StringBuffer("");
+                  StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
                   int l1 = reference.segmentCount();
                   int l2 = childPath.segmentCount();
                   int n = Math.min(l1,l2);
-                  
+
                   int i=0;
                   for(; i<n; i++) {
                       if(!reference.segment(i).equalsIgnoreCase(childPath.segment(i))) {
                           break;
                       }
                   }
-                  
+
                   for(int j=i; j<l1; j++) {
                       buf.append(cOnePathLevelUp);
                   }

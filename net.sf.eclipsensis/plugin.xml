@@ -2,10 +2,10 @@
 <?eclipse version="3.0"?>
 <!--
 ###############################################################################
-# Copyright (c) 2004 Sunil Kamath (IcemanK).
-# All rights reserved. This program and the accompanying materials 
-# are made available under the terms of the Common Public License v1.0
-# which is available at http://www.eclipse.org/legal/cpl-v10.html
+# Copyright (c) 2004, 2005 Sunil Kamath (IcemanK).
+# All rights reserved.
+# This program is made available under the terms of the Common Public License
+# v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
 # 
 # Contributors:
 #     Sunil Kamath (IcemanK) - initial API and implementation
@@ -20,6 +20,9 @@
 
    <runtime>
       <library name="eclipsensis.jar">
+         <export name="*"/>
+      </library>
+      <library name="lib/xstream-1.1.jar">
          <export name="*"/>
       </library>
    </runtime>
@@ -59,7 +62,7 @@
       </editor>
    </extension>
    <extension
-	    id="net.sf.eclipsensis.editor.NSISDocumentSetupParticipant"
+        id="net.sf.eclipsensis.editor.NSISDocumentSetupParticipant"
         name="%document.setup.participant.name"
         point="org.eclipse.core.filebuffers.documentSetup">
         <participant
@@ -371,10 +374,40 @@
           contextId="net.sf.eclipsensis.NSISEditorScope"
           keySequence="Shift+F6"/>
       <command
-         name="%tabs.to.spaces"
+         name="%tabs.to.spaces.name"
          description="%tabs.to.spaces.description"
          id="net.sf.eclipsensis.commands.NSISTabsToSpaces"
          categoryId="net.sf.eclipsensis.NSISCategory"/>
+      <command
+         name="%toggle.comment.name"
+         description="%toggle.comment.description"
+         id="net.sf.eclipsensis.commands.NSISToggleComment"
+         categoryId="net.sf.eclipsensis.NSISCategory"/>
+      <keyBinding
+          keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
+          commandId="net.sf.eclipsensis.commands.NSISToggleComment"
+          contextId="net.sf.eclipsensis.NSISEditorScope"
+          keySequence="Ctrl+/"/>
+      <command
+         name="%add.block.comment.name"
+         description="%add.block.comment.description"
+         id="net.sf.eclipsensis.commands.NSISAddBlockComment"
+         categoryId="net.sf.eclipsensis.NSISCategory"/>
+      <keyBinding
+          keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
+          commandId="net.sf.eclipsensis.commands.NSISAddBlockComment"
+          contextId="net.sf.eclipsensis.NSISEditorScope"
+          keySequence="Ctrl+Shift+/"/>
+      <command
+         name="%remove.block.comment.name"
+         description="%remove.block.comment.description"
+         id="net.sf.eclipsensis.commands.NSISRemoveBlockComment"
+         categoryId="net.sf.eclipsensis.NSISCategory"/>
+      <keyBinding
+          keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
+          commandId="net.sf.eclipsensis.commands.NSISRemoveBlockComment"
+          contextId="net.sf.eclipsensis.NSISEditorScope"
+          keySequence="Ctrl+Shift+\"/>
    </extension>
    <extension
          point="org.eclipse.help.contexts">

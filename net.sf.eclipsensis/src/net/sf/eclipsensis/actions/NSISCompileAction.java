@@ -1,8 +1,8 @@
 /*******************************************************************************
- * Copyright (c) 2004 Sunil Kamath (IcemanK).
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which is available at http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2004, 2005 Sunil Kamath (IcemanK).
+ * All rights reserved.
+ * This program is made available under the terms of the Common Public License
+ * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
@@ -11,7 +11,6 @@ package net.sf.eclipsensis.actions;
 
 import java.text.MessageFormat;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.console.INSISConsoleLineProcessor;
@@ -29,9 +28,6 @@ import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 
 public class NSISCompileAction extends NSISScriptAction
 {
-    private static final Pattern cSyntaxPattern = Pattern.compile("[\\w]+ expects [0-9\\-\\+]+ parameters, got [0-9]\\."); //$NON-NLS-1$
-    private static final Pattern cErrorPattern = Pattern.compile("error in script \"(.+)\" on line (\\d+).*",Pattern.CASE_INSENSITIVE); //$NON-NLS-1$
-
     /* (non-Javadoc)
      * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
      */
@@ -49,8 +45,8 @@ public class NSISCompileAction extends NSISScriptAction
                             IEditorInput input = editors[i].getEditorInput();
                             if(input != null && input instanceof IFileEditorInput) {
                                 if(mFile.equals(((IFileEditorInput)input).getFile())) {
-                                    if(MessageDialog.openConfirm(windows[i].getShell(), EclipseNSISPlugin.getResourceString("confirm.title"), 
-                                            MessageFormat.format(EclipseNSISPlugin.getResourceString("compile.save.confirmation"),new String[]{mFile.getName()}))) {
+                                    if(MessageDialog.openConfirm(windows[i].getShell(), EclipseNSISPlugin.getResourceString("confirm.title"),  //$NON-NLS-1$
+                                            MessageFormat.format(EclipseNSISPlugin.getResourceString("compile.save.confirmation"),new String[]{mFile.getName()}))) { //$NON-NLS-1$
                                         if(editors[i] instanceof ITextEditor) {
                                             IAction saveAction = ((ITextEditor)editors[i]).getAction(ITextEditorActionConstants.SAVE);
                                             if(saveAction != null) {
@@ -131,12 +127,13 @@ public class NSISCompileAction extends NSISScriptAction
         public NSISConsoleLine processText(String text)
         {
             NSISConsoleLine line;
-            Matcher matcher = cErrorPattern.matcher(text);
+            text = text.trim();
+            Matcher matcher = MakeNSISRunner.MAKENSIS_ERROR_PATTERN.matcher(text);
             if(matcher.matches()) {
                 line = NSISConsoleLine.error(text);
                 IFile file = mFile.getWorkspace().getRoot().getFileForLocation(new Path(matcher.group(1)));
                 if(file != null && file.equals(mFile)) {
-                    line.setFile(mFile);
+                    line.setFile(file);
                     line.setLineNum(Integer.parseInt(matcher.group(2)));
                 }
             }
@@ -153,7 +150,7 @@ public class NSISCompileAction extends NSISScriptAction
                     warningsMode = true;
                     line = NSISConsoleLine.warning(text);
                 }
-                else if(cSyntaxPattern.matcher(lText).matches()) {
+                else if(MakeNSISRunner.MAKENSIS_SYNTAX_ERROR_PATTERN.matcher(lText).matches()) {
                     errorMode = true;
                     line = NSISConsoleLine.error(text);
                 }
@@ -167,8 +164,18 @@ public class NSISCompileAction extends NSISScriptAction
                     line = NSISConsoleLine.info(text);
                 }
                 if(line.getType() == NSISConsoleLine.WARNING) {
-                    line.setFile(mFile);
-                    line.setLineNum(1);
+                    matcher = MakeNSISRunner.MAKENSIS_WARNING_PATTERN.matcher(text);
+                    if(matcher.matches()) {
+                        IFile file = mFile.getWorkspace().getRoot().getFileForLocation(new Path(matcher.group(1)));
+                        if(file != null && file.equals(mFile)) {
+                            line.setFile(file);
+                            line.setLineNum(Integer.parseInt(matcher.group(2)));
+                        }
+                    }
+                    else if(!text.endsWith("warnings:")) { //$NON-NLS-1$ 
+                        line.setFile(mFile);
+                        line.setLineNum(1);
+                    }
                 }
             }
             

@@ -1,8 +1,8 @@
 /*******************************************************************************
- * Copyright (c) 2004 Sunil Kamath (IcemanK).
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which is available at http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2004, 2005 Sunil Kamath (IcemanK).
+ * All rights reserved.
+ * This program is made available under the terms of the Common Public License
+ * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
@@ -14,6 +14,7 @@ import java.util.List;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.editor.codeassist.NSISInformationUtility;
+import net.sf.eclipsensis.editor.text.NSISPartitionScanner;
 import net.sf.eclipsensis.editor.text.NSISTextUtility;
 import net.sf.eclipsensis.help.NSISHelpURLProvider;
 import net.sf.eclipsensis.settings.INSISPreferenceConstants;
@@ -45,6 +46,9 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
     public static final int INSERT_DIRECTORY = INSERT_FILE + 1;
     public static final int INSERT_COLOR = INSERT_DIRECTORY + 1;
     public static final int TABS_TO_SPACES = INSERT_COLOR + 1;
+    public static final int TOGGLE_COMMENT = TABS_TO_SPACES + 1;
+    public static final int ADD_BLOCK_COMMENT = TOGGLE_COMMENT + 1;
+    public static final int REMOVE_BLOCK_COMMENT = ADD_BLOCK_COMMENT + 1;
     
     private IPreferenceStore mPreferenceStore = null;
     private NSISAutoIndentStrategy mAutoIndentStrategy = null;
@@ -232,6 +236,9 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
             case INSERT_DIRECTORY:
             case INSERT_COLOR:
             case TABS_TO_SPACES:
+            case TOGGLE_COMMENT:
+            case REMOVE_BLOCK_COMMENT:
+            case ADD_BLOCK_COMMENT:
                 return true;
             default:
                 return super.canDoOperation(operation);
@@ -294,6 +301,21 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
                 doConvertTabsToSpaces();
                 return;
             }
+            case TOGGLE_COMMENT:
+            {
+                doToggleComment();
+                return;
+            }
+            case ADD_BLOCK_COMMENT:
+            {
+                doAddBlockComment();
+                return;
+            }
+            case REMOVE_BLOCK_COMMENT:
+            {
+                doRemoveBlockComment();
+                return;
+            }
             default:
             {
                 super.doOperation(operation);
@@ -308,6 +330,166 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
             }
             catch (BadLocationException e) {
             }
+        }
+    }
+    
+    private void doAddBlockComment()
+    {
+        try {
+            Point p = getSelectedRange();
+            if(p.y > 0) {
+                IDocument doc = getDocument();
+                ITypedRegion region = null;
+                int startPos = p.x;
+                int endPos = p.x+p.y-1;
+                StringBuffer newText = new StringBuffer("/*"); //$NON-NLS-1$
+                int pos = p.x;
+                while(true) {
+                    region = NSISTextUtility.getTypedRegionAtOffset(doc,pos);
+                    int regionStart = region.getOffset();
+                    int regionLen = region.getLength();
+                    int regionEnd = regionStart+regionLen-1;
+                    String regionType = region.getType();
+                    if(regionType.equals(NSISPartitionScanner.NSIS_SINGLELINE_COMMENT) ||
+                            regionType.equals(NSISPartitionScanner.NSIS_STRING)) {
+                        if(regionStart < startPos) {
+                            startPos = regionStart;
+                        }
+                        newText.append(doc.get(regionStart,regionLen));
+                        if(regionEnd >= endPos) {
+                            endPos = regionEnd;
+                            break;
+                        }
+                        else {
+                            pos = regionEnd+1;
+                        }
+                    }
+                    else if(regionType.equals(NSISPartitionScanner.NSIS_MULTILINE_COMMENT)) {
+                        if(regionStart < startPos) {
+                            startPos = regionStart;
+                        }
+                        newText.append(doc.get(regionStart+2,regionLen-4));
+                        if(regionEnd >= endPos) {
+                            endPos = regionEnd;
+                            break;
+                        }
+                        else {
+                            pos = regionEnd+1;
+                        }
+                    }
+                    else {
+                        regionStart = Math.max(startPos,regionStart);
+                        if(regionEnd >= endPos) {
+                            newText.append(doc.get(regionStart,endPos-regionStart+1));
+                            break;
+                        }
+                        else {
+                            newText.append(doc.get(regionStart,regionEnd-regionStart+1));
+                            pos = regionEnd+1;
+                        }
+                    }
+                }
+                newText.append("*/"); //$NON-NLS-1$
+                doc.replace(startPos,endPos-startPos+1,newText.toString());
+            }
+        }
+        catch (BadLocationException e) {
+            e.printStackTrace();
+        }
+        
+    }
+    
+    private void doRemoveBlockComment()
+    {
+        try {
+            IDocument doc = getDocument();
+            Point p = getSelectedRange();
+            int startPos = p.x;
+            int endPos = (p.x>0?p.x+p.y-1:startPos);
+            int pos = startPos;
+            StringBuffer newText = new StringBuffer("");
+            ITypedRegion region;
+            while(true) {
+                region = NSISTextUtility.getTypedRegionAtOffset(doc,pos);
+                int regionStart = region.getOffset();
+                int regionLen = region.getLength();
+                int regionEnd = regionStart+regionLen-1;
+                String regionType = region.getType();
+                if(regionType.equals(NSISPartitionScanner.NSIS_MULTILINE_COMMENT)) {
+                    newText.append(doc.get(regionStart+2,regionLen-4));
+                    if(regionStart < startPos) {
+                        startPos = regionStart;
+                    }
+                    if(regionEnd >= endPos) {
+                        endPos = regionEnd;
+                        break;
+                    }
+                    else {
+                        pos = regionEnd+1;
+                    }
+                }
+                else {
+                    if(regionEnd >= endPos) {
+                        newText.append(doc.get(pos,(endPos-pos+1)));
+                        break;
+                    }
+                    else {
+                        newText.append(doc.get(pos,(regionEnd-pos+1)));
+                        pos = regionEnd+1;
+                    }
+                }
+            }
+            doc.replace(startPos,endPos-startPos+1,newText.toString());
+        }
+        catch (BadLocationException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    private void doToggleComment()
+    {
+        try {
+            IDocument doc = getDocument();
+            Point p = getSelectedRange();
+            int startLine = doc.getLineOfOffset(p.x);
+            int endLine = (p.y==0?startLine:doc.getLineOfOffset(p.x+p.y-1));
+            boolean allAreCommented=true;
+            IRegion region = null;
+            String[] text = new String[endLine-startLine+1];
+            for(int i=startLine; i<=endLine; i++) {
+                region = doc.getLineInformation(i);
+                text[i-startLine] = doc.get(region.getOffset(),region.getLength());
+                String text2 = text[i-startLine].trim();
+                if(!text2.startsWith(";") && !text2.startsWith("#")) { //$NON-NLS-1$ //$NON-NLS-2$
+                    allAreCommented = false;
+                }
+            }
+            
+            int startPos = doc.getLineOffset(startLine);
+            int length = region.getOffset()+region.getLength()-startPos;
+
+            StringBuffer newText = new StringBuffer(""); //$NON-NLS-1$
+            for(int i=startLine; i<=endLine; i++) {
+                if(i > startLine) {
+                    newText.append(doc.getLineDelimiter(i-1));
+                }
+                if(allAreCommented) {
+                    String text2 = text[i-startLine].trim();
+                    int n = text[i-startLine].indexOf(text2);
+                    newText.append(text[i-startLine].substring(0,n));
+                    if(n < (text[i-startLine].length()-1)) {
+                        newText.append(text[i-startLine].substring(n+1));
+                    }
+                }
+                else {
+                    newText.append(";").append(text[i-startLine]); //$NON-NLS-1$
+                }
+            }
+            
+            doc.replace(startPos,length,newText.toString());
+        }
+        catch (BadLocationException e) {
+            e.printStackTrace();
         }
     }
     

@@ -1,8 +1,8 @@
 /*******************************************************************************
- * Copyright (c) 2004 Sunil Kamath (IcemanK).
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which is available at http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2004, 2005 Sunil Kamath (IcemanK).
+ * All rights reserved.
+ * This program is made available under the terms of the Common Public License
+ * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
@@ -38,4 +38,6 @@ public interface INSISWizardConstants
     
     public static final int SHORTCUT_URL = 0;
     public static final int SHORTCUT_INSTALLELEMENT = 1;
+    
+    public static final String WIZARD_TEMPLATE_EXTENSION=".nst"; //$NON-NLS-1$
 }

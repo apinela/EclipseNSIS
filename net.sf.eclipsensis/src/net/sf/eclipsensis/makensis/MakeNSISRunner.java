@@ -1,8 +1,8 @@
 /*******************************************************************************
- * Copyright (c) 2004 Sunil Kamath (IcemanK).
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which is available at http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2004, 2005 Sunil Kamath (IcemanK).
+ * All rights reserved.
+ * This program is made available under the terms of the Common Public License
+ * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
@@ -13,15 +13,25 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.IEclipseNSISPluginListener;
 import net.sf.eclipsensis.INSISConstants;
-import net.sf.eclipsensis.console.*;
+import net.sf.eclipsensis.console.INSISConsoleLineProcessor;
+import net.sf.eclipsensis.console.NSISConsole;
+import net.sf.eclipsensis.console.NSISConsoleLine;
+import net.sf.eclipsensis.console.NSISConsoleWriter;
 import net.sf.eclipsensis.settings.NSISPreferences;
 import net.sf.eclipsensis.settings.NSISProperties;
 import net.sf.eclipsensis.settings.NSISSettings;
+import net.sf.eclipsensis.util.CaseInsensitiveMap;
 import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.core.resources.IFile;
@@ -29,6 +39,7 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
@@ -51,6 +62,9 @@ public class MakeNSISRunner implements INSISConstants
             shutdown();
         }
     };
+    public static final Pattern MAKENSIS_SYNTAX_ERROR_PATTERN = Pattern.compile("[\\w]+ expects [0-9\\-\\+]+ parameters, got [0-9]\\."); //$NON-NLS-1$
+    public static final Pattern MAKENSIS_ERROR_PATTERN = Pattern.compile("error in script \"(.+)\" on line (\\d+).*",Pattern.CASE_INSENSITIVE); //$NON-NLS-1$
+    public static final Pattern MAKENSIS_WARNING_PATTERN = Pattern.compile(".+\\((.+):(\\d+)\\).*",Pattern.CASE_INSENSITIVE); //$NON-NLS-1$
     
     static {
         System.loadLibrary("MakeNSISRunner"); //$NON-NLS-1$
@@ -180,14 +194,60 @@ public class MakeNSISRunner implements INSISConstants
                                 }
                             }
                         }
-                        List warnings = results.getWarnings();
-                        if (warnings != null) {
-                            for (Iterator iter = warnings.iterator(); iter.hasNext();) {
-                                IMarker marker = file.createMarker(PROBLEM_ID);
-                                marker.setAttribute(IMarker.SEVERITY,
-                                                    IMarker.SEVERITY_WARNING);
-                                marker.setAttribute(IMarker.MESSAGE,(String) iter.next());
-                                marker.setAttribute(IMarker.LINE_NUMBER, 1);
+                        List warnings = console.getWarnings();
+                        if(Common.isEmptyCollection(warnings)) {
+                            warnings = results.getWarnings();
+                            if (warnings != null) {
+                                CaseInsensitiveMap map = new CaseInsensitiveMap();
+                                for (Iterator iter = warnings.iterator(); iter.hasNext();) {
+                                    String text = (String) iter.next();
+                                    if(text.toLowerCase().startsWith("warning:")) { //$NON-NLS-1$
+                                        text = text.substring(8).trim();
+                                    }
+                                    if(!map.containsKey(text)) {
+                                        IMarker marker = file.createMarker(PROBLEM_ID);
+                                        marker.setAttribute(IMarker.SEVERITY,
+                                                            IMarker.SEVERITY_WARNING);
+                                        Matcher matcher = MakeNSISRunner.MAKENSIS_WARNING_PATTERN.matcher(text);
+                                        if(matcher.matches()) {
+                                            IFile file2 = file.getWorkspace().getRoot().getFileForLocation(new Path(matcher.group(1)));
+                                            if(file2 != null && file.equals(file2)) {
+                                                marker.setAttribute(IMarker.LINE_NUMBER, Integer.parseInt(matcher.group(2)));
+                                            }
+                                            else {
+                                                marker.setAttribute(IMarker.LINE_NUMBER, 1);
+                                            }
+                                        }
+                                        else {
+                                            marker.setAttribute(IMarker.LINE_NUMBER, 1);
+                                        }
+                                    
+                                        marker.setAttribute(IMarker.MESSAGE,text);
+                                        map.put(text,text);
+                                    }
+                                }
+                            }
+                        }
+                        else {
+                            CaseInsensitiveMap map = new CaseInsensitiveMap();
+                            Iterator iter = warnings.iterator();
+                            for(iter=warnings.iterator(); iter.hasNext(); ) {
+                                NSISConsoleLine warning = (NSISConsoleLine)iter.next();
+                                if(warning.getLineNum() > 0) {
+                                    String text = warning.toString().trim();
+                                    if(text.toLowerCase().startsWith("warning:")) { //$NON-NLS-1$
+                                        text = text.substring(8).trim();
+                                    }
+                                    if(!map.containsKey(text)) {
+                                        IMarker marker = file.createMarker(PROBLEM_ID);
+                                        marker.setAttribute(IMarker.SEVERITY,
+                                                            IMarker.SEVERITY_WARNING);
+                                        marker.setAttribute(IMarker.MESSAGE, text);
+                                        int lineNum = (warning.getLineNum() > 0?warning.getLineNum():1);
+                                        marker.setAttribute(IMarker.LINE_NUMBER, lineNum);
+                                        map.put(text,text);
+                                    }
+                                }
                             }
                         }
                     }

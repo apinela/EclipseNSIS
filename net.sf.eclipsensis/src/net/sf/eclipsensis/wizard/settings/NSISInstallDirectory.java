@@ -1,8 +1,8 @@
 /*******************************************************************************
- * Copyright (c) 2004 Sunil Kamath (IcemanK).
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which is available at http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2004, 2005 Sunil Kamath (IcemanK).
+ * All rights reserved.
+ * This program is made available under the terms of the Common Public License
+ * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
@@ -17,16 +17,18 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 
-public class NSISInstallDirectory extends AbstractNSISInstallItem
+public class NSISInstallDirectory extends AbstractNSISInstallItem implements INSISInstallFileSystemObject
 {
+	private static final long serialVersionUID = 3960745695250401464L;
+
     public static final String TYPE = EclipseNSISPlugin.getResourceString("wizard.directory.type"); //$NON-NLS-1$
-    private static final Image cImage = ImageManager.getImage(EclipseNSISPlugin.getResourceString("wizard.directory.icon")); //$NON-NLS-1$
+    private static final Image cFolderImage = ImageManager.getImage(EclipseNSISPlugin.getResourceString("wizard.directory.icon")); //$NON-NLS-1$
+    private static final Image cRecursiveFolderImage = ImageManager.getImage(EclipseNSISPlugin.getResourceString("wizard.recursive.directory.icon")); //$NON-NLS-1$
     
     private String mName = null;
-    private boolean mIsRecursive = true;
     private String mDestination = "$INSTDIR"; //$NON-NLS-1$
     private int mOverwriteMode = OVERWRITE_ON;
-    private boolean mCopyFolderContents = false;
+    private boolean mRecursive = false;
     
     static {
         NSISInstallElementFactory.register(TYPE, NSISInstallDirectory.class);
@@ -45,7 +47,7 @@ public class NSISInstallDirectory extends AbstractNSISInstallItem
      */
     public String getDisplayName()
     {
-        return mName+(mCopyFolderContents?"\\*.*":""); //$NON-NLS-1$ //$NON-NLS-2$
+        return mName; //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     /* (non-Javadoc)
@@ -66,7 +68,7 @@ public class NSISInstallDirectory extends AbstractNSISInstallItem
      */
     public Image getImage()
     {
-        return cImage;
+        return (mRecursive?cRecursiveFolderImage:cFolderImage);
     }
 
     /**
@@ -85,22 +87,6 @@ public class NSISInstallDirectory extends AbstractNSISInstallItem
         mDestination = destination;
     }
     
-    /**
-     * @return Returns the isRecursive.
-     */
-    public boolean isRecursive()
-    {
-        return mIsRecursive;
-    }
-
-    /**
-     * @param isRecursive The isRecursive to set.
-     */
-    public void setRecursive(boolean isRecursive)
-    {
-        mIsRecursive = isRecursive;
-    }
-
     /**
      * @return Returns the name.
      */
@@ -134,18 +120,18 @@ public class NSISInstallDirectory extends AbstractNSISInstallItem
     }
     
     /**
-     * @return Returns the copyFolderContents.
+     * @return Returns the recursive.
      */
-    public boolean isCopyFolderContents()
+    public boolean isRecursive()
     {
-        return mCopyFolderContents;
+        return mRecursive;
     }
     
     /**
-     * @param copyFolderContents The copyWithFolderName to set.
+     * @param recursive The recursive to set.
      */
-    public void setCopyFolderContents(boolean copyFolderContents)
+    public void setRecursive(boolean recursive)
     {
-        mCopyFolderContents = copyFolderContents;
+        mRecursive = recursive;
     }
 }

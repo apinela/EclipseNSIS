@@ -1,14 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2004 Sunil Kamath (IcemanK).
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which is available at http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2004, 2005 Sunil Kamath (IcemanK).
+ * All rights reserved.
+ * This program is made available under the terms of the Common Public License
+ * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
 package net.sf.eclipsensis.wizard.settings;
 
+import java.io.Serializable;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 
@@ -17,13 +18,16 @@ import net.sf.eclipsensis.makensis.MakeNSISRunner;
 import net.sf.eclipsensis.util.ColorManager;
 import net.sf.eclipsensis.util.ImageManager;
 import net.sf.eclipsensis.wizard.INSISWizardConstants;
+import net.sf.eclipsensis.wizard.NSISWizard;
 
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Composite;
 
-public class NSISWizardSettings implements INSISWizardConstants
+public class NSISWizardSettings implements INSISWizardConstants, Serializable
 {
+	private static final long serialVersionUID = -3872062583870145866L;
+
     public static final String INSTALLER_TYPE = "INSTALLER"; //$NON-NLS-1$
     private static Image cInstallerImage = ImageManager.getImage(EclipseNSISPlugin.getResourceString("wizard.installer.icon")); //$NON-NLS-1$
     private String mName = EclipseNSISPlugin.getResourceString("wizard.default.name",""); //$NON-NLS-1$ //$NON-NLS-2$
@@ -75,15 +79,18 @@ public class NSISWizardSettings implements INSISWizardConstants
     private String mSavePath = ""; //$NON-NLS-1$
     private boolean mMakePathsRelative = true;
     private boolean mCompileScript = true;
+    private boolean mTestScript = false;
     
     private INSISInstallElement mInstaller = new AbstractNSISInstallGroup()
     {
         private String mFormat;
         
+        private static final long serialVersionUID = 3601773736043608518L;
+        
         {
             setSettings(NSISWizardSettings.this);
             mChildTypes.add(NSISSection.TYPE);
-            mChildTypes.add(NSISSubSection.TYPE);
+            mChildTypes.add(NSISSectionGroup.TYPE);
             mFormat = EclipseNSISPlugin.getResourceString("wizard.installer.format"); //$NON-NLS-1$
             NSISSection section = (NSISSection)NSISInstallElementFactory.create(mSettings,NSISSection.TYPE);
             section.setName(EclipseNSISPlugin.getResourceString("main.section.name")); //$NON-NLS-1$
@@ -97,7 +104,7 @@ public class NSISWizardSettings implements INSISWizardConstants
          */
         public String getDisplayName()
         {
-            return MessageFormat.format(mFormat,new Object[]{mName});
+            return MessageFormat.format(mFormat,new Object[]{mSettings.getName()});
         }
 
         /* (non-Javadoc)
@@ -138,12 +145,28 @@ public class NSISWizardSettings implements INSISWizardConstants
         }
     };
 
+    private transient NSISWizard mWizard = null;
+    
     public NSISWizardSettings()
     {
         super();
         mInstaller.setSettings(this);
     }
     
+    /**
+     * @return Returns the wizard.
+     */
+    public NSISWizard getWizard()
+    {
+        return mWizard;
+    }
+    /**
+     * @param wizard The wizard to set.
+     */
+    public void setWizard(NSISWizard wizard)
+    {
+        mWizard = wizard;
+    }
     /**
      * @return Returns the autoCloseInstaller.
      */
@@ -739,6 +762,22 @@ public class NSISWizardSettings implements INSISWizardConstants
     }
 
     /**
+     * @return Returns the testScript.
+     */
+    public boolean isTestScript()
+    {
+        return mTestScript;
+    }
+
+    /**
+     * @param testScript The testScript to set.
+     */
+    public void setTestScript(boolean testScript)
+    {
+        mTestScript = testScript;
+    }
+
+    /**
      * @return Returns the makePathsRelative.
      */
     public boolean isMakePathsRelative()
@@ -919,10 +958,5 @@ public class NSISWizardSettings implements INSISWizardConstants
     public void setSelectComponents(boolean selectComponents)
     {
         mSelectComponents = selectComponents;
-    }
-    
-    public int getWorkCount()
-    {
-        return 4;
     }
 }

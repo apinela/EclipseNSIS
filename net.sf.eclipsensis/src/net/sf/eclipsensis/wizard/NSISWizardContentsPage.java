@@ -1,8 +1,8 @@
 /*******************************************************************************
- * Copyright (c) 2004 Sunil Kamath (IcemanK).
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which is available at http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2004, 2005 Sunil Kamath (IcemanK).
+ * All rights reserved.
+ * This program is made available under the terms of the Common Public License
+ * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
@@ -46,13 +46,12 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
     private static final String cDeleteConfirmMessageFormat = EclipseNSISPlugin.getResourceString("delete.confirmation.message"); //$NON-NLS-1$
     
     /**
-     * @param settings
      * @param pageName
      * @param title
      */
-    public NSISWizardContentsPage(NSISWizardSettings settings)
+    public NSISWizardContentsPage()
     {
-        super(settings, NAME, EclipseNSISPlugin.getResourceString("wizard.contents.title"), //$NON-NLS-1$
+        super(NAME, EclipseNSISPlugin.getResourceString("wizard.contents.title"), //$NON-NLS-1$
               EclipseNSISPlugin.getResourceString("wizard.contents.description")); //$NON-NLS-1$
     }
     
@@ -61,6 +60,8 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
      */
     public void createControl(Composite parent)
     {
+        NSISWizardSettings settings = mWizard.getSettings();
+
         final Composite composite = new Composite(parent, SWT.NONE);
         setControl(composite);
     
@@ -94,20 +95,32 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
         
         final ToolBar toolbar = createToolBar(group, bundle);
         gd = new GridData(GridData.FILL_HORIZONTAL);
+        gd.horizontalSpan = 1;
         toolbar.setLayoutData(gd);
     
         final ToolItem addToolItem = toolbar.getItem(0);
         final ToolItem editToolItem = toolbar.getItem(1);
         final ToolItem deleteToolItem = toolbar.getItem(2);
-    
-        final Tree tree = new Tree(group,SWT.MULTI|SWT.BORDER);
+
+        Composite composite2 = new Composite(group,SWT.NONE);
         gd = new GridData(GridData.FILL_BOTH);
+        gd.horizontalSpan = 1;
+        composite2.setLayoutData(gd);
+        
+        GridLayout layout2 = new GridLayout(2,false);
+        layout.marginHeight = 0;
+        layout.marginWidth = 0;
+        composite2.setLayout(layout2);
+        
+        final Tree tree = new Tree(composite2,SWT.MULTI|SWT.BORDER);
+        gd = new GridData(GridData.FILL_BOTH);
+        gd.horizontalSpan = 1;
         tree.setLayoutData(gd);
 
         updateSelectComponents();
         final TreeViewer tv = new TreeViewer(tree);
         tv.setLabelProvider(new NSISInstallElementLabelProvider());
-        tv.setContentProvider(new NSISInstallElementTreeContentProvider(mSettings));
+        tv.setContentProvider(new NSISInstallElementTreeContentProvider(settings));
         tv.addSelectionChangedListener(new ISelectionChangedListener(){
             public void selectionChanged(SelectionChangedEvent event) 
             {
@@ -115,8 +128,33 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
             }
         });
         tv.setAutoExpandLevel(TreeViewer.ALL_LEVELS);
-        tv.setInput(mSettings);
+        tv.setInput(settings);
     
+        Composite composite3 = new Composite(composite2,SWT.NONE);
+        gd = new GridData(GridData.VERTICAL_ALIGN_CENTER);
+        gd.horizontalSpan = 1;
+        gd.grabExcessHorizontalSpace = false;
+        composite3.setLayoutData(gd);
+        
+        layout2 = new GridLayout();
+        layout.marginHeight = 0;
+        layout.marginWidth = 0;
+        composite3.setLayout(layout2);
+        
+        final Button upButton = new Button(composite3,SWT.PUSH);
+        upButton.setImage(ImageManager.getImage(EclipseNSISPlugin.getResourceString("up.icon"))); //$NON-NLS-1$
+        upButton.setToolTipText(EclipseNSISPlugin.getResourceString("up.tooltip")); //$NON-NLS-1$
+        
+        final Button downButton = new Button(composite3,SWT.PUSH);
+        downButton.setImage(ImageManager.getImage(EclipseNSISPlugin.getResourceString("down.icon"))); //$NON-NLS-1$
+        downButton.setToolTipText(EclipseNSISPlugin.getResourceString("down.tooltip")); //$NON-NLS-1$
+        //TODO Implement up-down functionality
+        mWizard.addSettingsListener(new INSISWizardSettingsListener() {
+            public void settingsChanged()
+            {
+                tv.setInput(mWizard.getSettings());
+            }});
+
         SelectionAdapter editSelectionAdapter = new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e)
             {
@@ -148,7 +186,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
             {
                     MenuItem mi = (MenuItem)e.widget;
                     String text = mi.getText();
-                    INSISInstallElement element = NSISInstallElementFactory.create(mSettings,text);
+                    INSISInstallElement element = NSISInstallElementFactory.create(mWizard.getSettings(),text);
                     if(element != null) {
                         try {
                             if(element.isEditable()) {
@@ -192,6 +230,18 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
         });
         editToolItem.addSelectionListener(editSelectionAdapter);
         deleteToolItem.addSelectionListener(deleteSelectionAdapter);
+        toolbar.getItem(3).addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e)
+            {
+                tv.expandAll();
+            }
+        });
+        toolbar.getItem(4).addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e)
+            {
+                tv.collapseAll();
+            }
+        });
         
         final Menu itemPopupMenu = createMenu(bundle);
         final Menu addDropdownMenu = new Menu(getShell(),SWT.DROP_DOWN);
@@ -276,23 +326,25 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
 
     private void updateSelectComponents()
     {
-        if(mSettings.getInstallerType() != INSISWizardConstants.INSTALLER_TYPE_SILENT) {
-            INSISInstallElement[] items = mSettings.getInstaller().getChildren();
+        NSISWizardSettings settings = mWizard.getSettings();
+
+        if(settings.getInstallerType() != INSISWizardConstants.INSTALLER_TYPE_SILENT) {
+            INSISInstallElement[] items = settings.getInstaller().getChildren();
             if(!Common.isEmptyArray(items)) {
                 for (int i = 0; i < items.length; i++) {
                     if(items[i] instanceof NSISSection) {
                         if(!((NSISSection)items[i]).isHidden()) {
-                            mSettings.setSelectComponents(true);
+                            settings.setSelectComponents(true);
                             return;
                         }
                     }
-                    else if(items[i] instanceof NSISSubSection) {
+                    else if(items[i] instanceof NSISSectionGroup) {
                         INSISInstallElement[] items2 = items[i].getChildren();
                         if(!Common.isEmptyArray(items2)) {
                             for (int j = 0; j < items2.length; j++) {
                                 if(items2[j] instanceof NSISSection) {
                                     if(!((NSISSection)items2[j]).isHidden()) {
-                                        mSettings.setSelectComponents(true);
+                                        settings.setSelectComponents(true);
                                         return;
                                     }
                                 }
@@ -302,7 +354,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
                 }
             }
         }
-        mSettings.setSelectComponents(false);
+        settings.setSelectComponents(false);
     }
 
     private void editElement(Composite composite, TreeViewer tv, INSISInstallElement element)
@@ -514,16 +566,17 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
     {
         ToolBar toolbar = new ToolBar(parent, SWT.FLAT); //$NON-NLS-1$
         
-        int[] styles = {SWT.DROP_DOWN,SWT.PUSH,SWT.PUSH};
-        String[] images = {"installitem.add.icon","installitem.edit.icon","installitem.delete.icon"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        String[] disabledImages = {"installitem.add.disabledicon","installitem.edit.disabledicon","installitem.delete.disabledicon"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        String[] tooltips = {"installitem.add.tooltip","installitem.edit.tooltip","installitem.delete.tooltip"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        int[] styles = {SWT.DROP_DOWN,SWT.PUSH,SWT.PUSH,SWT.PUSH,SWT.PUSH};
+        String[] images = {"add.icon","edit.icon","delete.icon","installitem.expandall.icon","installitem.collapseall.icon"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+        String[] disabledImages = {"add.disabledicon","edit.disabledicon","delete.disabledicon","installitem.expandall.disabledicon","installitem.collapseall.disabledicon"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+        String[] tooltips = {"add.tooltip","edit.tooltip","delete.tooltip","installitem.expandall.tooltip","installitem.collapseall.tooltip"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+        boolean[] state = {false,false,false,true,true};
         for (int i = 0; i < styles.length; i++) {
             ToolItem ti = new ToolItem(toolbar, styles[i]);
             ti.setImage(ImageManager.getImage(bundle.getString(images[i])));
             ti.setDisabledImage(ImageManager.getImage(bundle.getString(disabledImages[i])));
             ti.setToolTipText(bundle.getString(tooltips[i]));
-            ti.setEnabled(false);
+            ti.setEnabled(state[i]);
         }
         return toolbar;
     }
@@ -537,8 +590,8 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
         Menu menu = new Menu(getShell(), SWT.POP_UP); //$NON-NLS-1$
         
         int[] styles = {SWT.CASCADE,SWT.PUSH,SWT.PUSH};
-        String[] images = {"installitem.add.icon","installitem.edit.icon","installitem.delete.icon"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        String[] tooltips = {"installitem.add.tooltip","installitem.edit.tooltip","installitem.delete.tooltip"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        String[] images = {"add.icon","edit.icon","delete.icon"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        String[] tooltips = {"add.tooltip","edit.tooltip","delete.tooltip"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         for (int i = 0; i < styles.length; i++) {
             MenuItem mi = new MenuItem(menu, styles[i]);
             mi.setImage(ImageManager.getImage(bundle.getString(images[i])));
@@ -569,23 +622,25 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
     
     private void checkUnselectedSections()
     {
-        if(Common.isEmpty(getErrorMessage()) && mSettings.getInstallerType() == INSISWizardConstants.INSTALLER_TYPE_SILENT) {
-            INSISInstallElement[] items = mSettings.getInstaller().getChildren();
+        NSISWizardSettings settings = mWizard.getSettings();
+
+        if(Common.isEmpty(getErrorMessage()) && settings.getInstallerType() == INSISWizardConstants.INSTALLER_TYPE_SILENT) {
+            INSISInstallElement[] items = settings.getInstaller().getChildren();
             if(!Common.isEmptyArray(items)) {
                 for (int i = 0; i < items.length; i++) {
                     if(items[i] instanceof NSISSection) {
                         if(((NSISSection)items[i]).isDefaultUnselected()) {
-                            setMessage(EclipseNSISPlugin.getResourceString("silent.unselected.sections.warning"),WARNING);
+                            setMessage(EclipseNSISPlugin.getResourceString("silent.unselected.sections.warning"),WARNING); //$NON-NLS-1$
                             return;
                         }
                     }
-                    else if(items[i] instanceof NSISSubSection) {
+                    else if(items[i] instanceof NSISSectionGroup) {
                         INSISInstallElement[] items2 = items[i].getChildren();
                         if(!Common.isEmptyArray(items2)) {
                             for (int j = 0; j < items2.length; j++) {
                                 if(items2[j] instanceof NSISSection) {
                                     if(((NSISSection)items2[j]).isDefaultUnselected()) {
-                                        setMessage(EclipseNSISPlugin.getResourceString("silent.unselected.sections.warning"),WARNING);
+                                        setMessage(EclipseNSISPlugin.getResourceString("silent.unselected.sections.warning"),WARNING); //$NON-NLS-1$
                                         return;
                                     }
                                 }
@@ -596,15 +651,17 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
             }
         }
         else {
-            setMessage(EclipseNSISPlugin.getResourceString("wizard.contents.description"));
+            setMessage(EclipseNSISPlugin.getResourceString("wizard.contents.description")); //$NON-NLS-1$
         }
     }
 
-    private boolean validatePage(int flag)
+    public boolean validatePage(int flag)
     {
+        NSISWizardSettings settings = mWizard.getSettings();
+
         boolean b;
         
-        if((b = validateInstallElement(mSettings.getInstaller()))) {
+        if((b = validateInstallElement(settings.getInstaller()))) {
             setErrorMessage(null);
         }
         setPageComplete(b);

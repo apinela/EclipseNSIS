@@ -1,32 +1,34 @@
 /*******************************************************************************
- * Copyright (c) 2004 Sunil Kamath (IcemanK).
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which is available at http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2004, 2005 Sunil Kamath (IcemanK).
+ * All rights reserved.
+ * This program is made available under the terms of the Common Public License
+ * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
 package net.sf.eclipsensis.settings;
 
-import java.util.*;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 
+import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.makensis.MakeNSISRunner;
-import net.sf.eclipsensis.util.Common;
 
 public abstract class NSISSettings implements INSISPreferenceConstants
 {
+    protected static File cPluginStateLocation = EclipseNSISPlugin.getPluginStateLocation();
+    
     private boolean mHdrInfo = false;
     private boolean mLicense = false;
     private boolean mNoConfig = false;
     private boolean mNoCD = false;
     private int mVerbosity = INSISPreferenceConstants.VERBOSITY_ALL;
     private int mCompressor = MakeNSISRunner.COMPRESSOR_DEFAULT;
-    private int mInstructionsCount = 0;
     private ArrayList mInstructions = null;
-    private Properties mSymbols = null;
-    private Properties mOldSymbols = null;
-
+    private LinkedHashMap mSymbols = null;
+    
     protected abstract String getString(String name);
     protected abstract boolean getBoolean(String name);
     protected abstract int getInt(String name);
@@ -45,9 +47,8 @@ public abstract class NSISSettings implements INSISPreferenceConstants
         setNoCD(getBoolean(NOCD));
         setVerbosity(getInt(VERBOSITY));
         setCompressor(getInt(COMPRESSOR));
-        setInstructions(loadArrayList(INSTRUCTIONS));
-        mInstructionsCount = mInstructions.size();
-        setSymbols(loadProperties(SYMBOLS));
+        setInstructions((ArrayList)loadObject(INSTRUCTIONS));
+        setSymbols((LinkedHashMap)loadObject(SYMBOLS));
     }
     
     public void store()
@@ -58,99 +59,10 @@ public abstract class NSISSettings implements INSISPreferenceConstants
         setValue(NOCD, mNoCD);
         setValue(VERBOSITY,mVerbosity);
         setValue(COMPRESSOR, mCompressor);
-        storeProperties(SYMBOLS, mOldSymbols, mSymbols);
-        mInstructionsCount = storeArrayList(INSTRUCTIONS, mInstructionsCount, mInstructions);
+        storeObject(SYMBOLS, mSymbols);
+        storeObject(INSTRUCTIONS, mInstructions);
     }
 
-    private String makeSettingsPropertyName(String settingName, String propertyName)
-    {
-        return new StringBuffer(settingName).append(".").append(propertyName).toString(); //$NON-NLS-1$
-    }
-    
-    protected Properties loadProperties(String settingName)
-    {
-        Properties properties = new Properties();
-        String propertiesList = getString(settingName);
-        if(!Common.isEmpty(propertiesList)) {
-            StringTokenizer st = new StringTokenizer(propertiesList,","); //$NON-NLS-1$
-            while(st.hasMoreTokens()) {
-                String property = st.nextToken();
-                if(!Common.isEmpty(property)) {
-                    String value = getString(makeSettingsPropertyName(settingName,property));
-                    properties.setProperty(property,(value != null?value:"")); //$NON-NLS-1$
-                }
-            }
-        }
-        return properties;
-    }
-
-    protected Properties storeProperties(String settingName, Properties oldProperties, Properties properties)
-    {
-        if(oldProperties != null) {
-            for(Iterator iter=oldProperties.keySet().iterator(); iter.hasNext(); ) {
-                String key = (String)iter.next();
-                if(!properties.containsKey(key)) {
-                    setValue(makeSettingsPropertyName(settingName,key),""); //$NON-NLS-1$
-                }
-            }
-        }
-        StringBuffer propertiesList = new StringBuffer(""); //$NON-NLS-1$
-        if(properties != null) {
-            Iterator iter=properties.entrySet().iterator();
-            if(iter.hasNext()) {
-                do {
-                    Map.Entry entry = (Map.Entry)iter.next();
-                    String key = (String)entry.getKey();
-                    String value = (String)entry.getValue();
-                    propertiesList.append(key).append((iter.hasNext()?",":"")); //$NON-NLS-1$ //$NON-NLS-2$
-                    setValue(makeSettingsPropertyName(settingName,key),value);
-                } while(iter.hasNext()); 
-            }
-            setValue(settingName,propertiesList.toString());
-        }
-        return properties;
-    }
-    
-    private String makeSettingName(String settingName, String text, int index)
-    {
-        return new StringBuffer(settingName).append(".").append(text).append(index).toString(); //$NON-NLS-1$
-    }
-    
-    protected ArrayList loadArrayList(String settingName)
-    {
-        ArrayList list = new ArrayList();
-        int count = getInt(settingName);
-        if(count > 0) {
-            for(int i=0; i<count; i++) {
-                String name = getString(makeSettingName(settingName,"item",i)); //$NON-NLS-1$
-                if(!Common.isEmpty(name)) {
-                    list.add(name.trim());
-                }
-            }
-        }
-        return list;
-    }
-    
-    protected int storeArrayList(String settingName, int oldCount, ArrayList list)
-    {
-        int count = 0;
-        if(list != null) {
-            count = list.size();
-            for(int i=0; i<count; i++) {
-                String item = (String)list.get(i);
-                setValue(makeSettingName(settingName,"item",i),item); //$NON-NLS-1$
-            }
-        }
-        if(oldCount > count) {
-            for(int i=count; i<oldCount; i++) {
-                setValue(makeSettingName(settingName,"item",i),""); //$NON-NLS-1$ //$NON-NLS-2$
-            }
-        }
-        
-        setValue(settingName,count);
-        return count;
-    }
-    
     /**
      * @return Returns the compressor.
      */
@@ -320,36 +232,27 @@ public abstract class NSISSettings implements INSISPreferenceConstants
     /**
      * @return Returns the default symbols.
      */
-    public Properties getDefaultSymbols()
+    public LinkedHashMap getDefaultSymbols()
     {
-        return new Properties();
-    }
-    
-    private Properties createPropertiesCopy(Properties properties)
-    {
-        Properties copy = new Properties();
-        if(properties != null) {
-            copy.putAll(properties);
-        }
-        return copy;
+        return new LinkedHashMap();
     }
     
     /**
      * @return Returns the symbols.
      */
-    public Properties getSymbols()
+    public LinkedHashMap getSymbols()
     {
-        return createPropertiesCopy(mSymbols);
+        return (mSymbols == null?new LinkedHashMap():new LinkedHashMap(mSymbols));
     }
 
     /**
      * @param symbols The symbols to set.
      */
-    public void setSymbols(Properties symbols)
+    public void setSymbols(LinkedHashMap symbols)
     {
-        if(mSymbols !=null && mOldSymbols == null) {
-            mOldSymbols = mSymbols;
-        }
-        mSymbols = (symbols==null?new Properties():symbols);
+        mSymbols = (symbols==null?new LinkedHashMap():symbols);
     }
+    
+    protected abstract void storeObject(String settingName, Object object);
+    protected abstract Object loadObject(String settingName);
 }
