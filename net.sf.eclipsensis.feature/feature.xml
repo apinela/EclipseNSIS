@@ -2,7 +2,7 @@
 <feature
       id="net.sf.eclipsensis"
       label="net.sf.eclipsensis"
-      version="0.2.0"
+      version="0.4.0"
       provider-name="Sunil Kamath (IcemanK)"
       os="win32"
       ws="win32"
@@ -15,7 +15,7 @@
    </description>
 
    <copyright url="copyright.html">
-      EclipseNSIS Plugin: Copyright (C) 2004 Sunil Kamath (IcemanK).
+      EclipseNSIS Plugin: Copyright (c) 2004, 2005 Sunil Kamath (IcemanK).
 All rights reserved.
 Visit http://eclipsensis.sf.net
 Eclipse Platform: and the Eclipse icon Copyright (C) Eclipse contributors and others
@@ -53,6 +53,6 @@ http://www.eclipse.org/lega/cpl-v10.html
          id="net.sf.eclipsensis"
          download-size="250"
          install-size="250"
-         version="0.2.0"/>
+         version="0.4.0"/>
 
 </feature>
