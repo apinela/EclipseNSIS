@@ -26,12 +26,12 @@ public class NSISProperties extends NSISSettings implements INSISConstants
     private static HashMap cQualifiedNames = new HashMap();
 
     private IFile mFile = null;
-    private boolean mUseDefaults = true;
+    private boolean mUseGlobals = true;
     
     private static Random cRandom = new Random();
     
     static {
-        cQualifiedNames.put(USE_DEFAULTS, new QualifiedName(PLUGIN_NAME,USE_DEFAULTS));
+        cQualifiedNames.put(USE_GLOBALS, new QualifiedName(PLUGIN_NAME,USE_GLOBALS));
         cQualifiedNames.put(HDRINFO, new QualifiedName(PLUGIN_NAME,HDRINFO));
         cQualifiedNames.put(VERBOSITY, new QualifiedName(PLUGIN_NAME,VERBOSITY));
         cQualifiedNames.put(LICENSE, new QualifiedName(PLUGIN_NAME,LICENSE));
@@ -45,17 +45,28 @@ public class NSISProperties extends NSISSettings implements INSISConstants
     public static NSISProperties getProperties(IFile file)
     {
         String fileName = file.getLocation().toString();
-        NSISProperties props = null;
         if(!cPropertiesCache.containsKey(fileName)) {
             synchronized(NSISProperties.class) {
                 if(!cPropertiesCache.containsKey(fileName)) {
-                    props = new NSISProperties(file);
+                    NSISProperties props = new NSISProperties(file);
                     props.load();
                     cPropertiesCache.put(fileName,props);
                 }
             }
         }
-        return (NSISProperties)cPropertiesCache.get(fileName);
+        NSISProperties properties = (NSISProperties)cPropertiesCache.get(fileName);
+        if(properties.getUseGlobals()) {
+            NSISPreferences prefs = NSISPreferences.getPreferences();
+            properties.setHdrInfo(prefs.getHdrInfo());
+            properties.setLicense(prefs.getLicense());
+            properties.setNoConfig(prefs.getNoConfig());
+            properties.setNoCD(prefs.getNoCD());
+            properties.setVerbosity(prefs.getVerbosity());
+            properties.setCompressor(prefs.getCompressor());
+            properties.setSymbols(prefs.getSymbols());
+            properties.setInstructions(prefs.getInstructions());
+        }
+        return properties;
     }
     
     private static QualifiedName getQualifiedName(String name)
@@ -80,20 +91,21 @@ public class NSISProperties extends NSISSettings implements INSISConstants
 
     protected void load()
     {
-        String temp = getPersistentProperty(getQualifiedName(USE_DEFAULTS));
-        setUseDefaults((temp == null || Boolean.valueOf(temp).booleanValue()));
-        if(!getUseDefaults()) {
+        String temp = getPersistentProperty(getQualifiedName(USE_GLOBALS));
+        setUseGlobals((temp == null || Boolean.valueOf(temp).booleanValue()));
+        if(!getUseGlobals()) {
             super.load();
         }
     }
     
     public void store()
     {
-        setValue(USE_DEFAULTS,getUseDefaults());
-        if(getUseDefaults()) {
+        setValue(USE_GLOBALS,getUseGlobals());
+        if(getUseGlobals()) {
             setHdrInfo(getDefaultHdrInfo());
             setLicense(getDefaultLicense());
-            setNoConfig(getNoConfig());
+            setNoConfig(getDefaultNoConfig());
+            setNoCD(getDefaultNoCD());
             setVerbosity(getDefaultVerbosity());
             setCompressor(getDefaultCompressor());
             setSymbols(getDefaultSymbols());
@@ -105,17 +117,17 @@ public class NSISProperties extends NSISSettings implements INSISConstants
     /**
      * @return Returns the useDefaults.
      */
-    public boolean getUseDefaults()
+    public boolean getUseGlobals()
     {
-        return mUseDefaults;
+        return mUseGlobals;
     }
     
     /**
-     * @param useDefaults The useDefaults to set.
+     * @param useGlobals The useGlobals to set.
      */
-    public void setUseDefaults(boolean useDefaults)
+    public void setUseGlobals(boolean useGlobals)
     {
-        mUseDefaults = useDefaults;
+        mUseGlobals = useGlobals;
     }
     
     private String getPersistentProperty(QualifiedName qname)

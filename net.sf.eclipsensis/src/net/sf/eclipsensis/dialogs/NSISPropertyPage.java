@@ -22,14 +22,14 @@ import org.eclipse.swt.widgets.Composite;
 
 public class NSISPropertyPage extends NSISSettingsPage
 {
-    private Button mUseDefaults = null;
+    private Button mUseGlobals = null;
     
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.dialogs.NSISSettingsPage#canEnableControls()
      */
     protected boolean canEnableControls()
     {
-        return !mUseDefaults.getSelection();
+        return !mUseGlobals.getSelection();
     }
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.dialogs.NSISSettingsPage#createEnablerControl(org.eclipse.swt.widgets.Composite)
@@ -41,10 +41,10 @@ public class NSISPropertyPage extends NSISSettingsPage
         layout.marginWidth = 0;
         composite.setLayout(layout);
         
-        mUseDefaults = createCheckBox(composite, EclipseNSISPlugin.getResourceString("use.defaults.text"), //$NON-NLS-1$
-                                      EclipseNSISPlugin.getResourceString("use.defaults.tooltip"), //$NON-NLS-1$
-                                      ((NSISProperties)getSettings()).getUseDefaults());
-        mUseDefaults.addSelectionListener(new SelectionAdapter() {
+        mUseGlobals = createCheckBox(composite, EclipseNSISPlugin.getResourceString("use.globals.text"), //$NON-NLS-1$
+                                      EclipseNSISPlugin.getResourceString("use.globals.tooltip"), //$NON-NLS-1$
+                                      ((NSISProperties)getSettings()).getUseGlobals());
+        mUseGlobals.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) 
             {
                 enableControls(canEnableControls());
@@ -90,12 +90,15 @@ public class NSISPropertyPage extends NSISSettingsPage
      */
     public boolean performOk()
     {
-        boolean useDefaults = mUseDefaults.getSelection();
+        boolean useDefaults = mUseGlobals.getSelection();
         NSISProperties properties = (NSISProperties)getSettings();
-        properties.setUseDefaults(useDefaults);
+        properties.setUseGlobals(useDefaults);
         if(useDefaults) {
-            
+            properties.store();
+            return true;
         }
-        return super.performOk();
+        else {
+            return super.performOk();
+        }
     }
 }

@@ -12,8 +12,8 @@
 -->
 <contexts>
     <context id="nsis_editor_context">
-        <description>The NSIS editor is used to edit NullSoft Installer scripts.</description>
-        <topic label="NSIS Editor" href="help/editing.html"/>
-        <topic label="Eclipse NSIS User guide" href="help/overview.html"/>
+        <description>The EclipseNSIS editor is used to edit NullSoft Installer scripts.</description>
+        <topic label="EclipseNSIS Editor" href="help/editing.html"/>
+        <topic label="EclipseNSIS User guide" href="help/overview.html"/>
     </context>
 </contexts>

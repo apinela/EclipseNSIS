@@ -163,8 +163,9 @@ public class PreferenceStoreWrapper implements IPreferenceStore
     private void checkBoolean(String name)
     {
         if(!mInternalStore.contains(name) && mParentStore.contains(name)) {
-            mInternalStore.setValue(name,mParentStore.getBoolean(name));
             mInternalStore.setDefault(name,mParentStore.getDefaultBoolean(name));
+            mInternalStore.setToDefault(name);
+            mInternalStore.setValue(name,mParentStore.getBoolean(name));
             mNamesMap.put(name,Boolean.class);
         }
     }
@@ -193,8 +194,9 @@ public class PreferenceStoreWrapper implements IPreferenceStore
     private void checkDouble(String name)
     {
         if(!mInternalStore.contains(name) && mParentStore.contains(name)) {
-            mInternalStore.setValue(name,mParentStore.getDouble(name));
             mInternalStore.setDefault(name,mParentStore.getDefaultDouble(name));
+            mInternalStore.setToDefault(name);
+            mInternalStore.setValue(name,mParentStore.getDouble(name));
             mNamesMap.put(name,Double.class);
         }
     }
@@ -214,8 +216,9 @@ public class PreferenceStoreWrapper implements IPreferenceStore
     private void checkFloat(String name)
     {
         if(!mInternalStore.contains(name) && mParentStore.contains(name)) {
-            mInternalStore.setValue(name,mParentStore.getFloat(name));
             mInternalStore.setDefault(name,mParentStore.getDefaultFloat(name));
+            mInternalStore.setToDefault(name);
+            mInternalStore.setValue(name,mParentStore.getFloat(name));
             mNamesMap.put(name,Float.class);
         }
     }
@@ -235,8 +238,9 @@ public class PreferenceStoreWrapper implements IPreferenceStore
     private void checkInt(String name)
     {
         if(!mInternalStore.contains(name) && mParentStore.contains(name)) {
-            mInternalStore.setValue(name,mParentStore.getInt(name));
             mInternalStore.setDefault(name,mParentStore.getDefaultInt(name));
+            mInternalStore.setToDefault(name);
+            mInternalStore.setValue(name,mParentStore.getInt(name));
             mNamesMap.put(name,Integer.class);
         }
     }
@@ -256,8 +260,9 @@ public class PreferenceStoreWrapper implements IPreferenceStore
     private void checkLong(String name)
     {
         if(!mInternalStore.contains(name) && mParentStore.contains(name)) {
-            mInternalStore.setValue(name,mParentStore.getLong(name));
             mInternalStore.setDefault(name,mParentStore.getDefaultLong(name));
+            mInternalStore.setToDefault(name);
+            mInternalStore.setValue(name,mParentStore.getLong(name));
             mNamesMap.put(name,Long.class);
         }
     }
@@ -277,8 +282,9 @@ public class PreferenceStoreWrapper implements IPreferenceStore
     private void checkString(String name)
     {
         if(!mInternalStore.contains(name) && mParentStore.contains(name)) {
-            mInternalStore.setValue(name,mParentStore.getString(name));
             mInternalStore.setDefault(name,mParentStore.getDefaultString(name));
+            mInternalStore.setToDefault(name);
+            mInternalStore.setValue(name,mParentStore.getString(name));
             mNamesMap.put(name,String.class);
         }
     }

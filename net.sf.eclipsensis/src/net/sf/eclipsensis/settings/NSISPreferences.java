@@ -41,6 +41,7 @@ public class NSISPreferences extends NSISSettings implements IPropertyChangeList
     private boolean mCaseSensitiveTaskTags = true;
     
     private static NSISPreferences cInstance = null;
+    private final HashSet mInheritedPreferences = new HashSet();
     
     public static NSISPreferences getPreferences()
     {
@@ -53,7 +54,6 @@ public class NSISPreferences extends NSISSettings implements IPropertyChangeList
                 }
             }
         }
-        
         return cInstance;
     }
     
@@ -176,6 +176,18 @@ public class NSISPreferences extends NSISSettings implements IPropertyChangeList
             String prefix = "linked."+linkedModelPrefs[i]; //$NON-NLS-1$
             for (int j = 0; j < linkedModelPrefSuffixes.length; j++) {
                 String preference = prefix + linkedModelPrefSuffixes[j];
+                mInheritedPreferences.add(preference);
+                initializePreference(preference, defaultStore.getString(preference));
+            }
+        }
+        
+        String[] preferencePrefixes = {"error", "warning","info","task"};
+        String[] preferenceSuffixes = {"", "Color","InOverviewRuler","InVerticalRuler","Highlighting"};
+        for (int i = 0; i < preferencePrefixes.length; i++) {
+            String prefix = preferencePrefixes[i] + "Indication";
+            for (int j = 0; j < preferenceSuffixes.length; j++) {
+                String preference = prefix + preferenceSuffixes[j];
+                mInheritedPreferences.add(preference);
                 initializePreference(preference, defaultStore.getString(preference));
             }
         }
@@ -185,7 +197,7 @@ public class NSISPreferences extends NSISSettings implements IPropertyChangeList
     public void propertyChange(PropertyChangeEvent event)
     {
         String name = event.getProperty();
-        if(name.startsWith("linked.") && mPreferenceStore.contains(name)) { //$NON-NLS-1$
+        if(mInheritedPreferences.contains(name)) { //$NON-NLS-1$
             mPreferenceStore.setValue(name, event.getNewValue().toString());
         }
     }

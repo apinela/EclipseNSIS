@@ -1,0 +1,188 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<!--
+###############################################################################
+# Copyright (c) 2004, 2005 Sunil Kamath (IcemanK).
+# All rights reserved.
+# This program is made available under the terms of the Common Public License
+# v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
+#
+# Contributors:
+# Sunil Kamath (IcemanK) - initial API and implementation
+###############################################################################
+-->
+  <title>EclipseNSIS - Editor Preferences</title>
+  <link rel="stylesheet" href="book.css" charset="ISO-8859-1"
+ type="text/css">
+  <meta http-equiv="Content-Type"
+ content="text/html; charset=ISO-8859-1">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+</head>
+<body>
+<div id="main">
+<a href="nsisprefs.html">Previous</a> | <a
+ href="overview.html#contents">Contents</a> | <a
+ href="templateprefs.html">Next</a>
+<hr>
+<h2><a name="editor"></a>Editor</h2>
+These preferences are used to customize the look and feel of the EclipseNSIS
+editor.<br>
+The Editor Preferences page has two tabs:<br>
+<ul>
+	<li><a href="#appearance">Appearance</a></li>
+	<li><a href="#syntax">Syntax</a></li>
+</ul>
+<br><br>
+<h3><a name="appearance"></a>Appearance</h3>
+<img
+ alt="Editor Preferences Appearance Tab" src="images/editorpref1.gif"
+ style="border: medium none ; width: 425px; height: 508px;"
+ usemap="#editorpref1"><br>
+<br>
+<dl>
+  <dt><a name="a_tabwidth"></a><strong>Displayed tab width</strong></dt>
+  <dd>Specifies how wide tabs are displayed in units of spaces. <a
+ href="javascript:history.go(-1)">&#8592; Back</a></dd>
+  <dt><a name="a_spacestabs"></a><strong>Use spaces for tabs</strong></dt>
+  <dd>The editor uses spaces instead of tabs to represent indentations.
+    <a href="javascript:history.go(-1)">&#8592; Back</a></dd>
+  <dt><a name="a_printmargin"></a><strong>Print margin column</strong></dt>
+  <dd>Specifies the column after which the print margin is displayed. <a
+ href="javascript:history.go(-1)">&#8592; Back</a></dd>
+  <dt><a name="a_showruler"></a><strong>Show overview ruler</strong></dt>
+  <dd>If enabled, the overview ruler on the right border of the EclipseNSIS
+editor is displayed and shows problems of the whole visible document. <a
+ href="javascript:history.go(-1)">&#8592; Back</a></dd>
+  <dt><a name="a_showlinenum"></a><strong>Show line numbers</strong></dt>
+  <dd>If enabled, the vertical ruler on the left border of the EclipseNSIS
+editor displays line numbers of the visible document. <a
+ href="javascript:history.go(-1)">&#8592; Back</a></dd>
+  <dt><a name="a_highlight"></a><strong>Highlight current line</strong></dt>
+  <dd>If enabled, the background of the current line of the cursor is
+highlighted. <a href="javascript:history.go(-1)">&#8592; Back</a></dd>
+  <dt><a name="a_showmargin"></a><strong>Show print margin</strong></dt>
+  <dd>If enabled, the print margin is displayed. <a
+ href="javascript:history.go(-1)">&#8592; Back</a></dd>
+  <dt><a name="a_showmatch"></a><strong>Show matching delimiters</strong></dt>
+  <dd>If enabled, whenever the cursor is next to a parenthesis, bracket
+or curly braces, its opening or closing counter part is highlighted. <a
+ href="javascript:history.go(-1)">&#8592; Back</a></dd>
+  <dt><a name="a_customcaret"></a><strong>Use custom caret</strong></dt>
+  <dd>Accessibility option to use a custom caret. <a
+ href="javascript:history.go(-1)">&#8592; Back</a></dd>
+  <dt><a name="a_thickcaret"></a><strong>Enable thick caret</strong></dt>
+  <dd>Accessibility option to use a thick caret. <a
+ href="javascript:history.go(-1)">&#8592; Back</a></dd>
+  <dt><a name="a_appearancecolors"></a><strong>Appearance color options</strong></dt>
+  <dd>The colors of various EclipseNSIS editor appearance features are
+specified here. The available appearance features are listed below. <a
+ href="javascript:history.go(-1)">&#8592; Back</a></dd>
+  <dl>
+    <dt>Current line highlight</dt>
+    <dd>The color of current line highlight.</dd>
+    <dt>Line number foreground</dt>
+    <dd>The color of line numbers.</dd>
+    <dt>Matching delimiters highlight<br>
+    </dt>
+    <dd>The color of delimiters highlight.</dd>
+    <dt>Print margin</dt>
+    <dd>The color of the print margin.</dd>
+    <dt>Selection background<br>
+    </dt>
+    <dd>The background color of selected text.</dd>
+    <dt>Selection foreground<br>
+    </dt>
+    <dd>The foreground color of selected text.</dd>
+  </dl>
+  </dl>
+<a href="preferences.html">Back to Preferences</a><br><br>
+<h3><a name="syntax"></a>Syntax</h3>
+<img
+ alt="Editor Preferences Syntax Tab" src="images/editorpref2.gif"
+ style="border: medium none ; width: 425px; height: 508px;"
+ usemap="#editorpref2"> <br><br>
+  <dl>
+  <dt><a name="a_syntaxstyles"></a><strong>Syntax style options</strong></dt>
+  <dd>Syntax styles specify how NSIS source code is rendered. The
+available syntax elements are listed below. <a
+ href="javascript:history.go(-1)">&#8592; Back</a></dd>
+  <dl>
+    <dt>Built-in Constants and Variables</dt>
+    <dd>e.g., $INSTDIR, $R0, etc.</dd>
+    <dt>Callbacks</dt>
+    <dd>e.g., .onInit, .onInstFailed, etc.</dd>
+    <dt>Comments</dt>
+    <dd>Single line and multiline comments.</dd>
+    <dt>Compile-time Commands</dt>
+    <dd>e.g., !system, !macro, etc.</dd>
+    <dt>Installer Attributes</dt>
+    <dd>e.g., OutFile, Name, etc.</dd>
+    <dt>Instruction Options</dt>
+    <dd>e.g., /oname, /ifempty, etc.</dd>
+    <dt>Instruction Parameters</dt>
+    <dd>e.g., HKLM, MB_OK, etc.</dd>
+    <dt>Instructions</dt>
+    <dd>e.g., ReadRegStr, MessageBox, etc.</dd>
+    <dt>Language Strings</dt>
+    <dd>Language variables, i.e., delimited by "$(" and ")".</dd>
+    <dt>Numbers</dt>
+    <dd>Numbers in decimal, octal and hex format.</dd>
+    <dtPredefined and="" user-defined="" symbols=""><dd>e.g.,
+${NSISDIR} and any other symbols delimited by "${" and "}", etc.</dd>
+    <dt>Section and Function</dt>
+    <dd>Section and Function keywords, e.g., Section, SectionEnd, etc.</dd>
+    <dt>Strings</dt>
+    <dd>NSIS strings which are delimited by double, single or backward
+single quotes.</dd>
+    <dt>Task Tags</dt>
+    <dd>Task tags defined using the <a href="tasktagprefs.html">Task Tags</a>
+preference page.</dd>
+    <dt>User-defined Variables</dt>
+    <dd>Any valid NSIS words starting with "$".</dd>
+    </dtPredefined>
+  </dl>
+  <dt><a name="a_syntaxpreview"></a><strong>Preview</strong></dt>
+  <dd>Displays the preview of NSIS source code respecting the current
+colors and styles. <a href="javascript:history.go(-1)">&#8592; Back</a></dd>
+</dl>
+<a href="preferences.html">Back to Preferences</a><br>
+<hr><a href="nsisprefs.html">Previous</a> | <a
+ href="overview.html#contents">Contents</a> | <a
+ href="templateprefs.html">Next</a><br>
+<br>
+<p><strong><small>Copyright &copy; 2004, 2005 Sunil Kamath
+(IcemanK).</small></strong></p>
+<map name="editorpref1">
+<area id="appearancecolors" shape="RECT" href="#a_appearancecolors"
+ alt="Appearance color options" coords="17,306, 254,392">
+<area id="thickcaret" shape="RECT" href="#a_thickcaret"
+ alt="Enable thick caret" coords="39,273, 141,287">
+<area id="customcaret" shape="RECT" href="#a_customcaret"
+ alt="Use custom caret" coords="18,253, 118,267">
+<area id="showmatch" shape="RECT" href="#a_showmatch"
+ alt="Show matching delimiters" coords="18,231, 156,244">
+<area id="showmargin" shape="RECT" href="#a_showmargin"
+ alt="Show print margin" coords="18,210, 122,224">
+<area id="highlight" shape="RECT" href="#a_highlight"
+ alt="Highlight current line" coords="18,189, 133,204">
+<area id="showlinenum" shape="RECT" href="#a_showlinenum"
+ alt="Show line numbers" coords="19,168, 126,184">
+<area id="showruler" shape="RECT" href="#a_showruler"
+ alt="Show overview ruler" coords="18,147, 134,162">
+<area id="printmargin" shape="RECT" href="#a_printmargin"
+ alt="Print margin column" coords="17,122, 156,143">
+<area id="spacestabs" shape="RECT" href="#a_spacestabs"
+ alt="Use spaces for tabs" coords="20,101, 131,115">
+<area id="tabwidth" shape="RECT" href="#a_tabwidth"
+ alt="Displayed tab width" coords="18,76, 156,97">
+</map>
+<map name="editorpref2">
+<area id="syntaxpreview" shape="RECT" href="#a_syntaxpreview"
+ alt="Syntax preview" coords="17,231, 407,465">
+<area id="syntaxstyles" shape="RECT" href="#a_syntaxstyles"
+ alt="Syntax styles" coords="17,77, 342,226">
+</map>
+</div>
+</body>
+</html>

@@ -445,7 +445,7 @@
    <extension
          point="org.eclipse.ui.newWizards">
       <category
-            name="NSIS"
+            name="%wizard.category"
             id="net.sf.eclipsensis"/>
       <wizard
             class="net.sf.eclipsensis.wizard.NSISScriptWizard"

@@ -129,17 +129,6 @@ public class MakeNSISRunner implements INSISConstants
         }
     }
     
-    private static NSISSettings getSettings(IFile file)
-    {
-        NSISProperties properties = NSISProperties.getProperties(file);
-        if (properties.getUseDefaults()) {
-            return NSISPreferences.getPreferences();
-        }
-        else {
-            return properties;
-        }
-    }
-    
     private static void updateMarkers(final IFile file, final NSISConsoleModel model, final MakeNSISResults results)
     {
         if (!results.getCanceled()) {
@@ -272,7 +261,7 @@ public class MakeNSISRunner implements INSISConstants
                     String fileName = file.getLocation().toFile().getAbsolutePath();
                     File workDir = file.getLocation().toFile().getParentFile();
                     String[] env = Common.getEnv();
-                    NSISSettings settings = getSettings(file);
+                    NSISSettings settings = NSISProperties.getProperties(file);
                     ArrayList options = new ArrayList();
                     if(settings.getVerbosity() != settings.getDefaultVerbosity()) {
                         options.add(EclipseNSISPlugin.getResourceString("makensis.verbose.option")+settings.getVerbosity()); //$NON-NLS-1$

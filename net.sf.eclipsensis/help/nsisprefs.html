@@ -1,0 +1,199 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<!--
+###############################################################################
+# Copyright (c) 2004, 2005 Sunil Kamath (IcemanK).
+# All rights reserved.
+# This program is made available under the terms of the Common Public License
+# v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
+#
+# Contributors:
+# Sunil Kamath (IcemanK) - initial API and implementation
+###############################################################################
+-->
+  <title>EclipseNSIS - EclipseNSIS Preferences</title>
+  <link rel="stylesheet" href="book.css" charset="ISO-8859-1"
+ type="text/css">
+  <meta http-equiv="Content-Type"
+ content="text/html; charset=ISO-8859-1">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+</head>
+<body>
+<div id="main">
+<a href="preferences.html">Previous</a> | <a href="overview.html#contents">Contents </a>| <a href="editorprefs.html">Next</a>
+<hr>
+<h2><a name="nsis"></a>EclipseNSIS</h2>
+These preferences are used to set global settings for NSIS scripts,
+including
+command
+line options for the MakeNSIS compiler. These options are applied
+during script compilation, unless overridden on the script level (see
+the <a href="properties.html">Properties</a> section).<br>
+The EclipseNSIS Preferences page has two tabs:<br>
+<ul>
+	<li><a href="#general">General</a></li>
+	<li><a href="#symbols">Defined Symbols</a></li>
+</ul>
+<br>
+<br>
+<h3><a name="general"></a>General</h3>
+<img
+ alt="EclipseNSIS Preferences General Tab" src="images/preferences1.gif"
+ style="border: medium none ; width: 425px; height: 508px;"
+ usemap="#preferences1"><br>
+<br>
+<dl>
+  <dt><a name="a_nsishome"></a><strong>NSIS
+Home</strong></dt>
+  <dd>Location of NSIS installation. This
+is the folder where
+makensis.exe can be found. In case there are multiple NSIS
+installations, e.g. in a development environment, the drop-down combo
+remembers the locations you specified, so that they are available for
+quick NSIS home selection.&nbsp;<a href="javascript:history.go(-1)">&#8592;
+Back</a> </dd>
+  <dt><a name="a_autoconsole"></a><strong>Automatically open NSIS
+console</strong></dt>
+  <dd>Automatically open the EclipseNSIS console view when compiling a script.
+If the view is already open, it is activated. <a
+ href="javascript:history.go(-1)">&#8592; Back</a></dd>
+  <dt><a name="a_help"></a><strong>Use Eclipse integrated help browser</strong></dt>
+  <dd>Use the Eclipse integrated help browser to display NSIS help. If
+this option is unchecked, then the NSIS htmlhelp file is opened
+instead. <a href="javascript:history.go(-1)">&#8592; Back</a></dd>
+  <dt><a name="a_hdrinfo"></a><strong>Print NSIS header info</strong></dt>
+  <dd>Prints out information on what options were used to compile
+MakeNSIS was compiled with. Equivalent to the /HDRINFO compiler option.
+    <a href="javascript:history.go(-1)">&#8592; Back</a></dd>
+  <dt><a name="a_license"></a><strong>Print NSIS license</strong></dt>
+  <dd>Displays a keen license page. Equivalent to the /LICENSE compiler
+option. <a href="javascript:history.go(-1)">&#8592; Back</a></dd>
+  <dt><a name="a_noconfig"></a><strong>Do not include default NSIS
+config</strong></dt>
+  <dd>Disables inclusion of &lt;path to makensis.exe&gt;\nsisconf.nsh.
+Without this parameter, installer defaults are set from nsisconf.nsh..
+Equivalent to the /NOCONFIG compiler option. <a
+ href="javascript:history.go(-1)">&#8592; Back</a></dd>
+  <dt><a name="a_nocd"></a><strong>Don't change directory</strong></dt>
+  <dd>Disables the current directory change to that of the .nsi file.
+Equivalent to the /NOCD compiler option. <a
+ href="javascript:history.go(-1)">&#8592; Back</a></dd>
+  <dt><a name="a_verbosity"></a><strong>Verbosity</strong></dt>
+  <dd>Sets the verbosity of the compiler output. Equivalent to the /V
+compiler option. <a href="javascript:history.go(-1)">&#8592; Back</a></dd>
+  <dt><a name="a_compressor"></a><strong>Compressor</strong></dt>
+  <dd>Sets the default compressor for NSIS scripts. This overrides any
+compressor settings in the script. When the Best compressor option is
+selected, all compressors are tried, and the one with the best
+compression is used for creating the installer. <a
+ href="javascript:history.go(-1)">&#8592; Back</a></dd>
+  <dt><a name="a_instructions"></a><strong>Instructions</strong></dt>
+  <dd>Instructions for the MakeNSIS compiler to execute prior to
+compiling the script. Equivalent to the /X compiler option. The
+following buttons allow the manipulation and configuration of
+instructions. <a href="javascript:history.go(-1)">&#8592; Back</a></dd>
+  <dl>
+    <dt><a name="a_add1"></a><strong>Add<br>
+      </strong></dt>
+    <dd>Add a new instruction. <a href="javascript:history.go(-1)">&#8592;
+Back</a></dd>
+    <dt><a name="a_edit1"></a><strong>Edit</strong></dt>
+    <dd>Edit the selected instruction. <a
+ href="javascript:history.go(-1)">&#8592; Back</a></dd>
+    <dt><a name="a_delete1"></a><strong>Delete</strong></dt>
+    <dd>Delete the selected instruction(s). <a
+ href="javascript:history.go(-1)">&#8592; Back</a></dd>
+    <dt><a name="a_up1"></a><strong>Up</strong></dt>
+    <dd>Move the selected instruction(s) up in the execution sequence. <a
+ href="javascript:history.go(-1)">&#8592; Back</a></dd>
+    <dt><a name="a_down1"></a><strong>Down</strong></dt>
+    <dd>Move the selected instruction(s) down in the execution
+sequence. <a href="javascript:history.go(-1)">&#8592; Back</a></dd>
+  </dl></dl>
+ <a href="preferences.html">Back to Preferences</a><br>
+ <h3><a name="symbols"></a>Defined Symbols</h3>
+  <img
+ alt="EclipseNSIS Preferences Symbols Tab" src="images/preferences2.gif"
+ style="border: medium none ; width: 425px; height: 508px;"
+ usemap="#preferences2"><br><br>
+ <dl>
+  <dt><a name="a_symbols"></a><strong>Defined Symbols</strong></dt>
+  <dd>Symbols to be defined by the MakeNSIS compiler prior to
+compiling the script. Equivalent to the /D compiler option. The
+following buttons allow the manipulation and configuration of symbol
+definitions. <a href="javascript:history.go(-1)">&#8592; Back</a></dd>
+  <dl>
+    <dt><a name="a_add2"></a><strong>Add<br>
+      </strong></dt>
+    <dd>Add a new symbol. <a href="javascript:history.go(-1)">&#8592; Back</a></dd>
+    <dt><a name="a_edit2"></a><strong>Edit</strong></dt>
+    <dd>Edit the selected symbol. <a href="javascript:history.go(-1)">&#8592;
+Back</a></dd>
+    <dt><a name="a_delete2"></a><strong>Delete</strong></dt>
+    <dd>Delete the selected symbol(s). <a
+ href="javascript:history.go(-1)">&#8592; Back</a></dd>
+    <dt><a name="a_up2"></a><strong>Up</strong></dt>
+    <dd>Move the selected symbol(s) up in the define sequence. <a
+ href="javascript:history.go(-1)">&#8592; Back</a></dd>
+    <dt><a name="a_down2"></a><strong>Down</strong></dt>
+    <dd>Move the selected symbol(s) down in the define sequence. <a
+ href="javascript:history.go(-1)">&#8592; Back</a></dd>
+  </dl>
+</dl>
+<a href="preferences.html">Back to Preferences</a><br>
+<hr><a href="preferences.html">Previous</a> | <a
+ href="overview.html#contents">Contents</a> | <a
+ href="editorprefs.html">Next</a><br>
+<br>
+<p><strong><small>Copyright &copy; 2004, 2005 Sunil Kamath
+(IcemanK).</small></strong></p>
+<map name="preferences1">
+<area id="down1" shape="RECT" href="#a_down1" alt="Move down"
+ coords="376,430, 406,458">
+<area id="up1" shape="RECT" href="#a_up1" alt="Move up"
+ coords="376,400, 406,428">
+<area id="delete1" shape="RECT" href="#a_delete1" alt="Delete"
+ coords="376,369, 406,397">
+<area id="edit1" shape="RECT" href="#a_edit1" alt="Edit"
+ coords="376,338, 406,366">
+<area id="add1" shape="RECT" href="#a_add1" alt="Add"
+ coords="376,307, 406,335">
+<area id="instructions" shape="RECT" href="#a_instructions"
+ alt="Instructions" coords="17,292, 373,459">
+<area id="compressor" shape="RECT" href="#a_compressor"
+ alt="Compressor settings" coords="27,247, 272,266">
+<area id="verbosity" shape="RECT" href="#a_verbosity"
+ alt="Compiler verbosity" coords="26,220, 272,240">
+<area id="nocd" shape="RECT" href="#a_nocd" alt="Don't change directory"
+ coords="208,196, 336,210">
+<area id="noconfig" shape="RECT" href="#a_noconfig"
+ alt="Exclude NSIS config" coords="26,194, 201,209">
+<area id="license" shape="RECT" href="#a_license" alt="Print license"
+ coords="208,174, 310,189">
+<area id="hdrinfo" shape="RECT" href="#a_hdrinfo"
+ alt="Print header info" coords="26,174, 151,188">
+<area id="help" shape="RECT" href="#a_help" alt="Integrate Help"
+ coords="19,131, 332,145">
+<area id="autoconsole" shape="RECT" href="#a_autoconsole"
+ alt="Auto-open Console" coords="18,109, 282,123">
+<area id="nsishome" shape="RECT" href="#a_nsishome" alt="NSIS Home"
+ coords="18,80, 406,104">
+</map>
+<map name="preferences2">
+<area id="add2" shape="RECT" href="#a_add2" alt="Add"
+ coords="376,94, 406,122">
+<area id="edit2" shape="RECT" href="#a_edit2" alt="Edit"
+ coords="376,124, 406,152">
+<area id="delete2" shape="RECT" href="#a_delete2" alt="Delete"
+ coords="376,156, 406,184">
+<area id="down2" shape="RECT" href="#a_down2" alt="Down"
+ coords="376,217, 406,245">
+<area id="up2" shape="RECT" href="#a_up2" alt="Up"
+ coords="376,185, 405,213">
+<area id="symbols" shape="RECT" href="#a_symbols" alt="Defined Symbols"
+ coords="16,76, 374,466">
+</map>
+</div>
+</body>
+</html>

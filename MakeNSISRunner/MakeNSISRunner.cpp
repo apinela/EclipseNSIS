@@ -71,7 +71,7 @@ void RegisterWindowClass() {
 	wcex.hCursor		= 0;
 	wcex.hbrBackground	= (HBRUSH)(COLOR_WINDOW + 1);
 	wcex.lpszMenuName	= 0;
-	wcex.lpszClassName	= _T("Hidden Eclipse NSIS Window");
+	wcex.lpszClassName	= _T("Hidden EclipseNSIS Window");
 	wcex.hIconSm		= 0;
 
 	RegisterClassEx(&wcex);
@@ -152,11 +152,11 @@ JNIEXPORT jlong JNICALL Java_net_sf_eclipsensis_makensis_MakeNSISRunner_init(JNI
 		return 0;
 	}
 
-	HANDLE hWnd = CreateWindow(_T("Hidden Eclipse NSIS Window"), NULL, WS_OVERLAPPEDWINDOW,
+	HANDLE hWnd = CreateWindow(_T("Hidden EclipseNSIS Window"), NULL, WS_OVERLAPPEDWINDOW,
 						CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
 						NULL, NULL, hInstance, NULL);
 	if(hWnd == NULL) {
-		throwException(pEnv, _T("Failed create Hidden Eclipse NSIS Window"));
+		throwException(pEnv, _T("Failed create Hidden EclipseNSIS Window"));
 		return 0;
 	}
 

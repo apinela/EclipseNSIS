@@ -28,6 +28,7 @@ public class NSISEditorSourceViewerConfiguration extends NSISSourceViewerConfigu
     protected InformationPresenter mInformationPresenter = null;
     protected NSISTextHover mTextHover = null;
     protected NSISAnnotationHover mAnnotationHover = null;
+    protected IInformationControlCreator mInformationControlCreator = null;
 
     public NSISEditorSourceViewerConfiguration(IPreferenceStore preferenceStore)
     {
@@ -35,6 +36,7 @@ public class NSISEditorSourceViewerConfiguration extends NSISSourceViewerConfigu
         mTextHover = new NSISTextHover();
         
         NSISInformationProvider informationProvider = new NSISInformationProvider();
+        mInformationControlCreator = new NSISInformationControlCreator(null);
         IInformationControlCreator informationControlCreator = new NSISInformationControlCreator(null,SWT.V_SCROLL|SWT.H_SCROLL);
         informationProvider.setInformationPresenterControlCreator(informationControlCreator);
         mInformationPresenter = new InformationPresenter(informationControlCreator);
@@ -67,7 +69,7 @@ public class NSISEditorSourceViewerConfiguration extends NSISSourceViewerConfigu
     public IInformationControlCreator getInformationControlCreator(
             ISourceViewer sourceViewer)
     {
-        return (mTextHover != null?mTextHover.getHoverControlCreator():null);
+        return mInformationControlCreator;
     }
 
     /* (non-Javadoc)
