@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+###############################################################################
+# Copyright (c) 2004 Sunil Kamath (IcemanK).
+# All rights reserved. This program and the accompanying materials 
+# are made available under the terms of the Common Public License v1.0
+# which is available at http://www.eclipse.org/legal/cpl-v10.html
+# 
+# Contributors:
+#     Sunil Kamath (IcemanK) - initial API and implementation
+###############################################################################
+-->
+<toc label="Eclipse NSIS Users Guide" topic="overview.html">
+<topic label="Installation" href="help/installation.html"/>
+<topic label="Configuration" href="help/configuration.html"/>
+<topic label="Editing NSIS Scripts" href="help/editing.html"/>
+<topic label="Compiling and Testing NSIS Scripts" href="help/compiling.html"/>
+<topic label="Eclipse NSIS Plugin Console" href="help/console.html"/>
+<topic label="Useful Links" href="help/links.html"/>
+<topic label="NSIS Reference">
+<link toc="toc_nsis.xml"/>
+</topic>
+</toc>

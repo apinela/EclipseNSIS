@@ -11,14 +11,13 @@ package net.sf.eclipsensis.settings;
 
 import java.util.HashMap;
 
+import net.sf.eclipsensis.INSISConstants;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.QualifiedName;
 
-/**
- * @author Sunil.Kamath
- */
-public class NSISProperties extends NSISSettings
+public class NSISProperties extends NSISSettings implements INSISConstants
 {
     private static HashMap cPropertiesCache = new HashMap();
     private static HashMap cQualifiedNames = new HashMap();

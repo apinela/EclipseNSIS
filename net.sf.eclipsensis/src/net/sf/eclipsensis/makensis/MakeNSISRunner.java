@@ -11,11 +11,9 @@ package net.sf.eclipsensis.makensis;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 import java.util.*;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Map;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
@@ -26,12 +24,12 @@ import net.sf.eclipsensis.settings.NSISSettings;
 import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
-/**
- * @author Sunil.Kamath
- */
 public class MakeNSISRunner implements INSISConstants
 {
     private static MakeNSISProcess cProcess = null;
@@ -39,10 +37,35 @@ public class MakeNSISRunner implements INSISConstants
     private static String cProcessLock = "lock"; //$NON-NLS-1$
     private static long cHwnd = 0;
     private static HashSet cListeners = new HashSet();
+    public static final int COMPRESSOR_DEFAULT;
+    public static final int COMPRESSOR_BEST;
+    public static final String[] COMPRESSOR_DISPLAY_ARRAY;
+    public static final String[] COMPRESSOR_NAME_ARRAY;
     
     static {
         System.loadLibrary("MakeNSISRunner"); //$NON-NLS-1$
         cBestCompressorFormat = EclipseNSISPlugin.getResourceString("best.compressor.format"); //$NON-NLS-1$
+
+        int index = 0;
+        COMPRESSOR_DEFAULT = index++;
+        String[] compressorArray = Common.loadArrayProperty(EclipseNSISPlugin.getDefault().getResourceBundle(),
+                                                            "compressors"); //$NON-NLS-1$
+        COMPRESSOR_NAME_ARRAY = new String[compressorArray.length+2];
+        COMPRESSOR_DISPLAY_ARRAY = new String[compressorArray.length+2];
+
+        COMPRESSOR_NAME_ARRAY[COMPRESSOR_DEFAULT] = ""; //$NON-NLS-1$
+        COMPRESSOR_DISPLAY_ARRAY[COMPRESSOR_DEFAULT] = EclipseNSISPlugin.getResourceString("compressor.default.text"); //$NON-NLS-1$
+        for(int i=0; i<compressorArray.length; i++) {
+            COMPRESSOR_NAME_ARRAY[index] = compressorArray[i];
+            COMPRESSOR_DISPLAY_ARRAY[index] = EclipseNSISPlugin.getResourceString(new StringBuffer("compressor.").append( //$NON-NLS-1$
+                                                                                                   compressorArray[i]).append(
+                                                                                                   ".text").toString(), //$NON-NLS-1$
+                                                                                  compressorArray[i].toUpperCase()); 
+            index++;
+        }
+        COMPRESSOR_BEST = index;
+        COMPRESSOR_NAME_ARRAY[COMPRESSOR_BEST] = "best"; //$NON-NLS-1$
+        COMPRESSOR_DISPLAY_ARRAY[COMPRESSOR_BEST] = EclipseNSISPlugin.getResourceString("compressor.best.text"); //$NON-NLS-1$
     }
 
     public static void addListener(IMakeNSISRunListener listener)
@@ -72,9 +95,7 @@ public class MakeNSISRunner implements INSISConstants
         synchronized(cProcessLock) {
             if(cProcess != null) {
                 cProcess.cancel();
-                boolean isCanceled = cProcess.isCanceled();
-                cProcess = null;
-                return isCanceled;
+                return cProcess.isCanceled();
             }
         }
         return false;
@@ -108,6 +129,76 @@ public class MakeNSISRunner implements INSISConstants
         }
     }
     
+    private static void updateMarkers(final IFile file, final NSISConsole console, final MakeNSISResults results)
+    {
+        if (!results.getCanceled()) {
+            WorkspaceModifyOperation op = new WorkspaceModifyOperation()
+            {
+                protected void execute(IProgressMonitor monitor)throws CoreException
+                {
+                    try {
+                        file.deleteMarkers(PROBLEM_ID, false, IResource.DEPTH_ZERO);
+                        List errors = console.getErrors();
+                        if (errors == null || errors.size() == 0) {
+                            errors = results.getErrors();
+                            if (errors != null && errors.size() > 0) {
+                                IMarker marker = file.createMarker(PROBLEM_ID);
+                                marker.setAttribute(IMarker.SEVERITY,
+                                                    IMarker.SEVERITY_ERROR);
+                                marker.setAttribute(IMarker.MESSAGE,
+                                                    MessageFormat.format(EclipseNSISPlugin.getResourceString("makensis.error.format"), //$NON-NLS-1$
+                                                                         new String[]{(String)errors.get(0) }));
+                                marker.setAttribute(IMarker.LINE_NUMBER, 1);
+                            }
+                        }
+                        else {
+                            Iterator iter = errors.iterator();
+                            NSISConsoleLine error = (NSISConsoleLine)iter.next();
+                            IMarker marker = file.createMarker(PROBLEM_ID);
+                            marker.setAttribute(IMarker.SEVERITY,
+                                                IMarker.SEVERITY_ERROR);
+                            marker.setAttribute(IMarker.MESSAGE, error.toString());
+                            while (error.getLineNum() <= 0 && iter.hasNext()) {
+                                error = (NSISConsoleLine) iter.next();
+                            }
+                            if (error.getLineNum() > 0) {
+                                marker.setAttribute(IMarker.LINE_NUMBER, error.getLineNum());
+                            }
+                            else {
+                                marker.setAttribute(IMarker.LINE_NUMBER, 1);
+                            }
+                        }
+                        List warnings = results.getWarnings();
+                        if (warnings != null) {
+                            for (Iterator iter = warnings.iterator(); iter.hasNext();) {
+                                IMarker marker = file.createMarker(PROBLEM_ID);
+                                marker.setAttribute(IMarker.SEVERITY,
+                                                    IMarker.SEVERITY_WARNING);
+                                marker.setAttribute(IMarker.MESSAGE,(String) iter.next());
+                                marker.setAttribute(IMarker.LINE_NUMBER, 1);
+                            }
+                        }
+                    }
+                    catch (CoreException ex) {
+                        console.add(NSISConsoleLine.error(ex.getMessage()));
+                    }
+                    finally {
+                        monitor.done();
+                    }
+                }
+            };
+            try {
+                op.run(null);
+            }
+            catch (InvocationTargetException e) {
+                console.add(NSISConsoleLine.error(e.getMessage()));
+            }
+            catch (InterruptedException e) {
+                console.add(NSISConsoleLine.error(e.getMessage()));
+            }
+        }
+    }
+    
     public static synchronized MakeNSISResults run(IFile file, INSISConsoleLineProcessor outputProcessor)
     {
         try {
@@ -128,12 +219,9 @@ public class MakeNSISRunner implements INSISConstants
                         options.add(EclipseNSISPlugin.getResourceString("makensis.verbose.option")+settings.getVerbosity()); //$NON-NLS-1$
                     }
                     int compressor = settings.getCompressor();
-                    switch(compressor) {
-                        case COMPRESSOR_DEFAULT:
-                        case COMPRESSOR_BEST:
-                            break;
-                        default:
-                            options.add(EclipseNSISPlugin.getResourceString("makensis.setcompressor.final.option")+COMPRESSOR_NAME_ARRAY[compressor]); //$NON-NLS-1$
+                    if(compressor != MakeNSISRunner.COMPRESSOR_DEFAULT &&
+                       compressor != MakeNSISRunner.COMPRESSOR_BEST) {
+                        options.add(EclipseNSISPlugin.getResourceString("makensis.setcompressor.final.option")+MakeNSISRunner.COMPRESSOR_NAME_ARRAY[compressor]); //$NON-NLS-1$
                     }
                     if(settings.getHdrInfo()) {
                         options.add(EclipseNSISPlugin.getResourceString("makensis.hdrinfo.option")); //$NON-NLS-1$
@@ -167,7 +255,7 @@ public class MakeNSISRunner implements INSISConstants
                         for(Iterator iter=instructions.iterator(); iter.hasNext(); ) {
                             String instruction = (String)iter.next();
                             if(!Common.isEmpty(instruction)) {
-                                if(compressor == COMPRESSOR_DEFAULT ||
+                                if(compressor == MakeNSISRunner.COMPRESSOR_DEFAULT ||
                                    !instruction.toLowerCase().startsWith(EclipseNSISPlugin.getResourceString("makensis.setcompressor.instruction").toLowerCase()+" ")) { //$NON-NLS-1$ //$NON-NLS-2$
                                     options.add(EclipseNSISPlugin.getResourceString("makensis.execute.option")+instruction); //$NON-NLS-1$
                                 }
@@ -176,24 +264,25 @@ public class MakeNSISRunner implements INSISConstants
                     }
     
                     int rv = 0;
-                    String[] optionsArray = (String[])options.toArray(new String[0]);
-                    int cmdArrayLen = optionsArray.length+(compressor != COMPRESSOR_BEST?4:5);
+                    String[] optionsArray = (String[])options.toArray(Common.EMPTY_STRING_ARRAY);
+                    int cmdArrayLen = optionsArray.length+(compressor != MakeNSISRunner.COMPRESSOR_BEST?4:5);
                     String[] cmdArray = new String[cmdArrayLen];
                     cmdArray[0] = NSISPreferences.getPreferences().getNSISExe();
                     System.arraycopy(optionsArray,0,cmdArray,cmdArrayLen-optionsArray.length-3,optionsArray.length);
                     cmdArray[cmdArrayLen-3]=EclipseNSISPlugin.getResourceString("makensis.notifyhwnd.option"); //$NON-NLS-1$
                     cmdArray[cmdArrayLen-2]=Long.toString(cHwnd);
                     cmdArray[cmdArrayLen-1]=fileName;
-                    if(compressor != COMPRESSOR_BEST) {
+                    if(compressor != MakeNSISRunner.COMPRESSOR_BEST) {
                         results = runProcess(cmdArray,env,workDir,outputProcessor);
                     }
                     else {
                         File tempFile = null;
                         String bestCompressor = null;
                         long bestFileSize = Long.MAX_VALUE;
-                        for(int i=0; i<COMPRESSOR_NAME_ARRAY.length; i++) {
-                            if(i != COMPRESSOR_DEFAULT && i != COMPRESSOR_BEST) {
-                                cmdArray[1]=EclipseNSISPlugin.getResourceString("makensis.setcompressor.final.option")+COMPRESSOR_NAME_ARRAY[i]; //$NON-NLS-1$
+                        for(int i=0; i<MakeNSISRunner.COMPRESSOR_NAME_ARRAY.length; i++) {
+                            if(i != MakeNSISRunner.COMPRESSOR_DEFAULT && i != MakeNSISRunner.COMPRESSOR_BEST) {
+                                outputProcessor.reset();
+                                cmdArray[1]=EclipseNSISPlugin.getResourceString("makensis.setcompressor.final.option")+MakeNSISRunner.COMPRESSOR_NAME_ARRAY[i]; //$NON-NLS-1$
                                 MakeNSISResults tempresults = runProcess(cmdArray,env,workDir,outputProcessor);
                                 if(tempresults.getReturnCode() != MakeNSISResults.RETURN_SUCCESS) {
                                     results = tempresults;
@@ -207,7 +296,7 @@ public class MakeNSISRunner implements INSISConstants
                                     File outputFile = new File(tempresults.getOutputFileName());
                                     if(outputFile.isFile() && outputFile.exists()) {
                                         if(bestCompressor == null || outputFile.length() < bestFileSize) {
-                                            bestCompressor = COMPRESSOR_NAME_ARRAY[i];
+                                            bestCompressor = MakeNSISRunner.COMPRESSOR_NAME_ARRAY[i];
                                             if(tempFile == null) {
                                                 tempFile = new File(outputFile.getAbsolutePath()+EclipseNSISPlugin.getResourceString("makensis.tempfile.suffix")); //$NON-NLS-1$
                                             }
@@ -235,7 +324,8 @@ public class MakeNSISRunner implements INSISConstants
                     String outputFileName = results.getOutputFileName();
                     File exeFile = (outputFileName==null?null:new File(outputFileName));
                     try {
-                        if(rv == 0 && exeFile != null && exeFile.exists()) {
+                        updateMarkers(file, console, results);
+                        if(rv == MakeNSISResults.RETURN_SUCCESS && exeFile != null && exeFile.exists()) {
                             file.setPersistentProperty(NSIS_COMPILE_TIMESTAMP,Long.toString(System.currentTimeMillis()));
                             file.setPersistentProperty(NSIS_EXE_NAME,outputFileName);
                             file.setPersistentProperty(NSIS_EXE_TIMESTAMP,Long.toString(exeFile.lastModified()));
@@ -244,6 +334,7 @@ public class MakeNSISRunner implements INSISConstants
                             file.setPersistentProperty(NSIS_COMPILE_TIMESTAMP,null);
                             file.setPersistentProperty(NSIS_EXE_NAME,null);
                             file.setPersistentProperty(NSIS_EXE_TIMESTAMP,null);
+                            
                         }
                     }
                     catch(CoreException cex) {
@@ -281,6 +372,10 @@ public class MakeNSISRunner implements INSISConstants
                             {
                                 return NSISConsoleLine.error(text);
                             }
+                            
+                            public void reset()
+                            {
+                            }
                         })).start();
     
             int rv = proc.waitFor();
@@ -291,21 +386,25 @@ public class MakeNSISRunner implements INSISConstants
                 results.setOutputFileName(outputFileName);
             }
             else {
-                ArrayList errors = getErrors();
-                results.setErrors(errors);
-                if(errors != null) {
-                    for(Iterator iter=errors.iterator(); iter.hasNext(); ) {
-                        console.add(NSISConsoleLine.error(((String)iter.next()).trim()));
+                results.setCanceled(process.isCanceled());
+                ArrayList errors = new ArrayList();
+                StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
+                for(Iterator iter = getErrors().iterator(); iter.hasNext() ;) {
+                    String text = (String)iter.next();
+                    if(text.endsWith("\n")) { //$NON-NLS-1$
+                        buf.append(text.substring(0,text.length()-1));
+                        errors.add(buf.toString());
+                        buf = new StringBuffer(""); //$NON-NLS-1$
+                    }
+                    else {
+                        buf.append(text);
                     }
                 }
+                errors.add(buf.toString());
+                results.setErrors(errors);
             }
             ArrayList warnings = getWarnings();
             results.setWarnings(warnings);
-            if(warnings != null) {
-                for(Iterator iter=warnings.iterator(); iter.hasNext(); ) {
-                    console.add(NSISConsoleLine.warning(((String)iter.next()).trim()));
-                }
-            }
         }
         catch(IOException ioe){
             console.add(NSISConsoleLine.error(ioe.getMessage()));

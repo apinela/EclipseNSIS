@@ -7,10 +7,12 @@
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
-package net.sf.eclipsensis.makensis;
+package net.sf.eclipsensis.settings;
 
-public interface IMakeNSISRunListener
+import org.eclipse.jface.preference.IPreferenceStore;
+
+public interface IPropertyAdaptable
 {
-    public void started();
-    public void stopped();
+    public boolean canAdaptToProperty(IPreferenceStore store, String property);
+    public void adaptToProperty(IPreferenceStore store, String property);
 }

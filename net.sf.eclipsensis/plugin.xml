@@ -14,7 +14,7 @@
 <plugin
    id="net.sf.eclipsensis"
    name="%plugin.name"
-   version="0.0.1"
+   version="0.2.0"
    provider-name="Sunil Kamath"
    class="net.sf.eclipsensis.EclipseNSISPlugin">
 
@@ -29,21 +29,44 @@
       <import plugin="org.eclipse.ui.ide"/>
       <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.eclipse.jface.text"/>
+      <import plugin="org.eclipse.core.filebuffers"/>
       <import plugin="org.eclipse.ui.editors"/>
       <import plugin="org.eclipse.ui.workbench.texteditor"/>
       <import plugin="org.eclipse.core.resources"/>
+      <import plugin="org.eclipse.ui.views"/>
+      <import plugin="org.eclipse.help"/>
+      <import plugin="org.eclipse.ui.forms"/>
+      <import plugin="org.eclipse.jdt.ui"/>
    </requires>
 
+   <extension
+         point="org.eclipse.core.runtime.products">
+      <product name="%product.name" application="org.eclipse.ui.ide.workbench" description="%product.description"> 
+          <property name="windowImage" value="icons/nsis.gif"/> 
+          <property name="aboutImage" value="icons/eclipsnsis.gif"/> 
+          <property name="aboutText" value="%about.text"/> 
+          <property name="appName" value="%product.name"/> 
+      </product> 
+   </extension>
    <extension
          point="org.eclipse.ui.editors">
       <editor
             name="%editor.name"
-            extensions="nsh,nsi"
+            extensions="%nsis.extensions"
             icon="%editor.icon"
-            contributorClass="org.eclipse.ui.texteditor.BasicTextEditorActionContributor"
+            contributorClass="net.sf.eclipsensis.editor.NSISActionContributor"
             class="net.sf.eclipsensis.editor.NSISEditor"
             id="net.sf.eclipsensis.editor.NSISEditor">
       </editor>
+   </extension>
+   <extension
+	    id="net.sf.eclipsensis.editor.NSISDocumentSetupParticipant"
+        name="%document.setup.participant.name"
+        point="org.eclipse.core.filebuffers.documentSetup">
+        <participant
+            extensions="%nsis.extensions"
+            class="net.sf.eclipsensis.editor.NSISDocumentSetupParticipant">
+        </participant>
    </extension>
    <extension
          point="org.eclipse.ui.preferencePages">
@@ -51,6 +74,12 @@
             name="%preference.page.name"
             class="net.sf.eclipsensis.dialogs.NSISPreferencePage"
             id="net.sf.eclipsensis.dialogs.NSISPreferencePage">
+      </page>
+      <page
+            name="%editor.preference.page.name"
+            category="net.sf.eclipsensis.dialogs.NSISPreferencePage"
+            class="net.sf.eclipsensis.dialogs.NSISEditorPreferencePage"
+            id="net.sf.eclipsensis.dialogs.NSISEditorPreferencePage">
       </page>
    </extension>
    <extension
@@ -94,6 +123,22 @@
                   name="net.sf.eclipsensis.Group2">
             </separator>
          </menu>
+         <action
+               label="%about.action.name"
+               class="net.sf.eclipsensis.actions.NSISAboutAction"
+               tooltip="%about.action.tooltip"
+               menubarPath="net.sf.eclipsensis.Menu/net.sf.eclipsensis.Group2"
+               id="net.sf.eclipsensis.actions.NSISAboutAction">
+         </action>
+         <action
+               label="%help.action.name"
+               icon="%help.action.icon"
+               class="net.sf.eclipsensis.actions.NSISHelpAction"
+               tooltip="%help.action.tooltip"
+               menubarPath="net.sf.eclipsensis.Menu/net.sf.eclipsensis.Group2"
+               toolbarPath="net.sf.eclipsensis.Group"
+               id="net.sf.eclipsensis.actions.NSISHelpAction">
+         </action>
          <action
                label="%preferences.action.name"
                icon="%preferences.action.icon"
@@ -197,5 +242,101 @@
          </action>
       </objectContribution>
    </extension>
-
+   <extension
+         id="NSISCompileProblem"
+         name="%compile.problem.marker.name"
+         point="org.eclipse.core.resources.markers">
+      <super type="org.eclipse.core.resources.problemmarker"/>
+      <persistent value="true" />
+   </extension>
+   <extension
+         id="net.sf.eclipsensis.help.NSISHelpProducer"
+         name="%help.name"
+         point="org.eclipse.help.contentProducer">
+       <contentProducer producer="net.sf.eclipsensis.help.NSISHelpProducer"/>
+   </extension>
+   <extension
+         point="org.eclipse.help.toc">
+      <toc file="toc.xml" primary="true"/>
+   </extension>
+   <extension
+         point="org.eclipse.help.toc">
+      <toc file="toc_nsis.xml"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.contexts">
+      <context
+            name="%context.editingNSISSource.name"
+            description="%context.editingNSISSource.description"
+            parentId="org.eclipse.ui.textEditorScope"
+            id="net.sf.eclipsensis.NSISEditorScope">
+      </context>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <category
+         name="%category.name"
+         description="%category.description"
+         id="net.sf.eclipsensis.NSISCategory">
+      </category>
+      <command
+         name="%goto.help.name"
+         description="%goto.help.description"
+         id="net.sf.eclipsensis.commands.NSISGotoHelp"
+         categoryId="net.sf.eclipsensis.NSISCategory"/>
+      <keyBinding
+          keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
+          commandId="net.sf.eclipsensis.commands.NSISGotoHelp"
+          contextId="net.sf.eclipsensis.NSISEditorScope"
+          keySequence="F2"/>
+      <command
+         name="%sticky.help.name"
+         description="%sticky.help.description"
+         id="net.sf.eclipsensis.commands.NSISStickyHelp"
+         categoryId="net.sf.eclipsensis.NSISCategory"/>
+      <keyBinding
+          keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
+          commandId="net.sf.eclipsensis.commands.NSISStickyHelp"
+          contextId="net.sf.eclipsensis.NSISEditorScope"
+          keySequence="F3"/>
+      <command
+         name="%insert.file.name"
+         description="%insert.file.description"
+         id="net.sf.eclipsensis.commands.NSISInsertFile"
+         categoryId="net.sf.eclipsensis.NSISCategory"/>
+      <keyBinding
+          keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
+          commandId="net.sf.eclipsensis.commands.NSISInsertFile"
+          contextId="net.sf.eclipsensis.NSISEditorScope"
+          keySequence="Shift+F4"/>
+      <command
+         name="%insert.directory.name"
+         description="%insert.directory.description"
+         id="net.sf.eclipsensis.commands.NSISInsertDirectory"
+         categoryId="net.sf.eclipsensis.NSISCategory"/>
+      <keyBinding
+          keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
+          commandId="net.sf.eclipsensis.commands.NSISInsertDirectory"
+          contextId="net.sf.eclipsensis.NSISEditorScope"
+          keySequence="Shift+F5"/>
+      <command
+         name="%insert.color.name"
+         description="%insert.color.description"
+         id="net.sf.eclipsensis.commands.NSISInsertColor"
+         categoryId="net.sf.eclipsensis.NSISCategory"/>
+      <keyBinding
+          keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
+          commandId="net.sf.eclipsensis.commands.NSISInsertColor"
+          contextId="net.sf.eclipsensis.NSISEditorScope"
+          keySequence="Shift+F6"/>
+      <command
+         name="%tabs.to.spaces"
+         description="%tabs.to.spaces.description"
+         id="net.sf.eclipsensis.commands.NSISTabsToSpaces"
+         categoryId="net.sf.eclipsensis.NSISCategory"/>
+   </extension>
+   <extension
+         point="org.eclipse.help.contexts">
+       <contexts file="contexts.xml"/> 
+   </extension>
 </plugin>

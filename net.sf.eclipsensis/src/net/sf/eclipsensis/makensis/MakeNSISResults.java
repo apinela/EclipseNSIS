@@ -13,9 +13,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author Sunil.Kamath
- */
 public class MakeNSISResults
 {
     public static final int RETURN_SUCCESS = 0;
@@ -25,11 +22,12 @@ public class MakeNSISResults
     private String mScriptFileName = null;
     private ArrayList mErrors = null;
     private ArrayList mWarnings = null;
+    private boolean mCanceled = false;
     
     /**
      * @return Returns the errors.
      */
-    public List getError()
+    public List getErrors()
     {
         return (mErrors==null?null:Collections.unmodifiableList(mErrors));
     }
@@ -97,5 +95,21 @@ public class MakeNSISResults
     void setReturnCode(int returnCode)
     {
         mReturnCode = returnCode;
+    }
+    
+    /**
+     * @return Returns the canceled.
+     */
+    public boolean getCanceled()
+    {
+        return mCanceled;
+    }
+    
+    /**
+     * @param canceled The canceled to set.
+     */
+    void setCanceled(boolean canceled)
+    {
+        mCanceled = canceled;
     }
 }

@@ -9,9 +9,6 @@
  *******************************************************************************/
 package net.sf.eclipsensis.makensis;
 
-/**
- * @author Sunil.Kamath
- */
 public class MakeNSISProcess
 {
     private boolean mCanceled = false;

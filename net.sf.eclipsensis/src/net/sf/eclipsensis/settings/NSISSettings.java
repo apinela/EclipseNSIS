@@ -11,20 +11,17 @@ package net.sf.eclipsensis.settings;
 
 import java.util.*;
 
-import net.sf.eclipsensis.INSISConstants;
+import net.sf.eclipsensis.makensis.MakeNSISRunner;
 import net.sf.eclipsensis.util.Common;
 
-/**
- * @author Sunil.Kamath
- */
-public abstract class NSISSettings implements INSISConstants
+public abstract class NSISSettings implements INSISPreferenceConstants
 {
     private boolean mHdrInfo = false;
     private boolean mLicense = false;
     private boolean mNoConfig = false;
     private boolean mNoCD = false;
-    private int mVerbosity = VERBOSITY_ALL;
-    private int mCompressor = COMPRESSOR_DEFAULT;
+    private int mVerbosity = INSISPreferenceConstants.VERBOSITY_ALL;
+    private int mCompressor = MakeNSISRunner.COMPRESSOR_DEFAULT;
     private int mInstructionsCount = 0;
     private ArrayList mInstructions = null;
     private Properties mSymbols = null;
@@ -167,7 +164,7 @@ public abstract class NSISSettings implements INSISConstants
      */
     public int getDefaultCompressor()
     {
-        return COMPRESSOR_DEFAULT;
+        return MakeNSISRunner.COMPRESSOR_DEFAULT;
     }
 
     /**

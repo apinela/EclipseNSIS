@@ -9,15 +9,13 @@
  *******************************************************************************/
 package net.sf.eclipsensis.util;
 
-import java.io.*;
+import java.io.File;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.sf.eclipsensis.INSISConstants;
 
-/**
- * @author Sunil.Kamath
- */
-public class NSISValidator
+public class NSISValidator implements INSISConstants
 {
 
     public static double MINIMUM_NSIS_VERSION = 2.0;
@@ -27,7 +25,7 @@ public class NSISValidator
     {
         if(nsisHome != null) {
             if(nsisHome.exists() && nsisHome.isDirectory()) {
-                File file = new File(nsisHome,"makensis.exe"); //$NON-NLS-1$
+                File file = new File(nsisHome,MAKENSIS_EXE);
                 if(file.exists() && file.isFile()) {
                     double version = getVersion(file);
                     if(version >= MINIMUM_NSIS_VERSION) {
@@ -51,69 +49,22 @@ public class NSISValidator
     {
         double version = 0;
         String exeName = exeFile.getAbsoluteFile().getAbsolutePath();
-        try {
-            final Process proc = Runtime.getRuntime().exec(new String[]{exeName,"/VERSION"},Common.getEnv(), //$NON-NLS-1$
-                                                                        exeFile.getParentFile());
-            new Thread(new Runnable() {
-                public void run()
-                {
-                    BufferedReader br = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
+        String[] output = Common.runProcessWithOutput(new String[]{exeName,"/VERSION"}, //$NON-NLS-1$
+                                               exeFile.getParentFile());
+        if(!Common.isEmptyArray(output)) {
+            for (int i = 0; i < output.length; i++) {
+                Matcher matcher = cVersionPattern.matcher(output[i]);
+                if(matcher.matches()) {
                     try {
-                        String line = br.readLine();
-                        while(line != null) {
-                            line = br.readLine();
-                        }
+                        double temp = Double.parseDouble(matcher.group(1));
+                        version = temp;
+                        break;
                     }
-                    catch(IOException ioe) {
-                        ioe.printStackTrace();
-                    }
-                    finally {
-                        try {
-                            br.close();
-                        }
-                        catch (IOException e) {
-                            e.printStackTrace();
-                        }
+                    catch(Exception ex) {
+                        ex.printStackTrace();
                     }
                 }
-            }).start();
-            BufferedReader br = new BufferedReader(new InputStreamReader(proc.getInputStream()));
-            try {
-                String line = br.readLine();
-                while(line != null) {
-                    Matcher matcher = cVersionPattern.matcher(line);
-                    if(matcher.matches()) {
-                        try {
-                            double temp = Double.parseDouble(matcher.group(1));
-                            version = temp;
-                        }
-                        catch(Exception ex) {
-                            ex.printStackTrace();
-                        }
-                    }
-                    line = br.readLine();
-                }
             }
-            catch(IOException ioe) {
-                ioe.printStackTrace();
-                version = 0;
-            }
-            finally {
-                try {
-                    br.close();
-                }
-                catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            int rv = proc.waitFor();
-            if(rv != 0) {
-                version = 0;
-            }
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            version = 0;
         }
         
         return version;

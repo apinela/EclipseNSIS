@@ -9,24 +9,37 @@
  *******************************************************************************/
 package net.sf.eclipsensis.util;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Properties;
+import java.io.*;
+import java.lang.reflect.Array;
+import java.util.*;
 
 
 
-/**
- * @author Sunil.Kamath
- */
 public class Common
 {
+    public static final String[] EMPTY_STRING_ARRAY = new String[0];
+    
     private static String[] cEnv = null;
+    
     public static boolean isEmpty(String string)
     {
         return (string == null || string.trim().length() == 0);
+    }
+
+    /**
+     * Check for an empty array
+     *
+     * @param array       Array to be tested
+     * @return            True if the array is null or length is zero
+     */
+    public static boolean isEmptyArray(Object array)
+    {
+        if(array != null) {
+            if(array.getClass().isArray()) {
+                return (Array.getLength(array) == 0);
+            }
+        }
+        return true;
     }
 
     public static String[] getEnv() throws IOException
@@ -72,5 +85,87 @@ public class Common
             }
         }
         return cEnv;
+    }
+
+    public static String[] runProcessWithOutput(String[] cmdArray, File workDir)
+    {
+        return runProcessWithOutput(cmdArray, workDir, 0);
+    }
+    
+    public static String[] runProcessWithOutput(String[] cmdArray, File workDir, int validReturnCode)
+    {
+        String[] output = null;
+        try {
+            Process proc = Runtime.getRuntime().exec(cmdArray,getEnv(), workDir);
+            new Thread(new RunnableInputStreamReader(proc.getErrorStream(),false)).start();
+            output = new RunnableInputStreamReader(proc.getInputStream()).getOutput();
+            int rv = proc.waitFor();
+            if(rv != validReturnCode) {
+                output = null;
+            }
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+            output = null;
+        }
+        catch (InterruptedException e) {
+            e.printStackTrace();
+            output = null;
+        }
+        
+        return output;
+    }
+    
+    public static String leftPad(String text, int length, char padChar)
+    {
+        if(text.length() < length) {
+            StringBuffer buf = new StringBuffer("");
+            for(int i=text.length(); i<length; i++) {
+                buf.append(padChar);
+            }
+            buf.append(text);
+            text = buf.toString();
+        }
+        return text;
+    }
+    
+    public static String[] tokenize(String text, char separator)
+    {
+        ArrayList list = new ArrayList();
+        if(!Common.isEmpty(text)) {
+            char[] chars = text.toCharArray();
+            StringBuffer buf = new StringBuffer("");
+            for (int i = 0; i < chars.length; i++) {
+                if(chars[i] != separator) {
+                    buf.append(chars[i]);
+                }
+                else {
+                    list.add(buf.toString());
+                    buf.delete(0,buf.length());
+                }
+            }
+            list.add(buf.toString());
+        }
+        return (String[])list.toArray(new String[0]);
+    }
+
+    public static String[] loadArrayProperty(ResourceBundle bundle, String propertyName)
+    {
+        String[] array = EMPTY_STRING_ARRAY;
+        if(bundle != null) {
+            String property = bundle.getString(propertyName);
+            if(!isEmpty(property)) {
+                StringTokenizer st = new StringTokenizer(property,","); //$NON-NLS-1$
+                ArrayList list = new ArrayList();
+                while(st.hasMoreTokens()) {
+                    String token = st.nextToken();
+                    if(!isEmpty(token)) {
+                        list.add(token.trim());
+                    }
+                }
+                array = (String[])list.toArray(EMPTY_STRING_ARRAY);
+            }
+        }
+        return array;
     }
 }
