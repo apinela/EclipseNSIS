@@ -19,6 +19,7 @@ import java.util.regex.Pattern;
 
 import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.console.*;
+import net.sf.eclipsensis.console.model.NSISConsoleModel;
 import net.sf.eclipsensis.settings.*;
 import net.sf.eclipsensis.util.CaseInsensitiveMap;
 import net.sf.eclipsensis.util.Common;
@@ -141,7 +142,7 @@ public class MakeNSISRunner implements INSISConstants
         }
     }
     
-    private static void updateMarkers(final IFile file, final NSISConsole console, final MakeNSISResults results)
+    private static void updateMarkers(final IFile file, final NSISConsoleModel model, final MakeNSISResults results)
     {
         if (!results.getCanceled()) {
             WorkspaceModifyOperation op = new WorkspaceModifyOperation()
@@ -150,7 +151,7 @@ public class MakeNSISRunner implements INSISConstants
                 {
                     try {
                         file.deleteMarkers(PROBLEM_ID, false, IResource.DEPTH_ZERO);
-                        List errors = console.getErrors();
+                        List errors = model.getErrors();
                         if (Common.isEmptyCollection(errors)) {
                             errors = results.getErrors();
                             if (!Common.isEmptyCollection(errors)) {
@@ -183,7 +184,7 @@ public class MakeNSISRunner implements INSISConstants
                                 }
                             }
                         }
-                        List warnings = console.getWarnings();
+                        List warnings = model.getWarnings();
                         if(Common.isEmptyCollection(warnings)) {
                             warnings = results.getWarnings();
                             if (warnings != null) {
@@ -240,7 +241,7 @@ public class MakeNSISRunner implements INSISConstants
                         }
                     }
                     catch (CoreException ex) {
-                        console.add(NSISConsoleLine.error(ex.getMessage()));
+                        model.add(NSISConsoleLine.error(ex.getMessage()));
                     }
                     finally {
                         monitor.done();
@@ -251,10 +252,10 @@ public class MakeNSISRunner implements INSISConstants
                 op.run(null);
             }
             catch (InvocationTargetException e) {
-                console.add(NSISConsoleLine.error(e.getMessage()));
+                model.add(NSISConsoleLine.error(e.getMessage()));
             }
             catch (InterruptedException e) {
-                console.add(NSISConsoleLine.error(e.getMessage()));
+                model.add(NSISConsoleLine.error(e.getMessage()));
             }
         }
     }
@@ -265,9 +266,10 @@ public class MakeNSISRunner implements INSISConstants
             notifyListeners(true);
             MakeNSISResults results = null;
             if(file != null) {
-                NSISConsole console = NSISConsole.getConsole();
+                NSISConsoleModel consoleModel = NSISConsoleModel.getInstance();
+                NSISConsole.autoShowConsole();
                 try {
-                    console.clear();
+                    consoleModel.clear();
                     reset();
                     String fileName = file.getLocation().toFile().getAbsolutePath();
                     File workDir = file.getLocation().toFile().getParentFile();
@@ -375,7 +377,7 @@ public class MakeNSISRunner implements INSISConstants
                             if(!outputFile.exists()) {
                                 tempFile.renameTo(outputFile);
                             }
-                            console.add(NSISConsoleLine.info(MessageFormat.format(cBestCompressorFormat,
+                            consoleModel.add(NSISConsoleLine.info(MessageFormat.format(cBestCompressorFormat,
                                                                                   new Object[]{bestCompressor})));
                         }
                     }
@@ -383,7 +385,7 @@ public class MakeNSISRunner implements INSISConstants
                     String outputFileName = results.getOutputFileName();
                     File exeFile = (outputFileName==null?null:new File(outputFileName));
                     try {
-                        updateMarkers(file, console, results);
+                        updateMarkers(file, consoleModel, results);
                         if(rv == MakeNSISResults.RETURN_SUCCESS && exeFile != null && exeFile.exists()) {
                             file.setPersistentProperty(NSIS_COMPILE_TIMESTAMP,Long.toString(System.currentTimeMillis()));
                             file.setPersistentProperty(NSIS_EXE_NAME,outputFileName);
@@ -407,7 +409,7 @@ public class MakeNSISRunner implements INSISConstants
                     }
                 }
                 catch(IOException ioe){
-                    console.add(NSISConsoleLine.error(ioe.getMessage()));
+                    consoleModel.add(NSISConsoleLine.error(ioe.getMessage()));
                 }
             }
             return results;
@@ -420,14 +422,14 @@ public class MakeNSISRunner implements INSISConstants
     private static synchronized MakeNSISResults runCompileProcess(String[] cmdArray, String[] env, File workDir,
                                                         INSISConsoleLineProcessor outputProcessor)
     {
-        NSISConsole console = NSISConsole.getConsole();
+        NSISConsoleModel model = NSISConsoleModel.getInstance();
         MakeNSISResults results = new MakeNSISResults();
         try {
             Process proc = Runtime.getRuntime().exec(cmdArray,env,workDir);
             MakeNSISProcess process = new MakeNSISProcess(proc);
             setProcess(process);
-            new Thread(new NSISConsoleWriter(process, console, proc.getInputStream(),outputProcessor)).start();
-            new Thread(new NSISConsoleWriter(process, console, proc.getErrorStream(),
+            new Thread(new NSISConsoleWriter(process, model, proc.getInputStream(),outputProcessor)).start();
+            new Thread(new NSISConsoleWriter(process, model, proc.getErrorStream(),
                         new INSISConsoleLineProcessor() {
                             public NSISConsoleLine processText(String text)
                             {
@@ -472,10 +474,10 @@ public class MakeNSISRunner implements INSISConstants
             results.setWarnings(warnings);
         }
         catch(IOException ioe){
-            console.add(NSISConsoleLine.error(ioe.getMessage()));
+            model.add(NSISConsoleLine.error(ioe.getMessage()));
         }
         catch(InterruptedException ie){
-            console.add(NSISConsoleLine.error(ie.getMessage()));
+            model.add(NSISConsoleLine.error(ie.getMessage()));
         }
         finally {
             setProcess(null);
@@ -531,10 +533,10 @@ public class MakeNSISRunner implements INSISConstants
                     Runtime.getRuntime().exec(new String[]{exeName},null,workDir);
                 }
                 catch(IOException ex) {
-                    NSISConsole console = NSISConsole.getConsole();
-                    if(console != null) {
-                        console.clear();
-                        console.add(NSISConsoleLine.error(ex.getMessage()));
+                    NSISConsoleModel model = NSISConsoleModel.getInstance();
+                    if(model != null) {
+                        model.clear();
+                        model.add(NSISConsoleLine.error(ex.getMessage()));
                     }
                     else {
                         MessageDialog.openError(EclipseNSISPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getShell(),

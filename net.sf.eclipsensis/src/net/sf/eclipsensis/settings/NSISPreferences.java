@@ -32,6 +32,7 @@ public class NSISPreferences extends NSISSettings implements IPropertyChangeList
     private String mNSISHome = null;
     private Version mNSISVersion = null;
     private boolean mUseIntegratedHelp = true;
+    private boolean mAutoShowConsole = true;
     private Properties mNSISOptions = null;
     
     private static NSISPreferences cInstance = null;
@@ -102,6 +103,7 @@ public class NSISPreferences extends NSISSettings implements IPropertyChangeList
         initializePreference(NOCD,(getDefaultNoCD()?Boolean.TRUE:Boolean.FALSE));
         initializePreference(VERBOSITY,new Integer(getDefaultVerbosity()));
         initializePreference(COMPRESSOR,new Integer(getDefaultCompressor()));
+        initializePreference(AUTO_SHOW_CONSOLE,Boolean.TRUE);
         initializePreference(INSTRUCTIONS,""); //$NON-NLS-1$
         initializePreference(SYMBOLS,""); //$NON-NLS-1$
         
@@ -297,6 +299,23 @@ public class NSISPreferences extends NSISSettings implements IPropertyChangeList
     {
         mUseIntegratedHelp = useIntegratedHelp;
     }
+    
+    /**
+     * @return Returns the autoShowConsole.
+     */
+    public boolean isAutoShowConsole()
+    {
+        return mAutoShowConsole;
+    }
+    
+    /**
+     * @param autoShowConsole The autoShowConsole to set.
+     */
+    public void setAutoShowConsole(boolean autoShowConsole)
+    {
+        mAutoShowConsole = autoShowConsole;
+    }
+    
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.settings.NSISSettings#getBoolean(java.lang.String)
      */

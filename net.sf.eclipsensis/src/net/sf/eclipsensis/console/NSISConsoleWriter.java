@@ -11,19 +11,20 @@ package net.sf.eclipsensis.console;
 
 import java.io.*;
 
+import net.sf.eclipsensis.console.model.NSISConsoleModel;
 import net.sf.eclipsensis.makensis.MakeNSISProcess;
 
 public class NSISConsoleWriter implements Runnable
 {
     private MakeNSISProcess mProcess = null;
-    private NSISConsole mConsole = null;
+    private NSISConsoleModel mModel = null;
     private InputStream mInputStream = null;
     private INSISConsoleLineProcessor mLineProcessor = null;
     
-    public NSISConsoleWriter(MakeNSISProcess process, NSISConsole console, InputStream inputStream, INSISConsoleLineProcessor lineProcessor)
+    public NSISConsoleWriter(MakeNSISProcess process, NSISConsoleModel console, InputStream inputStream, INSISConsoleLineProcessor lineProcessor)
     {
         mProcess = process;
-        mConsole = console;
+        mModel = console;
         mInputStream = inputStream;
         mLineProcessor = lineProcessor;
     }
@@ -45,7 +46,7 @@ public class NSISConsoleWriter implements Runnable
                     else {
                         line = NSISConsoleLine.info(text);
                     }
-                    mConsole.add(line);
+                    mModel.add(line);
                     text = br.readLine();
                 }
                 else {
@@ -56,7 +57,7 @@ public class NSISConsoleWriter implements Runnable
         }
         catch(Exception ex) {
             ex.printStackTrace();
-            mConsole.add(NSISConsoleLine.error(ex.getMessage()));
+            mModel.add(NSISConsoleLine.error(ex.getMessage()));
         }
     }
 }

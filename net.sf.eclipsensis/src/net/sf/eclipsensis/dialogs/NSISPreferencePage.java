@@ -41,6 +41,7 @@ public class NSISPreferencePage	extends NSISSettingsPage
                                                 NSISPreferencePage.class.getName()+".NSISHomesList.ser"); //$NON-NLS-1$
     private ComboViewer mNSISHome = null;
     private Button mUseIntegratedHelp = null;
+    private Button mAutoShowConsole = null;
     
     public static void show()
     {
@@ -169,6 +170,11 @@ public class NSISPreferencePage	extends NSISSettingsPage
             }
         });
         
+        mAutoShowConsole = createCheckBox(composite, EclipseNSISPlugin.getResourceString("auto.show.console.text"), //$NON-NLS-1$
+                                      EclipseNSISPlugin.getResourceString("auto.show.console.tooltip"), //$NON-NLS-1$
+                                      ((NSISPreferences)getSettings()).isAutoShowConsole());
+        ((GridData)mAutoShowConsole.getLayoutData()).horizontalSpan = 2;
+        
         mUseIntegratedHelp = createCheckBox(composite, EclipseNSISPlugin.getResourceString("use.integrated.help.text"), //$NON-NLS-1$
                                       EclipseNSISPlugin.getResourceString("use.integrated.help.tooltip"), //$NON-NLS-1$
                                       ((NSISPreferences)getSettings()).isUseIntegratedHelp());
@@ -181,6 +187,7 @@ public class NSISPreferencePage	extends NSISSettingsPage
      */
     protected void enableControls(boolean state)
     {
+        mAutoShowConsole.setEnabled(state);
         mUseIntegratedHelp.setEnabled(state);
         super.enableControls(state);
     }
@@ -199,6 +206,7 @@ public class NSISPreferencePage	extends NSISSettingsPage
         mInstructions.setInput(getSettings().getDefaultInstructions());
         mSymbols.setInput(getSettings().getDefaultSymbols());
         mUseIntegratedHelp.setSelection(true);
+        mAutoShowConsole.setSelection(true);
     }
 
     /* (non-Javadoc)
@@ -220,8 +228,10 @@ public class NSISPreferencePage	extends NSISSettingsPage
             mNSISHome.refresh();
             combo.setText(home);
         }
-        ((NSISPreferences)getSettings()).setNSISHome(home);
-        ((NSISPreferences)getSettings()).setUseIntegratedHelp(mUseIntegratedHelp.getSelection());
+        NSISPreferences preferences = (NSISPreferences)getSettings();
+        preferences.setNSISHome(home);
+        preferences.setAutoShowConsole(mAutoShowConsole.getSelection());
+        preferences.setUseIntegratedHelp(mUseIntegratedHelp.getSelection());
         return super.performOk();
     }
 }
