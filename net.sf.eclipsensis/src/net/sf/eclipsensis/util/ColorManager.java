@@ -59,17 +59,11 @@ public class ColorManager
         return color;
     }
 
-    /**
-     * Return the Color that is stored in the Color table as rgb.
-     */
     public static Color getNegativeColor(RGB rgb)
     {
         return getColor(new RGB(255 & ~rgb.red, 255 & ~rgb.green, 255 & ~rgb.blue));
     }
     
-    /**
-     * Return the Color that is stored in the Color table as rgb.
-     */
     public static Color getNegativeColor(Color color)
     {
         return getNegativeColor(color.getRGB());
