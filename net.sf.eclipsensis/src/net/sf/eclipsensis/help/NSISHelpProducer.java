@@ -22,37 +22,51 @@ import org.eclipse.help.IHelpContentProducer;
 
 public class NSISHelpProducer implements IHelpContentProducer, INSISConstants
 {
+    private static final File cHelpCacheLocation = new File(EclipseNSISPlugin.getPluginStateLocation(),PLUGIN_HELP_LOCATION_PREFIX);
     private NSISHelpURLProvider mHelpURLProvider = NSISHelpURLProvider.getInstance();
     
     /* (non-Javadoc)
      * @see org.eclipse.help.IHelpContentProducer#getInputStream(java.lang.String, java.lang.String, java.util.Locale)
      */
-    public InputStream getInputStream(String pluginID, String href,
-            Locale locale)
+    public InputStream getInputStream(String pluginID, String href, Locale locale)
     {
         if(pluginID.equals(PLUGIN_NAME) && href.startsWith(NSIS_HELP_PREFIX)) {
-            href=href.substring(NSIS_HELP_PREFIX.length());
             String nsisHome = NSISPreferences.getPreferences().getNSISHome();
             if(!Common.isEmpty(nsisHome)) {
                 File nsisDir = new File(nsisHome);
                 if(nsisDir.exists() && nsisDir.isDirectory()) {
-                    File helpFile = new File(nsisDir,href);
-                    if(helpFile.exists() && helpFile.isFile()) {
+                    File helpFile = null;
+                    String href2=href.substring(NSIS_HELP_PREFIX.length());
+                    boolean isDocs = false;
+                    if(href2.startsWith(DOCS_LOCATION_PREFIX)) {
+                        isDocs = true;
+                        if(cHelpCacheLocation.exists() && cHelpCacheLocation.isDirectory()) {
+                            helpFile = new File(cHelpCacheLocation,href2);
+                        }
+                    }
+                    else {
+                        helpFile = new File(nsisDir,href2);
+                    }
+                    if(helpFile != null && helpFile.exists() && helpFile.isFile()) {
                         try {
                             return new BufferedInputStream(new FileInputStream(helpFile));
                         }
                         catch (FileNotFoundException e) {
                         }
                     }
+                    if(isDocs) {
+                        return new ByteArrayInputStream(MessageFormat.format(EclipseNSISPlugin.getResourceString("missing.help.format"), //$NON-NLS-1$
+                                new Object[]{href,PLUGIN_NAME,
+                                             NSISLiveHelpAction.class.getName()}).getBytes());
+                    }
+                    else {
+                        return new ByteArrayInputStream(MessageFormat.format(EclipseNSISPlugin.getResourceString("missing.file.format"), //$NON-NLS-1$
+                                new Object[]{href}).getBytes());
+                    }
                 }
-                return new ByteArrayInputStream(MessageFormat.format(EclipseNSISPlugin.getResourceString("missing.docs.help.format"), //$NON-NLS-1$
-                                                new Object[]{nsisDir.getAbsolutePath(),PLUGIN_NAME,
-                                                             NSISLiveHelpAction.class.getName()}).getBytes());
             }
-            else {
-                return new ByteArrayInputStream(MessageFormat.format(EclipseNSISPlugin.getResourceString("unconfigured.docs.help.format"), //$NON-NLS-1$
-                                                new Object[]{PLUGIN_NAME,NSISLiveHelpAction.class.getName()}).getBytes());
-            }
+            return new ByteArrayInputStream(MessageFormat.format(EclipseNSISPlugin.getResourceString("unconfigured.help.format"), //$NON-NLS-1$
+                    new Object[]{PLUGIN_NAME,NSISLiveHelpAction.class.getName()}).getBytes());
         }
         return null;
     }

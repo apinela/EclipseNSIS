@@ -54,6 +54,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IActionDelegate;
 import org.eclipse.ui.IEditorInput;
@@ -104,16 +105,20 @@ public class NSISEditor extends TextEditor implements INSISConstants, IPropertyC
                     }
                     else {
                         if(mOutlinePage != null) {
-                            sel = new StructuredSelection(element);
-                            mOutlinePage.setSelection(sel);
-                            return;
+                            if(!mOutlinePage.isDisposed()) {
+                                sel = new StructuredSelection(element);
+                                mOutlinePage.setSelection(sel);
+                                return;
+                            }
+                            else {
+                                mOutlinePage = null;
+                            }
                         }
-                        else {
-                            mCurrentPosition = position;
-                            setHighlightRange(mCurrentPosition.getOffset(), 
-                                              mCurrentPosition.getLength(), 
-                                              false);
-                        }
+                        
+                        mCurrentPosition = position;
+                        setHighlightRange(mCurrentPosition.getOffset(), 
+                                          mCurrentPosition.getLength(), 
+                                          false);
                     }
                 }
             }
@@ -288,7 +293,9 @@ public class NSISEditor extends TextEditor implements INSISConstants, IPropertyC
      */
     protected void editorContextMenuAboutToShow(IMenuManager menu) {
         super.editorContextMenuAboutToShow(menu);
+        menu.add(new Separator());
         addAction(menu, "ContentAssistProposal"); //$NON-NLS-1$
+        addAction(menu, "NSISTemplateProposal"); //$NON-NLS-1$
         menu.add(new Separator());
         addAction(menu, "NSISTabsToSpaces"); //$NON-NLS-1$
         addAction(menu, "NSISToggleComment"); //$NON-NLS-1$
@@ -327,9 +334,21 @@ public class NSISEditor extends TextEditor implements INSISConstants, IPropertyC
         }
     }
     
+    public Point getSelectedRange()
+    {
+        ISourceViewer sourceViewer = getSourceViewer();
+        if(sourceViewer != null) {
+            return sourceViewer.getSelectedRange();
+        }
+        else {
+            return new Point(0,0);
+        }
+    }
+    
     public Object getAdapter(Class required) {
+        ISourceViewer sourceViewer = getSourceViewer();
         if (IContentOutlinePage.class.equals(required)) {
-            if (mOutlinePage == null) {
+            if (mOutlinePage == null || mOutlinePage.isDisposed()) {
                 mCurrentPosition = null;
                 mOutlinePage= new NSISContentOutlinePage(this);
                 if (getEditorInput() != null) {
@@ -340,7 +359,7 @@ public class NSISEditor extends TextEditor implements INSISConstants, IPropertyC
         }
         
         if (mProjectionSupport != null) {
-            Object adapter= mProjectionSupport.getAdapter(getSourceViewer(), required);
+            Object adapter= mProjectionSupport.getAdapter(sourceViewer, required);
             if (adapter != null)
                 return adapter;
         }

@@ -11,20 +11,35 @@ package net.sf.eclipsensis.editor.codeassist;
 
 import java.util.ArrayList;
 
+import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
-import net.sf.eclipsensis.editor.text.*;
+import net.sf.eclipsensis.editor.text.DefaultTextProcessor;
+import net.sf.eclipsensis.editor.text.INSISTextProcessor;
+import net.sf.eclipsensis.editor.text.NSISPartitionScanner;
+import net.sf.eclipsensis.editor.text.NSISRegionScanner;
+import net.sf.eclipsensis.editor.text.NSISScanner;
+import net.sf.eclipsensis.editor.text.NSISTextProcessorRule;
+import net.sf.eclipsensis.editor.text.NSISTextUtility;
 import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.ImageManager;
 
-import org.eclipse.jface.text.*;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.ITypedRegion;
+import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.contentassist.CompletionProposal;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.rules.ICharacterScanner;
 import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.text.rules.Token;
+import org.eclipse.swt.graphics.Image;
 
 public class NSISInformationUtility implements INSISConstants
 {
+    private static final Image KEYWORD_IMAGE = ImageManager.getImage(EclipseNSISPlugin.getResourceString("nsis.icon"));
+
     public static IRegion getInformationRegionAtOffset(ITextViewer textViewer, int offset, boolean forUsage)
     {
         IDocument doc = textViewer.getDocument();
@@ -137,7 +152,9 @@ public class NSISInformationUtility implements INSISConstants
                             list.add(new CompletionProposal(NSISKeywords.ALL_KEYWORDS[i],
                                                             region.getOffset(),
                                                             offset-region.getOffset()+1,
-                                                            NSISKeywords.ALL_KEYWORDS[i].length()));
+                                                            NSISKeywords.ALL_KEYWORDS[i].length(),
+                                                            KEYWORD_IMAGE, 
+                                                            null, null, null));
                         }
                         else {
                             break;

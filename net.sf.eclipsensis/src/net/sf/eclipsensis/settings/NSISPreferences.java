@@ -30,7 +30,7 @@ public class NSISPreferences extends NSISSettings
     private File mNSISExe = null;
     private String mNSISHome = null;
     private Version mNSISVersion = null;
-    private boolean mUseDocsHelp = true;
+    private boolean mUseIntegratedHelp = true;
     private Properties mNSISOptions = null;
     
     private static NSISPreferences cInstance = null;
@@ -94,7 +94,7 @@ public class NSISPreferences extends NSISSettings
     private void initializeNSISPreferences()
     {
         initializePreference(NSIS_HOME,""); //$NON-NLS-1$
-        initializePreference(USE_DOCS_HELP,Boolean.TRUE); //$NON-NLS-1$
+        initializePreference(USE_INTEGRATED_HELP,Boolean.TRUE); //$NON-NLS-1$
         initializePreference(HDRINFO,(getDefaultHdrInfo()?Boolean.TRUE:Boolean.FALSE));
         initializePreference(LICENSE,(getDefaultLicense()?Boolean.TRUE:Boolean.FALSE));
         initializePreference(NOCONFIG,(getDefaultNoConfig()?Boolean.TRUE:Boolean.FALSE));
@@ -105,7 +105,7 @@ public class NSISPreferences extends NSISSettings
         initializePreference(SYMBOLS,""); //$NON-NLS-1$
         
         setNSISHome(mPreferenceStore.getString(NSIS_HOME));
-        setUseDocsHelp(mPreferenceStore.getBoolean(USE_DOCS_HELP));
+        setUseIntegratedHelp(mPreferenceStore.getBoolean(USE_INTEGRATED_HELP));
     }
 
     private void initializeEditorPreference(String name, IPreferenceStore defaultStore, Class type)
@@ -197,7 +197,7 @@ public class NSISPreferences extends NSISSettings
     public void store()
     {
         setValue(NSIS_HOME,mNSISHome);
-        setValue(USE_DOCS_HELP,mUseDocsHelp);
+        setValue(USE_INTEGRATED_HELP,mUseIntegratedHelp);
         super.store();
     }
 
@@ -247,19 +247,19 @@ public class NSISPreferences extends NSISSettings
     }
     
     /**
-     * @return Returns the useDocsHelp.
+     * @return Returns the useIntegratedHelp.
      */
-    public boolean isUseDocsHelp()
+    public boolean isUseIntegratedHelp()
     {
-        return mUseDocsHelp;
+        return mUseIntegratedHelp;
     }
 
     /**
-     * @param useDocsHelp The useDocsHelp to set.
+     * @param useIntegratedHelp The useIntegratedHelp to set.
      */
-    public void setUseDocsHelp(boolean useDocsHelp)
+    public void setUseIntegratedHelp(boolean useIntegratedHelp)
     {
-        mUseDocsHelp = useDocsHelp;
+        mUseIntegratedHelp = useIntegratedHelp;
     }
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.settings.NSISSettings#getBoolean(java.lang.String)
@@ -358,7 +358,7 @@ public class NSISPreferences extends NSISSettings
             }
             catch(IOException ioe) {
                 setValue(name,""); //$NON-NLS-1$
-                System.out.println(ioe);
+                ioe.printStackTrace();
             }
         }
     }

@@ -14,7 +14,9 @@ import net.sf.eclipsensis.help.INSISKeywordsListener;
 import net.sf.eclipsensis.help.NSISKeywords;
 
 import org.eclipse.jface.viewers.IContentProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.texteditor.ITextEditor;
@@ -28,6 +30,7 @@ public class NSISContentOutlinePage extends ContentOutlinePage implements INSISK
 {
     private Object mInput;
     private NSISEditor mEditor;
+    private boolean mDisposed = false;
 
     /**
      * Creates a content outline page using the given provider and the given
@@ -73,6 +76,11 @@ public class NSISContentOutlinePage extends ContentOutlinePage implements INSISK
                 if (mInput != null) {
                     viewer.setInput(mInput);
                 }
+                Point sel = mEditor.getSelectedRange();
+                NSISOutlineElement element = contentProvider.findElement(sel.x,sel.y);
+                if(element != null) {
+                    setSelection(new StructuredSelection(element));
+                }
                 NSISKeywords.addKeywordsListener(this);
             }
         }
@@ -86,8 +94,18 @@ public class NSISContentOutlinePage extends ContentOutlinePage implements INSISK
         super.dispose();
         if(mEditor != null) {
             getTreeViewer().removeSelectionChangedListener(mEditor);
+            NSISOutlineContentProvider provider = mEditor.getOutlineContentProvider();
+            if(provider != null) {
+                provider.inputChanged(null, mEditor.getEditorInput());
+            }
         }
         NSISKeywords.removeKeywordsListener(this);
+        mDisposed = true;
+    }
+    
+    public boolean isDisposed()
+    {
+        return mDisposed;
     }
     
     /**

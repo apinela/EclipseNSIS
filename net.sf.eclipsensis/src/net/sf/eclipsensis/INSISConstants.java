@@ -21,6 +21,8 @@ public interface INSISConstants
     public static final String NSIS_EDITOR_CONTEXT = PLUGIN_CONTEXT_PREFIX + "nsis_editor_context"; //$NON-NLS-1$
     
     public static final String PLUGIN_HELP_LOCATION_PREFIX = "help/"; //$NON-NLS-1$
+    public static final String DOCS_LOCATION_PREFIX = "Docs/"; //$NON-NLS-1$
+    public static final String CACHED_HELP_LOCATION = PLUGIN_HELP_LOCATION_PREFIX+DOCS_LOCATION_PREFIX; //$NON-NLS-1$
     public static final String NSIS_HELP_PREFIX = PLUGIN_HELP_LOCATION_PREFIX+"NSIS/"; //$NON-NLS-1$
     public static final String NSIS_CHM_HELP_FILE = "NSIS.chm"; //$NON-NLS-1$
     public static final String LANGUAGE_FILES_LOCATION = "Contrib\\Language files"; //$NON-NLS-1$

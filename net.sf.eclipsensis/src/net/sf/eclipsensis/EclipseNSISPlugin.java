@@ -10,13 +10,16 @@
 package net.sf.eclipsensis;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 import net.sf.eclipsensis.dialogs.NSISPreferencePage;
+import net.sf.eclipsensis.editor.template.NSISTemplateContextType;
 import net.sf.eclipsensis.help.NSISHelpURLProvider;
+import net.sf.eclipsensis.settings.INSISPreferenceConstants;
 import net.sf.eclipsensis.settings.NSISPreferences;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.util.WinAPI;
@@ -25,8 +28,12 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.text.templates.ContextTypeRegistry;
+import org.eclipse.jface.text.templates.persistence.TemplateStore;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.editors.text.templates.ContributionContextTypeRegistry;
+import org.eclipse.ui.editors.text.templates.ContributionTemplateStore;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -46,6 +53,8 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
 	private ResourceBundle mResourceBundle = null;
     private String mName = null;
     private String mVersion = null;
+    private TemplateStore mTemplateStore;
+    private ContributionContextTypeRegistry mContextTypeRegistry;
 
 	/**
 	 * The constructor.
@@ -185,6 +194,39 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
 	public ResourceBundle getResourceBundle() {
 		return mResourceBundle;
 	}
+    
+    /**
+     * Returns this plug-in's template store.
+     * 
+     * @return the template store of this plug-in instance
+     */
+    public TemplateStore getTemplateStore() {
+        if (mTemplateStore == null) {
+            mTemplateStore= new ContributionTemplateStore(getContextTypeRegistry(), 
+                            NSISPreferences.getPreferences().getPreferenceStore(), 
+                            INSISPreferenceConstants.CUSTOM_TEMPLATES);
+            try {
+                mTemplateStore.load();
+            } 
+            catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return mTemplateStore;
+    }
+
+    /**
+     * Returns this plug-in's context type registry.
+     * 
+     * @return the context type registry for this plug-in instance
+     */
+    public ContextTypeRegistry getContextTypeRegistry() {
+        if (mContextTypeRegistry == null) {
+            mContextTypeRegistry= new ContributionContextTypeRegistry();
+            mContextTypeRegistry.addContextType(NSISTemplateContextType.NSIS_TEMPLATE_CONTEXT_TYPE);
+        }
+        return mContextTypeRegistry;
+    }
     
     /**
      * @return Returns the mName.

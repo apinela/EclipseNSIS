@@ -39,7 +39,7 @@ public class NSISLiveHelpAction implements ILiveHelpAction
                 }
                 else {
                     NSISHelpURLProvider helpURLProvider = NSISHelpURLProvider.getInstance();
-                    String chmURL = helpURLProvider.convertDocHelpURLToCHMHelpURL(mData);
+                    String chmURL = helpURLProvider.convertHelpURLToCHMHelpURL(mData);
                     if(!Common.isEmpty(chmURL)) {
                         helpURLProvider.openCHMHelpURL(chmURL);
                     }

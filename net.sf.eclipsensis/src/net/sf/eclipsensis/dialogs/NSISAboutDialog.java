@@ -58,6 +58,7 @@ public class NSISAboutDialog extends Dialog implements INSISConstants
     private static final String cAboutText;
     private static final int cWidthHint;
     private static final String[] cURISchemes = {"http://","https://","ftp://","mailto:","news:"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+    private static final boolean[] cURIOpaqueSchemes = {false,false,false,true,true};
     private static final ArrayList cLinks = new ArrayList();
     
     private LinkedHashMap mStyleRanges = new LinkedHashMap();
@@ -429,27 +430,41 @@ public class NSISAboutDialog extends Dialog implements INSISConstants
         int[] range = {buffer.length(),0};
         String temp = new String((char[])Common.subArray(chars,startPos,endPos)).toLowerCase();
         StringBuffer tempBuf = new StringBuffer(""); //$NON-NLS-1$
+        boolean isOpaque = false;
         for (int i = 0; i < cURISchemes.length; i++) {
             if(temp.startsWith(cURISchemes[i])) {
                 tempBuf.append((char[])Common.subArray(chars,startPos,startPos+cURISchemes[i].length()));
                 startPos += cURISchemes[i].length();
+                isOpaque = cURIOpaqueSchemes[i];
                 break;
             }
         }
         boolean found = false;
+        int lastPos = -1;
         for (int i = startPos; i < endPos; i++) {
             if(Character.isWhitespace(chars[i])) {
-                tempBuf.append((char[])Common.subArray(chars,startPos,i));
-                startPos =i;
                 found = true;
                 break;
             }
+            lastPos = i;
         }
         if(!found) {
-            tempBuf.append((char[])Common.subArray(chars,startPos,endPos));
-            startPos = endPos;
+            lastPos = endPos-1;
         }
-
+        while(lastPos >= startPos) {
+            char c = chars[lastPos];
+            if(!Character.isLetterOrDigit(c)) {
+                if(isOpaque || (c != '?' && c != '#')) {
+                    lastPos--;
+                    continue;
+                }
+            }
+            break;
+        }
+        
+        tempBuf.append((char[])Common.subArray(chars,startPos,lastPos+1));
+        startPos = lastPos+1;
+        
         try {
             URI uri = new URI(tempBuf.toString());
             String scheme = uri.getScheme();

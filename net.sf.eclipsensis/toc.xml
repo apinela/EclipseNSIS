@@ -17,7 +17,5 @@
 <topic label="Compiling and Testing NSIS Scripts" href="help/compiling.html"/>
 <topic label="Eclipse NSIS Plugin Console" href="help/console.html"/>
 <topic label="Useful Links" href="help/links.html"/>
-<topic label="NSIS Reference">
-<link toc="toc_nsis.xml"/>
-</topic>
+<topic label="NSIS Reference" href="help/NSIS/Docs/IndexPage.html"/>
 </toc>

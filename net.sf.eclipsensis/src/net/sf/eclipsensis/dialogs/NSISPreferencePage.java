@@ -50,7 +50,7 @@ public class NSISPreferencePage	extends NSISSettingsPage
     private static File cNSISHomesListFile = new File(EclipseNSISPlugin.getPluginStateLocation(),
                                                 NSISPreferencePage.class.getName()+".NSISHomesList.ser"); //$NON-NLS-1$
     private ComboViewer mNSISHome = null;
-    private Button mUseDocsHelp = null;
+    private Button mUseIntegratedHelp = null;
     
     public static void show()
     {
@@ -179,10 +179,10 @@ public class NSISPreferencePage	extends NSISSettingsPage
             }
         });
         
-        mUseDocsHelp = createCheckBox(composite, EclipseNSISPlugin.getResourceString("use.docs.help.text"), //$NON-NLS-1$
-                                      EclipseNSISPlugin.getResourceString("use.docs.help.tooltip"), //$NON-NLS-1$
-                                      ((NSISPreferences)getSettings()).isUseDocsHelp());
-        ((GridData)mUseDocsHelp.getLayoutData()).horizontalSpan = 2;
+        mUseIntegratedHelp = createCheckBox(composite, EclipseNSISPlugin.getResourceString("use.integrated.help.text"), //$NON-NLS-1$
+                                      EclipseNSISPlugin.getResourceString("use.integrated.help.tooltip"), //$NON-NLS-1$
+                                      ((NSISPreferences)getSettings()).isUseIntegratedHelp());
+        ((GridData)mUseIntegratedHelp.getLayoutData()).horizontalSpan = 2;
         return composite;
     }
     
@@ -191,7 +191,7 @@ public class NSISPreferencePage	extends NSISSettingsPage
      */
     protected void enableControls(boolean state)
     {
-        mUseDocsHelp.setEnabled(state);
+        mUseIntegratedHelp.setEnabled(state);
         super.enableControls(state);
     }
     /* (non-Javadoc)
@@ -208,7 +208,7 @@ public class NSISPreferencePage	extends NSISSettingsPage
         mCompressor.select(getSettings().getDefaultCompressor());
         mInstructions.setInput(getSettings().getDefaultInstructions());
         mSymbols.setInput(getSettings().getDefaultSymbols());
-        mUseDocsHelp.setSelection(true);
+        mUseIntegratedHelp.setSelection(true);
     }
 
     /* (non-Javadoc)
@@ -231,7 +231,7 @@ public class NSISPreferencePage	extends NSISSettingsPage
             combo.setText(home);
         }
         ((NSISPreferences)getSettings()).setNSISHome(home);
-        ((NSISPreferences)getSettings()).setUseDocsHelp(mUseDocsHelp.getSelection());
+        ((NSISPreferences)getSettings()).setUseIntegratedHelp(mUseIntegratedHelp.getSelection());
         return super.performOk();
     }
 }
