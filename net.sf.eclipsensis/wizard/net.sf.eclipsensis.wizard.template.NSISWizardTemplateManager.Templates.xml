@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates>
-<template name="Silent Installer" fileName="templateSilent.ser" enabled="true" deleted="false">
+<template name="Silent Installer" filename="templateSilent.ser" enabled="true" deleted="false">
 <description>Silent Installer with default icons and options.</description>
 </template>
-<template name="MUI Installer" fileName="templateMUI.ser" enabled="true" deleted="false">
+<template name="MUI Installer" filename="templateMUI.ser" enabled="true" deleted="false">
 <description>MUI Installer with default icons and options.</description>
 </template>
-<template name="Classic Installer" fileName="templateClassic.ser" enabled="true" deleted="false">
+<template name="Classic Installer" filename="templateClassic.ser" enabled="true" deleted="false">
 <description>Classic installer with default icons and options.</description>
 </template>
 </templates>

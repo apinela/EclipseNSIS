@@ -10,6 +10,7 @@
 package net.sf.eclipsensis.wizard;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 import javax.sound.sampled.*;
@@ -20,7 +21,6 @@ import net.sf.eclipsensis.util.*;
 import net.sf.eclipsensis.wizard.settings.NSISWizardSettings;
 import net.sf.eclipsensis.wizard.util.*;
 
-import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
@@ -117,8 +117,8 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
 
                 if(control == mBGPreviewButton) {
                     return (settings.isShowBackground() && 
-                            validateEmptyOrValidFile(settings.getBackgroundBMP(),null) &&
-                            validateEmptyOrValidFile(settings.getBackgroundWAV(),null));
+                            validateEmptyOrValidFile(Common.decodePath(settings.getBackgroundBMP()),null) &&
+                            validateEmptyOrValidFile(Common.decodePath(settings.getBackgroundWAV()),null));
                 }
                 else {
                     return true;
@@ -326,7 +326,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
         }
         
         addPageListener(new NSISWizardPageAdapter() {
-            public void aboutToEnter(IWizardPage page, boolean forward)
+            public void aboutToShow()
             {
                 c.setEnabled(mse.canEnable(c));
                 if(l != null) {
@@ -373,8 +373,8 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
 
                 if(control == mSplashPreviewButton) {
                     return (settings.isShowSplash() && 
-                            Common.isValidFile(settings.getSplashBMP()) &&
-                            validateEmptyOrValidFile(settings.getSplashWAV(),null) && 
+                            Common.isValidFile(Common.decodePath(settings.getSplashBMP())) &&
+                            validateEmptyOrValidFile(Common.decodePath(settings.getSplashWAV()),null) && 
                             settings.getSplashDelay() > 0);
                 }
                 else {
@@ -531,7 +531,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
     
     private void previewSplash()
     {
-        if(Common.isValidFile(mWizard.getSettings().getSplashBMP())) {
+        if(Common.isValidFile(Common.decodePath(mWizard.getSettings().getSplashBMP()))) {
             SplashPreviewTask task = new SplashPreviewTask();
             new Timer().scheduleAtFixedRate(task,0,task.getResolution()); 
         }
@@ -555,7 +555,11 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
         final Font previewFont = new Font(display,mBGPreviewFontData);
         final Font messageFont = new Font(display,mBGPreviewEscapeFontData);
 
-        final Clip clip = loadAudioClip(settings.getBackgroundWAV());
+        Canvas canvas = new Canvas(shell, SWT.NO_BACKGROUND);
+        final GC gc = new GC(canvas);
+        shell.open();
+        shell.forceActive();
+        final Clip clip = loadAudioClip(Common.decodePath(settings.getBackgroundWAV()));
         if(clip != null) {
             clip.loop(Clip.LOOP_CONTINUOUSLY);
         }
@@ -573,9 +577,6 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
                 }
             }
         });
-        Canvas canvas = new Canvas(shell, SWT.NO_BACKGROUND);
-        final GC gc = new GC(canvas);
-        shell.open();
         canvas.addPaintListener(new PaintListener() {
             public void paintControl(PaintEvent e)
             {
@@ -599,8 +600,9 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
                     b += db;
                 }
                 
-                if(Common.isValidFile(settings.getBackgroundBMP())) {
-                    ImageData imageData = new ImageData(settings.getBackgroundBMP());
+                String backgroundBMP = Common.decodePath(settings.getBackgroundBMP());
+                if(Common.isValidFile(backgroundBMP)) {
+                    ImageData imageData = new ImageData(backgroundBMP);
                     Image image = new Image(display, imageData);
                     int x = rect.x + (rect.width - imageData.width)/2;
                     int y = rect.y + (rect.height - imageData.height)/2;
@@ -673,31 +675,44 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
     {
         Clip clip = null;
         if(Common.isValidFile(fileName)) {
+            AudioInputStream ais = null;
             try {
-                AudioInputStream ais = AudioSystem.getAudioInputStream(new File(fileName));
+                ais = AudioSystem.getAudioInputStream(new File(fileName));
                 AudioFormat format = ais.getFormat();
-                if (format.getEncoding() != AudioFormat.Encoding.PCM_SIGNED) {
-                    format = new AudioFormat(
-                            AudioFormat.Encoding.PCM_SIGNED,
-                            format.getSampleRate(),
-                            format.getSampleSizeInBits()*2,
-                            format.getChannels(),
-                            format.getFrameSize()*2,
-                            format.getFrameRate(),
-                            true);        // big endian
-                    ais = AudioSystem.getAudioInputStream(format, ais);
+                if (format.getEncoding() != AudioFormat.Encoding.PCM_SIGNED && format.getEncoding() != AudioFormat.Encoding.PCM_UNSIGNED) {
+                    if(AudioSystem.isConversionSupported(AudioFormat.Encoding.PCM_SIGNED, format)) {
+                        format = new AudioFormat(
+                                AudioFormat.Encoding.PCM_SIGNED,
+                                format.getSampleRate(),
+                                format.getSampleSizeInBits(),
+                                format.getChannels(),
+                                format.getFrameSize(),
+                                format.getFrameRate(),
+                                true);        // big endian
+                        ais = AudioSystem.getAudioInputStream(format, ais);
+                    }
                 }
                 
                 DataLine.Info info = new DataLine.Info(Clip.class, format);
                 if(AudioSystem.isLineSupported(info)) {
                     clip = (Clip)AudioSystem.getLine(info);
                     clip.open(ais);
-                    ais.close();
                 }
             }
             catch (Exception e1) {
                 clip = null;
                 e1.printStackTrace();
+            }
+            finally {
+                if(ais != null) {
+                    try {
+                        ais.close();
+                    }
+                    catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    ais = null;
+                }
             }
         }
         return clip;
@@ -769,7 +784,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
             fillLayout.marginWidth=0;
             mShell.setLayout(fillLayout);
 
-            ImageData imageData = new ImageData(settings.getSplashBMP());
+            ImageData imageData = new ImageData(Common.decodePath(settings.getSplashBMP()));
             mShell.setSize(imageData.width, imageData.height);
             Rectangle rect = mDisplay.getClientArea();
             int x = (rect.width-imageData.width)/2;
@@ -787,7 +802,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
 
             mAlpha = -1;
             mShell.open();
-            mClip = loadAudioClip(settings.getSplashWAV());
+            mClip = loadAudioClip(Common.decodePath(settings.getSplashWAV()));
             if(mClip != null) {
                 mClip.start();
             }

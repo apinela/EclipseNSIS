@@ -15,6 +15,7 @@ import java.util.List;
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.wizard.NSISWizard;
 import net.sf.eclipsensis.wizard.NSISWizardDisplayValues;
 import net.sf.eclipsensis.wizard.settings.NSISInstallDirectory;
 import net.sf.eclipsensis.wizard.util.NSISWizardDialogUtil;
@@ -36,9 +37,9 @@ public class NSISInstallDirectoryDialog extends AbstractNSISInstallItemDialog
         cProperties.add("recursive"); //$NON-NLS-1$
     }
 
-    public NSISInstallDirectoryDialog(Shell parentShell, NSISInstallDirectory item)
+    public NSISInstallDirectoryDialog(NSISWizard wizard, NSISInstallDirectory item)
     {
-        super(parentShell, item);
+        super(wizard, item);
     }
 
     /* (non-Javadoc)

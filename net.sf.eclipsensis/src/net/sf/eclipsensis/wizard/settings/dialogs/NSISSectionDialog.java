@@ -15,6 +15,7 @@ import java.util.List;
 import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.settings.NSISPreferences;
 import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.wizard.NSISWizard;
 import net.sf.eclipsensis.wizard.settings.NSISSection;
 import net.sf.eclipsensis.wizard.util.MasterSlaveController;
 import net.sf.eclipsensis.wizard.util.NSISWizardDialogUtil;
@@ -38,9 +39,9 @@ public class NSISSectionDialog extends AbstractNSISInstallItemDialog
         cProperties.add("name"); //$NON-NLS-1$
     }
 
-    public NSISSectionDialog(Shell parentShell, NSISSection item)
+    public NSISSectionDialog(NSISWizard wizard, NSISSection item)
     {
-        super(parentShell, item);
+        super(wizard, item);
     }
 
     /* (non-Javadoc)
@@ -149,28 +150,6 @@ public class NSISSectionDialog extends AbstractNSISInstallItemDialog
             }
         });
         ((GridData)cb3.getLayoutData()).horizontalSpan = 1;
-//        final boolean canEnable;
-//        if(mItem.getSettings().getInstallerType() == INSISWizardConstants.INSTALLER_TYPE_SILENT) {
-//            cb3.setSelection(false);
-//            cb3.setEnabled(false);
-//            canEnable = false;
-//        }
-//        else {
-//            canEnable = true;
-//        }
-
-//        MasterSlaveEnabler mse = new MasterSlaveEnabler() {
-//            /* (non-Javadoc)
-//             * @see net.sf.eclipsensis.wizard.util.MasterSlaveEnabler#canEnable(org.eclipse.swt.widgets.Control)
-//             */
-//            public boolean canEnable(Control control)
-//            {
-//                return canEnable;
-//            }
-//        };
-//        m.setEnabler(cb3,mse);
-//        
-//        m.updateSlaves();
         return composite;
     }
     

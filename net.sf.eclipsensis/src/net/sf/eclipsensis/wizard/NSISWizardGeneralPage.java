@@ -180,7 +180,7 @@ public class NSISWizardGeneralPage extends AbstractNSISWizardPage
            }
         });
     
-        final Text t2 = NSISWizardDialogUtil.createImageBrowser(group, settings.getIcon(), new Point(36,36), 
+        final Text t2 = NSISWizardDialogUtil.createImageBrowser(group, settings.getIcon(), new Point(32,32), 
                                           Common.loadArrayProperty(bundle,"installer.icon.filternames"),  //$NON-NLS-1$
                                           Common.loadArrayProperty(bundle,"installer.icon.filters"), "installer.icon.label", //$NON-NLS-1$ //$NON-NLS-2$ 
                                           true, null, false);
@@ -191,6 +191,7 @@ public class NSISWizardGeneralPage extends AbstractNSISWizardPage
                validateField(INSTICON_CHECK);
            }
         });
+        NSISWizardDialogUtil.loadImage(t2);
     
         final Button[] radio = NSISWizardDialogUtil.createRadioGroup(group, NSISWizardDisplayValues.INSTALLER_TYPE_NAMES, 
                                            settings.getInstallerType(),"installer.type.label", //$NON-NLS-1$
@@ -271,7 +272,7 @@ public class NSISWizardGeneralPage extends AbstractNSISWizardPage
            }
         });
     
-        final Text t2 = NSISWizardDialogUtil.createImageBrowser(group, settings.getUninstallIcon(), new Point(36,36), 
+        final Text t2 = NSISWizardDialogUtil.createImageBrowser(group, settings.getUninstallIcon(), new Point(32,32), 
                                           Common.loadArrayProperty(bundle,"uninstaller.icon.filternames"),  //$NON-NLS-1$
                                           Common.loadArrayProperty(bundle,"uninstaller.icon.filters"), "uninstaller.icon.label", //$NON-NLS-1$ //$NON-NLS-2$ 
                                           true, m, false);
@@ -282,6 +283,7 @@ public class NSISWizardGeneralPage extends AbstractNSISWizardPage
                validateField(UNINSTICON_CHECK);
            }
         });
+        NSISWizardDialogUtil.loadImage(t2);
 
         m.updateSlaves();
 

@@ -11,20 +11,20 @@ package net.sf.eclipsensis.wizard.settings;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.util.ImageManager;
+import net.sf.eclipsensis.wizard.NSISWizard;
 import net.sf.eclipsensis.wizard.NSISWizardDisplayValues;
 import net.sf.eclipsensis.wizard.settings.dialogs.NSISInstallRegistryValueDialog;
 
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Composite;
 
 public class NSISInstallRegistryValue extends AbstractNSISInstallItem
 {
 	private static final long serialVersionUID = 4012648943855296196L;
 
     public static final String TYPE = EclipseNSISPlugin.getResourceString("wizard.regvalue.type"); //$NON-NLS-1$
-    private static final Image cStrImage = ImageManager.getImage(EclipseNSISPlugin.getResourceString("wizard.regstr.icon")); //$NON-NLS-1$
-    private static final Image cDwordImage = ImageManager.getImage(EclipseNSISPlugin.getResourceString("wizard.regdword.icon")); //$NON-NLS-1$
+    private static final Image STR_IMAGE = ImageManager.getImage(EclipseNSISPlugin.getResourceString("wizard.regstr.icon")); //$NON-NLS-1$
+    private static final Image DWORD_IMAGE = ImageManager.getImage(EclipseNSISPlugin.getResourceString("wizard.regdword.icon")); //$NON-NLS-1$
     
     private int mRootKey = HKLM;
     private String mSubKey = null;
@@ -33,7 +33,7 @@ public class NSISInstallRegistryValue extends AbstractNSISInstallItem
     private int mValueType = REG_SZ;
 
     static {
-        NSISInstallElementFactory.register(TYPE, NSISInstallRegistryValue.class);
+        NSISInstallElementFactory.register(TYPE, STR_IMAGE, NSISInstallRegistryValue.class);
     }
 
     /* (non-Javadoc)
@@ -61,9 +61,9 @@ public class NSISInstallRegistryValue extends AbstractNSISInstallItem
         return true;
     }
 
-    public boolean edit(Composite composite)
+    public boolean edit(NSISWizard wizard)
     {
-        return new NSISInstallRegistryValueDialog(composite.getShell(),this).open() == Window.OK;
+        return new NSISInstallRegistryValueDialog(wizard,this).open() == Window.OK;
     }
 
     /* (non-Javadoc)
@@ -74,9 +74,9 @@ public class NSISInstallRegistryValue extends AbstractNSISInstallItem
         switch(mValueType)
         {
             case REG_DWORD:
-                return cDwordImage;
+                return DWORD_IMAGE;
             default:
-                return cStrImage;
+                return STR_IMAGE;
         }
     }
 

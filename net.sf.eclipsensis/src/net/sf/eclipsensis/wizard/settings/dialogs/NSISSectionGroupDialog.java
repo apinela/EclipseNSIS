@@ -16,6 +16,7 @@ import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.settings.NSISPreferences;
 import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.wizard.NSISWizard;
 import net.sf.eclipsensis.wizard.settings.NSISSectionGroup;
 import net.sf.eclipsensis.wizard.util.NSISWizardDialogUtil;
 
@@ -34,12 +35,12 @@ public class NSISSectionGroupDialog extends AbstractNSISInstallItemDialog
         cProperties.add("bold"); //$NON-NLS-1$
         cProperties.add("caption"); //$NON-NLS-1$
         cProperties.add("description"); //$NON-NLS-1$
-        cProperties.add("expanded"); //$NON-NLS-1$
+        cProperties.add("defaultExpanded"); //$NON-NLS-1$
     }
 
-    public NSISSectionGroupDialog(Shell parentShell, NSISSectionGroup item)
+    public NSISSectionGroupDialog(NSISWizard wizard, NSISSectionGroup item)
     {
-        super(parentShell, item);
+        super(wizard, item);
     }
 
     /* (non-Javadoc)
@@ -135,10 +136,10 @@ public class NSISSectionGroupDialog extends AbstractNSISInstallItemDialog
             }
         });
         ((GridData)cb1.getLayoutData()).horizontalSpan = 1;
-        final Button cb2 = NSISWizardDialogUtil.createCheckBox(composite2,"wizard.expanded.label",mStore.getBoolean("expanded"),true,null,false); //$NON-NLS-1$ //$NON-NLS-2$
+        final Button cb2 = NSISWizardDialogUtil.createCheckBox(composite2,"wizard.default.expanded.label",mStore.getBoolean("defaultExpanded"),true,null,false); //$NON-NLS-1$ //$NON-NLS-2$
         cb2.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
-                mStore.setValue("expanded",cb2.getSelection()); //$NON-NLS-1$
+                mStore.setValue("defaultExpanded",cb2.getSelection()); //$NON-NLS-1$
             }
         });
         ((GridData)cb2.getLayoutData()).horizontalSpan = 1;
@@ -147,7 +148,6 @@ public class NSISSectionGroupDialog extends AbstractNSISInstallItemDialog
     
     protected String checkForErrors()
     {
-        String subKey = mStore.getString("subKey").trim(); //$NON-NLS-1$
         if(Common.isEmpty(mStore.getString("caption"))) { //$NON-NLS-1$
             return EclipseNSISPlugin.getResourceString("wizard.missing.sectiongroup.caption"); //$NON-NLS-1$
         }

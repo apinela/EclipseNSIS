@@ -12,19 +12,19 @@ package net.sf.eclipsensis.wizard.settings;
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.util.ImageManager;
+import net.sf.eclipsensis.wizard.NSISWizard;
 import net.sf.eclipsensis.wizard.settings.dialogs.NSISInstallDirectoryDialog;
 
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Composite;
 
 public class NSISInstallDirectory extends AbstractNSISInstallItem implements INSISInstallFileSystemObject
 {
 	private static final long serialVersionUID = 3960745695250401464L;
 
     public static final String TYPE = EclipseNSISPlugin.getResourceString("wizard.directory.type"); //$NON-NLS-1$
-    private static final Image cFolderImage = ImageManager.getImage(EclipseNSISPlugin.getResourceString("wizard.directory.icon")); //$NON-NLS-1$
-    private static final Image cRecursiveFolderImage = ImageManager.getImage(EclipseNSISPlugin.getResourceString("wizard.recursive.directory.icon")); //$NON-NLS-1$
+    private static final Image IMAGE = ImageManager.getImage(EclipseNSISPlugin.getResourceString("wizard.directory.icon")); //$NON-NLS-1$
+    private static final Image RECURSIVE_IMAGE = ImageManager.getImage(EclipseNSISPlugin.getResourceString("wizard.recursive.directory.icon")); //$NON-NLS-1$
     
     private String mName = null;
     private String mDestination = NSISKeywords.getKeyword("$INSTDIR"); //$NON-NLS-1$
@@ -32,7 +32,7 @@ public class NSISInstallDirectory extends AbstractNSISInstallItem implements INS
     private boolean mRecursive = false;
     
     static {
-        NSISInstallElementFactory.register(TYPE, NSISInstallDirectory.class);
+        NSISInstallElementFactory.register(TYPE, IMAGE, NSISInstallDirectory.class);
     }
 
     /* (non-Javadoc)
@@ -59,9 +59,9 @@ public class NSISInstallDirectory extends AbstractNSISInstallItem implements INS
         return true;
     }
 
-    public boolean edit(Composite composite)
+    public boolean edit(NSISWizard wizard)
     {
-        return new NSISInstallDirectoryDialog(composite.getShell(),this).open() == Window.OK;
+        return new NSISInstallDirectoryDialog(wizard,this).open() == Window.OK;
     }
 
     /* (non-Javadoc)
@@ -69,7 +69,7 @@ public class NSISInstallDirectory extends AbstractNSISInstallItem implements INS
      */
     public Image getImage()
     {
-        return (mRecursive?cRecursiveFolderImage:cFolderImage);
+        return (mRecursive?RECURSIVE_IMAGE:IMAGE);
     }
 
     /**

@@ -14,8 +14,7 @@ import java.util.List;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.wizard.INSISWizardConstants;
-import net.sf.eclipsensis.wizard.NSISWizardDisplayValues;
+import net.sf.eclipsensis.wizard.*;
 import net.sf.eclipsensis.wizard.settings.NSISInstallRegistryValue;
 import net.sf.eclipsensis.wizard.util.NSISWizardDialogUtil;
 
@@ -39,9 +38,9 @@ public class NSISInstallRegistryValueDialog extends AbstractNSISInstallItemDialo
         cProperties.add("data"); //$NON-NLS-1$
     }
 
-    public NSISInstallRegistryValueDialog(Shell parentShell, NSISInstallRegistryValue item)
+    public NSISInstallRegistryValueDialog(NSISWizard wizard, NSISInstallRegistryValue item)
     {
-        super(parentShell, item);
+        super(wizard, item);
     }
 
     /* (non-Javadoc)

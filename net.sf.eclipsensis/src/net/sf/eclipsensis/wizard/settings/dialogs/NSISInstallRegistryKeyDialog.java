@@ -14,6 +14,7 @@ import java.util.List;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.wizard.NSISWizard;
 import net.sf.eclipsensis.wizard.NSISWizardDisplayValues;
 import net.sf.eclipsensis.wizard.settings.NSISInstallRegistryKey;
 import net.sf.eclipsensis.wizard.util.NSISWizardDialogUtil;
@@ -32,9 +33,9 @@ public class NSISInstallRegistryKeyDialog extends AbstractNSISInstallItemDialog
         cProperties.add("subKey"); //$NON-NLS-1$
     }
 
-    public NSISInstallRegistryKeyDialog(Shell parentShell, NSISInstallRegistryKey item)
+    public NSISInstallRegistryKeyDialog(NSISWizard wizard, NSISInstallRegistryKey item)
     {
-        super(parentShell, item);
+        super(wizard, item);
     }
 
     /* (non-Javadoc)

@@ -15,6 +15,7 @@ import java.util.List;
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.wizard.NSISWizard;
 import net.sf.eclipsensis.wizard.NSISWizardDisplayValues;
 import net.sf.eclipsensis.wizard.settings.NSISInstallFile;
 import net.sf.eclipsensis.wizard.util.NSISWizardDialogUtil;
@@ -35,9 +36,9 @@ public class NSISInstallFileDialog extends AbstractNSISInstallItemDialog
         cProperties.add("overwriteMode"); //$NON-NLS-1$
     }
 
-    public NSISInstallFileDialog(Shell parentShell, NSISInstallFile item)
+    public NSISInstallFileDialog(NSISWizard wizard, NSISInstallFile item)
     {
-        super(parentShell, item);
+        super(wizard, item);
     }
 
     /* (non-Javadoc)

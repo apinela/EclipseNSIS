@@ -139,16 +139,35 @@ public class NSISInformationUtility implements INSISConstants
     public static ICompletionProposal[] getCompletionsAtOffset(ITextViewer viewer, int offset)
     {
         if(offset > 0) {
-            offset--;
+            int offset2 = offset-1;
             IDocument doc = viewer.getDocument();
-            ITypedRegion[][] nsisLine = NSISTextUtility.getNSISLines(doc, offset);
-            IRegion region = internalGetInformationRegionAtOffset(doc, offset, nsisLine, true);
+            ITypedRegion[][] nsisLine = NSISTextUtility.getNSISLines(doc, offset2);
+            IRegion region = internalGetInformationRegionAtOffset(doc, offset2, nsisLine, true);
             if(region == null || region.equals(NSISTextUtility.EMPTY_REGION)) {
-                region = internalGetInformationRegionAtOffset(doc, offset, nsisLine, false);
+                region = internalGetInformationRegionAtOffset(doc, offset2, nsisLine, false);
+                if(region == null || region.equals(NSISTextUtility.EMPTY_REGION)) {
+                    try {
+                        //Last ditch
+                        region = doc.getLineInformationOfOffset(offset);
+                        char[] chars = doc.get(region.getOffset(),offset-region.getOffset()).toCharArray();
+                        int i = chars.length-1;
+                        while (i >= 0) {
+                            if(Character.isWhitespace(chars[i])) {
+                                break;
+                            }
+                            i--;
+                        };
+                        int offset3 = region.getOffset()+i+1;
+                        region = new Region(offset3,offset-offset3);
+                    }
+                    catch (BadLocationException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
             if(region != null || !region.equals(NSISTextUtility.EMPTY_REGION)) {
-                if(region.getOffset()+region.getLength() > offset) {
-                    region = new Region(region.getOffset(),offset-region.getOffset()+1);
+                if(region.getOffset()+region.getLength() > offset2) {
+                    region = new Region(region.getOffset(),offset2-region.getOffset()+1);
                 }
                 String text = NSISTextUtility.getRegionText(doc,region);
                 if(!Common.isEmpty(text)) {
@@ -183,7 +202,7 @@ public class NSISInformationUtility implements INSISConstants
                                 if(NSISKeywords.ALL_KEYWORDS[i].regionMatches(true,0,text,0,textlen)) {
                                     list.add(new CompletionProposal(NSISKeywords.ALL_KEYWORDS[i],
                                                                     region.getOffset(),
-                                                                    offset-region.getOffset()+1,
+                                                                    offset2-region.getOffset()+1,
                                                                     NSISKeywords.ALL_KEYWORDS[i].length(),
                                                                     KEYWORD_IMAGE, 
                                                                     null, null, null));
@@ -200,7 +219,7 @@ public class NSISInformationUtility implements INSISConstants
                                 if(NSISKeywords.PLUGINS[i].regionMatches(true,0,text,0,textlen)) {
                                     list.add(new CompletionProposal(NSISKeywords.PLUGINS[i],
                                                                     region.getOffset(),
-                                                                    offset-region.getOffset()+1,
+                                                                    offset2-region.getOffset()+1,
                                                                     NSISKeywords.PLUGINS[i].length(),
                                                                     PLUGIN_IMAGE, 
                                                                     null, null, null));

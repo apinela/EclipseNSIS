@@ -45,11 +45,12 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
     private static File cStateLocation = null;
     
 	private ArrayList mListeners = new ArrayList();
-	private ResourceBundle mResourceBundle = null;
     private String mName = null;
     private String mVersion = null;
     private TemplateStore mTemplateStore;
     private ContributionContextTypeRegistry mContextTypeRegistry;
+    private Locale mLocale;
+    private HashMap mResourceBundles = new HashMap();
 
 	/**
 	 * The constructor.
@@ -58,10 +59,11 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
     {
 		super();
 		cPlugin = this;
+        mLocale = Locale.getDefault();
 		try {
-			mResourceBundle = new EclipseNSISPluginResourceBundle();
+			mResourceBundles.put(mLocale,new EclipseNSISPluginResourceBundle(mLocale));
 		} catch (MissingResourceException x) {
-			mResourceBundle = null;
+			x.printStackTrace();
 		}
 	}
 
@@ -201,8 +203,23 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
 	 */
 	public ResourceBundle getResourceBundle() 
     {
-		return mResourceBundle;
+		return getResourceBundle(mLocale);
 	}
+
+    /**
+     * Returns the plugin's resource bundle,
+     */
+    public ResourceBundle getResourceBundle(Locale locale) 
+    {
+        if(!mResourceBundles.containsKey(locale)) {
+            synchronized(this) {
+                if(!mResourceBundles.containsKey(locale)) {
+                    mResourceBundles.put(locale,new EclipseNSISPluginResourceBundle(locale));
+                }                
+            }
+        }
+        return (ResourceBundle)mResourceBundles.get(locale);
+    }
     
     /**
      * Returns this plug-in's template store.
@@ -275,14 +292,19 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
         
         public EclipseNSISPluginResourceBundle()
         {
+            this(Locale.getDefault());
+        }
+
+        public EclipseNSISPluginResourceBundle(Locale locale)
+        {
             super();
             try {
-                mResources = ResourceBundle.getBundle(RESOURCE_BUNDLE);
+                mResources = ResourceBundle.getBundle(RESOURCE_BUNDLE, locale);
             } catch (MissingResourceException x) {
                 mResources = null;
             }
             try {
-                mMessages = ResourceBundle.getBundle(MESSAGE_BUNDLE);
+                mMessages = ResourceBundle.getBundle(MESSAGE_BUNDLE, locale);
             } catch (MissingResourceException x) {
                 mMessages = null;
             }

@@ -157,11 +157,12 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
         composite2.setLayout(layout);
         
         java.util.List selectedLanguages = settings.getLanguages();
-        selectedLanguages.clear();
         final NSISLanguageManager nsisLanguageManager = NSISLanguageManager.getInstance();
-        NSISLanguage defaultLanguage = nsisLanguageManager.getDefaultLanguage();
-        if(defaultLanguage != null) {
-            selectedLanguages.add(defaultLanguage);
+        if(selectedLanguages.isEmpty()) {
+            NSISLanguage defaultLanguage = nsisLanguageManager.getDefaultLanguage();
+            if(defaultLanguage != null) {
+                selectedLanguages.add(defaultLanguage);
+            }
         }
         java.util.List availableLanguages = nsisLanguageManager.getLanguages();
         availableLanguages.removeAll(selectedLanguages);

@@ -13,18 +13,18 @@ import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.util.ImageManager;
+import net.sf.eclipsensis.wizard.NSISWizard;
 import net.sf.eclipsensis.wizard.settings.dialogs.NSISInstallShortcutDialog;
 
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Composite;
 
 public class NSISInstallShortcut extends AbstractNSISInstallItem
 {
 	private static final long serialVersionUID = 7567273788917909918L;
 
     public static final String TYPE = EclipseNSISPlugin.getResourceString("wizard.shortcut.type"); //$NON-NLS-1$
-    private static final Image cImage = ImageManager.getImage(EclipseNSISPlugin.getResourceString("wizard.shortcut.icon")); //$NON-NLS-1$
+    private static final Image IMAGE = ImageManager.getImage(EclipseNSISPlugin.getResourceString("wizard.shortcut.icon")); //$NON-NLS-1$
     
     private String mName = null;
     private String mLocation = null;
@@ -33,7 +33,7 @@ public class NSISInstallShortcut extends AbstractNSISInstallItem
     private int mShortcutType = SHORTCUT_URL; 
 
     static {
-        NSISInstallElementFactory.register(TYPE, NSISInstallShortcut.class);
+        NSISInstallElementFactory.register(TYPE, IMAGE, NSISInstallShortcut.class);
     }
 
     /**
@@ -102,9 +102,9 @@ public class NSISInstallShortcut extends AbstractNSISInstallItem
         return true;
     }
 
-    public boolean edit(Composite composite)
+    public boolean edit(NSISWizard wizard)
     {
-        return new NSISInstallShortcutDialog(composite.getShell(),this).open() == Window.OK;
+        return new NSISInstallShortcutDialog(wizard,this).open() == Window.OK;
     }
 
     /* (non-Javadoc)
@@ -112,7 +112,7 @@ public class NSISInstallShortcut extends AbstractNSISInstallItem
      */
     public Image getImage()
     {
-        return cImage;
+        return IMAGE;
     }
     
     /**
@@ -153,7 +153,7 @@ public class NSISInstallShortcut extends AbstractNSISInstallItem
     public void setSettings(NSISWizardSettings settings)
     {
         super.setSettings(settings);
-        if(!Common.isEmpty(getSettings().getStartMenuGroup()) && Common.isEmpty(mLocation)) {
+        if(settings != null && !Common.isEmpty(getSettings().getStartMenuGroup()) && Common.isEmpty(mLocation)) {
             mLocation = new StringBuffer(NSISKeywords.getKeyword("$SMPROGRAMS")).append("\\").append( //$NON-NLS-1$ //$NON-NLS-2$
                     getSettings().getStartMenuGroup()).toString(); //$NON-NLS-1$
         }

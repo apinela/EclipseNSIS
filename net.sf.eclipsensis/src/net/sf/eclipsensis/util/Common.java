@@ -33,15 +33,17 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
+import org.w3c.dom.*;
 
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.xml.DomDriver;
-
+/**
+ * Common class is the Swiss Army Knife of the project. Most miscellaneous utility functions
+ * have been dumped in here.
+ * 
+ * @author Sunil.Kamath
+ */
 public class Common
 {
     public static final String[] EMPTY_STRING_ARRAY = new String[0];
-
-    private static XStream cXStream = new XStream(new DomDriver());
 
     private static String[] cEnv = null;
     private static final String cPathSeparator = System.getProperty("file.separator"); //$NON-NLS-1$
@@ -56,8 +58,8 @@ public class Common
     public static String encodePath(String path)
     {
         String nsisdirKeyword = NSISKeywords.getKeyword("${NSISDIR}"); //$NON-NLS-1$
-        String nsisHome = NSISPreferences.getPreferences().getNSISHome();
-        if(path.startsWith(nsisHome)) {
+        String nsisHome = NSISPreferences.getPreferences().getNSISHome().toLowerCase();
+        if(path.toLowerCase().startsWith(nsisHome)) {
             path = nsisdirKeyword + path.substring(nsisHome.length());
         }
         return path;
@@ -65,22 +67,12 @@ public class Common
 
     public static String decodePath(String path)
     {
-        String nsisdirKeyword = NSISKeywords.getKeyword("${NSISDIR}"); //$NON-NLS-1$
+        String nsisdirKeyword = NSISKeywords.getKeyword("${NSISDIR}").toLowerCase(); //$NON-NLS-1$
         String nsisHome = NSISPreferences.getPreferences().getNSISHome();
-        if(path.startsWith(nsisdirKeyword)) {
+        if(path.toLowerCase().startsWith(nsisdirKeyword)) {
             path = nsisHome + path.substring(nsisdirKeyword.length());
         }
         return path;
-    }
-
-    public static Object fromXML(String xml)
-    {
-        return cXStream.fromXML(xml);
-    }
-
-    public static String toXML(Object object)
-    {
-        return cXStream.toXML(object);
     }
 
     public static Object readObject(File file) throws IOException, ClassNotFoundException
@@ -110,16 +102,58 @@ public class Common
         if(object != null) {
             try {
                 if(object instanceof InputStream) {
-                    ((InputStream)object).close();
+                    InputStream is = (InputStream)object;
+                    try {
+                        int count = 0;
+                        while(count < 100 && is.available() > 0) {
+                            try {
+                                Thread.sleep(10);
+                            }
+                            catch (InterruptedException e1) {
+                            }
+                            count++;
+                        }
+                    }
+                    catch (IOException e) {
+                    }
+                    is.close();
                 }
                 else if(object instanceof OutputStream) {
-                    ((OutputStream)object).close();
+                    OutputStream os = (OutputStream)object;
+                    try {
+                        os.flush();
+                    }
+                    catch (IOException e) {
+                    }
+                    os.close();
                 }
                 else if(object instanceof Reader) {
-                    ((Reader)object).close();
+                    Reader r = (Reader)object;
+                    try {
+                        int count = 0;
+                        while(count < 100 && r.ready()) {
+                            try {
+                                Thread.sleep(10);
+                            }
+                            catch (InterruptedException e1) {
+                                e1.printStackTrace();
+                            }
+                            count++;
+                        }
+                    }
+                    catch (IOException e) {
+                    }
+                    r.close();
                 }
                 else if(object instanceof Writer) {
-                    ((Writer)object).close();
+                    Writer w = (Writer)object;
+                    try {
+                        w.flush();
+                    }
+                    catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    w.close();
                 }
             }
             catch (IOException e) {
@@ -507,7 +541,7 @@ public class Common
                     buf.delete(0,buf.length());
                 }
             }
-            list.add(buf.toString());
+            list.add(buf.toString().trim());
         }
         return (String[])list.toArray(new String[0]);
     }
@@ -828,5 +862,14 @@ public class Common
         }
         gc.dispose();
         return pt;
+    }
+    
+    public static void addAttribute(Document document, Node node, String name, String value)
+    {
+        if(value != null) {
+            Attr attribute = document.createAttribute(name);
+            attribute.setValue(value);
+            node.getAttributes().setNamedItem(attribute);
+        }
     }
 }

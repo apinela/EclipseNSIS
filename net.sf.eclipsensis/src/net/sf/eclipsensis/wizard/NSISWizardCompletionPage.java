@@ -22,7 +22,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.window.Window;
-import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
@@ -172,7 +171,7 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
         });
 
         addPageListener(new NSISWizardPageAdapter() {
-            public void aboutToEnter(IWizardPage page, boolean forward)
+            public void aboutToShow()
             {
                 NSISWizardSettings settings = mWizard.getSettings();
 

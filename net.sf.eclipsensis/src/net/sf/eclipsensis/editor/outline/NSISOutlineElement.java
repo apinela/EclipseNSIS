@@ -23,6 +23,7 @@ public class NSISOutlineElement
 {
     private int mType;
     private String mName;
+    private Position mSelectPosition;
     private Position mPosition;
     private ArrayList mChildren = new ArrayList();
     private NSISOutlineElement mParent = null;
@@ -41,7 +42,7 @@ public class NSISOutlineElement
     {
         mType = type;
         mName = name;
-        mPosition = position;
+        setPosition(position);
     }
 
     public String toString()
@@ -93,6 +94,16 @@ public class NSISOutlineElement
         mPosition = position;
     }
 
+    public void setSelectPosition(Position selectPosition)
+    {
+        mSelectPosition = selectPosition;
+    }
+    
+    public Position getSelectPosition()
+    {
+        return mSelectPosition;
+    }
+    
     /**
      * @return Returns the type.
      */

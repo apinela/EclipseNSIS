@@ -10,27 +10,29 @@
 package net.sf.eclipsensis.wizard.settings;
 
 import java.io.Serializable;
-import java.text.MessageFormat;
-import java.util.ArrayList;
+import java.util.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.help.NSISKeywords;
+import net.sf.eclipsensis.lang.NSISLanguage;
+import net.sf.eclipsensis.lang.NSISLanguageManager;
 import net.sf.eclipsensis.makensis.MakeNSISRunner;
-import net.sf.eclipsensis.util.ColorManager;
-import net.sf.eclipsensis.util.ImageManager;
+import net.sf.eclipsensis.util.*;
 import net.sf.eclipsensis.wizard.INSISWizardConstants;
 import net.sf.eclipsensis.wizard.NSISWizard;
 
-import org.eclipse.swt.graphics.Image;
+import org.eclipse.jface.resource.StringConverter;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.widgets.Composite;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
-public class NSISWizardSettings implements INSISWizardConstants, Serializable
+public class NSISWizardSettings extends AbstractNodeConvertible implements INSISWizardConstants, Serializable
 {
-	private static final long serialVersionUID = -3872062583870145866L;
+    public static final String NODE = "settings"; //$NON-NLS-1$
+    public static final String CHILD_NODE = "attribute"; //$NON-NLS-1$
+    
+    private static final long serialVersionUID = -3872062583870145866L;
 
-    public static final String INSTALLER_TYPE = "INSTALLER"; //$NON-NLS-1$
-    private static Image cInstallerImage = ImageManager.getImage(EclipseNSISPlugin.getResourceString("wizard.installer.icon")); //$NON-NLS-1$
     private String mName = EclipseNSISPlugin.getResourceString("wizard.default.name",""); //$NON-NLS-1$ //$NON-NLS-2$
     private String mCompany = ""; //$NON-NLS-1$
     private String mVersion = ""; //$NON-NLS-1$
@@ -82,84 +84,30 @@ public class NSISWizardSettings implements INSISWizardConstants, Serializable
     private boolean mCompileScript = true;
     private boolean mTestScript = false;
     
-    private INSISInstallElement mInstaller = new AbstractNSISInstallGroup()
-    {
-        private String mFormat;
-        
-        private static final long serialVersionUID = 3601773736043608518L;
-        
-        {
-            setSettings(NSISWizardSettings.this);
-            mFormat = EclipseNSISPlugin.getResourceString("wizard.installer.format"); //$NON-NLS-1$
-            NSISSection section = (NSISSection)NSISInstallElementFactory.create(getSettings(),NSISSection.TYPE);
-            section.setName(EclipseNSISPlugin.getResourceString("main.section.name")); //$NON-NLS-1$
-            section.setDescription(EclipseNSISPlugin.getResourceString("main.section.description")); //$NON-NLS-1$
-            section.setHidden(true);
-            addChild(section);
-        }
-
-        /* (non-Javadoc)
-         * @see net.sf.eclipsensis.wizard.settings.AbstractNSISInstallGroup#resetChildTypes()
-         */
-        public void setChildTypes()
-        {
-            clearChildTypes();
-            addChildType(NSISSection.TYPE);
-            addChildType(NSISSectionGroup.TYPE);
-        }
-
-        /* (non-Javadoc)
-         * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#getDisplayName()
-         */
-        public String getDisplayName()
-        {
-            return MessageFormat.format(mFormat,new Object[]{getSettings().getName()});
-        }
-
-        /* (non-Javadoc)
-         * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#getImage()
-         */
-        public Image getImage()
-        {
-            return cInstallerImage;
-        }
-
-        /* (non-Javadoc)
-         * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#getType()
-         */
-        public String getType()
-        {
-            return INSTALLER_TYPE;
-        }
-
-        /* (non-Javadoc)
-         * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#isEditable()
-         */
-        public boolean isEditable()
-        {
-            return false;
-        }
-
-        /* (non-Javadoc)
-         * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#isRemovable()
-         */
-        public boolean isRemovable()
-        {
-            return false;
-        }
-
-        public boolean edit(Composite composite)
-        {
-            return false;
-        }
-    };
+    private INSISInstallElement mInstaller;
 
     private transient NSISWizard mWizard = null;
     
     public NSISWizardSettings()
     {
+        this(false);
+    }
+
+    public NSISWizardSettings(boolean empty)
+    {
         super();
-        mInstaller.setSettings(this);
+        if(!empty) {
+            mInstaller = new NSISInstaller();
+            mInstaller.setSettings(this);
+            NSISSection section = (NSISSection)NSISInstallElementFactory.create(NSISSection.TYPE);
+            section.setName(EclipseNSISPlugin.getResourceString("main.section.name")); //$NON-NLS-1$
+            section.setDescription(EclipseNSISPlugin.getResourceString("main.section.description")); //$NON-NLS-1$
+            section.setHidden(true);
+            mInstaller.addChild(section);
+        }
+        else {
+            mInstaller = null;
+        }
     }
     
     /**
@@ -838,6 +786,11 @@ public class NSISWizardSettings implements INSISWizardConstants, Serializable
         return mInstaller;
     }
     
+    public void setInstaller(INSISInstallElement installer)
+    {
+        mInstaller = installer;
+    }
+    
     /**
      * @return Returns the autoCloseUninstaller.
      */
@@ -967,5 +920,81 @@ public class NSISWizardSettings implements INSISWizardConstants, Serializable
     public void setSelectComponents(boolean selectComponents)
     {
         mSelectComponents = selectComponents;
+    }
+
+
+    protected Object getNodeValue(Node node, String name, Class clasz)
+    {
+        if(name.equals("installer")) { //$NON-NLS-1$
+            NodeList nodeList = node.getChildNodes();
+            int n = nodeList.getLength();
+            for(int i=0; i<n; i++) {
+                Node childNode = nodeList.item(i);
+                if(childNode.getNodeName().equals(INSISInstallElement.NODE)) {
+                    NSISInstaller installer = (NSISInstaller)NSISInstallElementFactory.createFromNode(childNode,NSISInstaller.TYPE);
+                    if(installer != null) {
+                        installer.setSettings(this);
+                    }
+                    return installer;
+                }
+            }
+            return null;
+        }
+        else {
+            return super.getNodeValue(node, name, clasz);
+        }
+    }
+    
+    protected String getNodeName()
+    {
+        return NODE; //$NON-NLS-1$
+    }
+
+    protected String getChildNodeName()
+    {
+        return CHILD_NODE;
+    }
+    
+    protected String convertToString(String name, Object obj)
+    {
+        if(obj instanceof RGB) {
+            return StringConverter.asString((RGB)obj);
+        }
+        else if(obj instanceof NSISLanguage) {
+            return ((NSISLanguage)obj).getName();
+        }
+        else if(obj instanceof Collection && name.equals("languages")) { //$NON-NLS-1$
+            StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
+            if(!Common.isEmptyCollection((Collection)obj)) {
+                Iterator iter = ((Collection)obj).iterator();
+                buf.append(convertToString(name, iter.next()));
+                while(iter.hasNext()) {
+                    buf.append(",").append(convertToString(name, iter.next())); //$NON-NLS-1$
+                }
+            }
+            return buf.toString();
+        }
+        return super.convertToString(name, obj);
+    }
+    protected Object convertFromString(String name, String string, Class clasz)
+    {
+        if(clasz.equals(RGB.class)) {
+            return StringConverter.asRGB(string);
+        }
+        else if(name.equals("languages")) { //$NON-NLS-1$
+            String[] langNames = Common.tokenize(string,',');
+            ArrayList languages = new ArrayList();
+            NSISLanguageManager languageManager = NSISLanguageManager.getInstance();
+            for (int i = 0; i < langNames.length; i++) {
+                NSISLanguage language = languageManager.getLanguage(langNames[i]);
+                if(language != null) {
+                    languages.add(language);
+                }
+            }
+            return languages;
+        }
+        else {
+            return super.convertFromString(name, string, clasz);
+        }
     }
 }

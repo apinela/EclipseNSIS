@@ -14,6 +14,7 @@ import java.util.List;
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.dialogs.StatusMessageDialog;
 import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.wizard.NSISWizard;
 import net.sf.eclipsensis.wizard.settings.INSISInstallElement;
 
 import org.eclipse.core.runtime.IStatus;
@@ -29,10 +30,12 @@ public abstract class AbstractNSISInstallItemDialog extends StatusMessageDialog
 {
     protected INSISInstallElement mItem;
     protected IPreferenceStore mStore;
+    protected NSISWizard mWizard;
     
-    public AbstractNSISInstallItemDialog(Shell parentShell, INSISInstallElement item)
+    public AbstractNSISInstallItemDialog(NSISWizard wizard, INSISInstallElement item)
     {
-        super(parentShell);
+        super(wizard.getShell());
+        mWizard = wizard;
         mItem = item;
         mStore = new PreferenceStore();
         Common.beanToStore(mItem, mStore, getProperties());

@@ -38,6 +38,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
 public class NSISOutlineContentProvider implements ITreeContentProvider, INSISConstants
 {
     public static final String NSIS_OUTLINE = "__nsis_outline"; //$NON-NLS-1$
+    public static final String NSIS_OUTLINE_SELECT = "__nsis_outline_select"; //$NON-NLS-1$
 
     public static final int DEFINE = 0;
     public static final int IFDEF = DEFINE+1;
@@ -88,6 +89,7 @@ public class NSISOutlineContentProvider implements ITreeContentProvider, INSISCo
     private ITextEditor mEditor;
     private IAnnotationModel mAnnotationModel;
     private IPositionUpdater mPositionUpdater = new DefaultPositionUpdater(NSIS_OUTLINE);
+    private IPositionUpdater mSelectPositionUpdater = new DefaultPositionUpdater(NSIS_OUTLINE_SELECT);
 
     private NSISOutlineElement[] mOutlineElements = null;
     
@@ -135,6 +137,7 @@ public class NSISOutlineContentProvider implements ITreeContentProvider, INSISCo
                 if(found) {
                     current.merge(element.getPosition());
                     document.addPosition(NSIS_OUTLINE,current.getPosition());
+                    document.addPosition(NSIS_OUTLINE_SELECT,current.getSelectPosition());
                     if(mAnnotationModel != null) {
                         mAnnotationModel.addAnnotation(new ProjectionAnnotation(), current.getPosition());
                     }
@@ -155,6 +158,7 @@ public class NSISOutlineContentProvider implements ITreeContentProvider, INSISCo
                          NSISOutlineElement element) throws BadLocationException, BadPositionCategoryException
     {
         document.addPosition(NSIS_OUTLINE,element.getPosition());
+        document.addPosition(NSIS_OUTLINE_SELECT,element.getSelectPosition());
         current.addChild(element);
     }
 
@@ -384,7 +388,11 @@ public class NSISOutlineContentProvider implements ITreeContentProvider, INSISCo
                                 break;
                         }
                         NSISOutlineElement element = new NSISOutlineElement(type, name.toString(), position);
-                        element.setPosition(getLinePosition(nsisLines[i]));
+                        Position linePosition = getLinePosition(nsisLines[i]);
+                        element.setPosition(linePosition);
+                        String text = document.get(linePosition.getOffset(),linePosition.getLength());
+                        String text2 = text.trim();
+                        element.setSelectPosition(new Position(linePosition.getOffset()+text.indexOf(text2),text2.length()));
                         switch(type) {
                             case DEFINE:
                                 addLine(document, current, element);
@@ -460,6 +468,12 @@ public class NSISOutlineContentProvider implements ITreeContentProvider, INSISCo
                     catch (BadPositionCategoryException x) {
                     }
                     document.removePositionUpdater(mPositionUpdater);
+                    try {
+                        document.removePositionCategory(NSIS_OUTLINE_SELECT);
+                    }
+                    catch (BadPositionCategoryException x) {
+                    }
+                    document.removePositionUpdater(mSelectPositionUpdater);
                 }
                 mAnnotationModel = null;
             }
@@ -472,6 +486,8 @@ public class NSISOutlineContentProvider implements ITreeContentProvider, INSISCo
                 if (document != null) {
                     document.addPositionCategory(NSIS_OUTLINE);
                     document.addPositionUpdater(mPositionUpdater);
+                    document.addPositionCategory(NSIS_OUTLINE_SELECT);
+                    document.addPositionUpdater(mSelectPositionUpdater);
     
                     parse(document);
                 }

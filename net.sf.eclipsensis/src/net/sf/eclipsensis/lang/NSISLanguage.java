@@ -69,4 +69,18 @@ public class NSISLanguage implements Serializable
     {
         return getDisplayName();
     }
+    
+    public int hashCode()
+    {
+        return mLangId;
+    }
+    
+    public boolean equals(Object o)
+    {
+        if(o instanceof NSISLanguage) {
+            NSISLanguage language = (NSISLanguage)o;
+            return mName.equals(language.mName) && (mLangId == language.mLangId);
+        }
+        return false;
+    }
 }

@@ -374,7 +374,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
             {
                     MenuItem mi = (MenuItem)e.widget;
                     String text = mi.getText();
-                    INSISInstallElement element = NSISInstallElementFactory.create(mWizard.getSettings(),text);
+                    INSISInstallElement element = NSISInstallElementFactory.create(text);
                     if(element != null) {
                         try {
                             if(element.isEditable()) {
@@ -383,7 +383,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
                                     Object obj = ((IStructuredSelection)se).getFirstElement();
                                     if(obj instanceof INSISInstallElement) {
                                         INSISInstallElement parent = (INSISInstallElement)obj;
-                                        if(element.edit(composite)) {
+                                        if(element.edit(mWizard)) {
                                             parent.addChild(element);
                                             tv.refresh(parent,true);
                                             tv.reveal(element);
@@ -548,7 +548,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
     private void editElement(Composite composite, TreeViewer tv, INSISInstallElement element)
     {
         try {
-            if(element.edit(composite)) {
+            if(element.edit(mWizard)) {
                 tv.refresh(element, true);
                 if(element.hasChildren()) {
                     tv.expandToLevel(element,TreeViewer.ALL_LEVELS);

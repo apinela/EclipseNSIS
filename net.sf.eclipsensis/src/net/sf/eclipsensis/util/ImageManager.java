@@ -49,7 +49,7 @@ public class ImageManager
             imageDescriptor = cImageRegistry.getDescriptor(urlString);
             if(imageDescriptor == null) {
                 imageDescriptor = createImageDescriptor(url);
-                cImageRegistry.put(urlString, imageDescriptor);
+                cImageRegistry.put(urlString.toLowerCase(), imageDescriptor);
             }
         }
         
@@ -72,14 +72,26 @@ public class ImageManager
         return imageDescriptor;
     }
 
-    public synchronized static Image getImage(String location) {
+    public synchronized static Image getImage(String location) 
+    {
         return getImage(makeLocationURL(location));
     }
 
-    public synchronized static Image getImage(URL url) {
+    public synchronized static boolean containsImage(URL url) 
+    {
+        return (cImageRegistry.get(url.toString().toLowerCase()) != null);
+    }
+
+    public synchronized static void putImage(URL url, Image image) 
+    {
+        cImageRegistry.put(url.toString().toLowerCase(),image);
+    }
+
+    public synchronized static Image getImage(URL url) 
+    {
         Image image = null;
         if(url != null) {
-            String urlString = url.toString();
+            String urlString = url.toString().toLowerCase();
             image = cImageRegistry.get(urlString);
             if(image == null) {
                 cImageRegistry.put(urlString,createImageDescriptor(url));

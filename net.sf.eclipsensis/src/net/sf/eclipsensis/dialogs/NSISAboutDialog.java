@@ -15,6 +15,7 @@ import java.util.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
+import net.sf.eclipsensis.settings.NSISPreferences;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.util.ImageManager;
 
@@ -106,7 +107,17 @@ public class NSISAboutDialog extends Dialog implements INSISConstants
         label.setBackground(background);
         label.setForeground(foreground);
         label.setFont(JFaceResources.getBannerFont());
-        label.setText(cAboutHeader);
+        NSISPreferences prefs = NSISPreferences.getPreferences();
+        if(prefs.getNSISExe() != null) {
+            StringBuffer buf = new StringBuffer(cAboutHeader).append(INSISConstants.LINE_SEPARATOR);
+            buf.append(EclipseNSISPlugin.getFormattedString("about.header.format", //$NON-NLS-1$
+                                                new Object[]{EclipseNSISPlugin.getResourceString("makensis.display.name"),  //$NON-NLS-1$
+                                                             prefs.getNSISVersion().toString()}));
+            label.setText(buf.toString());
+        }
+        else {
+            label.setText(cAboutHeader);
+        }
         GridData data = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.FILL_HORIZONTAL);
         data.horizontalSpan = 1;
         label.setLayoutData(data);

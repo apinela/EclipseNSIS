@@ -12,57 +12,32 @@ package net.sf.eclipsensis.wizard.settings;
 import java.text.MessageFormat;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.IEclipseNSISPluginListener;
-import net.sf.eclipsensis.help.INSISKeywordsListener;
 import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.util.ImageManager;
+import net.sf.eclipsensis.wizard.NSISWizard;
 import net.sf.eclipsensis.wizard.settings.dialogs.NSISSectionGroupDialog;
 
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Composite;
+import org.w3c.dom.*;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 
 public class NSISSectionGroup extends AbstractNSISInstallGroup
 {
 	private static final long serialVersionUID = 5806218807884563902L;
 
-    public static String TYPE = null;
-    private static String cFormat = EclipseNSISPlugin.getResourceString("wizard.sectiongroup.format"); //$NON-NLS-1$
-    private static final Image cImage = ImageManager.getImage(EclipseNSISPlugin.getResourceString("wizard.sectiongroup.icon")); //$NON-NLS-1$
-
-    private static INSISKeywordsListener cKeywordsListener  = new INSISKeywordsListener() {
-
-        public void keywordsChanged()
-        {
-            loadType();
-        }
-        
-    };
-    private static IEclipseNSISPluginListener cShutdownListener = new IEclipseNSISPluginListener() {
-        public void stopped()
-        {
-            NSISKeywords.removeKeywordsListener(cKeywordsListener);
-        }
-    };
+    public static final String TYPE = NSISKeywords.getKeyword(EclipseNSISPlugin.getResourceString("wizard.sectiongroup.type")); //$NON-NLS-1$
+    private static final String FORMAT = EclipseNSISPlugin.getResourceString("wizard.sectiongroup.format"); //$NON-NLS-1$
+    private static final Image IMAGE = ImageManager.getImage(EclipseNSISPlugin.getResourceString("wizard.sectiongroup.icon")); //$NON-NLS-1$
 
     private String mDescription= ""; //$NON-NLS-1$
     private String mCaption = ""; //$NON-NLS-1$
-    private boolean mIsExpanded = false;
-    private boolean mIsBold = false;
+    private boolean mDefaultExpanded = false;
+    private boolean mBold = false;
 
     static {
-        loadType();
-        EclipseNSISPlugin.getDefault().addListener(cShutdownListener);
-        NSISKeywords.addKeywordsListener(cKeywordsListener);
-    }
-    
-    private static void loadType()
-    {
-        if(TYPE != null) {
-            NSISInstallElementFactory.unregister(TYPE, NSISSectionGroup.class);
-        }
-        TYPE = NSISKeywords.getKeyword(EclipseNSISPlugin.getResourceString("wizard.sectiongroup.type")); //$NON-NLS-1$
-        NSISInstallElementFactory.register(TYPE, NSISSectionGroup.class);
+        NSISInstallElementFactory.register(TYPE, IMAGE, NSISSectionGroup.class);
     }
 
     /* (non-Javadoc)
@@ -95,12 +70,12 @@ public class NSISSectionGroup extends AbstractNSISInstallGroup
      */
     public String getDisplayName()
     {
-        return MessageFormat.format(cFormat, new Object[]{mCaption,TYPE});
+        return MessageFormat.format(FORMAT, new Object[]{mCaption,NSISKeywords.getKeyword(TYPE)});
     }
 
-    public boolean edit(Composite composite)
+    public boolean edit(NSISWizard wizard)
     {
-        return new NSISSectionGroupDialog(composite.getShell(),this).open() == Window.OK;
+        return new NSISSectionGroupDialog(wizard,this).open() == Window.OK;
     }
 
     /* (non-Javadoc)
@@ -108,7 +83,7 @@ public class NSISSectionGroup extends AbstractNSISInstallGroup
      */
     public Image getImage()
     {
-        return cImage;
+        return IMAGE;
     }
 
     /**
@@ -132,31 +107,15 @@ public class NSISSectionGroup extends AbstractNSISInstallGroup
      */
     public boolean isBold()
     {
-        return mIsBold;
+        return mBold;
     }
 
     /**
-     * @param isBold The isBold to set.
+     * @param bold The isBold to set.
      */
-    public void setBold(boolean isBold)
+    public void setBold(boolean bold)
     {
-        mIsBold = isBold;
-    }
-
-    /**
-     * @return Returns the isExpanded.
-     */
-    public boolean isExpanded()
-    {
-        return mIsExpanded;
-    }
-
-    /**
-     * @param isExpanded The isExpanded to set.
-     */
-    public void setExpanded(boolean isExpanded)
-    {
-        mIsExpanded = isExpanded;
+        mBold = bold;
     }
     
     /**
@@ -173,5 +132,42 @@ public class NSISSectionGroup extends AbstractNSISInstallGroup
     public void setDescription(String description)
     {
         mDescription = description;
+    }
+    
+    public boolean isDefaultExpanded()
+    {
+        return mDefaultExpanded;
+    }
+    
+    public void setDefaultExpanded(boolean defaultExpanded)
+    {
+        mDefaultExpanded = defaultExpanded;
+    }
+    
+    protected Object getNodeValue(Node node, String name, Class clasz)
+    {
+        if(name.equals("description")) { //$NON-NLS-1$
+            StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
+            NodeList nodeList = node.getChildNodes();
+            int n = nodeList.getLength();
+            for(int i=0; i < n; i++) {
+                Node child = nodeList.item(i);
+                if(child instanceof Text) {
+                    buf.append(((Text)child).getNodeValue());
+                }
+            }
+            return buf.toString();
+        }
+        else {
+            return super.getNodeValue(node, name, clasz);
+        }
+    }
+    
+    protected Node createChildNode(Document document, String name, Object value)
+    {
+        if(name.equals("description")) { //$NON-NLS-1$
+            value = document.createTextNode((String)value); //$NON-NLS-1$
+        }
+        return super.createChildNode(document, name, value);
     }
 }

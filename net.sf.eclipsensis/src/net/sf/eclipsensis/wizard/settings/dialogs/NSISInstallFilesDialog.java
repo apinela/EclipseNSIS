@@ -17,6 +17,7 @@ import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.util.ImageManager;
 import net.sf.eclipsensis.viewer.*;
+import net.sf.eclipsensis.wizard.NSISWizard;
 import net.sf.eclipsensis.wizard.NSISWizardDisplayValues;
 import net.sf.eclipsensis.wizard.settings.NSISInstallFiles;
 import net.sf.eclipsensis.wizard.util.NSISWizardDialogUtil;
@@ -40,9 +41,9 @@ public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
         cProperties.add("overwriteMode"); //$NON-NLS-1$
     }
 
-    public NSISInstallFilesDialog(Shell parentShell, NSISInstallFiles item)
+    public NSISInstallFilesDialog(NSISWizard wizard, NSISInstallFiles item)
     {
-        super(parentShell, item);
+        super(wizard, item);
         setShellStyle(getShellStyle() | SWT.RESIZE);
         mFiles = new LinkedHashSet(Arrays.asList(Common.tokenize(mStore.getString("files"),'\0'))); //$NON-NLS-1$
     }

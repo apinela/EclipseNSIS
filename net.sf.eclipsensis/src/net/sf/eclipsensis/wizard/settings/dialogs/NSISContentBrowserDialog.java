@@ -33,7 +33,7 @@ public class NSISContentBrowserDialog extends Dialog
     private HashSet mTypes = new HashSet(Arrays.asList(new String[]{
                                                         NSISInstallDirectory.TYPE,
                                                         NSISInstallFile.TYPE,
-                                                        NSISInstallFiles.FILEITEM_TYPE
+                                                        NSISInstallFiles.FileItem.TYPE
                                                      }));
     
     /**
@@ -90,13 +90,13 @@ public class NSISContentBrowserDialog extends Dialog
         
         ViewerFilter vf = new ViewerFilter() {
             private HashSet mTypes = new HashSet(Arrays.asList(new String[]{
-                                                    NSISWizardSettings.INSTALLER_TYPE,
+                                                    NSISInstaller.TYPE,
                                                     NSISSectionGroup.TYPE,
                                                     NSISSection.TYPE,
                                                     NSISInstallDirectory.TYPE,
                                                     NSISInstallFile.TYPE,
                                                     NSISInstallFiles.TYPE,
-                                                    NSISInstallFiles.FILEITEM_TYPE
+                                                    NSISInstallFiles.FileItem.TYPE
                                                  }));
             
             public boolean select(Viewer viewer, Object parentElement, Object element)

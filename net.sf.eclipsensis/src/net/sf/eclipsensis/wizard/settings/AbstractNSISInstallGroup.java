@@ -13,6 +13,8 @@ import java.util.*;
 
 import net.sf.eclipsensis.util.Common;
 
+import org.w3c.dom.*;
+
 public abstract class AbstractNSISInstallGroup extends AbstractNSISInstallElement
 {
 	private static final long serialVersionUID = 6871218426689788748L;
@@ -26,13 +28,20 @@ public abstract class AbstractNSISInstallGroup extends AbstractNSISInstallElemen
      */
     public AbstractNSISInstallGroup()
     {
+        super();
         setChildTypes();
+    }
+    
+    protected void addSkippedProperties(Collection skippedProperties)
+    {
+        super.addSkippedProperties(skippedProperties);
+        skippedProperties.add("expanded"); //$NON-NLS-1$
     }
     
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#hasChildren()
      */
-    public boolean hasChildren()
+    public final boolean hasChildren()
     {
         return mChildren.size() > 0;
     }
@@ -40,9 +49,17 @@ public abstract class AbstractNSISInstallGroup extends AbstractNSISInstallElemen
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#getChildren()
      */
-    public INSISInstallElement[] getChildren()
+    public final INSISInstallElement[] getChildren()
     {
         return (INSISInstallElement[])mChildren.toArray(new INSISInstallElement[0]);
+    }
+
+    public final void setChildren(INSISInstallElement[] children)
+    {
+        removeAllChildren();
+        for (int i = 0; i < children.length; i++) {
+            addChild(children[i]);
+        }
     }
 
     /* (non-Javadoc)
@@ -53,17 +70,17 @@ public abstract class AbstractNSISInstallGroup extends AbstractNSISInstallElemen
         return (String[])mChildTypes.toArray(new String[0]);
     }
     
-    protected void clearChildTypes()
+    protected final void clearChildTypes()
     {
         mChildTypes.clear();
     }
 
-    protected void addChildType(String childType)
+    protected final void addChildType(String childType)
     {
         mChildTypes.add(childType);
     }
     
-    protected Iterator getChildrenIterator()
+    protected final Iterator getChildrenIterator()
     {
         return mChildren.iterator();
     }
@@ -71,7 +88,7 @@ public abstract class AbstractNSISInstallGroup extends AbstractNSISInstallElemen
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#addChild(net.sf.eclipsensis.wizard.settings.INSISInstallElement)
      */
-    public void addChild(INSISInstallElement child)
+    public final void addChild(INSISInstallElement child)
     {
         if(child != null && mChildTypes.contains(child.getType()) && !mChildren.contains(child)) {
             INSISInstallElement oldParent = child.getParent();
@@ -80,6 +97,7 @@ public abstract class AbstractNSISInstallGroup extends AbstractNSISInstallElemen
             }
             mChildren.add(child);
             child.setParent(this);
+            child.setSettings(getSettings());
         }
     }
 
@@ -91,25 +109,27 @@ public abstract class AbstractNSISInstallGroup extends AbstractNSISInstallElemen
         if(child != null && mChildTypes.contains(child.getType()) && mChildren.contains(child)) {
             mChildren.remove(child);
             child.setParent(null);
+            child.setSettings(null);
         }
     }
 
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#removeAllChildren()
      */
-    public void removeAllChildren()
+    public final void removeAllChildren()
     {
         for(Iterator iter=mChildren.iterator(); iter.hasNext(); ) {
             INSISInstallElement child = (INSISInstallElement)iter.next();
             iter.remove();
             child.setParent(null);
+            child.setSettings(null);
         }
     }
 
     /**
      * @return Returns the expanded.
      */
-    public boolean isExpanded()
+    public final boolean isExpanded()
     {
         return mExpanded;
     }
@@ -117,7 +137,7 @@ public abstract class AbstractNSISInstallGroup extends AbstractNSISInstallElemen
     /**
      * @param expanded The expanded to set.
      */
-    public void setExpanded(boolean expanded)
+    public final void setExpanded(boolean expanded)
     {
         setExpanded(expanded, false);
     }
@@ -126,7 +146,7 @@ public abstract class AbstractNSISInstallGroup extends AbstractNSISInstallElemen
      * @param expanded The expanded to set.
      * @param recursive Perform recursively
      */
-    public void setExpanded(boolean expanded, boolean recursive)
+    public final void setExpanded(boolean expanded, boolean recursive)
     {
         mExpanded = expanded;
         if(recursive) {
@@ -137,6 +157,16 @@ public abstract class AbstractNSISInstallGroup extends AbstractNSISInstallElemen
                         ((AbstractNSISInstallGroup)child).setExpanded(expanded, recursive);
                     }
                 }
+            }
+        }
+    }
+
+    public final void setSettings(NSISWizardSettings settings)
+    {
+        super.setSettings(settings);
+        if(!Common.isEmptyCollection(mChildren)) {
+            for (Iterator iter = mChildren.iterator(); iter.hasNext();) {
+                ((INSISInstallElement)iter.next()).setSettings(settings);
             }
         }
     }
@@ -153,6 +183,60 @@ public abstract class AbstractNSISInstallGroup extends AbstractNSISInstallElemen
                     }
                 }
             }
+        }
+    }
+    
+    protected Node createChildNode(Document document, String name, Object value)
+    {
+        if(name.equals("children")) { //$NON-NLS-1$
+            final Node[] children;
+            if(!Common.isEmptyArray(value)) {
+                INSISInstallElement[] elements = (INSISInstallElement[])value;
+                children = new Node[elements.length]; //$NON-NLS-1$
+                for (int i=0; i<elements.length; i++) {
+                    children[i] = elements[i].toNode(document);
+                }
+            }
+            else {
+                children = new Node[0];
+            }
+            value = new NodeList() {
+                public int getLength()
+                {
+                    return children.length;
+                }
+
+                public Node item(int index)
+                {
+                    return children[index];
+                }
+            };
+        }
+        return super.createChildNode(document, name, value);
+    }
+
+    protected Object getNodeValue(Node node, String name, Class clasz)
+    {
+        if(name.equals("children")) { //$NON-NLS-1$
+            NodeList children = node.getChildNodes();
+            ArrayList elements = new ArrayList();
+            if(children != null) {
+                int n = children.getLength();
+                for(int i=0; i<n; i++) {
+                    Node child = children.item(i);
+                    if(child.getNodeName().equals(getNodeName())) { //$NON-NLS-1$
+                        INSISInstallElement installElement = NSISInstallElementFactory.createFromNode(child);
+                        if(installElement != null) {
+                            addChild(installElement);
+                            elements.add(installElement);
+                        }
+                    }
+                }
+            }
+            return elements.toArray(new INSISInstallElement[elements.size()]);
+        }
+        else {
+            return super.getNodeValue(node, name, clasz);
         }
     }
     

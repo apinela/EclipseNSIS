@@ -9,42 +9,45 @@
  *******************************************************************************/
 package net.sf.eclipsensis.wizard.settings;
 
-import java.util.Arrays;
-import java.util.Iterator;
+import java.util.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.util.*;
+import net.sf.eclipsensis.wizard.NSISWizard;
 import net.sf.eclipsensis.wizard.settings.dialogs.NSISInstallFilesDialog;
 
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Composite;
 
 public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISInstallFileSystemObject
 {
 	private static final long serialVersionUID = 1293912008528238512L;
 
     public static final String TYPE = EclipseNSISPlugin.getResourceString("wizard.files.type"); //$NON-NLS-1$
-    private static final Image cImage = ImageManager.getImage(EclipseNSISPlugin.getResourceString("wizard.files.icon")); //$NON-NLS-1$
-    public static final String FILEITEM_TYPE = "Files FileItem"; //$NON-NLS-1$
-    private static final Image cItemImage = ImageManager.getImage(EclipseNSISPlugin.getResourceString("wizard.file.icon")); //$NON-NLS-1$
+    private static final Image IMAGE = ImageManager.getImage(EclipseNSISPlugin.getResourceString("wizard.files.icon")); //$NON-NLS-1$
     
     private String mDestination = NSISKeywords.getKeyword("$INSTDIR"); //$NON-NLS-1$
     private int mOverwriteMode = OVERWRITE_ON;
     public static final char SEPARATOR = '\0'; 
 
     static {
-        NSISInstallElementFactory.register(TYPE, NSISInstallFiles.class);
+        NSISInstallElementFactory.register(TYPE, IMAGE, NSISInstallFiles.class);
     }
 
+    protected void addSkippedProperties(Collection skippedProperties)
+    {
+        super.addSkippedProperties(skippedProperties);
+        skippedProperties.add("files"); //$NON-NLS-1$
+    }
+    
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.wizard.settings.AbstractNSISInstallGroup#resetChildTypes()
      */
     public void setChildTypes()
     {
         clearChildTypes();
-        addChildType(FILEITEM_TYPE);
+        addChildType(FileItem.TYPE);
     }
 
     /* (non-Javadoc)
@@ -92,9 +95,9 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
         return true;
     }
 
-    public boolean edit(Composite composite)
+    public boolean edit(NSISWizard wizard)
     {
-        return new NSISInstallFilesDialog(composite.getShell(),this).open() == Window.OK;
+        return new NSISInstallFilesDialog(wizard,this).open() == Window.OK;
     }
 
     /* (non-Javadoc)
@@ -102,7 +105,7 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
      */
     public Image getImage()
     {
-        return cImage;
+        return IMAGE;
     }
 
     /**
@@ -154,7 +157,9 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
             }
         }
         for(Iterator iter=newFiles.iterator(); iter.hasNext(); ) {
-            addChild(new FileItem((String)iter.next()));
+            FileItem fi = new FileItem();
+            fi.setName((String)iter.next());
+            addChild(fi);
         }
     }
 
@@ -174,18 +179,18 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
         mOverwriteMode = overwriteMode;
     }
     
-    public class FileItem extends AbstractNSISInstallItem
+    public static class FileItem extends AbstractNSISInstallItem
     {
         private static final long serialVersionUID = 3744853352840436396L;
+        public static final String TYPE = EclipseNSISPlugin.getResourceString("wizard.fileitem.type"); //$NON-NLS-1$
+        private static final Image IMAGE = ImageManager.getImage(EclipseNSISPlugin.getResourceString("wizard.file.icon")); //$NON-NLS-1$
 
         private String mName = null;
         
-        private FileItem(String name)
-        {
-            super();
-            mName = name;
+        static {
+            NSISInstallElementFactory.register(TYPE, IMAGE, FileItem.class);
         }
-
+        
         /* (non-Javadoc)
          * @see java.lang.Object#equals(java.lang.Object)
          */
@@ -224,7 +229,7 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
         /* (non-Javadoc)
          * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#edit(org.eclipse.swt.widgets.Composite)
          */
-        public boolean edit(Composite composite)
+        public boolean edit(NSISWizard wizard)
         {
             return false;
         }
@@ -242,7 +247,7 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
          */
         public Image getImage()
         {
-            return cItemImage;
+            return IMAGE;
         }
 
         /* (non-Javadoc)
@@ -250,7 +255,7 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
          */
         public String getType()
         {
-            return FILEITEM_TYPE;
+            return TYPE;
         }
 
         /* (non-Javadoc)

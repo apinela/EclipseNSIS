@@ -16,8 +16,7 @@ import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.settings.INSISPreferenceConstants;
 import net.sf.eclipsensis.settings.NSISPreferences;
-import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.WinAPI;
+import net.sf.eclipsensis.util.*;
 
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -41,7 +40,7 @@ public class NSISLanguageManager implements IPropertyChangeListener
     };
     
     private NSISPreferences mPreferences = NSISPreferences.getPreferences();
-    private HashMap mLanguageMap = new HashMap();
+    private Map mLanguageMap = new CaseInsensitiveMap();
     private List mLanguages = new ArrayList();;
     private Map mLocaleLanguageMap= null;
     private Map mLanguageIdLocaleMap = null;
@@ -174,7 +173,7 @@ public class NSISLanguageManager implements IPropertyChangeListener
                                 }
                             }
                             NSISLanguage language = new NSISLanguage(name,displayName,langId);
-                            mLanguageMap.put(name.toUpperCase(),language);
+                            mLanguageMap.put(name,language);
                             mLanguageMap.put(new Integer(langId),language);
                             mLanguages.add(language);
                         }
@@ -200,10 +199,10 @@ public class NSISLanguageManager implements IPropertyChangeListener
         if(lang == null) {
             Locale locale = Locale.getDefault();
             //Try the user's language
-            lang = (NSISLanguage)mLanguageMap.get(locale.getDisplayLanguage(Locale.US).toUpperCase());
+            lang = (NSISLanguage)mLanguageMap.get(locale.getDisplayLanguage(Locale.US));
             if(lang == null) {
                 //See if this is one of the specially mapped locales
-                lang = (NSISLanguage)mLanguageMap.get(((String)mLocaleLanguageMap.get(locale.toString())).toUpperCase());
+                lang = (NSISLanguage)mLanguageMap.get(((String)mLocaleLanguageMap.get(locale.toString())));
                 if(lang == null) {
                     //Try the default lang id
                     lang = (NSISLanguage)mLanguageMap.get(mDefaultLanguageId);
@@ -225,7 +224,7 @@ public class NSISLanguageManager implements IPropertyChangeListener
     
     public NSISLanguage getLanguage(String name)
     {
-        return (NSISLanguage)mLanguageMap.get(name.toUpperCase());
+        return (NSISLanguage)mLanguageMap.get(name);
     }
 
     public Locale getLocaleForLangId(int langId)

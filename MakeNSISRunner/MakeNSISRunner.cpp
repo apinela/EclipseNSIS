@@ -249,7 +249,7 @@ jobject makeArrayList(JNIEnv *pEnv, TCHAR **items)
 
 		int i=0;
 		while(items[i]) {
-			pEnv->CallObjectMethod(arrayListObject, g_arrayListAdd, pEnv->NewStringUTF(items[i]));
+			pEnv->CallBooleanMethod(arrayListObject, g_arrayListAdd, pEnv->NewStringUTF(items[i]));
 			i++;
 		}
 

@@ -51,6 +51,7 @@ public class NSISWizardTemplate implements Serializable
     
     public NSISWizardTemplate(NSISWizardTemplate template)
     {
+        this();
         mName = template.mName;
         mDescription = template.mDescription;
         mEnabled = template.mEnabled;

@@ -17,11 +17,11 @@ import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.swt.graphics.Image;
+import org.w3c.dom.Node;
 
 public class NSISInstallElementFactory
 {
     private static HashMap cElementMap = new HashMap();
-    private static final String TYPE_FIELD_NAME = "TYPE"; //$NON-NLS-1$
     private static final Class[] EMPTY_CLASS_ARRAY = new Class[0];
     private static final Object[] EMPTY_OBJECT_ARRAY = new Object[0];
     
@@ -44,11 +44,11 @@ public class NSISInstallElementFactory
     {
     }
 
-    public static void register(String type, Class clasz)
+    public static void register(String type, Image image, Class clasz)
     {
         if(!cElementMap.containsKey(type)) {
             try {
-                NSISInstallElementDescriptor descriptor = new NSISInstallElementDescriptor(clasz);
+                NSISInstallElementDescriptor descriptor = new NSISInstallElementDescriptor(clasz, image);
                 cElementMap.put(type, descriptor);
             }
             catch(Exception ex) {
@@ -63,16 +63,34 @@ public class NSISInstallElementFactory
         }
     }
     
-    public static INSISInstallElement create(NSISWizardSettings settings, String type)
+    public static INSISInstallElement create(String type)
     {
         NSISInstallElementDescriptor descriptor = (NSISInstallElementDescriptor)cElementMap.get(type);
         if(descriptor != null) {
             try {
-                INSISInstallElement element = (INSISInstallElement)descriptor.getConstructor().newInstance(EMPTY_OBJECT_ARRAY);
-                element.setSettings(settings);
-                return element;
+                return (INSISInstallElement)descriptor.getConstructor().newInstance(EMPTY_OBJECT_ARRAY);
             }
             catch (Exception e) {
+            }
+        }
+        return null;
+    }
+    
+    public static INSISInstallElement createFromNode(Node node)
+    {
+        return createFromNode(node,null);
+    }
+    
+    public static INSISInstallElement createFromNode(Node node, String type)
+    {
+        if(node.getNodeName().equals(INSISInstallElement.NODE)) { //$NON-NLS-1$
+            String nodeType = node.getAttributes().getNamedItem(INSISInstallElement.TYPE_ATTRIBUTE).getNodeValue(); //$NON-NLS-1$
+            if(Common.isEmpty(type) || nodeType.equals(type)) {
+                INSISInstallElement element = create(nodeType);
+                if(element != null) {
+                    element.fromNode(node);
+                    return element;
+                }
             }
         }
         return null;
@@ -91,15 +109,13 @@ public class NSISInstallElementFactory
     {
         public Image mImage;
         public Class mElementClass;
-        public String mName;
         public Constructor mConstructor;
         
-        public NSISInstallElementDescriptor(Class clasz) throws SecurityException, NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException
+        public NSISInstallElementDescriptor(Class clasz, Image image) throws SecurityException, NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException
         {
             mElementClass = clasz;
             mConstructor = clasz.getConstructor(EMPTY_CLASS_ARRAY);
-            INSISInstallElement instance = (INSISInstallElement)mConstructor.newInstance(EMPTY_OBJECT_ARRAY);
-            mImage = instance.getImage();
+            mImage = image;
         }
         
         /**
@@ -124,14 +140,6 @@ public class NSISInstallElementFactory
         public Image getImage()
         {
             return mImage;
-        }
-        
-        /**
-         * @return Returns the name.
-         */
-        public String getName()
-        {
-            return mName;
         }
     }
 }

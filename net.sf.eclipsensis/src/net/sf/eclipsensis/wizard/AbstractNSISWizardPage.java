@@ -188,17 +188,17 @@ public abstract class AbstractNSISWizardPage extends WizardPage implements INSIS
         mWizard = (NSISWizard)newWizard;
     }
 
-    protected class NSISWizardPageAdapter implements INSISWizardPageListener
+    protected static class NSISWizardPageAdapter implements INSISWizardPageListener
     {
         /* (non-Javadoc)
-         * @see net.sf.eclipsensis.wizard.INSISWizardPageListener#aboutToEnter()
+         * @see net.sf.eclipsensis.wizard.INSISWizardPageListener#aboutToShow()
          */
         public void aboutToShow()
         {
         }
 
         /* (non-Javadoc)
-         * @see net.sf.eclipsensis.wizard.INSISWizardPageListener#aboutToLeave()
+         * @see net.sf.eclipsensis.wizard.INSISWizardPageListener#aboutToHide()
          */
         public void aboutToHide()
         {

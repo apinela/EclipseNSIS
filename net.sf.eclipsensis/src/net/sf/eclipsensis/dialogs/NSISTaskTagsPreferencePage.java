@@ -15,6 +15,7 @@ import java.util.*;
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.editor.*;
 import net.sf.eclipsensis.settings.NSISPreferences;
+import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.util.ImageManager;
 import net.sf.eclipsensis.viewer.CollectionContentProvider;
 
@@ -291,6 +292,29 @@ public class NSISTaskTagsPreferencePage extends PreferencePage implements IWorkb
                 different = true;
             }
         }
+        if(different) {
+            if(taskTags.size() > 0) {
+                boolean defaultFound = false;
+                for (Iterator iter = taskTags.iterator(); iter.hasNext();) {
+                    NSISTaskTag element = (NSISTaskTag)iter.next();
+                    if(element.isDefault()) {
+                        defaultFound = true;
+                        break;
+                    }
+                }
+                if(!defaultFound) {
+                    if(taskTags.size() == 1) {
+                        NSISTaskTag taskTag = (NSISTaskTag)taskTags.toArray()[0];
+                        taskTag.setDefault(true);
+                        mTableViewer.setChecked(taskTag,true);
+                    }
+                    else {
+                        Common.openError(getShell(),EclipseNSISPlugin.getResourceString("task.tag.dialog.missing.default")); //$NON-NLS-1$
+                        return false;
+                    }
+                }
+            }
+        }
         mPreferences.setTaskTags(taskTags);
         mPreferences.setCaseSensitiveTaskTags(caseSensitive);
         boolean updateTaskTags = true;
@@ -302,7 +326,7 @@ public class NSISTaskTagsPreferencePage extends PreferencePage implements IWorkb
             int rv = dialog.open();
             if(rv == 2) {
                 //Cancel
-                return performCancel();
+                return false;
             }
             else {
                 updateTaskTags = (rv == 0);

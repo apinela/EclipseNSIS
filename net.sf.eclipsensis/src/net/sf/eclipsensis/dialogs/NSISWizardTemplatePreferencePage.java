@@ -270,7 +270,7 @@ public class NSISWizardTemplatePreferencePage extends PreferencePage implements 
         if(mReaderWriter == null) {
             synchronized(this) {
                 if(mReaderWriter == null) {
-                    mReaderWriter = new NSISWizardTemplateReaderWriter(true);
+                    mReaderWriter = new NSISWizardTemplateReaderWriter();
                 }
             }
         }
@@ -434,7 +434,7 @@ public class NSISWizardTemplatePreferencePage extends PreferencePage implements 
             File file= new File(path);
             if (file.exists()) {
                 InputStream input= new BufferedInputStream(new FileInputStream(file));
-                Collection coll = getReaderWriter().read(input);
+                Collection coll = getReaderWriter().import_(input);
                 input.close();
                 if(!Common.isEmptyCollection(coll)) {
                     for (Iterator iter=coll.iterator(); iter.hasNext(); ) {
@@ -472,7 +472,7 @@ public class NSISWizardTemplatePreferencePage extends PreferencePage implements 
             OutputStream os = null;
             try {
                 os = new BufferedOutputStream(new FileOutputStream(file));
-                getReaderWriter().save(templates, os);
+                getReaderWriter().export(templates, os);
             } 
             catch (Exception e) {
                 Common.openError(getShell(),e.getLocalizedMessage());

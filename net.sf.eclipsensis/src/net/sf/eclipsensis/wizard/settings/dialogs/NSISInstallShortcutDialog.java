@@ -18,8 +18,7 @@ import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.viewer.CollectionContentProvider;
 import net.sf.eclipsensis.viewer.CollectionLabelProvider;
-import net.sf.eclipsensis.wizard.INSISWizardConstants;
-import net.sf.eclipsensis.wizard.NSISWizardDisplayValues;
+import net.sf.eclipsensis.wizard.*;
 import net.sf.eclipsensis.wizard.settings.NSISInstallShortcut;
 import net.sf.eclipsensis.wizard.util.MasterSlaveController;
 import net.sf.eclipsensis.wizard.util.NSISWizardDialogUtil;
@@ -44,9 +43,9 @@ public class NSISInstallShortcutDialog extends AbstractNSISInstallItemDialog imp
         cProperties.add("url"); //$NON-NLS-1$
     }
 
-    public NSISInstallShortcutDialog(Shell parentShell, NSISInstallShortcut item)
+    public NSISInstallShortcutDialog(NSISWizard wizard, NSISInstallShortcut item)
     {
-        super(parentShell, item);
+        super(wizard, item);
     }
 
     /* (non-Javadoc)
@@ -139,7 +138,7 @@ public class NSISInstallShortcutDialog extends AbstractNSISInstallItemDialog imp
             }
         });
         
-        final Combo c2 = NSISWizardDialogUtil.createContentBrowser(composite, "wizard.path.label", mStore.getString("path"), mItem.getSettings().getWizard(), true, m2, true); //$NON-NLS-1$ //$NON-NLS-2$
+        final Combo c2 = NSISWizardDialogUtil.createContentBrowser(composite, "wizard.path.label", mStore.getString("path"), mWizard, true, m2, true); //$NON-NLS-1$ //$NON-NLS-2$
 
         c2.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e)

@@ -16,13 +16,14 @@ import java.util.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
-import net.sf.eclipsensis.editor.NSISEditor;
+import net.sf.eclipsensis.editor.*;
 import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.help.NSISUsageProvider;
 import net.sf.eclipsensis.lang.NSISLanguage;
 import net.sf.eclipsensis.lang.NSISLanguageManager;
 import net.sf.eclipsensis.makensis.MakeNSISRunner;
 import net.sf.eclipsensis.script.*;
+import net.sf.eclipsensis.settings.NSISPreferences;
 import net.sf.eclipsensis.util.*;
 import net.sf.eclipsensis.wizard.settings.*;
 
@@ -126,6 +127,7 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
             }).start();
 
             mSaveFile.create(is,true,null);
+            new NSISTaskTagUpdater().updateTaskTags(mSaveFile);
             mWriter = null;
             incrementMonitor(1);
             
@@ -194,6 +196,15 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
 
     private void writeScript()
     {
+        String defaultTaskTag = ""; //$NON-NLS-1$
+        Collection taskTags = NSISPreferences.getPreferences().getTaskTags();
+        for (Iterator iter = taskTags.iterator(); iter.hasNext();) {
+            NSISTaskTag taskTag = (NSISTaskTag)iter.next();
+            if(taskTag.isDefault()) {
+                defaultTaskTag = taskTag.getTag();
+                break;
+            }
+        }
         mNsisDirKeyword = getKeyword("${NSISDIR}").toUpperCase(); //$NON-NLS-1$
         boolean isSilent = false;
         boolean isMUI = false;
@@ -370,7 +381,7 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
                     fn.addElement(new NSISScriptInstruction("StartMenu::Select",new String[]{"/autoadd","/text", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                             quote((mSettings.isEnableLanguageSupport()?": $(StartMenuPageText)": //$NON-NLS-1$
                              EclipseNSISPlugin.getResourceString("scriptgen.start.menu.page.text"))), //$NON-NLS-1$
-                             "$StartMenuGroup",mSettings.getStartMenuGroup()})); //$NON-NLS-1$
+                             "/lastused","$StartMenuGroup",mSettings.getStartMenuGroup()})); //$NON-NLS-1$ //$NON-NLS-2$
                     fn.addElement(new NSISScriptInstruction("Pop",getKeyword("$R1"))); //$NON-NLS-1$ //$NON-NLS-2$
                     fn.addElement(new NSISScriptInstruction("StrCmp",new String[]{getKeyword("$R1"),"success","success"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
                     fn.addElement(new NSISScriptInstruction("StrCmp",new String[]{getKeyword("$R1"),"cancel","done"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
@@ -775,7 +786,7 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
             }
             else if(contents[i] instanceof NSISSectionGroup) {
                 NSISSectionGroup subsec = (NSISSectionGroup)contents[i];
-                NSISScriptSectionGroup scriptSecgrp = (NSISScriptSectionGroup)script.insertElement(sectionsPlaceHolder, new NSISScriptSectionGroup(subsec.getCaption(),subsec.isExpanded(),subsec.isBold(), 
+                NSISScriptSectionGroup scriptSecgrp = (NSISScriptSectionGroup)script.insertElement(sectionsPlaceHolder, new NSISScriptSectionGroup(subsec.getCaption(),subsec.isDefaultExpanded(),subsec.isBold(), 
                                                                         MessageFormat.format("SECGRP{0,number,0000}",new Object[]{new Integer(sectionGroupCounter++)}))); //$NON-NLS-1$
                 INSISInstallElement[] children = subsec.getChildren();
                 if(!Common.isEmptyArray(children)) {
@@ -806,7 +817,7 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
 
         if(mSettings.isEnableLanguageSupport()) {
             Locale defaultLocale = languageManager.getDefaultLocale();
-            ResourceBundle defaultBundle = ResourceBundle.getBundle(INSISConstants.RESOURCE_BUNDLE,defaultLocale);
+            ResourceBundle defaultBundle = EclipseNSISPlugin.getDefault().getResourceBundle(defaultLocale);
             NSISScriptlet smScriptlet = new NSISScriptlet();
             NSISScriptlet unlinkScriptlet = new NSISScriptlet();
             for (Iterator iter = languages.iterator(); iter.hasNext();) {
@@ -817,7 +828,7 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
                     bundle = defaultBundle;
                 }
                 else {
-                    bundle = ResourceBundle.getBundle(INSISConstants.RESOURCE_BUNDLE,locale);
+                    bundle = EclipseNSISPlugin.getDefault().getResourceBundle(locale);
                     if(!bundle.equals(defaultBundle) && !validateLocale(locale,bundle.getLocale())) {
                         bundle = defaultBundle;
                     }
@@ -839,7 +850,7 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
             if(smScriptlet.size() > 0 || unlinkScriptlet.size() > 0) {
                 script.addElement(new NSISScriptBlankLine());
                 script.addElement(new NSISScriptSingleLineComment(EclipseNSISPlugin.getResourceString("scriptgen.langstring.comment1"))); //$NON-NLS-1$
-                script.addElement(new NSISScriptSingleLineComment(EclipseNSISPlugin.getResourceString("scriptgen.langstring.comment2"))); //$NON-NLS-1$
+                script.addElement(new NSISScriptSingleLineComment(EclipseNSISPlugin.getFormattedString("scriptgen.langstring.comment2",new Object[]{defaultTaskTag}).trim())); //$NON-NLS-1$
                 if(smScriptlet.size() > 0) {
                     script.addElement(new NSISScriptBlankLine());
                     script.append(smScriptlet);

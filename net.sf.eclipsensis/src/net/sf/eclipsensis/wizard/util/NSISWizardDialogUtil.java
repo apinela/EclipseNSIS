@@ -10,6 +10,7 @@
 package net.sf.eclipsensis.wizard.util;
 
 import java.io.File;
+import java.net.URL;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.dialogs.ColorEditor;
@@ -31,6 +32,7 @@ import org.eclipse.swt.widgets.*;
 public class NSISWizardDialogUtil
 {
     public static final String LABEL = "LABEL"; //$NON-NLS-1$
+    public static final String IMAGE = "IMAGE"; //$NON-NLS-1$
 
     private static void addSlave(MasterSlaveController masterSlaveController, Control slave)
     {
@@ -178,7 +180,7 @@ public class NSISWizardDialogUtil
             {
                 Shell shell = button.getShell();
                 FileDialog dialog = new FileDialog(shell, (isSave?SWT.SAVE:SWT.OPEN));
-                dialog.setFileName(t.getText());
+                dialog.setFileName(Common.decodePath(t.getText()));
                 dialog.setFilterNames(filterNames);
                 dialog.setFilterExtensions(filterExtensions);
                 String file = dialog.open();
@@ -225,28 +227,68 @@ public class NSISWizardDialogUtil
         }
         l2.setLayoutData(data);
         l2.setEnabled(enabled);
+        t.setData(IMAGE,l2);
         addSlave(masterSlaveController, l2);
         
         t.addModifyListener(new ModifyListener(){
             public void modifyText(ModifyEvent e)
             {
-                String fileName = Common.decodePath(((Text)e.widget).getText());
-                Image image = null;;
-                if(!Common.isEmpty(fileName) && Common.isValidFile(fileName)) {
-                    try {
-                        image = ImageManager.getImage(new File(fileName).toURL());
-                    }
-                    catch (Exception ex) {
-                        image = null;
-//                        e.printStackTrace();
-                    }
-                }
-                l2.setImage(image);
-                l2.setData((image==null?null:image.getImageData()));
+                loadImage((Text)e.widget);
             }
          });
         
         return t;
+    }
+
+    public static void loadImage(Text t)
+    {
+        String fileName = Common.decodePath(t.getText());
+        Label l = (Label)t.getData(IMAGE);
+        if(l != null) {
+            Image image = null;
+            if(!Common.isEmpty(fileName) && Common.isValidFile(fileName)) {
+                try {
+                    URL url = new File(fileName).toURL();
+                    if(ImageManager.containsImage(url)) {
+                        image = ImageManager.getImage(url);
+                    }
+                    else {
+                        GridData data = (GridData)l.getLayoutData();
+                        Point size = (Point)l.computeSize(data.widthHint,data.heightHint);
+                        ImageData[] imageData = new ImageLoader().load(fileName);
+                        if(!Common.isEmptyArray(imageData)) {
+                            ImageData bestData = null;
+                            int bestArea = 0;
+                            Display display = l.getDisplay();
+                            int displayDepth = display.getDepth();
+                            for (int i = 0; i < imageData.length; i++) {
+                                if(imageData[i].width <= size.x && imageData[i].height <= size.y && imageData[i].depth <= displayDepth) {
+                                    if(bestData != null) {
+                                        int imageArea = imageData[i].width*imageData[i].height;
+                                        if((imageArea < bestArea) ||
+                                           (imageArea == bestArea && imageData[i].depth < bestData.depth)) {
+                                            continue;
+                                        }
+                                    }
+                                    bestData = imageData[i];
+                                    bestArea = bestData.width*bestData.height;
+                                }
+                            }
+                            if(bestData == null) {
+                                bestData = imageData[0];
+                            }
+                            image = new Image(display,bestData); 
+                            ImageManager.putImage(url,image);
+                        }
+                    }
+                }
+                catch (Exception ex) {
+                    image = null;
+                }
+            }
+            l.setImage(image);
+            l.setData((image==null?null:image.getImageData()));
+        }
     }
 
     public static Combo createCombo(Composite parent, String[] items, int selectedItem, boolean isReadOnly, String labelResource, boolean enabled, MasterSlaveController masterSlaveController, boolean isRequired)

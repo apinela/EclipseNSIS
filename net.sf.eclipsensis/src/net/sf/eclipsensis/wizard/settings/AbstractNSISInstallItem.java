@@ -38,6 +38,10 @@ public abstract class AbstractNSISInstallItem extends AbstractNSISInstallElement
         return null;
     }
 
+    public final void setChildren(INSISInstallElement[] children)
+    {
+    }
+
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#addChild(net.sf.eclipsensis.wizard.settings.INSISInstallElement)
      */

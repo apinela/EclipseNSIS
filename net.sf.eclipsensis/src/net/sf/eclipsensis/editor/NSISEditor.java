@@ -55,6 +55,7 @@ public class NSISEditor extends TextEditor implements INSISConstants, IPropertyC
     private NSISContentOutlinePage mOutlinePage;
     private NSISOutlineContentProvider mOutlineContentProvider;
     private Position mCurrentPosition = null;
+    private Mutex mMutex = new Mutex();
     
     /**
      * 
@@ -77,31 +78,41 @@ public class NSISEditor extends TextEditor implements INSISConstants, IPropertyC
             }
     
             if(mOutlineContentProvider != null) {
-                ITextSelection textSelection = (ITextSelection)selection;
-                IStructuredSelection sel = StructuredSelection.EMPTY;
-                NSISOutlineElement element = mOutlineContentProvider.findElement(textSelection.getOffset(),textSelection.getLength());
-                if(element != null) {
-                    Position position = element.getPosition();
-                    if(position.equals(mCurrentPosition)) {
-                        return;
-                    }
-                    else {
-                        if(mOutlinePage != null) {
-                            if(!mOutlinePage.isDisposed()) {
-                                sel = new StructuredSelection(element);
-                                mOutlinePage.setSelection(sel);
+                if(mMutex.acquireWithoutBlocking(source)) {
+                    try {
+                        ITextSelection textSelection = (ITextSelection)selection;
+                        IStructuredSelection sel = StructuredSelection.EMPTY;
+                        NSISOutlineElement element = mOutlineContentProvider.findElement(textSelection.getOffset(),textSelection.getLength());
+                        if(element != null) {
+                            Position position = element.getPosition();
+                            if(position.equals(mCurrentPosition)) {
                                 return;
                             }
                             else {
-                                mOutlinePage = null;
+                                if(mOutlinePage != null) {
+                                    if(!mOutlinePage.isDisposed()) {
+                                        sel = new StructuredSelection(element);
+                                        mOutlinePage.setSelection(sel);
+                                        return;
+                                    }
+                                    else {
+                                        mOutlinePage = null;
+                                    }
+                                }
+                                
+                                mCurrentPosition = position;
+                                setHighlightRange(mCurrentPosition.getOffset(), 
+                                                  mCurrentPosition.getLength(), 
+                                                  false);
                             }
                         }
-                        
-                        mCurrentPosition = position;
-                        setHighlightRange(mCurrentPosition.getOffset(), 
-                                          mCurrentPosition.getLength(), 
-                                          false);
                     }
+                    finally {
+                        mMutex.release(source);
+                    }
+                }
+                else {
+                    return;
                 }
             }
             mCurrentPosition = null;
@@ -125,12 +136,25 @@ public class NSISEditor extends TextEditor implements INSISConstants, IPropertyC
                                 moveCursor = false;
                             }
                         }
+                        
                         setHighlightRange(mCurrentPosition.getOffset(), 
                                           mCurrentPosition.getLength(), 
                                           moveCursor);
                     }
                     catch (IllegalArgumentException x) {
                         resetHighlightRange();
+                    }
+                }
+
+                if(mMutex.acquireWithoutBlocking(source)) {
+                    try {
+                        Position selectPosition = element.getSelectPosition();
+                        if(selectPosition != null) {
+                            sourceViewer.setSelectedRange(selectPosition.getOffset(),selectPosition.getLength());
+                        }
+                    }
+                    finally {
+                        mMutex.release(source);
                     }
                 }
             }
@@ -378,6 +402,12 @@ public class NSISEditor extends TextEditor implements INSISConstants, IPropertyC
         }
     }
     
+    protected void performSaveAs(IProgressMonitor progressMonitor)
+    {
+        super.performSaveAs(progressMonitor);
+        updateTaskTagMarkers(new NSISTaskTagUpdater());
+    }
+
     /* (non-Javadoc)
      * @see org.eclipse.ui.texteditor.AbstractTextEditor#editorSaved()
      */
@@ -487,5 +517,84 @@ public class NSISEditor extends TextEditor implements INSISConstants, IPropertyC
                 mInformationPresenter.showInformation();
             }
         }
+    }
+    
+    private static class Mutex
+    {
+        private static int cCounter = 0;
+        private Object mOwner = null;
+        private int mLockCount = 0;
+        private final int mId = newId();
+
+        public int getId()
+        {
+            return mId;
+        }
+
+        private static int newId()
+        {
+            synchronized(Mutex.class) {
+                cCounter++;
+                return cCounter;
+            }
+        }
+
+        /**
+         * Acquire the mutex. The mutex can be acquired multiple times
+         * by the same thread, provided that it is released as many
+         * times as it is acquired. The calling thread blocks until
+         * it has acquired the mutex. (There is no timeout).
+         *
+         * @see release
+         * @see acquireWithoutBlocking
+         */
+        public synchronized void acquire(Object owner, long timeout) throws InterruptedException
+        {
+            while( acquireWithoutBlocking(owner) == false) {
+                this.wait(timeout);
+            }
+        }
+
+        /**
+         * Attempts to acquire the mutex. Returns false (and does not
+         * block) if it can't get it.
+         *
+         * @see release
+         * @see acquire
+         */
+        public synchronized boolean acquireWithoutBlocking(Object owner)
+        {
+            // Try to get the mutex. Return true if you got it.
+            if( mOwner == null ) {   
+                mOwner = owner;
+                mLockCount = 1;
+                return true;
+            }
+
+            if( mOwner == owner ) {
+                ++mLockCount;
+                return true;
+            }
+
+            return false;
+        }
+
+        /**
+         * Release the mutex. The mutex has to be released as many times
+         * as it was acquired to actually unlock the resource. The mutex
+         * must be released by the thread that acquired it
+         *
+         * @throws Mutex.OwnershipException (a RuntimeException) if a thread
+         *      other than the current owner tries to release the mutex.
+         */
+         public synchronized void release(Object owner)
+         {
+             if( mOwner == owner ) {
+                 if( --mLockCount <= 0 ) {   
+                     mOwner = null;
+                     notify();
+                 }
+             }
+         }
     }
 }

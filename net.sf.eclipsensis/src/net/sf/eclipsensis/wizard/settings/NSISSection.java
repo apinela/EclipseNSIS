@@ -12,39 +12,23 @@ package net.sf.eclipsensis.wizard.settings;
 import java.text.MessageFormat;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.IEclipseNSISPluginListener;
-import net.sf.eclipsensis.help.INSISKeywordsListener;
 import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.util.ImageManager;
+import net.sf.eclipsensis.wizard.NSISWizard;
 import net.sf.eclipsensis.wizard.settings.dialogs.NSISSectionDialog;
 
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Composite;
+import org.w3c.dom.*;
 
 public class NSISSection extends AbstractNSISInstallGroup
 {
 	private static final long serialVersionUID = -971949137266423189L;
 
-    public static String TYPE = null;
+    public static final String TYPE = NSISKeywords.getKeyword(EclipseNSISPlugin.getResourceString("wizard.section.type")); //$NON-NLS-1$
 
-    private static Image cImage = ImageManager.getImage(EclipseNSISPlugin.getResourceString("wizard.section.icon")); //$NON-NLS-1$
-    private static String cFormat = EclipseNSISPlugin.getResourceString("wizard.section.format"); //$NON-NLS-1$
-
-    private static INSISKeywordsListener cKeywordsListener  = new INSISKeywordsListener() {
-
-        public void keywordsChanged()
-        {
-            loadType();
-        }
-        
-    };
-    private static IEclipseNSISPluginListener cShutdownListener = new IEclipseNSISPluginListener() {
-        public void stopped()
-        {
-            NSISKeywords.removeKeywordsListener(cKeywordsListener);
-        }
-    };
+    private static final Image IMAGE = ImageManager.getImage(EclipseNSISPlugin.getResourceString("wizard.section.icon")); //$NON-NLS-1$
+    private static final String FORMAT = EclipseNSISPlugin.getResourceString("wizard.section.format"); //$NON-NLS-1$
     
     private String mDescription = null;
     private String mName = null;
@@ -53,18 +37,7 @@ public class NSISSection extends AbstractNSISInstallGroup
     private boolean mDefaultUnselected = false;
 
     static {
-        loadType();
-        EclipseNSISPlugin.getDefault().addListener(cShutdownListener);
-        NSISKeywords.addKeywordsListener(cKeywordsListener);
-    }
-    
-    private static void loadType()
-    {
-        if(TYPE != null) {
-            NSISInstallElementFactory.unregister(TYPE, NSISSection.class);
-        }
-        TYPE = NSISKeywords.getKeyword(EclipseNSISPlugin.getResourceString("wizard.section.type")); //$NON-NLS-1$
-        NSISInstallElementFactory.register(TYPE, NSISSection.class);
+        NSISInstallElementFactory.register(TYPE, IMAGE, NSISSection.class);
     }
     
     /* (non-Javadoc)
@@ -94,7 +67,7 @@ public class NSISSection extends AbstractNSISInstallGroup
      */
     public String getDisplayName()
     {
-        return MessageFormat.format(cFormat,new Object[]{mName,TYPE}).trim();
+        return MessageFormat.format(FORMAT,new Object[]{mName,NSISKeywords.getKeyword(TYPE)}).trim();
     }
 
     /* (non-Javadoc)
@@ -105,9 +78,9 @@ public class NSISSection extends AbstractNSISInstallGroup
         return true;
     }
 
-    public boolean edit(Composite composite)
+    public boolean edit(NSISWizard wizard)
     {
-        return new NSISSectionDialog(composite.getShell(),this).open() == Window.OK;
+        return new NSISSectionDialog(wizard,this).open() == Window.OK;
     }
 
     /* (non-Javadoc)
@@ -115,7 +88,7 @@ public class NSISSection extends AbstractNSISInstallGroup
      */
     public Image getImage()
     {
-        return cImage;
+        return IMAGE;
     }
 
     /**
@@ -189,5 +162,32 @@ public class NSISSection extends AbstractNSISInstallGroup
     public void setDescription(String description)
     {
         mDescription = description;
+    }
+    
+    protected Object getNodeValue(Node node, String name, Class clasz)
+    {
+        if(name.equals("description")) { //$NON-NLS-1$
+            StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
+            NodeList nodeList = node.getChildNodes();
+            int n = nodeList.getLength();
+            for(int i=0; i < n; i++) {
+                Node child = nodeList.item(i);
+                if(child instanceof Text) {
+                    buf.append(((Text)child).getNodeValue());
+                }
+            }
+            return buf.toString();
+        }
+        else {
+            return super.getNodeValue(node, name, clasz);
+        }
+    }
+
+    protected Node createChildNode(Document document, String name, Object value)
+    {
+        if(name.equals("description")) { //$NON-NLS-1$
+            value = document.createTextNode((String)value); //$NON-NLS-1$
+        }
+        return super.createChildNode(document, name, value);
     }
 }

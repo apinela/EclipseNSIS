@@ -12,25 +12,25 @@ package net.sf.eclipsensis.wizard.settings;
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.util.ImageManager;
+import net.sf.eclipsensis.wizard.NSISWizard;
 import net.sf.eclipsensis.wizard.settings.dialogs.NSISInstallFileDialog;
 
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Composite;
 
 public class NSISInstallFile extends AbstractNSISInstallItem implements INSISInstallFileSystemObject
 {
 	private static final long serialVersionUID = 7628955872836262241L;
 
     public static final String TYPE = EclipseNSISPlugin.getResourceString("wizard.file.type"); //$NON-NLS-1$
-    private static final Image cImage = ImageManager.getImage(EclipseNSISPlugin.getResourceString("wizard.file.icon")); //$NON-NLS-1$
+    private static final Image IMAGE = ImageManager.getImage(EclipseNSISPlugin.getResourceString("wizard.file.icon")); //$NON-NLS-1$
     
     private String mName = null;
     private String mDestination = NSISKeywords.getKeyword("$INSTDIR"); //$NON-NLS-1$
     private int mOverwriteMode = OVERWRITE_ON; 
 
     static {
-        NSISInstallElementFactory.register(TYPE, NSISInstallFile.class);
+        NSISInstallElementFactory.register(TYPE, IMAGE, NSISInstallFile.class);
     }
 
     /* (non-Javadoc)
@@ -57,9 +57,9 @@ public class NSISInstallFile extends AbstractNSISInstallItem implements INSISIns
         return true;
     }
 
-    public boolean edit(Composite composite)
+    public boolean edit(NSISWizard wizard)
     {
-        return new NSISInstallFileDialog(composite.getShell(),this).open() == Window.OK;
+        return new NSISInstallFileDialog(wizard,this).open() == Window.OK;
     }
 
     /* (non-Javadoc)
@@ -67,7 +67,7 @@ public class NSISInstallFile extends AbstractNSISInstallItem implements INSISIns
      */
     public Image getImage()
     {
-        return cImage;
+        return IMAGE;
     }
 
     /**

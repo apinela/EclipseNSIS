@@ -22,9 +22,6 @@
       <library name="eclipsensis.jar">
          <export name="*"/>
       </library>
-      <library name="lib/xstream-1.1.jar">
-         <export name="*"/>
-      </library>
    </runtime>
 
    <requires>
