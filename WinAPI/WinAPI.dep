@@ -1,0 +1,9 @@
+# Microsoft Developer Studio Generated Dependency File, included by WinAPI.mak
+
+.\WinAPI.cpp : \
+	"..\..\..\jdk1.4\include\jni.h"\
+	"..\..\..\jdk1.4\include\win32\jni_md.h"\
+	"..\..\..\program files\microsoft visual studio\vc98\include\basetsd.h"\
+	".\net_sf_eclipsensis_util_WinAPI.h"\
+	"c:\program files\html help workshop\include\htmlhelp.h"\
+	
