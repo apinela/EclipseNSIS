@@ -9,9 +9,17 @@
  *******************************************************************************/
 package net.sf.eclipsensis.util;
 
+import java.beans.*;
 import java.io.*;
 import java.lang.reflect.Array;
+import java.lang.reflect.Method;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import net.sf.eclipsensis.help.NSISKeywords;
+
+import org.eclipse.jface.preference.IPreferenceStore;
 
 
 
@@ -20,7 +28,12 @@ public class Common
     public static final String[] EMPTY_STRING_ARRAY = new String[0];
     
     private static String[] cEnv = null;
-    
+
+    private static Pattern cValidPathName = Pattern.compile("([A-Za-z]:)?\\\\?(((\\.?[A-Za-z0-9\\$%\\'`\\-@\\{\\}~\\!#\\(\\&_\\^\\x20])+|\\.{1,2}+)\\\\)*(\\.?[A-Za-z0-9\\$%\\'`\\-@\\{\\}~\\!#\\(\\&_\\^\\x20])+"); //$NON-NLS-1$
+    private static Pattern cValidNSISPrefixedPathNameSuffix = Pattern.compile("\\\\(((\\.?[A-Za-z0-9\\$%\\'`\\-@\\{\\}~\\!#\\(\\&_\\^\\x20])+|\\.{1,2}+)\\\\)*(\\.?[A-Za-z0-9\\$%\\'`\\-@\\{\\}~\\!#\\(\\&_\\^\\x20])+"); //$NON-NLS-1$
+    private static Pattern cValidFileName = Pattern.compile("(\\.?[A-Za-z0-9\\$%\\'`\\-@\\{\\}~\\!#\\(\\&_\\^\\x20])+"); //$NON-NLS-1$
+    private static Pattern cValidURL = Pattern.compile("(?:(?:ftp|https?):\\/\\/)?(?:[a-z0-9](?:[-a-z0-9]*[a-z0-9])?\\.)+(?:com|edu|biz|org|gov|int|info|mil|net|name|museum|coop|aero|[a-z][a-z])\\b(?:\\d+)?(?:\\/[^;\"'<>()\\[\\]{}\\s\\x7f-\\xff]*(?:[.,?]+[^;\"'<>()\\[\\]{}\\s\\x7f-\\xff]+)*)?"); //$NON-NLS-1$
+
     public static boolean isEmpty(String string)
     {
         return (string == null || string.trim().length() == 0);
@@ -119,7 +132,7 @@ public class Common
     public static String leftPad(String text, int length, char padChar)
     {
         if(text.length() < length) {
-            StringBuffer buf = new StringBuffer("");
+            StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
             for(int i=text.length(); i<length; i++) {
                 buf.append(padChar);
             }
@@ -134,7 +147,7 @@ public class Common
         ArrayList list = new ArrayList();
         if(!Common.isEmpty(text)) {
             char[] chars = text.toCharArray();
-            StringBuffer buf = new StringBuffer("");
+            StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
             for (int i = 0; i < chars.length; i++) {
                 if(chars[i] != separator) {
                     buf.append(chars[i]);
@@ -167,5 +180,152 @@ public class Common
             }
         }
         return array;
+    }
+
+    public static boolean isValidNSISPrefixedPathName(String pathName)
+    {
+        int n = pathName.indexOf('\\');
+        String suffix = null;
+        if(n >= 0) {
+            suffix = pathName.substring(n);
+            pathName = pathName.substring(0,n);
+        }
+        if(!Common.isEmpty(pathName)) {
+            for(int i=0; i<NSISKeywords.PREDEFINED_PATH_VARIABLES.length; i++) {
+                if(NSISKeywords.PREDEFINED_PATH_VARIABLES[i].equalsIgnoreCase(pathName)) {
+                    if(!Common.isEmpty(suffix)) {
+                        Matcher matcher = cValidNSISPrefixedPathNameSuffix.matcher(suffix);
+                        return matcher.matches();
+                    }
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public static boolean isValidPathName(String pathName)
+    {
+        Matcher matcher = cValidPathName.matcher(pathName);
+        return matcher.matches();
+    }
+
+    public static boolean isValidFileName(String fileName)
+    {
+        Matcher matcher = cValidFileName.matcher(fileName);
+        return matcher.matches();
+    }
+
+    public static boolean isValidFile(String fileName)
+    {
+        File file = new File(fileName);
+        return (file.exists() && file.isFile());
+    }
+
+    public static boolean isValidPath(String pathName)
+    {
+        File file = new File(pathName);
+        return (file.exists() && file.isDirectory());
+    }
+
+    public static boolean isValidURL(String url)
+    {
+        Matcher matcher = cValidURL.matcher(url);
+        return matcher.matches();
+    }
+
+    public static void beanToStore(Object bean, IPreferenceStore store, java.util.List properties)
+    {
+        try {
+            BeanInfo beanInfo = Introspector.getBeanInfo(bean.getClass());
+            PropertyDescriptor[] pd = beanInfo.getPropertyDescriptors();
+            for (int i = 0; i < pd.length; i++) {
+                String name = pd[i].getName();
+                if(properties.contains(name)) {
+                    Class clasz = pd[i].getPropertyType();
+                    Method m = pd[i].getReadMethod();
+                    try {
+                        if(clasz.equals(Boolean.class) || clasz.equals(Boolean.TYPE)) {
+                            Boolean b = (Boolean)m.invoke(bean,null);
+                            store.setValue(name,(b==null?false:b.booleanValue()));
+                        }
+                        else if(clasz.equals(Integer.class) || clasz.equals(Integer.TYPE)) {
+                            Integer n = (Integer)m.invoke(bean,null);
+                            store.setValue(name,(n==null?0:n.intValue()));
+                        }
+                        else if(clasz.equals(Long.class) || clasz.equals(Long.TYPE)) {
+                            Long l = (Long)m.invoke(bean,null);
+                            store.setValue(name,(l==null?0:l.longValue()));
+                        }
+                        else if(clasz.equals(Double.class) || clasz.equals(Double.TYPE)) {
+                            Double d = (Double)m.invoke(bean,null);
+                            store.setValue(name,(d==null?0:d.doubleValue()));
+                        }
+                        else if(clasz.equals(Float.class) || clasz.equals(Float.TYPE)) {
+                            Float f = (Float)m.invoke(bean,null);
+                            store.setValue(name,(f==null?0:f.floatValue()));
+                        }
+                        else if(clasz.equals(String.class)) {
+                            String s = (String)m.invoke(bean,null);
+                            store.setValue(name,(s==null?"":s));
+                        }
+                    }
+                    catch (Exception e1) {
+                        e1.printStackTrace();
+                    }
+                }
+            }
+        }
+        catch (IntrospectionException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void storeToBean(Object bean, IPreferenceStore store, java.util.List properties)
+    {
+        try {
+            BeanInfo beanInfo = Introspector.getBeanInfo(bean.getClass());
+            PropertyDescriptor[] pd = beanInfo.getPropertyDescriptors();
+            Object[] args = new Object[1];
+    
+            for (int i = 0; i < pd.length; i++) {
+                String name = pd[i].getName();
+                if(properties.contains(name)) {
+                    Class clasz = pd[i].getPropertyType();
+                    Method m = pd[i].getWriteMethod();
+                    try {
+                        if(clasz.equals(Boolean.class) || clasz.equals(Boolean.TYPE)) {
+                            args[0] = Boolean.valueOf(store.getBoolean(name));
+                        }
+                        else if(clasz.equals(Integer.class) || clasz.equals(Integer.TYPE)) {
+                            args[0] = new Integer(store.getInt(name));
+                        }
+                        else if(clasz.equals(Long.class) || clasz.equals(Long.TYPE)) {
+                            args[0] = new Long(store.getLong(name));
+                        }
+                        else if(clasz.equals(Double.class) || clasz.equals(Double.TYPE)) {
+                            args[0] = new Double(store.getDouble(name));
+                        }
+                        else if(clasz.equals(Float.class) || clasz.equals(Float.TYPE)) {
+                            args[0] = new Float(store.getFloat(name));
+                        }
+                        else if(clasz.equals(String.class)) {
+                            String value = store.getString(name);
+                            args[0] = (value==null?"":value);
+                        }
+                        else {
+                            continue;
+                        }
+                        m.invoke(bean, args);
+                    }
+                    catch (Exception e1) {
+                        e1.printStackTrace();
+                    }
+                }
+            }
+        }
+        catch (IntrospectionException e) {
+            e.printStackTrace();
+        }
     }
 }

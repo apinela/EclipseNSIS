@@ -47,7 +47,7 @@ public class NSISOutlineElement
     public String toString()
     {
         if(!Common.isEmpty(mName)) {
-            return new StringBuffer(getTypeName()).append(" ").append(mName).toString();
+            return new StringBuffer(getTypeName()).append(" ").append(mName).toString(); //$NON-NLS-1$
         }
         else {
             return getTypeName();
@@ -75,7 +75,7 @@ public class NSISOutlineElement
     public String getTypeName()
     {
         return (mType >=0 && mType < NSISOutlineContentProvider.OUTLINE_KEYWORDS.length?
-                NSISOutlineContentProvider.OUTLINE_KEYWORDS[mType]:"");
+                NSISOutlineContentProvider.OUTLINE_KEYWORDS[mType]:""); //$NON-NLS-1$
     }
     /**
      * @return Returns the position.

@@ -101,23 +101,16 @@ public abstract class NSISSettingsPage	extends PropertyPage implements IWorkbenc
     
     private Control createGeneralPage(Composite parent)
     {
-        Composite composite = new Composite(parent,SWT.NULL);
+        Composite composite = new Composite(parent,SWT.NONE);
         GridLayout layout = new GridLayout(1,false);
         composite.setLayout(layout);
         
-        Composite child = createEnablerControl(composite);
-        GridData data = new GridData();
-        data.horizontalSpan = 1;
-        data.grabExcessHorizontalSpace = true;
-        data.horizontalAlignment = GridData.FILL;
+        Composite child = createMasterControl(composite);
+        GridData data = new GridData(GridData.FILL_HORIZONTAL);
         child.setLayoutData(data);
 
         mGroup = createNSISOptionsGroup(composite);
-        data = new GridData();
-        data.horizontalSpan = 1;
-        data.grabExcessHorizontalSpace = true;
-        data.horizontalAlignment = GridData.FILL;
-        data.verticalAlignment = GridData.FILL;
+        data = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_FILL);
         mGroup.setLayoutData(data);
         
         createInstructionsViewer(composite);
@@ -135,7 +128,7 @@ public abstract class NSISSettingsPage	extends PropertyPage implements IWorkbenc
         }
     }
     
-    protected final void enableControls(boolean state)
+    protected void enableControls(boolean state)
     {
         enableComposite(mGroup,state);
         enableComposite(mInstructions.getControl().getParent(),state);
@@ -154,7 +147,6 @@ public abstract class NSISSettingsPage	extends PropertyPage implements IWorkbenc
         Group group = new Group(parent, SWT.SHADOW_ETCHED_IN);
         group.setText(EclipseNSISPlugin.getResourceString("nsis.options.group.text")); //$NON-NLS-1$
         GridLayout layout = new GridLayout(2,false);
-        layout.marginWidth = 5;
         group.setLayout(layout);
         
         mHdrInfo = createCheckBox(group, EclipseNSISPlugin.getResourceString("hdrinfo.text"), //$NON-NLS-1$
@@ -173,10 +165,9 @@ public abstract class NSISSettingsPage	extends PropertyPage implements IWorkbenc
                                EclipseNSISPlugin.getResourceString("nocd.tooltip"), //$NON-NLS-1$
                                mSettings.getNoCD());
 
-        Composite composite  = new Composite(group,SWT.NULL);
-        GridData data = new GridData();
+        Composite composite  = new Composite(group,SWT.NONE);
+        GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
         data.horizontalSpan = 2;
-        data.horizontalAlignment = GridData.FILL;
         composite.setLayoutData(data);
 
         layout = new GridLayout(2, false);
@@ -198,9 +189,7 @@ public abstract class NSISSettingsPage	extends PropertyPage implements IWorkbenc
         button.setText(text);
         button.setToolTipText(tooltipText);
         button.setSelection(state);
-        GridData data = new GridData();
-        data.horizontalSpan = 1;
-        data.horizontalAlignment = GridData.FILL;
+        GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
         button.setLayoutData(data);
         return button;
     }
@@ -210,10 +199,7 @@ public abstract class NSISSettingsPage	extends PropertyPage implements IWorkbenc
     {
         Label label = new Label(composite, SWT.LEFT);
         label.setText(text);
-        GridData data = new GridData();
-        data.horizontalSpan = 1;
-        data.grabExcessHorizontalSpace = false;
-        data.horizontalAlignment = GridData.FILL;
+        GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
         label.setLayoutData(data);
 
         Combo combo = new Combo(composite, SWT.DROP_DOWN|SWT.READ_ONLY);
@@ -225,10 +211,7 @@ public abstract class NSISSettingsPage	extends PropertyPage implements IWorkbenc
         }
         combo.select(selected);
 
-        data = new GridData();
-        data.horizontalSpan = 1;
-        data.horizontalAlignment = GridData.FILL;
-        data.grabExcessHorizontalSpace = false;
+        data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
         combo.setLayoutData(data);
         return combo;
     }
@@ -245,12 +228,11 @@ public abstract class NSISSettingsPage	extends PropertyPage implements IWorkbenc
   
         Label label = new Label(composite, SWT.LEFT);
         label.setText(description);
-        GridData data = new GridData();
+        GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
         data.horizontalSpan = 2;
-        data.horizontalAlignment = GridData.FILL;
         label.setLayoutData(data);
         
-        final Table table = new Table(composite, SWT.FULL_SELECTION | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.BORDER);
+        final Table table = new Table(composite, SWT.FULL_SELECTION | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
         table.setLinesVisible(true);
         table.setHeaderVisible(true);
 
@@ -261,13 +243,8 @@ public abstract class NSISSettingsPage	extends PropertyPage implements IWorkbenc
             }
         }
 
-        data = new GridData();
-        data.horizontalSpan = 1;
-        data.horizontalAlignment = GridData.FILL;
+        data = new GridData(GridData.FILL_BOTH);
         data.verticalSpan = 3;
-        data.verticalAlignment = GridData.FILL;
-        data.grabExcessHorizontalSpace = true;
-        data.grabExcessVerticalSpace = true;
         table.setLayoutData(data);
         Button addButton = createButton(composite,addText,addTooltip);
         if(addAdapter != null) {
@@ -318,20 +295,14 @@ public abstract class NSISSettingsPage	extends PropertyPage implements IWorkbenc
         Button button = new Button(parent, SWT.PUSH | SWT.CENTER);
         button.setText(text);
         button.setToolTipText(tooltipText);
-        GridData data = new GridData();
-        data.horizontalSpan = 1;
-        data.verticalSpan = 1;
-        data.horizontalAlignment = GridData.FILL;
-        data.verticalAlignment = GridData.BEGINNING;
-        data.grabExcessHorizontalSpace = false;
-        data.grabExcessVerticalSpace = false;
+        GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_BEGINNING);
         button.setLayoutData(data);
         return button;
     }
     
     private Control createSymbolsViewer(Composite parent)
     {
-        Composite composite = new Composite(parent,SWT.NULL);
+        Composite composite = new Composite(parent,SWT.NONE);
         SelectionAdapter addAdapter = new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) 
             {
@@ -360,7 +331,7 @@ public abstract class NSISSettingsPage	extends PropertyPage implements IWorkbenc
         mSymbols = createTableViewer(composite, mSettings.getSymbols(), new MapContentProvider(), new MapLabelProvider(),
                                      EclipseNSISPlugin.getResourceString("symbols.description"), //$NON-NLS-1$
                                      new String[] {
-                                         EclipseNSISPlugin.getResourceString("symbols.mName.text"), //$NON-NLS-1$
+                                         EclipseNSISPlugin.getResourceString("symbols.name.text"), //$NON-NLS-1$
                                          EclipseNSISPlugin.getResourceString("symbols.value.text")}, //$NON-NLS-1$
                                      EclipseNSISPlugin.getResourceString("symbols.add.text"), //$NON-NLS-1$
                                      EclipseNSISPlugin.getResourceString("symbols.add.tooltip"), //$NON-NLS-1$
@@ -374,7 +345,7 @@ public abstract class NSISSettingsPage	extends PropertyPage implements IWorkbenc
 
     private Control createInstructionsViewer(Composite parent)
     {
-        Composite composite = new Composite(parent,SWT.NULL);
+        Composite composite = new Composite(parent,SWT.NONE);
         SelectionAdapter addAdapter = new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) 
             {
@@ -412,12 +383,7 @@ public abstract class NSISSettingsPage	extends PropertyPage implements IWorkbenc
                                       EclipseNSISPlugin.getResourceString("instructions.remove.tooltip"), //$NON-NLS-1$
                                       addAdapter,editAdapter,removeAdapter);
         ((GridLayout)composite.getLayout()).marginWidth = 0;
-        GridData data = new GridData();
-        data.horizontalSpan = 1;
-        data.grabExcessHorizontalSpace = true;
-        data.grabExcessVerticalSpace = true;
-        data.horizontalAlignment = GridData.FILL;
-        data.verticalAlignment = GridData.FILL;
+        GridData data = new GridData(GridData.FILL_BOTH);
         composite.setLayoutData(data);
         
         return composite;
@@ -505,5 +471,5 @@ public abstract class NSISSettingsPage	extends PropertyPage implements IWorkbenc
      * @param composite
      * @return
      */
-    protected abstract Composite createEnablerControl(Composite parent);
+    protected abstract Composite createMasterControl(Composite parent);
 }

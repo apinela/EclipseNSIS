@@ -16,9 +16,6 @@ import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.text.*;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.*;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.texteditor.MarkerAnnotation;

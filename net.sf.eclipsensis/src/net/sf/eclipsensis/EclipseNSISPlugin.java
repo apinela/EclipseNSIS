@@ -17,9 +17,11 @@ import java.util.ResourceBundle;
 import net.sf.eclipsensis.console.NSISConsole;
 import net.sf.eclipsensis.console.NSISConsoleLine;
 import net.sf.eclipsensis.dialogs.NSISPreferencePage;
+import net.sf.eclipsensis.help.NSISHelpURLProvider;
 import net.sf.eclipsensis.makensis.MakeNSISRunner;
 import net.sf.eclipsensis.settings.NSISPreferences;
 import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.WinAPI;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
@@ -36,10 +38,14 @@ import org.osgi.framework.BundleContext;
 public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstants
 {
     //The shared instance.
-	private static EclipseNSISPlugin cPlugin;
+    public static final int NSIS_REG_ROOTKEY = WinAPI.HKEY_LOCAL_MACHINE;
+	public static final String NSIS_REG_SUBKEY = "SOFTWARE\\NSIS"; //$NON-NLS-1$
+    public static final String NSIS_REG_VALUE = ""; //$NON-NLS-1$
+    private static EclipseNSISPlugin cPlugin;
     
 	//Resource bundle.
 	private ResourceBundle mResourceBundle;
+    private NSISHelpURLProvider mHelpURLProvider = null;
     private String mName;
     private String mVersion;
 
@@ -66,15 +72,24 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
         mVersion = (String)getBundle().getHeaders().get("Bundle-Version"); //$NON-NLS-1$
         validateOS();
         if(!isConfigured()) {
-            Shell shell = getWorkbench().getActiveWorkbenchWindow().getShell();
-            if(MessageDialog.openConfirm(shell,mName,getResourceString("unconfigured.confirm"))) {
-                configure();
-            }
+            // First try autoconfigure
+            NSISPreferences prefs = NSISPreferences.getPreferences();
+            prefs.setNSISHome(WinAPI.RegQueryStrValue(NSIS_REG_ROOTKEY,NSIS_REG_SUBKEY,NSIS_REG_VALUE));
             if(!isConfigured()) {
-                MessageDialog.openWarning(shell,mName,getResourceString("unconfigured.warning"));
+                Shell shell = getWorkbench().getActiveWorkbenchWindow().getShell();
+                if(MessageDialog.openConfirm(shell,mName,getResourceString("unconfigured.confirm"))) { //$NON-NLS-1$
+                    configure();
+                }
+                if(!isConfigured()) {
+                    MessageDialog.openWarning(shell,mName,getResourceString("unconfigured.warning")); //$NON-NLS-1$
+                }
+            }
+            else {
+                prefs.store();
             }
         }
         MakeNSISRunner.startup();
+        mHelpURLProvider = new NSISHelpURLProvider();
 	}
     
     private void configure()
@@ -89,7 +104,7 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
 
     private void validateOS() throws CoreException
     {
-        String[] supportedOS = Common.loadArrayProperty(getResourceBundle(),"supported.os");
+        String[] supportedOS = Common.loadArrayProperty(getResourceBundle(),"supported.os"); //$NON-NLS-1$
         if(!Common.isEmptyArray(supportedOS)) {
             String osName = System.getProperty("os.name"); //$NON-NLS-1$
             for(int i=0; i<supportedOS.length; i++) {
@@ -111,6 +126,10 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
 	public void stop(BundleContext context) throws Exception {
 		super.stop(context);
         MakeNSISRunner.shutdown();
+        if(mHelpURLProvider != null) {
+            mHelpURLProvider.dispose();
+            mHelpURLProvider = null;
+        }
 	}
 
 	/**
@@ -189,5 +208,13 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
                 }
             }
         }
+    }
+
+    /**
+     * @return Returns the helpURLProvider.
+     */
+    public NSISHelpURLProvider getHelpURLProvider()
+    {
+        return mHelpURLProvider;
     }
 }

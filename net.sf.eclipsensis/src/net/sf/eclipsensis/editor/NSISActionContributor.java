@@ -21,7 +21,9 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.editors.text.TextEditorActionContributor;
-import org.eclipse.ui.texteditor.*;
+import org.eclipse.ui.texteditor.ITextEditor;
+import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
+import org.eclipse.ui.texteditor.RetargetTextEditorAction;
 
 /**
  * Contributes interesting NSIS actions to the desktop's Edit menu and the toolbar.
@@ -49,15 +51,15 @@ public class NSISActionContributor extends TextEditorActionContributor implement
         mTabsToSpaces.setActionDefinitionId(TABS_TO_SPACES_COMMAND_ID);
         
         mInsertFile= new RetargetTextEditorAction(bundle, "insert.file."); //$NON-NLS-1$
-        mInsertFile.setImageDescriptor(ImageManager.getImageDescriptor(bundle.getString("insert.file.image")));
+        mInsertFile.setImageDescriptor(ImageManager.getImageDescriptor(bundle.getString("insert.file.image"))); //$NON-NLS-1$
         mInsertFile.setActionDefinitionId(INSERT_FILE_COMMAND_ID);
         
         mInsertDirectory= new RetargetTextEditorAction(bundle, "insert.directory."); //$NON-NLS-1$
-        mInsertDirectory.setImageDescriptor(ImageManager.getImageDescriptor(bundle.getString("insert.directory.image")));
+        mInsertDirectory.setImageDescriptor(ImageManager.getImageDescriptor(bundle.getString("insert.directory.image"))); //$NON-NLS-1$
         mInsertDirectory.setActionDefinitionId(INSERT_DIRECTORY_COMMAND_ID);
         
         mInsertColor= new RetargetTextEditorAction(bundle, "insert.color."); //$NON-NLS-1$
-        mInsertColor.setImageDescriptor(ImageManager.getImageDescriptor(bundle.getString("insert.color.image")));
+        mInsertColor.setImageDescriptor(ImageManager.getImageDescriptor(bundle.getString("insert.color.image"))); //$NON-NLS-1$
         mInsertColor.setActionDefinitionId(INSERT_COLOR_COMMAND_ID);
         
 /*		mContentAssistTip= new RetargetTextEditorAction(EclipseNSISPlugin.getDefault().getResourceBundle(), "ContentAssistTip."); //$NON-NLS-1$

@@ -10,6 +10,8 @@
 package net.sf.eclipsensis.util;
 
 import java.io.File;
+import java.util.Properties;
+import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -17,9 +19,9 @@ import net.sf.eclipsensis.INSISConstants;
 
 public class NSISValidator implements INSISConstants
 {
-
     public static double MINIMUM_NSIS_VERSION = 2.0;
     private static Pattern cVersionPattern = Pattern.compile("[vV]?(\\d+[\\.\\d+]?).*"); //$NON-NLS-1$
+    public static final String DEFINED_SYMBOLS_PREFIX = "Defined symbols: ";
 
     public static File findNSISExe(File nsisHome)
     {
@@ -35,6 +37,32 @@ public class NSISValidator implements INSISConstants
             }
         }
         return null;
+    }
+
+    public static Properties loadNSISOptions(File nsisEXE)
+    {
+        Properties props = new Properties();
+        String exeName = nsisEXE.getAbsoluteFile().getAbsolutePath();
+        String[] output = Common.runProcessWithOutput(new String[]{exeName,"/HDRINFO"}, //$NON-NLS-1$
+                                                     nsisEXE.getParentFile(),1);
+        if(!Common.isEmptyArray(output)) {
+            for (int i = 0; i < output.length; i++) {
+                if(output[i].startsWith(DEFINED_SYMBOLS_PREFIX)) {
+                    StringTokenizer st = new StringTokenizer(output[i].substring(DEFINED_SYMBOLS_PREFIX.length()),",");
+                    while(st.hasMoreTokens()) {
+                        String token = st.nextToken();
+                        int n = token.indexOf('=');
+                        if(n>0 && token.length() > n+1) {
+                            props.put(token.substring(0,n).trim(),token.substring(n+1).trim());
+                        }
+                        else {
+                            props.setProperty(token,"");
+                        }
+                    }
+                }
+            }
+        }
+        return props;
     }
 
     public static boolean validateNSISHome(String nsisHome)

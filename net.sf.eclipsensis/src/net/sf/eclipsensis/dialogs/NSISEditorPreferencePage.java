@@ -22,8 +22,6 @@ import net.sf.eclipsensis.settings.INSISPreferenceConstants;
 import net.sf.eclipsensis.settings.NSISPreferences;
 import net.sf.eclipsensis.settings.PreferenceStoreWrapper;
 
-import org.eclipse.jdt.internal.ui.JavaPlugin;
-import org.eclipse.jdt.ui.PreferenceConstants;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.PreferenceConverter;
@@ -53,19 +51,19 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
     };
     
     private final String[][] mSyntaxStyleListModel = {
-            {EclipseNSISPlugin.getResourceString("comments.label"),COMMENTS_STYLE},
-            {EclipseNSISPlugin.getResourceString("strings.label"),STRINGS_STYLE},
-            {EclipseNSISPlugin.getResourceString("commands.label"),COMMANDS_STYLE},
-            {EclipseNSISPlugin.getResourceString("installer.attributes.label"),INSTALLER_ATTRIBUTES_STYLE},
-            {EclipseNSISPlugin.getResourceString("compiletime.commands.label"),COMPILETIME_COMMANDS_STYLE},
-            {EclipseNSISPlugin.getResourceString("callbacks.label"),CALLBACKS_STYLE},
-            {EclipseNSISPlugin.getResourceString("instructions.label"),INSTRUCTIONS_STYLE},
-            {EclipseNSISPlugin.getResourceString("instruction.parameters.label"),INSTRUCTION_PARAMETERS_STYLE},
-            {EclipseNSISPlugin.getResourceString("instruction.options.label"),INSTRUCTION_OPTIONS_STYLE},
-            {EclipseNSISPlugin.getResourceString("symbols.label"),SYMBOLS_STYLE},
-            {EclipseNSISPlugin.getResourceString("predefined.variables.label"),PREDEFINED_VARIABLES_STYLE},
-            {EclipseNSISPlugin.getResourceString("userdefined.variables.label"),USERDEFINED_VARIABLES_STYLE},
-            {EclipseNSISPlugin.getResourceString("numbers.label"),NUMBERS_STYLE}
+            {EclipseNSISPlugin.getResourceString("comments.label"),COMMENTS_STYLE}, //$NON-NLS-1$
+            {EclipseNSISPlugin.getResourceString("strings.label"),STRINGS_STYLE}, //$NON-NLS-1$
+            {EclipseNSISPlugin.getResourceString("commands.label"),COMMANDS_STYLE}, //$NON-NLS-1$
+            {EclipseNSISPlugin.getResourceString("installer.attributes.label"),INSTALLER_ATTRIBUTES_STYLE}, //$NON-NLS-1$
+            {EclipseNSISPlugin.getResourceString("compiletime.commands.label"),COMPILETIME_COMMANDS_STYLE}, //$NON-NLS-1$
+            {EclipseNSISPlugin.getResourceString("callbacks.label"),CALLBACKS_STYLE}, //$NON-NLS-1$
+            {EclipseNSISPlugin.getResourceString("instructions.label"),INSTRUCTIONS_STYLE}, //$NON-NLS-1$
+            {EclipseNSISPlugin.getResourceString("instruction.parameters.label"),INSTRUCTION_PARAMETERS_STYLE}, //$NON-NLS-1$
+            {EclipseNSISPlugin.getResourceString("instruction.options.label"),INSTRUCTION_OPTIONS_STYLE}, //$NON-NLS-1$
+            {EclipseNSISPlugin.getResourceString("symbols.label"),SYMBOLS_STYLE}, //$NON-NLS-1$
+            {EclipseNSISPlugin.getResourceString("predefined.variables.label"),PREDEFINED_VARIABLES_STYLE}, //$NON-NLS-1$
+            {EclipseNSISPlugin.getResourceString("userdefined.variables.label"),USERDEFINED_VARIABLES_STYLE}, //$NON-NLS-1$
+            {EclipseNSISPlugin.getResourceString("numbers.label"),NUMBERS_STYLE} //$NON-NLS-1$
     };
     
     private HashMap mStyleMap = new HashMap();
@@ -134,7 +132,7 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
         int i= mAppearanceColorList.getSelectionIndex();
         String key= mAppearanceColorListModel[i][1];
         RGB rgb= PreferenceConverter.getColor(mPreferenceStore, key);
-        mAppearanceColorEditor.setColorValue(rgb);      
+        mAppearanceColorEditor.setRGB(rgb);      
         updateAppearanceColorWidgets(mAppearanceColorListModel[i][2]);
     }
 
@@ -143,7 +141,7 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
         int i= mSyntaxStyleList.getSelectionIndex();
         String key= mSyntaxStyleListModel[i][1];
         NSISSyntaxStyle style = getStyle(key);
-        mSyntaxColorEditor.setColorValue(style.mForeground);
+        mSyntaxColorEditor.setRGB(style.mForeground);
         mStyleBold.setSelection(style.mBold);
         mStyleItalic.setSelection(style.mItalic);
     }
@@ -303,7 +301,7 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
                 int i= mAppearanceColorList.getSelectionIndex();
                 String key= mAppearanceColorListModel[i][1];
                 
-                PreferenceConverter.setValue(mPreferenceStore, key, mAppearanceColorEditor.getColorValue());
+                PreferenceConverter.setValue(mPreferenceStore, key, mAppearanceColorEditor.getRGB());
             }
         });
         
@@ -375,7 +373,7 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
                 int i= mSyntaxStyleList.getSelectionIndex();
                 String key= mSyntaxStyleListModel[i][1];
                 NSISSyntaxStyle style = getStyle(key);
-                style.mForeground = mSyntaxColorEditor.getColorValue();
+                style.mForeground = mSyntaxColorEditor.getRGB();
                 saveStyle(key, style);
             }
         });
@@ -453,7 +451,7 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
         mPreviewer= new NSISSourceViewer(parent, null, null, false, SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
         NSISSourceViewerConfiguration configuration= new NSISSourceViewerConfiguration(mPreferenceStore, true);
         mPreviewer.configure(configuration);
-        Font font= JFaceResources.getFont(PreferenceConstants.EDITOR_TEXT_FONT);
+        Font font= JFaceResources.getFont(JFaceResources.TEXT_FONT);
         mPreviewer.getTextWidget().setFont(font);
         
         String content= loadPreviewContentFromFile("NSISPreview.txt"); //$NON-NLS-1$
@@ -477,10 +475,13 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
                 buffer.append(separator);
             }
         } catch (IOException io) {
-            JavaPlugin.log(io);
+            io.printStackTrace();
         } finally {
             if (reader != null) {
-                try { reader.close(); } catch (IOException e) {}
+                try { 
+                    reader.close();
+                } 
+                catch (IOException e) {}
             }
         }
         return buffer.toString();
@@ -590,6 +591,9 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
         handleAppearanceColorListSelection();
 
         handleSyntaxStyleListSelection();
+        if(mPreviewer != null && mPreviewer.mustProcessPropertyQueue()) {
+            mPreviewer.processPropertyQueue();
+        }
 
         super.performDefaults();
     }
@@ -661,7 +665,7 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
     private boolean validatePositiveNumber(String number, boolean showMessageBox) {
         if (number.length() == 0) {
             if(showMessageBox) {
-                MessageDialog.openError(getShell(),EclipseNSISPlugin.getResourceString("error.title"),
+                MessageDialog.openError(getShell(),EclipseNSISPlugin.getResourceString("error.title"), //$NON-NLS-1$
                                         EclipseNSISPlugin.getResourceString("empty.input")); //$NON-NLS-1$
             }
             return false;
@@ -670,16 +674,16 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
                 int value= Integer.parseInt(number);
                 if (value < 0) {
                     if(showMessageBox) {
-                        MessageDialog.openError(getShell(),EclipseNSISPlugin.getResourceString("error.title"),
-                                                MessageFormat.format(EclipseNSISPlugin.getResourceString("empty.input"), 
+                        MessageDialog.openError(getShell(),EclipseNSISPlugin.getResourceString("error.title"), //$NON-NLS-1$
+                                                MessageFormat.format(EclipseNSISPlugin.getResourceString("invalid.input"),  //$NON-NLS-1$
                                                                      new Object[]{number})); //$NON-NLS-1$
                     }
                     return false;
                 }
             } catch (NumberFormatException e) {
                 if(showMessageBox) {
-                    MessageDialog.openError(getShell(),EclipseNSISPlugin.getResourceString("error.title"),
-                            MessageFormat.format(EclipseNSISPlugin.getResourceString("empty.input"), 
+                    MessageDialog.openError(getShell(),EclipseNSISPlugin.getResourceString("error.title"), //$NON-NLS-1$
+                            MessageFormat.format(EclipseNSISPlugin.getResourceString("invalid.input"),  //$NON-NLS-1$
                                                  new Object[]{number})); //$NON-NLS-1$
                 }
                 return false;
@@ -697,7 +701,7 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
         for (int i= 0; i < mNumberFields.size(); i++) {
             Text text= (Text) mNumberFields.get(i);
             if(!validatePositiveNumber(text.getText(),false)) {
-                text.setText("");
+                text.setText(""); //$NON-NLS-1$
             }
         }
     }

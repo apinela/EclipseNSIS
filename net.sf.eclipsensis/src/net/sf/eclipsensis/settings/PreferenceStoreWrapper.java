@@ -115,28 +115,8 @@ public class PreferenceStoreWrapper implements IPreferenceStore
     
     public void loadDefaults()
     {
-        for(Iterator iter = mNamesMap.entrySet().iterator(); iter.hasNext(); ) {
-            Map.Entry entry = (Map.Entry)iter.next();
-            String name = (String)entry.getKey();
-            Class type = (Class)entry.getValue();
-            if(type.equals(Boolean.class)) {
-                mParentStore.setValue(name,mInternalStore.getDefaultBoolean(name));
-            }
-            else if(type.equals(Integer.class)) {
-                mParentStore.setValue(name,mInternalStore.getDefaultInt(name));
-            }
-            else if(type.equals(Long.class)) {
-                mParentStore.setValue(name,mInternalStore.getDefaultLong(name));
-            }
-            else if(type.equals(Float.class)) {
-                mParentStore.setValue(name,mInternalStore.getDefaultFloat(name));
-            }
-            else if(type.equals(Double.class)) {
-                mParentStore.setValue(name,mInternalStore.getDefaultDouble(name));
-            }
-            else {
-                mParentStore.setValue(name,mInternalStore.getDefaultString(name));
-            }
+        for(Iterator iter = mNamesMap.keySet().iterator(); iter.hasNext(); ) {
+            mInternalStore.setToDefault((String)iter.next());
         }
     }
     

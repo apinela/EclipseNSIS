@@ -13,7 +13,9 @@ import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.editor.text.NSISTextUtility;
 import net.sf.eclipsensis.help.NSISUsageProvider;
 
-import org.eclipse.jface.text.*;
+import org.eclipse.jface.text.IInformationControlCreator;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.information.IInformationProvider;
 import org.eclipse.jface.text.information.IInformationProviderExtension;
 import org.eclipse.jface.text.information.IInformationProviderExtension2;

@@ -15,9 +15,6 @@ import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.*;
-import org.eclipse.jface.text.DocumentEvent;
-import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
 import org.eclipse.jface.text.rules.ITokenScanner;
 

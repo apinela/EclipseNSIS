@@ -10,6 +10,7 @@
 package net.sf.eclipsensis.dialogs;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.util.Common;
 
@@ -96,6 +97,7 @@ public class NSISInstructionDialog extends Dialog implements IDialogConstants
         mInstructionCombo = createCombo(composite, EclipseNSISPlugin.getResourceString("instructions.instruction.text"), //$NON-NLS-1$
                                         EclipseNSISPlugin.getResourceString("instructions.instruction.tooltip"), //$NON-NLS-1$
                                         cInstructionList,instruction);
+        mInstructionCombo.setTextLimit(INSISConstants.DIALOG_TEXT_LIMIT);
         mInstructionCombo.addKeyListener(new KeyAdapter() {
            public void keyReleased(KeyEvent e)
            {
@@ -105,6 +107,7 @@ public class NSISInstructionDialog extends Dialog implements IDialogConstants
         
         mParametersText = createText(composite, EclipseNSISPlugin.getResourceString("instructions.parameters.text"), //$NON-NLS-1$
                                      EclipseNSISPlugin.getResourceString("instructions.parameters.tooltip"),parameters); //$NON-NLS-1$
+        mParametersText.setTextLimit(INSISConstants.DIALOG_TEXT_LIMIT);
         return composite;
     }
     

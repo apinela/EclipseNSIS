@@ -10,7 +10,6 @@
 package net.sf.eclipsensis.editor.text;
 
 import java.util.ArrayList;
-import java.util.regex.Pattern;
 
 import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.util.Common;
@@ -25,8 +24,6 @@ import org.eclipse.swt.graphics.Point;
 public class NSISTextUtility implements INSISConstants
 {
     public static final IRegion EMPTY_REGION = new Region(0,0);
-    private static final Pattern[] cUsagePatterns;
-    private static final Pattern[] cHelpPatterns;
     private static final String[] cValidPartitionTypes = {IDocument.DEFAULT_CONTENT_TYPE,
                                                           NSISPartitionScanner.NSIS_STRING};
     
@@ -38,25 +35,6 @@ public class NSISTextUtility implements INSISConstants
     private static final int REGION1_CONTAINED_BY_REGION2= 4;
     private static final int REGION1_AFTER_REGION2 = 5;
 
-    static {
-        Pattern keyword = null;
-        Pattern define = null;
-        try {
-            keyword = Pattern.compile("^\\s*((?:!|\\.|un\\.)?[\\w]+)\\s",Pattern.CASE_INSENSITIVE);
-        }
-        catch(Throwable t) {
-            keyword = null;
-        }
-        try {
-            define = Pattern.compile("(\\$(?:\\{[\\w\\.]+\\}|[\\w\\.]+))");
-        }
-        catch(Throwable t) {
-            define = null;
-        }
-        cUsagePatterns = new Pattern[]{keyword};
-        cHelpPatterns = new Pattern[]{keyword,define};
-    }
-    
     public static int computeOffset(ISourceViewer sourceViewer, boolean hoverOnly)
     {
         if (sourceViewer == null) {
@@ -315,7 +293,7 @@ public class NSISTextUtility implements INSISConstants
                 if(!Common.isEmptyArray(typedRegions)) {
                     String[] delims = (String[])doc.getLegalLineDelimiters().clone();
                     for(int i=0; i<delims.length; i++) {
-                        delims[i] = "\\"+delims[i];
+                        delims[i] = "\\"+delims[i]; //$NON-NLS-1$
                     }
                     
                     int firstLine = doc.getLineOfOffset(typedRegions[0].getOffset());

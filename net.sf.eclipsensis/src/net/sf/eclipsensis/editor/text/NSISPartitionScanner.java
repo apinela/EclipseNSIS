@@ -10,8 +10,6 @@
 package net.sf.eclipsensis.editor.text;
 
 import java.util.*;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.rules.*;

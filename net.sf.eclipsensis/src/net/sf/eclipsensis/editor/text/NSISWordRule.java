@@ -12,9 +12,6 @@ package net.sf.eclipsensis.editor.text;
 import net.sf.eclipsensis.INSISConstants;
 
 import org.eclipse.jface.text.rules.*;
-import org.eclipse.jface.text.rules.IToken;
-import org.eclipse.jface.text.rules.IWordDetector;
-import org.eclipse.jface.text.rules.WordRule;
 
 public class NSISWordRule extends WordRule implements INSISConstants
 {
@@ -44,7 +41,7 @@ public class NSISWordRule extends WordRule implements INSISConstants
         int c= scanner.read();
         if (fDetector.isWordStart((char) c)) {
             if (fColumn == UNDEFINED || (fColumn == scanner.getColumn() - 1)) {
-                StringBuffer buffer = new StringBuffer("");
+                StringBuffer buffer = new StringBuffer(""); //$NON-NLS-1$
                 buffer.append((char) c);
                 while ((c = scanner.read()) != ICharacterScanner.EOF) {
                     if(c == LINE_CONTINUATION_CHAR) {

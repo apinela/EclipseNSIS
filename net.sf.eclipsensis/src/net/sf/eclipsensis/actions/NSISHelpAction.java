@@ -26,7 +26,7 @@ public class NSISHelpAction extends ActionDelegate implements IEditorActionDeleg
     public NSISHelpAction()
     {
         super();
-        mHelpUrl = new StringBuffer("/").append(PLUGIN_NAME).append("/").append(PLUGIN_HELP_LOCATION).toString();
+        mHelpUrl = new StringBuffer("/").append(PLUGIN_NAME).append("/").append(PLUGIN_HELP_LOCATION).toString(); //$NON-NLS-1$ //$NON-NLS-2$
     }
     
     /* (non-Javadoc)

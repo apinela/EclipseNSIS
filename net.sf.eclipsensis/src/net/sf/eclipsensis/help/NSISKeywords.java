@@ -25,6 +25,7 @@ public class NSISKeywords
     public static final String[] INSTRUCTIONS;
     public static final String[] INSTRUCTION_PARAMETERS;
     public static final String[] INSTRUCTION_OPTIONS;
+    public static final String[] PREDEFINED_PATH_VARIABLES;
     public static final String[] PREDEFINED_VARIABLES;
     public static final String[] CALLBACKS;
     
@@ -44,6 +45,11 @@ public class NSISKeywords
             bundle = null;
         }
         String[] temp = Common.EMPTY_STRING_ARRAY;
+        temp = appendArray(temp, (PREDEFINED_PATH_VARIABLES = Common.loadArrayProperty(bundle, "predefined.path.variables"))); //$NON-NLS-1$
+        temp = appendArray(temp, Common.loadArrayProperty(bundle, "predefined.variables")); //$NON-NLS-1$
+        PREDEFINED_VARIABLES = (String[])temp.clone();
+        Arrays.sort(PREDEFINED_VARIABLES, String.CASE_INSENSITIVE_ORDER);
+        
         temp = appendArray(temp, (SINGLELINE_COMPILETIME_COMMANDS = Common.loadArrayProperty(bundle, "singleline.compiletime.commands"))); //$NON-NLS-1$
         temp = appendArray(temp, (MULTILINE_COMPILETIME_COMMANDS = Common.loadArrayProperty(bundle, "multiline.compiletime.commands"))); //$NON-NLS-1$
         temp = appendArray(temp, (INSTALLER_ATTRIBUTES = Common.loadArrayProperty(bundle, "installer.attributes"))); //$NON-NLS-1$
@@ -51,8 +57,6 @@ public class NSISKeywords
         temp = appendArray(temp, (INSTRUCTIONS = Common.loadArrayProperty(bundle, "instructions"))); //$NON-NLS-1$
         temp = appendArray(temp, (INSTRUCTION_PARAMETERS = Common.loadArrayProperty(bundle, "instruction.parameters"))); //$NON-NLS-1$
         temp = appendArray(temp, (INSTRUCTION_OPTIONS = Common.loadArrayProperty(bundle, "instruction.options"))); //$NON-NLS-1$
-        temp = appendArray(temp, (PREDEFINED_VARIABLES = Common.loadArrayProperty(bundle, "predefined.variables"))); //$NON-NLS-1$
-        Arrays.sort(PREDEFINED_VARIABLES, String.CASE_INSENSITIVE_ORDER);
         temp = appendArray(temp, (CALLBACKS = Common.loadArrayProperty(bundle, "callbacks"))); //$NON-NLS-1$
         ALL_KEYWORDS = temp;
         Arrays.sort(ALL_KEYWORDS, String.CASE_INSENSITIVE_ORDER);

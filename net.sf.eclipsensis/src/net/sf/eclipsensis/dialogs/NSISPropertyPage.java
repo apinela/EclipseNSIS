@@ -36,9 +36,9 @@ public class NSISPropertyPage extends NSISSettingsPage
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.dialogs.NSISSettingsPage#createEnablerControl(org.eclipse.swt.widgets.Composite)
      */
-    protected Composite createEnablerControl(Composite parent)
+    protected Composite createMasterControl(Composite parent)
     {
-        Composite composite = new Composite(parent,SWT.NULL);
+        Composite composite = new Composite(parent,SWT.NONE);
         GridLayout layout = new GridLayout(1,false);
         layout.marginWidth = 0;
         composite.setLayout(layout);

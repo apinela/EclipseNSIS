@@ -58,18 +58,18 @@ public class NSISOutlineContentProvider implements ITreeContentProvider, INSISCo
     
     private static final int ROOT = Integer.MAX_VALUE;
     
-    public static final String[] OUTLINE_KEYWORDS = {"!define", "!ifdef", "!ifndef", "!ifmacrodef", 
-                                                    "!ifnmacrodef", "!endif", "!macro", "!macroend", 
-                                                    "Function", "FunctionEnd", "Section", "SectionEnd", 
-                                                    "SubSection", "SubSectionEnd", "Page", "PageEx", 
-                                                    "Pageexend"};
+    public static final String[] OUTLINE_KEYWORDS = {"!define", "!ifdef", "!ifndef", "!ifmacrodef",  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                                                    "!ifnmacrodef", "!endif", "!macro", "!macroend",  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                                                    "Function", "FunctionEnd", "Section", "SectionEnd",  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                                                    "SubSection", "SubSectionEnd", "Page", "PageEx",  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                                                    "Pageexend"}; //$NON-NLS-1$
     
     public static final Image[] OUTLINE_IMAGES = new Image[OUTLINE_KEYWORDS.length];
     
     static {
         for(int i=0; i<OUTLINE_KEYWORDS.length; i++) {
             OUTLINE_IMAGES[i] = ImageManager.getImage(EclipseNSISPlugin.getResourceString(new StringBuffer("outline.").append( //$NON-NLS-1$
-                                    OUTLINE_KEYWORDS[i].toLowerCase().replaceAll("!","")).append(".icon").toString(),null)); //$NON-NLS-1$
+                                    OUTLINE_KEYWORDS[i].toLowerCase().replaceAll("!","")).append(".icon").toString(),null)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         }
     }
     
@@ -235,7 +235,7 @@ public class NSISOutlineContentProvider implements ITreeContentProvider, INSISCo
                 try {
                     if(nsisToken != null) {
                         Position position = new Position(nsisToken.mRegion.getOffset(),nsisToken.mRegion.getLength());
-                        StringBuffer name = new StringBuffer("");
+                        StringBuffer name = new StringBuffer(""); //$NON-NLS-1$
                         switch(nsisToken.mType) {
                             case DEFINE:
                             case IFDEF:
@@ -285,26 +285,26 @@ public class NSISOutlineContentProvider implements ITreeContentProvider, INSISCo
                                         }
                                         if(temp != null) {
                                             if(nsisToken.mType == SECTION) {
-                                                if( (regionType.equals(IDocument.DEFAULT_CONTENT_TYPE) && !temp.equalsIgnoreCase("/o")) ||
-                                                    !temp.substring(1,temp.length()-1).equalsIgnoreCase("/o")) {
+                                                if( (regionType.equals(IDocument.DEFAULT_CONTENT_TYPE) && !temp.equalsIgnoreCase("/o")) || //$NON-NLS-1$
+                                                    !temp.substring(1,temp.length()-1).equalsIgnoreCase("/o")) { //$NON-NLS-1$
                                                     name.append(temp);
                                                     break;
                                                 }
                                                 else {
-                                                    if(!temp.substring(1,temp.length()-1).equalsIgnoreCase("/o")) {
+                                                    if(!temp.substring(1,temp.length()-1).equalsIgnoreCase("/o")) { //$NON-NLS-1$
                                                         name.append(temp);
                                                         break;
                                                     }
                                                 }
                                             }
                                             else if(nsisToken.mType == PAGE) {
-                                                if( (regionType.equals(IDocument.DEFAULT_CONTENT_TYPE) && temp.equalsIgnoreCase("custom"))||
-                                                     temp.substring(1,temp.length()-1).equalsIgnoreCase("custom")) {
+                                                if( (regionType.equals(IDocument.DEFAULT_CONTENT_TYPE) && temp.equalsIgnoreCase("custom"))|| //$NON-NLS-1$
+                                                     temp.substring(1,temp.length()-1).equalsIgnoreCase("custom")) { //$NON-NLS-1$
                                                     name.append(temp);
                                                 }
                                                 else {
                                                     if(name.length() > 0) {
-                                                        name.append(" ");
+                                                        name.append(" "); //$NON-NLS-1$
                                                     }
                                                     name.append(temp);
                                                     break;
@@ -572,7 +572,7 @@ public class NSISOutlineContentProvider implements ITreeContentProvider, INSISCo
         {
             boolean nonWhiteSpaceFound = false;
 
-            StringBuffer buf = new StringBuffer("");
+            StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
             int c;
             int offset = ((NSISScanner)scanner).getOffset();
             while((c = scanner.read()) != ICharacterScanner.EOF) {

@@ -10,11 +10,10 @@
 package net.sf.eclipsensis.help;
 
 import java.io.*;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.InputStream;
+import java.text.MessageFormat;
 import java.util.Locale;
 
+import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.settings.NSISPreferences;
 import net.sf.eclipsensis.util.Common;
@@ -44,21 +43,12 @@ public class NSISHelpProducer implements IHelpContentProducer, INSISConstants
                         }
                     }
                 }
-                else {
-                    return new ByteArrayInputStream(new StringBuffer("<html><body>NSIS documentation not found in").append(
-                                                                     nsisDir.getAbsolutePath()).append(
-                                                                     " folder.</body></html>").toString().getBytes());
-                }
+                return new ByteArrayInputStream(MessageFormat.format(EclipseNSISPlugin.getResourceString("missing.docs.help.format"), //$NON-NLS-1$
+                                                new Object[]{nsisDir.getAbsolutePath()}).getBytes());
             }
             else {
-                return new ByteArrayInputStream(new StringBuffer("<html><head>").append(
-                                                    "<script language=\"JavaScript\" src=\"../../../../org.eclipse.help/livehelp.js\"> </script>").append(
-                                                    "</head><body><p>Please <a href='javascript:liveAction(").append(
-                                                    "\"").append(PLUGIN_NAME).append("\",").append(
-                                                    "\"").append(NSISLiveHelpAction.class.getName()).append("\",").append(
-                                                    "\"\")'>configure</a> the Eclipse NSIS plugin before accessing help.</p>").append(
-                                                    "<p>Click <a href='javascript:history.go(0)'>here</a> to refresh this page.</p>").append(
-                                                    "</body></html>").toString().getBytes());
+                return new ByteArrayInputStream(MessageFormat.format(EclipseNSISPlugin.getResourceString("unconfigured.docs.help.format"), //$NON-NLS-1$
+                                                new Object[]{PLUGIN_NAME,NSISLiveHelpAction.class.getName()}).getBytes());
             }
         }
         return null;

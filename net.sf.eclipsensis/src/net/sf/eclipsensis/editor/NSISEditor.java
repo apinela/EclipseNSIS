@@ -45,7 +45,8 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IActionDelegate;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.TextEditorAction;
@@ -170,23 +171,23 @@ public class NSISEditor extends TextEditor implements INSISConstants, IPropertyC
         setAction("NSISGotoHelp", a); //$NON-NLS-1$
 
         a = new TextOperationAction(resourceBundle,"sticky.help.",this,ISourceViewer.INFORMATION,true); //$NON-NLS-1$
-        a = new NSISStickyHelpAction(resourceBundle,"sticky.help.",(TextOperationAction)a);
+        a = new NSISStickyHelpAction(resourceBundle,"sticky.help.",(TextOperationAction)a); //$NON-NLS-1$
         a.setActionDefinitionId(STICKY_HELP_COMMAND_ID);
         setAction("NSISStickyHelp", a); //$NON-NLS-1$
 
         a = new TextOperationAction(resourceBundle,"insert.file.",this,NSISSourceViewer.INSERT_FILE,false); //$NON-NLS-1$
         a.setActionDefinitionId(INSERT_FILE_COMMAND_ID);
-        a.setImageDescriptor(ImageManager.getImageDescriptor(resourceBundle.getString("insert.file.image")));
+        a.setImageDescriptor(ImageManager.getImageDescriptor(resourceBundle.getString("insert.file.image"))); //$NON-NLS-1$
         setAction("NSISInsertFile", a); //$NON-NLS-1$
 
         a = new TextOperationAction(resourceBundle,"insert.directory.",this,NSISSourceViewer.INSERT_DIRECTORY,false); //$NON-NLS-1$
         a.setActionDefinitionId(INSERT_DIRECTORY_COMMAND_ID);
-        a.setImageDescriptor(ImageManager.getImageDescriptor(resourceBundle.getString("insert.directory.image")));
+        a.setImageDescriptor(ImageManager.getImageDescriptor(resourceBundle.getString("insert.directory.image"))); //$NON-NLS-1$
         setAction("NSISInsertDirectory", a); //$NON-NLS-1$
 
         a = new TextOperationAction(resourceBundle,"insert.color.",this,NSISSourceViewer.INSERT_COLOR,false); //$NON-NLS-1$
         a.setActionDefinitionId(INSERT_COLOR_COMMAND_ID);
-        a.setImageDescriptor(ImageManager.getImageDescriptor(resourceBundle.getString("insert.color.image")));
+        a.setImageDescriptor(ImageManager.getImageDescriptor(resourceBundle.getString("insert.color.image"))); //$NON-NLS-1$
         setAction("NSISInsertColor", a); //$NON-NLS-1$
 
         a = new TextOperationAction(resourceBundle,"tabs.to.spaces.",this,NSISSourceViewer.TABS_TO_SPACES,false); //$NON-NLS-1$
@@ -198,14 +199,14 @@ public class NSISEditor extends TextEditor implements INSISConstants, IPropertyC
         mCurrentPosition = null;
         if (mOutlinePage != null) {
             mOutlinePage.setInput(null);
+            mOutlinePage.dispose();
+            mOutlinePage = null;
         }
-        else if (mOutlineContentProvider != null) {
+        if (mOutlineContentProvider != null) {
             mOutlineContentProvider.inputChanged(getEditorInput(),null);
+            mOutlineContentProvider.dispose();
+            mOutlineContentProvider = null;
         }
-        mOutlinePage.dispose();
-        mOutlinePage = null;
-        mOutlineContentProvider.dispose();
-        mOutlineContentProvider = null;
         getSelectionProvider().removeSelectionChangedListener(this);
         ((ProjectionViewer)getSourceViewer()).removePostSelectionChangedListener(this);
         NSISPreferences.getPreferences().getPreferenceStore().removePropertyChangeListener(this);

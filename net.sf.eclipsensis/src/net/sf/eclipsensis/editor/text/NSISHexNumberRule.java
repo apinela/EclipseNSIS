@@ -37,7 +37,7 @@ public class NSISHexNumberRule extends NSISWordPatternRule
                        (character >= 'A' && character <= 'F') ||
                        (character >= 'a' && character <= 'f');
             }
-        },"0x",null, token);
+        },"0x",null, token); //$NON-NLS-1$
     }
 
     /* (non-Javadoc)

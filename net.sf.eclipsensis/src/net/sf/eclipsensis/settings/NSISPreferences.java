@@ -10,6 +10,7 @@
 package net.sf.eclipsensis.settings;
 
 import java.io.File;
+import java.util.Properties;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.editor.text.NSISSyntaxStyle;
@@ -25,6 +26,8 @@ public class NSISPreferences extends NSISSettings
     private IPreferenceStore mPreferenceStore = null;
     private File mNSISExe = null;
     private String mNSISHome = null;
+    private boolean mUseDocsHelp = true;
+    private Properties mNSISOptions = null;
     
     private static NSISPreferences cInstance = null;
     
@@ -33,7 +36,8 @@ public class NSISPreferences extends NSISSettings
         if(cInstance == null) {
             synchronized(NSISPreferences.class) {
                 if(cInstance == null) {
-                    cInstance = new NSISPreferences(EclipseNSISPlugin.getDefault().getPreferenceStore());
+                    IPreferenceStore preferenceStore = EclipseNSISPlugin.getDefault().getPreferenceStore();
+                    cInstance = new NSISPreferences(preferenceStore);
                     cInstance.load();
                 }
             }
@@ -86,6 +90,7 @@ public class NSISPreferences extends NSISSettings
     private void initializeNSISPreferences()
     {
         initializePreference(NSIS_HOME,""); //$NON-NLS-1$
+        initializePreference(USE_DOCS_HELP,Boolean.TRUE); //$NON-NLS-1$
         initializePreference(HDRINFO,(getDefaultHdrInfo()?Boolean.TRUE:Boolean.FALSE));
         initializePreference(LICENSE,(getDefaultLicense()?Boolean.TRUE:Boolean.FALSE));
         initializePreference(NOCONFIG,(getDefaultNoConfig()?Boolean.TRUE:Boolean.FALSE));
@@ -96,6 +101,7 @@ public class NSISPreferences extends NSISSettings
         initializePreference(SYMBOLS,""); //$NON-NLS-1$
         
         setNSISHome(mPreferenceStore.getString(NSIS_HOME));
+        setUseDocsHelp(mPreferenceStore.getBoolean(USE_DOCS_HELP));
     }
 
     private void initializeEditorPreference(String name, IPreferenceStore defaultStore, Class type)
@@ -187,6 +193,7 @@ public class NSISPreferences extends NSISSettings
     public void store()
     {
         setValue(NSIS_HOME,mNSISHome);
+        setValue(USE_DOCS_HELP,mUseDocsHelp);
         super.store();
     }
 
@@ -203,9 +210,10 @@ public class NSISPreferences extends NSISSettings
      */
     public void setNSISHome(String nsisHome)
     {
-        mNSISExe = NSISValidator.findNSISExe(new File(nsisHome));
+        mNSISExe = (nsisHome==null?null:NSISValidator.findNSISExe(new File(nsisHome)));
         if(mNSISExe != null) {
             mNSISHome = nsisHome;
+            mNSISOptions = NSISValidator.loadNSISOptions(mNSISExe);
         }
         else {
             mNSISHome = ""; //$NON-NLS-1$
@@ -217,6 +225,21 @@ public class NSISPreferences extends NSISSettings
         return (mNSISExe !=null?mNSISExe.getAbsolutePath():null);
     }
     
+    /**
+     * @return Returns the useDocsHelp.
+     */
+    public boolean isUseDocsHelp()
+    {
+        return mUseDocsHelp;
+    }
+
+    /**
+     * @param useDocsHelp The useDocsHelp to set.
+     */
+    public void setUseDocsHelp(boolean useDocsHelp)
+    {
+        mUseDocsHelp = useDocsHelp;
+    }
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.settings.NSISSettings#getBoolean(java.lang.String)
      */
@@ -287,5 +310,10 @@ public class NSISPreferences extends NSISSettings
     protected void removeString(String name)
     {
         mPreferenceStore.setValue(name, IPreferenceStore.STRING_DEFAULT_DEFAULT);
+    }
+
+    public String getNSISOption(String option)
+    {
+        return mNSISOptions.getProperty(option);
     }
 }

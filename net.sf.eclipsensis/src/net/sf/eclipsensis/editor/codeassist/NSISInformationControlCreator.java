@@ -30,7 +30,7 @@ import org.eclipse.ui.keys.KeySequence;
 public class NSISInformationControlCreator implements IInformationControlCreator,INSISConstants //,ICommandListener
 {
     private ICommand[] mCommands = null;
-    private int mStyle = SWT.NULL;
+    private int mStyle = SWT.NONE;
     private DefaultInformationControl.IInformationPresenter mInformationPresenter =
         new DefaultInformationControl.IInformationPresenter()
         {
@@ -51,7 +51,7 @@ public class NSISInformationControlCreator implements IInformationControlCreator
 
     public NSISInformationControlCreator(String[] commandIds)
     {
-        this(commandIds,SWT.NULL);
+        this(commandIds,SWT.NONE);
     }
     
     public NSISInformationControlCreator(String[] commandIds, int style)
@@ -90,7 +90,7 @@ public class NSISInformationControlCreator implements IInformationControlCreator
                 }       
             }
             if(params.size() > 0) {
-                String format = EclipseNSISPlugin.getResourceString("information.status.format."+params.size()/2);
+                String format = EclipseNSISPlugin.getResourceString("information.status.format."+params.size()/2); //$NON-NLS-1$
                 if(!Common.isEmpty(format)) {
                     statusText = MessageFormat.format(format, params.toArray());
                 }

@@ -17,6 +17,7 @@ public interface INSISPreferenceConstants
 {
 
     public static final String NSIS_HOME = "nsisHome"; //$NON-NLS-1$
+    public static final String USE_DOCS_HELP = "useDocsHelp"; //$NON-NLS-1$
     public static final String USE_DEFAULTS = "useDefaults"; //$NON-NLS-1$
     public static final String HDRINFO = "hdrInfo"; //$NON-NLS-1$
     public static final String VERBOSITY = "verbosity"; //$NON-NLS-1$
@@ -57,19 +58,19 @@ public interface INSISPreferenceConstants
     public static final String SELECTION_FOREGROUND_DEFAULT_COLOR=AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_FOREGROUND_DEFAULT_COLOR;
     public static final String SELECTION_BACKGROUND_COLOR=AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_BACKGROUND_COLOR;
     public static final String SELECTION_BACKGROUND_DEFAULT_COLOR=AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_BACKGROUND_DEFAULT_COLOR;
-    public static final String USE_SPACES_FOR_TABS = "useSpacesForTabs";
+    public static final String USE_SPACES_FOR_TABS = "useSpacesForTabs"; //$NON-NLS-1$
     
-    public static final String COMMENTS_STYLE = "commentsStyle";
-    public static final String COMPILETIME_COMMANDS_STYLE = "compiletimeCommandsStyle";
-    public static final String INSTALLER_ATTRIBUTES_STYLE = "installerAttributesStyle";
-    public static final String COMMANDS_STYLE = "commandsStyle";
-    public static final String INSTRUCTIONS_STYLE = "instructionsStyle";
-    public static final String INSTRUCTION_PARAMETERS_STYLE = "instructionParametersStyle";
-    public static final String INSTRUCTION_OPTIONS_STYLE = "instructionOptionsStyle";;
-    public static final String PREDEFINED_VARIABLES_STYLE = "predefinedVariablesStyle";
-    public static final String USERDEFINED_VARIABLES_STYLE = "userdefinedVariablesStyle";
-    public static final String SYMBOLS_STYLE = "symbolsStyle";
-    public static final String CALLBACKS_STYLE = "callbacksStyle";
-    public static final String STRINGS_STYLE = "stringsStyle";
-    public static final String NUMBERS_STYLE = "numbersStyle";
+    public static final String COMMENTS_STYLE = "commentsStyle"; //$NON-NLS-1$
+    public static final String COMPILETIME_COMMANDS_STYLE = "compiletimeCommandsStyle"; //$NON-NLS-1$
+    public static final String INSTALLER_ATTRIBUTES_STYLE = "installerAttributesStyle"; //$NON-NLS-1$
+    public static final String COMMANDS_STYLE = "commandsStyle"; //$NON-NLS-1$
+    public static final String INSTRUCTIONS_STYLE = "instructionsStyle"; //$NON-NLS-1$
+    public static final String INSTRUCTION_PARAMETERS_STYLE = "instructionParametersStyle"; //$NON-NLS-1$
+    public static final String INSTRUCTION_OPTIONS_STYLE = "instructionOptionsStyle";; //$NON-NLS-1$
+    public static final String PREDEFINED_VARIABLES_STYLE = "predefinedVariablesStyle"; //$NON-NLS-1$
+    public static final String USERDEFINED_VARIABLES_STYLE = "userdefinedVariablesStyle"; //$NON-NLS-1$
+    public static final String SYMBOLS_STYLE = "symbolsStyle"; //$NON-NLS-1$
+    public static final String CALLBACKS_STYLE = "callbacksStyle"; //$NON-NLS-1$
+    public static final String STRINGS_STYLE = "stringsStyle"; //$NON-NLS-1$
+    public static final String NUMBERS_STYLE = "numbersStyle"; //$NON-NLS-1$
 }

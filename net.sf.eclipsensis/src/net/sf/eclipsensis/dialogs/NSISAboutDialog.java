@@ -16,8 +16,8 @@ import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.util.ColorManager;
 import net.sf.eclipsensis.util.ImageManager;
 
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
@@ -26,9 +26,6 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.events.IHyperlinkListener;
 import org.eclipse.ui.forms.widgets.Hyperlink;
@@ -46,24 +43,24 @@ public class NSISAboutDialog extends Dialog implements INSISConstants, IHyperlin
     private static Color cBackground;
     
     static {
-        cAboutImage = ImageManager.getImage(EclipseNSISPlugin.getResourceString("about.icon"));
+        cAboutImage = ImageManager.getImage(EclipseNSISPlugin.getResourceString("about.icon")); //$NON-NLS-1$
         
         EclipseNSISPlugin plugin = EclipseNSISPlugin.getDefault();
         String name = plugin.getName();
-        cAboutTitle = MessageFormat.format(EclipseNSISPlugin.getResourceString("about.title.format"),
+        cAboutTitle = MessageFormat.format(EclipseNSISPlugin.getResourceString("about.title.format"), //$NON-NLS-1$
                                            new Object[]{name});
         
-        cAboutHeader = MessageFormat.format(EclipseNSISPlugin.getResourceString("about.header.format"),
+        cAboutHeader = MessageFormat.format(EclipseNSISPlugin.getResourceString("about.header.format"), //$NON-NLS-1$
                                            new Object[]{name, plugin.getVersion()});
 
-        cAboutText = EclipseNSISPlugin.getResourceString("about.text");
+        cAboutText = EclipseNSISPlugin.getResourceString("about.text"); //$NON-NLS-1$
 
-        cCPLURL = EclipseNSISPlugin.getResourceString("cpl.url");
+        cCPLURL = EclipseNSISPlugin.getResourceString("cpl.url"); //$NON-NLS-1$
 
-        cAboutURLText = MessageFormat.format(EclipseNSISPlugin.getResourceString("about.url.format"),
+        cAboutURLText = MessageFormat.format(EclipseNSISPlugin.getResourceString("about.url.format"), //$NON-NLS-1$
                                              new Object[]{name});
 
-        cPluginHomeURL = EclipseNSISPlugin.getResourceString("plugin.home.url");
+        cPluginHomeURL = EclipseNSISPlugin.getResourceString("plugin.home.url"); //$NON-NLS-1$
 
         cBackground = ColorManager.getColor(new RGB(255,255,255));
     }
@@ -95,7 +92,7 @@ public class NSISAboutDialog extends Dialog implements INSISConstants, IHyperlin
     }
 
     protected Control createDialogArea(Composite parent) {
-        Composite composite = new Composite(parent,SWT.BORDER | SWT.SHADOW_ETCHED_IN);
+        Composite composite = new Composite(parent,SWT.NONE);
         composite.setBackground(cBackground);
         GridLayout layout = new GridLayout(3,false);
         composite.setLayout(layout);
@@ -103,34 +100,24 @@ public class NSISAboutDialog extends Dialog implements INSISConstants, IHyperlin
         Label label = new Label(composite, SWT.CENTER);
         label.setBackground(cBackground);
         label.setImage(cAboutImage);
-        GridData data = new GridData();
-        data.verticalAlignment = GridData.BEGINNING;
-        data.horizontalAlignment = GridData.CENTER;
-        data.horizontalSpan = 1;
-        data.verticalSpan = 6;
+        GridData data = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_CENTER);
+        data.verticalSpan = 5;
         label.setLayoutData(data);
         
         label = new Label(composite, SWT.LEFT);
         label.setBackground(cBackground);
         label.setFont(JFaceResources.getBannerFont());
         label.setText(cAboutHeader);
-        data = new GridData();
-        data.verticalAlignment = GridData.CENTER;
-        data.horizontalAlignment = GridData.BEGINNING;
+        data = new GridData(GridData.VERTICAL_ALIGN_CENTER | GridData.FILL_HORIZONTAL);
         data.horizontalSpan = 2;
-        data.verticalSpan = 1;
-        data.grabExcessHorizontalSpace = true;
         label.setLayoutData(data);
         
         label = new Label(composite, SWT.LEFT);
         label.setBackground(cBackground);
         label.setFont(JFaceResources.getDialogFont());
         label.setText(cAboutText);
-        data = new GridData();
-        data.verticalAlignment = GridData.END;
-        data.horizontalAlignment = GridData.BEGINNING;
+        data = new GridData(GridData.VERTICAL_ALIGN_END | GridData.HORIZONTAL_ALIGN_BEGINNING);
         data.horizontalSpan = 2;
-        data.verticalSpan = 1;
         label.setLayoutData(data);
 
         Hyperlink link = new Hyperlink(composite,SWT.LEFT);
@@ -140,28 +127,21 @@ public class NSISAboutDialog extends Dialog implements INSISConstants, IHyperlin
         link.setUnderlined(true);
         link.setFont(JFaceResources.getDialogFont());
         link.addHyperlinkListener(this);
-        data = new GridData();
-        data.verticalAlignment = GridData.BEGINNING;
-        data.horizontalAlignment = GridData.BEGINNING;
+        data = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_BEGINNING);
         data.horizontalSpan = 2;
-        data.verticalSpan = 1;
+        link.setLayoutData(data);
 
-        label = new Label(composite, SWT.NULL);
+        label = new Label(composite, SWT.NONE);
         label.setBackground(cBackground);
         data = new GridData();
         data.horizontalSpan = 2;
-        data.verticalSpan = 1;
         label.setLayoutData(data);
 
         label = new Label(composite, SWT.LEFT);
         label.setBackground(cBackground);
         label.setFont(JFaceResources.getDialogFont());
         label.setText(cAboutURLText);
-        data = new GridData();
-        data.verticalAlignment = GridData.END;
-        data.horizontalAlignment = GridData.BEGINNING;
-        data.horizontalSpan = 1;
-        data.verticalSpan = 1;
+        data = new GridData(GridData.VERTICAL_ALIGN_END | GridData.HORIZONTAL_ALIGN_BEGINNING);
         label.setLayoutData(data);
 
         link = new Hyperlink(composite,SWT.LEFT);
@@ -171,15 +151,26 @@ public class NSISAboutDialog extends Dialog implements INSISConstants, IHyperlin
         link.setUnderlined(true);
         link.setFont(JFaceResources.getDialogFont());
         link.addHyperlinkListener(this);
-        data = new GridData();
-        data.verticalAlignment = GridData.BEGINNING;
-        data.horizontalAlignment = GridData.BEGINNING;
-        data.horizontalSpan = 1;
-        data.verticalSpan = 1;
+        data = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_BEGINNING);
+        link.setLayoutData(data);
 
+        label = new Label(parent, SWT.SEPARATOR | SWT.HORIZONTAL);
+        data = new GridData(GridData.FILL_HORIZONTAL);
+        data.horizontalSpan = ((GridLayout)parent.getLayout()).numColumns;
+        label.setLayoutData(data);
+        
         return composite;
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.Dialog#createButtonBar(org.eclipse.swt.widgets.Composite)
+     */
+    protected Control createButtonBar(Composite parent)
+    {
+        Control ctl = super.createButtonBar(parent);
+        getButton(IDialogConstants.OK_ID).setFocus();
+        return ctl;
+    }
     /* (non-Javadoc)
      * @see org.eclipse.ui.forms.events.IHyperlinkListener#linkActivated(org.eclipse.ui.forms.events.HyperlinkEvent)
      */

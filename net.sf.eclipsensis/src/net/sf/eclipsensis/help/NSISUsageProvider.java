@@ -11,13 +11,13 @@ package net.sf.eclipsensis.help;
 
 import java.util.Properties;
 
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
-
 import net.sf.eclipsensis.settings.INSISPreferenceConstants;
 import net.sf.eclipsensis.settings.NSISPreferences;
 import net.sf.eclipsensis.util.CaseInsensitiveProperties;
 import net.sf.eclipsensis.util.Common;
+
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 
 public class NSISUsageProvider
 {

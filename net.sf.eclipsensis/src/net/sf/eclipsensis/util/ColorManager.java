@@ -30,7 +30,8 @@ public class ColorManager
     public static final RGB NAVY_BLUE = new RGB(0,0,0x80);
     public static final RGB TURQUOISE = new RGB(0x40,0xe0,0xd0);
     public static final RGB DARK_SEA_GREEN = new RGB(0x8f,0xbc,0x8f);
-    public static final RGB DEFAULT = new RGB(0, 0, 0);
+    public static final RGB WHITE = new RGB(0xff, 0xff, 0xff);
+    public static final RGB BLACK = new RGB(0, 0, 0);
 
     private static ColorRegistry mColorTable = new ColorRegistry();
 

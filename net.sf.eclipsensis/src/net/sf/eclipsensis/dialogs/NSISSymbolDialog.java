@@ -10,6 +10,7 @@
 package net.sf.eclipsensis.dialogs;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.jface.dialogs.Dialog;
@@ -99,8 +100,11 @@ public class NSISSymbolDialog extends Dialog implements IDialogConstants
                getButton(OK_ID).setEnabled(!Common.isEmpty(mNameText.getText()));
            }
         });
+        mNameText.setTextLimit(INSISConstants.DIALOG_TEXT_LIMIT);
+        
         mValueText = createText(composite, EclipseNSISPlugin.getResourceString("symbols.value.text"), //$NON-NLS-1$
                                EclipseNSISPlugin.getResourceString("symbols.value.tooltip"),mValue); //$NON-NLS-1$
+        mValueText.setTextLimit(INSISConstants.DIALOG_TEXT_LIMIT);
         return composite;
     }
     

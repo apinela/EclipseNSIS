@@ -30,6 +30,7 @@ import org.eclipse.ui.PlatformUI;
 public class NSISPreferencePage	extends NSISSettingsPage
 {
     private Text mNSISHome = null;
+    private Button mUseDocsHelp = null;
     
     public static void show()
     {
@@ -66,28 +67,21 @@ public class NSISPreferencePage	extends NSISSettingsPage
      * @param composite
      * @return
      */
-    protected Composite createEnablerControl(Composite parent)
+    protected Composite createMasterControl(Composite parent)
     {
-        Composite composite = new Composite(parent,SWT.NULL);
+        Composite composite = new Composite(parent,SWT.NONE);
         GridLayout layout = new GridLayout(3,false);
         layout.marginWidth = 0;
         composite.setLayout(layout);
         
         Label label = new Label(composite, SWT.LEFT);
         label.setText(EclipseNSISPlugin.getResourceString("nsis.home.text")); //$NON-NLS-1$
-        GridData data = new GridData();
-        data.horizontalSpan = 1;
-        data.horizontalAlignment = GridData.FILL;
+        GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
         label.setLayoutData(data);
         
         mNSISHome = new Text(composite, SWT.SINGLE | SWT.BORDER);
         mNSISHome.setToolTipText(EclipseNSISPlugin.getResourceString("nsis.home.tooltip")); //$NON-NLS-1$
-        data = new GridData();
-        data.horizontalAlignment = GridData.FILL;
-        data.horizontalSpan = 1;
-        data.grabExcessHorizontalSpace = true;
-        data.verticalAlignment = GridData.CENTER;
-        data.grabExcessVerticalSpace = false;
+        data = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_CENTER);
         mNSISHome.setLayoutData(data);
         mNSISHome.setText(((NSISPreferences)getSettings()).getNSISHome());
         mNSISHome.addFocusListener(new FocusAdapter() {
@@ -108,15 +102,15 @@ public class NSISPreferencePage	extends NSISSettingsPage
                 enableControls(state);
             }
         });
-        Button button = new Button(composite, SWT.PUSH | SWT.CENTER);
-        button.setText(EclipseNSISPlugin.getResourceString("browse.text")); //$NON-NLS-1$
-        button.setToolTipText(EclipseNSISPlugin.getResourceString("browse.tooltip")); //$NON-NLS-1$
+
+        Button button = createButton(composite, EclipseNSISPlugin.getResourceString("browse.text"), //$NON-NLS-1$
+                                     EclipseNSISPlugin.getResourceString("browse.tooltip")); //$NON-NLS-1$
         button.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) 
             {
                 Shell shell = getShell();
                 DirectoryDialog dialog = new DirectoryDialog(shell);
-        
+                dialog.setMessage(EclipseNSISPlugin.getResourceString("nsis.home.message"));
                 String nsisHome = dialog.open();
                 if (!Common.isEmpty(nsisHome)) { 
                     if(NSISValidator.validateNSISHome(nsisHome)) {
@@ -132,14 +126,22 @@ public class NSISPreferencePage	extends NSISSettingsPage
                 }
             }
         });
-        data = new GridData();
-        data.horizontalSpan = 1;
-        data.horizontalAlignment = GridData.FILL;
-        button.setLayoutData(data);
         
+        mUseDocsHelp = createCheckBox(composite, EclipseNSISPlugin.getResourceString("use.docs.help.text"), //$NON-NLS-1$
+                                      EclipseNSISPlugin.getResourceString("use.docs.help.tooltip"), //$NON-NLS-1$
+                                      ((NSISPreferences)getSettings()).isUseDocsHelp());
+        ((GridData)mUseDocsHelp.getLayoutData()).horizontalSpan = 2;
         return composite;
     }
     
+    /* (non-Javadoc)
+     * @see net.sf.eclipsensis.dialogs.NSISSettingsPage#enableControls(boolean)
+     */
+    protected void enableControls(boolean state)
+    {
+        mUseDocsHelp.setEnabled(state);
+        super.enableControls(state);
+    }
     /* (non-Javadoc)
      * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
      */
@@ -154,6 +156,7 @@ public class NSISPreferencePage	extends NSISSettingsPage
         mCompressor.select(getSettings().getDefaultCompressor());
         mInstructions.setInput(getSettings().getDefaultInstructions());
         mSymbols.setInput(getSettings().getDefaultSymbols());
+        mUseDocsHelp.setSelection(true);
     }
 
     /* (non-Javadoc)
@@ -162,6 +165,7 @@ public class NSISPreferencePage	extends NSISSettingsPage
     public boolean performOk()
     {
         ((NSISPreferences)getSettings()).setNSISHome(mNSISHome.getText());
+        ((NSISPreferences)getSettings()).setUseDocsHelp(mUseDocsHelp.getSelection());
         return super.performOk();
     }
 }

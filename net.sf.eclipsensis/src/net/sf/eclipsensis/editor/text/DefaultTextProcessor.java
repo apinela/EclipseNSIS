@@ -19,7 +19,7 @@ import org.eclipse.jface.text.rules.Token;
 public class DefaultTextProcessor implements INSISTextProcessor, INSISConstants
 {
     protected ICharacterScanner mScanner;
-    protected StringBuffer mBuffer = new StringBuffer("");
+    protected StringBuffer mBuffer = new StringBuffer(""); //$NON-NLS-1$
     
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.editor.codeassist.NSISTextUtility.INSISTextProcessor#setScanner(org.eclipse.jface.text.rules.ICharacterScanner)

@@ -38,19 +38,19 @@ public class NSISSyntaxStyle
 
     public String toString()
     {
-        StringBuffer buf = new StringBuffer("");
+        StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
         RGB rgb = mForeground;
         if(rgb != null) {
             buf.append(StringConverter.asString(rgb));
         }
-        buf.append("|");
+        buf.append("|"); //$NON-NLS-1$
         rgb = mBackground;
         if(rgb != null) {
             buf.append(StringConverter.asString(rgb));
         }
-        buf.append("|");
+        buf.append("|"); //$NON-NLS-1$
         buf.append(StringConverter.asString(mBold));
-        buf.append("|");
+        buf.append("|"); //$NON-NLS-1$
         buf.append(StringConverter.asString(mItalic));
         
         return buf.toString();

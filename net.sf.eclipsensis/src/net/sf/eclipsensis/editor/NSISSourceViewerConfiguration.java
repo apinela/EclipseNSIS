@@ -151,7 +151,7 @@ public class NSISSourceViewerConfiguration extends SourceViewerConfiguration imp
             return ((NSISSourceViewer)sourceViewer).calculatePrefixes();
         }
         else {
-            return new String[]{"\t","    "};
+            return new String[]{"\t","    "}; //$NON-NLS-1$ //$NON-NLS-2$
         }
     }
 

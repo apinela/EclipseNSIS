@@ -24,6 +24,9 @@ public interface INSISConstants
     public static final String PLUGIN_HELP_LOCATION = PLUGIN_HELP_LOCATION_PREFIX+"overview.html"; //$NON-NLS-1$
     public static final String NSIS_REFERENCE_PREFIX = PLUGIN_HELP_LOCATION_PREFIX+"NSIS/"; //$NON-NLS-1$
     public static final String NSIS_REFERENCE_DOCS_PREFIX = NSIS_REFERENCE_PREFIX+"Docs/"; //$NON-NLS-1$
+    public static final String NSIS_REFERENCE_CHM_LOCATION = "NSIS.chm"; //$NON-NLS-1$
+    public static final String LANGUAGE_FILES_LOCATION = "Contrib/Language files"; //$NON-NLS-1$
+    public static final String LANGUAGE_FILES_FILTER = ".nlf"; //$NON-NLS-1$
     public static final String RESOURCE_BUNDLE = "net.sf.eclipsensis.EclipseNSISPluginResources"; //$NON-NLS-1$
     public static final String CONSOLE_ID = "net.sf.eclipsensis.console.NSISConsole"; //$NON-NLS-1$
     public static final String PROBLEM_ID = "net.sf.eclipsensis.NSISCompileProblem"; //$NON-NLS-1$
@@ -43,4 +46,7 @@ public interface INSISConstants
     public static final char LINE_CONTINUATION_CHAR = '\\';
     public static final char[][] QUOTE_ESCAPE_SEQUENCES = {{'$','\\','"'},{'$','\\','\''},{'$','\\','`'}};
     public static final char[][] WHITESPACE_ESCAPE_SEQUENCES = {{'$','\\','r'},{'$','\\','n'},{'$','\\','t'}};
+    
+    public static final int DIALOG_TEXT_LIMIT = 100;
+    public static final int DEFAULT_NSIS_TEXT_LIMIT = 1024;
 }

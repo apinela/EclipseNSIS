@@ -15,7 +15,6 @@ import java.util.List;
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.editor.codeassist.NSISInformationUtility;
 import net.sf.eclipsensis.editor.text.NSISTextUtility;
-import net.sf.eclipsensis.help.NSISHelpURLProvider;
 import net.sf.eclipsensis.settings.INSISPreferenceConstants;
 import net.sf.eclipsensis.settings.IPropertyAdaptable;
 import net.sf.eclipsensis.util.Common;
@@ -33,7 +32,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 
 public class NSISSourceViewer extends ProjectionViewer implements IPropertyChangeListener
@@ -251,21 +249,21 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
             case INSERT_FILE:
             {
                 FileDialog dialog = new FileDialog(getControl().getShell(),SWT.OPEN);
-                dialog.setText(EclipseNSISPlugin.getResourceString("insert.file.description"));
+                dialog.setText(EclipseNSISPlugin.getResourceString("insert.file.description")); //$NON-NLS-1$
                 text = dialog.open();
                 break;
             }
             case INSERT_DIRECTORY:
             {
                 DirectoryDialog dialog = new DirectoryDialog(getControl().getShell());
-                dialog.setText(EclipseNSISPlugin.getResourceString("insert.directory.description"));
+                dialog.setText(EclipseNSISPlugin.getResourceString("insert.directory.description")); //$NON-NLS-1$
                 text = dialog.open();
                 break;
             }
             case INSERT_COLOR:
             {
                 ColorDialog dialog = new ColorDialog(getControl().getShell());
-                dialog.setText(EclipseNSISPlugin.getResourceString("insert.color.description"));
+                dialog.setText(EclipseNSISPlugin.getResourceString("insert.color.description")); //$NON-NLS-1$
                 RGB rgb = dialog.open();
                 if(rgb != null) {
                     text = new StringBuffer(Common.leftPad(Integer.toHexString(rgb.red),2,'0')).append(
@@ -323,10 +321,7 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
             String keyword;
             IRegion region = NSISInformationUtility.getInformationRegionAtOffset(this,offset,false);
             keyword = NSISTextUtility.getRegionText(getDocument(),region);
-            url = NSISHelpURLProvider.getHelpURL(keyword);
-            if(!Common.isEmpty(url)) {
-                WorkbenchHelp.displayHelpResource(url);
-            }
+            EclipseNSISPlugin.getDefault().getHelpURLProvider().showHelpURL(keyword);
         }
     }
 

@@ -13,9 +13,6 @@ import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.help.NSISKeywords;
 
 import org.eclipse.jface.text.rules.*;
-import org.eclipse.jface.text.rules.ICharacterScanner;
-import org.eclipse.jface.text.rules.IRule;
-import org.eclipse.jface.text.rules.IToken;
 
 public class NSISVariablesWordRule implements IRule, INSISConstants
 {

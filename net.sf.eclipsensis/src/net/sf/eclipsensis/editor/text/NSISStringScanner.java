@@ -76,7 +76,7 @@ public class NSISStringScanner extends NSISRuleBasedScanner
                         {
                             return super.isWordPart(character) || character == '{' || character == '}';
                         }
-                    }, "${","}",createTokenFromPreference(INSISPreferenceConstants.SYMBOLS_STYLE));
+                    }, "${","}",createTokenFromPreference(INSISPreferenceConstants.SYMBOLS_STYLE)); //$NON-NLS-1$ //$NON-NLS-2$
                 }
             }
         }
