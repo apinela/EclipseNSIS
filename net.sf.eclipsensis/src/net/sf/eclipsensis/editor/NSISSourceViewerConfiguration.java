@@ -18,7 +18,6 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextDoubleClickStrategy;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
-import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.text.rules.ITokenScanner;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
@@ -109,26 +108,5 @@ public class NSISSourceViewerConfiguration extends SourceViewerConfiguration imp
     public IPreferenceStore getPreferenceStore()
     {
         return mPreferenceStore;
-    }
-
-    protected class NSISCommentScanner extends NSISSingleTokenScanner
-    {
-       /**
-         * @param preferenceStore
-         */
-        public NSISCommentScanner(IPreferenceStore preferenceStore)
-        {
-            super(preferenceStore);
-            mProperty = INSISPreferenceConstants.COMMENTS_STYLE;
-        }
-
-        /**
-         * @return
-         */
-        protected IToken getDefaultToken()
-        {
-            IToken defaultToken= createTokenFromPreference(INSISPreferenceConstants.COMMENTS_STYLE);
-            return defaultToken;
-        }
     }
 }

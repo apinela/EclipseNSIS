@@ -12,6 +12,7 @@ package net.sf.eclipsensis.wizard.settings.dialogs;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.wizard.NSISWizardDisplayValues;
@@ -51,7 +52,7 @@ public class NSISInstallDirectoryDialog extends AbstractNSISInstallItemDialog
     /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
      */
-    protected Control createControl(Composite parent)
+    protected Control createControlContents(Composite parent)
     {
         Composite composite = new Composite(parent, SWT.NONE);
         GridLayout layout = new GridLayout(3,false);
@@ -65,7 +66,7 @@ public class NSISInstallDirectoryDialog extends AbstractNSISInstallItemDialog
             public void modifyText(ModifyEvent e)
             {
                 mStore.setValue("name",t.getText().trim()); //$NON-NLS-1$
-                setComplete(validate());
+                validate();
             }
         });
         final Combo c1 = NSISWizardDialogUtil.createCombo(composite,NSISKeywords.PATH_CONSTANTS_AND_VARIABLES,mStore.getString("destination"), //$NON-NLS-1$
@@ -74,7 +75,7 @@ public class NSISInstallDirectoryDialog extends AbstractNSISInstallItemDialog
             public void modifyText(ModifyEvent e)
             {
                 mStore.setValue("destination",c1.getText().trim()); //$NON-NLS-1$
-                setComplete(validate());
+                validate();
             }
         });
         GridData gd = (GridData)c1.getLayoutData();
@@ -97,12 +98,17 @@ public class NSISInstallDirectoryDialog extends AbstractNSISInstallItemDialog
 
         return composite;
     }
-    
-    /* (non-Javadoc)
-     * @see net.sf.eclipsensis.wizard.settings.dialogs.AbstractNSISInstallItemDialog#validate()
-     */
-    protected boolean validate()
+ 
+    protected String checkForErrors()
     {
-        return Common.isValidPath(Common.decodePath(mStore.getString("name"))) && Common.isValidNSISPathName(mStore.getString("destination")); //$NON-NLS-1$ //$NON-NLS-2$
+        if(!Common.isValidPath(Common.decodePath(mStore.getString("name")))) { //$NON-NLS-1$
+            return EclipseNSISPlugin.getResourceString("wizard.invalid.directory.name"); //$NON-NLS-1$
+        }
+        else if(!Common.isValidNSISPathName(mStore.getString("destination"))) { //$NON-NLS-1$
+            return EclipseNSISPlugin.getResourceString("wizard.invalid.directory.destination"); //$NON-NLS-1$
+        }
+        else {
+            return ""; //$NON-NLS-1$
+        }
     }
 }

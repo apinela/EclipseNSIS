@@ -60,7 +60,7 @@ public class NSISInstallShortcutDialog extends AbstractNSISInstallItemDialog imp
     /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
      */
-    protected Control createControl(Composite parent)
+    protected Control createControlContents(Composite parent)
     {
         Composite composite = new Composite(parent, SWT.NONE);
         GridLayout layout = new GridLayout(3,false);
@@ -93,7 +93,7 @@ public class NSISInstallShortcutDialog extends AbstractNSISInstallItemDialog imp
             public void modifyText(ModifyEvent e)
             {
                 mStore.setValue("location",c1.getText().trim()); //$NON-NLS-1$
-                setComplete(validate());
+                validate();
             }
         });
 
@@ -102,7 +102,7 @@ public class NSISInstallShortcutDialog extends AbstractNSISInstallItemDialog imp
             public void modifyText(ModifyEvent e)
             {
                 mStore.setValue("name",t1.getText().trim()); //$NON-NLS-1$
-                setComplete(validate());
+                validate();
             }
         });
 
@@ -120,7 +120,7 @@ public class NSISInstallShortcutDialog extends AbstractNSISInstallItemDialog imp
                         n = 1;
                     }
                     mStore.setValue("shortcutType",n); //$NON-NLS-1$
-                    setComplete(validate());
+                    validate();
                 }
             }            
         };
@@ -135,7 +135,7 @@ public class NSISInstallShortcutDialog extends AbstractNSISInstallItemDialog imp
             public void modifyText(ModifyEvent e)
             {
                 mStore.setValue("url",t2.getText().trim()); //$NON-NLS-1$
-                setComplete(validate());
+                validate();
             }
         });
         
@@ -145,7 +145,7 @@ public class NSISInstallShortcutDialog extends AbstractNSISInstallItemDialog imp
             public void modifyText(ModifyEvent e)
             {
                 mStore.setValue("path",c2.getText().trim()); //$NON-NLS-1$
-                setComplete(validate());
+                validate();
             }
         });
 
@@ -155,18 +155,26 @@ public class NSISInstallShortcutDialog extends AbstractNSISInstallItemDialog imp
         return composite;
     }
     
-    /* (non-Javadoc)
-     * @see net.sf.eclipsensis.wizard.settings.dialogs.AbstractNSISInstallItemDialog#validate()
-     */
-    protected boolean validate()
+    protected String checkForErrors()
     {
-        if(Common.isValidNSISPathName(mStore.getString("location")) && Common.isValidFileName(mStore.getString("name"))) { //$NON-NLS-1$ //$NON-NLS-2$
+        String subKey = mStore.getString("subKey").trim(); //$NON-NLS-1$
+        if(!Common.isValidNSISPathName(mStore.getString("location"))) { //$NON-NLS-1$
+            return EclipseNSISPlugin.getResourceString("wizard.invalid.shortcut.location"); //$NON-NLS-1$
+        }
+        else if(!Common.isValidFileName(mStore.getString("name"))) { //$NON-NLS-1$
+            return EclipseNSISPlugin.getResourceString("wizard.invalid.shortcut.name"); //$NON-NLS-1$
+        }
+        else {
             int n = mStore.getInt("shortcutType"); //$NON-NLS-1$
-            if((n == SHORTCUT_INSTALLELEMENT && Common.isValidNSISPathName(mStore.getString("path")))|| //$NON-NLS-1$
-               (n == SHORTCUT_URL && Common.isValidURL(mStore.getString("url")))) { //$NON-NLS-1$
-                return true;
+            if((n == SHORTCUT_INSTALLELEMENT && !Common.isValidNSISPathName(mStore.getString("path")))) { //$NON-NLS-1$
+                return EclipseNSISPlugin.getResourceString("wizard.invalid.shortcut.file"); //$NON-NLS-1$
+            }
+            else if((n == SHORTCUT_URL && !Common.isValidURL(mStore.getString("url")))) { //$NON-NLS-1$
+                return EclipseNSISPlugin.getResourceString("wizard.invalid.shortcut.url"); //$NON-NLS-1$
+            }
+            else {
+                return ""; //$NON-NLS-1$
             }
         }
-        return false;
     }
 }

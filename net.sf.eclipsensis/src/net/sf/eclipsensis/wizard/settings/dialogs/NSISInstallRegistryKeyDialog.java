@@ -12,6 +12,7 @@ package net.sf.eclipsensis.wizard.settings.dialogs;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.wizard.NSISWizardDisplayValues;
 import net.sf.eclipsensis.wizard.settings.NSISInstallRegistryKey;
@@ -47,7 +48,7 @@ public class NSISInstallRegistryKeyDialog extends AbstractNSISInstallItemDialog
     /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
      */
-    protected Control createControl(Composite parent)
+    protected Control createControlContents(Composite parent)
     {
         Composite composite = new Composite(parent, SWT.NONE);
         GridLayout layout = new GridLayout(2,false);
@@ -68,18 +69,20 @@ public class NSISInstallRegistryKeyDialog extends AbstractNSISInstallItemDialog
             public void modifyText(ModifyEvent e)
             {
                 mStore.setValue("subKey",t.getText().trim()); //$NON-NLS-1$
-                setComplete(validate());
+                validate();
             }
         });
         return composite;
     }
     
-    /* (non-Javadoc)
-     * @see net.sf.eclipsensis.wizard.settings.dialogs.AbstractNSISInstallItemDialog#validate()
-     */
-    protected boolean validate()
+    protected String checkForErrors()
     {
         String subKey = mStore.getString("subKey").trim(); //$NON-NLS-1$
-        return !Common.isEmpty(subKey) && !subKey.endsWith("\\") && !subKey.startsWith("\\"); //$NON-NLS-1$ //$NON-NLS-2$
+        if(Common.isEmpty(subKey) || subKey.endsWith("\\") || subKey.startsWith("\\")) { //$NON-NLS-1$ //$NON-NLS-2$
+            return EclipseNSISPlugin.getResourceString("wizard.invalid.sub.key"); //$NON-NLS-1$
+        }
+        else {
+            return ""; //$NON-NLS-1$
+        }
     }
 }

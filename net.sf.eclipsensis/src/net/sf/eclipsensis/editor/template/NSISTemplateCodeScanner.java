@@ -21,7 +21,7 @@ import org.eclipse.jface.text.rules.*;
 
 public class NSISTemplateCodeScanner extends NSISCodeScanner
 {
-    protected NSISWordPatternRule mTemplateVariableRule = null;
+    protected NSISWordPatternRule mTemplateVariableRule;
 
     /**
      * @param preferenceStore

@@ -23,7 +23,7 @@ import org.eclipse.swt.SWT;
 
 public abstract class NSISRuleBasedScanner extends BufferedRuleBasedScanner implements NSISScanner, IPropertyAdaptable
 {
-    protected IPreferenceStore mPreferenceStore = null;
+    protected IPreferenceStore mPreferenceStore;
     
     public NSISRuleBasedScanner(IPreferenceStore preferenceStore)
     {
@@ -31,6 +31,11 @@ public abstract class NSISRuleBasedScanner extends BufferedRuleBasedScanner impl
         reset();
     }
 
+    protected boolean isCaseSensitive()
+    {
+        return false;
+    }
+    
     public final void reset()
     {
         reset(false);
@@ -54,7 +59,7 @@ public abstract class NSISRuleBasedScanner extends BufferedRuleBasedScanner impl
     public int read()
     {
         int c = super.read();
-        if(Character.isUpperCase((char)c)) {
+        if(!isCaseSensitive() && Character.isUpperCase((char)c)) {
             c = Character.toLowerCase((char)c);
         }
         return c;
@@ -103,6 +108,14 @@ public abstract class NSISRuleBasedScanner extends BufferedRuleBasedScanner impl
     }
  
     /**
+     * @return Returns the preferenceStore.
+     */
+    public IPreferenceStore getPreferenceStore()
+    {
+        return mPreferenceStore;
+    }
+    
+    /**
      * @return
      */
     protected abstract void addRules(List rules, IToken defaultToken);
@@ -111,4 +124,15 @@ public abstract class NSISRuleBasedScanner extends BufferedRuleBasedScanner impl
      * @return
      */
     protected abstract IToken getDefaultToken();
+
+    protected void addWords(WordRule wordRule, String preferenceName, String[] array)
+    {
+        boolean caseSensitive = isCaseSensitive();
+        IToken token = createTokenFromPreference(preferenceName);
+        if(!Common.isEmptyArray(array)) {
+            for (int i = 0; i < array.length; i++) {
+                wordRule.addWord((caseSensitive?array[i]:array[i].toLowerCase()), token);
+            }
+        }
+    }
 }

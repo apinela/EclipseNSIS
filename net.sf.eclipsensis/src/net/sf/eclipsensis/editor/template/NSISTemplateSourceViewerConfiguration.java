@@ -11,8 +11,7 @@ package net.sf.eclipsensis.editor.template;
 
 import net.sf.eclipsensis.editor.NSISSourceViewerConfiguration;
 import net.sf.eclipsensis.editor.NSISSourceViewerConfigurationTools;
-import net.sf.eclipsensis.editor.text.NSISPartitionScanner;
-import net.sf.eclipsensis.editor.text.NSISStringScanner;
+import net.sf.eclipsensis.editor.text.*;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IDocument;

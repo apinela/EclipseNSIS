@@ -77,7 +77,7 @@ public class NSISCharacterPairMatcher implements ICharacterPairMatcher
     
         // get the chars preceding and following the start mPosition
         try {
-            ITypedRegion typedRegion = NSISTextUtility.getTypedRegionAtOffset(mDocument,mPos);
+            ITypedRegion typedRegion = NSISTextUtility.getNSISPartitionAtOffset(mDocument,mPos);
             String type = typedRegion.getType();
             int offset = typedRegion.getOffset();
             if(type.equals(NSISPartitionScanner.NSIS_STRING)) {
@@ -97,7 +97,7 @@ public class NSISCharacterPairMatcher implements ICharacterPairMatcher
                 }
             }
             else if(type.equals(IDocument.DEFAULT_CONTENT_TYPE) && mAlwaysUsePrevChar && mPos == offset) {
-                ITypedRegion typedRegion2 = NSISTextUtility.getTypedRegionAtOffset(mDocument, mPos-1);
+                ITypedRegion typedRegion2 = NSISTextUtility.getNSISPartitionAtOffset(mDocument, mPos-1);
                 if(typedRegion2.getType().equals(NSISPartitionScanner.NSIS_STRING)) {
                     offset = typedRegion2.getOffset();
                     mStartPos = offset;

@@ -37,8 +37,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
-public class NSISWizardTemplatePreferencePage extends PreferencePage implements
-        IWorkbenchPreferencePage
+public class NSISWizardTemplatePreferencePage extends PreferencePage implements IWorkbenchPreferencePage
 {
     private NSISWizardTemplateManager mTemplateManager = null;
     private NSISWizardTemplateReaderWriter mReaderWriter = null;
@@ -508,7 +507,6 @@ public class NSISWizardTemplatePreferencePage extends PreferencePage implements
     
     private void restoreDeleted() 
     {
-        //TODO Test
         mTemplateManager.restore();
         mTableViewer.refresh(true);
         mTableViewer.setCheckedElements(getEnabledTemplates());

@@ -13,6 +13,7 @@ import java.util.*;
 import java.util.List;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.editor.codeassist.NSISInformationUtility;
 import net.sf.eclipsensis.editor.text.NSISPartitionScanner;
 import net.sf.eclipsensis.editor.text.NSISTextUtility;
@@ -23,6 +24,7 @@ import net.sf.eclipsensis.util.ColorManager;
 import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
@@ -33,13 +35,14 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.texteditor.MarkerAnnotation;
+import org.eclipse.ui.views.markers.MarkerViewUtil;
 
 
 public class NSISSourceViewer extends ProjectionViewer implements IPropertyChangeListener, INSISKeywordsListener
@@ -247,6 +250,49 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
                 };
                 sb.addSelectionListener(mSelAdapter);
             }
+        }
+        
+        final IVerticalRuler ruler = getVerticalRuler();
+        if(ruler != null) {
+            ruler.getControl().addMouseListener(new MouseAdapter()
+            {
+                public void mouseUp(MouseEvent e) 
+                {
+                    try {
+                        IAnnotationModel model = getAnnotationModel();
+                        IDocument document= getDocument();
+                        int lineNumber = ruler.toDocumentLineNumber(e.y);
+                        IRegion info= document.getLineInformation(lineNumber);
+                        
+                        if (model != null) {
+                            ArrayList messages = new ArrayList();
+                            for(Iterator iter= model.getAnnotationIterator(); iter.hasNext(); ) {
+                                Annotation a= (Annotation) iter.next();
+                                Position p= model.getPosition(a);
+                                if (p != null && p.overlapsWith(info.getOffset(), info.getLength())) {
+                                    if(a instanceof MarkerAnnotation) {
+                                        IMarker marker = ((MarkerAnnotation)a).getMarker();
+                                        String type = marker.getType();
+                                        if(type.equals(INSISConstants.PROBLEM_MARKER_ID)||type.equals(INSISConstants.TASK_MARKER_ID)) {
+                                            setSelectedRange(p.getOffset(),p.getLength());
+                                            final IMarker fMarker = marker;
+                                            PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+                                                public void run()
+                                                {
+                                                    MarkerViewUtil.showMarker(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(),fMarker,false);
+                                                }
+                                            });
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    } 
+                    catch (Exception ex) {
+                    }
+                }
+            });
         }
     }
 
@@ -505,7 +551,7 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
                 StringBuffer newText = new StringBuffer("/*"); //$NON-NLS-1$
                 int pos = p.x;
                 while(true) {
-                    region = NSISTextUtility.getTypedRegionAtOffset(doc,pos);
+                    region = NSISTextUtility.getNSISPartitionAtOffset(doc,pos);
                     int regionStart = region.getOffset();
                     int regionLen = region.getLength();
                     int regionEnd = regionStart+regionLen-1;
@@ -570,7 +616,7 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
             StringBuffer newText = new StringBuffer(""); //$NON-NLS-1$
             ITypedRegion region;
             while(true) {
-                region = NSISTextUtility.getTypedRegionAtOffset(doc,pos);
+                region = NSISTextUtility.getNSISPartitionAtOffset(doc,pos);
                 int regionStart = region.getOffset();
                 int regionLen = region.getLength();
                 int regionEnd = regionStart+regionLen-1;

@@ -12,6 +12,7 @@ package net.sf.eclipsensis.wizard.settings.dialogs;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.settings.NSISPreferences;
 import net.sf.eclipsensis.util.Common;
@@ -52,7 +53,7 @@ public class NSISSectionGroupDialog extends AbstractNSISInstallItemDialog
     /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
      */
-    protected Control createControl(Composite parent)
+    protected Control createControlContents(Composite parent)
     {
         Composite composite = new Composite(parent, SWT.NONE);
         Dialog.applyDialogFont(composite);
@@ -71,7 +72,7 @@ public class NSISSectionGroupDialog extends AbstractNSISInstallItemDialog
             public void modifyText(ModifyEvent e)
             {
                 mStore.setValue("caption",t.getText().trim()); //$NON-NLS-1$
-                setComplete(validate());
+                validate();
             }
         });
         t.addVerifyListener(new VerifyListener() {
@@ -105,7 +106,7 @@ public class NSISSectionGroupDialog extends AbstractNSISInstallItemDialog
             public void modifyText(ModifyEvent e)
             {
                 mStore.setValue("description",t2.getText().trim()); //$NON-NLS-1$
-                setComplete(validate());
+                validate();
             }
         });
         int textLimit;
@@ -144,11 +145,14 @@ public class NSISSectionGroupDialog extends AbstractNSISInstallItemDialog
         return composite;
     }
     
-    /* (non-Javadoc)
-     * @see net.sf.eclipsensis.wizard.settings.dialogs.AbstractNSISInstallItemDialog#validate()
-     */
-    protected boolean validate()
+    protected String checkForErrors()
     {
-        return !Common.isEmpty(mStore.getString("caption")); //$NON-NLS-1$
+        String subKey = mStore.getString("subKey").trim(); //$NON-NLS-1$
+        if(Common.isEmpty(mStore.getString("caption"))) { //$NON-NLS-1$
+            return EclipseNSISPlugin.getResourceString("wizard.missing.sectiongroup.caption"); //$NON-NLS-1$
+        }
+        else {
+            return ""; //$NON-NLS-1$
+        }
     }
 }

@@ -27,13 +27,13 @@ public class NSISTextUtility implements INSISConstants
     private static final String[] cValidPartitionTypes = {IDocument.DEFAULT_CONTENT_TYPE,
                                                           NSISPartitionScanner.NSIS_STRING};
     
-    private static final int INVALID_REGIONS = -1;
-    private static final int REGION1_BEFORE_REGION2 = 0;
-    private static final int REGION1_OVERLAPS_LEFT_REGION2 = 1;
-    private static final int REGION1_CONTAINS_REGION2 = 2;
-    private static final int REGION1_OVERLAPS_RIGHT_REGION2 = 3;
-    private static final int REGION1_CONTAINED_BY_REGION2= 4;
-    private static final int REGION1_AFTER_REGION2 = 5;
+    public static final int INVALID_REGIONS = -1;
+    public static final int REGION1_BEFORE_REGION2 = 0;
+    public static final int REGION1_OVERLAPS_LEFT_REGION2 = 1;
+    public static final int REGION1_CONTAINS_REGION2 = 2;
+    public static final int REGION1_OVERLAPS_RIGHT_REGION2 = 3;
+    public static final int REGION1_CONTAINED_BY_REGION2= 4;
+    public static final int REGION1_AFTER_REGION2 = 5;
 
     public static int computeOffset(ISourceViewer sourceViewer, boolean hoverOnly)
     {
@@ -97,7 +97,7 @@ public class NSISTextUtility implements INSISConstants
         }
     }
     
-    private static int getOverlapType(IRegion region1, IRegion region2)
+    public static int getOverlapType(IRegion region1, IRegion region2)
     {
         int start1 = region1.getOffset();
         int end1 = start1 + region1.getLength() - 1;
@@ -126,7 +126,7 @@ public class NSISTextUtility implements INSISConstants
         return INVALID_REGIONS;
     }
 
-    private static IRegion intersection(IRegion region1, IRegion region2)
+    public static IRegion intersection(IRegion region1, IRegion region2)
     {
         int start1 = region1.getOffset();
         int end1 = start1 + region1.getLength() - 1;
@@ -151,7 +151,7 @@ public class NSISTextUtility implements INSISConstants
     
     public static ITypedRegion[][] getNSISLines(IDocument doc)
     {
-        return getNSISLines(doc, getTypedRegions(doc));
+        return getNSISLines(doc, getNSISPartitions(doc));
     }
     
     public static boolean contains(IRegion region, int offset)
@@ -191,7 +191,7 @@ public class NSISTextUtility implements INSISConstants
         try {
             int linenum = doc.getLineOfOffset(offset);
             IRegion line = doc.getLineInformation(linenum);
-            ITypedRegion typedRegion = getTypedRegionAtOffset(doc, line.getOffset());
+            ITypedRegion typedRegion = getNSISPartitionAtOffset(doc, line.getOffset());
             if(!isValidRegionType(typedRegion.getType(),cValidPartitionTypes)) {
                 if(contains(typedRegion,offset)) {
                     return new ITypedRegion[0][];
@@ -205,14 +205,14 @@ public class NSISTextUtility implements INSISConstants
                     IRegion line2 = doc.getLineInformation(linenum2);
                     int endOffset = line2.getOffset()+line2.getLength()-1;
                     if(endOffset >= 0) {
-                        typedRegion = getTypedRegionAtOffset(doc, endOffset);
+                        typedRegion = getNSISPartitionAtOffset(doc, endOffset);
                         if(!isValidRegionType(typedRegion.getType(),cValidPartitionTypes)) {
                             break;
                         }
                         if(doc.get(endOffset,1).charAt(0)!=LINE_CONTINUATION_CHAR) {
                             break;
                         }
-                        typedRegion = getTypedRegionAtOffset(doc, line2.getOffset());
+                        typedRegion = getNSISPartitionAtOffset(doc, line2.getOffset());
                         if(!isValidRegionType(typedRegion.getType(),cValidPartitionTypes)) {
                             int startOffset = typedRegion.getOffset()+typedRegion.getLength();
                             line = new Region(startOffset, line.getOffset()+line.getLength()-startOffset);
@@ -228,7 +228,7 @@ public class NSISTextUtility implements INSISConstants
                     }
                 }
             }
-            typedRegion = getTypedRegionAtOffset(doc, line.getOffset()+line.getLength()-1);
+            typedRegion = getNSISPartitionAtOffset(doc, line.getOffset()+line.getLength()-1);
             if(!isValidRegionType(typedRegion.getType(),cValidPartitionTypes)) {
                 if(contains(typedRegion,offset)) {
                     return new ITypedRegion[0][];
@@ -241,12 +241,12 @@ public class NSISTextUtility implements INSISConstants
                     int numlines = doc.getNumberOfLines();
                     while(linenum2 < numlines) {
                         IRegion line2 = doc.getLineInformation(linenum2);
-                        typedRegion = getTypedRegionAtOffset(doc, line2.getOffset());
+                        typedRegion = getNSISPartitionAtOffset(doc, line2.getOffset());
                         if(!isValidRegionType(typedRegion.getType(),cValidPartitionTypes)) {
                             break;
                         }
                         int endOffset = line2.getOffset()+line2.getLength()-1;
-                        typedRegion = getTypedRegionAtOffset(doc, endOffset);
+                        typedRegion = getNSISPartitionAtOffset(doc, endOffset);
                         if(!isValidRegionType(typedRegion.getType(),cValidPartitionTypes)) {
                             line = new Region(line.getOffset(),typedRegion.getOffset()-line.getOffset());
                             break;
@@ -263,7 +263,7 @@ public class NSISTextUtility implements INSISConstants
                     }
                 }
             }
-            ITypedRegion[] partitions = getTypedRegions(doc);
+            ITypedRegion[] partitions = getNSISPartitions(doc);
             if(!Common.isEmptyArray(partitions)) {
                 int startIndex = findRegion(partitions,line.getOffset());
                 if(startIndex >= 0) {
@@ -380,7 +380,7 @@ public class NSISTextUtility implements INSISConstants
      * @return
      * @throws BadLocationException
      */
-    private static ITypedRegion[] getTypedRegions(IDocument doc)
+    public static ITypedRegion[] getNSISPartitions(IDocument doc)
     {
         ITypedRegion[] typedRegions;
         try {
@@ -431,7 +431,7 @@ public class NSISTextUtility implements INSISConstants
      * @return
      * @throws BadLocationException
      */
-    public static ITypedRegion getTypedRegionAtOffset(IDocument doc, int offset) throws BadLocationException
+    public static ITypedRegion getNSISPartitionAtOffset(IDocument doc, int offset) throws BadLocationException
     {
         ITypedRegion typedRegion;
         if (doc instanceof IDocumentExtension3) {

@@ -23,6 +23,7 @@ import net.sf.eclipsensis.viewer.*;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Image;
@@ -224,8 +225,9 @@ public abstract class NSISSettingsPage	extends PropertyPage implements IWorkbenc
     protected TableViewer createTableViewer(Composite composite, final Object input, IContentProvider contentProvider,
                                             ILabelProvider labelProvider, String description, String[] columnNames, 
                                             String addTooltip, String editTooltip, String removeTooltip,
-                                            SelectionAdapter addAdapter, SelectionAdapter editAdapter,
-                                            SelectionAdapter removeAdapter, final TableViewerUpDownMover mover)
+                                            SelectionListener addAdapter, SelectionListener editAdapter,
+                                            SelectionListener removeAdapter, IDoubleClickListener doubleClickListener,
+                                            final TableViewerUpDownMover mover)
     {
         GridLayout layout = new GridLayout(2,false);
         composite.setLayout(layout);
@@ -299,6 +301,7 @@ public abstract class NSISSettingsPage	extends PropertyPage implements IWorkbenc
             }
         });
 
+        viewer.addDoubleClickListener(doubleClickListener);
         table.addControlListener(new ControlAdapter() {
             public void controlResized(ControlEvent e) 
             {
@@ -337,15 +340,14 @@ public abstract class NSISSettingsPage	extends PropertyPage implements IWorkbenc
         SelectionAdapter addAdapter = new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) 
             {
-                NSISSymbolDialog dialog = new NSISSymbolDialog(NSISSettingsPage.this);
-                dialog.open();
+                addOrEditSymbol("",""); //$NON-NLS-1$ //$NON-NLS-2$
             }
         };
         SelectionAdapter editAdapter = new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) 
             {
                 Map.Entry entry = (Map.Entry)((IStructuredSelection)mSymbols.getSelection()).getFirstElement();
-                new NSISSymbolDialog(NSISSettingsPage.this,(String)entry.getKey(),(String)entry.getValue()).open();
+                addOrEditSymbol((String)entry.getKey(),(String)entry.getValue());
             }
         };
         SelectionAdapter removeAdapter = new SelectionAdapter() {
@@ -389,6 +391,14 @@ public abstract class NSISSettingsPage	extends PropertyPage implements IWorkbenc
             
         };
         
+        IDoubleClickListener doubleClickListener = new IDoubleClickListener() {
+            public void doubleClick(DoubleClickEvent event)
+            {
+                Map.Entry entry = (Map.Entry)((IStructuredSelection)event.getSelection()).getFirstElement();
+                addOrEditSymbol((String)entry.getKey(),(String)entry.getValue());
+            }
+        };
+        
         mSymbols = createTableViewer(composite, mSettings.getSymbols(), new MapContentProvider(), new MapLabelProvider(),
                                      EclipseNSISPlugin.getResourceString("symbols.description"), //$NON-NLS-1$
                                      new String[] {
@@ -397,7 +407,8 @@ public abstract class NSISSettingsPage	extends PropertyPage implements IWorkbenc
                                          EclipseNSISPlugin.getResourceString("symbols.add.tooltip"), //$NON-NLS-1$
                                          EclipseNSISPlugin.getResourceString("symbols.edit.tooltip"), //$NON-NLS-1$
                                          EclipseNSISPlugin.getResourceString("symbols.remove.tooltip"), //$NON-NLS-1$
-                                     addAdapter,editAdapter,removeAdapter, mover);
+                                     addAdapter,editAdapter,removeAdapter, doubleClickListener, 
+                                     mover);
         return composite;
     }
 
@@ -407,14 +418,13 @@ public abstract class NSISSettingsPage	extends PropertyPage implements IWorkbenc
         SelectionAdapter addAdapter = new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) 
             {
-                new NSISInstructionDialog(NSISSettingsPage.this).open();
+                addOrEditInstruction(""); //$NON-NLS-1$
             }
         };
         SelectionAdapter editAdapter = new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) 
             {
-                String text = ((String)((IStructuredSelection)mInstructions.getSelection()).getFirstElement()).trim();
-                new NSISInstructionDialog(NSISSettingsPage.this,text).open();
+                addOrEditInstruction(((String)((IStructuredSelection)mInstructions.getSelection()).getFirstElement()).trim());
             }
         };
         SelectionAdapter removeAdapter = new SelectionAdapter() {
@@ -453,6 +463,15 @@ public abstract class NSISSettingsPage	extends PropertyPage implements IWorkbenc
                 ((ArrayList)input).addAll(elements);
             }
         };
+
+        IDoubleClickListener doubleClickListener = new IDoubleClickListener() {
+            public void doubleClick(DoubleClickEvent event)
+            {
+                
+                addOrEditInstruction(((String)((IStructuredSelection)event.getSelection()).getFirstElement()).trim());
+            }
+        };
+        
         mInstructions = createTableViewer(composite, mSettings.getInstructions(),
                                       new CollectionContentProvider(), new CollectionLabelProvider(),
                                       EclipseNSISPlugin.getResourceString("instructions.description"), //$NON-NLS-1$
@@ -460,7 +479,7 @@ public abstract class NSISSettingsPage	extends PropertyPage implements IWorkbenc
                                       EclipseNSISPlugin.getResourceString("instructions.add.tooltip"), //$NON-NLS-1$
                                       EclipseNSISPlugin.getResourceString("instructions.edit.tooltip"), //$NON-NLS-1$
                                       EclipseNSISPlugin.getResourceString("instructions.remove.tooltip"), //$NON-NLS-1$
-                                      addAdapter,editAdapter,removeAdapter, mover);
+                                      addAdapter,editAdapter,removeAdapter, doubleClickListener, mover);
         ((GridLayout)composite.getLayout()).marginWidth = 0;
         GridData data = new GridData(GridData.FILL_BOTH);
         composite.setLayoutData(data);
@@ -488,45 +507,39 @@ public abstract class NSISSettingsPage	extends PropertyPage implements IWorkbenc
         return false;
     }
     
-    public final boolean validateSaveSymbol(String oldName, String newName, String newValue, boolean isEdit)
+    private void addOrEditSymbol(String oldName, String oldValue)
     {
         Map map = (Map)mSymbols.getInput();
-        if(!isEdit || !oldName.equals(newName)) {
-            if(map.containsKey(newName)) {
-                if(Common.openConfirm(getShell(), EclipseNSISPlugin.getFormattedString("symbol.overwrite.confirm", //$NON-NLS-1$
-                                                                      new String[]{newName}))) {
-                    if(isEdit) {
-                        map.remove(oldName);
-                    }
-                }
-                else {
-                    return false;
+        NSISSymbolDialog dialog = new NSISSymbolDialog(getShell(),oldName, oldValue);
+        Collection coll = new HashSet(map.keySet());
+        coll.remove(oldName);
+        dialog.setExistingSymbols(coll);
+        if(dialog.open() == Window.OK) {
+            String newName = dialog.getName();
+            if(!Common.isEmpty(oldName)) {
+                if(!oldName.equals(newName)) {
+                    map.remove(oldName);
                 }
             }
+            String newValue = dialog.getValue();
+            map.put(newName,newValue);
+            mSymbols.refresh(true);
         }
-        map.put(newName,newValue);
-        mSymbols.refresh();
-        return true;
     }
     
-    public final boolean validateSaveInstruction(String oldInstruction, String newInstruction, boolean isEdit)
+    private void addOrEditInstruction(String oldInstruction)
     {
-        Collection collection = (Collection)mInstructions.getInput();
-        if(!Common.isEmpty(newInstruction)) {
-            if(isEdit) {
+        NSISInstructionDialog dialog = new NSISInstructionDialog(getShell(),oldInstruction);
+        if(dialog.open() == Window.OK) {
+            String newInstruction = dialog.getInstruction();
+            Collection collection = (Collection)mInstructions.getInput();
+            if(!Common.isEmpty(oldInstruction)) {
                 if(!oldInstruction.equals(newInstruction)) {
                     collection.remove(oldInstruction);
                 }
-                else {
-                    return true;
-                }
             }
             collection.add(newInstruction);
-            mInstructions.refresh();
-            return true;
-        }
-        else {
-            return false;
+            mInstructions.refresh(true);
         }
     }
     

@@ -40,8 +40,8 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.IActionDelegate;
-import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.*;
+import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.texteditor.*;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
@@ -148,7 +148,8 @@ public class NSISEditor extends TextEditor implements INSISConstants, IPropertyC
     /*
      * @see org.eclipse.ui.texteditor.ExtendedTextEditor#createPartControl(org.eclipse.swt.widgets.Composite)
      */
-    public void createPartControl(Composite parent) {
+    public void createPartControl(Composite parent) 
+    {
         super.createPartControl(parent);
         ProjectionViewer viewer= (ProjectionViewer) getSourceViewer();
         mProjectionSupport= new ProjectionSupport(viewer, getAnnotationAccess(), getSharedColors());
@@ -162,7 +163,8 @@ public class NSISEditor extends TextEditor implements INSISConstants, IPropertyC
         viewer.addPostSelectionChangedListener(this);
     }
     
-    protected void createActions() {
+    protected void createActions() 
+    {
         super.createActions();
         ResourceBundle resourceBundle = EclipseNSISPlugin.getDefault().getResourceBundle();
         IAction a= new TextOperationAction(resourceBundle, "content.assist.proposal.", this, ISourceViewer.CONTENTASSIST_PROPOSALS); //$NON-NLS-1$
@@ -214,7 +216,8 @@ public class NSISEditor extends TextEditor implements INSISConstants, IPropertyC
         setAction("NSISRemoveBlockComment", a); //$NON-NLS-1$
     }
     
-    public void dispose() {
+    public void dispose() 
+    {
         mCurrentPosition = null;
         if (mOutlinePage != null) {
             mOutlinePage.setInput(null);
@@ -232,31 +235,8 @@ public class NSISEditor extends TextEditor implements INSISConstants, IPropertyC
         super.dispose();
     }
     
-    public void doRevertToSaved() {
-        super.doRevertToSaved();
-        if (mOutlinePage != null) {
-            mCurrentPosition = null;
-            mOutlinePage.update();
-        }
-    }
-    
-    public void doSave(IProgressMonitor monitor) {
-        super.doSave(monitor);
-        if (mOutlinePage != null) {
-            mCurrentPosition = null;
-            mOutlinePage.update();
-        }
-    }
-    
-    public void doSaveAs() {
-        super.doSaveAs();
-        if (mOutlinePage != null) {
-            mCurrentPosition = null;
-            mOutlinePage.update();
-        }
-    }
-    
-    public void doSetInput(IEditorInput input) throws CoreException {
+    public void doSetInput(IEditorInput input) throws CoreException 
+    {
         IEditorInput oldInput = getEditorInput();
         super.doSetInput(input);
         if(oldInput != null) {
@@ -277,7 +257,8 @@ public class NSISEditor extends TextEditor implements INSISConstants, IPropertyC
     /*
      * @see org.eclipse.ui.texteditor.ExtendedTextEditor#editorContextMenuAboutToShow(org.eclipse.jface.action.IMenuManager)
      */
-    protected void editorContextMenuAboutToShow(IMenuManager menu) {
+    protected void editorContextMenuAboutToShow(IMenuManager menu) 
+    {
         super.editorContextMenuAboutToShow(menu);
         menu.add(new Separator());
         addAction(menu, "ContentAssistProposal"); //$NON-NLS-1$
@@ -299,7 +280,8 @@ public class NSISEditor extends TextEditor implements INSISConstants, IPropertyC
     /*
      * @see org.eclipse.ui.texteditor.ExtendedTextEditor#createSourceViewer(org.eclipse.swt.widgets.Composite, org.eclipse.jface.text.source.IVerticalRuler, int)
      */
-    protected ISourceViewer createSourceViewer(Composite parent, IVerticalRuler ruler, int styles) {
+    protected ISourceViewer createSourceViewer(Composite parent, IVerticalRuler ruler, int styles) 
+    {
         fAnnotationAccess= createAnnotationAccess();
         fOverviewRuler= createOverviewRuler(getSharedColors());
         
@@ -315,7 +297,8 @@ public class NSISEditor extends TextEditor implements INSISConstants, IPropertyC
     /*
      * @see org.eclipse.ui.texteditor.AbstractTextEditor#adjustHighlightRange(int, int)
      */
-    protected void adjustHighlightRange(int offset, int length) {
+    protected void adjustHighlightRange(int offset, int length) 
+    {
         ISourceViewer viewer= getSourceViewer();
         if (viewer instanceof ITextViewerExtension5) {
             ITextViewerExtension5 extension= (ITextViewerExtension5) viewer;
@@ -334,7 +317,8 @@ public class NSISEditor extends TextEditor implements INSISConstants, IPropertyC
         }
     }
     
-    public Object getAdapter(Class required) {
+    public Object getAdapter(Class required) 
+    {
         ISourceViewer sourceViewer = getSourceViewer();
         if (IContentOutlinePage.class.equals(required)) {
             if (mOutlinePage == null || mOutlinePage.isDisposed()) {
@@ -359,7 +343,8 @@ public class NSISEditor extends TextEditor implements INSISConstants, IPropertyC
     /* (non-Javadoc)
      * Method declared on AbstractTextEditor
      */
-    protected void initializeEditor() {
+    protected void initializeEditor() 
+    {
         super.initializeEditor();
         IPreferenceStore preferenceStore = NSISPreferences.getPreferences().getPreferenceStore();
         setPreferenceStore(preferenceStore);
@@ -399,7 +384,44 @@ public class NSISEditor extends TextEditor implements INSISConstants, IPropertyC
     protected void editorSaved()
     {
         super.editorSaved();
+        updateOutlinePage();
         updateActionsState();
+        WorkspaceModifyOperation op = new WorkspaceModifyOperation()
+        {
+            protected void execute(IProgressMonitor monitor)throws CoreException
+            {
+                NSISTaskTagUpdater taskTagUpdater = new NSISTaskTagUpdater();
+                updateTaskTagMarkers(taskTagUpdater);
+            }
+        };
+        try {
+            op.run(null);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    /**
+     * @param file
+     */
+    public void updateTaskTagMarkers(NSISTaskTagUpdater taskTagUpdater)
+    {
+        IEditorInput editorInput = getEditorInput();
+        if(editorInput instanceof IFileEditorInput) {
+            taskTagUpdater.updateTaskTags(((IFileEditorInput)editorInput).getFile(), getSourceViewer().getDocument());
+        }
+    }
+
+    /**
+     * 
+     */
+    private void updateOutlinePage()
+    {
+        if (mOutlinePage != null) {
+            mCurrentPosition = null;
+            mOutlinePage.update();
+        }
     }
 
     public static void updatePresentations()
@@ -416,6 +438,11 @@ public class NSISEditor extends TextEditor implements INSISConstants, IPropertyC
         }
     }
 
+    public static Collection getEditors()
+    {
+        return Collections.unmodifiableSet(cEditors);
+    }
+    
     /**
      * @return Returns the outlineContentProvider.
      */
@@ -424,7 +451,8 @@ public class NSISEditor extends TextEditor implements INSISConstants, IPropertyC
         return mOutlineContentProvider;
     }
 
-    private class NSISStickyHelpAction extends TextEditorAction {
+    private class NSISStickyHelpAction extends TextEditorAction 
+    {
         private final TextOperationAction mTextOperationAction;
         private InformationPresenter mInformationPresenter; 
 
@@ -446,7 +474,8 @@ public class NSISEditor extends TextEditor implements INSISConstants, IPropertyC
         /*
          *  @see org.eclipse.jface.action.IAction#run()
          */
-        public void run() {
+        public void run() 
+        {
             ISourceViewer sourceViewer = getSourceViewer();
             int offset = NSISTextUtility.computeOffset(sourceViewer,true);
             if(offset == -1) {

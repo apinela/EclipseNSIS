@@ -27,6 +27,8 @@ public interface INSISPreferenceConstants
     public static final String COMPRESSOR = "compressor"; //$NON-NLS-1$
     public static final String INSTRUCTIONS = "instructions"; //$NON-NLS-1$
     public static final String SYMBOLS = "symbols"; //$NON-NLS-1$
+    public static final String TASK_TAGS = "taskTags"; //$NON-NLS-1$
+    public static final String CASE_SENSITIVE_TASK_TAGS = "caseSensitiveTaskTags"; //$NON-NLS-1$
     public static final int VERBOSITY_NONE = 0;
     public static final int VERBOSITY_ERRORS = 1;
     public static final int VERBOSITY_WARNINGS = 2;
@@ -77,6 +79,7 @@ public interface INSISPreferenceConstants
     public static final String STRINGS_STYLE = "stringsStyle"; //$NON-NLS-1$
     public static final String NUMBERS_STYLE = "numbersStyle"; //$NON-NLS-1$
     public static final String LANGSTRINGS_STYLE = "langstringsStyle"; //$NON-NLS-1$
+    public static final String TASK_TAGS_STYLE = "taskTagsStyle"; //$NON-NLS-1$
     
     public static final String AUTO_SHOW_CONSOLE = "autoShowConsole"; //$NON-NLS-1$
     public static final String EDITOR_FONT = "net.sf.eclipsensis.editor.Font"; //$NON-NLS-1$

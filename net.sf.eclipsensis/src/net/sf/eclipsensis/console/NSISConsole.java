@@ -737,7 +737,7 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
          */
         public String getType() throws CoreException
         {
-            return PROBLEM_ID;
+            return PROBLEM_MARKER_ID;
         }
         
         /* (non-Javadoc)

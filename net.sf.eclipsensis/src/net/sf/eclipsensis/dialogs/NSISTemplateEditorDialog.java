@@ -13,19 +13,15 @@ import java.util.*;
 import java.util.List;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.editor.NSISDocumentSetupParticipant;
 import net.sf.eclipsensis.editor.template.NSISTemplateEditorSourceViewerConfiguration;
 import net.sf.eclipsensis.editor.template.NSISTemplateSourceViewer;
 import net.sf.eclipsensis.settings.INSISPreferenceConstants;
 import net.sf.eclipsensis.settings.NSISPreferences;
 import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.ImageManager;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.*;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.IconAndMessageDialog;
 import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.*;
@@ -39,15 +35,13 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.custom.VerifyKeyListener;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.IUpdate;
 
-public class NSISTemplateEditorDialog extends IconAndMessageDialog
+public class NSISTemplateEditorDialog extends StatusMessageDialog
 {
     private final Template mTemplate;
     
@@ -58,15 +52,10 @@ public class NSISTemplateEditorDialog extends IconAndMessageDialog
     private Button mInsertVariableButton = null;
     private boolean mIsNameModifiable = false;
 
-    private Status mStatus = new Status(IStatus.OK,"",null); //$NON-NLS-1$
-    private Status mValidationStatus = new Status(IStatus.OK,"",null); //$NON-NLS-1$
-    private boolean mSuppressError= true; // #4354  
+    private DialogStatus mValidationStatus = new DialogStatus(IStatus.OK,""); //$NON-NLS-1$
     private Map mGlobalActions= new HashMap(10);
     private List mSelectionActions = new ArrayList(3);  
     private String[][] mContextTypes = null;
-    private Image mErrorImage = null;
-    private Image mWarningImage = null;
-    private Image mTransparentImage = null;
     
     private ContextTypeRegistry mContextTypeRegistry; 
     
@@ -112,79 +101,28 @@ public class NSISTemplateEditorDialog extends IconAndMessageDialog
                                                                                            "edit.template.dialog.title"))); //$NON-NLS-1$
     }
 
-    /*
-     * @see org.eclipse.ui.texteditor.templates.StatusDialog#create()
-     */
     public void create() 
     {
         super.create();
-
-        if(Common.isEmpty(mPatternEditor.getTextWidget().getText())) {
-            mValidationStatus = new Status(IStatus.ERROR,EclipseNSISPlugin.getResourceString("template.error.no.pattern"),null); //$NON-NLS-1$
+        if(mPatternEditor != null && Common.isEmpty(mPatternEditor.getTextWidget().getText())) {
+            mValidationStatus = new DialogStatus(IStatus.ERROR,EclipseNSISPlugin.getResourceString("template.error.no.pattern")); //$NON-NLS-1$
         }
 
-        if (mNameText != null && Common.isEmpty(mNameText.getText())) {
-            Status status = new Status(IStatus.ERROR,EclipseNSISPlugin.getResourceString("template.error.no.name"),null); //$NON-NLS-1$
+        if (mNameText != null && !mNameText.isDisposed() && Common.isEmpty(mNameText.getText())) {
+            IStatus status = new DialogStatus(IStatus.ERROR,EclipseNSISPlugin.getResourceString("template.error.no.name")); //$NON-NLS-1$
             updateButtonsEnableState(status);
         }
     }
-    
-    /**
-     * Updates the status of the ok button to reflect the given status.
-     * Subclasses may override this method to update additional buttons.
-     * @param status the status.
-     */
-    protected void updateButtonsEnableState(IStatus status) 
+
+    protected Control createControl(Composite parent) 
     {
-        Button b = getButton(IDialogConstants.OK_ID);
-        if (b != null && !b.isDisposed()) {
-            b.setEnabled(!status.matches(IStatus.ERROR));
-        }
-    }
-
-    /*
-     * @see Dialog#createDialogArea(Composite)
-     */
-    protected Control createDialogArea(Composite ancestor) 
-    {
-        Composite parent = new Composite(ancestor, SWT.NONE);
-        GridLayout layout= new GridLayout();
-        layout.marginHeight = 0;
-        layout.marginHeight = 0;
-        parent.setLayout(layout);
-        parent.setLayoutData(new GridData(GridData.FILL_BOTH));
-
-        mErrorImage = ImageManager.getImage(EclipseNSISPlugin.getResourceString("error.icon")); //$NON-NLS-1$
-        mWarningImage = ImageManager.getImage(EclipseNSISPlugin.getResourceString("warning.icon")); //$NON-NLS-1$
-        int width = Math.max(mErrorImage.getBounds().width,mWarningImage.getBounds().width);
-        int height = Math.max(mErrorImage.getBounds().height,mWarningImage.getBounds().height);
-        Image tempImage = ImageManager.getImage(EclipseNSISPlugin.getResourceString("transparent.icon")); //$NON-NLS-1$
-        ImageData imageData = tempImage.getImageData();
-        imageData = imageData.scaledTo(width, height);
-        mTransparentImage = new Image(getShell().getDisplay(),imageData);
-
         Composite composite= new Composite(parent, SWT.NONE);
-        layout= new GridLayout();
+        GridLayout layout= new GridLayout();
         layout.numColumns= 2;
         layout.marginHeight = 0;
         layout.marginHeight = 0;
         composite.setLayout(layout);
-        composite.setLayoutData(new GridData(GridData.FILL_BOTH));
         
-        Label label = new Label(parent, SWT.SEPARATOR | SWT.HORIZONTAL);
-        GridData data = new GridData(GridData.FILL_HORIZONTAL);
-        label.setLayoutData(data);
-        
-        Composite composite2= new Composite(parent, SWT.NONE);
-        layout= new GridLayout();
-        layout.numColumns= 2;
-        layout.marginHeight = 0;
-        layout.marginHeight = 0;
-        composite2.setLayout(layout);
-        composite2.setLayoutData(new GridData(GridData.FILL_BOTH));
-        message = getMessage();
-        createMessageArea(composite2);
-
         ModifyListener listener= new ModifyListener() {
             public void modifyText(ModifyEvent e) {
                 doTextWidgetChanged(e.widget);
@@ -210,10 +148,7 @@ public class NSISTemplateEditorDialog extends IconAndMessageDialog
                 }
 
                 public void focusLost(FocusEvent e) {
-                    if (mSuppressError) {
-                        mSuppressError= false;
-                        updateButtons();
-                    }
+                    updateButtons();
                 }
             });
             
@@ -250,8 +185,7 @@ public class NSISTemplateEditorDialog extends IconAndMessageDialog
         composite3.setLayoutData(new GridData());
         
         mInsertVariableButton= new Button(composite3, SWT.NONE);
-        data= new GridData(GridData.FILL_HORIZONTAL);
-        mInsertVariableButton.setLayoutData(data);
+        mInsertVariableButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         mInsertVariableButton.setText(EclipseNSISPlugin.getResourceString("template.insert.variable.label")); //$NON-NLS-1$
         mInsertVariableButton.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent e) {
@@ -273,13 +207,12 @@ public class NSISTemplateEditorDialog extends IconAndMessageDialog
         initializeActions();
 
         applyDialogFont(composite);        
-        return parent;
+        return composite;
     }
     
     private void doTextWidgetChanged(Widget w) 
     {
         if (w == mNameText) {
-            mSuppressError= false;
             String name= mNameText.getText();
             mTemplate.setName(name);
             updateButtons();            
@@ -315,18 +248,16 @@ public class NSISTemplateEditorDialog extends IconAndMessageDialog
         String text= document.get();
         mTemplate.setPattern(text);
         if(Common.isEmpty(text)) {
-            mValidationStatus.setSeverity(IStatus.ERROR);
-            mValidationStatus.setMessage(EclipseNSISPlugin.getResourceString("template.error.no.pattern")); //$NON-NLS-1$
+            mValidationStatus.setError(EclipseNSISPlugin.getResourceString("template.error.no.pattern")); //$NON-NLS-1$
         }
         else {
-            mValidationStatus.setSeverity(IStatus.OK);
+            mValidationStatus.setOK();
             TemplateContextType contextType= mContextTypeRegistry.getContextType(mTemplate.getContextTypeId());
             if (contextType != null) {
                 try {
                     contextType.validate(text);
                 } catch (TemplateException e) {
-                    mValidationStatus.setSeverity(IStatus.ERROR);
-                    mValidationStatus.setMessage(e.getLocalizedMessage());
+                    mValidationStatus.setError(e.getLocalizedMessage());
                 }
             }
         }
@@ -552,53 +483,16 @@ public class NSISTemplateEditorDialog extends IconAndMessageDialog
     
     private void updateButtons() 
     {      
-        Status status;
+        DialogStatus status;
 
         boolean valid= mNameText == null || mNameText.getText().trim().length() != 0;
         if (!valid) {
-            status = new Status(IStatus.OK,null,null);
-            if (!mSuppressError) {
-                status.setSeverity(IStatus.ERROR);
-                status.setMessage(EclipseNSISPlugin.getResourceString("template.error.no.name")); //$NON-NLS-1$
-            }
-        } else {
+            status = new DialogStatus(IStatus.ERROR,EclipseNSISPlugin.getResourceString("template.error.no.name")); //$NON-NLS-1$
+        } 
+        else {
             status= mValidationStatus; 
         }
         updateStatus(status);
-    }
-
-    protected void updateStatus(Status status)
-    {
-        mStatus = status;
-        updateButtonsEnableState(status);
-        imageLabel.setImage(getImage());
-        messageLabel.setText(getMessage());
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.dialogs.IconAndMessageDialog#getImage()
-     */
-    protected Image getImage()
-    {
-        switch(mStatus.getSeverity()) {
-            case IStatus.ERROR:
-                return mErrorImage;
-            case IStatus.WARNING:
-                return mWarningImage;
-            default:
-                return mTransparentImage;
-        }
-    }
-
-    protected String getMessage()
-    {
-        switch(mStatus.getSeverity()) {
-            case IStatus.ERROR:
-            case IStatus.WARNING:
-                return mStatus.getMessage();
-            default:
-                return ""; //$NON-NLS-1$
-        }
     }
     
     private static class TextViewerAction extends Action implements IUpdate 
@@ -645,125 +539,5 @@ public class NSISTemplateEditorDialog extends IconAndMessageDialog
                 mOperationTarget.doOperation(mOperationCode);
             }
         }
-    }
-
-    private class Status implements IStatus
-    {
-        private int mSeverity;
-        private String mMessage;
-        private Throwable mException;
-        
-        public Status(int severity, String message, Throwable exception)
-        {
-            mSeverity = severity;
-            mMessage = message;
-            mException = exception;
-        }
-
-        /**
-         * @param exception The exception to set.
-         */
-        public void setException(Throwable exception)
-        {
-            mException = exception;
-        }
-        
-        /**
-         * @param message The message to set.
-         */
-        public void setMessage(String message)
-        {
-            mMessage = message;
-        }
-        
-        /**
-         * @param severity The severity to set.
-         */
-        public void setSeverity(int severity)
-        {
-            mSeverity = severity;
-        }
-        
-        /* (non-Javadoc)
-         * @see org.eclipse.core.runtime.IStatus#getChildren()
-         */
-        public IStatus[] getChildren()
-        {
-            return null;
-        }
-
-        /* (non-Javadoc)
-         * @see org.eclipse.core.runtime.IStatus#getCode()
-         */
-        public int getCode()
-        {
-            return 0;
-        }
-
-        /* (non-Javadoc)
-         * @see org.eclipse.core.runtime.IStatus#getException()
-         */
-        public Throwable getException()
-        {
-            return mException;
-        }
-
-        /* (non-Javadoc)
-         * @see org.eclipse.core.runtime.IStatus#getMessage()
-         */
-        public String getMessage()
-        {
-            return mMessage;
-        }
-
-        /* (non-Javadoc)
-         * @see org.eclipse.core.runtime.IStatus#getPlugin()
-         */
-        public String getPlugin()
-        {
-            return INSISConstants.PLUGIN_NAME;
-        }
-
-        /* (non-Javadoc)
-         * @see org.eclipse.core.runtime.IStatus#getSeverity()
-         */
-        public int getSeverity()
-        {
-            return mSeverity;
-        }
-
-        /* (non-Javadoc)
-         * @see org.eclipse.core.runtime.IStatus#isMultiStatus()
-         */
-        public boolean isMultiStatus()
-        {
-            return false;
-        }
-
-        /* (non-Javadoc)
-         * @see org.eclipse.core.runtime.IStatus#isOK()
-         */
-        public boolean isOK()
-        {
-            return (mSeverity == OK);
-        }
-
-        /* (non-Javadoc)
-         * @see org.eclipse.core.runtime.IStatus#matches(int)
-         */
-        public boolean matches(int severityMask)
-        {
-            return (mSeverity & severityMask) != 0;
-        }
-    }
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.window.Window#close()
-     */
-    public boolean close()
-    {
-        if(mTransparentImage != null && !mTransparentImage.isDisposed()) {
-            mTransparentImage.dispose();
-        }
-        return super.close();
     }
 }

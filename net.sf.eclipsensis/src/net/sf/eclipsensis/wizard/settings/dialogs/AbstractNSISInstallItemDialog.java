@@ -12,26 +12,27 @@ package net.sf.eclipsensis.wizard.settings.dialogs;
 import java.util.List;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.dialogs.StatusMessageDialog;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.wizard.settings.INSISInstallElement;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceStore;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 
-public abstract class AbstractNSISInstallItemDialog extends Dialog
+public abstract class AbstractNSISInstallItemDialog extends StatusMessageDialog
 {
     protected INSISInstallElement mItem;
     protected IPreferenceStore mStore;
-    private boolean mComplete = true;
     
     public AbstractNSISInstallItemDialog(Shell parentShell, INSISInstallElement item)
     {
         super(parentShell);
-        setBlockOnOpen(true);
         mItem = item;
         mStore = new PreferenceStore();
         Common.beanToStore(mItem, mStore, getProperties());
@@ -41,27 +42,32 @@ public abstract class AbstractNSISInstallItemDialog extends Dialog
     /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
      */
-    protected final Control createDialogArea(Composite parent)
+    protected final Control createControl(Composite parent)
     {
-        Composite composite = (Composite)super.createDialogArea(parent);
-        Control control = createControl(composite);
-        Dialog.applyDialogFont(composite);
+        Composite composite = new Composite(parent, SWT.NONE);
+        GridLayout layout = new GridLayout(1,false);
+        layout.marginHeight = 0;
+        layout.marginWidth = 0;
+        composite.setLayout(layout);
+        
+        Control control = createControlContents(composite);
         GridData gd = new GridData(GridData.FILL_BOTH);
         gd.widthHint = convertWidthInCharsToPixels(65);
         control.setLayoutData(gd);
+        
+        Dialog.applyDialogFont(composite);
         return composite;
     }
     
     /* (non-Javadoc)
-     * @see org.eclipse.jface.dialogs.Dialog#createButtonBar(org.eclipse.swt.widgets.Composite)
+     * @see org.eclipse.jface.window.Window#create()
      */
-    protected final Control createButtonBar(Composite parent)
+    public void create()
     {
-        Control control = super.createButtonBar(parent);
-        setComplete(validate());
-        return control;
+        super.create();
+        validate();
     }
-
+    
     /* (non-Javadoc)
      * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
      */
@@ -83,12 +89,21 @@ public abstract class AbstractNSISInstallItemDialog extends Dialog
         }
     }
 
-    public final void setComplete(boolean complete)
+    protected final boolean validate()
     {
-        getButton(IDialogConstants.OK_ID).setEnabled(complete);
+        DialogStatus status = getStatus();
+        String error = checkForErrors();
+        if(Common.isEmpty(error)) {
+            status.setOK();
+        }
+        else {
+            status.setError(error);
+        }
+        refreshStatus();
+        return status.getSeverity() == IStatus.OK;
     }
 
-    protected abstract Control createControl(Composite parent);
-    protected abstract boolean validate();
+    protected abstract String checkForErrors();
+    protected abstract Control createControlContents(Composite parent);
     protected abstract List getProperties();
 }

@@ -14,23 +14,21 @@ import net.sf.eclipsensis.help.INSISKeywordsListener;
 import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.util.Common;
 
-import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 
-public class NSISInstructionDialog extends Dialog implements IDialogConstants
+public class NSISInstructionDialog extends StatusMessageDialog
 {
     private static String[] cInstructionList;
 
-    private NSISSettingsPage mSettingsPage = null;
     private String mInstruction = ""; //$NON-NLS-1$
     private Combo mInstructionCombo = null;
     private Text mParametersText = null;
-    private boolean mEditMode = true;
     private static INSISKeywordsListener cKeywordsListener  = new INSISKeywordsListener() {
 
         public void keywordsChanged()
@@ -69,17 +67,15 @@ public class NSISInstructionDialog extends Dialog implements IDialogConstants
     /**
      * @param parentShell
      */
-    public NSISInstructionDialog(NSISSettingsPage settingsPage, String instruction)
+    public NSISInstructionDialog(Shell parentShell, String instruction)
     {
-        this(settingsPage);
+        super(parentShell);
         mInstruction = instruction;
-        mEditMode = !Common.isEmpty(mInstruction);
     }
 
-    public NSISInstructionDialog(NSISSettingsPage settingsPage)
+    public NSISInstructionDialog(Shell parentShell)
     {
-        super(settingsPage.getShell());
-        mSettingsPage = settingsPage;
+        this(parentShell,""); //$NON-NLS-1$
     }
 
     /**
@@ -95,16 +91,11 @@ public class NSISInstructionDialog extends Dialog implements IDialogConstants
     /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
      */
-    protected Control createDialogArea(Composite parent)
+    protected Control createControl(Composite parent)
     {
-        Composite composite = (Composite)super.createDialogArea(parent);
-        GridLayout layout = (GridLayout)composite.getLayout();
-        layout.numColumns = 2;
-
-        GridData data = (GridData)composite.getLayoutData();
-        data.verticalAlignment = GridData.FILL;
-        data.horizontalAlignment = GridData.FILL;
-        data.widthHint = convertWidthInCharsToPixels(50);
+        Composite composite = new Composite(parent,SWT.NONE);
+        composite.setLayout(new GridLayout(2,false));
+        
         String instruction;
         String parameters;
         int n = mInstruction.indexOf(" "); //$NON-NLS-1$
@@ -121,18 +112,32 @@ public class NSISInstructionDialog extends Dialog implements IDialogConstants
                                         EclipseNSISPlugin.getResourceString("instructions.instruction.tooltip"), //$NON-NLS-1$
                                         cInstructionList,instruction);
         mInstructionCombo.setTextLimit(INSISConstants.DIALOG_TEXT_LIMIT);
-        mInstructionCombo.addKeyListener(new KeyAdapter() {
-           public void keyReleased(KeyEvent e)
-           {
-               getButton(OK_ID).setEnabled(!Common.isEmpty(mInstructionCombo.getText()));
-           }
-        });
-        mInstructionCombo.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e)
+        mInstructionCombo.addModifyListener(new ModifyListener() {
+            public void modifyText(ModifyEvent e)
             {
-                getButton(OK_ID).setEnabled(!Common.isEmpty(mInstructionCombo.getText()));
+                char[] chars = mInstructionCombo.getText().toCharArray();
+                if(!Common.isEmptyArray(chars)) {
+                    StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
+                    int pos = mInstructionCombo.getSelection().x;
+                    for (int i = 0; i < chars.length; i++) {
+                        if(Character.isLetterOrDigit(chars[i]) || (i==0 && chars[i]=='!')) {
+                            buf.append(chars[i]);
+                        }
+                        else {
+                            if(i <= pos && pos > 0) {
+                                pos--;
+                            }
+                        }
+                    }
+                    if(buf.length() != chars.length) {
+                        mInstructionCombo.setText(buf.toString());
+                        mInstructionCombo.setSelection(new Point(pos,pos));
+                        return;
+                    }
+                }
+                validate();
             }
-         });
+        });
         
         mParametersText = createText(composite, EclipseNSISPlugin.getResourceString("instructions.parameters.text"), //$NON-NLS-1$
                                      EclipseNSISPlugin.getResourceString("instructions.parameters.tooltip"),parameters); //$NON-NLS-1$
@@ -140,6 +145,24 @@ public class NSISInstructionDialog extends Dialog implements IDialogConstants
         return composite;
     }
     
+    public void create()
+    {
+        super.create();
+        validate();
+    }
+    
+    private void validate()
+    {
+        DialogStatus status = getStatus();
+        if(Common.isEmpty(mInstructionCombo.getText())) {
+            status.setError(EclipseNSISPlugin.getResourceString("instruction.blank.error")); //$NON-NLS-1$
+        }
+        else {
+            status.setOK();
+        }
+        refreshStatus();
+    }
+
     protected Combo createCombo(Composite composite, String text, String tooltipText,
                                 String[] list, String value)
     {
@@ -151,14 +174,13 @@ public class NSISInstructionDialog extends Dialog implements IDialogConstants
         data.horizontalAlignment = GridData.FILL;
         label.setLayoutData(data);
         
-        Combo combo = new Combo(composite, SWT.DROP_DOWN);
+        Combo combo = new Combo(composite, SWT.DROP_DOWN|SWT.BORDER);
         combo.setToolTipText(tooltipText);
         if(!Common.isEmptyArray(list)) {
             for(int i=0; i<list.length; i++) {
                 combo.add(list[i]);
             }
         }
-        combo.setText(value);
         
         data = new GridData();
         data.horizontalSpan = 1;
@@ -179,12 +201,8 @@ public class NSISInstructionDialog extends Dialog implements IDialogConstants
         
         Text text = new Text(composite, SWT.SINGLE | SWT.BORDER);
         text.setToolTipText(tooltipText);
-        data = new GridData();
-        data.horizontalAlignment = GridData.FILL;
-        data.horizontalSpan = 1;
-        data.grabExcessHorizontalSpace = true;
-        data.verticalAlignment = GridData.CENTER;
-        data.grabExcessVerticalSpace = false;
+        data = new GridData(GridData.FILL_HORIZONTAL);
+        data.widthHint = convertWidthInCharsToPixels(40);
         text.setLayoutData(data);
         text.setText(value);
         
@@ -196,16 +214,18 @@ public class NSISInstructionDialog extends Dialog implements IDialogConstants
      */
     protected void okPressed()
     {
-        String instruction = mInstructionCombo.getText().trim();
-        if(!Common.isEmpty(instruction)) {
-            if(mSettingsPage.validateSaveInstruction(mInstruction,new StringBuffer(instruction).append(" ").append( //$NON-NLS-1$
-                                                       mParametersText.getText().trim()).toString().trim(),
-                                                       mEditMode)) {
-                super.okPressed();
-            }
-        }
+        mInstruction = new StringBuffer(mInstructionCombo.getText().trim()).append(" ").append(mParametersText.getText().trim()).toString().trim(); //$NON-NLS-1$
+        super.okPressed();
     }
 
+    /**
+     * @return Returns the instruction.
+     */
+    public String getInstruction()
+    {
+        return mInstruction;
+    }
+    
     /**
      * @see org.eclipse.jface.dialogs.Dialog#createButtonBar(Composite)
      */

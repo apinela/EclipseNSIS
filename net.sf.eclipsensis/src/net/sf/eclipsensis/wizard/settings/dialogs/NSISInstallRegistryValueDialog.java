@@ -12,6 +12,7 @@ package net.sf.eclipsensis.wizard.settings.dialogs;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.wizard.INSISWizardConstants;
 import net.sf.eclipsensis.wizard.NSISWizardDisplayValues;
@@ -54,7 +55,7 @@ public class NSISInstallRegistryValueDialog extends AbstractNSISInstallItemDialo
     /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
      */
-    protected Control createControl(Composite parent)
+    protected Control createControlContents(Composite parent)
     {
         Composite composite = new Composite(parent, SWT.NONE);
         GridLayout layout = new GridLayout(2,false);
@@ -75,7 +76,7 @@ public class NSISInstallRegistryValueDialog extends AbstractNSISInstallItemDialo
             public void modifyText(ModifyEvent e)
             {
                 mStore.setValue("subKey",t1.getText().trim()); //$NON-NLS-1$
-                setComplete(validate());
+                validate();
             }
         });
 
@@ -85,18 +86,25 @@ public class NSISInstallRegistryValueDialog extends AbstractNSISInstallItemDialo
             public void modifyText(ModifyEvent e)
             {
                 mStore.setValue("value",t2.getText().trim()); //$NON-NLS-1$
-                setComplete(validate());
+                validate();
             }
         });
         final Combo c2 = NSISWizardDialogUtil.createCombo(composite,NSISWizardDisplayValues.REG_VALUE_TYPES,mStore.getInt("valueType"), //$NON-NLS-1$
                 true,"wizard.value.type.label",true,null,false); //$NON-NLS-1$
+        c2.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e)
+            {
+                validate();
+            }
+        });
+        
         final Text t3 = NSISWizardDialogUtil.createText(composite,mStore.getString("data"),"wizard.data.label",true, //$NON-NLS-1$ //$NON-NLS-2$
                 null,false);
         t3.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e)
             {
                 mStore.setValue("data",t3.getText().trim()); //$NON-NLS-1$
-                setComplete(validate());
+                validate();
             }
         });
         t3.addVerifyListener(new VerifyListener() {
@@ -159,13 +167,17 @@ public class NSISInstallRegistryValueDialog extends AbstractNSISInstallItemDialo
         return composite;
     }
     
-    /* (non-Javadoc)
-     * @see net.sf.eclipsensis.wizard.settings.dialogs.AbstractNSISInstallItemDialog#validate()
-     */
-    protected boolean validate()
+    protected String checkForErrors()
     {
         String subKey = mStore.getString("subKey").trim(); //$NON-NLS-1$
-        return !Common.isEmpty(subKey) && !subKey.endsWith("\\") && !subKey.startsWith("\\") && //$NON-NLS-1$ //$NON-NLS-2$
-               (mStore.getInt("valueType") == INSISWizardConstants.REG_SZ || !Common.isEmpty(mStore.getString("data"))); //$NON-NLS-1$ //$NON-NLS-2$
+        if(Common.isEmpty(subKey) || subKey.endsWith("\\") || subKey.startsWith("\\")) { //$NON-NLS-1$ //$NON-NLS-2$
+            return EclipseNSISPlugin.getResourceString("wizard.invalid.sub.key"); //$NON-NLS-1$
+        }
+        else if(mStore.getInt("valueType") != INSISWizardConstants.REG_SZ && Common.isEmpty(mStore.getString("data"))) { //$NON-NLS-1$ //$NON-NLS-2$
+            return EclipseNSISPlugin.getResourceString("wizard.invalid.reg.value"); //$NON-NLS-1$
+        }
+        else {
+            return ""; //$NON-NLS-1$
+        }
     }
 }

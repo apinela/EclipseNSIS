@@ -9,8 +9,10 @@
  *******************************************************************************/
 package net.sf.eclipsensis.editor.codeassist;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 
+import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.util.Common;
 
@@ -43,20 +45,32 @@ public class NSISAnnotationHover implements IAnnotationHover, INSISConstants, IA
 			IRegion info= document.getLineInformation(lineNumber);
             
             if (model != null) {
+                ArrayList messages = new ArrayList();
                 for(Iterator e= model.getAnnotationIterator(); e.hasNext(); ) {
                     Annotation a= (Annotation) e.next();
                     Position p= model.getPosition(a);
                     if (p != null && p.overlapsWith(info.getOffset(), info.getLength())) {
                         if(a instanceof MarkerAnnotation) {
                             IMarker marker = ((MarkerAnnotation)a).getMarker();
-                            if(marker.getType().equals(PROBLEM_ID)) {
+                            String type = marker.getType();
+                            if(type.equals(PROBLEM_MARKER_ID) || type.equals(TASK_MARKER_ID)) {
                                 String msg= a.getText();
                                 if (!Common.isEmpty(msg)) {
-                                    return msg;
+                                    messages.add(msg);
                                 }
                             }
                         }
                     }
+                }
+                if(messages.size() == 1) {
+                    return (String)messages.get(0);
+                }
+                else if(messages.size() > 1) {
+                    StringBuffer buf = new StringBuffer(EclipseNSISPlugin.getResourceString("multiple.markers.message")); //$NON-NLS-1$
+                    for (Iterator iter = messages.iterator(); iter.hasNext();) {
+                        buf.append(LINE_SEPARATOR).append("\t- ").append(iter.next()); //$NON-NLS-1$
+                    }
+                    return buf.toString();
                 }
             }
 		} 

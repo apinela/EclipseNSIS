@@ -12,17 +12,17 @@ package net.sf.eclipsensis.editor.text;
 import java.util.List;
 
 import net.sf.eclipsensis.settings.INSISPreferenceConstants;
-import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.text.rules.*;
+import org.eclipse.jface.text.rules.IRule;
+import org.eclipse.jface.text.rules.IToken;
 
 public class NSISStringScanner extends NSISRuleBasedScanner
 {
-    private IToken mDefaultToken = null;
-    protected NSISVariablesWordRule mVariablesWordRule = null;
-    protected NSISWordPatternRule mSymbolsRule = null;
-    protected NSISWordPatternRule mLangstringsRule = null;
+    private IToken mDefaultToken;
+    protected NSISVariablesWordRule mVariablesWordRule;
+    protected NSISWordPatternRule mSymbolsRule;
+    protected NSISWordPatternRule mLangstringsRule;
 
     /**
      * @param preferenceStore
@@ -149,16 +149,6 @@ public class NSISStringScanner extends NSISRuleBasedScanner
             }
         }
         return mVariablesWordRule;
-    }
-
-    protected void addWords(WordRule wordRule, String preferenceName, String[] array)
-    {
-        IToken token = createTokenFromPreference(preferenceName);
-        if(!Common.isEmptyArray(array)) {
-            for (int i = 0; i < array.length; i++) {
-                wordRule.addWord(array[i].toLowerCase(), token);
-            }
-        }
     }
 
     /* (non-Javadoc)

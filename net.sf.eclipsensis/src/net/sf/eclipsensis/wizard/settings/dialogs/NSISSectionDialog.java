@@ -54,7 +54,7 @@ public class NSISSectionDialog extends AbstractNSISInstallItemDialog
     /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
      */
-    protected Control createControl(Composite parent)
+    protected Control createControlContents(Composite parent)
     {
         Composite composite = new Composite(parent, SWT.NONE);
         GridLayout layout = new GridLayout(2,false);
@@ -86,7 +86,7 @@ public class NSISSectionDialog extends AbstractNSISInstallItemDialog
             public void modifyText(ModifyEvent e)
             {
                 mStore.setValue("name",t.getText().trim()); //$NON-NLS-1$
-                setComplete(validate());
+                validate();
             }
         });
         Label l = NSISWizardDialogUtil.createLabel(composite,"wizard.description.label",true,null,false); //$NON-NLS-1$
@@ -103,7 +103,7 @@ public class NSISSectionDialog extends AbstractNSISInstallItemDialog
             public void modifyText(ModifyEvent e)
             {
                 mStore.setValue("description",t2.getText().trim()); //$NON-NLS-1$
-                setComplete(validate());
+                validate();
             }
         });
         int textLimit;
@@ -174,12 +174,10 @@ public class NSISSectionDialog extends AbstractNSISInstallItemDialog
         return composite;
     }
     
-    /* (non-Javadoc)
-     * @see net.sf.eclipsensis.wizard.settings.dialogs.AbstractNSISInstallItemDialog#validate()
-     */
-    protected boolean validate()
+    
+    protected String checkForErrors()
     {
-        return true;
+        return ""; //$NON-NLS-1$
     }
     
     /* (non-Javadoc)

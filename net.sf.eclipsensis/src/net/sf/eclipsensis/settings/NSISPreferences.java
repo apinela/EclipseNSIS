@@ -11,13 +11,15 @@ package net.sf.eclipsensis.settings;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Properties;
+import java.util.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.IEclipseNSISPluginListener;
+import net.sf.eclipsensis.editor.NSISTaskTag;
 import net.sf.eclipsensis.editor.text.NSISSyntaxStyle;
 import net.sf.eclipsensis.util.*;
 
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.StringConverter;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -34,6 +36,9 @@ public class NSISPreferences extends NSISSettings implements IPropertyChangeList
     private boolean mUseIntegratedHelp = true;
     private boolean mAutoShowConsole = true;
     private Properties mNSISOptions = null;
+    private Collection mTaskTags = null;
+    private Collection mDefaultTaskTags = null;
+    private boolean mCaseSensitiveTaskTags = true;
     
     private static NSISPreferences cInstance = null;
     
@@ -223,6 +228,7 @@ public class NSISPreferences extends NSISSettings implements IPropertyChangeList
         initializeSyntaxPreference(NUMBERS_STYLE,ColorManager.RED, null, false, false);
         initializeSyntaxPreference(STRINGS_STYLE,ColorManager.TURQUOISE, null, false, false);
         initializeSyntaxPreference(COMMENTS_STYLE,ColorManager.GREY, null, false, true);
+        initializeSyntaxPreference(TASK_TAGS_STYLE,ColorManager.TEAL, null, true, false);
     }
 
     protected void load()
@@ -230,16 +236,116 @@ public class NSISPreferences extends NSISSettings implements IPropertyChangeList
         initializeNSISPreferences();
         initializeEditorPreferences();
         initializeSyntaxPreferences();
+        initializeDefaultTaskTags();
+        initializePreference(TASK_TAGS,""); //$NON-NLS-1$
+        mTaskTags = (Collection)loadObject(TASK_TAGS);
+        initializePreference(CASE_SENSITIVE_TASK_TAGS,Boolean.TRUE); //$NON-NLS-1$
+        mCaseSensitiveTaskTags = getBoolean(CASE_SENSITIVE_TASK_TAGS);
         super.load();
     }
     
+    /**
+     * 
+     */
+    private void initializeDefaultTaskTags()
+    {
+        String defaultTaskTag = EclipseNSISPlugin.getResourceString("default.task.tag",""); //$NON-NLS-1$ //$NON-NLS-2$
+        String[] taskTags = Common.loadArrayProperty(EclipseNSISPlugin.getDefault().getResourceBundle(),"task.tags"); //$NON-NLS-1$
+        String[] taskTagPriorities = Common.loadArrayProperty(EclipseNSISPlugin.getDefault().getResourceBundle(),"task.priorities"); //$NON-NLS-1$
+        mDefaultTaskTags = new ArrayList();
+        if(!Common.isEmptyArray(taskTags)) {
+            for (int i = 0; i < taskTags.length; i++) {
+                NSISTaskTag tag;
+                if(!Common.isEmptyArray(taskTagPriorities) && taskTagPriorities.length > i) {
+                    try {
+                        tag = new NSISTaskTag(taskTags[i],Integer.parseInt(taskTagPriorities[i]));
+                    }
+                    catch(NumberFormatException nfe) {
+                        nfe.printStackTrace();
+                        tag = new NSISTaskTag(taskTags[i],IMarker.PRIORITY_NORMAL);
+                    }
+                }
+                else {
+                    tag = new NSISTaskTag(taskTags[i],IMarker.PRIORITY_NORMAL);
+                }
+                tag.setDefault(taskTags[i].equals(defaultTaskTag));
+                mDefaultTaskTags.add(tag);
+            }
+        }
+    }
+
     public void store()
     {
         setValue(NSIS_HOME,mNSISHome);
         setValue(USE_INTEGRATED_HELP,mUseIntegratedHelp);
+        setValue(AUTO_SHOW_CONSOLE,mAutoShowConsole);
+        setValue(CASE_SENSITIVE_TASK_TAGS,mCaseSensitiveTaskTags);
+        storeObject(TASK_TAGS,mTaskTags);
         super.store();
     }
 
+    private Collection createCopy(Collection tags)
+    {
+        Collection copy = new ArrayList();
+        for (Iterator iter=tags.iterator(); iter.hasNext(); ) {
+            copy.add(new NSISTaskTag((NSISTaskTag)iter.next()));
+        }
+        return copy;
+    }
+
+    /**
+     * @return Returns the taskTags.
+     */
+    public Collection getTaskTags()
+    {
+        return (mTaskTags == null?getDefaultTaskTags():createCopy(mTaskTags));
+    }
+    
+    /**
+     * @param taskTags The taskTags to set.
+     */
+    public void setTaskTags(Collection taskTags)
+    {
+        if(taskTags != null && taskTags.size() == mDefaultTaskTags.size()) {
+            boolean different = false;
+            for (Iterator iter = taskTags.iterator(); iter.hasNext();) {
+                if(!mDefaultTaskTags.contains(iter.next())) {
+                    different = true;
+                    break;
+                }
+            }
+            if(!different) {
+                taskTags = null;
+            }
+        }
+        mTaskTags = taskTags;
+    }
+    
+    
+    /**
+     * @return Returns the defaultTaskTags.
+     */
+    public Collection getDefaultTaskTags()
+    {
+        return createCopy(mDefaultTaskTags);
+    }
+    
+    /**
+     * @return Returns the caseSensitiveTaskTags.
+     */
+    public boolean isCaseSensitiveTaskTags()
+    {
+        return mCaseSensitiveTaskTags;
+    }
+    
+    /**
+     * @param caseSensitiveTaskTags The caseSensitiveTaskTags to set.
+     */
+    public void setCaseSensitiveTaskTags(boolean caseSensitiveTaskTags)
+    {
+        mCaseSensitiveTaskTags = caseSensitiveTaskTags;
+    }
+    
     /**
      * @return Returns the NSISHome.
      */

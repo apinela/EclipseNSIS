@@ -26,20 +26,10 @@ public class NSISRegionScanner implements NSISScanner
     private char[][] mDelimiters;
     private char[] mContent;
     
-    public NSISRegionScanner(IDocument document, IRegion region)
+    
+    public NSISRegionScanner(IDocument document)
     {
         mDocument = document;
-        mStartOffset = region.getOffset();
-        mEndOffset = mStartOffset + region.getLength() - 1;
-        mOffset = 0;
-        try {
-            String content = mDocument.get(mStartOffset,region.getLength());
-            mContent = content.toCharArray();
-        }
-        catch (BadLocationException e) {
-            mContent = new char[0];
-        }
-        
         String[] delimiters= mDocument.getLegalLineDelimiters();
         if(!Common.isEmptyArray(delimiters)) {
             mDelimiters = new char[delimiters.length][];
@@ -56,6 +46,29 @@ public class NSISRegionScanner implements NSISScanner
         }
         else {
             mDelimiters = new char[0][];
+        }
+    }
+
+    public NSISRegionScanner(IDocument document, IRegion region)
+    {
+        this(document);
+        setRegion(region);
+    }
+
+    /**
+     * @param region
+     */
+    public void setRegion(IRegion region)
+    {
+        mStartOffset = region.getOffset();
+        mEndOffset = mStartOffset + region.getLength() - 1;
+        mOffset = 0;
+        try {
+            String content = mDocument.get(mStartOffset,region.getLength());
+            mContent = content.toCharArray();
+        }
+        catch (BadLocationException e) {
+            mContent = new char[0];
         }
     }
 

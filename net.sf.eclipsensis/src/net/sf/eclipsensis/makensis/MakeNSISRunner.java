@@ -9,8 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.makensis;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 import java.util.*;
@@ -149,12 +148,12 @@ public class MakeNSISRunner implements INSISConstants
                 protected void execute(IProgressMonitor monitor)throws CoreException
                 {
                     try {
-                        file.deleteMarkers(PROBLEM_ID, false, IResource.DEPTH_ZERO);
+                        file.deleteMarkers(PROBLEM_MARKER_ID, false, IResource.DEPTH_ZERO);
                         List errors = model.getErrors();
                         if (Common.isEmptyCollection(errors)) {
                             errors = results.getErrors();
                             if (!Common.isEmptyCollection(errors)) {
-                                IMarker marker = file.createMarker(PROBLEM_ID);
+                                IMarker marker = file.createMarker(PROBLEM_MARKER_ID);
                                 marker.setAttribute(IMarker.SEVERITY,
                                                     IMarker.SEVERITY_ERROR);
                                 marker.setAttribute(IMarker.MESSAGE,
@@ -166,7 +165,7 @@ public class MakeNSISRunner implements INSISConstants
                         else {
                             Iterator iter = errors.iterator();
                             NSISConsoleLine error = (NSISConsoleLine)iter.next();
-                            IMarker marker = file.createMarker(PROBLEM_ID);
+                            IMarker marker = file.createMarker(PROBLEM_MARKER_ID);
                             marker.setAttribute(IMarker.SEVERITY,
                                                 IMarker.SEVERITY_ERROR);
                             marker.setAttribute(IMarker.MESSAGE, error.toString());
@@ -194,7 +193,7 @@ public class MakeNSISRunner implements INSISConstants
                                         text = text.substring(8).trim();
                                     }
                                     if(!map.containsKey(text)) {
-                                        IMarker marker = file.createMarker(PROBLEM_ID);
+                                        IMarker marker = file.createMarker(PROBLEM_MARKER_ID);
                                         marker.setAttribute(IMarker.SEVERITY,
                                                             IMarker.SEVERITY_WARNING);
                                         Matcher matcher = MakeNSISRunner.MAKENSIS_WARNING_PATTERN.matcher(text);
@@ -227,7 +226,7 @@ public class MakeNSISRunner implements INSISConstants
                                         text = text.substring(8).trim();
                                     }
                                     if(!map.containsKey(text)) {
-                                        IMarker marker = file.createMarker(PROBLEM_ID);
+                                        IMarker marker = file.createMarker(PROBLEM_MARKER_ID);
                                         marker.setAttribute(IMarker.SEVERITY,
                                                             IMarker.SEVERITY_WARNING);
                                         marker.setAttribute(IMarker.MESSAGE, text);
@@ -427,8 +426,10 @@ public class MakeNSISRunner implements INSISConstants
             Process proc = Runtime.getRuntime().exec(cmdArray,env,workDir);
             MakeNSISProcess process = new MakeNSISProcess(proc);
             setProcess(process);
-            new Thread(new NSISConsoleWriter(process, model, proc.getInputStream(),outputProcessor)).start();
-            new Thread(new NSISConsoleWriter(process, model, proc.getErrorStream(),
+            InputStream inputStream = proc.getInputStream();
+            new Thread(new NSISConsoleWriter(process, model, inputStream,outputProcessor)).start();
+            InputStream errorStream = proc.getErrorStream();
+            new Thread(new NSISConsoleWriter(process, model, errorStream,
                         new INSISConsoleLineProcessor() {
                             public NSISConsoleLine processText(String text)
                             {
@@ -441,6 +442,8 @@ public class MakeNSISRunner implements INSISConstants
                         })).start();
     
             int rv = proc.waitFor();
+            Common.closeIO(inputStream);
+            Common.closeIO(errorStream);
             results.setReturnCode(rv);
             String outputFileName = null;
             if(results.getReturnCode() == MakeNSISResults.RETURN_SUCCESS) {

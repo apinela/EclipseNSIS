@@ -9,44 +9,50 @@
  *******************************************************************************/
 package net.sf.eclipsensis.dialogs;
 
+import java.util.Collection;
+
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 
-public class NSISSymbolDialog extends Dialog implements IDialogConstants
+public class NSISSymbolDialog extends StatusMessageDialog
 {
-    private NSISSettingsPage mSettingsPage = null;
     private String mName = ""; //$NON-NLS-1$
     private String mValue = ""; //$NON-NLS-1$
     private Text mNameText = null;
     private Text mValueText = null;
-    private boolean mEditMode = true;
+    private Collection mExistingSymbols = null;
     
     /**
      * @param parentShell
      */
-    public NSISSymbolDialog(NSISSettingsPage settingsPage, String name, String value)
+    public NSISSymbolDialog(Shell parentShell, String name, String value)
     {
-        this(settingsPage);
+        super(parentShell);
         mName = name;
         mValue = value;
-        mEditMode = !Common.isEmpty(mName);
     }
 
-    public NSISSymbolDialog(NSISSettingsPage settingsPage)
+    public NSISSymbolDialog(Shell parentShell)
     {
-        super(settingsPage.getShell());
-        mSettingsPage = settingsPage;
+        this(parentShell,"",""); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
+    /**
+     * @param existingSymbols The existingSymbols to set.
+     */
+    public void setExistingSymbols(Collection existingSymbols)
+    {
+        mExistingSymbols = existingSymbols;
+    }
+    
     /**
      * @see org.eclipse.jface.window.Window#configureShell(Shell)
      */
@@ -58,28 +64,19 @@ public class NSISSymbolDialog extends Dialog implements IDialogConstants
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
+     * @see net.sf.eclipsensis.dialogs.StatusMessageDialog#createControl(org.eclipse.swt.widgets.Composite)
      */
-    protected Control createDialogArea(Composite parent)
+    protected Control createControl(Composite parent)
     {
-        Composite composite = (Composite)super.createDialogArea(parent);
-        GridLayout layout = (GridLayout)composite.getLayout();
-        layout.numColumns = 2;
-
-        GridData data = (GridData)composite.getLayoutData();
-        data.verticalAlignment = GridData.FILL;
-        data.horizontalAlignment = GridData.FILL;
-        data.widthHint = convertWidthInCharsToPixels(50);
+        Composite composite = new Composite(parent, SWT.NONE);
+        GridLayout layout = new GridLayout(2,false);
+        layout.marginHeight = 0;
+        layout.marginWidth = 0;
+        composite.setLayout(layout);
         
         mNameText = createText(composite, EclipseNSISPlugin.getResourceString("symbols.name.text"), //$NON-NLS-1$
                                EclipseNSISPlugin.getResourceString("symbols.name.tooltip"),mName); //$NON-NLS-1$
-/*        mNameText.addFocusListener(new FocusAdapter() {
-            public void focusLost(FocusEvent e) 
-            {
-                getButton(OK_ID).setEnabled(!Common.isEmpty(mNameText.getText()));
-            }
-        });
-*/
+
         mNameText.addVerifyListener(new VerifyListener() {
             public void verifyText(VerifyEvent e) 
             {
@@ -94,17 +91,18 @@ public class NSISSymbolDialog extends Dialog implements IDialogConstants
             }
         });
         
-        mNameText.addKeyListener(new KeyAdapter() {
-           public void keyReleased(KeyEvent e)
-           {
-               getButton(OK_ID).setEnabled(!Common.isEmpty(mNameText.getText()));
-           }
+        mNameText.addModifyListener(new ModifyListener() {
+            public void modifyText(ModifyEvent e)
+            {
+                validate();
+            }
         });
         mNameText.setTextLimit(INSISConstants.DIALOG_TEXT_LIMIT);
         
         mValueText = createText(composite, EclipseNSISPlugin.getResourceString("symbols.value.text"), //$NON-NLS-1$
                                EclipseNSISPlugin.getResourceString("symbols.value.tooltip"),mValue); //$NON-NLS-1$
         mValueText.setTextLimit(INSISConstants.DIALOG_TEXT_LIMIT);
+        Dialog.applyDialogFont(composite);
         return composite;
     }
     
@@ -112,23 +110,32 @@ public class NSISSymbolDialog extends Dialog implements IDialogConstants
     {
         Label label = new Label(composite, SWT.LEFT);
         label.setText(labelText);
-        GridData data = new GridData();
-        data.horizontalSpan = 1;
-        data.horizontalAlignment = GridData.FILL;
-        label.setLayoutData(data);
+        label.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
         
         Text text = new Text(composite, SWT.SINGLE | SWT.BORDER);
         text.setToolTipText(tooltipText);
-        data = new GridData();
-        data.horizontalAlignment = GridData.FILL;
-        data.horizontalSpan = 1;
-        data.grabExcessHorizontalSpace = true;
-        data.verticalAlignment = GridData.CENTER;
-        data.grabExcessVerticalSpace = false;
-        text.setLayoutData(data);
+        GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
+        gridData.widthHint = convertWidthInCharsToPixels(40);
+        text.setLayoutData(gridData);
         text.setText(value);
         
         return text;
+    }
+    
+    /**
+     * @return Returns the name.
+     */
+    public String getName()
+    {
+        return mName;
+    }
+    
+    /**
+     * @return Returns the value.
+     */
+    public String getValue()
+    {
+        return mValue;
     }
     
     /* (non-Javadoc)
@@ -136,21 +143,37 @@ public class NSISSymbolDialog extends Dialog implements IDialogConstants
      */
     protected void okPressed()
     {
-        String name = mNameText.getText();
-        if(!Common.isEmpty(name)) {
-            if(mSettingsPage.validateSaveSymbol(mName,name,mValueText.getText(),mEditMode)) {
-                super.okPressed();
+        mName = mNameText.getText();
+        if(!Common.isEmptyCollection(mExistingSymbols) && mExistingSymbols.contains(mName)) {
+            if(!Common.openConfirm(getShell(), EclipseNSISPlugin.getFormattedString("symbol.overwrite.confirm", //$NON-NLS-1$
+                                                                  new String[]{mName}))) {
+                return;
             }
         }
+
+        mValue = mValueText.getText();
+        super.okPressed();
     }
     
-    /**
-     * @see org.eclipse.jface.dialogs.Dialog#createButtonBar(Composite)
+    private void validate()
+    {
+        DialogStatus status = getStatus();
+        String name = mNameText.getText();
+        if(Common.isEmpty(name)) {
+            status.setError(EclipseNSISPlugin.getResourceString("symbol.name.blank.error")); //$NON-NLS-1$
+        }
+        else {
+            status.setOK();
+        }
+        refreshStatus();
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.window.Window#create()
      */
-    protected Control createButtonBar(Composite parent) {
-        Control control = super.createButtonBar(parent);
-        Button okButton = getButton(OK_ID);
-        okButton.setEnabled(!Common.isEmpty(mName));
-        return control;
+    public void create()
+    {
+        super.create();
+        validate();
     }
 }

@@ -1,3 +1,4 @@
+; TODO Do something
 ; The name of the installer
 !define MYSYMBOL "Some Value"
 Name "$(^Name)"

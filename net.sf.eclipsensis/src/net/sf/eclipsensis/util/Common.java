@@ -567,9 +567,12 @@ public class Common
         int n = pathName.indexOf('\\');
         String suffix = null;
         String prefix = null;
-        if(n >= 0) {
+        if(n >= 1) {
             suffix = pathName.substring(n);
             prefix = pathName.substring(0,n);
+        }
+        else {
+            prefix = pathName;
         }
         if(!Common.isEmpty(prefix)) {
             for(int i=0; i<NSISKeywords.PATH_CONSTANTS_AND_VARIABLES.length; i++) {

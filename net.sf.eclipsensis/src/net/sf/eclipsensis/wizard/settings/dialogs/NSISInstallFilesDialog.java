@@ -58,7 +58,7 @@ public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
     /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
      */
-    protected Control createControl(Composite parent)
+    protected Control createControlContents(Composite parent)
     {
         Composite composite = new Composite(parent, SWT.NONE);
         Dialog.applyDialogFont(composite);
@@ -192,7 +192,7 @@ public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
                         mFiles.add(Common.encodePath(new StringBuffer(filterPath).append("\\").append(fileNames[i]).toString())); //$NON-NLS-1$
                     }
                     viewer.refresh();
-                    setComplete(validate());
+                    validate();
                 }
             }
         });
@@ -205,7 +205,7 @@ public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
                     mFiles.remove(iter.next());
                 }
                 viewer.refresh();
-                setComplete(validate());
+                validate();
             }
         });
         
@@ -252,7 +252,7 @@ public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
             public void modifyText(ModifyEvent e)
             {
                 mStore.setValue("destination",c1.getText().trim()); //$NON-NLS-1$
-                setComplete(validate());
+                validate();
             }
         });
         gd = (GridData)c1.getLayoutData();
@@ -284,11 +284,16 @@ public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
         super.okPressed();
     }
 
-    /* (non-Javadoc)
-     * @see net.sf.eclipsensis.wizard.settings.dialogs.AbstractNSISInstallItemDialog#validate()
-     */
-    protected boolean validate()
+    protected String checkForErrors()
     {
-        return mFiles.size() > 0 && Common.isValidNSISPathName(mStore.getString("destination")); //$NON-NLS-1$
+        if(mFiles.size() == 0) { //$NON-NLS-1$
+            return EclipseNSISPlugin.getResourceString("wizard.invalid.fileset"); //$NON-NLS-1$
+        }
+        else if(!Common.isValidNSISPathName(mStore.getString("destination"))) { //$NON-NLS-1$
+            return EclipseNSISPlugin.getResourceString("wizard.invalid.fileset.destination"); //$NON-NLS-1$
+        }
+        else {
+            return ""; //$NON-NLS-1$
+        }
     }
 }

@@ -39,7 +39,7 @@ public class NSISWordRule extends WordRule implements INSISConstants
     {
         int offset = ((NSISScanner)scanner).getOffset();
         int c= scanner.read();
-        if (fDetector.isWordStart((char) c)) {
+        if (c != ICharacterScanner.EOF && fDetector.isWordStart((char) c)) {
             if (fColumn == UNDEFINED || (fColumn == scanner.getColumn() - 1)) {
                 StringBuffer buffer = new StringBuffer(""); //$NON-NLS-1$
                 buffer.append((char) c);
