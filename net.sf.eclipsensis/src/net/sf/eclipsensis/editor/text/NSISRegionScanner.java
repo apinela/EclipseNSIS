@@ -1,0 +1,116 @@
+/*******************************************************************************
+ * Copyright (c) 2004 Sunil Kamath (IcemanK).
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which is available at http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     Sunil Kamath (IcemanK) - initial API and implementation
+ *******************************************************************************/
+package net.sf.eclipsensis.editor.text;
+
+import java.util.Arrays;
+import java.util.Comparator;
+
+import net.sf.eclipsensis.util.Common;
+
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
+
+
+public class NSISRegionScanner implements NSISScanner
+{
+    private IDocument mDocument;
+    private int mStartOffset;
+    private int mEndOffset;
+    private int mOffset;
+    private char[][] mDelimiters;
+    private char[] mContent;
+    
+    public NSISRegionScanner(IDocument document, IRegion region)
+    {
+        mDocument = document;
+        mStartOffset = region.getOffset();
+        mEndOffset = mStartOffset + region.getLength() - 1;
+        mOffset = 0;
+        try {
+            String content = mDocument.get(mStartOffset,region.getLength());
+            mContent = content.toCharArray();
+        }
+        catch (BadLocationException e) {
+            mContent = new char[0];
+        }
+        
+        String[] delimiters= mDocument.getLegalLineDelimiters();
+        if(!Common.isEmptyArray(delimiters)) {
+            mDelimiters = new char[delimiters.length][];
+            for (int i = 0; i < delimiters.length; i++) {
+                mDelimiters[i] = delimiters[i].toCharArray();
+            }
+
+            Arrays.sort(mDelimiters,new Comparator() {
+                public int compare(Object a, Object b)
+                {
+                    return ((char[])b).length-((char[])a).length;
+                }
+            });
+        }
+        else {
+            mDelimiters = new char[0][];
+        }
+    }
+
+    /* (non-Javadoc)
+     * @see net.sf.eclipsensis.editor.text.NSISScanner#getOffset()
+     */
+    public int getOffset()
+    {
+        return mStartOffset+mOffset;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.text.rules.ICharacterScanner#getColumn()
+     */
+    public int getColumn()
+    {
+        return (mOffset >=0 && mOffset < mContent.length?mOffset:-1);
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.text.rules.ICharacterScanner#getLegalLineDelimiters()
+     */
+    public char[][] getLegalLineDelimiters()
+    {
+        return mDelimiters;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.text.rules.ICharacterScanner#read()
+     */
+    public int read()
+    {
+        try {
+            if(mOffset < mContent.length) {
+                return mContent[mOffset];
+            }
+            return EOF;
+        }
+        finally {
+            mOffset++;
+        }
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.text.rules.ICharacterScanner#unread()
+     */
+    public void unread()
+    {
+        mOffset--;
+    }
+    
+    public void reset()
+    {
+        mOffset = 0;
+    }
+}

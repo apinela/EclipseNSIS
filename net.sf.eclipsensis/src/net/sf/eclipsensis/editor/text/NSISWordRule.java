@@ -1,0 +1,81 @@
+/*******************************************************************************
+ * Copyright (c) 2004 Sunil Kamath (IcemanK).
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which is available at http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     Sunil Kamath (IcemanK) - initial API and implementation
+ *******************************************************************************/
+package net.sf.eclipsensis.editor.text;
+
+import net.sf.eclipsensis.INSISConstants;
+
+import org.eclipse.jface.text.rules.*;
+import org.eclipse.jface.text.rules.IToken;
+import org.eclipse.jface.text.rules.IWordDetector;
+import org.eclipse.jface.text.rules.WordRule;
+
+public class NSISWordRule extends WordRule implements INSISConstants
+{
+    /**
+     * @param detector
+     */
+    public NSISWordRule(IWordDetector detector)
+    {
+        super(detector);
+    }
+
+    /**
+     * @param detector
+     * @param defaultToken
+     */
+    public NSISWordRule(IWordDetector detector, IToken defaultToken)
+    {
+        super(detector, defaultToken);
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.text.rules.IRule#evaluate(org.eclipse.jface.text.rules.ICharacterScanner)
+     */
+    public IToken evaluate(ICharacterScanner scanner)
+    {
+        int offset = ((NSISScanner)scanner).getOffset();
+        int c= scanner.read();
+        if (fDetector.isWordStart((char) c)) {
+            if (fColumn == UNDEFINED || (fColumn == scanner.getColumn() - 1)) {
+                StringBuffer buffer = new StringBuffer("");
+                buffer.append((char) c);
+                while ((c = scanner.read()) != ICharacterScanner.EOF) {
+                    if(c == LINE_CONTINUATION_CHAR) {
+                        int c2 = scanner.read();
+                        if(NSISTextUtility.delimitersDetected(scanner, c2)) {
+                            continue;
+                        }
+                    }
+                    if(fDetector.isWordPart((char) c)) {
+                        buffer.append((char) c);
+                    }
+                    else {
+                        break;
+                    }
+                }
+                scanner.unread();
+                
+                IToken token= (IToken)fWords.get(buffer.toString());
+                if (token != null) {
+                    return token;
+                }
+                    
+                if (fDefaultToken.isUndefined()) {
+                    NSISTextUtility.unread(scanner, ((NSISScanner)scanner).getOffset()-offset);
+                }
+                    
+                return fDefaultToken;
+            }
+        }
+        
+        scanner.unread();
+        return Token.UNDEFINED;
+    }
+}
