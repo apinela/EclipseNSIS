@@ -25,20 +25,8 @@ import org.eclipse.swt.events.VerifyListener;
 
 public abstract class AbstractNSISWizardPage extends WizardPage implements INSISWizardConstants
 {
-    protected static final int WIDTH_HINT;
     private ArrayList mListeners = new ArrayList();
     protected NSISWizard mWizard = null;
-
-    static {
-        int widthHint;
-        try {
-            widthHint = Integer.parseInt(EclipseNSISPlugin.getResourceString("wizard.width.hint")); //$NON-NLS-1$
-        }
-        catch(Exception ex) {
-            widthHint = 500;
-        }
-        WIDTH_HINT = widthHint;
-    }
 
     protected VerifyListener mNumberVerifyListener = new VerifyListener() {
         public void verifyText(VerifyEvent e) 
@@ -215,6 +203,11 @@ public abstract class AbstractNSISWizardPage extends WizardPage implements INSIS
         public void aboutToHide()
         {
         }
+    }
+    
+    protected boolean isTemplateWizard()
+    {
+        return (mWizard instanceof NSISTemplateWizard);
     }
 
     public abstract boolean validatePage(int flag);

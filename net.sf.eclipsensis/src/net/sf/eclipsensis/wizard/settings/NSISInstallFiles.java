@@ -9,12 +9,12 @@
  *******************************************************************************/
 package net.sf.eclipsensis.wizard.settings;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Iterator;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.help.NSISKeywords;
-import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.ImageManager;
+import net.sf.eclipsensis.util.*;
 import net.sf.eclipsensis.wizard.settings.dialogs.NSISInstallFilesDialog;
 
 import org.eclipse.jface.window.Window;
@@ -43,8 +43,8 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
      */
     public void setChildTypes()
     {
-        mChildTypes.clear();
-        mChildTypes.add(FILEITEM_TYPE);
+        clearChildTypes();
+        addChildType(FILEITEM_TYPE);
     }
 
     /* (non-Javadoc)
@@ -60,7 +60,7 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
      */
     public void removeChild(INSISInstallElement child)
     {
-        if(mChildren.size() > 1) {
+        if(getChildren().length > 1) {
             super.removeChild(child);
         }
         else {
@@ -127,8 +127,8 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
     public String getFiles()
     {
         StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
-        if(mChildren.size() > 0) {
-            Iterator iter = mChildren.iterator();
+        if(getChildren().length > 0) {
+            Iterator iter = getChildrenIterator();
             buf.append(((FileItem)iter.next()).getName());
             for(; iter.hasNext(); ) {
                 buf.append(SEPARATOR).append(((FileItem)iter.next()).getName());
@@ -143,18 +143,18 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
     public void setFiles(String filenames)
     {
         String[] files = Common.tokenize(filenames,SEPARATOR);
-        List newList = Arrays.asList(files);
-        for(Iterator iter=mChildren.iterator(); iter.hasNext(); ) {
+        CaseInsensitiveSet newFiles = new CaseInsensitiveSet(Arrays.asList(files));
+        for(Iterator iter=getChildrenIterator(); iter.hasNext(); ) {
             FileItem item = (FileItem)iter.next();
-            if(!newList.contains(item)) {
+            if(!newFiles.contains(item.getName())) {
                 iter.remove();
             }
-        }
-        for(Iterator iter=newList.iterator(); iter.hasNext(); ) {
-            FileItem item = new FileItem((String)iter.next());
-            if(!mChildren.contains(item)) {
-                addChild(item);
+            else {
+                newFiles.remove(item.getName());
             }
+        }
+        for(Iterator iter=newFiles.iterator(); iter.hasNext(); ) {
+            addChild(new FileItem((String)iter.next()));
         }
     }
 

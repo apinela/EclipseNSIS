@@ -62,19 +62,24 @@ public class NSISWizardGeneralPage extends AbstractNSISWizardPage
 
     public boolean validatePage(int flag)
     {
-        NSISWizardSettings settings = mWizard.getSettings();
-
-        boolean b = ((flag & APPNAME_CHECK) == 0 || validateAppName()) && 
-               ((flag & PUBURL_CHECK) == 0 || validateEmptyOrValidURL(settings.getUrl(),null)) &&
-               ((flag & INSTFILE_CHECK) == 0 || validatePathName(settings.getOutFile(),cInstallFileErrors)) &&
-               ((flag & INSTICON_CHECK) == 0 || validateEmptyOrValidFile(settings.getIcon(),null)) &&
-               ((flag & UNINSTFILE_CHECK) == 0 || !settings.isCreateUninstaller() || validateFileName(settings.getUninstallFile(),cUninstallFileErrors)) &&
-               ((flag & UNINSTICON_CHECK) == 0 || !settings.isCreateUninstaller() || validateEmptyOrValidFile(settings.getUninstallIcon(),null));
-        setPageComplete(b);
-        if(b) {
-            setErrorMessage(null);
+        if(isTemplateWizard()) {
+            return true;
         }
-        return b;
+        else {
+            NSISWizardSettings settings = mWizard.getSettings();
+    
+            boolean b = ((flag & APPNAME_CHECK) == 0 || validateAppName()) && 
+                   ((flag & PUBURL_CHECK) == 0 || validateEmptyOrValidURL(settings.getUrl(),null)) &&
+                   ((flag & INSTFILE_CHECK) == 0 || validatePathName(Common.decodePath(settings.getOutFile()),cInstallFileErrors)) &&
+                   ((flag & INSTICON_CHECK) == 0 || validateEmptyOrValidFile(Common.decodePath(settings.getIcon()),null)) &&
+                   ((flag & UNINSTFILE_CHECK) == 0 || !settings.isCreateUninstaller() || validateFileName(Common.decodePath(settings.getUninstallFile()),cUninstallFileErrors)) &&
+                   ((flag & UNINSTICON_CHECK) == 0 || !settings.isCreateUninstaller() || validateEmptyOrValidFile(Common.decodePath(settings.getUninstallIcon()),null));
+            setPageComplete(b);
+            if(b) {
+                setErrorMessage(null);
+            }
+            return b;
+        }
     }
 
     /* (non-Javadoc)

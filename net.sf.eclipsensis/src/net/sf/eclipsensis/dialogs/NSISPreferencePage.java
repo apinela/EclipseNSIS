@@ -22,7 +22,6 @@ import net.sf.eclipsensis.util.*;
 import net.sf.eclipsensis.viewer.CollectionContentProvider;
 import net.sf.eclipsensis.viewer.CollectionLabelProvider;
 
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.viewers.ComboViewer;
@@ -134,7 +133,7 @@ public class NSISPreferencePage	extends NSISSettingsPage
                         mNSISHome.getCombo().setText(nsisHome);
                     }
                     if(!NSISValidator.validateNSISHome(nsisHome)) {
-                        MessageDialog.openError(getShell(),EclipseNSISPlugin.getResourceString("error.title"),EclipseNSISPlugin.getResourceString("invalid.nsis.home.message")); //$NON-NLS-1$ //$NON-NLS-2$
+                        Common.openError(getShell(),EclipseNSISPlugin.getResourceString("invalid.nsis.home.message")); //$NON-NLS-1$ //$NON-NLS-2$
                         mNSISHome.getCombo().setText(""); //$NON-NLS-1$
                         mNSISHome.getCombo().forceFocus();
                     }
@@ -161,7 +160,7 @@ public class NSISPreferencePage	extends NSISSettingsPage
                         enableControls(true);
                     }
                     else {
-                        MessageDialog.openError(getShell(),EclipseNSISPlugin.getResourceString("error.title"),EclipseNSISPlugin.getResourceString("invalid.nsis.home.message")); //$NON-NLS-1$ //$NON-NLS-2$
+                        Common.openError(getShell(), EclipseNSISPlugin.getResourceString("invalid.nsis.home.message")); //$NON-NLS-1$ //$NON-NLS-2$
                         mNSISHome.getCombo().setText(""); //$NON-NLS-1$
                         mNSISHome.getCombo().setFocus();
                         enableControls(false);

@@ -18,8 +18,8 @@ import net.sf.eclipsensis.util.*;
 import net.sf.eclipsensis.wizard.settings.*;
 import net.sf.eclipsensis.wizard.util.NSISWizardDialogUtil;
 
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -69,8 +69,9 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
         ResourceBundle bundle = EclipseNSISPlugin.getDefault().getResourceBundle();
     
         Label l = NSISWizardDialogUtil.createLabel(composite,"wizard.contents.text",true,null,false); //$NON-NLS-1$
+        Dialog.applyDialogFont(l);
         final GridData gridData = (GridData)l.getLayoutData();
-        gridData.widthHint = WIDTH_HINT;
+        gridData.widthHint = Common.calculateControlSize(l,80,0).x;
         composite.addListener (SWT.Resize,  new Listener () {
             boolean init = false;
             
@@ -397,7 +398,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
                             }
                         }
                         catch(Exception ex) {
-                            delayedValidateAfterError(ex.getMessage(),2000);
+                            delayedValidateAfterError(ex.getLocalizedMessage(),2000);
                         }
                     }
             }
@@ -556,7 +557,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
             }
         }
         catch(Exception ex) {
-            delayedValidateAfterError(ex.getMessage(),2000);
+            delayedValidateAfterError(ex.getLocalizedMessage(),2000);
         }
     }
 
@@ -580,9 +581,15 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
                                     continue;
                                 }
                                 else if(buttonId != IDialogConstants.YES_TO_ALL_ID) {
-                                    buttonId = cDeleteConfirmButtonIds[new MessageDialog(getShell(),cDeleteConfirmTitle,null,
+                                    int index = new MessageDialog(getShell(),cDeleteConfirmTitle,null,
                                             MessageFormat.format(cDeleteConfirmMessageFormat,new String[]{element.getDisplayName()}), MessageDialog.QUESTION, 
-                                            new String[]{IDialogConstants.YES_LABEL, IDialogConstants.YES_TO_ALL_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.NO_TO_ALL_LABEL}, 0).open()];
+                                            new String[]{IDialogConstants.YES_LABEL, IDialogConstants.YES_TO_ALL_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.NO_TO_ALL_LABEL}, 0).open();
+                                    if(index >= 0) {
+                                        buttonId = cDeleteConfirmButtonIds[index];
+                                    }
+                                    else {
+                                        return;
+                                    }
     
                                     if(buttonId == IDialogConstants.NO_ID || buttonId == IDialogConstants.NO_TO_ALL_ID) {
                                         continue;
@@ -598,7 +605,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
                     setPageComplete(validatePage(ALL_CHECK));
                 }
                 catch(Exception ex) {
-                    delayedValidateAfterError(ex.getMessage(),2000);
+                    delayedValidateAfterError(ex.getLocalizedMessage(),2000);
                 }
                 finally {
                     tv.refresh(false);
@@ -800,7 +807,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
                 }
             }
             else {
-                setErrorMessage(MessageFormat.format(EclipseNSISPlugin.getResourceString("empty.contents.error"),new Object[]{installElement.getDisplayName()})); //$NON-NLS-1$
+                setErrorMessage(EclipseNSISPlugin.getFormattedString("empty.contents.error",new Object[]{installElement.getDisplayName()})); //$NON-NLS-1$
                 return false;
             }
         }
@@ -844,15 +851,20 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
 
     public boolean validatePage(int flag)
     {
-        NSISWizardSettings settings = mWizard.getSettings();
-
-        boolean b;
-        
-        if((b = validateInstallElement(settings.getInstaller()))) {
-            setErrorMessage(null);
+        if(isTemplateWizard()) {
+            return true;
         }
-        setPageComplete(b);
-        checkUnselectedSections();
-        return b;
+        else {
+            NSISWizardSettings settings = mWizard.getSettings();
+    
+            boolean b;
+            
+            if((b = validateInstallElement(settings.getInstaller()))) {
+                setErrorMessage(null);
+            }
+            setPageComplete(b);
+            checkUnselectedSections();
+            return b;
+        }
     }
 }

@@ -10,20 +10,9 @@
 package net.sf.eclipsensis.wizard.settings;
 
 
-public abstract class AbstractNSISInstallItem implements INSISInstallElement
+public abstract class AbstractNSISInstallItem extends AbstractNSISInstallElement
 {
 	private static final long serialVersionUID = 7704420240201206452L;
-
-    private INSISInstallElement mParent = null;
-    private NSISWizardSettings mSettings = null;
-    
-    /* (non-Javadoc)
-     * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#isRemovable()
-     */
-    public boolean isRemovable()
-    {
-        return true;
-    }
 
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#hasChildren()
@@ -68,31 +57,5 @@ public abstract class AbstractNSISInstallItem implements INSISInstallElement
      */
     public final void removeAllChildren()
     {
-    }
-    
-    /* (non-Javadoc)
-     * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#getParent()
-     */
-    public INSISInstallElement getParent()
-    {
-        return mParent;
-    }
-    
-    /* (non-Javadoc)
-     * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#setParent(net.sf.eclipsensis.wizard.settings.INSISInstallElement)
-     */
-    public void setParent(INSISInstallElement parent)
-    {
-        mParent = parent;
-    }
-
-    public void setSettings(NSISWizardSettings settings)
-    {
-        mSettings = settings;
-    }
-    
-    public NSISWizardSettings getSettings()
-    {
-        return mSettings;
     }
 }

@@ -10,7 +10,6 @@
 package net.sf.eclipsensis.wizard;
 
 import java.text.Collator;
-import java.text.MessageFormat;
 import java.util.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
@@ -24,9 +23,11 @@ import net.sf.eclipsensis.viewer.ListViewerUpDownMover;
 import net.sf.eclipsensis.wizard.settings.NSISWizardSettings;
 import net.sf.eclipsensis.wizard.util.*;
 
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -70,7 +71,7 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
 
         String startMenuGroup = settings.getStartMenuGroup();
         if(settings.isCreateStartMenuGroup() && !Common.isValidFileName(startMenuGroup)) {
-            setErrorMessage(MessageFormat.format(EclipseNSISPlugin.getResourceString("invalid.start.menu.group.error"),new String[]{startMenuGroup})); //$NON-NLS-1$
+            setErrorMessage(EclipseNSISPlugin.getFormattedString("invalid.start.menu.group.error",new String[]{startMenuGroup})); //$NON-NLS-1$
             return false;
         }
         return true;
@@ -90,14 +91,19 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
     
     public boolean validatePage(int flag)
     {
-        boolean b = ((flag & INSTDIR_CHECK) == 0 || validateNSISPathName(mWizard.getSettings().getInstallDir(),cInstallDirErrors)) &&
-                    ((flag & SMGRP_CHECK) == 0 || validateStartMenuGroup()) &&
-                    ((flag & LANG_CHECK) == 0 || validateLanguages());
-        setPageComplete(b);
-        if(b) {
-            setErrorMessage(null);
+        if(isTemplateWizard()) {
+            return true;
         }
-        return b;
+        else {
+            boolean b = ((flag & INSTDIR_CHECK) == 0 || validateNSISPathName(mWizard.getSettings().getInstallDir(),cInstallDirErrors)) &&
+                        ((flag & SMGRP_CHECK) == 0 || validateStartMenuGroup()) &&
+                        ((flag & LANG_CHECK) == 0 || validateLanguages());
+            setPageComplete(b);
+            if(b) {
+                setErrorMessage(null);
+            }
+            return b;
+        }
     }
 
     /* (non-Javadoc)
@@ -143,8 +149,6 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
         
         final Composite composite2 = new Composite(group, SWT.NONE);
         data = new GridData(GridData.FILL_BOTH);
-        data.widthHint = WIDTH_HINT;
-        data.heightHint = 150;
         composite2.setLayoutData(data);
         
         GridLayout layout = new GridLayout(20,true);
@@ -170,6 +174,8 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
         final List availableLangList = new List(composite2,SWT.BORDER|SWT.H_SCROLL|SWT.V_SCROLL|SWT.MULTI);
         data = new GridData(GridData.FILL_BOTH);
         data.horizontalSpan=8;
+        Dialog.applyDialogFont(availableLangList);
+        data.heightHint = Common.calculateControlSize(availableLangList,0,10).y;
         availableLangList.setLayoutData(data);
         m.addSlave(availableLangList);
         
@@ -215,6 +221,8 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
         final List selectedLangList = new List(composite2,SWT.BORDER|SWT.H_SCROLL|SWT.V_SCROLL|SWT.MULTI);
         data = new GridData(GridData.FILL_BOTH);
         data.horizontalSpan=8;
+        Dialog.applyDialogFont(selectedLangList);
+        data.heightHint = Common.calculateControlSize(selectedLangList,0,10).y;
         selectedLangList.setLayoutData(data);
         m.addSlave(selectedLangList);
         
@@ -286,6 +294,8 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
         });
 
         final MasterSlaveEnabler mse = new MasterSlaveEnabler() {
+            public void enabled(Control control, boolean flag) { }
+            
             public boolean canEnable(Control c)
             {
                 NSISWizardSettings settings = mWizard.getSettings();
@@ -428,8 +438,7 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
         
         m.updateSlaves();
 
-        final int diff = group.computeSize(SWT.DEFAULT,SWT.DEFAULT).y-150;
-        group.addListener(SWT.Resize,new Listener() {
+        composite2.addListener(SWT.Resize,new Listener() {
             boolean init = false;
             public void handleEvent (Event e)
             {
@@ -439,7 +448,11 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
                     init = true;
                 }
                 else {
-                    ((GridData)composite2.getLayoutData()).heightHint=group.getSize().y-diff;
+                    Point size = composite2.getSize();
+                    GridLayout layout = (GridLayout)composite2.getLayout();
+                    int heightHint = size.y - 2*layout.marginHeight;
+                    ((GridData)availableLangList.getLayoutData()).heightHint = heightHint;
+                    ((GridData)selectedLangList.getLayoutData()).heightHint = heightHint;
                 }
             }
         });
@@ -565,6 +578,8 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
             }
         });
         final MasterSlaveEnabler mse = new MasterSlaveEnabler() {
+            public void enabled(Control control, boolean flag) { }
+            
             public boolean canEnable(Control control)
             {
                 NSISWizardSettings settings = mWizard.getSettings();

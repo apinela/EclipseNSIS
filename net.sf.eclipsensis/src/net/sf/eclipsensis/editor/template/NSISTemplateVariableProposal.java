@@ -9,9 +9,8 @@
  *******************************************************************************/
 package net.sf.eclipsensis.editor.template;
 
-import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.util.Common;
 
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.IContextInformation;
@@ -58,7 +57,7 @@ public class NSISTemplateVariableProposal implements ICompletionProposal
             e.printStackTrace();
 
             Shell shell= mViewer.getTextWidget().getShell();
-            MessageDialog.openError(shell, EclipseNSISPlugin.getResourceString("error.title"), e.getMessage()); //$NON-NLS-1$
+            Common.openError(shell, e.getLocalizedMessage()); //$NON-NLS-1$
         }
     }
 

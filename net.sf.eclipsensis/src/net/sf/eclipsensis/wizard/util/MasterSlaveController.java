@@ -81,7 +81,11 @@ public class MasterSlaveController extends SelectionAdapter
                 recursiveSetEnabled(children[i],enabled, enabler);
             }
         }
-        control.setEnabled(enabled?(enabler != null?enabler.canEnable(control):enabled):enabled);
+        enabled = enabled?(enabler != null?enabler.canEnable(control):enabled):enabled;
+        control.setEnabled(enabled);
+        if(enabler != null) {
+            enabler.enabled(control,enabled);
+        }
     }
 
     /* (non-Javadoc)

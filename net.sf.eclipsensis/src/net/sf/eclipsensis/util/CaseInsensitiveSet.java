@@ -17,7 +17,7 @@ public class CaseInsensitiveSet implements Set, Serializable
 	private static final long serialVersionUID = -3353276139904582714L;
 
     private Map mValueMap = new HashMap();
-    private HashSet mSet = new HashSet();
+    private Set mSet = new LinkedHashSet();
 
     public CaseInsensitiveSet()
     {

@@ -54,10 +54,6 @@ public class NSISInstallDirectoryDialog extends AbstractNSISInstallItemDialog
     protected Control createControl(Composite parent)
     {
         Composite composite = new Composite(parent, SWT.NONE);
-        GridData gd = new GridData(GridData.FILL_BOTH);
-        gd.widthHint = 400;
-        composite.setLayoutData(gd);
-        
         GridLayout layout = new GridLayout(3,false);
         layout.marginHeight = 0;
         layout.marginWidth = 0;
@@ -81,7 +77,7 @@ public class NSISInstallDirectoryDialog extends AbstractNSISInstallItemDialog
                 setComplete(validate());
             }
         });
-        gd = (GridData)c1.getLayoutData();
+        GridData gd = (GridData)c1.getLayoutData();
         gd.horizontalAlignment = GridData.FILL;
         final Combo c2 = NSISWizardDialogUtil.createCombo(composite,NSISWizardDisplayValues.OVERWRITE_MODE_NAMES,mStore.getInt("overwriteMode"), //$NON-NLS-1$
                 true,"wizard.overwrite.label",true,null,false); //$NON-NLS-1$
@@ -107,6 +103,6 @@ public class NSISInstallDirectoryDialog extends AbstractNSISInstallItemDialog
      */
     protected boolean validate()
     {
-        return Common.isValidPath(mStore.getString("name")) && Common.isValidNSISPathName(mStore.getString("destination")); //$NON-NLS-1$ //$NON-NLS-2$
+        return Common.isValidPath(Common.decodePath(mStore.getString("name"))) && Common.isValidNSISPathName(mStore.getString("destination")); //$NON-NLS-1$ //$NON-NLS-2$
     }
 }

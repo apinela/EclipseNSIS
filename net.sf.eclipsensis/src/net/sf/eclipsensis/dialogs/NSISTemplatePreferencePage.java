@@ -11,7 +11,8 @@ package net.sf.eclipsensis.dialogs;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.editor.NSISDocumentSetupParticipant;
-import net.sf.eclipsensis.editor.template.*;
+import net.sf.eclipsensis.editor.template.NSISTemplateSourceViewer;
+import net.sf.eclipsensis.editor.template.NSISTemplateSourceViewerConfiguration;
 import net.sf.eclipsensis.settings.INSISPreferenceConstants;
 
 import org.eclipse.jface.dialogs.Dialog;
@@ -33,12 +34,14 @@ import org.eclipse.ui.texteditor.templates.TemplatePreferencePage;
 public class NSISTemplatePreferencePage extends TemplatePreferencePage
 {
     private EclipseNSISPlugin mPlugin = null;
+    private NSISTemplateSourceViewer mViewer = null;
     
     /**
      * 
      */
     public NSISTemplatePreferencePage()
     {
+        super();
         mPlugin = EclipseNSISPlugin.getDefault();
         setPreferenceStore(mPlugin.getPreferenceStore());
         setTemplateStore(mPlugin.getTemplateStore());
@@ -66,31 +69,31 @@ public class NSISTemplatePreferencePage extends TemplatePreferencePage
      */
     protected SourceViewer createViewer(Composite parent)
     {
-        final NSISTemplateSourceViewer viewer= new NSISTemplateSourceViewer(parent, null, null, false, SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
+        mViewer= new NSISTemplateSourceViewer(parent, null, null, false, SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
         SourceViewerConfiguration configuration= new NSISTemplateSourceViewerConfiguration(getPreferenceStore());
         final FontRegistry fontRegistry = JFaceResources.getFontRegistry();
-        viewer.getTextWidget().setFont(fontRegistry.get(INSISPreferenceConstants.EDITOR_FONT));
+        mViewer.getTextWidget().setFont(fontRegistry.get(INSISPreferenceConstants.EDITOR_FONT));
         final IPropertyChangeListener propertyChangeListener = new IPropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent event)
             {
-                viewer.getTextWidget().setFont(fontRegistry.get(INSISPreferenceConstants.EDITOR_FONT));
+                mViewer.getTextWidget().setFont(fontRegistry.get(INSISPreferenceConstants.EDITOR_FONT));
             }
         };
         fontRegistry.addListener(propertyChangeListener);
-        viewer.getTextWidget().addDisposeListener(new DisposeListener() {
+        mViewer.getTextWidget().addDisposeListener(new DisposeListener() {
             public void widgetDisposed(DisposeEvent e)
             {
                 fontRegistry.removeListener(propertyChangeListener);
             }
         });
-        viewer.configure(configuration);
+        mViewer.configure(configuration);
         
         IDocument document= new Document();
         new NSISDocumentSetupParticipant().setup(document);
-        viewer.setDocument(document);
-        viewer.setEditable(false);
+        mViewer.setDocument(document);
+        mViewer.setEditable(false);
         
-        return viewer;
+        return mViewer;
     }
     
     /* (non-Javadoc)
@@ -111,5 +114,17 @@ public class NSISTemplatePreferencePage extends TemplatePreferencePage
         mPlugin.savePluginPreferences();
         
         return ok;
+    }
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.IDialogPage#setVisible(boolean)
+     */
+    public void setVisible(boolean visible)
+    {
+        if(visible) {
+            if(mViewer != null && !mViewer.getTextWidget().isDisposed() && mViewer.mustProcessPropertyQueue()) {
+                mViewer.processPropertyQueue();
+            }
+        }
+        super.setVisible(visible);
     }
 }

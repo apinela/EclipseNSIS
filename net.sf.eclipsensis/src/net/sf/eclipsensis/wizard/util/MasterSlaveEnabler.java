@@ -14,4 +14,5 @@ import org.eclipse.swt.widgets.Control;
 public interface MasterSlaveEnabler
 {
     public boolean canEnable(Control control);
+    public void enabled(Control control, boolean flag);
 }

@@ -69,7 +69,7 @@ public class NSISSymbolDialog extends Dialog implements IDialogConstants
         GridData data = (GridData)composite.getLayoutData();
         data.verticalAlignment = GridData.FILL;
         data.horizontalAlignment = GridData.FILL;
-        data.widthHint = 300;
+        data.widthHint = convertWidthInCharsToPixels(50);
         
         mNameText = createText(composite, EclipseNSISPlugin.getResourceString("symbols.name.text"), //$NON-NLS-1$
                                EclipseNSISPlugin.getResourceString("symbols.name.tooltip"),mName); //$NON-NLS-1$

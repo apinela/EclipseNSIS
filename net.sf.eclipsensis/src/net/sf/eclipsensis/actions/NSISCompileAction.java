@@ -9,7 +9,6 @@
  *******************************************************************************/
 package net.sf.eclipsensis.actions;
 
-import java.text.MessageFormat;
 import java.util.regex.Matcher;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
@@ -17,11 +16,11 @@ import net.sf.eclipsensis.console.INSISConsoleLineProcessor;
 import net.sf.eclipsensis.console.NSISConsoleLine;
 import net.sf.eclipsensis.makensis.MakeNSISResults;
 import net.sf.eclipsensis.makensis.MakeNSISRunner;
+import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.*;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
@@ -45,8 +44,9 @@ public class NSISCompileAction extends NSISScriptAction
                             IEditorInput input = editors[i].getEditorInput();
                             if(input != null && input instanceof IFileEditorInput) {
                                 if(mFile.equals(((IFileEditorInput)input).getFile())) {
-                                    if(MessageDialog.openConfirm(windows[i].getShell(), EclipseNSISPlugin.getResourceString("confirm.title"),  //$NON-NLS-1$
-                                            MessageFormat.format(EclipseNSISPlugin.getResourceString("compile.save.confirmation"),new String[]{mFile.getName()}))) { //$NON-NLS-1$
+                                    if(Common.openConfirm(windows[i].getShell(), 
+                                            EclipseNSISPlugin.getFormattedString("compile.save.confirmation", //$NON-NLS-1$
+                                                                 new String[]{mFile.getName()}))) { //$NON-NLS-1$
                                         if(editors[i] instanceof ITextEditor) {
                                             IAction saveAction = ((ITextEditor)editors[i]).getAction(ITextEditorActionConstants.SAVE);
                                             if(saveAction != null) {

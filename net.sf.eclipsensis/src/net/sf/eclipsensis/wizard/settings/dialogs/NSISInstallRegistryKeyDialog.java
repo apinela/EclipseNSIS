@@ -19,7 +19,6 @@ import net.sf.eclipsensis.wizard.util.NSISWizardDialogUtil;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 
@@ -51,10 +50,6 @@ public class NSISInstallRegistryKeyDialog extends AbstractNSISInstallItemDialog
     protected Control createControl(Composite parent)
     {
         Composite composite = new Composite(parent, SWT.NONE);
-        GridData gd = new GridData(GridData.FILL_BOTH);
-        gd.widthHint = 400;
-        composite.setLayoutData(gd);
-        
         GridLayout layout = new GridLayout(2,false);
         layout.marginHeight = 0;
         layout.marginWidth = 0;

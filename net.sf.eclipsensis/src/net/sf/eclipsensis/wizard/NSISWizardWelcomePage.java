@@ -9,17 +9,22 @@
  *******************************************************************************/
 package net.sf.eclipsensis.wizard;
 
-import java.util.ResourceBundle;
+import java.text.Collator;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.wizard.settings.dialogs.NSISWizardTemplateDialog;
-import net.sf.eclipsensis.wizard.util.NSISWizardDialogUtil;
+import net.sf.eclipsensis.viewer.CollectionContentProvider;
+import net.sf.eclipsensis.viewer.CollectionLabelProvider;
+import net.sf.eclipsensis.wizard.template.NSISWizardTemplate;
+import net.sf.eclipsensis.wizard.template.NSISWizardTemplateManager;
+import net.sf.eclipsensis.wizard.util.*;
 
-import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.window.Window;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
@@ -30,6 +35,10 @@ import org.eclipse.swt.widgets.*;
 public class NSISWizardWelcomePage extends AbstractNSISWizardPage
 {
     public static final String NAME = "nsisWizardWelcome"; //$NON-NLS-1$
+    
+    private NSISWizardTemplate mTemplate = null;
+    private boolean mCreateFromTemplate = false;
+    private boolean mUsingTemplate = false;
     
     /**
      * @param pageName
@@ -51,53 +60,18 @@ public class NSISWizardWelcomePage extends AbstractNSISWizardPage
 
         final GridLayout layout = new GridLayout(1,false);
         composite.setLayout(layout);
-        Label l = NSISWizardDialogUtil.createLabel(composite,"wizard.welcome.header", true, null, false); //$NON-NLS-1$
+        final Label l = NSISWizardDialogUtil.createLabel(composite,"wizard.welcome.header", true, null, false); //$NON-NLS-1$
         l.setFont(JFaceResources.getBannerFont());
         l.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
         final Label l2 = NSISWizardDialogUtil.createLabel(composite,"wizard.welcome.text", true, null, false); //$NON-NLS-1$
         final GridData gridData = (GridData)l2.getLayoutData();
-        gridData.widthHint = WIDTH_HINT;
+        Dialog.applyDialogFont(l2);
+        gridData.widthHint = Common.calculateControlSize(l2,80,0).x;
 
-        NSISWizardDialogUtil.createLabel(composite,"wizard.required.text", true, null, true); //$NON-NLS-1$
+        final Label l3 = NSISWizardDialogUtil.createLabel(composite,"wizard.required.text", true, null, true); //$NON-NLS-1$
 
-        Composite composite2 = new Composite(composite, SWT.NONE);
-        GridLayout layout2 = new GridLayout(2, false);
-        layout2.marginWidth = 0;
-        composite2.setLayout(layout2);
-        GridData data = new GridData(GridData.FILL_BOTH);
-        composite2.setLayoutData(data);
-        
-        final ResourceBundle bundle = EclipseNSISPlugin.getDefault().getResourceBundle();
-        Label l3 = NSISWizardDialogUtil.createLabel(composite2,"load.wizard.template.label", true, null, false); //$NON-NLS-1$
-        data = (GridData)l3.getLayoutData();
-        data.horizontalSpan = 1;
-        data.horizontalAlignment = GridData.HORIZONTAL_ALIGN_BEGINNING;
-        data.grabExcessHorizontalSpace = false;
-        data.grabExcessVerticalSpace = true;
-        
-        final Button button = new Button(composite2, SWT.PUSH | SWT.CENTER);
-        button.setText(EclipseNSISPlugin.getResourceString("load.wizard.template.button.text")); //$NON-NLS-1$
-        button.setToolTipText(EclipseNSISPlugin.getResourceString("browse.tooltip")); //$NON-NLS-1$
-        button.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
-                NSISWizardTemplateDialog dialog = new NSISWizardTemplateDialog(getShell(),NSISWizardTemplateDialog.MODE_LOAD);
-                dialog.setTemplateName(mWizard.getTemplateName());
-                if(dialog.open() == Window.OK) {
-                    String templateName = dialog.getTemplateName();
-                    if(!Common.isEmpty(templateName)) {
-                        try {
-                            mWizard.loadTemplate(templateName);
-                        }
-                        catch(Exception ex) {
-                            MessageDialog.openError(getShell(),bundle.getString("error.title"),ex.toString()); //$NON-NLS-1$
-                        }
-                    }
-                }
-            }
-        });
-        data = new GridData(GridData.HORIZONTAL_ALIGN_CENTER);
-        button.setLayoutData(data);
+        Group group = createTemplatesGroup(composite);
         
         composite.addListener (SWT.Resize,  new Listener () {
             boolean init = false;
@@ -116,10 +90,147 @@ public class NSISWizardWelcomePage extends AbstractNSISWizardPage
 
         validatePage(1);
     }
+    
+    private Group createTemplatesGroup(Composite parent)
+    {
+        Group group = NSISWizardDialogUtil.createGroup(parent, 1, null,null,false); //$NON-NLS-1$
+        ((GridLayout)group.getLayout()).makeColumnsEqualWidth = true;
+        GridData data = (GridData)group.getLayoutData();
+        data.grabExcessVerticalSpace = true;
+        data.verticalAlignment = GridData.FILL;
+        
+        final Button b = NSISWizardDialogUtil.createCheckBox(group,"create.from.template.button.text",false,true,null,false); //$NON-NLS-1$
+        
+        MasterSlaveController m = new MasterSlaveController(b);
+        SashForm form = new SashForm(group,SWT.HORIZONTAL);
+        data = new GridData(GridData.FILL_BOTH);
+        form.setLayoutData(data);
+        
+        MasterSlaveEnabler mse = new MasterSlaveEnabler() {
+            public boolean canEnable(Control control)
+            {
+                return true;
+            }
+            
+            public void enabled(Control control, boolean flag)
+            {
+                int id = (flag?SWT.COLOR_LIST_BACKGROUND:SWT.COLOR_WIDGET_BACKGROUND);
+                control.setBackground(getShell().getDisplay().getSystemColor(id));
+            }
+        };
+        
+        Composite composite = new Composite(form,SWT.NONE);
+        GridLayout layout = new GridLayout(1,false);
+        layout.marginHeight = 0;
+        layout.marginWidth = 0;
+        composite.setLayout(layout);
+        Label l = NSISWizardDialogUtil.createLabel(composite,"create.from.template.label",b.getSelection(),m,true); //$NON-NLS-1$
+        l.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+        final List list = new List(composite,SWT.BORDER|SWT.SINGLE|SWT.FULL_SELECTION);
+        data = new GridData(GridData.FILL_BOTH);
+        list.setLayoutData(data);
+        m.addSlave(list, mse);
+
+        composite = new Composite(form,SWT.NONE);
+        layout = new GridLayout(1,false);
+        layout.marginHeight = 0;
+        layout.marginWidth = 0;
+        composite.setLayout(layout);
+        l = NSISWizardDialogUtil.createLabel(composite,"wizard.template.description.label",true,m,false); //$NON-NLS-1$
+        l.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        final StyledText t = new StyledText(composite,SWT.BORDER|SWT.MULTI|SWT.READ_ONLY|SWT.WRAP);
+        t.setLayoutData(new GridData(GridData.FILL_BOTH));
+        t.setBackground(getShell().getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
+        t.setCursor(null);
+        t.setCaret(null);
+        m.addSlave(t, mse);
+
+        final ListViewer viewer = new ListViewer(list);
+        viewer.setContentProvider(new CollectionContentProvider());
+        viewer.setLabelProvider(new CollectionLabelProvider());
+        final NSISWizardTemplateManager templateManager = ((NSISScriptWizard)mWizard).getTemplateManager();
+        viewer.setInput(templateManager.getTemplates());
+        Collator collator = Collator.getInstance();
+        collator.setStrength(Collator.PRIMARY);
+        viewer.setSorter(new ViewerSorter(collator));
+        
+        ViewerFilter filter = new ViewerFilter() {
+            public boolean select(Viewer viewer, Object parentElement, Object element)
+            {
+                if(element instanceof NSISWizardTemplate) {
+                    NSISWizardTemplate template = (NSISWizardTemplate)element;
+                    return template.isEnabled() && !template.isDeleted();
+                }
+                return true;
+            }
+        };
+        viewer.addFilter(filter);
+        
+        viewer.addSelectionChangedListener(new ISelectionChangedListener() {
+            public void selectionChanged(SelectionChangedEvent event)
+            {
+                ISelection sel = event.getSelection();
+                if(!sel.isEmpty() && sel instanceof IStructuredSelection) {
+                    Object obj = ((IStructuredSelection)sel).getFirstElement();
+                    if(obj instanceof NSISWizardTemplate) {
+                        mTemplate = (NSISWizardTemplate)obj;
+                        t.setText(mTemplate.getDescription());
+                    }
+                }
+                else {
+                    mTemplate = null;
+                }
+                validatePage(0xffff);
+            }
+        });
+
+        b.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) 
+            {
+                mCreateFromTemplate = b.getSelection();
+                validatePage(0xffff);
+            }            
+        });
+        
+        m.updateSlaves();
+        
+        if(mWizard instanceof NSISScriptWizard) {
+            final NSISScriptWizard scriptWizard = (NSISScriptWizard)mWizard;
+            addPageListener(new NSISWizardPageAdapter() {
+                public void aboutToHide()
+                {
+                    if(!mCreateFromTemplate) {
+                        if(mUsingTemplate) {
+                            scriptWizard.initSettings();
+                            scriptWizard.setTemplate(null);
+                            mUsingTemplate = false;
+                        }
+                    }
+                    else {
+                        if(mTemplate != null) {
+                            scriptWizard.loadTemplate(mTemplate);
+                            mTemplate = null;
+                            mUsingTemplate = true;
+                        }
+                    }
+                }
+            });
+        }
+        
+        return group;
+    }
 
     public boolean validatePage(int flag)
     {
-        setPageComplete(true);
-        return true;
+        boolean b = !mCreateFromTemplate || mTemplate != null;
+        setPageComplete(b);
+        if(b) {
+            setErrorMessage(null);
+        }
+        else {
+            setErrorMessage(EclipseNSISPlugin.getResourceString("select.template.error")); //$NON-NLS-1$
+        }
+        return b;
     }
 }

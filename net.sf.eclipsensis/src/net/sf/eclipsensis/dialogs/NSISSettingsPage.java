@@ -9,7 +9,6 @@
  *******************************************************************************/
 package net.sf.eclipsensis.dialogs;
 
-import java.text.MessageFormat;
 import java.util.*;
 import java.util.List;
 
@@ -22,7 +21,7 @@ import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.util.ImageManager;
 import net.sf.eclipsensis.viewer.*;
 
-import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -99,6 +98,8 @@ public abstract class NSISSettingsPage	extends PropertyPage implements IWorkbenc
                         }
                     }
                 });
+        
+        Dialog.applyDialogFont(mFolder);
         return mFolder;
     }
     
@@ -492,9 +493,7 @@ public abstract class NSISSettingsPage	extends PropertyPage implements IWorkbenc
         Map map = (Map)mSymbols.getInput();
         if(!isEdit || !oldName.equals(newName)) {
             if(map.containsKey(newName)) {
-                if(MessageDialog.openConfirm(getShell(),
-                                                 EclipseNSISPlugin.getResourceString("warning.title"), //$NON-NLS-1$
-                                                 MessageFormat.format(EclipseNSISPlugin.getResourceString("symbol.overwrite.warning"), //$NON-NLS-1$
+                if(Common.openConfirm(getShell(), EclipseNSISPlugin.getFormattedString("symbol.overwrite.confirm", //$NON-NLS-1$
                                                                       new String[]{newName}))) {
                     if(isEdit) {
                         map.remove(oldName);

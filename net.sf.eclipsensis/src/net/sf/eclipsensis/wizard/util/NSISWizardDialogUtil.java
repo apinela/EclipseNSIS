@@ -136,7 +136,7 @@ public class NSISWizardDialogUtil
                 DirectoryDialog dialog = new DirectoryDialog(shell, SWT.NONE);
                 String directory = dialog.open();
                 if (!Common.isEmpty(directory)) { 
-                    t.setText(directory);
+                    t.setText(Common.encodePath(directory));
                 }
             }
         });
@@ -183,7 +183,7 @@ public class NSISWizardDialogUtil
                 dialog.setFilterExtensions(filterExtensions);
                 String file = dialog.open();
                 if (!Common.isEmpty(file)) { 
-                    t.setText(file);
+                    t.setText(Common.encodePath(file));
                 }
             }
         });
@@ -196,58 +196,58 @@ public class NSISWizardDialogUtil
     }
 
     public static Text createImageBrowser(Composite parent, String value, Point size, final String[] filterNames, final String[] filterExtensions, String labelResource, boolean enabled, MasterSlaveController masterSlaveController, boolean isRequired)
-        {
-            parent = checkParentLayoutColumns(parent, 2);
-            GridLayout layout = (GridLayout)parent.getLayout();
-            Label l = createLabel(parent, labelResource, enabled, masterSlaveController, isRequired); 
-            parent = new Composite(parent,SWT.NONE);
-            GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-            data.horizontalSpan = layout.numColumns - 1;
-            parent.setLayoutData(data);
-            layout = new GridLayout(3,false);
-            layout.marginHeight = 0;
-            layout.marginWidth = 0;
-            parent.setLayout(layout);
-            final Text t = createText(parent, value, 1, enabled, masterSlaveController);
-            t.setData(LABEL,l);
-    
-            createFileBrowserButton(parent, false, filterNames, filterExtensions, t, enabled, masterSlaveController);
-            
-            final Label l2 = new Label(parent, SWT.BORDER | SWT.SHADOW_IN | SWT.CENTER);
-            data = new GridData(GridData.HORIZONTAL_ALIGN_CENTER);
-            if(size != null) {
-                if(size.x != SWT.DEFAULT) {
-                    data.widthHint = size.x;
-                }
-                if(size.y != SWT.DEFAULT) {
-                    data.heightHint = size.y;
-                }
+    {
+        parent = checkParentLayoutColumns(parent, 2);
+        GridLayout layout = (GridLayout)parent.getLayout();
+        Label l = createLabel(parent, labelResource, enabled, masterSlaveController, isRequired); 
+        parent = new Composite(parent,SWT.NONE);
+        GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+        data.horizontalSpan = layout.numColumns - 1;
+        parent.setLayoutData(data);
+        layout = new GridLayout(3,false);
+        layout.marginHeight = 0;
+        layout.marginWidth = 0;
+        parent.setLayout(layout);
+        final Text t = createText(parent, value, 1, enabled, masterSlaveController);
+        t.setData(LABEL,l);
+
+        createFileBrowserButton(parent, false, filterNames, filterExtensions, t, enabled, masterSlaveController);
+        
+        final Label l2 = new Label(parent, SWT.BORDER | SWT.SHADOW_IN | SWT.CENTER);
+        data = new GridData(GridData.HORIZONTAL_ALIGN_CENTER);
+        if(size != null) {
+            if(size.x != SWT.DEFAULT) {
+                data.widthHint = size.x;
             }
-            l2.setLayoutData(data);
-            l2.setEnabled(enabled);
-            addSlave(masterSlaveController, l2);
-            
-            t.addModifyListener(new ModifyListener(){
-                public void modifyText(ModifyEvent e)
-                {
-                    String fileName = ((Text)e.widget).getText();
-                    Image image = null;;
-                    if(!Common.isEmpty(fileName) && Common.isValidFile(fileName)) {
-                        try {
-                            image = ImageManager.getImage(new File(fileName).toURL());
-                        }
-                        catch (Exception ex) {
-                            image = null;
-    //                        e.printStackTrace();
-                        }
-                    }
-                    l2.setImage(image);
-                    l2.setData((image==null?null:image.getImageData()));
-                }
-             });
-            
-            return t;
+            if(size.y != SWT.DEFAULT) {
+                data.heightHint = size.y;
+            }
         }
+        l2.setLayoutData(data);
+        l2.setEnabled(enabled);
+        addSlave(masterSlaveController, l2);
+        
+        t.addModifyListener(new ModifyListener(){
+            public void modifyText(ModifyEvent e)
+            {
+                String fileName = Common.decodePath(((Text)e.widget).getText());
+                Image image = null;;
+                if(!Common.isEmpty(fileName) && Common.isValidFile(fileName)) {
+                    try {
+                        image = ImageManager.getImage(new File(fileName).toURL());
+                    }
+                    catch (Exception ex) {
+                        image = null;
+//                        e.printStackTrace();
+                    }
+                }
+                l2.setImage(image);
+                l2.setData((image==null?null:image.getImageData()));
+            }
+         });
+        
+        return t;
+    }
 
     public static Combo createCombo(Composite parent, String[] items, int selectedItem, boolean isReadOnly, String labelResource, boolean enabled, MasterSlaveController masterSlaveController, boolean isRequired)
     {
@@ -347,7 +347,9 @@ public class NSISWizardDialogUtil
     public static Group createGroup(Composite parent, int numColumns, String labelResource, MasterSlaveController masterSlaveController, boolean isRequired)
     {
         Group group = new Group(parent, SWT.SHADOW_ETCHED_IN);
-        group.setText(EclipseNSISPlugin.getResourceString(labelResource));
+        if(!Common.isEmpty(labelResource)) {
+            group.setText(EclipseNSISPlugin.getResourceString(labelResource));
+        }
         if(isRequired) {
             setRequiredElementFont(group);
         }

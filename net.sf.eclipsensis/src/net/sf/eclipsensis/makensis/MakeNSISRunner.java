@@ -26,7 +26,6 @@ import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 public class MakeNSISRunner implements INSISConstants
@@ -159,7 +158,7 @@ public class MakeNSISRunner implements INSISConstants
                                 marker.setAttribute(IMarker.SEVERITY,
                                                     IMarker.SEVERITY_ERROR);
                                 marker.setAttribute(IMarker.MESSAGE,
-                                                    MessageFormat.format(EclipseNSISPlugin.getResourceString("makensis.error.format"), //$NON-NLS-1$
+                                        EclipseNSISPlugin.getFormattedString("makensis.error.format", //$NON-NLS-1$
                                                                          new String[]{(String)errors.get(0) }));
                                 marker.setAttribute(IMarker.LINE_NUMBER, 1);
                             }
@@ -241,7 +240,7 @@ public class MakeNSISRunner implements INSISConstants
                         }
                     }
                     catch (CoreException ex) {
-                        model.add(NSISConsoleLine.error(ex.getMessage()));
+                        model.add(NSISConsoleLine.error(ex.getLocalizedMessage()));
                     }
                     finally {
                         monitor.done();
@@ -252,10 +251,10 @@ public class MakeNSISRunner implements INSISConstants
                 op.run(null);
             }
             catch (InvocationTargetException e) {
-                model.add(NSISConsoleLine.error(e.getMessage()));
+                model.add(NSISConsoleLine.error(e.getLocalizedMessage()));
             }
             catch (InterruptedException e) {
-                model.add(NSISConsoleLine.error(e.getMessage()));
+                model.add(NSISConsoleLine.error(e.getLocalizedMessage()));
             }
         }
     }
@@ -409,7 +408,7 @@ public class MakeNSISRunner implements INSISConstants
                     }
                 }
                 catch(IOException ioe){
-                    consoleModel.add(NSISConsoleLine.error(ioe.getMessage()));
+                    consoleModel.add(NSISConsoleLine.error(ioe.getLocalizedMessage()));
                 }
             }
             return results;
@@ -474,10 +473,10 @@ public class MakeNSISRunner implements INSISConstants
             results.setWarnings(warnings);
         }
         catch(IOException ioe){
-            model.add(NSISConsoleLine.error(ioe.getMessage()));
+            model.add(NSISConsoleLine.error(ioe.getLocalizedMessage()));
         }
         catch(InterruptedException ie){
-            model.add(NSISConsoleLine.error(ie.getMessage()));
+            model.add(NSISConsoleLine.error(ie.getLocalizedMessage()));
         }
         finally {
             setProcess(null);
@@ -536,11 +535,11 @@ public class MakeNSISRunner implements INSISConstants
                     NSISConsoleModel model = NSISConsoleModel.getInstance();
                     if(model != null) {
                         model.clear();
-                        model.add(NSISConsoleLine.error(ex.getMessage()));
+                        model.add(NSISConsoleLine.error(ex.getLocalizedMessage()));
                     }
                     else {
-                        MessageDialog.openError(EclipseNSISPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getShell(),
-                                                EclipseNSISPlugin.getResourceString("error.title"),ex.getMessage()); //$NON-NLS-1$
+                        Common.openError(EclipseNSISPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getShell(),
+                                         ex.getLocalizedMessage());
                     }
                 }
             }

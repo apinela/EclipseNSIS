@@ -63,10 +63,6 @@ public class NSISInstallShortcutDialog extends AbstractNSISInstallItemDialog imp
     protected Control createControl(Composite parent)
     {
         Composite composite = new Composite(parent, SWT.NONE);
-        GridData gd = new GridData(GridData.FILL_BOTH);
-        gd.widthHint = 400;
-        composite.setLayoutData(gd);
-        
         GridLayout layout = new GridLayout(3,false);
         layout.marginHeight = 0;
         layout.marginWidth = 0;
@@ -74,7 +70,7 @@ public class NSISInstallShortcutDialog extends AbstractNSISInstallItemDialog imp
         
         final Combo c1 = NSISWizardDialogUtil.createCombo(composite,null,"", //$NON-NLS-1$
                                                           false,"wizard.location.label",true,null,true); //$NON-NLS-1$
-        gd = (GridData)c1.getLayoutData();
+        GridData gd = (GridData)c1.getLayoutData();
         gd.horizontalAlignment = GridData.FILL;
         ArrayList input = new ArrayList(Arrays.asList(NSISKeywords.PATH_CONSTANTS_AND_VARIABLES));
         String temp = EclipseNSISPlugin.getResourceString("wizard.additional.shortcut.locations",""); //$NON-NLS-1$ //$NON-NLS-2$

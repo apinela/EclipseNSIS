@@ -91,7 +91,7 @@ public class NSISWizardSettings implements INSISWizardConstants, Serializable
         {
             setSettings(NSISWizardSettings.this);
             mFormat = EclipseNSISPlugin.getResourceString("wizard.installer.format"); //$NON-NLS-1$
-            NSISSection section = (NSISSection)NSISInstallElementFactory.create(mSettings,NSISSection.TYPE);
+            NSISSection section = (NSISSection)NSISInstallElementFactory.create(getSettings(),NSISSection.TYPE);
             section.setName(EclipseNSISPlugin.getResourceString("main.section.name")); //$NON-NLS-1$
             section.setDescription(EclipseNSISPlugin.getResourceString("main.section.description")); //$NON-NLS-1$
             section.setHidden(true);
@@ -103,9 +103,9 @@ public class NSISWizardSettings implements INSISWizardConstants, Serializable
          */
         public void setChildTypes()
         {
-            mChildTypes.clear();
-            mChildTypes.add(NSISSection.TYPE);
-            mChildTypes.add(NSISSectionGroup.TYPE);
+            clearChildTypes();
+            addChildType(NSISSection.TYPE);
+            addChildType(NSISSectionGroup.TYPE);
         }
 
         /* (non-Javadoc)
@@ -113,7 +113,7 @@ public class NSISWizardSettings implements INSISWizardConstants, Serializable
          */
         public String getDisplayName()
         {
-            return MessageFormat.format(mFormat,new Object[]{mSettings.getName()});
+            return MessageFormat.format(mFormat,new Object[]{getSettings().getName()});
         }
 
         /* (non-Javadoc)

@@ -9,14 +9,11 @@
  *******************************************************************************/
 package net.sf.eclipsensis.wizard;
 
-import java.io.IOException;
-import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.wizard.settings.NSISWizardSettings;
-import net.sf.eclipsensis.wizard.settings.dialogs.NSISWizardTemplateDialog;
 import net.sf.eclipsensis.wizard.util.MasterSlaveController;
 import net.sf.eclipsensis.wizard.util.NSISWizardDialogUtil;
 
@@ -24,7 +21,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.swt.SWT;
@@ -71,7 +67,7 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
             return false;
         }
         else if(!Path.EMPTY.isValidPath(pathname)) {
-            setErrorMessage(MessageFormat.format(EclipseNSISPlugin.getResourceString("invalid.save.location.error"),new String[]{pathname})); //$NON-NLS-1$
+            setErrorMessage(EclipseNSISPlugin.getFormattedString("invalid.save.location.error",new String[]{pathname})); //$NON-NLS-1$
             return false;
         }
         return true;
@@ -79,16 +75,21 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
 
     public boolean validatePage(int flag)
     {
-        NSISWizardSettings settings = mWizard.getSettings();
-
-        boolean b = (((flag & PROGRAM_FILE_CHECK) == 0) || validateNSISPath(settings.getRunProgramAfterInstall())&&
-                     ((flag & README_FILE_CHECK) == 0) || validateNSISPath(settings.getOpenReadmeAfterInstall())&&
-                     ((flag & SAVE_PATH_CHECK) == 0) || validateSavePath());
-        setPageComplete(b);
-        if(b) {
-            setErrorMessage(null);
+        if(isTemplateWizard()) {
+            return true;
         }
-        return b;
+        else {
+            NSISWizardSettings settings = mWizard.getSettings();
+    
+            boolean b = (((flag & PROGRAM_FILE_CHECK) == 0) || validateNSISPath(settings.getRunProgramAfterInstall())&&
+                         ((flag & README_FILE_CHECK) == 0) || validateNSISPath(settings.getOpenReadmeAfterInstall())&&
+                         ((flag & SAVE_PATH_CHECK) == 0) || validateSavePath());
+            setPageComplete(b);
+            if(b) {
+                setErrorMessage(null);
+            }
+            return b;
+        }
     }
 
     /**
@@ -98,7 +99,7 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
     {
         boolean b = Common.isEmpty(pathname) || Common.isValidNSISPathName(pathname);
         if(!b) {
-            setErrorMessage(MessageFormat.format(EclipseNSISPlugin.getResourceString("invalid.nsis.pathname.error"),new String[]{pathname})); //$NON-NLS-1$
+            setErrorMessage(EclipseNSISPlugin.getFormattedString("invalid.nsis.pathname.error",new String[]{pathname})); //$NON-NLS-1$
         }
         return b;
     }
@@ -118,43 +119,6 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
         createPostInstallationActionsGroup(composite);
         createMiscUninstallerSettingsGroup(composite);
         createScriptSaveSettingsGroup(composite);
-        Composite composite2 = new Composite(composite, SWT.NONE);
-        GridLayout layout2 = new GridLayout(2, false);
-        layout2.marginWidth = 0;
-        composite2.setLayout(layout2);
-        GridData data = new GridData(GridData.FILL_HORIZONTAL);
-
-        composite2.setLayoutData(data);
-        
-        final ResourceBundle bundle = EclipseNSISPlugin.getDefault().getResourceBundle();
-        Label l3 = NSISWizardDialogUtil.createLabel(composite2,"save.wizard.template.label", true, null, false); //$NON-NLS-1$
-        data = (GridData)l3.getLayoutData();
-        data.horizontalSpan = 1;
-        data.horizontalAlignment = GridData.HORIZONTAL_ALIGN_BEGINNING;
-        data.grabExcessHorizontalSpace = false;
-        
-        final Button button = new Button(composite2, SWT.PUSH | SWT.CENTER);
-        button.setText(EclipseNSISPlugin.getResourceString("save.wizard.template.button.text")); //$NON-NLS-1$
-        button.setToolTipText(EclipseNSISPlugin.getResourceString("browse.tooltip")); //$NON-NLS-1$
-        button.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
-                NSISWizardTemplateDialog dialog = new NSISWizardTemplateDialog(getShell(),NSISWizardTemplateDialog.MODE_SAVE);
-                dialog.setTemplateName(mWizard.getTemplateName());
-                if(dialog.open() == Window.OK) {
-                    String templateName = dialog.getTemplateName();
-                    if(!Common.isEmpty(templateName)) {
-                        try {
-                            mWizard.saveTemplate(templateName);
-                        }
-                        catch(IOException ioe) {
-                            MessageDialog.openError(getShell(),bundle.getString("error.title"),ioe.toString()); //$NON-NLS-1$
-                        }
-                    }
-                }
-            }
-        });
-        data = new GridData(GridData.HORIZONTAL_ALIGN_CENTER);
-        button.setLayoutData(data);
 
         validatePage(ALL_CHECK);
     }
@@ -370,6 +334,24 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
             }
         });
  
+        if(mWizard instanceof NSISScriptWizard) {
+            final NSISScriptWizard scriptWizard = (NSISScriptWizard)mWizard;
+            final Button button = NSISWizardDialogUtil.createCheckBox(group,"save.wizard.template.label",scriptWizard.isSaveAsTemplate(),true,null,false); //$NON-NLS-1$
+            button.addSelectionListener(new SelectionAdapter() {
+                public void widgetSelected(SelectionEvent e) 
+                {
+                    scriptWizard.setSaveAsTemplate(button.getSelection());
+                }
+            });
+            scriptWizard.addSettingsListener(new INSISWizardSettingsListener() {
+                public void settingsChanged()
+                {
+                    scriptWizard.setSaveAsTemplate(false);
+                    button.setSelection(false);
+                }
+            });
+        }
+
         mWizard.addSettingsListener(new INSISWizardSettingsListener() {
             public void settingsChanged()
             {
@@ -378,7 +360,8 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
                 b2.setSelection(settings.isMakePathsRelative());
                 b3.setSelection(settings.isCompileScript());
                 b4.setSelection(settings.isTestScript());
-            }});
+            }
+       });
     }
 
     /**

@@ -10,7 +10,6 @@
 package net.sf.eclipsensis.help;
 
 import java.io.*;
-import java.text.MessageFormat;
 import java.util.Locale;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
@@ -55,18 +54,18 @@ public class NSISHelpProducer implements IHelpContentProducer, INSISConstants
                         }
                     }
                     if(isDocs) {
-                        return new ByteArrayInputStream(MessageFormat.format(EclipseNSISPlugin.getResourceString("missing.help.format"), //$NON-NLS-1$
-                                new Object[]{href,PLUGIN_NAME,
-                                             NSISLiveHelpAction.class.getName()}).getBytes());
+                        return new ByteArrayInputStream(EclipseNSISPlugin.getFormattedString("missing.help.format", //$NON-NLS-1$
+                                                                new Object[]{href,PLUGIN_NAME,
+                                                                             NSISLiveHelpAction.class.getName()}).getBytes());
                     }
                     else {
-                        return new ByteArrayInputStream(MessageFormat.format(EclipseNSISPlugin.getResourceString("missing.file.format"), //$NON-NLS-1$
-                                new Object[]{href}).getBytes());
+                        return new ByteArrayInputStream(EclipseNSISPlugin.getFormattedString("missing.file.format", //$NON-NLS-1$
+                                                                            new Object[]{href}).getBytes());
                     }
                 }
             }
-            return new ByteArrayInputStream(MessageFormat.format(EclipseNSISPlugin.getResourceString("unconfigured.help.format"), //$NON-NLS-1$
-                    new Object[]{PLUGIN_NAME,NSISLiveHelpAction.class.getName()}).getBytes());
+            return new ByteArrayInputStream(EclipseNSISPlugin.getFormattedString("unconfigured.help.format", //$NON-NLS-1$
+                                                                new Object[]{PLUGIN_NAME,NSISLiveHelpAction.class.getName()}).getBytes());
         }
         return null;
     }

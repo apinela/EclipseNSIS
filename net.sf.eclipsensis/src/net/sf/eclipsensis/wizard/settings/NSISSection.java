@@ -72,13 +72,13 @@ public class NSISSection extends AbstractNSISInstallGroup
      */
     public void setChildTypes()
     {
-        mChildTypes.clear();
-        mChildTypes.add(NSISInstallFile.TYPE);
-        mChildTypes.add(NSISInstallFiles.TYPE);
-        mChildTypes.add(NSISInstallDirectory.TYPE);
-        mChildTypes.add(NSISInstallShortcut.TYPE);
-        mChildTypes.add(NSISInstallRegistryKey.TYPE);
-        mChildTypes.add(NSISInstallRegistryValue.TYPE);
+        clearChildTypes();
+        addChildType(NSISInstallFile.TYPE);
+        addChildType(NSISInstallFiles.TYPE);
+        addChildType(NSISInstallDirectory.TYPE);
+        addChildType(NSISInstallShortcut.TYPE);
+        addChildType(NSISInstallRegistryKey.TYPE);
+        addChildType(NSISInstallRegistryValue.TYPE);
     }
 
     /* (non-Javadoc)

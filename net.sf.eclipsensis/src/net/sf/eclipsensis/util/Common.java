@@ -15,17 +15,24 @@ import java.beans.*;
 import java.io.*;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
+import java.rmi.dgc.VMID;
 import java.text.BreakIterator;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.help.NSISKeywords;
+import net.sf.eclipsensis.settings.NSISPreferences;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Shell;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
@@ -45,46 +52,36 @@ public class Common
     private static Pattern cValidFileName = Pattern.compile("(\\.?[A-Za-z0-9\\$%\\'`\\-@\\{\\}~\\!#\\(\\&_\\^\\x20])+"); //$NON-NLS-1$
     private static Pattern cValidURL = Pattern.compile("(?:(?:ftp|https?):\\/\\/)?(?:[a-z0-9](?:[-a-z0-9]*[a-z0-9])?\\.)+(?:com|edu|biz|org|gov|int|info|mil|net|name|museum|coop|aero|[a-z][a-z])\\b(?:\\d+)?(?:\\/[^;\"'<>()\\[\\]{}\\s\\x7f-\\xff]*(?:[.,?]+[^;\"'<>()\\[\\]{}\\s\\x7f-\\xff]+)*)?"); //$NON-NLS-1$
 
-    public static Object readObjectXML(File file) throws IOException, ClassNotFoundException
-    {
-        return readObjectXML(new BufferedReader(new FileReader(file)));
-    }
-
-    public static Object readObjectXML(Reader reader) throws IOException, ClassNotFoundException
-    {
-        ArrayList objectList = new ArrayList();
-        ObjectInputStream ois = null;
-        try {
-            ois = cXStream.createObjectInputStream(reader);
-            return ois.readObject();
-        }
-        finally {
-            closeIO(ois);
-            closeIO(reader);
-        }
-    }
-
-    public static void writeObjectXML(File file, Object object) throws IOException
-    {
-        writeObjectXML(new BufferedWriter(new FileWriter(file)), object);
-    }
-
-    public static void writeObjectXML(Writer writer, Object object) throws IOException
-    {
-        if(object != null) {
-            ObjectOutputStream oos = null;
     
-            try {
-                oos = cXStream.createObjectOutputStream(writer);
-                oos.writeObject(object);
-            }
-            finally {
-                closeIO(oos);
-                closeIO(writer);
-            }
+    public static String encodePath(String path)
+    {
+        String nsisdirKeyword = NSISKeywords.getKeyword("${NSISDIR}"); //$NON-NLS-1$
+        String nsisHome = NSISPreferences.getPreferences().getNSISHome();
+        if(path.startsWith(nsisHome)) {
+            path = nsisdirKeyword + path.substring(nsisHome.length());
         }
+        return path;
     }
 
+    public static String decodePath(String path)
+    {
+        String nsisdirKeyword = NSISKeywords.getKeyword("${NSISDIR}"); //$NON-NLS-1$
+        String nsisHome = NSISPreferences.getPreferences().getNSISHome();
+        if(path.startsWith(nsisdirKeyword)) {
+            path = nsisHome + path.substring(nsisdirKeyword.length());
+        }
+        return path;
+    }
+
+    public static Object fromXML(String xml)
+    {
+        return cXStream.fromXML(xml);
+    }
+
+    public static String toXML(Object object)
+    {
+        return cXStream.toXML(object);
+    }
 
     public static Object readObject(File file) throws IOException, ClassNotFoundException
     {
@@ -778,5 +775,55 @@ public class Common
             lines.add(buf.toString());
         }
         return (String[])lines.toArray(EMPTY_STRING_ARRAY);
+    }
+    
+    public static String generateUniqueName(String prefix, String suffix)
+    {
+        StringBuffer name = new StringBuffer(""); //$NON-NLS-1$
+        if(!Common.isEmpty(prefix)) {
+            name.append(prefix);
+        }
+        name.append(new VMID().toString().replaceAll("[:-]","")); //$NON-NLS-1$ //$NON-NLS-2$
+        if(!Common.isEmpty(suffix)) {
+            name.append(suffix);
+        }
+        return name.toString();
+    }
+    
+    public static void openError(Shell shell, String message)
+    {
+        MessageDialog.openError(shell, EclipseNSISPlugin.getResourceString("error.title"), message); //$NON-NLS-1$
+    }
+    
+    public static void openWarning(Shell shell, String message)
+    {
+        MessageDialog.openWarning(shell, EclipseNSISPlugin.getResourceString("warning.title"), message); //$NON-NLS-1$
+    }
+    
+    public static boolean openConfirm(Shell shell, String message)
+    {
+        return MessageDialog.openConfirm(shell,EclipseNSISPlugin.getResourceString("confirm.title"), //$NON-NLS-1$
+                                          message);
+    }
+    
+    public static boolean openQuestion(Shell shell, String message)
+    {
+        return MessageDialog.openQuestion(shell,EclipseNSISPlugin.getResourceString("confirm.title"), //$NON-NLS-1$
+                                          message);
+    }
+    
+    public static Point calculateControlSize(Control control, int chars, int lines)
+    {
+        Point pt = new Point(0,0);
+        GC gc = new GC(control);
+        FontMetrics fontMetrics = gc.getFontMetrics();
+        if(chars > 0) {
+            pt.x = chars*fontMetrics.getAverageCharWidth();
+        }
+        if(lines > 0) {
+            pt.y = lines*fontMetrics.getHeight();
+        }
+        gc.dispose();
+        return pt;
     }
 }

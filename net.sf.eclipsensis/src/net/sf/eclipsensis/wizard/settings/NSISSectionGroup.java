@@ -70,8 +70,8 @@ public class NSISSectionGroup extends AbstractNSISInstallGroup
      */
     public void setChildTypes()
     {
-        mChildTypes.clear();
-        mChildTypes.add(NSISSection.TYPE);
+        clearChildTypes();
+        addChildType(NSISSection.TYPE);
     }
 
     /* (non-Javadoc)

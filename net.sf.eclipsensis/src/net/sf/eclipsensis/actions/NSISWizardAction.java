@@ -9,7 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.actions;
 
-import net.sf.eclipsensis.wizard.NSISWizard;
+import net.sf.eclipsensis.wizard.NSISScriptWizard;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.preference.PreferenceManager;
@@ -28,6 +28,6 @@ public class NSISWizardAction extends NSISScriptAction
         IWorkbench workbench = PlatformUI.getWorkbench();
         PreferenceManager manager = workbench.getPreferenceManager();
         Shell shell = workbench.getActiveWorkbenchWindow().getShell();
-        new WizardDialog(shell,new NSISWizard()).open();
+        new WizardDialog(shell,new NSISScriptWizard()).open();
     }
 }

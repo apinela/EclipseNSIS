@@ -11,6 +11,7 @@ package net.sf.eclipsensis;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.*;
 
 import net.sf.eclipsensis.dialogs.NSISPreferencePage;
@@ -22,7 +23,6 @@ import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.util.WinAPI;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.templates.ContextTypeRegistry;
 import org.eclipse.jface.text.templates.persistence.TemplateStore;
 import org.eclipse.swt.widgets.Display;
@@ -68,7 +68,8 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
 	/**
 	 * This method is called upon plug-in activation
 	 */
-	public void start(BundleContext context) throws Exception {
+	public void start(BundleContext context) throws Exception 
+    {
 		super.start(context);
         mName = (String)getBundle().getHeaders().get("Bundle-Name"); //$NON-NLS-1$
         mVersion = (String)getBundle().getHeaders().get("Bundle-Version"); //$NON-NLS-1$
@@ -79,11 +80,11 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
             prefs.setNSISHome(WinAPI.RegQueryStrValue(NSIS_REG_ROOTKEY,NSIS_REG_SUBKEY,NSIS_REG_VALUE));
             if(!isConfigured()) {
                 Shell shell = getWorkbench().getActiveWorkbenchWindow().getShell();
-                if(MessageDialog.openConfirm(shell,mName,getResourceString("unconfigured.confirm"))) { //$NON-NLS-1$
+                if(Common.openConfirm(shell,getResourceString("unconfigured.confirm"))) { //$NON-NLS-1$
                     configure();
                 }
                 if(!isConfigured()) {
-                    MessageDialog.openWarning(shell,mName,getResourceString("unconfigured.warning")); //$NON-NLS-1$
+                    Common.openWarning(shell,getResourceString("unconfigured.warning")); //$NON-NLS-1$
                 }
             }
             else {
@@ -117,8 +118,8 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
                 }
             }
             String osError = getResourceString("unsupported.os.error"); //$NON-NLS-1$
-            MessageDialog.openError(getWorkbench().getActiveWorkbenchWindow().getShell(),
-                                    mName,osError);
+            Common.openError(getWorkbench().getActiveWorkbenchWindow().getShell(),
+                                    osError);
             throw new CoreException(new Status(IStatus.ERROR,PLUGIN_NAME,IStatus.ERROR,osError,
                                     new RuntimeException(osError)));
         }
@@ -127,7 +128,8 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
 	/**
 	 * This method is called when the plug-in is stopped
 	 */
-	public void stop(BundleContext context) throws Exception {
+	public void stop(BundleContext context) throws Exception 
+    {
         for (Iterator iter = mListeners.iterator(); iter.hasNext();) {
             IEclipseNSISPluginListener listener = (IEclipseNSISPluginListener) iter.next();
             listener.stopped();
@@ -158,11 +160,21 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
         return cStateLocation;
     }
 
+    /**
+     * Returns the string from the plugin's resource bundle,
+     * or 'key' if not found.
+     */
+    public static String getFormattedString(String key, Object[] args)
+    {
+        return MessageFormat.format(getResourceString(key),args);
+    }
+
 	/**
 	 * Returns the string from the plugin's resource bundle,
 	 * or 'key' if not found.
 	 */
-	public static String getResourceString(String key) {
+	public static String getResourceString(String key) 
+    {
         return getResourceString(key, key);
 	}
 
@@ -170,7 +182,8 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
      * Returns the string from the plugin's resource bundle,
      * or the default value if not found.
      */
-    public static String getResourceString(String key, String defaultValue) {
+    public static String getResourceString(String key, String defaultValue) 
+    {
         EclipseNSISPlugin plugin = EclipseNSISPlugin.getDefault();
         if(plugin != null) {
             ResourceBundle bundle = plugin.getResourceBundle();
@@ -186,7 +199,8 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
 	/**
 	 * Returns the plugin's resource bundle,
 	 */
-	public ResourceBundle getResourceBundle() {
+	public ResourceBundle getResourceBundle() 
+    {
 		return mResourceBundle;
 	}
     
@@ -195,7 +209,8 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
      * 
      * @return the template store of this plug-in instance
      */
-    public TemplateStore getTemplateStore() {
+    public TemplateStore getTemplateStore() 
+    {
         if (mTemplateStore == null) {
             mTemplateStore= new ContributionTemplateStore(getContextTypeRegistry(), 
                             NSISPreferences.getPreferences().getPreferenceStore(), 
@@ -215,7 +230,8 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
      * 
      * @return the context type registry for this plug-in instance
      */
-    public ContextTypeRegistry getContextTypeRegistry() {
+    public ContextTypeRegistry getContextTypeRegistry() 
+    {
         if (mContextTypeRegistry == null) {
             mContextTypeRegistry= new ContributionContextTypeRegistry();
             mContextTypeRegistry.addContextType(NSISTemplateContextType.NSIS_TEMPLATE_CONTEXT_TYPE);

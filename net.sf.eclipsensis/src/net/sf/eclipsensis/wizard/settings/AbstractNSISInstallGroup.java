@@ -13,14 +13,12 @@ import java.util.*;
 
 import net.sf.eclipsensis.util.Common;
 
-public abstract class AbstractNSISInstallGroup implements INSISInstallElement
+public abstract class AbstractNSISInstallGroup extends AbstractNSISInstallElement
 {
 	private static final long serialVersionUID = 6871218426689788748L;
 
-    protected LinkedHashSet mChildTypes = new LinkedHashSet();
-    protected ArrayList mChildren = new ArrayList();
-    protected INSISInstallElement mParent = null;
-    protected NSISWizardSettings mSettings = null;
+    private LinkedHashSet mChildTypes = new LinkedHashSet();
+    private ArrayList mChildren = new ArrayList();
     private transient boolean mExpanded = true;
     
     /**
@@ -31,14 +29,6 @@ public abstract class AbstractNSISInstallGroup implements INSISInstallElement
         setChildTypes();
     }
     
-    /* (non-Javadoc)
-     * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#isRemovable()
-     */
-    public boolean isRemovable()
-    {
-        return true;
-    }
-
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#hasChildren()
      */
@@ -61,6 +51,21 @@ public abstract class AbstractNSISInstallGroup implements INSISInstallElement
     public String[] getChildTypes()
     {
         return (String[])mChildTypes.toArray(new String[0]);
+    }
+    
+    protected void clearChildTypes()
+    {
+        mChildTypes.clear();
+    }
+
+    protected void addChildType(String childType)
+    {
+        mChildTypes.add(childType);
+    }
+    
+    protected Iterator getChildrenIterator()
+    {
+        return mChildren.iterator();
     }
 
     /* (non-Javadoc)
@@ -101,32 +106,6 @@ public abstract class AbstractNSISInstallGroup implements INSISInstallElement
         }
     }
 
-    /* (non-Javadoc)
-     * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#setParent(net.sf.eclipsensis.wizard.settings.INSISInstallElement)
-     */
-    public void setParent(INSISInstallElement parent)
-    {
-        mParent = parent;
-    }
-
-    /* (non-Javadoc)
-     * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#getParent()
-     */
-    public INSISInstallElement getParent()
-    {
-        return mParent;
-    }
-
-    public void setSettings(NSISWizardSettings settings)
-    {
-        mSettings = settings;
-    }
-    
-    public NSISWizardSettings getSettings()
-    {
-        return mSettings;
-    }
-    
     /**
      * @return Returns the expanded.
      */

@@ -57,7 +57,7 @@ public class NSISConsoleWriter implements Runnable
         }
         catch(Exception ex) {
             ex.printStackTrace();
-            mModel.add(NSISConsoleLine.error(ex.getMessage()));
+            mModel.add(NSISConsoleLine.error(ex.getLocalizedMessage()));
         }
     }
 }

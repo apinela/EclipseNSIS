@@ -10,16 +10,15 @@
 package net.sf.eclipsensis.dialogs;
 
 import java.io.*;
-import java.text.MessageFormat;
 import java.util.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.editor.*;
 import net.sf.eclipsensis.editor.text.NSISSyntaxStyle;
 import net.sf.eclipsensis.settings.*;
+import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.FontRegistry;
@@ -108,7 +107,9 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
     private boolean mFieldsInitialized= false;
     private SelectionListener mAccessibilityListener;
     
-    public NSISEditorPreferencePage() {
+    public NSISEditorPreferencePage() 
+    {
+        super();
         setDescription(EclipseNSISPlugin.getResourceString("editor.preferences.description")); //$NON-NLS-1$
         setPreferenceStore(NSISPreferences.getPreferences().getPreferenceStore());
         mPreferenceStore= new PreferenceStoreWrapper(getPreferenceStore());
@@ -701,8 +702,7 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
     private boolean validatePositiveNumber(String number, boolean showMessageBox) {
         if (number.length() == 0) {
             if(showMessageBox) {
-                MessageDialog.openError(getShell(),EclipseNSISPlugin.getResourceString("error.title"), //$NON-NLS-1$
-                                        EclipseNSISPlugin.getResourceString("empty.input")); //$NON-NLS-1$
+                Common.openError(getShell(), EclipseNSISPlugin.getResourceString("empty.input")); //$NON-NLS-1$
             }
             return false;
         } else {
@@ -710,16 +710,14 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
                 int value= Integer.parseInt(number);
                 if (value < 0) {
                     if(showMessageBox) {
-                        MessageDialog.openError(getShell(),EclipseNSISPlugin.getResourceString("error.title"), //$NON-NLS-1$
-                                                MessageFormat.format(EclipseNSISPlugin.getResourceString("invalid.input"),  //$NON-NLS-1$
+                        Common.openError(getShell(), EclipseNSISPlugin.getFormattedString("invalid.input",  //$NON-NLS-1$
                                                                      new Object[]{number})); //$NON-NLS-1$
                     }
                     return false;
                 }
             } catch (NumberFormatException e) {
                 if(showMessageBox) {
-                    MessageDialog.openError(getShell(),EclipseNSISPlugin.getResourceString("error.title"), //$NON-NLS-1$
-                            MessageFormat.format(EclipseNSISPlugin.getResourceString("invalid.input"),  //$NON-NLS-1$
+                    Common.openError(getShell(), EclipseNSISPlugin.getFormattedString("invalid.input",  //$NON-NLS-1$
                                                  new Object[]{number})); //$NON-NLS-1$
                 }
                 return false;

@@ -21,6 +21,7 @@ import net.sf.eclipsensis.wizard.NSISWizardDisplayValues;
 import net.sf.eclipsensis.wizard.settings.NSISInstallFiles;
 import net.sf.eclipsensis.wizard.util.NSISWizardDialogUtil;
 
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -60,8 +61,9 @@ public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
     protected Control createControl(Composite parent)
     {
         Composite composite = new Composite(parent, SWT.NONE);
+        Dialog.applyDialogFont(composite);
         GridData gd = new GridData(GridData.FILL_BOTH);
-        gd.widthHint = 400;
+        gd.widthHint = Common.calculateControlSize(composite,60,0).x;
         composite.setLayoutData(gd);
         
         GridLayout layout = new GridLayout(2,false);
@@ -78,7 +80,7 @@ public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
         Composite composite2 = new Composite(composite, SWT.NONE);
         gd = new GridData(GridData.FILL_BOTH);
         gd.horizontalSpan = 2;
-        gd.heightHint = 120;
+        gd.heightHint = convertHeightInCharsToPixels(10);
         composite2.setLayoutData(gd);
         
         layout = new GridLayout(2,false);
@@ -187,7 +189,7 @@ public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
                     filterPath = dialog.getFilterPath();
                     String[] fileNames = dialog.getFileNames();
                     for (int i = 0; i < fileNames.length; i++) {
-                        mFiles.add(new StringBuffer(filterPath).append("\\").append(fileNames[i]).toString()); //$NON-NLS-1$
+                        mFiles.add(Common.encodePath(new StringBuffer(filterPath).append("\\").append(fileNames[i]).toString())); //$NON-NLS-1$
                     }
                     viewer.refresh();
                     setComplete(validate());

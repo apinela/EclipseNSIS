@@ -89,6 +89,12 @@
             class="net.sf.eclipsensis.dialogs.NSISTemplatePreferencePage"
             id="net.sf.eclipsensis.dialogs.NSISTemplatePreferencePage">
       </page>
+      <page
+            name="%wizard.templates.preference.page.name"
+            category="net.sf.eclipsensis.dialogs.NSISPreferencePage"
+            class="net.sf.eclipsensis.dialogs.NSISWizardTemplatePreferencePage"
+            id="net.sf.eclipsensis.dialogs.NSISWizardTemplatePreferencePage">
+      </page>
    </extension>
    <extension
          point="org.eclipse.ui.propertyPages">
@@ -223,7 +229,7 @@
                relative="org.eclipse.ui.views.TaskList"
                relationship="right"/>
          <newWizardShortcut
-               id="net.sf.eclipsensis.wizard.NSISWizard">
+               id="net.sf.eclipsensis.wizard.NSISScriptWizard">
          </newWizardShortcut>
       </perspectiveExtension>
       <perspectiveExtension
@@ -235,7 +241,7 @@
                relative="org.eclipse.ui.views.ProblemView"
                relationship="right"/>
          <newWizardShortcut
-               id="net.sf.eclipsensis.wizard.NSISWizard">
+               id="net.sf.eclipsensis.wizard.NSISScriptWizard">
          </newWizardShortcut>
       </perspectiveExtension>
       <perspectiveExtension
@@ -247,7 +253,7 @@
                relative="org.eclipse.ui.views.ProblemView"
                relationship="right"/>
          <newWizardShortcut
-               id="net.sf.eclipsensis.wizard.NSISWizard">
+               id="net.sf.eclipsensis.wizard.NSISScriptWizard">
          </newWizardShortcut>
       </perspectiveExtension>
    </extension>
@@ -435,11 +441,11 @@
             name="NSIS"
             id="net.sf.eclipsensis"/>
       <wizard
-            class="net.sf.eclipsensis.wizard.NSISWizard"
+            class="net.sf.eclipsensis.wizard.NSISScriptWizard"
             icon="%wizard.icon"
             category="net.sf.eclipsensis"
             name="%wizard.name"
-            id="net.sf.eclipsensis.wizard.NSISWizard"/>
+            id="net.sf.eclipsensis.wizard.NSISScriptWizard"/>
    </extension>
    <extension
          point="org.eclipse.ui.editors.templates">

@@ -9,7 +9,6 @@
  *******************************************************************************/
 package net.sf.eclipsensis.wizard.settings.dialogs;
 
-import java.text.MessageFormat;
 import java.util.List;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
@@ -20,6 +19,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceStore;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 
 public abstract class AbstractNSISInstallItemDialog extends Dialog
@@ -45,6 +45,10 @@ public abstract class AbstractNSISInstallItemDialog extends Dialog
     {
         Composite composite = (Composite)super.createDialogArea(parent);
         Control control = createControl(composite);
+        Dialog.applyDialogFont(composite);
+        GridData gd = new GridData(GridData.FILL_BOTH);
+        gd.widthHint = convertWidthInCharsToPixels(65);
+        control.setLayoutData(gd);
         return composite;
     }
     
@@ -63,7 +67,7 @@ public abstract class AbstractNSISInstallItemDialog extends Dialog
      */
     protected void configureShell(Shell newShell)
     {
-        newShell.setText(MessageFormat.format(EclipseNSISPlugin.getResourceString("wizard.installitem.dialog.title.format"), //$NON-NLS-1$
+        newShell.setText(EclipseNSISPlugin.getFormattedString("wizard.installitem.dialog.title.format", //$NON-NLS-1$
                          new String[]{mItem.getType()}));
         super.configureShell(newShell);
     }

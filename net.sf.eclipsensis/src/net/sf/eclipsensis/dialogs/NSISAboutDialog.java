@@ -11,7 +11,6 @@ package net.sf.eclipsensis.dialogs;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.text.MessageFormat;
 import java.util.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
@@ -39,7 +38,6 @@ public class NSISAboutDialog extends Dialog implements INSISConstants
     private static final String cAboutTitle;
     private static final String cAboutHeader;
     private static final String cAboutText;
-    private static final int cWidthHint;
     private static final String[] cURISchemes = {"http://","https://","ftp://","mailto:","news:"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
     private static final boolean[] cURIOpaqueSchemes = {false,false,false,true,true};
     private static final ArrayList cLinks = new ArrayList();
@@ -59,22 +57,13 @@ public class NSISAboutDialog extends Dialog implements INSISConstants
         
         EclipseNSISPlugin plugin = EclipseNSISPlugin.getDefault();
         String name = plugin.getName();
-        cAboutTitle = MessageFormat.format(EclipseNSISPlugin.getResourceString("about.title.format"), //$NON-NLS-1$
+        cAboutTitle = EclipseNSISPlugin.getFormattedString("about.title.format", //$NON-NLS-1$
                                            new Object[]{name});
         
-        cAboutHeader = MessageFormat.format(EclipseNSISPlugin.getResourceString("about.header.format"), //$NON-NLS-1$
+        cAboutHeader = EclipseNSISPlugin.getFormattedString("about.header.format", //$NON-NLS-1$
                                            new Object[]{name, plugin.getVersion()});
 
         cAboutText = parseAboutText(EclipseNSISPlugin.getResourceString("about.text")); //$NON-NLS-1$
-        
-        int widthHint;
-        try {
-            widthHint = Integer.parseInt(EclipseNSISPlugin.getResourceString("aboutdialog.wodth.hint")); //$NON-NLS-1$)
-        }
-        catch(NumberFormatException nfe) {
-            widthHint = 400;
-        }
-        cWidthHint = widthHint;
     }
     /**
      * @param parentShell
@@ -133,7 +122,7 @@ public class NSISAboutDialog extends Dialog implements INSISConstants
         final StyledText text = new StyledText(composite, SWT.MULTI | SWT.READ_ONLY | SWT.WRAP);
         data = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_FILL);
         data.horizontalSpan = 2;
-        data.widthHint = cWidthHint;
+        data.widthHint = convertWidthInCharsToPixels(80);
         text.setLayoutData(data);
         text.setCaret(null);
         text.setFont(parent.getFont());

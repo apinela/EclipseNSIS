@@ -109,6 +109,8 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
         NSISWizardSettings settings = mWizard.getSettings();
 
         final MasterSlaveEnabler mse = new MasterSlaveEnabler() {
+            public void enabled(Control control, boolean flag) { }
+            
             public boolean canEnable(Control control)
             {
                 NSISWizardSettings settings = mWizard.getSettings();
@@ -304,6 +306,8 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
             }
         });
         final MasterSlaveEnabler mse = new MasterSlaveEnabler() {
+            public void enabled(Control control, boolean flag) { }
+            
             public boolean canEnable(Control control)
             {
                 NSISWizardSettings settings = mWizard.getSettings();
@@ -361,6 +365,8 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
         NSISWizardSettings settings = mWizard.getSettings();
 
         final MasterSlaveEnabler mse = new MasterSlaveEnabler() {
+            public void enabled(Control control, boolean flag) { }
+            
             public boolean canEnable(Control control)
             {
                 NSISWizardSettings settings = mWizard.getSettings();
@@ -640,19 +646,24 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
 
     public boolean validatePage(int flag)
     {
-        NSISWizardSettings settings = mWizard.getSettings();
-
-        boolean b = (!settings.isShowLicense() || ((flag & LICDATA_CHECK) == 0 || validateFile(settings.getLicenseData(),cLicFileErrors))) &&
-                    (!settings.isShowSplash() || (((flag & SPLIMG_CHECK) == 0 || validateFile(settings.getSplashBMP(), cSplashImageErrors)) &&
-                                                ((flag & SPLWAV_CHECK) == 0 || validateEmptyOrValidFile(settings.getSplashWAV(),null)) &&
-                                                ((flag & SPLDLY_CHECK) == 0 || validateDelay(settings.getSplashDelay(),cSplashDelayErrors)))) &&
-                    (!settings.isShowBackground() || (((flag & BGIMG_CHECK) == 0 || validateEmptyOrValidFile(settings.getBackgroundBMP(),null)) && 
-                                                   ((flag & BGWAV_CHECK) == 0 || validateEmptyOrValidFile(settings.getBackgroundWAV(),null))));
-        setPageComplete(b);
-        if(b) {
-            setErrorMessage(null);
+        if(isTemplateWizard()) {
+            return true;
         }
-        return b;
+        else {
+            NSISWizardSettings settings = mWizard.getSettings();
+    
+            boolean b = (!settings.isShowLicense() || ((flag & LICDATA_CHECK) == 0 || validateFile(Common.decodePath(settings.getLicenseData()),cLicFileErrors))) &&
+                        (!settings.isShowSplash() || (((flag & SPLIMG_CHECK) == 0 || validateFile(Common.decodePath(settings.getSplashBMP()), cSplashImageErrors)) &&
+                                                    ((flag & SPLWAV_CHECK) == 0 || validateEmptyOrValidFile(Common.decodePath(settings.getSplashWAV()),null)) &&
+                                                    ((flag & SPLDLY_CHECK) == 0 || validateDelay(settings.getSplashDelay(),cSplashDelayErrors)))) &&
+                        (!settings.isShowBackground() || (((flag & BGIMG_CHECK) == 0 || validateEmptyOrValidFile(Common.decodePath(settings.getBackgroundBMP()),null)) && 
+                                                       ((flag & BGWAV_CHECK) == 0 || validateEmptyOrValidFile(Common.decodePath(settings.getBackgroundWAV()),null))));
+            setPageComplete(b);
+            if(b) {
+                setErrorMessage(null);
+            }
+            return b;
+        }
     }
 
     /**
