@@ -1,9 +1,9 @@
 /*******************************************************************************
  * Copyright (c) 2004, 2005 Sunil Kamath (IcemanK).
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ * All rights reserved.
+ * This program is made available under the terms of the Common Public License
+ * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -48,7 +48,7 @@ jstring makeString(JNIEnv*, TCHAR*);
 void createString(TCHAR**,PCOPYDATASTRUCT);
 void createAppendArray(TCHAR***, int*, PCOPYDATASTRUCT);
 
-BOOL APIENTRY DllMain(HINSTANCE hinstDll, DWORD dwReasion, LPVOID lpReserved) 
+BOOL APIENTRY DllMain(HINSTANCE hinstDll, DWORD dwReasion, LPVOID lpReserved)
 {
 	if(dwReasion == DLL_PROCESS_ATTACH) {
 		hInstance = hinstDll;
@@ -61,7 +61,7 @@ BOOL APIENTRY DllMain(HINSTANCE hinstDll, DWORD dwReasion, LPVOID lpReserved)
 void RegisterWindowClass() {
 	WNDCLASSEX wcex;
 
-	wcex.cbSize = sizeof(WNDCLASSEX); 
+	wcex.cbSize = sizeof(WNDCLASSEX);
 	wcex.style			= CS_HREDRAW | CS_VREDRAW;
 	wcex.lpfnWndProc	= WndProc;
 	wcex.cbClsExtra		= 0;
@@ -77,7 +77,7 @@ void RegisterWindowClass() {
 	RegisterClassEx(&wcex);
 }
 
-LRESULT CALLBACK WndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam) 
+LRESULT CALLBACK WndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 {
 	if(Msg == WM_COPYDATA) {
 		PCOPYDATASTRUCT cds = PCOPYDATASTRUCT(lParam);
@@ -130,7 +130,7 @@ unsigned WINAPI CreateWndThread(LPVOID pThreadParam) {
 		DispatchMessage(&Msg);
 	}
 	return Msg.wParam;
-} 
+}
 
 JNIEXPORT jlong JNICALL Java_net_sf_eclipsensis_makensis_MakeNSISRunner_init(JNIEnv *pEnv, jclass jcls)
 {
@@ -162,7 +162,7 @@ JNIEXPORT jlong JNICALL Java_net_sf_eclipsensis_makensis_MakeNSISRunner_init(JNI
 
 
 	HANDLE hThread = (HANDLE)_beginthreadex(NULL, 0, &CreateWndThread, hWnd, 0, &uThreadId);
-	if(!hThread) 
+	if(!hThread)
 	{
 		throwException(pEnv,_T("Fail creating thread"));
 		return 0;

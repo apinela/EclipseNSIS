@@ -1,9 +1,9 @@
 /*******************************************************************************
  * Copyright (c) 2004, 2005 Sunil Kamath (IcemanK).
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ * All rights reserved.
+ * This program is made available under the terms of the Common Public License
+ * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -45,9 +45,9 @@ JNIEXPORT jboolean JNICALL Java_net_sf_eclipsensis_util_WinAPI_SetLayeredWindowA
 {
 	if(SetLayeredWindowAttributesProc) {
 		if ( dwFlags == net_sf_eclipsensis_util_WinAPI_LWA_COLORKEY ) {
-			return( SetLayeredWindowAttributesProc((HWND)hWnd, (COLORREF)RGB(crRed,crGreen,crBlue), 
+			return( SetLayeredWindowAttributesProc((HWND)hWnd, (COLORREF)RGB(crRed,crGreen,crBlue),
 											   (BYTE)bAlpha, (DWORD)dwFlags ));
-		} 
+		}
 		else {
 			return( SetLayeredWindowAttributesProc((HWND)hWnd, NULL, (BYTE)bAlpha, (DWORD)dwFlags ));
 		}
@@ -64,8 +64,8 @@ JNIEXPORT jstring JNICALL Java_net_sf_eclipsensis_util_WinAPI_RegQueryStrValue(J
     HKEY hKey;
     DWORD type;
     DWORD cbData;
-    
-    if(ERROR_SUCCESS == RegOpenKeyEx((HKEY)hRootKey, 
+
+    if(ERROR_SUCCESS == RegOpenKeyEx((HKEY)hRootKey,
                                      _T((char *)pEnv->GetStringUTFChars(sSubKey, 0)),0, KEY_QUERY_VALUE, &hKey)) {
         if(ERROR_SUCCESS == RegQueryValueEx(hKey, _T(""), 0, &type, NULL, &cbData)) {
             value = (TCHAR *)GlobalAlloc(GPTR, cbData*sizeof(TCHAR));
@@ -76,8 +76,8 @@ JNIEXPORT jstring JNICALL Java_net_sf_eclipsensis_util_WinAPI_RegQueryStrValue(J
         }
         RegCloseKey(hKey);
 	}
-    
-    return result;    
+
+    return result;
 }
 
 JNIEXPORT jlong JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetDesktopWindow(JNIEnv *pEnv, jclass jClass)
