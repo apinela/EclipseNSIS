@@ -68,13 +68,13 @@ public class NSISVariablesWordRule implements IRule, INSISConstants
                 }
                 else {
                     if(matchOffset >= 0) {
-                        token = mPredefinedVariablesToken;
                         break;
                     }
                 }
                 c= scanner.read();
             } while (c != ICharacterScanner.EOF && (mWordDetector.isWordPart((char) c) || c == LINE_CONTINUATION_CHAR));
             if(matchOffset >= 0) {
+                token = mPredefinedVariablesToken;
                 NSISTextUtility.unread(scanner,((NSISScanner)scanner).getOffset()-matchOffset-1);
             }
             else {
