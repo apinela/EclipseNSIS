@@ -75,7 +75,7 @@ public class NSISCodeScanner extends NSISStringScanner
                         
                         public boolean isWordPart(char character)
                         {
-                            return super.isWordPart(character) || character == '.';
+                            return (Character.isLetter(character) || character == '_') || character == '.';
                         }
                     }, defaultToken);
                     addWords(mCallbacksRule, INSISPreferenceConstants.CALLBACKS_STYLE, NSISKeywords.CALLBACKS);

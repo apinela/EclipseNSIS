@@ -16,14 +16,8 @@ import net.sf.eclipsensis.util.CaseInsensitiveMap;
 
 import org.eclipse.jface.text.templates.*;
 
-public class NSISTemplateTranslator extends TemplateTranslator
+public class NSISTemplateTranslator extends TemplateTranslator implements INSISTemplateConstants
 {
-    private static final int TEXT = 0;
-    private static final int ESCAPE = 1;
-    private static final int IDENTIFIER = 2;
-    
-    private static final char IDENTIFIER_BOUNDARY = '%';
-    
     private String mErrorMessage = null;
     
     /* (non-Javadoc)

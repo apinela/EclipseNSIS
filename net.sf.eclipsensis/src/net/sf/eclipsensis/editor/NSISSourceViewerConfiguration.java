@@ -10,34 +10,23 @@
 package net.sf.eclipsensis.editor;
 
 import net.sf.eclipsensis.INSISConstants;
-import net.sf.eclipsensis.editor.codeassist.*;
+import net.sf.eclipsensis.editor.codeassist.NSISDoubleClickSelector;
 import net.sf.eclipsensis.editor.text.*;
 import net.sf.eclipsensis.settings.INSISPreferenceConstants;
 
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.text.*;
-import org.eclipse.jface.text.information.IInformationPresenter;
-import org.eclipse.jface.text.information.InformationPresenter;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.ITextDoubleClickStrategy;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
-import org.eclipse.jface.text.presentation.PresentationReconciler;
-import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
 import org.eclipse.jface.text.rules.IToken;
-import org.eclipse.jface.text.source.*;
+import org.eclipse.jface.text.rules.ITokenScanner;
+import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.jface.text.source.SourceViewerConfiguration;
 
 public class NSISSourceViewerConfiguration extends SourceViewerConfiguration implements INSISConstants, INSISPreferenceConstants
 {
-    protected static final String[] cConfiguredContentTypes;
-    protected InformationPresenter mInformationPresenter = null;
-    protected NSISTextHover mTextHover = null;
-    protected NSISAnnotationHover mAnnotationHover = null;
-    protected NSISDoubleClickSelector mDoubleClickStrategy = null;
     protected IPreferenceStore mPreferenceStore = null;
-    
-    static {
-        cConfiguredContentTypes = new String[NSISPartitionScanner.NSIS_PARTITION_TYPES.length+1];
-        cConfiguredContentTypes[0]=IDocument.DEFAULT_CONTENT_TYPE;
-        System.arraycopy(NSISPartitionScanner.NSIS_PARTITION_TYPES,0,cConfiguredContentTypes,1,NSISPartitionScanner.NSIS_PARTITION_TYPES.length);
-    }
+    protected ITextDoubleClickStrategy mDoubleClickStrategy = null;
     
     public NSISSourceViewerConfiguration(IPreferenceStore preferenceStore)
     {
@@ -46,14 +35,6 @@ public class NSISSourceViewerConfiguration extends SourceViewerConfiguration imp
         mDoubleClickStrategy = new NSISDoubleClickSelector();
     }
     
-    /*
-     * (non-Javadoc) Method declared on SourceViewerConfiguration
-     */
-    public IAnnotationHover getAnnotationHover(ISourceViewer sourceViewer)
-    {
-        return mAnnotationHover;
-    }
-
     /*
      * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getConfiguredDocumentPartitioning(org.eclipse.jface.text.source.ISourceViewer)
      */
@@ -67,7 +48,7 @@ public class NSISSourceViewerConfiguration extends SourceViewerConfiguration imp
      */
     public String[] getConfiguredContentTypes(ISourceViewer sourceViewer)
     {
-        return cConfiguredContentTypes;
+        return NSISSourceViewerConfigurationTools.CONFIGURED_CONTENT_TYPES;
     }
 
     /*
@@ -107,24 +88,14 @@ public class NSISSourceViewerConfiguration extends SourceViewerConfiguration imp
     public IPresentationReconciler getPresentationReconciler(
             ISourceViewer sourceViewer)
     {
-        PresentationReconciler reconciler = new PresentationReconciler();
-        reconciler.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
-
-        DefaultDamagerRepairer dr = new NSISDamagerRepairer(new NSISCodeScanner(mPreferenceStore));
-        reconciler.setDamager(dr, IDocument.DEFAULT_CONTENT_TYPE);
-        reconciler.setRepairer(dr, IDocument.DEFAULT_CONTENT_TYPE);
-        
-        dr = new NSISDamagerRepairer(new NSISCommentScanner(mPreferenceStore));
-        reconciler.setDamager(dr, NSISPartitionScanner.NSIS_SINGLELINE_COMMENT);
-        reconciler.setRepairer(dr, NSISPartitionScanner.NSIS_SINGLELINE_COMMENT);
-        reconciler.setDamager(dr, NSISPartitionScanner.NSIS_MULTILINE_COMMENT);
-        reconciler.setRepairer(dr, NSISPartitionScanner.NSIS_MULTILINE_COMMENT);
-
-        dr = new NSISDamagerRepairer(new NSISStringScanner(mPreferenceStore));
-        reconciler.setDamager(dr, NSISPartitionScanner.NSIS_STRING);
-        reconciler.setRepairer(dr, NSISPartitionScanner.NSIS_STRING);
-
-        return reconciler;
+        return NSISSourceViewerConfigurationTools.createPresentationReconciler(sourceViewer,
+                                            new ITokenScanner[] {new NSISCodeScanner(mPreferenceStore),
+                                                                new NSISCommentScanner(mPreferenceStore),
+                                                                new NSISStringScanner(mPreferenceStore)},
+                                            new String[][] {{IDocument.DEFAULT_CONTENT_TYPE},
+                                                            {NSISPartitionScanner.NSIS_SINGLELINE_COMMENT,
+                                                             NSISPartitionScanner.NSIS_MULTILINE_COMMENT},
+                                                            {NSISPartitionScanner.NSIS_STRING}});
     }
 
     /* (non-Javadoc)
@@ -135,32 +106,6 @@ public class NSISSourceViewerConfiguration extends SourceViewerConfiguration imp
         return mPreferenceStore.getInt(INSISPreferenceConstants.TAB_WIDTH);
     }
 
-    /* (non-Javadoc)
-     * Method declared on SourceViewerConfiguration
-     */
-    public ITextHover getTextHover(ISourceViewer sourceViewer, String contentType)
-    {
-        return mTextHover;
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getInformationControlCreator(org.eclipse.jface.text.source.ISourceViewer)
-     */
-    public IInformationControlCreator getInformationControlCreator(
-            ISourceViewer sourceViewer)
-    {
-        return (mTextHover != null?mTextHover.getHoverControlCreator():null);
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getInformationPresenter(org.eclipse.jface.text.source.ISourceViewer)
-     */
-    public IInformationPresenter getInformationPresenter(
-            ISourceViewer sourceViewer)
-    {
-        return mInformationPresenter;
-    }
-    
     public IPreferenceStore getPreferenceStore()
     {
         return mPreferenceStore;

@@ -329,7 +329,7 @@ public class NSISKeywords implements INSISConstants
         ALL_CONSTANTS = (String[])Common.joinArrays(new Object[]{PATH_CONSTANTS, STRING_CONSTANTS});
         Arrays.sort(ALL_CONSTANTS, String.CASE_INSENSITIVE_ORDER);
 
-        ALL_VARIABLES = (String[])Common.joinArrays(new Object[]{PATH_CONSTANTS_AND_VARIABLES, VARIABLES});
+        ALL_VARIABLES = (String[])Common.joinArrays(new Object[]{REGISTERS, PATH_CONSTANTS_AND_VARIABLES, VARIABLES});
         Arrays.sort(ALL_VARIABLES, String.CASE_INSENSITIVE_ORDER);
 
         ALL_CONSTANTS_AND_VARIABLES = (String[])Common.joinArrays(new Object[]{ALL_CONSTANTS, ALL_VARIABLES, PREDEFINES});

@@ -157,21 +157,23 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
         }
         super.configure(configuration);
         NSISKeywords.addKeywordsListener(this);
-        if(configuration instanceof NSISEditorSourceViewerConfiguration) {
-            mAutoIndentStrategy = new NSISAutoIndentStrategy(mPreferenceStore);
-            mTabConversionStrategy = new NSISTabConversionStrategy(mPreferenceStore);
-            mPreferenceStore.addPropertyChangeListener(this);
-            mAutoIndentStrategy.updateFromPreferences();
-            mTabConversionStrategy.updateFromPreferences();
+        if(configuration instanceof NSISSourceViewerConfiguration) {
             mConfiguredContentTypes = configuration.getConfiguredContentTypes(this);
-            for(int i=0; i<mConfiguredContentTypes.length; i++) {
-                prependAutoEditStrategy(mAutoIndentStrategy,mConfiguredContentTypes[i]);
-                prependAutoEditStrategy(mTabConversionStrategy,mConfiguredContentTypes[i]);
-            }
-            mInsertTemplateAssistant = ((NSISEditorSourceViewerConfiguration)configuration).getInsertTemplateAssistant(this);
-            if(mInsertTemplateAssistant != null) {
-                mInsertTemplateAssistant.install(this);
-                mInsertTemplateAssistantInstalled = true;
+            mPreferenceStore.addPropertyChangeListener(this);
+            if(configuration instanceof NSISEditorSourceViewerConfiguration) {
+                mAutoIndentStrategy = new NSISAutoIndentStrategy(mPreferenceStore);
+                mTabConversionStrategy = new NSISTabConversionStrategy(mPreferenceStore);
+                mAutoIndentStrategy.updateFromPreferences();
+                mTabConversionStrategy.updateFromPreferences();
+                for(int i=0; i<mConfiguredContentTypes.length; i++) {
+                    prependAutoEditStrategy(mAutoIndentStrategy,mConfiguredContentTypes[i]);
+                    prependAutoEditStrategy(mTabConversionStrategy,mConfiguredContentTypes[i]);
+                }
+                mInsertTemplateAssistant = ((NSISEditorSourceViewerConfiguration)configuration).getInsertTemplateAssistant(this);
+                if(mInsertTemplateAssistant != null) {
+                    mInsertTemplateAssistant.install(this);
+                    mInsertTemplateAssistantInstalled = true;
+                }
             }
         }
         final StyledText st = getTextWidget();
@@ -374,6 +376,7 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
                 super.enableOperation(operation, enable);
         }
     }
+    
     /* (non-Javadoc)
      * @see org.eclipse.jface.text.ITextOperationTarget#canDoOperation(int)
      */

@@ -28,7 +28,7 @@ public class NSISHexNumberRule extends NSISWordPatternRule
              */
             public boolean isWordStart(char character)
             {
-                return (character == '0');
+                return isWordPart(character);
             }
             
             public boolean isWordPart(char character)

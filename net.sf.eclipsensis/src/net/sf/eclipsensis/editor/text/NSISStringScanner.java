@@ -77,7 +77,7 @@ public class NSISStringScanner extends NSISRuleBasedScanner
                         public boolean isWordPart(char character)
                         {
                             if(!mFoundEndSequence) {
-                                if(character == ')') {
+                                if(character == '}') {
                                     mFoundEndSequence = true;
                                     return true;
                                 }

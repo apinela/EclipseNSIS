@@ -1,6 +1,6 @@
 ; The name of the installer
 !define MYSYMBOL "Some Value"
-Name "My Setup"
+Name "$(^Name)"
 
 Var MyVar
 
@@ -13,6 +13,9 @@ InstallDir $PROGRAMFILES\MySetup
 ; Pages
 Page directory
 Page instfiles
+
+# Installer languages
+LoadLanguageFile "${NSISDIR}\Contrib\Language files\English.nlf"
 
 ; Callback function
 Function .onInit
@@ -31,3 +34,5 @@ Section "" ;No components page, name is not important
     ; Put file there
     File /oname=othername.exe somefile.exe
 SectionEnd ; end the section
+
+LangString ^Name ${LANG_ENGLISH} "My Setup"

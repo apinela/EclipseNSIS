@@ -299,18 +299,18 @@ public abstract class NSISSettingsPage	extends PropertyPage implements IWorkbenc
         });
 
         table.addControlListener(new ControlAdapter() {
-                public void controlResized(ControlEvent e) 
-                {
-                    Table table  = (Table)e.widget;
-                    int width = table.getSize().x - 2*table.getBorderWidth();
-                    int lineWidth = table.getGridLineWidth();
-                    TableColumn[] columns = table.getColumns();
-                    width -= (columns.length-1)*lineWidth;
-                    for(int i=0; i<columns.length; i++) {
-                        columns[i].setWidth(width/columns.length);
-                    }
+            public void controlResized(ControlEvent e) 
+            {
+                Table table  = (Table)e.widget;
+                int width = table.getSize().x - 2*table.getBorderWidth();
+                int lineWidth = table.getGridLineWidth();
+                TableColumn[] columns = table.getColumns();
+                width -= (columns.length-1)*lineWidth;
+                for(int i=0; i<columns.length; i++) {
+                    columns[i].setWidth(width/columns.length);
                 }
-            });
+            }
+        });
         
         return viewer;
     }

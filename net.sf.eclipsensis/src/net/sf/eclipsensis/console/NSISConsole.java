@@ -49,6 +49,9 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
     private Color mInfoColor = null;
     private Color mWarningColor = null;
     private Color mErrorColor = null;
+    private Image mErrorImage = null;
+    private Image mWarningImage = null;
+    private Image mInfoImage = null;
     
     private Font mFont = null;
     private Font mUnderlineFont = null;
@@ -175,7 +178,12 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
                     new Runnable() {
                         public void run()
                         {
-                            processModelEvent(event);
+                            try {
+                                processModelEvent(event);
+                            }
+                            catch(Exception ex) {
+                                ex.printStackTrace();
+                            }
                         }
                     }
             );
@@ -219,6 +227,14 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
         mWarningColor = mColorRegistry.get(CONSOLE_WARNING_COLOR);
         mErrorColor = mColorRegistry.get(CONSOLE_ERROR_COLOR);
         mColorRegistry.addListener(this);
+        mErrorImage = ImageManager.getImage(EclipseNSISPlugin.getResourceString("error.icon"));
+        mWarningImage = ImageManager.getImage(EclipseNSISPlugin.getResourceString("warning.icon"));
+        int width = Math.max(mErrorImage.getBounds().width,mWarningImage.getBounds().width);
+        int height = Math.max(mErrorImage.getBounds().height,mWarningImage.getBounds().height);
+        Image tempImage = ImageManager.getImage(EclipseNSISPlugin.getResourceString("transparent.icon"));
+        ImageData imageData = tempImage.getImageData();
+        imageData = imageData.scaledTo(width, height);
+        mInfoImage = new Image(mDisplay,imageData);
         
         mFontRegistry = JFaceResources.getFontRegistry();
         mFont = mFontRegistry.get(CONSOLE_FONT);
@@ -226,10 +242,10 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
         mFontRegistry.addListener(this);
         
         mClipboard = new Clipboard(mDisplay);
-		mViewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+        Table table = new Table(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+		mViewer = new TableViewer(table);
         mMouseListener = new NSISConsoleMouseListener(mViewer);
         
-        Table table = mViewer.getTable();
         table.setFont(mFont);
         table.addMouseListener(mMouseListener);
         table.addMouseMoveListener(mMouseListener);
@@ -250,6 +266,9 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
      */
     public void dispose()
     {
+        if(mInfoImage != null && !mInfoImage.isDisposed()) {
+            mInfoImage.dispose();
+        }
         mModel.removeModelListener(this);
         mModel = null;
         mColorRegistry.removeListener(this);
@@ -545,8 +564,18 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
         public String getColumnText(Object obj, int index) {
             return getText(obj);
         }
+        
         public Image getColumnImage(Object obj, int index) {
-            return null;
+            if(obj instanceof NSISConsoleLine) {
+                NSISConsoleLine line = (NSISConsoleLine)obj;
+                switch(line.getType()) {
+                    case NSISConsoleLine.ERROR:
+                        return mErrorImage;
+                    case NSISConsoleLine.WARNING:
+                        return mWarningImage;
+                }
+            }
+            return mInfoImage;
         }
 
         /* (non-Javadoc)

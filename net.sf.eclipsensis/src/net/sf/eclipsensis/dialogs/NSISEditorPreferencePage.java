@@ -22,13 +22,15 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -110,6 +112,25 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
         setDescription(EclipseNSISPlugin.getResourceString("editor.preferences.description")); //$NON-NLS-1$
         setPreferenceStore(NSISPreferences.getPreferences().getPreferenceStore());
         mPreferenceStore= new PreferenceStoreWrapper(getPreferenceStore());
+        sortModels();
+    }
+
+    private void sortModels()
+    {
+        Comparator comparator = new Comparator() {
+            public int compare(Object o1, Object o2)
+            {
+                String[] first = (String[])o1;
+                String[] second = (String[])o2;
+                int n = first[0].compareToIgnoreCase(second[0]);
+                if(n == 0) {
+                    n = first[1].compareToIgnoreCase(second[1]);
+                }
+                return n;
+            }
+        };
+        Arrays.sort(mAppearanceColorListModel, comparator);
+        Arrays.sort(mSyntaxStyleListModel, comparator);
     }
 
     /*
@@ -453,8 +474,21 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
         mPreviewer= new NSISSourceViewer(parent, null, null, false, SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
         SourceViewerConfiguration configuration= new NSISSourceViewerConfiguration(mPreferenceStore);
         mPreviewer.configure(configuration);
-        Font font= JFaceResources.getFont(JFaceResources.TEXT_FONT);
-        mPreviewer.getTextWidget().setFont(font);
+        final FontRegistry fontRegistry = JFaceResources.getFontRegistry();
+        mPreviewer.getTextWidget().setFont(fontRegistry.get(INSISPreferenceConstants.EDITOR_FONT));
+        final IPropertyChangeListener propertyChangeListener = new IPropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent event)
+            {
+                mPreviewer.getTextWidget().setFont(fontRegistry.get(INSISPreferenceConstants.EDITOR_FONT));
+            }
+        };
+        fontRegistry.addListener(propertyChangeListener);
+        mPreviewer.getTextWidget().addDisposeListener(new DisposeListener() {
+            public void widgetDisposed(DisposeEvent e)
+            {
+                fontRegistry.removeListener(propertyChangeListener);
+            }
+        });
         
         String content= loadPreviewContentFromFile("NSISPreview.txt"); //$NON-NLS-1$
         IDocument document= new Document(content);

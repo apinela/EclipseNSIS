@@ -67,27 +67,27 @@ public class NSISPreferences extends NSISSettings implements IPropertyChangeList
     
     private void initializePreference(String name, Object defaultValue)
     {
-        if(!mPreferenceStore.contains(name)) {
-            if(defaultValue != null) {
-                Class type = defaultValue.getClass();
-                if(type.equals(Integer.class)) {
-                    mPreferenceStore.setDefault(name,((Integer)defaultValue).intValue());
-                }
-                else if(type.equals(Long.class)) {
-                    mPreferenceStore.setDefault(name,((Long)defaultValue).longValue());
-                }
-                else if(type.equals(Float.class)) {
-                    mPreferenceStore.setDefault(name,((Float)defaultValue).floatValue());
-                }
-                else if(type.equals(Double.class)) {
-                    mPreferenceStore.setDefault(name,((Double)defaultValue).doubleValue());
-                }
-                else if(type.equals(Boolean.class)) {
-                    mPreferenceStore.setDefault(name,((Boolean)defaultValue).booleanValue());
-                }
-                else {
-                    mPreferenceStore.setDefault(name, defaultValue.toString());
-                }
+        if(defaultValue != null) {
+            Class type = defaultValue.getClass();
+            if(type.equals(Integer.class)) {
+                mPreferenceStore.setDefault(name,((Integer)defaultValue).intValue());
+            }
+            else if(type.equals(Long.class)) {
+                mPreferenceStore.setDefault(name,((Long)defaultValue).longValue());
+            }
+            else if(type.equals(Float.class)) {
+                mPreferenceStore.setDefault(name,((Float)defaultValue).floatValue());
+            }
+            else if(type.equals(Double.class)) {
+                mPreferenceStore.setDefault(name,((Double)defaultValue).doubleValue());
+            }
+            else if(type.equals(Boolean.class)) {
+                mPreferenceStore.setDefault(name,((Boolean)defaultValue).booleanValue());
+            }
+            else {
+                mPreferenceStore.setDefault(name, defaultValue.toString());
+            }
+            if(!mPreferenceStore.contains(name)) {
                 mPreferenceStore.setToDefault(name);
             }
         }
@@ -113,25 +113,25 @@ public class NSISPreferences extends NSISSettings implements IPropertyChangeList
 
     private void initializeEditorPreference(String name, IPreferenceStore defaultStore, Class type)
     {
+        if(type.equals(Integer.class)) {
+            mPreferenceStore.setDefault(name,defaultStore.getInt(name));
+        }
+        else if(type.equals(Long.class)) {
+            mPreferenceStore.setDefault(name,defaultStore.getLong(name));
+        }
+        else if(type.equals(Float.class)) {
+            mPreferenceStore.setDefault(name,defaultStore.getFloat(name));
+        }
+        else if(type.equals(Double.class)) {
+            mPreferenceStore.setDefault(name,defaultStore.getDouble(name));
+        }
+        else if(type.equals(Boolean.class)) {
+            mPreferenceStore.setDefault(name,defaultStore.getBoolean(name));
+        }
+        else {
+            mPreferenceStore.setDefault(name,defaultStore.getString(name));
+        }
         if(!mPreferenceStore.contains(name)) {
-            if(type.equals(Integer.class)) {
-                mPreferenceStore.setDefault(name,defaultStore.getInt(name));
-            }
-            else if(type.equals(Long.class)) {
-                mPreferenceStore.setDefault(name,defaultStore.getLong(name));
-            }
-            else if(type.equals(Float.class)) {
-                mPreferenceStore.setDefault(name,defaultStore.getFloat(name));
-            }
-            else if(type.equals(Double.class)) {
-                mPreferenceStore.setDefault(name,defaultStore.getDouble(name));
-            }
-            else if(type.equals(Boolean.class)) {
-                mPreferenceStore.setDefault(name,defaultStore.getBoolean(name));
-            }
-            else {
-                mPreferenceStore.setDefault(name,defaultStore.getString(name));
-            }
             mPreferenceStore.setToDefault(name);
         }
     }
@@ -200,9 +200,9 @@ public class NSISPreferences extends NSISSettings implements IPropertyChangeList
     
     private void initializeSyntaxPreference(String name, RGB foreground, RGB background, boolean bold, boolean italic)
     {
+        NSISSyntaxStyle style = new NSISSyntaxStyle(foreground, background, bold, italic);
+        mPreferenceStore.setDefault(name,style.toString());
         if(!mPreferenceStore.contains(name)) {
-            NSISSyntaxStyle style = new NSISSyntaxStyle(foreground, background, bold, italic);
-            mPreferenceStore.setDefault(name,style.toString());
             mPreferenceStore.setToDefault(name);
         }
     }

@@ -79,6 +79,7 @@ public interface INSISPreferenceConstants
     public static final String LANGSTRINGS_STYLE = "langstringsStyle"; //$NON-NLS-1$
     
     public static final String AUTO_SHOW_CONSOLE = "autoShowConsole"; //$NON-NLS-1$
+    public static final String EDITOR_FONT = "net.sf.eclipsensis.editor.Font"; //$NON-NLS-1$
     public static final String CONSOLE_FONT = "net.sf.eclipsensis.console.Font"; //$NON-NLS-1$
     public static final String CONSOLE_INFO_COLOR = "net.sf.eclipsensis.console.InfoColor"; //$NON-NLS-1$
     public static final String CONSOLE_WARNING_COLOR = "net.sf.eclipsensis.console.WarningColor"; //$NON-NLS-1$
