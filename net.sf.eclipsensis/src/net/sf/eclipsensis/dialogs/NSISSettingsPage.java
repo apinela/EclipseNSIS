@@ -82,8 +82,6 @@ public abstract class NSISSettingsPage	extends PropertyPage implements IWorkbenc
         item.setToolTipText(EclipseNSISPlugin.getResourceString("symbols.tab.tooltip")); //$NON-NLS-1$
         item.setControl(createSymbolsViewer(mFolder));
 
-        enableControls(canEnableControls());
-
         mFolder.addSelectionListener(new SelectionAdapter()
                 {
                     public void widgetSelected(SelectionEvent e)
@@ -104,6 +102,12 @@ public abstract class NSISSettingsPage	extends PropertyPage implements IWorkbenc
         return mFolder;
     }
     
+    public void createControl(Composite parent)
+    {
+        super.createControl(parent);
+        enableControls(canEnableControls());
+    }
+
     private Control createGeneralPage(Composite parent)
     {
         Composite composite = new Composite(parent,SWT.NONE);

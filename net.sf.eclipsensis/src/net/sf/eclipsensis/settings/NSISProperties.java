@@ -10,6 +10,7 @@
 package net.sf.eclipsensis.settings;
 
 import java.io.*;
+import java.util.*;
 import java.util.HashMap;
 import java.util.Random;
 
@@ -22,6 +23,7 @@ import org.eclipse.core.runtime.QualifiedName;
 
 public class NSISProperties extends NSISSettings implements INSISConstants
 {
+    private static NSISPreferences cPreferences;
     private static HashMap cPropertiesCache = new HashMap();
     private static HashMap cQualifiedNames = new HashMap();
 
@@ -31,6 +33,7 @@ public class NSISProperties extends NSISSettings implements INSISConstants
     private static Random cRandom = new Random();
     
     static {
+        cPreferences = NSISPreferences.getPreferences();
         cQualifiedNames.put(USE_GLOBALS, new QualifiedName(PLUGIN_NAME,USE_GLOBALS));
         cQualifiedNames.put(HDRINFO, new QualifiedName(PLUGIN_NAME,HDRINFO));
         cQualifiedNames.put(VERBOSITY, new QualifiedName(PLUGIN_NAME,VERBOSITY));
@@ -54,19 +57,87 @@ public class NSISProperties extends NSISSettings implements INSISConstants
                 }
             }
         }
-        NSISProperties properties = (NSISProperties)cPropertiesCache.get(fileName);
-        if(properties.getUseGlobals()) {
-            NSISPreferences prefs = NSISPreferences.getPreferences();
-            properties.setHdrInfo(prefs.getHdrInfo());
-            properties.setLicense(prefs.getLicense());
-            properties.setNoConfig(prefs.getNoConfig());
-            properties.setNoCD(prefs.getNoCD());
-            properties.setVerbosity(prefs.getVerbosity());
-            properties.setCompressor(prefs.getCompressor());
-            properties.setSymbols(prefs.getSymbols());
-            properties.setInstructions(prefs.getInstructions());
+        return (NSISProperties)cPropertiesCache.get(fileName);
+    }
+    
+    public int getCompressor()
+    {
+        if(getUseGlobals()) {
+            return cPreferences.getCompressor();
         }
-        return properties;
+        else {
+            return super.getCompressor();
+        }
+    }
+    
+    public boolean getHdrInfo()
+    {
+        if(getUseGlobals()) {
+            return cPreferences.getHdrInfo();
+        }
+        else {
+            return super.getHdrInfo();
+        }
+    }
+    
+    public ArrayList getInstructions()
+    {
+        if(getUseGlobals()) {
+            return cPreferences.getInstructions();
+        }
+        else {
+            return super.getInstructions();
+        }
+    }
+    
+    public boolean getLicense()
+    {
+        if(getUseGlobals()) {
+            return cPreferences.getLicense();
+        }
+        else {
+            return super.getLicense();
+        }
+    }
+    
+    public boolean getNoCD()
+    {
+        if(getUseGlobals()) {
+            return cPreferences.getNoCD();
+        }
+        else {
+            return super.getNoCD();
+        }
+    }
+    
+    public boolean getNoConfig()
+    {
+        if(getUseGlobals()) {
+            return cPreferences.getNoConfig();
+        }
+        else {
+            return super.getNoConfig();
+        }
+    }
+    
+    public LinkedHashMap getSymbols()
+    {
+        if(getUseGlobals()) {
+            return cPreferences.getSymbols();
+        }
+        else {
+            return super.getSymbols();
+        }
+    }
+    
+    public int getVerbosity()
+    {
+        if(getUseGlobals()) {
+            return cPreferences.getVerbosity();
+        }
+        else {
+            return super.getVerbosity();
+        }
     }
     
     private static QualifiedName getQualifiedName(String name)

@@ -433,6 +433,9 @@ public class MakeNSISRunner implements INSISConstants
             int rv = proc.waitFor();
             Common.closeIO(inputStream);
             Common.closeIO(errorStream);
+            if(process.isCanceled()) {
+                model.add(NSISConsoleLine.error(EclipseNSISPlugin.getResourceString("cancel.message"))); //$NON-NLS-1$
+            }
             results.setReturnCode(rv);
             String outputFileName = null;
             if(results.getReturnCode() == MakeNSISResults.RETURN_SUCCESS) {

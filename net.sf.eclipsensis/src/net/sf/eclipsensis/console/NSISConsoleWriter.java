@@ -13,6 +13,7 @@ import java.io.*;
 
 import net.sf.eclipsensis.console.model.NSISConsoleModel;
 import net.sf.eclipsensis.makensis.MakeNSISProcess;
+import net.sf.eclipsensis.util.Common;
 
 public class NSISConsoleWriter implements Runnable
 {
@@ -34,8 +35,9 @@ public class NSISConsoleWriter implements Runnable
      */
     public void run()
     {
+        BufferedReader br = null;
         try {
-            BufferedReader br = new BufferedReader(new InputStreamReader(mInputStream));
+            br = new BufferedReader(new InputStreamReader(mInputStream));
             NSISConsoleLine line;
             String text = br.readLine();
             while(text != null) {
@@ -47,17 +49,24 @@ public class NSISConsoleWriter implements Runnable
                         line = NSISConsoleLine.info(text);
                     }
                     mModel.add(line);
-                    text = br.readLine();
+                    try {
+                        text = br.readLine();
+                    }
+                    catch (IOException ioe) {
+                        break;
+                    }
                 }
                 else {
                     break;
                 }
             }
-            br.close();
         }
         catch(Exception ex) {
             ex.printStackTrace();
             mModel.add(NSISConsoleLine.error(ex.getLocalizedMessage()));
+        }
+        finally {
+            Common.closeIO(br);
         }
     }
 }

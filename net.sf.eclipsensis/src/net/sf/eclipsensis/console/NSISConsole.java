@@ -237,7 +237,7 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
         mClipboard = new Clipboard(mDisplay);
         Table table = new Table(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		mViewer = new TableViewer(table);
-        mMouseListener = new NSISConsoleMouseListener(mViewer);
+        mMouseListener = new NSISConsoleMouseListener();
         
         table.setFont(mFont);
         table.addMouseListener(mMouseListener);
@@ -483,6 +483,66 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
         return mDisposed;
     }
     
+    /**
+     * @param table
+     */
+    private int selectItems(Table table, int startIndex, int oldEndIndex, int newEndIndex)
+    {
+        if(oldEndIndex != newEndIndex) {
+            int d1 = oldEndIndex - startIndex;
+            int d2 = newEndIndex - startIndex;
+            if(d1 == 0) {
+                if(d2 > 0) {
+                    table.select(startIndex+1,newEndIndex);
+                }
+                else {
+                    table.select(newEndIndex,startIndex-1);
+                }
+            }
+            else {
+                if(d2 == 0) {
+                    if(d1 > 0) {
+                        table.deselect(startIndex+1,oldEndIndex);
+                    }
+                    else {
+                        table.deselect(oldEndIndex,startIndex-1);
+                    }
+                }
+                else {
+                    if(d1/d2 < 0) {
+                        if(d1 > 0) {
+                            table.deselect(startIndex+1,oldEndIndex);
+                            table.select(newEndIndex,startIndex-1);
+                        }
+                        else {
+                            table.deselect(oldEndIndex,startIndex-1);
+                            table.select(startIndex+1,newEndIndex);
+                        }
+                    }
+                    else {
+                        if(d1 > 0) {
+                            if(d1 > d2) {
+                                table.deselect(newEndIndex+1,oldEndIndex);
+                            }
+                            else {
+                                table.select(oldEndIndex+1,newEndIndex);
+                            }
+                        }
+                        else {
+                            if(d1 > d2) {
+                                table.select(newEndIndex,oldEndIndex-1);
+                            }
+                            else {
+                                table.deselect(oldEndIndex,newEndIndex-1);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return newEndIndex;
+    }
+
     private class NSISConsoleContentProvider implements IStructuredContentProvider
     {
         private Object mInput = null;
@@ -762,12 +822,10 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
     {
         private boolean mMouseDown = false;
         private boolean mDragging = false;
-        private TableViewer mTableViewer = null;
-        
-        public NSISConsoleMouseListener(TableViewer tableViewer)
-        {
-            mTableViewer = tableViewer;
-        }
+        private int mStartIndex = -1;
+        private int mEndIndex = -1;
+        private int mStartX = 0;
+        private NSISConsoleScroller mScroller = null;
         
         public void mouseDown(MouseEvent e)
         {
@@ -775,18 +833,48 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
                 return;
             }
             mMouseDown = true;
+            if(isEscaped(e)) {
+                return;
+            }
+            mStartIndex = mEndIndex = getItemIndex(new Point(e.x,e.y));
+            if(mStartIndex >= 0) {
+                Table table = mViewer.getTable();
+                mStartX = table.getItem(mStartIndex).getBounds(0).x;
+                if(mStartIndex > 0) {
+                    table.deselect(0,mStartIndex-1);
+                }
+                if(mStartIndex < (table.getItemCount()-1)) {
+                    table.deselect(mStartIndex+1,table.getItemCount()-1);
+                }
+            }
         }
         
+        /**
+         * @param e
+         * @return
+         */
+        private boolean isEscaped(MouseEvent e)
+        {
+            return (e.stateMask & SWT.CTRL) > 0 || (e.stateMask & SWT.SHIFT) > 0;
+        }
+
+        private int getItemIndex(Point p)
+        {
+            TableItem item = mViewer.getTable().getItem(p);
+            if(item != null) {
+                return mViewer.getTable().indexOf(item);
+            }
+            
+            return -1;
+        }
+
         private NSISConsoleLine getLine(Point p)
         {
             NSISConsoleLine line = null;
-            TableItem item = mTableViewer.getTable().getItem(p);
-            if(item != null) {
-                List contents = mModel.getContents();
-                int i = mTableViewer.getTable().indexOf(item);
-                if(i >= 0 && i < contents.size()) {
-                    line = (NSISConsoleLine)contents.get(i);
-                }
+            int i = getItemIndex(p);
+            List contents = mModel.getContents();
+            if(i >= 0 && i < contents.size()) {
+                line = (NSISConsoleLine)contents.get(i);
             }
             
             return line;
@@ -794,12 +882,21 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
         
         public void mouseUp(MouseEvent e) 
         {
+            if (e.button != 1) {
+                return;
+            }
             mMouseDown = false;
-            Table table = mTableViewer.getTable();
+            mStartIndex = mEndIndex = -1;
+            mStartX = 0;
+            Table table = mViewer.getTable();
 
             NSISConsoleLine line = getLine(new Point(e.x,e.y));
             if (mDragging) {
                 mDragging = false;
+                if(mScroller != null) {
+                    mScroller.stop();
+                    mScroller = null;
+                }
                 if (line != null) {
                     table.setCursor(mDisplay.getSystemCursor(SWT.CURSOR_HAND));
                 }
@@ -811,15 +908,41 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
             }
         }
         
-        public void mouseMove(MouseEvent e) 
+        public void mouseMove(final MouseEvent e) 
         {
-            Table table = mTableViewer.getTable();
+            Table table = mViewer.getTable();
             if (mMouseDown) {
                 if (!mDragging) {
                     table.setCursor(null);
                 }
                 mDragging = true;
-                return;
+                if(isEscaped(e)) {
+                    return;
+                }
+
+                boolean upwards = e.y < 0;
+                if(upwards || e.y >= table.getClientArea().height) {
+                    if(mScroller != null) {
+                        if(mScroller.isRunning() && mScroller.isUpwards() == upwards) {
+                            return;
+                        }
+                        mScroller.stop();
+                        mEndIndex = mScroller.getEndIndex();
+                        mScroller = null;
+                    }
+                    mScroller = new NSISConsoleScroller(mStartIndex, mEndIndex, upwards);
+                    new Thread(mScroller).start();
+                }
+                else {
+                    if(mScroller != null) {
+                        mScroller.stop();
+                        mScroller = null;
+                    }
+                    int index = getItemIndex(new Point(mStartX,e.y));
+                    if(index >= 0 && mStartIndex >= 0) {
+                         mEndIndex = selectItems(table, mStartIndex, mEndIndex, index);
+                    }
+                }
             }
             NSISConsoleLine line = getLine(new Point(e.x,e.y));
             if (line != null && line.getFile() != null && line.getLineNum() >= 0) {
@@ -828,6 +951,98 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
             else {
                 table.setCursor(null);
             }
+        }
+    }
+    
+    private class NSISConsoleScroller implements Runnable
+    {
+        private int mStartIndex = 0;
+        private int mEndIndex = 0;
+        
+        private int mTopIndex = 0;
+        private boolean mUpwards = false;;
+        private boolean mRunning = true;
+
+        /**
+         * @param y
+         */
+        private NSISConsoleScroller(int startIndex, int endIndex, boolean upwards)
+        {
+            mStartIndex = startIndex;
+            mUpwards = upwards;
+
+            Table table = mViewer.getTable();
+            mTopIndex = table.getTopIndex();
+            TableItem item = table.getItem(new Point(table.getItem(mTopIndex).getBounds(0).x,table.getClientArea().height-2));
+            int bottomIndex = (item == null?table.getItemCount()-1:table.indexOf(item));
+            mEndIndex = selectItems(table,mStartIndex,endIndex,(upwards?mTopIndex:bottomIndex));
+        }
+        
+        private boolean isRunning()
+        {
+            return mRunning;
+        }
+
+        private int getEndIndex()
+        {
+            return mEndIndex;
+        }
+        
+        private boolean isUpwards()
+        {
+            return mUpwards;
+        }
+        
+        /* (non-Javadoc)
+         * @see java.lang.Runnable#run()
+         */
+        public void run()
+        {
+            final Table table = mViewer.getTable();
+            if(mUpwards) {
+                while(mRunning && mTopIndex >= 0) {
+                    mTopIndex = --mTopIndex;
+                    mDisplay.syncExec(new Runnable() {
+                        public void run()
+                        {
+                            if(isRunning() && mTopIndex >= 0) {
+                                table.setTopIndex(mTopIndex);
+                                mEndIndex = selectItems(table,mStartIndex,mEndIndex,mTopIndex);
+                                return;
+                            }
+                            stop();
+                        }
+                    });
+                }
+            }
+            else {
+                while(mRunning && mTopIndex < mModel.getContents().size()) {
+                    mTopIndex = ++mTopIndex;
+                    mDisplay.syncExec(new Runnable() {
+                        public void run()
+                        {
+                            if(isRunning() && mTopIndex < mModel.getContents().size()) {
+                                table.setTopIndex(mTopIndex);
+                                TableItem item = table.getItem(new Point(table.getItem(mTopIndex).getBounds(0).x,table.getClientArea().height-2));
+                                if(item != null) {
+                                    table.showItem(item);
+                                    mTopIndex = table.getTopIndex();
+                                    int bottomIndex = table.indexOf(item);
+                                    mEndIndex = selectItems(table, mStartIndex, mEndIndex, bottomIndex);
+                                    return;
+                                }
+                            }
+                            stop();
+                        }
+                    });
+                }
+            }
+            mRunning = false;
+        }
+        
+        public void stop()
+        {
+            mRunning = false;
         }
     }
 }

@@ -20,8 +20,6 @@ import net.sf.eclipsensis.wizard.settings.dialogs.NSISSectionGroupDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.graphics.Image;
 import org.w3c.dom.*;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
 
 public class NSISSectionGroup extends AbstractNSISInstallGroup
 {

@@ -277,6 +277,27 @@ public class NSISAboutDialog extends Dialog implements INSISConstants
             }
         });
         
+        final GC gc = new GC(text);
+        text.addDisposeListener(new DisposeListener() {
+            public void widgetDisposed(DisposeEvent e)
+            {
+                gc.dispose();
+            }
+        });
+        text.addPaintListener(new PaintListener() {
+            public void paintControl(PaintEvent e)
+            {
+                if(!Common.isEmptyMap(mStyleRanges)) {
+                    for (Iterator iter = mStyleRanges.keySet().iterator(); iter.hasNext();) {
+                        StyleRange range = (StyleRange)iter.next();
+                        if(range != null) {
+                            drawHyperLink(text, gc, range);
+                        }
+                    }
+                }
+            }
+        });
+
         label = new Label(parent, SWT.SEPARATOR | SWT.HORIZONTAL);
         data = new GridData(GridData.FILL_HORIZONTAL);
         data.horizontalSpan = 2;
@@ -293,6 +314,20 @@ public class NSISAboutDialog extends Dialog implements INSISConstants
             }
         }
         return null;
+    }
+
+    /**
+     * @param gc
+     * @param position
+     * @param line
+     */
+    private void drawHyperLink(StyledText text, GC gc, StyleRange range)
+    {
+        Point left= text.getLocationAtOffset(range.start);
+        Point right= text.getLocationAtOffset(range.start + range.length);
+        gc.setForeground(range.foreground);
+        int y= left.y + Math.min(text.getBaseline() + 1, text.getLineHeight());
+        gc.drawLine(left.x,y,right.x,y);
     }
 
     private StyleRange getCurrentStyleRange(StyledText st)

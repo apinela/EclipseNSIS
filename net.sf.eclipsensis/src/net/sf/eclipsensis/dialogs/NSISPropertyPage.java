@@ -53,6 +53,16 @@ public class NSISPropertyPage extends NSISSettingsPage
         
         return composite;
     }
+
+    protected void enableControls(boolean state)
+    {
+        Button button = getDefaultsButton();
+        if(button != null && !button.isDisposed()) {
+            button.setEnabled(state);
+        }
+        super.enableControls(state);
+    }
+    
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.dialogs.NSISSettingsPage#getPageDescription()
      */
@@ -60,6 +70,7 @@ public class NSISPropertyPage extends NSISSettingsPage
     {
         return EclipseNSISPlugin.getResourceString("properties.header.text"); //$NON-NLS-1$
     }
+    
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.dialogs.NSISSettingsPage#loadSettings()
      */
@@ -73,16 +84,18 @@ public class NSISPropertyPage extends NSISSettingsPage
      */
     protected void performDefaults()
     {
-        super.performDefaults();
-        NSISPreferences preferences = NSISPreferences.getPreferences();
-        mHdrInfo.setSelection(preferences.getHdrInfo());
-        mLicense.setSelection(preferences.getLicense());
-        mNoConfig.setSelection(preferences.getNoConfig());
-        mNoCD.setSelection(preferences.getNoCD());
-        mVerbosity.select(preferences.getVerbosity());
-        mCompressor.select(preferences.getCompressor());
-        mInstructions.setInput(preferences.getInstructions());
-        mSymbols.setInput(preferences.getSymbols());
+        if(!mUseGlobals.getSelection()) {
+            NSISSettings properties = (NSISProperties)getSettings();
+            mHdrInfo.setSelection(properties.getDefaultHdrInfo());
+            mLicense.setSelection(properties.getDefaultLicense());
+            mNoConfig.setSelection(properties.getDefaultNoConfig());
+            mNoCD.setSelection(properties.getDefaultNoCD());
+            mVerbosity.select(properties.getDefaultVerbosity());
+            mCompressor.select(properties.getDefaultCompressor());
+            mInstructions.setInput(properties.getDefaultInstructions());
+            mSymbols.setInput(properties.getDefaultSymbols());
+            super.performDefaults();
+        }
     }
 
     /* (non-Javadoc)
