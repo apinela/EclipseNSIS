@@ -18,6 +18,7 @@
   <meta http-equiv="Content-Type"
  content="text/html; charset=ISO-8859-1">
   <meta http-equiv="Content-Style-Type" content="text/css">
+  <script language="javascript" type="text/javascript" src="help.js"></script>
 </head>
 <body>
 <div id="main">
@@ -27,16 +28,18 @@
 <hr>
 <h1>Console
 </h1>
-The EclipseNSIS console shows the output of an NSIS script compilation
+<p>The EclipseNSIS console shows
+the output of an NSIS script compilation
 process. The console shows three different kinds of output:
-<br>
+</p>
 <ul>
   <li>Information </li>
   <li>Warnings </li>
   <li>Errors </li>
 </ul>
-The font and colors for the console can be customized on the <a
- href="colorsfontsprefs.html">Colors &amp; Fonts
+<p>The font and colors for the
+console can be customized on the <a href="colorsfontsprefs.html">Colors
+&amp; Fonts
 preferences page</a>.<br>
 By default, the console is opened automatically, if it is not already
 open, and made visible whenever a script is compiled. This behavior can
@@ -59,44 +62,42 @@ Button&nbsp; (for multiple individual lines) or Shift+Left Mouse
 Button (for a range of lines) or click on the first line to select and
 drag the cursor onto the other lines to select.<br>
 For detailed help about the console, click on the appropriate part of
-the console screenshot.<br>
-<br>
+the console screenshot.
+</p>
+<p style="text-align: center;">
 <img alt="EclipseNSIS Console" src="images/console.gif" ismap="ismap"
- usemap="#console" style="" medium="" none="" ;="" 705px="" 294px=""
- border="" height="" width=""><br>
-<br>
+ usemap="#console"
+ style="border: medium none ; width: 705px; height: 294px;"></p>
 <dl>
-  <dt><a name="a_output"></a>Output</dt>
-  <dd>The output from the MakeNSIS
-compilation process.</dd>
-</dl>
-<dl>
-  <dt><a name="a_error"></a>Error</dt>
+  <a name="a_output"></a><div id="id_output"><dt>Output</dt>
+  <dd>The output from
+the MakeNSIS
+compilation process.</dd></div>
+  <a name="a_error"></a><div id="id_error"><dt>Error</dt>
   <dd>An example error message.
-Clicking on it will highlight the relevant line in the EclipseNSIS
-editor.</dd>
-</dl>
-<dl>
-  <dt><a name="a_warning"></a>Warning</dt>
+Clicking on it will highlight the
+relevant line in the EclipseNSIS
+editor.</dd></div>
+  <a name="a_warning"></a><div id="id_warning"><dt>Warning</dt>
   <dd>An example warning message.
 Clicking on it will highlight the relevant line in the EclipseNSIS
-editor.</dd>
-  <dt><a name="a_cancel"></a>
-Cancel Compilation</dt>
+editor.</dd></div>
+  <a name="a_cancel"></a><div id="id_cancel"><dt>Cancel
+Compilation</dt>
   <dd>Cancels NSIS script
-compilation. This button is enabled only during compilation.</dd>
-  <dt><a name="a_copy"></a>
-Copy</dt>
+compilation. This button is enabled only during compilation.</dd></div>
+  <a name="a_copy"></a><div id="id_copy"><dt>Copy</dt>
   <dd>Copy the selected lines from
-the console.</dd>
-  <dt><a name="a_selectall"></a>
-Select All</dt>
+the console. This button is enabled only when some lines are selected.</dd></div>
+  <a name="a_selectall"></a><div id="id_selectall"><dt>Select
+All</dt>
   <dd>Select all the lines in
-the console.</dd>
-  <dt><a name="a_clear"></a>
-Clear</dt>
+the console. This button is enabled only when the console contains some
+output.</dd></div>
+  <a name="a_clear"></a><div id="id_clear"><dt>Clear</dt>
   <dd>Clear
-the console of all output.</dd>
+the console of all output. This button is enabled only when the console
+contains some output, and is disabled during compilation.</dd></div>
 </dl>
 <br>
 <br>
@@ -109,19 +110,19 @@ the console of all output.</dd>
 &copy; 2004, 2005 Sunil Kamath (IcemanK).</small></strong></p>
 <map name="console">
 <area id="error" shape="RECT" href="#a_error" alt="Error"
- coords="6,250, 685,266">
+ coords="6,250, 685,266" onclick="highlightDef('id_error');">
 <area id="warning" shape="RECT" href="#a_warning" alt="Warning"
- coords="6,233, 178,249">
+ coords="6,233, 178,249" onclick="highlightDef('id_warning');">
 <area id="output" shape="RECT" href="#a_output" alt="Console output"
- coords="3,25, 684,274">
+ coords="3,25, 684,274" onclick="highlightDef('id_output');">
 <area id="clear" shape="RECT" href="#a_clear" alt="Clear"
- coords="623,1, 644,21">
+ coords="623,1, 644,21" onclick="highlightDef('id_clear');">
 <area id="selectall" shape="RECT" href="#a_selectall" alt="Select all"
- coords="600,1, 620,21">
+ coords="600,1, 620,21" onclick="highlightDef('id_selectall');">
 <area id="copy" shape="RECT" href="#a_copy" alt="Copy"
- coords="577,1, 597,21">
+ coords="577,1, 597,21" onclick="highlightDef('id_copy');">
 <area id="cancel" shape="RECT" href="#a_cancel" alt="Cancel compilation"
- coords="554,1, 574,21">
+ coords="554,1, 574,21" onclick="highlightDef('id_cancel');">
 </map>
 </div>
 </body>

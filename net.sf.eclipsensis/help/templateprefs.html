@@ -18,6 +18,7 @@ Preferences</title>
   <meta http-equiv="Content-Type"
  content="text/html; charset=ISO-8859-1">
   <meta http-equiv="Content-Style-Type" content="text/css">
+  <script language="javascript" type="text/javascript" src="help.js"></script>
 </head>
 <body>
 <div id="main">
@@ -26,10 +27,10 @@ Preferences</title>
 | <a href="tasktagprefs.html">Next</a>
 <hr>
 <h2><a name="templates"></a>Templates</h2>
-The Templates preference page is used to work with code
+<p>The Templates preference page is used to work with code
 templates. A template is a convenience for the programmer to quickly
 insert often reoccurring source code patterns.
-There are three types of templates:<br>
+There are three types of templates:</p>
 <ul>
   <li><span style="font-weight: bold;">Built-in</span>:
 Templates which
@@ -42,149 +43,147 @@ Templates
 which have been created by the user.<br>
   </li>
 </ul>
-Templates are created and edited using the <a href="#templateeditor">Template
+<p>Templates are created and edited using the <a href="#templateeditor">Template
 Editor</a>.
-<br>
-<br>
+</p>
+<p style="text-align: center;">
 <img alt="Editor Templates Preferences" src="images/templatepref.gif"
  ismap="ismap"
  style="border: medium none ; width: 425px; height: 508px;"
- usemap="#templatepref"><br>
-<br>
+ usemap="#templatepref"></p>
 <dl>
-  <dt><a name="a_templates"></a><strong>Templates</strong></dt>
+  <a name="a_templates"></a><div id="id_templates"><dt>Templates</dt>
   <dd>Displays the list of
 templates. Only checked templates are
 enabled for use. To disable/enable a template uncheck/check the
 checkbox associated with it The following buttons allow manipulation
 and configuration of templates. <a href="javascript:history.go(-1)">&larr;
-Back</a></dd>
+Back</a></dd></div>
   <dl>
-    <dt><a name="a_new1"></a><strong>New</strong></dt>
+    <a name="a_new1"></a><div id="id_new1"><dt>New</dt>
     <dd> Opens a <a href="#templateeditor">dialog</a>
 to create a new
-template. <a href="javascript:history.go(-1)">&larr; Back</a></dd>
-    <dt><a name="a_edit3"></a><strong>Edit</strong></dt>
+template. <a href="javascript:history.go(-1)">&larr; Back</a></dd></div>
+    <a name="a_edit3"></a><div id="id_edit3"><dt>Edit</dt>
     <dd> Opens a <a href="#templateeditor">dialog</a>
 to edit the
 currently selected template. <a href="javascript:history.go(-1)">&larr;
-Back</a></dd>
-    <dt><a name="a_remove1"></a><strong>Remove</strong></dt>
+Back</a></dd></div>
+    <a name="a_remove1"></a><div id="id_remove1"><dt>Remove</dt>
     <dd>Remove all selected
-templates. <a href="javascript:history.go(-1)">&larr; Back</a></dd>
-    <dt><a name="a_restore1"></a><strong>Restore
-removed</strong></dt>
+templates. <a href="javascript:history.go(-1)">&larr; Back</a></dd></div>
+    <a name="a_restore1"></a><div id="id_restore1"><dt>Restore
+removed</dt>
     <dd>Restore any custom
 templates removed during the current
 preferences editing session as long as the preferences have not yet
 been saved using the <span style="font-weight: bold;">Apply</span>
 or <span style="font-weight: bold;">OK</span>
-buttons.. <a href="javascript:history.go(-1)">&larr; Back</a></dd>
-    <dt><a name="a_revert1"></a><strong>Revert
-to default</strong></dt>
+buttons.. <a href="javascript:history.go(-1)">&larr; Back</a></dd></div>
+    <a name="a_revert1"></a><div id="id_revert1"><dt>Revert
+to default</dt>
     <dd>Revert all selected custom
 templates back to their original
-built-in states. <a href="javascript:history.go(-1)">&larr; Back</a></dd>
-    <dt><a name="a_import1"></a><strong>Import</strong></dt>
+built-in states. <a href="javascript:history.go(-1)">&larr; Back</a></dd></div>
+    <a name="a_import1"></a><div id="id_import1"><dt>Import</dt>
     <dd> Imports templates from
-the file system. <a href="javascript:history.go(-1)">&larr; Back</a></dd>
-    <dt><a name="a_export1"></a><strong>Export</strong></dt>
+the file system. <a href="javascript:history.go(-1)">&larr; Back</a></dd></div>
+    <a name="a_export1"></a><div id="id_export1"><dt>Export</dt>
     <dd>Exports all selected
 templates to the file system. <a href="javascript:history.go(-1)">&larr;
-Back</a></dd>
+Back</a></dd></div>
   </dl>
-  <dt><a name="a_templatepreview"></a><strong>Preview</strong></dt>
+  <a name="a_templatepreview"></a><div id="id_templatepreview"><dt>Preview</dt>
   <dd>Preview the pattern of the
-selected template. <a href="javascript:history.go(-1)">&larr; Back</a></dd>
+selected template. <a href="javascript:history.go(-1)">&larr; Back</a></dd></div>
 </dl>
 <a href="preferences.html">Back
 to Preferences</a><br>
 <h3><a name="templateeditor"></a>Template
 Editor</h3>
-The Templates Editor dialog is used to create new and edit existing
+<p>The Templates Editor dialog is used to create new and edit existing
 code
-templates.<br>
-<br>
+templates.</p>
+<p style="text-align: center;">
 <img alt="Editor Template Editor" ismap="ismap"
  src="images/templatedialog.gif" usemap="#templatedialog"
- style="border: medium none ; width: 529px; height: 284px;"><br>
-<br>
+ style="border: medium none ; width: 529px; height: 284px;"></p>
 <dl>
-  <dt><a name="a_name1"></a><strong>Name</strong></dt>
+  <a name="a_name1"></a><div id="id_name1"><dt>Name</dt>
   <dd>The name of the template. <a href="javascript:history.go(-1)">&larr;
-Back</a></dd>
-  <dt><a name="a_context"></a><strong>Context</strong></dt>
+Back</a></dd></div>
+  <a name="a_context"></a><div id="id_context"><dt>Context</dt>
   <dd> The context determines
 where the template can be used and the
 set of available pre-defined template variables. EclipseNSIS provides
 only one context- <strong>NSIS
-Script</strong>. <a href="javascript:history.go(-1)">&larr; Back</a></dd>
-  <dt><a name="a_description1"></a><strong>Description</strong></dt>
+Script</strong>. <a href="javascript:history.go(-1)">&larr; Back</a></dd></div>
+  <a name="a_description1"></a><div id="id_description1"><dt>Description</dt>
   <dd>A description of the
 template, which is displayed to the user
 when choosing the template. <a href="javascript:history.go(-1)">&larr;
-Back</a></dd>
-  <dt><a name="a_pattern"></a><strong>Pattern</strong></dt>
+Back</a></dd></div>
+  <a name="a_pattern"></a><div id="id_pattern"><dt>Pattern</dt>
   <dd>The template pattern. The
 pattern editor is syntax highlighting
 and provides code completion assistance (press Ctrl-Space). A pattern
 consists of source code with replaceable variables. The format of a
 replaceable variable is %name% where "name" is a variable name. <a
- href="javascript:history.go(-1)">&larr; Back</a></dd>
-  <dt><a name="a_insertvar"></a><strong>Insert
-Variable</strong></dt>
+ href="javascript:history.go(-1)">&larr; Back</a></dd></div>
+  <a name="a_insertvar"></a><div id="id_insertvar"><dt>Insert
+Variable</dt>
   <dd> Displays a list of
 pre-defined context specific variables. The
 following pre-defined variables are available: <a
  href="javascript:history.go(-1)">&larr; Back</a></dd>
   <dl>
-    <dt><strong>%cursor%</strong></dt>
+    <dt>%cursor%</dt>
     <dd>Specifies the cursor
 position when the template edit mode is
 left. This is useful when the cursor should jump to another place than
 to the end of the template on leaving template edit mode.</dd>
-    <dt><strong>%date%</strong></dt>
+    <dt>%date%</dt>
     <dd>Evaluates to the current
 date.</dd>
-    <dt><strong>%percent%</strong></dt>
+    <dt>%percent%</dt>
     <dd>Evaluates to the percent
 symbol '%'. Alternatively, two
 percents can be used: '%%'.</dd>
-    <dt><strong>%time%</strong></dt>
+    <dt>%time%</dt>
     <dd>Evaluates to the current
 time.</dd>
-    <dt><strong>%year%</strong></dt>
+    <dt>%year%</dt>
     <dd>Evaluates to the current
 year.</dd>
-    <dt><strong>%user%</strong></dt>
+    <dt>%user%</dt>
     <dd>Evaluates to the user name.</dd>
-    <dt><strong>%line_selection%</strong></dt>
+    <dt>%line_selection%</dt>
     <dd>Evaluates to the selected
 line in the editor.</dd>
-    <dt><strong>%word_selection%</strong></dt>
+    <dt>%word_selection%</dt>
     <dd>Evaluates to the selected
 word in the editor.</dd>
-    <dt><strong>%register%</strong></dt>
+    <dt>%register%</dt>
     <dd>Evaluates to an NSIS
 register, e.g., $0, $
 R0, etc.</dd>
-    <dt><strong>%pathconst%</strong></dt>
+    <dt>%pathconst%</dt>
     <dd>Evaluates to an NSIS path
 constant, e.g., $PROGRAMFILES,
 $DESKTOP, etc..</dd>
-    <dt><strong>%pathvar%</strong></dt>
+    <dt>%pathvar%</dt>
     <dd>Evaluates to an NSIS path
 variable, e.g., $INSTDIR, $OUTDIR,
 etc.</dd>
-    <dt><strong>%predefine%</strong></dt>
+    <dt>%predefine%</dt>
     <dd>Evaluates to an NSIS
 predefine, e.g., ${__FILE__}, ${__LINE__},
 etc.</dd>
-    <dt><strong>%pagetype%</strong></dt>
+    <dt>%pagetype%</dt>
     <dd>Evaluates to an NSIS
 installer page type, e.g., instfiles,
 license, etc.</dd>
-  </dl>
+  </dl></div>
 </dl>
 <a href="preferences.html">Back
 to Preferences</a><br>
@@ -197,36 +196,39 @@ to Preferences</a><br>
 &copy; 2004, 2005 Sunil Kamath
 (IcemanK).</small></strong></p>
 <map name="templatepref">
-<area id="templatepreview" shape="RECT" href="#a_templatepreview"
- alt="Preview" coords="8,322, 418,475">
-<area id="export1" shape="RECT" href="#a_export1" alt="Export"
- coords="315,247, 415,271">
-<area id="import1" shape="RECT" href="#a_import1" alt="Import"
- coords="315,218, 415,243">
-<area id="revert1" shape="RECT" href="#a_revert1"
- alt="Revert to default" coords="316,181, 415,206">
-<area id="restore1" shape="RECT" href="#a_restore1"
- alt="Restore removed" coords="316,153, 415,178">
-<area id="remove1" shape="RECT" href="#a_remove1" alt="Remove"
- coords="316,116, 415,141">
-<area id="edit3" shape="RECT" href="#a_edit3" alt="Edit"
- coords="316,89, 415,114">
-<area id="new1" shape="RECT" href="#a_new1" alt="New"
- coords="316,62, 415,87">
-<area id="templates" shape="RECT" href="#a_templates" alt="Templates"
- coords="9,61, 312,316">
+<area id="templatepreview" onclick="highlightDef('id_templatepreview');"
+ shape="RECT" href="#a_templatepreview" alt="Preview"
+ coords="8,322, 418,475">
+<area id="export1" onclick="highlightDef('id_export1');" shape="RECT"
+ href="#a_export1" alt="Export" coords="315,247, 415,271">
+<area id="import1" onclick="highlightDef('id_import1');" shape="RECT"
+ href="#a_import1" alt="Import" coords="315,218, 415,243">
+<area id="revert1" onclick="highlightDef('id_revert1');" shape="RECT"
+ href="#a_revert1" alt="Revert to default" coords="316,181, 415,206">
+<area id="restore1" onclick="highlightDef('id_restore1');" shape="RECT"
+ href="#a_restore1" alt="Restore removed" coords="316,153, 415,178">
+<area id="remove1" onclick="highlightDef('id_remove1');" shape="RECT"
+ href="#a_remove1" alt="Remove" coords="316,116, 415,141">
+<area id="edit3" onclick="highlightDef('id_edit3');" shape="RECT"
+ href="#a_edit3" alt="Edit" coords="316,89, 415,114">
+<area id="new1" onclick="highlightDef('id_new1');" shape="RECT"
+ href="#a_new1" alt="New" coords="316,62, 415,87">
+<area id="templates" onclick="highlightDef('id_templates');"
+ shape="RECT" href="#a_templates" alt="Templates" coords="9,61, 312,316">
 </map>
 <map name="templatedialog">
-<area id="insertvar" shape="RECT" href="#a_insertvar"
- alt="Insert Variable" coords="79,181, 173,205">
-<area id="pattern" shape="RECT" href="#a_pattern" alt="Pattern"
- coords="18,92, 503,179">
-<area id="description1" shape="RECT" href="#a_description1"
- alt="Description" coords="18,67, 502,87">
-<area id="context" shape="RECT" href="#a_context" alt="Context"
- coords="374,42, 500,60">
-<area id="name1" shape="RECT" href="#a_name1" alt="Name"
- coords="17,41, 371,62">
+<area id="insertvar" onclick="highlightDef('id_insertvar');"
+ shape="RECT" href="#a_insertvar" alt="Insert Variable"
+ coords="79,181, 173,205">
+<area id="pattern" onclick="highlightDef('id_pattern');" shape="RECT"
+ href="#a_pattern" alt="Pattern" coords="18,92, 503,179">
+<area id="description1" onclick="highlightDef('id_description1');"
+ shape="RECT" href="#a_description1" alt="Description"
+ coords="18,67, 502,87">
+<area id="context" onclick="highlightDef('id_context');" shape="RECT"
+ href="#a_context" alt="Context" coords="374,42, 500,60">
+<area id="name1" onclick="highlightDef('id_name1');" shape="RECT"
+ href="#a_name1" alt="Name" coords="17,41, 371,62">
 </map>
 </div>
 </body>
