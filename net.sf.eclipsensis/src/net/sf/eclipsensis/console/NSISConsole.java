@@ -342,9 +342,6 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
     {
         if(mIsCompiling != isCompiling) {
             if(!mDisposed) {
-                IActionBars bars = getViewSite().getActionBars();
-                final IToolBarManager toolBarManager = bars.getToolBarManager();
-                IMenuManager menuManager = bars.getMenuManager();
                 mCancelAction.setEnabled(isCompiling);
                 mClearAction.setEnabled(!isCompiling && mModel.getContents().size() > 0);
             }
