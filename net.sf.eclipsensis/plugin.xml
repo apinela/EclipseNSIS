@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<!--
+###############################################################################
+# Copyright (c) 2004 Sunil Kamath (IcemanK).
+# All rights reserved. This program and the accompanying materials 
+# are made available under the terms of the Common Public License v1.0
+# which is available at http://www.eclipse.org/legal/cpl-v10.html
+# 
+# Contributors:
+#     Sunil Kamath (IcemanK) - initial API and implementation
+###############################################################################
+-->
+<plugin
+   id="net.sf.eclipsensis"
+   name="%plugin.name"
+   version="0.0.1"
+   provider-name="Sunil Kamath"
+   class="net.sf.eclipsensis.EclipseNSISPlugin">
+
+   <runtime>
+      <library name="eclipsensis.jar">
+         <export name="*"/>
+      </library>
+   </runtime>
+
+   <requires>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.ui.ide"/>
+      <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.eclipse.jface.text"/>
+      <import plugin="org.eclipse.ui.editors"/>
+      <import plugin="org.eclipse.ui.workbench.texteditor"/>
+      <import plugin="org.eclipse.core.resources"/>
+   </requires>
+
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            name="%editor.name"
+            extensions="nsh,nsi"
+            icon="%editor.icon"
+            contributorClass="org.eclipse.ui.texteditor.BasicTextEditorActionContributor"
+            class="net.sf.eclipsensis.editor.NSISEditor"
+            id="net.sf.eclipsensis.editor.NSISEditor">
+      </editor>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            name="%preference.page.name"
+            class="net.sf.eclipsensis.dialogs.NSISPreferencePage"
+            id="net.sf.eclipsensis.dialogs.NSISPreferencePage">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.ui.propertyPages">
+      <page
+            objectClass="org.eclipse.core.resources.IFile"
+            icon="%property.page.icon"
+            class="net.sf.eclipsensis.dialogs.NSISPropertyPage"
+            nameFilter="*.nsi"
+            name="%property.page.name"
+            id="net.sf.eclipsensis.dialogs.NSISPropertyPage">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            name="%view.category.name"
+            id="net.sf.eclipsensis">
+      </category>
+      <view
+            allowMultiple="false"
+            class="net.sf.eclipsensis.console.NSISConsole"
+            icon="%console.icon"
+            category="net.sf.eclipsensis"
+            name="%console.name"
+            id="net.sf.eclipsensis.console.NSISConsole">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editorActions">
+      <editorContribution
+            targetID="net.sf.eclipsensis.editor.NSISEditor"
+            id="net.sf.eclipsensis.editorContribution">
+         <menu
+               label="%nsis.menu.name"
+               id="net.sf.eclipsensis.Menu">
+            <separator
+                  name="net.sf.eclipsensis.Group">
+            </separator>
+            <separator
+                  name="net.sf.eclipsensis.Group2">
+            </separator>
+         </menu>
+         <action
+               label="%preferences.action.name"
+               icon="%preferences.action.icon"
+               class="net.sf.eclipsensis.actions.NSISPreferencesAction"
+               tooltip="%preferences.action.tooltip"
+               menubarPath="net.sf.eclipsensis.Menu/net.sf.eclipsensis.Group2"
+               toolbarPath="net.sf.eclipsensis.Group"
+               id="net.sf.eclipsensis.actions.NSISPreferencesAction">
+         </action>
+         <action
+               label="%cancel.action.name"
+               icon="%cancel.action.icon"
+               disabledIcon="%cancel.action.disabledicon"
+               class="net.sf.eclipsensis.actions.NSISCancelAction"
+               tooltip="%cancel.action.tooltip"
+               menubarPath="net.sf.eclipsensis.Menu/net.sf.eclipsensis.Group"
+               toolbarPath="net.sf.eclipsensis.Group"
+               id="net.sf.eclipsensis.actions.NSISCancelAction">
+         </action>
+         <action
+               label="%compile.test.action.name"
+               icon="%compile.test.action.icon"
+               disabledIcon="%compile.test.action.disabledicon"
+               class="net.sf.eclipsensis.actions.NSISCompileTestAction"
+               tooltip="%compile.test.action.tooltip"
+               menubarPath="net.sf.eclipsensis.Menu/net.sf.eclipsensis.Group"
+               toolbarPath="net.sf.eclipsensis.Group"
+               id="net.sf.eclipsensis.actions.NSISCompileTestAction">
+         </action>
+         <action
+               label="%test.action.name"
+               icon="%test.action.icon"
+               disabledIcon="%test.action.disabledicon"
+               class="net.sf.eclipsensis.actions.NSISTestAction"
+               tooltip="%test.action.tooltip"
+               menubarPath="net.sf.eclipsensis.Menu/net.sf.eclipsensis.Group"
+               toolbarPath="net.sf.eclipsensis.Group"
+               id="net.sf.eclipsensis.actions.NSISTestAction">
+         </action>
+         <action
+               label="%compile.action.name"
+               icon="%compile.action.icon"
+               disabledIcon="%compile.action.disabledicon"
+               class="net.sf.eclipsensis.actions.NSISCompileAction"
+               tooltip="%compile.action.tooltip"
+               menubarPath="net.sf.eclipsensis.Menu/net.sf.eclipsensis.Group"
+               toolbarPath="net.sf.eclipsensis.Group"
+               id="net.sf.eclipsensis.actions.NSISCompileAction">
+         </action>
+      </editorContribution>            
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension targetID="org.eclipse.ui.resourcePerspective">
+         <view
+               visible="false"
+               ratio="0.5"
+               id="net.sf.eclipsensis.console.NSISConsole"
+               relative="org.eclipse.ui.views.TaskList"
+               relationship="right"/>
+      </perspectiveExtension>
+   </extension>
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IFile"
+            nameFilter="*.nsi"
+            id="net.sf.eclipsensis.popupMenuContribution">
+         <menu
+               label="%nsis.menu.name"
+               path="additions"
+               id="net.sf.eclipsensis.PopupMenu">
+            <separator name="net.sf.eclipsensis.PopupGroup"/>
+         </menu>
+         <action
+               enablesFor="1"
+               label="%compile.test.action.name"
+               icon="%compile.test.action.icon"
+               class="net.sf.eclipsensis.actions.NSISCompileTestAction"
+               tooltip="%compile.test.action.tooltip"
+               menubarPath="net.sf.eclipsensis.PopupMenu/net.sf.eclipsensis.PopupGroup"
+               id="net.sf.eclipsensis.popup.actions.NSISCompileTestAction">
+         </action>
+         <action
+               enablesFor="1"
+               label="%test.action.name"
+               icon="%test.action.icon"
+               class="net.sf.eclipsensis.actions.NSISTestAction"
+               tooltip="%test.action.tooltip"
+               menubarPath="net.sf.eclipsensis.PopupMenu/net.sf.eclipsensis.PopupGroup"
+               id="net.sf.eclipsensis.popup.actions.NSISTestAction">
+         </action>
+         <action
+               enablesFor="1"
+               label="%compile.action.name"
+               icon="%compile.action.icon"
+               class="net.sf.eclipsensis.actions.NSISCompileAction"
+               tooltip="%compile.action.tooltip"
+               menubarPath="net.sf.eclipsensis.PopupMenu/net.sf.eclipsensis.PopupGroup"
+               id="net.sf.eclipsensis.popup.actions.NSISCompileAction">
+         </action>
+      </objectContribution>
+   </extension>
+
+</plugin>
