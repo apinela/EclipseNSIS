@@ -9,24 +9,31 @@ rem * Contributors:
 rem *     Sunil Kamath (IcemanK) - initial API and implementation
 rem *******************************************************************************
 setlocal
-rem *****
-rem JDK
-rem *****
-set JAVA_HOME=d:\jdk1.4
 
-rem ********
-rem MSVC 6.0
-rem ********
-call "D:\Program Files\Microsoft Visual Studio\VC98\Bin\vcvars32.bat"
+if exist env.bat goto ENV
+..\CreateEnv\CreateEnv
 
-rem ****** 
-rem MS-SDK
-rem ******
-set Mssdk="D:\Program Files\Microsoft SDK"
-call %mssdk%\setenv.bat
+:ENV
+call env.bat
 
-set lib=%lib%;%JAVA_HOME%\lib;%ProgramFiles%\HTML Help Workshop\lib
-set include=%include%;%JAVA_HOME%\include;%JAVA_HOME%\include\win32;%ProgramFiles%\HTML Help Workshop\include
+if "X%JAVA_HOME%"=="X" (
+    echo Java SDK 1.4 is required.
+    goto END
+)
+
+if not "X%MS.NETDir%"=="X" (
+    goto FOUND
+)
+
+if "X%MSVCDir%"=="X" (
+    echo Microsoft .NET Framework 1.1 SDK or Microsoft Visual Studio 6.0 is required.
+    goto END
+)
+
+:FOUND
+set lib=%lib%;%JAVA_HOME%\lib
+set include=%include%;%JAVA_HOME%\include;%JAVA_HOME%\include\win32
+set NO_EXTERNAL_DEPS=1
 
 :MAKE
 if "X%1"=="X" goto MAKE_RELEASE
