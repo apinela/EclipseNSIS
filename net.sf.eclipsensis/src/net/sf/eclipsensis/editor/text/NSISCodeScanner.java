@@ -20,12 +20,12 @@ import org.eclipse.jface.text.rules.*;
 
 public class NSISCodeScanner extends NSISStringScanner
 {
-    private NSISHexNumberRule mHexNumberRule;
-    private NumberRule mNumberRule;
-    private WordRule mCompileTimeCommandsRule;
-    private WordRule mKeywordsRule;
-    private WordRule mInstructionOptionsRule;
-    private WordRule mCallbacksRule;
+    private NSISHexNumberRule mHexNumberRule = null;
+    private NumberRule mNumberRule = null;
+    private WordRule mCompileTimeCommandsRule = null;
+    private WordRule mKeywordsRule = null;
+    private WordRule mInstructionOptionsRule = null;
+    private WordRule mCallbacksRule = null;
     /**
      * @param preferenceStore
      */
@@ -45,6 +45,7 @@ public class NSISCodeScanner extends NSISStringScanner
         rules.add(getCallbacksRule(defaultToken));
         rules.add(getSymbolsRule(defaultToken));
         rules.add(getVariablesRule(defaultToken));
+        rules.add(getLangstringsRule(defaultToken));
         rules.add(getHexNumberRule(defaultToken));
         rules.add(getNumberRule(defaultToken));
     }

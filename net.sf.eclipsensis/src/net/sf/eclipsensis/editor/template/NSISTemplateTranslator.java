@@ -129,40 +129,4 @@ public class NSISTemplateTranslator extends TemplateTranslator
 
         return new TemplateBuffer(translatedString, variables);
     }
-
-    private TemplateVariable[] findVariables(String string, int[] offsets, int[] lengths) {
-
-        Map map= new HashMap();
-        
-        for (int i= 0; i != offsets.length; i++) {
-            int offset= offsets[i];
-            int length= lengths[i];
-            
-            String content= string.substring(offset, offset + length);
-            Vector vector= (Vector) map.get(content);
-            if (vector == null) {
-                vector= new Vector();
-                map.put(content, vector);
-            }           
-            vector.add(new Integer(offset));
-        }
-        
-        TemplateVariable[] variables= new TemplateVariable[map.size()];
-        int k= 0;
-        
-        Set keys= map.keySet();
-        for (Iterator i= keys.iterator(); i.hasNext(); ) {
-            String name= (String) i.next();         
-            Vector vector= (Vector) map.get(name);
-            
-            int[] offsets_= new int[vector.size()];
-            for (int j= 0; j != offsets_.length; j++)
-                offsets_[j]= ((Integer) vector.get(j)).intValue();
-                
-            variables[k]= createVariable(name, name, offsets_);
-            k++;
-        }
-        
-        return variables;
-    }
 }

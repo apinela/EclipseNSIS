@@ -94,6 +94,12 @@
             class="net.sf.eclipsensis.dialogs.NSISEditorPreferencePage"
             id="net.sf.eclipsensis.dialogs.NSISEditorPreferencePage">
       </page>
+      <page
+            name="%templates.preference.page.name"
+            category="net.sf.eclipsensis.dialogs.NSISEditorPreferencePage"
+            class="net.sf.eclipsensis.dialogs.NSISTemplatePreferencePage"
+            id="net.sf.eclipsensis.dialogs.NSISTemplatePreferencePage">
+      </page>
    </extension>
    <extension
          point="org.eclipse.ui.propertyPages">
@@ -518,14 +524,6 @@
             class="net.sf.eclipsensis.editor.template.resolvers.NSISPredefineVariableResolver">
       </resolver>
       <resolver
-            name="%nsis.resolvers.percent.name"
-            type="percent"
-            icon="icons/nsis.gif"
-            description="%nsis.resolvers.percent.description"
-            contextTypeId="net.sf.eclipsensis.editor.template.NSISTemplateContextType"
-            class="net.sf.eclipsensis.editor.template.resolvers.NSISPercentVariableResolver">
-      </resolver>
-      <resolver
             name="%nsis.resolvers.pagetype.name"
             type="pagetype"
             icon="icons/nsis.gif"
@@ -594,6 +592,15 @@
           id="net.sf.eclipsensis.console.InfoColor">
           <description>
              %nsis.console.info.color.description
+          </description>
+      </colorDefinition>
+      <colorDefinition
+          label="%nsis.template.variable.color.name"
+          value="0,128,128"
+          categoryId="net.sf.eclipsensis.themes.NSIS"
+          id="net.sf.eclipsensis.template.TemplateVariableColor">
+          <description>
+             %nsis.template.variable.color.description
           </description>
       </colorDefinition>
    </extension>

@@ -54,12 +54,14 @@ public class NSISWordPatternRule extends NSISSingleLineRule
         return result;
     }
 
-    protected boolean endSequenceDetected(ICharacterScanner scanner) {
+    protected boolean endSequenceDetected(ICharacterScanner scanner, boolean resume) 
+    {
         StringBuffer buffer = new StringBuffer();
         int offset = ((NSISScanner)scanner).getOffset();
 
         int c= scanner.read();
         
+        boolean foundWordStart = false;
         while (true) {
             if(c == INSISConstants.LINE_CONTINUATION_CHAR) {
                 int c2 = scanner.read();
@@ -72,13 +74,20 @@ public class NSISWordPatternRule extends NSISSingleLineRule
                 }
             }
 
-            
-            if(!mWordDetector.isWordPart((char)c)) {
-                break;
+            if(foundWordStart || resume) {
+                if(!mWordDetector.isWordPart((char)c)) {
+                    break;
+                }
             }
             else {
-                buffer.append((char)c);
+                if(!mWordDetector.isWordStart((char)c)) {
+                    break;
+                }
+                else {
+                    foundWordStart = true;
+                }
             }
+            buffer.append((char)c);
             c= scanner.read();
         }
         scanner.unread();

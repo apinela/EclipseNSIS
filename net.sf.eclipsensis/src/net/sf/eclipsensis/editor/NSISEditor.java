@@ -363,7 +363,7 @@ public class NSISEditor extends TextEditor implements INSISConstants, IPropertyC
         super.initializeEditor();
         IPreferenceStore preferenceStore = NSISPreferences.getPreferences().getPreferenceStore();
         setPreferenceStore(preferenceStore);
-        setSourceViewerConfiguration(new NSISSourceViewerConfiguration(preferenceStore));
+        setSourceViewerConfiguration(new NSISEditorSourceViewerConfiguration(preferenceStore));
     }
     
     public void addAction(NSISAction action)

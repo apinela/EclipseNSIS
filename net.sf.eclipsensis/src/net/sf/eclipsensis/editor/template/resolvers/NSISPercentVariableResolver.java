@@ -9,6 +9,8 @@
  *******************************************************************************/
 package net.sf.eclipsensis.editor.template.resolvers;
 
+import net.sf.eclipsensis.EclipseNSISPlugin;
+
 import org.eclipse.jface.text.templates.SimpleTemplateVariableResolver;
 
 public class NSISPercentVariableResolver extends SimpleTemplateVariableResolver
@@ -17,9 +19,9 @@ public class NSISPercentVariableResolver extends SimpleTemplateVariableResolver
      * @param type
      * @param description
      */
-    public NSISPercentVariableResolver(String type, String description)
+    public NSISPercentVariableResolver()
     {
-        super(type, description);
+        super("percent", EclipseNSISPlugin.getResourceString("nsis.resolvers.percent.description"));
         setEvaluationString("%"); //$NON-NLS-1$
     }
 }

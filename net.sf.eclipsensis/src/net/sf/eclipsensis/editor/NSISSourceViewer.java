@@ -157,7 +157,7 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
         }
         super.configure(configuration);
         NSISKeywords.addKeywordsListener(this);
-        if(configuration instanceof NSISSourceViewerConfiguration) {
+        if(configuration instanceof NSISEditorSourceViewerConfiguration) {
             mAutoIndentStrategy = new NSISAutoIndentStrategy(mPreferenceStore);
             mTabConversionStrategy = new NSISTabConversionStrategy(mPreferenceStore);
             mPreferenceStore.addPropertyChangeListener(this);
@@ -168,7 +168,7 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
                 prependAutoEditStrategy(mAutoIndentStrategy,mConfiguredContentTypes[i]);
                 prependAutoEditStrategy(mTabConversionStrategy,mConfiguredContentTypes[i]);
             }
-            mInsertTemplateAssistant = ((NSISSourceViewerConfiguration)configuration).getInsertTemplateAssistant(this);
+            mInsertTemplateAssistant = ((NSISEditorSourceViewerConfiguration)configuration).getInsertTemplateAssistant(this);
             if(mInsertTemplateAssistant != null) {
                 mInsertTemplateAssistant.install(this);
                 mInsertTemplateAssistantInstalled = true;

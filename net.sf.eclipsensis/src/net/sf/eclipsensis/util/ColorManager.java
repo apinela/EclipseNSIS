@@ -32,6 +32,7 @@ public class ColorManager
     public static final RGB DARK_SEA_GREEN = new RGB(0x8f,0xbc,0x8f);
     public static final RGB WHITE = new RGB(0xff, 0xff, 0xff);
     public static final RGB BLACK = new RGB(0, 0, 0);
+    public static final RGB CHOCOLATE = new RGB(0xd2,0x69,0x1e);
 
     private static ColorRegistry mColorTable = new ColorRegistry();
 

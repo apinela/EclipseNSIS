@@ -73,13 +73,13 @@ public class NSISPatternRule implements IPredicateRule, INSISConstants
     public IToken evaluate(ICharacterScanner scanner, boolean resume)
     {
         if (resume) {
-            if (endSequenceDetected(scanner)) {
+            if (endSequenceDetected(scanner, resume)) {
                 return mSuccessToken;
             }
         } 
         else {
             if (startSequenceDetected(scanner)) {
-                if (endSequenceDetected(scanner)) {
+                if (endSequenceDetected(scanner, resume)) {
                     return mSuccessToken;
                 }
             }
@@ -110,7 +110,7 @@ public class NSISPatternRule implements IPredicateRule, INSISConstants
         return true;
     }
     
-    protected boolean endSequenceDetected(ICharacterScanner scanner) {
+    protected boolean endSequenceDetected(ICharacterScanner scanner, boolean resume) {
         int c;
         while ((c= scanner.read()) != ICharacterScanner.EOF) {
             if(!preProcess(scanner, c)) {

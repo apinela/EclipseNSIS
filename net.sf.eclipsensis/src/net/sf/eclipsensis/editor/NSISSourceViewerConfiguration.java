@@ -11,13 +11,11 @@ package net.sf.eclipsensis.editor;
 
 import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.editor.codeassist.*;
-import net.sf.eclipsensis.editor.template.NSISTemplateCompletionProcessor;
 import net.sf.eclipsensis.editor.text.*;
 import net.sf.eclipsensis.settings.INSISPreferenceConstants;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.*;
-import org.eclipse.jface.text.contentassist.*;
 import org.eclipse.jface.text.information.IInformationPresenter;
 import org.eclipse.jface.text.information.InformationPresenter;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
@@ -25,18 +23,15 @@ import org.eclipse.jface.text.presentation.PresentationReconciler;
 import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
 import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.text.source.*;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Display;
 
 public class NSISSourceViewerConfiguration extends SourceViewerConfiguration implements INSISConstants, INSISPreferenceConstants
 {
-    private static final String[] cConfiguredContentTypes;
-    private InformationPresenter mInformationPresenter = null;
-    private NSISTextHover mTextHover = null;
-    private NSISAnnotationHover mAnnotationHover = null;
-    private NSISDoubleClickSelector mDoubleClickStrategy = null;
-    private IPreferenceStore mPreferenceStore = null;
-    private boolean mPreviewMode = false;
+    protected static final String[] cConfiguredContentTypes;
+    protected InformationPresenter mInformationPresenter = null;
+    protected NSISTextHover mTextHover = null;
+    protected NSISAnnotationHover mAnnotationHover = null;
+    protected NSISDoubleClickSelector mDoubleClickStrategy = null;
+    protected IPreferenceStore mPreferenceStore = null;
     
     static {
         cConfiguredContentTypes = new String[NSISPartitionScanner.NSIS_PARTITION_TYPES.length+1];
@@ -44,33 +39,11 @@ public class NSISSourceViewerConfiguration extends SourceViewerConfiguration imp
         System.arraycopy(NSISPartitionScanner.NSIS_PARTITION_TYPES,0,cConfiguredContentTypes,1,NSISPartitionScanner.NSIS_PARTITION_TYPES.length);
     }
     
-    /**
-     * @param preferenceStore
-     */
     public NSISSourceViewerConfiguration(IPreferenceStore preferenceStore)
-    {
-        this(preferenceStore,false);
-    }
-
-    public NSISSourceViewerConfiguration(IPreferenceStore preferenceStore, boolean previewMode)
     {
         super();
         mPreferenceStore = preferenceStore;
-        mPreviewMode = previewMode;
         mDoubleClickStrategy = new NSISDoubleClickSelector();
-        
-        if(!previewMode) {
-            mTextHover = new NSISTextHover();
-            
-            NSISInformationProvider informationProvider = new NSISInformationProvider();
-            IInformationControlCreator informationControlCreator = new NSISInformationControlCreator(null,SWT.V_SCROLL|SWT.H_SCROLL);
-            informationProvider.setInformationPresenterControlCreator(informationControlCreator);
-            mInformationPresenter = new InformationPresenter(informationControlCreator);
-            mInformationPresenter.setInformationProvider(informationProvider,NSISPartitionScanner.NSIS_STRING);
-            mInformationPresenter.setInformationProvider(informationProvider,IDocument.DEFAULT_CONTENT_TYPE);
-            mInformationPresenter.setSizeConstraints(60, 5, true, true);
-            mAnnotationHover = new NSISAnnotationHover();
-        }
     }
     
     /*
@@ -95,52 +68,6 @@ public class NSISSourceViewerConfiguration extends SourceViewerConfiguration imp
     public String[] getConfiguredContentTypes(ISourceViewer sourceViewer)
     {
         return cConfiguredContentTypes;
-    }
-
-    /*
-     * (non-Javadoc) Method declared on SourceViewerConfiguration
-     */
-    public IContentAssistant getContentAssistant(ISourceViewer sourceViewer)
-    {
-        ContentAssistant assistant = null;
-        if(!mPreviewMode) {
-            assistant = new ContentAssistant();
-            assistant.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
-            IContentAssistProcessor completionProcessor = new NSISTemplateCompletionProcessor();
-            assistant.setContentAssistProcessor(completionProcessor,
-                                                IDocument.DEFAULT_CONTENT_TYPE);
-            completionProcessor = new NSISCompletionProcessor();
-            assistant.setContentAssistProcessor(completionProcessor,
-                                                NSISPartitionScanner.NSIS_STRING);
-    
-            assistant.enableAutoActivation(true);
-            assistant.setAutoActivationDelay(100);
-            assistant.setProposalPopupOrientation(IContentAssistant.PROPOSAL_OVERLAY);
-            assistant.setContextInformationPopupOrientation(IContentAssistant.CONTEXT_INFO_ABOVE);
-            assistant.setContextInformationPopupBackground(Display.getCurrent().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
-        }
-        return assistant;
-    }
-
-    /*
-     * (non-Javadoc) Method declared on SourceViewerConfiguration
-     */
-    public IContentAssistant getInsertTemplateAssistant(ISourceViewer sourceViewer)
-    {
-        ContentAssistant assistant = null;
-        if(!mPreviewMode) {
-            assistant = new ContentAssistant();
-            assistant.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
-            IContentAssistProcessor completionProcessor = new NSISTemplateCompletionProcessor(true);
-            assistant.setContentAssistProcessor(completionProcessor,
-                                                IDocument.DEFAULT_CONTENT_TYPE);
-    
-            assistant.enableAutoActivation(false);
-            assistant.setProposalPopupOrientation(IContentAssistant.PROPOSAL_OVERLAY);
-            assistant.setContextInformationPopupOrientation(IContentAssistant.CONTEXT_INFO_ABOVE);
-            assistant.setContextInformationPopupBackground(Display.getCurrent().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
-        }
-        return assistant;
     }
 
     /*
@@ -239,7 +166,7 @@ public class NSISSourceViewerConfiguration extends SourceViewerConfiguration imp
         return mPreferenceStore;
     }
 
-    private class NSISCommentScanner extends NSISSingleTokenScanner
+    protected class NSISCommentScanner extends NSISSingleTokenScanner
     {
        /**
          * @param preferenceStore

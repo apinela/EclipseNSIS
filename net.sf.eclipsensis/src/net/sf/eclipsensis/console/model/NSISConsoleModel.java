@@ -34,15 +34,6 @@ public class NSISConsoleModel
         return cInstance;
     }
 
-    /**
-     * 
-     */
-    private NSISConsoleModel()
-    {
-        super();
-        // TODO Auto-generated constructor stub
-    }
-
     public void addModelListener(INSISConsoleModelListener listener)
     {
         mListeners.add(listener);

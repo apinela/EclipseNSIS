@@ -45,7 +45,7 @@ public class NSISVariablesWordRule implements IRule, INSISConstants
         NSISKeywords.VariableMatcher variableMatcher = new NSISKeywords.VariableMatcher();
         int c= scanner.read();
         if (mWordDetector.isWordStart((char) c)) {
-            IToken token = mVariablesToken;
+            IToken token = null;
             buffer.setLength(0);
             do {
                 if(c == LINE_CONTINUATION_CHAR) {
@@ -56,7 +56,7 @@ public class NSISVariablesWordRule implements IRule, INSISConstants
                     }
                     else {
                         scanner.unread();
-                        break;
+//                        break;
                     }
                 }
                 buffer.append((char) c);
@@ -79,6 +79,13 @@ public class NSISVariablesWordRule implements IRule, INSISConstants
             }
             else {
                 scanner.unread();
+                if(buffer.length() > 1) {
+                    token = mVariablesToken;
+                }
+                else {
+                    scanner.unread();
+                    token = Token.UNDEFINED;
+                }
             }
             
             return token;

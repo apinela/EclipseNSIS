@@ -9,6 +9,8 @@
  *******************************************************************************/
 package net.sf.eclipsensis.editor.template;
 
+import net.sf.eclipsensis.editor.template.resolvers.NSISPercentVariableResolver;
+
 import org.eclipse.jface.text.templates.*;
 
 
@@ -24,6 +26,7 @@ public class NSISTemplateContextType extends TemplateContextType
 		addResolver(new GlobalTemplateVariables.Year());
 		addResolver(new GlobalTemplateVariables.Time());
 		addResolver(new GlobalTemplateVariables.User());
+        addResolver(new NSISPercentVariableResolver());
 	}
     
     /* (non-Javadoc)

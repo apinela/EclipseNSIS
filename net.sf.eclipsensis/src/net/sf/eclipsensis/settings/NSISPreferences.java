@@ -211,6 +211,7 @@ public class NSISPreferences extends NSISSettings implements IPropertyChangeList
     {
         initializeSyntaxPreference(CALLBACKS_STYLE,ColorManager.NAVY_BLUE, null, false, false);
         initializeSyntaxPreference(SYMBOLS_STYLE,ColorManager.PURPLE, null, false, false);
+        initializeSyntaxPreference(LANGSTRINGS_STYLE,ColorManager.CHOCOLATE, null, false, false);
         initializeSyntaxPreference(PREDEFINED_VARIABLES_STYLE,ColorManager.DARK_OLIVE_GREEN, null, false, false);
         initializeSyntaxPreference(USERDEFINED_VARIABLES_STYLE,ColorManager.PURPLE, null, false, false);
         initializeSyntaxPreference(INSTRUCTIONS_STYLE,ColorManager.PINK, null, false, false);

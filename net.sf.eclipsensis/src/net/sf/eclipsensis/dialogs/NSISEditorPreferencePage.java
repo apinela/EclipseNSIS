@@ -25,6 +25,7 @@ import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Font;
@@ -59,6 +60,7 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
             {EclipseNSISPlugin.getResourceString("instruction.options.label"),INSTRUCTION_OPTIONS_STYLE}, //$NON-NLS-1$
             {EclipseNSISPlugin.getResourceString("symbols.label"),SYMBOLS_STYLE}, //$NON-NLS-1$
             {EclipseNSISPlugin.getResourceString("predefined.variables.label"),PREDEFINED_VARIABLES_STYLE}, //$NON-NLS-1$
+            {EclipseNSISPlugin.getResourceString("langstrings.label"),LANGSTRINGS_STYLE}, //$NON-NLS-1$
             {EclipseNSISPlugin.getResourceString("userdefined.variables.label"),USERDEFINED_VARIABLES_STYLE}, //$NON-NLS-1$
             {EclipseNSISPlugin.getResourceString("numbers.label"),NUMBERS_STYLE} //$NON-NLS-1$
     };
@@ -449,7 +451,7 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
     private Control createPreviewer(Composite parent)
     {
         mPreviewer= new NSISSourceViewer(parent, null, null, false, SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
-        NSISSourceViewerConfiguration configuration= new NSISSourceViewerConfiguration(mPreferenceStore, true);
+        SourceViewerConfiguration configuration= new NSISSourceViewerConfiguration(mPreferenceStore);
         mPreviewer.configure(configuration);
         Font font= JFaceResources.getFont(JFaceResources.TEXT_FONT);
         mPreviewer.getTextWidget().setFont(font);
