@@ -47,12 +47,22 @@ import org.eclipse.jface.text.source.projection.ProjectionViewer;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.ColorDialog;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.ScrollBar;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
@@ -77,6 +87,7 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
     private ILineTracker mLineTracker = null;
     private String[] mConfiguredContentTypes = null;
     private HashSet mPropertyQueue = new HashSet();
+    private SelectionAdapter mSelAdapter = null;
 
    /**
      * @param parent
@@ -183,6 +194,78 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
                 prependAutoEditStrategy(mTabConversionStrategy,mConfiguredContentTypes[i]);
             }
         }
+        final StyledText st = getTextWidget();
+        if(st != null) {
+            final ScrollBar sb = st.getVerticalBar();
+            if(sb != null) {
+                mSelAdapter = new SelectionAdapter() {
+                    private Shell mShell = null;
+                    private Text mText = null;
+                    
+                    public void widgetSelected(SelectionEvent e) 
+                    {
+                        switch(e.detail) {
+                            case 0:
+                                if(mShell != null) {
+                                    mShell.dispose();
+                                    mShell = null;
+                                    mText = null;
+                                }
+                                break;
+                            case SWT.DRAG:
+                                if(mShell == null) {
+                                    makeShell();
+                                }
+                                String text = (getTopIndex()+1)+" - "+(getBottomIndex()+1); //$NON-NLS-1$
+                                mText.setText(text);
+                                break;
+                        }
+                    }
+
+                    private void makeShell()
+                    {
+                        Point stLoc = st.toDisplay(0,0);
+                        Point stSize = st.getSize();
+                        Point sbSize = sb.getSize();
+                        int x = stLoc.x+stSize.x-sbSize.x-5;
+                        int y = stLoc.y+5;
+                        mShell = new Shell(st.getShell(), SWT.NO_TRIM | SWT.NO_FOCUS | SWT.ON_TOP);
+                        Display display = mShell.getDisplay();
+                        mShell.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
+                        GridLayout layout = new GridLayout(1,true);
+                        layout.marginHeight=1;
+                        layout.marginWidth=1;
+                        mShell.setLayout(layout);
+                        GridData data = new GridData(GridData.FILL_BOTH);
+                        mShell.setLayoutData(data);
+                        Composite composite = new Composite(mShell,SWT.NONE);
+                        data = new GridData(GridData.FILL_BOTH);
+                        composite.setLayoutData(data);
+                        composite.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+                        layout = new GridLayout(1,true);
+                        layout.marginHeight=2;
+                        layout.marginWidth=2;
+                        composite.setLayout(layout);
+                        mText= new Text(composite, SWT.SINGLE | SWT.READ_ONLY | SWT.RIGHT);
+                        data= new GridData(GridData.FILL_BOTH);
+                        mText.setLayoutData(data);
+                        mText.setForeground(display.getSystemColor(SWT.COLOR_INFO_FOREGROUND));
+                        mText.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+                        int lineCount = st.getLineCount();
+                        String text = new StringBuffer().append(lineCount).append(" - ").append(lineCount).toString(); //$NON-NLS-1$
+                        GC gc = new GC(mText);
+                        Point extent = gc.stringExtent(text);
+                        gc.dispose();
+                        int width = extent.x+2*(1+layout.marginWidth)+5;
+                        mShell.setBounds(x-width-5,y,width,extent.y+2*(1+layout.marginHeight));
+                        if(!mShell.isVisible()) {
+                            mShell.setVisible(true);
+                        }
+                    }
+                };
+                sb.addSelectionListener(mSelAdapter);
+            }
+        }
     }
 
     /* (non-Javadoc)
@@ -190,6 +273,15 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
      */
     public void unconfigure()
     {
+        if(mSelAdapter != null) {
+            StyledText st = getTextWidget();
+            if(st != null) {
+                ScrollBar sb = st.getVerticalBar();
+                if(sb != null) {
+                    sb.removeSelectionListener(mSelAdapter);
+                }
+            }
+        }
         mAutoIndentStrategy = null;
         mTabConversionStrategy = null;
         if(mPreferenceStore != null) {

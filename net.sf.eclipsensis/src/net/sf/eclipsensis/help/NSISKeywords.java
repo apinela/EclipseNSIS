@@ -67,14 +67,6 @@ public class NSISKeywords
         }
     };
     
-    private static String[] appendArray(String[] array, String[] array2)
-    {
-        String[] newArray = new String[array.length+array2.length];
-        System.arraycopy(array,0,newArray,0,array.length);
-        System.arraycopy(array2,0,newArray,array.length,array2.length);
-        return newArray;
-    }
-
     static {
         loadKeywords();
         NSISPreferences.getPreferences().getPreferenceStore().addPropertyChangeListener(cPropertyChangeListener);
@@ -202,45 +194,45 @@ public class NSISKeywords
         String[] temp = Common.EMPTY_STRING_ARRAY;
         Set set = getValidKeywords(predefinedPathVariables);
         cAllKeywordsSet.addAll(set);
-        temp = appendArray(temp, (PREDEFINED_PATH_VARIABLES = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
+        temp = (String[])Common.appendArray(temp, (PREDEFINED_PATH_VARIABLES = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
         
         set = getValidKeywords(predefinedVariables);
         cAllKeywordsSet.addAll(set);
-        temp = appendArray(temp, (String[])set.toArray(Common.EMPTY_STRING_ARRAY));
+        temp = (String[])Common.appendArray(temp, (String[])set.toArray(Common.EMPTY_STRING_ARRAY));
         PREDEFINED_VARIABLES = (String[])temp.clone();
         Arrays.sort(PREDEFINED_VARIABLES, String.CASE_INSENSITIVE_ORDER);
         
         set = getValidKeywords(singlelineCompiletimeCommands);
         cAllKeywordsSet.addAll(set);
-        temp = appendArray(temp, (SINGLELINE_COMPILETIME_COMMANDS = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
+        temp = (String[])Common.appendArray(temp, (SINGLELINE_COMPILETIME_COMMANDS = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
 
         set = getValidKeywords(multilineCompiletimeCommands);
         cAllKeywordsSet.addAll(set);
-        temp = appendArray(temp, (MULTILINE_COMPILETIME_COMMANDS = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
+        temp = (String[])Common.appendArray(temp, (MULTILINE_COMPILETIME_COMMANDS = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
 
         set = getValidKeywords(installerAttributes);
         cAllKeywordsSet.addAll(set);
-        temp = appendArray(temp, (INSTALLER_ATTRIBUTES = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
+        temp = (String[])Common.appendArray(temp, (INSTALLER_ATTRIBUTES = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
 
         set = getValidKeywords(commands);
         cAllKeywordsSet.addAll(set);
-        temp = appendArray(temp, (COMMANDS = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
+        temp = (String[])Common.appendArray(temp, (COMMANDS = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
 
         set = getValidKeywords(instructions);
         cAllKeywordsSet.addAll(set);
-        temp = appendArray(temp, (INSTRUCTIONS = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
+        temp = (String[])Common.appendArray(temp, (INSTRUCTIONS = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
 
         set = getValidKeywords(instructionParameters);
         cAllKeywordsSet.addAll(set);
-        temp = appendArray(temp, (INSTRUCTION_PARAMETERS = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
+        temp = (String[])Common.appendArray(temp, (INSTRUCTION_PARAMETERS = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
 
         set = getValidKeywords(instructionOptions);
         cAllKeywordsSet.addAll(set);
-        temp = appendArray(temp, (INSTRUCTION_OPTIONS = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
+        temp = (String[])Common.appendArray(temp, (INSTRUCTION_OPTIONS = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
 
         set = getValidKeywords(callbacks);
         cAllKeywordsSet.addAll(set);
-        temp = appendArray(temp, (CALLBACKS = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
+        temp = (String[])Common.appendArray(temp, (CALLBACKS = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
 
         ALL_KEYWORDS = temp;
         Arrays.sort(ALL_KEYWORDS, String.CASE_INSENSITIVE_ORDER);

@@ -190,6 +190,158 @@ public class Common
     }
 
     /**
+     * Flip array
+     *
+     * @param array       Array to be resized
+     */
+    public static void flipArray(Object array) 
+    {
+        if(array != null && array.getClass().isArray()) {
+            int len = Array.getLength(array);
+            int n = (2*len+1)/4;
+            for(int i=0; i<n; i++) {
+                int j = len - 1 - i;
+                Object temp = Array.get(array,i);
+                Array.set(array,i,Array.get(array,j));
+                Array.set(array,j,temp);
+            }
+        }
+        else {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    /**
+     * Resize array while keeping existing elements
+     *
+     * @param array       Array to be resized
+     * @param offset      Offset index
+     * @param newLength   New length of array
+     * @return            New array of different size
+     */
+    public static Object resizeArray(Object array, int offset, int newLength) 
+    {
+        if (array == null || newLength < 0)
+        {
+            throw new IllegalArgumentException();
+        }
+        Class c = array.getClass();
+        if ( !c.isArray() ) {
+            throw new IllegalArgumentException();
+        }
+        Object newArray = Array.newInstance(c.getComponentType(), newLength);
+        int oldLength = Array.getLength(array);
+        System.arraycopy(array,offset,newArray,0,Math.min(oldLength - offset, newLength));
+        return newArray;
+    }
+
+    /**
+     * Resize array while keeping existing elements
+     *
+     * @param array       Array to be resized
+     * @param newLength   New length of array
+     * @return            New array of different size
+     */
+    public static Object resizeArray(Object array, int newLength) 
+    {
+        return resizeArray(array,0,newLength);
+    }
+    
+    /**
+     * Get subset of array
+     *
+     * @param array       Input array
+     * @param beginOffset Begin offset (inclusive)
+     * @param endOffset   End offset (exclusive)
+     * @return            Sub array
+     */
+    public static Object subArray(Object array, int beginOffset, int endOffset)
+    {
+        if(array != null && array.getClass().isArray()) {
+            int n = Array.getLength(array);
+            if(beginOffset >= 0 && endOffset <= n && endOffset >= beginOffset) {
+                return resizeArray(array,beginOffset, endOffset-beginOffset);
+            }
+            else {
+                throw new IndexOutOfBoundsException();
+            }
+        }
+        else {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    /**
+     * Append one array to another
+     *
+     * @param oldArray    The target array
+     * @param newArray    The array to be appended
+     * @return            Appended array
+     */
+    public static Object appendArray(Object oldArray, Object newArray) 
+    {
+        return appendArray(oldArray, newArray, 0, Array.getLength(newArray));
+    }
+
+    /**
+     * Append one array to another
+     *
+     * @param oldArray    The target array
+     * @param newArray    The array to be appended
+     * @return            Appended array
+     */
+    public static Object appendArray(Object oldArray, Object newArray, int startIndex, int length) 
+    {
+        if (newArray == null)
+        {
+            return oldArray;
+        }
+        Class newClass = newArray.getClass();
+        if(!newClass.isArray()) {
+            throw new IllegalArgumentException();
+        }
+        if(oldArray == null) {
+            return cloneArray(newArray);
+        }
+        Class oldClass = oldArray.getClass();
+        if(!oldClass.isArray()) {
+            throw new IllegalArgumentException();
+        }
+        
+        Object appendedArray = null;
+        if(newClass.equals(oldClass) || oldClass.isAssignableFrom(newClass)) {
+            int oldLength = Array.getLength(oldArray);
+            int newLength = Array.getLength(newArray);
+            startIndex = Math.min(startIndex,newLength-1);
+            newLength = Math.min(newLength,newLength-startIndex);
+            appendedArray = resizeArray(oldArray, oldLength+newLength);
+            System.arraycopy(newArray,startIndex,appendedArray,oldLength,newLength);
+        }
+        return appendedArray;
+    }
+
+    /**
+     * Clone an array
+     *
+     * @param array       Array to be cloned
+     * @return            Clone of the array
+     */
+    public static Object cloneArray(Object array) 
+    {
+
+        Class clasz = array.getClass();
+        if(clasz.isArray()) {
+            Object arrayClone = Array.newInstance(clasz.getComponentType(),
+                                                  Array.getLength(array));
+            System.arraycopy(array,0,arrayClone,0,Array.getLength(arrayClone));
+            return arrayClone;
+        }
+        else {
+            throw new IllegalArgumentException();
+        }
+    }
+    
+    /**
      * Check for an empty array
      *
      * @param array       Array to be tested
