@@ -71,7 +71,7 @@ public class NSISEditor extends TextEditor implements INSISConstants, IPropertyC
         Object source = event.getSource();
         ISelection selection = event.getSelection();
         ISourceViewer sourceViewer = getSourceViewer();
-        if(source.equals(sourceViewer)) {
+        if(source.equals(sourceViewer) && selection instanceof ITextSelection) {
             IAction action = getAction("NSISAddBlockComment"); //$NON-NLS-1$
             if(action != null) {
                 action.setEnabled(sourceViewer.getSelectedRange().y > 0);
@@ -129,13 +129,13 @@ public class NSISEditor extends TextEditor implements INSISConstants, IPropertyC
                     mCurrentPosition = position;
                     try {
                         boolean moveCursor = true;
-                        ISelection sel = getSelectionProvider().getSelection();
-                        if(sel != null && sel instanceof ITextSelection) {
-                            int offset = ((ITextSelection)sel).getOffset();
-                            if(position.includes(offset)) {
-                                moveCursor = false;
-                            }
-                        }
+//                        ISelection sel = getSelectionProvider().getSelection();
+//                        if(sel != null && sel instanceof ITextSelection) {
+//                            int offset = ((ITextSelection)sel).getOffset();
+//                            if(position.includes(offset)) {
+//                                moveCursor = false;
+//                            }
+//                        }
                         
                         setHighlightRange(mCurrentPosition.getOffset(), 
                                           mCurrentPosition.getLength(), 
