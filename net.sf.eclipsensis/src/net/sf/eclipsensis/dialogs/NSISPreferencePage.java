@@ -39,7 +39,7 @@ public class NSISPreferencePage	extends NSISSettingsPage
     private static File cNSISHomesListFile = new File(EclipseNSISPlugin.getPluginStateLocation(),
                                                 NSISPreferencePage.class.getName()+".NSISHomesList.ser"); //$NON-NLS-1$
     private ComboViewer mNSISHome = null;
-    private Button mUseIntegratedHelp = null;
+    private Button mUseEclipseHelp = null;
     private Button mAutoShowConsole = null;
     
     public static void show()
@@ -174,10 +174,10 @@ public class NSISPreferencePage	extends NSISSettingsPage
                                       ((NSISPreferences)getSettings()).isAutoShowConsole());
         ((GridData)mAutoShowConsole.getLayoutData()).horizontalSpan = 2;
         
-        mUseIntegratedHelp = createCheckBox(composite, EclipseNSISPlugin.getResourceString("use.integrated.help.text"), //$NON-NLS-1$
-                                      EclipseNSISPlugin.getResourceString("use.integrated.help.tooltip"), //$NON-NLS-1$
-                                      ((NSISPreferences)getSettings()).isUseIntegratedHelp());
-        ((GridData)mUseIntegratedHelp.getLayoutData()).horizontalSpan = 2;
+        mUseEclipseHelp = createCheckBox(composite, EclipseNSISPlugin.getResourceString("use.eclipse.help.text"), //$NON-NLS-1$
+                                      EclipseNSISPlugin.getResourceString("use.eclipse.help.tooltip"), //$NON-NLS-1$
+                                      ((NSISPreferences)getSettings()).isUseEclipseHelp());
+        ((GridData)mUseEclipseHelp.getLayoutData()).horizontalSpan = 2;
         return composite;
     }
     
@@ -187,7 +187,7 @@ public class NSISPreferencePage	extends NSISSettingsPage
     protected void enableControls(boolean state)
     {
         mAutoShowConsole.setEnabled(state);
-        mUseIntegratedHelp.setEnabled(state);
+        mUseEclipseHelp.setEnabled(state);
         super.enableControls(state);
     }
     /* (non-Javadoc)
@@ -204,7 +204,7 @@ public class NSISPreferencePage	extends NSISSettingsPage
         mCompressor.select(getSettings().getDefaultCompressor());
         mInstructions.setInput(getSettings().getDefaultInstructions());
         mSymbols.setInput(getSettings().getDefaultSymbols());
-        mUseIntegratedHelp.setSelection(true);
+        mUseEclipseHelp.setSelection(true);
         mAutoShowConsole.setSelection(true);
     }
 
@@ -230,7 +230,7 @@ public class NSISPreferencePage	extends NSISSettingsPage
         NSISPreferences preferences = (NSISPreferences)getSettings();
         preferences.setNSISHome(home);
         preferences.setAutoShowConsole(mAutoShowConsole.getSelection());
-        preferences.setUseIntegratedHelp(mUseIntegratedHelp.getSelection());
+        preferences.setUseEclipseHelp(mUseEclipseHelp.getSelection());
         return super.performOk();
     }
 }

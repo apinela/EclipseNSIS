@@ -1,23 +1,27 @@
 <!--
 
 // these are the scripts that are called in the links.
-
-var DHTML = (document.getElementById || document.all || document.layers);
-var highlightColor = "rgb(204, 0, 0)";
+var ie = document.all;
+var ns4 = document.layers;
+var mozilla = document.getElementById;
+var DHTML = (mozilla || ie || ns4);
+var highlightColor = "rgb(153, 204, 204)";
 var lastObj = null;
 var lastObjBorder = null;
 
 function highlightDef(id)
 {
-	if(lastObj) {
-	    lastObj.style.border = lastObjBorder;
-	    lastObj = null;
-	    lastObjBorder = null;
-	}
-	lastObj = getObj(id);
-	if(lastObj) {
-        lastObjBorder = lastObj.style.border;
-        lastObj.style.border = "2px solid "+highlightColor;
+    if(DHTML) {
+    	if(lastObj) {
+    	    lastObj.style.border = lastObjBorder;
+    	    lastObj = null;
+    	    lastObjBorder = null;
+    	}
+    	lastObj = getObj(id);
+    	if(lastObj) {
+            lastObjBorder = lastObj.style.border;
+            lastObj.style.border = "2px solid "+highlightColor;
+        }
     }
 }
 
@@ -54,4 +58,22 @@ function makeObj(name)
    	    this.style = document.layers[name];
     }
 }
+
+function toggleImage(name, index, images)
+{
+    if(DHTML) {
+        index = 1-index;
+        document.images[name].src = images[index].src;
+    }
+    return index;
+}
+
+function changeCursor(id, cur)
+{
+    if(DHTML) {
+        var obj = getObj(id);
+        obj.style.cursor = cur;
+    }
+}
+
 // -->

@@ -207,12 +207,18 @@ public class NSISOutlineContentProvider implements ITreeContentProvider, INSISCo
 
     private void parse(IDocument document)
     {
-        ITypedRegion[][] nsisLines = NSISTextUtility.getNSISLines(document);
+        ITypedRegion[] partitions = NSISTextUtility.getNSISPartitions(document);
         if(mAnnotationModel != null) {
             for(Iterator iter = mAnnotationModel.getAnnotationIterator(); iter.hasNext(); ) {
                 mAnnotationModel.removeAnnotation((Annotation)iter.next());
             }
+            for (int i = 0; i < partitions.length; i++) {
+                if(partitions[i].getType().equals(NSISPartitionScanner.NSIS_MULTILINE_COMMENT)) {
+                    mAnnotationModel.addAnnotation(new ProjectionAnnotation(), new Position(partitions[i].getOffset(),partitions[i].getLength()));
+                }
+            }
         }
+        ITypedRegion[][] nsisLines = NSISTextUtility.getNSISLines(document, partitions);
         if(!Common.isEmptyArray(nsisLines)) {
             NSISOutlineElement rootElement = new NSISOutlineElement(ROOT,null);
             Stack parents = new Stack();

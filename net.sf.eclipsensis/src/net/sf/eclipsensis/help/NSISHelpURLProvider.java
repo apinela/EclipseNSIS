@@ -53,6 +53,8 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
     
     private ParserDelegator mParserDelegator = new ParserDelegator();
 
+    private String mStartPage = null;
+    private String mCHMStartPage = null;
     private Map mHelpURLs = null;
     private Map mCHMHelpURLs = null;
     
@@ -100,10 +102,21 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
     {
         mHelpURLs = null;
         mCHMHelpURLs = null;
+        mStartPage = null;
+        mCHMStartPage = null;
+
         String home = mPreferences.getNSISHome();
         if(!Common.isEmpty(home)) {
             File htmlHelpFile = new File(home,NSIS_CHM_HELP_FILE);
             if(htmlHelpFile.exists()) {
+                try {
+                    String startPage = mBundle.getString("help.start.page"); //$NON-NLS-1$
+                    mStartPage = MessageFormat.format(NSIS_HELP_FORMAT,new Object[]{startPage});
+                    mCHMStartPage = MessageFormat.format(NSIS_CHM_HELP_FORMAT,new Object[]{htmlHelpFile.getAbsolutePath(),startPage});
+                }
+                catch(MissingResourceException mre) {
+                }
+                
                 File stateLocation = EclipseNSISPlugin.getPluginStateLocation();
                 File cacheFile = new File(stateLocation,getClass().getName()+".HelpURLs.ser"); //$NON-NLS-1$
                 long cacheTimeStamp = 0;
@@ -233,6 +246,16 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
         }
     }
     
+    public String getHelpStartPage()
+    {
+        return mStartPage;
+    }
+    
+    public String getCHMHelpStartPage()
+    {
+        return mCHMStartPage;
+    }
+    
     public void keywordsChanged()
     {
         loadHelpURLs();
@@ -259,10 +282,10 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
         return chmHelpURL;
     }
     
-    private String getHelpURL(String keyWord, boolean useIntegratedHelp)
+    private String getHelpURL(String keyWord, boolean useEclipseHelp)
     {
         if(!Common.isEmpty(keyWord)) {
-            if(useIntegratedHelp) {
+            if(useEclipseHelp) {
                 if(mHelpURLs != null) {
                     return (String)mHelpURLs.get(keyWord);
                 }
@@ -276,10 +299,27 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
         return null;
     }
     
+    public void showHelp()
+    {
+        String url = null;
+        if(mPreferences.isUseEclipseHelp()) {
+            url = getHelpStartPage();
+        }
+        if(Common.isEmpty(url)) {
+            url = getCHMHelpStartPage();
+            if(!Common.isEmpty(url)) {
+                openCHMHelpURL(url);
+            }
+        }
+        else {
+            WorkbenchHelp.displayHelpResource(url);
+        }
+    }
+    
     public void showHelpURL(String keyword)
     {
         String url = null;
-        if(mPreferences.isUseIntegratedHelp()) {
+        if(mPreferences.isUseEclipseHelp()) {
             url = getHelpURL(keyword, true);
         }
         if(Common.isEmpty(url)) {
@@ -298,6 +338,8 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
      */
     public void openCHMHelpURL(String url)
     {
-        WinAPI.HtmlHelp(WinAPI.GetDesktopWindow(),url,WinAPI.HH_DISPLAY_TOPIC,0);
+        if(!NSISHTMLHelp.showHelp(url)) {
+            WinAPI.HtmlHelp(WinAPI.GetDesktopWindow(),url,WinAPI.HH_DISPLAY_TOPIC,0);
+        }
     }
 }

@@ -59,6 +59,33 @@
       </editor>
    </extension>
    <extension
+        point="org.eclipse.ui.editors.annotationTypes">
+        <type
+            name="net.sf.eclipsensis.editor.error"
+            super="org.eclipse.ui.workbench.texteditor.error"
+            markerType="net.sf.eclipsensis.NSISCompileProblem"
+            markerSeverity="2">
+        </type>
+        <type
+            name="net.sf.eclipsensis.editor.warning"
+            super="org.eclipse.ui.workbench.texteditor.warning"
+            markerType="net.sf.eclipsensis.NSISCompileProblem"
+            markerSeverity="1">
+        </type>
+        <type
+            name="net.sf.eclipsensis.editor.task"
+            super="org.eclipse.ui.workbench.texteditor.task"
+            markerType="net.sf.eclipsensis.NSISTask"
+            markerSeverity="0">
+        </type>
+        <type
+            name="net.sf.eclipsensis.editor.bookmark"
+            super="org.eclipse.ui.workbench.texteditor.bookmark"
+            markerType="org.eclipse.core.resources.bookmark"
+            markerSeverity="0">
+        </type>
+   </extension>
+   <extension
         id="net.sf.eclipsensis.editor.NSISDocumentSetupParticipant"
         name="%document.setup.participant.name"
         point="org.eclipse.core.filebuffers.documentSetup">
@@ -124,6 +151,14 @@
             name="%console.name"
             id="net.sf.eclipsensis.console.NSISConsole">
       </view>
+      <view
+            allowMultiple="false"
+            class="net.sf.eclipsensis.help.NSISHTMLHelp"
+            icon="%htmlhelp.icon"
+            category="net.sf.eclipsensis"
+            name="%htmlhelp.name"
+            id="net.sf.eclipsensis.help.NSISHTMLHelp">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.editorActions">
@@ -149,6 +184,15 @@
                tooltip="%about.action.tooltip"
                menubarPath="net.sf.eclipsensis.Menu/net.sf.eclipsensis.Group3"
                id="net.sf.eclipsensis.actions.NSISAboutAction">
+         </action>
+         <action
+               label="%htmlhelp.action.name"
+               icon="%htmlhelp.action.icon"
+               class="net.sf.eclipsensis.actions.NSISHTMLHelpAction"
+               tooltip="%htmlhelp.action.tooltip"
+               menubarPath="net.sf.eclipsensis.Menu/net.sf.eclipsensis.Group3"
+               toolbarPath="net.sf.eclipsensis.Group"
+               id="net.sf.eclipsensis.actions.NSISHTMLHelpAction">
          </action>
          <action
                label="%help.action.name"

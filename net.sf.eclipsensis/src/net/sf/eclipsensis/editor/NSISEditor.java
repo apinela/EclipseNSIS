@@ -179,9 +179,13 @@ public class NSISEditor extends TextEditor implements INSISConstants, IPropertyC
         mProjectionSupport= new ProjectionSupport(viewer, getAnnotationAccess(), getSharedColors());
         mProjectionSupport.addSummarizableAnnotationType("org.eclipse.ui.workbench.texteditor.error"); //$NON-NLS-1$
         mProjectionSupport.addSummarizableAnnotationType("org.eclipse.ui.workbench.texteditor.warning"); //$NON-NLS-1$
+        mProjectionSupport.addSummarizableAnnotationType("org.eclipse.ui.workbench.texteditor.task"); //$NON-NLS-1$
+        mProjectionSupport.addSummarizableAnnotationType("org.eclipse.ui.workbench.texteditor.bookmark"); //$NON-NLS-1$
         mProjectionSupport.install();
         NSISPreferences.getPreferences().getPreferenceStore().addPropertyChangeListener(this);
-        viewer.doOperation(ProjectionViewer.TOGGLE);
+        if(viewer.canDoOperation(ProjectionViewer.TOGGLE)) {
+            viewer.doOperation(ProjectionViewer.TOGGLE);
+        }
         mOutlineContentProvider = new NSISOutlineContentProvider(this);
         getSelectionProvider().addSelectionChangedListener(this);
         viewer.addPostSelectionChangedListener(this);

@@ -33,7 +33,7 @@ public class NSISPreferences extends NSISSettings implements IPropertyChangeList
     private File mNSISExe = null;
     private String mNSISHome = null;
     private Version mNSISVersion = null;
-    private boolean mUseIntegratedHelp = true;
+    private boolean mUseEclipseHelp = true;
     private boolean mAutoShowConsole = true;
     private Properties mNSISOptions = null;
     private Collection mTaskTags = null;
@@ -101,7 +101,7 @@ public class NSISPreferences extends NSISSettings implements IPropertyChangeList
     private void initializeNSISPreferences()
     {
         initializePreference(NSIS_HOME,""); //$NON-NLS-1$
-        initializePreference(USE_INTEGRATED_HELP,Boolean.TRUE); //$NON-NLS-1$
+        initializePreference(USE_ECLIPSE_HELP,Boolean.FALSE); //$NON-NLS-1$
         initializePreference(HDRINFO,(getDefaultHdrInfo()?Boolean.TRUE:Boolean.FALSE));
         initializePreference(LICENSE,(getDefaultLicense()?Boolean.TRUE:Boolean.FALSE));
         initializePreference(NOCONFIG,(getDefaultNoConfig()?Boolean.TRUE:Boolean.FALSE));
@@ -113,7 +113,7 @@ public class NSISPreferences extends NSISSettings implements IPropertyChangeList
         initializePreference(SYMBOLS,""); //$NON-NLS-1$
         
         setNSISHome(mPreferenceStore.getString(NSIS_HOME));
-        setUseIntegratedHelp(mPreferenceStore.getBoolean(USE_INTEGRATED_HELP));
+        setUseEclipseHelp(mPreferenceStore.getBoolean(USE_ECLIPSE_HELP));
     }
 
     private void initializeEditorPreference(String name, IPreferenceStore defaultStore, Class type)
@@ -289,7 +289,7 @@ public class NSISPreferences extends NSISSettings implements IPropertyChangeList
     public void store()
     {
         setValue(NSIS_HOME,mNSISHome);
-        setValue(USE_INTEGRATED_HELP,mUseIntegratedHelp);
+        setValue(USE_ECLIPSE_HELP,mUseEclipseHelp);
         setValue(AUTO_SHOW_CONSOLE,mAutoShowConsole);
         setValue(CASE_SENSITIVE_TASK_TAGS,mCaseSensitiveTaskTags);
         storeObject(TASK_TAGS,mTaskTags);
@@ -406,17 +406,17 @@ public class NSISPreferences extends NSISSettings implements IPropertyChangeList
     /**
      * @return Returns the useIntegratedHelp.
      */
-    public boolean isUseIntegratedHelp()
+    public boolean isUseEclipseHelp()
     {
-        return mUseIntegratedHelp;
+        return mUseEclipseHelp;
     }
 
     /**
-     * @param useIntegratedHelp The useIntegratedHelp to set.
+     * @param useEclipseHelp The useEclipseHelp to set.
      */
-    public void setUseIntegratedHelp(boolean useIntegratedHelp)
+    public void setUseEclipseHelp(boolean useEclipseHelp)
     {
-        mUseIntegratedHelp = useIntegratedHelp;
+        mUseEclipseHelp = useEclipseHelp;
     }
     
     /**

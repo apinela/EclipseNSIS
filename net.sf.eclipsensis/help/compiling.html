@@ -1,6 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<html>
-<head>
+<html><head>
 <!--
 ###############################################################################
 # Copyright (c) 2004, 2005 Sunil Kamath (IcemanK).
@@ -13,27 +12,49 @@
 ###############################################################################
 -->
   <title>EclipseNSIS - Compiling &amp; Testing</title>
-  <link rel="stylesheet" href="book.css" charset="ISO-8859-1"
- type="text/css">
-  <meta http-equiv="Content-Type"
- content="text/html; charset=ISO-8859-1">
+
+
+  <link rel="stylesheet" href="book.css" charset="ISO-8859-1" type="text/css">
+
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+
   <meta http-equiv="Content-Style-Type" content="text/css">
+
+  <script type="text/javascript" language="javascript" src="redirect.js">
+  </script>
 </head>
+
 <body>
 <div id="main">
-<a href="editing.html">Previous</a> | <a
- href="overview.html#contents">Contents</a> | <a
- href="console.html">Next</a>
+<a href="editing.html">Previous</a> | <a href="overview.html#contents">Contents</a> | <a href="console.html">Next</a>
 <hr>
-<h1>Compiling &amp; Testing
-</h1><br>
- <H1>UNDER CONSTRUCTION</H1>
-<hr><a href="editing.html">Previous</a> | <a
- href="overview.html#contents">Contents</a> | <a
- href="console.html">Next</a>
+<h1>Compiling &amp; Testing</h1>
+<p>
+EclipseNSIS includes integrated support for compiling NSIS scripts as well as for testing the installers
+created after compilation. Errors and warnings encountered during compilation are logged in the EclipseNSIS <a href="console.html">console</a> and markers
+are added to the NSIS script file indicating the nature and location of these errors and warnings. These markers can be
+viewed either as annotations in the EclipseNSIS editor <a href="editing.html#rulers">vertical and overview rulers</a> or as line items in the Eclipse Workbench Problems view.
+</p>
+<p>There are two ways to compile an NSIS script in EclipseNSIS:</p>
+<ol>
+<li>Using the <a href="editing.html#a_compile">Compile Script</a> or <a href="editing.html#a_compile_test">Compile Script and Test</a> menu items or buttons in the <a href="editing.html#menu">EclipseNSIS editor menu or toolbar</a>, respectively.</li><li>
+Right clicking on an NSIS script in any view that shows a list of Workspace resources (e.g., <a href="javascript:redirectEclipse('/org.eclipse.platform.doc.user/concepts/cnav.htm');">resource navigator</a>,
+<a href="javascript:redirectEclipse('/org.eclipse.jdt.doc.user/reference/ref-view-package-explorer.htm');">JDT package explorer</a>, etc.) and select the EclipseNSIS menu.</li></ol>
+<p style="text-align: center;"><img style="border: 0px solid ; width: 377px; height: 531px;" alt="EclipseNSIS Popup Menu" src="images/popupmenu.gif"></p>
+<p>If an NSIS script is successfully compiled in EclipseNSIS, i.e., there are no errors encountered during compilation,
+the installer file generated can be tested using the <a href="editing.html#a_test">Test Installer</a> menu item or toolbar button. This menu item will stay enabled as long as:</p>
+<ol style="list-style-type: lower-alpha;">
+<li>The NSIS script is not modified after the installer was generated.</li>
+<li>The installer still exists on the filesystem.</li>
+<li>The installer is not altered manually after successful script compilation.</li>
+</ol>
+<p>EclipseNSIS persistently remembers script compilation and installer status, i.e., the status is remembered even
+between Eclipse Workbench sessions.</p>
+<br>
+<hr><a href="editing.html">Previous</a> | <a href="overview.html#contents">Contents</a> | <a href="console.html">Next</a>
 <br>
 <br>
 <p><strong><small>Copyright &copy; 2004, 2005 Sunil Kamath (IcemanK).</small></strong></p>
 </div>
-</body>
-</html>
+
+</body></html>

@@ -10,7 +10,7 @@
 #     Sunil Kamath (IcemanK) - initial API and implementation
 ###############################################################################
 -->
-<toc label="EclipseNSIS Users Guide" topic="help/overview.html">
+<toc label="EclipseNSIS User Guide" topic="help/overview.html">
 <topic label="Installation" href="help/installation.html"/>
 <topic label="Configuration" href="help/configuration.html"/>
 <topic label="Editing NSIS Scripts" href="help/editing.html"/>
@@ -28,5 +28,5 @@
 <topic label="Script Properties" href="help/properties.html"/>
 <topic label="License &amp; Copyright" href="help/license.html"/>
 <topic label="Useful Links" href="help/links.html"/>
-<topic label="NSIS Users Manual" href="help/NSIS/Docs/IndexPage.html"/>
+<topic label="NSIS Users Manual" href="help/NSIS/Docs/Contents.html"/>
 </toc>
