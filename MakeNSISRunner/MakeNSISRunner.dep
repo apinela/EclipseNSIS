@@ -1,0 +1,7 @@
+# Microsoft Developer Studio Generated Dependency File, included by MakeNSISRunner.mak
+
+.\MakeNSISRunner.cpp : \
+	".\net_sf_eclipsensis_makensis_MakeNSISRunner.h"\
+	{$(INCLUDE)}"jni.h"\
+	{$(INCLUDE)}"jni_md.h"\
+	
