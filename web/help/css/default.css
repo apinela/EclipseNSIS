@@ -1,0 +1,50 @@
+body   { background-color : #EEEEEE; }                 /* Hinterrundfarbe --- */
+
+h1     { font-size        : xx-large;                  /* Ueberschrift 1 ---- */
+         font-weight      : bold
+         color            : #000000;
+         text-align       : justify;
+         padding          : 0px   0px   0px   0px;
+         margin           : 0.4cm 0.1cm 0.0cm 0.1cm; }
+
+h2     { font-size        : x-large;                   /* Ueberschrift 2 ---- */
+         font-weight      : bold
+         color            : #000000;
+         text-align       : justify;
+         padding          : 0px   0px   0px   0px;
+         margin           : 0.4cm 0.1cm 0.0cm 0.1cm; }
+
+h3     { font-size        : large;                     /* Ueberschrift 3 ---- */
+         font-weight      : bold
+         color            : #000000;
+         text-align       : justify;
+         padding          : 0px   0px   0px   0px;
+         margin           : 0.4cm 0.1cm 0.0cm 0.1cm; }
+
+h4     { font-size        : large;                     /* Ueberschrift 4 ---- */
+         font-weight      : normal;
+         color            : #000000;
+         text-align       : justify;
+         padding          : 0px   0px   0px   0px;
+         margin           : 0.4cm 0.1cm 0.0cm 0.1cm; }
+
+p      { color            : #000000;                   /* Absaetze ---------- */
+         text-align       : justify;
+         padding          : 0px   0px   0px   0px;
+         margin           : 0.2cm 0.1cm 0.0cm 0.1cm; }
+
+ul     { padding          : 0.0cm 0.1cm 0.0cm 0.0cm;   /* Ungeordnete Liste - */
+         margin           : 0.0cm 0.1cm 0.0cm 1.0cm; }
+
+table  { margin           : 0.4cm 0.4cm 0.1cm 0.5cm;   /* Tabelle ----------- */
+         border-collapse  : collapse; }
+
+td     { padding          : 3px 6px 3px 6px;           /* Tabellenfelder      */
+         vertical-align   : top; }
+
+.b0010 { border-bottom    : 1px solid black; }         /* Border unten        */
+.b0100 { border-right     : 1px solid black; }         /* Border rechts       */
+.b0110 { border-bottom    : 1px solid black;           /* Border rechts-unten */
+         border-right     : 1px solid black; }
+.b1111 { border           : 1px solid black; }         /* Border umlaufend    */
+

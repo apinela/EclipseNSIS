@@ -7,12 +7,12 @@
 # All rights reserved.
 # This program is made available under the terms of the Common Public License
 # v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
-#
-# Contributors:
+# # Contributors:
 # Sunil Kamath (IcemanK) - initial API and implementation
 ###############################################################################
 -->
-  <title>EclipseNSIS - Templates Preferences</title>
+  <title>EclipseNSIS - Templates
+Preferences</title>
   <link rel="stylesheet" href="book.css" charset="ISO-8859-1"
  type="text/css">
   <meta http-equiv="Content-Type"
@@ -21,8 +21,9 @@
 </head>
 <body>
 <div id="main">
-<a href="editorprefs.html">Previous</a> | <a
- href="overview.html#contents">Contents</a> | <a href="tasktagprefs.html">Next</a>
+<a href="editorprefs.html">Previous</a>
+| <a href="overview.html#contents">Contents</a>
+| <a href="tasktagprefs.html">Next</a>
 <hr>
 <h2><a name="templates"></a>Templates</h2>
 The Templates preference page is used to work with code
@@ -30,132 +31,170 @@ templates. A template is a convenience for the programmer to quickly
 insert often reoccurring source code patterns.
 There are three types of templates:<br>
 <ul>
-  <li><span style="font-weight: bold;">Built-in</span>: Templates which
+  <li><span style="font-weight: bold;">Built-in</span>:
+Templates which
 are prepackaged along with the plugin.</li>
-  <li><span style="font-weight: bold;">Custom</span>: Built-in
+  <li><span style="font-weight: bold;">Custom</span>:
+Built-in
 templates which have been modified by the user.</li>
-  <li><span style="font-weight: bold;">User-defined</span>: Templates
+  <li><span style="font-weight: bold;">User-defined</span>:
+Templates
 which have been created by the user.<br>
   </li>
 </ul>
-
-Templates are created and edited using the <a href="#templateeditor">Template Editor</a>.
-<br><br>
+Templates are created and edited using the <a href="#templateeditor">Template
+Editor</a>.
+<br>
+<br>
 <img alt="Editor Templates Preferences" src="images/templatepref.gif"
+ ismap="ismap"
  style="border: medium none ; width: 425px; height: 508px;"
  usemap="#templatepref"><br>
 <br>
 <dl>
   <dt><a name="a_templates"></a><strong>Templates</strong></dt>
-  <dd>Displays the list of templates. Only checked templates are
+  <dd>Displays the list of
+templates. Only checked templates are
 enabled for use. To disable/enable a template uncheck/check the
 checkbox associated with it The following buttons allow manipulation
-and configuration of templates. <a href="javascript:history.go(-1)">&#8592;
+and configuration of templates. <a href="javascript:history.go(-1)">&larr;
 Back</a></dd>
   <dl>
     <dt><a name="a_new1"></a><strong>New</strong></dt>
-    <dd> Opens a <a href="#templateeditor">dialog</a> to create a new
-template. <a href="javascript:history.go(-1)">&#8592; Back</a></dd>
+    <dd> Opens a <a href="#templateeditor">dialog</a>
+to create a new
+template. <a href="javascript:history.go(-1)">&larr; Back</a></dd>
     <dt><a name="a_edit3"></a><strong>Edit</strong></dt>
-    <dd> Opens a <a href="#templateeditor">dialog</a> to edit the
-currently selected template. <a href="javascript:history.go(-1)">&#8592; Back</a></dd>
+    <dd> Opens a <a href="#templateeditor">dialog</a>
+to edit the
+currently selected template. <a href="javascript:history.go(-1)">&larr;
+Back</a></dd>
     <dt><a name="a_remove1"></a><strong>Remove</strong></dt>
-    <dd>Remove all selected templates. <a
- href="javascript:history.go(-1)">&#8592; Back</a></dd>
-    <dt><a name="a_restore1"></a><strong>Restore removed</strong></dt>
-    <dd>Restore any custom templates removed during the current
+    <dd>Remove all selected
+templates. <a href="javascript:history.go(-1)">&larr; Back</a></dd>
+    <dt><a name="a_restore1"></a><strong>Restore
+removed</strong></dt>
+    <dd>Restore any custom
+templates removed during the current
 preferences editing session as long as the preferences have not yet
-been saved using the <span style="font-weight: bold;">Apply</span> or <span
- style="font-weight: bold;">OK</span> buttons.. <a
- href="javascript:history.go(-1)">&#8592; Back</a></dd>
-    <dt><a name="a_revert1"></a><strong>Revert to default</strong></dt>
-    <dd>Revert all selected custom templates back to their original
-built-in states. <a href="javascript:history.go(-1)">&#8592; Back</a></dd>
+been saved using the <span style="font-weight: bold;">Apply</span>
+or <span style="font-weight: bold;">OK</span>
+buttons.. <a href="javascript:history.go(-1)">&larr; Back</a></dd>
+    <dt><a name="a_revert1"></a><strong>Revert
+to default</strong></dt>
+    <dd>Revert all selected custom
+templates back to their original
+built-in states. <a href="javascript:history.go(-1)">&larr; Back</a></dd>
     <dt><a name="a_import1"></a><strong>Import</strong></dt>
-    <dd> Imports templates from the file system. <a
- href="javascript:history.go(-1)">&#8592; Back</a></dd>
+    <dd> Imports templates from
+the file system. <a href="javascript:history.go(-1)">&larr; Back</a></dd>
     <dt><a name="a_export1"></a><strong>Export</strong></dt>
-    <dd>Exports all selected templates to the file system. <a
- href="javascript:history.go(-1)">&#8592; Back</a></dd>
+    <dd>Exports all selected
+templates to the file system. <a href="javascript:history.go(-1)">&larr;
+Back</a></dd>
   </dl>
   <dt><a name="a_templatepreview"></a><strong>Preview</strong></dt>
-  <dd>Preview the pattern of the selected template. <a
- href="javascript:history.go(-1)">&#8592; Back</a></dd>
+  <dd>Preview the pattern of the
+selected template. <a href="javascript:history.go(-1)">&larr; Back</a></dd>
 </dl>
-<a href="preferences.html">Back to Preferences</a><br>
-<h3><a name="templateeditor"></a>Template Editor</h3>
+<a href="preferences.html">Back
+to Preferences</a><br>
+<h3><a name="templateeditor"></a>Template
+Editor</h3>
 The Templates Editor dialog is used to create new and edit existing
 code
 templates.<br>
 <br>
-<img alt="Editor Template Editor" src="images/templatedialog.gif"
- usemap="#templatedialog"
+<img alt="Editor Template Editor" ismap="ismap"
+ src="images/templatedialog.gif" usemap="#templatedialog"
  style="border: medium none ; width: 529px; height: 284px;"><br>
 <br>
 <dl>
   <dt><a name="a_name1"></a><strong>Name</strong></dt>
-  <dd>The name of the template. <a href="javascript:history.go(-1)">&#8592;
+  <dd>The name of the template. <a href="javascript:history.go(-1)">&larr;
 Back</a></dd>
   <dt><a name="a_context"></a><strong>Context</strong></dt>
-  <dd> The context determines where the template can be used and the
-set of available pre-defined template variables. EclipseNSIS provides only one context- <strong>NSIS Script</strong>. <a
- href="javascript:history.go(-1)">&#8592; Back</a></dd>
+  <dd> The context determines
+where the template can be used and the
+set of available pre-defined template variables. EclipseNSIS provides
+only one context- <strong>NSIS
+Script</strong>. <a href="javascript:history.go(-1)">&larr; Back</a></dd>
   <dt><a name="a_description1"></a><strong>Description</strong></dt>
-  <dd>A description of the template, which is displayed to the user
-when choosing the template. <a href="javascript:history.go(-1)">&#8592; Back</a></dd>
+  <dd>A description of the
+template, which is displayed to the user
+when choosing the template. <a href="javascript:history.go(-1)">&larr;
+Back</a></dd>
   <dt><a name="a_pattern"></a><strong>Pattern</strong></dt>
-  <dd>The template pattern. The pattern editor is syntax highlighting
+  <dd>The template pattern. The
+pattern editor is syntax highlighting
 and provides code completion assistance (press Ctrl-Space). A pattern
 consists of source code with replaceable variables. The format of a
 replaceable variable is %name% where "name" is a variable name. <a
- href="javascript:history.go(-1)">&#8592; Back</a></dd>
-  <dt><a name="a_insertvar"></a><strong>Insert Variable</strong></dt>
-  <dd> Displays a list of pre-defined context specific variables. The
+ href="javascript:history.go(-1)">&larr; Back</a></dd>
+  <dt><a name="a_insertvar"></a><strong>Insert
+Variable</strong></dt>
+  <dd> Displays a list of
+pre-defined context specific variables. The
 following pre-defined variables are available: <a
- href="javascript:history.go(-1)">&#8592; Back</a></dd>
+ href="javascript:history.go(-1)">&larr; Back</a></dd>
   <dl>
     <dt><strong>%cursor%</strong></dt>
-    <dd>Specifies the cursor position when the template edit mode is
+    <dd>Specifies the cursor
+position when the template edit mode is
 left. This is useful when the cursor should jump to another place than
 to the end of the template on leaving template edit mode.</dd>
     <dt><strong>%date%</strong></dt>
-    <dd>Evaluates to the current date.</dd>
+    <dd>Evaluates to the current
+date.</dd>
     <dt><strong>%percent%</strong></dt>
-    <dd>Evaluates to the percent symbol '%'. Alternatively, two
+    <dd>Evaluates to the percent
+symbol '%'. Alternatively, two
 percents can be used: '%%'.</dd>
     <dt><strong>%time%</strong></dt>
-    <dd>Evaluates to the current time.</dd>
+    <dd>Evaluates to the current
+time.</dd>
     <dt><strong>%year%</strong></dt>
-    <dd>Evaluates to the current year.</dd>
+    <dd>Evaluates to the current
+year.</dd>
     <dt><strong>%user%</strong></dt>
     <dd>Evaluates to the user name.</dd>
     <dt><strong>%line_selection%</strong></dt>
-    <dd>Evaluates to the selected line in the editor.</dd>
+    <dd>Evaluates to the selected
+line in the editor.</dd>
     <dt><strong>%word_selection%</strong></dt>
-    <dd>Evaluates to the selected word in the editor.</dd>
+    <dd>Evaluates to the selected
+word in the editor.</dd>
     <dt><strong>%register%</strong></dt>
-    <dd>Evaluates to an NSIS register, e.g., $0, $
+    <dd>Evaluates to an NSIS
+register, e.g., $0, $
 R0, etc.</dd>
     <dt><strong>%pathconst%</strong></dt>
-    <dd>Evaluates to an NSIS path constant, e.g., $PROGRAMFILES,
+    <dd>Evaluates to an NSIS path
+constant, e.g., $PROGRAMFILES,
 $DESKTOP, etc..</dd>
     <dt><strong>%pathvar%</strong></dt>
-    <dd>Evaluates to an NSIS path variable, e.g., $INSTDIR, $OUTDIR,
+    <dd>Evaluates to an NSIS path
+variable, e.g., $INSTDIR, $OUTDIR,
 etc.</dd>
     <dt><strong>%predefine%</strong></dt>
-    <dd>Evaluates to an NSIS predefine, e.g., ${__FILE__}, ${__LINE__},
+    <dd>Evaluates to an NSIS
+predefine, e.g., ${__FILE__}, ${__LINE__},
 etc.</dd>
     <dt><strong>%pagetype%</strong></dt>
-    <dd>Evaluates to an NSIS installer page type, e.g., instfiles,
+    <dd>Evaluates to an NSIS
+installer page type, e.g., instfiles,
 license, etc.</dd>
   </dl>
 </dl>
-<a href="preferences.html">Back to Preferences</a><br>
-<hr><a href="editorprefs.html">Previous</a> | <a
- href="overview.html#contents">Contents</a> | <a href="tasktagprefs.html">Next</a>
+<a href="preferences.html">Back
+to Preferences</a><br>
+<hr><a href="editorprefs.html">Previous</a>
+| <a href="overview.html#contents">Contents</a>
+| <a href="tasktagprefs.html">Next</a>
 <br>
 <br>
-<p><strong><small>Copyright &copy; 2004, 2005 Sunil Kamath
+<p><strong><small>Copyright
+&copy; 2004, 2005 Sunil Kamath
 (IcemanK).</small></strong></p>
 <map name="templatepref">
 <area id="templatepreview" shape="RECT" href="#a_templatepreview"

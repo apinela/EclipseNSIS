@@ -7,12 +7,12 @@
 # All rights reserved.
 # This program is made available under the terms of the Common Public License
 # v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
-#
-# Contributors:
+# # Contributors:
 # Sunil Kamath (IcemanK) - initial API and implementation
 ###############################################################################
 -->
-  <title>EclipseNSIS - EclipseNSIS Preferences</title>
+  <title>EclipseNSIS - EclipseNSIS
+Preferences</title>
   <link rel="stylesheet" href="book.css" charset="ISO-8859-1"
  type="text/css">
   <meta http-equiv="Content-Type"
@@ -21,7 +21,9 @@
 </head>
 <body>
 <div id="main">
-<a href="preferences.html">Previous</a> | <a href="overview.html#contents">Contents </a>| <a href="editorprefs.html">Next</a>
+<a href="preferences.html">Previous</a>
+| <a href="overview.html#contents">Contents
+</a>| <a href="editorprefs.html">Next</a>
 <hr>
 <h2><a name="nsis"></a>EclipseNSIS</h2>
 These preferences are used to set global settings for NSIS scripts,
@@ -29,124 +31,157 @@ including
 command
 line options for the MakeNSIS compiler. These options are applied
 during script compilation, unless overridden on the script level (see
-the <a href="properties.html">Properties</a> section).<br>
+the <a href="properties.html">Properties</a>
+section).<br>
 The EclipseNSIS Preferences page has two tabs:<br>
 <ul>
-	<li><a href="#general">General</a></li>
-	<li><a href="#symbols">Defined Symbols</a></li>
+  <li><a href="#general">General</a></li>
+  <li><a href="#symbols">Defined Symbols</a></li>
 </ul>
 <br>
 <br>
 <h3><a name="general"></a>General</h3>
-<img
- alt="EclipseNSIS Preferences General Tab" src="images/preferences1.gif"
+<img alt="EclipseNSIS Preferences General Tab"
+ src="images/preferences1.gif" ismap="ismap"
  style="border: medium none ; width: 425px; height: 508px;"
  usemap="#preferences1"><br>
 <br>
 <dl>
   <dt><a name="a_nsishome"></a><strong>NSIS
 Home</strong></dt>
-  <dd>Location of NSIS installation. This
+  <dd>Location of NSIS
+installation. This
 is the folder where
 makensis.exe can be found. In case there are multiple NSIS
 installations, e.g. in a development environment, the drop-down combo
 remembers the locations you specified, so that they are available for
-quick NSIS home selection.&nbsp;<a href="javascript:history.go(-1)">&#8592;
+quick NSIS home selection.&nbsp;<a href="javascript:history.go(-1)">&larr;
 Back</a> </dd>
-  <dt><a name="a_autoconsole"></a><strong>Automatically open NSIS
+  <dt><a name="a_autoconsole"></a><strong>Automatically
+open NSIS
 console</strong></dt>
-  <dd>Automatically open the EclipseNSIS console view when compiling a script.
+  <dd>Automatically open the
+EclipseNSIS console view when compiling a script.
 If the view is already open, it is activated. <a
- href="javascript:history.go(-1)">&#8592; Back</a></dd>
-  <dt><a name="a_help"></a><strong>Use Eclipse integrated help browser</strong></dt>
-  <dd>Use the Eclipse integrated help browser to display NSIS help. If
+ href="javascript:history.go(-1)">&larr; Back</a></dd>
+  <dt><a name="a_help"></a><strong>Use
+Eclipse integrated help browser</strong></dt>
+  <dd>Use the Eclipse integrated
+help browser to display NSIS help. If
 this option is unchecked, then the NSIS htmlhelp file is opened
-instead. <a href="javascript:history.go(-1)">&#8592; Back</a></dd>
-  <dt><a name="a_hdrinfo"></a><strong>Print NSIS header info</strong></dt>
-  <dd>Prints out information on what options were used to compile
+instead. <a href="javascript:history.go(-1)">&larr;
+Back</a></dd>
+  <dt><a name="a_hdrinfo"></a><strong>Print
+NSIS header info</strong></dt>
+  <dd>Prints out information on
+what options were used to compile
 MakeNSIS was compiled with. Equivalent to the /HDRINFO compiler option.
-    <a href="javascript:history.go(-1)">&#8592; Back</a></dd>
-  <dt><a name="a_license"></a><strong>Print NSIS license</strong></dt>
-  <dd>Displays a keen license page. Equivalent to the /LICENSE compiler
-option. <a href="javascript:history.go(-1)">&#8592; Back</a></dd>
-  <dt><a name="a_noconfig"></a><strong>Do not include default NSIS
+    <a href="javascript:history.go(-1)">&larr;
+Back</a></dd>
+  <dt><a name="a_license"></a><strong>Print
+NSIS license</strong></dt>
+  <dd>Displays a keen license
+page. Equivalent to the /LICENSE compiler
+option. <a href="javascript:history.go(-1)">&larr;
+Back</a></dd>
+  <dt><a name="a_noconfig"></a><strong>Do
+not include default NSIS
 config</strong></dt>
-  <dd>Disables inclusion of &lt;path to makensis.exe&gt;\nsisconf.nsh.
+  <dd>Disables inclusion of
+&lt;path to makensis.exe&gt;\nsisconf.nsh.
 Without this parameter, installer defaults are set from nsisconf.nsh..
 Equivalent to the /NOCONFIG compiler option. <a
- href="javascript:history.go(-1)">&#8592; Back</a></dd>
-  <dt><a name="a_nocd"></a><strong>Don't change directory</strong></dt>
-  <dd>Disables the current directory change to that of the .nsi file.
+ href="javascript:history.go(-1)">&larr; Back</a></dd>
+  <dt><a name="a_nocd"></a><strong>Don't
+change directory</strong></dt>
+  <dd>Disables the current
+directory change to that of the .nsi file.
 Equivalent to the /NOCD compiler option. <a
- href="javascript:history.go(-1)">&#8592; Back</a></dd>
+ href="javascript:history.go(-1)">&larr; Back</a></dd>
   <dt><a name="a_verbosity"></a><strong>Verbosity</strong></dt>
-  <dd>Sets the verbosity of the compiler output. Equivalent to the /V
-compiler option. <a href="javascript:history.go(-1)">&#8592; Back</a></dd>
+  <dd>Sets the verbosity of the
+compiler output. Equivalent to the /V
+compiler option. <a href="javascript:history.go(-1)">&larr; Back</a></dd>
   <dt><a name="a_compressor"></a><strong>Compressor</strong></dt>
-  <dd>Sets the default compressor for NSIS scripts. This overrides any
+  <dd>Sets the default compressor
+for NSIS scripts. This overrides any
 compressor settings in the script. When the Best compressor option is
 selected, all compressors are tried, and the one with the best
 compression is used for creating the installer. <a
- href="javascript:history.go(-1)">&#8592; Back</a></dd>
+ href="javascript:history.go(-1)">&larr; Back</a></dd>
   <dt><a name="a_instructions"></a><strong>Instructions</strong></dt>
-  <dd>Instructions for the MakeNSIS compiler to execute prior to
+  <dd>Instructions for the
+MakeNSIS compiler to execute prior to
 compiling the script. Equivalent to the /X compiler option. The
 following buttons allow the manipulation and configuration of
-instructions. <a href="javascript:history.go(-1)">&#8592; Back</a></dd>
+instructions. <a href="javascript:history.go(-1)">&larr; Back</a></dd>
   <dl>
     <dt><a name="a_add1"></a><strong>Add<br>
       </strong></dt>
-    <dd>Add a new instruction. <a href="javascript:history.go(-1)">&#8592;
+    <dd>Add a new instruction. <a href="javascript:history.go(-1)">&larr;
 Back</a></dd>
     <dt><a name="a_edit1"></a><strong>Edit</strong></dt>
-    <dd>Edit the selected instruction. <a
- href="javascript:history.go(-1)">&#8592; Back</a></dd>
+    <dd>Edit the selected
+instruction. <a href="javascript:history.go(-1)">&larr; Back</a></dd>
     <dt><a name="a_delete1"></a><strong>Delete</strong></dt>
-    <dd>Delete the selected instruction(s). <a
- href="javascript:history.go(-1)">&#8592; Back</a></dd>
+    <dd>Delete the selected
+instruction(s). <a href="javascript:history.go(-1)">&larr; Back</a></dd>
     <dt><a name="a_up1"></a><strong>Up</strong></dt>
-    <dd>Move the selected instruction(s) up in the execution sequence. <a
- href="javascript:history.go(-1)">&#8592; Back</a></dd>
+    <dd>Move the selected
+instruction(s) up in the execution sequence. <a
+ href="javascript:history.go(-1)">&larr; Back</a></dd>
     <dt><a name="a_down1"></a><strong>Down</strong></dt>
-    <dd>Move the selected instruction(s) down in the execution
-sequence. <a href="javascript:history.go(-1)">&#8592; Back</a></dd>
-  </dl></dl>
- <a href="preferences.html">Back to Preferences</a><br>
- <h3><a name="symbols"></a>Defined Symbols</h3>
-  <img
- alt="EclipseNSIS Preferences Symbols Tab" src="images/preferences2.gif"
+    <dd>Move the selected
+instruction(s) down in the execution
+sequence. <a href="javascript:history.go(-1)">&larr; Back</a></dd>
+  </dl>
+</dl>
+<a href="preferences.html">Back
+to Preferences</a><br>
+<h3><a name="symbols"></a>Defined
+Symbols</h3>
+<img alt="EclipseNSIS Preferences Symbols Tab"
+ src="images/preferences2.gif" ismap="ismap"
  style="border: medium none ; width: 425px; height: 508px;"
- usemap="#preferences2"><br><br>
- <dl>
-  <dt><a name="a_symbols"></a><strong>Defined Symbols</strong></dt>
-  <dd>Symbols to be defined by the MakeNSIS compiler prior to
+ usemap="#preferences2"><br>
+<br>
+<dl>
+  <dt><a name="a_symbols"></a><strong>Defined
+Symbols</strong></dt>
+  <dd>Symbols to be defined by the
+MakeNSIS compiler prior to
 compiling the script. Equivalent to the /D compiler option. The
 following buttons allow the manipulation and configuration of symbol
-definitions. <a href="javascript:history.go(-1)">&#8592; Back</a></dd>
+definitions. <a href="javascript:history.go(-1)">&larr; Back</a></dd>
   <dl>
     <dt><a name="a_add2"></a><strong>Add<br>
       </strong></dt>
-    <dd>Add a new symbol. <a href="javascript:history.go(-1)">&#8592; Back</a></dd>
+    <dd>Add a new symbol. <a href="javascript:history.go(-1)">&larr;
+Back</a></dd>
     <dt><a name="a_edit2"></a><strong>Edit</strong></dt>
-    <dd>Edit the selected symbol. <a href="javascript:history.go(-1)">&#8592;
+    <dd>Edit the selected symbol. <a href="javascript:history.go(-1)">&larr;
 Back</a></dd>
     <dt><a name="a_delete2"></a><strong>Delete</strong></dt>
-    <dd>Delete the selected symbol(s). <a
- href="javascript:history.go(-1)">&#8592; Back</a></dd>
+    <dd>Delete the selected
+symbol(s). <a href="javascript:history.go(-1)">&larr; Back</a></dd>
     <dt><a name="a_up2"></a><strong>Up</strong></dt>
-    <dd>Move the selected symbol(s) up in the define sequence. <a
- href="javascript:history.go(-1)">&#8592; Back</a></dd>
+    <dd>Move the selected
+symbol(s) up in the define sequence. <a
+ href="javascript:history.go(-1)">&larr; Back</a></dd>
     <dt><a name="a_down2"></a><strong>Down</strong></dt>
-    <dd>Move the selected symbol(s) down in the define sequence. <a
- href="javascript:history.go(-1)">&#8592; Back</a></dd>
+    <dd>Move the selected
+symbol(s) down in the define sequence. <a
+ href="javascript:history.go(-1)">&larr; Back</a></dd>
   </dl>
 </dl>
-<a href="preferences.html">Back to Preferences</a><br>
-<hr><a href="preferences.html">Previous</a> | <a
- href="overview.html#contents">Contents</a> | <a
- href="editorprefs.html">Next</a><br>
+<a href="preferences.html">Back
+to Preferences</a><br>
+<hr><a href="preferences.html">Previous</a>
+| <a href="overview.html#contents">Contents</a>
+| <a href="editorprefs.html">Next</a><br>
 <br>
-<p><strong><small>Copyright &copy; 2004, 2005 Sunil Kamath
+<p><strong><small>Copyright
+&copy; 2004, 2005 Sunil Kamath
 (IcemanK).</small></strong></p>
 <map name="preferences1">
 <area id="down1" shape="RECT" href="#a_down1" alt="Move down"

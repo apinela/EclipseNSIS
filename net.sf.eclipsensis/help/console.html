@@ -1,4 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
 <!--
 ###############################################################################
 # Copyright (c) 2004, 2005 Sunil Kamath (IcemanK).
@@ -7,11 +9,120 @@
 # v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
 #
 # Contributors:
-#     Sunil Kamath (IcemanK) - initial API and implementation
+# Sunil Kamath (IcemanK) - initial API and implementation
 ###############################################################################
 -->
-<html>
+  <title>EclipseNSIS - Console</title>
+  <link rel="stylesheet" href="book.css" charset="ISO-8859-1"
+ type="text/css">
+  <meta http-equiv="Content-Type"
+ content="text/html; charset=ISO-8859-1">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+</head>
 <body>
-Under construction
+<div id="main">
+<a href="compiling.html">Previous</a>
+| <a href="overview.html#contents">Contents</a>
+| <a href="wizard.html">Next</a>
+<hr>
+<h1>Console
+</h1>
+The EclipseNSIS console shows the output of an NSIS script compilation
+process. The console shows three different kinds of output:
+<br>
+<ul>
+  <li>Information </li>
+  <li>Warnings </li>
+  <li>Errors </li>
+</ul>
+The font and colors for the console can be customized on the <a
+ href="colorsfontsprefs.html">Colors &amp; Fonts
+preferences page</a>.<br>
+By default, the console is opened automatically, if it is not already
+open, and made visible whenever a script is compiled. This behavior can
+also be modified on the <a href="nsisprefs.html">EclipseNSIS
+preferences page</a>. If errors or
+warnings are detected, problem markers are created in the NSIS script
+file with information about these problems. These problem markers can
+be viewed either in the EclipseNSIS editor or in the standard Eclipse
+Problems view. Errors and warning are also marked as hyperlinks in the
+console. Clicking on a hyperlink will take you to the line associated
+with the error or warning. If the MakeNSIS compiler does not provide a
+line number for the error or warning, the problem marker is assigned to
+the first line of the script file.<br>
+For performance reasons, the console output is displayed using a Table
+widget. This means that output text can only be selected (and copied)
+in complete lines only- partial line selections are not possible. To
+select a line of output, simply click on it. For multiple line
+selections, either use the standard Windows Ctrl+Left Mouse
+Button&nbsp; (for multiple individual lines) or Shift+Left Mouse
+Button (for a range of lines) or click on the first line to select and
+drag the cursor onto the other lines to select.<br>
+For detailed help about the console, click on the appropriate part of
+the console screenshot.<br>
+<br>
+<img alt="EclipseNSIS Console" src="images/console.gif" ismap="ismap"
+ usemap="#console" style="" medium="" none="" ;="" 705px="" 294px=""
+ border="" height="" width=""><br>
+<br>
+<dl>
+  <dt><a name="a_output"></a>Output</dt>
+  <dd>The output from the MakeNSIS
+compilation process.</dd>
+</dl>
+<dl>
+  <dt><a name="a_error"></a>Error</dt>
+  <dd>An example error message.
+Clicking on it will highlight the relevant line in the EclipseNSIS
+editor.</dd>
+</dl>
+<dl>
+  <dt><a name="a_warning"></a>Warning</dt>
+  <dd>An example warning message.
+Clicking on it will highlight the relevant line in the EclipseNSIS
+editor.</dd>
+  <dt><a name="a_cancel"></a>
+Cancel Compilation</dt>
+  <dd>Cancels NSIS script
+compilation. This button is enabled only during compilation.</dd>
+  <dt><a name="a_copy"></a>
+Copy</dt>
+  <dd>Copy the selected lines from
+the console.</dd>
+  <dt><a name="a_selectall"></a>
+Select All</dt>
+  <dd>Select all the lines in
+the console.</dd>
+  <dt><a name="a_clear"></a>
+Clear</dt>
+  <dd>Clear
+the console of all output.</dd>
+</dl>
+<br>
+<br>
+<hr><a href="compiling.html">Previous</a>
+| <a href="overview.html#contents">Contents</a>
+| <a href="wizard.html">Next</a>
+<br>
+<br>
+<p><strong><small>Copyright
+&copy; 2004, 2005 Sunil Kamath (IcemanK).</small></strong></p>
+<map name="console">
+<area id="error" shape="RECT" href="#a_error" alt="Error"
+ coords="6,250, 685,266">
+<area id="warning" shape="RECT" href="#a_warning" alt="Warning"
+ coords="6,233, 178,249">
+<area id="output" shape="RECT" href="#a_output" alt="Console output"
+ coords="3,25, 684,274">
+<area id="clear" shape="RECT" href="#a_clear" alt="Clear"
+ coords="623,1, 644,21">
+<area id="selectall" shape="RECT" href="#a_selectall" alt="Select all"
+ coords="600,1, 620,21">
+<area id="copy" shape="RECT" href="#a_copy" alt="Copy"
+ coords="577,1, 597,21">
+<area id="cancel" shape="RECT" href="#a_cancel" alt="Cancel compilation"
+ coords="554,1, 574,21">
+</map>
+</div>
 </body>
 </html>
