@@ -64,6 +64,13 @@ public abstract class AbstractNSISInstallItem implements INSISInstallElement
     }
 
     /* (non-Javadoc)
+     * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#removeAllChildren()
+     */
+    public final void removeAllChildren()
+    {
+    }
+    
+    /* (non-Javadoc)
      * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#getParent()
      */
     public INSISInstallElement getParent()

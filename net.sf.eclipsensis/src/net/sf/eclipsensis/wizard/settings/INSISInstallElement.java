@@ -30,6 +30,7 @@ public interface INSISInstallElement extends INSISWizardConstants, Serializable
     public String[] getChildTypes();
     public void addChild(INSISInstallElement child);
     public void removeChild(INSISInstallElement child);
+    public void removeAllChildren();
     public Image getImage();
     public void setSettings(NSISWizardSettings settings);
     public NSISWizardSettings getSettings();

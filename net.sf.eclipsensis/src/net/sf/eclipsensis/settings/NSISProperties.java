@@ -9,12 +9,24 @@
  *******************************************************************************/
 package net.sf.eclipsensis.settings;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.Reader;
+import java.io.Writer;
 import java.util.HashMap;
 import java.util.Random;
 
 import net.sf.eclipsensis.INSISConstants;
+import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.ISynchronizer;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.QualifiedName;
 
@@ -224,18 +236,77 @@ public class NSISProperties extends NSISSettings implements INSISConstants
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.settings.NSISSettings#loadObject(java.lang.String)
      */
-    protected Object loadObject(String settingName)
+    protected Object loadObject(String name)
     {
-        // TODO Auto-generated method stub
+        QualifiedName qname = getQualifiedName(name);
+        ISynchronizer synchronizer = ResourcesPlugin.getWorkspace().getSynchronizer();
+        synchronizer.add(qname);
+        Reader r = null;
+        try {
+            byte[] bytes = synchronizer.getSyncInfo(qname,mFile);
+            if(!Common.isEmptyArray(bytes)) {
+                ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
+                r = new BufferedReader(new InputStreamReader(bais));
+                Object object = Common.readObjectFromXML(r);
+                r.close();
+                r = null;
+                return object;
+            }
+        }
+        catch(Exception e) {
+            e.printStackTrace();
+        }
+        finally {
+            if(r != null) {
+                try {
+                    r.close();
+                }
+                catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        }
         return null;
     }
     
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.settings.NSISSettings#storeObject(java.lang.String, java.lang.Object)
      */
-    protected void storeObject(String settingName, Object object)
+    protected void storeObject(String name, Object object)
     {
-        // TODO Auto-generated method stub
-
+        try {
+            QualifiedName qname = getQualifiedName(name);
+            ISynchronizer synchronizer = ResourcesPlugin.getWorkspace().getSynchronizer();
+            synchronizer.add(qname);
+            if(object != null) {
+                Writer w = null;
+                try {
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    w = new BufferedWriter(new OutputStreamWriter(baos));
+                    Common.writeObjectToXML(w,object);
+                    w.close();
+                    w = null;
+                    synchronizer.setSyncInfo(qname,mFile,baos.toByteArray());
+                    return;
+                }
+                catch(IOException ioe) {
+                    ioe.printStackTrace();
+                }
+                finally {
+                    if(w != null) {
+                        try {
+                            w.close();
+                        }
+                        catch (IOException e1) {
+                            e1.printStackTrace();
+                        }
+                    }
+                }
+            }
+            synchronizer.setSyncInfo(qname,mFile,null);
+        }
+        catch (CoreException e) {
+            e.printStackTrace();
+        }
     }
 }

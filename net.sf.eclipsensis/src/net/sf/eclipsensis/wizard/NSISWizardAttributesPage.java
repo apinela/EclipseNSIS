@@ -13,6 +13,7 @@ import java.text.Collator;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -261,7 +262,7 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
                     return sel.toList();
                 }
                 else {
-                    return new ArrayList();
+                    return Collections.EMPTY_LIST;
                 }
             }
 

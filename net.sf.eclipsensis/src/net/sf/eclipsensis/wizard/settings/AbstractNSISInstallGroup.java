@@ -10,6 +10,7 @@
 package net.sf.eclipsensis.wizard.settings;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 
 public abstract class AbstractNSISInstallGroup implements INSISInstallElement
@@ -75,6 +76,18 @@ public abstract class AbstractNSISInstallGroup implements INSISInstallElement
     {
         if(child != null && mChildTypes.contains(child.getType()) && mChildren.contains(child)) {
             mChildren.remove(child);
+            child.setParent(null);
+        }
+    }
+
+    /* (non-Javadoc)
+     * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#removeAllChildren()
+     */
+    public void removeAllChildren()
+    {
+        for(Iterator iter=mChildren.iterator(); iter.hasNext(); ) {
+            INSISInstallElement child = (INSISInstallElement)iter.next();
+            iter.remove();
             child.setParent(null);
         }
     }

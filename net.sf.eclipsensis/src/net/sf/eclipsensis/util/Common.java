@@ -93,12 +93,12 @@ public class Common
     private static Pattern cValidFileName = Pattern.compile("(\\.?[A-Za-z0-9\\$%\\'`\\-@\\{\\}~\\!#\\(\\&_\\^\\x20])+"); //$NON-NLS-1$
     private static Pattern cValidURL = Pattern.compile("(?:(?:ftp|https?):\\/\\/)?(?:[a-z0-9](?:[-a-z0-9]*[a-z0-9])?\\.)+(?:com|edu|biz|org|gov|int|info|mil|net|name|museum|coop|aero|[a-z][a-z])\\b(?:\\d+)?(?:\\/[^;\"'<>()\\[\\]{}\\s\\x7f-\\xff]*(?:[.,?]+[^;\"'<>()\\[\\]{}\\s\\x7f-\\xff]+)*)?"); //$NON-NLS-1$
 
-    public static Object readObjectFromFile(File file) throws IOException, ClassNotFoundException
+    public static Object readObjectFromXMLFile(File file) throws IOException, ClassNotFoundException
     {
-        return readObject(new BufferedReader(new FileReader(file)));
+        return readObjectFromXML(new BufferedReader(new FileReader(file)));
     }
 
-    public static Object readObject(Reader reader) throws IOException, ClassNotFoundException
+    public static Object readObjectFromXML(Reader reader) throws IOException, ClassNotFoundException
     {
         ObjectInputStream ois = null;
         try {
@@ -112,12 +112,12 @@ public class Common
         }
     }
 
-    public static void writeObjectToFile(File file, Object object) throws IOException
+    public static void writeObjectToXMLFile(File file, Object object) throws IOException
     {
-        writeObject(new BufferedWriter(new FileWriter(file)), object);
+        writeObjectToXML(new BufferedWriter(new FileWriter(file)), object);
     }
 
-    public static void writeObject(Writer writer, Object object) throws IOException
+    public static void writeObjectToXML(Writer writer, Object object) throws IOException
     {
         ObjectOutputStream oos = null;
 

@@ -319,39 +319,39 @@ public class NSISPreferences extends NSISSettings
         return mNSISOptions.getProperty(option);
     }
     
-    protected void storeObject(String settingName, Object object)
+    protected void storeObject(String name, Object object)
     {
-        String fileName = getString(settingName);
+        String fileName = getString(name);
         if(Common.isEmpty(fileName)) {
-            fileName = makeSettingsFileName(settingName);
+            fileName = makeSettingFileName(name);
         }
         File objectFile = new File(cPluginStateLocation,fileName);
         if(object == null) {
             if(objectFile.exists()) {
                 objectFile.delete();
             }
-            setValue(settingName,"");
+            setValue(name,"");
         }
         else {
             try {
-                Common.writeObjectToFile(objectFile, object);
-                setValue(settingName,fileName);
+                Common.writeObjectToXMLFile(objectFile, object);
+                setValue(name,fileName);
             }
             catch(IOException ioe) {
-                setValue(settingName,"");
+                setValue(name,"");
                 System.out.println(ioe);
             }
         }
     }
 
-    protected Object loadObject(String settingName)
+    protected Object loadObject(String name)
     {
-        String fileName = getString(settingName);
+        String fileName = getString(name);
         File objectFile = new File(cPluginStateLocation,fileName);
         Object object = null;
         if(objectFile.exists()) {
             try {
-                object = Common.readObjectFromFile(objectFile);
+                object = Common.readObjectFromXMLFile(objectFile);
             }
             catch (Exception e) {
                 object = null;
@@ -361,8 +361,8 @@ public class NSISPreferences extends NSISSettings
         return object;
     }
     
-    private String makeSettingsFileName(String settingName)
+    private String makeSettingFileName(String name)
     {
-        return new StringBuffer(getClass().getName()).append(".").append(settingName).append(".xml").toString(); //$NON-NLS-1$
+        return new StringBuffer(getClass().getName()).append(".").append(name).append(".xml").toString(); //$NON-NLS-1$
     }
 }

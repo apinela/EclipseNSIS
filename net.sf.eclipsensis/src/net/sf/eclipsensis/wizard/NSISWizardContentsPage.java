@@ -10,26 +10,59 @@
 package net.sf.eclipsensis.wizard;
 
 import java.text.MessageFormat;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.util.ImageManager;
-import net.sf.eclipsensis.wizard.settings.*;
+import net.sf.eclipsensis.util.UpDownMover;
+import net.sf.eclipsensis.wizard.settings.INSISInstallElement;
+import net.sf.eclipsensis.wizard.settings.NSISInstallElementFactory;
+import net.sf.eclipsensis.wizard.settings.NSISInstallElementLabelProvider;
+import net.sf.eclipsensis.wizard.settings.NSISInstallElementTreeContentProvider;
+import net.sf.eclipsensis.wizard.settings.NSISSection;
+import net.sf.eclipsensis.wizard.settings.NSISSectionGroup;
+import net.sf.eclipsensis.wizard.settings.NSISWizardSettings;
 import net.sf.eclipsensis.wizard.util.NSISWizardDialogUtil;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Item;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
 
 public class NSISWizardContentsPage extends AbstractNSISWizardPage
 {
@@ -121,15 +154,144 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
         final TreeViewer tv = new TreeViewer(tree);
         tv.setLabelProvider(new NSISInstallElementLabelProvider());
         tv.setContentProvider(new NSISInstallElementTreeContentProvider(settings));
-        tv.addSelectionChangedListener(new ISelectionChangedListener(){
-            public void selectionChanged(SelectionChangedEvent event) 
-            {
-                enableItems(event.getSelection(),addToolItem,editToolItem,deleteToolItem);
-            }
-        });
         tv.setAutoExpandLevel(TreeViewer.ALL_LEVELS);
         tv.setInput(settings);
     
+        final UpDownMover mover = new UpDownMover() {
+            private TreeViewer mTreeViewer = null;
+            
+            public void setInput(Object input)
+            {
+                mTreeViewer = (TreeViewer)input;
+            }
+
+            public Object getInput()
+            {
+                return mTreeViewer;
+            }
+
+            private List getSelectionList()
+            {
+                List list = null;
+                ISelection sel = mTreeViewer.getSelection();
+                if(!sel.isEmpty() && sel instanceof IStructuredSelection) {
+                    list = ((IStructuredSelection)sel).toList();
+                }
+                return list;
+            }
+
+            private INSISInstallElement getSelectionParent(List list)
+            {
+                INSISInstallElement parent = null;
+                if(!Common.isEmptyCollection(list)) {
+                    for(Iterator iter=list.iterator(); iter.hasNext(); ) {
+                        Object obj = iter.next();
+                        if(obj instanceof INSISInstallElement) {
+                            INSISInstallElement element = (INSISInstallElement)obj;
+                            if(parent != null) {
+                                if(!parent.equals(element.getParent())) {
+                                    return null;
+                                }
+                            }
+                            else {
+                                parent = element.getParent();
+                                if(parent == null) {
+                                    return null;
+                                }
+                            }
+                        }
+                        else {
+                            return null;
+                        }
+                    }
+                }
+                return parent;
+            }
+            
+            protected int[] getSelectedIndices()
+            {
+                List list = getSelectionList();
+                INSISInstallElement parent = getSelectionParent(list);
+                if(parent != null) {
+                    List allElements = getAllElements(parent);
+                    int[] selectedIndices = new int[list.size()];
+                    int i=0;
+                    for(Iterator iter=list.iterator(); iter.hasNext(); ) {
+                        selectedIndices[i++] = allElements.indexOf(iter.next());
+                    }
+                    
+                    return selectedIndices;
+                }
+                return new int[0];
+            }
+
+            protected int getSize()
+            {
+                List list = getSelectionList();
+                INSISInstallElement parent = getSelectionParent(list);
+                if(parent != null) {
+                    INSISInstallElement[] children = parent.getChildren();
+                    if(!Common.isEmptyArray(children)) {
+                        return children.length;
+                    }
+                }
+                return 0;
+            }
+
+            private List getAllElements(INSISInstallElement parent)
+            {
+                if(parent != null) {
+                    INSISInstallElement[] children = parent.getChildren();
+                    if(!Common.isEmptyArray(children)) {
+                        return Arrays.asList(children);
+                    }
+                }
+                return Collections.EMPTY_LIST;
+            }
+
+            protected List getAllElements()
+            {
+                List list = getSelectionList();
+                return getAllElements(getSelectionParent(getSelectionList()));
+            }
+
+            private List getMoveElements(INSISInstallElement parent, List selectionList)
+            {
+                if(parent != null) {
+                    return selectionList;
+                }
+                else {
+                    return Collections.EMPTY_LIST;
+                }
+            }
+
+            protected List getMoveElements()
+            {
+                List list = getSelectionList();
+                return getMoveElements(getSelectionParent(list), list);
+            }
+
+            protected void updateElements(List elements, List move, boolean isDown)
+            {
+                INSISInstallElement parent = getSelectionParent(move);
+                if(parent != null) {
+                    parent.removeAllChildren();
+                    for (Iterator iter = elements.iterator(); iter.hasNext();) {
+                        INSISInstallElement element = (INSISInstallElement)iter.next();
+                        parent.addChild(element);
+                    }
+                    mTreeViewer.refresh(parent);
+                    mTreeViewer.expandToLevel(parent, TreeViewer.ALL_LEVELS);
+                    if(!Common.isEmptyCollection(move)) {
+                        mTreeViewer.setSelection(new StructuredSelection(move));
+                        mTreeViewer.reveal(move.get(isDown?move.size()-1:0));
+                    }
+                }
+            }
+            
+        };
+        mover.setInput(tv);
+        
         Composite composite3 = new Composite(composite2,SWT.NONE);
         gd = new GridData(GridData.VERTICAL_ALIGN_CENTER);
         gd.horizontalSpan = 1;
@@ -144,11 +306,34 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
         final Button upButton = new Button(composite3,SWT.PUSH);
         upButton.setImage(ImageManager.getImage(EclipseNSISPlugin.getResourceString("up.icon"))); //$NON-NLS-1$
         upButton.setToolTipText(EclipseNSISPlugin.getResourceString("up.tooltip")); //$NON-NLS-1$
+        upButton.setEnabled(mover.canMoveUp());
+        upButton.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) 
+            {
+                mover.moveUp();
+            }
+        });
         
         final Button downButton = new Button(composite3,SWT.PUSH);
         downButton.setImage(ImageManager.getImage(EclipseNSISPlugin.getResourceString("down.icon"))); //$NON-NLS-1$
         downButton.setToolTipText(EclipseNSISPlugin.getResourceString("down.tooltip")); //$NON-NLS-1$
-        //TODO Implement up-down functionality
+        downButton.setEnabled(mover.canMoveDown());
+        downButton.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) 
+            {
+                mover.moveDown();
+            }
+        });
+        
+        tv.addSelectionChangedListener(new ISelectionChangedListener(){
+            public void selectionChanged(SelectionChangedEvent event) 
+            {
+                enableItems(event.getSelection(),addToolItem,editToolItem,deleteToolItem);
+                upButton.setEnabled(mover.canMoveUp());
+                downButton.setEnabled(mover.canMoveDown());
+            }
+        });
+        
         mWizard.addSettingsListener(new INSISWizardSettingsListener() {
             public void settingsChanged()
             {

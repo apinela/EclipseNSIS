@@ -253,6 +253,6 @@ public abstract class NSISSettings implements INSISPreferenceConstants
         mSymbols = (symbols==null?new LinkedHashMap():symbols);
     }
     
-    protected abstract void storeObject(String settingName, Object object);
-    protected abstract Object loadObject(String settingName);
+    protected abstract void storeObject(String name, Object object);
+    protected abstract Object loadObject(String name);
 }
