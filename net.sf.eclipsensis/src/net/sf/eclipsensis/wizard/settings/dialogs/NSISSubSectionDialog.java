@@ -29,10 +29,10 @@ public class NSISSubSectionDialog extends AbstractNSISInstallItemDialog
     private static ArrayList cProperties = new ArrayList();
     
     static {
-        cProperties.add("bold");
-        cProperties.add("caption");
-        cProperties.add("description");
-        cProperties.add("expanded");
+        cProperties.add("bold"); //$NON-NLS-1$
+        cProperties.add("caption"); //$NON-NLS-1$
+        cProperties.add("description"); //$NON-NLS-1$
+        cProperties.add("expanded"); //$NON-NLS-1$
     }
 
     public NSISSubSectionDialog(Shell parentShell, NSISSubSection item)
@@ -63,18 +63,35 @@ public class NSISSubSectionDialog extends AbstractNSISInstallItemDialog
         layout.marginWidth = 0;
         composite.setLayout(layout);
         
-        final Text t = NSISWizardDialogUtil.createText(composite,mStore.getString("caption"),
-                            "wizard.caption.label",true,null,true);
+        final Text t = NSISWizardDialogUtil.createText(composite,mStore.getString("caption"), //$NON-NLS-1$
+                            "wizard.caption.label",true,null,true); //$NON-NLS-1$
         t.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e)
             {
-                mStore.setValue("caption",t.getText());
+                mStore.setValue("caption",t.getText().trim()); //$NON-NLS-1$
                 setComplete(validate());
             }
         });
-        Label l = NSISWizardDialogUtil.createLabel(composite,"wizard.description.label",true,null,false);
+        t.addVerifyListener(new VerifyListener() {
+            public void verifyText(VerifyEvent e) 
+            {
+                String text = ((Text)e.widget).getText();
+                StringBuffer buf = new StringBuffer("");
+                buf.append(text.substring(0,e.start)).append(e.text).append(text.substring(e.end));
+                text = buf.toString();
+                if(text.length() > 0) {
+                    char c = text.charAt(0);
+                    if((text.length()>=3 && text.substring(0,3).equalsIgnoreCase("un.")) ||
+                        Character.isWhitespace(c) || c == '!') {
+                        e.doit = false;
+                        return;
+                    }
+                }
+            }
+        });
+        Label l = NSISWizardDialogUtil.createLabel(composite,"wizard.description.label",true,null,false); //$NON-NLS-1$
         ((GridData)l.getLayoutData()).horizontalSpan = 2;
-        final Text t2 = NSISWizardDialogUtil.createText(composite,mStore.getString("description"),SWT.MULTI|SWT.BORDER|SWT.WRAP|SWT.V_SCROLL,1,true,null);
+        final Text t2 = NSISWizardDialogUtil.createText(composite,mStore.getString("description"),SWT.MULTI|SWT.BORDER|SWT.WRAP|SWT.V_SCROLL,1,true,null); //$NON-NLS-1$
         gd = (GridData)t2.getLayoutData();
         gd.horizontalSpan = 2;
         gd.verticalSpan = 4;
@@ -84,13 +101,13 @@ public class NSISSubSectionDialog extends AbstractNSISInstallItemDialog
         t2.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e)
             {
-                mStore.setValue("description",t2.getText());
+                mStore.setValue("description",t2.getText().trim()); //$NON-NLS-1$
                 setComplete(validate());
             }
         });
         int textLimit;
         try {
-            textLimit = Integer.parseInt(NSISPreferences.getPreferences().getNSISOption("NSIS_MAX_STRLEN"));
+            textLimit = Integer.parseInt(NSISPreferences.getPreferences().getNSISOption("NSIS_MAX_STRLEN")); //$NON-NLS-1$
         }
         catch(Exception ex){
             textLimit = INSISConstants.DEFAULT_NSIS_TEXT_LIMIT;
@@ -107,17 +124,17 @@ public class NSISSubSectionDialog extends AbstractNSISInstallItemDialog
         layout.marginWidth = 0;
         composite2.setLayout(layout);
 
-        final Button cb1 = NSISWizardDialogUtil.createCheckBox(composite2,"wizard.bold.label",mStore.getBoolean("bold"),true,null,false);
+        final Button cb1 = NSISWizardDialogUtil.createCheckBox(composite2,"wizard.bold.label",mStore.getBoolean("bold"),true,null,false); //$NON-NLS-1$ //$NON-NLS-2$
         cb1.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
-                mStore.setValue("bold",cb1.getSelection());
+                mStore.setValue("bold",cb1.getSelection()); //$NON-NLS-1$
             }
         });
         ((GridData)cb1.getLayoutData()).horizontalSpan = 1;
-        final Button cb2 = NSISWizardDialogUtil.createCheckBox(composite2,"wizard.expanded.label",mStore.getBoolean("expanded"),true,null,false);
+        final Button cb2 = NSISWizardDialogUtil.createCheckBox(composite2,"wizard.expanded.label",mStore.getBoolean("expanded"),true,null,false); //$NON-NLS-1$ //$NON-NLS-2$
         cb2.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
-                mStore.setValue("expanded",cb2.getSelection());
+                mStore.setValue("expanded",cb2.getSelection()); //$NON-NLS-1$
             }
         });
         ((GridData)cb2.getLayoutData()).horizontalSpan = 1;
@@ -129,6 +146,6 @@ public class NSISSubSectionDialog extends AbstractNSISInstallItemDialog
      */
     protected boolean validate()
     {
-        return !Common.isEmpty(mStore.getString("caption"));
+        return !Common.isEmpty(mStore.getString("caption")); //$NON-NLS-1$
     }
 }

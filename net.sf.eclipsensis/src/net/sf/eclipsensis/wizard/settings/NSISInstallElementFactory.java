@@ -21,12 +21,12 @@ import org.eclipse.swt.graphics.Image;
 public class NSISInstallElementFactory
 {
     private static HashMap cElementMap = new HashMap();
-    private static final String TYPE_FIELD_NAME = "TYPE";
+    private static final String TYPE_FIELD_NAME = "TYPE"; //$NON-NLS-1$
     private static final Class[] EMPTY_CLASS_ARRAY = new Class[0];
     private static final Object[] EMPTY_OBJECT_ARRAY = new Object[0];
     
     static {
-        String[] classList = Common.loadArrayProperty(EclipseNSISPlugin.getDefault().getResourceBundle(),"preload.nsisinstallelements");
+        String[] classList = Common.loadArrayProperty(EclipseNSISPlugin.getDefault().getResourceBundle(),"preload.nsisinstallelements"); //$NON-NLS-1$
         for (int i = 0; i < classList.length; i++) {
             try {
                 Class clasz = Class.forName(classList[i]);

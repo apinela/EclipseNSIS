@@ -44,7 +44,7 @@ public class NSISInstallRegistryKey extends AbstractNSISInstallItem
     public String getDisplayName()
     {
         return new StringBuffer(NSISWizardDisplayValues.HKEY_NAMES[mRootKey]).append(
-                "\\").append(mSubKey).toString();
+                "\\").append(mSubKey).toString(); //$NON-NLS-1$
     }
 
     /* (non-Javadoc)

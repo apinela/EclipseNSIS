@@ -31,11 +31,11 @@ public class NSISInstallRegistryValueDialog extends AbstractNSISInstallItemDialo
     private static ArrayList cProperties = new ArrayList();
     
     static {
-        cProperties.add("rootKey");
-        cProperties.add("subKey");
-        cProperties.add("valueType");
-        cProperties.add("value");
-        cProperties.add("data");
+        cProperties.add("rootKey"); //$NON-NLS-1$
+        cProperties.add("subKey"); //$NON-NLS-1$
+        cProperties.add("valueType"); //$NON-NLS-1$
+        cProperties.add("value"); //$NON-NLS-1$
+        cProperties.add("data"); //$NON-NLS-1$
     }
 
     public NSISInstallRegistryValueDialog(Shell parentShell, NSISInstallRegistryValue item)
@@ -66,40 +66,40 @@ public class NSISInstallRegistryValueDialog extends AbstractNSISInstallItemDialo
         layout.marginWidth = 0;
         composite.setLayout(layout);
         
-        final Combo c1 = NSISWizardDialogUtil.createCombo(composite,NSISWizardDisplayValues.HKEY_NAMES,mStore.getInt("rootKey"),
-                            true,"wizard.root.key.label",true,null,false);
+        final Combo c1 = NSISWizardDialogUtil.createCombo(composite,NSISWizardDisplayValues.HKEY_NAMES,mStore.getInt("rootKey"), //$NON-NLS-1$
+                            true,"wizard.root.key.label",true,null,false); //$NON-NLS-1$
         c1.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
-                mStore.setValue("rootKey",c1.getSelectionIndex());
+                mStore.setValue("rootKey",c1.getSelectionIndex()); //$NON-NLS-1$
             }
         });
-        final Text t1 = NSISWizardDialogUtil.createText(composite,mStore.getString("subKey"),"wizard.sub.key.label",true,
+        final Text t1 = NSISWizardDialogUtil.createText(composite,mStore.getString("subKey"),"wizard.sub.key.label",true, //$NON-NLS-1$ //$NON-NLS-2$
                            null,true);
         t1.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e)
             {
-                mStore.setValue("subKey",t1.getText().trim());
+                mStore.setValue("subKey",t1.getText().trim()); //$NON-NLS-1$
                 setComplete(validate());
             }
         });
 
-        final Text t2 = NSISWizardDialogUtil.createText(composite,mStore.getString("value"),"wizard.value.label",true,
+        final Text t2 = NSISWizardDialogUtil.createText(composite,mStore.getString("value"),"wizard.value.label",true, //$NON-NLS-1$ //$NON-NLS-2$
                 null,false);
         t2.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e)
             {
-                mStore.setValue("value",t2.getText().trim());
+                mStore.setValue("value",t2.getText().trim()); //$NON-NLS-1$
                 setComplete(validate());
             }
         });
-        final Combo c2 = NSISWizardDialogUtil.createCombo(composite,NSISWizardDisplayValues.REG_VALUE_TYPES,mStore.getInt("valueType"),
-                true,"wizard.value.type.label",true,null,false);
-        final Text t3 = NSISWizardDialogUtil.createText(composite,mStore.getString("data"),"wizard.data.label",true,
+        final Combo c2 = NSISWizardDialogUtil.createCombo(composite,NSISWizardDisplayValues.REG_VALUE_TYPES,mStore.getInt("valueType"), //$NON-NLS-1$
+                true,"wizard.value.type.label",true,null,false); //$NON-NLS-1$
+        final Text t3 = NSISWizardDialogUtil.createText(composite,mStore.getString("data"),"wizard.data.label",true, //$NON-NLS-1$ //$NON-NLS-2$
                 null,false);
         t3.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e)
             {
-                mStore.setValue("data",t3.getText().trim());
+                mStore.setValue("data",t3.getText().trim()); //$NON-NLS-1$
                 setComplete(validate());
             }
         });
@@ -145,14 +145,14 @@ public class NSISInstallRegistryValueDialog extends AbstractNSISInstallItemDialo
         c2.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 int index = c2.getSelectionIndex();
-                mStore.setValue("valueType",index);
+                mStore.setValue("valueType",index); //$NON-NLS-1$
                 if(index == INSISWizardConstants.REG_DWORD) {
                     l.setFont(requiredFont);
                     try {
                         int n = Integer.parseInt(t3.getText());
                     }
                     catch(Exception ex) {
-                        t3.setText("");
+                        t3.setText(""); //$NON-NLS-1$
                     }
                 }
                 else {
@@ -168,8 +168,8 @@ public class NSISInstallRegistryValueDialog extends AbstractNSISInstallItemDialo
      */
     protected boolean validate()
     {
-        String subKey = mStore.getString("subKey").trim();
-        return !Common.isEmpty(subKey) && !subKey.endsWith("\\") && !subKey.startsWith("\\") &&
-               (mStore.getInt("valueType") == INSISWizardConstants.REG_SZ || !Common.isEmpty(mStore.getString("data")));
+        String subKey = mStore.getString("subKey").trim(); //$NON-NLS-1$
+        return !Common.isEmpty(subKey) && !subKey.endsWith("\\") && !subKey.startsWith("\\") && //$NON-NLS-1$ //$NON-NLS-2$
+               (mStore.getInt("valueType") == INSISWizardConstants.REG_SZ || !Common.isEmpty(mStore.getString("data"))); //$NON-NLS-1$ //$NON-NLS-2$
     }
 }

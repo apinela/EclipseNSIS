@@ -15,13 +15,15 @@ import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
 
 public class NSISValidator implements INSISConstants
 {
-    public static double MINIMUM_NSIS_VERSION = 2.0;
-    private static Pattern cVersionPattern = Pattern.compile("[vV]?(\\d+[\\.\\d+]?).*"); //$NON-NLS-1$
-    public static final String DEFINED_SYMBOLS_PREFIX = "Defined symbols: ";
+    private static Version EMPTY_VERSION = new Version("0");
+    public static Version MINIMUM_NSIS_VERSION = new Version(EclipseNSISPlugin.getResourceString("minimum.nsis.version"));
+    private static Pattern cVersionPattern = Pattern.compile("v(\\d+(?:\\.\\d+)?(?:[A-Za-z]+\\d*)?)"); //$NON-NLS-1$
+    public static final String DEFINED_SYMBOLS_PREFIX = "Defined symbols: "; //$NON-NLS-1$
 
     public static File findNSISExe(File nsisHome)
     {
@@ -29,8 +31,8 @@ public class NSISValidator implements INSISConstants
             if(nsisHome.exists() && nsisHome.isDirectory()) {
                 File file = new File(nsisHome,MAKENSIS_EXE);
                 if(file.exists() && file.isFile()) {
-                    double version = getVersion(file);
-                    if(version >= MINIMUM_NSIS_VERSION) {
+                    Version version = getVersion(file);
+                    if(version.compareTo(MINIMUM_NSIS_VERSION) >= 0) {
                         return file;
                     }
                 }
@@ -48,7 +50,7 @@ public class NSISValidator implements INSISConstants
         if(!Common.isEmptyArray(output)) {
             for (int i = 0; i < output.length; i++) {
                 if(output[i].startsWith(DEFINED_SYMBOLS_PREFIX)) {
-                    StringTokenizer st = new StringTokenizer(output[i].substring(DEFINED_SYMBOLS_PREFIX.length()),",");
+                    StringTokenizer st = new StringTokenizer(output[i].substring(DEFINED_SYMBOLS_PREFIX.length()),","); //$NON-NLS-1$
                     while(st.hasMoreTokens()) {
                         String token = st.nextToken();
                         int n = token.indexOf('=');
@@ -56,7 +58,7 @@ public class NSISValidator implements INSISConstants
                             props.put(token.substring(0,n).trim(),token.substring(n+1).trim());
                         }
                         else {
-                            props.setProperty(token,"");
+                            props.setProperty(token,""); //$NON-NLS-1$
                         }
                     }
                 }
@@ -73,9 +75,9 @@ public class NSISValidator implements INSISConstants
         return false;
     }
 
-    private static double getVersion(File exeFile)
+    private static Version getVersion(File exeFile)
     {
-        double version = 0;
+        Version version = null;
         String exeName = exeFile.getAbsoluteFile().getAbsolutePath();
         String[] output = Common.runProcessWithOutput(new String[]{exeName,"/VERSION"}, //$NON-NLS-1$
                                                exeFile.getParentFile());
@@ -83,19 +85,13 @@ public class NSISValidator implements INSISConstants
             for (int i = 0; i < output.length; i++) {
                 Matcher matcher = cVersionPattern.matcher(output[i]);
                 if(matcher.matches()) {
-                    try {
-                        double temp = Double.parseDouble(matcher.group(1));
-                        version = temp;
-                        break;
-                    }
-                    catch(Exception ex) {
-                        ex.printStackTrace();
-                    }
+                    version = new Version(matcher.group(1));
+                    break;
                 }
             }
         }
         
-        return version;
+        return (version == null?EMPTY_VERSION:version);
     }
 
 }

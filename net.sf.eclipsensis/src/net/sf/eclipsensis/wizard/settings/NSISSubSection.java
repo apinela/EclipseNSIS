@@ -25,8 +25,8 @@ public class NSISSubSection extends AbstractNSISInstallGroup
     private static String cFormat = EclipseNSISPlugin.getResourceString("wizard.subsection.format"); //$NON-NLS-1$
     private static final Image cImage = ImageManager.getImage(EclipseNSISPlugin.getResourceString("wizard.subsection.icon")); //$NON-NLS-1$
 
-    private String mDescription= "";
-    private String mCaption = "";
+    private String mDescription= ""; //$NON-NLS-1$
+    private String mCaption = ""; //$NON-NLS-1$
     private boolean mIsExpanded = false;
     private boolean mIsBold = false;
 

@@ -19,7 +19,7 @@ import org.eclipse.swt.graphics.Image;
 
 public class ImageManager
 {
-    private static ImageRegistry cImageRegistry = new ImageRegistry();
+    private static ImageRegistry cImageRegistry = EclipseNSISPlugin.getDefault().getImageRegistry();
 
     public synchronized static ImageDescriptor getImageDescriptor(String location)
     {

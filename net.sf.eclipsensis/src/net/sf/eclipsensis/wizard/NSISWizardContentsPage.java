@@ -41,9 +41,9 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
 
     private static final int[] cDeleteConfirmButtonIds = {IDialogConstants.YES_ID, IDialogConstants.YES_TO_ALL_ID, IDialogConstants.NO_ID, IDialogConstants.NO_TO_ALL_ID};
 
-    private static final String cDeleteConfirmTitle = EclipseNSISPlugin.getResourceString("delete.confirmation.title");
+    private static final String cDeleteConfirmTitle = EclipseNSISPlugin.getResourceString("delete.confirmation.title"); //$NON-NLS-1$
 
-    private static final String cDeleteConfirmMessageFormat = EclipseNSISPlugin.getResourceString("delete.confirmation.message");
+    private static final String cDeleteConfirmMessageFormat = EclipseNSISPlugin.getResourceString("delete.confirmation.message"); //$NON-NLS-1$
     
     /**
      * @param settings
@@ -69,7 +69,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
         
         ResourceBundle bundle = EclipseNSISPlugin.getDefault().getResourceBundle();
     
-        Label l = NSISWizardDialogUtil.createLabel(composite,"wizard.contents.text",true,null,false);
+        Label l = NSISWizardDialogUtil.createLabel(composite,"wizard.contents.text",true,null,false); //$NON-NLS-1$
         final GridData gridData = (GridData)l.getLayoutData();
         gridData.widthHint = WIDTH_HINT;
         composite.addListener (SWT.Resize,  new Listener () {
@@ -87,7 +87,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
             }
         });
         
-        Group group = NSISWizardDialogUtil.createGroup(composite,1,"",null,false);
+        Group group = NSISWizardDialogUtil.createGroup(composite,1,"",null,false); //$NON-NLS-1$
         GridData gd = (GridData)group.getLayoutData();
         gd.grabExcessVerticalSpace = true;
         gd.verticalAlignment = GridData.FILL;
@@ -103,6 +103,8 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
         final Tree tree = new Tree(group,SWT.MULTI|SWT.BORDER);
         gd = new GridData(GridData.FILL_BOTH);
         tree.setLayoutData(gd);
+
+        updateSelectComponents();
         final TreeViewer tv = new TreeViewer(tree);
         tv.setLabelProvider(new NSISInstallElementLabelProvider());
         tv.setContentProvider(new NSISInstallElementTreeContentProvider(mSettings));
@@ -123,6 +125,8 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
                     Object obj = ((IStructuredSelection)sel).getFirstElement();
                     if(obj instanceof INSISInstallElement) {
                         editElement(composite, tv, (INSISInstallElement)obj);
+                        updateSelectComponents();
+                        checkUnselectedSections();
                     }
                 }
             }
@@ -134,6 +138,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
                 ISelection sel = tv.getSelection();
                 if(!sel.isEmpty() && sel instanceof IStructuredSelection) {
                     deleteElements(tv, sel);
+                    updateSelectComponents();
                 }
             }
         };
@@ -141,29 +146,35 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
         final SelectionAdapter addSelectionAdapter = new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e)
             {
-                MenuItem mi = (MenuItem)e.widget;
-                String text = mi.getText();
-                INSISInstallElement element = NSISInstallElementFactory.create(mSettings,text);
-                if(element != null) {
-                    if(element.isEditable()) {
-                        ISelection se = tv.getSelection();
-                        if(!se.isEmpty() && se instanceof IStructuredSelection) {
-                            Object obj = ((IStructuredSelection)se).getFirstElement();
-                            if(obj instanceof INSISInstallElement) {
-                                INSISInstallElement parent = (INSISInstallElement)obj;
-                                if(element.edit(composite)) {
-                                    parent.addChild(element);
-                                    tv.refresh(parent,true);
-                                    tv.reveal(element);
-                                    if(element.hasChildren()) {
-                                        tv.expandToLevel(element,TreeViewer.ALL_LEVELS);
+                    MenuItem mi = (MenuItem)e.widget;
+                    String text = mi.getText();
+                    INSISInstallElement element = NSISInstallElementFactory.create(mSettings,text);
+                    if(element != null) {
+                        try {
+                            if(element.isEditable()) {
+                                ISelection se = tv.getSelection();
+                                if(!se.isEmpty() && se instanceof IStructuredSelection) {
+                                    Object obj = ((IStructuredSelection)se).getFirstElement();
+                                    if(obj instanceof INSISInstallElement) {
+                                        INSISInstallElement parent = (INSISInstallElement)obj;
+                                        if(element.edit(composite)) {
+                                            parent.addChild(element);
+                                            tv.refresh(parent,true);
+                                            tv.reveal(element);
+                                            if(element.hasChildren()) {
+                                                tv.expandToLevel(element,TreeViewer.ALL_LEVELS);
+                                            }
+                                            updateSelectComponents();
+                                            setPageComplete(validatePage(ALL_CHECK));
+                                        }
                                     }
-                                    setPageComplete(validatePage(ALL_CHECK));
                                 }
                             }
                         }
+                        catch(Exception ex) {
+                            delayedValidateAfterError(ex.getMessage(),2000);
+                        }
                     }
-                }
             }
         };
 
@@ -193,16 +204,33 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
         editMenuItem.addSelectionListener(editSelectionAdapter);
         deleteMenuItem.addSelectionListener(deleteSelectionAdapter);
 
-        tree.addMouseListener(new MouseAdapter() {
-            public void mouseDoubleClick(MouseEvent e) {
-                TreeItem ti = tree.getItem(new Point(e.x,e.y));
-                if(ti != null) {
-                    Object obj = ti.getData();
+        tree.addSelectionListener(new SelectionAdapter() {
+            public void widgetDefaultSelected(SelectionEvent e) {
+                ISelection sel = tv.getSelection();
+                if(!sel.isEmpty() && sel instanceof IStructuredSelection) {
+                    IStructuredSelection ssel = (IStructuredSelection)sel;
+                    Object obj = ssel.getFirstElement();
                     if(obj instanceof INSISInstallElement) {
                         editElement(composite, tv, (INSISInstallElement)obj);
+                        updateSelectComponents();
+                        checkUnselectedSections();
                     }
                 }
             }
+        });
+        
+        tree.addMouseListener(new MouseAdapter() {
+//            public void mouseDoubleClick(MouseEvent e) {
+//                TreeItem ti = tree.getItem(new Point(e.x,e.y));
+//                if(ti != null) {
+//                    Object obj = ti.getData();
+//                    if(obj instanceof INSISInstallElement) {
+//                        editElement(composite, tv, (INSISInstallElement)obj);
+//                        updateSelectComponents();
+//                        checkUnselectedSections();
+//                    }
+//                }
+//            }
 
             public void mouseUp(MouseEvent e) {
                 if(e.button == 3) {
@@ -227,6 +255,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
                         if(!sel.isEmpty() && sel instanceof IStructuredSelection) {
                             if(canDeleteElements((IStructuredSelection)sel)) {
                                 deleteElements(tv, sel);
+                                updateSelectComponents();
                             }
                         }
                         
@@ -234,59 +263,133 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
                 }
             }
         });
+
+        addPageListener(new NSISWizardPageAdapter() {
+            public void aboutToShow()
+            {
+                checkUnselectedSections();
+            }
+        });
+
         setPageComplete(validatePage(ALL_CHECK));
+    }
+
+    private void updateSelectComponents()
+    {
+        if(mSettings.getInstallerType() != INSISWizardConstants.INSTALLER_TYPE_SILENT) {
+            INSISInstallElement[] items = mSettings.getInstaller().getChildren();
+            if(!Common.isEmptyArray(items)) {
+                for (int i = 0; i < items.length; i++) {
+                    if(items[i] instanceof NSISSection) {
+                        if(!((NSISSection)items[i]).isHidden()) {
+                            mSettings.setSelectComponents(true);
+                            return;
+                        }
+                    }
+                    else if(items[i] instanceof NSISSubSection) {
+                        INSISInstallElement[] items2 = items[i].getChildren();
+                        if(!Common.isEmptyArray(items2)) {
+                            for (int j = 0; j < items2.length; j++) {
+                                if(items2[j] instanceof NSISSection) {
+                                    if(!((NSISSection)items2[j]).isHidden()) {
+                                        mSettings.setSelectComponents(true);
+                                        return;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        mSettings.setSelectComponents(false);
     }
 
     private void editElement(Composite composite, TreeViewer tv, INSISInstallElement element)
     {
-        if(element.edit(composite)) {
-            tv.refresh(element, true);
-            if(element.hasChildren()) {
-                tv.expandToLevel(element,TreeViewer.ALL_LEVELS);
+        try {
+            if(element.edit(composite)) {
+                tv.refresh(element, true);
+                if(element.hasChildren()) {
+                    tv.expandToLevel(element,TreeViewer.ALL_LEVELS);
+                }
+                setPageComplete(validatePage(ALL_CHECK));
             }
-            setPageComplete(validatePage(ALL_CHECK));
+        }
+        catch(Exception ex) {
+            delayedValidateAfterError(ex.getMessage(),2000);
         }
     }
-
 
     /**
      * @param tv
      * @param sel
      */
-    private void deleteElements(TreeViewer tv, ISelection sel)
+    private void deleteElements(final TreeViewer tv, ISelection sel)
     {
         if(sel instanceof IStructuredSelection) {
             IStructuredSelection ssel = (IStructuredSelection)sel;
             if(!ssel.isEmpty()) {
-                int buttonId = -1;
-                for(Iterator iter = (ssel).iterator(); iter.hasNext(); ) {
-                    Object obj = iter.next();
-                    if(obj instanceof INSISInstallElement) {
-                        INSISInstallElement element = (INSISInstallElement)obj;
-                        if(element.hasChildren()) {
-                            if(buttonId == IDialogConstants.NO_TO_ALL_ID) {
-                                continue;
-                            }
-                            else if(buttonId != IDialogConstants.YES_TO_ALL_ID) {
-                                buttonId = cDeleteConfirmButtonIds[new MessageDialog(getShell(),cDeleteConfirmTitle,null,
-                                        MessageFormat.format(cDeleteConfirmMessageFormat,new String[]{element.getDisplayName()}), MessageDialog.QUESTION, 
-                                        new String[]{IDialogConstants.YES_LABEL, IDialogConstants.YES_TO_ALL_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.NO_TO_ALL_LABEL}, 0).open()];
-
-                                if(buttonId == IDialogConstants.NO_ID || buttonId == IDialogConstants.NO_TO_ALL_ID) {
+                try {
+                    int buttonId = -1;
+                    for(Iterator iter = (ssel).iterator(); iter.hasNext(); ) {
+                        Object obj = iter.next();
+                        if(obj instanceof INSISInstallElement) {
+                            INSISInstallElement element = (INSISInstallElement)obj;
+                            if(element.hasChildren()) {
+                                if(buttonId == IDialogConstants.NO_TO_ALL_ID) {
                                     continue;
                                 }
+                                else if(buttonId != IDialogConstants.YES_TO_ALL_ID) {
+                                    buttonId = cDeleteConfirmButtonIds[new MessageDialog(getShell(),cDeleteConfirmTitle,null,
+                                            MessageFormat.format(cDeleteConfirmMessageFormat,new String[]{element.getDisplayName()}), MessageDialog.QUESTION, 
+                                            new String[]{IDialogConstants.YES_LABEL, IDialogConstants.YES_TO_ALL_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.NO_TO_ALL_LABEL}, 0).open()];
+    
+                                    if(buttonId == IDialogConstants.NO_ID || buttonId == IDialogConstants.NO_TO_ALL_ID) {
+                                        continue;
+                                    }
+                                }
+                            }
+                            INSISInstallElement parent = element.getParent();
+                            if(parent != null) {
+                                parent.removeChild(element);
                             }
                         }
-                        INSISInstallElement parent = element.getParent();
-                        if(parent != null) {
-                            parent.removeChild(element);
-                        }
                     }
+                    setPageComplete(validatePage(ALL_CHECK));
                 }
-                tv.refresh(false);
-                setPageComplete(validatePage(ALL_CHECK));
+                catch(Exception ex) {
+                    delayedValidateAfterError(ex.getMessage(),2000);
+                }
+                finally {
+                    tv.refresh(false);
+                }
             }
         }
+    }
+
+    /**
+     * @param errorMessage
+     */
+    private void delayedValidateAfterError(String errorMessage, final int delay)
+    {
+        setErrorMessage(errorMessage);
+        final Display display = getShell().getDisplay();
+        new Thread(new Runnable() {
+            public void run() {
+                try {
+                    Thread.sleep(delay);
+                }
+                catch(InterruptedException ie) {
+                }
+                display.asyncExec(new Runnable() {
+                    public void run()
+                    {
+                        setPageComplete(validatePage(ALL_CHECK));
+                    }
+                 });
+            }
+        }).start();
     }
 
     private void enableItem(Item item, boolean state)
@@ -412,9 +515,9 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
         ToolBar toolbar = new ToolBar(parent, SWT.FLAT); //$NON-NLS-1$
         
         int[] styles = {SWT.DROP_DOWN,SWT.PUSH,SWT.PUSH};
-        String[] images = {"installitem.add.icon","installitem.edit.icon","installitem.delete.icon"};
-        String[] disabledImages = {"installitem.add.disabledicon","installitem.edit.disabledicon","installitem.delete.disabledicon"};
-        String[] tooltips = {"installitem.add.tooltip","installitem.edit.tooltip","installitem.delete.tooltip"};
+        String[] images = {"installitem.add.icon","installitem.edit.icon","installitem.delete.icon"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        String[] disabledImages = {"installitem.add.disabledicon","installitem.edit.disabledicon","installitem.delete.disabledicon"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        String[] tooltips = {"installitem.add.tooltip","installitem.edit.tooltip","installitem.delete.tooltip"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         for (int i = 0; i < styles.length; i++) {
             ToolItem ti = new ToolItem(toolbar, styles[i]);
             ti.setImage(ImageManager.getImage(bundle.getString(images[i])));
@@ -434,8 +537,8 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
         Menu menu = new Menu(getShell(), SWT.POP_UP); //$NON-NLS-1$
         
         int[] styles = {SWT.CASCADE,SWT.PUSH,SWT.PUSH};
-        String[] images = {"installitem.add.icon","installitem.edit.icon","installitem.delete.icon"};
-        String[] tooltips = {"installitem.add.tooltip","installitem.edit.tooltip","installitem.delete.tooltip"};
+        String[] images = {"installitem.add.icon","installitem.edit.icon","installitem.delete.icon"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        String[] tooltips = {"installitem.add.tooltip","installitem.edit.tooltip","installitem.delete.tooltip"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         for (int i = 0; i < styles.length; i++) {
             MenuItem mi = new MenuItem(menu, styles[i]);
             mi.setImage(ImageManager.getImage(bundle.getString(images[i])));
@@ -457,11 +560,44 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
                 }
             }
             else {
-                setErrorMessage(MessageFormat.format(EclipseNSISPlugin.getResourceString("empty.contents.error"),new Object[]{installElement.getDisplayName()}));
+                setErrorMessage(MessageFormat.format(EclipseNSISPlugin.getResourceString("empty.contents.error"),new Object[]{installElement.getDisplayName()})); //$NON-NLS-1$
                 return false;
             }
         }
         return true;
+    }
+    
+    private void checkUnselectedSections()
+    {
+        if(Common.isEmpty(getErrorMessage()) && mSettings.getInstallerType() == INSISWizardConstants.INSTALLER_TYPE_SILENT) {
+            INSISInstallElement[] items = mSettings.getInstaller().getChildren();
+            if(!Common.isEmptyArray(items)) {
+                for (int i = 0; i < items.length; i++) {
+                    if(items[i] instanceof NSISSection) {
+                        if(((NSISSection)items[i]).isDefaultUnselected()) {
+                            setMessage(EclipseNSISPlugin.getResourceString("silent.unselected.sections.warning"),WARNING);
+                            return;
+                        }
+                    }
+                    else if(items[i] instanceof NSISSubSection) {
+                        INSISInstallElement[] items2 = items[i].getChildren();
+                        if(!Common.isEmptyArray(items2)) {
+                            for (int j = 0; j < items2.length; j++) {
+                                if(items2[j] instanceof NSISSection) {
+                                    if(((NSISSection)items2[j]).isDefaultUnselected()) {
+                                        setMessage(EclipseNSISPlugin.getResourceString("silent.unselected.sections.warning"),WARNING);
+                                        return;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        else {
+            setMessage(EclipseNSISPlugin.getResourceString("wizard.contents.description"));
+        }
     }
 
     private boolean validatePage(int flag)
@@ -472,6 +608,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
             setErrorMessage(null);
         }
         setPageComplete(b);
+        checkUnselectedSections();
         return b;
     }
 }

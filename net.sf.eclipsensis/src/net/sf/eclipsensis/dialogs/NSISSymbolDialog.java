@@ -71,8 +71,8 @@ public class NSISSymbolDialog extends Dialog implements IDialogConstants
         data.horizontalAlignment = GridData.FILL;
         data.widthHint = 300;
         
-        mNameText = createText(composite, EclipseNSISPlugin.getResourceString("symbols.mName.text"), //$NON-NLS-1$
-                               EclipseNSISPlugin.getResourceString("symbols.mName.tooltip"),mName); //$NON-NLS-1$
+        mNameText = createText(composite, EclipseNSISPlugin.getResourceString("symbols.name.text"), //$NON-NLS-1$
+                               EclipseNSISPlugin.getResourceString("symbols.name.tooltip"),mName); //$NON-NLS-1$
 /*        mNameText.addFocusListener(new FocusAdapter() {
             public void focusLost(FocusEvent e) 
             {

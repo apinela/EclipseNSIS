@@ -11,7 +11,6 @@ package net.sf.eclipsensis.wizard.settings;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Collection;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.makensis.MakeNSISRunner;
@@ -33,8 +32,8 @@ public class NSISWizardSettings implements INSISWizardConstants
     private String mUrl = ""; //$NON-NLS-1$
     private String mOutFile = EclipseNSISPlugin.getResourceString("wizard.default.installer",""); //$NON-NLS-1$ //$NON-NLS-2$
     private int mCompressorType = MakeNSISRunner.COMPRESSOR_DEFAULT;
-    private int mInstallerType = INSTALLER_TYPE_CLASSIC;
-    private String mInstallIcon = ""; //$NON-NLS-1$
+    private int mInstallerType = INSTALLER_TYPE_MUI;
+    private String mIcon = ""; //$NON-NLS-1$
     private boolean mShowSplash = false;
     private String mSplashBMP = ""; //$NON-NLS-1$
     private String mSplashWAV = ""; //$NON-NLS-1$
@@ -50,7 +49,7 @@ public class NSISWizardSettings implements INSISWizardConstants
     private boolean mShowLicense = false;
     private String mLicenseData = ""; //$NON-NLS-1$
     private int mLicenseButtonType = LICENSE_BUTTON_CLASSIC;
-    private boolean mCreateMultilingual = false;
+    private boolean mEnableLanguageSupport = false;
     private ArrayList mLanguages = new ArrayList();
     private boolean mSelectLanguage = false;
     private String mInstallDir = "$PROGRAMFILES\\" + mName; //$NON-NLS-1$
@@ -67,11 +66,13 @@ public class NSISWizardSettings implements INSISWizardConstants
     private boolean mAutoCloseUninstaller = false;
     private boolean mCreateUninstallerStartMenuShortcut = true;
     private boolean mCreateUninstallerControlPanelEntry = true;
+    private boolean mSilentUninstaller = false;
+    private boolean mSelectComponents = false;
     
     private boolean mCreateUninstaller = true;
     private String mUninstallIcon = ""; //$NON-NLS-1$
     private String mUninstallFile = EclipseNSISPlugin.getResourceString("wizard.default.uninstaller",""); //$NON-NLS-1$ //$NON-NLS-2$
-    private String mSavePath = "";
+    private String mSavePath = ""; //$NON-NLS-1$
     private boolean mMakePathsRelative = true;
     private boolean mCompileScript = true;
     
@@ -80,10 +81,11 @@ public class NSISWizardSettings implements INSISWizardConstants
         private String mFormat;
         
         {
+            setSettings(NSISWizardSettings.this);
             mChildTypes.add(NSISSection.TYPE);
             mChildTypes.add(NSISSubSection.TYPE);
             mFormat = EclipseNSISPlugin.getResourceString("wizard.installer.format"); //$NON-NLS-1$
-            NSISSection section = new NSISSection();
+            NSISSection section = (NSISSection)NSISInstallElementFactory.create(mSettings,NSISSection.TYPE);
             section.setName(EclipseNSISPlugin.getResourceString("main.section.name")); //$NON-NLS-1$
             section.setDescription(EclipseNSISPlugin.getResourceString("main.section.description")); //$NON-NLS-1$
             section.setHidden(true);
@@ -382,19 +384,19 @@ public class NSISWizardSettings implements INSISWizardConstants
     }
     
     /**
-     * @return Returns the installIcon.
+     * @return Returns the icon.
      */
-    public String getInstallIcon()
+    public String getIcon()
     {
-        return mInstallIcon;
+        return mIcon;
     }
     
     /**
-     * @param installIcon The installIcon to set.
+     * @param icon The icon to set.
      */
-    public void setInstallIcon(String installIcon)
+    public void setIcon(String icon)
     {
-        mInstallIcon = installIcon;
+        mIcon = icon;
     }
     
     /**
@@ -656,17 +658,17 @@ public class NSISWizardSettings implements INSISWizardConstants
     /**
      * @return Returns the createMultilingual.
      */
-    public boolean isCreateMultilingual()
+    public boolean isEnableLanguageSupport()
     {
-        return mCreateMultilingual;
+        return mEnableLanguageSupport;
     }
     
     /**
      * @param createMultilingual The createMultilingual to set.
      */
-    public void setCreateMultilingual(boolean createMultilingual)
+    public void setEnableLanguageSupport(boolean enableLanguageSupport)
     {
-        mCreateMultilingual = createMultilingual;
+        mEnableLanguageSupport = enableLanguageSupport;
     }
     
     /**
@@ -688,7 +690,7 @@ public class NSISWizardSettings implements INSISWizardConstants
     /**
      * @return Returns the languages.
      */
-    public Collection getLanguages()
+    public ArrayList getLanguages()
     {
         return mLanguages;
     }
@@ -696,7 +698,7 @@ public class NSISWizardSettings implements INSISWizardConstants
     /**
      * @param languages The languages to set.
      */
-    public void setLanguages(Collection languages)
+    public void setLanguages(ArrayList languages)
     {
         if(mLanguages != languages) {
             mLanguages.clear();
@@ -885,5 +887,42 @@ public class NSISWizardSettings implements INSISWizardConstants
             boolean createUninstallerStartMenuShortcut)
     {
         mCreateUninstallerStartMenuShortcut = createUninstallerStartMenuShortcut;
+    }
+    
+    /**
+     * @return Returns the silentUninstaller.
+     */
+    public boolean isSilentUninstaller()
+    {
+        return mSilentUninstaller;
+    }
+    
+    /**
+     * @param silentUninstaller The silentUninstaller to set.
+     */
+    public void setSilentUninstaller(boolean silentUninstaller)
+    {
+        mSilentUninstaller = silentUninstaller;
+    }
+    
+    /**
+     * @return Returns the selectComponents.
+     */
+    public boolean isSelectComponents()
+    {
+        return mSelectComponents;
+    }
+    
+    /**
+     * @param selectComponents The selectComponents to set.
+     */
+    public void setSelectComponents(boolean selectComponents)
+    {
+        mSelectComponents = selectComponents;
+    }
+    
+    public int getWorkCount()
+    {
+        return 4;
     }
 }

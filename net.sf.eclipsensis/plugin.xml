@@ -14,7 +14,7 @@
 <plugin
    id="net.sf.eclipsensis"
    name="%plugin.name"
-   version="0.2.0"
+   version="0.4.0"
    provider-name="Sunil Kamath"
    class="net.sf.eclipsensis.EclipseNSISPlugin">
 
@@ -36,14 +36,13 @@
       <import plugin="org.eclipse.ui.views"/>
       <import plugin="org.eclipse.help"/>
       <import plugin="org.eclipse.ui.forms"/>
-      <import plugin="org.eclipse.jdt.ui"/>
    </requires>
 
    <extension
          point="org.eclipse.core.runtime.products">
       <product name="%product.name" application="org.eclipse.ui.ide.workbench" description="%product.description"> 
-          <property name="windowImage" value="icons/nsis.gif"/> 
-          <property name="aboutImage" value="icons/eclipsnsis.gif"/> 
+          <property name="windowImage" value="%product.window.image"/> 
+          <property name="aboutImage" value="%product.about.image"/> 
           <property name="aboutText" value="%about.text"/> 
           <property name="appName" value="%product.name"/> 
       </product> 
@@ -122,25 +121,40 @@
             <separator
                   name="net.sf.eclipsensis.Group2">
             </separator>
+            <separator
+                  name="net.sf.eclipsensis.Group3">
+            </separator>
          </menu>
          <action
                label="%about.action.name"
                class="net.sf.eclipsensis.actions.NSISAboutAction"
                tooltip="%about.action.tooltip"
-               menubarPath="net.sf.eclipsensis.Menu/net.sf.eclipsensis.Group2"
+               menubarPath="net.sf.eclipsensis.Menu/net.sf.eclipsensis.Group3"
                id="net.sf.eclipsensis.actions.NSISAboutAction">
          </action>
          <action
                label="%help.action.name"
+               disabledIcon="%help.action.disabledicon"
                icon="%help.action.icon"
                class="net.sf.eclipsensis.actions.NSISHelpAction"
                tooltip="%help.action.tooltip"
-               menubarPath="net.sf.eclipsensis.Menu/net.sf.eclipsensis.Group2"
+               menubarPath="net.sf.eclipsensis.Menu/net.sf.eclipsensis.Group3"
                toolbarPath="net.sf.eclipsensis.Group"
                id="net.sf.eclipsensis.actions.NSISHelpAction">
          </action>
          <action
+               disabledIcon="%wizard.action.disabledicon"
+               toolbarPath="net.sf.eclipsensis.Group"
+               label="%wizard.action.name"
+               tooltip="%wizard.action.tooltip"
+               class="net.sf.eclipsensis.actions.NSISWizardAction"
+               icon="%wizard.action.icon"
+               menubarPath="net.sf.eclipsensis.Menu/net.sf.eclipsensis.Group2"
+               id="net.sf.eclipsensis.actions.NSISWizardAction">
+         </action>
+         <action
                label="%preferences.action.name"
+               disabledIcon="%preferences.action.disabledicon"
                icon="%preferences.action.icon"
                class="net.sf.eclipsensis.actions.NSISPreferencesAction"
                tooltip="%preferences.action.tooltip"
@@ -199,6 +213,33 @@
                id="net.sf.eclipsensis.console.NSISConsole"
                relative="org.eclipse.ui.views.TaskList"
                relationship="right"/>
+         <newWizardShortcut
+               id="net.sf.eclipsensis.wizard.NSISWizard">
+         </newWizardShortcut>
+      </perspectiveExtension>
+      <perspectiveExtension
+            targetID="org.eclipse.jdt.ui.JavaPerspective">
+         <view
+               visible="false"
+               ratio="0.5"
+               id="net.sf.eclipsensis.console.NSISConsole"
+               relative="org.eclipse.ui.views.ProblemView"
+               relationship="right"/>
+         <newWizardShortcut
+               id="net.sf.eclipsensis.wizard.NSISWizard">
+         </newWizardShortcut>
+      </perspectiveExtension>
+      <perspectiveExtension
+            targetID="org.eclipse.pde.ui.PDEPerspective">
+         <view
+               visible="false"
+               ratio="0.5"
+               id="net.sf.eclipsensis.console.NSISConsole"
+               relative="org.eclipse.ui.views.ProblemView"
+               relationship="right"/>
+         <newWizardShortcut
+               id="net.sf.eclipsensis.wizard.NSISWizard">
+         </newWizardShortcut>
       </perspectiveExtension>
    </extension>
    <extension
@@ -338,5 +379,17 @@
    <extension
          point="org.eclipse.help.contexts">
        <contexts file="contexts.xml"/> 
+   </extension>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <category
+            name="NSIS"
+            id="net.sf.eclipsensis"/>
+      <wizard
+            class="net.sf.eclipsensis.wizard.NSISWizard"
+            icon="%wizard.icon"
+            category="net.sf.eclipsensis"
+            name="%wizard.name"
+            id="net.sf.eclipsensis.wizard.NSISWizard"/>
    </extension>
 </plugin>

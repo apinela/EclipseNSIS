@@ -31,11 +31,11 @@ public class NSISInstallShortcutDialog extends AbstractNSISInstallItemDialog imp
     private static ArrayList cProperties = new ArrayList();
     
     static {
-        cProperties.add("location");
-        cProperties.add("name");
-        cProperties.add("shortcutType");
-        cProperties.add("path");
-        cProperties.add("url");
+        cProperties.add("location"); //$NON-NLS-1$
+        cProperties.add("name"); //$NON-NLS-1$
+        cProperties.add("shortcutType"); //$NON-NLS-1$
+        cProperties.add("path"); //$NON-NLS-1$
+        cProperties.add("url"); //$NON-NLS-1$
     }
 
     public NSISInstallShortcutDialog(Shell parentShell, NSISInstallShortcut item)
@@ -66,29 +66,29 @@ public class NSISInstallShortcutDialog extends AbstractNSISInstallItemDialog imp
         layout.marginWidth = 0;
         composite.setLayout(layout);
         
-        final Combo c1 = NSISWizardDialogUtil.createCombo(composite,NSISKeywords.PREDEFINED_PATH_VARIABLES,mStore.getString("location"),
-                                                          false,"wizard.location.label",true,null,true);
+        final Combo c1 = NSISWizardDialogUtil.createCombo(composite,NSISKeywords.PREDEFINED_PATH_VARIABLES,mStore.getString("location"), //$NON-NLS-1$
+                                                          false,"wizard.location.label",true,null,true); //$NON-NLS-1$
         c1.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e)
             {
-                mStore.setValue("location",c1.getText());
+                mStore.setValue("location",c1.getText().trim()); //$NON-NLS-1$
                 setComplete(validate());
             }
         });
         gd = (GridData)c1.getLayoutData();
         gd.horizontalAlignment = GridData.FILL;
 
-        final Text t1 = NSISWizardDialogUtil.createText(composite,mStore.getString("name"),"wizard.name.label",true,null,true);
+        final Text t1 = NSISWizardDialogUtil.createText(composite,mStore.getString("name"),"wizard.name.label",true,null,true); //$NON-NLS-1$ //$NON-NLS-2$
         t1.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e)
             {
-                mStore.setValue("name",t1.getText());
+                mStore.setValue("name",t1.getText().trim()); //$NON-NLS-1$
                 setComplete(validate());
             }
         });
 
-        final Button[] radio = NSISWizardDialogUtil.createRadioGroup(composite,NSISWizardDisplayValues.SHORTCUT_TYPE_NAMES,mStore.getInt("shortcutType"),
-                            "wizard.shortcut.type.label",true,null,false);
+        final Button[] radio = NSISWizardDialogUtil.createRadioGroup(composite,NSISWizardDisplayValues.SHORTCUT_TYPE_NAMES,mStore.getInt("shortcutType"), //$NON-NLS-1$
+                            "wizard.shortcut.type.label",true,null,false); //$NON-NLS-1$
         SelectionAdapter sa = new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 Button b = (Button)e.widget;
@@ -100,7 +100,7 @@ public class NSISInstallShortcutDialog extends AbstractNSISInstallItemDialog imp
                     else if(b == radio[1]) {
                         n = 1;
                     }
-                    mStore.setValue("shortcutType",n);
+                    mStore.setValue("shortcutType",n); //$NON-NLS-1$
                     setComplete(validate());
                 }
             }            
@@ -111,21 +111,21 @@ public class NSISInstallShortcutDialog extends AbstractNSISInstallItemDialog imp
         MasterSlaveController m1 = new MasterSlaveController(radio[SHORTCUT_URL]);
         MasterSlaveController m2 = new MasterSlaveController(radio[SHORTCUT_INSTALLELEMENT]);
         
-        final Text t2 = NSISWizardDialogUtil.createText(composite,mStore.getString("url"),"wizard.url.label",true,m1,true);
+        final Text t2 = NSISWizardDialogUtil.createText(composite,mStore.getString("url"),"wizard.url.label",true,m1,true); //$NON-NLS-1$ //$NON-NLS-2$
         t2.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e)
             {
-                mStore.setValue("url",t2.getText());
+                mStore.setValue("url",t2.getText().trim()); //$NON-NLS-1$
                 setComplete(validate());
             }
         });
         
-        final Combo c2 = NSISWizardDialogUtil.createContentBrowser(composite, "wizard.path.label", mStore.getString("path"), mItem.getSettings(), true, m2, true);
+        final Combo c2 = NSISWizardDialogUtil.createContentBrowser(composite, "wizard.path.label", mStore.getString("path"), mItem.getSettings(), true, m2, true); //$NON-NLS-1$ //$NON-NLS-2$
 
         c2.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e)
             {
-                mStore.setValue("path",c2.getText());
+                mStore.setValue("path",c2.getText().trim()); //$NON-NLS-1$
                 setComplete(validate());
             }
         });
@@ -141,10 +141,10 @@ public class NSISInstallShortcutDialog extends AbstractNSISInstallItemDialog imp
      */
     protected boolean validate()
     {
-        if(Common.isValidNSISPrefixedPathName(mStore.getString("location")) && Common.isValidFileName(mStore.getString("name"))) {
-            int n = mStore.getInt("shortcutType");
-            if((n == SHORTCUT_INSTALLELEMENT && Common.isValidNSISPrefixedPathName(mStore.getString("path")))||
-               (n == SHORTCUT_URL && Common.isValidURL(mStore.getString("url")))) {
+        if(Common.isValidNSISPrefixedPathName(mStore.getString("location")) && Common.isValidFileName(mStore.getString("name"))) { //$NON-NLS-1$ //$NON-NLS-2$
+            int n = mStore.getInt("shortcutType"); //$NON-NLS-1$
+            if((n == SHORTCUT_INSTALLELEMENT && Common.isValidNSISPrefixedPathName(mStore.getString("path")))|| //$NON-NLS-1$
+               (n == SHORTCUT_URL && Common.isValidURL(mStore.getString("url")))) { //$NON-NLS-1$
                 return true;
             }
         }

@@ -45,7 +45,7 @@ public class NSISInstallDirectory extends AbstractNSISInstallItem
      */
     public String getDisplayName()
     {
-        return mName+(mCopyFolderContents?"\\*.*":"");
+        return mName+(mCopyFolderContents?"\\*.*":""); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     /* (non-Javadoc)

@@ -56,4 +56,15 @@ public class ColorManager
         }
         return color;
     }
+
+    /**
+     * @param rgb
+     * @return
+     */
+    public static String rgbToHex(RGB rgb)
+    {
+        return new StringBuffer(Common.leftPad(Integer.toHexString(rgb.red),2,'0')).append(
+                                Common.leftPad(Integer.toHexString(rgb.green),2,'0')).append(
+                                Common.leftPad(Integer.toHexString(rgb.blue),2,'0')).toString().toUpperCase();
+    }
 }

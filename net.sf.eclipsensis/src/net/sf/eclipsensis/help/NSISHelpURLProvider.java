@@ -12,6 +12,7 @@ package net.sf.eclipsensis.help;
 import java.util.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.IEclipseNSISPluginListener;
 import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.settings.INSISPreferenceConstants;
 import net.sf.eclipsensis.settings.NSISPreferences;
@@ -37,7 +38,35 @@ public class NSISHelpURLProvider implements INSISConstants, IPropertyChangeListe
     
     private ResourceBundle mBundle;
     
-    public NSISHelpURLProvider()
+    private static NSISHelpURLProvider cInstance = null;
+    private static IEclipseNSISPluginListener cShutdownListener = new IEclipseNSISPluginListener() {
+        public void stopped()
+        {
+            if(cInstance != null) {
+                synchronized(NSISHelpProducer.class) {
+                    if(cInstance != null) {
+                        cInstance.dispose();
+                        cInstance = null;
+                    }                    
+                }
+            }
+        }
+    };
+    
+    public static NSISHelpURLProvider getInstance()
+    {
+        if(cInstance == null) {
+            synchronized(NSISHelpURLProvider.class) {
+                if(cInstance == null) {
+                    cInstance = new NSISHelpURLProvider();
+                    EclipseNSISPlugin.getDefault().addListener(cShutdownListener);
+                }                
+            }
+        }
+        return cInstance;
+    }
+    
+    private NSISHelpURLProvider()
     {
         mDocsHelpPrefix = EclipseNSISPlugin.getResourceString("docs.help.prefix","Chapter"); //$NON-NLS-1$ //$NON-NLS-2$
         mDocsHelpSuffix = EclipseNSISPlugin.getResourceString("docs.help.suffix","html"); //$NON-NLS-1$ //$NON-NLS-2$

@@ -15,6 +15,7 @@ import java.util.ResourceBundle;
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.wizard.settings.NSISWizardSettings;
+import net.sf.eclipsensis.wizard.util.MasterSlaveController;
 import net.sf.eclipsensis.wizard.util.NSISWizardDialogUtil;
 
 import org.eclipse.core.runtime.Path;
@@ -61,19 +62,20 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
     {
         String pathname = mSettings.getSavePath();
         if(Common.isEmpty(pathname)) {
-            setErrorMessage(EclipseNSISPlugin.getResourceString("empty.save.location.error"));
+            setErrorMessage(EclipseNSISPlugin.getResourceString("empty.save.location.error")); //$NON-NLS-1$
             return false;
         }
-        else if(Path.EMPTY.isValidPath(pathname)) {
+        else if(!Path.EMPTY.isValidPath(pathname)) {
             setErrorMessage(MessageFormat.format(EclipseNSISPlugin.getResourceString("invalid.save.location.error"),new String[]{pathname})); //$NON-NLS-1$
+            return false;
         }
         return true;
     }
 
     private boolean validatePage(int flag)
     {
-        boolean b = (((flag & PROGRAM_FILE_CHECK) == 0) || validateNSISPath(mSettings.getRunProgramAfterInstall())||
-                     ((flag & README_FILE_CHECK) == 0) || validateNSISPath(mSettings.getOpenReadmeAfterInstall())||
+        boolean b = (((flag & PROGRAM_FILE_CHECK) == 0) || validateNSISPath(mSettings.getRunProgramAfterInstall())&&
+                     ((flag & README_FILE_CHECK) == 0) || validateNSISPath(mSettings.getOpenReadmeAfterInstall())&&
                      ((flag & SAVE_PATH_CHECK) == 0) || validateSavePath());
         setPageComplete(b);
         if(b) {
@@ -159,18 +161,15 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
             }
         });
 
-        NSISWizard wizard = (NSISWizard)getWizard();
-        wizard.addNSISWizardListener(new NSISWizardAdapter() {
+        addPageListener(new NSISWizardPageAdapter() {
             public void aboutToEnter(IWizardPage page, boolean forward)
             {
-                if(page != null && page.getName().equals(NAME) && forward) {
-                    boolean b = mSettings.getInstallerType() != INSTALLER_TYPE_SILENT;
-                    b1.setEnabled(b);
-                    b2.setEnabled(b);
-                    b = mSettings.isCreateUninstaller();
-                    b3.setEnabled(b);
-                    b4.setEnabled(b);
-                }
+                boolean b = mSettings.getInstallerType() != INSTALLER_TYPE_SILENT;
+                b1.setEnabled(b);
+                b2.setEnabled(b);
+                b = mSettings.isCreateUninstaller();
+                b3.setEnabled(b);
+                b4.setEnabled(b);
             }
         });
     }
@@ -183,8 +182,8 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
         ResourceBundle bundle = EclipseNSISPlugin.getDefault().getResourceBundle();
         final Group group = NSISWizardDialogUtil.createGroup(parent, 3, "post.installation.actions.group.label",null,false); //$NON-NLS-1$
         
-        final Combo c1 = NSISWizardDialogUtil.createContentBrowser(group, "run.program.label", mSettings.getRunProgramAfterInstall(), mSettings, true, null, false);
-        final Text t = NSISWizardDialogUtil.createText(group,mSettings.getRunProgramAfterInstallParams(),"run.params.label",true,null,false);
+        final Combo c1 = NSISWizardDialogUtil.createContentBrowser(group, "run.program.label", mSettings.getRunProgramAfterInstall(), mSettings, true, null, false); //$NON-NLS-1$
+        final Text t = NSISWizardDialogUtil.createText(group,mSettings.getRunProgramAfterInstallParams(),"run.params.label",true,null,false); //$NON-NLS-1$
         Label l = (Label)t.getData(NSISWizardDialogUtil.LABEL);
         if(l != null) {
             ((GridData)l.getLayoutData()).horizontalIndent=8;
@@ -202,7 +201,7 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
             }
         });
         
-        final Combo c2 = NSISWizardDialogUtil.createContentBrowser(group, "open.readme.label", mSettings.getOpenReadmeAfterInstall(), mSettings, true, null, false);
+        final Combo c2 = NSISWizardDialogUtil.createContentBrowser(group, "open.readme.label", mSettings.getOpenReadmeAfterInstall(), mSettings, true, null, false); //$NON-NLS-1$
         c1.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e)
             {
@@ -220,7 +219,7 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
         ResourceBundle bundle = EclipseNSISPlugin.getDefault().getResourceBundle();
         final Group group = NSISWizardDialogUtil.createGroup(parent, 3, "script.save.settings.group.label",null,true); //$NON-NLS-1$
         
-        final Text t = NSISWizardDialogUtil.createText(group, mSettings.getSavePath().toString(),"workbench.save.location.label",true,null,true);
+        final Text t = NSISWizardDialogUtil.createText(group, mSettings.getSavePath().toString(),"workbench.save.location.label",true,null,true); //$NON-NLS-1$
         ((GridData)t.getLayoutData()).horizontalSpan = 1;
         t.addModifyListener(new ModifyListener(){
             public void modifyText(ModifyEvent e)
@@ -231,16 +230,16 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
          });
         
         Button b = new Button(group,SWT.PUSH);
-        b.setText(EclipseNSISPlugin.getResourceString("browse.text"));
-        b.setToolTipText(EclipseNSISPlugin.getResourceString("browse.tooltip"));
+        b.setText(EclipseNSISPlugin.getResourceString("browse.text")); //$NON-NLS-1$
+        b.setToolTipText(EclipseNSISPlugin.getResourceString("browse.tooltip")); //$NON-NLS-1$
         b.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 SaveAsDialog dialog = new SaveAsDialog(getShell());
                 String savePath = mSettings.getSavePath();
-                dialog.setOriginalName((Common.isEmpty(savePath)?EclipseNSISPlugin.getResourceString("default.save.name"):savePath));
-                dialog.setTitle(EclipseNSISPlugin.getResourceString("save.location.title"));
+                dialog.setOriginalName((Common.isEmpty(savePath)?EclipseNSISPlugin.getResourceString("default.save.name"):savePath)); //$NON-NLS-1$
+                dialog.setTitle(EclipseNSISPlugin.getResourceString("save.location.title")); //$NON-NLS-1$
                 dialog.create();
-                dialog.setMessage(EclipseNSISPlugin.getResourceString("save.location.message"));
+                dialog.setMessage(EclipseNSISPlugin.getResourceString("save.location.message")); //$NON-NLS-1$
                 int returnCode = dialog.open();
                 if(returnCode == Window.OK) {
                     t.setText(dialog.getResult().toString());
@@ -277,8 +276,18 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
         final Group group = NSISWizardDialogUtil.createGroup(parent, 1, "miscellaneous.uninstaller.settings.group.label",null,false); //$NON-NLS-1$
         group.setEnabled(mSettings.isCreateUninstaller());
         
+        final Button b = NSISWizardDialogUtil.createCheckBox(group, "silent.uninstaller", //$NON-NLS-1$
+                mSettings.isSilentUninstaller(),true, null, false);
+        b.addSelectionListener(new SelectionAdapter(){
+            public void widgetSelected(SelectionEvent e)
+            {
+                mSettings.setSilentUninstaller(((Button)e.widget).getSelection());
+            }
+        });
+        MasterSlaveController m = new MasterSlaveController(b,true);
+        
         final Button b1 = NSISWizardDialogUtil.createCheckBox(group, "show.uninstaller.details.label", //$NON-NLS-1$
-                              mSettings.isShowUninstDetails(),true, null, false);
+                              mSettings.isShowUninstDetails(),true, m, false);
         b1.addSelectionListener(new SelectionAdapter(){
             public void widgetSelected(SelectionEvent e)
             {
@@ -287,21 +296,19 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
         });
 
         final Button b2 = NSISWizardDialogUtil.createCheckBox(group, "autoclose.uninstaller.label", //$NON-NLS-1$
-                mSettings.isAutoCloseUninstaller(),true, null, false);
+                mSettings.isAutoCloseUninstaller(),true, m, false);
         b2.addSelectionListener(new SelectionAdapter(){
             public void widgetSelected(SelectionEvent e)
             {
                 mSettings.setAutoCloseUninstaller(((Button)e.widget).getSelection());
             }
         });
-
-        NSISWizard wizard = (NSISWizard)getWizard();
-        wizard.addNSISWizardListener(new NSISWizardAdapter() {
-            public void aboutToEnter(IWizardPage page, boolean forward)
+        m.updateSlaves();
+        
+        addPageListener(new NSISWizardPageAdapter() {
+            public void aboutToShow()
             {
-                if(page != null && page.getName().equals(NAME) && forward) {
-                    group.setEnabled(mSettings.isCreateUninstaller());
-                }
+                group.setEnabled(mSettings.isCreateUninstaller());
             }
         });
     }

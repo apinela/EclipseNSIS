@@ -151,7 +151,7 @@ public class NSISInstallShortcut extends AbstractNSISInstallItem
     {
         super.setSettings(settings);
         if(!Common.isEmpty(settings.getStartMenuGroup()) && Common.isEmpty(mLocation)) {
-            mLocation = "$SMPROGRAMS\\"+settings.getStartMenuGroup();
+            mLocation = "$SMPROGRAMS\\"+settings.getStartMenuGroup(); //$NON-NLS-1$
         }
     }
 }

@@ -17,8 +17,8 @@ public class NSISWizardDisplayValues implements INSISWizardConstants
     public static final String[] INSTALLER_TYPE_NAMES = new String[INSTALLER_TYPE_MUI+1];
     public static final String[] LICENSE_BUTTON_NAMES = new String[LICENSE_BUTTON_RADIO+1];
     public static final String[] COMPRESSOR_TYPE_NAMES = new String[MakeNSISRunner.COMPRESSOR_DISPLAY_ARRAY.length-1];
-    public static final String[] HKEY_NAMES = {"HKEY_CLASSES_ROOT","HKEY_LOCAL_MACHINE","HKEY_CURRENT_USER","HKEY_USERS",
-                                               "HKEY_CURRENT_CONFIG","HKEY_DYN_DATA","HKEY_PERFORMANCE_DATA"};
+    public static final String[] HKEY_NAMES = {"HKEY_CLASSES_ROOT","HKEY_LOCAL_MACHINE","HKEY_CURRENT_USER","HKEY_USERS", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                                               "HKEY_CURRENT_CONFIG","HKEY_DYN_DATA","HKEY_PERFORMANCE_DATA"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     public static final String[] SHORTCUT_TYPE_NAMES = new String[SHORTCUT_INSTALLELEMENT+1];
     public static final String[] OVERWRITE_MODE_NAMES = new String[OVERWRITE_IFDIFF+1];
     public static final String[] REG_VALUE_TYPES = new String[REG_DWORD+1];

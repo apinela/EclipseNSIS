@@ -110,7 +110,7 @@ public class NSISPreferencePage	extends NSISSettingsPage
             {
                 Shell shell = getShell();
                 DirectoryDialog dialog = new DirectoryDialog(shell);
-                dialog.setMessage(EclipseNSISPlugin.getResourceString("nsis.home.message"));
+                dialog.setMessage(EclipseNSISPlugin.getResourceString("nsis.home.message")); //$NON-NLS-1$
                 String nsisHome = dialog.open();
                 if (!Common.isEmpty(nsisHome)) { 
                     if(NSISValidator.validateNSISHome(nsisHome)) {

@@ -9,9 +9,11 @@
  *******************************************************************************/
 package net.sf.eclipsensis.actions;
 
+import java.text.MessageFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.console.INSISConsoleLineProcessor;
 import net.sf.eclipsensis.console.NSISConsoleLine;
 import net.sf.eclipsensis.makensis.MakeNSISResults;
@@ -20,6 +22,10 @@ import net.sf.eclipsensis.makensis.MakeNSISRunner;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.ui.*;
+import org.eclipse.ui.texteditor.ITextEditor;
+import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 
 public class NSISCompileAction extends NSISScriptAction
 {
@@ -29,10 +35,43 @@ public class NSISCompileAction extends NSISScriptAction
     /* (non-Javadoc)
      * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
      */
-	public void run(IAction action) {
+	final public void run(IAction action) {
         if(mPlugin != null) {
-            new Thread(getRunnable()).start();
-            action.setEnabled(false);
+            MakeNSISRunner.startup();
+            if(mFile != null) {
+                IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
+                outer:
+                for (int i = 0; i < windows.length; i++) {
+                    IWorkbenchPage[] pages = windows[i].getPages();
+                    for (int j = 0; j < pages.length; j++) {
+                        IEditorPart[] editors = pages[i].getDirtyEditors();
+                        for (int k = 0; k < editors.length; k++) {
+                            IEditorInput input = editors[i].getEditorInput();
+                            if(input != null && input instanceof IFileEditorInput) {
+                                if(mFile.equals(((IFileEditorInput)input).getFile())) {
+                                    if(MessageDialog.openConfirm(windows[i].getShell(), EclipseNSISPlugin.getResourceString("confirm.title"), 
+                                            MessageFormat.format(EclipseNSISPlugin.getResourceString("compile.save.confirmation"),new String[]{mFile.getName()}))) {
+                                        if(editors[i] instanceof ITextEditor) {
+                                            IAction saveAction = ((ITextEditor)editors[i]).getAction(ITextEditorActionConstants.SAVE);
+                                            if(saveAction != null) {
+                                                saveAction.run();
+                                                break outer;
+                                            }
+                                        }
+                                        editors[i].doSave(null);
+                                        break outer;
+                                    }
+                                    else {
+                                        return;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                new Thread(getRunnable()).start();
+                action.setEnabled(false);
+            }
         }
 	}
     
@@ -81,7 +120,7 @@ public class NSISCompileAction extends NSISScriptAction
         public void run()
         {
             if(mFile != null) {
-                MakeNSISResults results = MakeNSISRunner.run(mFile, this);
+                MakeNSISResults results = MakeNSISRunner.compile(mFile, this);
                 mOutputExeName = results.getOutputFileName();
             }
         }        
@@ -126,6 +165,10 @@ public class NSISCompileAction extends NSISScriptAction
                 }
                 else {
                     line = NSISConsoleLine.info(text);
+                }
+                if(line.getType() == NSISConsoleLine.WARNING) {
+                    line.setFile(mFile);
+                    line.setLineNum(1);
                 }
             }
             

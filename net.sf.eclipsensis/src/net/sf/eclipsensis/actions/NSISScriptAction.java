@@ -9,7 +9,6 @@
  *******************************************************************************/
 package net.sf.eclipsensis.actions;
 
-import net.sf.eclipsensis.console.NSISConsole;
 import net.sf.eclipsensis.makensis.IMakeNSISRunListener;
 import net.sf.eclipsensis.makensis.MakeNSISRunner;
 
@@ -23,7 +22,6 @@ import org.eclipse.ui.IFileEditorInput;
 
 public abstract class NSISScriptAction extends NSISAction implements IMakeNSISRunListener
 {
-    protected NSISConsole mConsole = null;
     protected IFile mFile = null;
     
 	/**
@@ -63,7 +61,6 @@ public abstract class NSISScriptAction extends NSISAction implements IMakeNSISRu
             if(editorInput !=null && editorInput instanceof IFileEditorInput) {
                 mFile = ((IFileEditorInput)editorInput).getFile();
             }
-            mConsole = NSISConsole.getConsole();
         }
         updateActionState();
     }

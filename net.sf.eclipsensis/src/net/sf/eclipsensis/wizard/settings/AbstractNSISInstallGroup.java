@@ -38,7 +38,7 @@ public abstract class AbstractNSISInstallGroup implements INSISInstallElement
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#getChildren()
      */
-    public final INSISInstallElement[] getChildren()
+    public INSISInstallElement[] getChildren()
     {
         return (INSISInstallElement[])mChildren.toArray(new INSISInstallElement[0]);
     }
@@ -46,7 +46,7 @@ public abstract class AbstractNSISInstallGroup implements INSISInstallElement
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#getChildTypes()
      */
-    public final String[] getChildTypes()
+    public String[] getChildTypes()
     {
         return (String[])mChildTypes.toArray(new String[0]);
     }
@@ -54,7 +54,7 @@ public abstract class AbstractNSISInstallGroup implements INSISInstallElement
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#addChild(net.sf.eclipsensis.wizard.settings.INSISInstallElement)
      */
-    public final void addChild(INSISInstallElement child)
+    public void addChild(INSISInstallElement child)
     {
         if(child != null && mChildTypes.contains(child.getType()) && !mChildren.contains(child)) {
             INSISInstallElement oldParent = child.getParent();
@@ -69,7 +69,7 @@ public abstract class AbstractNSISInstallGroup implements INSISInstallElement
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#removeChild(net.sf.eclipsensis.wizard.settings.INSISInstallElement)
      */
-    public final void removeChild(INSISInstallElement child)
+    public void removeChild(INSISInstallElement child)
     {
         if(child != null && mChildTypes.contains(child.getType()) && mChildren.contains(child)) {
             mChildren.remove(child);
@@ -80,7 +80,7 @@ public abstract class AbstractNSISInstallGroup implements INSISInstallElement
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#setParent(net.sf.eclipsensis.wizard.settings.INSISInstallElement)
      */
-    public final void setParent(INSISInstallElement parent)
+    public void setParent(INSISInstallElement parent)
     {
         mParent = parent;
     }

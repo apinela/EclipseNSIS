@@ -65,7 +65,7 @@ public abstract class AbstractNSISInstallItemDialog extends Dialog
      */
     protected void configureShell(Shell newShell)
     {
-        newShell.setText(MessageFormat.format(EclipseNSISPlugin.getResourceString("wizard.installitem.dialog.title.format"),
+        newShell.setText(MessageFormat.format(EclipseNSISPlugin.getResourceString("wizard.installitem.dialog.title.format"), //$NON-NLS-1$
                          new String[]{mItem.getType()}));
         super.configureShell(newShell);
     }

@@ -10,6 +10,8 @@
 package net.sf.eclipsensis.wizard;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.util.Common;
@@ -17,7 +19,6 @@ import net.sf.eclipsensis.util.ImageManager;
 import net.sf.eclipsensis.wizard.settings.NSISWizardSettings;
 
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.events.VerifyListener;
@@ -26,11 +27,12 @@ public abstract class AbstractNSISWizardPage extends WizardPage implements INSIS
 {
     protected NSISWizardSettings mSettings = null;
     protected static final int WIDTH_HINT;
+    private ArrayList mListeners = new ArrayList();
 
     static {
         int widthHint;
         try {
-            widthHint = Integer.parseInt(EclipseNSISPlugin.getResourceString("wizard.width.hint"));
+            widthHint = Integer.parseInt(EclipseNSISPlugin.getResourceString("wizard.width.hint")); //$NON-NLS-1$
         }
         catch(Exception ex) {
             widthHint = 500;
@@ -155,20 +157,54 @@ public abstract class AbstractNSISWizardPage extends WizardPage implements INSIS
         }
         return true;
     }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.IDialogPage#setVisible(boolean)
+     */
+    public void setVisible(boolean visible)
+    {
+        notifyListeners(visible);
+        super.setVisible(visible);
+    }
     
-    protected class NSISWizardAdapter implements INSISWizardListener
+    private void notifyListeners(boolean enter)
+    {
+        for (Iterator iter = mListeners.iterator(); iter.hasNext();) {
+            INSISWizardPageListener listener = (INSISWizardPageListener) iter.next();
+            if(enter) {
+                listener.aboutToShow();
+            }
+            else {
+                listener.aboutToHide();
+            }
+        }
+    }
+
+    public void addPageListener(INSISWizardPageListener listener)
+    {
+        if(!mListeners.contains(listener)) {
+            mListeners.add(listener);
+        }
+    }
+
+    public void removePageListener(INSISWizardPageListener listener)
+    {
+        mListeners.remove(listener);
+    }
+    
+    protected class NSISWizardPageAdapter implements INSISWizardPageListener
     {
         /* (non-Javadoc)
-         * @see net.sf.eclipsensis.wizard.INSISWizardListener#aboutToEnter(org.eclipse.jface.wizard.IWizardPage, boolean)
+         * @see net.sf.eclipsensis.wizard.INSISWizardPageListener#aboutToEnter()
          */
-        public void aboutToEnter(IWizardPage page, boolean forward)
+        public void aboutToShow()
         {
         }
 
         /* (non-Javadoc)
-         * @see net.sf.eclipsensis.wizard.INSISWizardListener#aboutToLeave(org.eclipse.jface.wizard.IWizardPage, boolean)
+         * @see net.sf.eclipsensis.wizard.INSISWizardPageListener#aboutToLeave()
          */
-        public void aboutToLeave(IWizardPage page, boolean forward)
+        public void aboutToHide()
         {
         }
     }

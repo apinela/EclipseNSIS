@@ -20,6 +20,8 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
@@ -28,6 +30,11 @@ public class NSISContentBrowserDialog extends Dialog
 {
     private NSISWizardSettings mSettings = null;
     private INSISInstallElement mElement = null;
+    private HashSet mTypes = new HashSet(Arrays.asList(new String[]{
+                                                        NSISInstallDirectory.TYPE,
+                                                        NSISInstallFile.TYPE,
+                                                        NSISInstallFiles.FILEITEM_TYPE
+                                                     }));
     
     /**
      * @param parentShell
@@ -44,7 +51,7 @@ public class NSISContentBrowserDialog extends Dialog
      */
     protected void configureShell(Shell newShell)
     {
-        newShell.setText(EclipseNSISPlugin.getResourceString("wizard.content.browser.title"));
+        newShell.setText(EclipseNSISPlugin.getResourceString("wizard.content.browser.title")); //$NON-NLS-1$
         Composite parent = newShell.getParent();
         if(parent != null) {
             Point point = parent.toDisplay(0,0);
@@ -79,7 +86,7 @@ public class NSISContentBrowserDialog extends Dialog
     protected Control createDialogArea(Composite parent)
     {
         Composite composite = (Composite)super.createDialogArea(parent);
-        Label l = NSISWizardDialogUtil.createLabel(composite,"wizard.select.shortcut.message",true,null,false);
+        Label l = NSISWizardDialogUtil.createLabel(composite,"wizard.select.shortcut.message",true,null,false); //$NON-NLS-1$
         
         ViewerFilter vf = new ViewerFilter() {
             private HashSet mTypes = new HashSet(Arrays.asList(new String[]{
@@ -115,29 +122,16 @@ public class NSISContentBrowserDialog extends Dialog
         tv.setLabelProvider(new NSISInstallElementLabelProvider());
         tv.setContentProvider(new NSISInstallElementTreeContentProvider(mSettings));
         tv.addSelectionChangedListener(new ISelectionChangedListener(){
-            private HashSet mTypes = new HashSet(Arrays.asList(new String[]{
-                    NSISInstallDirectory.TYPE,
-                    NSISInstallFile.TYPE,
-                    NSISInstallFiles.FILEITEM_TYPE
-                 }));
-
             public void selectionChanged(SelectionChangedEvent event) 
             {
-                Button okButton = getButton(IDialogConstants.OK_ID);
-                boolean enabled = false;
-                mElement = null;
-                ISelection sel = event.getSelection();
-                if(!sel.isEmpty() && sel instanceof IStructuredSelection) {
-                    IStructuredSelection ssel = (IStructuredSelection)sel;
-                    if(ssel.size() == 1) {
-                        Object obj = ssel.getFirstElement();
-                        if(obj instanceof INSISInstallElement && mTypes.contains(((INSISInstallElement)obj).getType())) {
-                            mElement = (INSISInstallElement)obj;
-                            enabled = true;
-                        }
-                    }
+                getButton(IDialogConstants.OK_ID).setEnabled(setElement(event.getSelection()));
+            }
+        });
+        tree.addSelectionListener(new SelectionAdapter() {
+            public void widgetDefaultSelected(SelectionEvent e) {
+                if(setElement(tv.getSelection())) {
+                    buttonPressed(IDialogConstants.OK_ID);
                 }
-                okButton.setEnabled(enabled);
             }
         });
         tv.setAutoExpandLevel(2);
@@ -145,5 +139,22 @@ public class NSISContentBrowserDialog extends Dialog
         tv.setInput(mSettings);
 
         return composite;
+    }
+    
+    private boolean setElement(ISelection sel)
+    {
+        boolean ok = false;
+        mElement = null;
+        if(!sel.isEmpty() && sel instanceof IStructuredSelection) {
+            IStructuredSelection ssel = (IStructuredSelection)sel;
+            if(ssel.size() == 1) {
+                Object obj = ssel.getFirstElement();
+                if(obj instanceof INSISInstallElement && mTypes.contains(((INSISInstallElement)obj).getType())) {
+                    mElement = (INSISInstallElement)obj;
+                    ok = true;
+                }
+            }
+        }
+        return ok;
     }
 }

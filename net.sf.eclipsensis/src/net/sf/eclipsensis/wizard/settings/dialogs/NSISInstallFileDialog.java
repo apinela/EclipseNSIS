@@ -30,9 +30,9 @@ public class NSISInstallFileDialog extends AbstractNSISInstallItemDialog
     private static ArrayList cProperties = new ArrayList();
     
     static {
-        cProperties.add("destination");
-        cProperties.add("name");
-        cProperties.add("overwriteMode");
+        cProperties.add("destination"); //$NON-NLS-1$
+        cProperties.add("name"); //$NON-NLS-1$
+        cProperties.add("overwriteMode"); //$NON-NLS-1$
     }
 
     public NSISInstallFileDialog(Shell parentShell, NSISInstallFile item)
@@ -63,33 +63,33 @@ public class NSISInstallFileDialog extends AbstractNSISInstallItemDialog
         layout.marginWidth = 0;
         composite.setLayout(layout);
         
-        final Text t = NSISWizardDialogUtil.createFileBrowser(composite,mStore.getString("name"),false,
-                            Common.loadArrayProperty(EclipseNSISPlugin.getDefault().getResourceBundle(),"wizard.source.file.filternames"),
-                            Common.loadArrayProperty(EclipseNSISPlugin.getDefault().getResourceBundle(),"wizard.source.file.filters"),
-                            "wizard.source.file.label",true,null,true);
+        final Text t = NSISWizardDialogUtil.createFileBrowser(composite,mStore.getString("name"),false, //$NON-NLS-1$
+                            Common.loadArrayProperty(EclipseNSISPlugin.getDefault().getResourceBundle(),"wizard.source.file.filternames"), //$NON-NLS-1$
+                            Common.loadArrayProperty(EclipseNSISPlugin.getDefault().getResourceBundle(),"wizard.source.file.filters"), //$NON-NLS-1$
+                            "wizard.source.file.label",true,null,true); //$NON-NLS-1$
         t.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e)
             {
-                mStore.setValue("name",t.getText());
+                mStore.setValue("name",t.getText().trim()); //$NON-NLS-1$
                 setComplete(validate());
             }
         });
-        final Combo c1 = NSISWizardDialogUtil.createCombo(composite,NSISKeywords.PREDEFINED_PATH_VARIABLES,mStore.getString("destination"),
-                                                         false,"wizard.destination.label",true,null,false);
+        final Combo c1 = NSISWizardDialogUtil.createCombo(composite,NSISKeywords.PREDEFINED_PATH_VARIABLES,mStore.getString("destination"), //$NON-NLS-1$
+                                                         false,"wizard.destination.label",true,null,false); //$NON-NLS-1$
         c1.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e)
             {
-                mStore.setValue("destination",c1.getText());
+                mStore.setValue("destination",c1.getText().trim()); //$NON-NLS-1$
                 setComplete(validate());
             }
         });
         gd = (GridData)c1.getLayoutData();
         gd.horizontalAlignment = GridData.FILL;
-        final Combo c2 = NSISWizardDialogUtil.createCombo(composite,NSISWizardDisplayValues.OVERWRITE_MODE_NAMES,mStore.getInt("overwriteMode"),
-                true,"wizard.overwrite.label",true,null,false);
+        final Combo c2 = NSISWizardDialogUtil.createCombo(composite,NSISWizardDisplayValues.OVERWRITE_MODE_NAMES,mStore.getInt("overwriteMode"), //$NON-NLS-1$
+                true,"wizard.overwrite.label",true,null,false); //$NON-NLS-1$
         c2.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
-                mStore.setValue("overwrite",c2.getSelectionIndex());
+                mStore.setValue("overwrite",c2.getSelectionIndex()); //$NON-NLS-1$
             }
         });
         return composite;
@@ -100,6 +100,6 @@ public class NSISInstallFileDialog extends AbstractNSISInstallItemDialog
      */
     protected boolean validate()
     {
-        return Common.isValidFile(mStore.getString("name")) && Common.isValidNSISPrefixedPathName(mStore.getString("destination"));
+        return Common.isValidFile(mStore.getString("name")) && Common.isValidNSISPrefixedPathName(mStore.getString("destination")); //$NON-NLS-1$ //$NON-NLS-2$
     }
 }

@@ -35,4 +35,5 @@ public class WinAPI
     public static native String RegQueryStrValue(long hRootKey, String sSubKey, String sValue);
     public static native long GetDesktopWindow();
     public static native long HtmlHelp(long hwndCaller, String  pszFile, int uCommand, long dwData);
+    public static native int GetUserDefaultLangID();
 }

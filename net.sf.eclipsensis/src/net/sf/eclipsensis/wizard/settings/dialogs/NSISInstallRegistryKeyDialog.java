@@ -28,8 +28,8 @@ public class NSISInstallRegistryKeyDialog extends AbstractNSISInstallItemDialog
     private static ArrayList cProperties = new ArrayList();
     
     static {
-        cProperties.add("rootKey");
-        cProperties.add("subKey");
+        cProperties.add("rootKey"); //$NON-NLS-1$
+        cProperties.add("subKey"); //$NON-NLS-1$
     }
 
     public NSISInstallRegistryKeyDialog(Shell parentShell, NSISInstallRegistryKey item)
@@ -60,19 +60,19 @@ public class NSISInstallRegistryKeyDialog extends AbstractNSISInstallItemDialog
         layout.marginWidth = 0;
         composite.setLayout(layout);
         
-        final Combo c1 = NSISWizardDialogUtil.createCombo(composite,NSISWizardDisplayValues.HKEY_NAMES,mStore.getInt("rootKey"),
-                            true,"wizard.root.key.label",true,null,false);
+        final Combo c1 = NSISWizardDialogUtil.createCombo(composite,NSISWizardDisplayValues.HKEY_NAMES,mStore.getInt("rootKey"), //$NON-NLS-1$
+                            true,"wizard.root.key.label",true,null,false); //$NON-NLS-1$
         c1.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
-                mStore.setValue("rootKey",c1.getSelectionIndex());
+                mStore.setValue("rootKey",c1.getSelectionIndex()); //$NON-NLS-1$
             }
         });
-        final Text t = NSISWizardDialogUtil.createText(composite,mStore.getString("subKey"),"wizard.sub.key.label",true,
+        final Text t = NSISWizardDialogUtil.createText(composite,mStore.getString("subKey"),"wizard.sub.key.label",true, //$NON-NLS-1$ //$NON-NLS-2$
                            null,true);
         t.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e)
             {
-                mStore.setValue("subKey",t.getText().trim());
+                mStore.setValue("subKey",t.getText().trim()); //$NON-NLS-1$
                 setComplete(validate());
             }
         });
@@ -84,7 +84,7 @@ public class NSISInstallRegistryKeyDialog extends AbstractNSISInstallItemDialog
      */
     protected boolean validate()
     {
-        String subKey = mStore.getString("subKey").trim();
-        return !Common.isEmpty(subKey) && !subKey.endsWith("\\") && !subKey.startsWith("\\");
+        String subKey = mStore.getString("subKey").trim(); //$NON-NLS-1$
+        return !Common.isEmpty(subKey) && !subKey.endsWith("\\") && !subKey.startsWith("\\"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 }

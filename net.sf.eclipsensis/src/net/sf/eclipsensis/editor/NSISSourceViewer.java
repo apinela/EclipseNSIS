@@ -15,10 +15,13 @@ import java.util.List;
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.editor.codeassist.NSISInformationUtility;
 import net.sf.eclipsensis.editor.text.NSISTextUtility;
+import net.sf.eclipsensis.help.NSISHelpURLProvider;
 import net.sf.eclipsensis.settings.INSISPreferenceConstants;
 import net.sf.eclipsensis.settings.IPropertyAdaptable;
+import net.sf.eclipsensis.util.ColorManager;
 import net.sf.eclipsensis.util.Common;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.presentation.IPresentationDamager;
@@ -32,6 +35,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
 
 
 public class NSISSourceViewer extends ProjectionViewer implements IPropertyChangeListener
@@ -161,7 +165,7 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
             for(Iterator iter=fAutoIndentStrategies.keySet().iterator(); iter.hasNext(); ) {
                 String contentType = (String)iter.next();
                 List list = (List)fAutoIndentStrategies.get(contentType);
-                if(list != null && list.size() > 0) {
+                if(!Common.isEmptyCollection(list)) {
                     for (Iterator iter2 = list.iterator(); iter2.hasNext();) {
                         IAutoEditStrategy autoEditStrategy = (IAutoEditStrategy)iter2.next();
                         if(autoEditStrategy instanceof NSISAutoEditStrategy) {
@@ -247,28 +251,41 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
                 return;
             }
             case INSERT_FILE:
-            {
-                FileDialog dialog = new FileDialog(getControl().getShell(),SWT.OPEN);
-                dialog.setText(EclipseNSISPlugin.getResourceString("insert.file.description")); //$NON-NLS-1$
-                text = dialog.open();
-                break;
-            }
             case INSERT_DIRECTORY:
-            {
-                DirectoryDialog dialog = new DirectoryDialog(getControl().getShell());
-                dialog.setText(EclipseNSISPlugin.getResourceString("insert.directory.description")); //$NON-NLS-1$
-                text = dialog.open();
+                
+                if(operation == INSERT_FILE) {
+                    FileDialog dialog = new FileDialog(getControl().getShell(),SWT.OPEN);
+                    dialog.setText(EclipseNSISPlugin.getResourceString("insert.file.description")); //$NON-NLS-1$
+                    text = dialog.open();
+                }
+                else {
+                    DirectoryDialog dialog = new DirectoryDialog(getControl().getShell());
+                    dialog.setText(EclipseNSISPlugin.getResourceString("insert.directory.description")); //$NON-NLS-1$
+                    text = dialog.open();
+                }
+                if(!Common.isEmpty(text)) {
+                    IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+                    if(page != null) {
+                        IEditorPart editor = page.getActiveEditor();
+                        if(editor != null && editor instanceof NSISEditor) {
+                            IEditorInput editorInput = editor.getEditorInput();
+                            if(editorInput != null && editorInput instanceof IFileEditorInput) {
+                                IFile file = ((IFileEditorInput)editorInput).getFile();
+                                if(file != null) {
+                                    text = Common.makeRelativeLocation(file, text);
+                                }
+                            }
+                        }
+                    }
+                }
                 break;
-            }
             case INSERT_COLOR:
             {
                 ColorDialog dialog = new ColorDialog(getControl().getShell());
                 dialog.setText(EclipseNSISPlugin.getResourceString("insert.color.description")); //$NON-NLS-1$
                 RGB rgb = dialog.open();
                 if(rgb != null) {
-                    text = new StringBuffer(Common.leftPad(Integer.toHexString(rgb.red),2,'0')).append(
-                                            Common.leftPad(Integer.toHexString(rgb.green),2,'0')).append(
-                                            Common.leftPad(Integer.toHexString(rgb.blue),2,'0')).toString().toUpperCase();
+                    text = ColorManager.rgbToHex(rgb);
                 }
                 break;
             }
@@ -321,7 +338,7 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
             String keyword;
             IRegion region = NSISInformationUtility.getInformationRegionAtOffset(this,offset,false);
             keyword = NSISTextUtility.getRegionText(getDocument(),region);
-            EclipseNSISPlugin.getDefault().getHelpURLProvider().showHelpURL(keyword);
+            NSISHelpURLProvider.getInstance().showHelpURL(keyword);
         }
     }
 

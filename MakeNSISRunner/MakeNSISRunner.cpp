@@ -10,6 +10,7 @@
 #include <windows.h>
 #include <tchar.h>
 #include <process.h>
+#include "htmlhelp.h"
 #include "net_sf_eclipsensis_makensis_MakeNSISRunner.h"
 
 enum {
@@ -207,8 +208,6 @@ JNIEXPORT jobject JNICALL Java_net_sf_eclipsensis_makensis_MakeNSISRunner_getWar
 	return makeArrayList(pEnv, sWarnings);
 }
 
-
-
 // Utility functions
 
 void freeArray(TCHAR*** array, int *count)
@@ -240,29 +239,6 @@ void freeString(TCHAR **string)
 jobject makeArrayList(JNIEnv *pEnv, TCHAR **items)
 {
 	if(items) {
-/*	
-		jclass arrayListClass = NULL;
-		jmethodID arrayListConstructor = NULL;
-		jmethodID arrayListAdd = NULL;
-
-		arrayListClass = pEnv->FindClass("java/util/ArrayList");
-		if(arrayListClass == NULL) {
-			throwException(pEnv,_T("Could not find java.util.ArrayList class"));
-			return NULL;
-		}
-
-		arrayListConstructor = pEnv->GetMethodID(arrayListClass, "<init>", "()V");
-		if(arrayListConstructor == NULL) {
-			throwException(pEnv,_T("Could not find constructor for java.util.ArrayList class"));
-			return NULL;
-		}
-
-		arrayListAdd = pEnv->GetMethodID(arrayListClass, "add", "(Ljava/lang/Object;)Z");
-		if(arrayListAdd == NULL) {
-			throwException(pEnv,_T("Could not find add method for java.util.ArrayList class"));
-			return NULL;
-		}
-*/
 		jobject arrayListObject;
 
 		arrayListObject = pEnv->NewObject(g_arrayListClass,g_arrayListConstructor);
@@ -326,7 +302,7 @@ void ErrorHandler(LPCTSTR pszErrorMessage) {
 }
 
 void throwException(JNIEnv *pEnv, char *errMsg) {
-	jclass failex = pEnv->FindClass("java/lang/RuntimeException");
+	jclass failex = pEnv->FindClass(_T("java/lang/RuntimeException"));
 	if( failex != NULL ){
 		pEnv->ThrowNew(failex, errMsg);
 	}

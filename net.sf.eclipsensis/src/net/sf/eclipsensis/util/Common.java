@@ -19,6 +19,11 @@ import java.util.regex.Pattern;
 
 import net.sf.eclipsensis.help.NSISKeywords;
 
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.preference.IPreferenceStore;
 
 
@@ -28,7 +33,9 @@ public class Common
     public static final String[] EMPTY_STRING_ARRAY = new String[0];
     
     private static String[] cEnv = null;
-
+    private static final String cPathSeparator = System.getProperty("file.separator");
+    private static final String cOnePathLevelUp = ".." + cPathSeparator;
+    
     private static Pattern cValidPathName = Pattern.compile("([A-Za-z]:)?\\\\?(((\\.?[A-Za-z0-9\\$%\\'`\\-@\\{\\}~\\!#\\(\\&_\\^\\x20])+|\\.{1,2}+)\\\\)*(\\.?[A-Za-z0-9\\$%\\'`\\-@\\{\\}~\\!#\\(\\&_\\^\\x20])+"); //$NON-NLS-1$
     private static Pattern cValidNSISPrefixedPathNameSuffix = Pattern.compile("\\\\(((\\.?[A-Za-z0-9\\$%\\'`\\-@\\{\\}~\\!#\\(\\&_\\^\\x20])+|\\.{1,2}+)\\\\)*(\\.?[A-Za-z0-9\\$%\\'`\\-@\\{\\}~\\!#\\(\\&_\\^\\x20])+"); //$NON-NLS-1$
     private static Pattern cValidFileName = Pattern.compile("(\\.?[A-Za-z0-9\\$%\\'`\\-@\\{\\}~\\!#\\(\\&_\\^\\x20])+"); //$NON-NLS-1$
@@ -51,6 +58,20 @@ public class Common
             if(array.getClass().isArray()) {
                 return (Array.getLength(array) == 0);
             }
+        }
+        return true;
+    }
+
+    /**
+     * Check for an empty collection
+     *
+     * @param collection       Collection to be tested
+     * @return            True if the collection is null or size is zero
+     */
+    public static boolean isEmptyCollection(Collection collection)
+    {
+        if(collection != null) {
+            return (collection.size() == 0);
         }
         return true;
     }
@@ -182,6 +203,30 @@ public class Common
         return array;
     }
 
+    public static Map loadMapProperty(ResourceBundle bundle, String propertyName)
+    {
+        HashMap map = new HashMap();
+        if(bundle != null) {
+            String property = bundle.getString(propertyName);
+            if(!isEmpty(property)) {
+                StringTokenizer st = new StringTokenizer(property,",");
+                while(st.hasMoreTokens()) {
+                    String token = st.nextToken();
+                    int n=token.indexOf("=");
+                    if(n > 0) {
+                        String key = token.substring(0,n).trim();
+                        String value = null;
+                        if(n < token.length() - 1) {
+                            value = token.substring(n+1).trim();
+                        }
+                        map.put(key, value);
+                    }
+                }
+            }
+        }
+        return map;
+    }
+
     public static boolean isValidNSISPrefixedPathName(String pathName)
     {
         int n = pathName.indexOf('\\');
@@ -267,7 +312,7 @@ public class Common
                         }
                         else if(clasz.equals(String.class)) {
                             String s = (String)m.invoke(bean,null);
-                            store.setValue(name,(s==null?"":s));
+                            store.setValue(name,(s==null?"":s)); //$NON-NLS-1$
                         }
                     }
                     catch (Exception e1) {
@@ -311,7 +356,7 @@ public class Common
                         }
                         else if(clasz.equals(String.class)) {
                             String value = store.getString(name);
-                            args[0] = (value==null?"":value);
+                            args[0] = (value==null?"":value); //$NON-NLS-1$
                         }
                         else {
                             continue;
@@ -327,5 +372,44 @@ public class Common
         catch (IntrospectionException e) {
             e.printStackTrace();
         }
+    }
+
+    public static boolean stringsAreEqual(String str1, String str2, boolean ignoreCase) 
+    {
+        return ((str1 == null && str2 == null) ||
+                (str1 !=null && str2 != null && (ignoreCase?str1.equalsIgnoreCase(str2):str1.equals(str2))));
+    }
+
+    public static String makeRelativeLocation(IResource resource, String pathname)
+    {
+        Path childPath = new Path(pathname);
+        if(resource instanceof IContainer || resource instanceof IFile) {
+            IPath reference = (resource instanceof IContainer?(IContainer)resource:((IFile)resource).getParent()).getLocation();
+            if(reference.isAbsolute() && childPath.isAbsolute()) {
+              if(stringsAreEqual(reference.getDevice(), childPath.getDevice(), true)) {
+                  StringBuffer buf = new StringBuffer("");
+                  int l1 = reference.segmentCount();
+                  int l2 = childPath.segmentCount();
+                  int n = Math.min(l1,l2);
+                  
+                  int i=0;
+                  for(; i<n; i++) {
+                      if(!reference.segment(i).equalsIgnoreCase(childPath.segment(i))) {
+                          break;
+                      }
+                  }
+                  
+                  for(int j=i; j<l1; j++) {
+                      buf.append(cOnePathLevelUp);
+                  }
+                  for(int j=i; j<l2-1; j++) {
+                      buf.append(childPath.segment(j)).append(cPathSeparator);
+                  }
+                  buf.append(childPath.lastSegment());
+                  childPath = new Path(buf.toString());
+              }
+            }
+        }
+        return childPath.toOSString();
     }
 }

@@ -83,7 +83,7 @@ public class NSISTestAction extends NSISScriptAction
     public void run(IAction action)
     {
         if(mPlugin !=null && mExeName != null) {
-            mPlugin.testInstaller(mExeName);
+            MakeNSISRunner.testInstaller(mExeName);
         }
     }
 

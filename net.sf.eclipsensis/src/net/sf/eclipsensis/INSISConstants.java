@@ -25,12 +25,15 @@ public interface INSISConstants
     public static final String NSIS_REFERENCE_PREFIX = PLUGIN_HELP_LOCATION_PREFIX+"NSIS/"; //$NON-NLS-1$
     public static final String NSIS_REFERENCE_DOCS_PREFIX = NSIS_REFERENCE_PREFIX+"Docs/"; //$NON-NLS-1$
     public static final String NSIS_REFERENCE_CHM_LOCATION = "NSIS.chm"; //$NON-NLS-1$
-    public static final String LANGUAGE_FILES_LOCATION = "Contrib/Language files"; //$NON-NLS-1$
-    public static final String LANGUAGE_FILES_FILTER = ".nlf"; //$NON-NLS-1$
+    public static final String LANGUAGE_FILES_LOCATION = "Contrib\\Language files"; //$NON-NLS-1$
+    public static final String MUI_LANGUAGE_FILES_LOCATION = "Contrib\\Modern UI\\Language files"; //$NON-NLS-1$
+    public static final String LANGUAGE_FILES_EXTENSION = ".nlf"; //$NON-NLS-1$
+    public static final String MUI_LANGUAGE_FILES_EXTENSION = ".nsh"; //$NON-NLS-1$
     public static final String RESOURCE_BUNDLE = "net.sf.eclipsensis.EclipseNSISPluginResources"; //$NON-NLS-1$
     public static final String CONSOLE_ID = "net.sf.eclipsensis.console.NSISConsole"; //$NON-NLS-1$
     public static final String PROBLEM_ID = "net.sf.eclipsensis.NSISCompileProblem"; //$NON-NLS-1$
     public static final String NSIS_EDITOR_CONTEXT_ID = "net.sf.eclipsensis.NSISEditorScope"; //$NON-NLS-1$
+    public static final String COMPILE_ACTION_ID = "net.sf.eclipsensis.actions.NSISCompileAction"; //$NON-NLS-1$
 
     public static final String GOTO_HELP_COMMAND_ID = "net.sf.eclipsensis.commands.NSISGotoHelp"; //$NON-NLS-1$
     public static final String STICKY_HELP_COMMAND_ID = "net.sf.eclipsensis.commands.NSISStickyHelp"; //$NON-NLS-1$

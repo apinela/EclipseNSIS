@@ -65,11 +65,16 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
         if(cConsole == null || cConsole.isDisposed()) {
             synchronized(NSISConsole.class) {
                 if(cConsole == null || cConsole.isDisposed()) {
-                    try {
-                        PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(CONSOLE_ID);
-                    }
-                    catch(PartInitException pie) {
-                    }
+                    PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+                        public void run()
+                        {
+                            try {
+                                PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(CONSOLE_ID);
+                            }
+                            catch(PartInitException pie) {
+                            }
+                        }
+                    });
                 }
             }
         }
@@ -293,7 +298,7 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
                                             }
                                         }
                         			}
-                        		},EclipseNSISPlugin.getResourceString("copy.action.mName"),EclipseNSISPlugin.getResourceString("copy.action.tooltip"),EclipseNSISPlugin.getResourceString("copy.action.icon"),EclipseNSISPlugin.getResourceString("copy.action.disabled.icon"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                        		},EclipseNSISPlugin.getResourceString("copy.action.name"),EclipseNSISPlugin.getResourceString("copy.action.tooltip"),EclipseNSISPlugin.getResourceString("copy.action.icon"),EclipseNSISPlugin.getResourceString("copy.action.disabled.icon"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
                                 ActionFactory.COPY,false);
         
         mSelectAllAction = makeAction(
@@ -301,7 +306,7 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
                                 public void run() {
                                     mViewer.setSelection(new StructuredSelection(mContent));
                                 }
-                            },EclipseNSISPlugin.getResourceString("selectall.action.mName"),EclipseNSISPlugin.getResourceString("selectall.action.tooltip"),EclipseNSISPlugin.getResourceString("selectall.action.icon"),null, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                            },EclipseNSISPlugin.getResourceString("selectall.action.name"),EclipseNSISPlugin.getResourceString("selectall.action.tooltip"),EclipseNSISPlugin.getResourceString("selectall.action.icon"),null, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                             ActionFactory.SELECT_ALL,false);
         
 		mClearAction = makeAction( 
@@ -309,20 +314,21 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
                     			public void run() {
                     				clear();
                     			}
-                    		},EclipseNSISPlugin.getResourceString("clear.action.mName"),EclipseNSISPlugin.getResourceString("clear.action.tooltip"),EclipseNSISPlugin.getResourceString("clear.action.icon"),EclipseNSISPlugin.getResourceString("clear.action.disabled.icon"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                    		},EclipseNSISPlugin.getResourceString("clear.action.name"),EclipseNSISPlugin.getResourceString("clear.action.tooltip"),EclipseNSISPlugin.getResourceString("clear.action.icon"),EclipseNSISPlugin.getResourceString("clear.action.disabled.icon"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
                             null,false);
         
         final NSISCancelAction cancelActionDelegate = new NSISCancelAction();
         mCancelAction = makeAction( 
                 new Action() {
                     public void run() {
+                        cancelActionDelegate.init(this);
                         cancelActionDelegate.run(this);
                     }
                     
                     public void dispose() {
                         cancelActionDelegate.dispose();
                     }
-                },EclipseNSISPlugin.getResourceString("cancel.action.mName"),EclipseNSISPlugin.getResourceString("cancel.action.tooltip"),EclipseNSISPlugin.getResourceString("cancel.action.icon"),EclipseNSISPlugin.getResourceString("cancel.action.disabled.icon"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                },EclipseNSISPlugin.getResourceString("cancel.action.name"),EclipseNSISPlugin.getResourceString("cancel.action.tooltip"),EclipseNSISPlugin.getResourceString("cancel.action.icon"),EclipseNSISPlugin.getResourceString("cancel.action.disabled.icon"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
                 null,false);
         cancelActionDelegate.init(mCancelAction);
 
@@ -345,12 +351,14 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
                                     }
                                 }
                             }
-                        }
-                        try {
-                            IDE.openEditor(getSite().getPage(), new DummyMarker(file,lineNum), OpenStrategy.activateOnOpen());
-                        }
-                        catch (PartInitException e) {
-                            e.printStackTrace();
+                            else {
+                                try {
+                                    IDE.openEditor(getSite().getPage(), new DummyMarker(file,lineNum), OpenStrategy.activateOnOpen());
+                                }
+                                catch (PartInitException e) {
+                                    e.printStackTrace();
+                                }
+                            }
                         }
                     }
                 }

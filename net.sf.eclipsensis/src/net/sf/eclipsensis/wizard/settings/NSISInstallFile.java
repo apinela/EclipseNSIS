@@ -23,7 +23,7 @@ public class NSISInstallFile extends AbstractNSISInstallItem
     private static final Image cImage = ImageManager.getImage(EclipseNSISPlugin.getResourceString("wizard.file.icon")); //$NON-NLS-1$
     
     private String mName = null;
-    private String mDestination = "$INSTDIR";
+    private String mDestination = "$INSTDIR"; //$NON-NLS-1$
     private int mOverwriteMode = OVERWRITE_ON; 
 
     static {

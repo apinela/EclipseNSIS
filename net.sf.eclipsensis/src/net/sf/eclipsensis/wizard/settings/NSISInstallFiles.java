@@ -29,7 +29,7 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup
     public static final String FILEITEM_TYPE = "Files FileItem"; //$NON-NLS-1$
     private static final Image cItemImage = ImageManager.getImage(EclipseNSISPlugin.getResourceString("wizard.file.icon")); //$NON-NLS-1$
     
-    private String mDestination = "$INSTDIR";
+    private String mDestination = "$INSTDIR"; //$NON-NLS-1$
     private int mOverwriteMode = OVERWRITE_ON;
     public static final char SEPARATOR = '\0'; 
 
@@ -43,6 +43,27 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup
         mChildTypes.add(FILEITEM_TYPE);
     }
 
+    /* (non-Javadoc)
+     * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#getChildTypes()
+     */
+    public String[] getChildTypes()
+    {
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#removeChild(net.sf.eclipsensis.wizard.settings.INSISInstallElement)
+     */
+    public void removeChild(INSISInstallElement child)
+    {
+        if(mChildren.size() > 1) {
+            super.removeChild(child);
+        }
+        else {
+            throw new UnsupportedOperationException(EclipseNSISPlugin.getResourceString("wizard.fileset.delete.exception")); //$NON-NLS-1$
+        }
+    }
+    
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#getType()
      */
@@ -101,7 +122,7 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup
      */
     public String getFiles()
     {
-        StringBuffer buf = new StringBuffer("");
+        StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
         if(mChildren.size() > 0) {
             Iterator iter = mChildren.iterator();
             buf.append(((FileItem)iter.next()).getName());

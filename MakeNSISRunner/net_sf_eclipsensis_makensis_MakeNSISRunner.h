@@ -16,8 +16,15 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-/* Inaccessible static: cMutex */
 /* Inaccessible static: cProcess */
+/* Inaccessible static: cBestCompressorFormat */
+/* Inaccessible static: cProcessLock */
+/* Inaccessible static: cHwnd */
+/* Inaccessible static: cListeners */
+/* Inaccessible static: COMPRESSOR_DEFAULT */
+/* Inaccessible static: COMPRESSOR_BEST */
+/* Inaccessible static: COMPRESSOR_DISPLAY_ARRAY */
+/* Inaccessible static: COMPRESSOR_NAME_ARRAY */
 /*
  * Class:     net_sf_eclipsensis_makensis_MakeNSISRunner
  * Method:    init
@@ -29,7 +36,7 @@ JNIEXPORT jlong JNICALL Java_net_sf_eclipsensis_makensis_MakeNSISRunner_init
 /*
  * Class:     net_sf_eclipsensis_makensis_MakeNSISRunner
  * Method:    destroy
- * Signature: (J)V
+ * Signature: ()V
  */
 JNIEXPORT void JNICALL Java_net_sf_eclipsensis_makensis_MakeNSISRunner_destroy
   (JNIEnv *, jclass);
@@ -44,18 +51,18 @@ JNIEXPORT void JNICALL Java_net_sf_eclipsensis_makensis_MakeNSISRunner_reset
 
 /*
  * Class:     net_sf_eclipsensis_makensis_MakeNSISRunner
- * Method:    getOutputFileName
- * Signature: ()Ljava/lang/String;
- */
-JNIEXPORT jstring JNICALL Java_net_sf_eclipsensis_makensis_MakeNSISRunner_getOutputFileName
-  (JNIEnv *, jclass);
-
-/*
- * Class:     net_sf_eclipsensis_makensis_MakeNSISRunner
  * Method:    getScriptFileName
  * Signature: ()Ljava/lang/String;
  */
 JNIEXPORT jstring JNICALL Java_net_sf_eclipsensis_makensis_MakeNSISRunner_getScriptFileName
+  (JNIEnv *, jclass);
+
+/*
+ * Class:     net_sf_eclipsensis_makensis_MakeNSISRunner
+ * Method:    getOutputFileName
+ * Signature: ()Ljava/lang/String;
+ */
+JNIEXPORT jstring JNICALL Java_net_sf_eclipsensis_makensis_MakeNSISRunner_getOutputFileName
   (JNIEnv *, jclass);
 
 /*

@@ -16,6 +16,7 @@ import java.text.MessageFormat;
 import java.util.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.IEclipseNSISPluginListener;
 import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.console.*;
 import net.sf.eclipsensis.settings.NSISPreferences;
@@ -28,6 +29,7 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 public class MakeNSISRunner implements INSISConstants
@@ -35,19 +37,26 @@ public class MakeNSISRunner implements INSISConstants
     private static MakeNSISProcess cProcess = null;
     private static String cBestCompressorFormat = null;
     private static String cProcessLock = "lock"; //$NON-NLS-1$
+    private static String cHwndLock = "lock"; //$NON-NLS-1$
     private static long cHwnd = 0;
     private static HashSet cListeners = new HashSet();
-    public static final int COMPRESSOR_DEFAULT;
+    public static final int COMPRESSOR_DEFAULT = 0;
     public static final int COMPRESSOR_BEST;
     public static final String[] COMPRESSOR_DISPLAY_ARRAY;
     public static final String[] COMPRESSOR_NAME_ARRAY;
+    
+    private static IEclipseNSISPluginListener cShutdownListener = new IEclipseNSISPluginListener() {
+        public void stopped()
+        {
+            shutdown();
+        }
+    };
     
     static {
         System.loadLibrary("MakeNSISRunner"); //$NON-NLS-1$
         cBestCompressorFormat = EclipseNSISPlugin.getResourceString("best.compressor.format"); //$NON-NLS-1$
 
-        int index = 0;
-        COMPRESSOR_DEFAULT = index++;
+        int index = COMPRESSOR_DEFAULT + 1;
         String[] compressorArray = Common.loadArrayProperty(EclipseNSISPlugin.getDefault().getResourceBundle(),
                                                             "compressors"); //$NON-NLS-1$
         COMPRESSOR_NAME_ARRAY = new String[compressorArray.length+2];
@@ -139,9 +148,9 @@ public class MakeNSISRunner implements INSISConstants
                     try {
                         file.deleteMarkers(PROBLEM_ID, false, IResource.DEPTH_ZERO);
                         List errors = console.getErrors();
-                        if (errors == null || errors.size() == 0) {
+                        if (Common.isEmptyCollection(errors)) {
                             errors = results.getErrors();
-                            if (errors != null && errors.size() > 0) {
+                            if (!Common.isEmptyCollection(errors)) {
                                 IMarker marker = file.createMarker(PROBLEM_ID);
                                 marker.setAttribute(IMarker.SEVERITY,
                                                     IMarker.SEVERITY_ERROR);
@@ -161,11 +170,14 @@ public class MakeNSISRunner implements INSISConstants
                             while (error.getLineNum() <= 0 && iter.hasNext()) {
                                 error = (NSISConsoleLine) iter.next();
                             }
-                            if (error.getLineNum() > 0) {
-                                marker.setAttribute(IMarker.LINE_NUMBER, error.getLineNum());
-                            }
-                            else {
-                                marker.setAttribute(IMarker.LINE_NUMBER, 1);
+                            int lineNum = (error.getLineNum() > 0?error.getLineNum():1);
+                            marker.setAttribute(IMarker.LINE_NUMBER, lineNum);
+                            //reset the linenum for errors which don't have a linenum
+                            for(iter=errors.iterator(); iter.hasNext(); ) {
+                                error = (NSISConsoleLine) iter.next();
+                                if(error.getLineNum() <= 0) {
+                                    error.setLineNum(lineNum);
+                                }
                             }
                         }
                         List warnings = results.getWarnings();
@@ -199,7 +211,7 @@ public class MakeNSISRunner implements INSISConstants
         }
     }
     
-    public static synchronized MakeNSISResults run(IFile file, INSISConsoleLineProcessor outputProcessor)
+    public static synchronized MakeNSISResults compile(IFile file, INSISConsoleLineProcessor outputProcessor)
     {
         try {
             notifyListeners(true);
@@ -209,7 +221,6 @@ public class MakeNSISRunner implements INSISConstants
                 try {
                     console.clear();
                     reset();
-                    startup();
                     String fileName = file.getLocation().toFile().getAbsolutePath();
                     File workDir = file.getLocation().toFile().getParentFile();
                     String[] env = Common.getEnv();
@@ -273,7 +284,7 @@ public class MakeNSISRunner implements INSISConstants
                     cmdArray[cmdArrayLen-2]=Long.toString(cHwnd);
                     cmdArray[cmdArrayLen-1]=fileName;
                     if(compressor != MakeNSISRunner.COMPRESSOR_BEST) {
-                        results = runProcess(cmdArray,env,workDir,outputProcessor);
+                        results = runCompileProcess(cmdArray,env,workDir,outputProcessor);
                     }
                     else {
                         File tempFile = null;
@@ -283,7 +294,7 @@ public class MakeNSISRunner implements INSISConstants
                             if(i != MakeNSISRunner.COMPRESSOR_DEFAULT && i != MakeNSISRunner.COMPRESSOR_BEST) {
                                 outputProcessor.reset();
                                 cmdArray[1]=EclipseNSISPlugin.getResourceString("makensis.setcompressor.final.option")+MakeNSISRunner.COMPRESSOR_NAME_ARRAY[i]; //$NON-NLS-1$
-                                MakeNSISResults tempresults = runProcess(cmdArray,env,workDir,outputProcessor);
+                                MakeNSISResults tempresults = runCompileProcess(cmdArray,env,workDir,outputProcessor);
                                 if(tempresults.getReturnCode() != MakeNSISResults.RETURN_SUCCESS) {
                                     results = tempresults;
                                     if(tempFile != null && tempFile.exists()) {
@@ -356,8 +367,8 @@ public class MakeNSISRunner implements INSISConstants
         }
     }
     
-    private static synchronized MakeNSISResults runProcess(String[] cmdArray, String[] env, File workDir,
-                                       INSISConsoleLineProcessor outputProcessor)
+    private static synchronized MakeNSISResults runCompileProcess(String[] cmdArray, String[] env, File workDir,
+                                                        INSISConsoleLineProcessor outputProcessor)
     {
         NSISConsole console = NSISConsole.getConsole();
         MakeNSISResults results = new MakeNSISResults();
@@ -387,20 +398,24 @@ public class MakeNSISRunner implements INSISConstants
             }
             else {
                 results.setCanceled(process.isCanceled());
-                ArrayList errors = new ArrayList();
-                StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
-                for(Iterator iter = getErrors().iterator(); iter.hasNext() ;) {
-                    String text = (String)iter.next();
-                    if(text.endsWith("\n")) { //$NON-NLS-1$
-                        buf.append(text.substring(0,text.length()-1));
-                        errors.add(buf.toString());
-                        buf = new StringBuffer(""); //$NON-NLS-1$
+                ArrayList errors = null;
+                ArrayList compileErrors = getErrors();
+                if(!Common.isEmptyCollection(compileErrors)) {
+                    errors = new ArrayList();
+                    StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
+                    for(Iterator iter = compileErrors.iterator(); iter.hasNext() ;) {
+                        String text = (String)iter.next();
+                        if(text.endsWith("\n")) { //$NON-NLS-1$
+                            buf.append(text.substring(0,text.length()-1));
+                            errors.add(buf.toString());
+                            buf = new StringBuffer(""); //$NON-NLS-1$
+                        }
+                        else {
+                            buf.append(text);
+                        }
                     }
-                    else {
-                        buf.append(text);
-                    }
+                    errors.add(buf.toString());
                 }
-                errors.add(buf.toString());
                 results.setErrors(errors);
             }
             ArrayList warnings = getWarnings();
@@ -418,17 +433,27 @@ public class MakeNSISRunner implements INSISConstants
         return results;
     }
     
-    public static synchronized void startup()
+    public static void startup()
     {
         if(cHwnd <= 0) {
-            cHwnd = init();
+            synchronized(cHwndLock) {
+                if(cHwnd <= 0) {
+                    cHwnd = init();
+                    EclipseNSISPlugin.getDefault().addListener(cShutdownListener);
+                }
+            }
         }
     }
     
-    public static synchronized void shutdown()
+    public static void shutdown()
     {
         if(cHwnd > 0) {
-            destroy();
+            synchronized(cHwndLock) {
+                if(cHwnd > 0) {
+                    destroy();
+                    cHwnd = 0;
+                }
+            }
         }
     }
     
@@ -444,5 +469,29 @@ public class MakeNSISRunner implements INSISConstants
 
     private static native ArrayList getErrors(); 
 
-    private static native ArrayList getWarnings(); 
+    private static native ArrayList getWarnings();
+
+    public static void testInstaller(String exeName)
+    {
+        if(exeName != null) {
+            File exeFile = new File(exeName);
+            if (exeFile.exists()) {
+                File workDir = exeFile.getParentFile();
+                try {
+                    Runtime.getRuntime().exec(new String[]{exeName},null,workDir);
+                }
+                catch(IOException ex) {
+                    NSISConsole console = NSISConsole.getConsole();
+                    if(console != null) {
+                        console.clear();
+                        console.add(NSISConsoleLine.error(ex.getMessage()));
+                    }
+                    else {
+                        MessageDialog.openError(EclipseNSISPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getShell(),
+                                                EclipseNSISPlugin.getResourceString("error.title"),ex.getMessage()); //$NON-NLS-1$
+                    }
+                }
+            }
+        }
+    } 
 }

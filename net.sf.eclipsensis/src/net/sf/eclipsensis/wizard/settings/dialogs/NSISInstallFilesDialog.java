@@ -34,16 +34,16 @@ public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
     private Collection mFiles = null;
     
     static {
-        cProperties.add("destination");
-        cProperties.add("files");
-        cProperties.add("overwriteMode");
+        cProperties.add("destination"); //$NON-NLS-1$
+        cProperties.add("files"); //$NON-NLS-1$
+        cProperties.add("overwriteMode"); //$NON-NLS-1$
     }
 
     public NSISInstallFilesDialog(Shell parentShell, NSISInstallFiles item)
     {
         super(parentShell, item);
         setShellStyle(getShellStyle() | SWT.RESIZE);
-        mFiles = new LinkedHashSet(Arrays.asList(Common.tokenize(mStore.getString("files"),'\0')));
+        mFiles = new LinkedHashSet(Arrays.asList(Common.tokenize(mStore.getString("files"),'\0'))); //$NON-NLS-1$
     }
 
     /* (non-Javadoc)
@@ -70,7 +70,7 @@ public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
         composite.setLayout(layout);
         
         Label label = new Label(composite, SWT.LEFT);
-        label.setText(EclipseNSISPlugin.getResourceString("wizard.source.files.label"));
+        label.setText(EclipseNSISPlugin.getResourceString("wizard.source.files.label")); //$NON-NLS-1$
         gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
         gd.horizontalSpan = 2;
         label.setLayoutData(gd);
@@ -94,7 +94,7 @@ public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
         table.setLayoutData(gd);
 
         TableColumn tableColumn = new TableColumn(table,SWT.LEFT,0);
-        tableColumn.setText(EclipseNSISPlugin.getResourceString("wizard.file.name.label"));
+        tableColumn.setText(EclipseNSISPlugin.getResourceString("wizard.file.name.label")); //$NON-NLS-1$
         
         composite2 = new Composite(composite2, SWT.NONE);
         gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
@@ -107,12 +107,12 @@ public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
         composite2.setLayout(layout);
 
         final Button addButton = new Button(composite2,SWT.PUSH);
-        addButton.setText(EclipseNSISPlugin.getResourceString("wizard.add.files.label"));
+        addButton.setText(EclipseNSISPlugin.getResourceString("wizard.add.files.label")); //$NON-NLS-1$
         gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_BEGINNING);
         addButton.setLayoutData(gd);
 
         final Button removeButton = new Button(composite2,SWT.PUSH);
-        removeButton.setText(EclipseNSISPlugin.getResourceString("wizard.remove.files.label"));
+        removeButton.setText(EclipseNSISPlugin.getResourceString("wizard.remove.files.label")); //$NON-NLS-1$
         gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_BEGINNING);
         removeButton.setLayoutData(gd);
         removeButton.setEnabled(false);
@@ -124,14 +124,14 @@ public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
 
         final ResourceBundle bundle = EclipseNSISPlugin.getDefault().getResourceBundle();
         addButton.addSelectionListener(new SelectionAdapter() {
-            String filterPath = "";
+            String filterPath = ""; //$NON-NLS-1$
             
             public void widgetSelected(SelectionEvent e) 
             {
                 FileDialog dialog = new FileDialog(getShell(),SWT.OPEN|SWT.MULTI|SWT.PRIMARY_MODAL);
-                dialog.setText(EclipseNSISPlugin.getResourceString("wizard.files.dialog.title"));
-                dialog.setFilterNames(Common.loadArrayProperty(bundle,"wizard.source.file.filternames"));
-                dialog.setFilterExtensions(Common.loadArrayProperty(bundle,"wizard.source.file.filters"));
+                dialog.setText(EclipseNSISPlugin.getResourceString("wizard.files.dialog.title")); //$NON-NLS-1$
+                dialog.setFilterNames(Common.loadArrayProperty(bundle,"wizard.source.file.filternames")); //$NON-NLS-1$
+                dialog.setFilterExtensions(Common.loadArrayProperty(bundle,"wizard.source.file.filters")); //$NON-NLS-1$
                 if(!Common.isEmpty(filterPath)) {
                     dialog.setFilterPath(filterPath);
                 }
@@ -139,7 +139,7 @@ public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
                     filterPath = dialog.getFilterPath();
                     String[] fileNames = dialog.getFileNames();
                     for (int i = 0; i < fileNames.length; i++) {
-                        mFiles.add(new StringBuffer(filterPath).append("\\").append(fileNames[i]).toString());
+                        mFiles.add(new StringBuffer(filterPath).append("\\").append(fileNames[i]).toString()); //$NON-NLS-1$
                     }
                     viewer.refresh();
                     setComplete(validate());
@@ -181,22 +181,22 @@ public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
         });
         
 
-        final Combo c1 = NSISWizardDialogUtil.createCombo(composite,NSISKeywords.PREDEFINED_PATH_VARIABLES,mStore.getString("destination"),
-                                                         false,"wizard.destination.label",true,null,false);
+        final Combo c1 = NSISWizardDialogUtil.createCombo(composite,NSISKeywords.PREDEFINED_PATH_VARIABLES,mStore.getString("destination"), //$NON-NLS-1$
+                                                         false,"wizard.destination.label",true,null,false); //$NON-NLS-1$
         c1.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e)
             {
-                mStore.setValue("destination",c1.getText());
+                mStore.setValue("destination",c1.getText().trim()); //$NON-NLS-1$
                 setComplete(validate());
             }
         });
         gd = (GridData)c1.getLayoutData();
         gd.horizontalAlignment = GridData.FILL;
-        final Combo c2 = NSISWizardDialogUtil.createCombo(composite,NSISWizardDisplayValues.OVERWRITE_MODE_NAMES,mStore.getInt("overwriteMode"),
-                true,"wizard.overwrite.label",true,null,false);
+        final Combo c2 = NSISWizardDialogUtil.createCombo(composite,NSISWizardDisplayValues.OVERWRITE_MODE_NAMES,mStore.getInt("overwriteMode"), //$NON-NLS-1$
+                true,"wizard.overwrite.label",true,null,false); //$NON-NLS-1$
         c2.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
-                mStore.setValue("overwrite",c2.getSelectionIndex());
+                mStore.setValue("overwrite",c2.getSelectionIndex()); //$NON-NLS-1$
             }
         });
         return composite;
@@ -207,7 +207,7 @@ public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
      */
     protected void okPressed()
     {
-        StringBuffer buf = new StringBuffer("");
+        StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
         if(mFiles.size() > 0) {
             Iterator iter = mFiles.iterator();
             buf.append(iter.next());
@@ -215,7 +215,7 @@ public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
                 buf.append(NSISInstallFiles.SEPARATOR).append(iter.next());
             }
         }
-        mStore.setValue("files",buf.toString());
+        mStore.setValue("files",buf.toString()); //$NON-NLS-1$
         super.okPressed();
     }
 
@@ -224,6 +224,6 @@ public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
      */
     protected boolean validate()
     {
-        return mFiles.size() > 0 && Common.isValidNSISPrefixedPathName(mStore.getString("destination"));
+        return mFiles.size() > 0 && Common.isValidNSISPrefixedPathName(mStore.getString("destination")); //$NON-NLS-1$
     }
 }

@@ -10,6 +10,7 @@
 package net.sf.eclipsensis.actions;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.console.NSISConsole;
 import net.sf.eclipsensis.console.NSISConsoleLine;
 import net.sf.eclipsensis.makensis.MakeNSISRunner;
 
@@ -23,7 +24,7 @@ public class NSISCancelAction extends NSISScriptAction
 	public void run(IAction action) {
         try {
             MakeNSISRunner.cancel();
-            mConsole.add(NSISConsoleLine.error(EclipseNSISPlugin.getResourceString("cancel.message"))); //$NON-NLS-1$
+            NSISConsole.getConsole().add(NSISConsoleLine.error(EclipseNSISPlugin.getResourceString("cancel.message"))); //$NON-NLS-1$
         }
         catch(Exception ex)
         {

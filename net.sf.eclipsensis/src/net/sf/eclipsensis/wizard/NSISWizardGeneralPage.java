@@ -65,7 +65,7 @@ public class NSISWizardGeneralPage extends AbstractNSISWizardPage
         boolean b = ((flag & APPNAME_CHECK) == 0 || validateAppName()) && 
                ((flag & PUBURL_CHECK) == 0 || validateEmptyOrValidURL(mSettings.getUrl(),null)) &&
                ((flag & INSTFILE_CHECK) == 0 || validatePathName(mSettings.getOutFile(),cInstallFileErrors)) &&
-               ((flag & INSTICON_CHECK) == 0 || validateEmptyOrValidFile(mSettings.getInstallIcon(),null)) &&
+               ((flag & INSTICON_CHECK) == 0 || validateEmptyOrValidFile(mSettings.getIcon(),null)) &&
                ((flag & UNINSTFILE_CHECK) == 0 || !mSettings.isCreateUninstaller() || validateFileName(mSettings.getUninstallFile(),cUninstallFileErrors)) &&
                ((flag & UNINSTICON_CHECK) == 0 || !mSettings.isCreateUninstaller() || validateEmptyOrValidFile(mSettings.getUninstallIcon(),null));
         setPageComplete(b);
@@ -159,14 +159,14 @@ public class NSISWizardGeneralPage extends AbstractNSISWizardPage
            }
         });
     
-        final Text t2 = NSISWizardDialogUtil.createImageBrowser(group, mSettings.getInstallIcon(), new Point(36,36), 
+        final Text t2 = NSISWizardDialogUtil.createImageBrowser(group, mSettings.getIcon(), new Point(36,36), 
                                           Common.loadArrayProperty(bundle,"installer.icon.filternames"),  //$NON-NLS-1$
                                           Common.loadArrayProperty(bundle,"installer.icon.filters"), "installer.icon.label", //$NON-NLS-1$ //$NON-NLS-2$ 
                                           true, null, false);
         t2.addModifyListener(new ModifyListener(){
            public void modifyText(ModifyEvent e)
            {
-               mSettings.setInstallIcon(t2.getText());
+               mSettings.setIcon(t2.getText());
                validateField(INSTICON_CHECK);
            }
         });
@@ -226,7 +226,7 @@ public class NSISWizardGeneralPage extends AbstractNSISWizardPage
            }
         });
     
-        final Text t2 = NSISWizardDialogUtil.createImageBrowser(group, mSettings.getInstallIcon(), new Point(36,36), 
+        final Text t2 = NSISWizardDialogUtil.createImageBrowser(group, mSettings.getIcon(), new Point(36,36), 
                                           Common.loadArrayProperty(bundle,"uninstaller.icon.filternames"),  //$NON-NLS-1$
                                           Common.loadArrayProperty(bundle,"uninstaller.icon.filters"), "uninstaller.icon.label", //$NON-NLS-1$ //$NON-NLS-2$ 
                                           true, m, false);

@@ -29,11 +29,11 @@ public class NSISInstallDirectoryDialog extends AbstractNSISInstallItemDialog
     private static ArrayList cProperties = new ArrayList();
     
     static {
-        cProperties.add("copyFolderContents");
-        cProperties.add("destination");
-        cProperties.add("recursive");
-        cProperties.add("name");
-        cProperties.add("overwriteMode");
+        cProperties.add("copyFolderContents"); //$NON-NLS-1$
+        cProperties.add("destination"); //$NON-NLS-1$
+        cProperties.add("recursive"); //$NON-NLS-1$
+        cProperties.add("name"); //$NON-NLS-1$
+        cProperties.add("overwriteMode"); //$NON-NLS-1$
     }
 
     public NSISInstallDirectoryDialog(Shell parentShell, NSISInstallDirectory item)
@@ -64,31 +64,31 @@ public class NSISInstallDirectoryDialog extends AbstractNSISInstallItemDialog
         layout.marginWidth = 0;
         composite.setLayout(layout);
         
-        final Text t = NSISWizardDialogUtil.createDirectoryBrowser(composite,mStore.getString("name"),
-                            "wizard.source.directory.label",true,null,true);
+        final Text t = NSISWizardDialogUtil.createDirectoryBrowser(composite,mStore.getString("name"), //$NON-NLS-1$
+                            "wizard.source.directory.label",true,null,true); //$NON-NLS-1$
         t.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e)
             {
-                mStore.setValue("name",t.getText());
+                mStore.setValue("name",t.getText().trim()); //$NON-NLS-1$
                 setComplete(validate());
             }
         });
-        final Combo c1 = NSISWizardDialogUtil.createCombo(composite,NSISKeywords.PREDEFINED_PATH_VARIABLES,mStore.getString("destination"),
-                                                         false,"wizard.destination.label",true,null,false);
+        final Combo c1 = NSISWizardDialogUtil.createCombo(composite,NSISKeywords.PREDEFINED_PATH_VARIABLES,mStore.getString("destination"), //$NON-NLS-1$
+                                                         false,"wizard.destination.label",true,null,false); //$NON-NLS-1$
         c1.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e)
             {
-                mStore.setValue("destination",c1.getText());
+                mStore.setValue("destination",c1.getText().trim()); //$NON-NLS-1$
                 setComplete(validate());
             }
         });
         gd = (GridData)c1.getLayoutData();
         gd.horizontalAlignment = GridData.FILL;
-        final Combo c2 = NSISWizardDialogUtil.createCombo(composite,NSISWizardDisplayValues.OVERWRITE_MODE_NAMES,mStore.getInt("overwriteMode"),
-                true,"wizard.overwrite.label",true,null,false);
+        final Combo c2 = NSISWizardDialogUtil.createCombo(composite,NSISWizardDisplayValues.OVERWRITE_MODE_NAMES,mStore.getInt("overwriteMode"), //$NON-NLS-1$
+                true,"wizard.overwrite.label",true,null,false); //$NON-NLS-1$
         c2.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
-                mStore.setValue("overwrite",c2.getSelectionIndex());
+                mStore.setValue("overwrite",c2.getSelectionIndex()); //$NON-NLS-1$
             }
         });
 
@@ -102,18 +102,18 @@ public class NSISInstallDirectoryDialog extends AbstractNSISInstallItemDialog
         layout.marginWidth = 0;
         composite2.setLayout(layout);
         
-        final Button cb1 = NSISWizardDialogUtil.createCheckBox(composite2,"wizard.recursive.label",mStore.getBoolean("recursive"),true,null,false);
+        final Button cb1 = NSISWizardDialogUtil.createCheckBox(composite2,"wizard.recursive.label",mStore.getBoolean("recursive"),true,null,false); //$NON-NLS-1$ //$NON-NLS-2$
         cb1.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
-                mStore.setValue("recursive",cb1.getSelection());
+                mStore.setValue("recursive",cb1.getSelection()); //$NON-NLS-1$
             }
         });
         ((GridData)cb1.getLayoutData()).horizontalSpan = 1;
         
-        final Button cb2 = NSISWizardDialogUtil.createCheckBox(composite2,"wizard.copy.folder.contents.label",mStore.getBoolean("copyFolderContents"),true,null,false);
+        final Button cb2 = NSISWizardDialogUtil.createCheckBox(composite2,"wizard.copy.folder.contents.label",mStore.getBoolean("copyFolderContents"),true,null,false); //$NON-NLS-1$ //$NON-NLS-2$
         cb2.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
-                mStore.setValue("copyFolderContents",cb2.getSelection());
+                mStore.setValue("copyFolderContents",cb2.getSelection()); //$NON-NLS-1$
             }
         });
         ((GridData)cb2.getLayoutData()).horizontalSpan = 1;
@@ -126,6 +126,6 @@ public class NSISInstallDirectoryDialog extends AbstractNSISInstallItemDialog
      */
     protected boolean validate()
     {
-        return Common.isValidPath(mStore.getString("name")) && Common.isValidNSISPrefixedPathName(mStore.getString("destination"));
+        return Common.isValidPath(mStore.getString("name")) && Common.isValidNSISPrefixedPathName(mStore.getString("destination")); //$NON-NLS-1$ //$NON-NLS-2$
     }
 }

@@ -9,16 +9,9 @@
  *******************************************************************************/
 package net.sf.eclipsensis;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+import java.util.*;
 
-import net.sf.eclipsensis.console.NSISConsole;
-import net.sf.eclipsensis.console.NSISConsoleLine;
 import net.sf.eclipsensis.dialogs.NSISPreferencePage;
-import net.sf.eclipsensis.help.NSISHelpURLProvider;
-import net.sf.eclipsensis.makensis.MakeNSISRunner;
 import net.sf.eclipsensis.settings.NSISPreferences;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.util.WinAPI;
@@ -43,11 +36,10 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
     public static final String NSIS_REG_VALUE = ""; //$NON-NLS-1$
     private static EclipseNSISPlugin cPlugin;
     
-	//Resource bundle.
-	private ResourceBundle mResourceBundle;
-    private NSISHelpURLProvider mHelpURLProvider = null;
-    private String mName;
-    private String mVersion;
+	private ArrayList mListeners = new ArrayList();
+	private ResourceBundle mResourceBundle = null;
+    private String mName = null;
+    private String mVersion = null;
 
 	/**
 	 * The constructor.
@@ -88,8 +80,6 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
                 prefs.store();
             }
         }
-        MakeNSISRunner.startup();
-        mHelpURLProvider = new NSISHelpURLProvider();
 	}
     
     private void configure()
@@ -124,12 +114,12 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
 	 * This method is called when the plug-in is stopped
 	 */
 	public void stop(BundleContext context) throws Exception {
-		super.stop(context);
-        MakeNSISRunner.shutdown();
-        if(mHelpURLProvider != null) {
-            mHelpURLProvider.dispose();
-            mHelpURLProvider = null;
+        for (Iterator iter = mListeners.iterator(); iter.hasNext();) {
+            IEclipseNSISPluginListener listener = (IEclipseNSISPluginListener) iter.next();
+            listener.stopped();
+            iter.remove();
         }
+		super.stop(context);
 	}
 
 	/**
@@ -174,6 +164,7 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
     {
         return mName;
     }
+    
     /**
      * @return Returns the version.
      */
@@ -181,40 +172,16 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
     {
         return mVersion;
     }
+    
     public boolean isConfigured()
     {
         return (NSISPreferences.getPreferences().getNSISExe() != null);
     }
     
-    public void testInstaller(String exeName)
+    public void addListener(IEclipseNSISPluginListener listener)
     {
-        if(exeName != null) {
-            File exeFile = new File(exeName);
-            if (exeFile.exists()) {
-                File workDir = exeFile.getParentFile();
-                try {
-                    Runtime.getRuntime().exec(new String[]{exeName},null,workDir);
-                }
-                catch(IOException ex) {
-                    NSISConsole console = NSISConsole.getConsole();
-                    if(console != null) {
-                        console.clear();
-                        console.add(NSISConsoleLine.error(ex.getMessage()));
-                    }
-                    else {
-                        MessageDialog.openError(getWorkbench().getActiveWorkbenchWindow().getShell(),
-                                                getResourceString("error.title"),ex.getMessage()); //$NON-NLS-1$
-                    }
-                }
-            }
+        if(!mListeners.contains(listener)) {
+            mListeners.add(listener);
         }
-    }
-
-    /**
-     * @return Returns the helpURLProvider.
-     */
-    public NSISHelpURLProvider getHelpURLProvider()
-    {
-        return mHelpURLProvider;
     }
 }

@@ -25,8 +25,8 @@ rem ******
 set Mssdk="D:\Program Files\Microsoft SDK"
 call %mssdk%\setenv.bat
 
-set lib=%lib%;%JAVA_HOME%\lib
-set include=%include%;%JAVA_HOME%\include;%JAVA_HOME%\include\win32
+set lib=%lib%;%JAVA_HOME%\lib;%ProgramFiles%\HTML Help Workshop\lib
+set include=%include%;%JAVA_HOME%\include;%JAVA_HOME%\include\win32;%ProgramFiles%\HTML Help Workshop\include
 
 :MAKE
 if "X%1"=="X" goto MAKE_RELEASE

@@ -96,3 +96,7 @@ JNIEXPORT jlong JNICALL Java_net_sf_eclipsensis_util_WinAPI_HtmlHelp(JNIEnv *pEn
 	}
 }
 
+JNIEXPORT jint JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetUserDefaultLangID(JNIEnv *pEnv, jclass jClass)
+{
+    return GetUserDefaultLangID();
+}

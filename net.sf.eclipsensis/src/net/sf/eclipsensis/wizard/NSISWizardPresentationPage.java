@@ -58,6 +58,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
     private Button mSplashPreviewButton = null;
     private Button mBGPreviewButton = null;
     private FontData mBGPreviewFontData;
+    private FontData mBGPreviewEscapeFontData;
     private Point mBGPreviewTextLocation;
     private int mBGPreviewGradientHeight;
     
@@ -81,7 +82,8 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
     {
         super(settings, NAME, EclipseNSISPlugin.getResourceString("wizard.presentation.title"), //$NON-NLS-1$
               EclipseNSISPlugin.getResourceString("wizard.presentation.description")); //$NON-NLS-1$
-        mBGPreviewFontData = new FontData(EclipseNSISPlugin.getResourceString("background.preview.font","1|Times New Roman|40|3|WINDOWS|1|-53|0|0|0|700|1|0|0|1|0|0|0|0|Times New Roman")); //$NON-NLS-1$ //$NON-NLS-2$
+        mBGPreviewFontData = new FontData(EclipseNSISPlugin.getResourceString("background.preview.font","1|Times New Roman|26|3|WINDOWS|1|-53|0|0|0|700|1|0|0|1|0|0|0|0|Times New Roman")); //$NON-NLS-1$ //$NON-NLS-2$
+        mBGPreviewEscapeFontData = new FontData(EclipseNSISPlugin.getResourceString("background.preview.escape.font","1|Times New Roman|12|1|WINDOWS|1|0|0|0|0|700|0|0|0|1|0|0|0|0|Times New Roman")); //$NON-NLS-1$ //$NON-NLS-2$
         mBGPreviewTextLocation = new Point(Integer.parseInt(EclipseNSISPlugin.getResourceString("background.preview.text.x","16")), //$NON-NLS-1$ //$NON-NLS-2$
                                            Integer.parseInt(EclipseNSISPlugin.getResourceString("background.preview.text.y","8"))); //$NON-NLS-1$ //$NON-NLS-2$
         mBGPreviewGradientHeight = Integer.parseInt(EclipseNSISPlugin.getResourceString("background.preview.gradient.height","4")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -280,7 +282,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
 
         final Combo c = NSISWizardDialogUtil.createCombo(group, NSISWizardDisplayValues.LICENSE_BUTTON_NAMES, 
                                     mSettings.getLicenseButtonType(),true,"license.button.label", //$NON-NLS-1$
-                                    (mSettings.getInstallerType() == INSTALLER_TYPE_MUI), m, false);
+                                    (mSettings.getInstallerType() != INSTALLER_TYPE_SILENT && mSettings.isShowLicense()), m, false);
         final Label l = (Label)c.getData(NSISWizardDialogUtil.LABEL);
         
         c.addSelectionListener(new SelectionAdapter() {
@@ -293,7 +295,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
             public boolean canEnable(Control control)
             {
                 if(c == control || (l != null && l == control)) {
-                    return (mSettings.getInstallerType() == INSTALLER_TYPE_MUI) && mSettings.isShowLicense();
+                    return (mSettings.getInstallerType() != INSTALLER_TYPE_SILENT && mSettings.isShowLicense());
                 }
                 else {
                     return true;
@@ -305,14 +307,12 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
             m.setEnabler(l,mse);
         }
         
-        ((NSISWizard)getWizard()).addNSISWizardListener(new NSISWizardAdapter() {
+        addPageListener(new NSISWizardPageAdapter() {
             public void aboutToEnter(IWizardPage page, boolean forward)
             {
-                if(page != null && page.getName().equals(NAME) && forward) {
-                    c.setEnabled(mse.canEnable(c));
-                    if(l != null) {
-                        l.setEnabled(mse.canEnable(l));
-                    }
+                c.setEnabled(mse.canEnable(c));
+                if(l != null) {
+                    l.setEnabled(mse.canEnable(l));
                 }
             }
         });
@@ -492,6 +492,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
         shell.setBounds(rect.x,rect.y,rect.width,rect.height);
         
         final Font previewFont = new Font(display,mBGPreviewFontData);
+        final Font messageFont = new Font(display,mBGPreviewEscapeFontData);
 
         final Clip clip = loadAudioClip(mSettings.getBackgroundWAV());
         if(clip != null) {
@@ -504,6 +505,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
                     shell.close();
                     shell.dispose();
                     previewFont.dispose();
+                    messageFont.dispose();
                     if(clip != null) {
                         clip.stop();
                     }
@@ -548,7 +550,11 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
                 gc.setForeground(ColorManager.getColor(mSettings.getBGTextColor()));
                 gc.setFont(previewFont);
                 gc.drawString(previewText, mBGPreviewTextLocation.x, mBGPreviewTextLocation.y, true);
-                Point p;
+                
+                RGB rgb = new RGB(255 & ~botRGB.red, 255 & ~botRGB.green, 255 & ~botRGB.blue);
+                gc.setForeground(ColorManager.getColor(rgb));
+                gc.setFont(messageFont);
+                gc.drawString(EclipseNSISPlugin.getResourceString("background.preview.escape.message"),10,rect.y+rect.height-20,true); //$NON-NLS-1$
             }
         });
         canvas.addDisposeListener(new DisposeListener() {

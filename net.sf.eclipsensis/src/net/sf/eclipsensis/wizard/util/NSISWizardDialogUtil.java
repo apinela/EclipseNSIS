@@ -29,7 +29,7 @@ import org.eclipse.swt.widgets.*;
 
 public class NSISWizardDialogUtil
 {
-    public static final String LABEL = "LABEL";
+    public static final String LABEL = "LABEL"; //$NON-NLS-1$
 
     private static void addSlave(MasterSlaveController masterSlaveController, Control slave)
     {
@@ -410,7 +410,7 @@ public class NSISWizardDialogUtil
         c2.setData(LABEL, l);
         
         final Button b = new Button(composite, SWT.PUSH);
-        b.setText(EclipseNSISPlugin.getResourceString("browse.text"));
+        b.setText(EclipseNSISPlugin.getResourceString("browse.text")); //$NON-NLS-1$
         gd = new GridData(GridData.HORIZONTAL_ALIGN_CENTER);
         b.setLayoutData(gd);
         b.addSelectionListener(new SelectionAdapter() {
@@ -418,20 +418,20 @@ public class NSISWizardDialogUtil
                 NSISContentBrowserDialog dialog = new NSISContentBrowserDialog(b.getShell(),settings);
                 if(dialog.open() == Window.OK) {
                     INSISInstallElement element = dialog.getSelectedElement();
-                    StringBuffer text = new StringBuffer("");
+                    StringBuffer text = new StringBuffer(""); //$NON-NLS-1$
                     if(element instanceof NSISInstallFiles.FileItem) {
                         String destination = ((NSISInstallFiles)element.getParent()).getDestination();
                         text.append(destination);
-                        if(!destination.endsWith("\\")) {
-                            text.append("\\");
+                        if(!destination.endsWith("\\")) { //$NON-NLS-1$
+                            text.append("\\"); //$NON-NLS-1$
                         }
                         text.append(new File(((NSISInstallFiles.FileItem)element).getName()).getName());
                     }
                     else if(element instanceof NSISInstallFile) {
                         String destination = ((NSISInstallFile)element).getDestination();
                         text.append(destination);
-                        if(!destination.endsWith("\\")) {
-                            text.append("\\");
+                        if(!destination.endsWith("\\")) { //$NON-NLS-1$
+                            text.append("\\"); //$NON-NLS-1$
                         }
                         text.append(new File(((NSISInstallFile)element).getName()).getName());
                     }
@@ -439,8 +439,8 @@ public class NSISWizardDialogUtil
                         if(!((NSISInstallDirectory)element).isCopyFolderContents()) {
                             String destination = ((NSISInstallDirectory)element).getDestination();
                             text.append(destination);
-                            if(!destination.endsWith("\\")) {
-                                text.append("\\");
+                            if(!destination.endsWith("\\")) { //$NON-NLS-1$
+                                text.append("\\"); //$NON-NLS-1$
                             }
                             text.append(new File(((NSISInstallDirectory)element).getName()).getName());
                         }

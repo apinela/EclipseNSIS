@@ -90,6 +90,14 @@ JNIEXPORT jlong JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetDesktopWindow
 JNIEXPORT jlong JNICALL Java_net_sf_eclipsensis_util_WinAPI_HtmlHelp
   (JNIEnv *, jclass, jlong, jstring, jint, jlong);
 
+/*
+ * Class:     net_sf_eclipsensis_util_WinAPI
+ * Method:    GetUserDefaultLangID
+ * Signature: ()I
+ */
+JNIEXPORT jint JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetUserDefaultLangID
+  (JNIEnv *, jclass);
+
 #ifdef __cplusplus
 }
 #endif
