@@ -318,16 +318,16 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
          */
         protected Object handleGetObject(String key)
         {
-            if(mResources != null) {
+            if(mMessages != null) {
                 try {
-                    return mResources.getObject(key);
+                    return mMessages.getObject(key);
                 }
                 catch(MissingResourceException mre) {
                 }
             }
-            if(mMessages != null) {
+            if(mResources != null) {
                 try {
-                    return mMessages.getObject(key);
+                    return mResources.getObject(key);
                 }
                 catch(MissingResourceException mre) {
                 }

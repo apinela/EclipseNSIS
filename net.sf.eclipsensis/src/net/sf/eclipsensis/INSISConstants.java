@@ -32,7 +32,8 @@ public interface INSISConstants
     public static final String RESOURCE_BUNDLE = "net.sf.eclipsensis.EclipseNSISPluginResources"; //$NON-NLS-1$
     public static final String MESSAGE_BUNDLE = "net.sf.eclipsensis.EclipseNSISPluginMessages"; //$NON-NLS-1$
     public static final String CONSOLE_ID = "net.sf.eclipsensis.console.NSISConsole"; //$NON-NLS-1$
-    public static final String PROBLEM_ID = "net.sf.eclipsensis.NSISCompileProblem"; //$NON-NLS-1$
+    public static final String PROBLEM_MARKER_ID = "net.sf.eclipsensis.NSISCompileProblem"; //$NON-NLS-1$
+    public static final String TASK_MARKER_ID = "net.sf.eclipsensis.NSISTask"; //$NON-NLS-1$
     public static final String NSIS_EDITOR_CONTEXT_ID = "net.sf.eclipsensis.NSISEditorScope"; //$NON-NLS-1$
     public static final String COMPILE_ACTION_ID = "net.sf.eclipsensis.actions.NSISCompileAction"; //$NON-NLS-1$
     public static final String COMPILE_TEST_ACTION_ID = "net.sf.eclipsensis.actions.NSISCompileTestAction"; //$NON-NLS-1$
@@ -53,6 +54,7 @@ public interface INSISConstants
     public static final QualifiedName NSIS_EXE_TIMESTAMP = new QualifiedName(PLUGIN_NAME,"nsisEXETimestamp"); //$NON-NLS-1$
     
     public static final char LINE_CONTINUATION_CHAR = '\\';
+    public static final String LINE_SEPARATOR = System.getProperty("line.separator"); //$NON-NLS-1$
     public static final char[][] QUOTE_ESCAPE_SEQUENCES = {{'$','\\','"'},{'$','\\','\''},{'$','\\','`'}};
     public static final char[][] WHITESPACE_ESCAPE_SEQUENCES = {{'$','\\','r'},{'$','\\','n'},{'$','\\','t'}};
     

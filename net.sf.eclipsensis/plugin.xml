@@ -90,6 +90,12 @@
             id="net.sf.eclipsensis.dialogs.NSISTemplatePreferencePage">
       </page>
       <page
+            name="%task.tags.preference.page.name"
+            category="net.sf.eclipsensis.dialogs.NSISEditorPreferencePage"
+            class="net.sf.eclipsensis.dialogs.NSISTaskTagsPreferencePage"
+            id="net.sf.eclipsensis.dialogs.NSISTaskTagsPreferencePage">
+      </page>
+      <page
             name="%wizard.templates.preference.page.name"
             category="net.sf.eclipsensis.dialogs.NSISPreferencePage"
             class="net.sf.eclipsensis.dialogs.NSISWizardTemplatePreferencePage"
@@ -102,7 +108,7 @@
             objectClass="org.eclipse.core.resources.IFile"
             icon="%property.page.icon"
             class="net.sf.eclipsensis.dialogs.NSISPropertyPage"
-            nameFilter="*.nsi"
+            nameFilter="%nsi.extension"
             name="%property.page.name"
             id="net.sf.eclipsensis.dialogs.NSISPropertyPage">
       </page>
@@ -261,7 +267,7 @@
          point="org.eclipse.ui.popupMenus">
       <objectContribution
             objectClass="org.eclipse.core.resources.IFile"
-            nameFilter="*.nsi"
+            nameFilter="%nsi.extension"
             id="net.sf.eclipsensis.popupMenuContribution">
          <menu
                label="%nsis.menu.name"
@@ -306,6 +312,14 @@
       <persistent value="true" />
    </extension>
    <extension
+         id="NSISTask"
+         name="%task.marker.name"
+         point="org.eclipse.core.resources.markers">
+      <super type="org.eclipse.core.resources.taskmarker"/>
+      <super type="org.eclipse.core.resources.textmarker"/>
+      <persistent value="true"/>
+   </extension>
+   <extension
          id="net.sf.eclipsensis.help.NSISHelpProducer"
          name="%help.name"
          point="org.eclipse.help.contentProducer">
@@ -314,10 +328,6 @@
    <extension
          point="org.eclipse.help.toc">
       <toc file="toc.xml" primary="true"/>
-   </extension>
-   <extension
-         point="org.eclipse.help.toc">
-      <toc file="toc_nsis.xml"/>
    </extension>
    <extension
          point="org.eclipse.ui.contexts">
@@ -344,7 +354,7 @@
           keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
           commandId="net.sf.eclipsensis.commands.NSISInsertTemplate"
           contextId="net.sf.eclipsensis.NSISEditorScope"
-          keySequence="Ctrl+T"/>
+          keySequence="%insert.template.keysequence"/>
       <command
          name="%goto.help.name"
          description="%goto.help.description"
@@ -354,7 +364,7 @@
           keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
           commandId="net.sf.eclipsensis.commands.NSISGotoHelp"
           contextId="net.sf.eclipsensis.NSISEditorScope"
-          keySequence="F2"/>
+          keySequence="%goto.help.keysequence"/>
       <command
          name="%sticky.help.name"
          description="%sticky.help.description"
@@ -364,7 +374,7 @@
           keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
           commandId="net.sf.eclipsensis.commands.NSISStickyHelp"
           contextId="net.sf.eclipsensis.NSISEditorScope"
-          keySequence="F3"/>
+          keySequence="%sticky.help.keysequence"/>
       <command
          name="%insert.file.name"
          description="%insert.file.description"
@@ -374,7 +384,7 @@
           keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
           commandId="net.sf.eclipsensis.commands.NSISInsertFile"
           contextId="net.sf.eclipsensis.NSISEditorScope"
-          keySequence="Shift+F4"/>
+          keySequence="%insert.file.keysequence"/>
       <command
          name="%insert.directory.name"
          description="%insert.directory.description"
@@ -384,7 +394,7 @@
           keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
           commandId="net.sf.eclipsensis.commands.NSISInsertDirectory"
           contextId="net.sf.eclipsensis.NSISEditorScope"
-          keySequence="Shift+F5"/>
+          keySequence="%insert.directory.keysequence"/>
       <command
          name="%insert.color.name"
          description="%insert.color.description"
@@ -394,7 +404,7 @@
           keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
           commandId="net.sf.eclipsensis.commands.NSISInsertColor"
           contextId="net.sf.eclipsensis.NSISEditorScope"
-          keySequence="Shift+F6"/>
+          keySequence="%insert.color.keysequence"/>
       <command
          name="%tabs.to.spaces.name"
          description="%tabs.to.spaces.description"
@@ -409,7 +419,7 @@
           keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
           commandId="net.sf.eclipsensis.commands.NSISToggleComment"
           contextId="net.sf.eclipsensis.NSISEditorScope"
-          keySequence="Ctrl+/"/>
+          keySequence="%toggle.comment.keysequence"/>
       <command
          name="%add.block.comment.name"
          description="%add.block.comment.description"
@@ -419,7 +429,7 @@
           keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
           commandId="net.sf.eclipsensis.commands.NSISAddBlockComment"
           contextId="net.sf.eclipsensis.NSISEditorScope"
-          keySequence="Ctrl+Shift+/"/>
+          keySequence="%add.block.comment.keysequence"/>
       <command
          name="%remove.block.comment.name"
          description="%remove.block.comment.description"
@@ -429,7 +439,7 @@
           keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
           commandId="net.sf.eclipsensis.commands.NSISRemoveBlockComment"
           contextId="net.sf.eclipsensis.NSISEditorScope"
-          keySequence="Ctrl+Shift+\"/>
+          keySequence="%remove.block.comment.keysequence"/>
    </extension>
    <extension
          point="org.eclipse.help.contexts">
