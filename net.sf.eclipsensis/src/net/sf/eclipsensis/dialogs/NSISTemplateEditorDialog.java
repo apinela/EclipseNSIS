@@ -15,7 +15,8 @@ import java.util.List;
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.editor.NSISDocumentSetupParticipant;
-import net.sf.eclipsensis.editor.template.*;
+import net.sf.eclipsensis.editor.template.NSISTemplateEditorSourceViewerConfiguration;
+import net.sf.eclipsensis.editor.template.NSISTemplateSourceViewer;
 import net.sf.eclipsensis.settings.INSISPreferenceConstants;
 import net.sf.eclipsensis.settings.NSISPreferences;
 import net.sf.eclipsensis.util.Common;
@@ -57,8 +58,8 @@ public class NSISTemplateEditorDialog extends IconAndMessageDialog
     private Button mInsertVariableButton = null;
     private boolean mIsNameModifiable = false;
 
-    private Status mStatus = new Status(IStatus.OK,"",null);
-    private Status mValidationStatus = new Status(IStatus.OK,"",null);
+    private Status mStatus = new Status(IStatus.OK,"",null); //$NON-NLS-1$
+    private Status mValidationStatus = new Status(IStatus.OK,"",null); //$NON-NLS-1$
     private boolean mSuppressError= true; // #4354  
     private Map mGlobalActions= new HashMap(10);
     private List mSelectionActions = new ArrayList(3);  
@@ -69,7 +70,7 @@ public class NSISTemplateEditorDialog extends IconAndMessageDialog
     
     private ContextTypeRegistry mContextTypeRegistry; 
     
-    private NSISTemplateVariableProcessor mTemplateProcessor= new NSISTemplateVariableProcessor();
+    private TemplateContextType mTemplateContextType = null;
         
     /**
      * Creates a new dialog.
@@ -98,8 +99,7 @@ public class NSISTemplateEditorDialog extends IconAndMessageDialog
         }
         mContextTypes= (String[][]) contexts.toArray(new String[contexts.size()][]);
                 
-        TemplateContextType type= mContextTypeRegistry.getContextType(template.getContextTypeId());
-        mTemplateProcessor.setContextType(type);
+        mTemplateContextType = mContextTypeRegistry.getContextType(template.getContextTypeId());
     }
     
     /**
@@ -154,11 +154,11 @@ public class NSISTemplateEditorDialog extends IconAndMessageDialog
         parent.setLayout(layout);
         parent.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-        mErrorImage = ImageManager.getImage(EclipseNSISPlugin.getResourceString("error.icon"));
-        mWarningImage = ImageManager.getImage(EclipseNSISPlugin.getResourceString("warning.icon"));
+        mErrorImage = ImageManager.getImage(EclipseNSISPlugin.getResourceString("error.icon")); //$NON-NLS-1$
+        mWarningImage = ImageManager.getImage(EclipseNSISPlugin.getResourceString("warning.icon")); //$NON-NLS-1$
         int width = Math.max(mErrorImage.getBounds().width,mWarningImage.getBounds().width);
         int height = Math.max(mErrorImage.getBounds().height,mWarningImage.getBounds().height);
-        Image tempImage = ImageManager.getImage(EclipseNSISPlugin.getResourceString("transparent.icon"));
+        Image tempImage = ImageManager.getImage(EclipseNSISPlugin.getResourceString("transparent.icon")); //$NON-NLS-1$
         ImageData imageData = tempImage.getImageData();
         imageData = imageData.scaledTo(width, height);
         mTransparentImage = new Image(getShell().getDisplay(),imageData);
@@ -288,7 +288,7 @@ public class NSISTemplateEditorDialog extends IconAndMessageDialog
             String name= mContextCombo.getText();
             String contextId= getContextId(name);
             mTemplate.setContextTypeId(contextId);
-            mTemplateProcessor.setContextType(mContextTypeRegistry.getContextType(contextId));
+            mTemplateContextType = mContextTypeRegistry.getContextType(contextId);
         } 
         else if (w == mDescriptionText) {
             String desc= mDescriptionText.getText();
@@ -316,7 +316,7 @@ public class NSISTemplateEditorDialog extends IconAndMessageDialog
         mTemplate.setPattern(text);
         if(Common.isEmpty(text)) {
             mValidationStatus.setSeverity(IStatus.ERROR);
-            mValidationStatus.setMessage(EclipseNSISPlugin.getResourceString("template.error.no.pattern"));
+            mValidationStatus.setMessage(EclipseNSISPlugin.getResourceString("template.error.no.pattern")); //$NON-NLS-1$
         }
         else {
             mValidationStatus.setSeverity(IStatus.OK);
@@ -407,7 +407,7 @@ public class NSISTemplateEditorDialog extends IconAndMessageDialog
     {
         final SourceViewer viewer= new NSISTemplateSourceViewer(parent, null, null, false, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
         SourceViewerConfiguration configuration= new NSISTemplateEditorSourceViewerConfiguration(NSISPreferences.getPreferences().getPreferenceStore(),
-                                                        mTemplateProcessor);
+                                                        mTemplateContextType);
         final FontRegistry fontRegistry = JFaceResources.getFontRegistry();
         viewer.getTextWidget().setFont(fontRegistry.get(INSISPreferenceConstants.EDITOR_FONT));
         final IPropertyChangeListener propertyChangeListener = new IPropertyChangeListener() {
@@ -597,7 +597,7 @@ public class NSISTemplateEditorDialog extends IconAndMessageDialog
             case IStatus.WARNING:
                 return mStatus.getMessage();
             default:
-                return "";
+                return ""; //$NON-NLS-1$
         }
     }
     

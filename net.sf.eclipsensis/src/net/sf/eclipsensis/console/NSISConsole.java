@@ -227,11 +227,11 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
         mWarningColor = mColorRegistry.get(CONSOLE_WARNING_COLOR);
         mErrorColor = mColorRegistry.get(CONSOLE_ERROR_COLOR);
         mColorRegistry.addListener(this);
-        mErrorImage = ImageManager.getImage(EclipseNSISPlugin.getResourceString("error.icon"));
-        mWarningImage = ImageManager.getImage(EclipseNSISPlugin.getResourceString("warning.icon"));
+        mErrorImage = ImageManager.getImage(EclipseNSISPlugin.getResourceString("error.icon")); //$NON-NLS-1$
+        mWarningImage = ImageManager.getImage(EclipseNSISPlugin.getResourceString("warning.icon")); //$NON-NLS-1$
         int width = Math.max(mErrorImage.getBounds().width,mWarningImage.getBounds().width);
         int height = Math.max(mErrorImage.getBounds().height,mWarningImage.getBounds().height);
-        Image tempImage = ImageManager.getImage(EclipseNSISPlugin.getResourceString("transparent.icon"));
+        Image tempImage = ImageManager.getImage(EclipseNSISPlugin.getResourceString("transparent.icon")); //$NON-NLS-1$
         ImageData imageData = tempImage.getImageData();
         imageData = imageData.scaledTo(width, height);
         mInfoImage = new Image(mDisplay,imageData);

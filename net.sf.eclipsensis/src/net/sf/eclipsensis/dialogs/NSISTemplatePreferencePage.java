@@ -33,7 +33,6 @@ import org.eclipse.ui.texteditor.templates.TemplatePreferencePage;
 public class NSISTemplatePreferencePage extends TemplatePreferencePage
 {
     private EclipseNSISPlugin mPlugin = null;
-    private NSISTemplateVariableProcessor mTemplateProcessor;
     
     /**
      * 
@@ -44,7 +43,6 @@ public class NSISTemplatePreferencePage extends TemplatePreferencePage
         setPreferenceStore(mPlugin.getPreferenceStore());
         setTemplateStore(mPlugin.getTemplateStore());
         setContextTypeRegistry(mPlugin.getContextTypeRegistry());
-        mTemplateProcessor= new NSISTemplateVariableProcessor();
     }
 
     /*

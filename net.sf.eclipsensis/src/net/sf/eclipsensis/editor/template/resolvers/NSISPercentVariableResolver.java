@@ -21,7 +21,7 @@ public class NSISPercentVariableResolver extends SimpleTemplateVariableResolver
      */
     public NSISPercentVariableResolver()
     {
-        super("percent", EclipseNSISPlugin.getResourceString("nsis.resolvers.percent.description"));
+        super("percent", EclipseNSISPlugin.getResourceString("nsis.resolvers.percent.description")); //$NON-NLS-1$ //$NON-NLS-2$
         setEvaluationString("%"); //$NON-NLS-1$
     }
 }

@@ -18,15 +18,16 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.jface.text.templates.TemplateContextType;
 
 public class NSISTemplateEditorSourceViewerConfiguration extends NSISTemplateSourceViewerConfiguration
 {
-    private NSISTemplateVariableProcessor mTemplateVariableProcessor = null;
+    private TemplateContextType mTemplateContextType = null;
     
-    public NSISTemplateEditorSourceViewerConfiguration(IPreferenceStore preferenceStore, NSISTemplateVariableProcessor templateVariableProcessor)
+    public NSISTemplateEditorSourceViewerConfiguration(IPreferenceStore preferenceStore, TemplateContextType templateContextType)
     {
         super(preferenceStore);
-        mTemplateVariableProcessor = templateVariableProcessor;
+        mTemplateContextType = templateContextType;
     }
 
     /*
@@ -35,9 +36,10 @@ public class NSISTemplateEditorSourceViewerConfiguration extends NSISTemplateSou
     public IContentAssistant getContentAssistant(ISourceViewer sourceViewer)
     {
         return NSISSourceViewerConfigurationTools.createContentAssistant(sourceViewer,
-                        new IContentAssistProcessor[] {new NSISCompletionProcessor()},
-                        new String[][] {{IDocument.DEFAULT_CONTENT_TYPE,
-                                         NSISPartitionScanner.NSIS_STRING}},
+                        new IContentAssistProcessor[] {new NSISTemplateVariableProcessor(mTemplateContextType),
+                                                       new NSISCompletionProcessor()},
+                        new String[][] {{IDocument.DEFAULT_CONTENT_TYPE},
+                                         {NSISPartitionScanner.NSIS_STRING}},
                         true);
     }
 
@@ -47,7 +49,7 @@ public class NSISTemplateEditorSourceViewerConfiguration extends NSISTemplateSou
     public IContentAssistant getInsertTemplateVariableAssistant(ISourceViewer sourceViewer)
     {
         return NSISSourceViewerConfigurationTools.createContentAssistant(sourceViewer,
-                new IContentAssistProcessor[] {mTemplateVariableProcessor},
+                new IContentAssistProcessor[] {new NSISTemplateVariableProcessor(mTemplateContextType, true)},
                 new String[][] { {IDocument.DEFAULT_CONTENT_TYPE} },
                 false);
     }

@@ -11,14 +11,19 @@ package net.sf.eclipsensis.editor.template;
 
 import java.util.*;
 
+import net.sf.eclipsensis.editor.codeassist.NSISCompletionProcessor;
+import net.sf.eclipsensis.util.Common;
+
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.contentassist.*;
 import org.eclipse.jface.text.templates.TemplateContextType;
 import org.eclipse.jface.text.templates.TemplateVariableResolver;
 
-public class NSISTemplateVariableProcessor implements IContentAssistProcessor, INSISTemplateConstants
+public class NSISTemplateVariableProcessor extends NSISCompletionProcessor implements INSISTemplateConstants
 {
     private static final IRegion[] EMPTY_IREGION_ARRAY = new IRegion[0];
+    private char[] mAutoActivationChars = null;
+    private boolean mInsertTemplateVariablesMode = false;
 
     private static Comparator mTemplateVariableProposalComparator= new Comparator() {
         public int compare(Object o1, Object o2) {
@@ -35,6 +40,26 @@ public class NSISTemplateVariableProcessor implements IContentAssistProcessor, I
     
     private TemplateContextType mContextType;
     
+    /**
+     * 
+     */
+    public NSISTemplateVariableProcessor(TemplateContextType contextType)
+    {
+        this(contextType,false);
+    }
+    /**
+     * @param insertTemplateVariablesMode
+     */
+    public NSISTemplateVariableProcessor(TemplateContextType contextType, boolean insertTemplateVariablesMode)
+    {
+        super();
+        setContextType(contextType);
+        mInsertTemplateVariablesMode = insertTemplateVariablesMode;
+        mAutoActivationChars = new char[] {IDENTIFIER_BOUNDARY};
+        if(!mInsertTemplateVariablesMode) {
+            mAutoActivationChars = (char[])Common.appendArray(mAutoActivationChars, super.getCompletionProposalAutoActivationCharacters());
+        }
+    }
     /**
      * Sets the context type.
      */
@@ -56,32 +81,35 @@ public class NSISTemplateVariableProcessor implements IContentAssistProcessor, I
      */
     public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int documentOffset) 
     {
-        if (mContextType == null) {
-            return null;
-        }
-
         List proposals= new ArrayList();        
+        if (mContextType != null) {
+            String text= viewer.getDocument().get();
+            int start= getStart(text, documentOffset);
+            int end= documentOffset;
+    
+            String string= text.substring(start, end);
+            String prefix= (string.length() >= 1?string.substring(1):null);
+    
+            if(mInsertTemplateVariablesMode || (string.length() > 0 && string.charAt(0) == IDENTIFIER_BOUNDARY)) {
+                int offset= start;
+                int length= end - start;
         
-        String text= viewer.getDocument().get();
-        int start= getStart(text, documentOffset);
-        int end= documentOffset;
-
-        String string= text.substring(start, end);
-        String prefix= (string.length() >= 1?string.substring(1):null);
-
-        int offset= start;
-        int length= end - start;
-
-        for (Iterator iterator= mContextType.resolvers(); iterator.hasNext(); ) {
-            TemplateVariableResolver variable= (TemplateVariableResolver) iterator.next();
-
-            if (prefix == null || variable.getType().startsWith(prefix)) {
-                proposals.add(new NSISTemplateVariableProposal(variable, offset, length, viewer));
+                for (Iterator iterator= mContextType.resolvers(); iterator.hasNext(); ) {
+                    TemplateVariableResolver variable= (TemplateVariableResolver) iterator.next();
+        
+                    if (Common.isEmpty(prefix) || variable.getType().startsWith(prefix)) {
+                        proposals.add(new NSISTemplateVariableProposal(variable, offset, length, viewer));
+                    }
+                }
+        
+                Collections.sort(proposals, mTemplateVariableProposalComparator);
             }
         }
-
-        Collections.sort(proposals, mTemplateVariableProposalComparator);
-        return (ICompletionProposal[]) proposals.toArray(new ICompletionProposal[proposals.size()]);
+        ICompletionProposal[] completionProposals = (ICompletionProposal[]) proposals.toArray(new ICompletionProposal[proposals.size()]);
+        if(!mInsertTemplateVariablesMode) {
+            completionProposals = (ICompletionProposal[])Common.appendArray(completionProposals, super.computeCompletionProposals(viewer, documentOffset));
+        }
+        return completionProposals;
     }
 
     /* Guesses the start position of the completion */
@@ -195,7 +223,7 @@ public class NSISTemplateVariableProcessor implements IContentAssistProcessor, I
      */
     public char[] getCompletionProposalAutoActivationCharacters() 
     {
-        return new char[] {'%'};
+        return mAutoActivationChars;
     }
 
     /*

@@ -12,9 +12,6 @@ package net.sf.eclipsensis.editor.codeassist;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.contentassist.*;
 
-/**
- * NSIS completion processor.
- */
 public class NSISCompletionProcessor implements IContentAssistProcessor
 {
     /*
