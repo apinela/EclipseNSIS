@@ -10,7 +10,10 @@
 package net.sf.eclipsensis.editor.outline;
 
 import net.sf.eclipsensis.editor.NSISEditor;
+import net.sf.eclipsensis.help.INSISKeywordsListener;
+import net.sf.eclipsensis.help.NSISKeywords;
 
+import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -21,7 +24,7 @@ import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
  * A content outline page which always represents the content of the connected
  * editor in 10 segments.
  */
-public class NSISContentOutlinePage extends ContentOutlinePage
+public class NSISContentOutlinePage extends ContentOutlinePage implements INSISKeywordsListener
 {
     private Object mInput;
     private NSISEditor mEditor;
@@ -36,6 +39,23 @@ public class NSISContentOutlinePage extends ContentOutlinePage
         mEditor = editor;
     }
 
+    /* (non-Javadoc)
+     * @see net.sf.eclipsensis.help.INSISKeywordsListener#keywordsChanged()
+     */
+    public void keywordsChanged()
+    {
+        TreeViewer viewer = getTreeViewer();
+        if(viewer != null) {
+            IContentProvider contentProvider = viewer.getContentProvider();
+            if(contentProvider != null && contentProvider instanceof NSISOutlineContentProvider) {
+                NSISOutlineContentProvider.loadOutlineKeywordsAndImages();
+                Object input = viewer.getInput();
+                viewer.setInput(null);
+                viewer.setInput(input);
+            }
+        }
+    }
+    
     /*
      * (non-Javadoc) Method declared on ContentOutlinePage
      */
@@ -53,6 +73,7 @@ public class NSISContentOutlinePage extends ContentOutlinePage
                 if (mInput != null) {
                     viewer.setInput(mInput);
                 }
+                NSISKeywords.addKeywordsListener(this);
             }
         }
     }
@@ -66,6 +87,7 @@ public class NSISContentOutlinePage extends ContentOutlinePage
         if(mEditor != null) {
             getTreeViewer().removeSelectionChangedListener(mEditor);
         }
+        NSISKeywords.removeKeywordsListener(this);
     }
     
     /**

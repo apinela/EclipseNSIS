@@ -3,6 +3,6 @@
 	<classpathentry excluding="net/sf/eclipsensis/help/NSISHelpUpdater.java" kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="lib/xstream-1.1.jar"/>
+	<classpathentry sourcepath="lib/xstream-1.1-src.zip" kind="lib" path="lib/xstream-1.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -48,7 +48,7 @@ public class NSISScriptFunction extends AbstractNSISScriptElementContainer
         writer.indent();
         writeElements(writer);
         writer.unindent();
-        writer.println("FunctionEnd"); //$NON-NLS-1$
+        writer.println(getKeyword("FunctionEnd")); //$NON-NLS-1$
     }
 
     /* (non-Javadoc)

@@ -19,14 +19,14 @@ import org.eclipse.ui.help.WorkbenchHelp;
 
 public class NSISHelpAction extends ActionDelegate implements IEditorActionDelegate, INSISConstants
 {
-    private String mHelpUrl;
+    public static final String PLUGIN_HELP_URL = new StringBuffer("/").append(PLUGIN_NAME).append(
+                            "/").append(PLUGIN_HELP_LOCATION_PREFIX).append("NSIS/Docs/Chapter4.html").toString(); //$NON-NLS-1$
     /**
      * 
      */
     public NSISHelpAction()
     {
         super();
-        mHelpUrl = new StringBuffer("/").append(PLUGIN_NAME).append("/").append(PLUGIN_HELP_LOCATION).toString(); //$NON-NLS-1$ //$NON-NLS-2$
     }
     
     /* (non-Javadoc)
@@ -41,6 +41,6 @@ public class NSISHelpAction extends ActionDelegate implements IEditorActionDeleg
      */
     public void run(IAction action)
     {
-        WorkbenchHelp.displayHelpResource(mHelpUrl);
+        WorkbenchHelp.displayHelpResource(PLUGIN_HELP_URL);
     }
 }

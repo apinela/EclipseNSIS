@@ -18,6 +18,7 @@ import net.sf.eclipsensis.editor.text.NSISSyntaxStyle;
 import net.sf.eclipsensis.util.ColorManager;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.util.NSISValidator;
+import net.sf.eclipsensis.util.Version;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.graphics.RGB;
@@ -28,6 +29,7 @@ public class NSISPreferences extends NSISSettings
     private IPreferenceStore mPreferenceStore = null;
     private File mNSISExe = null;
     private String mNSISHome = null;
+    private Version mNSISVersion = null;
     private boolean mUseDocsHelp = true;
     private Properties mNSISOptions = null;
     
@@ -215,6 +217,7 @@ public class NSISPreferences extends NSISSettings
         mNSISExe = (nsisHome==null?null:NSISValidator.findNSISExe(new File(nsisHome)));
         if(mNSISExe != null) {
             mNSISHome = nsisHome;
+            mNSISVersion = NSISValidator.getNSISVersion(mNSISExe);
             mNSISOptions = NSISValidator.loadNSISOptions(mNSISExe);
         }
         else {
@@ -225,6 +228,22 @@ public class NSISPreferences extends NSISSettings
     public String getNSISExe()
     {
         return (mNSISExe !=null?mNSISExe.getAbsolutePath():null);
+    }
+    
+    /**
+     * @return Returns the nSISOptions.
+     */
+    public Properties getNSISOptions()
+    {
+        return mNSISOptions;
+    }
+    
+    /**
+     * @return Returns the nSISVersion.
+     */
+    public Version getNSISVersion()
+    {
+        return mNSISVersion;
     }
     
     /**

@@ -14,12 +14,28 @@ import java.util.Stack;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
-import net.sf.eclipsensis.editor.text.*;
+import net.sf.eclipsensis.editor.text.NSISPartitionScanner;
+import net.sf.eclipsensis.editor.text.NSISRegionScanner;
+import net.sf.eclipsensis.editor.text.NSISScanner;
+import net.sf.eclipsensis.editor.text.NSISTextUtility;
+import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.util.ImageManager;
 
-import org.eclipse.jface.text.*;
-import org.eclipse.jface.text.rules.*;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.BadPositionCategoryException;
+import org.eclipse.jface.text.DefaultPositionUpdater;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IPositionUpdater;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ITypedRegion;
+import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.Region;
+import org.eclipse.jface.text.TypedRegion;
+import org.eclipse.jface.text.rules.ICharacterScanner;
+import org.eclipse.jface.text.rules.IRule;
+import org.eclipse.jface.text.rules.IToken;
+import org.eclipse.jface.text.rules.Token;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.projection.ProjectionAnnotation;
@@ -58,21 +74,32 @@ public class NSISOutlineContentProvider implements ITreeContentProvider, INSISCo
     
     private static final int ROOT = Integer.MAX_VALUE;
     
-    public static final String[] OUTLINE_KEYWORDS = {"!define", "!ifdef", "!ifndef", "!ifmacrodef",  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-                                                    "!ifnmacrodef", "!endif", "!macro", "!macroend",  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-                                                    "Function", "FunctionEnd", "Section", "SectionEnd",  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-                                                    "SectionGroup", "SectionGroupEnd", "Page", "PageEx",  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-                                                    "Pageexend"}; //$NON-NLS-1$
+    private static final String[] cOutlineKeywordNames = {"!define", "!ifdef", "!ifndef", "!ifmacrodef",  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                                                         "!ifnmacrodef", "!endif", "!macro", "!macroend",  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                                                         "Function", "FunctionEnd", "Section", "SectionEnd",  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                                                         "SubSection", "SubSectionEnd", "Page", "PageEx",  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                                                         "Pageexend"}; //$NON-NLS-1$
+
+    public static final String[] OUTLINE_KEYWORDS = new String[cOutlineKeywordNames.length];
     
-    public static final Image[] OUTLINE_IMAGES = new Image[OUTLINE_KEYWORDS.length];
+    public static final Image[] OUTLINE_IMAGES = new Image[cOutlineKeywordNames.length];
     
     static {
-        for(int i=0; i<OUTLINE_KEYWORDS.length; i++) {
-            OUTLINE_IMAGES[i] = ImageManager.getImage(EclipseNSISPlugin.getResourceString(new StringBuffer("outline.").append( //$NON-NLS-1$
-                                    OUTLINE_KEYWORDS[i].toLowerCase().replaceAll("!","")).append(".icon").toString(),null)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        }
+        loadOutlineKeywordsAndImages();
     }
     
+    /**
+     * 
+     */
+    public static void loadOutlineKeywordsAndImages()
+    {
+        for(int i=0; i<cOutlineKeywordNames.length; i++) {
+            OUTLINE_KEYWORDS[i] = NSISKeywords.getKeyword(cOutlineKeywordNames[i]);
+            OUTLINE_IMAGES[i] = ImageManager.getImage(EclipseNSISPlugin.getResourceString(new StringBuffer("outline.").append( //$NON-NLS-1$
+                                                     cOutlineKeywordNames[i].toLowerCase().replaceAll("!","")).append(".icon").toString(),null)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        }
+    }
+
     private ITextEditor mEditor;
     private IAnnotationModel mAnnotationModel;
     private IPositionUpdater mPositionUpdater = new DefaultPositionUpdater(NSIS_OUTLINE);

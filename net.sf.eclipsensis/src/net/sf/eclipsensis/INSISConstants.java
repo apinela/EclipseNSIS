@@ -21,10 +21,8 @@ public interface INSISConstants
     public static final String NSIS_EDITOR_CONTEXT = PLUGIN_CONTEXT_PREFIX + "nsis_editor_context"; //$NON-NLS-1$
     
     public static final String PLUGIN_HELP_LOCATION_PREFIX = "help/"; //$NON-NLS-1$
-    public static final String PLUGIN_HELP_LOCATION = PLUGIN_HELP_LOCATION_PREFIX+"overview.html"; //$NON-NLS-1$
-    public static final String NSIS_REFERENCE_PREFIX = PLUGIN_HELP_LOCATION_PREFIX+"NSIS/"; //$NON-NLS-1$
-    public static final String NSIS_REFERENCE_DOCS_PREFIX = NSIS_REFERENCE_PREFIX+"Docs/"; //$NON-NLS-1$
-    public static final String NSIS_REFERENCE_CHM_LOCATION = "NSIS.chm"; //$NON-NLS-1$
+    public static final String NSIS_HELP_PREFIX = PLUGIN_HELP_LOCATION_PREFIX+"NSIS/"; //$NON-NLS-1$
+    public static final String NSIS_CHM_HELP_FILE = "NSIS.chm"; //$NON-NLS-1$
     public static final String LANGUAGE_FILES_LOCATION = "Contrib\\Language files"; //$NON-NLS-1$
     public static final String MUI_LANGUAGE_FILES_LOCATION = "Contrib\\Modern UI\\Language files"; //$NON-NLS-1$
     public static final String LANGUAGE_FILES_EXTENSION = ".nlf"; //$NON-NLS-1$
@@ -56,4 +54,6 @@ public interface INSISConstants
     
     public static final int DIALOG_TEXT_LIMIT = 100;
     public static final int DEFAULT_NSIS_TEXT_LIMIT = 1024;
+    
+    public static final String UNINSTALL_SECTION_NAME = "Uninstall"; //$NON-NLS-1$
 }

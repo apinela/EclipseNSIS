@@ -28,8 +28,8 @@ public class NSISHelpProducer implements IHelpContentProducer, INSISConstants
     public InputStream getInputStream(String pluginID, String href,
             Locale locale)
     {
-        if(pluginID.equals(PLUGIN_NAME) && href.startsWith(NSIS_REFERENCE_PREFIX)) {
-            href=href.substring(NSIS_REFERENCE_PREFIX.length());
+        if(pluginID.equals(PLUGIN_NAME) && href.startsWith(NSIS_HELP_PREFIX)) {
+            href=href.substring(NSIS_HELP_PREFIX.length());
             String nsisHome = NSISPreferences.getPreferences().getNSISHome();
             if(!Common.isEmpty(nsisHome)) {
                 File nsisDir = new File(nsisHome);

@@ -10,6 +10,7 @@
 package net.sf.eclipsensis.script;
 
 
+import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.util.Common;
 
 public abstract class AbstractNSISScriptElement implements INSISScriptElement 
@@ -55,7 +56,7 @@ public abstract class AbstractNSISScriptElement implements INSISScriptElement
      */
     public void write(NSISScriptWriter writer) 
     {
-        writer.printValue(mName);
+        writer.printValue(getKeyword(mName));
         if(!Common.isEmptyArray(mArgs)) {
             for (int i = 0; i < mArgs.length; i++) {
                 writer.print(" "); //$NON-NLS-1$
@@ -83,5 +84,10 @@ public abstract class AbstractNSISScriptElement implements INSISScriptElement
             array = new String[]{name};
         }
         return array;
+    }
+    
+    protected static String getKeyword(String keyword)
+    {
+        return NSISKeywords.getKeyword(keyword);
     }
 }

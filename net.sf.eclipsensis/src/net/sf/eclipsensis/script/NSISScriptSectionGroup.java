@@ -9,6 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.script;
 
+import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.util.Common;
 
 public class NSISScriptSectionGroup extends AbstractNSISScriptElementContainer 
@@ -25,7 +26,7 @@ public class NSISScriptSectionGroup extends AbstractNSISScriptElementContainer
 
     public NSISScriptSectionGroup(String caption, boolean expanded, boolean bold, String index)
     {
-        super("SectionGroup",makeArray(caption, expanded, bold, index)); //$NON-NLS-1$
+        super("SubSection",makeArray(caption, expanded, bold, index)); //$NON-NLS-1$
         mCaption = caption;
         mExpanded = expanded;
         mBold = bold;
@@ -110,7 +111,7 @@ public class NSISScriptSectionGroup extends AbstractNSISScriptElementContainer
         String[] args = new String[(expanded?2:1) + (Common.isEmpty(index)?0:1)];
         int n = 0;
         if(expanded) {
-            args[n++] = "/e"; //$NON-NLS-1$
+            args[n++] = getKeyword("/e"); //$NON-NLS-1$
         }
         args[n++] = (bold?"!":"")+caption; //$NON-NLS-1$ //$NON-NLS-2$
         if(!Common.isEmpty(index)) {
@@ -128,7 +129,7 @@ public class NSISScriptSectionGroup extends AbstractNSISScriptElementContainer
         writer.indent();
         writeElements(writer);
         writer.unindent();
-        writer.println("SectionGroupEnd"); //$NON-NLS-1$
+        writer.println(getKeyword("SubSectionEnd")); //$NON-NLS-1$
     }
 
     /* (non-Javadoc)
@@ -138,7 +139,7 @@ public class NSISScriptSectionGroup extends AbstractNSISScriptElementContainer
             throws InvalidNSISScriptElementException
     {
         if(element != null) {
-            if(element instanceof NSISScriptSection && !((NSISScriptSection)element).getName().equalsIgnoreCase("Uninstall")) { //$NON-NLS-1$
+            if(element instanceof NSISScriptSection && !((NSISScriptSection)element).getName().equalsIgnoreCase(INSISConstants.UNINSTALL_SECTION_NAME)) { //$NON-NLS-1$
                 return;
             }
         }

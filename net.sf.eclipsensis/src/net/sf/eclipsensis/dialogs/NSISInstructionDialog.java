@@ -10,7 +10,9 @@
 package net.sf.eclipsensis.dialogs;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.IEclipseNSISPluginListener;
 import net.sf.eclipsensis.INSISConstants;
+import net.sf.eclipsensis.help.INSISKeywordsListener;
 import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.util.Common;
 
@@ -33,15 +35,39 @@ import org.eclipse.swt.widgets.Text;
 
 public class NSISInstructionDialog extends Dialog implements IDialogConstants
 {
-    private static final String[] cInstructionList;
+    private static String[] cInstructionList;
 
     private NSISSettingsPage mSettingsPage = null;
     private String mInstruction = ""; //$NON-NLS-1$
     private Combo mInstructionCombo = null;
     private Text mParametersText = null;
     private boolean mEditMode = true;
+    private static INSISKeywordsListener cKeywordsListener  = new INSISKeywordsListener() {
+
+        public void keywordsChanged()
+        {
+            loadInstructionList();
+        }
+        
+    };
+    private static IEclipseNSISPluginListener cShutdownListener = new IEclipseNSISPluginListener() {
+        public void stopped()
+        {
+            NSISKeywords.removeKeywordsListener(cKeywordsListener);
+        }
+    };
     
     static {
+        loadInstructionList();
+        NSISKeywords.addKeywordsListener(cKeywordsListener);
+        EclipseNSISPlugin.getDefault().addListener(cShutdownListener);
+    }
+    
+    /**
+     * 
+     */
+    private static void loadInstructionList()
+    {
         cInstructionList = new String[NSISKeywords.SINGLELINE_COMPILETIME_COMMANDS.length+
                                       NSISKeywords.INSTALLER_ATTRIBUTES.length];
         System.arraycopy(NSISKeywords.SINGLELINE_COMPILETIME_COMMANDS,0,
@@ -50,7 +76,7 @@ public class NSISInstructionDialog extends Dialog implements IDialogConstants
                         cInstructionList,NSISKeywords.SINGLELINE_COMPILETIME_COMMANDS.length,
                         NSISKeywords.INSTALLER_ATTRIBUTES.length);
     }
-    
+
     /**
      * @param parentShell
      */

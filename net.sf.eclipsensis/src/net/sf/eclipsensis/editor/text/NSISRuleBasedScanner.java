@@ -31,10 +31,12 @@ public abstract class NSISRuleBasedScanner extends BufferedRuleBasedScanner impl
         reset();
     }
 
-    /**
-     * @param defaultToken
-     */
-    protected void reset()
+    public final void reset()
+    {
+        reset(false);
+    }
+    
+    public void reset(boolean full)
     {
         IToken defaultToken = getDefaultToken();
         setDefaultReturnToken(defaultToken);

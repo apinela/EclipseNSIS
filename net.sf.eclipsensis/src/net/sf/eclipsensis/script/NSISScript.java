@@ -11,6 +11,8 @@ package net.sf.eclipsensis.script;
 
 import java.util.Iterator;
 
+import net.sf.eclipsensis.INSISConstants;
+
 public class NSISScript extends AbstractNSISScriptElementContainer 
 {
     private String mName;
@@ -63,7 +65,7 @@ public class NSISScript extends AbstractNSISScriptElementContainer
                 return;
             }
             else if(element instanceof NSISScriptSection) {
-                if(!((NSISScriptSection)element).getName().equalsIgnoreCase("Uninstall")) { //$NON-NLS-1$
+                if(!((NSISScriptSection)element).getName().equalsIgnoreCase(INSISConstants.UNINSTALL_SECTION_NAME)) { //$NON-NLS-1$
                     return;
                 }
                 else if(!mHasUninstall) {

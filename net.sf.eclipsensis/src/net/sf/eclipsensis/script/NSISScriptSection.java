@@ -9,6 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.script;
 
+import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.util.Common;
 
 public class NSISScriptSection extends AbstractNSISScriptElementContainer 
@@ -52,15 +53,15 @@ public class NSISScriptSection extends AbstractNSISScriptElementContainer
     {
         String[] args = null;
         
-        if(name.equalsIgnoreCase("Uninstall")) { //$NON-NLS-1$
-            args = new String[] {"Uninstall"}; //$NON-NLS-1$
+        if(name.equalsIgnoreCase(INSISConstants.UNINSTALL_SECTION_NAME)) { //$NON-NLS-1$
+            args = new String[] {INSISConstants.UNINSTALL_SECTION_NAME}; //$NON-NLS-1$
         }
         else {
             int size = 1 + (defaultUnselected?1:0) + (index!=null?1:0);
             args = new String[size];
             int n=0;
             if(defaultUnselected) {
-                args[n++] = "/o"; //$NON-NLS-1$
+                args[n++] = getKeyword("/o"); //$NON-NLS-1$
             }
             args[n++] = (Common.isEmpty(name)?"":(hidden?"-":(bold?"!":""))+name); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
             if(index != null) {
@@ -164,7 +165,7 @@ public class NSISScriptSection extends AbstractNSISScriptElementContainer
         writer.indent();
         writeElements(writer);
         writer.unindent();
-        writer.println("SectionEnd"); //$NON-NLS-1$
+        writer.println(getKeyword("SectionEnd")); //$NON-NLS-1$
     }
 
     /* (non-Javadoc)

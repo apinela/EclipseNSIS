@@ -16,6 +16,7 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 import net.sf.eclipsensis.dialogs.NSISPreferencePage;
+import net.sf.eclipsensis.help.NSISHelpURLProvider;
 import net.sf.eclipsensis.settings.NSISPreferences;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.util.WinAPI;
@@ -84,6 +85,10 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
             else {
                 prefs.store();
             }
+        }
+        
+        if(isConfigured()) {
+            NSISHelpURLProvider.init();
         }
 	}
     

@@ -55,7 +55,7 @@ public class NSISScriptMacro extends AbstractNSISScriptElementContainer
         writer.indent();
         writeElements(writer);
         writer.unindent();
-        writer.println("!macroend"); //$NON-NLS-1$
+        writer.println(getKeyword("!macroend")); //$NON-NLS-1$
     }
 
     /* (non-Javadoc)

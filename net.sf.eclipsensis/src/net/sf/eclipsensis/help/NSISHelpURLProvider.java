@@ -9,36 +9,34 @@
  *******************************************************************************/
 package net.sf.eclipsensis.help;
 
-import java.util.Enumeration;
+import java.io.File;
+import java.io.FileReader;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.swing.text.html.parser.ParserDelegator;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.IEclipseNSISPluginListener;
 import net.sf.eclipsensis.INSISConstants;
-import net.sf.eclipsensis.settings.INSISPreferenceConstants;
 import net.sf.eclipsensis.settings.NSISPreferences;
 import net.sf.eclipsensis.util.CaseInsensitiveMap;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.util.WinAPI;
 
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.help.WorkbenchHelp;
 
-public class NSISHelpURLProvider implements INSISConstants, IPropertyChangeListener
+public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListener
 {
-    private NSISPreferences mPreferences = NSISPreferences.getPreferences();
-    
-    private final String mDocsHelpPrefix;
-    private final String mDocsHelpSuffix;
-    private final String mCHMHelpPrefix;
-    private final String mCHMHelpSuffix;
-
-    private CaseInsensitiveMap mDocsHelpURLs = new CaseInsensitiveMap();
-    private CaseInsensitiveMap mCHMHelpURLs = new CaseInsensitiveMap();
-    
-    private ResourceBundle mBundle;
+    private static final String NSIS_DOCS_HELP_FORMAT = "/"+INSISConstants.PLUGIN_NAME+"/"+INSISConstants.NSIS_HELP_PREFIX+"Docs/Chapter{0}.html#{1}"; //$NON-NLS-1$
+    private static final Pattern NSIS_DOCS_TOPIC_PATTERN = Pattern.compile("[a-zA-Z]+([1-9][0-9]*)(?:\\.[1-9][0-9]*)*\\.html#([1-9][0-9]*(?:\\.[1-9][0-9]*)*)");
+    private static final String NSIS_CHM_HELP_FORMAT = "mk:@MSITStore:{0}::/{1}"; //$NON-NLS-1$
     
     private static NSISHelpURLProvider cInstance = null;
     private static IEclipseNSISPluginListener cShutdownListener = new IEclipseNSISPluginListener() {
@@ -54,8 +52,31 @@ public class NSISHelpURLProvider implements INSISConstants, IPropertyChangeListe
             }
         }
     };
+
+    private NSISPreferences mPreferences = NSISPreferences.getPreferences();
+    
+    private final String mDocsHelpPrefix;
+    private final String mDocsHelpSuffix;
+    private final String mCHMHelpPrefix;
+    private final String mCHMHelpSuffix;
+    
+    private ParserDelegator mParserDelegator = new ParserDelegator();
+
+    private Map mDocsHelpURLs = null;
+    private Map mCHMHelpURLs = null;
+    
+    private ResourceBundle mBundle;
     
     public static NSISHelpURLProvider getInstance()
+    {
+        init();
+        return cInstance;
+    }
+    
+    /**
+     * 
+     */
+    public static void init()
     {
         if(cInstance == null) {
             synchronized(NSISHelpURLProvider.class) {
@@ -65,9 +86,8 @@ public class NSISHelpURLProvider implements INSISConstants, IPropertyChangeListe
                 }                
             }
         }
-        return cInstance;
     }
-    
+
     private NSISHelpURLProvider()
     {
         mDocsHelpPrefix = EclipseNSISPlugin.getResourceString("docs.help.prefix","Chapter"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -80,88 +100,147 @@ public class NSISHelpURLProvider implements INSISConstants, IPropertyChangeListe
         catch (MissingResourceException x) {
             mBundle = null;
         }
-        loadDocsHelpURLs();
-        loadCHMHelpURLs();
-        mPreferences.getPreferenceStore().addPropertyChangeListener(this);
+        loadHelpURLs();
+        NSISKeywords.addKeywordsListener(this);
     }
     
     public void dispose()
     {
-        mPreferences.getPreferenceStore().removePropertyChangeListener(this);
+        NSISKeywords.removeKeywordsListener(this);
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
-     */
-    public void propertyChange(PropertyChangeEvent event)
+    private void loadHelpURLs()
     {
-        if(INSISPreferenceConstants.NSIS_HOME.equals(event.getProperty())) {
-            loadCHMHelpURLs();
+        mDocsHelpURLs = null;
+        mCHMHelpURLs = null;
+        String home = mPreferences.getNSISHome();
+        if(!Common.isEmpty(home)) {
+            //File homeFile
+            File htmlHelpFile = new File(home,NSIS_CHM_HELP_FILE);
+            if(htmlHelpFile.exists()) {
+                File stateLocation = EclipseNSISPlugin.getPluginStateLocation();
+                File cacheFile = new File(stateLocation,getClass().getName()+".HelpURLs.xml"); //$NON-NLS-1$
+                long cacheTimeStamp = 0;
+                if(cacheFile.exists()) {
+                    cacheTimeStamp = cacheFile.lastModified();
+                }
+                
+                long htmlHelpTimeStamp = htmlHelpFile.lastModified();
+                if(htmlHelpTimeStamp != cacheTimeStamp) {
+                    Map topicMap = new CaseInsensitiveMap();
+                    
+                    String[] mappedHelpTopics = Common.loadArrayProperty(mBundle, "mapped.help.topics");
+                    if(!Common.isEmptyArray(mappedHelpTopics)) {
+                        for (int i = 0; i < mappedHelpTopics.length; i++) {
+                            String[] keywords = Common.loadArrayProperty(mBundle,mappedHelpTopics[i]);
+                            if(!Common.isEmptyArray(keywords)) {
+                                ArrayList list = new ArrayList();
+                                for (int j = 0; j < keywords.length; j++) {
+                                    keywords[j] = NSISKeywords.getKeyword(keywords[j]);
+                                    if(NSISKeywords.isValidKeyword(keywords[j])) {
+                                        list.add(keywords[j]);
+                                    }
+                                }
+                                topicMap.put(mappedHelpTopics[i],list);
+                            }
+                        }
+                    }
+                    String temp = WinAPI.ExtractHtmlHelpTOC(htmlHelpFile.getAbsolutePath(),stateLocation.getAbsolutePath());
+                    if(!Common.isEmpty(temp)) {
+                        File tocFile = new File(temp);
+                        if(tocFile.exists()) {
+                            try {
+                                NSISHelpTOCParserCallback parserCallback = new NSISHelpTOCParserCallback();
+                                parserCallback.setTopicMap(topicMap);
+                                mParserDelegator.parse(new FileReader(tocFile), parserCallback, false);
+                                mDocsHelpURLs = loadDocsHelpURLs(parserCallback.getKeywordHelpMap());
+                                mCHMHelpURLs = loadCHMHelpURLs(htmlHelpFile.getAbsolutePath(),parserCallback.getKeywordHelpMap());
+                                Common.writeObjectToXMLFile(cacheFile,new Object[]{mDocsHelpURLs,mCHMHelpURLs});
+                            }
+                            catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            tocFile.delete();
+                        }
+                    }
+                }
+                else {
+                    Object obj = null;
+                    try {
+                        obj = Common.readObjectFromXMLFile(cacheFile);
+                    }
+                    catch (Exception e) {
+                        obj = null;
+                        e.printStackTrace();
+                    }
+                    if(obj != null && obj.getClass().isArray()) {
+                        mDocsHelpURLs = (Map)((Object[])obj)[0];
+                        mCHMHelpURLs = (Map)((Object[])obj)[1];
+                    }
+                }
+            }
         }
+    }
+    
+    public void keywordsChanged()
+    {
+        loadHelpURLs();
     }
 
-    private void loadDocsHelpURLs()
+    private Map loadDocsHelpURLs(Map keywordHelpMap)
     {
-        mDocsHelpURLs.clear();
-        if(mBundle != null) {
-            for(Enumeration enum=mBundle.getKeys(); enum.hasMoreElements();) {
-                String key = (String)enum.nextElement();
-                String[] ids = Common.loadArrayProperty(mBundle,key);
-                if(!Common.isEmptyArray(ids) && ids.length >= 3) {
-                    StringBuffer buf = new StringBuffer("/").append(PLUGIN_NAME).append("/").append( //$NON-NLS-1$ //$NON-NLS-2$
-                                                    NSIS_REFERENCE_DOCS_PREFIX).append(
-                                                    mDocsHelpPrefix).append(ids[0]).append(".").append( //$NON-NLS-1$
-                                                    mDocsHelpSuffix).append('#').append(ids[0]);
-                    for (int i = 1; i < ids.length; i++) {
-                        buf.append(".").append(ids[i]); //$NON-NLS-1$
-                    }
-                    mDocsHelpURLs.put(key, buf.toString());
+        Map urlsMap = new CaseInsensitiveMap();
+        if(!Common.isEmptyMap(keywordHelpMap)) {
+            MessageFormat mf = new MessageFormat(NSIS_DOCS_HELP_FORMAT);
+            StringBuffer buf = new StringBuffer();
+            String[] args = new String[]{null,null};
+            for (Iterator iter = keywordHelpMap.keySet().iterator(); iter.hasNext();) {
+                buf.delete(0,buf.length());
+                String keyword = (String)iter.next();
+                String location = (String)keywordHelpMap.get(keyword);
+                Matcher matcher = NSIS_DOCS_TOPIC_PATTERN.matcher(location);
+                if(matcher.matches() && matcher.groupCount() == args.length) {
+                    args[0] = matcher.group(1);
+                    args[1] = matcher.group(2);
+                    urlsMap.put(keyword,mf.format(args,buf,null).toString());
                 }
             }
         }
+        return urlsMap;
     }
     
-    private void loadCHMHelpURLs()
+    private Map loadCHMHelpURLs(String htmlHelpFile, Map keywordHelpMap)
     {
-        mCHMHelpURLs.clear();
-        if(mBundle != null) {
-            String home = mPreferences.getNSISHome();
-            if(!Common.isEmpty(home)) {
-                for(Enumeration enum=mBundle.getKeys(); enum.hasMoreElements();) {
-                    String key = (String)enum.nextElement();
-                    String[] ids = Common.loadArrayProperty(mBundle,key);
-                    if(!Common.isEmptyArray(ids) && ids.length >= 3) {
-                        StringBuffer buf = new StringBuffer("mk:@MSITStore:").append( //$NON-NLS-1$
-                                                home);
-                        if(!home.endsWith("\\")) { //$NON-NLS-1$
-                            buf.append("\\"); //$NON-NLS-1$
-                        }
-                        buf.append(NSIS_REFERENCE_CHM_LOCATION).append("::/").append(mCHMHelpPrefix).append( //$NON-NLS-1$
-                                  ids[0]).append(".").append(ids[1]).append(".").append( //$NON-NLS-1$ //$NON-NLS-2$
-                                  mCHMHelpSuffix).append("#").append(ids[0]); //$NON-NLS-1$
-                        for (int i = 1; i < ids.length; i++) {
-                            buf.append(".").append(ids[i]); //$NON-NLS-1$
-                        }
-                        mCHMHelpURLs.put(key, buf.toString());
-                    }
-                }
+        Map urlsMap = new CaseInsensitiveMap();
+        if(!Common.isEmptyMap(keywordHelpMap)) {
+            MessageFormat mf = new MessageFormat(NSIS_CHM_HELP_FORMAT);
+            StringBuffer buf = new StringBuffer();
+            String[] args = new String[]{htmlHelpFile,null};
+            for (Iterator iter = keywordHelpMap.keySet().iterator(); iter.hasNext();) {
+                buf.delete(0,buf.length());
+                String keyword = (String)iter.next();
+                args[1] = (String)keywordHelpMap.get(keyword);
+                urlsMap.put(keyword,mf.format(args,buf,null).toString());
             }
         }
+        return urlsMap;
     }
     
     private String getHelpURL(String keyWord, boolean useDocHelp)
     {
         if(!Common.isEmpty(keyWord)) {
             if(useDocHelp) {
-                return (String)mDocsHelpURLs.get(keyWord);
+                if(mDocsHelpURLs != null) {
+                    return (String)mDocsHelpURLs.get(keyWord);
+                }
             }
             else {
-                return (String)mCHMHelpURLs.get(keyWord);
+                if(mCHMHelpURLs != null) {
+                    return (String)mCHMHelpURLs.get(keyWord);
+                }
             }
         }
-        else {
-            return null;
-        }
+        return null;
     }
     
     public void showHelpURL(String keyword)

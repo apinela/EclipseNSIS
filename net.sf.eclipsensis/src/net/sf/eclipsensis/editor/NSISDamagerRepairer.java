@@ -9,12 +9,16 @@
  *******************************************************************************/
 package net.sf.eclipsensis.editor;
 
+import net.sf.eclipsensis.editor.text.NSISRuleBasedScanner;
 import net.sf.eclipsensis.editor.text.NSISTextUtility;
 import net.sf.eclipsensis.settings.IPropertyAdaptable;
 import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.text.*;
+import org.eclipse.jface.text.DocumentEvent;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ITypedRegion;
+import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
 import org.eclipse.jface.text.rules.ITokenScanner;
 
@@ -26,6 +30,13 @@ public class NSISDamagerRepairer extends DefaultDamagerRepairer implements IProp
     public NSISDamagerRepairer(ITokenScanner scanner)
     {
         super(scanner);
+    }
+    
+    public void reset()
+    {
+        if(fScanner instanceof NSISRuleBasedScanner) {
+            ((NSISRuleBasedScanner)fScanner).reset(true);
+        }
     }
 
     /* (non-Javadoc)

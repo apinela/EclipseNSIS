@@ -151,4 +151,12 @@ public class CaseInsensitiveMap implements Map
         mKeyMap.put(fixKey(key),key);
         return mValueMap.put(key,value);
     }
+    
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    public String toString()
+    {
+        return mValueMap.toString();
+    }
 }

@@ -7,35 +7,8 @@
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *
- *******************************************************************************
- *
- * XStream License
- * XStream is open source software, made available under a BSD license.
- * Copyright (c) 2003-2005, Joe Walnes
- * All rights reserved.
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- * Redistributions of source code must retain the above copyright notice, this
- * list of conditions and the following disclaimer. Redistributions in binary
- * form must reproduce the above copyright notice, this list of conditions and
- * the following disclaimer in the documentation and/or other materials provided
- * with the distribution.
- * Neither the name of XStream nor the names of its contributors may be used to
- * endorse or promote products derived from this software without specific prior
- * written permission.
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- *
  *******************************************************************************/
+
 package net.sf.eclipsensis.util;
 
 import java.beans.BeanInfo;
@@ -44,6 +17,7 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.EOFException;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -61,6 +35,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.MissingResourceException;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.StringTokenizer;
@@ -101,15 +76,35 @@ public class Common
 
     public static Object readObjectFromXML(Reader reader) throws IOException, ClassNotFoundException
     {
+        ArrayList objectList = new ArrayList();
         ObjectInputStream ois = null;
         try {
             ois = cXStream.createObjectInputStream(reader);
-            return ois.readObject();
+            while(true) {
+                try {
+                    Object o = ois.readObject();
+                    objectList.add(o);
+                }
+                catch(EOFException eofe) {
+                    break;
+                }
+            }
         }
         finally {
             if(ois != null) {
                 ois.close();
             }
+        }
+        if(objectList.size() > 0) {
+            if(objectList.size() == 1) {
+                return objectList.get(0);
+            }
+            else {
+                return objectList.toArray();
+            }
+        }
+        else {
+            return null;
         }
     }
 
@@ -120,15 +115,25 @@ public class Common
 
     public static void writeObjectToXML(Writer writer, Object object) throws IOException
     {
-        ObjectOutputStream oos = null;
-
-        try {
-            oos = cXStream.createObjectOutputStream(writer);
-            oos.writeObject(object);
-        }
-        finally {
-            if(oos != null) {
-                oos.close();
+        if(object != null) {
+            ObjectOutputStream oos = null;
+    
+            try {
+                oos = cXStream.createObjectOutputStream(writer);
+                if(object.getClass().isArray()) {
+                    int n = Array.getLength(object);
+                    for(int i=0; i<n; i++) {
+                        oos.writeObject(Array.get(object,i));
+                    }
+                }
+                else {
+                    oos.writeObject(object);
+                }
+            }
+            finally {
+                if(oos != null) {
+                    oos.close();
+                }
             }
         }
     }
@@ -164,6 +169,20 @@ public class Common
     {
         if(collection != null) {
             return (collection.size() == 0);
+        }
+        return true;
+    }
+
+    /**
+     * Check for an empty map
+     *
+     * @param map       Map to be tested
+     * @return          True if the map is null or size is zero
+     */
+    public static boolean isEmptyMap(Map map)
+    {
+        if(map != null) {
+            return (map.size() == 0);
         }
         return true;
     }
@@ -279,7 +298,13 @@ public class Common
     {
         String[] array = EMPTY_STRING_ARRAY;
         if(bundle != null) {
-            String property = bundle.getString(propertyName);
+            String property = null;
+            try {
+                property = bundle.getString(propertyName);
+            }
+            catch(MissingResourceException mre) {
+                property = null;
+            }
             if(!isEmpty(property)) {
                 StringTokenizer st = new StringTokenizer(property,","); //$NON-NLS-1$
                 ArrayList list = new ArrayList();

@@ -15,6 +15,7 @@ import java.util.*;
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.IEclipseNSISPluginListener;
 import net.sf.eclipsensis.INSISConstants;
+import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.settings.INSISPreferenceConstants;
 import net.sf.eclipsensis.settings.NSISPreferences;
 import net.sf.eclipsensis.util.Common;
@@ -25,7 +26,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 
 public class NSISLanguageManager implements IPropertyChangeListener
 {
-    private static final String DEFINE_MUI_LANGNAME = "!DEFINE MUI_LANGNAME "; //$NON-NLS-1$
+    private static final String DEFINE_MUI_LANGNAME = NSISKeywords.getKeyword("!DEFINE").toUpperCase()+" MUI_LANGNAME "; //$NON-NLS-1$ //$NON-NLS-2$
     private static NSISLanguageManager cInstance = null;
     private static IEclipseNSISPluginListener cShutdownListener = new IEclipseNSISPluginListener() {
         public void stopped()

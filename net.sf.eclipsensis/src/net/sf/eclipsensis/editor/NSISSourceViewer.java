@@ -9,14 +9,19 @@
  *******************************************************************************/
 package net.sf.eclipsensis.editor;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.editor.codeassist.NSISInformationUtility;
 import net.sf.eclipsensis.editor.text.NSISPartitionScanner;
 import net.sf.eclipsensis.editor.text.NSISTextUtility;
+import net.sf.eclipsensis.help.INSISKeywordsListener;
 import net.sf.eclipsensis.help.NSISHelpURLProvider;
+import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.settings.INSISPreferenceConstants;
 import net.sf.eclipsensis.settings.IPropertyAdaptable;
 import net.sf.eclipsensis.util.ColorManager;
@@ -24,7 +29,16 @@ import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.text.*;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.BadPartitioningException;
+import org.eclipse.jface.text.DefaultLineTracker;
+import org.eclipse.jface.text.DocumentCommand;
+import org.eclipse.jface.text.IAutoEditStrategy;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentExtension3;
+import org.eclipse.jface.text.ILineTracker;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.presentation.IPresentationDamager;
 import org.eclipse.jface.text.source.IOverviewRuler;
 import org.eclipse.jface.text.source.IVerticalRuler;
@@ -35,11 +49,18 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
+import org.eclipse.swt.widgets.ColorDialog;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PlatformUI;
 
 
-public class NSISSourceViewer extends ProjectionViewer implements IPropertyChangeListener
+public class NSISSourceViewer extends ProjectionViewer implements IPropertyChangeListener, INSISKeywordsListener
 {
     public static final int GOTO_HELP = 1000;
     public static final int INSERT_FILE = GOTO_HELP + 1;
@@ -94,6 +115,31 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
             }
         }
         
+        updatePresentation(contentTypes);
+    }
+
+    /* (non-Javadoc)
+     * @see net.sf.eclipsensis.help.INSISKeywordsListener#keywordsChanged()
+     */
+    public void keywordsChanged()
+    {
+        HashSet contentTypes = new HashSet();
+        for(int i=0; i<mConfiguredContentTypes.length; i++) {
+            IPresentationDamager damager = fPresentationReconciler.getDamager(mConfiguredContentTypes[i]);
+            if(damager instanceof NSISDamagerRepairer) {
+                ((NSISDamagerRepairer)damager).reset();
+                contentTypes.add(mConfiguredContentTypes[i]);
+            }
+        }
+        
+        updatePresentation(contentTypes);
+    }
+    
+    /**
+     * @param contentTypes
+     */
+    private void updatePresentation(Collection contentTypes)
+    {
         IDocument doc = getDocument();
         try {
             ITypedRegion[] regions = null;
@@ -106,7 +152,6 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
             for (int i = 0; i < regions.length; i++) {
                 if(contentTypes.contains(regions[i].getType())) {
                     invalidateTextPresentation(regions[i].getOffset(),regions[i].getLength());
-//                    fPresentationReconciler.
                 }
             }
         }
@@ -125,6 +170,7 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
             mPreferenceStore = ((NSISSourceViewerConfiguration)configuration).getPreferenceStore();
         }
         super.configure(configuration);
+        NSISKeywords.addKeywordsListener(this);
         if(configuration instanceof NSISSourceViewerConfiguration) {
             mAutoIndentStrategy = new NSISAutoIndentStrategy(mPreferenceStore);
             mTabConversionStrategy = new NSISTabConversionStrategy(mPreferenceStore);
@@ -151,6 +197,7 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
             mPreferenceStore = null;
         }
         mConfiguredContentTypes = null;
+        NSISKeywords.addKeywordsListener(this);
         super.unconfigure();
     }
 

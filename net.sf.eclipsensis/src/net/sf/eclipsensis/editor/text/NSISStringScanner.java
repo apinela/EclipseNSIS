@@ -128,6 +128,19 @@ public class NSISStringScanner extends NSISRuleBasedScanner
     }
 
     /* (non-Javadoc)
+     * @see net.sf.eclipsensis.editor.text.NSISRuleBasedScanner#reset(boolean)
+     */
+    public void reset(boolean full)
+    {
+        if(full) {
+            mDefaultToken = null;
+            mSymbolsRule = null;
+            mVariablesWordRule = null;
+        }
+        super.reset(full);
+    }
+
+    /* (non-Javadoc)
      * @see net.sf.eclipsensis.settings.IPropertyAdaptable#canAdaptToProperty(org.eclipse.jface.preference.IPreferenceStore, java.lang.String)
      */
     public boolean canAdaptToProperty(IPreferenceStore store, String property)

@@ -94,22 +94,22 @@ public class NSISAboutDialog extends Dialog implements INSISConstants, IHyperlin
     protected Control createDialogArea(Composite parent) {
         Composite composite = new Composite(parent,SWT.NONE);
         composite.setBackground(cBackground);
-        GridLayout layout = new GridLayout(3,false);
+        GridLayout layout = new GridLayout(2,false);
         composite.setLayout(layout);
         
-        Label label = new Label(composite, SWT.CENTER);
-        label.setBackground(cBackground);
-        label.setImage(cAboutImage);
-        GridData data = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_CENTER);
-        data.verticalSpan = 5;
-        label.setLayoutData(data);
-        
-        label = new Label(composite, SWT.LEFT);
+        Label label = new Label(composite, SWT.LEFT|SWT.BORDER);
         label.setBackground(cBackground);
         label.setFont(JFaceResources.getBannerFont());
         label.setText(cAboutHeader);
-        data = new GridData(GridData.VERTICAL_ALIGN_CENTER | GridData.FILL_HORIZONTAL);
-        data.horizontalSpan = 2;
+        GridData data = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.FILL_HORIZONTAL);
+        data.horizontalSpan = 1;
+        label.setLayoutData(data);
+        
+        label = new Label(composite, SWT.CENTER|SWT.BORDER);
+        label.setBackground(cBackground);
+        label.setImage(cAboutImage);
+        data = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_END);
+        data.horizontalSpan = 1;
         label.setLayoutData(data);
         
         label = new Label(composite, SWT.LEFT);

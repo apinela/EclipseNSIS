@@ -20,6 +20,8 @@ import net.sf.eclipsensis.INSISConstants;
 
 public class NSISValidator implements INSISConstants
 {
+    public static final String MAKENSIS_VERSION_OPTION = "/VERSION"; //$NON-NLS-1$
+    public static final String MAKENSIS_HDRINFO_OPTION = "/HDRINFO"; //$NON-NLS-1$
     private static Version EMPTY_VERSION = new Version("0"); //$NON-NLS-1$
     public static Version MINIMUM_NSIS_VERSION = new Version(EclipseNSISPlugin.getResourceString("minimum.nsis.version")); //$NON-NLS-1$
     private static Pattern cVersionPattern = Pattern.compile("v(\\d+(?:\\.\\d+)?(?:[A-Za-z]+\\d*)?)"); //$NON-NLS-1$
@@ -31,7 +33,7 @@ public class NSISValidator implements INSISConstants
             if(nsisHome.exists() && nsisHome.isDirectory()) {
                 File file = new File(nsisHome,MAKENSIS_EXE);
                 if(file.exists() && file.isFile()) {
-                    Version version = getVersion(file);
+                    Version version = getNSISVersion(file);
                     if(version.compareTo(MINIMUM_NSIS_VERSION) >= 0) {
                         return file;
                     }
@@ -45,7 +47,7 @@ public class NSISValidator implements INSISConstants
     {
         Properties props = new Properties();
         String exeName = nsisEXE.getAbsoluteFile().getAbsolutePath();
-        String[] output = Common.runProcessWithOutput(new String[]{exeName,"/HDRINFO"}, //$NON-NLS-1$
+        String[] output = Common.runProcessWithOutput(new String[]{exeName,MAKENSIS_HDRINFO_OPTION}, //$NON-NLS-1$
                                                      nsisEXE.getParentFile(),1);
         if(!Common.isEmptyArray(output)) {
             for (int i = 0; i < output.length; i++) {
@@ -75,11 +77,11 @@ public class NSISValidator implements INSISConstants
         return false;
     }
 
-    private static Version getVersion(File exeFile)
+    public static Version getNSISVersion(File exeFile)
     {
         Version version = null;
         String exeName = exeFile.getAbsoluteFile().getAbsolutePath();
-        String[] output = Common.runProcessWithOutput(new String[]{exeName,"/VERSION"}, //$NON-NLS-1$
+        String[] output = Common.runProcessWithOutput(new String[]{exeName,MAKENSIS_VERSION_OPTION}, //$NON-NLS-1$
                                                exeFile.getParentFile());
         if(!Common.isEmptyArray(output)) {
             for (int i = 0; i < output.length; i++) {

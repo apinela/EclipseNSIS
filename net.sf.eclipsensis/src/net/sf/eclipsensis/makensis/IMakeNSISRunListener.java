@@ -9,7 +9,9 @@
  *******************************************************************************/
 package net.sf.eclipsensis.makensis;
 
-public interface IMakeNSISRunListener
+import java.util.EventListener;
+
+public interface IMakeNSISRunListener extends EventListener
 {
     public void started();
     public void stopped();

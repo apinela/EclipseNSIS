@@ -7,11 +7,11 @@
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
-package net.sf.eclipsensis;
+package net.sf.eclipsensis.help;
 
 import java.util.EventListener;
 
-public interface IEclipseNSISPluginListener extends EventListener
+public interface INSISKeywordsListener extends EventListener
 {
-    public void stopped();
+    public void keywordsChanged();
 }

@@ -431,7 +431,7 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
 	private void showMessage(String message) {
 		MessageDialog.openInformation(
 			mViewer.getControl().getShell(),
-			"NSIS Console", //$NON-NLS-1$
+			getTitle(),
 			message);
 	}
 

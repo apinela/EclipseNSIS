@@ -16,7 +16,11 @@ import net.sf.eclipsensis.settings.INSISPreferenceConstants;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.TextAttribute;
-import org.eclipse.jface.text.rules.*;
+import org.eclipse.jface.text.rules.IRule;
+import org.eclipse.jface.text.rules.IToken;
+import org.eclipse.jface.text.rules.NumberRule;
+import org.eclipse.jface.text.rules.Token;
+import org.eclipse.jface.text.rules.WordRule;
 
 public class NSISCodeScanner extends NSISStringScanner
 {
@@ -26,7 +30,6 @@ public class NSISCodeScanner extends NSISStringScanner
     private WordRule mKeywordsRule;
     private WordRule mInstructionOptionsRule;
     private WordRule mCallbacksRule;
-
     /**
      * @param preferenceStore
      */
@@ -205,6 +208,22 @@ public class NSISCodeScanner extends NSISStringScanner
             return;
         }
         reset();
+    }
+
+    /* (non-Javadoc)
+     * @see net.sf.eclipsensis.editor.text.NSISRuleBasedScanner#reset(boolean)
+     */
+    public void reset(boolean full)
+    {
+        if(full) {
+            mCallbacksRule = null;
+            mInstructionOptionsRule = null;
+            mKeywordsRule = null;
+            mCompileTimeCommandsRule = null;
+            mNumberRule = null;
+            mHexNumberRule = null;
+        }
+        super.reset(full);
     }
 
     /* (non-Javadoc)

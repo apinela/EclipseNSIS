@@ -169,10 +169,12 @@ public class NSISScriptWriter extends PrintWriter
                 quoted = true;
             }
             else {
-                for (int i = 0; i < chars.length; i++) {
-                    if(Character.isWhitespace(chars[i])) {
-                        quoted = true;
-                        break;
+                if(chars[0] != '"' && chars[chars.length-1] != '"') {
+                    for (int i = 0; i < chars.length; i++) {
+                        if(Character.isWhitespace(chars[i])) {
+                            quoted = true;
+                            break;
+                        }
                     }
                 }
             }
