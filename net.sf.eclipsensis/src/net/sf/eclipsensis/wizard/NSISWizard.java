@@ -27,6 +27,16 @@ import org.eclipse.ui.IWorkbench;
 
 public abstract class NSISWizard extends Wizard implements INewWizard, INSISWizardConstants
 {
+    /**
+     * The wizard dialog width
+     */
+    private static final int SIZING_WIZARD_WIDTH = 500;
+
+    /**
+     * The wizard dialog height
+     */
+    private static final int SIZING_WIZARD_HEIGHT = 600;
+
     private NSISWizardSettings mSettings = null;
     private ArrayList mSettingsListeners = new ArrayList();
     
@@ -51,6 +61,7 @@ public abstract class NSISWizard extends Wizard implements INewWizard, INSISWiza
     {
         if(EclipseNSISPlugin.getDefault().isConfigured()) {
             initSettings();
+
     		addStartPage();
             addPage(new NSISWizardGeneralPage());
             addPage(new NSISWizardAttributesPage());

@@ -33,10 +33,11 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.dialogs.PropertyPage;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
-public abstract class NSISSettingsPage	extends PropertyPage implements IWorkbenchPreferencePage, INSISConstants
+public abstract class NSISSettingsPage extends PropertyPage implements IWorkbenchPreferencePage, INSISConstants
 {
     private NSISSettings mSettings = null;
 
@@ -105,6 +106,7 @@ public abstract class NSISSettingsPage	extends PropertyPage implements IWorkbenc
     public void createControl(Composite parent)
     {
         super.createControl(parent);
+        WorkbenchHelp.setHelp(getControl(),getContextId());
         enableControls(canEnableControls());
     }
 
@@ -566,4 +568,8 @@ public abstract class NSISSettingsPage	extends PropertyPage implements IWorkbenc
      * @return
      */
     protected abstract Composite createMasterControl(Composite parent);
+    /**
+     * @return
+     */
+    protected abstract String getContextId();
 }

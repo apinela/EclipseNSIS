@@ -38,6 +38,16 @@ public class NSISSectionGroup extends AbstractNSISInstallGroup
         NSISInstallElementFactory.register(TYPE, IMAGE, NSISSectionGroup.class);
     }
 
+    public Object clone() throws CloneNotSupportedException
+    {
+        NSISSectionGroup sectionGroup = (NSISSectionGroup)super.clone();
+        sectionGroup.mDefaultExpanded = mDefaultExpanded;
+        sectionGroup.mCaption = mCaption;
+        sectionGroup.mDescription = mDescription;
+        sectionGroup.mBold = mBold;
+        return sectionGroup;
+    }
+
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.wizard.settings.AbstractNSISInstallGroup#resetChildTypes()
      */

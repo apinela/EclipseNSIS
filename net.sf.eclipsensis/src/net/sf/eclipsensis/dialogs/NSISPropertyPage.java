@@ -25,6 +25,14 @@ public class NSISPropertyPage extends NSISSettingsPage
 {
     private Button mUseGlobals = null;
     
+    /**
+     * @return
+     */
+    protected String getContextId()
+    {
+        return PLUGIN_CONTEXT_PREFIX + "nsis_properties_context";
+    }
+
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.dialogs.NSISSettingsPage#canEnableControls()
      */

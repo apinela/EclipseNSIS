@@ -63,7 +63,7 @@ public class NSISEditor extends TextEditor implements INSISConstants, IPropertyC
     public NSISEditor()
     {
         super();
-        setHelpContextId(NSIS_EDITOR_CONTEXT);
+        setHelpContextId(PLUGIN_CONTEXT_PREFIX + "nsis_editor_context"); //$NON-NLS-1$;
     }
     
     public void selectionChanged(SelectionChangedEvent event)

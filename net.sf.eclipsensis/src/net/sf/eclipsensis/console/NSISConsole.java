@@ -37,6 +37,7 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.ide.IGotoMarker;
 import org.eclipse.ui.part.ViewPart;
@@ -236,6 +237,7 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
         
         mClipboard = new Clipboard(mDisplay);
         Table table = new Table(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+        WorkbenchHelp.setHelp(table,PLUGIN_CONTEXT_PREFIX + "nsis_console_context");
 		mViewer = new TableViewer(table);
         mMouseListener = new NSISConsoleMouseListener();
         

@@ -36,6 +36,17 @@ public class NSISInstallShortcut extends AbstractNSISInstallItem
         NSISInstallElementFactory.register(TYPE, IMAGE, NSISInstallShortcut.class);
     }
 
+    public Object clone() throws CloneNotSupportedException
+    {
+        NSISInstallShortcut shortcut = (NSISInstallShortcut)super.clone();
+        shortcut.mName = mName;
+        shortcut.mLocation = mLocation;
+        shortcut.mPath = mPath;
+        shortcut.mShortcutType = mShortcutType;
+        shortcut.mUrl = mUrl;
+        return shortcut;
+    }
+
     /**
      * @return Returns the path.
      */

@@ -16,13 +16,18 @@ import java.util.*;
 
 import org.w3c.dom.*;
 
-public abstract class AbstractNodeConvertible implements INodeConvertible, Serializable
+public abstract class AbstractNodeConvertible implements INodeConvertible, Serializable, Cloneable
 {
 	private static final long serialVersionUID = 7565288054528442187L;
     public static final String NAME_ATTRIBUTE = "name"; //$NON-NLS-1$
     public static final String VALUE_ATTRIBUTE = "value"; //$NON-NLS-1$
 
     private transient Collection mSkippedProperties = null;
+
+    public Object clone() throws CloneNotSupportedException
+    {
+        return super.clone();
+    }
 
     public Collection getSkippedProperties()
     {

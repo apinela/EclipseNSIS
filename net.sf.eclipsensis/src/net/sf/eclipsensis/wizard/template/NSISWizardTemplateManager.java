@@ -28,11 +28,8 @@ public class NSISWizardTemplateManager
     private static final File cDefaultTemplatesStore;
     private static final NSISWizardTemplateReaderWriter cReaderWriter = new NSISWizardTemplateReaderWriter();
 
-    private Collection mTemplates;
-    private Collection mDefaultTemplates;
-    private Collection mDeleteQueue = new HashSet();
-    private HashMap mDefaultTemplatesMap = new HashMap();
-    private HashMap mTemplatesMap = new HashMap();
+    private Map mTemplatesMap = new HashMap();
+    private Map mDefaultTemplatesMap = new HashMap();
     
     private static File checkLocation(File parentFolder)
     {
@@ -49,7 +46,7 @@ public class NSISWizardTemplateManager
         return location;
     }
 
-    static File getLocation(NSISWizardTemplate template)
+    private static File getLocation(NSISWizardTemplate template)
     {
         return (template.getType()==NSISWizardTemplate.TYPE_DEFAULT?DEFAULT_LOCATION:USER_LOCATION);
     }
@@ -66,84 +63,58 @@ public class NSISWizardTemplateManager
         DEFAULT_LOCATION = checkLocation(pluginLocation);
         USER_LOCATION = checkLocation(EclipseNSISPlugin.getPluginStateLocation());
 
-        String fileName = NSISWizardTemplateManager.class.getName()+".Templates.xml"; //$NON-NLS-1$
+        String fileName = NSISWizardTemplateManager.class.getName()+".Templates.ser"; //$NON-NLS-1$
         cDefaultTemplatesStore = (DEFAULT_LOCATION==null?null:new File(DEFAULT_LOCATION,fileName));
         cUserTemplatesStore = new File(USER_LOCATION,fileName);
     }
 
-    private static Collection loadTemplateStore(File store)
+    private static Map loadTemplateStore(File store)
     {
-        Collection set = null;
+        Map map = null;
         if(store != null) {
             if(store.exists() && store.isFile()) {
                 try {
-                    set = cReaderWriter.read(new BufferedInputStream(new FileInputStream(store)));
+                    map = (Map)Common.readObject(store);
                 }
                 catch (Exception e) {
                     e.printStackTrace();
-                    set = new HashSet();
+                    map = new HashMap();
                 }
             }
         }
 
-        if(set == null) {
-            set = new HashSet();
+        if(map == null) {
+            map = new HashMap();
         }
         
-        return set;
+        return map;
     }
     
     public NSISWizardTemplateManager()
     {
-        mTemplates = new HashSet();
-        mDefaultTemplates = loadTemplateStore(cDefaultTemplatesStore);
-        for (Iterator iter = mDefaultTemplates.iterator(); iter.hasNext();) {
-            NSISWizardTemplate element = (NSISWizardTemplate)iter.next();
-            mDefaultTemplatesMap.put(element.getName(),element);
-            mTemplates.add(element);
-            mTemplatesMap.put(element.getName(),element);
-        }
-        Collection coll = loadTemplateStore(cUserTemplatesStore);
-        for (Iterator iter = coll.iterator(); iter.hasNext();) {
-            NSISWizardTemplate element = (NSISWizardTemplate)iter.next();
-            NSISWizardTemplate defaultElement = (NSISWizardTemplate)mDefaultTemplatesMap.get(element.getName());
-            if(defaultElement != null) {
-                element.setType(NSISWizardTemplate.TYPE_CUSTOM);
-                mTemplates.remove(defaultElement);
-                mTemplatesMap.remove(defaultElement.getName());
-            }
-            else {
-                element.setType(NSISWizardTemplate.TYPE_USER);
-            }
-            mTemplates.add(element);
-            mTemplatesMap.put(element.getName(),element);
-        }
+        mDefaultTemplatesMap = loadTemplateStore(cDefaultTemplatesStore);
+        mTemplatesMap = new HashMap(mDefaultTemplatesMap);
+        mTemplatesMap.putAll(loadTemplateStore(cUserTemplatesStore));
     }
     
     public Collection getTemplates()
     {
-        return mTemplates;
+        return mTemplatesMap.values();
     }
     
     public Collection getDefaultTemplates()
     {
-        return mDefaultTemplates;
+        return mDefaultTemplatesMap.values();
     }
     
     public boolean addTemplate(final NSISWizardTemplate template)
     {
-        if(mTemplates.contains(template)) {
-            return updateTemplate(template);
-        }
-        else {
-            NSISWizardTemplate oldTemplate = (NSISWizardTemplate)mTemplatesMap.get(template.getName());
-            if(oldTemplate == null) {
-                oldTemplate = (NSISWizardTemplate)mDefaultTemplatesMap.get(template.getName());
-            }
-            if(oldTemplate != null) {
-                Display display = Display.getDefault();
+        NSISWizardTemplate oldTemplate = (NSISWizardTemplate)mTemplatesMap.get(template.getName());
+        if(oldTemplate != null) {
+            int type = oldTemplate.getType();
+            if(type != NSISWizardTemplate.TYPE_CUSTOM || !oldTemplate.isDeleted()) {
                 final boolean[] rv = { true };
-                display.syncExec(new Runnable() {
+                Display.getDefault().syncExec(new Runnable() {
                     public void run()
                     {
                         if(!Common.openConfirm(null,EclipseNSISPlugin.getFormattedString("wizard.template.save.confirm", //$NON-NLS-1$
@@ -156,59 +127,49 @@ public class NSISWizardTemplateManager
                     return false;
                 }
                 else {
-                    mTemplates.remove(oldTemplate);
-                    mTemplatesMap.remove(oldTemplate.getName());
                     switch(oldTemplate.getType()) {
                         case NSISWizardTemplate.TYPE_DEFAULT:
                             template.setType(NSISWizardTemplate.TYPE_CUSTOM);
                             break;
                         default:
-                            mDeleteQueue.add(oldTemplate);
                             template.setType(oldTemplate.getType());
                             break;
                     }
                 }
             }
-            template.setDeleted(false);
-            mTemplates.add(template);
-            mTemplatesMap.put(template.getName(),template);
-            return true;
+            else {
+                template.setType(NSISWizardTemplate.TYPE_CUSTOM);
+            }
         }
+        else {
+            template.setType(NSISWizardTemplate.TYPE_USER);
+        }
+        template.setDeleted(false);
+        mTemplatesMap.put(template.getName(),template);
+        return true;
     }
     
     public boolean removeTemplate(final NSISWizardTemplate template)
     {
-        if(mTemplates.contains(template)) {
+        if(mTemplatesMap.containsKey(template.getName())) {
             switch(template.getType()) {
                 case NSISWizardTemplate.TYPE_DEFAULT:
-                    if(!template.isLoaded()) {
-                        template.loadSettings();
-                        template.setSettingsChanged(true);
-                    }
                     template.setType(NSISWizardTemplate.TYPE_CUSTOM);
                 case NSISWizardTemplate.TYPE_CUSTOM:
                     template.setDeleted(true);
                     break;
                 case NSISWizardTemplate.TYPE_USER:
-                    mTemplates.remove(template);
-                    mDeleteQueue.add(template);
                     mTemplatesMap.remove(template.getName());
             }
             return true;
         }
         return false;
     }
+ 
     
-    public boolean updateTemplate(final NSISWizardTemplate template)
+    public boolean updateTemplate(NSISWizardTemplate oldTemplate, final NSISWizardTemplate template)
     {
-        if(mTemplates.contains(template)) {
-            NSISWizardTemplate oldTemplate = null;
-            for (Iterator iter = mTemplates.iterator(); iter.hasNext();) {
-                NSISWizardTemplate element = (NSISWizardTemplate)iter.next();
-                if(element.equals(template)) {
-                    oldTemplate = element;
-                }
-            }
+        if(mTemplatesMap.containsKey(oldTemplate.getName())) {
             if(!oldTemplate.getName().equals(template.getName())) {
                 NSISWizardTemplate otherTemplate = (NSISWizardTemplate)mTemplatesMap.get(template.getName());
                 if(otherTemplate != null) {
@@ -227,36 +188,19 @@ public class NSISWizardTemplateManager
                         return false;
                     }
                     else {
-                        switch(otherTemplate.getType()) {
-                            case NSISWizardTemplate.TYPE_DEFAULT:
-                                template.setType(NSISWizardTemplate.TYPE_CUSTOM);
-                                break;
-                            default:
-                                mDeleteQueue.add(otherTemplate);
-                                break;
-                        }
-                        mTemplates.remove(otherTemplate);
-                        mTemplatesMap.remove(otherTemplate.getName());
+                        removeTemplate(oldTemplate);
+                        oldTemplate = otherTemplate;
                     }
                 }
-                
+            }
+            if(oldTemplate.getType() == NSISWizardTemplate.TYPE_DEFAULT) {
+                template.setType(NSISWizardTemplate.TYPE_CUSTOM);
             }
             else {
-                if(!oldTemplate.isDifferentFrom(template)) {
-                    return false;
-                }
-                switch(template.getType()) {
-                    case NSISWizardTemplate.TYPE_DEFAULT:
-                        if(!template.isLoaded()) {
-                            template.loadSettings();
-                            template.setSettingsChanged(true);
-                        }
-                        template.setType(NSISWizardTemplate.TYPE_CUSTOM);
-                }
+                template.setType(oldTemplate.getType());
             }
-            mTemplates.remove(oldTemplate);
             mTemplatesMap.remove(oldTemplate.getName());
-            mTemplates.add(template);
+            template.setDeleted(false);
             mTemplatesMap.put(template.getName(),template);
             return true;
         }
@@ -265,7 +209,7 @@ public class NSISWizardTemplateManager
 
     public void restore()
     {
-        for (Iterator iter = mTemplates.iterator(); iter.hasNext();) {
+        for (Iterator iter = mTemplatesMap.values().iterator(); iter.hasNext();) {
             NSISWizardTemplate element = (NSISWizardTemplate)iter.next();
             if(element.getType() == NSISWizardTemplate.TYPE_CUSTOM && element.isDeleted()) {
                 element.setDeleted(false);
@@ -275,7 +219,7 @@ public class NSISWizardTemplateManager
 
     public boolean canRestore()
     {
-        for (Iterator iter = mTemplates.iterator(); iter.hasNext();) {
+        for (Iterator iter = mTemplatesMap.values().iterator(); iter.hasNext();) {
             NSISWizardTemplate element = (NSISWizardTemplate)iter.next();
             if(element.getType() == NSISWizardTemplate.TYPE_CUSTOM && element.isDeleted()) {
                 return true;
@@ -286,35 +230,23 @@ public class NSISWizardTemplateManager
 
     public void resetToDefaults()
     {
-        for (Iterator iter = mTemplates.iterator(); iter.hasNext();) {
-            NSISWizardTemplate template = (NSISWizardTemplate)iter.next();
-            iter.remove();
-            mTemplatesMap.remove(template.getName());
-            if(template.getType() != NSISWizardTemplate.TYPE_DEFAULT) {
-                mDeleteQueue.add(template);
-            }
-        }
-        mTemplates.clear();
         mTemplatesMap.clear();
-        mTemplates.addAll(mDefaultTemplates);
         mTemplatesMap.putAll(mDefaultTemplatesMap);
     }
 
-    public void revert(NSISWizardTemplate template)
+    public NSISWizardTemplate revert(NSISWizardTemplate template)
     {
         if(template.getType() == NSISWizardTemplate.TYPE_CUSTOM) {
             NSISWizardTemplate defaultTemplate = (NSISWizardTemplate)mDefaultTemplatesMap.get(template.getName());
-            mTemplates.remove(template);
-            mTemplatesMap.remove(template.getName());
-            mDeleteQueue.add(template);
-            mTemplates.add(defaultTemplate);
             mTemplatesMap.put(defaultTemplate.getName(),defaultTemplate);
+            return defaultTemplate;
         }
+        return null;
     }
     
     public boolean canRevert(NSISWizardTemplate template)
     {
-        return (mTemplates.contains(template) && (template.getType() == NSISWizardTemplate.TYPE_CUSTOM));
+        return (mTemplatesMap.containsKey(template.getName()) && (template.getType() == NSISWizardTemplate.TYPE_CUSTOM));
     }
     
     /**
@@ -323,19 +255,13 @@ public class NSISWizardTemplateManager
      */
     public void save() throws IOException
     {
-        HashSet set = new HashSet();
-        for (Iterator iter = mTemplates.iterator(); iter.hasNext();) {
-                NSISWizardTemplate template = (NSISWizardTemplate)iter.next();
-                if(template.getType() != NSISWizardTemplate.TYPE_DEFAULT) {
-                    template.saveSettings();
-                    set.add(template);
-                }
-        }
-        for (Iterator iter = mDeleteQueue.iterator(); iter.hasNext();) {
+        HashMap map = new HashMap();
+        for (Iterator iter = mTemplatesMap.values().iterator(); iter.hasNext();) {
             NSISWizardTemplate template = (NSISWizardTemplate)iter.next();
-            template.deleteSettings();
-            iter.remove();
+            if(template.getType() != NSISWizardTemplate.TYPE_DEFAULT) {
+                map.put(template.getName(),template);
+            }
         }
-        cReaderWriter.save(set,new BufferedOutputStream(new FileOutputStream(cUserTemplatesStore)));
+        Common.writeObject(cUserTemplatesStore, map);
     }
 }

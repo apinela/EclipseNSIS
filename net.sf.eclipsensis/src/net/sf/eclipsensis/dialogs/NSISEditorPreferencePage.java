@@ -13,6 +13,7 @@ import java.io.*;
 import java.util.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.editor.*;
 import net.sf.eclipsensis.editor.text.NSISSyntaxStyle;
 import net.sf.eclipsensis.settings.*;
@@ -37,6 +38,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 public class NSISEditorPreferencePage extends PreferencePage implements IWorkbenchPreferencePage, INSISPreferenceConstants
 {
@@ -146,7 +148,7 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
      */
     public void createControl(Composite parent) {
         super.createControl(parent);
-//        WorkbenchHelp.setHelp(getControl(), ITextEditorHelpContextIds.TEXT_EDITOR_PREFERENCE_PAGE);
+        WorkbenchHelp.setHelp(getControl(),INSISConstants.PLUGIN_CONTEXT_PREFIX+"nsis_editorprefs_context");
     }
 
     private void handleAppearanceColorListSelection()

@@ -11,11 +11,10 @@ package net.sf.eclipsensis.dialogs;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.wizard.IWizard;
-import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 
-public class NSISTemplateWizardDialog extends WizardDialog
+public class NSISTemplateWizardDialog extends NSISWizardDialog
 {
     /**
      * @param parentShell

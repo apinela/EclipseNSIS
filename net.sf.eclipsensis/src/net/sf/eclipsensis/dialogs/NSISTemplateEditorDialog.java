@@ -13,6 +13,7 @@ import java.util.*;
 import java.util.List;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.editor.NSISDocumentSetupParticipant;
 import net.sf.eclipsensis.editor.template.NSISTemplateEditorSourceViewerConfiguration;
 import net.sf.eclipsensis.editor.template.NSISTemplateSourceViewer;
@@ -38,6 +39,7 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.IUpdate;
 
@@ -206,7 +208,8 @@ public class NSISTemplateEditorDialog extends StatusMessageDialog
         }
         initializeActions();
 
-        applyDialogFont(composite);        
+        applyDialogFont(composite);
+        WorkbenchHelp.setHelp(composite,INSISConstants.PLUGIN_CONTEXT_PREFIX+"nsis_templatedlg_context");
         return composite;
     }
     

@@ -22,6 +22,12 @@ public abstract class AbstractNSISInstallElement extends AbstractNodeConvertible
     private static final long serialVersionUID = 742172003526190746L;
 
     private NSISWizardSettings mSettings = null;
+    private INSISInstallElement mParent = null;
+
+    public Object clone() throws CloneNotSupportedException
+    {
+        return super.clone();
+    }
 
     protected void addSkippedProperties(Collection skippedProperties)
     {
@@ -50,8 +56,6 @@ public abstract class AbstractNSISInstallElement extends AbstractNodeConvertible
     {
         return mSettings;
     }
-
-    private INSISInstallElement mParent = null;
 
     public void setParent(INSISInstallElement parent)
     {

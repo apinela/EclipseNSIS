@@ -52,6 +52,14 @@ public class NSISPreferencePage	extends NSISSettingsPage
         pd.open();
     }
     
+    /**
+     * @return
+     */
+    protected String getContextId()
+    {
+        return PLUGIN_CONTEXT_PREFIX + "nsis_prefs_context";
+    }
+
     protected String getPageDescription()
     {
         return EclipseNSISPlugin.getResourceString("preferences.header.text"); //$NON-NLS-1$

@@ -32,9 +32,6 @@ public class NSISWizardTemplateReaderWriter
     private static final String NAME_ATTRIBUTE= "name"; //$NON-NLS-1$
     private static final String DESCRIPTION_NODE= "description"; //$NON-NLS-1$
     private static final String SETTINGS_NODE= "settings"; //$NON-NLS-1$
-    private static final String FILENAME_ATTRIBUTE= "filename"; //$NON-NLS-1$
-    private static final String ENABLED_ATTRIBUTE= "enabled"; //$NON-NLS-1$
-    private static final String DELETED_ATTRIBUTE= "deleted"; //$NON-NLS-1$
     
     /**
      * Reads templates from a stream and adds them to the templates.
@@ -43,17 +40,12 @@ public class NSISWizardTemplateReaderWriter
      * @return the read templates
      * @throws IOException if reading from the stream fails 
      */ 
-    public Collection read(InputStream stream) throws IOException 
-    {
-        return read(new InputSource(stream), false);
-    }
-    
     public Collection import_(InputStream stream) throws IOException 
     {
-        return read(new InputSource(stream), true);
+        return import_(new InputSource(stream));
     }
     
-    private Collection read(InputSource source, boolean isImport) throws IOException 
+    public Collection import_(InputSource source) throws IOException 
     {
         try {
             Collection templates= new HashSet();
@@ -79,21 +71,10 @@ public class NSISWizardTemplateReaderWriter
                 }
 
                 NSISWizardTemplate template;
-                if(isImport) {
-                    template = new NSISWizardTemplate(name);
-                }
-                else {
-                    template = new NSISWizardTemplate();
-                    template.setName(name);
-                    String fileName = getStringValue(attributes, FILENAME_ATTRIBUTE, ""); //$NON-NLS-1$
-                    if (fileName == null) {
-                        throw new IOException(EclipseNSISPlugin.getResourceString("wizard.template.readerwriter.error.missing_attribute")); //$NON-NLS-1$
-                    }
-                    template.setFileName(fileName);
-                }
+                template = new NSISWizardTemplate(name);
 
-                template.setDeleted(isImport?false:getBooleanValue(attributes, DELETED_ATTRIBUTE, false));
-                template.setEnabled(isImport?true:getBooleanValue(attributes, ENABLED_ATTRIBUTE, true));
+                template.setDeleted(false);
+                template.setEnabled(true);
                 
                 NodeList children = node.getChildNodes();
                 if(children != null) {
@@ -112,7 +93,7 @@ public class NSISWizardTemplateReaderWriter
                             }
                             template.setDescription(buf.toString());
                         }
-                        else if(isImport && item.getNodeName().equals(SETTINGS_NODE)) {
+                        else if(item.getNodeName().equals(SETTINGS_NODE)) {
                             NSISWizardSettings settings = new NSISWizardSettings(true);
                             settings.fromNode(item);
                             template.setSettings(settings);
@@ -146,14 +127,9 @@ public class NSISWizardTemplateReaderWriter
      * @param stream the byte output to write the templates to in XML
      * @throws IOException if writing the templates fails 
      */
-    public void save(Collection templates, OutputStream stream) throws IOException 
-    {
-        save(templates, new StreamResult(stream), false);
-    }
-    
     public void export(Collection templates, OutputStream stream) throws IOException 
     {
-        save(templates, new StreamResult(stream), true);
+        export(templates, new StreamResult(stream));
     }
     
     /**
@@ -163,7 +139,7 @@ public class NSISWizardTemplateReaderWriter
      * @param result the stream result to write to
      * @throws IOException if writing the templates fails 
      */
-    private void save(Collection templates, StreamResult result, boolean isExport) throws IOException 
+    public void export(Collection templates, StreamResult result) throws IOException 
     {
         try {
             DocumentBuilderFactory factory= DocumentBuilderFactory.newInstance();
@@ -186,14 +162,7 @@ public class NSISWizardTemplateReaderWriter
                 description.appendChild(data);
                 node.appendChild(description);
                 
-                if(isExport) {
-                    node.appendChild(template.getSettings().toNode(document));
-                }
-                else {
-                    Common.addAttribute(document, node, FILENAME_ATTRIBUTE, template.getFileName());
-                    Common.addAttribute(document, node, ENABLED_ATTRIBUTE, Boolean.toString(template.isEnabled()));
-                    Common.addAttribute(document, node, DELETED_ATTRIBUTE, Boolean.toString(template.isDeleted()));
-                }
+                node.appendChild(template.getSettings().toNode(document));
             }       
             
             
@@ -204,7 +173,6 @@ public class NSISWizardTemplateReaderWriter
             DOMSource source = new DOMSource(document);
 
             transformer.transform(source, result);
-
         } 
         catch (ParserConfigurationException e) {
             throw new IOException(e.getMessage());

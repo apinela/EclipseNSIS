@@ -40,4 +40,5 @@ public interface INSISInstallElement extends INSISWizardConstants, Serializable,
     public Image getImage();
     public void setSettings(NSISWizardSettings settings);
     public NSISWizardSettings getSettings();
+    public Object clone() throws CloneNotSupportedException;
 }

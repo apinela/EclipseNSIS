@@ -15,6 +15,7 @@ import java.util.*;
 import java.util.List;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.viewer.CollectionLabelProvider;
 import net.sf.eclipsensis.viewer.EmptyContentProvider;
@@ -36,6 +37,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 public class NSISWizardTemplatePreferencePage extends PreferencePage implements IWorkbenchPreferencePage
 {
@@ -60,6 +62,14 @@ public class NSISWizardTemplatePreferencePage extends PreferencePage implements 
         super();
         setDescription(EclipseNSISPlugin.getResourceString("wizard.template.preferences.description")); //$NON-NLS-1$
         mTemplateManager = new NSISWizardTemplateManager();
+    }
+
+    /*
+     * @see PreferencePage#createControl(Composite)
+     */
+    public void createControl(Composite parent) {
+        super.createControl(parent);
+        WorkbenchHelp.setHelp(getControl(),INSISConstants.PLUGIN_CONTEXT_PREFIX+"nsis_scrtmpltprefs_context");
     }
 
     /* (non-Javadoc)
@@ -146,12 +156,9 @@ public class NSISWizardTemplatePreferencePage extends PreferencePage implements 
             public void checkStateChanged(CheckStateChangedEvent event) {
                 NSISWizardTemplate template= (NSISWizardTemplate)event.getElement();
                 if(template.getType() == NSISWizardTemplate.TYPE_DEFAULT) {
-                    NSISWizardTemplate newTemplate = new NSISWizardTemplate(template);
-                    newTemplate.setSettings(template.getSettings());
-                    template = newTemplate;
+                    template.setType(NSISWizardTemplate.TYPE_CUSTOM);
                 }
                 template.setEnabled(event.getChecked());
-                mTemplateManager.updateTemplate(template);
                 mTableViewer.refresh(true);
                 mTableViewer.setSelection(new StructuredSelection(template));
                 doSelectionChanged();
@@ -381,14 +388,21 @@ public class NSISWizardTemplatePreferencePage extends PreferencePage implements 
 
     private void edit(NSISWizardTemplate oldTemplate) 
     {
-        NSISWizardTemplate newTemplate= new NSISWizardTemplate(oldTemplate);
-        Dialog dialog= new NSISTemplateWizardDialog(getShell(),new NSISTemplateWizard(newTemplate));
-        if (dialog.open() == Window.OK) {
-            mTemplateManager.updateTemplate(newTemplate);
-            mTableViewer.refresh(true);
-            doSelectionChanged();
-            mTableViewer.setChecked(newTemplate, newTemplate.isEnabled());
-            mTableViewer.setSelection(new StructuredSelection(newTemplate));           
+        NSISWizardTemplate newTemplate;
+        try {
+            newTemplate = (NSISWizardTemplate)oldTemplate.clone();
+            Dialog dialog= new NSISTemplateWizardDialog(getShell(),new NSISTemplateWizard(newTemplate));
+            if (dialog.open() == Window.OK) {
+                mTemplateManager.updateTemplate(oldTemplate, newTemplate);
+                mTableViewer.refresh(true);
+                doSelectionChanged();
+                mTableViewer.setChecked(newTemplate, newTemplate.isEnabled());
+                mTableViewer.setSelection(new StructuredSelection(newTemplate));           
+            }
+        }
+        catch (CloneNotSupportedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
     }
         
@@ -518,13 +532,19 @@ public class NSISWizardTemplatePreferencePage extends PreferencePage implements 
         IStructuredSelection selection= (IStructuredSelection) mTableViewer.getSelection();
 
         if(!selection.isEmpty()) {
+            ArrayList list = new ArrayList();
             for (Iterator iter= selection.iterator(); iter.hasNext(); ) {
-                mTemplateManager.revert((NSISWizardTemplate) iter.next());
+                NSISWizardTemplate temp = mTemplateManager.revert((NSISWizardTemplate) iter.next());
+                if(temp != null) {
+                    list.add(temp);
+                }
             }
     
             mTableViewer.refresh(true);
+            mTableViewer.setSelection(new StructuredSelection(list));
             doSelectionChanged();
             mTableViewer.setCheckedElements(getEnabledTemplates());
+            mTableViewer.getTable().setFocus();
         }
     }
     

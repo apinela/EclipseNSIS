@@ -13,6 +13,7 @@ import java.text.Collator;
 import java.util.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.editor.*;
 import net.sf.eclipsensis.settings.NSISPreferences;
 import net.sf.eclipsensis.util.Common;
@@ -33,6 +34,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 public class NSISTaskTagsPreferencePage extends PreferencePage implements IWorkbenchPreferencePage
 {
@@ -65,6 +67,14 @@ public class NSISTaskTagsPreferencePage extends PreferencePage implements IWorkb
             mBoldFont.dispose();
         }
         super.dispose();
+    }
+
+    /*
+     * @see PreferencePage#createControl(Composite)
+     */
+    public void createControl(Composite parent) {
+        super.createControl(parent);
+        WorkbenchHelp.setHelp(getControl(),INSISConstants.PLUGIN_CONTEXT_PREFIX+"nsis_tasktagprefs_context");
     }
 
     /* (non-Javadoc)

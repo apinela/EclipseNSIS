@@ -14,6 +14,37 @@
     <context id="nsis_editor_context">
         <description>The EclipseNSIS editor is used to edit NullSoft Installer scripts.</description>
         <topic label="EclipseNSIS Editor" href="help/editing.html"/>
-        <topic label="EclipseNSIS User guide" href="help/overview.html"/>
+    </context>
+    <context id="nsis_console_context">
+        <description>The EclipseNSIS console shows the output of an NSIS script compilation process.</description>
+        <topic label="EclipseNSIS Console" href="help/console.html"/>
+    </context>
+    <context id="nsis_prefs_context">
+        <description>This preferences page is used to set global settings for NSIS scripts.</description>
+        <topic label="EclipseNSIS Preferences" href="help/nsisprefs.html"/>
+    </context>
+    <context id="nsis_editorprefs_context">
+        <description>This preferences page is used to customize the look and feel of the EclipseNSIS editor.</description>
+        <topic label="Editor Preferences" href="help/editorprefs.html"/>
+    </context>
+    <context id="nsis_templateprefs_context">
+        <description>This preferences page is used to work with code templates.</description>
+        <topic label="Templates Preferences" href="help/templateprefs.html"/>
+    </context>
+    <context id="nsis_tasktagprefs_context">
+        <description>This preferences page is used to configure task tags.</description>
+        <topic label="Task Tags Preferences" href="help/tasktagprefs.html"/>
+    </context>
+    <context id="nsis_scrtmpltprefs_context">
+        <description>This preferences page is used to work with script templates.</description>
+        <topic label="Script Templates Preferences" href="help/scrtmpltprefs.html"/>
+    </context>
+    <context id="nsis_templatedlg_context">
+        <description>The Templates Editor dialog is used to create new and edit existing code templates.</description>
+        <topic label="Templates Editor" href="help/templateprefs.html#templateeditor"/>
+    </context>
+    <context id="nsis_properties_context">
+        <description>This properties page is used to set custom NSIS compilation options for a particular script.</description>
+        <topic label="Script Properties" href="help/properties.html"/>
     </context>
 </contexts>

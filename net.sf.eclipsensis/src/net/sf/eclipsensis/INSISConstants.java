@@ -18,7 +18,6 @@ public interface INSISConstants
     public static final String MAKENSIS_EXE = "makensis.exe"; //$NON-NLS-1$
 
     public static final String PLUGIN_CONTEXT_PREFIX = PLUGIN_NAME + "."; //$NON-NLS-1$
-    public static final String NSIS_EDITOR_CONTEXT = PLUGIN_CONTEXT_PREFIX + "nsis_editor_context"; //$NON-NLS-1$
     
     public static final String HTMLHELP_ID = "net.sf.eclipsensis.help.NSISHTMLHelp"; //$NON-NLS-1$
     public static final String PLUGIN_HELP_LOCATION_PREFIX = "help/"; //$NON-NLS-1$

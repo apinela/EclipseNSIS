@@ -33,7 +33,16 @@ public class NSISInstallFile extends AbstractNSISInstallItem implements INSISIns
         NSISInstallElementFactory.register(TYPE, IMAGE, NSISInstallFile.class);
     }
 
-    /* (non-Javadoc)
+    public Object clone() throws CloneNotSupportedException
+    {
+        NSISInstallFile file = (NSISInstallFile)super.clone();
+        file.mName = mName;
+        file.mDestination = mDestination;
+        file.mOverwriteMode = mOverwriteMode;
+        return file;
+    }
+
+     /* (non-Javadoc)
      * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#getType()
      */
     public String getType()

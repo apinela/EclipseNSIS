@@ -26,13 +26,21 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
 
     public static final String TYPE = EclipseNSISPlugin.getResourceString("wizard.files.type"); //$NON-NLS-1$
     private static final Image IMAGE = ImageManager.getImage(EclipseNSISPlugin.getResourceString("wizard.files.icon")); //$NON-NLS-1$
+    public static final char SEPARATOR = '\0'; 
     
     private String mDestination = NSISKeywords.getKeyword("$INSTDIR"); //$NON-NLS-1$
     private int mOverwriteMode = OVERWRITE_ON;
-    public static final char SEPARATOR = '\0'; 
 
     static {
         NSISInstallElementFactory.register(TYPE, IMAGE, NSISInstallFiles.class);
+    }
+
+    public Object clone() throws CloneNotSupportedException
+    {
+        NSISInstallFiles files = (NSISInstallFiles)super.clone();
+        files.mDestination = mDestination;
+        files.mOverwriteMode = mOverwriteMode;
+        return files;
     }
 
     protected void addSkippedProperties(Collection skippedProperties)
@@ -191,6 +199,13 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
             NSISInstallElementFactory.register(TYPE, IMAGE, FileItem.class);
         }
         
+        public Object clone() throws CloneNotSupportedException
+        {
+            FileItem item = (FileItem)super.clone();
+            item.mName = mName;
+            return item;
+        }
+
         /* (non-Javadoc)
          * @see java.lang.Object#equals(java.lang.Object)
          */

@@ -32,6 +32,17 @@ public abstract class AbstractNSISInstallGroup extends AbstractNSISInstallElemen
         setChildTypes();
     }
     
+    public Object clone() throws CloneNotSupportedException
+    {
+        AbstractNSISInstallGroup group = (AbstractNSISInstallGroup)super.clone();
+        for (Iterator iter = mChildren.iterator(); iter.hasNext();) {
+            INSISInstallElement element = (INSISInstallElement)((INSISInstallElement)iter.next()).clone();
+            element.setParent(group);
+            
+        }
+        return group;
+    }
+    
     protected void addSkippedProperties(Collection skippedProperties)
     {
         super.addSkippedProperties(skippedProperties);

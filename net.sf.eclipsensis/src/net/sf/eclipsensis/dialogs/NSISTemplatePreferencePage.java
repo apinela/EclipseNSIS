@@ -10,6 +10,7 @@
 package net.sf.eclipsensis.dialogs;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.editor.NSISDocumentSetupParticipant;
 import net.sf.eclipsensis.editor.template.NSISTemplateSourceViewer;
 import net.sf.eclipsensis.editor.template.NSISTemplateSourceViewerConfiguration;
@@ -29,6 +30,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.texteditor.templates.TemplatePreferencePage;
 
 public class NSISTemplatePreferencePage extends TemplatePreferencePage
@@ -46,6 +48,14 @@ public class NSISTemplatePreferencePage extends TemplatePreferencePage
         setPreferenceStore(mPlugin.getPreferenceStore());
         setTemplateStore(mPlugin.getTemplateStore());
         setContextTypeRegistry(mPlugin.getContextTypeRegistry());
+    }
+
+    /*
+     * @see PreferencePage#createControl(Composite)
+     */
+    public void createControl(Composite parent) {
+        super.createControl(parent);
+        WorkbenchHelp.setHelp(getControl(),INSISConstants.PLUGIN_CONTEXT_PREFIX+"nsis_templateprefs_context");
     }
 
     /*

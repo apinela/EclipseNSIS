@@ -32,6 +32,14 @@ public class NSISInstallRegistryKey extends AbstractNSISInstallItem
         NSISInstallElementFactory.register(TYPE, IMAGE, NSISInstallRegistryKey.class);
     }
 
+    public Object clone() throws CloneNotSupportedException
+    {
+        NSISInstallRegistryKey key = (NSISInstallRegistryKey)super.clone();
+        key.mRootKey = mRootKey;
+        key.mSubKey = mSubKey;
+        return key;
+    }
+
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#getType()
      */
