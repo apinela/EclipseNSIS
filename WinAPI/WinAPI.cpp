@@ -102,7 +102,7 @@ JNIEXPORT jint JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetUserDefaultLangID(
     return GetUserDefaultLangID();
 }
 
-JNIEXPORT jstring JNICALL Java_net_sf_eclipsensis_util_WinAPI_ExtractHtmlHelpTOC(JNIEnv *pEnv, jclass jClass, jstring pszFile, jstring pszFolder)
+JNIEXPORT jstring JNICALL Java_net_sf_eclipsensis_util_WinAPI_ExtractHtmlHelpAndTOC(JNIEnv *pEnv, jclass jClass, jstring pszFile, jstring pszFolder)
 {
     jstring result = NULL;
 	HRESULT hr = CoInitialize(NULL);
@@ -111,9 +111,9 @@ JNIEXPORT jstring JNICALL Java_net_sf_eclipsensis_util_WinAPI_ExtractHtmlHelpTOC
         TCHAR *tocFile = NULL;
         tocFile = (TCHAR *)GlobalAlloc(GPTR, MAX_PATH*sizeof(TCHAR));
 
-        if(ExtractTOC(_T((char *)pEnv->GetStringUTFChars(pszFile, 0)),
-                      _T((char *)pEnv->GetStringUTFChars(pszFolder, 0)),
-                      tocFile) == S_OK) {
+        if(ExtractHtmlHelpAndTOC(_T((char *)pEnv->GetStringUTFChars(pszFile, 0)),
+	                             _T((char *)pEnv->GetStringUTFChars(pszFolder, 0)),
+                                 tocFile) == S_OK) {
             result = pEnv->NewStringUTF(tocFile);
         }
         GlobalFree(tocFile);

@@ -36,5 +36,5 @@ public class WinAPI
     public static native long GetDesktopWindow();
     public static native long HtmlHelp(long hwndCaller, String  pszFile, int uCommand, long dwData);
     public static native int GetUserDefaultLangID();
-    public static native String ExtractHtmlHelpTOC(String pszFile, String pszFolder);
+    public static native String ExtractHtmlHelpAndTOC(String pszFile, String pszFolder);
 }

@@ -13,6 +13,8 @@
 static const GUID CLSID_ITStorage = { 0x5d02926a, 0x212e, 0x11d0, { 0x9d, 0xf9, 0x0, 0xa0, 0xc9, 0x22, 0xe6, 0xec } };
 static const GUID IID_ITStorage = { 0x88cc31de, 0x27ab, 0x11d0, { 0x9d, 0xf9, 0x0, 0xa0, 0xc9, 0x22, 0xe6, 0xec} };
 
+static WCHAR* supported_extensions[] = { L".html", L".htm", L".css", L".js", L".bmp", L".jpg", L".gif", NULL };
+
 CItsFile::CItsFile()
 {
     m_pITStorage = NULL;
@@ -138,7 +140,7 @@ HRESULT SaveSub(IStorage* p, WCHAR* pwzSubstream, WCHAR* pwzFilename)
 }
 
 
-HRESULT ExtractTOCFromStorage(IStorage *ps, WCHAR* folder, WCHAR* tocFile)
+HRESULT ExtractHtmlHelpAndTOCFromStorage(IStorage *ps, WCHAR* folder, WCHAR* tocFile)
 {
     IStorage*    psub = NULL;
     IEnumSTATSTG* pEnum = NULL;
@@ -146,6 +148,7 @@ HRESULT ExtractTOCFromStorage(IStorage *ps, WCHAR* folder, WCHAR* tocFile)
     char buf[4096] = {0};
     HRESULT hr = S_OK;
     LPCSTR typnam[] = { "STGTY_STORAGE", "STGTY_STREAM", "STGTY_LOCKBYTES", "STGTY_PROPERTY" };
+    WCHAR newFile[MAX_PATH] = {0};
     
     // create the folder - unless it already exists
     if (!CreateDirectoryW(folder, NULL)) {
@@ -168,14 +171,26 @@ HRESULT ExtractTOCFromStorage(IStorage *ps, WCHAR* folder, WCHAR* tocFile)
     hr = S_OK;
     while (pEnum->Next(1, &entry, NULL)==S_OK) {
         if (entry.type == STGTY_STREAM) {
-            int len = wcslen(entry.pwcsName);
-            if(len >= 4) {
-                if(!wcsicmp(entry.pwcsName+(len-4),L".hhc")) {
+            WCHAR *pExt = wcsrchr(entry.pwcsName,'.');
+            if(pExt) {
+                if(tocFile && !wcsicmp(pExt,L".hhc")) {
                     wcscpy(tocFile, folder);
                     wcscat(tocFile, L"\\");
                     wcscat(tocFile, entry.pwcsName);
                     hr = SaveSub(ps, entry.pwcsName, tocFile);
-                    break;
+                }
+                else {
+                    int i =0;
+                    while(supported_extensions[i]) {
+                        if(!wcsicmp(pExt,supported_extensions[i])) {
+                            wcscpy(newFile, folder);
+                            wcscat(newFile, L"\\");
+                            wcscat(newFile, entry.pwcsName);
+                            hr = SaveSub(ps, entry.pwcsName, newFile);
+                        }
+
+                        i++;
+                    }
                 }
             }
         } 
@@ -185,7 +200,10 @@ HRESULT ExtractTOCFromStorage(IStorage *ps, WCHAR* folder, WCHAR* tocFile)
                 break;
             }
 
-            hr = ExtractTOCFromStorage(psub, folder, tocFile);            
+            wcscpy(newFile, folder);
+            wcscat(newFile, L"\\");
+            wcscat(newFile, entry.pwcsName);
+            hr = ExtractHtmlHelpAndTOCFromStorage(psub, newFile, NULL);            
             psub->Release();
             if (FAILED(hr)) {
                 break;
@@ -197,7 +215,7 @@ HRESULT ExtractTOCFromStorage(IStorage *ps, WCHAR* folder, WCHAR* tocFile)
     return hr;    
 }
 
-HRESULT ExtractTOC(LPCSTR pszFile, LPCSTR pszFolder, LPSTR tocFile)
+HRESULT ExtractHtmlHelpAndTOC(LPCSTR pszFile, LPCSTR pszFolder, LPSTR tocFile)
 {
     CItsFile itf;
     WCHAR pwzFile[MAX_PATH];
@@ -213,7 +231,7 @@ HRESULT ExtractTOC(LPCSTR pszFile, LPCSTR pszFolder, LPSTR tocFile)
         return hr;
     }
 
-    hr = ExtractTOCFromStorage(itf.pStorage(), pwzFolder, pwzTOCFile);
+    hr = ExtractHtmlHelpAndTOCFromStorage(itf.pStorage(), pwzFolder, pwzTOCFile);
     if (FAILED(hr)) {
         return hr;
     }
