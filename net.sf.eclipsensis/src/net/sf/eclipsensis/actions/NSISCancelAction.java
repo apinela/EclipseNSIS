@@ -10,13 +10,12 @@
 package net.sf.eclipsensis.actions;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.console.NSISConsole;
 import net.sf.eclipsensis.console.NSISConsoleLine;
 import net.sf.eclipsensis.makensis.MakeNSISRunner;
 
 import org.eclipse.jface.action.IAction;
 
-public class NSISCancelAction extends NSISAction 
+public class NSISCancelAction extends NSISScriptAction 
 {
     /* (non-Javadoc)
      * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
@@ -24,8 +23,7 @@ public class NSISCancelAction extends NSISAction
 	public void run(IAction action) {
         try {
             MakeNSISRunner.cancel();
-            NSISConsole console = NSISConsole.getConsole();
-            console.add(NSISConsoleLine.error(EclipseNSISPlugin.getResourceString("cancel.message"))); //$NON-NLS-1$
+            mConsole.add(NSISConsoleLine.error(EclipseNSISPlugin.getResourceString("cancel.message"))); //$NON-NLS-1$
         }
         catch(Exception ex)
         {

@@ -21,7 +21,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.action.IAction;
 
-public class NSISCompileAction extends NSISAction
+public class NSISCompileAction extends NSISScriptAction
 {
     private static final Pattern cSyntaxPattern = Pattern.compile("[\\w]+ expects [0-9\\-\\+]+ parameters, got [0-9]\\."); //$NON-NLS-1$
     private static final Pattern cErrorPattern = Pattern.compile("error in script \"(.+)\" on line (\\d+).*",Pattern.CASE_INSENSITIVE); //$NON-NLS-1$
@@ -94,7 +94,6 @@ public class NSISCompileAction extends NSISAction
             NSISConsoleLine line;
             Matcher matcher = cErrorPattern.matcher(text);
             if(matcher.matches()) {
-                System.out.println(matcher.group(1)+" "+matcher.group(2)); //$NON-NLS-1$
                 line = NSISConsoleLine.error(text);
                 IFile file = mFile.getWorkspace().getRoot().getFileForLocation(new Path(matcher.group(1)));
                 if(file != null && file.equals(mFile)) {
@@ -131,6 +130,16 @@ public class NSISCompileAction extends NSISAction
             }
             
             return line;
+        }
+
+        /* (non-Javadoc)
+         * @see net.sf.eclipsensis.console.INSISConsoleLineProcessor#reset()
+         */
+        public void reset()
+        {
+            mOutputExeName = null;
+            warningsMode = false;
+            errorMode = false;
         }
     }
 }

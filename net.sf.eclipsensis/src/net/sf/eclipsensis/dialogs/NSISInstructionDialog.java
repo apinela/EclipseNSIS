@@ -9,26 +9,22 @@
  *******************************************************************************/
 package net.sf.eclipsensis.dialogs;
 
-import java.util.ArrayList;
-import java.util.StringTokenizer;
-
 import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 
-/**
- * @author Sunil.Kamath
- */
 public class NSISInstructionDialog extends Dialog implements IDialogConstants
 {
-    private static String[] cInstructionList = null;
+    private static final String[] cInstructionList;
 
     private NSISSettingsPage mSettingsPage = null;
     private String mInstruction = ""; //$NON-NLS-1$
@@ -37,20 +33,13 @@ public class NSISInstructionDialog extends Dialog implements IDialogConstants
     private boolean mEditMode = true;
     
     static {
-        String instructionList = EclipseNSISPlugin.getResourceString("instructions.list"); //$NON-NLS-1$
-        if(!Common.isEmpty(instructionList)) {
-            StringTokenizer st = new StringTokenizer(instructionList,","); //$NON-NLS-1$
-            ArrayList list = new ArrayList();
-            while(st.hasMoreTokens()) {
-                String token = st.nextToken();
-                if(!Common.isEmpty(token)) {
-                    list.add(token.trim());
-                }
-            }
-            if(list.size() > 0) {
-                cInstructionList = (String[])list.toArray(new String[0]);
-            }
-        }
+        cInstructionList = new String[NSISKeywords.SINGLELINE_COMPILETIME_COMMANDS.length+
+                                      NSISKeywords.INSTALLER_ATTRIBUTES.length];
+        System.arraycopy(NSISKeywords.SINGLELINE_COMPILETIME_COMMANDS,0,
+                        cInstructionList,0,NSISKeywords.SINGLELINE_COMPILETIME_COMMANDS.length);
+        System.arraycopy(NSISKeywords.INSTALLER_ATTRIBUTES,0,
+                        cInstructionList,NSISKeywords.SINGLELINE_COMPILETIME_COMMANDS.length,
+                        NSISKeywords.INSTALLER_ATTRIBUTES.length);
     }
     
     /**
@@ -132,7 +121,7 @@ public class NSISInstructionDialog extends Dialog implements IDialogConstants
         
         Combo combo = new Combo(composite, SWT.DROP_DOWN);
         combo.setToolTipText(tooltipText);
-        if(list != null && list.length > 0) {
+        if(!Common.isEmptyArray(list)) {
             for(int i=0; i<list.length; i++) {
                 combo.add(list[i]);
             }

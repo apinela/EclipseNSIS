@@ -15,9 +15,6 @@ import java.io.InputStreamReader;
 
 import net.sf.eclipsensis.makensis.MakeNSISProcess;
 
-/**
- * @author Sunil.Kamath
- */
 public class NSISConsoleWriter implements Runnable
 {
     private MakeNSISProcess mProcess = null;

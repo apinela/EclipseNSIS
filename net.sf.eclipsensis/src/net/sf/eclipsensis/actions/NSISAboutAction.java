@@ -7,10 +7,20 @@
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
-package net.sf.eclipsensis.console;
+package net.sf.eclipsensis.actions;
 
-public interface INSISConsoleLineProcessor
+import net.sf.eclipsensis.dialogs.NSISAboutDialog;
+
+import org.eclipse.jface.action.IAction;
+import org.eclipse.ui.PlatformUI;
+
+public class NSISAboutAction extends NSISAction
 {
-    public NSISConsoleLine processText(String text);
-    public void reset();
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
+     */
+    public void run(IAction action)
+    {
+        new NSISAboutDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell()).open();
+    }
 }

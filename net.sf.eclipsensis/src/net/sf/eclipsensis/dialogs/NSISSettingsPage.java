@@ -11,12 +11,11 @@ package net.sf.eclipsensis.dialogs;
 
 import java.text.MessageFormat;
 import java.util.*;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Map;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
+import net.sf.eclipsensis.makensis.MakeNSISRunner;
+import net.sf.eclipsensis.settings.INSISPreferenceConstants;
 import net.sf.eclipsensis.settings.NSISSettings;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.viewer.*;
@@ -185,10 +184,10 @@ public abstract class NSISSettingsPage	extends PropertyPage implements IWorkbenc
         composite.setLayout(layout);
         
         mVerbosity = createCombo(composite,EclipseNSISPlugin.getResourceString("verbosity.text"),EclipseNSISPlugin.getResourceString("verbosity.tooltip"), //$NON-NLS-1$ //$NON-NLS-2$
-                                 VERBOSITY_ARRAY, mSettings.getVerbosity());
+                                 INSISPreferenceConstants.VERBOSITY_ARRAY, mSettings.getVerbosity());
         
         mCompressor = createCombo(composite,EclipseNSISPlugin.getResourceString("compressor.text"),EclipseNSISPlugin.getResourceString("compressor.tooltip"), //$NON-NLS-1$ //$NON-NLS-2$
-                                 COMPRESSOR_DISPLAY_ARRAY,mSettings.getCompressor());
+                                 MakeNSISRunner.COMPRESSOR_DISPLAY_ARRAY,mSettings.getCompressor());
 
         return group;
     }
@@ -219,8 +218,10 @@ public abstract class NSISSettingsPage	extends PropertyPage implements IWorkbenc
 
         Combo combo = new Combo(composite, SWT.DROP_DOWN|SWT.READ_ONLY);
         combo.setToolTipText(tooltipText);
-        for(int i=0; i<list.length; i++) {
-            combo.add(list[i]);
+        if(!Common.isEmptyArray(list)) {
+            for(int i=0; i<list.length; i++) {
+                combo.add(list[i]);
+            }
         }
         combo.select(selected);
 
@@ -252,10 +253,12 @@ public abstract class NSISSettingsPage	extends PropertyPage implements IWorkbenc
         final Table table = new Table(composite, SWT.FULL_SELECTION | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.BORDER);
         table.setLinesVisible(true);
         table.setHeaderVisible(true);
-        
-        for(int i=0; i<columnNames.length; i++) {
-            TableColumn tableColumn = new TableColumn(table,SWT.LEFT,i);
-            tableColumn.setText(columnNames[i]);
+
+        if(!Common.isEmptyArray(columnNames))  {
+            for(int i=0; i<columnNames.length; i++) {
+                TableColumn tableColumn = new TableColumn(table,SWT.LEFT,i);
+                tableColumn.setText(columnNames[i]);
+            }
         }
 
         data = new GridData();
@@ -357,7 +360,7 @@ public abstract class NSISSettingsPage	extends PropertyPage implements IWorkbenc
         mSymbols = createTableViewer(composite, mSettings.getSymbols(), new MapContentProvider(), new MapLabelProvider(),
                                      EclipseNSISPlugin.getResourceString("symbols.description"), //$NON-NLS-1$
                                      new String[] {
-                                         EclipseNSISPlugin.getResourceString("symbols.name.text"), //$NON-NLS-1$
+                                         EclipseNSISPlugin.getResourceString("symbols.mName.text"), //$NON-NLS-1$
                                          EclipseNSISPlugin.getResourceString("symbols.value.text")}, //$NON-NLS-1$
                                      EclipseNSISPlugin.getResourceString("symbols.add.text"), //$NON-NLS-1$
                                      EclipseNSISPlugin.getResourceString("symbols.add.tooltip"), //$NON-NLS-1$
@@ -434,7 +437,8 @@ public abstract class NSISSettingsPage	extends PropertyPage implements IWorkbenc
             mSettings.setCompressor(mCompressor.getSelectionIndex());
             mSettings.setInstructions((ArrayList)mInstructions.getInput());
             mSettings.setSymbols((Properties)mSymbols.getInput());
-            mSettings.store();            
+            mSettings.store(); 
+            return true;
         }
         return false;
     }

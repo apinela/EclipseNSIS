@@ -11,9 +11,6 @@ package net.sf.eclipsensis.console;
 
 import org.eclipse.core.resources.IFile;
 
-/**
- * @author Sunil.Kamath
- */
 public class NSISConsoleLine
 {
     public static final int INFO = 0;
@@ -24,8 +21,6 @@ public class NSISConsoleLine
     private int mType = INFO;
     private IFile mFile = null;
     private int mLineNum = 0;
-    private NSISConsoleLine mPreviousLine = null;
-    private NSISConsoleLine mNextLine = null;
 
     public static NSISConsoleLine info(String text)
     {
@@ -90,32 +85,5 @@ public class NSISConsoleLine
     public void setLineNum(int lineNum)
     {
         mLineNum = lineNum;
-    }
-
-    /**
-     * @return Returns the nextLine.
-     */
-    public NSISConsoleLine getNextLine()
-    {
-        return mNextLine;
-    }
-
-    /**
-     * @return Returns the previousLine.
-     */
-    public NSISConsoleLine getPreviousLine()
-    {
-        return mPreviousLine;
-    }
-    
-    /**
-     * @param previousLine The previousLine to set.
-     */
-    public void setPreviousLine(NSISConsoleLine previousLine)
-    {
-        mPreviousLine = previousLine;
-        if(previousLine != null) {
-            previousLine.mNextLine = this;
-        }
     }
 }

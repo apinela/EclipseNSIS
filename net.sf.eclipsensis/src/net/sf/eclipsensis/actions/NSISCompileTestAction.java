@@ -9,9 +9,6 @@
  *******************************************************************************/
 package net.sf.eclipsensis.actions;
 
-/**
- * @author Sunil.Kamath
- */
 public class NSISCompileTestAction extends NSISCompileAction
 {
     protected NSISCompileRunnable getRunnable()
@@ -19,9 +16,6 @@ public class NSISCompileTestAction extends NSISCompileAction
         return new NSISCompileTestRunnable();
     }
     
-    /**
-     * @author Sunil.Kamath
-     */
     protected class NSISCompileTestRunnable extends NSISCompileRunnable
     {
         /**

@@ -16,10 +16,7 @@ import net.sf.eclipsensis.makensis.MakeNSISRunner;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IAction;
 
-/**
- * @author Sunil.Kamath
- */
-public class NSISTestAction extends NSISAction
+public class NSISTestAction extends NSISScriptAction
 {
     private String mExeName = null;
 

@@ -9,17 +9,18 @@
  *******************************************************************************/
 package net.sf.eclipsensis.dialogs;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.settings.NSISPreferences;
 import net.sf.eclipsensis.settings.NSISProperties;
 import net.sf.eclipsensis.settings.NSISSettings;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
 
 public class NSISPropertyPage extends NSISSettingsPage
 {

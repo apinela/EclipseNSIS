@@ -17,15 +17,29 @@ import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.util.NSISValidator;
 
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.preference.PreferenceDialog;
+import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.PlatformUI;
 
 public class NSISPreferencePage	extends NSISSettingsPage
 {
     private Text mNSISHome = null;
+    
+    public static void show()
+    {
+        IWorkbench workbench = PlatformUI.getWorkbench();
+        PreferenceManager manager = workbench.getPreferenceManager();
+        Shell shell = workbench.getActiveWorkbenchWindow().getShell();
+        PreferenceDialog pd = new PreferenceDialog(shell, manager);
+        pd.setSelectedNode(NSISPreferencePage.class.getName());
+        pd.open();
+    }
     
     protected String getPageDescription()
     {

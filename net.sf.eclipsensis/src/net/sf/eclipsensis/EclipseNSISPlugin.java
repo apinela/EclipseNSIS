@@ -16,12 +16,18 @@ import java.util.ResourceBundle;
 
 import net.sf.eclipsensis.console.NSISConsole;
 import net.sf.eclipsensis.console.NSISConsoleLine;
+import net.sf.eclipsensis.dialogs.NSISPreferencePage;
 import net.sf.eclipsensis.makensis.MakeNSISRunner;
 import net.sf.eclipsensis.settings.NSISPreferences;
+import net.sf.eclipsensis.util.Common;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -34,12 +40,14 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
     
 	//Resource bundle.
 	private ResourceBundle mResourceBundle;
-    private Bundle mBundle = null;
+    private String mName;
+    private String mVersion;
 
 	/**
 	 * The constructor.
 	 */
-	public EclipseNSISPlugin() {
+	public EclipseNSISPlugin() 
+    {
 		super();
 		cPlugin = this;
 		try {
@@ -54,10 +62,49 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
-        mBundle = context.getBundle();
+        mName = (String)getBundle().getHeaders().get("Bundle-Name"); //$NON-NLS-1$
+        mVersion = (String)getBundle().getHeaders().get("Bundle-Version"); //$NON-NLS-1$
+        validateOS();
+        if(!isConfigured()) {
+            Shell shell = getWorkbench().getActiveWorkbenchWindow().getShell();
+            if(MessageDialog.openConfirm(shell,mName,getResourceString("unconfigured.confirm"))) {
+                configure();
+            }
+            if(!isConfigured()) {
+                MessageDialog.openWarning(shell,mName,getResourceString("unconfigured.warning"));
+            }
+        }
         MakeNSISRunner.startup();
 	}
+    
+    private void configure()
+    {
+        Display.getDefault().syncExec(new Runnable() {
+            public void run()
+            {
+                NSISPreferencePage.show();
+            }
+        });
+    }
 
+    private void validateOS() throws CoreException
+    {
+        String[] supportedOS = Common.loadArrayProperty(getResourceBundle(),"supported.os");
+        if(!Common.isEmptyArray(supportedOS)) {
+            String osName = System.getProperty("os.name"); //$NON-NLS-1$
+            for(int i=0; i<supportedOS.length; i++) {
+                if(osName.equalsIgnoreCase(supportedOS[i])) {
+                    return;
+                }
+            }
+            String osError = getResourceString("unsupported.os.error"); //$NON-NLS-1$
+            MessageDialog.openError(getWorkbench().getActiveWorkbenchWindow().getShell(),
+                                    mName,osError);
+            throw new CoreException(new Status(IStatus.ERROR,PLUGIN_NAME,IStatus.ERROR,osError,
+                                    new RuntimeException(osError)));
+        }
+    }
+    
 	/**
 	 * This method is called when the plug-in is stopped
 	 */
@@ -78,13 +125,21 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
 	 * or 'key' if not found.
 	 */
 	public static String getResourceString(String key) {
-		ResourceBundle bundle = EclipseNSISPlugin.getDefault().getResourceBundle();
-		try {
-			return (bundle != null) ? bundle.getString(key) : key;
-		} catch (MissingResourceException e) {
-			return key;
-		}
+        return getResourceString(key, key);
 	}
+
+    /**
+     * Returns the string from the plugin's resource bundle,
+     * or the default value if not found.
+     */
+    public static String getResourceString(String key, String defaultValue) {
+        ResourceBundle bundle = EclipseNSISPlugin.getDefault().getResourceBundle();
+        try {
+            return (bundle != null) ? bundle.getString(key) : defaultValue;
+        } catch (MissingResourceException e) {
+            return defaultValue;
+        }
+    }
 
 	/**
 	 * Returns the plugin's resource bundle,
@@ -93,6 +148,20 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
 		return mResourceBundle;
 	}
     
+    /**
+     * @return Returns the mName.
+     */
+    public String getName()
+    {
+        return mName;
+    }
+    /**
+     * @return Returns the version.
+     */
+    public String getVersion()
+    {
+        return mVersion;
+    }
     public boolean isConfigured()
     {
         return (NSISPreferences.getPreferences().getNSISExe() != null);

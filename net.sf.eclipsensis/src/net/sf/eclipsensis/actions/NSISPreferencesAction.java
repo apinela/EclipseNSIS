@@ -12,15 +12,7 @@ package net.sf.eclipsensis.actions;
 import net.sf.eclipsensis.dialogs.NSISPreferencePage;
 
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.preference.PreferenceDialog;
-import org.eclipse.jface.preference.PreferenceManager;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.PlatformUI;
 
-/**
- * @author Sunil.Kamath
- */
 public class NSISPreferencesAction extends NSISAction
 {
     /* (non-Javadoc)
@@ -28,16 +20,6 @@ public class NSISPreferencesAction extends NSISAction
      */
     public void run(IAction action)
     {
-        IWorkbench workbench = PlatformUI.getWorkbench();
-        PreferenceManager manager = workbench.getPreferenceManager();
-        Shell shell = workbench.getActiveWorkbenchWindow().getShell();
-        PreferenceDialog pd = new PreferenceDialog(shell, manager);
-        pd.setSelectedNode(NSISPreferencePage.class.getName());
-        pd.open();
-    }
-
-    public boolean isEnabled()
-    {
-        return true;
+        NSISPreferencePage.show();
     }
 }

@@ -10,9 +10,7 @@
 package net.sf.eclipsensis.console;
 
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
+import java.util.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
@@ -22,8 +20,13 @@ import net.sf.eclipsensis.makensis.MakeNSISRunner;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.util.ImageManager;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
@@ -36,6 +39,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.ViewPart;
 
 public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRunListener
@@ -49,11 +53,11 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
     private Action mCancelAction;
 	private Action mDoubleClickAction;
     private ArrayList mContent = new ArrayList();
+    private ArrayList mErrors = new ArrayList();
     private HashSet mListeners = new HashSet();
     private boolean mDisposed = false;
     private Clipboard mClipboard = null;
     private Display mDisplay = null;
-    private NSISConsoleLine mCurrentLine = null;
     private boolean mIsCompiling = false;
 
     public static NSISConsole getConsole()
@@ -83,7 +87,7 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
     public void clear()
     {
         mContent.clear();
-        mCurrentLine = null;
+        mErrors.clear();
         if(Thread.currentThread() == mDisplay.getThread()) {
             _clear();
         }
@@ -108,9 +112,10 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
     
     public void add(final NSISConsoleLine line)
     {
-        line.setPreviousLine(mCurrentLine);
-        mCurrentLine = line;
-        mContent.add(mCurrentLine);
+        mContent.add(line);
+        if(line.getType() == NSISConsoleLine.ERROR) {
+            mErrors.add(line);
+        }
         if(Thread.currentThread() == mDisplay.getThread()) {
             _add(line);
         }
@@ -134,6 +139,14 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
         mSelectAllAction.setEnabled(true);
     }
     
+    /**
+     * @return Returns the errors.
+     */
+    public List getErrors()
+    {
+        return (mErrors==null?null:Collections.unmodifiableList(mErrors));
+    }
+
 	/**
 	 * This is a callback that will allow us
 	 * to create the viewer and initialize it.
@@ -280,7 +293,7 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
                                             }
                                         }
                         			}
-                        		},EclipseNSISPlugin.getResourceString("copy.action.name"),EclipseNSISPlugin.getResourceString("copy.action.tooltip"),EclipseNSISPlugin.getResourceString("copy.action.icon"),EclipseNSISPlugin.getResourceString("copy.action.disabled.icon"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                        		},EclipseNSISPlugin.getResourceString("copy.action.mName"),EclipseNSISPlugin.getResourceString("copy.action.tooltip"),EclipseNSISPlugin.getResourceString("copy.action.icon"),EclipseNSISPlugin.getResourceString("copy.action.disabled.icon"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
                                 ActionFactory.COPY,false);
         
         mSelectAllAction = makeAction(
@@ -288,7 +301,7 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
                                 public void run() {
                                     mViewer.setSelection(new StructuredSelection(mContent));
                                 }
-                            },EclipseNSISPlugin.getResourceString("selectall.action.name"),EclipseNSISPlugin.getResourceString("selectall.action.tooltip"),EclipseNSISPlugin.getResourceString("selectall.action.icon"),null, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                            },EclipseNSISPlugin.getResourceString("selectall.action.mName"),EclipseNSISPlugin.getResourceString("selectall.action.tooltip"),EclipseNSISPlugin.getResourceString("selectall.action.icon"),null, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                             ActionFactory.SELECT_ALL,false);
         
 		mClearAction = makeAction( 
@@ -296,7 +309,7 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
                     			public void run() {
                     				clear();
                     			}
-                    		},EclipseNSISPlugin.getResourceString("clear.action.name"),EclipseNSISPlugin.getResourceString("clear.action.tooltip"),EclipseNSISPlugin.getResourceString("clear.action.icon"),EclipseNSISPlugin.getResourceString("clear.action.disabled.icon"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                    		},EclipseNSISPlugin.getResourceString("clear.action.mName"),EclipseNSISPlugin.getResourceString("clear.action.tooltip"),EclipseNSISPlugin.getResourceString("clear.action.icon"),EclipseNSISPlugin.getResourceString("clear.action.disabled.icon"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
                             null,false);
         
         final NSISCancelAction cancelActionDelegate = new NSISCancelAction();
@@ -309,18 +322,36 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
                     public void dispose() {
                         cancelActionDelegate.dispose();
                     }
-                },EclipseNSISPlugin.getResourceString("cancel.action.name"),EclipseNSISPlugin.getResourceString("cancel.action.tooltip"),EclipseNSISPlugin.getResourceString("cancel.action.icon"),EclipseNSISPlugin.getResourceString("cancel.action.disabled.icon"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                },EclipseNSISPlugin.getResourceString("cancel.action.mName"),EclipseNSISPlugin.getResourceString("cancel.action.tooltip"),EclipseNSISPlugin.getResourceString("cancel.action.icon"),EclipseNSISPlugin.getResourceString("cancel.action.disabled.icon"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
                 null,false);
         cancelActionDelegate.init(mCancelAction);
 
 		mDoubleClickAction = new Action() {
 			public void run() {
 				ISelection selection = mViewer.getSelection();
-				Object obj = ((IStructuredSelection)selection).getFirstElement();
-                if(obj !=null && obj instanceof NSISConsoleLine) {
-                    NSISConsoleLine line = (NSISConsoleLine)obj;
-                    if(line.getFile() != null && line.getLineNum() > 0) {
-                        showMessage("Double-click detected on "+obj.toString()); //$NON-NLS-1$
+                if(selection instanceof IStructuredSelection) {
+    				Object obj = ((IStructuredSelection)selection).getFirstElement();
+                    if(obj !=null && obj instanceof NSISConsoleLine) {
+                        NSISConsoleLine line = (NSISConsoleLine)obj;
+                        IFile file = line.getFile();
+                        int lineNum = line.getLineNum();
+                        if(file != null && lineNum > 0) {
+                            IEditorPart editor = getSite().getPage().getActiveEditor();
+                            if (editor != null) {
+                                IEditorInput input = editor.getEditorInput();
+                                if (input instanceof IFileEditorInput) {
+                                    if (file.equals(((IFileEditorInput) input).getFile())) {
+                                        getSite().getPage().activate(editor);
+                                    }
+                                }
+                            }
+                        }
+                        try {
+                            IDE.openEditor(getSite().getPage(), new DummyMarker(file,lineNum), OpenStrategy.activateOnOpen());
+                        }
+                        catch (PartInitException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
 			}
@@ -343,6 +374,7 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
             }
         });
     }
+
 	private void showMessage(String message) {
 		MessageDialog.openInformation(
 			mViewer.getControl().getShell(),
@@ -417,7 +449,7 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
             return getText(obj);
         }
         public Image getColumnImage(Object obj, int index) {
-            return null; //getImage(obj);
+            return null;
         }
 
         /* (non-Javadoc)
@@ -477,6 +509,187 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
                 color = blue;
             }
             return color;
+        }
+    }
+
+    private class DummyMarker implements IMarker
+    {
+        private IResource mResource = null;
+        int mLine = -1;
+        
+        /**
+         * @param resource
+         * @param line
+         */
+        public DummyMarker(IResource resource, int line)
+        {
+            mResource = resource;
+            mLine = line;
+        }
+        
+        /* (non-Javadoc)
+         * @see org.eclipse.core.resources.IMarker#delete()
+         */
+        public void delete() throws CoreException
+        {
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.core.resources.IMarker#exists()
+         */
+        public boolean exists()
+        {
+            return true;
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.core.resources.IMarker#getAttribute(java.lang.String, boolean)
+         */
+        public boolean getAttribute(String attributeName, boolean defaultValue)
+        {
+            return defaultValue;
+        }
+        
+        /* (non-Javadoc)
+         * @see org.eclipse.core.resources.IMarker#getAttribute(java.lang.String, int)
+         */
+        public int getAttribute(String attributeName, int defaultValue)
+        {
+            if(attributeName.equals(IMarker.LINE_NUMBER)) {
+                return mLine;
+            }
+            else {
+                return defaultValue;
+            }
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.core.resources.IMarker#getAttribute(java.lang.String, java.lang.String)
+         */
+        public String getAttribute(String attributeName, String defaultValue)
+        {
+            return defaultValue;
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.core.resources.IMarker#getAttribute(java.lang.String)
+         */
+        public Object getAttribute(String attributeName) throws CoreException
+        {
+            if(attributeName.equals(IMarker.LINE_NUMBER)) {
+                return new Integer(mLine);
+            }
+            else {
+                return null;
+            }
+        }
+        
+        /* (non-Javadoc)
+         * @see org.eclipse.core.resources.IMarker#getAttributes()
+         */
+        public Map getAttributes() throws CoreException
+        {
+            return null;
+        }
+        
+        /* (non-Javadoc)
+         * @see org.eclipse.core.resources.IMarker#getAttributes(java.lang.String[])
+         */
+        public Object[] getAttributes(String[] attributeNames)
+                throws CoreException
+        {
+            Object[] values = new Object[attributeNames.length];
+            for (int i = 0; i < values.length; i++) {
+                values[i] = getAttribute(attributeNames[i]);
+            }
+            return values;
+        }
+        
+        /* (non-Javadoc)
+         * @see org.eclipse.core.resources.IMarker#getCreationTime()
+         */
+        public long getCreationTime() throws CoreException
+        {
+            return System.currentTimeMillis();
+        }
+        
+        /* (non-Javadoc)
+         * @see org.eclipse.core.resources.IMarker#getId()
+         */
+        public long getId()
+        {
+            return 0;
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.core.resources.IMarker#getResource()
+         */
+        public IResource getResource()
+        {
+            return mResource;
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.core.resources.IMarker#getType()
+         */
+        public String getType() throws CoreException
+        {
+            return PROBLEM_ID;
+        }
+        
+        /* (non-Javadoc)
+         * @see org.eclipse.core.resources.IMarker#isSubtypeOf(java.lang.String)
+         */
+        public boolean isSubtypeOf(String superType) throws CoreException
+        {
+            return false;
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.core.resources.IMarker#setAttribute(java.lang.String, boolean)
+         */
+        public void setAttribute(String attributeName, boolean value)
+                throws CoreException
+        {
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.core.resources.IMarker#setAttribute(java.lang.String, int)
+         */
+        public void setAttribute(String attributeName, int value)
+                throws CoreException
+        {
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.core.resources.IMarker#setAttribute(java.lang.String, java.lang.Object)
+         */
+        public void setAttribute(String attributeName, Object value)
+                throws CoreException
+        {
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.core.resources.IMarker#setAttributes(java.util.Map)
+         */
+        public void setAttributes(Map attributes) throws CoreException
+        {
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.core.resources.IMarker#setAttributes(java.lang.String[], java.lang.Object[])
+         */
+        public void setAttributes(String[] attributeNames, Object[] values)
+                throws CoreException
+        {
+        }
+        
+        /* (non-Javadoc)
+         * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
+         */
+        public Object getAdapter(Class adapter)
+        {
+            return null;
         }
     }
 }
