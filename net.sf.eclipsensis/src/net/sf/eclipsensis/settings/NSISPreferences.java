@@ -181,10 +181,10 @@ public class NSISPreferences extends NSISSettings implements IPropertyChangeList
             }
         }
         
-        String[] preferencePrefixes = {"error", "warning","info","task"};
-        String[] preferenceSuffixes = {"", "Color","InOverviewRuler","InVerticalRuler","Highlighting"};
+        String[] preferencePrefixes = {"error", "warning","info","task"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+        String[] preferenceSuffixes = {"", "Color","InOverviewRuler","InVerticalRuler","Highlighting"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
         for (int i = 0; i < preferencePrefixes.length; i++) {
-            String prefix = preferencePrefixes[i] + "Indication";
+            String prefix = preferencePrefixes[i] + "Indication"; //$NON-NLS-1$
             for (int j = 0; j < preferenceSuffixes.length; j++) {
                 String preference = prefix + preferenceSuffixes[j];
                 mInheritedPreferences.add(preference);

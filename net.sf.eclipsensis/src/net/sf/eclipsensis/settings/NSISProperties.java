@@ -11,8 +11,6 @@ package net.sf.eclipsensis.settings;
 
 import java.io.*;
 import java.util.*;
-import java.util.HashMap;
-import java.util.Random;
 
 import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.util.Common;

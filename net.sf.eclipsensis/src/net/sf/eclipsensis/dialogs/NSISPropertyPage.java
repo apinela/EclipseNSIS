@@ -10,7 +10,8 @@
 package net.sf.eclipsensis.dialogs;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.settings.*;
+import net.sf.eclipsensis.settings.NSISProperties;
+import net.sf.eclipsensis.settings.NSISSettings;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.swt.SWT;
