@@ -9,6 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.script;
 
+
 import net.sf.eclipsensis.util.Common;
 
 public abstract class AbstractNSISScriptElement implements INSISScriptElement 

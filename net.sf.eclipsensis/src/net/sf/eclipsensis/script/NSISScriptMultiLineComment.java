@@ -9,6 +9,8 @@
  *******************************************************************************/
 package net.sf.eclipsensis.script;
 
+import net.sf.eclipsensis.util.Common;
+
 public class NSISScriptMultiLineComment implements INSISScriptElement
 {
     private String mText = ""; //$NON-NLS-1$
@@ -42,8 +44,15 @@ public class NSISScriptMultiLineComment implements INSISScriptElement
      */
     public void write(NSISScriptWriter writer)
     {
-        writer.print("/*"); //$NON-NLS-1$
-        writer.print(mText);
-        writer.println("*/"); //$NON-NLS-1$
+        String[] lines = Common.formatLines(getText(),SCRIPT_MAX_LINE_LENGTH-2);
+        if(!Common.isEmptyArray(lines)) {
+            writer.print("/* "); //$NON-NLS-1$
+            writer.print(lines[0]);
+            for (int i = 1; i < lines.length; i++) {
+                writer.print(" * "); //$NON-NLS-1$
+                writer.println(lines[i]);
+            }
+        }
+        writer.println(" */"); //$NON-NLS-1$
     }
 }

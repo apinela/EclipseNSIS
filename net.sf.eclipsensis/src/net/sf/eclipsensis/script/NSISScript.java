@@ -57,10 +57,9 @@ public class NSISScript extends AbstractNSISScriptElementContainer
     protected void validateElement(INSISScriptElement element) throws InvalidNSISScriptElementException
     {
         if(element != null) {
-            if(element instanceof NSISScriptDefine || element instanceof NSISScriptAttribute || 
-               element instanceof NSISScriptFunction || element instanceof NSISScriptBlankLine ||
-               element instanceof NSISScriptSectionGroup || element instanceof NSISScriptMacro || 
-               element instanceof NSISScriptInsertMacro || element instanceof NSISScriptInclude) {
+            if(element instanceof NSISScriptAttribute || element instanceof NSISScriptFunction || 
+               element instanceof NSISScriptSectionGroup || element instanceof NSISScriptInclude ||
+               element instanceof NSISScriptMacro) {
                 return;
             }
             else if(element instanceof NSISScriptSection) {

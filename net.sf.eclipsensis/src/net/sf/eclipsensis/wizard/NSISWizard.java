@@ -38,7 +38,7 @@ public class NSISWizard extends Wizard implements INewWizard, INSISWizardConstan
     private static File cTemplateFolder = null;
     
     static {
-        cTemplateFolder = new File(EclipseNSISPlugin.getPluginStateLocation(),"wizard");
+        cTemplateFolder = new File(EclipseNSISPlugin.getPluginStateLocation(),"wizard"); //$NON-NLS-1$
         if(cTemplateFolder.exists()) {
             if(!cTemplateFolder.isDirectory()) {
                 cTemplateFolder.delete();

@@ -9,7 +9,10 @@
  *******************************************************************************/
 package net.sf.eclipsensis.script;
 
+import net.sf.eclipsensis.EclipseNSISPlugin;
+
 public interface INSISScriptElement
 {
+    public static final int SCRIPT_MAX_LINE_LENGTH = Integer.parseInt(EclipseNSISPlugin.getResourceString("script.max.line.length","80")); //$NON-NLS-1$ //$NON-NLS-2$
     public void write(NSISScriptWriter writer);
 }

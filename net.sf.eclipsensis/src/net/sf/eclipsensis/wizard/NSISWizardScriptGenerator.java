@@ -17,9 +17,11 @@ import java.io.OutputStreamWriter;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.io.PrintWriter;
+import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -218,9 +220,17 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
 
     private void writeScript()
     {
-        //TODO Group reservefiles and Pages
         boolean isSilent = false;
         boolean isMUI = false;
+        switch(mSettings.getInstallerType()) {
+            case INSTALLER_TYPE_SILENT:
+                isSilent = true;
+                break;
+            case INSTALLER_TYPE_MUI:
+                isMUI = true;
+                break;
+        }
+
         NSISLanguageManager languageManager = NSISLanguageManager.getInstance();
         List languages = mSettings.getLanguages();
         NSISScript script = new NSISScript(mSettings.getName());
@@ -229,110 +239,125 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
             script.addElement(new NSISScriptAttribute("SetCompressor",MakeNSISRunner.COMPRESSOR_NAME_ARRAY[mSettings.getCompressorType()])); //$NON-NLS-1$
             script.addElement(new NSISScriptBlankLine());
         }
-        
-        script.addElement(new NSISScriptInclude("Sections.nsh")); //$NON-NLS-1$
-        switch(mSettings.getInstallerType()) {
-            case INSTALLER_TYPE_SILENT:
-                isSilent = true;
-                break;
-            case INSTALLER_TYPE_MUI:
-                isMUI = true;
-                script.addElement(new NSISScriptInclude("MUI.nsh")); //$NON-NLS-1$
-                script.addElement(new NSISScriptBlankLine());
-                break;
+        script.addElement(new NSISScriptSingleLineComment(EclipseNSISPlugin.getResourceString("scriptgen.defines.comment"))); //$NON-NLS-1$
+        INSISScriptElement definesPlaceHolder = script.addElement(new NSISScriptBlankLine());
+        INSISScriptElement muiDefsPlaceHolder = null;
+        if(isMUI) {
+            script.addElement(new NSISScriptSingleLineComment(EclipseNSISPlugin.getResourceString("scriptgen.muidefs.comment"))); //$NON-NLS-1$
+            muiDefsPlaceHolder = script.addElement(new NSISScriptBlankLine());
+        }
+        script.addElement(new NSISScriptSingleLineComment(EclipseNSISPlugin.getResourceString("scriptgen.includes.comment"))); //$NON-NLS-1$
+        INSISScriptElement includePlaceHolder = script.addElement(new NSISScriptBlankLine());
+        script.addElement(new NSISScriptSingleLineComment(EclipseNSISPlugin.getResourceString("scriptgen.reservedfiles.comment"))); //$NON-NLS-1$
+        INSISScriptElement reservedFilesPlaceHolder = script.addElement(new NSISScriptBlankLine());
+        script.addElement(new NSISScriptSingleLineComment(EclipseNSISPlugin.getResourceString("scriptgen.variables.comment"))); //$NON-NLS-1$
+        INSISScriptElement varsPlaceHolder = script.addElement(new NSISScriptBlankLine());
+        script.addElement(new NSISScriptSingleLineComment(EclipseNSISPlugin.getResourceString("scriptgen.pages.comment"))); //$NON-NLS-1$
+        INSISScriptElement pagesPlaceHolder = script.addElement(new NSISScriptBlankLine());
+        script.addElement(new NSISScriptSingleLineComment(EclipseNSISPlugin.getResourceString("scriptgen.attributes.comment"))); //$NON-NLS-1$
+        INSISScriptElement attributesPlaceHolder = script.addElement(new NSISScriptBlankLine());
+        script.addElement(new NSISScriptSingleLineComment(EclipseNSISPlugin.getResourceString("scriptgen.sections.comment"))); //$NON-NLS-1$
+        INSISScriptElement sectionsPlaceHolder = script.addElement(new NSISScriptBlankLine());
+        INSISScriptElement unsectionsPlaceHolder = null;
+        if(mSettings.isCreateUninstaller()) {
+            script.addElement(new NSISScriptSingleLineComment(EclipseNSISPlugin.getResourceString("scriptgen.unsections.comment"))); //$NON-NLS-1$
+            unsectionsPlaceHolder = script.addElement(new NSISScriptBlankLine());
+        }
+        script.addElement(new NSISScriptSingleLineComment(EclipseNSISPlugin.getResourceString("scriptgen.functions.comment"))); //$NON-NLS-1$
+        INSISScriptElement functionsPlaceHolder = script.addElement(new NSISScriptBlankLine());
+        INSISScriptElement unfunctionsPlaceHolder = null;
+        if(mSettings.isCreateUninstaller()) {
+            script.addElement(new NSISScriptSingleLineComment(EclipseNSISPlugin.getResourceString("scriptgen.unfunctions.comment"))); //$NON-NLS-1$
+            unfunctionsPlaceHolder = script.addElement(new NSISScriptBlankLine());
+        }
+
+        script.insertElement(includePlaceHolder,new NSISScriptInclude("Sections.nsh")); //$NON-NLS-1$
+        if(isMUI) {
+            script.insertElement(includePlaceHolder,new NSISScriptInclude("MUI.nsh")); //$NON-NLS-1$
         }
         
         IContainer saveFolder = mSaveFile.getParent();
 
-        script.addElement(new NSISScriptAttribute("OutFile",maybeMakeRelative(saveFolder,mSettings.getOutFile()))); //$NON-NLS-1$
-        INSISScriptElement placeHolder1 = script.addElement(new NSISScriptBlankLine());
+        script.insertElement(attributesPlaceHolder,new NSISScriptAttribute("OutFile",maybeMakeRelative(saveFolder,mSettings.getOutFile()))); //$NON-NLS-1$
 
         if(mSettings.isCreateUninstaller()) {
-            INSISScriptElement el = script.insertAfterElement(placeHolder1,new NSISScriptDefine("REGKEY","\"SOFTWARE\\$(^Name)\"")); //$NON-NLS-1$ //$NON-NLS-2$
-            script.insertAfterElement(el, new NSISScriptBlankLine());
+            INSISScriptElement el = script.insertElement(definesPlaceHolder,new NSISScriptDefine("REGKEY","\"SOFTWARE\\$(^Name)\"")); //$NON-NLS-1$ //$NON-NLS-2$
         }
 
-        INSISScriptElement placeHolder2 = script.addElement(new NSISScriptAttribute("InstallDir",mSettings.getInstallDir())); //$NON-NLS-1$
-        script.addElement(new NSISScriptAttribute("CRCCheck","on")); //$NON-NLS-1$ //$NON-NLS-2$
-        script.addElement(new NSISScriptAttribute("XPStyle","on")); //$NON-NLS-1$ //$NON-NLS-2$
-        INSISScriptElement placeHolder3 = script.addElement(new NSISScriptBlankLine());
+        script.insertElement(attributesPlaceHolder,new NSISScriptAttribute("InstallDir",mSettings.getInstallDir())); //$NON-NLS-1$
+        script.insertElement(attributesPlaceHolder,new NSISScriptAttribute("CRCCheck","on")); //$NON-NLS-1$ //$NON-NLS-2$
+        script.insertElement(attributesPlaceHolder,new NSISScriptAttribute("XPStyle","on")); //$NON-NLS-1$ //$NON-NLS-2$
 
         String icon = maybeMakeRelative(saveFolder,mSettings.getIcon());
         if(!Common.isEmpty(icon)) {
             if(isMUI) {
-                placeHolder3 = script.addElement(new NSISScriptDefine("MUI_ICON",icon)); //$NON-NLS-1$
+                script.insertElement(muiDefsPlaceHolder,new NSISScriptDefine("MUI_ICON",icon)); //$NON-NLS-1$
             }
             else {
-                placeHolder3 = script.addElement(new NSISScriptAttribute("Icon",icon)); //$NON-NLS-1$
+                script.insertElement(attributesPlaceHolder,new NSISScriptAttribute("Icon",icon)); //$NON-NLS-1$
             }
         }
-
-        INSISScriptElement placeHolder4 = script.addElement(new NSISScriptBlankLine());
         
         if(!isSilent) {
-            placeHolder4 = script.insertAfterElement(placeHolder4, new NSISScriptAttribute("ShowInstDetails",(mSettings.isShowInstDetails()?"show":"hide"))); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            script.insertElement(attributesPlaceHolder,new NSISScriptAttribute("ShowInstDetails",(mSettings.isShowInstDetails()?"show":"hide"))); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             if(!mSettings.isAutoCloseInstaller()) {
                 if(isMUI) {
-                    placeHolder4 = script.insertAfterElement(placeHolder4, new NSISScriptDefine("MUI_FINISHPAGE_NOAUTOCLOSE")); //$NON-NLS-1$
+                    script.insertElement(muiDefsPlaceHolder,new NSISScriptDefine("MUI_FINISHPAGE_NOAUTOCLOSE")); //$NON-NLS-1$
                 }
                 else {
-                    placeHolder4 = script.insertAfterElement(placeHolder4, new NSISScriptAttribute("AutoCloseWindow","false")); //$NON-NLS-1$ //$NON-NLS-2$
+                    script.insertElement(attributesPlaceHolder,new NSISScriptAttribute("AutoCloseWindow","false")); //$NON-NLS-1$ //$NON-NLS-2$
                 }
             }
             else if (!isMUI) {
-                placeHolder4 = script.insertAfterElement(placeHolder4, new NSISScriptAttribute("AutoCloseWindow","true")); //$NON-NLS-1$ //$NON-NLS-2$
+                script.insertElement(attributesPlaceHolder,new NSISScriptAttribute("AutoCloseWindow","true")); //$NON-NLS-1$ //$NON-NLS-2$
             }
-            placeHolder4 = script.insertAfterElement(placeHolder4, new NSISScriptBlankLine());
         }
         else {
-            script.insertAfterElement(placeHolder2, new NSISScriptAttribute("SilentInstall")); //$NON-NLS-1$
+            script.insertElement(attributesPlaceHolder,new NSISScriptAttribute("SilentInstall")); //$NON-NLS-1$
         }
         
         if(isMUI) {
-            script.addElement(new NSISScriptInsertMacro("MUI_PAGE_WELCOME")); //$NON-NLS-1$
+            script.insertElement(pagesPlaceHolder,new NSISScriptInsertMacro("MUI_PAGE_WELCOME")); //$NON-NLS-1$
             if(mSettings.isShowLicense()) {
                 int licenseButtonType = mSettings.getLicenseButtonType();
                 switch(licenseButtonType) {
                     case LICENSE_BUTTON_CHECKED:
-                        script.addElement(new NSISScriptDefine("MUI_LICENSEPAGE_CHECKBOX")); //$NON-NLS-1$
+                        script.insertElement(muiDefsPlaceHolder,new NSISScriptDefine("MUI_LICENSEPAGE_CHECKBOX")); //$NON-NLS-1$
                         break;
                     case LICENSE_BUTTON_RADIO:
-                        script.addElement(new NSISScriptDefine("MUI_LICENSEPAGE_RADIOBUTTONS")); //$NON-NLS-1$
+                        script.insertElement(muiDefsPlaceHolder,new NSISScriptDefine("MUI_LICENSEPAGE_RADIOBUTTONS")); //$NON-NLS-1$
                         break;
                 }
-                script.addElement(new NSISScriptInsertMacro("MUI_PAGE_LICENSE",new String[]{maybeMakeRelative(saveFolder,mSettings.getLicenseData())})); //$NON-NLS-1$
+                script.insertElement(pagesPlaceHolder,new NSISScriptInsertMacro("MUI_PAGE_LICENSE",new String[]{maybeMakeRelative(saveFolder,mSettings.getLicenseData())})); //$NON-NLS-1$
             }
             if(mSettings.isSelectComponents()) {
-                script.addElement(new NSISScriptInsertMacro("MUI_PAGE_COMPONENTS")); //$NON-NLS-1$
+                script.insertElement(pagesPlaceHolder,new NSISScriptInsertMacro("MUI_PAGE_COMPONENTS")); //$NON-NLS-1$
             }
             if(mSettings.isChangeInstallDir()) {
-                script.addElement(new NSISScriptInsertMacro("MUI_PAGE_DIRECTORY")); //$NON-NLS-1$
+                script.insertElement(pagesPlaceHolder,new NSISScriptInsertMacro("MUI_PAGE_DIRECTORY")); //$NON-NLS-1$
             }
             if(mSettings.isCreateStartMenuGroup()) {
-                script.addElement(new NSISScriptBlankLine());
-                script.addElement(new NSISScriptAttribute("Var","StartMenuGroup")); //$NON-NLS-1$ //$NON-NLS-2$
+                script.insertElement(varsPlaceHolder,new NSISScriptAttribute("Var","StartMenuGroup")); //$NON-NLS-1$ //$NON-NLS-2$
                 if(mSettings.isChangeStartMenuGroup()) {
-                    script.addElement(new NSISScriptDefine("MUI_STARTMENUPAGE_REGISTRY_ROOT","HKCU"));  //$NON-NLS-1$ //$NON-NLS-2$
-                    script.addElement(new NSISScriptDefine("MUI_STARTMENUPAGE_NODISABLE")); //$NON-NLS-1$
-                    script.addElement(new NSISScriptDefine("MUI_STARTMENUPAGE_REGISTRY_KEY","Software\\"+mSettings.getName()));  //$NON-NLS-1$ //$NON-NLS-2$
-                    script.addElement(new NSISScriptDefine("MUI_STARTMENUPAGE_REGISTRY_VALUENAME","StartMenuGroup")); //$NON-NLS-1$ //$NON-NLS-2$
-                    script.addElement(new NSISScriptDefine("MUI_STARTMENUPAGE_DEFAULT_FOLDER",mSettings.getStartMenuGroup()));  //$NON-NLS-1$
-                    script.addElement(new NSISScriptInsertMacro("MUI_PAGE_STARTMENU",new String[]{"Application","$StartMenuGroup"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                    script.insertElement(muiDefsPlaceHolder,new NSISScriptDefine("MUI_STARTMENUPAGE_REGISTRY_ROOT","HKCU"));  //$NON-NLS-1$ //$NON-NLS-2$
+                    script.insertElement(muiDefsPlaceHolder,new NSISScriptDefine("MUI_STARTMENUPAGE_NODISABLE")); //$NON-NLS-1$
+                    script.insertElement(muiDefsPlaceHolder,new NSISScriptDefine("MUI_STARTMENUPAGE_REGISTRY_KEY","Software\\"+mSettings.getName()));  //$NON-NLS-1$ //$NON-NLS-2$
+                    script.insertElement(muiDefsPlaceHolder,new NSISScriptDefine("MUI_STARTMENUPAGE_REGISTRY_VALUENAME","StartMenuGroup")); //$NON-NLS-1$ //$NON-NLS-2$
+                    script.insertElement(muiDefsPlaceHolder,new NSISScriptDefine("MUI_STARTMENUPAGE_DEFAULT_FOLDER",mSettings.getStartMenuGroup()));  //$NON-NLS-1$
+                    script.insertElement(pagesPlaceHolder,new NSISScriptInsertMacro("MUI_PAGE_STARTMENU",new String[]{"Application","$StartMenuGroup"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                 }
-                script.addElement(new NSISScriptBlankLine());
             }
-            script.addElement(new NSISScriptInsertMacro("MUI_PAGE_INSTFILES")); //$NON-NLS-1$
-            script.addElement(new NSISScriptBlankLine());
+            script.insertElement(pagesPlaceHolder,new NSISScriptInsertMacro("MUI_PAGE_INSTFILES")); //$NON-NLS-1$
             if(!Common.isEmpty(mSettings.getRunProgramAfterInstall())) {
-                script.addElement(new NSISScriptDefine("MUI_FINISHPAGE_RUN",mSettings.getRunProgramAfterInstall())); //$NON-NLS-1$
+                script.insertElement(muiDefsPlaceHolder,new NSISScriptDefine("MUI_FINISHPAGE_RUN",mSettings.getRunProgramAfterInstall())); //$NON-NLS-1$
                 if(!Common.isEmpty(mSettings.getRunProgramAfterInstallParams())) {
-                    script.addElement(new NSISScriptDefine("MUI_FINISHPAGE_RUN_PARAMETERS",escapeQuotes(mSettings.getRunProgramAfterInstallParams()))); //$NON-NLS-1$
+                    script.insertElement(muiDefsPlaceHolder,new NSISScriptDefine("MUI_FINISHPAGE_RUN_PARAMETERS",escapeQuotes(mSettings.getRunProgramAfterInstallParams()))); //$NON-NLS-1$
                 }
             }
             if(!Common.isEmpty(mSettings.getOpenReadmeAfterInstall())) {
-                script.addElement(new NSISScriptDefine("MUI_FINISHPAGE_SHOWREADME",mSettings.getOpenReadmeAfterInstall())); //$NON-NLS-1$
+                script.insertElement(muiDefsPlaceHolder,new NSISScriptDefine("MUI_FINISHPAGE_SHOWREADME",mSettings.getOpenReadmeAfterInstall())); //$NON-NLS-1$
             }
-            script.addElement(new NSISScriptInsertMacro("MUI_PAGE_FINISH")); //$NON-NLS-1$
+            script.insertElement(pagesPlaceHolder,new NSISScriptInsertMacro("MUI_PAGE_FINISH")); //$NON-NLS-1$
         }
         else {
             if(!isSilent) {
@@ -340,34 +365,32 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
                     int licenseButtonType = mSettings.getLicenseButtonType();
                     switch(licenseButtonType) {
                         case LICENSE_BUTTON_CHECKED:
-                            script.addElement(new NSISScriptAttribute("LicenseForceSelection","checkbox")); //$NON-NLS-1$ //$NON-NLS-2$
+                            script.insertElement(attributesPlaceHolder,new NSISScriptAttribute("LicenseForceSelection","checkbox")); //$NON-NLS-1$ //$NON-NLS-2$
                             break;
                         case LICENSE_BUTTON_RADIO:
-                            script.addElement(new NSISScriptAttribute("LicenseForceSelection","radiobuttons")); //$NON-NLS-1$ //$NON-NLS-2$
+                            script.insertElement(attributesPlaceHolder,new NSISScriptAttribute("LicenseForceSelection","radiobuttons")); //$NON-NLS-1$ //$NON-NLS-2$
                             break;
                     }
-                    script.addElement(new NSISScriptAttribute("LicenseData",maybeMakeRelative(saveFolder,mSettings.getLicenseData()))); //$NON-NLS-1$
-                    script.addElement(new NSISScriptAttribute("Page","license")); //$NON-NLS-1$ //$NON-NLS-2$
+                    script.insertElement(attributesPlaceHolder,new NSISScriptAttribute("LicenseData",maybeMakeRelative(saveFolder,mSettings.getLicenseData()))); //$NON-NLS-1$
+                    script.insertElement(pagesPlaceHolder,new NSISScriptAttribute("Page","license")); //$NON-NLS-1$ //$NON-NLS-2$
                 }
                 if(mSettings.isSelectComponents()) {
-                    script.addElement(new NSISScriptAttribute("Page","components")); //$NON-NLS-1$ //$NON-NLS-2$
+                    script.insertElement(pagesPlaceHolder,new NSISScriptAttribute("Page","components")); //$NON-NLS-1$ //$NON-NLS-2$
                 }
                 if(mSettings.isChangeInstallDir()) {
-                    script.addElement(new NSISScriptAttribute("Page","directory")); //$NON-NLS-1$ //$NON-NLS-2$
+                    script.insertElement(pagesPlaceHolder,new NSISScriptAttribute("Page","directory")); //$NON-NLS-1$ //$NON-NLS-2$
                 }
             }
             
             if(mSettings.isCreateStartMenuGroup()) {
                 if(!isSilent && mSettings.isChangeStartMenuGroup()) {
-                    script.addElement(new NSISScriptAttribute("ReserveFile","${NSISDIR}\\Plugins\\StartMenu.dll")); //$NON-NLS-1$ //$NON-NLS-2$
-                    script.addElement(new NSISScriptAttribute("Page",new String[]{"custom","StartMenuGroupSelect","", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                    script.insertElement(reservedFilesPlaceHolder,new NSISScriptAttribute("ReserveFile","${NSISDIR}\\Plugins\\StartMenu.dll")); //$NON-NLS-1$ //$NON-NLS-2$
+                    script.insertElement(pagesPlaceHolder,new NSISScriptAttribute("Page",new String[]{"custom","StartMenuGroupSelect","", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
                                                                (mSettings.isEnableLanguageSupport()?": $(StartMenuPageTitle)": //$NON-NLS-1$
                                                                 MessageFormat.format(": {0}",new String[]{ //$NON-NLS-1$
                                                                 EclipseNSISPlugin.getResourceString("scriptgen.start.menu.page.title")}))})); //$NON-NLS-1$
-                    script.addElement(new NSISScriptBlankLine());
-                    script.addElement(new NSISScriptAttribute("Var","StartMenuGroup")); //$NON-NLS-1$ //$NON-NLS-2$
-                    script.addElement(new NSISScriptBlankLine());
-                    NSISScriptFunction fn = (NSISScriptFunction)script.addElement(new NSISScriptFunction("StartMenuGroupSelect")); //$NON-NLS-1$
+                    script.insertElement(varsPlaceHolder,new NSISScriptAttribute("Var","StartMenuGroup")); //$NON-NLS-1$ //$NON-NLS-2$
+                    NSISScriptFunction fn = (NSISScriptFunction)script.insertElement(functionsPlaceHolder,new NSISScriptFunction("StartMenuGroupSelect")); //$NON-NLS-1$
                     fn.addElement(new NSISScriptInstruction("Push","$R1")); //$NON-NLS-1$ //$NON-NLS-2$
                     fn.addElement(new NSISScriptInstruction("StartMenu::Select",new String[]{"/autoadd","/text", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                             (mSettings.isEnableLanguageSupport()?": $(StartMenuPageText)": //$NON-NLS-1$
@@ -382,15 +405,15 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
                     fn.addElement(new NSISScriptInstruction("Pop","$StartMenuGroup")); //$NON-NLS-1$ //$NON-NLS-2$
                     fn.addElement(new NSISScriptInstruction("done:")); //$NON-NLS-1$
                     fn.addElement(new NSISScriptInstruction("Pop","$R1")); //$NON-NLS-1$ //$NON-NLS-2$
-                    script.addElement(new NSISScriptBlankLine());
+                    script.insertElement(functionsPlaceHolder,new NSISScriptBlankLine());
                 }
             }
 
-            script.addElement(new NSISScriptAttribute("Page","instfiles")); //$NON-NLS-1$ //$NON-NLS-2$
+            script.insertElement(pagesPlaceHolder,new NSISScriptAttribute("Page","instfiles")); //$NON-NLS-1$ //$NON-NLS-2$
             if(!Common.isEmpty(mSettings.getRunProgramAfterInstall()) ||
                !Common.isEmpty(mSettings.getOpenReadmeAfterInstall())) {
                 script.addElement(new NSISScriptBlankLine());
-                NSISScriptFunction fn = (NSISScriptFunction)script.addElement(new NSISScriptFunction(".onInstSuccess")); //$NON-NLS-1$
+                NSISScriptFunction fn = (NSISScriptFunction)script.insertElement(functionsPlaceHolder,new NSISScriptFunction(".onInstSuccess")); //$NON-NLS-1$
                 if(!Common.isEmpty(mSettings.getRunProgramAfterInstall())) {
                     StringBuffer buf = new StringBuffer("$\\\"").append( //$NON-NLS-1$
                             mSettings.getRunProgramAfterInstall()).append(
@@ -399,52 +422,51 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
                         buf.append(" ").append(escapeQuotes(mSettings.getRunProgramAfterInstallParams())); //$NON-NLS-1$
                     }
                     fn.addElement(new NSISScriptInstruction("Exec",buf.toString())); //$NON-NLS-1$
-                    script.addElement(new NSISScriptBlankLine());
+                    script.insertElement(functionsPlaceHolder,new NSISScriptBlankLine());
                 }
                 if(!Common.isEmpty(mSettings.getOpenReadmeAfterInstall())) {
                     fn.addElement(new NSISScriptInstruction("ExecShell",new String[]{"open",mSettings.getOpenReadmeAfterInstall()})); //$NON-NLS-1$ //$NON-NLS-2$
                 }
             }
         }
-        INSISScriptElement placeHolder5 = script.addElement(new NSISScriptBlankLine());
         
         if(!isSilent && mSettings.isShowBackground()) {
             String backgroundBMP = mSettings.getBackgroundBMP();
             String backgroundWAV = mSettings.getBackgroundWAV();
             if(Common.isEmpty(backgroundBMP)) {
-                script.addElement(new NSISScriptAttribute("BGGradient", //$NON-NLS-1$
+                script.insertElement(attributesPlaceHolder,new NSISScriptAttribute("BGGradient", //$NON-NLS-1$
                                  new String[] {
                                       ColorManager.rgbToHex(mSettings.getBGTopColor()),
                                       ColorManager.rgbToHex(mSettings.getBGBottomColor()),
                                       ColorManager.rgbToHex(mSettings.getBGTextColor())}));
                 if(!Common.isEmpty(backgroundWAV)) {
-                    script.addElement(new NSISScriptBlankLine());
-                    script.addElement(new NSISScriptAttribute("ReserveFile","${NSISDIR}\\Plugins\\BGImage.dll")); //$NON-NLS-1$ //$NON-NLS-2$
+                    script.insertElement(reservedFilesPlaceHolder,new NSISScriptAttribute("ReserveFile","${NSISDIR}\\Plugins\\BGImage.dll")); //$NON-NLS-1$ //$NON-NLS-2$
                     NSISScriptFunction fn;
                     if(isMUI) {
-                        script.addElement(new NSISScriptDefine("MUI_CUSTOMFUNCTION_GUIINIT","CustomGUIInit")); //$NON-NLS-1$ //$NON-NLS-2$
-                        fn = (NSISScriptFunction)script.addElement(new NSISScriptFunction("CustomGUIInit")); //$NON-NLS-1$
+                        script.insertElement(muiDefsPlaceHolder,new NSISScriptDefine("MUI_CUSTOMFUNCTION_GUIINIT","CustomGUIInit")); //$NON-NLS-1$ //$NON-NLS-2$
+                        fn = (NSISScriptFunction)script.insertElement(functionsPlaceHolder,new NSISScriptFunction("CustomGUIInit")); //$NON-NLS-1$
                     }
                     else {
-                        fn = (NSISScriptFunction)script.addElement(new NSISScriptFunction(".onGUIInit")); //$NON-NLS-1$
+                        fn = (NSISScriptFunction)script.insertElement(functionsPlaceHolder,new NSISScriptFunction(".onGUIInit")); //$NON-NLS-1$
                     }
                     fn.addElement(new NSISScriptInstruction("File",new String[]{"/oname=$PLUGINSDIR\\bgimage.wav",maybeMakeRelative(saveFolder,backgroundWAV)})); //$NON-NLS-1$ //$NON-NLS-2$
                     fn.addElement(new NSISScriptInstruction("BGImage::Sound",new String[]{"/NOUNLOAD","/LOOP","$PLUGINSDIR\\bgimage.wav"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-                    script.addElement(new NSISScriptBlankLine());
+                    script.insertElement(functionsPlaceHolder,new NSISScriptBlankLine());
 
-                    fn = (NSISScriptFunction)script.addElement(new NSISScriptFunction(".onGUIEnd")); //$NON-NLS-1$
+                    fn = (NSISScriptFunction)script.insertElement(functionsPlaceHolder,new NSISScriptFunction(".onGUIEnd")); //$NON-NLS-1$
                     fn.addElement(new NSISScriptInstruction("BGImage::Sound","/STOP")); //$NON-NLS-1$ //$NON-NLS-2$
+                    script.insertElement(functionsPlaceHolder,new NSISScriptBlankLine());
                 }
             }
             else {
-                script.addElement(new NSISScriptAttribute("ReserveFile","${NSISDIR}\\Plugins\\BGImage.dll")); //$NON-NLS-1$ //$NON-NLS-2$
+                script.insertElement(reservedFilesPlaceHolder,new NSISScriptAttribute("ReserveFile","${NSISDIR}\\Plugins\\BGImage.dll")); //$NON-NLS-1$ //$NON-NLS-2$
                 NSISScriptFunction fn;
                 if(isMUI) {
-                    script.addElement(new NSISScriptDefine("MUI_CUSTOMFUNCTION_GUIINIT","CustomGUIInit")); //$NON-NLS-1$ //$NON-NLS-2$
-                    fn = (NSISScriptFunction)script.addElement(new NSISScriptFunction("CustomGUIInit")); //$NON-NLS-1$
+                    script.insertElement(muiDefsPlaceHolder,new NSISScriptDefine("MUI_CUSTOMFUNCTION_GUIINIT","CustomGUIInit")); //$NON-NLS-1$ //$NON-NLS-2$
+                    fn = (NSISScriptFunction)script.insertElement(functionsPlaceHolder,new NSISScriptFunction("CustomGUIInit")); //$NON-NLS-1$
                 }
                 else {
-                    fn = (NSISScriptFunction)script.addElement(new NSISScriptFunction(".onGUIInit")); //$NON-NLS-1$
+                    fn = (NSISScriptFunction)script.insertElement(functionsPlaceHolder,new NSISScriptFunction(".onGUIInit")); //$NON-NLS-1$
                 }
                 fn.addElement(new NSISScriptInstruction("Push","$R1")); //$NON-NLS-1$ //$NON-NLS-2$
                 fn.addElement(new NSISScriptInstruction("Push","$R2")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -481,47 +503,49 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
                 fn.addElement(new NSISScriptInstruction("done:")); //$NON-NLS-1$
                 fn.addElement(new NSISScriptInstruction("Pop","$R2")); //$NON-NLS-1$ //$NON-NLS-2$
                 fn.addElement(new NSISScriptInstruction("Pop","$R1")); //$NON-NLS-1$ //$NON-NLS-2$
+                script.insertElement(functionsPlaceHolder,new NSISScriptBlankLine());
 
-                script.addElement(new NSISScriptBlankLine());
-                fn = (NSISScriptFunction)script.addElement(new NSISScriptFunction(".onGUIEnd")); //$NON-NLS-1$
+                fn = (NSISScriptFunction)script.insertElement(functionsPlaceHolder,new NSISScriptFunction(".onGUIEnd")); //$NON-NLS-1$
                 if(!Common.isEmpty(backgroundWAV)) {
                     fn.addElement(new NSISScriptInstruction("BGImage::Sound",new String[]{"/NOUNLOAD","/STOP"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                 }
                 fn.addElement(new NSISScriptInstruction("BGImage::Destroy")); //$NON-NLS-1$
+                script.insertElement(functionsPlaceHolder,new NSISScriptBlankLine());
             }
-            placeHolder5 = script.addElement(new NSISScriptBlankLine());
         }
 
         NSISLanguage defaultLanguage = null;
         if(mSettings.isEnableLanguageSupport()) {
             if(!isSilent && mSettings.isSelectLanguage() && languages.size() > 1) {
                 if(isMUI) {
-                    placeHolder5 = script.insertAfterElement(placeHolder5,new NSISScriptInsertMacro("MUI_RESERVEFILE_LANGDLL")); //$NON-NLS-1$
+                    script.insertElement(reservedFilesPlaceHolder,new NSISScriptInsertMacro("MUI_RESERVEFILE_LANGDLL")); //$NON-NLS-1$
                 }
                 else {
-                    placeHolder5 = script.insertAfterElement(placeHolder5,new NSISScriptAttribute("ReserveFile","${NSISDIR}\\Plugins\\LangDLL.dll")); //$NON-NLS-1$ //$NON-NLS-2$
+                    script.insertElement(reservedFilesPlaceHolder,new NSISScriptAttribute("ReserveFile","${NSISDIR}\\Plugins\\LangDLL.dll")); //$NON-NLS-1$ //$NON-NLS-2$
                 }
-                placeHolder5 = script.insertAfterElement(placeHolder5,new NSISScriptBlankLine());
             }
 
+            INSISScriptElement languagesPlaceHolder = script.insertAfterElement(pagesPlaceHolder,new NSISScriptBlankLine());
+            script.insertAfterElement(pagesPlaceHolder,new NSISScriptSingleLineComment(EclipseNSISPlugin.getResourceString("scriptgen.languages.comment"))); //$NON-NLS-1$
             defaultLanguage = (NSISLanguage)languages.get(0);
             for (Iterator iter = languages.iterator(); iter.hasNext();) {
                 NSISLanguage language = (NSISLanguage) iter.next();
                 if(isMUI) {
-                    placeHolder5 = script.insertAfterElement(placeHolder5,new NSISScriptInsertMacro("MUI_LANGUAGE",language.getName())); //$NON-NLS-1$
+                    script.insertElement(languagesPlaceHolder,new NSISScriptInsertMacro("MUI_LANGUAGE",language.getName())); //$NON-NLS-1$
                 }
                 else {
-                    placeHolder5 = script.insertAfterElement(placeHolder5,new NSISScriptAttribute("LoadLanguageFile", //$NON-NLS-1$
+                    script.insertElement(languagesPlaceHolder,new NSISScriptAttribute("LoadLanguageFile", //$NON-NLS-1$
                                     new StringBuffer("${NSISDIR}\\").append(INSISConstants.LANGUAGE_FILES_LOCATION).append( //$NON-NLS-1$
                                     "\\").append(language.getName()).append(INSISConstants.LANGUAGE_FILES_EXTENSION).toString())); //$NON-NLS-1$
                 }
             }
-            placeHolder5 = script.insertAfterElement(placeHolder5,new NSISScriptBlankLine());
         }
         else {
             if(isMUI) {
                 defaultLanguage = NSISLanguageManager.getInstance().getLanguage("English"); //$NON-NLS-1$
-                placeHolder5 = script.insertAfterElement(placeHolder5,new NSISScriptInsertMacro("MUI_LANGUAGE",defaultLanguage.getName())); //$NON-NLS-1$
+                INSISScriptElement languagesPlaceHolder = script.insertAfterElement(pagesPlaceHolder,new NSISScriptBlankLine());
+                script.insertAfterElement(pagesPlaceHolder,new NSISScriptInsertMacro("MUI_LANGUAGE",defaultLanguage.getName())); //$NON-NLS-1$
+                script.insertAfterElement(pagesPlaceHolder,new NSISScriptSingleLineComment(EclipseNSISPlugin.getResourceString("scriptgen.languages.comment"))); //$NON-NLS-1$
             }
             else {
                 defaultLanguage = NSISLanguageManager.getInstance().getDefaultLanguage();
@@ -530,10 +554,9 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
 
         String version = mSettings.getVersion();
         if(!Common.isEmpty(version)) {
-            script.addElement(new NSISScriptDefine("VERSION",version)); //$NON-NLS-1$
-            script.addElement(new NSISScriptDefine("COMPANY",mSettings.getCompany())); //$NON-NLS-1$
-            script.addElement(new NSISScriptDefine("URL",mSettings.getUrl())); //$NON-NLS-1$
-            script.addElement(new NSISScriptBlankLine());
+            script.insertElement(definesPlaceHolder,new NSISScriptDefine("VERSION",version)); //$NON-NLS-1$
+            script.insertElement(definesPlaceHolder,new NSISScriptDefine("COMPANY",mSettings.getCompany())); //$NON-NLS-1$
+            script.insertElement(definesPlaceHolder,new NSISScriptDefine("URL",mSettings.getUrl())); //$NON-NLS-1$
 
             int[] numbers = new Version(version).getNumbers();
             StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
@@ -545,32 +568,30 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
                 buf.append((j>0?".0":"0")); //$NON-NLS-1$ //$NON-NLS-2$
             }
             String langId=(mSettings.isEnableLanguageSupport()?"/LANG="+defaultLanguage.getLangDef():null); //$NON-NLS-1$
-            script.addElement(new NSISScriptAttribute("VIProductVersion",buf.toString())); //$NON-NLS-1$
-            addVersionInfoKey(script, langId, new String[]{"ProductName",mSettings.getName()}); //$NON-NLS-1$
-            addVersionInfoKey(script, langId, new String[]{"ProductVersion","\"${VERSION}\""}); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            script.insertElement(attributesPlaceHolder,new NSISScriptAttribute("VIProductVersion",buf.toString())); //$NON-NLS-1$
+            script.insertElement(attributesPlaceHolder,createVersionInfoKey(langId, new String[]{"ProductName",mSettings.getName()})); //$NON-NLS-1$
+            script.insertElement(attributesPlaceHolder,createVersionInfoKey("ProductVersion",new String[]{"\"${VERSION}\""})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             if(!Common.isEmpty(mSettings.getCompany())) {
-                addVersionInfoKey(script, langId, new String[]{"CompanyName","\"${COMPANY}\""}); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                script.insertElement(attributesPlaceHolder,createVersionInfoKey(langId, new String[]{"CompanyName","\"${COMPANY}\""})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             }
             if(!Common.isEmpty(mSettings.getUrl())) {
-                addVersionInfoKey(script, langId, new String[]{"CompanyWebsite","\"${URL}\""}); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                script.insertElement(attributesPlaceHolder,createVersionInfoKey(langId, new String[]{"CompanyWebsite","\"${URL}\""})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             }
-            addVersionInfoKey(script, langId, new String[]{"FileVersion",""}); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-            addVersionInfoKey(script, langId, new String[]{"FileDescription",""}); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-            addVersionInfoKey(script, langId, new String[]{"LegalCopyright",""}); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-            script.addElement(new NSISScriptBlankLine());
+            script.insertElement(attributesPlaceHolder,createVersionInfoKey(langId, new String[]{"FileVersion",""})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            script.insertElement(attributesPlaceHolder,createVersionInfoKey(langId, new String[]{"FileDescription",""})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            script.insertElement(attributesPlaceHolder,createVersionInfoKey(langId, new String[]{"LegalCopyright",""})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         }
 
         if(!isSilent && mSettings.isShowSplash()) {
             if(mSettings.getFadeInDelay() > 0 || mSettings.getFadeOutDelay() > 0) {
-                script.addElement(new NSISScriptAttribute("ReserveFile","${NSISDIR}\\Plugins\\AdvSplash.dll")); //$NON-NLS-1$ //$NON-NLS-2$
+                script.insertElement(reservedFilesPlaceHolder,new NSISScriptAttribute("ReserveFile","${NSISDIR}\\Plugins\\AdvSplash.dll")); //$NON-NLS-1$ //$NON-NLS-2$
             }
             else {
-                script.addElement(new NSISScriptAttribute("ReserveFile","${NSISDIR}\\Plugins\\Splash.dll")); //$NON-NLS-1$ //$NON-NLS-2$
+                script.insertElement(reservedFilesPlaceHolder,new NSISScriptAttribute("ReserveFile","${NSISDIR}\\Plugins\\Splash.dll")); //$NON-NLS-1$ //$NON-NLS-2$
             }
-            script.addElement(new NSISScriptBlankLine());
         }
 
-        NSISScriptFunction onInitFunction = (NSISScriptFunction)script.addElement(new NSISScriptFunction(".onInit")); //$NON-NLS-1$
+        NSISScriptFunction onInitFunction = (NSISScriptFunction)script.insertElement(functionsPlaceHolder,new NSISScriptFunction(".onInit")); //$NON-NLS-1$
         onInitFunction.addElement(new NSISScriptInstruction("InitPluginsDir")); //$NON-NLS-1$
         if(mSettings.isCreateStartMenuGroup() && !mSettings.isChangeStartMenuGroup()) {
             script.addElement(new NSISScriptInstruction("StrCpy",new String[]{"$StartMenuGroup", mSettings.getStartMenuGroup()})); //$NON-NLS-1$ //$NON-NLS-2$
@@ -621,11 +642,8 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
                 }
             }
         }
-        INSISScriptElement placeHolder6 = script.addElement(new NSISScriptBlankLine());
 
-        NSISScriptSection unPostSection = null;
-       
-        NSISScriptSection postSection = (NSISScriptSection)script.addElement(new NSISScriptSection("post",false,true,false)); //$NON-NLS-1$
+        NSISScriptSection postSection = new NSISScriptSection("post",false,true,false); //$NON-NLS-1$
         postSection.addElement(new NSISScriptInstruction("WriteRegStr",new String[]{ //$NON-NLS-1$
                 "HKLM","\"${REGKEY}\"","Path","$INSTDIR"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
         if(!isMUI) {
@@ -639,10 +657,23 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
             }
         }
 
+        NSISScriptSection unPostSection = null;
         NSISScriptFunction unOnInitFunction = null;
+
         if(mSettings.isCreateUninstaller()) {
-            unPostSection = (NSISScriptSection)script.insertAfterElement(postSection, new NSISScriptSection("un.post",false,false,false)); //$NON-NLS-1$
-            script.insertElement(unPostSection,new NSISScriptBlankLine());
+            unPostSection = new NSISScriptSection("un.post",false,false,false); //$NON-NLS-1$
+            script.insertAfterElement(sectionsPlaceHolder,new NSISScriptBlankLine()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            NSISScriptMacro macro = (NSISScriptMacro)script.insertAfterElement(sectionsPlaceHolder,new NSISScriptMacro("SELECT_UNSECTION",new String[]{"SECTION_NAME","UNSECTION_ID"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            macro.addElement(new NSISScriptInstruction("Push","$R0")); //$NON-NLS-1$ //$NON-NLS-2$
+            macro.addElement(new NSISScriptInstruction("ReadRegStr", new String[]{"$R0","HKLM","\"${REGKEY}\\Components\"","\"${SECTION_NAME}\""})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+            macro.addElement(new NSISScriptInstruction("StrCmp",new String[]{"$R0","1","0","next${UNSECTION_ID}"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+            macro.addElement(new NSISScriptInsertMacro("SelectSection","\"${UNSECTION_ID}\"")); //$NON-NLS-1$ //$NON-NLS-2$
+            macro.addElement(new NSISScriptInstruction("GoTo","done${UNSECTION_ID}")); //$NON-NLS-1$ //$NON-NLS-2$
+            macro.addElement(new NSISScriptLabel("next${UNSECTION_ID}")); //$NON-NLS-1$
+            macro.addElement(new NSISScriptInsertMacro("UnselectSection","\"${UNSECTION_ID}\"")); //$NON-NLS-1$ //$NON-NLS-2$
+            macro.addElement(new NSISScriptLabel("done${UNSECTION_ID}")); //$NON-NLS-1$
+            macro.addElement(new NSISScriptInstruction("Pop","$R0")); //$NON-NLS-1$ //$NON-NLS-2$
+            script.insertAfterElement(sectionsPlaceHolder,new NSISScriptSingleLineComment(EclipseNSISPlugin.getResourceString("scriptgen.select.unsection.macro.comment"))); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
             unPostSection.addElement(new NSISScriptInstruction("RmDir",new String[]{"/REBOOTOK","$INSTDIR"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             if(mSettings.isCreateStartMenuGroup()) {
@@ -660,61 +691,46 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
                     unPostSection.addElement(0,new NSISScriptInstruction("DeleteRegValue",new String[]{ //$NON-NLS-1$
                             "HKLM","\"${REGKEY}\"","InstallerLanguage"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                 }
-                if(mSettings.isCreateStartMenuGroup()) {
-                    unPostSection.addElement(0,new NSISScriptInstruction("DeleteRegValue",new String[]{ //$NON-NLS-1$
-                            "HKLM","\"${REGKEY}\"","StartMenuGroup"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                }
+            }
+            if(mSettings.isCreateStartMenuGroup()) {
+                unPostSection.addElement(0,new NSISScriptInstruction("DeleteRegValue",new String[]{ //$NON-NLS-1$
+                        "HKLM","\"${REGKEY}\"","StartMenuGroup"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             }
 
-            NSISScriptMacro macro = (NSISScriptMacro)script.insertElement(unPostSection,new NSISScriptMacro("SELECT_UNSECTION",new String[]{"SECTION_NAME","UNSECTION_ID"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-            macro.addElement(new NSISScriptInstruction("Push","$R0")); //$NON-NLS-1$ //$NON-NLS-2$
-            macro.addElement(new NSISScriptInstruction("ReadRegStr", new String[]{"$R0","HKLM","\"${REGKEY}\\Components\"","\"${SECTION_NAME}\""})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-            macro.addElement(new NSISScriptInstruction("StrCmp",new String[]{"$R0","1","0","next${UNSECTION_ID}"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-            macro.addElement(new NSISScriptInsertMacro("SelectSection","\"${UNSECTION_ID}\"")); //$NON-NLS-1$ //$NON-NLS-2$
-            macro.addElement(new NSISScriptInstruction("GoTo","done${UNSECTION_ID}")); //$NON-NLS-1$ //$NON-NLS-2$
-            macro.addElement(new NSISScriptLabel("next${UNSECTION_ID}")); //$NON-NLS-1$
-            macro.addElement(new NSISScriptInsertMacro("UnselectSection","\"${UNSECTION_ID}\"")); //$NON-NLS-1$ //$NON-NLS-2$
-            macro.addElement(new NSISScriptLabel("done${UNSECTION_ID}")); //$NON-NLS-1$
-            macro.addElement(new NSISScriptInstruction("Pop","$R0")); //$NON-NLS-1$ //$NON-NLS-2$
-
-            script.insertElement(unPostSection,new NSISScriptBlankLine());
-            script.insertAfterElement(placeHolder2, new NSISScriptAttribute("InstallDirRegKey",new String[]{"HKLM","\"${REGKEY}\"","Path"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+            script.insertElement(attributesPlaceHolder,new NSISScriptAttribute("InstallDirRegKey",new String[]{"HKLM","\"${REGKEY}\"","Path"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
             String unIcon = maybeMakeRelative(saveFolder,mSettings.getUninstallIcon());
             if(!Common.isEmpty(unIcon)) {
                 if(isMUI) {
-                    script.insertAfterElement(placeHolder3,new NSISScriptDefine("MUI_UNICON",unIcon)); //$NON-NLS-1$
+                    script.insertElement(muiDefsPlaceHolder,new NSISScriptDefine("MUI_UNICON",unIcon)); //$NON-NLS-1$
                 }
                 else {
-                    script.insertAfterElement(placeHolder3,new NSISScriptAttribute("UninstallIcon",unIcon)); //$NON-NLS-1$
+                    script.insertElement(attributesPlaceHolder,new NSISScriptAttribute("UninstallIcon",unIcon)); //$NON-NLS-1$
                 }
             }
             if(mSettings.isSilentUninstaller()) {
-                placeHolder4 = script.insertAfterElement(placeHolder4,new NSISScriptAttribute("SilentUnInstall")); //$NON-NLS-1$
+                script.insertElement(attributesPlaceHolder,new NSISScriptAttribute("SilentUnInstall")); //$NON-NLS-1$
             }
             else {
-                placeHolder4 = script.insertAfterElement(placeHolder4,new NSISScriptAttribute("ShowUninstDetails",(mSettings.isShowUninstDetails()?"show":"hide"))); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                script.insertElement(attributesPlaceHolder,new NSISScriptAttribute("ShowUninstDetails",(mSettings.isShowUninstDetails()?"show":"hide"))); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                 if(!mSettings.isAutoCloseUninstaller() && isMUI) {
-                    placeHolder4 = script.insertAfterElement(placeHolder4,new NSISScriptDefine("MUI_UNFINISHPAGE_NOAUTOCLOSE")); //$NON-NLS-1$
+                    script.insertElement(muiDefsPlaceHolder,new NSISScriptDefine("MUI_UNFINISHPAGE_NOAUTOCLOSE")); //$NON-NLS-1$
                 }
             }
-            placeHolder4 = script.insertAfterElement(placeHolder4,new NSISScriptBlankLine());
             if(mSettings.isEnableLanguageSupport()&& isMUI && mSettings.isSelectLanguage() && 
                     languages.size() > 1) {
-                placeHolder4 = script.insertAfterElement(placeHolder4,new NSISScriptDefine("MUI_LANGDLL_REGISTRY_ROOT","HKLM"));  //$NON-NLS-1$ //$NON-NLS-2$
-                placeHolder4 = script.insertAfterElement(placeHolder4,new NSISScriptDefine("MUI_LANGDLL_REGISTRY_KEY","${REGKEY}"));  //$NON-NLS-1$ //$NON-NLS-2$
-                placeHolder4 = script.insertAfterElement(placeHolder4,new NSISScriptDefine("MUI_LANGDLL_REGISTRY_VALUENAME","InstallerLanguage")); //$NON-NLS-1$ //$NON-NLS-2$
+                script.insertElement(muiDefsPlaceHolder,new NSISScriptDefine("MUI_LANGDLL_REGISTRY_ROOT","HKLM"));  //$NON-NLS-1$ //$NON-NLS-2$
+                script.insertElement(muiDefsPlaceHolder,new NSISScriptDefine("MUI_LANGDLL_REGISTRY_KEY","${REGKEY}"));  //$NON-NLS-1$ //$NON-NLS-2$
+                script.insertElement(muiDefsPlaceHolder,new NSISScriptDefine("MUI_LANGDLL_REGISTRY_VALUENAME","InstallerLanguage")); //$NON-NLS-1$ //$NON-NLS-2$
             }
 
-            unOnInitFunction = (NSISScriptFunction)script.insertAfterElement(unPostSection,new NSISScriptFunction("un.onInit")); //$NON-NLS-1$
-            script.insertAfterElement(unPostSection,new NSISScriptBlankLine());
+            unOnInitFunction = (NSISScriptFunction)script.insertElement(unfunctionsPlaceHolder,new NSISScriptFunction("un.onInit")); //$NON-NLS-1$
             
             if(!mSettings.isSilentUninstaller() && mSettings.isAutoCloseUninstaller()) {
                 unOnInitFunction.addElement(new NSISScriptInstruction("SetAutoClose","true")); //$NON-NLS-1$ //$NON-NLS-2$
-                unOnInitFunction.addElement(new NSISScriptInstruction("ReadRegStr", new String[]{"$INSTDIR","HKLM","\"${REGKEY}\"","Path"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-                if(mSettings.isCreateStartMenuGroup()) {
-                    unOnInitFunction.addElement(new NSISScriptInstruction("ReadRegStr", new String[]{"$StartMenuGroup","HKLM","\"${REGKEY}\"","StartMenuGroup"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-                }
-                script.insertAfterElement(unOnInitFunction,new NSISScriptBlankLine());
+            }
+            unOnInitFunction.addElement(new NSISScriptInstruction("ReadRegStr", new String[]{"$INSTDIR","HKLM","\"${REGKEY}\"","Path"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+            if(mSettings.isCreateStartMenuGroup()) {
+                unOnInitFunction.addElement(new NSISScriptInstruction("ReadRegStr", new String[]{"$StartMenuGroup","HKLM","\"${REGKEY}\"","StartMenuGroup"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
             }
             if(mSettings.isEnableLanguageSupport()) {
                 if(!isSilent && mSettings.isSelectLanguage() && languages.size() > 1) {
@@ -763,34 +779,37 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
         int sectionGroupCounter = 0;
         for (int i = 0; i < contents.length; i++) {
             if(contents[i] instanceof NSISSection) {
-                placeHolder6 = script.insertAfterElement(placeHolder6, buildSection(script, (NSISSection)contents[i],unSectionList,unOnInitFunction,sectionCounter++));
+                script.insertElement(sectionsPlaceHolder, buildSection(script, (NSISSection)contents[i],unSectionList,unOnInitFunction,sectionCounter++));
             }
             else if(contents[i] instanceof NSISSectionGroup) {
                 NSISSectionGroup subsec = (NSISSectionGroup)contents[i];
-                placeHolder6 = script.insertAfterElement(placeHolder6, 
-                                                    new NSISScriptSectionGroup(subsec.getCaption(),subsec.isExpanded(),subsec.isBold(), 
+                NSISScriptSectionGroup scriptSecgrp = (NSISScriptSectionGroup)script.insertElement(sectionsPlaceHolder, new NSISScriptSectionGroup(subsec.getCaption(),subsec.isExpanded(),subsec.isBold(), 
                                                                         MessageFormat.format("SECGRP{0,number,0000}",new Object[]{new Integer(sectionGroupCounter++)}))); //$NON-NLS-1$
                 INSISInstallElement[] children = subsec.getChildren();
-                for (int j = 0; j < children.length; j++) {
-                    ((NSISScriptSectionGroup)placeHolder6).addElement(buildSection(script, (NSISSection)children[j],unSectionList,unOnInitFunction,sectionCounter++));
-                    placeHolder6 = script.insertAfterElement(placeHolder6,new NSISScriptBlankLine());
+                if(!Common.isEmptyArray(children)) {
+                    scriptSecgrp.addElement(buildSection(script, (NSISSection)children[0],unSectionList,unOnInitFunction,sectionCounter++));
+                    for (int j = 1; j < children.length; j++) {
+                        scriptSecgrp.addElement(new NSISScriptBlankLine());
+                        scriptSecgrp.addElement(buildSection(script, (NSISSection)children[j],unSectionList,unOnInitFunction,sectionCounter++));
+                    }
                 }
             }
-            placeHolder6 = script.insertAfterElement(placeHolder6,new NSISScriptBlankLine());
+            script.insertElement(sectionsPlaceHolder, new NSISScriptBlankLine());
         }
         String sectionId = MessageFormat.format("SEC{0,number,0000}",new Object[]{new Integer(sectionCounter++)}); //$NON-NLS-1$
         postSection.setIndex(sectionId);
+        script.insertElement(sectionsPlaceHolder, postSection);
         
         if(unPostSection != null) {
-            unPostSection.setIndex("UN"+sectionId); //$NON-NLS-1$
-            
             if(!Common.isEmptyCollection(unSectionList)) {
                 Collections.reverse(unSectionList);
                 for(Iterator iter=unSectionList.iterator(); iter.hasNext(); ) {
-                    script.insertElement(unPostSection,(NSISScriptSection)iter.next());
-                    script.insertElement(unPostSection, new NSISScriptBlankLine());
+                    script.insertElement(unsectionsPlaceHolder,(NSISScriptSection)iter.next());
+                    script.insertElement(unsectionsPlaceHolder, new NSISScriptBlankLine());
                 }
             }
+            unPostSection.setIndex("UN"+sectionId); //$NON-NLS-1$
+            script.insertElement(unsectionsPlaceHolder,unPostSection);
         }
 
         if(mSettings.isEnableLanguageSupport()) {
@@ -827,7 +846,8 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
             }
             if(smScriptlet.size() > 0 || unlinkScriptlet.size() > 0) {
                 script.addElement(new NSISScriptBlankLine());
-                script.addElement(new NSISScriptSingleLineComment(EclipseNSISPlugin.getResourceString("scriptgen.langstring.comment"))); //$NON-NLS-1$
+                script.addElement(new NSISScriptSingleLineComment(EclipseNSISPlugin.getResourceString("scriptgen.langstring.comment1"))); //$NON-NLS-1$
+                script.addElement(new NSISScriptSingleLineComment(EclipseNSISPlugin.getResourceString("scriptgen.langstring.comment2"))); //$NON-NLS-1$
                 if(smScriptlet.size() > 0) {
                     script.addElement(new NSISScriptBlankLine());
                     script.append(smScriptlet);
@@ -838,16 +858,21 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
                 }
             }
         }
+        mWriter.print(NSISScriptSingleLineComment.PREFIX_HASH+" "); //$NON-NLS-1$
+        mWriter.println(EclipseNSISPlugin.getResourceString("scriptgen.header.comment")); //$NON-NLS-1$ //$NON-NLS-2$
+        mWriter.print(NSISScriptSingleLineComment.PREFIX_HASH+" "); //$NON-NLS-1$
+        mWriter.println(DateFormat.getDateTimeInstance().format(new Date())); //$NON-NLS-1$ //$NON-NLS-2$
+        mWriter.println();
         script.write(new NSISScriptWriter(mWriter));
         mWriter.flush();
         mWriter.close();
     }
     
     /**
-     * @param script
      * @param langId
+     * @param args
      */
-    private void addVersionInfoKey(NSISScript script, String langId, String[] args)
+    private NSISScriptAttribute createVersionInfoKey(String langId, String[] args)
     {
         if(langId != null) {
             String[] temp = new String[Common.isEmptyArray(args)?1:args.length+1];
@@ -857,7 +882,7 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
             }
             args = temp;
         }
-        script.addElement(new NSISScriptAttribute("VIAddVersionKey",args)); //$NON-NLS-1$ //$NON-NLS-2$
+        return new NSISScriptAttribute("VIAddVersionKey",args); //$NON-NLS-1$
     }
 
     private NSISScriptSection buildSection(NSISScript script, NSISSection sec, List unSectionList, NSISScriptFunction unOnInit, int counter)

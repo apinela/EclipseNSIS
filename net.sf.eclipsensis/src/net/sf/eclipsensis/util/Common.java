@@ -55,6 +55,7 @@ import java.io.Reader;
 import java.io.Writer;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
+import java.text.BreakIterator;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -503,5 +504,33 @@ public class Common
             }
         }
         return childPath.toOSString();
+    }
+
+    public static String[] formatLines(String text, int maxLength) 
+    {
+        ArrayList lines = new ArrayList();
+        BreakIterator boundary = BreakIterator.getLineInstance();
+        boundary.setText(text);
+        int start = boundary.first();
+        int end = boundary.next();
+        int lineLength = 0;
+    
+        StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
+        while (end != BreakIterator.DONE) {
+            String word = text.substring(start,end);
+            lineLength = lineLength + word.length();
+            if (lineLength >= maxLength) {
+                lines.add(buf.toString());
+                buf.delete(0,buf.length());
+                lineLength = word.length();
+            }
+            buf.append(word);
+            start = end;
+            end = boundary.next();
+        }
+        if(buf.length() > 0) {
+            lines.add(buf.toString());
+        }
+        return (String[])lines.toArray(EMPTY_STRING_ARRAY);
     }
 }

@@ -280,22 +280,22 @@ public abstract class NSISSettingsPage	extends PropertyPage implements IWorkbenc
         data = new GridData(GridData.FILL_BOTH);
         data.verticalSpan = 5;
         table.setLayoutData(data);
-        Button addButton = createButton(composite,ImageManager.getImage(EclipseNSISPlugin.getResourceString("add.icon")),addTooltip);
+        Button addButton = createButton(composite,ImageManager.getImage(EclipseNSISPlugin.getResourceString("add.icon")),addTooltip); //$NON-NLS-1$
         if(addAdapter != null) {
             addButton.addSelectionListener(addAdapter);
         }
-        final Button editButton = createButton(composite,ImageManager.getImage(EclipseNSISPlugin.getResourceString("edit.icon")),editTooltip);
+        final Button editButton = createButton(composite,ImageManager.getImage(EclipseNSISPlugin.getResourceString("edit.icon")),editTooltip); //$NON-NLS-1$
         editButton.setEnabled(false);
         if(editAdapter != null) {
             editButton.addSelectionListener(editAdapter);
         }
-        final Button removeButton = createButton(composite,ImageManager.getImage(EclipseNSISPlugin.getResourceString("delete.icon")),removeTooltip);
+        final Button removeButton = createButton(composite,ImageManager.getImage(EclipseNSISPlugin.getResourceString("delete.icon")),removeTooltip); //$NON-NLS-1$
         removeButton.setEnabled(false);
         if(removeAdapter != null) {
             removeButton.addSelectionListener(removeAdapter);
         }
-        final Button upButton = createButton(composite,ImageManager.getImage(EclipseNSISPlugin.getResourceString("up.icon")),
-                                                       EclipseNSISPlugin.getResourceString("up.tooltip"));
+        final Button upButton = createButton(composite,ImageManager.getImage(EclipseNSISPlugin.getResourceString("up.icon")), //$NON-NLS-1$
+                                                       EclipseNSISPlugin.getResourceString("up.tooltip")); //$NON-NLS-1$
         upButton.setEnabled(mover.canMoveUp());
         upButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) 
@@ -304,8 +304,8 @@ public abstract class NSISSettingsPage	extends PropertyPage implements IWorkbenc
             }
         });
         
-        final Button downButton = createButton(composite,ImageManager.getImage(EclipseNSISPlugin.getResourceString("down.icon")),
-                                                         EclipseNSISPlugin.getResourceString("down.tooltip"));
+        final Button downButton = createButton(composite,ImageManager.getImage(EclipseNSISPlugin.getResourceString("down.icon")), //$NON-NLS-1$
+                                                         EclipseNSISPlugin.getResourceString("down.tooltip")); //$NON-NLS-1$
         downButton.setEnabled(mover.canMoveDown());
         downButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) 

@@ -9,19 +9,20 @@
  *******************************************************************************/
 package net.sf.eclipsensis.script;
 
-public class NSISScriptSingleLineComment implements INSISScriptElement
+import net.sf.eclipsensis.util.Common;
+
+public class NSISScriptSingleLineComment extends NSISScriptMultiLineComment
 {
     public static final String PREFIX_SEMICOLON = ";"; //$NON-NLS-1$
     public static final String PREFIX_HASH = "#"; //$NON-NLS-1$
-    private String mPrefix = ";"; //$NON-NLS-1$
-    private String mText = ""; //$NON-NLS-1$
+    private String mPrefix = PREFIX_HASH; //$NON-NLS-1$
     
     /**
      * @param text
      */
     public NSISScriptSingleLineComment(String text)
     {
-        setText(text);
+        super(text);
     }
 
     /**
@@ -30,8 +31,8 @@ public class NSISScriptSingleLineComment implements INSISScriptElement
      */
     public NSISScriptSingleLineComment(String prefix, String text)
     {
+        this(text);
         setPrefix(prefix);
-        setText(text);
     }
 
     /**
@@ -52,28 +53,18 @@ public class NSISScriptSingleLineComment implements INSISScriptElement
         }
     }
 
-    /**
-     * @return Returns the text.
-     */
-    public String getText()
-    {
-        return mText;
-    }
-
-    /**
-     * @param text The text to set.
-     */
-    public void setText(String text)
-    {
-        mText = text;
-    }
-
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.script.INSISScriptElement#write(net.sf.eclipsensis.script.NSISScriptWriter)
      */
     public void write(NSISScriptWriter writer)
     {
-        writer.print(mPrefix);
-        writer.println(mText);
+        String[] lines = Common.formatLines(getText(),SCRIPT_MAX_LINE_LENGTH-2);
+        if(!Common.isEmptyArray(lines)) {
+            for (int i = 0; i < lines.length; i++) {
+                writer.print(mPrefix);
+                writer.print(" "); //$NON-NLS-1$
+                writer.println(lines[i]);
+            }
+        }
     }
 }

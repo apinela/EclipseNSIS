@@ -64,6 +64,9 @@ public class NSISScriptMacro extends AbstractNSISScriptElementContainer
     protected void validateElement(INSISScriptElement element)
             throws InvalidNSISScriptElementException
     {
+        if(element instanceof NSISScriptMacro) {
+            throw new InvalidNSISScriptElementException(element);
+        }
     }
     
     /**

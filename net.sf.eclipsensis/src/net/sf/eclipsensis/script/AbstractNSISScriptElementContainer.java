@@ -85,7 +85,8 @@ public abstract class AbstractNSISScriptElementContainer extends AbstractNSISScr
     
     protected void validateElement(INSISScriptElement element) throws InvalidNSISScriptElementException
     {
-        if(element instanceof NSISScriptSingleLineComment || element instanceof NSISScriptMultiLineComment) {
+        if(element instanceof NSISScriptMultiLineComment || element instanceof NSISScriptBlankLine || 
+           element instanceof NSISScriptDefine || element instanceof NSISScriptInsertMacro) {
             return;
         }
         throw new InvalidNSISScriptElementException(element);

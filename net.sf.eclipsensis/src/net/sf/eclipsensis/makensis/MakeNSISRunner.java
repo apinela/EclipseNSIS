@@ -230,8 +230,7 @@ public class MakeNSISRunner implements INSISConstants
                         }
                         else {
                             CaseInsensitiveMap map = new CaseInsensitiveMap();
-                            Iterator iter = warnings.iterator();
-                            for(iter=warnings.iterator(); iter.hasNext(); ) {
+                            for(Iterator iter=warnings.iterator(); iter.hasNext(); ) {
                                 NSISConsoleLine warning = (NSISConsoleLine)iter.next();
                                 if(warning.getLineNum() > 0) {
                                     String text = warning.toString().trim();

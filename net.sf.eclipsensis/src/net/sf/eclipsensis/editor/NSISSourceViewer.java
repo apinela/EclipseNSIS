@@ -407,7 +407,7 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
             int startPos = p.x;
             int endPos = (p.x>0?p.x+p.y-1:startPos);
             int pos = startPos;
-            StringBuffer newText = new StringBuffer("");
+            StringBuffer newText = new StringBuffer(""); //$NON-NLS-1$
             ITypedRegion region;
             while(true) {
                 region = NSISTextUtility.getTypedRegionAtOffset(doc,pos);

@@ -330,7 +330,7 @@ public class NSISPreferences extends NSISSettings
             if(objectFile.exists()) {
                 objectFile.delete();
             }
-            setValue(name,"");
+            setValue(name,""); //$NON-NLS-1$
         }
         else {
             try {
@@ -338,7 +338,7 @@ public class NSISPreferences extends NSISSettings
                 setValue(name,fileName);
             }
             catch(IOException ioe) {
-                setValue(name,"");
+                setValue(name,""); //$NON-NLS-1$
                 System.out.println(ioe);
             }
         }
@@ -363,6 +363,6 @@ public class NSISPreferences extends NSISSettings
     
     private String makeSettingFileName(String name)
     {
-        return new StringBuffer(getClass().getName()).append(".").append(name).append(".xml").toString(); //$NON-NLS-1$
+        return new StringBuffer(getClass().getName()).append(".").append(name).append(".xml").toString(); //$NON-NLS-1$ //$NON-NLS-2$
     }
 }

@@ -174,9 +174,7 @@ public class NSISScriptSection extends AbstractNSISScriptElementContainer
             throws InvalidNSISScriptElementException
     {
         if(element != null) {
-            if(element instanceof NSISScriptInsertMacro || element instanceof NSISScriptInstruction || 
-               element instanceof NSISScriptDefine || element instanceof NSISScriptBlankLine || 
-               element instanceof NSISScriptLabel) {
+            if(element instanceof NSISScriptInstruction || element instanceof NSISScriptLabel) {
                 return;
             }
         }
