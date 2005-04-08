@@ -209,7 +209,7 @@ public class NSISTemplateEditorDialog extends StatusMessageDialog
         initializeActions();
 
         applyDialogFont(composite);
-        WorkbenchHelp.setHelp(composite,INSISConstants.PLUGIN_CONTEXT_PREFIX+"nsis_templatedlg_context");
+        WorkbenchHelp.setHelp(composite,INSISConstants.PLUGIN_CONTEXT_PREFIX+"nsis_templatedlg_context"); //$NON-NLS-1$
         return composite;
     }
     

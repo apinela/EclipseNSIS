@@ -164,4 +164,6 @@ public abstract class NSISWizard extends Wizard implements INewWizard, INSISWiza
     {
         mTemplate = template;
     }
+
+    public abstract String getHelpContextId();
 }

@@ -370,30 +370,30 @@ public class MakeNSISRunner implements INSISConstants
                     }
                 }
                 finally {
+                    rv = results.getReturnCode();
+                    if(rv == MakeNSISResults.RETURN_CANCEL) {
+                        consoleModel.add(NSISConsoleLine.error(EclipseNSISPlugin.getResourceString("cancel.message"))); //$NON-NLS-1$
+                    }
+                    String outputFileName = results.getOutputFileName();
+                    File exeFile = (outputFileName==null?null:new File(outputFileName));
+                    try {
+                        if(rv == MakeNSISResults.RETURN_SUCCESS && exeFile != null && exeFile.exists()) {
+                            file.setPersistentProperty(NSIS_COMPILE_TIMESTAMP,Long.toString(System.currentTimeMillis()));
+                            file.setPersistentProperty(NSIS_EXE_NAME,outputFileName);
+                            file.setPersistentProperty(NSIS_EXE_TIMESTAMP,Long.toString(exeFile.lastModified()));
+                        }
+                        else {
+                            file.setPersistentProperty(NSIS_COMPILE_TIMESTAMP,null);
+                            file.setPersistentProperty(NSIS_EXE_NAME,null);
+                            file.setPersistentProperty(NSIS_EXE_TIMESTAMP,null);
+                            
+                        }
+                        updateMarkers(file, consoleModel, results);
+                    }
+                    catch(CoreException cex) {
+                        cex.printStackTrace();
+                    }
                     notifyListeners(false);
-                }
-                rv = results.getReturnCode();
-                if(rv == MakeNSISResults.RETURN_CANCEL) {
-                    consoleModel.add(NSISConsoleLine.error(EclipseNSISPlugin.getResourceString("cancel.message"))); //$NON-NLS-1$
-                }
-                String outputFileName = results.getOutputFileName();
-                File exeFile = (outputFileName==null?null:new File(outputFileName));
-                try {
-                    updateMarkers(file, consoleModel, results);
-                    if(rv == MakeNSISResults.RETURN_SUCCESS && exeFile != null && exeFile.exists()) {
-                        file.setPersistentProperty(NSIS_COMPILE_TIMESTAMP,Long.toString(System.currentTimeMillis()));
-                        file.setPersistentProperty(NSIS_EXE_NAME,outputFileName);
-                        file.setPersistentProperty(NSIS_EXE_TIMESTAMP,Long.toString(exeFile.lastModified()));
-                    }
-                    else {
-                        file.setPersistentProperty(NSIS_COMPILE_TIMESTAMP,null);
-                        file.setPersistentProperty(NSIS_EXE_NAME,null);
-                        file.setPersistentProperty(NSIS_EXE_TIMESTAMP,null);
-                        
-                    }
-                }
-                catch(CoreException cex) {
-                    cex.printStackTrace();
                 }
                 try {
                     file.getProject().refreshLocal(IResource.DEPTH_INFINITE,null);

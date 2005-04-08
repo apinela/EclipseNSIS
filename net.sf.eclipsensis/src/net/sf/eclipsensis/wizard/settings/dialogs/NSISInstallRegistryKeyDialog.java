@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.wizard.NSISWizard;
 import net.sf.eclipsensis.wizard.NSISWizardDisplayValues;
@@ -27,15 +28,15 @@ import org.eclipse.swt.widgets.*;
 public class NSISInstallRegistryKeyDialog extends AbstractNSISInstallItemDialog
 {
     private static ArrayList cProperties = new ArrayList();
-    
-    static {
-        cProperties.add("rootKey"); //$NON-NLS-1$
-        cProperties.add("subKey"); //$NON-NLS-1$
-    }
 
     public NSISInstallRegistryKeyDialog(NSISWizard wizard, NSISInstallRegistryKey item)
     {
         super(wizard, item);
+    }
+    
+    static {
+        cProperties.add("rootKey"); //$NON-NLS-1$
+        cProperties.add("subKey"); //$NON-NLS-1$
     }
 
     /* (non-Javadoc)
@@ -74,6 +75,11 @@ public class NSISInstallRegistryKeyDialog extends AbstractNSISInstallItemDialog
             }
         });
         return composite;
+    }
+    
+    protected String getHelpContextId()
+    {
+        return INSISConstants.PLUGIN_CONTEXT_PREFIX+"nsis_regkeydlg_context"; //$NON-NLS-1$
     }
     
     protected String checkForErrors()

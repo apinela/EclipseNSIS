@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.wizard.NSISWizard;
@@ -41,6 +42,11 @@ public class NSISInstallFileDialog extends AbstractNSISInstallItemDialog
         super(wizard, item);
     }
 
+    protected String getHelpContextId()
+    {
+        return INSISConstants.PLUGIN_CONTEXT_PREFIX+"nsis_filedlg_context"; //$NON-NLS-1$
+    }
+    
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.wizard.settings.dialogs.AbstractNSISInstallItemDialog#getProperties()
      */

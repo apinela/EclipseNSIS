@@ -43,6 +43,11 @@ public class NSISSectionGroupDialog extends AbstractNSISInstallItemDialog
         super(wizard, item);
     }
 
+    protected String getHelpContextId()
+    {
+        return INSISConstants.PLUGIN_CONTEXT_PREFIX+"nsis_sectiongrpdlg_context"; //$NON-NLS-1$
+    }
+    
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.wizard.settings.dialogs.AbstractNSISInstallItemDialog#getProperties()
      */

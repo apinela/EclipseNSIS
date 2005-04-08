@@ -14,6 +14,7 @@ import java.util.*;
 import java.util.List;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.viewer.CollectionContentProvider;
@@ -48,6 +49,11 @@ public class NSISInstallShortcutDialog extends AbstractNSISInstallItemDialog imp
         super(wizard, item);
     }
 
+    protected String getHelpContextId()
+    {
+        return INSISConstants.PLUGIN_CONTEXT_PREFIX+"nsis_shortcutdlg_context"; //$NON-NLS-1$
+    }
+    
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.wizard.settings.dialogs.AbstractNSISInstallItemDialog#getProperties()
      */

@@ -148,7 +148,7 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
      */
     public void createControl(Composite parent) {
         super.createControl(parent);
-        WorkbenchHelp.setHelp(getControl(),INSISConstants.PLUGIN_CONTEXT_PREFIX+"nsis_editorprefs_context");
+        WorkbenchHelp.setHelp(getControl(),INSISConstants.PLUGIN_CONTEXT_PREFIX+"nsis_editorprefs_context"); //$NON-NLS-1$
     }
 
     private void handleAppearanceColorListSelection()

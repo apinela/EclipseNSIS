@@ -237,7 +237,7 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
         
         mClipboard = new Clipboard(mDisplay);
         Table table = new Table(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
-        WorkbenchHelp.setHelp(table,PLUGIN_CONTEXT_PREFIX + "nsis_console_context");
+        WorkbenchHelp.setHelp(table,PLUGIN_CONTEXT_PREFIX + "nsis_console_context"); //$NON-NLS-1$
 		mViewer = new TableViewer(table);
         mMouseListener = new NSISConsoleMouseListener();
         

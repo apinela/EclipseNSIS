@@ -14,6 +14,7 @@ import java.util.*;
 import java.util.List;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.util.*;
 import net.sf.eclipsensis.wizard.settings.*;
 import net.sf.eclipsensis.wizard.util.NSISWizardDialogUtil;
@@ -53,10 +54,12 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
               EclipseNSISPlugin.getResourceString("wizard.contents.description")); //$NON-NLS-1$
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
-     */
-    public void createControl(Composite parent)
+    protected String getHelpContextId()
+    {
+        return INSISConstants.PLUGIN_CONTEXT_PREFIX+"nsis_wizcontents_context"; //$NON-NLS-1$
+    }
+    
+    protected Control createPageControl(Composite parent)
     {
         NSISWizardSettings settings = mWizard.getSettings();
 
@@ -510,6 +513,8 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
         });
 
         setPageComplete(validatePage(ALL_CHECK));
+        
+        return composite;
     }
 
     private void updateSelectComponents()

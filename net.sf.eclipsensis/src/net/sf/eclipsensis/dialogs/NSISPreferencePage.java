@@ -57,7 +57,7 @@ public class NSISPreferencePage	extends NSISSettingsPage
      */
     protected String getContextId()
     {
-        return PLUGIN_CONTEXT_PREFIX + "nsis_prefs_context";
+        return PLUGIN_CONTEXT_PREFIX + "nsis_prefs_context"; //$NON-NLS-1$
     }
 
     protected String getPageDescription()

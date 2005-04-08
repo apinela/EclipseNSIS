@@ -30,7 +30,7 @@ public class NSISPropertyPage extends NSISSettingsPage
      */
     protected String getContextId()
     {
-        return PLUGIN_CONTEXT_PREFIX + "nsis_properties_context";
+        return PLUGIN_CONTEXT_PREFIX + "nsis_properties_context"; //$NON-NLS-1$
     }
 
     /* (non-Javadoc)

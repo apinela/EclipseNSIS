@@ -40,11 +40,74 @@
         <topic label="Script Templates Preferences" href="help/scrtmpltprefs.html"/>
     </context>
     <context id="nsis_templatedlg_context">
-        <description>The Templates Editor dialog is used to create new and edit existing code templates.</description>
-        <topic label="Templates Editor" href="help/templateprefs.html#templateeditor"/>
+        <description>The Template Editor dialog is used to create new and edit existing code templates.</description>
+        <topic label="Template Editor" href="help/templateprefs.html#templateeditor"/>
+    </context>
+    <context id="nsis_scrtmpltdlg_context">
+        <description>The Script Template Editor dialog is used to create new and edit existing script templates.</description>
+        <topic label="Script Template Editor" href="help/scrtmpltprefs.html#scripttemplateeditor"/>
     </context>
     <context id="nsis_properties_context">
         <description>This properties page is used to set custom NSIS compilation options for a particular script.</description>
         <topic label="Script Properties" href="help/properties.html"/>
+    </context>
+    <context id="nsis_wizard_context">
+        <description>The NSIS Script Wizard is a guide through the process of generating an NSIS script.</description>
+    </context>
+    <context id="nsis_wizwelcome_context">
+        <description>The Welcome page provides an introduction to the Script Wizard.</description>
+        <topic label="Script Wizard Welcome Page" href="help/wizwelcome.html"/>
+    </context>
+    <context id="nsis_wizgeneral_context">
+        <description>The General Information page is used to collect some general, mainly required, information about the NSIS script and installer.</description>
+        <topic label="Script Wizard General Information Page" href="help/wizgeneral.html"/>
+    </context>
+    <context id="nsis_wizattrib_context">
+        <description>The Installer Attributes page is used to specify installation locations and languages.</description>
+        <topic label="Script Wizard Installer Attributes Page" href="help/wizattrib.html"/>
+    </context>
+    <context id="nsis_wizpresentation_context">
+        <description>The Installer Attributes page is used to customize how the installer presents itself to the user.</description>
+        <topic label="Script Wizard Installer Presentation Page" href="help/wizpresentation.html"/>
+    </context>
+    <context id="nsis_wizcontents_context">
+        <description>The Installer Contents page is used to manage installer contents.</description>
+        <topic label="Script Wizard Installer Contents Page" href="help/wizcontents.html"/>
+    </context>
+    <context id="nsis_wizcomplete_context">
+        <description>The Wizard Completion page is used to specify some final items before script generation.</description>
+        <topic label="Script Wizard Completion Page" href="help/wizcomplete.html"/>
+    </context>
+    <context id="nsis_filedlg_context">
+        <description>This dialog is used to add or edit information about a file to be included in the installer.</description>
+        <topic label="Add/Edit File Dialog" href="help/wizcontents.html#filedlg"/>
+    </context>
+    <context id="nsis_filesetdlg_context">
+        <description>This dialog is used to add or edit information about a group of files to be included in the installer.</description>
+        <topic label="Add/Edit FileSet Dialog" href="help/wizcontents.html#filesetdlg"/>
+    </context>
+    <context id="nsis_folderdlg_context">
+        <description>This dialog is used to add or edit information about a fiolder to be included in the installer.</description>
+        <topic label="Add/Edit Folder Dialog" href="help/wizcontents.html#folderdlg"/>
+    </context>
+    <context id="nsis_shortcutdlg_context">
+        <description>This dialog is used to add or edit information about a shortcut to be included in the installer.</description>
+        <topic label="Add/Edit Shortcut Dialog" href="help/wizcontents.html#shortcutdlg"/>
+    </context>
+    <context id="nsis_regkeydlg_context">
+        <description>This dialog is used to add or edit information about a registry key to be included in the installer.</description>
+        <topic label="Add/Edit Registry Key Dialog" href="help/wizcontents.html#regkeydlg"/>
+    </context>
+    <context id="nsis_regvaldlg_context">
+        <description>This dialog is used to add or edit information about a registry value to be included in the installer.</description>
+        <topic label="Add/Edit Registry Value Dialog" href="help/wizcontents.html#regvaldlg"/>
+    </context>
+    <context id="nsis_sectiondlg_context">
+        <description>This dialog is used to add or edit information about a Section to be included in the installer.</description>
+        <topic label="Add/Edit Section Dialog" href="help/wizcontents.html#rsectiondlg"/>
+    </context>
+    <context id="nsis_sectiongrpdlg_context">
+        <description>This dialog is used to add or edit information about a SectionGroup to be included in the installer.</description>
+        <topic label="Add/Edit SectionGroup Dialog" href="help/wizcontents.html#rsectiongrpdlg"/>
     </context>
 </contexts>

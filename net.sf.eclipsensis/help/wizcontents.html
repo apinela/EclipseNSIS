@@ -1,0 +1,154 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><!--
+###############################################################################
+# Copyright (c) 2004, 2005 Sunil Kamath (IcemanK).
+# All rights reserved.
+# This program is made available under the terms of the Common Public License
+# v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
+#
+# Contributors:
+# Sunil Kamath (IcemanK) - initial API and implementation
+###############################################################################
+-->
+  <title>EclipseNSIS - Script Wizard Installer Contents</title>
+
+
+  <link rel="stylesheet" href="book.css" charset="ISO-8859-1" type="text/css">
+
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+
+  <meta http-equiv="Content-Style-Type" content="text/css">
+
+  <script language="javascript" type="text/javascript" src="help.js"></script></head>
+<body>
+<div id="main">
+<a href="wizpresentation.html">Previous</a> | <a href="overview.html#contents">Contents</a> | <a href="wizcomplete.html">Next</a>
+<hr>
+<h1>Script Wizard</h1>
+<h2>Installer Contents</h2><p>This
+page is used to manage installer contents. This consists of one or more of the following items:</p>
+<ul>
+<li><a href="#file">File</a></li>
+<li><a href="#fileset">File Set</a></li>
+<li><a href="#folder">Folder</a></li>
+<li><a href="#shortcut">Shortcut</a></li>
+<li><a href="#regkey">Registry Key</a></li>
+<li><a href="#regval">Registry Value</a></li>
+<li><a href="#section">Section</a></li>
+<li><a href="#sectiongrp">SectionGroup/SubSection</a></li>
+</ul>
+<p>These items can be added, edited or deleted using the supplied toolbar. The
+toolbar popups change depending upon the type of item which is
+currently
+selected. The toolbar functions can
+also be accessed as a context menu by
+right-clicking on an item in the tree. The installer contents are installed in the
+sequence in which they are shown in the tree. </p>
+<p style="text-align: center;"><img style="border: 0px solid ; width: 508px; height: 629px;" usemap="#wizardcontents" ismap="ismap" alt="Script Wizard Installer Contents" src="images/wizardcontents.gif">
+</p>
+<a name="a_contents"></a><dl id="id_contents"><dt>Installer Contents</dt><dd>A visual representation of the installer contents in a tree format. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="a_add"></a><dl id="id_add"><dt>Add</dt><dd>Add an installation item, Section or SectionGroup/SubSection. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="a_edit"></a><dl id="id_edit"><dt>Edit</dt><dd>Edit the currently selected item. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="a_delete"></a><dl id="id_delete"><dt>Delete</dt><dd>Delete the currently selected item. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="a_expandall"></a><dl id="id_expandall"><dt>Expand All</dt><dd>Expand all nodes in the tree. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="a_collapseall"></a><dl id="id_collapseall"><dt>Collapse All</dt><dd>Collapse all nodes in the tree. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="a_up"></a><dl id="id_up"><dt>Move Up</dt><dd>Move the selected items higher up in the installation sequence. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="a_down"></a><dl id="id_down"><dt>Move Down</dt><dd>Move the selected items lower down in the installation sequence. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a href="wizard.html">Back
+to Script Wizard</a><br>
+<h2>Installer Items</h2>
+<p>The various installer items and the dialogs used to add and edit them are described in this section.</p>
+<a name="file"></a><h3 style="text-decoration: underline;">File</h3>
+<p>This consists of a single file on the filesystem.</p>
+<p style="text-align: center;"><img style="border: 0px solid ; width: 432px; height: 194px;" usemap="#filedlg" ismap="ismap" alt="Add/Edit File" src="images/filedlg.gif"></p>
+<a name="a_source"></a><dl id="id_source"><dt>Source File</dt><dd>The source file name. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="a_destination"></a><dl id="id_destination"><dt>Destination</dt><dd>The installation destination folder. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="a_overwrite"></a><dl id="id_overwrite"><dt>Overwrite</dt><dd>The overwrite action to take if the file already exists on the installation filesystem. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="fileset"></a><h3 style="text-decoration: underline;">File Set</h3>
+<p>This consists of a set of files on the filesystem which will be installed in the same destination folder.</p>
+<p style="text-align: center;"><img style="border: 0px solid ; width: 432px; height: 319px;" usemap="#filesetdlg" ismap="ismap" alt="Add/Edit File Set" src="images/filesetdlg.gif"></p>
+<a name="a_source2"></a><dl id="id_source2"><dt>Source Files</dt><dd>The source file names. These can be from different locations. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="a_add2"></a><dl id="id_add2"><dt>Add</dt><dd>Add one or more source files by browsing the filesystem. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="a_delete2"></a><dl id="id_delete2"><dt>Delete</dt><dd>Delete the selected source file(s) from the installer. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="a_up2"></a><dl id="id_up2"><dt>Up</dt><dd>Move the selected file(s) higher in the installation sequence. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="a_down2"></a><dl id="id_down2"><dt>Down</dt><dd>Move the selected file(s) loweer in the installation sequence. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="a_destination2"></a><dl id="id_destination2"><dt>Destination</dt><dd>The installation destination folder. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="a_overwrite2"></a><dl id="id_overwrite2"><dt>Overwrite</dt><dd>The overwrite action to take if any of the files already exists on the installation filesystem. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="folder"></a><h3 style="text-decoration: underline;">Folder</h3>
+<p>This consists of a single
+folder on the filesystem. It can, however, be installed recursively,
+i.e., all its sub-folders and files will
+be installed as well.</p>
+<p style="text-align: center;"><img style="border: 0px solid ; width: 432px; height: 215px;" usemap="#folderdlg" ismap="ismap" alt="Add/Edit Folder" src="images/folderdlg.gif"></p>
+<a name="a_source3"></a><dl id="id_source3"><dt>Source Folder</dt><dd>The source folder name. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="a_destination3"></a><dl id="id_destination3"><dt>Destination</dt><dd>The installation destination folder. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="a_overwrite3"></a><dl id="id_overwrite3"><dt>Overwrite</dt><dd>The overwrite action to take if the folder, or any of its children, already exist on the installation filesystem. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="a_includesub"></a><dl id="id_includesub"><dt>Include All Sub-Folders and Files</dt><dd>Option to recursively install the folder. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="shortcut"></a><h3 style="text-decoration: underline;">Shortcut</h3>
+<p>This represents a shortcut to
+be created on the installation system. The shortcut can either to be a
+file on the installation system or a URL.</p>
+<p style="text-align: center;"><img style="border: 0px solid ; width: 432px; height: 239px;" usemap="#shortcutdlg" ismap="ismap" alt="Add/Edit Shortcut" src="images/shortcutdlg.gif"></p>
+<a name="a_location"></a><dl id="id_location"><dt>Location</dt><dd>The location on the installation system in which the shortcut will be created. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="a_name2"></a><dl id="id_name2"><dt>Name</dt><dd>The shortcut name. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="a_shortcut_type"></a><dl id="id_shortcut_type"><dt>Shortcut Type</dt><dd>The shortcut type- File or URL. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="a_url"></a><dl id="id_url"><dt>URL</dt><dd>The shortcut destination URL. This is enabled if the selected shortcut type is URL. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="a_path"></a><dl id="id_path"><dt>Path</dt><dd>The shortcut destination file. This is enabled if the selected shortcut type is File. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="regkey"></a><h3 style="text-decoration: underline;">Registry Key</h3>
+<p>This represents a Windows registry key to
+be created on the installation system.</p>
+<p style="text-align: center;"><img style="border: 0px solid ; width: 432px; height: 165px;" usemap="#regkeydlg" ismap="ismap" alt="Add/Edit Registry Key" src="images/regkeydlg.gif"></p>
+<a name="a_rootkey"></a><dl id="id_rootkey"><dt>Root Key</dt><dd>The root key. This must be one of the root keys supplied by windows, e.g., HKEY_LOCAL_MACHINE, HKEY_CURRENT_USER, etc. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="a_subkey"></a><dl id="id_subkey"><dt>Sub Key</dt><dd>The
+name of the sub key which will be created. This can be a
+multi-level subkey, with its parts separated by a '\' character. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="regval"></a><h3 style="text-decoration: underline;">Registry Value</h3>
+<p>This represents a Windows registry value to
+be created on the installation system.</p>
+<p style="text-align: center;"><img style="border: 0px solid ; width: 432px; height: 241px;" usemap="#regvaldlg" ismap="ismap" alt="Add/Edit Registry Value" src="images/regvaldlg.gif"></p>
+<a name="a_rootkey2"></a><dl id="id_rootkey2"><dt>Root Key</dt><dd>The root key. This must be one of the root keys supplied by windows, e.g., HKEY_LOCAL_MACHINE, HKEY_CURRENT_USER, etc. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="a_subkey2"></a><dl id="id_subkey2"><dt>Sub Key</dt><dd>The
+name of the sub key in which the registry value will be created. This can be a
+multi-level subkey, with its parts separated by a '\' character. If it does not exist it will be created.
+<a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="a_value"></a><dl id="id_value"><dt>Value</dt><dd>The
+name of the registry value which will be created.
+<a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="a_type"></a><dl id="id_type"><dt>Type</dt><dd>The registry value type. Currently string (REG_SZ) and numeric (REG_DWORD) value types are supported. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="a_data"></a><dl id="id_data"><dt>Data</dt><dd>The actual data to be written to the registry value. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="section"></a><h3 style="text-decoration: underline;">Section</h3>
+<p>This represents a logical grouping of one or more files, folders, file sets, shortcuts, registry keys or registry values.</p>
+<p style="text-align: center;"><img style="border: 0px solid ; width: 432px; height: 255px;" usemap="#sectiondlg" ismap="ismap" alt="Add/Edit Section" src="images/sectiondlg.gif"></p>
+<a name="a_name"></a><dl id="id_name"><dt>Name</dt><dd>The Section name. If this is left blank, the Section is automatically hidden. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="a_description"></a><dl id="id_description"><dt>Description</dt><dd>The Section description. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="a_hidden"></a><dl id="id_hidden"><dt>Hidden</dt><dd>Flag indicating whether the Section is hidden. A hidden Section is always installed, since the user does
+not have the option to unselect it. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="a_bold"></a><dl id="id_bold"><dt>Display in Bold Text</dt><dd>Flag
+indicating whether the Section should be displayed in bold type. This
+is a useful way to attract the user's attention to a particular Section. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="a_unselected"></a><dl id="id_unselected"><dt>Unselected by Default</dt><dd>Flag indicating whether the Section should be unselected by default- i.e., the default behavior is <strong>NOT</strong> to install the Section contents. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="sectiongrp"></a><h3 style="text-decoration: underline;">SectionGroup/SubSection</h3>
+<p>This represents a logical grouping of one or more Sections. In NSIS versions prior to 2.05, SectionGroups
+are called SubSections.</p>
+<p style="text-align: center;"><img style="border: 0px solid ; width: 432px; height: 255px;" usemap="#sectiongrpdlg" ismap="ismap" alt="Add/Edit SectionGroup" src="images/sectiongrpdlg.gif"></p>
+<a name="a_caption"></a><dl id="id_caption"><dt>Caption</dt><dd>The caption of the SectionGroup. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="a_description2"></a><dl id="id_description2"><dt>Description</dt><dd>The SectionGroup description. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="a_bold2"></a><dl id="id_bold2"><dt>Display in Bold Text</dt><dd>Flag
+indicating whether the SectionGroup should be displayed in bold type. This
+is a useful way to attract the user's attention to a particular SectionGroup.
+<a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="a_expanded"></a><dl id="id_expanded"><dt>Expanded by Default</dt><dd>Flag indicating whether the SectionGroup is expanded by default, i.e., its component Sections are visible to the user. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<hr><a href="wizpresentation.html">Previous</a> | <a href="overview.html#contents">Contents</a> | <a href="wizcomplete.html">Next</a>
+<p><strong><small>Copyright &copy; 2004, 2005 Sunil Kamath (IcemanK).</small></strong></p>
+<map name="wizardcontents"><area id="down" shape="RECT" href="#a_down" alt="Move Down" onclick="highlightDef('id_down');" coords="454,357, 479,382"><area id="up" shape="RECT" href="#a_up" alt="Move Up" onclick="highlightDef('id_up');" coords="454,326, 479,351"><area id="collapseall" shape="RECT" href="#a_collapseall" alt="Collapse All" onclick="highlightDef('id_collapseall');" coords="124,158, 147,180"><area id="expandall" shape="RECT" href="#a_expandall" alt="Expand All" onclick="highlightDef('id_expandall');" coords="100,158, 123,180"><area id="delete" shape="RECT" href="#a_delete" alt="Delete" onclick="highlightDef('id_delete');" coords="76,158, 99,180"><area id="edit" shape="RECT" href="#a_edit" alt="Edit" onclick="highlightDef('id_edit');" coords="52,158, 75,180"><area id="add" shape="RECT" href="#a_add" alt="Add" onclick="highlightDef('id_add');" coords="19,158, 51,180"><area id="contents" shape="RECT" href="#a_contents" alt="Installer Contents" onclick="highlightDef('id_contents');" coords="22,190, 442,520"></map>
+<map name="sectiondlg"><area id="name" shape="RECT" href="#a_name" alt="Name" onclick="highlightDef('id_name');" coords="13,40, 409,63"><area id="description" shape="RECT" href="#a_description" alt="Description" onclick="highlightDef('id_description');" coords="12,68, 410,158"><area id="hidden" shape="RECT" href="#a_hidden" alt="Hidden" onclick="highlightDef('id_hidden');" coords="12,161, 63,175"><area id="bold" shape="RECT" href="#a_bold" alt="Display in Bold Text" onclick="highlightDef('id_bold');" coords="71,161, 182,175"><area id="unselected" shape="RECT" href="#a_unselected" alt="Unselected by Default" onclick="highlightDef('id_unselected');" coords="190,162, 314,175"></map>
+<map name="sectiongrpdlg"><area id="caption" shape="RECT" href="#a_caption" alt="Caption" onclick="highlightDef('id_caption');" coords="13,40, 408,61"><area id="description2" shape="RECT" href="#a_description2" alt="Description" onclick="highlightDef('id_description2');" coords="13,68, 411,157"><area id="bold2" shape="RECT" href="#a_bold2" alt="Display in Bold Text" onclick="highlightDef('id_bold2');" coords="13,161, 123,175"><area id="expanded" shape="RECT" href="#a_expanded" alt="Expanded by Default" onclick="highlightDef('id_expanded');" coords="131,161, 251,176"></map>
+<map name="filedlg"><area id="source" shape="RECT" href="#a_source" alt="Source File" onclick="highlightDef('id_source');" coords="13,41, 379,63"><area id="destination" shape="RECT" href="#a_destination" alt="Destination" onclick="highlightDef('id_destination');" coords="12,68, 407,90"><area id="overwrite" shape="RECT" href="#a_overwrite" alt="Overwrite" onclick="highlightDef('id_overwrite');" coords="13,94, 158,116"></map>
+<map name="filesetdlg"><area id="source2" shape="RECT" href="#a_source2" alt="Source Files" onclick="highlightDef('id_source2');" coords="13,42, 377,190"><area id="add2" shape="RECT" href="#a_add2" alt="Add" onclick="highlightDef('id_add2');" coords="380,58, 409,84"><area id="delete2" shape="RECT" href="#a_delete2" alt="Delete" onclick="highlightDef('id_delete2');" coords="380,90, 409,116"><area id="up2" shape="RECT" href="#a_up2" alt="Up" onclick="highlightDef('id_up2');" coords="380,120, 409,146"><area id="down2" shape="RECT" href="#a_down2" alt="Down" onclick="highlightDef('id_down2');" coords="380,151, 409,177"><area id="destination2" shape="RECT" href="#a_destination2" alt="Destination" onclick="highlightDef('id_destination2');" coords="12,193, 407,215"><area id="overwrite2" shape="RECT" href="#a_overwrite2" alt="Overwrite" onclick="highlightDef('id_overwrite2');" coords="12,219, 154,240"></map>
+<map name="folderdlg"><area id="source3" shape="RECT" href="#a_source3" alt="Source Folder" onclick="highlightDef('id_source3');" coords="13,42, 378,62"><area id="destination3" shape="RECT" href="#a_destination3" alt="Destination" onclick="highlightDef('id_destination3');" coords="12,69, 407,90"><area id="overwrite3" shape="RECT" href="#a_overwrite3" alt="Overwrite" onclick="highlightDef('id_overwrite3');" coords="12,94, 176,116"><area id="includesub" shape="RECT" href="#a_includesub" alt="Include All Sub-Folders and Files" onclick="highlightDef('id_includesub');" coords="12,121, 184,135"></map>
+<map name="shortcutdlg"><area id="location" shape="RECT" href="#a_location" alt="Location" onclick="highlightDef('id_location');" coords="13,40, 408,62"><area id="name2" shape="RECT" href="#a_name2" alt="Name" onclick="highlightDef('id_name2');" coords="13,67, 409,88"><area id="shortcut_type" shape="RECT" href="#a_shortcut_type" alt="Shortcut Type" onclick="highlightDef('id_shortcut_type');" coords="12,90, 262,107"><area id="url" shape="RECT" href="#a_url" alt="URL" onclick="highlightDef('id_url');" coords="13,113, 409,134"><area id="path" shape="RECT" href="#a_path" alt="Path" onclick="highlightDef('id_path');" coords="12,138, 379,160"></map>
+<map name="regkeydlg"><area id="rootkey" shape="RECT" href="#a_rootkey" alt="Root Key" onclick="highlightDef('id_rootkey');" coords="13,41, 228,60"><area id="subkey" shape="RECT" href="#a_subkey" alt="Sub Key" onclick="highlightDef('id_subkey');" coords="13,66, 408,87"></map>
+<map name="regvaldlg"><area id="rootkey2" shape="RECT" href="#a_rootkey2" alt="Root Key" onclick="highlightDef('id_rootkey2');" coords="12,41, 228,61"><area id="subkey2" shape="RECT" href="#a_subkey2" alt="Sub Key" onclick="highlightDef('id_subkey2');" coords="13,67, 409,87"><area id="value" shape="RECT" href="#a_value" alt="Value" onclick="highlightDef('id_value');" coords="13,91, 410,113"><area id="type" shape="RECT" href="#a_type" alt="Type" onclick="highlightDef('id_type');" coords="12,117, 127,137"><area id="data" shape="RECT" href="#a_data" alt="Data" onclick="highlightDef('id_data');" coords="13,143, 409,163"></map>
+</div>
+
+</body></html>

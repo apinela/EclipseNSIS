@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.wizard.*;
 import net.sf.eclipsensis.wizard.settings.NSISInstallRegistryValue;
@@ -164,6 +165,11 @@ public class NSISInstallRegistryValueDialog extends AbstractNSISInstallItemDialo
             }
         });
         return composite;
+    }
+    
+    protected String getHelpContextId()
+    {
+        return INSISConstants.PLUGIN_CONTEXT_PREFIX+"nsis_regval_context"; //$NON-NLS-1$
     }
     
     protected String checkForErrors()

@@ -16,7 +16,14 @@
 <topic label="Editing NSIS Scripts" href="help/editing.html"/>
 <topic label="Compiling and Testing" href="help/compiling.html"/>
 <topic label="Console" href="help/console.html"/>
-<topic label="Script Wizard" href="help/wizard.html"/>
+<topic label="Script Wizard" href="help/wizard.html">
+<topic label="Welcome" href="help/wizwelcome.html"/>
+<topic label="General Information" href="help/wizgeneral.html"/>
+<topic label="Installer Attributes" href="help/wizattrib.html"/>
+<topic label="Installer Presentation" href="help/wizpresentation.html"/>
+<topic label="Installer Contents" href="help/wizcontents.html"/>
+<topic label="Wizard Completion" href="help/wizcomplete.html"/>
+</topic>
 <topic label="Preferences" href="help/preferences.html">
 <topic label="EclipseNSIS" href="help/nsisprefs.html"/>
 <topic label="Editor" href="help/editorprefs.html"/>

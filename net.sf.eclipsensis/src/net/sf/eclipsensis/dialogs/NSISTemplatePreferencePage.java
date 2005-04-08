@@ -55,7 +55,7 @@ public class NSISTemplatePreferencePage extends TemplatePreferencePage
      */
     public void createControl(Composite parent) {
         super.createControl(parent);
-        WorkbenchHelp.setHelp(getControl(),INSISConstants.PLUGIN_CONTEXT_PREFIX+"nsis_templateprefs_context");
+        WorkbenchHelp.setHelp(getControl(),INSISConstants.PLUGIN_CONTEXT_PREFIX+"nsis_templateprefs_context"); //$NON-NLS-1$
     }
 
     /*

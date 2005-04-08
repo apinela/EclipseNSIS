@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.wizard.template.*;
 
@@ -34,6 +35,11 @@ public class NSISScriptWizard extends NSISWizard
         setWindowTitle(EclipseNSISPlugin.getResourceString("wizard.window.title")); //$NON-NLS-1$
     }
 
+    public String getHelpContextId()
+    {
+        return INSISConstants.PLUGIN_CONTEXT_PREFIX+"nsis_wizard_context"; //$NON-NLS-1$
+    }
+    
     /**
      * @return Returns the templateManager.
      */

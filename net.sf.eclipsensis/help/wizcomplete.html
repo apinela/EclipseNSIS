@@ -1,0 +1,57 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><!--
+###############################################################################
+# Copyright (c) 2004, 2005 Sunil Kamath (IcemanK).
+# All rights reserved.
+# This program is made available under the terms of the Common Public License
+# v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
+#
+# Contributors:
+# Sunil Kamath (IcemanK) - initial API and implementation
+###############################################################################
+-->
+  <title>EclipseNSIS - Script Wizard Completion</title>
+
+
+  <link rel="stylesheet" href="book.css" charset="ISO-8859-1" type="text/css">
+
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+
+  <meta http-equiv="Content-Style-Type" content="text/css">
+
+  <script language="javascript" type="text/javascript" src="help.js"></script>
+</head>
+<body>
+<div id="main">
+<a href="wizcontents.html">Previous</a> | <a href="overview.html#contents">Contents</a> | <a href="preferences.html">Next</a>
+<hr>
+<h1>Script Wizard</h1>
+<h2>Wizard Completion</h2><p>This page is used to specify some final items before script generation.</p>
+<p style="text-align: center;"><img style="border: 0px solid ; width: 508px; height: 629px;" usemap="#wizardcomplete" ismap="ismap" alt="Script Wizard Completion" src="images/wizardcomplete.gif">
+</p>
+<a name="a_instdetails"></a><dl id="id_instdetails"><dt>Show Installation Details</dt><dd>Display a window in the installation page which shows details about the installer. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="a_autoclose"></a><dl id="id_autoclose"><dt>Auto-close Installer</dt><dd>Automatically close the installer upon successful completion. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="a_uninst_shortcut"></a><dl id="id_uninst_shortcut"><dt>Add Uninstaller Shortcut</dt><dd>Add an uninstaller shortcut to the Start Menu program group. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="a_uninst_entry"></a><dl id="id_uninst_entry"><dt>Add Uninstaller Entry</dt><dd>Add an uninstallation entry to the Control Panel Add/Remove Programs dialog. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="a_run_prog"></a><dl id="id_run_prog"><dt>Run Program</dt><dd>Name of program to run after successful installation. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="a_run_params"></a><dl id="id_run_params"><dt>Run Program Parameters</dt><dd>Command-line parameters for program to run after installation. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="a_readme"></a><dl id="id_readme"><dt>Open Readme</dt><dd>Name of README file to open after successful installation. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="a_uninst"></a><dl id="id_uninst"><dt>Silent Uninstaller</dt><dd>Create a silent uninstaller, i.e., without a user interface. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="a_uninst_detail"></a><dl id="id_uninst_detail"><dt>Show Uninstaller Details</dt><dd>Display a window in the uninstallation page which shows details about the uninstaller. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="a_uninst_autoclose"></a><dl id="id_uninst_autoclose"><dt>Autoclose Uninstaller</dt><dd>Automatically close the uninstaller upon successful completion. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="a_saveloc"></a><dl id="id_saveloc"><dt>Workbench Save Location</dt><dd>Eclipse Workbench location for saving the wizard-generated NSIS script. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="a_relpath"></a><dl id="id_relpath"><dt>Convert Paths to Relative Paths</dt><dd>Convert
+absolute file paths to paths relative to the NSIS script save location.
+This enhances portability of the script, e.g., if it is part of a
+source code repository. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="a_compile"></a><dl id="id_compile"><dt>Compile After Creation</dt><dd>Compile the generated script after creation. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="a_test"></a><dl id="id_test"><dt>Test after Compilation</dt><dd>Run the script generated installer after successful compilation. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="a_tmplsave"></a><dl id="id_tmplsave"><dt>Save as a Template</dt><dd>Save the current wizard settings as a Script template. This enables re-creation of the script at a later time. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a href="wizard.html">Back
+to Script Wizard</a><br>
+<hr><a href="wizcontents.html">Previous</a> | <a href="overview.html#contents">Contents</a> | <a href="preferences.html">Next</a>
+<p><strong><small>Copyright &copy; 2004, 2005 Sunil Kamath (IcemanK).</small></strong></p>
+<map name="wizardcomplete"><area id="tmplsave" shape="RECT" href="#a_tmplsave" alt="Save as a Template" onclick="highlightDef('id_tmplsave');" coords="21,494, 136,511"><area id="test" shape="RECT" href="#a_test" alt="Test after Compilation" onclick="highlightDef('id_test');" coords="175,474, 300,490"><area id="compile" shape="RECT" href="#a_compile" alt="Compile test script" onclick="highlightDef('id_compile');" coords="21,475, 147,490"><area id="relpath" shape="RECT" href="#a_relpath" alt="Convert Paths to Relative Paths" onclick="highlightDef('id_relpath');" coords="21,452, 193,469"><area id="saveloc" shape="RECT" href="#a_saveloc" alt="Workbench Save Location" onclick="highlightDef('id_saveloc');" coords="21,426, 456,446"><area id="uninst_autoclose" shape="RECT" href="#a_uninst_autoclose" alt="Autoclose Uninstaller" onclick="highlightDef('id_uninst_autoclose');" coords="21,379, 218,393"><area id="uninst_detail" shape="RECT" href="#a_uninst_detail" alt="Show uninstaller details" onclick="highlightDef('id_uninst_detail');" coords="22,359, 168,370"><area id="uninst" shape="RECT" href="#a_uninst" alt="Silent uninstaller" onclick="highlightDef('id_uninst');" coords="22,336, 118,348"><area id="readme" shape="RECT" href="#a_readme" alt="Open readme" onclick="highlightDef('id_readme');" coords="21,283, 455,303"><area id="run_params" shape="RECT" href="#a_run_params" alt="Run Paramteres" onclick="highlightDef('id_run_params');" coords="21,257, 488,278"><area id="run_prog" shape="RECT" href="#a_run_prog" alt="Run program" onclick="highlightDef('id_run_prog');" coords="21,230, 456,251"><area id="uninst_entry" shape="RECT" href="#a_uninst_entry" alt="Uninstaller entry" onclick="highlightDef('id_uninst_entry');" coords="22,182, 332,195"><area id="uninst_shortcutt" shape="RECT" href="#a_uninst_shortcut" alt="Add uninstaller shortcut" onclick="highlightDef('id_uninst_shortcut');" coords="22,162, 301,175"><area id="autoclose" shape="RECT" href="#a_autoclose" alt="Auto-close Installer" onclick="highlightDef('id_autoclose');" coords="22,141, 208,153"><area id="instdetails" shape="RECT" href="#a_instdetails" alt="Show installation details" onclick="highlightDef('id_instdetails');" coords="22,120, 156,133"></map>
+</div>
+
+</body></html>

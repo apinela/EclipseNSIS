@@ -13,6 +13,7 @@ import java.text.Collator;
 import java.util.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.lang.NSISLanguage;
 import net.sf.eclipsensis.lang.NSISLanguageManager;
@@ -106,12 +107,14 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
-     */
-    public void createControl(Composite parent)
+    protected String getHelpContextId()
     {
-        Composite composite = new Composite(parent, SWT.NONE);
+        return INSISConstants.PLUGIN_CONTEXT_PREFIX+"nsis_wizattrib_context"; //$NON-NLS-1$
+    }
+    
+    protected Control createPageControl(Composite parent)
+    {
+        final Composite composite = new Composite(parent, SWT.NONE);
         setControl(composite);
 
         GridLayout layout = new GridLayout(1,false);
@@ -123,6 +126,7 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
         createLanguagesGroup(composite); //$NON-NLS-1$
 
         validatePage(ALL_CHECK);
+        return composite;
     }
 
     protected void createLanguagesGroup(Composite parent)

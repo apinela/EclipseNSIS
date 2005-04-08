@@ -74,7 +74,7 @@ public class NSISTaskTagsPreferencePage extends PreferencePage implements IWorkb
      */
     public void createControl(Composite parent) {
         super.createControl(parent);
-        WorkbenchHelp.setHelp(getControl(),INSISConstants.PLUGIN_CONTEXT_PREFIX+"nsis_tasktagprefs_context");
+        WorkbenchHelp.setHelp(getControl(),INSISConstants.PLUGIN_CONTEXT_PREFIX+"nsis_tasktagprefs_context"); //$NON-NLS-1$
     }
 
     /* (non-Javadoc)

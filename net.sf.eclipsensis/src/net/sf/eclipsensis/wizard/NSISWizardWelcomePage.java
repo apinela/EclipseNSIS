@@ -12,6 +12,7 @@ package net.sf.eclipsensis.wizard;
 import java.text.Collator;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.viewer.CollectionContentProvider;
 import net.sf.eclipsensis.viewer.CollectionLabelProvider;
@@ -50,10 +51,12 @@ public class NSISWizardWelcomePage extends AbstractNSISWizardPage
               EclipseNSISPlugin.getResourceString("wizard.welcome.description")); //$NON-NLS-1$
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
-     */
-    public void createControl(Composite parent)
+    protected String getHelpContextId()
+    {
+        return INSISConstants.PLUGIN_CONTEXT_PREFIX+"nsis_wizwelcome_context"; //$NON-NLS-1$
+    }
+    
+    protected Control createPageControl(Composite parent)
     {
         final Composite composite = new Composite(parent, SWT.NONE);
         setControl(composite);
@@ -89,6 +92,8 @@ public class NSISWizardWelcomePage extends AbstractNSISWizardPage
         });
 
         validatePage(1);
+        
+        return composite;
     }
     
     private Group createTemplatesGroup(Composite parent)

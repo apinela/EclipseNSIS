@@ -25,6 +25,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 public abstract class AbstractNSISInstallItemDialog extends StatusMessageDialog
 {
@@ -59,6 +60,10 @@ public abstract class AbstractNSISInstallItemDialog extends StatusMessageDialog
         control.setLayoutData(gd);
         
         Dialog.applyDialogFont(composite);
+        String helpContextId = getHelpContextId();
+        if(helpContextId != null) {
+            WorkbenchHelp.setHelp(composite,helpContextId);
+        }
         return composite;
     }
     
@@ -109,4 +114,5 @@ public abstract class AbstractNSISInstallItemDialog extends StatusMessageDialog
     protected abstract String checkForErrors();
     protected abstract Control createControlContents(Composite parent);
     protected abstract List getProperties();
+    protected abstract String getHelpContextId();
 }

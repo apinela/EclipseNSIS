@@ -44,6 +44,11 @@ public class NSISSectionDialog extends AbstractNSISInstallItemDialog
         super(wizard, item);
     }
 
+    protected String getHelpContextId()
+    {
+        return INSISConstants.PLUGIN_CONTEXT_PREFIX+"nsis_sectiondlg_context"; //$NON-NLS-1$
+    }
+    
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.wizard.settings.dialogs.AbstractNSISInstallItemDialog#getProperties()
      */
@@ -64,7 +69,7 @@ public class NSISSectionDialog extends AbstractNSISInstallItemDialog
         composite.setLayout(layout);
         
         final Text t = NSISWizardDialogUtil.createText(composite,mStore.getString("name"), //$NON-NLS-1$
-                            "wizard.name.label",true,null,true); //$NON-NLS-1$
+                            "wizard.name.label",true,null,false); //$NON-NLS-1$
         t.addVerifyListener(new VerifyListener() {
             public void verifyText(VerifyEvent e) 
             {

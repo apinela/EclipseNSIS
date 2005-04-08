@@ -10,6 +10,7 @@
 package net.sf.eclipsensis.wizard;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.wizard.template.NSISWizardTemplate;
 import net.sf.eclipsensis.wizard.util.NSISWizardDialogUtil;
@@ -37,10 +38,12 @@ public class NSISWizardTemplatePage extends AbstractNSISWizardPage
               EclipseNSISPlugin.getResourceString("wizard.template.description")); //$NON-NLS-1$
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
-     */
-    public void createControl(Composite parent)
+    protected String getHelpContextId()
+    {
+        return INSISConstants.PLUGIN_CONTEXT_PREFIX+"nsis_scrtmpltdlg_context"; //$NON-NLS-1$
+    }
+    
+    protected Control createPageControl(Composite parent)
     {
         mTemplate = mWizard.getTemplate();
         final Composite composite = new Composite(parent, SWT.NONE);
@@ -88,6 +91,8 @@ public class NSISWizardTemplatePage extends AbstractNSISWizardPage
         });
 
         validatePage(0xffff);
+        
+        return composite;
     }
 
     public boolean validatePage(int flag)

@@ -22,6 +22,9 @@ import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.events.VerifyListener;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 public abstract class AbstractNSISWizardPage extends WizardPage implements INSISWizardConstants
 {
@@ -210,5 +213,16 @@ public abstract class AbstractNSISWizardPage extends WizardPage implements INSIS
         return (mWizard instanceof NSISTemplateWizard);
     }
 
+    public final void createControl(Composite parent)
+    {
+        Control control = createPageControl(parent);
+        String contextId = getHelpContextId();
+        if(contextId != null) {
+            WorkbenchHelp.setHelp(control,contextId);
+        }
+
+    }
     public abstract boolean validatePage(int flag);
+    protected abstract Control createPageControl(Composite parent);
+    protected abstract String getHelpContextId();
 }

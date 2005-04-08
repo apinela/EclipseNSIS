@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.wizard.NSISWizard;
@@ -50,6 +51,11 @@ public class NSISInstallDirectoryDialog extends AbstractNSISInstallItemDialog
         return cProperties;
     }
 
+    protected String getHelpContextId()
+    {
+        return INSISConstants.PLUGIN_CONTEXT_PREFIX+"nsis_folderdlg_context"; //$NON-NLS-1$
+    }
+    
     /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
      */

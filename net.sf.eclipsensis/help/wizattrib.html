@@ -1,0 +1,71 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><!--
+###############################################################################
+# Copyright (c) 2004, 2005 Sunil Kamath (IcemanK).
+# All rights reserved.
+# This program is made available under the terms of the Common Public License
+# v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
+#
+# Contributors:
+# Sunil Kamath (IcemanK) - initial API and implementation
+###############################################################################
+-->
+  <title>EclipseNSIS - Script Wizard Installer Attributes</title>
+
+
+  <link rel="stylesheet" href="book.css" charset="ISO-8859-1" type="text/css">
+
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+
+  <meta http-equiv="Content-Style-Type" content="text/css">
+
+  <script language="javascript" type="text/javascript" src="help.js"></script>
+</head>
+<body>
+<div id="main">
+<a href="wizgeneral.html">Previous</a> | <a href="overview.html#contents">Contents</a> | <a href="wizpresentation.html">Next</a>
+<hr>
+<h1>Script Wizard</h1>
+<h2>Installer Attributes</h2><p>This page is used to specify installation locations and languages.</p>
+<p style="text-align: center;"><img style="border: 0px solid ; width: 508px; height: 629px;" usemap="#wizardattrib" ismap="ismap" alt="Script Wizard Installer Attributes" src="images/wizardattrib.gif">
+</p>
+<a name="a_instdir"></a><dl id="id_instdir"><dt>Directory Name</dt><dd>The installation directory for the application. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="a_changedir"></a><dl id="id_changedir"><dt>Allow Directory Change</dt><dd>Option
+to allow the user to choose the installation directory. If this option
+is selected, the user is prompted with an installer page to specify the
+installation location, otherwise the application
+always installs in the location specified above. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="a_create_smgrp"></a><dl id="id_create_smgrp"><dt>Create Start Menu Group</dt><dd>Option to create a Start Menu group with application related shortcuts. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="a_smgrp_name"></a><dl id="id_smgrp_name"><dt>Group Name</dt><dd>The Start Menu group name for the application. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="a_change_smgrp"></a><dl id="id_change_smgrp"><dt>Allow User to Change Group</dt><dd>Option
+to allow the user to change the Start Menu group. If this option is
+selected, the user is prompted with an installer page to specify the
+Start Menu group name, otherwise the installer
+always creates the group name specified above.
+<a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="a_langsupp"></a><dl id="id_langsupp"><dt>Enable Language Support</dt><dd>Option to create a multilingual installer. If this option is not selected, the installer
+is created using the default NSIS language (currently U.S. English). <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="a_avail_langgrp"></a><dl id="id_avail_langgrp"><dt>Available Languages</dt><dd>List of languages currently supported by NSIS. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="a_sel_langgrp"></a><dl id="id_sel_langgrp"><dt>Selected Languages</dt><dd>List of languages selected for the installer. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="a_sellang"></a><dl id="id_sellang"><dt>Allow User to Select Language.</dt><dd>Option
+to allow user to select the language of the installer. If this option
+is selected, the
+user is prompted to select a language for installation, otherwise the
+installer attempts to automatically determine the language to be used
+from the user's locale settings. If the user's locale specifies
+a language not selected for the installer, the first language in the
+selected languages list is used. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="a_allang_right"></a><dl id="id_alllang_right"><dt>Add All</dt><dd>Add all supported language to the Selected Languages list. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="a_sellang_right"></a><dl id="id_sellang_right"><dt>Add Highlighted</dt><dd>Add highlighted language(s) to the Selected Languages list. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="a_sellang_left"></a><dl id="id_sellang_left"><dt>Remove Highlighted</dt><dd>Remove highlighted language(s) from the Selected Languages list. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="a_alllang_left"></a><dl id="id_alllang_left"><dt>Remove All</dt><dd>Remove all languages from the Selected Languages list. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="a_langup"></a><dl id="id_langup"><dt>Move Up</dt><dd>Move highlighted language(s) up in priority. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="a_langdown"></a><dl id="id_langdown"><dt>Move Down</dt><dd>Move highlighted language(s) down in priority. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a href="wizard.html">Back
+to Script Wizard</a><br>
+<hr><a href="wizgeneral.html">Previous</a> | <a href="overview.html#contents">Contents</a> | <a href="wizpresentation.html">Next</a>
+<p><strong><small>Copyright &copy; 2004, 2005 Sunil Kamath (IcemanK).</small></strong></p>
+<map name="wizardattrib"><area id="langup" shape="RECT" href="#a_langup" alt="Move Up" onclick="highlightDef('id_langup');" coords="434,390, 477,419"><area id="langdown" shape="RECT" href="#a_langdown" alt="Move Down" onclick="highlightDef('id_langdown');" coords="434,421, 477,450"><area id="allang_left" shape="RECT" href="#a_alllang_left" alt="Remove All" onclick="highlightDef('id_alllang_left');" coords="204,452, 247,480"><area id="selllang_left" shape="RECT" href="#a_sellang_left" alt="Remove Highlighted" onclick="highlightDef('id_sellang_left');" coords="204,420, 247,448"><area id="selllang_right" shape="RECT" href="#a_sellang_right" alt="Add Highlighted" onclick="highlightDef('id_sellang_right');" coords="203,385, 247,417"><area id="alllang_right" shape="RECT" href="#a_allang_right" alt="Add All" onclick="highlightDef('id_alllang_right');" coords="204,359, 247,387"><area id="sellang" shape="RECT" href="#a_sellang" alt="Allow User to Select Language." onclick="highlightDef('id_sellang');" coords="21,503, 184,518"><area id="sel_langgrp" shape="RECT" href="#a_sel_langgrp" alt="Selected Languages" onclick="highlightDef('id_sel_langgrp');" coords="251,306, 433,501"><area id="avail_langgrp" shape="RECT" href="#a_avail_langgrp" alt="Available Languages" onclick="highlightDef('id_avail_langgrp');" coords="20,306, 198,501"><area id="langsupp" shape="RECT" href="#a_langsupp" alt="Enable Language Support" onclick="highlightDef('id_langsupp');" coords="22,283, 162,299"><area id="change_smrgrp" shape="RECT" href="#a_change_smgrp" alt="Allow User to Change Group" onclick="highlightDef('id_change_smgrp');" coords="19,238, 175,253"><area id="smgrp_name" shape="RECT" href="#a_smgrp_name" alt="Group Name" onclick="highlightDef('id_smgrp_name');" coords="19,212, 486,234"><area id="create_smgrp" shape="RECT" href="#a_create_smgrp" alt="Create Start Menu Group" onclick="highlightDef('id_create_smgrp');" coords="19,193, 161,207"><area id="changedir" shape="RECT" href="#a_changedir" alt="Allow User to Change Directory" onclick="highlightDef('id_changedir');" coords="19,145, 189,160"><area id="instdir" shape="RECT" href="#a_instdir" alt="Directory Name" onclick="highlightDef('id_instdir');" coords="19,119, 485,139"></map>
+</div>
+
+</body></html>

@@ -16,6 +16,7 @@ import java.util.*;
 import javax.sound.sampled.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.dialogs.ColorEditor;
 import net.sf.eclipsensis.util.*;
 import net.sf.eclipsensis.wizard.settings.NSISWizardSettings;
@@ -73,19 +74,21 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
     {
         super(NAME, EclipseNSISPlugin.getResourceString("wizard.presentation.title"), //$NON-NLS-1$
               EclipseNSISPlugin.getResourceString("wizard.presentation.description")); //$NON-NLS-1$
-        mBGPreviewFontData = new FontData(EclipseNSISPlugin.getResourceString("background.preview.font","1|Times New Roman|26|3|WINDOWS|1|-53|0|0|0|700|1|0|0|1|0|0|0|0|Times New Roman")); //$NON-NLS-1$ //$NON-NLS-2$
+        mBGPreviewFontData = new FontData(EclipseNSISPlugin.getResourceString("background.preview.font","1|Times New Roman|24|3|WINDOWS|1|-53|0|0|0|700|1|0|0|1|0|0|0|0|Times New Roman")); //$NON-NLS-1$ //$NON-NLS-2$
         mBGPreviewEscapeFontData = new FontData(EclipseNSISPlugin.getResourceString("background.preview.escape.font","1|Times New Roman|12|1|WINDOWS|1|0|0|0|0|700|0|0|0|1|0|0|0|0|Times New Roman")); //$NON-NLS-1$ //$NON-NLS-2$
         mBGPreviewTextLocation = new Point(Integer.parseInt(EclipseNSISPlugin.getResourceString("background.preview.text.x","16")), //$NON-NLS-1$ //$NON-NLS-2$
                                            Integer.parseInt(EclipseNSISPlugin.getResourceString("background.preview.text.y","8"))); //$NON-NLS-1$ //$NON-NLS-2$
         mBGPreviewGradientHeight = Integer.parseInt(EclipseNSISPlugin.getResourceString("background.preview.gradient.height","4")); //$NON-NLS-1$ //$NON-NLS-2$
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
-     */
-    public void createControl(Composite parent)
+    protected String getHelpContextId()
     {
-        Composite composite = new Composite(parent, SWT.NONE);
+        return INSISConstants.PLUGIN_CONTEXT_PREFIX+"nsis_wizpresentation_context"; //$NON-NLS-1$
+    }
+    
+    protected Control createPageControl(Composite parent)
+    {
+        final Composite composite = new Composite(parent, SWT.NONE);
         setControl(composite);
 
         GridLayout layout = new GridLayout(1,false);
@@ -98,6 +101,8 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
         createBackgroundGroup(composite, bundle);
 
         setPageComplete(validatePage(ALL_CHECK));
+        
+        return composite;
     }
     
     /**
@@ -543,7 +548,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
 
         final Shell shell = new Shell((Display)null, SWT.APPLICATION_MODAL | SWT.NO_TRIM);
         shell.setText(EclipseNSISPlugin.getResourceString("background.preview.title")); //$NON-NLS-1$
-        final String previewText = new StringBuffer(settings.getName()).append(" ").append(settings.getVersion()).toString().trim();  //$NON-NLS-1$
+        final String previewText = EclipseNSISPlugin.getFormattedString("background.preview.text", new Object[]{settings.getName()});  //$NON-NLS-1$
         final Display display = shell.getDisplay();
         FillLayout fillLayout = new FillLayout();
         fillLayout.marginHeight=0;
