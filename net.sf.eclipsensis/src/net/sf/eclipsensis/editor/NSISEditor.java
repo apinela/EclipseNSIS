@@ -71,6 +71,7 @@ public class NSISEditor extends TextEditor implements INSISConstants, IPropertyC
         Object source = event.getSource();
         ISelection selection = event.getSelection();
         ISourceViewer sourceViewer = getSourceViewer();
+        boolean acquiredMutex = mMutex.acquireWithoutBlocking(source);
         if(source.equals(sourceViewer) && selection instanceof ITextSelection) {
             IAction action = getAction("NSISAddBlockComment"); //$NON-NLS-1$
             if(action != null) {
@@ -78,7 +79,7 @@ public class NSISEditor extends TextEditor implements INSISConstants, IPropertyC
             }
     
             if(mOutlineContentProvider != null) {
-                if(mMutex.acquireWithoutBlocking(source)) {
+                if(acquiredMutex) {
                     try {
                         ITextSelection textSelection = (ITextSelection)selection;
                         IStructuredSelection sel = StructuredSelection.EMPTY;
@@ -128,7 +129,7 @@ public class NSISEditor extends TextEditor implements INSISConstants, IPropertyC
                 if(mCurrentPosition == null || !position.equals(mCurrentPosition)) {
                     mCurrentPosition = position;
                     try {
-                        boolean moveCursor = true;
+                        boolean moveCursor = acquiredMutex;
 //                        ISelection sel = getSelectionProvider().getSelection();
 //                        if(sel != null && sel instanceof ITextSelection) {
 //                            int offset = ((ITextSelection)sel).getOffset();
@@ -146,7 +147,7 @@ public class NSISEditor extends TextEditor implements INSISConstants, IPropertyC
                     }
                 }
 
-                if(mMutex.acquireWithoutBlocking(source)) {
+                if(acquiredMutex) {
                     try {
                         Position selectPosition = element.getSelectPosition();
                         if(selectPosition != null) {
