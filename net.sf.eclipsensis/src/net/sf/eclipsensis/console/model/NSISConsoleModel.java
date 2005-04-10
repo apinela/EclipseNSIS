@@ -18,7 +18,7 @@ public class NSISConsoleModel
     private static NSISConsoleModel cInstance = null;
     
     private HashSet mListeners = new HashSet();
-    private ArrayList mContents = new ArrayList();
+    private List mContents = Collections.synchronizedList(new ArrayList());
     private ArrayList mErrors = new ArrayList();
     private ArrayList mWarnings = new ArrayList();
     

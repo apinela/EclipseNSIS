@@ -38,4 +38,5 @@ public class WinAPI
     public static native int GetUserDefaultLangID();
     public static native String ExtractHtmlHelpAndTOC(String pszFile, String pszFolder);
     public static native String[] GetPluginExports(String pszPluginFile);
+    public static final native int SendMessage(int hWnd, int msg, int wParam, int lParam);
 }

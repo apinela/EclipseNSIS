@@ -15,7 +15,6 @@ import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.help.WorkbenchHelp;
 
@@ -55,16 +54,5 @@ public class NSISWizardDialog extends WizardDialog
         int delX = size.x - clientArea.width;
         int delY = size.y - clientArea.height;
         shell.setSize( Math.max(SIZING_WIZARD_WIDTH, clientArea.width)+delX, Math.max(SIZING_WIZARD_HEIGHT, clientArea.height)+delY);
-    }
-    
-    protected Control createContents(Composite parent)
-    {
-        // TODO Auto-generated method stub
-        return super.createContents(parent);
-    }
-    protected Control createDialogArea(Composite parent)
-    {
-        // TODO Auto-generated method stub
-        return super.createDialogArea(parent);
     }
 }

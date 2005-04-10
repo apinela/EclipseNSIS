@@ -32,6 +32,7 @@ public class NSISCompileAction extends NSISScriptAction
      */
 	final public void run(IAction action) {
         if(mPlugin != null) {
+            action.setEnabled(false);
             MakeNSISRunner.startup();
             if(mFile != null) {
                 IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
@@ -58,6 +59,7 @@ public class NSISCompileAction extends NSISScriptAction
                                         break outer;
                                     }
                                     else {
+                                        action.setEnabled(true);
                                         return;
                                     }
                                 }
@@ -66,7 +68,6 @@ public class NSISCompileAction extends NSISScriptAction
                     }
                 }
                 new Thread(getRunnable()).start();
-                action.setEnabled(false);
             }
         }
 	}
@@ -128,54 +129,56 @@ public class NSISCompileAction extends NSISScriptAction
         {
             NSISConsoleLine line;
             text = text.trim();
-            Matcher matcher = MakeNSISRunner.MAKENSIS_ERROR_PATTERN.matcher(text);
-            if(matcher.matches()) {
-                line = NSISConsoleLine.error(text);
-                IFile file = mFile.getWorkspace().getRoot().getFileForLocation(new Path(matcher.group(1)));
-                if(file != null && file.equals(mFile)) {
-                    line.setFile(file);
-                    line.setLineNum(Integer.parseInt(matcher.group(2)));
+
+            String lText = text.toLowerCase();
+            if(lText.startsWith("error")) {
+                Matcher matcher = MakeNSISRunner.MAKENSIS_ERROR_PATTERN.matcher(text);
+                if(matcher.matches()) {
+                    line = NSISConsoleLine.error(text);
+                    IFile file = mFile.getWorkspace().getRoot().getFileForLocation(new Path(matcher.group(1)));
+                    if(file != null && file.equals(mFile)) {
+                        line.setFile(file);
+                        line.setLineNum(Integer.parseInt(matcher.group(2)));
+                    }
+                    return line;
                 }
             }
+            if(lText.startsWith("error ") || lText.startsWith("error:") || //$NON-NLS-1$ //$NON-NLS-2$
+               lText.startsWith("!include: error ") || lText.startsWith("!include: error:")) { //$NON-NLS-1$ //$NON-NLS-2$
+                line = NSISConsoleLine.error(text);
+            }
+            else if(lText.startsWith("warning ") || lText.startsWith("warning:") || lText.startsWith("invalid ")) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                line = NSISConsoleLine.warning(text);
+            }
+            else if(lText.endsWith(" warning:") || lText.endsWith(" warnings:")) { //$NON-NLS-1$ //$NON-NLS-2$
+                mWarningMode = true;
+                line = NSISConsoleLine.warning(text);
+            }
+            else if(MakeNSISRunner.MAKENSIS_SYNTAX_ERROR_PATTERN.matcher(lText).matches()) {
+                mErrorMode = true;
+                line = NSISConsoleLine.error(text);
+            }
+            else if(mErrorMode) {
+                line = NSISConsoleLine.error(text);
+            }
+            else if(mWarningMode) {
+                line = NSISConsoleLine.warning(text);
+            }
             else {
-                String lText = text.toLowerCase();
-                if(lText.startsWith("error ") || lText.startsWith("error:") || //$NON-NLS-1$ //$NON-NLS-2$
-                   lText.startsWith("!include: error ") || lText.startsWith("!include: error:")) { //$NON-NLS-1$ //$NON-NLS-2$
-                    line = NSISConsoleLine.error(text);
-                }
-                else if(lText.startsWith("warning ") || lText.startsWith("warning:") || lText.startsWith("invalid ")) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                    line = NSISConsoleLine.warning(text);
-                }
-                else if(lText.endsWith(" warning:") || lText.endsWith(" warnings:")) { //$NON-NLS-1$ //$NON-NLS-2$
-                    mWarningMode = true;
-                    line = NSISConsoleLine.warning(text);
-                }
-                else if(MakeNSISRunner.MAKENSIS_SYNTAX_ERROR_PATTERN.matcher(lText).matches()) {
-                    mErrorMode = true;
-                    line = NSISConsoleLine.error(text);
-                }
-                else if(mErrorMode) {
-                    line = NSISConsoleLine.error(text);
-                }
-                else if(mWarningMode) {
-                    line = NSISConsoleLine.warning(text);
-                }
-                else {
-                    line = NSISConsoleLine.info(text);
-                }
-                if(line.getType() == NSISConsoleLine.WARNING) {
-                    matcher = MakeNSISRunner.MAKENSIS_WARNING_PATTERN.matcher(text);
-                    if(matcher.matches()) {
-                        IFile file = mFile.getWorkspace().getRoot().getFileForLocation(new Path(matcher.group(1)));
-                        if(file != null && file.equals(mFile)) {
-                            line.setFile(file);
-                            line.setLineNum(Integer.parseInt(matcher.group(2)));
-                        }
+                line = NSISConsoleLine.info(text);
+            }
+            if(line.getType() == NSISConsoleLine.WARNING) {
+                Matcher matcher = MakeNSISRunner.MAKENSIS_WARNING_PATTERN.matcher(text);
+                if(matcher.matches()) {
+                    IFile file = mFile.getWorkspace().getRoot().getFileForLocation(new Path(matcher.group(1)));
+                    if(file != null && file.equals(mFile)) {
+                        line.setFile(file);
+                        line.setLineNum(Integer.parseInt(matcher.group(2)));
                     }
-                    else if(!text.endsWith("warnings:") && !text.endsWith("warning:")) { //$NON-NLS-1$ //$NON-NLS-2$ 
-                        line.setFile(mFile);
-                        line.setLineNum(1);
-                    }
+                }
+                else if(!text.endsWith("warnings:") && !text.endsWith("warning:")) { //$NON-NLS-1$ //$NON-NLS-2$ 
+                    line.setFile(mFile);
+                    line.setLineNum(1);
                 }
             }
             

@@ -1,0 +1,19 @@
+Manifest-Version: 1.0
+Bundle-Name: %plugin.name
+Bundle-SymbolicName: net.sf.eclipsensis; singleton=true
+Bundle-Version: 0.5.0
+Bundle-ClassPath: eclipsensis.jar
+Bundle-Activator: net.sf.eclipsensis.EclipseNSISPlugin
+Bundle-Vendor: Sunil Kamath (IcemanK)
+Bundle-Localization: plugin
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.ui.ide,
+ org.eclipse.core.runtime,
+ org.eclipse.jface.text,
+ org.eclipse.core.filebuffers,
+ org.eclipse.ui.editors,
+ org.eclipse.ui.workbench.texteditor,
+ org.eclipse.core.resources,
+ org.eclipse.ui.views,
+ org.eclipse.help
+Eclipse-AutoStart: false

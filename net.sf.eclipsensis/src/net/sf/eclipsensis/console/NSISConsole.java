@@ -20,8 +20,7 @@ import net.sf.eclipsensis.makensis.IMakeNSISRunListener;
 import net.sf.eclipsensis.makensis.MakeNSISRunner;
 import net.sf.eclipsensis.settings.INSISPreferenceConstants;
 import net.sf.eclipsensis.settings.NSISPreferences;
-import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.ImageManager;
+import net.sf.eclipsensis.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
@@ -34,6 +33,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.internal.win32.OS;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionFactory;
@@ -201,8 +201,9 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
     
     private void add(NSISConsoleLine line)
     {
-        mViewer.refresh(false);
-        mViewer.reveal(line);
+        mViewer.add(line);
+        int index = mModel.getContents().size()-1;
+        WinAPI.SendMessage (mViewer.getTable().handle, OS.LVM_ENSUREVISIBLE, index, 0);
         mClearAction.setEnabled(!mIsCompiling);
         mSelectAllAction.setEnabled(true);
     }
@@ -345,7 +346,9 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
         if(mIsCompiling != isCompiling) {
             if(!mDisposed) {
                 mCancelAction.setEnabled(isCompiling);
-                mClearAction.setEnabled(!isCompiling && mModel.getContents().size() > 0);
+                boolean b = mModel.getContents().size() > 0;
+                mClearAction.setEnabled(!isCompiling && b);
+                mSelectAllAction.setEnabled(b);
             }
             mIsCompiling = isCompiling;
         }

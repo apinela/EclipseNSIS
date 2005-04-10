@@ -114,6 +114,14 @@ JNIEXPORT jstring JNICALL Java_net_sf_eclipsensis_util_WinAPI_ExtractHtmlHelpAnd
 JNIEXPORT jobjectArray JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetPluginExports
   (JNIEnv *, jclass, jstring);
 
+/*
+ * Class:     net_sf_eclipsensis_util_WinAPI
+ * Method:    SendMessage
+ * Signature: (IIII)I
+ */
+JNIEXPORT jint JNICALL Java_net_sf_eclipsensis_util_WinAPI_SendMessage
+  (JNIEnv *, jclass, jint, jint, jint, jint);
+
 #ifdef __cplusplus
 }
 #endif

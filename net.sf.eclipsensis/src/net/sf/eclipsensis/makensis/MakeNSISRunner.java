@@ -48,7 +48,7 @@ public class MakeNSISRunner implements INSISConstants
     };
     public static final Pattern MAKENSIS_SYNTAX_ERROR_PATTERN = Pattern.compile("[\\w]+ expects [0-9\\-\\+]+ parameters, got [0-9]\\."); //$NON-NLS-1$
     public static final Pattern MAKENSIS_ERROR_PATTERN = Pattern.compile("error in script \"(.+)\" on line (\\d+).*",Pattern.CASE_INSENSITIVE); //$NON-NLS-1$
-    public static final Pattern MAKENSIS_WARNING_PATTERN = Pattern.compile(".+\\((.+):(\\d+)\\).*",Pattern.CASE_INSENSITIVE); //$NON-NLS-1$
+    public static final Pattern MAKENSIS_WARNING_PATTERN = Pattern.compile(".+\\((.+):(\\d+)\\).*"); //$NON-NLS-1$
     public static final String MAKENSIS_VERSION_OPTION = "/VERSION"; //$NON-NLS-1$
     public static final String MAKENSIS_HDRINFO_OPTION = "/HDRINFO"; //$NON-NLS-1$
     public static final String MAKENSIS_VERBOSITY_OPTION = "/V"; //$NON-NLS-1$

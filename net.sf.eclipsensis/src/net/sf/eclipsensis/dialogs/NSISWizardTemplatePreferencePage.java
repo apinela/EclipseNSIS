@@ -401,7 +401,6 @@ public class NSISWizardTemplatePreferencePage extends PreferencePage implements 
             }
         }
         catch (CloneNotSupportedException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }

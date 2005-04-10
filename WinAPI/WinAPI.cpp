@@ -20,10 +20,16 @@ typedef BOOL (_stdcall *_tSetLayeredWindowAttributesProc)(HWND hwnd, // handle t
     DWORD dwFlags        // action
 );
 _tSetLayeredWindowAttributesProc SetLayeredWindowAttributesProc;
+BOOL isUnicode;
 
 JNIEXPORT void JNICALL Java_net_sf_eclipsensis_util_WinAPI_init(JNIEnv *pEnv, jclass jClass)
 {
-    if(LOBYTE(LOWORD(GetVersion())) >= 5) {
+	OSVERSIONINFO osvi;
+	osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
+    GetVersionEx (&osvi);
+	
+	isUnicode = osvi.dwPlatformId != VER_PLATFORM_WIN32s && osvi.dwPlatformId != VER_PLATFORM_WIN32_WINDOWS;
+    if(osvi.dwMajorVersion >= 5) {
         HANDLE user32 = GetModuleHandle("user32");
         SetLayeredWindowAttributesProc = (_tSetLayeredWindowAttributesProc) GetProcAddress((HINSTANCE)user32, "SetLayeredWindowAttributes");
     }
@@ -201,4 +207,19 @@ JNIEXPORT jobjectArray JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetPluginExpo
         pEnv->ReleaseStringUTFChars(pszPluginFile, str);
     }
     return result;
+}
+
+/*
+ * Class:     net_sf_eclipsensis_util_WinAPI
+ * Method:    SendMessage
+ * Signature: (IIII)I
+ */
+JNIEXPORT jint JNICALL Java_net_sf_eclipsensis_util_WinAPI_SendMessage(JNIEnv *pEnv, jclass jClass, jint hWnd, jint msg, jint wParam, jint lParam)
+{
+	if(isUnicode) {
+		return SendMessageW((HWND)hWnd, msg, wParam, lParam);
+	}
+	else {
+		return SendMessageA((HWND)hWnd, msg, wParam, lParam);
+	}
 }
