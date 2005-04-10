@@ -131,7 +131,7 @@ public class NSISCompileAction extends NSISScriptAction
             text = text.trim();
 
             String lText = text.toLowerCase();
-            if(lText.startsWith("error")) {
+            if(lText.startsWith("error")) { //$NON-NLS-1$
                 Matcher matcher = MakeNSISRunner.MAKENSIS_ERROR_PATTERN.matcher(text);
                 if(matcher.matches()) {
                     line = NSISConsoleLine.error(text);

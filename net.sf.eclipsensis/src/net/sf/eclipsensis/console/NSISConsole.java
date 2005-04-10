@@ -33,7 +33,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.internal.win32.OS;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionFactory;
@@ -203,7 +202,11 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
     {
         mViewer.add(line);
         int index = mModel.getContents().size()-1;
-        WinAPI.SendMessage (mViewer.getTable().handle, OS.LVM_ENSUREVISIBLE, index, 0);
+        WinAPI.SendMessage (mViewer.getTable().handle, 
+                            0x1013, // LVM_ENSUREVISIBLE 
+                            index, 
+                            0 // FALSE
+                            );
         mClearAction.setEnabled(!mIsCompiling);
         mSelectAllAction.setEnabled(true);
     }
@@ -491,7 +494,7 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
     /**
      * @param table
      */
-    private int selectItems(Table table, int startIndex, int oldEndIndex, int newEndIndex)
+    private synchronized int selectItems(Table table, int startIndex, int oldEndIndex, int newEndIndex)
     {
         if(oldEndIndex != newEndIndex) {
             int d1 = oldEndIndex - startIndex;
@@ -912,7 +915,7 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
                 table.setCursor(null);
             }
         }
-        
+
         public void mouseMove(final MouseEvent e) 
         {
             Table table = mViewer.getTable();
@@ -941,11 +944,12 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
                 else {
                     if(mScroller != null) {
                         mScroller.stop();
+                        mEndIndex = mScroller.getEndIndex();
                         mScroller = null;
                     }
                     int index = getItemIndex(new Point(mStartX,e.y));
                     if(index >= 0 && mStartIndex >= 0) {
-                         mEndIndex = selectItems(table, mStartIndex, mEndIndex, index);
+                        mEndIndex = selectItems(table, mStartIndex, mEndIndex, index);
                     }
                 }
             }
