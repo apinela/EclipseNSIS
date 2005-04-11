@@ -11,6 +11,7 @@ Name CreateEnv
 OutFile CreateEnv.exe
 SetCompressor lzma
 SilentInstall silent
+
 !macro STRIP_TRAILING_SLASH DIRNAME
     Push $R1
     StrCpy $R1 ${DIRNAME} 1 -1
@@ -20,17 +21,39 @@ SilentInstall silent
     StrCpy $R1 ${DIRNAME} -1
     Exch $R1
 !macroend
+
 Section
     Push $R0
     Push $R1
+    Push $R2
     FileOpen $R1 env.bat w
 
+;Find the JAVA_HOME
+;
+;Sun
     ReadRegStr $R0 HKEY_LOCAL_MACHINE "SOFTWARE\JavaSoft\Java Development Kit\1.4" JavaHome
+    StrCmp $R0 "" ibmsdk
+    StrCpy $R2 "Sun"
+    GoTo javahome
+
+;IBM
+ibmsdk:
+    ReadRegStr $R0 HKEY_LOCAL_MACHINE "SOFTWARE\IBM\Java Development Kit\1.4" JavaHome
+    StrCmp $R0 "" jrockit
+    StrCpy $R2 "IBM"
+    GoTo javahome
+
+;BEA JRockit
+jrockit:
+    ReadRegStr $R0 HKEY_LOCAL_MACHINE "SOFTWARE\JRockit\Java Development Kit\1.4" JavaHome
     StrCmp $R0 "" dotnet
+    StrCpy $R2 "BEA JRockit"
+
+javahome:
 !insertmacro STRIP_TRAILING_SLASH $R0
     Pop $R0
     FileWrite $R1 "rem *******$\r$\n"
-    FileWrite $R1 "rem JDK 1.4$\r$\n"
+    FileWrite $R1 "rem $R2 JDK 1.4$\r$\n"
     FileWrite $R1 "rem *******$\r$\n"
     FileWrite $R1 "set JAVA_HOME=$R0$\r$\n"
     FileWrite $R1 "$\r$\n"
@@ -91,6 +114,7 @@ hhw:
 
 done:
     FileClose $R1
+    Pop $R2
     Pop $R1
     Pop $R0
 SectionEnd
