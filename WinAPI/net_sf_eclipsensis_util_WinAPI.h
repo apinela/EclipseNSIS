@@ -144,14 +144,6 @@ JNIEXPORT jint JNICALL Java_net_sf_eclipsensis_util_WinAPI_SendMessage
 JNIEXPORT jint JNICALL Java_net_sf_eclipsensis_util_WinAPI_CallWindowProc
   (JNIEnv *, jclass, jint, jint, jint, jint, jint);
 
-/*
- * Class:     net_sf_eclipsensis_util_WinAPI
- * Method:    ClipCursor
- * Signature: (Lnet/sf/eclipsensis/util/WinAPI$RECT;)I
- */
-JNIEXPORT jint JNICALL Java_net_sf_eclipsensis_util_WinAPI_ClipCursor
-  (JNIEnv *, jclass, jobject);
-
 #ifdef __cplusplus
 }
 #endif
