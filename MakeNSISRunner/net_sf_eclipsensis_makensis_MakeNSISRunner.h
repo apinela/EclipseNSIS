@@ -21,7 +21,8 @@ extern "C" {
 /* Inaccessible static: cProcessLock */
 /* Inaccessible static: cHwnd */
 /* Inaccessible static: cListeners */
-/* Inaccessible static: COMPRESSOR_DEFAULT */
+#undef net_sf_eclipsensis_makensis_MakeNSISRunner_COMPRESSOR_DEFAULT
+#define net_sf_eclipsensis_makensis_MakeNSISRunner_COMPRESSOR_DEFAULT 0L
 /* Inaccessible static: COMPRESSOR_BEST */
 /* Inaccessible static: COMPRESSOR_DISPLAY_ARRAY */
 /* Inaccessible static: COMPRESSOR_NAME_ARRAY */

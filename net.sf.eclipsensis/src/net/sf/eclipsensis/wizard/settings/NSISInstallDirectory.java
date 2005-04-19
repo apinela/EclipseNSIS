@@ -11,7 +11,6 @@ package net.sf.eclipsensis.wizard.settings;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.help.NSISKeywords;
-import net.sf.eclipsensis.util.ImageManager;
 import net.sf.eclipsensis.wizard.NSISWizard;
 import net.sf.eclipsensis.wizard.settings.dialogs.NSISInstallDirectoryDialog;
 
@@ -23,8 +22,8 @@ public class NSISInstallDirectory extends AbstractNSISInstallItem implements INS
 	private static final long serialVersionUID = 3960745695250401464L;
 
     public static final String TYPE = EclipseNSISPlugin.getResourceString("wizard.directory.type"); //$NON-NLS-1$
-    private static final Image IMAGE = ImageManager.getImage(EclipseNSISPlugin.getResourceString("wizard.directory.icon")); //$NON-NLS-1$
-    private static final Image RECURSIVE_IMAGE = ImageManager.getImage(EclipseNSISPlugin.getResourceString("wizard.recursive.directory.icon")); //$NON-NLS-1$
+    private static final Image IMAGE = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("wizard.directory.icon")); //$NON-NLS-1$
+    private static final Image RECURSIVE_IMAGE = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("wizard.recursive.directory.icon")); //$NON-NLS-1$
     
     private String mName = null;
     private String mDestination = NSISKeywords.getKeyword("$INSTDIR"); //$NON-NLS-1$

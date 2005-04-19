@@ -1,19 +1,43 @@
 Manifest-Version: 1.0
 Bundle-Name: %plugin.name
 Bundle-SymbolicName: net.sf.eclipsensis; singleton=true
-Bundle-Version: 0.5.0
+Bundle-Version: 0.5.1
 Bundle-ClassPath: eclipsensis.jar
 Bundle-Activator: net.sf.eclipsensis.EclipseNSISPlugin
 Bundle-Vendor: Sunil Kamath (IcemanK)
 Bundle-Localization: plugin
-Require-Bundle: org.eclipse.ui,
- org.eclipse.ui.ide,
- org.eclipse.core.runtime,
- org.eclipse.jface.text,
- org.eclipse.core.filebuffers,
- org.eclipse.ui.editors,
- org.eclipse.ui.workbench.texteditor,
+Require-Bundle: org.eclipse.core.filebuffers,
  org.eclipse.core.resources,
+ org.eclipse.core.runtime,
+ org.eclipse.help,
+ org.eclipse.jface.text,
+ org.eclipse.ui,
+ org.eclipse.ui.editors,
+ org.eclipse.ui.ide,
  org.eclipse.ui.views,
- org.eclipse.help
+ org.eclipse.ui.workbench.texteditor,
+ org.eclipse.gef
 Eclipse-AutoStart: true
+Provide-Package: net.sf.eclipsensis.util,
+ net.sf.eclipsensis,
+ net.sf.eclipsensis.actions,
+ net.sf.eclipsensis.console,
+ net.sf.eclipsensis.console.model,
+ net.sf.eclipsensis.dialogs,
+ net.sf.eclipsensis.editor,
+ net.sf.eclipsensis.editor.codeassist,
+ net.sf.eclipsensis.editor.outline,
+ net.sf.eclipsensis.editor.template,
+ net.sf.eclipsensis.editor.template.resolvers,
+ net.sf.eclipsensis.editor.text,
+ net.sf.eclipsensis.help,
+ net.sf.eclipsensis.lang,
+ net.sf.eclipsensis.makensis,
+ net.sf.eclipsensis.script,
+ net.sf.eclipsensis.settings,
+ net.sf.eclipsensis.viewer,
+ net.sf.eclipsensis.wizard,
+ net.sf.eclipsensis.wizard.settings,
+ net.sf.eclipsensis.wizard.settings.dialogs,
+ net.sf.eclipsensis.wizard.template,
+ net.sf.eclipsensis.wizard.util

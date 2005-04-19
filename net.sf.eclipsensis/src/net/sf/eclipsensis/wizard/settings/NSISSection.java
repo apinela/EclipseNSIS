@@ -13,7 +13,6 @@ import java.text.MessageFormat;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.help.NSISKeywords;
-import net.sf.eclipsensis.util.ImageManager;
 import net.sf.eclipsensis.wizard.NSISWizard;
 import net.sf.eclipsensis.wizard.settings.dialogs.NSISSectionDialog;
 
@@ -27,7 +26,7 @@ public class NSISSection extends AbstractNSISInstallGroup
 
     public static final String TYPE = NSISKeywords.getKeyword(EclipseNSISPlugin.getResourceString("wizard.section.type")); //$NON-NLS-1$
 
-    private static final Image IMAGE = ImageManager.getImage(EclipseNSISPlugin.getResourceString("wizard.section.icon")); //$NON-NLS-1$
+    private static final Image IMAGE = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("wizard.section.icon")); //$NON-NLS-1$
     private static final String FORMAT = EclipseNSISPlugin.getResourceString("wizard.section.format"); //$NON-NLS-1$
     
     private String mDescription = null;

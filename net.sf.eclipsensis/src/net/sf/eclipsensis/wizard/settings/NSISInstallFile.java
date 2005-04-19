@@ -11,7 +11,6 @@ package net.sf.eclipsensis.wizard.settings;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.help.NSISKeywords;
-import net.sf.eclipsensis.util.ImageManager;
 import net.sf.eclipsensis.wizard.NSISWizard;
 import net.sf.eclipsensis.wizard.settings.dialogs.NSISInstallFileDialog;
 
@@ -23,7 +22,7 @@ public class NSISInstallFile extends AbstractNSISInstallItem implements INSISIns
 	private static final long serialVersionUID = 7628955872836262241L;
 
     public static final String TYPE = EclipseNSISPlugin.getResourceString("wizard.file.type"); //$NON-NLS-1$
-    private static final Image IMAGE = ImageManager.getImage(EclipseNSISPlugin.getResourceString("wizard.file.icon")); //$NON-NLS-1$
+    private static final Image IMAGE = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("wizard.file.icon")); //$NON-NLS-1$
     
     private String mName = null;
     private String mDestination = NSISKeywords.getKeyword("$INSTDIR"); //$NON-NLS-1$

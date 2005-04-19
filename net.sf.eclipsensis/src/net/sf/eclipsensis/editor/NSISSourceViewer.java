@@ -112,16 +112,18 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
      */
     public void keywordsChanged()
     {
-        HashSet contentTypes = new HashSet();
-        for(int i=0; i<mConfiguredContentTypes.length; i++) {
-            IPresentationDamager damager = fPresentationReconciler.getDamager(mConfiguredContentTypes[i]);
-            if(damager instanceof NSISDamagerRepairer) {
-                ((NSISDamagerRepairer)damager).reset();
-                contentTypes.add(mConfiguredContentTypes[i]);
+        if(fPresentationReconciler != null) {
+            HashSet contentTypes = new HashSet();
+            for(int i=0; i<mConfiguredContentTypes.length; i++) {
+                IPresentationDamager damager = fPresentationReconciler.getDamager(mConfiguredContentTypes[i]);
+                if(damager instanceof NSISDamagerRepairer) {
+                    ((NSISDamagerRepairer)damager).reset();
+                    contentTypes.add(mConfiguredContentTypes[i]);
+                }
             }
+            
+            updatePresentation(contentTypes);
         }
-        
-        updatePresentation(contentTypes);
     }
     
     /**

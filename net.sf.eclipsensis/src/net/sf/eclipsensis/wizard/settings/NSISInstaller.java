@@ -12,14 +12,13 @@ package net.sf.eclipsensis.wizard.settings;
 import java.text.MessageFormat;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.util.ImageManager;
 import net.sf.eclipsensis.wizard.NSISWizard;
 
 import org.eclipse.swt.graphics.Image;
 
 public class NSISInstaller extends AbstractNSISInstallGroup
 {
-    private static final Image IMAGE = ImageManager.getImage(EclipseNSISPlugin.getResourceString("wizard.installer.icon")); //$NON-NLS-1$
+    private static final Image IMAGE = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("wizard.installer.icon")); //$NON-NLS-1$
     public static final String TYPE = EclipseNSISPlugin.getResourceString("wizard.installer.type"); //$NON-NLS-1$
     private String mFormat;
 

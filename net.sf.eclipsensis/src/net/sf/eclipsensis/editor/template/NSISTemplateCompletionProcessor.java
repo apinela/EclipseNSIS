@@ -14,7 +14,6 @@ import java.util.*;
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.editor.codeassist.NSISInformationUtility;
 import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.ImageManager;
 
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
@@ -23,7 +22,7 @@ import org.eclipse.swt.graphics.Image;
 
 public class NSISTemplateCompletionProcessor extends TemplateCompletionProcessor
 {
-    private static final Image TEMPLATE_IMAGE = ImageManager.getImage(EclipseNSISPlugin.getResourceString("template.icon")); //$NON-NLS-1$
+    private static final Image TEMPLATE_IMAGE = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("template.icon")); //$NON-NLS-1$
     private boolean mInsertTemplatesMode = false;
     protected static final Comparator PROPOSAL_COMPARATOR = new Comparator() {
 

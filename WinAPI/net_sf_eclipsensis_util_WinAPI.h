@@ -18,6 +18,18 @@ extern "C" {
 #endif
 #undef net_sf_eclipsensis_util_WinAPI_GWL_EXSTYLE
 #define net_sf_eclipsensis_util_WinAPI_GWL_EXSTYLE -20L
+#undef net_sf_eclipsensis_util_WinAPI_GWL_WNDPROC
+#define net_sf_eclipsensis_util_WinAPI_GWL_WNDPROC -4L
+#undef net_sf_eclipsensis_util_WinAPI_WM_NCHITTEST
+#define net_sf_eclipsensis_util_WinAPI_WM_NCHITTEST 132L
+#undef net_sf_eclipsensis_util_WinAPI_WM_SETFOCUS
+#define net_sf_eclipsensis_util_WinAPI_WM_SETFOCUS 7L
+#undef net_sf_eclipsensis_util_WinAPI_WM_KEYDOWN
+#define net_sf_eclipsensis_util_WinAPI_WM_KEYDOWN 256L
+#undef net_sf_eclipsensis_util_WinAPI_WM_CHAR
+#define net_sf_eclipsensis_util_WinAPI_WM_CHAR 258L
+#undef net_sf_eclipsensis_util_WinAPI_WM_SYSCHAR
+#define net_sf_eclipsensis_util_WinAPI_WM_SYSCHAR 262L
 #undef net_sf_eclipsensis_util_WinAPI_LWA_COLORKEY
 #define net_sf_eclipsensis_util_WinAPI_LWA_COLORKEY 1L
 #undef net_sf_eclipsensis_util_WinAPI_LWA_ALPHA
@@ -26,6 +38,8 @@ extern "C" {
 #define net_sf_eclipsensis_util_WinAPI_WS_EX_LAYERED 524288L
 #undef net_sf_eclipsensis_util_WinAPI_HH_DISPLAY_TOPIC
 #define net_sf_eclipsensis_util_WinAPI_HH_DISPLAY_TOPIC 0L
+#undef net_sf_eclipsensis_util_WinAPI_HTTRANSPARENT
+#define net_sf_eclipsensis_util_WinAPI_HTTRANSPARENT -1L
 #undef net_sf_eclipsensis_util_WinAPI_HKEY_CLASSES_ROOT
 #define net_sf_eclipsensis_util_WinAPI_HKEY_CLASSES_ROOT -2147483648L
 #undef net_sf_eclipsensis_util_WinAPI_HKEY_CURRENT_USER
@@ -45,50 +59,50 @@ JNIEXPORT void JNICALL Java_net_sf_eclipsensis_util_WinAPI_init
 /*
  * Class:     net_sf_eclipsensis_util_WinAPI
  * Method:    SetWindowLong
- * Signature: (JIJ)J
+ * Signature: (III)I
  */
-JNIEXPORT jlong JNICALL Java_net_sf_eclipsensis_util_WinAPI_SetWindowLong
-  (JNIEnv *, jclass, jlong, jint, jlong);
+JNIEXPORT jint JNICALL Java_net_sf_eclipsensis_util_WinAPI_SetWindowLong
+  (JNIEnv *, jclass, jint, jint, jint);
 
 /*
  * Class:     net_sf_eclipsensis_util_WinAPI
  * Method:    GetWindowLong
- * Signature: (JI)J
+ * Signature: (II)I
  */
-JNIEXPORT jlong JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetWindowLong
-  (JNIEnv *, jclass, jlong, jint);
+JNIEXPORT jint JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetWindowLong
+  (JNIEnv *, jclass, jint, jint);
 
 /*
  * Class:     net_sf_eclipsensis_util_WinAPI
  * Method:    SetLayeredWindowAttributes
- * Signature: (JIIIIJ)Z
+ * Signature: (IIIIII)Z
  */
 JNIEXPORT jboolean JNICALL Java_net_sf_eclipsensis_util_WinAPI_SetLayeredWindowAttributes
-  (JNIEnv *, jclass, jlong, jint, jint, jint, jint, jlong);
+  (JNIEnv *, jclass, jint, jint, jint, jint, jint, jint);
 
 /*
  * Class:     net_sf_eclipsensis_util_WinAPI
  * Method:    RegQueryStrValue
- * Signature: (JLjava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+ * Signature: (ILjava/lang/String;Ljava/lang/String;)Ljava/lang/String;
  */
 JNIEXPORT jstring JNICALL Java_net_sf_eclipsensis_util_WinAPI_RegQueryStrValue
-  (JNIEnv *, jclass, jlong, jstring, jstring);
+  (JNIEnv *, jclass, jint, jstring, jstring);
 
 /*
  * Class:     net_sf_eclipsensis_util_WinAPI
  * Method:    GetDesktopWindow
- * Signature: ()J
+ * Signature: ()I
  */
-JNIEXPORT jlong JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetDesktopWindow
+JNIEXPORT jint JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetDesktopWindow
   (JNIEnv *, jclass);
 
 /*
  * Class:     net_sf_eclipsensis_util_WinAPI
  * Method:    HtmlHelp
- * Signature: (JLjava/lang/String;IJ)J
+ * Signature: (ILjava/lang/String;II)I
  */
-JNIEXPORT jlong JNICALL Java_net_sf_eclipsensis_util_WinAPI_HtmlHelp
-  (JNIEnv *, jclass, jlong, jstring, jint, jlong);
+JNIEXPORT jint JNICALL Java_net_sf_eclipsensis_util_WinAPI_HtmlHelp
+  (JNIEnv *, jclass, jint, jstring, jint, jint);
 
 /*
  * Class:     net_sf_eclipsensis_util_WinAPI
@@ -108,7 +122,7 @@ JNIEXPORT jstring JNICALL Java_net_sf_eclipsensis_util_WinAPI_ExtractHtmlHelpAnd
 
 /*
  * Class:     net_sf_eclipsensis_util_WinAPI
- * Method:    GetPluginSymbols
+ * Method:    GetPluginExports
  * Signature: (Ljava/lang/String;)[Ljava/lang/String;
  */
 JNIEXPORT jobjectArray JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetPluginExports
@@ -121,6 +135,22 @@ JNIEXPORT jobjectArray JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetPluginExpo
  */
 JNIEXPORT jint JNICALL Java_net_sf_eclipsensis_util_WinAPI_SendMessage
   (JNIEnv *, jclass, jint, jint, jint, jint);
+
+/*
+ * Class:     net_sf_eclipsensis_util_WinAPI
+ * Method:    CallWindowProc
+ * Signature: (IIIII)I
+ */
+JNIEXPORT jint JNICALL Java_net_sf_eclipsensis_util_WinAPI_CallWindowProc
+  (JNIEnv *, jclass, jint, jint, jint, jint, jint);
+
+/*
+ * Class:     net_sf_eclipsensis_util_WinAPI
+ * Method:    ClipCursor
+ * Signature: (Lnet/sf/eclipsensis/util/WinAPI$RECT;)I
+ */
+JNIEXPORT jint JNICALL Java_net_sf_eclipsensis_util_WinAPI_ClipCursor
+  (JNIEnv *, jclass, jobject);
 
 #ifdef __cplusplus
 }

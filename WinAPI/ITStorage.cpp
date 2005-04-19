@@ -92,8 +92,8 @@ HRESULT CItsFile::ReadStream(PWCHAR pwzStream, ULONG* cbRetSize, void** pRetBuff
 
 char* GetErr(DWORD dwLastError)
 {
-  LPSTR MessageBuffer;
-  DWORD dwBufferLength;
+    LPSTR MessageBuffer;
+    DWORD dwBufferLength;
     dwBufferLength = FormatMessageA(
         FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_IGNORE_INSERTS | FORMAT_MESSAGE_FROM_SYSTEM, 
         NULL, dwLastError, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR) &MessageBuffer, 0, NULL);

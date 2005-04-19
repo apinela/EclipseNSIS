@@ -2,7 +2,7 @@
 <feature
       id="net.sf.eclipsensis"
       label="net.sf.eclipsensis"
-      version="0.5.0"
+      version="0.5.1"
       provider-name="Sunil Kamath (IcemanK)"
       os="win32"
       ws="win32"
@@ -139,8 +139,8 @@ This Agreement is governed by the laws of the State of New York and the intellec
 
    <plugin
          id="net.sf.eclipsensis"
-         download-size="1650"
-         install-size="1650"
-         version="0.5.0"/>
+         download-size="0"
+         install-size="0"
+         version="0.5.1"/>
 
 </feature>

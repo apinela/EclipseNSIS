@@ -18,7 +18,6 @@ import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.lang.NSISLanguage;
 import net.sf.eclipsensis.lang.NSISLanguageManager;
 import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.ImageManager;
 import net.sf.eclipsensis.viewer.CollectionContentProvider;
 import net.sf.eclipsensis.viewer.ListViewerUpDownMover;
 import net.sf.eclipsensis.wizard.settings.NSISWizardSettings;
@@ -202,25 +201,25 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
         final Button allRightButton = new Button(composite3,SWT.PUSH);
         data = new GridData(GridData.FILL_HORIZONTAL);
         allRightButton.setLayoutData(data);
-        allRightButton.setImage(ImageManager.getImage(EclipseNSISPlugin.getResourceString("all.right.icon"))); //$NON-NLS-1$
+        allRightButton.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("all.right.icon"))); //$NON-NLS-1$
         allRightButton.setToolTipText(EclipseNSISPlugin.getResourceString("all.right.tooltip")); //$NON-NLS-1$
 
         final Button rightButton = new Button(composite3,SWT.PUSH);
         data = new GridData(GridData.FILL_HORIZONTAL);
         rightButton.setLayoutData(data);
-        rightButton.setImage(ImageManager.getImage(EclipseNSISPlugin.getResourceString("right.icon"))); //$NON-NLS-1$
+        rightButton.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("right.icon"))); //$NON-NLS-1$
         rightButton.setToolTipText(EclipseNSISPlugin.getResourceString("right.tooltip")); //$NON-NLS-1$
 
         final Button leftButton = new Button(composite3,SWT.PUSH);
         data = new GridData(GridData.FILL_HORIZONTAL);
         leftButton.setLayoutData(data);
-        leftButton.setImage(ImageManager.getImage(EclipseNSISPlugin.getResourceString("left.icon"))); //$NON-NLS-1$
+        leftButton.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("left.icon"))); //$NON-NLS-1$
         leftButton.setToolTipText(EclipseNSISPlugin.getResourceString("left.tooltip")); //$NON-NLS-1$
         
         final Button allLeftButton = new Button(composite3,SWT.PUSH);
         data = new GridData(GridData.FILL_HORIZONTAL);
         allLeftButton.setLayoutData(data);
-        allLeftButton.setImage(ImageManager.getImage(EclipseNSISPlugin.getResourceString("all.left.icon"))); //$NON-NLS-1$
+        allLeftButton.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("all.left.icon"))); //$NON-NLS-1$
         allLeftButton.setToolTipText(EclipseNSISPlugin.getResourceString("all.left.tooltip")); //$NON-NLS-1$
         
         final List selectedLangList = new List(composite2,SWT.BORDER|SWT.H_SCROLL|SWT.V_SCROLL|SWT.MULTI);
@@ -279,14 +278,14 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
         final Button upButton = new Button(composite4,SWT.PUSH);
         data = new GridData(GridData.FILL_HORIZONTAL);
         upButton.setLayoutData(data);
-        upButton.setImage(ImageManager.getImage(EclipseNSISPlugin.getResourceString("up.icon"))); //$NON-NLS-1$
+        upButton.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("up.icon"))); //$NON-NLS-1$
         upButton.setToolTipText(EclipseNSISPlugin.getResourceString("up.tooltip")); //$NON-NLS-1$
         m.addSlave(upButton);
         
         final Button downButton = new Button(composite4,SWT.PUSH);
         data = new GridData(GridData.FILL_HORIZONTAL);
         downButton.setLayoutData(data);
-        downButton.setImage(ImageManager.getImage(EclipseNSISPlugin.getResourceString("down.icon"))); //$NON-NLS-1$
+        downButton.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("down.icon"))); //$NON-NLS-1$
         downButton.setToolTipText(EclipseNSISPlugin.getResourceString("down.tooltip")); //$NON-NLS-1$
         m.addSlave(downButton);
 

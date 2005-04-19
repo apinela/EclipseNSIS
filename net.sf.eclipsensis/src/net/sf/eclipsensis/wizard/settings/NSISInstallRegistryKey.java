@@ -10,7 +10,6 @@
 package net.sf.eclipsensis.wizard.settings;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.util.ImageManager;
 import net.sf.eclipsensis.wizard.NSISWizard;
 import net.sf.eclipsensis.wizard.NSISWizardDisplayValues;
 import net.sf.eclipsensis.wizard.settings.dialogs.NSISInstallRegistryKeyDialog;
@@ -23,7 +22,7 @@ public class NSISInstallRegistryKey extends AbstractNSISInstallItem
 	private static final long serialVersionUID = 1525071202238497310L;
 
     public static final String TYPE = EclipseNSISPlugin.getResourceString("wizard.regkey.type"); //$NON-NLS-1$
-    private static final Image IMAGE = ImageManager.getImage(EclipseNSISPlugin.getResourceString("wizard.regkey.icon")); //$NON-NLS-1$
+    private static final Image IMAGE = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("wizard.regkey.icon")); //$NON-NLS-1$
     
     private int mRootKey = HKLM;
     private String mSubKey = null;

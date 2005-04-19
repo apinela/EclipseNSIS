@@ -15,7 +15,8 @@ import java.util.List;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
-import net.sf.eclipsensis.util.*;
+import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.UpDownMover;
 import net.sf.eclipsensis.wizard.settings.*;
 import net.sf.eclipsensis.wizard.util.NSISWizardDialogUtil;
 
@@ -288,7 +289,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
         composite3.setLayout(layout2);
         
         final Button upButton = new Button(composite3,SWT.PUSH);
-        upButton.setImage(ImageManager.getImage(EclipseNSISPlugin.getResourceString("up.icon"))); //$NON-NLS-1$
+        upButton.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("up.icon"))); //$NON-NLS-1$
         upButton.setToolTipText(EclipseNSISPlugin.getResourceString("up.tooltip")); //$NON-NLS-1$
         upButton.setEnabled(mover.canMoveUp());
         upButton.addSelectionListener(new SelectionAdapter() {
@@ -299,7 +300,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
         });
         
         final Button downButton = new Button(composite3,SWT.PUSH);
-        downButton.setImage(ImageManager.getImage(EclipseNSISPlugin.getResourceString("down.icon"))); //$NON-NLS-1$
+        downButton.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("down.icon"))); //$NON-NLS-1$
         downButton.setToolTipText(EclipseNSISPlugin.getResourceString("down.tooltip")); //$NON-NLS-1$
         downButton.setEnabled(mover.canMoveDown());
         downButton.addSelectionListener(new SelectionAdapter() {
@@ -772,8 +773,8 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
         boolean[] state = {false,false,false,true,true};
         for (int i = 0; i < styles.length; i++) {
             ToolItem ti = new ToolItem(toolbar, styles[i]);
-            ti.setImage(ImageManager.getImage(bundle.getString(images[i])));
-            ti.setDisabledImage(ImageManager.getImage(bundle.getString(disabledImages[i])));
+            ti.setImage(EclipseNSISPlugin.getImageManager().getImage(bundle.getString(images[i])));
+            ti.setDisabledImage(EclipseNSISPlugin.getImageManager().getImage(bundle.getString(disabledImages[i])));
             ti.setToolTipText(bundle.getString(tooltips[i]));
             ti.setEnabled(state[i]);
         }
@@ -793,7 +794,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
         String[] tooltips = {"add.tooltip","edit.tooltip","delete.tooltip"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         for (int i = 0; i < styles.length; i++) {
             MenuItem mi = new MenuItem(menu, styles[i]);
-            mi.setImage(ImageManager.getImage(bundle.getString(images[i])));
+            mi.setImage(EclipseNSISPlugin.getImageManager().getImage(bundle.getString(images[i])));
             mi.setText(bundle.getString(tooltips[i]));
             mi.setEnabled(false);
         }

@@ -19,8 +19,7 @@ import net.sf.eclipsensis.editor.template.NSISTemplateContextType;
 import net.sf.eclipsensis.help.NSISHelpURLProvider;
 import net.sf.eclipsensis.settings.INSISPreferenceConstants;
 import net.sf.eclipsensis.settings.NSISPreferences;
-import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.WinAPI;
+import net.sf.eclipsensis.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.text.templates.ContextTypeRegistry;
@@ -51,6 +50,8 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
     private ContributionContextTypeRegistry mContextTypeRegistry;
     private Locale mLocale;
     private HashMap mResourceBundles = new HashMap();
+    public static final String[] BUNDLE_NAMES = new String[]{RESOURCE_BUNDLE,MESSAGE_BUNDLE};
+    private ImageManager mImageManager;
 
 	/**
 	 * The constructor.
@@ -61,8 +62,9 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
 		cPlugin = this;
         mLocale = Locale.getDefault();
 		try {
-			mResourceBundles.put(mLocale,new EclipseNSISPluginResourceBundle(mLocale));
-		} catch (MissingResourceException x) {
+			mResourceBundles.put(mLocale,new CompoundResourceBundle(mLocale, BUNDLE_NAMES));
+		} 
+        catch (MissingResourceException x) {
 			x.printStackTrace();
 		}
 	}
@@ -93,6 +95,7 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
                 prefs.store();
             }
         }
+        mImageManager = new ImageManager(this);
         
         if(isConfigured()) {
             NSISHelpURLProvider.init();
@@ -127,7 +130,12 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
         }
     }
     
-	/**
+    public static ImageManager getImageManager()
+    {
+        return getDefault().mImageManager;
+    }
+    
+    /**
 	 * This method is called when the plug-in is stopped
 	 */
 	public void stop(BundleContext context) throws Exception 
@@ -137,6 +145,7 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
             listener.stopped();
             iter.remove();
         }
+        mImageManager = null;
 		super.stop(context);
 	}
 
@@ -214,7 +223,7 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
         if(!mResourceBundles.containsKey(locale)) {
             synchronized(this) {
                 if(!mResourceBundles.containsKey(locale)) {
-                    mResourceBundles.put(locale,new EclipseNSISPluginResourceBundle(locale));
+                    mResourceBundles.put(locale,new CompoundResourceBundle(locale, BUNDLE_NAMES));
                 }                
             }
         }
@@ -281,103 +290,6 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
     {
         if(!mListeners.contains(listener)) {
             mListeners.add(listener);
-        }
-    }
-    
-    private class EclipseNSISPluginResourceBundle extends ResourceBundle
-    {
-        private ResourceBundle mResources = null;
-        private ResourceBundle mMessages = null;
-        private final Locale EMPTY_LOCALE = new Locale("","",""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        
-        public EclipseNSISPluginResourceBundle()
-        {
-            this(Locale.getDefault());
-        }
-
-        public EclipseNSISPluginResourceBundle(Locale locale)
-        {
-            super();
-            try {
-                mResources = ResourceBundle.getBundle(RESOURCE_BUNDLE, locale);
-            } catch (MissingResourceException x) {
-                mResources = null;
-            }
-            try {
-                mMessages = ResourceBundle.getBundle(MESSAGE_BUNDLE, locale);
-            } catch (MissingResourceException x) {
-                mMessages = null;
-            }
-        }
-
-        /* (non-Javadoc)
-         * @see java.util.ResourceBundle#getKeys()
-         */
-        public Enumeration getKeys()
-        {
-            ArrayList list = null;
-            if(mResources != null) {
-                list = Collections.list(mResources.getKeys());
-            }
-            if(mMessages != null) {
-                if(list == null) {
-                    list = Collections.list(mMessages.getKeys());
-                }
-                else {
-                    list.addAll(Collections.list(mMessages.getKeys()));
-                }
-            }
-            if(list != null) {
-                return Collections.enumeration(list);
-            }
-            else {
-                return Collections.enumeration(Collections.EMPTY_LIST);
-            }
-        }
-
-        /* (non-Javadoc)
-         * @see java.util.ResourceBundle#handleGetObject(java.lang.String)
-         */
-        protected Object handleGetObject(String key)
-        {
-            if(mMessages != null) {
-                try {
-                    return mMessages.getObject(key);
-                }
-                catch(MissingResourceException mre) {
-                }
-            }
-            if(mResources != null) {
-                try {
-                    return mResources.getObject(key);
-                }
-                catch(MissingResourceException mre) {
-                }
-            }
-            return null;
-        }
-        
-        /* (non-Javadoc)
-         * @see java.util.ResourceBundle#getLocale()
-         */
-        public Locale getLocale()
-        {
-            if(mMessages != null) {
-                return mMessages.getLocale();
-            }
-            else if(mResources != null) {
-                return mResources.getLocale();
-            }
-            else {
-                return EMPTY_LOCALE;
-            }
-        }
-
-        /* (non-Javadoc)
-         * @see java.util.ResourceBundle#setParent(java.util.ResourceBundle)
-         */
-        protected void setParent(ResourceBundle parent)
-        {
         }
     }
 }

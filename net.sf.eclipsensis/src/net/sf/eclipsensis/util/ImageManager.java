@@ -11,18 +11,34 @@ package net.sf.eclipsensis.util;
 
 import java.net.URL;
 
-import net.sf.eclipsensis.EclipseNSISPlugin;
-
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 public class ImageManager
 {
-    private static EclipseNSISPlugin cPlugin = EclipseNSISPlugin.getDefault();
-    private static ImageRegistry cImageRegistry = (cPlugin != null?cPlugin.getImageRegistry():null);
+    private static AbstractUIPlugin mPlugin;
+    private static ImageRegistry mImageRegistry;
 
-    public synchronized static ImageDescriptor getImageDescriptor(String location)
+    public ImageManager(AbstractUIPlugin plugin)
+    {
+        mPlugin = plugin;
+        if(mPlugin != null) {
+            mImageRegistry = mPlugin.getImageRegistry();
+        }
+        else {
+            Display.getDefault().syncExec(new Runnable() {
+                public void run()
+                {
+                    mImageRegistry = new ImageRegistry();
+                }
+            });
+        }
+    }
+
+    public synchronized ImageDescriptor getImageDescriptor(String location)
     {
         return getImageDescriptor(makeLocationURL(location));
     }
@@ -31,25 +47,25 @@ public class ImageManager
      * @param location
      * @return
      */
-    private static URL makeLocationURL(String location)
+    private URL makeLocationURL(String location)
     {
-        if(cPlugin == null || Common.isEmpty(location)) {
+        if(mPlugin == null || Common.isEmpty(location)) {
             return null;
         }
         else {
-            return cPlugin.getBundle().getEntry(location);
+            return mPlugin.getBundle().getEntry(location);
         }
     }
 
-    public synchronized static ImageDescriptor getImageDescriptor(URL url)
+    public synchronized ImageDescriptor getImageDescriptor(URL url)
     {
         String urlString = (url != null?url.toString():""); //$NON-NLS-1$
         ImageDescriptor imageDescriptor = null;
-        if(cImageRegistry != null) {
-            imageDescriptor = cImageRegistry.getDescriptor(urlString);
+        if(mImageRegistry != null) {
+            imageDescriptor = mImageRegistry.getDescriptor(urlString);
             if(imageDescriptor == null) {
                 imageDescriptor = createImageDescriptor(url);
-                cImageRegistry.put(urlString.toLowerCase(), imageDescriptor);
+                mImageRegistry.put(urlString.toLowerCase(), imageDescriptor);
             }
         }
         
@@ -60,7 +76,7 @@ public class ImageManager
      * @param location
      * @return
      */
-    private static ImageDescriptor createImageDescriptor(URL url)
+    private  ImageDescriptor createImageDescriptor(URL url)
     {
         ImageDescriptor imageDescriptor;
         if(url != null) {
@@ -72,34 +88,34 @@ public class ImageManager
         return imageDescriptor;
     }
 
-    public synchronized static Image getImage(String location) 
+    public synchronized Image getImage(String location) 
     {
         return getImage(makeLocationURL(location));
     }
 
-    public synchronized static boolean containsImage(URL url) 
+    public synchronized boolean containsImage(URL url) 
     {
-        return (cImageRegistry.get(url.toString().toLowerCase()) != null);
+        return (mImageRegistry.get(url.toString().toLowerCase()) != null);
     }
 
-    public synchronized static void putImage(URL url, Image image) 
+    public synchronized void putImage(URL url, Image image) 
     {
-        cImageRegistry.put(url.toString().toLowerCase(),image);
+        mImageRegistry.put(url.toString().toLowerCase(),image);
     }
 
-    public synchronized static Image getImage(URL url) 
+    public synchronized  Image getImage(URL url) 
     {
         Image image = null;
         if(url != null) {
             String urlString = url.toString().toLowerCase();
-            image = cImageRegistry.get(urlString);
+            image = mImageRegistry.get(urlString);
             if(image == null) {
-                cImageRegistry.put(urlString,createImageDescriptor(url));
-                image = cImageRegistry.get(urlString);
+                mImageRegistry.put(urlString,createImageDescriptor(url));
+                image = mImageRegistry.get(urlString);
                 if(image == null) {
-                    cImageRegistry.remove(urlString);
-                    cImageRegistry.put(urlString, ImageDescriptor.getMissingImageDescriptor());
-                    image = cImageRegistry.get(urlString);
+                    mImageRegistry.remove(urlString);
+                    mImageRegistry.put(urlString, ImageDescriptor.getMissingImageDescriptor());
+                    image = mImageRegistry.get(urlString);
                 }
             }
         }

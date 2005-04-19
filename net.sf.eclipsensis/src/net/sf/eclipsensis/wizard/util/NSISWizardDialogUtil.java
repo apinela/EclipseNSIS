@@ -16,7 +16,6 @@ import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.dialogs.ColorEditor;
 import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.ImageManager;
 import net.sf.eclipsensis.wizard.NSISWizard;
 import net.sf.eclipsensis.wizard.settings.*;
 import net.sf.eclipsensis.wizard.settings.dialogs.NSISContentBrowserDialog;
@@ -249,8 +248,8 @@ public class NSISWizardDialogUtil
             if(!Common.isEmpty(fileName) && Common.isValidFile(fileName)) {
                 try {
                     URL url = new File(fileName).toURL();
-                    if(ImageManager.containsImage(url)) {
-                        image = ImageManager.getImage(url);
+                    if(EclipseNSISPlugin.getImageManager().containsImage(url)) {
+                        image = EclipseNSISPlugin.getImageManager().getImage(url);
                     }
                     else {
                         GridData data = (GridData)l.getLayoutData();
@@ -278,7 +277,7 @@ public class NSISWizardDialogUtil
                                 bestData = imageData[0];
                             }
                             image = new Image(display,bestData); 
-                            ImageManager.putImage(url,image);
+                            EclipseNSISPlugin.getImageManager().putImage(url,image);
                         }
                     }
                 }

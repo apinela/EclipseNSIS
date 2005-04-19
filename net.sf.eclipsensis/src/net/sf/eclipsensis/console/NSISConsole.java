@@ -20,7 +20,8 @@ import net.sf.eclipsensis.makensis.IMakeNSISRunListener;
 import net.sf.eclipsensis.makensis.MakeNSISRunner;
 import net.sf.eclipsensis.settings.INSISPreferenceConstants;
 import net.sf.eclipsensis.settings.NSISPreferences;
-import net.sf.eclipsensis.util.*;
+import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.WinAPI;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
@@ -225,11 +226,11 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
         mWarningColor = mColorRegistry.get(CONSOLE_WARNING_COLOR);
         mErrorColor = mColorRegistry.get(CONSOLE_ERROR_COLOR);
         mColorRegistry.addListener(this);
-        mErrorImage = ImageManager.getImage(EclipseNSISPlugin.getResourceString("error.icon")); //$NON-NLS-1$
-        mWarningImage = ImageManager.getImage(EclipseNSISPlugin.getResourceString("warning.icon")); //$NON-NLS-1$
+        mErrorImage = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("error.icon")); //$NON-NLS-1$
+        mWarningImage = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("warning.icon")); //$NON-NLS-1$
         int width = Math.max(mErrorImage.getBounds().width,mWarningImage.getBounds().width);
         int height = Math.max(mErrorImage.getBounds().height,mWarningImage.getBounds().height);
-        Image tempImage = ImageManager.getImage(EclipseNSISPlugin.getResourceString("transparent.icon")); //$NON-NLS-1$
+        Image tempImage = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("transparent.icon")); //$NON-NLS-1$
         ImageData imageData = tempImage.getImageData();
         imageData = imageData.scaledTo(width, height);
         mInfoImage = new Image(mDisplay,imageData);
@@ -362,8 +363,8 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
     {
         if(!Common.isEmpty(text)) action.setText(text);
         if(!Common.isEmpty(tooltipText)) action.setToolTipText(tooltipText);
-        if(!Common.isEmpty(image)) action.setImageDescriptor(ImageManager.getImageDescriptor(image));
-        if(!Common.isEmpty(disabledImage)) action.setDisabledImageDescriptor(ImageManager.getImageDescriptor(disabledImage));
+        if(!Common.isEmpty(image)) action.setImageDescriptor(EclipseNSISPlugin.getImageManager().getImageDescriptor(image));
+        if(!Common.isEmpty(disabledImage)) action.setDisabledImageDescriptor(EclipseNSISPlugin.getImageManager().getImageDescriptor(disabledImage));
         action.setEnabled(enabled);
         if(globalActionFactory != null)  getViewSite().getActionBars().setGlobalActionHandler(
                                                                         globalActionFactory.getId(),

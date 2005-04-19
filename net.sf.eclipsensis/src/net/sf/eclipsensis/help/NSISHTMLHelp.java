@@ -13,7 +13,6 @@ import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.settings.INSISPreferenceConstants;
 import net.sf.eclipsensis.settings.NSISPreferences;
-import net.sf.eclipsensis.util.ImageManager;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -138,7 +137,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
         ToolItem item = new ToolItem(bar, SWT.NONE);
         item.setToolTipText(EclipseNSISPlugin.getResourceString(tooltip));
 //        item.setText(EclipseNSISPlugin.getResourceString(text));
-        item.setImage(ImageManager.getImage(EclipseNSISPlugin.getResourceString(icon)));
+        item.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString(icon)));
         item.setEnabled(enabled);
         item.addListener(SWT.Selection, listener);
         return item;

@@ -15,7 +15,6 @@ import java.util.Iterator;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.ImageManager;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.IWizard;
@@ -44,7 +43,7 @@ public abstract class AbstractNSISWizardPage extends WizardPage implements INSIS
         }
     };
     
-    private static ImageDescriptor cImage = ImageManager.getImageDescriptor(EclipseNSISPlugin.getResourceString("wizard.title.image")); //$NON-NLS-1$
+    private static ImageDescriptor cImage = EclipseNSISPlugin.getImageManager().getImageDescriptor(EclipseNSISPlugin.getResourceString("wizard.title.image")); //$NON-NLS-1$
     
 	public AbstractNSISWizardPage(String pageName, String title, String description) 
     {

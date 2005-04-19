@@ -17,7 +17,6 @@ import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.settings.NSISPreferences;
 import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.ImageManager;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -54,7 +53,7 @@ public class NSISAboutDialog extends Dialog implements INSISConstants
                 return ((String)o2).length()-((String)o1).length();
             }
         });
-        cAboutImage = ImageManager.getImage(EclipseNSISPlugin.getResourceString("about.icon")); //$NON-NLS-1$
+        cAboutImage = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("about.icon")); //$NON-NLS-1$
         
         EclipseNSISPlugin plugin = EclipseNSISPlugin.getDefault();
         String name = plugin.getName();

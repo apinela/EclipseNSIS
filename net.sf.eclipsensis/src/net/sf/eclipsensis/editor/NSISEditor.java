@@ -22,7 +22,6 @@ import net.sf.eclipsensis.editor.text.NSISPartitionScanner;
 import net.sf.eclipsensis.editor.text.NSISTextUtility;
 import net.sf.eclipsensis.settings.INSISPreferenceConstants;
 import net.sf.eclipsensis.settings.NSISPreferences;
-import net.sf.eclipsensis.util.ImageManager;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -215,17 +214,17 @@ public class NSISEditor extends TextEditor implements INSISConstants, IPropertyC
 
         a = new TextOperationAction(resourceBundle,"insert.file.",this,NSISSourceViewer.INSERT_FILE,false); //$NON-NLS-1$
         a.setActionDefinitionId(INSERT_FILE_COMMAND_ID);
-        a.setImageDescriptor(ImageManager.getImageDescriptor(resourceBundle.getString("insert.file.image"))); //$NON-NLS-1$
+        a.setImageDescriptor(EclipseNSISPlugin.getImageManager().getImageDescriptor(resourceBundle.getString("insert.file.image"))); //$NON-NLS-1$
         setAction("NSISInsertFile", a); //$NON-NLS-1$
 
         a = new TextOperationAction(resourceBundle,"insert.directory.",this,NSISSourceViewer.INSERT_DIRECTORY,false); //$NON-NLS-1$
         a.setActionDefinitionId(INSERT_DIRECTORY_COMMAND_ID);
-        a.setImageDescriptor(ImageManager.getImageDescriptor(resourceBundle.getString("insert.directory.image"))); //$NON-NLS-1$
+        a.setImageDescriptor(EclipseNSISPlugin.getImageManager().getImageDescriptor(resourceBundle.getString("insert.directory.image"))); //$NON-NLS-1$
         setAction("NSISInsertDirectory", a); //$NON-NLS-1$
 
         a = new TextOperationAction(resourceBundle,"insert.color.",this,NSISSourceViewer.INSERT_COLOR,false); //$NON-NLS-1$
         a.setActionDefinitionId(INSERT_COLOR_COMMAND_ID);
-        a.setImageDescriptor(ImageManager.getImageDescriptor(resourceBundle.getString("insert.color.image"))); //$NON-NLS-1$
+        a.setImageDescriptor(EclipseNSISPlugin.getImageManager().getImageDescriptor(resourceBundle.getString("insert.color.image"))); //$NON-NLS-1$
         setAction("NSISInsertColor", a); //$NON-NLS-1$
 
         a = new TextOperationAction(resourceBundle,"tabs.to.spaces.",this,NSISSourceViewer.TABS_TO_SPACES,false); //$NON-NLS-1$

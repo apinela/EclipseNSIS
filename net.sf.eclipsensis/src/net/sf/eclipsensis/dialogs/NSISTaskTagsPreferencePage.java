@@ -17,7 +17,6 @@ import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.editor.*;
 import net.sf.eclipsensis.settings.NSISPreferences;
 import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.ImageManager;
 import net.sf.eclipsensis.viewer.CollectionContentProvider;
 
 import org.eclipse.jface.dialogs.*;
@@ -157,7 +156,7 @@ public class NSISTaskTagsPreferencePage extends PreferencePage implements IWorkb
         buttons.setLayout(layout);
 
         mAddButton= new Button(buttons, SWT.PUSH);
-        mAddButton.setImage(ImageManager.getImage(EclipseNSISPlugin.getResourceString("add.icon"))); //$NON-NLS-1$
+        mAddButton.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("add.icon"))); //$NON-NLS-1$
         mAddButton.setToolTipText(EclipseNSISPlugin.getResourceString("new.tooltip")); //$NON-NLS-1$
         mAddButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         mAddButton.addListener(SWT.Selection, new Listener() {
@@ -167,7 +166,7 @@ public class NSISTaskTagsPreferencePage extends PreferencePage implements IWorkb
         });
 
         mEditButton= new Button(buttons, SWT.PUSH);
-        mEditButton.setImage(ImageManager.getImage(EclipseNSISPlugin.getResourceString("edit.icon"))); //$NON-NLS-1$
+        mEditButton.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("edit.icon"))); //$NON-NLS-1$
         mEditButton.setToolTipText(EclipseNSISPlugin.getResourceString("edit.tooltip")); //$NON-NLS-1$
         mEditButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         mEditButton.addListener(SWT.Selection, new Listener() {
@@ -177,7 +176,7 @@ public class NSISTaskTagsPreferencePage extends PreferencePage implements IWorkb
         });
 
         mRemoveButton= new Button(buttons, SWT.PUSH);
-        mRemoveButton.setImage(ImageManager.getImage(EclipseNSISPlugin.getResourceString("delete.icon"))); //$NON-NLS-1$
+        mRemoveButton.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("delete.icon"))); //$NON-NLS-1$
         mRemoveButton.setToolTipText(EclipseNSISPlugin.getResourceString("remove.tooltip")); //$NON-NLS-1$
         mRemoveButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         mRemoveButton.addListener(SWT.Selection, new Listener() {

@@ -91,7 +91,10 @@ public class NSISContentOutlinePage extends ContentOutlinePage implements INSISK
     {
         super.dispose();
         if(mEditor != null) {
-            getTreeViewer().removeSelectionChangedListener(mEditor);
+            TreeViewer tv = getTreeViewer();
+            if(tv != null) {
+                tv.removeSelectionChangedListener(mEditor);
+            }
             NSISOutlineContentProvider provider = mEditor.getOutlineContentProvider();
             if(provider != null) {
                 provider.inputChanged(null, mEditor.getEditorInput());

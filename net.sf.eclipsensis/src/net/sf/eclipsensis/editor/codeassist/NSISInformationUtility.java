@@ -16,7 +16,6 @@ import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.editor.text.*;
 import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.ImageManager;
 
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.contentassist.CompletionProposal;
@@ -28,8 +27,8 @@ public class NSISInformationUtility implements INSISConstants
 {
     public static final ICompletionProposal[] EMPTY_COMPLETION_PROPOSAL_ARRAY = new ICompletionProposal[0];
     private static final char[] COMPLETION_AUTO_ACTIVATION_CHARS = { '.', '/','$','!',':' };
-    private static final Image KEYWORD_IMAGE = ImageManager.getImage(EclipseNSISPlugin.getResourceString("keyword.icon")); //$NON-NLS-1$
-    private static final Image PLUGIN_IMAGE = ImageManager.getImage(EclipseNSISPlugin.getResourceString("plugin.icon")); //$NON-NLS-1$
+    private static final Image KEYWORD_IMAGE = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("keyword.icon")); //$NON-NLS-1$
+    private static final Image PLUGIN_IMAGE = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("plugin.icon")); //$NON-NLS-1$
     private static final Comparator mCompletionProposalComparator = new Comparator() {
         public int compare(Object o1, Object o2)
         {

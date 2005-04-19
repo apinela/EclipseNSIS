@@ -13,7 +13,6 @@ import java.util.ResourceBundle;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
-import net.sf.eclipsensis.util.ImageManager;
 
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.text.ITextSelection;
@@ -64,15 +63,15 @@ public class NSISActionContributor extends TextEditorActionContributor implement
         mRemoveBlockComment.setActionDefinitionId(REMOVE_BLOCK_COMMENT_COMMAND_ID);
         
         mInsertFile= new RetargetTextEditorAction(bundle, "insert.file."); //$NON-NLS-1$
-        mInsertFile.setImageDescriptor(ImageManager.getImageDescriptor(bundle.getString("insert.file.image"))); //$NON-NLS-1$
+        mInsertFile.setImageDescriptor(EclipseNSISPlugin.getImageManager().getImageDescriptor(bundle.getString("insert.file.image"))); //$NON-NLS-1$
         mInsertFile.setActionDefinitionId(INSERT_FILE_COMMAND_ID);
         
         mInsertDirectory= new RetargetTextEditorAction(bundle, "insert.directory."); //$NON-NLS-1$
-        mInsertDirectory.setImageDescriptor(ImageManager.getImageDescriptor(bundle.getString("insert.directory.image"))); //$NON-NLS-1$
+        mInsertDirectory.setImageDescriptor(EclipseNSISPlugin.getImageManager().getImageDescriptor(bundle.getString("insert.directory.image"))); //$NON-NLS-1$
         mInsertDirectory.setActionDefinitionId(INSERT_DIRECTORY_COMMAND_ID);
         
         mInsertColor= new RetargetTextEditorAction(bundle, "insert.color."); //$NON-NLS-1$
-        mInsertColor.setImageDescriptor(ImageManager.getImageDescriptor(bundle.getString("insert.color.image"))); //$NON-NLS-1$
+        mInsertColor.setImageDescriptor(EclipseNSISPlugin.getImageManager().getImageDescriptor(bundle.getString("insert.color.image"))); //$NON-NLS-1$
         mInsertColor.setActionDefinitionId(INSERT_COLOR_COMMAND_ID);
         
 /*		mContentAssistTip= new RetargetTextEditorAction(EclipseNSISPlugin.getDefault().getResourceBundle(), "ContentAssistTip."); //$NON-NLS-1$

@@ -13,7 +13,8 @@ import java.util.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.help.NSISKeywords;
-import net.sf.eclipsensis.util.*;
+import net.sf.eclipsensis.util.CaseInsensitiveSet;
+import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.wizard.NSISWizard;
 import net.sf.eclipsensis.wizard.settings.dialogs.NSISInstallFilesDialog;
 
@@ -25,7 +26,7 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
 	private static final long serialVersionUID = 1293912008528238512L;
 
     public static final String TYPE = EclipseNSISPlugin.getResourceString("wizard.files.type"); //$NON-NLS-1$
-    private static final Image IMAGE = ImageManager.getImage(EclipseNSISPlugin.getResourceString("wizard.files.icon")); //$NON-NLS-1$
+    private static final Image IMAGE = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("wizard.files.icon")); //$NON-NLS-1$
     public static final char SEPARATOR = '\0'; 
     
     private String mDestination = NSISKeywords.getKeyword("$INSTDIR"); //$NON-NLS-1$
@@ -191,7 +192,7 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
     {
         private static final long serialVersionUID = 3744853352840436396L;
         public static final String TYPE = EclipseNSISPlugin.getResourceString("wizard.fileitem.type"); //$NON-NLS-1$
-        private static final Image IMAGE = ImageManager.getImage(EclipseNSISPlugin.getResourceString("wizard.file.icon")); //$NON-NLS-1$
+        private static final Image IMAGE = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("wizard.file.icon")); //$NON-NLS-1$
 
         private String mName = null;
         

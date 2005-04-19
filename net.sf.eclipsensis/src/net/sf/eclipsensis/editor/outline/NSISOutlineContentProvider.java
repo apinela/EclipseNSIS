@@ -17,7 +17,6 @@ import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.editor.text.*;
 import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.ImageManager;
 
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.rules.*;
@@ -81,7 +80,7 @@ public class NSISOutlineContentProvider implements ITreeContentProvider, INSISCo
     {
         for(int i=0; i<cOutlineKeywordNames.length; i++) {
             OUTLINE_KEYWORDS[i] = NSISKeywords.getKeyword(cOutlineKeywordNames[i]);
-            OUTLINE_IMAGES[i] = ImageManager.getImage(EclipseNSISPlugin.getResourceString(new StringBuffer("outline.").append( //$NON-NLS-1$
+            OUTLINE_IMAGES[i] = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString(new StringBuffer("outline.").append( //$NON-NLS-1$
                                                      cOutlineKeywordNames[i].toLowerCase().replaceAll("!","")).append(".icon").toString(),null)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         }
     }
