@@ -9,7 +9,8 @@
  *******************************************************************************/
 package net.sf.eclipsensis.wizard.template;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;

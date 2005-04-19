@@ -11,7 +11,6 @@ package net.sf.eclipsensis.dialogs;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
-import net.sf.eclipsensis.util.ImageManager;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -76,13 +75,13 @@ public abstract class StatusMessageDialog extends IconAndMessageDialog implement
         parent.setLayout(layout);
         parent.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-        mErrorImage = ImageManager.getImage(EclipseNSISPlugin.getResourceString("error.icon")); //$NON-NLS-1$
-        mWarningImage = ImageManager.getImage(EclipseNSISPlugin.getResourceString("warning.icon")); //$NON-NLS-1$
-        mInfoImage = ImageManager.getImage(EclipseNSISPlugin.getResourceString("info.icon")); //$NON-NLS-1$
+        mErrorImage = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("error.icon")); //$NON-NLS-1$
+        mWarningImage = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("warning.icon")); //$NON-NLS-1$
+        mInfoImage = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("info.icon")); //$NON-NLS-1$
 
         int width = Math.max(mInfoImage.getBounds().width,Math.max(mErrorImage.getBounds().width,mWarningImage.getBounds().width));
         int height = Math.max(mInfoImage.getBounds().height,Math.max(mErrorImage.getBounds().height,mWarningImage.getBounds().height));
-        Image tempImage = ImageManager.getImage(EclipseNSISPlugin.getResourceString("transparent.icon")); //$NON-NLS-1$
+        Image tempImage = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("transparent.icon")); //$NON-NLS-1$
         ImageData imageData = tempImage.getImageData();
         imageData = imageData.scaledTo(width, height);
         mOKImage = new Image(getShell().getDisplay(),imageData);
