@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<!--
+###############################################################################
+# Copyright (c) 2004, 2005 Sunil Kamath (IcemanK).
+# All rights reserved.
+# This program is made available under the terms of the Common Public License
+# v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
+# 
+# Contributors:
+#     Sunil Kamath (IcemanK) - initial API and implementation
+###############################################################################
+-->
+<plugin>
+
+   <extension
+         point="org.eclipse.core.runtime.products">
+      <product name="%product.name" application="org.eclipse.ui.ide.workbench" description="%product.description"> 
+          <property name="windowImage" value="%product.window.image"/> 
+          <property name="aboutImage" value="%product.about.image"/> 
+          <property name="aboutText" value="%about.text"/> 
+          <property name="appName" value="%product.name"/> 
+      </product> 
+   </extension>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            default="true"
+            name="%installoptions.design.editor.name"
+            extensions="%ini.extensions"
+            icon="%installoptions.design.editor.icon"
+            class="net.sf.eclipsensis.installoptions.editor.InstallOptionsDesignEditor"
+            contributorClass="net.sf.eclipsensis.installoptions.actions.InstallOptionsDesignActionContributor"
+            id="%installoptions.design.editor.id">
+      </editor>
+      <editor
+            default="false"
+            name="%installoptions.source.editor.name"
+            extensions="%ini.extensions"
+            icon="%installoptions.source.editor.icon"
+            class="net.sf.eclipsensis.installoptions.editor.InstallOptionsSourceEditor"
+            contributorClass="net.sf.eclipsensis.installoptions.actions.InstallOptionsSourceActionContributor"
+            id="%installoptions.source.editor.id">
+      </editor>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            name="%installoptions.preference.page.name"
+            category="net.sf.eclipsensis.dialogs.NSISPreferencePage"
+            class="net.sf.eclipsensis.installoptions.dialogs.InstallOptionsPreferencePage"
+            id="%installoptions.preference.page.id">
+      </page>
+   </extension>
+</plugin>

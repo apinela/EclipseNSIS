@@ -1,0 +1,28 @@
+Manifest-Version: 1.0
+Bundle-Name: %plugin.name
+Bundle-SymbolicName: net.sf.eclipsensis.installoptions; singleton=true
+Bundle-Version: 0.0.1
+Bundle-ClassPath: installoptions.jar
+Bundle-Activator: net.sf.eclipsensis.installoptions.InstallOptionsPlugin
+Bundle-Vendor: Sunil Kamath (IcemanK)
+Bundle-Localization: plugin
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.gef,
+ org.eclipse.jface,
+ org.eclipse.ui,
+ org.eclipse.ui.views,
+ org.eclipse.core.resources,
+ org.eclipse.ui.ide,
+ net.sf.eclipsensis,
+ org.eclipse.ui.editors,
+ org.eclipse.ui.workbench.texteditor,
+ org.eclipse.jface.text
+Eclipse-AutoStart: true
+Provide-Package: net.sf.eclipsensis.installoptions,
+ net.sf.eclipsensis.installoptions.dnd,
+ net.sf.eclipsensis.installoptions.edit,
+ net.sf.eclipsensis.installoptions.editor,
+ net.sf.eclipsensis.installoptions.figures,
+ net.sf.eclipsensis.installoptions.model,
+ net.sf.eclipsensis.installoptions.model.commands,
+ net.sf.eclipsensis.installoptions.rulers
