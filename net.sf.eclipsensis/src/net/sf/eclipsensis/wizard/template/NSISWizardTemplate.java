@@ -54,12 +54,7 @@ public class NSISWizardTemplate implements Serializable, Cloneable
     
     public Object clone() throws CloneNotSupportedException
     {
-        NSISWizardTemplate template = new NSISWizardTemplate();;
-        template.mName = mName;
-        template.mDescription = mDescription;
-        template.mEnabled = mEnabled;
-        template.mDeleted = mDeleted;
-        template.mType = mType;
+        NSISWizardTemplate template = (NSISWizardTemplate)super.clone();
         template.mSettings = (mSettings==null?null:(NSISWizardSettings)mSettings.clone());
         return template;
     }

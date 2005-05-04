@@ -26,7 +26,10 @@ public abstract class AbstractNSISInstallElement extends AbstractNodeConvertible
 
     public Object clone() throws CloneNotSupportedException
     {
-        return super.clone();
+        AbstractNSISInstallElement element = (AbstractNSISInstallElement) super.clone();
+        element.mSettings = null;
+        element.mParent = null;
+        return element;
     }
 
     protected void addSkippedProperties(Collection skippedProperties)

@@ -184,7 +184,7 @@ public class NSISCodeScanner extends NSISStringScanner
         if (INSISPreferenceConstants.CALLBACKS_STYLE.equals(property)) {
             mCallbacksRule = null;
         }
-        else if (INSISPreferenceConstants.INSTRUCTIONS_STYLE.equals(property)) {
+        else if (INSISPreferenceConstants.INSTRUCTION_OPTIONS_STYLE.equals(property)) {
             mInstructionOptionsRule = null;
         }
         else if (INSISPreferenceConstants.INSTALLER_ATTRIBUTES_STYLE.equals(property) ||

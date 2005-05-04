@@ -35,11 +35,13 @@ public abstract class AbstractNSISInstallGroup extends AbstractNSISInstallElemen
     public Object clone() throws CloneNotSupportedException
     {
         AbstractNSISInstallGroup group = (AbstractNSISInstallGroup)super.clone();
+        group.mChildren = new ArrayList();
         for (Iterator iter = mChildren.iterator(); iter.hasNext();) {
             INSISInstallElement element = (INSISInstallElement)((INSISInstallElement)iter.next()).clone();
-            element.setParent(group);
-            
+            group.addChild(element);
         }
+        group.mChildTypes = new LinkedHashSet();
+        group.mChildTypes.addAll(mChildTypes);
         return group;
     }
     

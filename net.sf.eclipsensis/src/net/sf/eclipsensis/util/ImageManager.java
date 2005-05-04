@@ -19,8 +19,8 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 public class ImageManager
 {
-    private static AbstractUIPlugin mPlugin;
-    private static ImageRegistry mImageRegistry;
+    private AbstractUIPlugin mPlugin;
+    private ImageRegistry mImageRegistry;
 
     public ImageManager(AbstractUIPlugin plugin)
     {

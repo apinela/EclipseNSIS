@@ -15,8 +15,7 @@ Require-Bundle: org.eclipse.core.filebuffers,
  org.eclipse.ui.editors,
  org.eclipse.ui.ide,
  org.eclipse.ui.views,
- org.eclipse.ui.workbench.texteditor,
- org.eclipse.gef
+ org.eclipse.ui.workbench.texteditor
 Eclipse-AutoStart: true
 Provide-Package: net.sf.eclipsensis.util,
  net.sf.eclipsensis,

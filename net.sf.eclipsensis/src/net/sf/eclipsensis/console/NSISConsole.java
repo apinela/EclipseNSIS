@@ -79,9 +79,10 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
                 {
                     try {
                         IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-                        IViewPart view = activePage.findView(CONSOLE_ID);
+                        String consoleId = EclipseNSISPlugin.getBundleResourceString("console.id"); //$NON-NLS-1$
+                        IViewPart view = activePage.findView(consoleId);
                         if(view == null) {
-                            activePage.showView(CONSOLE_ID, null, IWorkbenchPage.VIEW_VISIBLE);
+                            activePage.showView(consoleId, null, IWorkbenchPage.VIEW_VISIBLE);
                         }
                         else {
                             activePage.bringToTop(view);

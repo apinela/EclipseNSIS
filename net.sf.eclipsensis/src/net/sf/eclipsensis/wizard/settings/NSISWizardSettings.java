@@ -1000,56 +1000,12 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     
     public Object clone() throws CloneNotSupportedException
     {
-        NSISWizardSettings settings = new NSISWizardSettings(true);
-        settings.mName = mName;
-        settings.mCompany = mCompany;
-        settings.mVersion = mVersion;
-        settings.mUrl = mUrl;
-        settings.mOutFile = mOutFile;
-        settings.mCompressorType = mCompressorType;
-        settings.mInstallerType = mInstallerType;
-        settings.mIcon = mIcon;
-        settings.mShowSplash = mShowSplash;
-        settings.mSplashBMP = mSplashBMP;
-        settings.mSplashWAV = mSplashWAV;
-        settings.mSplashDelay = mSplashDelay;
-        settings.mFadeInDelay = mFadeInDelay;
-        settings.mFadeOutDelay = mFadeOutDelay;
-        settings.mShowBackground = mShowBackground;
+        NSISWizardSettings settings = (NSISWizardSettings)super.clone();
         settings.mBGTopColor = cloneRGB(mBGTopColor);
         settings.mBGBottomColor = cloneRGB(mBGBottomColor);
         settings.mBGTextColor = cloneRGB(mBGTextColor);
-        settings.mBackgroundBMP = mBackgroundBMP;
-        settings.mBackgroundWAV = mBackgroundWAV;
-        settings.mShowLicense = mShowLicense;
-        settings.mLicenseData = mLicenseData;
-        settings.mLicenseButtonType = mLicenseButtonType;
         settings.mLanguages = (mLanguages==null?null:(ArrayList)mLanguages.clone());
-        settings.mEnableLanguageSupport = mEnableLanguageSupport;
-        settings.mSelectLanguage = mSelectLanguage;
-        settings.mInstallDir = mInstallDir;
-        settings.mChangeInstallDir = mChangeInstallDir;
-        settings.mCreateStartMenuGroup = mCreateStartMenuGroup;
-        settings.mStartMenuGroup =mStartMenuGroup;
-        settings.mChangeStartMenuGroup = mChangeStartMenuGroup;
-        settings.mShowInstDetails = mShowInstDetails;
-        settings.mRunProgramAfterInstall = mRunProgramAfterInstall;
-        settings.mRunProgramAfterInstallParams = mRunProgramAfterInstallParams;
-        settings.mOpenReadmeAfterInstall =mOpenReadmeAfterInstall;
-        settings.mAutoCloseInstaller = mAutoCloseInstaller;
-        settings.mShowUninstDetails = mShowUninstDetails;
-        settings.mAutoCloseUninstaller = mAutoCloseUninstaller;
-        settings.mCreateUninstallerStartMenuShortcut = mCreateUninstallerStartMenuShortcut;
-        settings.mCreateUninstallerControlPanelEntry = mCreateUninstallerControlPanelEntry;
-        settings.mSilentUninstaller = mSilentUninstaller;
-        settings.mSelectComponents = mSelectComponents;
-        settings.mCreateUninstaller = mCreateUninstaller;
-        settings.mUninstallIcon = mUninstallIcon;
-        settings.mUninstallFile = mUninstallFile;
-        settings.mSavePath = mSavePath;
-        settings.mMakePathsRelative = mMakePathsRelative;
-        settings.mCompileScript = mCompileScript;
-        settings.mTestScript = mTestScript;
+        settings.mWizard = null;
         settings.mInstaller = (INSISInstallElement)mInstaller.clone();
         return settings;
     }

@@ -180,6 +180,15 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
         return MessageFormat.format(getResourceString(key),args);
     }
 
+    /**
+     * Returns the string from the plugin bundle's resource bundle,
+     * or 'key' if not found.
+     */
+    public static String getBundleResourceString(String key) 
+    {
+        return Platform.getResourceString(getDefault().getBundle(), key);
+    }
+
 	/**
 	 * Returns the string from the plugin's resource bundle,
 	 * or 'key' if not found.

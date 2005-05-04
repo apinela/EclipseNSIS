@@ -19,7 +19,24 @@ public interface INSISConstants
 
     public static final String PLUGIN_CONTEXT_PREFIX = PLUGIN_NAME + "."; //$NON-NLS-1$
     
-    public static final String HTMLHELP_ID = "net.sf.eclipsensis.help.NSISHTMLHelp"; //$NON-NLS-1$
+    public static final String HTMLHELP_ID = EclipseNSISPlugin.getBundleResourceString("%htmlhelp.id"); //$NON-NLS-1$
+    public static final String CONSOLE_ID = EclipseNSISPlugin.getBundleResourceString("%console.id"); //$NON-NLS-1$
+    public static final String PROBLEM_MARKER_ID = EclipseNSISPlugin.getBundleResourceString("%qualified.compile.problem.marker.id"); //$NON-NLS-1$
+    public static final String TASK_MARKER_ID = EclipseNSISPlugin.getBundleResourceString("%qualified.task.marker.id"); //$NON-NLS-1$ //$NON-NLS-2$
+    public static final String NSIS_EDITOR_CONTEXT_ID = EclipseNSISPlugin.getBundleResourceString("%context.editingNSISSource.id"); //$NON-NLS-1$
+    public static final String COMPILE_ACTION_ID = EclipseNSISPlugin.getBundleResourceString("%compile.action.id"); //$NON-NLS-1$
+    public static final String COMPILE_TEST_ACTION_ID = EclipseNSISPlugin.getBundleResourceString("%compile.test.action.id"); //$NON-NLS-1$
+    public static final String INSERT_TEMPLATE_COMMAND_ID = EclipseNSISPlugin.getBundleResourceString("%insert.template.command.id"); //$NON-NLS-1$
+    public static final String GOTO_HELP_COMMAND_ID = EclipseNSISPlugin.getBundleResourceString("%goto.help.command.id"); //$NON-NLS-1$
+    public static final String STICKY_HELP_COMMAND_ID = EclipseNSISPlugin.getBundleResourceString("%sticky.help.command.id"); //$NON-NLS-1$
+    public static final String INSERT_FILE_COMMAND_ID = EclipseNSISPlugin.getBundleResourceString("%insert.file.command.id"); //$NON-NLS-1$
+    public static final String INSERT_DIRECTORY_COMMAND_ID = EclipseNSISPlugin.getBundleResourceString("%insert.directory.command.id"); //$NON-NLS-1$
+    public static final String INSERT_COLOR_COMMAND_ID = EclipseNSISPlugin.getBundleResourceString("%insert.color.command.id"); //$NON-NLS-1$
+    public static final String TABS_TO_SPACES_COMMAND_ID = EclipseNSISPlugin.getBundleResourceString("%tabs.to.spaces.command.id"); //$NON-NLS-1$
+    public static final String TOGGLE_COMMENT_COMMAND_ID = EclipseNSISPlugin.getBundleResourceString("%toggle.comment.command.id"); //$NON-NLS-1$
+    public static final String ADD_BLOCK_COMMENT_COMMAND_ID = EclipseNSISPlugin.getBundleResourceString("%add.block.comment.command.id"); //$NON-NLS-1$
+    public static final String REMOVE_BLOCK_COMMENT_COMMAND_ID = EclipseNSISPlugin.getBundleResourceString("%remove.block.comment.command.id"); //$NON-NLS-1$
+    
     public static final String PLUGIN_HELP_LOCATION_PREFIX = "help/"; //$NON-NLS-1$
     public static final String DOCS_LOCATION_PREFIX = "Docs/"; //$NON-NLS-1$
     public static final String CACHED_HELP_LOCATION = PLUGIN_HELP_LOCATION_PREFIX+DOCS_LOCATION_PREFIX; //$NON-NLS-1$
@@ -31,23 +48,6 @@ public interface INSISConstants
     public static final String MUI_LANGUAGE_FILES_EXTENSION = ".nsh"; //$NON-NLS-1$
     public static final String RESOURCE_BUNDLE = "net.sf.eclipsensis.EclipseNSISPluginResources"; //$NON-NLS-1$
     public static final String MESSAGE_BUNDLE = "net.sf.eclipsensis.EclipseNSISPluginMessages"; //$NON-NLS-1$
-    public static final String CONSOLE_ID = "net.sf.eclipsensis.console.NSISConsole"; //$NON-NLS-1$
-    public static final String PROBLEM_MARKER_ID = "net.sf.eclipsensis.NSISCompileProblem"; //$NON-NLS-1$
-    public static final String TASK_MARKER_ID = "net.sf.eclipsensis.NSISTask"; //$NON-NLS-1$
-    public static final String NSIS_EDITOR_CONTEXT_ID = "net.sf.eclipsensis.NSISEditorScope"; //$NON-NLS-1$
-    public static final String COMPILE_ACTION_ID = "net.sf.eclipsensis.actions.NSISCompileAction"; //$NON-NLS-1$
-    public static final String COMPILE_TEST_ACTION_ID = "net.sf.eclipsensis.actions.NSISCompileTestAction"; //$NON-NLS-1$
-
-    public static final String INSERT_TEMPLATE_COMMAND_ID = "net.sf.eclipsensis.commands.NSISInsertTemplate"; //$NON-NLS-1$
-    public static final String GOTO_HELP_COMMAND_ID = "net.sf.eclipsensis.commands.NSISGotoHelp"; //$NON-NLS-1$
-    public static final String STICKY_HELP_COMMAND_ID = "net.sf.eclipsensis.commands.NSISStickyHelp"; //$NON-NLS-1$
-    public static final String INSERT_FILE_COMMAND_ID = "net.sf.eclipsensis.commands.NSISInsertFile"; //$NON-NLS-1$
-    public static final String INSERT_DIRECTORY_COMMAND_ID = "net.sf.eclipsensis.commands.NSISInsertDirectory"; //$NON-NLS-1$
-    public static final String INSERT_COLOR_COMMAND_ID = "net.sf.eclipsensis.commands.NSISInsertColor"; //$NON-NLS-1$
-    public static final String TABS_TO_SPACES_COMMAND_ID = "net.sf.eclipsensis.commands.NSISTabsToSpaces"; //$NON-NLS-1$
-    public static final String TOGGLE_COMMENT_COMMAND_ID = "net.sf.eclipsensis.commands.NSISToggleComment"; //$NON-NLS-1$
-    public static final String ADD_BLOCK_COMMENT_COMMAND_ID = "net.sf.eclipsensis.commands.NSISAddBlockComment"; //$NON-NLS-1$
-    public static final String REMOVE_BLOCK_COMMENT_COMMAND_ID = "net.sf.eclipsensis.commands.NSISRemoveBlockComment"; //$NON-NLS-1$
     
     public static final QualifiedName NSIS_COMPILE_TIMESTAMP = new QualifiedName(PLUGIN_NAME,"nsisCompileTimestamp"); //$NON-NLS-1$
     public static final QualifiedName NSIS_EXE_NAME = new QualifiedName(PLUGIN_NAME,"nsisEXEName"); //$NON-NLS-1$

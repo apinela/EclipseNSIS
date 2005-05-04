@@ -20,16 +20,6 @@ import org.eclipse.ui.PlatformUI;
 
 public class NSISWizardAction extends NSISScriptAction
 {
-    /**
-     * The wizard dialog width
-     */
-    private static final int SIZING_WIZARD_WIDTH = 500;
-
-    /**
-     * The wizard dialog height
-     */
-    private static final int SIZING_WIZARD_HEIGHT = 600;
-
     /* (non-Javadoc)
      * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
      */

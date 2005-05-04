@@ -34,16 +34,6 @@ public class NSISInstallDirectory extends AbstractNSISInstallItem implements INS
         NSISInstallElementFactory.register(TYPE, IMAGE, NSISInstallDirectory.class);
     }
 
-    public Object clone() throws CloneNotSupportedException
-    {
-        NSISInstallDirectory directory = (NSISInstallDirectory)super.clone();
-        directory.mName = mName;
-        directory.mDestination = mDestination;
-        directory.mOverwriteMode = mOverwriteMode;
-        directory.mRecursive = mRecursive;
-        return directory;
-    }
-
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#getType()
      */

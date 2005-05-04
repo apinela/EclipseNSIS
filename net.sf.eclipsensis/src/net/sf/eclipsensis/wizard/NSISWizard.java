@@ -22,6 +22,8 @@ import net.sf.eclipsensis.wizard.template.NSISWizardTemplate;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 
@@ -31,11 +33,10 @@ public abstract class NSISWizard extends Wizard implements INewWizard, INSISWiza
      * The wizard dialog width
      */
     private static final int SIZING_WIZARD_WIDTH = 500;
-
     /**
      * The wizard dialog height
      */
-    private static final int SIZING_WIZARD_HEIGHT = 600;
+    private static final int SIZING_WIZARD_HEIGHT = 450;
 
     private NSISWizardSettings mSettings = null;
     private ArrayList mSettingsListeners = new ArrayList();
@@ -129,6 +130,17 @@ public abstract class NSISWizard extends Wizard implements INewWizard, INSISWiza
         return prevPage;
     }
 
+    public void createPageControls(Composite pageContainer)
+    {
+        super.createPageControls(pageContainer);
+        Object data = pageContainer.getLayoutData();
+        if(data instanceof GridData) {
+            GridData d = (GridData)data;
+            d.widthHint = SIZING_WIZARD_WIDTH;
+            d.heightHint = SIZING_WIZARD_HEIGHT;
+        }
+    }
+    
     public void addSettingsListener(INSISWizardSettingsListener listener)
     {
         mSettingsListeners.add(listener);

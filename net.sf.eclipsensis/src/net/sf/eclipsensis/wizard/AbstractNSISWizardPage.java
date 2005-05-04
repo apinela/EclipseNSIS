@@ -215,12 +215,13 @@ public abstract class AbstractNSISWizardPage extends WizardPage implements INSIS
     public final void createControl(Composite parent)
     {
         Control control = createPageControl(parent);
+
         String contextId = getHelpContextId();
         if(contextId != null) {
             WorkbenchHelp.setHelp(control,contextId);
         }
-
     }
+
     public abstract boolean validatePage(int flag);
     protected abstract Control createPageControl(Composite parent);
     protected abstract String getHelpContextId();
