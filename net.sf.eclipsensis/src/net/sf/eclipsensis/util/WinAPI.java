@@ -17,6 +17,7 @@ public class WinAPI
     }
 
     public static final int GWL_EXSTYLE = 0xffffffec;
+    public static final int GWL_STYLE = 0xfffffff0;
     public static final int GWL_WNDPROC = 0xfffffffc;
     
     public static final int WM_NCHITTEST = 0x84;
@@ -38,6 +39,7 @@ public class WinAPI
     public static final int HKEY_CURRENT_USER = 0x80000001;
     public static final int HKEY_LOCAL_MACHINE = 0x80000002; 
     public static final int HKEY_USERS = 0x80000003;
+    public static final int BS_LEFTTEXT = 0x20;
     
     private static native void init();
     public static native int SetWindowLong(int hWnd, int nIndex, int dwNewLong);

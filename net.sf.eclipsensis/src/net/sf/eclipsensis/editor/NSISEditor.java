@@ -54,7 +54,7 @@ public class NSISEditor extends TextEditor implements INSISConstants, IPropertyC
     private NSISContentOutlinePage mOutlinePage;
     private NSISOutlineContentProvider mOutlineContentProvider;
     private Position mCurrentPosition = null;
-    private Mutex mMutex = new Mutex();
+    private NSISEditor.Mutex mMutex = new NSISEditor.Mutex();
     
     /**
      * 
@@ -172,7 +172,7 @@ public class NSISEditor extends TextEditor implements INSISConstants, IPropertyC
     /*
      * @see org.eclipse.ui.texteditor.ExtendedTextEditor#createPartControl(org.eclipse.swt.widgets.Composite)
      */
-    public void createPartControl(Composite parent) 
+    public void createPartControl(Composite parent)
     {
         super.createPartControl(parent);
         ProjectionViewer viewer= (ProjectionViewer) getSourceViewer();

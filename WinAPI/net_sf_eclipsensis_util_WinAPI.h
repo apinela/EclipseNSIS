@@ -18,6 +18,8 @@ extern "C" {
 #endif
 #undef net_sf_eclipsensis_util_WinAPI_GWL_EXSTYLE
 #define net_sf_eclipsensis_util_WinAPI_GWL_EXSTYLE -20L
+#undef net_sf_eclipsensis_util_WinAPI_GWL_STYLE
+#define net_sf_eclipsensis_util_WinAPI_GWL_STYLE -16L
 #undef net_sf_eclipsensis_util_WinAPI_GWL_WNDPROC
 #define net_sf_eclipsensis_util_WinAPI_GWL_WNDPROC -4L
 #undef net_sf_eclipsensis_util_WinAPI_WM_NCHITTEST
@@ -48,6 +50,8 @@ extern "C" {
 #define net_sf_eclipsensis_util_WinAPI_HKEY_LOCAL_MACHINE -2147483646L
 #undef net_sf_eclipsensis_util_WinAPI_HKEY_USERS
 #define net_sf_eclipsensis_util_WinAPI_HKEY_USERS -2147483645L
+#undef net_sf_eclipsensis_util_WinAPI_BS_LEFTTEXT
+#define net_sf_eclipsensis_util_WinAPI_BS_LEFTTEXT 32L
 /*
  * Class:     net_sf_eclipsensis_util_WinAPI
  * Method:    init

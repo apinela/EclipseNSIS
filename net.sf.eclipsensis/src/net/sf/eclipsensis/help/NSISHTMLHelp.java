@@ -74,30 +74,28 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
     public static boolean showHelp(final String url)
     {
         final boolean[] result = {false};
-        if(NSISPreferences.getPreferences().isAutoShowConsole()) {
-            PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-                public void run()
-                {
-                    try {
-                        IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-                        NSISHTMLHelp htmlHelp = (NSISHTMLHelp)activePage.findView(HTMLHELP_ID);
-                        if(htmlHelp == null) {
-                            cFirstPage = url;
-                            htmlHelp = (NSISHTMLHelp)activePage.showView(HTMLHELP_ID);
-                        }
-                        else {
-                            activePage.activate(htmlHelp);
-                            htmlHelp.goUrl(url);
-                        }
-                        result[0] = htmlHelp.isActivated();
+        PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+            public void run()
+            {
+                try {
+                    IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+                    NSISHTMLHelp htmlHelp = (NSISHTMLHelp)activePage.findView(HTMLHELP_ID);
+                    if(htmlHelp == null) {
+                        cFirstPage = url;
+                        htmlHelp = (NSISHTMLHelp)activePage.showView(HTMLHELP_ID);
                     }
-                    catch(PartInitException pie) {
-                        result[0] = false;
-                        pie.printStackTrace();
+                    else {
+                        activePage.activate(htmlHelp);
+                        htmlHelp.goUrl(url);
                     }
+                    result[0] = htmlHelp.isActivated();
                 }
-            });
-        }
+                catch(PartInitException pie) {
+                    result[0] = false;
+                    pie.printStackTrace();
+                }
+            }
+        });
         return result[0];
     }
     

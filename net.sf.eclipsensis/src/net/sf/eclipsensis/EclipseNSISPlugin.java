@@ -67,6 +67,7 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
         catch (MissingResourceException x) {
 			x.printStackTrace();
 		}
+        mImageManager = new ImageManager(this);
 	}
 
 	/**
@@ -95,7 +96,6 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
                 prefs.store();
             }
         }
-        mImageManager = new ImageManager(this);
         
         if(isConfigured()) {
             NSISHelpURLProvider.init();
@@ -145,7 +145,6 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
             listener.stopped();
             iter.remove();
         }
-        mImageManager = null;
 		super.stop(context);
 	}
 
