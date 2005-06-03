@@ -17,6 +17,7 @@ public class SetConstraintCommand extends org.eclipse.gef.commands.Command
 {
     private Position mNewPos;
     private Position mOldPos;
+    private Position mGraphicalPos;
 
     private InstallOptionsWidget mPart;
 
@@ -28,8 +29,7 @@ public class SetConstraintCommand extends org.eclipse.gef.commands.Command
 
     public boolean canExecute()
     {
-        // TODO Auto-generated method stub
-        return mNewPos.left >= 0 && mNewPos.top >= 0;
+        return mGraphicalPos.left >= 0 && mGraphicalPos.top >= 0;
     }
 
     public String getLabel()
@@ -42,8 +42,7 @@ public class SetConstraintCommand extends org.eclipse.gef.commands.Command
 
     public void redo()
     {
-        Position pos = mPart.toModel(mNewPos);
-        mPart.setPosition(pos);
+        mPart.setPosition(mNewPos);
     }
 
     public void undo()
@@ -53,7 +52,8 @@ public class SetConstraintCommand extends org.eclipse.gef.commands.Command
 
     public void setPosition(Position pos)
     {
-        mNewPos = pos.getCopy();
+        mGraphicalPos = pos;
+        mNewPos = mPart.toModel(pos);
     }
 
     public void setPart(InstallOptionsWidget part)

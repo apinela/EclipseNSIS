@@ -10,10 +10,12 @@
 package net.sf.eclipsensis.installoptions.model.commands;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
+import net.sf.eclipsensis.installoptions.figures.FigureUtility;
 import net.sf.eclipsensis.installoptions.model.*;
 
-import org.eclipse.draw2d.geometry.Insets;
 import org.eclipse.draw2d.geometry.Rectangle;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.widgets.Display;
 
 public class CreateCommand extends org.eclipse.gef.commands.Command
 {
@@ -30,27 +32,20 @@ public class CreateCommand extends org.eclipse.gef.commands.Command
         super(InstallOptionsPlugin.getResourceString("create.command.name")); //$NON-NLS-1$
     }
 
+    public boolean canExecute()
+    {
+        return mRect != null && mRect.x >= 0 && mRect.y >= 0;
+    }
+
     public void execute()
     {
         if (mRect != null) {
-            Insets expansion = getInsets();
-            if (!mRect.isEmpty())
-                mRect.expand(expansion);
-            else {
-                mRect.x -= expansion.left;
-                mRect.y -= expansion.top;
-            }
             Position p  = mChild.getPosition();
             p.setLocation(mRect.getLocation());
             if (!mRect.isEmpty())
                 p.setSize(mRect.getSize());
         }
         redo();
-    }
-
-    private Insets getInsets()
-    {
-        return new Insets();
     }
 
     public InstallOptionsDialog getParent()
@@ -75,7 +70,8 @@ public class CreateCommand extends org.eclipse.gef.commands.Command
 
     public void setLocation(Rectangle r)
     {
-        mRect = r;
+        Font f = Display.getDefault().getSystemFont();
+        mRect = FigureUtility.pixelsToDialogUnits(r,f);
     }
 
     public void setParent(InstallOptionsDialog newParent)

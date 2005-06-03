@@ -9,35 +9,24 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.edit.button;
 
-import net.sf.eclipsensis.installoptions.model.InstallOptionsButton;
+import net.sf.eclipsensis.installoptions.edit.uneditable.InstallOptionsUneditableElementEditManager;
 
 import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.gef.tools.CellEditorLocator;
-import org.eclipse.gef.tools.DirectEditManager;
-import org.eclipse.jface.viewers.CellEditor;
-import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Text;
 
-public class InstallOptionsButtonEditManager extends DirectEditManager
+public class InstallOptionsButtonEditManager extends InstallOptionsUneditableElementEditManager
 {
     public InstallOptionsButtonEditManager(GraphicalEditPart source, Class editorType, CellEditorLocator locator)
     {
         super(source, editorType, locator);
     }
 
-    protected void initCellEditor() 
+    /* (non-Javadoc)
+     * @see net.sf.eclipsensis.installoptions.edit.uneditable.InstallOptionsUneditableElementEditManager#getCellEditorStyle()
+     */
+    protected int getCellEditorStyle()
     {
-        InstallOptionsButton button = (InstallOptionsButton)getEditPart().getModel();
-        String initialLabelText = button.getText();
-        getCellEditor().setValue(initialLabelText);
-        Text text = (Text)getCellEditor().getControl();
-        text.selectAll();
-    }
-
-    protected CellEditor createCellEditorOn(Composite composite) 
-    {
-        return new TextCellEditor(composite, SWT.SINGLE|SWT.CENTER);
+        return SWT.SINGLE|SWT.CENTER;
     }
 }

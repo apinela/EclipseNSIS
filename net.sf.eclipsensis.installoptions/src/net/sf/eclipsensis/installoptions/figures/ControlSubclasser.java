@@ -81,8 +81,14 @@ public class ControlSubclasser
                     res = 0;
                     break;
                 default:
-                    res=WinAPI.CallWindowProc(((Integer)cProcMap.get(new Integer(hwnd))).intValue(),
-                                              hwnd, msg, wParam, lParam);
+                    try {
+                        res=WinAPI.CallWindowProc(((Integer)cProcMap.get(new Integer(hwnd))).intValue(),
+                                                  hwnd, msg, wParam, lParam);
+                    }
+                    catch(Throwable t) {
+                        //Ignore any errors
+                        res = 0;
+                    }
             }
             
             return res;

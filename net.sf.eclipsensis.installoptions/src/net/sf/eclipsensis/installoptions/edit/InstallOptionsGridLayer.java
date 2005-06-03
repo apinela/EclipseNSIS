@@ -10,55 +10,103 @@
 package net.sf.eclipsensis.installoptions.edit;
 
 import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
+import net.sf.eclipsensis.installoptions.figures.FigureUtility;
 
-import org.eclipse.draw2d.ColorConstants;
-import org.eclipse.draw2d.Graphics;
+import org.eclipse.draw2d.*;
+import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.editparts.GridLayer;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.widgets.Display;
 
 public class InstallOptionsGridLayer extends GridLayer implements IInstallOptionsConstants
 {
     private String mStyle = GRID_STYLE_LINES;
     public static final String PROPERTY_GRID_STYLE="net.sf.eclipsensis.installoptions.grid_style"; //$NON-NLS-1$
+    private double mDpuX;
+    private double mDpuY;
+    
+    public InstallOptionsGridLayer()
+    {
+        super();
+        Font f = Display.getDefault().getSystemFont();
+        mDpuX = ((double)FigureUtility.dialogUnitsToPixelsX(1000,f))/1000;
+        mDpuY = ((double)FigureUtility.dialogUnitsToPixelsY(1000,f))/1000;
+    }
 
     protected void paintGrid(Graphics g)
     {
+        int distanceX = (int)(this.gridX*mDpuX);
+        int distanceY = (int)(this.gridY*mDpuY);
+        Point origin = new Point((int)(this.origin.x*mDpuX),(int)(this.origin.y*mDpuY));
+        Rectangle clip = g.getClip(Rectangle.SINGLETON);
+        if (distanceX > 0) {
+            int n=1;
+            int x = origin.x;
+            if (origin.x >= clip.x) {
+                while (x - distanceX >= clip.x) {
+                    x = origin.x - (int)((n++)*gridX*mDpuX);
+                }
+            }
+            else {
+                while (x < clip.x) {
+                    x = origin.x + (int)((n++)*gridX*mDpuX);
+                }
+            }
+            origin.x = x;
+        }
+        if(distanceY > 0) {
+            int n=1;
+            int y = origin.y;
+            if (origin.y >= clip.y) {
+                while (y - distanceX >= clip.y) {
+                    y = origin.y - (int)((n++)*gridY*mDpuY);
+                }
+            }
+            else {
+                while (y < clip.y) {
+                    y = origin.y + (int)((n++)*gridY*mDpuY);
+                }
+            }
+            origin.y = y;
+        }
+        
         if(GRID_STYLE_DOTS.equals(mStyle)) {
             setForegroundColor(ColorConstants.black);
-            Rectangle clip = g.getClip(Rectangle.SINGLETON);
-            
             if (gridX > 0 && gridY > 0) {
-                if (origin.x >= clip.x) {
-                    while (origin.x - gridX >= clip.x) {
-                        origin.x -= gridX;
-                    }
-                }
-                else {
-                    while (origin.x < clip.x) {
-                        origin.x += gridX;
-                    }
-                }
-                if (origin.y >= clip.y) {
-                    while (origin.y - gridY >= clip.y) {
-                        origin.y -= gridY;
-                    }
-                }
-                else {
-                    while (origin.y < clip.y) {
-                        origin.y += gridY;
-                    }
-                }
-                for (int i = origin.x; i < clip.x + clip.width; i += gridX) {
-                    for (int j = origin.y; j < clip.y + clip.height; j += gridY) {
-                        g.drawPoint(i, j);
+                int n = (int)Math.round(origin.x/(gridX*mDpuX));
+                int x = origin.x;
+                while(x < clip.x+clip.width) {
+                    x = (int)((n++)*gridX*mDpuX); 
+
+                    int m = (int)Math.round(origin.y/(gridY*mDpuY));
+                    int y = origin.y;
+                    while(y < clip.y+clip.height) {
+                        y = (int)((m++)*gridY*mDpuY); 
+                        g.drawPoint(x, y);
                     }
                 }
             }
-            
+        
         }
         else {
             setForegroundColor(ColorConstants.lightGray);
-            super.paintGrid(g);
+            if(gridX > 0) {
+                int n = (int)Math.round(origin.x/(gridX*mDpuX));
+                int x = origin.x;
+                while(x < clip.x+clip.width) {
+                    x = (int)((n++)*gridX*mDpuX);
+                    g.drawLine(x, clip.y, x, clip.y + clip.height);
+                }
+            }
+            if(gridY > 0) {
+                int n = (int)Math.round(origin.y/(gridY*mDpuY));
+                int y = origin.y;
+                while(y < clip.y+clip.height) {
+                    y = (int)((n++)*gridY*mDpuY); 
+                    g.drawLine(clip.x, y, clip.x + clip.width, y);
+                }
+            }
         }
     }
     

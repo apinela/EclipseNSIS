@@ -19,9 +19,11 @@ import net.sf.eclipsensis.installoptions.actions.*;
 import net.sf.eclipsensis.installoptions.dialogs.GridSnapGlueSettingsDialog;
 import net.sf.eclipsensis.installoptions.dnd.InstallOptionsTemplateTransferDropTargetListener;
 import net.sf.eclipsensis.installoptions.edit.*;
-import net.sf.eclipsensis.installoptions.model.*;
+import net.sf.eclipsensis.installoptions.model.DialogSizeManager;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsDialog;
+import net.sf.eclipsensis.installoptions.model.commands.InstallOptionsCommandStack;
 import net.sf.eclipsensis.installoptions.properties.CustomPropertySheetEntry;
-import net.sf.eclipsensis.installoptions.rulers.InstallOptionsRulerProvider;
+import net.sf.eclipsensis.installoptions.rulers.*;
 import net.sf.eclipsensis.installoptions.util.TypeConverter;
 
 import org.eclipse.core.resources.*;
@@ -33,6 +35,7 @@ import org.eclipse.draw2d.parts.Thumbnail;
 import org.eclipse.gef.*;
 import org.eclipse.gef.commands.CommandStack;
 import org.eclipse.gef.commands.CommandStackListener;
+import org.eclipse.gef.dnd.TemplateTransferDragSourceListener;
 import org.eclipse.gef.editparts.ScalableFreeformRootEditPart;
 import org.eclipse.gef.editparts.ZoomManager;
 import org.eclipse.gef.palette.PaletteRoot;
@@ -41,7 +44,7 @@ import org.eclipse.gef.ui.actions.*;
 import org.eclipse.gef.ui.palette.*;
 import org.eclipse.gef.ui.palette.FlyoutPaletteComposite.FlyoutPreferences;
 import org.eclipse.gef.ui.parts.*;
-import org.eclipse.gef.ui.rulers.RulerComposite;
+import org.eclipse.gef.ui.parts.TreeViewer;
 import org.eclipse.gef.ui.stackview.CommandStackInspectorPage;
 import org.eclipse.gef.ui.views.palette.PalettePage;
 import org.eclipse.gef.ui.views.palette.PaletteViewerPage;
@@ -51,7 +54,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.util.TransferDropTargetListener;
-import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
@@ -75,9 +78,9 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
     private List mSelectionActions = new ArrayList();
     private List mStackActions = new ArrayList();
     private List mPropertyActions = new ArrayList();
-    private PaletteViewerProvider mProvider;
-    private FlyoutPaletteComposite mSplitter;
-    private CustomPalettePage mPage;
+    private PaletteViewerProvider mPaletteProvider;
+    private FlyoutPaletteComposite mPalette;
+    private CustomPalettePage mPalettePage;
     private boolean mSwitching = false;
 
     private KeyHandler mSharedKeyHandler;
@@ -105,8 +108,9 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
                 MessageDialog dialog = new MessageDialog(shell, title, null,
                         message, MessageDialog.QUESTION, buttons, 0);
                 if (dialog.open() == 0) {
-                    if (!performSaveAs())
+                    if (!performSaveAs()) {
                         partActivated(part);
+                    }
                 }
                 else {
                     closeEditor(false);
@@ -137,7 +141,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
 
     private ResourceTracker mResourceListener = new ResourceTracker();
 
-    private RulerComposite mRulerComposite;
+    private InstallOptionsRulerComposite mRulerComposite;
 
     protected static final String PALETTE_DOCK_LOCATION = "PaletteDockLocation"; //$NON-NLS-1$
 
@@ -205,7 +209,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
     }
 
     /**
-     * Returns the list of {@link IAction IActions} dependant on property changes in the
+     * Returns the list of {@link IAction IActions} dependent on property changes in the
      * Editor.  These actions should implement the {@link UpdateAction} interface so that they
      * can be updated in response to property changes.  An example is the "Save" action.
      * @return the list of property-dependant actions
@@ -216,7 +220,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
     }
 
     /**
-     * Returns the list of {@link IAction IActions} dependant on changes in the workbench's
+     * Returns the list of {@link IAction IActions} dependent on changes in the workbench's
      * {@link ISelectionService}. These actions should implement the {@link UpdateAction}
      * interface so that they can be updated in response to selection changes.  An example is
      * the Delete action.
@@ -261,6 +265,13 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
     {
         getSelectionSynchronizer().addViewer(getGraphicalViewer());
         getSite().setSelectionProvider(getGraphicalViewer());
+        getGraphicalViewer().addSelectionChangedListener(new ISelectionChangedListener(){
+
+            public void selectionChanged(SelectionChangedEvent event)
+            {
+                showPropertiesView();
+            }
+        });
     }
 
     /**
@@ -345,8 +356,9 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
         Iterator iter = actionIds.iterator();
         while (iter.hasNext()) {
             IAction action = registry.getAction(iter.next());
-            if (action instanceof UpdateAction)
+            if (action instanceof UpdateAction) {
                 ((UpdateAction)action).update();
+            }
         }
     }
 
@@ -355,13 +367,13 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
      */
     public void createPartControl(Composite parent) 
     {
-        mSplitter = new FlyoutPaletteComposite(parent, SWT.NONE, getSite().getPage(),
+        mPalette = new FlyoutPaletteComposite(parent, SWT.NONE, getSite().getPage(),
                 getPaletteViewerProvider(), getPalettePreferences());
-        createGraphicalViewer(mSplitter);
-        mSplitter.setGraphicalControl(getGraphicalControl());
-        if (mPage != null) {
-            mSplitter.setExternalViewer(mPage.getPaletteViewer());
-            mPage = null;
+        createGraphicalViewer(mPalette);
+        mPalette.setGraphicalControl(getGraphicalControl());
+        if (mPalettePage != null) {
+            mPalette.setExternalViewer(mPalettePage.getPaletteViewer());
+            mPalettePage = null;
         }
     }
 
@@ -375,10 +387,10 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
      */
     protected final PaletteViewerProvider getPaletteViewerProvider() 
     {
-        if (mProvider == null) {
-            mProvider = createPaletteViewerProvider();
+        if (mPaletteProvider == null) {
+            mPaletteProvider = createPaletteViewerProvider();
         }
-        return mProvider;
+        return mPaletteProvider;
     }
 
     /**
@@ -389,6 +401,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
     protected void setEditDomain(DefaultEditDomain editDomain) 
     {
         mEditDomain = editDomain;
+        mEditDomain.setCommandStack(new InstallOptionsCommandStack());
         getEditDomain().setPaletteRoot(getPaletteRoot());
     }
 
@@ -434,7 +447,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
         }
 
         viewer.setRootEditPart(root);
-
+       
         viewer.setEditPartFactory(GraphicalPartFactory.getInstance());
         ContextMenuProvider provider = new InstallOptionsDesignMenuProvider(this,//viewer,
                                                                     getActionRegistry());
@@ -443,7 +456,6 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
                 provider, viewer);
         viewer.setKeyHandler(new GraphicalViewerKeyHandler(viewer)
                 .setParent(getCommonKeyHandler()));
-
         IFile file = ((IFileEditorInput)getEditorInput()).getFile();
         loadProperties(file);
 
@@ -456,15 +468,6 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
         
         IAction showGuides = new ToggleGuideVisibilityAction(getGraphicalViewer());
         getActionRegistry().registerAction(showGuides);
-
-        Listener listener = new Listener() {
-            public void handleEvent(Event event)
-            {
-                handleActivationChanged(event);
-            }
-        };
-        getGraphicalControl().addListener(SWT.Activate, listener);
-        getGraphicalControl().addListener(SWT.Deactivate, listener);
     }
 
     protected void createOutputStream(OutputStream os) throws IOException
@@ -476,43 +479,17 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
 
     protected CustomPalettePage createPalettePage()
     {
-        /*
         return new CustomPalettePage(getPaletteViewerProvider());
-         */
-        return new CustomPalettePage(getPaletteViewerProvider()) {
-            public void init(IPageSite pageSite)
-            {
-                super.init(pageSite);
-                IAction copy = getActionRegistry().getAction(ActionFactory.COPY.getId());
-                pageSite.getActionBars().setGlobalActionHandler(ActionFactory.COPY.getId(), copy);
-            }
-        };
     }
 
     protected PaletteViewerProvider createPaletteViewerProvider()
     {
-        /*
-        return new PaletteViewerProvider(getGraphicalViewer().getEditDomain());
-         */
-        return new PaletteViewerProvider(getEditDomain()); /* {
-            private IMenuListener menuListener;
-
-            protected void hookPaletteViewer(PaletteViewer viewer)
-            {
-                super.hookPaletteViewer(viewer);
-                final CopyTemplateAction copy = (CopyTemplateAction)getActionRegistry().getAction(ActionFactory.COPY.getId());
-                viewer.addSelectionChangedListener(copy);
-                if (menuListener == null)
-                    menuListener = new IMenuListener() {
-                        public void menuAboutToShow(IMenuManager manager)
-                        {
-                            manager.appendToGroup(
-                                    GEFActionConstants.GROUP_COPY, copy);
-                        }
-                    };
-                viewer.getContextMenu().addMenuListener(menuListener);
+        return new PaletteViewerProvider(getEditDomain()) {
+            protected void configurePaletteViewer(PaletteViewer viewer) {
+                super.configurePaletteViewer(viewer);
+                viewer.addDragSourceListener(new TemplateTransferDragSourceListener(viewer));
             }
-        };*/
+        };
     }
 
     public void dispose()
@@ -581,19 +558,20 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
             return mOutlinePage;
         }
         if(InstallOptionsPlugin.getDefault().isZoomSupported()) {
-            if (type == ZoomManager.class)
+            if (type == ZoomManager.class) {
                 return getGraphicalViewer().getProperty(ZoomManager.class.toString());
+            }
         }
         if (type == PalettePage.class) {
-            if (mSplitter == null) {
-                mPage = createPalettePage();
-                return mPage;
+            if (mPalette == null) {
+                mPalettePage = createPalettePage();
+                return mPalettePage;
             }
             return createPalettePage();
         }
         if (type == org.eclipse.ui.views.properties.IPropertySheetPage.class) {
             PropertySheetPage page = new PropertySheetPage();
-            page.setRootEntry(new CustomPropertySheetEntry(GEFPlugin.createUndoablePropertySheetEntry(getCommandStack())));
+            page.setRootEntry(new CustomPropertySheetEntry(getCommandStack()));
             return page;
         }
         if (type == GraphicalViewer.class) {
@@ -616,9 +594,6 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
 
     protected Control getGraphicalControl()
     {
-        /*
-        return getGraphicalViewer().getControl();
-         */
         return mRulerComposite;
     }
 
@@ -690,38 +665,10 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
     {
     }
 
-    protected void handleActivationChanged(Event event)
-    {
-//        IActionBars bars = getEditorSite().getActionBars();
-//
-//        boolean b = updateAction(event, bars, ActionFactory.COPY);
-//        if(b) {
-//            bars.updateActionBars();
-//        }
-    }
-
-    /**
-     * @param event
-     * @param bars
-     * @param actionFactory 
-     */
-    private boolean updateAction(Event event, IActionBars bars, ActionFactory actionFactory)
-    {
-        IAction action = null;
-        String id = actionFactory.getId();
-        if (event.type == SWT.Deactivate) {
-            action = getActionRegistry().getAction(id);
-        }
-        if (bars.getGlobalActionHandler(id) != action) {
-            bars.setGlobalActionHandler(id, action);
-            return true;
-        }
-        return false;
-    }
 
     protected void initializeGraphicalViewer()
     {
-        mSplitter.hookDropTargetListener(getGraphicalViewer());
+        mPalette.hookDropTargetListener(getGraphicalViewer());
         getGraphicalViewer().setContents(getInstallOptionsDialog());
         getGraphicalViewer().addDropTargetListener((TransferDropTargetListener)new InstallOptionsTemplateTransferDropTargetListener(getGraphicalViewer()));
     }
@@ -778,6 +725,22 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
         getSelectionActions().add(action.getId());
         registry.registerAction(action);
 
+        action = new ArrangeAction(this, SEND_BACKWARD);
+        getSelectionActions().add(action.getId());
+        registry.registerAction(action);
+
+        action = new ArrangeAction(this, SEND_TO_BACK);
+        getSelectionActions().add(action.getId());
+        registry.registerAction(action);
+
+        action = new ArrangeAction(this, BRING_FORWARD);
+        getSelectionActions().add(action.getId());
+        registry.registerAction(action);
+
+        action = new ArrangeAction(this, BRING_TO_FRONT);
+        getSelectionActions().add(action.getId());
+        registry.registerAction(action);
+
         action = new PasteAction(this);
         getSelectionActions().add(action.getId());
         registry.registerAction(action);
@@ -791,6 +754,13 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
         getSelectionActions().add(action.getId());
 
         action = new DirectEditAction((IWorkbenchPart)this);
+        String label = InstallOptionsPlugin.getResourceString("direct.edit.label"); //$NON-NLS-1$
+        action.setText(label);
+        action.setToolTipText(label);
+        registry.registerAction(action);
+        getSelectionActions().add(action.getId());
+
+        action = new ExtendedEditAction((IWorkbenchPart)this);
         registry.registerAction(action);
         getSelectionActions().add(action.getId());
 
@@ -830,7 +800,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
      */
     protected void createGraphicalViewer(Composite parent)
     {
-        mRulerComposite = new RulerComposite(parent, SWT.NONE);
+        mRulerComposite = new InstallOptionsRulerComposite(parent, SWT.NONE);
         GraphicalViewer viewer = new ScrollingGraphicalViewer();
         viewer.createControl(mRulerComposite);
         setGraphicalViewer(viewer);
@@ -900,6 +870,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
         RulerProvider provider = null;
         if (ruler != null) {
             provider = new InstallOptionsRulerProvider(ruler);
+            provider.setUnit(InstallOptionsRulerProvider.UNIT_DLU);
         }
         GraphicalViewer viewer = getGraphicalViewer();
         viewer.setProperty(RulerProvider.PROPERTY_VERTICAL_RULER,provider);
@@ -907,6 +878,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
         provider = null;
         if (ruler != null) {
             provider = new InstallOptionsRulerProvider(ruler);
+            provider.setUnit(InstallOptionsRulerProvider.UNIT_DLU);
         }
         viewer.setProperty(RulerProvider.PROPERTY_HORIZONTAL_RULER, provider);
         
@@ -1202,6 +1174,29 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
         mSwitching = switching;
     }
 
+    private void showPropertiesView()
+    {
+        PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+            public void run()
+            {
+                try {
+                    IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+                    if(activePage != null) {
+                        IViewPart view = (IViewPart)activePage.findView(IPageLayout.ID_PROP_SHEET);
+                        if(view == null) {
+                            activePage.showView(IPageLayout.ID_PROP_SHEET, null, IWorkbenchPage.VIEW_VISIBLE);
+                        }
+                        else {
+                            activePage.bringToTop(view);
+                        }
+                    }
+                }
+                catch(PartInitException pie) {
+                    pie.printStackTrace();
+                }
+            }
+        });
+    }
 
     protected class CustomPalettePage extends PaletteViewerPage 
     {
@@ -1219,8 +1214,8 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
         public void createControl(Composite parent) 
         {
             super.createControl(parent);
-            if (mSplitter != null) {
-                mSplitter.setExternalViewer(viewer);
+            if (mPalette != null) {
+                mPalette.setExternalViewer(viewer);
             }
         }
         /**
@@ -1228,8 +1223,8 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
          */
         public void dispose() 
         {
-            if (mSplitter != null) {
-                mSplitter.setExternalViewer(null);
+            if (mPalette != null) {
+                mPalette.setExternalViewer(null);
             }
             super.dispose();
         }

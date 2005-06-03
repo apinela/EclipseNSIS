@@ -257,7 +257,7 @@ public abstract class NSISSettingsPage extends PropertyPage implements IWorkbenc
         viewer.setContentProvider((contentProvider==null?new WorkbenchContentProvider():contentProvider));
         viewer.setLabelProvider((labelProvider == null?new WorkbenchLabelProvider():labelProvider));
         viewer.setInput(input);
-        mover.setInput(viewer);
+        mover.setViewer(viewer);
 
         data = new GridData(GridData.FILL_BOTH);
         data.verticalSpan = 5;
@@ -371,21 +371,10 @@ public abstract class NSISSettingsPage extends PropertyPage implements IWorkbenc
 
             protected List getAllElements()
             {
-                return new ArrayList(((LinkedHashMap)((TableViewer)getInput()).getInput()).entrySet());
+                return new ArrayList(((LinkedHashMap)((TableViewer)getViewer()).getInput()).entrySet());
             }
 
-            protected List getMoveElements()
-            {
-                IStructuredSelection sel = (IStructuredSelection)((TableViewer)getInput()).getSelection();
-                if(!sel.isEmpty()) {
-                    return sel.toList();
-                }
-                else {
-                    return Collections.EMPTY_LIST;
-                }
-            }
-
-            protected void updateStructuredViewerInput(Object input, List elements)
+            protected void updateStructuredViewerInput(Object input, List elements, List move, boolean isDown)
             {
                 ((LinkedHashMap)input).clear();
                 for(Iterator iter=elements.iterator(); iter.hasNext(); ) {
@@ -448,21 +437,10 @@ public abstract class NSISSettingsPage extends PropertyPage implements IWorkbenc
 
             protected List getAllElements()
             {
-                return (ArrayList)((TableViewer)getInput()).getInput();
+                return (ArrayList)((TableViewer)getViewer()).getInput();
             }
 
-            protected List getMoveElements()
-            {
-                IStructuredSelection sel = (IStructuredSelection)((TableViewer)getInput()).getSelection();
-                if(!sel.isEmpty()) {
-                    return sel.toList();
-                }
-                else {
-                    return Collections.EMPTY_LIST;
-                }
-            }
-
-            protected void updateStructuredViewerInput(Object input, List elements)
+            protected void updateStructuredViewerInput(Object input, List elements, List move, boolean isDown)
             {
                 ((ArrayList)input).clear();
                 ((ArrayList)input).addAll(elements);

@@ -13,12 +13,13 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.*;
 
-import net.sf.eclipsensis.installoptions.model.InstallOptionsDialog;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsElement;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
 
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.EditPolicy;
 import org.eclipse.gef.editparts.AbstractTreeEditPart;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
@@ -81,14 +82,32 @@ public class InstallOptionsTreeEditPart extends AbstractTreeEditPart implements 
 
     public void propertyChange(PropertyChangeEvent change)
     {
-        if (change.getPropertyName().equals(InstallOptionsDialog.PROPERTY_CHILDREN)) {
-            if (change.getOldValue() instanceof Integer) {
-                // new child
-                addChild(createChild(change.getNewValue()), ((Integer)change.getOldValue()).intValue());
+        if (change.getPropertyName().equals(InstallOptionsModel.PROPERTY_CHILDREN)) {
+            Object oldValue = change.getOldValue();
+            Object newValue = change.getNewValue();
+            if(oldValue == null && newValue == null) {
+                ISelection sel = getViewer().getSelection();
+                refreshChildren();
+                getViewer().setSelection(sel);
             }
             else {
-                // remove child
-                removeChild((EditPart)getViewer().getEditPartRegistry().get(change.getOldValue()));
+                if (oldValue instanceof Integer) {
+                    // new child
+                    addChild(createChild(newValue), ((Integer)oldValue).intValue());
+                }
+                else {
+                    EditPart editPart = (EditPart)getViewer().getEditPartRegistry().get(oldValue);
+                    if(newValue == null) {
+                        // remove child
+                        removeChild(editPart);
+                    }
+                    else {
+                        // reorder child
+                        ISelection sel = getViewer().getSelection();
+                        reorderChild(editPart, ((Integer)newValue).intValue());
+                        getViewer().setSelection(sel);
+                    }
+                }
             }
         }
         refreshVisuals();
@@ -110,18 +129,20 @@ public class InstallOptionsTreeEditPart extends AbstractTreeEditPart implements 
         }
         else {
             TreeItem item = (TreeItem)getWidget();
-            InstallOptionsElement element = getInstallOptionsElement();
-            Image image = element.getIcon();
-            Image itemImage = item.getImage();
-            if (image != itemImage) {
-                if(image != null) {
-                    image.setBackground(item.getParent().getBackground());
+            if(item != null) {
+                InstallOptionsElement element = getInstallOptionsElement();
+                Image image = element.getIcon();
+                Image itemImage = item.getImage();
+                if (image != itemImage) {
+                    if(image != null) {
+                        image.setBackground(item.getParent().getBackground());
+                    }
+                    setWidgetImage(image);
                 }
-                setWidgetImage(image);
-            }
-            String string = getInstallOptionsElement().toString();
-            if(string != null && !string.equals(item.getText())) {
-                setWidgetText(string);
+                String string = getInstallOptionsElement().toString();
+                if(string != null && !string.equals(item.getText())) {
+                    setWidgetText(string);
+                }
             }
         }
     }

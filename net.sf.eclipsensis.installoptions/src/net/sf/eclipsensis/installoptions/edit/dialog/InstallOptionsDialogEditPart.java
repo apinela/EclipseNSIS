@@ -11,14 +11,13 @@ package net.sf.eclipsensis.installoptions.edit.dialog;
 
 import java.beans.PropertyChangeEvent;
 import java.util.*;
-import java.util.ArrayList;
-import java.util.List;
 
 import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
-import net.sf.eclipsensis.installoptions.edit.InstallOptionsEditPart;
-import net.sf.eclipsensis.installoptions.edit.InstallOptionsXYLayoutEditPolicy;
+import net.sf.eclipsensis.installoptions.edit.*;
+import net.sf.eclipsensis.installoptions.figures.ComboboxFigure;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsDialog;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
 
 import org.eclipse.draw2d.*;
 import org.eclipse.gef.*;
@@ -40,10 +39,46 @@ public class InstallOptionsDialogEditPart extends InstallOptionsEditPart impleme
     public void propertyChange(PropertyChangeEvent evt)
     {
         String prop = evt.getPropertyName();
-        if (InstallOptionsDialog.PROPERTY_CHILDREN.equals(prop)) {
+        if (InstallOptionsModel.PROPERTY_CHILDREN.equals(prop)) {
+            //This bit is in here to correct z-ordering of children.
+            List modelChildren = getModelChildren();
+            List children = getChildren();
+            HashSet oldChildren = new HashSet(children);
+            int n = Math.min(modelChildren.size(), children.size());
+            int i=0;
+            for(; i<n; i++) {
+                Object model = modelChildren.get(i);
+                EditPart part = (EditPart)children.get(i);
+                if(model != part.getModel()) {
+                    break;
+                }
+            }
             refreshChildren();
+            if(i < n) {
+                for(int j=i; j<children.size(); j++) {
+                    GraphicalEditPart part = (GraphicalEditPart)children.get(j);
+                    IFigure fig = part.getFigure();
+                    LayoutManager layout = getContentPane().getLayoutManager();
+                    Object constraint = null;
+                    if (layout != null) {
+                        constraint = layout.getConstraint(fig);
+                    }
+                    getContentPane().remove(fig);
+                    getContentPane().add(fig);
+                    setLayoutConstraint(part, fig, constraint);
+                }
+            }
+            //This is a stupid hack for Combobox figures
+            UpdateManager updateManager = ((FigureCanvas)getViewer().getControl()).getLightweightSystem().getUpdateManager();
+            for(int j=0; j<children.size(); j++) {
+                GraphicalEditPart part = (GraphicalEditPart)children.get(j);
+                IFigure fig = part.getFigure();
+                if(fig instanceof ComboboxFigure && !oldChildren.contains(part)) {
+                    updateManager.performUpdate(fig.getBounds());
+                }
+            }
         }
-        else if (InstallOptionsDialog.PROPERTY_SIZE.equals(prop)) {
+        else if (InstallOptionsModel.PROPERTY_SIZE.equals(prop)) {
             refreshVisuals();
         }
     }
@@ -80,6 +115,7 @@ public class InstallOptionsDialogEditPart extends InstallOptionsEditPart impleme
         installEditPolicy(EditPolicy.SELECTION_FEEDBACK_ROLE, null);
         installEditPolicy(EditPolicy.COMPONENT_ROLE,
                 new RootComponentEditPolicy());
+        installEditPolicy(EditPolicy.CONTAINER_ROLE, new InstallOptionsDialogEditPolicy());
         installEditPolicy(EditPolicy.LAYOUT_ROLE, new InstallOptionsXYLayoutEditPolicy(
                 (XYLayout)getContentPane().getLayoutManager()));
 
@@ -136,7 +172,7 @@ public class InstallOptionsDialogEditPart extends InstallOptionsEditPart impleme
             if (val != null && val.booleanValue()) {
                 val = (Boolean)getViewer().getProperty(SnapToGrid.PROPERTY_GRID_ENABLED);
                 if (val != null && val.booleanValue()) {
-                    snapStrategies.add(new SnapToGrid(this));
+                    snapStrategies.add(new InstallOptionsSnapToGrid(this));
                 }
             }
 

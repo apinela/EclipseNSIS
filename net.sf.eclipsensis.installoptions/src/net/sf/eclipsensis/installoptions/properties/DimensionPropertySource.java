@@ -10,6 +10,8 @@
 package net.sf.eclipsensis.installoptions.properties;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
+import net.sf.eclipsensis.installoptions.properties.descriptors.CustomPropertyDescriptor;
+import net.sf.eclipsensis.installoptions.properties.validators.NumberCellEditorValidator;
 
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.ui.views.properties.*;
@@ -24,12 +26,13 @@ public class DimensionPropertySource implements IPropertySource
 
     static {
         PropertyDescriptor widthProp = new TextPropertyDescriptor(ID_WIDTH,
-                "a1:"+InstallOptionsPlugin.getResourceString("width.property.name")); //$NON-NLS-1$ //$NON-NLS-2$
-        widthProp.setValidator(NumberCellEditorValidator.instance());
+                InstallOptionsPlugin.getResourceString("width.property.name")); //$NON-NLS-1$ //$NON-NLS-2$
+        widthProp.setValidator(NumberCellEditorValidator.getInstance());
         PropertyDescriptor heightProp = new TextPropertyDescriptor(ID_HEIGHT,
-                "a2:"+InstallOptionsPlugin.getResourceString("height.property.name")); //$NON-NLS-1$ //$NON-NLS-2$
-        heightProp.setValidator(NumberCellEditorValidator.instance());
-        mDescriptors = new IPropertyDescriptor[]{widthProp, heightProp};
+                InstallOptionsPlugin.getResourceString("height.property.name")); //$NON-NLS-1$ //$NON-NLS-2$
+        heightProp.setValidator(NumberCellEditorValidator.getInstance());
+        mDescriptors = new IPropertyDescriptor[]{new CustomPropertyDescriptor(widthProp,0),
+                new CustomPropertyDescriptor(heightProp,1)};
     }
 
     protected Dimension mDimension = null;

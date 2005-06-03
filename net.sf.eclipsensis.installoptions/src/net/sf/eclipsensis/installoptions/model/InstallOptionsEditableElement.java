@@ -1,0 +1,281 @@
+/*******************************************************************************
+ * Copyright (c) 2004, 2005 Sunil Kamath (IcemanK).
+ * All rights reserved.
+ * This program is made available under the terms of the Common Public License
+ * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     Sunil Kamath (IcemanK) - initial API and implementation
+ *******************************************************************************/
+package net.sf.eclipsensis.installoptions.model;
+
+import java.util.List;
+
+import net.sf.eclipsensis.INSISConstants;
+import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
+import net.sf.eclipsensis.installoptions.properties.validators.NSISStringLengthValidator;
+import net.sf.eclipsensis.installoptions.properties.validators.NumberCellEditorValidator;
+import net.sf.eclipsensis.settings.NSISPreferences;
+
+import org.eclipse.ui.views.properties.IPropertyDescriptor;
+import org.eclipse.ui.views.properties.TextPropertyDescriptor;
+
+public abstract class InstallOptionsEditableElement extends InstallOptionsWidget
+{
+    private static final int DEFAULT_MAX_LEN;
+    
+    private String mText;
+    private String mState;
+    private String mMaxLen;
+    private String mMinLen;
+    private String mValidateText;
+
+    static {
+        int maxLen;
+        try {
+            maxLen = Integer.parseInt(NSISPreferences.getPreferences().getNSISOption("NSIS_MAX_STRLEN")); //$NON-NLS-1$
+        }
+        catch(Exception ex){
+            maxLen = INSISConstants.DEFAULT_NSIS_TEXT_LIMIT;
+        }
+        DEFAULT_MAX_LEN = maxLen;
+    }
+    /**
+     * @param type
+     */
+    public InstallOptionsEditableElement(String type)
+    {
+        super(type);
+        mText = ""; //$NON-NLS-1$
+        mState = getDefaultState(); //$NON-NLS-1$
+        mMaxLen = ""; //$NON-NLS-1$
+        mMinLen = ""; //$NON-NLS-1$
+        mValidateText = ""; //$NON-NLS-1$
+    }
+
+    public Object clone() throws CloneNotSupportedException
+    {
+        InstallOptionsEditableElement clone = (InstallOptionsEditableElement)super.clone();
+        clone.setMaxLen(getMaxLen());
+        clone.setMinLen(getMinLen());
+        clone.setText(getText());
+        clone.setState(getState());
+        clone.setValidateText(getValidateText());
+        return clone;
+    }
+    
+    protected String getDefaultState()
+    {
+        return ""; //$NON-NLS-1$
+    }
+
+    protected void addPropertyName(List list, String setting)
+    {
+        if(setting.equalsIgnoreCase(InstallOptionsModel.PROPERTY_TEXT)) {
+            list.add(InstallOptionsModel.PROPERTY_TEXT);
+        }
+        else if (setting.equalsIgnoreCase(InstallOptionsModel.PROPERTY_STATE)) {
+            list.add(InstallOptionsModel.PROPERTY_STATE);
+        }
+        else if (setting.equalsIgnoreCase(InstallOptionsModel.PROPERTY_MAXLEN)) {
+            list.add(InstallOptionsModel.PROPERTY_MAXLEN);
+        }
+        else if (setting.equalsIgnoreCase(InstallOptionsModel.PROPERTY_MINLEN)) {
+            list.add(InstallOptionsModel.PROPERTY_MINLEN);
+        }
+        else if (setting.equalsIgnoreCase(InstallOptionsModel.PROPERTY_VALIDATETEXT)) {
+            list.add(InstallOptionsModel.PROPERTY_VALIDATETEXT);
+        }
+        else {
+            super.addPropertyName(list, setting);
+        }
+    }
+
+    protected IPropertyDescriptor createPropertyDescriptor(String name)
+    {
+        if(name.equals(InstallOptionsModel.PROPERTY_TEXT)) {
+            TextPropertyDescriptor descriptor = new TextPropertyDescriptor(InstallOptionsModel.PROPERTY_TEXT, InstallOptionsPlugin.getResourceString("text.property.name")); //$NON-NLS-1$;
+            descriptor.setValidator(new NSISStringLengthValidator(InstallOptionsModel.PROPERTY_TEXT));
+            return descriptor;
+        }
+        else if(name.equals(InstallOptionsModel.PROPERTY_STATE)) {
+            TextPropertyDescriptor descriptor = new TextPropertyDescriptor(InstallOptionsModel.PROPERTY_STATE, InstallOptionsPlugin.getResourceString("state.property.name")); //$NON-NLS-1$;
+            descriptor.setValidator(new NSISStringLengthValidator(InstallOptionsModel.PROPERTY_STATE));
+            return descriptor;
+        }
+        else if(name.equals(InstallOptionsModel.PROPERTY_MAXLEN)) {
+            TextPropertyDescriptor descriptor = new TextPropertyDescriptor(InstallOptionsModel.PROPERTY_MAXLEN, InstallOptionsPlugin.getResourceString("maxlen.property.name")); //$NON-NLS-1$;
+            NumberCellEditorValidator validator = new NumberCellEditorValidator(getDefaultMinLen(),getDefaultMaxLen(),true) {
+                public int getMinValue()
+                {
+                    String minLen = getMinLen();
+                    try {
+                        return Integer.parseInt(minLen);
+                    }
+                    catch(NumberFormatException nfe) {
+                        return getDefaultMinLen();
+                    }
+                }
+            };
+            descriptor.setValidator(validator);
+            return descriptor;
+        }
+        else if(name.equals(InstallOptionsModel.PROPERTY_MINLEN)) {
+            TextPropertyDescriptor descriptor = new TextPropertyDescriptor(InstallOptionsModel.PROPERTY_MINLEN, InstallOptionsPlugin.getResourceString("minlen.property.name")); //$NON-NLS-1$;
+            NumberCellEditorValidator validator = new NumberCellEditorValidator(getDefaultMinLen(),getDefaultMaxLen(),true) {
+                public int getMaxValue()
+                {
+                    String maxLen = getMaxLen();
+                    try {
+                        return Integer.parseInt(maxLen);
+                    }
+                    catch(NumberFormatException nfe) {
+                        return getDefaultMaxLen();
+                    }
+                }
+            };
+            descriptor.setValidator(validator);
+            return descriptor;
+        }
+        else if(name.equals(InstallOptionsModel.PROPERTY_VALIDATETEXT)) {
+            TextPropertyDescriptor descriptor = new TextPropertyDescriptor(InstallOptionsModel.PROPERTY_VALIDATETEXT, InstallOptionsPlugin.getResourceString("validatetext.property.name")); //$NON-NLS-1$;
+            descriptor.setValidator(new NSISStringLengthValidator(InstallOptionsModel.PROPERTY_VALIDATETEXT));
+            return descriptor;
+        }
+        else {
+            return super.createPropertyDescriptor(name);
+        }
+    }
+    
+    protected int getDefaultMinLen()
+    {
+        return 0;
+    }
+    
+    protected int getDefaultMaxLen()
+    {
+        return DEFAULT_MAX_LEN;
+    }
+
+    public Object getPropertyValue(Object propName)
+    {
+        if (InstallOptionsModel.PROPERTY_TEXT.equals(propName)) {
+            return getText();
+        }
+        if (InstallOptionsModel.PROPERTY_STATE.equals(propName)) {
+            return getState();
+        }
+        if (InstallOptionsModel.PROPERTY_MAXLEN.equals(propName)) {
+            return getMaxLen();
+        }
+        if (InstallOptionsModel.PROPERTY_MINLEN.equals(propName)) {
+            return getMinLen();
+        }
+        if (InstallOptionsModel.PROPERTY_VALIDATETEXT.equals(propName)) {
+            return getValidateText();
+        }
+        return super.getPropertyValue(propName);
+    }
+    
+    public void setPropertyValue(Object id, Object value)
+    {
+        if(id.equals(InstallOptionsModel.PROPERTY_TEXT)) {
+            setText((String)value);
+        }
+        else if(id.equals(InstallOptionsModel.PROPERTY_STATE)) {
+            setState((String)value);
+        }
+        else if(id.equals(InstallOptionsModel.PROPERTY_MAXLEN)) {
+            setMaxLen((String)value);
+        }
+        else if(id.equals(InstallOptionsModel.PROPERTY_MINLEN)) {
+            setMinLen((String)value);
+        }
+        else if(id.equals(InstallOptionsModel.PROPERTY_VALIDATETEXT)) {
+            setValidateText((String)value);
+        }
+        else {
+            super.setPropertyValue(id, value);
+        }
+    }
+
+    protected Position getDefaultPosition()
+    {
+        return new Position(0,0,122,13);
+    }
+    
+    public String getText()
+    {
+        return mText;
+    }
+
+    public void setText(String text)
+    {
+        if(!mText.equals(text)) {
+            String oldText = mText;
+            mText = text;
+            firePropertyChange(InstallOptionsModel.PROPERTY_TEXT, oldText, mText);
+        }
+    }
+    
+    public String getState()
+    {
+        return mState;
+    }
+    
+    public void setState(String state)
+    {
+        if(!mState.equals(state)) {
+            String oldState = mState;
+            mState = state;
+            firePropertyChange(InstallOptionsModel.PROPERTY_STATE, oldState, mState);
+        }
+    }
+
+    public String getMaxLen()
+    {
+        return mMaxLen;
+    }
+    
+    public void setMaxLen(String maxLen)
+    {
+        if(!mMaxLen.equals(maxLen)) {
+            String oldMaxLen = mMaxLen;
+            mMaxLen = maxLen;
+            firePropertyChange(InstallOptionsModel.PROPERTY_MAXLEN, oldMaxLen, mMaxLen);
+        }
+    }
+    
+    public String getMinLen()
+    {
+        return mMinLen;
+    }
+    
+    public void setMinLen(String minLen)
+    {
+        if(!mMinLen.equals(minLen)) {
+            String oldMinLen = mMinLen;
+            mMinLen = minLen;
+            firePropertyChange(InstallOptionsModel.PROPERTY_MINLEN, oldMinLen, mMinLen);
+        }
+    }
+    
+    public String getValidateText()
+    {
+        return mValidateText;
+    }
+    
+    public void setValidateText(String validateText)
+    {
+        if(!mValidateText.equals(validateText)) {
+            String oldValidateText = mValidateText;
+            mValidateText = validateText;
+            firePropertyChange(InstallOptionsModel.PROPERTY_VALIDATETEXT, oldValidateText, mValidateText);
+        }
+    }
+    
+    protected String getDisplayName()
+    {
+        return getState();
+    }
+}

@@ -16,6 +16,7 @@ import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.model.*;
 import net.sf.eclipsensis.installoptions.model.commands.*;
+import net.sf.eclipsensis.installoptions.rulers.InstallOptionsGuide;
 
 import org.eclipse.draw2d.*;
 import org.eclipse.draw2d.geometry.Insets;
@@ -91,8 +92,8 @@ public class InstallOptionsXYLayoutEditPolicy extends XYLayoutEditPolicy impleme
         add.setDebugLabel("InstallOptionsXYEP add subpart");//$NON-NLS-1$
 
         SetConstraintCommand setConstraint = new SetConstraintCommand();
-        setConstraint.setPosition(pos);
         setConstraint.setPart(part);
+        setConstraint.setPosition(pos);
         setConstraint.setLabel(InstallOptionsPlugin.getResourceString("set.constaint.command.label")); //$NON-NLS-1$
         setConstraint.setDebugLabel("InstallOptionsXYEP setConstraint");//$NON-NLS-1$
 

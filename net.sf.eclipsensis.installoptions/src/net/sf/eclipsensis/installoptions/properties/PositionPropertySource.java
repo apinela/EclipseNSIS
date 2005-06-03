@@ -12,6 +12,7 @@ package net.sf.eclipsensis.installoptions.properties;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsWidget;
 import net.sf.eclipsensis.installoptions.model.Position;
+import net.sf.eclipsensis.installoptions.properties.descriptors.CustomPropertyDescriptor;
 
 import org.eclipse.jface.viewers.ICellEditorValidator;
 import org.eclipse.ui.views.properties.*;
@@ -28,18 +29,21 @@ public class PositionPropertySource implements IPropertySource
     private void createDescriptors()
     {
         PropertyDescriptor leftProp = new TextPropertyDescriptor(ID_LEFT,
-                "a0:"+InstallOptionsPlugin.getResourceString("left.property.name")); //$NON-NLS-1$ //$NON-NLS-2$
+                InstallOptionsPlugin.getResourceString("left.property.name")); //$NON-NLS-1$ //$NON-NLS-2$
         leftProp.setValidator(new PositionCellEditorValidator(ID_LEFT));
         PropertyDescriptor topProp = new TextPropertyDescriptor(ID_TOP,
-                "a1:"+InstallOptionsPlugin.getResourceString("top.property.name")); //$NON-NLS-1$ //$NON-NLS-2$
+                InstallOptionsPlugin.getResourceString("top.property.name")); //$NON-NLS-1$ //$NON-NLS-2$
         topProp.setValidator(new PositionCellEditorValidator(ID_TOP));
         PropertyDescriptor rightProp = new TextPropertyDescriptor(ID_RIGHT,
-                "a2:"+InstallOptionsPlugin.getResourceString("right.property.name")); //$NON-NLS-1$ //$NON-NLS-2$
+                InstallOptionsPlugin.getResourceString("right.property.name")); //$NON-NLS-1$ //$NON-NLS-2$
         rightProp.setValidator(new PositionCellEditorValidator(ID_RIGHT));
         PropertyDescriptor bottomProp = new TextPropertyDescriptor(ID_BOTTOM,
-                "a3:"+InstallOptionsPlugin.getResourceString("bottom.property.name")); //$NON-NLS-1$ //$NON-NLS-2$
+                InstallOptionsPlugin.getResourceString("bottom.property.name")); //$NON-NLS-1$ //$NON-NLS-2$
         bottomProp.setValidator(new PositionCellEditorValidator(ID_BOTTOM));
-        mDescriptors = new IPropertyDescriptor[]{leftProp, topProp, rightProp, bottomProp};
+        mDescriptors = new IPropertyDescriptor[]{new CustomPropertyDescriptor(leftProp,0), 
+                                                 new CustomPropertyDescriptor(topProp,1), 
+                                                 new CustomPropertyDescriptor(rightProp,2),
+                                                 new CustomPropertyDescriptor(bottomProp,3)};
     }
 
     protected InstallOptionsWidget mWidget = null;

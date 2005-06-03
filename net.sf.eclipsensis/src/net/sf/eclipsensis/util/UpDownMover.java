@@ -40,6 +40,24 @@ public abstract class UpDownMover
         }
         return false;
     }
+    
+    public void moveToTop()
+    {
+        List move = getMoveElements();
+        List elements = new ArrayList(getAllElements());
+        elements.removeAll(move);
+        elements.addAll(0,move);
+        updateElements(elements, move, false);
+    }
+
+    public void moveToBottom()
+    {
+        List move = getMoveElements();
+        List elements = new ArrayList(getAllElements());
+        elements.removeAll(move);
+        elements.addAll(move);
+        updateElements(elements, move, true);
+    }
 
     public void moveDown() 
     {
@@ -78,12 +96,31 @@ public abstract class UpDownMover
         }
         return res;
     }
-    
-    public abstract void setInput(Object input);
-    public abstract Object getInput();
+
+    private List getMoveElements()
+    {
+        List moveElements = new ArrayList();
+        List allElements = getAllElements();
+        if(!Common.isEmptyCollection(allElements)) {
+            int[] selectedIndices = getSelectedIndices();
+            
+            if(!Common.isEmptyArray(selectedIndices)) {
+                for (int i = 0; i < selectedIndices.length; i++) {
+                    moveElements.add(allElements.get(selectedIndices[i]));
+                }
+            }
+        }
+        
+        return moveElements;
+    }
+
+    private int getSize()
+    {
+        List allElements = getAllElements();
+        return Common.isEmptyCollection(allElements)?0:allElements.size();
+    }
+
     protected abstract int[] getSelectedIndices();
-    protected abstract int getSize();
     protected abstract List getAllElements();
-    protected abstract List getMoveElements();
     protected abstract void updateElements(List elements, List move, boolean isDown);
 }

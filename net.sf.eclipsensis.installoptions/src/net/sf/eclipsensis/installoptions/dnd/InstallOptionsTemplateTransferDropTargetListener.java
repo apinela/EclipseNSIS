@@ -27,10 +27,10 @@ public class InstallOptionsTemplateTransferDropTargetListener extends
         super(viewer);
     }
 
-    protected CreationFactory getFactory(Object template) 
+    protected CreationFactory getFactory(Object type) 
     {
-        if (template instanceof String) {
-            return new InstallOptionsElementFactory((String)template);
+        if (type instanceof String) {
+            return new InstallOptionsElementFactory((String)type);
         }
         return null;
     }

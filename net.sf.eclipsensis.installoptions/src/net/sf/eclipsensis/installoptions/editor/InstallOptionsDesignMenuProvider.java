@@ -9,9 +9,13 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.editor;
 
-import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
-import net.sf.eclipsensis.installoptions.actions.SetDialogSizeMenuManager;
+import java.util.List;
 
+import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
+import net.sf.eclipsensis.installoptions.actions.*;
+import net.sf.eclipsensis.installoptions.edit.*;
+
+import org.eclipse.gef.EditPart;
 import org.eclipse.gef.EditPartViewer;
 import org.eclipse.gef.ui.actions.ActionRegistry;
 import org.eclipse.gef.ui.actions.GEFActionConstants;
@@ -53,7 +57,42 @@ public class InstallOptionsDesignMenuProvider extends org.eclipse.gef.ContextMen
         addContextMenu(manager, ActionFactory.COPY.getId(), GEFActionConstants.GROUP_EDIT);
         addContextMenu(manager, ActionFactory.PASTE.getId(), GEFActionConstants.GROUP_EDIT);
         addContextMenu(manager, ActionFactory.DELETE.getId(), GEFActionConstants.GROUP_EDIT);
-        addContextMenu(manager,GEFActionConstants.DIRECT_EDIT, GEFActionConstants.GROUP_EDIT);
+        
+        List selected = getViewer().getSelectedEditParts();
+        if(selected.size() == 1) {
+            EditPart editPart = (EditPart)selected.get(0);
+            if(editPart instanceof InstallOptionsWidgetEditPart) {
+                action = getActionRegistry().getAction(GEFActionConstants.DIRECT_EDIT);
+                if (action != null && action.isEnabled()) {
+                    IDirectEditLabelProvider labelProvider = (IDirectEditLabelProvider)((InstallOptionsWidgetEditPart)editPart).getAdapter(IDirectEditLabelProvider.class);
+                    String label;
+                    if(labelProvider != null) {
+                        label = labelProvider.getDirectEditLabel();
+                    }
+                    else {
+                        label = InstallOptionsPlugin.getResourceString("direct.edit.label"); //$NON-NLS-1$
+                    }
+                    action.setText(label);
+                    action.setToolTipText(label);
+                    manager.appendToGroup(GEFActionConstants.GROUP_EDIT, action);
+                }
+
+                action = getActionRegistry().getAction(ExtendedEditAction.ID);
+                if (action != null && action.isEnabled()) {
+                    IExtendedEditLabelProvider labelProvider = (IExtendedEditLabelProvider)((InstallOptionsWidgetEditPart)editPart).getAdapter(IExtendedEditLabelProvider.class);
+                    String label;
+                    if(labelProvider != null) {
+                        label = labelProvider.getExtendedEditLabel();
+                    }
+                    else {
+                        label = InstallOptionsPlugin.getResourceString("extended.edit.label"); //$NON-NLS-1$
+                    }
+                    action.setText(label);
+                    action.setToolTipText(label);
+                    manager.appendToGroup(GEFActionConstants.GROUP_EDIT, action);
+                }
+            }
+        }
 
         // Alignment Actions
         MenuManager submenu = new MenuManager(InstallOptionsPlugin.getResourceString("alignment.submenu.name")); //$NON-NLS-1$
@@ -71,6 +110,17 @@ public class InstallOptionsDesignMenuProvider extends org.eclipse.gef.ContextMen
             manager.appendToGroup(GEFActionConstants.GROUP_REST, submenu);
         }
 
+        submenu = new MenuManager(InstallOptionsPlugin.getResourceString("arrange.submenu.name")); //$NON-NLS-1$
+
+        addContextMenu(submenu, ArrangeAction.SEND_BACKWARD_ID, null);
+        addContextMenu(submenu, ArrangeAction.SEND_TO_BACK_ID, null);
+        addContextMenu(submenu, ArrangeAction.BRING_FORWARD_ID, null);
+        addContextMenu(submenu, ArrangeAction.BRING_TO_FRONT_ID, null);
+
+        if (!submenu.isEmpty()) {
+            manager.appendToGroup(GEFActionConstants.GROUP_REST, submenu);
+        }
+        
         if(mEditor != null) {
             if(mSetDialogSizeMenu == null) {
                 mSetDialogSizeMenu = new SetDialogSizeMenuManager(manager);

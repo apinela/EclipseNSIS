@@ -35,14 +35,12 @@ public class ReorderPartCommand extends Command
 
     public void execute()
     {
-        parent.removeChild(child);
-        parent.addChild(child, newIndex);
+        parent.moveChild(child, newIndex);
     }
 
     public void undo()
     {
-        parent.removeChild(child);
-        parent.addChild(child, oldIndex);
+        parent.moveChild(child, oldIndex);
     }
 
 }

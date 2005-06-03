@@ -12,10 +12,14 @@ package net.sf.eclipsensis.installoptions.model.commands;
 import java.util.*;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
+import net.sf.eclipsensis.installoptions.figures.FigureUtility;
 import net.sf.eclipsensis.installoptions.model.*;
+import net.sf.eclipsensis.installoptions.rulers.InstallOptionsGuide;
 
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.commands.Command;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.widgets.Display;
 
 public class CloneCommand extends Command
 {
@@ -32,10 +36,13 @@ public class CloneCommand extends Command
 
     private int mHorizontalAlignment, mVerticalAlignment;
 
+    private Font mFont;
+
     public CloneCommand()
     {
         super(InstallOptionsPlugin.getResourceString("clone.command.name")); //$NON-NLS-1$
         mParts = new LinkedList();
+        mFont = Display.getDefault().getSystemFont();
     }
 
     public void addPart(InstallOptionsWidget part, Rectangle newBounds)
@@ -44,6 +51,7 @@ public class CloneCommand extends Command
         if (mBounds == null) {
             mBounds = new HashMap();
         }
+        newBounds = FigureUtility.pixelsToDialogUnits(newBounds,mFont);
         mBounds.put(part, newBounds);
     }
 
@@ -60,38 +68,23 @@ public class CloneCommand extends Command
     {
         InstallOptionsElement newPart = null;
 
-        /* TODO Add cloning here.
-         * if (oldPart instanceof AndGate) { newPart = new AndGate(); } else if
-         * (oldPart instanceof Circuit) { newPart = new Circuit(); } else if
-         * (oldPart instanceof GroundOutput) { newPart = new GroundOutput(); }
-         * else if (oldPart instanceof LED) { newPart = new LED();
-         * newPart.setPropertyValue(LED.P_VALUE,
-         * oldPart.getPropertyValue(LED.P_VALUE)); } else if (oldPart instanceof
-         * LiveOutput) { newPart = new LiveOutput(); } else if (oldPart
-         * instanceof LogicLabel) { newPart = new LogicLabel();
-         * ((LogicLabel)newPart).setLabelContents(((LogicLabel)oldPart).getLabelContents()); }
-         * else if (oldPart instanceof OrGate) { newPart = new OrGate(); } else
-         * if (oldPart instanceof LogicFlowContainer) { newPart = new
-         * LogicFlowContainer(); } else if (oldPart instanceof XORGate) {
-         * newPart = new XORGate(); }
-         */
-        if (oldPart instanceof InstallOptionsButton) {
-            newPart = new InstallOptionsButton();
-            ((InstallOptionsButton)newPart).setText(((InstallOptionsButton)oldPart).getText());
-
-            if (index < 0) {
-                newParent.addChild((InstallOptionsWidget)newPart);
+        if (oldPart instanceof InstallOptionsWidget) {
+            try {
+                newPart = (InstallOptionsWidget)((InstallOptionsWidget)oldPart).clone();
+                if (newBounds != null) {
+                    ((InstallOptionsWidget)newPart).getPosition().setLocation(newBounds.getTopLeft());
+                }
+    
+                if (index < 0) {
+                    newParent.addChild((InstallOptionsWidget)newPart);
+                }
+                else {
+                    newParent.addChild((InstallOptionsWidget)newPart, index);
+                }
             }
-            else {
-                newParent.addChild((InstallOptionsWidget)newPart, index);
+            catch (CloneNotSupportedException e) {
+                e.printStackTrace();
             }
-
-            Position p = ((InstallOptionsWidget)oldPart).getPosition().getCopy();
-
-            if (newBounds != null) {
-                p.setLocation(newBounds.getTopLeft());
-            }
-            ((InstallOptionsWidget)newPart).setPosition(p);
         }
         else if (oldPart instanceof InstallOptionsDialog) {
             Iterator i = ((InstallOptionsDialog)oldPart).getChildren().iterator();
@@ -119,8 +112,7 @@ public class CloneCommand extends Command
                 clonePart(part, mParent, (Rectangle)mBounds.get(part), -1);
             }
             else if (mIndices != null && mIndices.containsKey(part)) {
-                clonePart(part, mParent, null, ((Integer)mIndices.get(part))
-                        .intValue());
+                clonePart(part, mParent, null, ((Integer)mIndices.get(part)).intValue());
             }
             else {
                 clonePart(part, mParent, null, -1);

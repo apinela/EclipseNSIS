@@ -9,6 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.util;
 
+
 public class WinAPI
 {
     static {
@@ -39,7 +40,10 @@ public class WinAPI
     public static final int HKEY_CURRENT_USER = 0x80000001;
     public static final int HKEY_LOCAL_MACHINE = 0x80000002; 
     public static final int HKEY_USERS = 0x80000003;
+    
     public static final int BS_LEFTTEXT = 0x20;
+    public static final int CB_SHOWDROPDOWN = 0x14f;
+    public static final int CB_GETDROPPEDSTATE = 0x157;
     
     private static native void init();
     public static native int SetWindowLong(int hWnd, int nIndex, int dwNewLong);

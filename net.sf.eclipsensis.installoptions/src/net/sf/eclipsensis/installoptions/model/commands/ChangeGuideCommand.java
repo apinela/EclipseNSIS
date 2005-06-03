@@ -9,8 +9,8 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.model.commands;
 
-import net.sf.eclipsensis.installoptions.model.InstallOptionsGuide;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsWidget;
+import net.sf.eclipsensis.installoptions.rulers.InstallOptionsGuide;
 
 import org.eclipse.gef.commands.Command;
 

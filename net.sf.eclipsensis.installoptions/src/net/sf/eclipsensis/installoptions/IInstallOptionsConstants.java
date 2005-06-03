@@ -25,8 +25,6 @@ public interface IInstallOptionsConstants
     public static final String INSTALLOPTIONS_DESIGN_EDITOR_ID = InstallOptionsPlugin.getBundleResourceString("%installoptions.design.editor.id"); //$NON-NLS-1$
     public static final String INSTALLOPTIONS_SOURCE_EDITOR_ID = InstallOptionsPlugin.getBundleResourceString("%installoptions.source.editor.id"); //$NON-NLS-1$
     
-    public static final String TEMPLATE_BUTTON = "ButtonTemplate"; //$NON-NLS-1$
-
     public static final String GRID_STYLE_LINES="GridStyleLines"; //$NON-NLS-1$
     public static final String GRID_STYLE_DOTS="GridStyleDots"; //$NON-NLS-1$
     
@@ -85,5 +83,13 @@ public interface IInstallOptionsConstants
 
     public static final Color GHOST_FILL_COLOR = new Color(null, 31, 31, 31);
     
-    public static final String TYPE_BUTTON = "Button"; //$NON-NLS-1$
+    public static final String REQ_REORDER_PART="reorder part"; //$NON-NLS-1$
+    public static final String REQ_EXTENDED_EDIT="extended edit"; //$NON-NLS-1$
+    
+    public static final int SEND_BACKWARD = 1;
+    public static final int SEND_TO_BACK = 2;
+    public static final int BRING_FORWARD = 3;
+    public static final int BRING_TO_FRONT = 4;
+
+    public static final char LIST_SEPARATOR = '|';
 }

@@ -237,7 +237,7 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
         final ListViewerUpDownMover mover = new ListViewerUpDownMover(){
             protected java.util.List getAllElements()
             {
-                Collection collection = (Collection)((ListViewer)getInput()).getInput();
+                Collection collection = (Collection)((ListViewer)getViewer()).getInput();
                 if(collection instanceof java.util.List) {
                     return (java.util.List)collection;
                 }
@@ -246,25 +246,14 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
                 }
             }
 
-            protected java.util.List getMoveElements()
-            {
-                IStructuredSelection sel = (IStructuredSelection)((ListViewer)getInput()).getSelection();
-                if(!sel.isEmpty()) {
-                    return sel.toList();
-                }
-                else {
-                    return Collections.EMPTY_LIST;
-                }
-            }
-
-            protected void updateStructuredViewerInput(Object input, java.util.List elements)
+            protected void updateStructuredViewerInput(Object input, java.util.List elements, java.util.List move, boolean isDown)
             {
                 ((Collection)input).clear();
                 ((Collection)input).addAll(elements);
             }
         };
         
-        mover.setInput(lv2);
+        mover.setViewer(lv2);
 
         final Composite composite4 = new Composite(composite2,SWT.NONE);
         layout = new GridLayout(1,false);

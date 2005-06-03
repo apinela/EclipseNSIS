@@ -526,10 +526,22 @@ public class Common
         return text;
     }
 
+    public static String flatten(Object[] array, char separator)
+    {
+        StringBuffer buf = new StringBuffer("");
+        if(!Common.isEmptyArray(array)) {
+            buf.append(array[0]);
+            for (int i = 1; i < array.length; i++) {
+                buf.append(separator).append((array[i]==null?"":array[i]));
+            }
+        }
+        return buf.toString();
+    }
+
     public static String[] tokenize(String text, char separator)
     {
         ArrayList list = new ArrayList();
-        if(!Common.isEmpty(text)) {
+        if(text != null && text.length() > 0) {
             char[] chars = text.toCharArray();
             StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
             for (int i = 0; i < chars.length; i++) {
@@ -745,6 +757,11 @@ public class Common
         catch (IntrospectionException e) {
             e.printStackTrace();
         }
+    }
+
+    public static boolean stringsAreEqual(String str1, String str2)
+    {
+        return stringsAreEqual(str1, str2, false);
     }
 
     public static boolean stringsAreEqual(String str1, String str2, boolean ignoreCase)

@@ -112,7 +112,7 @@ public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
         final TableViewerUpDownMover mover = new TableViewerUpDownMover(){
             protected List getAllElements()
             {
-                Collection collection = (Collection)((TableViewer)getInput()).getInput();
+                Collection collection = (Collection)((TableViewer)getViewer()).getInput();
                 if(collection instanceof List) {
                     return (List)collection;
                 }
@@ -121,25 +121,14 @@ public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
                 }
             }
 
-            protected List getMoveElements()
-            {
-                IStructuredSelection sel = (IStructuredSelection)((TableViewer)getInput()).getSelection();
-                if(!sel.isEmpty()) {
-                    return sel.toList();
-                }
-                else {
-                    return Collections.EMPTY_LIST;
-                }
-            }
-
-            protected void updateStructuredViewerInput(Object input, List elements)
+            protected void updateStructuredViewerInput(Object input, List elements, List move, boolean isDown)
             {
                 ((Collection)input).clear();
                 ((Collection)input).addAll(elements);
             }
         };
 
-        mover.setInput(viewer);
+        mover.setViewer(viewer);
         
         composite2 = new Composite(composite2, SWT.NONE);
         gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);

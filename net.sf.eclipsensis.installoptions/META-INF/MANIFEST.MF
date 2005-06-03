@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-Name: %plugin.name
 Bundle-SymbolicName: net.sf.eclipsensis.installoptions; singleton=true
-Bundle-Version: 0.0.1
+Bundle-Version: 0.1.0
 Bundle-ClassPath: installoptions.jar
 Bundle-Activator: net.sf.eclipsensis.installoptions.InstallOptionsPlugin
 Bundle-Vendor: Sunil Kamath (IcemanK)

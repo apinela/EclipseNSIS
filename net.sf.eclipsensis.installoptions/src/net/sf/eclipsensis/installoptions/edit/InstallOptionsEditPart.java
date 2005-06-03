@@ -12,6 +12,7 @@ package net.sf.eclipsensis.installoptions.edit;
 import java.beans.PropertyChangeListener;
 
 import net.sf.eclipsensis.installoptions.model.InstallOptionsElement;
+import net.sf.eclipsensis.installoptions.model.commands.InstallOptionsCommandStack;
 
 import org.eclipse.gef.AccessibleEditPart;
 import org.eclipse.gef.EditPolicy;
@@ -32,8 +33,7 @@ public abstract class InstallOptionsEditPart extends AbstractGraphicalEditPart i
 
     protected void createEditPolicies()
     {
-        installEditPolicy(EditPolicy.COMPONENT_ROLE,
-                new InstallOptionsEditPolicy());
+        installEditPolicy(EditPolicy.COMPONENT_ROLE, new InstallOptionsEditPolicy());
     }
 
     abstract protected AccessibleEditPart createAccessible();
@@ -60,5 +60,17 @@ public abstract class InstallOptionsEditPart extends AbstractGraphicalEditPart i
     protected InstallOptionsElement getInstallOptionsElement()
     {
         return (InstallOptionsElement)getModel();
+    }
+
+    public void addNotify()
+    {
+        super.addNotify();
+        ((InstallOptionsElement)getModel()).addModelCommandListener(((InstallOptionsCommandStack)getViewer().getEditDomain().getCommandStack()));
+    }
+
+    public void removeNotify()
+    {
+        ((InstallOptionsElement)getModel()).removeModelCommandListener(((InstallOptionsCommandStack)getViewer().getEditDomain().getCommandStack()));
+        super.removeNotify();
     }
 }

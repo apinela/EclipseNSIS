@@ -9,6 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.viewer;
 
+import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableViewer;
 
 public abstract class TableViewerUpDownMover extends StructuredViewerUpDownMover
@@ -18,15 +19,15 @@ public abstract class TableViewerUpDownMover extends StructuredViewerUpDownMover
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.util.UpDownMover#setInput(java.lang.Object)
      */
-    public void setInput(Object input)
+    public void setViewer(StructuredViewer viewer)
     {
-        mTableViewer = (TableViewer)input;
+        mTableViewer = (TableViewer)viewer;
     }
 
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.util.UpDownMover#getInput()
      */
-    public Object getInput()
+    public StructuredViewer getViewer()
     {
         return mTableViewer;
     }
@@ -37,13 +38,5 @@ public abstract class TableViewerUpDownMover extends StructuredViewerUpDownMover
     protected int[] getSelectedIndices()
     {
         return mTableViewer.getTable().getSelectionIndices();
-    }
-
-    /* (non-Javadoc)
-     * @see net.sf.eclipsensis.util.UpDownMover#getSize()
-     */
-    protected int getSize()
-    {
-        return mTableViewer.getTable().getItemCount();
     }
 }

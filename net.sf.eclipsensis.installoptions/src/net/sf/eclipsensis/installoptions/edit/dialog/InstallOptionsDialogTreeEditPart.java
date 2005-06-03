@@ -34,7 +34,6 @@ public class InstallOptionsDialogTreeEditPart extends InstallOptionsTreeEditPart
      */
     protected void createEditPolicies() {
         super.createEditPolicies();
-        installEditPolicy(EditPolicy.CONTAINER_ROLE, new InstallOptionsDialogEditPolicy());
         installEditPolicy(EditPolicy.TREE_CONTAINER_ROLE, new InstallOptionsTreeContainerEditPolicy());
         //If this editpart is the contents of the viewer, then it is not deletable!
         if (getParent() instanceof RootEditPart) {

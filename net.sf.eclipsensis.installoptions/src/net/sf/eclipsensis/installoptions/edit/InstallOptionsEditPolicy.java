@@ -14,9 +14,10 @@ import net.sf.eclipsensis.installoptions.model.InstallOptionsWidget;
 import net.sf.eclipsensis.installoptions.model.commands.DeleteCommand;
 
 import org.eclipse.gef.commands.Command;
+import org.eclipse.gef.editpolicies.ComponentEditPolicy;
 import org.eclipse.gef.requests.GroupRequest;
 
-public class InstallOptionsEditPolicy extends org.eclipse.gef.editpolicies.ComponentEditPolicy
+public class InstallOptionsEditPolicy extends ComponentEditPolicy
 {
     protected Command createDeleteCommand(GroupRequest request)
     {

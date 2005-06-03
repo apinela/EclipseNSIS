@@ -13,7 +13,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
-import net.sf.eclipsensis.installoptions.model.*;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsWidget;
+import net.sf.eclipsensis.installoptions.model.Position;
+import net.sf.eclipsensis.installoptions.rulers.InstallOptionsGuide;
 
 import org.eclipse.gef.commands.Command;
 
@@ -35,18 +37,18 @@ public class MoveGuideCommand extends Command
         mGuide.setPosition(mGuide.getPosition() + mPositionDelta);
         Iterator iter = mGuide.getParts().iterator();
         while (iter.hasNext()) {
-            InstallOptionsWidget part = (InstallOptionsWidget)iter.next();
-            Position pos = part.getPosition();
-            mOldPositions.put(part,pos);
-            pos = part.toGraphical(pos);
+            InstallOptionsWidget widget = (InstallOptionsWidget)iter.next();
+            Position pos = widget.getPosition();
+            mOldPositions.put(widget,pos);
+            pos = widget.toGraphical(pos);
             if (mGuide.isHorizontal()) {
                 pos.setLocation(pos.left,pos.top+mPositionDelta);
             }
             else {
                 pos.setLocation(pos.left+mPositionDelta,pos.top);
             }
-            pos = part.toModel(pos);
-            part.setPosition(pos);
+            pos = widget.toModel(pos);
+            widget.setPosition(pos);
         }
     }
 

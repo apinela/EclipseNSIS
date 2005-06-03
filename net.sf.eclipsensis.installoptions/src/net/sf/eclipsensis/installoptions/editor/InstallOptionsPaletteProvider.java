@@ -12,16 +12,15 @@ package net.sf.eclipsensis.installoptions.editor;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsButton;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsElementFactory;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
 
 import org.eclipse.gef.palette.*;
-import org.eclipse.gef.requests.SimpleFactory;
 
 public class InstallOptionsPaletteProvider
 {
-    static private List createCategories(PaletteRoot root)
+    private static List createCategories(PaletteRoot root)
     {
         List categories = new ArrayList();
 
@@ -33,25 +32,31 @@ public class InstallOptionsPaletteProvider
 
     private static PaletteContainer createComponentsDrawer()
     {
-
-        PaletteDrawer drawer = new PaletteDrawer("Components", InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("components.icon"))); //$NON-NLS-1$ //$NON-NLS-2$
+        PaletteDrawer drawer = new PaletteDrawer(InstallOptionsPlugin.getResourceString("palettedrawer.name"), InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("controls.icon"))); //$NON-NLS-1$ //$NON-NLS-2$
         List entries = new ArrayList();
-
-        
-        CombinedTemplateCreationEntry combined = new CombinedTemplateCreationEntry(InstallOptionsPlugin.getResourceString("button.template.name"), //$NON-NLS-1$
-                                                                InstallOptionsPlugin.getResourceString("button.template.short.desc"), //$NON-NLS-1$
-                                                                IInstallOptionsConstants.TEMPLATE_BUTTON, 
-                                                                new SimpleFactory(InstallOptionsButton.class),
-                                                                InstallOptionsPlugin.getImageManager().getImageDescriptor("icons/button16.gif"), //$NON-NLS-1$ 
-                                                                InstallOptionsPlugin.getImageManager().getImageDescriptor("icons/button24.gif")//$NON-NLS-1$
-        );
-        entries.add(combined);
+        InstallOptionsModel model = InstallOptionsModel.getInstance();
+        String[] controlTypes = model.getControlTypes();
+        for (int i = 0; i < controlTypes.length; i++) {
+            entries.add(createComponentEntry(controlTypes[i]));
+        }
          
         drawer.addAll(entries);
         return drawer;
     }
 
-    static private PaletteContainer createControlGroup(PaletteRoot root)
+    private static PaletteEntry createComponentEntry(String type)
+    {
+        String ltype = type.toLowerCase();
+        CombinedTemplateCreationEntry entry = new CombinedTemplateCreationEntry(InstallOptionsPlugin.getResourceString(ltype+".type.name"), //$NON-NLS-1$
+                InstallOptionsPlugin.getResourceString(ltype+".type.short.desc"), //$NON-NLS-1$
+                type, 
+                new InstallOptionsElementFactory(type),
+                InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString(ltype+".type.small.icon")), //$NON-NLS-1$
+                InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString(ltype+".type.large.icon"))); //$NON-NLS-1$
+        return entry;
+    }
+
+    private static PaletteContainer createControlGroup(PaletteRoot root)
     {
         PaletteGroup controlGroup = new PaletteGroup(InstallOptionsPlugin.getResourceString("palettegroup.name")); //$NON-NLS-1$
 

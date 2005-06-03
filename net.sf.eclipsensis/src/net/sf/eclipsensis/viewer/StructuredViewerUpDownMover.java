@@ -24,14 +24,25 @@ public abstract class StructuredViewerUpDownMover extends UpDownMover
      */
     protected final void updateElements(List elements, List move, boolean isDown)
     {
-        StructuredViewer viewer = (StructuredViewer)getInput();
-        updateStructuredViewerInput(viewer.getInput(), elements);
-        viewer.refresh();
+        StructuredViewer viewer = (StructuredViewer)getViewer();
+        updateStructuredViewerInput(viewer.getInput(), elements, move, isDown);
+        refreshViewer(viewer, elements, move, isDown);
         if(!Common.isEmptyCollection(move)) {
             viewer.setSelection(new StructuredSelection(move));
             viewer.reveal(move.get(isDown?move.size()-1:0));
         }
     }
 
-    protected abstract void updateStructuredViewerInput(Object input, List elements);
+    /**
+     * @param viewer
+     */
+    protected void refreshViewer(StructuredViewer viewer, List elements, List move, boolean isDown)
+    {
+        viewer.refresh();
+    }
+
+    protected abstract void updateStructuredViewerInput(Object input, List elements, List move, boolean isDown);
+
+    public abstract void setViewer(StructuredViewer viewer);
+    public abstract StructuredViewer getViewer();
 }

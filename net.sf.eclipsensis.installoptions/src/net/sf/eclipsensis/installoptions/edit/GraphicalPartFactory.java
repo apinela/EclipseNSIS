@@ -9,10 +9,22 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.edit;
 
+import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.edit.button.InstallOptionsButtonEditPart;
+import net.sf.eclipsensis.installoptions.edit.checkbox.InstallOptionsCheckBoxEditPart;
+import net.sf.eclipsensis.installoptions.edit.combobox.InstallOptionsComboboxEditPart;
 import net.sf.eclipsensis.installoptions.edit.dialog.InstallOptionsDialogEditPart;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsButton;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsDialog;
+import net.sf.eclipsensis.installoptions.edit.droplist.InstallOptionsDropListEditPart;
+import net.sf.eclipsensis.installoptions.edit.groupbox.InstallOptionsGroupBoxEditPart;
+import net.sf.eclipsensis.installoptions.edit.label.InstallOptionsLabelEditPart;
+import net.sf.eclipsensis.installoptions.edit.link.InstallOptionsLinkEditPart;
+import net.sf.eclipsensis.installoptions.edit.listbox.InstallOptionsListboxEditPart;
+import net.sf.eclipsensis.installoptions.edit.password.InstallOptionsPasswordEditPart;
+import net.sf.eclipsensis.installoptions.edit.pathrequest.InstallOptionsPathRequestEditPart;
+import net.sf.eclipsensis.installoptions.edit.picture.InstallOptionsPictureEditPart;
+import net.sf.eclipsensis.installoptions.edit.radiobutton.InstallOptionsRadioButtonEditPart;
+import net.sf.eclipsensis.installoptions.edit.text.InstallOptionsTextEditPart;
+import net.sf.eclipsensis.installoptions.model.*;
 
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.EditPartFactory;
@@ -32,6 +44,7 @@ public class GraphicalPartFactory implements EditPartFactory
         }
         return cInstance;
     }
+    
     private GraphicalPartFactory()
     {
     }
@@ -40,26 +53,98 @@ public class GraphicalPartFactory implements EditPartFactory
     {
         EditPart child = null;
 
-        /*
-         * TODO Put my own code for creating edit parts
-         * 
-         * if (model instanceof LogicFlowContainer) child = new
-         * LogicFlowContainerEditPart(); else if (model instanceof Wire) child =
-         * new WireEditPart(); else if (model instanceof LED) child = new
-         * LEDEditPart(); else if (model instanceof LogicLabel) child = new
-         * LogicLabelEditPart(); else if (model instanceof Circuit) child = new
-         * CircuitEditPart(); else if (model instanceof Gate) child = new
-         * GateEditPart(); else if (model instanceof SimpleOutput) child = new
-         * OutputEditPart(); //Note that subclasses of LogicDiagram have already
-         * been matched above, like Circuit else 
-         */
-        if(model instanceof InstallOptionsButton) {
-            child = new InstallOptionsButtonEditPart();
+        if(model != null) {
+            Class clasz = model.getClass();
+            if(clasz.equals(InstallOptionsLabel.class)) {
+                child = new InstallOptionsLabelEditPart();
+            }
+            else if(clasz.equals(InstallOptionsBitmap.class)) {
+                child = new InstallOptionsPictureEditPart() {
+                    protected String getDirectEditLabelProperty()
+                    {
+                        return "bitmap.direct.edit.label"; //$NON-NLS-1$
+                    }
+
+                    protected String getTypeName()
+                    {
+                        return InstallOptionsPlugin.getResourceString("bitmap.type.name"); //$NON-NLS-1$
+                    }
+                };
+            }
+            else if(clasz.equals(InstallOptionsIcon.class)) {
+                child = new InstallOptionsPictureEditPart() {
+                    protected String getDirectEditLabelProperty()
+                    {
+                        return "icon.direct.edit.label"; //$NON-NLS-1$
+                    }
+
+                    protected String getTypeName()
+                    {
+                        return InstallOptionsPlugin.getResourceString("icon.type.name"); //$NON-NLS-1$
+                    }
+                };
+            }
+            else if(clasz.equals(InstallOptionsLink.class)) {
+                child = new InstallOptionsLinkEditPart();
+            }
+            else if(clasz.equals(InstallOptionsButton.class)) {
+                child = new InstallOptionsButtonEditPart();
+            }
+            else if(clasz.equals(InstallOptionsCheckBox.class)) {
+                child = new InstallOptionsCheckBoxEditPart();
+            }
+            else if(clasz.equals(InstallOptionsRadioButton.class)) {
+                child = new InstallOptionsRadioButtonEditPart();
+            }
+            else if(clasz.equals(InstallOptionsFileRequest.class)) {
+                child = new InstallOptionsPathRequestEditPart() {
+                    protected String getDirectEditLabelProperty()
+                    {
+                        return "filerequest.direct.edit.label"; //$NON-NLS-1$
+                    }
+
+                    protected String getTypeName()
+                    {
+                        return InstallOptionsPlugin.getResourceString("filerequest.type.name"); //$NON-NLS-1$
+                    }
+                };
+            }
+            else if(clasz.equals(InstallOptionsDirRequest.class)) {
+                child = new InstallOptionsPathRequestEditPart() {
+                    protected String getDirectEditLabelProperty()
+                    {
+                        return "dirrequest.direct.edit.label"; //$NON-NLS-1$
+                    }
+
+                    protected String getTypeName()
+                    {
+                        return InstallOptionsPlugin.getResourceString("dirrequest.type.name"); //$NON-NLS-1$
+                    }
+                };
+            }
+            else if (clasz.equals(InstallOptionsGroupBox.class)) {
+                child = new InstallOptionsGroupBoxEditPart();
+            }
+            else if (clasz.equals(InstallOptionsText.class)) {
+                child = new InstallOptionsTextEditPart();
+            }
+            else if (clasz.equals(InstallOptionsPassword.class)) {
+                child = new InstallOptionsPasswordEditPart();
+            }
+            else if (clasz.equals(InstallOptionsDropList.class)) {
+                child = new InstallOptionsDropListEditPart();
+            }
+            else if (clasz.equals(InstallOptionsCombobox.class)) {
+                child = new InstallOptionsComboboxEditPart();
+            }
+            else if (clasz.equals(InstallOptionsListbox.class)) {
+                child = new InstallOptionsListboxEditPart();
+            }
+            else if (clasz.equals(InstallOptionsDialog.class)) {
+                child = new InstallOptionsDialogEditPart();
+            }
+            child.setModel(model);
         }
-        else if (model instanceof InstallOptionsDialog) {
-            child = new InstallOptionsDialogEditPart();
-        }
-        child.setModel(model);
         return child;
     }
 

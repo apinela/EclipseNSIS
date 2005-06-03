@@ -9,26 +9,15 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.figures;
 
-import org.eclipse.gef.RootEditPart;
+import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
 
-public class ButtonFigure extends SWTControlFigure
+public class ButtonFigure extends UneditableElementFigure
 {
-    private String mText;
-
-    public ButtonFigure(RootEditPart editpart)
+    public ButtonFigure(GraphicalEditPart editPart)
     {
-        super(editpart);
-    }
-
-    public void setText(String text) 
-    {
-        mText = text;
-        if(!isNeedsReScrape()) {
-            setNeedsReScrape(true);
-        }
-        layout();
+        super(editPart);
     }
 
     /**
@@ -36,8 +25,16 @@ public class ButtonFigure extends SWTControlFigure
      */
     protected Control createSWTControl(Composite parent)
     {
-        Button button = new Button(parent, SWT.CENTER | SWT.PUSH);
-        button.setText(mText);
+        Button button = new Button(parent, getStyle());
+        button.setText(getText());
         return button;
+    }
+
+    /**
+     * @return
+     */
+    public int getDefaultStyle()
+    {
+        return SWT.CENTER|SWT.PUSH;
     }
 }

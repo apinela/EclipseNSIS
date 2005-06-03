@@ -9,13 +9,48 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.edit.dialog;
 
+import java.util.List;
+
+import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsDialog;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsWidget;
+import net.sf.eclipsensis.installoptions.model.commands.ReorderPartCommand;
+import net.sf.eclipsensis.installoptions.requests.ReorderPartRequest;
+
+import org.eclipse.gef.EditPart;
+import org.eclipse.gef.Request;
 import org.eclipse.gef.commands.Command;
+import org.eclipse.gef.commands.UnexecutableCommand;
 import org.eclipse.gef.editpolicies.ContainerEditPolicy;
 import org.eclipse.gef.requests.CreateRequest;
 
-public class InstallOptionsDialogEditPolicy extends ContainerEditPolicy
+public class InstallOptionsDialogEditPolicy extends ContainerEditPolicy implements IInstallOptionsConstants
 {
-    protected Command getCreateCommand(CreateRequest request) {
+    protected Command getCreateCommand(CreateRequest request) 
+    {
         return null;
+    }
+
+    public Command getCommand(Request request)
+    {
+        if(REQ_REORDER_PART.equals(request.getType())) {
+            return getReorderPartCommand((ReorderPartRequest)request);
+        }
+        else {
+            return super.getCommand(request);
+        }
+    }
+    
+    protected Command getReorderPartCommand(ReorderPartRequest request)
+    {
+        EditPart editpart = request.getEditPart();
+        List children = getHost().getChildren();
+        int newIndex = request.getNewIndex();
+        int oldIndex = children.indexOf(editpart);
+        if (oldIndex == newIndex) {
+            return UnexecutableCommand.INSTANCE;
+        }
+        return new ReorderPartCommand((InstallOptionsWidget)editpart.getModel(),
+                (InstallOptionsDialog)getHost().getModel(), oldIndex, newIndex);
     }
 }

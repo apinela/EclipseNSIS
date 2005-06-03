@@ -9,80 +9,108 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.model;
 
-import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
+import java.util.List;
+
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
+import net.sf.eclipsensis.installoptions.properties.validators.NSISStringLengthValidator;
 
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 
-public class InstallOptionsButton extends InstallOptionsWidget
+public class InstallOptionsButton extends InstallOptionsUneditableElement
 {
-    public static String PROPERTY_TEXT = "net.sf.eclipsensis.installoptions.button_text"; //$NON-NLS-1$
-    private static Image BUTTON_ICON = InstallOptionsPlugin.getImageManager().getImage("icons/button16.gif"); //$NON-NLS-1$
-    protected static IPropertyDescriptor[] cNewDescriptors = null;
+    private static Image BUTTON_ICON = InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("button.type.small.icon")); //$NON-NLS-1$
 
-    private String mText = InstallOptionsPlugin.getResourceString("button.text.default"); //$NON-NLS-1$
-
-    static {
-        int n = cDescriptors.length;
-        cNewDescriptors = new IPropertyDescriptor[n+1];
-        System.arraycopy(cDescriptors,0,cNewDescriptors,0,n);
-        cNewDescriptors[n++] = new TextPropertyDescriptor(PROPERTY_TEXT, InstallOptionsPlugin.getResourceString("text.property.name")); //$NON-NLS-1$;
-    }
+    private String mState;
 
     public InstallOptionsButton()
     {
-        super();
-        mPosition = new Position(0,0,59,24);
+        this(InstallOptionsModel.TYPE_BUTTON);
     }
 
-    public IPropertyDescriptor[] getPropertyDescriptors()
+    protected InstallOptionsButton(String type)
     {
-        return cNewDescriptors;
+        super(type);
+        mState = ""; //$NON-NLS-1$
     }
 
+    public Object clone() throws CloneNotSupportedException
+    {
+        InstallOptionsButton clone = (InstallOptionsButton)super.clone();
+        clone.setState(getState());
+        return clone;
+    }
+
+    /**
+     * @return
+     */
+    protected Position getDefaultPosition()
+    {
+        return new Position(0,0,50,15);
+    }
+
+    protected String getDefaultText()
+    {
+        return InstallOptionsPlugin.getResourceString("button.text.default"); //$NON-NLS-1$
+    }
+
+    protected void addPropertyName(List list, String setting)
+    {
+        if (setting.equalsIgnoreCase(InstallOptionsModel.PROPERTY_STATE)) {
+            list.add(InstallOptionsModel.PROPERTY_STATE);
+        }
+        else {
+            super.addPropertyName(list, setting);
+        }
+    }
+
+    protected IPropertyDescriptor createPropertyDescriptor(String name)
+    {
+        if(name.equals(InstallOptionsModel.PROPERTY_STATE)) {
+            TextPropertyDescriptor descriptor = new TextPropertyDescriptor(InstallOptionsModel.PROPERTY_STATE, InstallOptionsPlugin.getResourceString("state.property.name")); //$NON-NLS-1$;
+            descriptor.setValidator(new NSISStringLengthValidator(InstallOptionsModel.PROPERTY_STATE));
+            return descriptor;
+        }
+        else {
+            return super.createPropertyDescriptor(name);
+        }
+    }
+    
     public Object getPropertyValue(Object propName)
     {
-        if (PROPERTY_TEXT.equals(propName)) {
-            return getText();
+        if (InstallOptionsModel.PROPERTY_STATE.equals(propName)) {
+            return getState();
         }
         return super.getPropertyValue(propName);
     }
     
     public void setPropertyValue(Object id, Object value)
     {
-        if(id.equals(PROPERTY_TEXT)) {
-            setText((String)value);
+        if(id.equals(InstallOptionsModel.PROPERTY_STATE)) {
+            setState((String)value);
         }
         else {
             super.setPropertyValue(id, value);
         }
     }
 
-    public String getText()
-    {
-        return mText;
-    }
-
     public Image getIconImage()
     {
         return BUTTON_ICON;
     }
-
-    public void setText(String s)
+    
+    public String getState()
     {
-        mText = s;
-        firePropertyChange(PROPERTY_TEXT, null, mText);
+        return mState;
     }
-
-    public String toString()
+    
+    public void setState(String state)
     {
-        return new StringBuffer(super.toString()).append(" ").append(InstallOptionsPlugin.getResourceString("button.template.name")).append("=").append(getText()).toString(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    }
-
-    public String getType()
-    {
-        return IInstallOptionsConstants.TYPE_BUTTON;
+        if(!mState.equals(state)) {
+            String oldState = mState;
+            mState = state;
+            firePropertyChange(InstallOptionsModel.PROPERTY_STATE, oldState, mState);
+        }
     }
 }

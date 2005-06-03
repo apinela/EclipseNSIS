@@ -14,8 +14,6 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.sf.eclipsensis.installoptions.model.InstallOptionsGuide;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsRuler;
 import net.sf.eclipsensis.installoptions.model.commands.*;
 
 import org.eclipse.gef.commands.Command;
@@ -24,7 +22,8 @@ import org.eclipse.gef.rulers.RulerProvider;
 
 public class InstallOptionsRulerProvider extends RulerProvider
 {
-
+    public static final int UNIT_DLU = 3;
+    
     private InstallOptionsRuler mRuler;
 
     private PropertyChangeListener mRulerListener = new PropertyChangeListener() {

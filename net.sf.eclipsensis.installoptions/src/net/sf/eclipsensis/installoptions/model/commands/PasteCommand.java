@@ -56,7 +56,7 @@ public class PasteCommand extends Command
         redo();
     }
 
-    private void calculatePasteBounds()
+    private void calculatePasteBounds(InstallOptionsDialog dialog)
     {
         FigureCanvas canvas = (FigureCanvas)mPart.getViewer().getControl();
         org.eclipse.swt.graphics.Rectangle dim = canvas.getClientArea();
@@ -67,9 +67,9 @@ public class PasteCommand extends Command
         for (Iterator iter = mPasteList.iterator(); iter.hasNext();) {
             InstallOptionsWidget model = (InstallOptionsWidget)iter.next();
             Position pos = model.getPosition();
-            pos = model.toGraphical(pos);
+            pos = model.toGraphical(pos, dialog);
             pos.setLocation(pos.left+delX,pos.top+delY);
-            pos = model.toModel(pos);
+            pos = model.toModel(pos, dialog);
             model.getPosition().set(pos.left,pos.top,pos.right,pos.bottom);
         }
         mPasteBounds.x = p.x;
@@ -78,8 +78,8 @@ public class PasteCommand extends Command
 
     public void redo()
     {
-        calculatePasteBounds();
         InstallOptionsDialog dialog = (InstallOptionsDialog)mPart.getModel();
+        calculatePasteBounds(dialog);
         for (Iterator iter = mPasteList.iterator(); iter.hasNext();) {
             dialog.addChild((InstallOptionsWidget)iter.next());
         }

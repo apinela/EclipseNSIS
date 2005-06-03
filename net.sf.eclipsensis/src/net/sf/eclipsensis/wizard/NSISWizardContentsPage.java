@@ -16,7 +16,7 @@ import java.util.List;
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.UpDownMover;
+import net.sf.eclipsensis.viewer.StructuredViewerUpDownMover;
 import net.sf.eclipsensis.wizard.settings.*;
 import net.sf.eclipsensis.wizard.util.NSISWizardDialogUtil;
 
@@ -127,15 +127,15 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
         tv.setAutoExpandLevel(TreeViewer.ALL_LEVELS);
         tv.setInput(settings);
     
-        final UpDownMover mover = new UpDownMover() {
+        final StructuredViewerUpDownMover mover = new StructuredViewerUpDownMover() {
             private TreeViewer mTreeViewer = null;
             
-            public void setInput(Object input)
+            public void setViewer(StructuredViewer viewer)
             {
-                mTreeViewer = (TreeViewer)input;
+                mTreeViewer = (TreeViewer)viewer;
             }
 
-            public Object getInput()
+            public StructuredViewer getViewer()
             {
                 return mTreeViewer;
             }
@@ -195,19 +195,6 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
                 return new int[0];
             }
 
-            protected int getSize()
-            {
-                List list = getSelectionList();
-                INSISInstallElement parent = getSelectionParent(list);
-                if(parent != null) {
-                    INSISInstallElement[] children = parent.getChildren();
-                    if(!Common.isEmptyArray(children)) {
-                        return children.length;
-                    }
-                }
-                return 0;
-            }
-
             private List getAllElements(INSISInstallElement parent)
             {
                 if(parent != null) {
@@ -225,23 +212,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
                 return getAllElements(getSelectionParent(getSelectionList()));
             }
 
-            private List getMoveElements(INSISInstallElement parent, List selectionList)
-            {
-                if(parent != null) {
-                    return selectionList;
-                }
-                else {
-                    return Collections.EMPTY_LIST;
-                }
-            }
-
-            protected List getMoveElements()
-            {
-                List list = getSelectionList();
-                return getMoveElements(getSelectionParent(list), list);
-            }
-
-            protected void updateElements(List elements, List move, boolean isDown)
+            protected void updateStructuredViewerInput(Object input, List elements, List move, boolean isDown)
             {
                 INSISInstallElement parent = getSelectionParent(move);
                 if(parent != null && parent instanceof AbstractNSISInstallGroup) {
@@ -252,12 +223,14 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
                     }
                     mTreeViewer.refresh(parent,true);
                     expandGroup((AbstractNSISInstallGroup)parent);
-//                    mTreeViewer.expandToLevel(parent, TreeViewer.ALL_LEVELS);
-                    if(!Common.isEmptyCollection(move)) {
-                        mTreeViewer.setSelection(new StructuredSelection(move));
-                        mTreeViewer.reveal(move.get(isDown?move.size()-1:0));
-                    }
                 }
+            }
+
+            /**
+             * @param viewer
+             */
+            protected void refreshViewer(StructuredViewer viewer, List elements, List move, boolean isDown)
+            {
             }
             
             private void expandGroup(AbstractNSISInstallGroup group)
@@ -275,7 +248,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
                 }
             }
         };
-        mover.setInput(tv);
+        mover.setViewer(tv);
         
         Composite composite3 = new Composite(composite2,SWT.NONE);
         gd = new GridData(GridData.VERTICAL_ALIGN_CENTER);

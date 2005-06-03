@@ -10,205 +10,50 @@
 package net.sf.eclipsensis.installoptions.properties;
 
 import java.util.*;
-import java.util.HashSet;
-import java.util.Set;
 
-import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.installoptions.properties.descriptors.CustomPropertyDescriptor;
 
-import org.eclipse.jface.viewers.CellEditor;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.views.properties.IPropertySheetEntry;
-import org.eclipse.ui.views.properties.IPropertySheetEntryListener;
+import org.eclipse.gef.commands.CommandStack;
+import org.eclipse.gef.internal.ui.properties.PropertySheetEntry;
+import org.eclipse.gef.internal.ui.properties.UndoablePropertySheetEntry;
+import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
-public class CustomPropertySheetEntry implements IPropertySheetEntry, IPropertySheetEntryListener
+public class CustomPropertySheetEntry extends UndoablePropertySheetEntry
 {
-    private IPropertySheetEntry mDelegate;
-    private Set mPropertySheetEntryListeners = new HashSet();
-    
     /**
      * 
      */
-    public CustomPropertySheetEntry(IPropertySheetEntry delegate)
+    public CustomPropertySheetEntry()
     {
-        mDelegate = delegate;
-        mDelegate.addPropertySheetEntryListener(this);
+        super();
     }
 
-    public void childEntriesChanged(IPropertySheetEntry node)
-    {
-        for(Iterator iter=mPropertySheetEntryListeners.iterator(); iter.hasNext(); ) {
-            ((IPropertySheetEntryListener)iter.next()).childEntriesChanged(this);
-        }
-    }
-
-    public void errorMessageChanged(IPropertySheetEntry entry)
-    {
-        for(Iterator iter=mPropertySheetEntryListeners.iterator(); iter.hasNext(); ) {
-            ((IPropertySheetEntryListener)iter.next()).errorMessageChanged(this);
-        }
-    }
-
-    public void valueChanged(IPropertySheetEntry entry)
-    {
-        for(Iterator iter=mPropertySheetEntryListeners.iterator(); iter.hasNext(); ) {
-            ((IPropertySheetEntryListener)iter.next()).valueChanged(this);
-        }
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.views.properties.IPropertySheetEntry#addPropertySheetEntryListener(org.eclipse.ui.views.properties.IPropertySheetEntryListener)
+    /**
+     * @param stack
      */
-    public void addPropertySheetEntryListener(
-            IPropertySheetEntryListener listener)
+    public CustomPropertySheetEntry(CommandStack stack)
     {
-        mPropertySheetEntryListeners.add(listener);
+        super(stack);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.views.properties.IPropertySheetEntry#applyEditorValue()
-     */
-    public void applyEditorValue()
+    protected PropertySheetEntry createChildEntry()
     {
-        mDelegate.applyEditorValue();
+        return new CustomPropertySheetEntry();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.views.properties.IPropertySheetEntry#dispose()
-     */
-    public void dispose()
+    protected List computeMergedPropertyDescriptors()
     {
-        mDelegate.dispose();
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.views.properties.IPropertySheetEntry#getCategory()
-     */
-    public String getCategory()
-    {
-        return mDelegate.getCategory();
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.views.properties.IPropertySheetEntry#getChildEntries()
-     */
-    public IPropertySheetEntry[] getChildEntries()
-    {
-        IPropertySheetEntry[] childEntries = mDelegate.getChildEntries();
-        if(!Common.isEmptyArray(childEntries)) {
-            CustomPropertySheetEntry[] newChildEntries = new CustomPropertySheetEntry[childEntries.length];
-            for (int i = 0; i < childEntries.length; i++) {
-                if(!(childEntries[i] instanceof CustomPropertySheetEntry)) {
-                    CustomPropertySheetEntry entry = new CustomPropertySheetEntry(childEntries[i]);
-                    newChildEntries[i] = entry;
-                }
-                else {
-                    newChildEntries[i] = (CustomPropertySheetEntry)childEntries[i];
-                }
+        List list = super.computeMergedPropertyDescriptors();
+        ArrayList list2 = new ArrayList();
+        for (Iterator iter = list.iterator(); iter.hasNext();) {
+            IPropertyDescriptor element = (IPropertyDescriptor)iter.next();
+            if(element instanceof CustomPropertyDescriptor) {
+                list2.add(((CustomPropertyDescriptor)element).getDelegate());
             }
-            childEntries = newChildEntries;
+            else {
+                list2.add(element);
+            }
         }
-        return childEntries;
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.views.properties.IPropertySheetEntry#getDescription()
-     */
-    public String getDescription()
-    {
-        return mDelegate.getDescription();
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.views.properties.IPropertySheetEntry#getDisplayName()
-     */
-    public String getDisplayName()
-    {
-        String displayName = mDelegate.getDisplayName();
-        int colon = displayName.lastIndexOf(':');
-        if (colon != -1) {
-            displayName = displayName.substring(colon + 1);
-        }
-        return displayName;
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.views.properties.IPropertySheetEntry#getEditor(org.eclipse.swt.widgets.Composite)
-     */
-    public CellEditor getEditor(Composite parent)
-    {
-        return mDelegate.getEditor(parent);
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.views.properties.IPropertySheetEntry#getErrorText()
-     */
-    public String getErrorText()
-    {
-        return mDelegate.getErrorText();
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.views.properties.IPropertySheetEntry#getFilters()
-     */
-    public String[] getFilters()
-    {
-        return mDelegate.getFilters();
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.views.properties.IPropertySheetEntry#getHelpContextIds()
-     */
-    public Object getHelpContextIds()
-    {
-        return mDelegate.getHelpContextIds();
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.views.properties.IPropertySheetEntry#getImage()
-     */
-    public Image getImage()
-    {
-        return mDelegate.getImage();
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.views.properties.IPropertySheetEntry#getValueAsString()
-     */
-    public String getValueAsString()
-    {
-        return mDelegate.getValueAsString();
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.views.properties.IPropertySheetEntry#hasChildEntries()
-     */
-    public boolean hasChildEntries()
-    {
-        return mDelegate.hasChildEntries();
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.views.properties.IPropertySheetEntry#removePropertySheetEntryListener(org.eclipse.ui.views.properties.IPropertySheetEntryListener)
-     */
-    public void removePropertySheetEntryListener(IPropertySheetEntryListener listener)
-    {
-        mPropertySheetEntryListeners.remove(listener);
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.views.properties.IPropertySheetEntry#resetPropertyValue()
-     */
-    public void resetPropertyValue()
-    {
-        mDelegate.resetPropertyValue();
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.views.properties.IPropertySheetEntry#setValues(java.lang.Object[])
-     */
-    public void setValues(Object[] values)
-    {
-        mDelegate.setValues(values);
+        return list2;
     }
 }

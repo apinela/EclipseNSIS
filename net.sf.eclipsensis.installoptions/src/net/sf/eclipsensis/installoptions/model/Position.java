@@ -9,8 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.model;
 
-import org.eclipse.draw2d.geometry.Dimension;
-import org.eclipse.draw2d.geometry.Point;
+import org.eclipse.draw2d.geometry.*;
 
 public class Position implements Cloneable
 {
@@ -55,6 +54,11 @@ public class Position implements Cloneable
         }
     }
 
+    public Rectangle getBounds()
+    {
+        return new Rectangle(left,top,right-left+1,bottom-top+1);
+    }
+    
     public Point getLocation()
     {
         return new Point(left,top);

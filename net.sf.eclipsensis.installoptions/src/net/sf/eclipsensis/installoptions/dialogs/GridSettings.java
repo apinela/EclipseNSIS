@@ -142,7 +142,7 @@ public class GridSettings extends Composite implements IInstallOptionsConstants
         l.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         
         l = new Label(group,SWT.NONE);
-        l.setText(InstallOptionsPlugin.getResourceString("grids.ettings.horizontal.label")); //$NON-NLS-1$
+        l.setText(InstallOptionsPlugin.getResourceString("grid.settings.horizontal.label")); //$NON-NLS-1$
         l.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         
         l = new Label(group,SWT.NONE);

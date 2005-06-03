@@ -10,6 +10,7 @@
 package net.sf.eclipsensis.viewer;
 
 import org.eclipse.jface.viewers.ListViewer;
+import org.eclipse.jface.viewers.StructuredViewer;
 
 public abstract class ListViewerUpDownMover extends StructuredViewerUpDownMover
 {
@@ -18,15 +19,15 @@ public abstract class ListViewerUpDownMover extends StructuredViewerUpDownMover
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.util.UpDownMover#setInput(java.lang.Object)
      */
-    public void setInput(Object input)
+    public void setViewer(StructuredViewer viewer)
     {
-        mListViewer = (ListViewer)input;
+        mListViewer = (ListViewer)viewer;
     }
 
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.util.UpDownMover#getInput()
      */
-    public Object getInput()
+    public StructuredViewer getViewer()
     {
         return mListViewer;
     }
@@ -37,13 +38,5 @@ public abstract class ListViewerUpDownMover extends StructuredViewerUpDownMover
     protected int[] getSelectedIndices()
     {
         return mListViewer.getList().getSelectionIndices();
-    }
-
-    /* (non-Javadoc)
-     * @see net.sf.eclipsensis.util.UpDownMover#getSize()
-     */
-    protected int getSize()
-    {
-        return mListViewer.getList().getItemCount();
     }
 }

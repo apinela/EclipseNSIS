@@ -56,6 +56,11 @@ public class InstallOptionsDesignActionContributor extends ActionBarContributor
 
         addRetargetAction(new DeleteRetargetAction());
         
+        addRetargetAction(new ArrangeRetargetAction(IInstallOptionsConstants.SEND_BACKWARD));
+        addRetargetAction(new ArrangeRetargetAction(IInstallOptionsConstants.SEND_TO_BACK));
+        addRetargetAction(new ArrangeRetargetAction(IInstallOptionsConstants.BRING_FORWARD));
+        addRetargetAction(new ArrangeRetargetAction(IInstallOptionsConstants.BRING_TO_FRONT));
+        
         addRetargetAction(new AlignmentRetargetAction(PositionConstants.LEFT));
         addRetargetAction(new AlignmentRetargetAction(PositionConstants.CENTER));
         addRetargetAction(new AlignmentRetargetAction(PositionConstants.RIGHT));
@@ -122,8 +127,21 @@ public class InstallOptionsDesignActionContributor extends ActionBarContributor
         mInstallOptionsMenu.add(getAction(ToggleGuideVisibilityAction.ID));
         mInstallOptionsMenu.add(getAction(IInstallOptionsConstants.GRID_SNAP_GLUE_SETTINGS_ACTION_ID));
         mInstallOptionsMenu.add(new Separator());
+        mInstallOptionsMenu.add(getAction(GEFActionConstants.ALIGN_LEFT));
+        mInstallOptionsMenu.add(getAction(GEFActionConstants.ALIGN_CENTER));
+        mInstallOptionsMenu.add(getAction(GEFActionConstants.ALIGN_RIGHT));
+        mInstallOptionsMenu.add(new Separator());
+        mInstallOptionsMenu.add(getAction(GEFActionConstants.ALIGN_TOP));
+        mInstallOptionsMenu.add(getAction(GEFActionConstants.ALIGN_MIDDLE));
+        mInstallOptionsMenu.add(getAction(GEFActionConstants.ALIGN_BOTTOM));
+        mInstallOptionsMenu.add(new Separator());
         mInstallOptionsMenu.add(getAction(GEFActionConstants.MATCH_WIDTH));
         mInstallOptionsMenu.add(getAction(GEFActionConstants.MATCH_HEIGHT));
+        mInstallOptionsMenu.add(new Separator());
+        mInstallOptionsMenu.add(getAction(ArrangeAction.SEND_BACKWARD_ID));
+        mInstallOptionsMenu.add(getAction(ArrangeAction.SEND_TO_BACK_ID));
+        mInstallOptionsMenu.add(getAction(ArrangeAction.BRING_FORWARD_ID));
+        mInstallOptionsMenu.add(getAction(ArrangeAction.BRING_TO_FRONT_ID));
         mInstallOptionsMenu.add(new Separator());
         mSetDialogSizeMenu = new SetDialogSizeMenuManager(mInstallOptionsMenu);
         mInstallOptionsMenu.add(mSetDialogSizeMenu);
@@ -170,6 +188,12 @@ public class InstallOptionsDesignActionContributor extends ActionBarContributor
         tbm.add(getAction(GEFActionConstants.MATCH_WIDTH));
         tbm.add(getAction(GEFActionConstants.MATCH_HEIGHT));
         
+        tbm.add(new Separator());
+        tbm.add(getAction(ArrangeAction.SEND_BACKWARD_ID));
+        tbm.add(getAction(ArrangeAction.SEND_TO_BACK_ID));
+        tbm.add(getAction(ArrangeAction.BRING_FORWARD_ID));
+        tbm.add(getAction(ArrangeAction.BRING_TO_FRONT_ID));
+
         if(InstallOptionsPlugin.getDefault().isZoomSupported()) {
             tbm.add(new Separator());   
             tbm.add(mZoomComboContributionItem);
