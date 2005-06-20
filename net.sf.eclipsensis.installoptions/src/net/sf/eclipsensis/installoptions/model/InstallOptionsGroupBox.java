@@ -15,7 +15,7 @@ import org.eclipse.swt.graphics.Image;
 
 public class InstallOptionsGroupBox extends InstallOptionsUneditableElement
 {
-    private static Image GROUPBOX_ICON = InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("groupbox.type.small.icon")); //$NON-NLS-1$
+    public static Image GROUPBOX_ICON = InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("groupbox.type.small.icon")); //$NON-NLS-1$
 
     public InstallOptionsGroupBox()
     {

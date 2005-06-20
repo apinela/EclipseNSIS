@@ -77,6 +77,6 @@ public class CopyAction extends SelectionAction
     }
 
     public void run() {
-        execute(createCopyCommand(getSelectedObjects()));
+        createCopyCommand(getSelectedObjects()).execute();
     }
 }

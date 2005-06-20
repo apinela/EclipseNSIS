@@ -171,18 +171,10 @@ public abstract class InstallOptionsWidgetEditPart extends InstallOptionsEditPar
     protected final IFigure createFigure()
     {
         IInstallOptionsFigure figure2 = createInstallOptionsFigure();
-        initFigure(figure2);
+        figure2.setFocusTraversable(true);
         return figure2;
     }
     
-    protected void initFigure(IInstallOptionsFigure figure2)
-    {
-        InstallOptionsWidget widget = (InstallOptionsWidget)getModel();
-        figure2.setFocusTraversable(true);
-        figure2.setBounds(widget.toGraphical(widget.getPosition()).getBounds());
-        figure2.setDisabled(widget.getFlags().contains(InstallOptionsModel.FLAGS_DISABLED));
-    }
-
     /**
      * Updates the visual aspect of this.
      */
@@ -199,7 +191,7 @@ public abstract class InstallOptionsWidgetEditPart extends InstallOptionsEditPar
     protected void createEditPolicies()
     {
         super.createEditPolicies();
-        installEditPolicy(EditPolicy.SELECTION_FEEDBACK_ROLE, new InstallOptionsSelectionEditPolicy());
+        installEditPolicy(EditPolicy.SELECTION_FEEDBACK_ROLE, new InstallOptionsSelectionEditPolicy(this));
     }
     
 
@@ -247,6 +239,11 @@ public abstract class InstallOptionsWidgetEditPart extends InstallOptionsEditPar
         return TextCellEditor.class;
     }
 
+    protected InstallOptionsWidget getInstallOptionsWidget()
+    {
+        return (InstallOptionsWidget)getModel();
+    }
+    
     protected abstract DirectEditManager creatDirectEditManager(InstallOptionsWidgetEditPart part, Class clasz, CellEditorLocator locator);
     protected abstract CellEditorLocator createCellEditorLocator(IInstallOptionsFigure figure);
     protected abstract IInstallOptionsFigure createInstallOptionsFigure();

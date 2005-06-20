@@ -90,7 +90,11 @@ public class ImageManager
 
     public synchronized Image getImage(String location) 
     {
-        return getImage(makeLocationURL(location));
+        Image image = mImageRegistry.get(location.toLowerCase());
+        if(image == null) {
+            return getImage(makeLocationURL(location));
+        }
+        return image;
     }
 
     public synchronized boolean containsImage(URL url) 
@@ -100,22 +104,32 @@ public class ImageManager
 
     public synchronized void putImage(URL url, Image image) 
     {
-        mImageRegistry.put(url.toString().toLowerCase(),image);
+        mImageRegistry.put(url.toString(),image);
     }
 
-    public synchronized  Image getImage(URL url) 
+    public synchronized void putImage(String s, Image image) 
+    {
+        mImageRegistry.put(s.toLowerCase(),image);
+    }
+
+    public synchronized void putImageDescriptor(String s, ImageDescriptor image) 
+    {
+        mImageRegistry.put(s.toLowerCase(),image);
+    }
+
+    public synchronized Image getImage(URL url) 
     {
         Image image = null;
         if(url != null) {
             String urlString = url.toString().toLowerCase();
-            image = mImageRegistry.get(urlString);
+            image = getImage(urlString);
             if(image == null) {
-                mImageRegistry.put(urlString,createImageDescriptor(url));
-                image = mImageRegistry.get(urlString);
+                putImageDescriptor(urlString,createImageDescriptor(url));
+                image = getImage(urlString);
                 if(image == null) {
                     mImageRegistry.remove(urlString);
-                    mImageRegistry.put(urlString, ImageDescriptor.getMissingImageDescriptor());
-                    image = mImageRegistry.get(urlString);
+                    putImageDescriptor(urlString, ImageDescriptor.getMissingImageDescriptor());
+                    image = getImage(urlString);
                 }
             }
         }

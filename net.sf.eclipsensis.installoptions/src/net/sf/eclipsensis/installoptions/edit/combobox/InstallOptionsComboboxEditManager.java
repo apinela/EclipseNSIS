@@ -31,7 +31,7 @@ public class InstallOptionsComboboxEditManager extends InstallOptionsEditableEle
         super(source, editorType, locator);
     }
 
-    protected CellEditor createCellEditorOn(Composite composite)
+    protected CellEditor createCellEditor(Composite composite)
     {
         InstallOptionsCombobox combobox = (InstallOptionsCombobox)getEditPart().getModel();
         List items = combobox.getListItems();

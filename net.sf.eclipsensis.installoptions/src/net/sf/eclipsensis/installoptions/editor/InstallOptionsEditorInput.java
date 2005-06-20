@@ -16,25 +16,55 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.editors.text.TextFileDocumentProvider;
+import org.eclipse.ui.part.FileEditorInput;
 
-public class InstallOptionsEditorInput implements IFileEditorInput
+public class InstallOptionsEditorInput extends FileEditorInput
 {
     private TextFileDocumentProvider mDocumentProvider;
     private IFileEditorInput mInput;
+    private boolean mSwitching = false;
     /**
      * @throws CoreException
      * 
      */
     public InstallOptionsEditorInput(IFileEditorInput input)
     {
+        super(input.getFile());
         mInput = input;
         mDocumentProvider = new TextFileDocumentProvider();
-        try {
-            mDocumentProvider.connect(this);
+    }
+    
+    public boolean equals(Object obj)
+    {
+        if(obj instanceof InstallOptionsEditorInput) {
+            return mInput.equals(((InstallOptionsEditorInput)obj).mInput);
         }
-        catch (CoreException e) {
-            mDocumentProvider = null;
-            e.printStackTrace();
+        else if (obj instanceof IFileEditorInput) {
+            return mInput.equals(obj);
+        }
+        return super.equals(obj);
+    }
+    
+    public void prepareForSwitch()
+    {
+        if(!mSwitching) {
+            mSwitching = true;
+            try {
+                mDocumentProvider.connect(this);
+            }
+            catch (CoreException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    
+    public void completedSwitch()
+    {
+        if(mSwitching) {
+            mSwitching = false;
+            if(mDocumentProvider != null) {
+                mDocumentProvider.disconnect(this);
+            }
         }
     }
 

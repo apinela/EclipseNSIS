@@ -11,35 +11,21 @@ package net.sf.eclipsensis.installoptions.model;
 
 import java.util.List;
 
-import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.properties.validators.NSISStringLengthValidator;
 import net.sf.eclipsensis.installoptions.properties.validators.NumberCellEditorValidator;
-import net.sf.eclipsensis.settings.NSISPreferences;
 
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 
 public abstract class InstallOptionsEditableElement extends InstallOptionsWidget
 {
-    private static final int DEFAULT_MAX_LEN;
-    
     private String mText;
     private String mState;
     private String mMaxLen;
     private String mMinLen;
     private String mValidateText;
 
-    static {
-        int maxLen;
-        try {
-            maxLen = Integer.parseInt(NSISPreferences.getPreferences().getNSISOption("NSIS_MAX_STRLEN")); //$NON-NLS-1$
-        }
-        catch(Exception ex){
-            maxLen = INSISConstants.DEFAULT_NSIS_TEXT_LIMIT;
-        }
-        DEFAULT_MAX_LEN = maxLen;
-    }
     /**
      * @param type
      */
@@ -154,7 +140,7 @@ public abstract class InstallOptionsEditableElement extends InstallOptionsWidget
     
     protected int getDefaultMaxLen()
     {
-        return DEFAULT_MAX_LEN;
+        return InstallOptionsModel.MAX_LENGTH.intValue();
     }
 
     public Object getPropertyValue(Object propName)
@@ -215,6 +201,7 @@ public abstract class InstallOptionsEditableElement extends InstallOptionsWidget
             String oldText = mText;
             mText = text;
             firePropertyChange(InstallOptionsModel.PROPERTY_TEXT, oldText, mText);
+            setDirty(true);
         }
     }
     
@@ -229,6 +216,7 @@ public abstract class InstallOptionsEditableElement extends InstallOptionsWidget
             String oldState = mState;
             mState = state;
             firePropertyChange(InstallOptionsModel.PROPERTY_STATE, oldState, mState);
+            setDirty(true);
         }
     }
 
@@ -243,6 +231,7 @@ public abstract class InstallOptionsEditableElement extends InstallOptionsWidget
             String oldMaxLen = mMaxLen;
             mMaxLen = maxLen;
             firePropertyChange(InstallOptionsModel.PROPERTY_MAXLEN, oldMaxLen, mMaxLen);
+            setDirty(true);
         }
     }
     
@@ -257,6 +246,7 @@ public abstract class InstallOptionsEditableElement extends InstallOptionsWidget
             String oldMinLen = mMinLen;
             mMinLen = minLen;
             firePropertyChange(InstallOptionsModel.PROPERTY_MINLEN, oldMinLen, mMinLen);
+            setDirty(true);
         }
     }
     
@@ -271,6 +261,7 @@ public abstract class InstallOptionsEditableElement extends InstallOptionsWidget
             String oldValidateText = mValidateText;
             mValidateText = validateText;
             firePropertyChange(InstallOptionsModel.PROPERTY_VALIDATETEXT, oldValidateText, mValidateText);
+            setDirty(true);
         }
     }
     

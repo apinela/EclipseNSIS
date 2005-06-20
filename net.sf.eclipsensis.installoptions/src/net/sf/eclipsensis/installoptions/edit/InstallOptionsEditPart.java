@@ -12,7 +12,7 @@ package net.sf.eclipsensis.installoptions.edit;
 import java.beans.PropertyChangeListener;
 
 import net.sf.eclipsensis.installoptions.model.InstallOptionsElement;
-import net.sf.eclipsensis.installoptions.model.commands.InstallOptionsCommandStack;
+import net.sf.eclipsensis.installoptions.model.commands.IModelCommandListener;
 
 import org.eclipse.gef.AccessibleEditPart;
 import org.eclipse.gef.EditPolicy;
@@ -33,7 +33,7 @@ public abstract class InstallOptionsEditPart extends AbstractGraphicalEditPart i
 
     protected void createEditPolicies()
     {
-        installEditPolicy(EditPolicy.COMPONENT_ROLE, new InstallOptionsEditPolicy());
+        installEditPolicy(EditPolicy.COMPONENT_ROLE, new InstallOptionsEditPolicy(this));
     }
 
     abstract protected AccessibleEditPart createAccessible();
@@ -65,12 +65,17 @@ public abstract class InstallOptionsEditPart extends AbstractGraphicalEditPart i
     public void addNotify()
     {
         super.addNotify();
-        ((InstallOptionsElement)getModel()).addModelCommandListener(((InstallOptionsCommandStack)getViewer().getEditDomain().getCommandStack()));
+        ((InstallOptionsElement)getModel()).addModelCommandListener(getModelCommandListener());
+    }
+
+    private IModelCommandListener getModelCommandListener()
+    {
+        return (IModelCommandListener)((InstallOptionsEditDomain)getViewer().getEditDomain()).getAdapter(IModelCommandListener.class);
     }
 
     public void removeNotify()
     {
-        ((InstallOptionsElement)getModel()).removeModelCommandListener(((InstallOptionsCommandStack)getViewer().getEditDomain().getCommandStack()));
+        ((InstallOptionsElement)getModel()).removeModelCommandListener(getModelCommandListener());
         super.removeNotify();
     }
 }

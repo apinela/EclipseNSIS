@@ -9,15 +9,34 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.edit.editable;
 
+import net.sf.eclipsensis.installoptions.edit.InstallOptionsDirectEditPolicy;
+import net.sf.eclipsensis.installoptions.edit.InstallOptionsEditDomain;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsEditableElement;
 import net.sf.eclipsensis.installoptions.model.commands.InstallOptionsEditableElementCommand;
 
+import org.eclipse.gef.EditPart;
+import org.eclipse.gef.Request;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.editpolicies.DirectEditPolicy;
 import org.eclipse.gef.requests.DirectEditRequest;
 
-public class EditableElementDirectEditPolicy extends DirectEditPolicy
+public class EditableElementDirectEditPolicy extends InstallOptionsDirectEditPolicy
 {
+    public EditableElementDirectEditPolicy(EditPart editPart)
+    {
+        super(editPart);
+    }
+    
+    public Command getCommand(Request request)
+    {
+        if(((InstallOptionsEditDomain)mEditPart.getViewer().getEditDomain()).isReadOnly()) {
+            return null;
+        }
+        else {
+            return super.getCommand(request);
+        }
+    }
+    
     /**
      * @see DirectEditPolicy#getDirectEditCommand(DirectEditRequest)
      */

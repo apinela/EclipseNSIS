@@ -9,9 +9,12 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.model;
 
+import java.text.MessageFormat;
 import java.util.*;
+import java.util.regex.Pattern;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.settings.INSISPreferenceConstants;
 import net.sf.eclipsensis.settings.NSISPreferences;
 import net.sf.eclipsensis.util.*;
@@ -38,6 +41,17 @@ public class InstallOptionsModel implements IPropertyChangeListener
     public static final String TYPE_DROPLIST = "DropList"; //$NON-NLS-1$
     public static final String TYPE_LISTBOX = "Listbox"; //$NON-NLS-1$
     
+    public static final String SECTION_SETTINGS = "Settings"; //$NON-NLS-1$
+    public static final String SECTION_FIELD_PREFIX = "Field"; //$NON-NLS-1$
+    public static final Pattern SECTION_FIELD_PATTERN = Pattern.compile(SECTION_FIELD_PREFIX+" ([1-9][0-9]*)",Pattern.CASE_INSENSITIVE); //$NON-NLS-1$
+    public static final MessageFormat SECTION_FIELD_FORMAT = new MessageFormat(SECTION_FIELD_PREFIX+" {0}"); //$NON-NLS-1$
+
+    public static final String PROPERTY_TYPE = "Type"; //$NON-NLS-1$
+    public static final String PROPERTY_LEFT = "Left"; //$NON-NLS-1$
+    public static final String PROPERTY_TOP = "Top"; //$NON-NLS-1$
+    public static final String PROPERTY_RIGHT = "Right"; //$NON-NLS-1$
+    public static final String PROPERTY_BOTTOM = "Bottom"; //$NON-NLS-1$
+    public static final String PROPERTY_NUMFIELDS = "NumFields"; //$NON-NLS-1$
     public static final String PROPERTY_POSITION = "Position"; //$NON-NLS-1$
     public static final String PROPERTY_INDEX = "Index"; //$NON-NLS-1$
     public static final String PROPERTY_FLAGS = "Flags"; //$NON-NLS-1$
@@ -46,9 +60,7 @@ public class InstallOptionsModel implements IPropertyChangeListener
     public static final String PROPERTY_MAXLEN = "MaxLen"; //$NON-NLS-1$
     public static final String PROPERTY_MINLEN = "MinLen"; //$NON-NLS-1$
     public static final String PROPERTY_VALIDATETEXT = "ValidateText"; //$NON-NLS-1$
-    public static final String PROPERTY_SIZE = "Size"; //$NON-NLS-1$
     public static final String PROPERTY_CHILDREN = "Children"; //$NON-NLS-1$
-    public static final String PROPERTY_DIALOG_SIZE_VISIBLE = "DialogSizeVisible"; //$NON-NLS-1$
     public static final String PROPERTY_TITLE =  "Title"; //$NON-NLS-1$
     public static final String PROPERTY_CANCEL_ENABLED = "CancelEnabled"; //$NON-NLS-1$
     public static final String PROPERTY_CANCEL_SHOW = "CancelShow"; //$NON-NLS-1$;
@@ -72,6 +84,7 @@ public class InstallOptionsModel implements IPropertyChangeListener
     public static final String FLAGS_VSCROLL = "VSCROLL"; //$NON-NLS-1$
     public static final String FLAGS_READONLY = "READONLY"; //$NON-NLS-1$
     public static final String FLAGS_MULTISELECT = "MULTISELECT"; //$NON-NLS-1$
+    public static final String FLAGS_EXTENDEDSELECT = "EXTENDEDSELCT"; //$NON-NLS-1$
     
     public static final String STATE_UNCHECKED="0"; //$NON-NLS-1$
     public static final String STATE_CHECKED="1"; //$NON-NLS-1$
@@ -79,14 +92,28 @@ public class InstallOptionsModel implements IPropertyChangeListener
     public static final String OPTION_DEFAULT=""; //$NON-NLS-1$
     public static final String OPTION_NO="0"; //$NON-NLS-1$
     public static final String OPTION_YES="1"; //$NON-NLS-1$
-    
+
+    public static final Integer MAX_LENGTH;
+
     private static InstallOptionsModel cInstance = null;
     
     private String[] mControlTypes;
     private String[] mDialogSettings;
-    private HashMap mControlSettings = new HashMap();
-    private HashMap mControlFlags = new HashMap();
-    public static final String PROPERTY_TYPE = "Type"; //$NON-NLS-1$
+    private Map mControlSettings = new CaseInsensitiveMap();
+    private Map mControlFlags = new CaseInsensitiveMap();
+    private String[] mControlRequiredSettings;
+    
+    static {
+        int maxLen;
+        try {
+            maxLen = Integer.parseInt(NSISPreferences.getPreferences().getNSISOption("NSIS_MAX_STRLEN")); //$NON-NLS-1$
+        }
+        catch(Exception ex){
+            maxLen = INSISConstants.DEFAULT_NSIS_TEXT_LIMIT;
+        }
+        MAX_LENGTH = new Integer(maxLen);
+    }
+    
     public static InstallOptionsModel getInstance()
     {
         if(cInstance == null) {
@@ -117,10 +144,11 @@ public class InstallOptionsModel implements IPropertyChangeListener
 
     private void loadModel()
     {
-        ArrayList controlTypes = new ArrayList();
-        ArrayList dialogSettings = new ArrayList();
-        HashMap controlSettings = new HashMap();
-        HashMap controlFlags = new HashMap();
+        List controlRequiredSettings = new ArrayList();
+        List controlTypes = new ArrayList();
+        List dialogSettings = new ArrayList();
+        Map controlSettings = new CaseInsensitiveMap();
+        Map controlFlags = new CaseInsensitiveMap();
         ResourceBundle bundle;
         try {
             bundle = ResourceBundle.getBundle(getClass().getName());
@@ -170,11 +198,14 @@ public class InstallOptionsModel implements IPropertyChangeListener
                     else if(name.equals("Dialog.Control.Types")) { //$NON-NLS-1$
                         list = controlTypes;
                     }
+                    else if(name.equals("Control.Required.Settings")) { //$NON-NLS-1$
+                        list = controlRequiredSettings;
+                    }
                     else {
                         int n = name.indexOf("."); //$NON-NLS-1$
                         if(n > 0) {
                             String type = name.substring(0,n);
-                            HashMap map;
+                            Map map;
                             if(name.endsWith(".Settings")) { //$NON-NLS-1$
                                 map = controlSettings;
                             }
@@ -201,10 +232,12 @@ public class InstallOptionsModel implements IPropertyChangeListener
         }
         mControlTypes = (String[])controlTypes.toArray(Common.EMPTY_STRING_ARRAY);
         mDialogSettings = (String[])dialogSettings.toArray(Common.EMPTY_STRING_ARRAY);
+        mControlRequiredSettings = (String[])controlRequiredSettings.toArray(Common.EMPTY_STRING_ARRAY);
         mControlSettings.clear();
         for(Iterator iter=controlSettings.keySet().iterator(); iter.hasNext(); ) {
             Object key = iter.next();
             List list = (List)controlSettings.get(key);
+            list.addAll(0,controlRequiredSettings);
             mControlSettings.put(key,list.toArray(Common.EMPTY_STRING_ARRAY));
         }
         mControlFlags.clear();
@@ -252,6 +285,11 @@ public class InstallOptionsModel implements IPropertyChangeListener
     {
         String[] flags = (String[])mControlSettings.get(type);
         return(flags == null?Common.EMPTY_STRING_ARRAY:flags);
+    }
+    
+    public String[] getControlRequiredSettings()
+    {
+        return mControlRequiredSettings;
     }
     
     public String[] getControlTypes()

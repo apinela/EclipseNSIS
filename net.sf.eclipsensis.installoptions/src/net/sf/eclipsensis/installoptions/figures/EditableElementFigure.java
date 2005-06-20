@@ -9,23 +9,32 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.figures;
 
-import org.eclipse.gef.GraphicalEditPart;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
+
+import org.eclipse.draw2d.FigureCanvas;
+import org.eclipse.ui.views.properties.IPropertySource;
 
 public abstract class EditableElementFigure extends SWTControlFigure implements IEditableElementFigure
 {
-    protected String mState = ""; //$NON-NLS-1$
+    protected String mState;
 
     /**
      * @param editPart
      */
-    public EditableElementFigure(GraphicalEditPart editPart)
+    public EditableElementFigure(FigureCanvas canvas, IPropertySource propertySource)
     {
-        super(editPart);
+        super(canvas, propertySource);
     }
     
+    protected void init(IPropertySource propertySource)
+    {
+        setState((String)propertySource.getPropertyValue(InstallOptionsModel.PROPERTY_STATE));
+        super.init(propertySource);
+   }
+
     public String getState()
     {
-        return mState;
+        return mState==null?"":mState; //$NON-NLS-1$
     }
     
     public void setState(String state) 

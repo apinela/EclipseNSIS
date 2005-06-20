@@ -37,7 +37,7 @@ import org.eclipse.ui.views.properties.PropertyDescriptor;
 
 public class InstallOptionsListbox extends InstallOptionsCombobox
 {
-    private static Image LISTBOX_ICON = InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("listbox.type.small.icon")); //$NON-NLS-1$
+    public static Image LISTBOX_ICON = InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("listbox.type.small.icon")); //$NON-NLS-1$
     
     public InstallOptionsListbox()
     {
@@ -69,7 +69,8 @@ public class InstallOptionsListbox extends InstallOptionsCombobox
 
     public void setFlags(List flags)
     {
-        if(!flags.contains(InstallOptionsModel.FLAGS_MULTISELECT)) {
+        if(!flags.contains(InstallOptionsModel.FLAGS_MULTISELECT)&&
+           !flags.contains(InstallOptionsModel.FLAGS_EXTENDEDSELECT)) {
             String state = getState();
             int n = state.indexOf(IInstallOptionsConstants.LIST_SEPARATOR);
             if(n >= 0) {
@@ -118,7 +119,9 @@ public class InstallOptionsListbox extends InstallOptionsCombobox
                 setListItems((List)evt.getNewValue());
             }
             else if(evt.getPropertyName().equals(InstallOptionsModel.PROPERTY_FLAGS)) {
-                setMultiSelect(((List)evt.getNewValue()).contains(InstallOptionsModel.FLAGS_MULTISELECT));
+                List list = (List)evt.getNewValue();
+                setMultiSelect(list.contains(InstallOptionsModel.FLAGS_MULTISELECT)||
+                               list.contains(InstallOptionsModel.FLAGS_EXTENDEDSELECT));
             }
         }
 
@@ -139,7 +142,9 @@ public class InstallOptionsListbox extends InstallOptionsCombobox
         public CellEditor createPropertyEditor(Composite parent)
         {
             if(mEditor == null) {
-                mEditor = new SelectListItemsCellEditor(parent,getListItems(),getFlags().contains(InstallOptionsModel.FLAGS_MULTISELECT));
+                mEditor = new SelectListItemsCellEditor(parent,getListItems(),
+                        (getFlags().contains(InstallOptionsModel.FLAGS_MULTISELECT)||
+                         getFlags().contains(InstallOptionsModel.FLAGS_EXTENDEDSELECT)));
                 ICellEditorValidator validator = getValidator();
                 if(validator != null) {
                     mEditor.setValidator(validator);
@@ -280,7 +285,7 @@ public class InstallOptionsListbox extends InstallOptionsCombobox
             if(validator != null) {
                 String error = validator.isValid(getSelection());
                 if(!Common.isEmpty(error)) {
-                    MessageDialog.openError(getShell(),EclipseNSISPlugin.getResourceString("error.title"),error);
+                    MessageDialog.openError(getShell(),EclipseNSISPlugin.getResourceString("error.title"),error); //$NON-NLS-1$
                     return;
                 }
             }

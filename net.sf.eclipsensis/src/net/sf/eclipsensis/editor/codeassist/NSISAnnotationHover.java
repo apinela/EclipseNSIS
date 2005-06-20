@@ -27,12 +27,20 @@ import org.eclipse.ui.texteditor.MarkerAnnotation;
  */
 public class NSISAnnotationHover implements IAnnotationHover, INSISConstants, IAnnotationHoverExtension
 {
+    private String[] mAnnotationTypes;
+    
     private IInformationControlCreator mHoverControlCreator = new IInformationControlCreator(){
         public IInformationControl createInformationControl(Shell parent)
         {
             return new DefaultInformationControl(parent);
         }
     };
+    
+    public NSISAnnotationHover(String[] annotationTypes)
+    {
+        super();
+        mAnnotationTypes = annotationTypes;
+    }
     
 	/* (non-Javadoc)
 	 * Method declared on IAnnotationHover
@@ -53,10 +61,13 @@ public class NSISAnnotationHover implements IAnnotationHover, INSISConstants, IA
                         if(a instanceof MarkerAnnotation) {
                             IMarker marker = ((MarkerAnnotation)a).getMarker();
                             String type = marker.getType();
-                            if(type.equals(PROBLEM_MARKER_ID) || type.equals(TASK_MARKER_ID)) {
-                                String msg= a.getText();
-                                if (!Common.isEmpty(msg)) {
-                                    messages.add(msg);
+                            for (int i = 0; i < mAnnotationTypes.length; i++) {
+                                if(type.equals(mAnnotationTypes[i])) {
+                                    String msg= a.getText();
+                                    if (!Common.isEmpty(msg)) {
+                                        messages.add(msg);
+                                    }
+                                    break;
                                 }
                             }
                         }

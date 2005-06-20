@@ -24,22 +24,35 @@ public class PositionPropertySource implements IPropertySource
     public static String ID_RIGHT = "right"; //$NON-NLS-1$
     public static String ID_BOTTOM = "bottom";//$NON-NLS-1$
 
+    private static ICellEditorValidator cValidator = new ICellEditorValidator(){
+        public String isValid(Object value)
+        {
+            try {
+                int val = Integer.parseInt((String)value);
+                return null;
+            }
+            catch (NumberFormatException nfe){
+                return InstallOptionsPlugin.getResourceString("number.error.message"); //$NON-NLS-1$
+            }
+        }
+    };
+    
     private IPropertyDescriptor[] mDescriptors;
 
     private void createDescriptors()
     {
         PropertyDescriptor leftProp = new TextPropertyDescriptor(ID_LEFT,
                 InstallOptionsPlugin.getResourceString("left.property.name")); //$NON-NLS-1$ //$NON-NLS-2$
-        leftProp.setValidator(new PositionCellEditorValidator(ID_LEFT));
+        leftProp.setValidator(cValidator);
         PropertyDescriptor topProp = new TextPropertyDescriptor(ID_TOP,
                 InstallOptionsPlugin.getResourceString("top.property.name")); //$NON-NLS-1$ //$NON-NLS-2$
-        topProp.setValidator(new PositionCellEditorValidator(ID_TOP));
+        topProp.setValidator(cValidator);
         PropertyDescriptor rightProp = new TextPropertyDescriptor(ID_RIGHT,
                 InstallOptionsPlugin.getResourceString("right.property.name")); //$NON-NLS-1$ //$NON-NLS-2$
-        rightProp.setValidator(new PositionCellEditorValidator(ID_RIGHT));
+        rightProp.setValidator(cValidator);
         PropertyDescriptor bottomProp = new TextPropertyDescriptor(ID_BOTTOM,
                 InstallOptionsPlugin.getResourceString("bottom.property.name")); //$NON-NLS-1$ //$NON-NLS-2$
-        bottomProp.setValidator(new PositionCellEditorValidator(ID_BOTTOM));
+        bottomProp.setValidator(cValidator);
         mDescriptors = new IPropertyDescriptor[]{new CustomPropertyDescriptor(leftProp,0), 
                                                  new CustomPropertyDescriptor(topProp,1), 
                                                  new CustomPropertyDescriptor(rightProp,2),
@@ -135,50 +148,5 @@ public class PositionPropertySource implements IPropertySource
         return new StringBuffer("(").append(mPosition.left).append(",").append( //$NON-NLS-1$ //$NON-NLS-2$
             mPosition.top).append(",").append(mPosition.right).append(",").append( //$NON-NLS-1$ //$NON-NLS-2$
             mPosition.bottom).append(")").toString(); //$NON-NLS-1$
-    }
-    
-    private class PositionCellEditorValidator implements ICellEditorValidator
-    {
-        private String mId;
-        
-        public PositionCellEditorValidator(String id)
-        {
-            mId = id;
-        }
-
-        /* (non-Javadoc)
-         * @see org.eclipse.jface.viewers.ICellEditorValidator#isValid(java.lang.Object)
-         */
-        public String isValid(Object value)
-        {
-            try {
-                int val = Integer.parseInt((String)value);
-                Position pos = mPosition.getCopy();
-                if(mId.equals(ID_LEFT)) {
-                    pos.left = val;
-                }
-                else if(mId.equals(ID_TOP)) {
-                    pos.top = val;
-                }
-                else if(mId.equals(ID_RIGHT)) {
-                    pos.right = val;
-                }
-                else if(mId.equals(ID_BOTTOM)) {
-                    pos.bottom = val;
-                }
-                pos = mWidget.toGraphical(pos);
-                if(pos.left > pos.right) {
-                    return InstallOptionsPlugin.getResourceString("position.horizontal.error.message"); //$NON-NLS-1$
-                }
-                else if(pos.top > pos.bottom) {
-                    return InstallOptionsPlugin.getResourceString("position.vertical.error.message"); //$NON-NLS-1$
-                }
-                return null;
-            }
-            catch (NumberFormatException nfe){
-                return InstallOptionsPlugin.getResourceString("number.error.message"); //$NON-NLS-1$
-            }
-        }
-        
     }
 }

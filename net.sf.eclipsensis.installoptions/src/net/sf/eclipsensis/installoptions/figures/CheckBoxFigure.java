@@ -9,20 +9,32 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.figures;
 
+import java.util.List;
+
+import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
 import net.sf.eclipsensis.util.WinAPI;
 
-import org.eclipse.gef.GraphicalEditPart;
+import org.eclipse.draw2d.FigureCanvas;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.views.properties.IPropertySource;
 
 public class CheckBoxFigure extends ButtonFigure
 {
-    protected boolean mState = false;
-    protected boolean mLeftText = false;
+    protected boolean mState;
+    protected boolean mLeftText;
 
-    public CheckBoxFigure(GraphicalEditPart editPart)
+    public CheckBoxFigure(FigureCanvas canvas, IPropertySource propertySource)
     {
-        super(editPart);
+        super(canvas, propertySource);
+    }
+    
+    protected void init(IPropertySource propertySource)
+    {
+        List flags = (List)propertySource.getPropertyValue(InstallOptionsModel.PROPERTY_FLAGS);
+        setLeftText(flags != null && flags.contains(InstallOptionsModel.FLAGS_RIGHT));
+        setState(InstallOptionsModel.STATE_CHECKED.equals(propertySource.getPropertyValue(InstallOptionsModel.PROPERTY_STATE)));
+        super.init(propertySource);
     }
     
     public void setState(boolean state)

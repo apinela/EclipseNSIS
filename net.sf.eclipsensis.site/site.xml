@@ -5,16 +5,20 @@
       Update site for EclipseNSIS.
    </description>
    <feature url="features/net.sf.eclipsensis_0.0.1.jar" id="net.sf.eclipsensis" version="0.0.1" os="win32" ws="win32" arch="x86">
-      <category name="net.sf.eclipsensis"/>
+      <category name="net.sf.eclipsensis.archive"/>
    </feature>
    <feature url="features/net.sf.eclipsensis_0.2.0.jar" id="net.sf.eclipsensis" version="0.2.0" os="win32" ws="win32" arch="x86">
-      <category name="net.sf.eclipsensis"/>
+      <category name="net.sf.eclipsensis.archive"/>
    </feature>
    <feature url="features/net.sf.eclipsensis_0.5.0.jar" id="net.sf.eclipsensis" version="0.5.0" os="win32" ws="win32" arch="x86">
-      <category name="net.sf.eclipsensis"/>
+      <category name="net.sf.eclipsensis.archive"/>
    </feature>
    <feature url="features/net.sf.eclipsensis_0.5.1.jar" id="net.sf.eclipsensis" version="0.5.1" os="win32" ws="win32" arch="x86">
-      <category name="net.sf.eclipsensis"/>
+      <category name="net.sf.eclipsensis.archive"/>
    </feature>
-   <category-def name="net.sf.eclipsensis" label="Releases of EclipseNSIS"/>
+   <feature url="features/net.sf.eclipsensis_0.5.2.jar" id="net.sf.eclipsensis" version="0.5.2" os="win32" ws="win32" arch="x86">
+      <category name="net.sf.eclipsensis.current"/>
+   </feature>
+   <category-def name="net.sf.eclipsensis.archive" label="Archived Releases"/>
+   <category-def name="net.sf.eclipsensis.current" label="Current Release"/>
 </site>

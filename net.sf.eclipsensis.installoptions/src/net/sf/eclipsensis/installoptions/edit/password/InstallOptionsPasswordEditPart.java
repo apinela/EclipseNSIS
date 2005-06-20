@@ -14,6 +14,8 @@ import net.sf.eclipsensis.installoptions.edit.text.InstallOptionsTextEditPart;
 import net.sf.eclipsensis.installoptions.figures.IInstallOptionsFigure;
 import net.sf.eclipsensis.installoptions.figures.PasswordFigure;
 
+import org.eclipse.draw2d.FigureCanvas;
+
 public class InstallOptionsPasswordEditPart extends InstallOptionsTextEditPart
 {
     protected String getDirectEditLabelProperty()
@@ -23,7 +25,7 @@ public class InstallOptionsPasswordEditPart extends InstallOptionsTextEditPart
 
     protected IInstallOptionsFigure createInstallOptionsFigure() 
     {
-        return new PasswordFigure(this);
+        return new PasswordFigure((FigureCanvas)this.getViewer().getControl(), getInstallOptionsWidget());
     }
 
     /**

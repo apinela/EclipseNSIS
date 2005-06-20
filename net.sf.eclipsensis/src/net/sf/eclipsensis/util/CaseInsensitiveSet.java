@@ -193,4 +193,12 @@ public class CaseInsensitiveSet implements Set, Serializable
     {
         return mSet.toArray(a);
     }
+    
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    public String toString()
+    {
+        return mSet.toString();
+    }
 }

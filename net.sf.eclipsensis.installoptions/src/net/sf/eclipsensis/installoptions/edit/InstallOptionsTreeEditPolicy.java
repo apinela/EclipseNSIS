@@ -17,11 +17,25 @@ import org.eclipse.gef.editpolicies.AbstractEditPolicy;
 
 public class InstallOptionsTreeEditPolicy extends AbstractEditPolicy
 {
-    public Command getCommand(Request req){
-        if (REQ_MOVE.equals(req.getType())) {
-            return getMoveCommand(req);
+    private EditPart mEditPart;
+    
+    public InstallOptionsTreeEditPolicy(EditPart editPart)
+    {
+        super();
+        mEditPart = editPart;
+    }
+    
+    public Command getCommand(Request req)
+    {
+        if(((InstallOptionsEditDomain)mEditPart.getViewer().getEditDomain()).isReadOnly()) {
+            return null;
         }
-        return null;    
+        else {
+            if (REQ_MOVE.equals(req.getType())) {
+                return getMoveCommand(req);
+            }
+            return null;
+        }
     }
 
     protected Command getMoveCommand(Request req){

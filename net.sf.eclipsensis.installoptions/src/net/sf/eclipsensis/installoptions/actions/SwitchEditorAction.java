@@ -11,11 +11,11 @@ package net.sf.eclipsensis.installoptions.actions;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.editor.IInstallOptionsEditor;
-import net.sf.eclipsensis.installoptions.editor.InstallOptionsEditorInput;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.text.IDocument;
 import org.eclipse.ui.*;
+import org.eclipse.ui.ide.IDE;
 
 public class SwitchEditorAction extends Action
 {
@@ -36,27 +36,27 @@ public class SwitchEditorAction extends Action
     {
         return ID;
     }
-    
+
     public void run() {
-        IWorkbenchPage page = mEditor.getSite().getPage();
-        IEditorInput input = mEditor.getEditorInput();
-        //TODO REMOVE BELOW
-        IDocument document = ((InstallOptionsEditorInput)input).getDocumentProvider().getDocument(input);
-        if(document != null) {
-            char[] buf = new char[1024];
-            for (int i = 0; i < buf.length; i++) {
-                buf[i] = (char)(32 + (int)Math.rint(Math.random()*94));
+        if(mEditor.canSwitch()) {
+            IWorkbenchPage page = mEditor.getSite().getPage();
+            IEditorInput input = mEditor.getEditorInput();
+            mEditor.prepareForSwitch();
+            page.closeEditor(mEditor,false);
+            try {
+                page.openEditor(input,mSwitchToEditorId);
+                if(input instanceof IFileEditorInput) {
+                    try {
+                        ((IFileEditorInput)input).getFile().setPersistentProperty(IDE.EDITOR_KEY,mSwitchToEditorId);
+                    }
+                    catch (CoreException e1) {
+                        e1.printStackTrace();
+                    }
+                }
             }
-            document.set(new String(buf));
-        }
-        //REMOVE ABOVE
-        mEditor.setSwitching(true);
-        page.closeEditor(mEditor,false);
-        try {
-            page.openEditor(input,mSwitchToEditorId);
-        }
-        catch (PartInitException e) {
-            e.printStackTrace();
+            catch (PartInitException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

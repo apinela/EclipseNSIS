@@ -15,6 +15,6 @@ import org.eclipse.ui.IEditorPart;
 
 public interface IInstallOptionsEditor extends IEditorPart, IInstallOptionsConstants
 {
-    public boolean isSwitching();
-    public void setSwitching(boolean switching);
+    public boolean canSwitch();
+    public void prepareForSwitch();
 }

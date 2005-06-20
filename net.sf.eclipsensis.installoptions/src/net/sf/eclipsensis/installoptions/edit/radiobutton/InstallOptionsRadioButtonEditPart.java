@@ -14,6 +14,8 @@ import net.sf.eclipsensis.installoptions.edit.checkbox.InstallOptionsCheckBoxEdi
 import net.sf.eclipsensis.installoptions.figures.IInstallOptionsFigure;
 import net.sf.eclipsensis.installoptions.figures.RadioButtonFigure;
 
+import org.eclipse.draw2d.FigureCanvas;
+
 public class InstallOptionsRadioButtonEditPart extends InstallOptionsCheckBoxEditPart
 {
     protected String getDirectEditLabelProperty()
@@ -28,7 +30,7 @@ public class InstallOptionsRadioButtonEditPart extends InstallOptionsCheckBoxEdi
 
     protected IInstallOptionsFigure createInstallOptionsFigure()
     {
-        return new RadioButtonFigure(this);
+        return new RadioButtonFigure((FigureCanvas)this.getViewer().getControl(), getInstallOptionsWidget());
     }
 
     protected String getTypeName()

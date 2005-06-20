@@ -23,7 +23,7 @@ public class ToggleStateCommand extends Command
     public ToggleStateCommand(InstallOptionsCheckBox model, String state) 
     {
         mModel = model;
-        setLabel(InstallOptionsPlugin.getFormattedString("toggle.state.command.label", new Object[]{mModel.getType()}));
+        setLabel(InstallOptionsPlugin.getFormattedString("toggle.state.command.label", new Object[]{mModel.getType()})); //$NON-NLS-1$
         if (state != null) {
             mNewState = state;
         }

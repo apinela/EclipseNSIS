@@ -14,6 +14,7 @@ import net.sf.eclipsensis.installoptions.edit.editable.InstallOptionsEditableEle
 import net.sf.eclipsensis.installoptions.figures.IInstallOptionsFigure;
 import net.sf.eclipsensis.installoptions.figures.PathRequestFigure;
 
+import org.eclipse.draw2d.FigureCanvas;
 import org.eclipse.gef.tools.CellEditorLocator;
 import org.eclipse.gef.tools.DirectEditManager;
 
@@ -21,7 +22,7 @@ public abstract class InstallOptionsPathRequestEditPart extends InstallOptionsEd
 {
     protected IInstallOptionsFigure createInstallOptionsFigure() 
     {
-        return new PathRequestFigure(this);
+        return new PathRequestFigure((FigureCanvas)this.getViewer().getControl(), getInstallOptionsWidget());
     }
 
     protected DirectEditManager creatDirectEditManager(InstallOptionsWidgetEditPart part, Class clasz, CellEditorLocator locator)

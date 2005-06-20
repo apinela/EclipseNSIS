@@ -3,5 +3,5 @@
       autobuild="false"
       scrub-output="false"
       use-console="true">
-   <feature id="net.sf.eclipsensis" version="0.5.1"/>
+   <feature id="net.sf.eclipsensis" version="0.5.2"/>
 </site-build>

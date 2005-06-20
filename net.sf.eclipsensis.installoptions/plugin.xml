@@ -31,7 +31,7 @@
             icon="%installoptions.design.editor.icon"
             class="net.sf.eclipsensis.installoptions.editor.InstallOptionsDesignEditor"
             contributorClass="net.sf.eclipsensis.installoptions.actions.InstallOptionsDesignActionContributor"
-            id="%installoptions.design.editor.id">
+            id="net.sf.eclipsensis.installoptions.editor.InstallOptionsDesignEditor">
       </editor>
       <editor
             default="false"
@@ -40,8 +40,33 @@
             icon="%installoptions.source.editor.icon"
             class="net.sf.eclipsensis.installoptions.editor.InstallOptionsSourceEditor"
             contributorClass="net.sf.eclipsensis.installoptions.actions.InstallOptionsSourceActionContributor"
-            id="%installoptions.source.editor.id">
+            id="net.sf.eclipsensis.installoptions.editor.InstallOptionsSourceEditor">
       </editor>
+   </extension>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <wizard
+            name="%installoptions.wizard.name"
+            icon="%installoptions.wizard.icon"
+            category="net.sf.eclipsensis"
+            class="net.sf.eclipsensis.installoptions.wizard.InstallOptionsWizard"
+            id="net.sf.eclipsensis.installoptions.wizard.InstallOptionsWizard">
+         <description>
+            %installoptions.wizard.desc
+         </description>
+         <selection
+               class="org.eclipse.core.resources.IResource">
+         </selection>
+      </wizard>
+   </extension>
+   <extension
+        id="net.sf.eclipsensis.installoptions.editor.InstallOptionsDocumentSetupParticipant"
+        name="%document.setup.participant.name"
+        point="org.eclipse.core.filebuffers.documentSetup">
+        <participant
+            extensions="%ini.extensions"
+            class="net.sf.eclipsensis.installoptions.editor.InstallOptionsDocumentSetupParticipant">
+        </participant>
    </extension>
    <extension
          point="org.eclipse.ui.preferencePages">
@@ -49,7 +74,23 @@
             name="%installoptions.preference.page.name"
             category="net.sf.eclipsensis.dialogs.NSISPreferencePage"
             class="net.sf.eclipsensis.installoptions.dialogs.InstallOptionsPreferencePage"
-            id="%installoptions.preference.page.id">
+            id="net.sf.eclipsensis.installoptions.dialogs.InstallOptionsPreferencePage">
       </page>
+   </extension>
+   <extension
+         id="InstallOptionsProblem"
+         name="%installoptions.error.annotation.name"
+         point="org.eclipse.core.resources.markers">
+      <super type="org.eclipse.core.resources.problemmarker"/>
+      <persistent value="true" />
+   </extension>
+   <extension
+        point="org.eclipse.ui.editors.annotationTypes">
+        <type
+            name="%installoptions.error.annotation.name"
+            super="org.eclipse.ui.workbench.texteditor.error"
+            markerType="net.sf.eclipsensis.installoptions.InstallOptionsProblem"
+            markerSeverity="2">
+        </type>
    </extension>
 </plugin>

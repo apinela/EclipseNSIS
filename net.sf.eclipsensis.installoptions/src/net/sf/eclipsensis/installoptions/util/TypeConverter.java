@@ -9,12 +9,20 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.util;
 
+import java.lang.reflect.Method;
+import java.util.*;
+
+import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
+import net.sf.eclipsensis.util.ColorManager;
+import net.sf.eclipsensis.util.Common;
+
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
+import org.eclipse.swt.graphics.RGB;
 
 public abstract class TypeConverter
 {
-    private TypeConverter()
+    public TypeConverter()
     {
     }
     
@@ -80,6 +88,98 @@ public abstract class TypeConverter
         public Object makeCopy(Object o)
         {
             return (Boolean)o;
+        }
+    };
+    
+    public static final TypeConverter RGB_CONVERTER = new TypeConverter() {
+        public String asString(Object o)
+        {
+            StringBuffer buf = new StringBuffer("0x"); //$NON-NLS-1$
+            RGB rgb = (RGB)o;
+            buf.append(ColorManager.rgbToHex(rgb));
+            return buf.toString();
+        }
+        
+        public Object asType(String s)
+        {
+            if(s != null && s.startsWith("0x") && s.length()==8) { //$NON-NLS-1$
+                RGB rgb = ColorManager.hexToRGB(s.substring(2));
+                if( (rgb.red >= 0 && rgb.red <= 255) &&
+                    (rgb.green >= 0 && rgb.green <= 255) &&
+                    (rgb.blue >= 0 && rgb.blue <= 255)) {
+                    return rgb;
+                 }
+
+            }
+            return null;
+        }
+
+        public Object makeCopy(Object o)
+        {
+            RGB rgb = (RGB)o;
+            return new RGB(rgb.red,rgb.green,rgb.blue);
+        }
+    };
+    
+
+    public static final TypeConverter INTEGER_CONVERTER = new TypeConverter() {
+        public String asString(Object o)
+        {
+            return ((Integer)o).toString();
+        }
+        
+        public Object asType(String s)
+        {
+            return (Common.isEmpty(s)?null:Integer.valueOf(s));
+        }
+
+        public Object makeCopy(Object o)
+        {
+            return (Integer)o;
+        }
+    };
+    
+    public static final TypeConverter STRING_ARRAY_CONVERTER = new TypeConverter() {
+        public String asString(Object o)
+        {
+            return Common.flatten((String[])o,IInstallOptionsConstants.LIST_SEPARATOR);
+        }
+        
+        public Object asType(String s)
+        {
+            return Common.tokenize(s,IInstallOptionsConstants.LIST_SEPARATOR);
+        }
+
+        public Object makeCopy(Object o)
+        {
+            return (String[])((String[])o).clone();
+        }
+    };
+    
+    
+    public static final TypeConverter STRING_LIST_CONVERTER = new TypeConverter() {
+        public String asString(Object o)
+        {
+            return Common.flatten((String[])((List)o).toArray(Common.EMPTY_STRING_ARRAY),IInstallOptionsConstants.LIST_SEPARATOR);
+        }
+        
+        public Object asType(String s)
+        {
+            return new ArrayList(Arrays.asList(Common.tokenize(s,IInstallOptionsConstants.LIST_SEPARATOR)));
+        }
+
+        public Object makeCopy(Object o)
+        {
+            if(o instanceof Cloneable) {
+                try {
+                    Method method = o.getClass().getMethod("clone",null); //$NON-NLS-1$
+                    return method.invoke(o,null);
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            return (List)(new ArrayList((List)o)).clone();
         }
     };
     

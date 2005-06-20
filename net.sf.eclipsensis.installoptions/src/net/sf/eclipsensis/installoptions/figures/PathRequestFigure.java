@@ -9,12 +9,15 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.figures;
 
-import org.eclipse.draw2d.Figure;
-import org.eclipse.draw2d.XYLayout;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsWidget;
+import net.sf.eclipsensis.installoptions.properties.PropertySourceWrapper;
+
+import org.eclipse.draw2d.*;
 import org.eclipse.draw2d.geometry.Rectangle;
-import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.views.properties.IPropertySource;
 
 public class PathRequestFigure extends Figure implements IEditableElementFigure
 {
@@ -22,7 +25,7 @@ public class PathRequestFigure extends Figure implements IEditableElementFigure
     public static final int BROWSE_BUTTON_WIDTH;
     public static final int SPACING;
 
-    private GraphicalEditPart mEditPart;
+    private FigureCanvas mCanvas;
     private TextFigure mTextFigure;
     private ButtonFigure mButtonFigure;
     
@@ -35,14 +38,37 @@ public class PathRequestFigure extends Figure implements IEditableElementFigure
     /**
      * 
      */
-    public PathRequestFigure(GraphicalEditPart editPart)
+    public PathRequestFigure(FigureCanvas canvas, IPropertySource propertySource)
     {
         super();
-        mEditPart = editPart;
+        mCanvas = canvas;
         setLayoutManager(new XYLayout());
-        mTextFigure = new TextFigure(mEditPart);
-        mButtonFigure = new ButtonFigure(mEditPart);
-        mButtonFigure.setText(BROWSE_BUTTON_TEXT);
+        final Rectangle[] newBounds = calculateBounds((Rectangle)propertySource.getPropertyValue(InstallOptionsWidget.PROPERTY_BOUNDS));
+        mTextFigure = new TextFigure(canvas, new PropertySourceWrapper(propertySource){
+                public Object getPropertyValue(Object id)
+                {
+                    if(InstallOptionsWidget.PROPERTY_BOUNDS.equals(id)) {
+                        return newBounds[0];
+                    }
+                    else {
+                        return super.getPropertyValue(id);
+                    }
+                }
+            });
+        mButtonFigure = new ButtonFigure(canvas, new PropertySourceWrapper(propertySource){
+            public Object getPropertyValue(Object id)
+            {
+                if(InstallOptionsWidget.PROPERTY_BOUNDS.equals(id)) {
+                    return newBounds[1];
+                }
+                else if( InstallOptionsModel.PROPERTY_TEXT.equals(id)) {
+                    return BROWSE_BUTTON_TEXT;
+                }
+                else {
+                    return super.getPropertyValue(id);
+                }
+            }
+        });
         add(mTextFigure);
         add(mButtonFigure);
     }
@@ -80,12 +106,18 @@ public class PathRequestFigure extends Figure implements IEditableElementFigure
         mButtonFigure.refresh();
     }
 
+    private Rectangle[] calculateBounds(Rectangle rect)
+    {
+        return new Rectangle[]{new Rectangle(0,0,Math.max(0,rect.width-(BROWSE_BUTTON_WIDTH+SPACING)),rect.height),
+                               new Rectangle(Math.max(0,rect.width-BROWSE_BUTTON_WIDTH),0,Math.min(rect.width,BROWSE_BUTTON_WIDTH),rect.height)};
+        
+    }
+
     public void setBounds(Rectangle rect)
     {
-        Rectangle rect1 = new Rectangle(0,0,Math.max(0,rect.width-(BROWSE_BUTTON_WIDTH+SPACING)),rect.height);
-        getLayoutManager().setConstraint(mTextFigure,rect1);
-        Rectangle rect2 = new Rectangle(Math.max(0,rect.width-BROWSE_BUTTON_WIDTH),0,Math.min(rect.width,BROWSE_BUTTON_WIDTH),rect.height);
-        getLayoutManager().setConstraint(mButtonFigure,rect2);
+        Rectangle[] newBounds = calculateBounds(rect);
+        getLayoutManager().setConstraint(mTextFigure,newBounds[0]);
+        getLayoutManager().setConstraint(mButtonFigure,newBounds[1]);
         super.setBounds(rect);
     }
 

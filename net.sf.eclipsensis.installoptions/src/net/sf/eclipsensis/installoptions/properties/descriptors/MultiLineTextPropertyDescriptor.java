@@ -10,11 +10,10 @@
 package net.sf.eclipsensis.installoptions.properties.descriptors;
 
 import java.beans.*;
+import java.util.List;
 
 import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
 import net.sf.eclipsensis.installoptions.properties.editors.MultiLineTextCellEditor;
-
-import java.util.List;
 
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.ListenerList;
@@ -25,7 +24,7 @@ import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 
 public class MultiLineTextPropertyDescriptor extends TextPropertyDescriptor implements PropertyChangeListener
 {
-    private static final String PROPERTY_LABEL_PROVIDER="LabelProvider";
+    private static final String PROPERTY_LABEL_PROVIDER="LabelProvider"; //$NON-NLS-1$
 
     private boolean mMultiLine = true;
     private boolean mOnlyNumbers = false;
@@ -252,7 +251,7 @@ public class MultiLineTextPropertyDescriptor extends TextPropertyDescriptor impl
                 }
             }
             Object value = getValue();
-            mDelegate.setValue(value==null?"":value);
+            mDelegate.setValue(value==null?"":value); //$NON-NLS-1$
         }
 
         public void activate()
@@ -469,7 +468,7 @@ public class MultiLineTextPropertyDescriptor extends TextPropertyDescriptor impl
                 mValue = mDelegate.getValue();
 
             if(mValue == null)
-                mValue = "";
+                mValue = ""; //$NON-NLS-1$
             return mValue;
         }
 
@@ -479,7 +478,7 @@ public class MultiLineTextPropertyDescriptor extends TextPropertyDescriptor impl
         protected void doSetValue(Object value)
         {
             if(value == null) {
-                value = "";
+                value = ""; //$NON-NLS-1$
             }
             mValue = value;
             if(mDelegate != null)

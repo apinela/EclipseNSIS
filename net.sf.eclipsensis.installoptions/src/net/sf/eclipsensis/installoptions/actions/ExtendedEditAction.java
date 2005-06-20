@@ -18,7 +18,7 @@ import org.eclipse.ui.IWorkbenchPart;
 
 public class ExtendedEditAction extends SelectionAction
 {
-    public static final String ID = "net.sf.eclipsensis.installoptions.extended_edit";
+    public static final String ID = "net.sf.eclipsensis.installoptions.extended_edit"; //$NON-NLS-1$
     private ExtendedEditRequest mRequest = new ExtendedEditRequest();
 
     public ExtendedEditAction(IWorkbenchPart part) {

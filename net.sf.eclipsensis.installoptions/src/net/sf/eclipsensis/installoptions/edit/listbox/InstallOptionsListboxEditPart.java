@@ -16,6 +16,7 @@ import net.sf.eclipsensis.installoptions.figures.IInstallOptionsFigure;
 import net.sf.eclipsensis.installoptions.figures.ListFigure;
 import net.sf.eclipsensis.installoptions.properties.editors.ListCellEditor;
 
+import org.eclipse.draw2d.FigureCanvas;
 import org.eclipse.gef.tools.CellEditorLocator;
 import org.eclipse.gef.tools.DirectEditManager;
 
@@ -33,7 +34,7 @@ public class InstallOptionsListboxEditPart extends InstallOptionsComboboxEditPar
 
     protected IInstallOptionsFigure createInstallOptionsFigure() 
     {
-        return new ListFigure(this);
+        return new ListFigure((FigureCanvas)this.getViewer().getControl(), getInstallOptionsWidget());
     }
     
     /**

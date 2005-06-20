@@ -9,19 +9,19 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.editor;
 
-import java.io.*;
 import java.util.*;
 import java.util.List;
 
+import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.actions.*;
 import net.sf.eclipsensis.installoptions.dialogs.GridSnapGlueSettingsDialog;
-import net.sf.eclipsensis.installoptions.dnd.InstallOptionsTemplateTransferDropTargetListener;
+import net.sf.eclipsensis.installoptions.dnd.*;
 import net.sf.eclipsensis.installoptions.edit.*;
+import net.sf.eclipsensis.installoptions.ini.INIFile;
 import net.sf.eclipsensis.installoptions.model.DialogSizeManager;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsDialog;
-import net.sf.eclipsensis.installoptions.model.commands.InstallOptionsCommandStack;
 import net.sf.eclipsensis.installoptions.properties.CustomPropertySheetEntry;
 import net.sf.eclipsensis.installoptions.rulers.*;
 import net.sf.eclipsensis.installoptions.util.TypeConverter;
@@ -49,10 +49,10 @@ import org.eclipse.gef.ui.stackview.CommandStackInspectorPage;
 import org.eclipse.gef.ui.views.palette.PalettePage;
 import org.eclipse.gef.ui.views.palette.PaletteViewerPage;
 import org.eclipse.jface.action.*;
-import org.eclipse.jface.dialogs.IMessageProvider;
-import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.util.TransferDragSourceListener;
 import org.eclipse.jface.util.TransferDropTargetListener;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
@@ -65,6 +65,7 @@ import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.dialogs.SaveAsDialog;
 import org.eclipse.ui.part.*;
 import org.eclipse.ui.texteditor.IDocumentProvider;
+import org.eclipse.ui.texteditor.IDocumentProviderExtension3;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import org.eclipse.ui.views.properties.PropertySheetPage;
 
@@ -82,8 +83,14 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
     private FlyoutPaletteComposite mPalette;
     private CustomPalettePage mPalettePage;
     private boolean mSwitching = false;
-
+    private INIFile mINIFile = new INIFile();
     private KeyHandler mSharedKeyHandler;
+    private Map[] mCachedMarkers;
+    /** 
+     * The number of reentrances into error correction code while saving.
+     * @since 2.0
+     */
+    private int mErrorCorrectionOnSave;
 
     private PaletteRoot mRoot;
 
@@ -124,14 +131,27 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
 
         public void partClosed(IWorkbenchPart part)
         {
+            part.getSite().getWorkbenchWindow().getSelectionService().removeSelectionListener(InstallOptionsDesignEditor.this);
         }
 
         public void partDeactivated(IWorkbenchPart part)
         {
         }
 
-        public void partOpened(IWorkbenchPart part)
+        public void partOpened(final IWorkbenchPart part)
         {
+            part.getSite().getWorkbenchWindow().getSelectionService().addSelectionListener(InstallOptionsDesignEditor.this);
+            part.getSite().getShell().getDisplay().asyncExec(new Runnable() {
+                public void run()
+                {
+                    if(mINIFile.hasErrors()) {
+                        MessageDialog.openError(getSite().getShell(),EclipseNSISPlugin.getResourceString("error.title"), //$NON-NLS-1$
+                                InstallOptionsPlugin.getFormattedString("editor.switch.error", //$NON-NLS-1$
+                                                        new String[]{((IFileEditorInput)getEditorInput()).getFile().getName()}));
+                        getActionRegistry().getAction(SwitchEditorAction.ID).run();
+                    }
+                }
+            });
         }
     };
 
@@ -157,7 +177,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
 
     public InstallOptionsDesignEditor()
     {
-        setEditDomain(new DefaultEditDomain(this));
+        setEditDomain(new InstallOptionsEditDomain(this));
     }
 
     /**
@@ -276,8 +296,6 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
 
     /**
      * Sets the site and input for this editor then creates and initializes the actions.
-     * Subclasses may extend this method, but should always call <code>super.init(site, input)
-     * </code>.
      * @see org.eclipse.ui.IEditorPart#init(IEditorSite, IEditorInput)
      */
     public void init(IEditorSite site, IEditorInput input) throws PartInitException 
@@ -285,7 +303,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
         setSite(site);
         setInput(input);
         getCommandStack().addCommandStackListener(this);
-        getSite().getWorkbenchWindow().getSelectionService().addSelectionListener(this);
+//        getSite().getWorkbenchWindow().getSelectionService().addSelectionListener(this);
         initializeActionRegistry();
     }
 
@@ -310,9 +328,11 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
     {
         // If not the active editor, ignore selection changed.
         IEditorPart activeEditor = getSite().getPage().getActiveEditor();
-        Object adapter = activeEditor.getAdapter(getClass());
-        if (this.equals(adapter)) {
-            updateActions(mSelectionActions);
+        if(activeEditor != null) {
+            Object adapter = activeEditor.getAdapter(getClass());
+            if (this.equals(adapter)) {
+                updateActions(mSelectionActions);
+            }
         }
     }
 
@@ -401,7 +421,6 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
     protected void setEditDomain(DefaultEditDomain editDomain) 
     {
         mEditDomain = editDomain;
-        mEditDomain.setCommandStack(new InstallOptionsCommandStack());
         getEditDomain().setPaletteRoot(getPaletteRoot());
     }
 
@@ -470,13 +489,6 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
         getActionRegistry().registerAction(showGuides);
     }
 
-    protected void createOutputStream(OutputStream os) throws IOException
-    {
-        ObjectOutputStream out = new ObjectOutputStream(os);
-        out.writeObject(getInstallOptionsDialog());
-        out.close();
-    }
-
     protected CustomPalettePage createPalettePage()
     {
         return new CustomPalettePage(getPaletteViewerProvider());
@@ -494,21 +506,41 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
 
     public void dispose()
     {
-        getSite().getWorkbenchWindow().getPartService().removePartListener(
-                mPartListener);
-        mPartListener = null;
-        if(!isSwitching()) {
-            InstallOptionsEditorInput input = (InstallOptionsEditorInput)getEditorInput();
-            if(input != null) {
-                input.getDocumentProvider().disconnect(input);
+        InstallOptionsEditorInput input = (InstallOptionsEditorInput)getEditorInput();
+        IFile file = input.getFile();
+        file.getWorkspace().removeResourceChangeListener(mResourceListener);
+        if(input != null) {
+            IDocumentProvider provider = input.getDocumentProvider();
+            if(provider != null) {
+                IDocument doc = provider.getDocument(input);
+                if(doc != null) {
+                    if(isSwitching()) {
+                        try {
+                            updateDocument(doc);
+                            InstallOptionsMarkerUtility.updateMarkers(file, mINIFile);
+                            file.setSessionProperty(IInstallOptionsConstants.FILEPROPERTY_PROBLEM_MARKERS, mCachedMarkers);
+                        }
+                        catch (CoreException e1) {
+                            e1.printStackTrace();
+                        }
+                    }
+                    else {
+                        if(isDirty()) {
+                            InstallOptionsMarkerUtility.updateMarkers(file, mCachedMarkers);
+                        }
+                    }
+                    input.getDocumentProvider().disconnect(input);
+                    mINIFile.disconnect(doc);
+                }
             }
         }
-        IFile file = ((IFileEditorInput)getEditorInput()).getFile();
+
+        mPartListener = null;
         saveProperties(file);
-        file.getWorkspace().removeResourceChangeListener(mResourceListener);
         getCommandStack().removeCommandStackListener(this);
         getSite().getWorkbenchWindow().getSelectionService().removeSelectionListener(this);
         getEditDomain().setActiveTool(null);
+        ((InstallOptionsEditDomain)getEditDomain()).setFile(null);
         getActionRegistry().dispose();
         super.dispose();
         mDisposed = true;
@@ -519,42 +551,179 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
         return mDisposed;
     }
 
+    protected void handleExceptionOnSave(InstallOptionsEditorInput input, IDocumentProvider p, 
+                                         CoreException exception, IProgressMonitor progressMonitor) 
+    {
+        try {
+            ++ mErrorCorrectionOnSave;
+            
+            Shell shell= getSite().getShell();
+            
+            boolean isSynchronized= false;
+            
+            if (p instanceof IDocumentProviderExtension3)  {
+                IDocumentProviderExtension3 p3= (IDocumentProviderExtension3) p;
+                isSynchronized= p3.isSynchronized(input);
+            } else  {
+                long modifiedStamp= p.getModificationStamp(input);
+                long synchStamp= p.getSynchronizationStamp(input);
+                isSynchronized= (modifiedStamp == synchStamp);
+            }
+            
+            if (mErrorCorrectionOnSave == 1 && !isSynchronized) {
+                
+                String title= InstallOptionsPlugin.getResourceString("outofsync.error.save.title"); //$NON-NLS-1$
+                String msg= InstallOptionsPlugin.getResourceString("outofsync.error.save.message"); //$NON-NLS-1$
+                
+                if (MessageDialog.openQuestion(shell, title, msg))
+                    performSave(input, p, true, progressMonitor);
+                else {
+                    if (progressMonitor != null) {
+                        progressMonitor.setCanceled(true);
+                    }
+                }
+            } 
+            else {
+                String title= InstallOptionsPlugin.getResourceString("error.save.title"); //$NON-NLS-1$
+                String msg= InstallOptionsPlugin.getFormattedString("error.save.message", new Object[] { exception.getMessage() }); //$NON-NLS-1$
+                ErrorDialog.openError(shell, title, msg, exception.getStatus());
+                
+                if (progressMonitor != null) {
+                    progressMonitor.setCanceled(true);
+                }
+            }
+        } 
+        finally {
+            -- mErrorCorrectionOnSave;
+        }
+    }
+
     public void doSave(IProgressMonitor progressMonitor)
     {
         try {
-            mEditorSaving = true;
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            createOutputStream(out);
-            IFile file = ((IFileEditorInput)getEditorInput()).getFile();
-            saveProperties(file);
-            file.setContents(new ByteArrayInputStream(out.toByteArray()), true,
-                    false, progressMonitor);
-            out.close();
-            getCommandStack().markSaveLocation();
+            InstallOptionsEditorInput input = (InstallOptionsEditorInput)getEditorInput();
+            if(input != null) {
+                IDocumentProvider provider = input.getDocumentProvider();
+                if(provider != null) {
+                    IDocument doc = provider.getDocument(input);
+                    INIFile iniFile = updateDocument(doc);
+                    performSave(input, provider, true, progressMonitor);
+                }
+            }
         }
         catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    
+    protected void editorSaved(InstallOptionsEditorInput input)
+    {
+        IFile file = input.getFile();
+        saveProperties(file);
+        InstallOptionsMarkerUtility.updateMarkers(file, mINIFile);
+        mCachedMarkers = InstallOptionsMarkerUtility.getMarkerAttributes(file);
+    }
+    
+    public void doRevertToSaved() 
+    {
+        try {
+            InstallOptionsEditorInput input = (InstallOptionsEditorInput)getEditorInput();
+            if(input != null) {
+                IDocumentProvider provider = input.getDocumentProvider();
+                if(provider != null) {
+                    performRevert(input, provider);
+                }
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    protected void performRevert(InstallOptionsEditorInput input, IDocumentProvider provider) 
+    {
+        if (provider == null) {
+            return;
+        }
+            
+        try {
+            mEditorSaving = true;
+            provider.aboutToChange(getEditorInput());
+            provider.resetDocument(getEditorInput());
+            editorSaved(input);
+        } 
+        catch (CoreException x) {
+            IStatus status= x.getStatus();
+            if (status == null || status.getSeverity() != IStatus.CANCEL ) {
+                Shell shell= getSite().getShell();
+                String title= InstallOptionsPlugin.getResourceString("error.revert.title"); //$NON-NLS-1$
+                String msg= InstallOptionsPlugin.getResourceString("error.revert.message"); //$NON-NLS-1$
+                ErrorDialog.openError(shell, title, msg, x.getStatus());
+            }
+        } 
         finally {
+            provider.changed(getEditorInput());
+            mEditorSaving = false;
+            loadInstallOptionsDialog();
+            getCommandStack().flush();
+        }
+    }
+
+    protected void performSave(InstallOptionsEditorInput input, IDocumentProvider provider, boolean overwrite, IProgressMonitor progressMonitor) 
+    {
+        if (provider == null) {
+            return;
+        }
+        
+        try {
+            mEditorSaving = true;
+            provider.aboutToChange(input);
+            provider.saveDocument(progressMonitor, input, provider.getDocument(input), overwrite);
+            editorSaved(input);
+            getCommandStack().markSaveLocation();
+        } 
+        catch (CoreException x) 
+        {
+            IStatus status= x.getStatus();
+            if (status == null || status.getSeverity() != IStatus.CANCEL) {
+                handleExceptionOnSave(input, provider, x, progressMonitor);
+            }
+        } 
+        finally {
+            provider.changed(input);
             mEditorSaving = false;
         }
+    }
+
+    private INIFile updateDocument(IDocument doc) throws CoreException
+    {
+        InstallOptionsDialog dialog = getInstallOptionsDialog();
+        if(doc != null && dialog != null && dialog.canUpdateINIFile()) {
+            INIFile iniFile = dialog.updateINIFile();
+            iniFile.updateDocument(doc);
+            return iniFile;
+        }
+        return null;
     }
 
     public void doSaveAs()
     {
         performSaveAs();
     }
-
+    
     public Object getAdapter(Class type)
     {
         if(type == getClass()) {
             return this;
         }
+        if (type == InstallOptionsDialog.class) {
+            return mInstallOptionsDialog;
+        }
         if (type == CommandStackInspectorPage.class) {
             return new CommandStackInspectorPage(getCommandStack());
         }
         if (type == IContentOutlinePage.class) {
-            mOutlinePage = new OutlinePage(new TreeViewer());
+            mOutlinePage = new OutlinePage(new InstallOptionsTreeViewer());
             return mOutlinePage;
         }
         if(InstallOptionsPlugin.getDefault().isZoomSupported()) {
@@ -571,8 +740,11 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
         }
         if (type == org.eclipse.ui.views.properties.IPropertySheetPage.class) {
             PropertySheetPage page = new PropertySheetPage();
-            page.setRootEntry(new CustomPropertySheetEntry(getCommandStack()));
+            page.setRootEntry(new CustomPropertySheetEntry((InstallOptionsEditDomain)getEditDomain()));
             return page;
+        }
+        if (type == EditDomain.class) {
+            return getEditDomain();
         }
         if (type == GraphicalViewer.class) {
             return getGraphicalViewer();
@@ -613,7 +785,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
         return mSharedKeyHandler;
     }
 
-    public InstallOptionsDialog getInstallOptionsDialog()
+    private InstallOptionsDialog getInstallOptionsDialog()
     {
         return mInstallOptionsDialog;
     }
@@ -711,6 +883,10 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
         getSelectionActions().add(action.getId());
         
         action = new SaveAction(this);
+        registry.registerAction(action);
+        getPropertyActions().add(action.getId());
+        
+        action = new RevertToSavedAction(this);
         registry.registerAction(action);
         getPropertyActions().add(action.getId());
         
@@ -828,7 +1004,8 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
 
     public boolean isSaveOnCloseNeeded()
     {
-        return getCommandStack().isDirty();
+        InstallOptionsEditorInput input = (InstallOptionsEditorInput)getEditorInput();
+        return (input != null && input.getDocumentProvider().canSaveDocument(input)) || (getInstallOptionsDialog() != null && getInstallOptionsDialog().canUpdateINIFile());
     }
 
     private Object loadPreference(String name, TypeConverter converter, Object defaultValue)
@@ -866,73 +1043,78 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
     protected void loadProperties(IFile file)
     {
         // Ruler properties
-        InstallOptionsRuler ruler = getInstallOptionsDialog().getRuler(PositionConstants.WEST);
-        RulerProvider provider = null;
-        if (ruler != null) {
-            provider = new InstallOptionsRulerProvider(ruler);
-            provider.setUnit(InstallOptionsRulerProvider.UNIT_DLU);
-        }
-        GraphicalViewer viewer = getGraphicalViewer();
-        viewer.setProperty(RulerProvider.PROPERTY_VERTICAL_RULER,provider);
-        ruler = getInstallOptionsDialog().getRuler(PositionConstants.NORTH);
-        provider = null;
-        if (ruler != null) {
-            provider = new InstallOptionsRulerProvider(ruler);
-            provider.setUnit(InstallOptionsRulerProvider.UNIT_DLU);
-        }
-        viewer.setProperty(RulerProvider.PROPERTY_HORIZONTAL_RULER, provider);
+        InstallOptionsDialog dialog = getInstallOptionsDialog();
+        if(dialog != null) {
+            GraphicalViewer viewer = getGraphicalViewer();
+
+            if(viewer != null) {
+                InstallOptionsRuler ruler = dialog.getRuler(PositionConstants.WEST);
+                RulerProvider provider = null;
+                if (ruler != null) {
+                    provider = new InstallOptionsRulerProvider(ruler);
+                    provider.setUnit(InstallOptionsRulerProvider.UNIT_DLU);
+                }
+                viewer.setProperty(RulerProvider.PROPERTY_VERTICAL_RULER,provider);
+                
+                ruler = dialog.getRuler(PositionConstants.NORTH);
+                provider = null;
+                if (ruler != null) {
+                    provider = new InstallOptionsRulerProvider(ruler);
+                    provider.setUnit(InstallOptionsRulerProvider.UNIT_DLU);
+                }
+                viewer.setProperty(RulerProvider.PROPERTY_HORIZONTAL_RULER, provider);
+                
+                viewer.setProperty(RulerProvider.PROPERTY_RULER_VISIBILITY,
+                        loadFileProperty(file, FILEPROPERTY_SHOW_RULERS,TypeConverter.BOOLEAN_CONVERTER,
+                                SHOW_RULERS_DEFAULT));
         
-        viewer.setProperty(RulerProvider.PROPERTY_RULER_VISIBILITY,
-                loadFileProperty(file, FILEPROPERTY_SHOW_RULERS,TypeConverter.BOOLEAN_CONVERTER,
-                        SHOW_RULERS_DEFAULT));
-
-        // Snap to Geometry property
-        viewer.setProperty(SnapToGeometry.PROPERTY_SNAP_ENABLED,
-                loadFileProperty(file, FILEPROPERTY_SNAP_TO_GEOMETRY,TypeConverter.BOOLEAN_CONVERTER,
-                        SNAP_TO_GEOMETRY_DEFAULT));
-
-        // Grid properties
-        viewer.setProperty(SnapToGrid.PROPERTY_GRID_ENABLED,
-                loadFileProperty(file, FILEPROPERTY_SNAP_TO_GRID,TypeConverter.BOOLEAN_CONVERTER,
-                        SNAP_TO_GRID_DEFAULT));
-        viewer.setProperty(InstallOptionsGridLayer.PROPERTY_GRID_STYLE,
-                loadFileProperty(file, FILEPROPERTY_GRID_STYLE,TypeConverter.STRING_CONVERTER,
-                        GRID_STYLE_DEFAULT));
-        viewer.setProperty(SnapToGrid.PROPERTY_GRID_ORIGIN,
-                loadFileProperty(file, FILEPROPERTY_GRID_ORIGIN,TypeConverter.POINT_CONVERTER,
-                        GRID_ORIGIN_DEFAULT));
-        viewer.setProperty(SnapToGrid.PROPERTY_GRID_SPACING,
-                loadFileProperty(file, FILEPROPERTY_GRID_SPACING,TypeConverter.DIMENSION_CONVERTER,
-                        GRID_SPACING_DEFAULT));
-        viewer.setProperty(SnapToGrid.PROPERTY_GRID_VISIBLE,
-                loadFileProperty(file, FILEPROPERTY_SHOW_GRID,TypeConverter.BOOLEAN_CONVERTER,
-                        SHOW_GRID_DEFAULT));
-
-        // Guides properties
-        viewer.setProperty(PROPERTY_SNAP_TO_GUIDES,
-                loadFileProperty(file, FILEPROPERTY_SNAP_TO_GUIDES,TypeConverter.BOOLEAN_CONVERTER,
-                        SNAP_TO_GUIDES_DEFAULT));
-        viewer.setProperty(PROPERTY_GLUE_TO_GUIDES,
-                loadFileProperty(file, FILEPROPERTY_GLUE_TO_GUIDES,TypeConverter.BOOLEAN_CONVERTER,
-                        GLUE_TO_GUIDES_DEFAULT));
-        viewer.setProperty(ToggleGuideVisibilityAction.PROPERTY_GUIDE_VISIBILITY,
-                loadFileProperty(file, FILEPROPERTY_SHOW_GUIDES,TypeConverter.BOOLEAN_CONVERTER,
-                        SHOW_GUIDES_DEFAULT));
-
-        getInstallOptionsDialog().setSize(
-                (Dimension)loadFileProperty(file, FILEPROPERTY_DIALOG_SIZE,TypeConverter.DIMENSION_CONVERTER,
-                        DialogSizeManager.getDefaultDialogSizeDimension()));
-        getInstallOptionsDialog().setDialogSizeVisible(
-                ((Boolean)loadFileProperty(file, FILEPROPERTY_SHOW_DIALOG_SIZE,TypeConverter.BOOLEAN_CONVERTER,
-                        SHOW_DIALOG_SIZE_DEFAULT)).booleanValue());
+                // Snap to Geometry property
+                viewer.setProperty(SnapToGeometry.PROPERTY_SNAP_ENABLED,
+                        loadFileProperty(file, FILEPROPERTY_SNAP_TO_GEOMETRY,TypeConverter.BOOLEAN_CONVERTER,
+                                SNAP_TO_GEOMETRY_DEFAULT));
         
-        if(InstallOptionsPlugin.getDefault().isZoomSupported()) {
-            // Zoom
-            ZoomManager manager = (ZoomManager)viewer.getProperty(ZoomManager.class.toString());
-            if (manager != null) {
-                manager.setZoomAsText((String)loadFileProperty(file, FILEPROPERTY_ZOOM,TypeConverter.STRING_CONVERTER,
-                        ZOOM_DEFAULT));
+                // Grid properties
+                viewer.setProperty(SnapToGrid.PROPERTY_GRID_ENABLED,
+                        loadFileProperty(file, FILEPROPERTY_SNAP_TO_GRID,TypeConverter.BOOLEAN_CONVERTER,
+                                SNAP_TO_GRID_DEFAULT));
+                viewer.setProperty(InstallOptionsGridLayer.PROPERTY_GRID_STYLE,
+                        loadFileProperty(file, FILEPROPERTY_GRID_STYLE,TypeConverter.STRING_CONVERTER,
+                                GRID_STYLE_DEFAULT));
+                viewer.setProperty(SnapToGrid.PROPERTY_GRID_ORIGIN,
+                        loadFileProperty(file, FILEPROPERTY_GRID_ORIGIN,TypeConverter.POINT_CONVERTER,
+                                GRID_ORIGIN_DEFAULT));
+                viewer.setProperty(SnapToGrid.PROPERTY_GRID_SPACING,
+                        loadFileProperty(file, FILEPROPERTY_GRID_SPACING,TypeConverter.DIMENSION_CONVERTER,
+                                GRID_SPACING_DEFAULT));
+                viewer.setProperty(SnapToGrid.PROPERTY_GRID_VISIBLE,
+                        loadFileProperty(file, FILEPROPERTY_SHOW_GRID,TypeConverter.BOOLEAN_CONVERTER,
+                                SHOW_GRID_DEFAULT));
+        
+                // Guides properties
+                viewer.setProperty(PROPERTY_SNAP_TO_GUIDES,
+                        loadFileProperty(file, FILEPROPERTY_SNAP_TO_GUIDES,TypeConverter.BOOLEAN_CONVERTER,
+                                SNAP_TO_GUIDES_DEFAULT));
+                viewer.setProperty(PROPERTY_GLUE_TO_GUIDES,
+                        loadFileProperty(file, FILEPROPERTY_GLUE_TO_GUIDES,TypeConverter.BOOLEAN_CONVERTER,
+                                GLUE_TO_GUIDES_DEFAULT));
+                viewer.setProperty(ToggleGuideVisibilityAction.PROPERTY_GUIDE_VISIBILITY,
+                        loadFileProperty(file, FILEPROPERTY_SHOW_GUIDES,TypeConverter.BOOLEAN_CONVERTER,
+                                SHOW_GUIDES_DEFAULT));
+                
+                if(InstallOptionsPlugin.getDefault().isZoomSupported()) {
+                    // Zoom
+                    ZoomManager manager = (ZoomManager)viewer.getProperty(ZoomManager.class.toString());
+                    if (manager != null) {
+                        manager.setZoomAsText((String)loadFileProperty(file, FILEPROPERTY_ZOOM,TypeConverter.STRING_CONVERTER,
+                                ZOOM_DEFAULT));
+                    }
+                }
             }
+            
+            dialog.setDialogSize((Dimension)loadFileProperty(file, FILEPROPERTY_DIALOG_SIZE,TypeConverter.DIMENSION_CONVERTER,
+                            DialogSizeManager.getDefaultDialogSizeDimension()));
+            dialog.setShowDialogSize(((Boolean)loadFileProperty(file, FILEPROPERTY_SHOW_DIALOG_SIZE,TypeConverter.BOOLEAN_CONVERTER,
+                            SHOW_DIALOG_SIZE_DEFAULT)).booleanValue());
         }
     }
 
@@ -952,7 +1134,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
         }
         
         if (provider.isDeleted(input) && original != null) {
-            String message= InstallOptionsPlugin.getFormattedString("editor.warning.save.delete", new Object[] { original.getName() }); //$NON-NLS-1$
+            String message= InstallOptionsPlugin.getFormattedString("warning.save.delete", new Object[] { original.getName() }); //$NON-NLS-1$
             dialog.setErrorMessage(null);
             dialog.setMessage(message, IMessageProvider.WARNING);
         }
@@ -972,16 +1154,19 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
         boolean success= false;
         if(!file.exists()) {
             try {
-                
+                IDocument doc = provider.getDocument(input);
+                INIFile iniFile = updateDocument(doc);
                 provider.aboutToChange(newInput);
-                provider.saveDocument(new NullProgressMonitor(), newInput, provider.getDocument(input), true);            
+                provider.saveDocument(new NullProgressMonitor(), newInput, doc, true);
+                saveProperties(file);
+                InstallOptionsMarkerUtility.updateMarkers(file, iniFile);
                 success= true;
                 
             } catch (CoreException x) {
                 IStatus status= x.getStatus();
                 if (status == null || status.getSeverity() != IStatus.CANCEL) {
-                    String title= InstallOptionsPlugin.getResourceString("editor.error.save.title"); //$NON-NLS-1$
-                    String msg= InstallOptionsPlugin.getFormattedString("editor.error.save.message", new Object[] { x.getMessage() }); //$NON-NLS-1$
+                    String title= InstallOptionsPlugin.getResourceString("error.saveas.title"); //$NON-NLS-1$
+                    String msg= InstallOptionsPlugin.getFormattedString("error.save.message", new Object[] { x.getMessage() }); //$NON-NLS-1$
                     
                     if (status != null) {
                         switch (status.getSeverity()) {
@@ -1019,9 +1204,9 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
      * @param file
      * @return
      */
-    private InstallOptionsEditorInput createInput(final IFile file)
+    private IEditorInput createInput(IFile file)
     {
-        return new InstallOptionsEditorInput(new FileEditorInput(file));
+        return new FileEditorInput(file);
     }
 
     private boolean savePreviouslyNeeded()
@@ -1041,98 +1226,93 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
 
     protected void saveProperties(IFile file)
     {
-        GraphicalViewer viewer = getGraphicalViewer();
-        saveFileProperty(file, FILEPROPERTY_SHOW_RULERS,TypeConverter.BOOLEAN_CONVERTER,
-                viewer.getProperty(RulerProvider.PROPERTY_RULER_VISIBILITY),
-                SHOW_RULERS_DEFAULT);
-
-        // Snap to Geometry property
-        saveFileProperty(file, FILEPROPERTY_SNAP_TO_GEOMETRY,TypeConverter.BOOLEAN_CONVERTER,
-                viewer.getProperty(SnapToGeometry.PROPERTY_SNAP_ENABLED),
-                SNAP_TO_GEOMETRY_DEFAULT);
-
-        // Grid properties
-        saveFileProperty(file, FILEPROPERTY_SNAP_TO_GRID,TypeConverter.BOOLEAN_CONVERTER,
-                viewer.getProperty(SnapToGrid.PROPERTY_GRID_ENABLED),
-                SNAP_TO_GRID_DEFAULT);
-        saveFileProperty(file, FILEPROPERTY_GRID_STYLE,TypeConverter.STRING_CONVERTER,
-                viewer.getProperty(InstallOptionsGridLayer.PROPERTY_GRID_STYLE),
-                GRID_STYLE_DEFAULT);
-        saveFileProperty(file, FILEPROPERTY_GRID_ORIGIN,TypeConverter.POINT_CONVERTER,
-                viewer.getProperty(SnapToGrid.PROPERTY_GRID_ORIGIN),
-                GRID_ORIGIN_DEFAULT);
-        saveFileProperty(file, FILEPROPERTY_GRID_SPACING,TypeConverter.DIMENSION_CONVERTER,
-                viewer.getProperty(SnapToGrid.PROPERTY_GRID_SPACING),
-                GRID_SPACING_DEFAULT);
-        saveFileProperty(file, FILEPROPERTY_SHOW_GRID,TypeConverter.BOOLEAN_CONVERTER,
-                viewer.getProperty(SnapToGrid.PROPERTY_GRID_VISIBLE),
-                SHOW_GRID_DEFAULT);
-
-        // Guides properties
-        saveFileProperty(file, FILEPROPERTY_SNAP_TO_GUIDES,TypeConverter.BOOLEAN_CONVERTER,
-                viewer.getProperty(PROPERTY_SNAP_TO_GUIDES),
-                SNAP_TO_GUIDES_DEFAULT);
-        saveFileProperty(file, FILEPROPERTY_GLUE_TO_GUIDES,TypeConverter.BOOLEAN_CONVERTER,
-                viewer.getProperty(PROPERTY_GLUE_TO_GUIDES),
-                GLUE_TO_GUIDES_DEFAULT);
-        saveFileProperty(file, FILEPROPERTY_SHOW_GUIDES,TypeConverter.BOOLEAN_CONVERTER,
-                viewer.getProperty(ToggleGuideVisibilityAction.PROPERTY_GUIDE_VISIBILITY),
-                SHOW_GUIDES_DEFAULT);
-
-        saveFileProperty(file, FILEPROPERTY_DIALOG_SIZE,TypeConverter.DIMENSION_CONVERTER,
-                getInstallOptionsDialog().getSize(),
-                DialogSizeManager.getDefaultDialogSizeDimension());
-        saveFileProperty(file, FILEPROPERTY_SHOW_DIALOG_SIZE,TypeConverter.BOOLEAN_CONVERTER,
-                Boolean.valueOf(getInstallOptionsDialog().isDialogSizeVisible()),
-                SHOW_DIALOG_SIZE_DEFAULT);
-        
-        if(InstallOptionsPlugin.getDefault().isZoomSupported()) {
-            // Zoom
-            ZoomManager manager = (ZoomManager)viewer.getProperty(ZoomManager.class.toString());
-            if (manager != null) {
-                saveFileProperty(file, FILEPROPERTY_ZOOM,TypeConverter.STRING_CONVERTER,
-                        manager.getZoomAsText(),
-                        ZOOM_DEFAULT);
+        InstallOptionsDialog dialog = getInstallOptionsDialog();
+        if(dialog != null) {
+            GraphicalViewer viewer = getGraphicalViewer();
+            saveFileProperty(file, FILEPROPERTY_SHOW_RULERS,TypeConverter.BOOLEAN_CONVERTER,
+                    viewer.getProperty(RulerProvider.PROPERTY_RULER_VISIBILITY),
+                    SHOW_RULERS_DEFAULT);
+    
+            // Snap to Geometry property
+            saveFileProperty(file, FILEPROPERTY_SNAP_TO_GEOMETRY,TypeConverter.BOOLEAN_CONVERTER,
+                    viewer.getProperty(SnapToGeometry.PROPERTY_SNAP_ENABLED),
+                    SNAP_TO_GEOMETRY_DEFAULT);
+    
+            // Grid properties
+            saveFileProperty(file, FILEPROPERTY_SNAP_TO_GRID,TypeConverter.BOOLEAN_CONVERTER,
+                    viewer.getProperty(SnapToGrid.PROPERTY_GRID_ENABLED),
+                    SNAP_TO_GRID_DEFAULT);
+            saveFileProperty(file, FILEPROPERTY_GRID_STYLE,TypeConverter.STRING_CONVERTER,
+                    viewer.getProperty(InstallOptionsGridLayer.PROPERTY_GRID_STYLE),
+                    GRID_STYLE_DEFAULT);
+            saveFileProperty(file, FILEPROPERTY_GRID_ORIGIN,TypeConverter.POINT_CONVERTER,
+                    viewer.getProperty(SnapToGrid.PROPERTY_GRID_ORIGIN),
+                    GRID_ORIGIN_DEFAULT);
+            saveFileProperty(file, FILEPROPERTY_GRID_SPACING,TypeConverter.DIMENSION_CONVERTER,
+                    viewer.getProperty(SnapToGrid.PROPERTY_GRID_SPACING),
+                    GRID_SPACING_DEFAULT);
+            saveFileProperty(file, FILEPROPERTY_SHOW_GRID,TypeConverter.BOOLEAN_CONVERTER,
+                    viewer.getProperty(SnapToGrid.PROPERTY_GRID_VISIBLE),
+                    SHOW_GRID_DEFAULT);
+    
+            // Guides properties
+            saveFileProperty(file, FILEPROPERTY_SNAP_TO_GUIDES,TypeConverter.BOOLEAN_CONVERTER,
+                    viewer.getProperty(PROPERTY_SNAP_TO_GUIDES),
+                    SNAP_TO_GUIDES_DEFAULT);
+            saveFileProperty(file, FILEPROPERTY_GLUE_TO_GUIDES,TypeConverter.BOOLEAN_CONVERTER,
+                    viewer.getProperty(PROPERTY_GLUE_TO_GUIDES),
+                    GLUE_TO_GUIDES_DEFAULT);
+            saveFileProperty(file, FILEPROPERTY_SHOW_GUIDES,TypeConverter.BOOLEAN_CONVERTER,
+                    viewer.getProperty(ToggleGuideVisibilityAction.PROPERTY_GUIDE_VISIBILITY),
+                    SHOW_GUIDES_DEFAULT);
+    
+            saveFileProperty(file, FILEPROPERTY_DIALOG_SIZE,TypeConverter.DIMENSION_CONVERTER,
+                    dialog.getDialogSize(),
+                    DialogSizeManager.getDefaultDialogSizeDimension());
+            saveFileProperty(file, FILEPROPERTY_SHOW_DIALOG_SIZE,TypeConverter.BOOLEAN_CONVERTER,
+                    Boolean.valueOf(dialog.isShowDialogSize()),
+                    SHOW_DIALOG_SIZE_DEFAULT);
+            
+            if(InstallOptionsPlugin.getDefault().isZoomSupported()) {
+                // Zoom
+                ZoomManager manager = (ZoomManager)viewer.getProperty(ZoomManager.class.toString());
+                if (manager != null) {
+                    saveFileProperty(file, FILEPROPERTY_ZOOM,TypeConverter.STRING_CONVERTER,
+                            manager.getZoomAsText(),
+                            ZOOM_DEFAULT);
+                }
             }
         }
     }
 
     public void setInput(IEditorInput input)
     {
-        if(input != null && !(input instanceof InstallOptionsEditorInput)) {
-            input = new InstallOptionsEditorInput((IFileEditorInput)input);
-        }
-        //TODO REMOVE BELOW
-        IDocument document = ((InstallOptionsEditorInput)input).getDocumentProvider().getDocument(input);
-        System.out.println(document.get());
-        //REMOVE ABOVE
         superSetInput(input);
+        input = getEditorInput();
+        IDocument document = ((InstallOptionsEditorInput)input).getDocumentProvider().getDocument(input);
+        mINIFile.connect(document);
+        loadInstallOptionsDialog();
+    }
 
-//        IFile file = ((IFileEditorInput)input).getFile();
-//        try {
-//            InputStream is = file.getContents(false);
-//            ObjectInputStream ois = new ObjectInputStream(is);
-//            setInstallOptionsDialog((InstallOptionsDialog)ois.readObject());
-//            ois.close();
-//        }
-//        catch (Exception e) {
-            setInstallOptionsDialog(new InstallOptionsDialog());
-            //This is just an example. All exceptions caught here.
-//            e.printStackTrace();
-//        }
-
+    private void loadInstallOptionsDialog()
+    {
+        InstallOptionsDialog dialog = new InstallOptionsDialog();
+        if(!mINIFile.hasErrors()) {
+            dialog.loadINIFile(mINIFile);
+        }
+        setInstallOptionsDialog(dialog);
         if (!mEditorSaving) {
+            loadProperties(((IFileEditorInput)getEditorInput()).getFile());
             if (getGraphicalViewer() != null) {
-                getGraphicalViewer().setContents(getInstallOptionsDialog());
-                loadProperties(((IFileEditorInput)input).getFile());
+                getGraphicalViewer().setContents(dialog);
             }
             if (mOutlinePage != null) {
-                mOutlinePage.setContents(getInstallOptionsDialog());
+                mOutlinePage.setContents(dialog);
             }
         }
     }
 
-    public void setInstallOptionsDialog(InstallOptionsDialog diagram)
+    private void setInstallOptionsDialog(InstallOptionsDialog diagram)
     {
         mInstallOptionsDialog = diagram;
     }
@@ -1144,15 +1324,41 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
 
     protected void superSetInput(IEditorInput input)
     {
-        if (getEditorInput() != null) {
-            IFile file = ((IFileEditorInput)getEditorInput()).getFile();
+        IEditorInput oldInput = getEditorInput();
+        if (oldInput != null) {
+            ((InstallOptionsEditDomain)getEditDomain()).setFile(null);
+            IFile file = ((IFileEditorInput)oldInput).getFile();
             file.getWorkspace().removeResourceChangeListener(mResourceListener);
+            if(isDirty()) {
+                InstallOptionsMarkerUtility.updateMarkers(file,mCachedMarkers);
+            }
+            ((InstallOptionsEditorInput)oldInput).getDocumentProvider().disconnect(oldInput);
+        }
+        if(input != null) {
+            try {
+                if(!(input instanceof InstallOptionsEditorInput)) {
+                    input = new InstallOptionsEditorInput((IFileEditorInput)input);
+                    mCachedMarkers = InstallOptionsMarkerUtility.getMarkerAttributes(((IFileEditorInput)input).getFile());
+                    ((InstallOptionsEditorInput)input).getDocumentProvider().connect(input);
+                }
+                else {
+                    ((InstallOptionsEditorInput)input).getDocumentProvider().connect(input);
+                    ((InstallOptionsEditorInput)input).completedSwitch();
+                    mCachedMarkers = (Map[])((IFileEditorInput)input).getFile().getSessionProperty(IInstallOptionsConstants.FILEPROPERTY_PROBLEM_MARKERS);
+                    ((IFileEditorInput)input).getFile().setSessionProperty(IInstallOptionsConstants.FILEPROPERTY_PROBLEM_MARKERS, null);
+                }
+            }
+            catch (CoreException e) {
+                e.printStackTrace();
+            }
         }
 
         super.setInput(input);
 
-        if (getEditorInput() != null) {
-            IFile file = ((IFileEditorInput)getEditorInput()).getFile();
+        input = getEditorInput();
+        if (input != null) {
+            IFile file = ((IFileEditorInput)input).getFile();
+            ((InstallOptionsEditDomain)getEditDomain()).setFile(file);
             file.getWorkspace().addResourceChangeListener(mResourceListener);
             setPartName(file.getName());
         }
@@ -1164,14 +1370,22 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
         getSite().getWorkbenchWindow().getPartService().addPartListener(mPartListener);
     }
     
-    public boolean isSwitching()
+    private boolean isSwitching()
     {
         return mSwitching;
     }
     
-    public void setSwitching(boolean switching)
+    public boolean canSwitch()
     {
-        mSwitching = switching;
+        return true;
+    }
+    
+    public void prepareForSwitch()
+    {
+        if(!mSwitching) {
+            mSwitching = true;
+            ((InstallOptionsEditorInput)getEditorInput()).prepareForSwitch();
+        }
     }
 
     private void showPropertiesView()
@@ -1291,8 +1505,6 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
                     "net.sf.eclipsensis.installoptions.editor.outline.contextmenu", //$NON-NLS-1$
                     provider, getSite().getSelectionProvider());
             getViewer().setKeyHandler(getCommonKeyHandler());
-            getViewer().addDropTargetListener(
-                    (TransferDropTargetListener)new InstallOptionsTemplateTransferDropTargetListener(getViewer()));
             IToolBarManager tbm = getSite().getActionBars().getToolBarManager();
             mShowOutlineAction = new Action() {
                 public void run()
@@ -1452,11 +1664,8 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
 
             if (delta.getKind() == IResourceDelta.REMOVED) {
                 Display display = getSite().getShell().getDisplay();
-                if ((IResourceDelta.MOVED_TO & delta.getFlags()) == 0) { // if
-                    // the
-                    // file
-                    // was
-                    // deleted
+                if ((IResourceDelta.MOVED_TO & delta.getFlags()) == 0) { 
+                    // If the file was deleted
                     // NOTE: The case where an open, unsaved file is deleted is
                     // being handled by the
                     // PartListener added to the Workbench in the initialize()
@@ -1464,8 +1673,9 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
                     display.asyncExec(new Runnable() {
                         public void run()
                         {
-                            if (!isDirty())
+                            if (!isDirty()) {
                                 closeEditor(false);
+                            }
                         }
                     });
                 }
@@ -1496,6 +1706,30 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
                 }
             }
             return false;
+        }
+    }
+
+    private class InstallOptionsTreeViewer extends TreeViewer
+    {
+        public InstallOptionsTreeViewer()
+        {
+            super();
+            addDragSourceListener(new InstallOptionsTreeViewerDragSourceListener(this));
+            addDropTargetListener(new InstallOptionsTreeViewerDropTargetListener(this));
+        }
+        
+        public void addDragSourceListener(TransferDragSourceListener listener)
+        {
+            if(listener instanceof InstallOptionsTreeViewerDragSourceListener) {
+                super.addDragSourceListener(listener);
+            }
+        }
+        
+        public void addDropTargetListener(TransferDropTargetListener listener)
+        {
+            if(listener instanceof InstallOptionsTreeViewerDropTargetListener) {
+                super.addDropTargetListener(listener);
+            }
         }
     }
 }

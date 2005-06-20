@@ -9,14 +9,10 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.edit.dialog;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.*;
 
 import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
 import net.sf.eclipsensis.installoptions.figures.FigureUtility;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsDialog;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
 
 import org.eclipse.draw2d.*;
 import org.eclipse.draw2d.geometry.Dimension;
@@ -27,37 +23,9 @@ import org.eclipse.swt.widgets.Display;
 public class InstallOptionsDialogLayer extends FreeformLayer implements IInstallOptionsConstants
 {
     private List mChildren = new ArrayList();
-    private InstallOptionsDialog mDialog;
-    private Dimension mDialogSize = new Dimension();
-    private boolean mDialogSizeVisible = false;
-    private PropertyChangeListener mListener = new PropertyChangeListener() {
-        public void propertyChange(PropertyChangeEvent evt)
-        {
-            if(evt.getPropertyName().equals(InstallOptionsModel.PROPERTY_SIZE)) {
-                setDialogSize(dialogUnitsToPixels((Dimension)evt.getNewValue()));
-            }
-            else if(evt.getPropertyName().equals(InstallOptionsModel.PROPERTY_DIALOG_SIZE_VISIBLE)) {
-                setDialogSizeVisible(((Boolean)evt.getNewValue()).booleanValue());
-            }
-        }
-    };
+    private Dimension mDialogSize = new Dimension(100,100);
+    private boolean mShowDialogSize = false;
     
-    public void setInstallOptionsDialog(InstallOptionsDialog dialog)
-    {
-        if(mDialog != dialog) {
-            if(mDialog != null) {
-                mDialog.removePropertyChangeListener(mListener);
-            }
-            mDialog = dialog;
-            mDialogSize = dialogUnitsToPixels((mDialog != null?mDialog.getSize():new Dimension()));
-            mDialogSizeVisible = (mDialog != null?mDialog.isDialogSizeVisible():false);
-            if(mDialog != null) {
-                mDialog.addPropertyChangeListener(mListener);
-            }
-            repaint();
-        }
-    }
-
     private Dimension dialogUnitsToPixels(Dimension d)
     {
         Font f = Display.getDefault().getSystemFont();
@@ -67,9 +35,10 @@ public class InstallOptionsDialogLayer extends FreeformLayer implements IInstall
     protected void paintFigure(Graphics graphics)
     {
         super.paintFigure(graphics);
-        if(mDialog != null && mDialogSizeVisible && !mDialogSize.equals(0,0)) {
+        if(mShowDialogSize && !mDialogSize.equals(0,0)) {
             setForegroundColor(ColorConstants.blue);
-            graphics.drawRectangle(0,0,mDialogSize.width,mDialogSize.height);
+            Dimension d = dialogUnitsToPixels(mDialogSize);
+            graphics.drawRectangle(0,0,d.width,d.height);
         }
     }
     
@@ -115,15 +84,15 @@ public class InstallOptionsDialogLayer extends FreeformLayer implements IInstall
         }
     }
     
-    public boolean isDialogSizeVisible()
+    public boolean isShowDialogSize()
     {
-        return mDialogSizeVisible;
+        return mShowDialogSize;
     }
     
-    public void setDialogSizeVisible(boolean dialogSizeVisible)
+    public void setShowDialogSize(boolean showDialogSize)
     {
-        if(mDialogSizeVisible != dialogSizeVisible) {
-            mDialogSizeVisible = dialogSizeVisible;
+        if(mShowDialogSize != showDialogSize) {
+            mShowDialogSize = showDialogSize;
             repaint();
         }
     }

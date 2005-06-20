@@ -20,7 +20,7 @@ import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 
 public class InstallOptionsDirRequest extends InstallOptionsPathRequest
 {
-    private static Image DIRREQUEST_ICON = InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("dirrequest.type.small.icon")); //$NON-NLS-1$
+    public static Image DIRREQUEST_ICON = InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("dirrequest.type.small.icon")); //$NON-NLS-1$
 
     private String mRoot = ""; //$NON-NLS-1$
 
@@ -92,6 +92,7 @@ public class InstallOptionsDirRequest extends InstallOptionsPathRequest
             String oldRoot = mRoot;
             mRoot = root;
             firePropertyChange(InstallOptionsModel.PROPERTY_ROOT, oldRoot, mRoot);
+            setDirty(true);
         }
     }
 }

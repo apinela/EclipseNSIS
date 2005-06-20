@@ -20,7 +20,7 @@ import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 
 public class InstallOptionsLabel extends InstallOptionsUneditableElement
 {
-    private static Image LABEL_ICON = InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("label.type.small.icon")); //$NON-NLS-1$
+    public static Image LABEL_ICON = InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("label.type.small.icon")); //$NON-NLS-1$
 
     public InstallOptionsLabel()
     {

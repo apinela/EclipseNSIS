@@ -23,8 +23,7 @@ public class SetConstraintCommand extends org.eclipse.gef.commands.Command
 
     public void execute()
     {
-        mOldPos = mPart.getPosition().getCopy();
-        redo();
+        mPart.setPosition(mNewPos);
     }
 
     public boolean canExecute()
@@ -38,11 +37,6 @@ public class SetConstraintCommand extends org.eclipse.gef.commands.Command
             return InstallOptionsPlugin.getResourceString("set.constraint.command.location.name"); //$NON-NLS-1$
         }
         return InstallOptionsPlugin.getResourceString("set.constraint.command.resize.name"); //$NON-NLS-1$
-    }
-
-    public void redo()
-    {
-        mPart.setPosition(mNewPos);
     }
 
     public void undo()
@@ -59,5 +53,6 @@ public class SetConstraintCommand extends org.eclipse.gef.commands.Command
     public void setPart(InstallOptionsWidget part)
     {
         mPart = part;
+        mOldPos = mPart.getPosition().getCopy();
     }
 }

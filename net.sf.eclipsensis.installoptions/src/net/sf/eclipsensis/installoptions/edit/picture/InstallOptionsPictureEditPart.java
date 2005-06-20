@@ -26,15 +26,7 @@ public abstract class InstallOptionsPictureEditPart extends InstallOptionsWidget
 
     protected IInstallOptionsFigure createInstallOptionsFigure() 
     {
-        return new PictureFigure();
-    }
-
-    public void initFigure(IInstallOptionsFigure figure2)
-    {
-        super.initFigure(figure2);
-        PictureFigure figure3 = (PictureFigure)figure2;
-        InstallOptionsPicture picture = (InstallOptionsPicture)getModel();
-        figure3.setImage(picture.getImage());
+        return new PictureFigure(getInstallOptionsWidget());
     }
 
     protected DirectEditManager creatDirectEditManager(InstallOptionsWidgetEditPart part, Class clasz, CellEditorLocator locator)

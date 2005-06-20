@@ -15,6 +15,7 @@ import net.sf.eclipsensis.installoptions.edit.uneditable.InstallOptionsUneditabl
 import net.sf.eclipsensis.installoptions.figures.IInstallOptionsFigure;
 import net.sf.eclipsensis.installoptions.figures.LabelFigure;
 
+import org.eclipse.draw2d.FigureCanvas;
 import org.eclipse.gef.tools.CellEditorLocator;
 import org.eclipse.gef.tools.DirectEditManager;
 
@@ -27,7 +28,7 @@ public class InstallOptionsLabelEditPart extends InstallOptionsUneditableElement
     
     protected IInstallOptionsFigure createInstallOptionsFigure() 
     {
-        return new LabelFigure(this);
+        return new LabelFigure((FigureCanvas)this.getViewer().getControl(), getInstallOptionsWidget());
     }
 
     /**

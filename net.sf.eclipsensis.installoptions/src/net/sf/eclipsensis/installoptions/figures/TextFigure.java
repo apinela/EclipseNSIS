@@ -9,23 +9,40 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.figures;
 
-import org.eclipse.gef.GraphicalEditPart;
+import java.util.List;
+
+import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
+
+import org.eclipse.draw2d.FigureCanvas;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.views.properties.IPropertySource;
 
 public class TextFigure extends EditableElementFigure
 {
-    private boolean mHScroll = false;
-    private boolean mVScroll = false;
-    private boolean mMultiLine = false;
-    private boolean mReadOnly = false;
-    private boolean mNoWordWrap = false;
-    private boolean mOnlyNumbers = false;
+    private boolean mHScroll;
+    private boolean mVScroll;
+    private boolean mMultiLine;
+    private boolean mReadOnly;
+    private boolean mNoWordWrap;
+    private boolean mOnlyNumbers;
     
-    public TextFigure(GraphicalEditPart editPart)
+    public TextFigure(FigureCanvas canvas, IPropertySource propertySource)
     {
-        super(editPart);
+        super(canvas, propertySource);
     }
+    
+    protected void init(IPropertySource propertySource)
+    {
+        List flags = (List)propertySource.getPropertyValue(InstallOptionsModel.PROPERTY_FLAGS);
+        setOnlyNumbers(flags != null && flags.contains(InstallOptionsModel.FLAGS_ONLY_NUMBERS));
+        setMultiLine(flags != null && flags.contains(InstallOptionsModel.FLAGS_MULTILINE));
+        setNoWordWrap(flags != null && flags.contains(InstallOptionsModel.FLAGS_NOWORDWRAP));
+        setHScroll(flags != null && flags.contains(InstallOptionsModel.FLAGS_HSCROLL));
+        setVScroll(flags != null && flags.contains(InstallOptionsModel.FLAGS_VSCROLL));
+        setReadOnly(flags != null && flags.contains(InstallOptionsModel.FLAGS_READONLY));
+        super.init(propertySource);
+   }
 
     public boolean isOnlyNumbers()
     {
@@ -36,6 +53,7 @@ public class TextFigure extends EditableElementFigure
     {
         mOnlyNumbers = onlyNumbers;
     }
+    
     public boolean isHScroll()
     {
         return mHScroll;

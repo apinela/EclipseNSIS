@@ -50,7 +50,7 @@ public class InstallOptionsPaletteProvider
         CombinedTemplateCreationEntry entry = new CombinedTemplateCreationEntry(InstallOptionsPlugin.getResourceString(ltype+".type.name"), //$NON-NLS-1$
                 InstallOptionsPlugin.getResourceString(ltype+".type.short.desc"), //$NON-NLS-1$
                 type, 
-                new InstallOptionsElementFactory(type),
+                InstallOptionsElementFactory.getFactory(type),
                 InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString(ltype+".type.small.icon")), //$NON-NLS-1$
                 InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString(ltype+".type.large.icon"))); //$NON-NLS-1$
         return entry;
@@ -74,8 +74,8 @@ public class InstallOptionsPaletteProvider
 
     static PaletteRoot createPalette()
     {
-        PaletteRoot ioPalette = new PaletteRoot();
-        ioPalette.addAll(createCategories(ioPalette));
-        return ioPalette;
+        PaletteRoot paletteRoot = new PaletteRoot();
+        paletteRoot.addAll(createCategories(paletteRoot));
+        return paletteRoot;
     }
 }

@@ -11,31 +11,17 @@ package net.sf.eclipsensis.installoptions.properties.validators;
 
 import java.util.Collection;
 
-import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
 import net.sf.eclipsensis.installoptions.properties.labelproviders.MultiLineLabelProvider;
-import net.sf.eclipsensis.settings.NSISPreferences;
 import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.jface.viewers.ICellEditorValidator;
 
 public class NSISStringLengthValidator implements ICellEditorValidator
 {
-    private static final Integer MAX_LENGTH;
-
     private String mPropertyName;
-
-    static {
-        int maxLen;
-        try {
-            maxLen = Integer.parseInt(NSISPreferences.getPreferences().getNSISOption("NSIS_MAX_STRLEN")); //$NON-NLS-1$
-        }
-        catch(Exception ex){
-            maxLen = INSISConstants.DEFAULT_NSIS_TEXT_LIMIT;
-        }
-        MAX_LENGTH = new Integer(maxLen);
-    }
     
     /**
      * 
@@ -49,8 +35,8 @@ public class NSISStringLengthValidator implements ICellEditorValidator
     public String isValid(String value)
     {
         value = MultiLineLabelProvider.INSTANCE.getText(value);
-        if(value.length() > MAX_LENGTH.intValue())  {
-            return InstallOptionsPlugin.getFormattedString("property.maxlength.error",new Object[]{mPropertyName,MAX_LENGTH});
+        if(value.length() > InstallOptionsModel.MAX_LENGTH.intValue())  {
+            return InstallOptionsPlugin.getFormattedString("property.maxlength.error",new Object[]{mPropertyName,InstallOptionsModel.MAX_LENGTH}); //$NON-NLS-1$
         }
         return null;
     }

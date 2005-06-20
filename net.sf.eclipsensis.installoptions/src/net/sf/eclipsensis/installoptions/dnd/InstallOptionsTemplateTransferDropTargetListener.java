@@ -9,14 +9,15 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.dnd;
 
+import net.sf.eclipsensis.installoptions.edit.InstallOptionsEditDomain;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsElementFactory;
 
 import org.eclipse.gef.EditPartViewer;
 import org.eclipse.gef.dnd.TemplateTransferDropTargetListener;
 import org.eclipse.gef.requests.CreationFactory;
+import org.eclipse.swt.dnd.DropTargetEvent;
 
-public class InstallOptionsTemplateTransferDropTargetListener extends
-        TemplateTransferDropTargetListener
+public class InstallOptionsTemplateTransferDropTargetListener extends TemplateTransferDropTargetListener
 {
     /**
      * @param viewer
@@ -30,8 +31,16 @@ public class InstallOptionsTemplateTransferDropTargetListener extends
     protected CreationFactory getFactory(Object type) 
     {
         if (type instanceof String) {
-            return new InstallOptionsElementFactory((String)type);
+            return InstallOptionsElementFactory.getFactory((String)type);
         }
         return null;
+    }
+    
+    public boolean isEnabled(DropTargetEvent event)
+    {
+        if(((InstallOptionsEditDomain)getViewer().getEditDomain()).isReadOnly()) {
+            return false;
+        }
+        return super.isEnabled(event);
     }
 }

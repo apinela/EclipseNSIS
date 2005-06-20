@@ -29,7 +29,7 @@ public class InstallOptionsListboxEditManager extends InstallOptionsEditableElem
         super(source, editorType, locator);
     }
 
-    protected CellEditor createCellEditorOn(Composite composite)
+    protected CellEditor createCellEditor(Composite composite)
     {
         InstallOptionsListbox listbox = (InstallOptionsListbox)getEditPart().getModel();
         List items = listbox.getListItems();
@@ -43,6 +43,8 @@ public class InstallOptionsListboxEditManager extends InstallOptionsEditableElem
 
     protected int getCellEditorStyle() 
     {
-        return ((InstallOptionsListbox)getEditPart().getModel()).getFlags().contains(InstallOptionsModel.FLAGS_MULTISELECT)?SWT.MULTI:SWT.SINGLE;
+        List flags = ((InstallOptionsListbox)getEditPart().getModel()).getFlags();
+        return (flags.contains(InstallOptionsModel.FLAGS_MULTISELECT)||
+                flags.contains(InstallOptionsModel.FLAGS_EXTENDEDSELECT))?SWT.MULTI:SWT.SINGLE;
     }
 }

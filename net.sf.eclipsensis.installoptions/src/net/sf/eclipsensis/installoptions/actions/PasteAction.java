@@ -12,10 +12,12 @@ package net.sf.eclipsensis.installoptions.actions;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
+import net.sf.eclipsensis.installoptions.edit.InstallOptionsEditDomain;
 import net.sf.eclipsensis.installoptions.edit.dialog.InstallOptionsDialogEditPart;
 import net.sf.eclipsensis.installoptions.editor.InstallOptionsDesignEditor;
 import net.sf.eclipsensis.installoptions.model.commands.PasteCommand;
 
+import org.eclipse.gef.EditDomain;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.internal.GEFMessages;
 import org.eclipse.gef.ui.actions.WorkbenchPartAction;
@@ -32,7 +34,7 @@ public class PasteAction extends WorkbenchPartAction implements PropertyChangeLi
     public PasteAction(IWorkbenchPart part)
     {
         super(part);
-        setLazyEnablementCalculation(false);
+        setLazyEnablementCalculation(true);
         ((Clipboard)Clipboard.getDefault()).addPropertyChangeListener(this);
     }
 
@@ -56,6 +58,10 @@ public class PasteAction extends WorkbenchPartAction implements PropertyChangeLi
         IWorkbenchPart part = getWorkbenchPart();
         if(part instanceof InstallOptionsDesignEditor) {
             InstallOptionsDesignEditor editor = (InstallOptionsDesignEditor)part;
+            EditDomain domain = (EditDomain)getWorkbenchPart().getAdapter(EditDomain.class);
+            if(domain instanceof InstallOptionsEditDomain && ((InstallOptionsEditDomain)domain).isReadOnly()) {
+                return null;
+            }
             pasteCommand = new PasteCommand();
             pasteCommand.setParent((InstallOptionsDialogEditPart)editor.getGraphicalViewer().getContents());
         }

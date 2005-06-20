@@ -15,7 +15,7 @@ import org.eclipse.swt.graphics.Image;
 
 public class InstallOptionsPassword extends InstallOptionsText
 {
-    private static Image PASSWORD_ICON = InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("password.type.small.icon")); //$NON-NLS-1$
+    public static Image PASSWORD_ICON = InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("password.type.small.icon")); //$NON-NLS-1$
 
     /**
      * 
@@ -40,6 +40,6 @@ public class InstallOptionsPassword extends InstallOptionsText
     
     protected String getDefaultState()
     {
-        return "";
+        return ""; //$NON-NLS-1$
     }
 }

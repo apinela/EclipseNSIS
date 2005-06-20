@@ -90,18 +90,20 @@ public class ArrangeCommand extends Command
     public void setParent(InstallOptionsDialogEditPart parent)
     {
         mParent = parent;
-        mDialog = (InstallOptionsDialog)mParent.getModel();
+        if(mParent != null) {
+            mDialog = (InstallOptionsDialog)mParent.getModel();
         
-        mSelectedParts = Collections.EMPTY_LIST;
-        mSelectedChildren = Collections.EMPTY_LIST;
-        
-        IStructuredSelection ssel = (IStructuredSelection)mParent.getViewer().getSelection();
-        if(ssel.size() > 0) {
-            if(ssel.size() > 1 || ssel.getFirstElement() != mParent) {
-                mSelectedParts = new ArrayList(ssel.toList());
-                mSelectedChildren = new ArrayList();
-                for(Iterator iter = mSelectedParts.iterator(); iter.hasNext();) {
-                    mSelectedChildren.add(((InstallOptionsWidgetEditPart)iter.next()).getModel());
+            mSelectedParts = Collections.EMPTY_LIST;
+            mSelectedChildren = Collections.EMPTY_LIST;
+            
+            IStructuredSelection ssel = (IStructuredSelection)mParent.getViewer().getSelection();
+            if(ssel.size() > 0) {
+                if(ssel.size() > 1 || ssel.getFirstElement() != mParent) {
+                    mSelectedParts = new ArrayList(ssel.toList());
+                    mSelectedChildren = new ArrayList();
+                    for(Iterator iter = mSelectedParts.iterator(); iter.hasNext();) {
+                        mSelectedChildren.add(((InstallOptionsWidgetEditPart)iter.next()).getModel());
+                    }
                 }
             }
         }
@@ -110,9 +112,11 @@ public class ArrangeCommand extends Command
 
     public void redo()
     {
-        mDialog.setSelection(mSelectedChildren);
-        move();
-        mParent.getViewer().setSelection(new StructuredSelection(mSelectedParts));
+        if(mDialog != null) {
+            mDialog.setSelection(mSelectedChildren);
+            move();
+            mParent.getViewer().setSelection(new StructuredSelection(mSelectedParts));
+        }
     }
 
     protected void move()
@@ -135,7 +139,9 @@ public class ArrangeCommand extends Command
 
     public void undo()
     {
-        mDialog.setChildren(mOldChildren);
-        mParent.getViewer().setSelection(new StructuredSelection(mSelectedParts));
+        if(mDialog != null) {
+            mDialog.setChildren(mOldChildren);
+            mParent.getViewer().setSelection(new StructuredSelection(mSelectedParts));
+        }
     }
 }

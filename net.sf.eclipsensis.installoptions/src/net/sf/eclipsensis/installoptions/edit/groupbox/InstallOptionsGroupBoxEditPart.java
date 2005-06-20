@@ -15,6 +15,7 @@ import net.sf.eclipsensis.installoptions.edit.uneditable.InstallOptionsUneditabl
 import net.sf.eclipsensis.installoptions.figures.GroupBoxFigure;
 import net.sf.eclipsensis.installoptions.figures.IInstallOptionsFigure;
 
+import org.eclipse.draw2d.FigureCanvas;
 import org.eclipse.gef.tools.CellEditorLocator;
 import org.eclipse.gef.tools.DirectEditManager;
 
@@ -27,7 +28,7 @@ public class InstallOptionsGroupBoxEditPart extends InstallOptionsUneditableElem
     
     protected IInstallOptionsFigure createInstallOptionsFigure() 
     {
-        return new GroupBoxFigure(this);
+        return new GroupBoxFigure((FigureCanvas)this.getViewer().getControl(), getInstallOptionsWidget());
     }
 
     /**

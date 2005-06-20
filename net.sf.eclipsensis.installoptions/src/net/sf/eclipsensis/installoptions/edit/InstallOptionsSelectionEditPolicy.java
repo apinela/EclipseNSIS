@@ -13,6 +13,7 @@ import org.eclipse.draw2d.*;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.gef.*;
+import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.editpolicies.ComponentEditPolicy;
 import org.eclipse.gef.requests.LocationRequest;
 import org.eclipse.swt.graphics.Rectangle;
@@ -21,6 +22,13 @@ import org.eclipse.swt.widgets.Display;
 public class InstallOptionsSelectionEditPolicy extends ComponentEditPolicy
 {
     private Label mToolTip;
+    private EditPart mEditPart;
+    
+    public InstallOptionsSelectionEditPolicy(EditPart editPart)
+    {
+        super();
+        mEditPart = editPart;
+    }
     
     private Label getToolTip()
     {
@@ -38,6 +46,17 @@ public class InstallOptionsSelectionEditPolicy extends ComponentEditPolicy
         return mToolTip;
     }
     
+    
+    public Command getCommand(Request request)
+    {
+        if(((InstallOptionsEditDomain)mEditPart.getViewer().getEditDomain()).isReadOnly()) {
+            return null;
+        }
+        else {
+            return super.getCommand(request);
+        }
+    }
+
     private Point computeTipLocation(IFigure tip, Point p) {
         Rectangle clientArea = Display.getDefault().getClientArea();
         Point preferredLocation = new Point(p.x, p.y + 26);

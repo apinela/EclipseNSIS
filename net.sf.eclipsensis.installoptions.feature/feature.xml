@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="net.sf.eclipsensis.installoptions"
+      label="%feature.name"
+      version="0.0.1"
+      provider-name="%provider.name"
+      os="win32"
+      ws="win32"
+      arch="x86">
+
+   <install-handler/>
+
+   <description url="%description.url">
+      %description
+   </description>
+
+   <copyright url="%copyright.url">
+      %copyright.text
+   </copyright>
+
+   <license url="%license.url">
+      %license.text
+   </license>
+
+   <url>
+      <update label="%update.site.name" url="http://eclipsensis.sf.net/update"/>
+      <discovery label="%discovery.site.name" url="http://eclipsensis.sf.net/update/"/>
+   </url>
+
+   <requires>
+      <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.eclipse.gef"/>
+      <import plugin="org.eclipse.jface"/>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.ui.views"/>
+      <import plugin="org.eclipse.core.resources"/>
+      <import plugin="org.eclipse.ui.ide"/>
+      <import plugin="net.sf.eclipsensis"/>
+      <import plugin="org.eclipse.ui.editors"/>
+      <import plugin="org.eclipse.ui.workbench.texteditor"/>
+      <import plugin="org.eclipse.jface.text"/>
+   </requires>
+
+   <plugin
+         id="net.sf.eclipsensis.installoptions"
+         os="win32"
+         ws="win32"
+         arch="x86"
+         download-size="210"
+         install-size="210"
+         version="0.0.1"/>
+
+</feature>

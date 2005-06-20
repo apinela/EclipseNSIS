@@ -14,10 +14,16 @@ import net.sf.eclipsensis.installoptions.model.InstallOptionsCheckBox;
 import net.sf.eclipsensis.installoptions.model.commands.ToggleStateCommand;
 import net.sf.eclipsensis.installoptions.requests.ExtendedEditRequest;
 
+import org.eclipse.gef.EditPart;
 import org.eclipse.gef.commands.Command;
 
 public class InstallOptionsCheckBoxExtendedEditPolicy extends InstallOptionsExtendedEditPolicy
 {
+    public InstallOptionsCheckBoxExtendedEditPolicy(EditPart editPart)
+    {
+        super(editPart);
+    }
+    
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.installoptions.edit.InstallOptionsExtendedEditPolicy#getExtendedEditCommand(net.sf.eclipsensis.installoptions.requests.ExtendedEditRequest)
      */

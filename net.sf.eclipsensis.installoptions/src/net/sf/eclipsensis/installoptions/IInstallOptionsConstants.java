@@ -25,6 +25,8 @@ public interface IInstallOptionsConstants
     public static final String INSTALLOPTIONS_DESIGN_EDITOR_ID = InstallOptionsPlugin.getBundleResourceString("%installoptions.design.editor.id"); //$NON-NLS-1$
     public static final String INSTALLOPTIONS_SOURCE_EDITOR_ID = InstallOptionsPlugin.getBundleResourceString("%installoptions.source.editor.id"); //$NON-NLS-1$
     
+    public static final String INSTALLOPTIONS_PROBLEM_MARKER_ID = InstallOptionsPlugin.getBundleResourceString("%installoptions.qualified.problem.marker.id"); //$NON-NLS-1$
+
     public static final String GRID_STYLE_LINES="GridStyleLines"; //$NON-NLS-1$
     public static final String GRID_STYLE_DOTS="GridStyleDots"; //$NON-NLS-1$
     
@@ -70,9 +72,12 @@ public interface IInstallOptionsConstants
     public static final QualifiedName FILEPROPERTY_GRID_STYLE = new QualifiedName(QUALIFIED_NAME_PREFIX,PREFERENCE_GRID_STYLE);
     public static final QualifiedName FILEPROPERTY_ZOOM = new QualifiedName(QUALIFIED_NAME_PREFIX,PREFERENCE_ZOOM);
     public static final QualifiedName FILEPROPERTY_DIALOG_SIZE = new QualifiedName(QUALIFIED_NAME_PREFIX,"DialogSize"); //$NON-NLS-1$
+    public static final QualifiedName FILEPROPERTY_PROBLEM_MARKERS = new QualifiedName(QUALIFIED_NAME_PREFIX,"ProblemMarkers"); //$NON-NLS-1$
     
     public static final String PROPERTY_SNAP_TO_GUIDES = "net.sf.eclipsensis.installoptions.snap_to_guides"; //$NON-NLS-1$
     public static final String PROPERTY_GLUE_TO_GUIDES = "net.sf.eclipsensis.installoptions.glue_to_guides"; //$NON-NLS-1$
+    public static final String PROPERTY_DIALOG_SIZE = "net.sf.eclipsensis.installoptions.dialog_size"; //$NON-NLS-1$
+    public static final String PROPERTY_SHOW_DIALOG_SIZE = "net.sf.eclipsensis.installoptions.show_dialog_size"; //$NON-NLS-1$
     
     public static final String GRID_SNAP_GLUE_SETTINGS_ACTION_ID = "net.sf.eclipsensis.installoptions.grid_snap_glue_settings"; //$NON-NLS-1$
     public static final String[] ZOOM_LEVEL_CONTRIBUTIONS = new String[] {   

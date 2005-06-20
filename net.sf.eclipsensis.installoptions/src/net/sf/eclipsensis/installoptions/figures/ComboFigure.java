@@ -9,18 +9,16 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.figures;
 
-import org.eclipse.gef.GraphicalEditPart;
+import org.eclipse.draw2d.FigureCanvas;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.views.properties.IPropertySource;
 
 public class ComboFigure extends EditableElementFigure
 {
-    private Point mSWTPreferredSize;
-    
-    public ComboFigure(GraphicalEditPart editPart)
+    public ComboFigure(FigureCanvas canvas, IPropertySource propertySource)
     {
-        super(editPart);
+        super(canvas, propertySource);
     }
     
     /**
@@ -31,13 +29,7 @@ public class ComboFigure extends EditableElementFigure
         Combo combo = new Combo(parent, getStyle());
         String state = getState();
         combo.setText(state);
-        mSWTPreferredSize = combo.computeSize(SWT.DEFAULT,SWT.DEFAULT);
         return combo;
-    }
-
-    public Point getSWTPreferredSize()
-    {
-        return mSWTPreferredSize;
     }
     
     /**

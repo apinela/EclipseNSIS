@@ -11,6 +11,10 @@ package net.sf.eclipsensis.installoptions.figures;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.List;
+
+import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsWidget;
 
 import org.eclipse.draw2d.*;
 import org.eclipse.draw2d.geometry.Point;
@@ -21,6 +25,8 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.views.properties.IPropertySource;
 
 public abstract class SWTControlFigure extends Figure implements IInstallOptionsFigure
 {
@@ -87,43 +93,51 @@ public abstract class SWTControlFigure extends Figure implements IInstallOptions
         }
     };
 
-    public SWTControlFigure(GraphicalEditPart editPart)
+    public SWTControlFigure(FigureCanvas canvas, IPropertySource propertySource)
     {
         super();
-        mEditPart = editPart;
         setLayoutManager(new XYLayout());
-        mCanvas = (FigureCanvas) editPart.getViewer().getControl();
-        mCanvas.addDisposeListener(new DisposeListener(){
-            public void widgetDisposed(DisposeEvent e)
-            {
-                if(mImage != null && !mImage.isDisposed()) {
-                    mImage.dispose();
+        mCanvas = canvas;
+        if(mCanvas != null) {
+            mCanvas.addDisposeListener(new DisposeListener(){
+                public void widgetDisposed(DisposeEvent e)
+                {
+                    if(mImage != null && !mImage.isDisposed()) {
+                        mImage.dispose();
+                    }
                 }
-            }
-        });
+            });
+        }
+        init(propertySource);
     }
 
-    public GraphicalEditPart getEditPart()
+    protected void init(IPropertySource propertySource)
     {
-        return mEditPart;
+        List flags = (List)propertySource.getPropertyValue(InstallOptionsModel.PROPERTY_FLAGS);
+        setDisabled(flags != null && flags.contains(InstallOptionsModel.FLAGS_DISABLED));
+        setBounds((Rectangle)propertySource.getPropertyValue(InstallOptionsWidget.PROPERTY_BOUNDS));
     }
 
     public void addNotify()
     {
-        Viewport viewPort = mCanvas.getViewport();
-        viewPort.addFigureListener(mFigureListener);
-        addFigureListener(mFigureListener);
-        viewPort.addPropertyChangeListener(mPropertyListener);
+        if(mCanvas != null) {
+            Viewport viewPort = mCanvas.getViewport();
+            viewPort.addFigureListener(mFigureListener);
+            addFigureListener(mFigureListener);
+            viewPort.addPropertyChangeListener(mPropertyListener);
+        }
         super.addNotify();
     }
 
     public void removeNotify() 
     {
         super.removeNotify();
-        Viewport viewPort = mCanvas.getViewport();
-        viewPort.removeFigureListener(mFigureListener);
-        viewPort.removePropertyChangeListener(mPropertyListener);
-        removeFigureListener(mFigureListener);
+        if(mCanvas != null) {
+            Viewport viewPort = mCanvas.getViewport();
+            viewPort.removeFigureListener(mFigureListener);
+            viewPort.removePropertyChangeListener(mPropertyListener);
+            removeFigureListener(mFigureListener);
+        }
     }
     
     public void setDisabled(boolean disabled)
@@ -176,7 +190,8 @@ public abstract class SWTControlFigure extends Figure implements IInstallOptions
      */
     protected synchronized void layout() 
     {
-        if(isNeedsReScrape()) {
+        if(isNeedsReScrape() && mCanvas != null) {
+            PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell().forceActive();
             Rectangle clientArea = mCanvas.getViewport().getClientArea();
             Rectangle rect = clientArea.intersect(bounds);
             if(rect.width > 0 && rect.height > 0) {

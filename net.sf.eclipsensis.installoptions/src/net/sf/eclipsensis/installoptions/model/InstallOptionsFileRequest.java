@@ -16,6 +16,7 @@ import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.properties.validators.NSISStringLengthValidator;
+import net.sf.eclipsensis.installoptions.util.TypeConverter;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.viewer.CollectionContentProvider;
 import net.sf.eclipsensis.viewer.TableViewerUpDownMover;
@@ -35,14 +36,45 @@ import org.eclipse.ui.views.properties.PropertyDescriptor;
 
 public class InstallOptionsFileRequest extends InstallOptionsPathRequest
 {
-    private static Image FILEREQUEST_ICON = InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("filerequest.type.small.icon")); //$NON-NLS-1$
+    public static Image FILEREQUEST_ICON = InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("filerequest.type.small.icon")); //$NON-NLS-1$
     private static final char FILTER_SEPARATOR = ';';
+    private static final TypeConverter FILTER_LIST_CONVERTER = new TypeConverter(){
+        public String asString(Object o)
+        {
+            return Common.flatten(((List)o).toArray(),IInstallOptionsConstants.LIST_SEPARATOR);
+        }
+
+        public Object asType(String s)
+        {
+            List list = new ArrayList();
+            String[] tokens = Common.tokenize(s,IInstallOptionsConstants.LIST_SEPARATOR);
+            for (int i = 0; i < (tokens.length-1); i+= 2) {
+                String description = tokens[i];
+                String[] temp = Common.tokenize(tokens[i+1],FILTER_SEPARATOR);
+                Pattern[] patterns = new Pattern[temp.length];
+                for (int j = 0; j < patterns.length; j++) {
+                    patterns[i] = new Pattern(temp[i]);
+                }
+                list.add(new Filter(description, patterns));
+            }
+            return list;
+        }
+
+        public Object makeCopy(Object o)
+        {
+            List list = new ArrayList();
+            for(Iterator iter=((List)o).iterator(); iter.hasNext(); ) {
+                list.add(((Filter)iter.next()).clone());
+            }
+            return null;
+        }
+    };
 
     private static final LabelProvider cLabelProvider = new LabelProvider(){
         public String getText(Object element) 
         {
             if(element instanceof List) {
-                return Common.flatten(((List)element).toArray(),IInstallOptionsConstants.LIST_SEPARATOR);
+                return FILTER_LIST_CONVERTER.asString(element);
             }
             else {
                 return super.getText(element);
@@ -85,6 +117,16 @@ public class InstallOptionsFileRequest extends InstallOptionsPathRequest
         }
     }
 
+    protected TypeConverter getTypeConverter(String property)
+    {
+        if(property.equals(InstallOptionsModel.PROPERTY_FILTER)) {
+            return FILTER_LIST_CONVERTER;
+        }
+        else {
+            return super.getTypeConverter(property);
+        }
+    }
+    
     protected IPropertyDescriptor createPropertyDescriptor(String name)
     {
         if(name.equals(InstallOptionsModel.PROPERTY_FILTER)) {
@@ -134,9 +176,10 @@ public class InstallOptionsFileRequest extends InstallOptionsPathRequest
             List oldFilter = mFilter;
             mFilter = filter;
             firePropertyChange(InstallOptionsModel.PROPERTY_FILTER, oldFilter, mFilter);
+            setDirty(true);
         }
     }
-    
+ 
     private final class FilterCellEditor extends DialogCellEditor
     {
         private FilterCellEditor(Composite parent)
@@ -207,7 +250,7 @@ public class InstallOptionsFileRequest extends InstallOptionsPathRequest
             if(validator != null) {
                 String error = validator.isValid(getFilter());
                 if(!Common.isEmpty(error)) {
-                    MessageDialog.openError(getShell(),EclipseNSISPlugin.getResourceString("error.title"),error);
+                    MessageDialog.openError(getShell(),EclipseNSISPlugin.getResourceString("error.title"),error); //$NON-NLS-1$
                     return;
                 }
             }
@@ -677,10 +720,11 @@ public class InstallOptionsFileRequest extends InstallOptionsPathRequest
         }
     }
     
-    private class Filter implements Cloneable
+    private static class Filter implements Cloneable
     {
+        private static final Pattern[] EMPTY_PATTERN_ARRAY = new Pattern[0];
         private String mDescription;
-        private Pattern[] mPatterns;
+        private Pattern[] mPatterns = EMPTY_PATTERN_ARRAY;
         
         public Filter()
         {
@@ -689,24 +733,27 @@ public class InstallOptionsFileRequest extends InstallOptionsPathRequest
         public Filter(String description, Pattern[] patterns)
         {
             this();
-            mDescription = description;
-            mPatterns = patterns;
+            setDescription(description);
+            setPatterns(patterns);
         }
         
         public Filter(Filter filter)
         {
-            this(filter.getDescription(),(Pattern[])filter.getPatterns().clone());
-        }
-
-        public Object clone() throws CloneNotSupportedException
-        {
-            Filter clone = (Filter)super.clone();
-            if(!Common.isEmptyArray(clone.mPatterns)) {
-                for (int i = 0; i < clone.mPatterns.length; i++) {
-                    clone.mPatterns[i] = (Pattern)clone.mPatterns[i].clone();
+            this();
+            setDescription(filter.getDescription());
+            Pattern[] patterns = filter.getPatterns();
+            Pattern[] patterns2 = null;
+            if(!Common.isEmptyArray(patterns)) {
+                for (int i = 0; i < patterns.length; i++) {
+                    patterns2[i] = (Pattern)patterns[i].clone();
                 }
             }
-            return clone;
+            setPatterns(patterns2);
+        }
+
+        public Object clone()
+        {
+            return new Filter(this);
         }
 
         public String getDescription()
@@ -726,7 +773,7 @@ public class InstallOptionsFileRequest extends InstallOptionsPathRequest
 
         public void setPatterns(Pattern[] patterns)
         {
-            mPatterns = patterns;
+            mPatterns = (patterns==null?EMPTY_PATTERN_ARRAY:patterns);
         }
         
         public String toString()
@@ -743,7 +790,7 @@ public class InstallOptionsFileRequest extends InstallOptionsPathRequest
         }
     }
     
-    private class Pattern implements Cloneable
+    private static class Pattern implements Cloneable
     {
         private String mPattern;
         
@@ -767,9 +814,9 @@ public class InstallOptionsFileRequest extends InstallOptionsPathRequest
             mPattern = pattern;
         }
         
-        public Object clone() throws CloneNotSupportedException
+        public Object clone()
         {
-            return super.clone();
+            return new Pattern(mPattern);
         }
     }
 }

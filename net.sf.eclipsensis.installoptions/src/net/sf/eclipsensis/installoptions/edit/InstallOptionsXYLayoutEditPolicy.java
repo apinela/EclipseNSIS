@@ -31,11 +31,23 @@ import org.eclipse.gef.rulers.RulerProvider;
 
 public class InstallOptionsXYLayoutEditPolicy extends XYLayoutEditPolicy implements IInstallOptionsConstants
 {
-
-    public InstallOptionsXYLayoutEditPolicy(XYLayout layout)
+    private EditPart mEditPart;
+    
+    public InstallOptionsXYLayoutEditPolicy(EditPart editPart, XYLayout layout)
     {
         super();
+        mEditPart = editPart;
         setXyLayout(layout);
+    }
+    
+    public Command getCommand(Request request)
+    {
+        if(((InstallOptionsEditDomain)mEditPart.getViewer().getEditDomain()).isReadOnly()) {
+            return null;
+        }
+        else {
+            return super.getCommand(request);
+        }
     }
 
     protected Command chainGuideAttachmentCommand(Request request,
@@ -188,7 +200,7 @@ public class InstallOptionsXYLayoutEditPolicy extends XYLayoutEditPolicy impleme
 
     protected EditPolicy createChildEditPolicy(EditPart child)
     {
-        return new InstallOptionsResizableEditPolicy();
+        return new InstallOptionsResizableEditPolicy(child);
     }
 
     /*

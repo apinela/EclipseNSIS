@@ -15,7 +15,7 @@ import org.eclipse.swt.graphics.Image;
 
 public class InstallOptionsBitmap extends InstallOptionsPicture
 {
-    private static Image BITMAP_ICON = InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("bitmap.type.small.icon")); //$NON-NLS-1$
+    public static Image BITMAP_ICON = InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("bitmap.type.small.icon")); //$NON-NLS-1$
     private static Image BITMAP_IMAGE = InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("bitmap.image")); //$NON-NLS-1$
 
     /**

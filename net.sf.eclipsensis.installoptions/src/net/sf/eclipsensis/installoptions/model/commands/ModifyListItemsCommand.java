@@ -30,7 +30,7 @@ public class ModifyListItemsCommand extends Command
         mModel = (InstallOptionsCombobox)mEditPart.getModel();
         mNewListItems = newListItems;
         mOldListItems = mModel.getListItems();
-        setLabel(InstallOptionsPlugin.getFormattedString("modify.listitems.command.label", new Object[]{mModel.getType()}));
+        setLabel(InstallOptionsPlugin.getFormattedString("modify.listitems.command.label", new Object[]{mModel.getType()})); //$NON-NLS-1$
     }
     
     public void execute()

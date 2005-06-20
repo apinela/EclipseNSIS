@@ -14,7 +14,7 @@ import java.util.List;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.properties.descriptors.CustomColorPropertyDescriptor;
 import net.sf.eclipsensis.installoptions.properties.validators.NSISStringLengthValidator;
-import net.sf.eclipsensis.util.ColorManager;
+import net.sf.eclipsensis.installoptions.util.TypeConverter;
 
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -25,7 +25,7 @@ import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 
 public class InstallOptionsLink extends InstallOptionsUneditableElement
 {
-    private static Image LINK_ICON = InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("link.type.small.icon")); //$NON-NLS-1$
+    public static Image LINK_ICON = InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("link.type.small.icon")); //$NON-NLS-1$
     public static final RGB DEFAULT_TXTCOLOR = new RGB(0,0,255);
     
     private String mState;
@@ -35,20 +35,17 @@ public class InstallOptionsLink extends InstallOptionsUneditableElement
         public String getText(Object element) 
         {
             if(element instanceof RGB) {
-                StringBuffer buf = new StringBuffer("0x"); //$NON-NLS-1$
-                RGB rgb = (RGB)element;
-                buf.append(ColorManager.rgbToHex(rgb));
-                if(rgb.equals(DEFAULT_TXTCOLOR)) {
-                    buf.append(" ").append(InstallOptionsPlugin.getResourceString("value.default")); //$NON-NLS-1$ //$NON-NLS-2$
+                String s = TypeConverter.RGB_CONVERTER.asString(element);
+                if(((RGB)element).equals(DEFAULT_TXTCOLOR)) {
+                    s = new StringBuffer(s).append(" ").append(InstallOptionsPlugin.getResourceString("value.default")).toString(); //$NON-NLS-1$ //$NON-NLS-2$
                 }
-                return buf.toString();
+                return s;
             }
             else {
                 return super.getText(element);
             }
         }
     };
-    
     /**
      * 
      */
@@ -98,6 +95,7 @@ public class InstallOptionsLink extends InstallOptionsUneditableElement
             String oldState = mState;
             mState = state;
             firePropertyChange(InstallOptionsModel.PROPERTY_STATE, oldState, mState);
+            setDirty(true);
         }
     }
     
@@ -112,6 +110,17 @@ public class InstallOptionsLink extends InstallOptionsUneditableElement
             RGB oldTxtColor = mTxtColor;
             mTxtColor = (DEFAULT_TXTCOLOR.equals(txtColor)?null:txtColor);
             firePropertyChange(InstallOptionsModel.PROPERTY_TXTCOLOR, oldTxtColor, txtColor);
+            setDirty(true);
+        }
+    }
+    
+    protected TypeConverter getTypeConverter(String property)
+    {
+        if(property.equalsIgnoreCase(InstallOptionsModel.PROPERTY_TXTCOLOR)) {
+            return TypeConverter.RGB_CONVERTER;
+        }
+        else {
+            return super.getTypeConverter(property);
         }
     }
 

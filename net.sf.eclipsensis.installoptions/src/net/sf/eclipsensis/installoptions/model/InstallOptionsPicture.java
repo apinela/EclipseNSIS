@@ -14,6 +14,8 @@ import org.eclipse.swt.graphics.Rectangle;
 
 public abstract class InstallOptionsPicture extends InstallOptionsLabel
 {
+    public static final String PROPERTY_IMAGE = "Image"; //$NON-NLS-1$
+    
     /**
      * @param type
      */
@@ -36,6 +38,16 @@ public abstract class InstallOptionsPicture extends InstallOptionsLabel
     {
         Rectangle rect = getImage().getBounds();
         return new Position(0,0,rect.width-1,rect.height-1);
+    }
+    
+    public Object getPropertyValue(Object propName)
+    {
+        if(PROPERTY_IMAGE.equals(propName)) {
+            return getImage();
+        }
+        else {
+            return super.getPropertyValue(propName);
+        }
     }
     
     public abstract Image getImage();

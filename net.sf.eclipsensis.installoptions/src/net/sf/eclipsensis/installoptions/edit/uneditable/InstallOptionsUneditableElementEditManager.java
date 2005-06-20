@@ -9,17 +9,17 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.edit.uneditable;
 
+import net.sf.eclipsensis.installoptions.edit.InstallOptionsDirectEditManager;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsUneditableElement;
 
 import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.gef.tools.CellEditorLocator;
-import org.eclipse.gef.tools.DirectEditManager;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 
-public abstract class InstallOptionsUneditableElementEditManager extends DirectEditManager
+public abstract class InstallOptionsUneditableElementEditManager extends InstallOptionsDirectEditManager
 {
     public InstallOptionsUneditableElementEditManager(GraphicalEditPart source, Class editorType, CellEditorLocator locator)
     {
@@ -35,7 +35,7 @@ public abstract class InstallOptionsUneditableElementEditManager extends DirectE
         text.selectAll();
     }
 
-    protected CellEditor createCellEditorOn(Composite composite) 
+    protected CellEditor createCellEditor(Composite composite) 
     {
         return new TextCellEditor(composite, getCellEditorStyle());
     }

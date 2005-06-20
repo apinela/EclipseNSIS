@@ -9,17 +9,18 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.figures;
 
-import org.eclipse.gef.GraphicalEditPart;
+import org.eclipse.draw2d.FigureCanvas;
 import org.eclipse.swt.SWT;
+import org.eclipse.ui.views.properties.IPropertySource;
 
 public class PasswordFigure extends TextFigure
 {
     /**
      * @param editPart
      */
-    public PasswordFigure(GraphicalEditPart editPart)
+    public PasswordFigure(FigureCanvas canvas, IPropertySource propertySource)
     {
-        super(editPart);
+        super(canvas, propertySource);
     }
 
     public int getDefaultStyle()

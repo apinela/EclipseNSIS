@@ -155,7 +155,7 @@ public class MultiLineTextCellEditor extends DialogCellEditor
             if(validator != null) {
                 String error = validator.isValid(getValue());
                 if(!Common.isEmpty(error)) {
-                    MessageDialog.openError(getShell(),EclipseNSISPlugin.getResourceString("error.title"),error);
+                    MessageDialog.openError(getShell(),EclipseNSISPlugin.getResourceString("error.title"),error); //$NON-NLS-1$
                     return;
                 }
             }

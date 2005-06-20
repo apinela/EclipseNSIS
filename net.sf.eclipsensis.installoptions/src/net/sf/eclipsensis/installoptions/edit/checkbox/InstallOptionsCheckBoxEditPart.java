@@ -19,6 +19,7 @@ import net.sf.eclipsensis.installoptions.figures.IInstallOptionsFigure;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsCheckBox;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
 
+import org.eclipse.draw2d.FigureCanvas;
 import org.eclipse.gef.tools.CellEditorLocator;
 import org.eclipse.gef.tools.DirectEditManager;
 
@@ -61,7 +62,7 @@ public class InstallOptionsCheckBoxEditPart extends InstallOptionsButtonEditPart
 
     protected IInstallOptionsFigure createInstallOptionsFigure()
     {
-        return new CheckBoxFigure(this);
+        return new CheckBoxFigure((FigureCanvas)this.getViewer().getControl(), getInstallOptionsWidget());
     }
 
     protected CellEditorLocator createCellEditorLocator(IInstallOptionsFigure figure)
@@ -77,7 +78,7 @@ public class InstallOptionsCheckBoxEditPart extends InstallOptionsButtonEditPart
     protected void createEditPolicies()
     {
         super.createEditPolicies();
-        installEditPolicy(InstallOptionsExtendedEditPolicy.ROLE, new InstallOptionsCheckBoxExtendedEditPolicy());
+        installEditPolicy(InstallOptionsExtendedEditPolicy.ROLE, new InstallOptionsCheckBoxExtendedEditPolicy(this));
     }
     
     protected String getExtendedEditLabelProperty()
@@ -88,15 +89,6 @@ public class InstallOptionsCheckBoxEditPart extends InstallOptionsButtonEditPart
     protected String getTypeName()
     {
         return InstallOptionsPlugin.getResourceString("checkbox.type.name"); //$NON-NLS-1$
-    }
-
-    public void initFigure(IInstallOptionsFigure figure2)
-    {
-        super.initFigure(figure2);
-        CheckBoxFigure figure3 = (CheckBoxFigure)figure2;
-        InstallOptionsCheckBox button = (InstallOptionsCheckBox)getInstallOptionsUneditableElement();
-        figure3.setLeftText(button.getFlags().contains(InstallOptionsModel.FLAGS_RIGHT));
-        figure3.setState(InstallOptionsModel.STATE_CHECKED.equals(button.getState()));
     }
 
     protected void handleFlagAdded(String flag)

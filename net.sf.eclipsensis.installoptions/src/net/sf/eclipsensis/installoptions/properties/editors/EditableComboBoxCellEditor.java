@@ -171,7 +171,7 @@ public class EditableComboBoxCellEditor extends CellEditor
         if( (getStyle() & SWT.READ_ONLY) > 0) {
             int index = mCombo.getSelectionIndex();
             if(index < 0 || index >= mCombo.getItemCount()) {
-                mSelection = "";
+                mSelection = ""; //$NON-NLS-1$
             }
             else {
                 mSelection = mCombo.getItem(index);
@@ -218,7 +218,7 @@ public class EditableComboBoxCellEditor extends CellEditor
         mSelection = (String)value;
         if( (getStyle()&SWT.READ_ONLY) > 0) {
             if(!getItems().contains(value)) {
-                mSelection = "";
+                mSelection = ""; //$NON-NLS-1$
             }
         }
         mCombo.setText(mSelection);
@@ -237,7 +237,7 @@ public class EditableComboBoxCellEditor extends CellEditor
             
             if(mSelection == null) {
                 setValueValid(true);
-                mSelection = "";
+                mSelection = ""; //$NON-NLS-1$
             }
             else {
                 setValue(mSelection);

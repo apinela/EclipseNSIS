@@ -43,7 +43,7 @@ public class NSISEditorSourceViewerConfiguration extends NSISSourceViewerConfigu
         mInformationPresenter.setInformationProvider(informationProvider,NSISPartitionScanner.NSIS_STRING);
         mInformationPresenter.setInformationProvider(informationProvider,IDocument.DEFAULT_CONTENT_TYPE);
         mInformationPresenter.setSizeConstraints(60, 5, true, true);
-        mAnnotationHover = new NSISAnnotationHover();
+        mAnnotationHover = new NSISAnnotationHover(new String[]{PROBLEM_MARKER_ID,TASK_MARKER_ID});
     }
 
     /*

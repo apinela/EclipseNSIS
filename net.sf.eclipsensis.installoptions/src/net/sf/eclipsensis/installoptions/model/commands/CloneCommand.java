@@ -91,7 +91,6 @@ public class CloneCommand extends Command
             while (i.hasNext()) {
                 clonePart((InstallOptionsElement)i.next(), (InstallOptionsDialog)newPart, null, -1);
             }
-            ((InstallOptionsDialog)newPart).setSize(((InstallOptionsDialog)oldPart).getSize());
         }
 
         if (newParent == mParent) {

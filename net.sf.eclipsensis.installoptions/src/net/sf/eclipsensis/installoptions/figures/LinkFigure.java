@@ -10,8 +10,9 @@
 package net.sf.eclipsensis.installoptions.figures;
 
 import net.sf.eclipsensis.installoptions.model.InstallOptionsLink;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
 
-import org.eclipse.gef.GraphicalEditPart;
+import org.eclipse.draw2d.FigureCanvas;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -19,21 +20,29 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.views.properties.IPropertySource;
 
 public class LinkFigure extends LabelFigure
 {
-    private RGB mTxtColor = null;
+    private RGB mTxtColor;
+    
     /**
      * @param editPart
      */
-    public LinkFigure(GraphicalEditPart editPart)
+    public LinkFigure(FigureCanvas canvas, IPropertySource propertySource)
     {
-        super(editPart);
+        super(canvas, propertySource);
     }
+    
+    protected void init(IPropertySource propertySource)
+    {
+        setTxtColor((RGB)propertySource.getPropertyValue(InstallOptionsModel.PROPERTY_TXTCOLOR));
+        super.init(propertySource);
+   }
     
     public RGB getTxtColor()
     {
-        return mTxtColor;
+        return mTxtColor==null?InstallOptionsLink.DEFAULT_TXTCOLOR:mTxtColor;
     }
 
     public void setTxtColor(RGB txtColor)
@@ -47,7 +56,7 @@ public class LinkFigure extends LabelFigure
     protected Control createSWTControl(Composite parent)
     {
         Control label = super.createSWTControl(parent);
-        final Color color = new Color(label.getDisplay(),(mTxtColor==null?InstallOptionsLink.DEFAULT_TXTCOLOR:mTxtColor));
+        final Color color = new Color(label.getDisplay(),getTxtColor());
         label.setForeground(color);
         label.addDisposeListener(new DisposeListener(){
             public void widgetDisposed(DisposeEvent e)

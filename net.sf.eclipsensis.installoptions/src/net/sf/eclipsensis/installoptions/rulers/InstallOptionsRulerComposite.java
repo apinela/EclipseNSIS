@@ -29,17 +29,17 @@ import org.eclipse.swt.widgets.*;
 
 public class InstallOptionsRulerComposite extends Composite
 {
-    private EditDomain rulerEditDomain;
-    private GraphicalViewer left, top;
-    private FigureCanvas editor;
-    private GraphicalViewer diagramViewer;
-    private Font font;
-    private Listener layoutListener;
-    private PropertyChangeListener propertyListener;
-    private boolean layingOut = false;
-    private boolean isRulerVisible = true;
-    private boolean needToLayout = false;
-    private Runnable runnable = new Runnable() {
+    private EditDomain mRulerEditDomain;
+    private GraphicalViewer mLeft, mTop;
+    private FigureCanvas mEditor;
+    private GraphicalViewer mViewer;
+    private Font mFont;
+    private Listener mLayoutListener;
+    private PropertyChangeListener mPropertyListener;
+    private boolean mLayingOut = false;
+    private boolean mIsRulerVisible = true;
+    private boolean mNeedToLayout = false;
+    private Runnable mRunnable = new Runnable() {
         public void run() {
             layout(false);
         }
@@ -68,46 +68,46 @@ public class InstallOptionsRulerComposite extends Composite
 
         // Finish initializing the viewer
         viewer.setRootEditPart(new RulerRootEditPart(isHorizontal));
-        viewer.setEditPartFactory(new InstallOptionsRulerEditPartFactory(diagramViewer));
+        viewer.setEditPartFactory(new InstallOptionsRulerEditPartFactory(mViewer));
         viewer.createControl(this);
         ((GraphicalEditPart)viewer.getRootEditPart()).getFigure()
                 .setBorder(new RulerBorder(isHorizontal));
-        viewer.setProperty(GraphicalViewer.class.toString(), diagramViewer);
+        viewer.setProperty(GraphicalViewer.class.toString(), mViewer);
         
         // Configure the viewer's control
         FigureCanvas canvas = (FigureCanvas)viewer.getControl();
         canvas.setScrollBarVisibility(FigureCanvas.NEVER);
-        if (font == null) {
+        if (mFont == null) {
             FontData[] data = canvas.getFont().getFontData();
             for (int i = 0; i < data.length; i++) {
                 data[i].setHeight(data[i].getHeight() - 1);
             }
-            font = new Font(Display.getCurrent(), data);
+            mFont = new Font(Display.getCurrent(), data);
         }
-        canvas.setFont(font);
+        canvas.setFont(mFont);
         if (isHorizontal) {
             canvas.getViewport().setHorizontalRangeModel(
-                    editor.getViewport().getHorizontalRangeModel());
+                    mEditor.getViewport().getHorizontalRangeModel());
         } else {
             canvas.getViewport().setVerticalRangeModel(
-                    editor.getViewport().getVerticalRangeModel());
+                    mEditor.getViewport().getVerticalRangeModel());
         }
 
         // Add the viewer to the rulerEditDomain
-        if (rulerEditDomain == null) {
-            rulerEditDomain = new EditDomain();
-            rulerEditDomain.setCommandStack(diagramViewer.getEditDomain().getCommandStack());
+        if (mRulerEditDomain == null) {
+            mRulerEditDomain = new EditDomain();
+            mRulerEditDomain.setCommandStack(mViewer.getEditDomain().getCommandStack());
         }
-        rulerEditDomain.addViewer(viewer);
+        mRulerEditDomain.addViewer(viewer);
         
         return viewer;
     }
 
     private void disposeResources() {
-        if (diagramViewer != null)
-            diagramViewer.removePropertyChangeListener(propertyListener);
-        if (font != null)
-            font.dispose();
+        if (mViewer != null)
+            mViewer.removePropertyChangeListener(mPropertyListener);
+        if (mFont != null)
+            mFont.dispose();
         // layoutListener is not being removed from the scroll bars because they are already
         // disposed at this point.
     }
@@ -124,58 +124,58 @@ public class InstallOptionsRulerComposite extends Composite
         Viewport port = ((FigureCanvas)viewer.getControl()).getViewport();
         port.setHorizontalRangeModel(rModel);
         port.setVerticalRangeModel(rModel);
-        rulerEditDomain.removeViewer(viewer);
+        mRulerEditDomain.removeViewer(viewer);
         viewer.getControl().dispose();
     }
 
     private void doLayout() {
-        if (left == null && top == null) {
+        if (mLeft == null && mTop == null) {
             Rectangle area = getClientArea();
-            if (!editor.getBounds().equals(area))
-                editor.setBounds(area);
+            if (!mEditor.getBounds().equals(area))
+                mEditor.setBounds(area);
             return;
         }
         
         int leftWidth, rightWidth, topHeight, bottomHeight;
-        leftWidth = left == null ? 0 
-                : left.getControl().computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
+        leftWidth = mLeft == null ? 0 
+                : mLeft.getControl().computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
         rightWidth = 0; 
-        topHeight = top == null ? 0 
-                : top.getControl().computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
+        topHeight = mTop == null ? 0 
+                : mTop.getControl().computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
         bottomHeight = 0; 
 
         Point size = getSize();
         Point editorSize = new Point(size.x - (leftWidth + rightWidth), 
                    size.y - (topHeight + bottomHeight));
-        if (!editor.getSize().equals(editorSize))
-            editor.setSize(editorSize);     
+        if (!mEditor.getSize().equals(editorSize))
+            mEditor.setSize(editorSize);     
         Point editorLocation = new Point(leftWidth, topHeight);
-        if (!editor.getLocation().equals(editorLocation))
-            editor.setLocation(editorLocation);
+        if (!mEditor.getLocation().equals(editorLocation))
+            mEditor.setLocation(editorLocation);
 
         int vBarWidth = 0, hBarHeight = 0;
-        Rectangle trim = editor.computeTrim(0, 0, 0, 0);
+        Rectangle trim = mEditor.computeTrim(0, 0, 0, 0);
         /*
          * Fix for Bug# 67554
          * Motif leaves a few pixels of space around the Canvas which
          * can cause the rulers to misaligned.
          */
-        if (editor.getVerticalBar().getVisible())
+        if (mEditor.getVerticalBar().getVisible())
             vBarWidth = trim.width + ("motif".equals(SWT.getPlatform()) ? trim.x * 2 : 0); //$NON-NLS-1$
-        if (editor.getHorizontalBar().getVisible())
+        if (mEditor.getHorizontalBar().getVisible())
             hBarHeight = trim.height + ("motif".equals(SWT.getPlatform()) ? trim.y * 2 : 0); //$NON-NLS-1$
         
-        if (left != null) {
+        if (mLeft != null) {
             Rectangle leftBounds = new Rectangle(
                     0, topHeight - 1, leftWidth, editorSize.y - hBarHeight);
-            if (!left.getControl().getBounds().equals(leftBounds))
-                left.getControl().setBounds(leftBounds);
+            if (!mLeft.getControl().getBounds().equals(leftBounds))
+                mLeft.getControl().setBounds(leftBounds);
         }
-        if (top != null) {
+        if (mTop != null) {
             Rectangle topBounds = new Rectangle(
                     leftWidth - 1, 0, editorSize.x - vBarWidth, topHeight);
-            if (!top.getControl().getBounds().equals(topBounds))
-                top.getControl().setBounds(topBounds);
+            if (!mTop.getControl().getBounds().equals(topBounds))
+                mTop.getControl().setBounds(topBounds);
         }
     }
 
@@ -183,10 +183,10 @@ public class InstallOptionsRulerComposite extends Composite
         GraphicalViewer result = null;
         switch(orientation) {
             case PositionConstants.NORTH:
-                result = top;
+                result = mTop;
                 break;
             case PositionConstants.WEST:
-                result = left;
+                result = mLeft;
         }
         return result;
     }
@@ -195,13 +195,13 @@ public class InstallOptionsRulerComposite extends Composite
      * @see org.eclipse.swt.widgets.Composite#layout(boolean)
      */
     public void layout(boolean change) {
-        if (!layingOut && !isDisposed()) {
+        if (!mLayingOut && !isDisposed()) {
             checkWidget();
-            if (change || needToLayout) {
-                needToLayout = false;
-                layingOut = true;
+            if (change || mNeedToLayout) {
+                mNeedToLayout = false;
+                mLayingOut = true;
                 doLayout(); 
-                layingOut = false;          
+                mLayingOut = false;          
             }
         }
     }
@@ -224,14 +224,14 @@ public class InstallOptionsRulerComposite extends Composite
         // pre-conditions
         Assert.isNotNull(primaryViewer);
         Assert.isNotNull(primaryViewer.getControl());
-        Assert.isTrue(diagramViewer == null);
+        Assert.isTrue(mViewer == null);
         
-        diagramViewer = primaryViewer;
-        editor = (FigureCanvas)diagramViewer.getControl();
+        mViewer = primaryViewer;
+        mEditor = (FigureCanvas)mViewer.getControl();
 
         // layout whenever the scrollbars are shown or hidden, and whenever the RulerComposite
         // is resized
-        layoutListener = new Listener() {
+        mLayoutListener = new Listener() {
             public void handleEvent(Event event) {
                 // @TODO:Pratik  If you use Display.asyncExec(runnable) here, some flashing
                 // occurs.  You can see it when the palette is in the editor, and you hit
@@ -239,42 +239,42 @@ public class InstallOptionsRulerComposite extends Composite
                 layout(true);
             }
         };
-        addListener(SWT.Resize, layoutListener);
-        editor.getHorizontalBar().addListener(SWT.Show, layoutListener);
-        editor.getHorizontalBar().addListener(SWT.Hide, layoutListener);
-        editor.getVerticalBar().addListener(SWT.Show, layoutListener);
-        editor.getVerticalBar().addListener(SWT.Hide, layoutListener);
+        addListener(SWT.Resize, mLayoutListener);
+        mEditor.getHorizontalBar().addListener(SWT.Show, mLayoutListener);
+        mEditor.getHorizontalBar().addListener(SWT.Hide, mLayoutListener);
+        mEditor.getVerticalBar().addListener(SWT.Show, mLayoutListener);
+        mEditor.getVerticalBar().addListener(SWT.Hide, mLayoutListener);
 
-        propertyListener = new PropertyChangeListener() {
+        mPropertyListener = new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
                 String property = evt.getPropertyName();
                 if (RulerProvider.PROPERTY_HORIZONTAL_RULER.equals(property)) {
-                    setRuler((RulerProvider)diagramViewer
+                    setRuler((RulerProvider)mViewer
                             .getProperty(RulerProvider.PROPERTY_HORIZONTAL_RULER), 
                         PositionConstants.NORTH);
                 } else if (RulerProvider.PROPERTY_VERTICAL_RULER.equals(property)) {
-                    setRuler((RulerProvider)diagramViewer
+                    setRuler((RulerProvider)mViewer
                             .getProperty(RulerProvider.PROPERTY_VERTICAL_RULER),
                         PositionConstants.WEST);
                 } else if (RulerProvider.PROPERTY_RULER_VISIBILITY.equals(property))
-                    setRulerVisibility(((Boolean)diagramViewer.getProperty(
+                    setRulerVisibility(((Boolean)mViewer.getProperty(
                             RulerProvider.PROPERTY_RULER_VISIBILITY)).booleanValue());
             }
         };
-        diagramViewer.addPropertyChangeListener(propertyListener);
-        Boolean rulerVisibility = (Boolean)diagramViewer
+        mViewer.addPropertyChangeListener(mPropertyListener);
+        Boolean rulerVisibility = (Boolean)mViewer
                 .getProperty(RulerProvider.PROPERTY_RULER_VISIBILITY);
         if (rulerVisibility != null)
             setRulerVisibility(rulerVisibility.booleanValue());
-        setRuler((RulerProvider)diagramViewer.getProperty(
+        setRuler((RulerProvider)mViewer.getProperty(
                 RulerProvider.PROPERTY_HORIZONTAL_RULER), PositionConstants.NORTH);
-        setRuler((RulerProvider)diagramViewer.getProperty(
+        setRuler((RulerProvider)mViewer.getProperty(
                 RulerProvider.PROPERTY_VERTICAL_RULER), PositionConstants.WEST);
     }
 
     private void setRuler(RulerProvider provider, int orientation) {
         Object ruler = null;
-        if (isRulerVisible && provider != null)
+        if (mIsRulerVisible && provider != null)
             // provider.getRuler() might return null (at least the API does not prevent that)
             ruler = provider.getRuler();
         
@@ -293,32 +293,32 @@ public class InstallOptionsRulerComposite extends Composite
         }
         if (container.getContents() != ruler) {
             container.setContents(ruler);
-            needToLayout = true;
-            Display.getCurrent().asyncExec(runnable);
+            mNeedToLayout = true;
+            Display.getCurrent().asyncExec(mRunnable);
         }
     }
 
     private void setRulerContainer(GraphicalViewer container, int orientation) {
         if (orientation == PositionConstants.NORTH) {
-            if (top == container)
+            if (mTop == container)
                 return;
-            disposeRulerViewer(top);
-            top = container;        
+            disposeRulerViewer(mTop);
+            mTop = container;        
         } else if (orientation == PositionConstants.WEST) {
-            if (left == container)
+            if (mLeft == container)
                 return;
-            disposeRulerViewer(left);
-            left = container;       
+            disposeRulerViewer(mLeft);
+            mLeft = container;       
         }
     }
 
     private void setRulerVisibility(boolean isVisible) {
-        if (isRulerVisible != isVisible) {
-            isRulerVisible = isVisible;
-            if (diagramViewer != null) {
-                setRuler((RulerProvider)diagramViewer.getProperty(
+        if (mIsRulerVisible != isVisible) {
+            mIsRulerVisible = isVisible;
+            if (mViewer != null) {
+                setRuler((RulerProvider)mViewer.getProperty(
                         RulerProvider.PROPERTY_HORIZONTAL_RULER), PositionConstants.NORTH);
-                setRuler((RulerProvider)diagramViewer.getProperty(
+                setRuler((RulerProvider)mViewer.getProperty(
                         RulerProvider.PROPERTY_VERTICAL_RULER), PositionConstants.WEST);
             }
         }

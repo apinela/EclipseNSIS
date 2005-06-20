@@ -18,6 +18,7 @@ import net.sf.eclipsensis.installoptions.figures.IInstallOptionsFigure;
 import net.sf.eclipsensis.installoptions.figures.LinkFigure;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
 
+import org.eclipse.draw2d.FigureCanvas;
 import org.eclipse.gef.tools.CellEditorLocator;
 import org.eclipse.gef.tools.DirectEditManager;
 import org.eclipse.swt.graphics.RGB;
@@ -31,7 +32,7 @@ public class InstallOptionsLinkEditPart extends InstallOptionsLabelEditPart
 
     protected IInstallOptionsFigure createInstallOptionsFigure() 
     {
-        return new LinkFigure(this);
+        return new LinkFigure((FigureCanvas)this.getViewer().getControl(), getInstallOptionsWidget());
     }
 
     protected void doPropertyChange(PropertyChangeEvent evt)

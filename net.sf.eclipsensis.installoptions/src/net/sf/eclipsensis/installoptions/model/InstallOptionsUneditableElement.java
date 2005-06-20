@@ -88,6 +88,7 @@ public abstract class InstallOptionsUneditableElement extends InstallOptionsWidg
             String oldText = mText;
             mText = s;
             firePropertyChange(InstallOptionsModel.PROPERTY_TEXT, oldText, mText);
+            setDirty(true);
         }
     }
     
@@ -96,6 +97,9 @@ public abstract class InstallOptionsUneditableElement extends InstallOptionsWidg
     {
         return getText();
     }
-
-    protected abstract String getDefaultText();
+ 
+    protected String getDefaultText()
+    {
+        return ""; //$NON-NLS-1$
+    }
 }

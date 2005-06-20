@@ -10,15 +10,17 @@
 package net.sf.eclipsensis.installoptions.edit;
 
 import java.util.Iterator;
+import java.util.List;
 
 import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
 
 import org.eclipse.draw2d.*;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Rectangle;
-import org.eclipse.gef.GraphicalEditPart;
-import org.eclipse.gef.LayerConstants;
+import org.eclipse.gef.*;
+import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.editpolicies.ResizableEditPolicy;
+import org.eclipse.gef.handles.AbstractHandle;
 import org.eclipse.swt.graphics.Color;
 
 /**
@@ -26,7 +28,43 @@ import org.eclipse.swt.graphics.Color;
  */
 public class InstallOptionsResizableEditPolicy extends ResizableEditPolicy
 {
+    private EditPart mEditPart;
+    
+    
+    public Command getCommand(Request request)
+    {
+        if(((InstallOptionsEditDomain)mEditPart.getViewer().getEditDomain()).isReadOnly()) {
+            return null;
+        }
+        else {
+            return super.getCommand(request);
+        }
+    }
 
+    public InstallOptionsResizableEditPolicy(EditPart editPart)
+    {
+        super();
+        mEditPart = editPart;
+    }
+
+    public void showSourceFeedback(Request request)
+    {
+        if(!((InstallOptionsEditDomain)mEditPart.getViewer().getEditDomain()).isReadOnly()) {
+            super.showSourceFeedback(request);
+        }
+    }
+    
+    protected List createSelectionHandles()
+    {
+        List list = super.createSelectionHandles();
+        if(((InstallOptionsEditDomain)mEditPart.getViewer().getEditDomain()).isReadOnly()) {
+            for (Iterator iter = list.iterator(); iter.hasNext();) {
+                AbstractHandle element = (AbstractHandle)iter.next();
+                element.setCursor(null);
+            };
+        }
+        return list;
+    }
     /**
      * Creates the figure used for feedback.
      * 
@@ -74,12 +112,17 @@ public class InstallOptionsResizableEditPolicy extends ResizableEditPolicy
 
     protected IFigure getCustomFeedbackFigure(Object modelPart)
     {
-        IFigure figure = new RectangleFigure();
-        ((RectangleFigure)figure).setXOR(true);
-        ((RectangleFigure)figure).setFill(true);
-        figure.setBackgroundColor(IInstallOptionsConstants.GHOST_FILL_COLOR);
-        figure.setForegroundColor(ColorConstants.white);
-        return figure;
+        if(((InstallOptionsEditDomain)mEditPart.getViewer().getEditDomain()).isReadOnly()) {
+            return null;
+        }
+        else {
+            IFigure figure = new RectangleFigure();
+            ((RectangleFigure)figure).setXOR(true);
+            ((RectangleFigure)figure).setFill(true);
+            figure.setBackgroundColor(IInstallOptionsConstants.GHOST_FILL_COLOR);
+            figure.setForegroundColor(ColorConstants.white);
+            return figure;
+        }
     }
 
     /**

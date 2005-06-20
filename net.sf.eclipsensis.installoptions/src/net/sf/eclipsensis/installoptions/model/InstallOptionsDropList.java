@@ -20,7 +20,7 @@ import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
 public class InstallOptionsDropList extends InstallOptionsCombobox
 {
-    private static Image DROPLIST_ICON = InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("droplist.type.small.icon")); //$NON-NLS-1$
+    public static Image DROPLIST_ICON = InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("droplist.type.small.icon")); //$NON-NLS-1$
     
     public InstallOptionsDropList()
     {
@@ -54,7 +54,7 @@ public class InstallOptionsDropList extends InstallOptionsCombobox
     {
         super.setListItems(listItems);
         String oldState = getState();
-        String newState = (!getListItems().contains(oldState)?"":oldState);
+        String newState = (!getListItems().contains(oldState)?"":oldState); //$NON-NLS-1$
         if(!Common.stringsAreEqual(oldState,newState)) {
             fireModelCommand(createSetPropertyCommand(InstallOptionsModel.PROPERTY_STATE,newState));
         }

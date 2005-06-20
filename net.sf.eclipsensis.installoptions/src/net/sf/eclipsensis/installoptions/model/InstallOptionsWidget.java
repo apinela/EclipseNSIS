@@ -20,6 +20,7 @@ import net.sf.eclipsensis.installoptions.properties.descriptors.CustomPropertyDe
 import net.sf.eclipsensis.installoptions.properties.labelproviders.ListLabelProvider;
 import net.sf.eclipsensis.installoptions.properties.validators.NSISStringLengthValidator;
 import net.sf.eclipsensis.installoptions.rulers.InstallOptionsGuide;
+import net.sf.eclipsensis.installoptions.util.TypeConverter;
 import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.draw2d.geometry.Dimension;
@@ -37,6 +38,9 @@ import org.eclipse.ui.views.properties.*;
 
 public abstract class InstallOptionsWidget extends InstallOptionsElement
 {
+    public static final String PROPERTY_BOUNDS = "Bounds"; //$NON-NLS-1$
+    private static final Position cDefaultPosition = new Position(0,0,63,35);
+    
     private static LabelProvider cPositionLabelProvider = new LabelProvider(){
         public String getText(Object element)
         {
@@ -51,7 +55,7 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
     };
 
     private static LabelProvider cFlagsLabelProvider = new ListLabelProvider();
-    private static final String MISSING_DISPLAY_NAME = InstallOptionsPlugin.getResourceString("missing.widget.display.name");
+    private static final String MISSING_DISPLAY_NAME = InstallOptionsPlugin.getResourceString("missing.widget.display.name"); //$NON-NLS-1$
 
     protected IPropertyDescriptor[] mDescriptors;
     protected InstallOptionsDialog mParent = null;
@@ -73,7 +77,9 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
      */
     protected final void createPropertyDescriptors()
     {
-        List names = getPropertyNames();
+        List names = doGetPropertyNames();
+        names.add(0, InstallOptionsModel.PROPERTY_INDEX);
+        names.add(1, InstallOptionsModel.PROPERTY_POSITION);
         ArrayList list = new ArrayList();
         int i=0;
         for (Iterator iter = names.iterator(); iter.hasNext();) {
@@ -97,12 +103,10 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
     /**
      * 
      */
-    protected final List getPropertyNames()
+    protected final List doGetPropertyNames()
     {
-        ArrayList list = new ArrayList();
-        list.add(InstallOptionsModel.PROPERTY_INDEX);
+        List list = super.doGetPropertyNames();
         list.add(InstallOptionsModel.PROPERTY_TYPE);
-        list.add(InstallOptionsModel.PROPERTY_POSITION);
         String[] settings = InstallOptionsModel.getInstance().getControlSettings(getType());
         for (int i = 0; i < settings.length; i++) {
             addPropertyName(list, settings[i]);
@@ -112,7 +116,19 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
     
     protected void addPropertyName(List list, String setting)
     {
-        if(setting.equalsIgnoreCase(InstallOptionsModel.PROPERTY_FLAGS)) {
+        if(setting.equalsIgnoreCase(InstallOptionsModel.PROPERTY_LEFT)) {
+            list.add(InstallOptionsModel.PROPERTY_LEFT);
+        }
+        else if(setting.equalsIgnoreCase(InstallOptionsModel.PROPERTY_RIGHT)) {
+            list.add(InstallOptionsModel.PROPERTY_RIGHT);
+        }
+        else if(setting.equalsIgnoreCase(InstallOptionsModel.PROPERTY_TOP)) {
+            list.add(InstallOptionsModel.PROPERTY_TOP);
+        }
+        else if(setting.equalsIgnoreCase(InstallOptionsModel.PROPERTY_BOTTOM)) {
+            list.add(InstallOptionsModel.PROPERTY_BOTTOM);
+        }
+        else if(setting.equalsIgnoreCase(InstallOptionsModel.PROPERTY_FLAGS)) {
             list.add(InstallOptionsModel.PROPERTY_FLAGS);
         }
     }
@@ -122,13 +138,13 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
         if(name.equals(InstallOptionsModel.PROPERTY_INDEX)) {
             return new IndexPropertyDescriptor();
         }
-        else if(name.equals(InstallOptionsModel.PROPERTY_TYPE)) {
-            return new PropertyDescriptor(InstallOptionsModel.PROPERTY_TYPE, InstallOptionsPlugin.getResourceString("type.property.name")); //$NON-NLS-1$
-        }
         else if(name.equals(InstallOptionsModel.PROPERTY_POSITION)) {
             PropertyDescriptor positionPropertyDescriptor = new PropertyDescriptor(InstallOptionsModel.PROPERTY_POSITION, InstallOptionsPlugin.getResourceString("position.property.name")); //$NON-NLS-1$
             positionPropertyDescriptor.setLabelProvider(cPositionLabelProvider);
             return positionPropertyDescriptor;
+        }
+        else if(name.equals(InstallOptionsModel.PROPERTY_TYPE)) {
+            return new PropertyDescriptor(InstallOptionsModel.PROPERTY_TYPE, InstallOptionsPlugin.getResourceString("type.property.name")); //$NON-NLS-1$
         }
         else if(name.equals(InstallOptionsModel.PROPERTY_FLAGS)) {
             return new FlagsPropertyDescriptor();
@@ -160,11 +176,26 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
 
     public Object getPropertyValue(Object id)
     {
-        if (InstallOptionsModel.PROPERTY_POSITION.equals(id)) {
+        if (PROPERTY_BOUNDS.equals(id)) {
+            return toGraphical(getPosition()).getBounds();
+        }
+        else if (InstallOptionsModel.PROPERTY_LEFT.equals(id)) {
+            return new Integer(getPosition().left);
+        }
+        else if (InstallOptionsModel.PROPERTY_TOP.equals(id)) {
+            return new Integer(getPosition().top);
+        }
+        else if (InstallOptionsModel.PROPERTY_RIGHT.equals(id)) {
+            return new Integer(getPosition().right);
+        }
+        else if (InstallOptionsModel.PROPERTY_BOTTOM.equals(id)) {
+            return new Integer(getPosition().bottom);
+        }
+        else if (InstallOptionsModel.PROPERTY_POSITION.equals(id)) {
             return new PositionPropertySource(this);
         }
         if (InstallOptionsModel.PROPERTY_INDEX.equals(id)) {
-            return new Integer(mIndex);
+            return new Integer(getIndex());
         }
         if (InstallOptionsModel.PROPERTY_FLAGS.equals(id)) {
             return getFlags();
@@ -172,14 +203,43 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
         return super.getPropertyValue(id);
     }
     
+    protected TypeConverter getTypeConverter(String property)
+    {
+        if (InstallOptionsModel.PROPERTY_LEFT.equals(property) ||
+            InstallOptionsModel.PROPERTY_TOP.equals(property) ||
+            InstallOptionsModel.PROPERTY_RIGHT.equals(property) ||
+            InstallOptionsModel.PROPERTY_BOTTOM.equals(property)) {
+            return TypeConverter.INTEGER_CONVERTER;
+        }
+        else if(InstallOptionsModel.PROPERTY_FLAGS.equals(property)) {
+            return TypeConverter.STRING_LIST_CONVERTER;
+        }
+        else {
+            return super.getTypeConverter(property);
+        }
+    }
+    
     public void setPropertyValue(Object id, Object value)
     {
         if(InstallOptionsModel.PROPERTY_POSITION.equals(id)) {
             setPosition((Position)value);
         }
+        else if (InstallOptionsModel.PROPERTY_LEFT.equals(id)) {
+            getPosition().left = ((Integer)value).intValue();
+        }
+        else if (InstallOptionsModel.PROPERTY_TOP.equals(id)) {
+            getPosition().top = ((Integer)value).intValue();
+        }
+        else if (InstallOptionsModel.PROPERTY_RIGHT.equals(id)) {
+            getPosition().right = ((Integer)value).intValue();
+        }
+        else if (InstallOptionsModel.PROPERTY_BOTTOM.equals(id)) {
+            getPosition().bottom = ((Integer)value).intValue();
+        }
         else if(InstallOptionsModel.PROPERTY_INDEX.equals(id)) {
             if(mIndex != ((Integer)value).intValue()) {
                 firePropertyChange(InstallOptionsModel.PROPERTY_INDEX,new Integer(mIndex), value);
+                setDirty(true);
             }
         }
         else if(InstallOptionsModel.PROPERTY_FLAGS.equals(id)) {
@@ -198,6 +258,7 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
     void setParent(InstallOptionsDialog parent)
     {
         mParent = parent;
+        setDirty(true);
     }
     
     public int getIndex()
@@ -208,6 +269,7 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
     void setIndex(int index)
     {
         mIndex = index;
+        setDirty(true);
     }
 
     public final String toString()
@@ -232,6 +294,7 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
         if(!oldFlags.equals(flags)) {
             mFlags = flags;
             firePropertyChange(InstallOptionsModel.PROPERTY_FLAGS,oldFlags,mFlags);
+            setDirty(true);
         }
     }
     
@@ -255,7 +318,7 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
             p.set(0,0,0,0);
         }
         else {
-            Dimension size = dialog.getSize();
+            Dimension size = dialog.getDialogSize();
             p.left = toGraphical(p.left,size.width);
             p.top = toGraphical(p.top,size.height);
             p.right = toGraphical(p.right,size.width);
@@ -286,7 +349,7 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
             p.set(0,0,0,0);
         }
         else {
-            Dimension size = dialog.getSize();
+            Dimension size = dialog.getDialogSize();
             p.left = toModel(p.left, mPosition.left, size.width);
             p.top = toModel(p.top, mPosition.top, size.height);
             p.right = toModel(p.right, mPosition.right, size.width);
@@ -306,6 +369,7 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
             Position mOldPosition = mPosition;
             mPosition = position;
             firePropertyChange(InstallOptionsModel.PROPERTY_POSITION,mOldPosition,mPosition);
+            setDirty(true);
         }
     }
 
@@ -505,7 +569,7 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
             if(validator != null) {
                 String error = validator.isValid(mValues);
                 if(!Common.isEmpty(error)) {
-                    MessageDialog.openError(getShell(),EclipseNSISPlugin.getResourceString("error.title"),error);
+                    MessageDialog.openError(getShell(),EclipseNSISPlugin.getResourceString("error.title"),error); //$NON-NLS-1$
                     return;
                 }
             }
@@ -513,6 +577,18 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
         }
     }
     
-    protected abstract Position getDefaultPosition();
-    protected abstract String getDisplayName();
+    protected Position getDefaultPosition()
+    {
+        return cDefaultPosition.getCopy();
+    }
+    
+    protected String getDisplayName()
+    {
+        return ""; //$NON-NLS-1$
+    }
+    
+    protected String getSectionName()
+    {
+        return InstallOptionsModel.SECTION_FIELD_FORMAT.format(new Object[]{new Integer(getIndex()+1)});
+    }
 }

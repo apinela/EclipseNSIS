@@ -40,12 +40,14 @@ public class InstallOptionsXYStatusContribution extends StatusLineContributionIt
 
     public void editorChanged(IEditorPart part) {
         if (mEditor != null) {
-            mFigureCanvas.removeMouseListener(mMouseListener);
-            mFigureCanvas.removeMouseMoveListener(mMouseListener);
+            if(mFigureCanvas != null && !mFigureCanvas.isDisposed()) {
+                mFigureCanvas.removeMouseListener(mMouseListener);
+                mFigureCanvas.removeMouseMoveListener(mMouseListener);
+            }
             mViewport = null;
             mFigureCanvas = null;
-            mEditor = null;
         }
+        mEditor = null;
 
         if (part != null && part instanceof InstallOptionsDesignEditor) {
             try {

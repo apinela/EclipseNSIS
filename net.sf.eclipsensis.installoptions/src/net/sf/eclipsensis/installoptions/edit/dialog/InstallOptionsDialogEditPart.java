@@ -10,16 +10,17 @@
 package net.sf.eclipsensis.installoptions.edit.dialog;
 
 import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.*;
 
 import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.edit.*;
-import net.sf.eclipsensis.installoptions.figures.ComboboxFigure;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsDialog;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
 
 import org.eclipse.draw2d.*;
+import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.gef.*;
 import org.eclipse.gef.editpolicies.RootComponentEditPolicy;
 import org.eclipse.gef.editpolicies.SnapFeedbackPolicy;
@@ -31,6 +32,30 @@ import org.eclipse.swt.accessibility.AccessibleEvent;
 
 public class InstallOptionsDialogEditPart extends InstallOptionsEditPart implements LayerConstants, IInstallOptionsConstants
 {
+    private FreeformLayout mLayout = new FreeformLayout();
+    private PropertyChangeListener mPropertyChangeListener = new PropertyChangeListener(){
+        public void propertyChange(PropertyChangeEvent event)
+        {
+            String property = event.getPropertyName();
+            if(property.equals(IInstallOptionsConstants.PROPERTY_DIALOG_SIZE)) {
+                Dimension d = (Dimension)event.getNewValue();
+                getInstallOptionsDialog().setDialogSize(d);
+                InstallOptionsDialogLayer fig = (InstallOptionsDialogLayer)getFigure();
+                if(fig != null) {
+                    fig.setDialogSize(d);
+                }
+            }
+            if(property.equals(IInstallOptionsConstants.PROPERTY_SHOW_DIALOG_SIZE)) {
+                Boolean d = (Boolean)event.getNewValue();
+                getInstallOptionsDialog().setShowDialogSize(d.booleanValue());
+                InstallOptionsDialogLayer fig = (InstallOptionsDialogLayer)getFigure();
+                if(fig != null) {
+                    fig.setShowDialogSize(d.booleanValue());
+                }
+            }
+        }
+    };
+
     protected InstallOptionsDialog getInstallOptionsDialog()
     {
         return (InstallOptionsDialog)getModel();
@@ -69,17 +94,15 @@ public class InstallOptionsDialogEditPart extends InstallOptionsEditPart impleme
                 }
             }
             //This is a stupid hack for Combobox figures
-            UpdateManager updateManager = ((FigureCanvas)getViewer().getControl()).getLightweightSystem().getUpdateManager();
-            for(int j=0; j<children.size(); j++) {
-                GraphicalEditPart part = (GraphicalEditPart)children.get(j);
-                IFigure fig = part.getFigure();
-                if(fig instanceof ComboboxFigure && !oldChildren.contains(part)) {
-                    updateManager.performUpdate(fig.getBounds());
-                }
-            }
-        }
-        else if (InstallOptionsModel.PROPERTY_SIZE.equals(prop)) {
-            refreshVisuals();
+            //TODO Remove
+//            UpdateManager updateManager = ((FigureCanvas)getViewer().getControl()).getLightweightSystem().getUpdateManager();
+//            for(int j=0; j<children.size(); j++) {
+//                GraphicalEditPart part = (GraphicalEditPart)children.get(j);
+//                IFigure fig = part.getFigure();
+//                if(fig instanceof ComboboxFigure && !oldChildren.contains(part)) {
+//                    updateManager.performUpdate(fig.getBounds());
+//                }
+//            }
         }
     }
 
@@ -92,8 +115,6 @@ public class InstallOptionsDialogEditPart extends InstallOptionsEditPart impleme
     {
         return getInstallOptionsDialog().getChildren();
     }
-
-    private FreeformLayout mLayout = new FreeformLayout();
 
     protected AccessibleEditPart createAccessible()
     {
@@ -115,8 +136,8 @@ public class InstallOptionsDialogEditPart extends InstallOptionsEditPart impleme
         installEditPolicy(EditPolicy.SELECTION_FEEDBACK_ROLE, null);
         installEditPolicy(EditPolicy.COMPONENT_ROLE,
                 new RootComponentEditPolicy());
-        installEditPolicy(EditPolicy.CONTAINER_ROLE, new InstallOptionsDialogEditPolicy());
-        installEditPolicy(EditPolicy.LAYOUT_ROLE, new InstallOptionsXYLayoutEditPolicy(
+        installEditPolicy(EditPolicy.CONTAINER_ROLE, new InstallOptionsDialogEditPolicy(this));
+        installEditPolicy(EditPolicy.LAYOUT_ROLE, new InstallOptionsXYLayoutEditPolicy(this,
                 (XYLayout)getContentPane().getLayoutManager()));
 
         installEditPolicy("Snap Feedback", new SnapFeedbackPolicy()); //$NON-NLS-1$
@@ -129,22 +150,13 @@ public class InstallOptionsDialogEditPart extends InstallOptionsEditPart impleme
      */
     protected IFigure createFigure()
     {
+        EditPartViewer viewer = getViewer();
         InstallOptionsDialogLayer f = new InstallOptionsDialogLayer();
+        f.setDialogSize(getInstallOptionsDialog().getDialogSize());
+        f.setShowDialogSize(getInstallOptionsDialog().isShowDialogSize());
         f.setLayoutManager(mLayout);
         f.setBorder(new MarginBorder(5));
         return f;
-    }
-
-    public void activate()
-    {
-        super.activate();
-        ((InstallOptionsDialogLayer)getFigure()).setInstallOptionsDialog((InstallOptionsDialog)getModel());
-    }
-
-    public void deactivate()
-    {
-        ((InstallOptionsDialogLayer)getFigure()).setInstallOptionsDialog(null);
-        super.deactivate();
     }
 
     /**
@@ -159,13 +171,13 @@ public class InstallOptionsDialogEditPart extends InstallOptionsEditPart impleme
             if (val != null && val.booleanValue()) {
                 val = (Boolean)getViewer().getProperty(PROPERTY_SNAP_TO_GUIDES);
                 if (val != null && val.booleanValue()) {
-                    snapStrategies.add(new SnapToGuides(this));
+                    snapStrategies.add(new InstallOptionsSnapToGuides(this));
                 }
             }
             
             val = (Boolean)getViewer().getProperty(SnapToGeometry.PROPERTY_SNAP_ENABLED);
             if (val != null && val.booleanValue()) {
-                snapStrategies.add(new SnapToGeometry(this));
+                snapStrategies.add(new InstallOptionsSnapToGeometry(this));
             }
             
             val = (Boolean)getViewer().getProperty(SnapToGrid.PROPERTY_GRID_VISIBLE);
@@ -192,54 +204,42 @@ public class InstallOptionsDialogEditPart extends InstallOptionsEditPart impleme
         return super.getAdapter(adapter);
     }
 
+    public void addNotify()
+    {
+        super.addNotify();
+        getViewer().setProperty(IInstallOptionsConstants.PROPERTY_DIALOG_SIZE, 
+                    getInstallOptionsDialog().getDialogSize().getCopy());
+        getViewer().setProperty(IInstallOptionsConstants.PROPERTY_SHOW_DIALOG_SIZE, 
+                    Boolean.valueOf(getInstallOptionsDialog().isShowDialogSize()));
+        getViewer().addPropertyChangeListener(mPropertyChangeListener);
+        //Stupid hack so that Combobox shows up.
+        //TODO Remove
+//        FigureCanvas figureCanvas = (FigureCanvas)getViewer().getControl();
+//        if(figureCanvas != null) {
+//            UpdateManager updateManager = (figureCanvas).getLightweightSystem().getUpdateManager();
+//            List kiddies = getChildren();
+//            for(int j=0; j<kiddies.size(); j++) {
+//                GraphicalEditPart part = (GraphicalEditPart)kiddies.get(j);
+//                IFigure fig = part.getFigure();
+//                if(fig instanceof ComboboxFigure) {
+//                    updateManager.performUpdate(fig.getBounds());
+//                }
+//            }
+//        }
+    }
+    
+    public void removeNotify()
+    {
+        getViewer().removePropertyChangeListener(mPropertyChangeListener);
+        super.removeNotify();
+    }
+
     public DragTracker getDragTracker(Request req)
     {
         if (req instanceof SelectionRequest
                 && ((SelectionRequest)req).getLastButtonPressed() == 3)
             return new DeselectAllTracker(this);
         return new MarqueeDragTracker();
-    }
-
-    /**
-     * Returns <code>NULL</code> as it does not hold any connections.
-     * 
-     * @return ConnectionAnchor
-     */
-    public ConnectionAnchor getSourceConnectionAnchor(
-            ConnectionEditPart editPart)
-    {
-        return null;
-    }
-
-    /**
-     * Returns <code>NULL</code> as it does not hold any connections.
-     * 
-     * @return ConnectionAnchor
-     */
-    public ConnectionAnchor getSourceConnectionAnchor(int x, int y)
-    {
-        return null;
-    }
-
-    /**
-     * Returns <code>NULL</code> as it does not hold any connections.
-     * 
-     * @return ConnectionAnchor
-     */
-    public ConnectionAnchor getTargetConnectionAnchor(
-            ConnectionEditPart editPart)
-    {
-        return null;
-    }
-
-    /**
-     * Returns <code>NULL</code> as it does not hold any connections.
-     * 
-     * @return ConnectionAnchor
-     */
-    public ConnectionAnchor getTargetConnectionAnchor(int x, int y)
-    {
-        return null;
     }
 
     protected void refreshVisuals()

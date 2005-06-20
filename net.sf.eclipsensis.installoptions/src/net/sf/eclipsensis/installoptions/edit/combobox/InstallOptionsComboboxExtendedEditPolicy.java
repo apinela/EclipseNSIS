@@ -16,10 +16,16 @@ import net.sf.eclipsensis.installoptions.edit.InstallOptionsWidgetEditPart;
 import net.sf.eclipsensis.installoptions.model.commands.ModifyListItemsCommand;
 import net.sf.eclipsensis.installoptions.requests.ExtendedEditRequest;
 
+import org.eclipse.gef.EditPart;
 import org.eclipse.gef.commands.Command;
 
 public class InstallOptionsComboboxExtendedEditPolicy extends InstallOptionsExtendedEditPolicy
 {
+    public InstallOptionsComboboxExtendedEditPolicy(EditPart editPart)
+    {
+        super(editPart);
+    }
+    
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.installoptions.edit.InstallOptionsExtendedEditPolicy#getExtendedEditCommand(net.sf.eclipsensis.installoptions.requests.ExtendedEditRequest)
      */

@@ -175,7 +175,7 @@ public class ListCellEditor extends CellEditor
             
             if(mSelection == null) {
                 setValueValid(true);
-                mSelection = "";
+                mSelection = ""; //$NON-NLS-1$
             }
             else {
                 setValue(mSelection);

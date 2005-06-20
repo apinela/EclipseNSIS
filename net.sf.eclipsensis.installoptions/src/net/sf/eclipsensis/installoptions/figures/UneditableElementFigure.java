@@ -9,23 +9,32 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.figures;
 
-import org.eclipse.gef.GraphicalEditPart;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
+
+import org.eclipse.draw2d.FigureCanvas;
+import org.eclipse.ui.views.properties.IPropertySource;
 
 public abstract class UneditableElementFigure extends SWTControlFigure implements IUneditableElementFigure
 {
-    protected String mText = ""; //$NON-NLS-1$
+    protected String mText;
 
     /**
      * @param editPart
      */
-    public UneditableElementFigure(GraphicalEditPart editPart)
+    public UneditableElementFigure(FigureCanvas canvas, IPropertySource propertySource)
     {
-        super(editPart);
+        super(canvas, propertySource);
     }
+    
+    protected void init(IPropertySource propertySource)
+    {
+        setText((String)propertySource.getPropertyValue(InstallOptionsModel.PROPERTY_TEXT));
+        super.init(propertySource);
+   }
     
     public String getText()
     {
-        return mText;
+        return mText==null?"":mText; //$NON-NLS-1$
     }
     
     public void setText(String text) 

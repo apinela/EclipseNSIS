@@ -132,7 +132,7 @@ public class MakeNSISRunner implements INSISConstants
     private static void updateMarkers(final IFile file, final NSISConsoleModel model, final MakeNSISResults results)
     {
         if (!results.getCanceled()) {
-            WorkspaceModifyOperation op = new WorkspaceModifyOperation()
+            WorkspaceModifyOperation op = new WorkspaceModifyOperation(file)
             {
                 protected void execute(IProgressMonitor monitor)throws CoreException
                 {

@@ -9,15 +9,15 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.figures;
 
+import java.util.List;
+
+import net.sf.eclipsensis.installoptions.model.*;
 import net.sf.eclipsensis.util.ColorManager;
 
 import org.eclipse.draw2d.*;
-import org.eclipse.draw2d.ImageFigure;
-import org.eclipse.draw2d.LineBorder;
-import org.eclipse.draw2d.geometry.Dimension;
-import org.eclipse.draw2d.geometry.Insets;
+import org.eclipse.draw2d.geometry.*;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.ui.views.properties.IPropertySource;
 
 public class PictureFigure extends ImageFigure implements IInstallOptionsFigure
 {
@@ -29,6 +29,15 @@ public class PictureFigure extends ImageFigure implements IInstallOptionsFigure
         }
     };
 
+    public PictureFigure(IPropertySource propertySource)
+    {
+        super();
+        setImage((Image)propertySource.getPropertyValue(InstallOptionsPicture.PROPERTY_IMAGE));
+        List flags = (List)propertySource.getPropertyValue(InstallOptionsModel.PROPERTY_FLAGS);
+        setDisabled(flags != null && flags.contains(InstallOptionsModel.FLAGS_DISABLED));
+        setBounds((Rectangle)propertySource.getPropertyValue(InstallOptionsWidget.PROPERTY_BOUNDS));
+    }
+
     public void refresh()
     {
     }
@@ -39,8 +48,7 @@ public class PictureFigure extends ImageFigure implements IInstallOptionsFigure
         if(dim.width != rect.width || dim.height != rect.height) {
             Image image = getImage();
             if(image != null) {
-                Rectangle rect2 = image.getBounds();
-                if(rect.width > rect2.width || rect.height > rect2.height) {
+                if(rect.width > image.getBounds().width || rect.height > image.getBounds().height) {
                     setBorder(mLineBorder);
                 }
                 else {

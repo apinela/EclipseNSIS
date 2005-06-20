@@ -13,10 +13,12 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
+import net.sf.eclipsensis.installoptions.edit.InstallOptionsEditDomain;
 import net.sf.eclipsensis.installoptions.edit.InstallOptionsWidgetEditPart;
-import net.sf.eclipsensis.installoptions.editor.InstallOptionsDesignEditor;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsDialog;
 import net.sf.eclipsensis.installoptions.model.commands.CutCommand;
 
+import org.eclipse.gef.EditDomain;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.ui.actions.SelectionAction;
 import org.eclipse.ui.ISharedImages;
@@ -32,7 +34,7 @@ public class CutAction extends SelectionAction
     public CutAction(IWorkbenchPart part)
     {
         super(part);
-        setLazyEnablementCalculation(false);
+        setLazyEnablementCalculation(true);
     }
 
     /**
@@ -54,17 +56,25 @@ public class CutAction extends SelectionAction
         if (objects.isEmpty()) {
             return null;
         }
+        EditDomain domain = (EditDomain)getWorkbenchPart().getAdapter(EditDomain.class);
+        if(domain instanceof InstallOptionsEditDomain && ((InstallOptionsEditDomain)domain).isReadOnly()) {
+            return null;
+        }
 
-        CutCommand cutCommand = new CutCommand();
-        cutCommand.setParent(((InstallOptionsDesignEditor)getWorkbenchPart()).getInstallOptionsDialog());
-        //cutCommand.setParent(objects.get(0));
-        for (Iterator iter = objects.iterator(); iter.hasNext();) {
-            Object object = iter.next();
-            if(object instanceof InstallOptionsWidgetEditPart) {
-                cutCommand.addPart((InstallOptionsWidgetEditPart)object);
-            }
-            else {
-                return null;
+        CutCommand cutCommand = null;
+        InstallOptionsDialog dialog = (InstallOptionsDialog)getWorkbenchPart().getAdapter(InstallOptionsDialog.class);
+        if(dialog != null) {
+            cutCommand = new CutCommand();
+            cutCommand.setParent(dialog);
+            //cutCommand.setParent(objects.get(0));
+            for (Iterator iter = objects.iterator(); iter.hasNext();) {
+                Object object = iter.next();
+                if(object instanceof InstallOptionsWidgetEditPart) {
+                    cutCommand.addPart((InstallOptionsWidgetEditPart)object);
+                }
+                else {
+                    return null;
+                }
             }
         }
         

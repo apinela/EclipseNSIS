@@ -23,7 +23,7 @@ public class InstallOptionsUneditableElementCommand extends Command
     public InstallOptionsUneditableElementCommand(InstallOptionsUneditableElement uneditable, String text) 
     {
         mUneditable = uneditable;
-        setLabel(InstallOptionsPlugin.getFormattedString("uneditable.element.command.label", 
+        setLabel(InstallOptionsPlugin.getFormattedString("uneditable.element.command.label",  //$NON-NLS-1$
                                                          new Object[]{mUneditable.getType()}));
         if (text != null) {
             mNewText = text;

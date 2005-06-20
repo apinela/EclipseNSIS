@@ -19,6 +19,7 @@ import net.sf.eclipsensis.installoptions.properties.dialogs.ListItemsDialog;
 import net.sf.eclipsensis.installoptions.properties.editors.EditableComboBoxCellEditor;
 import net.sf.eclipsensis.installoptions.properties.labelproviders.ListLabelProvider;
 import net.sf.eclipsensis.installoptions.properties.validators.NSISStringLengthValidator;
+import net.sf.eclipsensis.installoptions.util.TypeConverter;
 
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
@@ -31,7 +32,7 @@ import org.eclipse.ui.views.properties.PropertyDescriptor;
 public class InstallOptionsCombobox extends InstallOptionsEditableElement
 {
     protected static LabelProvider cListItemsLabelProvider = new ListLabelProvider();
-    private static Image COMBOBOX_ICON = InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("combobox.type.small.icon")); //$NON-NLS-1$
+    public static Image COMBOBOX_ICON = InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("combobox.type.small.icon")); //$NON-NLS-1$
     private List mListItems = new ArrayList();
     
     public InstallOptionsCombobox()
@@ -67,6 +68,16 @@ public class InstallOptionsCombobox extends InstallOptionsEditableElement
         }
     }
 
+    protected TypeConverter getTypeConverter(String property)
+    {
+        if(InstallOptionsModel.PROPERTY_LISTITEMS.equals(property)) {
+            return TypeConverter.STRING_LIST_CONVERTER;
+        }
+        else {
+            return super.getTypeConverter(property);
+        }
+    }
+    
     protected IPropertyDescriptor createPropertyDescriptor(String name)
     {
         if(name.equals(InstallOptionsModel.PROPERTY_LISTITEMS)) {
@@ -109,6 +120,7 @@ public class InstallOptionsCombobox extends InstallOptionsEditableElement
             List oldListItems = mListItems;
             mListItems = listItems;
             firePropertyChange(InstallOptionsModel.PROPERTY_LISTITEMS, oldListItems, mListItems);
+            setDirty(true);
         }
     }
     
@@ -123,9 +135,7 @@ public class InstallOptionsCombobox extends InstallOptionsEditableElement
         clone.setListItems(new ArrayList(mListItems));
         return clone;
     }
-    
-//    public D
-//    
+ 
     protected class ComboStatePropertyDescriptor extends PropertyDescriptor implements PropertyChangeListener
     {
         private EditableComboBoxCellEditor mEditor;

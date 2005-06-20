@@ -23,7 +23,7 @@ public class InstallOptionsEditableElementCommand extends Command
     public InstallOptionsEditableElementCommand(InstallOptionsEditableElement editable, String state) 
     {
         mEditable = editable;
-        setLabel(InstallOptionsPlugin.getFormattedString("editable.element.command.label", 
+        setLabel(InstallOptionsPlugin.getFormattedString("editable.element.command.label",  //$NON-NLS-1$
                                                          new Object[]{mEditable.getType()}));
         if (state != null) {
             mNewState = state;

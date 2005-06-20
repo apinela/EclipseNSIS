@@ -12,10 +12,13 @@ package net.sf.eclipsensis.installoptions.actions;
 import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 
+import org.eclipse.core.runtime.IAdapterFactory;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.draw2d.PositionConstants;
 import org.eclipse.gef.internal.GEFMessages;
 import org.eclipse.gef.ui.actions.*;
 import org.eclipse.jface.action.*;
+import org.eclipse.swt.SWT;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.RetargetAction;
@@ -35,6 +38,10 @@ public class InstallOptionsDesignActionContributor extends ActionBarContributor
         
         addRetargetAction(new UndoRetargetAction());
         addRetargetAction(new RedoRetargetAction());
+
+        retargetAction = new RetargetAction(ActionFactory.REVERT.getId(),InstallOptionsPlugin.getResourceString("revert.action.label")); //$NON-NLS-1$
+        retargetAction.setToolTipText(InstallOptionsPlugin.getResourceString("revert.action.tooltip")); //$NON-NLS-1$
+        addRetargetAction(retargetAction);
 
         retargetAction = new RetargetAction(ActionFactory.CUT.getId(),InstallOptionsPlugin.getResourceString("cut.action.name")); //$NON-NLS-1$
         retargetAction.setToolTipText(InstallOptionsPlugin.getResourceString("cut.action.tooltip")); //$NON-NLS-1$
@@ -75,6 +82,7 @@ public class InstallOptionsDesignActionContributor extends ActionBarContributor
         
         retargetAction = new RetargetAction(SwitchEditorAction.ID, InstallOptionsPlugin.getResourceString("switch.source.editor.action.name")); //$NON-NLS-1$
         retargetAction.setImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("switch.editor.icon"))); //$NON-NLS-1$
+        retargetAction.setAccelerator(SWT.F12);
         addRetargetAction(retargetAction);
         
         addRetargetAction(new RetargetAction(IInstallOptionsConstants.GRID_SNAP_GLUE_SETTINGS_ACTION_ID,InstallOptionsPlugin.getResourceString("grid.snap.glue.action.name"))); //$NON-NLS-1$
@@ -156,6 +164,22 @@ public class InstallOptionsDesignActionContributor extends ActionBarContributor
         mEditor = editor;
         mSetDialogSizeMenu.setEditor(editor);
         mXYStatusContribution.editorChanged(editor);
+        if(editor.getAdapter(ActionRegistry.class) == null) {
+            Platform.getAdapterManager().registerAdapters(new IAdapterFactory(){
+                    public Object getAdapter(Object adaptableObject, Class adapterType)
+                    {
+                        if(adapterType.equals(ActionRegistry.class)) {
+                            return new ActionRegistry();
+                        }
+                        return null;
+                    }
+    
+                    public Class[] getAdapterList()
+                    {
+                        return new Class[]{ActionRegistry.class};
+                    }
+                },editor.getClass());
+        }
         super.setActiveEditor(editor);
     }
 

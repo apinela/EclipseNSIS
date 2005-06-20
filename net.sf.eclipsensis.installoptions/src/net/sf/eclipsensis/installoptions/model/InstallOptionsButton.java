@@ -20,7 +20,7 @@ import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 
 public class InstallOptionsButton extends InstallOptionsUneditableElement
 {
-    private static Image BUTTON_ICON = InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("button.type.small.icon")); //$NON-NLS-1$
+    public static Image BUTTON_ICON = InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("button.type.small.icon")); //$NON-NLS-1$
 
     private String mState;
 
@@ -111,6 +111,7 @@ public class InstallOptionsButton extends InstallOptionsUneditableElement
             String oldState = mState;
             mState = state;
             firePropertyChange(InstallOptionsModel.PROPERTY_STATE, oldState, mState);
+            setDirty(true);
         }
     }
 }

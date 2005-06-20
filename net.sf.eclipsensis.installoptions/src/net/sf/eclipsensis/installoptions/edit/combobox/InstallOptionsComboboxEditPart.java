@@ -22,6 +22,7 @@ import net.sf.eclipsensis.installoptions.properties.dialogs.ListItemsDialog;
 import net.sf.eclipsensis.installoptions.properties.editors.EditableComboBoxCellEditor;
 import net.sf.eclipsensis.installoptions.properties.validators.NSISStringLengthValidator;
 
+import org.eclipse.draw2d.FigureCanvas;
 import org.eclipse.gef.tools.CellEditorLocator;
 import org.eclipse.gef.tools.DirectEditManager;
 import org.eclipse.jface.window.Window;
@@ -55,7 +56,7 @@ public class InstallOptionsComboboxEditPart extends InstallOptionsEditableElemen
     protected void createEditPolicies()
     {
         super.createEditPolicies();
-        installEditPolicy(InstallOptionsExtendedEditPolicy.ROLE, new InstallOptionsComboboxExtendedEditPolicy());
+        installEditPolicy(InstallOptionsExtendedEditPolicy.ROLE, new InstallOptionsComboboxExtendedEditPolicy(this));
     }
     
     public Object getAdapter(Class key)
@@ -78,15 +79,7 @@ public class InstallOptionsComboboxEditPart extends InstallOptionsEditableElemen
 
     protected IInstallOptionsFigure createInstallOptionsFigure() 
     {
-        return new ComboboxFigure(this);
-    }
-
-    public void initFigure(IInstallOptionsFigure figure2)
-    {
-        IListItemsFigure figure3 = (IListItemsFigure)figure2;
-        InstallOptionsCombobox control = (InstallOptionsCombobox)getInstallOptionsEditableElement();
-        figure3.setListItems(control.getListItems());
-        super.initFigure(figure2);
+        return new ComboboxFigure((FigureCanvas)this.getViewer().getControl(), getInstallOptionsWidget());
     }
 
     public void doPropertyChange(PropertyChangeEvent evt)

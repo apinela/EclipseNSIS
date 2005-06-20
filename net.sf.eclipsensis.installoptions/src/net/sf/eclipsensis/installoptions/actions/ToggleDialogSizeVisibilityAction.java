@@ -9,10 +9,11 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.actions;
 
+import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.editor.InstallOptionsDesignEditor;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsDialog;
 
+import org.eclipse.gef.GraphicalViewer;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
 
@@ -36,20 +37,31 @@ public class ToggleDialogSizeVisibilityAction extends Action
     
     public void run()
     {
-        InstallOptionsDialog dialog = mEditor.getInstallOptionsDialog();
-        if(dialog != null) {
-            dialog.setDialogSizeVisible(!dialog.isDialogSizeVisible());
+        if(isEnabled()) {
+            if(isEnabled()) {
+                GraphicalViewer viewer = ((InstallOptionsDesignEditor)mEditor).getGraphicalViewer();
+                Boolean b = (Boolean)viewer.getProperty(IInstallOptionsConstants.PROPERTY_SHOW_DIALOG_SIZE); 
+                viewer.setProperty(IInstallOptionsConstants.PROPERTY_SHOW_DIALOG_SIZE,b.booleanValue()?Boolean.FALSE:Boolean.TRUE);
+            }
         }
     }
     
     public boolean isEnabled()
     {
-        return (mEditor.getInstallOptionsDialog() != null);
+        GraphicalViewer viewer = ((InstallOptionsDesignEditor)mEditor).getGraphicalViewer();
+        if(viewer != null) {
+            return (viewer.getProperty(IInstallOptionsConstants.PROPERTY_SHOW_DIALOG_SIZE) != null);
+        }
+        return false;
     }
     
     public boolean isChecked()
     {
-        InstallOptionsDialog dialog = mEditor.getInstallOptionsDialog();
-        return (dialog != null && dialog.isDialogSizeVisible());
+        if(isEnabled()) {
+            GraphicalViewer viewer = ((InstallOptionsDesignEditor)mEditor).getGraphicalViewer();
+            Boolean b = (Boolean)viewer.getProperty(IInstallOptionsConstants.PROPERTY_SHOW_DIALOG_SIZE); 
+            return b.booleanValue();
+        }
+        return false;
     }
 }

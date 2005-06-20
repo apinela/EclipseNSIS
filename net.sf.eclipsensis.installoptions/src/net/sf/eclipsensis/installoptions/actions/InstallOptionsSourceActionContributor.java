@@ -14,6 +14,7 @@ import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.swt.SWT;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.RetargetAction;
 import org.eclipse.ui.editors.text.TextEditorActionContributor;
@@ -30,6 +31,7 @@ public class InstallOptionsSourceActionContributor extends TextEditorActionContr
         mInstallOptionsMenu = new MenuManager(InstallOptionsPlugin.getResourceString("installoptions.menu.name")); //$NON-NLS-1$
         mSwitchEditorAction = new RetargetAction(SwitchEditorAction.ID, InstallOptionsPlugin.getResourceString("switch.design.editor.action.name")); //$NON-NLS-1$
         mSwitchEditorAction.setImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("switch.editor.icon"))); //$NON-NLS-1$
+        mSwitchEditorAction.setAccelerator(SWT.F12);
 
         mInstallOptionsMenu.add(mSwitchEditorAction);
     }

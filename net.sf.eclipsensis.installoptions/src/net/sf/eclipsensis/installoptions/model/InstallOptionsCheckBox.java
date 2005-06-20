@@ -18,7 +18,7 @@ import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
 public class InstallOptionsCheckBox extends InstallOptionsButton
 {
-    private static Image CHECKBOX_ICON = InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("checkbox.type.small.icon")); //$NON-NLS-1$
+    public static Image CHECKBOX_ICON = InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("checkbox.type.small.icon")); //$NON-NLS-1$
     private static final int DEFAULT_STATE = 0;
     private static final String[] STATE_DATA = {"",InstallOptionsModel.STATE_UNCHECKED, //$NON-NLS-1$
                                                 InstallOptionsModel.STATE_CHECKED};

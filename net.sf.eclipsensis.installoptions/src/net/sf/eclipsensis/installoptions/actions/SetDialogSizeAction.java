@@ -9,13 +9,13 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.actions;
 
+import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
+import net.sf.eclipsensis.installoptions.edit.InstallOptionsEditDomain;
 import net.sf.eclipsensis.installoptions.editor.InstallOptionsDesignEditor;
 import net.sf.eclipsensis.installoptions.model.DialogSize;
-import net.sf.eclipsensis.installoptions.model.commands.SetDialogSizeCommand;
 
-import org.eclipse.gef.commands.Command;
-import org.eclipse.gef.commands.CommandStack;
+import org.eclipse.gef.EditDomain;
 import org.eclipse.jface.action.Action;
 import org.eclipse.ui.IEditorPart;
 
@@ -40,33 +40,23 @@ public class SetDialogSizeAction extends Action
         mEditor = editor;
     }
 
-    private Command createSetDialogSizeCommand()
-    {
-        SetDialogSizeCommand command = new SetDialogSizeCommand();
-        command.setEditor((InstallOptionsDesignEditor)mEditor);
-        command.setNewSize(mDialogSize.getSize());
-        return command;
-    }
-
     public void run()
     {
         if(isEnabled()) {
-            Command command = createSetDialogSizeCommand();
-            if(command != null && command.canExecute()) {
-                CommandStack commandStack = (CommandStack)mEditor.getAdapter(CommandStack.class);
-                if(commandStack != null) {
-                    commandStack.execute(command);
-                }
-                else {
-                    command.execute();
-                }
-            }
+            ((InstallOptionsDesignEditor)mEditor).getGraphicalViewer().setProperty(IInstallOptionsConstants.PROPERTY_DIALOG_SIZE,mDialogSize.getSize());
         }
     }
 
     public boolean isEnabled()
     {
-        return (mDialogSize != null && mEditor != null && mEditor instanceof InstallOptionsDesignEditor && 
-                !((InstallOptionsDesignEditor)mEditor).isDisposed() && ((InstallOptionsDesignEditor)mEditor).getInstallOptionsDialog() != null);
+        if (mDialogSize != null && mEditor != null && mEditor instanceof InstallOptionsDesignEditor && 
+                !((InstallOptionsDesignEditor)mEditor).isDisposed() && ((InstallOptionsDesignEditor)mEditor).getGraphicalViewer() != null) {
+            EditDomain domain = (EditDomain)mEditor.getAdapter(EditDomain.class);
+            if(domain instanceof InstallOptionsEditDomain && ((InstallOptionsEditDomain)domain).isReadOnly()) {
+                return false;
+            }
+            return true;
+        }
+        return false;
     }
 }

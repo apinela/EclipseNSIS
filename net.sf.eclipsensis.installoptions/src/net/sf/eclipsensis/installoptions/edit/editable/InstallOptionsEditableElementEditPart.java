@@ -13,7 +13,6 @@ import java.beans.PropertyChangeEvent;
 
 import net.sf.eclipsensis.installoptions.edit.InstallOptionsWidgetEditPart;
 import net.sf.eclipsensis.installoptions.figures.IEditableElementFigure;
-import net.sf.eclipsensis.installoptions.figures.IInstallOptionsFigure;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsEditableElement;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
 
@@ -29,15 +28,7 @@ public abstract class InstallOptionsEditableElementEditPart extends InstallOptio
     protected void createEditPolicies()
     {
         super.createEditPolicies();
-        installEditPolicy(EditPolicy.DIRECT_EDIT_ROLE, new EditableElementDirectEditPolicy());
-    }
-
-    public void initFigure(IInstallOptionsFigure figure2)
-    {
-        super.initFigure(figure2);
-        IEditableElementFigure figure3 = (IEditableElementFigure)figure2;
-        InstallOptionsEditableElement control = getInstallOptionsEditableElement();
-        figure3.setState(control.getState());
+        installEditPolicy(EditPolicy.DIRECT_EDIT_ROLE, new EditableElementDirectEditPolicy(this));
     }
 
     protected InstallOptionsEditableElement getInstallOptionsEditableElement()

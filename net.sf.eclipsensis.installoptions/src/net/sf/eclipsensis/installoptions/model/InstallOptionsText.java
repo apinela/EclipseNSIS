@@ -22,7 +22,7 @@ import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
 public class InstallOptionsText extends InstallOptionsEditableElement
 {
-    private static Image TEXT_ICON = InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("text.type.small.icon")); //$NON-NLS-1$
+    public static Image TEXT_ICON = InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("text.type.small.icon")); //$NON-NLS-1$
     
     public InstallOptionsText()
     {
@@ -55,7 +55,7 @@ public class InstallOptionsText extends InstallOptionsEditableElement
         if(flags.contains(InstallOptionsModel.FLAGS_ONLY_NUMBERS)) {
             String oldState = getState();
             if(!Common.isEmpty(oldState)) {
-                StringBuffer buf = new StringBuffer("");
+                StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
                 char[] chars = oldState.toCharArray();
                 for (int i = 0; i < chars.length; i++) {
                     if(Character.isDigit(chars[i])) {
@@ -79,7 +79,7 @@ public class InstallOptionsText extends InstallOptionsEditableElement
     protected IPropertyDescriptor createPropertyDescriptor(String name)
     {
         if(name.equals(InstallOptionsModel.PROPERTY_STATE)) {
-            MultiLineTextPropertyDescriptor descriptor = new MultiLineTextPropertyDescriptor(InstallOptionsModel.PROPERTY_STATE, InstallOptionsPlugin.getResourceString("state.property.name"));
+            MultiLineTextPropertyDescriptor descriptor = new MultiLineTextPropertyDescriptor(InstallOptionsModel.PROPERTY_STATE, InstallOptionsPlugin.getResourceString("state.property.name")); //$NON-NLS-1$
             descriptor.setLabelProvider(MultiLineLabelProvider.INSTANCE);
             descriptor.setValidator(new NSISStringLengthValidator(InstallOptionsModel.PROPERTY_STATE));
             descriptor.setMultiLine(getFlags().contains(InstallOptionsModel.FLAGS_MULTILINE));

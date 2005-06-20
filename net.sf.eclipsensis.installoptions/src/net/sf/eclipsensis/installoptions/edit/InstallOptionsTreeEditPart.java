@@ -40,7 +40,10 @@ public class InstallOptionsTreeEditPart extends AbstractTreeEditPart implements 
     public void activate()
     {
         super.activate();
-        getInstallOptionsElement().addPropertyChangeListener(this);
+        InstallOptionsElement element = getInstallOptionsElement();
+        if(element != null) {
+            element.addPropertyChangeListener(this);
+        }
     }
 
     /**
@@ -48,14 +51,17 @@ public class InstallOptionsTreeEditPart extends AbstractTreeEditPart implements 
      */
     protected void createEditPolicies()
     {
-        EditPolicy component = new InstallOptionsEditPolicy();
+        EditPolicy component = new InstallOptionsEditPolicy(this);
         installEditPolicy(EditPolicy.COMPONENT_ROLE, component);
-        installEditPolicy(EditPolicy.PRIMARY_DRAG_ROLE, new InstallOptionsTreeEditPolicy());
+        installEditPolicy(EditPolicy.PRIMARY_DRAG_ROLE, new InstallOptionsTreeEditPolicy(this));
     }
 
     public void deactivate()
     {
-        getInstallOptionsElement().removePropertyChangeListener(this);
+        InstallOptionsElement element = getInstallOptionsElement();
+        if(element != null) {
+            element.removePropertyChangeListener(this);
+        }
         super.deactivate();
     }
 
@@ -131,17 +137,19 @@ public class InstallOptionsTreeEditPart extends AbstractTreeEditPart implements 
             TreeItem item = (TreeItem)getWidget();
             if(item != null) {
                 InstallOptionsElement element = getInstallOptionsElement();
-                Image image = element.getIcon();
-                Image itemImage = item.getImage();
-                if (image != itemImage) {
-                    if(image != null) {
-                        image.setBackground(item.getParent().getBackground());
+                if(element != null) {
+                    Image image = element.getIcon();
+                    Image itemImage = item.getImage();
+                    if (image != itemImage) {
+                        if(image != null) {
+                            image.setBackground(item.getParent().getBackground());
+                        }
+                        setWidgetImage(image);
                     }
-                    setWidgetImage(image);
-                }
-                String string = getInstallOptionsElement().toString();
-                if(string != null && !string.equals(item.getText())) {
-                    setWidgetText(string);
+                    String string = getInstallOptionsElement().toString();
+                    if(string != null && !string.equals(item.getText())) {
+                        setWidgetText(string);
+                    }
                 }
             }
         }

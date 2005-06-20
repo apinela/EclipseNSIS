@@ -29,7 +29,7 @@ public class InstallOptionsTextEditManager extends InstallOptionsEditableElement
         super(source, editorType, locator);
     }
 
-    protected CellEditor createCellEditorOn(Composite composite)
+    protected CellEditor createCellEditor(Composite composite)
     {
         TextCellEditor cellEditor = (TextCellEditor)super.createCellEditorOn(composite);
         TextFigure figure = (TextFigure)getEditPart().getFigure();

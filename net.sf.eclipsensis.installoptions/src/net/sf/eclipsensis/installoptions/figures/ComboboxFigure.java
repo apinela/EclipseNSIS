@@ -9,40 +9,68 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.figures;
 
-import java.util.Collections;
 import java.util.List;
 
-import org.eclipse.draw2d.Figure;
-import org.eclipse.draw2d.XYLayout;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsWidget;
+import net.sf.eclipsensis.installoptions.properties.PropertySourceWrapper;
+
+import org.eclipse.draw2d.*;
 import org.eclipse.draw2d.geometry.Rectangle;
-import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.ui.views.properties.IPropertySource;
 
 public class ComboboxFigure extends Figure implements  IListItemsFigure
 {
-    private GraphicalEditPart mEditPart;
+    private FigureCanvas mCanvas;
     private ListFigure mListFigure;
     private ComboFigure mComboFigure;
-    private List mListItems;
+    private int mComboHeight;
     
     /**
      * 
      */
-    public ComboboxFigure(GraphicalEditPart editPart)
+    public ComboboxFigure(FigureCanvas canvas, IPropertySource propertySource)
     {
         super();
-        mEditPart = editPart;
+        mCanvas = canvas;
+        Combo cb = new Combo(mCanvas,SWT.DROP_DOWN);
+        cb.setVisible(false);
+        cb.setBounds(-100,-100,10,10);
+        Point p = cb.computeSize(SWT.DEFAULT,SWT.DEFAULT);
+        cb.dispose();
+        mComboHeight = p.y;
+        
         setLayoutManager(new XYLayout());
-        mComboFigure = new ComboFigure(mEditPart);
-        mListFigure = new ListFigure(mEditPart);
+        final Rectangle[] bounds = calculateBounds((Rectangle)propertySource.getPropertyValue(InstallOptionsWidget.PROPERTY_BOUNDS));
+        mComboFigure = new ComboFigure(canvas, new PropertySourceWrapper(propertySource){
+            public Object getPropertyValue(Object id)
+            {
+                if(InstallOptionsWidget.PROPERTY_BOUNDS.equals(id)) {
+                    return bounds[0];
+                }
+                else {
+                    return super.getPropertyValue(id);
+                }
+            }
+        });
+        mListFigure = new ListFigure(canvas, new PropertySourceWrapper(propertySource){
+            public Object getPropertyValue(Object id)
+            {
+                if(InstallOptionsWidget.PROPERTY_BOUNDS.equals(id)) {
+                    return bounds[1];
+                }
+                else {
+                    return super.getPropertyValue(id);
+                }
+            }
+        });
         mListFigure.setStyle(SWT.BORDER|SWT.SINGLE);
-        mListFigure.setVisible(false);
-        mComboFigure.setVisible(false);
         add(mComboFigure);
         add(mListFigure);
     }
-    
+        
     public ListFigure getListFigure()
     {
         return mListFigure;
@@ -77,18 +105,19 @@ public class ComboboxFigure extends Figure implements  IListItemsFigure
         mListFigure.refresh();
     }
 
+    private Rectangle[] calculateBounds(Rectangle rect)
+    {
+        Rectangle rect1 = new Rectangle(0,0,rect.width,Math.min(mComboHeight,rect.height));
+        return new Rectangle[] {rect1,
+                                new Rectangle(0,Math.max(0,rect1.height-1),rect.width,Math.max(0,rect.height-rect1.height+1))};
+    }
+    
     public void setBounds(Rectangle rect)
     {
-        Point p = mComboFigure.getSWTPreferredSize();
-        if(p != null) {
-            mListFigure.setVisible(true);
-            mComboFigure.setVisible(true);
-            Rectangle rect1 = new Rectangle(0,0,rect.width,Math.min(p.y,rect.height));
-            Rectangle rect2 = new Rectangle(0,Math.max(0,rect1.height-1),rect.width,Math.max(0,rect.height-rect1.height+1));
-            getLayoutManager().setConstraint(mListFigure,rect2);
-            getLayoutManager().setConstraint(mComboFigure,rect1);
-            super.setBounds(rect);
-        }
+        Rectangle[] bounds = calculateBounds(rect);
+        getLayoutManager().setConstraint(mComboFigure,bounds[0]);
+        getLayoutManager().setConstraint(mListFigure,bounds[1]);
+        super.setBounds(rect);
     }
 
     /* (non-Javadoc)
@@ -106,7 +135,7 @@ public class ComboboxFigure extends Figure implements  IListItemsFigure
 
     public List getListItems()
     {
-        return (mListItems==null?Collections.EMPTY_LIST:mListItems);
+        return mListFigure.getListItems();
     }
     
     public void setListItems(List listItems)

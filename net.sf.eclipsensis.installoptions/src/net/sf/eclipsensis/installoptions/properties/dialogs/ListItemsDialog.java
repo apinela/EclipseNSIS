@@ -140,7 +140,7 @@ public class ListItemsDialog extends Dialog
             public void handleEvent(Event e) {
                 List list = (List)viewer.getInput();
                 if(list != null) {
-                    String item = InstallOptionsPlugin.getResourceString("default.listitem.label");
+                    String item = InstallOptionsPlugin.getResourceString("default.listitem.label"); //$NON-NLS-1$
                     list.add(item);
                     viewer.refresh(false);
                     viewer.setSelection(new StructuredSelection(item));
@@ -261,7 +261,7 @@ public class ListItemsDialog extends Dialog
         if(validator != null) {
             String error = validator.isValid(getValues());
             if(!Common.isEmpty(error)) {
-                MessageDialog.openError(getShell(),EclipseNSISPlugin.getResourceString("error.title"),error);
+                MessageDialog.openError(getShell(),EclipseNSISPlugin.getResourceString("error.title"),error); //$NON-NLS-1$
                 return;
             }
         }
