@@ -53,7 +53,7 @@ public class InstallOptionsFileRequest extends InstallOptionsPathRequest
                 String[] temp = Common.tokenize(tokens[i+1],FILTER_SEPARATOR);
                 Pattern[] patterns = new Pattern[temp.length];
                 for (int j = 0; j < patterns.length; j++) {
-                    patterns[i] = new Pattern(temp[i]);
+                    patterns[j] = new Pattern(temp[j]);
                 }
                 list.add(new Filter(description, patterns));
             }
@@ -744,6 +744,7 @@ public class InstallOptionsFileRequest extends InstallOptionsPathRequest
             Pattern[] patterns = filter.getPatterns();
             Pattern[] patterns2 = null;
             if(!Common.isEmptyArray(patterns)) {
+                patterns2 = new Pattern[patterns.length];
                 for (int i = 0; i < patterns.length; i++) {
                     patterns2[i] = (Pattern)patterns[i].clone();
                 }

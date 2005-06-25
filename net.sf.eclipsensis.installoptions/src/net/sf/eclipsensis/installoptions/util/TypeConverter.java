@@ -200,6 +200,84 @@ public abstract class TypeConverter
         }
     };
     
+    public static final TypeConverter INI_STRING_CONVERTER = new TypeConverter() {
+        public String asString(Object o)
+        {
+            StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
+            if(o != null) {
+                char[] chars = ((String)o).toCharArray();
+                boolean escaped = false;
+                for (int i = 0; i < chars.length; i++) {
+                    if(escaped) {
+                        switch(chars[i]) {
+                            case 'r':
+                                buf.append("\r"); //$NON-NLS-1$
+                                break;
+                            case 'n':
+                                buf.append("\n"); //$NON-NLS-1$
+                                break;
+                            case 't':
+                                buf.append("\t"); //$NON-NLS-1$
+                                break;
+                            case '\\':
+                                buf.append("\\"); //$NON-NLS-1$
+                                break;
+                            default:
+                                buf.append("\\").append(chars[i]); //$NON-NLS-1$
+                        }
+                        escaped = false;
+                    }
+                    else {
+                        if(chars[i] == '\\') {
+                            escaped = true;
+                        }
+                        else {
+                            buf.append(chars[i]);
+                        }
+                    }
+                }
+                if(escaped) {
+                    buf.append("\\"); //$NON-NLS-1$
+                }
+            }
+            
+            return buf.toString();
+        }
+        
+        public Object asType(String s)
+        {
+            StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
+            if(s != null) {
+                char[] chars = ((String)s).toCharArray();
+                for (int i = 0; i < chars.length; i++) {
+                    switch(chars[i]) {
+                        case '\r':
+                            buf.append("\\r"); //$NON-NLS-1$
+                            break;
+                        case '\n':
+                            buf.append("\\n"); //$NON-NLS-1$
+                            break;
+                        case '\t':
+                            buf.append("\\t"); //$NON-NLS-1$
+                            break;
+                        case '\\':
+                            buf.append("\\\\"); //$NON-NLS-1$
+                            break;
+                        default:
+                            buf.append(chars[i]);
+                    }
+                }
+            }
+            
+            return buf.toString();
+        }
+
+        public Object makeCopy(Object o)
+        {
+            return (String)o;
+        }
+    };
+    
     public static final TypeConverter DIMENSION_CONVERTER = new TypeConverter() {
         public String asString(Object o)
         {

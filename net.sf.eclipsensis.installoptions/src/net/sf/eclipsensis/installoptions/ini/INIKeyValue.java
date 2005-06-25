@@ -13,6 +13,7 @@ import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.ini.validators.IINIKeyValueValidator;
 import net.sf.eclipsensis.installoptions.ini.validators.INIKeyValueValidatorRegistry;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
+import net.sf.eclipsensis.installoptions.util.TypeConverter;
 import net.sf.eclipsensis.util.Common;
 
 public class INIKeyValue extends INILine
@@ -20,6 +21,7 @@ public class INIKeyValue extends INILine
     private String mKey = ""; //$NON-NLS-1$
     private String mValue = ""; //$NON-NLS-1$
     private String mOriginalValue = ""; //$NON-NLS-1$
+    private boolean mQuoted = false;
     
     public INIKeyValue(String key)
     {
@@ -30,8 +32,12 @@ public class INIKeyValue extends INILine
     INIKeyValue(String key, String value)
     {
         this(key);
-        mValue = value;
-        mOriginalValue = value;
+        if(value != null && value.length() > 2 && value.startsWith("\"") && value.endsWith("\"")) { //$NON-NLS-1$ //$NON-NLS-2$
+            value = value.substring(1,value.length()-1);
+            mQuoted = true;
+        }
+        setValue(value);
+        mOriginalValue = getValue();
     }
     
     public String getKey()
@@ -46,7 +52,7 @@ public class INIKeyValue extends INILine
     
     public void setValue(String value)
     {
-        mValue = value;
+        mValue = (value==null?"":TypeConverter.INI_STRING_CONVERTER.asString(value)); //$NON-NLS-1$
     }
     
     protected void checkProblems()
@@ -84,27 +90,57 @@ public class INIKeyValue extends INILine
         {
             String text = getText();
             StringBuffer buf = new StringBuffer();
+            boolean oldQuoted = mQuoted;
+            String current = (String)TypeConverter.INI_STRING_CONVERTER.asType(maybeQuote(mValue));
+
             if(Common.isEmpty(text)) {
-                text = buf.append(mKey).append("=").append(mValue).toString(); //$NON-NLS-1$
+                text = buf.append(mKey).append("=").append(current).toString(); //$NON-NLS-1$
             }
             else {
                 int n = text.indexOf('=');
-                if(Common.isEmpty(mOriginalValue)) {
+                if(mOriginalValue.length() == 0 && !oldQuoted) {
                     buf.append(text.substring(0,n+1));
-                    buf.append(mValue);
+                    buf.append(current);
                     if(text.length() >= n+1) {
                         buf.append(text.substring(n+1));
                     }
                 }
                 else {
-                    n = text.indexOf(mOriginalValue,n);
+                    String original = (String)TypeConverter.INI_STRING_CONVERTER.asType(oldQuoted?quote(mOriginalValue):mOriginalValue);
+                    n = text.indexOf(original,n);
                     buf.append(text.substring(0,n));
-                    buf.append(mValue);
-                    buf.append(text.substring(n+mOriginalValue.length()));
+                    buf.append(current);
+                    buf.append(text.substring(n+original.length()));
                 }
             }
             setText(buf.toString());
             mOriginalValue = mValue;
         }
+    }
+    
+    private String maybeQuote(String text)
+    {
+        mQuoted = false;
+        if(text != null && text.length() > 0) {
+            if(Character.isWhitespace(text.charAt(0)) || Character.isWhitespace(text.charAt(text.length()-1))) {
+                text = quote(text);
+                mQuoted = true;
+            }
+        }
+        return text;
+    }
+    
+    private String quote(String text)
+    {
+        return new StringBuffer("\"").append(text).append("\"").toString(); //$NON-NLS-1$ //$NON-NLS-2$
+    }
+    
+    private String escape(String text)
+    {
+        if(text != null && text.length() > 0) {
+            
+            char[] chars = text.toCharArray();
+        }
+        return text;
     }
 }

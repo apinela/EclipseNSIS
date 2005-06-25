@@ -17,7 +17,6 @@ import net.sf.eclipsensis.installoptions.model.commands.InstallOptionsEditableEl
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.Request;
 import org.eclipse.gef.commands.Command;
-import org.eclipse.gef.editpolicies.DirectEditPolicy;
 import org.eclipse.gef.requests.DirectEditRequest;
 
 public class EditableElementDirectEditPolicy extends InstallOptionsDirectEditPolicy

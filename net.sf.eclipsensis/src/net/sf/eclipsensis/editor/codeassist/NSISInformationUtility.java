@@ -40,7 +40,7 @@ public class NSISInformationUtility implements INSISConstants
     {
         IDocument doc = textViewer.getDocument();
         ITypedRegion[][] nsisLine = NSISTextUtility.getNSISLines(doc, offset);
-        return internalGetInformationRegionAtOffset(doc, offset, nsisLine, forUsage);
+        return getInformationRegionAtOffset(doc, offset, nsisLine, forUsage);
     }
 
 /**
@@ -50,7 +50,7 @@ public class NSISInformationUtility implements INSISConstants
      * @param forUsage
      * @return
      */
-    private static IRegion internalGetInformationRegionAtOffset(IDocument doc, int offset, ITypedRegion[][] nsisLine, boolean forUsage)
+    private static IRegion getInformationRegionAtOffset(IDocument doc, int offset, ITypedRegion[][] nsisLine, boolean forUsage)
     {
         if(!Common.isEmptyArray(nsisLine)) {
             if(!Common.isEmptyArray(nsisLine[0])) {
@@ -138,12 +138,11 @@ public class NSISInformationUtility implements INSISConstants
     public static ICompletionProposal[] getCompletionsAtOffset(ITextViewer viewer, int offset)
     {
         if(offset > 0) {
-            int offset2 = offset-1;
             IDocument doc = viewer.getDocument();
-            ITypedRegion[][] nsisLine = NSISTextUtility.getNSISLines(doc, offset2);
-            IRegion region = internalGetInformationRegionAtOffset(doc, offset2, nsisLine, true);
+            ITypedRegion[][] nsisLine = NSISTextUtility.getNSISLines(doc, offset);
+            IRegion region = getInformationRegionAtOffset(doc, offset, nsisLine, true);
             if(region == null || region.equals(NSISTextUtility.EMPTY_REGION)) {
-                region = internalGetInformationRegionAtOffset(doc, offset2, nsisLine, false);
+                region = getInformationRegionAtOffset(doc, offset, nsisLine, false);
                 if(region == null || region.equals(NSISTextUtility.EMPTY_REGION)) {
                     try {
                         //Last ditch
@@ -165,8 +164,8 @@ public class NSISInformationUtility implements INSISConstants
                 }
             }
             if(region != null || !region.equals(NSISTextUtility.EMPTY_REGION)) {
-                if(region.getOffset()+region.getLength() > offset2) {
-                    region = new Region(region.getOffset(),offset2-region.getOffset()+1);
+                if(region.getOffset()+region.getLength() > offset) {
+                    region = new Region(region.getOffset(),offset-region.getOffset()+1);
                 }
                 String text = NSISTextUtility.getRegionText(doc,region);
                 if(!Common.isEmpty(text)) {
@@ -201,7 +200,7 @@ public class NSISInformationUtility implements INSISConstants
                                 if(NSISKeywords.ALL_KEYWORDS[i].regionMatches(true,0,text,0,textlen)) {
                                     list.add(new CompletionProposal(NSISKeywords.ALL_KEYWORDS[i],
                                                                     region.getOffset(),
-                                                                    offset2-region.getOffset()+1,
+                                                                    offset-region.getOffset(),
                                                                     NSISKeywords.ALL_KEYWORDS[i].length(),
                                                                     KEYWORD_IMAGE, 
                                                                     null, null, null));
@@ -218,7 +217,7 @@ public class NSISInformationUtility implements INSISConstants
                                 if(NSISKeywords.PLUGINS[i].regionMatches(true,0,text,0,textlen)) {
                                     list.add(new CompletionProposal(NSISKeywords.PLUGINS[i],
                                                                     region.getOffset(),
-                                                                    offset2-region.getOffset()+1,
+                                                                    offset-region.getOffset(),
                                                                     NSISKeywords.PLUGINS[i].length(),
                                                                     PLUGIN_IMAGE, 
                                                                     null, null, null));
@@ -454,7 +453,7 @@ public class NSISInformationUtility implements INSISConstants
             if(mOffset >=0 && mFirstNonWhitespaceOffset >= 0 && mBuffer.length() > 0) {
                 int offset = ((NSISScanner)mScanner).getOffset();
                 if(mOffset >= mFirstNonWhitespaceOffset && mOffset < offset) {
-                    return new Token(new Region(mFirstNonWhitespaceOffset,(offset-mFirstNonWhitespaceOffset)));
+                    return new Token(new Region(mFirstNonWhitespaceOffset,mBuffer.length()));
                 }
             }
             return Token.UNDEFINED;

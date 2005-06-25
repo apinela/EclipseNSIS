@@ -1007,6 +1007,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
         settings.mLanguages = (mLanguages==null?null:(ArrayList)mLanguages.clone());
         settings.mWizard = null;
         settings.mInstaller = (INSISInstallElement)mInstaller.clone();
+        settings.mInstaller.setSettings(settings);
         return settings;
     }
 

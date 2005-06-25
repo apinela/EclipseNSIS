@@ -90,7 +90,7 @@ public class ImageManager
 
     public synchronized Image getImage(String location) 
     {
-        Image image = mImageRegistry.get(location.toLowerCase());
+        Image image = mImageRegistry.get(location==null?null:location.toLowerCase());
         if(image == null) {
             return getImage(makeLocationURL(location));
         }
@@ -99,22 +99,22 @@ public class ImageManager
 
     public synchronized boolean containsImage(URL url) 
     {
-        return (mImageRegistry.get(url.toString().toLowerCase()) != null);
+        return (mImageRegistry.get(url==null?null:url.toString().toLowerCase()) != null);
     }
 
     public synchronized void putImage(URL url, Image image) 
     {
-        mImageRegistry.put(url.toString(),image);
+        putImage(url == null?null:url.toString(),image);
     }
 
     public synchronized void putImage(String s, Image image) 
     {
-        mImageRegistry.put(s.toLowerCase(),image);
+        mImageRegistry.put(s==null?null:s.toLowerCase(),image);
     }
-
+    
     public synchronized void putImageDescriptor(String s, ImageDescriptor image) 
     {
-        mImageRegistry.put(s.toLowerCase(),image);
+        mImageRegistry.put(s==null?null:s.toLowerCase(),image);
     }
 
     public synchronized Image getImage(URL url) 

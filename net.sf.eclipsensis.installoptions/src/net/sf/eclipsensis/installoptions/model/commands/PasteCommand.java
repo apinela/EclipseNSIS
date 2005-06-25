@@ -18,8 +18,7 @@ import net.sf.eclipsensis.installoptions.edit.dialog.InstallOptionsDialogEditPar
 import net.sf.eclipsensis.installoptions.model.*;
 
 import org.eclipse.draw2d.FigureCanvas;
-import org.eclipse.draw2d.geometry.Point;
-import org.eclipse.draw2d.geometry.Rectangle;
+import org.eclipse.draw2d.geometry.*;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.jface.viewers.StructuredSelection;
 
@@ -56,7 +55,7 @@ public class PasteCommand extends Command
         redo();
     }
 
-    private void calculatePasteBounds(InstallOptionsDialog dialog)
+    private void calculatePasteBounds(Dimension size)
     {
         FigureCanvas canvas = (FigureCanvas)mPart.getViewer().getControl();
         org.eclipse.swt.graphics.Rectangle dim = canvas.getClientArea();
@@ -67,9 +66,9 @@ public class PasteCommand extends Command
         for (Iterator iter = mPasteList.iterator(); iter.hasNext();) {
             InstallOptionsWidget model = (InstallOptionsWidget)iter.next();
             Position pos = model.getPosition();
-            pos = model.toGraphical(pos, dialog);
+            pos = model.toGraphical(pos, size);
             pos.setLocation(pos.left+delX,pos.top+delY);
-            pos = model.toModel(pos, dialog);
+            pos = model.toModel(pos, size);
             model.getPosition().set(pos.left,pos.top,pos.right,pos.bottom);
         }
         mPasteBounds.x = p.x;
@@ -79,7 +78,7 @@ public class PasteCommand extends Command
     public void redo()
     {
         InstallOptionsDialog dialog = (InstallOptionsDialog)mPart.getModel();
-        calculatePasteBounds(dialog);
+        calculatePasteBounds(dialog.getDialogSize());
         for (Iterator iter = mPasteList.iterator(); iter.hasNext();) {
             dialog.addChild((InstallOptionsWidget)iter.next());
         }

@@ -239,11 +239,21 @@ public abstract class InstallOptionsWidgetEditPart extends InstallOptionsEditPar
         return TextCellEditor.class;
     }
 
-    protected InstallOptionsWidget getInstallOptionsWidget()
+    public InstallOptionsWidget getInstallOptionsWidget()
     {
         return (InstallOptionsWidget)getModel();
     }
     
+    public void addNotify()
+    {
+        super.addNotify();
+    }
+
+    public void removeNotify()
+    {
+        super.removeNotify();
+    }
+
     protected abstract DirectEditManager creatDirectEditManager(InstallOptionsWidgetEditPart part, Class clasz, CellEditorLocator locator);
     protected abstract CellEditorLocator createCellEditorLocator(IInstallOptionsFigure figure);
     protected abstract IInstallOptionsFigure createInstallOptionsFigure();

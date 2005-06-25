@@ -110,6 +110,14 @@ public class InstallOptionsDesignMenuProvider extends org.eclipse.gef.ContextMen
             manager.appendToGroup(GEFActionConstants.GROUP_REST, submenu);
         }
 
+        submenu = new MenuManager(InstallOptionsPlugin.getResourceString("resize.submenu.name")); //$NON-NLS-1$
+        addContextMenu(submenu, GEFActionConstants.MATCH_WIDTH, null);
+        addContextMenu(submenu, GEFActionConstants.MATCH_HEIGHT, null);
+
+        if (!submenu.isEmpty()) {
+            manager.appendToGroup(GEFActionConstants.GROUP_REST, submenu);
+        }
+
         submenu = new MenuManager(InstallOptionsPlugin.getResourceString("arrange.submenu.name")); //$NON-NLS-1$
 
         addContextMenu(submenu, ArrangeAction.SEND_BACKWARD_ID, null);
@@ -121,7 +129,7 @@ public class InstallOptionsDesignMenuProvider extends org.eclipse.gef.ContextMen
             manager.appendToGroup(GEFActionConstants.GROUP_REST, submenu);
         }
         
-        if(mEditor != null) {
+        if(mEditor != null && selected.size() == 0) {
             if(mSetDialogSizeMenu == null) {
                 mSetDialogSizeMenu = new SetDialogSizeMenuManager(manager);
                 mSetDialogSizeMenu.setEditor(mEditor);

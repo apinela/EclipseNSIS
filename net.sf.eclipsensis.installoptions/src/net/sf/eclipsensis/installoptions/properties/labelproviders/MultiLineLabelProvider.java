@@ -9,6 +9,8 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.properties.labelproviders;
 
+import net.sf.eclipsensis.installoptions.util.TypeConverter;
+
 import org.eclipse.jface.viewers.LabelProvider;
 
 public class MultiLineLabelProvider extends LabelProvider
@@ -27,28 +29,7 @@ public class MultiLineLabelProvider extends LabelProvider
     public String getText(Object element) 
     {
         if(element instanceof String) {
-            StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
-            char[] chars = ((String)element).toCharArray();
-            for (int i = 0; i < chars.length; i++) {
-                switch(chars[i]) {
-                    case '\r':
-                        buf.append("\\r"); //$NON-NLS-1$
-                        break;
-                    case '\n':
-                        buf.append("\\n"); //$NON-NLS-1$
-                        break;
-                    case '\t':
-                        buf.append("\\t"); //$NON-NLS-1$
-                        break;
-                    case '\\':
-                        buf.append("\\\\"); //$NON-NLS-1$
-                        break;
-                    default:
-                        buf.append(chars[i]);
-                }
-            }
-            
-            return buf.toString();
+            return (String)TypeConverter.INI_STRING_CONVERTER.asType((String)element);
         }
         else {
             return super.getText(element);

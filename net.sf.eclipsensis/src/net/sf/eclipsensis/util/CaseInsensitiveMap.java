@@ -147,7 +147,10 @@ public class CaseInsensitiveMap implements Map, Serializable
      */
     public Object put(Object key, Object value)
     {
-        mKeyMap.put(fixKey(key),key);
+        Object oldKey = mKeyMap.put(fixKey(key),key);
+        if(oldKey != null) {
+            mValueMap.remove(oldKey);
+        }
         return mValueMap.put(key,value);
     }
     

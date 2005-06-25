@@ -127,7 +127,7 @@ public class NSISKeywords implements INSISConstants
                     if(cPluginsMap.size() != pluginFiles.length) {
                         for (Iterator iter = cPluginsMap.entrySet().iterator(); iter.hasNext();) {
                             Map.Entry entry = (Map.Entry)iter.next();
-                            if(set.contains(entry.getKey())) {
+                            if(!set.contains(entry.getKey())) {
                                 iter.remove();
                                 changed = true;
                             }

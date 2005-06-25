@@ -1,4 +1,13 @@
 <!--
+//###############################################################################
+//# Copyright (c) 2004, 2005 Sunil Kamath (IcemanK).
+//# All rights reserved.
+//# This program is made available under the terms of the Common Public License
+//# v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
+//#
+//# Contributors:
+//# Sunil Kamath (IcemanK) - initial API and implementation
+//###############################################################################
 
 // these are the scripts that are called in the links.
 var ie = document.all;

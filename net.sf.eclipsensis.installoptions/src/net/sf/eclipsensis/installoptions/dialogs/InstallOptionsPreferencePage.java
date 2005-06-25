@@ -41,7 +41,7 @@ import org.eclipse.ui.dialogs.PropertyPage;
 
 public class InstallOptionsPreferencePage extends PropertyPage implements IWorkbenchPreferencePage, IInstallOptionsConstants
 {
-    private Map mGeneralSettingsMap = new HashMap();;
+    private Map mDisplaySettingsMap = new HashMap();;
     private Map mGridSettingsMap = new HashMap();;
     private Map mSnapGlueSettingsMap = new HashMap();
     private Map mDialogSizesMap = new LinkedHashMap();
@@ -71,7 +71,7 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
     private void loadPreferences()
     {
         // Ruler preference
-        loadPreference(mGeneralSettingsMap, PREFERENCE_SHOW_RULERS,TypeConverter.BOOLEAN_CONVERTER,
+        loadPreference(mDisplaySettingsMap, PREFERENCE_SHOW_RULERS,TypeConverter.BOOLEAN_CONVERTER,
                 SHOW_RULERS_DEFAULT);
 
         // Snap to Geometry preference
@@ -79,7 +79,7 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
                 SNAP_TO_GEOMETRY_DEFAULT);
 
         // Grid preferences
-        loadPreference(mGeneralSettingsMap, PREFERENCE_SHOW_GRID,TypeConverter.BOOLEAN_CONVERTER,
+        loadPreference(mDisplaySettingsMap, PREFERENCE_SHOW_GRID,TypeConverter.BOOLEAN_CONVERTER,
                 SHOW_GRID_DEFAULT);
         loadPreference(mSnapGlueSettingsMap, PREFERENCE_SNAP_TO_GRID,TypeConverter.BOOLEAN_CONVERTER,
                 SNAP_TO_GRID_DEFAULT);
@@ -91,7 +91,7 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
                 GRID_SPACING_DEFAULT);
 
         // Guides preferences
-        loadPreference(mGeneralSettingsMap, PREFERENCE_SHOW_GUIDES,TypeConverter.BOOLEAN_CONVERTER,
+        loadPreference(mDisplaySettingsMap, PREFERENCE_SHOW_GUIDES,TypeConverter.BOOLEAN_CONVERTER,
                 SHOW_GUIDES_DEFAULT);
         loadPreference(mSnapGlueSettingsMap, PREFERENCE_SNAP_TO_GUIDES,TypeConverter.BOOLEAN_CONVERTER,
                 SNAP_TO_GUIDES_DEFAULT);
@@ -99,12 +99,12 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
                 GLUE_TO_GUIDES_DEFAULT);
 
         // Dialog size preferences
-        loadPreference(mGeneralSettingsMap, PREFERENCE_SHOW_DIALOG_SIZE,TypeConverter.BOOLEAN_CONVERTER,
+        loadPreference(mDisplaySettingsMap, PREFERENCE_SHOW_DIALOG_SIZE,TypeConverter.BOOLEAN_CONVERTER,
                 SHOW_DIALOG_SIZE_DEFAULT);
         
         // Zoom
         if(InstallOptionsPlugin.getDefault().isZoomSupported()) {
-            loadPreference(mGeneralSettingsMap, PREFERENCE_ZOOM,TypeConverter.STRING_CONVERTER,
+            loadPreference(mDisplaySettingsMap, PREFERENCE_ZOOM,TypeConverter.STRING_CONVERTER,
                     ZOOM_DEFAULT);
         }
     }
@@ -130,7 +130,7 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
     private void savePreferences()
     {
         // Ruler preference
-        savePreference(mGeneralSettingsMap, PREFERENCE_SHOW_RULERS,TypeConverter.BOOLEAN_CONVERTER,
+        savePreference(mDisplaySettingsMap, PREFERENCE_SHOW_RULERS,TypeConverter.BOOLEAN_CONVERTER,
                 SHOW_RULERS_DEFAULT);
 
         // Snap to Geometry preference
@@ -138,7 +138,7 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
                 SNAP_TO_GEOMETRY_DEFAULT);
 
         // Grid preferences
-        savePreference(mGeneralSettingsMap, PREFERENCE_SHOW_GRID,TypeConverter.BOOLEAN_CONVERTER,
+        savePreference(mDisplaySettingsMap, PREFERENCE_SHOW_GRID,TypeConverter.BOOLEAN_CONVERTER,
                 SHOW_GRID_DEFAULT);
         savePreference(mSnapGlueSettingsMap, PREFERENCE_SNAP_TO_GRID,TypeConverter.BOOLEAN_CONVERTER,
                 SNAP_TO_GRID_DEFAULT);
@@ -150,7 +150,7 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
                 GRID_SPACING_DEFAULT);
 
         // Guides preferences
-        savePreference(mGeneralSettingsMap, PREFERENCE_SHOW_GUIDES,TypeConverter.BOOLEAN_CONVERTER,
+        savePreference(mDisplaySettingsMap, PREFERENCE_SHOW_GUIDES,TypeConverter.BOOLEAN_CONVERTER,
                 SHOW_GUIDES_DEFAULT);
         savePreference(mSnapGlueSettingsMap, PREFERENCE_SNAP_TO_GUIDES,TypeConverter.BOOLEAN_CONVERTER,
                 SNAP_TO_GUIDES_DEFAULT);
@@ -158,12 +158,12 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
                 GLUE_TO_GUIDES_DEFAULT);
 
         // Dialog size preferences
-        savePreference(mGeneralSettingsMap, PREFERENCE_SHOW_DIALOG_SIZE,TypeConverter.BOOLEAN_CONVERTER,
+        savePreference(mDisplaySettingsMap, PREFERENCE_SHOW_DIALOG_SIZE,TypeConverter.BOOLEAN_CONVERTER,
                 SHOW_DIALOG_SIZE_DEFAULT);
         
         // Zoom
         if(InstallOptionsPlugin.getDefault().isZoomSupported()) {
-            savePreference(mGeneralSettingsMap, PREFERENCE_ZOOM,TypeConverter.STRING_CONVERTER,
+            savePreference(mDisplaySettingsMap, PREFERENCE_ZOOM,TypeConverter.STRING_CONVERTER,
                     ZOOM_DEFAULT);
         }
         
@@ -196,30 +196,30 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
         loadDialogSizes();
         parent = new Composite(parent,SWT.NONE);
         parent.setLayoutData(new GridData(GridData.FILL_BOTH));
-        GridLayout layout = new GridLayout(1,false);
+        GridLayout layout = new GridLayout(2,false);
         layout.marginHeight = 0;
         layout.marginWidth = 0;
         parent.setLayout(layout);
         
-        Composite composite = new Composite(parent,SWT.NONE);
+        Composite composite = parent/*new Composite(parent,SWT.NONE);
         composite.setLayoutData(new GridData(GridData.FILL_BOTH));
         layout = new GridLayout(2,false);
         layout.marginHeight = 0;
         layout.marginWidth = 0;
-        composite.setLayout(layout);
+        composite.setLayout(layout)*/;
 
-        createGeneralGroup(composite);
+        createDisplayGroup(composite);
 
         createDialogSizesGroup(composite);
         
-        composite = new Composite(parent,SWT.NONE);
+        composite = parent/*new Composite(parent,SWT.NONE);
         composite.setLayoutData(new GridData(GridData.FILL_BOTH));
         layout = new GridLayout(2,false);
         layout.marginHeight = 0;
         layout.marginWidth = 0;
-        composite.setLayout(layout);
-        mGridSettings = new GridSettings(composite,mGridSettingsMap);
+        composite.setLayout(layout)*/;
         mSnapGlueSettings = new SnapGlueSettings(composite, mSnapGlueSettingsMap);
+        mGridSettings = new GridSettings(composite,mGridSettingsMap);
         return parent;
     }
 
@@ -248,10 +248,6 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
         group.setLayout(new GridLayout(1,false));
         group.setText(InstallOptionsPlugin.getResourceString("dialog.sizes.group.name")); //$NON-NLS-1$
         
-        Label l = new Label(group,SWT.WRAP);
-        l.setLayoutData(new GridData());
-        l.setText(InstallOptionsPlugin.getResourceString("dialog.size.group.description")); //$NON-NLS-1$
-
         final Composite composite2 = new Composite(group,SWT.NONE);
         composite2.setLayoutData(new GridData(GridData.FILL_BOTH));
         GridLayout layout = new GridLayout(2,false);
@@ -286,6 +282,10 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
         
         columns[2] = new TableColumn(table, SWT.NONE);      
         columns[2].setText(EclipseNSISPlugin.getResourceString("Height")); //$NON-NLS-1$
+
+        Label l = new Label(group,SWT.WRAP);
+        l.setLayoutData(new GridData());
+        l.setText(InstallOptionsPlugin.getResourceString("dialog.size.group.footer")); //$NON-NLS-1$
         
         mDialogSizeViewer = new CheckboxTableViewer(table);
         DialogSizeLabelProvider provider = new DialogSizeLabelProvider();
@@ -460,24 +460,24 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
     /**
      * @param composite
      */
-    private void createGeneralGroup(Composite composite)
+    private void createDisplayGroup(Composite composite)
     {
         Group group = new Group(composite,SWT.SHADOW_ETCHED_IN);
-        GridData gridData = new GridData(GridData.FILL_VERTICAL);
+        GridData gridData = new GridData(GridData.FILL_VERTICAL|GridData.HORIZONTAL_ALIGN_FILL);
         group.setLayoutData(gridData);
         group.setLayout(new GridLayout(2,false));
-        group.setText(InstallOptionsPlugin.getResourceString("general.group.name")); //$NON-NLS-1$
+        group.setText(InstallOptionsPlugin.getResourceString("display.group.name")); //$NON-NLS-1$
         
         mShowRulers = new Button(group,SWT.CHECK);
         gridData = new GridData(GridData.FILL_HORIZONTAL);
         gridData.horizontalSpan = 2;
         mShowRulers.setLayoutData(gridData);
         mShowRulers.setText(InstallOptionsPlugin.getResourceString("show.rulers.label")); //$NON-NLS-1$
-        mShowRulers.setSelection(((Boolean)mGeneralSettingsMap.get(PREFERENCE_SHOW_RULERS)).booleanValue());
+        mShowRulers.setSelection(((Boolean)mDisplaySettingsMap.get(PREFERENCE_SHOW_RULERS)).booleanValue());
         mShowRulers.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) 
             {
-                mGeneralSettingsMap.put(PREFERENCE_SHOW_RULERS, Boolean.valueOf(((Button)e.widget).getSelection()));
+                mDisplaySettingsMap.put(PREFERENCE_SHOW_RULERS, Boolean.valueOf(((Button)e.widget).getSelection()));
             }
         });
         
@@ -486,11 +486,11 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
         gridData.horizontalSpan = 2;
         mShowGrid.setLayoutData(gridData);
         mShowGrid.setText(InstallOptionsPlugin.getResourceString("show.grid.label")); //$NON-NLS-1$
-        mShowGrid.setSelection(((Boolean)mGeneralSettingsMap.get(PREFERENCE_SHOW_GRID)).booleanValue());
+        mShowGrid.setSelection(((Boolean)mDisplaySettingsMap.get(PREFERENCE_SHOW_GRID)).booleanValue());
         mShowGrid.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) 
             {
-                mGeneralSettingsMap.put(PREFERENCE_SHOW_GRID, Boolean.valueOf(((Button)e.widget).getSelection()));
+                mDisplaySettingsMap.put(PREFERENCE_SHOW_GRID, Boolean.valueOf(((Button)e.widget).getSelection()));
             }
         });
         
@@ -499,11 +499,11 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
         gridData.horizontalSpan = 2;
         mShowGuides.setLayoutData(gridData);
         mShowGuides.setText(InstallOptionsPlugin.getResourceString("show.guides.label")); //$NON-NLS-1$
-        mShowGuides.setSelection(((Boolean)mGeneralSettingsMap.get(PREFERENCE_SHOW_GUIDES)).booleanValue());
+        mShowGuides.setSelection(((Boolean)mDisplaySettingsMap.get(PREFERENCE_SHOW_GUIDES)).booleanValue());
         mShowGuides.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) 
             {
-                mGeneralSettingsMap.put(PREFERENCE_SHOW_GUIDES, Boolean.valueOf(((Button)e.widget).getSelection()));
+                mDisplaySettingsMap.put(PREFERENCE_SHOW_GUIDES, Boolean.valueOf(((Button)e.widget).getSelection()));
             }
         });
         
@@ -512,11 +512,11 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
         gridData.horizontalSpan = 2;
         mShowDialogSize.setLayoutData(gridData);
         mShowDialogSize.setText(InstallOptionsPlugin.getResourceString("show.dialog.size.label")); //$NON-NLS-1$
-        mShowDialogSize.setSelection(((Boolean)mGeneralSettingsMap.get(PREFERENCE_SHOW_DIALOG_SIZE)).booleanValue());
+        mShowDialogSize.setSelection(((Boolean)mDisplaySettingsMap.get(PREFERENCE_SHOW_DIALOG_SIZE)).booleanValue());
         mShowDialogSize.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) 
             {
-                mGeneralSettingsMap.put(PREFERENCE_SHOW_DIALOG_SIZE, Boolean.valueOf(((Button)e.widget).getSelection()));
+                mDisplaySettingsMap.put(PREFERENCE_SHOW_DIALOG_SIZE, Boolean.valueOf(((Button)e.widget).getSelection()));
             }
         });
         
@@ -531,11 +531,11 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
             for (int i = 0; i < zoomLevels.length; i++) {
                 mZoom.add(zoomLevels[i]);
             }
-            mZoom.setText((String)mGeneralSettingsMap.get(PREFERENCE_ZOOM));
+            mZoom.setText((String)mDisplaySettingsMap.get(PREFERENCE_ZOOM));
             mZoom.addSelectionListener(new SelectionListener(){
                 public void widgetSelected(SelectionEvent e)
                 {
-                    mGeneralSettingsMap.put(PREFERENCE_ZOOM,mZoom.getText());
+                    mDisplaySettingsMap.put(PREFERENCE_ZOOM,mZoom.getText());
                 }
     
                 public void widgetDefaultSelected(SelectionEvent e)
@@ -568,11 +568,11 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
                             }
                         } catch (Exception ex) {
                             Display.getCurrent().beep();
-                            mZoom.setText((String)mGeneralSettingsMap.get(PREFERENCE_ZOOM));
+                            mZoom.setText((String)mDisplaySettingsMap.get(PREFERENCE_ZOOM));
                             return;
                         }
                     }
-                    mGeneralSettingsMap.put(PREFERENCE_ZOOM,text);
+                    mDisplaySettingsMap.put(PREFERENCE_ZOOM,text);
                 }
             });
         }
@@ -587,20 +587,20 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
 
     protected void performDefaults()
     {
-        mGeneralSettingsMap.put(PREFERENCE_SHOW_RULERS,SHOW_RULERS_DEFAULT);
+        mDisplaySettingsMap.put(PREFERENCE_SHOW_RULERS,SHOW_RULERS_DEFAULT);
         mShowRulers.setSelection(SHOW_RULERS_DEFAULT.booleanValue());
 
-        mGeneralSettingsMap.put(PREFERENCE_SHOW_GRID,SHOW_GRID_DEFAULT);
+        mDisplaySettingsMap.put(PREFERENCE_SHOW_GRID,SHOW_GRID_DEFAULT);
         mShowGrid.setSelection(SHOW_GRID_DEFAULT.booleanValue());
 
-        mGeneralSettingsMap.put(PREFERENCE_SHOW_DIALOG_SIZE,SHOW_DIALOG_SIZE_DEFAULT);
+        mDisplaySettingsMap.put(PREFERENCE_SHOW_DIALOG_SIZE,SHOW_DIALOG_SIZE_DEFAULT);
         mShowDialogSize.setSelection(SHOW_DIALOG_SIZE_DEFAULT.booleanValue());
 
-        mGeneralSettingsMap.put(PREFERENCE_SHOW_GUIDES,SHOW_GUIDES_DEFAULT);
+        mDisplaySettingsMap.put(PREFERENCE_SHOW_GUIDES,SHOW_GUIDES_DEFAULT);
         mShowGuides.setSelection(SHOW_GUIDES_DEFAULT.booleanValue());
 
         if(InstallOptionsPlugin.getDefault().isZoomSupported()) {
-            mGeneralSettingsMap.put(PREFERENCE_ZOOM,ZOOM_DEFAULT);
+            mDisplaySettingsMap.put(PREFERENCE_ZOOM,ZOOM_DEFAULT);
             mZoom.setText(ZOOM_DEFAULT);
         }
         
@@ -620,7 +620,7 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
         mGridSettingsMap.put(PREFERENCE_GRID_STYLE, GRID_STYLE_DEFAULT);
         mGridSettingsMap.put(PREFERENCE_GRID_ORIGIN, new org.eclipse.draw2d.geometry.Point(GRID_ORIGIN_DEFAULT));
         mGridSettingsMap.put(PREFERENCE_GRID_SPACING, new Dimension(GRID_SPACING_DEFAULT));
-        mGridSettings.setSettings(mGeneralSettingsMap);
+        mGridSettings.setSettings(mDisplaySettingsMap);
         
         mSnapGlueSettingsMap.put(PREFERENCE_SNAP_TO_GEOMETRY, SNAP_TO_GEOMETRY_DEFAULT);
         mSnapGlueSettingsMap.put(PREFERENCE_SNAP_TO_GRID, SNAP_TO_GRID_DEFAULT);

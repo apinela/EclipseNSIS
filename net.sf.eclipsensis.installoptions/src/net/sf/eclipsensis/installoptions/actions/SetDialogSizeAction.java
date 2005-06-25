@@ -11,15 +11,14 @@ package net.sf.eclipsensis.installoptions.actions;
 
 import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
-import net.sf.eclipsensis.installoptions.edit.InstallOptionsEditDomain;
 import net.sf.eclipsensis.installoptions.editor.InstallOptionsDesignEditor;
 import net.sf.eclipsensis.installoptions.model.DialogSize;
 
-import org.eclipse.gef.EditDomain;
 import org.eclipse.jface.action.Action;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.texteditor.IUpdate;
 
-public class SetDialogSizeAction extends Action
+public class SetDialogSizeAction extends Action implements IUpdate
 {
     private IEditorPart mEditor = null;
     private DialogSize mDialogSize = null;
@@ -51,12 +50,20 @@ public class SetDialogSizeAction extends Action
     {
         if (mDialogSize != null && mEditor != null && mEditor instanceof InstallOptionsDesignEditor && 
                 !((InstallOptionsDesignEditor)mEditor).isDisposed() && ((InstallOptionsDesignEditor)mEditor).getGraphicalViewer() != null) {
-            EditDomain domain = (EditDomain)mEditor.getAdapter(EditDomain.class);
-            if(domain instanceof InstallOptionsEditDomain && ((InstallOptionsEditDomain)domain).isReadOnly()) {
-                return false;
-            }
+//            EditDomain domain = (EditDomain)mEditor.getAdapter(EditDomain.class);
+//            if(domain instanceof InstallOptionsEditDomain && ((InstallOptionsEditDomain)domain).isReadOnly()) {
+//                return false;
+//            }
             return true;
         }
         return false;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.texteditor.IUpdate#update()
+     */
+    public void update()
+    {
+        super.setEnabled(isEnabled());
     }
 }

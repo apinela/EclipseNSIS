@@ -16,11 +16,13 @@ import java.util.*;
 import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.edit.*;
+import net.sf.eclipsensis.installoptions.model.*;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsDialog;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
 
 import org.eclipse.draw2d.*;
 import org.eclipse.draw2d.geometry.Dimension;
+import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.*;
 import org.eclipse.gef.editpolicies.RootComponentEditPolicy;
 import org.eclipse.gef.editpolicies.SnapFeedbackPolicy;
@@ -43,6 +45,16 @@ public class InstallOptionsDialogEditPart extends InstallOptionsEditPart impleme
                 InstallOptionsDialogLayer fig = (InstallOptionsDialogLayer)getFigure();
                 if(fig != null) {
                     fig.setDialogSize(d);
+                }
+                List children = getChildren();
+                for (Iterator iter = children.iterator(); iter.hasNext();) {
+                    InstallOptionsWidgetEditPart element = (InstallOptionsWidgetEditPart)iter.next();
+                    IFigure figure = element.getFigure();
+                    if(figure != null) {
+                        InstallOptionsWidget widget = element.getInstallOptionsWidget();
+                        Rectangle bounds = widget.toGraphical(widget.getPosition(),d).getBounds();
+                        setLayoutConstraint(element, figure, bounds);
+                    }
                 }
             }
             if(property.equals(IInstallOptionsConstants.PROPERTY_SHOW_DIALOG_SIZE)) {

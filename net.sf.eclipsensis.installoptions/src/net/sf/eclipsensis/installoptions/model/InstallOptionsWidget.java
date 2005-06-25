@@ -308,17 +308,17 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
 
     public Position toGraphical(Position p)
     {
-        return toGraphical(p, getParent());
+        InstallOptionsDialog dialog = getParent();
+        return toGraphical(p, (dialog==null?null:dialog.getDialogSize()));
     }
 
-    public Position toGraphical(Position p, InstallOptionsDialog dialog)
+    public Position toGraphical(Position p, Dimension size)
     {
         p = p.getCopy();
-        if(dialog == null) {
+        if(size == null) {
             p.set(0,0,0,0);
         }
         else {
-            Dimension size = dialog.getDialogSize();
             p.left = toGraphical(p.left,size.width);
             p.top = toGraphical(p.top,size.height);
             p.right = toGraphical(p.right,size.width);
@@ -338,18 +338,18 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
 
     public Position toModel(Position p)
     {
-        return toModel(p, getParent());
+        InstallOptionsDialog dialog = getParent();
+        return toModel(p, (dialog==null?null:dialog.getDialogSize()));
     }
 
-    public Position toModel(Position p, InstallOptionsDialog dialog)
+    public Position toModel(Position p, Dimension size)
     {
         Font f = Display.getDefault().getSystemFont();
         p = FigureUtility.pixelsToDialogUnits(p,f);
-        if(dialog == null) {
+        if(size == null) {
             p.set(0,0,0,0);
         }
         else {
-            Dimension size = dialog.getDialogSize();
             p.left = toModel(p.left, mPosition.left, size.width);
             p.top = toModel(p.top, mPosition.top, size.height);
             p.right = toModel(p.right, mPosition.right, size.width);

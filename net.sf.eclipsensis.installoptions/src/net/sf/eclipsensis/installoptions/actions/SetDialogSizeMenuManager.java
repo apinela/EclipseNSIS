@@ -54,6 +54,13 @@ public class SetDialogSizeMenuManager extends MenuManager implements IPropertyCh
         }
     }
 
+    public void updateActions()
+    {
+        for(Iterator iter=mActionMap.values().iterator(); iter.hasNext(); ) {
+            ((SetDialogSizeAction)iter.next()).update();
+        }
+    }
+
     public void rebuild()
     {
         if(mNeedsRebuild) {
@@ -83,7 +90,13 @@ public class SetDialogSizeMenuManager extends MenuManager implements IPropertyCh
                     }
                     mNeedsRebuild = false;
                 }
+                else {
+                    updateActions();
+                }
             }
+        }
+        else {
+            updateActions();
         }
     }
 

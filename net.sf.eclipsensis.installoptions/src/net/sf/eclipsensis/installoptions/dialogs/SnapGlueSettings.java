@@ -109,7 +109,7 @@ public class SnapGlueSettings extends Composite implements IInstallOptionsConsta
         mGlueToGuides.setText(InstallOptionsPlugin.getResourceString("snap.glue.settings.glue.guides.label")); //$NON-NLS-1$
         mGlueToGuides.setToolTipText(InstallOptionsPlugin.getResourceString("snap.glue.settings.glue.guides.tooltip")); //$NON-NLS-1$
         GridData data = new GridData(GridData.FILL_HORIZONTAL);
-        data.horizontalIndent = 16;
+//        data.horizontalIndent = 16;
         mGlueToGuides.setLayoutData(data);
         mGlueToGuides.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
