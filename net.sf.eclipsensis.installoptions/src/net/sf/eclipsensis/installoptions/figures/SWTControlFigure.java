@@ -68,7 +68,7 @@ public abstract class SWTControlFigure extends Figure implements IInstallOptions
                 if(!source.isDisposed() && source.handle > 0) {
                     Point p1 = new Point(0, 0);
                     translateToAbsolute(p1);
-                    int borderWidth = source.getBorderWidth();
+//                    int borderWidth = source.getBorderWidth();
 //                    setNeedsReScrape(!(e.width+2*borderWidth >= bounds.width && e.height+2*borderWidth >= bounds.height));
                     setNeedsReScrape(mImageBounds.width != bounds.width || mImageBounds.height != bounds.height);
 //                    e.gc.copyArea(mImage, mImageBounds.x-bounds.x, mImageBounds.y-bounds.y);

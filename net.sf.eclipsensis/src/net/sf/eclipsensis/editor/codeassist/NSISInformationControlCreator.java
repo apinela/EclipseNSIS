@@ -11,25 +11,27 @@ package net.sf.eclipsensis.editor.codeassist;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.List;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.util.Common;
 
+import org.eclipse.core.commands.Command;
+import org.eclipse.core.commands.ParameterizedCommand;
+import org.eclipse.jface.bindings.TriggerSequence;
+import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.text.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.commands.*;
-import org.eclipse.ui.keys.KeySequence;
-
+import org.eclipse.ui.commands.ICommandService;
+import org.eclipse.ui.keys.IBindingService;
 
 public class NSISInformationControlCreator implements IInformationControlCreator,INSISConstants //,ICommandListener
 {
-    private ICommand[] mCommands = null;
+    private ParameterizedCommand[] mCommands = null;
     private int mStyle = SWT.NONE;
     private DefaultInformationControl.IInformationPresenter mInformationPresenter =
         new DefaultInformationControl.IInformationPresenter()
@@ -58,15 +60,18 @@ public class NSISInformationControlCreator implements IInformationControlCreator
     {
         ArrayList list = new ArrayList();
         if(!Common.isEmptyArray(commandIds)) {
-            ICommandManager commandManager= PlatformUI.getWorkbench().getCommandSupport().getCommandManager();
+            ICommandService commandService= (ICommandService)PlatformUI.getWorkbench().getAdapter(ICommandService.class);
             for(int i=0; i<commandIds.length; i++) {
-                ICommand command = commandManager.getCommand(commandIds[i]);
-                if(command != null && !list.contains(command)) {
-                    list.add(command);
+                Command command = commandService.getCommand(commandIds[i]);
+                if(command != null) {
+                    ParameterizedCommand pc = new ParameterizedCommand(command, null);
+                    if(!list.contains(pc)) {
+                        list.add(pc);
+                    }
                 }
             }
         }
-        mCommands = (ICommand[])list.toArray(new ICommand[0]);
+        mCommands = (ParameterizedCommand[])list.toArray(new ParameterizedCommand[list.size()]);
         mStyle = style;
     }
 
@@ -74,18 +79,23 @@ public class NSISInformationControlCreator implements IInformationControlCreator
     {
         String statusText = null;
         if(!Common.isEmptyArray(mCommands)) {
+            IBindingService bindingService = (IBindingService)PlatformUI.getWorkbench().getAdapter(IBindingService.class);
             ArrayList params = new ArrayList();
             for (int i = 0; i < mCommands.length; i++) {
-                List list= mCommands[i].getKeySequenceBindings();
-                if (!list.isEmpty()) {
-                    KeySequence keySequence= ((IKeySequenceBinding)list.get(0)).getKeySequence();
-                    try {
-                        String keyText = keySequence.format();
-                        String description = mCommands[i].getDescription();
-                        params.add(keyText);
-                        params.add(description);
-                    }
-                    catch(NotDefinedException nde) {
+                TriggerSequence[] sequences = bindingService.getActiveBindingsFor(mCommands[i]);
+                if (!Common.isEmptyArray(sequences)) {
+                    for (int j = 0; j < sequences.length; j++) {
+                        if(sequences[j] instanceof KeySequence) {
+                            KeySequence keySequence= (KeySequence)sequences[j];
+                            try {
+                                String keyText = keySequence.format();
+                                String description = mCommands[i].getCommand().getDescription();
+                                params.add(keyText);
+                                params.add(description);
+                            }
+                            catch(Exception e) {
+                            }
+                        }
                     }
                 }       
             }

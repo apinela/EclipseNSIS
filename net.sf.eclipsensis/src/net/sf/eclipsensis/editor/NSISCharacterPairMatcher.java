@@ -70,8 +70,6 @@ public class NSISCharacterPairMatcher implements ICharacterPairMatcher
 
     protected boolean matchStringAt()
     {
-        char prevChar, nextChar;
-        int i;
         mStartPos= -1;
         mEndPos= -1;
     

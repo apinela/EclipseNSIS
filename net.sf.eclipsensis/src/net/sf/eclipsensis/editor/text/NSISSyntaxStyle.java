@@ -10,18 +10,21 @@
 package net.sf.eclipsensis.editor.text;
 
 
+import net.sf.eclipsensis.util.ColorManager;
 import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.jface.resource.StringConverter;
+import org.eclipse.jface.text.TextAttribute;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.RGB;
 
 
-public class NSISSyntaxStyle
+public class NSISSyntaxStyle implements Cloneable
 {
-    public RGB mForeground = null;
-    public RGB mBackground = null;
-    public boolean mBold;
-    public boolean mItalic;
+    private RGB mForeground = null;
+    private RGB mBackground = null;
+    private boolean mBold;
+    private boolean mItalic;
 
     /**
      * @param foreground
@@ -38,10 +41,55 @@ public class NSISSyntaxStyle
         mItalic = italic;
     }
 
-    /**
-     * 
-     */
-    public NSISSyntaxStyle()
+    public Object clone()
+    {
+        try {
+            return super.clone();
+        }
+        catch (CloneNotSupportedException e) {
+            return new NSISSyntaxStyle(mForeground,mBackground,mBold,mItalic);
+        }
+    }
+
+    public boolean equals(Object obj)
+    {
+        if(obj instanceof NSISSyntaxStyle) {
+            NSISSyntaxStyle style = (NSISSyntaxStyle)obj;
+            if(mBold == style.mBold && mItalic == style.mItalic) {
+                return rgbsAreEqual(mForeground,style.mForeground) &&
+                       rgbsAreEqual(mBackground,style.mBackground);
+            }
+        }
+        return false;
+    }
+
+    private boolean rgbsAreEqual(RGB rgb1, RGB rgb2) 
+    {
+        if(rgb1 == null && rgb2 == null) {
+            return true;
+        }
+        else if(rgb1 != null && rgb2 != null) {
+            return rgb1.equals(rgb2);
+        }
+        else {
+            return false;
+        }
+    }
+    public int hashCode()
+    {
+        int hashCode = 0;
+        if(mForeground != null) {
+            hashCode += (mForeground.hashCode() << 16);
+        }
+        if(mForeground != null) {
+            hashCode += (mForeground.hashCode() << 8);
+        }
+        hashCode += (mBold?1 << 4:0);
+        hashCode += (mItalic?1:0);
+        return hashCode;
+    }
+
+    private NSISSyntaxStyle()
     {
     }
 
@@ -87,5 +135,53 @@ public class NSISSyntaxStyle
             }
         }
         return style;
+    }
+    
+    public TextAttribute createTextAttribute()
+    {
+        int style = (mBold?SWT.BOLD:0) | (mItalic?SWT.ITALIC:0);
+        return new TextAttribute(ColorManager.getColor(mForeground),
+                                 ColorManager.getColor(mBackground),
+                                 style);
+    }
+
+    public RGB getBackground()
+    {
+        return mBackground;
+    }
+
+    public void setBackground(RGB background)
+    {
+        mBackground = background;
+    }
+
+    public boolean isBold()
+    {
+        return mBold;
+    }
+
+    public void setBold(boolean bold)
+    {
+        mBold = bold;
+    }
+
+    public RGB getForeground()
+    {
+        return mForeground;
+    }
+
+    public void setForeground(RGB foreground)
+    {
+        mForeground = foreground;
+    }
+
+    public boolean isItalic()
+    {
+        return mItalic;
+    }
+
+    public void setItalic(boolean italic)
+    {
+        mItalic = italic;
     }
 }

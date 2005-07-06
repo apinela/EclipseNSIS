@@ -44,6 +44,7 @@ public class NSISSectionGroup extends AbstractNSISInstallGroup
     {
         clearChildTypes();
         addChildType(NSISSection.TYPE);
+        addChildType(NSISSectionGroup.TYPE);
     }
 
     /* (non-Javadoc)

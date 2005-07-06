@@ -12,7 +12,6 @@
 ###############################################################################
 -->
 <plugin>
-
    <extension
          point="org.eclipse.core.runtime.products">
       <product name="%product.name" application="org.eclipse.ui.ide.workbench" description="%product.description"> 
@@ -69,6 +68,26 @@
         </participant>
    </extension>
    <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension targetID="org.eclipse.ui.resourcePerspective">
+         <newWizardShortcut
+               id="net.sf.eclipsensis.installoptions.wizard.InstallOptionsWizard">
+         </newWizardShortcut>
+      </perspectiveExtension>
+      <perspectiveExtension
+            targetID="org.eclipse.jdt.ui.JavaPerspective">
+         <newWizardShortcut
+               id="net.sf.eclipsensis.installoptions.wizard.InstallOptionsWizard">
+         </newWizardShortcut>
+      </perspectiveExtension>
+      <perspectiveExtension
+            targetID="org.eclipse.pde.ui.PDEPerspective">
+         <newWizardShortcut
+               id="net.sf.eclipsensis.installoptions.wizard.InstallOptionsWizard">
+         </newWizardShortcut>
+      </perspectiveExtension>
+   </extension>
+   <extension
          point="org.eclipse.ui.preferencePages">
       <page
             name="%installoptions.preference.page.name"
@@ -92,5 +111,50 @@
             markerType="net.sf.eclipsensis.installoptions.InstallOptionsProblem"
             markerSeverity="2">
         </type>
+   </extension>
+   <extension
+         point="org.eclipse.help.toc">
+      <toc file="toc.xml" primary="true"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <category
+         name="%commands.category.name"
+         description="%commands.category.description"
+         id="net.sf.eclipsensis.installoptions.InstallOptionsCategory">
+      </category>
+      <command
+         name="%switch.editor.command.name"
+         description="%switch.editor.command.description"
+         id="net.sf.eclipsensis.installoptions.commands.SwitchEditor"
+         categoryId="net.sf.eclipsensis.installoptions.InstallOptionsCategory"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.contexts">
+      <context
+            name="%editing.installoptions.source.name"
+            description="%editing.installoptions.source.description"
+            parentId="org.eclipse.ui.textEditorScope"
+            id="net.sf.eclipsensis.installoptions.InstallOptionsSourceEditorScope">
+      </context>
+      <context
+            name="%editing.installoptions.design.name"
+            description="%editing.installoptions.design.description"
+            parentId="org.eclipse.ui.contexts.window"
+            id="net.sf.eclipsensis.installoptions.InstallOptionsDesignEditorScope">
+      </context>
+   </extension>
+   <extension
+         point="org.eclipse.ui.bindings">
+      <key
+          schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+          commandId="net.sf.eclipsensis.installoptions.commands.SwitchEditor"
+          contextId="net.sf.eclipsensis.installoptions.InstallOptionsSourceEditorScope"
+          sequence="%switch.editor.command.keysequence"/>
+      <key
+          schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+          commandId="net.sf.eclipsensis.installoptions.commands.SwitchEditor"
+          contextId="net.sf.eclipsensis.installoptions.InstallOptionsDesignEditorScope"
+          sequence="%switch.editor.command.keysequence"/>
    </extension>
 </plugin>

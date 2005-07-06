@@ -86,7 +86,7 @@ public class NSISContentBrowserDialog extends Dialog
     protected Control createDialogArea(Composite parent)
     {
         Composite composite = (Composite)super.createDialogArea(parent);
-        Label l = NSISWizardDialogUtil.createLabel(composite,"wizard.select.shortcut.message",true,null,false); //$NON-NLS-1$
+        NSISWizardDialogUtil.createLabel(composite,"wizard.select.shortcut.message",true,null,false); //$NON-NLS-1$
         
         ViewerFilter vf = new ViewerFilter() {
             private HashSet mTypes = new HashSet(Arrays.asList(new String[]{

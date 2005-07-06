@@ -11,6 +11,8 @@ package net.sf.eclipsensis.script;
 
 public class InvalidNSISScriptElementException extends RuntimeException
 {
+    private static final long serialVersionUID = -7718052999840999457L;
+
     /**
      * @param message
      */

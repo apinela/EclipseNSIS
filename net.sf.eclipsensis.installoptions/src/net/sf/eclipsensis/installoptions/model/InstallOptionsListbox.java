@@ -127,21 +127,21 @@ public class InstallOptionsListbox extends InstallOptionsCombobox
 
         public void setListItems(List listItems)
         {
-            if(mEditor != null) {
+            if(mEditor != null && !mEditor.getControl().isDisposed()) {
                 mEditor.setListItems(listItems);
             }
         }
 
         public void setMultiSelect(boolean multiSelect)
         {
-            if(mEditor != null) {
+            if(mEditor != null && !mEditor.getControl().isDisposed()) {
                 mEditor.setMultiSelect(multiSelect);
             }
         }
 
         public CellEditor createPropertyEditor(Composite parent)
         {
-            if(mEditor == null) {
+            if(mEditor == null || mEditor.getControl() == null || mEditor.getControl().isDisposed()) {
                 mEditor = new SelectListItemsCellEditor(parent,getListItems(),
                         (getFlags().contains(InstallOptionsModel.FLAGS_MULTISELECT)||
                          getFlags().contains(InstallOptionsModel.FLAGS_EXTENDEDSELECT)));

@@ -14,7 +14,6 @@ import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import org.eclipse.jface.viewers.DialogCellEditor;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.TableTree;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.*;
@@ -57,9 +56,6 @@ public class CustomColorCellEditor extends DialogCellEditor
         }
         else if (control instanceof Tree) {
             extent = ((Tree) control).getItemHeight() - 1;
-        }
-        else if (control instanceof TableTree) {
-            extent = ((TableTree) control).getItemHeight() - 1;
         }
     
         if (size > extent) {

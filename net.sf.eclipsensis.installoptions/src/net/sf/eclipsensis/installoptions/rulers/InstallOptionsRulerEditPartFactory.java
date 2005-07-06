@@ -27,4 +27,8 @@ public class InstallOptionsRulerEditPartFactory extends RulerEditPartFactory
         return new InstallOptionsRulerEditPart(model);
     }
 
+    protected EditPart createGuideEditPart(EditPart parentEditPart, Object model)
+    {
+        return new InstallOptionsGuideEditPart(model);
+    }
 }

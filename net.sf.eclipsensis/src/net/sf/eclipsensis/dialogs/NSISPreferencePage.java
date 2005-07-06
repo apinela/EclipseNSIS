@@ -22,8 +22,6 @@ import net.sf.eclipsensis.util.*;
 import net.sf.eclipsensis.viewer.CollectionContentProvider;
 import net.sf.eclipsensis.viewer.CollectionLabelProvider;
 
-import org.eclipse.jface.preference.PreferenceDialog;
-import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
@@ -31,8 +29,8 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.PreferencesUtil;
 
 public class NSISPreferencePage	extends NSISSettingsPage
 {
@@ -44,12 +42,8 @@ public class NSISPreferencePage	extends NSISSettingsPage
     
     public static void show()
     {
-        IWorkbench workbench = PlatformUI.getWorkbench();
-        PreferenceManager manager = workbench.getPreferenceManager();
-        Shell shell = workbench.getActiveWorkbenchWindow().getShell();
-        PreferenceDialog pd = new PreferenceDialog(shell, manager);
-        pd.setSelectedNode(NSISPreferencePage.class.getName());
-        pd.open();
+        PreferencesUtil.createPreferenceDialogOn(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
+                PREFERENCE_PAGE_ID, null, null).open();
     }
     
     /**

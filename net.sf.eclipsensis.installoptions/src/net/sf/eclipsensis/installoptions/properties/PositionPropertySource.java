@@ -28,7 +28,7 @@ public class PositionPropertySource implements IPropertySource
         public String isValid(Object value)
         {
             try {
-                int val = Integer.parseInt((String)value);
+                Integer.parseInt((String)value);
                 return null;
             }
             catch (NumberFormatException nfe){

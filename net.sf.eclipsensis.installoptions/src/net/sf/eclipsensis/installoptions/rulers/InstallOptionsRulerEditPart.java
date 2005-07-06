@@ -10,6 +10,7 @@
 package net.sf.eclipsensis.installoptions.rulers;
 
 import org.eclipse.draw2d.IFigure;
+import org.eclipse.gef.GraphicalViewer;
 import org.eclipse.gef.internal.ui.rulers.RulerEditPart;
 import org.eclipse.gef.internal.ui.rulers.RulerFigure;
 
@@ -23,6 +24,11 @@ public class InstallOptionsRulerEditPart extends RulerEditPart
         super(model);
     }
 
+    protected GraphicalViewer getDiagramViewer()
+    {
+        return super.getDiagramViewer();
+    }
+    
     protected IFigure createFigure() 
     {
         RulerFigure ruler =  new InstallOptionsRulerFigure(this, isHorizontal(), getRulerProvider().getUnit());

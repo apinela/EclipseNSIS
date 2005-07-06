@@ -200,6 +200,9 @@ public abstract class InstallOptionsWidgetEditPart extends InstallOptionsEditPar
         if(request.getType().equals(IInstallOptionsConstants.REQ_EXTENDED_EDIT)) {
             performExtendedEdit(request);
         }
+        else if(request.getType().equals(RequestConstants.REQ_OPEN)) {
+            performExtendedEdit(new ExtendedEditRequest(this));
+        }
         else if (request.getType() == RequestConstants.REQ_DIRECT_EDIT) {
             performDirectEdit();
         }

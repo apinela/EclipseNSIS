@@ -13,7 +13,6 @@ import net.sf.eclipsensis.dialogs.NSISWizardDialog;
 import net.sf.eclipsensis.wizard.NSISScriptWizard;
 
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
@@ -26,7 +25,6 @@ public class NSISWizardAction extends NSISScriptAction
     public void run(IAction action)
     {
         IWorkbench workbench = PlatformUI.getWorkbench();
-        PreferenceManager manager = workbench.getPreferenceManager();
         Shell shell = workbench.getActiveWorkbenchWindow().getShell();
         new NSISWizardDialog(shell,new NSISScriptWizard()).open();
     }

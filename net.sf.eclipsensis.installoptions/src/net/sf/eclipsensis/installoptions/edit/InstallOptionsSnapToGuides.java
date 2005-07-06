@@ -11,8 +11,6 @@ package net.sf.eclipsensis.installoptions.edit;
 
 import org.eclipse.draw2d.geometry.PrecisionRectangle;
 import org.eclipse.gef.*;
-import org.eclipse.gef.GraphicalEditPart;
-import org.eclipse.gef.SnapToGuides;
 
 public class InstallOptionsSnapToGuides extends SnapToGuides
 {

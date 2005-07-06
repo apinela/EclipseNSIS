@@ -154,7 +154,6 @@ public class NSISTemplateVariableProcessor extends NSISCompletionProcessor imple
     private IRegion[] parsePattern(String string)
     {
         int state= TEXT;
-        String errorMessage= null;
         ArrayList list = new ArrayList();
         
         int offset = -1;

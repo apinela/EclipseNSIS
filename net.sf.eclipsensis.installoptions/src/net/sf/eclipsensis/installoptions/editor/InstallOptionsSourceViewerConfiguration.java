@@ -33,12 +33,11 @@ public class InstallOptionsSourceViewerConfiguration extends SourceViewerConfigu
     {
         PresentationReconciler reconciler = new PresentationReconciler();
         reconciler.setDocumentPartitioning(InstallOptionsPartitionScanner.INSTALLOPTIONS_PARTITIONING);
-        DefaultDamagerRepairer dr = new DefaultDamagerRepairer(new InstallOptionsCommentScanner());
+        DefaultDamagerRepairer dr = new InstallOptionsDamagerRepairer(new InstallOptionsCommentScanner());
         reconciler.setDamager(dr, InstallOptionsPartitionScanner.INSTALLOPTIONS_COMMENT);
         reconciler.setRepairer(dr, InstallOptionsPartitionScanner.INSTALLOPTIONS_COMMENT);
         
-        InstallOptionsRuleBasedScanner scanner = new InstallOptionsRuleBasedScanner();
-        dr = new DefaultDamagerRepairer(scanner);
+        dr = new InstallOptionsDamagerRepairer(new InstallOptionsRuleBasedScanner());
         reconciler.setDamager(dr, IDocument.DEFAULT_CONTENT_TYPE);
         reconciler.setRepairer(dr, IDocument.DEFAULT_CONTENT_TYPE);
 

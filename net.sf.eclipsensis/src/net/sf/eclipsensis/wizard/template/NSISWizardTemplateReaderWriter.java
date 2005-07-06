@@ -190,20 +190,20 @@ public class NSISWizardTemplateReaderWriter
         }       
     }
 
-    private boolean getBooleanValue(NamedNodeMap attributes, String attribute, boolean defaultValue) throws SAXException 
-    {
-        Node enabledNode= attributes.getNamedItem(attribute);
-        if (enabledNode == null)
-            return defaultValue;
-        else if (enabledNode.getNodeValue().equals(Boolean.toString(true)))
-            return true;
-        else if (enabledNode.getNodeValue().equals(Boolean.toString(false))) {
-            return false;
-        }
-        else {
-            throw new SAXException(EclipseNSISPlugin.getResourceString("wizard.template.readerwriter.error.illegal.boolean.attribute")); //$NON-NLS-1$
-        }
-    }
+//    private boolean getBooleanValue(NamedNodeMap attributes, String attribute, boolean defaultValue) throws SAXException 
+//    {
+//        Node enabledNode= attributes.getNamedItem(attribute);
+//        if (enabledNode == null)
+//            return defaultValue;
+//        else if (enabledNode.getNodeValue().equals(Boolean.toString(true)))
+//            return true;
+//        else if (enabledNode.getNodeValue().equals(Boolean.toString(false))) {
+//            return false;
+//        }
+//        else {
+//            throw new SAXException(EclipseNSISPlugin.getResourceString("wizard.template.readerwriter.error.illegal.boolean.attribute")); //$NON-NLS-1$
+//        }
+//    }
     
     private String getStringValue(NamedNodeMap attributes, String name) throws SAXException 
     {

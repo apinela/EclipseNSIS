@@ -17,8 +17,6 @@ import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.edit.*;
 import net.sf.eclipsensis.installoptions.model.*;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsDialog;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
 
 import org.eclipse.draw2d.*;
 import org.eclipse.draw2d.geometry.Dimension;
@@ -80,7 +78,6 @@ public class InstallOptionsDialogEditPart extends InstallOptionsEditPart impleme
             //This bit is in here to correct z-ordering of children.
             List modelChildren = getModelChildren();
             List children = getChildren();
-            HashSet oldChildren = new HashSet(children);
             int n = Math.min(modelChildren.size(), children.size());
             int i=0;
             for(; i<n; i++) {
@@ -105,16 +102,6 @@ public class InstallOptionsDialogEditPart extends InstallOptionsEditPart impleme
                     setLayoutConstraint(part, fig, constraint);
                 }
             }
-            //This is a stupid hack for Combobox figures
-            //TODO Remove
-//            UpdateManager updateManager = ((FigureCanvas)getViewer().getControl()).getLightweightSystem().getUpdateManager();
-//            for(int j=0; j<children.size(); j++) {
-//                GraphicalEditPart part = (GraphicalEditPart)children.get(j);
-//                IFigure fig = part.getFigure();
-//                if(fig instanceof ComboboxFigure && !oldChildren.contains(part)) {
-//                    updateManager.performUpdate(fig.getBounds());
-//                }
-//            }
         }
     }
 
@@ -162,7 +149,6 @@ public class InstallOptionsDialogEditPart extends InstallOptionsEditPart impleme
      */
     protected IFigure createFigure()
     {
-        EditPartViewer viewer = getViewer();
         InstallOptionsDialogLayer f = new InstallOptionsDialogLayer();
         f.setDialogSize(getInstallOptionsDialog().getDialogSize());
         f.setShowDialogSize(getInstallOptionsDialog().isShowDialogSize());
@@ -224,20 +210,6 @@ public class InstallOptionsDialogEditPart extends InstallOptionsEditPart impleme
         getViewer().setProperty(IInstallOptionsConstants.PROPERTY_SHOW_DIALOG_SIZE, 
                     Boolean.valueOf(getInstallOptionsDialog().isShowDialogSize()));
         getViewer().addPropertyChangeListener(mPropertyChangeListener);
-        //Stupid hack so that Combobox shows up.
-        //TODO Remove
-//        FigureCanvas figureCanvas = (FigureCanvas)getViewer().getControl();
-//        if(figureCanvas != null) {
-//            UpdateManager updateManager = (figureCanvas).getLightweightSystem().getUpdateManager();
-//            List kiddies = getChildren();
-//            for(int j=0; j<kiddies.size(); j++) {
-//                GraphicalEditPart part = (GraphicalEditPart)kiddies.get(j);
-//                IFigure fig = part.getFigure();
-//                if(fig instanceof ComboboxFigure) {
-//                    updateManager.performUpdate(fig.getBounds());
-//                }
-//            }
-//        }
     }
     
     public void removeNotify()

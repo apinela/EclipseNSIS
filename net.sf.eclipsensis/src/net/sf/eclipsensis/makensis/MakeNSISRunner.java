@@ -512,8 +512,6 @@ public class MakeNSISRunner implements INSISConstants
 
     private static native void reset();
 
-    private static native String getScriptFileName(); 
-
     private static native String getOutputFileName(); 
 
     private static native ArrayList getErrors(); 

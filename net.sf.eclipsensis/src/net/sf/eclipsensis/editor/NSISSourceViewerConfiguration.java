@@ -21,6 +21,7 @@ import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.rules.ITokenScanner;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
+import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 
 public class NSISSourceViewerConfiguration extends SourceViewerConfiguration implements INSISConstants, INSISPreferenceConstants
 {
@@ -102,7 +103,7 @@ public class NSISSourceViewerConfiguration extends SourceViewerConfiguration imp
      */
     public int getTabWidth(ISourceViewer sourceViewer)
     {
-        return mPreferenceStore.getInt(INSISPreferenceConstants.TAB_WIDTH);
+        return mPreferenceStore.getInt(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH);
     }
 
     public IPreferenceStore getPreferenceStore()

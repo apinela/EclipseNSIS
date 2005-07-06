@@ -9,48 +9,35 @@
  *******************************************************************************/
 package net.sf.eclipsensis.dialogs;
 
-import java.io.*;
 import java.util.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.editor.*;
 import net.sf.eclipsensis.editor.text.NSISSyntaxStyle;
+import net.sf.eclipsensis.editor.text.NSISTextUtility;
 import net.sf.eclipsensis.settings.*;
 import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.wizard.util.MasterSlaveController;
 
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.preference.PreferenceConverter;
-import org.eclipse.jface.preference.PreferencePage;
-import org.eclipse.jface.resource.FontRegistry;
-import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.preference.*;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.widgets.List;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.*;
+import org.eclipse.ui.dialogs.PreferencesUtil;
+import org.eclipse.ui.editors.text.EditorsUI;
+import org.eclipse.ui.texteditor.ChainedPreferenceStore;
 
 public class NSISEditorPreferencePage extends PreferencePage implements IWorkbenchPreferencePage, INSISPreferenceConstants
 {
-    private final String[][] mAppearanceColorListModel= {
-        {EclipseNSISPlugin.getResourceString("line.number.foreground.color"), LINE_NUMBER_RULER_COLOR, null}, //$NON-NLS-1$
-        {EclipseNSISPlugin.getResourceString("current.line.highlight.color"), CURRENT_LINE_COLOR, null}, //$NON-NLS-1$
-        {EclipseNSISPlugin.getResourceString("matching.delimiters.color"), MATCHING_DELIMITERS_COLOR, null}, //$NON-NLS-1$
-        {EclipseNSISPlugin.getResourceString("print.margin.color"), PRINT_MARGIN_COLOR, null}, //$NON-NLS-1$
-        {EclipseNSISPlugin.getResourceString("selection.foreground.color"), SELECTION_FOREGROUND_COLOR, SELECTION_FOREGROUND_DEFAULT_COLOR}, //$NON-NLS-1$
-        {EclipseNSISPlugin.getResourceString("selection.background.color"), SELECTION_BACKGROUND_COLOR, SELECTION_BACKGROUND_DEFAULT_COLOR}, //$NON-NLS-1$
-    };
-    
     private final String[][] mSyntaxStyleListModel = {
             {EclipseNSISPlugin.getResourceString("comments.label"),COMMENTS_STYLE}, //$NON-NLS-1$
             {EclipseNSISPlugin.getResourceString("strings.label"),STRINGS_STYLE}, //$NON-NLS-1$
@@ -83,32 +70,14 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
         }
     };
     
-    private Map mTextFields= new HashMap();
-    private ModifyListener mTextFieldListener= new ModifyListener() {
-        public void modifyText(ModifyEvent e) {
-            Text text= (Text) e.widget;
-            mPreferenceStore.setValue((String) mTextFields.get(text), text.getText());
-        }
-    };
-
-    private ArrayList mNumberFields= new ArrayList();
-    private ModifyListener mNumberFieldListener= new ModifyListener() {
-        public void modifyText(ModifyEvent e) {
-            numberFieldChanged((Text) e.widget);
-        }
-    };
-    
-    private List mAppearanceColorList;
-    private ColorEditor mAppearanceColorEditor;
-    private Button mAppearanceColorDefault;
-
     private List mSyntaxStyleList;
     private ColorEditor mSyntaxColorEditor;
     private Button mStyleBold;
     private Button mStyleItalic;
 
-    private boolean mFieldsInitialized= false;
-    private SelectionListener mAccessibilityListener;
+    private ColorEditor mMatchingDelimsColorEditor;
+
+    private MasterSlaveController mMasterSlaveController;
     
     public NSISEditorPreferencePage() 
     {
@@ -133,7 +102,6 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
                 return n;
             }
         };
-        Arrays.sort(mAppearanceColorListModel, comparator);
         Arrays.sort(mSyntaxStyleListModel, comparator);
     }
 
@@ -148,16 +116,7 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
      */
     public void createControl(Composite parent) {
         super.createControl(parent);
-        WorkbenchHelp.setHelp(getControl(),INSISConstants.PLUGIN_CONTEXT_PREFIX+"nsis_editorprefs_context"); //$NON-NLS-1$
-    }
-
-    private void handleAppearanceColorListSelection()
-    { 
-        int i= mAppearanceColorList.getSelectionIndex();
-        String key= mAppearanceColorListModel[i][1];
-        RGB rgb= PreferenceConverter.getColor(mPreferenceStore, key);
-        mAppearanceColorEditor.setRGB(rgb);      
-        updateAppearanceColorWidgets(mAppearanceColorListModel[i][2]);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),INSISConstants.PLUGIN_CONTEXT_PREFIX+"nsis_editorprefs_context"); //$NON-NLS-1$
     }
 
     private void handleSyntaxStyleListSelection()
@@ -165,9 +124,9 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
         int i= mSyntaxStyleList.getSelectionIndex();
         String key= mSyntaxStyleListModel[i][1];
         NSISSyntaxStyle style = getStyle(key);
-        mSyntaxColorEditor.setRGB(style.mForeground);
-        mStyleBold.setSelection(style.mBold);
-        mStyleItalic.setSelection(style.mItalic);
+        mSyntaxColorEditor.setRGB(style.getForeground());
+        mStyleBold.setSelection(style.isBold());
+        mStyleItalic.setSelection(style.isItalic());
     }
     
     private NSISSyntaxStyle getStyle(String key)
@@ -179,167 +138,44 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
         }
         return style;
     }
-
-    private void updateAppearanceColorWidgets(String systemDefaultKey)
-    {
-        if (systemDefaultKey == null) {
-            mAppearanceColorDefault.setSelection(false);
-            mAppearanceColorDefault.setVisible(false);
-            mAppearanceColorEditor.getButton().setEnabled(true);
-        } else {
-            boolean systemDefault= mPreferenceStore.getBoolean(systemDefaultKey);
-            mAppearanceColorDefault.setSelection(systemDefault);
-            mAppearanceColorDefault.setVisible(true);
-            mAppearanceColorEditor.getButton().setEnabled(!systemDefault);
-        }
-    }
     
-    private Control createAppearancePage(Composite parent)
+    private Control createAppearanceGroup(Composite parent)
     {
         Composite appearanceComposite= new Composite(parent, SWT.NONE);
         GridLayout layout= new GridLayout(); 
         layout.numColumns= 2;
         appearanceComposite.setLayout(layout);
 
-        String label= EclipseNSISPlugin.getResourceString("displayed.tab.width"); //$NON-NLS-1$
-        addTextField(appearanceComposite, label, TAB_WIDTH, 3, 0, true);
-
-        label= EclipseNSISPlugin.getResourceString("use.spaces"); //$NON-NLS-1$
+        String label = EclipseNSISPlugin.getResourceString("use.spaces"); //$NON-NLS-1$
         addCheckBox(appearanceComposite, label, USE_SPACES_FOR_TABS, 0);
         
-        label= EclipseNSISPlugin.getResourceString("print.margin.column"); //$NON-NLS-1$
-        addTextField(appearanceComposite, label, PRINT_MARGIN_COLUMN, 3, 0, true);
-                
-        label= EclipseNSISPlugin.getResourceString("show.overview.ruler"); //$NON-NLS-1$
-        addCheckBox(appearanceComposite, label, OVERVIEW_RULER, 0);
-                
-        label= EclipseNSISPlugin.getResourceString("show.line.numbers"); //$NON-NLS-1$
-        addCheckBox(appearanceComposite, label, LINE_NUMBER_RULER, 0);
-
-        label= EclipseNSISPlugin.getResourceString("highlight.current.line"); //$NON-NLS-1$
-        addCheckBox(appearanceComposite, label, CURRENT_LINE, 0);
-                
-        label= EclipseNSISPlugin.getResourceString("show.print.margin"); //$NON-NLS-1$
-        addCheckBox(appearanceComposite, label, PRINT_MARGIN, 0);
-        
         label= EclipseNSISPlugin.getResourceString("show.matching.delimiters"); //$NON-NLS-1$
-        addCheckBox(appearanceComposite, label, MATCHING_DELIMITERS, 0);
-
-        label= EclipseNSISPlugin.getResourceString("accessibility.disable.custom.carets"); //$NON-NLS-1$
-        final Button customCaretButton= addCheckBox(appearanceComposite, label, USE_CUSTOM_CARETS, 0);
-
-        label= EclipseNSISPlugin.getResourceString("accessibility.wide.caret"); //$NON-NLS-1$
-        final Button wideCaretButton= addCheckBox(appearanceComposite, label, WIDE_CARET, 20);
-
-        boolean customCaretState= mPreferenceStore.getBoolean(USE_CUSTOM_CARETS);
-        wideCaretButton.setEnabled(customCaretState);
-        
-        mAccessibilityListener = new SelectionListener() {
-            public void widgetSelected(SelectionEvent e) {
-                wideCaretButton.setEnabled(customCaretButton.getSelection());
-            }
-
-            public void widgetDefaultSelected(SelectionEvent e) {}
-        };
-        customCaretButton.addSelectionListener(mAccessibilityListener);
-
-        Label l= new Label(appearanceComposite, SWT.LEFT );
-        GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-        gd.horizontalSpan= 2;
-        gd.heightHint= convertHeightInCharsToPixels(1) / 2;
+        Button cb = addCheckBox(appearanceComposite, label, MATCHING_DELIMITERS, 0);
+        Label l = new Label(appearanceComposite, SWT.NONE);
+        l.setText(EclipseNSISPlugin.getResourceString("matching.delimiters.color")); //$NON-NLS-1$
+        GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+        gd.horizontalIndent= 20;
         l.setLayoutData(gd);
         
-        l= new Label(appearanceComposite, SWT.LEFT);
-        l.setText(EclipseNSISPlugin.getResourceString("appearance.options")); //$NON-NLS-1$
-        gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-        gd.horizontalSpan= 2;
-        l.setLayoutData(gd);
-
-        Composite editorComposite= new Composite(appearanceComposite, SWT.NONE);
-        layout= new GridLayout();
-        layout.numColumns= 2;
-        layout.marginHeight= 0;
-        layout.marginWidth= 0;
-        editorComposite.setLayout(layout);
-        gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.FILL_VERTICAL);
-        gd.horizontalSpan= 2;
-        editorComposite.setLayoutData(gd);      
-
-        mAppearanceColorList= new List(editorComposite, SWT.SINGLE | SWT.V_SCROLL | SWT.BORDER);
-        gd= new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.FILL_HORIZONTAL);
-        gd.heightHint= convertHeightInCharsToPixels(5);
-        mAppearanceColorList.setLayoutData(gd);
-                        
-        Composite stylesComposite= new Composite(editorComposite, SWT.NONE);
-        layout= new GridLayout();
-        layout.marginHeight= 0;
-        layout.marginWidth= 0;
-        layout.numColumns= 2;
-        stylesComposite.setLayout(layout);
-        stylesComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
-        
-        l= new Label(stylesComposite, SWT.LEFT);
-        l.setText(EclipseNSISPlugin.getResourceString("color")); //$NON-NLS-1$
-        gd= new GridData();
-        gd.horizontalAlignment= GridData.BEGINNING;
-        l.setLayoutData(gd);
-
-        mAppearanceColorEditor= new ColorEditor(stylesComposite);
-        Button foregroundColorButton= mAppearanceColorEditor.getButton();
-        gd= new GridData(GridData.FILL_HORIZONTAL);
-        gd.horizontalAlignment= GridData.BEGINNING;
-        foregroundColorButton.setLayoutData(gd);
-
-        SelectionListener colorDefaultSelectionListener= new SelectionListener() {
+        mMatchingDelimsColorEditor = new ColorEditor(appearanceComposite);
+        Button button = mMatchingDelimsColorEditor.getButton();
+        button.setLayoutData(new GridData());
+        button.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
-                boolean systemDefault= mAppearanceColorDefault.getSelection();
-                mAppearanceColorEditor.getButton().setEnabled(!systemDefault);
-                
-                int i= mAppearanceColorList.getSelectionIndex();
-                String key= mAppearanceColorListModel[i][2];
-                if (key != null)
-                    mPreferenceStore.setValue(key, systemDefault);
-            }
-            public void widgetDefaultSelected(SelectionEvent e) {}
-        };
-        
-        mAppearanceColorDefault= new Button(stylesComposite, SWT.CHECK);
-        mAppearanceColorDefault.setText(EclipseNSISPlugin.getResourceString("system.default")); //$NON-NLS-1$
-        gd= new GridData(GridData.FILL_HORIZONTAL);
-        gd.horizontalAlignment= GridData.BEGINNING;
-        gd.horizontalSpan= 2;
-        mAppearanceColorDefault.setLayoutData(gd);
-        mAppearanceColorDefault.setVisible(false);
-        mAppearanceColorDefault.addSelectionListener(colorDefaultSelectionListener);
-        
-        mAppearanceColorList.addSelectionListener(new SelectionListener() {
-            public void widgetDefaultSelected(SelectionEvent e) {
-                // do nothing
-            }
-            public void widgetSelected(SelectionEvent e) {
-                handleAppearanceColorListSelection();
+                PreferenceConverter.setValue(mPreferenceStore, MATCHING_DELIMITERS_COLOR, mMatchingDelimsColorEditor.getRGB());
             }
         });
-        foregroundColorButton.addSelectionListener(new SelectionListener() {
-            public void widgetDefaultSelected(SelectionEvent e) {
-                // do nothing
-            }
-            public void widgetSelected(SelectionEvent e) {
-                int i= mAppearanceColorList.getSelectionIndex();
-                String key= mAppearanceColorListModel[i][1];
-                
-                PreferenceConverter.setValue(mPreferenceStore, key, mAppearanceColorEditor.getRGB());
-            }
-        });
+        mMasterSlaveController = new MasterSlaveController(cb);
+        mMasterSlaveController.addSlave(l);
+        mMasterSlaveController.addSlave(button);
         
         return appearanceComposite;
     }
     
-    private Control createSyntaxPage(Composite parent)
+    private Control createSyntaxGroup(Composite parent)
     {
         Composite syntaxComposite= new Composite(parent, SWT.NONE);
-        GridLayout layout= new GridLayout(); 
-        layout.numColumns= 1;
+        GridLayout layout= new GridLayout(1, false); 
         syntaxComposite.setLayout(layout);
 
         Label l= new Label(syntaxComposite, SWT.LEFT);
@@ -384,28 +220,22 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
         gd.horizontalAlignment= GridData.BEGINNING;
         foregroundColorButton.setLayoutData(gd);
         
-        mSyntaxStyleList.addSelectionListener(new SelectionListener() {
-            public void widgetDefaultSelected(SelectionEvent e) {
-                // do nothing
-            }
+        mSyntaxStyleList.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 handleSyntaxStyleListSelection();
             }
         });
-        foregroundColorButton.addSelectionListener(new SelectionListener() {
-            public void widgetDefaultSelected(SelectionEvent e) {
-                // do nothing
-            }
+        foregroundColorButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 int i= mSyntaxStyleList.getSelectionIndex();
                 String key= mSyntaxStyleListModel[i][1];
                 NSISSyntaxStyle style = getStyle(key);
-                style.mForeground = mSyntaxColorEditor.getRGB();
+                style.setForeground(mSyntaxColorEditor.getRGB());
                 saveStyle(key, style);
             }
         });
         
-        SelectionListener boldStyleListener = new SelectionListener() {
+        SelectionListener boldStyleListener = new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 boolean bold = mStyleBold.getSelection();
                 
@@ -413,11 +243,10 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
                 String key= mSyntaxStyleListModel[i][1];
                 if (key != null) {
                     NSISSyntaxStyle style = getStyle(key);
-                    style.mBold = bold;
+                    style.setBold(bold);
                     saveStyle(key, style);
                 }
             }
-            public void widgetDefaultSelected(SelectionEvent e) {}
         };
         mStyleBold = new Button(stylesComposite, SWT.CHECK);
         mStyleBold.setText(EclipseNSISPlugin.getResourceString("bold")); //$NON-NLS-1$
@@ -427,7 +256,7 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
         mStyleBold.setLayoutData(gd);
         mStyleBold.addSelectionListener(boldStyleListener);
 
-        SelectionListener italicStyleListener = new SelectionListener() {
+        SelectionListener italicStyleListener = new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 boolean italic = mStyleItalic.getSelection();
                 
@@ -435,11 +264,10 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
                 String key= mSyntaxStyleListModel[i][1];
                 if (key != null) {
                     NSISSyntaxStyle style = getStyle(key);
-                    style.mItalic = italic;
+                    style.setItalic(italic);
                     saveStyle(key, style);
                 }
             }
-            public void widgetDefaultSelected(SelectionEvent e) {}
         };
         mStyleItalic = new Button(stylesComposite, SWT.CHECK);
         mStyleItalic.setText(EclipseNSISPlugin.getResourceString("italic")); //$NON-NLS-1$
@@ -476,25 +304,11 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
     private Control createPreviewer(Composite parent)
     {
         mPreviewer= new NSISSourceViewer(parent, null, null, false, SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
-        SourceViewerConfiguration configuration= new NSISSourceViewerConfiguration(mPreferenceStore);
+        NSISTextUtility.hookSourceViewer(mPreviewer);
+        SourceViewerConfiguration configuration= new NSISSourceViewerConfiguration(new ChainedPreferenceStore(new IPreferenceStore[]{mPreferenceStore,getPreferenceStore(), EditorsUI.getPreferenceStore()}));
         mPreviewer.configure(configuration);
-        final FontRegistry fontRegistry = JFaceResources.getFontRegistry();
-        mPreviewer.getTextWidget().setFont(fontRegistry.get(INSISPreferenceConstants.EDITOR_FONT));
-        final IPropertyChangeListener propertyChangeListener = new IPropertyChangeListener() {
-            public void propertyChange(PropertyChangeEvent event)
-            {
-                mPreviewer.getTextWidget().setFont(fontRegistry.get(INSISPreferenceConstants.EDITOR_FONT));
-            }
-        };
-        fontRegistry.addListener(propertyChangeListener);
-        mPreviewer.getTextWidget().addDisposeListener(new DisposeListener() {
-            public void widgetDisposed(DisposeEvent e)
-            {
-                fontRegistry.removeListener(propertyChangeListener);
-            }
-        });
         
-        String content= loadPreviewContentFromFile("NSISPreview.txt"); //$NON-NLS-1$
+        String content= new String(Common.loadContentFromStream(getClass().getResourceAsStream("NSISPreview.txt"))); //$NON-NLS-1$
         IDocument document= new Document(content);
         new NSISDocumentSetupParticipant().setup(document);
         mPreviewer.setDocument(document);
@@ -502,64 +316,46 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
         
         return mPreviewer.getControl();
     }
-
-    private String loadPreviewContentFromFile(String filename) {
-        String line;
-        String separator= System.getProperty("line.separator"); //$NON-NLS-1$
-        StringBuffer buffer= new StringBuffer(512);
-        BufferedReader reader= null;
-        try {
-            reader= new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(filename)));
-            while ((line= reader.readLine()) != null) {
-                buffer.append(line);
-                buffer.append(separator);
-            }
-        } catch (IOException io) {
-            io.printStackTrace();
-        } finally {
-            if (reader != null) {
-                try { 
-                    reader.close();
-                } 
-                catch (IOException e) {}
-            }
-        }
-        return buffer.toString();
-    }
     
     /*
      * @see PreferencePage#createContents(Composite)
      */
-    protected Control createContents(Composite parent) {
+    protected Control createContents(Composite parent) 
+    {
+        parent = new Composite(parent,SWT.NONE);
+        GridLayout layout = new GridLayout(1,false);
+        layout.marginWidth = 0;
+        layout.marginHeight = 0;
+        parent.setLayout(layout);
         
-        initializeDefaultColors();
-        TabFolder folder = new TabFolder(parent, SWT.NONE);
-        TabItem item = new TabItem(folder, SWT.NONE);
-        item.setText(EclipseNSISPlugin.getResourceString("appearances.tab.label")); //$NON-NLS-1$
-        item.setControl(createAppearancePage(folder));
-        item = new TabItem(folder, SWT.NONE);
-        item.setText(EclipseNSISPlugin.getResourceString("syntax.tab.label")); //$NON-NLS-1$
-        item.setControl(createSyntaxPage(folder));
+        Link link= new Link(parent, SWT.NONE);
+        link.setText(EclipseNSISPlugin.getResourceString("editor.preferences.note")); //$NON-NLS-1$
+        link.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                PreferencesUtil.createPreferenceDialogOn(getShell(), "org.eclipse.ui.preferencePages.GeneralTextEditor", null, null); //$NON-NLS-1$
+            }
+        });
+        
+        Group group = new Group(parent,SWT.SHADOW_ETCHED_IN);
+        group.setText(EclipseNSISPlugin.getResourceString("appearances.group.label")); //$NON-NLS-1$
+        group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        group.setLayout(new GridLayout(1,false));
+        Control c = createAppearanceGroup(group);
+        c.setLayoutData(new GridData(GridData.FILL_BOTH));
+        group = new Group(parent,SWT.SHADOW_ETCHED_IN);
+        group.setText(EclipseNSISPlugin.getResourceString("syntax.group.label")); //$NON-NLS-1$
+        group.setLayoutData(new GridData(GridData.FILL_BOTH));
+        group.setLayout(new GridLayout(1,false));
+        c = createSyntaxGroup(group);
+        c.setLayoutData(new GridData(GridData.FILL_BOTH));
         initialize();
-        Dialog.applyDialogFont(folder);
-        return folder;
+        Dialog.applyDialogFont(parent);
+        return parent;
     }
     
     private void initialize() {
         
         initializeFields();
-        
-        for (int i= 0; i < mAppearanceColorListModel.length; i++) {
-            mAppearanceColorList.add(mAppearanceColorListModel[i][0]);
-        }
-        mAppearanceColorList.getDisplay().asyncExec(new Runnable() {
-            public void run() {
-                if (mAppearanceColorList != null && !mAppearanceColorList.isDisposed()) {
-                    mAppearanceColorList.select(0);
-                    handleAppearanceColorListSelection();
-                }
-            }
-        });
 
         for (int i= 0; i < mSyntaxStyleListModel.length; i++) {
             mSyntaxStyleList.add(mSyntaxStyleListModel[i][0]);
@@ -574,40 +370,17 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
         });
     }
     
-    private void initializeFields() {
-        
+    private void initializeFields() 
+    {
         Iterator e= mCheckBoxes.keySet().iterator();
         while (e.hasNext()) {
             Button b= (Button) e.next();
             String key= (String) mCheckBoxes.get(b);
             b.setSelection(mPreferenceStore.getBoolean(key));
         }
-        
-        e= mTextFields.keySet().iterator();
-        while (e.hasNext()) {
-            Text t= (Text) e.next();
-            String key= (String) mTextFields.get(t);
-            t.setText(mPreferenceStore.getString(key));
-        }
-        
+        mMatchingDelimsColorEditor.setRGB(PreferenceConverter.getColor(mPreferenceStore, MATCHING_DELIMITERS_COLOR));
+        mMasterSlaveController.updateSlaves();
         mStyleMap.clear();
-        mFieldsInitialized= true;
-        validateAllNumbers();
-        
-        mAccessibilityListener.widgetSelected(null);
-    }
-    
-    private void initializeDefaultColors() {    
-        if (!getPreferenceStore().contains(SELECTION_BACKGROUND_COLOR)) {
-            RGB rgb= getControl().getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION).getRGB();
-            PreferenceConverter.setDefault(mPreferenceStore, SELECTION_BACKGROUND_COLOR, rgb);
-            PreferenceConverter.setDefault(getPreferenceStore(), SELECTION_BACKGROUND_COLOR, rgb);
-        }
-        if (!getPreferenceStore().contains(SELECTION_FOREGROUND_COLOR)) {
-            RGB rgb= getControl().getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION_TEXT).getRGB();
-            PreferenceConverter.setDefault(mPreferenceStore, SELECTION_FOREGROUND_COLOR, rgb);
-            PreferenceConverter.setDefault(getPreferenceStore(), SELECTION_FOREGROUND_COLOR, rgb);
-        }
     }
     
     /*
@@ -627,8 +400,6 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
         mPreferenceStore.loadDefaults();
         
         initializeFields();
-
-        handleAppearanceColorListSelection();
 
         handleSyntaxStyleListSelection();
         if(mPreviewer != null && mPreviewer.mustProcessPropertyQueue()) {
@@ -663,83 +434,5 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
         mCheckBoxes.put(checkBox, key);
         
         return checkBox;
-    }
-    
-    private Control addTextField(Composite composite, String label, String key, int textLimit, int indentation, boolean isNumber) {
-        
-        Label labelControl= new Label(composite, SWT.NONE);
-        labelControl.setText(label);
-        GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-        gd.horizontalIndent= indentation;
-        labelControl.setLayoutData(gd);
-        
-        Text textControl= new Text(composite, SWT.BORDER | SWT.SINGLE);     
-        gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-        gd.widthHint= convertWidthInCharsToPixels(textLimit + 1);
-        textControl.setLayoutData(gd);
-        textControl.setTextLimit(textLimit);
-        mTextFields.put(textControl, key);
-        if (isNumber) {
-            mNumberFields.add(textControl);
-            textControl.addModifyListener(mNumberFieldListener);
-        } else {
-            textControl.addModifyListener(mTextFieldListener);
-        }
-            
-        return textControl;
-    }
-    
-    private static void indent(Control control) {
-        GridData gridData= new GridData();
-        gridData.horizontalIndent= 20;
-        control.setLayoutData(gridData);        
-    }
-    
-    private void numberFieldChanged(Text textControl) {
-        String number= textControl.getText();
-        if(validatePositiveNumber(number, true)) {
-            mPreferenceStore.setValue((String) mTextFields.get(textControl), number);
-        }
-    }
-    
-    private boolean validatePositiveNumber(String number, boolean showMessageBox) {
-        if (number.length() == 0) {
-            if(showMessageBox) {
-                Common.openError(getShell(), EclipseNSISPlugin.getResourceString("empty.input")); //$NON-NLS-1$
-            }
-            return false;
-        } else {
-            try {
-                int value= Integer.parseInt(number);
-                if (value < 0) {
-                    if(showMessageBox) {
-                        Common.openError(getShell(), EclipseNSISPlugin.getFormattedString("invalid.input",  //$NON-NLS-1$
-                                                                     new Object[]{number})); //$NON-NLS-1$
-                    }
-                    return false;
-                }
-            } catch (NumberFormatException e) {
-                if(showMessageBox) {
-                    Common.openError(getShell(), EclipseNSISPlugin.getFormattedString("invalid.input",  //$NON-NLS-1$
-                                                 new Object[]{number})); //$NON-NLS-1$
-                }
-                return false;
-            }
-        }
-        return true;
-    }
-    
-    private void validateAllNumbers()
-    {
-        if (!mFieldsInitialized) {
-            return;
-        }
-        
-        for (int i= 0; i < mNumberFields.size(); i++) {
-            Text text= (Text) mNumberFields.get(i);
-            if(!validatePositiveNumber(text.getText(),false)) {
-                text.setText(""); //$NON-NLS-1$
-            }
-        }
     }
 }

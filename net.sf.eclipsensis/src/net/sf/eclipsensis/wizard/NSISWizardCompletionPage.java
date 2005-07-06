@@ -9,8 +9,6 @@
  *******************************************************************************/
 package net.sf.eclipsensis.wizard;
 
-import java.util.ResourceBundle;
-
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.util.Common;
@@ -134,7 +132,6 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
     {
         NSISWizardSettings settings = mWizard.getSettings();
 
-        ResourceBundle bundle = EclipseNSISPlugin.getDefault().getResourceBundle();
         Group group = NSISWizardDialogUtil.createGroup(parent, 1, "miscellaneous.installer.settings.group.label",null,false); //$NON-NLS-1$
 
         final Button b1 = NSISWizardDialogUtil.createCheckBox(group, "show.installer.details.label", //$NON-NLS-1$
@@ -209,7 +206,6 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
      */
     private void createPostInstallationActionsGroup(Composite parent)
     {
-        ResourceBundle bundle = EclipseNSISPlugin.getDefault().getResourceBundle();
         final Group group = NSISWizardDialogUtil.createGroup(parent, 3, "post.installation.actions.group.label",null,false); //$NON-NLS-1$
         NSISWizardSettings settings = mWizard.getSettings();
 
@@ -264,7 +260,6 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
      */
     private void createScriptSaveSettingsGroup(Composite parent)
     {
-        ResourceBundle bundle = EclipseNSISPlugin.getDefault().getResourceBundle();
         final Group group = NSISWizardDialogUtil.createGroup(parent, 3, "script.save.settings.group.label",null,true); //$NON-NLS-1$
         NSISWizardSettings settings = mWizard.getSettings();
 
@@ -373,7 +368,6 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
      */
     private void createMiscUninstallerSettingsGroup(Composite parent)
     {
-        ResourceBundle bundle = EclipseNSISPlugin.getDefault().getResourceBundle();
         NSISWizardSettings settings = mWizard.getSettings();
 
         final Group group = NSISWizardDialogUtil.createGroup(parent, 1, "miscellaneous.uninstaller.settings.group.label",null,false); //$NON-NLS-1$

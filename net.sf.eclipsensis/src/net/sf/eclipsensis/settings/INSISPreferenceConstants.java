@@ -11,8 +11,6 @@ package net.sf.eclipsensis.settings;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 
-import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
-
 public interface INSISPreferenceConstants
 {
     public static final String CUSTOM_TEMPLATES = "customTemplates"; //$NON-NLS-1$
@@ -40,26 +38,6 @@ public interface INSISPreferenceConstants
                                                                 EclipseNSISPlugin.getResourceString("verbosity.info.text"), //$NON-NLS-1$
                                                                 EclipseNSISPlugin.getResourceString("verbosity.all.text")}; //$NON-NLS-1$
 
-    public static final String CURRENT_LINE_COLOR=AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR;
-    public static final String CURRENT_LINE=AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE;
-
-    public static final String TAB_WIDTH=AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH;
-
-    public static final String PRINT_MARGIN_COLOR=AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLOR;
-    public static final String PRINT_MARGIN_COLUMN=AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN;
-    public static final String PRINT_MARGIN=AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN;
-            
-    public static final String OVERVIEW_RULER=AbstractDecoratedTextEditorPreferenceConstants.EDITOR_OVERVIEW_RULER;
-            
-    public static final String LINE_NUMBER_RULER_COLOR=AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER_COLOR;
-    public static final String LINE_NUMBER_RULER=AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER;
-    public static final String USE_CUSTOM_CARETS=AbstractDecoratedTextEditorPreferenceConstants.EDITOR_USE_CUSTOM_CARETS;
-    public static final String WIDE_CARET=AbstractDecoratedTextEditorPreferenceConstants.EDITOR_WIDE_CARET;
-            
-    public static final String SELECTION_FOREGROUND_COLOR=AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_FOREGROUND_COLOR;
-    public static final String SELECTION_FOREGROUND_DEFAULT_COLOR=AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_FOREGROUND_DEFAULT_COLOR;
-    public static final String SELECTION_BACKGROUND_COLOR=AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_BACKGROUND_COLOR;
-    public static final String SELECTION_BACKGROUND_DEFAULT_COLOR=AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_BACKGROUND_DEFAULT_COLOR;
     public static final String USE_SPACES_FOR_TABS = "useSpacesForTabs"; //$NON-NLS-1$
     
     public final static String MATCHING_DELIMITERS = "matchingDelimiters"; //$NON-NLS-1$
@@ -82,7 +60,6 @@ public interface INSISPreferenceConstants
     public static final String TASK_TAGS_STYLE = "taskTagsStyle"; //$NON-NLS-1$
     
     public static final String AUTO_SHOW_CONSOLE = "autoShowConsole"; //$NON-NLS-1$
-    public static final String EDITOR_FONT = "net.sf.eclipsensis.editor.Font"; //$NON-NLS-1$
     public static final String CONSOLE_FONT = "net.sf.eclipsensis.console.Font"; //$NON-NLS-1$
     public static final String CONSOLE_INFO_COLOR = "net.sf.eclipsensis.console.InfoColor"; //$NON-NLS-1$
     public static final String CONSOLE_WARNING_COLOR = "net.sf.eclipsensis.console.WarningColor"; //$NON-NLS-1$

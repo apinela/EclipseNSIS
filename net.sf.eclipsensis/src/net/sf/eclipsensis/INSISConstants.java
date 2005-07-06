@@ -19,6 +19,7 @@ public interface INSISConstants
 
     public static final String PLUGIN_CONTEXT_PREFIX = PLUGIN_NAME + "."; //$NON-NLS-1$
     
+    public static final String PREFERENCE_PAGE_ID = EclipseNSISPlugin.getBundleResourceString("%preference.page.id"); //$NON-NLS-1$
     public static final String HTMLHELP_ID = EclipseNSISPlugin.getBundleResourceString("%htmlhelp.id"); //$NON-NLS-1$
     public static final String CONSOLE_ID = EclipseNSISPlugin.getBundleResourceString("%console.id"); //$NON-NLS-1$
     public static final String PROBLEM_MARKER_ID = EclipseNSISPlugin.getBundleResourceString("%qualified.compile.problem.marker.id"); //$NON-NLS-1$

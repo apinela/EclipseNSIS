@@ -13,9 +13,8 @@ import net.sf.eclipsensis.installoptions.model.Position;
 
 import org.eclipse.draw2d.FigureUtilities;
 import org.eclipse.draw2d.geometry.*;
-import org.eclipse.draw2d.geometry.Point;
-import org.eclipse.draw2d.geometry.Rectangle;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontMetrics;
 
 public class FigureUtility
 {
@@ -145,7 +144,6 @@ public class FigureUtility
             buf.append((char)i);
         }
         Dimension dim = FigureUtilities.getStringExtents(buf.toString(),f);
-        FontData fd = f.getFontData()[0];
         return (int)div(dim.width,52);
     }
 }

@@ -9,17 +9,29 @@
  *******************************************************************************/
 package net.sf.eclipsensis.editor.text;
 
-import java.util.ArrayList;
+import java.util.*;
 
 import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.util.Common;
 
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.resource.FontRegistry;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.*;
+import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.rules.ICharacterScanner;
 import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.editors.text.EditorsUI;
+import org.eclipse.ui.texteditor.AbstractDecoratedTextEditor;
 
 public class NSISTextUtility implements INSISConstants
 {
@@ -548,5 +560,127 @@ public class NSISTextUtility implements INSISConstants
             }
             return remainder;
         }
+    }
+    
+    public static String flattenSyntaxStylesMap(Map map)
+    {
+        StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
+        if(!Common.isEmptyMap(map)) {
+            Iterator iter = map.keySet().iterator();
+            String key = (String)iter.next();
+            NSISSyntaxStyle style = (NSISSyntaxStyle)map.get(key);
+            buf.append(key).append('#').append(style.toString());
+            while(iter.hasNext()) {
+                key = (String)iter.next();
+                style = (NSISSyntaxStyle)map.get(key);
+                buf.append('\u00FF').append(key).append('#').append(style.toString());
+            }
+        }
+        return buf.toString();
+    }
+    
+    public static Map parseSyntaxStylesMap(String text)
+    {
+        Map map = new LinkedHashMap();
+        String[] pairs = Common.tokenize(text,'\u00FF');
+        if(!Common.isEmptyArray(pairs)) {
+            for (int i = 0; i < pairs.length; i++) {
+                String[] keyValue = Common.tokenize(pairs[i],'#');
+                if(!Common.isEmptyArray(keyValue)) {
+                    String key = keyValue[0];
+                    if(keyValue.length > 1) {
+                        try {
+                            NSISSyntaxStyle style = NSISSyntaxStyle.parse(keyValue[1]);
+                            map.put(key, style);
+                            continue;
+                        }
+                        catch(Exception ex) { 
+                            ex.printStackTrace();
+                        }
+                    }
+                    map.put(key,null);
+                }
+            }
+        }
+        return map;
+    }
+    
+    public static void hookSourceViewer(final ISourceViewer viewer)
+    {
+        final StyledText textWidget = viewer.getTextWidget();
+        
+        final FontRegistry fontRegistry = JFaceResources.getFontRegistry();
+        textWidget.setFont(fontRegistry.get(JFaceResources.TEXT_FONT));
+        final IPropertyChangeListener fontListener = new IPropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent event)
+            {
+                if(event.getProperty().equals(JFaceResources.TEXT_FONT)) {
+                    textWidget.setFont(fontRegistry.get(JFaceResources.TEXT_FONT));
+                }
+            }
+        };
+        fontRegistry.addListener(fontListener);
+
+        final Display display = textWidget.getDisplay();
+        final HashMap map = new HashMap();
+        final IPreferenceStore store = EditorsUI.getPreferenceStore();
+        
+        textWidget.setBackground(createColor(map, store, AbstractDecoratedTextEditor.PREFERENCE_COLOR_BACKGROUND,
+                AbstractDecoratedTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT, display));
+        textWidget.setForeground(createColor(map, store, AbstractDecoratedTextEditor.PREFERENCE_COLOR_FOREGROUND,
+                AbstractDecoratedTextEditor.PREFERENCE_COLOR_FOREGROUND_SYSTEM_DEFAULT, display));
+
+        final IPropertyChangeListener colorListener = new IPropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent event)
+            {
+                if(event.getProperty().equals(AbstractDecoratedTextEditor.PREFERENCE_COLOR_BACKGROUND)||
+                   event.getProperty().equals(AbstractDecoratedTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT)) {
+                    textWidget.setBackground(createColor(map, store, AbstractDecoratedTextEditor.PREFERENCE_COLOR_BACKGROUND,
+                            AbstractDecoratedTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT, display));
+                }
+                else if(event.getProperty().equals(AbstractDecoratedTextEditor.PREFERENCE_COLOR_FOREGROUND)||
+                        event.getProperty().equals(AbstractDecoratedTextEditor.PREFERENCE_COLOR_FOREGROUND_SYSTEM_DEFAULT)) {
+                    textWidget.setForeground(createColor(map, store, AbstractDecoratedTextEditor.PREFERENCE_COLOR_FOREGROUND,
+                            AbstractDecoratedTextEditor.PREFERENCE_COLOR_FOREGROUND_SYSTEM_DEFAULT, display));
+                }
+            }
+        };
+        store.addPropertyChangeListener(colorListener);
+        textWidget.addDisposeListener(new DisposeListener(){
+            public void widgetDisposed(DisposeEvent e)
+            {
+                fontRegistry.removeListener(fontListener);
+                store.removePropertyChangeListener(colorListener);
+                for(Iterator iter=map.values().iterator(); iter.hasNext(); ) {
+                    Color color = (Color)iter.next();
+                    if(color != null && !color.isDisposed()) {
+                        color.dispose();
+                    }
+                }
+            }
+        });
+    }
+
+    private static Color createColor(HashMap map, IPreferenceStore store, String key, String defaultKey, Display display) 
+    {
+        if(!store.getBoolean(defaultKey)) {
+            if (store.contains(key)) {
+                RGB rgb= null;
+                if (store.isDefault(key)) {
+                    rgb= PreferenceConverter.getDefaultColor(store, key);
+                }
+                else {
+                    rgb= PreferenceConverter.getColor(store, key);
+                }
+                Color color = new Color(display, rgb);
+                Color oldColor = (Color)map.put(key,color);
+                if(oldColor != null) {
+                    oldColor.dispose();
+                }
+                return color;
+            }
+        }
+
+        return null;
     }
 }

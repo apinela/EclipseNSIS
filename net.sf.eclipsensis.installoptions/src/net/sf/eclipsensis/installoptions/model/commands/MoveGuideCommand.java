@@ -41,17 +41,34 @@ public class MoveGuideCommand extends Command
             Position pos = widget.getPosition();
             mOldPositions.put(widget,pos);
             pos = widget.toGraphical(pos);
+            int alignment = mGuide.getAlignment(widget);
             if (mGuide.isHorizontal()) {
-                pos.setLocation(pos.left,pos.top+mPositionDelta);
+                pos.setLocation(pos.left,calculatePosition(mGuide.getPosition(),alignment, pos));//pos.top+mPositionDelta);
             }
             else {
-                pos.setLocation(pos.left+mPositionDelta,pos.top);
+                pos.setLocation(/*pos.left+mPositionDelta*/calculatePosition(mGuide.getPosition(),alignment, pos),pos.top);
             }
             pos = widget.toModel(pos);
             widget.setPosition(pos);
         }
     }
 
+    public boolean canExecute()
+    {
+        int guidePos = mGuide.getPosition() + mPositionDelta;
+        Iterator iter = mGuide.getParts().iterator();
+        while (iter.hasNext()) {
+            InstallOptionsWidget widget = (InstallOptionsWidget)iter.next();
+            Position pos = widget.toGraphical(widget.getPosition());
+            int alignment = mGuide.getAlignment(widget);
+            int position = calculatePosition(guidePos, alignment, pos);
+            if(position < 0) {
+                return false;
+            }
+        }
+        return super.canExecute();
+    }
+    
     public void undo()
     {
         mGuide.setPosition(mGuide.getPosition() - mPositionDelta);
@@ -62,4 +79,23 @@ public class MoveGuideCommand extends Command
         }
     }
 
+    private int calculatePosition(int guidePos, int alignment, Position pos)
+    {
+        int position;
+        int dim = (mGuide.isHorizontal()?pos.getSize().height:pos.getSize().width);
+        switch(alignment) {
+            case -1:
+                position = guidePos;
+                break;
+            case 0:
+                position = guidePos-dim/2;
+                break;
+            case 1:
+                position = guidePos-dim;
+                break;
+            default:
+                position = (mGuide.isHorizontal()?pos.getBounds().y:pos.getBounds().x);
+        }
+        return position;
+    }
 }

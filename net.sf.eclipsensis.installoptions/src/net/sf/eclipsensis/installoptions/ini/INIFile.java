@@ -242,11 +242,13 @@ public class INIFile implements IDocumentListener, IINIContainer
             
             doc.removePositionUpdater(mPositionUpdater);
             doc.removeDocumentListener(this);
-            try {
-                doc.removePositionCategory(INIFILE_CATEGORY);
-            }
-            catch (BadPositionCategoryException e) {
-                e.printStackTrace();
+            if(doc.containsPositionCategory(INIFILE_CATEGORY)) {
+                try {
+                    doc.removePositionCategory(INIFILE_CATEGORY);
+                }
+                catch (BadPositionCategoryException e) {
+                    e.printStackTrace();
+                }
             }
             mChildren.clear();
             mLines.clear();

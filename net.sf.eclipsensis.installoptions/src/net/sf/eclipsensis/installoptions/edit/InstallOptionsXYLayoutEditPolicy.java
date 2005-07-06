@@ -128,8 +128,8 @@ public class InstallOptionsXYLayoutEditPolicy extends XYLayoutEditPolicy impleme
 
     protected Command createChangeConstraintCommand(ChangeBoundsRequest request, EditPart child, Object constraint)
     {
-        SetConstraintCommand cmd = new SetConstraintCommand();
         InstallOptionsWidget part = (InstallOptionsWidget)child.getModel();
+        SetConstraintCommand cmd = new SetConstraintCommand();
         cmd.setPart(part);
         cmd.setPosition((Position)constraint);
         Command result = cmd;
@@ -148,12 +148,9 @@ public class InstallOptionsXYLayoutEditPolicy extends XYLayoutEditPolicy impleme
                                     true);
                         }
                         else if (part.getHorizontalGuide() != null) {
-                            // SnapToGuides didn't provide a horizontal guide, but this part
-                            // is attached
-                            // to a horizontal guide. Now we check to see if the part is
-                            // attached to
-                            // the guide along the edge being resized. If that is the case,
-                            // we need to
+                            // SnapToGuides didn't provide a horizontal guide, but this part is attached
+                            // to a horizontal guide. Now we check to see if the part is attached to
+                            // the guide along the edge being resized. If that is the case, we need to
                             // detach the part from the guide; otherwise, we leave it alone.
                             int alignment = part.getHorizontalGuide().getAlignment(part);
                             int edgeBeingResized = 0;

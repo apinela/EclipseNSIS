@@ -12,19 +12,71 @@ package net.sf.eclipsensis.installoptions.edit.link;
 import java.beans.PropertyChangeEvent;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
+import net.sf.eclipsensis.installoptions.edit.IExtendedEditSupport;
+import net.sf.eclipsensis.installoptions.edit.InstallOptionsExtendedEditPolicy;
 import net.sf.eclipsensis.installoptions.edit.label.InstallOptionsLabelEditPart;
 import net.sf.eclipsensis.installoptions.edit.uneditable.InstallOptionsUneditableElementEditPart;
 import net.sf.eclipsensis.installoptions.figures.IInstallOptionsFigure;
 import net.sf.eclipsensis.installoptions.figures.LinkFigure;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsLink;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
 
 import org.eclipse.draw2d.FigureCanvas;
 import org.eclipse.gef.tools.CellEditorLocator;
 import org.eclipse.gef.tools.DirectEditManager;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.widgets.ColorDialog;
 
 public class InstallOptionsLinkEditPart extends InstallOptionsLabelEditPart
 {
+    private IExtendedEditSupport mExtendedEditSupport = new IExtendedEditSupport() {
+        private Object mNewValue;
+        public boolean performExtendedEdit()
+        {
+            InstallOptionsLink model = (InstallOptionsLink)getModel();
+            ColorDialog dialog = new ColorDialog(getViewer().getControl().getShell());
+            RGB value = (RGB)model.getTxtColor();
+            if (value != null) {
+                dialog.setRGB(value);
+            }
+            else {
+                dialog.setRGB(InstallOptionsLink.DEFAULT_TXTCOLOR);
+            }
+            if (dialog.open() != null) {
+                mNewValue = dialog.getRGB();
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+
+        public Object getNewValue()
+        {
+            return mNewValue;
+        }
+        
+    };
+
+    public Object getAdapter(Class key)
+    {
+        if(IExtendedEditSupport.class.equals(key)) {
+            return mExtendedEditSupport;
+        }
+        return super.getAdapter(key);
+    }
+    
+    protected void createEditPolicies()
+    {
+        super.createEditPolicies();
+        installEditPolicy(InstallOptionsExtendedEditPolicy.ROLE, new InstallOptionsLinkExtendedEditPolicy(this));
+    }
+    
+    protected String getExtendedEditLabelProperty()
+    {
+        return "link.extended.edit.label"; //$NON-NLS-1$
+    }
+
     protected String getDirectEditLabelProperty()
     {
         return "link.direct.edit.label"; //$NON-NLS-1$

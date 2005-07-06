@@ -23,7 +23,7 @@ import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 public abstract class AbstractNSISWizardPage extends WizardPage implements INSISWizardConstants
 {
@@ -218,7 +218,7 @@ public abstract class AbstractNSISWizardPage extends WizardPage implements INSIS
 
         String contextId = getHelpContextId();
         if(contextId != null) {
-            WorkbenchHelp.setHelp(control,contextId);
+            PlatformUI.getWorkbench().getHelpSystem().setHelp(control,contextId);
         }
     }
 

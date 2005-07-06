@@ -22,12 +22,10 @@ public class InstallOptionsRulerFigure extends RulerFigure
 {
     private double mDPU = -1.0; 
     private int mUnit;
-    private EditPart mEditPart;
     
     public InstallOptionsRulerFigure(EditPart editPart, boolean isHorizontal, int measurementUnit) 
     {
         super(isHorizontal, measurementUnit);
-        mEditPart = editPart;
     }
 
     public int getUnit() 

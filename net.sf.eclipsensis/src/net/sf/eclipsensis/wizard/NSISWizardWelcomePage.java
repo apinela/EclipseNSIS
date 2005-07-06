@@ -72,9 +72,9 @@ public class NSISWizardWelcomePage extends AbstractNSISWizardPage
         Dialog.applyDialogFont(l2);
         gridData.widthHint = Common.calculateControlSize(l2,80,0).x;
 
-        final Label l3 = NSISWizardDialogUtil.createLabel(composite,"wizard.required.text", true, null, true); //$NON-NLS-1$
+        NSISWizardDialogUtil.createLabel(composite,"wizard.required.text", true, null, true); //$NON-NLS-1$
 
-        Group group = createTemplatesGroup(composite);
+        createTemplatesGroup(composite);
         
         composite.addListener (SWT.Resize,  new Listener () {
             boolean init = false;

@@ -24,6 +24,12 @@ public class ExtendedEditRequest extends LocationRequest
         super(IInstallOptionsConstants.REQ_EXTENDED_EDIT);
     }
     
+    public ExtendedEditRequest(EditPart editPart)
+    {
+        this();
+        setEditPart(editPart);
+    }
+    
     public EditPart getEditPart()
     {
         return mEditPart;

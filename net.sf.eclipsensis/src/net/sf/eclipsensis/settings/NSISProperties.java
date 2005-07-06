@@ -28,8 +28,6 @@ public class NSISProperties extends NSISSettings implements INSISConstants
     private IFile mFile = null;
     private boolean mUseGlobals = true;
     
-    private static Random cRandom = new Random();
-    
     static {
         cPreferences = NSISPreferences.getPreferences();
         cQualifiedNames.put(USE_GLOBALS, new QualifiedName(PLUGIN_NAME,USE_GLOBALS));

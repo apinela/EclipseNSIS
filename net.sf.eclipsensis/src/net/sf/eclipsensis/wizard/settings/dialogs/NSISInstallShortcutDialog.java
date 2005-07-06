@@ -162,7 +162,6 @@ public class NSISInstallShortcutDialog extends AbstractNSISInstallItemDialog imp
     
     protected String checkForErrors()
     {
-        String subKey = mStore.getString("subKey").trim(); //$NON-NLS-1$
         if(!Common.isValidNSISPathName(mStore.getString("location"))) { //$NON-NLS-1$
             return EclipseNSISPlugin.getResourceString("wizard.invalid.shortcut.location"); //$NON-NLS-1$
         }

@@ -15,6 +15,9 @@ import java.beans.*;
 import java.io.*;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
+import java.nio.ByteBuffer;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
 import java.rmi.dgc.VMID;
 import java.text.BreakIterator;
 import java.util.*;
@@ -57,7 +60,7 @@ public class Common
     
     public static String encodePath(String path)
     {
-        String nsisdirKeyword = NSISKeywords.getKeyword("${NSISDIR}"); //$NON-NLS-1$
+        String nsisdirKeyword = ""; //$NON-NLS-1$
         String nsisHome = NSISPreferences.getPreferences().getNSISHome().toLowerCase();
         if(path.toLowerCase().startsWith(nsisHome)) {
             path = nsisdirKeyword + path.substring(nsisHome.length());
@@ -67,7 +70,7 @@ public class Common
 
     public static String decodePath(String path)
     {
-        String nsisdirKeyword = NSISKeywords.getKeyword("${NSISDIR}").toLowerCase(); //$NON-NLS-1$
+        String nsisdirKeyword = "".toLowerCase(); //$NON-NLS-1$
         String nsisHome = NSISPreferences.getPreferences().getNSISHome();
         if(path.toLowerCase().startsWith(nsisdirKeyword)) {
             path = nsisHome + path.substring(nsisdirKeyword.length());
@@ -82,7 +85,6 @@ public class Common
 
     public static Object readObject(InputStream inputStream) throws IOException, ClassNotFoundException
     {
-        ArrayList objectList = new ArrayList();
         ObjectInputStream ois = null;
         try {
             if(!(inputStream instanceof BufferedInputStream)) {
@@ -528,11 +530,11 @@ public class Common
 
     public static String flatten(Object[] array, char separator)
     {
-        StringBuffer buf = new StringBuffer("");
+        StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
         if(!Common.isEmptyArray(array)) {
             buf.append(array[0]);
             for (int i = 1; i < array.length; i++) {
-                buf.append(separator).append((array[i]==null?"":array[i]));
+                buf.append(separator).append((array[i]==null?"":array[i])); //$NON-NLS-1$
             }
         }
         return buf.toString();
@@ -888,5 +890,86 @@ public class Common
             attribute.setValue(value);
             node.getAttributes().setNamedItem(attribute);
         }
+    }
+    public static void writeContentToFile(File file, byte[] content)
+    {
+        if(!file.canWrite()) {
+            file.delete();
+        }
+        ByteBuffer buf = ByteBuffer.wrap(content);
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(file);
+            fos.getChannel().write(buf);
+        }
+        catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        finally {
+            try {
+                fos.close();
+            }
+            catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static byte[] loadContentFromFile(File file) {
+        byte[] bytes = new byte[0];
+        if(file.exists()) {
+            FileInputStream fis = null;
+            try {
+                fis = new FileInputStream(file);
+                bytes = readChannel(fis.getChannel());
+            }
+            catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+            catch (IOException e) {
+                e.printStackTrace();
+            }
+            finally {
+                if(fis != null) {
+                    try {
+                        fis.close();
+                    }
+                    catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+        return bytes;
+    }
+
+    public static byte[] loadContentFromStream(InputStream stream)
+    {
+        try {
+            return readChannel(Channels.newChannel(stream));
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+            return new byte[0];
+        }
+    }
+
+    public static byte[] readChannel(ReadableByteChannel channel) throws IOException
+    {
+        byte[] bytes = new byte[0];
+        ByteBuffer buf = ByteBuffer.allocateDirect(8192);
+        int numread = channel.read(buf);
+        while(numread > 0) {
+            buf.rewind();
+            int n = bytes.length;
+            bytes = (byte[])resizeArray(bytes, n+numread);
+            buf.get(bytes,n,numread);
+            buf.rewind();
+            numread = channel.read(buf);
+        }
+        return bytes;
     }
 }

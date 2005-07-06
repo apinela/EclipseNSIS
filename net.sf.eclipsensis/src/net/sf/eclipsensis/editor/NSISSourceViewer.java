@@ -41,6 +41,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.MarkerAnnotation;
 import org.eclipse.ui.views.markers.MarkerViewUtil;
 
@@ -267,7 +268,6 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
                         IRegion info= document.getLineInformation(lineNumber);
                         
                         if (model != null) {
-                            ArrayList messages = new ArrayList();
                             for(Iterator iter= model.getAnnotationIterator(); iter.hasNext(); ) {
                                 Annotation a= (Annotation) iter.next();
                                 Position p= model.getPosition(a);
@@ -335,7 +335,7 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
     public void propertyChange(PropertyChangeEvent event)
     {
         String property = event.getProperty();
-        if(property.equals(INSISPreferenceConstants.TAB_WIDTH)||
+        if(property.equals(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH)||
            property.equals(INSISPreferenceConstants.USE_SPACES_FOR_TABS)) {
             for(Iterator iter=fIndentChars.keySet().iterator(); iter.hasNext(); ) {
                 setIndentPrefixes(calculatePrefixes(),(String)iter.next());
@@ -373,7 +373,7 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
 
         // prefix[0] is either '\t' or ' ' x tabWidth, depending on useSpaces
                 
-        int tabWidth= mPreferenceStore.getInt(INSISPreferenceConstants.TAB_WIDTH);
+        int tabWidth= mPreferenceStore.getInt(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH);
         boolean useSpaces= mPreferenceStore.getBoolean(INSISPreferenceConstants.USE_SPACES_FOR_TABS);
         
         for (int i= 0; i <= tabWidth; i++) {
@@ -703,7 +703,7 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
     
     private void doConvertTabsToSpaces()
     {
-        int tabWidth = mPreferenceStore.getInt(INSISPreferenceConstants.TAB_WIDTH);
+        int tabWidth = mPreferenceStore.getInt(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH);
         IDocument doc = getDocument();
         Point p = getSelectedRange();
         String text;
@@ -724,7 +724,6 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
     {
         int offset = NSISTextUtility.computeOffset(this,false);
         if(offset >= 0) {
-            String url = null;
             String keyword;
             IRegion region = NSISInformationUtility.getInformationRegionAtOffset(this,offset,false);
             keyword = NSISTextUtility.getRegionText(getDocument(),region);

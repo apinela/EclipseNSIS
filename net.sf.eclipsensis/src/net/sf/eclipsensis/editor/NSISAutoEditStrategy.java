@@ -13,6 +13,7 @@ import net.sf.eclipsensis.settings.INSISPreferenceConstants;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IAutoEditStrategy;
+import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 
 public abstract class NSISAutoEditStrategy implements IAutoEditStrategy
 {
@@ -30,7 +31,7 @@ public abstract class NSISAutoEditStrategy implements IAutoEditStrategy
     public void updateFromPreferences()
     {
         mUseSpacesForTabs = mPreferenceStore.getBoolean(INSISPreferenceConstants.USE_SPACES_FOR_TABS);
-        mTabWidth = mPreferenceStore.getInt(INSISPreferenceConstants.TAB_WIDTH);
+        mTabWidth = mPreferenceStore.getInt(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH);
     }
 
 }

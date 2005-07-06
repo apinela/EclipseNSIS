@@ -21,10 +21,8 @@ import org.eclipse.gef.EditDomain;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.internal.GEFMessages;
 import org.eclipse.gef.ui.actions.WorkbenchPartAction;
-import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.internal.WorkbenchImages;
 
 public class PasteAction extends WorkbenchPartAction implements PropertyChangeListener
 {
@@ -44,12 +42,13 @@ public class PasteAction extends WorkbenchPartAction implements PropertyChangeLi
     protected void init() 
     {
         super.init();
+        ISharedImages sharedImages = PlatformUI.getWorkbench().getSharedImages();
         setText(GEFMessages.PasteAction_Label);
         setToolTipText(GEFMessages.PasteAction_Tooltip);
         setId(ActionFactory.PASTE.getId());
-        setHoverImageDescriptor(WorkbenchImages.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE));
-        setImageDescriptor(WorkbenchImages.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE));
-        setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE_DISABLED));
+        setHoverImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE));
+        setImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE));
+        setDisabledImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE_DISABLED));
         setEnabled(false);
     }
 

@@ -21,7 +21,6 @@ public class NSISRegionScanner implements NSISScanner
 {
     private IDocument mDocument;
     private int mStartOffset;
-    private int mEndOffset;
     private int mOffset;
     private char[][] mDelimiters;
     private char[] mContent;
@@ -61,7 +60,6 @@ public class NSISRegionScanner implements NSISScanner
     public void setRegion(IRegion region)
     {
         mStartOffset = region.getOffset();
-        mEndOffset = mStartOffset + region.getLength() - 1;
         mOffset = 0;
         try {
             String content = mDocument.get(mStartOffset,region.getLength());

@@ -13,8 +13,12 @@ import java.util.*;
 import java.util.List;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.dialogs.ColorEditor;
+import net.sf.eclipsensis.editor.text.NSISSyntaxStyle;
+import net.sf.eclipsensis.editor.text.NSISTextUtility;
 import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
+import net.sf.eclipsensis.installoptions.editor.*;
 import net.sf.eclipsensis.installoptions.model.DialogSize;
 import net.sf.eclipsensis.installoptions.model.DialogSizeManager;
 import net.sf.eclipsensis.installoptions.util.TypeConverter;
@@ -28,6 +32,9 @@ import org.eclipse.gef.editparts.ZoomManager;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.text.Document;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -37,6 +44,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.dialogs.PropertyPage;
 
 public class InstallOptionsPreferencePage extends PropertyPage implements IWorkbenchPreferencePage, IInstallOptionsConstants
@@ -57,6 +65,10 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
     private Combo mZoom;
     private GridSettings mGridSettings;
     private SnapGlueSettings mSnapGlueSettings;
+    private Map mSyntaxStylesMap;
+    private int mSyntaxStylesHashCode;
+    private ListViewer mSyntaxStylesViewer;
+    private InstallOptionsSourcePreviewer mPreviewer;
 
     /**
      * 
@@ -107,6 +119,9 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
             loadPreference(mDisplaySettingsMap, PREFERENCE_ZOOM,TypeConverter.STRING_CONVERTER,
                     ZOOM_DEFAULT);
         }
+        
+        mSyntaxStylesMap = NSISTextUtility.parseSyntaxStylesMap(getPreferenceStore().getString(PREFERENCE_SYNTAX_STYLES));
+        mSyntaxStylesHashCode = mSyntaxStylesMap.hashCode();
     }
 
     private void loadPreference(Map map, String name, TypeConverter converter, Object defaultValue)
@@ -171,6 +186,12 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
         list.clear();
         list.addAll(mDialogSizesMap.values());
         DialogSizeManager.storeDialogSizes();
+        
+        int hashCode = mSyntaxStylesMap.hashCode();
+        if(hashCode != mSyntaxStylesHashCode) {
+            getPreferenceStore().setValue(PREFERENCE_SYNTAX_STYLES, NSISTextUtility.flattenSyntaxStylesMap(mSyntaxStylesMap));
+            mSyntaxStylesHashCode = hashCode;
+        }
     }
 
     private void savePreference(Map map, String name, TypeConverter converter, Object defaultValue)
@@ -194,32 +215,228 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
     {
         loadPreferences();
         loadDialogSizes();
+        TabFolder folder = new TabFolder(parent, SWT.NONE);
+        Dialog.applyDialogFont(folder);
+        TabItem item = new TabItem(folder, SWT.NONE);
+        item.setText(InstallOptionsPlugin.getResourceString("design.editor.tab.name")); //$NON-NLS-1$
+        item.setControl(createDesignEditorTab(folder));
+        item = new TabItem(folder, SWT.NONE);
+        item.setText(InstallOptionsPlugin.getResourceString("source.editor.tab.name")); //$NON-NLS-1$
+        item.setControl(createSourceEditorTab(folder));
+        return folder;
+    }
+
+    private Control createSourceEditorTab(Composite parent)
+    {
+        Composite syntaxComposite= new Composite(parent, SWT.NONE);
+        GridData gd = new GridData(GridData.FILL_BOTH);
+        syntaxComposite.setLayoutData(gd);
+        GridLayout layout= new GridLayout(1, false); 
+        layout.marginHeight = 2;
+        layout.marginWidth = 2;
+        syntaxComposite.setLayout(layout);
+        
+        Link link= new Link(syntaxComposite, SWT.NONE);
+        link.setText(InstallOptionsPlugin.getResourceString("source.editor.preferences.description")); //$NON-NLS-1$
+        link.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                PreferencesUtil.createPreferenceDialogOn(getShell(), "org.eclipse.ui.preferencePages.GeneralTextEditor", null, null); //$NON-NLS-1$
+            }
+        });
+        gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+        gd.horizontalSpan= 2;
+        link.setLayoutData(gd);
+
+        Label l= new Label(syntaxComposite, SWT.LEFT);
+        l.setText(EclipseNSISPlugin.getResourceString("syntax.options")); //$NON-NLS-1$
+        gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+        gd.horizontalSpan= 2;
+        l.setLayoutData(gd);
+
+        Composite listComposite= new Composite(syntaxComposite, SWT.NONE);
+        layout= new GridLayout();
+        layout.numColumns= 2;
+        layout.marginHeight= 0;
+        layout.marginWidth= 0;
+        listComposite.setLayout(layout);
+        gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.FILL_VERTICAL);
+        gd.horizontalSpan= 1;
+        listComposite.setLayoutData(gd);      
+
+        final org.eclipse.swt.widgets.List list = new org.eclipse.swt.widgets.List(listComposite, SWT.SINGLE | SWT.V_SCROLL | SWT.BORDER);
+        gd= new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.FILL_BOTH);
+        gd.heightHint= convertHeightInCharsToPixels(5);
+        gd.widthHint= convertWidthInCharsToPixels(30);
+        list.setLayoutData(gd);
+        mSyntaxStylesViewer = new ListViewer(list);
+        mSyntaxStylesViewer.setContentProvider(new CollectionContentProvider());
+        mSyntaxStylesViewer.setLabelProvider(new LabelProvider(){
+            public String getText(Object element) {
+                if(element instanceof String) {
+                    String name = (String)element;
+                    String label = InstallOptionsPlugin.getResourceString(name.toLowerCase()+".label","");
+                    if(Common.isEmpty(label)) {
+                        label = name;
+                    }
+                    return label;
+                }
+                return super.getText(element);
+            }
+        });
+                        
+        Composite stylesComposite= new Composite(listComposite, SWT.NONE);
+        layout= new GridLayout();
+        layout.marginHeight= 0;
+        layout.marginWidth= 0;
+        layout.numColumns= 2;
+        stylesComposite.setLayout(layout);
+        stylesComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
+        
+        l= new Label(stylesComposite, SWT.LEFT);
+        l.setText(EclipseNSISPlugin.getResourceString("color")); //$NON-NLS-1$
+        gd= new GridData();
+        gd.horizontalAlignment= GridData.BEGINNING;
+        l.setLayoutData(gd);
+
+        final ColorEditor ce= new ColorEditor(stylesComposite);
+        Button foregroundColorButton= ce.getButton();
+        gd= new GridData(GridData.FILL_HORIZONTAL);
+        gd.horizontalAlignment= GridData.BEGINNING;
+        foregroundColorButton.setLayoutData(gd);
+        foregroundColorButton.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                IStructuredSelection sel = (IStructuredSelection)mSyntaxStylesViewer.getSelection();
+                if(!sel.isEmpty()) {
+                    String key= (String)((IStructuredSelection)sel).getFirstElement();
+                    NSISSyntaxStyle style = (NSISSyntaxStyle)mSyntaxStylesMap.get(key);
+                    style.setForeground(ce.getRGB());
+                    mPreviewer.setSyntaxStyles(mSyntaxStylesMap);
+                }
+            }
+        });
+        
+        final Button styleBold = new Button(stylesComposite, SWT.CHECK);
+        styleBold.setText(EclipseNSISPlugin.getResourceString("bold")); //$NON-NLS-1$
+        gd= new GridData(GridData.FILL_HORIZONTAL);
+        gd.horizontalAlignment= GridData.BEGINNING;
+        gd.horizontalSpan= 2;
+        styleBold.setLayoutData(gd);
+        styleBold.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                IStructuredSelection sel = (IStructuredSelection)mSyntaxStylesViewer.getSelection();
+                if(!sel.isEmpty()) {
+                    boolean bold = styleBold.getSelection();
+                    String key= (String)((IStructuredSelection)sel).getFirstElement();
+                    NSISSyntaxStyle style = (NSISSyntaxStyle)mSyntaxStylesMap.get(key);
+                    style.setBold(bold);
+                    mPreviewer.setSyntaxStyles(mSyntaxStylesMap);
+                }
+            }
+        });
+
+        final Button styleItalic = new Button(stylesComposite, SWT.CHECK);
+        styleItalic.setText(EclipseNSISPlugin.getResourceString("italic")); //$NON-NLS-1$
+        gd= new GridData(GridData.FILL_HORIZONTAL);
+        gd.horizontalAlignment= GridData.BEGINNING;
+        gd.horizontalSpan= 2;
+        styleItalic.setLayoutData(gd);
+        styleItalic.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                IStructuredSelection sel = (IStructuredSelection)mSyntaxStylesViewer.getSelection();
+                if(!sel.isEmpty()) {
+                    boolean italic = styleItalic.getSelection();
+                    String key= (String)((IStructuredSelection)sel).getFirstElement();
+                    NSISSyntaxStyle style = (NSISSyntaxStyle)mSyntaxStylesMap.get(key);
+                    style.setItalic(italic);
+                    mPreviewer.setSyntaxStyles(mSyntaxStylesMap);
+                }
+            }
+        });
+
+        mSyntaxStylesViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+            private void enable(boolean flag)
+            {
+                ce.getButton().setEnabled(flag);
+                styleItalic.setEnabled(flag);
+                styleBold.setEnabled(flag);
+            }
+            
+            public void selectionChanged(SelectionChangedEvent event)
+            {
+                ISelection sel = event.getSelection();
+                if(sel.isEmpty()) {
+                    enable(false);
+                }
+                else {
+                    enable(true);
+                    String key= (String)((IStructuredSelection)sel).getFirstElement();
+                    NSISSyntaxStyle style = (NSISSyntaxStyle)mSyntaxStylesMap.get(key);
+                    ce.setRGB(style.getForeground());
+                    styleBold.setSelection(style.isBold());
+                    styleItalic.setSelection(style.isItalic());
+                }
+            }
+        });
+        
+        l= new Label(syntaxComposite, SWT.LEFT);
+        l.setText(EclipseNSISPlugin.getResourceString("preview")); //$NON-NLS-1$
+        gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+        gd.horizontalSpan= 1;
+        l.setLayoutData(gd);
+        
+        Set input = mSyntaxStylesMap.keySet();
+        mSyntaxStylesViewer.setInput(input);
+        if(!Common.isEmptyCollection(input)) {
+            mSyntaxStylesViewer.setSelection(new StructuredSelection(input.iterator().next()));
+        }
+
+        Control previewer= createPreviewer(syntaxComposite);
+        gd= new GridData(GridData.FILL_BOTH);
+        gd.horizontalSpan= 1;
+        gd.widthHint= convertWidthInCharsToPixels(20);
+        gd.heightHint= convertHeightInCharsToPixels(10);
+        previewer.setLayoutData(gd);
+
+        return syntaxComposite;
+    }
+
+    private Control createPreviewer(Composite parent)
+    {
+        mPreviewer= new InstallOptionsSourcePreviewer(parent, null, null, false, SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
+        NSISTextUtility.hookSourceViewer(mPreviewer);
+        SourceViewerConfiguration configuration= new InstallOptionsSourceViewerConfiguration();
+        mPreviewer.configure(configuration);
+        
+        String content= new String(Common.loadContentFromStream(getClass().getResourceAsStream("InstallOptionsPreview.txt"))); //$NON-NLS-1$
+        IDocument document= new Document(content);
+        new InstallOptionsDocumentSetupParticipant().setup(document);
+        mPreviewer.setDocument(document);
+        mPreviewer.setEditable(false);
+        
+        return mPreviewer.getControl();
+    }
+
+    private Composite createDesignEditorTab(Composite parent)
+    {
         parent = new Composite(parent,SWT.NONE);
-        parent.setLayoutData(new GridData(GridData.FILL_BOTH));
+        GridData gd = new GridData(GridData.FILL_BOTH);
+        parent.setLayoutData(gd);
         GridLayout layout = new GridLayout(2,false);
-        layout.marginHeight = 0;
-        layout.marginWidth = 0;
+        layout.marginHeight = 2;
+        layout.marginWidth = 2;
         parent.setLayout(layout);
         
-        Composite composite = parent/*new Composite(parent,SWT.NONE);
-        composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-        layout = new GridLayout(2,false);
-        layout.marginHeight = 0;
-        layout.marginWidth = 0;
-        composite.setLayout(layout)*/;
-
-        createDisplayGroup(composite);
-
-        createDialogSizesGroup(composite);
+        Label l = new Label(parent,SWT.WRAP);
+        l.setText(InstallOptionsPlugin.getResourceString("design.editor.preferences.description"));
+        gd = new GridData(GridData.FILL_HORIZONTAL);
+        gd.horizontalSpan = 2;
+        l.setLayoutData(gd);
         
-        composite = parent/*new Composite(parent,SWT.NONE);
-        composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-        layout = new GridLayout(2,false);
-        layout.marginHeight = 0;
-        layout.marginWidth = 0;
-        composite.setLayout(layout)*/;
-        mSnapGlueSettings = new SnapGlueSettings(composite, mSnapGlueSettingsMap);
-        mGridSettings = new GridSettings(composite,mGridSettingsMap);
+        createDisplayGroup(parent);
+        createDialogSizesGroup(parent);
+        mSnapGlueSettings = new SnapGlueSettings(parent, mSnapGlueSettingsMap);
+        mGridSettings = new GridSettings(parent,mGridSettingsMap);
+
         return parent;
     }
 
@@ -240,7 +457,7 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
     /**
      * @param composite
      */
-    private void createDialogSizesGroup(final Composite composite)
+    private Control createDialogSizesGroup(final Composite composite)
     {
         final Group group = new Group(composite,SWT.SHADOW_ETCHED_IN);
         GridData gridData = new GridData(GridData.FILL_BOTH);
@@ -249,14 +466,17 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
         group.setText(InstallOptionsPlugin.getResourceString("dialog.sizes.group.name")); //$NON-NLS-1$
         
         final Composite composite2 = new Composite(group,SWT.NONE);
-        composite2.setLayoutData(new GridData(GridData.FILL_BOTH));
+        gridData = new GridData(GridData.FILL_BOTH);
+        gridData.widthHint = convertWidthInCharsToPixels(60);
+        composite2.setLayoutData(gridData);
         GridLayout layout = new GridLayout(2,false);
         layout.marginHeight = 0;
         layout.marginWidth = 0;
         composite2.setLayout(layout);
         
         final Table table= new Table(composite2, SWT.CHECK | SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION);
-        table.setLayoutData(new GridData(GridData.FILL_BOTH));
+        gridData = new GridData(GridData.FILL_BOTH);
+        table.setLayoutData(gridData);
         FontData fontData = table.getFont().getFontData()[0];
         fontData.setStyle(SWT.BOLD);
         final Font boldFont = new Font(table.getShell().getDisplay(),fontData);
@@ -412,6 +632,8 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
                 }
             }
         });
+        composite2.layout();
+        return group;
     }
 
     private void updateDialogSizeViewerInput()
@@ -460,7 +682,7 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
     /**
      * @param composite
      */
-    private void createDisplayGroup(Composite composite)
+    private Control createDisplayGroup(Composite composite)
     {
         Group group = new Group(composite,SWT.SHADOW_ETCHED_IN);
         GridData gridData = new GridData(GridData.FILL_VERTICAL|GridData.HORIZONTAL_ALIGN_FILL);
@@ -576,6 +798,7 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
                 }
             });
         }
+        return group;
     }
 
     /* (non-Javadoc)
@@ -627,6 +850,13 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
         mSnapGlueSettingsMap.put(PREFERENCE_SNAP_TO_GUIDES, SNAP_TO_GUIDES_DEFAULT);
         mSnapGlueSettingsMap.put(PREFERENCE_GLUE_TO_GUIDES, GLUE_TO_GUIDES_DEFAULT);
         mSnapGlueSettings.setSettings(mSnapGlueSettingsMap);
+        
+        ISelection sel = (ISelection)mSyntaxStylesViewer.getSelection();
+        mSyntaxStylesMap.clear();
+        InstallOptionsPlugin.getDefault().setSyntaxStyles(mSyntaxStylesMap);
+        mSyntaxStylesViewer.setInput(mSyntaxStylesMap.keySet());
+        mSyntaxStylesViewer.setSelection(sel);
+        
         super.performDefaults();
     }
 

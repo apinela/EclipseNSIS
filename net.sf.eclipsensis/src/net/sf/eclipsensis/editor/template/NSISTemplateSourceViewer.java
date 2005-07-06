@@ -113,7 +113,6 @@ public class NSISTemplateSourceViewer extends NSISSourceViewer
      */
     public void doOperation(int operation)
     {
-        String text = null;
         switch(operation) {
             case INSERT_TEMPLATE_VARIABLE:
             {

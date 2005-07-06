@@ -22,7 +22,6 @@ import org.eclipse.help.IHelpContentProducer;
 public class NSISHelpProducer implements IHelpContentProducer, INSISConstants
 {
     private static final File cHelpCacheLocation = new File(EclipseNSISPlugin.getPluginStateLocation(),PLUGIN_HELP_LOCATION_PREFIX);
-    private NSISHelpURLProvider mHelpURLProvider = NSISHelpURLProvider.getInstance();
     
     /* (non-Javadoc)
      * @see org.eclipse.help.IHelpContentProducer#getInputStream(java.lang.String, java.lang.String, java.util.Locale)

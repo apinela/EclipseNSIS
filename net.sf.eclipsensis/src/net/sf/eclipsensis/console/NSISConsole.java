@@ -26,7 +26,6 @@ import net.sf.eclipsensis.util.WinAPI;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.*;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.*;
 import org.eclipse.jface.util.*;
 import org.eclipse.jface.viewers.*;
@@ -37,7 +36,6 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.ide.IGotoMarker;
 import org.eclipse.ui.part.ViewPart;
@@ -101,7 +99,6 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
     public void propertyChange(PropertyChangeEvent event)
     {
         String property = event.getProperty();
-        boolean changed = false;
         int type = -1;
         if(property.equals(CONSOLE_INFO_COLOR)) {
             mInfoColor = mColorRegistry.get(property);
@@ -242,7 +239,7 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
         
         mClipboard = new Clipboard(mDisplay);
         Table table = new Table(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
-        WorkbenchHelp.setHelp(table,PLUGIN_CONTEXT_PREFIX + "nsis_console_context"); //$NON-NLS-1$
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(table,PLUGIN_CONTEXT_PREFIX + "nsis_console_context"); //$NON-NLS-1$
 		mViewer = new TableViewer(table);
         mMouseListener = new NSISConsoleMouseListener();
         
@@ -416,13 +413,15 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
                         cancelActionDelegate.init(this);
                         cancelActionDelegate.run(this);
                     }
-                    
-                    public void dispose() {
-                        cancelActionDelegate.dispose();
-                    }
                 },EclipseNSISPlugin.getResourceString("cancel.action.name"),EclipseNSISPlugin.getResourceString("cancel.action.tooltip"),EclipseNSISPlugin.getResourceString("cancel.action.icon"),EclipseNSISPlugin.getResourceString("cancel.action.disabled.icon"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
                 null,false);
         cancelActionDelegate.init(mCancelAction);
+        mViewer.getTable().addDisposeListener(new DisposeListener(){
+            public void widgetDisposed(DisposeEvent e)
+            {
+                cancelActionDelegate.dispose();
+            }
+        });
 	}
 
     private void gotoMarker(NSISConsoleLine line)
@@ -467,14 +466,6 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
             }
         });
     }
-
-    private void showMessage(String message) 
-    {
-		MessageDialog.openInformation(
-			mViewer.getControl().getShell(),
-			getTitle(),
-			message);
-	}
 
 	/**
 	 * Passing the focus request to the viewer's control.

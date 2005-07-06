@@ -24,6 +24,10 @@ public interface IInstallOptionsConstants
 
     public static final String INSTALLOPTIONS_DESIGN_EDITOR_ID = InstallOptionsPlugin.getBundleResourceString("%installoptions.design.editor.id"); //$NON-NLS-1$
     public static final String INSTALLOPTIONS_SOURCE_EDITOR_ID = InstallOptionsPlugin.getBundleResourceString("%installoptions.source.editor.id"); //$NON-NLS-1$
+
+    public static final String SWITCH_EDITOR_COMMAND_ID = InstallOptionsPlugin.getBundleResourceString("%switch.editor.command.id"); //$NON-NLS-1$
+    public static final String EDITING_INSTALLOPTIONS_SOURCE_CONTEXT_ID = InstallOptionsPlugin.getBundleResourceString("%editing.installoptions.source.id"); //$NON-NLS-1$
+    public static final String EDITING_INSTALLOPTIONS_DESIGN_CONTEXT_ID = InstallOptionsPlugin.getBundleResourceString("%editing.installoptions.design.id"); //$NON-NLS-1$
     
     public static final String INSTALLOPTIONS_PROBLEM_MARKER_ID = InstallOptionsPlugin.getBundleResourceString("%installoptions.qualified.problem.marker.id"); //$NON-NLS-1$
 
@@ -57,6 +61,13 @@ public interface IInstallOptionsConstants
     public static final String PREFERENCE_GRID_STYLE = "GridStyle"; //$NON-NLS-1$
     public static final String PREFERENCE_ZOOM = "Zoom"; //$NON-NLS-1$
 
+    public static final String PREFERENCE_SYNTAX_STYLES = "SyntaxStyles";
+    public static final String SECTION_STYLE = "SectionStyle";
+    public static final String COMMENT_STYLE = "CommentStyle";    
+    public static final String KEY_STYLE = "KeyStyle";    
+    public static final String KEY_VALUE_DELIM_STYLE = "KeyValueDelimStyle";    
+    public static final String NUMBER_STYLE = "NumberStyle";    
+    
     public static final String QUALIFIED_NAME_PREFIX = PLUGIN_NAME;
     
     public static final QualifiedName FILEPROPERTY_SHOW_GRID = new QualifiedName(QUALIFIED_NAME_PREFIX,PREFERENCE_SHOW_GRID);

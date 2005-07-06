@@ -317,7 +317,6 @@ public class NSISWizardDialogUtil
      */
     public static Combo createCombo(Composite parent, int horizontalSpan, String[] items, String selectedItem, boolean isReadOnly, boolean enabled, MasterSlaveController masterSlaveController)
     {
-        GridLayout layout = (GridLayout)parent.getLayout();
         Combo c = new Combo(parent, SWT.DROP_DOWN | (isReadOnly?SWT.READ_ONLY:SWT.NONE));
         if(!Common.isEmptyArray(items)) {
             for (int i = 0; i < items.length; i++) {

@@ -25,7 +25,6 @@ public class PathRequestFigure extends Figure implements IEditableElementFigure
     public static final int BROWSE_BUTTON_WIDTH;
     public static final int SPACING;
 
-    private FigureCanvas mCanvas;
     private TextFigure mTextFigure;
     private ButtonFigure mButtonFigure;
     
@@ -41,7 +40,6 @@ public class PathRequestFigure extends Figure implements IEditableElementFigure
     public PathRequestFigure(FigureCanvas canvas, IPropertySource propertySource)
     {
         super();
-        mCanvas = canvas;
         setLayoutManager(new XYLayout());
         final Rectangle[] newBounds = calculateBounds((Rectangle)propertySource.getPropertyValue(InstallOptionsWidget.PROPERTY_BOUNDS));
         mTextFigure = new TextFigure(canvas, new PropertySourceWrapper(propertySource){

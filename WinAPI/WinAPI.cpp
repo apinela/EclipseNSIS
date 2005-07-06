@@ -20,7 +20,6 @@ typedef BOOL (_stdcall *_tSetLayeredWindowAttributesProc)(HWND hwnd, // handle t
     DWORD dwFlags        // action
 );
 _tSetLayeredWindowAttributesProc SetLayeredWindowAttributesProc;
-BOOL isUnicode;
 
 JNIEXPORT void JNICALL Java_net_sf_eclipsensis_util_WinAPI_init(JNIEnv *pEnv, jclass jClass)
 {
@@ -28,7 +27,6 @@ JNIEXPORT void JNICALL Java_net_sf_eclipsensis_util_WinAPI_init(JNIEnv *pEnv, jc
     osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
     GetVersionEx (&osvi);
     
-    isUnicode = osvi.dwPlatformId != VER_PLATFORM_WIN32s && osvi.dwPlatformId != VER_PLATFORM_WIN32_WINDOWS;
     if(osvi.dwMajorVersion >= 5) {
         HANDLE user32 = GetModuleHandle("user32");
         SetLayeredWindowAttributesProc = (_tSetLayeredWindowAttributesProc) GetProcAddress((HINSTANCE)user32, "SetLayeredWindowAttributes");
@@ -40,22 +38,12 @@ JNIEXPORT void JNICALL Java_net_sf_eclipsensis_util_WinAPI_init(JNIEnv *pEnv, jc
 
 JNIEXPORT jint JNICALL Java_net_sf_eclipsensis_util_WinAPI_SetWindowLong(JNIEnv *pEnv, jclass jClass, jint hWnd, jint nIndex, jint dwNewLong)
 {
-    if(isUnicode) {
-        return SetWindowLongW((HWND)hWnd, nIndex, (LONG)dwNewLong);
-    }
-    else {
-        return SetWindowLongA((HWND)hWnd, nIndex, (LONG)dwNewLong);
-    }
+    return SetWindowLong((HWND)hWnd, nIndex, (LONG)dwNewLong);
 }
 
 JNIEXPORT jint JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetWindowLong(JNIEnv *pEnv, jclass jClass, jint hWnd, jint nIndex)
 {
-    if(isUnicode) {
-        return GetWindowLongW((HWND)hWnd, nIndex);
-    }
-    else {
-        return GetWindowLongA((HWND)hWnd, nIndex);
-    }
+    return GetWindowLong((HWND)hWnd, nIndex);
 }
 
 JNIEXPORT jboolean JNICALL Java_net_sf_eclipsensis_util_WinAPI_SetLayeredWindowAttributes(JNIEnv *pEnv, jclass jClass, jint hWnd, jint crRed, jint crGreen, jint crBlue, jint bAlpha, jint dwFlags)
@@ -74,26 +62,6 @@ JNIEXPORT jboolean JNICALL Java_net_sf_eclipsensis_util_WinAPI_SetLayeredWindowA
     }
 }
 
-LONG _RegOpenKeyEx(HKEY hKey, LONG lpSubKey, DWORD ulOptions, REGSAM samDesired, PHKEY phkResult)
-{
-    if(isUnicode) {
-        return RegOpenKeyExW(hKey, (LPCWSTR)lpSubKey, ulOptions, samDesired, phkResult);
-    }
-    else {
-        return RegOpenKeyExA(hKey, (LPCTSTR)lpSubKey, ulOptions, samDesired, phkResult);
-    }
-}
-
-LONG _RegQueryValueEx(HKEY hKey, LONG lpValueName, LPDWORD lpReserved, LPDWORD lpType, LPBYTE lpData, LPDWORD lpcbData)
-{
-    if(isUnicode) {
-        return RegQueryValueExW(hKey, (LPCWSTR)lpValueName, lpReserved, lpType, lpData, lpcbData);
-    }
-    else {
-        return RegQueryValueExA(hKey, (LPCTSTR)lpValueName, lpReserved, lpType, lpData, lpcbData);
-    }
-}
-
 JNIEXPORT jstring JNICALL Java_net_sf_eclipsensis_util_WinAPI_RegQueryStrValue(JNIEnv *pEnv, jclass jClass, jint hRootKey, jstring sSubKey, jstring sValue)
 {
     jstring result = NULL;
@@ -101,19 +69,20 @@ JNIEXPORT jstring JNICALL Java_net_sf_eclipsensis_util_WinAPI_RegQueryStrValue(J
     HKEY hKey;
     DWORD type;
     DWORD cbData;
+	LONG rv;
 
     char *str1 = (char *)pEnv->GetStringUTFChars(sSubKey, 0);
     char *str2 = (char *)pEnv->GetStringUTFChars(sValue, 0);
-    if(ERROR_SUCCESS == _RegOpenKeyEx((HKEY)hRootKey,
-                                      (LONG)(_T(str1)),0, KEY_QUERY_VALUE, &hKey)) {
-        if(ERROR_SUCCESS == _RegQueryValueEx(hKey, (LONG)(_T(str2)), 0, &type, NULL, &cbData)) {
+    if(ERROR_SUCCESS == (rv = RegOpenKeyEx((HKEY)hRootKey,
+                                      _T(str1),0, KEY_QUERY_VALUE, &hKey))) {
+        if(ERROR_SUCCESS == (rv = RegQueryValueEx(hKey, _T(str2), 0, &type, NULL, &cbData))) {
             value = (TCHAR *)GlobalAlloc(GPTR, cbData*sizeof(TCHAR));
-            if(ERROR_SUCCESS == _RegQueryValueEx(hKey, (LONG)(_T("")), 0, &type, (LPBYTE)value, &cbData)) {
+            if(ERROR_SUCCESS == (rv = RegQueryValueEx(hKey, _T(str2), 0, &type, (LPBYTE)value, &cbData))) {
                 result = pEnv->NewStringUTF(value);
             }
             GlobalFree(value);
         }
-        RegCloseKey(hKey);
+        rv = RegCloseKey(hKey);
     }
     pEnv->ReleaseStringUTFChars(sSubKey, str1);
     pEnv->ReleaseStringUTFChars(sValue, str2);
@@ -132,12 +101,7 @@ JNIEXPORT jint JNICALL Java_net_sf_eclipsensis_util_WinAPI_HtmlHelp(JNIEnv *pEnv
     if(pszFile) {
         char *str = (char *)pEnv->GetStringUTFChars(pszFile, 0);
         TCHAR *file = _T(str);
-        if(isUnicode) {
-            result = (jint)HtmlHelpW((HWND)hwndCaller, (LPCWSTR)file, (UINT)uCommand, (DWORD)dwData);
-        }
-        else {
-            result = (jint)HtmlHelpA((HWND)hwndCaller, (LPCTSTR)file, (UINT)uCommand, (DWORD)dwData);
-        }
+        result = (jint)HtmlHelp((HWND)hwndCaller, (LPCTSTR)file, (UINT)uCommand, (DWORD)dwData);
         pEnv->ReleaseStringUTFChars(pszFile, str);
     }
     return result;
@@ -246,21 +210,11 @@ JNIEXPORT jobjectArray JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetPluginExpo
 
 JNIEXPORT jint JNICALL Java_net_sf_eclipsensis_util_WinAPI_SendMessage(JNIEnv *pEnv, jclass jClass, jint hWnd, jint msg, jint wParam, jint lParam)
 {
-    if(isUnicode) {
-        return SendMessageW((HWND)hWnd, msg, wParam, lParam);
-    }
-    else {
-        return SendMessageA((HWND)hWnd, msg, wParam, lParam);
-    }
+    return SendMessage((HWND)hWnd, msg, wParam, lParam);
 }
 
 JNIEXPORT jint JNICALL Java_net_sf_eclipsensis_util_WinAPI_CallWindowProc(JNIEnv *pEnv, jclass jClass, jint lpWndProc, jint hWnd, jint Msg, jint wParam, jint lParam)
 {
-    if(isUnicode) {
-        return CallWindowProcW((WNDPROC)lpWndProc, (HWND)hWnd, Msg, wParam, lParam);
-    }
-    else {
-        return CallWindowProcA((WNDPROC)lpWndProc, (HWND)hWnd, Msg, wParam, lParam);
-    }
+    return CallWindowProc((WNDPROC)lpWndProc, (HWND)hWnd, Msg, wParam, lParam);
 }
 

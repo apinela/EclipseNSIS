@@ -130,7 +130,6 @@ public class EditableComboBoxCellEditor extends CellEditor
 
             public void widgetSelected(SelectionEvent event)
             {
-                System.out.println(event.stateMask);
                 computeSelection();
                 if(isAutoApplyEditorValue()) {
                     int n = WinAPI.SendMessage(mCombo.handle,WinAPI.CB_GETDROPPEDSTATE,0,0);

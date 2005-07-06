@@ -20,7 +20,6 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.texteditor.StatusLineContributionItem;
 
@@ -28,7 +27,6 @@ public class InstallOptionsXYStatusContribution extends StatusLineContributionIt
 {
     private InstallOptionsDesignEditor mEditor = null;
     private Viewport mViewport;
-    private Composite mComposite;
     private XYStatusMouseListener mMouseListener = new XYStatusMouseListener();
     private FigureCanvas mFigureCanvas;
     private int mKey;

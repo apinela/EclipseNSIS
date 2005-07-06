@@ -737,7 +737,6 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
         private int mFadeOutDelay = 0;
         private Display mDisplay;
         private Shell mShell = null;
-        private GC mGC = null;
         private int mAlpha;
         private long mResolution;
         private Clip mClip = null;

@@ -126,7 +126,7 @@ public class NSISTemplateCompletionProcessor extends TemplateCompletionProcessor
      * @see org.eclipse.jface.text.templates.TemplateCompletionProcessor#createProposal(org.eclipse.jface.text.templates.Template, org.eclipse.jface.text.templates.TemplateContext, org.eclipse.jface.text.Region, int)
      */
     protected ICompletionProposal createProposal(Template template,
-            TemplateContext context, Region region, int relevance)
+            TemplateContext context, IRegion region, int relevance)
     {
         return new NSISTemplateProposal(template, context, region, getImage(template), relevance);
     }

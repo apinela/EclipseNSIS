@@ -10,15 +10,21 @@
 package net.sf.eclipsensis.installoptions;
 
 import java.text.MessageFormat;
+import java.util.*;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import net.sf.eclipsensis.editor.text.NSISSyntaxStyle;
+import net.sf.eclipsensis.editor.text.NSISTextUtility;
 import net.sf.eclipsensis.installoptions.util.TypeConverter;
+import net.sf.eclipsensis.util.*;
 import net.sf.eclipsensis.util.CompoundResourceBundle;
 import net.sf.eclipsensis.util.ImageManager;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -64,11 +70,16 @@ public class InstallOptionsPlugin extends AbstractUIPlugin implements IInstallOp
      */
     public static String getResourceString(String key) 
     {
+        return getResourceString(key, key);
+    }
+
+    public static String getResourceString(String key, String defaultValue)
+    {
         ResourceBundle bundle = InstallOptionsPlugin.getDefault().getResourceBundle();
         try {
-            return (bundle != null) ? bundle.getString(key) : key;
+            return (bundle != null) ? bundle.getString(key) : defaultValue;
         } catch (MissingResourceException e) {
-            return key;
+            return defaultValue;
         }
     }
     
@@ -123,6 +134,39 @@ public class InstallOptionsPlugin extends AbstractUIPlugin implements IInstallOp
         if(isZoomSupported()) {
             initializePreference(store,PREFERENCE_ZOOM,ZOOM_DEFAULT);
         }
+        
+        
+        String preference = store.getString(IInstallOptionsConstants.PREFERENCE_SYNTAX_STYLES);
+        Map map;
+        if(!Common.isEmpty(preference)) {
+            map = NSISTextUtility.parseSyntaxStylesMap(preference); 
+        }
+        else {
+            map = new LinkedHashMap();
+        }
+        boolean changed = setSyntaxStyles(map);
+        if(changed) {
+            store.putValue(IInstallOptionsConstants.PREFERENCE_SYNTAX_STYLES, NSISTextUtility.flattenSyntaxStylesMap(map));
+        }
+    }
+
+    public boolean setSyntaxStyles(Map map)
+    {
+        boolean changed = setSyntaxStyle(map,IInstallOptionsConstants.COMMENT_STYLE,new NSISSyntaxStyle(ColorManager.GREY,null,false,true));
+        changed |= setSyntaxStyle(map,IInstallOptionsConstants.SECTION_STYLE,new NSISSyntaxStyle(ColorManager.TEAL,null,false,false));
+        changed |= setSyntaxStyle(map,IInstallOptionsConstants.KEY_STYLE,new NSISSyntaxStyle(Display.getDefault().getSystemColor(SWT.COLOR_BLUE).getRGB(),null,false,false));
+        changed |= setSyntaxStyle(map,IInstallOptionsConstants.KEY_VALUE_DELIM_STYLE,new NSISSyntaxStyle(Display.getDefault().getSystemColor(SWT.COLOR_RED).getRGB(),null,false,false));
+        changed |= setSyntaxStyle(map,IInstallOptionsConstants.NUMBER_STYLE,new NSISSyntaxStyle(ColorManager.CHOCOLATE,null,false,false));
+        return changed;
+    }
+    
+    private boolean setSyntaxStyle(Map map, String name, NSISSyntaxStyle style)
+    {
+        if(!map.containsKey(name) || map.get(name) == null) {
+            map.put(name,style);
+            return true;
+        }
+        return false;
     }
 
     public void start(BundleContext context) throws Exception

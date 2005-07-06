@@ -116,82 +116,12 @@ public class NSISPreferences extends NSISSettings implements IPropertyChangeList
         setUseEclipseHelp(mPreferenceStore.getBoolean(USE_ECLIPSE_HELP));
     }
 
-    private void initializeEditorPreference(String name, IPreferenceStore defaultStore, Class type)
-    {
-        if(type.equals(Integer.class)) {
-            mPreferenceStore.setDefault(name,defaultStore.getInt(name));
-        }
-        else if(type.equals(Long.class)) {
-            mPreferenceStore.setDefault(name,defaultStore.getLong(name));
-        }
-        else if(type.equals(Float.class)) {
-            mPreferenceStore.setDefault(name,defaultStore.getFloat(name));
-        }
-        else if(type.equals(Double.class)) {
-            mPreferenceStore.setDefault(name,defaultStore.getDouble(name));
-        }
-        else if(type.equals(Boolean.class)) {
-            mPreferenceStore.setDefault(name,defaultStore.getBoolean(name));
-        }
-        else {
-            mPreferenceStore.setDefault(name,defaultStore.getString(name));
-        }
-        if(!mPreferenceStore.contains(name)) {
-            mPreferenceStore.setToDefault(name);
-        }
-    }
-
     private void initializeEditorPreferences()
     {
-        IPreferenceStore defaultStore = EditorsUI.getPreferenceStore();
-        initializeEditorPreference(CURRENT_LINE_COLOR,defaultStore,String.class);
-        initializeEditorPreference(CURRENT_LINE,defaultStore,Boolean.class);
-
-        initializeEditorPreference(TAB_WIDTH,defaultStore,Integer.class);
-
-        initializeEditorPreference(PRINT_MARGIN_COLOR,defaultStore,String.class);
-        initializeEditorPreference(PRINT_MARGIN_COLUMN,defaultStore,Integer.class);
-        initializeEditorPreference(PRINT_MARGIN,defaultStore,Boolean.class);
-        
-        initializeEditorPreference(OVERVIEW_RULER,defaultStore,Boolean.class);
-        
-        initializeEditorPreference(LINE_NUMBER_RULER_COLOR,defaultStore,String.class);
-        initializeEditorPreference(LINE_NUMBER_RULER,defaultStore,Boolean.class);
-        initializeEditorPreference(USE_CUSTOM_CARETS,defaultStore,Boolean.class);
-        initializeEditorPreference(WIDE_CARET,defaultStore,Boolean.class);
-        
-        initializeEditorPreference(SELECTION_FOREGROUND_COLOR,defaultStore,String.class);
-        initializeEditorPreference(SELECTION_FOREGROUND_DEFAULT_COLOR,defaultStore,Boolean.class);
-        initializeEditorPreference(SELECTION_BACKGROUND_COLOR,defaultStore,String.class);
-        initializeEditorPreference(SELECTION_BACKGROUND_DEFAULT_COLOR,defaultStore,Boolean.class);
-
         initializePreference(MATCHING_DELIMITERS,Boolean.TRUE);
         initializePreference(MATCHING_DELIMITERS_COLOR,StringConverter.asString(new RGB(128,128,128)));
 
         initializePreference(USE_SPACES_FOR_TABS,Boolean.TRUE);
-        
-        String[] linkedModelPrefs = {"slave.","focus.","master.","exit."}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-        String[] linkedModelPrefSuffixes = { "text","text.style","color"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        for (int i = 0; i < linkedModelPrefs.length; i++) {
-            String prefix = "linked."+linkedModelPrefs[i]; //$NON-NLS-1$
-            for (int j = 0; j < linkedModelPrefSuffixes.length; j++) {
-                String preference = prefix + linkedModelPrefSuffixes[j];
-                mInheritedPreferences.add(preference);
-                initializePreference(preference, defaultStore.getString(preference));
-            }
-        }
-        
-        String[] preferencePrefixes = {"error", "warning","info","task"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-        String[] preferenceSuffixes = {"", "Color","InOverviewRuler","InVerticalRuler","Highlighting"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-        for (int i = 0; i < preferencePrefixes.length; i++) {
-            String prefix = preferencePrefixes[i] + "Indication"; //$NON-NLS-1$
-            for (int j = 0; j < preferenceSuffixes.length; j++) {
-                String preference = prefix + preferenceSuffixes[j];
-                mInheritedPreferences.add(preference);
-                initializePreference(preference, defaultStore.getString(preference));
-            }
-        }
-        defaultStore.addPropertyChangeListener(this);
     }
     
     public void propertyChange(PropertyChangeEvent event)

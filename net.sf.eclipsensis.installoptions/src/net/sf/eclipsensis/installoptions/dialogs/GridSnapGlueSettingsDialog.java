@@ -27,8 +27,6 @@ public class GridSnapGlueSettingsDialog extends Dialog implements IInstallOption
     private GraphicalViewer mViewer;
     private HashMap mGridSettingsMap = new HashMap();;
     private HashMap mSnapGlueSettingsMap = new HashMap();
-    private GridSettings mGridSettings;
-    private SnapGlueSettings mSnapGlueSettings;;
     
     /**
      * @param parentShell
@@ -95,8 +93,8 @@ public class GridSnapGlueSettingsDialog extends Dialog implements IInstallOption
     {
         Composite composite = (Composite)super.createDialogArea(parent);
 
-        mGridSettings = new GridSettings(composite,mGridSettingsMap);
-        mSnapGlueSettings = new SnapGlueSettings(composite,mSnapGlueSettingsMap);
+        new GridSettings(composite,mGridSettingsMap);
+        new SnapGlueSettings(composite,mSnapGlueSettingsMap);
         
         initializeDialogUnits(composite);
         GridData data = (GridData)composite.getLayoutData();

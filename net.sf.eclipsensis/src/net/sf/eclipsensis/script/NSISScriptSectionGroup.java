@@ -139,7 +139,7 @@ public class NSISScriptSectionGroup extends AbstractNSISScriptElementContainer
             throws InvalidNSISScriptElementException
     {
         if(element != null) {
-            if(element instanceof NSISScriptSection && !((NSISScriptSection)element).getName().equalsIgnoreCase(INSISConstants.UNINSTALL_SECTION_NAME)) { //$NON-NLS-1$
+            if(element instanceof NSISScriptSectionGroup || (element instanceof NSISScriptSection && !((NSISScriptSection)element).getName().equalsIgnoreCase(INSISConstants.UNINSTALL_SECTION_NAME))) { //$NON-NLS-1$
                 return;
             }
         }

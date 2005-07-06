@@ -14,23 +14,20 @@ import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.editor.NSISDocumentSetupParticipant;
 import net.sf.eclipsensis.editor.template.NSISTemplateSourceViewer;
 import net.sf.eclipsensis.editor.template.NSISTemplateSourceViewerConfiguration;
-import net.sf.eclipsensis.settings.INSISPreferenceConstants;
+import net.sf.eclipsensis.editor.text.NSISTextUtility;
 
-import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.resource.FontRegistry;
-import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.text.templates.Template;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.editors.text.EditorsUI;
+import org.eclipse.ui.texteditor.ChainedPreferenceStore;
 import org.eclipse.ui.texteditor.templates.TemplatePreferencePage;
 
 public class NSISTemplatePreferencePage extends TemplatePreferencePage
@@ -55,7 +52,7 @@ public class NSISTemplatePreferencePage extends TemplatePreferencePage
      */
     public void createControl(Composite parent) {
         super.createControl(parent);
-        WorkbenchHelp.setHelp(getControl(),INSISConstants.PLUGIN_CONTEXT_PREFIX+"nsis_templateprefs_context"); //$NON-NLS-1$
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),INSISConstants.PLUGIN_CONTEXT_PREFIX+"nsis_templateprefs_context"); //$NON-NLS-1$
     }
 
     /*
@@ -80,22 +77,8 @@ public class NSISTemplatePreferencePage extends TemplatePreferencePage
     protected SourceViewer createViewer(Composite parent)
     {
         mViewer= new NSISTemplateSourceViewer(parent, null, null, false, SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
-        SourceViewerConfiguration configuration= new NSISTemplateSourceViewerConfiguration(getPreferenceStore());
-        final FontRegistry fontRegistry = JFaceResources.getFontRegistry();
-        mViewer.getTextWidget().setFont(fontRegistry.get(INSISPreferenceConstants.EDITOR_FONT));
-        final IPropertyChangeListener propertyChangeListener = new IPropertyChangeListener() {
-            public void propertyChange(PropertyChangeEvent event)
-            {
-                mViewer.getTextWidget().setFont(fontRegistry.get(INSISPreferenceConstants.EDITOR_FONT));
-            }
-        };
-        fontRegistry.addListener(propertyChangeListener);
-        mViewer.getTextWidget().addDisposeListener(new DisposeListener() {
-            public void widgetDisposed(DisposeEvent e)
-            {
-                fontRegistry.removeListener(propertyChangeListener);
-            }
-        });
+        NSISTextUtility.hookSourceViewer(mViewer);
+        SourceViewerConfiguration configuration= new NSISTemplateSourceViewerConfiguration(new ChainedPreferenceStore(new IPreferenceStore[]{getPreferenceStore(), EditorsUI.getPreferenceStore()}));
         mViewer.configure(configuration);
         
         IDocument document= new Document();
@@ -106,14 +89,15 @@ public class NSISTemplatePreferencePage extends TemplatePreferencePage
         return mViewer;
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.texteditor.templates.TemplatePreferencePage#createTemplateEditDialog(org.eclipse.jface.text.templates.Template, boolean, boolean)
-     */
-    protected Dialog createTemplateEditDialog(Template template, boolean edit, boolean isNameModifiable)
+    protected Template editTemplate(Template template, boolean edit, boolean isNameModifiable)
     {
-        return new NSISTemplateEditorDialog(getShell(),template, edit, isNameModifiable);
+        NSISTemplateEditorDialog dialog= new NSISTemplateEditorDialog(getShell(), template, edit, isNameModifiable, getContextTypeRegistry());
+        if (dialog.open() == Window.OK) {
+            return dialog.getTemplate();
+        }
+        return null;
     }
-    
+
     /*
      * @see org.eclipse.jface.preference.IPreferencePage#performOk()
      */

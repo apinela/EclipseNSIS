@@ -134,13 +134,4 @@ public class INIKeyValue extends INILine
     {
         return new StringBuffer("\"").append(text).append("\"").toString(); //$NON-NLS-1$ //$NON-NLS-2$
     }
-    
-    private String escape(String text)
-    {
-        if(text != null && text.length() > 0) {
-            
-            char[] chars = text.toCharArray();
-        }
-        return text;
-    }
 }

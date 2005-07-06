@@ -29,7 +29,6 @@ public class BeginningOfLineRule extends SingleLineRule
 
     protected IToken doEvaluate(ICharacterScanner scanner, boolean resume)
     {
-        int o = ((IInstallOptionsScanner)scanner).getOffset();
         try {
             int n = 0;
             if(!resume) {

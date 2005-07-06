@@ -371,61 +371,31 @@
          description="%insert.template.description"
          id="net.sf.eclipsensis.commands.NSISInsertTemplate"
          categoryId="net.sf.eclipsensis.NSISCategory"/>
-      <keyBinding
-          keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
-          commandId="net.sf.eclipsensis.commands.NSISInsertTemplate"
-          contextId="net.sf.eclipsensis.NSISEditorScope"
-          keySequence="%insert.template.keysequence"/>
       <command
          name="%goto.help.name"
          description="%goto.help.description"
          id="net.sf.eclipsensis.commands.NSISGotoHelp"
          categoryId="net.sf.eclipsensis.NSISCategory"/>
-      <keyBinding
-          keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
-          commandId="net.sf.eclipsensis.commands.NSISGotoHelp"
-          contextId="net.sf.eclipsensis.NSISEditorScope"
-          keySequence="%goto.help.keysequence"/>
       <command
          name="%sticky.help.name"
          description="%sticky.help.description"
          id="net.sf.eclipsensis.commands.NSISStickyHelp"
          categoryId="net.sf.eclipsensis.NSISCategory"/>
-      <keyBinding
-          keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
-          commandId="net.sf.eclipsensis.commands.NSISStickyHelp"
-          contextId="net.sf.eclipsensis.NSISEditorScope"
-          keySequence="%sticky.help.keysequence"/>
       <command
          name="%insert.file.name"
          description="%insert.file.description"
          id="net.sf.eclipsensis.commands.NSISInsertFile"
          categoryId="net.sf.eclipsensis.NSISCategory"/>
-      <keyBinding
-          keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
-          commandId="net.sf.eclipsensis.commands.NSISInsertFile"
-          contextId="net.sf.eclipsensis.NSISEditorScope"
-          keySequence="%insert.file.keysequence"/>
       <command
          name="%insert.directory.name"
          description="%insert.directory.description"
          id="net.sf.eclipsensis.commands.NSISInsertDirectory"
          categoryId="net.sf.eclipsensis.NSISCategory"/>
-      <keyBinding
-          keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
-          commandId="net.sf.eclipsensis.commands.NSISInsertDirectory"
-          contextId="net.sf.eclipsensis.NSISEditorScope"
-          keySequence="%insert.directory.keysequence"/>
       <command
          name="%insert.color.name"
          description="%insert.color.description"
          id="net.sf.eclipsensis.commands.NSISInsertColor"
          categoryId="net.sf.eclipsensis.NSISCategory"/>
-      <keyBinding
-          keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
-          commandId="net.sf.eclipsensis.commands.NSISInsertColor"
-          contextId="net.sf.eclipsensis.NSISEditorScope"
-          keySequence="%insert.color.keysequence"/>
       <command
          name="%tabs.to.spaces.name"
          description="%tabs.to.spaces.description"
@@ -436,71 +406,104 @@
          description="%toggle.comment.description"
          id="net.sf.eclipsensis.commands.NSISToggleComment"
          categoryId="net.sf.eclipsensis.NSISCategory"/>
-      <keyBinding
-          keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
-          commandId="net.sf.eclipsensis.commands.NSISToggleComment"
-          contextId="net.sf.eclipsensis.NSISEditorScope"
-          keySequence="%toggle.comment.keysequence"/>
       <command
          name="%add.block.comment.name"
          description="%add.block.comment.description"
          id="net.sf.eclipsensis.commands.NSISAddBlockComment"
          categoryId="net.sf.eclipsensis.NSISCategory"/>
-      <keyBinding
-          keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
-          commandId="net.sf.eclipsensis.commands.NSISAddBlockComment"
-          contextId="net.sf.eclipsensis.NSISEditorScope"
-          keySequence="%add.block.comment.keysequence"/>
       <command
          name="%remove.block.comment.name"
          description="%remove.block.comment.description"
          id="net.sf.eclipsensis.commands.NSISRemoveBlockComment"
          categoryId="net.sf.eclipsensis.NSISCategory"/>
-      <keyBinding
-          keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
-          commandId="net.sf.eclipsensis.commands.NSISRemoveBlockComment"
-          contextId="net.sf.eclipsensis.NSISEditorScope"
-          keySequence="%remove.block.comment.keysequence"/>
       <command
          name="%compile.name"
          description="%compile.description"
          id="net.sf.eclipsensis.commands.NSISCompile"
          categoryId="net.sf.eclipsensis.NSISCategory"/>
-      <keyBinding
-          keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
-          commandId="net.sf.eclipsensis.commands.NSISCompile"
-          contextId="net.sf.eclipsensis.NSISEditorScope"
-          keySequence="%compile.keysequence"/>
       <command
          name="%compile.test.name"
          description="%compile.test.description"
          id="net.sf.eclipsensis.commands.NSISCompileTest"
          categoryId="net.sf.eclipsensis.NSISCategory"/>
-      <keyBinding
-          keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
-          commandId="net.sf.eclipsensis.commands.NSISCompileTest"
-          contextId="net.sf.eclipsensis.NSISEditorScope"
-          keySequence="%compile.test.keysequence"/>
       <command
          name="%test.name"
          description="%test.description"
          id="net.sf.eclipsensis.commands.NSISTest"
          categoryId="net.sf.eclipsensis.NSISCategory"/>
-      <keyBinding
-          keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
-          commandId="net.sf.eclipsensis.commands.NSISTest"
-          contextId="net.sf.eclipsensis.NSISEditorScope"
-          keySequence="%test.keysequence"/>
       <command
          name="%cancel.name"
          description="%cancel.description"
          id="net.sf.eclipsensis.commands.NSISCancel"
          categoryId="net.sf.eclipsensis.NSISCategory"/>
-      <keyBinding
-          keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
+   </extension>
+   <extension
+         point="org.eclipse.ui.bindings">
+      <key
+          schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+          commandId="net.sf.eclipsensis.commands.NSISInsertTemplate"
+          contextId="net.sf.eclipsensis.NSISEditorScope"
+          sequence="%insert.template.keysequence"/>
+      <key
+          schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+          commandId="net.sf.eclipsensis.commands.NSISGotoHelp"
+          contextId="net.sf.eclipsensis.NSISEditorScope"
+          sequence="%goto.help.keysequence"/>
+      <key
+          schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+          commandId="net.sf.eclipsensis.commands.NSISStickyHelp"
+          contextId="net.sf.eclipsensis.NSISEditorScope"
+          sequence="%sticky.help.keysequence"/>
+      <key
+          schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+          commandId="net.sf.eclipsensis.commands.NSISInsertFile"
+          contextId="net.sf.eclipsensis.NSISEditorScope"
+          sequence="%insert.file.keysequence"/>
+      <key
+          schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+          commandId="net.sf.eclipsensis.commands.NSISInsertDirectory"
+          contextId="net.sf.eclipsensis.NSISEditorScope"
+          sequence="%insert.directory.keysequence"/>
+      <key
+          schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+          commandId="net.sf.eclipsensis.commands.NSISInsertColor"
+          contextId="net.sf.eclipsensis.NSISEditorScope"
+          sequence="%insert.color.keysequence"/>
+      <key
+          schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+          commandId="net.sf.eclipsensis.commands.NSISToggleComment"
+          contextId="net.sf.eclipsensis.NSISEditorScope"
+          sequence="%toggle.comment.keysequence"/>
+      <key
+          schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+          commandId="net.sf.eclipsensis.commands.NSISAddBlockComment"
+          contextId="net.sf.eclipsensis.NSISEditorScope"
+          sequence="%add.block.comment.keysequence"/>
+      <key
+          schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+          commandId="net.sf.eclipsensis.commands.NSISRemoveBlockComment"
+          contextId="net.sf.eclipsensis.NSISEditorScope"
+          sequence="%remove.block.comment.keysequence"/>
+      <key
+          schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+          commandId="net.sf.eclipsensis.commands.NSISCompile"
+          contextId="net.sf.eclipsensis.NSISEditorScope"
+          sequence="%compile.keysequence"/>
+      <key
+          schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+          commandId="net.sf.eclipsensis.commands.NSISCompileTest"
+          contextId="net.sf.eclipsensis.NSISEditorScope"
+          sequence="%compile.test.keysequence"/>
+      <key
+          schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+          commandId="net.sf.eclipsensis.commands.NSISTest"
+          contextId="net.sf.eclipsensis.NSISEditorScope"
+          sequence="%test.keysequence"/>
+      <key
+          schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
           commandId="net.sf.eclipsensis.commands.NSISCancel"
           contextId="net.sf.eclipsensis.NSISEditorScope"
-          keySequence="%cancel.keysequence"/>
+          sequence="%cancel.keysequence"/>
    </extension>
    <extension
          point="org.eclipse.help.contexts">
@@ -530,6 +533,7 @@
             icon="icons/template.gif"
             description="%function.description"
             contextTypeId="net.sf.eclipsensis.editor.template.NSISTemplateContextType"
+            autoinsert="false"
             id="net.sf.eclipsensis.editor.template.nsis.Function">
          <pattern>Function %name%&#13;&#10;FunctionEnd&#13;&#10;</pattern>
       </template>
@@ -538,6 +542,7 @@
             icon="icons/template.gif"
             description="%section.description"
             contextTypeId="net.sf.eclipsensis.editor.template.NSISTemplateContextType"
+            autoinsert="false"
             id="net.sf.eclipsensis.editor.template.nsis.Section">
          <pattern>Section %name%&#13;&#10;SectionEnd&#13;&#10;</pattern>
       </template>
@@ -546,6 +551,7 @@
             icon="icons/template.gif"
             description="%page.description"
             contextTypeId="net.sf.eclipsensis.editor.template.NSISTemplateContextType"
+            autoinsert="false"
             id="net.sf.eclipsensis.editor.template.nsis.Page">
          <pattern>Page %pagetype%&#13;&#10;</pattern>
       </template>
@@ -554,6 +560,7 @@
             icon="icons/template.gif"
             description="%pageex.description"
             contextTypeId="net.sf.eclipsensis.editor.template.NSISTemplateContextType"
+            autoinsert="false"
             id="net.sf.eclipsensis.editor.template.nsis.PageEx">
          <pattern>PageEx %pagetype%&#13;&#10;PageExEnd&#13;&#10;</pattern>
       </template>
@@ -615,15 +622,6 @@
                 %nsis.console.theme.category.description
              </description>
       </themeElementCategory>
-      <fontDefinition
-          label="%nsis.editor.font.name"
-          defaultsTo="org.eclipse.jface.textfont"
-          categoryId="net.sf.eclipsensis.themes.NSIS"
-          id="net.sf.eclipsensis.editor.Font">
-          <description>
-             %nsis.editor.font.description
-          </description>
-      </fontDefinition>
       <fontDefinition
           label="%nsis.console.font.name"
           defaultsTo="org.eclipse.jface.textfont"

@@ -21,7 +21,7 @@ import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.settings.NSISPreferences;
 import net.sf.eclipsensis.util.*;
 
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListener
 {
@@ -312,7 +312,7 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
             }
         }
         else {
-            WorkbenchHelp.displayHelpResource(url);
+            PlatformUI.getWorkbench().getHelpSystem().displayHelpResource(url);
         }
     }
     
@@ -329,7 +329,7 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
             }
         }
         else {
-            WorkbenchHelp.displayHelpResource(url);
+            PlatformUI.getWorkbench().getHelpSystem().displayHelpResource(url);
         }
     }
 

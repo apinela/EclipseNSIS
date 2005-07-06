@@ -10,7 +10,6 @@
 package net.sf.eclipsensis.editor.outline;
 
 import java.util.Iterator;
-import java.util.Stack;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
@@ -220,7 +219,6 @@ public class NSISOutlineContentProvider implements ITreeContentProvider, INSISCo
         ITypedRegion[][] nsisLines = NSISTextUtility.getNSISLines(document, partitions);
         if(!Common.isEmptyArray(nsisLines)) {
             NSISOutlineElement rootElement = new NSISOutlineElement(ROOT,null);
-            Stack parents = new Stack();
             NSISOutlineElement current = rootElement;
             for (int i = 0; i < nsisLines.length; i++) {
                 NSISOutlineData nsisToken = null;
@@ -432,7 +430,7 @@ public class NSISOutlineContentProvider implements ITreeContentProvider, INSISCo
                                                      new int[]{SECTION});
                                 break;
                             case SECTIONGROUP:
-                                current = openElement(current, element, new int[]{SECTION,SECTIONGROUP,FUNCTION});
+                                current = openElement(current, element, new int[]{SECTION,FUNCTION});
                                 break;
                             case SECTIONGROUPEND:
                                 current = closeElement(document, current, element, 
@@ -571,11 +569,6 @@ public class NSISOutlineContentProvider implements ITreeContentProvider, INSISCo
     private boolean positionContains(Position position, int offset, int length)
     {
         return (offset >= position.getOffset() && offset+length <= position.getOffset()+position.getLength());
-    }
-
-    private boolean positionContains(Position position, Position position2)
-    {
-        return positionContains(position, position2.getOffset(), position2.getLength());
     }
 
     public NSISOutlineElement findElement(int offset, int length)

@@ -21,10 +21,8 @@ import net.sf.eclipsensis.installoptions.model.commands.CutCommand;
 import org.eclipse.gef.EditDomain;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.ui.actions.SelectionAction;
-import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.internal.WorkbenchImages;
 
 public class CutAction extends SelectionAction
 {
@@ -43,12 +41,13 @@ public class CutAction extends SelectionAction
     protected void init() 
     {
         super.init();
+        ISharedImages sharedImages = PlatformUI.getWorkbench().getSharedImages();
         setText(InstallOptionsPlugin.getResourceString("cut.action.name")); //$NON-NLS-1$
         setToolTipText(InstallOptionsPlugin.getResourceString("cut.action.tooltip")); //$NON-NLS-1$
         setId(ActionFactory.CUT.getId());
-        setHoverImageDescriptor(WorkbenchImages.getImageDescriptor(ISharedImages.IMG_TOOL_CUT));
-        setImageDescriptor(WorkbenchImages.getImageDescriptor(ISharedImages.IMG_TOOL_CUT));
-        setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(ISharedImages.IMG_TOOL_CUT_DISABLED));
+        setHoverImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_CUT));
+        setImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_CUT));
+        setDisabledImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_CUT_DISABLED));
         setEnabled(false);
     }
 

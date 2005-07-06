@@ -57,6 +57,7 @@ public class InstallOptionsDesignMenuProvider extends org.eclipse.gef.ContextMen
         addContextMenu(manager, ActionFactory.COPY.getId(), GEFActionConstants.GROUP_EDIT);
         addContextMenu(manager, ActionFactory.PASTE.getId(), GEFActionConstants.GROUP_EDIT);
         addContextMenu(manager, ActionFactory.DELETE.getId(), GEFActionConstants.GROUP_EDIT);
+        addContextMenu(manager, ToggleEnablementAction.ID, GEFActionConstants.GROUP_EDIT);
         
         List selected = getViewer().getSelectedEditParts();
         if(selected.size() == 1) {
@@ -95,7 +96,7 @@ public class InstallOptionsDesignMenuProvider extends org.eclipse.gef.ContextMen
         }
 
         // Alignment Actions
-        MenuManager submenu = new MenuManager(InstallOptionsPlugin.getResourceString("alignment.submenu.name")); //$NON-NLS-1$
+        MenuManager submenu = new MenuManager(InstallOptionsPlugin.getResourceString("align.submenu.name")); //$NON-NLS-1$
 
         addContextMenu(submenu, GEFActionConstants.ALIGN_LEFT, null);
         addContextMenu(submenu, GEFActionConstants.ALIGN_CENTER, null);
@@ -110,7 +111,7 @@ public class InstallOptionsDesignMenuProvider extends org.eclipse.gef.ContextMen
             manager.appendToGroup(GEFActionConstants.GROUP_REST, submenu);
         }
 
-        submenu = new MenuManager(InstallOptionsPlugin.getResourceString("resize.submenu.name")); //$NON-NLS-1$
+        submenu = new MenuManager(InstallOptionsPlugin.getResourceString("match.submenu.name")); //$NON-NLS-1$
         addContextMenu(submenu, GEFActionConstants.MATCH_WIDTH, null);
         addContextMenu(submenu, GEFActionConstants.MATCH_HEIGHT, null);
 

@@ -304,6 +304,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
         setInput(input);
         getCommandStack().addCommandStackListener(this);
 //        getSite().getWorkbenchWindow().getSelectionService().addSelectionListener(this);
+        site.getKeyBindingService().setScopes(new String[]{EDITING_INSTALLOPTIONS_DESIGN_CONTEXT_ID});
         initializeActionRegistry();
     }
 
@@ -606,7 +607,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
                 IDocumentProvider provider = input.getDocumentProvider();
                 if(provider != null) {
                     IDocument doc = provider.getDocument(input);
-                    INIFile iniFile = updateDocument(doc);
+                    updateDocument(doc);
                     performSave(input, provider, true, progressMonitor);
                 }
             }
@@ -848,12 +849,15 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
     protected void createActions()
     {
         ActionRegistry registry = getActionRegistry();
-
-        ToggleDialogSizeVisibilityAction dialogAction = new ToggleDialogSizeVisibilityAction(this);
-        registry.registerAction(dialogAction);
-        
         IAction action;
         
+        action = new ToggleDialogSizeVisibilityAction(this);
+        registry.registerAction(action);
+        
+        action = new ToggleEnablementAction(this);
+        registry.registerAction(action);
+        getSelectionActions().add(action.getId());
+
         action = new Action(InstallOptionsPlugin.getResourceString("grid.snap.glue.action.name")) { //$NON-NLS-1$
             public void run()
             {
@@ -966,7 +970,9 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
         getSelectionActions().add(action.getId());
         
         action = new SwitchEditorAction(this, INSTALLOPTIONS_SOURCE_EDITOR_ID);
+        action.setActionDefinitionId(IInstallOptionsConstants.SWITCH_EDITOR_COMMAND_ID);
         registry.registerAction(action);
+        getEditorSite().getKeyBindingService().registerAction(action);
     }
 
     /*
@@ -1005,7 +1011,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
     public boolean isSaveOnCloseNeeded()
     {
         InstallOptionsEditorInput input = (InstallOptionsEditorInput)getEditorInput();
-        return (input != null && input.getDocumentProvider().canSaveDocument(input)) || (getInstallOptionsDialog() != null && getInstallOptionsDialog().canUpdateINIFile());
+        return (input != null && input.getDocumentProvider().canSaveDocument(input)) || getCommandStack().isDirty();
     }
 
     private Object loadPreference(String name, TypeConverter converter, Object defaultValue)

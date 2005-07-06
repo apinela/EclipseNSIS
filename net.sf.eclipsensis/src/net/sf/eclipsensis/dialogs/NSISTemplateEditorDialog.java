@@ -17,19 +17,16 @@ import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.editor.NSISDocumentSetupParticipant;
 import net.sf.eclipsensis.editor.template.NSISTemplateEditorSourceViewerConfiguration;
 import net.sf.eclipsensis.editor.template.NSISTemplateSourceViewer;
-import net.sf.eclipsensis.settings.INSISPreferenceConstants;
+import net.sf.eclipsensis.editor.text.NSISTextUtility;
 import net.sf.eclipsensis.settings.NSISPreferences;
 import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.*;
-import org.eclipse.jface.resource.FontRegistry;
-import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.source.*;
 import org.eclipse.jface.text.templates.*;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
@@ -39,13 +36,16 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.texteditor.ITextEditorActionConstants;
-import org.eclipse.ui.texteditor.IUpdate;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.editors.text.EditorsUI;
+import org.eclipse.ui.texteditor.*;
 
 public class NSISTemplateEditorDialog extends StatusMessageDialog
 {
-    private final Template mTemplate;
+    private String mName;
+    private String mDescription;
+    private String mPattern;
+    private String mContextTypeId;
     
     private Text mNameText = null;
     private Text mDescriptionText = null;
@@ -72,16 +72,21 @@ public class NSISTemplateEditorDialog extends StatusMessageDialog
      * @param isNameModifiable whether the name of the template may be modified
      * @param registry the context type registry to use
      */
-    public NSISTemplateEditorDialog(Shell parent, Template template, boolean edit, boolean isNameModifiable) 
+    public NSISTemplateEditorDialog(Shell parent, Template template, boolean edit, boolean isNameModifiable, ContextTypeRegistry contextTypeRegistry) 
     {
         super(parent);
         
         setShellStyle(getShellStyle() | SWT.MAX | SWT.RESIZE);
 
-        mTemplate= template;
-        mIsNameModifiable= isNameModifiable;
+        if(template != null) {
+            mName= template.getName();
+            mDescription = template.getDescription();
+            mPattern = template.getPattern();
+            mContextTypeId = template.getContextTypeId();
+        }
+        mIsNameModifiable = isNameModifiable;
         
-        mContextTypeRegistry= EclipseNSISPlugin.getDefault().getContextTypeRegistry();
+        mContextTypeRegistry = contextTypeRegistry;
         
         List contexts= new ArrayList();
         for (Iterator it= mContextTypeRegistry.contextTypes(); it.hasNext();) {
@@ -99,7 +104,7 @@ public class NSISTemplateEditorDialog extends StatusMessageDialog
     protected void configureShell(Shell newShell)
     {
         super.configureShell(newShell);
-        newShell.setText(EclipseNSISPlugin.getResourceString((Common.isEmpty(mTemplate.getName())?"new.template.dialog.title": //$NON-NLS-1$
+        newShell.setText(EclipseNSISPlugin.getResourceString((Common.isEmpty(mName)?"new.template.dialog.title": //$NON-NLS-1$
                                                                                            "edit.template.dialog.title"))); //$NON-NLS-1$
     }
 
@@ -198,37 +203,33 @@ public class NSISTemplateEditorDialog extends StatusMessageDialog
             public void widgetDefaultSelected(SelectionEvent e) {}
         });
 
-        mDescriptionText.setText(mTemplate.getDescription());
+        mDescriptionText.setText(mDescription);
         if (mIsNameModifiable) {
-            mNameText.setText(mTemplate.getName());
+            mNameText.setText(mName);
             mNameText.addModifyListener(listener);
-            mContextCombo.select(getIndex(mTemplate.getContextTypeId()));
+            mContextCombo.select(getIndex(mContextTypeId));
         } else {
             mPatternEditor.getControl().setFocus();
         }
         initializeActions();
 
         applyDialogFont(composite);
-        WorkbenchHelp.setHelp(composite,INSISConstants.PLUGIN_CONTEXT_PREFIX+"nsis_templatedlg_context"); //$NON-NLS-1$
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(composite,INSISConstants.PLUGIN_CONTEXT_PREFIX+"nsis_templatedlg_context"); //$NON-NLS-1$
         return composite;
     }
     
     private void doTextWidgetChanged(Widget w) 
     {
         if (w == mNameText) {
-            String name= mNameText.getText();
-            mTemplate.setName(name);
+            mName = mNameText.getText();
             updateButtons();            
         } 
         else if (w == mContextCombo) {
-            String name= mContextCombo.getText();
-            String contextId= getContextId(name);
-            mTemplate.setContextTypeId(contextId);
-            mTemplateContextType = mContextTypeRegistry.getContextType(contextId);
+            mContextTypeId = getContextId(mContextCombo.getText());
+            mTemplateContextType = mContextTypeRegistry.getContextType(mContextTypeId);
         } 
         else if (w == mDescriptionText) {
-            String desc= mDescriptionText.getText();
-            mTemplate.setDescription(desc);
+            mDescription = mDescriptionText.getText();
         }   
     }
     
@@ -248,17 +249,16 @@ public class NSISTemplateEditorDialog extends StatusMessageDialog
 
     private void doSourceChanged(IDocument document) 
     {
-        String text= document.get();
-        mTemplate.setPattern(text);
-        if(Common.isEmpty(text)) {
+        mPattern = document.get();
+        if(Common.isEmpty(mPattern)) {
             mValidationStatus.setError(EclipseNSISPlugin.getResourceString("template.error.no.pattern")); //$NON-NLS-1$
         }
         else {
             mValidationStatus.setOK();
-            TemplateContextType contextType= mContextTypeRegistry.getContextType(mTemplate.getContextTypeId());
+            TemplateContextType contextType= mContextTypeRegistry.getContextType(mContextTypeId);
             if (contextType != null) {
                 try {
-                    contextType.validate(text);
+                    contextType.validate(mPattern);
                 } catch (TemplateException e) {
                     mValidationStatus.setError(e.getLocalizedMessage());
                 }
@@ -290,7 +290,7 @@ public class NSISTemplateEditorDialog extends StatusMessageDialog
     {
         SourceViewer viewer= createViewer(parent);
 
-        IDocument document= new Document(mTemplate.getPattern());
+        IDocument document= new Document(mPattern);
         new NSISDocumentSetupParticipant().setup(document);
         viewer.setDocument(document);
         viewer.setEditable(true);
@@ -340,23 +340,9 @@ public class NSISTemplateEditorDialog extends StatusMessageDialog
     private SourceViewer createViewer(Composite parent) 
     {
         final SourceViewer viewer= new NSISTemplateSourceViewer(parent, null, null, false, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
-        SourceViewerConfiguration configuration= new NSISTemplateEditorSourceViewerConfiguration(NSISPreferences.getPreferences().getPreferenceStore(),
+        NSISTextUtility.hookSourceViewer(viewer);
+        SourceViewerConfiguration configuration= new NSISTemplateEditorSourceViewerConfiguration(new ChainedPreferenceStore(new IPreferenceStore[]{NSISPreferences.getPreferences().getPreferenceStore(), EditorsUI.getPreferenceStore()}),
                                                         mTemplateContextType);
-        final FontRegistry fontRegistry = JFaceResources.getFontRegistry();
-        viewer.getTextWidget().setFont(fontRegistry.get(INSISPreferenceConstants.EDITOR_FONT));
-        final IPropertyChangeListener propertyChangeListener = new IPropertyChangeListener() {
-            public void propertyChange(PropertyChangeEvent event)
-            {
-                viewer.getTextWidget().setFont(fontRegistry.get(INSISPreferenceConstants.EDITOR_FONT));
-            }
-        };
-        fontRegistry.addListener(propertyChangeListener);
-        viewer.getTextWidget().addDisposeListener(new DisposeListener() {
-            public void widgetDisposed(DisposeEvent e)
-            {
-                fontRegistry.removeListener(propertyChangeListener);
-            }
-        });
         viewer.configure(configuration);
         return viewer;
     }
@@ -496,6 +482,11 @@ public class NSISTemplateEditorDialog extends StatusMessageDialog
             status= mValidationStatus; 
         }
         updateStatus(status);
+    }
+
+    public Template getTemplate()
+    {
+        return new Template(mName, mDescription, mContextTypeId, mPattern, false);
     }
     
     private static class TextViewerAction extends Action implements IUpdate 

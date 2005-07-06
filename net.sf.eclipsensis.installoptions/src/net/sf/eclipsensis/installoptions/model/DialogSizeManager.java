@@ -51,7 +51,6 @@ public class DialogSizeManager
                 if(cDialogSizes == null) {
                     IPreferenceStore store = InstallOptionsPlugin.getDefault().getPreferenceStore();
                     String temp = store.getString(PROPERTY_DIALOGSIZES_COUNT); //$NON-NLS-1$
-                    Object source = null;
                     if(Common.isEmpty(temp)) {
                         cDialogSizes = new ArrayList();
                         for(Iterator iter=getPresetDialogSizes().iterator(); iter.hasNext(); ) {

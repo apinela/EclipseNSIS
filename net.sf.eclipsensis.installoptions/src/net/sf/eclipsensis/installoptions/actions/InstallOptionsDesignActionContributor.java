@@ -18,22 +18,20 @@ import org.eclipse.draw2d.PositionConstants;
 import org.eclipse.gef.internal.GEFMessages;
 import org.eclipse.gef.ui.actions.*;
 import org.eclipse.jface.action.*;
-import org.eclipse.swt.SWT;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.RetargetAction;
-import org.eclipse.ui.internal.WorkbenchImages;
 
 public class InstallOptionsDesignActionContributor extends ActionBarContributor
 {
     private MenuManager mInstallOptionsMenu;
     private SetDialogSizeMenuManager mSetDialogSizeMenu;
-    private IEditorPart mEditor;
     private ZoomComboContributionItem mZoomComboContributionItem;
     private InstallOptionsXYStatusContribution mXYStatusContribution;
 
     protected void buildActions() 
     {
+        ISharedImages sharedImages = PlatformUI.getWorkbench().getSharedImages();
         RetargetAction retargetAction;
         
         addRetargetAction(new UndoRetargetAction());
@@ -45,20 +43,20 @@ public class InstallOptionsDesignActionContributor extends ActionBarContributor
 
         retargetAction = new RetargetAction(ActionFactory.CUT.getId(),InstallOptionsPlugin.getResourceString("cut.action.name")); //$NON-NLS-1$
         retargetAction.setToolTipText(InstallOptionsPlugin.getResourceString("cut.action.tooltip")); //$NON-NLS-1$
-        retargetAction.setImageDescriptor(WorkbenchImages.getImageDescriptor(ISharedImages.IMG_TOOL_CUT));
-        retargetAction.setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(ISharedImages.IMG_TOOL_CUT_DISABLED));
+        retargetAction.setImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_CUT));
+        retargetAction.setDisabledImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_CUT_DISABLED));
         addRetargetAction(retargetAction);
         
         retargetAction = new RetargetAction(ActionFactory.COPY.getId(),GEFMessages.CopyAction_Label);
         retargetAction.setToolTipText(GEFMessages.CopyAction_Tooltip);
-        retargetAction.setImageDescriptor(WorkbenchImages.getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
-        retargetAction.setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(ISharedImages.IMG_TOOL_COPY_DISABLED));
+        retargetAction.setImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
+        retargetAction.setDisabledImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_COPY_DISABLED));
         addRetargetAction(retargetAction);
         
         retargetAction = new RetargetAction(ActionFactory.PASTE.getId(),GEFMessages.PasteAction_Label);
         retargetAction.setToolTipText(GEFMessages.PasteAction_Tooltip);
-        retargetAction.setImageDescriptor(WorkbenchImages.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE));
-        retargetAction.setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE_DISABLED));
+        retargetAction.setImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE));
+        retargetAction.setDisabledImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE_DISABLED));
         addRetargetAction(retargetAction);
 
         addRetargetAction(new DeleteRetargetAction());
@@ -82,7 +80,7 @@ public class InstallOptionsDesignActionContributor extends ActionBarContributor
         
         retargetAction = new RetargetAction(SwitchEditorAction.ID, InstallOptionsPlugin.getResourceString("switch.source.editor.action.name")); //$NON-NLS-1$
         retargetAction.setImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("switch.editor.icon"))); //$NON-NLS-1$
-        retargetAction.setAccelerator(SWT.F12);
+        retargetAction.setActionDefinitionId(IInstallOptionsConstants.SWITCH_EDITOR_COMMAND_ID);
         addRetargetAction(retargetAction);
         
         addRetargetAction(new RetargetAction(IInstallOptionsConstants.GRID_SNAP_GLUE_SETTINGS_ACTION_ID,InstallOptionsPlugin.getResourceString("grid.snap.glue.action.name"))); //$NON-NLS-1$
@@ -161,7 +159,6 @@ public class InstallOptionsDesignActionContributor extends ActionBarContributor
 
     public void setActiveEditor(IEditorPart editor)
     {
-        mEditor = editor;
         mSetDialogSizeMenu.setEditor(editor);
         mXYStatusContribution.editorChanged(editor);
         if(editor.getAdapter(ActionRegistry.class) == null) {

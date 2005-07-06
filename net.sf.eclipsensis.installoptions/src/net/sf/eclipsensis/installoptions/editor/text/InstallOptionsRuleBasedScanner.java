@@ -12,28 +12,19 @@ package net.sf.eclipsensis.installoptions.editor.text;
 import java.util.ArrayList;
 
 import net.sf.eclipsensis.editor.text.NSISWhitespaceDetector;
-import net.sf.eclipsensis.util.ColorManager;
+import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
 
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.TextAttribute;
 import org.eclipse.jface.text.rules.*;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Display;
 
-public class InstallOptionsRuleBasedScanner extends BufferedRuleBasedScanner
-        implements IInstallOptionsScanner
+public class InstallOptionsRuleBasedScanner extends InstallOptionsSyntaxScanner
 {
-    /**
-     * 
-     */
-    public InstallOptionsRuleBasedScanner()
+    protected void reset()
     {
-        super();
         ArrayList list = new ArrayList();
         list.add(new BeginningOfLineWordPatternRule(new InstallOptionsWordDetector('[',']'),
-            "[","]",new Token(new TextAttribute(ColorManager.getColor(ColorManager.TEAL),null,SWT.NONE)))); //$NON-NLS-1$ //$NON-NLS-2$
+            "[","]",createToken(IInstallOptionsConstants.SECTION_STYLE))); //$NON-NLS-1$ //$NON-NLS-2$
         list.add(new ExclusiveEndSequenceWordPatternRule(new InstallOptionsWordDetector('\0','='),null,"=", //$NON-NLS-1$
-            new Token(new TextAttribute(Display.getDefault().getSystemColor(SWT.COLOR_BLUE),null,SWT.NONE))));
+                createToken(IInstallOptionsConstants.KEY_STYLE)));
         list.add(new WordRule(new IWordDetector(){
 
             public boolean isWordStart(char c)
@@ -45,25 +36,9 @@ public class InstallOptionsRuleBasedScanner extends BufferedRuleBasedScanner
             {
                 return false;
             }}
-        ,new Token(new TextAttribute(Display.getDefault().getSystemColor(SWT.COLOR_RED),null,SWT.NONE))));
-        list.add(new NumberRule(new Token(new TextAttribute(ColorManager.getColor(ColorManager.CHOCOLATE),null,SWT.NONE))));
+        ,createToken(IInstallOptionsConstants.KEY_VALUE_DELIM_STYLE)));
+        list.add(new NumberRule(createToken(IInstallOptionsConstants.NUMBER_STYLE)));
         list.add(new WhitespaceRule(new NSISWhitespaceDetector()));
         setRules((IRule[])list.toArray(new IRule[0]));
-    }
-
-    /* (non-Javadoc)
-     * @see net.sf.eclipsensis.installoptions.editor.text.IInstallOptionsScanner#getOffset()
-     */
-    public int getOffset()
-    {
-        return fOffset;
-    }
-
-    /* (non-Javadoc)
-     * @see net.sf.eclipsensis.installoptions.editor.text.IInstallOptionsScanner#getDocument()
-     */
-    public IDocument getDocument()
-    {
-        return fDocument;
     }
 }

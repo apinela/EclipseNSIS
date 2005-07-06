@@ -9,6 +9,8 @@
  *******************************************************************************/
 package net.sf.eclipsensis.help;
 
+import java.text.MessageFormat;
+
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.settings.INSISPreferenceConstants;
@@ -18,58 +20,37 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.SWTException;
-import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.SWTError;
+import org.eclipse.swt.browser.*;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
-import org.eclipse.swt.ole.win32.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.part.ViewPart;
 
 public class NSISHTMLHelp extends ViewPart implements INSISConstants
 {
-    private static final int DISPID_AMBIENT_DLCONTROL = -5512;
-    private static final int DLCTL_DLIMAGES = 0x10;
-    
-    private static final int CSC_UPDATECOMMANDS = -1;
-    private static final int CSC_NAVIGATEFORWARD = 1;
-    private static final int CSC_NAVIGATEBACK = 2;
-
-    // Constants for Browser ReadyState
-    private static final int READYSTATE_UNINITIALIZED = 0;
-    private static final int READYSTATE_LOADING = 1;
-    private static final int READYSTATE_LOADED = 2;
-    private static final int READYSTATE_INTERACTIVE = 3;
-    private static final int READYSTATE_COMPLETE = 4;
-    
-    // Browser Control Events 
-    private static final int STATUS_TEXT_CHANGE = 102; // Statusbar text changed.
-    private static final int PROGRESS_CHANGE = 108; // Fired when download progress is updated.
-    private static final int COMMAND_STATE_CHANGE = 105; // The enabled state of a command changed
-
-    // Browser properties
-    private static final int DISPID_READYSTATE = -525;
-    
     private static String cFirstPage = null;
+    private static final String cImageLocationFormat = EclipseNSISPlugin.getResourceString("help.browser.throbber.icon.format"); //$NON-NLS-1$
+    private static final int cImageCount = Integer.parseInt(EclipseNSISPlugin.getResourceString("help.browser.throbber.icon.count")); //$NON-NLS-1$
+//                                                            "help.browser.throbber.icons");
 
-    private OleFrame mOleFrame = null;
-    private OleControlSite mOleControlSite = null;
-    private OleAutomation mOleAutomation = null;
-
-    private Font mBrowserFont;
-
+    private Browser mBrowser;
+    private ToolBar mToolBar;
     private ProgressBar mProgressBar;
     private Label mStatusText;
-    
+    private Canvas mThrobber;
+
+    private Image[] mImages;
     private ToolItem mBack;
     private ToolItem mForward;
     private ToolItem mHome;
     private ToolItem mStop;
     private ToolItem mRefresh;
     
-    private boolean mActivated = false;
-    
     private String mStartPage;
+    private int mIndex;
+    private boolean mBusy;
     
     public static boolean showHelp(final String url)
     {
@@ -83,12 +64,15 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
                     if(htmlHelp == null) {
                         cFirstPage = url;
                         htmlHelp = (NSISHTMLHelp)activePage.showView(HTMLHELP_ID);
+                        result[0] = htmlHelp.isActivated();
                     }
                     else {
                         activePage.activate(htmlHelp);
-                        htmlHelp.goUrl(url);
+                        result[0] = htmlHelp.isActivated();
+                        if(result[0]) {
+                            htmlHelp.getBrowser().setUrl(url);
+                        }
                     }
-                    result[0] = htmlHelp.isActivated();
                 }
                 catch(PartInitException pie) {
                     result[0] = false;
@@ -99,20 +83,51 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
         return result[0];
     }
     
+    private Browser getBrowser()
+    {
+        return mBrowser;
+    }
+    
+    private boolean isActivated()
+    {
+        return getBrowser() != null;
+    }
+    
     /* (non-Javadoc)
      * @see org.eclipse.ui.part.WorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
      */
     public void createPartControl(Composite parent)
     {
-        Composite composite = new Composite(parent,SWT.NONE);
-        GridLayout gridLayout = new GridLayout();
-        gridLayout.numColumns = 3;
-        composite.setLayout(gridLayout);
+        initResources();
+        try {
+            mBrowser = new Browser(parent, SWT.BORDER);
+        }
+        catch (SWTError e) {
+            mBrowser = null;
+            parent.setLayout(new FillLayout());
+            Label label = new Label(parent, SWT.CENTER | SWT.WRAP);
+            label.setText(EclipseNSISPlugin.getResourceString("help.browser.create.error")); //$NON-NLS-1$
+            parent.layout(true);
+            return;
+        }
+        parent.setLayout(new FormLayout());
+        createToolBar(parent);
+        createStatusArea(parent);
+        FormData data = new FormData();
+        data.left = new FormAttachment(0, 0);
+        data.top = new FormAttachment(mThrobber, 5, SWT.DEFAULT);
+        data.right = new FormAttachment(100, 0);
+        data.bottom = new FormAttachment(mStatusText, -5, SWT.DEFAULT);
+        mBrowser.setLayoutData(data);
+        mBrowser.addLocationListener(new LocationListener() {
+            public void changed(LocationEvent event) 
+            {
+                mBusy = true;
+            }
+            public void changing(LocationEvent event) {
+            }
+        });
 
-        mBrowserFont = new Font (null, "MS Sans Serif", 8, SWT.NULL); //$NON-NLS-1$
-        createToolBar(composite);
-        createHelpBrowser(composite);
-        createStatusArea(composite);
         openHelp();
         IPreferenceStore prefs = NSISPreferences.getPreferences().getPreferenceStore();
         prefs.addPropertyChangeListener(new IPropertyChangeListener(){
@@ -129,254 +144,183 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
             }
         });
     }
+    
+    /**
+     * Loads the resources
+     */
+    private void initResources() 
+    {
+        if (mImages == null) {
+            MessageFormat mf = new MessageFormat(cImageLocationFormat);
+            mImages = new Image[cImageCount];
+            for (int i = 0; i < cImageCount; ++i) {
+                mImages[i] = EclipseNSISPlugin.getImageManager().getImage(mf.format(new Object[]{new Integer(i)}));
+            }
+        }
+    }
 
-    private ToolItem createToolItem(ToolBar bar, String tooltip, String text, String icon, boolean enabled, Listener listener)
+    private ToolItem createToolItem(ToolBar bar, String tooltip, String text, String icon)
     {
         ToolItem item = new ToolItem(bar, SWT.NONE);
         item.setToolTipText(EclipseNSISPlugin.getResourceString(tooltip));
 //        item.setText(EclipseNSISPlugin.getResourceString(text));
         item.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString(icon)));
-        item.setEnabled(enabled);
-        item.addListener(SWT.Selection, listener);
         return item;
     }
 
     private void createToolBar(Composite displayArea)
     {
-        ToolBar bar = new ToolBar(displayArea, SWT.FLAT);
-        GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
-        gridData.horizontalSpan = 3;
-        bar.setLayoutData(gridData);
+        mToolBar = new ToolBar(displayArea, SWT.FLAT);
+        FormData data = new FormData();
+        data.top = new FormAttachment(0, 5);
+        mToolBar.setLayoutData(data);
         
         // Add a button to navigate backwards through previously visited pages
-        mBack = createToolItem(bar,"help.browser.back.tooltip","help.browser.back.text", //$NON-NLS-1$ //$NON-NLS-2$
-                               "help.browser.back.icon",false,  //$NON-NLS-1$
-                               new Listener() {
-                                   public void handleEvent(Event e) {
-                                       if(mOleAutomation != null) {
-                                           goBack();
-                                       }
-                                   }
-                               });
+        mBack = createToolItem(mToolBar,"help.browser.back.tooltip","help.browser.back.text", //$NON-NLS-1$ //$NON-NLS-2$
+                               "help.browser.back.icon"); //$NON-NLS-1$
     
         // Add a button to navigate forward through previously visited pages
-        mForward = createToolItem(bar,"help.browser.forward.tooltip","help.browser.forward.text", //$NON-NLS-1$ //$NON-NLS-2$
-                "help.browser.forward.icon",false,  //$NON-NLS-1$
-                new Listener() {
-                    public void handleEvent(Event e) {
-                        if (mOleAutomation != null) {
-                            goForward();
-                        }
-                    }
-                });
+        mForward = createToolItem(mToolBar,"help.browser.forward.tooltip","help.browser.forward.text", //$NON-NLS-1$ //$NON-NLS-2$
+                "help.browser.forward.icon"); //$NON-NLS-1$
     
         // Add a separator
-        new ToolItem(bar, SWT.SEPARATOR);
+        new ToolItem(mToolBar, SWT.SEPARATOR);
         
         // Add a button to refresh the current web page
-        mRefresh = createToolItem(bar,"help.browser.refresh.tooltip","help.browser.refresh.text", //$NON-NLS-1$ //$NON-NLS-2$
-                "help.browser.refresh.icon",false,  //$NON-NLS-1$
-                new Listener() {
-                    public void handleEvent(Event e) {
-                        if (mOleAutomation != null) {
-                            refresh();
-                        }
-                    }
-                });
+        mRefresh = createToolItem(mToolBar,"help.browser.refresh.tooltip","help.browser.refresh.text", //$NON-NLS-1$ //$NON-NLS-2$
+                "help.browser.refresh.icon"); //$NON-NLS-1$
 
         // Add a button to abort web page loading
-        mStop = createToolItem(bar,"help.browser.stop.tooltip","help.browser.stop.text", //$NON-NLS-1$ //$NON-NLS-2$
-                "help.browser.stop.icon",false,  //$NON-NLS-1$
-                new Listener() {
-                    public void handleEvent(Event e) {
-                        if (mOleAutomation != null) {
-                            stop();
-                        }
-                    }
-                });
+        mStop = createToolItem(mToolBar,"help.browser.stop.tooltip","help.browser.stop.text", //$NON-NLS-1$ //$NON-NLS-2$
+                "help.browser.stop.icon"); //$NON-NLS-1$
         
         // Add a button to navigate to the Home page
-        mHome = createToolItem(bar,"help.browser.home.tooltip","help.browser.home.text", //$NON-NLS-1$ //$NON-NLS-2$
-                "help.browser.home.icon",false,  //$NON-NLS-1$
-                new Listener() {
-                    public void handleEvent(Event e) {
-                        if (mOleAutomation != null) {
-                            goUrl(mStartPage);
-                        }
+        mHome = createToolItem(mToolBar,"help.browser.home.tooltip","help.browser.home.text", //$NON-NLS-1$ //$NON-NLS-2$
+                "help.browser.home.icon"); //$NON-NLS-1$
+
+        Listener listener = new Listener() {
+            public void handleEvent(Event event) {
+                ToolItem item = (ToolItem)event.widget;
+                if (item == mBack) {
+                    mBrowser.back(); 
+                }
+                else if (item == mForward) {
+                    mBrowser.forward();
+                }
+                else if (item == mStop) {
+                    mBrowser.stop();
+                }
+                else if (item == mRefresh) {
+                    mBrowser.refresh();
+                }
+                else if (item == mHome) {
+                    mBrowser.setUrl(mStartPage);
+                }
+            }
+        };
+        mBack.addListener(SWT.Selection, listener);
+        mForward.addListener(SWT.Selection, listener);
+        mStop.addListener(SWT.Selection, listener);
+        mRefresh.addListener(SWT.Selection, listener);
+        mHome.addListener(SWT.Selection, listener);
+
+        final Rectangle rect = mImages[0].getBounds();
+        mThrobber = new Canvas(displayArea, SWT.NONE);
+        data = new FormData();
+        data.width = rect.width;
+        data.height = rect.height;
+        data.top = new FormAttachment(0, 5);
+        data.right = new FormAttachment(100, -5);
+        mThrobber.setLayoutData(data);
+        
+        mThrobber.addListener(SWT.Paint, new Listener() {
+            public void handleEvent(Event e) {
+                Point pt = ((Canvas)e.widget).getSize();
+                e.gc.drawImage(mImages[mIndex], 0, 0, rect.width, rect.height, 0, 0, pt.x, pt.y);         
+            }
+        });
+        mThrobber.addListener(SWT.MouseDown, new Listener() {
+            public void handleEvent(Event e) {
+                mBrowser.setUrl(mStartPage);
+            }
+        });
+        
+        final Display display = displayArea.getDisplay();
+        display.asyncExec(new Runnable() {
+            
+            public void run() {
+                if (mThrobber.isDisposed()) {
+                    return;
+                }
+                if (mBusy) {
+                    mIndex ++;
+                    if(mIndex == mImages.length) {
+                        mIndex = 1;
                     }
-                });
-    }
-    
-    /**
-     * @param composite
-     */
-    private void createHelpBrowser(Composite composite)
-    {
-        mOleFrame = new OleFrame(composite,SWT.NONE);
-        GridData gridData = new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL);
-        gridData.horizontalSpan = 3;
-        mOleFrame.setLayoutData(gridData);
-        mOleFrame.setLayout(new FillLayout());
-
-        try {
-            // Create an Automation object for access to extended capabilities
-            mOleControlSite = new OleControlSite(mOleFrame,SWT.NONE,"Shell.Explorer"); //$NON-NLS-1$
-            Variant download = new Variant(DLCTL_DLIMAGES);
-            mOleControlSite.setSiteProperty(DISPID_AMBIENT_DLCONTROL, download);
-            mOleAutomation = new OleAutomation(mOleControlSite);
-        } catch (SWTException ex) {
-            // Creation may have failed because control is not installed on machine
-            Label label = new Label(mOleFrame, SWT.BORDER);
-            label.setText(EclipseNSISPlugin.getResourceString("help.browser.create.error")); //$NON-NLS-1$
-            if(mOleAutomation != null) {
-                mOleAutomation.dispose();
-                mOleAutomation = null;
-            }
-            return;
-        }
-
-        // Respond to ProgressChange events by updating the Progress bar
-        mOleControlSite.addEventListener(PROGRESS_CHANGE, new OleListener() {
-            public void handleEvent(OleEvent event) 
-            {
-                Variant progress = event.arguments[0];
-                Variant maxProgress = event.arguments[1];
-                if (progress == null || maxProgress == null) {
-                    return;
+                    mThrobber.redraw();
                 }
-                mProgressBar.setMaximum(maxProgress.getInt());
-                mProgressBar.setSelection(progress.getInt());
+                display.timerExec(100, this);
             }
         });
-        
-        // Respond to StatusTextChange events by updating the Status Text label
-        mOleControlSite.addEventListener(STATUS_TEXT_CHANGE, new OleListener() {
-            public void handleEvent(OleEvent event) 
-            {
-                Variant statusText = event.arguments[0];
-                if (mStatusText == null || statusText == null) {
-                    return;
-                }
-                String text = statusText.getString();
-                if (text != null) {
-                    mStatusText.setText(text);
-                }
-            }
-        });
-        
-        // Listen for changes to the ready state and print out the current state 
-        mOleControlSite.addPropertyListener(DISPID_READYSTATE, new OleListener() {
-            public void handleEvent(OleEvent event) 
-            {
-                if (event.detail == OLE.PROPERTY_CHANGING) {
-                    return;
-                }
-                int state = getReadyState();
-                switch (state) {
-                    case READYSTATE_UNINITIALIZED:
-                        if (mStatusText != null) {
-                            mStatusText.setText(EclipseNSISPlugin.getResourceString("help.browser.state.uninitialized.text")); //$NON-NLS-1$
-                        }
-                        mBack.setEnabled(false);
-                        mForward.setEnabled(false);
-                        mHome.setEnabled(false);
-                        mRefresh.setEnabled(false);
-                        mStop.setEnabled(false);
-                        break;
-                    case READYSTATE_LOADING:
-                        if (mStatusText != null) {
-                            mStatusText.setText(EclipseNSISPlugin.getResourceString("help.browser.state.loading.text")); //$NON-NLS-1$
-                        }
-                        mHome.setEnabled(true);
-                        mRefresh.setEnabled(true);
-                        mStop.setEnabled(true);
-                        break;
-                    case READYSTATE_LOADED:
-                        if (mStatusText != null) {
-                            mStatusText.setText(EclipseNSISPlugin.getResourceString("help.browser.state.loaded.text")); //$NON-NLS-1$
-                        }
-                        mStop.setEnabled(true);
-                        break;
-                    case READYSTATE_INTERACTIVE:
-                        if (mStatusText != null) {
-                            mStatusText.setText(EclipseNSISPlugin.getResourceString("help.browser.state.interactive.text")); //$NON-NLS-1$
-                        }
-                        mStop.setEnabled(true);
-                        break;
-                    case READYSTATE_COMPLETE:
-                        if (mStatusText != null) {
-                            mStatusText.setText(EclipseNSISPlugin.getResourceString("help.browser.state.complete.text")); //$NON-NLS-1$
-                        }
-                        mStop.setEnabled(false);
-                        break;
-                }
-            }
-        });
-
-        // Listen for changes to the active command states
-        mOleControlSite.addEventListener(COMMAND_STATE_CHANGE, new OleListener() {
-            public void handleEvent(OleEvent event) 
-            {
-                if (event.type != COMMAND_STATE_CHANGE) return;
-                final int commandID = (event.arguments[0] != null) ? event.arguments[0].getInt() : 0;
-                final boolean commandEnabled = (event.arguments[1] != null) ? event.arguments[1].getBoolean() : false;
-                
-                switch (commandID) {
-                    case CSC_NAVIGATEBACK:
-                        mBack.setEnabled(commandEnabled);
-                        break;
-                    case CSC_NAVIGATEFORWARD:
-                        mForward.setEnabled(commandEnabled);
-                        break;
-                }
-            }
-        });
-
-        // in place activate the ActiveX control        
-        mActivated = (mOleControlSite.doVerb(OLE.OLEIVERB_INPLACEACTIVATE) == OLE.S_OK);
     }
     
     private void createStatusArea(Composite composite) 
     {
-        // Add a progress bar to display downloading progress information
-        mProgressBar = new ProgressBar(composite, SWT.BORDER);
-        GridData gridData = new GridData();
-        gridData.horizontalAlignment = GridData.BEGINNING;
-        gridData.verticalAlignment = GridData.FILL;
-        mProgressBar.setLayoutData(gridData);        
-
         // Add a label for displaying status messages as they are received from the control
         mStatusText = new Label(composite, SWT.SINGLE | SWT.READ_ONLY | SWT.BORDER);
-        gridData = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_FILL);
-        gridData.horizontalSpan = 2;
-        mStatusText.setLayoutData(gridData);
-        mStatusText.setFont(mBrowserFont);
-    }   
+        // Add a progress bar to display downloading progress information
+        mProgressBar = new ProgressBar(composite, SWT.BORDER);
 
-    public void dispose()
-    {
-        if(mBrowserFont != null) {
-            mBrowserFont.dispose();
-            mBrowserFont = null;
-        }
-        if(mOleControlSite != null) {
-            mOleAutomation.dispose();
-            mOleAutomation = null;
-            mOleControlSite.dispose();
-            mOleControlSite = null;
-        }
-        mOleFrame.dispose();
-        mOleFrame = null;
-    }
+        FormData data = new FormData();
+        data.left = new FormAttachment(0, 5);
+        data.right = new FormAttachment(mProgressBar, 0, SWT.DEFAULT);
+        data.bottom = new FormAttachment(100, -5);
+        mStatusText.setLayoutData(data);
+        
+        data = new FormData();
+        data.right = new FormAttachment(100, -5);
+        data.bottom = new FormAttachment(100, -5);
+        mProgressBar.setLayoutData(data);
+        
+        mBrowser.addStatusTextListener(new StatusTextListener() {
+            public void changed(StatusTextEvent event) {
+                mStatusText.setText(event.text); 
+            }
+        });
+
+        mBrowser.addProgressListener(new ProgressListener() {
+            public void changed(ProgressEvent event) 
+            {
+                if (event.total == 0) return;                            
+                int ratio = event.current * 100 / event.total;
+                mProgressBar.setSelection(ratio);
+                mBusy = event.current != event.total;
+                if (!mBusy) {
+                    mIndex = 0;
+                    mThrobber.redraw();
+                }
+            }
+            
+            public void completed(ProgressEvent event) 
+            {
+                mProgressBar.setSelection(0);
+                mBusy = false;
+                mIndex = 0;
+                mBack.setEnabled(mBrowser.isBackEnabled());
+                mForward.setEnabled(mBrowser.isForwardEnabled());
+                mThrobber.redraw();
+            }
+        });
+    }   
 
     private void openHelp()
     {
-        if (mActivated) {
+        if (isActivated()) {
             mStartPage = NSISHelpURLProvider.getInstance().getCHMHelpStartPage();
             if(mStartPage == null) {
                 mStartPage = "about:blank"; //$NON-NLS-1$
             }
-            goUrl(cFirstPage == null?mStartPage:cFirstPage);
+            mBrowser.setUrl(cFirstPage == null?mStartPage:cFirstPage);
         }
     }
 
@@ -385,132 +329,8 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
      */
     public void setFocus()
     {
-        mOleFrame.setFocus();
-    }
-    private boolean isActivated()
-    {
-        return mActivated;
-    }
-
-    private int[] getOleIDOfNames(Object name)
-    {
-        if(name instanceof String) {
-            return mOleAutomation.getIDsOfNames(new String[]{(String)name});
-        }
-        else if(name instanceof String[]) {
-            return mOleAutomation.getIDsOfNames((String[])name);
-        }
-        else {
-            return null;
+        if(isActivated()) {
+            mBrowser.setFocus();
         }
     }
-    
-    private Variant getOleProperty(Object name)
-    {
-        return mOleAutomation.getProperty(getOleIDOfNames(name)[0]);
-    }
-
-    private void invokeOleFunction(Object name)
-    {
-        mOleAutomation.invoke(getOleIDOfNames(name)[0]);
-    }
-
-    /**
-     * Returns the current web page title.
-     * 
-     * @return the current web page title String
-     */
-    public String getLocationName() 
-    {
-        // dispid=210, type=PROPGET, name="LocationName"
-        Variant result = getOleProperty("LocationName"); //$NON-NLS-1$
-        if (result == null || result.getType() != OLE.VT_BSTR) return null;
-        return result.getString();
-    }
-
-    /**
-     * Returns the current URL.
-     * 
-     * @return the current URL String
-     */
-    public String getLocationURL() 
-    {
-        // dispid=211, type=PROPGET, name="LocationURL"
-        Variant result = getOleProperty("LocationURL"); //$NON-NLS-1$
-        if (result == null || result.getType() != OLE.VT_BSTR) return null;
-        return result.getString();
-    }
-
-    /**
-     * Returns the current state of the control.
-     * 
-     * @return the current state of the control, one of:
-     *         READYSTATE_UNINITIALIZED;
-     *         READYSTATE_LOADING;
-     *         READYSTATE_LOADED;
-     *         READYSTATE_INTERACTIVE;
-     *         READYSTATE_COMPLETE.
-     */
-    public int getReadyState() 
-    {
-        // dispid=4294966771, type=PROPGET, name="ReadyState"
-        Variant result = getOleProperty("ReadyState"); //$NON-NLS-1$
-        if (result == null || result.getType() != OLE.VT_I4) return -1;
-        return result.getInt();
-    }
-    
-    /**
-     * Navigates backwards through previously visited web sites.
-     */
-    public void goBack() 
-    {
-        // dispid=100, type=METHOD, name="GoBack"
-        invokeOleFunction("GoBack"); //$NON-NLS-1$
-    }
-        
-    /**
-     * Navigates backwards through previously visited web sites.
-     */
-    public void goForward() 
-    {
-        // dispid=101, type=METHOD, name="GoForward"
-        invokeOleFunction("GoForward"); //$NON-NLS-1$
-    }
-    
-    /**
-     * Navigates to a particular URL.
-     */
-    public void goUrl(String url) 
-    {
-        // dispid=104, type=METHOD, name="Navigate"
-        int[] rgdispid = getOleIDOfNames(new String[]{"Navigate", "URL"}); //$NON-NLS-1$ //$NON-NLS-2$
-        
-        Variant[] rgvarg = new Variant[1];
-        rgvarg[0] = new Variant(url);
-        int[] rgdispidNamedArgs = new int[1];
-        rgdispidNamedArgs[0] = rgdispid[1]; // identifier of argument
-        mOleAutomation.invoke(rgdispid[0], rgvarg, rgdispidNamedArgs);
-    }
-    
-    /**
-     * Refreshes the currently viewed page.
-     *
-     * @return the platform-defined result code for the "Refresh" method invocation
-     */
-    public void refresh()
-    {
-        // dispid= 4294966746, type=METHOD, name="Refresh"
-        mOleAutomation.invokeNoReply(getOleIDOfNames("Refresh")[0]); //$NON-NLS-1$
-    }
-    
-    /**
-     * Aborts loading of the currnet page.
-     *
-     * @return the platform-defined result code for the "Stop" method invocation
-     */
-    public void stop() 
-    {
-        // dispid=106, type=METHOD, name="Stop"
-        invokeOleFunction("Stop"); //$NON-NLS-1$
-    }   
 }

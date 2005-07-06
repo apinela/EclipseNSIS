@@ -50,7 +50,6 @@ public class CopyCommand extends Command
         mMinY = Math.min(mMinY,bounds.y);
         mMaxY = Math.max(mMaxY,bounds.y+bounds.height-1);
         
-        InstallOptionsWidgetEditPart newPart;
         try {
             mCopies.add((InstallOptionsWidget)((InstallOptionsWidget)part.getModel()).clone());
         }

@@ -12,8 +12,7 @@ package net.sf.eclipsensis.installoptions.edit;
 import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
 import net.sf.eclipsensis.installoptions.requests.ExtendedEditRequest;
 
-import org.eclipse.gef.EditPart;
-import org.eclipse.gef.Request;
+import org.eclipse.gef.*;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.editpolicies.GraphicalEditPolicy;
 
@@ -35,8 +34,11 @@ public abstract class InstallOptionsExtendedEditPolicy extends GraphicalEditPoli
             return null;
         }
         else {
-            if (IInstallOptionsConstants.REQ_EXTENDED_EDIT == request.getType()) {
+            if (IInstallOptionsConstants.REQ_EXTENDED_EDIT.equals(request.getType())) {
                 return getExtendedEditCommand((ExtendedEditRequest)request);
+            }
+            else if (RequestConstants.REQ_OPEN.equals(request.getType())) {
+                return getExtendedEditCommand(new ExtendedEditRequest(mEditPart));
             }
             else {
                 return super.getCommand(request);
@@ -46,7 +48,8 @@ public abstract class InstallOptionsExtendedEditPolicy extends GraphicalEditPoli
 
     public boolean understandsRequest(Request request) 
     {
-        if (IInstallOptionsConstants.REQ_EXTENDED_EDIT.equals(request.getType())) {
+        if (IInstallOptionsConstants.REQ_EXTENDED_EDIT.equals(request.getType())||
+            RequestConstants.REQ_OPEN.equals(request.getType())) {
             if(((InstallOptionsEditDomain)mEditPart.getViewer().getEditDomain()).isReadOnly()) {
                 return false;
             }

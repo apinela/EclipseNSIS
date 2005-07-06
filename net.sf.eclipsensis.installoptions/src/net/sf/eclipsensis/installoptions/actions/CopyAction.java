@@ -18,10 +18,8 @@ import net.sf.eclipsensis.installoptions.model.commands.CopyCommand;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.internal.GEFMessages;
 import org.eclipse.gef.ui.actions.SelectionAction;
-import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.internal.WorkbenchImages;
 
 public class CopyAction extends SelectionAction
 {
@@ -40,12 +38,13 @@ public class CopyAction extends SelectionAction
     protected void init() 
     {
         super.init();
+        ISharedImages sharedImages = PlatformUI.getWorkbench().getSharedImages();
         setText(GEFMessages.CopyAction_Label);
         setToolTipText(GEFMessages.CopyAction_Tooltip);
         setId(ActionFactory.COPY.getId());
-        setHoverImageDescriptor(WorkbenchImages.getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
-        setImageDescriptor(WorkbenchImages.getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
-        setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(ISharedImages.IMG_TOOL_COPY_DISABLED));
+        setHoverImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
+        setImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
+        setDisabledImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_COPY_DISABLED));
         setEnabled(false);
     }
 

@@ -37,8 +37,6 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
 
     private static final int ALL_CHECK=0;
 
-    private static final String[] cDeleteConfirmButtonLabels = {IDialogConstants.YES_LABEL, IDialogConstants.YES_TO_ALL_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.NO_TO_ALL_LABEL};
-
     private static final int[] cDeleteConfirmButtonIds = {IDialogConstants.YES_ID, IDialogConstants.YES_TO_ALL_ID, IDialogConstants.NO_ID, IDialogConstants.NO_TO_ALL_ID};
 
     private static final String cDeleteConfirmTitle = EclipseNSISPlugin.getResourceString("delete.confirmation.title"); //$NON-NLS-1$
@@ -208,7 +206,6 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
 
             protected List getAllElements()
             {
-                List list = getSelectionList();
                 return getAllElements(getSelectionParent(getSelectionList()));
             }
 
@@ -490,6 +487,25 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
         
         return composite;
     }
+    
+    private boolean shouldSelectComponents(INSISInstallElement item)
+    {
+        if(item instanceof NSISSection) {
+            return (!((NSISSection)item).isHidden());
+        }
+        else if(item instanceof NSISSectionGroup) {
+            INSISInstallElement[] items = item.getChildren();
+            if(!Common.isEmptyArray(items)) {
+                for (int i = 0; i < items.length; i++) {
+                    if(shouldSelectComponents(items[i])) {
+                        return true;
+                    }
+                }
+            }
+        }
+        
+        return false;
+    }
 
     private void updateSelectComponents()
     {
@@ -499,24 +515,9 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
             INSISInstallElement[] items = settings.getInstaller().getChildren();
             if(!Common.isEmptyArray(items)) {
                 for (int i = 0; i < items.length; i++) {
-                    if(items[i] instanceof NSISSection) {
-                        if(!((NSISSection)items[i]).isHidden()) {
-                            settings.setSelectComponents(true);
-                            return;
-                        }
-                    }
-                    else if(items[i] instanceof NSISSectionGroup) {
-                        INSISInstallElement[] items2 = items[i].getChildren();
-                        if(!Common.isEmptyArray(items2)) {
-                            for (int j = 0; j < items2.length; j++) {
-                                if(items2[j] instanceof NSISSection) {
-                                    if(!((NSISSection)items2[j]).isHidden()) {
-                                        settings.setSelectComponents(true);
-                                        return;
-                                    }
-                                }
-                            }
-                        }
+                    if(shouldSelectComponents(items[i])) {
+                        settings.setSelectComponents(true);
+                        return;
                     }
                 }
             }

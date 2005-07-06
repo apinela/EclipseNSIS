@@ -80,10 +80,10 @@ public class InstallOptionsGuide
             return;
 
         getMap().put(part, new Integer(alignment));
-        InstallOptionsGuide parent = isHorizontal()?part.getHorizontalGuide():part
+        InstallOptionsGuide oldGuide = isHorizontal()?part.getHorizontalGuide():part
                 .getVerticalGuide();
-        if (parent != null && parent != this) {
-            parent.detachPart(part);
+        if (oldGuide != null && oldGuide != this) {
+            oldGuide.detachPart(part);
         }
         if (isHorizontal()) {
             part.setHorizontalGuide(this);
@@ -130,7 +130,7 @@ public class InstallOptionsGuide
     public Map getMap()
     {
         if (mMap == null) {
-            mMap = new Hashtable();
+            mMap = new HashMap();
         }
         return mMap;
     }
@@ -196,5 +196,4 @@ public class InstallOptionsGuide
                     oldValue), new Integer(mPosition));
         }
     }
-
 }

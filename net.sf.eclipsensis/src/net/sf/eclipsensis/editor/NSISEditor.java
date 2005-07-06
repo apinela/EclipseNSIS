@@ -41,6 +41,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.texteditor.*;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
@@ -375,6 +376,7 @@ public class NSISEditor extends TextEditor implements INSISConstants, IPropertyC
     {
         super.initializeEditor();
         IPreferenceStore preferenceStore = NSISPreferences.getPreferences().getPreferenceStore();
+        preferenceStore = new ChainedPreferenceStore(new IPreferenceStore[]{preferenceStore, EditorsUI.getPreferenceStore()});
         setPreferenceStore(preferenceStore);
         setSourceViewerConfiguration(new NSISEditorSourceViewerConfiguration(preferenceStore));
     }
@@ -537,7 +539,7 @@ public class NSISEditor extends TextEditor implements INSISConstants, IPropertyC
 
         private static int newId()
         {
-            synchronized(Mutex.class) {
+            synchronized(NSISEditor.Mutex.class) {
                 cCounter++;
                 return cCounter;
             }

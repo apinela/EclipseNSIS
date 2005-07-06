@@ -12,40 +12,15 @@ package net.sf.eclipsensis.installoptions.editor.text;
 import java.util.Arrays;
 import java.util.Comparator;
 
-import net.sf.eclipsensis.util.ColorManager;
+import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
 
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.TextAttribute;
-import org.eclipse.jface.text.rules.BufferedRuleBasedScanner;
-import org.eclipse.jface.text.rules.Token;
-import org.eclipse.swt.SWT;
 
-public class InstallOptionsCommentScanner extends BufferedRuleBasedScanner implements IInstallOptionsScanner
+public class InstallOptionsCommentScanner extends InstallOptionsSyntaxScanner
 {
-    /**
-     * 
-     */
-    public InstallOptionsCommentScanner()
+    protected void reset()
     {
-        super();
-        setDefaultReturnToken(new Token(new TextAttribute(ColorManager.getColor(ColorManager.GREY),
-                null, SWT.ITALIC)));
-    }
-
-    /* (non-Javadoc)
-     * @see net.sf.eclipsensis.installoptions.editor.text.IInstallOptionsScanner#getOffset()
-     */
-    public int getOffset()
-    {
-        return fOffset;
-    }
-
-    /* (non-Javadoc)
-     * @see net.sf.eclipsensis.installoptions.editor.text.IInstallOptionsScanner#getDocument()
-     */
-    public IDocument getDocument()
-    {
-        return fDocument;
+        setDefaultReturnToken(createToken(IInstallOptionsConstants.COMMENT_STYLE));
     }
 
     public void setRange(IDocument document, int offset, int length)

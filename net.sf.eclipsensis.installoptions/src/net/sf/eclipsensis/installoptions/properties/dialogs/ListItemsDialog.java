@@ -174,17 +174,6 @@ public class ListItemsDialog extends Dialog
                 return (List)((TableViewer)getViewer()).getInput();
             }
 
-            protected List getMoveElements()
-            {
-                IStructuredSelection sel = (IStructuredSelection)((TableViewer)getViewer()).getSelection();
-                if(!sel.isEmpty()) {
-                    return sel.toList();
-                }
-                else {
-                    return Collections.EMPTY_LIST;
-                }
-            }
-
             protected void updateStructuredViewerInput(Object input, List elements, List move, boolean isDown)
             {
                 ((List)input).clear();

@@ -14,7 +14,7 @@ import net.sf.eclipsensis.wizard.NSISWizard;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 public class NSISWizardDialog extends WizardDialog
 {
@@ -33,7 +33,7 @@ public class NSISWizardDialog extends WizardDialog
         NSISWizard wiz = (NSISWizard)getWizard();
         String helpContextId = wiz.getHelpContextId();
         if(helpContextId != null) {
-            WorkbenchHelp.setHelp(getContents(),helpContextId);
+            PlatformUI.getWorkbench().getHelpSystem().setHelp(getContents(),helpContextId);
         }
     }
 }

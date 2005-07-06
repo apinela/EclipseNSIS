@@ -31,7 +31,7 @@ public class InstallOptionsTextEditManager extends InstallOptionsEditableElement
 
     protected CellEditor createCellEditor(Composite composite)
     {
-        TextCellEditor cellEditor = (TextCellEditor)super.createCellEditorOn(composite);
+        TextCellEditor cellEditor = (TextCellEditor)super.createCellEditor(composite);
         TextFigure figure = (TextFigure)getEditPart().getFigure();
         if(figure.isOnlyNumbers()) {
             ((Text)cellEditor.getControl()).addVerifyListener(new VerifyListener(){

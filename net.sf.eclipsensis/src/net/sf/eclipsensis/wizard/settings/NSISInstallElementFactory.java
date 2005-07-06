@@ -31,7 +31,7 @@ public class NSISInstallElementFactory
             String[] classList = Common.loadArrayProperty(plugin.getResourceBundle(),"preload.nsisinstallelements"); //$NON-NLS-1$
             for (int i = 0; i < classList.length; i++) {
                 try {
-                    Class clasz = Class.forName(classList[i]);
+                    Class.forName(classList[i]);
                 }
                 catch(Exception e)
                 {

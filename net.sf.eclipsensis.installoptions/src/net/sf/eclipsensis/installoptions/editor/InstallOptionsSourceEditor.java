@@ -9,7 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.editor;
 
-import java.util.*;
+import java.util.Map;
 import java.util.regex.Matcher;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
@@ -20,21 +20,27 @@ import net.sf.eclipsensis.installoptions.ini.*;
 import net.sf.eclipsensis.installoptions.model.*;
 import net.sf.eclipsensis.util.Common;
 
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.CompositeImageDescriptor;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.jface.text.source.IVerticalRuler;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.progress.UIJob;
+import org.eclipse.ui.texteditor.ChainedPreferenceStore;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
@@ -47,6 +53,15 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
     private OutlinePage mOutlinePage = null;
     private Map[] mCachedMarkers;
     
+    public InstallOptionsSourceEditor()
+    {
+        super();
+        setPreferenceStore(new ChainedPreferenceStore(new IPreferenceStore[]{
+                InstallOptionsPlugin.getDefault().getPreferenceStore(),
+                EditorsUI.getPreferenceStore()
+        }));
+    }
+
     public boolean canSwitch()
     {
         boolean valid = !mINIFile.hasErrors();
@@ -91,7 +106,16 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
     {
         super.createActions();
         IAction action = new SwitchEditorAction(this, INSTALLOPTIONS_DESIGN_EDITOR_ID);
+        action.setActionDefinitionId(SWITCH_EDITOR_COMMAND_ID);
         setAction(action.getId(),action);
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.texteditor.AbstractDecoratedTextEditor#initializeKeyBindingScopes()
+     */
+    protected void initializeKeyBindingScopes()
+    {
+        setKeyBindingScopes(new String[] { IInstallOptionsConstants.EDITING_INSTALLOPTIONS_SOURCE_CONTEXT_ID });
     }
 
     public void dispose()
@@ -174,6 +198,18 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
         setSourceViewerConfiguration(new InstallOptionsSourceViewerConfiguration());
     }
     
+    protected ISourceViewer createSourceViewer(Composite parent, IVerticalRuler ruler, int styles)
+    {
+        fAnnotationAccess= createAnnotationAccess();
+        fOverviewRuler= createOverviewRuler(getSharedColors());
+
+        ISourceViewer viewer= new InstallOptionsSourceViewer(parent, ruler, getOverviewRuler(), isOverviewRulerVisible(), styles);
+        // ensure decoration support has been created and configured.
+        getSourceViewerDecorationSupport(viewer);
+
+        return viewer;
+    }
+
     public void createPartControl(Composite parent)
     {
         super.createPartControl(parent);

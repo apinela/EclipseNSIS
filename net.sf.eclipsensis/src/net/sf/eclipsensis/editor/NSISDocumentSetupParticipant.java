@@ -13,7 +13,7 @@ import net.sf.eclipsensis.editor.text.NSISPartitionScanner;
 
 import org.eclipse.core.filebuffers.IDocumentSetupParticipant;
 import org.eclipse.jface.text.*;
-import org.eclipse.jface.text.rules.DefaultPartitioner;
+import org.eclipse.jface.text.rules.FastPartitioner;
 
 public class NSISDocumentSetupParticipant implements IDocumentSetupParticipant
 {
@@ -23,7 +23,7 @@ public class NSISDocumentSetupParticipant implements IDocumentSetupParticipant
     public void setup(IDocument document) {
         if (document instanceof IDocumentExtension3) {
             IDocumentExtension3 extension3= (IDocumentExtension3) document;
-            IDocumentPartitioner partitioner= new DefaultPartitioner(new NSISPartitionScanner(), NSISPartitionScanner.NSIS_PARTITION_TYPES);
+            IDocumentPartitioner partitioner= new FastPartitioner(new NSISPartitionScanner(), NSISPartitionScanner.NSIS_PARTITION_TYPES);
             extension3.setDocumentPartitioner(NSISPartitionScanner.NSIS_PARTITIONING, partitioner);
             partitioner.connect(document);
         }

@@ -153,7 +153,7 @@ public class NSISInstallRegistryValueDialog extends AbstractNSISInstallItemDialo
                 if(index == INSISWizardConstants.REG_DWORD) {
                     l.setFont(requiredFont);
                     try {
-                        int n = Integer.parseInt(t3.getText());
+                        Integer.parseInt(t3.getText());
                     }
                     catch(Exception ex) {
                         t3.setText(""); //$NON-NLS-1$

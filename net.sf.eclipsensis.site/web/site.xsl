@@ -16,16 +16,16 @@
 <xsl:for-each select="site">
     <html>
     <head>
-    <title>net.sf.eclipsensis</title>
+    <title>EclipseNSIS Update Site</title>
     <style>@import url("web/site.css");</style>
     </head>
     <body>
-    <h1 class="title">net.sf.eclipsensis</h1>
+    <h1 class="title">EclipseNSIS Update Site</h1>
     <p class="bodyText"><xsl:value-of select="description"/></p>
     <table width="100%" border="0" cellspacing="1" cellpadding="2">
     <xsl:for-each select="category-def">
-        <xsl:sort select="@label" order="ascending" case-order="upper-first"/>
-        <xsl:sort select="@name" order="ascending" case-order="upper-first"/>
+        <xsl:sort select="@label" order="descending" case-order="upper-first"/>
+        <xsl:sort select="@name" order="descending" case-order="upper-first"/>
     <xsl:if test="count(key('cat',@name)) != 0">
             <tr class="header">
                 <td class="sub-header" width="30%">

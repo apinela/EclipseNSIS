@@ -81,7 +81,6 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
     {
         NSISWizardSettings settings = mWizard.getSettings();
 
-        String startMenuGroup = settings.getStartMenuGroup();
         if(settings.isEnableLanguageSupport() && settings.getLanguages().size() == 0) {
             setErrorMessage(EclipseNSISPlugin.getResourceString("invalid.languages.error")); //$NON-NLS-1$
             return false;
@@ -130,7 +129,6 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
 
     protected void createLanguagesGroup(Composite parent)
     {
-        ResourceBundle bundle = EclipseNSISPlugin.getDefault().getResourceBundle();
         final Group group = NSISWizardDialogUtil.createGroup(parent, 1, "language.support.group.label",null,false); //$NON-NLS-1$
         GridData data = ((GridData)group.getLayoutData());
         data.verticalAlignment = GridData.FILL;
@@ -481,7 +479,6 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
      */
     private void createInstallationDirectoryGroup(Composite parent)
     {
-        ResourceBundle bundle = EclipseNSISPlugin.getDefault().getResourceBundle();
         Group group = NSISWizardDialogUtil.createGroup(parent, 2, "installation.directory.group.label",null,false); //$NON-NLS-1$
 
         NSISWizardSettings settings = mWizard.getSettings();
@@ -534,7 +531,6 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
      */
     private void createStartMenuGroupGroup(Composite parent)
     {
-        ResourceBundle bundle = EclipseNSISPlugin.getDefault().getResourceBundle();
         Group group = NSISWizardDialogUtil.createGroup(parent, 2, "startmenu.group.group.label",null,false); //$NON-NLS-1$
 
         NSISWizardSettings settings = mWizard.getSettings();

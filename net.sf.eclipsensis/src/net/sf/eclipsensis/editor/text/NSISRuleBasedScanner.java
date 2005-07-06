@@ -12,14 +12,12 @@ package net.sf.eclipsensis.editor.text;
 import java.util.*;
 
 import net.sf.eclipsensis.settings.IPropertyAdaptable;
-import net.sf.eclipsensis.util.ColorManager;
 import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.TextAttribute;
 import org.eclipse.jface.text.rules.*;
-import org.eclipse.swt.SWT;
 
 public abstract class NSISRuleBasedScanner extends BufferedRuleBasedScanner implements NSISScanner, IPropertyAdaptable
 {
@@ -84,10 +82,7 @@ public abstract class NSISRuleBasedScanner extends BufferedRuleBasedScanner impl
             }
         }
         if(syntaxStyle != null) {
-            int style = (syntaxStyle.mBold?SWT.BOLD:0) | (syntaxStyle.mItalic?SWT.ITALIC:0);
-            attr = new TextAttribute(ColorManager.getColor(syntaxStyle.mForeground),
-                                     ColorManager.getColor(syntaxStyle.mBackground),
-                                     style);
+            attr = syntaxStyle.createTextAttribute();
         }
         
         return (attr == null?fDefaultReturnToken:new Token(attr));
