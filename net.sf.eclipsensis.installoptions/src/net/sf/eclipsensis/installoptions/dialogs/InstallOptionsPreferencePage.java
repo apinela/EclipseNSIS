@@ -274,7 +274,7 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
             public String getText(Object element) {
                 if(element instanceof String) {
                     String name = (String)element;
-                    String label = InstallOptionsPlugin.getResourceString(name.toLowerCase()+".label","");
+                    String label = InstallOptionsPlugin.getResourceString(name.toLowerCase()+".label",""); //$NON-NLS-1$ //$NON-NLS-2$
                     if(Common.isEmpty(label)) {
                         label = name;
                     }
@@ -427,7 +427,7 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
         parent.setLayout(layout);
         
         Label l = new Label(parent,SWT.WRAP);
-        l.setText(InstallOptionsPlugin.getResourceString("design.editor.preferences.description"));
+        l.setText(InstallOptionsPlugin.getResourceString("design.editor.preferences.description")); //$NON-NLS-1$
         gd = new GridData(GridData.FILL_HORIZONTAL);
         gd.horizontalSpan = 2;
         l.setLayoutData(gd);

@@ -53,8 +53,8 @@ treemenu.prototype.add = function(open, label, target, url,                     
  for (i=this.nodes.length-1; i>=0; i--)                                         // Parent node:
    if (this.nodes[i].indent < indent) { node.parent = this.nodes[i];   break; } //   Loop back to find parent by indent
  if (!node.parent) node.parent = this.root;                                     //   Root-node is parent if none found
- if (node.parent.indent<node.indent-1)                                          //   Invalid indent
-     alert('Indent of "' + node.text + '" must be <' + (node.parent.indent+2)); //   -> alert-message
+// if (node.parent.indent<node.indent-1)                                          //   Invalid indent
+//     alert('Indent of "' + node.text + '" must be <' + (node.parent.indent+2)); //   -> alert-message
  node.parent.childs[node.parent.childs.length] = node; }                        //   New node is child of the parent
 
                                                                                 // ---------- Build Html-code ----------

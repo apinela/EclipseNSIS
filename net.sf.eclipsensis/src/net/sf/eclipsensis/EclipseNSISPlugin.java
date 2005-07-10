@@ -117,8 +117,32 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
         String[] supportedOS = Common.loadArrayProperty(getResourceBundle(),"supported.os"); //$NON-NLS-1$
         if(!Common.isEmptyArray(supportedOS)) {
             String osName = System.getProperty("os.name"); //$NON-NLS-1$
+            String osVersion = System.getProperty("os.version");
             for(int i=0; i<supportedOS.length; i++) {
-                if(osName.equalsIgnoreCase(supportedOS[i])) {
+                String[] tokens = Common.tokenize(supportedOS[i],'#');
+                String os = tokens[0];
+                Version minOSVersion = null;
+                Version maxOSVersion = null;
+                if(tokens.length >= 2) {
+                    minOSVersion = new Version(tokens[1]);
+                    if(tokens.length >= 3) {
+                        maxOSVersion = new Version(tokens[3]);
+                    }
+                }
+                if(osName.equalsIgnoreCase(os)) {
+                    if(minOSVersion != null) {
+                        Version version = new Version(osVersion);
+                        if(version.compareTo(minOSVersion) >= 0) {
+                            if(maxOSVersion != null) {
+                                if(maxOSVersion.compareTo(version) >= 0) {
+                                    return;
+                                }
+                                break;
+                            }
+                            return;
+                        }
+                        break;
+                    }
                     return;
                 }
             }

@@ -9,7 +9,7 @@ function prependSlash(url)
 
 function redirectEclipse(url)
 {
-    document.location = "http://help.eclipse.org/help30/topic" + prependSlash(url);
+    document.location = "http://help.eclipse.org/help31/topic" + prependSlash(url);
 }
 
 function redirectNSIS(url)

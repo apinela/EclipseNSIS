@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- *
+ * 
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -52,6 +52,10 @@ extern "C" {
 #define net_sf_eclipsensis_util_WinAPI_HKEY_USERS -2147483645L
 #undef net_sf_eclipsensis_util_WinAPI_BS_LEFTTEXT
 #define net_sf_eclipsensis_util_WinAPI_BS_LEFTTEXT 32L
+#undef net_sf_eclipsensis_util_WinAPI_CB_SHOWDROPDOWN
+#define net_sf_eclipsensis_util_WinAPI_CB_SHOWDROPDOWN 335L
+#undef net_sf_eclipsensis_util_WinAPI_CB_GETDROPPEDSTATE
+#define net_sf_eclipsensis_util_WinAPI_CB_GETDROPPEDSTATE 343L
 /*
  * Class:     net_sf_eclipsensis_util_WinAPI
  * Method:    init

@@ -48,7 +48,6 @@ public class Common
 {
     public static final String[] EMPTY_STRING_ARRAY = new String[0];
 
-    private static String[] cEnv = null;
     private static final String cPathSeparator = System.getProperty("file.separator"); //$NON-NLS-1$
     private static final String cOnePathLevelUp = ".." + cPathSeparator; //$NON-NLS-1$
 
@@ -441,51 +440,6 @@ public class Common
         return true;
     }
 
-    public static String[] getEnv() throws IOException
-    {
-        if(cEnv == null) {
-            synchronized(Common.class) {
-                if(cEnv == null) {
-                    Properties props = new Properties();
-                    Process proc = null;
-                    Runtime runtime = Runtime.getRuntime();
-                    String osName = System.getProperty("os.name").toLowerCase(); //$NON-NLS-1$
-
-                    if (osName.indexOf("windows") >= 0) { //$NON-NLS-1$
-                        if (osName.indexOf("windows 9") >= 0) { //$NON-NLS-1$
-                            proc = runtime.exec("command.com /c set"); //$NON-NLS-1$
-                        }
-                        else {
-                            proc = runtime.exec("cmd.exe /c set"); //$NON-NLS-1$
-                        }
-                    }
-                    else {
-                        proc = runtime.exec("env"); //$NON-NLS-1$
-                    }
-                    BufferedReader br = new BufferedReader(new InputStreamReader(
-                                                            proc.getInputStream()));
-                    String line;
-                    while ((line = br.readLine()) != null) {
-                        int n = line.indexOf('=');
-                        if(n >= 0) {
-                            String key = line.substring(0, n);
-                            String value = line.substring(n + 1);
-                            props.setProperty(key, value);
-                        }
-                    }
-                    br.close();
-                    cEnv = new String[props.size()];
-                    int i=0;
-                    for(Iterator iter = props.entrySet().iterator(); iter.hasNext(); ) {
-                        Map.Entry entry = (Map.Entry)iter.next();
-                        cEnv[i++] = new StringBuffer((String)entry.getKey()).append("=").append((String)entry.getValue()).toString(); //$NON-NLS-1$
-                    }
-                }
-            }
-        }
-        return cEnv;
-    }
-
     public static String[] runProcessWithOutput(String[] cmdArray, File workDir)
     {
         return runProcessWithOutput(cmdArray, workDir, 0);
@@ -495,7 +449,7 @@ public class Common
     {
         String[] output = null;
         try {
-            Process proc = Runtime.getRuntime().exec(cmdArray,getEnv(), workDir);
+            Process proc = Runtime.getRuntime().exec(cmdArray, null, workDir);
             new Thread(new RunnableInputStreamReader(proc.getErrorStream(),false)).start();
             output = new RunnableInputStreamReader(proc.getInputStream()).getOutput();
             int rv = proc.waitFor();

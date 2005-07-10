@@ -9,7 +9,6 @@
  *******************************************************************************/
 package net.sf.eclipsensis.util;
 
-
 public class WinAPI
 {
     static {

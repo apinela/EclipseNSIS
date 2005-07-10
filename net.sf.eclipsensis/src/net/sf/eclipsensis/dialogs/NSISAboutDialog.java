@@ -15,7 +15,6 @@ import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.settings.NSISPreferences;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.help.ui.browser.LaunchURL;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -156,10 +155,8 @@ public class NSISAboutDialog extends Dialog implements INSISConstants
             mLaunchURL.setInitializationData(null,null,mURLData);
             mLaunchURL.run(null);
         }
-        catch (CoreException e) {
-            e.printStackTrace();
+        catch (Exception ex) {
+            ex.printStackTrace();
         }
-//        PlatformUI.getWorkbench().getHelpSystem().displayHelpResource(link); //$NON-NLS-1$
     }
-    
 }

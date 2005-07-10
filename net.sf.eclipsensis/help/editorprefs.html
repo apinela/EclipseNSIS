@@ -20,6 +20,7 @@ Preferences</title>
  content="text/html; charset=ISO-8859-1">
   <meta http-equiv="Content-Style-Type" content="text/css">
   <script language="javascript" type="text/javascript" src="help.js"></script>
+  <script language="javascript" type="text/javascript" src="redirect.js"></script>
 </head>
 <body>
 <div id="main">
@@ -30,106 +31,27 @@ Preferences</title>
 <h1>Preferences</h1>
 <h2><a name="editor"></a>Editor</h2>
 <p>These preferences are used to customize the look and feel of the
-EclipseNSIS
-editor.<br>
-The Editor Preferences page has two tabs:</p>
-<ul>
-  <li><a href="#appearance">Appearance</a></li>
-  <li><a href="#syntax">Syntax</a></li>
-</ul>
-<h3><a name="appearance"></a>Appearance</h3>
+EclipseNSIS editor.<br>
+<strong>Please note that the EclipseNSIS editor inherits preferences from the <a href="javascript:redirectEclipse('/org.eclipse.platform.doc.user/reference/ref-texteditorprefs.htm');">Text Editor</a>.</strong></p>
 <p style="text-align: center;"><img
- alt="Editor Preferences Appearance Tab" src="images/editorpref1.gif"
+ alt="Editor Preferences" src="images/editorpref.gif"
  ismap="ismap"
  style="border: medium none ; width: 425px; height: 508px;"
- usemap="#editorpref1"></p>
-  <a name="a_tabwidth"></a><dl id="id_tabwidth"><dt>Displayed
-tab width</dt>
-  <dd>Specifies how wide tabs are
-displayed in units of spaces. <a href="javascript:history.go(-1)">&larr;
-Back</a></dd></dl>
+ usemap="#editorpref"></p>
   <a name="a_spacestabs"></a><dl id="id_spacestabs"><dt>Use
 spaces for tabs</dt>
   <dd>The editor uses spaces
 instead of tabs to represent indentations. <a
  href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
-  <a name="a_printmargin"></a><dl id="id_printmargin"><dt>Print
-margin column</dt>
-  <dd>Specifies the column after
-which the print margin is displayed. <a
- href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
-  <a name="a_showruler"></a><dl id="id_showruler"><dt>Show
-overview ruler</dt>
-  <dd>If enabled, the overview
-ruler on the right border of the EclipseNSIS
-editor is displayed and shows problems of the whole visible document. <a
- href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
-  <a name="a_showlinenum"></a><dl id="id_showlinenum"><dt>Show
-line numbers</dt>
-  <dd>If enabled, the vertical
-ruler on the left border of the EclipseNSIS
-editor displays line numbers of the visible document. <a
- href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
-  <a name="a_highlight"></a><dl id="id_highlight"><dt>Highlight
-current line</dt>
-  <dd>If enabled, the background
-of the current line of the cursor is
-highlighted. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
-  <a name="a_showmargin"></a><dl id="id_showmargin"><dt>Show
-print margin</dt>
-  <dd>If enabled, the print margin
-is displayed. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
   <a name="a_showmatch"></a><dl id="id_showmatch"><dt>Show
 matching delimiters</dt>
   <dd>If enabled, whenever the
 cursor is next to a parenthesis, bracket
 or curly braces, its opening or closing counter part is highlighted. <a
  href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
-  <a name="a_customcaret"></a><dl id="id_customcaret"><dt>Use
-custom caret</dt>
-  <dd>Accessibility option to use
-a custom caret. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
-  <a name="a_thickcaret"></a><dl id="id_thickcaret"><dt>Enable
-thick caret</dt>
-  <dd>Accessibility option to use
-a thick caret. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
-  <a name="a_appearancecolors"></a><dl id="id_appearancecolors"><dt>Appearance
-color options</dt>
-  <dd>The colors of various
-EclipseNSIS editor appearance features are
-specified here. The available appearance features are listed below. <a
- href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd>
-  <dl>
-    <dt>Current line highlight</dt>
-    <dd>The color of current line
-highlight.</dd>
-    <dt>Line number foreground</dt>
-    <dd>The color of line numbers.</dd>
-    <dt>Matching delimiters
-highlight<br>
-    </dt>
-    <dd>The color of delimiters
-highlight.</dd>
-    <dt>Print margin</dt>
-    <dd>The color of the print
-margin.</dd>
-    <dt>Selection background<br>
-    </dt>
-    <dd>The background color of
-selected text.</dd>
-    <dt>Selection foreground<br>
-    </dt>
-    <dd>The foreground color of
-selected text.</dd>
-  </dl></div>
-<a href="preferences.html">Back
-to Preferences</a><br>
-<br>
-<h3><a name="syntax"></a>Syntax</h3>
-<p style="text-align: center;"><img alt="Editor Preferences Syntax Tab"
- src="images/editorpref2.gif" ismap="ismap"
- style="border: medium none ; width: 425px; height: 508px;"
- usemap="#editorpref2"></p>
+  <a name="a_matchcolor"></a><dl id="id_matchcolor"><dt>Matching delimiters highlight</dt>
+  <dd>Specify the color used to highlight matching delimiters. <a
+ href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
   <a name="a_syntaxstyles"></a><dl id="id_syntaxstyles"><dt>Syntax
 style options</dt>
   <dd>Syntax styles specify how
@@ -195,49 +117,13 @@ to Preferences</a><br>
 <p><strong><small>Copyright
 &copy; 2004, 2005 Sunil Kamath
 (IcemanK).</small></strong></p>
-<map name="editorpref1">
-<area id="appearancecolors" shape="RECT" href="#a_appearancecolors"
- alt="Appearance color options" coords="17,306, 254,392"
- onclick="highlightDef('id_appearancecolors');">
-<area id="thickcaret" shape="RECT" href="#a_thickcaret"
- alt="Enable thick caret" coords="39,273, 141,287"
- onclick="highlightDef('id_thickcaret');">
-<area id="customcaret" shape="RECT" href="#a_customcaret"
- alt="Use custom caret" coords="18,253, 118,267"
- onclick="highlightDef('id_customcaret');">
-<area id="showmatch" shape="RECT" href="#a_showmatch"
- alt="Show matching delimiters" coords="18,231, 156,244"
- onclick="highlightDef('id_showmatch');">
-<area id="showmargin" shape="RECT" href="#a_showmargin"
- alt="Show print margin" coords="18,210, 122,224"
- onclick="highlightDef('id_showmargin');">
-<area id="highlight" shape="RECT" href="#a_highlight"
- alt="Highlight current line" coords="18,189, 133,204"
- onclick="highlightDef('id_highlight');">
-<area id="showlinenum" shape="RECT" href="#a_showlinenum"
- alt="Show line numbers" coords="19,168, 126,184"
- onclick="highlightDef('id_showlinenum');">
-<area id="showruler" shape="RECT" href="#a_showruler"
- alt="Show overview ruler" coords="18,147, 134,162"
- onclick="highlightDef('id_showruler');">
-<area id="printmargin" shape="RECT" href="#a_printmargin"
- alt="Print margin column" coords="17,122, 156,143"
- onclick="highlightDef('id_printmargin');">
-<area id="spacestabs" shape="RECT" href="#a_spacestabs"
- alt="Use spaces for tabs" coords="20,101, 131,115"
- onclick="highlightDef('id_spacestabs');">
-<area id="tabwidth" shape="RECT" href="#a_tabwidth"
- alt="Displayed tab width" coords="18,76, 156,97"
- onclick="highlightDef('id_tabwidth');">
-</map>
-<map name="editorpref2">
-<area id="syntaxpreview" shape="RECT" href="#a_syntaxpreview"
- alt="Syntax preview" coords="17,231, 407,465"
- onclick="highlightDef('id_syntaxpreview');">
-<area id="syntaxstyles" shape="RECT" href="#a_syntaxstyles"
- alt="Syntax styles" coords="17,77, 342,226"
- onclick="highlightDef('id_syntaxstyles');">
-</map>
+<MAP NAME="editorpref">
+     <AREA ID="syntaxpreview" SHAPE="RECT" HREF="#a_syntaxpreview" ALT="Syntax Preview" OnClick="highlightDef('id_syntaxpreview');" COORDS="24,300, 407,463">
+     <AREA ID="syntaxstyles" SHAPE="RECT" HREF="#a_syntaxstyles" ALT="Syntax style options" OnClick="highlightDef('id_syntaxstyles');" COORDS="22,212, 345,295">
+     <AREA ID="matchcolor" SHAPE="RECT" HREF="#a_matchcolor" ALT="Matching delimiters highlight" OnClick="highlightDef('id_matchcolor');" COORDS="44,147, 228,171">
+     <AREA ID="showmatch" SHAPE="RECT" HREF="#a_showmatch" ALT="Show matching delimiters" OnClick="highlightDef('id_showmatch');" COORDS="24,127, 161,141">
+     <AREA ID="spacestabs" SHAPE="RECT" HREF="#a_spacestabs" ALT="Use spaces for tabs" OnClick="highlightDef('id_spacestabs');" COORDS="24,106, 137,120">
+</MAP>
 </div>
 </body>
 </html>

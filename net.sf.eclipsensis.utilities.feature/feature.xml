@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="net.sf.eclipsensis.utilities"
+      label="%feature.name"
+      version="0.1.0"
+      provider-name="%provider.name">
+   <install-handler/>
+
+   <description url="%description.url">
+      %description.text
+   </description>
+
+   <copyright url="%copyright.url">
+      %copyright.text
+   </copyright>
+
+   <license url="%license.url">
+      %license.text
+   </license>
+
+   <url>
+      <update label="%update.site.name" url="http://eclipsensis.sf.net/update"/>
+      <discovery label="%discovery.site.name" url="http://eclipsensis.sf.net/update/"/>
+   </url>
+
+   <requires>
+      <import plugin="org.eclipse.ui" version="3.1.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.runtime" version="3.1.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.resources" version="3.1.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.jdt.launching" version="3.1.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.console" version="3.1.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.debug.core" version="3.1.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.debug.ui" version="3.1.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.jdt.core" version="3.1.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.ide" version="3.1.0" match="greaterOrEqual"/>
+   </requires>
+
+   <plugin
+         id="net.sf.jarsigner"
+         download-size="36"
+         install-size="36"
+         version="0.1.0"
+         unpack="false"/>
+
+   <plugin
+         id="net.sf.jnigen"
+         download-size="42"
+         install-size="42"
+         version="0.3.0"
+         unpack="false"/>
+
+</feature>

@@ -1,20 +1,20 @@
 Manifest-Version: 1.0
 Bundle-Name: %plugin.name
-Bundle-SymbolicName: net.sf.eclipsensis.installoptions; singleton=true
+Bundle-ManifestVersion: 2
+Bundle-SymbolicName: net.sf.eclipsensis.installoptions; singleton:=true
 Bundle-Version: 0.9.0
-Bundle-ClassPath: installoptions.jar
 Bundle-Activator: net.sf.eclipsensis.installoptions.InstallOptionsPlugin
 Bundle-Vendor: Sunil Kamath (IcemanK)
 Bundle-Localization: plugin
-Require-Bundle: org.eclipse.core.runtime,
- org.eclipse.gef,
- org.eclipse.jface,
- org.eclipse.ui,
- org.eclipse.ui.views,
- org.eclipse.core.resources,
- org.eclipse.ui.ide,
+Require-Bundle: org.eclipse.core.runtime;bundle-version="3.1",
+ org.eclipse.gef;bundle-version="3.0",
+ org.eclipse.jface;bundle-version="3.1",
+ org.eclipse.ui;bundle-version="3.1",
+ org.eclipse.ui.views;bundle-version="3.1",
+ org.eclipse.core.resources;bundle-version="3.1",
+ org.eclipse.ui.ide;bundle-version="3.1",
  net.sf.eclipsensis;bundle-version="0.9.0",
- org.eclipse.ui.editors,
- org.eclipse.ui.workbench.texteditor,
- org.eclipse.jface.text
+ org.eclipse.ui.editors;bundle-version="3.1",
+ org.eclipse.ui.workbench.texteditor;bundle-version="3.1",
+ org.eclipse.jface.text;bundle-version="3.1"
 Eclipse-AutoStart: true

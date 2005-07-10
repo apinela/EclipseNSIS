@@ -1,0 +1,32 @@
+<project name="EclipseNSIS Web">
+    <target name="update">
+        <copy todir="update" includeEmptyDirs="false">
+            <fileset dir="../net.sf.eclipsensis.site" excludes="**/CVS/*,.project,.sitebuild/*"/>
+        </copy>
+    </target>
+    <target name="clean.update">
+        <delete includeemptydirs="true">
+            <fileset dir="update" includes="**/*"/>
+    	</delete>
+    </target>
+    <target name="help">
+        <copy todir="help/eclipsensis" includeEmptyDirs="false">
+            <fileset dir="../net.sf.eclipsensis/help" excludes="**/CVS/*"/>
+        </copy>
+        <copy todir="help/eclipsensis" overwrite="true">
+            <fileset file="help/redirect.js"/>
+        </copy>
+        <copy todir="help/installoptions" includeEmptyDirs="false">
+            <fileset dir="../net.sf.eclipsensis.installoptions/help" excludes="**/CVS/*"/>
+            </copy>
+        <copy todir="help/installoptions" overwrite="true">
+            <fileset file="help/redirect.js"/>
+        </copy>
+    </target>
+    <target name="clean.help">
+        <delete includeemptydirs="true">
+            <fileset dir="help/eclipsensis" includes="**/*"/>
+            <fileset dir="help/installoptions" includes="**/*"/>
+    	</delete>
+    </target>
+</project>

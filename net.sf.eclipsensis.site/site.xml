@@ -3,23 +3,24 @@
    <description url="http://eclipsensis.sf.net/update">
       Download released versions of EclipseNSIS plugins here.
    </description>
-   <feature url="features/net.sf.eclipsensis_0.9.0.jar" id="net.sf.eclipsensis" version="0.9.0" label="EclipseNSIS" os="win32" ws="win32" arch="x86">
-      <category name="0.9.0"/>
+   <feature url="features/net.sf.eclipsensis_0.9.0.jar" id="net.sf.eclipsensis" version="0.9.0" os="win32" ws="win32" arch="x86">
+      <category name="Current Releases"/>
    </feature>
-   <feature url="features/net.sf.eclipsensis.installoptions_0.9.0.jar" id="net.sf.eclipsensis.installoptions" version="0.9.0" label="EclipseNSIS InstallOptions Editor" os="win32" ws="win32" arch="x86">
-      <category name="0.9.0"/>
+   <feature url="features/net.sf.eclipsensis.installoptions_0.9.0.jar" id="net.sf.eclipsensis.installoptions" version="0.9.0" os="win32" ws="win32" arch="x86">
+      <category name="Current Releases"/>
    </feature>
-   <feature url="features/net.sf.eclipsensis_0.0.1.jar" id="net.sf.eclipsensis" version="0.0.1" label="EclipseNSIS" os="win32" ws="win32" arch="x86">
-      <category name="0.0.1"/>
+   <feature url="features/net.sf.eclipsensis_0.0.1.jar" id="net.sf.eclipsensis" version="0.0.1" os="win32" ws="win32" arch="x86">
+      <category name="Previous Releases"/>
    </feature>
-   <feature url="features/net.sf.eclipsensis_0.2.0.jar" id="net.sf.eclipsensis" version="0.2.0" label="EclipseNSIS" os="win32" ws="win32" arch="x86">
-      <category name="0.2.0"/>
+   <feature url="features/net.sf.eclipsensis_0.2.0.jar" id="net.sf.eclipsensis" version="0.2.0" os="win32" ws="win32" arch="x86">
+      <category name="Previous Releases"/>
    </feature>
-   <feature url="features/net.sf.eclipsensis_0.5.0.jar" id="net.sf.eclipsensis" version="0.5.0" label="EclipseNSIS" os="win32" ws="win32" arch="x86">
-      <category name="0.5.0"/>
+   <feature url="features/net.sf.eclipsensis_0.5.0.jar" id="net.sf.eclipsensis" version="0.5.0" os="win32" ws="win32" arch="x86">
+      <category name="Previous Releases"/>
    </feature>
-   <category-def name="0.0.1" label="EclipseNSIS 0.0.1"/>
-   <category-def name="0.2.0" label="EclipseNSIS 0.2.0"/>
-   <category-def name="0.5.0" label="EclipseNSIS 0.5.0"/>
-   <category-def name="0.9.0" label="EclipseNSIS 0.9.0"/>
+   <feature url="features/net.sf.eclipsensis.utilities_0.1.0.jar" id="net.sf.eclipsensis.utilities" version="0.1.0">
+      <category name="Current Releases"/>
+   </feature>
+   <category-def name="Previous Releases" label="Previous Releases"/>
+   <category-def name="Current Releases" label="Current Releases"/>
 </site>

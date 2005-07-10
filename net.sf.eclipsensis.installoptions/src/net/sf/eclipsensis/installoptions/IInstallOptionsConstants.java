@@ -61,12 +61,12 @@ public interface IInstallOptionsConstants
     public static final String PREFERENCE_GRID_STYLE = "GridStyle"; //$NON-NLS-1$
     public static final String PREFERENCE_ZOOM = "Zoom"; //$NON-NLS-1$
 
-    public static final String PREFERENCE_SYNTAX_STYLES = "SyntaxStyles";
-    public static final String SECTION_STYLE = "SectionStyle";
-    public static final String COMMENT_STYLE = "CommentStyle";    
-    public static final String KEY_STYLE = "KeyStyle";    
-    public static final String KEY_VALUE_DELIM_STYLE = "KeyValueDelimStyle";    
-    public static final String NUMBER_STYLE = "NumberStyle";    
+    public static final String PREFERENCE_SYNTAX_STYLES = "SyntaxStyles"; //$NON-NLS-1$
+    public static final String SECTION_STYLE = "SectionStyle"; //$NON-NLS-1$
+    public static final String COMMENT_STYLE = "CommentStyle";     //$NON-NLS-1$
+    public static final String KEY_STYLE = "KeyStyle";     //$NON-NLS-1$
+    public static final String KEY_VALUE_DELIM_STYLE = "KeyValueDelimStyle";     //$NON-NLS-1$
+    public static final String NUMBER_STYLE = "NumberStyle";     //$NON-NLS-1$
     
     public static final String QUALIFIED_NAME_PREFIX = PLUGIN_NAME;
     

@@ -29,10 +29,10 @@
     <xsl:if test="count(key('cat',@name)) != 0">
             <tr class="header">
                 <td class="sub-header" width="30%">
-                    <xsl:value-of select="@name"/>
+                    <xsl:value-of select="@label"/>
                 </td>
                 <td class="sub-header" width="70%">
-                    <xsl:value-of select="@label"/>
+                    Platform
                 </td>
             </tr>
             <xsl:for-each select="key('cat',@name)">
