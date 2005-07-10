@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<!--
+###############################################################################
+# Copyright (c) 2005 Sunil Kamath (IcemanK).
+# All rights reserved.
+# This program is made available under the terms of the Common Public License
+# v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
+# 
+# Contributors:
+#     Sunil Kamath (IcemanK) - initial API and implementation
+###############################################################################
+-->
+<plugin>
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IFile"
+            id="net.sf.jnigen.actions.JNIGenAction.IFile"
+            nameFilter="*.jar">
+         <action
+               enablesFor="+"
+               label="%jarsigner.action.label"
+               class="net.sf.jarsigner.actions.JARSignerAction"
+               id="net.sf.jarsigner.actions.JARSignerAction"/>
+      </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IFile"
+            id="net.sf.jnigen.actions.JNIGenAction.IFile"
+            nameFilter="*.zip">
+         <action
+               enablesFor="+"
+               label="%jarsigner.action.label"
+               class="net.sf.jarsigner.actions.JARSignerAction"
+               id="net.sf.jarsigner.actions.JARSignerAction"/>
+      </objectContribution>
+   </extension>
+</plugin>
