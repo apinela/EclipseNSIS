@@ -51,7 +51,7 @@
             class="net.sf.eclipsensis.installoptions.wizard.InstallOptionsWizard"
             id="net.sf.eclipsensis.installoptions.wizard.InstallOptionsWizard">
          <description>
-            %installoptions.wizard.desc
+            %installoptions.wizard.description
          </description>
          <selection
                class="org.eclipse.core.resources.IResource">
