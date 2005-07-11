@@ -338,8 +338,8 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
      */
     public void openCHMHelpURL(String url)
     {
-        if(!NSISHTMLHelp.showHelp(url)) {
+//        if(!NSISHTMLHelp.showHelp(url)) {
             WinAPI.HtmlHelp(WinAPI.GetDesktopWindow(),url,WinAPI.HH_DISPLAY_TOPIC,0);
-        }
+//        }
     }
 }

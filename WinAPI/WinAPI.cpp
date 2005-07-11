@@ -20,7 +20,6 @@ typedef BOOL (_stdcall *_tSetLayeredWindowAttributesProc)(HWND hwnd, // handle t
     DWORD dwFlags        // action
 );
 _tSetLayeredWindowAttributesProc SetLayeredWindowAttributesProc;
-BOOL isUnicode;
 
 JNIEXPORT void JNICALL Java_net_sf_eclipsensis_util_WinAPI_init(JNIEnv *pEnv, jclass jClass)
 {
@@ -28,9 +27,8 @@ JNIEXPORT void JNICALL Java_net_sf_eclipsensis_util_WinAPI_init(JNIEnv *pEnv, jc
     osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
     GetVersionEx (&osvi);
 	
-	isUnicode = osvi.dwPlatformId != VER_PLATFORM_WIN32s && osvi.dwPlatformId != VER_PLATFORM_WIN32_WINDOWS;
     if(osvi.dwMajorVersion >= 5) {
-        HANDLE user32 = GetModuleHandle("user32");
+        HANDLE user32 = GetModuleHandle(_T("user32"));
         SetLayeredWindowAttributesProc = (_tSetLayeredWindowAttributesProc) GetProcAddress((HINSTANCE)user32, "SetLayeredWindowAttributes");
     }
     else {
@@ -73,21 +71,21 @@ JNIEXPORT jstring JNICALL Java_net_sf_eclipsensis_util_WinAPI_RegQueryStrValue(J
     DWORD cbData;
 	LONG rv;
 
-    char *str1 = (char *)pEnv->GetStringUTFChars(sSubKey, 0);
-    char *str2 = (char *)pEnv->GetStringUTFChars(sValue, 0);
+    LPCWSTR str1 = (LPCWSTR)pEnv->GetStringChars(sSubKey, 0);
+    LPCWSTR str2 = (LPCWSTR)pEnv->GetStringChars(sValue, 0);
     if(ERROR_SUCCESS == (rv = RegOpenKeyEx((HKEY)hRootKey,
-                                      _T(str1),0, KEY_QUERY_VALUE, &hKey))) {
-        if(ERROR_SUCCESS == (rv = RegQueryValueEx(hKey, _T(str2), 0, &type, NULL, &cbData))) {
-            value = (TCHAR *)GlobalAlloc(GPTR, cbData*sizeof(TCHAR));
-            if(ERROR_SUCCESS == (rv = RegQueryValueEx(hKey, _T(str2), 0, &type, (LPBYTE)value, &cbData))) {
-                result = pEnv->NewStringUTF(value);
+                                      str1,0, KEY_QUERY_VALUE, &hKey))) {
+        if(ERROR_SUCCESS == (rv = RegQueryValueEx(hKey, str2, 0, &type, NULL, &cbData))) {
+            value = (TCHAR *)GlobalAlloc(GPTR, cbData);
+            if(ERROR_SUCCESS == (rv = RegQueryValueEx(hKey, str2, 0, &type, (LPBYTE)value, &cbData))) {
+                result = pEnv->NewString(value, wcslen(value));
             }
             GlobalFree(value);
         }
         rv = RegCloseKey(hKey);
     }
-    pEnv->ReleaseStringUTFChars(sSubKey, str1);
-    pEnv->ReleaseStringUTFChars(sValue, str2);
+    pEnv->ReleaseStringChars(sSubKey, str1);
+    pEnv->ReleaseStringChars(sValue, str2);
 
     return result;
 }
@@ -101,10 +99,9 @@ JNIEXPORT jint JNICALL Java_net_sf_eclipsensis_util_WinAPI_HtmlHelp(JNIEnv *pEnv
 {
     jint result = 0;
     if(pszFile) {
-        char *str = (char *)pEnv->GetStringUTFChars(pszFile, 0);
-        TCHAR *file = _T(str);
-        result = (jint)HtmlHelp((HWND)hwndCaller, (LPCTSTR)file, (UINT)uCommand, (DWORD)dwData);
-        pEnv->ReleaseStringUTFChars(pszFile, str);
+        LPCWSTR file = (LPCWSTR)pEnv->GetStringChars(pszFile, 0);
+        result = (jint)HtmlHelp((HWND)hwndCaller, file, (UINT)uCommand, (DWORD)dwData);
+        pEnv->ReleaseStringChars(pszFile, file);
     }
     return result;
 }
@@ -121,17 +118,18 @@ JNIEXPORT jstring JNICALL Java_net_sf_eclipsensis_util_WinAPI_ExtractHtmlHelpAnd
 
     if(hr == S_OK || hr == S_FALSE) {
         TCHAR *tocFile = NULL;
-        tocFile = (TCHAR *)GlobalAlloc(GPTR, MAX_PATH*sizeof(TCHAR));
+		int length = MAX_PATH*sizeof(WCHAR);
+        tocFile = (TCHAR *)GlobalAlloc(GPTR, length+1);
 
-        char *str1 = (char *)pEnv->GetStringUTFChars(pszFile, 0);
-        char *str2 = (char *)pEnv->GetStringUTFChars(pszFolder, 0);
-        if(ExtractHtmlHelpAndTOC(_T(str1), _T(str2), tocFile) == S_OK) {
-            result = pEnv->NewStringUTF(tocFile);
+        LPCWSTR str1 = (LPCWSTR)pEnv->GetStringChars(pszFile, 0);
+        LPCWSTR str2 = (LPCWSTR)pEnv->GetStringChars(pszFolder, 0);
+        if(ExtractHtmlHelpAndTOC(str1, str2, tocFile) == S_OK) {
+            result = pEnv->NewString(tocFile, wcslen(tocFile));
         }
 
         GlobalFree(tocFile);
-        pEnv->ReleaseStringUTFChars(pszFile, str1);
-        pEnv->ReleaseStringUTFChars(pszFolder, str2);
+        pEnv->ReleaseStringChars(pszFile, str1);
+        pEnv->ReleaseStringChars(pszFolder, str2);
 
         if(hr == S_OK) {
             CoUninitialize();
@@ -146,14 +144,12 @@ JNIEXPORT jobjectArray JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetPluginExpo
     jobjectArray result = NULL;
 
     if(pszPluginFile) {
-        char *str =  (char *)pEnv->GetStringUTFChars(pszPluginFile, 0);
-        
-        TCHAR *pluginFile = _T(str);
+        LPCWSTR pluginFile =  (LPCWSTR)pEnv->GetStringChars(pszPluginFile, 0);
         unsigned char* dlldata    = 0;
         long dlldatalen = 0;
         bool loaded = false;
         
-        FILE* dll = fopen(pluginFile,"rb");
+        FILE* dll = _wfopen(pluginFile,_T("rb"));
         if (dll) {
             fseek(dll,0,SEEK_END);
             dlldatalen = ftell(dll);
@@ -191,8 +187,8 @@ JNIEXPORT jobjectArray JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetPluginExpo
                                 result = pEnv->NewObjectArray(exports->NumberOfNames, stringClass, NULL);
 
                                 for (unsigned long j = 0; j < exports->NumberOfNames; j++) {
-                                    char *name = (char*)exports + names[j] - ExportDirVA;
-                                    pEnv->SetObjectArrayElement(result, j, pEnv->NewStringUTF(name));
+                                    char *name = (char *)exports + names[j] - ExportDirVA;
+                                    pEnv->SetObjectArrayElement(result, j, pEnv->NewStringUTF((const char*)name));
                                 }
                                 break;
                             }
@@ -205,7 +201,7 @@ JNIEXPORT jobjectArray JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetPluginExpo
             delete[] dlldata;
         }
         
-        pEnv->ReleaseStringUTFChars(pszPluginFile, str);
+        pEnv->ReleaseStringChars(pszPluginFile, pluginFile);
     }
     return result;
 }

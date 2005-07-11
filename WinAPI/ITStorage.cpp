@@ -7,6 +7,7 @@
  *
  *********************************************************************************/
 #include "ITStorage.h"
+#include <tchar.h>
 
 #define READ_BLOCK_SIZE    16384
 
@@ -62,7 +63,7 @@ HRESULT CItsFile::ReadStream(PWCHAR pwzStream, ULONG* cbRetSize, void** pRetBuff
     LPVOID pBuffer = NULL;
     HRESULT hr;
 
-    OutputDebugString("readstream\n");
+    OutputDebugString(_T("readstream\n"));
 
     // read entire #STRINGS into local mem
     hr = m_pStorage->OpenStream(pwzStream, NULL, STGM_READ, 0, &pStream); 
@@ -102,7 +103,7 @@ char* GetErr(DWORD dwLastError)
 
 HRESULT SaveSub(IStorage* p, WCHAR* pwzSubstream, WCHAR* pwzFilename)
 {
-    char t[READ_BLOCK_SIZE] = {0};
+    WCHAR t[READ_BLOCK_SIZE] = {0};
     ULONG cbRead=READ_BLOCK_SIZE;
     ULONG cbWrote=0;
     IStream* ps = NULL;
@@ -117,7 +118,7 @@ HRESULT SaveSub(IStorage* p, WCHAR* pwzSubstream, WCHAR* pwzFilename)
     if (fp==NULL) {
         DWORD err = GetLastError();
         char *p = GetErr(err);
-        sprintf(t, "unable to create file %S\n%u - %s\n", pwzFilename, err, p);
+        wsprintf(t, _T("unable to create file %S\n%u - %s\n"), pwzFilename, err, p);
         OutputDebugString(t);
         LocalFree(p);
         return S_FALSE;
@@ -145,7 +146,7 @@ HRESULT ExtractHtmlHelpAndTOCFromStorage(IStorage *ps, WCHAR* folder, WCHAR* toc
     IStorage*    psub = NULL;
     IEnumSTATSTG* pEnum = NULL;
     STATSTG entry = {0};
-    char buf[4096] = {0};
+    WCHAR buf[4096] = {0};
     HRESULT hr = S_OK;
     LPCSTR typnam[] = { "STGTY_STORAGE", "STGTY_STREAM", "STGTY_LOCKBYTES", "STGTY_PROPERTY" };
     WCHAR newFile[MAX_PATH] = {0};
@@ -155,7 +156,7 @@ HRESULT ExtractHtmlHelpAndTOCFromStorage(IStorage *ps, WCHAR* folder, WCHAR* toc
         DWORD err = GetLastError();
         if (err!=ERROR_ALREADY_EXISTS) {
             LPSTR perr = GetErr(err);
-            sprintf(buf, "CreateDirectory failed - %u : %s\n", err, perr); 
+            wsprintf(buf, _T("CreateDirectory failed - %u : %s\n"), err, perr); 
             OutputDebugString(buf);
             LocalFree(perr);
             return S_FALSE;
@@ -164,7 +165,7 @@ HRESULT ExtractHtmlHelpAndTOCFromStorage(IStorage *ps, WCHAR* folder, WCHAR* toc
     
     hr = ps->EnumElements(0, NULL, 0, &pEnum);
     if (FAILED(hr)) {
-        OutputDebugString("Unable to enumerate on storage elements");
+        OutputDebugString(_T("Unable to enumerate on storage elements"));
         return hr;
     }
 
@@ -215,27 +216,20 @@ HRESULT ExtractHtmlHelpAndTOCFromStorage(IStorage *ps, WCHAR* folder, WCHAR* toc
     return hr;    
 }
 
-HRESULT ExtractHtmlHelpAndTOC(LPCSTR pszFile, LPCSTR pszFolder, LPSTR tocFile)
+HRESULT ExtractHtmlHelpAndTOC(LPCWSTR pszFile, LPCWSTR pszFolder, LPWSTR tocFile)
 {
     CItsFile itf;
-    WCHAR pwzFile[MAX_PATH];
-    WCHAR pwzFolder[MAX_PATH];
     HRESULT hr;
-    WCHAR pwzTOCFile[MAX_PATH] = {0};
 
-    mbstowcs(pwzFile, pszFile, strlen(pszFile)+1);
-    mbstowcs(pwzFolder, pszFolder, strlen(pszFolder)+1);
-
-    hr = itf.OpenITS(pwzFile);
+    hr = itf.OpenITS((LPWSTR)pszFile);
     if (FAILED(hr)) {
         return hr;
     }
 
-    hr = ExtractHtmlHelpAndTOCFromStorage(itf.pStorage(), pwzFolder, pwzTOCFile);
+    hr = ExtractHtmlHelpAndTOCFromStorage(itf.pStorage(), (LPWSTR)pszFolder, tocFile);
     if (FAILED(hr)) {
         return hr;
     }
 
-    wcstombs(tocFile, pwzTOCFile, wcslen(pwzTOCFile)+1);
     return S_OK;
 }

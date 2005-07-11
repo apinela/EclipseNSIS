@@ -81,6 +81,6 @@ protected:
 
 
 LPSTR GetErr(DWORD dwLastError);
-HRESULT ExtractHtmlHelpAndTOC(LPCSTR pszFile, LPCSTR pszFolder, LPSTR tocFile);
+HRESULT ExtractHtmlHelpAndTOC(LPCWSTR pszFile, LPCWSTR pszFolder, LPWSTR tocFile);
 
 #endif

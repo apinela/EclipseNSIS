@@ -136,19 +136,19 @@ JNIEXPORT jlong JNICALL Java_net_sf_eclipsensis_makensis_MakeNSISRunner_init(JNI
 {
 	jclass arrayListClass = pEnv->FindClass("java/util/ArrayList");
 	if(arrayListClass == NULL) {
-		throwException(pEnv,_T("Could not find java.util.ArrayList class"));
+		throwException(pEnv,"Could not find java.util.ArrayList class");
 		return 0;
 	}
 
 	g_arrayListConstructor = pEnv->GetMethodID(arrayListClass, "<init>", "()V");
 	if(g_arrayListConstructor == NULL) {
-		throwException(pEnv,_T("Could not find constructor for java.util.ArrayList class"));
+		throwException(pEnv,"Could not find constructor for java.util.ArrayList class");
 		return 0;
 	}
 
 	g_arrayListAdd = pEnv->GetMethodID(arrayListClass, "add", "(Ljava/lang/Object;)Z");
 	if(g_arrayListAdd == NULL) {
-		throwException(pEnv,_T("Could not find add method for java.util.ArrayList class"));
+		throwException(pEnv,"Could not find add method for java.util.ArrayList class");
 		return 0;
 	}
 
@@ -156,7 +156,7 @@ JNIEXPORT jlong JNICALL Java_net_sf_eclipsensis_makensis_MakeNSISRunner_init(JNI
 						CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
 						NULL, NULL, hInstance, NULL);
 	if(hWnd == NULL) {
-		throwException(pEnv, _T("Failed create Hidden EclipseNSIS Window"));
+		throwException(pEnv, "Failed create Hidden EclipseNSIS Window");
 		return 0;
 	}
 
@@ -164,7 +164,7 @@ JNIEXPORT jlong JNICALL Java_net_sf_eclipsensis_makensis_MakeNSISRunner_init(JNI
 	HANDLE hThread = (HANDLE)_beginthreadex(NULL, 0, &CreateWndThread, hWnd, 0, &uThreadId);
 	if(!hThread)
 	{
-		throwException(pEnv,_T("Fail creating thread"));
+		throwException(pEnv,"Fail creating thread");
 		return 0;
 	}
 
@@ -243,13 +243,13 @@ jobject makeArrayList(JNIEnv *pEnv, TCHAR **items)
 
 		arrayListObject = pEnv->NewObject(g_arrayListClass,g_arrayListConstructor);
 		if(arrayListObject == NULL) {
-			throwException(pEnv,_T("Could not call constructor for java.util.ArrayList class"));
+			throwException(pEnv,"Could not call constructor for java.util.ArrayList class");
 			return NULL;
 		}
 
 		int i=0;
 		while(items[i]) {
-			pEnv->CallBooleanMethod(arrayListObject, g_arrayListAdd, pEnv->NewStringUTF(items[i]));
+			pEnv->CallBooleanMethod(arrayListObject, g_arrayListAdd, pEnv->NewString(items[i],wcslen(items[i])));
 			i++;
 		}
 
@@ -264,7 +264,7 @@ jobject makeArrayList(JNIEnv *pEnv, TCHAR **items)
 jstring makeString(JNIEnv *pEnv, TCHAR* string)
 {
 	if(string) {
-		return pEnv->NewStringUTF(string);
+		return pEnv->NewString(string, wcslen(string));
 	}
 	else {
 		return NULL;
@@ -302,7 +302,7 @@ void ErrorHandler(LPCTSTR pszErrorMessage) {
 }
 
 void throwException(JNIEnv *pEnv, char *errMsg) {
-	jclass failex = pEnv->FindClass(_T("java/lang/RuntimeException"));
+	jclass failex = pEnv->FindClass("java/lang/RuntimeException");
 	if( failex != NULL ){
 		pEnv->ThrowNew(failex, errMsg);
 	}
