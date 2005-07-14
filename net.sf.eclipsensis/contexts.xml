@@ -20,39 +20,39 @@
         <topic label="EclipseNSIS Console" href="help/console.html"/>
     </context>
     <context id="nsis_prefs_context">
-        <description>This preferences page is used to set global settings for NSIS scripts.</description>
+        <description>The EclipseNSIS preferences page is used to set global settings for NSIS scripts.</description>
         <topic label="EclipseNSIS Preferences" href="help/nsisprefs.html"/>
     </context>
     <context id="nsis_editorprefs_context">
-        <description>This preferences page is used to customize the look and feel of the EclipseNSIS editor.</description>
+        <description>The EclipseNSIS Editor preferences page is used to customize the look and feel of the EclipseNSIS editor.</description>
         <topic label="Editor Preferences" href="help/editorprefs.html"/>
     </context>
     <context id="nsis_templateprefs_context">
-        <description>This preferences page is used to work with code templates.</description>
+        <description>The EclipseNSIS Templates preferences page is used to work with code templates.</description>
         <topic label="Templates Preferences" href="help/templateprefs.html"/>
     </context>
     <context id="nsis_tasktagprefs_context">
-        <description>This preferences page is used to configure task tags.</description>
+        <description>The EclipseNSIS Task Tags  preferences page is used to configure task tags.</description>
         <topic label="Task Tags Preferences" href="help/tasktagprefs.html"/>
     </context>
     <context id="nsis_scrtmpltprefs_context">
-        <description>This preferences page is used to work with script templates.</description>
+        <description>The EclipseNSIS Script Templates preferences page is used to work with script templates.</description>
         <topic label="Script Templates Preferences" href="help/scrtmpltprefs.html"/>
     </context>
     <context id="nsis_templatedlg_context">
-        <description>The Template Editor dialog is used to create new and edit existing code templates.</description>
+        <description>The EclipseNSIS Template Editor dialog is used to create new and edit existing code templates.</description>
         <topic label="Template Editor" href="help/templateprefs.html#templateeditor"/>
     </context>
     <context id="nsis_scrtmpltdlg_context">
-        <description>The Script Template Editor dialog is used to create new and edit existing script templates.</description>
+        <description>The EclipseNSIS Script Template Editor dialog is used to create new and edit existing script templates.</description>
         <topic label="Script Template Editor" href="help/scrtmpltprefs.html#scripttemplateeditor"/>
     </context>
     <context id="nsis_properties_context">
-        <description>This properties page is used to set custom NSIS compilation options for a particular script.</description>
+        <description>The EclipseNSIS properties page is used to set custom NSIS compilation options for a particular script.</description>
         <topic label="Script Properties" href="help/properties.html"/>
     </context>
     <context id="nsis_wizard_context">
-        <description>The NSIS Script Wizard is a guide through the process of generating an NSIS script.</description>
+        <description>The NSIS Script Wizard provides a guide through the process of generating an NSIS script.</description>
     </context>
     <context id="nsis_wizwelcome_context">
         <description>The Welcome page provides an introduction to the Script Wizard.</description>

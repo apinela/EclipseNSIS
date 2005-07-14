@@ -37,7 +37,6 @@ import org.eclipse.gef.commands.CommandStack;
 import org.eclipse.gef.commands.CommandStackListener;
 import org.eclipse.gef.dnd.TemplateTransferDragSourceListener;
 import org.eclipse.gef.editparts.ScalableFreeformRootEditPart;
-import org.eclipse.gef.editparts.ZoomManager;
 import org.eclipse.gef.palette.PaletteRoot;
 import org.eclipse.gef.rulers.RulerProvider;
 import org.eclipse.gef.ui.actions.*;
@@ -396,6 +395,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
             mPalette.setExternalViewer(mPalettePage.getPaletteViewer());
             mPalettePage = null;
         }
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,PLUGIN_CONTEXT_PREFIX+"installoptions_designeditor_context");
     }
 
     /**
@@ -451,21 +451,6 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
         ScrollingGraphicalViewer viewer = (ScrollingGraphicalViewer)getGraphicalViewer();
 
         InstallOptionsRootEditPart root = new InstallOptionsRootEditPart();
-        if(InstallOptionsPlugin.getDefault().isZoomSupported()) {
-            List zoomLevels = new ArrayList(3);
-            zoomLevels.add(ZoomManager.FIT_ALL);
-            zoomLevels.add(ZoomManager.FIT_WIDTH);
-            zoomLevels.add(ZoomManager.FIT_HEIGHT);
-            root.getZoomManager().setZoomLevelContributions(zoomLevels);
-    
-            IAction zoomIn = new ZoomInAction(root.getZoomManager());
-            IAction zoomOut = new ZoomOutAction(root.getZoomManager());
-            getActionRegistry().registerAction(zoomIn);
-            getActionRegistry().registerAction(zoomOut);
-            getSite().getKeyBindingService().registerAction(zoomIn);
-            getSite().getKeyBindingService().registerAction(zoomOut);
-        }
-
         viewer.setRootEditPart(root);
        
         viewer.setEditPartFactory(GraphicalPartFactory.getInstance());
@@ -726,11 +711,6 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
         if (type == IContentOutlinePage.class) {
             mOutlinePage = new OutlinePage(new InstallOptionsTreeViewer());
             return mOutlinePage;
-        }
-        if(InstallOptionsPlugin.getDefault().isZoomSupported()) {
-            if (type == ZoomManager.class) {
-                return getGraphicalViewer().getProperty(ZoomManager.class.toString());
-            }
         }
         if (type == PalettePage.class) {
             if (mPalette == null) {
@@ -1106,15 +1086,6 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
                 viewer.setProperty(ToggleGuideVisibilityAction.PROPERTY_GUIDE_VISIBILITY,
                         loadFileProperty(file, FILEPROPERTY_SHOW_GUIDES,TypeConverter.BOOLEAN_CONVERTER,
                                 SHOW_GUIDES_DEFAULT));
-                
-                if(InstallOptionsPlugin.getDefault().isZoomSupported()) {
-                    // Zoom
-                    ZoomManager manager = (ZoomManager)viewer.getProperty(ZoomManager.class.toString());
-                    if (manager != null) {
-                        manager.setZoomAsText((String)loadFileProperty(file, FILEPROPERTY_ZOOM,TypeConverter.STRING_CONVERTER,
-                                ZOOM_DEFAULT));
-                    }
-                }
             }
             
             dialog.setDialogSize((Dimension)loadFileProperty(file, FILEPROPERTY_DIALOG_SIZE,TypeConverter.DIMENSION_CONVERTER,
@@ -1278,16 +1249,6 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
             saveFileProperty(file, FILEPROPERTY_SHOW_DIALOG_SIZE,TypeConverter.BOOLEAN_CONVERTER,
                     Boolean.valueOf(dialog.isShowDialogSize()),
                     SHOW_DIALOG_SIZE_DEFAULT);
-            
-            if(InstallOptionsPlugin.getDefault().isZoomSupported()) {
-                // Zoom
-                ZoomManager manager = (ZoomManager)viewer.getProperty(ZoomManager.class.toString());
-                if (manager != null) {
-                    saveFileProperty(file, FILEPROPERTY_ZOOM,TypeConverter.STRING_CONVERTER,
-                            manager.getZoomAsText(),
-                            ZOOM_DEFAULT);
-                }
-            }
         }
     }
 
@@ -1457,7 +1418,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
         }
     }
 
-    private class OutlinePage extends ContentOutlinePage implements IAdaptable
+    private class OutlinePage extends ContentOutlinePage
     {
         private PageBook mPageBook;
 
@@ -1555,16 +1516,6 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
             }
             super.dispose();
             InstallOptionsDesignEditor.this.mOutlinePage = null;
-        }
-
-        public Object getAdapter(Class type)
-        {
-            if(InstallOptionsPlugin.getDefault().isZoomSupported()) {
-                if (type == ZoomManager.class) {
-                    return getGraphicalViewer().getProperty(ZoomManager.class.toString());
-                }
-            }
-            return null;
         }
 
         public Control getControl()

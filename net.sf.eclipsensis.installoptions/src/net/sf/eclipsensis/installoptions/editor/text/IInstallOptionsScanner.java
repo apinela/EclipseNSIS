@@ -9,12 +9,12 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.editor.text;
 
+import net.sf.eclipsensis.editor.text.NSISScanner;
+
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.rules.ICharacterScanner;
 import org.eclipse.jface.text.rules.ITokenScanner;
 
-public interface IInstallOptionsScanner extends ICharacterScanner, ITokenScanner
+public interface IInstallOptionsScanner extends NSISScanner, ITokenScanner
 {
-    public int getOffset();
     public IDocument getDocument();
 }

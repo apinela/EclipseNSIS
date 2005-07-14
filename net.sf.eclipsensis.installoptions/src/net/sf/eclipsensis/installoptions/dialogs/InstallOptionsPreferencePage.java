@@ -25,10 +25,7 @@ import net.sf.eclipsensis.installoptions.util.TypeConverter;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.viewer.CollectionContentProvider;
 
-import org.eclipse.draw2d.ScalableFigure;
-import org.eclipse.draw2d.Viewport;
 import org.eclipse.draw2d.geometry.Dimension;
-import org.eclipse.gef.editparts.ZoomManager;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -42,6 +39,7 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.dialogs.PreferencesUtil;
@@ -62,7 +60,6 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
     private Button mShowGrid;
     private Button mShowGuides;
     private Button mShowDialogSize;
-    private Combo mZoom;
     private GridSettings mGridSettings;
     private SnapGlueSettings mSnapGlueSettings;
     private Map mSyntaxStylesMap;
@@ -113,12 +110,6 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
         // Dialog size preferences
         loadPreference(mDisplaySettingsMap, PREFERENCE_SHOW_DIALOG_SIZE,TypeConverter.BOOLEAN_CONVERTER,
                 SHOW_DIALOG_SIZE_DEFAULT);
-        
-        // Zoom
-        if(InstallOptionsPlugin.getDefault().isZoomSupported()) {
-            loadPreference(mDisplaySettingsMap, PREFERENCE_ZOOM,TypeConverter.STRING_CONVERTER,
-                    ZOOM_DEFAULT);
-        }
         
         mSyntaxStylesMap = NSISTextUtility.parseSyntaxStylesMap(getPreferenceStore().getString(PREFERENCE_SYNTAX_STYLES));
         mSyntaxStylesHashCode = mSyntaxStylesMap.hashCode();
@@ -176,12 +167,6 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
         savePreference(mDisplaySettingsMap, PREFERENCE_SHOW_DIALOG_SIZE,TypeConverter.BOOLEAN_CONVERTER,
                 SHOW_DIALOG_SIZE_DEFAULT);
         
-        // Zoom
-        if(InstallOptionsPlugin.getDefault().isZoomSupported()) {
-            savePreference(mDisplaySettingsMap, PREFERENCE_ZOOM,TypeConverter.STRING_CONVERTER,
-                    ZOOM_DEFAULT);
-        }
-        
         List list = DialogSizeManager.getDialogSizes();
         list.clear();
         list.addAll(mDialogSizesMap.values());
@@ -224,6 +209,12 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
         item.setText(InstallOptionsPlugin.getResourceString("source.editor.tab.name")); //$NON-NLS-1$
         item.setControl(createSourceEditorTab(folder));
         return folder;
+    }
+
+    public void createControl(Composite parent)
+    {
+        super.createControl(parent);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),PLUGIN_CONTEXT_PREFIX+"installoptions_preferences_context");
     }
 
     private Control createSourceEditorTab(Composite parent)
@@ -741,63 +732,6 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
                 mDisplaySettingsMap.put(PREFERENCE_SHOW_DIALOG_SIZE, Boolean.valueOf(((Button)e.widget).getSelection()));
             }
         });
-        
-        if(InstallOptionsPlugin.getDefault().isZoomSupported()) {
-            Label l = new Label(group,SWT.NONE);
-            l.setText(InstallOptionsPlugin.getResourceString("default.zoom.label")); //$NON-NLS-1$
-            l.setLayoutData(new GridData());
-            final ZoomManager zoomManager = new ZoomManager((ScalableFigure)null, (Viewport)null);
-            zoomManager.setZoomLevelContributions(Arrays.asList(ZOOM_LEVEL_CONTRIBUTIONS));
-            mZoom = new Combo(group,SWT.DROP_DOWN);
-            String[] zoomLevels = zoomManager.getZoomLevelsAsText();
-            for (int i = 0; i < zoomLevels.length; i++) {
-                mZoom.add(zoomLevels[i]);
-            }
-            mZoom.setText((String)mDisplaySettingsMap.get(PREFERENCE_ZOOM));
-            mZoom.addSelectionListener(new SelectionListener(){
-                public void widgetSelected(SelectionEvent e)
-                {
-                    mDisplaySettingsMap.put(PREFERENCE_ZOOM,mZoom.getText());
-                }
-    
-                public void widgetDefaultSelected(SelectionEvent e)
-                {
-                    widgetSelected(e);
-                }
-            });
-            mZoom.addFocusListener(new FocusAdapter(){
-                public void focusLost(FocusEvent e)
-                {
-                    String text = mZoom.getText();
-                    if (!text.equalsIgnoreCase(ZoomManager.FIT_HEIGHT) &&
-                        !text.equalsIgnoreCase(ZoomManager.FIT_ALL) &&
-                        !text.equalsIgnoreCase(ZoomManager.FIT_WIDTH)) {
-                        try {
-                            //Trim off the '%'
-                            if (text.charAt(text.length() - 1) == '%') {
-                                text = text.substring(0, text.length() - 1);
-                            }
-                            double zoom = Double.parseDouble(text) / (100.0*zoomManager.getUIMultiplier());
-                            zoom = Math.min(zoomManager.getMaxZoom(), zoom);
-                            zoom = Math.max(zoomManager.getMinZoom(), zoom);
-                            zoom = zoom*100*zoomManager.getUIMultiplier();
-                            int zoom2 = (int)zoom;
-                            if(zoom == zoom2) {
-                                text = zoom2+"%"; //$NON-NLS-1$
-                            }
-                            else {
-                                text = zoom+"%"; //$NON-NLS-1$
-                            }
-                        } catch (Exception ex) {
-                            Display.getCurrent().beep();
-                            mZoom.setText((String)mDisplaySettingsMap.get(PREFERENCE_ZOOM));
-                            return;
-                        }
-                    }
-                    mDisplaySettingsMap.put(PREFERENCE_ZOOM,text);
-                }
-            });
-        }
         return group;
     }
 
@@ -822,11 +756,6 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
         mDisplaySettingsMap.put(PREFERENCE_SHOW_GUIDES,SHOW_GUIDES_DEFAULT);
         mShowGuides.setSelection(SHOW_GUIDES_DEFAULT.booleanValue());
 
-        if(InstallOptionsPlugin.getDefault().isZoomSupported()) {
-            mDisplaySettingsMap.put(PREFERENCE_ZOOM,ZOOM_DEFAULT);
-            mZoom.setText(ZOOM_DEFAULT);
-        }
-        
         mDialogSizesMap.clear();
         List list = DialogSizeManager.getPresetDialogSizes();
         for (Iterator iter = list.iterator(); iter.hasNext();) {

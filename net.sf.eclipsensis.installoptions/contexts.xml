@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+###############################################################################
+# Copyright (c) 2004, 2005 Sunil Kamath (IcemanK).
+# All rights reserved.
+# This program is made available under the terms of the Common Public License
+# v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
+# 
+# Contributors:
+#     Sunil Kamath (IcemanK) - initial API and implementation
+###############################################################################
+-->
+<contexts>
+    <context id="installoptions_designeditor_context">
+        <description>The EclipseNSIS InstallOptions Design Editor provides a visual environment for editing InstallOptions dialog scripts.</description>
+        <topic label="Editing InstallOptions Scripts" href="help/editing.html"/>
+        <topic label="Design Editor" href="help/designeditor.html"/>
+    </context>
+    <context id="installoptions_sourceeditor_context">
+        <description>The EclipseNSIS InstallOptions Source Editor provides a text-based interface for editing InstallOptions dialog scripts.</description>
+        <topic label="Editing InstallOptions Scripts" href="help/editing.html"/>
+        <topic label="Source Editor" href="help/sourceeditor.html"/>
+    </context>
+    <context id="installoptions_preferences_context">
+        <description>The InstallOptions preferences page is used to customize the look and feel of the EclipseNSIS InstallOptions editors.</description>
+        <topic label="InstallOptions Preferences" href="help/preferences.html"/>
+    </context>
+    <context id="installoptions_wizard_context">
+        <description>The InstallOptions script wizard helps create a new InstallOptions script.</description>
+        <topic label="InstallOptions Script Wizard" href="help/wizard.html"/>
+    </context>
+</contexts>

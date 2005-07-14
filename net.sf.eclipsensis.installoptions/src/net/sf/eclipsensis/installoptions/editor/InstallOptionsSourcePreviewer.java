@@ -16,17 +16,13 @@ import net.sf.eclipsensis.installoptions.editor.text.InstallOptionsPartitionScan
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.presentation.IPresentationDamager;
 import org.eclipse.jface.text.presentation.IPresentationRepairer;
-import org.eclipse.jface.text.source.*;
+import org.eclipse.jface.text.source.IOverviewRuler;
+import org.eclipse.jface.text.source.IVerticalRuler;
+import org.eclipse.jface.text.source.projection.ProjectionViewer;
 import org.eclipse.swt.widgets.Composite;
 
-public class InstallOptionsSourcePreviewer extends SourceViewer
+public class InstallOptionsSourcePreviewer extends ProjectionViewer
 {
-    public InstallOptionsSourcePreviewer(Composite parent, IVerticalRuler ruler,
-            int styles)
-    {
-        super(parent, ruler, styles);
-    }
-
     public InstallOptionsSourcePreviewer(Composite parent, IVerticalRuler verticalRuler, IOverviewRuler overviewRuler,
             boolean showAnnotationsOverview, int styles)
     {

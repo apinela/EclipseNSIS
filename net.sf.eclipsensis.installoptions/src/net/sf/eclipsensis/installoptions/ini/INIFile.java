@@ -34,7 +34,7 @@ public class INIFile implements IDocumentListener, IINIContainer
     private List mErrors = new ArrayList();
     private List mWarnings = new ArrayList();
     private boolean mUpdatingDocument = false;
-    
+
     public void addListener(IINIFileListener listener)
     {
         if (!mListeners.contains(listener)) {
@@ -189,6 +189,7 @@ public class INIFile implements IDocumentListener, IINIContainer
             }
         }
         validate();
+        notifyListeners();
     }
     
     private List parseLines(IDocument doc, int startLine, int endLine)
@@ -239,7 +240,6 @@ public class INIFile implements IDocumentListener, IINIContainer
     {
         if(mDocument == doc) {
             mDocument = null;
-            
             doc.removePositionUpdater(mPositionUpdater);
             doc.removeDocumentListener(this);
             if(doc.containsPositionCategory(INIFILE_CATEGORY)) {
@@ -255,6 +255,7 @@ public class INIFile implements IDocumentListener, IINIContainer
             mErrors.clear();
             mWarnings.clear();
             mDirty = false;
+            notifyListeners();
         }
     }
 
@@ -311,6 +312,7 @@ public class INIFile implements IDocumentListener, IINIContainer
             IINIContainer container = this;
             if(mChangeStartLine > 0) {
                 INILine previous = (INILine)mLines.get(mChangeStartLine-1);
+                //TODO Fix projection annotation
                 if(previous instanceof IINIContainer) {
                     childIndex = 0;
                     index = mChildren.indexOf(previous)+1;

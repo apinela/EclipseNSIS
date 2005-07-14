@@ -34,7 +34,6 @@ public class InstallOptionsPlugin extends AbstractUIPlugin implements IInstallOp
     private ResourceBundle mResourceBundle;
     public static final String[] BUNDLE_NAMES = new String[]{RESOURCE_BUNDLE,MESSAGE_BUNDLE};
     private ImageManager mImageManager;
-    private boolean mZoomSupported = false;
     
     /**
      * 
@@ -49,7 +48,6 @@ public class InstallOptionsPlugin extends AbstractUIPlugin implements IInstallOp
         catch (MissingResourceException x) {
             x.printStackTrace();
         }
-        mZoomSupported = Boolean.valueOf(getResourceString("zoom.supported")).booleanValue(); //$NON-NLS-1$
     }
 
     /**
@@ -103,11 +101,6 @@ public class InstallOptionsPlugin extends AbstractUIPlugin implements IInstallOp
     public ResourceBundle getResourceBundle() {
         return mResourceBundle;
     }
-    
-    public boolean isZoomSupported()
-    {
-        return mZoomSupported;
-    }
 
     private void initializePreference(IPreferenceStore store, String name, String defaultValue)
     {
@@ -131,10 +124,6 @@ public class InstallOptionsPlugin extends AbstractUIPlugin implements IInstallOp
         initializePreference(store,PREFERENCE_GRID_SPACING,TypeConverter.DIMENSION_CONVERTER.asString(GRID_SPACING_DEFAULT));
         initializePreference(store,PREFERENCE_GRID_ORIGIN,TypeConverter.POINT_CONVERTER.asString(GRID_ORIGIN_DEFAULT));
         initializePreference(store,PREFERENCE_GRID_STYLE,GRID_STYLE_DEFAULT);
-        if(isZoomSupported()) {
-            initializePreference(store,PREFERENCE_ZOOM,ZOOM_DEFAULT);
-        }
-        
         
         String preference = store.getString(IInstallOptionsConstants.PREFERENCE_SYNTAX_STYLES);
         Map map;

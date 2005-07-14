@@ -11,6 +11,7 @@ package net.sf.eclipsensis.installoptions.editor.text;
 
 import java.util.ArrayList;
 
+import net.sf.eclipsensis.editor.text.NSISHexNumberRule;
 import net.sf.eclipsensis.editor.text.NSISWhitespaceDetector;
 import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
 
@@ -37,7 +38,9 @@ public class InstallOptionsRuleBasedScanner extends InstallOptionsSyntaxScanner
                 return false;
             }}
         ,createToken(IInstallOptionsConstants.KEY_VALUE_DELIM_STYLE)));
-        list.add(new NumberRule(createToken(IInstallOptionsConstants.NUMBER_STYLE)));
+        IToken numberToken = createToken(IInstallOptionsConstants.NUMBER_STYLE);
+        list.add(new NSISHexNumberRule(numberToken));
+        list.add(new NumberRule(numberToken));
         list.add(new WhitespaceRule(new NSISWhitespaceDetector()));
         setRules((IRule[])list.toArray(new IRule[0]));
     }

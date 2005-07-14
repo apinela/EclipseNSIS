@@ -41,6 +41,9 @@ public class NSISHelpProducer implements IHelpContentProducer, INSISConstants
                         if(cHelpCacheLocation.exists() && cHelpCacheLocation.isDirectory()) {
                             helpFile = new File(cHelpCacheLocation,href2);
                         }
+                        if(!helpFile.exists() || !helpFile.isFile()) {
+                            helpFile = new File(nsisDir,href2);
+                        }
                     }
                     else {
                         helpFile = new File(nsisDir,href2);

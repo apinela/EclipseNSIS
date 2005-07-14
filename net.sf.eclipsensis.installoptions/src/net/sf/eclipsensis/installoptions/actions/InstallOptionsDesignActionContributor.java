@@ -26,7 +26,6 @@ public class InstallOptionsDesignActionContributor extends ActionBarContributor
 {
     private MenuManager mInstallOptionsMenu;
     private SetDialogSizeMenuManager mSetDialogSizeMenu;
-    private ZoomComboContributionItem mZoomComboContributionItem;
     private InstallOptionsXYStatusContribution mXYStatusContribution;
 
     protected void buildActions() 
@@ -73,11 +72,6 @@ public class InstallOptionsDesignActionContributor extends ActionBarContributor
         addRetargetAction(new AlignmentRetargetAction(PositionConstants.MIDDLE));
         addRetargetAction(new AlignmentRetargetAction(PositionConstants.BOTTOM));
         
-        if(InstallOptionsPlugin.getDefault().isZoomSupported()) {
-            addRetargetAction(new ZoomInRetargetAction());
-            addRetargetAction(new ZoomOutRetargetAction());
-        }
-        
         retargetAction = new RetargetAction(SwitchEditorAction.ID, InstallOptionsPlugin.getResourceString("switch.source.editor.action.name")); //$NON-NLS-1$
         retargetAction.setImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("switch.editor.icon"))); //$NON-NLS-1$
         retargetAction.setActionDefinitionId(IInstallOptionsConstants.SWITCH_EDITOR_COMMAND_ID);
@@ -115,18 +109,7 @@ public class InstallOptionsDesignActionContributor extends ActionBarContributor
         retargetAction.setImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("show.guides.icon"))); //$NON-NLS-1$
         addRetargetAction(retargetAction);
 
-        if(InstallOptionsPlugin.getDefault().isZoomSupported()) {
-            mZoomComboContributionItem = new ZoomComboContributionItem(getPage(), IInstallOptionsConstants.ZOOM_LEVEL_CONTRIBUTIONS);
-        }
-        
-//      addRetargetAction(new DirectEditRetargetAction());
-
         mInstallOptionsMenu = new MenuManager(InstallOptionsPlugin.getResourceString("installoptions.menu.name")); //$NON-NLS-1$
-        if(InstallOptionsPlugin.getDefault().isZoomSupported()) {
-            mInstallOptionsMenu.add(getAction(GEFActionConstants.ZOOM_IN));
-            mInstallOptionsMenu.add(getAction(GEFActionConstants.ZOOM_OUT));
-            mInstallOptionsMenu.add(new Separator());
-        }
         mInstallOptionsMenu.add(getAction(GEFActionConstants.TOGGLE_RULER_VISIBILITY));
         mInstallOptionsMenu.add(getAction(GEFActionConstants.TOGGLE_GRID_VISIBILITY));
         mInstallOptionsMenu.add(getAction(ToggleDialogSizeVisibilityAction.ID));
@@ -214,11 +197,6 @@ public class InstallOptionsDesignActionContributor extends ActionBarContributor
         tbm.add(getAction(ArrangeAction.SEND_TO_BACK_ID));
         tbm.add(getAction(ArrangeAction.BRING_FORWARD_ID));
         tbm.add(getAction(ArrangeAction.BRING_TO_FRONT_ID));
-
-        if(InstallOptionsPlugin.getDefault().isZoomSupported()) {
-            tbm.add(new Separator());   
-            tbm.add(mZoomComboContributionItem);
-        }
     }
 
     public void contributeToMenu(IMenuManager menubar) 

@@ -38,7 +38,6 @@ public abstract class SWTControlFigure extends Figure implements IInstallOptions
     protected FigureCanvas mCanvas;
     protected boolean mDisabled = false;
     protected GraphicalEditPart mEditPart;
-    
     private int mStyle = -1;
     
     private FigureListener mFigureListener = new FigureListener() {
@@ -191,7 +190,11 @@ public abstract class SWTControlFigure extends Figure implements IInstallOptions
     protected synchronized void layout() 
     {
         if(isNeedsReScrape() && mCanvas != null) {
-            PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell().forceActive();
+            Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+            if(!shell.isVisible()) {
+                shell.setVisible(true);
+            }
+            shell.forceActive();
             Rectangle clientArea = mCanvas.getViewport().getClientArea();
             Rectangle rect = clientArea.intersect(bounds);
             if(rect.width > 0 && rect.height > 0) {

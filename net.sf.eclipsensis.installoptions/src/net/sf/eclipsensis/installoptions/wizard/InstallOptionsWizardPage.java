@@ -62,14 +62,13 @@ public class InstallOptionsWizardPage extends WizardNewFileCreationPage
     {
     	// inherit default container and name specification widgets
     	super.createControl(parent);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),IInstallOptionsConstants.PLUGIN_CONTEXT_PREFIX+"installoptions_wizard_context");
+        
     	Composite composite = new Composite((Composite)getControl(),SWT.NULL);
         GridLayout layout = new GridLayout(2,false);
         layout.marginHeight = 0;
         layout.marginWidth = 0;
         composite.setLayout(layout);
-    	
-        //TODO add help
-//    	WorkbenchHelp.setHelp(composite, IReadmeConstants.CREATION_WIZARD_PAGE_CONTEXT);
     	
     	this.setFileName(InstallOptionsPlugin.getResourceString("wizard.default.file.name")); //$NON-NLS-1$ //$NON-NLS-2$
     

@@ -1,0 +1,190 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><!--
+###############################################################################
+# Copyright (c) 2004, 2005 Sunil Kamath (IcemanK).
+# All rights reserved.
+# This program is made available under the terms of the Common Public License
+# v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
+#
+# Contributors:
+# Sunil Kamath (IcemanK) - initial API and implementation
+###############################################################################
+--><title>EclipseNSIS
+InstallOptions Editor - Design Editor</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"> <meta http-equiv="Content-Style-Type" content="text/css"> <link rel="stylesheet" href="book.css" charset="ISO-8859-1" type="text/css"> <script type="text/javascript" language="javascript" src="help.js">
+</script><script type="text/javascript" language="javascript" src="redirect.js">
+</script></head>
+<body><div id="main"><a href="editing.html">Previous</a>
+| <a href="overview.html#contents">Contents</a> | <a href="designeditor2.html">Next</a>
+<hr><h1>Design Editor</h1>
+<p>The Design Editor provides a
+visual environment for editing InstallOptions dialog scripts. It is
+registered to be the default editor of INI files. A core attribute of
+the design editor is that it preserves the general formatting of a
+loaded INI file, i.e., it does not
+change the file structure: it preserves comments, blank lines as
+well as the order of sections and lines. However, the design editor has
+the restriction that a script with errors must first be corrected using
+the <a href="sourceeditor.html">Source Editor</a>
+before it can be opened using the design editor.<br>
+The design editor offers the following features: </p>
+<ol><li><a href="#gui">Graphical User Interface</a></li>
+<li><a href="#editing_commands">Graphical Editing
+Commands</a></li>
+<li><a href="designeditor2.html#controls">Creating
+and Modifying InstallOptions Controls</a></li>
+<li><a href="designeditor2.html#outline">Outline and
+Overview</a></li>
+</ol><a name="gui"></a><h2>Graphical
+User Interface</h2>
+<p style="text-align: center;"><img style="border: 0px solid ; width: 630px; height: 476px;" usemap="#designeditor" ismap="ismap" alt="Design Editor" title="Design Editor" src="images/designeditor.gif"></p><a name="a_canvas"></a><dl id="id_canvas"><dt>Canvas</dt>
+<dd>The canvas provides the visual
+representation of the InstallOptions dialog. Controls can be added or
+removed directly on it, displaying what the overall design looks like
+as it evolves. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a><br>
+</dd></dl><a name="a_palette"></a><dl id="id_palette"><dt>Palette</dt>
+<dd>The design editor includes a
+palette of controls and selection tools.
+By default, the palette displays to the right of the canvas. It can be
+resized or collapsed as needed. If desired the palette can be
+configured to be collapsed by default.<br>
+The design palette includes the following selection tools:<br><br>
+<ul><li><span style="font-weight: bold;">Selection</span>
+- the default
+cursor tool, used for selecting existing controls in the canvas.
+Multiple controls can be selected by holding down the Ctrl
+key.</li>
+<li><span style="font-weight: bold;">Marquee</span>
+- a selection tool
+that can be used to drag a rectangular selection area. All components
+that lie completely within the selection rectangle are
+selected.</li></ul>The
+design palette also includes all controls supported by the
+InstallOptions plugin included in the version of NSIS configured in
+EclipseNSIS.&nbsp;
+<a href="javascript:history.go(-1)">&larr;&nbsp;Back</a><br>
+</dd></dl><a name="a_drawing_tools"></a><dl id="id_rulers"><dt>Drawing Tools</dt>
+<dd>To help draw accurately, the
+design editor has a pair of rulers, a grid, and guide lines, as well as
+the ability to snap and glue. The ruler, grid, snap, and glue settings
+can be changed at any time without affecting objects already placed in
+the drawing. The settings apply globally to the current InstallOptions
+script. Each InstallOptions script can have different settings for the
+rulers, grid, snap and glue. These settings can be customized using the
+<a href="#a_grid_snap_glue">Grid, Snap &amp; Glue</a>
+dialog. Finally, the design editor provides an outline of the
+InstallOptions dialog.<br><br>
+<ul><li><a name="a_grid"></a><span style="font-weight: bold;">Grid</span>
+- The grid consists either of horizontal and vertical lines or
+regularly spaced dots on the canvas. It helps line up controls as they
+are added to the canvas.</li>
+</ul><table style="vertical-align: top; text-align: left;" border="0" cellpadding="2" cellspacing="2" width="100%"><tbody><tr><td style="text-align: center; vertical-align: top;"><img style="border: 0px solid ; width: 60px; height: 50px;" alt="Grid Lines" title="Grid Lines" src="images/gridlines.gif"><br>Grid Lines</td>
+<td style="text-align: center; vertical-align: top;">&nbsp;
+&nbsp; &nbsp; &nbsp; &nbsp; <br>
+</td><td style="text-align: center; vertical-align: top;"><img style="border: 0px solid ; width: 60px; height: 50px;" alt="Grid Dots" title="Grid Dots" src="images/griddots.gif"><br>Grid Dots</td>
+</tr></tbody></table><ul><a name="a_rulers"></a><li><span style="font-weight: bold;">Rulers</span>
+- The rulers are along the top and left edges of the canvas. They help
+measure distances. The
+rulers' units match the InstallOptions script units.</li><li><a name="a_guides"></a><span style="font-weight: bold;">Guides</span>
+- Guides are used to align controls. A guide is like a customizable
+grid line. A guide is created by simply clicking on the ruler. It can
+be removed by clicking
+on the guide and dragging it off the ruler. Once a guide has been
+created it can be dragged to any position
+on its ruler.</li><li><a name="a_snap"></a><span style="font-weight: bold;">Snap</span>
+- Snap is the ability to force objects to line up. Snap makes it easier
+to create an accurate drawing. The design editor supports
+snapping to grid lines, guide lines or to other controls on the canvas.
+A red line appears
+on the canvas as an indication when a control is snapped.</li>
+</ul><p style="text-align: center;"><img style="width: 238px; height: 63px;" alt="Snap" title="Snap" src="images/snap.gif"></p><ul><li><a name="a_glue"></a><span style="font-weight: bold;">Glue</span>-
+Glue is the ability of a group of controls to stay together when being
+moved. This is accomplished in the design editor via the guides. By
+default, a control is automatically glued to a guide when snapped onto
+it. Then, anytime the guide is moved, all controls glued to it move as
+well.</li>
+</ul><p style="text-align: center;"><img style="width: 274px; height: 170px;" alt="Glue" title="Glue" src="images/glue.gif"></p><ul><li><a name="a_dialogsize"></a><span style="font-weight: bold;">Dialog Size</span>-
+This is an outline of the InstallOptions dialog size. It serves as a
+guide for
+placement of controls on the dialog.</li>
+</ul><p style="text-align: center;"><img style="width: 410px; height: 245px;" alt="Dialog Size" title="Dialog Size" src="images/dialogsizeoutline.gif"></p>
+<a href="javascript:history.go(-1)">&larr;&nbsp;Back</a><br>
+</dd></dl><a name="editing_commands"></a><h2>Graphical
+Editing Commands</h2>
+<p>The design editor includes a rich set of graphical editing
+commands for
+simplify and improve the experience of creating and editing
+InstallOptions scripts.</p>
+<p>These can
+be accessed either from the <span style="font-style: italic;">InstallOptions</span>
+menuitem in the main menu
+bar, by right-clicking in the editor to display the editor popup menu
+or by using the editor toolbar. Most
+commands also provide keyboard shortcuts.</p>
+<a name="a_show_hide"></a><dl id="id_show_hide"><dt>Show/Hide
+Drawing Tools</dt>
+<dd>These menuitems can be used to show or hide <a href="#a_drawing_tools">drawing tools</a>.
+The drawing tools currently supported for show/hide are:<br><br>
+<ul><li><img style="width: 16px; height: 16px;" alt="Rulers" title="Rulers" src="images/rulers.gif">&nbsp;Rulers</li>
+<li><img style="width: 16px; height: 16px;" alt="Grid" title="Grid" src="images/grid.gif">&nbsp;Grid</li>
+<li><img style="width: 16px; height: 16px;" alt="Guides" title="Guides" src="images/guides.gif">&nbsp;Guides</li>
+<li><a name="dialogsize"></a><img style="width: 16px; height: 16px;" alt="Dialog Size" title="Dialog Size" src="images/dialogsize.gif">&nbsp;Dialog
+size outline.</li></ul>
+<a href="javascript:history.go(-1)">&larr;&nbsp;Back</a><br>
+</dd></dl><a name="a_grid_snap_glue"></a><dl id="id_grid_snap_glue"><dt>Grid, Snap &amp; Glue</dt>
+<dd>Provides a dialog box which
+can be used to custom grid, snap &amp; glue settings for the
+InstallOptions script currently being edited. These settings are
+persisted when the file is closed and restored when it is reopened.<br>
+<p style="text-align: center;"><img src="images/gridsnapgluedialog.gif" style="border: medium none ; width: 256px; height: 321px;" alt="Grid, Snap &amp; Glue Dialog"></p><a href="javascript:history.go(-1)">&larr;&nbsp;Back</a><br></dd>
+</dl><a name="a_align"></a><dl id="id_align"><dt>Align
+Controls</dt>
+<dd>Aligns selected controls with
+the last selected control (the one that displays black selection
+handles). If the selection or marquee tool was dragged around a group
+of controls to select them, they are aligned with the control with the
+lowest Z-order (also indicated by black selection handles).
+The following alignments are supported:<br><br>
+<ul><li><img style="width: 16px; height: 16px;" alt="Align Left" title="Align Left" src="images/alignleft.gif">&nbsp;Align Left</li>
+<li><img style="width: 16px; height: 16px;" alt="Align Center" title="Align Center" src="images/aligncenter.gif">&nbsp;Align Center</li>
+<li><img style="width: 16px; height: 16px;" alt="Align Right" title="Align Right" src="images/alignright.gif">&nbsp;Align Right</li>
+<li><img style="width: 16px; height: 16px;" alt="Align Top" title="Align Top" src="images/aligntop.gif">&nbsp;Align Top</li>
+<li><img style="width: 16px; height: 16px;" alt="Align Middle" title="Align Middle" src="images/alignmid.gif">&nbsp;Align Middle</li>
+<li><img style="width: 16px; height: 16px;" alt="Align Bottom title=" bottom="" src="images/alignbottom.gif" align="">&nbsp;Align
+Bottom</li>
+</ul> <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a><br>
+</dd></dl><a name="a_toggle_comment"></a><dl id="id_toggle_comment"><dt>Match Controls</dt>
+<dd>Matches a dimension of the selected controls with
+the last selected control (the one that displays black selection
+handles). If the selection or marquee tool was dragged around a group
+of controls to select them, they are matched with the control at the
+back of the stacking order (also indicated by black selection handles).
+The following matchings are supported:<br><br>
+<ul><li><img style="width: 16px; height: 16px;" alt="Match Width" title="Match Width" src="images/matchwidth.gif">&nbsp;Match Width</li>
+<li><img style="width: 16px; height: 16px;" alt="Match Height" title="Match Height" src="images/matchheight.gif">&nbsp;Match Height</li>
+</ul><a href="javascript:history.go(-1)">&larr;&nbsp;Back</a><br>
+</dd></dl><a name="a_block_comment"></a><dl id="id_block_comment"><dt>Arrange Controls</dt>
+<dd>Changes the Z-order of the
+selected controls with respect to the unselected controls. The Z-order
+determines which controls are in front of other controls. The top of
+the
+Z-order is the control which is in front of all other controls. The
+following arrangements are supported:<br><br>
+<ul><li><img style="width: 16px; height: 16px;" alt="Send Backward" title="Send Backward" src="images/backward.gif">&nbsp;Send Backward</li>
+<li><img style="width: 16px; height: 16px;" alt="Send to Back" title="Send to Back" src="images/back.gif">&nbsp;Send to Back</li>
+<li><img style="width: 16px; height: 16px;" alt="Bring Forward" title="Bring Forward" src="images/forward.gif">&nbsp;Bring Forward</li><li><img style="width: 16px; height: 16px;" alt="Bring to Front" title="Bring to Front" src="images/front.gif">&nbsp;Bring
+to Front</li>
+</ul> <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a><br></dd>
+</dl><a name="a_insert_file_name"></a><dl id="id_insert_file_name"><dt>Reset Dialog Size</dt>
+<dd>Changes the size of targeted
+InstallOptions dialog UI. The selected size is shown when the <a href="#dialogsize">Dialog
+size outline</a> drawing tool is displayed. The available dialog
+sizes and the default can be configured using the <a href="preferences.html#a_dialogsize">Preferences</a>
+dialog.</dd><dt></dt>
+<dt style="text-align: center;"><img style="width: 271px; height: 43px;" alt="Reset Dialog Size" title="Reset Dialog Size" src="images/resetdialogsize.gif"></dt><dd>&nbsp;<a href="javascript:history.go(-1)">&larr;&nbsp;Back</a><br>
+</dd></dl><hr><a href="editing.html">Previous</a>
+| <a href="overview.html#contents">Contents</a> | <a href="designeditor2.html">Next</a> <br>
+<br><p><strong><small>Copyright &copy;
+2004, 2005 Sunil Kamath
+(IcemanK).</small></strong></p>
+<map name="designeditor"><area id="canvas" shape="RECT" href="#a_canvas" alt="Canvas" onclick="highlightDef('id_canvas');" coords="18,41, 482,472"><area id="palette" shape="RECT" href="#a_palette" alt="Palette" onclick="highlightDef('id_palette');" coords="485,23, 627,471"><area id="rulers" shape="POLY" href="#a_rulers" alt="Ruler" onclick="highlightDef('id_rulers');" coords="2,472, 16,472, 16,39, 481,39, 481,25, 18,25, 17,41, 2,41, 2,472"></map></div></body></html>

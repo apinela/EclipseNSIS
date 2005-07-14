@@ -12,12 +12,12 @@ package net.sf.eclipsensis.installoptions;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
-import org.eclipse.gef.editparts.ZoomManager;
 import org.eclipse.swt.graphics.Color;
 
 public interface IInstallOptionsConstants
 {
     public static final String PLUGIN_NAME = InstallOptionsPlugin.getDefault().getBundle().getSymbolicName();
+    public static final String PLUGIN_CONTEXT_PREFIX = PLUGIN_NAME + "."; //$NON-NLS-1$
 
     public static final String RESOURCE_BUNDLE = "net.sf.eclipsensis.installoptions.InstallOptionsPluginResources"; //$NON-NLS-1$
     public static final String MESSAGE_BUNDLE = "net.sf.eclipsensis.installoptions.InstallOptionsPluginMessages"; //$NON-NLS-1$
@@ -45,7 +45,6 @@ public interface IInstallOptionsConstants
     public static Dimension GRID_SPACING_DEFAULT = new Dimension(10,10);
     public static Point GRID_ORIGIN_DEFAULT = new Point(0, 0);
     public static String GRID_STYLE_DEFAULT = GRID_STYLE_LINES;
-    public static String ZOOM_DEFAULT = "100%"; //$NON-NLS-1$
     public static Dimension DIALOG_SIZE_DEFAULT = new Dimension(300,140); //$NON-NLS-1$
    
     public static final String PREFERENCE_SHOW_GRID = "ShowGrid"; //$NON-NLS-1$
@@ -59,7 +58,6 @@ public interface IInstallOptionsConstants
     public static final String PREFERENCE_GRID_SPACING = "GridSpacing"; //$NON-NLS-1$
     public static final String PREFERENCE_GRID_ORIGIN = "GridOrigin"; //$NON-NLS-1$
     public static final String PREFERENCE_GRID_STYLE = "GridStyle"; //$NON-NLS-1$
-    public static final String PREFERENCE_ZOOM = "Zoom"; //$NON-NLS-1$
 
     public static final String PREFERENCE_SYNTAX_STYLES = "SyntaxStyles"; //$NON-NLS-1$
     public static final String SECTION_STYLE = "SectionStyle"; //$NON-NLS-1$
@@ -81,7 +79,6 @@ public interface IInstallOptionsConstants
     public static final QualifiedName FILEPROPERTY_GRID_SPACING = new QualifiedName(QUALIFIED_NAME_PREFIX,PREFERENCE_GRID_SPACING);
     public static final QualifiedName FILEPROPERTY_GRID_ORIGIN = new QualifiedName(QUALIFIED_NAME_PREFIX,PREFERENCE_GRID_ORIGIN);
     public static final QualifiedName FILEPROPERTY_GRID_STYLE = new QualifiedName(QUALIFIED_NAME_PREFIX,PREFERENCE_GRID_STYLE);
-    public static final QualifiedName FILEPROPERTY_ZOOM = new QualifiedName(QUALIFIED_NAME_PREFIX,PREFERENCE_ZOOM);
     public static final QualifiedName FILEPROPERTY_DIALOG_SIZE = new QualifiedName(QUALIFIED_NAME_PREFIX,"DialogSize"); //$NON-NLS-1$
     public static final QualifiedName FILEPROPERTY_PROBLEM_MARKERS = new QualifiedName(QUALIFIED_NAME_PREFIX,"ProblemMarkers"); //$NON-NLS-1$
     
@@ -91,11 +88,6 @@ public interface IInstallOptionsConstants
     public static final String PROPERTY_SHOW_DIALOG_SIZE = "net.sf.eclipsensis.installoptions.show_dialog_size"; //$NON-NLS-1$
     
     public static final String GRID_SNAP_GLUE_SETTINGS_ACTION_ID = "net.sf.eclipsensis.installoptions.grid_snap_glue_settings"; //$NON-NLS-1$
-    public static final String[] ZOOM_LEVEL_CONTRIBUTIONS = new String[] {   
-        ZoomManager.FIT_ALL, 
-        ZoomManager.FIT_HEIGHT, 
-        ZoomManager.FIT_WIDTH
-    };
 
     public static final Color GHOST_FILL_COLOR = new Color(null, 31, 31, 31);
     

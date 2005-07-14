@@ -23,12 +23,6 @@ import org.eclipse.swt.widgets.Composite;
 
 public class InstallOptionsSourceViewer extends InstallOptionsSourcePreviewer
 {
-    public InstallOptionsSourceViewer(Composite parent, IVerticalRuler ruler,
-            int styles)
-    {
-        super(parent, ruler, styles);
-    }
-
     public InstallOptionsSourceViewer(Composite parent, IVerticalRuler verticalRuler, IOverviewRuler overviewRuler,
             boolean showAnnotationsOverview, int styles)
     {

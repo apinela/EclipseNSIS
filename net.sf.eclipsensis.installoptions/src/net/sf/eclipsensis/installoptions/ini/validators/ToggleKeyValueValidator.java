@@ -25,7 +25,7 @@ public class ToggleKeyValueValidator implements IINIKeyValueValidator
         String value = keyValue.getValue();
         if(!Common.isEmpty(value)) {
             char[] chars = value.toCharArray();
-            if(chars.length == 1 && chars[0] == '0' || chars[0] == '1') {
+            if(chars.length == 1 && (chars[0] == '0' || chars[0] == '1')) {
                 return true;
             }
             keyValue.addProblem(INIProblem.TYPE_ERROR,

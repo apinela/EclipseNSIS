@@ -1,0 +1,76 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><!-- ############################################################################### # Copyright (c) 2004, 2005 Sunil Kamath (IcemanK). # All rights reserved. # This program is made available under the terms of the Common Public License # v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html # # Contributors: # Sunil Kamath (IcemanK) - initial API and implementation ############################################################################### -->
+  <title>EclipseNSIS InstallOptions Editor - Source Editor</title>
+
+
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+
+  <meta http-equiv="Content-Style-Type" content="text/css">
+
+  <link rel="stylesheet" href="book.css" charset="ISO-8859-1" type="text/css">
+
+  <script type="text/javascript" language="javascript" src="help.js">
+  </script>
+  <script type="text/javascript" language="javascript" src="redirect.js">
+  </script>
+  <script type="text/javascript" language="javascript">
+<!--
+var current = 0;
+var foldingImages = new Array();
+foldingImages[0] = new Image();
+foldingImages[0].src = "images/folding1.gif";
+foldingImages[1] = new Image();
+foldingImages[1].src = "images/folding2.gif";
+//-->
+  </script></head>
+<body>
+<div id="main">
+<a href="designeditor2.html">Previous</a> | <a href="overview.html#contents">Contents</a> | <a href="preferences.html">Next</a>
+<hr>
+<h1>Source Editor</h1>
+<p>The Source Editor provides a
+text-based interface for editing InstallOptions scripts. It also
+validates the InstallOptions script dynamically as text is modified,
+and indicates errors and warning in the <a href="javascript:redirectEclipse('/org.eclipse.platform.doc.user/reference/ref-31a.htm');">Problems view</a>
+as well as the <a href="#rulers">vertical and outline rulers</a>. Additionally, the editor offers the following features:</p>
+<ol><li><a href="#rulers">Vertical and Overview Rulers</a></li><li><a href="#outline">Code Outline</a></li>
+<li><a href="#code_folding">Code Folding</a></li></ol>
+<a name="rulers"></a><h2>Vertical and Overview Rulers</h2>
+<p>The vertical ruler is to the left of the editing area in the source
+editor and is used to show text ranges and line-based annotations (e.g.,
+problems, bookmarks, tasks, etc.) adjacent to their text line.<br>
+The overview ruler is on the right hand side of the editing area, and is used
+to show annotations concerning the entire script. These annotations are
+shown relative to their position in the script and do not move as the user
+scrolls the script source. There usually is a corresponding annotation on
+the vertical ruler when that portion of the script is visible.</p>
+<p style="text-align: center;"><img alt="Vertical and Overview Rulers" src="images/editorrulers.gif" style="border: medium none ; width: 636px; height: 111px;"></p>
+<a name="outline"></a><h2>Code Outline</h2>
+<p>The source editor includes a code outline view for the currently-active InstallOptions
+script. The outline view lists sections
+in the InstallOptions INI script, and updates dynamically as text is modified in the source editor.</p><p style="text-align: center;"><img alt="Code Outline" style="border: medium none ; width: 276px; height: 244px;" src="images/outline2.gif"></p>
+<a name="code_folding"></a><h2>Code Folding</h2>
+<p>The source editor supports folding of sections
+in the InstallOptions INI script. Click on the image below for a preview of how folding works
+in the source editor.</p>
+<div id="div_folding">
+<p style="text-align: center;"><img name="img_folding" alt="Code Folding" src="images/folding1.gif" ismap="ismap" style="border: medium none ; width: 540px; height: 352px;" usemap="#folding1"></p>
+<script type="text/javascript" language="javascript">
+<!--
+if(ie) {
+document.write("<map name='folding1'><area id='folding' nohref='true' OnClick='current = toggleImage(\"img_folding\",current,foldingImages); if(this.blur) this.blur();' onMouseOver='changeCursor(\"div_folding\",\"hand\");' onMouseOut='changeCursor(\"div_folding\",\"auto\");' shape='RECT' alt='Folding' coords='19,236,28,244'></map>");
+}
+else {
+document.write("<map name='folding1'><area id='folding' href='javascript: current = toggleImage(\"img_folding\",current,foldingImages); if(this.blur) this.blur();' shape='RECT' alt='Folding' coords='19,236,28,244'></map>");
+}
+//-->
+</script>
+</div>
+<hr>
+<a href="designeditor2.html">Previous</a> | <a href="overview.html#contents">Contents</a> | <a href="preferences.html">Next</a> <br>
+<br>
+<p><strong><small>Copyright &copy; 2004, 2005 Sunil Kamath
+(IcemanK).</small></strong></p>
+</div>
+
+</body></html>

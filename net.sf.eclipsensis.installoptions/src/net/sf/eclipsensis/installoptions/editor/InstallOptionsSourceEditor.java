@@ -9,6 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.editor;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 
@@ -30,8 +31,8 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.CompositeImageDescriptor;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.Position;
-import org.eclipse.jface.text.source.ISourceViewer;
-import org.eclipse.jface.text.source.IVerticalRuler;
+import org.eclipse.jface.text.source.*;
+import org.eclipse.jface.text.source.projection.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.Composite;
@@ -52,6 +53,8 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
     private SelectionSynchronizer mSelectionSynchronizer = new SelectionSynchronizer();
     private OutlinePage mOutlinePage = null;
     private Map[] mCachedMarkers;
+    private ProjectionAnnotationModel mAnnotationModel;
+    private Annotation[] mAnnotations = null;
     
     public InstallOptionsSourceEditor()
     {
@@ -60,6 +63,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
                 InstallOptionsPlugin.getDefault().getPreferenceStore(),
                 EditorsUI.getPreferenceStore()
         }));
+        setHelpContextId(PLUGIN_CONTEXT_PREFIX + "installoptions_sourceeditor_context"); //$NON-NLS-1$;
     }
 
     public boolean canSwitch()
@@ -97,6 +101,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
         if(input != null) {
             InstallOptionsMarkerUtility.updateMarkers(input.getFile(), iniFile);
         }
+        updateAnnotations();
         if(mOutlinePage != null) {
             mOutlinePage.update();
         }
@@ -204,6 +209,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
         fOverviewRuler= createOverviewRuler(getSharedColors());
 
         ISourceViewer viewer= new InstallOptionsSourceViewer(parent, ruler, getOverviewRuler(), isOverviewRulerVisible(), styles);
+
         // ensure decoration support has been created and configured.
         getSourceViewerDecorationSupport(viewer);
 
@@ -213,9 +219,40 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
     public void createPartControl(Composite parent)
     {
         super.createPartControl(parent);
-        getSourceViewer().getSelectionProvider().addSelectionChangedListener(mSelectionSynchronizer);
-        ((TextViewer)getSourceViewer()).addPostSelectionChangedListener(mSelectionSynchronizer);
+        ProjectionViewer sourceViewer = (ProjectionViewer)getSourceViewer();
+        ProjectionSupport projectionSupport = new ProjectionSupport(sourceViewer,getAnnotationAccess(),getSharedColors());
+        projectionSupport.addSummarizableAnnotationType("org.eclipse.ui.workbench.texteditor.error"); //$NON-NLS-1$
+        projectionSupport.addSummarizableAnnotationType("org.eclipse.ui.workbench.texteditor.warning"); //$NON-NLS-1$
+        projectionSupport.addSummarizableAnnotationType("org.eclipse.ui.workbench.texteditor.task"); //$NON-NLS-1$
+        projectionSupport.addSummarizableAnnotationType("org.eclipse.ui.workbench.texteditor.bookmark"); //$NON-NLS-1$
+        projectionSupport.install();
+        if(sourceViewer.canDoOperation(ProjectionViewer.TOGGLE)) {
+            sourceViewer.doOperation(ProjectionViewer.TOGGLE);
+        }
+        sourceViewer.getSelectionProvider().addSelectionChangedListener(mSelectionSynchronizer);
+        ((TextViewer)sourceViewer).addPostSelectionChangedListener(mSelectionSynchronizer);
         mINIFile.addListener(this);
+        mAnnotationModel = sourceViewer.getProjectionAnnotationModel();
+        updateAnnotations();
+    }
+
+    private void updateAnnotations()
+    {
+        scheduleUIJob(InstallOptionsPlugin.getResourceString("outline.update.job.name"),getClass(),
+                new StatusRunnable(){
+                    public IStatus run(IProgressMonitor monitor)
+                    {
+                        HashMap annotations = new HashMap();
+                        INISection[] sections = mINIFile.getSections();
+                        for (int i = 0; i < sections.length; i++) {
+                            Position position = sections[i].getPosition();
+                            annotations.put(new ProjectionAnnotation(),new Position(position.offset,position.length));
+                        }
+                        mAnnotationModel.modifyAnnotations(mAnnotations,annotations,null);
+                        mAnnotations = (Annotation[])annotations.keySet().toArray(new Annotation[annotations.size()]);
+                        return Status.OK_STATUS;
+                    }
+                });
     }
 
     public Object getAdapter(Class type)
@@ -228,7 +265,29 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
         }
         return super.getAdapter(type);
     }
-        
+
+    private void scheduleUIJob(String jobName, final Class clasz, final StatusRunnable runnable)
+    {
+        Job[] jobs = Platform.getJobManager().find(clasz);
+        for (int i = 0; i < jobs.length; i++) {
+            if(jobs[i].getState() != Job.RUNNING) {
+                jobs[i].cancel();
+            }
+        }
+        Job job = new UIJob(jobName){ //$NON-NLS-1$
+                public boolean belongsTo(Object family)
+                {
+                    return clasz == family;
+                }
+
+                public IStatus runInUIThread(IProgressMonitor monitor)
+                {
+                    return runnable.run(monitor);
+                }
+            };
+        job.schedule();
+    }
+
     private class OutlinePage extends ContentOutlinePage
     {
         public void createControl(Composite parent)
@@ -294,29 +353,23 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
          */
         public void update()
         {
-            Job[] jobs = Platform.getJobManager().find(getClass());
-            for (int i = 0; i < jobs.length; i++) {
-                if(jobs[i].getState() != Job.RUNNING) {
-                    jobs[i].cancel();
-                }
-            }
-            Job job = new UIJob(InstallOptionsPlugin.getResourceString("outline.update.job.name")){ //$NON-NLS-1$
-                    public IStatus runInUIThread(IProgressMonitor monitor)
-                    {
-                        try {
-                            TreeViewer viewer = getTreeViewer();
-                            if(viewer != null && mINIFile != null) {
-                                viewer.refresh(mINIFile);
-                            }
-                            return Status.OK_STATUS;
-                        }
-                        catch(Exception e) {
-                            e.printStackTrace();
-                            return new Status(IStatus.ERROR,IInstallOptionsConstants.PLUGIN_NAME,-1,e.getMessage(),e);
-                        }
-                    }
-                };
-            job.schedule();
+            scheduleUIJob(InstallOptionsPlugin.getResourceString("outline.update.job.name"),getClass(),
+                          new StatusRunnable(){
+                              public IStatus run(IProgressMonitor monitor)
+                              {
+                                  try {
+                                      TreeViewer viewer = getTreeViewer();
+                                      if(viewer != null && mINIFile != null) {
+                                          viewer.refresh(mINIFile);
+                                      }
+                                      return Status.OK_STATUS;
+                                  }
+                                  catch(Exception e) {
+                                      e.printStackTrace();
+                                      return new Status(IStatus.ERROR,IInstallOptionsConstants.PLUGIN_NAME,-1,e.getMessage(),e);
+                                  }
+                              }
+                          });
         }
 
         public void setSelection(ISelection selection) 
@@ -491,5 +544,10 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
                 }
             }
         }
+    }
+    
+    private abstract class StatusRunnable
+    {
+        public abstract IStatus run(IProgressMonitor monitor);
     }
 }
