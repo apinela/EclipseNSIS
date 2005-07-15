@@ -1,4 +1,4 @@
-<project name="EclipseNSIS Web">
+<project name="EclipseNSIS Web" default="all">
     <target name="update">
         <copy todir="update" includeEmptyDirs="false">
             <fileset dir="../net.sf.eclipsensis.site" excludes="**/CVS/*,.project,.sitebuild/*"/>
@@ -29,4 +29,6 @@
             <fileset dir="help/installoptions" includes="**/*"/>
     	</delete>
     </target>
+	<target name="all" depends="update,help"/>
+	<target name="clean" depends="clean.update,clean.help"/>
 </project>
