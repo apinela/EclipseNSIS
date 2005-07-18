@@ -32,7 +32,7 @@ public class ImageManager
             Display.getDefault().syncExec(new Runnable() {
                 public void run()
                 {
-                    mImageRegistry = new ImageRegistry();
+                    mImageRegistry = new ImageRegistry(Display.getDefault());
                 }
             });
         }

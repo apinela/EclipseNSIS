@@ -13,6 +13,8 @@ package net.sf.eclipsensis.util;
 import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Manager for colors used in the NSIS plugin
@@ -35,7 +37,32 @@ public class ColorManager
     public static final RGB CHOCOLATE = new RGB(0xd2,0x69,0x1e);
     public static final RGB TEAL = new RGB(0x0,0x80,0x80);
 
-    private static ColorRegistry mColorTable = new ColorRegistry();
+    private static ColorRegistry cColorRegistry;
+    
+    private static ColorRegistry getColorRegistry()
+    {
+        if(cColorRegistry == null) {
+            synchronized(ColorManager.class) {
+                if(cColorRegistry == null) {
+                    if(Display.getCurrent() != null) {
+                        cColorRegistry = new ColorRegistry(Display.getCurrent());
+                    }
+                    else if(PlatformUI.isWorkbenchRunning()) {
+                        cColorRegistry = new ColorRegistry(PlatformUI.getWorkbench().getDisplay());
+                    }
+                    else {
+                        Display.getDefault().syncExec(new Runnable(){
+                            public void run()
+                            {
+                                cColorRegistry = new ColorRegistry(Display.getDefault());
+                            }
+                        });
+                    }
+                }
+            }
+        }
+        return cColorRegistry;
+    }
 
     /**
      * Return the Color that is stored in the Color table as rgb.
@@ -45,13 +72,14 @@ public class ColorManager
         Color color = null;
         if(rgb != null) {
             String rgbName = rgb.toString();
-            color = (Color) mColorTable.get(rgbName);
+            ColorRegistry colorRegistry = getColorRegistry();
+            color = (Color) colorRegistry.get(rgbName);
             if (color == null) {
                 synchronized(ColorManager.class) {
-                    color = (Color) mColorTable.get(rgbName);
+                    color = (Color) colorRegistry.get(rgbName);
                     if (color == null) {
-                        mColorTable.put(rgbName, rgb);
-                        color = (Color) mColorTable.get(rgbName);
+                        colorRegistry.put(rgbName, rgb);
+                        color = (Color) colorRegistry.get(rgbName);
                     }
                 }
             }
