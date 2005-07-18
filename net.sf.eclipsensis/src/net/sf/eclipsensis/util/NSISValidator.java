@@ -10,8 +10,9 @@
 package net.sf.eclipsensis.util;
 
 import java.io.File;
-import java.util.Properties;
-import java.util.StringTokenizer;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -24,7 +25,36 @@ public class NSISValidator implements INSISConstants
     private static Version EMPTY_VERSION = new Version("0"); //$NON-NLS-1$
     public static Version MINIMUM_NSIS_VERSION = new Version(EclipseNSISPlugin.getResourceString("minimum.nsis.version")); //$NON-NLS-1$
     private static Pattern cVersionPattern = Pattern.compile("v(\\d+(?:\\.\\d+)?(?:[A-Za-z]+\\d*)?)"); //$NON-NLS-1$
+    private static Pattern cCVSVersionPattern = Pattern.compile("v([0-3][0-9]-[a-zA-Z]{3}-20[0-9]{2})\\.cvs"); //$NON-NLS-1$
+    private static SimpleDateFormat cCVSDateFormat = new SimpleDateFormat("dd-MMM-yyyy");
     public static final String DEFINED_SYMBOLS_PREFIX = "Defined symbols: "; //$NON-NLS-1$
+    private static Map cVersionDateMap;
+
+    static {
+        ResourceBundle bundle;
+        try {
+            bundle = ResourceBundle.getBundle(NSISValidator.class.getName());
+        } catch (MissingResourceException x) {
+            bundle = null;
+        }
+        Map map = Common.loadMapProperty(bundle,"version.dates");
+        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
+        cVersionDateMap = new LinkedHashMap();
+        for(Iterator iter=map.keySet().iterator(); iter.hasNext(); ) {
+            String key = (String)iter.next();
+            String value = (String)map.get(key);
+            Version v = new Version(key);
+            Date d;
+            try {
+                d = sdf.parse(value);
+            }
+            catch (ParseException e) {
+                e.printStackTrace();
+                d = new Date(0);
+            }
+            cVersionDateMap.put(v,d);
+        }
+    }
 
     public static File findNSISExe(File nsisHome)
     {
@@ -88,6 +118,34 @@ public class NSISValidator implements INSISConstants
                 if(matcher.matches()) {
                     version = new Version(matcher.group(1));
                     break;
+                }
+                else {
+                    matcher = cCVSVersionPattern.matcher(output[i]);
+                    if(matcher.matches()) {
+                        Date cvsDate;
+                        try {
+                            cvsDate = cCVSDateFormat.parse(matcher.group(1));
+                        }
+                        catch (ParseException e) {
+                            e.printStackTrace();
+                            cvsDate = new Date(0);
+                        }
+                        
+                        for(Iterator iter=cVersionDateMap.keySet().iterator(); iter.hasNext(); ) {
+                            Version v = (Version)iter.next();
+                            Date d = (Date)cVersionDateMap.get(v);
+                            if(cvsDate.compareTo(d) >= 0) {
+                                version = v;
+                            }
+                            else {
+                                break;
+                            }
+                        }
+                        if(version != null) {
+                            version = new Version(version);
+                            version.setDisplayText(output[i].substring(1));
+                        }
+                    }
                 }
             }
         }

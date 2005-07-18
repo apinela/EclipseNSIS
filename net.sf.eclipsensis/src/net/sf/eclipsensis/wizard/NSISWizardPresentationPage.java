@@ -559,15 +559,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
         
         final Font previewFont = new Font(display,mBGPreviewFontData);
         final Font messageFont = new Font(display,mBGPreviewEscapeFontData);
-
-        Canvas canvas = new Canvas(shell, SWT.NO_BACKGROUND);
-        final GC gc = new GC(canvas);
-        shell.open();
-        shell.forceActive();
         final Clip clip = loadAudioClip(Common.decodePath(settings.getBackgroundWAV()));
-        if(clip != null) {
-            clip.loop(Clip.LOOP_CONTINUOUSLY);
-        }
         
         shell.addKeyListener(new KeyAdapter(){
             public void keyReleased(KeyEvent e) {
@@ -582,6 +574,14 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
                 }
             }
         });
+
+        Canvas canvas = new Canvas(shell, SWT.NO_BACKGROUND);
+        final GC gc = new GC(canvas);
+        shell.open();
+        shell.forceActive();
+        if(clip != null) {
+            clip.loop(Clip.LOOP_CONTINUOUSLY);
+        }
         canvas.addPaintListener(new PaintListener() {
             public void paintControl(PaintEvent e)
             {

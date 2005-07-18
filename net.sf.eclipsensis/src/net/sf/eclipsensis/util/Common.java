@@ -59,7 +59,7 @@ public class Common
     
     public static String encodePath(String path)
     {
-        String nsisdirKeyword = ""; //$NON-NLS-1$
+        String nsisdirKeyword = NSISKeywords.getKeyword("${NSISDIR}"); //$NON-NLS-1$
         String nsisHome = NSISPreferences.getPreferences().getNSISHome().toLowerCase();
         if(path.toLowerCase().startsWith(nsisHome)) {
             path = nsisdirKeyword + path.substring(nsisHome.length());
@@ -69,7 +69,7 @@ public class Common
 
     public static String decodePath(String path)
     {
-        String nsisdirKeyword = "".toLowerCase(); //$NON-NLS-1$
+        String nsisdirKeyword = NSISKeywords.getKeyword("${NSISDIR}").toLowerCase(); //$NON-NLS-1$
         String nsisHome = NSISPreferences.getPreferences().getNSISHome();
         if(path.toLowerCase().startsWith(nsisdirKeyword)) {
             path = nsisHome + path.substring(nsisdirKeyword.length());
@@ -542,7 +542,7 @@ public class Common
 
     public static Map loadMapProperty(ResourceBundle bundle, String propertyName)
     {
-        HashMap map = new HashMap();
+        Map map = new LinkedHashMap();
         if(bundle != null) {
             String property = bundle.getString(propertyName);
             if(!isEmpty(property)) {

@@ -133,6 +133,8 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
         GridData data = ((GridData)group.getLayoutData());
         data.verticalAlignment = GridData.FILL;
         data.grabExcessVerticalSpace = true;
+        data.horizontalAlignment = GridData.FILL;
+        data.grabExcessHorizontalSpace = true;
         
         NSISWizardSettings settings = mWizard.getSettings();
 
@@ -152,7 +154,7 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
         data = new GridData(GridData.FILL_BOTH);
         composite2.setLayoutData(data);
         
-        GridLayout layout = new GridLayout(20,true);
+        GridLayout layout = new GridLayout(4,false);
         layout.marginHeight = 0;
         layout.marginWidth = 0;
         composite2.setLayout(layout);
@@ -169,13 +171,12 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
         availableLanguages.removeAll(selectedLanguages);
         
         Label l = NSISWizardDialogUtil.createLabel(composite2, "available.languages.label", true, m, false); //$NON-NLS-1$
-        ((GridData)l.getLayoutData()).horizontalSpan = 10;
+        ((GridData)l.getLayoutData()).horizontalSpan = 2;
         l = NSISWizardDialogUtil.createLabel(composite2, "selected.languages.label", true, m, true); //$NON-NLS-1$
-        ((GridData)l.getLayoutData()).horizontalSpan = 10;
+        ((GridData)l.getLayoutData()).horizontalSpan = 2;
         
         final List availableLangList = new List(composite2,SWT.BORDER|SWT.H_SCROLL|SWT.V_SCROLL|SWT.MULTI);
-        data = new GridData(GridData.FILL_BOTH);
-        data.horizontalSpan=8;
+        data = new GridData(SWT.FILL,SWT.FILL,false,true);
         Dialog.applyDialogFont(availableLangList);
         data.heightHint = Common.calculateControlSize(availableLangList,0,10).y;
         availableLangList.setLayoutData(data);
@@ -193,7 +194,6 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
         layout.marginWidth = 0;
         composite3.setLayout(layout);
         data = new GridData(GridData.HORIZONTAL_ALIGN_FILL|GridData.VERTICAL_ALIGN_CENTER);
-        data.horizontalSpan=2;
         composite3.setLayoutData(data);
 
         final Button allRightButton = new Button(composite3,SWT.PUSH);
@@ -221,8 +221,7 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
         allLeftButton.setToolTipText(EclipseNSISPlugin.getResourceString("all.left.tooltip")); //$NON-NLS-1$
         
         final List selectedLangList = new List(composite2,SWT.BORDER|SWT.H_SCROLL|SWT.V_SCROLL|SWT.MULTI);
-        data = new GridData(GridData.FILL_BOTH);
-        data.horizontalSpan=8;
+        data = new GridData(SWT.FILL,SWT.FILL,false,true);
         Dialog.applyDialogFont(selectedLangList);
         data.heightHint = Common.calculateControlSize(selectedLangList,0,10).y;
         selectedLangList.setLayoutData(data);
@@ -259,7 +258,6 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
         layout.marginWidth = 0;
         composite4.setLayout(layout);
         data = new GridData(GridData.HORIZONTAL_ALIGN_FILL|GridData.VERTICAL_ALIGN_CENTER);
-        data.horizontalSpan=2;
         composite4.setLayoutData(data);
         
         final Button upButton = new Button(composite4,SWT.PUSH);
@@ -444,8 +442,22 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
                     int heightHint = size.y - 2*layout.marginHeight;
                     ((GridData)availableLangList.getLayoutData()).heightHint = heightHint;
                     ((GridData)selectedLangList.getLayoutData()).heightHint = heightHint;
+                    int totalWidth = size.x - 2*layout.marginWidth - 3*layout.horizontalSpacing;
+                    int listWidth =  (int)(totalWidth*0.4);
+                    int buttonWidth = (int)(0.5*(totalWidth-2*listWidth));
+                    size = availableLangList.computeSize(listWidth,SWT.DEFAULT);
+                    int delta = 0;
+                    if(size.x > listWidth) {
+                        delta = size.x-listWidth;
+                        listWidth = listWidth - delta;
+                    }
+                    ((GridData)availableLangList.getLayoutData()).widthHint =listWidth;
+                    ((GridData)composite3.getLayoutData()).widthHint = totalWidth - 2*(listWidth + delta) - buttonWidth;
+                    ((GridData)selectedLangList.getLayoutData()).widthHint = listWidth;
+                    ((GridData)composite4.getLayoutData()).widthHint = buttonWidth;
+                    composite2.layout();
                 }
-            }
+          }
         });
         
         mWizard.addSettingsListener(new INSISWizardSettingsListener() {

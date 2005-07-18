@@ -2,12 +2,12 @@
 <feature
       id="net.sf.eclipsensis"
       label="%feature.name"
-      version="0.9.0"
+      version="0.9.1"
       provider-name="%provider.name"
+      image="%splash.image"
       os="win32"
       ws="win32"
       arch="x86">
-
    <install-handler/>
 
    <description url="%description.url">
@@ -44,7 +44,7 @@
          id="net.sf.eclipsensis"
          download-size="1700"
          install-size="1700"
-         version="0.9.0"
+         version="0.9.1"
          unpack="false"/>
 
 </feature>

@@ -10,23 +10,19 @@
 package net.sf.eclipsensis.wizard.template;
 
 import java.io.*;
+import java.net.URL;
 import java.util.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.util.Common;
 
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 
 public class NSISWizardTemplateManager
 {
-    public static final File DEFAULT_LOCATION;
-    public static final File USER_LOCATION;
-
     private static final File cUserTemplatesStore;
-    private static final File cDefaultTemplatesStore;
+    private static final URL cDefaultTemplatesStore;
 
     private Map mTemplatesMap = new HashMap();
     private Map mDefaultTemplatesMap = new HashMap();
@@ -38,8 +34,15 @@ public class NSISWizardTemplateManager
         cPatches[0][0] = RGB.class.getName().getBytes();
         cPatches[0][1] = new byte[]{(byte)0x86, (byte)0xC9, (byte)0x2B, (byte)0x5B, (byte)0x04, (byte)0x11, (byte)0xCF, (byte)0x1D};
         cPatches[0][2] = new byte[]{(byte)0x2D, (byte)0x38, (byte)0x37, (byte)0x33, (byte)0x34, (byte)0x34, (byte)0x30, (byte)0x32};
+
+        String fileName = NSISWizardTemplateManager.class.getName()+".Templates.ser"; //$NON-NLS-1$
+
+        cDefaultTemplatesStore = EclipseNSISPlugin.getDefault().getBundle().getResource("/wizard/"+fileName);
+        
+        File userLocation = checkLocation(EclipseNSISPlugin.getPluginStateLocation());
+        cUserTemplatesStore = new File(userLocation,fileName);
     }
-    
+
     private static File checkLocation(File parentFolder)
     {
         File location = null;
@@ -55,26 +58,25 @@ public class NSISWizardTemplateManager
         return location;
     }
 
-//    private static File getLocation(NSISWizardTemplate template)
-//    {
-//        return (template.getType()==NSISWizardTemplate.TYPE_DEFAULT?DEFAULT_LOCATION:USER_LOCATION);
-//    }
-    
-    static {
-        File pluginLocation;
-        try {
-            pluginLocation = new Path(Platform.resolve(Platform.find(EclipseNSISPlugin.getDefault().getBundle(), new Path("/"))).getFile()).toFile(); //$NON-NLS-1$
+    private static Map loadTemplateStore(URL store)
+    {
+        Map map = null;
+        if(store != null) {
+            try {
+                InputStream stream = store.openStream();
+                map = (Map)Common.readObject(stream);
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+                map = new HashMap();
+            }
         }
-        catch (IOException e) {
-            pluginLocation = null;
-            e.printStackTrace();
-        }
-        DEFAULT_LOCATION = checkLocation(pluginLocation);
-        USER_LOCATION = checkLocation(EclipseNSISPlugin.getPluginStateLocation());
 
-        String fileName = NSISWizardTemplateManager.class.getName()+".Templates.ser"; //$NON-NLS-1$
-        cDefaultTemplatesStore = (DEFAULT_LOCATION==null?null:new File(DEFAULT_LOCATION,fileName));
-        cUserTemplatesStore = new File(USER_LOCATION,fileName);
+        if(map == null) {
+            map = new HashMap();
+        }
+        
+        return map;
     }
 
     private static Map loadTemplateStore(File store)

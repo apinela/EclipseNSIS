@@ -16,12 +16,12 @@ public class Version implements Comparable
 {
     private int[] mNumbers = null;
     private String[] mQualifiers = null;
-    private String mValue = null;
+    private String mDisplayText = null;
     
     public Version(String version)
     {
-        mValue = version;
-        StringTokenizer st = new StringTokenizer(mValue,"."); //$NON-NLS-1$
+        mDisplayText = version;
+        StringTokenizer st = new StringTokenizer(mDisplayText,"."); //$NON-NLS-1$
         mNumbers = new int[st.countTokens()];
         mQualifiers = new String[mNumbers.length];
         Arrays.fill(mNumbers,0);
@@ -40,6 +40,13 @@ public class Version implements Comparable
                 mQualifiers[i] = null;
             }
         }
+    }
+    
+    public Version(Version version)
+    {
+        mNumbers = (version.mNumbers == null?null:(int[])version.mNumbers.clone());
+        mQualifiers = (version.mQualifiers == null?null:(String[])version.mQualifiers.clone());
+        mDisplayText = version.mDisplayText;
     }
     
     /* (non-Javadoc)
@@ -84,7 +91,7 @@ public class Version implements Comparable
      */
     public String toString()
     {
-        return mValue;
+        return mDisplayText;
     }
 
     /* (non-Javadoc)
@@ -136,5 +143,10 @@ public class Version implements Comparable
     public String[] getQualifiers()
     {
         return (String[])mQualifiers.clone();
+    }
+
+    public void setDisplayText(String displayText)
+    {
+        mDisplayText = displayText;
     }
 }
