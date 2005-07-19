@@ -23,6 +23,11 @@
                label="%jarsigner.action.label"
                class="net.sf.jarsigner.actions.JARSignerAction"
                id="net.sf.jarsigner.actions.JARSignerAction"/>
+         <action
+               enablesFor="+"
+               label="%jarverifier.action.label"
+               class="net.sf.jarsigner.actions.JARVerifierAction"
+               id="net.sf.jarsigner.actions.JARVerifierAction"/>
       </objectContribution>
       <objectContribution
             objectClass="org.eclipse.core.resources.IFile"
@@ -33,6 +38,11 @@
                label="%jarsigner.action.label"
                class="net.sf.jarsigner.actions.JARSignerAction"
                id="net.sf.jarsigner.actions.JARSignerAction"/>
+         <action
+               enablesFor="+"
+               label="%jarverifier.action.label"
+               class="net.sf.jarsigner.actions.JARVerifierAction"
+               id="net.sf.jarsigner.actions.JARVerifierAction"/>
       </objectContribution>
    </extension>
 </plugin>

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: JARSigner Plug-in
 Bundle-SymbolicName: net.sf.jarsigner; singleton:=true
-Bundle-Version: 0.1.0
+Bundle-Version: 0.5.0
 Bundle-Activator: net.sf.jarsigner.JARSignerPlugin
 Bundle-Vendor: Sunil Kamath (IcemanK)
 Bundle-Localization: plugin

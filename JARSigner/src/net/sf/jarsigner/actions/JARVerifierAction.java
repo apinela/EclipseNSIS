@@ -10,8 +10,8 @@
 package net.sf.jarsigner.actions;
 
 import net.sf.jarsigner.JARSignerPlugin;
-import net.sf.jarsigner.dialogs.JARSignerOptionsDialog;
-import net.sf.jarsigner.util.JARSigner;
+import net.sf.jarsigner.dialogs.JARVerifierOptionsDialog;
+import net.sf.jarsigner.util.JARVerifier;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
@@ -23,7 +23,7 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.*;
 
-public class JARSignerAction implements IObjectActionDelegate 
+public class JARVerifierAction implements IObjectActionDelegate 
 {
     ISelection mSelection = null;
     IWorkbenchPart mPart = null;
@@ -31,7 +31,7 @@ public class JARSignerAction implements IObjectActionDelegate
 	/**
 	 * Constructor for JNIGenAction.
 	 */
-	public JARSignerAction() {
+	public JARVerifierAction() {
 		super();
 	}
 
@@ -51,22 +51,17 @@ public class JARSignerAction implements IObjectActionDelegate
         if (mSelection != null && !mSelection.isEmpty() && mSelection instanceof IStructuredSelection) {
             IStructuredSelection sel = (IStructuredSelection)mSelection;
             try {
-                JARSignerOptionsDialog dialog = new JARSignerOptionsDialog(Display.getDefault().getActiveShell(),sel.size() > 1);
+                JARVerifierOptionsDialog dialog = new JARVerifierOptionsDialog(Display.getDefault().getActiveShell(),sel.size() > 1);
                 if(dialog.open() == Window.OK) {
-                    final JARSigner jarSigner = new JARSigner(dialog.getToolsJar(),sel.toList(),
-                                                              dialog.getKeyStore(),dialog.getStorePass(),dialog.getAlias());
-                    jarSigner.setInternalSF(dialog.isInternalSF());
-                    jarSigner.setKeyPass(dialog.getKeyPass());
-                    jarSigner.setSectionsOnly(dialog.isSectionsOnly());
-                    jarSigner.setSigFile(dialog.getSigFile());
-                    jarSigner.setSignedJar(dialog.getSignedJar());
-                    jarSigner.setVerbose(dialog.isVerbose());
-                    jarSigner.setStoreType(dialog.getStoreType());
-                    jarSigner.setIgnoreErrors(dialog.isIgnoreErrors());
-                    Job job = new Job(JARSignerPlugin.getResourceString("jarsigner.job.title")) { //$NON-NLS-1$
+                    final JARVerifier jarVerifier = new JARVerifier(dialog.getToolsJar(),sel.toList());
+                    jarVerifier.setVerbose(dialog.isVerbose());
+                    jarVerifier.setCerts(dialog.isCerts());
+                    jarVerifier.setKeyStore(dialog.getKeyStore());
+                    jarVerifier.setIgnoreErrors(dialog.isIgnoreErrors());
+                    Job job = new Job(JARSignerPlugin.getResourceString("jarverifier.job.title")) { //$NON-NLS-1$
                         protected IStatus run(IProgressMonitor monitor)
                         {
-                            jarSigner.run(monitor);
+                            jarVerifier.run(monitor);
                             return Status.OK_STATUS;
                         }
                     };

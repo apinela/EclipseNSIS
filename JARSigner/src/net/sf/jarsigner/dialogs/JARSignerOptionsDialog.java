@@ -17,39 +17,27 @@ import java.util.List;
 
 import net.sf.jarsigner.JARSignerPlugin;
 
-import org.eclipse.jdt.launching.IVMInstall;
-import org.eclipse.jdt.launching.JavaRuntime;
-import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 
-public class JARSignerOptionsDialog extends Dialog
+public class JARSignerOptionsDialog extends AbstractJAROptionsDialog
 {
-    private static final String TOOLS_JAR = "tools.jar"; //$NON-NLS-1$
-    private static final String KEY_STORE = "key.store"; //$NON-NLS-1$
     private static final String STORE_PASS = "store.pass"; //$NON-NLS-1$
     private static final String ALIAS = "alias"; //$NON-NLS-1$
     private static final String STORE_TYPE = "store.type"; //$NON-NLS-1$
     private static final String KEY_PASS = "key.pass"; //$NON-NLS-1$
     private static final String SIG_FILE = "sig.file"; //$NON-NLS-1$
     private static final String SIGNED_JAR = "signed.jar"; //$NON-NLS-1$
-    private static final String VERBOSE = "verbose"; //$NON-NLS-1$
     private static final String INTERNAL_SF = "internal.sf"; //$NON-NLS-1$
     private static final String SECTIONS_ONLY = "sections.only"; //$NON-NLS-1$
-    private static final String IGNORE_ERRORS = "ignore.errors"; //$NON-NLS-1$
 
-    private Map mValues = new HashMap();
-    private IDialogSettings mDialogSettings;
-    private boolean mMulti = false;
-    private List mAliases = new ArrayList();
+    private List mAliases;
     private ComboViewer mComboViewer;
     
     /**
@@ -58,46 +46,16 @@ public class JARSignerOptionsDialog extends Dialog
      */
     public JARSignerOptionsDialog(Shell parentShell, boolean multi) throws KeyStoreException
     {
-        super(parentShell);
-        mMulti = multi;
-        init();
+        super(parentShell, multi);
     }
 
-    private void init()
+    protected void init()
     {
-        IDialogSettings dialogSettings = JARSignerPlugin.getDefault().getDialogSettings();
-        String name = getClass().getName();
-        mDialogSettings = dialogSettings.getSection(name);
-        if(mDialogSettings == null) {
-            mDialogSettings = dialogSettings.addNewSection(name);
-        }
-        String toolsJar = getStringDialogSetting(TOOLS_JAR);
-        if(JARSignerPlugin.isEmpty(toolsJar)) {
-            IVMInstall vm = JavaRuntime.getDefaultVMInstall();
-            if(vm == null) {
-                throw new RuntimeException(JARSignerPlugin.getResourceString("vm.not.found")); //$NON-NLS-1$
-            }
-            else {
-                File jdkHome = vm.getInstallLocation();
-                File toolPath = new File(jdkHome,"lib/tools.jar"); //$NON-NLS-1$
-                if(toolPath.exists() && toolPath.isFile()) {
-                    toolsJar = toolPath.getAbsolutePath();
-                }
-            }
-        }
-        mValues.put(TOOLS_JAR,toolsJar);
-
-        String keyStore = getStringDialogSetting(KEY_STORE);
-        if(JARSignerPlugin.isEmpty(keyStore)) {
-            String userHome = System.getProperty("user.home"); //$NON-NLS-1$
-            File storePath = new File(userHome,".keystore"); //$NON-NLS-1$
-            if(storePath.exists() && storePath.isFile()) {
-                keyStore = storePath.getAbsolutePath();
-            }
-        }
+        super.init();
         String storePass = getStringDialogSetting(STORE_PASS);
-
+        String keyStore = getStringDialogSetting(KEY_STORE);
         KeyStore ks = JARSignerPlugin.loadKeyStore(keyStore,storePass);
+        mAliases = new ArrayList();
         if(ks != null) {
             mValues.put(KEY_STORE,keyStore);
             mValues.put(STORE_PASS,storePass);
@@ -133,115 +91,13 @@ public class JARSignerOptionsDialog extends Dialog
         if(!mMulti) {
             mValues.put(SIGNED_JAR,getStringDialogSetting(SIGNED_JAR));
         }
-        else {
-            mValues.put(IGNORE_ERRORS,mDialogSettings.getBoolean(IGNORE_ERRORS)?Boolean.TRUE:Boolean.FALSE);
-        }
-        mValues.put(VERBOSE,mDialogSettings.getBoolean(VERBOSE)?Boolean.TRUE:Boolean.FALSE);
         mValues.put(INTERNAL_SF,mDialogSettings.getBoolean(INTERNAL_SF)?Boolean.TRUE:Boolean.FALSE);
         mValues.put(SECTIONS_ONLY,mDialogSettings.getBoolean(SECTIONS_ONLY)?Boolean.TRUE:Boolean.FALSE);
     }
 
-    private String getStringDialogSetting(String name)
+    protected String getDialogTitle()
     {
-        String str = mDialogSettings.get(name);
-        return (str==null?"":str); //$NON-NLS-1$
-    }
-
-    protected void configureShell(Shell newShell)
-    {
-        super.configureShell(newShell);
-        newShell.setText(JARSignerPlugin.getResourceString("jarsigner.dialog.title")); //$NON-NLS-1$
-    }
-    
-    private void makeBold(Control c)
-    {
-        FontData[] fd = c.getFont().getFontData();
-        for (int i = 0; i < fd.length; i++) {
-            fd[i].setStyle(SWT.BOLD);
-        }
-        final Font f = new Font(c.getDisplay(),fd);
-        c.setFont(f);
-        c.addDisposeListener(new DisposeListener(){
-            public void widgetDisposed(DisposeEvent e)
-            {
-                f.dispose();
-            }
-        });
-    }
-    
-    private Button makeCheckBox(Composite composite, String label, final String property, boolean isRequired)
-    {
-        final Button b = new Button(composite, SWT.CHECK);
-        if(isRequired) {
-            makeBold(b);
-        }
-        b.setText(JARSignerPlugin.getResourceString(label)); //$NON-NLS-1$
-        b.setSelection(((Boolean)mValues.get(property)).booleanValue());
-        GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-        gd.horizontalSpan = 3;
-        b.setLayoutData(gd);
-        b.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) 
-            {
-                mValues.put(property,b.getSelection()?Boolean.TRUE:Boolean.FALSE);
-                validate();
-            }
-        });
-        return b;
-    }
-    
-    private Text makeText(Composite composite, String label, final String property, boolean isRequired)
-    {
-        makeLabel(composite, label, isRequired);
-        final Text text = new Text(composite,SWT.BORDER);
-        text.setText((String)mValues.get(property));
-        GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-        gd.horizontalSpan = 2;
-        text.setLayoutData(gd);
-        text.addModifyListener(new ModifyListener() {
-            public void modifyText(ModifyEvent e)
-            {
-                mValues.put(property,text.getText());
-                validate();
-            }
-        });
-        
-        return text;
-    }
-
-    private Text makeFileBrowser(Composite composite, String label, final String property,
-                                 SelectionListener listener, boolean isRequired)
-    {
-        makeLabel(composite, label, isRequired);
-        final Text text = new Text(composite,SWT.BORDER);
-        text.setText((String)mValues.get(property));
-        text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        text.addModifyListener(new ModifyListener() {
-            public void modifyText(ModifyEvent e)
-            {
-                mValues.put(property,text.getText());
-                validate();
-            }
-        });
-        Button b = new Button(composite,SWT.PUSH);
-        b.setLayoutData(new GridData());
-        b.setText(JARSignerPlugin.getResourceString("browse.label")); //$NON-NLS-1$
-        if(listener != null) {
-            b.addSelectionListener(listener);
-        }
-        text.setData("button",b); //$NON-NLS-1$
-        b.setData("text",text); //$NON-NLS-1$
-        return text;
-    }
-
-    private void makeLabel(Composite composite, String label, boolean isRequired)
-    {
-        Label l = new Label(composite, SWT.NONE);
-        if(isRequired) {
-            makeBold(l);
-        }
-        l.setText(JARSignerPlugin.getResourceString(label)); //$NON-NLS-1$
-        l.setLayoutData(new GridData());
+        return JARSignerPlugin.getResourceString("jarsigner.dialog.title"); //$NON-NLS-1$
     }
 
     protected Control createDialogArea(Composite parent)
@@ -262,7 +118,7 @@ public class JARSignerOptionsDialog extends Dialog
             public void widgetSelected(SelectionEvent e) 
             {
                 Button b = (Button)e.widget;
-                Text text = (Text)b.getData("text"); //$NON-NLS-1$
+                Text text = (Text)b.getData(ATTR_TEXT); //$NON-NLS-1$
                 if(text != null) {
                     KeyStoreDialog dialog = new KeyStoreDialog(getShell(),getKeyStore(),getStorePass());
                     if(dialog.open() == Window.OK) {
@@ -298,7 +154,7 @@ public class JARSignerOptionsDialog extends Dialog
         GridData gd = (GridData)t.getLayoutData();
         gd.widthHint = convertWidthInCharsToPixels(50);
 
-        makeLabel(composite, "alias", true); //$NON-NLS-1$
+        makeLabel(composite, ALIAS, true); //$NON-NLS-1$
         final Combo combo = new Combo(composite,SWT.BORDER|SWT.DROP_DOWN|SWT.READ_ONLY);
         gd = new GridData(GridData.FILL_HORIZONTAL);
         gd.horizontalSpan = 2;
@@ -310,15 +166,15 @@ public class JARSignerOptionsDialog extends Dialog
             public void selectionChanged(SelectionChangedEvent event)
             {
                 mValues.put(ALIAS,combo.getText());
-                validate();
+                updateButtons();
             }
         });
         mComboViewer.setInput(mAliases);
         mComboViewer.setSelection(new StructuredSelection(getAlias()));
         
-        makeText(composite,"store.type",STORE_TYPE,false); //$NON-NLS-1$
-        makeText(composite,"key.pass",KEY_PASS,false); //$NON-NLS-1$
-        makeText(composite,"sig.file",SIG_FILE,false); //$NON-NLS-1$
+        makeText(composite,STORE_TYPE,STORE_TYPE,false); //$NON-NLS-1$
+        makeText(composite,KEY_PASS,KEY_PASS,false); //$NON-NLS-1$
+        makeText(composite,SIG_FILE,SIG_FILE,false); //$NON-NLS-1$
 
         if(!mMulti) {
             makeFileBrowser(composite,"signed.jar.location", SIGNED_JAR,  //$NON-NLS-1$
@@ -326,27 +182,21 @@ public class JARSignerOptionsDialog extends Dialog
                     false); //$NON-NLS-1$
         }
         
-        makeCheckBox(composite,"verbose",VERBOSE,false); //$NON-NLS-1$
-        makeCheckBox(composite,"internal.sf",INTERNAL_SF,false); //$NON-NLS-1$
-        makeCheckBox(composite,"sections.only",SECTIONS_ONLY,false); //$NON-NLS-1$
+        makeCheckBox(composite,VERBOSE,VERBOSE,false); //$NON-NLS-1$
+        makeCheckBox(composite,INTERNAL_SF,INTERNAL_SF,false); //$NON-NLS-1$
+        makeCheckBox(composite,SECTIONS_ONLY,SECTIONS_ONLY,false); //$NON-NLS-1$
         
         makeFileBrowser(composite,"tools.jar.location", TOOLS_JAR,  //$NON-NLS-1$
                 new FileSelectionAdapter("tools.jar.location.message",JARSignerPlugin.getResourceString("tools.jar.name"),false), //$NON-NLS-1$ //$NON-NLS-2$
                 true); //$NON-NLS-1$
         
         if(mMulti) {
-            makeCheckBox(composite,"ignore",IGNORE_ERRORS,false); //$NON-NLS-1$
+            makeCheckBox(composite,IGNORE_ERRORS,IGNORE_ERRORS,false); //$NON-NLS-1$
         }
         return parent;
     }
     
-    public void create()
-    {
-        super.create();
-        validate();
-    }
-
-    private void validate()
+    protected boolean isValid()
     {
         boolean state = !JARSignerPlugin.isEmpty(getKeyStore());
         
@@ -370,16 +220,11 @@ public class JARSignerOptionsDialog extends Dialog
                 }
             }
         }
-        Button button = getButton(IDialogConstants.OK_ID);
-        if(button != null) {
-            button.setEnabled(state);
-        }
+        return state;
     }
 
     protected void okPressed()
     {
-        mDialogSettings.put(TOOLS_JAR,getToolsJar());
-        mDialogSettings.put(KEY_STORE,getKeyStore());
         mDialogSettings.put(STORE_PASS,getStorePass());
         mDialogSettings.put(ALIAS,getAlias());
         mDialogSettings.put(STORE_TYPE,getStoreType());
@@ -388,18 +233,9 @@ public class JARSignerOptionsDialog extends Dialog
         if(!mMulti) {
             mDialogSettings.put(SIGNED_JAR,getSignedJar());
         }
-        mDialogSettings.put(VERBOSE,isVerbose());
         mDialogSettings.put(INTERNAL_SF,isInternalSF());
         mDialogSettings.put(SECTIONS_ONLY,isSectionsOnly());
-        if(mMulti) {
-            mDialogSettings.put(IGNORE_ERRORS,isIgnoreErrors());
-        }
         super.okPressed();
-    }
-
-    public String getToolsJar()
-    {
-        return (String)mValues.get(TOOLS_JAR);
     }
 
     public String getAlias()
@@ -412,19 +248,9 @@ public class JARSignerOptionsDialog extends Dialog
         return ((Boolean)mValues.get(INTERNAL_SF)).booleanValue();
     }
 
-    public boolean isIgnoreErrors()
-    {
-        return (mMulti?((Boolean)mValues.get(IGNORE_ERRORS)).booleanValue():true);
-    }
-
     public String getKeyPass()
     {
         return (String)mValues.get(KEY_PASS);
-    }
-
-    public String getKeyStore()
-    {
-        return (String)mValues.get(KEY_STORE);
     }
 
     public boolean isSectionsOnly()
@@ -450,42 +276,5 @@ public class JARSignerOptionsDialog extends Dialog
     public String getStoreType()
     {
         return (String)mValues.get(STORE_TYPE);
-    }
-
-    public boolean isVerbose()
-    {
-        return ((Boolean)mValues.get(VERBOSE)).booleanValue();
-    }
-    
-    private class FileSelectionAdapter extends SelectionAdapter
-    {
-        private boolean mOpen;
-        private String mDialogText;
-        private String mDefaultFile;
-        
-        
-        public FileSelectionAdapter(String file, String text, boolean open)
-        {
-            super();
-            mDefaultFile = file;
-            mDialogText = JARSignerPlugin.getResourceString(text);
-            mOpen = open;
-        }
-
-        public void widgetSelected(SelectionEvent e) 
-        {
-            Button b = (Button)e.item;
-            Text text = (Text)b.getData("text"); //$NON-NLS-1$
-            if(text != null) {
-                FileDialog dialog = new FileDialog(getShell(),(mOpen?SWT.OPEN:SWT.SAVE));
-                dialog.setText(mDialogText); //$NON-NLS-1$
-                String file = text.getText();
-                dialog.setFileName(JARSignerPlugin.isEmpty(file)?mDefaultFile:file); //$NON-NLS-1$
-                file = dialog.open();
-                if(file != null) {
-                    text.setText(file);
-                }
-            }
-        }
     }
 }
