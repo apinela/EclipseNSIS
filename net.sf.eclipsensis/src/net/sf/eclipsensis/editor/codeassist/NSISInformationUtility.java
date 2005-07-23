@@ -26,10 +26,11 @@ import org.eclipse.swt.graphics.Image;
 public class NSISInformationUtility implements INSISConstants
 {
     public static final ICompletionProposal[] EMPTY_COMPLETION_PROPOSAL_ARRAY = new ICompletionProposal[0];
+    
     private static final char[] COMPLETION_AUTO_ACTIVATION_CHARS = { '.', '/','$','!',':' };
     private static final Image KEYWORD_IMAGE = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("keyword.icon")); //$NON-NLS-1$
     private static final Image PLUGIN_IMAGE = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("plugin.icon")); //$NON-NLS-1$
-    private static final Comparator mCompletionProposalComparator = new Comparator() {
+    private static final Comparator cCompletionProposalComparator = new Comparator() {
         public int compare(Object o1, Object o2)
         {
             return (((ICompletionProposal)o1).getDisplayString()).compareToIgnoreCase(((ICompletionProposal)o2).getDisplayString());
@@ -174,7 +175,7 @@ public class NSISInformationUtility implements INSISConstants
                     if(pos > 0) {
                         String pluginName = text.substring(0,pos);
                         text = text.substring(pos+2);
-                        String[] exports = NSISKeywords.getPluginExports(pluginName);
+                        String[] exports = NSISKeywords.INSTANCE.getPluginExports(pluginName);
                         int textlen = text.length();
                         for (int i = 0; i < exports.length; i++) {
                             if(!Common.isEmpty(text)) {
@@ -194,14 +195,15 @@ public class NSISInformationUtility implements INSISConstants
                     }
                     else {
                         int textlen = text.length();
-                        for(int i=0; i<NSISKeywords.ALL_KEYWORDS.length; i++) {
-                            int n = NSISKeywords.ALL_KEYWORDS[i].compareToIgnoreCase(text);
+                        String[] allKeywords = NSISKeywords.INSTANCE.getKeywordsGroup(NSISKeywords.ALL_KEYWORDS);
+                        for(int i=0; i<allKeywords.length; i++) {
+                            int n = allKeywords[i].compareToIgnoreCase(text);
                             if(n >= 0) {
-                                if(NSISKeywords.ALL_KEYWORDS[i].regionMatches(true,0,text,0,textlen)) {
-                                    list.add(new CompletionProposal(NSISKeywords.ALL_KEYWORDS[i],
+                                if(allKeywords[i].regionMatches(true,0,text,0,textlen)) {
+                                    list.add(new CompletionProposal(allKeywords[i],
                                                                     region.getOffset(),
                                                                     offset-region.getOffset(),
-                                                                    NSISKeywords.ALL_KEYWORDS[i].length(),
+                                                                    allKeywords[i].length(),
                                                                     KEYWORD_IMAGE, 
                                                                     null, null, null));
                                 }
@@ -211,14 +213,15 @@ public class NSISInformationUtility implements INSISConstants
                             }
                             continue;
                         }
-                        for(int i=0; i<NSISKeywords.PLUGINS.length; i++) {
-                            int n = NSISKeywords.PLUGINS[i].compareToIgnoreCase(text);
+                        String[] plugins = NSISKeywords.INSTANCE.getKeywordsGroup(NSISKeywords.PLUGINS);
+                        for(int i=0; i<plugins.length; i++) {
+                            int n = plugins[i].compareToIgnoreCase(text);
                             if(n >= 0) {
-                                if(NSISKeywords.PLUGINS[i].regionMatches(true,0,text,0,textlen)) {
-                                    list.add(new CompletionProposal(NSISKeywords.PLUGINS[i],
+                                if(plugins[i].regionMatches(true,0,text,0,textlen)) {
+                                    list.add(new CompletionProposal(plugins[i],
                                                                     region.getOffset(),
                                                                     offset-region.getOffset(),
-                                                                    NSISKeywords.PLUGINS[i].length(),
+                                                                    plugins[i].length(),
                                                                     PLUGIN_IMAGE, 
                                                                     null, null, null));
                                 }
@@ -230,7 +233,7 @@ public class NSISInformationUtility implements INSISConstants
                         }
                     }
                     ICompletionProposal[] completionProposals = (ICompletionProposal[])list.toArray(EMPTY_COMPLETION_PROPOSAL_ARRAY);
-                    Arrays.sort(completionProposals, mCompletionProposalComparator);
+                    Arrays.sort(completionProposals, cCompletionProposalComparator);
                     return completionProposals;
                 }
             }
@@ -241,7 +244,7 @@ public class NSISInformationUtility implements INSISConstants
     private static class VariablesAndSymbolsProcessor extends AnyWordProcessor
     {
         protected boolean mIsSymbol = false;
-        protected NSISKeywords.VariableMatcher mVariableMatcher = new NSISKeywords.VariableMatcher();
+        protected NSISKeywords.VariableMatcher mVariableMatcher = NSISKeywords.INSTANCE.createVariableMatcher();
         private int mMatchOffset = -1;
         private boolean mIsComplete = false;
         

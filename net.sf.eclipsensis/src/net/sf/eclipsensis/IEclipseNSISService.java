@@ -9,9 +9,10 @@
  *******************************************************************************/
 package net.sf.eclipsensis;
 
-import java.util.EventListener;
+import org.eclipse.core.runtime.IProgressMonitor;
 
-public interface IEclipseNSISPluginListener extends EventListener
+public interface IEclipseNSISService
 {
-    public void stopped();
+    public void start(IProgressMonitor monitor); 
+    public void stop(IProgressMonitor monitor); 
 }

@@ -16,7 +16,6 @@ import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.figures.FigureUtility;
 import net.sf.eclipsensis.installoptions.properties.PositionPropertySource;
-import net.sf.eclipsensis.installoptions.properties.descriptors.CustomPropertyDescriptor;
 import net.sf.eclipsensis.installoptions.properties.labelproviders.ListLabelProvider;
 import net.sf.eclipsensis.installoptions.properties.validators.NSISStringLengthValidator;
 import net.sf.eclipsensis.installoptions.rulers.InstallOptionsGuide;
@@ -81,14 +80,10 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
         names.add(0, InstallOptionsModel.PROPERTY_INDEX);
         names.add(1, InstallOptionsModel.PROPERTY_POSITION);
         ArrayList list = new ArrayList();
-        int i=0;
         for (Iterator iter = names.iterator(); iter.hasNext();) {
             String name = (String)iter.next();
             IPropertyDescriptor descriptor = createPropertyDescriptor(name);
             if(descriptor != null) {
-                if(!(descriptor instanceof CustomPropertyDescriptor)) {
-                    descriptor = new CustomPropertyDescriptor(descriptor,i++);
-                }
                 list.add(descriptor);
             }
         }

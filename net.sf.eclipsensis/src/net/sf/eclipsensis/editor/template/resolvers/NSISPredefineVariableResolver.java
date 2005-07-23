@@ -38,6 +38,6 @@ public class NSISPredefineVariableResolver extends TemplateVariableResolver
      */
     protected String[] resolveAll(TemplateContext context)
     {
-        return NSISKeywords.PREDEFINES;
+        return NSISKeywords.INSTANCE.getKeywordsGroup(NSISKeywords.PREDEFINES);
     }
 }

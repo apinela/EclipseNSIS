@@ -38,6 +38,6 @@ public class NSISPagetypeVariableResolver extends TemplateVariableResolver
      */
     protected String[] resolveAll(TemplateContext context)
     {
-        return NSISKeywords.INSTALLER_PAGES;
+        return NSISKeywords.INSTANCE.getKeywordsGroup(NSISKeywords.INSTALLER_PAGES);
     }
 }

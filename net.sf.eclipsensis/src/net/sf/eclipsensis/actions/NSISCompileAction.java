@@ -33,7 +33,6 @@ public class NSISCompileAction extends NSISScriptAction
 	final public void run(IAction action) {
         if(mPlugin != null) {
             action.setEnabled(false);
-            MakeNSISRunner.startup();
             if(mFile != null) {
                 IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
                 outer:

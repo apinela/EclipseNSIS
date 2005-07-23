@@ -14,50 +14,62 @@ import java.io.IOException;
 import java.util.Map;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.IEclipseNSISService;
 import net.sf.eclipsensis.makensis.MakeNSISRunner;
 import net.sf.eclipsensis.settings.INSISPreferenceConstants;
 import net.sf.eclipsensis.settings.NSISPreferences;
 import net.sf.eclipsensis.util.CaseInsensitiveMap;
 import net.sf.eclipsensis.util.Common;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
-public class NSISUsageProvider
+public class NSISUsageProvider implements IEclipseNSISService
 {
-    private static Map cUsages = new CaseInsensitiveMap();
-    private static String cLineSeparator;
-    private static NSISPreferences cPreferences = NSISPreferences.getPreferences();
-    private static IPropertyChangeListener cPropertyChangeListener;
+    public static NSISUsageProvider INSTANCE = null;
     
-    static {
-        cLineSeparator = System.getProperty("line.separator"); //$NON-NLS-1$
-        cPropertyChangeListener = new IPropertyChangeListener() {
-            public void propertyChange(PropertyChangeEvent event)
-            {
-                if(INSISPreferenceConstants.NSIS_HOME.equals(event.getProperty())) {
-                    loadUsages();
-                }
+    private Map mUsages = new CaseInsensitiveMap();
+    private String mLineSeparator;
+    private NSISPreferences mPreferences = NSISPreferences.getPreferences();
+    private IPropertyChangeListener mPropertyChangeListener = new IPropertyChangeListener() {
+        public void propertyChange(PropertyChangeEvent event)
+        {
+            if(INSISPreferenceConstants.NSIS_HOME.equals(event.getProperty())) {
+                loadUsages();
             }
-        };
-        cPreferences.getPreferenceStore().addPropertyChangeListener(cPropertyChangeListener);
+        }
+    };
+
+    public void start(IProgressMonitor monitor)
+    {
+        monitor.subTask("Loading NSIS command help");
+        mLineSeparator = System.getProperty("line.separator"); //$NON-NLS-1$
         loadUsages();
+        mPreferences.getPreferenceStore().addPropertyChangeListener(mPropertyChangeListener);
+        INSTANCE = this;
+    }
+
+    public void stop(IProgressMonitor monitor)
+    {
+        INSTANCE = null;
+        mPreferences.getPreferenceStore().removePropertyChangeListener(mPropertyChangeListener);
     }
     
-    public static String getUsage(String keyWord)
+    public String getUsage(String keyWord)
     {
         if(!Common.isEmpty(keyWord)) {
-            return (String)cUsages.get(keyWord);
+            return (String)mUsages.get(keyWord);
         }
         else {
             return null;
         }
     }
 
-    private synchronized static void loadUsages()
+    private synchronized void loadUsages()
     {
-        cUsages.clear();
-        String makeNSISExe = cPreferences.getNSISExe();
+        mUsages.clear();
+        String makeNSISExe = mPreferences.getNSISExe();
         if(makeNSISExe != null) {
             File exeFile = new File(makeNSISExe);
             if(exeFile.exists()) {
@@ -84,13 +96,13 @@ public class NSISUsageProvider
                             }
                             else {
                                 if(Character.isWhitespace(line.charAt(0))) {
-                                    buf.append(cLineSeparator).append(line);
+                                    buf.append(mLineSeparator).append(line);
                                 }
                                 else {
                                     String usage = buf.toString();
                                     int n = usage.indexOf(" "); //$NON-NLS-1$
                                     String keyword = (n > 0?usage.substring(0,n):usage);
-                                    cUsages.put(keyword,usage);
+                                    mUsages.put(keyword,usage);
                                     buf = new StringBuffer(line);
                                 }
                             }
@@ -99,11 +111,11 @@ public class NSISUsageProvider
                             String usage = buf.toString();
                             int n = usage.indexOf(" "); //$NON-NLS-1$
                             String keyword = (n > 0?usage.substring(0,n):usage);
-                            cUsages.put(keyword,usage);
+                            mUsages.put(keyword,usage);
                         }
                     }
                     try {
-                        Common.writeObject(cacheFile,cUsages);
+                        Common.writeObject(cacheFile,mUsages);
                         cacheFile.setLastModified(exeTimeStamp);
                     }
                     catch (IOException e) {
@@ -112,7 +124,7 @@ public class NSISUsageProvider
                 }
                 else {
                     try {
-                        cUsages = (Map)Common.readObject(cacheFile);
+                        mUsages = (Map)Common.readObject(cacheFile);
                     }
                     catch (Exception e) {
                         e.printStackTrace();

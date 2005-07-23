@@ -109,6 +109,7 @@ public class NSISWizardGeneralPage extends AbstractNSISWizardPage
     {
         Group group = NSISWizardDialogUtil.createGroup(parent, 2, "application.group.label", null, true); //$NON-NLS-1$
         NSISWizardSettings settings = mWizard.getSettings();
+        final String programFiles =NSISKeywords.INSTANCE.getKeyword("$PROGRAMFILES"); //$NON-NLS-1$
 
         final Text t = NSISWizardDialogUtil.createText(group, settings.getName(), "application.name.label", true, null, true); //$NON-NLS-1$
         t.addModifyListener(new ModifyListener(){
@@ -118,7 +119,6 @@ public class NSISWizardGeneralPage extends AbstractNSISWizardPage
 
                String newName = ((Text)e.widget).getText();
                String installDir = settings.getInstallDir();
-               String programFiles = NSISKeywords.getKeyword("$PROGRAMFILES"); //$NON-NLS-1$
                if(Common.isEmpty(installDir) || installDir.equalsIgnoreCase(new StringBuffer(programFiles).append("\\").append(settings.getName()).toString())) { //$NON-NLS-1$
                    settings.setInstallDir(new StringBuffer(programFiles).append("\\").append(newName).toString()); //$NON-NLS-1$
                }

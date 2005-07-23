@@ -21,10 +21,13 @@ import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.settings.NSISPreferences;
 import net.sf.eclipsensis.util.*;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.ui.PlatformUI;
 
-public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListener
+public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListener, IEclipseNSISService
 {
+    public static NSISHelpURLProvider INSTANCE = null;
+    
     private static final String CHMLINK_JS = "chmlink.js"; //$NON-NLS-1$
     private static final String NSIS_HELP_FORMAT = new StringBuffer("/").append( //$NON-NLS-1$
                                     INSISConstants.PLUGIN_NAME).append("/").append( //$NON-NLS-1$
@@ -34,21 +37,6 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
                                     INSISConstants.NSIS_HELP_PREFIX).append("Docs/(.*)").toString()); //$NON-NLS-1$
     private static final String NSIS_CHM_HELP_FORMAT = "mk:@MSITStore:{0}::/{1}"; //$NON-NLS-1$
     
-    private static NSISHelpURLProvider cInstance = null;
-    private static IEclipseNSISPluginListener cShutdownListener = new IEclipseNSISPluginListener() {
-        public void stopped()
-        {
-            if(cInstance != null) {
-                synchronized(NSISHelpProducer.class) {
-                    if(cInstance != null) {
-                        cInstance.dispose();
-                        cInstance = null;
-                    }                    
-                }
-            }
-        }
-    };
-
     private NSISPreferences mPreferences = NSISPreferences.getPreferences();
     
     private ParserDelegator mParserDelegator = new ParserDelegator();
@@ -60,29 +48,9 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
     
     private ResourceBundle mBundle;
     
-    public static NSISHelpURLProvider getInstance()
+    public void start(IProgressMonitor monitor)
     {
-        init();
-        return cInstance;
-    }
-    
-    /**
-     * 
-     */
-    public static void init()
-    {
-        if(cInstance == null) {
-            synchronized(NSISHelpURLProvider.class) {
-                if(cInstance == null) {
-                    cInstance = new NSISHelpURLProvider();
-                    EclipseNSISPlugin.getDefault().addListener(cShutdownListener);
-                }                
-            }
-        }
-    }
-
-    private NSISHelpURLProvider()
-    {
+        monitor.subTask("Loading help URLs");
         try {
             mBundle = ResourceBundle.getBundle(NSISHelpURLProvider.class.getName());
         } 
@@ -90,12 +58,14 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
             mBundle = null;
         }
         loadHelpURLs();
-        NSISKeywords.addKeywordsListener(this);
+        NSISKeywords.INSTANCE.addKeywordsListener(this);
+        INSTANCE = this;
     }
-    
-    public void dispose()
+
+    public void stop(IProgressMonitor monitor)
     {
-        NSISKeywords.removeKeywordsListener(this);
+        NSISKeywords.INSTANCE.removeKeywordsListener(this);
+        INSTANCE = null;
     }
     
     private void loadHelpURLs()
@@ -139,8 +109,8 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
                             if(!Common.isEmptyArray(keywords)) {
                                 ArrayList list = new ArrayList();
                                 for (int j = 0; j < keywords.length; j++) {
-                                    keywords[j] = NSISKeywords.getKeyword(keywords[j]);
-                                    if(NSISKeywords.isValidKeyword(keywords[j])) {
+                                    keywords[j] = NSISKeywords.INSTANCE.getKeyword(keywords[j]);
+                                    if(NSISKeywords.INSTANCE.isValidKeyword(keywords[j])) {
                                         list.add(keywords[j]);
                                     }
                                 }
@@ -338,8 +308,8 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
      */
     public void openCHMHelpURL(String url)
     {
-//        if(!NSISHTMLHelp.showHelp(url)) {
+        if(!NSISHTMLHelp.showHelp(url)) {
             WinAPI.HtmlHelp(WinAPI.GetDesktopWindow(),url,WinAPI.HH_DISPLAY_TOPIC,0);
-//        }
+        }
     }
 }

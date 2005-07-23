@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.util.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.IEclipseNSISPluginListener;
 import net.sf.eclipsensis.editor.NSISTaskTag;
 import net.sf.eclipsensis.editor.text.NSISSyntaxStyle;
 import net.sf.eclipsensis.util.*;
@@ -22,13 +21,12 @@ import net.sf.eclipsensis.util.*;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.StringConverter;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.ui.editors.text.EditorsUI;
 
-public class NSISPreferences extends NSISSettings implements IPropertyChangeListener, IEclipseNSISPluginListener
+public class NSISPreferences extends NSISSettings
 {
+    public static NSISPreferences INSTANCE = null;
+
     private IPreferenceStore mPreferenceStore = null;
     private File mNSISExe = null;
     private String mNSISHome = null;
@@ -41,7 +39,6 @@ public class NSISPreferences extends NSISSettings implements IPropertyChangeList
     private boolean mCaseSensitiveTaskTags = true;
     
     private static NSISPreferences cInstance = null;
-    private final HashSet mInheritedPreferences = new HashSet();
     
     public static NSISPreferences getPreferences()
     {
@@ -122,27 +119,6 @@ public class NSISPreferences extends NSISSettings implements IPropertyChangeList
         initializePreference(MATCHING_DELIMITERS_COLOR,StringConverter.asString(new RGB(128,128,128)));
 
         initializePreference(USE_SPACES_FOR_TABS,Boolean.TRUE);
-    }
-    
-    public void propertyChange(PropertyChangeEvent event)
-    {
-        String name = event.getProperty();
-        if(mInheritedPreferences.contains(name)) { //$NON-NLS-1$
-            mPreferenceStore.setValue(name, event.getNewValue().toString());
-        }
-    }
-
-    /* (non-Javadoc)
-     * @see net.sf.eclipsensis.IEclipseNSISPluginListener#stopped()
-     */
-    public void stopped()
-    {
-        try {
-            EditorsUI.getPreferenceStore().removePropertyChangeListener(this);
-        }
-        catch(Exception e) {
-            e.printStackTrace();
-        }
     }
     
     private void initializeSyntaxPreference(String name, RGB foreground, RGB background, boolean bold, boolean italic)

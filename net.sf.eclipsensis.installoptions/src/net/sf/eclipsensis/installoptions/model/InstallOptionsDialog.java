@@ -17,7 +17,6 @@ import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.ini.*;
 import net.sf.eclipsensis.installoptions.properties.descriptors.CustomComboBoxPropertyDescriptor;
-import net.sf.eclipsensis.installoptions.properties.descriptors.CustomPropertyDescriptor;
 import net.sf.eclipsensis.installoptions.properties.validators.NSISStringLengthValidator;
 import net.sf.eclipsensis.installoptions.properties.validators.NumberCellEditorValidator;
 import net.sf.eclipsensis.installoptions.rulers.InstallOptionsRuler;
@@ -169,31 +168,30 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
     protected void createPropertyDescriptors()
     {
         ArrayList list = new ArrayList();
-        int n = 0;
         PropertyDescriptor descriptor = new TextPropertyDescriptor(InstallOptionsModel.PROPERTY_TITLE, InstallOptionsPlugin.getResourceString("title.property.name")); //$NON-NLS-1$
         descriptor.setLabelProvider(cDefaultLabelProvider);
         descriptor.setValidator(new NSISStringLengthValidator(InstallOptionsModel.PROPERTY_TITLE));
-        list.add(new CustomPropertyDescriptor(descriptor,n++));
-        list.add(new CustomPropertyDescriptor(new CustomComboBoxPropertyDescriptor(InstallOptionsModel.PROPERTY_CANCEL_ENABLED, InstallOptionsPlugin.getResourceString("cancel.enabled.property.name"), OPTION_DATA, OPTION_DISPLAY, DEFAULT_OPTION),n++)); //$NON-NLS-1$
-        list.add(new CustomPropertyDescriptor(new CustomComboBoxPropertyDescriptor(InstallOptionsModel.PROPERTY_CANCEL_SHOW, InstallOptionsPlugin.getResourceString("cancel.show.property.name"), OPTION_DATA, OPTION_DISPLAY, DEFAULT_OPTION),n++)); //$NON-NLS-1$
-        list.add(new CustomPropertyDescriptor(new CustomComboBoxPropertyDescriptor(InstallOptionsModel.PROPERTY_BACK_ENABLED, InstallOptionsPlugin.getResourceString("back.enabled.property.name"), OPTION_DATA, OPTION_DISPLAY, DEFAULT_OPTION),n++)); //$NON-NLS-1$
+        list.add(descriptor);
+        list.add(new CustomComboBoxPropertyDescriptor(InstallOptionsModel.PROPERTY_CANCEL_ENABLED, InstallOptionsPlugin.getResourceString("cancel.enabled.property.name"), OPTION_DATA, OPTION_DISPLAY, DEFAULT_OPTION)); //$NON-NLS-1$
+        list.add(new CustomComboBoxPropertyDescriptor(InstallOptionsModel.PROPERTY_CANCEL_SHOW, InstallOptionsPlugin.getResourceString("cancel.show.property.name"), OPTION_DATA, OPTION_DISPLAY, DEFAULT_OPTION)); //$NON-NLS-1$
+        list.add(new CustomComboBoxPropertyDescriptor(InstallOptionsModel.PROPERTY_BACK_ENABLED, InstallOptionsPlugin.getResourceString("back.enabled.property.name"), OPTION_DATA, OPTION_DISPLAY, DEFAULT_OPTION)); //$NON-NLS-1$
         descriptor = new TextPropertyDescriptor(InstallOptionsModel.PROPERTY_CANCEL_BUTTON_TEXT, InstallOptionsPlugin.getResourceString("cancel.button.text.property.name")); //$NON-NLS-1$
         descriptor.setLabelProvider(cDefaultLabelProvider);
         descriptor.setValidator(new NSISStringLengthValidator(InstallOptionsModel.PROPERTY_CANCEL_BUTTON_TEXT));
-        list.add(new CustomPropertyDescriptor(descriptor,n++));
+        list.add(descriptor);
         descriptor = new TextPropertyDescriptor(InstallOptionsModel.PROPERTY_BACK_BUTTON_TEXT, InstallOptionsPlugin.getResourceString("back.button.text.property.name")); //$NON-NLS-1$
         descriptor.setLabelProvider(cDefaultLabelProvider);
         descriptor.setValidator(new NSISStringLengthValidator(InstallOptionsModel.PROPERTY_BACK_BUTTON_TEXT));
-        list.add(new CustomPropertyDescriptor(descriptor,n++));
+        list.add(descriptor);
         descriptor = new TextPropertyDescriptor(InstallOptionsModel.PROPERTY_NEXT_BUTTON_TEXT, InstallOptionsPlugin.getResourceString("next.button.text.property.name")); //$NON-NLS-1$
         descriptor.setLabelProvider(cDefaultLabelProvider);
         descriptor.setValidator(new NSISStringLengthValidator(InstallOptionsModel.PROPERTY_NEXT_BUTTON_TEXT));
-        list.add(new CustomPropertyDescriptor(descriptor,n++));
+        list.add(descriptor);
         descriptor = new TextPropertyDescriptor(InstallOptionsModel.PROPERTY_RECT, InstallOptionsPlugin.getResourceString("rect.property.name")); //$NON-NLS-1$
         descriptor.setValidator(new NumberCellEditorValidator(1,Integer.MAX_VALUE,true));
         descriptor.setLabelProvider(cDefaultLabelProvider);
-        list.add(new CustomPropertyDescriptor(descriptor,n++));
-        list.add(new CustomPropertyDescriptor(new CustomComboBoxPropertyDescriptor(InstallOptionsModel.PROPERTY_RTL, InstallOptionsPlugin.getResourceString("rtl.property.name"), OPTION_DATA, OPTION_DISPLAY, DEFAULT_OPTION),n++)); //$NON-NLS-1$
+        list.add(descriptor);
+        list.add(new CustomComboBoxPropertyDescriptor(InstallOptionsModel.PROPERTY_RTL, InstallOptionsPlugin.getResourceString("rtl.property.name"), OPTION_DATA, OPTION_DISPLAY, DEFAULT_OPTION)); //$NON-NLS-1$
         mDescriptors = (IPropertyDescriptor[])list.toArray(new IPropertyDescriptor[list.size()]);
     }
 

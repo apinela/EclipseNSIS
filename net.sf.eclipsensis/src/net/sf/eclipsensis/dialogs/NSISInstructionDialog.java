@@ -9,8 +9,8 @@
  *******************************************************************************/
 package net.sf.eclipsensis.dialogs;
 
-import net.sf.eclipsensis.*;
-import net.sf.eclipsensis.help.INSISKeywordsListener;
+import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.util.Common;
 
@@ -24,46 +24,10 @@ import org.eclipse.swt.widgets.*;
 
 public class NSISInstructionDialog extends StatusMessageDialog
 {
-    private static String[] cInstructionList;
-
     private String mInstruction = ""; //$NON-NLS-1$
     private Combo mInstructionCombo = null;
     private Text mParametersText = null;
-    private static INSISKeywordsListener cKeywordsListener  = new INSISKeywordsListener() {
-
-        public void keywordsChanged()
-        {
-            loadInstructionList();
-        }
-        
-    };
-    private static IEclipseNSISPluginListener cShutdownListener = new IEclipseNSISPluginListener() {
-        public void stopped()
-        {
-            NSISKeywords.removeKeywordsListener(cKeywordsListener);
-        }
-    };
     
-    static {
-        loadInstructionList();
-        NSISKeywords.addKeywordsListener(cKeywordsListener);
-        EclipseNSISPlugin.getDefault().addListener(cShutdownListener);
-    }
-    
-    /**
-     * 
-     */
-    private static void loadInstructionList()
-    {
-        cInstructionList = new String[NSISKeywords.SINGLELINE_COMPILETIME_COMMANDS.length+
-                                      NSISKeywords.INSTALLER_ATTRIBUTES.length];
-        System.arraycopy(NSISKeywords.SINGLELINE_COMPILETIME_COMMANDS,0,
-                        cInstructionList,0,NSISKeywords.SINGLELINE_COMPILETIME_COMMANDS.length);
-        System.arraycopy(NSISKeywords.INSTALLER_ATTRIBUTES,0,
-                        cInstructionList,NSISKeywords.SINGLELINE_COMPILETIME_COMMANDS.length,
-                        NSISKeywords.INSTALLER_ATTRIBUTES.length);
-    }
-
     /**
      * @param parentShell
      */
@@ -110,7 +74,7 @@ public class NSISInstructionDialog extends StatusMessageDialog
         
         mInstructionCombo = createCombo(composite, EclipseNSISPlugin.getResourceString("instructions.instruction.text"), //$NON-NLS-1$
                                         EclipseNSISPlugin.getResourceString("instructions.instruction.tooltip"), //$NON-NLS-1$
-                                        cInstructionList,instruction);
+                                        instruction);
         mInstructionCombo.setTextLimit(INSISConstants.DIALOG_TEXT_LIMIT);
         mInstructionCombo.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e)
@@ -164,7 +128,7 @@ public class NSISInstructionDialog extends StatusMessageDialog
     }
 
     protected Combo createCombo(Composite composite, String text, String tooltipText,
-                                String[] list, String value)
+                                String value)
     {
         Label label = new Label(composite, SWT.LEFT);
         label.setText(text);
@@ -176,9 +140,16 @@ public class NSISInstructionDialog extends StatusMessageDialog
         
         Combo combo = new Combo(composite, SWT.DROP_DOWN|SWT.BORDER);
         combo.setToolTipText(tooltipText);
-        if(!Common.isEmptyArray(list)) {
-            for(int i=0; i<list.length; i++) {
-                combo.add(list[i]);
+        String[] items = NSISKeywords.INSTANCE.getKeywordsGroup(NSISKeywords.SINGLELINE_COMPILETIME_COMMANDS);
+        if(!Common.isEmptyArray(items)) {
+            for(int i=0; i<items.length; i++) {
+                combo.add(items[i]);
+            }
+        }
+        items = NSISKeywords.INSTANCE.getKeywordsGroup(NSISKeywords.INSTALLER_ATTRIBUTES);
+        if(!Common.isEmptyArray(items)) {
+            for(int i=0; i<items.length; i++) {
+                combo.add(items[i]);
             }
         }
         

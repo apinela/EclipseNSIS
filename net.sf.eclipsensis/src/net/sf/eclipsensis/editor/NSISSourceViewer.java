@@ -67,7 +67,7 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
     private SelectionAdapter mSelAdapter = null;
     private IContentAssistant mInsertTemplateAssistant = null;
     private boolean mInsertTemplateAssistantInstalled = false;
-
+    
    /**
      * @param parent
      * @param ruler
@@ -162,7 +162,7 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
             mPreferenceStore = ((NSISSourceViewerConfiguration)configuration).getPreferenceStore();
         }
         super.configure(configuration);
-        NSISKeywords.addKeywordsListener(this);
+        NSISKeywords.INSTANCE.addKeywordsListener(this);
         if(configuration instanceof NSISSourceViewerConfiguration) {
             mConfiguredContentTypes = configuration.getConfiguredContentTypes(this);
             mPreferenceStore.addPropertyChangeListener(this);
@@ -325,7 +325,7 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
             mPreferenceStore = null;
         }
         mConfiguredContentTypes = null;
-        NSISKeywords.addKeywordsListener(this);
+        NSISKeywords.INSTANCE.removeKeywordsListener(this);
         super.unconfigure();
     }
 
@@ -727,7 +727,7 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
             String keyword;
             IRegion region = NSISInformationUtility.getInformationRegionAtOffset(this,offset,false);
             keyword = NSISTextUtility.getRegionText(getDocument(),region);
-            NSISHelpURLProvider.getInstance().showHelpURL(keyword);
+            NSISHelpURLProvider.INSTANCE.showHelpURL(keyword);
         }
     }
 

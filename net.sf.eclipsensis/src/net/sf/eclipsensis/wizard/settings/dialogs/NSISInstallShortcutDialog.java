@@ -77,7 +77,7 @@ public class NSISInstallShortcutDialog extends AbstractNSISInstallItemDialog imp
                                                           false,"wizard.location.label",true,null,true); //$NON-NLS-1$
         GridData gd = (GridData)c1.getLayoutData();
         gd.horizontalAlignment = GridData.FILL;
-        ArrayList input = new ArrayList(Arrays.asList(NSISKeywords.PATH_CONSTANTS_AND_VARIABLES));
+        ArrayList input = new ArrayList(Arrays.asList(NSISKeywords.INSTANCE.getKeywordsGroup(NSISKeywords.PATH_CONSTANTS_AND_VARIABLES)));
         String temp = EclipseNSISPlugin.getResourceString("wizard.additional.shortcut.locations",""); //$NON-NLS-1$ //$NON-NLS-2$
         if(!Common.isEmpty(temp)) {
             String[] additionalPaths = Common.tokenize(temp,','); //$NON-NLS-1$

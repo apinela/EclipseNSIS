@@ -88,6 +88,6 @@ public abstract class AbstractNSISScriptElement implements INSISScriptElement
     
     protected static String getKeyword(String keyword)
     {
-        return NSISKeywords.getKeyword(keyword);
+        return NSISKeywords.INSTANCE.getKeyword(keyword);
     }
 }

@@ -18,49 +18,26 @@ import net.sf.eclipsensis.settings.INSISPreferenceConstants;
 import net.sf.eclipsensis.settings.NSISPreferences;
 import net.sf.eclipsensis.util.*;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
-public class NSISLanguageManager implements IPropertyChangeListener
+public class NSISLanguageManager implements IPropertyChangeListener, IEclipseNSISService
 {
-    private static final String DEFINE_MUI_LANGNAME = NSISKeywords.getKeyword("!DEFINE").toUpperCase()+" MUI_LANGNAME "; //$NON-NLS-1$ //$NON-NLS-2$
-    private static NSISLanguageManager cInstance = null;
-    private static IEclipseNSISPluginListener cShutdownListener = new IEclipseNSISPluginListener() {
-        public void stopped()
-        {
-            if(cInstance != null) {
-                synchronized(NSISLanguageManager.class) {
-                    if(cInstance != null) {
-                        cInstance.dispose();
-                        cInstance = null;
-                    }                    
-                }
-            }
-        }
-    };
+    public static NSISLanguageManager INSTANCE = null;
     
+    private String mDefineMUILanguageText;
     private NSISPreferences mPreferences = NSISPreferences.getPreferences();
     private Map mLanguageMap = new CaseInsensitiveMap();
     private List mLanguages = new ArrayList();;
     private Map mLocaleLanguageMap= null;
     private Map mLanguageIdLocaleMap = null;
     private Integer mDefaultLanguageId = null;
-    
-    public static NSISLanguageManager getInstance()
-    {
-        if(cInstance == null) {
-            synchronized(NSISLanguageManager.class) {
-                if(cInstance == null) {
-                    cInstance = new NSISLanguageManager();
-                    EclipseNSISPlugin.getDefault().addListener(cShutdownListener);
-                }
-            }
-        }
-        return cInstance;
-    }
 
-    private NSISLanguageManager()
+    public void start(IProgressMonitor monitor)
     {
+        monitor.subTask("Loading languages");
+        mDefineMUILanguageText = NSISKeywords.INSTANCE.getKeyword("!DEFINE").toUpperCase()+" MUI_LANGNAME "; //$NON-NLS-1$ //$NON-NLS-2$
         try {
             ResourceBundle bundle = ResourceBundle.getBundle(NSISLanguageManager.class.getName());
             mLocaleLanguageMap = Common.loadMapProperty(bundle,"locale.language.map"); //$NON-NLS-1$
@@ -72,6 +49,13 @@ public class NSISLanguageManager implements IPropertyChangeListener
         }
         loadLanguages();
         mPreferences.getPreferenceStore().addPropertyChangeListener(this);
+        INSTANCE = this;
+    }
+
+    public void stop(IProgressMonitor monitor)
+    {
+        INSTANCE = null;
+        mPreferences.getPreferenceStore().removePropertyChangeListener(this);
     }
     
     public void dispose()
@@ -148,8 +132,8 @@ public class NSISLanguageManager implements IPropertyChangeListener
                                             if(m >= 0) {
                                                 line = line.substring(0,m);
                                             }
-                                            if(line.toUpperCase().startsWith(DEFINE_MUI_LANGNAME)) {
-                                                line = line.substring(DEFINE_MUI_LANGNAME.length()).trim();
+                                            if(line.toUpperCase().startsWith(mDefineMUILanguageText)) {
+                                                line = line.substring(mDefineMUILanguageText.length()).trim();
                                                 //Check for quotes.
                                                 m = line.indexOf('"');
                                                 if(m >= 0) {

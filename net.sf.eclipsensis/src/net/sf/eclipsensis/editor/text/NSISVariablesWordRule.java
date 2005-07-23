@@ -42,7 +42,7 @@ public class NSISVariablesWordRule implements IRule, INSISConstants
     {
         StringBuffer buffer= new StringBuffer();
         int matchOffset = -1;
-        NSISKeywords.VariableMatcher variableMatcher = new NSISKeywords.VariableMatcher();
+        NSISKeywords.VariableMatcher variableMatcher = NSISKeywords.INSTANCE.createVariableMatcher();
         int c= scanner.read();
         if (mWordDetector.isWordStart((char) c)) {
             IToken token = null;

@@ -160,14 +160,13 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
         composite2.setLayout(layout);
         
         java.util.List selectedLanguages = settings.getLanguages();
-        final NSISLanguageManager nsisLanguageManager = NSISLanguageManager.getInstance();
         if(selectedLanguages.isEmpty()) {
-            NSISLanguage defaultLanguage = nsisLanguageManager.getDefaultLanguage();
+            NSISLanguage defaultLanguage = NSISLanguageManager.INSTANCE.getDefaultLanguage();
             if(defaultLanguage != null) {
                 selectedLanguages.add(defaultLanguage);
             }
         }
-        java.util.List availableLanguages = nsisLanguageManager.getLanguages();
+        java.util.List availableLanguages = NSISLanguageManager.INSTANCE.getLanguages();
         availableLanguages.removeAll(selectedLanguages);
         
         Label l = NSISWizardDialogUtil.createLabel(composite2, "available.languages.label", true, m, false); //$NON-NLS-1$
@@ -469,7 +468,7 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
                 b2.setSelection(settings.isSelectLanguage());
                 java.util.List selectedLanguages = settings.getLanguages();
                 lv2.setInput(selectedLanguages);
-                java.util.List availableLanguages = nsisLanguageManager.getLanguages();
+                java.util.List availableLanguages = NSISLanguageManager.INSTANCE.getLanguages();
                 availableLanguages.removeAll(selectedLanguages);
                 lv1.setInput(availableLanguages);
             }
@@ -495,9 +494,10 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
 
         NSISWizardSettings settings = mWizard.getSettings();
         
-        final Combo c = NSISWizardDialogUtil.createCombo(group, NSISKeywords.PATH_CONSTANTS_AND_VARIABLES, 
-                              settings.getInstallDir(), false, "installation.directory.label", //$NON-NLS-1$
-                              true, null, true);
+        final Combo c = NSISWizardDialogUtil.createCombo(group, 
+                                            NSISKeywords.INSTANCE.getKeywordsGroup(NSISKeywords.PATH_CONSTANTS_AND_VARIABLES), 
+                                            settings.getInstallDir(), false, "installation.directory.label", //$NON-NLS-1$
+                                            true, null, true);
         GridData gd = (GridData)c.getLayoutData();
         gd.horizontalAlignment = GridData.FILL;
         gd.grabExcessHorizontalSpace = true;

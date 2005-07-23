@@ -39,12 +39,7 @@ public class NSISWizardTemplateManager
 
         cDefaultTemplatesStore = EclipseNSISPlugin.getDefault().getBundle().getResource("/wizard/"+fileName);
         
-        File userLocation = checkLocation(EclipseNSISPlugin.getPluginStateLocation());
-        cUserTemplatesStore = new File(userLocation,fileName);
-    }
-
-    private static File checkLocation(File parentFolder)
-    {
+        File parentFolder = EclipseNSISPlugin.getPluginStateLocation();
         File location = null;
         if(parentFolder != null) {
             location = new File(parentFolder,"wizard"); //$NON-NLS-1$
@@ -55,15 +50,16 @@ public class NSISWizardTemplateManager
                 location.mkdirs();
             }
         }
-        return location;
+        
+        cUserTemplatesStore = new File(location,fileName);
     }
 
-    private static Map loadTemplateStore(URL store)
+    private void loadDefaultTemplateStore()
     {
         Map map = null;
-        if(store != null) {
+        if(cDefaultTemplatesStore != null) {
             try {
-                InputStream stream = store.openStream();
+                InputStream stream = cDefaultTemplatesStore.openStream();
                 map = (Map)Common.readObject(stream);
             }
             catch (Exception e) {
@@ -76,41 +72,38 @@ public class NSISWizardTemplateManager
             map = new HashMap();
         }
         
-        return map;
+        mDefaultTemplatesMap =  map;
     }
 
-    private static Map loadTemplateStore(File store)
+    private void loadUserTemplateStore()
     {
         Map map = null;
-        if(store != null) {
-            if(store.exists() && store.isFile()) {
+        if(cUserTemplatesStore != null) {
+            if(cUserTemplatesStore.exists() && cUserTemplatesStore.isFile()) {
                 try {
                     try {
-                        map = (Map)Common.readObject(store);
+                        map = (Map)Common.readObject(cUserTemplatesStore);
                     }
                     catch(InvalidClassException ice) {
                         //This is because RGB serialVersionUID was changed (for whatever reason)
-                        patchTemplateStore(store);
-                        map = (Map)Common.readObject(store);
+                        patchUserTemplateStore();
+                        map = (Map)Common.readObject(cUserTemplatesStore);
                     }
+                    if(mTemplatesMap == null) {
+                        mTemplatesMap = new HashMap();
+                    }
+                    mTemplatesMap.putAll(map);
                 }
                 catch (Exception e) {
                     e.printStackTrace();
-                    map = new HashMap();
                 }
             }
         }
-
-        if(map == null) {
-            map = new HashMap();
-        }
-        
-        return map;
     }
     
-    private static void patchTemplateStore(File store) throws IOException
+    private static void patchUserTemplateStore() throws IOException
     {
-        byte[] contents = Common.loadContentFromFile(store);
+        byte[] contents = Common.loadContentFromFile(cUserTemplatesStore);
         boolean changed = false;
         for(int i=0; i<cPatches.length; i++) {
             for(int j=0; j<contents.length; j++) {
@@ -148,15 +141,15 @@ public class NSISWizardTemplateManager
         }
         if(changed) {
             //save it back
-            Common.writeContentToFile(store, contents);
+            Common.writeContentToFile(cUserTemplatesStore, contents);
         }
     }
     
     public NSISWizardTemplateManager()
     {
-        mDefaultTemplatesMap = loadTemplateStore(cDefaultTemplatesStore);
+        loadDefaultTemplateStore();
         mTemplatesMap = new HashMap(mDefaultTemplatesMap);
-        mTemplatesMap.putAll(loadTemplateStore(cUserTemplatesStore));
+        loadUserTemplateStore();
     }
     
     public Collection getTemplates()

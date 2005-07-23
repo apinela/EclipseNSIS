@@ -29,7 +29,7 @@ public class NSISHelpTOCParserCallback extends HTMLEditorKit.ParserCallback
     private boolean mCanProcess = false;
     private String mLocation = null;
     private String mKeyword = null;
-    
+
     /* (non-Javadoc)
      * @see javax.swing.text.html.HTMLEditorKit.ParserCallback#handleEndTag(javax.swing.text.html.HTML.Tag, int)
      */
@@ -41,12 +41,12 @@ public class NSISHelpTOCParserCallback extends HTMLEditorKit.ParserCallback
                     List keywords = (List)mTopicMap.get(mKeyword);
                     for (Iterator iter = keywords.iterator(); iter.hasNext();) {
                         String keyword = (String)iter.next();
-                        if(NSISKeywords.isValidKeyword(keyword)) {
+                        if(NSISKeywords.INSTANCE.isValidKeyword(keyword)) {
                             mKeywordHelpMap.put(keyword, mLocation);
                         }
                     }
                 }
-                else if(NSISKeywords.isValidKeyword(mKeyword)) {
+                else if(NSISKeywords.INSTANCE.isValidKeyword(mKeyword)) {
                     mKeywordHelpMap.put(mKeyword,mLocation);
                 }
             }

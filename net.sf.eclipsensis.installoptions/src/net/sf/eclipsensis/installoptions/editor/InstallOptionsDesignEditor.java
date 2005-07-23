@@ -22,7 +22,7 @@ import net.sf.eclipsensis.installoptions.edit.*;
 import net.sf.eclipsensis.installoptions.ini.INIFile;
 import net.sf.eclipsensis.installoptions.model.DialogSizeManager;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsDialog;
-import net.sf.eclipsensis.installoptions.properties.CustomPropertySheetEntry;
+import net.sf.eclipsensis.installoptions.properties.CustomPropertySheetPage;
 import net.sf.eclipsensis.installoptions.rulers.*;
 import net.sf.eclipsensis.installoptions.util.TypeConverter;
 
@@ -44,7 +44,7 @@ import org.eclipse.gef.ui.palette.*;
 import org.eclipse.gef.ui.palette.FlyoutPaletteComposite.FlyoutPreferences;
 import org.eclipse.gef.ui.parts.*;
 import org.eclipse.gef.ui.parts.TreeViewer;
-import org.eclipse.gef.ui.stackview.CommandStackInspectorPage;
+import org.eclipse.gef.ui.properties.UndoablePropertySheetEntry;
 import org.eclipse.gef.ui.views.palette.PalettePage;
 import org.eclipse.gef.ui.views.palette.PaletteViewerPage;
 import org.eclipse.jface.action.*;
@@ -395,7 +395,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
             mPalette.setExternalViewer(mPalettePage.getPaletteViewer());
             mPalettePage = null;
         }
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,PLUGIN_CONTEXT_PREFIX+"installoptions_designeditor_context");
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,PLUGIN_CONTEXT_PREFIX+"installoptions_designeditor_context"); //$NON-NLS-1$
     }
 
     /**
@@ -705,9 +705,6 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
         if (type == InstallOptionsDialog.class) {
             return mInstallOptionsDialog;
         }
-        if (type == CommandStackInspectorPage.class) {
-            return new CommandStackInspectorPage(getCommandStack());
-        }
         if (type == IContentOutlinePage.class) {
             mOutlinePage = new OutlinePage(new InstallOptionsTreeViewer());
             return mOutlinePage;
@@ -720,8 +717,8 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
             return createPalettePage();
         }
         if (type == org.eclipse.ui.views.properties.IPropertySheetPage.class) {
-            PropertySheetPage page = new PropertySheetPage();
-            page.setRootEntry(new CustomPropertySheetEntry((InstallOptionsEditDomain)getEditDomain()));
+            PropertySheetPage page = new CustomPropertySheetPage((InstallOptionsEditDomain)getEditDomain());
+            page.setRootEntry(new UndoablePropertySheetEntry(getEditDomain().getCommandStack()));//new CustomPropertySheetEntry((InstallOptionsEditDomain)getEditDomain()));
             return page;
         }
         if (type == EditDomain.class) {

@@ -11,6 +11,7 @@ package net.sf.eclipsensis.editor.text;
 
 import java.util.*;
 
+import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.settings.IPropertyAdaptable;
 import net.sf.eclipsensis.util.Common;
 
@@ -120,10 +121,11 @@ public abstract class NSISRuleBasedScanner extends BufferedRuleBasedScanner impl
      */
     protected abstract IToken getDefaultToken();
 
-    protected void addWords(WordRule wordRule, String preferenceName, String[] array)
+    protected void addWords(WordRule wordRule, String preferenceName, String keywordsGroup)
     {
         boolean caseSensitive = isCaseSensitive();
         IToken token = createTokenFromPreference(preferenceName);
+        String[] array = NSISKeywords.INSTANCE.getKeywordsGroup(keywordsGroup);
         if(!Common.isEmptyArray(array)) {
             for (int i = 0; i < array.length; i++) {
                 wordRule.addWord((caseSensitive?array[i]:array[i].toLowerCase()), token);

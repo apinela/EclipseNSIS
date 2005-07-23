@@ -9,52 +9,133 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.properties;
 
-import java.util.*;
-
 import net.sf.eclipsensis.installoptions.edit.InstallOptionsEditDomain;
-import net.sf.eclipsensis.installoptions.properties.descriptors.CustomPropertyDescriptor;
+import net.sf.eclipsensis.util.Common;
 
-import org.eclipse.gef.internal.ui.properties.PropertySheetEntry;
-import org.eclipse.gef.internal.ui.properties.UndoablePropertySheetEntry;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.views.properties.IPropertyDescriptor;
+import org.eclipse.ui.views.properties.*;
 
-public class CustomPropertySheetEntry extends UndoablePropertySheetEntry
+public class CustomPropertySheetPage extends PropertySheetPage
 {
+    private static final PropertySheetSorter cNonSorter = new PropertySheetSorter() {
+        public int compare(IPropertySheetEntry entryA, IPropertySheetEntry entryB)
+        {
+            return -1;
+        }
+
+        public int compareCategories(String categoryA, String categoryB)
+        {
+            return -1;
+        }
+    };
+
     private InstallOptionsEditDomain mEditDomain;
     
-    /**
-     * @param stack
-     */
-    public CustomPropertySheetEntry(InstallOptionsEditDomain editDomain)
+    public CustomPropertySheetPage(InstallOptionsEditDomain editDomain)
     {
-        super(editDomain.getCommandStack());
+        super();
         mEditDomain = editDomain;
+        super.setSorter(cNonSorter);
     }
 
-    protected PropertySheetEntry createChildEntry()
+    public void setRootEntry(IPropertySheetEntry entry)
     {
-        return new CustomPropertySheetEntry(mEditDomain);
+        super.setRootEntry(entry);
     }
 
-    protected List computeMergedPropertyDescriptors()
+    public void createControl(Composite parent)
     {
-        List list = super.computeMergedPropertyDescriptors();
-        ArrayList list2 = new ArrayList();
-        for (Iterator iter = list.iterator(); iter.hasNext();) {
-            IPropertyDescriptor element = (IPropertyDescriptor)iter.next();
-            if(element instanceof CustomPropertyDescriptor) {
-                list2.add(new ReadOnlyPropertyDescriptor(((CustomPropertyDescriptor)element).getDelegate()));
+        super.createControl(parent);
+        super.setPropertySourceProvider(new CustomPropertySourceProvider());
+    }
+
+    protected void setSorter(PropertySheetSorter sorter)
+    {
+    }
+
+    public void setPropertySourceProvider(IPropertySourceProvider newProvider)
+    {
+    }
+
+    private class CustomPropertySourceProvider implements IPropertySourceProvider
+    {
+        public IPropertySource getPropertySource(Object object)
+        {
+            IPropertySource source = null;
+            if(object instanceof IPropertySource) {
+                source = (IPropertySource)object;
             }
-            else {
-                list2.add(new ReadOnlyPropertyDescriptor(element));
+            else if(object instanceof IAdaptable) {
+                source = (IPropertySource)((IAdaptable)object).getAdapter(IPropertySource.class);
             }
+            if(source != null) {
+                source = new CustomPropertySource(source);
+            }
+            return source;
         }
-        return list2;
     }
-    
+
+    public class CustomPropertySource implements IPropertySource
+    {
+        private IPropertySource mDelegate;
+        
+        public CustomPropertySource(IPropertySource delegate)
+        {
+            super();
+            mDelegate = delegate;
+        }
+
+        public Object getEditableValue()
+        {
+            Object value = mDelegate.getEditableValue();
+            if(value instanceof IPropertySource) {
+                value = new CustomPropertySource((IPropertySource)value);
+            }
+            return value;
+        }
+
+        public IPropertyDescriptor[] getPropertyDescriptors()
+        {
+            IPropertyDescriptor[] descriptors = mDelegate.getPropertyDescriptors();
+            if(!Common.isEmptyArray(descriptors)) {
+                IPropertyDescriptor[] descriptors2 = new IPropertyDescriptor[descriptors.length];
+                for (int i = 0; i < descriptors.length; i++) {
+                    if(!(descriptors[i] instanceof ReadOnlyPropertyDescriptor)) {
+                        descriptors2[i] = new ReadOnlyPropertyDescriptor(descriptors[i]);
+                    }
+                    else {
+                        descriptors2[i] = descriptors[i];
+                    }
+                }
+                descriptors = descriptors2;
+            }
+            return descriptors;
+        }
+
+        public Object getPropertyValue(Object id)
+        {
+            return mDelegate.getPropertyValue(id);
+        }
+
+        public boolean isPropertySet(Object id)
+        {
+            return mDelegate.isPropertySet(id);
+        }
+
+        public void resetPropertyValue(Object id)
+        {
+            mDelegate.resetPropertyValue(id);
+        }
+
+        public void setPropertyValue(Object id, Object value)
+        {
+            mDelegate.setPropertyValue(id,value);
+        }
+    }
+
     private class ReadOnlyPropertyDescriptor implements IPropertyDescriptor
     {
         private IPropertyDescriptor mDelegate;

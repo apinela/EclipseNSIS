@@ -29,7 +29,7 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
     private static final Image IMAGE = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("wizard.files.icon")); //$NON-NLS-1$
     public static final char SEPARATOR = '\0'; 
     
-    private String mDestination = NSISKeywords.getKeyword("$INSTDIR"); //$NON-NLS-1$
+    private String mDestination = NSISKeywords.INSTANCE.getKeyword("$INSTDIR"); //$NON-NLS-1$
     private int mOverwriteMode = OVERWRITE_ON;
 
     static {

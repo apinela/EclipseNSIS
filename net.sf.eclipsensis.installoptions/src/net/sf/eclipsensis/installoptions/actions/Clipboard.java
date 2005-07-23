@@ -11,7 +11,10 @@ package net.sf.eclipsensis.installoptions.actions;
 
 import java.beans.*;
 
-public class Clipboard extends org.eclipse.gef.ui.actions.Clipboard 
+import org.eclipse.gef.dnd.SimpleObjectTransfer;
+import org.eclipse.swt.dnd.Transfer;
+
+public class Clipboard
 {
     /**
      * The event name used for {@link Clipboard#fireContentsSet()}
@@ -20,6 +23,16 @@ public class Clipboard extends org.eclipse.gef.ui.actions.Clipboard
 
     protected static Clipboard cInstance = new Clipboard();
        
+    private static final SimpleObjectTransfer TRANSFER = new SimpleObjectTransfer() {
+        private final String TYPE_NAME = "net.sf.eclipsensis.clipboard.transfer"; //$NON-NLS-1$
+        private final int TYPE_ID = registerType(TYPE_NAME);
+        protected int[] getTypeIds() {
+            return new int[] {TYPE_ID};
+        }
+        protected String[] getTypeNames() {
+            return new String[] {TYPE_NAME};
+        }
+    };
     private PropertyChangeSupport mListeners = new PropertyChangeSupport(this );
 
     /**
@@ -34,7 +47,7 @@ public class Clipboard extends org.eclipse.gef.ui.actions.Clipboard
      * Get the default Clipboard
      * @return - The default Clipboard
      */
-    public static org.eclipse.gef.ui.actions.Clipboard getDefault() 
+    public static Clipboard getDefault() 
     {
         return cInstance;
     }
@@ -68,12 +81,19 @@ public class Clipboard extends org.eclipse.gef.ui.actions.Clipboard
         mListeners.firePropertyChange( event );
     }
    
-    /* (non-Javadoc)
-     * @see org.eclipse.gef.ui.actions.Clipboard#setContents(java.lang.Object)
-     */
+    public Object getContents() 
+    {
+        org.eclipse.swt.dnd.Clipboard cb = new org.eclipse.swt.dnd.Clipboard(null);
+        Object contents = cb.getContents(TRANSFER);
+        cb.dispose();
+        return contents;
+    }
+
     public void setContents(Object contents) 
     {
-        super.setContents(contents);
+        org.eclipse.swt.dnd.Clipboard cb = new org.eclipse.swt.dnd.Clipboard(null);
+        cb.setContents(new Object[] {contents}, new Transfer[] {TRANSFER});
+        cb.dispose();
         fireContentsSet();
     }
 }

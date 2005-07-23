@@ -9,10 +9,9 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.model.commands;
 
-import java.text.MessageFormat;
+import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 
 import org.eclipse.gef.commands.Command;
-import org.eclipse.gef.internal.GEFMessages;
 import org.eclipse.ui.views.properties.IPropertySource;
 
 public class SetPropertyValueCommand extends Command
@@ -23,14 +22,9 @@ public class SetPropertyValueCommand extends Command
     protected boolean mResetOnUndo;
     protected IPropertySource mTarget;
 
-    public SetPropertyValueCommand() 
-    {
-        super(""); //$NON-NLS-1$
-    }
-
     public SetPropertyValueCommand(String propLabel) 
     {
-        super(MessageFormat.format(GEFMessages.SetPropertyValueCommand_Label, new Object[]{propLabel}).trim());
+        super(InstallOptionsPlugin.getFormattedString("set.property.value.label", new Object[]{propLabel})); //$NON-NLS-1$
     }
 
     public boolean canExecute() 

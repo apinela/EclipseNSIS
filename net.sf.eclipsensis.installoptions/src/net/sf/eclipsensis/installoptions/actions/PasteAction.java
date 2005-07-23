@@ -12,6 +12,7 @@ package net.sf.eclipsensis.installoptions.actions;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
+import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.edit.InstallOptionsEditDomain;
 import net.sf.eclipsensis.installoptions.edit.dialog.InstallOptionsDialogEditPart;
 import net.sf.eclipsensis.installoptions.editor.InstallOptionsDesignEditor;
@@ -19,7 +20,6 @@ import net.sf.eclipsensis.installoptions.model.commands.PasteCommand;
 
 import org.eclipse.gef.EditDomain;
 import org.eclipse.gef.commands.Command;
-import org.eclipse.gef.internal.GEFMessages;
 import org.eclipse.gef.ui.actions.WorkbenchPartAction;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionFactory;
@@ -43,8 +43,8 @@ public class PasteAction extends WorkbenchPartAction implements PropertyChangeLi
     {
         super.init();
         ISharedImages sharedImages = PlatformUI.getWorkbench().getSharedImages();
-        setText(GEFMessages.PasteAction_Label);
-        setToolTipText(GEFMessages.PasteAction_Tooltip);
+        setText(InstallOptionsPlugin.getResourceString("paste.action.label")); //$NON-NLS-1$
+        setToolTipText(InstallOptionsPlugin.getResourceString("paste.action.tooltip")); //$NON-NLS-1$
         setId(ActionFactory.PASTE.getId());
         setHoverImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE));
         setImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE));

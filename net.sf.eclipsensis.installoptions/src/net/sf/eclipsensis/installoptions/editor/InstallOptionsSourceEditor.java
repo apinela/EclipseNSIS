@@ -238,7 +238,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
 
     private void updateAnnotations()
     {
-        scheduleUIJob(InstallOptionsPlugin.getResourceString("outline.update.job.name"),getClass(),
+        scheduleUIJob(InstallOptionsPlugin.getResourceString("outline.update.job.name"),getClass(), //$NON-NLS-1$
                 new StatusRunnable(){
                     public IStatus run(IProgressMonitor monitor)
                     {
@@ -353,7 +353,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
          */
         public void update()
         {
-            scheduleUIJob(InstallOptionsPlugin.getResourceString("outline.update.job.name"),getClass(),
+            scheduleUIJob(InstallOptionsPlugin.getResourceString("outline.update.job.name"),getClass(), //$NON-NLS-1$
                           new StatusRunnable(){
                               public IStatus run(IProgressMonitor monitor)
                               {

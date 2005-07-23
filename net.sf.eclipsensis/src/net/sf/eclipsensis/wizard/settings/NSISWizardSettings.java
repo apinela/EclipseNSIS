@@ -59,7 +59,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     private boolean mEnableLanguageSupport = false;
     private ArrayList mLanguages = new ArrayList();
     private boolean mSelectLanguage = false;
-    private String mInstallDir = new StringBuffer(NSISKeywords.getKeyword("$PROGRAMFILES")).append("\\").append(mName).toString(); //$NON-NLS-1$ //$NON-NLS-2$
+    private String mInstallDir = new StringBuffer(NSISKeywords.INSTANCE.getKeyword("$PROGRAMFILES")).append("\\").append(mName).toString(); //$NON-NLS-1$ //$NON-NLS-2$
     private boolean mChangeInstallDir = true;
     private boolean mCreateStartMenuGroup = false;
     private String mStartMenuGroup = mName;
@@ -984,9 +984,8 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
         else if(name.equals("languages")) { //$NON-NLS-1$
             String[] langNames = Common.tokenize(string,',');
             ArrayList languages = new ArrayList();
-            NSISLanguageManager languageManager = NSISLanguageManager.getInstance();
             for (int i = 0; i < langNames.length; i++) {
-                NSISLanguage language = languageManager.getLanguage(langNames[i]);
+                NSISLanguage language = NSISLanguageManager.INSTANCE.getLanguage(langNames[i]);
                 if(language != null) {
                     languages.add(language);
                 }

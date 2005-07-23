@@ -57,12 +57,7 @@ public class RunnableInputStreamReader implements Runnable
                 ioe.printStackTrace();
             }
             finally {
-                try {
-                    br.close();
-                }
-                catch (IOException e) {
-                    e.printStackTrace();
-                }
+                Common.closeIO(br);
             }
             mOutput = (String[])output.toArray(Common.EMPTY_STRING_ARRAY);
         }

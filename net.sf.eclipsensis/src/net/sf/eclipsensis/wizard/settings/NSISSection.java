@@ -24,7 +24,7 @@ public class NSISSection extends AbstractNSISInstallGroup
 {
 	private static final long serialVersionUID = -971949137266423189L;
 
-    public static final String TYPE = NSISKeywords.getKeyword(EclipseNSISPlugin.getResourceString("wizard.section.type")); //$NON-NLS-1$
+    public static final String TYPE = NSISKeywords.INSTANCE.getKeyword(EclipseNSISPlugin.getResourceString("wizard.section.type")); //$NON-NLS-1$
 
     private static final Image IMAGE = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("wizard.section.icon")); //$NON-NLS-1$
     private static final String FORMAT = EclipseNSISPlugin.getResourceString("wizard.section.format"); //$NON-NLS-1$
@@ -66,7 +66,7 @@ public class NSISSection extends AbstractNSISInstallGroup
      */
     public String getDisplayName()
     {
-        return MessageFormat.format(FORMAT,new Object[]{mName,NSISKeywords.getKeyword(TYPE)}).trim();
+        return MessageFormat.format(FORMAT,new Object[]{mName,NSISKeywords.INSTANCE.getKeyword(TYPE)}).trim();
     }
 
     /* (non-Javadoc)

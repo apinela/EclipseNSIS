@@ -12,11 +12,11 @@ package net.sf.eclipsensis.installoptions.actions;
 import java.util.Iterator;
 import java.util.List;
 
+import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.edit.InstallOptionsWidgetEditPart;
 import net.sf.eclipsensis.installoptions.model.commands.CopyCommand;
 
 import org.eclipse.gef.commands.Command;
-import org.eclipse.gef.internal.GEFMessages;
 import org.eclipse.gef.ui.actions.SelectionAction;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionFactory;
@@ -39,8 +39,8 @@ public class CopyAction extends SelectionAction
     {
         super.init();
         ISharedImages sharedImages = PlatformUI.getWorkbench().getSharedImages();
-        setText(GEFMessages.CopyAction_Label);
-        setToolTipText(GEFMessages.CopyAction_Tooltip);
+        setText(InstallOptionsPlugin.getResourceString("copy.action.label")); //$NON-NLS-1$
+        setToolTipText(InstallOptionsPlugin.getResourceString("copy.action.tooltip")); //$NON-NLS-1$
         setId(ActionFactory.COPY.getId());
         setHoverImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
         setImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_COPY));

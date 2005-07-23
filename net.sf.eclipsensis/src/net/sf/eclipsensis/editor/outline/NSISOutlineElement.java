@@ -21,14 +21,14 @@ import org.eclipse.swt.graphics.Image;
  */
 public class NSISOutlineElement
 {
-    private int mType;
+    private String mType;
     private String mName;
     private Position mSelectPosition;
     private Position mPosition;
     private ArrayList mChildren = new ArrayList();
     private NSISOutlineElement mParent = null;
 
-    public NSISOutlineElement(int type, Position position)
+    public NSISOutlineElement(String type, Position position)
     {
         this(type,null,position);
     }
@@ -38,7 +38,7 @@ public class NSISOutlineElement
      * @param name
      * @param position
      */
-    public NSISOutlineElement(int type, String name, Position position)
+    public NSISOutlineElement(String type, String name, Position position)
     {
         mType = type;
         mName = name;
@@ -67,16 +67,20 @@ public class NSISOutlineElement
      */
     public Image getIcon()
     {
-        return (mType >=0 && mType < NSISOutlineContentProvider.OUTLINE_IMAGES.length?
-                NSISOutlineContentProvider.OUTLINE_IMAGES[mType]:null);
+        return NSISOutlineContentResources.INSTANCE.getImage(mType);
     }
+
+    public String getType()
+    {
+        return mType;
+    }
+
     /**
      * @return Returns the name.
      */
     public String getTypeName()
     {
-        return (mType >=0 && mType < NSISOutlineContentProvider.OUTLINE_KEYWORDS.length?
-                NSISOutlineContentProvider.OUTLINE_KEYWORDS[mType]:""); //$NON-NLS-1$
+        return NSISOutlineContentResources.INSTANCE.getTypeName(mType);
     }
     /**
      * @return Returns the position.
@@ -104,14 +108,6 @@ public class NSISOutlineElement
         return mSelectPosition;
     }
     
-    /**
-     * @return Returns the type.
-     */
-    public int getType()
-    {
-        return mType;
-    }
-
     public void setParent(NSISOutlineElement parent)
     {
         if(mParent != null) {

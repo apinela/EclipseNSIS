@@ -33,7 +33,6 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
     private static String cFirstPage = null;
     private static final String cImageLocationFormat = EclipseNSISPlugin.getResourceString("help.browser.throbber.icon.format"); //$NON-NLS-1$
     private static final int cImageCount = Integer.parseInt(EclipseNSISPlugin.getResourceString("help.browser.throbber.icon.count")); //$NON-NLS-1$
-//                                                            "help.browser.throbber.icons");
 
     private Browser mBrowser;
     private ToolBar mToolBar;
@@ -316,7 +315,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
     private void openHelp()
     {
         if (isActivated()) {
-            mStartPage = NSISHelpURLProvider.getInstance().getCHMHelpStartPage();
+            mStartPage = NSISHelpURLProvider.INSTANCE.getCHMHelpStartPage();
             if(mStartPage == null) {
                 mStartPage = "about:blank"; //$NON-NLS-1$
             }

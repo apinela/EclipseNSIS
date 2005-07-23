@@ -10,7 +10,6 @@
 package net.sf.eclipsensis.installoptions.properties;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
-import net.sf.eclipsensis.installoptions.properties.descriptors.CustomPropertyDescriptor;
 import net.sf.eclipsensis.installoptions.properties.validators.NumberCellEditorValidator;
 
 import org.eclipse.draw2d.geometry.Dimension;
@@ -31,8 +30,7 @@ public class DimensionPropertySource implements IPropertySource
         PropertyDescriptor heightProp = new TextPropertyDescriptor(ID_HEIGHT,
                 InstallOptionsPlugin.getResourceString("height.property.name")); //$NON-NLS-1$ //$NON-NLS-2$
         heightProp.setValidator(NumberCellEditorValidator.getInstance());
-        mDescriptors = new IPropertyDescriptor[]{new CustomPropertyDescriptor(widthProp,0),
-                new CustomPropertyDescriptor(heightProp,1)};
+        mDescriptors = new IPropertyDescriptor[]{widthProp,heightProp};
     }
 
     protected Dimension mDimension = null;

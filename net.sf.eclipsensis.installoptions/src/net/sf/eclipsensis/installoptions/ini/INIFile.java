@@ -312,7 +312,6 @@ public class INIFile implements IDocumentListener, IINIContainer
             IINIContainer container = this;
             if(mChangeStartLine > 0) {
                 INILine previous = (INILine)mLines.get(mChangeStartLine-1);
-                //TODO Fix projection annotation
                 if(previous instanceof IINIContainer) {
                     childIndex = 0;
                     index = mChildren.indexOf(previous)+1;

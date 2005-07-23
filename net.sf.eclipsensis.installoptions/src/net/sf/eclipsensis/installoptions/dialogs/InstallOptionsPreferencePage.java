@@ -40,8 +40,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.dialogs.PropertyPage;
 
@@ -214,7 +212,7 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
     public void createControl(Composite parent)
     {
         super.createControl(parent);
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),PLUGIN_CONTEXT_PREFIX+"installoptions_preferences_context");
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),PLUGIN_CONTEXT_PREFIX+"installoptions_preferences_context"); //$NON-NLS-1$
     }
 
     private Control createSourceEditorTab(Composite parent)

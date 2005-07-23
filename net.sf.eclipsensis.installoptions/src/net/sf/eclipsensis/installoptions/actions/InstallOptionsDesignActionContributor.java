@@ -15,7 +15,6 @@ import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.draw2d.PositionConstants;
-import org.eclipse.gef.internal.GEFMessages;
 import org.eclipse.gef.ui.actions.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.ui.*;
@@ -46,14 +45,14 @@ public class InstallOptionsDesignActionContributor extends ActionBarContributor
         retargetAction.setDisabledImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_CUT_DISABLED));
         addRetargetAction(retargetAction);
         
-        retargetAction = new RetargetAction(ActionFactory.COPY.getId(),GEFMessages.CopyAction_Label);
-        retargetAction.setToolTipText(GEFMessages.CopyAction_Tooltip);
+        retargetAction = new RetargetAction(ActionFactory.COPY.getId(),InstallOptionsPlugin.getResourceString("copy.action.label")); //$NON-NLS-1$
+        retargetAction.setToolTipText(InstallOptionsPlugin.getResourceString("copy.action.tooltip")); //$NON-NLS-1$
         retargetAction.setImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
         retargetAction.setDisabledImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_COPY_DISABLED));
         addRetargetAction(retargetAction);
         
-        retargetAction = new RetargetAction(ActionFactory.PASTE.getId(),GEFMessages.PasteAction_Label);
-        retargetAction.setToolTipText(GEFMessages.PasteAction_Tooltip);
+        retargetAction = new RetargetAction(ActionFactory.PASTE.getId(),InstallOptionsPlugin.getResourceString("paste.action.label")); //$NON-NLS-1$
+        retargetAction.setToolTipText(InstallOptionsPlugin.getResourceString("paste.action.tooltip")); //$NON-NLS-1$
         retargetAction.setImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE));
         retargetAction.setDisabledImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE_DISABLED));
         addRetargetAction(retargetAction);
@@ -90,17 +89,20 @@ public class InstallOptionsDesignActionContributor extends ActionBarContributor
         
         retargetAction = new RetargetAction(
                 GEFActionConstants.TOGGLE_RULER_VISIBILITY, 
-                GEFMessages.ToggleRulerVisibility_Label, IAction.AS_CHECK_BOX);
+                InstallOptionsPlugin.getResourceString("toggle.ruler.label"), IAction.AS_CHECK_BOX); //$NON-NLS-1$
+        retargetAction.setToolTipText(InstallOptionsPlugin.getResourceString("toggle.ruler.tooltip")); //$NON-NLS-1$
         retargetAction.setImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("show.rulers.icon"))); //$NON-NLS-1$
         addRetargetAction(retargetAction);
         
         retargetAction = new RetargetAction(
                 GEFActionConstants.TOGGLE_SNAP_TO_GEOMETRY, 
-                GEFMessages.ToggleSnapToGeometry_Label, IAction.AS_CHECK_BOX);
+                InstallOptionsPlugin.getResourceString("toggle.snap.label"), IAction.AS_CHECK_BOX); //$NON-NLS-1$
+        retargetAction.setToolTipText(InstallOptionsPlugin.getResourceString("toggle.snap.tooltip")); //$NON-NLS-1$
         addRetargetAction(retargetAction);
 
         retargetAction = new RetargetAction(GEFActionConstants.TOGGLE_GRID_VISIBILITY, 
-                GEFMessages.ToggleGrid_Label, IAction.AS_CHECK_BOX);
+                InstallOptionsPlugin.getResourceString("toggle.grid.label"), IAction.AS_CHECK_BOX); //$NON-NLS-1$
+        retargetAction.setToolTipText(InstallOptionsPlugin.getResourceString("toggle.grid.tooltip")); //$NON-NLS-1$
         retargetAction.setImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("show.grid.icon"))); //$NON-NLS-1$
         addRetargetAction(retargetAction);
 

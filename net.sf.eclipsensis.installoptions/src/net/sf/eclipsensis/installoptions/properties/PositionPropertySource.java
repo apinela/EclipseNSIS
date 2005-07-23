@@ -12,7 +12,6 @@ package net.sf.eclipsensis.installoptions.properties;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsWidget;
 import net.sf.eclipsensis.installoptions.model.Position;
-import net.sf.eclipsensis.installoptions.properties.descriptors.CustomPropertyDescriptor;
 
 import org.eclipse.jface.viewers.ICellEditorValidator;
 import org.eclipse.ui.views.properties.*;
@@ -53,10 +52,7 @@ public class PositionPropertySource implements IPropertySource
         PropertyDescriptor bottomProp = new TextPropertyDescriptor(ID_BOTTOM,
                 InstallOptionsPlugin.getResourceString("bottom.property.name")); //$NON-NLS-1$ //$NON-NLS-2$
         bottomProp.setValidator(cValidator);
-        mDescriptors = new IPropertyDescriptor[]{new CustomPropertyDescriptor(leftProp,0), 
-                                                 new CustomPropertyDescriptor(topProp,1), 
-                                                 new CustomPropertyDescriptor(rightProp,2),
-                                                 new CustomPropertyDescriptor(bottomProp,3)};
+        mDescriptors = new IPropertyDescriptor[]{leftProp, topProp, rightProp, bottomProp};
     }
 
     protected InstallOptionsWidget mWidget = null;

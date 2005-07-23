@@ -11,10 +11,8 @@ package net.sf.eclipsensis.editor.outline;
 
 import java.util.Iterator;
 
-import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.editor.text.*;
-import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.jface.text.*;
@@ -25,7 +23,6 @@ import org.eclipse.jface.text.source.projection.ProjectionAnnotation;
 import org.eclipse.jface.text.source.projection.ProjectionAnnotationModel;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 
@@ -56,34 +53,8 @@ public class NSISOutlineContentProvider implements ITreeContentProvider, INSISCo
     public static final int PAGEEX = PAGE+1;
     public static final int PAGEEXEND = PAGEEX+1;
     
-    private static final int ROOT = Integer.MAX_VALUE;
+    private static final String ROOT = "ROOT"; //$NON-NLS-1$
     
-    private static final String[] cOutlineKeywordNames = {"!define", "!ifdef", "!ifndef", "!ifmacrodef",  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-                                                         "!ifnmacrodef", "!endif", "!macro", "!macroend",  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-                                                         "Function", "FunctionEnd", "Section", "SectionEnd",  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-                                                         "SubSection", "SubSectionEnd", "Page", "PageEx",  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-                                                         "Pageexend"}; //$NON-NLS-1$
-
-    public static final String[] OUTLINE_KEYWORDS = new String[cOutlineKeywordNames.length];
-    
-    public static final Image[] OUTLINE_IMAGES = new Image[cOutlineKeywordNames.length];
-    
-    static {
-        loadOutlineKeywordsAndImages();
-    }
-    
-    /**
-     * 
-     */
-    public static void loadOutlineKeywordsAndImages()
-    {
-        for(int i=0; i<cOutlineKeywordNames.length; i++) {
-            OUTLINE_KEYWORDS[i] = NSISKeywords.getKeyword(cOutlineKeywordNames[i]);
-            OUTLINE_IMAGES[i] = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString(new StringBuffer("outline.").append( //$NON-NLS-1$
-                                                     cOutlineKeywordNames[i].toLowerCase().replaceAll("!","")).append(".icon").toString(),null)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        }
-    }
-
     private ITextEditor mEditor;
     private IAnnotationModel mAnnotationModel;
     private IPositionUpdater mPositionUpdater = new DefaultPositionUpdater(NSIS_OUTLINE);
@@ -106,7 +77,7 @@ public class NSISOutlineContentProvider implements ITreeContentProvider, INSISCo
         boolean found = false;
         if(!Common.isEmptyArray(invalidParents)) {
             for(int i=0; i<invalidParents.length; i++) {
-                if(current.getType() == invalidParents[i]) {
+                if(NSISOutlineContentResources.INSTANCE.getTypeIndex(current.getType()) == invalidParents[i]) {
                     found = true;
                     break;
                 }
@@ -126,7 +97,7 @@ public class NSISOutlineContentProvider implements ITreeContentProvider, INSISCo
             while(current.getType() != ROOT) {
                 boolean found = false;
                 for (int i = 0; i < validTypes.length; i++) {
-                    if(current.getType() == validTypes[i]) {
+                    if(NSISOutlineContentResources.INSTANCE.getTypeIndex(current.getType()) == validTypes[i]) {
                         found = true;
                         break;
                     }
@@ -170,38 +141,6 @@ public class NSISOutlineContentProvider implements ITreeContentProvider, INSISCo
         int length = lastRegion.getOffset()+lastRegion.getLength() - nsisLine[0].getOffset();
         return new Position(nsisLine[0].getOffset(),length);
     }
-
-    /*
-        private IAnnotationModel getAnnotationModel(ITextEditor editor) {
-            return (IAnnotationModel) editor.getAdapter(ProjectionAnnotationModel.class);
-        }
-        
-        public void run() {
-            ITextEditor editor= getTextEditor();
-            ISelection selection= editor.getSelectionProvider().getSelection();
-            if (selection instanceof ITextSelection) {
-                ITextSelection textSelection= (ITextSelection) selection;
-                if (!textSelection.isEmpty()) {
-                    IAnnotationModel model= getAnnotationModel(editor);
-                    if (model != null) {
-                        
-                        int start= textSelection.getStartLine();
-                        int end= textSelection.getEndLine();
-                        
-                        try {
-                            IDocument document= editor.getDocumentProvider().getDocument(editor.getEditorInput());
-                            int offset= document.getLineOffset(start);
-                            int endOffset= document.getLineOffset(end + 1);
-                            Position position= new Position(offset, endOffset - offset);
-                            model.addAnnotation(new ProjectionAnnotation(), position);
-                        } catch (BadLocationException x) {
-                            // ignore
-                        }
-                    }
-                }
-            }
-        }
- */
 
     private void parse(IDocument document)
     {
@@ -256,7 +195,7 @@ public class NSISOutlineContentProvider implements ITreeContentProvider, INSISCo
                         IRegion region2 = nsisToken.getRegion();
                         Position position = new Position(region2.getOffset(),region2.getLength());
                         StringBuffer name = new StringBuffer(""); //$NON-NLS-1$
-                        int type = nsisToken.getType();
+                        int type = NSISOutlineContentResources.INSTANCE.getTypeIndex(nsisToken.getType());
                         switch(type) {
                             case DEFINE:
                             case IFDEF:
@@ -390,7 +329,7 @@ public class NSISOutlineContentProvider implements ITreeContentProvider, INSISCo
                             default:
                                 break;
                         }
-                        NSISOutlineElement element = new NSISOutlineElement(type, name.toString(), position);
+                        NSISOutlineElement element = new NSISOutlineElement(nsisToken.getType(), name.toString(), position);
                         Position linePosition = getLinePosition(nsisLines[i]);
                         element.setPosition(linePosition);
                         String text = document.get(linePosition.getOffset(),linePosition.getLength());
@@ -717,16 +656,9 @@ public class NSISOutlineContentProvider implements ITreeContentProvider, INSISCo
                             }
                         }
                     }
-                    int type = -1;
+                    String type = NSISOutlineContentResources.INSTANCE.getType(text);
     
-                    for (int i = 0; i < OUTLINE_KEYWORDS.length; i++) {
-                        if(text.equalsIgnoreCase(OUTLINE_KEYWORDS[i])) {
-                            type = i;
-                            break;
-                        }
-                    }
-    
-                    return (type == -1?Token.UNDEFINED:new Token(new NSISOutlineData(type, new Region(startOffset,length))));
+                    return (type == null?Token.UNDEFINED:new Token(new NSISOutlineData(type, new Region(startOffset,length))));
                 }
             }
             else {
@@ -737,14 +669,14 @@ public class NSISOutlineContentProvider implements ITreeContentProvider, INSISCo
     
     private class NSISOutlineData
     {
-        private int mType;
+        private String  mType;
         private IRegion mRegion;
         
         /**
          * @param type
          * @param region
          */
-        public NSISOutlineData(int type, IRegion region)
+        public NSISOutlineData(String type, IRegion region)
         {
             mType = type;
             mRegion = region;
@@ -761,7 +693,7 @@ public class NSISOutlineContentProvider implements ITreeContentProvider, INSISCo
         /**
          * @return Returns the type.
          */
-        public int getType()
+        public String getType()
         {
             return mType;
         }

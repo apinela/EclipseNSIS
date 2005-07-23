@@ -10,10 +10,9 @@
 package net.sf.eclipsensis.editor.outline;
 
 import net.sf.eclipsensis.editor.NSISEditor;
-import net.sf.eclipsensis.help.INSISKeywordsListener;
-import net.sf.eclipsensis.help.NSISKeywords;
 
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -24,7 +23,7 @@ import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
  * A content outline page which always represents the content of the connected
  * editor in 10 segments.
  */
-public class NSISContentOutlinePage extends ContentOutlinePage implements INSISKeywordsListener
+public class NSISContentOutlinePage extends ContentOutlinePage
 {
     private Object mInput;
     private NSISEditor mEditor;
@@ -40,23 +39,17 @@ public class NSISContentOutlinePage extends ContentOutlinePage implements INSISK
         mEditor = editor;
     }
 
-    /* (non-Javadoc)
-     * @see net.sf.eclipsensis.help.INSISKeywordsListener#keywordsChanged()
-     */
-    public void keywordsChanged()
+    void refresh()
     {
         TreeViewer viewer = getTreeViewer();
         if(viewer != null) {
-            IContentProvider contentProvider = viewer.getContentProvider();
-            if(contentProvider != null && contentProvider instanceof NSISOutlineContentProvider) {
-                NSISOutlineContentProvider.loadOutlineKeywordsAndImages();
-                Object input = viewer.getInput();
-                viewer.setInput(null);
-                viewer.setInput(input);
-            }
+            Object input = viewer.getInput();
+            viewer.setInput(null);
+            viewer.setInput(input);
+            viewer.expandAll();
         }
     }
-    
+
     /*
      * (non-Javadoc) Method declared on ContentOutlinePage
      */
@@ -65,6 +58,7 @@ public class NSISContentOutlinePage extends ContentOutlinePage implements INSISK
 
         super.createControl(parent);
         if(mEditor != null) {
+            NSISOutlineContentResources.INSTANCE.connect(this);
             NSISOutlineContentProvider contentProvider = mEditor.getOutlineContentProvider();
             if(contentProvider != null) {
                 TreeViewer viewer = getTreeViewer();
@@ -73,13 +67,13 @@ public class NSISContentOutlinePage extends ContentOutlinePage implements INSISK
                 viewer.addSelectionChangedListener(mEditor);
                 if (mInput != null) {
                     viewer.setInput(mInput);
+                    viewer.expandAll();
                 }
                 Point sel = mEditor.getSelectedRange();
                 NSISOutlineElement element = contentProvider.findElement(sel.x,sel.y);
                 if(element != null) {
                     setSelection(new StructuredSelection(element));
                 }
-                NSISKeywords.addKeywordsListener(this);
             }
         }
     }
@@ -100,7 +94,7 @@ public class NSISContentOutlinePage extends ContentOutlinePage implements INSISK
                 provider.inputChanged(null, mEditor.getEditorInput());
             }
         }
-        NSISKeywords.removeKeywordsListener(this);
+        NSISOutlineContentResources.INSTANCE.disconnect(this);
         mDisposed = true;
     }
     

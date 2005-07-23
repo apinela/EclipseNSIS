@@ -361,12 +361,6 @@ public class InstallOptionsRulerComposite extends Composite
         }
     }
 
-    /**
-     * Custom graphical viewer intended to be used for rulers.
-     * 
-     * @author Pratik Shah
-     * @since 3.0
-     */
     private static class RulerViewer
         extends ScrollingGraphicalViewer
     {
@@ -427,12 +421,6 @@ public class InstallOptionsRulerComposite extends Composite
             super.setContents(editpart);
             setFocus(getContents());
         }
-        /**
-         * Custom KeyHandler intended to be used with a RulerViewer
-         * 
-         * @author Pratik Shah
-         * @since 3.0
-         */
         protected static class RulerKeyHandler extends GraphicalViewerKeyHandler {
             /**
              * Constructor

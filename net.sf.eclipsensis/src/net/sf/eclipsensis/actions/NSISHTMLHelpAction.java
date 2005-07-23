@@ -19,14 +19,6 @@ import org.eclipse.ui.actions.ActionDelegate;
 
 public class NSISHTMLHelpAction extends ActionDelegate implements IEditorActionDelegate, INSISConstants
 {
-    /**
-     * 
-     */
-    public NSISHTMLHelpAction()
-    {
-        super();
-    }
-    
     /* (non-Javadoc)
      * @see org.eclipse.ui.IEditorActionDelegate#setActiveEditor(org.eclipse.jface.action.IAction, org.eclipse.ui.IEditorPart)
      */
@@ -39,6 +31,6 @@ public class NSISHTMLHelpAction extends ActionDelegate implements IEditorActionD
      */
     public void run(IAction action)
     {
-        NSISHelpURLProvider.getInstance().showHelp();
+        NSISHelpURLProvider.INSTANCE.showHelp();
     }
 }

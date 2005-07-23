@@ -17,6 +17,7 @@ import net.sf.eclipsensis.installoptions.model.InstallOptionsElementFactory;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
 
 import org.eclipse.gef.palette.*;
+import org.eclipse.gef.tools.AbstractTool;
 
 public class InstallOptionsPaletteProvider
 {
@@ -53,6 +54,7 @@ public class InstallOptionsPaletteProvider
                 InstallOptionsElementFactory.getFactory(type),
                 InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString(ltype+".type.small.icon")), //$NON-NLS-1$
                 InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString(ltype+".type.large.icon"))); //$NON-NLS-1$
+        entry.setToolProperty(AbstractTool.PROPERTY_UNLOAD_WHEN_FINISHED, Boolean.FALSE);
         return entry;
     }
 

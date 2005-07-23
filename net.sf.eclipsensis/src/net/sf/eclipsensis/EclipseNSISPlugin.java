@@ -11,21 +11,24 @@ package net.sf.eclipsensis;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 import java.util.*;
 
-import net.sf.eclipsensis.dialogs.NSISPreferencePage;
+import net.sf.eclipsensis.dialogs.MinimalProgressMonitorDialog;
 import net.sf.eclipsensis.editor.template.NSISTemplateContextType;
-import net.sf.eclipsensis.help.NSISHelpURLProvider;
+import net.sf.eclipsensis.makensis.MakeNSISRunner;
 import net.sf.eclipsensis.settings.INSISPreferenceConstants;
 import net.sf.eclipsensis.settings.NSISPreferences;
 import net.sf.eclipsensis.util.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.text.templates.ContextTypeRegistry;
 import org.eclipse.jface.text.templates.persistence.TemplateStore;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.editors.text.templates.ContributionContextTypeRegistry;
 import org.eclipse.ui.editors.text.templates.ContributionTemplateStore;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -43,7 +46,6 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
     private static EclipseNSISPlugin cPlugin;
     private static File cStateLocation = null;
     
-	private ArrayList mListeners = new ArrayList();
     private String mName = null;
     private String mVersion = null;
     private TemplateStore mTemplateStore;
@@ -52,6 +54,7 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
     private HashMap mResourceBundles = new HashMap();
     public static final String[] BUNDLE_NAMES = new String[]{RESOURCE_BUNDLE,MESSAGE_BUNDLE};
     private ImageManager mImageManager;
+    private Stack mServices = new Stack();
 
 	/**
 	 * The constructor.
@@ -97,17 +100,65 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
             }
         }
         
-        if(isConfigured()) {
-            NSISHelpURLProvider.init();
-        }
+        startServices();
 	}
+    
+    private void startServices()
+    {
+        final IRunnableWithProgress op = new IRunnableWithProgress(){
+            public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException
+            {
+                String[] services = Common.loadArrayProperty(getResourceBundle(),"services");
+                if(!Common.isEmptyArray(services)) {
+                    monitor.beginTask("Starting EclipseNSIS",services.length+1);
+                    for (int i = 0; i < services.length; i++) {
+                        try {
+                            Class clasz = Class.forName(services[i]);
+                            Constructor constructor = clasz.getConstructor(null);
+                            IEclipseNSISService service = (IEclipseNSISService)constructor.newInstance(null);
+                            service.start(monitor);
+                            mServices.push(service);
+                        }
+                        catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        monitor.worked(1);
+                    }
+                    monitor.subTask("Starting MakeNSIS launcher");
+                    MakeNSISRunner.startup();
+                    monitor.worked(1);
+                }
+            }
+        };
+        ProgressMonitorDialog dialog = new MinimalProgressMonitorDialog(Display.getDefault().getActiveShell());
+        try {
+            dialog.run(false,false,op);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     
     private void configure()
     {
         Display.getDefault().syncExec(new Runnable() {
             public void run()
             {
-                NSISPreferencePage.show();
+                NSISPreferences prefs = NSISPreferences.getPreferences();
+                Shell shell = Display.getDefault().getActiveShell();
+                DirectoryDialog dialog = new DirectoryDialog(shell);
+                dialog.setMessage(getResourceString("nsis.home.message"));
+                String nsisHome = dialog.open();
+                while(!Common.isEmpty(nsisHome)) {
+                    prefs.setNSISHome(nsisHome);
+                    if(!isConfigured()) {
+                        Common.openError(shell,EclipseNSISPlugin.getResourceString("invalid.nsis.home.message")); //$NON-NLS-1$ //$NON-NLS-2$
+                        nsisHome = dialog.open();
+                    }
+                    else {
+                        prefs.store();
+                    }
+                }
             }
         });
     }
@@ -164,10 +215,10 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
 	 */
 	public void stop(BundleContext context) throws Exception 
     {
-        for (Iterator iter = mListeners.iterator(); iter.hasNext();) {
-            IEclipseNSISPluginListener listener = (IEclipseNSISPluginListener) iter.next();
-            listener.stopped();
-            iter.remove();
+        MakeNSISRunner.shutdown();
+        while(mServices.size() > 0) {
+            IEclipseNSISService service = (IEclipseNSISService)mServices.pop();
+            service.stop(null);
         }
 		super.stop(context);
 	}
@@ -316,12 +367,5 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
     public boolean isConfigured()
     {
         return (NSISPreferences.getPreferences().getNSISExe() != null);
-    }
-    
-    public void addListener(IEclipseNSISPluginListener listener)
-    {
-        if(!mListeners.contains(listener)) {
-            mListeners.add(listener);
-        }
     }
 }

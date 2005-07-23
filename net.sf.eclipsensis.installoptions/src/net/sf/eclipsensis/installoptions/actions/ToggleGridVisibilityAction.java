@@ -9,9 +9,10 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.actions;
 
+import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
+
 import org.eclipse.gef.GraphicalViewer;
 import org.eclipse.gef.SnapToGrid;
-import org.eclipse.gef.internal.GEFMessages;
 import org.eclipse.gef.ui.actions.GEFActionConstants;
 import org.eclipse.jface.action.Action;
 
@@ -24,9 +25,9 @@ public class ToggleGridVisibilityAction extends Action
      */
     public ToggleGridVisibilityAction(GraphicalViewer diagramViewer)
     {
-        super(GEFMessages.ToggleGrid_Label, AS_CHECK_BOX);
+        super(InstallOptionsPlugin.getResourceString("toggle.grid.label"), AS_CHECK_BOX); //$NON-NLS-1$
         this.mDiagramViewer = diagramViewer;
-        setToolTipText(GEFMessages.ToggleGrid_Tooltip);
+        setToolTipText(InstallOptionsPlugin.getResourceString("toggle.grid.tooltip")); //$NON-NLS-1$
         setId(GEFActionConstants.TOGGLE_GRID_VISIBILITY);
         setActionDefinitionId(GEFActionConstants.TOGGLE_GRID_VISIBILITY);
         setChecked(isChecked());

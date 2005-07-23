@@ -215,6 +215,7 @@ public class NSISPreferencePage	extends NSISSettingsPage
      */
     public boolean performOk()
     {
+        long n = System.currentTimeMillis();
         Combo combo = mNSISHome.getCombo();
         String home = combo.getText();
         Collection nsisHomes = (Collection)mNSISHome.getInput();
@@ -233,6 +234,8 @@ public class NSISPreferencePage	extends NSISSettingsPage
         preferences.setNSISHome(home);
         preferences.setAutoShowConsole(mAutoShowConsole.getSelection());
         preferences.setUseEclipseHelp(mUseEclipseHelp.getSelection());
-        return super.performOk();
+        boolean ok = super.performOk();
+        System.out.println("NSISPreferencePage: "+(System.currentTimeMillis()-n));
+        return ok;
     }
 }

@@ -17,39 +17,44 @@ import net.sf.eclipsensis.settings.INSISPreferenceConstants;
 import net.sf.eclipsensis.settings.NSISPreferences;
 import net.sf.eclipsensis.util.*;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
-public class NSISKeywords implements INSISConstants
+public class NSISKeywords implements INSISConstants, IEclipseNSISService
 {
-    public static String[] ALL_KEYWORDS;
-    public static String[] SINGLELINE_COMPILETIME_COMMANDS;
-    public static String[] MULTILINE_COMPILETIME_COMMANDS;
-    public static String[] INSTALLER_ATTRIBUTES;
-    public static String[] COMMANDS;
-    public static String[] INSTRUCTIONS;
-    public static String[] INSTALLER_PAGES;
-    public static String[] INSTRUCTION_PARAMETERS;
-    public static String[] INSTRUCTION_OPTIONS;
-    public static String[] CALLBACKS;
-    public static String[] PATH_CONSTANTS_AND_VARIABLES;
-    public static String[] ALL_CONSTANTS_AND_VARIABLES;
-    public static String[] REGISTERS;
-    public static String[] PATH_VARIABLES;
-    public static String[] VARIABLES;
-    public static String[] ALL_VARIABLES;
-    public static String[] PATH_CONSTANTS;
-    public static String[] STRING_CONSTANTS;
-    public static String[] ALL_CONSTANTS;
-    public static String[] PREDEFINES;
-    public static String[] PLUGINS;
+    public static NSISKeywords INSTANCE = null;
     
-    private static Map cKeywordsMap = new CaseInsensitiveMap();
-    private static Map cPluginsMap = null;
-    private static Set cAllKeywordsSet = new CaseInsensitiveSet();
-    private static ArrayList cListeners = new ArrayList();
-    private static IPropertyChangeListener cPropertyChangeListener  = new IPropertyChangeListener() {
-
+    public static final String ALL_KEYWORDS="ALL_KEYWORDS";
+    public static final String SINGLELINE_COMPILETIME_COMMANDS="SINGLELINE_COMPILETIME_COMMANDS";
+    public static final String MULTILINE_COMPILETIME_COMMANDS="MULTILINE_COMPILETIME_COMMANDS";
+    public static final String INSTALLER_ATTRIBUTES="INSTALLER_ATTRIBUTES";
+    public static final String COMMANDS="COMMANDS";
+    public static final String INSTRUCTIONS="INSTRUCTIONS";
+    public static final String INSTALLER_PAGES="INSTALLER_PAGES";
+    public static final String INSTRUCTION_PARAMETERS="INSTRUCTION_PARAMETERS";
+    public static final String INSTRUCTION_OPTIONS="INSTRUCTION_OPTIONS";
+    public static final String CALLBACKS="CALLBACKS";
+    public static final String PATH_CONSTANTS_AND_VARIABLES="PATH_CONSTANTS_AND_VARIABLES";
+    public static final String ALL_CONSTANTS_AND_VARIABLES="ALL_CONSTANTS_AND_VARIABLES";
+    public static final String REGISTERS="REGISTERS";
+    public static final String PATH_VARIABLES="PATH_VARIABLES";
+    public static final String VARIABLES="VARIABLES";
+    public static final String ALL_VARIABLES="ALL_VARIABLES";
+    public static final String PATH_CONSTANTS="PATH_CONSTANTS";
+    public static final String STRING_CONSTANTS="STRING_CONSTANTS";
+    public static final String ALL_CONSTANTS="ALL_CONSTANTS";
+    public static final String PREDEFINES="PREDEFINES";
+    public static final String PLUGINS="PLUGINS";
+    
+    private String[] mPlugins;
+    
+    private Map mKeywordGroupsMap = new HashMap();
+    private Map mKeywordsMap = new CaseInsensitiveMap();
+    private Map mPluginsMap = null;
+    private Set mAllKeywordsSet = new CaseInsensitiveSet();
+    private ArrayList mListeners = new ArrayList();
+    private IPropertyChangeListener mPropertyChangeListener  = new IPropertyChangeListener() {
         public void propertyChange(PropertyChangeEvent event)
         {
             if(INSISPreferenceConstants.NSIS_HOME.equals(event.getProperty())) {
@@ -59,21 +64,23 @@ public class NSISKeywords implements INSISConstants
         }
         
     };
-    private static IEclipseNSISPluginListener cShutdownListener = new IEclipseNSISPluginListener() {
-        public void stopped()
-        {
-            NSISPreferences.getPreferences().getPreferenceStore().removePropertyChangeListener(cPropertyChangeListener);
-        }
-    };
-    
-    static {
+
+    public void start(IProgressMonitor monitor)
+    {
+        monitor.subTask("Loading keywords");
         loadKeywords();
         loadPlugins();
-        NSISPreferences.getPreferences().getPreferenceStore().addPropertyChangeListener(cPropertyChangeListener);
-        EclipseNSISPlugin.getDefault().addListener(cShutdownListener);
+        NSISPreferences.getPreferences().getPreferenceStore().addPropertyChangeListener(mPropertyChangeListener);
+        INSTANCE = this;
+    }
+
+    public void stop(IProgressMonitor monitor)
+    {
+        INSTANCE = null;
+        NSISPreferences.getPreferences().getPreferenceStore().removePropertyChangeListener(mPropertyChangeListener);
     }
     
-    private static void loadPlugins()
+    private void loadPlugins()
     {
         String nsisHome = NSISPreferences.getPreferences().getNSISHome();
         if(!Common.isEmpty(nsisHome)) {
@@ -97,14 +104,14 @@ public class NSISKeywords implements INSISConstants
                     File cacheFile = new File(EclipseNSISPlugin.getPluginStateLocation(),NSISKeywords.class.getName()+".Plugins.ser"); //$NON-NLS-1$
                     if(cacheFile.exists()) {
                         try {
-                            cPluginsMap = (Map)Common.readObject(cacheFile);
+                            mPluginsMap = (Map)Common.readObject(cacheFile);
                         }
                         catch (Exception e) {
-                            cPluginsMap = null;
+                            mPluginsMap = null;
                         }
                     }
-                    if(cPluginsMap == null) {
-                        cPluginsMap = new CaseInsensitiveMap();
+                    if(mPluginsMap == null) {
+                        mPluginsMap = new CaseInsensitiveMap();
                         changed = true;
                     }
 
@@ -114,18 +121,18 @@ public class NSISKeywords implements INSISConstants
                         String name = pluginFiles[i].getName();
                         name = name.substring(0,name.length()-length);
                         set.add(name);
-                        PluginInfo pi = (PluginInfo)cPluginsMap.get(name);
+                        PluginInfo pi = (PluginInfo)mPluginsMap.get(name);
                         if(pi == null || pi.getTimeStamp() != pluginFiles[i].lastModified()) {
                             String[] exports = WinAPI.GetPluginExports(pluginFiles[i].getAbsolutePath());
                             Arrays.sort(exports, String.CASE_INSENSITIVE_ORDER);
                             pi = new PluginInfo(name, exports,
                                                 pluginFiles[i].lastModified());
-                            cPluginsMap.put(name, pi);
+                            mPluginsMap.put(name, pi);
                             changed = true;
                         }
                     }
-                    if(cPluginsMap.size() != pluginFiles.length) {
-                        for (Iterator iter = cPluginsMap.entrySet().iterator(); iter.hasNext();) {
+                    if(mPluginsMap.size() != pluginFiles.length) {
+                        for (Iterator iter = mPluginsMap.entrySet().iterator(); iter.hasNext();) {
                             Map.Entry entry = (Map.Entry)iter.next();
                             if(!set.contains(entry.getKey())) {
                                 iter.remove();
@@ -136,23 +143,23 @@ public class NSISKeywords implements INSISConstants
 
                     if(changed) {
                         try {
-                            Common.writeObject(cacheFile, cPluginsMap);
+                            Common.writeObject(cacheFile, mPluginsMap);
                         }
                         catch (IOException e) {
                             e.printStackTrace();
                         }
                     }
-                    PLUGINS = (String[])cPluginsMap.keySet().toArray(Common.EMPTY_STRING_ARRAY);
-                    Arrays.sort(PLUGINS, String.CASE_INSENSITIVE_ORDER);
+                    mPlugins = (String[])mPluginsMap.keySet().toArray(Common.EMPTY_STRING_ARRAY);
+                    Arrays.sort(mPlugins, String.CASE_INSENSITIVE_ORDER);
                 }
             }
         }
     }
     
-    private static void loadKeywords()
+    private void loadKeywords()
     {
-        cKeywordsMap.clear();
-        cAllKeywordsSet.clear();
+        mKeywordsMap.clear();
+        mAllKeywordsSet.clear();
         
         ResourceBundle bundle;
         Version nsisVersion = NSISPreferences.getPreferences().getNSISVersion();
@@ -275,110 +282,140 @@ public class NSISKeywords implements INSISConstants
             }
         }
         
-        cKeywordsMap.putAll(registers);
-        cKeywordsMap.putAll(pathVariables);
-        cKeywordsMap.putAll(variables);
-        cKeywordsMap.putAll(pathConstants);
-        cKeywordsMap.putAll(stringConstants);
-        cKeywordsMap.putAll(predefines);
-        cKeywordsMap.putAll(singlelineCompiletimeCommands);
-        cKeywordsMap.putAll(multilineCompiletimeCommands);
-        cKeywordsMap.putAll(installerAttributes);
-        cKeywordsMap.putAll(commands);
-        cKeywordsMap.putAll(instructions);
-        cKeywordsMap.putAll(installerPages);
-        cKeywordsMap.putAll(instructionParameters);
-        cKeywordsMap.putAll(instructionOptions);
-        cKeywordsMap.putAll(callbacks);
+        mKeywordsMap.putAll(registers);
+        mKeywordsMap.putAll(pathVariables);
+        mKeywordsMap.putAll(variables);
+        mKeywordsMap.putAll(pathConstants);
+        mKeywordsMap.putAll(stringConstants);
+        mKeywordsMap.putAll(predefines);
+        mKeywordsMap.putAll(singlelineCompiletimeCommands);
+        mKeywordsMap.putAll(multilineCompiletimeCommands);
+        mKeywordsMap.putAll(installerAttributes);
+        mKeywordsMap.putAll(commands);
+        mKeywordsMap.putAll(instructions);
+        mKeywordsMap.putAll(installerPages);
+        mKeywordsMap.putAll(instructionParameters);
+        mKeywordsMap.putAll(instructionOptions);
+        mKeywordsMap.putAll(callbacks);
         
         String[] temp = Common.EMPTY_STRING_ARRAY;
+        String[] temp2;
 
         Set set = getValidKeywords(registers);
-        cAllKeywordsSet.addAll(set);
-        temp = (String[])Common.appendArray(temp, (REGISTERS = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
-        Arrays.sort(REGISTERS, String.CASE_INSENSITIVE_ORDER);
+        mAllKeywordsSet.addAll(set);
+        temp = (String[])Common.appendArray(temp, (temp2 = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
+        Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
+        mKeywordGroupsMap.put(REGISTERS,temp2);
         
         set = getValidKeywords(pathVariables);
-        cAllKeywordsSet.addAll(set);
-        temp = (String[])Common.appendArray(temp, (PATH_VARIABLES = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
-        Arrays.sort(PATH_VARIABLES, String.CASE_INSENSITIVE_ORDER);
+        mAllKeywordsSet.addAll(set);
+        temp = (String[])Common.appendArray(temp, (temp2 = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
+        Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
+        mKeywordGroupsMap.put(PATH_VARIABLES,temp2);
 
         set = getValidKeywords(variables);
-        cAllKeywordsSet.addAll(set);
-        temp = (String[])Common.appendArray(temp, (VARIABLES = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
-        Arrays.sort(VARIABLES, String.CASE_INSENSITIVE_ORDER);
+        mAllKeywordsSet.addAll(set);
+        temp = (String[])Common.appendArray(temp, (temp2 = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
+        Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
+        mKeywordGroupsMap.put(VARIABLES,temp2);
 
         set = getValidKeywords(pathConstants);
-        cAllKeywordsSet.addAll(set);
-        temp = (String[])Common.appendArray(temp, (PATH_CONSTANTS = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
-        Arrays.sort(PATH_CONSTANTS, String.CASE_INSENSITIVE_ORDER);
+        mAllKeywordsSet.addAll(set);
+        temp = (String[])Common.appendArray(temp, (temp2 = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
+        Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
+        mKeywordGroupsMap.put(PATH_CONSTANTS,temp2);
 
         set = getValidKeywords(stringConstants);
-        cAllKeywordsSet.addAll(set);
-        temp = (String[])Common.appendArray(temp, (STRING_CONSTANTS = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
-        Arrays.sort(STRING_CONSTANTS, String.CASE_INSENSITIVE_ORDER);
+        mAllKeywordsSet.addAll(set);
+        temp = (String[])Common.appendArray(temp, (temp2 = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
+        Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
+        mKeywordGroupsMap.put(STRING_CONSTANTS,temp2);
 
         set = getValidKeywords(predefines);
-        cAllKeywordsSet.addAll(set);
-        temp = (String[])Common.appendArray(temp, (PREDEFINES = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
-        Arrays.sort(PREDEFINES, String.CASE_INSENSITIVE_ORDER);
+        mAllKeywordsSet.addAll(set);
+        temp = (String[])Common.appendArray(temp, (temp2 = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
+        Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
+        mKeywordGroupsMap.put(PREDEFINES,temp2);
 
-        PATH_CONSTANTS_AND_VARIABLES = (String[])Common.joinArrays(new Object[]{PATH_CONSTANTS, PATH_VARIABLES});
-        Arrays.sort(PATH_CONSTANTS_AND_VARIABLES, String.CASE_INSENSITIVE_ORDER);
+        temp2 = (String[])Common.joinArrays(new Object[]{getKeywordsGroup(PATH_CONSTANTS), getKeywordsGroup(PATH_VARIABLES)});
+        Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
+        mKeywordGroupsMap.put(PATH_CONSTANTS_AND_VARIABLES,temp2);
 
-        ALL_CONSTANTS = (String[])Common.joinArrays(new Object[]{PATH_CONSTANTS, STRING_CONSTANTS});
-        Arrays.sort(ALL_CONSTANTS, String.CASE_INSENSITIVE_ORDER);
+        temp2 = (String[])Common.joinArrays(new Object[]{getKeywordsGroup(PATH_CONSTANTS), getKeywordsGroup(STRING_CONSTANTS)});
+        Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
+        mKeywordGroupsMap.put(ALL_CONSTANTS,temp2);
 
-        ALL_VARIABLES = (String[])Common.joinArrays(new Object[]{REGISTERS, PATH_CONSTANTS_AND_VARIABLES, VARIABLES});
-        Arrays.sort(ALL_VARIABLES, String.CASE_INSENSITIVE_ORDER);
+        temp2 = (String[])Common.joinArrays(new Object[]{getKeywordsGroup(REGISTERS), getKeywordsGroup(PATH_CONSTANTS_AND_VARIABLES), 
+                                                                                  getKeywordsGroup(VARIABLES)});
+        Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
+        mKeywordGroupsMap.put(ALL_VARIABLES,temp2);
 
-        ALL_CONSTANTS_AND_VARIABLES = (String[])Common.joinArrays(new Object[]{ALL_CONSTANTS, ALL_VARIABLES, PREDEFINES});
-        Arrays.sort(ALL_CONSTANTS_AND_VARIABLES, String.CASE_INSENSITIVE_ORDER);
+        temp2 = (String[])Common.joinArrays(new Object[]{getKeywordsGroup(ALL_CONSTANTS), getKeywordsGroup(ALL_VARIABLES), 
+                                                                                              getKeywordsGroup(PREDEFINES)});
+        Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
+        mKeywordGroupsMap.put(ALL_CONSTANTS_AND_VARIABLES,temp2);
         
         set = getValidKeywords(singlelineCompiletimeCommands);
-        cAllKeywordsSet.addAll(set);
-        temp = (String[])Common.appendArray(temp, (SINGLELINE_COMPILETIME_COMMANDS = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
+        mAllKeywordsSet.addAll(set);
+        temp = (String[])Common.appendArray(temp, (temp2 = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
+        Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
+        mKeywordGroupsMap.put(SINGLELINE_COMPILETIME_COMMANDS,temp2);
 
         set = getValidKeywords(multilineCompiletimeCommands);
-        cAllKeywordsSet.addAll(set);
-        temp = (String[])Common.appendArray(temp, (MULTILINE_COMPILETIME_COMMANDS = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
+        mAllKeywordsSet.addAll(set);
+        temp = (String[])Common.appendArray(temp, (temp2 = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
+        Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
+        mKeywordGroupsMap.put(MULTILINE_COMPILETIME_COMMANDS, temp2);
 
         set = getValidKeywords(installerAttributes);
-        cAllKeywordsSet.addAll(set);
-        temp = (String[])Common.appendArray(temp, (INSTALLER_ATTRIBUTES = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
+        mAllKeywordsSet.addAll(set);
+        temp = (String[])Common.appendArray(temp, (temp2 = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
+        Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
+        mKeywordGroupsMap.put(INSTALLER_ATTRIBUTES,temp2);
 
         set = getValidKeywords(commands);
-        cAllKeywordsSet.addAll(set);
-        temp = (String[])Common.appendArray(temp, (COMMANDS = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
+        mAllKeywordsSet.addAll(set);
+        temp = (String[])Common.appendArray(temp, (temp2 = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
+        Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
+        mKeywordGroupsMap.put(COMMANDS,temp2);
 
         set = getValidKeywords(instructions);
-        cAllKeywordsSet.addAll(set);
-        temp = (String[])Common.appendArray(temp, (INSTRUCTIONS = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
+        mAllKeywordsSet.addAll(set);
+        temp = (String[])Common.appendArray(temp, (temp2 = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
+        Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
+        mKeywordGroupsMap.put(INSTRUCTIONS,temp2);
 
         set = getValidKeywords(installerPages);
-        cAllKeywordsSet.addAll(set);
-        temp = (String[])Common.appendArray(temp, (INSTALLER_PAGES = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
-        Arrays.sort(INSTALLER_PAGES, String.CASE_INSENSITIVE_ORDER);
+        mAllKeywordsSet.addAll(set);
+        temp = (String[])Common.appendArray(temp, (temp2 = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
+        Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
+        mKeywordGroupsMap.put(INSTALLER_PAGES,temp2);
 
         set = getValidKeywords(instructionParameters);
-        cAllKeywordsSet.addAll(set);
-        temp = (String[])Common.appendArray(temp, (INSTRUCTION_PARAMETERS = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
-        INSTRUCTION_PARAMETERS = (String[])Common.appendArray(INSTRUCTION_PARAMETERS, INSTALLER_PAGES);
+        mAllKeywordsSet.addAll(set);
+        temp = (String[])Common.appendArray(temp, (temp2 = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
+        temp2 = (String[])Common.appendArray(temp2, getKeywordsGroup(INSTALLER_PAGES));
+        Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
+        mKeywordGroupsMap.put(INSTRUCTION_PARAMETERS,temp2);
         
         set = getValidKeywords(instructionOptions);
-        cAllKeywordsSet.addAll(set);
-        temp = (String[])Common.appendArray(temp, (INSTRUCTION_OPTIONS = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
+        mAllKeywordsSet.addAll(set);
+        temp = (String[])Common.appendArray(temp, (temp2 = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
+        Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
+        mKeywordGroupsMap.put(INSTRUCTION_OPTIONS,temp2);
 
         set = getValidKeywords(callbacks);
-        cAllKeywordsSet.addAll(set);
-        temp = (String[])Common.appendArray(temp, (CALLBACKS = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
+        mAllKeywordsSet.addAll(set);
+        temp = (String[])Common.appendArray(temp, (temp2 = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
+        Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
+        mKeywordGroupsMap.put(CALLBACKS,temp2);
 
-        ALL_KEYWORDS = temp;
-        Arrays.sort(ALL_KEYWORDS, String.CASE_INSENSITIVE_ORDER);
+        Arrays.sort(temp, String.CASE_INSENSITIVE_ORDER);
+        mKeywordGroupsMap.put(ALL_KEYWORDS,temp);
         notifyListeners();
     }
     
-    private static Set getValidKeywords(Map keywordMap)
+    private Set getValidKeywords(Map keywordMap)
     {
         HashSet set = new HashSet();
         for (Iterator iter = keywordMap.values().iterator(); iter.hasNext();) {
@@ -391,37 +428,42 @@ public class NSISKeywords implements INSISConstants
         return set;
     }
     
-    public static boolean isValidKeyword(String keyword)
+    public String[] getKeywordsGroup(String group)
     {
-        return cAllKeywordsSet.contains(keyword);
+        return (String[])mKeywordGroupsMap.get(group);
+    }
+    
+    public boolean isValidKeyword(String keyword)
+    {
+        return mAllKeywordsSet.contains(keyword);
     }
 
-    public static void notifyListeners()
+    public void notifyListeners()
     {
-        for (Iterator iter = cListeners.iterator(); iter.hasNext();) {
+        for (Iterator iter = mListeners.iterator(); iter.hasNext();) {
             INSISKeywordsListener listener = (INSISKeywordsListener)iter.next();
             listener.keywordsChanged();
         }
     }
     
-    public static void addKeywordsListener(INSISKeywordsListener listener)
+    public void addKeywordsListener(INSISKeywordsListener listener)
     {
-        if(!cListeners.contains(listener)) {
-            cListeners.add(listener);
+        if(!mListeners.contains(listener)) {
+            mListeners.add(listener);
         }
     }
     
-    public static void removeKeywordsListener(INSISKeywordsListener listener)
+    public void removeKeywordsListener(INSISKeywordsListener listener)
     {
-        if(!cListeners.contains(listener)) {
-            cListeners.remove(listener);
+        if(!mListeners.contains(listener)) {
+            mListeners.remove(listener);
         }
     }
 
-    public static String getKeyword(String name)
+    public String getKeyword(String name)
     {
-        if(cKeywordsMap.containsKey(name)) {
-            String newName = (String)cKeywordsMap.get(name);
+        if(mKeywordsMap.containsKey(name)) {
+            String newName = (String)mKeywordsMap.get(name);
             if(!newName.equalsIgnoreCase(name)) {
                 //This has been renamed. Check if it has been renamed again
                 return getKeyword(newName);
@@ -434,11 +476,17 @@ public class NSISKeywords implements INSISConstants
             return name;
         }
     }
+    
+    public VariableMatcher createVariableMatcher()
+    {
+        return new VariableMatcher();
+    }
 
-    public static class VariableMatcher
+    public class VariableMatcher
     {
         private int mPotentialMatchIndex = -1;
         private String mText = null;
+        private String[] mKeywords = getKeywordsGroup(ALL_CONSTANTS_AND_VARIABLES);
         
         public void reset()
         {
@@ -460,13 +508,13 @@ public class NSISKeywords implements INSISConstants
         public boolean hasPotentialMatch()
         {
             if(mText != null) {
-                for(int i=Math.max(mPotentialMatchIndex,0); i<ALL_CONSTANTS_AND_VARIABLES.length; i++) {
-                    int n = ALL_CONSTANTS_AND_VARIABLES[i].compareToIgnoreCase(mText);
+                for(int i=Math.max(mPotentialMatchIndex,0); i<mKeywords.length; i++) {
+                    int n = mKeywords[i].compareToIgnoreCase(mText);
                     if(n < 0) {
                         continue;
                     }
                     else if(n >= 0) {
-                        if(ALL_CONSTANTS_AND_VARIABLES[i].regionMatches(true,0,mText,0,mText.length())) {
+                        if(mKeywords[i].regionMatches(true,0,mText,0,mText.length())) {
                             mPotentialMatchIndex = i;
                             return true;
                         }
@@ -479,13 +527,13 @@ public class NSISKeywords implements INSISConstants
         
         public boolean isMatch()
         {
-            return (mPotentialMatchIndex >= 0 && ALL_CONSTANTS_AND_VARIABLES[mPotentialMatchIndex].equalsIgnoreCase(mText));
+            return (mPotentialMatchIndex >= 0 && mKeywords[mPotentialMatchIndex].equalsIgnoreCase(mText));
         }
     }
     
-    public static String[] getPluginExports(String name)
+    public String[] getPluginExports(String name)
     {
-        PluginInfo pi = (PluginInfo)cPluginsMap.get(name);
+        PluginInfo pi = (PluginInfo)mPluginsMap.get(name);
         if(pi != null) {
             return pi.getExports();
         }
@@ -538,4 +586,5 @@ public class NSISKeywords implements INSISConstants
             return mTimeStamp;
         }
     }
+
 }

@@ -59,7 +59,7 @@ public class Common
     
     public static String encodePath(String path)
     {
-        String nsisdirKeyword = NSISKeywords.getKeyword("${NSISDIR}"); //$NON-NLS-1$
+        String nsisdirKeyword = NSISKeywords.INSTANCE.getKeyword("${NSISDIR}"); //$NON-NLS-1$
         String nsisHome = NSISPreferences.getPreferences().getNSISHome().toLowerCase();
         if(path.toLowerCase().startsWith(nsisHome)) {
             path = nsisdirKeyword + path.substring(nsisHome.length());
@@ -69,7 +69,7 @@ public class Common
 
     public static String decodePath(String path)
     {
-        String nsisdirKeyword = NSISKeywords.getKeyword("${NSISDIR}").toLowerCase(); //$NON-NLS-1$
+        String nsisdirKeyword = NSISKeywords.INSTANCE.getKeyword("${NSISDIR}").toLowerCase(); //$NON-NLS-1$
         String nsisHome = NSISPreferences.getPreferences().getNSISHome();
         if(path.toLowerCase().startsWith(nsisdirKeyword)) {
             path = nsisHome + path.substring(nsisdirKeyword.length());
@@ -577,8 +577,9 @@ public class Common
             prefix = pathName;
         }
         if(!Common.isEmpty(prefix)) {
-            for(int i=0; i<NSISKeywords.PATH_CONSTANTS_AND_VARIABLES.length; i++) {
-                if(NSISKeywords.PATH_CONSTANTS_AND_VARIABLES[i].equalsIgnoreCase(prefix)) {
+            String[] array = NSISKeywords.INSTANCE.getKeywordsGroup(NSISKeywords.PATH_CONSTANTS_AND_VARIABLES);
+            for(int i=0; i<array.length; i++) {
+                if(array[i].equalsIgnoreCase(prefix)) {
                     if(!Common.isEmpty(suffix)) {
                         Matcher matcher = cValidNSISPrefixedPathNameSuffix.matcher(suffix);
                         return matcher.matches();

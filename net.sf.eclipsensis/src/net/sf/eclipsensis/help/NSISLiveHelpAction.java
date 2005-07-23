@@ -38,12 +38,12 @@ public class NSISLiveHelpAction implements ILiveHelpAction
                     NSISPreferencePage.show();
                 }
                 else {
-                    NSISHelpURLProvider helpURLProvider = NSISHelpURLProvider.getInstance();
-                    String chmURL = helpURLProvider.convertHelpURLToCHMHelpURL(mData);
+                    String chmURL = NSISHelpURLProvider.INSTANCE.convertHelpURLToCHMHelpURL(mData);
                     if(!Common.isEmpty(chmURL)) {
-                        helpURLProvider.openCHMHelpURL(chmURL);
+                        NSISHelpURLProvider.INSTANCE.openCHMHelpURL(chmURL);
                     }
                 }
-            }});
+            }
+        });
     }
 }
