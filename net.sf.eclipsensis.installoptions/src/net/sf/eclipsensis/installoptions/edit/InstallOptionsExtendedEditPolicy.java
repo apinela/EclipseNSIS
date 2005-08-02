@@ -10,6 +10,7 @@
 package net.sf.eclipsensis.installoptions.edit;
 
 import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
+import net.sf.eclipsensis.installoptions.model.*;
 import net.sf.eclipsensis.installoptions.requests.ExtendedEditRequest;
 
 import org.eclipse.gef.*;
@@ -50,7 +51,9 @@ public abstract class InstallOptionsExtendedEditPolicy extends GraphicalEditPoli
     {
         if (IInstallOptionsConstants.REQ_EXTENDED_EDIT.equals(request.getType())||
             RequestConstants.REQ_OPEN.equals(request.getType())) {
-            if(((InstallOptionsEditDomain)mEditPart.getViewer().getEditDomain()).isReadOnly()) {
+            InstallOptionsModelTypeDef typeDef = InstallOptionsModel.INSTANCE.getControlTypeDef(((InstallOptionsWidget)mEditPart.getModel()).getType());
+            if(typeDef == null || !typeDef.getSettings().contains(getExtendedEditProperty()) ||
+               ((InstallOptionsEditDomain)mEditPart.getViewer().getEditDomain()).isReadOnly()) {
                 return false;
             }
             else {
@@ -60,5 +63,7 @@ public abstract class InstallOptionsExtendedEditPolicy extends GraphicalEditPoli
         return super.understandsRequest(request);
     }
 
+    
+    protected abstract String getExtendedEditProperty();
     protected abstract Command getExtendedEditCommand(ExtendedEditRequest request);
 }

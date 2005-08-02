@@ -13,6 +13,7 @@ import java.util.*;
 
 import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
+import net.sf.eclipsensis.installoptions.ini.INISection;
 import net.sf.eclipsensis.installoptions.properties.editors.FileFilterCellEditor;
 import net.sf.eclipsensis.installoptions.properties.validators.NSISStringLengthValidator;
 import net.sf.eclipsensis.installoptions.util.*;
@@ -20,14 +21,12 @@ import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
 
 public class InstallOptionsFileRequest extends InstallOptionsPathRequest
 {
-    public static Image FILEREQUEST_ICON = InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("filerequest.type.small.icon")); //$NON-NLS-1$
     public  static final char FILTER_SEPARATOR = ';';
     
     private static final TypeConverter FILTER_LIST_CONVERTER = new TypeConverter(){
@@ -74,16 +73,22 @@ public class InstallOptionsFileRequest extends InstallOptionsPathRequest
         }
     };
 
-    private List mFilter = new ArrayList();
+    private List mFilter;
 
-    public InstallOptionsFileRequest()
+    protected InstallOptionsFileRequest(INISection section)
     {
-        super(InstallOptionsModel.TYPE_FILEREQUEST);
+        super(section);
     }
 
-    public Image getIconImage()
+    protected void init()
     {
-        return FILEREQUEST_ICON;
+        super.init();
+        mFilter = new ArrayList();
+    }
+    
+    public String getType()
+    {
+        return InstallOptionsModel.TYPE_FILEREQUEST;
     }
 
     public Object clone() throws CloneNotSupportedException

@@ -12,34 +12,24 @@ package net.sf.eclipsensis.installoptions.model;
 import java.util.List;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
+import net.sf.eclipsensis.installoptions.ini.INISection;
 import net.sf.eclipsensis.installoptions.properties.descriptors.MultiLineTextPropertyDescriptor;
 import net.sf.eclipsensis.installoptions.properties.labelproviders.MultiLineLabelProvider;
 import net.sf.eclipsensis.installoptions.properties.validators.NSISStringLengthValidator;
 import net.sf.eclipsensis.util.Common;
 
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
 public class InstallOptionsText extends InstallOptionsEditableElement
 {
-    public static Image TEXT_ICON = InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("text.type.small.icon")); //$NON-NLS-1$
-    
-    public InstallOptionsText()
+    protected InstallOptionsText(INISection section)
     {
-        this(InstallOptionsModel.TYPE_TEXT);
+        super(section);
     }
     
-    /**
-     * @param type
-     */
-    public InstallOptionsText(String type)
+    public String getType()
     {
-        super(type);
-    }
-
-    public Image getIconImage()
-    {
-        return TEXT_ICON;
+        return InstallOptionsModel.TYPE_TEXT;
     }
     
     /**

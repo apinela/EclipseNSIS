@@ -26,10 +26,10 @@ public class DimensionPropertySource implements IPropertySource
     static {
         PropertyDescriptor widthProp = new TextPropertyDescriptor(ID_WIDTH,
                 InstallOptionsPlugin.getResourceString("width.property.name")); //$NON-NLS-1$ //$NON-NLS-2$
-        widthProp.setValidator(NumberCellEditorValidator.getInstance());
+        widthProp.setValidator(NumberCellEditorValidator.INSTANCE);
         PropertyDescriptor heightProp = new TextPropertyDescriptor(ID_HEIGHT,
                 InstallOptionsPlugin.getResourceString("height.property.name")); //$NON-NLS-1$ //$NON-NLS-2$
-        heightProp.setValidator(NumberCellEditorValidator.getInstance());
+        heightProp.setValidator(NumberCellEditorValidator.INSTANCE);
         mDescriptors = new IPropertyDescriptor[]{widthProp,heightProp};
     }
 

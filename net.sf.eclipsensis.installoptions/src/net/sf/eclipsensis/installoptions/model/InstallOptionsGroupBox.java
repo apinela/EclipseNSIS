@@ -10,21 +10,18 @@
 package net.sf.eclipsensis.installoptions.model;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
-
-import org.eclipse.swt.graphics.Image;
+import net.sf.eclipsensis.installoptions.ini.INISection;
 
 public class InstallOptionsGroupBox extends InstallOptionsUneditableElement
 {
-    public static Image GROUPBOX_ICON = InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("groupbox.type.small.icon")); //$NON-NLS-1$
-
-    public InstallOptionsGroupBox()
+    protected InstallOptionsGroupBox(INISection section)
     {
-        this(InstallOptionsModel.TYPE_GROUPBOX);
+        super(section);
     }
-
-    protected InstallOptionsGroupBox(String type)
+    
+    public String getType()
     {
-        super(type);
+        return InstallOptionsModel.TYPE_GROUPBOX;
     }
 
     /**
@@ -41,10 +38,5 @@ public class InstallOptionsGroupBox extends InstallOptionsUneditableElement
     protected Position getDefaultPosition()
     {
         return new Position(0,0,124,64);
-    }
-
-    public Image getIconImage()
-    {
-        return GROUPBOX_ICON;
     }
 }

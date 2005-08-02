@@ -10,27 +10,22 @@
 package net.sf.eclipsensis.installoptions.model;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
-
-import org.eclipse.swt.graphics.Image;
+import net.sf.eclipsensis.installoptions.ini.INISection;
 
 public class InstallOptionsRadioButton extends InstallOptionsCheckBox
 {
-    public static Image RADIOBUTTON_ICON = InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("radiobutton.type.small.icon")); //$NON-NLS-1$
     private static final String[] STATE_DISPLAY = {InstallOptionsPlugin.getResourceString("state.default"), //$NON-NLS-1$
                                  InstallOptionsPlugin.getResourceString("state.unselected"), //$NON-NLS-1$
                                  InstallOptionsPlugin.getResourceString("state.selected")}; //$NON-NLS-1$
 
-    public InstallOptionsRadioButton()
+    protected InstallOptionsRadioButton(INISection section)
     {
-        this(InstallOptionsModel.TYPE_RADIOBUTTON);
+        super(section);
     }
 
-    /**
-     * @param type
-     */
-    protected InstallOptionsRadioButton(String type)
+    public String getType()
     {
-        super(type);
+        return InstallOptionsModel.TYPE_RADIOBUTTON;
     }
 
     protected Position getDefaultPosition()
@@ -44,11 +39,6 @@ public class InstallOptionsRadioButton extends InstallOptionsCheckBox
     protected String[] getStateDisplay()
     {
         return STATE_DISPLAY;
-    }
-
-    public Image getIconImage()
-    {
-        return RADIOBUTTON_ICON;
     }
 
     protected String getDefaultText()

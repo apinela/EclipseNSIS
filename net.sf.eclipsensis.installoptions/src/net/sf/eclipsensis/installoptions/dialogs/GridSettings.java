@@ -126,7 +126,7 @@ public class GridSettings extends Composite implements IInstallOptionsConstants
 
     private void initialize() 
     {
-        setLayoutData(new GridData(GridData.FILL_BOTH));
+        setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         GridLayout gridLayout = new GridLayout();
         gridLayout.marginHeight = 0;
         gridLayout.marginWidth = 0;
@@ -136,26 +136,26 @@ public class GridSettings extends Composite implements IInstallOptionsConstants
         group.setText(InstallOptionsPlugin.getResourceString("grid.settings.grid.group.name")); //$NON-NLS-1$
         gridLayout = new GridLayout(3,true);
         group.setLayout(gridLayout);
-        group.setLayoutData(new GridData(GridData.FILL_BOTH));
+        group.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
         Label l = new Label(group,SWT.NONE);
-        l.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        l.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         
         l = new Label(group,SWT.NONE);
         l.setText(InstallOptionsPlugin.getResourceString("grid.settings.horizontal.label")); //$NON-NLS-1$
-        l.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        l.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         
         l = new Label(group,SWT.NONE);
         l.setText(InstallOptionsPlugin.getResourceString("grid.settings.vertical.label")); //$NON-NLS-1$
-        l.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        l.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         
         l = new Label(group,SWT.NONE);
         l.setText(InstallOptionsPlugin.getResourceString("grid.settings.grid.spacing.label")); //$NON-NLS-1$
         l.setToolTipText(InstallOptionsPlugin.getResourceString("grid.settings.grid.spacing.tooltip")); //$NON-NLS-1$
-        l.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        l.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         
         mGridSpacingWidth = new Text(group,SWT.BORDER);
-        mGridSpacingWidth.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        mGridSpacingWidth.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         mGridSpacingWidth.addVerifyListener(mPositiveNumberVerifyListener);
         mGridSpacingWidth.addFocusListener(new FocusAdapter() {
             public void focusLost(FocusEvent e)
@@ -171,7 +171,7 @@ public class GridSettings extends Composite implements IInstallOptionsConstants
         });
 
         mGridSpacingHeight = new Text(group,SWT.BORDER);
-        mGridSpacingHeight.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        mGridSpacingHeight.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         mGridSpacingHeight.addVerifyListener(mPositiveNumberVerifyListener);
         mGridSpacingHeight.addFocusListener(new FocusAdapter() {
             public void focusLost(FocusEvent e)
@@ -189,10 +189,10 @@ public class GridSettings extends Composite implements IInstallOptionsConstants
         l = new Label(group,SWT.NONE);
         l.setText(InstallOptionsPlugin.getResourceString("grid.settings.grid.origin.label")); //$NON-NLS-1$
         l.setToolTipText(InstallOptionsPlugin.getResourceString("grid.settings.grid.origin.tooltip")); //$NON-NLS-1$
-        l.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        l.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 
         mGridOriginX = new Text(group,SWT.BORDER);
-        mGridOriginX.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        mGridOriginX.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         mGridOriginX.addVerifyListener(mNumberVerifyListener);
         mGridOriginX.addFocusListener(new FocusAdapter() {
             public void focusLost(FocusEvent e)
@@ -209,7 +209,7 @@ public class GridSettings extends Composite implements IInstallOptionsConstants
 
 
         mGridOriginY = new Text(group,SWT.BORDER);
-        mGridOriginY.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        mGridOriginY.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         mGridOriginY.addVerifyListener(mNumberVerifyListener);
         mGridOriginY.addFocusListener(new FocusAdapter() {
             public void focusLost(FocusEvent e)
@@ -227,10 +227,10 @@ public class GridSettings extends Composite implements IInstallOptionsConstants
         l = new Label(group,SWT.NONE);
         l.setText(InstallOptionsPlugin.getResourceString("grid.settings.grid.style.label")); //$NON-NLS-1$
         l.setToolTipText(InstallOptionsPlugin.getResourceString("grid.settings.grid.style.tooltip")); //$NON-NLS-1$
-        l.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        l.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         
         final Combo mGridStyle = new Combo(group,SWT.READ_ONLY|SWT.DROP_DOWN);
-        mGridStyle.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        mGridStyle.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         mGridStyleViewer = new ComboViewer(mGridStyle);
         mGridStyleViewer.setContentProvider(new ArrayContentProvider());
         mGridStyleViewer.setLabelProvider(new LabelProvider() {

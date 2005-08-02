@@ -50,10 +50,6 @@ public class SetDialogSizeAction extends Action implements IUpdate
     {
         if (mDialogSize != null && mEditor != null && mEditor instanceof InstallOptionsDesignEditor && 
                 !((InstallOptionsDesignEditor)mEditor).isDisposed() && ((InstallOptionsDesignEditor)mEditor).getGraphicalViewer() != null) {
-//            EditDomain domain = (EditDomain)mEditor.getAdapter(EditDomain.class);
-//            if(domain instanceof InstallOptionsEditDomain && ((InstallOptionsEditDomain)domain).isReadOnly()) {
-//                return false;
-//            }
             return true;
         }
         return false;

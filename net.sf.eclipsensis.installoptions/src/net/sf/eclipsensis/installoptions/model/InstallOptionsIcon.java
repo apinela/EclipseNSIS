@@ -10,25 +10,22 @@
 package net.sf.eclipsensis.installoptions.model;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
+import net.sf.eclipsensis.installoptions.ini.INISection;
 
 import org.eclipse.swt.graphics.Image;
 
 public class InstallOptionsIcon extends InstallOptionsPicture
 {
-    public static Image ICON_ICON = InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("icon.type.small.icon")); //$NON-NLS-1$
     private static Image ICON_IMAGE = InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("icon.image")); //$NON-NLS-1$
 
-    /**
-     * @param type
-     */
-    public InstallOptionsIcon()
+    protected InstallOptionsIcon(INISection section)
     {
-        super(InstallOptionsModel.TYPE_ICON);
+        super(section);
     }
-
-    public Image getIconImage()
+    
+    public String getType()
     {
-        return ICON_ICON;
+        return InstallOptionsModel.TYPE_ICON;
     }
 
     /* (non-Javadoc)

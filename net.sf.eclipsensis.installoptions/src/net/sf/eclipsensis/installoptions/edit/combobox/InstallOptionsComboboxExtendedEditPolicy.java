@@ -13,6 +13,7 @@ import java.util.List;
 
 import net.sf.eclipsensis.installoptions.edit.InstallOptionsExtendedEditPolicy;
 import net.sf.eclipsensis.installoptions.edit.InstallOptionsWidgetEditPart;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
 import net.sf.eclipsensis.installoptions.model.commands.ModifyListItemsCommand;
 import net.sf.eclipsensis.installoptions.requests.ExtendedEditRequest;
 
@@ -34,5 +35,10 @@ public class InstallOptionsComboboxExtendedEditPolicy extends InstallOptionsExte
         ModifyListItemsCommand command = new ModifyListItemsCommand((InstallOptionsWidgetEditPart)request.getEditPart(),
                                                                               (List)request.getNewValue());
         return command;
+    }
+
+    protected String getExtendedEditProperty()
+    {
+        return InstallOptionsModel.PROPERTY_LISTITEMS;
     }
 }

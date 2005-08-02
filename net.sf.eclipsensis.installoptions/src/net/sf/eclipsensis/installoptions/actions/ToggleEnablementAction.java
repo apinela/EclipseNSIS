@@ -14,8 +14,7 @@ import java.util.*;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.edit.InstallOptionsEditDomain;
 import net.sf.eclipsensis.installoptions.edit.InstallOptionsWidgetEditPart;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsWidget;
+import net.sf.eclipsensis.installoptions.model.*;
 import net.sf.eclipsensis.installoptions.model.commands.ToggleEnablementCommand;
 
 import org.eclipse.gef.EditDomain;
@@ -61,16 +60,21 @@ public class ToggleEnablementAction extends SelectionAction
         Iterator iter = objects.iterator();
         InstallOptionsWidget part = getPart(iter.next());
         if(part != null) {
+            if(!getFlags(part).contains(InstallOptionsModel.FLAGS_DISABLED)) {
+                return null;
+            }
             boolean shouldEnable = shouldEnable(part);
             list.add(part);
             while (iter.hasNext()) {
                 part = getPart(iter.next());
-                if(part != null && shouldEnable == shouldEnable(part)) {
-                    list.add(part);
+                if(part != null) {
+                    if(getFlags(part).contains(InstallOptionsModel.FLAGS_DISABLED) &&
+                       shouldEnable == shouldEnable(part)) {
+                        list.add(part);
+                        continue;
+                    }
                 }
-                else {
-                    return null;
-                }
+                return null;
             }
             cmd = new ToggleEnablementCommand((InstallOptionsWidget[])list.toArray(new InstallOptionsWidget[list.size()]),
                                                shouldEnable);
@@ -81,9 +85,15 @@ public class ToggleEnablementAction extends SelectionAction
         return cmd;
     }
 
+    private Collection getFlags(InstallOptionsWidget part)
+    {
+        InstallOptionsModelTypeDef typeDef = InstallOptionsModel.INSTANCE.getControlTypeDef(part.getType());
+        return (typeDef == null?Collections.EMPTY_SET:typeDef.getFlags());
+    }
+
     private boolean shouldEnable(InstallOptionsWidget part)
     {
-        return part.getFlags().contains(InstallOptionsModel.FLAGS_DISABLED);
+        return getFlags(part).contains(InstallOptionsModel.FLAGS_DISABLED);
     }
 
     private InstallOptionsWidget getPart(Object part)

@@ -7,7 +7,8 @@
 # All rights reserved.
 # This program is made available under the terms of the Common Public License
 # v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
-# # Contributors:
+#
+# Contributors:
 # Sunil Kamath (IcemanK) - initial API and implementation
 ###############################################################################
 -->
@@ -106,7 +107,9 @@ compiler option. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></
 for NSIS scripts. This overrides any
 compressor settings in the script. When the Best compressor option is
 selected, all compressors are tried, and the one with the best
-compression is used for creating the installer. <a
+compression is used for creating the installer. The "Solid" checkbox appears if the
+specified version of MakeNSIS.exe supports the <strong>SetCompressor /SOLID</strong> option. 
+The Solid checkbox is enabled only if a compressor is selected explicitly. <a
  href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
   <a name="a_instructions"></a><dl id="id_instructions"><dt>Instructions</dt>
   <dd>Instructions for the
@@ -179,53 +182,53 @@ to Preferences</a><br>
 (IcemanK).</small></strong></p>
 <map name="preferences1">
 <area id="down1" onclick="highlightDef('id_down1');" shape="RECT"
- href="#a_down1" alt="Move down" coords="376,430, 406,458">
+ href="#a_down1" alt="Move down" coords="385,397, 415,421">
 <area id="up1" onclick="highlightDef('id_up1');" shape="RECT"
- href="#a_up1" alt="Move up" coords="376,400, 406,428">
+ href="#a_up1" alt="Move up" coords="385,366, 415,390">
 <area id="delete1" onclick="highlightDef('id_delete1');" shape="RECT"
- href="#a_delete1" alt="Delete" coords="376,369, 406,397">
+ href="#a_delete1" alt="Delete" coords="385,336, 415,360">
 <area id="edit1" onclick="highlightDef('id_edit1');" shape="RECT"
- href="#a_edit1" alt="Edit" coords="376,338, 406,366">
+ href="#a_edit1" alt="Edit" coords="385,305, 415,329">
 <area id="add1" onclick="highlightDef('id_add1');" shape="RECT"
- href="#a_add1" alt="Add" coords="376,307, 406,335">
+ href="#a_add1" alt="Add" coords="385,274, 415,298">
 <area id="instructions" onclick="highlightDef('id_instructions');"
  shape="RECT" href="#a_instructions" alt="Instructions"
- coords="17,292, 373,459">
+ coords="17,272, 379,460">
 <area id="compressor" onclick="highlightDef('id_compressor');"
  shape="RECT" href="#a_compressor" alt="Compressor settings"
- coords="27,247, 272,266">
+ coords="27,215, 322,237">
 <area id="verbosity" onclick="highlightDef('id_verbosity');"
  shape="RECT" href="#a_verbosity" alt="Compiler verbosity"
- coords="26,220, 272,240">
+ coords="26,189, 279,211">
 <area id="nocd" onclick="highlightDef('id_nocd');" shape="RECT"
- href="#a_nocd" alt="Don't change directory" coords="208,196, 336,210">
+ href="#a_nocd" alt="Don't change directory" coords="208,169, 336,183">
 <area id="noconfig" onclick="highlightDef('id_noconfig');" shape="RECT"
- href="#a_noconfig" alt="Exclude NSIS config" coords="26,194, 201,209">
+ href="#a_noconfig" alt="Exclude NSIS config" coords="26,169, 201,183">
 <area id="license" onclick="highlightDef('id_license');" shape="RECT"
- href="#a_license" alt="Print license" coords="208,174, 310,189">
+ href="#a_license" alt="Print license" coords="208,148, 310,162">
 <area id="hdrinfo" onclick="highlightDef('id_hdrinfo');" shape="RECT"
- href="#a_hdrinfo" alt="Print header info" coords="26,174, 151,188">
+ href="#a_hdrinfo" alt="Print header info" coords="26,148, 151,162">
 <area id="help" onclick="highlightDef('id_help');" shape="RECT"
- href="#a_help" alt="Use Eclipse Platform Help" coords="19,131, 322,145">
+ href="#a_help" alt="Use Eclipse Platform Help" coords="19,104, 322,118">
 <area id="autoconsole" onclick="highlightDef('id_autoconsole');"
  shape="RECT" href="#a_autoconsole" alt="Auto-open Console"
- coords="18,109, 314,123">
+ coords="18,83, 314,97">
 <area id="nsishome" onclick="highlightDef('id_nsishome');" shape="RECT"
- href="#a_nsishome" alt="NSIS Home" coords="18,80, 406,104">
+ href="#a_nsishome" alt="NSIS Home" coords="18,55, 406,77">
 </map>
 <map name="preferences2">
 <area id="add2" onclick="highlightDef('id_add2');" shape="RECT"
- href="#a_add2" alt="Add" coords="376,94, 406,122">
+ href="#a_add2" alt="Add" coords="385,68, 410,92">
 <area id="edit2" onclick="highlightDef('id_edit2');" shape="RECT"
- href="#a_edit2" alt="Edit" coords="376,124, 406,152">
+ href="#a_edit2" alt="Edit" coords="385,99, 410,123">
 <area id="delete2" onclick="highlightDef('id_delete2');" shape="RECT"
- href="#a_delete2" alt="Delete" coords="376,156, 406,184">
+ href="#a_delete2" alt="Delete" coords="385,130, 410,154">
 <area id="down2" onclick="highlightDef('id_down2');" shape="RECT"
- href="#a_down2" alt="Down" coords="376,217, 406,245">
+ href="#a_down2" alt="Down" coords="385,192, 410,216">
 <area id="up2" onclick="highlightDef('id_up2');" shape="RECT"
- href="#a_up2" alt="Up" coords="376,185, 405,213">
+ href="#a_up2" alt="Up" coords="385,161, 410,185">
 <area id="symbols" onclick="highlightDef('id_symbols');" shape="RECT"
- href="#a_symbols" alt="Defined Symbols" coords="16,76, 374,466">
+ href="#a_symbols" alt="Defined Symbols" coords="16,68, 374,467">
 </map>
 </div>
 </body>

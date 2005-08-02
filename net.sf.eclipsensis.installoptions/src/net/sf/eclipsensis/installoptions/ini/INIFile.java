@@ -20,6 +20,10 @@ import org.eclipse.jface.text.*;
 
 public class INIFile implements IDocumentListener, IINIContainer
 {
+    public static final int INIFILE_CONNECTED = 0;
+    public static final int INIFILE_MODIFIED = 1;
+    public static final int INIFILE_DISCONNECTED = 2;
+
     public static final String INIFILE_CATEGORY = "__installoptions_inifile"; //$NON-NLS-1$
     
     private List mChildren = new ArrayList();
@@ -47,10 +51,10 @@ public class INIFile implements IDocumentListener, IINIContainer
         mListeners.remove(listener);
     }
     
-    private void notifyListeners()
+    private void notifyListeners(int event)
     {
         for (Iterator iter = mListeners.iterator(); iter.hasNext();) {
-            ((IINIFileListener)iter.next()).iniFileChanged(this);
+            ((IINIFileListener)iter.next()).iniFileChanged(this, event);
         }
     }
 
@@ -189,7 +193,7 @@ public class INIFile implements IDocumentListener, IINIContainer
             }
         }
         validate();
-        notifyListeners();
+        notifyListeners(INIFILE_CONNECTED);
     }
     
     private List parseLines(IDocument doc, int startLine, int endLine)
@@ -255,7 +259,7 @@ public class INIFile implements IDocumentListener, IINIContainer
             mErrors.clear();
             mWarnings.clear();
             mDirty = false;
-            notifyListeners();
+            notifyListeners(INIFILE_DISCONNECTED);
         }
     }
 
@@ -348,7 +352,7 @@ public class INIFile implements IDocumentListener, IINIContainer
                     container.addChild(line);
                 }
             }
-            notifyListeners();
+            notifyListeners(INIFILE_MODIFIED);
         }
     }
     
@@ -394,7 +398,12 @@ public class INIFile implements IDocumentListener, IINIContainer
     
     public void validate()
     {
-        if(mDirty) {
+        validate(false);
+    }
+
+    public void validate(boolean force)
+    {
+        if(mDirty || force) {
             mErrors.clear();
             mWarnings.clear();
             for (Iterator iter = mChildren.iterator(); iter.hasNext();) {
@@ -480,6 +489,9 @@ public class INIFile implements IDocumentListener, IINIContainer
                 }
             }
             mDirty = false;
+            if(force) {
+                notifyListeners(INIFILE_MODIFIED);
+            }
         }
     }
     

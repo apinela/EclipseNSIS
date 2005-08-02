@@ -21,7 +21,7 @@ public class MaxLenKeyValueValidator extends PositiveNumberKeyValueValidator
     {
         boolean b = super.isValid(keyValue);
         if(b) {
-            int maxValue = InstallOptionsModel.MAX_LENGTH.intValue();
+            int maxValue = InstallOptionsModel.INSTANCE.getMaxLength();
             String value = keyValue.getValue();
             if(!Common.isEmpty(value)) {
                 maxValue = Integer.parseInt(value);
@@ -42,7 +42,7 @@ public class MaxLenKeyValueValidator extends PositiveNumberKeyValueValidator
             }
             if(minValue > maxValue) {
                 keyValue.addProblem(INIProblem.TYPE_ERROR,InstallOptionsPlugin.getFormattedString("minmax.value.error",new Object[]{ //$NON-NLS-1$
-                        keyValue.getKey(),new Integer(minValue),InstallOptionsModel.MAX_LENGTH}));
+                        keyValue.getKey(),new Integer(minValue),new Integer(maxValue)}));
                 b = false;
             }
         }

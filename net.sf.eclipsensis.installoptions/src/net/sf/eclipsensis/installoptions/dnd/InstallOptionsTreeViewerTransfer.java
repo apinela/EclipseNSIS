@@ -18,18 +18,13 @@ import org.eclipse.swt.dnd.TransferData;
 
 public class InstallOptionsTreeViewerTransfer extends SimpleObjectTransfer
 {
-    private static final InstallOptionsTreeViewerTransfer INSTANCE = new InstallOptionsTreeViewerTransfer();
+    public static final InstallOptionsTreeViewerTransfer INSTANCE = new InstallOptionsTreeViewerTransfer();
     private static final String[] TYPE_NAMES = new String[]{"Local Transfer"//$NON-NLS-1$
                                                             + System.currentTimeMillis()
                                                             + ":" + INSTANCE.hashCode()};//$NON-NLS-1$
     private static final int[] TYPE_IDS = new int[] {registerType(TYPE_NAMES[0])};
 
     private static EditPartViewer viewer;
-
-    public static InstallOptionsTreeViewerTransfer getInstance() 
-    {
-        return INSTANCE;
-    }
 
     private InstallOptionsTreeViewerTransfer() 
     {

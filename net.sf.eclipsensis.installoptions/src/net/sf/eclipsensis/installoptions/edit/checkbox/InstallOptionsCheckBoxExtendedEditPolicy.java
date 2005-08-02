@@ -11,6 +11,7 @@ package net.sf.eclipsensis.installoptions.edit.checkbox;
 
 import net.sf.eclipsensis.installoptions.edit.InstallOptionsExtendedEditPolicy;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsCheckBox;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
 import net.sf.eclipsensis.installoptions.model.commands.ToggleStateCommand;
 import net.sf.eclipsensis.installoptions.requests.ExtendedEditRequest;
 
@@ -32,5 +33,10 @@ public class InstallOptionsCheckBoxExtendedEditPolicy extends InstallOptionsExte
         ToggleStateCommand command = new ToggleStateCommand((InstallOptionsCheckBox)request.getEditPart().getModel(),
                                                                                     (String)request.getNewValue());
         return command;
+    }
+
+    protected String getExtendedEditProperty()
+    {
+        return InstallOptionsModel.PROPERTY_STATE;
     }
 }

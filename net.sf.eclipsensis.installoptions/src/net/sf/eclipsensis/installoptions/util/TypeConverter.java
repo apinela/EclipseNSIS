@@ -53,7 +53,7 @@ public abstract class TypeConverter
     public static final TypeConverter POINT_CONVERTER = new TypeConverter() {
         public String asString(Object o)
         {
-            return TypeConverter.asString(((Point)o).x,((Point)o).y);
+            return Common.flatten(new String[]{Integer.toString(((Point)o).x),Integer.toString(((Point)o).y)},',');
         }
         
         public Object asType(String s)
@@ -120,7 +120,6 @@ public abstract class TypeConverter
             return new RGB(rgb.red,rgb.green,rgb.blue);
         }
     };
-    
 
     public static final TypeConverter INTEGER_CONVERTER = new TypeConverter() {
         public String asString(Object o)
@@ -155,7 +154,6 @@ public abstract class TypeConverter
             return (String[])((String[])o).clone();
         }
     };
-    
     
     public static final TypeConverter STRING_LIST_CONVERTER = new TypeConverter() {
         public String asString(Object o)
@@ -281,7 +279,7 @@ public abstract class TypeConverter
     public static final TypeConverter DIMENSION_CONVERTER = new TypeConverter() {
         public String asString(Object o)
         {
-            return TypeConverter.asString(((Dimension)o).width,((Dimension)o).height);
+            return Common.flatten(new String[]{Integer.toString(((Dimension)o).width),Integer.toString(((Dimension)o).height)},',');
         }
         
         public Object asType(String s)
@@ -301,9 +299,4 @@ public abstract class TypeConverter
             return new Dimension((Dimension)o);
         }
     };
-    
-    private static final String asString(int x, int y)
-    {
-        return new StringBuffer("").append(x).append(",").append(y).toString(); //$NON-NLS-1$ //$NON-NLS-2$
-    }
 }

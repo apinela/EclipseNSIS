@@ -13,27 +13,96 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.*;
 
+import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.installoptions.ini.*;
 import net.sf.eclipsensis.installoptions.model.commands.*;
 import net.sf.eclipsensis.installoptions.util.TypeConverter;
 import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.gef.commands.Command;
+import org.eclipse.jface.viewers.CellEditor;
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
 
 public abstract class InstallOptionsElement implements IPropertySource, Cloneable
 {
-    private INISection mSection;
-    private String mType=""; //$NON-NLS-1$
+    private static final IPropertyDescriptor cNullPropertyDescriptor = new IPropertyDescriptor(){
+        public CellEditor createPropertyEditor(Composite parent)
+        {
+            return null;
+        }
+
+        public String getCategory()
+        {
+            return null;
+        }
+
+        public String getDescription()
+        {
+            return null;
+        }
+
+        public String getDisplayName()
+        {
+            return null;
+        }
+
+        public String[] getFilterFlags()
+        {
+            return null;
+        }
+
+        public Object getHelpContextIds()
+        {
+            return null;
+        }
+
+        public Object getId()
+        {
+            return null;
+        }
+
+        public ILabelProvider getLabelProvider()
+        {
+            return null;
+        }
+
+        public boolean isCompatibleWith(IPropertyDescriptor anotherProperty)
+        {
+            return false;
+        }
+    };
+
+    protected static final String GUIDE_PREFIX = ";InstallOptions Editor Guides (DO NOT EDIT):"; //$NON-NLS-1$
+
+    private INISection mSection = null;
     protected PropertyChangeSupport mListeners = new PropertyChangeSupport(this);
     protected ArrayList mModelCommandListeners = new ArrayList();
-    private List mPropertyNames;
     private boolean mDirty = false;
+    protected Map mDescriptors = new HashMap();
 
-    public InstallOptionsElement(String type)
+    protected INIComment mGuideComment;
+
+    public InstallOptionsElement(INISection section)
     {
-        setType(type);
+        init();
+        if(section != null) {
+            loadSection(section);
+        }
+        else {
+            setDefaults();
+        }
+    }
+
+    protected void init()
+    {
+    }
+
+    protected void setDefaults()
+    {
     }
 
     protected boolean isDirty()
@@ -44,16 +113,6 @@ public abstract class InstallOptionsElement implements IPropertySource, Cloneabl
     protected void setDirty(boolean dirty)
     {
         mDirty = dirty;
-    }
-    
-    private void setType(String type)
-    {
-        mType = type;
-    }
-
-    public final String getType()
-    {
-        return mType;
     }
 
     public void addModelCommandListener(IModelCommandListener l)
@@ -75,6 +134,29 @@ public abstract class InstallOptionsElement implements IPropertySource, Cloneabl
             IModelCommandListener element = (IModelCommandListener)iter.next();
             element.executeModelCommand(e);
         }
+    }
+
+    public final IPropertyDescriptor[] getPropertyDescriptors()
+    {
+        Collection names = getPropertyNames();
+        ArrayList list = new ArrayList();
+        for (Iterator iter = names.iterator(); iter.hasNext();) {
+            String name = (String)iter.next();
+            IPropertyDescriptor descriptor = (IPropertyDescriptor)mDescriptors.get(name); 
+            if(descriptor == null) {
+                descriptor = createPropertyDescriptor(name);
+                if(descriptor != null) {
+                    mDescriptors.put(name,descriptor);
+                }
+                else {
+                    mDescriptors.put(name, (descriptor = cNullPropertyDescriptor));
+                }
+            }
+            if(descriptor != cNullPropertyDescriptor) {
+                list.add(descriptor);
+            }
+        }
+        return (IPropertyDescriptor[])list.toArray(new IPropertyDescriptor[list.size()]);
     }
 
     public void addPropertyChangeListener(PropertyChangeListener l)
@@ -106,7 +188,7 @@ public abstract class InstallOptionsElement implements IPropertySource, Cloneabl
     {
     }
 
-    public Image getIcon()
+    public final Image getIcon()
     {
         return getIconImage();
     }
@@ -128,7 +210,6 @@ public abstract class InstallOptionsElement implements IPropertySource, Cloneabl
         InstallOptionsElement element = (InstallOptionsElement)super.clone();
         element.mListeners = new PropertyChangeSupport(element);
         element.mModelCommandListeners = new ArrayList();
-        element.setType(getType());
         return element;
     }
 
@@ -141,22 +222,20 @@ public abstract class InstallOptionsElement implements IPropertySource, Cloneabl
         return command;
     }
 
-    public List getPropertyNames()
+    protected INIComment getGuideComment()
     {
-        if(mPropertyNames == null) {
-            synchronized(this) {
-                if(mPropertyNames == null) {
-                    mPropertyNames = doGetPropertyNames();
-                }
-            }
-        }
-        return mPropertyNames;
+        return mGuideComment;
     }
-    
-    public void loadSection(INISection section)
+
+    protected void setGuideComment(INIComment guideComment)
+    {
+        mGuideComment = guideComment;
+    }
+
+    private void loadSection(INISection section)
     {
         mSection = section;
-        List properties = getPropertyNames();
+        Collection properties = doGetPropertyNames();
         for (Iterator iter=properties.iterator(); iter.hasNext(); ) {
             String property = (String)iter.next();
             INIKeyValue[] keyValues = section.findKeyValues(property);
@@ -166,30 +245,40 @@ public abstract class InstallOptionsElement implements IPropertySource, Cloneabl
                 setPropertyValue(property,(converter != null?converter.asType(value):value));
             }
         }
+        mGuideComment = null;
+        for(Iterator iter=mSection.getChildren().iterator(); iter.hasNext(); ) {
+            INILine line = (INILine)iter.next();
+            if(line instanceof INIComment && line.getText().trim().startsWith(GUIDE_PREFIX)) {
+                mGuideComment = (INIComment)line;
+                break;
+            }
+        }
         setDirty(false);
     }
     
-    public INISection saveSection()
+    INISection getSection()
+    {
+        return mSection;
+    }
+    
+    protected final INISection updateSection()
     {
         if(mSection == null) {
             mSection = new INISection();
         }
         int n = mSection.getSize();
-        if(n > 0) {
+        while(n > 0) {
             INILine lastChild = mSection.getChild(n-1);
-            if(!lastChild.getClass().equals(INILine.class) || !Common.isEmpty(lastChild.getText())) {
-                mSection.addChild(new INILine());
-            }
-            else {
+            if(lastChild.getClass().equals(INILine.class) && Common.isEmpty(lastChild.getText())) {
                 n--;
             }
-        }
-        else {
-            mSection.addChild(new INILine());
+            else {
+                break;
+            }
         }
         if(isDirty()) {
             mSection.setName(getSectionName());
-            List properties = getPropertyNames();
+            Collection properties = doGetPropertyNames();
             for (Iterator iter=properties.iterator(); iter.hasNext(); ) {
                 String property = (String)iter.next();
                 TypeConverter converter = getTypeConverter(property);
@@ -210,6 +299,12 @@ public abstract class InstallOptionsElement implements IPropertySource, Cloneabl
                 }
             }
             
+            for(Iterator iter=mSection.getChildren().iterator(); iter.hasNext(); ) {
+                INILine line = (INILine)iter.next();
+                if(iter.hasNext() && line.getDelimiter() == null) {
+                    line.setDelimiter(INSISConstants.LINE_SEPARATOR);
+                }
+            }
             setDirty(false);
         }
         return mSection;
@@ -220,15 +315,18 @@ public abstract class InstallOptionsElement implements IPropertySource, Cloneabl
         return null;
     }
     
-    protected List doGetPropertyNames()
-    {
-        return new ArrayList();
-    }
-    
     public Image getIconImage()
     {
         return null;
     }
     
+    protected Collection getPropertyNames()
+    {
+        return doGetPropertyNames();
+    }
+    
+    protected abstract Collection doGetPropertyNames();
+    protected abstract IPropertyDescriptor createPropertyDescriptor(String name);
+    public abstract String getType();
     protected abstract String getSectionName();
 }

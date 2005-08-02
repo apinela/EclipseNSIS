@@ -10,26 +10,24 @@
 package net.sf.eclipsensis.installoptions.model;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
+import net.sf.eclipsensis.installoptions.ini.INISection;
 import net.sf.eclipsensis.installoptions.properties.descriptors.MultiLineTextPropertyDescriptor;
 import net.sf.eclipsensis.installoptions.properties.labelproviders.MultiLineLabelProvider;
 import net.sf.eclipsensis.installoptions.properties.validators.NSISStringLengthValidator;
 
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 
 public class InstallOptionsLabel extends InstallOptionsUneditableElement
 {
-    public static Image LABEL_ICON = InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("label.type.small.icon")); //$NON-NLS-1$
-
-    public InstallOptionsLabel()
+    protected InstallOptionsLabel(INISection section)
     {
-        this(InstallOptionsModel.TYPE_LABEL);
+        super(section);
     }
-
-    protected InstallOptionsLabel(String type)
+    
+    public String getType()
     {
-        super(type);
+        return InstallOptionsModel.TYPE_LABEL;
     }
 
     /**
@@ -59,10 +57,5 @@ public class InstallOptionsLabel extends InstallOptionsUneditableElement
         else {
             return super.createPropertyDescriptor(name);
         }
-    }
-
-    public Image getIconImage()
-    {
-        return LABEL_ICON;
     }
 }

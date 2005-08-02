@@ -11,40 +11,29 @@ package net.sf.eclipsensis.installoptions.model;
 
 import java.util.List;
 
-import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
+import net.sf.eclipsensis.installoptions.ini.INISection;
 import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
 public class InstallOptionsDropList extends InstallOptionsCombobox
 {
-    public static Image DROPLIST_ICON = InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("droplist.type.small.icon")); //$NON-NLS-1$
-    
-    public InstallOptionsDropList()
+    protected InstallOptionsDropList(INISection section)
     {
-        this(InstallOptionsModel.TYPE_DROPLIST);
+        super(section);
     }
     
-    /**
-     * @param type
-     */
-    public InstallOptionsDropList(String type)
+    public String getType()
     {
-        super(type);
+        return InstallOptionsModel.TYPE_DROPLIST;
     }
 
-    public Image getIconImage()
-    {
-        return DROPLIST_ICON;
-    }
-    
     protected IPropertyDescriptor createPropertyDescriptor(String name)
     {
         if(name.equals(InstallOptionsModel.PROPERTY_STATE)) {
             ComboStatePropertyDescriptor descriptor = (ComboStatePropertyDescriptor)super.createPropertyDescriptor(name);
-            descriptor.setStyle(SWT.DROP_DOWN|SWT.READ_ONLY);
+            descriptor.setStyle(SWT.READ_ONLY);
             return descriptor;
         }
         return super.createPropertyDescriptor(name);

@@ -49,7 +49,7 @@ public class InstallOptionsComboboxEditManager extends InstallOptionsEditableEle
             combo.setSelection(new Point(0,text.length()));
         }
     }
-
+    
     protected int getCellEditorStyle() 
     {
         return SWT.DROP_DOWN;

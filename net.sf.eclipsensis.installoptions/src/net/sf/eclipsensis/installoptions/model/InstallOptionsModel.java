@@ -93,38 +93,15 @@ public class InstallOptionsModel implements IPropertyChangeListener
     public static final String OPTION_NO="0"; //$NON-NLS-1$
     public static final String OPTION_YES="1"; //$NON-NLS-1$
 
-    public static final Integer MAX_LENGTH;
-
-    private static InstallOptionsModel cInstance = null;
+    public static InstallOptionsModel INSTANCE = new InstallOptionsModel();
     
-    private String[] mControlTypes;
-    private String[] mDialogSettings;
-    private Map mControlSettings = new CaseInsensitiveMap();
-    private Map mControlFlags = new CaseInsensitiveMap();
-    private String[] mControlRequiredSettings;
+    private List mListeners = new ArrayList();
+    private Set mDialogSettings = new CaseInsensitiveSet();
+    private Map mCachedControlTypes = new CaseInsensitiveMap();
+    private Map mControlTypes = new CaseInsensitiveMap();
+    private Set mControlRequiredSettings = new CaseInsensitiveSet();
+    private int mMaxLength;
     
-    static {
-        int maxLen;
-        try {
-            maxLen = Integer.parseInt(NSISPreferences.getPreferences().getNSISOption("NSIS_MAX_STRLEN")); //$NON-NLS-1$
-        }
-        catch(Exception ex){
-            maxLen = INSISConstants.DEFAULT_NSIS_TEXT_LIMIT;
-        }
-        MAX_LENGTH = new Integer(maxLen);
-    }
-    
-    public static InstallOptionsModel getInstance()
-    {
-        if(cInstance == null) {
-            synchronized(InstallOptionsModel.class) {
-                if(cInstance == null) {
-                    cInstance = new InstallOptionsModel();
-                }                
-            }
-        }
-        return cInstance;
-    }
     /**
      * 
      */
@@ -132,9 +109,33 @@ public class InstallOptionsModel implements IPropertyChangeListener
     {
         super();
         loadModel();
-        NSISPreferences.getPreferences().getPreferenceStore().addPropertyChangeListener(this);
+        NSISPreferences.INSTANCE.getPreferenceStore().addPropertyChangeListener(this);
     }
     
+    public int getMaxLength()
+    {
+        return mMaxLength;
+    }
+
+    public void addListener(IModelListener listener)
+    {
+        if(!mListeners.contains(listener)) {
+            mListeners.add(listener);
+        }
+    }
+    
+    public void removeListener(IModelListener listener)
+    {
+        mListeners.remove(listener);
+    }
+    
+    private void notifyListeners()
+    {
+        for (Iterator iter = mListeners.iterator(); iter.hasNext();) {
+            ((IModelListener)iter.next()).modelChanged();
+        }
+    }
+
     public void propertyChange(PropertyChangeEvent event)
     {
         if(INSISPreferenceConstants.NSIS_HOME.equals(event.getProperty())) {
@@ -159,7 +160,7 @@ public class InstallOptionsModel implements IPropertyChangeListener
         if(bundle != null) {
             Version nsisVersion;
             if(EclipseNSISPlugin.getDefault().isConfigured()) {
-                nsisVersion = NSISPreferences.getPreferences().getNSISVersion();
+                nsisVersion = NSISPreferences.INSTANCE.getNSISVersion();
             }
             else {
                 nsisVersion = NSISValidator.MINIMUM_NSIS_VERSION;
@@ -168,15 +169,17 @@ public class InstallOptionsModel implements IPropertyChangeListener
             for(Enumeration enum=bundle.getKeys(); enum.hasMoreElements();) {
                 String key = (String)enum.nextElement();
                 int n = key.indexOf('#');
-                String name = key.substring(0,n);
-                Version version = new Version(key.substring(n+1));
-                if(nsisVersion.compareTo(version) >= 0) {
-                    ArrayList list = (ArrayList)versionMap.get(version);
-                    if(list == null) {
-                        list = new ArrayList();
-                        versionMap.put(version, list);
+                if(n > 1) {
+                    String name = key.substring(0,n);
+                    Version version = new Version(key.substring(n+1));
+                    if(nsisVersion.compareTo(version) >= 0) {
+                        ArrayList list = (ArrayList)versionMap.get(version);
+                        if(list == null) {
+                            list = new ArrayList();
+                            versionMap.put(version, list);
+                        }
+                        list.add(new String[]{name,key});
                     }
-                    list.add(new String[]{name,key});
                 }
             }
             ArrayList versionList = new ArrayList(versionMap.keySet());
@@ -230,22 +233,45 @@ public class InstallOptionsModel implements IPropertyChangeListener
                 }
             }
         }
-        mControlTypes = (String[])controlTypes.toArray(Common.EMPTY_STRING_ARRAY);
-        mDialogSettings = (String[])dialogSettings.toArray(Common.EMPTY_STRING_ARRAY);
-        mControlRequiredSettings = (String[])controlRequiredSettings.toArray(Common.EMPTY_STRING_ARRAY);
-        mControlSettings.clear();
-        for(Iterator iter=controlSettings.keySet().iterator(); iter.hasNext(); ) {
-            Object key = iter.next();
-            List list = (List)controlSettings.get(key);
+
+        mDialogSettings.clear();
+        mDialogSettings.addAll(dialogSettings);
+        
+        mControlRequiredSettings.clear();
+        mControlRequiredSettings.addAll(controlRequiredSettings);
+
+        mCachedControlTypes.putAll(mControlTypes);
+        mControlTypes.clear();
+        for (Iterator iter = controlTypes.iterator(); iter.hasNext();) {
+            String type = (String)iter.next();
+            InstallOptionsModelTypeDef typeDef = (InstallOptionsModelTypeDef)mCachedControlTypes.remove(type);
+            if(typeDef == null) {
+                String name = bundle.getString(type+".Name"); //$NON-NLS-1$
+                String description = bundle.getString(type+".Description"); //$NON-NLS-1$
+                String largeIcon = bundle.getString(type+".LargeIcon"); //$NON-NLS-1$
+                String smallIcon = bundle.getString(type+".SmallIcon"); //$NON-NLS-1$
+                String model = bundle.getString(type+".Model"); //$NON-NLS-1$
+                String part = bundle.getString(type+".Part"); //$NON-NLS-1$
+                typeDef = new InstallOptionsModelTypeDef(type, name, description, smallIcon, largeIcon, model, part);
+            }
+            mControlTypes.put(type,typeDef);
+            List list = (List)controlSettings.get(type);
+            if(list == null) {
+                list = new ArrayList();
+            }
             list.addAll(0,controlRequiredSettings);
-            mControlSettings.put(key,list.toArray(Common.EMPTY_STRING_ARRAY));
+            typeDef.setSettings(list);
+            typeDef.setFlags((List)controlFlags.get(type));
         }
-        mControlFlags.clear();
-        for(Iterator iter=controlFlags.keySet().iterator(); iter.hasNext(); ) {
-            Object key = iter.next();
-            List list = (List)controlFlags.get(key);
-            mControlFlags.put(key,list.toArray(Common.EMPTY_STRING_ARRAY));
+        
+        try {
+            mMaxLength = Integer.parseInt(NSISPreferences.INSTANCE.getNSISOption("NSIS_MAX_STRLEN")); //$NON-NLS-1$
         }
+        catch(Exception ex){
+            mMaxLength = INSISConstants.DEFAULT_NSIS_TEXT_LIMIT;
+        }
+
+        notifyListeners();
     }
     
     private void processValues(List list, String[] values)
@@ -275,30 +301,24 @@ public class InstallOptionsModel implements IPropertyChangeListener
             }
         }
     }
-    public String[] getControlFlags(String type)
+    
+    public InstallOptionsModelTypeDef getControlTypeDef(String type)
     {
-        String[] flags = (String[])mControlFlags.get(type);
-        return(flags == null?Common.EMPTY_STRING_ARRAY:flags);
+        return (InstallOptionsModelTypeDef)mControlTypes.get(type);
     }
     
-    public String[] getControlSettings(String type)
+    public Collection getControlRequiredSettings()
     {
-        String[] flags = (String[])mControlSettings.get(type);
-        return(flags == null?Common.EMPTY_STRING_ARRAY:flags);
+        return Collections.unmodifiableSet(mControlRequiredSettings);
     }
     
-    public String[] getControlRequiredSettings()
+    public Collection getControlTypeDefs()
     {
-        return mControlRequiredSettings;
+        return Collections.unmodifiableCollection(mControlTypes.values());
     }
     
-    public String[] getControlTypes()
+    public Collection getDialogSettings()
     {
-        return mControlTypes;
-    }
-    
-    public String[] getDialogSettings()
-    {
-        return mDialogSettings;
+        return Collections.unmodifiableSet(mDialogSettings);
     }
 }

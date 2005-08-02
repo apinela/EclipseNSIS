@@ -17,19 +17,7 @@ import org.eclipse.gef.EditPartFactory;
 
 public class TreePartFactory implements EditPartFactory
 {
-    private static TreePartFactory cInstance = null;
-    
-    public static final TreePartFactory getInstance()
-    {
-        if(cInstance == null) {
-            synchronized(TreePartFactory.class) {
-                if(cInstance == null) {
-                    cInstance = new TreePartFactory();
-                }
-            }
-        }
-        return cInstance;
-    }
+    public static final TreePartFactory INSTANCE = new TreePartFactory();
     
     private TreePartFactory()
     {

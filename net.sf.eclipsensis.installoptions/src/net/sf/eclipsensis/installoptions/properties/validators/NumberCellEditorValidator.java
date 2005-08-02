@@ -16,22 +16,10 @@ import org.eclipse.jface.viewers.ICellEditorValidator;
 
 public class NumberCellEditorValidator implements ICellEditorValidator
 {
-    private static NumberCellEditorValidator cInstance = null;
+    public static NumberCellEditorValidator INSTANCE = new NumberCellEditorValidator(0,Integer.MAX_VALUE,false);
     private int mMinValue;
     private int mMaxValue;
     private boolean mBlankAllowed;
-    
-    public static NumberCellEditorValidator getInstance()
-    {
-        if(cInstance == null) {
-            synchronized(NumberCellEditorValidator.class) {
-                if(cInstance == null) {
-                    cInstance = new NumberCellEditorValidator(0,Integer.MAX_VALUE,false);
-                }
-            }
-        }
-        return cInstance;
-    }
     
     public NumberCellEditorValidator(int minValue, int maxValue, boolean blankAllowed)
     {

@@ -9,19 +9,18 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.model;
 
+import net.sf.eclipsensis.installoptions.ini.INISection;
+
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 
-public abstract class InstallOptionsPicture extends InstallOptionsLabel
+public abstract class InstallOptionsPicture extends InstallOptionsUneditableElement
 {
     public static final String PROPERTY_IMAGE = "Image"; //$NON-NLS-1$
     
-    /**
-     * @param type
-     */
-    public InstallOptionsPicture(String type)
+    protected InstallOptionsPicture(INISection section)
     {
-        super(type);
+        super(section);
     }
 
     public boolean isMultiLine()

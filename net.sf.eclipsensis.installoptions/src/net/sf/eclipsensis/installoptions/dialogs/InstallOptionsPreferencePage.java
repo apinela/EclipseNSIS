@@ -14,6 +14,7 @@ import java.util.List;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.dialogs.ColorEditor;
+import net.sf.eclipsensis.dialogs.TableResizer;
 import net.sf.eclipsensis.editor.text.NSISSyntaxStyle;
 import net.sf.eclipsensis.editor.text.NSISTextUtility;
 import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
@@ -29,8 +30,7 @@ import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.text.Document;
-import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
@@ -51,7 +51,6 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
     private Map mDialogSizesMap = new LinkedHashMap();
     private DialogSize mDefaultDialogSize = null;
     private CheckboxTableViewer mDialogSizeViewer;
-    private Button mAddDialogSize;
     private Button mEditDialogSize;
     private Button mRemoveDialogSize;
     private Button mShowRulers;
@@ -64,6 +63,8 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
     private int mSyntaxStylesHashCode;
     private ListViewer mSyntaxStylesViewer;
     private InstallOptionsSourcePreviewer mPreviewer;
+    private Object mData;
+    private TabFolder mFolder;
 
     /**
      * 
@@ -111,6 +112,12 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
         
         mSyntaxStylesMap = NSISTextUtility.parseSyntaxStylesMap(getPreferenceStore().getString(PREFERENCE_SYNTAX_STYLES));
         mSyntaxStylesHashCode = mSyntaxStylesMap.hashCode();
+    }
+
+    public void applyData(Object data)
+    {
+       mData = data;
+       activateTab();
     }
 
     private void loadPreference(Map map, String name, TypeConverter converter, Object defaultValue)
@@ -198,15 +205,73 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
     {
         loadPreferences();
         loadDialogSizes();
-        TabFolder folder = new TabFolder(parent, SWT.NONE);
-        Dialog.applyDialogFont(folder);
-        TabItem item = new TabItem(folder, SWT.NONE);
+        parent = new Composite(parent,SWT.NONE);
+        GridLayout layout = new GridLayout(1,false);
+        layout.marginHeight = 0;
+        layout.marginWidth = 0;
+        parent.setLayout(layout);
+        
+        mFolder = new TabFolder(parent, SWT.NONE);
+        Dialog.applyDialogFont(mFolder);
+        TabItem item = new TabItem(mFolder, SWT.NONE);
         item.setText(InstallOptionsPlugin.getResourceString("design.editor.tab.name")); //$NON-NLS-1$
-        item.setControl(createDesignEditorTab(folder));
-        item = new TabItem(folder, SWT.NONE);
+        item.setControl(createDesignEditorTab(mFolder));
+        item.setData(InstallOptionsDesignEditor.class);
+        item = new TabItem(mFolder, SWT.NONE);
         item.setText(InstallOptionsPlugin.getResourceString("source.editor.tab.name")); //$NON-NLS-1$
-        item.setControl(createSourceEditorTab(folder));
-        return folder;
+        item.setControl(createSourceEditorTab(mFolder));
+        item.setData(InstallOptionsSourceEditor.class);
+        activateTab();
+        
+        final Button b = new Button(parent,SWT.CHECK);
+        b.setText(InstallOptionsPlugin.getResourceString("check.default.editor.label"));
+        b.setSelection(getPreferenceStore().getBoolean(PREFERENCE_CHECK_EDITOR_ASSOCIATION));
+        b.addSelectionListener(new SelectionAdapter(){
+            public void widgetSelected(SelectionEvent e)
+            {
+                getPreferenceStore().setValue(PREFERENCE_CHECK_EDITOR_ASSOCIATION, b.getSelection());
+            }
+        });
+        b.setLayoutData(new GridData(SWT.BEGINNING,SWT.CENTER,false,false));
+        
+        return parent;
+    }
+
+    private void activateTab()
+    {
+        if(mFolder != null && mData != null) {
+            TabItem[] items = mFolder.getItems();
+            if(!Common.isEmptyArray(items)) {
+                for (int i = 0; i < items.length; i++) {
+                    if(items[i].getData() == mData) {
+                        mFolder.setSelection(i);
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    private Button makeStyleButton(Composite parent, String labelResource, final int styleFlag)
+    {
+        final Button styleButton = new Button(parent, SWT.CHECK);
+        styleButton.setText(EclipseNSISPlugin.getResourceString(labelResource)); //$NON-NLS-1$
+        GridData gd= new GridData(SWT.BEGINNING, SWT.CENTER, true, false);
+        gd.horizontalSpan= 2;
+        styleButton.setLayoutData(gd);
+        styleButton.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                IStructuredSelection sel = (IStructuredSelection)mSyntaxStylesViewer.getSelection();
+                if(!sel.isEmpty()) {
+                    boolean state = styleButton.getSelection();
+                    String key= (String)((IStructuredSelection)sel).getFirstElement();
+                    NSISSyntaxStyle style = (NSISSyntaxStyle)mSyntaxStylesMap.get(key);
+                    style.setStyle(styleFlag, state);
+                    mPreviewer.setSyntaxStyles(mSyntaxStylesMap);
+                }
+            }
+        });
+        return styleButton;
     }
 
     public void createControl(Composite parent)
@@ -218,11 +283,8 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
     private Control createSourceEditorTab(Composite parent)
     {
         Composite syntaxComposite= new Composite(parent, SWT.NONE);
-        GridData gd = new GridData(GridData.FILL_BOTH);
-        syntaxComposite.setLayoutData(gd);
+        syntaxComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         GridLayout layout= new GridLayout(1, false); 
-        layout.marginHeight = 2;
-        layout.marginWidth = 2;
         syntaxComposite.setLayout(layout);
         
         Link link= new Link(syntaxComposite, SWT.NONE);
@@ -232,32 +294,24 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
                 PreferencesUtil.createPreferenceDialogOn(getShell(), "org.eclipse.ui.preferencePages.GeneralTextEditor", null, null); //$NON-NLS-1$
             }
         });
-        gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-        gd.horizontalSpan= 2;
-        link.setLayoutData(gd);
+        link.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
 
         Label l= new Label(syntaxComposite, SWT.LEFT);
         l.setText(EclipseNSISPlugin.getResourceString("syntax.options")); //$NON-NLS-1$
-        gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-        gd.horizontalSpan= 2;
-        l.setLayoutData(gd);
+        l.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
 
         Composite listComposite= new Composite(syntaxComposite, SWT.NONE);
-        layout= new GridLayout();
-        layout.numColumns= 2;
+        layout= new GridLayout(2, false);
         layout.marginHeight= 0;
         layout.marginWidth= 0;
         listComposite.setLayout(layout);
-        gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.FILL_VERTICAL);
-        gd.horizontalSpan= 1;
-        listComposite.setLayoutData(gd);      
+        listComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));      
 
-        final org.eclipse.swt.widgets.List list = new org.eclipse.swt.widgets.List(listComposite, SWT.SINGLE | SWT.V_SCROLL | SWT.BORDER);
-        gd= new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.FILL_BOTH);
-        gd.heightHint= convertHeightInCharsToPixels(5);
+        mSyntaxStylesViewer = new ListViewer(listComposite, SWT.SINGLE | SWT.V_SCROLL | SWT.BORDER);
+        GridData gd= new GridData(SWT.FILL, SWT.BEGINNING, true, true);
+        gd.heightHint= convertHeightInCharsToPixels(9);
         gd.widthHint= convertWidthInCharsToPixels(30);
-        list.setLayoutData(gd);
-        mSyntaxStylesViewer = new ListViewer(list);
+        mSyntaxStylesViewer.getControl().setLayoutData(gd);
         mSyntaxStylesViewer.setContentProvider(new CollectionContentProvider());
         mSyntaxStylesViewer.setLabelProvider(new LabelProvider(){
             public String getText(Object element) {
@@ -274,24 +328,19 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
         });
                         
         Composite stylesComposite= new Composite(listComposite, SWT.NONE);
-        layout= new GridLayout();
+        layout= new GridLayout(2,false);
         layout.marginHeight= 0;
         layout.marginWidth= 0;
-        layout.numColumns= 2;
         stylesComposite.setLayout(layout);
-        stylesComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
+        stylesComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         
         l= new Label(stylesComposite, SWT.LEFT);
         l.setText(EclipseNSISPlugin.getResourceString("color")); //$NON-NLS-1$
-        gd= new GridData();
-        gd.horizontalAlignment= GridData.BEGINNING;
-        l.setLayoutData(gd);
+        l.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
 
         final ColorEditor ce= new ColorEditor(stylesComposite);
         Button foregroundColorButton= ce.getButton();
-        gd= new GridData(GridData.FILL_HORIZONTAL);
-        gd.horizontalAlignment= GridData.BEGINNING;
-        foregroundColorButton.setLayoutData(gd);
+        foregroundColorButton.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, true, false));
         foregroundColorButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 IStructuredSelection sel = (IStructuredSelection)mSyntaxStylesViewer.getSelection();
@@ -304,43 +353,10 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
             }
         });
         
-        final Button styleBold = new Button(stylesComposite, SWT.CHECK);
-        styleBold.setText(EclipseNSISPlugin.getResourceString("bold")); //$NON-NLS-1$
-        gd= new GridData(GridData.FILL_HORIZONTAL);
-        gd.horizontalAlignment= GridData.BEGINNING;
-        gd.horizontalSpan= 2;
-        styleBold.setLayoutData(gd);
-        styleBold.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
-                IStructuredSelection sel = (IStructuredSelection)mSyntaxStylesViewer.getSelection();
-                if(!sel.isEmpty()) {
-                    boolean bold = styleBold.getSelection();
-                    String key= (String)((IStructuredSelection)sel).getFirstElement();
-                    NSISSyntaxStyle style = (NSISSyntaxStyle)mSyntaxStylesMap.get(key);
-                    style.setBold(bold);
-                    mPreviewer.setSyntaxStyles(mSyntaxStylesMap);
-                }
-            }
-        });
-
-        final Button styleItalic = new Button(stylesComposite, SWT.CHECK);
-        styleItalic.setText(EclipseNSISPlugin.getResourceString("italic")); //$NON-NLS-1$
-        gd= new GridData(GridData.FILL_HORIZONTAL);
-        gd.horizontalAlignment= GridData.BEGINNING;
-        gd.horizontalSpan= 2;
-        styleItalic.setLayoutData(gd);
-        styleItalic.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
-                IStructuredSelection sel = (IStructuredSelection)mSyntaxStylesViewer.getSelection();
-                if(!sel.isEmpty()) {
-                    boolean italic = styleItalic.getSelection();
-                    String key= (String)((IStructuredSelection)sel).getFirstElement();
-                    NSISSyntaxStyle style = (NSISSyntaxStyle)mSyntaxStylesMap.get(key);
-                    style.setItalic(italic);
-                    mPreviewer.setSyntaxStyles(mSyntaxStylesMap);
-                }
-            }
-        });
+        final Button styleBold = makeStyleButton(stylesComposite, "bold", SWT.BOLD); //$NON-NLS-1$
+        final Button styleItalic = makeStyleButton(stylesComposite, "italic", SWT.ITALIC); //$NON-NLS-1$
+        final Button styleUnderline = makeStyleButton(stylesComposite, "underline", TextAttribute.UNDERLINE); //$NON-NLS-1$
+        final Button styleStrikethrough = makeStyleButton(stylesComposite, "strikethrough", TextAttribute.STRIKETHROUGH); //$NON-NLS-1$
 
         mSyntaxStylesViewer.addSelectionChangedListener(new ISelectionChangedListener() {
             private void enable(boolean flag)
@@ -348,6 +364,8 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
                 ce.getButton().setEnabled(flag);
                 styleItalic.setEnabled(flag);
                 styleBold.setEnabled(flag);
+                styleUnderline.setEnabled(flag);
+                styleStrikethrough.setEnabled(flag);
             }
             
             public void selectionChanged(SelectionChangedEvent event)
@@ -363,15 +381,15 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
                     ce.setRGB(style.getForeground());
                     styleBold.setSelection(style.isBold());
                     styleItalic.setSelection(style.isItalic());
+                    styleUnderline.setSelection(style.isUnderline());
+                    styleStrikethrough.setSelection(style.isStrikethrough());
                 }
             }
         });
         
         l= new Label(syntaxComposite, SWT.LEFT);
         l.setText(EclipseNSISPlugin.getResourceString("preview")); //$NON-NLS-1$
-        gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-        gd.horizontalSpan= 1;
-        l.setLayoutData(gd);
+        l.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         
         Set input = mSyntaxStylesMap.keySet();
         mSyntaxStylesViewer.setInput(input);
@@ -380,8 +398,7 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
         }
 
         Control previewer= createPreviewer(syntaxComposite);
-        gd= new GridData(GridData.FILL_BOTH);
-        gd.horizontalSpan= 1;
+        gd= new GridData(SWT.FILL, SWT.FILL, true, true);
         gd.widthHint= convertWidthInCharsToPixels(20);
         gd.heightHint= convertHeightInCharsToPixels(10);
         previewer.setLayoutData(gd);
@@ -408,7 +425,7 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
     private Composite createDesignEditorTab(Composite parent)
     {
         parent = new Composite(parent,SWT.NONE);
-        GridData gd = new GridData(GridData.FILL_BOTH);
+        GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
         parent.setLayoutData(gd);
         GridLayout layout = new GridLayout(2,false);
         layout.marginHeight = 2;
@@ -417,7 +434,7 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
         
         Label l = new Label(parent,SWT.WRAP);
         l.setText(InstallOptionsPlugin.getResourceString("design.editor.preferences.description")); //$NON-NLS-1$
-        gd = new GridData(GridData.FILL_HORIZONTAL);
+        gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
         gd.horizontalSpan = 2;
         l.setLayoutData(gd);
         
@@ -425,7 +442,6 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
         createDialogSizesGroup(parent);
         mSnapGlueSettings = new SnapGlueSettings(parent, mSnapGlueSettingsMap);
         mGridSettings = new GridSettings(parent,mGridSettingsMap);
-
         return parent;
     }
 
@@ -442,6 +458,16 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
             }
         }
     }
+    
+    private Button createButton(Composite parent, String imageResource, String tooltipResource, Listener selectionListener)
+    {
+        Button button = new Button(parent, SWT.PUSH);
+        button.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString(imageResource))); //$NON-NLS-1$
+        button.setToolTipText(EclipseNSISPlugin.getResourceString(tooltipResource)); //$NON-NLS-1$
+        button.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+        button.addListener(SWT.Selection, selectionListener);
+        return button;
+    }
 
     /**
      * @param composite
@@ -449,13 +475,13 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
     private Control createDialogSizesGroup(final Composite composite)
     {
         final Group group = new Group(composite,SWT.SHADOW_ETCHED_IN);
-        GridData gridData = new GridData(GridData.FILL_BOTH);
+        GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
         group.setLayoutData(gridData);
         group.setLayout(new GridLayout(1,false));
         group.setText(InstallOptionsPlugin.getResourceString("dialog.sizes.group.name")); //$NON-NLS-1$
         
         final Composite composite2 = new Composite(group,SWT.NONE);
-        gridData = new GridData(GridData.FILL_BOTH);
+        gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
         gridData.widthHint = convertWidthInCharsToPixels(60);
         composite2.setLayoutData(gridData);
         GridLayout layout = new GridLayout(2,false);
@@ -464,7 +490,7 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
         composite2.setLayout(layout);
         
         final Table table= new Table(composite2, SWT.CHECK | SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION);
-        gridData = new GridData(GridData.FILL_BOTH);
+        gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
         table.setLayoutData(gridData);
         FontData fontData = table.getFont().getFontData()[0];
         fontData.setStyle(SWT.BOLD);
@@ -508,58 +534,49 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
         });
 
         final Composite buttons= new Composite(composite2, SWT.NONE);
-        buttons.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
+        buttons.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false));
         layout= new GridLayout();
         layout.marginHeight= 0;
         layout.marginWidth= 0;
         buttons.setLayout(layout);
 
-        mAddDialogSize = new Button(buttons, SWT.PUSH);
-        mAddDialogSize.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("add.icon"))); //$NON-NLS-1$
-        mAddDialogSize.setToolTipText(EclipseNSISPlugin.getResourceString("new.tooltip")); //$NON-NLS-1$
-        mAddDialogSize.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        mAddDialogSize.addListener(SWT.Selection, new Listener() {
-            public void handleEvent(Event e) {
-                new DialogSizeDialog(getShell(),null).open();
-            }
-        });
+        createButton(buttons, "add.icon", "new.tooltip", //$NON-NLS-1$))); //$NON-NLS-2$
+                     new Listener() {
+                         public void handleEvent(Event e) {
+                             new DialogSizeDialog(getShell(),null).open();
+                         }
+                     });
 
-        mEditDialogSize = new Button(buttons, SWT.PUSH);
-        mEditDialogSize.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("edit.icon"))); //$NON-NLS-1$
-        mEditDialogSize.setToolTipText(EclipseNSISPlugin.getResourceString("edit.tooltip")); //$NON-NLS-1$
-        mEditDialogSize.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        mEditDialogSize.addListener(SWT.Selection, new Listener() {
-            public void handleEvent(Event e) {
-                editDialogSize();
-            }
-        });
+        mEditDialogSize = createButton(buttons, "edit.icon", "edit.tooltip", //$NON-NLS-1$))); //$NON-NLS-2$
+                                       new Listener() {
+                                           public void handleEvent(Event e) {
+                                               editDialogSize();
+                                           }
+                                       });
 
-        mRemoveDialogSize = new Button(buttons, SWT.PUSH);
-        mRemoveDialogSize.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("delete.icon"))); //$NON-NLS-1$
-        mRemoveDialogSize.setToolTipText(EclipseNSISPlugin.getResourceString("remove.tooltip")); //$NON-NLS-1$
-        mRemoveDialogSize.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        mRemoveDialogSize.addListener(SWT.Selection, new Listener() {
-            public void handleEvent(Event e) {
-                IStructuredSelection selection= (IStructuredSelection) mDialogSizeViewer.getSelection();
-                if(!selection.isEmpty()) {
-                    Collection coll = (Collection)mDialogSizeViewer.getInput();
-                    for(Iterator iter=selection.toList().iterator(); iter.hasNext(); ) {
-                        DialogSize ds = (DialogSize)iter.next();
-                        coll.remove(ds);
-                        if(mDefaultDialogSize.equals(ds)) {
-                            mDefaultDialogSize = null;
-                        }
-                    }
-                    if(mDefaultDialogSize == null && coll.size() > 0) {
-                        mDefaultDialogSize = (DialogSize)coll.iterator().next();
-                        mDefaultDialogSize.setDefault(true);
-                    }
-                    mDialogSizeViewer.refresh();
-                    mDialogSizeViewer.setAllChecked(false);
-                    mDialogSizeViewer.setChecked(mDefaultDialogSize,true);
-                }
-            }
-        });
+        mRemoveDialogSize = createButton(buttons, "delete.icon", "remove.tooltip", //$NON-NLS-1$))); //$NON-NLS-2$
+                                         new Listener() {
+                                             public void handleEvent(Event e) {
+                                                 IStructuredSelection selection= (IStructuredSelection) mDialogSizeViewer.getSelection();
+                                                 if(!selection.isEmpty()) {
+                                                     Collection coll = (Collection)mDialogSizeViewer.getInput();
+                                                     for(Iterator iter=selection.toList().iterator(); iter.hasNext(); ) {
+                                                         DialogSize ds = (DialogSize)iter.next();
+                                                         coll.remove(ds);
+                                                         if(mDefaultDialogSize.equals(ds)) {
+                                                             mDefaultDialogSize = null;
+                                                         }
+                                                     }
+                                                     if(mDefaultDialogSize == null && coll.size() > 0) {
+                                                         mDefaultDialogSize = (DialogSize)coll.iterator().next();
+                                                         mDefaultDialogSize.setDefault(true);
+                                                     }
+                                                     mDialogSizeViewer.refresh();
+                                                     mDialogSizeViewer.setAllChecked(false);
+                                                     mDialogSizeViewer.setChecked(mDefaultDialogSize,true);
+                                                 }
+                                             }
+                                         });
 
         mDialogSizeViewer.addCheckStateListener(new ICheckStateListener() {
             public void checkStateChanged(CheckStateChangedEvent event) {
@@ -594,34 +611,7 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
         });
 
         updateDialogSizeViewerInput();
-
-        composite2.addControlListener(new ControlAdapter() {
-            public void controlResized(ControlEvent e) {
-                Rectangle area= composite2.getClientArea();
-                Point preferredSize= table.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-                int width= area.width - 2 * table.getBorderWidth();
-                if (preferredSize.y > area.height) {
-                    Point vBarSize = table.getVerticalBar().getSize();
-                    width -= vBarSize.x;
-                }
-                width -= buttons.getSize().x;
-                width -= ((GridLayout)composite2.getLayout()).horizontalSpacing;
-                int columnWidth = width/4;
-                Point oldSize= table.getSize();
-                if (oldSize.x <= width) {
-                    table.setSize(width, area.height);
-                }
-                
-                columns[0].setWidth(width - 2*columnWidth);
-                for (int i = 1; i < columns.length; i++) {
-                    columns[i].setWidth(columnWidth);
-                }
-                if (oldSize.x > width) {
-                    table.setSize(width, area.height);
-                }
-            }
-        });
-        composite2.layout();
+        table.addControlListener(new TableResizer(new double[]{2,1,1}));
         return group;
     }
 
@@ -674,13 +664,13 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
     private Control createDisplayGroup(Composite composite)
     {
         Group group = new Group(composite,SWT.SHADOW_ETCHED_IN);
-        GridData gridData = new GridData(GridData.FILL_VERTICAL|GridData.HORIZONTAL_ALIGN_FILL);
+        GridData gridData = new GridData(SWT.FILL,SWT.FILL,false,true);
         group.setLayoutData(gridData);
         group.setLayout(new GridLayout(2,false));
         group.setText(InstallOptionsPlugin.getResourceString("display.group.name")); //$NON-NLS-1$
         
         mShowRulers = new Button(group,SWT.CHECK);
-        gridData = new GridData(GridData.FILL_HORIZONTAL);
+        gridData = new GridData(SWT.FILL, SWT.CENTER, true, false);
         gridData.horizontalSpan = 2;
         mShowRulers.setLayoutData(gridData);
         mShowRulers.setText(InstallOptionsPlugin.getResourceString("show.rulers.label")); //$NON-NLS-1$
@@ -693,7 +683,7 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
         });
         
         mShowGrid = new Button(group,SWT.CHECK);
-        gridData = new GridData(GridData.FILL_HORIZONTAL);
+        gridData = new GridData(SWT.FILL, SWT.CENTER, true, false);
         gridData.horizontalSpan = 2;
         mShowGrid.setLayoutData(gridData);
         mShowGrid.setText(InstallOptionsPlugin.getResourceString("show.grid.label")); //$NON-NLS-1$
@@ -706,7 +696,7 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
         });
         
         mShowGuides = new Button(group,SWT.CHECK);
-        gridData = new GridData(GridData.FILL_HORIZONTAL);
+        gridData = new GridData(SWT.FILL, SWT.CENTER, true, false);
         gridData.horizontalSpan = 2;
         mShowGuides.setLayoutData(gridData);
         mShowGuides.setText(InstallOptionsPlugin.getResourceString("show.guides.label")); //$NON-NLS-1$
@@ -719,7 +709,7 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
         });
         
         mShowDialogSize = new Button(group,SWT.CHECK);
-        gridData = new GridData(GridData.FILL_HORIZONTAL);
+        gridData = new GridData(SWT.FILL, SWT.CENTER, true, false);
         gridData.horizontalSpan = 2;
         mShowDialogSize.setLayoutData(gridData);
         mShowDialogSize.setText(InstallOptionsPlugin.getResourceString("show.dialog.size.label")); //$NON-NLS-1$
@@ -944,7 +934,7 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
         {
             parent = (Composite)super.createDialogArea(parent);
             Composite composite = new Composite(parent,SWT.NONE);
-            composite.setLayoutData(new GridData(GridData.FILL_BOTH));
+            composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
             GridLayout gridLayout = new GridLayout(2,false);
             gridLayout.marginWidth = 0;
             gridLayout.marginHeight = 0;
@@ -963,7 +953,7 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
                 }}
             );
             initializeDialogUnits(name);
-            GridData data = new GridData(GridData.FILL_HORIZONTAL);
+            GridData data = new GridData(SWT.FILL, SWT.CENTER, true, false);
             data.widthHint = convertWidthInCharsToPixels(50);
             name.setLayoutData(data);
             

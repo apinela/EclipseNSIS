@@ -9,24 +9,29 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.model;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.*;
 import java.util.regex.Matcher;
 
 import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
+import net.sf.eclipsensis.installoptions.figures.FigureUtility;
 import net.sf.eclipsensis.installoptions.ini.*;
 import net.sf.eclipsensis.installoptions.properties.descriptors.CustomComboBoxPropertyDescriptor;
 import net.sf.eclipsensis.installoptions.properties.validators.NSISStringLengthValidator;
 import net.sf.eclipsensis.installoptions.properties.validators.NumberCellEditorValidator;
-import net.sf.eclipsensis.installoptions.rulers.InstallOptionsRuler;
+import net.sf.eclipsensis.installoptions.rulers.*;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.util.UpDownMover;
 
 import org.eclipse.draw2d.PositionConstants;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.views.properties.*;
 
 public class InstallOptionsDialog extends InstallOptionsElement implements IInstallOptionsConstants
@@ -51,32 +56,107 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
             return super.getText(element);
         }
     };
-
-    protected IPropertyDescriptor[] mDescriptors;
-    protected List mChildren = new ArrayList();
-    protected InstallOptionsRuler mLeftRuler;
-    protected InstallOptionsRuler mTopRuler;
-
-    private String mTitle=""; //$NON-NLS-1$
-    private String mCancelEnabled=""; //$NON-NLS-1$
-    private String mCancelShow=""; //$NON-NLS-1$
-    private String mBackEnabled=""; //$NON-NLS-1$
-    private String mCancelButtonText=""; //$NON-NLS-1$
-    private String mNextButtonText=""; //$NON-NLS-1$
-    private String mBackButtonText=""; //$NON-NLS-1$
-    private String mRect=""; //$NON-NLS-1$
-    private String mRTL=""; //$NON-NLS-1$
-    private int[] mSelectedIndices = null;
-    private UpDownMover mUpDownMover = null;
-    private INIFile mINIFile;
-    private Map mINISectionMap = new HashMap();
-    private Dimension mDialogSize = new Dimension(100,100);
-    private boolean mShowDialogSize = true;
     
-    public InstallOptionsDialog()
+    protected List mChildren = new ArrayList();
+    protected InstallOptionsRuler mVerticalRuler;
+    protected InstallOptionsRuler mHorizontalRuler;
+
+    private String mTitle;
+    private String mCancelEnabled;
+    private String mCancelShow;
+    private String mBackEnabled;
+    private String mCancelButtonText;
+    private String mNextButtonText;
+    private String mBackButtonText;
+    private String mRect;
+    private String mRTL;
+    private int[] mSelectedIndices;
+    private UpDownMover mUpDownMover;
+    private INIFile mINIFile;
+    private Map mINISectionMap;
+    private Dimension mDialogSize;
+    private boolean mShowDialogSize;
+    
+    public InstallOptionsDialog(INISection section)
     {
-        super(InstallOptionsModel.TYPE_DIALOG);
-        init();
+        super(section);
+        if(section != null) {
+            mINISectionMap.put(section,this);
+        }
+    }
+
+    protected void init()
+    {
+        super.init();
+        mChildren = new ArrayList();
+        mTitle=""; //$NON-NLS-1$
+        mCancelEnabled=""; //$NON-NLS-1$
+        mCancelShow=""; //$NON-NLS-1$
+        mBackEnabled=""; //$NON-NLS-1$
+        mCancelButtonText=""; //$NON-NLS-1$
+        mNextButtonText=""; //$NON-NLS-1$
+        mBackButtonText=""; //$NON-NLS-1$
+        mRect=""; //$NON-NLS-1$
+        mRTL=""; //$NON-NLS-1$
+        mSelectedIndices = null;
+        mINIFile = null;
+        mINISectionMap = new HashMap();
+        mDialogSize = new Dimension(100,100);
+        mShowDialogSize = true;
+        reset();
+    }
+
+    protected void reset()
+    {
+        final PropertyChangeListener guideListener = new PropertyChangeListener(){
+            public void propertyChange(PropertyChangeEvent evt)
+            {
+                setDirty(true);
+            }
+        };
+        
+        final PropertyChangeListener rulerListener = new PropertyChangeListener(){
+            public void propertyChange(PropertyChangeEvent evt)
+            {
+                setDirty(true);
+                InstallOptionsRuler ruler = (InstallOptionsRuler)evt.getSource();
+                if(evt.getPropertyName() == InstallOptionsRuler.PROPERTY_CHILDREN) {
+                    InstallOptionsGuide guide = (InstallOptionsGuide)evt.getNewValue();
+                    if(ruler.getGuides().contains(guide)) {
+                        guide.addPropertyChangeListener(guideListener);
+                    }
+                    else {
+                        guide.removePropertyChangeListener(guideListener);
+                    }
+                }
+            }
+        };
+        
+        mVerticalRuler = new InstallOptionsRuler(false, InstallOptionsRulerProvider.UNIT_DLU);
+        mVerticalRuler.addPropertyChangeListener(rulerListener);
+        mHorizontalRuler = new InstallOptionsRuler(true, InstallOptionsRulerProvider.UNIT_DLU);
+        mHorizontalRuler.addPropertyChangeListener(rulerListener);
+        mUpDownMover = new UpDownMover() {
+            protected int[] getSelectedIndices()
+            {
+                return mSelectedIndices;
+            }
+
+            protected List getAllElements()
+            {
+                return mChildren;
+            }
+
+            protected void updateElements(List elements, List move, boolean isDown)
+            {
+                setChildren(elements);
+            }
+        };
+    }
+
+    public String getType()
+    {
+        return InstallOptionsModel.TYPE_DIALOG;
     }
 
     public Dimension getDialogSize()
@@ -97,11 +177,6 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
     public void setShowDialogSize(boolean showDialogSize)
     {
         mShowDialogSize = showDialogSize;
-    }
-    
-    public IPropertyDescriptor[] getPropertyDescriptors()
-    {
-        return mDescriptors;
     }
     
     public void setChildren(List children)
@@ -165,34 +240,47 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
         Arrays.sort(mSelectedIndices);
     }
 
-    protected void createPropertyDescriptors()
+    protected IPropertyDescriptor createPropertyDescriptor(String name)
     {
-        ArrayList list = new ArrayList();
-        PropertyDescriptor descriptor = new TextPropertyDescriptor(InstallOptionsModel.PROPERTY_TITLE, InstallOptionsPlugin.getResourceString("title.property.name")); //$NON-NLS-1$
-        descriptor.setLabelProvider(cDefaultLabelProvider);
-        descriptor.setValidator(new NSISStringLengthValidator(InstallOptionsModel.PROPERTY_TITLE));
-        list.add(descriptor);
-        list.add(new CustomComboBoxPropertyDescriptor(InstallOptionsModel.PROPERTY_CANCEL_ENABLED, InstallOptionsPlugin.getResourceString("cancel.enabled.property.name"), OPTION_DATA, OPTION_DISPLAY, DEFAULT_OPTION)); //$NON-NLS-1$
-        list.add(new CustomComboBoxPropertyDescriptor(InstallOptionsModel.PROPERTY_CANCEL_SHOW, InstallOptionsPlugin.getResourceString("cancel.show.property.name"), OPTION_DATA, OPTION_DISPLAY, DEFAULT_OPTION)); //$NON-NLS-1$
-        list.add(new CustomComboBoxPropertyDescriptor(InstallOptionsModel.PROPERTY_BACK_ENABLED, InstallOptionsPlugin.getResourceString("back.enabled.property.name"), OPTION_DATA, OPTION_DISPLAY, DEFAULT_OPTION)); //$NON-NLS-1$
-        descriptor = new TextPropertyDescriptor(InstallOptionsModel.PROPERTY_CANCEL_BUTTON_TEXT, InstallOptionsPlugin.getResourceString("cancel.button.text.property.name")); //$NON-NLS-1$
-        descriptor.setLabelProvider(cDefaultLabelProvider);
-        descriptor.setValidator(new NSISStringLengthValidator(InstallOptionsModel.PROPERTY_CANCEL_BUTTON_TEXT));
-        list.add(descriptor);
-        descriptor = new TextPropertyDescriptor(InstallOptionsModel.PROPERTY_BACK_BUTTON_TEXT, InstallOptionsPlugin.getResourceString("back.button.text.property.name")); //$NON-NLS-1$
-        descriptor.setLabelProvider(cDefaultLabelProvider);
-        descriptor.setValidator(new NSISStringLengthValidator(InstallOptionsModel.PROPERTY_BACK_BUTTON_TEXT));
-        list.add(descriptor);
-        descriptor = new TextPropertyDescriptor(InstallOptionsModel.PROPERTY_NEXT_BUTTON_TEXT, InstallOptionsPlugin.getResourceString("next.button.text.property.name")); //$NON-NLS-1$
-        descriptor.setLabelProvider(cDefaultLabelProvider);
-        descriptor.setValidator(new NSISStringLengthValidator(InstallOptionsModel.PROPERTY_NEXT_BUTTON_TEXT));
-        list.add(descriptor);
-        descriptor = new TextPropertyDescriptor(InstallOptionsModel.PROPERTY_RECT, InstallOptionsPlugin.getResourceString("rect.property.name")); //$NON-NLS-1$
-        descriptor.setValidator(new NumberCellEditorValidator(1,Integer.MAX_VALUE,true));
-        descriptor.setLabelProvider(cDefaultLabelProvider);
-        list.add(descriptor);
-        list.add(new CustomComboBoxPropertyDescriptor(InstallOptionsModel.PROPERTY_RTL, InstallOptionsPlugin.getResourceString("rtl.property.name"), OPTION_DATA, OPTION_DISPLAY, DEFAULT_OPTION)); //$NON-NLS-1$
-        mDescriptors = (IPropertyDescriptor[])list.toArray(new IPropertyDescriptor[list.size()]);
+        PropertyDescriptor descriptor = null;
+        if(name.equals(InstallOptionsModel.PROPERTY_TITLE)) {
+            descriptor = new TextPropertyDescriptor(InstallOptionsModel.PROPERTY_TITLE, InstallOptionsPlugin.getResourceString("title.property.name")); //$NON-NLS-1$
+            descriptor.setLabelProvider(cDefaultLabelProvider);
+            descriptor.setValidator(new NSISStringLengthValidator(InstallOptionsModel.PROPERTY_TITLE));
+        }
+        else if(name.equals(InstallOptionsModel.PROPERTY_CANCEL_ENABLED)) {
+            descriptor = new CustomComboBoxPropertyDescriptor(InstallOptionsModel.PROPERTY_CANCEL_ENABLED, InstallOptionsPlugin.getResourceString("cancel.enabled.property.name"), OPTION_DATA, OPTION_DISPLAY, DEFAULT_OPTION); //$NON-NLS-1$ 
+        }
+        else if(name.equals(InstallOptionsModel.PROPERTY_CANCEL_SHOW)) {
+            descriptor = new CustomComboBoxPropertyDescriptor(InstallOptionsModel.PROPERTY_CANCEL_SHOW, InstallOptionsPlugin.getResourceString("cancel.show.property.name"), OPTION_DATA, OPTION_DISPLAY, DEFAULT_OPTION); //$NON-NLS-1$
+        }
+        else if(name.equals(InstallOptionsModel.PROPERTY_BACK_ENABLED)) {
+            descriptor = new CustomComboBoxPropertyDescriptor(InstallOptionsModel.PROPERTY_BACK_ENABLED, InstallOptionsPlugin.getResourceString("back.enabled.property.name"), OPTION_DATA, OPTION_DISPLAY, DEFAULT_OPTION); //$NON-NLS-1$
+        }
+        else if(name.equals(InstallOptionsModel.PROPERTY_CANCEL_BUTTON_TEXT)) {
+            descriptor = new TextPropertyDescriptor(InstallOptionsModel.PROPERTY_CANCEL_BUTTON_TEXT, InstallOptionsPlugin.getResourceString("cancel.button.text.property.name")); //$NON-NLS-1$
+            descriptor.setLabelProvider(cDefaultLabelProvider);
+            descriptor.setValidator(new NSISStringLengthValidator(InstallOptionsModel.PROPERTY_CANCEL_BUTTON_TEXT));
+        }
+        else if(name.equals(InstallOptionsModel.PROPERTY_BACK_BUTTON_TEXT)) {
+            descriptor = new TextPropertyDescriptor(InstallOptionsModel.PROPERTY_BACK_BUTTON_TEXT, InstallOptionsPlugin.getResourceString("back.button.text.property.name")); //$NON-NLS-1$
+            descriptor.setLabelProvider(cDefaultLabelProvider);
+            descriptor.setValidator(new NSISStringLengthValidator(InstallOptionsModel.PROPERTY_BACK_BUTTON_TEXT));
+        }
+        else if(name.equals(InstallOptionsModel.PROPERTY_NEXT_BUTTON_TEXT)) {
+            descriptor = new TextPropertyDescriptor(InstallOptionsModel.PROPERTY_NEXT_BUTTON_TEXT, InstallOptionsPlugin.getResourceString("next.button.text.property.name")); //$NON-NLS-1$
+            descriptor.setLabelProvider(cDefaultLabelProvider);
+            descriptor.setValidator(new NSISStringLengthValidator(InstallOptionsModel.PROPERTY_NEXT_BUTTON_TEXT));
+        }
+        else if(name.equals(InstallOptionsModel.PROPERTY_RECT)) {
+            descriptor = new TextPropertyDescriptor(InstallOptionsModel.PROPERTY_RECT, InstallOptionsPlugin.getResourceString("rect.property.name")); //$NON-NLS-1$
+            descriptor.setValidator(new NumberCellEditorValidator(1,Integer.MAX_VALUE,true));
+            descriptor.setLabelProvider(cDefaultLabelProvider);
+        }
+        else if(name.equals(InstallOptionsModel.PROPERTY_RTL)) {
+            descriptor = new CustomComboBoxPropertyDescriptor(InstallOptionsModel.PROPERTY_RTL, InstallOptionsPlugin.getResourceString("rtl.property.name"), OPTION_DATA, OPTION_DISPLAY, DEFAULT_OPTION); //$NON-NLS-1$
+        }
+        return descriptor;
     }
 
     public void setPropertyValue(Object id, Object value)
@@ -410,6 +498,10 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
         }
         updateChildIndices(index);
         child.setParent(this);
+        INISection section = child.getSection();
+        if(section != null) {
+            mINISectionMap.put(section,child);
+        }
         fireChildAdded(InstallOptionsModel.PROPERTY_CHILDREN, child, new Integer(index));
         setDirty(true);
     }
@@ -425,6 +517,10 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
             child.setParent(this);
             if(oldChild != null) {
                 fireChildRemoved(InstallOptionsModel.PROPERTY_CHILDREN, child);
+            }
+            INISection section = child.getSection();
+            if(section != null) {
+                mINISectionMap.put(section,child);
             }
             fireChildAdded(InstallOptionsModel.PROPERTY_CHILDREN, child, new Integer(index));
             setDirty(true);
@@ -480,29 +576,6 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
         removeChild((InstallOptionsWidget)mChildren.get(index));
     }
 
-    protected void init()
-    {
-        mLeftRuler = new InstallOptionsRuler(false);
-        mTopRuler = new InstallOptionsRuler(true);
-        mUpDownMover = new UpDownMover() {
-            protected int[] getSelectedIndices()
-            {
-                return mSelectedIndices;
-            }
-
-            protected List getAllElements()
-            {
-                return mChildren;
-            }
-
-            protected void updateElements(List elements, List move, boolean isDown)
-            {
-                setChildren(elements);
-            }
-        };
-        createPropertyDescriptors();
-    }
-
     public Image getIconImage()
     {
         return INSTALLOPTIONS_ICON;
@@ -514,10 +587,10 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
         switch (orientation)
         {
             case PositionConstants.NORTH:
-                result = mTopRuler;
+                result = mHorizontalRuler;
                 break;
             case PositionConstants.WEST:
-                result = mLeftRuler;
+                result = mVerticalRuler;
                 break;
         }
         return result;
@@ -529,8 +602,8 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
         if(dialog.mSelectedIndices != null) {
             dialog.mSelectedIndices = (int[])dialog.mSelectedIndices.clone();
         }
-        dialog.init();
-        ArrayList list = new ArrayList();;
+        dialog.reset();
+        ArrayList list = new ArrayList();
         for (Iterator iter = mChildren.iterator(); iter.hasNext();) {
             InstallOptionsWidget child = (InstallOptionsWidget)((InstallOptionsWidget)iter.next()).clone();
             child.setParent(dialog);
@@ -549,11 +622,9 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
         return dialog;
     }
 
-    protected List doGetPropertyNames()
+    protected Collection doGetPropertyNames()
     {
-        List list = super.doGetPropertyNames();
-        list.addAll(Arrays.asList(InstallOptionsModel.getInstance().getDialogSettings()));
-        return list;
+        return InstallOptionsModel.INSTANCE.getDialogSettings();
     }
     
     public String toString()
@@ -561,15 +632,20 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
         return InstallOptionsPlugin.getResourceString("install.options.dialog.name"); //$NON-NLS-1$
     }
     
-    public void loadINIFile(INIFile file)
+    private void setINIFile(INIFile file)
     {
         mINIFile = file;
-        INISection[] sections = mINIFile.getSections();
+    }
+    
+    public static InstallOptionsDialog loadINIFile(INIFile file)
+    {
+        INISection[] sections = file.getSections();
+        InstallOptionsDialog dialog  = null;
         if(!Common.isEmptyArray(sections)) {
+            ArrayList children = new ArrayList();
             for (int i = 0; i < sections.length; i++) {
                 if(sections[i].getName().equalsIgnoreCase(InstallOptionsModel.SECTION_SETTINGS)) {
-                    loadSection(sections[i]);
-                    mINISectionMap.put(sections[i],this);
+                    dialog = new InstallOptionsDialog(sections[i]);
                 }
                 else {
                     Matcher m = InstallOptionsModel.SECTION_FIELD_PATTERN.matcher(sections[i].getName());
@@ -579,34 +655,161 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
                         if(!Common.isEmptyArray(types)) {
                             InstallOptionsElementFactory factory =  InstallOptionsElementFactory.getFactory(types[0].getValue());
                             if(factory != null) {
-                                InstallOptionsWidget widget = (InstallOptionsWidget)factory.getNewObject();
-                                widget.loadSection(sections[i]);
-                                if(index >= mChildren.size()) {
-                                    int diff = index-mChildren.size()+1;
+                                InstallOptionsWidget widget = (InstallOptionsWidget)factory.getNewObject(sections[i]);
+                                if(index >= children.size()) {
+                                    int diff = index-children.size()+1;
                                     for(int j=0; j<diff; j++) {
-                                        mChildren.add(null);
+                                        children.add(null);
                                     }
                                 }
-                                setChild(widget, index);
-                                widget.setDirty(false);
-                                mINISectionMap.put(sections[i],widget);
+                                children.set(index, widget);
                             }
                         }
                     }
                 }
             }
-            setDirty(false);
+            if(dialog == null) {
+                dialog = new InstallOptionsDialog(null);
+            }
+            int index = 0;
+            for (Iterator iter = children.iterator(); iter.hasNext(); index++) {
+                InstallOptionsWidget widget = (InstallOptionsWidget)iter.next();
+                dialog.mChildren.add(null);
+                if(widget != null) {
+                    dialog.setChild(widget,index);
+                    widget.setDirty(false);
+                }
+            }
+            
+            //Guides
+            if(dialog.getGuideComment() != null) {
+                String comment = dialog.getGuideComment().getText();
+                int n = comment.indexOf(GUIDE_PREFIX);
+                if(n >= 0) {
+                    Font f = Display.getDefault().getSystemFont();
+                    comment = comment.substring(n+GUIDE_PREFIX.length()).trim();
+                    String[] tokens = Common.tokenize(comment,'#');
+                    for (int i = 0; i < tokens.length; i++) {
+                        String[] tokens2 = Common.tokenize(tokens[i],'|');
+                        if(tokens2.length > 0) {
+                            int orientation;
+                            try {
+                                orientation = Integer.parseInt(tokens2[0]);
+                            }
+                            catch(Exception ex) {
+                                orientation = -1;
+                            }
+                            if(orientation == PositionConstants.NORTH || orientation == PositionConstants.WEST) {
+                                int offset = 0;
+                                if(tokens2.length > 1) {
+                                    try {
+                                        offset = Integer.parseInt(tokens2[1]);
+                                        if(orientation == PositionConstants.NORTH) {
+                                            offset = FigureUtility.dialogUnitsToPixelsX(offset, f);
+                                        }
+                                        else {
+                                            offset = FigureUtility.dialogUnitsToPixelsY(offset, f);
+                                        }
+                                    }
+                                    catch(Exception ex) {
+                                        offset = 0;
+                                    }
+                                }
+                                InstallOptionsRuler ruler = dialog.getRuler(orientation);
+                                InstallOptionsGuide guide = new InstallOptionsGuide(offset == PositionConstants.WEST);
+                                guide.setPosition(offset);
+                                ruler.addGuide(guide);
+                            }
+                        }
+                    }
+                    for(Iterator iter=dialog.getChildren().iterator(); iter.hasNext(); ) {
+                        InstallOptionsWidget child = ((InstallOptionsWidget)iter.next());
+                        if(child != null && child.getGuideComment() != null) {
+                            comment = child.getGuideComment().getText();
+                            if(comment != null) {
+                                n = comment.indexOf(GUIDE_PREFIX);
+                                if(n >= 0) {
+                                    comment = comment.substring(n+GUIDE_PREFIX.length()).trim();
+                                    tokens = Common.tokenize(comment,'#');
+                                    if(tokens.length > 0) {
+                                        for (int i = 0; i < tokens.length; i++) {
+                                            String[] tokens2 = Common.tokenize(tokens[i],'|');
+                                            if(tokens2.length >= 2) {
+                                                int orientation;
+                                                try {
+                                                    orientation = Integer.parseInt(tokens2[0]);
+                                                }
+                                                catch(Exception ex) {
+                                                    orientation = -1;
+                                                }
+                                                if(orientation == PositionConstants.NORTH || orientation == PositionConstants.WEST) {
+                                                    try {
+                                                        index = Integer.parseInt(tokens2[1]);
+                                                    }
+                                                    catch(Exception ex) {
+                                                        index = -1;
+                                                    }
+                                                    if(index >= 0) {
+                                                        int alignment = 0;
+                                                        if(tokens2.length > 2) {
+                                                            try {
+                                                                alignment = Integer.parseInt(tokens2[2]);
+                                                            }
+                                                            catch(Exception ex) {
+                                                                alignment = 0;
+                                                            }
+                                                        }
+                                                        if(Math.abs(alignment) <= 1) {
+                                                            List guides = dialog.getRuler(orientation).getGuides();
+                                                            if(!Common.isEmptyCollection(guides) && guides.size() > index) {
+                                                                InstallOptionsGuide guide = (InstallOptionsGuide)guides.get(index);
+                                                                int offset = guide.getPosition();
+                                                                Position p = child.toGraphical(child.getPosition());
+                                                                int offset2 = -1;
+                                                                switch(alignment) {
+                                                                    case -1:
+                                                                        offset2 = (orientation == PositionConstants.NORTH?p.left:p.top);
+                                                                        break;
+                                                                    case 0:
+                                                                        offset2 = (orientation == PositionConstants.NORTH?p.left+p.right:p.top+p.bottom)/2;
+                                                                        break;
+                                                                    case 1:
+                                                                        offset2 = (orientation == PositionConstants.NORTH?p.right:p.bottom);
+                                                                }
+                                                                if(offset == offset2) {
+                                                                    guide.attachPart(child,alignment);
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            dialog.setDirty(false);
+            
             //Remove null entries
-            int oldSize = mChildren.size();
-            for (Iterator iter = mChildren.iterator(); iter.hasNext();) {
+            int oldSize = dialog.mChildren.size();
+            for (Iterator iter = dialog.mChildren.iterator(); iter.hasNext(); ) {
                 if(iter.next() == null) {
                     iter.remove();
                 }
             }
-            if(oldSize != mChildren.size()) {
-                updateChildIndices(0);
+            if(oldSize != dialog.mChildren.size()) {
+                dialog.updateChildIndices(0);
             }
         }
+        else {
+            dialog = new InstallOptionsDialog(null);
+        }
+        dialog.setINIFile(file);
+        return dialog;
     }
     
     public boolean canUpdateINIFile()
@@ -628,13 +831,14 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
         if(canUpdateINIFile()) {
             HashMap tempMap = new HashMap();
             INISection section;
-            section = saveSection();
+            section = updateSection();
+            
             if(!mINISectionMap.containsKey(section)) {
                 mINIFile.addChild(section);
                 mINISectionMap.put(section,this);
             }
             tempMap.put(section, this);
-            INISection previousSection = null;
+            INISection previousSection = section;
             for (Iterator iter = mChildren.iterator(); iter.hasNext();) {
                 if(previousSection != null) {
                     int n = previousSection.getSize();
@@ -643,16 +847,28 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
                         if(lastChild.getDelimiter() == null) {
                             lastChild.setDelimiter(INSISConstants.LINE_SEPARATOR);
                         }
+                        if(!lastChild.getClass().equals(INILine.class) || !Common.isEmpty(lastChild.getText())) {
+                            previousSection.addChild(new INILine());
+                        }
                     }
                 }
                 InstallOptionsWidget element = (InstallOptionsWidget)iter.next();
-                section = element.saveSection();
+                section = element.updateSection();
                 if(!mINISectionMap.containsKey(section)) {
                     mINIFile.addChild(section);
                     mINISectionMap.put(section,element);
                 }
                 tempMap.put(section, element);
                 previousSection = section;
+            }
+            if(previousSection != null) {
+                int n = previousSection.getSize();
+                if(n > 0) {
+                    INILine lastChild = previousSection.getChild(n-1);
+                    if(lastChild.getClass().equals(INILine.class) && Common.isEmpty(lastChild.getText())) {
+                        previousSection.removeChild(lastChild);
+                    }
+                }
             }
             for (Iterator iter = mINISectionMap.keySet().iterator(); iter.hasNext();) {
                 section = (INISection)iter.next();
@@ -661,6 +877,92 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
                     mINIFile.removeChild(section);
                 }
             }
+
+            section = getSection();
+            List verticalGuides = getRuler(PositionConstants.NORTH).getGuides();
+            List horizontalGuides = getRuler(PositionConstants.WEST).getGuides();
+            INIComment comment = getGuideComment();
+            if(verticalGuides.size() > 0 || horizontalGuides.size() > 0) {
+                StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
+                Font f = Display.getDefault().getSystemFont();
+                for (Iterator iter = horizontalGuides.iterator(); iter.hasNext();) {
+                    InstallOptionsGuide guide = (InstallOptionsGuide)iter.next();
+                    if(buf.length() > 0) {
+                        buf.append('#');
+                    }
+                    buf.append(PositionConstants.WEST).append('|').append(FigureUtility.pixelsToDialogUnitsY(guide.getPosition(),f));
+                }
+                for (Iterator iter = verticalGuides.iterator(); iter.hasNext();) {
+                    InstallOptionsGuide guide = (InstallOptionsGuide)iter.next();
+                    if(buf.length() > 0) {
+                        buf.append('#');
+                    }
+                    buf.append(PositionConstants.NORTH).append('|').append(FigureUtility.pixelsToDialogUnitsX(guide.getPosition(),f));
+                }
+                String text;
+                if(comment == null) {
+                    comment = new INIComment();
+                    section.addChild(0,comment);
+                    text = GUIDE_PREFIX+buf.toString();
+                }
+                else {
+                    text = comment.getText();
+                    int n = text.indexOf(GUIDE_PREFIX);
+                    text = text.substring(0,n+GUIDE_PREFIX.length())+buf.toString();
+                }
+                comment.setText(text);
+
+                for(Iterator iter = getChildren().iterator(); iter.hasNext(); ) {
+                    InstallOptionsWidget child = (InstallOptionsWidget)iter.next();
+                    InstallOptionsGuide horizontalGuide = child.getHorizontalGuide();
+                    InstallOptionsGuide verticalGuide = child.getVerticalGuide();
+                    if(horizontalGuide != null || verticalGuide != null) {
+                        buf = new StringBuffer("");
+                        if(horizontalGuide != null) {
+                            buf.append(PositionConstants.WEST).append('|');
+                            buf.append(getRuler(PositionConstants.WEST).getGuides().indexOf(horizontalGuide)).append('|');
+                            buf.append(horizontalGuide.getAlignment(child));
+                        }
+                        if(verticalGuide != null) {
+                            if(buf.length() > 0) {
+                                buf.append('#');
+                            }
+                            buf.append(PositionConstants.NORTH).append('|');
+                            buf.append(getRuler(PositionConstants.NORTH).getGuides().indexOf(verticalGuide)).append('|');
+                            buf.append(horizontalGuide.getAlignment(child));
+                        }
+                        comment = child.getGuideComment();
+                        if(comment == null) {
+                            comment = new INIComment();
+                            child.getSection().addChild(0, comment);
+                            text = GUIDE_PREFIX+buf.toString();
+                        }
+                        else {
+                            text = comment.getText();
+                            int n = text.indexOf(GUIDE_PREFIX);
+                            text = text.substring(0,n+GUIDE_PREFIX.length())+buf.toString();
+                        }
+                        comment.setText(text);
+                    }
+                    else {
+                        if(child.getGuideComment() != null) {
+                            child.getSection().removeChild(child.getGuideComment());
+                        }
+                    }
+                }
+            }
+            else {
+                if(comment != null) {
+                    section.removeChild(comment);
+                }
+                for(Iterator iter = getChildren().iterator(); iter.hasNext(); ) {
+                    InstallOptionsWidget child = (InstallOptionsWidget)iter.next();
+                    if(child.getGuideComment() != null) {
+                        child.getSection().removeChild(child.getGuideComment());
+                    }
+                }
+            }
+            
             mINIFile.update();
             setDirty(false);
         }

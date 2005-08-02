@@ -10,6 +10,7 @@
 package net.sf.eclipsensis.installoptions.edit.uneditable;
 
 import net.sf.eclipsensis.installoptions.edit.InstallOptionsDirectEditManager;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsUneditableElement;
 
 import org.eclipse.gef.GraphicalEditPart;
@@ -38,6 +39,11 @@ public abstract class InstallOptionsUneditableElementEditManager extends Install
     protected CellEditor createCellEditor(Composite composite) 
     {
         return new TextCellEditor(composite, getCellEditorStyle());
+    }
+    
+    protected String getDirectEditProperty()
+    {
+        return InstallOptionsModel.PROPERTY_TEXT;
     }
     
     protected abstract int getCellEditorStyle();

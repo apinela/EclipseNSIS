@@ -10,25 +10,22 @@
 package net.sf.eclipsensis.installoptions.model;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
+import net.sf.eclipsensis.installoptions.ini.INISection;
 
 import org.eclipse.swt.graphics.Image;
 
 public class InstallOptionsBitmap extends InstallOptionsPicture
 {
-    public static Image BITMAP_ICON = InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("bitmap.type.small.icon")); //$NON-NLS-1$
     private static Image BITMAP_IMAGE = InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("bitmap.image")); //$NON-NLS-1$
 
-    /**
-     * @param type
-     */
-    public InstallOptionsBitmap()
+    protected InstallOptionsBitmap(INISection section)
     {
-        super(InstallOptionsModel.TYPE_BITMAP);
+        super(section);
     }
-
-    public Image getIconImage()
+    
+    public String getType()
     {
-        return BITMAP_ICON;
+        return InstallOptionsModel.TYPE_BITMAP;
     }
 
     /* (non-Javadoc)

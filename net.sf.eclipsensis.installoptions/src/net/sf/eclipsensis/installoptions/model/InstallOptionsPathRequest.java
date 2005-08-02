@@ -9,14 +9,13 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.model;
 
+import net.sf.eclipsensis.installoptions.ini.INISection;
+
 public abstract class InstallOptionsPathRequest extends InstallOptionsEditableElement
 {
-    /**
-     * @param type
-     */
-    public InstallOptionsPathRequest(String type)
+    protected InstallOptionsPathRequest(INISection section)
     {
-        super(type);
+        super(section);
     }
 
     protected int getDefaultMaxLen()

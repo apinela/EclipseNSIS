@@ -9,35 +9,20 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.model;
 
-import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
-
-import org.eclipse.swt.graphics.Image;
+import net.sf.eclipsensis.installoptions.ini.INISection;
 
 public class InstallOptionsPassword extends InstallOptionsText
 {
-    public static Image PASSWORD_ICON = InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("password.type.small.icon")); //$NON-NLS-1$
-
-    /**
-     * 
-     */
-    public InstallOptionsPassword()
+    protected InstallOptionsPassword(INISection section)
     {
-        this(InstallOptionsModel.TYPE_PASSWORD);
+        super(section);
     }
 
-    /**
-     * @param type
-     */
-    public InstallOptionsPassword(String type)
+    public String getType()
     {
-        super(type);
+        return InstallOptionsModel.TYPE_PASSWORD;
     }
 
-    public Image getIconImage()
-    {
-        return PASSWORD_ICON;
-    }
-    
     protected String getDefaultState()
     {
         return ""; //$NON-NLS-1$

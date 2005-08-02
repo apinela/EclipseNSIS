@@ -15,6 +15,7 @@ import java.util.List;
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.figures.FigureUtility;
+import net.sf.eclipsensis.installoptions.ini.INISection;
 import net.sf.eclipsensis.installoptions.properties.PositionPropertySource;
 import net.sf.eclipsensis.installoptions.properties.labelproviders.ListLabelProvider;
 import net.sf.eclipsensis.installoptions.properties.validators.NSISStringLengthValidator;
@@ -30,6 +31,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -56,55 +58,58 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
     private static LabelProvider cFlagsLabelProvider = new ListLabelProvider();
     private static final String MISSING_DISPLAY_NAME = InstallOptionsPlugin.getResourceString("missing.widget.display.name"); //$NON-NLS-1$
 
-    protected IPropertyDescriptor[] mDescriptors;
-    protected InstallOptionsDialog mParent = null;
-    protected int mIndex = -1;
-    protected Position mPosition = new Position();
+    private InstallOptionsModelTypeDef mTypeDef;
+    protected InstallOptionsDialog mParent;
+    protected int mIndex;
+    protected Position mPosition;
     protected InstallOptionsGuide mVerticalGuide;
     protected InstallOptionsGuide mHorizontalGuide;
     private List mFlags;
 
-    public InstallOptionsWidget(String type)
+    protected InstallOptionsWidget(INISection section)
     {
-        super(type);
-        mPosition = getDefaultPosition();
-        createPropertyDescriptors();
-    }
-
-    /**
-     * 
-     */
-    protected final void createPropertyDescriptors()
-    {
-        List names = doGetPropertyNames();
-        names.add(0, InstallOptionsModel.PROPERTY_INDEX);
-        names.add(1, InstallOptionsModel.PROPERTY_POSITION);
-        ArrayList list = new ArrayList();
-        for (Iterator iter = names.iterator(); iter.hasNext();) {
-            String name = (String)iter.next();
-            IPropertyDescriptor descriptor = createPropertyDescriptor(name);
-            if(descriptor != null) {
-                list.add(descriptor);
-            }
-        }
-        mDescriptors = (IPropertyDescriptor[])list.toArray(new IPropertyDescriptor[list.size()]);
+        super(section);
+        mTypeDef = InstallOptionsModel.INSTANCE.getControlTypeDef(getType());
     }
     
-    public IPropertyDescriptor[] getPropertyDescriptors()
+    protected void init()
     {
-        return mDescriptors;
+        super.init();
+        mIndex = -1;
+        mPosition = new Position();
+    }
+    
+    protected void setDefaults()
+    {
+        super.setDefaults();
+        mPosition = getDefaultPosition();
     }
 
     /**
      * 
      */
-    protected final List doGetPropertyNames()
+    protected final Collection getPropertyNames()
     {
-        List list = super.doGetPropertyNames();
+        List list = new ArrayList();
+        list.add(InstallOptionsModel.PROPERTY_INDEX);
+        list.add(InstallOptionsModel.PROPERTY_POSITION);
+        list.addAll(super.getPropertyNames());
+        return list;
+    }
+
+    /**
+     * 
+     */
+    protected final Collection doGetPropertyNames()
+    {
+        List list = new ArrayList();
         list.add(InstallOptionsModel.PROPERTY_TYPE);
-        String[] settings = InstallOptionsModel.getInstance().getControlSettings(getType());
-        for (int i = 0; i < settings.length; i++) {
-            addPropertyName(list, settings[i]);
+        InstallOptionsModelTypeDef typeDef = InstallOptionsModel.INSTANCE.getControlTypeDef(getType());
+        if(typeDef != null) {
+            Collection settings = typeDef.getSettings();
+            for (Iterator iter=settings.iterator(); iter.hasNext(); ) {
+                addPropertyName(list, (String)iter.next());
+            }
         }
         return list;
     }
@@ -376,9 +381,28 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
         element.setVerticalGuide(null);
         element.setPosition(mPosition.getCopy());
         element.setFlags(new ArrayList(getFlags()));
-        element.createPropertyDescriptors();
         element.setIndex(getIndex());
         return element;
+    }
+    
+    protected Position getDefaultPosition()
+    {
+        return cDefaultPosition.getCopy();
+    }
+    
+    protected String getDisplayName()
+    {
+        return ""; //$NON-NLS-1$
+    }
+    
+    protected String getSectionName()
+    {
+        return InstallOptionsModel.SECTION_FIELD_FORMAT.format(new Object[]{new Integer(getIndex()+1)});
+    }
+
+    public final Image getIconImage()
+    {
+        return InstallOptionsPlugin.getImageManager().getImage(mTypeDef.getSmallIcon());
     }
     
     private class IndexPropertyDescriptor extends ComboBoxPropertyDescriptor
@@ -454,12 +478,15 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
         private List mValues;
         private Table mTable;
         private String mType;
+        private Collection mAvailableFlags;
         
         public FlagsDialog(Shell parent, List values, String type)
         {
             super(parent);
             mValues = new ArrayList(values);
             mType = type;
+            InstallOptionsModelTypeDef typeDef = InstallOptionsModel.INSTANCE.getControlTypeDef(getType());
+            mAvailableFlags = (typeDef==null?Collections.EMPTY_SET:typeDef.getFlags());
         }
 
         public ICellEditorValidator getValidator()
@@ -487,7 +514,7 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
         {
             Composite composite = (Composite)super.createDialogArea(parent);
             Composite composite2 = new Composite(composite,SWT.NONE);
-            composite2.setLayoutData(new GridData(GridData.FILL_BOTH));
+            composite2.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
             GridLayout layout = new GridLayout(2,false);
             layout.marginHeight = 0;
             layout.marginWidth = 0;
@@ -501,21 +528,20 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
                 }
             });
             initializeDialogUnits(mTable);
-            GridData data = new GridData(GridData.FILL_BOTH);
+            GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
             data.widthHint = convertWidthInCharsToPixels(40);
             data.heightHint = convertHeightInCharsToPixels(10);
             mTable.setLayoutData(data);
-            InstallOptionsModel instance = InstallOptionsModel.getInstance();
-            String[] flags = instance.getControlFlags(mType);
-            for (int i = 0; i < flags.length; i++) {
+            for (Iterator iter=mAvailableFlags.iterator(); iter.hasNext(); ) {
                 TableItem ti = new TableItem(mTable,SWT.NONE);
-                ti.setText(flags[i]);
+                String flag = (String)iter.next();
+                ti.setText(flag);
                 if(mValues != null) {
-                    ti.setChecked(mValues.contains(flags[i]));
+                    ti.setChecked(mValues.contains(flag));
                 }
             }
             composite2 = new Composite(composite2,SWT.NONE);
-            composite2.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
+            composite2.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false));
             layout = new GridLayout(1,false);
             layout.marginWidth = 0;
             layout.marginHeight = 0;
@@ -528,7 +554,7 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
                     selectAll(true);
                 }
             });
-            b.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+            b.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
             b = new Button(composite2,SWT.PUSH);
             b.setText(InstallOptionsPlugin.getResourceString("deselect.all.label")); //$NON-NLS-1$
             b.addSelectionListener(new SelectionAdapter(){
@@ -537,7 +563,7 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
                     selectAll(false);
                 }
             });
-            b.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+            b.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
             return composite;
         }
 
@@ -552,11 +578,12 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
         protected void okPressed()
         {
             if(mTable != null) {
-                mValues.clear();
+                mValues.removeAll(mAvailableFlags);
                 TableItem[] items = mTable.getItems();
+                int counter=0;
                 for (int i = 0; i < items.length; i++) {
                     if(items[i].getChecked()) {
-                        mValues.add(items[i].getText());
+                        mValues.add(counter++,items[i].getText());
                     }
                 }
             }
@@ -571,19 +598,6 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
             super.okPressed();
         }
     }
-    
-    protected Position getDefaultPosition()
-    {
-        return cDefaultPosition.getCopy();
-    }
-    
-    protected String getDisplayName()
-    {
-        return ""; //$NON-NLS-1$
-    }
-    
-    protected String getSectionName()
-    {
-        return InstallOptionsModel.SECTION_FIELD_FORMAT.format(new Object[]{new Integer(getIndex()+1)});
-    }
+
+
 }

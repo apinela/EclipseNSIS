@@ -12,25 +12,20 @@ package net.sf.eclipsensis.installoptions.model;
 import java.util.List;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
+import net.sf.eclipsensis.installoptions.ini.INISection;
 import net.sf.eclipsensis.installoptions.properties.descriptors.CustomColorPropertyDescriptor;
 import net.sf.eclipsensis.installoptions.properties.validators.NSISStringLengthValidator;
 import net.sf.eclipsensis.installoptions.util.TypeConverter;
 
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 
 public class InstallOptionsLink extends InstallOptionsUneditableElement
 {
-    public static Image LINK_ICON = InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("link.type.small.icon")); //$NON-NLS-1$
     public static final RGB DEFAULT_TXTCOLOR = new RGB(0,0,255);
-    
-    private String mState;
-    private RGB mTxtColor;
-    
     private static ILabelProvider cLabelProvider = new LabelProvider(){
         public String getText(Object element) 
         {
@@ -46,26 +41,24 @@ public class InstallOptionsLink extends InstallOptionsUneditableElement
             }
         }
     };
-    /**
-     * 
-     */
-    public InstallOptionsLink()
+    
+    private String mState;
+    private RGB mTxtColor;
+    
+    protected InstallOptionsLink(INISection section)
     {
-        this(InstallOptionsModel.TYPE_LINK);
+        super(section);
+    }
+    
+    public String getType()
+    {
+        return InstallOptionsModel.TYPE_LINK;
     }
 
-    /**
-     * @param type
-     */
-    public InstallOptionsLink(String type)
+    protected void init()
     {
-        super(type);
+        super.init();
         mState = ""; //$NON-NLS-1$
-    }
-
-    public Image getIconImage()
-    {
-        return LINK_ICON;
     }
 
     /**

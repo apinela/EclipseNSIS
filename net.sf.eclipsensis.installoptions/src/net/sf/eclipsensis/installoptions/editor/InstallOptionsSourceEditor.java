@@ -22,27 +22,30 @@ import net.sf.eclipsensis.installoptions.model.*;
 import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuCreator;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.CompositeImageDescriptor;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.*;
 import org.eclipse.jface.text.source.projection.*;
+import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.swt.events.HelpListener;
 import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.progress.UIJob;
-import org.eclipse.ui.texteditor.ChainedPreferenceStore;
-import org.eclipse.ui.texteditor.IDocumentProvider;
+import org.eclipse.ui.texteditor.*;
 import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
@@ -55,6 +58,16 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
     private Map[] mCachedMarkers;
     private ProjectionAnnotationModel mAnnotationModel;
     private Annotation[] mAnnotations = null;
+    private String mJobFamily = getClass().getName()+System.currentTimeMillis();
+    private IModelListener mModelListener = new IModelListener()
+    {
+        public void modelChanged()
+        {
+            if(mINIFile != null) {
+                mINIFile.validate(true);
+            }
+        }
+    };
     
     public InstallOptionsSourceEditor()
     {
@@ -95,10 +108,10 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
         return mINIFile;
     }
     
-    public void iniFileChanged(INIFile iniFile)
+    public void iniFileChanged(INIFile iniFile, int event)
     {
         IFileEditorInput input = (IFileEditorInput)getEditorInput();
-        if(input != null) {
+        if(input != null && (event == INIFile.INIFILE_CONNECTED || event == INIFile.INIFILE_MODIFIED)) {
             InstallOptionsMarkerUtility.updateMarkers(input.getFile(), iniFile);
         }
         updateAnnotations();
@@ -113,6 +126,28 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
         IAction action = new SwitchEditorAction(this, INSTALLOPTIONS_DESIGN_EDITOR_ID);
         action.setActionDefinitionId(SWITCH_EDITOR_COMMAND_ID);
         setAction(action.getId(),action);
+        action = getAction(ITextEditorActionConstants.CONTEXT_PREFERENCES);
+        if(action != null) {
+            final Shell shell;
+            if (getSourceViewer() != null)
+                shell= getSourceViewer().getTextWidget().getShell();
+            else
+                shell= null;
+            IAction action2= new ActionWrapper(action, new Runnable() {
+                public void run() {
+                    String[] preferencePages= collectContextMenuPreferencePages();
+                    if (preferencePages.length > 0 && (shell == null || !shell.isDisposed()))
+                        PreferencesUtil.createPreferenceDialogOn(shell, preferencePages[0], preferencePages, InstallOptionsSourceEditor.class).open();
+                }
+            });
+            setAction(ITextEditorActionConstants.CONTEXT_PREFERENCES, action2);
+        }
+    }
+
+    protected String[] collectContextMenuPreferencePages() 
+    {
+        String[] pages = {IInstallOptionsConstants.INSTALLOPTIONS_PREFERENCE_PAGE_ID};
+        return (String[])Common.joinArrays(new Object[]{pages,super.collectContextMenuPreferencePages()});
     }
 
     /* (non-Javadoc)
@@ -125,6 +160,8 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
 
     public void dispose()
     {
+        InstallOptionsModel.INSTANCE.removeListener(mModelListener);
+        cancelJobs(mJobFamily);
         InstallOptionsEditorInput input = (InstallOptionsEditorInput)getEditorInput();
         if(isSwitching()) {
              try {
@@ -142,7 +179,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
         IDocument document = getDocumentProvider().getDocument(input);
         mINIFile.disconnect(document);
         mINIFile.removeListener(this);
-        ((TextViewer)getSourceViewer()).addPostSelectionChangedListener(mSelectionSynchronizer);
+        ((TextViewer)getSourceViewer()).removePostSelectionChangedListener(mSelectionSynchronizer);
         getSourceViewer().getSelectionProvider().removeSelectionChangedListener(mSelectionSynchronizer);
         super.dispose();
     }
@@ -164,10 +201,11 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
             }
         }
         IFile file = ((IFileEditorInput)input).getFile();
+        mCachedMarkers = null;
         if(input != null) {
             if(!(input instanceof InstallOptionsEditorInput)) {
+                ((IFileEditorInput)input).getFile().setPersistentProperty(FILEPROPERTY_INSTALLOPTIONS_FLAG, Boolean.TRUE.toString());
                 input = new InstallOptionsEditorInput((IFileEditorInput)input);
-                mCachedMarkers = InstallOptionsMarkerUtility.getMarkerAttributes(file);
                 setDocumentProvider(((InstallOptionsEditorInput)input).getDocumentProvider());
                 super.doSetInput(input);
             }
@@ -184,9 +222,9 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
             IDocument document = getDocumentProvider().getDocument(input);
             mINIFile.connect(document);
             file = ((IFileEditorInput)input).getFile();
-            if(Common.isEmptyArray(file.findMarkers(IInstallOptionsConstants.INSTALLOPTIONS_PROBLEM_MARKER_ID,
-                                    false,IResource.DEPTH_ZERO))) {
+            if(mCachedMarkers == null) {
                 InstallOptionsMarkerUtility.updateMarkers(file, mINIFile);
+                mCachedMarkers = InstallOptionsMarkerUtility.getMarkerAttributes(file);
             }
         }
     }
@@ -234,11 +272,12 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
         mINIFile.addListener(this);
         mAnnotationModel = sourceViewer.getProjectionAnnotationModel();
         updateAnnotations();
+        InstallOptionsModel.INSTANCE.addListener(mModelListener);
     }
 
     private void updateAnnotations()
     {
-        scheduleUIJob(InstallOptionsPlugin.getResourceString("outline.update.job.name"),getClass(), //$NON-NLS-1$
+        scheduleUIJob(InstallOptionsPlugin.getResourceString("annotations.update.job.name"),mJobFamily, //$NON-NLS-1$
                 new StatusRunnable(){
                     public IStatus run(IProgressMonitor monitor)
                     {
@@ -266,18 +305,13 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
         return super.getAdapter(type);
     }
 
-    private void scheduleUIJob(String jobName, final Class clasz, final StatusRunnable runnable)
+    private void scheduleUIJob(String jobName, final String jobFamily, final StatusRunnable runnable)
     {
-        Job[] jobs = Platform.getJobManager().find(clasz);
-        for (int i = 0; i < jobs.length; i++) {
-            if(jobs[i].getState() != Job.RUNNING) {
-                jobs[i].cancel();
-            }
-        }
+        cancelJobs(jobFamily);
         Job job = new UIJob(jobName){ //$NON-NLS-1$
                 public boolean belongsTo(Object family)
                 {
-                    return clasz == family;
+                    return jobFamily.equals(family);
                 }
 
                 public IStatus runInUIThread(IProgressMonitor monitor)
@@ -288,8 +322,193 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
         job.schedule();
     }
 
+    private void cancelJobs(String jobFamily)
+    {
+        Job[] jobs = Platform.getJobManager().find(jobFamily);
+        for (int i = 0; i < jobs.length; i++) {
+            if(jobs[i].getState() != Job.RUNNING) {
+                jobs[i].cancel();
+            }
+        }
+    }
+
+    private class ActionWrapper implements IAction
+    {
+        private IAction mDelegate;
+        private Runnable mRunnable;
+        
+        public ActionWrapper(IAction delegate, Runnable runnable)
+        {
+            super();
+            mDelegate = delegate;
+            mRunnable = runnable;
+        }
+
+        public void addPropertyChangeListener(IPropertyChangeListener listener)
+        {
+            mDelegate.addPropertyChangeListener(listener);
+        }
+
+        public int getAccelerator()
+        {
+            return mDelegate.getAccelerator();
+        }
+
+        public String getActionDefinitionId()
+        {
+            return mDelegate.getActionDefinitionId();
+        }
+
+        public String getDescription()
+        {
+            return mDelegate.getDescription();
+        }
+
+        public ImageDescriptor getDisabledImageDescriptor()
+        {
+            return mDelegate.getDisabledImageDescriptor();
+        }
+
+        public HelpListener getHelpListener()
+        {
+            return mDelegate.getHelpListener();
+        }
+
+        public ImageDescriptor getHoverImageDescriptor()
+        {
+            return mDelegate.getHoverImageDescriptor();
+        }
+
+        public String getId()
+        {
+            return mDelegate.getId();
+        }
+
+        public ImageDescriptor getImageDescriptor()
+        {
+            return mDelegate.getImageDescriptor();
+        }
+
+        public IMenuCreator getMenuCreator()
+        {
+            return mDelegate.getMenuCreator();
+        }
+
+        public int getStyle()
+        {
+            return mDelegate.getStyle();
+        }
+
+        public String getText()
+        {
+            return mDelegate.getText();
+        }
+
+        public String getToolTipText()
+        {
+            return mDelegate.getToolTipText();
+        }
+
+        public boolean isChecked()
+        {
+            return mDelegate.isChecked();
+        }
+
+        public boolean isEnabled()
+        {
+            return mDelegate.isEnabled();
+        }
+
+        public boolean isHandled()
+        {
+            return mDelegate.isHandled();
+        }
+
+        public void removePropertyChangeListener(IPropertyChangeListener listener)
+        {
+            mDelegate.removePropertyChangeListener(listener);
+        }
+
+        public void runWithEvent(Event event)
+        {
+            run();
+        }
+
+        public void setAccelerator(int keycode)
+        {
+            mDelegate.setAccelerator(keycode);
+        }
+
+        public void setActionDefinitionId(String id)
+        {
+            mDelegate.setActionDefinitionId(id);
+        }
+
+        public void setChecked(boolean checked)
+        {
+            mDelegate.setChecked(checked);
+        }
+
+        public void setDescription(String text)
+        {
+            mDelegate.setDescription(text);
+        }
+
+        public void setDisabledImageDescriptor(ImageDescriptor newImage)
+        {
+            mDelegate.setDisabledImageDescriptor(newImage);
+        }
+
+        public void setEnabled(boolean enabled)
+        {
+            mDelegate.setEnabled(enabled);
+        }
+
+        public void setHelpListener(HelpListener listener)
+        {
+            mDelegate.setHelpListener(listener);
+        }
+
+        public void setHoverImageDescriptor(ImageDescriptor newImage)
+        {
+            mDelegate.setHoverImageDescriptor(newImage);
+        }
+
+        public void setId(String id)
+        {
+            mDelegate.setId(id);
+        }
+
+        public void setImageDescriptor(ImageDescriptor newImage)
+        {
+            mDelegate.setImageDescriptor(newImage);
+        }
+
+        public void setMenuCreator(IMenuCreator creator)
+        {
+            mDelegate.setMenuCreator(creator);
+        }
+
+        public void setText(String text)
+        {
+            mDelegate.setText(text);
+        }
+
+        public void setToolTipText(String text)
+        {
+            mDelegate.setToolTipText(text);
+        }
+
+        public void run()
+        {
+            mRunnable.run();
+        }
+    }
+
     private class OutlinePage extends ContentOutlinePage
     {
+        private String mJobFamily = getClass().getName()+System.currentTimeMillis();
+        
         public void createControl(Composite parent)
         {
             super.createControl(parent);
@@ -339,6 +558,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
 
         public void dispose()
         {
+            cancelJobs(mJobFamily);
             TreeViewer viewer = getTreeViewer();
             if(viewer != null) {
                 viewer.removeSelectionChangedListener(mSelectionSynchronizer);
@@ -353,7 +573,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
          */
         public void update()
         {
-            scheduleUIJob(InstallOptionsPlugin.getResourceString("outline.update.job.name"),getClass(), //$NON-NLS-1$
+            scheduleUIJob(InstallOptionsPlugin.getResourceString("outline.update.job.name"),mJobFamily, //$NON-NLS-1$
                           new StatusRunnable(){
                               public IStatus run(IProgressMonitor monitor)
                               {
@@ -366,7 +586,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
                                   }
                                   catch(Exception e) {
                                       e.printStackTrace();
-                                      return new Status(IStatus.ERROR,IInstallOptionsConstants.PLUGIN_NAME,-1,e.getMessage(),e);
+                                      return new Status(IStatus.ERROR,IInstallOptionsConstants.PLUGIN_ID,-1,e.getMessage(),e);
                                   }
                               }
                           });
@@ -409,50 +629,9 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
                         INIKeyValue[] values = ((INISection)element).findKeyValues(InstallOptionsModel.PROPERTY_TYPE);
                         if(!Common.isEmptyArray(values)) {
                             String type = values[0].getValue();
-                            if (type.equalsIgnoreCase(InstallOptionsModel.TYPE_LABEL)) {
-                                image = InstallOptionsLabel.LABEL_ICON;
-                            }
-                            else if (type.equalsIgnoreCase(InstallOptionsModel.TYPE_LINK)) {
-                                image = InstallOptionsLink.LINK_ICON;
-                            }
-                            else if (type.equalsIgnoreCase(InstallOptionsModel.TYPE_BUTTON)) {
-                                image = InstallOptionsButton.BUTTON_ICON;
-                            }
-                            else if (type.equalsIgnoreCase(InstallOptionsModel.TYPE_CHECKBOX)) {
-                                image = InstallOptionsCheckBox.CHECKBOX_ICON;
-                            }
-                            else if (type.equalsIgnoreCase(InstallOptionsModel.TYPE_RADIOBUTTON)) {
-                                image = InstallOptionsRadioButton.RADIOBUTTON_ICON;
-                            }
-                            else if (type.equalsIgnoreCase(InstallOptionsModel.TYPE_FILEREQUEST)) {
-                                image = InstallOptionsFileRequest.FILEREQUEST_ICON;
-                            }
-                            else if (type.equalsIgnoreCase(InstallOptionsModel.TYPE_DIRREQUEST)) {
-                                image = InstallOptionsDirRequest.DIRREQUEST_ICON;
-                            }
-                            else if (type.equalsIgnoreCase(InstallOptionsModel.TYPE_ICON)) {
-                                image = InstallOptionsIcon.ICON_ICON;
-                            }
-                            else if (type.equalsIgnoreCase(InstallOptionsModel.TYPE_BITMAP)) {
-                                image = InstallOptionsBitmap.BITMAP_ICON;
-                            }
-                            else if (type.equalsIgnoreCase(InstallOptionsModel.TYPE_GROUPBOX)) {
-                                image = InstallOptionsGroupBox.GROUPBOX_ICON;
-                            }
-                            else if (type.equalsIgnoreCase(InstallOptionsModel.TYPE_TEXT)) {
-                                image = InstallOptionsText.TEXT_ICON;
-                            }
-                            else if (type.equalsIgnoreCase(InstallOptionsModel.TYPE_PASSWORD)) {
-                                image = InstallOptionsPassword.PASSWORD_ICON;
-                            }
-                            else if (type.equalsIgnoreCase(InstallOptionsModel.TYPE_COMBOBOX)) {
-                                image = InstallOptionsCombobox.COMBOBOX_ICON;
-                            }
-                            else if (type.equalsIgnoreCase(InstallOptionsModel.TYPE_DROPLIST)) {
-                                image = InstallOptionsDropList.DROPLIST_ICON;
-                            }
-                            else if (type.equalsIgnoreCase(InstallOptionsModel.TYPE_LISTBOX)) {
-                                image = InstallOptionsListbox.LISTBOX_ICON;
+                            InstallOptionsModelTypeDef typeDef = InstallOptionsModel.INSTANCE.getControlTypeDef(type);
+                            if(typeDef != null) {
+                                return InstallOptionsPlugin.getImageManager().getImage(typeDef.getSmallIcon());
                             }
                         }
                     }

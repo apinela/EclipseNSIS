@@ -23,8 +23,6 @@ import org.eclipse.swt.widgets.*;
 
 public class EditableComboBoxCellEditor extends CellEditor
 {
-    private static final int defaultStyle = SWT.DROP_DOWN;
-
     private List mItems;
     private String mSelection;
     private Combo mCombo;
@@ -36,16 +34,6 @@ public class EditableComboBoxCellEditor extends CellEditor
             WinAPI.SendMessage(mCombo.handle, WinAPI.CB_SHOWDROPDOWN,1,0);
         }
     };
-
-    public EditableComboBoxCellEditor()
-    {
-        setStyle(defaultStyle);
-    }
-
-    public EditableComboBoxCellEditor(Composite parent, List items)
-    {
-        this(parent, items, defaultStyle);
-    }
 
     public EditableComboBoxCellEditor(Composite parent, List items, int style)
     {

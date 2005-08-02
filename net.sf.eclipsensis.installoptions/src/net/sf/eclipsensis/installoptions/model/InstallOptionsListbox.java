@@ -15,8 +15,10 @@ import java.util.*;
 import java.util.List;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.dialogs.TableResizer;
 import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
+import net.sf.eclipsensis.installoptions.ini.INISection;
 import net.sf.eclipsensis.installoptions.properties.validators.NSISStringLengthValidator;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.viewer.CollectionContentProvider;
@@ -26,9 +28,8 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ControlAdapter;
-import org.eclipse.swt.events.ControlEvent;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -37,24 +38,14 @@ import org.eclipse.ui.views.properties.PropertyDescriptor;
 
 public class InstallOptionsListbox extends InstallOptionsCombobox
 {
-    public static Image LISTBOX_ICON = InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("listbox.type.small.icon")); //$NON-NLS-1$
-    
-    public InstallOptionsListbox()
+    protected InstallOptionsListbox(INISection section)
     {
-        this(InstallOptionsModel.TYPE_LISTBOX);
+        super(section);
     }
     
-    /**
-     * @param type
-     */
-    public InstallOptionsListbox(String type)
+    public String getType()
     {
-        super(type);
-    }
-
-    public Image getIconImage()
-    {
-        return LISTBOX_ICON;
+        return InstallOptionsModel.TYPE_LISTBOX;
     }
     
     protected IPropertyDescriptor createPropertyDescriptor(String name)
@@ -106,6 +97,12 @@ public class InstallOptionsListbox extends InstallOptionsCombobox
     protected class SelectListItemsPropertyDescriptor extends PropertyDescriptor implements PropertyChangeListener
     {
         private SelectListItemsCellEditor mEditor;
+        private DisposeListener mListener = new DisposeListener() {
+            public void widgetDisposed(DisposeEvent e)
+            {
+                mEditor = null;
+            }
+         };
         
         public SelectListItemsPropertyDescriptor()
         {
@@ -127,21 +124,21 @@ public class InstallOptionsListbox extends InstallOptionsCombobox
 
         public void setListItems(List listItems)
         {
-            if(mEditor != null && !mEditor.getControl().isDisposed()) {
+            if(mEditor != null) {
                 mEditor.setListItems(listItems);
             }
         }
 
         public void setMultiSelect(boolean multiSelect)
         {
-            if(mEditor != null && !mEditor.getControl().isDisposed()) {
+            if(mEditor != null) {
                 mEditor.setMultiSelect(multiSelect);
             }
         }
 
         public CellEditor createPropertyEditor(Composite parent)
         {
-            if(mEditor == null || mEditor.getControl() == null || mEditor.getControl().isDisposed()) {
+            if(mEditor == null) {
                 mEditor = new SelectListItemsCellEditor(parent,getListItems(),
                         (getFlags().contains(InstallOptionsModel.FLAGS_MULTISELECT)||
                          getFlags().contains(InstallOptionsModel.FLAGS_EXTENDEDSELECT)));
@@ -149,6 +146,7 @@ public class InstallOptionsListbox extends InstallOptionsCombobox
                 if(validator != null) {
                     mEditor.setValidator(validator);
                 }
+                mEditor.getControl().addDisposeListener(mListener);
             }
             return mEditor;
         }
@@ -233,38 +231,18 @@ public class InstallOptionsListbox extends InstallOptionsCombobox
             
             final Table table = new Table(composite,SWT.BORDER | (mMultiSelect?SWT.MULTI:SWT.SINGLE) | SWT.FULL_SELECTION | SWT.V_SCROLL);
             initializeDialogUnits(table);
-            GridData data = new GridData(GridData.FILL_BOTH);
+            GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
             data.widthHint = convertWidthInCharsToPixels(40);
             data.heightHint = convertHeightInCharsToPixels(10);
             table.setLayoutData(data);
             table.setLinesVisible(true);
+            table.addControlListener(new TableResizer());
             new TableColumn(table,SWT.LEFT);
             
             final TableViewer viewer = new TableViewer(table);
             viewer.setContentProvider(new CollectionContentProvider());
             viewer.setLabelProvider(new LabelProvider());
 
-            composite.addControlListener(new ControlAdapter() {
-                public void controlResized(ControlEvent e) {
-                    Rectangle area= composite.getClientArea();
-                    Point preferredSize= table.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-                    int width= area.width - 2 * table.getBorderWidth();
-                    if (preferredSize.y > area.height) {
-                        Point vBarSize = table.getVerticalBar().getSize();
-                        width -= vBarSize.x;
-                    }
-                    Point oldSize= table.getSize();
-                    if (oldSize.x <= width) {
-                        table.setSize(width, area.height);
-                    }
-                    
-                    TableColumn[] columns = table.getColumns();
-                    columns[0].setWidth(width);
-                    if (oldSize.x > width) {
-                        table.setSize(width, area.height);
-                    }
-                }
-            });
             viewer.setInput(mValues);
             viewer.setSelection(new StructuredSelection(mSelection));
 

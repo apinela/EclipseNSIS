@@ -23,7 +23,7 @@ public class INILine
     private List mErrors = new ArrayList();
     private List mWarnings = new ArrayList();
     
-    void setText(String text)
+    public void setText(String text)
     {
         mText = text;
     }

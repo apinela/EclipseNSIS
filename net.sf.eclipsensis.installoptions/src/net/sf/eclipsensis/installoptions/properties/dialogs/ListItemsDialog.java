@@ -13,6 +13,7 @@ import java.util.*;
 import java.util.List;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.dialogs.TableResizer;
 import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.util.Common;
@@ -24,8 +25,6 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -73,7 +72,7 @@ public class ListItemsDialog extends Dialog
         
         final Table table = new Table(composite,SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION | SWT.V_SCROLL);
         initializeDialogUnits(table);
-        GridData data = new GridData(GridData.FILL_BOTH);
+        GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
         data.widthHint = convertWidthInCharsToPixels(40);
         data.heightHint = convertHeightInCharsToPixels(10);
         table.setLayoutData(data);
@@ -126,7 +125,7 @@ public class ListItemsDialog extends Dialog
         });
         
         final Composite buttons = new Composite(composite,SWT.NONE);
-        buttons.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
+        buttons.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false));
         layout = new GridLayout(1,false);
         layout.marginWidth = 0;
         layout.marginHeight = 0;
@@ -135,7 +134,7 @@ public class ListItemsDialog extends Dialog
         final Button add = new Button(buttons,SWT.PUSH);
         add.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("add.icon"))); //$NON-NLS-1$
         add.setToolTipText(EclipseNSISPlugin.getResourceString("new.tooltip")); //$NON-NLS-1$
-        add.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        add.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         add.addListener(SWT.Selection, new Listener() {
             public void handleEvent(Event e) {
                 List list = (List)viewer.getInput();
@@ -151,7 +150,7 @@ public class ListItemsDialog extends Dialog
         final Button del = new Button(buttons, SWT.PUSH);
         del.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("delete.icon"))); //$NON-NLS-1$
         del.setToolTipText(EclipseNSISPlugin.getResourceString("remove.tooltip")); //$NON-NLS-1$
-        del.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        del.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         del.addListener(SWT.Selection, new Listener() {
             public void handleEvent(Event e) {
                 List list = (List)viewer.getInput();
@@ -186,7 +185,7 @@ public class ListItemsDialog extends Dialog
         up.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("up.icon"))); //$NON-NLS-1$
         up.setToolTipText(EclipseNSISPlugin.getResourceString("up.tooltip")); //$NON-NLS-1$
         up.setEnabled(mover.canMoveUp());
-        up.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        up.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         up.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) 
             {
@@ -198,7 +197,7 @@ public class ListItemsDialog extends Dialog
         down.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("down.icon"))); //$NON-NLS-1$
         down.setToolTipText(EclipseNSISPlugin.getResourceString("down.tooltip")); //$NON-NLS-1$
         down.setEnabled(mover.canMoveDown());
-        down.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        down.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         down.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e)
             {
@@ -217,29 +216,7 @@ public class ListItemsDialog extends Dialog
             }
         });
 
-        composite.addControlListener(new ControlAdapter() {
-            public void controlResized(ControlEvent e) {
-                Rectangle area= composite.getClientArea();
-                Point preferredSize= table.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-                int width= area.width - 2 * table.getBorderWidth();
-                if (preferredSize.y > area.height) {
-                    Point vBarSize = table.getVerticalBar().getSize();
-                    width -= vBarSize.x;
-                }
-                width -= buttons.getSize().x;
-                width -= ((GridLayout)composite.getLayout()).horizontalSpacing;
-                Point oldSize= table.getSize();
-                if (oldSize.x <= width) {
-                    table.setSize(width, area.height);
-                }
-                
-                TableColumn[] columns = table.getColumns();
-                columns[0].setWidth(width);
-                if (oldSize.x > width) {
-                    table.setSize(width, area.height);
-                }
-            }
-        });
+        table.addControlListener(new TableResizer());
         viewer.setInput(mValues);
         return composite;
     }

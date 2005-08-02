@@ -16,6 +16,7 @@ import java.util.*;
 import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.edit.*;
+import net.sf.eclipsensis.installoptions.figures.IInstallOptionsFigure;
 import net.sf.eclipsensis.installoptions.model.*;
 
 import org.eclipse.draw2d.*;
@@ -140,6 +141,16 @@ public class InstallOptionsDialogEditPart extends InstallOptionsEditPart impleme
                 (XYLayout)getContentPane().getLayoutManager()));
 
         installEditPolicy("Snap Feedback", new SnapFeedbackPolicy()); //$NON-NLS-1$
+    }
+
+    public void refreshDiagram()
+    {
+        InstallOptionsWidgetEditPart child;
+
+        for (Iterator iter = getChildren().iterator(); iter.hasNext(); ) {
+            child = (InstallOptionsWidgetEditPart)iter.next();
+            ((IInstallOptionsFigure)child.getFigure()).refresh();
+        }
     }
 
     /**

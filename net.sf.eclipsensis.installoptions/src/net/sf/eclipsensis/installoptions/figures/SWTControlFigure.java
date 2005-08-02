@@ -25,7 +25,6 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.views.properties.IPropertySource;
 
 public abstract class SWTControlFigure extends Figure implements IInstallOptionsFigure
@@ -67,10 +66,7 @@ public abstract class SWTControlFigure extends Figure implements IInstallOptions
                 if(!source.isDisposed() && source.handle > 0) {
                     Point p1 = new Point(0, 0);
                     translateToAbsolute(p1);
-//                    int borderWidth = source.getBorderWidth();
-//                    setNeedsReScrape(!(e.width+2*borderWidth >= bounds.width && e.height+2*borderWidth >= bounds.height));
                     setNeedsReScrape(mImageBounds.width != bounds.width || mImageBounds.height != bounds.height);
-//                    e.gc.copyArea(mImage, mImageBounds.x-bounds.x, mImageBounds.y-bounds.y);
                     GC gc = new GC(mCanvas);
                     gc.copyArea(mImage, p1.x+mImageBounds.x, p1.y+mImageBounds.y);
                     gc.dispose();
@@ -190,7 +186,7 @@ public abstract class SWTControlFigure extends Figure implements IInstallOptions
     protected synchronized void layout() 
     {
         if(isNeedsReScrape() && mCanvas != null) {
-            Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+            Shell shell = mCanvas.getShell();
             if(!shell.isVisible()) {
                 shell.setVisible(true);
             }

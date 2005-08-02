@@ -9,6 +9,8 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.properties;
 
+import java.util.*;
+
 import net.sf.eclipsensis.installoptions.edit.InstallOptionsEditDomain;
 import net.sf.eclipsensis.util.Common;
 
@@ -41,11 +43,6 @@ public class CustomPropertySheetPage extends PropertySheetPage
         super.setSorter(cNonSorter);
     }
 
-    public void setRootEntry(IPropertySheetEntry entry)
-    {
-        super.setRootEntry(entry);
-    }
-
     public void createControl(Composite parent)
     {
         super.createControl(parent);
@@ -71,7 +68,7 @@ public class CustomPropertySheetPage extends PropertySheetPage
             else if(object instanceof IAdaptable) {
                 source = (IPropertySource)((IAdaptable)object).getAdapter(IPropertySource.class);
             }
-            if(source != null) {
+            if(source != null && !(source instanceof CustomPropertySource)) {
                 source = new CustomPropertySource(source);
             }
             return source;
@@ -81,6 +78,7 @@ public class CustomPropertySheetPage extends PropertySheetPage
     public class CustomPropertySource implements IPropertySource
     {
         private IPropertySource mDelegate;
+        private Map mDescriptors = new HashMap();
         
         public CustomPropertySource(IPropertySource delegate)
         {
@@ -91,7 +89,7 @@ public class CustomPropertySheetPage extends PropertySheetPage
         public Object getEditableValue()
         {
             Object value = mDelegate.getEditableValue();
-            if(value instanceof IPropertySource) {
+            if(value instanceof IPropertySource && !(value instanceof CustomPropertySource)) {
                 value = new CustomPropertySource((IPropertySource)value);
             }
             return value;
@@ -99,20 +97,24 @@ public class CustomPropertySheetPage extends PropertySheetPage
 
         public IPropertyDescriptor[] getPropertyDescriptors()
         {
+            List list = new ArrayList();
             IPropertyDescriptor[] descriptors = mDelegate.getPropertyDescriptors();
             if(!Common.isEmptyArray(descriptors)) {
-                IPropertyDescriptor[] descriptors2 = new IPropertyDescriptor[descriptors.length];
                 for (int i = 0; i < descriptors.length; i++) {
-                    if(!(descriptors[i] instanceof ReadOnlyPropertyDescriptor)) {
-                        descriptors2[i] = new ReadOnlyPropertyDescriptor(descriptors[i]);
+                    IPropertyDescriptor descriptor = (IPropertyDescriptor)mDescriptors.get(descriptors[i].getId());
+                    if(descriptor == null) {
+                        if(!(descriptors[i] instanceof ReadOnlyPropertyDescriptor)) {
+                            descriptor = new ReadOnlyPropertyDescriptor(descriptors[i]);
+                        }
+                        else {
+                            descriptor = descriptors[i];
+                        }
+                        mDescriptors.put(descriptors[i].getId(), descriptor);
                     }
-                    else {
-                        descriptors2[i] = descriptors[i];
-                    }
+                    list.add(descriptor);
                 }
-                descriptors = descriptors2;
             }
-            return descriptors;
+            return (IPropertyDescriptor[])list.toArray(new IPropertyDescriptor[list.size()]);
         }
 
         public Object getPropertyValue(Object id)
@@ -159,7 +161,7 @@ public class CustomPropertySheetPage extends PropertySheetPage
             }
             else {
                 return mDelegate.createPropertyEditor(parent);
-            }
+           }
         }
 
         /* (non-Javadoc)

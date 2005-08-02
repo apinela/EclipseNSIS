@@ -13,6 +13,7 @@ import java.util.*;
 import java.util.List;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.dialogs.TableResizer;
 import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsFileRequest;
@@ -28,8 +29,6 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -93,13 +92,14 @@ public class FileFilterDialog extends Dialog
         Composite composite = (Composite)super.createDialogArea(parent);
         
         final Group group1 = new Group(composite,SWT.SHADOW_ETCHED_IN);
-        group1.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        group1.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         group1.setLayout(new GridLayout(2, false));
         group1.setText(InstallOptionsPlugin.getResourceString("filter.summary.group.name")); //$NON-NLS-1$
         final Table table = new Table(group1,SWT.BORDER|SWT.MULTI|SWT.FULL_SELECTION);
-        table.setLayoutData(new GridData(GridData.FILL_BOTH));
+        table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         table.setLinesVisible(true);
         table.setHeaderVisible(true);
+        table.addControlListener(new TableResizer());
         
         final TableColumn[] columns = new TableColumn[2];
         columns[0] = new TableColumn(table,SWT.LEFT);
@@ -112,7 +112,7 @@ public class FileFilterDialog extends Dialog
         viewer1.setLabelProvider(new FileFilterLabelProvider());
         
         final Composite buttons = new Composite(group1,SWT.NONE);
-        buttons.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
+        buttons.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false));
         layout= new GridLayout();
         layout.marginHeight= 0;
         layout.marginWidth= 0;
@@ -121,7 +121,7 @@ public class FileFilterDialog extends Dialog
         final Button add = new Button(buttons,SWT.PUSH);
         add.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("add.icon"))); //$NON-NLS-1$
         add.setToolTipText(EclipseNSISPlugin.getResourceString("new.tooltip")); //$NON-NLS-1$
-        add.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        add.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         add.addListener(SWT.Selection, new Listener() {
             public void handleEvent(Event e) {
                 FileFilter f = new FileFilter(InstallOptionsPlugin.getResourceString("default.filter.description"), //$NON-NLS-1$
@@ -138,7 +138,7 @@ public class FileFilterDialog extends Dialog
         final Button del = new Button(buttons, SWT.PUSH);
         del.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("delete.icon"))); //$NON-NLS-1$
         del.setToolTipText(EclipseNSISPlugin.getResourceString("remove.tooltip")); //$NON-NLS-1$
-        del.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        del.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         del.addListener(SWT.Selection, new Listener() {
             public void handleEvent(Event e) {
                 List list = (List)viewer1.getInput();
@@ -173,7 +173,7 @@ public class FileFilterDialog extends Dialog
         up.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("up.icon"))); //$NON-NLS-1$
         up.setToolTipText(EclipseNSISPlugin.getResourceString("up.tooltip")); //$NON-NLS-1$
         up.setEnabled(mover.canMoveUp());
-        up.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        up.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         up.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) 
             {
@@ -185,7 +185,7 @@ public class FileFilterDialog extends Dialog
         down.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("down.icon"))); //$NON-NLS-1$
         down.setToolTipText(EclipseNSISPlugin.getResourceString("down.tooltip")); //$NON-NLS-1$
         down.setEnabled(mover.canMoveDown());
-        down.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        down.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         down.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e)
             {
@@ -193,47 +193,14 @@ public class FileFilterDialog extends Dialog
             }
         });
         
-        group1.addControlListener(new ControlAdapter() {
-            public void controlResized(ControlEvent e) {
-                Rectangle area= group1.getClientArea();
-                Point preferredSize= table.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-                int width= area.width - 2 * table.getBorderWidth();
-                if (preferredSize.y > area.height) {
-                    Point vBarSize = table.getVerticalBar().getSize();
-                    width -= vBarSize.x;
-                }
-
-                int buttonsWidth = buttons.getSize().x;
-                if(buttonsWidth == 0) {
-                    buttonsWidth = buttons.computeSize(SWT.DEFAULT,SWT.DEFAULT).x;
-                }
-                
-                width -= buttonsWidth;
-                width -= ((GridLayout)group1.getLayout()).horizontalSpacing;
-                width -= 2*((GridLayout)group1.getLayout()).marginWidth;
-                int columnWidth = width/2;
-                Point oldSize= table.getSize();
-                if (oldSize.x <= width) {
-                    table.setSize(width, area.height);
-                }
-                
-                columns[0].setWidth(width - columnWidth);
-                columns[1].setWidth(columnWidth);
-
-                if (oldSize.x > width) {
-                    table.setSize(width, area.height);
-                }
-            }
-        });
-        
         final Group group2 = new Group(composite,SWT.SHADOW_ETCHED_IN);
-        group2.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        group2.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         group2.setLayout(new GridLayout(1, false));
         group2.setText(InstallOptionsPlugin.getResourceString("filter.detail.group.name")); //$NON-NLS-1$
 
         boolean isNull = (mCurrent==null);
         Composite composite2 = new Composite(group2,SWT.NONE);
-        composite2.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        composite2.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         layout = new GridLayout(2,false);
         layout.marginHeight = 0;
         layout.marginWidth = 0;
@@ -245,7 +212,7 @@ public class FileFilterDialog extends Dialog
         label.setEnabled(!isNull);
         
         final Text text = new Text(composite2,SWT.BORDER);
-        text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         text.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e)
             {
@@ -258,21 +225,22 @@ public class FileFilterDialog extends Dialog
         text.setEnabled(!isNull);
 
         final Label label2 = new Label(group2,SWT.NONE);
-        label2.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        label2.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         label2.setText(InstallOptionsPlugin.getResourceString("filter.patterns")); //$NON-NLS-1$
         label2.setEnabled(!isNull);
 
         composite2 = new Composite(group2,SWT.NONE);
-        composite2.setLayoutData(new GridData(GridData.FILL_BOTH));
+        composite2.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         layout = new GridLayout(2,false);
         layout.marginHeight = 0;
         layout.marginWidth = 0;
         composite2.setLayout(layout);
         
         final Table table2 = new Table(composite2,SWT.BORDER|SWT.MULTI|SWT.FULL_SELECTION);
-        table2.setLayoutData(new GridData(GridData.FILL_BOTH));
+        table2.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         table2.setLinesVisible(true);
         table2.setEnabled(!isNull);
+        table2.addControlListener(new TableResizer());
         new TableColumn(table2,SWT.LEFT);
         final TextCellEditor textEditor = new TextCellEditor(table2);
         ((Text) textEditor.getControl()).addVerifyListener(new VerifyListener() {
@@ -324,7 +292,7 @@ public class FileFilterDialog extends Dialog
         });
 
         final Composite buttons2 = new Composite(composite2,SWT.NONE);
-        buttons2.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
+        buttons2.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false));
         layout= new GridLayout();
         layout.marginHeight= 0;
         layout.marginWidth= 0;
@@ -333,7 +301,7 @@ public class FileFilterDialog extends Dialog
         final Button add2 = new Button(buttons2,SWT.PUSH);
         add2.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("add.icon"))); //$NON-NLS-1$
         add2.setToolTipText(EclipseNSISPlugin.getResourceString("new.tooltip")); //$NON-NLS-1$
-        add2.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        add2.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         add2.addListener(SWT.Selection, new Listener() {
             public void handleEvent(Event e) {
                 if(mCurrent != null) {
@@ -352,7 +320,7 @@ public class FileFilterDialog extends Dialog
         final Button del2 = new Button(buttons2, SWT.PUSH);
         del2.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("delete.icon"))); //$NON-NLS-1$
         del2.setToolTipText(EclipseNSISPlugin.getResourceString("remove.tooltip")); //$NON-NLS-1$
-        del2.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        del2.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         del2.addListener(SWT.Selection, new Listener() {
             public void handleEvent(Event e) 
             {
@@ -408,7 +376,7 @@ public class FileFilterDialog extends Dialog
         up2.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("up.icon"))); //$NON-NLS-1$
         up2.setToolTipText(EclipseNSISPlugin.getResourceString("up.tooltip")); //$NON-NLS-1$
         up2.setEnabled(!isNull && mover2.canMoveUp());
-        up2.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        up2.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         up2.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) 
             {
@@ -420,36 +388,11 @@ public class FileFilterDialog extends Dialog
         down2.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("down.icon"))); //$NON-NLS-1$
         down2.setToolTipText(EclipseNSISPlugin.getResourceString("down.tooltip")); //$NON-NLS-1$
         down2.setEnabled(!isNull && mover2.canMoveDown());
-        down2.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        down2.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         down2.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e)
             {
                 mover2.moveDown();
-            }
-        });
-        
-        group2.addControlListener(new ControlAdapter() {
-            public void controlResized(ControlEvent e) {
-                Rectangle area= group2.getClientArea();
-                Point preferredSize= table2.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-                int width= area.width - 2 * table2.getBorderWidth();
-                if (preferredSize.y > area.height) {
-                    Point vBarSize = table2.getVerticalBar().getSize();
-                    width -= vBarSize.x;
-                }
-                int buttonsWidth = buttons2.getSize().x;
-                if(buttonsWidth == 0) {
-                    buttonsWidth = buttons2.computeSize(SWT.DEFAULT,SWT.DEFAULT).x;
-                }
-                
-                width -= buttonsWidth;
-                width -= ((GridLayout)group2.getLayout()).horizontalSpacing;
-                width -= 2*((GridLayout)group2.getLayout()).marginWidth;
-                table2.setSize(width, area.height);
-                TableColumn[] columns = table2.getColumns();
-                if(!Common.isEmptyArray(columns)) {
-                    columns[0].setWidth(width);
-                }
             }
         });
         

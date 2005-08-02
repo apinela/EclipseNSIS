@@ -21,11 +21,11 @@ import org.eclipse.swt.dnd.DragSourceEvent;
 
 public class InstallOptionsTreeViewerDragSourceListener extends AbstractTransferDragSourceListener
 {
-    private List modelSelection;
+    private List mModelSelection;
 
     public InstallOptionsTreeViewerDragSourceListener(EditPartViewer viewer) 
     {
-        super(viewer, InstallOptionsTreeViewerTransfer.getInstance());
+        super(viewer, InstallOptionsTreeViewerTransfer.INSTANCE);
     }
 
     public void dragSetData(DragSourceEvent event) 
@@ -35,34 +35,34 @@ public class InstallOptionsTreeViewerDragSourceListener extends AbstractTransfer
 
     public void dragStart(DragSourceEvent event) 
     {
-        InstallOptionsTreeViewerTransfer.getInstance().setViewer(getViewer());
+        InstallOptionsTreeViewerTransfer.INSTANCE.setViewer(getViewer());
         List selection = getViewer().getSelectedEditParts();
-        InstallOptionsTreeViewerTransfer.getInstance().setObject(selection);
+        InstallOptionsTreeViewerTransfer.INSTANCE.setObject(selection);
         saveModelSelection(selection);
     }
 
     public void dragFinished(DragSourceEvent event) 
     {
-        InstallOptionsTreeViewerTransfer.getInstance().setObject(null);
-        InstallOptionsTreeViewerTransfer.getInstance().setViewer(null);
+        InstallOptionsTreeViewerTransfer.INSTANCE.setObject(null);
+        InstallOptionsTreeViewerTransfer.INSTANCE.setViewer(null);
         revertModelSelection();
     }
 
     protected void revertModelSelection() 
     {
         List list = new ArrayList();
-        for (int i = 0; i < modelSelection.size(); i++) {
-            list.add(getViewer().getEditPartRegistry().get(modelSelection.get(i)));
+        for (int i = 0; i < mModelSelection.size(); i++) {
+            list.add(getViewer().getEditPartRegistry().get(mModelSelection.get(i)));
         }
         getViewer().setSelection(new StructuredSelection(list));
     }
 
     protected void saveModelSelection(List editPartSelection) 
     {
-        modelSelection = new ArrayList();
+        mModelSelection = new ArrayList();
         for (int i = 0; i < editPartSelection.size(); i++) {
             EditPart editpart = (EditPart)editPartSelection.get(i);
-            modelSelection.add(editpart.getModel());
+            mModelSelection.add(editpart.getModel());
         }
     }
 }

@@ -20,11 +20,11 @@ import net.sf.eclipsensis.installoptions.dialogs.GridSnapGlueSettingsDialog;
 import net.sf.eclipsensis.installoptions.dnd.*;
 import net.sf.eclipsensis.installoptions.edit.*;
 import net.sf.eclipsensis.installoptions.ini.INIFile;
-import net.sf.eclipsensis.installoptions.model.DialogSizeManager;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsDialog;
+import net.sf.eclipsensis.installoptions.model.*;
 import net.sf.eclipsensis.installoptions.properties.CustomPropertySheetPage;
 import net.sf.eclipsensis.installoptions.rulers.*;
 import net.sf.eclipsensis.installoptions.util.TypeConverter;
+import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -61,6 +61,7 @@ import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.dialogs.SaveAsDialog;
 import org.eclipse.ui.part.*;
 import org.eclipse.ui.texteditor.IDocumentProvider;
@@ -85,6 +86,48 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
     private INIFile mINIFile = new INIFile();
     private KeyHandler mSharedKeyHandler;
     private Map[] mCachedMarkers;
+    private boolean mPerformingSaveAs = false;
+    private boolean mCreatedEmptyPart = true;
+    private IModelListener mModelListener = new IModelListener()
+    {
+        public void modelChanged()
+        {
+            GraphicalViewer viewer = getGraphicalViewer();
+            if(viewer != null) {
+                ISelection sel = viewer.getSelection();
+                viewer.setSelection(sel);
+            }
+            InstallOptionsDialog dialog = getInstallOptionsDialog();
+            if(dialog != null && dialog.canUpdateINIFile()) {
+                dialog.updateINIFile();
+            }
+            mINIFile.validate(true);
+            if(mINIFile.hasErrors()) {
+                IWorkbenchWindow window = InstallOptionsDesignEditor.this.getSite().getWorkbenchWindow();
+                if(PlatformUI.getWorkbench().getActiveWorkbenchWindow() == window) {
+                    if(window.getPartService().getActivePart() == InstallOptionsDesignEditor.this) {
+                        checkPerformSwitch();
+                    }
+                }
+            }
+        }
+    };
+//    
+//    private IPerspectiveListener3 mPerspectiveListener = new PerspectiveAdapter() {
+//        public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, IWorkbenchPartReference partRef, String changeId)
+//        {
+//            if(changeId == IWorkbenchPage.CHANGE_EDITOR_OPEN) {
+//                if(partRef instanceof IEditorReference) {
+//                    if(partRef.getPart(false) == InstallOptionsDesignEditor.this) {
+//                        mEditorOpened = true;
+//                        page.getWorkbenchWindow().removePerspectiveListener(this);
+//                        checkPerformSwitch();
+//                    }
+//                }
+//            }
+//        }
+//    };
+//
     /** 
      * The number of reentrances into error correction code while saving.
      * @since 2.0
@@ -94,8 +137,31 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
     private PaletteRoot mRoot;
 
     private OutlinePage mOutlinePage;
-
+//    private boolean mEditorOpened = false;
     private boolean mEditorSaving = false;
+
+    private IWindowListener mWindowListener = new IWindowListener() {
+        public void windowActivated(IWorkbenchWindow window)
+        {
+            if(window == InstallOptionsDesignEditor.this.getSite().getWorkbenchWindow()) {
+                if(window.getPartService().getActivePart() == InstallOptionsDesignEditor.this) {
+                    checkPerformSwitch();
+                }
+            }
+        }
+
+        public void windowDeactivated(IWorkbenchWindow window)
+        {
+        }
+
+        public void windowClosed(IWorkbenchWindow window)
+        {
+        }
+
+        public void windowOpened(IWorkbenchWindow window)
+        {
+        }
+    };
 
     private IPartListener mPartListener = new IPartListener() {
         // If an open, unsaved file was deleted, query the user to either do a
@@ -122,6 +188,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
                     closeEditor(false);
                 }
             }
+            checkPerformSwitch();
         }
 
         public void partBroughtToTop(IWorkbenchPart part)
@@ -130,7 +197,12 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
 
         public void partClosed(IWorkbenchPart part)
         {
-            part.getSite().getWorkbenchWindow().getSelectionService().removeSelectionListener(InstallOptionsDesignEditor.this);
+            if (part != InstallOptionsDesignEditor.this) {
+                return;
+            }
+            IWorkbenchWindow window = part.getSite().getWorkbenchWindow();
+            window.getSelectionService().removeSelectionListener(InstallOptionsDesignEditor.this);
+            part.getSite().getWorkbenchWindow().getWorkbench().removeWindowListener(mWindowListener);
         }
 
         public void partDeactivated(IWorkbenchPart part)
@@ -139,18 +211,12 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
 
         public void partOpened(final IWorkbenchPart part)
         {
-            part.getSite().getWorkbenchWindow().getSelectionService().addSelectionListener(InstallOptionsDesignEditor.this);
-            part.getSite().getShell().getDisplay().asyncExec(new Runnable() {
-                public void run()
-                {
-                    if(mINIFile.hasErrors()) {
-                        MessageDialog.openError(getSite().getShell(),EclipseNSISPlugin.getResourceString("error.title"), //$NON-NLS-1$
-                                InstallOptionsPlugin.getFormattedString("editor.switch.error", //$NON-NLS-1$
-                                                        new String[]{((IFileEditorInput)getEditorInput()).getFile().getName()}));
-                        getActionRegistry().getAction(SwitchEditorAction.ID).run();
-                    }
-                }
-            });
+            if (part != InstallOptionsDesignEditor.this) {
+                return;
+            }
+            IWorkbenchWindow window = part.getSite().getWorkbenchWindow();
+            window.getSelectionService().addSelectionListener(InstallOptionsDesignEditor.this);
+            part.getSite().getWorkbenchWindow().getWorkbench().addWindowListener(mWindowListener);
         }
     };
 
@@ -302,7 +368,6 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
         setSite(site);
         setInput(input);
         getCommandStack().addCommandStackListener(this);
-//        getSite().getWorkbenchWindow().getSelectionService().addSelectionListener(this);
         site.getKeyBindingService().setScopes(new String[]{EDITING_INSTALLOPTIONS_DESIGN_CONTEXT_ID});
         initializeActionRegistry();
     }
@@ -326,12 +391,14 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
      */
     public void selectionChanged(IWorkbenchPart part, ISelection selection) 
     {
-        // If not the active editor, ignore selection changed.
-        IEditorPart activeEditor = getSite().getPage().getActiveEditor();
-        if(activeEditor != null) {
-            Object adapter = activeEditor.getAdapter(getClass());
-            if (this.equals(adapter)) {
-                updateActions(mSelectionActions);
+        if(!mCreatedEmptyPart) {
+            // If not the active editor, ignore selection changed.
+            IEditorPart activeEditor = getSite().getPage().getActiveEditor();
+            if(activeEditor != null) {
+                Object adapter = activeEditor.getAdapter(getClass());
+                if (this.equals(adapter)) {
+                    updateActions(mSelectionActions);
+                }
             }
         }
     }
@@ -350,7 +417,9 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
      */
     public void setFocus() 
     {
-        getGraphicalViewer().getControl().setFocus();
+        if(!mCreatedEmptyPart) {
+            getGraphicalViewer().getControl().setFocus();
+        }
     }
 
     /**
@@ -359,8 +428,9 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
      */
     protected void setGraphicalViewer(GraphicalViewer viewer) 
     {
-        getEditDomain().addViewer(viewer);
         this.mGraphicalViewer = viewer;
+        getEditDomain().addViewer(viewer);
+        getEditDomain().setPaletteRoot(getPaletteRoot());
     }
 
     /**
@@ -387,15 +457,19 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
      */
     public void createPartControl(Composite parent) 
     {
-        mPalette = new FlyoutPaletteComposite(parent, SWT.NONE, getSite().getPage(),
-                getPaletteViewerProvider(), getPalettePreferences());
-        createGraphicalViewer(mPalette);
-        mPalette.setGraphicalControl(getGraphicalControl());
-        if (mPalettePage != null) {
-            mPalette.setExternalViewer(mPalettePage.getPaletteViewer());
-            mPalettePage = null;
+        if(!mINIFile.hasErrors()) {
+            mPalette = new FlyoutPaletteComposite(parent, SWT.NONE, getSite().getPage(),
+                    getPaletteViewerProvider(), getPalettePreferences());
+            createGraphicalViewer(mPalette);
+            mPalette.setGraphicalControl(getGraphicalControl());
+            if (mPalettePage != null) {
+                mPalette.setExternalViewer(mPalettePage.getPaletteViewer());
+                mPalettePage = null;
+            }
+            InstallOptionsModel.INSTANCE.addListener(mModelListener);
+            PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,PLUGIN_CONTEXT_PREFIX+"installoptions_designeditor_context"); //$NON-NLS-1$
+            mCreatedEmptyPart = false;
         }
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,PLUGIN_CONTEXT_PREFIX+"installoptions_designeditor_context"); //$NON-NLS-1$
     }
 
     /**
@@ -422,7 +496,6 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
     protected void setEditDomain(DefaultEditDomain editDomain) 
     {
         mEditDomain = editDomain;
-        getEditDomain().setPaletteRoot(getPaletteRoot());
     }
 
     protected void closeEditor(boolean save)
@@ -453,7 +526,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
         InstallOptionsRootEditPart root = new InstallOptionsRootEditPart();
         viewer.setRootEditPart(root);
        
-        viewer.setEditPartFactory(GraphicalPartFactory.getInstance());
+        viewer.setEditPartFactory(GraphicalPartFactory.INSTANCE);
         ContextMenuProvider provider = new InstallOptionsDesignMenuProvider(this,//viewer,
                                                                     getActionRegistry());
         viewer.setContextMenu(provider);
@@ -492,6 +565,8 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
 
     public void dispose()
     {
+        InstallOptionsModel.INSTANCE.removeListener(mModelListener);
+        boolean hasErrors = mINIFile.hasErrors();
         InstallOptionsEditorInput input = (InstallOptionsEditorInput)getEditorInput();
         IFile file = input.getFile();
         file.getWorkspace().removeResourceChangeListener(mResourceListener);
@@ -522,7 +597,9 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
         }
 
         mPartListener = null;
-        saveProperties(file);
+        if(!hasErrors) {
+            saveProperties(file);
+        }
         getCommandStack().removeCommandStackListener(this);
         getSite().getWorkbenchWindow().getSelectionService().removeSelectionListener(this);
         getEditDomain().setActiveTool(null);
@@ -681,15 +758,13 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
         }
     }
 
-    private INIFile updateDocument(IDocument doc) throws CoreException
+    private void updateDocument(IDocument doc) throws CoreException
     {
         InstallOptionsDialog dialog = getInstallOptionsDialog();
         if(doc != null && dialog != null && dialog.canUpdateINIFile()) {
-            INIFile iniFile = dialog.updateINIFile();
-            iniFile.updateDocument(doc);
-            return iniFile;
+            dialog.updateINIFile();
+            mINIFile.updateDocument(doc);
         }
-        return null;
     }
 
     public void doSaveAs()
@@ -806,7 +881,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
     protected PaletteRoot getPaletteRoot()
     {
         if (mRoot == null) {
-            mRoot = InstallOptionsPaletteProvider.createPalette();
+            mRoot = InstallOptionsPaletteProvider.createPalette(getGraphicalViewer());
         }
         return mRoot;
     }
@@ -827,6 +902,9 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
     {
         ActionRegistry registry = getActionRegistry();
         IAction action;
+        
+        action = new RefreshDiagramAction(this);
+        registry.registerAction(action);
         
         action = new ToggleDialogSizeVisibilityAction(this);
         registry.registerAction(action);
@@ -950,6 +1028,23 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
         action.setActionDefinitionId(IInstallOptionsConstants.SWITCH_EDITOR_COMMAND_ID);
         registry.registerAction(action);
         getEditorSite().getKeyBindingService().registerAction(action);
+
+        final Shell shell;
+        if (getGraphicalViewer() != null)
+            shell= getGraphicalViewer().getControl().getShell();
+        else
+            shell= null;
+        action = new Action(){
+            public void run() {
+                String[] preferencePages= {IInstallOptionsConstants.INSTALLOPTIONS_PREFERENCE_PAGE_ID};
+                if (preferencePages.length > 0 && (shell == null || !shell.isDisposed()))
+                    PreferencesUtil.createPreferenceDialogOn(shell, preferencePages[0], preferencePages, InstallOptionsDesignEditor.class).open();
+            }
+        };
+        action.setId("net.sf.eclipsensis.installoptions.design_editor_prefs"); //$NON-NLS-1$
+        action.setText(InstallOptionsPlugin.getResourceString("preferences.action.name")); //$NON-NLS-1$
+        action.setToolTipText(InstallOptionsPlugin.getResourceString("preferences.action.tooltip")); //$NON-NLS-1$
+        registry.registerAction(action);
     }
 
     /*
@@ -1035,7 +1130,6 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
                 RulerProvider provider = null;
                 if (ruler != null) {
                     provider = new InstallOptionsRulerProvider(ruler);
-                    provider.setUnit(InstallOptionsRulerProvider.UNIT_DLU);
                 }
                 viewer.setProperty(RulerProvider.PROPERTY_VERTICAL_RULER,provider);
                 
@@ -1043,7 +1137,6 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
                 provider = null;
                 if (ruler != null) {
                     provider = new InstallOptionsRulerProvider(ruler);
-                    provider.setUnit(InstallOptionsRulerProvider.UNIT_DLU);
                 }
                 viewer.setProperty(RulerProvider.PROPERTY_HORIZONTAL_RULER, provider);
                 
@@ -1094,84 +1187,90 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
 
     protected boolean performSaveAs()
     {
-        Shell shell = getSite().getWorkbenchWindow().getShell();
-        SaveAsDialog dialog = new SaveAsDialog(shell);
-        InstallOptionsEditorInput input = (InstallOptionsEditorInput)getEditorInput();
-        IFile original = input.getFile();
-        dialog.setOriginalFile(original);
-        dialog.create();
-        
-        IDocumentProvider provider= input.getDocumentProvider();
-        if (provider == null) {
-            // editor has programmatically been  closed while the dialog was open
-            return false;
-        }
-        
-        if (provider.isDeleted(input) && original != null) {
-            String message= InstallOptionsPlugin.getFormattedString("warning.save.delete", new Object[] { original.getName() }); //$NON-NLS-1$
-            dialog.setErrorMessage(null);
-            dialog.setMessage(message, IMessageProvider.WARNING);
-        }
-        
-        if (dialog.open() == Window.CANCEL) {
-            return false;
-        }
-        IPath path = dialog.getResult();
-        if (path == null) {
-            return false;
-        }
-
-        IWorkspace workspace = ResourcesPlugin.getWorkspace();
-        final IFile file = workspace.getRoot().getFile(path);
-        final IEditorInput newInput= new FileEditorInput(file);
-        
-        boolean success= false;
-        if(!file.exists()) {
-            try {
-                IDocument doc = provider.getDocument(input);
-                INIFile iniFile = updateDocument(doc);
-                provider.aboutToChange(newInput);
-                provider.saveDocument(new NullProgressMonitor(), newInput, doc, true);
-                saveProperties(file);
-                InstallOptionsMarkerUtility.updateMarkers(file, iniFile);
-                success= true;
-                
-            } catch (CoreException x) {
-                IStatus status= x.getStatus();
-                if (status == null || status.getSeverity() != IStatus.CANCEL) {
-                    String title= InstallOptionsPlugin.getResourceString("error.saveas.title"); //$NON-NLS-1$
-                    String msg= InstallOptionsPlugin.getFormattedString("error.save.message", new Object[] { x.getMessage() }); //$NON-NLS-1$
-                    
-                    if (status != null) {
-                        switch (status.getSeverity()) {
-                            case IStatus.INFO:
-                                MessageDialog.openInformation(shell, title, msg);
-                            break;
-                            case IStatus.WARNING:
-                                MessageDialog.openWarning(shell, title, msg);
-                            break;
-                            default:
-                                MessageDialog.openError(shell, title, msg);
-                        }
-                    } else {
-                        MessageDialog.openError(shell, title, msg);
-                    }
-                }
-            } finally {
-                provider.changed(newInput);
+        try {
+            mPerformingSaveAs = true;
+            Shell shell = getSite().getWorkbenchWindow().getShell();
+            SaveAsDialog dialog = new SaveAsDialog(shell);
+            InstallOptionsEditorInput input = (InstallOptionsEditorInput)getEditorInput();
+            IFile original = input.getFile();
+            dialog.setOriginalFile(original);
+            dialog.create();
+            
+            IDocumentProvider provider= input.getDocumentProvider();
+            if (provider == null) {
+                // editor has programmatically been  closed while the dialog was open
+                return false;
+            }
+            
+            if (provider.isDeleted(input) && original != null) {
+                String message= InstallOptionsPlugin.getFormattedString("warning.save.delete", new Object[] { original.getName() }); //$NON-NLS-1$
+                dialog.setErrorMessage(null);
+                dialog.setMessage(message, IMessageProvider.WARNING);
+            }
+            
+            if (dialog.open() == Window.CANCEL) {
+                return false;
+            }
+            IPath path = dialog.getResult();
+            if (path == null) {
+                return false;
             }
     
-            if(success) {
+            IWorkspace workspace = ResourcesPlugin.getWorkspace();
+            final IFile file = workspace.getRoot().getFile(path);
+            final IEditorInput newInput= new FileEditorInput(file);
+            
+            boolean success= false;
+            if(!file.exists()) {
                 try {
-                    superSetInput(createInput(file));
-                    getCommandStack().markSaveLocation();
+                    IDocument doc = provider.getDocument(input);
+                    updateDocument(doc);
+                    provider.aboutToChange(newInput);
+                    provider.saveDocument(new NullProgressMonitor(), newInput, doc, true);
+                    saveProperties(file);
+                    InstallOptionsMarkerUtility.updateMarkers(file, mINIFile);
+                    success= true;
+                    
+                } catch (CoreException x) {
+                    IStatus status= x.getStatus();
+                    if (status == null || status.getSeverity() != IStatus.CANCEL) {
+                        String title= InstallOptionsPlugin.getResourceString("error.saveas.title"); //$NON-NLS-1$
+                        String msg= InstallOptionsPlugin.getFormattedString("error.save.message", new Object[] { x.getMessage() }); //$NON-NLS-1$
+                        
+                        if (status != null) {
+                            switch (status.getSeverity()) {
+                                case IStatus.INFO:
+                                    MessageDialog.openInformation(shell, title, msg);
+                                break;
+                                case IStatus.WARNING:
+                                    MessageDialog.openWarning(shell, title, msg);
+                                break;
+                                default:
+                                    MessageDialog.openError(shell, title, msg);
+                            }
+                        } else {
+                            MessageDialog.openError(shell, title, msg);
+                        }
+                    }
+                } finally {
+                    provider.changed(newInput);
                 }
-                catch (Exception e) {
-                    e.printStackTrace();
+        
+                if(success) {
+                    try {
+                        superSetInput(createInput(file));
+                        getCommandStack().markSaveLocation();
+                    }
+                    catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             }
+            return true;
         }
-        return true;
+        finally {
+            mPerformingSaveAs = false;
+        }
     }
 
     /**
@@ -1253,17 +1352,28 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
     {
         superSetInput(input);
         input = getEditorInput();
-        IDocument document = ((InstallOptionsEditorInput)input).getDocumentProvider().getDocument(input);
-        mINIFile.connect(document);
-        loadInstallOptionsDialog();
+        if(input != null) {
+            IDocument document = ((InstallOptionsEditorInput)input).getDocumentProvider().getDocument(input);
+            mINIFile.connect(document);
+            if(mCachedMarkers == null) {
+                IFile file = ((InstallOptionsEditorInput)input).getFile();
+                InstallOptionsMarkerUtility.updateMarkers(file,mINIFile);
+                mCachedMarkers = InstallOptionsMarkerUtility.getMarkerAttributes(file);
+            }
+            loadInstallOptionsDialog();
+        }
     }
 
     private void loadInstallOptionsDialog()
     {
-        InstallOptionsDialog dialog = new InstallOptionsDialog();
+        InstallOptionsDialog dialog;
         if(!mINIFile.hasErrors()) {
-            dialog.loadINIFile(mINIFile);
+            dialog = InstallOptionsDialog.loadINIFile(mINIFile);
         }
+        else {
+            dialog = new InstallOptionsDialog(null);
+        }
+        
         setInstallOptionsDialog(dialog);
         if (!mEditorSaving) {
             loadProperties(((IFileEditorInput)getEditorInput()).getFile());
@@ -1298,11 +1408,15 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
             }
             ((InstallOptionsEditorInput)oldInput).getDocumentProvider().disconnect(oldInput);
         }
+        mCachedMarkers = null;
         if(input != null) {
             try {
                 if(!(input instanceof InstallOptionsEditorInput)) {
+                    ((IFileEditorInput)input).getFile().setPersistentProperty(FILEPROPERTY_INSTALLOPTIONS_FLAG, Boolean.TRUE.toString());
                     input = new InstallOptionsEditorInput((IFileEditorInput)input);
-                    mCachedMarkers = InstallOptionsMarkerUtility.getMarkerAttributes(((IFileEditorInput)input).getFile());
+                    if(mPerformingSaveAs) {
+                        mCachedMarkers = InstallOptionsMarkerUtility.getMarkerAttributes(((IFileEditorInput)input).getFile());
+                    }
                     ((InstallOptionsEditorInput)input).getDocumentProvider().connect(input);
                 }
                 else {
@@ -1374,6 +1488,22 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
                 }
             }
         });
+    }
+
+    private void checkPerformSwitch()
+    {
+        if(mINIFile.hasErrors() && !isSwitching()) {
+            prepareForSwitch();
+            getSite().getShell().getDisplay().asyncExec(new Runnable(){
+                public void run()
+                {
+                    MessageDialog.openError(getSite().getShell(),EclipseNSISPlugin.getResourceString("error.title"), //$NON-NLS-1$
+                            InstallOptionsPlugin.getFormattedString("editor.switch.error", //$NON-NLS-1$
+                                                    new String[]{((IFileEditorInput)getEditorInput()).getFile().getName()}));
+                    getActionRegistry().getAction(SwitchEditorAction.ID).run();
+                }
+            });
+        }
     }
 
     protected class CustomPalettePage extends PaletteViewerPage 
@@ -1461,7 +1591,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
         protected void configureOutlineViewer()
         {
             getViewer().setEditDomain(getEditDomain());
-            getViewer().setEditPartFactory(TreePartFactory.getInstance());
+            getViewer().setEditPartFactory(TreePartFactory.INSTANCE);
             ContextMenuProvider provider = new InstallOptionsDesignMenuProvider(getViewer(),
                     getActionRegistry());
             getViewer().setContextMenu(provider);
@@ -1645,18 +1775,20 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
             }
             else if (delta.getKind() == IResourceDelta.CHANGED) {
                 if (!mEditorSaving) {
-                    // the file was overwritten somehow (could have been
-                    // replaced by another
-                    // version in the respository)
-                    final IFile newFile = ResourcesPlugin.getWorkspace().getRoot().getFile(delta.getFullPath());
-                    Display display = getSite().getShell().getDisplay();
-                    display.asyncExec(new Runnable() {
-                        public void run()
-                        {
-                            setInput(createInput(newFile));
-                            getCommandStack().flush();
-                        }
-                    });
+                    if(Common.isEmptyArray(delta.getMarkerDeltas())) {
+                        // the file was overwritten somehow (could have been
+                        // replaced by another
+                        // version in the respository)
+                        final IFile newFile = ResourcesPlugin.getWorkspace().getRoot().getFile(delta.getFullPath());
+                        Display display = getSite().getShell().getDisplay();
+                        display.asyncExec(new Runnable() {
+                            public void run()
+                            {
+                                setInput(createInput(newFile));
+                                getCommandStack().flush();
+                            }
+                        });
+                    }
                 }
             }
             return false;

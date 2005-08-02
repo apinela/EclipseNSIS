@@ -36,7 +36,8 @@ public class InstallOptionsRuleBasedScanner extends InstallOptionsSyntaxScanner
             public boolean isWordPart(char c)
             {
                 return false;
-            }}
+            }
+        }
         ,createToken(IInstallOptionsConstants.KEY_VALUE_DELIM_STYLE)));
         IToken numberToken = createToken(IInstallOptionsConstants.NUMBER_STYLE);
         list.add(new NSISHexNumberRule(numberToken));

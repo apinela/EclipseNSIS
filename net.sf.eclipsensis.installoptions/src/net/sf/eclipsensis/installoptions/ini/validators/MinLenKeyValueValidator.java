@@ -27,7 +27,7 @@ public class MinLenKeyValueValidator extends PositiveNumberKeyValueValidator
                 minValue = Integer.parseInt(value);
             }
             
-            int maxValue = InstallOptionsModel.MAX_LENGTH.intValue();
+            int maxValue = InstallOptionsModel.INSTANCE.getMaxLength();
             INIKeyValue[] keyValues = ((INISection)keyValue.getParent()).findKeyValues(InstallOptionsModel.PROPERTY_MAXLEN);
             if(!Common.isEmptyArray(keyValues)) {
                 value = keyValues[0].getValue();
@@ -36,7 +36,7 @@ public class MinLenKeyValueValidator extends PositiveNumberKeyValueValidator
                         maxValue = Integer.parseInt(value);
                     }
                     catch(Exception e) {
-                        maxValue = InstallOptionsModel.MAX_LENGTH.intValue();
+                        maxValue = InstallOptionsModel.INSTANCE.getMaxLength();
                     }
                 }
             }

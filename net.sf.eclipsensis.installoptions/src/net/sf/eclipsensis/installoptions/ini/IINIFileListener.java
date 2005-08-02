@@ -13,5 +13,5 @@ import java.util.EventListener;
 
 public interface IINIFileListener extends EventListener
 {
-    public void iniFileChanged(INIFile iniFile);
+    public void iniFileChanged(INIFile iniFile, int event);
 }

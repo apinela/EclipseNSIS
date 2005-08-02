@@ -12,6 +12,7 @@ package net.sf.eclipsensis.installoptions.model;
 import java.util.List;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
+import net.sf.eclipsensis.installoptions.ini.INISection;
 import net.sf.eclipsensis.installoptions.properties.validators.NSISStringLengthValidator;
 
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
@@ -21,12 +22,23 @@ public abstract class InstallOptionsUneditableElement extends InstallOptionsWidg
 {
     private String mText;
 
+    protected InstallOptionsUneditableElement(INISection section)
+    {
+        super(section);
+    }
+    
+    protected void init()
+    {
+        super.init();
+        mText = ""; //$NON-NLS-1$
+    }
+    
     /**
      * @param type
      */
-    public InstallOptionsUneditableElement(String type)
+    protected void setDefaults()
     {
-        super(type);
+        super.setDefaults();
         mText = getDefaultText(); //$NON-NLS-1$
     }
 
@@ -91,7 +103,6 @@ public abstract class InstallOptionsUneditableElement extends InstallOptionsWidg
             setDirty(true);
         }
     }
-    
     
     protected String getDisplayName()
     {

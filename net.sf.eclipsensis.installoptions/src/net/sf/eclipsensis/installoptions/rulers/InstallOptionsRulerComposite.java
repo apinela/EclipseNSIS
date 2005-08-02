@@ -233,9 +233,6 @@ public class InstallOptionsRulerComposite extends Composite
         // is resized
         mLayoutListener = new Listener() {
             public void handleEvent(Event event) {
-                // @TODO:Pratik  If you use Display.asyncExec(runnable) here, some flashing
-                // occurs.  You can see it when the palette is in the editor, and you hit
-                // the button to show/hide it.
                 layout(true);
             }
         };

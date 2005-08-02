@@ -71,6 +71,12 @@ public class InstallOptionsDesignActionContributor extends ActionBarContributor
         addRetargetAction(new AlignmentRetargetAction(PositionConstants.MIDDLE));
         addRetargetAction(new AlignmentRetargetAction(PositionConstants.BOTTOM));
         
+        retargetAction = new RetargetAction(RefreshDiagramAction.ID, 
+                InstallOptionsPlugin.getResourceString("refresh.diagram.action.label")); //$NON-NLS-1$
+        retargetAction.setToolTipText(InstallOptionsPlugin.getResourceString("refresh.diagram.action.tooltip")); //$NON-NLS-1$
+        retargetAction.setImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("refresh.icon"))); //$NON-NLS-1$
+        addRetargetAction(retargetAction);
+        
         retargetAction = new RetargetAction(SwitchEditorAction.ID, InstallOptionsPlugin.getResourceString("switch.source.editor.action.name")); //$NON-NLS-1$
         retargetAction.setImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("switch.editor.icon"))); //$NON-NLS-1$
         retargetAction.setActionDefinitionId(IInstallOptionsConstants.SWITCH_EDITOR_COMMAND_ID);
@@ -137,6 +143,8 @@ public class InstallOptionsDesignActionContributor extends ActionBarContributor
         mSetDialogSizeMenu = new SetDialogSizeMenuManager(mInstallOptionsMenu);
         mInstallOptionsMenu.add(mSetDialogSizeMenu);
         mInstallOptionsMenu.add(new Separator());
+        mInstallOptionsMenu.add(getAction(RefreshDiagramAction.ID));
+        mInstallOptionsMenu.add(new Separator());
         mInstallOptionsMenu.add(getAction(SwitchEditorAction.ID));
         
         mXYStatusContribution = new InstallOptionsXYStatusContribution();
@@ -199,6 +207,9 @@ public class InstallOptionsDesignActionContributor extends ActionBarContributor
         tbm.add(getAction(ArrangeAction.SEND_TO_BACK_ID));
         tbm.add(getAction(ArrangeAction.BRING_FORWARD_ID));
         tbm.add(getAction(ArrangeAction.BRING_TO_FRONT_ID));
+
+        tbm.add(new Separator());
+        tbm.add(getAction(RefreshDiagramAction.ID));
     }
 
     public void contributeToMenu(IMenuManager menubar) 

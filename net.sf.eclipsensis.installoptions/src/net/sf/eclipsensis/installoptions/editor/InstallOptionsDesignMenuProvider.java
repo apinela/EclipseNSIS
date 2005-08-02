@@ -108,7 +108,7 @@ public class InstallOptionsDesignMenuProvider extends org.eclipse.gef.ContextMen
         addContextMenu(submenu, GEFActionConstants.ALIGN_BOTTOM, null);
 
         if (!submenu.isEmpty()) {
-            manager.appendToGroup(GEFActionConstants.GROUP_REST, submenu);
+            manager.appendToGroup(GEFActionConstants.GROUP_EDIT, submenu);
         }
 
         submenu = new MenuManager(InstallOptionsPlugin.getResourceString("match.submenu.name")); //$NON-NLS-1$
@@ -116,7 +116,7 @@ public class InstallOptionsDesignMenuProvider extends org.eclipse.gef.ContextMen
         addContextMenu(submenu, GEFActionConstants.MATCH_HEIGHT, null);
 
         if (!submenu.isEmpty()) {
-            manager.appendToGroup(GEFActionConstants.GROUP_REST, submenu);
+            manager.appendToGroup(GEFActionConstants.GROUP_EDIT, submenu);
         }
 
         submenu = new MenuManager(InstallOptionsPlugin.getResourceString("arrange.submenu.name")); //$NON-NLS-1$
@@ -127,7 +127,7 @@ public class InstallOptionsDesignMenuProvider extends org.eclipse.gef.ContextMen
         addContextMenu(submenu, ArrangeAction.BRING_TO_FRONT_ID, null);
 
         if (!submenu.isEmpty()) {
-            manager.appendToGroup(GEFActionConstants.GROUP_REST, submenu);
+            manager.appendToGroup(GEFActionConstants.GROUP_EDIT, submenu);
         }
         
         if(mEditor != null && selected.size() == 0) {
@@ -137,9 +137,12 @@ public class InstallOptionsDesignMenuProvider extends org.eclipse.gef.ContextMen
             }
             mSetDialogSizeMenu.rebuild();
             if(!mSetDialogSizeMenu.isEmpty()) {
-                manager.appendToGroup(GEFActionConstants.GROUP_REST, mSetDialogSizeMenu);
+                manager.appendToGroup(GEFActionConstants.GROUP_EDIT, mSetDialogSizeMenu);
             }
         }
+        addContextMenu(manager, RefreshDiagramAction.ID, GEFActionConstants.GROUP_EDIT);
+        
+        addContextMenu(manager, "net.sf.eclipsensis.installoptions.design_editor_prefs", GEFActionConstants.GROUP_REST); //$NON-NLS-1$
         addContextMenu(manager, ActionFactory.SAVE.getId(), GEFActionConstants.GROUP_SAVE);
     }
 

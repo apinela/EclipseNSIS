@@ -9,6 +9,8 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions;
 
+import net.sf.eclipsensis.util.Common;
+
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
@@ -16,14 +18,16 @@ import org.eclipse.swt.graphics.Color;
 
 public interface IInstallOptionsConstants
 {
-    public static final String PLUGIN_NAME = InstallOptionsPlugin.getDefault().getBundle().getSymbolicName();
-    public static final String PLUGIN_CONTEXT_PREFIX = PLUGIN_NAME + "."; //$NON-NLS-1$
+    public static final String PLUGIN_ID = InstallOptionsPlugin.getDefault().getBundle().getSymbolicName();
+    public static final String PLUGIN_CONTEXT_PREFIX = PLUGIN_ID + "."; //$NON-NLS-1$
 
     public static final String RESOURCE_BUNDLE = "net.sf.eclipsensis.installoptions.InstallOptionsPluginResources"; //$NON-NLS-1$
     public static final String MESSAGE_BUNDLE = "net.sf.eclipsensis.installoptions.InstallOptionsPluginMessages"; //$NON-NLS-1$
 
+    public static final String[] INI_EXTENSIONS = Common.tokenize(InstallOptionsPlugin.getBundleResourceString("%ini.extensions"),',');
     public static final String INSTALLOPTIONS_DESIGN_EDITOR_ID = InstallOptionsPlugin.getBundleResourceString("%installoptions.design.editor.id"); //$NON-NLS-1$
     public static final String INSTALLOPTIONS_SOURCE_EDITOR_ID = InstallOptionsPlugin.getBundleResourceString("%installoptions.source.editor.id"); //$NON-NLS-1$
+    public static final String INSTALLOPTIONS_PREFERENCE_PAGE_ID = InstallOptionsPlugin.getBundleResourceString("%installoptions.preference.page.id"); //$NON-NLS-1$
 
     public static final String SWITCH_EDITOR_COMMAND_ID = InstallOptionsPlugin.getBundleResourceString("%switch.editor.command.id"); //$NON-NLS-1$
     public static final String EDITING_INSTALLOPTIONS_SOURCE_CONTEXT_ID = InstallOptionsPlugin.getBundleResourceString("%editing.installoptions.source.id"); //$NON-NLS-1$
@@ -45,7 +49,8 @@ public interface IInstallOptionsConstants
     public static Dimension GRID_SPACING_DEFAULT = new Dimension(10,10);
     public static Point GRID_ORIGIN_DEFAULT = new Point(0, 0);
     public static String GRID_STYLE_DEFAULT = GRID_STYLE_LINES;
-    public static Dimension DIALOG_SIZE_DEFAULT = new Dimension(300,140); //$NON-NLS-1$
+    public static Dimension DIALOG_SIZE_DEFAULT = new Dimension(300,140);
+    public static Boolean CHECK_EDITOR_ASSOCIATION_DEFAULT = Boolean.TRUE;
    
     public static final String PREFERENCE_SHOW_GRID = "ShowGrid"; //$NON-NLS-1$
     public static final String PREFERENCE_SHOW_RULERS = "ShowRulers"; //$NON-NLS-1$
@@ -58,6 +63,7 @@ public interface IInstallOptionsConstants
     public static final String PREFERENCE_GRID_SPACING = "GridSpacing"; //$NON-NLS-1$
     public static final String PREFERENCE_GRID_ORIGIN = "GridOrigin"; //$NON-NLS-1$
     public static final String PREFERENCE_GRID_STYLE = "GridStyle"; //$NON-NLS-1$
+    public static final String PREFERENCE_CHECK_EDITOR_ASSOCIATION = "CheckEditorAssociation"; //$NON-NLS-1$
 
     public static final String PREFERENCE_SYNTAX_STYLES = "SyntaxStyles"; //$NON-NLS-1$
     public static final String SECTION_STYLE = "SectionStyle"; //$NON-NLS-1$
@@ -66,7 +72,7 @@ public interface IInstallOptionsConstants
     public static final String KEY_VALUE_DELIM_STYLE = "KeyValueDelimStyle";     //$NON-NLS-1$
     public static final String NUMBER_STYLE = "NumberStyle";     //$NON-NLS-1$
     
-    public static final String QUALIFIED_NAME_PREFIX = PLUGIN_NAME;
+    public static final String QUALIFIED_NAME_PREFIX = PLUGIN_ID;
     
     public static final QualifiedName FILEPROPERTY_SHOW_GRID = new QualifiedName(QUALIFIED_NAME_PREFIX,PREFERENCE_SHOW_GRID);
     public static final QualifiedName FILEPROPERTY_SHOW_RULERS = new QualifiedName(QUALIFIED_NAME_PREFIX,PREFERENCE_SHOW_RULERS);
@@ -81,6 +87,7 @@ public interface IInstallOptionsConstants
     public static final QualifiedName FILEPROPERTY_GRID_STYLE = new QualifiedName(QUALIFIED_NAME_PREFIX,PREFERENCE_GRID_STYLE);
     public static final QualifiedName FILEPROPERTY_DIALOG_SIZE = new QualifiedName(QUALIFIED_NAME_PREFIX,"DialogSize"); //$NON-NLS-1$
     public static final QualifiedName FILEPROPERTY_PROBLEM_MARKERS = new QualifiedName(QUALIFIED_NAME_PREFIX,"ProblemMarkers"); //$NON-NLS-1$
+    public static final QualifiedName FILEPROPERTY_INSTALLOPTIONS_FLAG = new QualifiedName(QUALIFIED_NAME_PREFIX,"InstallOptionsFlag"); //$NON-NLS-1$
     
     public static final String PROPERTY_SNAP_TO_GUIDES = "net.sf.eclipsensis.installoptions.snap_to_guides"; //$NON-NLS-1$
     public static final String PROPERTY_GLUE_TO_GUIDES = "net.sf.eclipsensis.installoptions.glue_to_guides"; //$NON-NLS-1$

@@ -11,6 +11,7 @@ package net.sf.eclipsensis.installoptions.edit.link;
 
 import net.sf.eclipsensis.installoptions.edit.InstallOptionsExtendedEditPolicy;
 import net.sf.eclipsensis.installoptions.edit.InstallOptionsWidgetEditPart;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
 import net.sf.eclipsensis.installoptions.model.commands.ModifyTxtColorCommand;
 import net.sf.eclipsensis.installoptions.requests.ExtendedEditRequest;
 
@@ -33,5 +34,10 @@ public class InstallOptionsLinkExtendedEditPolicy extends InstallOptionsExtended
         ModifyTxtColorCommand command = new ModifyTxtColorCommand((InstallOptionsWidgetEditPart)request.getEditPart(),
                                                                               (RGB)request.getNewValue());
         return command;
+    }
+
+    protected String getExtendedEditProperty()
+    {
+        return InstallOptionsModel.PROPERTY_TXTCOLOR;
     }
 }

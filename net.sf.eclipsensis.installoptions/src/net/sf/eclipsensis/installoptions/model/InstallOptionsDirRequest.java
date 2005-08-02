@@ -12,21 +12,30 @@ package net.sf.eclipsensis.installoptions.model;
 import java.util.List;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
+import net.sf.eclipsensis.installoptions.ini.INISection;
 import net.sf.eclipsensis.installoptions.properties.validators.NSISStringLengthValidator;
 
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 
 public class InstallOptionsDirRequest extends InstallOptionsPathRequest
 {
-    public static Image DIRREQUEST_ICON = InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("dirrequest.type.small.icon")); //$NON-NLS-1$
+    private String mRoot;
 
-    private String mRoot = ""; //$NON-NLS-1$
-
-    public InstallOptionsDirRequest()
+    protected InstallOptionsDirRequest(INISection section)
     {
-        super(InstallOptionsModel.TYPE_DIRREQUEST);
+        super(section);
+    }
+
+    protected void init()
+    {
+        super.init();
+        mRoot = ""; //$NON-NLS-1$
+    }
+    
+    public String getType()
+    {
+        return InstallOptionsModel.TYPE_DIRREQUEST;
     }
 
     public Object clone() throws CloneNotSupportedException
@@ -36,11 +45,6 @@ public class InstallOptionsDirRequest extends InstallOptionsPathRequest
         return clone;
     }
     
-    public Image getIconImage()
-    {
-        return DIRREQUEST_ICON;
-    }
-
     protected void addPropertyName(List list, String setting)
     {
         if (setting.equalsIgnoreCase(InstallOptionsModel.PROPERTY_ROOT)) {

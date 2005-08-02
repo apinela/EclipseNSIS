@@ -64,9 +64,11 @@ public class INIKeyValue extends INILine
             }
             INIKeyValue[] types = ((INISection)getParent()).findKeyValues(InstallOptionsModel.PROPERTY_TYPE);
             IINIKeyValueValidator validator = null;
-            if(!Common.isEmptyArray(types)) {
-                String name = new StringBuffer(types[0].getValue()).append(".").append(getKey()).toString(); //$NON-NLS-1$
-                validator = INIKeyValueValidatorRegistry.getKeyValueValidator(name);
+            if(!Common.isEmptyArray(types) && types[0] != this) {
+                if(InstallOptionsModel.INSTANCE.getControlTypeDef(types[0].getValue()) != null) {
+                    String name = new StringBuffer(types[0].getValue()).append(".").append(getKey()).toString(); //$NON-NLS-1$
+                    validator = INIKeyValueValidatorRegistry.getKeyValueValidator(name);
+                }
             }
             if(validator == null) {
                 validator = INIKeyValueValidatorRegistry.getKeyValueValidator(getKey());
@@ -74,9 +76,10 @@ public class INIKeyValue extends INILine
             if(validator != null) {
                 validator.isValid(this);
             }
-            if(getValue().length() > InstallOptionsModel.MAX_LENGTH.intValue()) {
+            int maxLen = InstallOptionsModel.INSTANCE.getMaxLength();
+            if(getValue().length() > maxLen) {
                 addProblem(INIProblem.TYPE_WARNING,InstallOptionsPlugin.getFormattedString("value.length.warning", //$NON-NLS-1$
-                        new Object[]{getKey(),InstallOptionsModel.MAX_LENGTH}));
+                        new Object[]{getKey(),new Integer(maxLen)}));
             }
         }
         else {

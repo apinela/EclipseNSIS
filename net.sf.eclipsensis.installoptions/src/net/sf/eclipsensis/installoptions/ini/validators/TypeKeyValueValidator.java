@@ -9,26 +9,20 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.ini.validators;
 
-import java.util.Arrays;
-import java.util.Set;
-
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.ini.INIKeyValue;
 import net.sf.eclipsensis.installoptions.ini.INIProblem;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
-import net.sf.eclipsensis.util.CaseInsensitiveSet;
 
 public class TypeKeyValueValidator implements IINIKeyValueValidator
 {
-    private static final Set TYPES = new CaseInsensitiveSet(Arrays.asList(InstallOptionsModel.getInstance().getControlTypes()));
-
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.installoptions.ini.validators.IINIKeyValueValidator#validate(net.sf.eclipsensis.installoptions.ini.INIKeyValue)
      */
     public boolean isValid(INIKeyValue keyValue)
     {
         String value = keyValue.getValue();
-        if(value.length() > 0 &&  TYPES.contains(value)) {
+        if(value.length() > 0 &&  InstallOptionsModel.INSTANCE.getControlTypeDef(value) != null) {
             return true;
         }
         keyValue.addProblem(INIProblem.TYPE_ERROR,

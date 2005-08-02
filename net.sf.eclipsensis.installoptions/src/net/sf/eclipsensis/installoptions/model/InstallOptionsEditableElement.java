@@ -12,6 +12,7 @@ package net.sf.eclipsensis.installoptions.model;
 import java.util.List;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
+import net.sf.eclipsensis.installoptions.ini.INISection;
 import net.sf.eclipsensis.installoptions.properties.validators.NSISStringLengthValidator;
 import net.sf.eclipsensis.installoptions.properties.validators.NumberCellEditorValidator;
 
@@ -26,17 +27,25 @@ public abstract class InstallOptionsEditableElement extends InstallOptionsWidget
     private String mMinLen;
     private String mValidateText;
 
-    /**
-     * @param type
-     */
-    public InstallOptionsEditableElement(String type)
+    protected InstallOptionsEditableElement(INISection section)
     {
-        super(type);
+        super(section);
+    }
+    
+    protected void init()
+    {
+        super.init();
         mText = ""; //$NON-NLS-1$
-        mState = getDefaultState(); //$NON-NLS-1$
+        mState = ""; //$NON-NLS-1$
         mMaxLen = ""; //$NON-NLS-1$
         mMinLen = ""; //$NON-NLS-1$
         mValidateText = ""; //$NON-NLS-1$
+    }
+    
+    protected void setDefaults()
+    {
+        super.setDefaults();
+        mState = getDefaultState();
     }
 
     public Object clone() throws CloneNotSupportedException
@@ -140,7 +149,7 @@ public abstract class InstallOptionsEditableElement extends InstallOptionsWidget
     
     protected int getDefaultMaxLen()
     {
-        return InstallOptionsModel.MAX_LENGTH.intValue();
+        return InstallOptionsModel.INSTANCE.getMaxLength();
     }
 
     public Object getPropertyValue(Object propName)
@@ -249,7 +258,7 @@ public abstract class InstallOptionsEditableElement extends InstallOptionsWidget
             setDirty(true);
         }
     }
-    
+
     public String getValidateText()
     {
         return mValidateText;

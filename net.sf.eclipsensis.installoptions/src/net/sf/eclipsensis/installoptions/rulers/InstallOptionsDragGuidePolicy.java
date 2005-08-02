@@ -30,26 +30,28 @@ public class InstallOptionsDragGuidePolicy extends DragGuidePolicy
     protected boolean isMoveValid(int zoomedPosition)
     {
         if(super.isMoveValid(zoomedPosition)) {
-            Iterator i = getGuideEditPart().getRulerProvider().getAttachedEditParts(getHost().getModel(), 
-                    ((InstallOptionsRulerEditPart)getHost().getParent()).getDiagramViewer()).iterator();
-            
-            int delta = zoomedPosition - getGuideEditPart().getZoomedPosition();
-            while (i.hasNext()) {
-                InstallOptionsWidgetEditPart part = (InstallOptionsWidgetEditPart)i.next();
-                IFigure fig = part.getFigure();
-                Rectangle bounds = fig.getBounds();
-                if(getGuideEditPart().isHorizontal()) {
-                    if(bounds.y+delta < 0) {
-                        return false;
+            if(zoomedPosition >= 0) {
+                Iterator i = getGuideEditPart().getRulerProvider().getAttachedEditParts(getHost().getModel(), 
+                        ((InstallOptionsRulerEditPart)getHost().getParent()).getDiagramViewer()).iterator();
+                
+                int delta = zoomedPosition - getGuideEditPart().getZoomedPosition();
+                while (i.hasNext()) {
+                    InstallOptionsWidgetEditPart part = (InstallOptionsWidgetEditPart)i.next();
+                    IFigure fig = part.getFigure();
+                    Rectangle bounds = fig.getBounds();
+                    if(getGuideEditPart().isHorizontal()) {
+                        if(bounds.y+delta < 0) {
+                            return false;
+                        }
+                    }
+                    else {
+                        if(bounds.x+delta < 0) {
+                            return false;
+                        }
                     }
                 }
-                else {
-                    if(bounds.x+delta < 0) {
-                        return false;
-                    }
-                }
+                return true;
             }
-            return true;
         }
         return false;
     }

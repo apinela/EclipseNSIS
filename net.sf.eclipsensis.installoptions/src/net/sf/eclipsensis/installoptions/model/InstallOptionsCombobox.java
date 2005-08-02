@@ -15,8 +15,9 @@ import java.util.*;
 import java.util.List;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
+import net.sf.eclipsensis.installoptions.ini.INISection;
 import net.sf.eclipsensis.installoptions.properties.dialogs.ListItemsDialog;
-import net.sf.eclipsensis.installoptions.properties.editors.EditableComboBoxCellEditor;
+import net.sf.eclipsensis.installoptions.properties.editors.CustomComboBoxCellEditor;
 import net.sf.eclipsensis.installoptions.properties.labelproviders.ListLabelProvider;
 import net.sf.eclipsensis.installoptions.properties.validators.NSISStringLengthValidator;
 import net.sf.eclipsensis.installoptions.util.TypeConverter;
@@ -24,7 +25,8 @@ import net.sf.eclipsensis.installoptions.util.TypeConverter;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
@@ -32,25 +34,22 @@ import org.eclipse.ui.views.properties.PropertyDescriptor;
 public class InstallOptionsCombobox extends InstallOptionsEditableElement
 {
     protected static LabelProvider cListItemsLabelProvider = new ListLabelProvider();
-    public static Image COMBOBOX_ICON = InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("combobox.type.small.icon")); //$NON-NLS-1$
-    private List mListItems = new ArrayList();
+    private List mListItems;
     
-    public InstallOptionsCombobox()
+    protected InstallOptionsCombobox(INISection section)
     {
-        this(InstallOptionsModel.TYPE_COMBOBOX);
+        super(section);
     }
     
-    /**
-     * @param type
-     */
-    public InstallOptionsCombobox(String type)
+    public String getType()
     {
-        super(type);
+        return InstallOptionsModel.TYPE_COMBOBOX;
     }
-
-    public Image getIconImage()
+    
+    protected void init()
     {
-        return COMBOBOX_ICON;
+        super.init();
+        mListItems = new ArrayList();
     }
 
     protected Position getDefaultPosition()
@@ -138,8 +137,14 @@ public class InstallOptionsCombobox extends InstallOptionsEditableElement
  
     protected class ComboStatePropertyDescriptor extends PropertyDescriptor implements PropertyChangeListener
     {
-        private EditableComboBoxCellEditor mEditor;
-        private int mStyle = SWT.DROP_DOWN;
+        private CustomComboBoxCellEditor mEditor;
+        private DisposeListener mListener = new DisposeListener() {
+            public void widgetDisposed(DisposeEvent e)
+            {
+                mEditor = null;
+            }
+         };
+        private int mStyle = SWT.NONE;
 
         public ComboStatePropertyDescriptor()
         {
@@ -168,7 +173,8 @@ public class InstallOptionsCombobox extends InstallOptionsEditableElement
         public CellEditor createPropertyEditor(Composite parent)
         {
             if(mEditor == null) {
-                mEditor = new EditableComboBoxCellEditor(parent,getListItems(),getStyle());
+                mEditor = new CustomComboBoxCellEditor(parent, getListItems(), mStyle);
+                mEditor.getControl().addDisposeListener(mListener);
             }
             return mEditor;
         }

@@ -12,27 +12,30 @@ package net.sf.eclipsensis.installoptions.model;
 import java.util.List;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
+import net.sf.eclipsensis.installoptions.ini.INISection;
 import net.sf.eclipsensis.installoptions.properties.validators.NSISStringLengthValidator;
 
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 
 public class InstallOptionsButton extends InstallOptionsUneditableElement
 {
-    public static Image BUTTON_ICON = InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("button.type.small.icon")); //$NON-NLS-1$
-
     private String mState;
 
-    public InstallOptionsButton()
+    protected InstallOptionsButton(INISection section)
     {
-        this(InstallOptionsModel.TYPE_BUTTON);
+        super(section);
     }
-
-    protected InstallOptionsButton(String type)
+    
+    protected void init()
     {
-        super(type);
+        super.init();
         mState = ""; //$NON-NLS-1$
+    }
+    
+    public String getType()
+    {
+        return InstallOptionsModel.TYPE_BUTTON;
     }
 
     public Object clone() throws CloneNotSupportedException
@@ -93,11 +96,6 @@ public class InstallOptionsButton extends InstallOptionsUneditableElement
         else {
             super.setPropertyValue(id, value);
         }
-    }
-
-    public Image getIconImage()
-    {
-        return BUTTON_ICON;
     }
     
     public String getState()

@@ -14,7 +14,7 @@ import java.util.regex.Matcher;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
-import net.sf.eclipsensis.util.CaseInsensitiveSet;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsModelTypeDef;
 import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.jface.text.Position;
@@ -169,10 +169,10 @@ public class INISection extends INILine implements IINIContainer
 
         //Validate required keys
         if(getName().equalsIgnoreCase(InstallOptionsModel.SECTION_SETTINGS)) {
-            Set settingsSet = new CaseInsensitiveSet(Arrays.asList(InstallOptionsModel.getInstance().getDialogSettings()));
+            Collection settings = InstallOptionsModel.INSTANCE.getDialogSettings();
             INIKeyValue[] keyValues = getKeyValues();
             for (int i = 0; i < keyValues.length; i++) {
-                if(!settingsSet.contains(keyValues[i].getKey())) {
+                if(!settings.contains(keyValues[i].getKey())) {
                     keyValues[i].addProblem(INIProblem.TYPE_WARNING, InstallOptionsPlugin.getFormattedString("unrecognized.key.warning", //$NON-NLS-1$
                             new Object[]{InstallOptionsPlugin.getResourceString("section.label"), //$NON-NLS-1$
                                          InstallOptionsModel.SECTION_SETTINGS,keyValues[i].getKey()}));
@@ -183,11 +183,12 @@ public class INISection extends INILine implements IINIContainer
             Matcher m = InstallOptionsModel.SECTION_FIELD_PATTERN.matcher(getName());
             if(m.matches()) {
                 List missing = new ArrayList();
-                String[] requiredSettings = InstallOptionsModel.getInstance().getControlRequiredSettings();
-                for (int i = 0; i < requiredSettings.length; i++) {
-                    INIKeyValue[] keyValues = findKeyValues(requiredSettings[i]);
+                Collection requiredSettings = InstallOptionsModel.INSTANCE.getControlRequiredSettings();
+                for (Iterator iter = requiredSettings.iterator(); iter.hasNext(); ) {
+                    String name = (String)iter.next();
+                    INIKeyValue[] keyValues = findKeyValues(name);
                     if(Common.isEmptyArray(keyValues)) {
-                        missing.add(requiredSettings[i]);
+                        missing.add(name);
                     }
                 }
                 if(missing.size() > 0) {
@@ -205,13 +206,17 @@ public class INISection extends INILine implements IINIContainer
                 INIKeyValue[] keyValues = findKeyValues(InstallOptionsModel.PROPERTY_TYPE);
                 if(!Common.isEmptyArray(keyValues)) {
                     String type = keyValues[0].getValue();
-                    Set settingsSet = new CaseInsensitiveSet(Arrays.asList(InstallOptionsModel.getInstance().getControlSettings(type)));
-                    keyValues = getKeyValues();
-                    for (int i = 0; i < keyValues.length; i++) {
-                        if(!settingsSet.contains(keyValues[i].getKey())) {
-                            keyValues[i].addProblem(INIProblem.TYPE_WARNING, InstallOptionsPlugin.getFormattedString("unrecognized.key.warning", //$NON-NLS-1$
-                                    new Object[]{InstallOptionsModel.PROPERTY_TYPE,
-                                                 type,keyValues[i].getKey()}));
+                    InstallOptionsModelTypeDef typeDef = InstallOptionsModel.INSTANCE.getControlTypeDef(type);
+                    if(typeDef != null) {
+                        Collection settingsSet;
+                        settingsSet = typeDef.getSettings();
+                        keyValues = getKeyValues();
+                        for (int i = 0; i < keyValues.length; i++) {
+                            if(!settingsSet.contains(keyValues[i].getKey())) {
+                                keyValues[i].addProblem(INIProblem.TYPE_WARNING, InstallOptionsPlugin.getFormattedString("unrecognized.key.warning", //$NON-NLS-1$
+                                        new Object[]{InstallOptionsModel.PROPERTY_TYPE,
+                                                     type,keyValues[i].getKey()}));
+                            }
                         }
                     }
                 }

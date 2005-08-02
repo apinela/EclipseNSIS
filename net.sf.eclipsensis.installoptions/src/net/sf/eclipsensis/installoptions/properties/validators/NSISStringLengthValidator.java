@@ -35,8 +35,9 @@ public class NSISStringLengthValidator implements ICellEditorValidator
     public String isValid(String value)
     {
         value = MultiLineLabelProvider.INSTANCE.getText(value);
-        if(value.length() > InstallOptionsModel.MAX_LENGTH.intValue())  {
-            return InstallOptionsPlugin.getFormattedString("property.maxlength.error",new Object[]{mPropertyName,InstallOptionsModel.MAX_LENGTH}); //$NON-NLS-1$
+        int maxLen = InstallOptionsModel.INSTANCE.getMaxLength();
+        if(value.length() > maxLen)  {
+            return InstallOptionsPlugin.getFormattedString("property.maxlength.error",new Object[]{mPropertyName,new Integer(maxLen)}); //$NON-NLS-1$
         }
         return null;
     }

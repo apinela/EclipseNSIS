@@ -11,20 +11,18 @@ package net.sf.eclipsensis.installoptions;
 
 import java.text.MessageFormat;
 import java.util.*;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
 
 import net.sf.eclipsensis.editor.text.NSISSyntaxStyle;
 import net.sf.eclipsensis.editor.text.NSISTextUtility;
 import net.sf.eclipsensis.installoptions.util.TypeConverter;
 import net.sf.eclipsensis.util.*;
-import net.sf.eclipsensis.util.CompoundResourceBundle;
-import net.sf.eclipsensis.util.ImageManager;
 
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.*;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -34,6 +32,7 @@ public class InstallOptionsPlugin extends AbstractUIPlugin implements IInstallOp
     private ResourceBundle mResourceBundle;
     public static final String[] BUNDLE_NAMES = new String[]{RESOURCE_BUNDLE,MESSAGE_BUNDLE};
     private ImageManager mImageManager;
+    private String mName = null;
     
     /**
      * 
@@ -124,6 +123,7 @@ public class InstallOptionsPlugin extends AbstractUIPlugin implements IInstallOp
         initializePreference(store,PREFERENCE_GRID_SPACING,TypeConverter.DIMENSION_CONVERTER.asString(GRID_SPACING_DEFAULT));
         initializePreference(store,PREFERENCE_GRID_ORIGIN,TypeConverter.POINT_CONVERTER.asString(GRID_ORIGIN_DEFAULT));
         initializePreference(store,PREFERENCE_GRID_STYLE,GRID_STYLE_DEFAULT);
+        initializePreference(store,PREFERENCE_CHECK_EDITOR_ASSOCIATION,CHECK_EDITOR_ASSOCIATION_DEFAULT.toString());
         
         String preference = store.getString(IInstallOptionsConstants.PREFERENCE_SYNTAX_STYLES);
         Map map;
@@ -141,11 +141,11 @@ public class InstallOptionsPlugin extends AbstractUIPlugin implements IInstallOp
 
     public boolean setSyntaxStyles(Map map)
     {
-        boolean changed = setSyntaxStyle(map,IInstallOptionsConstants.COMMENT_STYLE,new NSISSyntaxStyle(ColorManager.GREY,null,false,true));
-        changed |= setSyntaxStyle(map,IInstallOptionsConstants.SECTION_STYLE,new NSISSyntaxStyle(ColorManager.TEAL,null,false,false));
-        changed |= setSyntaxStyle(map,IInstallOptionsConstants.KEY_STYLE,new NSISSyntaxStyle(Display.getDefault().getSystemColor(SWT.COLOR_BLUE).getRGB(),null,false,false));
-        changed |= setSyntaxStyle(map,IInstallOptionsConstants.KEY_VALUE_DELIM_STYLE,new NSISSyntaxStyle(Display.getDefault().getSystemColor(SWT.COLOR_RED).getRGB(),null,false,false));
-        changed |= setSyntaxStyle(map,IInstallOptionsConstants.NUMBER_STYLE,new NSISSyntaxStyle(ColorManager.CHOCOLATE,null,false,false));
+        boolean changed = setSyntaxStyle(map,IInstallOptionsConstants.COMMENT_STYLE,new NSISSyntaxStyle(ColorManager.GREY,null,false,true,false,false));
+        changed |= setSyntaxStyle(map,IInstallOptionsConstants.SECTION_STYLE,new NSISSyntaxStyle(ColorManager.TEAL,null,false,false,false,false));
+        changed |= setSyntaxStyle(map,IInstallOptionsConstants.KEY_STYLE,new NSISSyntaxStyle(Display.getDefault().getSystemColor(SWT.COLOR_BLUE).getRGB(),null,false,false,false,false));
+        changed |= setSyntaxStyle(map,IInstallOptionsConstants.KEY_VALUE_DELIM_STYLE,new NSISSyntaxStyle(Display.getDefault().getSystemColor(SWT.COLOR_RED).getRGB(),null,false,false,false,false));
+        changed |= setSyntaxStyle(map,IInstallOptionsConstants.NUMBER_STYLE,new NSISSyntaxStyle(ColorManager.CHOCOLATE,null,false,false,false,false));
         return changed;
     }
     
@@ -157,17 +157,54 @@ public class InstallOptionsPlugin extends AbstractUIPlugin implements IInstallOp
         }
         return false;
     }
+    
+    /**
+     * @return Returns the name.
+     */
+    public String getName()
+    {
+        return mName;
+    }
 
     public void start(BundleContext context) throws Exception
     {
         super.start(context);
+        mName = (String)getBundle().getHeaders().get("Bundle-Name"); //$NON-NLS-1$
         mImageManager = new ImageManager(this);
         initializePreferences();
+        checkEditorAssociation();
     }
 
     public void stop(BundleContext context) throws Exception
     {
         mImageManager = null;
         super.stop(context);
+    }
+    
+    private void checkEditorAssociation()
+    {
+        final boolean toggleState = getPreferenceStore().getBoolean(PREFERENCE_CHECK_EDITOR_ASSOCIATION);
+        if(toggleState) {
+            final IEditorRegistry editorRegistry = PlatformUI.getWorkbench().getEditorRegistry();
+            for(int i=0; i<INI_EXTENSIONS.length; i++) {
+                IEditorDescriptor descriptor = editorRegistry.getDefaultEditor("*."+INI_EXTENSIONS[i]);
+                if(descriptor == null || (!descriptor.getId().equals(INSTALLOPTIONS_DESIGN_EDITOR_ID) && !descriptor.getId().equals(INSTALLOPTIONS_SOURCE_EDITOR_ID))) {
+                    Display.getDefault().asyncExec(new Runnable(){
+                        public void run()
+                        {
+                            MessageDialogWithToggle md = MessageDialogWithToggle.openYesNoCancelQuestion(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
+                                    getName(),getResourceString("check.default.editor.question"),
+                                    getResourceString("check.default.editor.toggle"),!toggleState,getPreferenceStore(),PREFERENCE_CHECK_EDITOR_ASSOCIATION);
+                            if(md.getReturnCode() == IDialogConstants.YES_ID) {
+                                for(int i=0; i<INI_EXTENSIONS.length; i++) {
+                                    editorRegistry.setDefaultEditor("*."+INI_EXTENSIONS[i],INSTALLOPTIONS_DESIGN_EDITOR_ID);
+                                }
+                            }
+                        }
+                    });
+                    break;
+                }
+            }
+        }
     }
 }

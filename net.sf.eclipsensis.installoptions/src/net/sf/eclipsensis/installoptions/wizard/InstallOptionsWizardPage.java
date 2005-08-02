@@ -76,7 +76,7 @@ public class InstallOptionsWizardPage extends WizardNewFileCreationPage
     	mOpenFileCheckbox = new Button(composite,SWT.CHECK);
     	mOpenFileCheckbox.setText(InstallOptionsPlugin.getResourceString("wizard.open.file.label")); //$NON-NLS-1$
     	mOpenFileCheckbox.setSelection(true);
-        mOpenFileCheckbox.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        mOpenFileCheckbox.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
     	
         mEditorIdCombo = new Combo(composite,SWT.DROP_DOWN|SWT.READ_ONLY);
         mEditorIdCombo.add(InstallOptionsPlugin.getResourceString("wizard.design.editor.label")); //$NON-NLS-1$

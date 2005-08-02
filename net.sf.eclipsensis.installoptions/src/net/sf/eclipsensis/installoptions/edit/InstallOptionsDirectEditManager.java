@@ -9,6 +9,8 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.edit;
 
+import net.sf.eclipsensis.installoptions.model.*;
+
 import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.gef.tools.CellEditorLocator;
 import org.eclipse.gef.tools.DirectEditManager;
@@ -30,7 +32,9 @@ public abstract class InstallOptionsDirectEditManager extends DirectEditManager
 
     protected final CellEditor createCellEditorOn(Composite composite)
     {
-        if(((InstallOptionsEditDomain)getEditPart().getViewer().getEditDomain()).isReadOnly()) {
+        InstallOptionsModelTypeDef typeDef = InstallOptionsModel.INSTANCE.getControlTypeDef(((InstallOptionsWidget)getEditPart().getModel()).getType());
+        if(typeDef == null || !typeDef.getSettings().contains(getDirectEditProperty()) ||
+           ((InstallOptionsEditDomain)getEditPart().getViewer().getEditDomain()).isReadOnly()) {
             return null;
         }
         else {
@@ -42,4 +46,6 @@ public abstract class InstallOptionsDirectEditManager extends DirectEditManager
     {
         return super.createCellEditorOn(composite);
     }
+    
+    protected abstract String getDirectEditProperty();
 }

@@ -22,13 +22,13 @@ public class InstallOptionsTreeViewerDropTargetListener extends AbstractTransfer
 {
     public InstallOptionsTreeViewerDropTargetListener(EditPartViewer viewer) 
     {
-        super(viewer, InstallOptionsTreeViewerTransfer.getInstance());
+        super(viewer, InstallOptionsTreeViewerTransfer.INSTANCE);
     }
 
     protected Request createTargetRequest() 
     {
         ChangeBoundsRequest request = new ChangeBoundsRequest(RequestConstants.REQ_MOVE);
-        request.setEditParts((List)InstallOptionsTreeViewerTransfer.getInstance().getObject());
+        request.setEditParts((List)InstallOptionsTreeViewerTransfer.INSTANCE.getObject());
         return request;
     }
 
@@ -36,7 +36,7 @@ public class InstallOptionsTreeViewerDropTargetListener extends AbstractTransfer
     {
         CompoundCommand command = new CompoundCommand();
 
-        Iterator iter = ((List)InstallOptionsTreeViewerTransfer.getInstance().getObject()).iterator();
+        Iterator iter = ((List)InstallOptionsTreeViewerTransfer.INSTANCE.getObject()).iterator();
 
         Request  request = getTargetRequest();
         request.setType(isMove() ? RequestConstants.REQ_MOVE : RequestConstants.REQ_ORPHAN);
@@ -74,7 +74,7 @@ public class InstallOptionsTreeViewerDropTargetListener extends AbstractTransfer
 
     protected void handleDragOver() 
     {
-        if (InstallOptionsTreeViewerTransfer.getInstance().getViewer() != getViewer()) {
+        if (InstallOptionsTreeViewerTransfer.INSTANCE.getViewer() != getViewer()) {
             getCurrentEvent().detail = DND.DROP_NONE;
             return;
         }
@@ -84,7 +84,7 @@ public class InstallOptionsTreeViewerDropTargetListener extends AbstractTransfer
 
     protected EditPart getSourceEditPart() 
     {
-        List selection = (List)InstallOptionsTreeViewerTransfer.getInstance().getObject();
+        List selection = (List)InstallOptionsTreeViewerTransfer.INSTANCE.getObject();
         if (selection == null
           || selection.isEmpty()
           || !(selection.get(0) instanceof EditPart))
@@ -114,7 +114,7 @@ public class InstallOptionsTreeViewerDropTargetListener extends AbstractTransfer
     protected boolean isMove() 
     {
         EditPart source = getSourceEditPart();
-        List selection = (List)InstallOptionsTreeViewerTransfer.getInstance().getObject();
+        List selection = (List)InstallOptionsTreeViewerTransfer.INSTANCE.getObject();
         for (int i = 0; i < selection.size(); i++) {
             EditPart ep = (EditPart)selection.get(i);
             if (ep.getParent() != source.getParent())

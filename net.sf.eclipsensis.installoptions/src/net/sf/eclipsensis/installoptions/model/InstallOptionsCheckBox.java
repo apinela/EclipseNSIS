@@ -10,15 +10,14 @@
 package net.sf.eclipsensis.installoptions.model;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
+import net.sf.eclipsensis.installoptions.ini.INISection;
 import net.sf.eclipsensis.installoptions.properties.descriptors.CustomComboBoxPropertyDescriptor;
 import net.sf.eclipsensis.installoptions.properties.validators.NSISStringLengthValidator;
 
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
 public class InstallOptionsCheckBox extends InstallOptionsButton
 {
-    public static Image CHECKBOX_ICON = InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("checkbox.type.small.icon")); //$NON-NLS-1$
     private static final int DEFAULT_STATE = 0;
     private static final String[] STATE_DATA = {"",InstallOptionsModel.STATE_UNCHECKED, //$NON-NLS-1$
                                                 InstallOptionsModel.STATE_CHECKED};
@@ -26,14 +25,14 @@ public class InstallOptionsCheckBox extends InstallOptionsButton
                                  InstallOptionsPlugin.getResourceString("state.unchecked"), //$NON-NLS-1$
                                  InstallOptionsPlugin.getResourceString("state.checked")}; //$NON-NLS-1$
 
-    public InstallOptionsCheckBox()
+    protected InstallOptionsCheckBox(INISection section)
     {
-        this(InstallOptionsModel.TYPE_CHECKBOX);
+        super(section);
     }
-
-    protected InstallOptionsCheckBox(String type)
+    
+    public String getType()
     {
-        super(type);
+        return InstallOptionsModel.TYPE_CHECKBOX;
     }
 
     protected Position getDefaultPosition()
@@ -44,11 +43,6 @@ public class InstallOptionsCheckBox extends InstallOptionsButton
     protected String getDefaultText()
     {
         return InstallOptionsPlugin.getResourceString("checkbox.text.default"); //$NON-NLS-1$
-    }
-
-    public Image getIconImage()
-    {
-        return CHECKBOX_ICON;
     }
 
     protected IPropertyDescriptor createPropertyDescriptor(String name)

@@ -136,7 +136,7 @@ public class MultiLineTextCellEditor extends DialogCellEditor
             }
             text.setText(mValue);
             initializeDialogUnits(text);
-            GridData data = new GridData(GridData.FILL_BOTH);
+            GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
             data.widthHint = convertWidthInCharsToPixels(50);
             data.heightHint = convertHeightInCharsToPixels(4);
             text.setLayoutData(data);

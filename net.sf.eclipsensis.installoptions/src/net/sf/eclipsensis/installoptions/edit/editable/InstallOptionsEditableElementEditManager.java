@@ -11,6 +11,7 @@ package net.sf.eclipsensis.installoptions.edit.editable;
 
 import net.sf.eclipsensis.installoptions.edit.InstallOptionsDirectEditManager;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsEditableElement;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
 
 import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.gef.tools.CellEditorLocator;
@@ -46,4 +47,9 @@ public abstract class InstallOptionsEditableElementEditManager extends InstallOp
     }
     
     protected abstract int getCellEditorStyle();
+
+    protected String getDirectEditProperty()
+    {
+        return InstallOptionsModel.PROPERTY_STATE;
+    }
 }

@@ -11,6 +11,7 @@ package net.sf.eclipsensis.installoptions.model;
 
 import java.util.Map;
 
+import net.sf.eclipsensis.installoptions.ini.INISection;
 import net.sf.eclipsensis.util.CaseInsensitiveMap;
 
 import org.eclipse.gef.requests.CreationFactory;
@@ -18,26 +19,35 @@ import org.eclipse.gef.requests.CreationFactory;
 public class InstallOptionsElementFactory implements CreationFactory
 {
     private static Map cCachedFactories = new CaseInsensitiveMap();
-    static {
-        String[] controlTypes = InstallOptionsModel.getInstance().getControlTypes();
-        for (int i = 0; i < controlTypes.length; i++) {
-            cCachedFactories.put(controlTypes[i], new InstallOptionsElementFactory(controlTypes[i]));
-        }
-    }
+
     public static InstallOptionsElementFactory getFactory(String type)
     {
-        return (InstallOptionsElementFactory)cCachedFactories.get(type);
+        InstallOptionsModelTypeDef typeDef = InstallOptionsModel.INSTANCE.getControlTypeDef(type);
+        if(typeDef != null) {
+            InstallOptionsElementFactory factory = (InstallOptionsElementFactory)cCachedFactories.get(typeDef.getType());
+            if(factory == null) {
+                synchronized (InstallOptionsElementFactory.class) {
+                    factory = (InstallOptionsElementFactory)cCachedFactories.get(typeDef.getType());
+                    if(factory == null) {
+                        factory = new InstallOptionsElementFactory(typeDef);
+                        cCachedFactories.put(typeDef.getType(), factory);
+                    }
+                }
+            }
+            return factory;
+        }
+        return null;
     }
     
-    private String mType;
+    private InstallOptionsModelTypeDef mTypeDef;
 
     /**
      * 
      */
-    private InstallOptionsElementFactory(String type)
+    private InstallOptionsElementFactory(InstallOptionsModelTypeDef typeDef)
     {
         super();
-        mType = type;
+        mTypeDef = typeDef;
     }
 
     /* (non-Javadoc)
@@ -45,59 +55,18 @@ public class InstallOptionsElementFactory implements CreationFactory
      */
     public Object getNewObject()
     {
-        if (InstallOptionsModel.TYPE_LABEL.equalsIgnoreCase(mType)) {
-            return new InstallOptionsLabel();
-        }
-        if (InstallOptionsModel.TYPE_BITMAP.equalsIgnoreCase(mType)) {
-            return new InstallOptionsBitmap();
-        }
-        if (InstallOptionsModel.TYPE_ICON.equalsIgnoreCase(mType)) {
-            return new InstallOptionsIcon();
-        }
-        if (InstallOptionsModel.TYPE_LINK.equalsIgnoreCase(mType)) {
-            return new InstallOptionsLink();
-        }
-        if (InstallOptionsModel.TYPE_BUTTON.equalsIgnoreCase(mType)) {
-            return new InstallOptionsButton();
-        }
-        if (InstallOptionsModel.TYPE_CHECKBOX.equalsIgnoreCase(mType)) {
-            return new InstallOptionsCheckBox();
-        }
-        if (InstallOptionsModel.TYPE_RADIOBUTTON.equalsIgnoreCase(mType)) {
-            return new InstallOptionsRadioButton();
-        }
-        if (InstallOptionsModel.TYPE_FILEREQUEST.equalsIgnoreCase(mType)) {
-            return new InstallOptionsFileRequest();
-        }
-        if (InstallOptionsModel.TYPE_DIRREQUEST.equalsIgnoreCase(mType)) {
-            return new InstallOptionsDirRequest();
-        }
-        if (InstallOptionsModel.TYPE_GROUPBOX.equalsIgnoreCase(mType)) {
-            return new InstallOptionsGroupBox();
-        }
-        if (InstallOptionsModel.TYPE_TEXT.equalsIgnoreCase(mType)) {
-            return new InstallOptionsText();
-        }
-        if (InstallOptionsModel.TYPE_PASSWORD.equalsIgnoreCase(mType)) {
-            return new InstallOptionsPassword();
-        }
-        if (InstallOptionsModel.TYPE_DROPLIST.equalsIgnoreCase(mType)) {
-            return new InstallOptionsDropList();
-        }
-        if (InstallOptionsModel.TYPE_COMBOBOX.equalsIgnoreCase(mType)) {
-            return new InstallOptionsCombobox();
-        }
-        if (InstallOptionsModel.TYPE_LISTBOX.equalsIgnoreCase(mType)) {
-            return new InstallOptionsListbox();
-        }
-        
-        return null;
+        return getNewObject(null);
+    }
+
+    public Object getNewObject(INISection section)
+    {
+        return mTypeDef.createModel(section);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.gef.requests.CreationFactory#getObjectType()
      */
     public Object getObjectType() {
-        return mType;
+        return mTypeDef.getType();
     }
 }

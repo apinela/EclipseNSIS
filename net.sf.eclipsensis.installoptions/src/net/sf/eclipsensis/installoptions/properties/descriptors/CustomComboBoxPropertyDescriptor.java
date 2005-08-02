@@ -45,13 +45,13 @@ public class CustomComboBoxPropertyDescriptor extends ComboBoxPropertyDescriptor
 
     public CellEditor createPropertyEditor(Composite parent)
     {
-        return new CustomComboBoxCellEditor(parent);
+        return new InternalComboBoxCellEditor(parent);
     }
 
-    private class CustomComboBoxCellEditor extends ComboBoxCellEditor
+    private class InternalComboBoxCellEditor extends ComboBoxCellEditor
     {
         
-        public CustomComboBoxCellEditor(Composite parent)
+        public InternalComboBoxCellEditor(Composite parent)
         {
             super(parent,mDisplay,SWT.READ_ONLY);
         }
