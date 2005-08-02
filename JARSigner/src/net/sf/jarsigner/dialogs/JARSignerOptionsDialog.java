@@ -107,7 +107,7 @@ public class JARSignerOptionsDialog extends AbstractJAROptionsDialog
         layout.numColumns = 1;
         layout.makeColumnsEqualWidth = false;
         Composite composite = new Composite(parent,SWT.NONE);
-        composite.setLayoutData(new GridData(GridData.FILL_BOTH));
+        composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         layout = new GridLayout(3,false);
         layout.marginHeight = 0;
         layout.marginWidth = 0;
@@ -156,7 +156,7 @@ public class JARSignerOptionsDialog extends AbstractJAROptionsDialog
 
         makeLabel(composite, ALIAS, true); //$NON-NLS-1$
         final Combo combo = new Combo(composite,SWT.BORDER|SWT.DROP_DOWN|SWT.READ_ONLY);
-        gd = new GridData(GridData.FILL_HORIZONTAL);
+        gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
         gd.horizontalSpan = 2;
         combo.setLayoutData(gd);
         mComboViewer = new ComboViewer(combo);

@@ -1,7 +1,7 @@
 # Microsoft Developer Studio Generated NMAKE File, Based on MakeNSISRunner.dsp
 !IF "$(CFG)" == ""
-CFG=MakeNSISRunner - Win32 Debug
-!MESSAGE No configuration specified. Defaulting to MakeNSISRunner - Win32 Debug.
+CFG=MakeNSISRunner - Win32 Release
+!MESSAGE No configuration specified. Defaulting to MakeNSISRunner - Win32 Release.
 !ENDIF 
 
 !IF "$(CFG)" != "MakeNSISRunner - Win32 Release" && "$(CFG)" != "MakeNSISRunner - Win32 Debug"
@@ -9,7 +9,7 @@ CFG=MakeNSISRunner - Win32 Debug
 !MESSAGE You can specify a configuration when running NMAKE
 !MESSAGE by defining the macro CFG on the command line. For example:
 !MESSAGE 
-!MESSAGE NMAKE /f "MakeNSISRunner.mak" CFG="MakeNSISRunner - Win32 Debug"
+!MESSAGE NMAKE /f "MakeNSISRunner.mak" CFG="MakeNSISRunner - Win32 Release"
 !MESSAGE 
 !MESSAGE Possible choices for configuration are:
 !MESSAGE 
@@ -37,6 +37,7 @@ ALL : "$(OUTDIR)\MakeNSISRunner.dll"
 
 
 CLEAN :
+	-@erase "$(INTDIR)\MakeNSISProcess.obj"
 	-@erase "$(INTDIR)\MakeNSISRunner.obj"
 	-@erase "$(INTDIR)\vc60.idb"
 	-@erase "$(OUTDIR)\MakeNSISRunner.dll"
@@ -47,7 +48,7 @@ CLEAN :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
 
 CPP=cl.exe
-CPP_PROJ=/nologo /MT /W3 /GX /O2 /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "MAKENSISRUNNER_EXPORTS" /D DWORD_PTR=DWORD /Fp"$(INTDIR)\MakeNSISRunner.pch" /YX /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
+CPP_PROJ=/nologo /MD /W3 /GX /O2 /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "MAKENSISRUNNER_EXPORTS" /D DWORD_PTR=DWORD /Fp"$(INTDIR)\MakeNSISRunner.pch" /YX /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
 
 .c{$(INTDIR)}.obj::
    $(CPP) @<<
@@ -89,6 +90,7 @@ BSC32_SBRS= \
 LINK32=link.exe
 LINK32_FLAGS=kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib jvm.lib /nologo /dll /incremental:no /pdb:"$(OUTDIR)\MakeNSISRunner.pdb" /machine:I386 /out:"$(OUTDIR)\MakeNSISRunner.dll" /implib:"$(OUTDIR)\MakeNSISRunner.lib" 
 LINK32_OBJS= \
+	"$(INTDIR)\MakeNSISProcess.obj" \
 	"$(INTDIR)\MakeNSISRunner.obj"
 
 "$(OUTDIR)\MakeNSISRunner.dll" : "$(OUTDIR)" $(DEF_FILE) $(LINK32_OBJS)
@@ -108,6 +110,7 @@ ALL : "$(OUTDIR)\MakeNSISRunner.dll"
 
 
 CLEAN :
+	-@erase "$(INTDIR)\MakeNSISProcess.obj"
 	-@erase "$(INTDIR)\MakeNSISRunner.obj"
 	-@erase "$(INTDIR)\vc60.idb"
 	-@erase "$(INTDIR)\vc60.pdb"
@@ -121,7 +124,7 @@ CLEAN :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
 
 CPP=cl.exe
-CPP_PROJ=/nologo /MTd /W3 /Gm /GX /ZI /Od /D "_DEBUG" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "MAKENSISRUNNER_EXPORTS" /D DWORD_PTR=DWORD /Fp"$(INTDIR)\MakeNSISRunner.pch" /YX /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /GZ /c 
+CPP_PROJ=/nologo /MDd /W3 /Gm /GX /ZI /Od /D "_DEBUG" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "MAKENSISRUNNER_EXPORTS" /D DWORD_PTR=DWORD /Fp"$(INTDIR)\MakeNSISRunner.pch" /YX /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /GZ /c 
 
 .c{$(INTDIR)}.obj::
    $(CPP) @<<
@@ -163,6 +166,7 @@ BSC32_SBRS= \
 LINK32=link.exe
 LINK32_FLAGS=kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib jvm.lib /nologo /dll /incremental:yes /pdb:"$(OUTDIR)\MakeNSISRunner.pdb" /debug /machine:I386 /out:"$(OUTDIR)\MakeNSISRunner.dll" /implib:"$(OUTDIR)\MakeNSISRunner.lib" /pdbtype:sept 
 LINK32_OBJS= \
+	"$(INTDIR)\MakeNSISProcess.obj" \
 	"$(INTDIR)\MakeNSISRunner.obj"
 
 "$(OUTDIR)\MakeNSISRunner.dll" : "$(OUTDIR)" $(DEF_FILE) $(LINK32_OBJS)
@@ -183,6 +187,11 @@ LINK32_OBJS= \
 
 
 !IF "$(CFG)" == "MakeNSISRunner - Win32 Release" || "$(CFG)" == "MakeNSISRunner - Win32 Debug"
+SOURCE=.\MakeNSISProcess.cpp
+
+"$(INTDIR)\MakeNSISProcess.obj" : $(SOURCE) "$(INTDIR)"
+
+
 SOURCE=.\MakeNSISRunner.cpp
 
 "$(INTDIR)\MakeNSISRunner.obj" : $(SOURCE) "$(INTDIR)"

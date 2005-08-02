@@ -30,8 +30,7 @@
             icon="%editor.icon"
             contributorClass="net.sf.eclipsensis.editor.NSISActionContributor"
             class="net.sf.eclipsensis.editor.NSISEditor"
-            id="net.sf.eclipsensis.editor.NSISEditor"
-            symbolicFontName="net.sf.eclipsensis.editor.Font">
+            id="net.sf.eclipsensis.editor.NSISEditor">
       </editor>
    </extension>
    <extension

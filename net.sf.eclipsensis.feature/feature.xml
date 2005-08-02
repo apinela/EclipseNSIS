@@ -2,12 +2,12 @@
 <feature
       id="net.sf.eclipsensis"
       label="%feature.name"
-      version="0.9.1"
+      version="0.9.2"
       provider-name="%provider.name"
-      image="%splash.image"
       os="win32"
       ws="win32"
-      arch="x86">
+      arch="x86"
+      image="%splash.image">
    <install-handler/>
 
    <description url="%description.url">
@@ -28,23 +28,24 @@
    </url>
 
    <requires>
-      <import plugin="org.eclipse.core.filebuffers"/>
-      <import plugin="org.eclipse.core.resources"/>
-      <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="org.eclipse.help"/>
-      <import plugin="org.eclipse.jface.text"/>
-      <import plugin="org.eclipse.ui"/>
-      <import plugin="org.eclipse.ui.editors"/>
-      <import plugin="org.eclipse.ui.ide"/>
-      <import plugin="org.eclipse.ui.views"/>
-      <import plugin="org.eclipse.ui.workbench.texteditor"/>
+      <import plugin="org.eclipse.core.filebuffers" version="3.1.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.resources" version="3.1.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.runtime" version="3.1.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.help" version="3.1.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.jface.text" version="3.1.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui" version="3.1.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.editors" version="3.1.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.ide" version="3.1.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.views" version="3.1.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.workbench.texteditor" version="3.1.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.help.ui" version="3.1.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin
          id="net.sf.eclipsensis"
          download-size="1700"
          install-size="1700"
-         version="0.9.1"
+         version="0.9.2"
          unpack="false"/>
 
 </feature>

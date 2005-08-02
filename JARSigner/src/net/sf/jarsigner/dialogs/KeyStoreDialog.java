@@ -47,7 +47,7 @@ public class KeyStoreDialog extends Dialog
         layout.numColumns = 1;
         layout.makeColumnsEqualWidth = false;
         Composite composite = new Composite(parent,SWT.NONE);
-        composite.setLayoutData(new GridData(GridData.FILL_BOTH));
+        composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         layout = new GridLayout(3,false);
         layout.marginHeight = 0;
         layout.marginWidth = 0;
@@ -59,7 +59,7 @@ public class KeyStoreDialog extends Dialog
         l.setLayoutData(new GridData());
         final Text text = new Text(composite,SWT.BORDER);
         text.setText(mKeyStoreName);
-        text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         text.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e)
             {
@@ -89,7 +89,7 @@ public class KeyStoreDialog extends Dialog
         l.setLayoutData(new GridData());
         final Text text2 = new Text(composite,SWT.BORDER);
         text2.setText(mStorePassword);
-        GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+        GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
         gd.horizontalSpan = 2;
         gd.widthHint = convertWidthInCharsToPixels(50);
         text2.setLayoutData(gd);

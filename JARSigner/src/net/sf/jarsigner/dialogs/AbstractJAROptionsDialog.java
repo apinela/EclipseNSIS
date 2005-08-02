@@ -136,7 +136,7 @@ public abstract class AbstractJAROptionsDialog extends Dialog
         }
         b.setText(JARSignerPlugin.getResourceString(label)); //$NON-NLS-1$
         b.setSelection(((Boolean)mValues.get(property)).booleanValue());
-        GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+        GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
         gd.horizontalSpan = 3;
         b.setLayoutData(gd);
         b.addSelectionListener(new SelectionAdapter() {
@@ -154,7 +154,7 @@ public abstract class AbstractJAROptionsDialog extends Dialog
         Label l = makeLabel(composite, label, isRequired);
         final Text text = new Text(composite,SWT.BORDER);
         text.setText((String)mValues.get(property));
-        GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+        GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
         gd.horizontalSpan = 2;
         text.setLayoutData(gd);
         text.addModifyListener(new ModifyListener() {
@@ -175,7 +175,7 @@ public abstract class AbstractJAROptionsDialog extends Dialog
         Label l = makeLabel(composite, label, isRequired);
         final Text text = new Text(composite,SWT.BORDER);
         text.setText((String)mValues.get(property));
-        text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         text.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e)
             {

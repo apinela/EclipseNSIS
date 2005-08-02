@@ -52,7 +52,7 @@ public class JARVerifierOptionsDialog extends AbstractJAROptionsDialog
         layout.numColumns = 1;
         layout.makeColumnsEqualWidth = false;
         Composite composite = new Composite(parent,SWT.NONE);
-        composite.setLayoutData(new GridData(GridData.FILL_BOTH));
+        composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         layout = new GridLayout(3,false);
         layout.marginHeight = 0;
         layout.marginWidth = 0;

@@ -20,7 +20,9 @@ enum {
   MAKENSIS_NOTIFY_OUTPUT
 };
 
-UINT uThreadId = 0;
+BOOL g_isInit = FALSE;
+HWND g_hWnd = 0;
+HANDLE g_hThread = 0;
 JNIEnv* g_pEnv = NULL;
 JavaVM* g_pJvm = NULL;
 jclass g_arrayListClass = NULL;
@@ -40,7 +42,7 @@ void RegisterWindowClass();
 unsigned WINAPI CreateWndThread(LPVOID);
 
 void ErrorHandler(LPCTSTR);
-void throwException(JNIEnv*, char*);
+void throwException(JNIEnv*, TCHAR*, TCHAR*);
 void freeArray(TCHAR***, int*);
 void freeString(TCHAR**);
 jobject makeArrayList(JNIEnv*, TCHAR**);
@@ -134,50 +136,60 @@ unsigned WINAPI CreateWndThread(LPVOID pThreadParam) {
 
 JNIEXPORT jlong JNICALL Java_net_sf_eclipsensis_makensis_MakeNSISRunner_init(JNIEnv *pEnv, jclass jcls)
 {
-	jclass arrayListClass = pEnv->FindClass("java/util/ArrayList");
-	if(arrayListClass == NULL) {
-		throwException(pEnv,_T("Could not find java.util.ArrayList class"));
-		return 0;
-	}
-
-	g_arrayListConstructor = pEnv->GetMethodID(arrayListClass, "<init>", "()V");
-	if(g_arrayListConstructor == NULL) {
-		throwException(pEnv,_T("Could not find constructor for java.util.ArrayList class"));
-		return 0;
-	}
-
-	g_arrayListAdd = pEnv->GetMethodID(arrayListClass, "add", "(Ljava/lang/Object;)Z");
-	if(g_arrayListAdd == NULL) {
-		throwException(pEnv,_T("Could not find add method for java.util.ArrayList class"));
-		return 0;
-	}
-
-	HANDLE hWnd = CreateWindow(_T("Hidden EclipseNSIS Window"), NULL, WS_OVERLAPPEDWINDOW,
-						CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
-						NULL, NULL, hInstance, NULL);
-	if(hWnd == NULL) {
-		throwException(pEnv, _T("Failed create Hidden EclipseNSIS Window"));
-		return 0;
-	}
-
-
-	HANDLE hThread = (HANDLE)_beginthreadex(NULL, 0, &CreateWndThread, hWnd, 0, &uThreadId);
-	if(!hThread)
-	{
-		throwException(pEnv,_T("Fail creating thread"));
-		return 0;
-	}
-
-    g_arrayListClass = (jclass)pEnv->NewGlobalRef(arrayListClass);
-    pEnv->DeleteLocalRef(arrayListClass);
-	return (jlong)hWnd;
+    if(!g_isInit) {
+    	jclass arrayListClass = pEnv->FindClass("java/util/ArrayList");
+    	if(arrayListClass == NULL) {
+    		throwException(pEnv, _T("java/lang/ClassNotFoundException"), _T("java.util.ArrayList"));
+    		return 0;
+    	}
+    
+    	g_arrayListConstructor = pEnv->GetMethodID(arrayListClass, "<init>", "()V");
+    	if(g_arrayListConstructor == NULL) {
+    		throwException(pEnv, _T("java/lang/NoSuchMethodException"), _T("java.util.ArrayList()"));
+    		return 0;
+    	}
+    
+    	g_arrayListAdd = pEnv->GetMethodID(arrayListClass, "add", "(Ljava/lang/Object;)Z");
+    	if(g_arrayListAdd == NULL) {
+    		throwException(pEnv, _T("java/lang/NoSuchMethodException"), _T("java.util.ArrayList.add(Object o)"));
+    		return 0;
+    	}
+    
+    	g_hWnd = CreateWindow(_T("Hidden EclipseNSIS Window"), NULL, WS_OVERLAPPEDWINDOW,
+    						CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
+    						NULL, NULL, hInstance, NULL);
+    	if(g_hWnd == NULL) {
+    		throwException(pEnv, _T("java/lang/RuntimeException"), _T("CreateWindow"));
+    		return 0;
+    	}
+    
+        UINT uThreadId = 0;
+    	g_hThread = (HANDLE)_beginthreadex(NULL, 0, &CreateWndThread, g_hWnd, 0, &uThreadId);
+    	if(!g_hThread)
+    	{
+    		throwException(pEnv, _T("java/lang/RuntimeException"), _T("_beginthreadex"));
+    		return 0;
+    	}
+    
+        g_arrayListClass = (jclass)pEnv->NewGlobalRef(arrayListClass);
+        pEnv->DeleteLocalRef(arrayListClass);
+        
+        g_isInit = TRUE;
+    }
+	return (jlong)g_hWnd;
 }
 
 JNIEXPORT void JNICALL Java_net_sf_eclipsensis_makensis_MakeNSISRunner_destroy(JNIEnv *pEnv, jclass jcls)
 {
-    pEnv->DeleteGlobalRef(g_arrayListClass);
-	Java_net_sf_eclipsensis_makensis_MakeNSISRunner_reset(pEnv, jcls);
-	PostThreadMessage(uThreadId, WM_QUIT, 0, 0);
+    if(g_isInit) {
+        pEnv->DeleteGlobalRef(g_arrayListClass);
+    	Java_net_sf_eclipsensis_makensis_MakeNSISRunner_reset(pEnv, jcls);
+    	PostMessage(g_hWnd,WM_QUIT,0,0);
+    	CloseHandle(g_hThread);
+    	g_hWnd = 0;
+    	g_hThread = 0;
+        g_isInit = FALSE;
+    }
 }
 
 JNIEXPORT void JNICALL Java_net_sf_eclipsensis_makensis_MakeNSISRunner_reset(JNIEnv *pEnv, jclass jcls)
@@ -243,7 +255,7 @@ jobject makeArrayList(JNIEnv *pEnv, TCHAR **items)
 
 		arrayListObject = pEnv->NewObject(g_arrayListClass,g_arrayListConstructor);
 		if(arrayListObject == NULL) {
-			throwException(pEnv,_T("Could not call constructor for java.util.ArrayList class"));
+			throwException(pEnv, _T("java/lang/RuntimeException"), _T("java.util.ArrayList()"));
 			return NULL;
 		}
 
@@ -301,10 +313,9 @@ void ErrorHandler(LPCTSTR pszErrorMessage) {
 	MessageBox(NULL, pszErrorMessage, _T("Error"), MB_OK | MB_ICONERROR);
 }
 
-void throwException(JNIEnv *pEnv, char *errMsg) {
-	jclass failex = pEnv->FindClass(_T("java/lang/RuntimeException"));
-	if( failex != NULL ){
-		pEnv->ThrowNew(failex, errMsg);
-	}
+void throwException(JNIEnv *pEnv, TCHAR *exception, TCHAR *errMsg) {
+    jclass failex = pEnv->FindClass(exception);
+    if( failex != NULL ){
+        pEnv->ThrowNew(failex, errMsg);
+    }
 }
-
