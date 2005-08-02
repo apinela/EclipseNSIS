@@ -54,7 +54,7 @@ public class NSISCancelAction extends NSISScriptAction
     public boolean isEnabled()
     {
         if(super.isEnabled()) {
-            return (MakeNSISRunner.isRunning());
+            return (MakeNSISRunner.isCompiling());
         }
         return false;
     }

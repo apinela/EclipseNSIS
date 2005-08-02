@@ -14,6 +14,7 @@ import java.util.ResourceBundle;
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.help.NSISKeywords;
+import net.sf.eclipsensis.makensis.MakeNSISRunner;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.wizard.settings.NSISWizardSettings;
 import net.sf.eclipsensis.wizard.util.MasterSlaveController;
@@ -22,6 +23,7 @@ import net.sf.eclipsensis.wizard.util.NSISWizardDialogUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 
@@ -215,16 +217,50 @@ public class NSISWizardGeneralPage extends AbstractNSISWizardPage
             radio[i].addSelectionListener(sa);
         }
 
-        final Combo c = NSISWizardDialogUtil.createCombo(group, NSISWizardDisplayValues.COMPRESSOR_TYPE_NAMES, 
-                        settings.getCompressorType(),true,"compressor.label", //$NON-NLS-1$
-                        true, null,false);
-        c.addSelectionListener(new SelectionAdapter() {
-        public void widgetSelected(SelectionEvent e)
-        {
-            mWizard.getSettings().setCompressorType(((Combo)e.widget).getSelectionIndex());
-        }
-        });
+        final Button cb;
+        NSISWizardDialogUtil.createLabel(group,"compressor.label", true, null, false); //$NON-NLS-1$
+        Composite composite = new Composite(group,SWT.NONE);
+        GridData gridData = new GridData(SWT.FILL,SWT.CENTER,true,false);
+        gridData.horizontalSpan = 2;
+        composite.setLayoutData(gridData);
+        GridLayout layout = new GridLayout(2,false);
+        layout.marginHeight = 0;
+        layout.marginWidth = 0;
+        composite.setLayout(layout);
+        final Combo c = NSISWizardDialogUtil.createCombo(composite, 2, 
+                        NSISWizardDisplayValues.COMPRESSOR_TYPE_NAMES, 
+                        NSISWizardDisplayValues.COMPRESSOR_TYPE_NAMES[settings.getCompressorType()],
+                        true, true, null);
 
+        String solidKeyword = NSISKeywords.INSTANCE.getKeyword("/SOLID"); //$NON-NLS-1$
+        if(NSISKeywords.INSTANCE.isValidKeyword(solidKeyword)) {
+            ((GridData)c.getLayoutData()).horizontalSpan = 1;
+            int index = c.getSelectionIndex();
+            cb = NSISWizardDialogUtil.createCheckBox(composite,"solid.compression.text",settings.isSolidCompression(), //$NON-NLS-1$
+                                                     (index >= 0 && index != MakeNSISRunner.COMPRESSOR_DEFAULT),
+                                                     null,false);
+            cb.addSelectionListener(new SelectionAdapter() {
+                public void widgetSelected(SelectionEvent e)
+                {
+                    mWizard.getSettings().setSolidCompression(((Button)e.widget).getSelection());
+                }
+            });
+            ((GridData)cb.getLayoutData()).horizontalSpan = 1;
+        }
+        else {
+            cb = null;
+        }
+        c.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e)
+            {
+                int index = ((Combo)e.widget).getSelectionIndex();
+                mWizard.getSettings().setCompressorType(index);
+                if(cb != null) {
+                    cb.setEnabled(index >= 0 && index != MakeNSISRunner.COMPRESSOR_DEFAULT);
+                }
+            }
+        });
+        
         mWizard.addSettingsListener(new INSISWizardSettingsListener() {
             public void settingsChanged()
             {
@@ -245,7 +281,13 @@ public class NSISWizardGeneralPage extends AbstractNSISWizardPage
                     c.clearSelection();
                     c.setText(""); //$NON-NLS-1$
                 }
-            }});
+                if(cb != null) {
+                    cb.setSelection(settings.isSolidCompression());
+                    int index = c.getSelectionIndex();
+                    cb.setEnabled(index >= 0 && index != MakeNSISRunner.COMPRESSOR_DEFAULT);
+                }
+            }
+        });
     }
 
     private void createUninstallerGroup(Composite parent)

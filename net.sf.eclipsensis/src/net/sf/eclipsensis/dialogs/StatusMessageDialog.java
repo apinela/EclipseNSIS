@@ -73,7 +73,7 @@ public abstract class StatusMessageDialog extends IconAndMessageDialog implement
         layout.marginHeight = 0;
         layout.marginWidth = 0;
         parent.setLayout(layout);
-        parent.setLayoutData(new GridData(GridData.FILL_BOTH));
+        parent.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
         mErrorImage = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("error.icon")); //$NON-NLS-1$
         mWarningImage = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("warning.icon")); //$NON-NLS-1$
@@ -87,10 +87,10 @@ public abstract class StatusMessageDialog extends IconAndMessageDialog implement
         mOKImage = new Image(getShell().getDisplay(),imageData);
 
         Control control = createControl(parent);
-        control.setLayoutData(new GridData(GridData.FILL_BOTH));
+        control.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         
         Label label = new Label(parent, SWT.SEPARATOR | SWT.HORIZONTAL);
-        GridData data = new GridData(GridData.FILL_HORIZONTAL);
+        GridData data = new GridData(SWT.FILL, SWT.CENTER, true, false);
         label.setLayoutData(data);
         
         Composite composite= new Composite(parent, SWT.NONE);
@@ -99,7 +99,7 @@ public abstract class StatusMessageDialog extends IconAndMessageDialog implement
         layout.marginHeight = 0;
         layout.marginWidth = 0;
         composite.setLayout(layout);
-        composite.setLayoutData(new GridData(GridData.FILL_BOTH));
+        composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         message = getMessage();
         createMessageArea(composite);
         applyDialogFont(parent);        
@@ -162,7 +162,7 @@ public abstract class StatusMessageDialog extends IconAndMessageDialog implement
     {
         public DialogStatus(int severity, String message)
         {
-            super(severity,INSISConstants.PLUGIN_NAME,0,message,null);
+            super(severity,INSISConstants.PLUGIN_ID,0,message,null);
         }
         
         public void setError(String message)

@@ -20,6 +20,7 @@ LoadLanguageFile "${NSISDIR}\Contrib\Language files\English.nlf"
 
 ; Callback function
 Function .onInit
+    splash::show 500 "$PLUGINSDIR\splash.bmp"
     StrCpy $R0 1
     StrCpy $R1 ${__FILE__}
     StrCpy $MyVar ${MYSYMBOL}

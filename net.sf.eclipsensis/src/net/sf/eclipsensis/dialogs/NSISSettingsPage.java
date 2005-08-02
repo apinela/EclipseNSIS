@@ -44,6 +44,7 @@ public abstract class NSISSettingsPage extends PropertyPage implements IWorkbenc
     protected Button mNoCD = null;
     protected Combo mVerbosity = null;
     protected Combo mCompressor = null;
+    protected Button mSolidCompression = null;
     protected TableViewer mInstructions = null;
     protected TableViewer mSymbols = null;
     
@@ -114,11 +115,11 @@ public abstract class NSISSettingsPage extends PropertyPage implements IWorkbenc
         composite.setLayout(layout);
         
         Composite child = createMasterControl(composite);
-        GridData data = new GridData(GridData.FILL_HORIZONTAL);
+        GridData data = new GridData(SWT.FILL, SWT.CENTER, true, false);
         child.setLayoutData(data);
 
         mGroup = createNSISOptionsGroup(composite);
-        data = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_FILL);
+        data = new GridData(SWT.FILL, SWT.FILL, true, false);
         mGroup.setLayoutData(data);
         
         createInstructionsViewer(composite);
@@ -144,6 +145,7 @@ public abstract class NSISSettingsPage extends PropertyPage implements IWorkbenc
             //Hack to properly enable the buttons
             mInstructions.setSelection(mInstructions.getSelection());
             mSymbols.setSelection(mSymbols.getSelection());
+            setSolidCompressionState();
         }
         TabItem[] tabItems = mFolder.getItems();
         for(int i=1; i<tabItems.length; i++) {
@@ -175,21 +177,39 @@ public abstract class NSISSettingsPage extends PropertyPage implements IWorkbenc
                                mSettings.getNoCD());
 
         Composite composite  = new Composite(group,SWT.NONE);
-        GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+        GridData data = new GridData(SWT.FILL, SWT.CENTER, false, false);
         data.horizontalSpan = 2;
         composite.setLayoutData(data);
 
-        layout = new GridLayout(2, false);
+        layout = new GridLayout(3, false);
         layout.marginWidth = 0;
+        layout.marginHeight = 0;
         composite.setLayout(layout);
         
         mVerbosity = createCombo(composite,EclipseNSISPlugin.getResourceString("verbosity.text"),EclipseNSISPlugin.getResourceString("verbosity.tooltip"), //$NON-NLS-1$ //$NON-NLS-2$
                                  INSISPreferenceConstants.VERBOSITY_ARRAY, mSettings.getVerbosity());
+        Label l = new Label(composite,SWT.None);
+        l.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
         
         mCompressor = createCombo(composite,EclipseNSISPlugin.getResourceString("compressor.text"),EclipseNSISPlugin.getResourceString("compressor.tooltip"), //$NON-NLS-1$ //$NON-NLS-2$
                                  MakeNSISRunner.COMPRESSOR_DISPLAY_ARRAY,mSettings.getCompressor());
-
+        mSolidCompression = createCheckBox(composite, EclipseNSISPlugin.getResourceString("solid.compression.text"), //$NON-NLS-1$
+                                          EclipseNSISPlugin.getResourceString("solid.compression.tooltip"), //$NON-NLS-1$
+                                          mSettings.getSolidCompression());
+        mSolidCompression.setVisible(isSolidCompressionSupported());
+        mCompressor.addSelectionListener(new SelectionAdapter(){
+            public void widgetSelected(SelectionEvent e)
+            {
+                setSolidCompressionState();
+            }
+        });
         return group;
+    }
+
+    private void setSolidCompressionState()
+    {
+        int n = mCompressor.getSelectionIndex();
+        mSolidCompression.setEnabled(n != MakeNSISRunner.COMPRESSOR_DEFAULT && n != MakeNSISRunner.COMPRESSOR_BEST);
     }
     
     protected Button createCheckBox(Composite parent, String text, String tooltipText, boolean state)
@@ -198,7 +218,7 @@ public abstract class NSISSettingsPage extends PropertyPage implements IWorkbenc
         button.setText(text);
         button.setToolTipText(tooltipText);
         button.setSelection(state);
-        GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+        GridData data = new GridData(SWT.FILL, SWT.CENTER, false, false);
         button.setLayoutData(data);
         return button;
     }
@@ -208,7 +228,7 @@ public abstract class NSISSettingsPage extends PropertyPage implements IWorkbenc
     {
         Label label = new Label(composite, SWT.LEFT);
         label.setText(text);
-        GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+        GridData data = new GridData(SWT.FILL, SWT.CENTER, false, false);
         label.setLayoutData(data);
 
         Combo combo = new Combo(composite, SWT.DROP_DOWN|SWT.READ_ONLY);
@@ -220,7 +240,7 @@ public abstract class NSISSettingsPage extends PropertyPage implements IWorkbenc
         }
         combo.select(selected);
 
-        data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+        data = new GridData(SWT.FILL, SWT.CENTER, false, false);
         combo.setLayoutData(data);
         return combo;
     }
@@ -237,11 +257,11 @@ public abstract class NSISSettingsPage extends PropertyPage implements IWorkbenc
   
         Label label = new Label(composite, SWT.LEFT);
         label.setText(description);
-        GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+        GridData data = new GridData(SWT.FILL, SWT.CENTER, false, false);
         data.horizontalSpan = 2;
         label.setLayoutData(data);
         
-        final Table table = new Table(composite, SWT.FULL_SELECTION | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
+        final Table table = new Table(composite, SWT.FULL_SELECTION | SWT.MULTI | SWT.V_SCROLL | SWT.BORDER);
         table.setLinesVisible(true);
         table.setHeaderVisible(true);
 
@@ -257,7 +277,7 @@ public abstract class NSISSettingsPage extends PropertyPage implements IWorkbenc
         viewer.setInput(input);
         mover.setViewer(viewer);
 
-        data = new GridData(GridData.FILL_BOTH);
+        data = new GridData(SWT.FILL, SWT.FILL, true, true);
         data.verticalSpan = 5;
         table.setLayoutData(data);
         Button addButton = createButton(composite,EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("add.icon")),addTooltip); //$NON-NLS-1$
@@ -305,19 +325,7 @@ public abstract class NSISSettingsPage extends PropertyPage implements IWorkbenc
         });
 
         viewer.addDoubleClickListener(doubleClickListener);
-        table.addControlListener(new ControlAdapter() {
-            public void controlResized(ControlEvent e) 
-            {
-                Table table  = (Table)e.widget;
-                int width = table.getSize().x - 2*table.getBorderWidth();
-                int lineWidth = table.getGridLineWidth();
-                TableColumn[] columns = table.getColumns();
-                width -= (columns.length-1)*lineWidth;
-                for(int i=0; i<columns.length; i++) {
-                    columns[i].setWidth(width/columns.length);
-                }
-            }
-        });
+        table.addControlListener(new TableResizer());
         
         return viewer;
     }
@@ -332,7 +340,7 @@ public abstract class NSISSettingsPage extends PropertyPage implements IWorkbenc
             button.setText(object.toString());
         }
         button.setToolTipText(tooltipText);
-        GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_BEGINNING);
+        GridData data = new GridData(SWT.FILL, SWT.BEGINNING, false, false);
         button.setLayoutData(data);
         return button;
     }
@@ -462,7 +470,7 @@ public abstract class NSISSettingsPage extends PropertyPage implements IWorkbenc
                                       EclipseNSISPlugin.getResourceString("instructions.remove.tooltip"), //$NON-NLS-1$
                                       addAdapter,editAdapter,removeAdapter, doubleClickListener, mover);
         ((GridLayout)composite.getLayout()).marginWidth = 0;
-        GridData data = new GridData(GridData.FILL_BOTH);
+        GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
         composite.setLayoutData(data);
         
         return composite;
@@ -480,6 +488,7 @@ public abstract class NSISSettingsPage extends PropertyPage implements IWorkbenc
             mSettings.setNoCD(mNoCD.getSelection());
             mSettings.setVerbosity(mVerbosity.getSelectionIndex());
             mSettings.setCompressor(mCompressor.getSelectionIndex());
+            mSettings.setSolidCompression(mSolidCompression.getSelection());
             mSettings.setInstructions((ArrayList)mInstructions.getInput());
             mSettings.setSymbols((LinkedHashMap)mSymbols.getInput());
             mSettings.store(); 
@@ -547,4 +556,6 @@ public abstract class NSISSettingsPage extends PropertyPage implements IWorkbenc
      * @return
      */
     protected abstract String getContextId();
+    
+    protected abstract boolean isSolidCompressionSupported();
 }

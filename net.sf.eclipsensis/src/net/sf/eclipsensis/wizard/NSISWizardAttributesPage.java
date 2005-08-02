@@ -131,9 +131,9 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
     {
         final Group group = NSISWizardDialogUtil.createGroup(parent, 1, "language.support.group.label",null,false); //$NON-NLS-1$
         GridData data = ((GridData)group.getLayoutData());
-        data.verticalAlignment = GridData.FILL;
+        data.verticalAlignment = SWT.FILL;
         data.grabExcessVerticalSpace = true;
-        data.horizontalAlignment = GridData.FILL;
+        data.horizontalAlignment = SWT.FILL;
         data.grabExcessHorizontalSpace = true;
         
         NSISWizardSettings settings = mWizard.getSettings();
@@ -151,7 +151,7 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
         final MasterSlaveController m = new MasterSlaveController(b);
         
         final Composite composite2 = new Composite(group, SWT.NONE);
-        data = new GridData(GridData.FILL_BOTH);
+        data = new GridData(SWT.FILL, SWT.FILL, true, true);
         composite2.setLayoutData(data);
         
         GridLayout layout = new GridLayout(4,false);
@@ -192,29 +192,29 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
         layout.marginHeight = 0;
         layout.marginWidth = 0;
         composite3.setLayout(layout);
-        data = new GridData(GridData.HORIZONTAL_ALIGN_FILL|GridData.VERTICAL_ALIGN_CENTER);
+        data = new GridData(SWT.FILL, SWT.CENTER, false, false);
         composite3.setLayoutData(data);
 
         final Button allRightButton = new Button(composite3,SWT.PUSH);
-        data = new GridData(GridData.FILL_HORIZONTAL);
+        data = new GridData(SWT.FILL, SWT.CENTER, true, false);
         allRightButton.setLayoutData(data);
         allRightButton.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("all.right.icon"))); //$NON-NLS-1$
         allRightButton.setToolTipText(EclipseNSISPlugin.getResourceString("all.right.tooltip")); //$NON-NLS-1$
 
         final Button rightButton = new Button(composite3,SWT.PUSH);
-        data = new GridData(GridData.FILL_HORIZONTAL);
+        data = new GridData(SWT.FILL, SWT.CENTER, true, false);
         rightButton.setLayoutData(data);
         rightButton.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("right.icon"))); //$NON-NLS-1$
         rightButton.setToolTipText(EclipseNSISPlugin.getResourceString("right.tooltip")); //$NON-NLS-1$
 
         final Button leftButton = new Button(composite3,SWT.PUSH);
-        data = new GridData(GridData.FILL_HORIZONTAL);
+        data = new GridData(SWT.FILL, SWT.CENTER, true, false);
         leftButton.setLayoutData(data);
         leftButton.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("left.icon"))); //$NON-NLS-1$
         leftButton.setToolTipText(EclipseNSISPlugin.getResourceString("left.tooltip")); //$NON-NLS-1$
         
         final Button allLeftButton = new Button(composite3,SWT.PUSH);
-        data = new GridData(GridData.FILL_HORIZONTAL);
+        data = new GridData(SWT.FILL, SWT.CENTER, true, false);
         allLeftButton.setLayoutData(data);
         allLeftButton.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("all.left.icon"))); //$NON-NLS-1$
         allLeftButton.setToolTipText(EclipseNSISPlugin.getResourceString("all.left.tooltip")); //$NON-NLS-1$
@@ -256,18 +256,18 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
         layout.marginHeight = 0;
         layout.marginWidth = 0;
         composite4.setLayout(layout);
-        data = new GridData(GridData.HORIZONTAL_ALIGN_FILL|GridData.VERTICAL_ALIGN_CENTER);
+        data = new GridData(SWT.FILL, SWT.CENTER, false, false);
         composite4.setLayoutData(data);
         
         final Button upButton = new Button(composite4,SWT.PUSH);
-        data = new GridData(GridData.FILL_HORIZONTAL);
+        data = new GridData(SWT.FILL, SWT.CENTER, true, false);
         upButton.setLayoutData(data);
         upButton.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("up.icon"))); //$NON-NLS-1$
         upButton.setToolTipText(EclipseNSISPlugin.getResourceString("up.tooltip")); //$NON-NLS-1$
         m.addSlave(upButton);
         
         final Button downButton = new Button(composite4,SWT.PUSH);
-        data = new GridData(GridData.FILL_HORIZONTAL);
+        data = new GridData(SWT.FILL, SWT.CENTER, true, false);
         downButton.setLayoutData(data);
         downButton.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("down.icon"))); //$NON-NLS-1$
         downButton.setToolTipText(EclipseNSISPlugin.getResourceString("down.tooltip")); //$NON-NLS-1$

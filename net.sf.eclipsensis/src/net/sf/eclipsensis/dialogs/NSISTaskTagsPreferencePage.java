@@ -25,8 +25,6 @@ import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ControlAdapter;
-import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -35,7 +33,6 @@ import org.eclipse.ui.*;
 
 public class NSISTaskTagsPreferencePage extends PreferencePage implements IWorkbenchPreferencePage
 {
-    private NSISPreferences mPreferences = null;
     private CheckboxTableViewer mTableViewer = null;
     private Button mAddButton = null;
     private Button mEditButton = null;
@@ -52,7 +49,6 @@ public class NSISTaskTagsPreferencePage extends PreferencePage implements IWorkb
         super();
         String descriptionText = EclipseNSISPlugin.getResourceString("task.tags.preferences.description"); //$NON-NLS-1$
         setDescription(descriptionText); //$NON-NLS-1$
-        mPreferences = NSISPreferences.getPreferences();
     }
 
     /* (non-Javadoc)
@@ -80,13 +76,13 @@ public class NSISTaskTagsPreferencePage extends PreferencePage implements IWorkb
     protected Control createContents(Composite parent)
     {
         Composite composite = new Composite(parent, SWT.NONE);
-        composite.setLayoutData(new GridData(GridData.FILL_BOTH));
+        composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         GridLayout layout= new GridLayout(2,false);
         layout.marginHeight= 0;
         layout.marginWidth= 0;
         composite.setLayout(layout);
-        Table table= new Table(composite, SWT.CHECK | SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION);
-        GridData data= new GridData(GridData.FILL_BOTH);
+        Table table= new Table(composite, SWT.CHECK | SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION | SWT.V_SCROLL);
+        GridData data= new GridData(SWT.FILL, SWT.FILL, true, true);
         data.widthHint= convertWidthInCharsToPixels(65);
         data.heightHint= convertHeightInCharsToPixels(10);
         table.setLayoutData(data);
@@ -147,7 +143,7 @@ public class NSISTaskTagsPreferencePage extends PreferencePage implements IWorkb
         });
         
         Composite buttons= new Composite(composite, SWT.NONE);
-        buttons.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
+        buttons.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false));
         layout= new GridLayout();
         layout.marginHeight= 0;
         layout.marginWidth= 0;
@@ -156,7 +152,7 @@ public class NSISTaskTagsPreferencePage extends PreferencePage implements IWorkb
         mAddButton= new Button(buttons, SWT.PUSH);
         mAddButton.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("add.icon"))); //$NON-NLS-1$
         mAddButton.setToolTipText(EclipseNSISPlugin.getResourceString("new.tooltip")); //$NON-NLS-1$
-        mAddButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        mAddButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         mAddButton.addListener(SWT.Selection, new Listener() {
             public void handleEvent(Event e) {
                 add();
@@ -166,7 +162,7 @@ public class NSISTaskTagsPreferencePage extends PreferencePage implements IWorkb
         mEditButton= new Button(buttons, SWT.PUSH);
         mEditButton.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("edit.icon"))); //$NON-NLS-1$
         mEditButton.setToolTipText(EclipseNSISPlugin.getResourceString("edit.tooltip")); //$NON-NLS-1$
-        mEditButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        mEditButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         mEditButton.addListener(SWT.Selection, new Listener() {
             public void handleEvent(Event e) {
                 edit();
@@ -176,7 +172,7 @@ public class NSISTaskTagsPreferencePage extends PreferencePage implements IWorkb
         mRemoveButton= new Button(buttons, SWT.PUSH);
         mRemoveButton.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("delete.icon"))); //$NON-NLS-1$
         mRemoveButton.setToolTipText(EclipseNSISPlugin.getResourceString("remove.tooltip")); //$NON-NLS-1$
-        mRemoveButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        mRemoveButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         mRemoveButton.addListener(SWT.Selection, new Listener() {
             public void handleEvent(Event e) {
                 remove();
@@ -185,8 +181,8 @@ public class NSISTaskTagsPreferencePage extends PreferencePage implements IWorkb
         
         mCaseSensitiveButton = new Button(composite, SWT.CHECK);
         mCaseSensitiveButton.setText(EclipseNSISPlugin.getResourceString("task.tags.case.sensitive.label")); //$NON-NLS-1$
-        mCaseSensitiveButton.setSelection(mPreferences.isCaseSensitiveTaskTags());
-        data = new GridData(GridData.FILL_HORIZONTAL);
+        mCaseSensitiveButton.setSelection(NSISPreferences.INSTANCE.isCaseSensitiveTaskTags());
+        data = new GridData(SWT.FILL, SWT.CENTER, true, false);
         data.horizontalSpan = 2;
         
         Dialog.applyDialogFont(composite);
@@ -194,9 +190,9 @@ public class NSISTaskTagsPreferencePage extends PreferencePage implements IWorkb
         fontData.setStyle(SWT.BOLD);
         mBoldFont = new Font(getShell().getDisplay(),fontData);
         
-        mOriginalTags = mPreferences.getTaskTags();
-        Collection taskTags = mPreferences.getTaskTags();
-        mTableViewer.setInput(mPreferences.getTaskTags());
+        mOriginalTags = NSISPreferences.INSTANCE.getTaskTags();
+        Collection taskTags = NSISPreferences.INSTANCE.getTaskTags();
+        mTableViewer.setInput(NSISPreferences.INSTANCE.getTaskTags());
         mTableViewer.setAllChecked(false);
         for (Iterator iter=taskTags.iterator(); iter.hasNext(); ) {
             NSISTaskTag t = (NSISTaskTag)iter.next();
@@ -207,7 +203,7 @@ public class NSISTaskTagsPreferencePage extends PreferencePage implements IWorkb
         }
 
         updateButtons();
-        configureTableResizing(composite, buttons, table, columns);
+        table.addControlListener(new TableResizer());
 
         return composite;
     }
@@ -285,7 +281,7 @@ public class NSISTaskTagsPreferencePage extends PreferencePage implements IWorkb
     {
         Collection taskTags = (Collection)mTableViewer.getInput();
         boolean caseSensitive = mCaseSensitiveButton.getSelection();
-        boolean different = (caseSensitive != mPreferences.isCaseSensitiveTaskTags());
+        boolean different = (caseSensitive != NSISPreferences.INSTANCE.isCaseSensitiveTaskTags());
         if(!different) {
             if(taskTags.size() == mOriginalTags.size()) {
                 for (Iterator iter = taskTags.iterator(); iter.hasNext();) {
@@ -322,8 +318,8 @@ public class NSISTaskTagsPreferencePage extends PreferencePage implements IWorkb
                 }
             }
         }
-        mPreferences.setTaskTags(taskTags);
-        mPreferences.setCaseSensitiveTaskTags(caseSensitive);
+        NSISPreferences.INSTANCE.setTaskTags(taskTags);
+        NSISPreferences.INSTANCE.setCaseSensitiveTaskTags(caseSensitive);
         boolean updateTaskTags = true;
         if(different) {
             MessageDialog dialog = new MessageDialog(getShell(),EclipseNSISPlugin.getResourceString("confirm.title"), //$NON-NLS-1$
@@ -339,7 +335,7 @@ public class NSISTaskTagsPreferencePage extends PreferencePage implements IWorkb
                 updateTaskTags = (rv == 0);
             }
         }
-        mPreferences.store();
+        NSISPreferences.INSTANCE.store();
         NSISEditor.updatePresentations();
         if(updateTaskTags) {
             new NSISTaskTagUpdater().updateTaskTags();
@@ -352,39 +348,9 @@ public class NSISTaskTagsPreferencePage extends PreferencePage implements IWorkb
      */
     protected void performDefaults()
     {
-        mTableViewer.setInput(mPreferences.getDefaultTaskTags());
+        mTableViewer.setInput(NSISPreferences.INSTANCE.getDefaultTaskTags());
         mTableViewer.refresh(true);
         super.performDefaults();
-    }
-    /**
-     * Correctly resizes the table so no phantom columns appear
-     */
-    private static void configureTableResizing(final Composite parent, final Composite buttons, final Table table, final TableColumn[] columns)
-    {
-        parent.addControlListener(new ControlAdapter() {
-            public void controlResized(ControlEvent e) {
-                Rectangle area= parent.getClientArea();
-                Point preferredSize= table.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-                int width= area.width - 2 * table.getBorderWidth();
-                if (preferredSize.y > area.height) {
-                    Point vBarSize = table.getVerticalBar().getSize();
-                    width -= vBarSize.x;
-                }
-                width -= buttons.getSize().x;
-                int colWidth = width/columns.length;
-                Point oldSize= table.getSize();
-                if (oldSize.x <= width) {
-                    table.setSize(width, area.height);
-                }
-                columns[0].setWidth(width - (columns.length-1)*colWidth);
-                for (int i = 0; i < columns.length; i++) {
-                    columns[i].setWidth(colWidth);
-                }
-                if (oldSize.x > width) {
-                    table.setSize(width, area.height);
-                }
-            }
-        });
     }
 
     /* (non-Javadoc)

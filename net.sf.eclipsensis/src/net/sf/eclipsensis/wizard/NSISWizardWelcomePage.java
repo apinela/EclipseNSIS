@@ -65,7 +65,7 @@ public class NSISWizardWelcomePage extends AbstractNSISWizardPage
         composite.setLayout(layout);
         final Label l = NSISWizardDialogUtil.createLabel(composite,"wizard.welcome.header", true, null, false); //$NON-NLS-1$
         l.setFont(JFaceResources.getBannerFont());
-        l.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        l.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 
         final Label l2 = NSISWizardDialogUtil.createLabel(composite,"wizard.welcome.text", true, null, false); //$NON-NLS-1$
         final GridData gridData = (GridData)l2.getLayoutData();
@@ -108,7 +108,7 @@ public class NSISWizardWelcomePage extends AbstractNSISWizardPage
         
         MasterSlaveController m = new MasterSlaveController(b);
         SashForm form = new SashForm(group,SWT.HORIZONTAL);
-        data = new GridData(GridData.FILL_BOTH);
+        data = new GridData(SWT.FILL, SWT.FILL, true, true);
         form.setLayoutData(data);
         
         MasterSlaveEnabler mse = new MasterSlaveEnabler() {
@@ -130,10 +130,10 @@ public class NSISWizardWelcomePage extends AbstractNSISWizardPage
         layout.marginWidth = 0;
         composite.setLayout(layout);
         Label l = NSISWizardDialogUtil.createLabel(composite,"create.from.template.label",b.getSelection(),m,true); //$NON-NLS-1$
-        l.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        l.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 
         final List list = new List(composite,SWT.BORDER|SWT.SINGLE|SWT.FULL_SELECTION);
-        data = new GridData(GridData.FILL_BOTH);
+        data = new GridData(SWT.FILL, SWT.FILL, true, true);
         list.setLayoutData(data);
         m.addSlave(list, mse);
 
@@ -143,9 +143,9 @@ public class NSISWizardWelcomePage extends AbstractNSISWizardPage
         layout.marginWidth = 0;
         composite.setLayout(layout);
         l = NSISWizardDialogUtil.createLabel(composite,"wizard.template.description.label",true,m,false); //$NON-NLS-1$
-        l.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        l.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         final StyledText t = new StyledText(composite,SWT.BORDER|SWT.MULTI|SWT.READ_ONLY|SWT.WRAP);
-        t.setLayoutData(new GridData(GridData.FILL_BOTH));
+        t.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         t.setBackground(getShell().getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
         t.setCursor(null);
         t.setCaret(null);

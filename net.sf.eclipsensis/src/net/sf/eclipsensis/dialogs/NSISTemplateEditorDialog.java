@@ -140,7 +140,7 @@ public class NSISTemplateEditorDialog extends StatusMessageDialog
             createLabel(composite, EclipseNSISPlugin.getResourceString("template.name.label")); //$NON-NLS-1$ 
             
             Composite composite3= new Composite(composite, SWT.NONE);
-            composite3.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+            composite3.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
             layout= new GridLayout();       
             layout.numColumns= 3;
             layout.marginWidth= 0;
@@ -173,12 +173,12 @@ public class NSISTemplateEditorDialog extends StatusMessageDialog
         
         int descFlags= mIsNameModifiable ? SWT.BORDER : SWT.BORDER | SWT.READ_ONLY;
         mDescriptionText= new Text(composite, descFlags );
-        mDescriptionText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL)); 
+        mDescriptionText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false)); 
         
         mDescriptionText.addModifyListener(listener);
 
         Label patternLabel= createLabel(composite, EclipseNSISPlugin.getResourceString("template.pattern.label")); //$NON-NLS-1$
-        patternLabel.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
+        patternLabel.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false));
         mPatternEditor= createEditor(composite);
         
         Label filler= new Label(composite, SWT.NONE);      
@@ -192,7 +192,7 @@ public class NSISTemplateEditorDialog extends StatusMessageDialog
         composite3.setLayoutData(new GridData());
         
         mInsertVariableButton= new Button(composite3, SWT.NONE);
-        mInsertVariableButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        mInsertVariableButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         mInsertVariableButton.setText(EclipseNSISPlugin.getResourceString("template.insert.variable.label")); //$NON-NLS-1$
         mInsertVariableButton.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent e) {
@@ -281,7 +281,7 @@ public class NSISTemplateEditorDialog extends StatusMessageDialog
     private static Text createText(Composite parent) 
     {
         Text text= new Text(parent, SWT.BORDER);
-        text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));     
+        text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));     
         
         return text;
     }
@@ -304,7 +304,7 @@ public class NSISTemplateEditorDialog extends StatusMessageDialog
         }
                 
         Control control= viewer.getControl();
-        GridData data= new GridData(GridData.FILL_BOTH);
+        GridData data= new GridData(SWT.FILL, SWT.FILL, true, true);
         data.widthHint= convertWidthInCharsToPixels(80);
         data.heightHint= convertHeightInCharsToPixels(nLines);
         control.setLayoutData(data);
@@ -341,7 +341,7 @@ public class NSISTemplateEditorDialog extends StatusMessageDialog
     {
         final SourceViewer viewer= new NSISTemplateSourceViewer(parent, null, null, false, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
         NSISTextUtility.hookSourceViewer(viewer);
-        SourceViewerConfiguration configuration= new NSISTemplateEditorSourceViewerConfiguration(new ChainedPreferenceStore(new IPreferenceStore[]{NSISPreferences.getPreferences().getPreferenceStore(), EditorsUI.getPreferenceStore()}),
+        SourceViewerConfiguration configuration= new NSISTemplateEditorSourceViewerConfiguration(new ChainedPreferenceStore(new IPreferenceStore[]{NSISPreferences.INSTANCE.getPreferenceStore(), EditorsUI.getPreferenceStore()}),
                                                         mTemplateContextType);
         viewer.configure(configuration);
         return viewer;

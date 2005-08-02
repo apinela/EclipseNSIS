@@ -95,7 +95,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
         gd.verticalAlignment = GridData.FILL;
         
         final ToolBar toolbar = createToolBar(group, bundle);
-        gd = new GridData(GridData.FILL_HORIZONTAL);
+        gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
         gd.horizontalSpan = 1;
         toolbar.setLayoutData(gd);
     
@@ -104,7 +104,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
         final ToolItem deleteToolItem = toolbar.getItem(2);
 
         Composite composite2 = new Composite(group,SWT.NONE);
-        gd = new GridData(GridData.FILL_BOTH);
+        gd = new GridData(SWT.FILL, SWT.FILL, true, true);
         gd.horizontalSpan = 1;
         composite2.setLayoutData(gd);
         
@@ -114,7 +114,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
         composite2.setLayout(layout2);
         
         final Tree tree = new Tree(composite2,SWT.MULTI|SWT.BORDER);
-        gd = new GridData(GridData.FILL_BOTH);
+        gd = new GridData(SWT.FILL, SWT.FILL, true, true);
         gd.horizontalSpan = 1;
         tree.setLayoutData(gd);
 
@@ -248,9 +248,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
         mover.setViewer(tv);
         
         Composite composite3 = new Composite(composite2,SWT.NONE);
-        gd = new GridData(GridData.VERTICAL_ALIGN_CENTER);
-        gd.horizontalSpan = 1;
-        gd.grabExcessHorizontalSpace = false;
+        gd = new GridData();
         composite3.setLayoutData(gd);
         
         layout2 = new GridLayout();
@@ -432,18 +430,6 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
         });
         
         tree.addMouseListener(new MouseAdapter() {
-//            public void mouseDoubleClick(MouseEvent e) {
-//                TreeItem ti = tree.getItem(new Point(e.x,e.y));
-//                if(ti != null) {
-//                    Object obj = ti.getData();
-//                    if(obj instanceof INSISInstallElement) {
-//                        editElement(composite, tv, (INSISInstallElement)obj);
-//                        updateSelectComponents();
-//                        checkUnselectedSections();
-//                    }
-//                }
-//            }
-
             public void mouseUp(MouseEvent e) {
                 if(e.button == 3) {
                     TreeItem ti = tree.getItem(new Point(e.x,e.y));

@@ -63,7 +63,7 @@ public class NSISSectionGroupDialog extends AbstractNSISInstallItemDialog
     {
         Composite composite = new Composite(parent, SWT.NONE);
         Dialog.applyDialogFont(composite);
-        GridData gd = new GridData(GridData.FILL_BOTH);
+        GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
         gd.widthHint = Common.calculateControlSize(composite,60,0).x;
         composite.setLayoutData(gd);
         
@@ -117,7 +117,7 @@ public class NSISSectionGroupDialog extends AbstractNSISInstallItemDialog
         });
         int textLimit;
         try {
-            textLimit = Integer.parseInt(NSISPreferences.getPreferences().getNSISOption("NSIS_MAX_STRLEN")); //$NON-NLS-1$
+            textLimit = Integer.parseInt(NSISPreferences.INSTANCE.getNSISOption("NSIS_MAX_STRLEN")); //$NON-NLS-1$
         }
         catch(Exception ex){
             textLimit = INSISConstants.DEFAULT_NSIS_TEXT_LIMIT;
@@ -125,7 +125,7 @@ public class NSISSectionGroupDialog extends AbstractNSISInstallItemDialog
         t2.setTextLimit(textLimit);
         
         Composite composite2 = new Composite(parent, SWT.NONE);
-        gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+        gd = new GridData(SWT.FILL, SWT.CENTER, false, false);
         gd.horizontalSpan = 2;
         composite2.setLayoutData(gd);
         

@@ -30,14 +30,12 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
     
     private static final String CHMLINK_JS = "chmlink.js"; //$NON-NLS-1$
     private static final String NSIS_HELP_FORMAT = new StringBuffer("/").append( //$NON-NLS-1$
-                                    INSISConstants.PLUGIN_NAME).append("/").append( //$NON-NLS-1$
+                                    INSISConstants.PLUGIN_ID).append("/").append( //$NON-NLS-1$
                                     INSISConstants.NSIS_HELP_PREFIX).append(
                                     "Docs/{0}").toString(); //$NON-NLS-1$
     private static final Pattern NSIS_HELP_PATTERN = Pattern.compile(new StringBuffer(".*/").append( //$NON-NLS-1$
                                     INSISConstants.NSIS_HELP_PREFIX).append("Docs/(.*)").toString()); //$NON-NLS-1$
     private static final String NSIS_CHM_HELP_FORMAT = "mk:@MSITStore:{0}::/{1}"; //$NON-NLS-1$
-    
-    private NSISPreferences mPreferences = NSISPreferences.getPreferences();
     
     private ParserDelegator mParserDelegator = new ParserDelegator();
 
@@ -50,7 +48,7 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
     
     public void start(IProgressMonitor monitor)
     {
-        monitor.subTask("Loading help URLs");
+        monitor.subTask(EclipseNSISPlugin.getResourceString("loading.helpurls.message")); //$NON-NLS-1$
         try {
             mBundle = ResourceBundle.getBundle(NSISHelpURLProvider.class.getName());
         } 
@@ -75,7 +73,7 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
         mStartPage = null;
         mCHMStartPage = null;
 
-        String home = mPreferences.getNSISHome();
+        String home = NSISPreferences.INSTANCE.getNSISHome();
         if(!Common.isEmpty(home)) {
             File htmlHelpFile = new File(home,NSIS_CHM_HELP_FILE);
             if(htmlHelpFile.exists()) {
@@ -235,7 +233,7 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
     {
         String chmHelpURL = null;
         if(!Common.isEmpty(helpURL)) {
-            String home = mPreferences.getNSISHome();
+            String home = NSISPreferences.INSTANCE.getNSISHome();
             if(!Common.isEmpty(home)) {
                 File htmlHelpFile = new File(home,NSIS_CHM_HELP_FILE);
                 if(htmlHelpFile.exists()) {
@@ -272,7 +270,7 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
     public void showHelp()
     {
         String url = null;
-        if(mPreferences.isUseEclipseHelp()) {
+        if(NSISPreferences.INSTANCE.isUseEclipseHelp()) {
             url = getHelpStartPage();
         }
         if(Common.isEmpty(url)) {
@@ -289,7 +287,7 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
     public void showHelpURL(String keyword)
     {
         String url = null;
-        if(mPreferences.isUseEclipseHelp()) {
+        if(NSISPreferences.INSTANCE.isUseEclipseHelp()) {
             url = getHelpURL(keyword, true);
         }
         if(Common.isEmpty(url)) {

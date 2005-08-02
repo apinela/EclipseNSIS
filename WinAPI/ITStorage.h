@@ -68,7 +68,7 @@ class CItsFile
 public:
     CItsFile();
     ~CItsFile();
-    HRESULT OpenITS(PWCHAR pszFile);
+    HRESULT OpenITS(PWCHAR pwzFile);
     HRESULT OpenStorage(PWCHAR pwzName, IStorage** ppStorage, DWORD dwAccess = STGM_READWRITE);
     HRESULT OpenStream(PWCHAR pwzFile, IStream** ppStream, DWORD dwAccess = STGM_READWRITE);
         HRESULT ReadStream(PWCHAR pwzStream, ULONG* cbSize, void** pBuffer);
@@ -81,6 +81,6 @@ protected:
 
 
 LPSTR GetErr(DWORD dwLastError);
-HRESULT ExtractHtmlHelpAndTOC(LPCWSTR pszFile, LPCWSTR pszFolder, LPWSTR tocFile);
+HRESULT ExtractHtmlHelpAndTOC(LPCWSTR pszFile, LPCSTR pszFolder, LPSTR tocFile);
 
 #endif

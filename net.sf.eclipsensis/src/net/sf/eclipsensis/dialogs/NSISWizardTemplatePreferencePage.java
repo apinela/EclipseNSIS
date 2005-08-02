@@ -28,10 +28,6 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.events.ControlAdapter;
-import org.eclipse.swt.events.ControlEvent;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -88,13 +84,13 @@ public class NSISWizardTemplatePreferencePage extends PreferencePage implements 
         innerLayout.marginHeight= 0;
         innerLayout.marginWidth= 0;
         innerParent.setLayout(innerLayout);
-        GridData gd= new GridData(GridData.FILL_BOTH);
+        GridData gd= new GridData(SWT.FILL, SWT.FILL, true, true);
         gd.horizontalSpan= 2;
         innerParent.setLayoutData(gd);
 
-        Table table= new Table(innerParent, SWT.CHECK | SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION);
+        Table table= new Table(innerParent, SWT.CHECK | SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION | SWT.V_SCROLL);
         
-        GridData data= new GridData(GridData.FILL_BOTH);
+        GridData data= new GridData(SWT.FILL, SWT.FILL, true, true);
         data.widthHint= convertWidthInCharsToPixels(3);
         data.heightHint= convertHeightInCharsToPixels(10);
         table.setLayoutData(data);
@@ -164,7 +160,7 @@ public class NSISWizardTemplatePreferencePage extends PreferencePage implements 
         });
 
         Composite buttons= new Composite(innerParent, SWT.NONE);
-        buttons.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
+        buttons.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false));
         layout= new GridLayout();
         layout.marginHeight= 0;
         layout.marginWidth= 0;
@@ -172,7 +168,7 @@ public class NSISWizardTemplatePreferencePage extends PreferencePage implements 
         
         mAddButton= new Button(buttons, SWT.PUSH);
         mAddButton.setText(EclipseNSISPlugin.getResourceString("wizard.template.preferences.new.label")); //$NON-NLS-1$
-        mAddButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        mAddButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         mAddButton.addListener(SWT.Selection, new Listener() {
             public void handleEvent(Event e) {
                 add();
@@ -181,7 +177,7 @@ public class NSISWizardTemplatePreferencePage extends PreferencePage implements 
 
         mEditButton= new Button(buttons, SWT.PUSH);
         mEditButton.setText(EclipseNSISPlugin.getResourceString("wizard.template.preferences.edit.label")); //$NON-NLS-1$
-        mEditButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        mEditButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         mEditButton.addListener(SWT.Selection, new Listener() {
             public void handleEvent(Event e) {
                 edit();
@@ -190,7 +186,7 @@ public class NSISWizardTemplatePreferencePage extends PreferencePage implements 
 
         mRemoveButton= new Button(buttons, SWT.PUSH);
         mRemoveButton.setText(EclipseNSISPlugin.getResourceString("wizard.template.preferences.remove.label")); //$NON-NLS-1$
-        mRemoveButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        mRemoveButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         mRemoveButton.addListener(SWT.Selection, new Listener() {
             public void handleEvent(Event e) {
                 remove();
@@ -201,7 +197,7 @@ public class NSISWizardTemplatePreferencePage extends PreferencePage implements 
                 
         mRestoreButton= new Button(buttons, SWT.PUSH);
         mRestoreButton.setText(EclipseNSISPlugin.getResourceString("wizard.template.preferences.restore.label")); //$NON-NLS-1$
-        mRestoreButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        mRestoreButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         mRestoreButton.addListener(SWT.Selection, new Listener() {
             public void handleEvent(Event e) {
                 restoreDeleted();
@@ -210,7 +206,7 @@ public class NSISWizardTemplatePreferencePage extends PreferencePage implements 
 
         mRevertButton= new Button(buttons, SWT.PUSH);
         mRevertButton.setText(EclipseNSISPlugin.getResourceString("wizard.template.preferences.revert.label")); //$NON-NLS-1$
-        mRevertButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        mRevertButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         mRevertButton.addListener(SWT.Selection, new Listener() {
             public void handleEvent(Event e) {
                 revert();
@@ -221,7 +217,7 @@ public class NSISWizardTemplatePreferencePage extends PreferencePage implements 
 
         mImportButton= new Button(buttons, SWT.PUSH);
         mImportButton.setText(EclipseNSISPlugin.getResourceString("wizard.template.preferences.import.label")); //$NON-NLS-1$
-        mImportButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        mImportButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         mImportButton.addListener(SWT.Selection, new Listener() {
             public void handleEvent(Event e) {
                 import_();
@@ -230,7 +226,7 @@ public class NSISWizardTemplatePreferencePage extends PreferencePage implements 
         
         mExportButton= new Button(buttons, SWT.PUSH);
         mExportButton.setText(EclipseNSISPlugin.getResourceString("wizard.template.preferences.export.label")); //$NON-NLS-1$
-        mExportButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        mExportButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         mExportButton.addListener(SWT.Selection, new Listener() {
             public void handleEvent(Event e) {
                 export();
@@ -247,7 +243,7 @@ public class NSISWizardTemplatePreferencePage extends PreferencePage implements 
         mDescriptionText.setBackground(getShell().getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
         mDescriptionText.setCursor(null);
         mDescriptionText.setCaret(null);
-        data= new GridData(GridData.FILL_BOTH);
+        data= new GridData(SWT.FILL, SWT.FILL, true, true);
         data.horizontalSpan= 2;
         data.heightHint= convertHeightInCharsToPixels(5);
         mDescriptionText.setLayoutData(data);
@@ -257,7 +253,7 @@ public class NSISWizardTemplatePreferencePage extends PreferencePage implements 
         mTableViewer.setCheckedElements(getEnabledTemplates());     
 
         updateButtons();
-        configureTableResizing(innerParent, buttons, table, column);
+        table.addControlListener(new TableResizer());
         
         Dialog.applyDialogFont(parent);     
         return parent;
@@ -292,9 +288,7 @@ public class NSISWizardTemplatePreferencePage extends PreferencePage implements 
     {
         Label separator= new Label(parent, SWT.NONE);
         separator.setVisible(false);
-        GridData gd= new GridData();
-        gd.horizontalAlignment= GridData.FILL;
-        gd.verticalAlignment= GridData.BEGINNING;
+        GridData gd= new GridData(SWT.FILL, SWT.BEGINNING, false, false);
         gd.heightHint= 4;
         separator.setLayoutData(gd);
         return separator;
@@ -401,33 +395,6 @@ public class NSISWizardTemplatePreferencePage extends PreferencePage implements 
         catch (CloneNotSupportedException e) {
             e.printStackTrace();
         }
-    }
-        
-    /**
-     * Correctly resizes the table so no phantom columns appear
-     */
-    private static void configureTableResizing(final Composite parent, final Composite buttons, final Table table, final TableColumn column1)
-    {
-        parent.addControlListener(new ControlAdapter() {
-            public void controlResized(ControlEvent e) {
-                Rectangle area= parent.getClientArea();
-                Point preferredSize= table.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-                int width= area.width - 2 * table.getBorderWidth();
-                if (preferredSize.y > area.height) {
-                    Point vBarSize = table.getVerticalBar().getSize();
-                    width -= vBarSize.x;
-                }
-                width -= buttons.getSize().x;
-                Point oldSize= table.getSize();
-                if (oldSize.x > width) {
-                    column1.setWidth(width);
-                    table.setSize(width, area.height);
-                } else {
-                    table.setSize(width, area.height);
-                    column1.setWidth(width);
-                 }
-            }
-        });
     }
 
     private void import_() 

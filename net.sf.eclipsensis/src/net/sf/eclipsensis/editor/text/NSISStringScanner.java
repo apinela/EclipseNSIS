@@ -35,11 +35,11 @@ public class NSISStringScanner extends NSISRuleBasedScanner
     /**
      * @return
      */
-    protected void addRules(List rules, IToken defaultToken)
+    protected void addRules(List rules)
     {
-        rules.add(getSymbolsRule(defaultToken));
-        rules.add(getVariablesRule(defaultToken));
-        rules.add(getLangstringsRule(defaultToken));
+        rules.add(getSymbolsRule());
+        rules.add(getVariablesRule());
+        rules.add(getLangstringsRule());
     }
 
     /**
@@ -58,7 +58,7 @@ public class NSISStringScanner extends NSISRuleBasedScanner
         return mDefaultToken;
     }
 
-    protected IRule getSymbolsRule(IToken defaultToken)
+    protected IRule getSymbolsRule()
     {
         if(mSymbolsRule == null) {
             synchronized(this) {
@@ -98,7 +98,7 @@ public class NSISStringScanner extends NSISRuleBasedScanner
         return mSymbolsRule;
     }
 
-    protected IRule getLangstringsRule(IToken defaultToken)
+    protected IRule getLangstringsRule()
     {
         if(mLangstringsRule == null) {
             synchronized(this) {
@@ -138,7 +138,7 @@ public class NSISStringScanner extends NSISRuleBasedScanner
         return mLangstringsRule;
     }
 
-    protected IRule getVariablesRule(IToken defaultToken)
+    protected IRule getVariablesRule()
     {
         if(mVariablesWordRule == null) {
             synchronized(this) {

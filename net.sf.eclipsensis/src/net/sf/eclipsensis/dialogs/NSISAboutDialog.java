@@ -94,18 +94,17 @@ public class NSISAboutDialog extends Dialog implements INSISConstants
         label.setBackground(background);
         label.setForeground(foreground);
         label.setFont(JFaceResources.getBannerFont());
-        NSISPreferences prefs = NSISPreferences.getPreferences();
-        if(prefs.getNSISExe() != null) {
+        if(NSISPreferences.INSTANCE.getNSISExe() != null) {
             StringBuffer buf = new StringBuffer(cAboutHeader).append(INSISConstants.LINE_SEPARATOR);
             buf.append(EclipseNSISPlugin.getFormattedString("about.header.format", //$NON-NLS-1$
                                                 new Object[]{EclipseNSISPlugin.getResourceString("makensis.display.name"),  //$NON-NLS-1$
-                                                             prefs.getNSISVersion().toString()}));
+                                                             NSISPreferences.INSTANCE.getNSISVersion().toString()}));
             label.setText(buf.toString());
         }
         else {
             label.setText(cAboutHeader);
         }
-        GridData data = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.FILL_HORIZONTAL);
+        GridData data = new GridData(SWT.FILL, SWT.BEGINNING, true, false);
         data.horizontalSpan = 1;
         label.setLayoutData(data);
         
@@ -113,12 +112,12 @@ public class NSISAboutDialog extends Dialog implements INSISConstants
         label.setBackground(background);
         label.setForeground(foreground);
         label.setImage(cAboutImage);
-        data = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_END);
+        data = new GridData(SWT.END, SWT.BEGINNING, false, false);
         data.horizontalSpan = 1;
         label.setLayoutData(data);
         
         Link link = new Link(composite, SWT.WRAP);
-        data = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_FILL);
+        data = new GridData(SWT.FILL, SWT.BEGINNING, false, false);
         data.horizontalSpan = 2;
         data.widthHint = convertWidthInCharsToPixels(80);
         link.setLayoutData(data);
@@ -132,7 +131,7 @@ public class NSISAboutDialog extends Dialog implements INSISConstants
         });
 
         label = new Label(parent, SWT.SEPARATOR | SWT.HORIZONTAL);
-        data = new GridData(GridData.FILL_HORIZONTAL);
+        data = new GridData(SWT.FILL, SWT.CENTER, true, false);
         data.horizontalSpan = 2;
         label.setLayoutData(data);
         return composite;

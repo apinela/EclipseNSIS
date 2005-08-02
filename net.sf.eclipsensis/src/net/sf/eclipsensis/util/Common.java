@@ -60,7 +60,7 @@ public class Common
     public static String encodePath(String path)
     {
         String nsisdirKeyword = NSISKeywords.INSTANCE.getKeyword("${NSISDIR}"); //$NON-NLS-1$
-        String nsisHome = NSISPreferences.getPreferences().getNSISHome().toLowerCase();
+        String nsisHome = NSISPreferences.INSTANCE.getNSISHome().toLowerCase();
         if(path.toLowerCase().startsWith(nsisHome)) {
             path = nsisdirKeyword + path.substring(nsisHome.length());
         }
@@ -70,7 +70,7 @@ public class Common
     public static String decodePath(String path)
     {
         String nsisdirKeyword = NSISKeywords.INSTANCE.getKeyword("${NSISDIR}").toLowerCase(); //$NON-NLS-1$
-        String nsisHome = NSISPreferences.getPreferences().getNSISHome();
+        String nsisHome = NSISPreferences.INSTANCE.getNSISHome();
         if(path.toLowerCase().startsWith(nsisdirKeyword)) {
             path = nsisHome + path.substring(nsisdirKeyword.length());
         }
@@ -440,35 +440,6 @@ public class Common
         return true;
     }
 
-    public static String[] runProcessWithOutput(String[] cmdArray, File workDir)
-    {
-        return runProcessWithOutput(cmdArray, workDir, 0);
-    }
-
-    public static String[] runProcessWithOutput(String[] cmdArray, File workDir, int validReturnCode)
-    {
-        String[] output = null;
-        try {
-            Process proc = Runtime.getRuntime().exec(cmdArray, null, workDir);
-            new Thread(new RunnableInputStreamReader(proc.getErrorStream(),false)).start();
-            output = new RunnableInputStreamReader(proc.getInputStream()).getOutput();
-            int rv = proc.waitFor();
-            if(rv != validReturnCode) {
-                output = null;
-            }
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-            output = null;
-        }
-        catch (InterruptedException e) {
-            e.printStackTrace();
-            output = null;
-        }
-
-        return output;
-    }
-
     public static String leftPad(String text, int length, char padChar)
     {
         if(text.length() < length) {
@@ -496,6 +467,11 @@ public class Common
 
     public static String[] tokenize(String text, char separator)
     {
+        return (String[])tokenizeList(text,separator).toArray(EMPTY_STRING_ARRAY);
+    }
+
+    public static List tokenizeList(String text, char separator)
+    {
         ArrayList list = new ArrayList();
         if(text != null && text.length() > 0) {
             char[] chars = text.toCharArray();
@@ -511,54 +487,57 @@ public class Common
             }
             list.add(buf.toString().trim());
         }
-        return (String[])list.toArray(new String[0]);
+        return list;
     }
 
     public static String[] loadArrayProperty(ResourceBundle bundle, String propertyName)
     {
-        String[] array = EMPTY_STRING_ARRAY;
+        return (String[])loadListProperty(bundle,propertyName).toArray(EMPTY_STRING_ARRAY);
+    }
+
+    public static String[] loadArrayProperty(ResourceBundle bundle, String propertyName, char separator)
+    {
+        return (String[])loadListProperty(bundle,propertyName, separator).toArray(EMPTY_STRING_ARRAY);
+    }
+
+    public static List loadListProperty(ResourceBundle bundle, String propertyName)
+    {
+        return loadListProperty(bundle, propertyName, ',');
+    }
+
+    public static List loadListProperty(ResourceBundle bundle, String propertyName, char separator)
+    {
+        String property = null;
         if(bundle != null) {
-            String property = null;
             try {
                 property = bundle.getString(propertyName);
             }
             catch(MissingResourceException mre) {
                 property = null;
             }
-            if(!isEmpty(property)) {
-                StringTokenizer st = new StringTokenizer(property,","); //$NON-NLS-1$
-                ArrayList list = new ArrayList();
-                while(st.hasMoreTokens()) {
-                    String token = st.nextToken();
-                    if(!isEmpty(token)) {
-                        list.add(token.trim());
-                    }
-                }
-                array = (String[])list.toArray(EMPTY_STRING_ARRAY);
-            }
         }
-        return array;
+        return tokenizeList(property, separator);
     }
 
     public static Map loadMapProperty(ResourceBundle bundle, String propertyName)
     {
+        return loadMapProperty(bundle,propertyName,',');
+    }
+
+    public static Map loadMapProperty(ResourceBundle bundle, String propertyName, char separator)
+    {
         Map map = new LinkedHashMap();
-        if(bundle != null) {
-            String property = bundle.getString(propertyName);
-            if(!isEmpty(property)) {
-                StringTokenizer st = new StringTokenizer(property,","); //$NON-NLS-1$
-                while(st.hasMoreTokens()) {
-                    String token = st.nextToken();
-                    int n=token.indexOf("="); //$NON-NLS-1$
-                    if(n > 0) {
-                        String key = token.substring(0,n).trim();
-                        String value = null;
-                        if(n < token.length() - 1) {
-                            value = token.substring(n+1).trim();
-                        }
-                        map.put(key, value);
-                    }
+        List list = loadListProperty(bundle, propertyName, separator);
+        for(Iterator iter=list.iterator(); iter.hasNext(); ) {
+            String pair = (String)iter.next();
+            int n=pair.indexOf("="); //$NON-NLS-1$
+            if(n > 0) {
+                String key = pair.substring(0,n).trim();
+                String value = null;
+                if(n < pair.length() - 1) {
+                    value = pair.substring(n+1).trim();
                 }
+                map.put(key, value);
             }
         }
         return map;
@@ -926,5 +905,17 @@ public class Common
             numread = channel.read(buf);
         }
         return bytes;
+    }
+    
+    public static String padString(String str, int length)
+    {
+        if(str != null) {
+            if(str.length() < length) {
+                char[] c = new char[length-str.length()];
+                Arrays.fill(c,' ');
+                str += new String(c);
+            }
+        }
+        return str;
     }
 }

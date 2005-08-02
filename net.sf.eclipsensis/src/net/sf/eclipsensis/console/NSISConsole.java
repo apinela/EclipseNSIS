@@ -55,7 +55,6 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
     private Font mFont = null;
     private Font mUnderlineFont = null;
 
-    private NSISConsoleModel mModel;
 	private TableViewer mViewer;
 	private Action mCopyAction;
     private Action mSelectAllAction;
@@ -71,7 +70,7 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
 
     public static void autoShowConsole()
     {
-        if(NSISPreferences.getPreferences().isAutoShowConsole()) {
+        if(NSISPreferences.INSTANCE.isAutoShowConsole()) {
             PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
                 public void run()
                 {
@@ -119,7 +118,7 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
             return;
         }
         if(type != -1) {
-            for (Iterator iter = mModel.getContents().iterator(); iter.hasNext();) {
+            for (Iterator iter = NSISConsoleModel.INSTANCE.getContents().iterator(); iter.hasNext();) {
                 NSISConsoleLine element = (NSISConsoleLine)iter.next();
                 if(element.getType() == type) {
                     mViewer.refresh(element, true);
@@ -199,7 +198,7 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
     private void add(NSISConsoleLine line)
     {
         mViewer.add(line);
-        int index = mModel.getContents().size()-1;
+        int index = NSISConsoleModel.INSTANCE.getContents().size()-1;
         WinAPI.SendMessage (mViewer.getTable().handle, 
                             0x1013, // LVM_ENSUREVISIBLE 
                             index, 
@@ -216,8 +215,6 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
 	public void createPartControl(Composite parent) 
     {
         mDisplay = parent.getDisplay();
-        mModel = NSISConsoleModel.getInstance();
-        
         mColorRegistry = JFaceResources.getColorRegistry();
         mInfoColor = mColorRegistry.get(CONSOLE_INFO_COLOR);
         mWarningColor = mColorRegistry.get(CONSOLE_WARNING_COLOR);
@@ -248,8 +245,8 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
         table.addMouseMoveListener(mMouseListener);
 		mViewer.setContentProvider(new NSISConsoleContentProvider());
 		mViewer.setLabelProvider(new NSSConsoleLabelProvider());
-		mViewer.setInput(mModel);
-        mModel.addModelListener(this);
+		mViewer.setInput(NSISConsoleModel.INSTANCE);
+        NSISConsoleModel.INSTANCE.addModelListener(this);
 		makeActions();
 		hookContextMenu();
         hookSelectionChangedAction();
@@ -266,8 +263,7 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
         if(mInfoImage != null && !mInfoImage.isDisposed()) {
             mInfoImage.dispose();
         }
-        mModel.removeModelListener(this);
-        mModel = null;
+        NSISConsoleModel.INSTANCE.removeModelListener(this);
         mColorRegistry.removeListener(this);
         mColorRegistry = null;
         mFontRegistry.removeListener(this);
@@ -347,7 +343,7 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
         if(mIsCompiling != isCompiling) {
             if(!mDisposed) {
                 mCancelAction.setEnabled(isCompiling);
-                boolean b = mModel.getContents().size() > 0;
+                boolean b = NSISConsoleModel.INSTANCE.getContents().size() > 0;
                 mClearAction.setEnabled(!isCompiling && b);
                 mSelectAllAction.setEnabled(b);
             }
@@ -393,7 +389,7 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
         mSelectAllAction = makeAction(
                             new Action() {
                                 public void run() {
-                                    mViewer.setSelection(new StructuredSelection(mModel.getContents()));
+                                    mViewer.setSelection(new StructuredSelection(NSISConsoleModel.INSTANCE.getContents()));
                                 }
                             },EclipseNSISPlugin.getResourceString("selectall.action.name"),EclipseNSISPlugin.getResourceString("selectall.action.tooltip"),EclipseNSISPlugin.getResourceString("selectall.action.icon"),null, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                             ActionFactory.SELECT_ALL,false);
@@ -401,7 +397,7 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
 		mClearAction = makeAction( 
                             new Action() {
                     			public void run() {
-                    				mModel.clear();
+                    				NSISConsoleModel.INSTANCE.clear();
                     			}
                     		},EclipseNSISPlugin.getResourceString("clear.action.name"),EclipseNSISPlugin.getResourceString("clear.action.tooltip"),EclipseNSISPlugin.getResourceString("clear.action.icon"),EclipseNSISPlugin.getResourceString("clear.action.disabled.icon"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
                             null,false);
@@ -872,7 +868,7 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
         {
             NSISConsoleLine line = null;
             int i = getItemIndex(p);
-            List contents = mModel.getContents();
+            List contents = NSISConsoleModel.INSTANCE.getContents();
             if(i >= 0 && i < contents.size()) {
                 line = (NSISConsoleLine)contents.get(i);
             }
@@ -1017,12 +1013,12 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
                 }
             }
             else {
-                while(mRunning && mTopIndex < mModel.getContents().size()) {
+                while(mRunning && mTopIndex < NSISConsoleModel.INSTANCE.getContents().size()) {
                     mTopIndex = ++mTopIndex;
                     mDisplay.syncExec(new Runnable() {
                         public void run()
                         {
-                            if(isRunning() && mTopIndex < mModel.getContents().size()) {
+                            if(isRunning() && mTopIndex < NSISConsoleModel.INSTANCE.getContents().size()) {
                                 table.setTopIndex(mTopIndex);
                                 TableItem item = table.getItem(new Point(table.getItem(mTopIndex).getBounds(0).x,table.getClientArea().height-2));
                                 if(item != null) {

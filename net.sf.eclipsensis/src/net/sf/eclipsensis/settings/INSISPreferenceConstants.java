@@ -23,6 +23,7 @@ public interface INSISPreferenceConstants
     public static final String NOCONFIG = "noConfig"; //$NON-NLS-1$
     public static final String NOCD = "noCD"; //$NON-NLS-1$
     public static final String COMPRESSOR = "compressor"; //$NON-NLS-1$
+    public static final String SOLID_COMPRESSION = "solidCompression"; //$NON-NLS-1$
     public static final String INSTRUCTIONS = "instructions"; //$NON-NLS-1$
     public static final String SYMBOLS = "symbols"; //$NON-NLS-1$
     public static final String TASK_TAGS = "taskTags"; //$NON-NLS-1$
@@ -58,6 +59,7 @@ public interface INSISPreferenceConstants
     public static final String NUMBERS_STYLE = "numbersStyle"; //$NON-NLS-1$
     public static final String LANGSTRINGS_STYLE = "langstringsStyle"; //$NON-NLS-1$
     public static final String TASK_TAGS_STYLE = "taskTagsStyle"; //$NON-NLS-1$
+    public static final String PLUGINS_STYLE = "pluginsStyle"; //$NON-NLS-1$
     
     public static final String AUTO_SHOW_CONSOLE = "autoShowConsole"; //$NON-NLS-1$
     public static final String CONSOLE_FONT = "net.sf.eclipsensis.console.Font"; //$NON-NLS-1$

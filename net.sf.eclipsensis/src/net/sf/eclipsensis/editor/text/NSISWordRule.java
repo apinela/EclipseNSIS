@@ -23,10 +23,6 @@ public class NSISWordRule extends WordRule implements INSISConstants
         super(detector);
     }
 
-    /**
-     * @param detector
-     * @param defaultToken
-     */
     public NSISWordRule(IWordDetector detector, IToken defaultToken)
     {
         super(detector, defaultToken);

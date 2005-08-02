@@ -9,6 +9,8 @@
  *******************************************************************************/
 package net.sf.eclipsensis.dialogs;
 
+import net.sf.eclipsensis.EclipseNSISPlugin;
+
 import org.eclipse.jface.dialogs.ProgressIndicator;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.util.Geometry;
@@ -25,6 +27,8 @@ public class MinimalProgressMonitorDialog extends ProgressMonitorDialog
     private static int BAR_DLUS = 9;
     private static int VERTICAL_OFFSET = 85;
     
+    private String mCaption = EclipseNSISPlugin.getDefault().getName();
+    
     /**
      * Construct an instance of this dialog.
      * 
@@ -36,6 +40,16 @@ public class MinimalProgressMonitorDialog extends ProgressMonitorDialog
         setShellStyle(SWT.NONE);
     }
     
+    public String getCaption()
+    {
+        return mCaption;
+    }
+
+    public void setCaption(String caption)
+    {
+        mCaption = caption;
+    }
+
     protected Control createContents(Composite parent) 
     {
         Composite container = new Composite(parent, SWT.NONE);
@@ -70,16 +84,14 @@ public class MinimalProgressMonitorDialog extends ProgressMonitorDialog
     {
         // progress indicator
         progressIndicator = new ProgressIndicator(parent);
-        GridData gd = new GridData();
+        GridData gd = new GridData(SWT.FILL,SWT.CENTER,true,false);
         gd.heightHint = convertVerticalDLUsToPixels(BAR_DLUS);
-        gd.horizontalAlignment = GridData.FILL;
-        gd.grabExcessHorizontalSpace = true;
         gd.horizontalSpan = 2;
         progressIndicator.setLayoutData(gd);
 
         // label showing current task
         subTaskLabel = new Label(parent, SWT.LEFT);
-        gd = new GridData(GridData.FILL_HORIZONTAL);
+        gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
         gd.minimumWidth = MINIMUM_WIDTH / 2;
         subTaskLabel.setLayoutData(gd);
         subTaskLabel.setFont(parent.getFont());
@@ -89,7 +101,7 @@ public class MinimalProgressMonitorDialog extends ProgressMonitorDialog
         gd = new GridData(SWT.RIGHT);
         label.setLayoutData(gd);
         label.setFont(parent.getFont());
-        label.setText("EclipseNSIS");
+        label.setText(mCaption);
         return parent;
     }
 

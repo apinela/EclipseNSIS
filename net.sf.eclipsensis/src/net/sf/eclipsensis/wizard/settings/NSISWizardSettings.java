@@ -39,6 +39,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     private String mUrl = ""; //$NON-NLS-1$
     private String mOutFile = EclipseNSISPlugin.getResourceString("wizard.default.installer",""); //$NON-NLS-1$ //$NON-NLS-2$
     private int mCompressorType = MakeNSISRunner.COMPRESSOR_DEFAULT;
+    private boolean mSolidCompression = false;
     private int mInstallerType = INSTALLER_TYPE_MUI;
     private String mIcon = ""; //$NON-NLS-1$
     private boolean mShowSplash = false;
@@ -779,6 +780,16 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     public void setCompressorType(int compressorType)
     {
         mCompressorType = compressorType;
+    }
+
+    public boolean isSolidCompression()
+    {
+        return mSolidCompression;
+    }
+
+    public void setSolidCompression(boolean solidCompression)
+    {
+        mSolidCompression = solidCompression;
     }
 
     public INSISInstallElement getInstaller()

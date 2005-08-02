@@ -22,11 +22,10 @@ import net.sf.eclipsensis.makensis.MakeNSISRunner;
 
 public class NSISValidator implements INSISConstants
 {
-    private static Version EMPTY_VERSION = new Version("0"); //$NON-NLS-1$
     public static Version MINIMUM_NSIS_VERSION = new Version(EclipseNSISPlugin.getResourceString("minimum.nsis.version")); //$NON-NLS-1$
     private static Pattern cVersionPattern = Pattern.compile("v(\\d+(?:\\.\\d+)?(?:[A-Za-z]+\\d*)?)"); //$NON-NLS-1$
     private static Pattern cCVSVersionPattern = Pattern.compile("v([0-3][0-9]-[a-zA-Z]{3}-20[0-9]{2})\\.cvs"); //$NON-NLS-1$
-    private static SimpleDateFormat cCVSDateFormat = new SimpleDateFormat("dd-MMM-yyyy");
+    private static SimpleDateFormat cCVSDateFormat = new SimpleDateFormat("dd-MMM-yyyy"); //$NON-NLS-1$
     public static final String DEFINED_SYMBOLS_PREFIX = "Defined symbols: "; //$NON-NLS-1$
     private static Map cVersionDateMap;
 
@@ -37,8 +36,8 @@ public class NSISValidator implements INSISConstants
         } catch (MissingResourceException x) {
             bundle = null;
         }
-        Map map = Common.loadMapProperty(bundle,"version.dates");
-        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
+        Map map = Common.loadMapProperty(bundle,"version.dates"); //$NON-NLS-1$
+        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm"); //$NON-NLS-1$
         cVersionDateMap = new LinkedHashMap();
         for(Iterator iter=map.keySet().iterator(); iter.hasNext(); ) {
             String key = (String)iter.next();
@@ -76,8 +75,9 @@ public class NSISValidator implements INSISConstants
     {
         Properties props = new Properties();
         String exeName = nsisEXE.getAbsoluteFile().getAbsolutePath();
-        String[] output = Common.runProcessWithOutput(new String[]{exeName,MakeNSISRunner.MAKENSIS_HDRINFO_OPTION}, //$NON-NLS-1$
-                                                     nsisEXE.getParentFile(),1);
+        String[] output = MakeNSISRunner.runProcessWithOutput(exeName,
+	                                                          new String[]{MakeNSISRunner.MAKENSIS_HDRINFO_OPTION},
+	                                                          nsisEXE.getParentFile(),1);
         if(!Common.isEmptyArray(output)) {
             for (int i = 0; i < output.length; i++) {
                 if(output[i].startsWith(DEFINED_SYMBOLS_PREFIX)) {
@@ -110,8 +110,9 @@ public class NSISValidator implements INSISConstants
     {
         Version version = null;
         String exeName = exeFile.getAbsoluteFile().getAbsolutePath();
-        String[] output = Common.runProcessWithOutput(new String[]{exeName,MakeNSISRunner.MAKENSIS_VERSION_OPTION}, //$NON-NLS-1$
-                                               exeFile.getParentFile());
+        String[] output = MakeNSISRunner.runProcessWithOutput(exeName, 
+                                                              new String[]{MakeNSISRunner.MAKENSIS_VERSION_OPTION},
+                                                              exeFile.getParentFile());
         if(!Common.isEmptyArray(output)) {
             for (int i = 0; i < output.length; i++) {
                 Matcher matcher = cVersionPattern.matcher(output[i]);
@@ -150,7 +151,7 @@ public class NSISValidator implements INSISConstants
             }
         }
         
-        return (version == null?EMPTY_VERSION:version);
+        return (version == null?Version.EMPTY_VERSION:version);
     }
 
 }

@@ -11,22 +11,28 @@ package net.sf.eclipsensis.settings;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.dialogs.MinimalProgressMonitorDialog;
 import net.sf.eclipsensis.editor.NSISTaskTag;
 import net.sf.eclipsensis.editor.text.NSISSyntaxStyle;
 import net.sf.eclipsensis.util.*;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.StringConverter;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.widgets.Display;
 
 public class NSISPreferences extends NSISSettings
 {
-    public static NSISPreferences INSTANCE = null;
-
+    public static final NSISPreferences INSTANCE;
+    
     private IPreferenceStore mPreferenceStore = null;
     private File mNSISExe = null;
     private String mNSISHome = null;
@@ -37,21 +43,14 @@ public class NSISPreferences extends NSISSettings
     private Collection mTaskTags = null;
     private Collection mDefaultTaskTags = null;
     private boolean mCaseSensitiveTaskTags = true;
-    
-    private static NSISPreferences cInstance = null;
-    
-    public static NSISPreferences getPreferences()
+    private List mListeners = new ArrayList();
+
+    static
     {
-        if(cInstance == null) {
-            synchronized(NSISPreferences.class) {
-                if(cInstance == null) {
-                    IPreferenceStore preferenceStore = EclipseNSISPlugin.getDefault().getPreferenceStore();
-                    cInstance = new NSISPreferences(preferenceStore);
-                    cInstance.load();
-                }
-            }
-        }
-        return cInstance;
+        IPreferenceStore preferenceStore = EclipseNSISPlugin.getDefault().getPreferenceStore();
+        NSISPreferences instance = new NSISPreferences(preferenceStore);
+        instance.load();
+        INSTANCE = instance;
     }
     
     protected NSISPreferences(IPreferenceStore preferenceStore)
@@ -59,6 +58,45 @@ public class NSISPreferences extends NSISSettings
         mPreferenceStore = preferenceStore;
     }
 
+    public void addListener(INSISHomeListener listener)
+    {
+        if (!mListeners.contains(listener)) {
+            mListeners.add(listener);
+        }
+    }
+
+    public void removeListener(INSISHomeListener listener)
+    {
+        mListeners.remove(listener);
+    }
+
+    private void notifyListeners(final String oldHome, final String newHome)
+    {
+        if(mListeners.size() > 0) {
+            final IRunnableWithProgress op = new IRunnableWithProgress(){
+                public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException
+                {
+                    monitor.beginTask(EclipseNSISPlugin.getResourceString("propagating.home.message"),10*mListeners.size()); //$NON-NLS-1$
+                    for (Iterator iter = mListeners.iterator(); iter.hasNext();) {
+                        try {
+                            ((INSISHomeListener)iter.next()).nsisHomeChanged(monitor, oldHome, newHome);
+                        }
+                        catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        monitor.worked(10);
+                    }
+                }
+            };
+            ProgressMonitorDialog dialog = new MinimalProgressMonitorDialog(Display.getDefault().getActiveShell());
+            try {
+                dialog.run(false,false,op);
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
     /**
      * @return Returns the preferenceStore.
      */
@@ -105,6 +143,7 @@ public class NSISPreferences extends NSISSettings
         initializePreference(NOCD,(getDefaultNoCD()?Boolean.TRUE:Boolean.FALSE));
         initializePreference(VERBOSITY,new Integer(getDefaultVerbosity()));
         initializePreference(COMPRESSOR,new Integer(getDefaultCompressor()));
+        initializePreference(SOLID_COMPRESSION,(getDefaultSolidCompression()?Boolean.TRUE:Boolean.FALSE));
         initializePreference(AUTO_SHOW_CONSOLE,Boolean.TRUE);
         initializePreference(INSTRUCTIONS,""); //$NON-NLS-1$
         initializePreference(SYMBOLS,""); //$NON-NLS-1$
@@ -121,9 +160,11 @@ public class NSISPreferences extends NSISSettings
         initializePreference(USE_SPACES_FOR_TABS,Boolean.TRUE);
     }
     
-    private void initializeSyntaxPreference(String name, RGB foreground, RGB background, boolean bold, boolean italic)
+    private void initializeSyntaxPreference(String name, RGB foreground, RGB background, boolean bold, 
+                                            boolean italic, boolean underline, boolean strikethrough)
     {
-        NSISSyntaxStyle style = new NSISSyntaxStyle(foreground, background, bold, italic);
+        NSISSyntaxStyle style = new NSISSyntaxStyle(foreground, background, bold, italic,
+                                                    underline, strikethrough);
         mPreferenceStore.setDefault(name,style.toString());
         if(!mPreferenceStore.contains(name)) {
             mPreferenceStore.setToDefault(name);
@@ -132,21 +173,22 @@ public class NSISPreferences extends NSISSettings
 
     private void initializeSyntaxPreferences()
     {
-        initializeSyntaxPreference(CALLBACKS_STYLE,ColorManager.NAVY_BLUE, null, false, false);
-        initializeSyntaxPreference(SYMBOLS_STYLE,ColorManager.PURPLE, null, false, false);
-        initializeSyntaxPreference(LANGSTRINGS_STYLE,ColorManager.CHOCOLATE, null, false, false);
-        initializeSyntaxPreference(PREDEFINED_VARIABLES_STYLE,ColorManager.DARK_OLIVE_GREEN, null, false, false);
-        initializeSyntaxPreference(USERDEFINED_VARIABLES_STYLE,ColorManager.PURPLE, null, false, false);
-        initializeSyntaxPreference(INSTRUCTIONS_STYLE,ColorManager.PINK, null, false, false);
-        initializeSyntaxPreference(INSTRUCTION_PARAMETERS_STYLE,ColorManager.PURPLE, null, false, false);
-        initializeSyntaxPreference(INSTRUCTION_OPTIONS_STYLE,ColorManager.ORCHID, null, false, false);
-        initializeSyntaxPreference(COMMANDS_STYLE,ColorManager.ORANGE, null, true, false);
-        initializeSyntaxPreference(INSTALLER_ATTRIBUTES_STYLE,ColorManager.MAGENTA, null, false, false);
-        initializeSyntaxPreference(COMPILETIME_COMMANDS_STYLE,ColorManager.RED, null, false, false);
-        initializeSyntaxPreference(NUMBERS_STYLE,ColorManager.RED, null, false, false);
-        initializeSyntaxPreference(STRINGS_STYLE,ColorManager.TURQUOISE, null, false, false);
-        initializeSyntaxPreference(COMMENTS_STYLE,ColorManager.GREY, null, false, true);
-        initializeSyntaxPreference(TASK_TAGS_STYLE,ColorManager.TEAL, null, true, false);
+        initializeSyntaxPreference(CALLBACKS_STYLE,ColorManager.NAVY_BLUE, null, false, false, false, false);
+        initializeSyntaxPreference(SYMBOLS_STYLE,ColorManager.PURPLE, null, false, false, false, false);
+        initializeSyntaxPreference(LANGSTRINGS_STYLE,ColorManager.CHOCOLATE, null, false, false, false, false);
+        initializeSyntaxPreference(PREDEFINED_VARIABLES_STYLE,ColorManager.DARK_OLIVE_GREEN, null, false, false, false, false);
+        initializeSyntaxPreference(USERDEFINED_VARIABLES_STYLE,ColorManager.PURPLE, null, false, false, false, false);
+        initializeSyntaxPreference(INSTRUCTIONS_STYLE,ColorManager.PINK, null, false, false, false, false);
+        initializeSyntaxPreference(INSTRUCTION_PARAMETERS_STYLE,ColorManager.PURPLE, null, false, false, false, false);
+        initializeSyntaxPreference(INSTRUCTION_OPTIONS_STYLE,ColorManager.ORCHID, null, false, false, false, false);
+        initializeSyntaxPreference(COMMANDS_STYLE,ColorManager.ORANGE, null, true, false, false, false);
+        initializeSyntaxPreference(INSTALLER_ATTRIBUTES_STYLE,ColorManager.MAGENTA, null, false, false, false, false);
+        initializeSyntaxPreference(COMPILETIME_COMMANDS_STYLE,ColorManager.RED, null, false, false, false, false);
+        initializeSyntaxPreference(NUMBERS_STYLE,ColorManager.RED, null, false, false, false, false);
+        initializeSyntaxPreference(STRINGS_STYLE,ColorManager.TURQUOISE, null, false, false, false, false);
+        initializeSyntaxPreference(COMMENTS_STYLE,ColorManager.GREY, null, false, true, false, false);
+        initializeSyntaxPreference(TASK_TAGS_STYLE,ColorManager.TEAL, null, true, false, false, false);
+        initializeSyntaxPreference(PLUGINS_STYLE,ColorManager.BEIGE, null, false, false, false, false);
     }
 
     protected void load()
@@ -277,6 +319,7 @@ public class NSISPreferences extends NSISSettings
      */
     public void setNSISHome(String nsisHome)
     {
+        String oldHome = mNSISHome;
         mNSISExe = (nsisHome==null?null:NSISValidator.findNSISExe(new File(nsisHome)));
         if(mNSISExe != null) {
             mNSISHome = nsisHome;
@@ -285,6 +328,11 @@ public class NSISPreferences extends NSISSettings
         }
         else {
             mNSISHome = ""; //$NON-NLS-1$
+            mNSISVersion = Version.EMPTY_VERSION;
+            mNSISOptions = null;
+        }
+        if(!Common.stringsAreEqual(oldHome, mNSISHome)) {
+            notifyListeners(oldHome, mNSISHome);
         }
     }
 
@@ -292,9 +340,14 @@ public class NSISPreferences extends NSISSettings
     {
         return (mNSISExe !=null?mNSISExe.getAbsolutePath():null);
     }
+
+    public File getNSISExeFile()
+    {
+        return mNSISExe;
+    }
     
     /**
-     * @return Returns the nSISOptions.
+     * @return Returns the NSIS Options.
      */
     public Properties getNSISOptions()
     {
@@ -302,7 +355,7 @@ public class NSISPreferences extends NSISSettings
     }
     
     /**
-     * @return Returns the nSISVersion.
+     * @return Returns the NSIS Version.
      */
     public Version getNSISVersion()
     {

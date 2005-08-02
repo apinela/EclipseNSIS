@@ -110,11 +110,11 @@ public class NSISSymbolDialog extends StatusMessageDialog
     {
         Label label = new Label(composite, SWT.LEFT);
         label.setText(labelText);
-        label.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
+        label.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
         
         Text text = new Text(composite, SWT.SINGLE | SWT.BORDER);
         text.setToolTipText(tooltipText);
-        GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
+        GridData gridData = new GridData(SWT.FILL, SWT.CENTER, true, false);
         gridData.widthHint = convertWidthInCharsToPixels(40);
         text.setLayoutData(gridData);
         text.setText(value);

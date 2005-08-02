@@ -13,12 +13,10 @@ import java.text.MessageFormat;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
-import net.sf.eclipsensis.settings.INSISPreferenceConstants;
+import net.sf.eclipsensis.settings.INSISHomeListener;
 import net.sf.eclipsensis.settings.NSISPreferences;
 
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.browser.*;
@@ -50,6 +48,15 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
     private String mStartPage;
     private int mIndex;
     private boolean mBusy;
+    private INSISHomeListener mNSISHomeListener = new INSISHomeListener(){
+        public void nsisHomeChanged(IProgressMonitor monitor, String oldHome, String newHome)
+        {
+            if(monitor != null) {
+                monitor.subTask(EclipseNSISPlugin.getResourceString("refreshing.browser.message")); //$NON-NLS-1$
+            }
+            openHelp();
+        }
+    };
     
     public static boolean showHelp(final String url)
     {
@@ -128,22 +135,15 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
         });
 
         openHelp();
-        IPreferenceStore prefs = NSISPreferences.getPreferences().getPreferenceStore();
-        prefs.addPropertyChangeListener(new IPropertyChangeListener(){
-            public void propertyChange(PropertyChangeEvent event)
-            {
-                if(event.getProperty().equals(INSISPreferenceConstants.NSIS_HOME)) {
-                    PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-                        public void run()
-                        {
-                            openHelp();
-                        }
-                    });
-                }
-            }
-        });
+        NSISPreferences.INSTANCE.addListener(mNSISHomeListener);
     }
     
+    public void dispose()
+    {
+        NSISPreferences.INSTANCE.removeListener(mNSISHomeListener);
+        super.dispose();
+    }
+
     /**
      * Loads the resources
      */

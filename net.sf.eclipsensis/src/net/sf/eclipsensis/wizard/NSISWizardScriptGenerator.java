@@ -197,7 +197,7 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
     private void writeScript()
     {
         String defaultTaskTag = ""; //$NON-NLS-1$
-        Collection taskTags = NSISPreferences.getPreferences().getTaskTags();
+        Collection taskTags = NSISPreferences.INSTANCE.getTaskTags();
         for (Iterator iter = taskTags.iterator(); iter.hasNext();) {
             NSISTaskTag taskTag = (NSISTaskTag)iter.next();
             if(taskTag.isDefault()) {
@@ -221,7 +221,15 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
         mScript = new NSISScript(mSettings.getName());
         
         if(mSettings.getCompressorType() != MakeNSISRunner.COMPRESSOR_DEFAULT) {
-            mScript.addElement(new NSISScriptAttribute("SetCompressor",MakeNSISRunner.COMPRESSOR_NAME_ARRAY[mSettings.getCompressorType()])); //$NON-NLS-1$
+            Object args;
+            String solidKeyword = NSISKeywords.INSTANCE.getKeyword("/SOLID"); //$NON-NLS-1$
+            if(NSISKeywords.INSTANCE.isValidKeyword(solidKeyword) && mSettings.isSolidCompression()) {
+                args = new String[]{solidKeyword,MakeNSISRunner.COMPRESSOR_NAME_ARRAY[mSettings.getCompressorType()]};
+            }
+            else {
+                args = MakeNSISRunner.COMPRESSOR_NAME_ARRAY[mSettings.getCompressorType()];
+            }
+            mScript.addElement(new NSISScriptAttribute("SetCompressor",args)); //$NON-NLS-1$
             mScript.addElement(new NSISScriptBlankLine());
         }
         mScript.addElement(new NSISScriptSingleLineComment(EclipseNSISPlugin.getResourceString("scriptgen.defines.comment"))); //$NON-NLS-1$
@@ -322,7 +330,7 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
             if(mSettings.isCreateStartMenuGroup()) {
                 mScript.insertElement(varsPlaceHolder,new NSISScriptAttribute("Var","StartMenuGroup")); //$NON-NLS-1$ //$NON-NLS-2$
                 if(mSettings.isChangeStartMenuGroup()) {
-                    mScript.insertElement(muiDefsPlaceHolder,new NSISScriptDefine("MUI_STARTMENUPAGE_REGISTRY_ROOT",getKeyword("HKCU")));  //$NON-NLS-1$ //$NON-NLS-2$
+                    mScript.insertElement(muiDefsPlaceHolder,new NSISScriptDefine("MUI_STARTMENUPAGE_REGISTRY_ROOT",getKeyword("HKLM")));  //$NON-NLS-1$ //$NON-NLS-2$
                     mScript.insertElement(muiDefsPlaceHolder,new NSISScriptDefine("MUI_STARTMENUPAGE_NODISABLE")); //$NON-NLS-1$
                     mScript.insertElement(muiDefsPlaceHolder,new NSISScriptDefine("MUI_STARTMENUPAGE_REGISTRY_KEY","Software\\"+mSettings.getName()));  //$NON-NLS-1$ //$NON-NLS-2$
                     mScript.insertElement(muiDefsPlaceHolder,new NSISScriptDefine("MUI_STARTMENUPAGE_REGISTRY_VALUENAME","StartMenuGroup")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -341,6 +349,11 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
                 mScript.insertElement(muiDefsPlaceHolder,new NSISScriptDefine("MUI_FINISHPAGE_SHOWREADME",mSettings.getOpenReadmeAfterInstall())); //$NON-NLS-1$
             }
             mScript.insertElement(pagesPlaceHolder,new NSISScriptInsertMacro("MUI_PAGE_FINISH")); //$NON-NLS-1$
+            
+            if(mSettings.isCreateUninstaller()) {
+                mScript.insertElement(pagesPlaceHolder,new NSISScriptInsertMacro("MUI_UNPAGE_CONFIRM")); //$NON-NLS-1$
+                mScript.insertElement(pagesPlaceHolder,new NSISScriptInsertMacro("MUI_UNPAGE_INSTFILES")); //$NON-NLS-1$
+            }
         }
         else {
             if(!isSilent) {
@@ -747,31 +760,42 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
             postSection.addElement(new NSISScriptInstruction("WriteUninstaller",uninstallFile)); //$NON-NLS-1$
             unPostSection.addElement(0,new NSISScriptInstruction("Delete",new String[]{getKeyword("/REBOOTOK"),uninstallFile})); //$NON-NLS-1$ //$NON-NLS-2$
 
-            if(mSettings.isCreateStartMenuGroup() && mSettings.isCreateUninstallerStartMenuShortcut()) {
-                postSection.addElement(new NSISScriptInstruction("SetOutPath",getKeyword("$SMPROGRAMS")+"\\$StartMenuGroup")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                String startMenuLink = quote(new StringBuffer(getKeyword("$SMPROGRAMS")).append("\\$StartMenuGroup\\$(^UninstallLink)").append(".lnk").toString()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                postSection.addElement(new NSISScriptInstruction("CreateShortcut",new String[]{startMenuLink,uninstallFile})); //$NON-NLS-1$
+            if(mSettings.isCreateStartMenuGroup()) {
+                if(isMUI) {
+                    postSection.addElement(new NSISScriptInsertMacro("MUI_STARTMENU_WRITE_BEGIN","Application")); //$NON-NLS-1$ //$NON-NLS-2$
+                }
+                if(mSettings.isCreateUninstallerStartMenuShortcut()) {
+                    postSection.addElement(new NSISScriptInstruction("SetOutPath",getKeyword("$SMPROGRAMS")+"\\$StartMenuGroup")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                    String startMenuLink = quote(new StringBuffer(getKeyword("$SMPROGRAMS")).append("\\$StartMenuGroup\\").append( //$NON-NLS-1$ //$NON-NLS-2$
+                            mSettings.isEnableLanguageSupport()?"$(^UninstallLink)": //$NON-NLS-1$
+                                        EclipseNSISPlugin.getResourceString("scriptgen.uninstall.link")).append(".lnk").toString()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                    postSection.addElement(new NSISScriptInstruction("CreateShortcut",new String[]{startMenuLink,uninstallFile})); //$NON-NLS-1$
 
-                unPostSection.addElement(0,new NSISScriptInstruction("Delete",new String[]{getKeyword("/REBOOTOK"),startMenuLink})); //$NON-NLS-1$ //$NON-NLS-2$
+                    unPostSection.addElement(0,new NSISScriptInstruction("Delete",new String[]{getKeyword("/REBOOTOK"),startMenuLink})); //$NON-NLS-1$ //$NON-NLS-2$
+                }
+                if(isMUI) {
+                    postSection.addElement(new NSISScriptInsertMacro("MUI_STARTMENU_WRITE_END")); //$NON-NLS-1$
+                }
             }
 
-            unPostSection.addElement(0,new NSISScriptInstruction("DeleteRegKey",new String[]{getKeyword("HKLM"),quote(cUninstallRegKey)})); //$NON-NLS-1$ //$NON-NLS-2$
+            if(mSettings.isCreateUninstallerControlPanelEntry()) {
+                postSection.addElement(new NSISScriptInstruction("WriteRegStr",new String[]{getKeyword("HKLM"),quote(cUninstallRegKey),"DisplayName",quote("$(^Name)")})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                if(!Common.isEmpty(mSettings.getVersion())) {
+                    postSection.addElement(new NSISScriptInstruction("WriteRegStr",new String[]{getKeyword("HKLM"),quote(cUninstallRegKey),"DisplayVersion",quote("${VERSION}")})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                }
+                if(!Common.isEmpty(mSettings.getCompany())) {
+                    postSection.addElement(new NSISScriptInstruction("WriteRegStr",new String[]{getKeyword("HKLM"),quote(cUninstallRegKey),"Publisher",quote("${COMPANY}")})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                }
+                if(!Common.isEmpty(mSettings.getUrl())) {
+                    postSection.addElement(new NSISScriptInstruction("WriteRegStr",new String[]{getKeyword("HKLM"),quote(cUninstallRegKey),"URLInfoAbout",quote("${URL}")})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                }
+                postSection.addElement(new NSISScriptInstruction("WriteRegStr",new String[]{getKeyword("HKLM"),quote(cUninstallRegKey),"DisplayIcon",uninstallFile})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                postSection.addElement(new NSISScriptInstruction("WriteRegStr",new String[]{getKeyword("HKLM"),quote(cUninstallRegKey),"UninstallString",uninstallFile})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                postSection.addElement(new NSISScriptInstruction("WriteRegDWORD",new String[]{getKeyword("HKLM"),quote(cUninstallRegKey),"NoModify","1"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                postSection.addElement(new NSISScriptInstruction("WriteRegDWORD",new String[]{getKeyword("HKLM"),quote(cUninstallRegKey),"NoRepair","1"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 
-            postSection.addElement(new NSISScriptInstruction("WriteRegStr",new String[]{getKeyword("HKLM"),quote(cUninstallRegKey),"DisplayName",quote("$(^Name)")})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-
-            if(!Common.isEmpty(mSettings.getVersion())) {
-                postSection.addElement(new NSISScriptInstruction("WriteRegStr",new String[]{getKeyword("HKLM"),quote(cUninstallRegKey),"DisplayVersion",quote("${VERSION}")})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                unPostSection.addElement(0,new NSISScriptInstruction("DeleteRegKey",new String[]{getKeyword("HKLM"),quote(cUninstallRegKey)})); //$NON-NLS-1$ //$NON-NLS-2$
             }
-            if(!Common.isEmpty(mSettings.getCompany())) {
-                postSection.addElement(new NSISScriptInstruction("WriteRegStr",new String[]{getKeyword("HKLM"),quote(cUninstallRegKey),"Publisher",quote("${COMPANY}")})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-            }
-            if(!Common.isEmpty(mSettings.getUrl())) {
-                postSection.addElement(new NSISScriptInstruction("WriteRegStr",new String[]{getKeyword("HKLM"),quote(cUninstallRegKey),"URLInfoAbout",quote("${URL}")})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-            }
-            postSection.addElement(new NSISScriptInstruction("WriteRegStr",new String[]{getKeyword("HKLM"),quote(cUninstallRegKey),"DisplayIcon",uninstallFile})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-            postSection.addElement(new NSISScriptInstruction("WriteRegStr",new String[]{getKeyword("HKLM"),quote(cUninstallRegKey),"UninstallString",uninstallFile})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-            postSection.addElement(new NSISScriptInstruction("WriteRegDWORD",new String[]{getKeyword("HKLM"),quote(cUninstallRegKey),"NoModify","1"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-            postSection.addElement(new NSISScriptInstruction("WriteRegDWORD",new String[]{getKeyword("HKLM"),quote(cUninstallRegKey),"NoRepair","1"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
         }
         mUnSectionList = (unPostSection == null?null:new ArrayList());
         INSISInstallElement[] contents =  mSettings.getInstaller().getChildren();

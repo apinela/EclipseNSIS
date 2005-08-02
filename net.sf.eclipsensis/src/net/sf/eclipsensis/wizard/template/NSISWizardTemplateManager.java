@@ -37,7 +37,7 @@ public class NSISWizardTemplateManager
 
         String fileName = NSISWizardTemplateManager.class.getName()+".Templates.ser"; //$NON-NLS-1$
 
-        cDefaultTemplatesStore = EclipseNSISPlugin.getDefault().getBundle().getResource("/wizard/"+fileName);
+        cDefaultTemplatesStore = EclipseNSISPlugin.getDefault().getBundle().getResource("/wizard/"+fileName); //$NON-NLS-1$
         
         File parentFolder = EclipseNSISPlugin.getPluginStateLocation();
         File location = null;

@@ -14,14 +14,25 @@ import java.util.StringTokenizer;
 
 public class Version implements Comparable
 {
+    public static final int MAJOR = 0;
+    public static final int MINOR = 1;
+    public static final int SERVICE = 2;
+    public static final int BUILD = 3;
+    
     private int[] mNumbers = null;
     private String[] mQualifiers = null;
     private String mDisplayText = null;
+    public static Version EMPTY_VERSION = new Version("0"); //$NON-NLS-1$
     
     public Version(String version)
     {
+        this(version,"."); //$NON-NLS-1$
+    }
+    
+    public Version(String version, String separators)
+    {
         mDisplayText = version;
-        StringTokenizer st = new StringTokenizer(mDisplayText,"."); //$NON-NLS-1$
+        StringTokenizer st = new StringTokenizer(mDisplayText,separators); //$NON-NLS-1$
         mNumbers = new int[st.countTokens()];
         mQualifiers = new String[mNumbers.length];
         Arrays.fill(mNumbers,0);
@@ -31,8 +42,8 @@ public class Version implements Comparable
                 char[] chars = token.toCharArray();
                 for (int j = 0; j < chars.length; j++) {
                     if(!Character.isDigit(chars[j])) {
-                        mNumbers[i] = (i>0?Integer.parseInt(token.substring(0,i)):0);
-                        mQualifiers[i] = token.substring(i);
+                        mNumbers[i] = (j>0?Integer.parseInt(token.substring(0,j)):0);
+                        mQualifiers[i] = token.substring(j);
                         break outer;
                     }
                 }
@@ -129,6 +140,15 @@ public class Version implements Comparable
         }
         return 0;
     }
+    
+    public int getNumber(int index)
+    {
+        if(mNumbers.length > index) {
+            return mNumbers[index];
+        }
+        return 0;
+    }
+
     /**
      * @return Returns the numbers.
      */

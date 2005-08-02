@@ -224,10 +224,10 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
                         layout.marginHeight=1;
                         layout.marginWidth=1;
                         mShell.setLayout(layout);
-                        GridData data = new GridData(GridData.FILL_BOTH);
+                        GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
                         mShell.setLayoutData(data);
                         Composite composite = new Composite(mShell,SWT.NONE);
-                        data = new GridData(GridData.FILL_BOTH);
+                        data = new GridData(SWT.FILL, SWT.FILL, true, true);
                         composite.setLayoutData(data);
                         composite.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
                         layout = new GridLayout(1,true);
@@ -235,7 +235,7 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
                         layout.marginWidth=2;
                         composite.setLayout(layout);
                         mText= new Text(composite, SWT.SINGLE | SWT.READ_ONLY | SWT.RIGHT);
-                        data= new GridData(GridData.FILL_BOTH);
+                        data= new GridData(SWT.FILL, SWT.FILL, true, true);
                         mText.setLayoutData(data);
                         mText.setForeground(display.getSystemColor(SWT.COLOR_INFO_FOREGROUND));
                         mText.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));

@@ -22,10 +22,12 @@ public class NSISCodeScanner extends NSISStringScanner
 {
     private NSISHexNumberRule mHexNumberRule;
     private NumberRule mNumberRule;
+    private WordRule mPluginsRule;
     private WordRule mCompileTimeCommandsRule;
     private WordRule mKeywordsRule;
     private WordRule mInstructionOptionsRule;
     private WordRule mCallbacksRule;
+        
     /**
      * @param preferenceStore
      */
@@ -37,17 +39,18 @@ public class NSISCodeScanner extends NSISStringScanner
     /**
      * @return
      */
-    protected void addRules(List rules, IToken defaultToken)
+    protected void addRules(List rules)
     {
-        rules.add(getCompiletimeCommandsRule(defaultToken));
-        rules.add(getKeywordsRule(defaultToken));
-        rules.add(getInstructionOptionsRule(defaultToken));
-        rules.add(getCallbacksRule(defaultToken));
-        rules.add(getSymbolsRule(defaultToken));
-        rules.add(getVariablesRule(defaultToken));
-        rules.add(getLangstringsRule(defaultToken));
-        rules.add(getHexNumberRule(defaultToken));
-        rules.add(getNumberRule(defaultToken));
+        rules.add(getPluginsRule());
+        rules.add(getCompiletimeCommandsRule());
+        rules.add(getInstructionOptionsRule());
+        rules.add(getCallbacksRule());
+        rules.add(getSymbolsRule());
+        rules.add(getVariablesRule());
+        rules.add(getLangstringsRule());
+        rules.add(getKeywordsRule());
+        rules.add(getHexNumberRule());
+        rules.add(getNumberRule());
     }
 
     /**
@@ -55,11 +58,10 @@ public class NSISCodeScanner extends NSISStringScanner
      */
     protected IToken getDefaultToken()
     {
-        IToken defaultToken= new Token(new TextAttribute(null));
-        return defaultToken;
+        return new Token(new TextAttribute(null));
     }
 
-    protected IRule getCallbacksRule(IToken defaultToken)
+    protected IRule getCallbacksRule()
     {
         if(mCallbacksRule == null) {
             synchronized (this) {
@@ -77,7 +79,7 @@ public class NSISCodeScanner extends NSISStringScanner
                         {
                             return (Character.isLetter(character) || character == '_') || character == '.';
                         }
-                    }, defaultToken);
+                    });
                     addWords(mCallbacksRule, INSISPreferenceConstants.CALLBACKS_STYLE, NSISKeywords.CALLBACKS);
                 }
             }
@@ -85,7 +87,7 @@ public class NSISCodeScanner extends NSISStringScanner
         return mCallbacksRule;
     }
 
-    protected IRule getInstructionOptionsRule(IToken defaultToken)
+    protected IRule getInstructionOptionsRule()
     {
         if(mInstructionOptionsRule == null) {
             synchronized(this) {
@@ -98,7 +100,7 @@ public class NSISCodeScanner extends NSISStringScanner
                         {
                             return (character == '/');
                         }
-                    }, defaultToken);
+                    });
                     addWords(mInstructionOptionsRule, INSISPreferenceConstants.INSTRUCTION_OPTIONS_STYLE, NSISKeywords.INSTRUCTION_OPTIONS);
                 }
             }
@@ -106,7 +108,33 @@ public class NSISCodeScanner extends NSISStringScanner
         return mInstructionOptionsRule;
     }
 
-    protected IRule getKeywordsRule(IToken defaultToken)
+    protected IRule getPluginsRule()
+    {
+        if(mPluginsRule == null) {
+            synchronized(this) {
+                if(mPluginsRule == null) {
+                    mPluginsRule = new NSISWordRule(new NSISWordDetector(){
+                        public boolean isWordPart(char character)
+                        {
+                            return super.isWordPart(character) || character == ':';
+                        }
+
+                        /*
+                         * (non-Javadoc) Method declared on IWordDetector.
+                         */
+                        public boolean isWordStart(char character)
+                        {
+                            return Character.isLetter(character);
+                        }
+                    });
+                    addWords(mPluginsRule, INSISPreferenceConstants.PLUGINS_STYLE, NSISKeywords.PLUGIN_CALLS);
+                }
+            }
+        }
+        return mPluginsRule;
+    }
+
+    protected IRule getKeywordsRule()
     {
         if(mKeywordsRule == null) {
             synchronized(this) {
@@ -119,7 +147,7 @@ public class NSISCodeScanner extends NSISStringScanner
                         {
                             return Character.isLetter(character);
                         }
-                    }, defaultToken);
+                    }, fDefaultReturnToken);
                     addWords(mKeywordsRule, INSISPreferenceConstants.INSTALLER_ATTRIBUTES_STYLE, NSISKeywords.INSTALLER_ATTRIBUTES);
                     addWords(mKeywordsRule, INSISPreferenceConstants.COMMANDS_STYLE, NSISKeywords.COMMANDS);
                     addWords(mKeywordsRule, INSISPreferenceConstants.INSTRUCTIONS_STYLE, NSISKeywords.INSTRUCTIONS);
@@ -130,7 +158,7 @@ public class NSISCodeScanner extends NSISStringScanner
         return mKeywordsRule;
     }
 
-    protected IRule getCompiletimeCommandsRule(IToken other)
+    protected IRule getCompiletimeCommandsRule()
     {
         if(mCompileTimeCommandsRule == null) {
             synchronized(this) {
@@ -143,7 +171,7 @@ public class NSISCodeScanner extends NSISStringScanner
                         {
                             return (character == '!');
                         }
-                    }, other);
+                    });
                     addWords(mCompileTimeCommandsRule, INSISPreferenceConstants.COMPILETIME_COMMANDS_STYLE, NSISKeywords.SINGLELINE_COMPILETIME_COMMANDS);
                     addWords(mCompileTimeCommandsRule, INSISPreferenceConstants.COMPILETIME_COMMANDS_STYLE, NSISKeywords.MULTILINE_COMPILETIME_COMMANDS);
                 }
@@ -152,7 +180,7 @@ public class NSISCodeScanner extends NSISStringScanner
         return mCompileTimeCommandsRule;
     }
 
-    protected IRule getNumberRule(IToken other)
+    protected IRule getNumberRule()
     {
         if(mNumberRule == null) {
             synchronized(this) {
@@ -164,7 +192,7 @@ public class NSISCodeScanner extends NSISStringScanner
         return mNumberRule;
     }
 
-    protected IRule getHexNumberRule(IToken other)
+    protected IRule getHexNumberRule()
     {
         if(mHexNumberRule == null) {
             synchronized(this) {
@@ -181,7 +209,10 @@ public class NSISCodeScanner extends NSISStringScanner
      */
     public void adaptToProperty(IPreferenceStore store, String property)
     {
-        if (INSISPreferenceConstants.CALLBACKS_STYLE.equals(property)) {
+        if (INSISPreferenceConstants.PLUGINS_STYLE.equals(property)) {
+            mPluginsRule = null;
+        }
+        else if (INSISPreferenceConstants.CALLBACKS_STYLE.equals(property)) {
             mCallbacksRule = null;
         }
         else if (INSISPreferenceConstants.INSTRUCTION_OPTIONS_STYLE.equals(property)) {
@@ -214,6 +245,7 @@ public class NSISCodeScanner extends NSISStringScanner
     {
         if(full) {
             mCallbacksRule = null;
+            mPluginsRule = null;
             mInstructionOptionsRule = null;
             mKeywordsRule = null;
             mCompileTimeCommandsRule = null;
@@ -229,6 +261,7 @@ public class NSISCodeScanner extends NSISStringScanner
     public boolean canAdaptToProperty(IPreferenceStore store, String property)
     {
         if(INSISPreferenceConstants.CALLBACKS_STYLE.equals(property) ||
+           INSISPreferenceConstants.PLUGINS_STYLE.equals(property) ||
            INSISPreferenceConstants.INSTRUCTIONS_STYLE.equals(property) ||
            INSISPreferenceConstants.INSTRUCTION_OPTIONS_STYLE.equals(property) ||
            INSISPreferenceConstants.INSTRUCTION_PARAMETERS_STYLE.equals(property) ||

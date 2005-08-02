@@ -13,76 +13,68 @@ import java.io.*;
 import java.util.*;
 
 import net.sf.eclipsensis.*;
-import net.sf.eclipsensis.settings.INSISPreferenceConstants;
+import net.sf.eclipsensis.settings.INSISHomeListener;
 import net.sf.eclipsensis.settings.NSISPreferences;
 import net.sf.eclipsensis.util.*;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.core.runtime.SubProgressMonitor;
 
 public class NSISKeywords implements INSISConstants, IEclipseNSISService
 {
     public static NSISKeywords INSTANCE = null;
     
-    public static final String ALL_KEYWORDS="ALL_KEYWORDS";
-    public static final String SINGLELINE_COMPILETIME_COMMANDS="SINGLELINE_COMPILETIME_COMMANDS";
-    public static final String MULTILINE_COMPILETIME_COMMANDS="MULTILINE_COMPILETIME_COMMANDS";
-    public static final String INSTALLER_ATTRIBUTES="INSTALLER_ATTRIBUTES";
-    public static final String COMMANDS="COMMANDS";
-    public static final String INSTRUCTIONS="INSTRUCTIONS";
-    public static final String INSTALLER_PAGES="INSTALLER_PAGES";
-    public static final String INSTRUCTION_PARAMETERS="INSTRUCTION_PARAMETERS";
-    public static final String INSTRUCTION_OPTIONS="INSTRUCTION_OPTIONS";
-    public static final String CALLBACKS="CALLBACKS";
-    public static final String PATH_CONSTANTS_AND_VARIABLES="PATH_CONSTANTS_AND_VARIABLES";
-    public static final String ALL_CONSTANTS_AND_VARIABLES="ALL_CONSTANTS_AND_VARIABLES";
-    public static final String REGISTERS="REGISTERS";
-    public static final String PATH_VARIABLES="PATH_VARIABLES";
-    public static final String VARIABLES="VARIABLES";
-    public static final String ALL_VARIABLES="ALL_VARIABLES";
-    public static final String PATH_CONSTANTS="PATH_CONSTANTS";
-    public static final String STRING_CONSTANTS="STRING_CONSTANTS";
-    public static final String ALL_CONSTANTS="ALL_CONSTANTS";
-    public static final String PREDEFINES="PREDEFINES";
-    public static final String PLUGINS="PLUGINS";
-    
-    private String[] mPlugins;
+    public static final String ALL_KEYWORDS="ALL_KEYWORDS"; //$NON-NLS-1$
+    public static final String SINGLELINE_COMPILETIME_COMMANDS="SINGLELINE_COMPILETIME_COMMANDS"; //$NON-NLS-1$
+    public static final String MULTILINE_COMPILETIME_COMMANDS="MULTILINE_COMPILETIME_COMMANDS"; //$NON-NLS-1$
+    public static final String INSTALLER_ATTRIBUTES="INSTALLER_ATTRIBUTES"; //$NON-NLS-1$
+    public static final String COMMANDS="COMMANDS"; //$NON-NLS-1$
+    public static final String INSTRUCTIONS="INSTRUCTIONS"; //$NON-NLS-1$
+    public static final String INSTALLER_PAGES="INSTALLER_PAGES"; //$NON-NLS-1$
+    public static final String INSTRUCTION_PARAMETERS="INSTRUCTION_PARAMETERS"; //$NON-NLS-1$
+    public static final String INSTRUCTION_OPTIONS="INSTRUCTION_OPTIONS"; //$NON-NLS-1$
+    public static final String CALLBACKS="CALLBACKS"; //$NON-NLS-1$
+    public static final String PATH_CONSTANTS_AND_VARIABLES="PATH_CONSTANTS_AND_VARIABLES"; //$NON-NLS-1$
+    public static final String ALL_CONSTANTS_AND_VARIABLES="ALL_CONSTANTS_AND_VARIABLES"; //$NON-NLS-1$
+    public static final String REGISTERS="REGISTERS"; //$NON-NLS-1$
+    public static final String PATH_VARIABLES="PATH_VARIABLES"; //$NON-NLS-1$
+    public static final String VARIABLES="VARIABLES"; //$NON-NLS-1$
+    public static final String ALL_VARIABLES="ALL_VARIABLES"; //$NON-NLS-1$
+    public static final String PATH_CONSTANTS="PATH_CONSTANTS"; //$NON-NLS-1$
+    public static final String STRING_CONSTANTS="STRING_CONSTANTS"; //$NON-NLS-1$
+    public static final String ALL_CONSTANTS="ALL_CONSTANTS"; //$NON-NLS-1$
+    public static final String PREDEFINES="PREDEFINES"; //$NON-NLS-1$
+    public static final String PLUGINS="PLUGINS"; //$NON-NLS-1$
+    public static final String PLUGIN_CALLS="PLUGINS"; //$NON-NLS-1$
     
     private Map mKeywordGroupsMap = new HashMap();
     private Map mKeywordsMap = new CaseInsensitiveMap();
     private Map mPluginsMap = null;
     private Set mAllKeywordsSet = new CaseInsensitiveSet();
     private ArrayList mListeners = new ArrayList();
-    private IPropertyChangeListener mPropertyChangeListener  = new IPropertyChangeListener() {
-        public void propertyChange(PropertyChangeEvent event)
+    private INSISHomeListener mNSISHomeListener  = new INSISHomeListener() {
+        public void nsisHomeChanged(IProgressMonitor monitor, String oldHome, String newHome)
         {
-            if(INSISPreferenceConstants.NSIS_HOME.equals(event.getProperty())) {
-                loadPlugins();
-                loadKeywords();
-            }
+            loadKeywords(monitor);
         }
-        
     };
 
     public void start(IProgressMonitor monitor)
     {
-        monitor.subTask("Loading keywords");
-        loadKeywords();
-        loadPlugins();
-        NSISPreferences.getPreferences().getPreferenceStore().addPropertyChangeListener(mPropertyChangeListener);
+        loadKeywords(monitor);
+        NSISPreferences.INSTANCE.addListener(mNSISHomeListener);
         INSTANCE = this;
     }
 
     public void stop(IProgressMonitor monitor)
     {
         INSTANCE = null;
-        NSISPreferences.getPreferences().getPreferenceStore().removePropertyChangeListener(mPropertyChangeListener);
+        NSISPreferences.INSTANCE.removeListener(mNSISHomeListener);
     }
     
     private void loadPlugins()
     {
-        String nsisHome = NSISPreferences.getPreferences().getNSISHome();
+        String nsisHome = NSISPreferences.INSTANCE.getNSISHome();
         if(!Common.isEmpty(nsisHome)) {
             File nsisHomeDir = new File(nsisHome);
             if(nsisHomeDir.exists() && nsisHomeDir.isDirectory()) {
@@ -149,20 +141,36 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
                             e.printStackTrace();
                         }
                     }
-                    mPlugins = (String[])mPluginsMap.keySet().toArray(Common.EMPTY_STRING_ARRAY);
-                    Arrays.sort(mPlugins, String.CASE_INSENSITIVE_ORDER);
+                    String[] plugins = (String[])mPluginsMap.keySet().toArray(Common.EMPTY_STRING_ARRAY);
+                    Arrays.sort(plugins, String.CASE_INSENSITIVE_ORDER);
+                    mKeywordGroupsMap.put(PLUGINS,plugins);
+                    
+                    ArrayList list = new ArrayList();
+                    for (int i = 0; i < plugins.length; i++) {
+                        PluginInfo pi = (PluginInfo)mPluginsMap.get(plugins[i]);
+                        String prefix = plugins[i]+"::"; //$NON-NLS-1$
+                        String[] exports = pi.getExports();
+                        for (int j = 0; j < exports.length; j++) {
+                            list.add(prefix+exports[j]);
+                        }
+                    }
+                    
+                    mKeywordGroupsMap.put(PLUGIN_CALLS,list.toArray(Common.EMPTY_STRING_ARRAY));
                 }
             }
         }
     }
     
-    private void loadKeywords()
+    private void loadKeywords(IProgressMonitor monitor)
     {
+        if(monitor != null) {
+            monitor.subTask(EclipseNSISPlugin.getResourceString("loading.keywords.message")); //$NON-NLS-1$
+        }
         mKeywordsMap.clear();
         mAllKeywordsSet.clear();
         
         ResourceBundle bundle;
-        Version nsisVersion = NSISPreferences.getPreferences().getNSISVersion();
+        Version nsisVersion = NSISPreferences.INSTANCE.getNSISVersion();
         try {
             bundle = ResourceBundle.getBundle(NSISKeywords.class.getName());
         } catch (MissingResourceException x) {
@@ -412,7 +420,10 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
 
         Arrays.sort(temp, String.CASE_INSENSITIVE_ORDER);
         mKeywordGroupsMap.put(ALL_KEYWORDS,temp);
-        notifyListeners();
+        
+        loadPlugins();
+        
+        notifyListeners(monitor);
     }
     
     private Set getValidKeywords(Map keywordMap)
@@ -438,11 +449,20 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
         return mAllKeywordsSet.contains(keyword);
     }
 
-    public void notifyListeners()
+    public void notifyListeners(IProgressMonitor monitor)
     {
-        for (Iterator iter = mListeners.iterator(); iter.hasNext();) {
-            INSISKeywordsListener listener = (INSISKeywordsListener)iter.next();
-            listener.keywordsChanged();
+        if(mListeners.size() > 0) {
+            if(monitor != null) {
+                monitor = new SubProgressMonitor(monitor, 10);
+                monitor.beginTask(EclipseNSISPlugin.getResourceString("updating.keywords.message"), mListeners.size()); //$NON-NLS-1$
+            }
+            for (Iterator iter = mListeners.iterator(); iter.hasNext();) {
+                INSISKeywordsListener listener = (INSISKeywordsListener)iter.next();
+                listener.keywordsChanged();
+                if(monitor != null) {
+                    monitor.worked(1);
+                }
+            }
         }
     }
     

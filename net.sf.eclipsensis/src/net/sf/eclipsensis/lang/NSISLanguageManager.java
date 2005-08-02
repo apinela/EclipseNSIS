@@ -14,20 +14,17 @@ import java.util.*;
 
 import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.help.NSISKeywords;
-import net.sf.eclipsensis.settings.INSISPreferenceConstants;
+import net.sf.eclipsensis.settings.INSISHomeListener;
 import net.sf.eclipsensis.settings.NSISPreferences;
 import net.sf.eclipsensis.util.*;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 
-public class NSISLanguageManager implements IPropertyChangeListener, IEclipseNSISService
+public class NSISLanguageManager implements INSISHomeListener, IEclipseNSISService
 {
     public static NSISLanguageManager INSTANCE = null;
     
     private String mDefineMUILanguageText;
-    private NSISPreferences mPreferences = NSISPreferences.getPreferences();
     private Map mLanguageMap = new CaseInsensitiveMap();
     private List mLanguages = new ArrayList();;
     private Map mLocaleLanguageMap= null;
@@ -36,7 +33,6 @@ public class NSISLanguageManager implements IPropertyChangeListener, IEclipseNSI
 
     public void start(IProgressMonitor monitor)
     {
-        monitor.subTask("Loading languages");
         mDefineMUILanguageText = NSISKeywords.INSTANCE.getKeyword("!DEFINE").toUpperCase()+" MUI_LANGNAME "; //$NON-NLS-1$ //$NON-NLS-2$
         try {
             ResourceBundle bundle = ResourceBundle.getBundle(NSISLanguageManager.class.getName());
@@ -47,38 +43,31 @@ public class NSISLanguageManager implements IPropertyChangeListener, IEclipseNSI
         catch(Exception ex) {
             mDefaultLanguageId = new Integer(1033);
         }
-        loadLanguages();
-        mPreferences.getPreferenceStore().addPropertyChangeListener(this);
+        loadLanguages(monitor);
+        NSISPreferences.INSTANCE.addListener(this);
         INSTANCE = this;
     }
 
     public void stop(IProgressMonitor monitor)
     {
         INSTANCE = null;
-        mPreferences.getPreferenceStore().removePropertyChangeListener(this);
+        NSISPreferences.INSTANCE.removeListener(this);
     }
     
-    public void dispose()
+    public void nsisHomeChanged(IProgressMonitor monitor, String oldHome, String newHome)
     {
-        mPreferences.getPreferenceStore().removePropertyChangeListener(this);
+        loadLanguages(monitor);
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
-     */
-    public void propertyChange(PropertyChangeEvent event)
+    private void loadLanguages(IProgressMonitor monitor)
     {
-        if(INSISPreferenceConstants.NSIS_HOME.equals(event.getProperty())) {
-            loadLanguages();
+        if(monitor != null) {
+            monitor.subTask(EclipseNSISPlugin.getResourceString("loading.languages.message")); //$NON-NLS-1$
         }
-    }
-    
-    private void loadLanguages()
-    {
         mLanguageMap.clear();
         mLanguages.clear();
         if(EclipseNSISPlugin.getDefault().isConfigured()) {
-            File nsisHome = new File(NSISPreferences.getPreferences().getNSISHome());
+            File nsisHome = new File(NSISPreferences.INSTANCE.getNSISHome());
             if(nsisHome.exists()) {
                 File langDir = new File(nsisHome,INSISConstants.LANGUAGE_FILES_LOCATION);
                 if(langDir.exists()) {

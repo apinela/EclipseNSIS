@@ -26,6 +26,7 @@ public abstract class NSISSettings implements INSISPreferenceConstants
     private boolean mNoCD = false;
     private int mVerbosity = INSISPreferenceConstants.VERBOSITY_ALL;
     private int mCompressor = MakeNSISRunner.COMPRESSOR_DEFAULT;
+    private boolean mSolidCompression = false;
     private ArrayList mInstructions = null;
     private LinkedHashMap mSymbols = null;
     
@@ -47,6 +48,7 @@ public abstract class NSISSettings implements INSISPreferenceConstants
         setNoCD(getBoolean(NOCD));
         setVerbosity(getInt(VERBOSITY));
         setCompressor(getInt(COMPRESSOR));
+        setSolidCompression(getBoolean(SOLID_COMPRESSION));
         setInstructions((ArrayList)loadObject(INSTRUCTIONS));
         setSymbols((LinkedHashMap)loadObject(SYMBOLS));
     }
@@ -59,10 +61,26 @@ public abstract class NSISSettings implements INSISPreferenceConstants
         setValue(NOCD, mNoCD);
         setValue(VERBOSITY,mVerbosity);
         setValue(COMPRESSOR, mCompressor);
+        setValue(SOLID_COMPRESSION, mSolidCompression);
         storeObject(SYMBOLS, mSymbols);
         storeObject(INSTRUCTIONS, mInstructions);
     }
 
+    public boolean getSolidCompression()
+    {
+        return mSolidCompression;
+    }
+    
+    public boolean getDefaultSolidCompression()
+    {
+        return false;
+    }
+    
+    public void setSolidCompression(boolean solidCompression)
+    {
+        mSolidCompression = solidCompression;
+    }
+    
     /**
      * @return Returns the compressor.
      */

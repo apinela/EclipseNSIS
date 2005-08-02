@@ -80,10 +80,10 @@ public class NSISTaskTagDialog extends StatusMessageDialog
         
         Label label = new Label(composite, SWT.LEFT);
         label.setText(EclipseNSISPlugin.getResourceString("task.tag.label")); //$NON-NLS-1$
-        label.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
+        label.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
         
         final Text text = new Text(composite, SWT.SINGLE | SWT.BORDER);
-        GridData data = new GridData(GridData.FILL_HORIZONTAL);
+        GridData data = new GridData(SWT.FILL, SWT.CENTER, true, false);
         data.widthHint = convertWidthInCharsToPixels(50);
         text.setLayoutData(data);
         text.setText(mTaskTag.getTag());
@@ -98,7 +98,7 @@ public class NSISTaskTagDialog extends StatusMessageDialog
         
         label = new Label(composite, SWT.LEFT);
         label.setText(EclipseNSISPlugin.getResourceString("task.tag.priority.label")); //$NON-NLS-1$
-        label.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
+        label.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
 
         final Combo combo = new Combo(composite,SWT.DROP_DOWN|SWT.READ_ONLY);
         if(!Common.isEmptyArray(NSISTaskTag.PRIORITY_LABELS)) {

@@ -25,20 +25,18 @@ public class NSISSyntaxStyle implements Cloneable
     private RGB mBackground = null;
     private boolean mBold;
     private boolean mItalic;
+    private boolean mUnderline;
+    private boolean mStrikethrough;
 
-    /**
-     * @param foreground
-     * @param background
-     * @param bold
-     * @param italic
-     */
     public NSISSyntaxStyle(RGB foreground, RGB background, boolean bold,
-            boolean italic)
+                           boolean italic, boolean underline, boolean strikeThrough)
     {
         mForeground = foreground;
         mBackground = background;
         mBold = bold;
         mItalic = italic;
+        mUnderline = underline;
+        mStrikethrough = strikeThrough;
     }
 
     public Object clone()
@@ -47,7 +45,7 @@ public class NSISSyntaxStyle implements Cloneable
             return super.clone();
         }
         catch (CloneNotSupportedException e) {
-            return new NSISSyntaxStyle(mForeground,mBackground,mBold,mItalic);
+            return new NSISSyntaxStyle(mForeground,mBackground,mBold,mItalic,mUnderline,mStrikethrough);
         }
     }
 
@@ -55,7 +53,8 @@ public class NSISSyntaxStyle implements Cloneable
     {
         if(obj instanceof NSISSyntaxStyle) {
             NSISSyntaxStyle style = (NSISSyntaxStyle)obj;
-            if(mBold == style.mBold && mItalic == style.mItalic) {
+            if(mBold == style.mBold && mItalic == style.mItalic && 
+               mUnderline == style.mUnderline && mStrikethrough == style.mStrikethrough) {
                 return rgbsAreEqual(mForeground,style.mForeground) &&
                        rgbsAreEqual(mBackground,style.mBackground);
             }
@@ -79,13 +78,15 @@ public class NSISSyntaxStyle implements Cloneable
     {
         int hashCode = 0;
         if(mForeground != null) {
-            hashCode += (mForeground.hashCode() << 16);
+            hashCode += mForeground.hashCode();
         }
-        if(mForeground != null) {
-            hashCode += (mForeground.hashCode() << 8);
+        if(mBackground != null) {
+            hashCode += mBackground.hashCode();
         }
-        hashCode += (mBold?1 << 4:0);
-        hashCode += (mItalic?1:0);
+        hashCode += (mBold?1 << 8:0);
+        hashCode += (mItalic?1 << 4:0);
+        hashCode += (mUnderline?1 << 2:0);
+        hashCode += (mStrikethrough?1 << 2:0);
         return hashCode;
     }
 
@@ -109,6 +110,10 @@ public class NSISSyntaxStyle implements Cloneable
         buf.append(StringConverter.asString(mBold));
         buf.append("|"); //$NON-NLS-1$
         buf.append(StringConverter.asString(mItalic));
+        buf.append("|"); //$NON-NLS-1$
+        buf.append(StringConverter.asString(mUnderline));
+        buf.append("|"); //$NON-NLS-1$
+        buf.append(StringConverter.asString(mStrikethrough));
         
         return buf.toString();
     }
@@ -130,6 +135,12 @@ public class NSISSyntaxStyle implements Cloneable
                     style.mBold = StringConverter.asBoolean(tokens[2]);
                     if(len > 3) {
                         style.mItalic = StringConverter.asBoolean(tokens[3]);
+                        if(len > 4) {
+                            style.mUnderline = StringConverter.asBoolean(tokens[4]);
+                        }
+                        if(len > 5) {
+                            style.mStrikethrough = StringConverter.asBoolean(tokens[5]);
+                        }
                     }
                 }
             }
@@ -139,7 +150,9 @@ public class NSISSyntaxStyle implements Cloneable
     
     public TextAttribute createTextAttribute()
     {
-        int style = (mBold?SWT.BOLD:0) | (mItalic?SWT.ITALIC:0);
+        int style = (mBold?SWT.BOLD:0) | (mItalic?SWT.ITALIC:0) | 
+                    (mUnderline?TextAttribute.UNDERLINE:0) | 
+                    (mStrikethrough?TextAttribute.STRIKETHROUGH:0);
         return new TextAttribute(ColorManager.getColor(mForeground),
                                  ColorManager.getColor(mBackground),
                                  style);
@@ -183,5 +196,43 @@ public class NSISSyntaxStyle implements Cloneable
     public void setItalic(boolean italic)
     {
         mItalic = italic;
+    }
+
+    public boolean isStrikethrough()
+    {
+        return mStrikethrough;
+    }
+
+    public void setStrikethrough(boolean strikethrough)
+    {
+        mStrikethrough = strikethrough;
+    }
+
+    public boolean isUnderline()
+    {
+        return mUnderline;
+    }
+
+    public void setUnderline(boolean underline)
+    {
+        mUnderline = underline;
+    }
+    
+    public void setStyle(int style, boolean flag)
+    {
+        switch(style) {
+            case SWT.BOLD:
+                setBold(flag);
+                break;
+            case SWT.ITALIC:
+                setItalic(flag);
+                break;
+            case TextAttribute.UNDERLINE:
+                setUnderline(flag);
+                break;
+            case TextAttribute.STRIKETHROUGH:
+                setStrikethrough(flag);
+                break;
+        }
     }
 }

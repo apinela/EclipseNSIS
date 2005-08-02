@@ -108,7 +108,7 @@ public class NSISContentBrowserDialog extends Dialog
             }
         };
         final Tree tree = new Tree(composite,SWT.BORDER);
-        GridData gd = new GridData(GridData.FILL_BOTH);
+        GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
         tree.setLayoutData(gd);
         final TreeViewer tv = new TreeViewer(tree);
         tv.setLabelProvider(new NSISInstallElementLabelProvider());

@@ -20,6 +20,7 @@ typedef BOOL (_stdcall *_tSetLayeredWindowAttributesProc)(HWND hwnd, // handle t
     DWORD dwFlags        // action
 );
 _tSetLayeredWindowAttributesProc SetLayeredWindowAttributesProc;
+BOOL isUnicode;
 
 JNIEXPORT void JNICALL Java_net_sf_eclipsensis_util_WinAPI_init(JNIEnv *pEnv, jclass jClass)
 {
@@ -27,6 +28,7 @@ JNIEXPORT void JNICALL Java_net_sf_eclipsensis_util_WinAPI_init(JNIEnv *pEnv, jc
     osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
     GetVersionEx (&osvi);
 	
+	isUnicode = (osvi.dwPlatformId == VER_PLATFORM_WIN32_NT);
     if(osvi.dwMajorVersion >= 5) {
         HANDLE user32 = GetModuleHandle(_T("user32"));
         SetLayeredWindowAttributesProc = (_tSetLayeredWindowAttributesProc) GetProcAddress((HINSTANCE)user32, "SetLayeredWindowAttributes");
@@ -71,21 +73,21 @@ JNIEXPORT jstring JNICALL Java_net_sf_eclipsensis_util_WinAPI_RegQueryStrValue(J
     DWORD cbData;
 	LONG rv;
 
-    LPCWSTR str1 = (LPCWSTR)pEnv->GetStringChars(sSubKey, 0);
-    LPCWSTR str2 = (LPCWSTR)pEnv->GetStringChars(sValue, 0);
+    LPCSTR str1 = (LPCSTR)pEnv->GetStringUTFChars(sSubKey, 0);
+    LPCSTR str2 = (LPCSTR)pEnv->GetStringUTFChars(sValue, 0);
     if(ERROR_SUCCESS == (rv = RegOpenKeyEx((HKEY)hRootKey,
                                       str1,0, KEY_QUERY_VALUE, &hKey))) {
         if(ERROR_SUCCESS == (rv = RegQueryValueEx(hKey, str2, 0, &type, NULL, &cbData))) {
             value = (TCHAR *)GlobalAlloc(GPTR, cbData);
             if(ERROR_SUCCESS == (rv = RegQueryValueEx(hKey, str2, 0, &type, (LPBYTE)value, &cbData))) {
-                result = pEnv->NewString(value, wcslen(value));
+                result = pEnv->NewStringUTF(value);
             }
             GlobalFree(value);
         }
         rv = RegCloseKey(hKey);
     }
-    pEnv->ReleaseStringChars(sSubKey, str1);
-    pEnv->ReleaseStringChars(sValue, str2);
+    pEnv->ReleaseStringUTFChars(sSubKey, str1);
+    pEnv->ReleaseStringUTFChars(sValue, str2);
 
     return result;
 }
@@ -99,9 +101,9 @@ JNIEXPORT jint JNICALL Java_net_sf_eclipsensis_util_WinAPI_HtmlHelp(JNIEnv *pEnv
 {
     jint result = 0;
     if(pszFile) {
-        LPCWSTR file = (LPCWSTR)pEnv->GetStringChars(pszFile, 0);
+        LPCSTR file = (LPCSTR)pEnv->GetStringUTFChars(pszFile, 0);
         result = (jint)HtmlHelp((HWND)hwndCaller, file, (UINT)uCommand, (DWORD)dwData);
-        pEnv->ReleaseStringChars(pszFile, file);
+        pEnv->ReleaseStringUTFChars(pszFile, file);
     }
     return result;
 }
@@ -118,18 +120,18 @@ JNIEXPORT jstring JNICALL Java_net_sf_eclipsensis_util_WinAPI_ExtractHtmlHelpAnd
 
     if(hr == S_OK || hr == S_FALSE) {
         TCHAR *tocFile = NULL;
-		int length = MAX_PATH*sizeof(WCHAR);
+		int length = MAX_PATH*sizeof(TCHAR);
         tocFile = (TCHAR *)GlobalAlloc(GPTR, length+1);
 
         LPCWSTR str1 = (LPCWSTR)pEnv->GetStringChars(pszFile, 0);
-        LPCWSTR str2 = (LPCWSTR)pEnv->GetStringChars(pszFolder, 0);
+        LPCSTR str2 = (LPCSTR)pEnv->GetStringUTFChars(pszFolder, 0);
         if(ExtractHtmlHelpAndTOC(str1, str2, tocFile) == S_OK) {
-            result = pEnv->NewString(tocFile, wcslen(tocFile));
+            result = pEnv->NewStringUTF(tocFile);
         }
 
         GlobalFree(tocFile);
         pEnv->ReleaseStringChars(pszFile, str1);
-        pEnv->ReleaseStringChars(pszFolder, str2);
+        pEnv->ReleaseStringUTFChars(pszFolder, str2);
 
         if(hr == S_OK) {
             CoUninitialize();
@@ -144,12 +146,12 @@ JNIEXPORT jobjectArray JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetPluginExpo
     jobjectArray result = NULL;
 
     if(pszPluginFile) {
-        LPCWSTR pluginFile =  (LPCWSTR)pEnv->GetStringChars(pszPluginFile, 0);
+        LPCSTR pluginFile =  (LPCSTR)pEnv->GetStringUTFChars(pszPluginFile, 0);
         unsigned char* dlldata    = 0;
         long dlldatalen = 0;
         bool loaded = false;
         
-        FILE* dll = _wfopen(pluginFile,_T("rb"));
+        FILE* dll = fopen(pluginFile,_T("rb"));
         if (dll) {
             fseek(dll,0,SEEK_END);
             dlldatalen = ftell(dll);
@@ -201,7 +203,7 @@ JNIEXPORT jobjectArray JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetPluginExpo
             delete[] dlldata;
         }
         
-        pEnv->ReleaseStringChars(pszPluginFile, pluginFile);
+        pEnv->ReleaseStringUTFChars(pszPluginFile, pluginFile);
     }
     return result;
 }
@@ -215,4 +217,3 @@ JNIEXPORT jint JNICALL Java_net_sf_eclipsensis_util_WinAPI_CallWindowProc(JNIEnv
 {
     return CallWindowProc((WNDPROC)lpWndProc, (HWND)hWnd, Msg, wParam, lParam);
 }
-

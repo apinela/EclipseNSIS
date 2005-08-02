@@ -15,23 +15,15 @@ import net.sf.eclipsensis.console.NSISConsoleLine;
 
 public class NSISConsoleModel
 {
-    private static NSISConsoleModel cInstance = null;
+    public static final NSISConsoleModel INSTANCE = new NSISConsoleModel();
     
     private HashSet mListeners = new HashSet();
     private List mContents = Collections.synchronizedList(new ArrayList());
     private ArrayList mErrors = new ArrayList();
     private ArrayList mWarnings = new ArrayList();
-    
-    public static NSISConsoleModel getInstance()
+
+    private NSISConsoleModel()
     {
-        if(cInstance == null) {
-            synchronized(NSISConsoleModel.class) {
-                if(cInstance == null) {
-                    cInstance = new NSISConsoleModel();
-                }
-            }
-        }
-        return cInstance;
     }
 
     public void addModelListener(INSISConsoleModelListener listener)

@@ -42,10 +42,9 @@ public abstract class NSISRuleBasedScanner extends BufferedRuleBasedScanner impl
     
     public void reset(boolean full)
     {
-        IToken defaultToken = getDefaultToken();
-        setDefaultReturnToken(defaultToken);
+        setDefaultReturnToken(getDefaultToken());
         List rules = new ArrayList();
-        addRules(rules, fDefaultReturnToken);
+        addRules(rules);
         rules.add(new WhitespaceRule(new NSISWhitespaceDetector()));
         IRule[] result = new IRule[rules.size()];
         rules.toArray(result);
@@ -114,7 +113,7 @@ public abstract class NSISRuleBasedScanner extends BufferedRuleBasedScanner impl
     /**
      * @return
      */
-    protected abstract void addRules(List rules, IToken defaultToken);
+    protected abstract void addRules(List rules);
 
     /**
      * @return

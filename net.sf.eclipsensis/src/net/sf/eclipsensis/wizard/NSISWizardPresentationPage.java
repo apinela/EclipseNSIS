@@ -150,7 +150,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
         final MasterSlaveController m = new MasterSlaveController(b);
         
         Composite composite = new Composite(group,SWT.NONE);
-        GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+        GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
         composite.setLayoutData(gd);
         GridLayout layout = new GridLayout(3, false);
         layout.marginHeight = 0;
@@ -189,7 +189,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
         });
         
         composite = new Composite(group,SWT.NONE);
-        gd = new GridData(GridData.FILL_HORIZONTAL);
+        gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
         composite.setLayoutData(gd);
         layout = new GridLayout(2, false);
         layout.marginHeight = 0;
@@ -227,7 +227,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
 
         for (int i = 0; i < labels.length; i++) {
             Composite composite3 = new Composite(group2, SWT.NONE);
-            composite3.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
+            composite3.setLayoutData(new GridData());
             layout = new GridLayout(2, false);
             layout.marginHeight = 0;
             layout.marginWidth = 0;
@@ -241,7 +241,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
         mBGPreviewButton = new Button(composite, SWT.PUSH | SWT.CENTER);
         m.addSlave(mBGPreviewButton, mse);
         mBGPreviewButton.setText(bundle.getString("preview.label")); //$NON-NLS-1$
-        mBGPreviewButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+        mBGPreviewButton.setLayoutData(new GridData(SWT.END, SWT.CENTER, false, false));
         mBGPreviewButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) 
             {
@@ -407,7 +407,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
         final MasterSlaveController m = new MasterSlaveController(b);
         
         Composite composite = new Composite(group,SWT.NONE);
-        GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+        GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
         composite.setLayoutData(gd);
         GridLayout layout = new GridLayout(3, false);
         layout.marginHeight = 0;
@@ -446,7 +446,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
         });
         
         composite = new Composite(group,SWT.NONE);
-        gd = new GridData(GridData.FILL_HORIZONTAL);
+        gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
         composite.setLayoutData(gd);
         layout = new GridLayout(2, false);
         layout.marginHeight = 0;
@@ -490,7 +490,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
         final Text[] t3 = new Text[labels.length];
         for (int i = 0; i < labels.length; i++) {
             Composite composite2 = new Composite(group2, SWT.NONE);
-            composite2.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
+            composite2.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
             layout = new GridLayout(2, false);
             layout.marginHeight = 0;
             layout.marginWidth = 0;
@@ -503,7 +503,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
         mSplashPreviewButton = new Button(composite, SWT.PUSH | SWT.CENTER);
         m.addSlave(mSplashPreviewButton, mse);
         mSplashPreviewButton.setText(bundle.getString("preview.label")); //$NON-NLS-1$
-        mSplashPreviewButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+        mSplashPreviewButton.setLayoutData(new GridData(SWT.END, SWT.CENTER, false, false));
         mSplashPreviewButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) 
             {

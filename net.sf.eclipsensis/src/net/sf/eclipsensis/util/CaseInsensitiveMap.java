@@ -16,7 +16,7 @@ public class CaseInsensitiveMap implements Map, Serializable
 {
 	private static final long serialVersionUID = 7710930539504135243L;
 
-    private Map mValueMap = new HashMap();
+    private Map mValueMap = new LinkedHashMap();
     private Map mKeyMap = new HashMap();
 
     public CaseInsensitiveMap()

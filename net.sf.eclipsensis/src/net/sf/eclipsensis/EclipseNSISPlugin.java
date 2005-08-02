@@ -15,6 +15,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 import java.util.*;
+import java.util.List;
 
 import net.sf.eclipsensis.dialogs.MinimalProgressMonitorDialog;
 import net.sf.eclipsensis.editor.template.NSISTemplateContextType;
@@ -29,9 +30,12 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.text.templates.ContextTypeRegistry;
 import org.eclipse.jface.text.templates.persistence.TemplateStore;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.IWindowListener;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.editors.text.templates.ContributionContextTypeRegistry;
 import org.eclipse.ui.editors.text.templates.ContributionTemplateStore;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.progress.UIJob;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -45,6 +49,7 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
     public static final String NSIS_REG_VALUE = ""; //$NON-NLS-1$
     private static EclipseNSISPlugin cPlugin;
     private static File cStateLocation = null;
+    private static String cInvalidException = null;
     
     private String mName = null;
     private String mVersion = null;
@@ -54,6 +59,9 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
     private HashMap mResourceBundles = new HashMap();
     public static final String[] BUNDLE_NAMES = new String[]{RESOURCE_BUNDLE,MESSAGE_BUNDLE};
     private ImageManager mImageManager;
+    private boolean mIsNT = false;
+    private String mJavaVendor;
+    private Version mJavaVersion;
     private Stack mServices = new Stack();
 
 	/**
@@ -78,25 +86,80 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
 	 */
 	public void start(BundleContext context) throws Exception 
     {
-		super.start(context);
+        super.start(context);
         mName = (String)getBundle().getHeaders().get("Bundle-Name"); //$NON-NLS-1$
         mVersion = (String)getBundle().getHeaders().get("Bundle-Version"); //$NON-NLS-1$
+        if(cInvalidException != null) {
+            throw new CoreException(new Status(IStatus.ERROR,PLUGIN_ID,IStatus.ERROR,cInvalidException,
+                                    new RuntimeException(cInvalidException)));
+        }
         validateOS();
+        validateVM();
         if(!isConfigured()) {
             // First try autoconfigure
-            NSISPreferences prefs = NSISPreferences.getPreferences();
-            prefs.setNSISHome(WinAPI.RegQueryStrValue(NSIS_REG_ROOTKEY,NSIS_REG_SUBKEY,NSIS_REG_VALUE));
+            NSISPreferences.INSTANCE.setNSISHome(WinAPI.RegQueryStrValue(NSIS_REG_ROOTKEY,NSIS_REG_SUBKEY,NSIS_REG_VALUE));
             if(!isConfigured()) {
-                Shell shell = getWorkbench().getActiveWorkbenchWindow().getShell();
-                if(Common.openConfirm(shell,getResourceString("unconfigured.confirm"))) { //$NON-NLS-1$
-                    configure();
+                final IWorkbenchWindow wwindow = getWorkbench().getActiveWorkbenchWindow();
+                final Runnable configOp = new Runnable() {
+                    public void run()
+                    {
+                        Shell shell = getWorkbench().getActiveWorkbenchWindow().getShell();
+                        if(Common.openConfirm(shell,getResourceString("unconfigured.confirm"))) { //$NON-NLS-1$
+                            configure();
+                        }
+                        if(!isConfigured()) {
+                            Common.openWarning(shell,getResourceString("unconfigured.warning")); //$NON-NLS-1$
+                        }
+                    }
+                };
+                if(wwindow.getShell().isVisible()) {
+                    configOp.run();
                 }
-                if(!isConfigured()) {
-                    Common.openWarning(shell,getResourceString("unconfigured.warning")); //$NON-NLS-1$
+                else {
+                    getWorkbench().addWindowListener(new IWindowListener(){
+                        private void schedule()
+                        {
+                            UIJob job = new UIJob(EclipseNSISPlugin.getResourceString("starting.eclipsensis.message")){ //$NON-NLS-1$
+                                public IStatus runInUIThread(IProgressMonitor monitor)
+                                {
+                                    configOp.run();
+                                    return Status.OK_STATUS;
+                                }
+                            };
+                            job.schedule();
+                        }
+                        
+                        public void windowActivated(IWorkbenchWindow window)
+                        {
+                            if(window == wwindow && window.getShell().isVisible()) {
+                                getWorkbench().removeWindowListener(this);
+                                schedule();
+                            }
+                        }
+
+                        public void windowDeactivated(IWorkbenchWindow window)
+                        {
+                        }
+
+                        public void windowClosed(IWorkbenchWindow window)
+                        {
+                            if(window == wwindow) {
+                                getWorkbench().removeWindowListener(this);
+                            }
+                        }
+
+                        public void windowOpened(IWorkbenchWindow window)
+                        {
+                            if(window == wwindow && window.getShell().isVisible()) {
+                                getWorkbench().removeWindowListener(this);
+                                schedule();
+                            }
+                        }
+                    });
                 }
             }
             else {
-                prefs.store();
+                NSISPreferences.INSTANCE.store();
             }
         }
         
@@ -105,12 +168,12 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
     
     private void startServices()
     {
-        final IRunnableWithProgress op = new IRunnableWithProgress(){
-            public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException
-            {
-                String[] services = Common.loadArrayProperty(getResourceBundle(),"services");
-                if(!Common.isEmptyArray(services)) {
-                    monitor.beginTask("Starting EclipseNSIS",services.length+1);
+        final String[] services = Common.loadArrayProperty(getResourceBundle(),"services"); //$NON-NLS-1$
+        if(!Common.isEmptyArray(services)) {
+            final IRunnableWithProgress op = new IRunnableWithProgress(){
+                public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException
+                {
+                    monitor.beginTask(EclipseNSISPlugin.getResourceString("starting.eclipsensis.message"),services.length+1); //$NON-NLS-1$
                     for (int i = 0; i < services.length; i++) {
                         try {
                             Class clasz = Class.forName(services[i]);
@@ -124,18 +187,18 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
                         }
                         monitor.worked(1);
                     }
-                    monitor.subTask("Starting MakeNSIS launcher");
+                    monitor.subTask(EclipseNSISPlugin.getResourceString("starting.makensis.message")); //$NON-NLS-1$
                     MakeNSISRunner.startup();
                     monitor.worked(1);
                 }
+            };
+            ProgressMonitorDialog dialog = new MinimalProgressMonitorDialog(Display.getDefault().getActiveShell());
+            try {
+                dialog.run(false,false,op);
             }
-        };
-        ProgressMonitorDialog dialog = new MinimalProgressMonitorDialog(Display.getDefault().getActiveShell());
-        try {
-            dialog.run(false,false,op);
-        }
-        catch (Exception e) {
-            e.printStackTrace();
+            catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
     
@@ -144,31 +207,38 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
         Display.getDefault().syncExec(new Runnable() {
             public void run()
             {
-                NSISPreferences prefs = NSISPreferences.getPreferences();
                 Shell shell = Display.getDefault().getActiveShell();
                 DirectoryDialog dialog = new DirectoryDialog(shell);
-                dialog.setMessage(getResourceString("nsis.home.message"));
+                dialog.setMessage(getResourceString("nsis.home.message")); //$NON-NLS-1$
                 String nsisHome = dialog.open();
                 while(!Common.isEmpty(nsisHome)) {
-                    prefs.setNSISHome(nsisHome);
+                    NSISPreferences.INSTANCE.setNSISHome(nsisHome);
                     if(!isConfigured()) {
                         Common.openError(shell,EclipseNSISPlugin.getResourceString("invalid.nsis.home.message")); //$NON-NLS-1$ //$NON-NLS-2$
                         nsisHome = dialog.open();
                     }
                     else {
-                        prefs.store();
+                        NSISPreferences.INSTANCE.store();
+                        break;
                     }
                 }
             }
         });
     }
 
+    public boolean isNT()
+    {
+        return mIsNT;
+    }
+
     private void validateOS() throws CoreException
     {
         String[] supportedOS = Common.loadArrayProperty(getResourceBundle(),"supported.os"); //$NON-NLS-1$
+        List ntOS = Common.loadListProperty(getResourceBundle(),"nt.os"); //$NON-NLS-1$
         if(!Common.isEmptyArray(supportedOS)) {
             String osName = System.getProperty("os.name"); //$NON-NLS-1$
             String osVersion = System.getProperty("os.version"); //$NON-NLS-1$
+            mIsNT = ntOS.contains(osName);
             for(int i=0; i<supportedOS.length; i++) {
                 String[] tokens = Common.tokenize(supportedOS[i],'#');
                 String os = tokens[0];
@@ -200,11 +270,47 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
             String osError = getResourceString("unsupported.os.error"); //$NON-NLS-1$
             Common.openError(getWorkbench().getActiveWorkbenchWindow().getShell(),
                                     osError);
-            throw new CoreException(new Status(IStatus.ERROR,PLUGIN_NAME,IStatus.ERROR,osError,
+            cInvalidException = osError;
+            throw new CoreException(new Status(IStatus.ERROR,PLUGIN_ID,IStatus.ERROR,osError,
                                     new RuntimeException(osError)));
         }
     }
     
+
+    private void validateVM() throws CoreException
+    {
+        mJavaVendor = System.getProperty("java.vendor"); //$NON-NLS-1$
+        if(Common.isEmpty(mJavaVendor)) {
+            mJavaVendor = System.getProperty("java.vm.vendor"); //$NON-NLS-1$
+        }
+        String version = System.getProperty("java.version"); //$NON-NLS-1$
+        if(Common.isEmpty(version)) {
+            version = System.getProperty("java.vm.version"); //$NON-NLS-1$
+        }
+        mJavaVersion = new Version(version,"._"); //$NON-NLS-1$
+        Map vms = Common.loadMapProperty(getResourceBundle(),(mIsNT?"nt.vms":"9x.vms"),'\u00FF'); //$NON-NLS-1$ //$NON-NLS-2$
+        version = (String)vms.get(mJavaVendor);
+        if(version != null) {
+            String[] tokens = Common.tokenize(version,'-');
+            if(tokens.length == 2) {
+                if(mJavaVersion.compareTo(new Version(tokens[0])) >= 0 &&
+                   mJavaVersion.compareTo(new Version(tokens[1])) <= 0) {
+                    return;
+                }
+            }
+            else {
+                if(new Version(tokens[0]).equals(mJavaVersion)) {
+                    return;
+                }
+            }
+        }
+        String vmError = getFormattedString((mIsNT?"unsupported.nt.vms.error":"unsupported.9x.vms.error"),new String[]{System.getProperty("os.name")}); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        Common.openError(getWorkbench().getActiveWorkbenchWindow().getShell(),
+                         vmError);
+        cInvalidException = vmError;
+        throw new CoreException(new Status(IStatus.ERROR,PLUGIN_ID,IStatus.ERROR,vmError,
+                                new RuntimeException(vmError)));
+    }
     public static ImageManager getImageManager()
     {
         return getDefault().mImageManager;
@@ -322,7 +428,7 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
     {
         if (mTemplateStore == null) {
             mTemplateStore= new ContributionTemplateStore(getContextTypeRegistry(), 
-                            NSISPreferences.getPreferences().getPreferenceStore(), 
+                            NSISPreferences.INSTANCE.getPreferenceStore(), 
                             INSISPreferenceConstants.CUSTOM_TEMPLATES);
             try {
                 mTemplateStore.load();
@@ -349,7 +455,7 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
     }
     
     /**
-     * @return Returns the mName.
+     * @return Returns the name.
      */
     public String getName()
     {
@@ -364,8 +470,18 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
         return mVersion;
     }
     
+    public String getJavaVendor()
+    {
+        return mJavaVendor;
+    }
+
+    public Version getJavaVersion()
+    {
+        return mJavaVersion;
+    }
+
     public boolean isConfigured()
     {
-        return (NSISPreferences.getPreferences().getNSISExe() != null);
+        return (NSISPreferences.INSTANCE.getNSISExe() != null);
     }
 }

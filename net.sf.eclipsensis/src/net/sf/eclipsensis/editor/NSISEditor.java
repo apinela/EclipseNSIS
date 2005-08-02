@@ -9,23 +9,27 @@
  *******************************************************************************/
 package net.sf.eclipsensis.editor;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.actions.NSISAction;
 import net.sf.eclipsensis.actions.NSISScriptAction;
+import net.sf.eclipsensis.dialogs.MinimalProgressMonitorDialog;
 import net.sf.eclipsensis.editor.codeassist.NSISInformationControlCreator;
 import net.sf.eclipsensis.editor.codeassist.NSISInformationProvider;
 import net.sf.eclipsensis.editor.outline.*;
 import net.sf.eclipsensis.editor.text.NSISPartitionScanner;
 import net.sf.eclipsensis.editor.text.NSISTextUtility;
-import net.sf.eclipsensis.settings.INSISPreferenceConstants;
-import net.sf.eclipsensis.settings.NSISPreferences;
+import net.sf.eclipsensis.settings.*;
+import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.information.InformationPresenter;
@@ -33,12 +37,11 @@ import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.IVerticalRuler;
 import org.eclipse.jface.text.source.projection.ProjectionSupport;
 import org.eclipse.jface.text.source.projection.ProjectionViewer;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.editors.text.EditorsUI;
@@ -46,7 +49,7 @@ import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.texteditor.*;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
-public class NSISEditor extends TextEditor implements INSISConstants, IPropertyChangeListener, ISelectionChangedListener
+public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeListener, ISelectionChangedListener
 {
     private static HashSet cEditors = new HashSet();
     
@@ -183,7 +186,7 @@ public class NSISEditor extends TextEditor implements INSISConstants, IPropertyC
         mProjectionSupport.addSummarizableAnnotationType("org.eclipse.ui.workbench.texteditor.task"); //$NON-NLS-1$
         mProjectionSupport.addSummarizableAnnotationType("org.eclipse.ui.workbench.texteditor.bookmark"); //$NON-NLS-1$
         mProjectionSupport.install();
-        NSISPreferences.getPreferences().getPreferenceStore().addPropertyChangeListener(this);
+        NSISPreferences.INSTANCE.addListener(this);
         if(viewer.canDoOperation(ProjectionViewer.TOGGLE)) {
             viewer.doOperation(ProjectionViewer.TOGGLE);
         }
@@ -260,7 +263,7 @@ public class NSISEditor extends TextEditor implements INSISConstants, IPropertyC
         }
         getSelectionProvider().removeSelectionChangedListener(this);
         ((ProjectionViewer)getSourceViewer()).removePostSelectionChangedListener(this);
-        NSISPreferences.getPreferences().getPreferenceStore().removePropertyChangeListener(this);
+        NSISPreferences.INSTANCE.removeListener(this);
         super.dispose();
     }
     
@@ -375,7 +378,7 @@ public class NSISEditor extends TextEditor implements INSISConstants, IPropertyC
     protected void initializeEditor() 
     {
         super.initializeEditor();
-        IPreferenceStore preferenceStore = NSISPreferences.getPreferences().getPreferenceStore();
+        IPreferenceStore preferenceStore = NSISPreferences.INSTANCE.getPreferenceStore();
         preferenceStore = new ChainedPreferenceStore(new IPreferenceStore[]{preferenceStore, EditorsUI.getPreferenceStore()});
         setPreferenceStore(preferenceStore);
         setSourceViewerConfiguration(new NSISEditorSourceViewerConfiguration(preferenceStore));
@@ -386,14 +389,12 @@ public class NSISEditor extends TextEditor implements INSISConstants, IPropertyC
         mActions.add(action);
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
-     */
-    public void propertyChange(PropertyChangeEvent event)
+    public void nsisHomeChanged(IProgressMonitor monitor, String oldHome, String newHome)
     {
-        if(INSISPreferenceConstants.NSIS_HOME.equals(event.getProperty())) {
-            updateActionsState();
+        if(monitor != null) {
+            monitor.subTask(EclipseNSISPlugin.getResourceString("updating.actions.message")); //$NON-NLS-1$
         }
+        updateActionsState();
     }
 
     public void updateActionsState()
@@ -406,6 +407,12 @@ public class NSISEditor extends TextEditor implements INSISConstants, IPropertyC
                 }
             }
         }
+    }
+
+    protected String[] collectContextMenuPreferencePages() 
+    {
+        String[] pages = {EDITOR_PREFERENCE_PAGE_ID, TEMPLATES_PREFERENCE_PAGE_ID, TASKTAGS_PREFERENCE_PAGE_ID};
+        return (String[])Common.joinArrays(new Object[]{pages,super.collectContextMenuPreferencePages()});
     }
     
     protected void performSaveAs(IProgressMonitor progressMonitor)
@@ -462,14 +469,35 @@ public class NSISEditor extends TextEditor implements INSISConstants, IPropertyC
 
     public static void updatePresentations()
     {
-        for(Iterator iter=cEditors.iterator(); iter.hasNext(); ) {
-            NSISEditor editor = (NSISEditor)iter.next();
-            ISourceViewer sourceViewer = editor.getSourceViewer();
-            if(sourceViewer instanceof NSISSourceViewer) {
-                NSISSourceViewer viewer = (NSISSourceViewer)sourceViewer;
-                if(viewer.mustProcessPropertyQueue()) {
-                    viewer.processPropertyQueue();
+        if(cEditors.size() > 0) {
+            final IRunnableWithProgress op = new IRunnableWithProgress(){
+                public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException
+                {
+                    monitor.beginTask(EclipseNSISPlugin.getResourceString("updating.presentation.message"),cEditors.size()); //$NON-NLS-1$
+                    for(Iterator iter=cEditors.iterator(); iter.hasNext(); ) {
+                        try {
+                            NSISEditor editor = (NSISEditor)iter.next();
+                            ISourceViewer sourceViewer = editor.getSourceViewer();
+                            if(sourceViewer instanceof NSISSourceViewer) {
+                                NSISSourceViewer viewer = (NSISSourceViewer)sourceViewer;
+                                if(viewer.mustProcessPropertyQueue()) {
+                                    viewer.processPropertyQueue();
+                                }
+                            }
+                        }
+                        catch(Exception ex) {
+                            ex.printStackTrace();
+                        }
+                        monitor.worked(1);
+                    }
                 }
+            };
+            ProgressMonitorDialog dialog = new MinimalProgressMonitorDialog(Display.getDefault().getActiveShell());
+            try {
+                dialog.run(false,false,op);
+            }
+            catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }

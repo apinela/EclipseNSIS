@@ -21,7 +21,6 @@ import org.eclipse.core.runtime.QualifiedName;
 
 public class NSISProperties extends NSISSettings implements INSISConstants
 {
-    private static NSISPreferences cPreferences;
     private static HashMap cPropertiesCache = new HashMap();
     private static HashMap cQualifiedNames = new HashMap();
 
@@ -29,16 +28,16 @@ public class NSISProperties extends NSISSettings implements INSISConstants
     private boolean mUseGlobals = true;
     
     static {
-        cPreferences = NSISPreferences.getPreferences();
-        cQualifiedNames.put(USE_GLOBALS, new QualifiedName(PLUGIN_NAME,USE_GLOBALS));
-        cQualifiedNames.put(HDRINFO, new QualifiedName(PLUGIN_NAME,HDRINFO));
-        cQualifiedNames.put(VERBOSITY, new QualifiedName(PLUGIN_NAME,VERBOSITY));
-        cQualifiedNames.put(LICENSE, new QualifiedName(PLUGIN_NAME,LICENSE));
-        cQualifiedNames.put(NOCONFIG, new QualifiedName(PLUGIN_NAME,NOCONFIG));
-        cQualifiedNames.put(NOCD, new QualifiedName(PLUGIN_NAME,NOCD));
-        cQualifiedNames.put(COMPRESSOR, new QualifiedName(PLUGIN_NAME,COMPRESSOR));
-        cQualifiedNames.put(INSTRUCTIONS, new QualifiedName(PLUGIN_NAME,INSTRUCTIONS));
-        cQualifiedNames.put(SYMBOLS, new QualifiedName(PLUGIN_NAME,SYMBOLS));
+        cQualifiedNames.put(USE_GLOBALS, new QualifiedName(PLUGIN_ID,USE_GLOBALS));
+        cQualifiedNames.put(HDRINFO, new QualifiedName(PLUGIN_ID,HDRINFO));
+        cQualifiedNames.put(VERBOSITY, new QualifiedName(PLUGIN_ID,VERBOSITY));
+        cQualifiedNames.put(LICENSE, new QualifiedName(PLUGIN_ID,LICENSE));
+        cQualifiedNames.put(NOCONFIG, new QualifiedName(PLUGIN_ID,NOCONFIG));
+        cQualifiedNames.put(NOCD, new QualifiedName(PLUGIN_ID,NOCD));
+        cQualifiedNames.put(COMPRESSOR, new QualifiedName(PLUGIN_ID,COMPRESSOR));
+        cQualifiedNames.put(SOLID_COMPRESSION, new QualifiedName(PLUGIN_ID,SOLID_COMPRESSION));
+        cQualifiedNames.put(INSTRUCTIONS, new QualifiedName(PLUGIN_ID,INSTRUCTIONS));
+        cQualifiedNames.put(SYMBOLS, new QualifiedName(PLUGIN_ID,SYMBOLS));
     }
     
     public static NSISProperties getProperties(IFile file)
@@ -59,17 +58,27 @@ public class NSISProperties extends NSISSettings implements INSISConstants
     public int getCompressor()
     {
         if(getUseGlobals()) {
-            return cPreferences.getCompressor();
+            return NSISPreferences.INSTANCE.getCompressor();
         }
         else {
             return super.getCompressor();
         }
     }
     
+    public boolean getSolidCompression()
+    {
+        if(getUseGlobals()) {
+            return NSISPreferences.INSTANCE.getSolidCompression();
+        }
+        else {
+            return super.getSolidCompression();
+        }
+    }
+    
     public boolean getHdrInfo()
     {
         if(getUseGlobals()) {
-            return cPreferences.getHdrInfo();
+            return NSISPreferences.INSTANCE.getHdrInfo();
         }
         else {
             return super.getHdrInfo();
@@ -79,7 +88,7 @@ public class NSISProperties extends NSISSettings implements INSISConstants
     public ArrayList getInstructions()
     {
         if(getUseGlobals()) {
-            return cPreferences.getInstructions();
+            return NSISPreferences.INSTANCE.getInstructions();
         }
         else {
             return super.getInstructions();
@@ -89,7 +98,7 @@ public class NSISProperties extends NSISSettings implements INSISConstants
     public boolean getLicense()
     {
         if(getUseGlobals()) {
-            return cPreferences.getLicense();
+            return NSISPreferences.INSTANCE.getLicense();
         }
         else {
             return super.getLicense();
@@ -99,7 +108,7 @@ public class NSISProperties extends NSISSettings implements INSISConstants
     public boolean getNoCD()
     {
         if(getUseGlobals()) {
-            return cPreferences.getNoCD();
+            return NSISPreferences.INSTANCE.getNoCD();
         }
         else {
             return super.getNoCD();
@@ -109,7 +118,7 @@ public class NSISProperties extends NSISSettings implements INSISConstants
     public boolean getNoConfig()
     {
         if(getUseGlobals()) {
-            return cPreferences.getNoConfig();
+            return NSISPreferences.INSTANCE.getNoConfig();
         }
         else {
             return super.getNoConfig();
@@ -119,7 +128,7 @@ public class NSISProperties extends NSISSettings implements INSISConstants
     public LinkedHashMap getSymbols()
     {
         if(getUseGlobals()) {
-            return cPreferences.getSymbols();
+            return NSISPreferences.INSTANCE.getSymbols();
         }
         else {
             return super.getSymbols();
@@ -129,7 +138,7 @@ public class NSISProperties extends NSISSettings implements INSISConstants
     public int getVerbosity()
     {
         if(getUseGlobals()) {
-            return cPreferences.getVerbosity();
+            return NSISPreferences.INSTANCE.getVerbosity();
         }
         else {
             return super.getVerbosity();
@@ -143,7 +152,7 @@ public class NSISProperties extends NSISSettings implements INSISConstants
             synchronized(NSISProperties.class) {
                 qname = (QualifiedName)cQualifiedNames.get(name);
                 if(qname == null) {
-                    qname = new QualifiedName(PLUGIN_NAME,name);
+                    qname = new QualifiedName(PLUGIN_ID,name);
                     cQualifiedNames.put(name,qname);
                 }
             }
@@ -175,6 +184,7 @@ public class NSISProperties extends NSISSettings implements INSISConstants
             setNoCD(getDefaultNoCD());
             setVerbosity(getDefaultVerbosity());
             setCompressor(getDefaultCompressor());
+            setSolidCompression(getDefaultSolidCompression());
             setSymbols(getDefaultSymbols());
             setInstructions(getDefaultInstructions());
         }

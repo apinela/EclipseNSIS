@@ -49,16 +49,16 @@ public class NSISCommentScanner extends NSISRuleBasedScanner
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.editor.text.NSISRuleBasedScanner#addRules(java.util.List, org.eclipse.jface.text.rules.IToken)
      */
-    protected void addRules(List rules, IToken defaultToken)
+    protected void addRules(List rules)
     {
         mCaseSensitive = getPreferenceStore().getBoolean(INSISPreferenceConstants.CASE_SENSITIVE_TASK_TAGS);
-        IRule taskTagsRule = getTaskTagsRule(defaultToken);
+        IRule taskTagsRule = getTaskTagsRule();
         if(taskTagsRule != null) {
             rules.add(taskTagsRule);
         }
     }
 
-    protected IRule getTaskTagsRule(IToken defaultToken)
+    protected IRule getTaskTagsRule()
     {
         if(mTaskTagsRule == null) {
             synchronized (this) {

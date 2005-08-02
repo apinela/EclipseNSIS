@@ -102,7 +102,7 @@ public class NSISCompileAction extends NSISScriptAction
     public boolean isEnabled()
     {
         if(super.isEnabled()) {
-            return (!MakeNSISRunner.isRunning());
+            return (!MakeNSISRunner.isCompiling());
         }
         return false;
     }

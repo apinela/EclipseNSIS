@@ -47,7 +47,7 @@ public class NSISTestAction extends NSISScriptAction
     {
         mExeName = null;
         if(super.isEnabled() && mFile != null && mFile.isSynchronized(IResource.DEPTH_ZERO)) {
-            if (!MakeNSISRunner.isRunning()) {
+            if (!MakeNSISRunner.isCompiling()) {
                 try {
                     String temp = mFile.getPersistentProperty(NSIS_COMPILE_TIMESTAMP);
                     if(temp != null) {

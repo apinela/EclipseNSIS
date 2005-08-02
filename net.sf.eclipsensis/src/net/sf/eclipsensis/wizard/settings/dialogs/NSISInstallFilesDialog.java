@@ -14,6 +14,7 @@ import java.util.List;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
+import net.sf.eclipsensis.dialogs.TableResizer;
 import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.viewer.*;
@@ -68,7 +69,7 @@ public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
     {
         Composite composite = new Composite(parent, SWT.NONE);
         Dialog.applyDialogFont(composite);
-        GridData gd = new GridData(GridData.FILL_BOTH);
+        GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
         gd.widthHint = Common.calculateControlSize(composite,60,0).x;
         composite.setLayoutData(gd);
         
@@ -79,12 +80,12 @@ public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
         
         Label label = new Label(composite, SWT.LEFT);
         label.setText(EclipseNSISPlugin.getResourceString("wizard.source.files.label")); //$NON-NLS-1$
-        gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+        gd = new GridData(SWT.FILL, SWT.CENTER, false, false);
         gd.horizontalSpan = 2;
         label.setLayoutData(gd);
         
         Composite composite2 = new Composite(composite, SWT.NONE);
-        gd = new GridData(GridData.FILL_BOTH);
+        gd = new GridData(SWT.FILL, SWT.FILL, true, true);
         gd.horizontalSpan = 2;
         gd.heightHint = convertHeightInCharsToPixels(10);
         composite2.setLayoutData(gd);
@@ -94,10 +95,10 @@ public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
         layout.marginWidth = 0;
         composite2.setLayout(layout);
   
-        final Table table = new Table(composite2, SWT.FULL_SELECTION | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
+        final Table table = new Table(composite2, SWT.FULL_SELECTION | SWT.MULTI | SWT.V_SCROLL | SWT.BORDER);
         table.setLinesVisible(true);
         table.setHeaderVisible(true);
-        gd = new GridData(GridData.FILL_BOTH);
+        gd = new GridData(SWT.FILL, SWT.FILL, true, true);
         gd.verticalSpan = 2;
         table.setLayoutData(gd);
 
@@ -131,7 +132,7 @@ public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
         mover.setViewer(viewer);
         
         composite2 = new Composite(composite2, SWT.NONE);
-        gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
+        gd = new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false);
         gd.horizontalSpan = 1;
         composite2.setLayoutData(gd);
         
@@ -143,25 +144,25 @@ public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
         final Button addButton = new Button(composite2,SWT.PUSH);
         addButton.setToolTipText(EclipseNSISPlugin.getResourceString("wizard.add.files.tooltip")); //$NON-NLS-1$
         addButton.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("add.icon"))); //$NON-NLS-1$
-        gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_BEGINNING);
+        gd = new GridData(SWT.FILL, SWT.BEGINNING, false, false);
         addButton.setLayoutData(gd);
 
         final Button removeButton = new Button(composite2,SWT.PUSH);
         removeButton.setToolTipText(EclipseNSISPlugin.getResourceString("wizard.remove.files.tooltip")); //$NON-NLS-1$
         removeButton.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("delete.icon"))); //$NON-NLS-1$
-        gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_BEGINNING);
+        gd = new GridData(SWT.FILL, SWT.BEGINNING, false, false);
         removeButton.setLayoutData(gd);
         removeButton.setEnabled(false);
         
         final Button upButton = new Button(composite2,SWT.PUSH);
-        gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_BEGINNING);
+        gd = new GridData(SWT.FILL, SWT.BEGINNING, false, false);
         upButton.setLayoutData(gd);
         upButton.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("up.icon"))); //$NON-NLS-1$
         upButton.setToolTipText(EclipseNSISPlugin.getResourceString("up.tooltip")); //$NON-NLS-1$
         upButton.setEnabled(mover.canMoveUp());
         
         final Button downButton = new Button(composite2,SWT.PUSH);
-        gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_BEGINNING);
+        gd = new GridData(SWT.FILL, SWT.BEGINNING, false, false);
         downButton.setLayoutData(gd);
         downButton.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("down.icon"))); //$NON-NLS-1$
         downButton.setToolTipText(EclipseNSISPlugin.getResourceString("down.tooltip")); //$NON-NLS-1$
@@ -226,20 +227,7 @@ public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
                 downButton.setEnabled(mover.canMoveDown());
             }
         });
-
-        table.addControlListener(new ControlAdapter() {
-            public void controlResized(ControlEvent e) 
-            {
-                Table table  = (Table)e.widget;
-                int width = table.getSize().x - 2*table.getBorderWidth();
-                int lineWidth = table.getGridLineWidth();
-                TableColumn[] columns = table.getColumns();
-                width -= (columns.length-1)*lineWidth;
-                for(int i=0; i<columns.length; i++) {
-                    columns[i].setWidth(width/columns.length);
-                }
-            }
-        });
+        table.addControlListener(new TableResizer());
         
         final Combo c1 = NSISWizardDialogUtil.createCombo(composite,
                                                          NSISKeywords.INSTANCE.getKeywordsGroup(NSISKeywords.PATH_CONSTANTS_AND_VARIABLES),

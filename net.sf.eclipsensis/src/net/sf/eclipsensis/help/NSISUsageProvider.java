@@ -16,14 +16,12 @@ import java.util.Map;
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.IEclipseNSISService;
 import net.sf.eclipsensis.makensis.MakeNSISRunner;
-import net.sf.eclipsensis.settings.INSISPreferenceConstants;
+import net.sf.eclipsensis.settings.INSISHomeListener;
 import net.sf.eclipsensis.settings.NSISPreferences;
 import net.sf.eclipsensis.util.CaseInsensitiveMap;
 import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 
 public class NSISUsageProvider implements IEclipseNSISService
 {
@@ -31,29 +29,25 @@ public class NSISUsageProvider implements IEclipseNSISService
     
     private Map mUsages = new CaseInsensitiveMap();
     private String mLineSeparator;
-    private NSISPreferences mPreferences = NSISPreferences.getPreferences();
-    private IPropertyChangeListener mPropertyChangeListener = new IPropertyChangeListener() {
-        public void propertyChange(PropertyChangeEvent event)
+    private INSISHomeListener mNSISHomeListener = new INSISHomeListener() {
+        public void nsisHomeChanged(IProgressMonitor monitor, String oldHome, String newHome)
         {
-            if(INSISPreferenceConstants.NSIS_HOME.equals(event.getProperty())) {
-                loadUsages();
-            }
+            loadUsages(monitor);
         }
     };
 
     public void start(IProgressMonitor monitor)
     {
-        monitor.subTask("Loading NSIS command help");
         mLineSeparator = System.getProperty("line.separator"); //$NON-NLS-1$
-        loadUsages();
-        mPreferences.getPreferenceStore().addPropertyChangeListener(mPropertyChangeListener);
+        loadUsages(monitor);
+        NSISPreferences.INSTANCE.addListener(mNSISHomeListener);
         INSTANCE = this;
     }
 
     public void stop(IProgressMonitor monitor)
     {
         INSTANCE = null;
-        mPreferences.getPreferenceStore().removePropertyChangeListener(mPropertyChangeListener);
+        NSISPreferences.INSTANCE.removeListener(mNSISHomeListener);
     }
     
     public String getUsage(String keyWord)
@@ -66,69 +60,69 @@ public class NSISUsageProvider implements IEclipseNSISService
         }
     }
 
-    private synchronized void loadUsages()
+    private synchronized void loadUsages(IProgressMonitor monitor)
     {
+        if(monitor != null) {
+            monitor.subTask(EclipseNSISPlugin.getResourceString("loading.cmdhelp.message")); //$NON-NLS-1$
+        }
         mUsages.clear();
-        String makeNSISExe = mPreferences.getNSISExe();
-        if(makeNSISExe != null) {
-            File exeFile = new File(makeNSISExe);
-            if(exeFile.exists()) {
-                long exeTimeStamp = exeFile.lastModified();
-                
-                File stateLocation = EclipseNSISPlugin.getPluginStateLocation();
-                File cacheFile = new File(stateLocation,NSISUsageProvider.class.getName()+".Usages.ser"); //$NON-NLS-1$
-                long cacheTimeStamp = 0;
-                if(cacheFile.exists()) {
-                    cacheTimeStamp = cacheFile.lastModified();
-                }
-                
-                if(exeTimeStamp != cacheTimeStamp) {
-                    String[] output = Common.runProcessWithOutput(new String[]{makeNSISExe,
-                                                                  MakeNSISRunner.MAKENSIS_VERBOSITY_OPTION+"1", //$NON-NLS-1$
-                                                                  MakeNSISRunner.MAKENSIS_CMDHELP_OPTION},
-                                                                  null,1);
-                    if(!Common.isEmptyArray(output)) {
-                        StringBuffer buf = null;
-                        for (int i = 0; i < output.length; i++) {
-                            String line = output[i];
-                            if(buf == null) {
-                                buf = new StringBuffer(line);
+        File exeFile = NSISPreferences.INSTANCE.getNSISExeFile();
+        if(exeFile != null && exeFile.exists()) {
+            long exeTimeStamp = exeFile.lastModified();
+            
+            File stateLocation = EclipseNSISPlugin.getPluginStateLocation();
+            File cacheFile = new File(stateLocation,NSISUsageProvider.class.getName()+".Usages.ser"); //$NON-NLS-1$
+            long cacheTimeStamp = 0;
+            if(cacheFile.exists()) {
+                cacheTimeStamp = cacheFile.lastModified();
+            }
+            
+            if(exeTimeStamp != cacheTimeStamp) {
+                String[] output = MakeNSISRunner.runProcessWithOutput(exeFile.getAbsolutePath(),new String[]{
+                                                                      MakeNSISRunner.MAKENSIS_VERBOSITY_OPTION+"1", //$NON-NLS-1$
+                                                                      MakeNSISRunner.MAKENSIS_CMDHELP_OPTION},
+                                                                      null,1);
+                if(!Common.isEmptyArray(output)) {
+                    StringBuffer buf = null;
+                    for (int i = 0; i < output.length; i++) {
+                        String line = output[i];
+                        if(buf == null) {
+                            buf = new StringBuffer(line);
+                        }
+                        else {
+                            if(Character.isWhitespace(line.charAt(0))) {
+                                buf.append(mLineSeparator).append(line);
                             }
                             else {
-                                if(Character.isWhitespace(line.charAt(0))) {
-                                    buf.append(mLineSeparator).append(line);
-                                }
-                                else {
-                                    String usage = buf.toString();
-                                    int n = usage.indexOf(" "); //$NON-NLS-1$
-                                    String keyword = (n > 0?usage.substring(0,n):usage);
-                                    mUsages.put(keyword,usage);
-                                    buf = new StringBuffer(line);
-                                }
+                                String usage = buf.toString();
+                                int n = usage.indexOf(" "); //$NON-NLS-1$
+                                String keyword = (n > 0?usage.substring(0,n):usage);
+                                mUsages.put(keyword,usage);
+                                buf = new StringBuffer(line);
                             }
                         }
-                        if(buf != null && buf.length() > 0) {
-                            String usage = buf.toString();
-                            int n = usage.indexOf(" "); //$NON-NLS-1$
-                            String keyword = (n > 0?usage.substring(0,n):usage);
-                            mUsages.put(keyword,usage);
-                        }
                     }
-                    try {
-                        Common.writeObject(cacheFile,mUsages);
-                        cacheFile.setLastModified(exeTimeStamp);
-                    }
-                    catch (IOException e) {
-                        e.printStackTrace();
+                    if(buf != null && buf.length() > 0) {
+                        String usage = buf.toString();
+                        int n = usage.indexOf(" "); //$NON-NLS-1$
+                        String keyword = (n > 0?usage.substring(0,n):usage);
+                        mUsages.put(keyword,usage);
                     }
                 }
-                else {
-                    try {
-                        mUsages = (Map)Common.readObject(cacheFile);
-                    }
-                    catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                try {
+                    Common.writeObject(cacheFile,mUsages);
+                    cacheFile.setLastModified(exeTimeStamp);
+                }
+                catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            else {
+                try {
+                    mUsages = (Map)Common.readObject(cacheFile);
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         }

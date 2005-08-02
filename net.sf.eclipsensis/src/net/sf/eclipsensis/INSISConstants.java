@@ -13,13 +13,16 @@ import org.eclipse.core.runtime.QualifiedName;
 
 public interface INSISConstants
 {
-    public static final String PLUGIN_NAME = EclipseNSISPlugin.getDefault().getBundle().getSymbolicName();
+    public static final String PLUGIN_ID = EclipseNSISPlugin.getDefault().getBundle().getSymbolicName();
 
     public static final String MAKENSIS_EXE = "makensis.exe"; //$NON-NLS-1$
 
-    public static final String PLUGIN_CONTEXT_PREFIX = PLUGIN_NAME + "."; //$NON-NLS-1$
+    public static final String PLUGIN_CONTEXT_PREFIX = PLUGIN_ID + "."; //$NON-NLS-1$
     
     public static final String PREFERENCE_PAGE_ID = EclipseNSISPlugin.getBundleResourceString("%preference.page.id"); //$NON-NLS-1$
+    public static final String EDITOR_PREFERENCE_PAGE_ID = EclipseNSISPlugin.getBundleResourceString("%editor.preference.page.id"); //$NON-NLS-1$
+    public static final String TEMPLATES_PREFERENCE_PAGE_ID = EclipseNSISPlugin.getBundleResourceString("%template.preference.page.id"); //$NON-NLS-1$
+    public static final String TASKTAGS_PREFERENCE_PAGE_ID = EclipseNSISPlugin.getBundleResourceString("%task.tags.preference.page.id"); //$NON-NLS-1$
     public static final String HTMLHELP_ID = EclipseNSISPlugin.getBundleResourceString("%htmlhelp.id"); //$NON-NLS-1$
     public static final String CONSOLE_ID = EclipseNSISPlugin.getBundleResourceString("%console.id"); //$NON-NLS-1$
     public static final String PROBLEM_MARKER_ID = EclipseNSISPlugin.getBundleResourceString("%qualified.compile.problem.marker.id"); //$NON-NLS-1$
@@ -50,9 +53,9 @@ public interface INSISConstants
     public static final String RESOURCE_BUNDLE = "net.sf.eclipsensis.EclipseNSISPluginResources"; //$NON-NLS-1$
     public static final String MESSAGE_BUNDLE = "net.sf.eclipsensis.EclipseNSISPluginMessages"; //$NON-NLS-1$
     
-    public static final QualifiedName NSIS_COMPILE_TIMESTAMP = new QualifiedName(PLUGIN_NAME,"nsisCompileTimestamp"); //$NON-NLS-1$
-    public static final QualifiedName NSIS_EXE_NAME = new QualifiedName(PLUGIN_NAME,"nsisEXEName"); //$NON-NLS-1$
-    public static final QualifiedName NSIS_EXE_TIMESTAMP = new QualifiedName(PLUGIN_NAME,"nsisEXETimestamp"); //$NON-NLS-1$
+    public static final QualifiedName NSIS_COMPILE_TIMESTAMP = new QualifiedName(PLUGIN_ID,"nsisCompileTimestamp"); //$NON-NLS-1$
+    public static final QualifiedName NSIS_EXE_NAME = new QualifiedName(PLUGIN_ID,"nsisEXEName"); //$NON-NLS-1$
+    public static final QualifiedName NSIS_EXE_TIMESTAMP = new QualifiedName(PLUGIN_ID,"nsisEXETimestamp"); //$NON-NLS-1$
     
     public static final char LINE_CONTINUATION_CHAR = '\\';
     public static final String LINE_SEPARATOR = System.getProperty("line.separator"); //$NON-NLS-1$

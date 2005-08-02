@@ -132,10 +132,8 @@ public class NSISInstructionDialog extends StatusMessageDialog
     {
         Label label = new Label(composite, SWT.LEFT);
         label.setText(text);
-        GridData data = new GridData();
+        GridData data = new GridData(SWT.FILL, SWT.CENTER, false, false);
         data.horizontalSpan = 1;
-        data.grabExcessHorizontalSpace = false;
-        data.horizontalAlignment = GridData.FILL;
         label.setLayoutData(data);
         
         Combo combo = new Combo(composite, SWT.DROP_DOWN|SWT.BORDER);
@@ -153,10 +151,8 @@ public class NSISInstructionDialog extends StatusMessageDialog
             }
         }
         
-        data = new GridData();
+        data = new GridData(SWT.FILL, SWT.CENTER, false, false);
         data.horizontalSpan = 1;
-        data.horizontalAlignment = GridData.FILL;
-        data.grabExcessHorizontalSpace = false;
         combo.setLayoutData(data);
         return combo;
     }
@@ -165,14 +161,13 @@ public class NSISInstructionDialog extends StatusMessageDialog
     {
         Label label = new Label(composite, SWT.LEFT);
         label.setText(labelText);
-        GridData data = new GridData();
+        GridData data = new GridData(SWT.FILL, SWT.CENTER, false, false);
         data.horizontalSpan = 1;
-        data.horizontalAlignment = GridData.FILL;
         label.setLayoutData(data);
         
         Text text = new Text(composite, SWT.SINGLE | SWT.BORDER);
         text.setToolTipText(tooltipText);
-        data = new GridData(GridData.FILL_HORIZONTAL);
+        data = new GridData(SWT.FILL, SWT.CENTER, true, false);
         data.widthHint = convertWidthInCharsToPixels(40);
         text.setLayoutData(data);
         text.setText(value);

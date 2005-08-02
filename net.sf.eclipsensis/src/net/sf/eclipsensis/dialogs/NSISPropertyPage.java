@@ -10,6 +10,7 @@
 package net.sf.eclipsensis.dialogs;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.settings.NSISProperties;
 import net.sf.eclipsensis.settings.NSISSettings;
 
@@ -101,6 +102,7 @@ public class NSISPropertyPage extends NSISSettingsPage
             mNoCD.setSelection(properties.getDefaultNoCD());
             mVerbosity.select(properties.getDefaultVerbosity());
             mCompressor.select(properties.getDefaultCompressor());
+            mSolidCompression.setSelection(properties.getDefaultSolidCompression());
             mInstructions.setInput(properties.getDefaultInstructions());
             mSymbols.setInput(properties.getDefaultSymbols());
             super.performDefaults();
@@ -122,5 +124,10 @@ public class NSISPropertyPage extends NSISSettingsPage
         else {
             return super.performOk();
         }
+    }
+
+    protected boolean isSolidCompressionSupported()
+    {
+        return NSISKeywords.INSTANCE.isValidKeyword("/SOLID"); //$NON-NLS-1$
     }
 }

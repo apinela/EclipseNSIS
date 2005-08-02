@@ -24,11 +24,11 @@ public class NSISOutlineContentResources implements IEclipseNSISService,  INSISK
 {
     public static NSISOutlineContentResources INSTANCE = null;  //$NON-NLS-1$
     
-    private static final String[] cTypes = {"!define", "!ifdef", "!ifndef", "!ifmacrodef", //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-                                                         "!ifnmacrodef", "!endif", "!macro", "!macroend",  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-                                                         "Function", "FunctionEnd", "Section", "SectionEnd",  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-                                                         "SubSection", "SubSectionEnd", "Page", "PageEx",  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-                                                         "Pageexend"}; //$NON-NLS-1$
+    private static final String[] cTypes = {"!define", "!ifdef", "!ifndef", "!ifmacrodef",  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                                            "!ifnmacrodef", "!endif", "!macro", "!macroend",  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                                            "Function", "FunctionEnd", "Section", "SectionEnd",  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                                            "SubSection", "SubSectionEnd", "Page", "PageEx",  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                                            "Pageexend","!include"}; //$NON-NLS-1$ //$NON-NLS-2$
 
     private final List mTypeList = Arrays.asList(cTypes);
     private final Map mTypes = new CaseInsensitiveMap();
@@ -43,16 +43,18 @@ public class NSISOutlineContentResources implements IEclipseNSISService,  INSISK
         mImages.clear();
         for(int i=0; i<cTypes.length; i++) {
             String typeName = NSISKeywords.INSTANCE.getKeyword(cTypes[i]);
-            mTypes.put(typeName,cTypes[i]);
-            mTypeNames.put(cTypes[i], typeName);
-            mImages.put(cTypes[i],EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString(new StringBuffer("outline.").append( //$NON-NLS-1$
-                                                                            cTypes[i].toLowerCase().replaceAll("!","")).append(".icon").toString(),null))); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            if(NSISKeywords.INSTANCE.isValidKeyword(typeName)) {
+                mTypes.put(typeName,cTypes[i]);
+                mTypeNames.put(cTypes[i], typeName);
+                mImages.put(cTypes[i],EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString(new StringBuffer("outline.").append( //$NON-NLS-1$
+                                                                                cTypes[i].toLowerCase().replaceAll("!","")).append(".icon").toString(),null))); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            }
         }
     }
 
     public void start(IProgressMonitor monitor)
     {
-        monitor.subTask("Loading outline resources");
+        monitor.subTask(EclipseNSISPlugin.getResourceString("loading.outline.message")); //$NON-NLS-1$
         load();
         NSISKeywords.INSTANCE.addKeywordsListener(this);
         INSTANCE = this;

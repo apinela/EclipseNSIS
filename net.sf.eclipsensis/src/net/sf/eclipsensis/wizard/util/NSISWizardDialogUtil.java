@@ -49,7 +49,7 @@ public class NSISWizardDialogUtil
         if(isRequired) {
             setRequiredElementFont(l);
         }
-        GridData data = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+        GridData data = new GridData(SWT.BEGINNING, SWT.CENTER, false, false);
         l.setLayoutData(data);
         l.setEnabled(enabled);
         
@@ -80,7 +80,7 @@ public class NSISWizardDialogUtil
         GridLayout layout = (GridLayout)parent.getLayout();
         if(layout.numColumns < numColumns) {
             parent = new Composite(parent, SWT.NONE);
-            GridData data = new GridData(GridData.FILL_HORIZONTAL);
+            GridData data = new GridData(SWT.FILL, SWT.CENTER, true, false);
             data.horizontalSpan = layout.numColumns;
             parent.setLayoutData(data);
             
@@ -111,7 +111,7 @@ public class NSISWizardDialogUtil
     {
         Text t = new Text(parent, style);
         t.setText(value);
-        GridData data = new GridData(GridData.FILL_HORIZONTAL);
+        GridData data = new GridData(SWT.FILL, SWT.CENTER, true, false);
         data.horizontalSpan = horizontalSpan;
         t.setLayoutData(data);
         t.setEnabled(enabled);
@@ -141,7 +141,7 @@ public class NSISWizardDialogUtil
                 }
             }
         });
-        GridData data = new GridData(GridData.HORIZONTAL_ALIGN_CENTER);
+        GridData data = new GridData(SWT.CENTER, SWT.CENTER, false, false);
         button.setLayoutData(data);
         button.setEnabled(enabled);
         addSlave(masterSlaveController, button);
@@ -188,7 +188,7 @@ public class NSISWizardDialogUtil
                 }
             }
         });
-        GridData data = new GridData(GridData.HORIZONTAL_ALIGN_CENTER);
+        GridData data = new GridData(SWT.CENTER, SWT.CENTER, false, false);
         button.setLayoutData(data);
         button.setEnabled(enabled);
         addSlave(masterSlaveController, button);
@@ -202,7 +202,7 @@ public class NSISWizardDialogUtil
         GridLayout layout = (GridLayout)parent.getLayout();
         Label l = createLabel(parent, labelResource, enabled, masterSlaveController, isRequired); 
         parent = new Composite(parent,SWT.NONE);
-        GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+        GridData data = new GridData(SWT.FILL, SWT.CENTER, false, false);
         data.horizontalSpan = layout.numColumns - 1;
         parent.setLayoutData(data);
         layout = new GridLayout(3,false);
@@ -215,7 +215,7 @@ public class NSISWizardDialogUtil
         createFileBrowserButton(parent, false, filterNames, filterExtensions, t, enabled, masterSlaveController);
         
         final Label l2 = new Label(parent, SWT.BORDER | SWT.SHADOW_IN | SWT.CENTER);
-        data = new GridData(GridData.HORIZONTAL_ALIGN_CENTER);
+        data = new GridData(SWT.CENTER, SWT.CENTER, false, false);
         if(size != null) {
             if(size.x != SWT.DEFAULT) {
                 data.widthHint = size.x;
@@ -325,7 +325,7 @@ public class NSISWizardDialogUtil
         }
         c.setText(selectedItem);
     
-        GridData data = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+        GridData data = new GridData(SWT.BEGINNING, SWT.CENTER, false, false);
         data.horizontalSpan = horizontalSpan;
         c.setLayoutData(data);
         c.setEnabled(enabled);
@@ -342,7 +342,7 @@ public class NSISWizardDialogUtil
         ColorEditor ce = new ColorEditor(parent);
         ce.setRGB(value);
         Button b = ce.getButton();
-        GridData data = new GridData(GridData.FILL_HORIZONTAL);
+        GridData data = new GridData(SWT.FILL, SWT.CENTER, true, false);
         data.horizontalSpan = layout.numColumns - 1;
         b.setLayoutData(data);
         b.setEnabled(enabled);
@@ -359,7 +359,7 @@ public class NSISWizardDialogUtil
     
         GridLayout layout = (GridLayout)parent.getLayout();
         parent = new Composite(parent,SWT.NONE);
-        GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+        GridData gd = new GridData(SWT.BEGINNING, SWT.CENTER, false, false);
         gd.horizontalSpan = layout.numColumns - 1;
         parent.setLayoutData(gd);
         layout = new GridLayout(items.length,true);
@@ -375,7 +375,7 @@ public class NSISWizardDialogUtil
             if(i == selectedItem) {
                 buttons[i].setSelection(true);
             }
-            buttons[i].setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
+            buttons[i].setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
             buttons[i].setEnabled(enabled);
             addSlave(masterSlaveController, buttons[i]);
             buttons[i].setData(LABEL,l);
@@ -393,7 +393,7 @@ public class NSISWizardDialogUtil
         if(isRequired) {
             setRequiredElementFont(group);
         }
-        GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+        GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
         gd.horizontalSpan = ((GridLayout)parent.getLayout()).numColumns;
         group.setLayoutData(gd);
         GridLayout layout = new GridLayout(numColumns,false);
@@ -416,7 +416,7 @@ public class NSISWizardDialogUtil
         if(isRequired) {
             setRequiredElementFont(button);
         }
-        GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+        GridData data = new GridData(SWT.FILL, SWT.CENTER, false, false);
         data.horizontalSpan = ((GridLayout)parent.getLayout()).numColumns;
         button.setLayoutData(data);
         return button;
@@ -439,7 +439,7 @@ public class NSISWizardDialogUtil
         GridData gd;
         Label l = createLabel(parent,labelResource,enabled,masterSlaveController,isRequired);
         Composite composite = new Composite(parent,SWT.NONE);
-        gd = new GridData(GridData.FILL_HORIZONTAL);
+        gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
         gd.horizontalSpan = numColumns-1;
         composite.setLayoutData(gd);
         GridLayout layout = new GridLayout(2,false);
@@ -457,7 +457,7 @@ public class NSISWizardDialogUtil
         
         final Button b = new Button(composite, SWT.PUSH);
         b.setText(EclipseNSISPlugin.getResourceString("browse.text")); //$NON-NLS-1$
-        gd = new GridData(GridData.HORIZONTAL_ALIGN_CENTER);
+        gd = new GridData(SWT.CENTER, SWT.CENTER, false, false);
         b.setLayoutData(gd);
         b.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {

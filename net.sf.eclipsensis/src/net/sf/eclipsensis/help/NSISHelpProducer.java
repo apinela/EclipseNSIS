@@ -28,8 +28,8 @@ public class NSISHelpProducer implements IHelpContentProducer, INSISConstants
      */
     public InputStream getInputStream(String pluginID, String href, Locale locale)
     {
-        if(pluginID.equals(PLUGIN_NAME) && href.startsWith(NSIS_HELP_PREFIX)) {
-            String nsisHome = NSISPreferences.getPreferences().getNSISHome();
+        if(pluginID.equals(PLUGIN_ID) && href.startsWith(NSIS_HELP_PREFIX)) {
+            String nsisHome = NSISPreferences.INSTANCE.getNSISHome();
             if(!Common.isEmpty(nsisHome)) {
                 File nsisDir = new File(nsisHome);
                 if(nsisDir.exists() && nsisDir.isDirectory()) {
@@ -57,7 +57,7 @@ public class NSISHelpProducer implements IHelpContentProducer, INSISConstants
                     }
                     if(isDocs) {
                         return new ByteArrayInputStream(EclipseNSISPlugin.getFormattedString("missing.help.format", //$NON-NLS-1$
-                                                                new Object[]{href,PLUGIN_NAME,
+                                                                new Object[]{href,PLUGIN_ID,
                                                                              NSISLiveHelpAction.class.getName()}).getBytes());
                     }
                     else {
@@ -67,7 +67,7 @@ public class NSISHelpProducer implements IHelpContentProducer, INSISConstants
                 }
             }
             return new ByteArrayInputStream(EclipseNSISPlugin.getFormattedString("unconfigured.help.format", //$NON-NLS-1$
-                                                                new Object[]{PLUGIN_NAME,NSISLiveHelpAction.class.getName()}).getBytes());
+                                                                new Object[]{PLUGIN_ID,NSISLiveHelpAction.class.getName()}).getBytes());
         }
         return null;
     }

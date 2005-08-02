@@ -38,8 +38,8 @@ public class NSISTaskTagRule implements IRule
     
     private void loadTaskTags()
     {
-        Collection taskTags = NSISPreferences.getPreferences().getTaskTags();
-        boolean caseSensitive = NSISPreferences.getPreferences().isCaseSensitiveTaskTags();
+        Collection taskTags = NSISPreferences.INSTANCE.getTaskTags();
+        boolean caseSensitive = NSISPreferences.INSTANCE.isCaseSensitiveTaskTags();
         if(caseSensitive) {
             mTaskTags = new HashMap();
         }

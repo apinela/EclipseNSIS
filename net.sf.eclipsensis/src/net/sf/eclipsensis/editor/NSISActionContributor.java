@@ -35,7 +35,6 @@ public class NSISActionContributor extends TextEditorActionContributor implement
     protected RetargetTextEditorAction mInsertFile;
     protected RetargetTextEditorAction mInsertDirectory;
     protected RetargetTextEditorAction mInsertColor;
-//	protected RetargetTextEditorAction mContentAssistTip;
 
 	/**
 	 * Default constructor.
@@ -73,10 +72,7 @@ public class NSISActionContributor extends TextEditorActionContributor implement
         mInsertColor= new RetargetTextEditorAction(bundle, "insert.color."); //$NON-NLS-1$
         mInsertColor.setImageDescriptor(EclipseNSISPlugin.getImageManager().getImageDescriptor(bundle.getString("insert.color.image"))); //$NON-NLS-1$
         mInsertColor.setActionDefinitionId(INSERT_COLOR_COMMAND_ID);
-        
-/*		mContentAssistTip= new RetargetTextEditorAction(EclipseNSISPlugin.getDefault().getResourceBundle(), "ContentAssistTip."); //$NON-NLS-1$
-		mContentAssistTip.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_CONTEXT_INFORMATION);
-*/	}
+    }
 	
 	/*
 	 * @see IEditorActionBarContributor#init(IActionBars)
@@ -100,7 +96,6 @@ public class NSISActionContributor extends TextEditorActionContributor implement
             editMenu.add(mInsertFile);
             editMenu.add(mInsertDirectory);
             editMenu.add(mInsertColor);
-//			editMenu.add(mContentAssistTip);
 		}
         editMenu.addMenuListener(new IMenuListener() {
             public void menuAboutToShow(IMenuManager manager)
@@ -134,8 +129,6 @@ public class NSISActionContributor extends TextEditorActionContributor implement
         mInsertFile.setAction(getAction(editor, "NSISInsertFile")); //$NON-NLS-1$
         mInsertDirectory.setAction(getAction(editor, "NSISInsertDirectory")); //$NON-NLS-1$
         mInsertColor.setAction(getAction(editor, "NSISInsertColor")); //$NON-NLS-1$
-        
-//		mContentAssistTip.setAction(getAction(editor, "ContentAssistTip")); //$NON-NLS-1$
 	}
 	
 	/*

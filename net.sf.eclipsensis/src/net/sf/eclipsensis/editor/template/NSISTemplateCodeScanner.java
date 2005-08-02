@@ -34,10 +34,10 @@ public class NSISTemplateCodeScanner extends NSISCodeScanner
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.editor.text.NSISRuleBasedScanner#addRules(java.util.List, org.eclipse.jface.text.rules.IToken)
      */
-    protected void addRules(List rules, IToken defaultToken)
+    protected void addRules(List rules)
     {
-        rules.add(getTemplateVariableRule(defaultToken));
-        super.addRules(rules, defaultToken);
+        rules.add(getTemplateVariableRule());
+        super.addRules(rules);
     }
     
     /* (non-Javadoc)
@@ -51,7 +51,7 @@ public class NSISTemplateCodeScanner extends NSISCodeScanner
         super.reset(full);
     }
     
-    protected IRule getTemplateVariableRule(IToken defaultToken)
+    protected IRule getTemplateVariableRule()
     {
         if(mTemplateVariableRule == null) {
             synchronized(this) {
