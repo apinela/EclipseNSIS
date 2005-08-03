@@ -917,7 +917,7 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
                     InstallOptionsGuide horizontalGuide = child.getHorizontalGuide();
                     InstallOptionsGuide verticalGuide = child.getVerticalGuide();
                     if(horizontalGuide != null || verticalGuide != null) {
-                        buf = new StringBuffer("");
+                        buf = new StringBuffer(""); //$NON-NLS-1$
                         if(horizontalGuide != null) {
                             buf.append(PositionConstants.WEST).append('|');
                             buf.append(getRuler(PositionConstants.WEST).getGuides().indexOf(horizontalGuide)).append('|');

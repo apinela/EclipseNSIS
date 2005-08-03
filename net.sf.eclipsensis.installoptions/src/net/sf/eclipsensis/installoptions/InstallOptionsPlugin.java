@@ -18,11 +18,13 @@ import net.sf.eclipsensis.installoptions.util.TypeConverter;
 import net.sf.eclipsensis.util.*;
 
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.*;
+import org.eclipse.ui.internal.registry.EditorRegistry;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -187,19 +189,21 @@ public class InstallOptionsPlugin extends AbstractUIPlugin implements IInstallOp
         if(toggleState) {
             final IEditorRegistry editorRegistry = PlatformUI.getWorkbench().getEditorRegistry();
             for(int i=0; i<INI_EXTENSIONS.length; i++) {
-                IEditorDescriptor descriptor = editorRegistry.getDefaultEditor("*."+INI_EXTENSIONS[i]);
+                IEditorDescriptor descriptor = editorRegistry.getDefaultEditor("*."+INI_EXTENSIONS[i]); //$NON-NLS-1$
                 if(descriptor == null || (!descriptor.getId().equals(INSTALLOPTIONS_DESIGN_EDITOR_ID) && !descriptor.getId().equals(INSTALLOPTIONS_SOURCE_EDITOR_ID))) {
                     Display.getDefault().asyncExec(new Runnable(){
                         public void run()
                         {
                             MessageDialogWithToggle md = MessageDialogWithToggle.openYesNoCancelQuestion(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
-                                    getName(),getResourceString("check.default.editor.question"),
-                                    getResourceString("check.default.editor.toggle"),!toggleState,getPreferenceStore(),PREFERENCE_CHECK_EDITOR_ASSOCIATION);
+                                    getName(),getResourceString("check.default.editor.question"), //$NON-NLS-1$
+                                    getResourceString("check.default.editor.toggle"),!toggleState,getPreferenceStore(),PREFERENCE_CHECK_EDITOR_ASSOCIATION); //$NON-NLS-1$
                             if(md.getReturnCode() == IDialogConstants.YES_ID) {
                                 for(int i=0; i<INI_EXTENSIONS.length; i++) {
-                                    editorRegistry.setDefaultEditor("*."+INI_EXTENSIONS[i],INSTALLOPTIONS_DESIGN_EDITOR_ID);
+                                    editorRegistry.setDefaultEditor("*."+INI_EXTENSIONS[i],INSTALLOPTIONS_DESIGN_EDITOR_ID); //$NON-NLS-1$
                                 }
                             }
+                            //Cast to inner class because otherwise it cannot be saved.
+                            ((EditorRegistry)editorRegistry).saveAssociations();
                         }
                     });
                     break;

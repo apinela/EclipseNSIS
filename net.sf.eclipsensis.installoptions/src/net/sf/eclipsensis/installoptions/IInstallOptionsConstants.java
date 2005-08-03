@@ -24,7 +24,7 @@ public interface IInstallOptionsConstants
     public static final String RESOURCE_BUNDLE = "net.sf.eclipsensis.installoptions.InstallOptionsPluginResources"; //$NON-NLS-1$
     public static final String MESSAGE_BUNDLE = "net.sf.eclipsensis.installoptions.InstallOptionsPluginMessages"; //$NON-NLS-1$
 
-    public static final String[] INI_EXTENSIONS = Common.tokenize(InstallOptionsPlugin.getBundleResourceString("%ini.extensions"),',');
+    public static final String[] INI_EXTENSIONS = Common.tokenize(InstallOptionsPlugin.getBundleResourceString("%ini.extensions"),','); //$NON-NLS-1$
     public static final String INSTALLOPTIONS_DESIGN_EDITOR_ID = InstallOptionsPlugin.getBundleResourceString("%installoptions.design.editor.id"); //$NON-NLS-1$
     public static final String INSTALLOPTIONS_SOURCE_EDITOR_ID = InstallOptionsPlugin.getBundleResourceString("%installoptions.source.editor.id"); //$NON-NLS-1$
     public static final String INSTALLOPTIONS_PREFERENCE_PAGE_ID = InstallOptionsPlugin.getBundleResourceString("%installoptions.preference.page.id"); //$NON-NLS-1$

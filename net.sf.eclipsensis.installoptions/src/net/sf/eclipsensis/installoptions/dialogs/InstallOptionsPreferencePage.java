@@ -212,6 +212,7 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
         parent.setLayout(layout);
         
         mFolder = new TabFolder(parent, SWT.NONE);
+        mFolder.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true));
         Dialog.applyDialogFont(mFolder);
         TabItem item = new TabItem(mFolder, SWT.NONE);
         item.setText(InstallOptionsPlugin.getResourceString("design.editor.tab.name")); //$NON-NLS-1$
@@ -224,7 +225,7 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
         activateTab();
         
         final Button b = new Button(parent,SWT.CHECK);
-        b.setText(InstallOptionsPlugin.getResourceString("check.default.editor.label"));
+        b.setText(InstallOptionsPlugin.getResourceString("check.default.editor.label")); //$NON-NLS-1$
         b.setSelection(getPreferenceStore().getBoolean(PREFERENCE_CHECK_EDITOR_ASSOCIATION));
         b.addSelectionListener(new SelectionAdapter(){
             public void widgetSelected(SelectionEvent e)
@@ -283,7 +284,6 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
     private Control createSourceEditorTab(Composite parent)
     {
         Composite syntaxComposite= new Composite(parent, SWT.NONE);
-        syntaxComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         GridLayout layout= new GridLayout(1, false); 
         syntaxComposite.setLayout(layout);
         
@@ -425,8 +425,6 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
     private Composite createDesignEditorTab(Composite parent)
     {
         parent = new Composite(parent,SWT.NONE);
-        GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
-        parent.setLayoutData(gd);
         GridLayout layout = new GridLayout(2,false);
         layout.marginHeight = 2;
         layout.marginWidth = 2;
@@ -434,7 +432,7 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
         
         Label l = new Label(parent,SWT.WRAP);
         l.setText(InstallOptionsPlugin.getResourceString("design.editor.preferences.description")); //$NON-NLS-1$
-        gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
+        GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
         gd.horizontalSpan = 2;
         l.setLayoutData(gd);
         

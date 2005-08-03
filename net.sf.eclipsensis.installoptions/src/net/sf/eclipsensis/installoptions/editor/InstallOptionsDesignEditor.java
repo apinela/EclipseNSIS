@@ -530,8 +530,8 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
         ContextMenuProvider provider = new InstallOptionsDesignMenuProvider(this,//viewer,
                                                                     getActionRegistry());
         viewer.setContextMenu(provider);
-        getSite().registerContextMenu("net.sf.eclipsensis.installoptions.editor.installoptionseditor.contextmenu", //$NON-NLS-1$
-                provider, viewer);
+        ((IEditorSite)getSite()).registerContextMenu("net.sf.eclipsensis.installoptions.editor.installoptionseditor.contextmenu", //$NON-NLS-1$
+                provider, viewer, true);
         viewer.setKeyHandler(new GraphicalViewerKeyHandler(viewer)
                 .setParent(getCommonKeyHandler()));
         IFile file = ((IFileEditorInput)getEditorInput()).getFile();

@@ -13,11 +13,14 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
+import net.sf.eclipsensis.installoptions.figures.FigureUtility;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsWidget;
 import net.sf.eclipsensis.installoptions.model.Position;
 import net.sf.eclipsensis.installoptions.rulers.InstallOptionsGuide;
 
 import org.eclipse.gef.commands.Command;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.widgets.Display;
 
 public class MoveGuideCommand extends Command
 {
@@ -34,32 +37,41 @@ public class MoveGuideCommand extends Command
 
     public void execute()
     {
-        mGuide.setPosition(mGuide.getPosition() + mPositionDelta);
+        boolean isHorizontal = mGuide.isHorizontal();
+        int guidePos = mGuide.getPosition() + mPositionDelta;
+        Font f = Display.getDefault().getSystemFont();
+        guidePos = (isHorizontal?FigureUtility.pixelsToDialogUnitsY(guidePos,f):FigureUtility.pixelsToDialogUnitsX(guidePos,f));
+        mGuide.setPosition((isHorizontal?FigureUtility.dialogUnitsToPixelsY(guidePos,f):FigureUtility.dialogUnitsToPixelsX(guidePos,f)));
         Iterator iter = mGuide.getParts().iterator();
         while (iter.hasNext()) {
             InstallOptionsWidget widget = (InstallOptionsWidget)iter.next();
             Position pos = widget.getPosition();
             mOldPositions.put(widget,pos);
-            pos = widget.toGraphical(pos);
+            pos = pos.getCopy();
             int alignment = mGuide.getAlignment(widget);
             if (mGuide.isHorizontal()) {
-                pos.setLocation(pos.left,calculatePosition(mGuide.getPosition(),alignment, pos));//pos.top+mPositionDelta);
+                pos.setLocation(pos.left,calculatePosition(guidePos,alignment, pos));
             }
             else {
-                pos.setLocation(/*pos.left+mPositionDelta*/calculatePosition(mGuide.getPosition(),alignment, pos),pos.top);
+                pos.setLocation(calculatePosition(guidePos,alignment, pos),pos.top);
             }
-            pos = widget.toModel(pos);
             widget.setPosition(pos);
         }
     }
 
     public boolean canExecute()
     {
+        boolean isHorizontal = mGuide.isHorizontal();
+        Font f = Display.getDefault().getSystemFont();
         int guidePos = mGuide.getPosition() + mPositionDelta;
+        guidePos = (isHorizontal?FigureUtility.pixelsToDialogUnitsY(guidePos,f):FigureUtility.pixelsToDialogUnitsX(guidePos,f));
+        if(guidePos < 0) {
+            return false;
+        }
         Iterator iter = mGuide.getParts().iterator();
         while (iter.hasNext()) {
             InstallOptionsWidget widget = (InstallOptionsWidget)iter.next();
-            Position pos = widget.toGraphical(widget.getPosition());
+            Position pos = widget.getPosition();
             int alignment = mGuide.getAlignment(widget);
             int position = calculatePosition(guidePos, alignment, pos);
             if(position < 0) {
@@ -88,10 +100,10 @@ public class MoveGuideCommand extends Command
                 position = guidePos;
                 break;
             case 0:
-                position = guidePos-dim/2;
+                position = guidePos-(dim-1)/2;
                 break;
             case 1:
-                position = guidePos-dim;
+                position = guidePos-dim+1;
                 break;
             default:
                 position = (mGuide.isHorizontal()?pos.getBounds().y:pos.getBounds().x);
