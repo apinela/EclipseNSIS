@@ -158,13 +158,7 @@ public class InstallOptionsModel implements IPropertyChangeListener
         }
 
         if(bundle != null) {
-            Version nsisVersion;
-            if(EclipseNSISPlugin.getDefault().isConfigured()) {
-                nsisVersion = NSISPreferences.INSTANCE.getNSISVersion();
-            }
-            else {
-                nsisVersion = NSISValidator.MINIMUM_NSIS_VERSION;
-            }
+            Version nsisVersion = getNSISVersion();
             HashMap versionMap = new HashMap();
             for(Enumeration enum=bundle.getKeys(); enum.hasMoreElements();) {
                 String key = (String)enum.nextElement();
@@ -272,6 +266,18 @@ public class InstallOptionsModel implements IPropertyChangeListener
         }
 
         notifyListeners();
+    }
+
+    public Version getNSISVersion()
+    {
+        Version nsisVersion;
+        if(EclipseNSISPlugin.getDefault().isConfigured()) {
+            nsisVersion = NSISPreferences.INSTANCE.getNSISVersion();
+        }
+        else {
+            nsisVersion = NSISValidator.MINIMUM_NSIS_VERSION;
+        }
+        return nsisVersion;
     }
     
     private void processValues(List list, String[] values)

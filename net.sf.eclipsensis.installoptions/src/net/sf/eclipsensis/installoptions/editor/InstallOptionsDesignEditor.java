@@ -16,6 +16,7 @@ import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.actions.*;
+import net.sf.eclipsensis.installoptions.builder.InstallOptionsNature;
 import net.sf.eclipsensis.installoptions.dialogs.GridSnapGlueSettingsDialog;
 import net.sf.eclipsensis.installoptions.dnd.*;
 import net.sf.eclipsensis.installoptions.edit.*;
@@ -112,22 +113,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
             }
         }
     };
-//    
-//    private IPerspectiveListener3 mPerspectiveListener = new PerspectiveAdapter() {
-//        public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, IWorkbenchPartReference partRef, String changeId)
-//        {
-//            if(changeId == IWorkbenchPage.CHANGE_EDITOR_OPEN) {
-//                if(partRef instanceof IEditorReference) {
-//                    if(partRef.getPart(false) == InstallOptionsDesignEditor.this) {
-//                        mEditorOpened = true;
-//                        page.getWorkbenchWindow().removePerspectiveListener(this);
-//                        checkPerformSwitch();
-//                    }
-//                }
-//            }
-//        }
-//    };
-//
+
     /** 
      * The number of reentrances into error correction code while saving.
      * @since 2.0
@@ -242,6 +228,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
 
     public InstallOptionsDesignEditor()
     {
+        InstallOptionsPlugin.checkEditorAssociation();
         setEditDomain(new InstallOptionsEditDomain(this));
     }
 
@@ -531,7 +518,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
                                                                     getActionRegistry());
         viewer.setContextMenu(provider);
         ((IEditorSite)getSite()).registerContextMenu("net.sf.eclipsensis.installoptions.editor.installoptionseditor.contextmenu", //$NON-NLS-1$
-                provider, viewer, true);
+                provider, viewer, false);
         viewer.setKeyHandler(new GraphicalViewerKeyHandler(viewer)
                 .setParent(getCommonKeyHandler()));
         IFile file = ((IFileEditorInput)getEditorInput()).getFile();
@@ -593,6 +580,14 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
                     input.getDocumentProvider().disconnect(input);
                     mINIFile.disconnect(doc);
                 }
+            }
+        }
+        if(!isSwitching()) {
+            try {
+                ((InstallOptionsNature)file.getProject().getNature(INSTALLOPTIONS_NATURE_ID)).stopEditing(file);
+            }
+            catch (CoreException e) {
+                e.printStackTrace();
             }
         }
 
@@ -683,8 +678,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
     {
         IFile file = input.getFile();
         saveProperties(file);
-        InstallOptionsMarkerUtility.updateMarkers(file, mINIFile);
-        mCachedMarkers = InstallOptionsMarkerUtility.getMarkerAttributes(file);
+        mCachedMarkers = InstallOptionsMarkerUtility.updateMarkers(file, mINIFile, true);
     }
     
     public void doRevertToSaved() 
@@ -1228,10 +1222,11 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
                     provider.aboutToChange(newInput);
                     provider.saveDocument(new NullProgressMonitor(), newInput, doc, true);
                     saveProperties(file);
-                    InstallOptionsMarkerUtility.updateMarkers(file, mINIFile);
+                    InstallOptionsMarkerUtility.updateMarkers(file, mINIFile, true);
                     success= true;
                     
-                } catch (CoreException x) {
+                } 
+                catch (CoreException x) {
                     IStatus status= x.getStatus();
                     if (status == null || status.getSeverity() != IStatus.CANCEL) {
                         String title= InstallOptionsPlugin.getResourceString("error.saveas.title"); //$NON-NLS-1$
@@ -1357,8 +1352,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
             mINIFile.connect(document);
             if(mCachedMarkers == null) {
                 IFile file = ((InstallOptionsEditorInput)input).getFile();
-                InstallOptionsMarkerUtility.updateMarkers(file,mINIFile);
-                mCachedMarkers = InstallOptionsMarkerUtility.getMarkerAttributes(file);
+                mCachedMarkers = InstallOptionsMarkerUtility.updateMarkers(file,mINIFile, true);
             }
             loadInstallOptionsDialog();
         }
@@ -1407,12 +1401,20 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
                 InstallOptionsMarkerUtility.updateMarkers(file,mCachedMarkers);
             }
             ((InstallOptionsEditorInput)oldInput).getDocumentProvider().disconnect(oldInput);
+            try {
+                ((InstallOptionsNature)file.getProject().getNature(INSTALLOPTIONS_NATURE_ID)).stopEditing(file);
+            }
+            catch (CoreException e) {
+                e.printStackTrace();
+            }
         }
         mCachedMarkers = null;
         if(input != null) {
             try {
                 if(!(input instanceof InstallOptionsEditorInput)) {
-                    ((IFileEditorInput)input).getFile().setPersistentProperty(FILEPROPERTY_INSTALLOPTIONS_FLAG, Boolean.TRUE.toString());
+                    IFile file = ((IFileEditorInput)input).getFile();
+                    InstallOptionsNature.addNature(file.getProject());
+                    ((InstallOptionsNature)file.getProject().getNature(INSTALLOPTIONS_NATURE_ID)).beginEditing(file);
                     input = new InstallOptionsEditorInput((IFileEditorInput)input);
                     if(mPerformingSaveAs) {
                         mCachedMarkers = InstallOptionsMarkerUtility.getMarkerAttributes(((IFileEditorInput)input).getFile());

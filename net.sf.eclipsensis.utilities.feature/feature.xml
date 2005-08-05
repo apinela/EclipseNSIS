@@ -2,8 +2,9 @@
 <feature
       id="net.sf.eclipsensis.utilities"
       label="%feature.name"
-      version="0.1.0"
-      provider-name="%provider.name">
+      version="0.5.0"
+      provider-name="%provider.name"
+      image="%splash.image">
    <install-handler/>
 
    <description url="%description.url">
@@ -39,14 +40,14 @@
          id="net.sf.jarsigner"
          download-size="36"
          install-size="36"
-         version="0.1.0"
+         version="0.5.0"
          unpack="false"/>
 
    <plugin
          id="net.sf.jnigen"
          download-size="42"
          install-size="42"
-         version="0.3.0"
+         version="0.5.0"
          unpack="false"/>
 
 </feature>

@@ -127,7 +127,7 @@ public abstract class AbstractJARUtil implements IJavaLaunchConfigurationConstan
                 try {
                     String arg = argsFormat.format(new String[]{maybeQuote(targetJar.getLocation().toOSString())});
                     workingCopy.setAttribute(ATTR_PROGRAM_ARGUMENTS, arg);
-                    ILaunch launch = workingCopy.launch(ILaunchManager.RUN_MODE,new SubProgressMonitor(monitor,100),false,false);
+                    ILaunch launch = workingCopy.launch(ILaunchManager.RUN_MODE,new SubProgressMonitor(monitor,1),false,false);
                     IProcess process = launch.getProcesses()[0];
                     IStreamsProxy proxy = process.getStreamsProxy();
                     IStreamMonitor stdout = proxy.getOutputStreamMonitor();

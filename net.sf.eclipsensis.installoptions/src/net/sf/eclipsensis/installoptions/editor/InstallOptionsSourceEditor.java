@@ -17,6 +17,7 @@ import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.actions.SwitchEditorAction;
+import net.sf.eclipsensis.installoptions.builder.InstallOptionsNature;
 import net.sf.eclipsensis.installoptions.ini.*;
 import net.sf.eclipsensis.installoptions.model.*;
 import net.sf.eclipsensis.util.Common;
@@ -44,7 +45,6 @@ import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.editors.text.TextEditor;
-import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.texteditor.*;
 import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
@@ -72,6 +72,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
     public InstallOptionsSourceEditor()
     {
         super();
+        InstallOptionsPlugin.checkEditorAssociation();
         setPreferenceStore(new ChainedPreferenceStore(new IPreferenceStore[]{
                 InstallOptionsPlugin.getDefault().getPreferenceStore(),
                 EditorsUI.getPreferenceStore()
@@ -111,6 +112,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
     public void iniFileChanged(INIFile iniFile, int event)
     {
         IFileEditorInput input = (IFileEditorInput)getEditorInput();
+        iniFile.validate();
         if(input != null && (event == INIFile.INIFILE_CONNECTED || event == INIFile.INIFILE_MODIFIED)) {
             InstallOptionsMarkerUtility.updateMarkers(input.getFile(), iniFile);
         }
@@ -172,8 +174,15 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
             }
         }
         else {
+            IFile file = input.getFile();
             if(isDirty()) {
-                InstallOptionsMarkerUtility.updateMarkers(input.getFile(),mCachedMarkers);
+                InstallOptionsMarkerUtility.updateMarkers(file,mCachedMarkers);
+            }
+            try {
+                ((InstallOptionsNature)file.getProject().getNature(INSTALLOPTIONS_NATURE_ID)).stopEditing(file);
+            }
+            catch (CoreException e) {
+                e.printStackTrace();
             }
         }
         IDocument document = getDocumentProvider().getDocument(input);
@@ -199,12 +208,15 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
                     mINIFile.disconnect(document);
                 }
             }
+            IFile file = editorInput.getFile();
+            ((InstallOptionsNature)file.getProject().getNature(INSTALLOPTIONS_NATURE_ID)).stopEditing(file);
         }
         IFile file = ((IFileEditorInput)input).getFile();
         mCachedMarkers = null;
         if(input != null) {
             if(!(input instanceof InstallOptionsEditorInput)) {
-                ((IFileEditorInput)input).getFile().setPersistentProperty(FILEPROPERTY_INSTALLOPTIONS_FLAG, Boolean.TRUE.toString());
+                InstallOptionsNature.addNature(file.getProject());
+                ((InstallOptionsNature)file.getProject().getNature(INSTALLOPTIONS_NATURE_ID)).beginEditing(file);
                 input = new InstallOptionsEditorInput((IFileEditorInput)input);
                 setDocumentProvider(((InstallOptionsEditorInput)input).getDocumentProvider());
                 super.doSetInput(input);
@@ -223,8 +235,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
             mINIFile.connect(document);
             file = ((IFileEditorInput)input).getFile();
             if(mCachedMarkers == null) {
-                InstallOptionsMarkerUtility.updateMarkers(file, mINIFile);
-                mCachedMarkers = InstallOptionsMarkerUtility.getMarkerAttributes(file);
+                mCachedMarkers = InstallOptionsMarkerUtility.updateMarkers(file, mINIFile, true);
             }
         }
     }
@@ -232,6 +243,13 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
     protected void editorSaved()
     {
         super.editorSaved();
+        try {
+            IFile file = ((IFileEditorInput)getEditorInput()).getFile();
+            file.setPersistentProperty(RESOURCEPROPERTY_BUILD_TIMESTAMP, Long.toString(System.currentTimeMillis()));
+        }
+        catch (CoreException e) {
+            e.printStackTrace();
+        }
         mCachedMarkers = InstallOptionsMarkerUtility.getMarkerAttributes(((IFileEditorInput)getEditorInput()).getFile());
     }
     
@@ -277,7 +295,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
 
     private void updateAnnotations()
     {
-        scheduleUIJob(InstallOptionsPlugin.getResourceString("annotations.update.job.name"),mJobFamily, //$NON-NLS-1$
+        scheduleJob(InstallOptionsPlugin.getResourceString("annotations.update.job.name"),mJobFamily, //$NON-NLS-1$
                 new StatusRunnable(){
                     public IStatus run(IProgressMonitor monitor)
                     {
@@ -305,21 +323,20 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
         return super.getAdapter(type);
     }
 
-    private void scheduleUIJob(String jobName, final String jobFamily, final StatusRunnable runnable)
+    private void scheduleJob(String jobName, final String jobFamily, final StatusRunnable runnable)
     {
         cancelJobs(jobFamily);
-        Job job = new UIJob(jobName){ //$NON-NLS-1$
+        new Job(jobName){ //$NON-NLS-1$
                 public boolean belongsTo(Object family)
                 {
                     return jobFamily.equals(family);
                 }
 
-                public IStatus runInUIThread(IProgressMonitor monitor)
+                public IStatus run(IProgressMonitor monitor)
                 {
                     return runnable.run(monitor);
                 }
-            };
-        job.schedule();
+            }.schedule();
     }
 
     private void cancelJobs(String jobFamily)
@@ -548,7 +565,6 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
                 }
             });
             viewer.setLabelProvider(new OutlineLabelProvider());
-//            mINIFile.addListener(this);
             viewer.addSelectionChangedListener(mSelectionSynchronizer);
             viewer.setInput(mINIFile);
             Point sel = getSourceViewer().getSelectedRange();
@@ -563,7 +579,6 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
             if(viewer != null) {
                 viewer.removeSelectionChangedListener(mSelectionSynchronizer);
             }
-//            mINIFile.removeListener(this);
             super.dispose();
             mOutlinePage = null;
         }
@@ -573,14 +588,19 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
          */
         public void update()
         {
-            scheduleUIJob(InstallOptionsPlugin.getResourceString("outline.update.job.name"),mJobFamily, //$NON-NLS-1$
+            scheduleJob(InstallOptionsPlugin.getResourceString("outline.update.job.name"),mJobFamily, //$NON-NLS-1$
                           new StatusRunnable(){
                               public IStatus run(IProgressMonitor monitor)
                               {
                                   try {
-                                      TreeViewer viewer = getTreeViewer();
+                                      final TreeViewer viewer = getTreeViewer();
                                       if(viewer != null && mINIFile != null) {
-                                          viewer.refresh(mINIFile);
+                                          Display.getDefault().asyncExec(new Runnable() {
+                                              public void run()
+                                              {
+                                                  viewer.refresh(mINIFile);
+                                              }
+                                          });
                                       }
                                       return Status.OK_STATUS;
                                   }
@@ -631,7 +651,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
                             String type = values[0].getValue();
                             InstallOptionsModelTypeDef typeDef = InstallOptionsModel.INSTANCE.getControlTypeDef(type);
                             if(typeDef != null) {
-                                return InstallOptionsPlugin.getImageManager().getImage(typeDef.getSmallIcon());
+                                image = InstallOptionsPlugin.getImageManager().getImage(typeDef.getSmallIcon());
                             }
                         }
                     }

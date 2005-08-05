@@ -16,7 +16,7 @@ public class Version implements Comparable
 {
     public static final int MAJOR = 0;
     public static final int MINOR = 1;
-    public static final int SERVICE = 2;
+    public static final int MICRO = 2;
     public static final int BUILD = 3;
     
     private int[] mNumbers = null;
@@ -147,6 +147,14 @@ public class Version implements Comparable
             return mNumbers[index];
         }
         return 0;
+    }
+    
+    public String getQualifier(int index)
+    {
+        if(mQualifiers.length > index) {
+            return mQualifiers[index];
+        }
+        return ""; //$NON-NLS-1$
     }
 
     /**

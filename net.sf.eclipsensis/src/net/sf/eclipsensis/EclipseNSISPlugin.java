@@ -25,7 +25,6 @@ import net.sf.eclipsensis.settings.NSISPreferences;
 import net.sf.eclipsensis.util.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.text.templates.ContextTypeRegistry;
 import org.eclipse.jface.text.templates.persistence.TemplateStore;
@@ -119,14 +118,13 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
                     getWorkbench().addWindowListener(new IWindowListener(){
                         private void schedule()
                         {
-                            UIJob job = new UIJob(EclipseNSISPlugin.getResourceString("starting.eclipsensis.message")){ //$NON-NLS-1$
+                            new UIJob(EclipseNSISPlugin.getResourceString("starting.eclipsensis.message")){ //$NON-NLS-1$
                                 public IStatus runInUIThread(IProgressMonitor monitor)
                                 {
                                     configOp.run();
                                     return Status.OK_STATUS;
                                 }
-                            };
-                            job.schedule();
+                            }.schedule();
                         }
                         
                         public void windowActivated(IWorkbenchWindow window)
@@ -192,9 +190,14 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
                     monitor.worked(1);
                 }
             };
-            ProgressMonitorDialog dialog = new MinimalProgressMonitorDialog(Display.getDefault().getActiveShell());
+
             try {
-                dialog.run(false,false,op);
+                if (Display.getCurrent() == null) {
+                    op.run(new NullProgressMonitor());
+                }
+                else {
+                    new MinimalProgressMonitorDialog(Display.getDefault().getActiveShell()).run(false, false, op);
+                }
             }
             catch (Exception e) {
                 e.printStackTrace();

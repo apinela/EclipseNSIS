@@ -22,6 +22,8 @@ import org.eclipse.ui.PlatformUI;
 public class ColorManager
 {
     public static final RGB GREY = new RGB(0xbe,0xbe,0xbe);
+    public static final RGB GREEN = new RGB(0,0xff,0);
+    public static final RGB BLUE = new RGB(0,0,0xff);
     public static final RGB RED = new RGB(0xff,0,0);
     public static final RGB MAGENTA = new RGB(0xff,0,0xff);
     public static final RGB ORANGE = new RGB(0xff,0xa5,0);

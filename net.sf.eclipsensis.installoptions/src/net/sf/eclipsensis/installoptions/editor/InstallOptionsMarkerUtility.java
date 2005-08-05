@@ -24,15 +24,21 @@ import org.eclipse.ui.ide.IDE;
 
 public class InstallOptionsMarkerUtility
 {
-    public static void updateMarkers(final IFile file, final INIFile iniFile)
+    public static Map[] updateMarkers(final IFile file, final INIFile iniFile)
     {
+        return updateMarkers(file, iniFile, false);
+    }
+    
+    public static Map[] updateMarkers(final IFile file, final INIFile iniFile, final boolean persistent)
+    {
+        final ArrayList list = new ArrayList();
         if(file != null) {
             WorkspaceModifyOperation op = new WorkspaceModifyOperation(file)
             {
                 protected void execute(IProgressMonitor monitor)throws CoreException
                 {
                     try {
-                        file.deleteMarkers(IInstallOptionsConstants.INSTALLOPTIONS_PROBLEM_MARKER_ID, false, IResource.DEPTH_ZERO);
+                        deleteMarkers(file);
                         if(iniFile != null) {
                             INIProblem[] problems = iniFile.getProblems();
                             for (int i = 0; i < problems.length; i++) {
@@ -46,6 +52,15 @@ public class InstallOptionsMarkerUtility
                                     marker.setAttribute(IMarker.LINE_NUMBER, problems[i].getLine());
                                 }
                                 marker.setAttribute(IDE.EDITOR_ID_ATTR,IInstallOptionsConstants.INSTALLOPTIONS_SOURCE_EDITOR_ID);
+                                list.add(marker.getAttributes());
+                            }
+                        }
+                        if(persistent) {
+                            try {
+                                file.setPersistentProperty(IInstallOptionsConstants.RESOURCEPROPERTY_BUILD_TIMESTAMP, Long.toString(System.currentTimeMillis()));
+                            }
+                            catch (CoreException e) {
+                                e.printStackTrace();
                             }
                         }
                     }
@@ -61,6 +76,7 @@ public class InstallOptionsMarkerUtility
                 e.printStackTrace();
             }
         }
+        return (Map[])list.toArray(new Map[list.size()]);
     }
 
     public static void updateMarkers(final IFile file, final Map[] attributes)
@@ -71,8 +87,7 @@ public class InstallOptionsMarkerUtility
                 protected void execute(IProgressMonitor monitor)throws CoreException
                 {
                     try {
-                        file.deleteMarkers(IInstallOptionsConstants.INSTALLOPTIONS_PROBLEM_MARKER_ID,
-                                false,IResource.DEPTH_ZERO);
+                        deleteMarkers(file);
                         if(!Common.isEmptyArray(attributes)) {
                             for (int i = 0; i < attributes.length; i++) {
                                 IMarker marker = file.createMarker(IInstallOptionsConstants.INSTALLOPTIONS_PROBLEM_MARKER_ID);
@@ -110,5 +125,10 @@ public class InstallOptionsMarkerUtility
             }
         }
         return (Map[])list.toArray(new Map[list.size()]);
+    }
+
+    public static void deleteMarkers(IFile file) throws CoreException
+    {
+        file.deleteMarkers(IInstallOptionsConstants.INSTALLOPTIONS_PROBLEM_MARKER_ID, false, IResource.DEPTH_ZERO);
     }
 }

@@ -1,0 +1,10 @@
+Revision History
+================
+
+0.5.0 (08/04/2005)
+    * Added support for JAR verification.
+
+0.3.0 (07/15/2005)
+    * First public release.
+    * Requires Eclipse 3.1 - not compatible with Eclipse 3.0
+    * Bundled into EclipseNSIS Utilities feature.

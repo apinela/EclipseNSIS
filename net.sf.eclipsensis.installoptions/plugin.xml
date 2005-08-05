@@ -98,9 +98,10 @@
    </extension>
    <extension
          id="InstallOptionsProblem"
-         name="%installoptions.error.annotation.name"
+         name="%installoptions.problem.marker.name"
          point="org.eclipse.core.resources.markers">
       <super type="org.eclipse.core.resources.problemmarker"/>
+	  <super type="org.eclipse.core.resources.textmarker"/>
       <persistent value="true" />
    </extension>
    <extension
@@ -110,6 +111,12 @@
             super="org.eclipse.ui.workbench.texteditor.error"
             markerType="net.sf.eclipsensis.installoptions.InstallOptionsProblem"
             markerSeverity="2">
+        </type>
+        <type
+            name="%installoptions.warning.annotation.name"
+            super="org.eclipse.ui.workbench.texteditor.warning"
+            markerType="net.sf.eclipsensis.installoptions.InstallOptionsProblem"
+            markerSeverity="1">
         </type>
    </extension>
    <extension
@@ -162,5 +169,22 @@
    <extension
          point="org.eclipse.help.contexts">
       <contexts file="contexts.xml"/>
+   </extension>
+   <extension
+         id="InstallOptionsBuilder"
+         name="%installoptions.builder.name"
+         point="org.eclipse.core.resources.builders">
+      <builder hasNature="true">
+         <run class="net.sf.eclipsensis.installoptions.builder.InstallOptionsBuilder"/>
+      </builder>
+   </extension>
+   <extension
+         id="InstallOptionsNature"
+         name="%installoptions.nature.name"
+         point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run class="net.sf.eclipsensis.installoptions.builder.InstallOptionsNature"/>
+      </runtime>
+      <builder id="net.sf.eclipsensis.installoptions.InstallOptionsBuilder"/>
    </extension>
 </plugin>

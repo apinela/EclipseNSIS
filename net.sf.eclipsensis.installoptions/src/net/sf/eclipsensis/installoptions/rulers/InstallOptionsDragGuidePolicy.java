@@ -11,10 +11,12 @@ package net.sf.eclipsensis.installoptions.rulers;
 
 import java.util.Iterator;
 
+import net.sf.eclipsensis.installoptions.edit.InstallOptionsEditDomain;
 import net.sf.eclipsensis.installoptions.edit.InstallOptionsWidgetEditPart;
 
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.geometry.Rectangle;
+import org.eclipse.gef.GraphicalViewer;
 import org.eclipse.gef.internal.ui.rulers.DragGuidePolicy;
 
 public class InstallOptionsDragGuidePolicy extends DragGuidePolicy
@@ -29,29 +31,34 @@ public class InstallOptionsDragGuidePolicy extends DragGuidePolicy
 
     protected boolean isMoveValid(int zoomedPosition)
     {
+        if(zoomedPosition < 0) {
+            return false;
+        }
+        GraphicalViewer viewer = (GraphicalViewer)getGuideEditPart().getViewer().getProperty(GraphicalViewer.class.toString());
+        if(viewer != null && ((InstallOptionsEditDomain)viewer.getEditDomain()).isReadOnly()) {
+            return false;
+        }
         if(super.isMoveValid(zoomedPosition)) {
-            if(zoomedPosition >= 0) {
-                Iterator i = getGuideEditPart().getRulerProvider().getAttachedEditParts(getHost().getModel(), 
-                        ((InstallOptionsRulerEditPart)getHost().getParent()).getDiagramViewer()).iterator();
-                
-                int delta = zoomedPosition - getGuideEditPart().getZoomedPosition();
-                while (i.hasNext()) {
-                    InstallOptionsWidgetEditPart part = (InstallOptionsWidgetEditPart)i.next();
-                    IFigure fig = part.getFigure();
-                    Rectangle bounds = fig.getBounds();
-                    if(getGuideEditPart().isHorizontal()) {
-                        if(bounds.y+delta < 0) {
-                            return false;
-                        }
-                    }
-                    else {
-                        if(bounds.x+delta < 0) {
-                            return false;
-                        }
+            Iterator i = getGuideEditPart().getRulerProvider().getAttachedEditParts(getHost().getModel(), 
+                    ((InstallOptionsRulerEditPart)getHost().getParent()).getDiagramViewer()).iterator();
+            
+            int delta = zoomedPosition - getGuideEditPart().getZoomedPosition();
+            while (i.hasNext()) {
+                InstallOptionsWidgetEditPart part = (InstallOptionsWidgetEditPart)i.next();
+                IFigure fig = part.getFigure();
+                Rectangle bounds = fig.getBounds();
+                if(getGuideEditPart().isHorizontal()) {
+                    if(bounds.y+delta < 0) {
+                        return false;
                     }
                 }
-                return true;
+                else {
+                    if(bounds.x+delta < 0) {
+                        return false;
+                    }
+                }
             }
+            return true;
         }
         return false;
     }

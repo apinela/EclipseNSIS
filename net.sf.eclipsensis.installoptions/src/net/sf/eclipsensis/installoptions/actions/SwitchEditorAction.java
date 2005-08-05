@@ -14,6 +14,7 @@ import net.sf.eclipsensis.installoptions.editor.IInstallOptionsEditor;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.Action;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.ui.*;
 import org.eclipse.ui.ide.IDE;
 
@@ -39,24 +40,29 @@ public class SwitchEditorAction extends Action
 
     public void run() {
         if(mEditor.canSwitch()) {
-            IWorkbenchPage page = mEditor.getSite().getPage();
-            IEditorInput input = mEditor.getEditorInput();
-            mEditor.prepareForSwitch();
-            page.closeEditor(mEditor,false);
-            try {
-                page.openEditor(input,mSwitchToEditorId);
-                if(input instanceof IFileEditorInput) {
+            BusyIndicator.showWhile(null,new Runnable(){
+                public void run()
+                {
+                    IWorkbenchPage page = mEditor.getSite().getPage();
+                    IEditorInput input = mEditor.getEditorInput();
+                    mEditor.prepareForSwitch();
+                    page.closeEditor(mEditor,false);
                     try {
-                        ((IFileEditorInput)input).getFile().setPersistentProperty(IDE.EDITOR_KEY,mSwitchToEditorId);
+                        page.openEditor(input,mSwitchToEditorId);
+                        if(input instanceof IFileEditorInput) {
+                            try {
+                                ((IFileEditorInput)input).getFile().setPersistentProperty(IDE.EDITOR_KEY,mSwitchToEditorId);
+                            }
+                            catch (CoreException e1) {
+                                e1.printStackTrace();
+                            }
+                        }
                     }
-                    catch (CoreException e1) {
-                        e1.printStackTrace();
+                    catch (PartInitException e) {
+                        e.printStackTrace();
                     }
                 }
-            }
-            catch (PartInitException e) {
-                e.printStackTrace();
-            }
+            });
         }
     }
 }

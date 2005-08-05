@@ -14,6 +14,7 @@ import java.util.*;
 
 import net.sf.eclipsensis.editor.text.NSISSyntaxStyle;
 import net.sf.eclipsensis.editor.text.NSISTextUtility;
+import net.sf.eclipsensis.installoptions.builder.InstallOptionsBuilder;
 import net.sf.eclipsensis.installoptions.util.TypeConverter;
 import net.sf.eclipsensis.util.*;
 
@@ -21,7 +22,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.registry.EditorRegistry;
@@ -35,6 +35,7 @@ public class InstallOptionsPlugin extends AbstractUIPlugin implements IInstallOp
     public static final String[] BUNDLE_NAMES = new String[]{RESOURCE_BUNDLE,MESSAGE_BUNDLE};
     private ImageManager mImageManager;
     private String mName = null;
+    private static boolean cCheckedEditorAssociation = false;
     
     /**
      * 
@@ -145,8 +146,8 @@ public class InstallOptionsPlugin extends AbstractUIPlugin implements IInstallOp
     {
         boolean changed = setSyntaxStyle(map,IInstallOptionsConstants.COMMENT_STYLE,new NSISSyntaxStyle(ColorManager.GREY,null,false,true,false,false));
         changed |= setSyntaxStyle(map,IInstallOptionsConstants.SECTION_STYLE,new NSISSyntaxStyle(ColorManager.TEAL,null,false,false,false,false));
-        changed |= setSyntaxStyle(map,IInstallOptionsConstants.KEY_STYLE,new NSISSyntaxStyle(Display.getDefault().getSystemColor(SWT.COLOR_BLUE).getRGB(),null,false,false,false,false));
-        changed |= setSyntaxStyle(map,IInstallOptionsConstants.KEY_VALUE_DELIM_STYLE,new NSISSyntaxStyle(Display.getDefault().getSystemColor(SWT.COLOR_RED).getRGB(),null,false,false,false,false));
+        changed |= setSyntaxStyle(map,IInstallOptionsConstants.KEY_STYLE,new NSISSyntaxStyle(ColorManager.BLUE,null,false,false,false,false));
+        changed |= setSyntaxStyle(map,IInstallOptionsConstants.KEY_VALUE_DELIM_STYLE,new NSISSyntaxStyle(ColorManager.RED,null,false,false,false,false));
         changed |= setSyntaxStyle(map,IInstallOptionsConstants.NUMBER_STYLE,new NSISSyntaxStyle(ColorManager.CHOCOLATE,null,false,false,false,false));
         return changed;
     }
@@ -174,7 +175,12 @@ public class InstallOptionsPlugin extends AbstractUIPlugin implements IInstallOp
         mName = (String)getBundle().getHeaders().get("Bundle-Name"); //$NON-NLS-1$
         mImageManager = new ImageManager(this);
         initializePreferences();
-        checkEditorAssociation();
+        new Thread(new Runnable(){
+            public void run()
+            {
+                InstallOptionsBuilder.buildWorkspace(null);
+            }
+        }, InstallOptionsPlugin.getResourceString("workspace.build.thread.name")).start(); //$NON-NLS-1$
     }
 
     public void stop(BundleContext context) throws Exception
@@ -183,30 +189,37 @@ public class InstallOptionsPlugin extends AbstractUIPlugin implements IInstallOp
         super.stop(context);
     }
     
-    private void checkEditorAssociation()
+    public static void checkEditorAssociation()
     {
-        final boolean toggleState = getPreferenceStore().getBoolean(PREFERENCE_CHECK_EDITOR_ASSOCIATION);
-        if(toggleState) {
-            final IEditorRegistry editorRegistry = PlatformUI.getWorkbench().getEditorRegistry();
-            for(int i=0; i<INI_EXTENSIONS.length; i++) {
-                IEditorDescriptor descriptor = editorRegistry.getDefaultEditor("*."+INI_EXTENSIONS[i]); //$NON-NLS-1$
-                if(descriptor == null || (!descriptor.getId().equals(INSTALLOPTIONS_DESIGN_EDITOR_ID) && !descriptor.getId().equals(INSTALLOPTIONS_SOURCE_EDITOR_ID))) {
-                    Display.getDefault().asyncExec(new Runnable(){
-                        public void run()
-                        {
-                            MessageDialogWithToggle md = MessageDialogWithToggle.openYesNoCancelQuestion(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
-                                    getName(),getResourceString("check.default.editor.question"), //$NON-NLS-1$
-                                    getResourceString("check.default.editor.toggle"),!toggleState,getPreferenceStore(),PREFERENCE_CHECK_EDITOR_ASSOCIATION); //$NON-NLS-1$
-                            if(md.getReturnCode() == IDialogConstants.YES_ID) {
-                                for(int i=0; i<INI_EXTENSIONS.length; i++) {
-                                    editorRegistry.setDefaultEditor("*."+INI_EXTENSIONS[i],INSTALLOPTIONS_DESIGN_EDITOR_ID); //$NON-NLS-1$
-                                }
+        if(!cCheckedEditorAssociation) {
+            synchronized (InstallOptionsPlugin.class) {
+                if(!cCheckedEditorAssociation) {
+                    cCheckedEditorAssociation = true;
+                    final boolean toggleState = getDefault().getPreferenceStore().getBoolean(PREFERENCE_CHECK_EDITOR_ASSOCIATION);
+                    if(toggleState) {
+                        final IEditorRegistry editorRegistry = PlatformUI.getWorkbench().getEditorRegistry();
+                        for(int i=0; i<INI_EXTENSIONS.length; i++) {
+                            IEditorDescriptor descriptor = editorRegistry.getDefaultEditor("*."+INI_EXTENSIONS[i]); //$NON-NLS-1$
+                            if(descriptor == null || (!descriptor.getId().equals(INSTALLOPTIONS_DESIGN_EDITOR_ID) && !descriptor.getId().equals(INSTALLOPTIONS_SOURCE_EDITOR_ID))) {
+                                Display.getDefault().asyncExec(new Runnable(){
+                                    public void run()
+                                    {
+                                        MessageDialogWithToggle md = MessageDialogWithToggle.openYesNoCancelQuestion(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
+                                                getDefault().getName(),getResourceString("check.default.editor.question"), //$NON-NLS-1$
+                                                getResourceString("check.default.editor.toggle"),!toggleState,getDefault().getPreferenceStore(),PREFERENCE_CHECK_EDITOR_ASSOCIATION); //$NON-NLS-1$
+                                        if(md.getReturnCode() == IDialogConstants.YES_ID) {
+                                            for(int i=0; i<INI_EXTENSIONS.length; i++) {
+                                                editorRegistry.setDefaultEditor("*."+INI_EXTENSIONS[i],INSTALLOPTIONS_DESIGN_EDITOR_ID); //$NON-NLS-1$
+                                            }
+                                            //Cast to inner class because otherwise it cannot be saved.
+                                            ((EditorRegistry)editorRegistry).saveAssociations();
+                                        }
+                                    }
+                                });
+                                break;
                             }
-                            //Cast to inner class because otherwise it cannot be saved.
-                            ((EditorRegistry)editorRegistry).saveAssociations();
                         }
-                    });
-                    break;
+                    }
                 }
             }
         }

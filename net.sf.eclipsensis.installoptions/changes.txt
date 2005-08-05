@@ -1,0 +1,21 @@
+Revision History
+================
+
+0.9.2 (08/05/2005)
+    * Upgraded to Eclipse GEF 3.1 - no longer compatible with GEF 3.0.
+    * Added dynamic support for change in MakeNSIS version in EclipseNSIS preferences.
+    * Added startup check for default INI file association with InstallOptions Editor.
+    * Added project nature and project builder for handling automatic detection of errors and warnings
+      upon resource changes.
+    * Guides and controls glued to guides are now saved as INI comments, and can be restored when 
+      Design editor is opened.
+    * Minor bug fixes.
+
+0.9.0 (07/15/2005)
+    * First public release of EclipseNSIS InstallOptions Editor feature.
+    * Requires Eclipse 3.1 - not compatible with Eclipse 3.0.
+    * Requires Eclipse GEF 3.0.
+    * Design editor with point & click editing and outline view.
+    * Source editor with syntax highlighting, code outlining & folding and dynamic error checking.
+    * Integrated help.
+    * Script wizard.
