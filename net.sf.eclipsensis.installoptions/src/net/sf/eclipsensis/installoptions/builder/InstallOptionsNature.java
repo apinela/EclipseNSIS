@@ -1,8 +1,5 @@
 package net.sf.eclipsensis.installoptions.builder;
 
-import java.util.Collection;
-import java.util.HashSet;
-
 import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
 import net.sf.eclipsensis.util.Common;
 
@@ -12,28 +9,6 @@ import org.eclipse.core.runtime.CoreException;
 public class InstallOptionsNature implements IProjectNature 
 {
 	private IProject mProject;
-    private Collection mEditedFiles = new HashSet();
-    
-    public void beginEditing(IFile file)
-    {
-        mEditedFiles.add(file);
-        try {
-            file.setPersistentProperty(IInstallOptionsConstants.RESOURCEPROPERTY_BUILD_TIMESTAMP,"-1"); //$NON-NLS-1$
-        }
-        catch (CoreException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void stopEditing(IFile file)
-    {
-        mEditedFiles.remove(file);
-    }
-
-	protected Collection getEditedFiles()
-    {
-        return mEditedFiles;
-    }
 
     /*
 	 * (non-Javadoc)

@@ -9,8 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.editor.codeassist;
 
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
@@ -27,7 +26,7 @@ import org.eclipse.ui.texteditor.MarkerAnnotation;
  */
 public class NSISAnnotationHover implements IAnnotationHover, INSISConstants, IAnnotationHoverExtension
 {
-    private String[] mAnnotationTypes;
+    private Set mAnnotationTypes;
     
     private IInformationControlCreator mHoverControlCreator = new IInformationControlCreator(){
         public IInformationControl createInformationControl(Shell parent)
@@ -39,7 +38,7 @@ public class NSISAnnotationHover implements IAnnotationHover, INSISConstants, IA
     public NSISAnnotationHover(String[] annotationTypes)
     {
         super();
-        mAnnotationTypes = annotationTypes;
+        mAnnotationTypes = new HashSet(Arrays.asList(annotationTypes));
     }
     
 	/* (non-Javadoc)
@@ -58,17 +57,18 @@ public class NSISAnnotationHover implements IAnnotationHover, INSISConstants, IA
                     Annotation a= (Annotation) e.next();
                     Position p= model.getPosition(a);
                     if (p != null && p.overlapsWith(info.getOffset(), info.getLength())) {
+                        String type;
                         if(a instanceof MarkerAnnotation) {
                             IMarker marker = ((MarkerAnnotation)a).getMarker();
-                            String type = marker.getType();
-                            for (int i = 0; i < mAnnotationTypes.length; i++) {
-                                if(type.equals(mAnnotationTypes[i])) {
-                                    String msg= a.getText();
-                                    if (!Common.isEmpty(msg)) {
-                                        messages.add(msg);
-                                    }
-                                    break;
-                                }
+                            type = marker.getType();
+                        }
+                        else {
+                            type = a.getType();
+                        }
+                        if(mAnnotationTypes.contains(type)) {
+                            String msg= a.getText();
+                            if (!Common.isEmpty(msg)) {
+                                messages.add(msg);
                             }
                         }
                     }

@@ -10,7 +10,7 @@
 package net.sf.eclipsensis.installoptions.editor;
 
 import java.util.HashMap;
-import java.util.Map;
+import java.util.Iterator;
 import java.util.regex.Matcher;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
@@ -22,7 +22,7 @@ import net.sf.eclipsensis.installoptions.ini.*;
 import net.sf.eclipsensis.installoptions.model.*;
 import net.sf.eclipsensis.util.Common;
 
-import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.IAction;
@@ -45,17 +45,22 @@ import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.editors.text.TextEditor;
+import org.eclipse.ui.ide.IGotoMarker;
 import org.eclipse.ui.texteditor.*;
 import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
 public class InstallOptionsSourceEditor extends TextEditor implements IInstallOptionsEditor, IINIFileListener
 {
+    private static final String MARKER_CATEGORY = "__installoptions_marker"; //$NON-NLS-1$
+    
+    private IPositionUpdater mMarkerPositionUpdater = new DefaultPositionUpdater(MARKER_CATEGORY);
+    private ResourceTracker mResourceListener = new ResourceTracker();
+    private HashMap mMarkerPositions = new HashMap();
     private boolean mSwitching = false;
     private INIFile mINIFile = new INIFile();
     private SelectionSynchronizer mSelectionSynchronizer = new SelectionSynchronizer();
     private OutlinePage mOutlinePage = null;
-    private Map[] mCachedMarkers;
     private ProjectionAnnotationModel mAnnotationModel;
     private Annotation[] mAnnotations = null;
     private String mJobFamily = getClass().getName()+System.currentTimeMillis();
@@ -68,6 +73,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
             }
         }
     };
+    private GotoMarker mGotoMarker = null;
     
     public InstallOptionsSourceEditor()
     {
@@ -91,11 +97,6 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
         return valid;
     }
     
-    private boolean isSwitching()
-    {
-        return mSwitching;
-    }
-    
     public void prepareForSwitch()
     {
         if(!mSwitching) {
@@ -111,11 +112,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
     
     public void iniFileChanged(INIFile iniFile, int event)
     {
-        IFileEditorInput input = (IFileEditorInput)getEditorInput();
         iniFile.validate();
-        if(input != null && (event == INIFile.INIFILE_CONNECTED || event == INIFile.INIFILE_MODIFIED)) {
-            InstallOptionsMarkerUtility.updateMarkers(input.getFile(), iniFile);
-        }
         updateAnnotations();
         if(mOutlinePage != null) {
             mOutlinePage.update();
@@ -165,27 +162,19 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
         InstallOptionsModel.INSTANCE.removeListener(mModelListener);
         cancelJobs(mJobFamily);
         InstallOptionsEditorInput input = (InstallOptionsEditorInput)getEditorInput();
-        if(isSwitching()) {
-             try {
-                ((IFileEditorInput)input).getFile().setSessionProperty(IInstallOptionsConstants.FILEPROPERTY_PROBLEM_MARKERS, mCachedMarkers);
-            }
-            catch (CoreException e) {
-                e.printStackTrace();
-            }
-        }
-        else {
-            IFile file = input.getFile();
-            if(isDirty()) {
-                InstallOptionsMarkerUtility.updateMarkers(file,mCachedMarkers);
-            }
-            try {
-                ((InstallOptionsNature)file.getProject().getNature(INSTALLOPTIONS_NATURE_ID)).stopEditing(file);
-            }
-            catch (CoreException e) {
-                e.printStackTrace();
-            }
-        }
+        IFile file = input.getFile();
+        file.getWorkspace().removeResourceChangeListener(mResourceListener);
+        mMarkerPositions.clear();
         IDocument document = getDocumentProvider().getDocument(input);
+        document.removePositionUpdater(mMarkerPositionUpdater);
+        if(document.containsPositionCategory(MARKER_CATEGORY)) {
+            try {
+                document.removePositionCategory(MARKER_CATEGORY);
+            }
+            catch (BadPositionCategoryException e) {
+                e.printStackTrace();
+            }
+        }
         mINIFile.disconnect(document);
         mINIFile.removeListener(this);
         ((TextViewer)getSourceViewer()).removePostSelectionChangedListener(mSelectionSynchronizer);
@@ -197,33 +186,36 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
     {
         InstallOptionsEditorInput editorInput = (InstallOptionsEditorInput)getEditorInput();
         if(editorInput != null) {
-            if(isDirty()) {
-                InstallOptionsMarkerUtility.updateMarkers(editorInput.getFile(),mCachedMarkers);
-            }
+            IFile file = editorInput.getFile();
+            file.getWorkspace().removeResourceChangeListener(mResourceListener);
+            mMarkerPositions.clear();
             IDocumentProvider provider = getDocumentProvider();
             if(provider != null) {
                 IDocument document = provider.getDocument(editorInput);
                 if(document != null) {
+                    document.removePositionUpdater(mMarkerPositionUpdater);
+                    if(document.containsPositionCategory(MARKER_CATEGORY)) {
+                        try {
+                            document.removePositionCategory(MARKER_CATEGORY);
+                        }
+                        catch (BadPositionCategoryException e) {
+                            e.printStackTrace();
+                        }
+                    }
                     provider.disconnect(editorInput);
                     mINIFile.disconnect(document);
                 }
             }
-            IFile file = editorInput.getFile();
-            ((InstallOptionsNature)file.getProject().getNature(INSTALLOPTIONS_NATURE_ID)).stopEditing(file);
         }
         IFile file = ((IFileEditorInput)input).getFile();
-        mCachedMarkers = null;
         if(input != null) {
             if(!(input instanceof InstallOptionsEditorInput)) {
                 InstallOptionsNature.addNature(file.getProject());
-                ((InstallOptionsNature)file.getProject().getNature(INSTALLOPTIONS_NATURE_ID)).beginEditing(file);
                 input = new InstallOptionsEditorInput((IFileEditorInput)input);
                 setDocumentProvider(((InstallOptionsEditorInput)input).getDocumentProvider());
                 super.doSetInput(input);
             }
             else {
-                mCachedMarkers = (Map[])file.getSessionProperty(IInstallOptionsConstants.FILEPROPERTY_PROBLEM_MARKERS);
-                file.setSessionProperty(IInstallOptionsConstants.FILEPROPERTY_PROBLEM_MARKERS,null);
                 setDocumentProvider(((InstallOptionsEditorInput)input).getDocumentProvider());
                 super.doSetInput(input);
                 ((InstallOptionsEditorInput)input).completedSwitch();
@@ -231,26 +223,69 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
         }
         input = getEditorInput();
         if(input != null) {
-            IDocument document = getDocumentProvider().getDocument(input);
-            mINIFile.connect(document);
             file = ((IFileEditorInput)input).getFile();
-            if(mCachedMarkers == null) {
-                mCachedMarkers = InstallOptionsMarkerUtility.updateMarkers(file, mINIFile, true);
+            file.getWorkspace().addResourceChangeListener(mResourceListener);
+            IDocument document = getDocumentProvider().getDocument(input);
+            document.addPositionCategory(MARKER_CATEGORY);
+            document.addPositionUpdater(mMarkerPositionUpdater);
+            mINIFile.connect(document);
+            for(Iterator iter=InstallOptionsMarkerUtility.getMarkers(file).iterator(); iter.hasNext(); ) {
+                IMarker marker = (IMarker)iter.next();
+                addMarkerPosition(document, marker);
             }
         }
     }
-    
-    protected void editorSaved()
+
+    private void removeMarkerPosition(IDocument document, IMarker marker)
     {
-        super.editorSaved();
-        try {
-            IFile file = ((IFileEditorInput)getEditorInput()).getFile();
-            file.setPersistentProperty(RESOURCEPROPERTY_BUILD_TIMESTAMP, Long.toString(System.currentTimeMillis()));
+        if(marker != null) {
+            Position p = (Position)mMarkerPositions.remove(marker);
+            if(document != null) {
+                try {
+                    document.removePosition(MARKER_CATEGORY, p);
+                }
+                catch (BadPositionCategoryException e) {
+                    e.printStackTrace();
+                }
+            }
+        }        
+    }
+
+    private void addMarkerPosition(IDocument document, IMarker marker)
+    {
+        if(document != null && marker != null) {
+            int start = InstallOptionsMarkerUtility.getMarkerIntAttribute(marker,IMarker.CHAR_START);
+            int end = InstallOptionsMarkerUtility.getMarkerIntAttribute(marker,IMarker.CHAR_END);
+            Position p;
+            if(start < 0 || end < 0) {
+                int line = InstallOptionsMarkerUtility.getMarkerIntAttribute(marker,IMarker.LINE_NUMBER);
+                if(line > 0) {
+                    IRegion region;
+                    try {
+                        region = document.getLineInformation(line-1);
+                        p = new Position(region.getOffset(),region.getLength());
+                    }
+                    catch (BadLocationException e) {
+                        e.printStackTrace();
+                        return;
+                    }
+                }
+                else {
+                    return;
+                }
+            }
+            else {
+                p = new Position(start,end-start+1);
+            }
+            try {
+                document.addPosition(MARKER_CATEGORY, p);
+                mMarkerPositions.put(marker,p);
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+                return;
+            }
         }
-        catch (CoreException e) {
-            e.printStackTrace();
-        }
-        mCachedMarkers = InstallOptionsMarkerUtility.getMarkerAttributes(((IFileEditorInput)getEditorInput()).getFile());
     }
     
     protected void initializeEditor()
@@ -261,7 +296,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
     
     protected ISourceViewer createSourceViewer(Composite parent, IVerticalRuler ruler, int styles)
     {
-        fAnnotationAccess= createAnnotationAccess();
+//        fAnnotationAccess= createAnnotationAccess();
         fOverviewRuler= createOverviewRuler(getSharedColors());
 
         ISourceViewer viewer= new InstallOptionsSourceViewer(parent, ruler, getOverviewRuler(), isOverviewRulerVisible(), styles);
@@ -307,11 +342,46 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
                         }
                         mAnnotationModel.modifyAnnotations(mAnnotations,annotations,null);
                         mAnnotations = (Annotation[])annotations.keySet().toArray(new Annotation[annotations.size()]);
+                        
+                        ISourceViewer viewer = getSourceViewer();
+                        if(viewer != null) {
+                            AnnotationModel model = (AnnotationModel)viewer.getAnnotationModel();
+                            if(model != null) {
+                                model.removeAllAnnotations();
+                                if(mINIFile.hasErrors() || mINIFile.hasWarnings()) {
+                                    INIProblem[] problems = mINIFile.getProblems();
+                                    IDocument doc = getDocumentProvider().getDocument(getEditorInput());
+                                    for (int i = 0; i < problems.length; i++) {
+                                        INIProblem problem = problems[i];
+                                        if(problems[i].getLine() > 0) {
+                                            try {
+                                                String name;
+                                                if(problem.getType() == INIProblem.TYPE_ERROR) {
+                                                    name = IInstallOptionsConstants.INSTALLOPTIONS_ANNOTATION_ERROR_NAME;
+                                                }
+                                                else if(problem.getType() == INIProblem.TYPE_WARNING) {
+                                                    name = IInstallOptionsConstants.INSTALLOPTIONS_ANNOTATION_WARNING_NAME;
+                                                }
+                                                else {
+                                                    continue;
+                                                }
+                                                final IRegion region = doc.getLineInformation(problem.getLine()-1);
+                                                model.addAnnotation(new Annotation(name,false,problem.getMessage()),
+                                                        new Position(region.getOffset(),region.getLength()));
+                                            }
+                                            catch (BadLocationException e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
                         return Status.OK_STATUS;
                     }
                 });
     }
-
+    
     public Object getAdapter(Class type)
     {
         if (type == IContentOutlinePage.class) {
@@ -319,6 +389,12 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
                 mOutlinePage = new OutlinePage();
             }
             return mOutlinePage;
+        }
+        else if(type == IGotoMarker.class) {
+            if(mGotoMarker == null) {
+                mGotoMarker = new GotoMarker(super.getAdapter(type));
+            }
+            return mGotoMarker;
         }
         return super.getAdapter(type);
     }
@@ -621,6 +697,32 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
         }
     }
     
+    private class GotoMarker implements IGotoMarker
+    {
+        private IGotoMarker mDelegate;
+        
+        public GotoMarker(Object o)
+        {
+            if(o instanceof IGotoMarker) {
+                mDelegate = (IGotoMarker)o;
+            }
+        }
+
+        public void gotoMarker(IMarker marker)
+        {
+            Position p = (Position)mMarkerPositions.get(marker);
+            if(p != null) {
+                if(!p.isDeleted()) {
+                    selectAndReveal(p.getOffset(),p.getLength());
+                }
+                return;
+            }
+            if(mDelegate != null) {
+                mDelegate.gotoMarker(marker);
+            }
+        }
+    }
+    
     private class OutlineLabelProvider extends LabelProvider
     {
         private ImageData mErrorImageData = InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("error.decoration.icon")).getImageData(); //$NON-NLS-1$
@@ -704,6 +806,62 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
             return image2;
         }
     }   
+    private class ResourceTracker implements IResourceChangeListener, IResourceDeltaVisitor
+    {
+        public void resourceChanged(IResourceChangeEvent event)
+        {
+            IResourceDelta delta = event.getDelta();
+            try {
+                if (delta != null) {
+                    delta.accept(this);
+                }
+            }
+            catch (CoreException exception) {
+            }
+        }
+
+        public boolean visit(IResourceDelta delta)
+        {
+            if (delta == null
+                    || !delta.getResource().equals(
+                            ((IFileEditorInput)getEditorInput()).getFile())) {
+                return true;
+            }
+
+            IDocument doc;
+            try {
+                doc = getDocumentProvider().getDocument(getEditorInput());
+            }
+            catch(Exception ex) {
+                ex.printStackTrace();
+                doc = null;
+            }
+            if (delta.getKind() == IResourceDelta.REMOVED) {
+                mMarkerPositions.clear();
+            }
+            else if (delta.getKind() == IResourceDelta.CHANGED) {
+                IMarkerDelta[] markerDeltas = delta.getMarkerDeltas();
+                if(!Common.isEmptyArray(markerDeltas)) {
+                    for (int i = 0; i < markerDeltas.length; i++) {
+                        IMarker marker = markerDeltas[i].getMarker();
+                        switch(markerDeltas[i].getKind()) {
+                            case IResourceDelta.REMOVED:
+                                removeMarkerPosition(doc, marker);
+                                break;
+                            case IResourceDelta.CHANGED:
+                                removeMarkerPosition(doc, marker);
+                                addMarkerPosition(doc, marker);
+                                break;
+                            case IResourceDelta.ADDED:
+                                addMarkerPosition(doc, marker);
+                                break;
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+    }
     
     private class SelectionSynchronizer implements ISelectionChangedListener
     {

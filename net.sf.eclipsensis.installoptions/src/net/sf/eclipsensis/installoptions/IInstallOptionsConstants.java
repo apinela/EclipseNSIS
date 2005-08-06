@@ -34,6 +34,8 @@ public interface IInstallOptionsConstants
     public static final String EDITING_INSTALLOPTIONS_DESIGN_CONTEXT_ID = InstallOptionsPlugin.getBundleResourceString("%editing.installoptions.design.id"); //$NON-NLS-1$
     
     public static final String INSTALLOPTIONS_PROBLEM_MARKER_ID = InstallOptionsPlugin.getBundleResourceString("%installoptions.qualified.problem.marker.id"); //$NON-NLS-1$
+    public static final String INSTALLOPTIONS_ANNOTATION_ERROR_NAME = InstallOptionsPlugin.getBundleResourceString("%installoptions.error.annotation.name"); //$NON-NLS-1$
+    public static final String INSTALLOPTIONS_ANNOTATION_WARNING_NAME = InstallOptionsPlugin.getBundleResourceString("%installoptions.warning.annotation.name"); //$NON-NLS-1$
     
     public static final String INSTALLOPTIONS_NATURE_ID = InstallOptionsPlugin.getBundleResourceString("%installoptions.qualified.nature.id"); //$NON-NLS-1$
     public static final String INSTALLOPTIONS_BUILDER_ID = InstallOptionsPlugin.getBundleResourceString("%installoptions.qualified.builder.id"); //$NON-NLS-1$
@@ -89,7 +91,6 @@ public interface IInstallOptionsConstants
     public static final QualifiedName FILEPROPERTY_GRID_ORIGIN = new QualifiedName(QUALIFIED_NAME_PREFIX,PREFERENCE_GRID_ORIGIN);
     public static final QualifiedName FILEPROPERTY_GRID_STYLE = new QualifiedName(QUALIFIED_NAME_PREFIX,PREFERENCE_GRID_STYLE);
     public static final QualifiedName FILEPROPERTY_DIALOG_SIZE = new QualifiedName(QUALIFIED_NAME_PREFIX,"DialogSize"); //$NON-NLS-1$
-    public static final QualifiedName FILEPROPERTY_PROBLEM_MARKERS = new QualifiedName(QUALIFIED_NAME_PREFIX,"ProblemMarkers"); //$NON-NLS-1$
     public static final QualifiedName RESOURCEPROPERTY_BUILD_TIMESTAMP = new QualifiedName(QUALIFIED_NAME_PREFIX,"BuildTimestamp"); //$NON-NLS-1$
     public static final QualifiedName PROJECTPROPERTY_NSIS_VERSION = new QualifiedName(QUALIFIED_NAME_PREFIX,"NSISVersion"); //$NON-NLS-1$
     

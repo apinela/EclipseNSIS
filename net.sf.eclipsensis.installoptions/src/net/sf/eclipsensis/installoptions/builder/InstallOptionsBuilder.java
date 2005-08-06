@@ -5,8 +5,8 @@ import java.util.Set;
 
 import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
-import net.sf.eclipsensis.installoptions.editor.InstallOptionsMarkerUtility;
 import net.sf.eclipsensis.installoptions.ini.INIFile;
+import net.sf.eclipsensis.installoptions.ini.INIProblem;
 import net.sf.eclipsensis.installoptions.model.IModelListener;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
 import net.sf.eclipsensis.settings.NSISPreferences;
@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.editors.text.FileDocumentProvider;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.FileEditorInput;
@@ -27,7 +28,6 @@ public class InstallOptionsBuilder extends IncrementalProjectBuilder implements 
 {
     private static Set cExtensionsSet;
 
-    private InstallOptionsNature mNature;
     private IDocumentProvider mDocumentProvider = new FileDocumentProvider();
     private INIFile mINIFile = new INIFile();
     private long mFullBuildTimestamp;
@@ -49,12 +49,6 @@ public class InstallOptionsBuilder extends IncrementalProjectBuilder implements 
     protected void startupOnInitialize()
     {
         super.startupOnInitialize();
-        try {
-            mNature = (InstallOptionsNature)getProject().getNature(INSTALLOPTIONS_NATURE_ID);
-        }
-        catch (CoreException e1) {
-            e1.printStackTrace();
-        }
         
         String nsisVersion;
         
@@ -180,36 +174,34 @@ public class InstallOptionsBuilder extends IncrementalProjectBuilder implements 
     {
 		if (resource instanceof IFile && cExtensionsSet.contains(getExtension(resource.getName()))) {
 			IFile file = (IFile) resource;
-            if(mNature == null || !mNature.getEditedFiles().contains(file)) {
-                try {
-                    String editorId = file.getPersistentProperty(IDE.EDITOR_KEY);
-                    if(editorId != null && (INSTALLOPTIONS_DESIGN_EDITOR_ID.equals(editorId) ||
-                                            INSTALLOPTIONS_SOURCE_EDITOR_ID.equals(editorId))) {
-                        long fileTimestamp = file.getLocalTimeStamp();
-                        long buildTimestamp;
-                        try {
-                            buildTimestamp = Long.parseLong(file.getPersistentProperty(RESOURCEPROPERTY_BUILD_TIMESTAMP));
-                        }
-                        catch(Exception ex) {
-                            buildTimestamp = -1;
-                        }
-                        if(buildTimestamp < mFullBuildTimestamp || buildTimestamp < fileTimestamp) {
-                            IFileEditorInput input = new FileEditorInput(file);
-                            mDocumentProvider.connect(input);
-                            final IDocument document = mDocumentProvider.getDocument(input);
-                            mINIFile.connect(document);
-                            InstallOptionsMarkerUtility.updateMarkers(file, mINIFile, true);
-                            mINIFile.disconnect(document);
-                            mDocumentProvider.disconnect(input);
-                        }
+            try {
+                String editorId = file.getPersistentProperty(IDE.EDITOR_KEY);
+                if(editorId != null && (INSTALLOPTIONS_DESIGN_EDITOR_ID.equals(editorId) ||
+                                        INSTALLOPTIONS_SOURCE_EDITOR_ID.equals(editorId))) {
+                    long fileTimestamp = file.getLocalTimeStamp();
+                    long buildTimestamp;
+                    try {
+                        buildTimestamp = Long.parseLong(file.getPersistentProperty(RESOURCEPROPERTY_BUILD_TIMESTAMP));
                     }
-                    else {
-                        InstallOptionsMarkerUtility.deleteMarkers(file);
+                    catch(Exception ex) {
+                        buildTimestamp = -1;
+                    }
+                    if(buildTimestamp < mFullBuildTimestamp || buildTimestamp < fileTimestamp) {
+                        IFileEditorInput input = new FileEditorInput(file);
+                        mDocumentProvider.connect(input);
+                        final IDocument document = mDocumentProvider.getDocument(input);
+                        mINIFile.connect(document);
+                        updateMarkers(file, mINIFile);
+                        mINIFile.disconnect(document);
+                        mDocumentProvider.disconnect(input);
                     }
                 }
-                catch (CoreException e) {
-                    e.printStackTrace();
+                else {
+                    deleteMarkers(file);
                 }
+            }
+            catch (CoreException e) {
+                e.printStackTrace();
             }
 		}
 	}
@@ -250,6 +242,56 @@ public class InstallOptionsBuilder extends IncrementalProjectBuilder implements 
             }
         });
 	}
+
+    private void updateMarkers(final IFile file, final INIFile iniFile)
+    {
+        if(file != null) {
+            WorkspaceModifyOperation op = new WorkspaceModifyOperation(file)
+            {
+                protected void execute(IProgressMonitor monitor)throws CoreException
+                {
+                    try {
+                        deleteMarkers(file);
+                        if(iniFile != null) {
+                            INIProblem[] problems = iniFile.getProblems();
+                            for (int i = 0; i < problems.length; i++) {
+                                IMarker marker = file.createMarker(IInstallOptionsConstants.INSTALLOPTIONS_PROBLEM_MARKER_ID);
+                                marker.setAttribute(IMarker.SEVERITY, 
+                                        problems[i].getType()==INIProblem.TYPE_WARNING?
+                                                IMarker.SEVERITY_WARNING:
+                                                IMarker.SEVERITY_ERROR);
+                                marker.setAttribute(IMarker.MESSAGE, problems[i].getMessage());
+                                if(problems[i].getLine() > 0) {
+                                    marker.setAttribute(IMarker.LINE_NUMBER, problems[i].getLine());
+                                }
+                                marker.setAttribute(IDE.EDITOR_ID_ATTR,IInstallOptionsConstants.INSTALLOPTIONS_SOURCE_EDITOR_ID);
+                            }
+                        }
+                        try {
+                            file.setPersistentProperty(IInstallOptionsConstants.RESOURCEPROPERTY_BUILD_TIMESTAMP, Long.toString(System.currentTimeMillis()));
+                        }
+                        catch (CoreException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    finally {
+                        monitor.done();
+                    }
+                }
+            };
+            try {
+                op.run(null);
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void deleteMarkers(IFile file) throws CoreException
+    {
+        file.deleteMarkers(IInstallOptionsConstants.INSTALLOPTIONS_PROBLEM_MARKER_ID, false, IResource.DEPTH_ZERO);
+    }
 
     public static void buildProject(final IProject project, final int kind, final Map args)
     {

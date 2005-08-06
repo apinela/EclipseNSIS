@@ -101,23 +101,21 @@
          name="%installoptions.problem.marker.name"
          point="org.eclipse.core.resources.markers">
       <super type="org.eclipse.core.resources.problemmarker"/>
-	  <super type="org.eclipse.core.resources.textmarker"/>
+     <super type="org.eclipse.core.resources.textmarker"/>
       <persistent value="true" />
    </extension>
    <extension
-        point="org.eclipse.ui.editors.annotationTypes">
-        <type
-            name="%installoptions.error.annotation.name"
-            super="org.eclipse.ui.workbench.texteditor.error"
-            markerType="net.sf.eclipsensis.installoptions.InstallOptionsProblem"
-            markerSeverity="2">
-        </type>
-        <type
-            name="%installoptions.warning.annotation.name"
-            super="org.eclipse.ui.workbench.texteditor.warning"
-            markerType="net.sf.eclipsensis.installoptions.InstallOptionsProblem"
-            markerSeverity="1">
-        </type>
+       point="org.eclipse.ui.editors.annotationTypes">
+       <type
+           name="net.sf.eclipsensis.installoptions.InstallOptionsError"
+           super="org.eclipse.ui.workbench.texteditor.error"
+           markerSeverity="2">
+       </type>
+       <type
+           name="net.sf.eclipsensis.installoptions.InstallOptionsWarning"
+           super="org.eclipse.ui.workbench.texteditor.warning"
+           markerSeverity="1">
+       </type>
    </extension>
    <extension
          point="org.eclipse.ui.commands">
@@ -186,5 +184,10 @@
          <run class="net.sf.eclipsensis.installoptions.builder.InstallOptionsNature"/>
       </runtime>
       <builder id="net.sf.eclipsensis.installoptions.InstallOptionsBuilder"/>
+   </extension>
+   <extension point="org.eclipse.core.filebuffers.annotationModelCreation">
+       <factory 
+         extensions="%ini.extensions"
+         class="net.sf.eclipsensis.installoptions.editor.annotation.InstallOptionsAnnotationModelFactory"/>
    </extension>
 </plugin>
