@@ -19,6 +19,8 @@ import java.util.List;
 
 import net.sf.eclipsensis.dialogs.MinimalProgressMonitorDialog;
 import net.sf.eclipsensis.editor.template.NSISTemplateContextType;
+import net.sf.eclipsensis.job.IJobStatusRunnable;
+import net.sf.eclipsensis.job.JobScheduler;
 import net.sf.eclipsensis.makensis.MakeNSISRunner;
 import net.sf.eclipsensis.settings.INSISPreferenceConstants;
 import net.sf.eclipsensis.settings.NSISPreferences;
@@ -34,7 +36,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.editors.text.templates.ContributionContextTypeRegistry;
 import org.eclipse.ui.editors.text.templates.ContributionTemplateStore;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.eclipse.ui.progress.UIJob;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -62,6 +63,7 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
     private String mJavaVendor;
     private Version mJavaVersion;
     private Stack mServices = new Stack();
+    private JobScheduler mJobScheduler = new JobScheduler();
 
 	/**
 	 * The constructor.
@@ -118,13 +120,14 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
                     getWorkbench().addWindowListener(new IWindowListener(){
                         private void schedule()
                         {
-                            new UIJob(EclipseNSISPlugin.getResourceString("starting.eclipsensis.message")){ //$NON-NLS-1$
-                                public IStatus runInUIThread(IProgressMonitor monitor)
-                                {
-                                    configOp.run();
-                                    return Status.OK_STATUS;
-                                }
-                            }.schedule();
+                            getJobScheduler().scheduleUIJob(EclipseNSISPlugin.getResourceString("starting.eclipsensis.message"), //$NON-NLS-1$
+                                                            new IJobStatusRunnable() {
+                                                                public IStatus run(IProgressMonitor monitor)
+                                                                {
+                                                                    configOp.run();
+                                                                    return Status.OK_STATUS;
+                                                                }
+                                                            });
                         }
                         
                         public void windowActivated(IWorkbenchWindow window)
@@ -162,6 +165,7 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
         }
         
         startServices();
+        mJobScheduler.start();
 	}
     
     private void startServices()
@@ -324,6 +328,7 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
 	 */
 	public void stop(BundleContext context) throws Exception 
     {
+        mJobScheduler.stop();
         MakeNSISRunner.shutdown();
         while(mServices.size() > 0) {
             IEclipseNSISService service = (IEclipseNSISService)mServices.pop();
@@ -332,7 +337,12 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
 		super.stop(context);
 	}
 
-	/**
+	public JobScheduler getJobScheduler()
+    {
+        return mJobScheduler;
+    }
+
+    /**
 	 * Returns the shared instance.
 	 */
 	public static EclipseNSISPlugin getDefault() {

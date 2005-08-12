@@ -11,12 +11,15 @@ package net.sf.eclipsensis.installoptions.editor;
 
 import java.util.*;
 
+import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.model.*;
 
 import org.eclipse.gef.GraphicalViewer;
 import org.eclipse.gef.palette.*;
 import org.eclipse.gef.tools.AbstractTool;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 
@@ -40,12 +43,14 @@ public class InstallOptionsPaletteProvider
         final Runnable op = new Runnable() {
             public void run()
             {
+                Boolean unload = Boolean.valueOf(InstallOptionsPlugin.getDefault().getPreferenceStore().getBoolean(IInstallOptionsConstants.PREFERENCE_UNLOAD_CREATION_TOOL_WHEN_FINISHED));
                 List entries = new ArrayList();
                 for (Iterator iter = InstallOptionsModel.INSTANCE.getControlTypeDefs().iterator(); iter.hasNext(); ) {
                     InstallOptionsModelTypeDef typeDef = (InstallOptionsModelTypeDef)iter.next();
-                    PaletteEntry entry = (PaletteEntry)entryMap.get(typeDef.getType());
+                    ToolEntry entry = (ToolEntry)entryMap.get(typeDef.getType());
                     if(entry == null) {
                         entry = createComponentEntry(typeDef);
+                        entry.setToolProperty(AbstractTool.PROPERTY_UNLOAD_WHEN_FINISHED, unload);
                         entryMap.put(typeDef.getType(), entry);
                     }
                     entries.add(entry);
@@ -62,16 +67,33 @@ public class InstallOptionsPaletteProvider
             }
         };
         InstallOptionsModel.INSTANCE.addListener(listener);
+
+        final IPropertyChangeListener listener2 = new IPropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent event)
+            {
+                if(event.getProperty().equals(IInstallOptionsConstants.PREFERENCE_UNLOAD_CREATION_TOOL_WHEN_FINISHED)) {
+                    Boolean newValue = (Boolean)event.getNewValue();
+                    for(Iterator iter=entryMap.values().iterator(); iter.hasNext(); ) {
+                        ((ToolEntry)iter.next()).setToolProperty(AbstractTool.PROPERTY_UNLOAD_WHEN_FINISHED, newValue);
+                    }
+                }
+            }
+        }; 
+        
+        InstallOptionsPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(listener2);
+        
         viewer.getControl().addDisposeListener(new DisposeListener(){
             public void widgetDisposed(DisposeEvent e)
             {
                 InstallOptionsModel.INSTANCE.removeListener(listener);
+                InstallOptionsPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(listener2);
             }
         });
+        
         return drawer;
     }
 
-    private static PaletteEntry createComponentEntry(InstallOptionsModelTypeDef typeDef)
+    private static ToolEntry createComponentEntry(InstallOptionsModelTypeDef typeDef)
     {
         CombinedTemplateCreationEntry entry = new CombinedTemplateCreationEntry(
                 typeDef.getName(),
@@ -80,7 +102,6 @@ public class InstallOptionsPaletteProvider
                 InstallOptionsElementFactory.getFactory(typeDef.getType()),
                 InstallOptionsPlugin.getImageManager().getImageDescriptor(typeDef.getSmallIcon()),
                 InstallOptionsPlugin.getImageManager().getImageDescriptor(typeDef.getLargeIcon()));
-        entry.setToolProperty(AbstractTool.PROPERTY_UNLOAD_WHEN_FINISHED, Boolean.FALSE);
         return entry;
     }
 

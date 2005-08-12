@@ -9,13 +9,14 @@ import net.sf.eclipsensis.installoptions.ini.INIFile;
 import net.sf.eclipsensis.installoptions.ini.INIProblem;
 import net.sf.eclipsensis.installoptions.model.IModelListener;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
+import net.sf.eclipsensis.job.IJobStatusRunnable;
+import net.sf.eclipsensis.job.JobScheduler;
 import net.sf.eclipsensis.settings.NSISPreferences;
 import net.sf.eclipsensis.util.CaseInsensitiveSet;
 import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
@@ -27,6 +28,7 @@ import org.eclipse.ui.texteditor.IDocumentProvider;
 public class InstallOptionsBuilder extends IncrementalProjectBuilder implements IInstallOptionsConstants
 {
     private static Set cExtensionsSet;
+    private static JobScheduler cJobScheduler = InstallOptionsPlugin.getDefault().getJobScheduler();
 
     private IDocumentProvider mDocumentProvider = new FileDocumentProvider();
     private INIFile mINIFile = new INIFile();
@@ -40,7 +42,7 @@ public class InstallOptionsBuilder extends IncrementalProjectBuilder implements 
         }
     }
 
-	protected void clean(IProgressMonitor monitor) throws CoreException
+    protected void clean(IProgressMonitor monitor) throws CoreException
     {
         super.clean(monitor);
         resetBuildTimestamp();
@@ -104,7 +106,7 @@ public class InstallOptionsBuilder extends IncrementalProjectBuilder implements 
                 if(event.getType() == IResourceChangeEvent.PRE_CLOSE) {
                     if(getProject() == event.getResource()) {
                         InstallOptionsModel.INSTANCE.removeListener(modelListener);
-                        cancelJobs(getProject());
+                        cJobScheduler.cancelJobs(new ProjectJobFamily(getProject()));
                         getProject().getWorkspace().removeResourceChangeListener(this);
                     }
                 }
@@ -206,13 +208,16 @@ public class InstallOptionsBuilder extends IncrementalProjectBuilder implements 
 		}
 	}
 
-	protected void fullBuild(IProgressMonitor monitor) throws CoreException 
+	protected void fullBuild(final IProgressMonitor monitor) throws CoreException 
     {
 		try {
             resetBuildTimestamp();
 			getProject().accept(new IResourceVisitor() {
                 public boolean visit(IResource resource) 
                 {
+                    if(monitor.isCanceled()) {
+                        return false;
+                    }
                     checkINI(resource);
                     return true;
                 }
@@ -222,11 +227,14 @@ public class InstallOptionsBuilder extends IncrementalProjectBuilder implements 
 		}
 	}
 
-	protected void incrementalBuild(IResourceDelta delta, IProgressMonitor monitor) throws CoreException 
+	protected void incrementalBuild(IResourceDelta delta, final IProgressMonitor monitor) throws CoreException 
     {
 		delta.accept(new IResourceDeltaVisitor() {
             public boolean visit(IResourceDelta delta) throws CoreException 
             {
+                if(monitor.isCanceled()) {
+                    return false;
+                }
                 IResource resource = delta.getResource();
                 switch (delta.getKind()) {
                     case IResourceDelta.ADDED:
@@ -295,17 +303,14 @@ public class InstallOptionsBuilder extends IncrementalProjectBuilder implements 
 
     public static void buildProject(final IProject project, final int kind, final Map args)
     {
-        new Job(InstallOptionsPlugin.getResourceString("full.build.job.name")) { //$NON-NLS-1$
-            public boolean belongsTo(Object family)
-            {
-                return project.equals(family);
-            }
-
-            protected IStatus run(IProgressMonitor monitor)
-            {
-                return internalBuildProject(project, kind, args, monitor);
-            }
-        }.schedule();
+        cJobScheduler.scheduleJob(new ProjectJobFamily(project),
+                                 InstallOptionsPlugin.getResourceString("full.build.job.name"), //$NON-NLS-1$
+                                 new IJobStatusRunnable() {
+                                    public IStatus run(IProgressMonitor monitor)
+                                    {
+                                        return internalBuildProject(project, kind, args, monitor);
+                                    }
+                                });
     }
 
     private static IStatus internalBuildProject(final IProject project, final int kind, final Map args, IProgressMonitor monitor)
@@ -345,7 +350,7 @@ public class InstallOptionsBuilder extends IncrementalProjectBuilder implements 
                                 checkBuildProject(project);
                             }
                             else {
-                                cancelJobs(project);
+                                cJobScheduler.cancelJobs(new ProjectJobFamily(project));
                             }
                         }
                     }
@@ -354,67 +359,80 @@ public class InstallOptionsBuilder extends IncrementalProjectBuilder implements 
         });
     }
     
-    private static void cancelJobs(IProject project)
-    {
-        Job[] jobs = Platform.getJobManager().find(project);
-        for (int i = 0; i < jobs.length; i++) {
-            jobs[i].cancel();
-        }
-    }
-    
     private static void checkBuildProject(final IProject project)
     {
-        new Job(InstallOptionsPlugin.getFormattedString("building.project.format", new Object[]{project.getName()})){ //$NON-NLS-1$
-            public boolean belongsTo(Object family)
-            {
-                return project.equals(family);
-            }
-
-            protected IStatus run(IProgressMonitor monitor)
-            {
-                try {
-                    String nsisVersion = InstallOptionsModel.INSTANCE.getNSISVersion().toString();
-                    if(project.hasNature(INSTALLOPTIONS_NATURE_ID)) {
-                        String buildNSISVersion = project.getPersistentProperty(PROJECTPROPERTY_NSIS_VERSION);
-                        String buildTimestamp = project.getPersistentProperty(RESOURCEPROPERTY_BUILD_TIMESTAMP);
-                        IProgressMonitor subMonitor = new SubProgressMonitor(monitor,1);
-                        if(!nsisVersion.equals(buildNSISVersion) || Common.isEmpty(buildTimestamp)) {
-                            internalBuildProject(project, FULL_BUILD, null, subMonitor);
-                        }
-                        else {
-                            internalBuildProject(project, INCREMENTAL_BUILD, null, subMonitor);
-                        }
-                    }
-                    else {
-                        project.accept(new IResourceProxyVisitor(){
-                            private boolean found = false;
-                            public boolean visit(IResourceProxy proxy) throws CoreException
-                            {
-                                if(found) {
-                                    return false;
-                                }
-                                if(proxy.getType() == IResource.FILE && cExtensionsSet.contains(getExtension(proxy.getName()))) {
-                                    IFile file = (IFile)proxy.requestResource();
-                                    String editorId = file.getPersistentProperty(IDE.EDITOR_KEY);
-                                    if(editorId != null && (INSTALLOPTIONS_DESIGN_EDITOR_ID.equals(editorId) ||
-                                                            INSTALLOPTIONS_SOURCE_EDITOR_ID.equals(editorId))) {
-                                        InstallOptionsNature.addNature(file.getProject());
-                                        found = true;
-                                        return false;
+        cJobScheduler.scheduleJob(new ProjectJobFamily(project),
+                    InstallOptionsPlugin.getFormattedString("building.project.format", new Object[]{project.getName()}), //$NON-NLS-1$
+                    new IJobStatusRunnable() {
+                        public IStatus run(final IProgressMonitor monitor)
+                        {
+                            try {
+                                String nsisVersion = InstallOptionsModel.INSTANCE.getNSISVersion().toString();
+                                if(project.hasNature(INSTALLOPTIONS_NATURE_ID)) {
+                                    String buildNSISVersion = project.getPersistentProperty(PROJECTPROPERTY_NSIS_VERSION);
+                                    String buildTimestamp = project.getPersistentProperty(RESOURCEPROPERTY_BUILD_TIMESTAMP);
+                                    IProgressMonitor subMonitor = new SubProgressMonitor(monitor,1);
+                                    if(!nsisVersion.equals(buildNSISVersion) || Common.isEmpty(buildTimestamp)) {
+                                        internalBuildProject(project, FULL_BUILD, null, subMonitor);
+                                    }
+                                    else {
+                                        internalBuildProject(project, INCREMENTAL_BUILD, null, subMonitor);
                                     }
                                 }
-                                return true;
+                                else {
+                                    project.accept(new IResourceProxyVisitor(){
+                                        private boolean found = false;
+                                        public boolean visit(IResourceProxy proxy) throws CoreException
+                                        {
+                                            if(monitor.isCanceled()) {
+                                                return false;
+                                            }
+                                            if(found) {
+                                                return false;
+                                            }
+                                            if(proxy.getType() == IResource.FILE && cExtensionsSet.contains(getExtension(proxy.getName()))) {
+                                                IFile file = (IFile)proxy.requestResource();
+                                                String editorId = file.getPersistentProperty(IDE.EDITOR_KEY);
+                                                if(editorId != null && (INSTALLOPTIONS_DESIGN_EDITOR_ID.equals(editorId) ||
+                                                                        INSTALLOPTIONS_SOURCE_EDITOR_ID.equals(editorId))) {
+                                                    InstallOptionsNature.addNature(file.getProject());
+                                                    found = true;
+                                                    return false;
+                                                }
+                                            }
+                                            return true;
+                                        }
+                                        
+                                    }, IContainer.EXCLUDE_DERIVED);
+                                }
+                                if(monitor.isCanceled()) {
+                                    return Status.CANCEL_STATUS;
+                                }
+                                return Status.OK_STATUS;
                             }
-                            
-                        }, IContainer.EXCLUDE_DERIVED);
-                    }
-                    return Status.OK_STATUS;
-                }
-                catch (CoreException e) {
-                    e.printStackTrace();
-                    return new Status(IStatus.ERROR,PLUGIN_ID,IStatus.OK,e.getMessage(),e);
-                }
+                            catch (CoreException e) {
+                                e.printStackTrace();
+                                return new Status(IStatus.ERROR,PLUGIN_ID,IStatus.OK,e.getMessage(),e);
+                            }
+                        }
+                    });
+    }
+    
+    private static class ProjectJobFamily
+    {
+        private IProject mProject;
+        
+        public ProjectJobFamily(IProject project)
+        {
+            mProject = project;
+        }
+        
+        public boolean equals(Object other)
+        {
+            if(other instanceof ProjectJobFamily) {
+                return mProject.equals(((ProjectJobFamily)other).mProject);
             }
-        }.schedule();
+            return false;
+        }
     }
 }

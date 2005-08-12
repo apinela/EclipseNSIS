@@ -12,10 +12,12 @@ package net.sf.jarsigner.util;
 import java.text.MessageFormat;
 import java.util.List;
 
+import net.sf.eclipsensis.utilities.util.Common;
 import net.sf.jarsigner.JARSignerPlugin;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jdt.launching.IVMInstall;
 
 public class JARSigner extends AbstractJARUtil 
 {
@@ -28,9 +30,9 @@ public class JARSigner extends AbstractJARUtil
     private boolean mInternalSF = false;
     private boolean mSectionsOnly = false;
     
-    public JARSigner(String toolsJar, List targetJars, String keyStore, String storePass, String alias)
+    public JARSigner(IVMInstall vmInstall, String toolsJar, List targetJars, String keyStore, String storePass, String alias)
     {
-        super(toolsJar,targetJars);
+        super(vmInstall, toolsJar,targetJars);
         setKeyStore(keyStore);
         mStorePass = maybeQuote(storePass);
         mAlias = maybeQuote(alias);
@@ -66,24 +68,24 @@ public class JARSigner extends AbstractJARUtil
         mStoreType = maybeQuote(storeType);
     }
 
-    protected String getSuccessMessage(IFile targetJar)
+    protected String getSuccessMessage(Object target)
     {
-        return JARSignerPlugin.getFormattedString("jar.signed.message",new Object[]{targetJar});
+        return JARSignerPlugin.getFormattedString("jar.signed.message",new Object[]{target}); //$NON-NLS-1$
     }
 
-    protected String getFailMessage(IFile targetJar)
+    protected String getFailMessage(Object target)
     {
-        return JARSignerPlugin.getFormattedString("jar.not.signed.message",new Object[]{targetJar});
+        return JARSignerPlugin.getFormattedString("jar.not.signed.message",new Object[]{target}); //$NON-NLS-1$
     }
 
     protected String getConsoleTitle()
     {
-        return JARSignerPlugin.getResourceString("jarsigner.console.title");
+        return JARSignerPlugin.getResourceString("jarsigner.console.title"); //$NON-NLS-1$
     }
 
     protected String getLaunchTitle()
     {
-        return JARSignerPlugin.getResourceString("jarsigner.launch.title");
+        return JARSignerPlugin.getResourceString("jarsigner.launch.title"); //$NON-NLS-1$
     }
 
     protected MessageFormat createArgsFormat()
@@ -91,16 +93,16 @@ public class JARSigner extends AbstractJARUtil
         StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
         buf.append("-keystore ").append(mKeyStore); //$NON-NLS-1$
         buf.append(" -storepass ").append(mStorePass); //$NON-NLS-1$
-        if(!JARSignerPlugin.isEmpty(mStoreType)) {
+        if(!Common.isEmpty(mStoreType)) {
             buf.append(" -storetype ").append(mStoreType); //$NON-NLS-1$
         }
-        if(!JARSignerPlugin.isEmpty(mKeyPass)) {
+        if(!Common.isEmpty(mKeyPass)) {
             buf.append(" -keypass ").append(mKeyPass); //$NON-NLS-1$
         }
-        if(!JARSignerPlugin.isEmpty(mSigFile)) {
+        if(!Common.isEmpty(mSigFile)) {
             buf.append(" -sigfile ").append(mSigFile); //$NON-NLS-1$
         }
-        if(!JARSignerPlugin.isEmpty(mSignedJar)) {
+        if(!Common.isEmpty(mSignedJar)) {
             buf.append(" -signedjar ").append(mSignedJar); //$NON-NLS-1$
         }
         if(mVerbose) {
@@ -117,10 +119,48 @@ public class JARSigner extends AbstractJARUtil
         return new MessageFormat(buf.toString());
     }
 
+    protected String getCancelMessage()
+    {
+        return JARSignerPlugin.getResourceString("jarsigner.cancel.message"); //$NON-NLS-1$
+    }
+
+    protected String getTaskName()
+    {
+        return JARSignerPlugin.getResourceString("jarsigner.task.name"); //$NON-NLS-1$
+    }
+
+    protected String getSubTaskName(Object target)
+    {
+        return JARSignerPlugin.getFormattedString("jarsigner.subtask.name", new Object[]{target}); //$NON-NLS-1$
+    }
+
+    protected IStatus postProcess(Object target, IProgressMonitor monitor)
+    {
+        if(Common.isEmpty(mSignedJar)) {
+            try {
+                ((IFile)target).refreshLocal(IResource.DEPTH_ONE,null);
+            }
+            catch (CoreException e) {
+                e.printStackTrace();
+            }
+        }
+        else {
+            IFile[] files = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(new Path(mSignedJar));
+            if(!Common.isEmptyArray(files)) {
+                for (int i = 0; i < files.length; i++) {
+                    try {
+                        (files[i]).refreshLocal(IResource.DEPTH_ONE,null);
+                    }
+                    catch (CoreException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+        return super.postProcess(target, monitor);
+    }
+
     protected void postJAR(IFile targetJar) throws Exception
     {
-        if(JARSignerPlugin.isEmpty(mSignedJar)) {
-            targetJar.refreshLocal(IResource.DEPTH_ONE,null);
-        }
     }
 }

@@ -13,6 +13,7 @@ import java.util.HashMap;
 
 import net.sf.eclipsensis.util.WinAPI;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.internal.Callback;
@@ -43,12 +44,12 @@ public class ControlSubclasser
         cNewProc = callback.getAddress();
     }
     
-    public static void subclassControl(Control control)
+    public static void subclassControl(Control control, SWTControlFigure figure)
     {
         final int handle = control.handle;
         final int oldProc = WinAPI.GetWindowLong(handle, WinAPI.GWL_WNDPROC);
         final Integer handleInteger = new Integer(handle);
-        cProcMap.put(handleInteger,new Integer(oldProc));
+        cProcMap.put(handleInteger,new ControlInfo(oldProc, figure));
         WinAPI.SetWindowLong(handle, WinAPI.GWL_WNDPROC, cNewProc);
         control.addDisposeListener(new DisposeListener() {
             public void widgetDisposed(DisposeEvent e)
@@ -65,7 +66,7 @@ public class ControlSubclasser
         {
         }
         
-        public int windowProc(int hwnd, int msg, int wParam, int lParam)
+        public int windowProc(int hWnd, int msg, int wParam, int lParam)
         {
             int res;
             
@@ -80,10 +81,21 @@ public class ControlSubclasser
                 case WinAPI.WM_SYSCHAR:
                     res = 0;
                     break;
+                case WinAPI.WM_PRINT:
+                    if(WinAPI.AreVisualStylesEnabled()) {
+                        ControlInfo info = (ControlInfo)cProcMap.get(new Integer(hWnd));
+                        if(info.figure.isNeedsTheme() && (info.figure.getStyle() & SWT.BORDER) == SWT.BORDER) {
+                            res=WinAPI.CallWindowProc(((ControlInfo)cProcMap.get(new Integer(hWnd))).oldProc,
+                                    hWnd, msg, wParam, lParam);
+                            WinAPI.DrawWidgetThemeBackGround(hWnd,wParam,info.figure.getTheme(),info.figure.getThemePartId(),
+                                                             info.figure.getThemeStateId());
+                            return res;
+                        }
+                    }
                 default:
                     try {
-                        res=WinAPI.CallWindowProc(((Integer)cProcMap.get(new Integer(hwnd))).intValue(),
-                                                  hwnd, msg, wParam, lParam);
+                        res=WinAPI.CallWindowProc(((ControlInfo)cProcMap.get(new Integer(hWnd))).oldProc,
+                                                  hWnd, msg, wParam, lParam);
                     }
                     catch(Throwable t) {
                         //Ignore any errors
@@ -92,6 +104,19 @@ public class ControlSubclasser
             }
             
             return res;
+        }
+    }
+    
+    private static class ControlInfo
+    {
+        int oldProc;
+        SWTControlFigure figure;
+        
+        public ControlInfo(int oldProc, SWTControlFigure figure)
+        {
+            super();
+            this.oldProc = oldProc;
+            this.figure = figure;
         }
     }
 }

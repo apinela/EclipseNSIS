@@ -24,7 +24,6 @@
 
    <url>
       <update label="%update.site.name" url="http://eclipsensis.sf.net/update"/>
-      <discovery label="%discovery.site.name" url="http://eclipsensis.sf.net/update/"/>
    </url>
 
    <requires>

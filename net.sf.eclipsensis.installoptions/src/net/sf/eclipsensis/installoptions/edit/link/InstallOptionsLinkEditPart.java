@@ -12,20 +12,18 @@ package net.sf.eclipsensis.installoptions.edit.link;
 import java.beans.PropertyChangeEvent;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
-import net.sf.eclipsensis.installoptions.edit.IExtendedEditSupport;
-import net.sf.eclipsensis.installoptions.edit.InstallOptionsExtendedEditPolicy;
+import net.sf.eclipsensis.installoptions.edit.*;
 import net.sf.eclipsensis.installoptions.edit.label.InstallOptionsLabelEditPart;
-import net.sf.eclipsensis.installoptions.edit.uneditable.InstallOptionsUneditableElementEditPart;
 import net.sf.eclipsensis.installoptions.figures.IInstallOptionsFigure;
 import net.sf.eclipsensis.installoptions.figures.LinkFigure;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsLink;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
 
-import org.eclipse.draw2d.FigureCanvas;
 import org.eclipse.gef.tools.CellEditorLocator;
 import org.eclipse.gef.tools.DirectEditManager;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.ColorDialog;
+import org.eclipse.swt.widgets.Composite;
 
 public class InstallOptionsLinkEditPart extends InstallOptionsLabelEditPart
 {
@@ -84,7 +82,7 @@ public class InstallOptionsLinkEditPart extends InstallOptionsLabelEditPart
 
     protected IInstallOptionsFigure createInstallOptionsFigure() 
     {
-        return new LinkFigure((FigureCanvas)this.getViewer().getControl(), getInstallOptionsWidget());
+        return new LinkFigure((Composite)getViewer().getControl(), getInstallOptionsWidget());
     }
 
     protected void doPropertyChange(PropertyChangeEvent evt)
@@ -99,7 +97,7 @@ public class InstallOptionsLinkEditPart extends InstallOptionsLabelEditPart
         }
     }
 
-    protected DirectEditManager creatDirectEditManager(InstallOptionsUneditableElementEditPart part, Class clasz, CellEditorLocator locator)
+    protected DirectEditManager creatDirectEditManager(InstallOptionsWidgetEditPart part, Class clasz, CellEditorLocator locator)
     {
         return new InstallOptionsLinkEditManager(part, clasz, locator);
     }

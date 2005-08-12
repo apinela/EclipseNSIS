@@ -30,7 +30,6 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -308,11 +307,21 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
 
     public Position toGraphical(Position p)
     {
+        return toGraphical(p, true);
+    }
+
+    public Position toGraphical(Position p, boolean toPixels)
+    {
         InstallOptionsDialog dialog = getParent();
-        return toGraphical(p, (dialog==null?null:dialog.getDialogSize()));
+        return toGraphical(p, (dialog==null?null:dialog.getDialogSize()), toPixels);
     }
 
     public Position toGraphical(Position p, Dimension size)
+    {
+        return toGraphical(p, size, true);
+    }
+
+    public Position toGraphical(Position p, Dimension size, boolean toPixels)
     {
         p = p.getCopy();
         if(size == null) {
@@ -324,8 +333,10 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
             p.right = toGraphical(p.right,size.width);
             p.bottom = toGraphical(p.bottom,size.height);
         }
-        Font f = Display.getDefault().getSystemFont();
-        return FigureUtility.dialogUnitsToPixels(p,f);
+        if(toPixels) {
+            p = FigureUtility.dialogUnitsToPixels(p,Display.getDefault().getSystemFont());
+        }
+        return p;
     }
 
     private int toModel(int value, int localValue, int refValue)
@@ -338,14 +349,25 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
 
     public Position toModel(Position p)
     {
+        return toModel(p, true);
+    }
+
+    public Position toModel(Position p, boolean fromPixels)
+    {
         InstallOptionsDialog dialog = getParent();
-        return toModel(p, (dialog==null?null:dialog.getDialogSize()));
+        return toModel(p, (dialog==null?null:dialog.getDialogSize()), fromPixels);
     }
 
     public Position toModel(Position p, Dimension size)
     {
-        Font f = Display.getDefault().getSystemFont();
-        p = FigureUtility.pixelsToDialogUnits(p,f);
+        return toModel(p, size, true);
+    }
+
+    public Position toModel(Position p, Dimension size, boolean fromPixels)
+    {
+        if(fromPixels) {
+            p = FigureUtility.pixelsToDialogUnits(p,Display.getDefault().getSystemFont());
+        }
         if(size == null) {
             p.set(0,0,0,0);
         }
@@ -365,9 +387,9 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
     
     public void setPosition(Position position)
     {
-        if(!mPosition.equals(position)) {
-            Position mOldPosition = mPosition;
-            mPosition = position;
+        Position mOldPosition = mPosition;
+        mPosition = position;
+        if(!mPosition.equals(mOldPosition)) {
             firePropertyChange(InstallOptionsModel.PROPERTY_POSITION,mOldPosition,mPosition);
             setDirty(true);
         }
@@ -501,8 +523,9 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
         
         protected void configureShell(Shell newShell)
         {
-            newShell.setText(InstallOptionsPlugin.getFormattedString("flags.dialog.name", new String[]{mType})); //$NON-NLS-1$
             super.configureShell(newShell);
+            newShell.setText(InstallOptionsPlugin.getFormattedString("flags.dialog.name", new String[]{mType})); //$NON-NLS-1$
+            newShell.setImage(InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("installoptions.icon"))); //$NON-NLS-1$
         }
 
         public List getValues()

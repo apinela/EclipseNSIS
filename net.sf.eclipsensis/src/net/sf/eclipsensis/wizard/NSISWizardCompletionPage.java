@@ -172,8 +172,8 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
             }
         });
 
-        addPageListener(new NSISWizardPageAdapter() {
-            public void aboutToShow()
+        addPageChangedRunnable(new Runnable() {
+            public void run()
             {
                 NSISWizardSettings settings = mWizard.getSettings();
 
@@ -402,8 +402,8 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
         });
         m.updateSlaves();
         
-        addPageListener(new NSISWizardPageAdapter() {
-            public void aboutToShow()
+        addPageChangedRunnable(new Runnable() {
+            public void run()
             {
                 group.setEnabled(mWizard.getSettings().isCreateUninstaller());
             }

@@ -9,6 +9,7 @@
  *******************************************************************************/
 package net.sf.jarsigner.actions;
 
+import net.sf.eclipsensis.utilities.UtilitiesPlugin;
 import net.sf.jarsigner.JARSignerPlugin;
 import net.sf.jarsigner.dialogs.JARVerifierOptionsDialog;
 import net.sf.jarsigner.util.JARVerifier;
@@ -51,9 +52,9 @@ public class JARVerifierAction implements IObjectActionDelegate
         if (mSelection != null && !mSelection.isEmpty() && mSelection instanceof IStructuredSelection) {
             IStructuredSelection sel = (IStructuredSelection)mSelection;
             try {
-                JARVerifierOptionsDialog dialog = new JARVerifierOptionsDialog(Display.getDefault().getActiveShell(),sel.size() > 1);
+                JARVerifierOptionsDialog dialog = new JARVerifierOptionsDialog(Display.getDefault().getActiveShell(),sel.toList());
                 if(dialog.open() == Window.OK) {
-                    final JARVerifier jarVerifier = new JARVerifier(dialog.getToolsJar(),sel.toList());
+                    final JARVerifier jarVerifier = new JARVerifier(dialog.getVMInstall(), dialog.getToolsJar(),sel.toList());
                     jarVerifier.setVerbose(dialog.isVerbose());
                     jarVerifier.setCerts(dialog.isCerts());
                     jarVerifier.setKeyStore(dialog.getKeyStore());
@@ -69,7 +70,8 @@ public class JARVerifierAction implements IObjectActionDelegate
                 }
             }
             catch(Exception e) {
-                MessageDialog.openError(Display.getDefault().getActiveShell(),JARSignerPlugin.getResourceString("error.title"),e.getMessage()); //$NON-NLS-1$
+                e.printStackTrace();
+                MessageDialog.openError(Display.getDefault().getActiveShell(),UtilitiesPlugin.getResourceString("error.title"),e.getMessage()); //$NON-NLS-1$
             }
         }
 	}

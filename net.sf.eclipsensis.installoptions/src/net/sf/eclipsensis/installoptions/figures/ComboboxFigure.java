@@ -13,17 +13,18 @@ import java.util.List;
 
 import net.sf.eclipsensis.installoptions.model.InstallOptionsWidget;
 import net.sf.eclipsensis.installoptions.properties.PropertySourceWrapper;
+import net.sf.eclipsensis.util.ColorManager;
 
 import org.eclipse.draw2d.*;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.views.properties.IPropertySource;
 
-public class ComboboxFigure extends Figure implements  IListItemsFigure
+public class ComboboxFigure extends Figure implements IListItemsFigure
 {
-    private FigureCanvas mCanvas;
     private ListFigure mListFigure;
     private ComboFigure mComboFigure;
     private int mComboHeight;
@@ -31,11 +32,10 @@ public class ComboboxFigure extends Figure implements  IListItemsFigure
     /**
      * 
      */
-    public ComboboxFigure(FigureCanvas canvas, IPropertySource propertySource)
+    public ComboboxFigure(Composite parent, IPropertySource propertySource)
     {
         super();
-        mCanvas = canvas;
-        Combo cb = new Combo(mCanvas,SWT.DROP_DOWN);
+        Combo cb = new Combo(parent,SWT.DROP_DOWN);
         cb.setVisible(false);
         cb.setBounds(-100,-100,10,10);
         Point p = cb.computeSize(SWT.DEFAULT,SWT.DEFAULT);
@@ -44,7 +44,7 @@ public class ComboboxFigure extends Figure implements  IListItemsFigure
         
         setLayoutManager(new XYLayout());
         final Rectangle[] bounds = calculateBounds((Rectangle)propertySource.getPropertyValue(InstallOptionsWidget.PROPERTY_BOUNDS));
-        mComboFigure = new ComboFigure(canvas, new PropertySourceWrapper(propertySource){
+        mComboFigure = new ComboFigure(parent, new PropertySourceWrapper(propertySource){
             public Object getPropertyValue(Object id)
             {
                 if(InstallOptionsWidget.PROPERTY_BOUNDS.equals(id)) {
@@ -55,7 +55,7 @@ public class ComboboxFigure extends Figure implements  IListItemsFigure
                 }
             }
         });
-        mListFigure = new ListFigure(canvas, new PropertySourceWrapper(propertySource){
+        mListFigure = new ListFigure(parent, new PropertySourceWrapper(propertySource){
             public Object getPropertyValue(Object id)
             {
                 if(InstallOptionsWidget.PROPERTY_BOUNDS.equals(id)) {
@@ -65,8 +65,8 @@ public class ComboboxFigure extends Figure implements  IListItemsFigure
                     return super.getPropertyValue(id);
                 }
             }
-        });
-        mListFigure.setStyle(SWT.BORDER|SWT.SINGLE);
+        }, SWT.SINGLE);
+        mListFigure.setBorder(new LineBorder(ColorManager.getColor(ColorManager.BLACK)));
         add(mComboFigure);
         add(mListFigure);
     }
@@ -109,7 +109,7 @@ public class ComboboxFigure extends Figure implements  IListItemsFigure
     {
         Rectangle rect1 = new Rectangle(0,0,rect.width,Math.min(mComboHeight,rect.height));
         return new Rectangle[] {rect1,
-                                new Rectangle(0,Math.max(0,rect1.height-1),rect.width,Math.max(0,rect.height-rect1.height+1))};
+                                new Rectangle(0,Math.max(0,rect1.height),rect.width,Math.max(0,rect.height-rect1.height))};
     }
     
     public void setBounds(Rectangle rect)
@@ -126,11 +126,6 @@ public class ComboboxFigure extends Figure implements  IListItemsFigure
     public String getState()
     {
         return mComboFigure.getState();
-    }
-    
-    public int getStyle()
-    {
-        return mComboFigure.getStyle();
     }
 
     public List getListItems()

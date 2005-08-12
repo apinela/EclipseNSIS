@@ -29,13 +29,14 @@ import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.settings.NSISPreferences;
 
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
+import org.osgi.framework.Bundle;
 import org.w3c.dom.*;
 
 /**
@@ -917,5 +918,33 @@ public class Common
             }
         }
         return str;
+    }
+    
+    public static void printBundleExtensions(Bundle bundle)
+    {
+        IExtensionRegistry registry = Platform.getExtensionRegistry();
+        IExtension[] extensions = registry.getExtensions(bundle.getSymbolicName());
+        for (int i = 0; i < extensions.length; i++) {
+            System.out.print(extensions[i].getExtensionPointUniqueIdentifier()+" label="); //$NON-NLS-1$
+            System.out.print(extensions[i].getLabel()+" simpleId="); //$NON-NLS-1$
+            System.out.print(extensions[i].getSimpleIdentifier()+" uniqueId="); //$NON-NLS-1$
+            System.out.println(extensions[i].getUniqueIdentifier());
+            printChildren("",extensions[i].getConfigurationElements()); //$NON-NLS-1$
+        }
+    }
+
+    private static void printChildren(String prefix, IConfigurationElement[] elements) {
+        if(!Common.isEmptyArray(elements)) {
+            prefix += "\t"; //$NON-NLS-1$
+            for (int j = 0; j < elements.length; j++) {
+                String[] attr = elements[j].getAttributeNames();
+                if(!Common.isEmptyArray(attr)) {
+                    for (int i = 0; i < attr.length; i++) {
+                        System.out.println(prefix+attr[i]+"="+elements[j].getAttribute(attr[i])); //$NON-NLS-1$
+                    }
+                }
+                printChildren(prefix,elements[j].getChildren());
+            }
+        }        
     }
 }

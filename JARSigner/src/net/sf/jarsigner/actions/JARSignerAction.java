@@ -9,6 +9,7 @@
  *******************************************************************************/
 package net.sf.jarsigner.actions;
 
+import net.sf.eclipsensis.utilities.UtilitiesPlugin;
 import net.sf.jarsigner.JARSignerPlugin;
 import net.sf.jarsigner.dialogs.JARSignerOptionsDialog;
 import net.sf.jarsigner.util.JARSigner;
@@ -51,9 +52,9 @@ public class JARSignerAction implements IObjectActionDelegate
         if (mSelection != null && !mSelection.isEmpty() && mSelection instanceof IStructuredSelection) {
             IStructuredSelection sel = (IStructuredSelection)mSelection;
             try {
-                JARSignerOptionsDialog dialog = new JARSignerOptionsDialog(Display.getDefault().getActiveShell(),sel.size() > 1);
+                JARSignerOptionsDialog dialog = new JARSignerOptionsDialog(Display.getDefault().getActiveShell(),sel.toList());
                 if(dialog.open() == Window.OK) {
-                    final JARSigner jarSigner = new JARSigner(dialog.getToolsJar(),sel.toList(),
+                    final JARSigner jarSigner = new JARSigner(dialog.getVMInstall(), dialog.getToolsJar(),sel.toList(),
                                                               dialog.getKeyStore(),dialog.getStorePass(),dialog.getAlias());
                     jarSigner.setInternalSF(dialog.isInternalSF());
                     jarSigner.setKeyPass(dialog.getKeyPass());
@@ -74,7 +75,8 @@ public class JARSignerAction implements IObjectActionDelegate
                 }
             }
             catch(Exception e) {
-                MessageDialog.openError(Display.getDefault().getActiveShell(),JARSignerPlugin.getResourceString("error.title"),e.getMessage()); //$NON-NLS-1$
+                e.printStackTrace();
+                MessageDialog.openError(Display.getDefault().getActiveShell(),UtilitiesPlugin.getResourceString("error.title"),e.getMessage()); //$NON-NLS-1$
             }
         }
 	}

@@ -15,7 +15,6 @@ import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.util.Common;
 
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.source.*;
 import org.eclipse.swt.widgets.Shell;
@@ -57,19 +56,13 @@ public class NSISAnnotationHover implements IAnnotationHover, INSISConstants, IA
                     Annotation a= (Annotation) e.next();
                     Position p= model.getPosition(a);
                     if (p != null && p.overlapsWith(info.getOffset(), info.getLength())) {
-                        String type;
-                        if(a instanceof MarkerAnnotation) {
-                            IMarker marker = ((MarkerAnnotation)a).getMarker();
-                            type = marker.getType();
+                        String msg = null;
+                        if(mAnnotationTypes.contains(a.getType()) ||
+                          (a instanceof MarkerAnnotation && mAnnotationTypes.contains((((MarkerAnnotation)a).getMarker()).getType()))) {
+                            msg= a.getText();
                         }
-                        else {
-                            type = a.getType();
-                        }
-                        if(mAnnotationTypes.contains(type)) {
-                            String msg= a.getText();
-                            if (!Common.isEmpty(msg)) {
-                                messages.add(msg);
-                            }
+                        if (!Common.isEmpty(msg)) {
+                            messages.add(msg);
                         }
                     }
                 }

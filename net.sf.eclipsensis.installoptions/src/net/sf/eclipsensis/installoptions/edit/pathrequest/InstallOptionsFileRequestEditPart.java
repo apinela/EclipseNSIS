@@ -12,7 +12,8 @@ package net.sf.eclipsensis.installoptions.edit.pathrequest;
 import java.util.List;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
-import net.sf.eclipsensis.installoptions.edit.*;
+import net.sf.eclipsensis.installoptions.edit.IExtendedEditSupport;
+import net.sf.eclipsensis.installoptions.edit.InstallOptionsExtendedEditPolicy;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsFileRequest;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
 import net.sf.eclipsensis.installoptions.model.commands.ModifyFilterCommand;
@@ -77,7 +78,7 @@ public class InstallOptionsFileRequestEditPart extends InstallOptionsPathRequest
         installEditPolicy(InstallOptionsExtendedEditPolicy.ROLE, new InstallOptionsExtendedEditPolicy(this) {
             protected Command getExtendedEditCommand(ExtendedEditRequest request)
             {
-                ModifyFilterCommand command = new ModifyFilterCommand((InstallOptionsWidgetEditPart)request.getEditPart(), (List)request.getNewValue());
+                ModifyFilterCommand command = new ModifyFilterCommand((InstallOptionsFileRequest)request.getEditPart().getModel(), (List)request.getNewValue());
                 return command;
             }
     

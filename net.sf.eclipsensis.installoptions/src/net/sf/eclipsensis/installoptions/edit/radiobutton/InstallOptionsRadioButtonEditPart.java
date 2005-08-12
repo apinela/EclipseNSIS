@@ -13,8 +13,7 @@ import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.edit.checkbox.InstallOptionsCheckBoxEditPart;
 import net.sf.eclipsensis.installoptions.figures.IInstallOptionsFigure;
 import net.sf.eclipsensis.installoptions.figures.RadioButtonFigure;
-
-import org.eclipse.draw2d.FigureCanvas;
+import org.eclipse.swt.widgets.Composite;
 
 public class InstallOptionsRadioButtonEditPart extends InstallOptionsCheckBoxEditPart
 {
@@ -30,7 +29,7 @@ public class InstallOptionsRadioButtonEditPart extends InstallOptionsCheckBoxEdi
 
     protected IInstallOptionsFigure createInstallOptionsFigure()
     {
-        return new RadioButtonFigure((FigureCanvas)this.getViewer().getControl(), getInstallOptionsWidget());
+        return new RadioButtonFigure((Composite)getViewer().getControl(), getInstallOptionsWidget());
     }
 
     protected String getTypeName()

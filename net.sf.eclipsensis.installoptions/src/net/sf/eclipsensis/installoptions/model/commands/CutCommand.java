@@ -12,7 +12,6 @@ package net.sf.eclipsensis.installoptions.model.commands;
 import java.util.*;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
-import net.sf.eclipsensis.installoptions.edit.InstallOptionsWidgetEditPart;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsDialog;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsWidget;
 import net.sf.eclipsensis.installoptions.rulers.InstallOptionsGuide;
@@ -36,9 +35,9 @@ public class CutCommand extends CopyCommand
         super(InstallOptionsPlugin.getResourceString("cut.command.name")); //$NON-NLS-1$
     }
 
-    public void addPart(InstallOptionsWidgetEditPart part)
+    public void addPart(InstallOptionsWidget part)
     {
-        mOriginals.add(part.getModel());
+        mOriginals.add(part);
         super.addPart(part);
     }
 

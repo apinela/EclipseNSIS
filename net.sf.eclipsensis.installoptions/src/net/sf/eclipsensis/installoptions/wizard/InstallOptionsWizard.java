@@ -11,16 +11,41 @@ package net.sf.eclipsensis.installoptions.wizard;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.wizard.IWizardContainer;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 
 public class InstallOptionsWizard extends Wizard implements INewWizard 
 {
+    private static final Image cShellImage = InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("installoptions.icon")); //$NON-NLS-1$
 	private IStructuredSelection mSelection;
 	private IWorkbench mWorkbench;
 	private InstallOptionsWizardPage mPage;
+    private IPageChangedListener mPageChangedListener = new IPageChangedListener() {
+        private Image mOldImage;
+        private Image[] mOldImages;
+        
+        public void pageChanged(PageChangedEvent event)
+        {
+            Shell shell = getContainer().getShell();
+            if(event.getSelectedPage() == mPage) {
+                mOldImage = shell.getImage();
+                mOldImages = shell.getImages();
+                shell.setImage(cShellImage);
+            }
+            else {
+                if(shell.getImage() == cShellImage) {
+                    shell.setImage(mOldImage);
+                    shell.setImages(mOldImages);
+                }
+            }
+        }
+    };
     
     /** (non-Javadoc)
      * Method declared on Wizard.
@@ -42,6 +67,17 @@ public class InstallOptionsWizard extends Wizard implements INewWizard
     	setDefaultPageImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("wizard.title.image"))); //$NON-NLS-1$
     }
     
+    public void setContainer(IWizardContainer wizardContainer)
+    {
+        if(getContainer() instanceof IPageChangeProvider) {
+            ((IPageChangeProvider)getContainer()).removePageChangedListener(mPageChangedListener);
+        }
+        super.setContainer(wizardContainer);
+        if(getContainer() instanceof IPageChangeProvider) {
+            ((IPageChangeProvider)getContainer()).addPageChangedListener(mPageChangedListener);
+        }
+    }
+
     /** (non-Javadoc)
      * Method declared on IWizard
      */

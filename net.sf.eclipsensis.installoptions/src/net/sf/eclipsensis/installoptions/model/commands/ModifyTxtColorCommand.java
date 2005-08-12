@@ -10,7 +10,6 @@
 package net.sf.eclipsensis.installoptions.model.commands;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
-import net.sf.eclipsensis.installoptions.edit.InstallOptionsWidgetEditPart;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsLink;
 
 import org.eclipse.gef.commands.Command;
@@ -18,15 +17,13 @@ import org.eclipse.swt.graphics.RGB;
 
 public class ModifyTxtColorCommand extends Command
 {
-    private InstallOptionsWidgetEditPart mEditPart;
     private InstallOptionsLink mModel;
     private RGB mOldTxtColor;
     private RGB mNewTxtColor;
     
-    public ModifyTxtColorCommand(InstallOptionsWidgetEditPart editPart, RGB newTxtColor)
+    public ModifyTxtColorCommand(InstallOptionsLink model, RGB newTxtColor)
     {
-        mEditPart = editPart;
-        mModel = (InstallOptionsLink)mEditPart.getModel();
+        mModel = model;
         mNewTxtColor = newTxtColor;
         mOldTxtColor = mModel.getTxtColor();
         setLabel(InstallOptionsPlugin.getFormattedString("modify.txtcolor.command.label", new Object[]{mModel.getType()})); //$NON-NLS-1$

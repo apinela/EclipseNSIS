@@ -30,7 +30,7 @@
             icon="%installoptions.design.editor.icon"
             class="net.sf.eclipsensis.installoptions.editor.InstallOptionsDesignEditor"
             contributorClass="net.sf.eclipsensis.installoptions.actions.InstallOptionsDesignActionContributor"
-            id="net.sf.eclipsensis.installoptions.editor.InstallOptionsDesignEditor">
+            id="%installoptions.design.editor.id">
       </editor>
       <editor
             default="false"
@@ -39,7 +39,7 @@
             icon="%installoptions.source.editor.icon"
             class="net.sf.eclipsensis.installoptions.editor.InstallOptionsSourceEditor"
             contributorClass="net.sf.eclipsensis.installoptions.actions.InstallOptionsSourceActionContributor"
-            id="net.sf.eclipsensis.installoptions.editor.InstallOptionsSourceEditor">
+            id="%installoptions.source.editor.id">
       </editor>
    </extension>
    <extension
@@ -49,7 +49,7 @@
             icon="%installoptions.wizard.icon"
             category="net.sf.eclipsensis"
             class="net.sf.eclipsensis.installoptions.wizard.InstallOptionsWizard"
-            id="net.sf.eclipsensis.installoptions.wizard.InstallOptionsWizard">
+            id="%installoptions.wizard.id">
          <description>
             %installoptions.wizard.description
          </description>
@@ -59,7 +59,7 @@
       </wizard>
    </extension>
    <extension
-        id="net.sf.eclipsensis.installoptions.editor.InstallOptionsDocumentSetupParticipant"
+        id="InstallOptionsDocumentSetupParticipant"
         name="%document.setup.participant.name"
         point="org.eclipse.core.filebuffers.documentSetup">
         <participant
@@ -71,19 +71,19 @@
          point="org.eclipse.ui.perspectiveExtensions">
       <perspectiveExtension targetID="org.eclipse.ui.resourcePerspective">
          <newWizardShortcut
-               id="net.sf.eclipsensis.installoptions.wizard.InstallOptionsWizard">
+               id="%installoptions.wizard.id">
          </newWizardShortcut>
       </perspectiveExtension>
       <perspectiveExtension
             targetID="org.eclipse.jdt.ui.JavaPerspective">
          <newWizardShortcut
-               id="net.sf.eclipsensis.installoptions.wizard.InstallOptionsWizard">
+               id="%installoptions.wizard.id">
          </newWizardShortcut>
       </perspectiveExtension>
       <perspectiveExtension
             targetID="org.eclipse.pde.ui.PDEPerspective">
          <newWizardShortcut
-               id="net.sf.eclipsensis.installoptions.wizard.InstallOptionsWizard">
+               id="%installoptions.wizard.id">
          </newWizardShortcut>
       </perspectiveExtension>
    </extension>
@@ -93,7 +93,7 @@
             name="%installoptions.preference.page.name"
             category="net.sf.eclipsensis.dialogs.NSISPreferencePage"
             class="net.sf.eclipsensis.installoptions.dialogs.InstallOptionsPreferencePage"
-            id="net.sf.eclipsensis.installoptions.dialogs.InstallOptionsPreferencePage">
+            id="%installoptions.preference.page.id">
       </page>
    </extension>
    <extension
@@ -101,18 +101,18 @@
          name="%installoptions.problem.marker.name"
          point="org.eclipse.core.resources.markers">
       <super type="org.eclipse.core.resources.problemmarker"/>
-     <super type="org.eclipse.core.resources.textmarker"/>
+      <super type="org.eclipse.core.resources.textmarker"/>
       <persistent value="true" />
    </extension>
    <extension
        point="org.eclipse.ui.editors.annotationTypes">
        <type
-           name="net.sf.eclipsensis.installoptions.InstallOptionsError"
+           name="%installoptions.error.annotation.name"
            super="org.eclipse.ui.workbench.texteditor.error"
            markerSeverity="2">
        </type>
        <type
-           name="net.sf.eclipsensis.installoptions.InstallOptionsWarning"
+           name="%installoptions.warning.annotation.name"
            super="org.eclipse.ui.workbench.texteditor.warning"
            markerSeverity="1">
        </type>
@@ -122,13 +122,13 @@
       <category
          name="%commands.category.name"
          description="%commands.category.description"
-         id="net.sf.eclipsensis.installoptions.InstallOptionsCategory">
+         id="%commands.category.id">
       </category>
       <command
          name="%switch.editor.command.name"
          description="%switch.editor.command.description"
-         id="net.sf.eclipsensis.installoptions.commands.SwitchEditor"
-         categoryId="net.sf.eclipsensis.installoptions.InstallOptionsCategory"/>
+         id="%switch.editor.command.id"
+         categoryId="%commands.category.id"/>
    </extension>
    <extension
          point="org.eclipse.ui.contexts">
@@ -136,26 +136,26 @@
             name="%editing.installoptions.source.name"
             description="%editing.installoptions.source.description"
             parentId="org.eclipse.ui.textEditorScope"
-            id="net.sf.eclipsensis.installoptions.InstallOptionsSourceEditorScope">
+            id="%editing.installoptions.source.id">
       </context>
       <context
             name="%editing.installoptions.design.name"
             description="%editing.installoptions.design.description"
             parentId="org.eclipse.ui.contexts.window"
-            id="net.sf.eclipsensis.installoptions.InstallOptionsDesignEditorScope">
+            id="%editing.installoptions.design.id">
       </context>
    </extension>
    <extension
          point="org.eclipse.ui.bindings">
       <key
           schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-          commandId="net.sf.eclipsensis.installoptions.commands.SwitchEditor"
-          contextId="net.sf.eclipsensis.installoptions.InstallOptionsSourceEditorScope"
+          commandId="%switch.editor.command.id"
+          contextId="%editing.installoptions.source.id"
           sequence="%switch.editor.command.keysequence"/>
       <key
           schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-          commandId="net.sf.eclipsensis.installoptions.commands.SwitchEditor"
-          contextId="net.sf.eclipsensis.installoptions.InstallOptionsDesignEditorScope"
+          commandId="%switch.editor.command.id"
+          contextId="%editing.installoptions.design.id"
           sequence="%switch.editor.command.keysequence"/>
    </extension>
    <extension
@@ -183,7 +183,7 @@
       <runtime>
          <run class="net.sf.eclipsensis.installoptions.builder.InstallOptionsNature"/>
       </runtime>
-      <builder id="net.sf.eclipsensis.installoptions.InstallOptionsBuilder"/>
+      <builder id="%installoptions.builder.id"/>
    </extension>
    <extension point="org.eclipse.core.filebuffers.annotationModelCreation">
        <factory 

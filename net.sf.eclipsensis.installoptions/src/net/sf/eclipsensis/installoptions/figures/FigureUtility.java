@@ -9,6 +9,8 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.figures;
 
+import java.util.HashMap;
+
 import net.sf.eclipsensis.installoptions.model.Position;
 
 import org.eclipse.draw2d.FigureUtilities;
@@ -18,6 +20,8 @@ import org.eclipse.swt.graphics.FontMetrics;
 
 public class FigureUtility
 {
+    private static HashMap cFontSizes = new HashMap();
+    
     private static long div(long dividend, long divisor)
     {
         if (dividend < 0) {
@@ -54,22 +58,22 @@ public class FigureUtility
 
     public static int dialogUnitsToPixelsX(int dlgUnits, Font f)
     {
-        return muldiv(dlgUnits, getFontAverageCharWidth(f), 4);
+        return muldiv(dlgUnits, getFontSize(f).width, 4);
     }
 
     public static int dialogUnitsToPixelsY(int dlgUnits, Font f)
     {
-        return muldiv(dlgUnits, getFontHeight(f), 8);
+        return muldiv(dlgUnits, getFontSize(f).height, 8);
     }
 
     public static int pixelsToDialogUnitsX(int pixUnits, Font f)
     {
-        return (int)div((pixUnits * 4), getFontAverageCharWidth(f));
+        return (int)div((pixUnits * 4), getFontSize(f).width);
     }
 
     public static int pixelsToDialogUnitsY(int pixUnits, Font f)
     {
-        return (int)div((pixUnits * 8), getFontHeight(f));
+        return (int)div((pixUnits * 8), getFontSize(f).height);
     }
     
     public static Point dialogUnitsToPixels(Point p, Font f)
@@ -145,5 +149,20 @@ public class FigureUtility
         }
         Dimension dim = FigureUtilities.getStringExtents(buf.toString(),f);
         return (int)div(dim.width,52);
+    }
+    
+    private static Dimension getFontSize(Font f)
+    {
+        Dimension size = (Dimension)cFontSizes.get(f);
+        if(size == null) {
+            synchronized (FigureUtility.class) {
+                size = (Dimension)cFontSizes.get(f);
+                if(size == null) {
+                    size = new Dimension(getFontAverageCharWidth(f),getFontHeight(f));
+                    cFontSizes.put(f,size);
+                }
+            }
+        }
+        return size;
     }
 }

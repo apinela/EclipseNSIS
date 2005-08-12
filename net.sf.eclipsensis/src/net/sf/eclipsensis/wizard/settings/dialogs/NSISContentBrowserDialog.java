@@ -51,6 +51,7 @@ public class NSISContentBrowserDialog extends Dialog
      */
     protected void configureShell(Shell newShell)
     {
+        super.configureShell(newShell);
         newShell.setText(EclipseNSISPlugin.getResourceString("wizard.content.browser.title")); //$NON-NLS-1$
         Composite parent = newShell.getParent();
         if(parent != null) {
@@ -60,8 +61,8 @@ public class NSISContentBrowserDialog extends Dialog
         else {
             newShell.setSize(400,400);
         }
-        super.configureShell(newShell);
-    }
+        newShell.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("nsis.icon"))); //$NON-NLS-1$
+   }
 
     /**
      * @return Returns the selected element.

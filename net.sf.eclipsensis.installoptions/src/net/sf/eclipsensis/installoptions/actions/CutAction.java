@@ -16,6 +16,7 @@ import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.edit.InstallOptionsEditDomain;
 import net.sf.eclipsensis.installoptions.edit.InstallOptionsWidgetEditPart;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsDialog;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsWidget;
 import net.sf.eclipsensis.installoptions.model.commands.CutCommand;
 
 import org.eclipse.gef.EditDomain;
@@ -69,7 +70,7 @@ public class CutAction extends SelectionAction
             for (Iterator iter = objects.iterator(); iter.hasNext();) {
                 Object object = iter.next();
                 if(object instanceof InstallOptionsWidgetEditPart) {
-                    cutCommand.addPart((InstallOptionsWidgetEditPart)object);
+                    cutCommand.addPart((InstallOptionsWidget)((InstallOptionsWidgetEditPart)object).getModel());
                 }
                 else {
                     return null;

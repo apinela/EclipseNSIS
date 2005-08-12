@@ -67,6 +67,7 @@ public class NSISAboutDialog extends Dialog implements INSISConstants
     protected void configureShell(Shell newShell)
     {
         super.configureShell(newShell);
+        newShell.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("nsis.icon"))); //$NON-NLS-1$
         newShell.setText(cAboutTitle);
     }
     

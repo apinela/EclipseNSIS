@@ -14,11 +14,11 @@ import java.util.*;
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.editor.text.*;
+import net.sf.eclipsensis.job.IJobStatusRunnable;
 import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.rules.ICharacterScanner;
 import org.eclipse.jface.text.rules.IToken;
@@ -116,84 +116,101 @@ public class NSISTaskTagUpdater implements INSISConstants
     public void updateTaskTags()
     {
         final String taskName = EclipseNSISPlugin.getResourceString("task.tags.job.title"); //$NON-NLS-1$
-        Job job = new Job(taskName) {
-            public IStatus run(IProgressMonitor monitor)
-            {
-                try {
-                    monitor.beginTask(taskName,2);
-                    monitor.setTaskName(EclipseNSISPlugin.getResourceString("task.tags.scan.task.name")); //$NON-NLS-1$
-                    final String[] extensions = Common.loadArrayProperty(EclipseNSISPlugin.getDefault().getResourceBundle(),"nsis.extensions"); //$NON-NLS-1$
-                    for (int i = 0; i < extensions.length; i++) {
-                        extensions[i]=extensions[i].toLowerCase();
-                    }
-                    final HashMap filesMap = new HashMap();
-                    Collection coll = NSISEditor.getEditors();
-                    for (Iterator iter = coll.iterator(); iter.hasNext();) {
-                        NSISEditor editor = (NSISEditor)iter.next();
-                        if(!editor.isDirty()) {
-                            IEditorInput editorInput = editor.getEditorInput();
-                            if(editorInput instanceof IFileEditorInput) {
-                                IFile file = ((IFileEditorInput)editorInput).getFile();
-                                IDocument document = editor.getDocumentProvider().getDocument(editorInput);
-                                filesMap.put(file,document);
-                            }
+        EclipseNSISPlugin.getDefault().getJobScheduler().scheduleJob(getClass(), taskName,
+            new IJobStatusRunnable() {
+                public IStatus run(final IProgressMonitor monitor)
+                {
+                    try {
+                        monitor.beginTask(taskName,2);
+                        monitor.setTaskName(EclipseNSISPlugin.getResourceString("task.tags.scan.task.name")); //$NON-NLS-1$
+                        final String[] extensions = Common.loadArrayProperty(EclipseNSISPlugin.getDefault().getResourceBundle(),"nsis.extensions"); //$NON-NLS-1$
+                        for (int i = 0; i < extensions.length; i++) {
+                            extensions[i]=extensions[i].toLowerCase();
                         }
-                    }
-                    ResourcesPlugin.getWorkspace().getRoot().accept(new IResourceVisitor() {
-
-                        public boolean visit(IResource resource) throws CoreException
-                        {
-                            if(resource instanceof IFile) {
-                                String ext = resource.getFileExtension();
-                                if(!Common.isEmpty(ext)) {
-                                    for (int i = 0; i < extensions.length; i++) {
-                                        if(ext.toLowerCase().equals(extensions[i])) {
-                                            filesMap.put(resource,null);
-                                            break;
-                                        }
-                                    }
+                        final HashMap filesMap = new HashMap();
+                        Collection coll = NSISEditor.getEditors();
+                        for (Iterator iter = coll.iterator(); iter.hasNext();) {
+                            if(monitor.isCanceled()) {
+                                return Status.CANCEL_STATUS;
+                            }
+                            NSISEditor editor = (NSISEditor)iter.next();
+                            if(!editor.isDirty()) {
+                                IEditorInput editorInput = editor.getEditorInput();
+                                if(editorInput instanceof IFileEditorInput) {
+                                    IFile file = ((IFileEditorInput)editorInput).getFile();
+                                    IDocument document = editor.getDocumentProvider().getDocument(editorInput);
+                                    filesMap.put(file,document);
                                 }
                             }
-                            else if(resource instanceof IContainer) {
-                                return true;
+                        }
+                        if(monitor.isCanceled()) {
+                            return Status.CANCEL_STATUS;
+                        }
+                        ResourcesPlugin.getWorkspace().getRoot().accept(new IResourceVisitor() {
+
+                            public boolean visit(IResource resource) throws CoreException
+                            {
+                                if(!monitor.isCanceled()) {
+                                    if(resource instanceof IFile) {
+                                        String ext = resource.getFileExtension();
+                                        if(!Common.isEmpty(ext)) {
+                                            for (int i = 0; i < extensions.length; i++) {
+                                                if(ext.toLowerCase().equals(extensions[i])) {
+                                                    filesMap.put(resource,null);
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    }
+                                    else if(resource instanceof IContainer) {
+                                        return true;
+                                    }
+                                }
+                                return false;
                             }
-                            return false;
+                            
+                        });
+                        if(monitor.isCanceled()) {
+                            return Status.CANCEL_STATUS;
                         }
                         
-                    });
-                    
-                    monitor.setTaskName(taskName);
-                    String taskName2 = EclipseNSISPlugin.getResourceString("task.tags.update.task.name"); //$NON-NLS-1$
-                    SubProgressMonitor subMonitor = new SubProgressMonitor(monitor,1);
-                    try {
-                        subMonitor.beginTask(taskName2,filesMap.size());
-                        for (Iterator iter = filesMap.keySet().iterator(); iter.hasNext();) {
-                            IFile file = (IFile)iter.next();
-                            IDocument document = (IDocument)filesMap.get(file);
-                            subMonitor.setTaskName(EclipseNSISPlugin.getFormattedString("task.tags.update.file.task.name",new String[]{file.getFullPath().toString()})); //$NON-NLS-1$
-                            if(document == null) {
-                                updateTaskTags(file);
+                        monitor.setTaskName(taskName);
+                        String taskName2 = EclipseNSISPlugin.getResourceString("task.tags.update.task.name"); //$NON-NLS-1$
+                        SubProgressMonitor subMonitor = new SubProgressMonitor(monitor,1);
+                        try {
+                            subMonitor.beginTask(taskName2,filesMap.size());
+                            for (Iterator iter = filesMap.keySet().iterator(); iter.hasNext();) {
+                                if(monitor.isCanceled()) {
+                                    return Status.CANCEL_STATUS;
+                                }
+                                IFile file = (IFile)iter.next();
+                                IDocument document = (IDocument)filesMap.get(file);
+                                subMonitor.setTaskName(EclipseNSISPlugin.getFormattedString("task.tags.update.file.task.name",new String[]{file.getFullPath().toString()})); //$NON-NLS-1$
+                                if(document == null) {
+                                    updateTaskTags(file);
+                                }
+                                else {
+                                    updateTaskTags(file,document);
+                                }
+                                subMonitor.worked(1);
                             }
-                            else {
-                                updateTaskTags(file,document);
-                            }
-                            subMonitor.worked(1);
                         }
+                        finally {
+                            subMonitor.done();
+                        }
+                        if(monitor.isCanceled()) {
+                            return Status.CANCEL_STATUS;
+                        }
+                        monitor.worked(1);
+                    }
+                    catch(CoreException ce) {
+                        ce.printStackTrace();
                     }
                     finally {
-                        subMonitor.done();
+                        monitor.done();
                     }
-                    monitor.worked(1);
+                    return Status.OK_STATUS;
                 }
-                catch(CoreException ce) {
-                    ce.printStackTrace();
-                }
-                finally {
-                    monitor.done();
-                }
-                return Status.OK_STATUS;
-            }
-        };
-        job.schedule();
+            });
     }
 }

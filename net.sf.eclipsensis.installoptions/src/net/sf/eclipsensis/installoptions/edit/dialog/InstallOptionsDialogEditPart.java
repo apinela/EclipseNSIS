@@ -29,6 +29,7 @@ import org.eclipse.gef.requests.SelectionRequest;
 import org.eclipse.gef.rulers.RulerProvider;
 import org.eclipse.gef.tools.DeselectAllTracker;
 import org.eclipse.gef.tools.MarqueeDragTracker;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.accessibility.AccessibleEvent;
 
 public class InstallOptionsDialogEditPart extends InstallOptionsEditPart implements LayerConstants, IInstallOptionsConstants
@@ -75,7 +76,16 @@ public class InstallOptionsDialogEditPart extends InstallOptionsEditPart impleme
     public void propertyChange(PropertyChangeEvent evt)
     {
         String prop = evt.getPropertyName();
-        if (InstallOptionsModel.PROPERTY_CHILDREN.equals(prop)) {
+        if (InstallOptionsDialog.PROPERTY_SELECTION.equals(prop)) {
+            List modelSelection = (List)evt.getNewValue();
+            List selection = new ArrayList();
+            for (Iterator iter = modelSelection.iterator(); iter.hasNext();) {
+                InstallOptionsWidget element = (InstallOptionsWidget)iter.next();
+                selection.add(getViewer().getEditPartRegistry().get(element));
+            }
+            getViewer().setSelection(new StructuredSelection(selection));
+        }
+        else if (InstallOptionsModel.PROPERTY_CHILDREN.equals(prop)) {
             //This bit is in here to correct z-ordering of children.
             List modelChildren = getModelChildren();
             List children = getChildren();

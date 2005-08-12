@@ -22,7 +22,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 
-public class NSISWizardTemplatePage extends AbstractNSISWizardPage
+public class NSISWizardTemplatePage extends AbstractNSISWizardStartPage
 {
     public static final String NAME = "nsisWizardTemplate"; //$NON-NLS-1$
     

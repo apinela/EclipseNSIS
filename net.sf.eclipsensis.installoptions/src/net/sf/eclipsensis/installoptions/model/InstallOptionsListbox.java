@@ -213,8 +213,9 @@ public class InstallOptionsListbox extends InstallOptionsCombobox
         }
         protected void configureShell(Shell newShell)
         {
-            newShell.setText(InstallOptionsPlugin.getFormattedString("select.listitems.dialog.name", new String[]{mType})); //$NON-NLS-1$
             super.configureShell(newShell);
+            newShell.setText(InstallOptionsPlugin.getFormattedString("select.listitems.dialog.name", new String[]{mType})); //$NON-NLS-1$
+            newShell.setImage(InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("installoptions.icon"))); //$NON-NLS-1$
         }
 
         public List getSelection()

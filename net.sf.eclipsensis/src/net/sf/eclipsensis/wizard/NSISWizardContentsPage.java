@@ -462,8 +462,8 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
             }
         });
 
-        addPageListener(new NSISWizardPageAdapter() {
-            public void aboutToShow()
+        addPageChangedRunnable(new Runnable() {
+            public void run()
             {
                 checkUnselectedSections();
             }

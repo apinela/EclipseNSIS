@@ -37,7 +37,7 @@ import org.eclipse.ui.texteditor.ChainedPreferenceStore;
 
 public class NSISEditorPreferencePage extends PreferencePage implements IWorkbenchPreferencePage, INSISPreferenceConstants
 {
-    private final String[][] mSyntaxStyleListModel = {
+    private static final String[][] cSyntaxStyleListModel = {
             {EclipseNSISPlugin.getResourceString("comments.label"),COMMENTS_STYLE}, //$NON-NLS-1$
             {EclipseNSISPlugin.getResourceString("strings.label"),STRINGS_STYLE}, //$NON-NLS-1$
             {EclipseNSISPlugin.getResourceString("commands.label"),COMMANDS_STYLE}, //$NON-NLS-1$
@@ -55,6 +55,7 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
             {EclipseNSISPlugin.getResourceString("userdefined.variables.label"),USERDEFINED_VARIABLES_STYLE}, //$NON-NLS-1$
             {EclipseNSISPlugin.getResourceString("numbers.label"),NUMBERS_STYLE} //$NON-NLS-1$
     };
+    private static final String[] cPreferenceKeys;
     
     private HashMap mStyleMap = new HashMap();
     private PreferenceStoreWrapper mPreferenceStore;
@@ -80,17 +81,8 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
     private ColorEditor mMatchingDelimsColorEditor;
 
     private MasterSlaveController mMasterSlaveController;
-    
-    public NSISEditorPreferencePage() 
-    {
-        super();
-        setDescription(EclipseNSISPlugin.getResourceString("editor.preferences.description")); //$NON-NLS-1$
-        setPreferenceStore(NSISPreferences.INSTANCE.getPreferenceStore());
-        mPreferenceStore= new PreferenceStoreWrapper(getPreferenceStore());
-        sortModels();
-    }
 
-    private void sortModels()
+    static
     {
         Comparator comparator = new Comparator() {
             public int compare(Object o1, Object o2)
@@ -104,7 +96,24 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
                 return n;
             }
         };
-        Arrays.sort(mSyntaxStyleListModel, comparator);
+        Arrays.sort(cSyntaxStyleListModel, comparator);
+        cPreferenceKeys = new String[cSyntaxStyleListModel.length+3];
+        int i = 0;
+        for (; i < cSyntaxStyleListModel.length; i++) {
+            cPreferenceKeys[i] = cSyntaxStyleListModel[i][1];
+        }
+        cPreferenceKeys[i++] = USE_SPACES_FOR_TABS;
+        cPreferenceKeys[i++] = MATCHING_DELIMITERS;
+        cPreferenceKeys[i++] = MATCHING_DELIMITERS_COLOR;
+    }
+    
+    public NSISEditorPreferencePage() 
+    {
+        super();
+        setDescription(EclipseNSISPlugin.getResourceString("editor.preferences.description")); //$NON-NLS-1$
+        setPreferenceStore(NSISPreferences.INSTANCE.getPreferenceStore());
+        mPreferenceStore= new PreferenceStoreWrapper(getPreferenceStore());
+        ((PreferenceStoreWrapper)mPreferenceStore).load(cPreferenceKeys);
     }
 
     /*
@@ -124,7 +133,7 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
     private void handleSyntaxStyleListSelection()
     { 
         int i= mSyntaxStyleList.getSelectionIndex();
-        String key= mSyntaxStyleListModel[i][1];
+        String key= cSyntaxStyleListModel[i][1];
         NSISSyntaxStyle style = getStyle(key);
         mSyntaxColorEditor.setRGB(style.getForeground());
         mStyleBold.setSelection(style.isBold());
@@ -188,7 +197,7 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
                 boolean state = styleButton.getSelection();
                 
                 int i= mSyntaxStyleList.getSelectionIndex();
-                String key= mSyntaxStyleListModel[i][1];
+                String key= cSyntaxStyleListModel[i][1];
                 if (key != null) {
                     NSISSyntaxStyle style = getStyle(key);
                     style.setStyle(styleFlag, state);
@@ -245,7 +254,7 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
         foregroundColorButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 int i= mSyntaxStyleList.getSelectionIndex();
-                String key= mSyntaxStyleListModel[i][1];
+                String key= cSyntaxStyleListModel[i][1];
                 NSISSyntaxStyle style = getStyle(key);
                 style.setForeground(mSyntaxColorEditor.getRGB());
                 saveStyle(key, style);
@@ -334,8 +343,8 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
         
         initializeFields();
 
-        for (int i= 0; i < mSyntaxStyleListModel.length; i++) {
-            mSyntaxStyleList.add(mSyntaxStyleListModel[i][0]);
+        for (int i= 0; i < cSyntaxStyleListModel.length; i++) {
+            mSyntaxStyleList.add(cSyntaxStyleListModel[i][0]);
         }
         mSyntaxStyleList.getDisplay().asyncExec(new Runnable() {
             public void run() {

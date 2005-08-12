@@ -51,8 +51,9 @@ public class NSISWizardTemplateDialog extends Dialog implements INSISWizardConst
      */
     protected void configureShell(Shell newShell)
     {
-        newShell.setText(EclipseNSISPlugin.getResourceString("wizard.template.dialog.title")); //$NON-NLS-1$
         super.configureShell(newShell);
+        newShell.setText(EclipseNSISPlugin.getResourceString("wizard.template.dialog.title")); //$NON-NLS-1$
+        newShell.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("nsis.icon"))); //$NON-NLS-1$
     }
 
     /* (non-Javadoc)

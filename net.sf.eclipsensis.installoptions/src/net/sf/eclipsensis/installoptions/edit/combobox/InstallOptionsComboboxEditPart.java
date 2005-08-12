@@ -22,10 +22,10 @@ import net.sf.eclipsensis.installoptions.properties.dialogs.ListItemsDialog;
 import net.sf.eclipsensis.installoptions.properties.editors.EditableComboBoxCellEditor;
 import net.sf.eclipsensis.installoptions.properties.validators.NSISStringLengthValidator;
 
-import org.eclipse.draw2d.FigureCanvas;
 import org.eclipse.gef.tools.CellEditorLocator;
 import org.eclipse.gef.tools.DirectEditManager;
 import org.eclipse.jface.window.Window;
+import org.eclipse.swt.widgets.Composite;
 
 public class InstallOptionsComboboxEditPart extends InstallOptionsEditableElementEditPart
 {
@@ -79,7 +79,7 @@ public class InstallOptionsComboboxEditPart extends InstallOptionsEditableElemen
 
     protected IInstallOptionsFigure createInstallOptionsFigure() 
     {
-        return new ComboboxFigure((FigureCanvas)this.getViewer().getControl(), getInstallOptionsWidget());
+        return new ComboboxFigure((Composite)getViewer().getControl(), getInstallOptionsWidget());
     }
 
     public void doPropertyChange(PropertyChangeEvent evt)

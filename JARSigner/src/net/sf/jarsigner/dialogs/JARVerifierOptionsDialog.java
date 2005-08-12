@@ -9,14 +9,14 @@
  *******************************************************************************/
 package net.sf.jarsigner.dialogs;
 
-import java.io.File;
 import java.security.KeyStoreException;
+import java.util.*;
+import java.util.List;
 
+import net.sf.eclipsensis.utilities.util.Common;
 import net.sf.jarsigner.JARSignerPlugin;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -25,19 +25,21 @@ public class JARVerifierOptionsDialog extends AbstractJAROptionsDialog
 {
     private static final String CERTS = "certs"; //$NON-NLS-1$
     
+    private List mControlsList;
     /**
      * @param parentShell
      * @throws KeyStoreException 
      */
-    public JARVerifierOptionsDialog(Shell parentShell, boolean multi) throws KeyStoreException
+    public JARVerifierOptionsDialog(Shell parentShell, List selection) throws KeyStoreException
     {
-        super(parentShell, multi);
+        super(parentShell, selection);
     }
 
     protected void init()
     {
+        mControlsList = new ArrayList();
         super.init();
-        mValues.put(CERTS,mDialogSettings.getBoolean(CERTS)?Boolean.TRUE:Boolean.FALSE);
+        setValue(CERTS,getDialogSettings().getBoolean(CERTS)?Boolean.TRUE:Boolean.FALSE);
     }
 
     protected String getDialogTitle()
@@ -45,87 +47,73 @@ public class JARVerifierOptionsDialog extends AbstractJAROptionsDialog
         return JARSignerPlugin.getResourceString("jarverifier.dialog.title"); //$NON-NLS-1$
     }
 
-    protected Control createDialogArea(Composite parent)
+    protected void createValuesDialogArea(Composite parent)
     {
-        parent = (Composite)super.createDialogArea(parent);
-        GridLayout layout = (GridLayout)parent.getLayout();
-        layout.numColumns = 1;
-        layout.makeColumnsEqualWidth = false;
+    }
+
+    protected void createFlagsDialogArea(Composite parent)
+    {
         Composite composite = new Composite(parent,SWT.NONE);
-        composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-        layout = new GridLayout(3,false);
+        GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
+        gd.horizontalSpan = ((GridLayout)parent.getLayout()).numColumns;
+        composite.setLayoutData(gd);
+        GridLayout layout = new GridLayout(3,false);
         layout.marginHeight = 0;
         layout.marginWidth = 0;
         composite.setLayout(layout);
         applyDialogFont(composite);
 
-        final Button b1 = makeCheckBox(composite,VERBOSE,VERBOSE, false); //$NON-NLS-1$
-
-        final Button b2 =makeCheckBox(composite,CERTS,CERTS, false); //$NON-NLS-1$
-        ((GridData)b2.getLayoutData()).horizontalIndent = 10;
-
         String keystore = getDefaultKeyStore();
-        if(JARSignerPlugin.isEmpty(keystore)) {
+        if(Common.isEmpty(keystore)) {
             keystore = ".keystore"; //$NON-NLS-1$
         }
-        final Text t = makeFileBrowser(composite,"key.store.location", KEY_STORE,  //$NON-NLS-1$
-                new FileSelectionAdapter("key.storer.location.message",keystore,false), //$NON-NLS-1$ //$NON-NLS-2$
+        Text t = makeFileBrowser(composite,JARSignerPlugin.getResourceString("key.store.location"), KEY_STORE,  //$NON-NLS-1$
+                new FileSelectionAdapter(JARSignerPlugin.getResourceString("key.store.location.message"),keystore,true), //$NON-NLS-1$ //$NON-NLS-2$
                 false); //$NON-NLS-1$
-        GridData gd = (GridData)t.getLayoutData();
+        gd = (GridData)t.getLayoutData();
         gd.widthHint = convertWidthInCharsToPixels(50);
-        final Label l = (Label)t.getData(ATTR_LABEL);
-        ((GridData)l.getLayoutData()).horizontalIndent = 10;
-        final Button b3 = (Button)t.getData(ATTR_BUTTON);
-        final Runnable r = new Runnable() {
-            public void run()
-            {
-                boolean state = b1.getSelection();
-                b2.setEnabled(state);
-                t.setEnabled(state);
-                l.setEnabled(state);
-                b3.setEnabled(state);
-            }
-        };
+        mControlsList.add(t);
         
-        b1.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) 
-            {
-                r.run();
-            }
-        });
-        
-        makeFileBrowser(composite,"tools.jar.location", TOOLS_JAR,  //$NON-NLS-1$
-                new FileSelectionAdapter("tools.jar.location.message",JARSignerPlugin.getResourceString("tools.jar.name"),false), //$NON-NLS-1$ //$NON-NLS-2$
-                true); //$NON-NLS-1$
-        
-        if(mMulti) {
-            makeCheckBox(composite,IGNORE_ERRORS,IGNORE_ERRORS,false); //$NON-NLS-1$
-        }
-        
-        r.run();
-        return parent;
+        Label l = (Label)t.getData(ATTR_LABEL);
+        mControlsList.add(l);
+
+        Button b = (Button)t.getData(ATTR_BUTTON);
+        mControlsList.add(b);
+
+        b = makeCheckBox(composite,JARSignerPlugin.getResourceString(CERTS),CERTS, false); //$NON-NLS-1$
+        mControlsList.add(b);
     }
     
-    protected boolean isValid()
+    protected void valueChanged(String name, Object oldValue, Object newValue)
     {
-        boolean state = true;
-        
-        if(!JARSignerPlugin.isEmpty(getKeyStore())) {
-            File f = new File(getKeyStore());
-            state = (f.exists() && f.isFile());
+        if(name.equals(VERBOSE)) {
+            boolean state = ((Boolean)newValue).booleanValue();
+            updateControlsState(state);
         }
+        super.valueChanged(name, oldValue, newValue);
+    }
 
-        return state;
+    private void updateControlsState(boolean state)
+    {
+        for(Iterator iter=mControlsList.iterator(); iter.hasNext(); ) {
+            ((Control)iter.next()).setEnabled(state);
+        }
+    }
+
+    public void create()
+    {
+        super.create();
+        updateControlsState(isVerbose());
     }
 
     protected void okPressed()
     {
-        mDialogSettings.put(CERTS,isCerts());
+        getDialogSettings().put(CERTS,isCerts());
         super.okPressed();
     }
 
     public boolean isCerts()
     {
-        return ((Boolean)mValues.get(CERTS)).booleanValue();
+        return ((Boolean)getValues().get(CERTS)).booleanValue();
     }
 }

@@ -10,25 +10,27 @@
 package net.sf.eclipsensis.wizard;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.util.Common;
 
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.wizard.IWizard;
-import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.jface.wizard.*;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.PlatformUI;
 
-public abstract class AbstractNSISWizardPage extends WizardPage implements INSISWizardConstants
+public abstract class AbstractNSISWizardPage extends WizardPage implements INSISWizardConstants, IPageChangedListener
 {
-    private ArrayList mListeners = new ArrayList();
     protected NSISWizard mWizard = null;
+    private Object mSelectedPage = null; 
+    private boolean mCurrentPage = false;
+    private boolean mPreviousPage = false;
+    private List mPageChangeRunnables = new ArrayList();
 
     protected VerifyListener mNumberVerifyListener = new VerifyListener() {
         public void verifyText(VerifyEvent e) 
@@ -146,65 +148,72 @@ public abstract class AbstractNSISWizardPage extends WizardPage implements INSIS
         }
         return true;
     }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.dialogs.IDialogPage#setVisible(boolean)
-     */
-    public void setVisible(boolean visible)
-    {
-        notifyListeners(visible);
-        super.setVisible(visible);
-    }
-    
-    private void notifyListeners(boolean enter)
-    {
-        for (Iterator iter = mListeners.iterator(); iter.hasNext();) {
-            INSISWizardPageListener listener = (INSISWizardPageListener) iter.next();
-            if(enter) {
-                listener.aboutToShow();
-            }
-            else {
-                listener.aboutToHide();
-            }
-        }
-    }
-
-    public void addPageListener(INSISWizardPageListener listener)
-    {
-        if(!mListeners.contains(listener)) {
-            mListeners.add(listener);
-        }
-    }
-
-    public void removePageListener(INSISWizardPageListener listener)
-    {
-        mListeners.remove(listener);
-    }
     
     /* (non-Javadoc)
      * @see org.eclipse.jface.wizard.IWizardPage#setWizard(org.eclipse.jface.wizard.IWizard)
      */
     public void setWizard(IWizard newWizard)
     {
+        if(mWizard != null) {
+            IPageChangeProvider pageChangeProvider = (IPageChangeProvider)mWizard.getAdapter(IPageChangeProvider.class);
+            if(pageChangeProvider != null) {
+                pageChangeProvider.removePageChangedListener(this);
+            }
+        }
         super.setWizard(newWizard);
         mWizard = (NSISWizard)newWizard;
+        if(mWizard != null) {
+            IPageChangeProvider pageChangeProvider = (IPageChangeProvider)mWizard.getAdapter(IPageChangeProvider.class);
+            if(pageChangeProvider != null) {
+                pageChangeProvider.addPageChangedListener(this);
+            }
+        }
     }
 
-    protected static class NSISWizardPageAdapter implements INSISWizardPageListener
+    
+    public final void setVisible(boolean visible)
     {
-        /* (non-Javadoc)
-         * @see net.sf.eclipsensis.wizard.INSISWizardPageListener#aboutToShow()
-         */
-        public void aboutToShow()
-        {
+        super.setVisible(visible);
+        if(mWizard != null) {
+            mWizard.setCurrentPage(this);
         }
+    }
 
-        /* (non-Javadoc)
-         * @see net.sf.eclipsensis.wizard.INSISWizardPageListener#aboutToHide()
-         */
-        public void aboutToHide()
-        {
+    protected void addPageChangedRunnable(Runnable r)
+    {
+        if(!mPageChangeRunnables.contains(r)) {
+            mPageChangeRunnables.add(r);
         }
+    }
+    
+    protected void removePageChangedRunnable(Runnable r)
+    {
+        mPageChangeRunnables.remove(r);
+    }
+
+    public final void pageChanged(PageChangedEvent event)
+    {
+        mPreviousPage = mCurrentPage;
+        mCurrentPage = this.equals(event.getSelectedPage());
+        mSelectedPage = event.getSelectedPage();
+        for (Iterator iter = mPageChangeRunnables.iterator(); iter.hasNext();) {
+            ((Runnable)iter.next()).run();
+        }
+    }
+
+    protected boolean isPreviousPage()
+    {
+        return mPreviousPage;
+    }
+
+    protected boolean isCurrentPage()
+    {
+        return mCurrentPage;
+    }
+
+    protected Object getSelectedPage()
+    {
+        return mSelectedPage;
     }
     
     protected boolean isTemplateWizard()

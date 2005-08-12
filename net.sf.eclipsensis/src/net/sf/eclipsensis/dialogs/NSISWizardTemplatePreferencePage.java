@@ -27,6 +27,7 @@ import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -353,10 +354,23 @@ public class NSISWizardTemplatePreferencePage extends PreferencePage implements 
         mRevertButton.setEnabled(canRevert);
     }
     
+    private NSISTemplateWizardDialog createWizardDialog(final NSISWizardTemplate template)
+    {
+        final NSISTemplateWizardDialog[] wizardDialog = new NSISTemplateWizardDialog[1];
+        BusyIndicator.showWhile(getShell().getDisplay(),new Runnable() {
+            public void run()
+            {
+                wizardDialog[0] = new NSISTemplateWizardDialog(getShell(),new NSISTemplateWizard(template));
+                wizardDialog[0].create();
+            }
+        });
+        return wizardDialog[0];
+    }
+    
     private void add() 
     {
         NSISWizardTemplate template = new NSISWizardTemplate(""); //$NON-NLS-1$
-        Dialog dialog= new NSISTemplateWizardDialog(getShell(),new NSISTemplateWizard(template));
+        Dialog dialog= createWizardDialog(template);
         if (dialog.open() != Window.CANCEL) {
             mTemplateManager.addTemplate(template);
             mTableViewer.refresh(true);
@@ -378,12 +392,12 @@ public class NSISWizardTemplatePreferencePage extends PreferencePage implements 
         edit(data);
     }
 
-    private void edit(NSISWizardTemplate oldTemplate) 
+    private void edit(final NSISWizardTemplate oldTemplate) 
     {
         NSISWizardTemplate newTemplate;
         try {
             newTemplate = (NSISWizardTemplate)oldTemplate.clone();
-            Dialog dialog= new NSISTemplateWizardDialog(getShell(),new NSISTemplateWizard(newTemplate));
+            Dialog dialog= createWizardDialog(newTemplate);
             if (dialog.open() == Window.OK) {
                 mTemplateManager.updateTemplate(oldTemplate, newTemplate);
                 mTableViewer.refresh(true);

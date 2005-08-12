@@ -56,6 +56,30 @@ extern "C" {
 #define net_sf_eclipsensis_util_WinAPI_CB_SHOWDROPDOWN 335L
 #undef net_sf_eclipsensis_util_WinAPI_CB_GETDROPPEDSTATE
 #define net_sf_eclipsensis_util_WinAPI_CB_GETDROPPEDSTATE 343L
+#undef net_sf_eclipsensis_util_WinAPI_WM_PRINT
+#define net_sf_eclipsensis_util_WinAPI_WM_PRINT 791L
+#undef net_sf_eclipsensis_util_WinAPI_PRF_NONCLIENT
+#define net_sf_eclipsensis_util_WinAPI_PRF_NONCLIENT 2L
+#undef net_sf_eclipsensis_util_WinAPI_PRF_CLIENT
+#define net_sf_eclipsensis_util_WinAPI_PRF_CLIENT 4L
+#undef net_sf_eclipsensis_util_WinAPI_PRF_ERASEBKGND
+#define net_sf_eclipsensis_util_WinAPI_PRF_ERASEBKGND 8L
+#undef net_sf_eclipsensis_util_WinAPI_PRF_CHILDREN
+#define net_sf_eclipsensis_util_WinAPI_PRF_CHILDREN 16L
+#undef net_sf_eclipsensis_util_WinAPI_EP_EDITTEXT
+#define net_sf_eclipsensis_util_WinAPI_EP_EDITTEXT 1L
+#undef net_sf_eclipsensis_util_WinAPI_ETS_NORMAL
+#define net_sf_eclipsensis_util_WinAPI_ETS_NORMAL 1L
+#undef net_sf_eclipsensis_util_WinAPI_ETS_DISABLED
+#define net_sf_eclipsensis_util_WinAPI_ETS_DISABLED 4L
+#undef net_sf_eclipsensis_util_WinAPI_ETS_READONLY
+#define net_sf_eclipsensis_util_WinAPI_ETS_READONLY 6L
+#undef net_sf_eclipsensis_util_WinAPI_LVP_LISTITEM
+#define net_sf_eclipsensis_util_WinAPI_LVP_LISTITEM 1L
+#undef net_sf_eclipsensis_util_WinAPI_LIS_NORMAL
+#define net_sf_eclipsensis_util_WinAPI_LIS_NORMAL 1L
+#undef net_sf_eclipsensis_util_WinAPI_LIS_DISABLED
+#define net_sf_eclipsensis_util_WinAPI_LIS_DISABLED 4L
 /*
  * Class:     net_sf_eclipsensis_util_WinAPI
  * Method:    init
@@ -151,6 +175,22 @@ JNIEXPORT jint JNICALL Java_net_sf_eclipsensis_util_WinAPI_SendMessage
  */
 JNIEXPORT jint JNICALL Java_net_sf_eclipsensis_util_WinAPI_CallWindowProc
   (JNIEnv *, jclass, jint, jint, jint, jint, jint);
+
+/*
+ * Class:     net_sf_eclipsensis_util_WinAPI
+ * Method:    AreVisualStylesEnabled
+ * Signature: ()Z
+ */
+JNIEXPORT jboolean JNICALL Java_net_sf_eclipsensis_util_WinAPI_AreVisualStylesEnabled
+  (JNIEnv *, jclass);
+
+/*
+ * Class:     net_sf_eclipsensis_util_WinAPI
+ * Method:    DrawWidgetThemeBackGround
+ * Signature: (IILjava/lang/String;II)V
+ */
+JNIEXPORT void JNICALL Java_net_sf_eclipsensis_util_WinAPI_DrawWidgetThemeBackGround
+  (JNIEnv *, jclass, jint, jint, jstring, jint, jint);
 
 #ifdef __cplusplus
 }

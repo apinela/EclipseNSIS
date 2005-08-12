@@ -9,92 +9,69 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.figures;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.List;
 
 import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsWidget;
+import net.sf.eclipsensis.util.WinAPI;
 
 import org.eclipse.draw2d.*;
-import org.eclipse.draw2d.geometry.Point;
-import org.eclipse.draw2d.geometry.Rectangle;
-import org.eclipse.gef.GraphicalEditPart;
-import org.eclipse.swt.SWT;
+import org.eclipse.draw2d.geometry.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.views.properties.IPropertySource;
 
 public abstract class SWTControlFigure extends Figure implements IInstallOptionsFigure
 {
+    private static final int PRINT_BITS = WinAPI.PRF_NONCLIENT | WinAPI.PRF_CLIENT | WinAPI.PRF_ERASEBKGND | WinAPI.PRF_CHILDREN;
+
+    private Composite mParent;
     private Image mImage;
-    private Control mControl;
-    private Rectangle mImageBounds;
     private boolean mNeedsReScrape = true;
 
-    protected FigureCanvas mCanvas;
     protected boolean mDisabled = false;
-    protected GraphicalEditPart mEditPart;
     private int mStyle = -1;
-    
-    private FigureListener mFigureListener = new FigureListener() {
-        public void figureMoved(IFigure source) {
-            if (isNeedsReScrape()) {
-                layout();
-            }
-        }
-    };
-
-    private PropertyChangeListener mPropertyListener = new PropertyChangeListener() {
-        public void propertyChange(PropertyChangeEvent evt)
-        {
-            if(evt.getPropertyName().equals(Viewport.PROPERTY_VIEW_LOCATION)) {
-                if(isNeedsReScrape()) {
-                    layout();
-                }
-            }
-        }
-    };
-    
     private PaintListener mSWTPaintListener = new PaintListener() {
         public void paintControl(PaintEvent e) 
         {
-            if(e.width > 0 && e.height > 0) {
-                final Control source = (Control) e.getSource();
-                if(!source.isDisposed() && source.handle > 0) {
-                    Point p1 = new Point(0, 0);
-                    translateToAbsolute(p1);
-                    setNeedsReScrape(mImageBounds.width != bounds.width || mImageBounds.height != bounds.height);
-                    GC gc = new GC(mCanvas);
-                    gc.copyArea(mImage, p1.x+mImageBounds.x, p1.y+mImageBounds.y);
-                    gc.dispose();
-        
-                    try {
-                        Display.getDefault().asyncExec(new Runnable() {
-                            public void run() {
-                                if(!source.isDisposed()) {
-                                    source.removePaintListener(mSWTPaintListener);
-                                    source.dispose();
-                                }
-                            }
-                        });
-                    }
-                    catch(Exception e1) { }
-                    repaint();
+            final Control source = (Control) e.getSource();
+            if(!source.isDisposed() && source.handle > 0) {
+                if(mImage != null && !mImage.isDisposed()) {
+                    mImage.dispose();
                 }
+                mImage = getImage(source);
+                source.removePaintListener(mSWTPaintListener);
+                repaint();
+                try {
+                  source.getDisplay().asyncExec(new Runnable() {
+                      public void run() {
+                          if(!source.isDisposed()) {
+                              source.dispose();
+                          }
+                      }
+                  });
+                }
+                catch(Exception e1) { }
             }
         }
     };
 
-    public SWTControlFigure(FigureCanvas canvas, IPropertySource propertySource)
+    public SWTControlFigure(Composite parent, IPropertySource propertySource)
+    {
+        this(parent, propertySource, -1);
+    }
+
+    public SWTControlFigure(Composite parent, IPropertySource propertySource, int style)
     {
         super();
+        mStyle = style;
         setLayoutManager(new XYLayout());
-        mCanvas = canvas;
-        if(mCanvas != null) {
-            mCanvas.addDisposeListener(new DisposeListener(){
+        mParent = parent;
+        if(mParent != null) {
+            mParent.addDisposeListener(new DisposeListener(){
                 public void widgetDisposed(DisposeEvent e)
                 {
                     if(mImage != null && !mImage.isDisposed()) {
@@ -113,28 +90,6 @@ public abstract class SWTControlFigure extends Figure implements IInstallOptions
         setBounds((Rectangle)propertySource.getPropertyValue(InstallOptionsWidget.PROPERTY_BOUNDS));
     }
 
-    public void addNotify()
-    {
-        if(mCanvas != null) {
-            Viewport viewPort = mCanvas.getViewport();
-            viewPort.addFigureListener(mFigureListener);
-            addFigureListener(mFigureListener);
-            viewPort.addPropertyChangeListener(mPropertyListener);
-        }
-        super.addNotify();
-    }
-
-    public void removeNotify() 
-    {
-        super.removeNotify();
-        if(mCanvas != null) {
-            Viewport viewPort = mCanvas.getViewport();
-            viewPort.removeFigureListener(mFigureListener);
-            viewPort.removePropertyChangeListener(mPropertyListener);
-            removeFigureListener(mFigureListener);
-        }
-    }
-    
     public void setDisabled(boolean disabled)
     {
         mDisabled = disabled;
@@ -168,16 +123,31 @@ public abstract class SWTControlFigure extends Figure implements IInstallOptions
 
     protected void paintFigure(Graphics g) 
     {
-        g.setBackgroundColor(Display.getDefault().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
         super.paintFigure(g);
-        if (mImage != null) {
-            if(mImageBounds.width != bounds.width || mImageBounds.height != bounds.height) {
-                g.drawImage(mImage, mImageBounds.x,mImageBounds.y);
+        if (mImage != null && !mImage.isDisposed()) {
+            Border b = getBorder();
+            Insets insets;
+            if(b != null) {
+                insets = b.getInsets(this);
             }
             else {
-                g.drawImage(mImage,bounds.x,bounds.y);
+                insets = new Insets(0,0,0,0);
             }
+            g.drawImage(mImage,bounds.x+insets.left,bounds.y+insets.top);
         }
+    }
+
+    private Image getImage(Control control)
+    {
+        org.eclipse.swt.graphics.Rectangle rect = control.getBounds();
+        if (rect.width <= 0 || rect.height <= 0) {
+            return new Image(control.getDisplay(), 1, 1);
+        }
+        Image image = new Image (control.getDisplay(), rect.width, rect.height);
+        GC gc = new GC (image);
+        WinAPI.SendMessage (control.handle, WinAPI.WM_PRINT, gc.handle, PRINT_BITS);
+        gc.dispose ();
+        return image;
     }
 
     /*
@@ -185,55 +155,65 @@ public abstract class SWTControlFigure extends Figure implements IInstallOptions
      */
     protected synchronized void layout() 
     {
-        if(isNeedsReScrape() && mCanvas != null) {
-            Shell shell = mCanvas.getShell();
-            if(!shell.isVisible()) {
-                shell.setVisible(true);
+        if(isNeedsReScrape()) {
+            if (mImage != null && !mImage.isDisposed()) {
+                mImage.dispose();
             }
-            shell.forceActive();
-            Rectangle clientArea = mCanvas.getViewport().getClientArea();
-            Rectangle rect = clientArea.intersect(bounds);
-            if(rect.width > 0 && rect.height > 0) {
-                if (mImage != null && !mImage.isDisposed()) {
-                    mImage.dispose();
-                }
-                mImage = null;
-                mImageBounds = rect;
-                mImage = new Image(mCanvas.getDisplay(), mImageBounds.width,mImageBounds.height);
-
-                if(mControl != null && !mControl.isDisposed()) {
-                    mControl.removePaintListener(mSWTPaintListener);
-                    mControl.dispose();
-                }
-                mControl = createSWTControl(mCanvas);
-                mControl.setVisible(isVisible());
-                mControl.setEnabled(!mDisabled);
-                ControlSubclasser.subclassControl(mControl);
+            mImage = null;
+            if(isVisible()) {
+                Control control = createSWTControl(mParent, (mStyle <0?getDefaultStyle():mStyle));
+                control.setVisible(true);
+                control.setEnabled(!mDisabled);
+                ControlSubclasser.subclassControl(control, this);
                 Point p1 = new Point(0, 0);
                 translateToAbsolute(p1);
-                mControl.setBounds(bounds.x + p1.x, bounds.y + p1.y, 
-                        bounds.width,bounds.height);
-                mControl.moveAbove(null);
-                mControl.addPaintListener(mSWTPaintListener);
+                Border b = getBorder();
+                Insets insets;
+                if(b != null) {
+                    insets = b.getInsets(this);
+                }
+                else {
+                    insets = new Insets(0,0,0,0);
+                }
+                control.setBounds(bounds.x + p1.x + insets.left, bounds.y + p1.y + insets.right, 
+                                   bounds.width - (insets.left+insets.right), 
+                                   bounds.height - (insets.top+insets.bottom));
+                control.addPaintListener(mSWTPaintListener);
+                setNeedsReScrape(false);
+                
+                //Force a repaint
+                control.setVisible(false);
+                control.setVisible(true);
             }
         }
         super.layout();
     }
     
-    
-    public int getStyle()
+    protected boolean isNeedsTheme()
     {
-        return (mStyle <0?getDefaultStyle():mStyle);
+        return false;
+    }
+
+    protected String getTheme()
+    {
+        return null;
     }
     
-    public void setStyle(int style)
+    protected int getThemePartId()
     {
-        mStyle = style;
+        return 0;
     }
     
-    /**
-     * @return
-     */
-    protected abstract Control createSWTControl(Composite parent);
+    protected int getThemeStateId()
+    {
+        return 0;
+    }
+
+    int getStyle()
+    {
+        return mStyle;
+    }
+
+    protected abstract Control createSWTControl(Composite parent, int style);
     public abstract int getDefaultStyle();
 }

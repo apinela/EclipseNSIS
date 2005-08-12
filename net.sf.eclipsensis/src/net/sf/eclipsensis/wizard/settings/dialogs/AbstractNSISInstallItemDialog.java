@@ -81,9 +81,9 @@ public abstract class AbstractNSISInstallItemDialog extends StatusMessageDialog
      */
     protected void configureShell(Shell newShell)
     {
-        newShell.setText(EclipseNSISPlugin.getFormattedString("wizard.installitem.dialog.title.format", //$NON-NLS-1$
-                         new String[]{mItem.getType()}));
         super.configureShell(newShell);
+        newShell.setText(EclipseNSISPlugin.getFormattedString("wizard.installitem.dialog.title.format", //$NON-NLS-1$
+                new String[]{mItem.getType()}));
     }
 
     /* (non-Javadoc)

@@ -103,9 +103,7 @@ public class InstallOptionsXYLayoutEditPolicy extends XYLayoutEditPolicy impleme
         add.setLabel(InstallOptionsPlugin.getResourceString("add.command.label")); //$NON-NLS-1$
         add.setDebugLabel("InstallOptionsXYEP add subpart");//$NON-NLS-1$
 
-        SetConstraintCommand setConstraint = new SetConstraintCommand();
-        setConstraint.setPart(part);
-        setConstraint.setPosition(pos);
+        SetConstraintCommand setConstraint = new SetConstraintCommand(part, pos, null, null);
         setConstraint.setLabel(InstallOptionsPlugin.getResourceString("set.constaint.command.label")); //$NON-NLS-1$
         setConstraint.setDebugLabel("InstallOptionsXYEP setConstraint");//$NON-NLS-1$
 
@@ -129,10 +127,9 @@ public class InstallOptionsXYLayoutEditPolicy extends XYLayoutEditPolicy impleme
     protected Command createChangeConstraintCommand(ChangeBoundsRequest request, EditPart child, Object constraint)
     {
         InstallOptionsWidget part = (InstallOptionsWidget)child.getModel();
-        SetConstraintCommand cmd = new SetConstraintCommand();
-        cmd.setPart(part);
-        cmd.setPosition((Position)constraint);
-        Command result = cmd;
+        Command result = new SetConstraintCommand(part, (Position)constraint,
+                                                  request.getMoveDelta(),
+                                                  request.getSizeDelta());
 
         Boolean val = (Boolean)child.getViewer().getProperty(RulerProvider.PROPERTY_RULER_VISIBILITY);
         if (val != null && val.booleanValue()) {

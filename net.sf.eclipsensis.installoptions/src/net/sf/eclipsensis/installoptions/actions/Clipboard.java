@@ -92,7 +92,12 @@ public class Clipboard
     public void setContents(Object contents) 
     {
         org.eclipse.swt.dnd.Clipboard cb = new org.eclipse.swt.dnd.Clipboard(null);
-        cb.setContents(new Object[] {contents}, new Transfer[] {TRANSFER});
+        if(contents != null) {
+            cb.setContents(new Object[] {contents}, new Transfer[] {TRANSFER});
+        }
+        else {
+            cb.clearContents();
+        }
         cb.dispose();
         fireContentsSet();
     }

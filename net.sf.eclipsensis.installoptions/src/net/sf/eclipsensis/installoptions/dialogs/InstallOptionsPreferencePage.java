@@ -771,6 +771,7 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
         InstallOptionsPlugin.getDefault().setSyntaxStyles(mSyntaxStylesMap);
         mSyntaxStylesViewer.setInput(mSyntaxStylesMap.keySet());
         mSyntaxStylesViewer.setSelection(sel);
+        mPreviewer.setSyntaxStyles(mSyntaxStylesMap);
         
         super.performDefaults();
     }
@@ -867,8 +868,9 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
 
         protected void configureShell(Shell newShell)
         {
-            newShell.setText((Common.isEmpty(mCurrent.getName())?InstallOptionsPlugin.getResourceString("dialog.size.dialog.add.title"):InstallOptionsPlugin.getResourceString("dialog.size.dialog.edit.title"))); //$NON-NLS-1$ //$NON-NLS-2$
             super.configureShell(newShell);
+            newShell.setText((Common.isEmpty(mCurrent.getName())?InstallOptionsPlugin.getResourceString("dialog.size.dialog.add.title"):InstallOptionsPlugin.getResourceString("dialog.size.dialog.edit.title"))); //$NON-NLS-1$ //$NON-NLS-2$
+            newShell.setImage(InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("installoptions.icon"))); //$NON-NLS-1$
         }
         
         public void create()

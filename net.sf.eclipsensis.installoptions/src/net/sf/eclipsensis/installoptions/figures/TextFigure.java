@@ -12,8 +12,8 @@ package net.sf.eclipsensis.installoptions.figures;
 import java.util.List;
 
 import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
+import net.sf.eclipsensis.util.WinAPI;
 
-import org.eclipse.draw2d.FigureCanvas;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.views.properties.IPropertySource;
@@ -27,9 +27,14 @@ public class TextFigure extends EditableElementFigure
     private boolean mNoWordWrap;
     private boolean mOnlyNumbers;
     
-    public TextFigure(FigureCanvas canvas, IPropertySource propertySource)
+    public TextFigure(Composite parent, IPropertySource propertySource, int style)
     {
-        super(canvas, propertySource);
+        super(parent, propertySource, style);
+    }
+
+    public TextFigure(Composite parent, IPropertySource propertySource)
+    {
+        super(parent, propertySource);
     }
     
     protected void init(IPropertySource propertySource)
@@ -106,9 +111,9 @@ public class TextFigure extends EditableElementFigure
     /**
      * @return
      */
-    protected Control createSWTControl(Composite parent)
+    protected Control createSWTControl(Composite parent, int style)
     {
-        Text text = new Text(parent, getStyle());
+        Text text = new Text(parent, style);
         text.setText(getState());
         return text;
     }
@@ -135,5 +140,31 @@ public class TextFigure extends EditableElementFigure
             style |= SWT.READ_ONLY;
         }
         return style;
+    }
+
+    protected String getTheme()
+    {
+        return "EDIT"; //$NON-NLS-1$
+    }
+
+    protected int getThemePartId()
+    {
+        return WinAPI.EP_EDITTEXT;
+    }
+
+    protected int getThemeStateId()
+    {
+        if(mDisabled) {
+            return WinAPI.ETS_DISABLED;
+        }
+        if(mReadOnly) {
+            return WinAPI.ETS_READONLY;
+        }
+        return WinAPI.ETS_NORMAL;
+    }
+
+    protected boolean isNeedsTheme()
+    {
+        return true;
     }
 }

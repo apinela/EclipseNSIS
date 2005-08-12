@@ -12,7 +12,6 @@ package net.sf.eclipsensis.installoptions.figures;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsLink;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
 
-import org.eclipse.draw2d.FigureCanvas;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -26,12 +25,14 @@ public class LinkFigure extends LabelFigure
 {
     private RGB mTxtColor;
     
-    /**
-     * @param editPart
-     */
-    public LinkFigure(FigureCanvas canvas, IPropertySource propertySource)
+    public LinkFigure(Composite parent, IPropertySource propertySource, int style)
     {
-        super(canvas, propertySource);
+        super(parent, propertySource, style);
+    }
+
+    public LinkFigure(Composite parent, IPropertySource propertySource)
+    {
+        super(parent, propertySource);
     }
     
     protected void init(IPropertySource propertySource)
@@ -53,9 +54,9 @@ public class LinkFigure extends LabelFigure
     /**
      * @return
      */
-    protected Control createSWTControl(Composite parent)
+    protected Control createSWTControl(Composite parent, int style)
     {
-        Control label = super.createSWTControl(parent);
+        Control label = super.createSWTControl(parent, style);
         final Color color = new Color(label.getDisplay(),getTxtColor());
         label.setForeground(color);
         label.addDisposeListener(new DisposeListener(){

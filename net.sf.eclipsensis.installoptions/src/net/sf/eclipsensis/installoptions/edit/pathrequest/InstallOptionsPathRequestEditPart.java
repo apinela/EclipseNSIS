@@ -14,15 +14,15 @@ import net.sf.eclipsensis.installoptions.edit.editable.InstallOptionsEditableEle
 import net.sf.eclipsensis.installoptions.figures.IInstallOptionsFigure;
 import net.sf.eclipsensis.installoptions.figures.PathRequestFigure;
 
-import org.eclipse.draw2d.FigureCanvas;
 import org.eclipse.gef.tools.CellEditorLocator;
 import org.eclipse.gef.tools.DirectEditManager;
+import org.eclipse.swt.widgets.Composite;
 
 public abstract class InstallOptionsPathRequestEditPart extends InstallOptionsEditableElementEditPart
 {
     protected IInstallOptionsFigure createInstallOptionsFigure() 
     {
-        return new PathRequestFigure((FigureCanvas)this.getViewer().getControl(), getInstallOptionsWidget());
+        return new PathRequestFigure((Composite)getViewer().getControl(), getInstallOptionsWidget());
     }
 
     protected DirectEditManager creatDirectEditManager(InstallOptionsWidgetEditPart part, Class clasz, CellEditorLocator locator)

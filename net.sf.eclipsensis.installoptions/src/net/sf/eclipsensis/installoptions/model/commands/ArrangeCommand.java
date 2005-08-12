@@ -9,28 +9,22 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.model.commands;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
-import net.sf.eclipsensis.installoptions.edit.InstallOptionsWidgetEditPart;
-import net.sf.eclipsensis.installoptions.edit.dialog.InstallOptionsDialogEditPart;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsDialog;
 import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.gef.commands.Command;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredSelection;
 
 public class ArrangeCommand extends Command
 {
     private int mType;
-    private InstallOptionsDialogEditPart mParent;
-    private InstallOptionsDialog mDialog;
     
-    private List mSelectedParts;
-    private List mSelectedChildren;
-
+    private InstallOptionsDialog mParent;
+    private List mSelection;
     private List mOldChildren;
 
     public ArrangeCommand(int type)
@@ -57,91 +51,46 @@ public class ArrangeCommand extends Command
 
     public boolean canExecute()
     {
-        if(mDialog != null) {
-            if(!Common.isEmptyCollection(mSelectedChildren)) {
-                mDialog.setSelection(mSelectedChildren);
-                return canMove();
+        if(mParent != null) {
+            if(!Common.isEmptyCollection(mSelection)) {
+                return mParent.canMove(mType, mSelection);
             }
         }
         return false;
     }
     
-    protected boolean canMove()
-    {
-        switch(mType) {
-            case IInstallOptionsConstants.SEND_BACKWARD:
-                return mDialog.canSendBackward();
-            case IInstallOptionsConstants.SEND_TO_BACK:
-                return mDialog.canSendToBack();
-            case IInstallOptionsConstants.BRING_FORWARD:
-                return mDialog.canBringForward();
-            case IInstallOptionsConstants.BRING_TO_FRONT:
-            default:
-                return mDialog.canBringToFront();
-        }
-    }
-    
     public void execute()
     {
-        mOldChildren = new ArrayList(((InstallOptionsDialog)mParent.getModel()).getChildren());
-        redo();
+        if(mParent != null) {
+            mOldChildren = new ArrayList(mParent.getChildren());
+            redo();
+        }
     }
 
-    public void setParent(InstallOptionsDialogEditPart parent)
+    public void setParent(InstallOptionsDialog parent)
     {
         mParent = parent;
-        if(mParent != null) {
-            mDialog = (InstallOptionsDialog)mParent.getModel();
-        
-            mSelectedParts = Collections.EMPTY_LIST;
-            mSelectedChildren = Collections.EMPTY_LIST;
-            
-            IStructuredSelection ssel = (IStructuredSelection)mParent.getViewer().getSelection();
-            if(ssel.size() > 0) {
-                if(ssel.size() > 1 || ssel.getFirstElement() != mParent) {
-                    mSelectedParts = new ArrayList(ssel.toList());
-                    mSelectedChildren = new ArrayList();
-                    for(Iterator iter = mSelectedParts.iterator(); iter.hasNext();) {
-                        mSelectedChildren.add(((InstallOptionsWidgetEditPart)iter.next()).getModel());
-                    }
-                }
-            }
-        }
+    }
+
+    public void setSelection(List selection)
+    {
+        mSelection = selection;
     }
 
 
     public void redo()
     {
-        if(mDialog != null) {
-            mDialog.setSelection(mSelectedChildren);
-            move();
-            mParent.getViewer().setSelection(new StructuredSelection(mSelectedParts));
-        }
-    }
-
-    protected void move()
-    {
-        switch(mType) {
-            case IInstallOptionsConstants.SEND_BACKWARD:
-                mDialog.sendBackward();
-                break;
-            case IInstallOptionsConstants.SEND_TO_BACK:
-                mDialog.sendToBack();
-                break;
-            case IInstallOptionsConstants.BRING_FORWARD:
-                mDialog.bringForward();
-                break;
-            case IInstallOptionsConstants.BRING_TO_FRONT:
-            default:
-                mDialog.bringToFront();
+        if(mParent != null) {
+            mParent.setSelection(mSelection);
+            mParent.move(mType);
         }
     }
 
     public void undo()
     {
-        if(mDialog != null) {
-            mDialog.setChildren(mOldChildren);
-            mParent.getViewer().setSelection(new StructuredSelection(mSelectedParts));
+        if(mParent != null) {
+            mParent.setChildren(mOldChildren);
+            mParent.setSelection(mSelection);
         }
     }
 }

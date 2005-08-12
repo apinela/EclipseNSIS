@@ -9,17 +9,20 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.actions;
 
+import java.util.*;
+
 import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.edit.InstallOptionsEditDomain;
-import net.sf.eclipsensis.installoptions.edit.dialog.InstallOptionsDialogEditPart;
 import net.sf.eclipsensis.installoptions.editor.InstallOptionsDesignEditor;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsDialog;
 import net.sf.eclipsensis.installoptions.model.commands.ArrangeCommand;
 
-import org.eclipse.gef.EditDomain;
+import org.eclipse.gef.*;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.ui.actions.SelectionAction;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbenchPart;
 
 public class ArrangeAction extends SelectionAction
@@ -84,7 +87,15 @@ public class ArrangeAction extends SelectionAction
                 return null;
             }
             command = new ArrangeCommand(mType);
-            command.setParent((InstallOptionsDialogEditPart)editor.getGraphicalViewer().getContents());
+            GraphicalViewer viewer = editor.getGraphicalViewer();
+            command.setParent((InstallOptionsDialog)viewer.getContents().getModel());
+            List selection = ((IStructuredSelection)viewer.getSelection()).toList();
+            List modelSelection = new ArrayList();
+            for (Iterator iter = selection.iterator(); iter.hasNext();) {
+                EditPart element = (EditPart)iter.next();
+                modelSelection.add(element.getModel());
+            }
+            command.setSelection(modelSelection);
         }
         
         return command;

@@ -16,9 +16,9 @@ import net.sf.eclipsensis.installoptions.figures.IInstallOptionsFigure;
 import net.sf.eclipsensis.installoptions.figures.TextFigure;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
 
-import org.eclipse.draw2d.FigureCanvas;
 import org.eclipse.gef.tools.CellEditorLocator;
 import org.eclipse.gef.tools.DirectEditManager;
+import org.eclipse.swt.widgets.Composite;
 
 public class InstallOptionsTextEditPart extends InstallOptionsEditableElementEditPart
 {
@@ -29,7 +29,7 @@ public class InstallOptionsTextEditPart extends InstallOptionsEditableElementEdi
     
     protected IInstallOptionsFigure createInstallOptionsFigure() 
     {
-        return new TextFigure((FigureCanvas)this.getViewer().getControl(), getInstallOptionsWidget());
+        return new TextFigure((Composite)getViewer().getControl(), getInstallOptionsWidget());
     }
 
     protected void handleFlagAdded(String flag)

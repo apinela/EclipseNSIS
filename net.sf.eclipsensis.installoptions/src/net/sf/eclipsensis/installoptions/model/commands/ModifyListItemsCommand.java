@@ -12,22 +12,19 @@ package net.sf.eclipsensis.installoptions.model.commands;
 import java.util.List;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
-import net.sf.eclipsensis.installoptions.edit.InstallOptionsWidgetEditPart;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsCombobox;
 
 import org.eclipse.gef.commands.Command;
 
 public class ModifyListItemsCommand extends Command
 {
-    private InstallOptionsWidgetEditPart mEditPart;
     private InstallOptionsCombobox mModel;
     private List mOldListItems;
     private List mNewListItems;
     
-    public ModifyListItemsCommand(InstallOptionsWidgetEditPart editPart, List newListItems)
+    public ModifyListItemsCommand(InstallOptionsCombobox model, List newListItems)
     {
-        mEditPart = editPart;
-        mModel = (InstallOptionsCombobox)mEditPart.getModel();
+        mModel = model;
         mNewListItems = newListItems;
         mOldListItems = mModel.getListItems();
         setLabel(InstallOptionsPlugin.getFormattedString("modify.listitems.command.label", new Object[]{mModel.getType()})); //$NON-NLS-1$

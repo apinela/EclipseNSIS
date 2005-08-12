@@ -31,6 +31,21 @@ import org.eclipse.swt.widgets.Display;
 
 public class NSISPreferences extends NSISSettings
 {
+    public static final RGB SYNTAX_COMMENTS = new RGB(0x7f,0x9f,0xbf);
+    public static final RGB SYNTAX_ATTRIBUTES = new RGB(0x80,0,0);
+    public static final RGB SYNTAX_COMMANDS = new RGB(0x64,0x32,0);
+    public static final RGB SYNTAX_SYMBOLS = new RGB(0x48,0x7,0x70);
+    public static final RGB SYNTAX_USER_VARIABLES = new RGB(0x48,0x7,0x70);
+    public static final RGB SYNTAX_PARAMETERS = new RGB(0x48,0x7,0x70);
+    public static final RGB SYNTAX_INSTRUCTIONS = new RGB(0x8c,0x0,0x46);
+    public static final RGB SYNTAX_OPTIONS = new RGB(0x53,0x53,0x0);
+    public static final RGB SYNTAX_PREDEF_VARIABLES = new RGB(0x42,0x53,0x2f);
+    public static final RGB SYNTAX_STRINGS = new RGB(0x0,0x42,0x42);
+    public static final RGB SYNTAX_CALLBACKS = new RGB(0,0,0x80);
+    public static final RGB SYNTAX_LANGSTRINGS = new RGB(0x61,0x31,0x1e);
+    public static final RGB SYNTAX_TASK_TAGS = new RGB(0x0,0x50,0x50);
+    public static final RGB SYNTAX_PLUGINS   = new RGB(0x54,0x4a,0x3d);
+
     public static final NSISPreferences INSTANCE;
     
     private IPreferenceStore mPreferenceStore = null;
@@ -173,22 +188,22 @@ public class NSISPreferences extends NSISSettings
 
     private void initializeSyntaxPreferences()
     {
-        initializeSyntaxPreference(CALLBACKS_STYLE,ColorManager.NAVY_BLUE, null, false, false, false, false);
-        initializeSyntaxPreference(SYMBOLS_STYLE,ColorManager.PURPLE, null, false, false, false, false);
-        initializeSyntaxPreference(LANGSTRINGS_STYLE,ColorManager.CHOCOLATE, null, false, false, false, false);
-        initializeSyntaxPreference(PREDEFINED_VARIABLES_STYLE,ColorManager.DARK_OLIVE_GREEN, null, false, false, false, false);
-        initializeSyntaxPreference(USERDEFINED_VARIABLES_STYLE,ColorManager.PURPLE, null, false, false, false, false);
-        initializeSyntaxPreference(INSTRUCTIONS_STYLE,ColorManager.PINK, null, false, false, false, false);
-        initializeSyntaxPreference(INSTRUCTION_PARAMETERS_STYLE,ColorManager.PURPLE, null, false, false, false, false);
-        initializeSyntaxPreference(INSTRUCTION_OPTIONS_STYLE,ColorManager.ORCHID, null, false, false, false, false);
-        initializeSyntaxPreference(COMMANDS_STYLE,ColorManager.ORANGE, null, true, false, false, false);
-        initializeSyntaxPreference(INSTALLER_ATTRIBUTES_STYLE,ColorManager.MAGENTA, null, false, false, false, false);
+        initializeSyntaxPreference(CALLBACKS_STYLE,SYNTAX_CALLBACKS, null, false, false, false, false);
+        initializeSyntaxPreference(SYMBOLS_STYLE,SYNTAX_SYMBOLS, null, false, false, false, false);
+        initializeSyntaxPreference(LANGSTRINGS_STYLE,SYNTAX_LANGSTRINGS, null, false, false, false, false);
+        initializeSyntaxPreference(PREDEFINED_VARIABLES_STYLE,SYNTAX_PREDEF_VARIABLES, null, false, false, false, false);
+        initializeSyntaxPreference(USERDEFINED_VARIABLES_STYLE,SYNTAX_USER_VARIABLES, null, false, false, false, false);
+        initializeSyntaxPreference(INSTRUCTIONS_STYLE,SYNTAX_INSTRUCTIONS, null, false, false, false, false);
+        initializeSyntaxPreference(INSTRUCTION_PARAMETERS_STYLE,SYNTAX_PARAMETERS, null, false, false, false, false);
+        initializeSyntaxPreference(INSTRUCTION_OPTIONS_STYLE,SYNTAX_OPTIONS, null, false, false, false, false);
+        initializeSyntaxPreference(COMMANDS_STYLE,SYNTAX_COMMANDS, null, true, false, false, false);
+        initializeSyntaxPreference(INSTALLER_ATTRIBUTES_STYLE,SYNTAX_ATTRIBUTES, null, false, false, false, false);
         initializeSyntaxPreference(COMPILETIME_COMMANDS_STYLE,ColorManager.RED, null, false, false, false, false);
         initializeSyntaxPreference(NUMBERS_STYLE,ColorManager.RED, null, false, false, false, false);
-        initializeSyntaxPreference(STRINGS_STYLE,ColorManager.TURQUOISE, null, false, false, false, false);
-        initializeSyntaxPreference(COMMENTS_STYLE,ColorManager.GREY, null, false, true, false, false);
-        initializeSyntaxPreference(TASK_TAGS_STYLE,ColorManager.TEAL, null, true, false, false, false);
-        initializeSyntaxPreference(PLUGINS_STYLE,ColorManager.BEIGE, null, false, false, false, false);
+        initializeSyntaxPreference(STRINGS_STYLE,SYNTAX_STRINGS, null, false, false, false, false);
+        initializeSyntaxPreference(COMMENTS_STYLE, SYNTAX_COMMENTS, null, false, true, false, false);
+        initializeSyntaxPreference(TASK_TAGS_STYLE,SYNTAX_TASK_TAGS, null, true, false, false, false);
+        initializeSyntaxPreference(PLUGINS_STYLE,SYNTAX_PLUGINS, null, false, false, false, false);
     }
 
     protected void load()

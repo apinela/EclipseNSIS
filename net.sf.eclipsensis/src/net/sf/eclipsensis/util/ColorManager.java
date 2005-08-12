@@ -21,24 +21,11 @@ import org.eclipse.ui.PlatformUI;
  */
 public class ColorManager
 {
-    public static final RGB GREY = new RGB(0xbe,0xbe,0xbe);
     public static final RGB GREEN = new RGB(0,0xff,0);
     public static final RGB BLUE = new RGB(0,0,0xff);
     public static final RGB RED = new RGB(0xff,0,0);
-    public static final RGB MAGENTA = new RGB(0xff,0,0xff);
-    public static final RGB ORANGE = new RGB(0xff,0xa5,0);
-    public static final RGB PINK = new RGB(0xff,0xc0,0xcb);
-    public static final RGB PURPLE = new RGB(0xa0,0x20,0xf0);
-    public static final RGB ORCHID = new RGB(0xda,0x70,0xd6);
-    public static final RGB DARK_OLIVE_GREEN = new RGB(0x55,0x6b,0x2f);
-    public static final RGB NAVY_BLUE = new RGB(0,0,0x80);
-    public static final RGB TURQUOISE = new RGB(0x40,0xe0,0xd0);
-    public static final RGB DARK_SEA_GREEN = new RGB(0x8f,0xbc,0x8f);
     public static final RGB WHITE = new RGB(0xff, 0xff, 0xff);
     public static final RGB BLACK = new RGB(0, 0, 0);
-    public static final RGB CHOCOLATE = new RGB(0xd2,0x69,0x1e);
-    public static final RGB TEAL = new RGB(0x0,0x80,0x80);
-    public static final RGB BEIGE = new RGB(0xa3,0x94,0x80);
 
     private static ColorRegistry cColorRegistry;
     

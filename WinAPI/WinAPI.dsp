@@ -96,6 +96,10 @@ SOURCE=.\ITStorage.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\VisualStylesXP.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\WinAPI.cpp
 # End Source File
 # End Group
@@ -109,6 +113,10 @@ SOURCE=.\ITStorage.h
 # Begin Source File
 
 SOURCE=.\net_sf_eclipsensis_util_WinAPI.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\VisualStylesXP.h
 # End Source File
 # End Group
 # Begin Group "Resource Files"

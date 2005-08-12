@@ -323,10 +323,12 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
         m.setEnabler(downButton, mse);
         m.setEnabler(b2,mse);
         
-        addPageListener(new NSISWizardPageAdapter() {
-            public void aboutToShow()
+        addPageChangedRunnable(new Runnable() {
+            public void run()
             {
-                b2.setEnabled(mse.canEnable(b2));
+                if(isCurrentPage()) {
+                    b2.setEnabled(mse.canEnable(b2));
+                }
             }
         });
         final Runnable langRunnable = new Runnable() {
@@ -519,12 +521,15 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
                 mWizard.getSettings().setChangeInstallDir(((Button)e.widget).getSelection());
             }
         });
-        addPageListener(new NSISWizardPageAdapter() {
-            public void aboutToShow()
+        
+        addPageChangedRunnable(new Runnable() {
+            public void run()
             {
-                NSISWizardSettings settings = mWizard.getSettings();
-                c.setText(settings.getInstallDir());
-                b2.setEnabled(settings.getInstallerType() != INSTALLER_TYPE_SILENT);
+                if(isCurrentPage()) {
+                    NSISWizardSettings settings = mWizard.getSettings();
+                    c.setText(settings.getInstallDir());
+                    b2.setEnabled(settings.getInstallerType() != INSTALLER_TYPE_SILENT);
+                }
             }
         });
 
@@ -595,8 +600,8 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
         };
         m.setEnabler(b2,mse);
         m.updateSlaves();
-        addPageListener(new NSISWizardPageAdapter() {
-            public void aboutToShow()
+        addPageChangedRunnable(new Runnable() {
+            public void run()
             {
                 t.setText(mWizard.getSettings().getStartMenuGroup());
                 b2.setEnabled(mse.canEnable(b2));

@@ -9,24 +9,28 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.figures;
 
-import org.eclipse.draw2d.FigureCanvas;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.views.properties.IPropertySource;
 
 public class ComboFigure extends EditableElementFigure
 {
-    public ComboFigure(FigureCanvas canvas, IPropertySource propertySource)
+    public ComboFigure(Composite parent, IPropertySource propertySource, int style)
     {
-        super(canvas, propertySource);
+        super(parent, propertySource, style);
+    }
+
+    public ComboFigure(Composite parent, IPropertySource propertySource)
+    {
+        super(parent, propertySource);
     }
     
     /**
      * @return
      */
-    protected Control createSWTControl(Composite parent)
+    protected Control createSWTControl(Composite parent, int style)
     {
-        Combo combo = new Combo(parent, getStyle());
+        Combo combo = new Combo(parent, style);
         String state = getState();
         combo.setText(state);
         return combo;

@@ -9,24 +9,28 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.figures;
 
-import org.eclipse.draw2d.FigureCanvas;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.views.properties.IPropertySource;
 
 public class ButtonFigure extends UneditableElementFigure
 {
-    public ButtonFigure(FigureCanvas canvas, IPropertySource propertySource)
+    public ButtonFigure(Composite parent, IPropertySource propertySource, int style)
     {
-        super(canvas, propertySource);
+        super(parent, propertySource, style);
+    }
+
+    public ButtonFigure(Composite parent, IPropertySource propertySource)
+    {
+        super(parent, propertySource);
     }
 
     /**
      * @return
      */
-    protected Control createSWTControl(Composite parent)
+    protected Control createSWTControl(Composite parent, int style)
     {
-        Button button = new Button(parent, getStyle());
+        Button button = new Button(parent, style);
         button.setText(getText());
         return button;
     }

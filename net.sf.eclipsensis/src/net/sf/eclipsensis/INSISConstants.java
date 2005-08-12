@@ -25,8 +25,8 @@ public interface INSISConstants
     public static final String TASKTAGS_PREFERENCE_PAGE_ID = EclipseNSISPlugin.getBundleResourceString("%task.tags.preference.page.id"); //$NON-NLS-1$
     public static final String HTMLHELP_ID = EclipseNSISPlugin.getBundleResourceString("%htmlhelp.id"); //$NON-NLS-1$
     public static final String CONSOLE_ID = EclipseNSISPlugin.getBundleResourceString("%console.id"); //$NON-NLS-1$
-    public static final String PROBLEM_MARKER_ID = EclipseNSISPlugin.getBundleResourceString("%qualified.compile.problem.marker.id"); //$NON-NLS-1$
-    public static final String TASK_MARKER_ID = EclipseNSISPlugin.getBundleResourceString("%qualified.task.marker.id"); //$NON-NLS-1$ //$NON-NLS-2$
+    public static final String PROBLEM_MARKER_ID = EclipseNSISPlugin.getBundleResourceString("%compile.problem.marker.id"); //$NON-NLS-1$
+    public static final String TASK_MARKER_ID = EclipseNSISPlugin.getBundleResourceString("%task.marker.id"); //$NON-NLS-1$ //$NON-NLS-2$
     public static final String NSIS_EDITOR_CONTEXT_ID = EclipseNSISPlugin.getBundleResourceString("%context.editingNSISSource.id"); //$NON-NLS-1$
     public static final String COMPILE_ACTION_ID = EclipseNSISPlugin.getBundleResourceString("%compile.action.id"); //$NON-NLS-1$
     public static final String COMPILE_TEST_ACTION_ID = EclipseNSISPlugin.getBundleResourceString("%compile.test.action.id"); //$NON-NLS-1$

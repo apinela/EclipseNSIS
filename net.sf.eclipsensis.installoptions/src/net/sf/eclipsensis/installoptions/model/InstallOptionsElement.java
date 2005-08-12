@@ -210,6 +210,10 @@ public abstract class InstallOptionsElement implements IPropertySource, Cloneabl
         InstallOptionsElement element = (InstallOptionsElement)super.clone();
         element.mListeners = new PropertyChangeSupport(element);
         element.mModelCommandListeners = new ArrayList();
+        element.mDescriptors = new HashMap();
+        element.mSection = null;
+        element.mDirty = true;
+        element.mGuideComment = null;
         return element;
     }
 

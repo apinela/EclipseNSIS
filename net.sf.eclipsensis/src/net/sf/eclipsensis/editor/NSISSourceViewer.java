@@ -731,6 +731,21 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
         }
     }
 
+    protected void ensureOverviewHoverManagerInstalled()
+    {
+        // This is a hack so that the Hover control creator for hover help isn't used in the
+        // Overview ruler.
+        IInformationControlCreator oldControlCreator = fHoverControlCreator;
+        if (fOverviewRulerAnnotationHover != null && fOverviewRulerAnnotationHover instanceof IAnnotationHoverExtension)  {
+            IInformationControlCreator controlCreator = ((IAnnotationHoverExtension)fOverviewRulerAnnotationHover).getHoverControlCreator();
+            if(controlCreator != null) {
+                fHoverControlCreator = controlCreator;
+            }
+        }
+        super.ensureOverviewHoverManagerInstalled();
+        fHoverControlCreator = oldControlCreator;
+    }
+
     private String convertTabsToSpaces(IDocument doc, int textOffset, String text, int tabWidth)
     {
         if (text != null) {

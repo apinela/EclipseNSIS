@@ -12,7 +12,27 @@
 #include <tchar.h>
 #include "htmlhelp.h"
 #include "ITStorage.h"
+#include "VisualStylesXP.h"
 #include "net_sf_eclipsensis_util_WinAPI.h"
+
+#define PACKVERSION(major,minor) MAKELONG(minor,major)
+
+#ifndef DLLVERSIONINFO
+typedef struct _DllVersionInfo
+{
+    DWORD cbSize;
+    DWORD dwMajorVersion;
+    DWORD dwMinorVersion;
+    DWORD dwBuildNumber;
+    DWORD dwPlatformID;
+}DLLVERSIONINFO;
+ 
+#endif
+
+#ifndef DLLGETVERSIONPROC
+typedef int (FAR WINAPI *DLLGETVERSIONPROC) (DLLVERSIONINFO *);
+#endif
+
 
 typedef BOOL (_stdcall *_tSetLayeredWindowAttributesProc)(HWND hwnd, // handle to the layered window
     COLORREF crKey,      // specifies the color key
@@ -21,6 +41,51 @@ typedef BOOL (_stdcall *_tSetLayeredWindowAttributesProc)(HWND hwnd, // handle t
 );
 _tSetLayeredWindowAttributesProc SetLayeredWindowAttributesProc;
 BOOL isUnicode;
+BOOL isXP;
+BOOL isCommCtrl6;
+
+
+DWORD GetDllVersion(LPCTSTR lpszDllName)
+{
+    HINSTANCE hinstDll;
+    DWORD dwVersion = 0;
+
+    /* For security purposes, LoadLibrary should be provided with a 
+       fully-qualified path to the DLL. The lpszDllName variable should be
+       tested to ensure that it is a fully qualified path before it is used. */
+    hinstDll = LoadLibrary(lpszDllName);
+	
+    if(hinstDll)
+    {
+        DLLGETVERSIONPROC pDllGetVersion;
+        pDllGetVersion = (DLLGETVERSIONPROC)GetProcAddress(hinstDll, 
+                          "DllGetVersion");
+
+        /* Because some DLLs might not implement this function, you
+        must test for it explicitly. Depending on the particular 
+        DLL, the lack of a DllGetVersion function can be a useful
+        indicator of the version. */
+
+        if(pDllGetVersion)
+        {
+            DLLVERSIONINFO dvi;
+            HRESULT hr;
+
+            ZeroMemory(&dvi, sizeof(dvi));
+            dvi.cbSize = sizeof(dvi);
+
+            hr = (*pDllGetVersion)(&dvi);
+
+            if(SUCCEEDED(hr))
+            {
+               dwVersion = PACKVERSION(dvi.dwMajorVersion, dvi.dwMinorVersion);
+            }
+        }
+
+        FreeLibrary(hinstDll);
+    }
+    return dwVersion;
+}
 
 JNIEXPORT void JNICALL Java_net_sf_eclipsensis_util_WinAPI_init(JNIEnv *pEnv, jclass jClass)
 {
@@ -29,13 +94,18 @@ JNIEXPORT void JNICALL Java_net_sf_eclipsensis_util_WinAPI_init(JNIEnv *pEnv, jc
     GetVersionEx (&osvi);
 	
 	isUnicode = (osvi.dwPlatformId == VER_PLATFORM_WIN32_NT);
+    isXP = FALSE;
     if(osvi.dwMajorVersion >= 5) {
+        if((osvi.dwMajorVersion > 5) || (osvi.dwMajorVersion == 5 && osvi.dwMinorVersion >= 1)) {
+            isXP = TRUE;
+        }
         HANDLE user32 = GetModuleHandle(_T("user32"));
         SetLayeredWindowAttributesProc = (_tSetLayeredWindowAttributesProc) GetProcAddress((HINSTANCE)user32, "SetLayeredWindowAttributes");
     }
     else {
         SetLayeredWindowAttributesProc = NULL;
     }
+    isCommCtrl6 = (GetDllVersion(_T("comctl32.dll")) >= PACKVERSION(6,0));
 }
 
 JNIEXPORT jint JNICALL Java_net_sf_eclipsensis_util_WinAPI_SetWindowLong(JNIEnv *pEnv, jclass jClass, jint hWnd, jint nIndex, jint dwNewLong)
@@ -216,4 +286,62 @@ JNIEXPORT jint JNICALL Java_net_sf_eclipsensis_util_WinAPI_SendMessage(JNIEnv *p
 JNIEXPORT jint JNICALL Java_net_sf_eclipsensis_util_WinAPI_CallWindowProc(JNIEnv *pEnv, jclass jClass, jint lpWndProc, jint hWnd, jint Msg, jint wParam, jint lParam)
 {
     return CallWindowProc((WNDPROC)lpWndProc, (HWND)hWnd, Msg, wParam, lParam);
+}
+
+JNIEXPORT jboolean JNICALL Java_net_sf_eclipsensis_util_WinAPI_AreVisualStylesEnabled (JNIEnv *pEnv, jclass jClass)
+{
+    if(isXP && isCommCtrl6) {
+        if(g_xpStyle.IsAppThemed() && g_xpStyle.IsThemeActive()) {
+            return TRUE;
+        }
+    }
+    return FALSE;
+}
+
+JNIEXPORT void JNICALL Java_net_sf_eclipsensis_util_WinAPI_DrawWidgetThemeBackGround(JNIEnv *pEnv, jclass jClass, jint hWnd, jint hDC, 
+                                                                                     jstring theme, jint partId, jint stateId)
+{
+    if(Java_net_sf_eclipsensis_util_WinAPI_AreVisualStylesEnabled(pEnv,jClass)) {
+        LPCWSTR pszTheme =  (LPCWSTR)pEnv->GetStringChars(theme, 0);
+        HTHEME hTheme = g_xpStyle.OpenThemeData((HWND)hWnd, pszTheme);
+
+		RECT rect, clipRect;
+
+        GetWindowRect((HWND)hWnd, &rect);
+        rect.right -= rect.left;
+        rect.left = 0;
+        rect.bottom -= rect.top;
+        rect.top = 0;
+
+		// draw the left border
+		clipRect.left = rect.left;
+		clipRect.top = rect.top;
+		clipRect.right = rect.left + 2;
+		clipRect.bottom = rect.bottom;
+		g_xpStyle.DrawThemeBackground(hTheme, (HDC)hDC, partId, stateId, &rect, &clipRect);
+
+		// draw the top border
+		clipRect.left = rect.left;
+		clipRect.top = rect.top;
+		clipRect.right = rect.right;
+		clipRect.bottom = rect.top + 2;
+		g_xpStyle.DrawThemeBackground(hTheme, (HDC)hDC, partId, stateId, &rect, &clipRect);
+
+		// draw the right border
+		clipRect.left = rect.right - 2;
+		clipRect.top = rect.top;
+		clipRect.right = rect.right;
+		clipRect.bottom = rect.bottom;
+		g_xpStyle.DrawThemeBackground(hTheme, (HDC)hDC, partId, stateId, &rect, &clipRect);
+
+		// draw the bottom border
+		clipRect.left = rect.left;
+		clipRect.top = rect.bottom - 2;
+		clipRect.right = rect.right;
+		clipRect.bottom = rect.bottom;
+		g_xpStyle.DrawThemeBackground(hTheme, (HDC)hDC, partId, stateId, &rect, &clipRect);
+
+        g_xpStyle.CloseThemeData(hTheme);
+        pEnv->ReleaseStringChars(theme, pszTheme);
+    }
 }

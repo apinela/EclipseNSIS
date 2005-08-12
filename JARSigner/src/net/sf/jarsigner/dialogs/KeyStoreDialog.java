@@ -11,6 +11,8 @@ package net.sf.jarsigner.dialogs;
 
 import java.security.KeyStore;
 
+import net.sf.eclipsensis.utilities.UtilitiesPlugin;
+import net.sf.eclipsensis.utilities.util.Common;
 import net.sf.jarsigner.JARSignerPlugin;
 
 import org.eclipse.jface.dialogs.*;
@@ -64,19 +66,19 @@ public class KeyStoreDialog extends Dialog
             public void modifyText(ModifyEvent e)
             {
                 mKeyStoreName = text.getText();
-                getButton(IDialogConstants.OK_ID).setEnabled(!JARSignerPlugin.isEmpty(mKeyStoreName));
+                getButton(IDialogConstants.OK_ID).setEnabled(!Common.isEmpty(mKeyStoreName));
             }
         });
         Button b = new Button(composite,SWT.PUSH);
         b.setLayoutData(new GridData());
-        b.setText(JARSignerPlugin.getResourceString("browse.label")); //$NON-NLS-1$
+        b.setText(UtilitiesPlugin.getResourceString("browse.label")); //$NON-NLS-1$
         b.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) 
             {
                 FileDialog dialog = new FileDialog(getShell(),SWT.OPEN);
                 dialog.setText(JARSignerPlugin.getResourceString("key.store.location.message")); //$NON-NLS-1$
                 String file = text.getText();
-                dialog.setFileName(JARSignerPlugin.isEmpty(file)?JARSignerPlugin.getResourceString("key.store.name"):file); //$NON-NLS-1$
+                dialog.setFileName(Common.isEmpty(file)?JARSignerPlugin.getResourceString("key.store.name"):file); //$NON-NLS-1$
                 file = dialog.open();
                 if(file != null) {
                     text.setText(file);
@@ -110,7 +112,7 @@ public class KeyStoreDialog extends Dialog
             super.okPressed();
         }
         else {
-            MessageDialog.openError(getShell(),JARSignerPlugin.getResourceString("error.title"), //$NON-NLS-1$
+            MessageDialog.openError(getShell(),UtilitiesPlugin.getResourceString("error.title"), //$NON-NLS-1$
                     JARSignerPlugin.getResourceString("invalid.keystore")); //$NON-NLS-1$
         }
     }

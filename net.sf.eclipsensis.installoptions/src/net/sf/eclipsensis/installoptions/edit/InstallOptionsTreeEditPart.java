@@ -86,7 +86,7 @@ public class InstallOptionsTreeEditPart extends AbstractTreeEditPart implements 
         return Collections.EMPTY_LIST;
     }
 
-    public void propertyChange(PropertyChangeEvent change)
+    public void propertyChange(final PropertyChangeEvent change)
     {
         if (change.getPropertyName().equals(InstallOptionsModel.PROPERTY_CHILDREN)) {
             Object oldValue = change.getOldValue();

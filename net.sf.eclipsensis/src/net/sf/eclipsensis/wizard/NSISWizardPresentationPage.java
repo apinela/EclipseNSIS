@@ -330,8 +330,8 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
             m.setEnabler(l,mse);
         }
         
-        addPageListener(new NSISWizardPageAdapter() {
-            public void aboutToShow()
+        addPageChangedRunnable(new Runnable() {
+            public void run()
             {
                 c.setEnabled(mse.canEnable(c));
                 if(l != null) {

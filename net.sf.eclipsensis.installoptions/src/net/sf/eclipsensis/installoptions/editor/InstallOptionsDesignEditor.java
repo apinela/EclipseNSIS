@@ -43,6 +43,7 @@ import org.eclipse.gef.rulers.RulerProvider;
 import org.eclipse.gef.ui.actions.*;
 import org.eclipse.gef.ui.palette.*;
 import org.eclipse.gef.ui.palette.FlyoutPaletteComposite.FlyoutPreferences;
+import org.eclipse.gef.ui.palette.customize.PaletteSettingsDialog;
 import org.eclipse.gef.ui.parts.*;
 import org.eclipse.gef.ui.parts.TreeViewer;
 import org.eclipse.gef.ui.properties.UndoablePropertySheetEntry;
@@ -50,6 +51,7 @@ import org.eclipse.gef.ui.views.palette.PalettePage;
 import org.eclipse.gef.ui.views.palette.PaletteViewerPage;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.util.TransferDragSourceListener;
@@ -59,7 +61,11 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.dialogs.PreferencesUtil;
@@ -219,9 +225,10 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
     protected static final String PALETTE_STATE = "PaletteState"; //$NON-NLS-1$
 
     protected static final int DEFAULT_PALETTE_SIZE = 130;
+    private static IPreferenceStore cPreferenceStore = InstallOptionsPlugin.getDefault().getPreferenceStore();
 
     static {
-        InstallOptionsPlugin.getDefault().getPreferenceStore().setDefault(PALETTE_SIZE, DEFAULT_PALETTE_SIZE);
+        cPreferenceStore.setDefault(PALETTE_SIZE, DEFAULT_PALETTE_SIZE);
     }
 
     public InstallOptionsDesignEditor()
@@ -541,9 +548,18 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
     protected PaletteViewerProvider createPaletteViewerProvider()
     {
         return new PaletteViewerProvider(getEditDomain()) {
-            protected void configurePaletteViewer(PaletteViewer viewer) {
+            protected void configurePaletteViewer(PaletteViewer viewer) 
+            {
                 super.configurePaletteViewer(viewer);
+                viewer.setContextMenu(new CustomPaletteContextMenuProvider(viewer));
                 viewer.addDragSourceListener(new TemplateTransferDragSourceListener(viewer));
+            }
+
+            public PaletteViewer createPaletteViewer(Composite parent)
+            {
+                PaletteViewer paletteViewer = super.createPaletteViewer(parent);
+                paletteViewer.setPaletteViewerPreferences(new PaletteViewerPreferences(cPreferenceStore));
+                return paletteViewer;
             }
         };
     }
@@ -757,7 +773,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
             return mInstallOptionsDialog;
         }
         if (type == IContentOutlinePage.class) {
-            mOutlinePage = new OutlinePage(new InstallOptionsTreeViewer());
+            mOutlinePage = new OutlinePage(new CustomTreeViewer());
             return mOutlinePage;
         }
         if (type == PalettePage.class) {
@@ -824,32 +840,32 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
         return new FlyoutPreferences() {
             public int getDockLocation()
             {
-                return InstallOptionsPlugin.getDefault().getPreferenceStore().getInt(PALETTE_DOCK_LOCATION);
+                return cPreferenceStore.getInt(PALETTE_DOCK_LOCATION);
             }
 
             public int getPaletteState()
             {
-                return InstallOptionsPlugin.getDefault().getPreferenceStore().getInt(PALETTE_STATE);
+                return cPreferenceStore.getInt(PALETTE_STATE);
             }
 
             public int getPaletteWidth()
             {
-                return InstallOptionsPlugin.getDefault().getPreferenceStore().getInt(PALETTE_SIZE);
+                return cPreferenceStore.getInt(PALETTE_SIZE);
             }
 
             public void setDockLocation(int location)
             {
-                InstallOptionsPlugin.getDefault().getPreferenceStore().setValue(PALETTE_DOCK_LOCATION, location);
+                cPreferenceStore.setValue(PALETTE_DOCK_LOCATION, location);
             }
 
             public void setPaletteState(int state)
             {
-                InstallOptionsPlugin.getDefault().getPreferenceStore().setValue(PALETTE_STATE, state);
+                cPreferenceStore.setValue(PALETTE_STATE, state);
             }
 
             public void setPaletteWidth(int width)
             {
-                InstallOptionsPlugin.getDefault().getPreferenceStore().setValue(PALETTE_SIZE, width);
+                cPreferenceStore.setValue(PALETTE_SIZE, width);
             }
         };
     }
@@ -1064,10 +1080,9 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
 
     private Object loadPreference(String name, TypeConverter converter, Object defaultValue)
     {
-        IPreferenceStore store = InstallOptionsPlugin.getDefault().getPreferenceStore();
         Object o = null;
         try {
-            o = converter.asType(store.getString(name));
+            o = converter.asType(cPreferenceStore.getString(name));
         }
         catch(Exception ex) {
             o = null;
@@ -1753,9 +1768,9 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
         }
     }
 
-    private class InstallOptionsTreeViewer extends TreeViewer
+    private class CustomTreeViewer extends TreeViewer
     {
-        public InstallOptionsTreeViewer()
+        public CustomTreeViewer()
         {
             super();
             addDragSourceListener(new InstallOptionsTreeViewerDragSourceListener(this));
@@ -1773,6 +1788,176 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
         {
             if(listener instanceof InstallOptionsTreeViewerDropTargetListener) {
                 super.addDropTargetListener(listener);
+            }
+        }
+    }
+
+    private class CustomPaletteContextMenuProvider extends PaletteContextMenuProvider
+    {
+        public CustomPaletteContextMenuProvider(PaletteViewer palette)
+        {
+            super(palette);
+        }
+
+        public void buildContextMenu(IMenuManager menu)
+        {
+            super.buildContextMenu(menu);
+            IContributionItem[] items = menu.getItems();
+            if(!Common.isEmptyArray(items)) {
+                for (int i = 0; i < items.length; i++) {
+                    if(items[i] instanceof ActionContributionItem) {
+                        IAction action = ((ActionContributionItem)items[i]).getAction();
+                        if(action.getClass().equals(SettingsAction.class)) {
+                            menu.remove(items[i]);
+                            break;
+                        }
+                    }
+                }
+            }
+            menu.appendToGroup(GEFActionConstants.GROUP_REST, new PaletteSettingsAction(getPaletteViewer()));
+        }
+        
+    }
+
+    private class PaletteSettingsAction extends SettingsAction
+    {
+        private PaletteViewer mPaletteViewer;
+        
+        public PaletteSettingsAction(PaletteViewer palette)
+        {
+            super(palette);
+            mPaletteViewer = palette;
+        }
+
+        public void run() 
+        {
+            Dialog settings = new CustomPaletteSettingsDialog(mPaletteViewer.getControl().getShell(), 
+                                                              mPaletteViewer.getPaletteViewerPreferences());
+            settings.open();
+        }
+    }
+
+    private class PaletteViewerPreferences extends DefaultPaletteViewerPreferences
+    {
+        public PaletteViewerPreferences(IPreferenceStore store)
+        {
+            super(store);
+            getPreferenceStore().setDefault(PREFERENCE_UNLOAD_CREATION_TOOL_WHEN_FINISHED, true);
+        }
+        
+        public void setUnloadCreationToolWhenFinished(boolean value)
+        {
+            getPreferenceStore().setValue(PREFERENCE_UNLOAD_CREATION_TOOL_WHEN_FINISHED, value);
+        }
+        
+        public boolean getUnloadCreationToolWhenFinished()
+        {
+            return getPreferenceStore().getBoolean(PREFERENCE_UNLOAD_CREATION_TOOL_WHEN_FINISHED);
+        }
+
+        protected void handlePreferenceStorePropertyChanged(String property)
+        {
+            if(property.equals(PREFERENCE_UNLOAD_CREATION_TOOL_WHEN_FINISHED)) {
+                firePropertyChanged(property,
+                        new Boolean(getUnloadCreationToolWhenFinished()));
+            }
+            else {
+                super.handlePreferenceStorePropertyChanged(property);
+            }
+        }
+    }
+    
+    private class CustomPaletteSettingsDialog extends PaletteSettingsDialog
+    {
+        protected static final String CACHE_UNLOAD_CREATION_TOOL_WHEN_FINISHED = "unload creation tool when finished"; //$NON-NLS-1$
+        protected static final int UNLOAD_CREATION_TOOL_WHEN_FINISHED_ID = CLIENT_ID + 1;
+        
+        private org.eclipse.gef.ui.palette.PaletteViewerPreferences mPrefs;
+        
+        public CustomPaletteSettingsDialog(Shell parentShell, org.eclipse.gef.ui.palette.PaletteViewerPreferences prefs)
+        {
+            super(parentShell, prefs);
+            mPrefs = prefs;
+        }
+
+        protected void cacheSettings()
+        {
+            super.cacheSettings();
+            if(mPrefs instanceof PaletteViewerPreferences) {
+                settings.put(CACHE_UNLOAD_CREATION_TOOL_WHEN_FINISHED, ((PaletteViewerPreferences)mPrefs).getUnloadCreationToolWhenFinished()?Boolean.TRUE:Boolean.FALSE);
+            }
+        }
+
+        protected void configureShell(Shell newShell)
+        {
+            super.configureShell(newShell);
+            newShell.setImage(InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("installoptions.icon"))); //$NON-NLS-1$
+        }
+
+        protected Control createDialogArea(Composite parent)
+        {
+            Composite composite = (Composite)super.createDialogArea(parent);
+            GridLayout layout = (GridLayout)composite.getLayout();
+
+            Label label = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
+            GridData data = new GridData(SWT.FILL, SWT.CENTER, false, false);
+            data.horizontalSpan = layout.numColumns;
+            label.setLayoutData(data);
+
+            Control child = createCreationToolOptions(composite);
+            data = new GridData(SWT.FILL, SWT.CENTER, false, false);
+            data.horizontalSpan = layout.numColumns;
+            data.horizontalIndent = 5;
+            child.setLayoutData(data);
+            
+            return composite;
+        }
+        
+        /**
+         * @param composite
+         * @return
+         */
+        private Control createCreationToolOptions(Composite composite)
+        {
+            composite = new Composite(composite, SWT.NONE);
+            composite.setLayout(new GridLayout(1,false));
+
+            Label label = new Label(composite, SWT.NONE);
+            label.setText(InstallOptionsPlugin.getResourceString("control.creation.tools.options")); //$NON-NLS-1$
+            GridData data = new GridData(SWT.FILL, SWT.CENTER, false, false);
+            label.setLayoutData(data);
+            
+            Button b = createButton(composite, UNLOAD_CREATION_TOOL_WHEN_FINISHED_ID,
+                    InstallOptionsPlugin.getResourceString("unload.creation.tool.when.finished.label"), //$NON-NLS-1$
+                    SWT.CHECK,null);
+            ((GridData)b.getLayoutData()).horizontalIndent = 5;
+            b.setSelection(((PaletteViewerPreferences)mPrefs).getUnloadCreationToolWhenFinished());
+            return composite;
+        }
+
+        protected void restoreSettings()
+        {
+            super.restoreSettings();
+            if(mPrefs instanceof PaletteViewerPreferences) {
+                ((PaletteViewerPreferences)mPrefs).setUnloadCreationToolWhenFinished(((Boolean)settings.get(CACHE_UNLOAD_CREATION_TOOL_WHEN_FINISHED)).booleanValue());
+            }
+        }
+
+        protected void buttonPressed(int buttonId)
+        {
+            if(buttonId == UNLOAD_CREATION_TOOL_WHEN_FINISHED_ID) {
+                Button b = getButton(buttonId);
+                handleUnloadCreationToolWhenFinishedChanged(b.getSelection());
+            }
+            else {
+                super.buttonPressed(buttonId);
+            }
+        }
+        
+        private void handleUnloadCreationToolWhenFinishedChanged(boolean value)
+        {
+            if(mPrefs instanceof PaletteViewerPreferences) {
+                ((PaletteViewerPreferences)mPrefs).setUnloadCreationToolWhenFinished(value);
             }
         }
     }

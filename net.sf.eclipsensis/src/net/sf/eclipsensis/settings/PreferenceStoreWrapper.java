@@ -84,6 +84,13 @@ public class PreferenceStoreWrapper implements IPreferenceStore
         mParentStore.addPropertyChangeListener(mPropertyChangeListener);
     }
     
+    public void load(String[] names)
+    {
+        for (int i = 0; i < names.length; i++) {
+            checkString(names[i]);
+        }
+    }
+    
     public void update()
     {
         for(Iterator iter = mNamesMap.entrySet().iterator(); iter.hasNext(); ) {

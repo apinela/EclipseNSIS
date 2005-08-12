@@ -25,6 +25,11 @@ public class Position implements Cloneable
     {
     }
 
+    public Position(Rectangle rect)
+    {
+        this(rect.x,rect.y,rect.x+rect.width-1,rect.y+rect.height-1);
+    }
+
     public Position(int left, int top, int right, int bottom)
     {
         this();

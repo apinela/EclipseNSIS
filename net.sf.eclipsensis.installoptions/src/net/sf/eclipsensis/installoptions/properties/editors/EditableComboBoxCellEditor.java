@@ -25,6 +25,7 @@ public class EditableComboBoxCellEditor extends CellEditor
 {
     private List mItems;
     private String mSelection;
+    private String mNewSelection;
     private Combo mCombo;
     private boolean mDownArrowPressed = false;
     private boolean mAutoDropDown = false;
@@ -94,6 +95,13 @@ public class EditableComboBoxCellEditor extends CellEditor
         mCombo = new Combo(parent, getStyle());
         mCombo.setFont(parent.getFont());
 
+        mCombo.addModifyListener(new ModifyListener(){
+            public void modifyText(ModifyEvent e)
+            {
+                mNewSelection = mCombo.getText();
+            }
+        });
+        
         mCombo.addKeyListener(new KeyAdapter() {
             public void keyPressed(KeyEvent e)
             {
@@ -155,18 +163,7 @@ public class EditableComboBoxCellEditor extends CellEditor
     {
         String oldSelection = mSelection;
         boolean oldIsValid = isValueValid();
-        if( (getStyle() & SWT.READ_ONLY) > 0) {
-            int index = mCombo.getSelectionIndex();
-            if(index < 0 || index >= mCombo.getItemCount()) {
-                mSelection = ""; //$NON-NLS-1$
-            }
-            else {
-                mSelection = mCombo.getItem(index);
-            }
-        }
-        else {
-            mSelection = mCombo.getText();
-        }
+        mSelection = mNewSelection;
         boolean newIsValid = isCorrect(mSelection);
         if(!mSelection.equals(oldSelection)) {
             valueChanged(oldIsValid,newIsValid);

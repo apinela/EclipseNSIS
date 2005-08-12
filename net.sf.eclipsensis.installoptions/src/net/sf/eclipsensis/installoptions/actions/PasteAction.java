@@ -11,16 +11,19 @@ package net.sf.eclipsensis.installoptions.actions;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.*;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.edit.InstallOptionsEditDomain;
-import net.sf.eclipsensis.installoptions.edit.dialog.InstallOptionsDialogEditPart;
 import net.sf.eclipsensis.installoptions.editor.InstallOptionsDesignEditor;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsDialog;
 import net.sf.eclipsensis.installoptions.model.commands.PasteCommand;
 
-import org.eclipse.gef.EditDomain;
+import org.eclipse.gef.*;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.ui.actions.WorkbenchPartAction;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionFactory;
 
@@ -52,17 +55,15 @@ public class PasteAction extends WorkbenchPartAction implements PropertyChangeLi
         setEnabled(false);
     }
 
-    public Command createPasteCommand() {
+    public PasteCommand createPasteCommand() {
         PasteCommand pasteCommand = null;
         IWorkbenchPart part = getWorkbenchPart();
         if(part instanceof InstallOptionsDesignEditor) {
-            InstallOptionsDesignEditor editor = (InstallOptionsDesignEditor)part;
             EditDomain domain = (EditDomain)getWorkbenchPart().getAdapter(EditDomain.class);
             if(domain instanceof InstallOptionsEditDomain && ((InstallOptionsEditDomain)domain).isReadOnly()) {
                 return null;
             }
             pasteCommand = new PasteCommand();
-            pasteCommand.setParent((InstallOptionsDialogEditPart)editor.getGraphicalViewer().getContents());
         }
         
         return pasteCommand;
@@ -84,6 +85,20 @@ public class PasteAction extends WorkbenchPartAction implements PropertyChangeLi
     }
 
     public void run() {
-        execute(createPasteCommand());
+        PasteCommand command = createPasteCommand();
+        if(command != null) {
+            InstallOptionsDesignEditor editor = (InstallOptionsDesignEditor)getWorkbenchPart();
+            GraphicalViewer viewer = editor.getGraphicalViewer();
+            command.setParent((InstallOptionsDialog)editor.getGraphicalViewer().getContents().getModel());
+            command.setClientArea(((Canvas)viewer.getControl()).getClientArea());
+            List selection = ((IStructuredSelection)viewer.getSelection()).toList();
+            List modelSelection = new ArrayList();
+            for (Iterator iter = selection.iterator(); iter.hasNext();) {
+                EditPart part = (EditPart)iter.next();
+                modelSelection.add(part.getModel());
+            }
+            command.setSelection(modelSelection);
+            execute(command);
+        }
     }
 }

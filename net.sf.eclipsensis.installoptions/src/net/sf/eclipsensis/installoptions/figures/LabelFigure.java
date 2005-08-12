@@ -9,24 +9,28 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.figures;
 
-import org.eclipse.draw2d.FigureCanvas;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.views.properties.IPropertySource;
 
 public class LabelFigure extends UneditableElementFigure
 {
-    public LabelFigure(FigureCanvas canvas, IPropertySource propertySource)
+    public LabelFigure(Composite parent, IPropertySource propertySource, int style)
     {
-        super(canvas, propertySource);
+        super(parent, propertySource, style);
+    }
+
+    public LabelFigure(Composite parent, IPropertySource propertySource)
+    {
+        super(parent, propertySource);
     }
 
     /**
      * @return
      */
-    protected Control createSWTControl(Composite parent)
+    protected Control createSWTControl(Composite parent, int style)
     {
-        Label label = new Label(parent, getStyle());
+        Label label = new Label(parent, style);
         label.setText(mText);
         return label;
     }

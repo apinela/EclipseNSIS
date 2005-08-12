@@ -9,8 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.wizard;
 
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.util.ColorManager;
@@ -19,15 +18,16 @@ import net.sf.eclipsensis.wizard.settings.AbstractNSISInstallGroup;
 import net.sf.eclipsensis.wizard.settings.NSISWizardSettings;
 import net.sf.eclipsensis.wizard.template.NSISWizardTemplate;
 
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.wizard.IWizardPage;
-import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.jface.wizard.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 
-public abstract class NSISWizard extends Wizard implements INewWizard, INSISWizardConstants
+public abstract class NSISWizard extends Wizard implements IAdaptable, INewWizard, INSISWizardConstants
 {
     /**
      * The wizard dialog width
@@ -40,6 +40,8 @@ public abstract class NSISWizard extends Wizard implements INewWizard, INSISWiza
 
     private NSISWizardSettings mSettings = null;
     private ArrayList mSettingsListeners = new ArrayList();
+    private IPageChangeProvider mPageChangeProvider;
+    private AbstractNSISWizardPage mCurrentPage = null;
     
     /**
 	 * Constructor for NSISWizard.
@@ -53,6 +55,44 @@ public abstract class NSISWizard extends Wizard implements INewWizard, INSISWiza
     void initSettings()
     {
         setSettings(new NSISWizardSettings());
+    }
+
+    void setCurrentPage(AbstractNSISWizardPage currentPage)
+    {
+        mCurrentPage = currentPage;
+        if(mPageChangeProvider instanceof PageChangeProvider) {
+            ((PageChangeProvider)mPageChangeProvider).firePageChanged();
+        }
+    }
+
+    public Object getAdapter(Class adapter)
+    {
+        if(IPageChangeProvider.class.equals(adapter)) {
+            if(mPageChangeProvider == null) {
+                mPageChangeProvider = new PageChangeProvider();
+            }
+            return mPageChangeProvider;
+        }
+        return null;
+    }
+
+    public void setContainer(IWizardContainer wizardContainer)
+    {
+        if(getContainer() == mPageChangeProvider) {
+            mPageChangeProvider = null;
+        }
+        super.setContainer(wizardContainer);
+        if(getContainer() != null && getContainer() instanceof IPageChangeProvider) {
+            IPageChangeProvider pageChangeProvider = (IPageChangeProvider)getContainer();
+            if(mPageChangeProvider != null && mPageChangeProvider instanceof PageChangeProvider) {
+                for(Iterator iter=((PageChangeProvider)mPageChangeProvider).getListeners().iterator(); iter.hasNext(); ) {
+                    pageChangeProvider.addPageChangedListener((IPageChangedListener)iter.next());
+                    iter.remove();
+                }
+                mPageChangeProvider = null;
+            }
+            mPageChangeProvider = pageChangeProvider;
+        }
     }
 
     /**
@@ -178,4 +218,41 @@ public abstract class NSISWizard extends Wizard implements INewWizard, INSISWiza
     }
 
     public abstract String getHelpContextId();
+    
+    private class PageChangeProvider implements IPageChangeProvider
+    {
+        private List mListeners = new ArrayList();
+        
+        public void addPageChangedListener(IPageChangedListener listener)
+        {
+            if(!mListeners.contains(listener)) {
+                mListeners.add(listener);
+            }
+        }
+        
+        public List getListeners()
+        {
+            return mListeners;
+        }
+
+        public Object getSelectedPage()
+        {
+            return mCurrentPage;
+        }
+
+        public void removePageChangedListener(IPageChangedListener listener)
+        {
+            if(!mListeners.contains(listener)) {
+                mListeners.add(listener);
+            }
+        }
+
+        public void firePageChanged()
+        {
+            PageChangedEvent pageChangedEvent = new PageChangedEvent(this, mCurrentPage);
+            for (Iterator iter = mListeners.iterator(); iter.hasNext();) {
+                ((IPageChangedListener)iter.next()).pageChanged(pageChangedEvent);
+            }
+        }
+    }
 }

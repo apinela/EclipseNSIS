@@ -107,8 +107,9 @@ public class MultiLineTextCellEditor extends DialogCellEditor
         
         protected void configureShell(Shell newShell)
         {
-            newShell.setText(InstallOptionsPlugin.getResourceString("multiline.text.dialog.title")); //$NON-NLS-1$
             super.configureShell(newShell);
+            newShell.setText(InstallOptionsPlugin.getResourceString("multiline.text.dialog.title")); //$NON-NLS-1$
+            newShell.setImage(InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("installoptions.icon"))); //$NON-NLS-1$
         }
 
         public String getValue()

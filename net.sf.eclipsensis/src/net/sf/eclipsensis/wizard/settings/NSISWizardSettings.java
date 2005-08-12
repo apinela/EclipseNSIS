@@ -49,7 +49,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     private int mFadeInDelay = 600;
     private int mFadeOutDelay = 400;
     private boolean mShowBackground = false;
-    private RGB mBGTopColor = ColorManager.NAVY_BLUE;
+    private RGB mBGTopColor = new RGB(0x0,0x0,0x80);
     private RGB mBGBottomColor = ColorManager.BLACK;
     private RGB mBGTextColor = ColorManager.WHITE;
     private String mBackgroundBMP = ""; //$NON-NLS-1$

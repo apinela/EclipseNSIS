@@ -153,7 +153,7 @@ public class InstallOptionsLink extends InstallOptionsUneditableElement
         InstallOptionsLink clone = (InstallOptionsLink)super.clone();
         clone.setState(getState());
         if(mTxtColor != null) {
-            clone.setTxtColor(new RGB(clone.mTxtColor.red,clone.mTxtColor.green,clone.mTxtColor.blue));
+            clone.setTxtColor(new RGB(mTxtColor.red,mTxtColor.green,mTxtColor.blue));
         }
         return clone;
     }

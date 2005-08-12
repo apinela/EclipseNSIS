@@ -36,6 +36,8 @@ import org.eclipse.ui.views.properties.*;
 
 public class InstallOptionsDialog extends InstallOptionsElement implements IInstallOptionsConstants
 {
+    public static final String PROPERTY_SELECTION = "net.sf.eclipsensis.installoptions.selection"; //$NON-NLS-1$
+    
     private static final int DEFAULT_OPTION = 0;
     private static final String[] OPTION_DATA = {"","0","1"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     private static final String[] OPTION_DISPLAY = {InstallOptionsPlugin.getResourceString("option.default"), //$NON-NLS-1$
@@ -179,6 +181,53 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
         mShowDialogSize = showDialogSize;
     }
     
+    public boolean canMove(int type, List selection)
+    {
+        boolean flag = false;
+        int[] oldSelection = mSelectedIndices;
+        try {
+            mSelectedIndices = parseSelection(selection);
+            switch(type) {
+                case IInstallOptionsConstants.SEND_BACKWARD:
+                    flag = canSendBackward();
+                    break;
+                case IInstallOptionsConstants.SEND_TO_BACK:
+                    flag = canSendToBack();
+                    break;
+                case IInstallOptionsConstants.BRING_FORWARD:
+                    flag = canBringForward();
+                    break;
+                case IInstallOptionsConstants.BRING_TO_FRONT:
+                default:
+                    return canBringToFront();
+            }
+        }
+        finally {
+            mSelectedIndices = oldSelection;
+        }
+        
+        return flag;
+    }
+    
+
+    public void move(int type)
+    {
+        switch(type) {
+            case IInstallOptionsConstants.SEND_BACKWARD:
+                sendBackward();
+                break;
+            case IInstallOptionsConstants.SEND_TO_BACK:
+                sendToBack();
+                break;
+            case IInstallOptionsConstants.BRING_FORWARD:
+                bringForward();
+                break;
+            case IInstallOptionsConstants.BRING_TO_FRONT:
+            default:
+                bringToFront();
+        }
+    }
+
     public void setChildren(List children)
     {
         mChildren.clear();
@@ -230,14 +279,28 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
     
     public void setSelection(List selection)
     {
+        mSelectedIndices = parseSelection(selection);
+        selection = new ArrayList();
+        if(!Common.isEmptyArray(mSelectedIndices)) {
+            for (int i = 0; i < mSelectedIndices.length; i++) {
+                selection.add(mChildren.get(mSelectedIndices[i]));
+            }
+        }
+        firePropertyChange(PROPERTY_SELECTION,null,selection);
+    }
+    
+    private int[] parseSelection(List selection)
+    {
+        selection.retainAll(mChildren);
         if(Common.isEmptyCollection(selection)) {
-            mSelectedIndices = new int[0];
+            return new int[0];
         }
-        mSelectedIndices = new int[selection.size()];
-        for (int i = 0; i < mSelectedIndices.length; i++) {
-            mSelectedIndices[i] = mChildren.indexOf(selection.get(i));
+        int[] selectedIndices = new int[selection.size()];
+        for (int i = 0; i < selectedIndices.length; i++) {
+            selectedIndices[i] = mChildren.indexOf(selection.get(i));
         }
-        Arrays.sort(mSelectedIndices);
+        Arrays.sort(selectedIndices);
+        return selectedIndices;
     }
 
     protected IPropertyDescriptor createPropertyDescriptor(String name)
@@ -619,6 +682,10 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
         dialog.setRect(getRect());
         dialog.setRTL(getRTL());
         dialog.setTitle(getTitle());
+        dialog.setDialogSize(getDialogSize().getCopy());
+        dialog.setShowDialogSize(isShowDialogSize());
+        dialog.mINIFile = null;
+        dialog.mINISectionMap = new HashMap();
         return dialog;
     }
 

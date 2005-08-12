@@ -357,6 +357,7 @@ public class MakeNSISRunner implements INSISConstants
                     }
                     List compressorSummaryList = new ArrayList();
                     int maxLineLength = 0;
+                    outer:
                     for(int i=0; i<MakeNSISRunner.COMPRESSOR_NAME_ARRAY.length; i++) {
                         if(i != MakeNSISRunner.COMPRESSOR_DEFAULT && i != MakeNSISRunner.COMPRESSOR_BEST) {
                             for(int j=0; j<count; j++) {
@@ -381,7 +382,7 @@ public class MakeNSISRunner implements INSISConstants
                                         tempFile.delete();
                                     }
                                     tempFile = null;
-                                    break;
+                                    break outer;
                                 }
                                 else {
                                     File outputFile = new File(tempresults.getOutputFileName());
@@ -417,6 +418,7 @@ public class MakeNSISRunner implements INSISConstants
                         char[] c = new char[maxLineLength];
                         Arrays.fill(c,'-');
                         String dashes = new String(c);
+                        NSISConsoleModel.INSTANCE.add(NSISConsoleLine.info(EclipseNSISPlugin.getResourceString("summary.title"))); //$NON-NLS-1$
                         NSISConsoleModel.INSTANCE.add(NSISConsoleLine.info(dashes));
                         NSISConsoleModel.INSTANCE.add(NSISConsoleLine.info(header));
                         NSISConsoleModel.INSTANCE.add(NSISConsoleLine.info(dashes));

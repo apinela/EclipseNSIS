@@ -69,8 +69,9 @@ public class FileFilterDialog extends Dialog
 
     protected void configureShell(Shell newShell)
     {
-        newShell.setText(InstallOptionsPlugin.getResourceString("filter.dialog.name")); //$NON-NLS-1$
         super.configureShell(newShell);
+        newShell.setText(InstallOptionsPlugin.getResourceString("filter.dialog.name")); //$NON-NLS-1$
+        newShell.setImage(InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("installoptions.icon"))); //$NON-NLS-1$
     }
     
     protected void okPressed()
@@ -124,13 +125,24 @@ public class FileFilterDialog extends Dialog
         add.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         add.addListener(SWT.Selection, new Listener() {
             public void handleEvent(Event e) {
-                FileFilter f = new FileFilter(InstallOptionsPlugin.getResourceString("default.filter.description"), //$NON-NLS-1$
-                                      new FilePattern[]{new FilePattern(InstallOptionsPlugin.getResourceString("default.filter.pattern"))}); //$NON-NLS-1$
                 List list = (List)viewer1.getInput();
                 if(list != null) {
+                    String desc = InstallOptionsPlugin.getFormattedString("default.filter.description",new Object[]{""}).trim(); //$NON-NLS-1$ //$NON-NLS-2$
+                    int counter = 1;
+                    for(ListIterator iter=list.listIterator(); iter.hasNext(); ) {
+                        if(((FileFilter)iter.next()).getDescription().equals(desc)) {
+                            while(iter.hasPrevious()) {
+                                iter.previous();
+                            }
+                            desc = InstallOptionsPlugin.getFormattedString("default.filter.description",new Object[]{new Integer(counter++)}); //$NON-NLS-1$
+                            continue;
+                        }
+                    }
+                    FileFilter f = new FileFilter(desc, new FilePattern[]{new FilePattern(InstallOptionsPlugin.getResourceString("default.filter.pattern"))}); //$NON-NLS-1$
                     list.add(f);
                     viewer1.refresh(false);
                     viewer1.setSelection(new StructuredSelection(f));
+                    
                 }
             }
         });
@@ -307,11 +319,14 @@ public class FileFilterDialog extends Dialog
                 if(mCurrent != null) {
                     FilePattern[] patterns = (FilePattern[])viewer2.getInput();
                     patterns = (FilePattern[])Common.resizeArray(patterns,patterns.length+1);
-                    patterns[patterns.length-1] = new FilePattern(InstallOptionsPlugin.getResourceString("default.filter.pattern")); //$NON-NLS-1$
+                    String filter = InstallOptionsPlugin.getResourceString("default.filter.pattern"); //$NON-NLS-1$
+                    patterns[patterns.length-1] = new FilePattern(filter); //$NON-NLS-1$
                     mCurrent.setPatterns(patterns);
                     viewer2.setInput(patterns);
                     viewer2.setSelection(new StructuredSelection(patterns[patterns.length-1]));
                     viewer1.update(mCurrent,null);
+                    viewer2.editElement(patterns[patterns.length-1],0);
+                    ((Text)textEditor.getControl()).setSelection(filter.length());
                 }
             }
         });
@@ -423,6 +438,7 @@ public class FileFilterDialog extends Dialog
                 }
                 boolean isNull = (mCurrent==null);
                 text.setText((isNull?"":mCurrent.getDescription())); //$NON-NLS-1$
+                text.setSelection(text.getText().length());
                 viewer2.setInput((isNull?null:mCurrent.getPatterns()));
                 label.setEnabled(!isNull);
                 text.setEnabled(!isNull);

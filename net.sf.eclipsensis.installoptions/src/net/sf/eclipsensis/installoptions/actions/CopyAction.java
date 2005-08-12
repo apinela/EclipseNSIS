@@ -14,6 +14,7 @@ import java.util.List;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.edit.InstallOptionsWidgetEditPart;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsWidget;
 import net.sf.eclipsensis.installoptions.model.commands.CopyCommand;
 
 import org.eclipse.gef.commands.Command;
@@ -57,7 +58,7 @@ public class CopyAction extends SelectionAction
         for (Iterator iter = objects.iterator(); iter.hasNext();) {
             Object object = iter.next();
             if(object instanceof InstallOptionsWidgetEditPart) {
-                copyCommand.addPart((InstallOptionsWidgetEditPart)object);
+                copyCommand.addPart((InstallOptionsWidget)((InstallOptionsWidgetEditPart)object).getModel());
             }
             else {
                 return null;

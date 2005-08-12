@@ -44,6 +44,21 @@ public class WinAPI
     public static final int CB_SHOWDROPDOWN = 0x14f;
     public static final int CB_GETDROPPEDSTATE = 0x157;
     
+    public static final int WM_PRINT = 0x317;
+    public static final int PRF_NONCLIENT = 0x2;
+    public static final int PRF_CLIENT = 0x4;
+    public static final int PRF_ERASEBKGND = 0x8;
+    public static final int PRF_CHILDREN = 0x10;
+    
+    public static final int EP_EDITTEXT = 1;
+    public static final int ETS_NORMAL = 1;
+    public static final int ETS_DISABLED = 4;
+    public static final int ETS_READONLY = 6;
+
+    public static final int LVP_LISTITEM = 1;
+    public static final int LIS_NORMAL = 1;
+    public static final int LIS_DISABLED = 4; 
+    
     private static native void init();
     public static native int SetWindowLong(int hWnd, int nIndex, int dwNewLong);
     public static native int GetWindowLong(int hWnd, int nIndex);
@@ -58,4 +73,7 @@ public class WinAPI
     public static native String[] GetPluginExports(String pszPluginFile);
     public static final native int SendMessage(int hWnd, int msg, int wParam, int lParam);
     public static final native int CallWindowProc(int lpWndProc, int hWnd, int Msg, int wParam, int lParam);
+    
+    public static final native boolean AreVisualStylesEnabled();
+    public static final native void DrawWidgetThemeBackGround(int hWnd, int hDC, String theme, int partId, int stateId);
 }

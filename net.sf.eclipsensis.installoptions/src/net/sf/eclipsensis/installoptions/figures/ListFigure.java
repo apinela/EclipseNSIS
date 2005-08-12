@@ -14,8 +14,8 @@ import java.util.*;
 import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
 import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.WinAPI;
 
-import org.eclipse.draw2d.FigureCanvas;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.widgets.List;
@@ -26,9 +26,14 @@ public class ListFigure extends EditableElementFigure implements IListItemsFigur
     private java.util.List mListItems;
     private java.util.List mSelected;
     
-    public ListFigure(FigureCanvas canvas, IPropertySource propertySource)
+    public ListFigure(Composite parent, IPropertySource propertySource, int style)
     {
-        super(canvas, propertySource);
+        super(parent, propertySource, style);
+    }
+    
+    public ListFigure(Composite parent, IPropertySource propertySource)
+    {
+        super(parent, propertySource);
     }
     
     protected void init(IPropertySource propertySource)
@@ -65,9 +70,9 @@ public class ListFigure extends EditableElementFigure implements IListItemsFigur
     /**
      * @return
      */
-    protected Control createSWTControl(Composite parent)
+    protected Control createSWTControl(Composite parent, int style)
     {
-        List list = new List(parent, getStyle());
+        List list = new List(parent, style);
         java.util.List selected = getSelected();
         java.util.List listItems = getListItems();
         selected.retainAll(listItems);
@@ -89,5 +94,28 @@ public class ListFigure extends EditableElementFigure implements IListItemsFigur
     public int getDefaultStyle()
     {
         return SWT.BORDER|SWT.MULTI;
+    }
+
+    protected String getTheme()
+    {
+        return "LISTVIEW"; //$NON-NLS-1$
+    }
+
+    protected int getThemePartId()
+    {
+        return WinAPI.LVP_LISTITEM;
+    }
+
+    protected int getThemeStateId()
+    {
+        if(mDisabled) {
+            return WinAPI.LIS_DISABLED;
+        }
+        return WinAPI.LIS_NORMAL;
+    }
+
+    protected boolean isNeedsTheme()
+    {
+        return true;
     }
 }

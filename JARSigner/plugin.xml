@@ -16,33 +16,33 @@
          point="org.eclipse.ui.popupMenus">
       <objectContribution
             objectClass="org.eclipse.core.resources.IFile"
-            id="net.sf.jnigen.actions.JNIGenAction.IFile"
-            nameFilter="*.jar">
+            id="%object.contribution.id"
+            nameFilter="%jar.name.filter">
          <action
                enablesFor="+"
                label="%jarsigner.action.label"
                class="net.sf.jarsigner.actions.JARSignerAction"
-               id="net.sf.jarsigner.actions.JARSignerAction"/>
+               id="%jarsigner.action.id"/>
          <action
                enablesFor="+"
                label="%jarverifier.action.label"
                class="net.sf.jarsigner.actions.JARVerifierAction"
-               id="net.sf.jarsigner.actions.JARVerifierAction"/>
+               id="%jarverifier.action.id"/>
       </objectContribution>
       <objectContribution
             objectClass="org.eclipse.core.resources.IFile"
-            id="net.sf.jnigen.actions.JNIGenAction.IFile"
-            nameFilter="*.zip">
+            id="%object.contribution.id"
+            nameFilter="%zip.name.filter">
          <action
                enablesFor="+"
                label="%jarsigner.action.label"
                class="net.sf.jarsigner.actions.JARSignerAction"
-               id="net.sf.jarsigner.actions.JARSignerAction"/>
+               id="%jarsigner.action.id"/>
          <action
                enablesFor="+"
                label="%jarverifier.action.label"
                class="net.sf.jarsigner.actions.JARVerifierAction"
-               id="net.sf.jarsigner.actions.JARVerifierAction"/>
+               id="%jarverifier.action.id"/>
       </objectContribution>
    </extension>
 </plugin>

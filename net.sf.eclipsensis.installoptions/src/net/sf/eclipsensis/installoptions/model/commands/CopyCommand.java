@@ -14,7 +14,6 @@ import java.util.List;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.actions.Clipboard;
-import net.sf.eclipsensis.installoptions.edit.InstallOptionsWidgetEditPart;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsWidget;
 
 import org.eclipse.draw2d.geometry.Rectangle;
@@ -42,16 +41,16 @@ public class CopyCommand extends Command
         mCopies = new ArrayList();
     }
 
-    public void addPart(InstallOptionsWidgetEditPart part)
+    public void addPart(InstallOptionsWidget part)
     {
-        Rectangle bounds = part.getFigure().getBounds();
+        Rectangle bounds = part.getPosition().getBounds();
         mMinX = Math.min(mMinX,bounds.x);
         mMaxX = Math.max(mMaxX,bounds.x+bounds.width-1);
         mMinY = Math.min(mMinY,bounds.y);
         mMaxY = Math.max(mMaxY,bounds.y+bounds.height-1);
         
         try {
-            mCopies.add((InstallOptionsWidget)((InstallOptionsWidget)part.getModel()).clone());
+            mCopies.add(part.clone());
         }
         catch (CloneNotSupportedException e) {
             e.printStackTrace();

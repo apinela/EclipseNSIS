@@ -63,6 +63,11 @@ public class NSISEditorSourceViewerConfiguration extends NSISSourceViewerConfigu
     }
 
 
+    public IAnnotationHover getOverviewRulerAnnotationHover(ISourceViewer sourceViewer)
+    {
+        return mAnnotationHover;
+    }
+
     /* (non-Javadoc)
      * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getInformationControlCreator(org.eclipse.jface.text.source.ISourceViewer)
      */

@@ -13,8 +13,7 @@ import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.edit.text.InstallOptionsTextEditPart;
 import net.sf.eclipsensis.installoptions.figures.IInstallOptionsFigure;
 import net.sf.eclipsensis.installoptions.figures.PasswordFigure;
-
-import org.eclipse.draw2d.FigureCanvas;
+import org.eclipse.swt.widgets.Composite;
 
 public class InstallOptionsPasswordEditPart extends InstallOptionsTextEditPart
 {
@@ -25,7 +24,7 @@ public class InstallOptionsPasswordEditPart extends InstallOptionsTextEditPart
 
     protected IInstallOptionsFigure createInstallOptionsFigure() 
     {
-        return new PasswordFigure((FigureCanvas)this.getViewer().getControl(), getInstallOptionsWidget());
+        return new PasswordFigure((Composite)getViewer().getControl(), getInstallOptionsWidget());
     }
 
     /**

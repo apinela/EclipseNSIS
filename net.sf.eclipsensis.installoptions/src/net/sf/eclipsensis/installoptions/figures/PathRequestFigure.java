@@ -13,9 +13,11 @@ import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsWidget;
 import net.sf.eclipsensis.installoptions.properties.PropertySourceWrapper;
 
-import org.eclipse.draw2d.*;
+import org.eclipse.draw2d.Figure;
+import org.eclipse.draw2d.XYLayout;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.views.properties.IPropertySource;
 
@@ -37,12 +39,12 @@ public class PathRequestFigure extends Figure implements IEditableElementFigure
     /**
      * 
      */
-    public PathRequestFigure(FigureCanvas canvas, IPropertySource propertySource)
+    public PathRequestFigure(Composite parent, IPropertySource propertySource)
     {
         super();
         setLayoutManager(new XYLayout());
         final Rectangle[] newBounds = calculateBounds((Rectangle)propertySource.getPropertyValue(InstallOptionsWidget.PROPERTY_BOUNDS));
-        mTextFigure = new TextFigure(canvas, new PropertySourceWrapper(propertySource){
+        mTextFigure = new TextFigure(parent, new PropertySourceWrapper(propertySource){
                 public Object getPropertyValue(Object id)
                 {
                     if(InstallOptionsWidget.PROPERTY_BOUNDS.equals(id)) {
@@ -53,7 +55,7 @@ public class PathRequestFigure extends Figure implements IEditableElementFigure
                     }
                 }
             });
-        mButtonFigure = new ButtonFigure(canvas, new PropertySourceWrapper(propertySource){
+        mButtonFigure = new ButtonFigure(parent, new PropertySourceWrapper(propertySource){
             public Object getPropertyValue(Object id)
             {
                 if(InstallOptionsWidget.PROPERTY_BOUNDS.equals(id)) {

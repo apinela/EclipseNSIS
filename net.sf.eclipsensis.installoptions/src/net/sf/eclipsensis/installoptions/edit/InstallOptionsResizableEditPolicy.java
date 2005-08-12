@@ -9,9 +9,12 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.edit;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsWidget;
+import net.sf.eclipsensis.installoptions.model.Position;
 
 import org.eclipse.draw2d.*;
 import org.eclipse.draw2d.geometry.Dimension;
@@ -149,14 +152,14 @@ public class InstallOptionsResizableEditPolicy extends ResizableEditPolicy
      */
     protected IFigure createDragSourceFeedbackFigure()
     {
-        IFigure figure = createFigure((GraphicalEditPart)getHost(), null);
+        IFigure figure = createFigure((GraphicalEditPart)getHost());
 
         figure.setBounds(getInitialFeedbackBounds());
         addFeedback(figure);
         return figure;
     }
 
-    protected IFigure createFigure(GraphicalEditPart part, IFigure parent)
+    protected IFigure createFigure(GraphicalEditPart part)
     {
 
         Rectangle childBounds = part.getFigure().getBounds().getCopy();
@@ -168,38 +171,7 @@ public class InstallOptionsResizableEditPolicy extends ResizableEditPolicy
             walker = walker.getParent();
         }
 
-        IFigure child;
-        if (parent != null) {
-            child = getCustomFeedbackFigure(part.getModel());
-            parent.add(child);
-            child.setBounds(childBounds);
-        }
-        else {
-            child = new ResizeFeedbackFigure(childBounds);
-        }
-
-        Iterator i = part.getChildren().iterator();
-
-        while (i.hasNext()) {
-            createFigure((GraphicalEditPart)i.next(), child);
-        }
-
-        return child;
-    }
-
-    protected IFigure getCustomFeedbackFigure(Object modelPart)
-    {
-        if(((InstallOptionsEditDomain)mEditPart.getViewer().getEditDomain()).isReadOnly()) {
-            return null;
-        }
-        else {
-            IFigure figure = new RectangleFigure();
-            ((RectangleFigure)figure).setXOR(true);
-            ((RectangleFigure)figure).setFill(true);
-            figure.setBackgroundColor(IInstallOptionsConstants.GHOST_FILL_COLOR);
-            figure.setForegroundColor(ColorConstants.white);
-            return figure;
-        }
+        return new ResizeFeedbackFigure(childBounds);
     }
 
     /**
@@ -224,9 +196,11 @@ public class InstallOptionsResizableEditPolicy extends ResizableEditPolicy
     {
         private boolean mInit = false;
         private String mText = null;
+        private InstallOptionsWidget mModel;
         
         public ResizeFeedbackFigure(Rectangle bounds)
         {
+            mModel = (InstallOptionsWidget)getHost().getModel();
             setXOR(true);
             setFill(true);
             setBackgroundColor(IInstallOptionsConstants.GHOST_FILL_COLOR);
@@ -240,7 +214,9 @@ public class InstallOptionsResizableEditPolicy extends ResizableEditPolicy
         {
             if(mInit) {
                 if(rect.width != bounds.width || rect.height != bounds.height) {
-                    mText = new StringBuffer().append(rect.width).append("x").append(rect.height).toString(); //$NON-NLS-1$
+                    Position pos = mModel.toGraphical(mModel.toModel(new Position(rect)),false);
+                    Dimension d = pos.getSize();
+                    mText = new StringBuffer().append(d.width).append("x").append(d.height).toString(); //$NON-NLS-1$
                 }
             }
             super.setBounds(rect);

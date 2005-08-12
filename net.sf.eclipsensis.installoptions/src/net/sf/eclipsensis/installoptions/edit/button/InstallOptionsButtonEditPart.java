@@ -15,9 +15,9 @@ import net.sf.eclipsensis.installoptions.edit.uneditable.InstallOptionsUneditabl
 import net.sf.eclipsensis.installoptions.figures.ButtonFigure;
 import net.sf.eclipsensis.installoptions.figures.IInstallOptionsFigure;
 
-import org.eclipse.draw2d.FigureCanvas;
 import org.eclipse.gef.tools.CellEditorLocator;
 import org.eclipse.gef.tools.DirectEditManager;
+import org.eclipse.swt.widgets.Composite;
 
 public class InstallOptionsButtonEditPart extends InstallOptionsUneditableElementEditPart
 {
@@ -28,7 +28,7 @@ public class InstallOptionsButtonEditPart extends InstallOptionsUneditableElemen
     
     protected IInstallOptionsFigure createInstallOptionsFigure() 
     {
-        return new ButtonFigure((FigureCanvas)this.getViewer().getControl(), getInstallOptionsWidget());
+        return new ButtonFigure((Composite)getViewer().getControl(), getInstallOptionsWidget());
     }
 
     /**

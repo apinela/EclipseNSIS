@@ -54,8 +54,9 @@ public class ListItemsDialog extends Dialog
     
     protected void configureShell(Shell newShell)
     {
-        newShell.setText(InstallOptionsPlugin.getFormattedString("listitems.dialog.name", new String[]{mType})); //$NON-NLS-1$
         super.configureShell(newShell);
+        newShell.setText(InstallOptionsPlugin.getFormattedString("listitems.dialog.name", new String[]{mType})); //$NON-NLS-1$
+        newShell.setImage(InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("installoptions.icon"))); //$NON-NLS-1$
     }
 
     public List getValues()
@@ -86,7 +87,6 @@ public class ListItemsDialog extends Dialog
         ((Text) textEditor.getControl()).addVerifyListener(new VerifyListener() {
             public void verifyText(VerifyEvent e) {
                 e.doit = e.text.indexOf(IInstallOptionsConstants.LIST_SEPARATOR) < 0;
-                        
             }
         });
         viewer.setColumnProperties(new String[]{"item"}); //$NON-NLS-1$
@@ -139,10 +139,18 @@ public class ListItemsDialog extends Dialog
             public void handleEvent(Event e) {
                 List list = (List)viewer.getInput();
                 if(list != null) {
-                    String item = InstallOptionsPlugin.getResourceString("default.listitem.label"); //$NON-NLS-1$
+                    int counter = 1;
+                    String item = InstallOptionsPlugin.getFormattedString("default.listitem.label", new Object[]{new Integer(counter++)}); //$NON-NLS-1$
+                    while(list.contains(item)) {
+                        item = item = InstallOptionsPlugin.getFormattedString("default.listitem.label", new Object[]{new Integer(counter++)}); //$NON-NLS-1$
+                    }
                     list.add(item);
                     viewer.refresh(false);
                     viewer.setSelection(new StructuredSelection(item));
+                    viewer.editElement(item,0);
+                    Text t = (Text)textEditor.getControl();
+                    t.setSelection(item.length());
+//                    viewer.se
                 }
             }
         });

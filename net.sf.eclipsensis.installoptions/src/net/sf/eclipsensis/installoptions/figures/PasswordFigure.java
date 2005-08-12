@@ -9,18 +9,20 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.figures;
 
-import org.eclipse.draw2d.FigureCanvas;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.views.properties.IPropertySource;
 
 public class PasswordFigure extends TextFigure
 {
-    /**
-     * @param editPart
-     */
-    public PasswordFigure(FigureCanvas canvas, IPropertySource propertySource)
+    public PasswordFigure(Composite parent, IPropertySource propertySource, int style)
     {
-        super(canvas, propertySource);
+        super(parent, propertySource, style);
+    }
+
+    public PasswordFigure(Composite parent, IPropertySource propertySource)
+    {
+        super(parent, propertySource);
     }
 
     public int getDefaultStyle()

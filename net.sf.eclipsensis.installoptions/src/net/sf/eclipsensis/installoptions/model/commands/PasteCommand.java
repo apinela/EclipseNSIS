@@ -13,35 +13,46 @@ import java.util.*;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.actions.Clipboard;
-import net.sf.eclipsensis.installoptions.edit.InstallOptionsEditPart;
-import net.sf.eclipsensis.installoptions.edit.dialog.InstallOptionsDialogEditPart;
+import net.sf.eclipsensis.installoptions.figures.FigureUtility;
 import net.sf.eclipsensis.installoptions.model.*;
 
-import org.eclipse.draw2d.FigureCanvas;
 import org.eclipse.draw2d.geometry.*;
 import org.eclipse.gef.commands.Command;
-import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.swt.widgets.Display;
 
 public class PasteCommand extends Command
 {
-    private InstallOptionsDialogEditPart mPart;
+    private InstallOptionsDialog mParent;
+    private List mSelection = null;
     private Rectangle mPasteBounds;
     private List mPasteList = new ArrayList();
+    private Rectangle mClientArea;
      
     public PasteCommand()
     {
         super(InstallOptionsPlugin.getResourceString("paste.command.name")); //$NON-NLS-1$
     }
-
-    public void setParent(InstallOptionsDialogEditPart parent)
+    
+    public void setParent(InstallOptionsDialog parent)
     {
-        mPart = parent;
+        mParent = parent;
+    }
+
+    public void setSelection(List selection)
+    {
+        mSelection = (selection != null?selection:Collections.EMPTY_LIST);
+    }
+
+    public void setClientArea(org.eclipse.swt.graphics.Rectangle clientArea)
+    {
+        mClientArea = FigureUtility.pixelsToDialogUnits(new Rectangle(clientArea.x,clientArea.y,clientArea.width,clientArea.height),Display.getDefault().getSystemFont());
     }
 
     public void execute()
     {
         CopyCommand.CopyContents mCopyContents = (CopyCommand.CopyContents)Clipboard.getDefault().getContents();
         mPasteBounds = new Rectangle(mCopyContents.getBounds());
+        mPasteList.clear();
         for (Iterator iter = mCopyContents.getChildren().iterator(); iter.hasNext();) {
             InstallOptionsWidget model;
             try {
@@ -57,10 +68,14 @@ public class PasteCommand extends Command
 
     private void calculatePasteBounds(Dimension size)
     {
-        FigureCanvas canvas = (FigureCanvas)mPart.getViewer().getControl();
-        org.eclipse.swt.graphics.Rectangle dim = canvas.getClientArea();
-        Point p = new Point((dim.width < mPasteBounds.width?dim.x:dim.x+(dim.width-mPasteBounds.width)/2-1),
-                            (dim.height < mPasteBounds.height?dim.y:dim.y+(dim.height-mPasteBounds.height)/2)-1);
+        Point p;
+        if(mClientArea != null) {
+            p = new Point((mClientArea.width < mPasteBounds.width?mClientArea.x:mClientArea.x+(mClientArea.width-mPasteBounds.width)/2-1),
+                                (mClientArea.height < mPasteBounds.height?mClientArea.y:mClientArea.y+(mClientArea.height-mPasteBounds.height)/2)-1);
+        }
+        else {
+            p = new Point(mPasteBounds.x + 5, mPasteBounds.y + 5);
+        }
         int delX = p.x-mPasteBounds.x;
         int delY = p.y-mPasteBounds.y;
         for (Iterator iter = mPasteList.iterator(); iter.hasNext();) {
@@ -77,29 +92,22 @@ public class PasteCommand extends Command
 
     public void redo()
     {
-        InstallOptionsDialog dialog = (InstallOptionsDialog)mPart.getModel();
-        calculatePasteBounds(dialog.getDialogSize());
+        calculatePasteBounds(mParent.getDialogSize());
         for (Iterator iter = mPasteList.iterator(); iter.hasNext();) {
-            dialog.addChild((InstallOptionsWidget)iter.next());
+            mParent.addChild((InstallOptionsWidget)iter.next());
         }
-        List list = mPart.getChildren();
-        ArrayList selectionList = new ArrayList();
-        for (Iterator iter = list.iterator(); iter.hasNext();) {
-            InstallOptionsEditPart child = (InstallOptionsEditPart)iter.next();
-            if(mPasteList.contains(child.getModel())) {
-                selectionList.add(child);
-            }
-        }
-        if(selectionList.size() > 0) {
-            mPart.getViewer().setSelection(new StructuredSelection(selectionList));
-        }
+        List list = mParent.getChildren();
+        mPasteList.retainAll(list);
+        mParent.setSelection(mPasteList);
     }
 
     public void undo()
     {
-        InstallOptionsDialog dialog = (InstallOptionsDialog)mPart.getModel();
         for (Iterator iter = mPasteList.iterator(); iter.hasNext();) {
-            dialog.removeChild((InstallOptionsWidget)iter.next());
+            mParent.removeChild((InstallOptionsWidget)iter.next());
+        }
+        if(mSelection != null) {
+            mParent.setSelection(mSelection);
         }
     }
 }

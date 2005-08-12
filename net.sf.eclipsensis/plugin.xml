@@ -12,7 +12,6 @@
 ###############################################################################
 -->
 <plugin>
-
    <extension
          point="org.eclipse.core.runtime.products">
       <product name="%product.name" application="org.eclipse.ui.ide.workbench" description="%product.description"> 
@@ -30,7 +29,7 @@
             icon="%editor.icon"
             contributorClass="net.sf.eclipsensis.editor.NSISActionContributor"
             class="net.sf.eclipsensis.editor.NSISEditor"
-            id="net.sf.eclipsensis.editor.NSISEditor">
+            id="%editor.id">
       </editor>
    </extension>
    <extension
@@ -38,19 +37,19 @@
         <type
             name="%nsis.error.annotation.name"
             super="org.eclipse.ui.workbench.texteditor.error"
-            markerType="net.sf.eclipsensis.NSISCompileProblem"
+            markerType="%compile.problem.marker.id"
             markerSeverity="2">
         </type>
         <type
             name="%nsis.warning.annotation.name"
             super="org.eclipse.ui.workbench.texteditor.warning"
-            markerType="net.sf.eclipsensis.NSISCompileProblem"
+            markerType="%compile.problem.marker.id"
             markerSeverity="1">
         </type>
         <type
             name="%nsis.task.annotation.name"
             super="org.eclipse.ui.workbench.texteditor.task"
-            markerType="net.sf.eclipsensis.NSISTask"
+            markerType="%task.marker.id"
             markerSeverity="0">
         </type>
         <type
@@ -61,7 +60,7 @@
         </type>
    </extension>
    <extension
-        id="net.sf.eclipsensis.editor.NSISDocumentSetupParticipant"
+        id="NSISDocumentSetupParticipant"
         name="%document.setup.participant.name"
         point="org.eclipse.core.filebuffers.documentSetup">
         <participant
@@ -74,31 +73,31 @@
       <page
             name="%preference.page.name"
             class="net.sf.eclipsensis.dialogs.NSISPreferencePage"
-            id="net.sf.eclipsensis.dialogs.NSISPreferencePage">
+            id="%preference.page.id">
       </page>
       <page
             name="%editor.preference.page.name"
-            category="net.sf.eclipsensis.dialogs.NSISPreferencePage"
+            category="%preference.page.id"
             class="net.sf.eclipsensis.dialogs.NSISEditorPreferencePage"
-            id="net.sf.eclipsensis.dialogs.NSISEditorPreferencePage">
+            id="%editor.preference.page.id">
       </page>
       <page
             name="%templates.preference.page.name"
-            category="net.sf.eclipsensis.dialogs.NSISEditorPreferencePage"
+            category="%editor.preference.page.id"
             class="net.sf.eclipsensis.dialogs.NSISTemplatePreferencePage"
-            id="net.sf.eclipsensis.dialogs.NSISTemplatePreferencePage">
+            id="%template.preference.page.id">
       </page>
       <page
             name="%task.tags.preference.page.name"
-            category="net.sf.eclipsensis.dialogs.NSISEditorPreferencePage"
+            category="%editor.preference.page.id"
             class="net.sf.eclipsensis.dialogs.NSISTaskTagsPreferencePage"
-            id="net.sf.eclipsensis.dialogs.NSISTaskTagsPreferencePage">
+            id="%task.tags.preference.page.id">
       </page>
       <page
             name="%wizard.templates.preference.page.name"
-            category="net.sf.eclipsensis.dialogs.NSISPreferencePage"
+            category="%preference.page.id"
             class="net.sf.eclipsensis.dialogs.NSISWizardTemplatePreferencePage"
-            id="net.sf.eclipsensis.dialogs.NSISWizardTemplatePreferencePage">
+            id="%wizard.template.preference.page.id">
       </page>
    </extension>
    <extension
@@ -109,37 +108,37 @@
             class="net.sf.eclipsensis.dialogs.NSISPropertyPage"
             nameFilter="%nsi.extension"
             name="%property.page.name"
-            id="net.sf.eclipsensis.dialogs.NSISPropertyPage">
+            id="%property.page.id">
       </page>
    </extension>
    <extension
          point="org.eclipse.ui.views">
       <category
             name="%view.category.name"
-            id="net.sf.eclipsensis">
+            id="%view.category.id">
       </category>
       <view
             allowMultiple="false"
             class="net.sf.eclipsensis.console.NSISConsole"
             icon="%console.icon"
-            category="net.sf.eclipsensis"
+            category="%view.category.id"
             name="%console.name"
-            id="net.sf.eclipsensis.console.NSISConsole">
+            id="%console.id">
       </view>
       <view
             allowMultiple="false"
             class="net.sf.eclipsensis.help.NSISHTMLHelp"
             icon="%htmlhelp.icon"
-            category="net.sf.eclipsensis"
+            category="%view.category.id"
             name="%htmlhelp.name"
-            id="net.sf.eclipsensis.help.NSISHTMLHelp">
+            id="%htmlhelp.id">
       </view>
    </extension>
    <extension
          point="org.eclipse.ui.editorActions">
       <editorContribution
-            targetID="net.sf.eclipsensis.editor.NSISEditor"
-            id="net.sf.eclipsensis.editorContribution">
+            targetID="%editor.id"
+            id="%editor.contribution.id">
          <menu
                label="%nsis.menu.name"
                id="net.sf.eclipsensis.Menu">
@@ -158,7 +157,7 @@
                class="net.sf.eclipsensis.actions.NSISAboutAction"
                tooltip="%about.action.tooltip"
                menubarPath="net.sf.eclipsensis.Menu/net.sf.eclipsensis.Group3"
-               id="net.sf.eclipsensis.actions.NSISAboutAction">
+               id="%about.action.id">
          </action>
          <action
                label="%htmlhelp.action.name"
@@ -167,7 +166,7 @@
                tooltip="%htmlhelp.action.tooltip"
                menubarPath="net.sf.eclipsensis.Menu/net.sf.eclipsensis.Group3"
                toolbarPath="net.sf.eclipsensis.Group"
-               id="net.sf.eclipsensis.actions.NSISHTMLHelpAction">
+               id="%htmlhelp.action.id">
          </action>
          <action
                label="%help.action.name"
@@ -177,7 +176,7 @@
                tooltip="%help.action.tooltip"
                menubarPath="net.sf.eclipsensis.Menu/net.sf.eclipsensis.Group3"
                toolbarPath="net.sf.eclipsensis.Group"
-               id="net.sf.eclipsensis.actions.NSISHelpAction">
+               id="%help.action.id">
          </action>
          <action
                disabledIcon="%wizard.action.disabledicon"
@@ -187,7 +186,7 @@
                class="net.sf.eclipsensis.actions.NSISWizardAction"
                icon="%wizard.action.icon"
                menubarPath="net.sf.eclipsensis.Menu/net.sf.eclipsensis.Group2"
-               id="net.sf.eclipsensis.actions.NSISWizardAction">
+               id="%wizard.action.id">
          </action>
          <action
                label="%preferences.action.name"
@@ -197,7 +196,7 @@
                tooltip="%preferences.action.tooltip"
                menubarPath="net.sf.eclipsensis.Menu/net.sf.eclipsensis.Group2"
                toolbarPath="net.sf.eclipsensis.Group"
-               id="net.sf.eclipsensis.actions.NSISPreferencesAction">
+               id="%preferences.action.id">
          </action>
          <action
                disabledIcon="%cancel.action.disabledicon"
@@ -208,40 +207,40 @@
                class="net.sf.eclipsensis.actions.NSISCancelAction"
                icon="%cancel.action.icon"
                menubarPath="net.sf.eclipsensis.Menu/net.sf.eclipsensis.Group"
-               id="net.sf.eclipsensis.actions.NSISCancelAction">
+               id="%cancel.action.id">
          </action>
          <action
                disabledIcon="%compile.test.action.disabledicon"
                toolbarPath="net.sf.eclipsensis.Group"
                label="%compile.test.action.name"
-               definitionId="net.sf.eclipsensis.commands.NSISCompileTest"
+               definitionId="%compile.test.command.id"
                tooltip="%compile.test.action.tooltip"
                class="net.sf.eclipsensis.actions.NSISCompileTestAction"
                icon="%compile.test.action.icon"
                menubarPath="net.sf.eclipsensis.Menu/net.sf.eclipsensis.Group"
-               id="net.sf.eclipsensis.actions.NSISCompileTestAction">
+               id="%compile.test.action.id">
          </action>
          <action
                disabledIcon="%test.action.disabledicon"
                toolbarPath="net.sf.eclipsensis.Group"
                label="%test.action.name"
-               definitionId="net.sf.eclipsensis.commands.NSISTest"
+               definitionId="%test.command.id"
                tooltip="%test.action.tooltip"
                class="net.sf.eclipsensis.actions.NSISTestAction"
                icon="%test.action.icon"
                menubarPath="net.sf.eclipsensis.Menu/net.sf.eclipsensis.Group"
-               id="net.sf.eclipsensis.actions.NSISTestAction">
+               id="%test.action.id">
          </action>
          <action
                disabledIcon="%compile.action.disabledicon"
                toolbarPath="net.sf.eclipsensis.Group"
                label="%compile.action.name"
-               definitionId="net.sf.eclipsensis.commands.NSISCompile"
+               definitionId="%compile.command.id"
                tooltip="%compile.action.tooltip"
                class="net.sf.eclipsensis.actions.NSISCompileAction"
                icon="%compile.action.icon"
                menubarPath="net.sf.eclipsensis.Menu/net.sf.eclipsensis.Group"
-               id="net.sf.eclipsensis.actions.NSISCompileAction">
+               id="%compile.action.id">
          </action>
       </editorContribution>            
    </extension>
@@ -251,11 +250,11 @@
          <view
                visible="false"
                ratio="0.5"
-               id="net.sf.eclipsensis.console.NSISConsole"
+               id="%console.id"
                relative="org.eclipse.ui.views.TaskList"
                relationship="right"/>
          <newWizardShortcut
-               id="net.sf.eclipsensis.wizard.NSISScriptWizard">
+               id="%wizard.id">
          </newWizardShortcut>
       </perspectiveExtension>
       <perspectiveExtension
@@ -263,11 +262,11 @@
          <view
                visible="false"
                ratio="0.5"
-               id="net.sf.eclipsensis.console.NSISConsole"
+               id="%console.id"
                relative="org.eclipse.ui.views.ProblemView"
                relationship="right"/>
          <newWizardShortcut
-               id="net.sf.eclipsensis.wizard.NSISScriptWizard">
+               id="%wizard.id">
          </newWizardShortcut>
       </perspectiveExtension>
       <perspectiveExtension
@@ -275,11 +274,11 @@
          <view
                visible="false"
                ratio="0.5"
-               id="net.sf.eclipsensis.console.NSISConsole"
+               id="%console.id"
                relative="org.eclipse.ui.views.ProblemView"
                relationship="right"/>
          <newWizardShortcut
-               id="net.sf.eclipsensis.wizard.NSISScriptWizard">
+               id="%wizard.id">
          </newWizardShortcut>
       </perspectiveExtension>
    </extension>
@@ -288,7 +287,7 @@
       <objectContribution
             objectClass="org.eclipse.core.resources.IFile"
             nameFilter="%nsi.extension"
-            id="net.sf.eclipsensis.popupMenuContribution">
+            id="%popup.menu.contribution.id">
          <menu
                label="%nsis.menu.name"
                path="additions"
@@ -302,7 +301,7 @@
                class="net.sf.eclipsensis.actions.NSISCompileTestAction"
                tooltip="%compile.test.action.tooltip"
                menubarPath="net.sf.eclipsensis.PopupMenu/net.sf.eclipsensis.PopupGroup"
-               id="net.sf.eclipsensis.popup.actions.NSISCompileTestAction">
+               id="%compile.test.popup.menu.id">
          </action>
          <action
                enablesFor="1"
@@ -311,7 +310,7 @@
                class="net.sf.eclipsensis.actions.NSISTestAction"
                tooltip="%test.action.tooltip"
                menubarPath="net.sf.eclipsensis.PopupMenu/net.sf.eclipsensis.PopupGroup"
-               id="net.sf.eclipsensis.popup.actions.NSISTestAction">
+               id="%test.popup.menu.id">
          </action>
          <action
                enablesFor="1"
@@ -320,7 +319,7 @@
                class="net.sf.eclipsensis.actions.NSISCompileAction"
                tooltip="%compile.action.tooltip"
                menubarPath="net.sf.eclipsensis.PopupMenu/net.sf.eclipsensis.PopupGroup"
-               id="net.sf.eclipsensis.popup.actions.NSISCompileAction">
+               id="%compile.popup.menu.id">
          </action>
       </objectContribution>
    </extension>
@@ -340,7 +339,7 @@
       <persistent value="true"/>
    </extension>
    <extension
-         id="net.sf.eclipsensis.help.NSISHelpProducer"
+         id="NSISHelpProducer"
          name="%help.name"
          point="org.eclipse.help.contentProducer">
        <contentProducer producer="net.sf.eclipsensis.help.NSISHelpProducer"/>
@@ -355,7 +354,7 @@
             name="%context.editingNSISSource.name"
             description="%context.editingNSISSource.description"
             parentId="org.eclipse.ui.textEditorScope"
-            id="net.sf.eclipsensis.NSISEditorScope">
+            id="%context.editingNSISSource.id">
       </context>
    </extension>
    <extension
@@ -363,145 +362,145 @@
       <category
          name="%category.name"
          description="%category.description"
-         id="net.sf.eclipsensis.NSISCategory">
+         id="%category.id">
       </category>
       <command
          name="%insert.template.name"
          description="%insert.template.description"
-         id="net.sf.eclipsensis.commands.NSISInsertTemplate"
-         categoryId="net.sf.eclipsensis.NSISCategory"/>
+         id="%insert.template.command.id"
+         categoryId="%category.id"/>
       <command
          name="%goto.help.name"
          description="%goto.help.description"
-         id="net.sf.eclipsensis.commands.NSISGotoHelp"
-         categoryId="net.sf.eclipsensis.NSISCategory"/>
+         id="%goto.help.command.id"
+         categoryId="%category.id"/>
       <command
          name="%sticky.help.name"
          description="%sticky.help.description"
-         id="net.sf.eclipsensis.commands.NSISStickyHelp"
-         categoryId="net.sf.eclipsensis.NSISCategory"/>
+         id="%sticky.help.command.id"
+         categoryId="%category.id"/>
       <command
          name="%insert.file.name"
          description="%insert.file.description"
-         id="net.sf.eclipsensis.commands.NSISInsertFile"
-         categoryId="net.sf.eclipsensis.NSISCategory"/>
+         id="%insert.file.command.id"
+         categoryId="%category.id"/>
       <command
          name="%insert.directory.name"
          description="%insert.directory.description"
-         id="net.sf.eclipsensis.commands.NSISInsertDirectory"
-         categoryId="net.sf.eclipsensis.NSISCategory"/>
+         id="%insert.directory.command.id"
+         categoryId="%category.id"/>
       <command
          name="%insert.color.name"
          description="%insert.color.description"
-         id="net.sf.eclipsensis.commands.NSISInsertColor"
-         categoryId="net.sf.eclipsensis.NSISCategory"/>
+         id="%insert.color.command.id"
+         categoryId="%category.id"/>
       <command
          name="%tabs.to.spaces.name"
          description="%tabs.to.spaces.description"
-         id="net.sf.eclipsensis.commands.NSISTabsToSpaces"
-         categoryId="net.sf.eclipsensis.NSISCategory"/>
+         id="%tabs.to.spaces.command.id"
+         categoryId="%category.id"/>
       <command
          name="%toggle.comment.name"
          description="%toggle.comment.description"
-         id="net.sf.eclipsensis.commands.NSISToggleComment"
-         categoryId="net.sf.eclipsensis.NSISCategory"/>
+         id="%toggle.comment.command.id"
+         categoryId="%category.id"/>
       <command
          name="%add.block.comment.name"
          description="%add.block.comment.description"
-         id="net.sf.eclipsensis.commands.NSISAddBlockComment"
-         categoryId="net.sf.eclipsensis.NSISCategory"/>
+         id="%add.block.comment.command.id"
+         categoryId="%category.id"/>
       <command
          name="%remove.block.comment.name"
          description="%remove.block.comment.description"
-         id="net.sf.eclipsensis.commands.NSISRemoveBlockComment"
-         categoryId="net.sf.eclipsensis.NSISCategory"/>
+         id="%remove.block.comment.command.id"
+         categoryId="%category.id"/>
       <command
          name="%compile.name"
          description="%compile.description"
-         id="net.sf.eclipsensis.commands.NSISCompile"
-         categoryId="net.sf.eclipsensis.NSISCategory"/>
+         id="%compile.command.id"
+         categoryId="%category.id"/>
       <command
          name="%compile.test.name"
          description="%compile.test.description"
-         id="net.sf.eclipsensis.commands.NSISCompileTest"
-         categoryId="net.sf.eclipsensis.NSISCategory"/>
+         id="%compile.test.command.id"
+         categoryId="%category.id"/>
       <command
          name="%test.name"
          description="%test.description"
-         id="net.sf.eclipsensis.commands.NSISTest"
-         categoryId="net.sf.eclipsensis.NSISCategory"/>
+         id="%test.command.id"
+         categoryId="%category.id"/>
       <command
          name="%cancel.name"
          description="%cancel.description"
-         id="net.sf.eclipsensis.commands.NSISCancel"
-         categoryId="net.sf.eclipsensis.NSISCategory"/>
+         id="%cancel.command.id"
+         categoryId="%category.id"/>
    </extension>
    <extension
          point="org.eclipse.ui.bindings">
       <key
           schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-          commandId="net.sf.eclipsensis.commands.NSISInsertTemplate"
-          contextId="net.sf.eclipsensis.NSISEditorScope"
+          commandId="%insert.template.command.id"
+          contextId="%context.editingNSISSource.id"
           sequence="%insert.template.keysequence"/>
       <key
           schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-          commandId="net.sf.eclipsensis.commands.NSISGotoHelp"
-          contextId="net.sf.eclipsensis.NSISEditorScope"
+          commandId="%goto.help.command.id"
+          contextId="%context.editingNSISSource.id"
           sequence="%goto.help.keysequence"/>
       <key
           schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-          commandId="net.sf.eclipsensis.commands.NSISStickyHelp"
-          contextId="net.sf.eclipsensis.NSISEditorScope"
+          commandId="%sticky.help.command.id"
+          contextId="%context.editingNSISSource.id"
           sequence="%sticky.help.keysequence"/>
       <key
           schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-          commandId="net.sf.eclipsensis.commands.NSISInsertFile"
-          contextId="net.sf.eclipsensis.NSISEditorScope"
+          commandId="%insert.file.command.id"
+          contextId="%context.editingNSISSource.id"
           sequence="%insert.file.keysequence"/>
       <key
           schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-          commandId="net.sf.eclipsensis.commands.NSISInsertDirectory"
-          contextId="net.sf.eclipsensis.NSISEditorScope"
+          commandId="%insert.directory.command.id"
+          contextId="%context.editingNSISSource.id"
           sequence="%insert.directory.keysequence"/>
       <key
           schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-          commandId="net.sf.eclipsensis.commands.NSISInsertColor"
-          contextId="net.sf.eclipsensis.NSISEditorScope"
+          commandId="%insert.color.command.id"
+          contextId="%context.editingNSISSource.id"
           sequence="%insert.color.keysequence"/>
       <key
           schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-          commandId="net.sf.eclipsensis.commands.NSISToggleComment"
-          contextId="net.sf.eclipsensis.NSISEditorScope"
+          commandId="%toggle.comment.command.id"
+          contextId="%context.editingNSISSource.id"
           sequence="%toggle.comment.keysequence"/>
       <key
           schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-          commandId="net.sf.eclipsensis.commands.NSISAddBlockComment"
-          contextId="net.sf.eclipsensis.NSISEditorScope"
+          commandId="%add.block.comment.command.id"
+          contextId="%context.editingNSISSource.id"
           sequence="%add.block.comment.keysequence"/>
       <key
           schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-          commandId="net.sf.eclipsensis.commands.NSISRemoveBlockComment"
-          contextId="net.sf.eclipsensis.NSISEditorScope"
+          commandId="%remove.block.comment.command.id"
+          contextId="%context.editingNSISSource.id"
           sequence="%remove.block.comment.keysequence"/>
       <key
           schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-          commandId="net.sf.eclipsensis.commands.NSISCompile"
-          contextId="net.sf.eclipsensis.NSISEditorScope"
+          commandId="%compile.command.id"
+          contextId="%context.editingNSISSource.id"
           sequence="%compile.keysequence"/>
       <key
           schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-          commandId="net.sf.eclipsensis.commands.NSISCompileTest"
-          contextId="net.sf.eclipsensis.NSISEditorScope"
+          commandId="%compile.test.command.id"
+          contextId="%context.editingNSISSource.id"
           sequence="%compile.test.keysequence"/>
       <key
           schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-          commandId="net.sf.eclipsensis.commands.NSISTest"
-          contextId="net.sf.eclipsensis.NSISEditorScope"
+          commandId="%test.command.id"
+          contextId="%context.editingNSISSource.id"
           sequence="%test.keysequence"/>
       <key
           schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-          commandId="net.sf.eclipsensis.commands.NSISCancel"
-          contextId="net.sf.eclipsensis.NSISEditorScope"
+          commandId="%cancel.command.id"
+          contextId="%context.editingNSISSource.id"
           sequence="%cancel.keysequence"/>
    </extension>
    <extension
@@ -512,55 +511,55 @@
          point="org.eclipse.ui.newWizards">
       <category
             name="%wizard.category"
-            id="net.sf.eclipsensis"/>
+            id="%wizard.category.id"/>
       <wizard
             class="net.sf.eclipsensis.wizard.NSISScriptWizard"
             icon="%wizard.icon"
-            category="net.sf.eclipsensis"
+            category="%wizard.category.id"
             name="%wizard.name"
-            id="net.sf.eclipsensis.wizard.NSISScriptWizard"/>
+            id="%wizard.id"/>
    </extension>
    <extension
          point="org.eclipse.ui.editors.templates">
       <contextType
             name="%nsis.contextType.name"
             class="net.sf.eclipsensis.editor.template.NSISTemplateContextType"
-            id="net.sf.eclipsensis.editor.template.NSISTemplateContextType">
+            id="%nsis.contextType.id">
       </contextType>
       <template
             name="%function.name"
             icon="icons/template.gif"
             description="%function.description"
-            contextTypeId="net.sf.eclipsensis.editor.template.NSISTemplateContextType"
+            contextTypeId="%nsis.contextType.id"
             autoinsert="false"
-            id="net.sf.eclipsensis.editor.template.nsis.Function">
+            id="%function.id">
          <pattern>Function %name%&#13;&#10;FunctionEnd&#13;&#10;</pattern>
       </template>
       <template
             name="%section.name"
             icon="icons/template.gif"
             description="%section.description"
-            contextTypeId="net.sf.eclipsensis.editor.template.NSISTemplateContextType"
+            contextTypeId="%nsis.contextType.id"
             autoinsert="false"
-            id="net.sf.eclipsensis.editor.template.nsis.Section">
+            id="%section.id">
          <pattern>Section %name%&#13;&#10;SectionEnd&#13;&#10;</pattern>
       </template>
       <template
             name="%page.name"
             icon="icons/template.gif"
             description="%page.description"
-            contextTypeId="net.sf.eclipsensis.editor.template.NSISTemplateContextType"
+            contextTypeId="%nsis.contextType.id"
             autoinsert="false"
-            id="net.sf.eclipsensis.editor.template.nsis.Page">
+            id="%page.id">
          <pattern>Page %pagetype%&#13;&#10;</pattern>
       </template>
       <template
             name="%pageex.name"
             icon="icons/template.gif"
             description="%pageex.description"
-            contextTypeId="net.sf.eclipsensis.editor.template.NSISTemplateContextType"
+            contextTypeId="%nsis.contextType.id"
             autoinsert="false"
-            id="net.sf.eclipsensis.editor.template.nsis.PageEx">
+            id="%pageex.id">
          <pattern>PageEx %pagetype%&#13;&#10;PageExEnd&#13;&#10;</pattern>
       </template>
       <resolver
@@ -568,7 +567,7 @@
             type="register"
             icon="icons/nsis.gif"
             description="%nsis.resolvers.register.description"
-            contextTypeId="net.sf.eclipsensis.editor.template.NSISTemplateContextType"
+            contextTypeId="%nsis.contextType.id"
             class="net.sf.eclipsensis.editor.template.resolvers.NSISRegisterVariableResolver">
       </resolver>
       <resolver
@@ -576,7 +575,7 @@
             type="pathconst"
             icon="icons/nsis.gif"
             description="%nsis.resolvers.pathconst.description"
-            contextTypeId="net.sf.eclipsensis.editor.template.NSISTemplateContextType"
+            contextTypeId="%nsis.contextType.id"
             class="net.sf.eclipsensis.editor.template.resolvers.NSISPathConstantVariableResolver">
       </resolver>
       <resolver
@@ -584,7 +583,7 @@
             type="pathvar"
             icon="icons/nsis.gif"
             description="%nsis.resolvers.pathvar.description"
-            contextTypeId="net.sf.eclipsensis.editor.template.NSISTemplateContextType"
+            contextTypeId="%nsis.contextType.id"
             class="net.sf.eclipsensis.editor.template.resolvers.NSISPathVariableVariableResolver">
       </resolver>
       <resolver
@@ -592,7 +591,7 @@
             type="predefine"
             icon="icons/nsis.gif"
             description="%nsis.resolvers.predefine.description"
-            contextTypeId="net.sf.eclipsensis.editor.template.NSISTemplateContextType"
+            contextTypeId="%nsis.contextType.id"
             class="net.sf.eclipsensis.editor.template.resolvers.NSISPredefineVariableResolver">
       </resolver>
       <resolver
@@ -600,7 +599,7 @@
             type="pagetype"
             icon="icons/nsis.gif"
             description="%nsis.resolvers.pagetype.description"
-            contextTypeId="net.sf.eclipsensis.editor.template.NSISTemplateContextType"
+            contextTypeId="%nsis.contextType.id"
             class="net.sf.eclipsensis.editor.template.resolvers.NSISPagetypeVariableResolver">
       </resolver>
    </extension>
@@ -608,15 +607,15 @@
       point="org.eclipse.ui.themes">
       <themeElementCategory 
              label="%nsis.theme.category.name"
-             id="net.sf.eclipsensis.themes.NSIS">
+             id="%nsis.theme.category.id">
              <description>
                 %nsis.theme.category.description
              </description>
       </themeElementCategory>
       <themeElementCategory 
              label="%nsis.console.theme.category.name"
-             id="net.sf.eclipsensis.themes.NSISConsole"
-             parentId= "net.sf.eclipsensis.themes.NSIS">
+             id="%nsis.console.theme.category.id"
+             parentId= "%nsis.theme.category.id">
              <description>
                 %nsis.console.theme.category.description
              </description>
@@ -624,8 +623,8 @@
       <fontDefinition
           label="%nsis.console.font.name"
           defaultsTo="org.eclipse.jface.textfont"
-          categoryId="net.sf.eclipsensis.themes.NSISConsole"
-          id="net.sf.eclipsensis.console.Font">
+          categoryId="%nsis.console.theme.category.id"
+          id="%nsis.console.font.id">
           <description>
              %nsis.console.font.description
           </description>
@@ -633,8 +632,8 @@
       <colorDefinition
           label="%nsis.console.error.color.name"
           defaultsTo="ERROR_COLOR"
-          categoryId="net.sf.eclipsensis.themes.NSISConsole"
-          id="net.sf.eclipsensis.console.ErrorColor">
+          categoryId="%nsis.console.theme.category.id"
+          id="%nsis.console.error.color.id">
           <description>
              %nsis.console.error.color.description
           </description>
@@ -642,8 +641,8 @@
       <colorDefinition
           label="%nsis.console.warning.color.name"
           value="255,127,0"
-          categoryId="net.sf.eclipsensis.themes.NSISConsole"
-          id="net.sf.eclipsensis.console.WarningColor">
+          categoryId="%nsis.console.theme.category.id"
+          id="%nsis.console.warning.color.id">
           <description>
              %nsis.console.warning.color.description
           </description>
@@ -651,8 +650,8 @@
       <colorDefinition
           label="%nsis.console.info.color.name"
           value="COLOR_BLUE"
-          categoryId="net.sf.eclipsensis.themes.NSISConsole"
-          id="net.sf.eclipsensis.console.InfoColor">
+          categoryId="%nsis.console.theme.category.id"
+          id="%nsis.console.info.color.id">
           <description>
              %nsis.console.info.color.description
           </description>
@@ -660,8 +659,8 @@
       <colorDefinition
           label="%nsis.template.variable.color.name"
           value="0,128,128"
-          categoryId="net.sf.eclipsensis.themes.NSIS"
-          id="net.sf.eclipsensis.template.TemplateVariableColor">
+          categoryId="%nsis.theme.category.id"
+          id="%nsis.template.variable.color.id">
           <description>
              %nsis.template.variable.color.description
           </description>

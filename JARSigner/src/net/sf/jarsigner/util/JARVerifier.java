@@ -12,17 +12,18 @@ package net.sf.jarsigner.util;
 import java.text.MessageFormat;
 import java.util.List;
 
+import net.sf.eclipsensis.utilities.util.Common;
 import net.sf.jarsigner.JARSignerPlugin;
 
-import org.eclipse.core.resources.IFile;
+import org.eclipse.jdt.launching.IVMInstall;
 
 public class JARVerifier extends AbstractJARUtil 
 {
     private boolean mCerts = false;
     
-    public JARVerifier(String toolsJar, List targetJars)
+    public JARVerifier(IVMInstall vmInstall, String toolsJar, List targetJars)
     {
-        super(toolsJar, targetJars);
+        super(vmInstall, toolsJar, targetJars);
     }
 
     public void setCerts(boolean internalSF)
@@ -30,24 +31,39 @@ public class JARVerifier extends AbstractJARUtil
         mCerts = internalSF;
     }
 
-    protected String getSuccessMessage(IFile targetJar)
+    protected String getSuccessMessage(Object target)
     {
-        return JARSignerPlugin.getFormattedString("jar.verified.message",new Object[]{targetJar});
+        return JARSignerPlugin.getFormattedString("jar.verified.message",new Object[]{target}); //$NON-NLS-1$
     }
 
-    protected String getFailMessage(IFile targetJar)
+    protected String getFailMessage(Object target)
     {
-        return JARSignerPlugin.getFormattedString("jar.not.verified.message",new Object[]{targetJar});
+        return JARSignerPlugin.getFormattedString("jar.not.verified.message",new Object[]{target}); //$NON-NLS-1$
+    }
+
+    protected String getCancelMessage()
+    {
+        return JARSignerPlugin.getResourceString("jarverifier.cancel.message"); //$NON-NLS-1$
+    }
+
+    protected String getTaskName()
+    {
+        return JARSignerPlugin.getResourceString("jarverifier.task.name"); //$NON-NLS-1$
+    }
+
+    protected String getSubTaskName(Object target)
+    {
+        return JARSignerPlugin.getFormattedString("jarverifier.subtask.name", new Object[]{target}); //$NON-NLS-1$
     }
 
     protected String getConsoleTitle()
     {
-        return JARSignerPlugin.getResourceString("jarverifier.console.title");
+        return JARSignerPlugin.getResourceString("jarverifier.console.title"); //$NON-NLS-1$
     }
 
     protected String getLaunchTitle()
     {
-        return JARSignerPlugin.getResourceString("jarverifier.launch.title");
+        return JARSignerPlugin.getResourceString("jarverifier.launch.title"); //$NON-NLS-1$
     }
 
     protected MessageFormat createArgsFormat()
@@ -59,7 +75,7 @@ public class JARVerifier extends AbstractJARUtil
             if(mCerts) {
                 buf.append(" -certs"); //$NON-NLS-1$
             }
-            if(!JARSignerPlugin.isEmpty(mKeyStore)) {
+            if(!Common.isEmpty(mKeyStore)) {
                 buf.append(" -keystore ").append(mKeyStore); //$NON-NLS-1$
             }
         }

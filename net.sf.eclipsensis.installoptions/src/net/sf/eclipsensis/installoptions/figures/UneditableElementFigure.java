@@ -11,19 +11,21 @@ package net.sf.eclipsensis.installoptions.figures;
 
 import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
 
-import org.eclipse.draw2d.FigureCanvas;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.views.properties.IPropertySource;
 
 public abstract class UneditableElementFigure extends SWTControlFigure implements IUneditableElementFigure
 {
     protected String mText;
 
-    /**
-     * @param editPart
-     */
-    public UneditableElementFigure(FigureCanvas canvas, IPropertySource propertySource)
+    public UneditableElementFigure(Composite parent, IPropertySource propertySource, int style)
     {
-        super(canvas, propertySource);
+        super(parent, propertySource, style);
+    }
+    
+    public UneditableElementFigure(Composite parent, IPropertySource propertySource)
+    {
+        super(parent, propertySource);
     }
     
     protected void init(IPropertySource propertySource)

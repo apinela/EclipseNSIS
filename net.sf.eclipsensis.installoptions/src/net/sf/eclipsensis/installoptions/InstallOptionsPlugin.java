@@ -16,12 +16,16 @@ import net.sf.eclipsensis.editor.text.NSISSyntaxStyle;
 import net.sf.eclipsensis.editor.text.NSISTextUtility;
 import net.sf.eclipsensis.installoptions.builder.InstallOptionsBuilder;
 import net.sf.eclipsensis.installoptions.util.TypeConverter;
+import net.sf.eclipsensis.job.JobScheduler;
 import net.sf.eclipsensis.util.*;
 
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.gef.GEFPlugin;
+import org.eclipse.gef.ui.palette.PaletteViewerPreferences;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.registry.EditorRegistry;
@@ -30,12 +34,17 @@ import org.osgi.framework.BundleContext;
 
 public class InstallOptionsPlugin extends AbstractUIPlugin implements IInstallOptionsConstants
 {
+    public static final RGB SYNTAX_COMMENTS = new RGB(0x7f,0x9f,0xbf);
+    public static final RGB SYNTAX_NUMBERS = new RGB(0x61,0x31,0x1e);
+    public static final RGB SYNTAX_SECTIONS = new RGB(0x0,0x50,0x50);
+
     private static InstallOptionsPlugin cPlugin;
     private ResourceBundle mResourceBundle;
     public static final String[] BUNDLE_NAMES = new String[]{RESOURCE_BUNDLE,MESSAGE_BUNDLE};
     private ImageManager mImageManager;
     private String mName = null;
     private static boolean cCheckedEditorAssociation = false;
+    private JobScheduler mJobScheduler = new JobScheduler();
     
     /**
      * 
@@ -140,15 +149,39 @@ public class InstallOptionsPlugin extends AbstractUIPlugin implements IInstallOp
         if(changed) {
             store.putValue(IInstallOptionsConstants.PREFERENCE_SYNTAX_STYLES, NSISTextUtility.flattenSyntaxStylesMap(map));
         }
+        initializePaletteViewerPreferences(store);
+    }
+    
+    private void initializePaletteViewerPreferences(IPreferenceStore store)
+    {
+        //This should be done just once.
+        if(!store.getBoolean(PREFERENCE_PALETTE_VIEWER_PREFS_INIT)) {
+            String[] properties = {
+                    PaletteViewerPreferences.PREFERENCE_LAYOUT,
+                    PaletteViewerPreferences.PREFERENCE_AUTO_COLLAPSE,
+                    PaletteViewerPreferences.PREFERENCE_COLUMNS_ICON_SIZE,
+                    PaletteViewerPreferences.PREFERENCE_LIST_ICON_SIZE,
+                    PaletteViewerPreferences.PREFERENCE_ICONS_ICON_SIZE,
+                    PaletteViewerPreferences.PREFERENCE_DETAILS_ICON_SIZE,
+                    PaletteViewerPreferences.PREFERENCE_FONT 
+                };
+            IPreferenceStore gefStore = GEFPlugin.getDefault().getPreferenceStore();
+            for (int i = 0; i < properties.length; i++) {
+                if(!store.contains(properties[i]) && gefStore.contains(properties[i])) {
+                    store.setValue(properties[i], gefStore.getString(properties[i]));
+                }
+            }
+            store.setValue(PREFERENCE_PALETTE_VIEWER_PREFS_INIT,true);
+        }
     }
 
     public boolean setSyntaxStyles(Map map)
     {
-        boolean changed = setSyntaxStyle(map,IInstallOptionsConstants.COMMENT_STYLE,new NSISSyntaxStyle(ColorManager.GREY,null,false,true,false,false));
-        changed |= setSyntaxStyle(map,IInstallOptionsConstants.SECTION_STYLE,new NSISSyntaxStyle(ColorManager.TEAL,null,false,false,false,false));
+        boolean changed = setSyntaxStyle(map,IInstallOptionsConstants.COMMENT_STYLE,new NSISSyntaxStyle(SYNTAX_COMMENTS,null,false,true,false,false));
+        changed |= setSyntaxStyle(map,IInstallOptionsConstants.SECTION_STYLE,new NSISSyntaxStyle(SYNTAX_SECTIONS,null,true,false,false,false));
         changed |= setSyntaxStyle(map,IInstallOptionsConstants.KEY_STYLE,new NSISSyntaxStyle(ColorManager.BLUE,null,false,false,false,false));
         changed |= setSyntaxStyle(map,IInstallOptionsConstants.KEY_VALUE_DELIM_STYLE,new NSISSyntaxStyle(ColorManager.RED,null,false,false,false,false));
-        changed |= setSyntaxStyle(map,IInstallOptionsConstants.NUMBER_STYLE,new NSISSyntaxStyle(ColorManager.CHOCOLATE,null,false,false,false,false));
+        changed |= setSyntaxStyle(map,IInstallOptionsConstants.NUMBER_STYLE,new NSISSyntaxStyle(SYNTAX_NUMBERS,null,true,false,false,false));
         return changed;
     }
     
@@ -175,6 +208,7 @@ public class InstallOptionsPlugin extends AbstractUIPlugin implements IInstallOp
         mName = (String)getBundle().getHeaders().get("Bundle-Name"); //$NON-NLS-1$
         mImageManager = new ImageManager(this);
         initializePreferences();
+        mJobScheduler.start();
         new Thread(new Runnable(){
             public void run()
             {
@@ -185,10 +219,16 @@ public class InstallOptionsPlugin extends AbstractUIPlugin implements IInstallOp
 
     public void stop(BundleContext context) throws Exception
     {
+        mJobScheduler.stop();
         mImageManager = null;
         super.stop(context);
     }
     
+    public JobScheduler getJobScheduler()
+    {
+        return mJobScheduler;
+    }
+
     public static void checkEditorAssociation()
     {
         if(!cCheckedEditorAssociation) {

@@ -20,11 +20,12 @@ import net.sf.eclipsensis.installoptions.actions.SwitchEditorAction;
 import net.sf.eclipsensis.installoptions.builder.InstallOptionsNature;
 import net.sf.eclipsensis.installoptions.ini.*;
 import net.sf.eclipsensis.installoptions.model.*;
+import net.sf.eclipsensis.job.IJobStatusRunnable;
+import net.sf.eclipsensis.job.JobScheduler;
 import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuCreator;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -74,6 +75,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
         }
     };
     private GotoMarker mGotoMarker = null;
+    private JobScheduler mJobScheduler = InstallOptionsPlugin.getDefault().getJobScheduler();
     
     public InstallOptionsSourceEditor()
     {
@@ -160,7 +162,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
     public void dispose()
     {
         InstallOptionsModel.INSTANCE.removeListener(mModelListener);
-        cancelJobs(mJobFamily);
+        mJobScheduler.cancelJobs(mJobFamily);
         InstallOptionsEditorInput input = (InstallOptionsEditorInput)getEditorInput();
         IFile file = input.getFile();
         file.getWorkspace().removeResourceChangeListener(mResourceListener);
@@ -330,13 +332,17 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
 
     private void updateAnnotations()
     {
-        scheduleJob(InstallOptionsPlugin.getResourceString("annotations.update.job.name"),mJobFamily, //$NON-NLS-1$
-                new StatusRunnable(){
+        mJobScheduler.cancelJobs(mJobFamily);
+        mJobScheduler.scheduleJob(mJobFamily, InstallOptionsPlugin.getResourceString("annotations.update.job.name"), //$NON-NLS-1$
+                new IJobStatusRunnable(){
                     public IStatus run(IProgressMonitor monitor)
                     {
                         HashMap annotations = new HashMap();
                         INISection[] sections = mINIFile.getSections();
                         for (int i = 0; i < sections.length; i++) {
+                            if(monitor.isCanceled()) {
+                                return Status.CANCEL_STATUS;
+                            }
                             Position position = sections[i].getPosition();
                             annotations.put(new ProjectionAnnotation(),new Position(position.offset,position.length));
                         }
@@ -348,10 +354,16 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
                             AnnotationModel model = (AnnotationModel)viewer.getAnnotationModel();
                             if(model != null) {
                                 model.removeAllAnnotations();
+                                if(monitor.isCanceled()) {
+                                    return Status.CANCEL_STATUS;
+                                }
                                 if(mINIFile.hasErrors() || mINIFile.hasWarnings()) {
                                     INIProblem[] problems = mINIFile.getProblems();
                                     IDocument doc = getDocumentProvider().getDocument(getEditorInput());
                                     for (int i = 0; i < problems.length; i++) {
+                                        if(monitor.isCanceled()) {
+                                            return Status.CANCEL_STATUS;
+                                        }
                                         INIProblem problem = problems[i];
                                         if(problems[i].getLine() > 0) {
                                             try {
@@ -377,6 +389,9 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
                                 }
                             }
                         }
+                        if(monitor.isCanceled()) {
+                            return Status.CANCEL_STATUS;
+                        }
                         return Status.OK_STATUS;
                     }
                 });
@@ -397,32 +412,6 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
             return mGotoMarker;
         }
         return super.getAdapter(type);
-    }
-
-    private void scheduleJob(String jobName, final String jobFamily, final StatusRunnable runnable)
-    {
-        cancelJobs(jobFamily);
-        new Job(jobName){ //$NON-NLS-1$
-                public boolean belongsTo(Object family)
-                {
-                    return jobFamily.equals(family);
-                }
-
-                public IStatus run(IProgressMonitor monitor)
-                {
-                    return runnable.run(monitor);
-                }
-            }.schedule();
-    }
-
-    private void cancelJobs(String jobFamily)
-    {
-        Job[] jobs = Platform.getJobManager().find(jobFamily);
-        for (int i = 0; i < jobs.length; i++) {
-            if(jobs[i].getState() != Job.RUNNING) {
-                jobs[i].cancel();
-            }
-        }
     }
 
     private class ActionWrapper implements IAction
@@ -650,7 +639,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
 
         public void dispose()
         {
-            cancelJobs(mJobFamily);
+            mJobScheduler.cancelJobs(mJobFamily);
             TreeViewer viewer = getTreeViewer();
             if(viewer != null) {
                 viewer.removeSelectionChangedListener(mSelectionSynchronizer);
@@ -664,19 +653,15 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
          */
         public void update()
         {
-            scheduleJob(InstallOptionsPlugin.getResourceString("outline.update.job.name"),mJobFamily, //$NON-NLS-1$
-                          new StatusRunnable(){
+            mJobScheduler.cancelJobs(mJobFamily);
+            mJobScheduler.scheduleUIJob(mJobFamily, InstallOptionsPlugin.getResourceString("outline.update.job.name"), //$NON-NLS-1$
+                          new IJobStatusRunnable(){
                               public IStatus run(IProgressMonitor monitor)
                               {
                                   try {
                                       final TreeViewer viewer = getTreeViewer();
                                       if(viewer != null && mINIFile != null) {
-                                          Display.getDefault().asyncExec(new Runnable() {
-                                              public void run()
-                                              {
-                                                  viewer.refresh(mINIFile);
-                                              }
-                                          });
+                                          viewer.refresh(mINIFile);
                                       }
                                       return Status.OK_STATUS;
                                   }
@@ -901,10 +886,5 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
                 }
             }
         }
-    }
-    
-    private abstract class StatusRunnable
-    {
-        public abstract IStatus run(IProgressMonitor monitor);
     }
 }

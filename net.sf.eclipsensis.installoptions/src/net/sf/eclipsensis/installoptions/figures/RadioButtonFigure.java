@@ -9,18 +9,20 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.figures;
 
-import org.eclipse.draw2d.FigureCanvas;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.views.properties.IPropertySource;
 
 public class RadioButtonFigure extends CheckBoxFigure
 {
-    /**
-     * @param editPart
-     */
-    public RadioButtonFigure(FigureCanvas canvas, IPropertySource propertySource)
+    public RadioButtonFigure(Composite parent, IPropertySource propertySource, int style)
     {
-        super(canvas, propertySource);
+        super(parent, propertySource, style);
+    }
+
+    public RadioButtonFigure(Composite parent, IPropertySource propertySource)
+    {
+        super(parent, propertySource);
     }
 
     public int getDefaultStyle()

@@ -13,6 +13,7 @@ import net.sf.eclipsensis.dialogs.NSISWizardDialog;
 import net.sf.eclipsensis.wizard.NSISScriptWizard;
 
 import org.eclipse.jface.action.IAction;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
@@ -25,7 +26,15 @@ public class NSISWizardAction extends NSISScriptAction
     public void run(IAction action)
     {
         IWorkbench workbench = PlatformUI.getWorkbench();
-        Shell shell = workbench.getActiveWorkbenchWindow().getShell();
-        new NSISWizardDialog(shell,new NSISScriptWizard()).open();
+        final Shell shell = workbench.getActiveWorkbenchWindow().getShell();
+        final NSISWizardDialog[] wizardDialog = new NSISWizardDialog[1];
+        BusyIndicator.showWhile(shell.getDisplay(),new Runnable() {
+            public void run()
+            {
+                wizardDialog[0] = new NSISWizardDialog(shell,new NSISScriptWizard());
+                wizardDialog[0].create();
+            }
+        });
+        wizardDialog[0].open();
     }
 }

@@ -7,14 +7,12 @@
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
-package net.sf.eclipsensis.wizard;
+package net.sf.eclipsensis.job;
 
-import java.util.EventListener;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 
-
-public interface INSISWizardPageListener extends EventListener
+public interface IJobStatusRunnable
 {
-    public void aboutToShow();
-    
-    public void aboutToHide();
+    public IStatus run(IProgressMonitor monitor);
 }

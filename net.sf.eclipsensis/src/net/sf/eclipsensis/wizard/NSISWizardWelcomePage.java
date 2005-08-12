@@ -33,7 +33,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 
-public class NSISWizardWelcomePage extends AbstractNSISWizardPage
+public class NSISWizardWelcomePage extends AbstractNSISWizardStartPage
 {
     public static final String NAME = "nsisWizardWelcome"; //$NON-NLS-1$
     
@@ -200,29 +200,32 @@ public class NSISWizardWelcomePage extends AbstractNSISWizardPage
         
         m.updateSlaves();
         
-        if(mWizard instanceof NSISScriptWizard) {
-            final NSISScriptWizard scriptWizard = (NSISScriptWizard)mWizard;
-            addPageListener(new NSISWizardPageAdapter() {
-                public void aboutToHide()
-                {
-                    if(!mCreateFromTemplate) {
-                        if(mUsingTemplate) {
-                            scriptWizard.initSettings();
-                            scriptWizard.setTemplate(null);
-                            mUsingTemplate = false;
-                        }
-                    }
-                    else {
-                        if(mTemplate != null) {
-                            scriptWizard.loadTemplate(mTemplate);
-                            mTemplate = null;
-                            mUsingTemplate = true;
+        addPageChangedRunnable(new Runnable() {
+            public void run()
+            {
+                if(isPreviousPage() && !isCurrentPage()) {
+                    if(getSelectedPage() instanceof AbstractNSISWizardPage) {
+                        if(mWizard instanceof NSISScriptWizard) {
+                            NSISScriptWizard scriptWizard = (NSISScriptWizard)mWizard;
+                            if(!mCreateFromTemplate) {
+                                if(mUsingTemplate) {
+                                    scriptWizard.initSettings();
+                                    scriptWizard.setTemplate(null);
+                                    mUsingTemplate = false;
+                                }
+                            }
+                            else {
+                                if(mTemplate != null) {
+                                    scriptWizard.loadTemplate(mTemplate);
+                                    mTemplate = null;
+                                    mUsingTemplate = true;
+                                }
+                            }
                         }
                     }
                 }
-            });
-        }
-        
+            }
+        });
         return group;
     }
 

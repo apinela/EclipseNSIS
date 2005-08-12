@@ -11,19 +11,21 @@ package net.sf.eclipsensis.installoptions.figures;
 
 import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
 
-import org.eclipse.draw2d.FigureCanvas;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.views.properties.IPropertySource;
 
 public abstract class EditableElementFigure extends SWTControlFigure implements IEditableElementFigure
 {
     protected String mState;
 
-    /**
-     * @param editPart
-     */
-    public EditableElementFigure(FigureCanvas canvas, IPropertySource propertySource)
+    public EditableElementFigure(Composite parent, IPropertySource propertySource, int style)
     {
-        super(canvas, propertySource);
+        super(parent, propertySource, style);
+    }
+    
+    public EditableElementFigure(Composite parent, IPropertySource propertySource)
+    {
+        super(parent, propertySource);
     }
     
     protected void init(IPropertySource propertySource)

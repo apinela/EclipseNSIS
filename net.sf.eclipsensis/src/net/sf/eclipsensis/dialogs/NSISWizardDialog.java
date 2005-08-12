@@ -9,6 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.dialogs;
 
+import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.wizard.NSISWizard;
 
 import org.eclipse.jface.wizard.IWizard;
@@ -25,6 +26,12 @@ public class NSISWizardDialog extends WizardDialog
     public NSISWizardDialog(Shell parentShell, IWizard newWizard)
     {
         super(parentShell, newWizard);
+    }
+
+    protected void configureShell(Shell newShell)
+    {
+        super.configureShell(newShell);
+        newShell.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("nsis.icon"))); //$NON-NLS-1$
     }
 
     public void create()

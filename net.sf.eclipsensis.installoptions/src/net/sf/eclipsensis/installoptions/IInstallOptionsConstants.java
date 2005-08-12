@@ -33,12 +33,12 @@ public interface IInstallOptionsConstants
     public static final String EDITING_INSTALLOPTIONS_SOURCE_CONTEXT_ID = InstallOptionsPlugin.getBundleResourceString("%editing.installoptions.source.id"); //$NON-NLS-1$
     public static final String EDITING_INSTALLOPTIONS_DESIGN_CONTEXT_ID = InstallOptionsPlugin.getBundleResourceString("%editing.installoptions.design.id"); //$NON-NLS-1$
     
-    public static final String INSTALLOPTIONS_PROBLEM_MARKER_ID = InstallOptionsPlugin.getBundleResourceString("%installoptions.qualified.problem.marker.id"); //$NON-NLS-1$
+    public static final String INSTALLOPTIONS_PROBLEM_MARKER_ID = InstallOptionsPlugin.getBundleResourceString("%installoptions.problem.marker.id"); //$NON-NLS-1$
     public static final String INSTALLOPTIONS_ANNOTATION_ERROR_NAME = InstallOptionsPlugin.getBundleResourceString("%installoptions.error.annotation.name"); //$NON-NLS-1$
     public static final String INSTALLOPTIONS_ANNOTATION_WARNING_NAME = InstallOptionsPlugin.getBundleResourceString("%installoptions.warning.annotation.name"); //$NON-NLS-1$
     
-    public static final String INSTALLOPTIONS_NATURE_ID = InstallOptionsPlugin.getBundleResourceString("%installoptions.qualified.nature.id"); //$NON-NLS-1$
-    public static final String INSTALLOPTIONS_BUILDER_ID = InstallOptionsPlugin.getBundleResourceString("%installoptions.qualified.builder.id"); //$NON-NLS-1$
+    public static final String INSTALLOPTIONS_NATURE_ID = InstallOptionsPlugin.getBundleResourceString("%installoptions.nature.id"); //$NON-NLS-1$
+    public static final String INSTALLOPTIONS_BUILDER_ID = InstallOptionsPlugin.getBundleResourceString("%installoptions.builder.id"); //$NON-NLS-1$
 
     public static final String GRID_STYLE_LINES="GridStyleLines"; //$NON-NLS-1$
     public static final String GRID_STYLE_DOTS="GridStyleDots"; //$NON-NLS-1$
@@ -69,6 +69,8 @@ public interface IInstallOptionsConstants
     public static final String PREFERENCE_GRID_ORIGIN = "GridOrigin"; //$NON-NLS-1$
     public static final String PREFERENCE_GRID_STYLE = "GridStyle"; //$NON-NLS-1$
     public static final String PREFERENCE_CHECK_EDITOR_ASSOCIATION = "CheckEditorAssociation"; //$NON-NLS-1$
+    public static final String PREFERENCE_PALETTE_VIEWER_PREFS_INIT = "PaletteViewerPrefsInit"; //$NON-NLS-1$
+    public static final String PREFERENCE_UNLOAD_CREATION_TOOL_WHEN_FINISHED = "UnloadToolWhenFinished"; //$NON-NLS-1$
 
     public static final String PREFERENCE_SYNTAX_STYLES = "SyntaxStyles"; //$NON-NLS-1$
     public static final String SECTION_STYLE = "SectionStyle"; //$NON-NLS-1$
