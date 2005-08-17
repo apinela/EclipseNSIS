@@ -49,12 +49,7 @@ public class CopyCommand extends Command
         mMinY = Math.min(mMinY,bounds.y);
         mMaxY = Math.max(mMaxY,bounds.y+bounds.height-1);
         
-        try {
-            mCopies.add(part.clone());
-        }
-        catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-        }
+        mCopies.add(part.clone());
     }
 
     public void execute()

@@ -11,6 +11,8 @@ package net.sf.eclipsensis.installoptions.ini;
 
 public class INIComment extends INILine
 {
+    private static final long serialVersionUID = 1300997609730805814L;
+
     protected void checkProblems()
     {
     }

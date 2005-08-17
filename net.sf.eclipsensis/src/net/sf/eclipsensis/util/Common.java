@@ -80,17 +80,39 @@ public class Common
 
     public static Object readObject(File file) throws IOException, ClassNotFoundException
     {
-        return readObject(new BufferedInputStream(new FileInputStream(file)));
+        return readObject(file, null);
+    }
+
+    public static Object readObject(File file, ClassLoader classLoader) throws IOException, ClassNotFoundException
+    {
+        return readObject(new BufferedInputStream(new FileInputStream(file)), classLoader);
     }
 
     public static Object readObject(InputStream inputStream) throws IOException, ClassNotFoundException
+    {
+        return readObject(inputStream, null);
+    }
+    
+    public static Object readObject(InputStream inputStream, final ClassLoader classLoader) throws IOException, ClassNotFoundException
     {
         ObjectInputStream ois = null;
         try {
             if(!(inputStream instanceof BufferedInputStream)) {
                 inputStream = new BufferedInputStream(inputStream);
             }
-            ois = new ObjectInputStream(inputStream);
+            ois = new ObjectInputStream(inputStream){
+
+                protected Class resolveClass(ObjectStreamClass desc) throws IOException, ClassNotFoundException
+                {
+                    if(classLoader != null) {
+                        try {
+                            return Class.forName(desc.getName(), false, classLoader);
+                        }
+                        catch(ClassNotFoundException e) {}
+                    }
+                    return super.resolveClass(desc);
+                }
+            };
             return ois.readObject();
         }
         finally {
@@ -99,6 +121,24 @@ public class Common
         }
     }
     
+    /*
+     *     protected Class resolveClass(ObjectStreamClass desc)
+    throws IOException, ClassNotFoundException
+    {
+    String name = desc.getName();
+    try {
+        return Class.forName(name, false, latestUserDefinedLoader());
+    } catch (ClassNotFoundException ex) {
+        Class cl = (Class) primClasses.get(name);
+        if (cl != null) {
+        return cl;
+        } else {
+        throw ex;
+        }
+    }
+    }
+
+     */
     public static void closeIO(Object object)
     {
         if(object != null) {

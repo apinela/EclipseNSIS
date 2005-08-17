@@ -395,7 +395,7 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
         }
     }
 
-    public Object clone() throws CloneNotSupportedException
+    public Object clone()
     {
         InstallOptionsWidget element = (InstallOptionsWidget)super.clone();
         element.setParent(null);
@@ -403,7 +403,7 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
         element.setVerticalGuide(null);
         element.setPosition(mPosition.getCopy());
         element.setFlags(new ArrayList(getFlags()));
-        element.setIndex(getIndex());
+        element.setIndex(-1);
         return element;
     }
     

@@ -50,15 +50,8 @@ public class NSISScriptWizard extends NSISWizard
 
     private boolean saveTemplate() throws IOException
     {
-        NSISWizardTemplateDialog dialog;
-        try {
-            dialog = new NSISWizardTemplateDialog(getShell(),getTemplateManager(), (NSISWizardTemplate)getTemplate().clone(),getSettings());
-            return(dialog.open() == Window.OK);
-        }
-        catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-            return false;
-        }
+        NSISWizardTemplateDialog dialog = new NSISWizardTemplateDialog(getShell(),getTemplateManager(), (NSISWizardTemplate)getTemplate().clone(),getSettings());
+        return(dialog.open() == Window.OK);
     }
 
     void loadTemplate(NSISWizardTemplate template)

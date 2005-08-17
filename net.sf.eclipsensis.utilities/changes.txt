@@ -1,0 +1,6 @@
+Revision History
+================
+
+0.5.0 (08/05/2005)
+    * Common base for tools.jar related utilities.
+    

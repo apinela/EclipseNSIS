@@ -117,14 +117,14 @@ public class InstallOptionsModel implements IPropertyChangeListener
         return mMaxLength;
     }
 
-    public void addListener(IModelListener listener)
+    public void addModelListener(IModelListener listener)
     {
         if(!mListeners.contains(listener)) {
             mListeners.add(listener);
         }
     }
     
-    public void removeListener(IModelListener listener)
+    public void removeModelListener(IModelListener listener)
     {
         mListeners.remove(listener);
     }

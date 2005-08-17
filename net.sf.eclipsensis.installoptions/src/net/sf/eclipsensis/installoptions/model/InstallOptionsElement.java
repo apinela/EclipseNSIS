@@ -205,16 +205,22 @@ public abstract class InstallOptionsElement implements IPropertySource, Cloneabl
         return null;
     }
 
-    public Object clone() throws CloneNotSupportedException
+    public Object clone()
     {
-        InstallOptionsElement element = (InstallOptionsElement)super.clone();
-        element.mListeners = new PropertyChangeSupport(element);
-        element.mModelCommandListeners = new ArrayList();
-        element.mDescriptors = new HashMap();
-        element.mSection = null;
-        element.mDirty = true;
-        element.mGuideComment = null;
-        return element;
+        try {
+            InstallOptionsElement element = (InstallOptionsElement)super.clone();
+            element.mListeners = new PropertyChangeSupport(element);
+            element.mModelCommandListeners = new ArrayList();
+            element.mDescriptors = new HashMap();
+            element.mSection = null;
+            element.mDirty = true;
+            element.mGuideComment = null;
+            return element;
+        }
+        catch(CloneNotSupportedException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     protected SetPropertyValueCommand createSetPropertyCommand(String property, Object value)
@@ -265,7 +271,7 @@ public abstract class InstallOptionsElement implements IPropertySource, Cloneabl
         return mSection;
     }
     
-    protected final INISection updateSection()
+    public final INISection updateSection()
     {
         if(mSection == null) {
             mSection = new INISection();

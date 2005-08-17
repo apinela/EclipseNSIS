@@ -9,14 +9,17 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.ini;
 
+import java.io.Serializable;
 import java.util.*;
 
 import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.util.Common;
 
-public class INILine
+public class INILine implements Cloneable, Serializable
 {
+    private static final long serialVersionUID = -1038711652231662150L;
+
     private String mText = ""; //$NON-NLS-1$
     private String mDelimiter = INSISConstants.LINE_SEPARATOR;
     private IINIContainer mParent;
@@ -114,6 +117,21 @@ public class INILine
                 if(!mErrors.contains(problem)) {
                     mErrors.add(problem);
                 }
+        }
+    }
+
+    public Object clone()
+    {
+        try {
+            INILine line = (INILine)super.clone();
+            line.mErrors = new ArrayList();
+            line.mWarnings = new ArrayList();
+            line.mParent = null;
+            return line;
+        }
+        catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+            return null;
         }
     }
 }

@@ -42,7 +42,9 @@ public interface INSISConstants
     public static final String REMOVE_BLOCK_COMMENT_COMMAND_ID = EclipseNSISPlugin.getBundleResourceString("%remove.block.comment.command.id"); //$NON-NLS-1$
     
     public static final String PLUGIN_HELP_LOCATION_PREFIX = "help/"; //$NON-NLS-1$
+    public static final String NSISCONTRIB_JS_LOCATION = PLUGIN_HELP_LOCATION_PREFIX + "nsiscontrib.js"; //$NON-NLS-1$
     public static final String DOCS_LOCATION_PREFIX = "Docs/"; //$NON-NLS-1$
+    public static final String CONTRIB_LOCATION_PREFIX = "Contrib/"; //$NON-NLS-1$
     public static final String CACHED_HELP_LOCATION = PLUGIN_HELP_LOCATION_PREFIX+DOCS_LOCATION_PREFIX; //$NON-NLS-1$
     public static final String NSIS_HELP_PREFIX = PLUGIN_HELP_LOCATION_PREFIX+"NSIS/"; //$NON-NLS-1$
     public static final String NSIS_CHM_HELP_FILE = "NSIS.chm"; //$NON-NLS-1$

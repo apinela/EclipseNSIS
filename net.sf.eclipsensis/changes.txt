@@ -7,10 +7,12 @@ Revision History
     * Added visual progress feedback during long-running startup or reconfiguring operations.
     * Added more rigorous checks for OS and JVM.
     * Added underline and strikethrough syntax styles.
+    * Improved job scheduling mechanism.
     * Bug fixes:
           o 1244592
           o 1246057
           o 1249913
+          o 1253797
     * Feature Requests
           o 1228374
           o 1252371

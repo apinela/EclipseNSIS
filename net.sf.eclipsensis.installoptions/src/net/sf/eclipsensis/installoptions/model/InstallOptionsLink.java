@@ -148,7 +148,7 @@ public class InstallOptionsLink extends InstallOptionsUneditableElement
         }
     }
     
-    public Object clone() throws CloneNotSupportedException
+    public Object clone()
     {
         InstallOptionsLink clone = (InstallOptionsLink)super.clone();
         clone.setState(getState());

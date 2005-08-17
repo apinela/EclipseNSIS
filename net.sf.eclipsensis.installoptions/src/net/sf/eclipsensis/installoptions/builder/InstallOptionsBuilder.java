@@ -98,14 +98,14 @@ public class InstallOptionsBuilder extends IncrementalProjectBuilder implements 
                 }
             }
         };
-        InstallOptionsModel.INSTANCE.addListener(modelListener);
+        InstallOptionsModel.INSTANCE.addModelListener(modelListener);
         
         getProject().getWorkspace().addResourceChangeListener(new IResourceChangeListener(){
             public void resourceChanged(IResourceChangeEvent event)
             {
                 if(event.getType() == IResourceChangeEvent.PRE_CLOSE) {
                     if(getProject() == event.getResource()) {
-                        InstallOptionsModel.INSTANCE.removeListener(modelListener);
+                        InstallOptionsModel.INSTANCE.removeModelListener(modelListener);
                         cJobScheduler.cancelJobs(new ProjectJobFamily(getProject()));
                         getProject().getWorkspace().removeResourceChangeListener(this);
                     }

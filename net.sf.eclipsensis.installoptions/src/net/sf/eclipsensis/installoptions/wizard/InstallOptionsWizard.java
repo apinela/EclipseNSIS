@@ -9,7 +9,10 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.wizard;
 
+import java.util.Arrays;
+
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
+import net.sf.eclipsensis.installoptions.template.InstallOptionsTemplate;
 
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -23,9 +26,9 @@ import org.eclipse.ui.IWorkbench;
 public class InstallOptionsWizard extends Wizard implements INewWizard 
 {
     private static final Image cShellImage = InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("installoptions.icon")); //$NON-NLS-1$
+    private InstallOptionsTemplate mTemplate = null;
 	private IStructuredSelection mSelection;
 	private IWorkbench mWorkbench;
-	private InstallOptionsWizardPage mPage;
     private IPageChangedListener mPageChangedListener = new IPageChangedListener() {
         private Image mOldImage;
         private Image[] mOldImages;
@@ -33,13 +36,16 @@ public class InstallOptionsWizard extends Wizard implements INewWizard
         public void pageChanged(PageChangedEvent event)
         {
             Shell shell = getContainer().getShell();
-            if(event.getSelectedPage() == mPage) {
-                mOldImage = shell.getImage();
-                mOldImages = shell.getImages();
-                shell.setImage(cShellImage);
+            Image image = shell.getImage();
+            if(Arrays.asList(getPages()).contains(event.getSelectedPage())) {
+                if(image != cShellImage) {
+                    mOldImage = image;
+                    mOldImages = shell.getImages();
+                    shell.setImage(cShellImage);
+                }
             }
             else {
-                if(shell.getImage() == cShellImage) {
+                if(image == cShellImage) {
                     shell.setImage(mOldImage);
                     shell.setImages(mOldImages);
                 }
@@ -52,8 +58,8 @@ public class InstallOptionsWizard extends Wizard implements INewWizard
      */
     public void addPages() 
     {
-    	mPage = new InstallOptionsWizardPage(mWorkbench, mSelection);
-    	addPage(mPage);
+    	addPage(new InstallOptionsWizardPage());
+        addPage(new InstallOptionsWizardPage2(mWorkbench, mSelection));
     }
     
     /** (non-Javadoc)
@@ -78,11 +84,21 @@ public class InstallOptionsWizard extends Wizard implements INewWizard
         }
     }
 
+    protected InstallOptionsTemplate getTemplate()
+    {
+        return mTemplate;
+    }
+
+    protected void setTemplate(InstallOptionsTemplate template)
+    {
+        mTemplate = template;
+    }
+
     /** (non-Javadoc)
      * Method declared on IWizard
      */
     public boolean performFinish() 
     {
-    	return mPage.finish();
+    	return ((InstallOptionsWizardPage2)getPages()[getPageCount()-1]).finish();
     }
 }

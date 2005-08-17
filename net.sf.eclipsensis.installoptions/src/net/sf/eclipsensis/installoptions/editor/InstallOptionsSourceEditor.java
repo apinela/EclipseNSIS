@@ -161,7 +161,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
 
     public void dispose()
     {
-        InstallOptionsModel.INSTANCE.removeListener(mModelListener);
+        InstallOptionsModel.INSTANCE.removeModelListener(mModelListener);
         mJobScheduler.cancelJobs(mJobFamily);
         InstallOptionsEditorInput input = (InstallOptionsEditorInput)getEditorInput();
         IFile file = input.getFile();
@@ -327,7 +327,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
         mINIFile.addListener(this);
         mAnnotationModel = sourceViewer.getProjectionAnnotationModel();
         updateAnnotations();
-        InstallOptionsModel.INSTANCE.addListener(mModelListener);
+        InstallOptionsModel.INSTANCE.addModelListener(mModelListener);
     }
 
     private void updateAnnotations()

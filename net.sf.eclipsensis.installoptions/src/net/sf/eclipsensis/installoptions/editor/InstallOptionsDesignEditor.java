@@ -24,7 +24,10 @@ import net.sf.eclipsensis.installoptions.ini.INIFile;
 import net.sf.eclipsensis.installoptions.model.*;
 import net.sf.eclipsensis.installoptions.properties.CustomPropertySheetPage;
 import net.sf.eclipsensis.installoptions.rulers.*;
+import net.sf.eclipsensis.installoptions.template.*;
 import net.sf.eclipsensis.installoptions.util.TypeConverter;
+import net.sf.eclipsensis.template.AbstractTemplate;
+import net.sf.eclipsensis.template.AbstractTemplateSettings;
 import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.core.resources.*;
@@ -38,6 +41,7 @@ import org.eclipse.gef.commands.CommandStack;
 import org.eclipse.gef.commands.CommandStackListener;
 import org.eclipse.gef.dnd.TemplateTransferDragSourceListener;
 import org.eclipse.gef.editparts.ScalableFreeformRootEditPart;
+import org.eclipse.gef.palette.CombinedTemplateCreationEntry;
 import org.eclipse.gef.palette.PaletteRoot;
 import org.eclipse.gef.rulers.RulerProvider;
 import org.eclipse.gef.ui.actions.*;
@@ -59,8 +63,7 @@ import org.eclipse.jface.util.TransferDropTargetListener;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -458,7 +461,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
                 mPalette.setExternalViewer(mPalettePage.getPaletteViewer());
                 mPalettePage = null;
             }
-            InstallOptionsModel.INSTANCE.addListener(mModelListener);
+            InstallOptionsModel.INSTANCE.addModelListener(mModelListener);
             PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,PLUGIN_CONTEXT_PREFIX+"installoptions_designeditor_context"); //$NON-NLS-1$
             mCreatedEmptyPart = false;
         }
@@ -566,7 +569,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
 
     public void dispose()
     {
-        InstallOptionsModel.INSTANCE.removeListener(mModelListener);
+        InstallOptionsModel.INSTANCE.removeModelListener(mModelListener);
         boolean hasErrors = mINIFile.hasErrors();
         InstallOptionsEditorInput input = (InstallOptionsEditorInput)getEditorInput();
         IFile file = input.getFile();
@@ -952,6 +955,10 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
         getSelectionActions().add(action.getId());
         registry.registerAction(action);
 
+        action = new CreateTemplateAction(this);
+        getSelectionActions().add(action.getId());
+        registry.registerAction(action);
+
         action = new ArrangeAction(this, SEND_BACKWARD);
         getSelectionActions().add(action.getId());
         registry.registerAction(action);
@@ -1285,7 +1292,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
     protected void saveProperties(IFile file)
     {
         InstallOptionsDialog dialog = getInstallOptionsDialog();
-        if(dialog != null) {
+        if(dialog != null && file.exists()) {
             GraphicalViewer viewer = getGraphicalViewer();
             saveFileProperty(file, FILEPROPERTY_SHOW_RULERS,TypeConverter.BOOLEAN_CONVERTER,
                     viewer.getProperty(RulerProvider.PROPERTY_RULER_VISIBILITY),
@@ -1815,6 +1822,16 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
                 }
             }
             menu.appendToGroup(GEFActionConstants.GROUP_REST, new PaletteSettingsAction(getPaletteViewer()));
+            
+            EditPart selectedPart = (EditPart)getPaletteViewer().getSelectedEditParts().get(0);
+            Object model = selectedPart.getModel();
+            if (model instanceof CombinedTemplateCreationEntry) {
+                final Object template = ((CombinedTemplateCreationEntry)model).getTemplate();
+                if(template instanceof InstallOptionsTemplate) {
+                    menu.appendToGroup(GEFActionConstants.MB_ADDITIONS, new EditTemplateAction((InstallOptionsTemplate)template));
+                    menu.appendToGroup(GEFActionConstants.MB_ADDITIONS, new DeleteTemplateAction((InstallOptionsTemplate)template));
+                }
+            }
         }
         
     }
@@ -1873,6 +1890,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
         protected static final int UNLOAD_CREATION_TOOL_WHEN_FINISHED_ID = CLIENT_ID + 1;
         
         private org.eclipse.gef.ui.palette.PaletteViewerPreferences mPrefs;
+        private AbstractTemplateSettings mTemplateSettings;
         
         public CustomPaletteSettingsDialog(Shell parentShell, org.eclipse.gef.ui.palette.PaletteViewerPreferences prefs)
         {
@@ -1891,12 +1909,77 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
         protected void configureShell(Shell newShell)
         {
             super.configureShell(newShell);
+            newShell.setText(InstallOptionsPlugin.getResourceString("settings.dialog.title"));
             newShell.setImage(InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("installoptions.icon"))); //$NON-NLS-1$
         }
 
         protected Control createDialogArea(Composite parent)
         {
+            parent = new Composite(parent,SWT.NONE);
+            parent.setLayout(new GridLayout(1,false));
+            
+            TabFolder mFolder = new TabFolder(parent, SWT.NONE);
+            mFolder.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true));
+            Dialog.applyDialogFont(mFolder);
+            TabItem item = new TabItem(mFolder, SWT.NONE);
+            item.setText(InstallOptionsPlugin.getResourceString("palette.settings.tab.name")); //$NON-NLS-1$
+            item.setControl(createPaletteTab(mFolder));
+            item = new TabItem(mFolder, SWT.NONE);
+            item.setText(InstallOptionsPlugin.getResourceString("templates.settings.tab.name")); //$NON-NLS-1$
+            item.setControl(createTemplatesTab(mFolder));
+            
+            return parent;
+        }
+        
+        private Control createTemplatesTab(Composite parent)
+        {
+            Composite composite = new Composite(parent, SWT.NONE);
+            composite.setLayout(new GridLayout(1,false));
+            
+            mTemplateSettings = new AbstractTemplateSettings(composite, SWT.NONE, InstallOptionsTemplateManager.INSTANCE) {
+                protected AbstractTemplate createTemplate(String name)
+                {
+                    return new InstallOptionsTemplate(name);
+                }
+
+                protected Dialog createDialog(final AbstractTemplate template)
+                {
+                    InstallOptionsTemplateDialog dialog = new InstallOptionsTemplateDialog(getShell(), (InstallOptionsTemplate)template) {
+                        protected void okPressed()
+                        {
+                            createUpdateTemplate();
+                            AbstractTemplate t = getTemplate();
+                            if(template != t) {
+                                template.setName(t.getName());
+                                template.setDescription(t.getDescription());
+                                template.setEnabled(t.isEnabled());
+                            }
+                            setReturnCode(OK);
+                            close();
+                        }
+                    };
+                    return dialog;
+                }
+                
+            };
+            mTemplateSettings.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true));
+            
+            Button b = new Button(composite,SWT.PUSH);
+            b.setText(InstallOptionsPlugin.getResourceString("restore.defaults.label"));
+            b.setLayoutData(new GridData(SWT.RIGHT,SWT.CENTER,false, false));
+            b.addSelectionListener(new SelectionAdapter(){
+                public void widgetSelected(SelectionEvent e)
+                {
+                    mTemplateSettings.performDefaults();
+                }
+            });
+            return composite;
+        }
+
+        private Control createPaletteTab(Composite parent)
+        {
             Composite composite = (Composite)super.createDialogArea(parent);
+            
             GridLayout layout = (GridLayout)composite.getLayout();
 
             Label label = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
@@ -1912,7 +1995,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
             
             return composite;
         }
-        
+
         /**
          * @param composite
          * @return
@@ -1940,6 +2023,13 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
             super.restoreSettings();
             if(mPrefs instanceof PaletteViewerPreferences) {
                 ((PaletteViewerPreferences)mPrefs).setUnloadCreationToolWhenFinished(((Boolean)settings.get(CACHE_UNLOAD_CREATION_TOOL_WHEN_FINISHED)).booleanValue());
+            }
+        }
+
+        protected void okPressed()
+        {
+            if(mTemplateSettings.performOk()) {
+                super.okPressed();
             }
         }
 

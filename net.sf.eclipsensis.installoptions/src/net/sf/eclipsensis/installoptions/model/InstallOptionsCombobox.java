@@ -128,7 +128,7 @@ public class InstallOptionsCombobox extends InstallOptionsEditableElement
         return true;
     }
     
-    public Object clone() throws CloneNotSupportedException
+    public Object clone()
     {
         InstallOptionsCombobox clone = (InstallOptionsCombobox)super.clone();
         clone.setListItems(new ArrayList(mListItems));

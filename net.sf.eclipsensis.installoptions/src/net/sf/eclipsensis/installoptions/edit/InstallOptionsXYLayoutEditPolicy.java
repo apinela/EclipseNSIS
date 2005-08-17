@@ -17,6 +17,7 @@ import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.model.*;
 import net.sf.eclipsensis.installoptions.model.commands.*;
 import net.sf.eclipsensis.installoptions.rulers.InstallOptionsGuide;
+import net.sf.eclipsensis.installoptions.template.CreateFromTemplateCommand;
 
 import org.eclipse.draw2d.*;
 import org.eclipse.draw2d.geometry.Insets;
@@ -46,7 +47,12 @@ public class InstallOptionsXYLayoutEditPolicy extends XYLayoutEditPolicy impleme
             return null;
         }
         else {
-            return super.getCommand(request);
+            if(request.getType().equals(IInstallOptionsConstants.REQ_CREATE_FROM_TEMPLATE)) {
+                return getCreateFromTemplateCommand((CreateRequest)request);
+            }
+            else {
+                return super.getCommand(request);
+            }
         }
     }
 
@@ -322,6 +328,26 @@ public class InstallOptionsXYLayoutEditPolicy extends XYLayoutEditPolicy impleme
         return chainGuideAttachmentCommand(request, newPart, cmd, false);
     }
 
+    protected Command getCreateFromTemplateCommand(CreateRequest request)
+    {
+        CreateFromTemplateCommand create = new CreateFromTemplateCommand();
+        create.setParent((InstallOptionsDialog)getHost().getModel());
+        InstallOptionsWidget[] newParts = (InstallOptionsWidget[])request.getNewObject();
+        create.setChildren(newParts);
+        Rectangle constraint = (Rectangle)getConstraintFor(request);
+        create.setLocation(constraint);
+        create.setLabel(InstallOptionsPlugin.getResourceString("create.from.template.command.label")); //$NON-NLS-1$
+        return create;
+    }
+
+    public EditPart getTargetEditPart(Request request) 
+    {
+        if (IInstallOptionsConstants.REQ_CREATE_FROM_TEMPLATE.equals(request.getType())) {
+            return getHost();
+        }
+        return super.getTargetEditPart(request);
+    }
+
     /* (non-Javadoc)
      * @see org.eclipse.gef.editpolicies.LayoutEditPolicy#getCreationFeedbackOffset(org.eclipse.gef.requests.CreateRequest)
      */
@@ -350,4 +376,27 @@ public class InstallOptionsXYLayoutEditPolicy extends XYLayoutEditPolicy impleme
         return null;
     }
 
+    public void showTargetFeedback(Request request) {
+        if(IInstallOptionsConstants.REQ_CREATE_FROM_TEMPLATE.equals(request.getType())) {
+            showLayoutTargetFeedback(request);
+            CreateRequest createReq = (CreateRequest)request;
+            if (createReq.getSize() != null) {
+                showSizeOnDropFeedback(createReq);
+            }
+        }
+        else {
+            super.showTargetFeedback(request);
+        }
+    }
+
+    public void eraseTargetFeedback(Request request) 
+    {
+        if(IInstallOptionsConstants.REQ_CREATE_FROM_TEMPLATE.equals(request.getType())) {
+            eraseLayoutTargetFeedback(request);
+            eraseSizeOnDropFeedback(request);
+        }
+        else {
+            super.eraseLayoutTargetFeedback(request);
+        }
+    }
 }

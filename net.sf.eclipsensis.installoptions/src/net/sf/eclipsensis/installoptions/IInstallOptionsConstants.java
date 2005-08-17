@@ -107,6 +107,7 @@ public interface IInstallOptionsConstants
     
     public static final String REQ_REORDER_PART="reorder part"; //$NON-NLS-1$
     public static final String REQ_EXTENDED_EDIT="extended edit"; //$NON-NLS-1$
+    public static final String REQ_CREATE_FROM_TEMPLATE="create from template"; //$NON-NLS-1$
     
     public static final int SEND_BACKWARD = 1;
     public static final int SEND_TO_BACK = 2;

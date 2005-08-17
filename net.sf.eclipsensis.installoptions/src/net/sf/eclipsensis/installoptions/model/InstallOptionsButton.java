@@ -38,7 +38,7 @@ public class InstallOptionsButton extends InstallOptionsUneditableElement
         return InstallOptionsModel.TYPE_BUTTON;
     }
 
-    public Object clone() throws CloneNotSupportedException
+    public Object clone()
     {
         InstallOptionsButton clone = (InstallOptionsButton)super.clone();
         clone.setState(getState());

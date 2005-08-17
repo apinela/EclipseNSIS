@@ -77,6 +77,12 @@ public class InstallOptionsDesignActionContributor extends ActionBarContributor
         retargetAction.setImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("refresh.icon"))); //$NON-NLS-1$
         addRetargetAction(retargetAction);
         
+        retargetAction = new RetargetAction(CreateTemplateAction.ID, 
+                InstallOptionsPlugin.getResourceString("create.template.action.label")); //$NON-NLS-1$
+        retargetAction.setToolTipText(InstallOptionsPlugin.getResourceString("create.template.action.tooltip")); //$NON-NLS-1$
+        retargetAction.setImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("create.template.action.icon"))); //$NON-NLS-1$
+        addRetargetAction(retargetAction);
+        
         retargetAction = new RetargetAction(SwitchEditorAction.ID, InstallOptionsPlugin.getResourceString("switch.source.editor.action.name")); //$NON-NLS-1$
         retargetAction.setImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("switch.editor.icon"))); //$NON-NLS-1$
         retargetAction.setActionDefinitionId(IInstallOptionsConstants.SWITCH_EDITOR_COMMAND_ID);
@@ -207,6 +213,9 @@ public class InstallOptionsDesignActionContributor extends ActionBarContributor
         tbm.add(getAction(ArrangeAction.SEND_TO_BACK_ID));
         tbm.add(getAction(ArrangeAction.BRING_FORWARD_ID));
         tbm.add(getAction(ArrangeAction.BRING_TO_FRONT_ID));
+
+        tbm.add(new Separator());
+        tbm.add(getAction(CreateTemplateAction.ID));
 
         tbm.add(new Separator());
         tbm.add(getAction(RefreshDiagramAction.ID));

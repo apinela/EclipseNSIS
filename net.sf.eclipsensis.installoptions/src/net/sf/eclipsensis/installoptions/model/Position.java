@@ -87,6 +87,16 @@ public class Position implements Cloneable
         top = y;
     }
 
+    public void move(int x, int y)
+    {
+        setLocation(left+x,top+y);
+    }
+
+    public void move(Dimension offset)
+    {
+        move(offset.width, offset.height);
+    }
+    
     public void setSize(Dimension d)
     {
         setSize(d.width, d.height);

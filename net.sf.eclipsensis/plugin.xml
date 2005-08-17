@@ -342,7 +342,11 @@
          id="NSISHelpProducer"
          name="%help.name"
          point="org.eclipse.help.contentProducer">
-       <contentProducer producer="net.sf.eclipsensis.help.NSISHelpProducer"/>
+       <contentProducer>
+          <producer class="net.sf.eclipsensis.help.NSISHelpProducer">
+             <parameter name="pluginId" value="%plugin.id"/>
+          </producer>
+       </contentProducer>
    </extension>
    <extension
          point="org.eclipse.help.toc">

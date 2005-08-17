@@ -18,6 +18,8 @@ import net.sf.eclipsensis.util.Common;
 
 public class INIKeyValue extends INILine
 {
+    private static final long serialVersionUID = -1955779348753709847L;
+    
     private String mKey = ""; //$NON-NLS-1$
     private String mValue = ""; //$NON-NLS-1$
     private String mOriginalValue = ""; //$NON-NLS-1$

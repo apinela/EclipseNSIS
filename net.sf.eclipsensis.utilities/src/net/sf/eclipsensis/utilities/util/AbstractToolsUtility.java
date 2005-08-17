@@ -12,13 +12,10 @@ package net.sf.eclipsensis.utilities.util;
 import java.io.File;
 import java.util.*;
 
-import net.sf.eclipsensis.utilities.UtilitiesPlugin;
-
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.*;
 import org.eclipse.debug.core.model.*;
 import org.eclipse.jdt.launching.*;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.console.*;
@@ -75,7 +72,7 @@ public abstract class AbstractToolsUtility implements IJavaLaunchConfigurationCo
         });
     }
     
-    public void run(IProgressMonitor monitor)
+    public IStatus run(IProgressMonitor monitor)
     {
         try {
             IRuntimeClasspathEntry toolsEntry = JavaRuntime.newArchiveRuntimeClasspathEntry(new Path(mToolsJar.getAbsolutePath()));
@@ -153,31 +150,36 @@ public abstract class AbstractToolsUtility implements IJavaLaunchConfigurationCo
                     else if(status.matches(IStatus.CANCEL)) {
                         if(!status.matches(IStatus.OK)) {
                             writeLogMessage(streams[1],getCancelMessage());
+                            return Status.CANCEL_STATUS;
                         }
                     }
                     else {
                         writeLogMessage(streams[1], status.getMessage()); //$NON-NLS-1$
+                        if(!mIgnoreErrors) {
+                            return status;
+                        }
                     }
                 }
                 catch (Throwable e) {
                     writeLogMessage(streams[1],getExceptionMessage(e));
                     if(!mIgnoreErrors) {
-                        return;
+                        return createStatus(IStatus.ERROR,getExceptionMessage(e));
                     }
                 }
                 IStatus status = postProcess(target, monitor);
                 if(status.matches(IStatus.CANCEL)) {
                     writeLogMessage(streams[1],getCancelMessage());
-                    return;
+                    return Status.CANCEL_STATUS;
                 }
                 monitor.worked(1);
                 if(iter.hasNext()) {
                     writeLogMessage(streams[0],"\n"); //$NON-NLS-1$
                 }
             }
+            return Status.OK_STATUS;
          }
         catch(Exception ex) {
-            MessageDialog.openError(Display.getDefault().getActiveShell(),UtilitiesPlugin.getResourceString("error.title"),ex.getMessage()); //$NON-NLS-1$
+            return createStatus(IStatus.ERROR,getExceptionMessage(ex));
         }
     }
 
@@ -187,7 +189,10 @@ public abstract class AbstractToolsUtility implements IJavaLaunchConfigurationCo
         if(exception != null) {
             message = exception.getMessage();
             if(message == null || message.length() == 0) {
-                message = getExceptionMessage(exception.getCause());
+                Throwable cause = exception.getCause();
+                if(!exception.equals(cause)) {
+                    message = getExceptionMessage(cause);
+                }
                 if(message == null) {
                     message = exception.getClass().getName();
                 }

@@ -54,14 +54,7 @@ public class PasteCommand extends Command
         mPasteBounds = new Rectangle(mCopyContents.getBounds());
         mPasteList.clear();
         for (Iterator iter = mCopyContents.getChildren().iterator(); iter.hasNext();) {
-            InstallOptionsWidget model;
-            try {
-                model = (InstallOptionsWidget)((InstallOptionsWidget)iter.next()).clone();
-                mPasteList.add(model);
-            }
-            catch (CloneNotSupportedException e) {
-                e.printStackTrace();
-            }
+            mPasteList.add(((InstallOptionsWidget)iter.next()).clone());
         }
         redo();
     }

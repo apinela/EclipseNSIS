@@ -10,12 +10,13 @@
 package net.sf.jarsigner.actions;
 
 import net.sf.eclipsensis.utilities.UtilitiesPlugin;
+import net.sf.eclipsensis.utilities.job.IJobStatusRunnable;
 import net.sf.jarsigner.JARSignerPlugin;
 import net.sf.jarsigner.dialogs.JARVerifierOptionsDialog;
 import net.sf.jarsigner.util.JARVerifier;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
@@ -59,14 +60,14 @@ public class JARVerifierAction implements IObjectActionDelegate
                     jarVerifier.setCerts(dialog.isCerts());
                     jarVerifier.setKeyStore(dialog.getKeyStore());
                     jarVerifier.setIgnoreErrors(dialog.isIgnoreErrors());
-                    Job job = new Job(JARSignerPlugin.getResourceString("jarverifier.job.title")) { //$NON-NLS-1$
-                        protected IStatus run(IProgressMonitor monitor)
-                        {
-                            jarVerifier.run(monitor);
-                            return Status.OK_STATUS;
-                        }
-                    };
-                    job.schedule();
+                    UtilitiesPlugin.getDefault().getJobScheduler().scheduleJob(getClass(),
+                            JARSignerPlugin.getResourceString("jarverifier.job.title"), //$NON-NLS-1$
+                            new IJobStatusRunnable() {
+                                public IStatus run(IProgressMonitor monitor)
+                                {
+                                    return jarVerifier.run(monitor);
+                                }
+                            });
                 }
             }
             catch(Exception e) {

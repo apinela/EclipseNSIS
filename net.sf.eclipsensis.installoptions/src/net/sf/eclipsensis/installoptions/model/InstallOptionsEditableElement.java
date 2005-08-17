@@ -48,7 +48,7 @@ public abstract class InstallOptionsEditableElement extends InstallOptionsWidget
         mState = getDefaultState();
     }
 
-    public Object clone() throws CloneNotSupportedException
+    public Object clone()
     {
         InstallOptionsEditableElement clone = (InstallOptionsEditableElement)super.clone();
         clone.setMaxLen(getMaxLen());

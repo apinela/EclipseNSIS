@@ -14,10 +14,13 @@ import java.util.*;
 import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.model.*;
+import net.sf.eclipsensis.installoptions.template.*;
 
 import org.eclipse.gef.GraphicalViewer;
 import org.eclipse.gef.palette.*;
 import org.eclipse.gef.tools.AbstractTool;
+import org.eclipse.gef.tools.CreationTool;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.events.DisposeEvent;
@@ -25,19 +28,21 @@ import org.eclipse.swt.events.DisposeListener;
 
 public class InstallOptionsPaletteProvider
 {
+    private static final ImageDescriptor cImageDescriptor = InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("templates.icon"));
+
     private static List createCategories(GraphicalViewer viewer, PaletteRoot root)
     {
         List categories = new ArrayList();
 
         categories.add(createControlGroup(viewer, root));
         categories.add(createComponentsDrawer(viewer));
-
+        categories.add(createTemplatesDrawer(viewer));
         return categories;
     }
 
     private static PaletteContainer createComponentsDrawer(final GraphicalViewer viewer)
     {
-        final PaletteDrawer drawer = new PaletteDrawer(InstallOptionsPlugin.getResourceString("palettedrawer.name"), InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("controls.icon"))); //$NON-NLS-1$ //$NON-NLS-2$
+        final PaletteDrawer drawer = new PaletteDrawer(InstallOptionsPlugin.getResourceString("palette.components.drawer.name"), InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("controls.icon"))); //$NON-NLS-1$ //$NON-NLS-2$
         final Map entryMap = new HashMap();
         
         final Runnable op = new Runnable() {
@@ -66,7 +71,7 @@ public class InstallOptionsPaletteProvider
                 op.run();
             }
         };
-        InstallOptionsModel.INSTANCE.addListener(listener);
+        InstallOptionsModel.INSTANCE.addModelListener(listener);
 
         final IPropertyChangeListener listener2 = new IPropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent event)
@@ -85,7 +90,7 @@ public class InstallOptionsPaletteProvider
         viewer.getControl().addDisposeListener(new DisposeListener(){
             public void widgetDisposed(DisposeEvent e)
             {
-                InstallOptionsModel.INSTANCE.removeListener(listener);
+                InstallOptionsModel.INSTANCE.removeModelListener(listener);
                 InstallOptionsPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(listener2);
             }
         });
@@ -105,9 +110,81 @@ public class InstallOptionsPaletteProvider
         return entry;
     }
 
+    private static PaletteContainer createTemplatesDrawer(final GraphicalViewer viewer)
+    {
+        final PaletteDrawer drawer = new PaletteDrawer(InstallOptionsPlugin.getResourceString("palette.templates.drawer.name"), 
+                cImageDescriptor); //$NON-NLS-1$ //$NON-NLS-2$
+        final Map entryMap = new HashMap();
+        List children = new ArrayList();
+        for(Iterator iter = InstallOptionsTemplateManager.INSTANCE.getTemplates().iterator(); iter.hasNext(); ) {
+            InstallOptionsTemplate template = (InstallOptionsTemplate)iter.next();
+            ToolEntry entry = createTemplateEntry(template);
+            entryMap.put(template, entry);
+            children.add(entry);
+        }
+        drawer.setChildren(children);
+        
+        final IInstallOptionsTemplateListener listener = new IInstallOptionsTemplateListener() {
+            public void templateChanged(InstallOptionsTemplateEvent event)
+            {
+                InstallOptionsTemplate oldTemplate = event.getOldTemplate();
+                InstallOptionsTemplate newTemplate = event.getNewTemplate();
+                ToolEntry entry;
+                switch(event.getType()) {
+                    case InstallOptionsTemplateEvent.TEMPLATE_ADDED:
+                        entry = createTemplateEntry(newTemplate);
+                        entryMap.put(newTemplate, entry);
+                        drawer.add(entry);
+                        break;
+                    case InstallOptionsTemplateEvent.TEMPLATE_REMOVED:
+                        entry = (ToolEntry)entryMap.remove(oldTemplate);
+                        if(entry != null) {
+                            drawer.remove(entry);
+                        }
+                        break;
+                    case InstallOptionsTemplateEvent.TEMPLATE_UPDATED:
+                        entry = (ToolEntry)entryMap.remove(oldTemplate);
+                        if(entry != null) {
+                            ((CombinedTemplateCreationEntry)entry).setTemplate(newTemplate);
+                            entry.setLabel(newTemplate.getName());
+                            entry.setVisible(newTemplate.isEnabled());
+                            entry.setDescription(newTemplate.getDescription());
+                            entry. setToolProperty(CreationTool.PROPERTY_CREATION_FACTORY, InstallOptionsTemplateManager.INSTANCE.getTemplateFactory(newTemplate));
+                            entryMap.put(newTemplate, entry);
+                        }
+                        break;
+                }
+                
+            }
+        };
+        InstallOptionsTemplateManager.INSTANCE.addTemplateListener(listener);
+        viewer.getControl().addDisposeListener(new DisposeListener(){
+            public void widgetDisposed(DisposeEvent e)
+            {
+                InstallOptionsTemplateManager.INSTANCE.removeTemplateListener(listener);
+            }
+        });
+        
+        return drawer;
+    }
+
+    private static ToolEntry createTemplateEntry(InstallOptionsTemplate template)
+    {
+        CombinedTemplateCreationEntry entry = new CombinedTemplateCreationEntry(
+                template.getName(),
+                template.getDescription(),
+                template,
+                InstallOptionsTemplateManager.INSTANCE.getTemplateFactory(template),
+                cImageDescriptor,
+                cImageDescriptor);
+        entry.setToolClass(InstallOptionsTemplateCreationTool.class);
+        entry.setVisible(template.isEnabled());
+        return entry;
+    }
+
     private static PaletteContainer createControlGroup(GraphicalViewer viewer, PaletteRoot root)
     {
-        PaletteGroup controlGroup = new PaletteGroup(InstallOptionsPlugin.getResourceString("palettegroup.name")); //$NON-NLS-1$
+        PaletteGroup controlGroup = new PaletteGroup(InstallOptionsPlugin.getResourceString("palette.control.group.name")); //$NON-NLS-1$
 
         List entries = new ArrayList();
 

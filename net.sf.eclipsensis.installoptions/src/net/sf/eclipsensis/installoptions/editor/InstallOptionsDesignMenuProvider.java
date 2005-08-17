@@ -140,6 +140,7 @@ public class InstallOptionsDesignMenuProvider extends org.eclipse.gef.ContextMen
                 manager.appendToGroup(GEFActionConstants.GROUP_EDIT, mSetDialogSizeMenu);
             }
         }
+        addContextMenu(manager, CreateTemplateAction.ID, GEFActionConstants.GROUP_EDIT);
         addContextMenu(manager, RefreshDiagramAction.ID, GEFActionConstants.GROUP_EDIT);
         
         addContextMenu(manager, "net.sf.eclipsensis.installoptions.design_editor_prefs", GEFActionConstants.GROUP_REST); //$NON-NLS-1$

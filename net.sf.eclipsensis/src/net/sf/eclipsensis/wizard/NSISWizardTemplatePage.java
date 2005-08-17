@@ -53,7 +53,7 @@ public class NSISWizardTemplatePage extends AbstractNSISWizardStartPage
         composite.setLayout(layout);
         ((GridLayout)composite.getLayout()).numColumns=2;
         
-        Text t = NSISWizardDialogUtil.createText(composite,mTemplate.getName(),"wizard.template.dialog.name.label",true,null,true); //$NON-NLS-1$ //$NON-NLS-2$
+        Text t = NSISWizardDialogUtil.createText(composite,mTemplate.getName(),"template.dialog.name.label",true,null,true); //$NON-NLS-1$ //$NON-NLS-2$
         t.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e)
             {
@@ -62,7 +62,7 @@ public class NSISWizardTemplatePage extends AbstractNSISWizardStartPage
             }
         });
         
-        Label l = NSISWizardDialogUtil.createLabel(composite,"wizard.template.dialog.description.label",true,null,false); //$NON-NLS-1$
+        Label l = NSISWizardDialogUtil.createLabel(composite,"template.dialog.description.label",true,null,false); //$NON-NLS-1$
         GridData data = (GridData)l.getLayoutData();
         data.horizontalSpan=2;
         
@@ -80,7 +80,7 @@ public class NSISWizardTemplatePage extends AbstractNSISWizardStartPage
             }
         });
 
-        Button b = NSISWizardDialogUtil.createCheckBox(composite,"wizard.template.dialog.boolean.label",true,true,null,false); //$NON-NLS-1$
+        Button b = NSISWizardDialogUtil.createCheckBox(composite,"template.dialog.enabled.label",true,true,null,false); //$NON-NLS-1$
         data = (GridData)b.getLayoutData();
         data.horizontalSpan=2;
         b.addSelectionListener(new SelectionAdapter() {

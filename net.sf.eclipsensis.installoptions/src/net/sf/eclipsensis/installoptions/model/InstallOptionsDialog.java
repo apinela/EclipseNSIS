@@ -659,7 +659,7 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
         return result;
     }
 
-    public Object clone() throws CloneNotSupportedException
+    public Object clone()
     {
         InstallOptionsDialog dialog = (InstallOptionsDialog)super.clone();
         if(dialog.mSelectedIndices != null) {
@@ -901,8 +901,10 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
             section = updateSection();
             
             if(!mINISectionMap.containsKey(section)) {
-                mINIFile.addChild(section);
                 mINISectionMap.put(section,this);
+            }
+            if(!mINIFile.getChildren().contains(section)) {
+                mINIFile.addChild(section);
             }
             tempMap.put(section, this);
             INISection previousSection = section;
@@ -922,8 +924,10 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
                 InstallOptionsWidget element = (InstallOptionsWidget)iter.next();
                 section = element.updateSection();
                 if(!mINISectionMap.containsKey(section)) {
-                    mINIFile.addChild(section);
                     mINISectionMap.put(section,element);
+                }
+                if(!mINIFile.getChildren().contains(section)) {
+                    mINIFile.addChild(section);
                 }
                 tempMap.put(section, element);
                 previousSection = section;

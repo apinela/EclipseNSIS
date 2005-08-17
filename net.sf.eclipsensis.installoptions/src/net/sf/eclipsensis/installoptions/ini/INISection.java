@@ -21,6 +21,8 @@ import org.eclipse.jface.text.Position;
 
 public class INISection extends INILine implements IINIContainer
 {
+    private static final long serialVersionUID = -1320834864833847467L;
+    
     private boolean mDirty = false;
     private List mChildren = new ArrayList();
     private String mName;
@@ -261,4 +263,18 @@ public class INISection extends INILine implements IINIContainer
     {
         return (INILine)mChildren.get(index);
     }
+
+    public Object clone()
+    {
+        INISection section = (INISection)super.clone();
+        section.mPosition = null;
+        section.mChildren = new ArrayList();
+        for (Iterator iter = mChildren.iterator(); iter.hasNext();) {
+            INILine line = (INILine)iter.next();
+            section.addChild((INILine)line.clone());
+        }
+        section.mDirty = false;
+        return section;
+    }
+
 }

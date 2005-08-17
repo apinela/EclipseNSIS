@@ -69,21 +69,16 @@ public class CloneCommand extends Command
         InstallOptionsElement newPart = null;
 
         if (oldPart instanceof InstallOptionsWidget) {
-            try {
-                newPart = (InstallOptionsWidget)((InstallOptionsWidget)oldPart).clone();
-                if (newBounds != null) {
-                    ((InstallOptionsWidget)newPart).getPosition().setLocation(newBounds.getTopLeft());
-                }
-    
-                if (index < 0) {
-                    newParent.addChild((InstallOptionsWidget)newPart);
-                }
-                else {
-                    newParent.addChild((InstallOptionsWidget)newPart, index);
-                }
+            newPart = (InstallOptionsWidget)((InstallOptionsWidget)oldPart).clone();
+            if (newBounds != null) {
+                ((InstallOptionsWidget)newPart).getPosition().setLocation(newBounds.getTopLeft());
             }
-            catch (CloneNotSupportedException e) {
-                e.printStackTrace();
+
+            if (index < 0) {
+                newParent.addChild((InstallOptionsWidget)newPart);
+            }
+            else {
+                newParent.addChild((InstallOptionsWidget)newPart, index);
             }
         }
         else if (oldPart instanceof InstallOptionsDialog) {

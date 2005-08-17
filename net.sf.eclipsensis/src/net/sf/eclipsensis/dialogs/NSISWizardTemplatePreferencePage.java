@@ -9,45 +9,27 @@
  *******************************************************************************/
 package net.sf.eclipsensis.dialogs;
 
-import java.io.*;
-import java.text.Collator;
-import java.util.*;
-import java.util.List;
-
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
-import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.viewer.CollectionLabelProvider;
-import net.sf.eclipsensis.viewer.EmptyContentProvider;
+import net.sf.eclipsensis.template.AbstractTemplate;
+import net.sf.eclipsensis.template.AbstractTemplateSettings;
 import net.sf.eclipsensis.wizard.NSISTemplateWizard;
-import net.sf.eclipsensis.wizard.template.*;
+import net.sf.eclipsensis.wizard.template.NSISWizardTemplate;
+import net.sf.eclipsensis.wizard.template.NSISWizardTemplateManager;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.PreferencePage;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 
 public class NSISWizardTemplatePreferencePage extends PreferencePage implements IWorkbenchPreferencePage
 {
-    private NSISWizardTemplateManager mTemplateManager = null;
-    private NSISWizardTemplateReaderWriter mReaderWriter = null;
-
-    private CheckboxTableViewer mTableViewer = null;
-    private Button mAddButton = null;
-    private Button mEditButton = null;
-    private Button mImportButton = null;
-    private Button mExportButton = null;
-    private Button mRemoveButton = null;
-    private Button mRestoreButton = null;
-    private Button mRevertButton = null;
-    private StyledText mDescriptionText = null;
+    private AbstractTemplateSettings mTemplateSettings;
 
     /**
      * 
@@ -56,7 +38,6 @@ public class NSISWizardTemplatePreferencePage extends PreferencePage implements 
     {
         super();
         setDescription(EclipseNSISPlugin.getResourceString("wizard.template.preferences.description")); //$NON-NLS-1$
-        mTemplateManager = new NSISWizardTemplateManager();
     }
 
     /*
@@ -72,192 +53,55 @@ public class NSISWizardTemplatePreferencePage extends PreferencePage implements 
      */
     protected Control createContents(Composite ancestor)
     {
-        Composite parent= new Composite(ancestor, SWT.NONE);
-        GridLayout layout= new GridLayout();
-        layout.numColumns= 2;
-        layout.marginHeight= 0;
-        layout.marginWidth= 0;
-        parent.setLayout(layout);               
+        mTemplateSettings =  new AbstractTemplateSettings(ancestor, SWT.NONE, new NSISWizardTemplateManager()) {
+            private Button mAddButton;
 
-        Composite innerParent= new Composite(parent, SWT.NONE);
-        GridLayout innerLayout= new GridLayout();
-        innerLayout.numColumns= 2;
-        innerLayout.marginHeight= 0;
-        innerLayout.marginWidth= 0;
-        innerParent.setLayout(innerLayout);
-        GridData gd= new GridData(SWT.FILL, SWT.FILL, true, true);
-        gd.horizontalSpan= 2;
-        innerParent.setLayoutData(gd);
-
-        Table table= new Table(innerParent, SWT.CHECK | SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION | SWT.V_SCROLL);
-        
-        GridData data= new GridData(SWT.FILL, SWT.FILL, true, true);
-        data.widthHint= convertWidthInCharsToPixels(3);
-        data.heightHint= convertHeightInCharsToPixels(10);
-        table.setLayoutData(data);
-
-        table.setHeaderVisible(true);
-        table.setLinesVisible(true);        
-
-        TableLayout tableLayout= new TableLayout();
-        table.setLayout(tableLayout);
-
-        TableColumn column= new TableColumn(table, SWT.NONE);      
-        column.setText(EclipseNSISPlugin.getResourceString("wizard.template.name.label")); //$NON-NLS-1$
-        
-        mTableViewer= new CheckboxTableViewer(table);       
-        mTableViewer.setLabelProvider(new CollectionLabelProvider());
-        mTableViewer.setContentProvider(new EmptyContentProvider() {
-            /* (non-Javadoc)
-             * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
-             */
-            public Object[] getElements(Object inputElement)
+            protected void createButtons(Composite parent)
             {
-                if(inputElement != null && inputElement instanceof NSISWizardTemplateManager) {
-                    return ((NSISWizardTemplateManager)inputElement).getTemplates().toArray();
-                }
-                return super.getElements(inputElement);
+                mAddButton= new Button(parent, SWT.PUSH);
+                mAddButton.setText(EclipseNSISPlugin.getResourceString("wizard.template.preferences.new.label")); //$NON-NLS-1$
+                mAddButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+                mAddButton.addListener(SWT.Selection, new Listener() {
+                    public void handleEvent(Event e) {
+                        add();
+                    }
+                });
+                super.createButtons(parent);
             }
-        });
 
-        Collator collator = Collator.getInstance();
-        collator.setStrength(Collator.PRIMARY);
-        mTableViewer.setSorter(new ViewerSorter(collator));
-        
-        ViewerFilter filter = new ViewerFilter() {
-            public boolean select(Viewer viewer, Object parentElement, Object element)
+            private void add() 
             {
-                if(element instanceof NSISWizardTemplate) {
-                    return !((NSISWizardTemplate)element).isDeleted();
+                NSISWizardTemplate template = new NSISWizardTemplate(""); //$NON-NLS-1$
+                Dialog dialog= createDialog(template);
+                if (dialog.open() != Window.CANCEL) {
+                    getTemplateManager().addTemplate(template);
+                    getTableViewer().refresh(true);
+                    getTableViewer().setChecked(template, template.isEnabled());
+                    getTableViewer().setSelection(new StructuredSelection(template));           
                 }
-                return true;
+            }
+
+            protected AbstractTemplate createTemplate(String name)
+            {
+                return new NSISWizardTemplate(name);
+            }
+
+            protected Dialog createDialog(AbstractTemplate template)
+            {
+                final NSISWizardTemplate wizardTemplate = (NSISWizardTemplate)template;
+                final NSISTemplateWizardDialog[] wizardDialog = new NSISTemplateWizardDialog[1];
+                BusyIndicator.showWhile(getShell().getDisplay(),new Runnable() {
+                    public void run()
+                    {
+                        wizardDialog[0] = new NSISTemplateWizardDialog(getShell(),new NSISTemplateWizard(wizardTemplate));
+                        wizardDialog[0].create();
+                    }
+                });
+                return wizardDialog[0];
             }
         };
-        mTableViewer.addFilter(filter);
-
-        mTableViewer.addDoubleClickListener(new IDoubleClickListener() {
-            public void doubleClick(DoubleClickEvent e) {
-                edit();
-            }
-        });
         
-        mTableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-            public void selectionChanged(SelectionChangedEvent e) {
-                doSelectionChanged();
-            }
-        });
-
-        mTableViewer.addCheckStateListener(new ICheckStateListener() {
-            public void checkStateChanged(CheckStateChangedEvent event) {
-                NSISWizardTemplate template= (NSISWizardTemplate)event.getElement();
-                if(template.getType() == NSISWizardTemplate.TYPE_DEFAULT) {
-                    template.setType(NSISWizardTemplate.TYPE_CUSTOM);
-                }
-                template.setEnabled(event.getChecked());
-                mTableViewer.refresh(true);
-                mTableViewer.setSelection(new StructuredSelection(template));
-                doSelectionChanged();
-            }
-        });
-
-        Composite buttons= new Composite(innerParent, SWT.NONE);
-        buttons.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false));
-        layout= new GridLayout();
-        layout.marginHeight= 0;
-        layout.marginWidth= 0;
-        buttons.setLayout(layout);
-        
-        mAddButton= new Button(buttons, SWT.PUSH);
-        mAddButton.setText(EclipseNSISPlugin.getResourceString("wizard.template.preferences.new.label")); //$NON-NLS-1$
-        mAddButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-        mAddButton.addListener(SWT.Selection, new Listener() {
-            public void handleEvent(Event e) {
-                add();
-            }
-        });
-
-        mEditButton= new Button(buttons, SWT.PUSH);
-        mEditButton.setText(EclipseNSISPlugin.getResourceString("wizard.template.preferences.edit.label")); //$NON-NLS-1$
-        mEditButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-        mEditButton.addListener(SWT.Selection, new Listener() {
-            public void handleEvent(Event e) {
-                edit();
-            }
-        });
-
-        mRemoveButton= new Button(buttons, SWT.PUSH);
-        mRemoveButton.setText(EclipseNSISPlugin.getResourceString("wizard.template.preferences.remove.label")); //$NON-NLS-1$
-        mRemoveButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-        mRemoveButton.addListener(SWT.Selection, new Listener() {
-            public void handleEvent(Event e) {
-                remove();
-            }
-        });
-
-        createSeparator(buttons);
-                
-        mRestoreButton= new Button(buttons, SWT.PUSH);
-        mRestoreButton.setText(EclipseNSISPlugin.getResourceString("wizard.template.preferences.restore.label")); //$NON-NLS-1$
-        mRestoreButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-        mRestoreButton.addListener(SWT.Selection, new Listener() {
-            public void handleEvent(Event e) {
-                restoreDeleted();
-            }
-        });
-
-        mRevertButton= new Button(buttons, SWT.PUSH);
-        mRevertButton.setText(EclipseNSISPlugin.getResourceString("wizard.template.preferences.revert.label")); //$NON-NLS-1$
-        mRevertButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-        mRevertButton.addListener(SWT.Selection, new Listener() {
-            public void handleEvent(Event e) {
-                revert();
-            }
-        });
-        
-        createSeparator(buttons);
-
-        mImportButton= new Button(buttons, SWT.PUSH);
-        mImportButton.setText(EclipseNSISPlugin.getResourceString("wizard.template.preferences.import.label")); //$NON-NLS-1$
-        mImportButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-        mImportButton.addListener(SWT.Selection, new Listener() {
-            public void handleEvent(Event e) {
-                import_();
-            }
-        });
-        
-        mExportButton= new Button(buttons, SWT.PUSH);
-        mExportButton.setText(EclipseNSISPlugin.getResourceString("wizard.template.preferences.export.label")); //$NON-NLS-1$
-        mExportButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-        mExportButton.addListener(SWT.Selection, new Listener() {
-            public void handleEvent(Event e) {
-                export();
-            }
-        });
-
-        Label label= new Label(parent, SWT.NONE);
-        label.setText(EclipseNSISPlugin.getResourceString("wizard.template.description.label")); //$NON-NLS-1$
-        data= new GridData();
-        data.horizontalSpan= 2;
-        label.setLayoutData(data);
-        
-        mDescriptionText = new StyledText(parent,SWT.BORDER|SWT.MULTI|SWT.READ_ONLY|SWT.WRAP);
-        mDescriptionText.setBackground(getShell().getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
-        mDescriptionText.setCursor(null);
-        mDescriptionText.setCaret(null);
-        data= new GridData(SWT.FILL, SWT.FILL, true, true);
-        data.horizontalSpan= 2;
-        data.heightHint= convertHeightInCharsToPixels(5);
-        mDescriptionText.setLayoutData(data);
-
-        mTableViewer.setInput(mTemplateManager);
-        mTableViewer.setAllChecked(false);
-        mTableViewer.setCheckedElements(getEnabledTemplates());     
-
-        updateButtons();
-        table.addControlListener(new TableResizer());
-        
-        Dialog.applyDialogFont(parent);     
-        return parent;
+        return mTemplateSettings;
     }
 
     /* (non-Javadoc)
@@ -267,287 +111,22 @@ public class NSISWizardTemplatePreferencePage extends PreferencePage implements 
     {
     }
     
-    private NSISWizardTemplateReaderWriter getReaderWriter()
-    {
-        if(mReaderWriter == null) {
-            synchronized(this) {
-                if(mReaderWriter == null) {
-                    mReaderWriter = new NSISWizardTemplateReaderWriter();
-                }
-            }
-        }
-        
-        return mReaderWriter;
-    }
-
-    /**
-     * Creates a separator between buttons
-     * @param parent
-     * @return
-     */
-    private Label createSeparator(Composite parent) 
-    {
-        Label separator= new Label(parent, SWT.NONE);
-        separator.setVisible(false);
-        GridData gd= new GridData(SWT.FILL, SWT.BEGINNING, false, false);
-        gd.heightHint= 4;
-        separator.setLayoutData(gd);
-        return separator;
-    }
-
-    private NSISWizardTemplate[] getEnabledTemplates() 
-    {
-        List enabled= new ArrayList();
-        Collection coll = mTemplateManager.getTemplates();
-        for (Iterator iter = coll.iterator(); iter.hasNext(); ) {
-            NSISWizardTemplate template = (NSISWizardTemplate)iter.next();
-            if (template.isEnabled() && !template.isDeleted()) {
-                enabled.add(template);
-            }
-        }
-        return (NSISWizardTemplate[]) enabled.toArray(new NSISWizardTemplate[enabled.size()]);
-    }
-    
-    private void doSelectionChanged() 
-    {      
-        updateViewerInput();
-        updateButtons();
-    }
-    
-    /**
-     * Updates the description.
-     */
-    protected void updateViewerInput() 
-    {
-        IStructuredSelection selection= (IStructuredSelection) mTableViewer.getSelection();
-
-        if (selection.size() == 1) {
-            NSISWizardTemplate template= (NSISWizardTemplate) selection.getFirstElement();
-            mDescriptionText.setText(template.getDescription());
-        } 
-        else {        
-            mDescriptionText.setText(""); //$NON-NLS-1$
-        }
-    }
-
-    /**
-     * Updates the buttons.
-     */
-    protected void updateButtons() 
-    {
-        IStructuredSelection selection= (IStructuredSelection) mTableViewer.getSelection();
-        int selectionCount= selection.size();
-        int itemCount= mTableViewer.getTable().getItemCount();
-        boolean canRestore= mTemplateManager.canRestore();
-        boolean canRevert= false;
-        for (Iterator it= selection.iterator(); it.hasNext();) {
-            if(mTemplateManager.canRevert((NSISWizardTemplate)it.next())) {
-                canRevert= true;
-                break;
-            }
-        }
-        
-        mEditButton.setEnabled(selectionCount == 1);
-        mExportButton.setEnabled(selectionCount > 0);
-        mRemoveButton.setEnabled(selectionCount > 0 && selectionCount <= itemCount);
-        mRestoreButton.setEnabled(canRestore);
-        mRevertButton.setEnabled(canRevert);
-    }
-    
-    private NSISTemplateWizardDialog createWizardDialog(final NSISWizardTemplate template)
-    {
-        final NSISTemplateWizardDialog[] wizardDialog = new NSISTemplateWizardDialog[1];
-        BusyIndicator.showWhile(getShell().getDisplay(),new Runnable() {
-            public void run()
-            {
-                wizardDialog[0] = new NSISTemplateWizardDialog(getShell(),new NSISTemplateWizard(template));
-                wizardDialog[0].create();
-            }
-        });
-        return wizardDialog[0];
-    }
-    
-    private void add() 
-    {
-        NSISWizardTemplate template = new NSISWizardTemplate(""); //$NON-NLS-1$
-        Dialog dialog= createWizardDialog(template);
-        if (dialog.open() != Window.CANCEL) {
-            mTemplateManager.addTemplate(template);
-            mTableViewer.refresh(true);
-            mTableViewer.setChecked(template, template.isEnabled());
-            mTableViewer.setSelection(new StructuredSelection(template));           
-        }
-    }
-
-    private void edit() 
-    {
-        IStructuredSelection selection= (IStructuredSelection) mTableViewer.getSelection();
-
-        Object[] objects= selection.toArray();      
-        if ((objects == null) || (objects.length != 1)) {
-            return;
-        }
-        
-        NSISWizardTemplate data= (NSISWizardTemplate)selection.getFirstElement();
-        edit(data);
-    }
-
-    private void edit(final NSISWizardTemplate oldTemplate) 
-    {
-        NSISWizardTemplate newTemplate;
-        try {
-            newTemplate = (NSISWizardTemplate)oldTemplate.clone();
-            Dialog dialog= createWizardDialog(newTemplate);
-            if (dialog.open() == Window.OK) {
-                mTemplateManager.updateTemplate(oldTemplate, newTemplate);
-                mTableViewer.refresh(true);
-                doSelectionChanged();
-                mTableViewer.setChecked(newTemplate, newTemplate.isEnabled());
-                mTableViewer.setSelection(new StructuredSelection(newTemplate));           
-            }
-        }
-        catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void import_() 
-    {
-        FileDialog dialog= new FileDialog(getShell());
-        dialog.setText(EclipseNSISPlugin.getResourceString("wizard.template.preferences.import.title")); //$NON-NLS-1$
-        dialog.setFilterExtensions(new String[] {EclipseNSISPlugin.getResourceString("wizard.template.preferences.import.extension")}); //$NON-NLS-1$
-        String path= dialog.open();
-        
-        if (path == null) {
-            return;
-        }
-        
-        try {
-            File file= new File(path);
-            if (file.exists()) {
-                InputStream input= new BufferedInputStream(new FileInputStream(file));
-                Collection coll = getReaderWriter().import_(input);
-                input.close();
-                if(!Common.isEmptyCollection(coll)) {
-                    for (Iterator iter=coll.iterator(); iter.hasNext(); ) {
-                        mTemplateManager.addTemplate((NSISWizardTemplate)iter.next());
-                    }
-                    
-                    mTableViewer.refresh();
-                    mTableViewer.setAllChecked(false);
-                    mTableViewer.setCheckedElements(getEnabledTemplates());
-                }
-            }
-        } 
-        catch (Exception e) {
-            Common.openError(getShell(), e.getLocalizedMessage());
-        }
-    }
-    
-    private void export() 
-    {
-        IStructuredSelection selection= (IStructuredSelection) mTableViewer.getSelection();
-        Collection templates= selection.toList();
-        FileDialog dialog= new FileDialog(getShell(), SWT.SAVE);
-        dialog.setText(EclipseNSISPlugin.getResourceString("wizard.template.preferences.export.title")); //$NON-NLS-1$
-        dialog.setFilterExtensions(new String[] {EclipseNSISPlugin.getResourceString("wizard.template.preferences.import.extension")}); //$NON-NLS-1$
-        dialog.setFileName(EclipseNSISPlugin.getResourceString("wizard.template.preferences.export.filename")); //$NON-NLS-1$
-        String path= dialog.open();
-        
-        if (path == null) {
-            return;
-        }
-        
-        File file= new File(path);      
-
-        if (!file.exists() || Common.openConfirm(getShell(),EclipseNSISPlugin.getFormattedString("wizard.template.preferences.export.save.confirm",new Object[]{file.getAbsolutePath()}))) { //$NON-NLS-1$
-            OutputStream os = null;
-            try {
-                os = new BufferedOutputStream(new FileOutputStream(file));
-                getReaderWriter().export(templates, os);
-            } 
-            catch (Exception e) {
-                Common.openError(getShell(),e.getLocalizedMessage());
-            }
-            finally {
-                if(os != null) {
-                    try {
-                        os.close();
-                    }
-                    catch (IOException e1) {
-                        e1.printStackTrace();
-                    }
-                }
-            }
-        }
-    }
-
-    private void remove() 
-    {
-        IStructuredSelection selection= (IStructuredSelection) mTableViewer.getSelection();
-
-        if(!selection.isEmpty()) {
-            Iterator elements= selection.iterator();
-            while (elements.hasNext()) {
-                NSISWizardTemplate template= (NSISWizardTemplate) elements.next();
-                mTemplateManager.removeTemplate(template);
-            }
-    
-            mTableViewer.refresh(true);
-        }
-    }
-    
-    private void restoreDeleted() 
-    {
-        mTemplateManager.restore();
-        mTableViewer.refresh(true);
-        mTableViewer.setCheckedElements(getEnabledTemplates());
-        updateButtons();
-    }
-    
-    private void revert() 
-    {
-        IStructuredSelection selection= (IStructuredSelection) mTableViewer.getSelection();
-
-        if(!selection.isEmpty()) {
-            ArrayList list = new ArrayList();
-            for (Iterator iter= selection.iterator(); iter.hasNext(); ) {
-                NSISWizardTemplate temp = mTemplateManager.revert((NSISWizardTemplate) iter.next());
-                if(temp != null) {
-                    list.add(temp);
-                }
-            }
-    
-            mTableViewer.refresh(true);
-            mTableViewer.setSelection(new StructuredSelection(list));
-            doSelectionChanged();
-            mTableViewer.setCheckedElements(getEnabledTemplates());
-            mTableViewer.getTable().setFocus();
-        }
-    }
-    
     /*
      * @see PreferencePage#performDefaults()
      */
-    protected void performDefaults() {
-        mTemplateManager.resetToDefaults();
-        mTableViewer.refresh(true);
-        mTableViewer.setAllChecked(false);
-        mTableViewer.setCheckedElements(getEnabledTemplates());     
+    protected void performDefaults() 
+    {
+        mTemplateSettings.performDefaults();
     }
 
     /*
      * @see PreferencePage#performOk()
      */ 
-    public boolean performOk() {
-        try {
-            mTemplateManager.save();
-        } 
-        catch (IOException e) {
-            Common.openError(getShell(),e.getLocalizedMessage());
-            return false;
+    public boolean performOk() 
+    {
+        if(mTemplateSettings.performOk()) {
+            return super.performOk();
         }
-
-        return super.performOk();
+        return false;
     }   
 }

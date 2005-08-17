@@ -16,4 +16,5 @@ Require-Bundle: org.eclipse.core.runtime,
 Eclipse-AutoStart: true
 Export-Package: net.sf.eclipsensis.utilities,
  net.sf.eclipsensis.utilities.dialogs,
+ net.sf.eclipsensis.utilities.job,
  net.sf.eclipsensis.utilities.util

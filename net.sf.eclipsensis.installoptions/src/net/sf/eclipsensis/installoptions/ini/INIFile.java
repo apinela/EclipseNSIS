@@ -9,9 +9,11 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.ini;
 
+import java.io.*;
 import java.util.*;
 import java.util.regex.Matcher;
 
+import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
 import net.sf.eclipsensis.util.Common;
@@ -104,7 +106,7 @@ public class INIFile implements IDocumentListener, IINIContainer
         return (INISection[])list.toArray(new INISection[0]);
     }
     
-    private INIComment parseComment(String text)
+    private static INIComment parseComment(String text)
     {
         if(text.startsWith(";")) { //$NON-NLS-1$
             return new INIComment();
@@ -112,7 +114,7 @@ public class INIFile implements IDocumentListener, IINIContainer
         return null;
     }
     
-    private INISection parseSection(String text)
+    private static INISection parseSection(String text)
     {
         if(text.startsWith("[")) { //$NON-NLS-1$
             int m = text.indexOf('[');
@@ -128,7 +130,7 @@ public class INIFile implements IDocumentListener, IINIContainer
         return null;
     }
     
-    private INIKeyValue parseKeyValue(String text)
+    private static INIKeyValue parseKeyValue(String text)
     {
         if(text.length() > 0) {
             int n = text.indexOf('=');
@@ -179,8 +181,8 @@ public class INIFile implements IDocumentListener, IINIContainer
         doc.addDocumentListener(this);
         doc.addPositionUpdater(mPositionUpdater);
         int lineCount = doc.getNumberOfLines();
-        List lines = parseLines(doc,0,lineCount-1);
         IINIContainer container = this;
+        List lines = parseLines(doc,0,lineCount-1);
         for(Iterator iter=lines.iterator(); iter.hasNext();) {
             INILine line = (INILine)iter.next();
             mLines.add(line);
@@ -194,6 +196,70 @@ public class INIFile implements IDocumentListener, IINIContainer
         }
         validate();
         notifyListeners(INIFILE_CONNECTED);
+    }
+
+    public void save(File file)
+    {
+        BufferedWriter writer = null;
+        try {
+            writer = new BufferedWriter(new FileWriter(file));
+            writer.write(toString());
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        finally {
+            Common.closeIO(writer);
+        }
+    }
+
+    public static INIFile load(File file)
+    {
+        try {
+            return load(new FileReader(file));
+        }
+        catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    
+    public static INIFile load(Reader r)
+    {
+        INIFile iniFile = new INIFile();
+        BufferedReader br = null;
+        try {
+            if(r instanceof BufferedReader) {
+                br = (BufferedReader)r;
+            }
+            else {
+                br = new BufferedReader(r);
+            }
+            String text = br.readLine();
+            IINIContainer container = iniFile;
+            while(text != null) {
+                INILine line = parse(text.trim());
+                line.setText(text);
+                line.setDelimiter(INSISConstants.LINE_SEPARATOR);
+                iniFile.mLines.add(line);
+                if(line instanceof IINIContainer) {
+                    iniFile.addChild(line);
+                    container = (IINIContainer)line;
+                }
+                else {
+                    container.addChild(line);
+                }
+                text = br.readLine();
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        finally {
+            Common.closeIO(br);
+        }
+        
+        return iniFile;
     }
     
     private List parseLines(IDocument doc, int startLine, int endLine)
@@ -224,7 +290,8 @@ public class INIFile implements IDocumentListener, IINIContainer
         }
         return lines;
     }
-    private INILine parse(String text)
+    
+    private static INILine parse(String text)
     {
         INILine line;
         line = parseComment(text);

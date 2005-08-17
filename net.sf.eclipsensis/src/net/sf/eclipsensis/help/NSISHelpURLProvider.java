@@ -43,6 +43,7 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
     private String mCHMStartPage = null;
     private Map mHelpURLs = null;
     private Map mCHMHelpURLs = null;
+    private Map mNSISContribPaths = new LinkedHashMap();
     
     private ResourceBundle mBundle;
     
@@ -55,6 +56,7 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
         catch (MissingResourceException x) {
             mBundle = null;
         }
+        loadNSISContribPaths();
         loadHelpURLs();
         NSISKeywords.INSTANCE.addKeywordsListener(this);
         INSTANCE = this;
@@ -66,6 +68,32 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
         INSTANCE = null;
     }
     
+    private void loadNSISContribPaths()
+    {
+        Map temp = new HashMap();
+        List list = new ArrayList();
+        for(Enumeration enum = mBundle.getKeys(); enum.hasMoreElements(); ) {
+            String key = (String)enum.nextElement();
+            if(key.startsWith("nsis.contrib.path")) {
+                String[] tokens = Common.tokenize(key,'#');
+                Version v;
+                if(tokens.length > 1) {
+                    v = new Version(tokens[1]);
+                }
+                else {
+                    v = NSISValidator.MINIMUM_NSIS_VERSION;
+                }
+                temp.put(v, key);
+                list.add(v);
+            }
+        }
+        Collections.sort(list);
+        for(Iterator iter=list.iterator(); iter.hasNext(); ) {
+            Version v = (Version)iter.next();
+            mNSISContribPaths.put(v, (String)mBundle.getString((String)temp.get(v)));
+        }
+    }
+
     private void loadHelpURLs()
     {
         mHelpURLs = null;
@@ -309,5 +337,21 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
         if(!NSISHTMLHelp.showHelp(url)) {
             WinAPI.HtmlHelp(WinAPI.GetDesktopWindow(),url,WinAPI.HH_DISPLAY_TOPIC,0);
         }
+    }
+    
+    public String getNSISContribPath()
+    {
+        Version nsisVersion = NSISPreferences.INSTANCE.getNSISVersion();
+        String nsisContribPath = null;
+        for(Iterator iter=mNSISContribPaths.keySet().iterator(); iter.hasNext(); ) {
+            Version v = (Version)iter.next();
+            if(nsisVersion.compareTo(v) >= 0) {
+                nsisContribPath = (String)mNSISContribPaths.get(v);
+            }
+            else {
+                break;
+            }
+        }
+        return nsisContribPath;
     }
 }

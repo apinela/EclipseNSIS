@@ -14,6 +14,11 @@ function redirectEclipse(url)
 
 function redirectNSIS(url)
 {
-    document.location = "http://nsis.sourceforge.net/Docs/" + prependSlash(url);
+    document.location = "http://nsis.sourceforge.net/Docs" + prependSlash(url);
+}
+
+function redirectNSISContrib(url)
+{
+    redirectNSIS(url);
 }
 //-->

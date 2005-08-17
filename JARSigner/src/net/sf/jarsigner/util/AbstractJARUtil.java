@@ -16,8 +16,7 @@ import net.sf.eclipsensis.utilities.util.AbstractToolsUtility;
 import net.sf.jarsigner.JARSignerPlugin;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Plugin;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.launching.IVMInstall;
 
 public abstract class AbstractJARUtil extends AbstractToolsUtility 
@@ -41,10 +40,10 @@ public abstract class AbstractJARUtil extends AbstractToolsUtility
         return mArgsFormat.format(new String[]{maybeQuote(((IFile)target).getLocation().toOSString())});
     }
 
-    public void run(IProgressMonitor monitor)
+    public IStatus run(IProgressMonitor monitor)
     {
         mArgsFormat = createArgsFormat();
-        super.run(monitor);
+        return super.run(monitor);
     }
 
     protected Plugin getPlugin()

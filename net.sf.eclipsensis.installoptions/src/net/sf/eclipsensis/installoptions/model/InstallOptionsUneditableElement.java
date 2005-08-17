@@ -42,7 +42,7 @@ public abstract class InstallOptionsUneditableElement extends InstallOptionsWidg
         mText = getDefaultText(); //$NON-NLS-1$
     }
 
-    public Object clone() throws CloneNotSupportedException
+    public Object clone()
     {
         InstallOptionsUneditableElement clone = (InstallOptionsUneditableElement)super.clone();
         clone.setText(getText());

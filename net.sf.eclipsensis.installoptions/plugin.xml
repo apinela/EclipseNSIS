@@ -59,6 +59,17 @@
       </wizard>
    </extension>
    <extension
+         id="InstallOptionsHelpProducer"
+         name="%help.name"
+         point="org.eclipse.help.contentProducer">
+       <contentProducer>
+          <producer class="net.sf.eclipsensis.help.NSISHelpProducer">
+             <parameter name="pluginId" value="%plugin.id"/>
+             <parameter name="javascriptOnly" value="true"/>
+          </producer>
+       </contentProducer>
+   </extension>
+   <extension
         id="InstallOptionsDocumentSetupParticipant"
         name="%document.setup.participant.name"
         point="org.eclipse.core.filebuffers.documentSetup">

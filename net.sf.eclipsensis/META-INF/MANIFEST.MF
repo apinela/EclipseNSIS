@@ -6,17 +6,18 @@ Bundle-Version: 0.9.2
 Bundle-Activator: net.sf.eclipsensis.EclipseNSISPlugin
 Bundle-Vendor: Sunil Kamath (IcemanK)
 Bundle-Localization: plugin
-Require-Bundle: org.eclipse.core.filebuffers;bundle-version="3.1",
- org.eclipse.core.resources;bundle-version="3.1",
- org.eclipse.core.runtime;bundle-version="3.1",
- org.eclipse.help;bundle-version="3.1",
- org.eclipse.jface.text;bundle-version="3.1",
- org.eclipse.ui;bundle-version="3.1",
- org.eclipse.ui.editors;bundle-version="3.1",
- org.eclipse.ui.ide;bundle-version="3.1",
- org.eclipse.ui.views;bundle-version="3.1",
- org.eclipse.ui.workbench.texteditor;bundle-version="3.1",
- org.eclipse.help.ui;bundle-version="3.1"
+Require-Bundle: org.eclipse.core.filebuffers;bundle-version="3.1.0",
+ org.eclipse.core.resources;bundle-version="3.1.0",
+ org.eclipse.core.runtime;bundle-version="3.1.0",
+ org.eclipse.help;bundle-version="3.1.0",
+ org.eclipse.jface.text;bundle-version="3.1.0",
+ org.eclipse.ui;bundle-version="3.1.0",
+ org.eclipse.ui.editors;bundle-version="3.1.0",
+ org.eclipse.ui.ide;bundle-version="3.1.0",
+ org.eclipse.ui.views;bundle-version="3.1.0",
+ org.eclipse.ui.workbench.texteditor;bundle-version="3.1.0",
+ org.eclipse.help.ui;bundle-version="3.1.0",
+ org.eclipse.help.base
 Eclipse-AutoStart: true
 Export-Package: net.sf.eclipsensis,
  net.sf.eclipsensis.actions,
@@ -35,6 +36,7 @@ Export-Package: net.sf.eclipsensis,
  net.sf.eclipsensis.makensis,
  net.sf.eclipsensis.script,
  net.sf.eclipsensis.settings,
+ net.sf.eclipsensis.template,
  net.sf.eclipsensis.util,
  net.sf.eclipsensis.viewer,
  net.sf.eclipsensis.wizard,

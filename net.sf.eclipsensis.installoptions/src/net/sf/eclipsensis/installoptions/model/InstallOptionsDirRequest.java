@@ -38,7 +38,7 @@ public class InstallOptionsDirRequest extends InstallOptionsPathRequest
         return InstallOptionsModel.TYPE_DIRREQUEST;
     }
 
-    public Object clone() throws CloneNotSupportedException
+    public Object clone()
     {
         InstallOptionsDirRequest clone = (InstallOptionsDirRequest)super.clone();
         clone.setRoot(getRoot());

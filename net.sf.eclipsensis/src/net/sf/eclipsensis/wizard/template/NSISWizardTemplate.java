@@ -9,24 +9,42 @@
  *******************************************************************************/
 package net.sf.eclipsensis.wizard.template;
 
-import java.io.Serializable;
-
+import net.sf.eclipsensis.template.AbstractTemplate;
 import net.sf.eclipsensis.wizard.settings.NSISWizardSettings;
 
-public class NSISWizardTemplate implements Serializable, Cloneable
+public class NSISWizardTemplate extends AbstractTemplate
 {
-	private static final long serialVersionUID = 5904505162934330711L;
+    private static final long serialVersionUID = 5904505162934330711L;
+
+    private NSISWizardSettings mSettings = null;
     
-    public static final int TYPE_DEFAULT = 0;
-    public static final int TYPE_CUSTOM = 1;
-    public static final int TYPE_USER = 2;
-    
+    //The following four are dummy declarations for handling serialization issues.
+    //TODO Remove in 0.9.3
     private String mName = null;
     private String mDescription = null;
     private boolean mEnabled = true;
     private boolean mDeleted = false;
     private int mType = TYPE_DEFAULT;
-    private NSISWizardSettings mSettings = null;
+
+    //The following method is a hack for handling serialization issues.
+    //TODO Remove in 0.9.3
+    boolean syncUp()
+    {
+        if(mName != null) {
+            super.setName(mName);
+            mName = null;
+            super.setDescription(mDescription);
+            mDescription = null;
+            super.setEnabled(mEnabled);
+            mEnabled = true;
+            super.setDeleted(mDeleted);
+            mDeleted = false;
+            super.setType(mType);
+            mType = 0;
+            return true;
+        }
+        return false;
+    }
 
     NSISWizardTemplate()
     {
@@ -37,7 +55,7 @@ public class NSISWizardTemplate implements Serializable, Cloneable
      */
     public NSISWizardTemplate(String name)
     {
-        this(name,""); //$NON-NLS-1$
+        super(name); //$NON-NLS-1$
     }
     
     /**
@@ -46,74 +64,22 @@ public class NSISWizardTemplate implements Serializable, Cloneable
      */
     public NSISWizardTemplate(String name, String description)
     {
-        this();
-        mName = name;
-        mDescription = (description==null?"":description); //$NON-NLS-1$
-        mType = TYPE_USER;
+        super(name, description);
     }
     
-    public Object clone() throws CloneNotSupportedException
+    public Object clone()
     {
         NSISWizardTemplate template = (NSISWizardTemplate)super.clone();
-        template.mSettings = (mSettings==null?null:(NSISWizardSettings)mSettings.clone());
+        try {
+            template.mSettings = (mSettings==null?null:(NSISWizardSettings)mSettings.clone());
+        }
+        catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+            template.mSettings = new NSISWizardSettings();
+        }
         return template;
     }
-    
-    /**
-     * @return Returns the description.
-     */
-    public String getDescription()
-    {
-        return mDescription;
-    }
-    
-    /**
-     * @return Returns the name.
-     */
-    public String getName()
-    {
-        return mName;
-    }
 
-    /**
-     * @return Returns the available.
-     */
-    public boolean isEnabled()
-    {
-        return mEnabled;
-    }
-
-    /**
-     * @param enabled The available to set.
-     */
-    public void setEnabled(boolean enabled)
-    {
-        mEnabled = enabled;
-    }
-
-    /**
-     * @param description The description to set.
-     */
-    public void setDescription(String description)
-    {
-        mDescription = description;
-    }
-
-    /**
-     * @param name The name to set.
-     */
-    public void setName(String name)
-    {
-        mName = name;
-    }
-
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
-    public String toString()
-    {
-        return getName();
-    }
     /**
      * @return Returns the settings.
      */
@@ -137,53 +103,4 @@ public class NSISWizardTemplate implements Serializable, Cloneable
         mSettings = settings;
     }
     
-    /* (non-Javadoc)
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
-    public boolean equals(Object obj)
-    {
-        if(obj instanceof NSISWizardTemplate) {
-            NSISWizardTemplate template = (NSISWizardTemplate)obj;
-            return mName.equals(template.mName) && mType == template.mType;
-        }
-        return false;
-    }
-    
-    /* (non-Javadoc)
-     * @see java.lang.Object#hashCode()
-     */
-    public int hashCode()
-    {
-        return mName.hashCode()+mType;
-    }
-    
-    /**
-     * @return Returns the deleted.
-     */
-    public boolean isDeleted()
-    {
-        return mDeleted;
-    }
-    /**
-     * @param deleted The deleted to set.
-     */
-    void setDeleted(boolean deleted)
-    {
-        mDeleted = deleted;
-    }
-    /**
-     * @return Returns the type.
-     */
-    public int getType()
-    {
-        return mType;
-    }
-    
-    /**
-     * @param type The type to set.
-     */
-    public void setType(int type)
-    {
-        mType = type;
-    }
 }

@@ -14,6 +14,8 @@ import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import net.sf.eclipsensis.utilities.job.JobScheduler;
+
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -28,6 +30,7 @@ public class UtilitiesPlugin extends AbstractUIPlugin
 	private static UtilitiesPlugin cPlugin;
     private ResourceBundle mResourceBundle;
     private Image mShellImage;
+    private JobScheduler mJobScheduler = new JobScheduler();
 	
 	/**
 	 * The constructor.
@@ -78,6 +81,7 @@ public class UtilitiesPlugin extends AbstractUIPlugin
     public void start(BundleContext context) throws Exception
     {
         super.start(context);
+        mJobScheduler.start();
         URL entry = getBundle().getEntry(getResourceString("utilities.icon"));
         getImageRegistry().put("utilities.icon", ImageDescriptor.createFromURL(entry));
         mShellImage = getImageRegistry().get("utilities.icon");
@@ -88,8 +92,14 @@ public class UtilitiesPlugin extends AbstractUIPlugin
         return mShellImage;
     }
     
+    public JobScheduler getJobScheduler()
+    {
+        return mJobScheduler;
+    }
+    
     public void stop(BundleContext context) throws Exception
     {
+        mJobScheduler.stop();
         mShellImage = null;
         super.stop(context);
     }

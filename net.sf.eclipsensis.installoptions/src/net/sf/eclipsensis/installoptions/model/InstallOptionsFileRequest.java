@@ -91,7 +91,7 @@ public class InstallOptionsFileRequest extends InstallOptionsPathRequest
         return InstallOptionsModel.TYPE_FILEREQUEST;
     }
 
-    public Object clone() throws CloneNotSupportedException
+    public Object clone()
     {
         InstallOptionsFileRequest clone = (InstallOptionsFileRequest)super.clone();
         List list = new ArrayList();

@@ -1,5 +1,4 @@
 <!--
-<!--
 //###############################################################################
 //# Copyright (c) 2004, 2005 Sunil Kamath (IcemanK).
 //# All rights reserved.
@@ -9,6 +8,27 @@
 //# Contributors:
 //# Sunil Kamath (IcemanK) - initial API and implementation
 //###############################################################################
+
+function getPrefix()
+{
+    var prefix;
+    var parts;
+    var path;
+    
+    path = location.pathname;
+    if(path.charAt(0) == '/') {
+        path = path.substr(1);
+    }
+    
+    parts = path.split('/');
+    if(parts.length >= 2) {
+        prefix = '/'+parts[0]+'/'+parts[1];
+    }
+    else {
+        prefix = '/help/topic';
+    }
+    return prefix;    
+}
 
 function prependSlash(url)
 {
@@ -20,11 +40,25 @@ function prependSlash(url)
 
 function redirectEclipse(url)
 {
-    document.location = "/help/topic" + prependSlash(url);
+    document.location = getPrefix() + prependSlash(url);
+}
+
+function _redirectNSIS(path, url)
+{
+    document.location = getPrefix() + prependSlash(path) + prependSlash(url);
 }
 
 function redirectNSIS(url)
 {
-    document.location = "/help/topic/net.sf.eclipsensis/help/NSIS/Docs"+prependSlash(url);
+    _redirectNSIS("/net.sf.eclipsensis/help/NSIS/Docs", url);
+}
+
+function redirectNSISContrib(url)
+{
+    if(nsisContribPath != null) {
+        _redirectNSIS(nsisContribPath, url);
+        return;
+    }
+    _redirectNSIS("/net.sf.eclipsensis/help/NSIS/Contrib", url);
 }
 //-->
