@@ -70,7 +70,7 @@ public interface IInstallOptionsConstants
     public static final String PREFERENCE_GRID_STYLE = "GridStyle"; //$NON-NLS-1$
     public static final String PREFERENCE_CHECK_EDITOR_ASSOCIATION = "CheckEditorAssociation"; //$NON-NLS-1$
     public static final String PREFERENCE_PALETTE_VIEWER_PREFS_INIT = "PaletteViewerPrefsInit"; //$NON-NLS-1$
-    public static final String PREFERENCE_UNLOAD_CREATION_TOOL_WHEN_FINISHED = "UnloadToolWhenFinished"; //$NON-NLS-1$
+    public static final String PREFERENCE_UNLOAD_CREATION_TOOL_WHEN_FINISHED = "UnloadCreationToolWhenFinished"; //$NON-NLS-1$
 
     public static final String PREFERENCE_SYNTAX_STYLES = "SyntaxStyles"; //$NON-NLS-1$
     public static final String SECTION_STYLE = "SectionStyle"; //$NON-NLS-1$

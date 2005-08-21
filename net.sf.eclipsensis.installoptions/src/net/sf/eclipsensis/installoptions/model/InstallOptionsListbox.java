@@ -23,13 +23,12 @@ import net.sf.eclipsensis.installoptions.properties.validators.NSISStringLengthV
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.viewer.CollectionContentProvider;
 
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -192,6 +191,7 @@ public class InstallOptionsListbox extends InstallOptionsCombobox
         private boolean mMultiSelect;
         private String mType;
         private ICellEditorValidator mValidator;
+        private TableViewer mViewer;
         
         public SelectListItemsDialog(Shell parent, List values, List selection, boolean multiSelect, String type)
         {
@@ -230,24 +230,20 @@ public class InstallOptionsListbox extends InstallOptionsCombobox
             layout.numColumns = 2;
             layout.makeColumnsEqualWidth = false;
             
-            final Table table = new Table(composite,SWT.BORDER | (mMultiSelect?SWT.MULTI:SWT.SINGLE) | SWT.FULL_SELECTION | SWT.V_SCROLL);
+            Table table = new Table(composite,SWT.BORDER | (mMultiSelect?SWT.MULTI:SWT.SINGLE) | SWT.FULL_SELECTION | SWT.V_SCROLL);
             initializeDialogUnits(table);
             GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
             data.widthHint = convertWidthInCharsToPixels(40);
             data.heightHint = convertHeightInCharsToPixels(10);
             table.setLayoutData(data);
             table.setLinesVisible(true);
-            table.addControlListener(new TableResizer());
             new TableColumn(table,SWT.LEFT);
+            table.addControlListener(new TableResizer());
             
-            final TableViewer viewer = new TableViewer(table);
-            viewer.setContentProvider(new CollectionContentProvider());
-            viewer.setLabelProvider(new LabelProvider());
-
-            viewer.setInput(mValues);
-            viewer.setSelection(new StructuredSelection(mSelection));
-
-            viewer.addSelectionChangedListener(new ISelectionChangedListener() {
+            mViewer = new TableViewer(table);
+            mViewer.setContentProvider(new CollectionContentProvider());
+            mViewer.setLabelProvider(new LabelProvider());
+            mViewer.addSelectionChangedListener(new ISelectionChangedListener() {
                 public void selectionChanged(SelectionChangedEvent event)
                 {
                     IStructuredSelection sel = (IStructuredSelection)event.getSelection();
@@ -255,9 +251,50 @@ public class InstallOptionsListbox extends InstallOptionsCombobox
                     mSelection.addAll(sel.toList());
                 }
             });
+
+            Composite buttons = new Composite(composite,SWT.NONE);
+            buttons.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false));
+            layout = new GridLayout(1,false);
+            layout.marginWidth = 0;
+            layout.marginHeight = 0;
+            buttons.setLayout(layout);
+            
+            Button selectAll = new Button(buttons,SWT.PUSH);
+            selectAll.setText(InstallOptionsPlugin.getResourceString("select.all.label")); //$NON-NLS-1$
+            selectAll.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+            selectAll.addSelectionListener(new SelectionAdapter() {
+                public void widgetSelected(SelectionEvent e)
+                {
+                    mViewer.setSelection(new StructuredSelection(mValues));
+                    mViewer.getTable().setFocus();
+                }
+            });
+            selectAll.setEnabled(mMultiSelect);
+
+            Button deselectAll = new Button(buttons,SWT.PUSH);
+            deselectAll.setText(InstallOptionsPlugin.getResourceString("deselect.all.label")); //$NON-NLS-1$
+            deselectAll.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+            deselectAll.addSelectionListener(new SelectionAdapter() {
+                public void widgetSelected(SelectionEvent e)
+                {
+                    mViewer.setSelection(StructuredSelection.EMPTY);
+                    mViewer.getTable().setFocus();
+                }
+            });
+
+            mViewer.setInput(mValues);
+
             return composite;
         }
-        
+
+        public void create()
+        {
+            super.create();
+            // Set the initial selection here because of Windows bug which creates blank rows 
+            // if the selection is set in createDialogArea
+            mViewer.setSelection(new StructuredSelection(mSelection));
+        }
+
         protected void okPressed()
         {
             ICellEditorValidator validator = getValidator();

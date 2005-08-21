@@ -18,7 +18,7 @@ import org.eclipse.ui.PlatformUI;
 
 public class EditTemplateAction extends Action
 {
-    public static final String ID = "net.sf.eclipsensis.installoptions.edit_template";
+    public static final String ID = "net.sf.eclipsensis.installoptions.edit_template"; //$NON-NLS-1$
     
     private InstallOptionsTemplate mTemplate;
     /**
@@ -27,7 +27,7 @@ public class EditTemplateAction extends Action
     public EditTemplateAction(InstallOptionsTemplate template)
     {
         super();
-        setText(InstallOptionsPlugin.getResourceString("edit.template.action.label"));
+        setText(InstallOptionsPlugin.getResourceString("edit.template.action.label")); //$NON-NLS-1$
         setToolTipText(InstallOptionsPlugin.getResourceString("edit.template.action.tooltip")); //$NON-NLS-1$
         setId(ID);
         mTemplate = template;

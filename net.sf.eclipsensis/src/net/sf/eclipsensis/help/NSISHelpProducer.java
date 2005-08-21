@@ -35,16 +35,16 @@ public class NSISHelpProducer implements IExecutableExtension, IHelpContentProdu
         if(pluginID.equals(mPluginId)) {
             if(href.equals(NSISCONTRIB_JS_LOCATION)) {
                 String nsisContribPath = NSISHelpURLProvider.INSTANCE.getNSISContribPath();
-                StringBuffer buf = new StringBuffer("<!--").append(LINE_SEPARATOR);
-                buf.append("var nsisContribPath=");
+                StringBuffer buf = new StringBuffer("<!--").append(LINE_SEPARATOR); //$NON-NLS-1$
+                buf.append("var nsisContribPath="); //$NON-NLS-1$
                 if(nsisContribPath == null) {
-                    buf.append("null");
+                    buf.append("null"); //$NON-NLS-1$
                 }
                 else {
-                    buf.append("\"").append(nsisContribPath).append("\"");
+                    buf.append("\"").append(nsisContribPath).append("\""); //$NON-NLS-1$ //$NON-NLS-2$
                 }
-                buf.append(";").append(LINE_SEPARATOR);
-                buf.append("//-->").append(LINE_SEPARATOR);
+                buf.append(";").append(LINE_SEPARATOR); //$NON-NLS-1$
+                buf.append("//-->").append(LINE_SEPARATOR); //$NON-NLS-1$
                 return new ByteArrayInputStream(buf.toString().getBytes());
             }
             else if(href.startsWith(NSIS_HELP_PREFIX) && !mJavascriptOnly) {
@@ -96,14 +96,14 @@ public class NSISHelpProducer implements IExecutableExtension, IHelpContentProdu
     {
         if(data instanceof Map) {
             Map map = (Map)data;
-            if(map.containsKey("pluginId")) {
-                mPluginId = (String)map.get("pluginId");
+            if(map.containsKey("pluginId")) { //$NON-NLS-1$
+                mPluginId = (String)map.get("pluginId"); //$NON-NLS-1$
             }
             else {
                 mPluginId = PLUGIN_ID;
             }
-            if(map.containsKey("javascriptOnly")) {
-                mJavascriptOnly = Boolean.valueOf((String)map.get("javascriptOnly")).booleanValue();
+            if(map.containsKey("javascriptOnly")) { //$NON-NLS-1$
+                mJavascriptOnly = Boolean.valueOf((String)map.get("javascriptOnly")).booleanValue(); //$NON-NLS-1$
             }
         }
     }

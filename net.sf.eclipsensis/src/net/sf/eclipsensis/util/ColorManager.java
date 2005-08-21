@@ -53,6 +53,17 @@ public class ColorManager
         }
         return cColorRegistry;
     }
+    
+    public static Color getSystemColor(int colorId)
+    {
+        int pixel = WinAPI.GetSysColor(colorId);
+        int red = pixel % 256;
+        pixel /= 256;
+        int green = pixel % 256;
+        pixel /= 256;
+        int blue = pixel % 256;
+        return getColor(new RGB(red,green,blue));
+    }
 
     /**
      * Return the Color that is stored in the Color table as rgb.

@@ -13,10 +13,9 @@ import net.sf.eclipsensis.installoptions.edit.InstallOptionsEditDomain;
 
 import org.eclipse.gef.EditDomain;
 import org.eclipse.gef.EditPartViewer;
-import org.eclipse.gef.dnd.SimpleObjectTransfer;
 import org.eclipse.swt.dnd.TransferData;
 
-public class InstallOptionsTreeViewerTransfer extends SimpleObjectTransfer
+public class InstallOptionsTreeViewerTransfer extends InstallOptionsObjectTransfer
 {
     public static final InstallOptionsTreeViewerTransfer INSTANCE = new InstallOptionsTreeViewerTransfer();
     private static final String[] TYPE_NAMES = new String[]{"Local Transfer"//$NON-NLS-1$

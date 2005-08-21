@@ -29,10 +29,10 @@ public class InstallOptionsTemplateTransferDropTargetListener extends TemplateTr
     /**
      * @param viewer
      */
-    public InstallOptionsTemplateTransferDropTargetListener(
-            EditPartViewer viewer)
+    public InstallOptionsTemplateTransferDropTargetListener(EditPartViewer viewer)
     {
         super(viewer);
+        setTransfer(InstallOptionsTemplateTransfer.INSTANCE);
     }
 
     protected Request createTargetRequest() 
@@ -40,6 +40,7 @@ public class InstallOptionsTemplateTransferDropTargetListener extends TemplateTr
         Request request = super.createTargetRequest();
         if(request instanceof CreateRequest) {
             CreateRequest req = (CreateRequest)request;
+            req.setFactory(getFactory(InstallOptionsTemplateTransfer.INSTANCE.getTemplate()));
             if(InstallOptionsTemplateCreationFactory.TYPE.equals(req.getNewObjectType())) {
                 req.setType(IInstallOptionsConstants.REQ_CREATE_FROM_TEMPLATE);
             }

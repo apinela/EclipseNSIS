@@ -80,6 +80,10 @@ extern "C" {
 #define net_sf_eclipsensis_util_WinAPI_LIS_NORMAL 1L
 #undef net_sf_eclipsensis_util_WinAPI_LIS_DISABLED
 #define net_sf_eclipsensis_util_WinAPI_LIS_DISABLED 4L
+#undef net_sf_eclipsensis_util_WinAPI_COLOR_GRAYTEXT
+#define net_sf_eclipsensis_util_WinAPI_COLOR_GRAYTEXT 17L
+#undef net_sf_eclipsensis_util_WinAPI_COLOR_3DHILIGHT
+#define net_sf_eclipsensis_util_WinAPI_COLOR_3DHILIGHT 20L
 /*
  * Class:     net_sf_eclipsensis_util_WinAPI
  * Method:    init
@@ -191,6 +195,14 @@ JNIEXPORT jboolean JNICALL Java_net_sf_eclipsensis_util_WinAPI_AreVisualStylesEn
  */
 JNIEXPORT void JNICALL Java_net_sf_eclipsensis_util_WinAPI_DrawWidgetThemeBackGround
   (JNIEnv *, jclass, jint, jint, jstring, jint, jint);
+
+/*
+ * Class:     net_sf_eclipsensis_util_WinAPI
+ * Method:    GetSysColor
+ * Signature: (I)I
+ */
+JNIEXPORT jint JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetSysColor
+  (JNIEnv *, jclass, jint);
 
 #ifdef __cplusplus
 }

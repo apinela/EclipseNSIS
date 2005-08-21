@@ -88,10 +88,7 @@ public class NSISTaskTagsPreferencePage extends PreferencePage implements IWorkb
         table.setLayoutData(data);
         
         table.setHeaderVisible(true);
-        table.setLinesVisible(true);        
-
-        TableLayout tableLayout= new TableLayout();
-        table.setLayout(tableLayout);
+        table.setLinesVisible(true);
 
         TableColumn[] columns = new TableColumn[2];
         columns[0] = new TableColumn(table, SWT.NONE);      

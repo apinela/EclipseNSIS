@@ -12,6 +12,7 @@ package net.sf.eclipsensis.installoptions.ini;
 import java.util.*;
 import java.util.regex.Matcher;
 
+import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsModelTypeDef;
@@ -277,4 +278,22 @@ public class INISection extends INILine implements IINIContainer
         return section;
     }
 
+    public INISection trim()
+    {
+        int n = mChildren.size();
+        for (int i=n-1; i>=0; i--) {
+            INILine line = (INILine)mChildren.get(i);
+            if(line.getClass().equals(INILine.class)) {
+                if(Common.isEmpty(line.getText())) {
+                    removeChild(line);
+                    continue;
+                }
+            }
+            if(line.getDelimiter() == null) {
+                line.setDelimiter(INSISConstants.LINE_SEPARATOR);
+            }
+            break;
+        }
+        return this;
+    }
 }

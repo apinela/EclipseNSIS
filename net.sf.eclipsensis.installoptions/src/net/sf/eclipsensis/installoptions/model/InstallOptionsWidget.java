@@ -55,7 +55,7 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
     };
 
     private static LabelProvider cFlagsLabelProvider = new ListLabelProvider();
-    private static final String MISSING_DISPLAY_NAME = InstallOptionsPlugin.getResourceString("missing.widget.display.name"); //$NON-NLS-1$
+    private static final String MISSING_DISPLAY_NAME = InstallOptionsPlugin.getResourceString("missing.outline.display.name"); //$NON-NLS-1$
 
     private InstallOptionsModelTypeDef mTypeDef;
     protected InstallOptionsDialog mParent;
@@ -274,7 +274,7 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
     public final String toString()
     {
         String displayName = getDisplayName();
-        return InstallOptionsPlugin.getFormattedString("widget.field.format", //$NON-NLS-1$
+        return InstallOptionsPlugin.getFormattedString("design.outline.display.name.format", //$NON-NLS-1$
                 new Object[]{new Integer(getIndex()+1), getType(), 
                             (Common.isEmpty(displayName)?MISSING_DISPLAY_NAME:displayName)});
     }
@@ -412,9 +412,9 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
         return cDefaultPosition.getCopy();
     }
     
-    protected String getDisplayName()
+    protected final String getDisplayName()
     {
-        return ""; //$NON-NLS-1$
+        return (String)getPropertyValue(mTypeDef.getDisplayProperty()); //$NON-NLS-1$
     }
     
     protected String getSectionName()

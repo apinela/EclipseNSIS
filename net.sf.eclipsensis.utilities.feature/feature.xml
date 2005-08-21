@@ -37,15 +37,22 @@
 
    <plugin
          id="net.sf.jarsigner"
-         download-size="36"
-         install-size="36"
+         download-size="40"
+         install-size="40"
          version="0.5.0"
          unpack="false"/>
 
    <plugin
          id="net.sf.jnigen"
-         download-size="42"
-         install-size="42"
+         download-size="34"
+         install-size="34"
+         version="0.5.0"
+         unpack="false"/>
+
+   <plugin
+         id="net.sf.eclipsensis.utilities"
+         download-size="66"
+         install-size="66"
          version="0.5.0"
          unpack="false"/>
 

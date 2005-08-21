@@ -26,18 +26,20 @@ public class InstallOptionsModelTypeDef
     private String mDescription;
     private String mLargeIcon;
     private String mSmallIcon;
+    private String mDisplayProperty;
     private Constructor mModelConstructor;
     private Constructor mEditPartConstructor;
     private Set mFlags = null;
     private Set mSettings = null;
     
-    InstallOptionsModelTypeDef(String type, String name, String description, String smallIcon, String largeIcon, String model, String part)
+    InstallOptionsModelTypeDef(String type, String name, String description, String smallIcon, String largeIcon, String displayProperty, String model, String part)
     {
         mType = type;
         mName = InstallOptionsPlugin.getResourceString(name);
         mDescription = InstallOptionsPlugin.getResourceString(description);
         mSmallIcon = InstallOptionsPlugin.getResourceString(smallIcon);
         mLargeIcon = InstallOptionsPlugin.getResourceString(largeIcon);
+        mDisplayProperty = displayProperty;
         mModelConstructor = createConstructor(model, cModelParamTypes);
         mEditPartConstructor = createConstructor(part, null);
     }
@@ -56,6 +58,11 @@ public class InstallOptionsModelTypeDef
         }
         
         return constructor;
+    }
+
+    public String getDisplayProperty()
+    {
+        return mDisplayProperty;
     }
 
     public String getSmallIcon()

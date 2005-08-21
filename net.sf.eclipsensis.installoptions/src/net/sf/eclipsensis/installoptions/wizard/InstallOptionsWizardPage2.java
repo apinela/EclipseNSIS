@@ -67,7 +67,7 @@ public class InstallOptionsWizardPage2 extends WizardNewFileCreationPage
     {
     	// inherit default container and name specification widgets
     	super.createControl(parent);
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),IInstallOptionsConstants.PLUGIN_CONTEXT_PREFIX+"installoptions_wizard_context"); //$NON-NLS-1$
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),IInstallOptionsConstants.PLUGIN_CONTEXT_PREFIX+"installoptions_wizard_context2"); //$NON-NLS-1$
         
     	Composite composite = new Composite((Composite)getControl(),SWT.NULL);
         GridLayout layout = new GridLayout(2,false);

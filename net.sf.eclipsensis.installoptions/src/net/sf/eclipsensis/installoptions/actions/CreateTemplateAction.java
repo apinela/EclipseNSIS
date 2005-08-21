@@ -23,7 +23,7 @@ import org.eclipse.ui.PlatformUI;
 
 public class CreateTemplateAction extends SelectionAction
 {
-    public static final String ID = "net.sf.eclipsensis.installoptions.create_template";
+    public static final String ID = "net.sf.eclipsensis.installoptions.create_template"; //$NON-NLS-1$
     /**
      * @param part
      */
@@ -39,10 +39,10 @@ public class CreateTemplateAction extends SelectionAction
     protected void init() 
     {
         super.init();
-        setText(InstallOptionsPlugin.getResourceString("create.template.action.label"));
+        setText(InstallOptionsPlugin.getResourceString("create.template.action.label")); //$NON-NLS-1$
         setToolTipText(InstallOptionsPlugin.getResourceString("create.template.action.tooltip")); //$NON-NLS-1$
         setId(ID);
-        ImageDescriptor descriptor = InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("create.template.action.icon"));
+        ImageDescriptor descriptor = InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("create.template.action.icon")); //$NON-NLS-1$
         setHoverImageDescriptor(descriptor);
         setImageDescriptor(descriptor);
         setEnabled(false);

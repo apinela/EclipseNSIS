@@ -345,3 +345,9 @@ JNIEXPORT void JNICALL Java_net_sf_eclipsensis_util_WinAPI_DrawWidgetThemeBackGr
         pEnv->ReleaseStringChars(theme, pszTheme);
     }
 }
+
+JNIEXPORT jint JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetSysColor(JNIEnv *pEnv, jclass jClass, jint index)
+{
+    return GetSysColor(index);
+}
+

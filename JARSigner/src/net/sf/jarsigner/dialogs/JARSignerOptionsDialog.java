@@ -118,7 +118,11 @@ public class JARSignerOptionsDialog extends AbstractJAROptionsDialog
                 Button b = (Button)e.widget;
                 Text text = (Text)b.getData(ATTR_TEXT); //$NON-NLS-1$
                 if(text != null) {
-                    KeyStoreDialog dialog = new KeyStoreDialog(getShell(),getKeyStore(),getStorePass());
+                    String store = getKeyStore();
+                    if(Common.isEmpty(store)) {
+                        store = getDefaultKeyStore();
+                    }
+                    KeyStoreDialog dialog = new KeyStoreDialog(getShell(),store,getStorePass());
                     if(dialog.open() == Window.OK) {
                         setValue(KEY_STORE, dialog.getKeyStoreName());
                         text.setText(getKeyStore());

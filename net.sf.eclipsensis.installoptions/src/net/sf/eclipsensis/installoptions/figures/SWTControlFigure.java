@@ -182,8 +182,8 @@ public abstract class SWTControlFigure extends Figure implements IInstallOptions
                 setNeedsReScrape(false);
                 
                 //Force a repaint
-                control.setVisible(false);
-                control.setVisible(true);
+//                control.setVisible(false);
+//                control.setVisible(true);
             }
         }
         super.layout();

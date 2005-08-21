@@ -103,11 +103,6 @@ public abstract class InstallOptionsUneditableElement extends InstallOptionsWidg
             setDirty(true);
         }
     }
-    
-    protected String getDisplayName()
-    {
-        return getText();
-    }
  
     protected String getDefaultText()
     {

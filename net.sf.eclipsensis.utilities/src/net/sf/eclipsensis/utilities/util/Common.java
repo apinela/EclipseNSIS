@@ -11,8 +11,6 @@ package net.sf.eclipsensis.utilities.util;
 
 import java.lang.reflect.Array;
 import java.util.*;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.eclipse.jdt.launching.*;
 import org.osgi.framework.Version;
@@ -92,7 +90,7 @@ public class Common
     
         List list = tokenize(ver,'.');
         int n = Math.min(parts.length,list.size());
-        String temp="";
+        String temp=""; //$NON-NLS-1$
         for(int i=0; i<n; i++) {
             outer: {
                 String token = (String)list.get(i);
@@ -109,7 +107,7 @@ public class Common
         }
         StringBuffer buf = new StringBuffer(temp);
         for(int i=n; i<list.size(); i++) {
-            buf.append(".").append(list.get(i));
+            buf.append(".").append(list.get(i)); //$NON-NLS-1$
         }
         
         return new Version(parts[0], parts[1], parts[2], buf.toString());

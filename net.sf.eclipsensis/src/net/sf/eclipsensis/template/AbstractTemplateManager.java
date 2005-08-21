@@ -25,8 +25,8 @@ public abstract class AbstractTemplateManager
     private File mUserTemplatesStore;
     private URL mDefaultTemplatesStore;
 
-    private Map mTemplatesMap = new HashMap();
-    private Map mDefaultTemplatesMap = new HashMap();
+    private Map mTemplatesMap;
+    private Map mDefaultTemplatesMap;
     private AbstractTemplateReaderWriter mReaderWriter;
     
     public AbstractTemplateManager()
@@ -54,15 +54,15 @@ public abstract class AbstractTemplateManager
         }
         catch (Exception e1) {
             e1.printStackTrace();
-            mDefaultTemplatesMap = new HashMap();
+            mDefaultTemplatesMap = new LinkedHashMap();
         }
         finally {
             if(mDefaultTemplatesMap == null) {
-                mDefaultTemplatesMap = new HashMap();
+                mDefaultTemplatesMap = new LinkedHashMap();
             }
         }
         
-        mTemplatesMap = new HashMap(mDefaultTemplatesMap);
+        mTemplatesMap = new LinkedHashMap(mDefaultTemplatesMap);
         try {
             Map map = loadUserTemplateStore();
             if(map != null) {
@@ -86,7 +86,7 @@ public abstract class AbstractTemplateManager
         Map map = null;
         if(mDefaultTemplatesStore != null) {
             InputStream stream = mDefaultTemplatesStore.openStream();
-            map = (Map)Common.readObject(stream);
+            map = (Map)Common.readObject(stream, getClass().getClassLoader());
         }
         
         return  map;
@@ -264,14 +264,8 @@ public abstract class AbstractTemplateManager
 
     public void resetToDefaults()
     {
-        for (Iterator iter = mTemplatesMap.values().iterator(); iter.hasNext();) {
-            AbstractTemplate template = (AbstractTemplate)iter.next();
-            removeTemplate(template);
-        }
-        for (Iterator iter = mDefaultTemplatesMap.values().iterator(); iter.hasNext();) {
-            AbstractTemplate template = (AbstractTemplate)iter.next();
-            addTemplate(template);
-        }
+        mTemplatesMap.clear();
+        mTemplatesMap.putAll(mDefaultTemplatesMap);
     }
 
     public AbstractTemplate revert(AbstractTemplate template)
@@ -298,7 +292,7 @@ public abstract class AbstractTemplateManager
      */
     public void save() throws IOException
     {
-        HashMap map = new HashMap();
+        Map map = new LinkedHashMap();
         for (Iterator iter = mTemplatesMap.values().iterator(); iter.hasNext();) {
             AbstractTemplate template = (AbstractTemplate)iter.next();
             checkClass(template);

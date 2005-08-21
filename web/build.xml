@@ -15,12 +15,14 @@
         </copy>
         <copy todir="help/eclipsensis" overwrite="true">
             <fileset file="help/redirect.js"/>
+        	<fileset file="help/nsiscontrib.js"/>
         </copy>
         <copy todir="help/installoptions" includeEmptyDirs="false">
             <fileset dir="../net.sf.eclipsensis.installoptions/help" excludes="**/CVS/*"/>
-            </copy>
+        </copy>
         <copy todir="help/installoptions" overwrite="true">
             <fileset file="help/redirect.js"/>
+        	<fileset file="help/nsiscontrib.js"/>
         </copy>
     </target>
     <target name="clean.help">

@@ -82,9 +82,9 @@ public class UtilitiesPlugin extends AbstractUIPlugin
     {
         super.start(context);
         mJobScheduler.start();
-        URL entry = getBundle().getEntry(getResourceString("utilities.icon"));
-        getImageRegistry().put("utilities.icon", ImageDescriptor.createFromURL(entry));
-        mShellImage = getImageRegistry().get("utilities.icon");
+        URL entry = getBundle().getEntry(getResourceString("utilities.icon")); //$NON-NLS-1$
+        getImageRegistry().put("utilities.icon", ImageDescriptor.createFromURL(entry)); //$NON-NLS-1$
+        mShellImage = getImageRegistry().get("utilities.icon"); //$NON-NLS-1$
     }
     
     public Image getShellImage()

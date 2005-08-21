@@ -96,17 +96,17 @@ public class FileFilterDialog extends Dialog
         group1.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         group1.setLayout(new GridLayout(2, false));
         group1.setText(InstallOptionsPlugin.getResourceString("filter.summary.group.name")); //$NON-NLS-1$
-        final Table table = new Table(group1,SWT.BORDER|SWT.MULTI|SWT.FULL_SELECTION);
+        Table table = new Table(group1,SWT.BORDER|SWT.MULTI|SWT.FULL_SELECTION);
         table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         table.setLinesVisible(true);
         table.setHeaderVisible(true);
-        table.addControlListener(new TableResizer());
         
-        final TableColumn[] columns = new TableColumn[2];
+        TableColumn[] columns = new TableColumn[2];
         columns[0] = new TableColumn(table,SWT.LEFT);
         columns[0].setText(InstallOptionsPlugin.getResourceString("filter.description")); //$NON-NLS-1$
         columns[1] = new TableColumn(table,SWT.LEFT);
         columns[1].setText(InstallOptionsPlugin.getResourceString("filter.patterns")); //$NON-NLS-1$
+        table.addControlListener(new TableResizer());
         
         final TableViewer viewer1 = new TableViewer(table);
         viewer1.setContentProvider(new CollectionContentProvider());
@@ -252,7 +252,6 @@ public class FileFilterDialog extends Dialog
         table2.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         table2.setLinesVisible(true);
         table2.setEnabled(!isNull);
-        table2.addControlListener(new TableResizer());
         new TableColumn(table2,SWT.LEFT);
         final TextCellEditor textEditor = new TextCellEditor(table2);
         ((Text) textEditor.getControl()).addVerifyListener(new VerifyListener() {
@@ -261,6 +260,8 @@ public class FileFilterDialog extends Dialog
                         
             }
         });
+        table2.addControlListener(new TableResizer());
+
         textEditor.setValidator(new ICellEditorValidator(){
             public String isValid(Object value)
             {

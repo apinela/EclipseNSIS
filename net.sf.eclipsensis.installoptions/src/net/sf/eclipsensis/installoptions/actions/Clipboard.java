@@ -11,7 +11,8 @@ package net.sf.eclipsensis.installoptions.actions;
 
 import java.beans.*;
 
-import org.eclipse.gef.dnd.SimpleObjectTransfer;
+import net.sf.eclipsensis.installoptions.dnd.InstallOptionsObjectTransfer;
+
 import org.eclipse.swt.dnd.Transfer;
 
 public class Clipboard
@@ -23,7 +24,7 @@ public class Clipboard
 
     protected static Clipboard cInstance = new Clipboard();
        
-    private static final SimpleObjectTransfer TRANSFER = new SimpleObjectTransfer() {
+    private static final InstallOptionsObjectTransfer TRANSFER = new InstallOptionsObjectTransfer() {
         private final String TYPE_NAME = "net.sf.eclipsensis.clipboard.transfer"; //$NON-NLS-1$
         private final int TYPE_ID = registerType(TYPE_NAME);
         protected int[] getTypeIds() {

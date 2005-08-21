@@ -39,7 +39,7 @@ import org.eclipse.draw2d.parts.Thumbnail;
 import org.eclipse.gef.*;
 import org.eclipse.gef.commands.CommandStack;
 import org.eclipse.gef.commands.CommandStackListener;
-import org.eclipse.gef.dnd.TemplateTransferDragSourceListener;
+import org.eclipse.gef.dnd.TemplateTransfer;
 import org.eclipse.gef.editparts.ScalableFreeformRootEditPart;
 import org.eclipse.gef.palette.CombinedTemplateCreationEntry;
 import org.eclipse.gef.palette.PaletteRoot;
@@ -63,6 +63,8 @@ import org.eclipse.jface.util.TransferDropTargetListener;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.DropTargetEvent;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -555,7 +557,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
             {
                 super.configurePaletteViewer(viewer);
                 viewer.setContextMenu(new CustomPaletteContextMenuProvider(viewer));
-                viewer.addDragSourceListener(new TemplateTransferDragSourceListener(viewer));
+                viewer.addDragSourceListener(new InstallOptionsTemplateTransferDragSourceListener(viewer));
             }
 
             public PaletteViewer createPaletteViewer(Composite parent)
@@ -1054,7 +1056,55 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
     protected void createGraphicalViewer(Composite parent)
     {
         mRulerComposite = new InstallOptionsRulerComposite(parent, SWT.NONE);
-        GraphicalViewer viewer = new ScrollingGraphicalViewer();
+        GraphicalViewer viewer = new ScrollingGraphicalViewer() {
+            public void addDropTargetListener(final TransferDropTargetListener listener)
+            {
+                if(listener.getTransfer() instanceof TemplateTransfer) {
+                    super.addDropTargetListener(new TransferDropTargetListener() {
+                        public void dragEnter(DropTargetEvent event) 
+                        {
+                            listener.dragEnter(event);
+                        }
+                        
+                        public void dragLeave(DropTargetEvent event) {
+                            listener.dragLeave(event);
+                        }
+                        
+                        public void dragOperationChanged(DropTargetEvent event) 
+                        {
+                            listener.dragOperationChanged(event);
+                        }
+                        
+                        public void dragOver(DropTargetEvent event) 
+                        {
+                            listener.dragOver(event);
+                        }
+    
+                        public void drop(DropTargetEvent event) 
+                        {
+                            listener.drop(event);
+                        }
+    
+                        public void dropAccept(DropTargetEvent event) 
+                        {
+                            listener.dropAccept(event);
+                        }
+                        
+                        public Transfer getTransfer() {
+                            return InstallOptionsTemplateTransfer.INSTANCE;
+                        }
+                        
+                        public boolean isEnabled(DropTargetEvent event) 
+                        {
+                            return listener.isEnabled(event);
+                        }
+                    });
+                }
+                else {
+                    super.addDropTargetListener(listener);
+                }
+            }
+        };
         viewer.createControl(mRulerComposite);
         setGraphicalViewer(viewer);
         configureGraphicalViewer();
@@ -1909,14 +1959,21 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
         protected void configureShell(Shell newShell)
         {
             super.configureShell(newShell);
-            newShell.setText(InstallOptionsPlugin.getResourceString("settings.dialog.title"));
+            newShell.setText(InstallOptionsPlugin.getResourceString("settings.dialog.title")); //$NON-NLS-1$
             newShell.setImage(InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("installoptions.icon"))); //$NON-NLS-1$
         }
 
         protected Control createDialogArea(Composite parent)
         {
-            parent = new Composite(parent,SWT.NONE);
-            parent.setLayout(new GridLayout(1,false));
+            Composite composite = new Composite(parent, SWT.NONE);
+            GridLayout layout = new GridLayout(1, false);
+            layout.marginHeight = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
+            layout.marginWidth = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
+            layout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
+            layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
+            composite.setLayout(layout);
+            composite.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true));
+            applyDialogFont(composite);
             
             TabFolder mFolder = new TabFolder(parent, SWT.NONE);
             mFolder.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true));
@@ -1965,7 +2022,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
             mTemplateSettings.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true));
             
             Button b = new Button(composite,SWT.PUSH);
-            b.setText(InstallOptionsPlugin.getResourceString("restore.defaults.label"));
+            b.setText(InstallOptionsPlugin.getResourceString("restore.defaults.label")); //$NON-NLS-1$
             b.setLayoutData(new GridData(SWT.RIGHT,SWT.CENTER,false, false));
             b.addSelectionListener(new SelectionAdapter(){
                 public void widgetSelected(SelectionEvent e)
@@ -2006,7 +2063,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
             composite.setLayout(new GridLayout(1,false));
 
             Label label = new Label(composite, SWT.NONE);
-            label.setText(InstallOptionsPlugin.getResourceString("control.creation.tools.options")); //$NON-NLS-1$
+            label.setText(InstallOptionsPlugin.getResourceString("creation.tools.options")); //$NON-NLS-1$
             GridData data = new GridData(SWT.FILL, SWT.CENTER, false, false);
             label.setLayoutData(data);
             

@@ -273,9 +273,4 @@ public abstract class InstallOptionsEditableElement extends InstallOptionsWidget
             setDirty(true);
         }
     }
-    
-    protected String getDisplayName()
-    {
-        return getState();
-    }
 }

@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.*;
 
 public class InstallOptionsTemplateManager extends AbstractTemplateManager
 {
-    private static final Path cPath = new Path("templates");
+    private static final Path cPath = new Path("templates"); //$NON-NLS-1$
     public static final InstallOptionsTemplateManager INSTANCE;
     
     private List mListeners = new ArrayList();
@@ -93,6 +93,17 @@ public class InstallOptionsTemplateManager extends AbstractTemplateManager
         }
         else {
             return false;
+        }
+    }
+
+    public void resetToDefaults()
+    {
+        for(Iterator iter=getTemplates().iterator(); iter.hasNext(); ) {
+            notifyListeners(InstallOptionsTemplateEvent.TEMPLATE_REMOVED, (InstallOptionsTemplate)iter.next(), null);
+        }
+        super.resetToDefaults();
+        for(Iterator iter=getTemplates().iterator(); iter.hasNext(); ) {
+            notifyListeners(InstallOptionsTemplateEvent.TEMPLATE_ADDED, null, (InstallOptionsTemplate)iter.next());
         }
     }
 

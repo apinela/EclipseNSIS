@@ -71,7 +71,7 @@ public class ListItemsDialog extends Dialog
         layout.numColumns = 2;
         layout.makeColumnsEqualWidth = false;
         
-        final Table table = new Table(composite,SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION | SWT.V_SCROLL);
+        Table table = new Table(composite,SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION | SWT.V_SCROLL);
         initializeDialogUnits(table);
         GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
         data.widthHint = convertWidthInCharsToPixels(40);

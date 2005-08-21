@@ -23,7 +23,7 @@ import org.eclipse.swt.graphics.RGB;
 
 public class NSISWizardTemplateManager extends AbstractTemplateManager
 {
-    private static final Path cPath = new Path("wizard");
+    private static final Path cPath = new Path("wizard"); //$NON-NLS-1$
     private static Object[][] cPatches;
     
     static {

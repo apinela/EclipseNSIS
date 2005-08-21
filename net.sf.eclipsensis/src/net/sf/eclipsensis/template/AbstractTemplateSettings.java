@@ -65,10 +65,7 @@ public abstract class AbstractTemplateSettings extends Composite
         return mTemplateManager;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
-     */
-    protected Control createContents()
+    protected void createContents()
     {
         GC gc = new GC(this);
         gc.setFont(JFaceResources.getDialogFont());
@@ -76,19 +73,12 @@ public abstract class AbstractTemplateSettings extends Composite
         gc.dispose();
 
         GridLayout layout= new GridLayout();
+        layout.numColumns= 2;
         layout.marginHeight= 0;
         layout.marginWidth= 0;
         this.setLayout(layout);
         
-        Composite parent= new Composite(this, SWT.NONE);
-        layout= new GridLayout();
-        layout.numColumns= 2;
-        layout.marginHeight= 0;
-        layout.marginWidth= 0;
-        parent.setLayout(layout);
-        parent.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-
-        Composite innerParent= new Composite(parent, SWT.NONE);
+        Composite innerParent= new Composite(this, SWT.NONE);
         GridLayout innerLayout= new GridLayout();
         innerLayout.numColumns= 2;
         innerLayout.marginHeight= 0;
@@ -108,11 +98,8 @@ public abstract class AbstractTemplateSettings extends Composite
         table.setHeaderVisible(true);
         table.setLinesVisible(true);        
 
-        TableLayout tableLayout= new TableLayout();
-        table.setLayout(tableLayout);
-
-        TableColumn column= new TableColumn(table, SWT.NONE);      
-        column.setText(EclipseNSISPlugin.getResourceString("template.name.label")); //$NON-NLS-1$
+        TableColumn[] columns= {new TableColumn(table, SWT.NONE)};      
+        columns[0].setText(EclipseNSISPlugin.getResourceString("template.name.label")); //$NON-NLS-1$
         
         mTableViewer= new CheckboxTableViewer(table);       
         mTableViewer.setLabelProvider(new CollectionLabelProvider());
@@ -180,13 +167,13 @@ public abstract class AbstractTemplateSettings extends Composite
 
         createButtons(buttons);
 
-        Label label= new Label(parent, SWT.NONE);
+        Label label= new Label(this, SWT.NONE);
         label.setText(EclipseNSISPlugin.getResourceString("template.description.label")); //$NON-NLS-1$
         data= new GridData();
         data.horizontalSpan= 2;
         label.setLayoutData(data);
         
-        mDescriptionText = new StyledText(parent,SWT.BORDER|SWT.MULTI|SWT.READ_ONLY|SWT.WRAP);
+        mDescriptionText = new StyledText(this,SWT.BORDER|SWT.MULTI|SWT.READ_ONLY|SWT.WRAP);
         mDescriptionText.setBackground(getShell().getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
         mDescriptionText.setCursor(null);
         mDescriptionText.setCaret(null);
@@ -202,8 +189,7 @@ public abstract class AbstractTemplateSettings extends Composite
         updateButtons();
         table.addControlListener(new TableResizer());
         
-        Dialog.applyDialogFont(parent);     
-        return parent;
+        Dialog.applyDialogFont(this);
     }
 
     protected void createButtons(Composite parent)

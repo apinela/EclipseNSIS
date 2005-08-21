@@ -395,7 +395,8 @@ public class INIFile implements IDocumentListener, IINIContainer
                 }
             }
     
-            int[] lineRange = getLineRange(event.getDocument(),event.getOffset(),event.getText().length());
+            String text = event.getText();
+            int[] lineRange = getLineRange(event.getDocument(),event.getOffset(),(text==null?0:text.length()));
             List newLines = parseLines(event.getDocument(),lineRange[0],lineRange[1]);
             for (Iterator iter = newLines.iterator(); iter.hasNext();) {
                 INILine line = (INILine)iter.next();

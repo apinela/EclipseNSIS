@@ -38,17 +38,17 @@ class InstallOptionsTemplateReaderWriter extends AbstractTemplateReaderWriter
     protected Node exportContents(AbstractTemplate template, Document document)
     {
         INISection[] iniSections = ((InstallOptionsTemplate)template).getSections();
-        StringBuffer buf = new StringBuffer("");
+        StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
         if(!Common.isEmptyArray(iniSections)) {
             iniSections[0].update();
             buf.append(iniSections[0]);
             for (int i = 1; i < iniSections.length; i++) {
-                iniSections[i].update();
+                iniSections[i].trim().update();
                 buf.append(INSISConstants.LINE_SEPARATOR).append(iniSections[i].toString());
             }
         }
         Element sections = document.createElement(SECTIONS_NODE);
-        Text data = document.createCDATASection(buf.toString());
+        Text data = document.createTextNode(buf.toString());
         sections.appendChild(data);
         return sections;
     }
@@ -63,7 +63,11 @@ class InstallOptionsTemplateReaderWriter extends AbstractTemplateReaderWriter
         String sections = readTextNode(item);
         if(!Common.isEmpty(sections)) {
             INIFile iniFile = INIFile.load(new StringReader(sections));
-            ((InstallOptionsTemplate)template).setSections(iniFile.getSections());
+            INISection[] iniSections = iniFile.getSections();
+            for (int i = 0; i < iniSections.length; i++) {
+                iniSections[i] = (INISection)iniSections[i].trim().clone();
+            }
+            ((InstallOptionsTemplate)template).setSections(iniSections);
         }        
     }
 }

@@ -70,42 +70,144 @@ as it evolves. <a href="javascript:history.go(-1)">&#8592;&nbsp;Back</a> </dd>
 <dl id="id_palette">
   <dt>Palette</dt>
   <dd>The design editor includes a
-palette of controls and selection tools.
+palette of controls, templates and selection tools.
 By default, the palette displays to the right of the canvas, but can be
 moved to the left of the canvas by simply dragging it there. The
 palette can be
 also resized or collapsed as needed. If desired the palette can be
 configured to be collapsed by default.<br>
-The palette includes the following selection tools:<br>
-    <br>
-    <ul>
-      <li><span style="font-weight: bold;">Selection</span>
-- the default
-cursor tool, used for selecting existing controls in the canvas.
-Multiple controls can be selected by holding down the Ctrl
-key.</li>
-      <li><span style="font-weight: bold;">Marquee</span>
-- a selection tool
-that can be used to drag a rectangular selection area. All components
-that lie completely within the selection rectangle are
-selected.</li>
-    </ul>
-The
-palette also includes creation tools for all controls supported by the
-InstallOptions plugin included in the version of NSIS configured in
-EclipseNSIS. In order to&nbsp; determine what controls are supported,
-please consult the <a
- href="javascript:redirectNSISContrib('InstallOptions/Readme.html');">InstallOptions
-Readme</a> file.<br>
-  </dd>
-  <dd>To customize the behavior of the design palette, right click on
-the palette and select the <span style="font-style: italic;">Settings...</span>
-in the popup context menu. This will open the Palette Settings dialog:</dd>
-  <dt style="text-align: center;"><img alt="Palette Settings dialog"
- src="images/palettesettings.gif"
- style="border: 0px solid ; width: 322px; height: 444px;"><br>
-  </dt>
-  <dd>&nbsp;<a href="javascript:history.go(-1)">&#8592;&nbsp;Back</a> </dd>
+<a name="a_selection_tools"></a><dl id="id_selection_tools">
+  <dt>Selection Tools Group </dt>
+<dd>The palette includes the following selection tools:
+      <ul>
+        <li><span style="font-weight: bold;">Selection</span>
+  - the default
+  cursor tool, used for selecting existing controls in the canvas.
+  Multiple controls can be selected by holding down the Ctrl
+  key.</li>
+        <li><span style="font-weight: bold;">Marquee</span>
+  - a selection tool
+  that can be used to drag a rectangular selection area. All components
+  that lie completely within the selection rectangle are
+  selected.</li>
+      </ul>
+</dd></dl>
+<a name="a_controls_drawer"></a><dl id="id_controls_drawer">
+        <dt>Control Creation Tools Drawer</dt>
+        <dd>The Controls drawer contains creation tools for all controls supported by the InstallOptions plugin 
+		included in the version of NSIS configured in EclipseNSIS. In order to&nbsp; determine what controls are supported, 
+		please consult the <a
+ href="javascript:redirectNSISContrib('InstallOptions/Readme.html');">InstallOptions Readme</a> file.  </dd>
+ </dl><br>
+<a name="a_templates_drawer"></a><dl id="id_templates_drawer">
+        <dt>Templated Creation Tools Drawer</dt>
+        <dd>The Templates drawer contains creation tools which use templates. A  template consists of one or more 
+		controls combined together into a reusable group. In order to create a template, simply select the controls to be 
+		grouped on the canvas and either select the <span style="font-style: italic;">Create Template...</span> 
+		icon (<img src="images/newtemplate.gif" width="16" height="16">) on the toolbar or right click with the mouse 
+		and select the <span style="font-style: italic;">Create Template...</span> item on the resulting popup context menu. This will 
+		display a template creation dialog which can be used to specify a name and description for the template, as well as to indicate whether
+		the template is to be enabled. A template which is not enabled will not be available in the Templates Drawer.<br>
+		<a name="templatedialog"></a><p style="text-align: center;"><img style="border: 0px solid ; width: 336px; height: 234px;" alt="Create Template Dialog" src="images/templatedialog.gif"></p>
+		</dd>
+      </dl><br>
+	  <a name="palette_templates_settings"></a><strong>Palette & Templates Settings</strong><br>
+  To customize the  design palette or manage templates, right click on
+      the palette and select the <span style="font-style: italic;">Settings...</span>
+      in the popup context menu. This will open the <a href="#palettesettings">Palette</a> &amp; <a href="#templatesettings">Templates</a> Settings dialog:<br>
+      <br>
+      <div style="text-align: center;"><table style="text-align: left; margin-left: auto; margin-right: auto;" border="0" cellpadding="2" cellspacing="2">
+<tbody>
+<tr>
+<td style="text-align: center;"><img src="images/palettesettings.gif" alt="Palette Settings" border="0" usemap="#palettesettings" style="width: 322px; height: 394px;" title="Palette Settings"><br>
+Palette Settings</td>
+<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+<td style="text-align: center;"><img src="images/templatesettings.gif" alt="Templates Settings" border="0" usemap="#templatesettings" style="width: 322px; height: 394px;" title="Templates Settings"><br>
+Templates Settings</td>
+</tr>
+</tbody>
+</table></div>
+<div><strong><a name="palettesettings"></a>Palette Settings</strong>
+<p>The Palette settings page is used to customize the behavior of the design editor palette.</p>
+<a name="a_palette_font"></a><dl id="id_palette_font">
+  <dt>Font</dt>
+  <dd>Customize the font used to display palette components. <a href="javascript:history.go(-1)">&larr;
+Back</a></dd>
+</dl>
+<a name="a_palette_layout"></a><dl id="id_palette_layout">
+  <dt>Layout</dt>
+  <dd>Customize the layout used to display palette components. For the list layout, large icons for palette components can be optionally displayed, if available <a href="javascript:history.go(-1)">&larr;
+Back</a></dd>
+</dl>
+<a name="a_palette_drawer"></a><dl id="id_palette_drawer">
+  <dt>Drawer Options </dt>
+  <dd>Customize the collapse behavior of palette drawers. The default behavior is to close all drawers other than the currently selected drawers if there is not enough space on the palette to completely display all palette drawers. <a href="javascript:history.go(-1)">&larr;
+Back</a></dd>
+</dl>
+<a name="a_palette_creation"></a><dl id="id_palette_creation">
+  <dt>Creation Tool Options </dt>
+  <dd>Customize the behavior of creation tools. The default behavior of a creation tool, when using the select and click method of creating controls, is to immediately unload upon control creation- i.e., to create another control, the creation tool must once more be selected before clicking on the canvas. If this option is deselected, the tool remains active until either the escape key is pressed or another tool is selected. <a href="javascript:history.go(-1)">&larr;
+Back</a></dd>
+</dl>
+</div><br>
+<div><strong><a name="templatesettings"></a>Templates Settings</strong>
+<p>The Templates settings page is used to manage templates. A  template consists of one or more 
+		controls combined together into a reusable group.
+Template creation is described <a href="#a_templates_drawer">above</a>. There are three types of  templates:</p>
+<ul>
+<li><span style="font-weight: bold;">Built-in</span>:
+Templates which
+are prepackaged along with the plugin.</li>
+<li><span style="font-weight: bold;">Custom</span>:
+Built-in 
+templates which have been modified by the user.</li>
+<li><span style="font-weight: bold;">User-defined</span>:
+Templates
+which have been created by the user.</li>
+</ul>
+<a name="a_templates2"></a><dl id="id_templates2"><dt>Templates</dt>
+<dd>Displays the list of templates. Only checked templates will be displayed in the <a href="#a_palette">palette </a>.
+To disable/enable a template uncheck/check the
+checkbox associated with it The following buttons allow manipulation
+and configuration of  templates. <a href="javascript:history.go(-1)">&larr;
+Back</a></dd>
+</dl>
+<dl>
+<a name="a_edit5"></a><dl id="id_edit5"><dt>Edit</dt>
+<dd> Opens a <a href="#templatedialog">dialog</a>
+to edit the
+currently selected template. <a href="javascript:history.go(-1)">&larr;
+Back</a></dd></dl>
+<a name="a_remove2"></a><dl id="id_remove2"><dt>Remove</dt>
+<dd>Remove all selected 
+templates. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd>
+</dl>
+<a name="a_restore2"></a><dl id="id_restore2"><dt>Restore
+removed</dt>
+<dd>Restore any built-in or custom 
+templates that have been removed. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd>
+</dl>
+<a name="a_revert2"></a><dl id="id_revert2"><dt>Revert
+to default</dt>
+<dd>Revert all selected custom
+templates back to their original
+built-in states. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="a_import2"></a><dl id="id_import2"><dt>Import</dt>
+<dd> Imports  templates
+from the file system. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd>
+</dl>
+<a name="a_export2"></a><dl id="id_export2"><dt>Export</dt>
+<dd>Exports all selected
+ templates to the file system. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd>
+</dl>
+</dl>
+<a name="a_description2"></a><dl id="id_description2"><dt>Description</dt>
+<dd>Displays the description of
+the selected script template. <a href="javascript:history.go(-1)">&larr;
+Back</a></dd></dl>
+<a name="a_defaults"></a><dl id="id_defaults"><dt>Restore Defaults</dt>
+<dd>Removes all user and custom templates and replaces with built-in templates. <a href="javascript:history.go(-1)">&larr;
+Back</a></dd></dl></div>
 </dl>
 <br>
 <a name="a_drawing_tools"></a>
@@ -353,13 +455,33 @@ with the painting loop.&nbsp;<a href="javascript:history.go(-1)">&#8592;&nbsp;Ba
 (IcemanK).</small></strong></p>
 <map name="designeditor">
 <area id="canvas" shape="RECT" href="#a_canvas" alt="Canvas"
- onclick="highlightDef('id_canvas');" coords="18,41, 482,472">
+ onclick="highlightDef('id_canvas');" coords="18,41,491,472">
 <area id="palette" shape="RECT" href="#a_palette" alt="Palette"
- onclick="highlightDef('id_palette');" coords="485,23, 627,471">
+ onclick="highlightDef('id_palette');" coords="496,23,626,40">
 <area id="rulers" shape="POLY" href="#a_rulers" alt="Ruler"
  onclick="highlightDef('id_rulers');"
- coords="2,472, 16,472, 16,39, 481,39, 481,25, 18,25, 17,41, 2,41, 2,472">
+ coords="2,472,17,472,17,40,489,40,489,25,18,25,17,41,2,41,2,472">
+<area id="selection_tools" shape="rect" onclick="highlightDef('id_selection_tools');" coords="496,40,627,80" href="#a_selection_tools" alt="Selection Tools">
+<area id="controls_drawer" shape="rect" onclick="highlightDef('id_controls_drawer');" coords="496,81,628,390" href="#a_controls_drawer" alt="Controls Drawer">
+<area id="templates_drawer" shape="rect" onclick="highlightDef('id_templates_drawer');" coords="496,390,628,473" href="#a_templates_drawer" alt="Templates Drawer">
 </map>
 </div>
+<map name="palettesettings" id="palettesettings">
+  <area id="palette_font" shape="rect" coords="20,37,304,89" href="#a_palette_font" onclick="highlightDef('id_palette_font');" alt="Palette Font">
+  <area id="palette_layout" shape="rect" coords="21,116,306,214" href="#a_palette_layout" onclick="highlightDef('id_palette_layout');" alt="Palette Layout">
+  <area id="palette_drawer" shape="rect" coords="21,239,290,314" href="#a_palette_drawer" onclick="highlightDef('id_palette_drawer');" alt="Palette Drawer">
+  <area id="palette_creation" shape="rect" coords="21,341,249,374" href="#palette_creation" onclick="highlightDef('id_palette_creation_tools');" alt="Palette Creation Tools">
+</map>
+<map name="templatesettings" id="templatesettings">
+  <area id="templates2" shape="rect" coords="8,26,212,238" href="#a_templates2" onclick="highlightDef('id_templates2');" alt="Templates">
+  <area id="edit5" shape="rect" coords="216,28,313,50" href="#a_edit5" onclick="highlightDef('id_edit5');" alt="Edit">
+  <area id="remove2" shape="rect" coords="216,56,313,78" href="#a_remove2" onclick="highlightDef('id_remove2');" alt="Remove ">
+  <area id="restore2" shape="rect" coords="215,93,311,113" href="#a_restore2" onclick="highlightDef('id_restore2');" alt="Restore Removed">
+  <area id="revert2" shape="rect" coords="216,121,311,141" href="#a_revert2" onclick="highlightDef('id_revert2');" alt="Revert to Default">
+  <area id="import2" shape="rect" coords="216,158,313,180" href="#a_import" onclick="highlightDef('id_import2');" alt="Import">
+  <area id="export2" shape="rect" coords="216,186,313,207" href="#a_export" onclick="highlightDef('id_export2');" alt="Export">
+  <area id="defaults" shape="rect" coords="220,362,313,385" href="#a_defaults" onclick="highlightDef('id_defaults');" alt="Restore Defaults">
+  <area id="description2" shape="rect" coords="8,243,316,360" href="#a_description2" onclick="highlightDef('id_description2');" alt="Description">
+</map>
 </body>
 </html>

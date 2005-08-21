@@ -261,15 +261,20 @@ public abstract class NSISSettingsPage extends PropertyPage implements IWorkbenc
         data.horizontalSpan = 2;
         label.setLayoutData(data);
         
-        final Table table = new Table(composite, SWT.FULL_SELECTION | SWT.MULTI | SWT.V_SCROLL | SWT.BORDER);
+        Table table = new Table(composite, SWT.FULL_SELECTION | SWT.MULTI | SWT.V_SCROLL | SWT.BORDER);
         table.setLinesVisible(true);
         table.setHeaderVisible(true);
 
+        TableColumn[] columns;
         if(!Common.isEmptyArray(columnNames))  {
+            columns = new TableColumn[columnNames.length];
             for(int i=0; i<columnNames.length; i++) {
-                TableColumn tableColumn = new TableColumn(table,SWT.LEFT,i);
-                tableColumn.setText(columnNames[i]);
+                columns[i] = new TableColumn(table,SWT.LEFT,i);
+                columns[i].setText(columnNames[i]);
             }
+        }
+        else {
+            columns = new TableColumn[0];
         }
         TableViewer viewer = new TableViewer(table);
         viewer.setContentProvider((contentProvider==null?new WorkbenchContentProvider():contentProvider));

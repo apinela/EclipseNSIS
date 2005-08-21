@@ -27,6 +27,10 @@
     </context>
     <context id="installoptions_wizard_context">
         <description>The InstallOptions script wizard helps create a new InstallOptions script.</description>
-        <topic label="InstallOptions Script Wizard" href="help/wizard.html"/>
+        <topic label="InstallOptions Script Wizard Welcome Page" href="help/wizard.html#welcome"/>
+    </context>
+    <context id="installoptions_wizard_context2">
+        <description>The InstallOptions script wizard helps create a new InstallOptions script.</description>
+        <topic label="InstallOptions Script Wizard Finish Page" href="help/wizard.html#finish"/>
     </context>
 </contexts>

@@ -474,20 +474,15 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
     {
         final Group group = new Group(composite,SWT.SHADOW_ETCHED_IN);
         GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
-        group.setLayoutData(gridData);
-        group.setLayout(new GridLayout(1,false));
-        group.setText(InstallOptionsPlugin.getResourceString("dialog.sizes.group.name")); //$NON-NLS-1$
-        
-        final Composite composite2 = new Composite(group,SWT.NONE);
-        gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
         gridData.widthHint = convertWidthInCharsToPixels(60);
-        composite2.setLayoutData(gridData);
+        group.setLayoutData(gridData);
         GridLayout layout = new GridLayout(2,false);
         layout.marginHeight = 0;
         layout.marginWidth = 0;
-        composite2.setLayout(layout);
+        group.setLayout(layout);
+        group.setText(InstallOptionsPlugin.getResourceString("dialog.sizes.group.name")); //$NON-NLS-1$
         
-        final Table table= new Table(composite2, SWT.CHECK | SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION);
+        Table table= new Table(group, SWT.CHECK | SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION);
         gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
         table.setLayoutData(gridData);
         FontData fontData = table.getFont().getFontData()[0];
@@ -503,22 +498,15 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
         table.setHeaderVisible(true);
         table.setLinesVisible(true);        
 
-        TableLayout tableLayout= new TableLayout();
-        table.setLayout(tableLayout);
-
         final TableColumn[] columns = new TableColumn[3];
         columns[0] = new TableColumn(table, SWT.NONE);      
-        columns[0].setText(EclipseNSISPlugin.getResourceString("Name")); //$NON-NLS-1$
+        columns[0].setText(InstallOptionsPlugin.getResourceString("dialog.size.name.label")); //$NON-NLS-1$
         
         columns[1] = new TableColumn(table, SWT.NONE);      
-        columns[1].setText(EclipseNSISPlugin.getResourceString("Width")); //$NON-NLS-1$
+        columns[1].setText(InstallOptionsPlugin.getResourceString("dialog.size.width.label")); //$NON-NLS-1$
         
         columns[2] = new TableColumn(table, SWT.NONE);      
-        columns[2].setText(EclipseNSISPlugin.getResourceString("Height")); //$NON-NLS-1$
-
-        Label l = new Label(group,SWT.WRAP);
-        l.setLayoutData(new GridData());
-        l.setText(InstallOptionsPlugin.getResourceString("dialog.size.group.footer")); //$NON-NLS-1$
+        columns[2].setText(InstallOptionsPlugin.getResourceString("dialog.size.height.label")); //$NON-NLS-1$
         
         mDialogSizeViewer = new CheckboxTableViewer(table);
         DialogSizeLabelProvider provider = new DialogSizeLabelProvider();
@@ -531,7 +519,7 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
             }
         });
 
-        final Composite buttons= new Composite(composite2, SWT.NONE);
+        final Composite buttons= new Composite(group, SWT.NONE);
         buttons.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false));
         layout= new GridLayout();
         layout.marginHeight= 0;
@@ -608,8 +596,15 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
             }
         });
 
+        Label l = new Label(group,SWT.WRAP);
+        gridData = new GridData(SWT.FILL, SWT.CENTER, true, false);
+        gridData.horizontalSpan = 2;
+        l.setLayoutData(gridData);
+        l.setText(InstallOptionsPlugin.getResourceString("dialog.size.group.footer")); //$NON-NLS-1$
+
         updateDialogSizeViewerInput();
         table.addControlListener(new TableResizer(new double[]{2,1,1}));
+
         return group;
     }
 

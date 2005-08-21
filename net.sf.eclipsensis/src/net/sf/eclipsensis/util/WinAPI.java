@@ -59,6 +59,9 @@ public class WinAPI
     public static final int LIS_NORMAL = 1;
     public static final int LIS_DISABLED = 4; 
     
+    public static final int COLOR_GRAYTEXT = 0x11;
+    public static final int COLOR_3DHILIGHT = 0x14;
+
     private static native void init();
     public static native int SetWindowLong(int hWnd, int nIndex, int dwNewLong);
     public static native int GetWindowLong(int hWnd, int nIndex);
@@ -76,4 +79,6 @@ public class WinAPI
     
     public static final native boolean AreVisualStylesEnabled();
     public static final native void DrawWidgetThemeBackGround(int hWnd, int hDC, String theme, int partId, int stateId);
+    
+    public static final native int GetSysColor(int index);
 }

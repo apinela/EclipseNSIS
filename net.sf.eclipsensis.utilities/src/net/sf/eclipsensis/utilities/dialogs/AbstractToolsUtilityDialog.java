@@ -38,15 +38,15 @@ import org.osgi.framework.Version;
 
 public abstract class AbstractToolsUtilityDialog extends Dialog
 {
-    protected static final String ATTR_BUTTON = "button";
-    protected static final String ATTR_LABEL = "label";
-    protected static final String ATTR_TEXT = "text";
+    protected static final String ATTR_BUTTON = "button"; //$NON-NLS-1$
+    protected static final String ATTR_LABEL = "label"; //$NON-NLS-1$
+    protected static final String ATTR_TEXT = "text"; //$NON-NLS-1$
     
     protected static final String TOOLS_JAR = "tools.jar"; //$NON-NLS-1$
     protected static final String VERBOSE = "verbose"; //$NON-NLS-1$
     protected static final String IGNORE_ERRORS = "ignore.errors"; //$NON-NLS-1$
 
-    private static Pattern cCreatedByPattern = Pattern.compile("([1-9](\\.[0-9])*[_\\-0-9a-zA-Z]*)( \\(.*\\))*");
+    private static Pattern cCreatedByPattern = Pattern.compile("([1-9](\\.[0-9])*[_\\-0-9a-zA-Z]*)( \\(.*\\))*"); //$NON-NLS-1$
 
     private Map mValues;
     private IDialogSettings mDialogSettings;
@@ -310,7 +310,7 @@ public abstract class AbstractToolsUtilityDialog extends Dialog
                     Version toolsJarVersion = null;
                     try {
                         jarfile = new JarFile(f);
-                        String createdBy = jarfile.getManifest().getMainAttributes().getValue("Created-By");
+                        String createdBy = jarfile.getManifest().getMainAttributes().getValue("Created-By"); //$NON-NLS-1$
                         Matcher matcher = cCreatedByPattern.matcher(createdBy);
                         if(matcher.matches()) {
                             toolsJarVersion = Common.parseVersion(matcher.group(1));
@@ -334,14 +334,14 @@ public abstract class AbstractToolsUtilityDialog extends Dialog
                     }
                     vmInstall = Common.getVMInstall(getMinJDKVersion(), toolsJarVersion);
                     if(vmInstall == null) {
-                        MessageDialog.openError(getShell(),UtilitiesPlugin.getResourceString("error.title"),
-                                UtilitiesPlugin.getResourceString("mismatched.tools.jar.vm.version"));
+                        MessageDialog.openError(getShell(),UtilitiesPlugin.getResourceString("error.title"), //$NON-NLS-1$
+                                UtilitiesPlugin.getResourceString("mismatched.tools.jar.vm.version")); //$NON-NLS-1$
                     }
                 }
                 
                 if(vmInstall != null) {
                     toolsMainClassName = getToolsMainClassName(Common.parseVersion(((IVMInstall2)vmInstall).getJavaVersion()));
-                    ZipEntry entry = jarfile.getEntry(toolsMainClassName.replace('.','/')+".class");
+                    ZipEntry entry = jarfile.getEntry(toolsMainClassName.replace('.','/')+".class"); //$NON-NLS-1$
                     if(entry == null) {
                         vmInstall = null;
                         toolsMainClassName = null;

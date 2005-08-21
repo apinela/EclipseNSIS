@@ -57,7 +57,7 @@ public class InstallOptionsTemplateDialog extends AbstractTemplateDialog
 
     protected String getShellTitle()
     {
-        return InstallOptionsPlugin.getResourceString((isCreate()?"create.template.dialog.title":"edit.template.dialog.title")); //$NON-NLS-1$
+        return InstallOptionsPlugin.getResourceString((isCreate()?"create.template.dialog.title":"edit.template.dialog.title")); //$NON-NLS-1$ //$NON-NLS-2$
     }
     
 }

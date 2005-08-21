@@ -11,8 +11,6 @@ package net.sf.eclipsensis.installoptions.template;
 
 import java.io.File;
 import java.util.*;
-import java.util.ArrayList;
-import java.util.List;
 
 import net.sf.eclipsensis.installoptions.ini.*;
 import net.sf.eclipsensis.installoptions.model.*;
@@ -42,15 +40,13 @@ public class InstallOptionsTemplate extends AbstractTemplate
     {
         this(name);
         INIFile iniFile = INIFile.load(file);
-        setSections(iniFile.getSections());
-    }
-    
-    public InstallOptionsTemplate(String name, INISection[] sections)
-    {
-        this(name);
+        INISection[] sections = iniFile.getSections();
+        for (int i = 0; i < sections.length; i++) {
+            sections[i] = (INISection)sections[i].trim().clone();
+        }
         setSections(sections);
     }
-
+    
     public InstallOptionsTemplate(String name, InstallOptionsWidget[] widgets)
     {
         this(name);
@@ -62,7 +58,7 @@ public class InstallOptionsTemplate extends AbstractTemplate
         Arrays.sort(widgets, cWidgetsComparator);
         INISection[] sections = new INISection[widgets.length];
         for (int i = 0; i < widgets.length; i++) {
-            sections[i] = (INISection)widgets[i].updateSection().clone();
+            sections[i] = (INISection)widgets[i].updateSection().trim().clone();
             sections[i].setName(InstallOptionsModel.SECTION_FIELD_FORMAT.format(new Object[]{new Integer(i+1)}));
             sections[i].update();
         }

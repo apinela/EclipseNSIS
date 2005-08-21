@@ -24,8 +24,8 @@
     <p class="bodyText"><xsl:value-of select="description"/></p>
     <table width="100%" border="0" cellspacing="1" cellpadding="2">
     <xsl:for-each select="category-def">
-        <xsl:sort select="@label" order="descending" case-order="upper-first"/>
-        <xsl:sort select="@name" order="descending" case-order="upper-first"/>
+        <xsl:sort select="@label" order="ascending" case-order="upper-first"/>
+        <xsl:sort select="@name" order="ascending" case-order="upper-first"/>
     <xsl:if test="count(key('cat',@name)) != 0">
             <tr class="header">
                 <td class="sub-header" width="30%">

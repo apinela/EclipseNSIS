@@ -17,7 +17,7 @@ import org.eclipse.jface.action.Action;
 
 public class DeleteTemplateAction extends Action
 {
-    public static final String ID = "net.sf.eclipsensis.installoptions.delete_template";
+    public static final String ID = "net.sf.eclipsensis.installoptions.delete_template"; //$NON-NLS-1$
     private InstallOptionsTemplate mTemplate;
     /**
      * @param part
@@ -25,7 +25,7 @@ public class DeleteTemplateAction extends Action
     public DeleteTemplateAction(InstallOptionsTemplate template)
     {
         super();
-        setText(InstallOptionsPlugin.getResourceString("delete.template.action.label"));
+        setText(InstallOptionsPlugin.getResourceString("delete.template.action.label")); //$NON-NLS-1$
         setToolTipText(InstallOptionsPlugin.getResourceString("delete.template.action.tooltip")); //$NON-NLS-1$
         setId(ID);
         mTemplate = template;

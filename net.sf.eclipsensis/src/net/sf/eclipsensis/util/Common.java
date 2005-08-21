@@ -273,9 +273,15 @@ public class Common
         if ( !c.isArray() ) {
             throw new IllegalArgumentException();
         }
-        Object newArray = Array.newInstance(c.getComponentType(), newLength);
         int oldLength = Array.getLength(array);
-        System.arraycopy(array,offset,newArray,0,Math.min(oldLength - offset, newLength));
+        Object newArray;
+        if(oldLength == newLength && offset == 0) {
+            newArray = array;
+        }
+        else {
+            newArray = Array.newInstance(c.getComponentType(), newLength);
+            System.arraycopy(array,offset,newArray,0,Math.min(oldLength - offset, newLength));
+        }
         return newArray;
     }
 

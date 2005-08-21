@@ -74,7 +74,7 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
         List list = new ArrayList();
         for(Enumeration enum = mBundle.getKeys(); enum.hasMoreElements(); ) {
             String key = (String)enum.nextElement();
-            if(key.startsWith("nsis.contrib.path")) {
+            if(key.startsWith("nsis.contrib.path")) { //$NON-NLS-1$
                 String[] tokens = Common.tokenize(key,'#');
                 Version v;
                 if(tokens.length > 1) {

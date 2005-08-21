@@ -708,8 +708,10 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
         }
     }
     
-    private class OutlineLabelProvider extends LabelProvider
+    private static class OutlineLabelProvider extends LabelProvider
     {
+        private static final String MISSING_DISPLAY_NAME = InstallOptionsPlugin.getResourceString("missing.outline.display.name"); //$NON-NLS-1$
+
         private ImageData mErrorImageData = InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("error.decoration.icon")).getImageData(); //$NON-NLS-1$
         private ImageData mWarningImageData = InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("warning.decoration.icon")).getImageData(); //$NON-NLS-1$
         private Image mUnknownImage = InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("unknown.icon")); //$NON-NLS-1$
@@ -718,7 +720,26 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
         public String getText(Object element)
         {
             if(element instanceof INISection) {
-                return ((INISection)element).getName();
+                String name = ((INISection)element).getName();
+                Matcher m = InstallOptionsModel.SECTION_FIELD_PATTERN.matcher(name);
+                if(m.matches()) {
+                    INIKeyValue[] values = ((INISection)element).findKeyValues(InstallOptionsModel.PROPERTY_TYPE);
+                    if(!Common.isEmptyArray(values)) {
+                        String type = values[0].getValue();
+                        InstallOptionsModelTypeDef typeDef = InstallOptionsModel.INSTANCE.getControlTypeDef(type);
+                        if(typeDef != null) {
+                            type = typeDef.getName();
+                            String displayName = ""; //$NON-NLS-1$
+                            values = ((INISection)element).findKeyValues(typeDef.getDisplayProperty());
+                            if(!Common.isEmptyArray(values)) {
+                                displayName = values[0].getValue();
+                            }
+                            return InstallOptionsPlugin.getFormattedString("source.outline.display.name.format",  //$NON-NLS-1$
+                                    new String[]{name, type, (Common.isEmpty(displayName)?MISSING_DISPLAY_NAME:displayName)});
+                        }
+                    }
+                }
+                return InstallOptionsPlugin.getFormattedString("source.outline.section.name.format", new String[]{name}); //$NON-NLS-1$
             }
             return super.getText(element);
         }

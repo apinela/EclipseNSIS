@@ -95,15 +95,15 @@ public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
         layout.marginWidth = 0;
         composite2.setLayout(layout);
   
-        final Table table = new Table(composite2, SWT.FULL_SELECTION | SWT.MULTI | SWT.V_SCROLL | SWT.BORDER);
+        Table table = new Table(composite2, SWT.FULL_SELECTION | SWT.MULTI | SWT.V_SCROLL | SWT.BORDER);
         table.setLinesVisible(true);
         table.setHeaderVisible(true);
         gd = new GridData(SWT.FILL, SWT.FILL, true, true);
         gd.verticalSpan = 2;
         table.setLayoutData(gd);
 
-        TableColumn tableColumn = new TableColumn(table,SWT.LEFT,0);
-        tableColumn.setText(EclipseNSISPlugin.getResourceString("wizard.file.name.label")); //$NON-NLS-1$
+        TableColumn[] columns = {new TableColumn(table,SWT.LEFT,0)};
+        columns[0].setText(EclipseNSISPlugin.getResourceString("wizard.file.name.label")); //$NON-NLS-1$
         
         final TableViewer viewer = new TableViewer(table);
         viewer.setContentProvider(new CollectionContentProvider());

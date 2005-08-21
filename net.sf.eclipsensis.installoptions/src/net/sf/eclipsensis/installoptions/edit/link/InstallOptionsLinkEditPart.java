@@ -24,6 +24,7 @@ import org.eclipse.gef.tools.DirectEditManager;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.ColorDialog;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.views.properties.IPropertySource;
 
 public class InstallOptionsLinkEditPart extends InstallOptionsLabelEditPart
 {
@@ -82,7 +83,12 @@ public class InstallOptionsLinkEditPart extends InstallOptionsLabelEditPart
 
     protected IInstallOptionsFigure createInstallOptionsFigure() 
     {
-        return new LinkFigure((Composite)getViewer().getControl(), getInstallOptionsWidget());
+        if(cIsNT) {
+            return new NTLinkFigure(getInstallOptionsWidget());
+        }
+        else {
+            return new LinkFigure((Composite)getViewer().getControl(), getInstallOptionsWidget());
+        }
     }
 
     protected void doPropertyChange(PropertyChangeEvent evt)
@@ -108,5 +114,27 @@ public class InstallOptionsLinkEditPart extends InstallOptionsLabelEditPart
     protected String getTypeName()
     {
         return InstallOptionsPlugin.getResourceString("link.type.name"); //$NON-NLS-1$
+    }
+
+    protected class NTLinkFigure extends NTLabelFigure
+    {
+        private RGB mTxtColor;
+
+        public NTLinkFigure(IPropertySource propertySource)
+        {
+            super(propertySource);
+            setTxtColor((RGB)propertySource.getPropertyValue(InstallOptionsModel.PROPERTY_TXTCOLOR));
+       }
+        
+        public RGB getTxtColor()
+        {
+            return mTxtColor==null?InstallOptionsLink.DEFAULT_TXTCOLOR:mTxtColor;
+        }
+
+        public void setTxtColor(RGB txtColor)
+        {
+            mTxtColor = txtColor;
+            refresh();
+        }
     }
 }
