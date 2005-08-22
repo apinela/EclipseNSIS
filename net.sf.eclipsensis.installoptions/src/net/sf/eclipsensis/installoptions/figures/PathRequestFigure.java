@@ -9,6 +9,9 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.figures;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsWidget;
 import net.sf.eclipsensis.installoptions.properties.PropertySourceWrapper;
@@ -39,7 +42,7 @@ public class PathRequestFigure extends Figure implements IEditableElementFigure
     /**
      * 
      */
-    public PathRequestFigure(Composite parent, IPropertySource propertySource)
+    public PathRequestFigure(Composite parent, final IPropertySource propertySource)
     {
         super();
         setLayoutManager(new XYLayout());
@@ -63,6 +66,11 @@ public class PathRequestFigure extends Figure implements IEditableElementFigure
                 }
                 else if( InstallOptionsModel.PROPERTY_TEXT.equals(id)) {
                     return BROWSE_BUTTON_TEXT;
+                }
+                else if( InstallOptionsModel.PROPERTY_FLAGS.equals(id)) {
+                    List flags = new ArrayList((List)propertySource.getPropertyValue(id));
+                    flags.removeAll(SCROLL_FLAGS);
+                    return flags;
                 }
                 else {
                     return super.getPropertyValue(id);
@@ -119,6 +127,16 @@ public class PathRequestFigure extends Figure implements IEditableElementFigure
         getLayoutManager().setConstraint(mTextFigure,newBounds[0]);
         getLayoutManager().setConstraint(mButtonFigure,newBounds[1]);
         super.setBounds(rect);
+    }
+
+    public void setHScroll(boolean hScroll)
+    {
+        mTextFigure.setHScroll(hScroll);
+    }
+
+    public void setVScroll(boolean vScroll)
+    {
+        mTextFigure.setVScroll(vScroll);
     }
 
     /* (non-Javadoc)

@@ -158,6 +158,16 @@ public abstract class InstallOptionsWidgetEditPart extends InstallOptionsEditPar
             ((IInstallOptionsFigure)getFigure()).setDisabled(false);
             setNeedsRefresh(true);
         }
+        else if(supportsScrolling()) {
+            if(flag.equals(InstallOptionsModel.FLAGS_HSCROLL)) {
+                ((IInstallOptionsFigure)getFigure()).setHScroll(false);
+                setNeedsRefresh(true);
+            }
+            else if(flag.equals(InstallOptionsModel.FLAGS_VSCROLL)) {
+                ((IInstallOptionsFigure)getFigure()).setVScroll(false);
+                setNeedsRefresh(true);
+            }
+        }
     }
     
     protected void handleFlagAdded(String flag)
@@ -165,6 +175,16 @@ public abstract class InstallOptionsWidgetEditPart extends InstallOptionsEditPar
         if(flag.equals(InstallOptionsModel.FLAGS_DISABLED)) {
             ((IInstallOptionsFigure)getFigure()).setDisabled(true);
             setNeedsRefresh(true);
+        }
+        else if(supportsScrolling()) {
+            if(flag.equals(InstallOptionsModel.FLAGS_HSCROLL)) {
+                ((IInstallOptionsFigure)getFigure()).setHScroll(true);
+                setNeedsRefresh(true);
+            }
+            else if(flag.equals(InstallOptionsModel.FLAGS_VSCROLL)) {
+                ((IInstallOptionsFigure)getFigure()).setVScroll(true);
+                setNeedsRefresh(true);
+            }
         }
     }
 
@@ -255,6 +275,11 @@ public abstract class InstallOptionsWidgetEditPart extends InstallOptionsEditPar
     public void removeNotify()
     {
         super.removeNotify();
+    }
+    
+    protected boolean supportsScrolling()
+    {
+        return true;
     }
 
     protected abstract DirectEditManager creatDirectEditManager(InstallOptionsWidgetEditPart part, Class clasz, CellEditorLocator locator);

@@ -37,6 +37,11 @@ public class InstallOptionsListboxEditPart extends InstallOptionsComboboxEditPar
         return new ListFigure((Composite)getViewer().getControl(), getInstallOptionsWidget());
     }
     
+    protected boolean supportsScrolling()
+    {
+        return true;
+    }
+
     /**
      * @return
      */

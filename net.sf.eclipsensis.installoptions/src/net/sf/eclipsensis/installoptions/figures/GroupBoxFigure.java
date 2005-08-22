@@ -28,7 +28,7 @@ public class GroupBoxFigure extends UneditableElementFigure
     /**
      * @return
      */
-    protected Control createSWTControl(Composite parent, int style)
+    protected Control createUneditableSWTControl(Composite parent, int style)
     {
         Group group = new Group(parent, style);
         group.setText(mText);

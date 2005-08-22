@@ -9,11 +9,13 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.figures;
 
+import net.sf.eclipsensis.installoptions.edit.label.InstallOptionsLabelEditPart.ILabelFigure;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.views.properties.IPropertySource;
 
-public class LabelFigure extends UneditableElementFigure
+public class LabelFigure extends UneditableElementFigure implements ILabelFigure
 {
     public LabelFigure(Composite parent, IPropertySource propertySource, int style)
     {
@@ -28,7 +30,7 @@ public class LabelFigure extends UneditableElementFigure
     /**
      * @return
      */
-    protected Control createSWTControl(Composite parent, int style)
+    protected Control createUneditableSWTControl(Composite parent, int style)
     {
         Label label = new Label(parent, style);
         label.setText(mText);

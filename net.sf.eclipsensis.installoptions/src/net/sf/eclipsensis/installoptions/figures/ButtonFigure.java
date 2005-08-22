@@ -28,7 +28,7 @@ public class ButtonFigure extends UneditableElementFigure
     /**
      * @return
      */
-    protected Control createSWTControl(Composite parent, int style)
+    protected Control createUneditableSWTControl(Composite parent, int style)
     {
         Button button = new Button(parent, style);
         button.setText(getText());

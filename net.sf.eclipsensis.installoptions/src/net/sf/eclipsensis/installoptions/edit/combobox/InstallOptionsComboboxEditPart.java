@@ -94,6 +94,11 @@ public class InstallOptionsComboboxEditPart extends InstallOptionsEditableElemen
         }
     }
     
+    protected boolean supportsScrolling()
+    {
+        return false;
+    }
+
     /**
      * @return
      */

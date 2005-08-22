@@ -20,8 +20,6 @@ import org.eclipse.ui.views.properties.IPropertySource;
 
 public class TextFigure extends EditableElementFigure
 {
-    private boolean mHScroll;
-    private boolean mVScroll;
     private boolean mMultiLine;
     private boolean mReadOnly;
     private boolean mNoWordWrap;
@@ -59,16 +57,6 @@ public class TextFigure extends EditableElementFigure
         mOnlyNumbers = onlyNumbers;
     }
     
-    public boolean isHScroll()
-    {
-        return mHScroll;
-    }
-    
-    public void setHScroll(boolean scroll)
-    {
-        mHScroll = scroll;
-    }
-    
     public boolean isMultiLine()
     {
         return mMultiLine;
@@ -99,15 +87,6 @@ public class TextFigure extends EditableElementFigure
         mReadOnly = readOnly;
     }
     
-    public boolean isVScroll()
-    {
-        return mVScroll;
-    }
-    
-    public void setVScroll(boolean scroll)
-    {
-        mVScroll = scroll;
-    }
     /**
      * @return
      */
@@ -126,15 +105,9 @@ public class TextFigure extends EditableElementFigure
         int style = SWT.BORDER;
         if(mMultiLine) {
             style |= SWT.MULTI;
-            if(!mNoWordWrap && !mHScroll) {
+            if(!mNoWordWrap && !isHScroll()) {
                 style |= SWT.WRAP;
             }
-        }
-        if(mHScroll) {
-            style |= SWT.H_SCROLL;
-        }
-        if(mVScroll) {
-            style |= SWT.V_SCROLL;
         }
         if(mReadOnly) {
             style |= SWT.READ_ONLY;
@@ -154,7 +127,7 @@ public class TextFigure extends EditableElementFigure
 
     protected int getThemeStateId()
     {
-        if(mDisabled) {
+        if(isDisabled()) {
             return WinAPI.ETS_DISABLED;
         }
         if(mReadOnly) {

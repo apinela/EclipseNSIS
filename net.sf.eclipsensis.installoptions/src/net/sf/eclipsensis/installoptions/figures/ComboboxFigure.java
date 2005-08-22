@@ -9,8 +9,10 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.figures;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsWidget;
 import net.sf.eclipsensis.installoptions.properties.PropertySourceWrapper;
 import net.sf.eclipsensis.util.ColorManager;
@@ -32,7 +34,7 @@ public class ComboboxFigure extends Figure implements IListItemsFigure
     /**
      * 
      */
-    public ComboboxFigure(Composite parent, IPropertySource propertySource)
+    public ComboboxFigure(Composite parent, final IPropertySource propertySource)
     {
         super();
         Combo cb = new Combo(parent,SWT.DROP_DOWN);
@@ -43,29 +45,9 @@ public class ComboboxFigure extends Figure implements IListItemsFigure
         mComboHeight = p.y;
         
         setLayoutManager(new XYLayout());
-        final Rectangle[] bounds = calculateBounds((Rectangle)propertySource.getPropertyValue(InstallOptionsWidget.PROPERTY_BOUNDS));
-        mComboFigure = new ComboFigure(parent, new PropertySourceWrapper(propertySource){
-            public Object getPropertyValue(Object id)
-            {
-                if(InstallOptionsWidget.PROPERTY_BOUNDS.equals(id)) {
-                    return bounds[0];
-                }
-                else {
-                    return super.getPropertyValue(id);
-                }
-            }
-        });
-        mListFigure = new ListFigure(parent, new PropertySourceWrapper(propertySource){
-            public Object getPropertyValue(Object id)
-            {
-                if(InstallOptionsWidget.PROPERTY_BOUNDS.equals(id)) {
-                    return bounds[1];
-                }
-                else {
-                    return super.getPropertyValue(id);
-                }
-            }
-        }, SWT.SINGLE);
+        Rectangle[] bounds = calculateBounds((Rectangle)propertySource.getPropertyValue(InstallOptionsWidget.PROPERTY_BOUNDS));
+        mComboFigure = new ComboFigure(parent, new CustomPropertySourceWrapper(propertySource, bounds[0]));
+        mListFigure = new ListFigure(parent,  new CustomPropertySourceWrapper(propertySource, bounds[1]), SWT.SINGLE);
         mListFigure.setBorder(new LineBorder(ColorManager.getColor(ColorManager.BLACK)));
         add(mComboFigure);
         add(mListFigure);
@@ -136,5 +118,40 @@ public class ComboboxFigure extends Figure implements IListItemsFigure
     public void setListItems(List listItems)
     {
         mListFigure.setListItems(listItems);
+    }
+
+    public void setHScroll(boolean hScroll)
+    {
+        //Scrolling not supported
+    }
+
+    public void setVScroll(boolean vScroll)
+    {
+        //Scrolling not supported
+    }
+    
+    private class CustomPropertySourceWrapper extends PropertySourceWrapper
+    {
+        private Rectangle mBounds;
+        public CustomPropertySourceWrapper(IPropertySource delegate, Rectangle bounds)
+        {
+            super(delegate);
+            mBounds = bounds;
+        }
+        
+        public Object getPropertyValue(Object id)
+        {
+            if(InstallOptionsWidget.PROPERTY_BOUNDS.equals(id)) {
+                return mBounds;
+            }
+            else if( InstallOptionsModel.PROPERTY_FLAGS.equals(id)) {
+                List flags = new ArrayList((List)getDelegate().getPropertyValue(id));
+                flags.removeAll(SCROLL_FLAGS);
+                return flags;
+            }
+            else {
+                return super.getPropertyValue(id);
+            }
+        }
     }
 }

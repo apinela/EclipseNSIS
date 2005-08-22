@@ -9,7 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.edit.label;
 
-import net.sf.eclipsensis.installoptions.figures.LabelFigure;
+import net.sf.eclipsensis.installoptions.edit.label.InstallOptionsLabelEditPart.ILabelFigure;
 
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.tools.CellEditorLocator;
@@ -21,9 +21,9 @@ public class LabelCellEditorLocator implements CellEditorLocator
     private static int X_OFFSET = -4;
     private static int W_OFFSET = 5;
 
-    private LabelFigure mLabel;
+    private ILabelFigure mLabel;
 
-    public LabelCellEditorLocator(LabelFigure label) 
+    public LabelCellEditorLocator(ILabelFigure label) 
     {
         setLabel(label);
     }
@@ -38,11 +38,11 @@ public class LabelCellEditorLocator implements CellEditorLocator
         text.setBounds(rect.x + X_OFFSET, rect.y, rect.width + W_OFFSET, rect.height);    
     }
 
-    protected LabelFigure getLabel() {
+    protected ILabelFigure getLabel() {
         return mLabel;
     }
 
-    protected void setLabel(LabelFigure label) 
+    protected void setLabel(ILabelFigure label) 
     {
         mLabel = label;
     }

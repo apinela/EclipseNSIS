@@ -61,6 +61,11 @@ public class WinAPI
     
     public static final int COLOR_GRAYTEXT = 0x11;
     public static final int COLOR_3DHILIGHT = 0x14;
+    
+    public static final int WS_HSCROLL = 0x100000;
+    public static final int WS_VSCROLL = 0x200000;
+    
+    public static final int LB_SETHORIZONTALEXTENT = 0x194;
 
     private static native void init();
     public static native int SetWindowLong(int hWnd, int nIndex, int dwNewLong);

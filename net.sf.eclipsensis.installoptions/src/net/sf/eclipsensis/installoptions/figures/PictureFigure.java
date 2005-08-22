@@ -9,62 +9,50 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.figures;
 
-import java.util.List;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsPicture;
 
-import net.sf.eclipsensis.installoptions.model.*;
-import net.sf.eclipsensis.util.ColorManager;
-
-import org.eclipse.draw2d.*;
-import org.eclipse.draw2d.geometry.*;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.views.properties.IPropertySource;
 
-public class PictureFigure extends ImageFigure implements IInstallOptionsFigure
+public class PictureFigure extends UneditableElementFigure
 {
-    private LineBorder mLineBorder = new LineBorder(ColorManager.getColor(ColorManager.BLACK)){
-        public void paint(IFigure figure, Graphics graphics, Insets insets) 
-        {
-            graphics.setLineStyle(Graphics.LINE_DASHDOT);
-            super.paint(figure,graphics,insets);
-        }
-    };
-
-    public PictureFigure(IPropertySource propertySource)
+    private Image mImage;
+    
+    public PictureFigure(Composite parent, IPropertySource propertySource)
     {
-        super();
+        super(parent, propertySource);
+    }
+
+    protected void init(IPropertySource propertySource)
+    {
         setImage((Image)propertySource.getPropertyValue(InstallOptionsPicture.PROPERTY_IMAGE));
-        List flags = (List)propertySource.getPropertyValue(InstallOptionsModel.PROPERTY_FLAGS);
-        setDisabled(flags != null && flags.contains(InstallOptionsModel.FLAGS_DISABLED));
-        setBounds((Rectangle)propertySource.getPropertyValue(InstallOptionsWidget.PROPERTY_BOUNDS));
+        super.init(propertySource);
     }
 
-    public void refresh()
+    protected Control createUneditableSWTControl(Composite parent, int style)
     {
-    }
-
-    public void setBounds(org.eclipse.draw2d.geometry.Rectangle rect)
-    {
-        Dimension dim = getSize();
-        if(dim.width != rect.width || dim.height != rect.height) {
-            Image image = getImage();
-            if(image != null) {
-                if(rect.width > image.getBounds().width || rect.height > image.getBounds().height) {
-                    setBorder(mLineBorder);
-                }
-                else {
-                    setBorder(null);
-                }
-            }
+        Label label = new Label(parent, style);
+        Image image = getImage();
+        if(image != null) {
+            label.setImage(image);
         }
-        super.setBounds(rect);
+        return label;
     }
 
-    /* (non-Javadoc)
-     * @see net.sf.eclipsensis.installoptions.figures.IInstallOptionsFigure#setDisabled(boolean)
-     */
-    public void setDisabled(boolean disabled)
+    public int getDefaultStyle()
     {
-        setEnabled(!disabled);
+        return SWT.CENTER;
     }
 
+    public Image getImage()
+    {
+        return mImage;
+    }
+
+    public void setImage(Image image)
+    {
+        mImage = image;
+    }
 }

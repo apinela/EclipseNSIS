@@ -22,6 +22,11 @@ public class PropertySourceWrapper implements IPropertySource
         mDelegate = delegate;
     }
     
+    protected IPropertySource getDelegate()
+    {
+        return mDelegate;
+    }
+
     /* (non-Javadoc)
      * @see org.eclipse.ui.views.properties.IPropertySource#getEditableValue()
      */

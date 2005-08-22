@@ -396,7 +396,7 @@ public class InstallOptionsXYLayoutEditPolicy extends XYLayoutEditPolicy impleme
             eraseSizeOnDropFeedback(request);
         }
         else {
-            super.eraseLayoutTargetFeedback(request);
+            super.eraseTargetFeedback(request);
         }
     }
 }

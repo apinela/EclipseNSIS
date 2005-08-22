@@ -47,14 +47,6 @@ public class InstallOptionsTextEditPart extends InstallOptionsEditableElementEdi
             figure.setNoWordWrap(true);
             setNeedsRefresh(true);
         }
-        else if(flag.equals(InstallOptionsModel.FLAGS_HSCROLL)) {
-            figure.setHScroll(true);
-            setNeedsRefresh(true);
-        }
-        else if(flag.equals(InstallOptionsModel.FLAGS_VSCROLL)) {
-            figure.setVScroll(true);
-            setNeedsRefresh(true);
-        }
         else if(flag.equals(InstallOptionsModel.FLAGS_READONLY)) {
             figure.setReadOnly(true);
             setNeedsRefresh(true);
@@ -76,14 +68,6 @@ public class InstallOptionsTextEditPart extends InstallOptionsEditableElementEdi
         }
         else if(flag.equals(InstallOptionsModel.FLAGS_NOWORDWRAP)) {
             figure.setNoWordWrap(false);
-            setNeedsRefresh(true);
-        }
-        else if(flag.equals(InstallOptionsModel.FLAGS_HSCROLL)) {
-            figure.setHScroll(false);
-            setNeedsRefresh(true);
-        }
-        else if(flag.equals(InstallOptionsModel.FLAGS_VSCROLL)) {
-            figure.setVScroll(false);
             setNeedsRefresh(true);
         }
         else if(flag.equals(InstallOptionsModel.FLAGS_READONLY)) {

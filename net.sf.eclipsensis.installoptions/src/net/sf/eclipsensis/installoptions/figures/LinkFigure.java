@@ -9,6 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.figures;
 
+import net.sf.eclipsensis.installoptions.edit.link.InstallOptionsLinkEditPart.ILinkFigure;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsLink;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
 
@@ -21,7 +22,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.views.properties.IPropertySource;
 
-public class LinkFigure extends LabelFigure
+public class LinkFigure extends LabelFigure implements ILinkFigure
 {
     private RGB mTxtColor;
     
@@ -54,9 +55,9 @@ public class LinkFigure extends LabelFigure
     /**
      * @return
      */
-    protected Control createSWTControl(Composite parent, int style)
+    protected Control createUneditableSWTControl(Composite parent, int style)
     {
-        Control label = super.createSWTControl(parent, style);
+        Control label = super.createUneditableSWTControl(parent, style);
         final Color color = new Color(label.getDisplay(),getTxtColor());
         label.setForeground(color);
         label.addDisposeListener(new DisposeListener(){

@@ -84,6 +84,9 @@ public class InstallOptionsLinkEditPart extends InstallOptionsLabelEditPart
     protected IInstallOptionsFigure createInstallOptionsFigure() 
     {
         if(cIsNT) {
+            //This is a hack because Windows NT Labels don't seem to respond to the 
+            //WM_PRINT message (see SWTControl.getImage(Control)
+            //TODO Remove once the cause (and fix) is known.
             return new NTLinkFigure(getInstallOptionsWidget());
         }
         else {
@@ -94,7 +97,7 @@ public class InstallOptionsLinkEditPart extends InstallOptionsLabelEditPart
     protected void doPropertyChange(PropertyChangeEvent evt)
     {
         if (evt.getPropertyName().equalsIgnoreCase(InstallOptionsModel.PROPERTY_TXTCOLOR)) {//$NON-NLS-1$
-            LinkFigure figure2 = (LinkFigure)getFigure();
+            ILinkFigure figure2 = (ILinkFigure)getFigure();
             figure2.setTxtColor((RGB)evt.getNewValue());
             setNeedsRefresh(true);
         }
@@ -116,13 +119,26 @@ public class InstallOptionsLinkEditPart extends InstallOptionsLabelEditPart
         return InstallOptionsPlugin.getResourceString("link.type.name"); //$NON-NLS-1$
     }
 
-    protected class NTLinkFigure extends NTLabelFigure
+    public static interface ILinkFigure extends ILabelFigure
+    {
+        public void setTxtColor(RGB rgb);
+    }
+
+    //This is a hack because Windows NT Labels don't seem to respond to the 
+    //WM_PRINT message (see SWTControl.getImage(Control)
+    //TODO Remove once the cause (and fix) is known.
+    protected class NTLinkFigure extends NTLabelFigure implements ILinkFigure
     {
         private RGB mTxtColor;
 
         public NTLinkFigure(IPropertySource propertySource)
         {
             super(propertySource);
+        }
+
+        protected void init(IPropertySource propertySource)
+        {
+            super.init(propertySource);
             setTxtColor((RGB)propertySource.getPropertyValue(InstallOptionsModel.PROPERTY_TXTCOLOR));
        }
         
@@ -133,8 +149,10 @@ public class InstallOptionsLinkEditPart extends InstallOptionsLabelEditPart
 
         public void setTxtColor(RGB txtColor)
         {
-            mTxtColor = txtColor;
-            refresh();
+            if(!getTxtColor().equals(txtColor)) {
+                mTxtColor = txtColor;
+                refresh();
+            }
         }
     }
 }

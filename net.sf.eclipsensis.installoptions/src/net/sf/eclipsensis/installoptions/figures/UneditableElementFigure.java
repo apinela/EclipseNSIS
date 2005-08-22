@@ -10,8 +10,10 @@
 package net.sf.eclipsensis.installoptions.figures;
 
 import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
+import net.sf.eclipsensis.util.WinAPI;
 
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.views.properties.IPropertySource;
 
 public abstract class UneditableElementFigure extends SWTControlFigure implements IUneditableElementFigure
@@ -43,4 +45,23 @@ public abstract class UneditableElementFigure extends SWTControlFigure implement
     {
         mText = text;
     }
+
+    protected final Control createSWTControl(Composite parent, int style)
+    {
+        Control control = createUneditableSWTControl(parent, style);
+        if(isHScroll() || isVScroll()) {
+            style = WinAPI.GetWindowLong(control.handle, WinAPI.GWL_STYLE);
+            if (isHScroll()) {
+                style |= WinAPI.WS_HSCROLL;
+            }
+            if (isVScroll()) {
+                style |= WinAPI.WS_VSCROLL;
+            }
+            WinAPI.SetWindowLong(control.handle,WinAPI.GWL_STYLE,style);
+        }
+        return control;
+    }
+    
+    protected abstract Control createUneditableSWTControl(Composite parent, int style);
+
 }
