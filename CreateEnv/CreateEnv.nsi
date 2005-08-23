@@ -56,11 +56,27 @@ javahome:
     FileWrite $R1 "rem $R2 JDK 1.4$\r$\n"
     FileWrite $R1 "rem *******$\r$\n"
     FileWrite $R1 "set JAVA_HOME=$R0$\r$\n"
+    FileWrite $R1 "set INCLUDE=%JAVA_HOME%\include;%JAVA_HOME%\include\win32;%INCLUDE%$\r$\n"
+    FileWrite $R1 "set LIB=%JAVA_HOME%\lib;%LIB%$\r$\n"
     FileWrite $R1 "$\r$\n"
+
+;msvc:
+    ReadRegStr $R0 HKEY_LOCAL_MACHINE "SOFTWARE\Microsoft\DevStudio\6.0\Products\Microsoft Visual C++" ProductDir
+    StrCmp $R0 "" 0 +3
+    ReadRegStr $R0 HKEY_LOCAL_MACHINE "SOFTWARE\Microsoft\VisualStudio\6.0\Setup\Microsoft Visual C++" ProductDir
+    StrCmp $R0 "" dotnet
+!insertmacro STRIP_TRAILING_SLASH $R0
+    Pop $R0
+    FileWrite $R1 "rem ************************$\r$\n"
+    FileWrite $R1 "rem Microsoft Visual C++ 6.0$\r$\n"
+    FileWrite $R1 "rem ************************$\r$\n"
+    FileWrite $R1 "call $\"$R0\Bin\vcvars32.bat$\"$\r$\n"
+    FileWrite $R1 "$\r$\n"
+    goto psdk
 
 dotnet:
     ReadRegStr $R0 HKEY_LOCAL_MACHINE "SOFTWARE\Microsoft\.NETFramework" sdkInstallRootv1.1
-    StrCmp $R0 "" msvc
+    StrCmp $R0 "" psdk
 !insertmacro STRIP_TRAILING_SLASH $R0
     Pop $R0
     FileWrite $R1 "rem ********************************$\r$\n"
@@ -75,20 +91,6 @@ dotnet:
     FileWrite $R1 "rem Microsoft Visual C++ Toolkit 2003$\r$\n"
     FileWrite $R1 "rem *********************************$\r$\n"
     FileWrite $R1 "call $\"$R0\vcvars32.bat$\"$\r$\n"
-    FileWrite $R1 "$\r$\n"
-    goto psdk
-
-msvc:
-    ReadRegStr $R0 HKEY_LOCAL_MACHINE "SOFTWARE\Microsoft\DevStudio\6.0\Products\Microsoft Visual C++" ProductDir
-    StrCmp $R0 "" 0 +3
-    ReadRegStr $R0 HKEY_LOCAL_MACHINE "SOFTWARE\Microsoft\DevStudio\6.0\Products\Microsoft Visual C++" ProductDir
-    StrCmp $R0 "" psdk
-!insertmacro STRIP_TRAILING_SLASH $R0
-    Pop $R0
-    FileWrite $R1 "rem ************************$\r$\n"
-    FileWrite $R1 "rem Microsoft Visual C++ 6.0$\r$\n"
-    FileWrite $R1 "rem ************************$\r$\n"
-    FileWrite $R1 "call $\"$R0\Bin\vcvars32.bat$\"$\r$\n"
     FileWrite $R1 "$\r$\n"
 
 psdk:
@@ -111,6 +113,8 @@ hhw:
     FileWrite $R1 "rem Microsoft HTML Help Workshop$\r$\n"
     FileWrite $R1 "rem ****************************$\r$\n"
     FileWrite $R1 "set HHW_HOME=$R0$\r$\n"
+    FileWrite $R1 "set INCLUDE=%HHW_HOME%\include;%INCLUDE%$\r$\n"
+    FileWrite $R1 "set LIB=%HHW_HOME%\lib;%LIB%$\r$\n"
 
 done:
     FileClose $R1

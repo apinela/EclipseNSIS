@@ -18,7 +18,17 @@
 
   <meta http-equiv="Content-Style-Type" content="text/css">
 
-  <link rel="stylesheet" href="web/css/styles.css" charset="ISO-8859-1" type="text/css"></head>
+  <link rel="stylesheet" href="web/css/styles.css" charset="ISO-8859-1" type="text/css">
+  <style type="text/css">
+<!--
+.style1 {
+	font-size: xx-small;
+	color: #FF0000;
+}
+.style2 {color: #FF0000}
+-->
+  </style>
+</head>
 <body>
 <div id="main">
 <h1 style="text-align: center;">EclipseNSIS - Build Instructions</h1>
@@ -54,13 +64,11 @@ is the directory where the EclipseNSIS source code distribution has been
 extracted.)
 </li>
 <li>Repeat the previous two steps
-for the [EclipseNSIS]\net.sf.eclipsensis.installoptions, [EclipseNSIS]\net.sf.eclipsensis.installoptions.feature, [EclipseNSIS]\net.sf.eclipsensis.feature and
-[EclipseNSIS]\net.sf.eclipsensis.site directories.</li>
+for the [EclipseNSIS]\net.sf.eclipsensis.installoptions, [EclipseNSIS]\net.sf.eclipsensis.installoptions.feature, and [EclipseNSIS]\net.sf.eclipsensis.feature directories.</li>
 <li>To build the EclipseNSIS plugin:</li>
 <ol style="list-style-type: lower-roman;">
 <li>Open the <span style="font-style: italic;">File&rarr;Export...</span> menu and select "Deployable plug-ins and fragments" in the Export wizard dialog.</li>
-<li>Select the EclipseNSIS plugin from the <span style="font-style: italic;">Available Plug-ins and Fragments</span> list. The name of the plugin will be "net.sf.eclipsensis (x.x.x)", where x.x.x is the current version.<br>
-</li>
+<li>Select the EclipseNSIS plugin from the <span style="font-style: italic;">Available Plug-ins and Fragments</span> list. The name of the plugin will be "net.sf.eclipsensis (x.x.x)", where x.x.x is the current version.</li>
 <li>In the <span style="font-style: italic;">Export Options</span> group, specify "a single ZIP file" in the <span style="font-style: italic;">Deploy as</span> field.</li>
 <li>In the <span style="font-style: italic;">Destination</span> group, specify a <span style="font-style: italic;">File name</span> for the build output.</li>
 <li>Press the <span style="font-style: italic;">Finish</span> button to complete the build.</li>
@@ -85,7 +93,7 @@ below.<br>
 <h3>Requirements</h3>
 <ul>
 <li>Java 1.4 SDK as described in the <a href="#java">Java Sources</a> section.</li>
-<li>Microsoft Visual C++ compiler. Either of the following can be used:</li>
+<li>Microsoft Visual C++ compiler. Either of the following can be used<span class="style2">*</span>:</li>
 <ul>
 <li>Commercial</li>
 <ul>
@@ -100,6 +108,7 @@ below.<br>
 <li><a href="http://www.microsoft.com/msdownload/platformsdk/sdkupdate/">Microsoft Platform SDK 2003</a> (only the Core SDK is required)</li>
 <li><a href="http://www.microsoft.com/downloads/details.aspx?FamilyID=00535334-c8a6-452f-9aa0-d597d16580cc&amp;DisplayLang=en">Microsoft HTML Help Workshop 1.3</a></li>
 </ul>
+<p class="style1">* For compatibility with Windows 98 and Windows NT 4.0, the DLLs must be linked to MSVCRT.dll. This can only be done if using MS Visual Studio 6.0</p>
 <h3>Instructions</h3>
 <ol>
 <li>Install all the required software to setup the development environment.</li>

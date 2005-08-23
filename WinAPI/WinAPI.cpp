@@ -350,4 +350,3 @@ JNIEXPORT jint JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetSysColor(JNIEnv *p
 {
     return GetSysColor(index);
 }
-

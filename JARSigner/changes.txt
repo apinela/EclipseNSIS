@@ -1,7 +1,7 @@
 Revision History
 ================
 
-0.5.0 (08/19/2005)
+0.5.0 (08/23/2005)
     * Added support for JAR verification.
 
 0.3.0 (07/15/2005)

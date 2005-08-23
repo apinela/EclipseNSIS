@@ -17,6 +17,7 @@ import net.sf.eclipsensis.util.WinAPI;
 
 import org.eclipse.draw2d.*;
 import org.eclipse.draw2d.geometry.*;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
@@ -32,7 +33,9 @@ public abstract class SWTControlFigure extends Figure implements IInstallOptions
     private Image mImage;
     private boolean mNeedsReScrape = true;
 
-    protected boolean mDisabled = false;
+    private boolean mDisabled = false;
+    private boolean mHScroll;
+    private boolean mVScroll;
     private int mStyle = -1;
     private PaintListener mSWTPaintListener = new PaintListener() {
         public void paintControl(PaintEvent e) 
@@ -87,12 +90,19 @@ public abstract class SWTControlFigure extends Figure implements IInstallOptions
     {
         List flags = (List)propertySource.getPropertyValue(InstallOptionsModel.PROPERTY_FLAGS);
         setDisabled(flags != null && flags.contains(InstallOptionsModel.FLAGS_DISABLED));
+        setHScroll(flags != null && flags.contains(InstallOptionsModel.FLAGS_HSCROLL));
+        setVScroll(flags != null && flags.contains(InstallOptionsModel.FLAGS_VSCROLL));
         setBounds((Rectangle)propertySource.getPropertyValue(InstallOptionsWidget.PROPERTY_BOUNDS));
     }
 
     public void setDisabled(boolean disabled)
     {
         mDisabled = disabled;
+    }
+
+    protected boolean isDisabled()
+    {
+        return mDisabled;
     }
 
     public void refresh()
@@ -161,7 +171,14 @@ public abstract class SWTControlFigure extends Figure implements IInstallOptions
             }
             mImage = null;
             if(isVisible()) {
-                Control control = createSWTControl(mParent, (mStyle <0?getDefaultStyle():mStyle));
+                int style = (mStyle <0?getDefaultStyle():mStyle);
+                if(isHScroll()) {
+                    style |= SWT.H_SCROLL;
+                }
+                if(isVScroll()) {
+                    style |= SWT.V_SCROLL;
+                }
+                Control control = createSWTControl(mParent, style);
                 control.setVisible(true);
                 control.setEnabled(!mDisabled);
                 ControlSubclasser.subclassControl(control, this);
@@ -182,8 +199,8 @@ public abstract class SWTControlFigure extends Figure implements IInstallOptions
                 setNeedsReScrape(false);
                 
                 //Force a repaint
-//                control.setVisible(false);
-//                control.setVisible(true);
+                control.setVisible(false);
+                control.setVisible(true);
             }
         }
         super.layout();
@@ -212,6 +229,26 @@ public abstract class SWTControlFigure extends Figure implements IInstallOptions
     int getStyle()
     {
         return mStyle;
+    }
+
+    public boolean isHScroll()
+    {
+        return mHScroll;
+    }
+
+    public void setHScroll(boolean scroll)
+    {
+        mHScroll = scroll;
+    }
+
+    public boolean isVScroll()
+    {
+        return mVScroll;
+    }
+
+    public void setVScroll(boolean scroll)
+    {
+        mVScroll = scroll;
     }
 
     protected abstract Control createSWTControl(Composite parent, int style);

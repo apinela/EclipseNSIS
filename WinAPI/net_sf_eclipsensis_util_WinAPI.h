@@ -84,6 +84,13 @@ extern "C" {
 #define net_sf_eclipsensis_util_WinAPI_COLOR_GRAYTEXT 17L
 #undef net_sf_eclipsensis_util_WinAPI_COLOR_3DHILIGHT
 #define net_sf_eclipsensis_util_WinAPI_COLOR_3DHILIGHT 20L
+#undef net_sf_eclipsensis_util_WinAPI_WS_HSCROLL
+#define net_sf_eclipsensis_util_WinAPI_WS_HSCROLL 1048576L
+#undef net_sf_eclipsensis_util_WinAPI_WS_VSCROLL
+#define net_sf_eclipsensis_util_WinAPI_WS_VSCROLL 2097152L
+#undef net_sf_eclipsensis_util_WinAPI_LB_SETHORIZONTALEXTENT
+#define net_sf_eclipsensis_util_WinAPI_LB_SETHORIZONTALEXTENT 404L
+
 /*
  * Class:     net_sf_eclipsensis_util_WinAPI
  * Method:    init

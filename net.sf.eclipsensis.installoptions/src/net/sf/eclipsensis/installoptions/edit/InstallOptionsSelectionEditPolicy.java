@@ -10,13 +10,11 @@
 package net.sf.eclipsensis.installoptions.edit;
 
 import org.eclipse.draw2d.*;
-import org.eclipse.draw2d.geometry.Dimension;
-import org.eclipse.draw2d.geometry.Point;
+import org.eclipse.draw2d.geometry.*;
 import org.eclipse.gef.*;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.editpolicies.ComponentEditPolicy;
 import org.eclipse.gef.requests.LocationRequest;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
 
 public class InstallOptionsSelectionEditPolicy extends ComponentEditPolicy
@@ -58,19 +56,23 @@ public class InstallOptionsSelectionEditPolicy extends ComponentEditPolicy
     }
 
     private Point computeTipLocation(IFigure tip, Point p) {
-        Rectangle clientArea = Display.getDefault().getClientArea();
+        FigureCanvas figureCanvas = (FigureCanvas)((GraphicalEditPart)getHost().getRoot()).getViewer().getControl();
+        Viewport viewport = figureCanvas.getViewport();
+        Rectangle clientArea = viewport.getClientArea();
         Point preferredLocation = new Point(p.x, p.y + 26);
         
-        Dimension tipSize = ((GraphicalEditPart)getHost().getRoot()).getFigure().getPreferredSize();
+        Dimension tipSize = tip.getSize();
         
         // Adjust location if tip is going to fall outside display
         if (preferredLocation.y + tipSize.height > clientArea.height) {
             preferredLocation.y = p.y - tipSize.height;
         }
+        preferredLocation.y += clientArea.y;
         
         if (preferredLocation.x + tipSize.width > clientArea.width) {
             preferredLocation.x -= (preferredLocation.x + tipSize.width) - clientArea.width;
         }
+        preferredLocation.x += clientArea.x;
         
         return preferredLocation; 
     }

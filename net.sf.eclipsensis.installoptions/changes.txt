@@ -1,7 +1,7 @@
 Revision History
 ================
 
-0.9.2 (08/19/2005)
+0.9.2 (08/23/2005)
     * Upgraded to Eclipse GEF 3.1 - no longer compatible with GEF 3.0.
     * Added template support.
     * Added dynamic support for change in MakeNSIS version in EclipseNSIS 
@@ -10,6 +10,7 @@ Revision History
       Editor.
     * Added project nature and project builder for handling automatic detection 
       of errors and warnings upon resource changes.
+    * Added underline and strikethrough syntax styles to source editor.
     * Guides and controls glued to guides are now saved as INI file comments, 
       and can be restored when Design editor is opened.
     * Improved screen scraping mechanism for control image capture.
