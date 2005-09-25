@@ -9,41 +9,24 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.edit.label;
 
+import net.sf.eclipsensis.installoptions.edit.InstallOptionsCellEditorLocator;
 import net.sf.eclipsensis.installoptions.edit.label.InstallOptionsLabelEditPart.ILabelFigure;
 
 import org.eclipse.draw2d.geometry.Rectangle;
-import org.eclipse.gef.tools.CellEditorLocator;
-import org.eclipse.jface.viewers.CellEditor;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.graphics.Point;
 
-public class LabelCellEditorLocator implements CellEditorLocator
+public class LabelCellEditorLocator extends InstallOptionsCellEditorLocator
 {
     private static int X_OFFSET = -4;
     private static int W_OFFSET = 5;
 
-    private ILabelFigure mLabel;
-
     public LabelCellEditorLocator(ILabelFigure label) 
     {
-        setLabel(label);
+        super(label);
     }
 
-    public void relocate(CellEditor celleditor) 
+    protected Rectangle transformLocation(Rectangle editArea, Point preferredSize)
     {
-        Text text = (Text)celleditor.getControl();
-
-        Rectangle rect = mLabel.getClientArea().getCopy();
-        mLabel.translateToAbsolute(rect);
-        
-        text.setBounds(rect.x + X_OFFSET, rect.y, rect.width + W_OFFSET, rect.height);    
-    }
-
-    protected ILabelFigure getLabel() {
-        return mLabel;
-    }
-
-    protected void setLabel(ILabelFigure label) 
-    {
-        mLabel = label;
+        return new Rectangle(editArea.x + X_OFFSET, editArea.y, editArea.width + W_OFFSET, editArea.height);
     }
 }

@@ -53,7 +53,6 @@ public abstract class NSISSettingsPage extends PropertyPage implements IWorkbenc
 
     public NSISSettingsPage() 
     {
-		setDescription(getPageDescription());
 	}
     
     /* (non-Javadoc)
@@ -62,7 +61,7 @@ public abstract class NSISSettingsPage extends PropertyPage implements IWorkbenc
     public void init(IWorkbench workbench)
     {
     }
-
+    
     /* (non-Javadoc)
      * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
      */
@@ -103,6 +102,7 @@ public abstract class NSISSettingsPage extends PropertyPage implements IWorkbenc
     
     public void createControl(Composite parent)
     {
+        setDescription(getPageDescription());
         super.createControl(parent);
         PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),getContextId());
         enableControls(canEnableControls());

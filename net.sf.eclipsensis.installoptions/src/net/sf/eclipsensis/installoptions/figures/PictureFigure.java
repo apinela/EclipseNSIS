@@ -23,6 +23,7 @@ public class PictureFigure extends UneditableElementFigure
     public PictureFigure(Composite parent, IPropertySource propertySource)
     {
         super(parent, propertySource);
+        setBorder(new DashedLineBorder());
     }
 
     protected void init(IPropertySource propertySource)

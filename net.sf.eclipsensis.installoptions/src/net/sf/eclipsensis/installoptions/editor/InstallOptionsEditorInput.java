@@ -18,11 +18,12 @@ import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.editors.text.TextFileDocumentProvider;
 import org.eclipse.ui.part.FileEditorInput;
 
-public class InstallOptionsEditorInput extends FileEditorInput
+public class InstallOptionsEditorInput extends FileEditorInput implements IInstallOptionsEditorInput
 {
     private TextFileDocumentProvider mDocumentProvider;
     private IFileEditorInput mInput;
     private boolean mSwitching = false;
+
     /**
      * @throws CoreException
      * 
@@ -81,6 +82,11 @@ public class InstallOptionsEditorInput extends FileEditorInput
         return mInput.getFile();
     }
 
+    public Object getSource()
+    {
+        return getFile();
+    }
+    
     /* (non-Javadoc)
      * @see org.eclipse.ui.IStorageEditorInput#getStorage()
      */
@@ -139,5 +145,4 @@ public class InstallOptionsEditorInput extends FileEditorInput
         }
         return mInput.getAdapter(adapter);
     }
-
 }

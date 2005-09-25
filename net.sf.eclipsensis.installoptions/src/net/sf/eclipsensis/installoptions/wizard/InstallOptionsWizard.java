@@ -25,7 +25,8 @@ import org.eclipse.ui.IWorkbench;
 
 public class InstallOptionsWizard extends Wizard implements INewWizard 
 {
-    private static final Image cShellImage = InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("installoptions.icon")); //$NON-NLS-1$
+    private static final Image cShellImage = InstallOptionsPlugin.getShellImage();
+    
     private InstallOptionsTemplate mTemplate = null;
 	private IStructuredSelection mSelection;
 	private IWorkbench mWorkbench;

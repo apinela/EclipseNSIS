@@ -9,12 +9,12 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.editor;
 
+import net.sf.eclipsensis.editor.NSISScrollTipHelper;
 import net.sf.eclipsensis.editor.text.NSISTextUtility;
 import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 
-import org.eclipse.jface.text.source.IOverviewRuler;
-import org.eclipse.jface.text.source.IVerticalRuler;
+import org.eclipse.jface.text.source.*;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.events.DisposeEvent;
@@ -23,11 +23,14 @@ import org.eclipse.swt.widgets.Composite;
 
 public class InstallOptionsSourceViewer extends InstallOptionsSourcePreviewer
 {
+    private NSISScrollTipHelper mScrollTipHelper;
+    
     public InstallOptionsSourceViewer(Composite parent, IVerticalRuler verticalRuler, IOverviewRuler overviewRuler,
             boolean showAnnotationsOverview, int styles)
     {
         super(parent, verticalRuler, overviewRuler, showAnnotationsOverview,
                 styles);
+        mScrollTipHelper = new NSISScrollTipHelper(this);
     }
 
     protected void createControl(Composite parent, int styles)
@@ -49,5 +52,17 @@ public class InstallOptionsSourceViewer extends InstallOptionsSourcePreviewer
                 InstallOptionsPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(listener);
             }
         });
+    }
+
+    public void configure(SourceViewerConfiguration configuration)
+    {
+        super.configure(configuration);
+        mScrollTipHelper.connect();
+    }
+
+    public void unconfigure()
+    {
+        mScrollTipHelper.disconnect();
+        super.unconfigure();
     }
 }

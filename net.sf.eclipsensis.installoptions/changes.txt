@@ -1,6 +1,17 @@
 Revision History
 ================
 
+0.9.3 (09/20/2005)
+    * Added support for Unknown control in design editor.
+    * Added distribution, locking actions to design editor.
+    * Added preview support in both source and design editors.
+    * Improved RTL support.
+    * Fixed Z-ordering of controls.
+    * External files are now supported- including code folding and annotations.
+    * Bug fixes:
+        o 1274588
+    * Other minor bug fixes.
+
 0.9.2 (08/23/2005)
     * Upgraded to Eclipse GEF 3.1 - no longer compatible with GEF 3.0.
     * Added template support.

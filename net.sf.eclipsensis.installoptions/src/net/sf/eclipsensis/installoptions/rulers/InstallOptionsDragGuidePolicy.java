@@ -13,6 +13,7 @@ import java.util.Iterator;
 
 import net.sf.eclipsensis.installoptions.edit.InstallOptionsEditDomain;
 import net.sf.eclipsensis.installoptions.edit.InstallOptionsWidgetEditPart;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsWidget;
 
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.geometry.Rectangle;
@@ -45,6 +46,9 @@ public class InstallOptionsDragGuidePolicy extends DragGuidePolicy
             int delta = zoomedPosition - getGuideEditPart().getZoomedPosition();
             while (i.hasNext()) {
                 InstallOptionsWidgetEditPart part = (InstallOptionsWidgetEditPart)i.next();
+                if(((InstallOptionsWidget)part.getModel()).isLocked()) {
+                    return false;
+                }
                 IFigure fig = part.getFigure();
                 Rectangle bounds = fig.getBounds();
                 if(getGuideEditPart().isHorizontal()) {

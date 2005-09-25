@@ -23,6 +23,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
@@ -98,6 +99,11 @@ public class NSISWizardTemplatePreferencePage extends PreferencePage implements 
                     }
                 });
                 return wizardDialog[0];
+            }
+
+            protected Image getShellImage()
+            {
+                return EclipseNSISPlugin.getShellImage();
             }
         };
         

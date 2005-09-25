@@ -93,7 +93,7 @@ public class ToggleEnablementAction extends SelectionAction
 
     private boolean shouldEnable(InstallOptionsWidget part)
     {
-        return getFlags(part).contains(InstallOptionsModel.FLAGS_DISABLED);
+        return part.getFlags().contains(InstallOptionsModel.FLAGS_DISABLED);
     }
 
     private InstallOptionsWidget getPart(Object part)

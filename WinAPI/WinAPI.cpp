@@ -350,3 +350,18 @@ JNIEXPORT jint JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetSysColor(JNIEnv *p
 {
     return GetSysColor(index);
 }
+
+JNIEXPORT jint JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetSystemMetrics(JNIEnv *pEnv, jclass jClass, jint index)
+{
+    return GetSystemMetrics(index);
+}
+
+JNIEXPORT void JNICALL Java_net_sf_eclipsensis_util_WinAPI_SetObjectFieldValue (JNIEnv *pEnv, jclass jClass, jobject object, jstring field, jint value)
+{
+    jclass clasz = pEnv->GetObjectClass(object);
+    LPCSTR fieldName = (LPCSTR)pEnv->GetStringUTFChars(field, 0);
+    jfieldID fieldId = pEnv->GetFieldID(clasz,fieldName,_T("I"));
+    pEnv->ReleaseStringUTFChars(field, fieldName);
+    pEnv->SetIntField(object, fieldId, value);
+}
+

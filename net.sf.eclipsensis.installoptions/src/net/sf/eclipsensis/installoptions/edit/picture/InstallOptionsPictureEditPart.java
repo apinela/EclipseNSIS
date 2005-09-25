@@ -11,8 +11,8 @@ package net.sf.eclipsensis.installoptions.edit.picture;
 
 import net.sf.eclipsensis.installoptions.edit.InstallOptionsWidgetEditPart;
 import net.sf.eclipsensis.installoptions.edit.label.InstallOptionsLabelEditPart;
-import net.sf.eclipsensis.installoptions.figures.IInstallOptionsFigure;
-import net.sf.eclipsensis.installoptions.figures.PictureFigure;
+import net.sf.eclipsensis.installoptions.figures.*;
+import net.sf.eclipsensis.installoptions.figures.FigureUtility.NTFigure;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsPicture;
 
 import org.eclipse.draw2d.ImageFigure;
@@ -30,7 +30,7 @@ public abstract class InstallOptionsPictureEditPart extends InstallOptionsLabelE
         if(cIsNT) {
             //This is a hack because Windows NT Labels don't seem to respond to the 
             //WM_PRINT message (see SWTControl.getImage(Control)
-            //TODO Remove once the cause (and fix) is known.
+            //XXX Remove once the cause (and fix) is known.
              return new NTPictureFigure(getInstallOptionsWidget());
         }
         else {
@@ -50,7 +50,7 @@ public abstract class InstallOptionsPictureEditPart extends InstallOptionsLabelE
     
     //This is a hack because Windows NT Labels don't seem to respond to the 
     //WM_PRINT message (see SWTControl.getImage(Control)
-    //TODO Remove once the cause (and fix) is known.
+    //XXX Remove once the cause (and fix) is known.
     private class NTPictureFigure extends NTFigure
     {
         protected ImageFigure mImageFigure;
@@ -64,6 +64,7 @@ public abstract class InstallOptionsPictureEditPart extends InstallOptionsLabelE
         protected void createChildFigures()
         {
             mImageFigure = new ImageFigure();
+            mImageFigure.setBorder(new DashedLineBorder());
             add(mImageFigure);
         }
 

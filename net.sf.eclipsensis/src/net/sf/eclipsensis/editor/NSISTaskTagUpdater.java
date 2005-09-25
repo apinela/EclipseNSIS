@@ -22,8 +22,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.rules.ICharacterScanner;
 import org.eclipse.jface.text.rules.IToken;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.*;
 import org.eclipse.ui.editors.text.FileDocumentProvider;
 import org.eclipse.ui.part.FileEditorInput;
 
@@ -128,18 +127,32 @@ public class NSISTaskTagUpdater implements INSISConstants
                             extensions[i]=extensions[i].toLowerCase();
                         }
                         final HashMap filesMap = new HashMap();
-                        Collection coll = NSISEditor.getEditors();
-                        for (Iterator iter = coll.iterator(); iter.hasNext();) {
+                        IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
+                        for (int i = 0; i < windows.length; i++) {
                             if(monitor.isCanceled()) {
                                 return Status.CANCEL_STATUS;
                             }
-                            NSISEditor editor = (NSISEditor)iter.next();
-                            if(!editor.isDirty()) {
-                                IEditorInput editorInput = editor.getEditorInput();
-                                if(editorInput instanceof IFileEditorInput) {
-                                    IFile file = ((IFileEditorInput)editorInput).getFile();
-                                    IDocument document = editor.getDocumentProvider().getDocument(editorInput);
-                                    filesMap.put(file,document);
+                            IWorkbenchPage[] pages = windows[i].getPages();
+                            for (int j = 0; j < pages.length; j++) {
+                                if(monitor.isCanceled()) {
+                                    return Status.CANCEL_STATUS;
+                                }
+                                IEditorReference[] editorRefs = pages[i].getEditorReferences();
+                                for (int k = 0; k < editorRefs.length; k++) {
+                                    if(monitor.isCanceled()) {
+                                        return Status.CANCEL_STATUS;
+                                    }
+                                    if(INSISConstants.EDITOR_ID.equals(editorRefs[k].getId())) {
+                                        NSISEditor editor = (NSISEditor)editorRefs[k].getEditor(false);
+                                        if(editor != null && !editor.isDirty()) {
+                                            IEditorInput editorInput = editor.getEditorInput();
+                                            if(editorInput instanceof IFileEditorInput) {
+                                                IFile file = ((IFileEditorInput)editorInput).getFile();
+                                                IDocument document = editor.getDocumentProvider().getDocument(editorInput);
+                                                filesMap.put(file,document);
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -151,7 +164,7 @@ public class NSISTaskTagUpdater implements INSISConstants
                             public boolean visit(IResource resource) throws CoreException
                             {
                                 if(!monitor.isCanceled()) {
-                                    if(resource instanceof IFile) {
+                                    if(resource instanceof IFile && !filesMap.containsKey(resource)) {
                                         String ext = resource.getFileExtension();
                                         if(!Common.isEmpty(ext)) {
                                             for (int i = 0; i < extensions.length; i++) {

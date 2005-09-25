@@ -19,6 +19,7 @@ import net.sf.eclipsensis.template.AbstractTemplateReaderWriter;
 import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
 
 public class NSISWizardTemplateManager extends AbstractTemplateManager
@@ -45,7 +46,7 @@ public class NSISWizardTemplateManager extends AbstractTemplateManager
             map = super.loadUserTemplateStore();
         }
         if(map != null) {
-            //TODO Remove in 0.9.3
+            //XXX Remove in 0.9.4
             boolean needsSave = false;
             for(Iterator iter=map.values().iterator(); iter.hasNext(); ) {
                 needsSave |= ((NSISWizardTemplate)iter.next()).syncUp();
@@ -119,5 +120,10 @@ public class NSISWizardTemplateManager extends AbstractTemplateManager
     protected AbstractTemplateReaderWriter createReaderWriter()
     {
         return NSISWizardTemplateReaderWriter.INSTANCE;
+    }
+
+    protected Image getShellImage()
+    {
+        return EclipseNSISPlugin.getShellImage();
     }
 }

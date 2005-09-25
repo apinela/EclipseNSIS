@@ -9,6 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.editor.template;
 
+import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.jface.text.*;
@@ -57,7 +58,7 @@ public class NSISTemplateVariableProposal implements ICompletionProposal
             e.printStackTrace();
 
             Shell shell= mViewer.getTextWidget().getShell();
-            Common.openError(shell, e.getLocalizedMessage()); //$NON-NLS-1$
+            Common.openError(shell, e.getLocalizedMessage(), EclipseNSISPlugin.getShellImage()); //$NON-NLS-1$
         }
     }
 

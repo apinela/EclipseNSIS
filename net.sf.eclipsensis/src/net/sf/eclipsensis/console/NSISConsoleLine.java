@@ -9,7 +9,8 @@
  *******************************************************************************/
 package net.sf.eclipsensis.console;
 
-import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.IPath;
+
 
 public class NSISConsoleLine
 {
@@ -19,7 +20,7 @@ public class NSISConsoleLine
 
     private String mText = null;
     private int mType = INFO;
-    private IFile mFile = null;
+    private IPath mSource = null;
     private int mLineNum = 0;
 
     public static NSISConsoleLine info(String text)
@@ -59,18 +60,18 @@ public class NSISConsoleLine
         return mType;
     }
     /**
-     * @return Returns the file.
+     * @return Returns the source.
      */
-    public IFile getFile()
+    public IPath getSource()
     {
-        return mFile;
+        return mSource;
     }
     /**
-     * @param file The file to set.
+     * @param source The source to set.
      */
-    public void setFile(IFile file)
+    public void setSource(IPath source)
     {
-        mFile = file;
+        mSource = source;
     }
     /**
      * @return Returns the lineNum.

@@ -85,6 +85,9 @@ public class InstallOptionsDialogEditPart extends InstallOptionsEditPart impleme
             }
             getViewer().setSelection(new StructuredSelection(selection));
         }
+        else if (InstallOptionsModel.PROPERTY_RTL.equals(prop)) {
+            refreshDiagram();
+        }
         else if (InstallOptionsModel.PROPERTY_CHILDREN.equals(prop)) {
             //This bit is in here to correct z-ordering of children.
             List modelChildren = getModelChildren();
@@ -113,7 +116,36 @@ public class InstallOptionsDialogEditPart extends InstallOptionsEditPart impleme
                     setLayoutConstraint(part, fig, constraint);
                 }
             }
-        }
+
+/*            List modelChildren = getModelChildren();
+            List children = getChildren();
+            int n = Math.min(modelChildren.size(), children.size())+1;
+            int i=1;
+            for(; i<n; i++) {
+                Object model = modelChildren.get(modelChildren.size()-i);
+                EditPart part = (EditPart)children.get(children.size()-i);
+                if(model != part.getModel()) {
+                    break;
+                }
+            }
+            refreshChildren();
+            n = children.size();
+            if(i >= 0 && i <n) {
+                n = n - i;
+                for(int j=n; j>=0; j--) {
+                    GraphicalEditPart part = (GraphicalEditPart)children.get(j);
+                    IFigure fig = part.getFigure();
+                    LayoutManager layout = getContentPane().getLayoutManager();
+                    Object constraint = null;
+                    if (layout != null) {
+                        constraint = layout.getConstraint(fig);
+                    }
+                    getContentPane().remove(fig);
+                    getContentPane().add(fig);
+                    setLayoutConstraint(part, fig, constraint);
+                }
+            }
+*/        }
     }
 
     /**
@@ -123,7 +155,9 @@ public class InstallOptionsDialogEditPart extends InstallOptionsEditPart impleme
      */
     protected List getModelChildren()
     {
-        return getInstallOptionsDialog().getChildren();
+        List list = new ArrayList(getInstallOptionsDialog().getChildren());
+        Collections.reverse(list);
+        return list;
     }
 
     protected AccessibleEditPart createAccessible()
@@ -255,5 +289,10 @@ public class InstallOptionsDialogEditPart extends InstallOptionsEditPart impleme
             EditPart part = (EditPart)iter.next();
             part.refresh();
         }
+    }
+
+    protected String getTypeName()
+    {
+        return InstallOptionsPlugin.getResourceString("install.options.dialog.name"); //$NON-NLS-1$
     }
 }

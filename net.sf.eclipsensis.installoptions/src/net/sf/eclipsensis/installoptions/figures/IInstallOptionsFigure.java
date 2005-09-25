@@ -14,6 +14,7 @@ import java.util.*;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
 
 import org.eclipse.draw2d.IFigure;
+import org.eclipse.draw2d.geometry.Rectangle;
 
 public interface IInstallOptionsFigure extends IFigure
 {
@@ -24,5 +25,9 @@ public interface IInstallOptionsFigure extends IFigure
     public void setDisabled(boolean disabled);
     public void setHScroll(boolean hScroll);
     public void setVScroll(boolean vScroll);
+    public boolean isDisabled();
+    public boolean isHScroll();
+    public boolean isVScroll();
     public void refresh();
+    public Rectangle getDirectEditArea();
 }

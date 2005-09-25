@@ -27,10 +27,11 @@ import org.eclipse.ui.IWorkbenchPart;
 
 public class ArrangeAction extends SelectionAction
 {
-    public static final String BRING_TO_FRONT_ID = "bring.to.front"; //$NON-NLS-1$
-    public static final String BRING_FORWARD_ID = "bring.forward"; //$NON-NLS-1$
-    public static final String SEND_TO_BACK_ID = "send.to.back"; //$NON-NLS-1$
-    public static final String SEND_BACKWARD_ID = "send.backward"; //$NON-NLS-1$
+    static final String GROUP = "net.sf.eclipsensis.installoptions.align."; //$NON-NLS-1$
+    public static final String BRING_TO_FRONT_ID = GROUP+"bring.to.front"; //$NON-NLS-1$
+    public static final String BRING_FORWARD_ID = GROUP+"bring.forward"; //$NON-NLS-1$
+    public static final String SEND_TO_BACK_ID = GROUP+"send.to.back"; //$NON-NLS-1$
+    public static final String SEND_BACKWARD_ID = GROUP+"send.backward"; //$NON-NLS-1$
     
     private int mType;
     /**
@@ -49,24 +50,25 @@ public class ArrangeAction extends SelectionAction
      */
     protected void initUI() 
     {
-        String prefix;
+        String id;
         switch(mType) {
-            case IInstallOptionsConstants.SEND_BACKWARD:
-                prefix = SEND_BACKWARD_ID;
+            case IInstallOptionsConstants.ARRANGE_SEND_BACKWARD:
+                id = SEND_BACKWARD_ID;
                 break;
-            case IInstallOptionsConstants.SEND_TO_BACK:
-                prefix = SEND_TO_BACK_ID;
+            case IInstallOptionsConstants.ARRANGE_SEND_TO_BACK:
+                id = SEND_TO_BACK_ID;
                 break;
-            case IInstallOptionsConstants.BRING_FORWARD:
-                prefix = BRING_FORWARD_ID;
+            case IInstallOptionsConstants.ARRANGE_BRING_FORWARD:
+                id = BRING_FORWARD_ID;
                 break;
-            case IInstallOptionsConstants.BRING_TO_FRONT:
+            case IInstallOptionsConstants.ARRANGE_BRING_TO_FRONT:
             default:
-                prefix = BRING_TO_FRONT_ID;
+                id = BRING_TO_FRONT_ID;
                 break;
         }
         
-        setId(prefix);
+        setId(id);
+        String prefix = id.substring(GROUP.length());
         setText(InstallOptionsPlugin.getResourceString(prefix+".action.name")); //$NON-NLS-1$
         setToolTipText(InstallOptionsPlugin.getResourceString(prefix+".tooltip")); //$NON-NLS-1$
         ImageDescriptor imageDescriptor = InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString(prefix+".icon")); //$NON-NLS-1$
@@ -76,7 +78,7 @@ public class ArrangeAction extends SelectionAction
         setEnabled(false);
     }
 
-    public Command createMoveCommand()
+    public Command createArrangeCommand()
     {
         ArrangeCommand command = null;
         IWorkbenchPart part = getWorkbenchPart();
@@ -102,7 +104,7 @@ public class ArrangeAction extends SelectionAction
     }
 
     protected boolean calculateEnabled() {
-        Command cmd = createMoveCommand();
+        Command cmd = createArrangeCommand();
         if (cmd == null) {
             return false;
         }
@@ -110,6 +112,6 @@ public class ArrangeAction extends SelectionAction
     }
 
     public void run() {
-        execute(createMoveCommand());
+        execute(createArrangeCommand());
     }
 }

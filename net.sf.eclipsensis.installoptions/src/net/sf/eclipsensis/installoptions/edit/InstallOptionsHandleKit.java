@@ -11,13 +11,15 @@ package net.sf.eclipsensis.installoptions.edit;
 
 import java.util.List;
 
-import org.eclipse.draw2d.Locator;
-import org.eclipse.draw2d.PositionConstants;
+import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
+
+import org.eclipse.draw2d.*;
+import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.*;
-import org.eclipse.gef.handles.MoveHandle;
-import org.eclipse.gef.handles.ResizeHandle;
+import org.eclipse.gef.handles.*;
 import org.eclipse.gef.tools.DragEditPartsTracker;
 import org.eclipse.swt.graphics.Cursor;
+import org.eclipse.swt.graphics.Image;
 
 public class InstallOptionsHandleKit
 {
@@ -43,6 +45,36 @@ public class InstallOptionsHandleKit
         handles.add(createResizableHandle(part, PositionConstants.NORTH_WEST));
         handles.add(createResizableHandle(part, PositionConstants.NORTH));
         handles.add(createResizableHandle(part, PositionConstants.NORTH_EAST));
+    }
+
+    public static void addLockHandles(GraphicalEditPart part, List handles)
+    {
+        handles.add(new MoveHandle(part) {
+            protected DragTracker createDragTracker()
+            {
+                return null;
+            }
+
+            protected void initialize() 
+            {
+                super.initialize();
+                setCursor(null);
+            }
+        });
+        handles.add(createLockHandle(part, PositionConstants.EAST));
+        handles.add(createLockHandle(part, PositionConstants.SOUTH_EAST));
+        handles.add(createLockHandle(part, PositionConstants.SOUTH));
+        handles.add(createLockHandle(part, PositionConstants.SOUTH_WEST));
+        handles.add(createLockHandle(part, PositionConstants.WEST));
+        handles.add(createLockHandle(part, PositionConstants.NORTH_WEST));
+        handles.add(createLockHandle(part, PositionConstants.NORTH));
+        handles.add(createLockHandle(part, PositionConstants.NORTH_EAST));
+    }
+
+    static Handle createLockHandle(GraphicalEditPart owner, int direction) 
+    {
+        InstallOptionsLockHandle handle = new InstallOptionsLockHandle(owner, direction);
+        return handle;
     }
 
     static Handle createResizableHandle(GraphicalEditPart owner, int direction) 
@@ -184,6 +216,32 @@ public class InstallOptionsHandleKit
             else {
                 return super.getCursor();
             }
+        }
+    }
+    
+    private static class InstallOptionsLockHandle extends AbstractHandle
+    {
+        private static Image cLockImage = InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("lock.handle.icon")); //$NON-NLS-1$
+        
+        public InstallOptionsLockHandle(GraphicalEditPart owner, int direction)
+        {
+            super();
+            setOwner(owner);
+            setLocator(new RelativeHandleLocator(owner.getFigure(), direction));
+            setOpaque(false);
+            setLayoutManager(new XYLayout());
+            IFigure imageFigure = new ImageFigure(cLockImage);
+            add(imageFigure);
+            setConstraint(imageFigure, new Rectangle(cLockImage.getBounds().x,
+                                                     cLockImage.getBounds().y,
+                                                     cLockImage.getBounds().width,
+                                                     cLockImage.getBounds().height));
+            
+        }
+
+        protected DragTracker createDragTracker()
+        {
+            return null;
         }
     }
 }

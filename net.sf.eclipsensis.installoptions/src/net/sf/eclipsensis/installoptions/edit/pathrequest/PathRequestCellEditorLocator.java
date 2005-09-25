@@ -9,46 +9,25 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.edit.pathrequest;
 
+import net.sf.eclipsensis.installoptions.edit.InstallOptionsCellEditorLocator;
 import net.sf.eclipsensis.installoptions.figures.PathRequestFigure;
-import net.sf.eclipsensis.installoptions.figures.TextFigure;
 
 import org.eclipse.draw2d.geometry.Rectangle;
-import org.eclipse.gef.tools.CellEditorLocator;
-import org.eclipse.jface.viewers.CellEditor;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.widgets.Text;
 
-public class PathRequestCellEditorLocator implements CellEditorLocator
+public class PathRequestCellEditorLocator extends InstallOptionsCellEditorLocator
 {
     private static int X_OFFSET = -4;
     private static int W_OFFSET = 5;
 
-    private PathRequestFigure mPathRequest;
-
     public PathRequestCellEditorLocator(PathRequestFigure pathRequest) 
     {
-        setPathRequest(pathRequest);
+        super(pathRequest);
     }
 
-    public void relocate(CellEditor celleditor) 
+    protected Rectangle transformLocation(Rectangle editArea, Point preferredSize)
     {
-        Text text = (Text)celleditor.getControl();
-
-        TextFigure textFigure = mPathRequest.getTextFigure();
-        Rectangle rect = textFigure.getClientArea().getCopy();
-        textFigure.translateToAbsolute(rect);
-        Point p = text.computeSize(SWT.DEFAULT,SWT.DEFAULT);
-        
-        text.setBounds(rect.x + X_OFFSET, rect.y+(rect.height-p.y)/2, rect.width + W_OFFSET, p.y);    
-    }
-
-    protected PathRequestFigure getPathRequest() {
-        return mPathRequest;
-    }
-
-    protected void setPathRequest(PathRequestFigure pathRequest) 
-    {
-        mPathRequest = pathRequest;
+        return new Rectangle(editArea.x + X_OFFSET, editArea.y+(editArea.height-preferredSize.y)/2, 
+                             editArea.width + W_OFFSET, preferredSize.y);
     }
 }

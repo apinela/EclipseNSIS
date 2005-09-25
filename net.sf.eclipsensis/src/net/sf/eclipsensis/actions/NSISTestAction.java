@@ -9,17 +9,12 @@
  *******************************************************************************/
 package net.sf.eclipsensis.actions;
 
-import java.io.File;
+import net.sf.eclipsensis.util.NSISCompileTestUtility;
 
-import net.sf.eclipsensis.makensis.MakeNSISRunner;
-
-import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IAction;
 
 public class NSISTestAction extends NSISScriptAction
 {
-    private String mExeName = null;
-
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.makensis.IMakeNSISRunListener#started()
      */
@@ -45,36 +40,7 @@ public class NSISTestAction extends NSISScriptAction
      */
     public boolean isEnabled()
     {
-        mExeName = null;
-        if(super.isEnabled() && mFile != null && mFile.isSynchronized(IResource.DEPTH_ZERO)) {
-            if (!MakeNSISRunner.isCompiling()) {
-                try {
-                    String temp = mFile.getPersistentProperty(NSIS_COMPILE_TIMESTAMP);
-                    if(temp != null) {
-                        long nsisCompileTimestamp = Long.parseLong(temp);
-                        if(nsisCompileTimestamp >= mFile.getLocalTimeStamp()) {
-                            temp = mFile.getPersistentProperty(NSIS_EXE_NAME);
-                            if(temp != null) {
-                                File exeFile = new File(temp);
-                                if(exeFile.exists()) {
-                                    temp = mFile.getPersistentProperty(NSIS_EXE_TIMESTAMP);
-                                    if(temp != null) {
-                                        if(Long.parseLong(temp) == exeFile.lastModified()) {
-                                            mExeName = exeFile.getAbsolutePath();
-                                            return true;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                catch(Exception ex) {
-                    ex.printStackTrace();
-                }
-            }
-        }
-        return false;
+        return (super.isEnabled() && NSISCompileTestUtility.INSTANCE.canTest(mInput));
     }
 
     /* (non-Javadoc)
@@ -82,9 +48,6 @@ public class NSISTestAction extends NSISScriptAction
      */
     public void run(IAction action)
     {
-        if(mPlugin !=null && mExeName != null) {
-            MakeNSISRunner.testInstaller(mExeName);
-        }
+        NSISCompileTestUtility.INSTANCE.test(mInput);
     }
-
 }

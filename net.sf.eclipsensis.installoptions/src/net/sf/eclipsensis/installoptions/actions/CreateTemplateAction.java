@@ -42,9 +42,10 @@ public class CreateTemplateAction extends SelectionAction
         setText(InstallOptionsPlugin.getResourceString("create.template.action.label")); //$NON-NLS-1$
         setToolTipText(InstallOptionsPlugin.getResourceString("create.template.action.tooltip")); //$NON-NLS-1$
         setId(ID);
-        ImageDescriptor descriptor = InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("create.template.action.icon")); //$NON-NLS-1$
+        ImageDescriptor descriptor = InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("create.template.icon")); //$NON-NLS-1$
         setHoverImageDescriptor(descriptor);
         setImageDescriptor(descriptor);
+        setDisabledImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("create.template.disabled.icon"))); //$NON-NLS-1$
         setEnabled(false);
     }
 

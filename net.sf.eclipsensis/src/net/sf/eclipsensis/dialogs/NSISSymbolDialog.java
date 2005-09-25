@@ -146,7 +146,8 @@ public class NSISSymbolDialog extends StatusMessageDialog
         mName = mNameText.getText();
         if(!Common.isEmptyCollection(mExistingSymbols) && mExistingSymbols.contains(mName)) {
             if(!Common.openConfirm(getShell(), EclipseNSISPlugin.getFormattedString("symbol.overwrite.confirm", //$NON-NLS-1$
-                                                                  new String[]{mName}))) {
+                                                                  new String[]{mName}), 
+                                   EclipseNSISPlugin.getShellImage())) {
                 return;
             }
         }

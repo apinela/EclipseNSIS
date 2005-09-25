@@ -76,7 +76,8 @@ public abstract class InstallOptionsElement implements IPropertySource, Cloneabl
         }
     };
 
-    protected static final String GUIDE_PREFIX = ";InstallOptions Editor Guides (DO NOT EDIT):"; //$NON-NLS-1$
+    protected static final String OLD_METADATA_PREFIX = ";InstallOptions Editor Guides (DO NOT EDIT):"; //$NON-NLS-1$
+    protected static final String METADATA_PREFIX = ";InstallOptions Editor Metadata (DO NOT EDIT):"; //$NON-NLS-1$
 
     private INISection mSection = null;
     protected PropertyChangeSupport mListeners = new PropertyChangeSupport(this);
@@ -84,7 +85,7 @@ public abstract class InstallOptionsElement implements IPropertySource, Cloneabl
     private boolean mDirty = false;
     protected Map mDescriptors = new HashMap();
 
-    protected INIComment mGuideComment;
+    private INIComment mMetadataComment;
 
     public InstallOptionsElement(INISection section)
     {
@@ -214,7 +215,7 @@ public abstract class InstallOptionsElement implements IPropertySource, Cloneabl
             element.mDescriptors = new HashMap();
             element.mSection = null;
             element.mDirty = true;
-            element.mGuideComment = null;
+            element.mMetadataComment = null;
             return element;
         }
         catch(CloneNotSupportedException e) {
@@ -232,17 +233,17 @@ public abstract class InstallOptionsElement implements IPropertySource, Cloneabl
         return command;
     }
 
-    protected INIComment getGuideComment()
+    protected INIComment getMetadataComment()
     {
-        return mGuideComment;
+        return mMetadataComment;
     }
 
-    protected void setGuideComment(INIComment guideComment)
+    protected void setMetadataComment(INIComment metadataComment)
     {
-        mGuideComment = guideComment;
+        mMetadataComment = metadataComment;
     }
 
-    private void loadSection(INISection section)
+    protected void loadSection(INISection section)
     {
         mSection = section;
         Collection properties = doGetPropertyNames();
@@ -255,12 +256,15 @@ public abstract class InstallOptionsElement implements IPropertySource, Cloneabl
                 setPropertyValue(property,(converter != null?converter.asType(value):value));
             }
         }
-        mGuideComment = null;
+        mMetadataComment = null;
         for(Iterator iter=mSection.getChildren().iterator(); iter.hasNext(); ) {
             INILine line = (INILine)iter.next();
-            if(line instanceof INIComment && line.getText().trim().startsWith(GUIDE_PREFIX)) {
-                mGuideComment = (INIComment)line;
-                break;
+            if(line instanceof INIComment) {
+                String text = line.getText().trim();
+                if(text.startsWith(OLD_METADATA_PREFIX) || text.startsWith(METADATA_PREFIX)) {
+                    mMetadataComment = (INIComment)line;
+                    break;
+                }
             }
         }
         setDirty(false);

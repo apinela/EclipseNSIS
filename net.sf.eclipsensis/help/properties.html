@@ -33,26 +33,25 @@
 <h1>Script Properties
 </h1>
 <p>The EclipseNSIS script
-Properties page is invoked by selecting the Properties menu for an NSIS script file in any view
+Properties page is invoked by selecting the Properties menu for a project, folder or an NSIS script file in any view
 that shows a list of Workspace resources (e.g., <a href="javascript:redirectEclipse('/org.eclipse.platform.doc.user/concepts/cnav.htm');">resource navigator</a>,
 <a href="javascript:redirectEclipse('/org.eclipse.jdt.doc.user/reference/ref-view-package-explorer.htm');">JDT package explorer</a>, etc.)
-and then selecting the EclipseNSIS item. The Properties menu is only available when a single file is selected.</p>
+and then selecting the EclipseNSIS item. The Properties menu is only available when a single resource is selected.</p>
 <p style="text-align: center;"><img style="border: medium none ; width: 202px; height: 151px;" alt="Navigate to Properties" src="images/navprops.gif"></p>
 <p>The <a href="nsisprefs.html">EclipseNSIS Preferences Page</a>
 is used to set global options while compiling an NSIS script. dialog is
 used to set
 script level compiler options. The Properties page is used to set
-custom options for a particular script. The major portion of the
+custom options for a particular resource. The options for any resource can be defaulted to those of it's parent resource. The options for a project resource can be defaulted to the global options. The major portion of the
 Properties page is identical in behavior to the <a href="nsisprefs.html">EclipseNSIS Preferences Page</a>.<br>
 </p>
 <p style="text-align: center;"><img style="border: 0px solid ; width: 425px; height: 508px;" alt="EclipseNSIS Properties page" src="images/properties.gif" usemap="#properties" ismap="ismap">
 </p>
-<a name="a_global"></a><dl id="id_global"><dt>Use
-global NSIS options</dt>
-<dd>Use the compiler options
-defined on the <a href="nsisprefs.html">EclipseNSIS
-Preferences Page</a>
-.</dd></dl>
+<a name="a_global"></a><dl id="id_global">
+  <dt>Use
+parent NSIS options</dt>
+  <dd>Use the appropriate parent options.</dd>
+</dl>
 <hr><a href="colorsfontsprefs.html">Previous</a>
 | <a href="overview.html#contents">Contents</a>
 | <a href="license.html">Next</a>
@@ -60,7 +59,9 @@ Preferences Page</a>
 <br>
 <p><strong><small>Copyright
 &copy; 2004, 2005 Sunil Kamath (IcemanK).</small></strong></p>
-<map name="properties"><area id="nsispref" shape="RECT" href="nsisprefs.html#general" coords="19,80, 406,460"><area id="global" shape="RECT" href="#a_global" alt="Use global NSIS options" onclick="highlightDef('id_global');" coords="18,54, 150,68"></map>
+<map name="properties">
+  <area id="nsispref" shape="RECT" href="nsisprefs.html#general" coords="19,80,412,461"><area id="global" shape="RECT" href="#a_global" alt="Use global NSIS options" onclick="highlightDef('id_global');" coords="18,54,190,69">
+</map>
 </div>
 
 </body></html>

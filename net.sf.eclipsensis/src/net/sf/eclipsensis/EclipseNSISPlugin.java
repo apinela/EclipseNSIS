@@ -30,6 +30,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.text.templates.ContextTypeRegistry;
 import org.eclipse.jface.text.templates.persistence.TemplateStore;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -50,6 +51,7 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
     private static EclipseNSISPlugin cPlugin;
     private static File cStateLocation = null;
     private static String cInvalidException = null;
+    private static Image cShellImage;
     
     private String mName = null;
     private String mVersion = null;
@@ -88,6 +90,7 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
 	public void start(BundleContext context) throws Exception 
     {
         super.start(context);
+        cShellImage = mImageManager.getImage(getResourceString("nsis.icon")); //$NON-NLS-1$
         mName = (String)getBundle().getHeaders().get("Bundle-Name"); //$NON-NLS-1$
         mVersion = (String)getBundle().getHeaders().get("Bundle-Version"); //$NON-NLS-1$
         if(cInvalidException != null) {
@@ -105,11 +108,11 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
                     public void run()
                     {
                         Shell shell = getWorkbench().getActiveWorkbenchWindow().getShell();
-                        if(Common.openConfirm(shell,getResourceString("unconfigured.confirm"))) { //$NON-NLS-1$
+                        if(Common.openConfirm(shell,getResourceString("unconfigured.confirm"),getShellImage())) { //$NON-NLS-1$
                             configure();
                         }
                         if(!isConfigured()) {
-                            Common.openWarning(shell,getResourceString("unconfigured.warning")); //$NON-NLS-1$
+                            Common.openWarning(shell,getResourceString("unconfigured.warning"),getShellImage()); //$NON-NLS-1$
                         }
                     }
                 };
@@ -221,7 +224,7 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
                 while(!Common.isEmpty(nsisHome)) {
                     NSISPreferences.INSTANCE.setNSISHome(nsisHome);
                     if(!isConfigured()) {
-                        Common.openError(shell,EclipseNSISPlugin.getResourceString("invalid.nsis.home.message")); //$NON-NLS-1$ //$NON-NLS-2$
+                        Common.openError(shell,EclipseNSISPlugin.getResourceString("invalid.nsis.home.message"), getShellImage()); //$NON-NLS-1$ //$NON-NLS-2$
                         nsisHome = dialog.open();
                     }
                     else {
@@ -276,7 +279,7 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
             }
             String osError = getResourceString("unsupported.os.error"); //$NON-NLS-1$
             Common.openError(getWorkbench().getActiveWorkbenchWindow().getShell(),
-                                    osError);
+                                    osError, getShellImage());
             cInvalidException = osError;
             throw new CoreException(new Status(IStatus.ERROR,PLUGIN_ID,IStatus.ERROR,osError,
                                     new RuntimeException(osError)));
@@ -313,7 +316,7 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
         }
         String vmError = getFormattedString((mIsNT?"unsupported.nt.vms.error":"unsupported.9x.vms.error"),new String[]{System.getProperty("os.name")}); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         Common.openError(getWorkbench().getActiveWorkbenchWindow().getShell(),
-                         vmError);
+                         vmError, getShellImage());
         cInvalidException = vmError;
         throw new CoreException(new Status(IStatus.ERROR,PLUGIN_ID,IStatus.ERROR,vmError,
                                 new RuntimeException(vmError)));
@@ -354,7 +357,7 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
         if(cStateLocation == null) {
             synchronized(EclipseNSISPlugin.class) {
                 if(cStateLocation == null) {
-                    EclipseNSISPlugin plugin = EclipseNSISPlugin.getDefault();
+                    EclipseNSISPlugin plugin = getDefault();
                     if(plugin != null) {
                         cStateLocation = plugin.getStateLocation().toFile();
                     }                    
@@ -391,15 +394,21 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
         return getResourceString(key, key);
 	}
 
-    /**
-     * Returns the string from the plugin's resource bundle,
-     * or the default value if not found.
-     */
-    public static String getResourceString(String key, String defaultValue) 
+    public static String getResourceString(Locale locale, String key) 
     {
-        EclipseNSISPlugin plugin = EclipseNSISPlugin.getDefault();
+        return getResourceString(locale, key, key);
+    }
+
+    public static String getResourceString(String key, String defaultValue)
+    {
+        return getResourceString(Locale.getDefault(),key,defaultValue);
+    }
+
+    public static String getResourceString(Locale locale, String key, String defaultValue)
+    {
+        EclipseNSISPlugin plugin = getDefault();
         if(plugin != null) {
-            ResourceBundle bundle = plugin.getResourceBundle();
+            ResourceBundle bundle = plugin.getResourceBundle(locale);
             try {
                 return (bundle != null) ? bundle.getString(key) : defaultValue;
             }
@@ -496,5 +505,10 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
     public boolean isConfigured()
     {
         return (NSISPreferences.INSTANCE.getNSISExe() != null);
+    }
+
+    public static Image getShellImage()
+    {
+        return cShellImage;
     }
 }

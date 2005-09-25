@@ -9,6 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions;
 
+import java.io.File;
 import java.text.MessageFormat;
 import java.util.*;
 
@@ -22,9 +23,9 @@ import net.sf.eclipsensis.util.*;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.gef.GEFPlugin;
 import org.eclipse.gef.ui.palette.PaletteViewerPreferences;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialogWithToggle;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.*;
@@ -37,9 +38,11 @@ public class InstallOptionsPlugin extends AbstractUIPlugin implements IInstallOp
     public static final RGB SYNTAX_COMMENTS = new RGB(0x7f,0x9f,0xbf);
     public static final RGB SYNTAX_NUMBERS = new RGB(0x61,0x31,0x1e);
     public static final RGB SYNTAX_SECTIONS = new RGB(0x0,0x50,0x50);
+    private static Image cShellImage;
+    private static File cStateLocation = null;
 
     private static InstallOptionsPlugin cPlugin;
-    private ResourceBundle mResourceBundle;
+    private HashMap mResourceBundles = new HashMap();
     public static final String[] BUNDLE_NAMES = new String[]{RESOURCE_BUNDLE,MESSAGE_BUNDLE};
     private ImageManager mImageManager;
     private String mName = null;
@@ -53,12 +56,6 @@ public class InstallOptionsPlugin extends AbstractUIPlugin implements IInstallOp
     {
         super();
         cPlugin = this;
-        try {
-            mResourceBundle = new CompoundResourceBundle(InstallOptionsPlugin.class.getClassLoader(),BUNDLE_NAMES);
-        } 
-        catch (MissingResourceException x) {
-            x.printStackTrace();
-        }
     }
 
     /**
@@ -82,15 +79,30 @@ public class InstallOptionsPlugin extends AbstractUIPlugin implements IInstallOp
         return getResourceString(key, key);
     }
 
+    public static String getResourceString(Locale locale, String key) 
+    {
+        return getResourceString(locale, key, key);
+    }
+
     public static String getResourceString(String key, String defaultValue)
     {
-        ResourceBundle bundle = InstallOptionsPlugin.getDefault().getResourceBundle();
-        try {
-            return (bundle != null) ? bundle.getString(key) : defaultValue;
-        } catch (MissingResourceException e) {
-            return defaultValue;
-        }
+        return getResourceString(Locale.getDefault(),key,defaultValue);
     }
+
+    public static String getResourceString(Locale locale, String key, String defaultValue)
+    {
+        InstallOptionsPlugin plugin = getDefault();
+        if(plugin != null) {
+            ResourceBundle bundle = plugin.getResourceBundle(locale);
+            try {
+                return (bundle != null) ? bundle.getString(key) : defaultValue;
+            } 
+            catch (MissingResourceException e) {
+            }
+        }
+        return defaultValue;
+    }
+        
     
     public static String getFormattedString(String key, Object[] args)
     {
@@ -110,9 +122,21 @@ public class InstallOptionsPlugin extends AbstractUIPlugin implements IInstallOp
      * Returns the plugin's resource bundle,
      */
     public ResourceBundle getResourceBundle() {
-        return mResourceBundle;
+        return getResourceBundle(Locale.getDefault());
     }
 
+    public ResourceBundle getResourceBundle(Locale locale) 
+    {
+        if(!mResourceBundles.containsKey(locale)) {
+            synchronized(this) {
+                if(!mResourceBundles.containsKey(locale)) {
+                    mResourceBundles.put(locale,new CompoundResourceBundle(getClass().getClassLoader(),locale, BUNDLE_NAMES));
+                }                
+            }
+        }
+        return (ResourceBundle)mResourceBundles.get(locale);
+    }
+    
     private void initializePreference(IPreferenceStore store, String name, String defaultValue)
     {
         store.setDefault(name,defaultValue);
@@ -207,6 +231,7 @@ public class InstallOptionsPlugin extends AbstractUIPlugin implements IInstallOp
         super.start(context);
         mName = (String)getBundle().getHeaders().get("Bundle-Name"); //$NON-NLS-1$
         mImageManager = new ImageManager(this);
+        cShellImage = mImageManager.getImage(getResourceString("installoptions.icon")); //$NON-NLS-1$
         initializePreferences();
         mJobScheduler.start();
         new Thread(new Runnable(){
@@ -244,10 +269,18 @@ public class InstallOptionsPlugin extends AbstractUIPlugin implements IInstallOp
                                 Display.getDefault().asyncExec(new Runnable(){
                                     public void run()
                                     {
-                                        MessageDialogWithToggle md = MessageDialogWithToggle.openYesNoCancelQuestion(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
-                                                getDefault().getName(),getResourceString("check.default.editor.question"), //$NON-NLS-1$
-                                                getResourceString("check.default.editor.toggle"),!toggleState,getDefault().getPreferenceStore(),PREFERENCE_CHECK_EDITOR_ASSOCIATION); //$NON-NLS-1$
-                                        if(md.getReturnCode() == IDialogConstants.YES_ID) {
+                                        MessageDialogWithToggle dialog = new MessageDialogWithToggle(
+                                                PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
+                                                getDefault().getName(),
+                                                InstallOptionsPlugin.getShellImage(), 
+                                                getResourceString("check.default.editor.question"),  //$NON-NLS-1$
+                                                MessageDialog.QUESTION, 
+                                                new String[] { IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL }, 0, 
+                                                getResourceString("check.default.editor.toggle"), !toggleState); //$NON-NLS-1$
+                                        dialog.setPrefStore(getDefault().getPreferenceStore());
+                                        dialog.setPrefKey(PREFERENCE_CHECK_EDITOR_ASSOCIATION);
+                                        dialog.open();
+                                        if(dialog.getReturnCode() == IDialogConstants.YES_ID) {
                                             for(int i=0; i<INI_EXTENSIONS.length; i++) {
                                                 editorRegistry.setDefaultEditor("*."+INI_EXTENSIONS[i],INSTALLOPTIONS_DESIGN_EDITOR_ID); //$NON-NLS-1$
                                             }
@@ -263,5 +296,25 @@ public class InstallOptionsPlugin extends AbstractUIPlugin implements IInstallOp
                 }
             }
         }
+    }
+
+    public static Image getShellImage()
+    {
+        return cShellImage;
+    }
+    
+    public static File getPluginStateLocation()
+    {
+        if(cStateLocation == null) {
+            synchronized(InstallOptionsPlugin.class) {
+                if(cStateLocation == null) {
+                    InstallOptionsPlugin plugin = getDefault();
+                    if(plugin != null) {
+                        cStateLocation = plugin.getStateLocation().toFile();
+                    }                    
+                }
+            }
+        }
+        return cStateLocation;
     }
 }

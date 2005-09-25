@@ -13,13 +13,15 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 
+import net.sf.eclipsensis.installoptions.editor.InstallOptionsGraphicalViewer;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsDialog;
+
 import org.eclipse.draw2d.*;
 import org.eclipse.draw2d.geometry.Insets;
 import org.eclipse.gef.*;
 import org.eclipse.gef.internal.ui.rulers.*;
 import org.eclipse.gef.rulers.RulerProvider;
 import org.eclipse.gef.ui.parts.GraphicalViewerKeyHandler;
-import org.eclipse.gef.ui.parts.ScrollingGraphicalViewer;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -32,7 +34,7 @@ public class InstallOptionsRulerComposite extends Composite
     private EditDomain mRulerEditDomain;
     private GraphicalViewer mLeft, mTop;
     private FigureCanvas mEditor;
-    private GraphicalViewer mViewer;
+    private InstallOptionsGraphicalViewer mViewer;
     private Font mFont;
     private Listener mLayoutListener;
     private PropertyChangeListener mPropertyListener;
@@ -61,8 +63,9 @@ public class InstallOptionsRulerComposite extends Composite
         });
     }
 
-    private GraphicalViewer createRulerContainer(int orientation) {
-        ScrollingGraphicalViewer viewer = new RulerViewer();
+    private GraphicalViewer createRulerContainer(InstallOptionsDialog dialog, int orientation) 
+    {
+        RulerViewer viewer = new RulerViewer(dialog);
         final boolean isHorizontal = orientation == PositionConstants.NORTH 
                 || orientation == PositionConstants.SOUTH;
 
@@ -220,7 +223,7 @@ public class InstallOptionsRulerComposite extends Composite
      * 
      * @param   primaryViewer   The graphical viewer for which the rulers have to be created
      */
-    public void setGraphicalViewer(ScrollingGraphicalViewer primaryViewer) {
+    public void setGraphicalViewer(InstallOptionsGraphicalViewer primaryViewer) {
         // pre-conditions
         Assert.isNotNull(primaryViewer);
         Assert.isNotNull(primaryViewer.getControl());
@@ -246,30 +249,30 @@ public class InstallOptionsRulerComposite extends Composite
             public void propertyChange(PropertyChangeEvent evt) {
                 String property = evt.getPropertyName();
                 if (RulerProvider.PROPERTY_HORIZONTAL_RULER.equals(property)) {
-                    setRuler((RulerProvider)mViewer
-                            .getProperty(RulerProvider.PROPERTY_HORIZONTAL_RULER), 
+                    setRuler(mViewer.getDialog(),(RulerProvider)mViewer.getProperty(RulerProvider.PROPERTY_HORIZONTAL_RULER), 
                         PositionConstants.NORTH);
-                } else if (RulerProvider.PROPERTY_VERTICAL_RULER.equals(property)) {
-                    setRuler((RulerProvider)mViewer
-                            .getProperty(RulerProvider.PROPERTY_VERTICAL_RULER),
+                } 
+                else if (RulerProvider.PROPERTY_VERTICAL_RULER.equals(property)) {
+                    setRuler(null, (RulerProvider)mViewer.getProperty(RulerProvider.PROPERTY_VERTICAL_RULER),
                         PositionConstants.WEST);
-                } else if (RulerProvider.PROPERTY_RULER_VISIBILITY.equals(property))
+                } 
+                else if (RulerProvider.PROPERTY_RULER_VISIBILITY.equals(property)) {
                     setRulerVisibility(((Boolean)mViewer.getProperty(
                             RulerProvider.PROPERTY_RULER_VISIBILITY)).booleanValue());
+                }
             }
         };
         mViewer.addPropertyChangeListener(mPropertyListener);
-        Boolean rulerVisibility = (Boolean)mViewer
-                .getProperty(RulerProvider.PROPERTY_RULER_VISIBILITY);
-        if (rulerVisibility != null)
+        Boolean rulerVisibility = (Boolean)mViewer.getProperty(RulerProvider.PROPERTY_RULER_VISIBILITY);
+        if (rulerVisibility != null) {
             setRulerVisibility(rulerVisibility.booleanValue());
-        setRuler((RulerProvider)mViewer.getProperty(
-                RulerProvider.PROPERTY_HORIZONTAL_RULER), PositionConstants.NORTH);
-        setRuler((RulerProvider)mViewer.getProperty(
-                RulerProvider.PROPERTY_VERTICAL_RULER), PositionConstants.WEST);
+        }
+        setRuler(mViewer.getDialog(),
+                (RulerProvider)mViewer.getProperty(RulerProvider.PROPERTY_HORIZONTAL_RULER), PositionConstants.NORTH);
+        setRuler(null, (RulerProvider)mViewer.getProperty(RulerProvider.PROPERTY_VERTICAL_RULER), PositionConstants.WEST);
     }
 
-    private void setRuler(RulerProvider provider, int orientation) {
+    private void setRuler(InstallOptionsDialog dialog, RulerProvider provider, int orientation) {
         Object ruler = null;
         if (mIsRulerVisible && provider != null)
             // provider.getRuler() might return null (at least the API does not prevent that)
@@ -285,7 +288,7 @@ public class InstallOptionsRulerComposite extends Composite
         
         GraphicalViewer container = getRulerContainer(orientation);
         if (container == null) {
-            container = createRulerContainer(orientation);
+            container = createRulerContainer(dialog, orientation);
             setRulerContainer(container, orientation);
         }
         if (container.getContents() != ruler) {
@@ -313,10 +316,8 @@ public class InstallOptionsRulerComposite extends Composite
         if (mIsRulerVisible != isVisible) {
             mIsRulerVisible = isVisible;
             if (mViewer != null) {
-                setRuler((RulerProvider)mViewer.getProperty(
-                        RulerProvider.PROPERTY_HORIZONTAL_RULER), PositionConstants.NORTH);
-                setRuler((RulerProvider)mViewer.getProperty(
-                        RulerProvider.PROPERTY_VERTICAL_RULER), PositionConstants.WEST);
+                setRuler(mViewer.getDialog(), (RulerProvider)mViewer.getProperty(RulerProvider.PROPERTY_HORIZONTAL_RULER), PositionConstants.NORTH);
+                setRuler(null, (RulerProvider)mViewer.getProperty(RulerProvider.PROPERTY_VERTICAL_RULER), PositionConstants.WEST);
             }
         }
     }
@@ -344,28 +345,33 @@ public class InstallOptionsRulerComposite extends Composite
         /**
          * @see org.eclipse.draw2d.Border#paint(org.eclipse.draw2d.IFigure, org.eclipse.draw2d.Graphics, org.eclipse.draw2d.geometry.Insets)
          */
-        public void paint(IFigure figure, Graphics graphics, Insets insets) {
+        public void paint(IFigure figure, Graphics graphics, Insets insets) 
+        {
+            graphics.pushState();
             graphics.setForegroundColor(ColorConstants.buttonDarker);
-            if (horizontal) {
+            if (horizontal) 
+            {
                 graphics.drawLine(figure.getBounds().getTopLeft(), 
                         figure.getBounds().getBottomLeft()
                         .translate(new org.eclipse.draw2d.geometry.Point(0, -4)));
-            } else {
+            } 
+            else {
                 graphics.drawLine(figure.getBounds().getTopLeft(), 
                         figure.getBounds().getTopRight()
                         .translate(new org.eclipse.draw2d.geometry.Point(-4, 0)));
             }
+            graphics.popState();
+            graphics.restoreState();
         }
     }
 
-    private static class RulerViewer
-        extends ScrollingGraphicalViewer
+    private static class RulerViewer extends InstallOptionsGraphicalViewer
     {
         /**
          * Constructor
          */
-        public RulerViewer() {
-            super();
+        public RulerViewer(InstallOptionsDialog dialog) {
+            super(dialog);
             init();
         }
         /**

@@ -31,7 +31,7 @@ public class ComboboxCellEditorLocator implements CellEditorLocator
     {
         Combo combo = (Combo)celleditor.getControl();
 
-        Rectangle rect = mCombobox.getClientArea().getCopy();
+        Rectangle rect = mCombobox.getDirectEditArea();
         mCombobox.translateToAbsolute(rect);
         Point p = combo.computeSize(SWT.DEFAULT,SWT.DEFAULT);
         int height = rect.height - p.y;

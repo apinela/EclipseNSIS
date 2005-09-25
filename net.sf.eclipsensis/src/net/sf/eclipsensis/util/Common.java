@@ -31,6 +31,7 @@ import net.sf.eclipsensis.settings.NSISPreferences;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.graphics.*;
@@ -827,26 +828,26 @@ public class Common
         return name.toString();
     }
     
-    public static void openError(Shell shell, String message)
+    public static void openError(Shell shell, String message, Image icon)
     {
-        MessageDialog.openError(shell, EclipseNSISPlugin.getResourceString("error.title"), message); //$NON-NLS-1$
+        openError(shell, EclipseNSISPlugin.getResourceString("error.title"), message, icon); //$NON-NLS-1$
     }
     
-    public static void openWarning(Shell shell, String message)
+    public static void openWarning(Shell shell, String message, Image icon)
     {
-        MessageDialog.openWarning(shell, EclipseNSISPlugin.getResourceString("warning.title"), message); //$NON-NLS-1$
+        openWarning(shell, EclipseNSISPlugin.getResourceString("warning.title"), message, icon); //$NON-NLS-1$
     }
     
-    public static boolean openConfirm(Shell shell, String message)
+    public static boolean openConfirm(Shell shell, String message, Image icon)
     {
-        return MessageDialog.openConfirm(shell,EclipseNSISPlugin.getResourceString("confirm.title"), //$NON-NLS-1$
-                                          message);
+        return openConfirm(shell,EclipseNSISPlugin.getResourceString("confirm.title"), //$NON-NLS-1$
+                                          message, icon);
     }
     
-    public static boolean openQuestion(Shell shell, String message)
+    public static boolean openQuestion(Shell shell, String message, Image icon)
     {
-        return MessageDialog.openQuestion(shell,EclipseNSISPlugin.getResourceString("confirm.title"), //$NON-NLS-1$
-                                          message);
+        return openQuestion(shell,EclipseNSISPlugin.getResourceString("confirm.title"), //$NON-NLS-1$
+                                          message, icon);
     }
     
     public static Point calculateControlSize(Control control, int chars, int lines)
@@ -992,5 +993,46 @@ public class Common
                 printChildren(prefix,elements[j].getChildren());
             }
         }        
+    }
+
+    public static boolean openConfirm(Shell parent, String title, String message, Image icon) 
+    {
+        MessageDialog dialog = new MessageDialog(parent, title, icon,
+                message, MessageDialog.QUESTION, new String[] { IDialogConstants.OK_LABEL,
+                        IDialogConstants.CANCEL_LABEL }, 0);
+        return dialog.open() == 0;
+    }
+
+    public static void openError(Shell parent, String title, String message, Image icon) 
+    {
+        MessageDialog dialog = new MessageDialog(parent, title, icon,
+                message, MessageDialog.ERROR, new String[] { IDialogConstants.OK_LABEL }, 0);
+        dialog.open();
+        return;
+    }
+
+    public static void openInformation(Shell parent, String title, String message, Image icon) 
+    {
+        MessageDialog dialog = new MessageDialog(parent, title, icon,
+                message, MessageDialog.INFORMATION,
+                new String[] { IDialogConstants.OK_LABEL }, 0);
+        dialog.open();
+        return;
+    }
+
+    public static boolean openQuestion(Shell parent, String title, String message, Image icon) 
+    {
+        MessageDialog dialog = new MessageDialog(parent, title, icon,
+                message, MessageDialog.QUESTION, new String[] { IDialogConstants.YES_LABEL,
+                        IDialogConstants.NO_LABEL }, 0);
+        return dialog.open() == 0;
+    }
+
+    public static void openWarning(Shell parent, String title, String message, Image icon) 
+    {
+        MessageDialog dialog = new MessageDialog(parent, title, icon, 
+                message, MessageDialog.WARNING, new String[] { IDialogConstants.OK_LABEL }, 0);
+        dialog.open();
+        return;
     }
 }

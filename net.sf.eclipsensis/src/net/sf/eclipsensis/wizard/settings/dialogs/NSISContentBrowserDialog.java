@@ -61,7 +61,7 @@ public class NSISContentBrowserDialog extends Dialog
         else {
             newShell.setSize(400,400);
         }
-        newShell.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("nsis.icon"))); //$NON-NLS-1$
+        newShell.setImage(EclipseNSISPlugin.getShellImage());
    }
 
     /**

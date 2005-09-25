@@ -13,10 +13,7 @@ import net.sf.eclipsensis.installoptions.edit.button.ButtonCellEditorLocator;
 import net.sf.eclipsensis.installoptions.figures.CheckBoxFigure;
 
 import org.eclipse.draw2d.geometry.Rectangle;
-import org.eclipse.jface.viewers.CellEditor;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.widgets.Text;
 
 public class CheckBoxCellEditorLocator extends ButtonCellEditorLocator
 {
@@ -28,14 +25,12 @@ public class CheckBoxCellEditorLocator extends ButtonCellEditorLocator
         super(button);
     }
 
-    public void relocate(CellEditor celleditor) 
+    protected Rectangle transformLocation(Rectangle editArea, Point preferredSize)
     {
-        Text text = (Text)celleditor.getControl();
-
-        Rectangle rect = getButton().getClientArea().getCopy();
-        getButton().translateToAbsolute(rect);
-        Point p = text.computeSize(SWT.DEFAULT,SWT.DEFAULT);
-        
-        text.setBounds(rect.x + X_OFFSET + (((CheckBoxFigure)getButton()).isLeftText()?0:15), rect.y+(rect.height-p.y)/2, rect.width + W_OFFSET, p.y);    
+        CheckBoxFigure figure = (CheckBoxFigure)getFigure();
+        return new Rectangle(editArea.x + X_OFFSET + (figure.isLeftText()?0:15), 
+                             editArea.y+(editArea.height-preferredSize.y)/2, 
+                             editArea.width + W_OFFSET, preferredSize.y);
     }
 }
+

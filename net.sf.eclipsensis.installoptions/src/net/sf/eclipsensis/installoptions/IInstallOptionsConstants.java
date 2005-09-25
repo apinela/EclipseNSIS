@@ -34,8 +34,8 @@ public interface IInstallOptionsConstants
     public static final String EDITING_INSTALLOPTIONS_DESIGN_CONTEXT_ID = InstallOptionsPlugin.getBundleResourceString("%editing.installoptions.design.id"); //$NON-NLS-1$
     
     public static final String INSTALLOPTIONS_PROBLEM_MARKER_ID = InstallOptionsPlugin.getBundleResourceString("%installoptions.problem.marker.id"); //$NON-NLS-1$
-    public static final String INSTALLOPTIONS_ANNOTATION_ERROR_NAME = InstallOptionsPlugin.getBundleResourceString("%installoptions.error.annotation.name"); //$NON-NLS-1$
-    public static final String INSTALLOPTIONS_ANNOTATION_WARNING_NAME = InstallOptionsPlugin.getBundleResourceString("%installoptions.warning.annotation.name"); //$NON-NLS-1$
+    public static final String INSTALLOPTIONS_ERROR_ANNOTATION_NAME = InstallOptionsPlugin.getBundleResourceString("%installoptions.error.annotation.name"); //$NON-NLS-1$
+    public static final String INSTALLOPTIONS_WARNING_ANNOTATION_NAME = InstallOptionsPlugin.getBundleResourceString("%installoptions.warning.annotation.name"); //$NON-NLS-1$
     
     public static final String INSTALLOPTIONS_NATURE_ID = InstallOptionsPlugin.getBundleResourceString("%installoptions.nature.id"); //$NON-NLS-1$
     public static final String INSTALLOPTIONS_BUILDER_ID = InstallOptionsPlugin.getBundleResourceString("%installoptions.builder.id"); //$NON-NLS-1$
@@ -71,6 +71,7 @@ public interface IInstallOptionsConstants
     public static final String PREFERENCE_CHECK_EDITOR_ASSOCIATION = "CheckEditorAssociation"; //$NON-NLS-1$
     public static final String PREFERENCE_PALETTE_VIEWER_PREFS_INIT = "PaletteViewerPrefsInit"; //$NON-NLS-1$
     public static final String PREFERENCE_UNLOAD_CREATION_TOOL_WHEN_FINISHED = "UnloadCreationToolWhenFinished"; //$NON-NLS-1$
+    public static final String PREFERENCE_PREVIEW_LANG = "PreviewLang"; //$NON-NLS-1$
 
     public static final String PREFERENCE_SYNTAX_STYLES = "SyntaxStyles"; //$NON-NLS-1$
     public static final String SECTION_STYLE = "SectionStyle"; //$NON-NLS-1$
@@ -94,6 +95,7 @@ public interface IInstallOptionsConstants
     public static final QualifiedName FILEPROPERTY_GRID_STYLE = new QualifiedName(QUALIFIED_NAME_PREFIX,PREFERENCE_GRID_STYLE);
     public static final QualifiedName FILEPROPERTY_DIALOG_SIZE = new QualifiedName(QUALIFIED_NAME_PREFIX,"DialogSize"); //$NON-NLS-1$
     public static final QualifiedName RESOURCEPROPERTY_BUILD_TIMESTAMP = new QualifiedName(QUALIFIED_NAME_PREFIX,"BuildTimestamp"); //$NON-NLS-1$
+    public static final QualifiedName PROJECTPROPERTY_BUILDER_VERSION = new QualifiedName(QUALIFIED_NAME_PREFIX,"BuilderVersion"); //$NON-NLS-1$
     public static final QualifiedName PROJECTPROPERTY_NSIS_VERSION = new QualifiedName(QUALIFIED_NAME_PREFIX,"NSISVersion"); //$NON-NLS-1$
     
     public static final String PROPERTY_SNAP_TO_GUIDES = "net.sf.eclipsensis.installoptions.snap_to_guides"; //$NON-NLS-1$
@@ -109,10 +111,27 @@ public interface IInstallOptionsConstants
     public static final String REQ_EXTENDED_EDIT="extended edit"; //$NON-NLS-1$
     public static final String REQ_CREATE_FROM_TEMPLATE="create from template"; //$NON-NLS-1$
     
-    public static final int SEND_BACKWARD = 1;
-    public static final int SEND_TO_BACK = 2;
-    public static final int BRING_FORWARD = 3;
-    public static final int BRING_TO_FRONT = 4;
+    public static final int ARRANGE_SEND_BACKWARD = 1;
+    public static final int ARRANGE_SEND_TO_BACK = 2;
+    public static final int ARRANGE_BRING_FORWARD = 3;
+    public static final int ARRANGE_BRING_TO_FRONT = 4;
 
+    public static final int DISTRIBUTE_HORIZONTAL_LEFT_EDGE=1;
+    public static final int DISTRIBUTE_HORIZONTAL_CENTER=2;
+    public static final int DISTRIBUTE_HORIZONTAL_RIGHT_EDGE=3;
+    public static final int DISTRIBUTE_HORIZONTAL_BETWEEN=4;
+    public static final int DISTRIBUTE_VERTICAL_TOP_EDGE=5;
+    public static final int DISTRIBUTE_VERTICAL_CENTER=6;
+    public static final int DISTRIBUTE_VERTICAL_BOTTOM_EDGE=7;
+    public static final int DISTRIBUTE_VERTICAL_BETWEEN=8;
+
+    public static final int PREVIEW_CLASSIC = 1;
+    public static final int PREVIEW_MUI = 2;
+    
     public static final char LIST_SEPARATOR = '|';
+    public static final String MATCHSIZE_GROUP = "net.sf.eclipsensis.installoptions.matchsize"; //$NON-NLS-1$
+    public static final String DISTRIBUTE_GROUP = "net.sf.eclipsensis.installoptions.distribute"; //$NON-NLS-1$
+    public static final String ALIGN_GROUP = "net.sf.eclipsensis.installoptions.align"; //$NON-NLS-1$
+    public static final String ARRANGE_GROUP = "net.sf.eclipsensis.installoptions.arrange"; //$NON-NLS-1$
+    public static final String PREVIEW_GROUP = "net.sf.eclipsensis.installoptions.preview"; //$NON-NLS-1$
 }

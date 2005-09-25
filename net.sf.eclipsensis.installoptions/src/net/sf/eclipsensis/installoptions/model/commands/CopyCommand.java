@@ -22,7 +22,6 @@ import org.eclipse.gef.commands.Command;
 public class CopyCommand extends Command
 {
     protected List mCopies;
-    protected Object mOldContents = null;
     protected CopyContents mNewContents = new CopyContents();
     private Rectangle mBounds;
     private int mMinX = Integer.MAX_VALUE;
@@ -43,11 +42,13 @@ public class CopyCommand extends Command
 
     public void addPart(InstallOptionsWidget part)
     {
-        Rectangle bounds = part.getPosition().getBounds();
-        mMinX = Math.min(mMinX,bounds.x);
-        mMaxX = Math.max(mMaxX,bounds.x+bounds.width-1);
-        mMinY = Math.min(mMinY,bounds.y);
-        mMaxY = Math.max(mMaxY,bounds.y+bounds.height-1);
+        if(!part.isLocked()) {
+            Rectangle bounds = part.getPosition().getBounds();
+            mMinX = Math.min(mMinX,bounds.x);
+            mMaxX = Math.max(mMaxX,bounds.x+bounds.width-1);
+            mMinY = Math.min(mMinY,bounds.y);
+            mMaxY = Math.max(mMaxY,bounds.y+bounds.height-1);
+        }
         
         mCopies.add(part.clone());
     }
@@ -61,13 +62,7 @@ public class CopyCommand extends Command
     public void redo()
     {
         Clipboard clipboard = (Clipboard)Clipboard.getDefault();
-        mOldContents = clipboard.getContents();
         clipboard.setContents(mNewContents);
-    }
-
-    public void undo()
-    {
-        Clipboard.getDefault().setContents(mOldContents);
     }
     
     public class CopyContents

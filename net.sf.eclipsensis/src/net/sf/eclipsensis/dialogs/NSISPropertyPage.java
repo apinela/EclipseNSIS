@@ -14,7 +14,7 @@ import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.settings.NSISProperties;
 import net.sf.eclipsensis.settings.NSISSettings;
 
-import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -24,7 +24,7 @@ import org.eclipse.swt.widgets.Composite;
 
 public class NSISPropertyPage extends NSISSettingsPage
 {
-    private Button mUseGlobals = null;
+    private Button mUseParent = null;
     
     /**
      * @return
@@ -39,7 +39,7 @@ public class NSISPropertyPage extends NSISSettingsPage
      */
     protected boolean canEnableControls()
     {
-        return !mUseGlobals.getSelection();
+        return !mUseParent.getSelection();
     }
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.dialogs.NSISSettingsPage#createEnablerControl(org.eclipse.swt.widgets.Composite)
@@ -50,11 +50,32 @@ public class NSISPropertyPage extends NSISSettingsPage
         GridLayout layout = new GridLayout(1,false);
         layout.marginWidth = 0;
         composite.setLayout(layout);
-        
-        mUseGlobals = createCheckBox(composite, EclipseNSISPlugin.getResourceString("use.globals.text"), //$NON-NLS-1$
-                                      EclipseNSISPlugin.getResourceString("use.globals.tooltip"), //$NON-NLS-1$
-                                      ((NSISProperties)getSettings()).getUseGlobals());
-        mUseGlobals.addSelectionListener(new SelectionAdapter() {
+        String label = null;
+        String tooltip = null;
+        IResource resource = (IResource)getElement();
+        if(resource instanceof IFile) {
+            label = "folder.options.label"; //$NON-NLS-1$
+            tooltip = "folder.options.tooltip"; //$NON-NLS-1$
+        }
+        else if(resource instanceof IFolder) {
+            if(((IFolder)resource).getParent() instanceof IProject) {
+                label = "project.options.label"; //$NON-NLS-1$
+                tooltip = "project.options.tooltip"; //$NON-NLS-1$
+            }
+            else {
+                label = "folder.options.label"; //$NON-NLS-1$
+                tooltip = "folder.options.tooltip"; //$NON-NLS-1$
+            }
+        }
+        else {
+            label = "global.options.label"; //$NON-NLS-1$
+            tooltip = "global.options.tooltip"; //$NON-NLS-1$
+        }
+        mUseParent = createCheckBox(composite, 
+                                    EclipseNSISPlugin.getResourceString(label),
+                                    EclipseNSISPlugin.getResourceString(tooltip),
+                                    ((NSISProperties)getSettings()).getUseParent());
+        mUseParent.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) 
             {
                 enableControls(canEnableControls());
@@ -78,7 +99,18 @@ public class NSISPropertyPage extends NSISSettingsPage
      */
     protected String getPageDescription()
     {
-        return EclipseNSISPlugin.getResourceString("properties.header.text"); //$NON-NLS-1$
+        String label = null;
+        IResource resource = (IResource)getElement();
+        if(resource instanceof IFile) {
+            label = "file.properties.header.text"; //$NON-NLS-1$
+        }
+        else if(resource instanceof IFolder) {
+            label = "folder.properties.header.text"; //$NON-NLS-1$
+        }
+        else {
+            label = "project.properties.header.text"; //$NON-NLS-1$
+        }
+        return EclipseNSISPlugin.getResourceString(label); //$NON-NLS-1$
     }
     
     /* (non-Javadoc)
@@ -86,7 +118,7 @@ public class NSISPropertyPage extends NSISSettingsPage
      */
     protected NSISSettings loadSettings()
     {
-        return NSISProperties.getProperties((IFile)getElement());
+        return NSISProperties.getProperties((IResource)getElement());
     }
     
     /* (non-Javadoc)
@@ -94,7 +126,7 @@ public class NSISPropertyPage extends NSISSettingsPage
      */
     protected void performDefaults()
     {
-        if(!mUseGlobals.getSelection()) {
+        if(!mUseParent.getSelection()) {
             NSISSettings properties = (NSISProperties)getSettings();
             mHdrInfo.setSelection(properties.getDefaultHdrInfo());
             mLicense.setSelection(properties.getDefaultLicense());
@@ -114,9 +146,9 @@ public class NSISPropertyPage extends NSISSettingsPage
      */
     public boolean performOk()
     {
-        boolean useDefaults = mUseGlobals.getSelection();
+        boolean useDefaults = mUseParent.getSelection();
         NSISProperties properties = (NSISProperties)getSettings();
-        properties.setUseGlobals(useDefaults);
+        properties.setUseParent(useDefaults);
         if(useDefaults) {
             properties.store();
             return true;

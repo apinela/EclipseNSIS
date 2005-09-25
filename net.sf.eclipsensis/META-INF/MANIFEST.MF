@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %plugin.name
 Bundle-SymbolicName: net.sf.eclipsensis; singleton:=true
-Bundle-Version: 0.9.2
+Bundle-Version: 0.9.3
 Bundle-Activator: net.sf.eclipsensis.EclipseNSISPlugin
 Bundle-Vendor: Sunil Kamath (IcemanK)
 Bundle-Localization: plugin
@@ -30,6 +30,7 @@ Export-Package: net.sf.eclipsensis,
  net.sf.eclipsensis.editor.template,
  net.sf.eclipsensis.editor.template.resolvers,
  net.sf.eclipsensis.editor.text,
+ net.sf.eclipsensis.handlers,
  net.sf.eclipsensis.help,
  net.sf.eclipsensis.job,
  net.sf.eclipsensis.lang,

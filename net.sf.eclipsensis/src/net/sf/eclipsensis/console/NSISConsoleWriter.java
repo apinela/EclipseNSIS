@@ -22,10 +22,10 @@ public class NSISConsoleWriter implements Runnable
     private InputStream mInputStream = null;
     private INSISConsoleLineProcessor mLineProcessor = null;
     
-    public NSISConsoleWriter(MakeNSISProcess process, NSISConsoleModel console, InputStream inputStream, INSISConsoleLineProcessor lineProcessor)
+    public NSISConsoleWriter(MakeNSISProcess process, NSISConsoleModel model, InputStream inputStream, INSISConsoleLineProcessor lineProcessor)
     {
         mProcess = process;
-        mModel = console;
+        mModel = model;
         mInputStream = inputStream;
         mLineProcessor = lineProcessor;
     }

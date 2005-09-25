@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.views.properties.IPropertySource;
 
-public abstract class SWTControlFigure extends Figure implements IInstallOptionsFigure
+public abstract class SWTControlFigure extends ScrollBarsFigure
 {
     private static final int PRINT_BITS = WinAPI.PRF_NONCLIENT | WinAPI.PRF_CLIENT | WinAPI.PRF_ERASEBKGND | WinAPI.PRF_CHILDREN;
 
@@ -41,23 +41,32 @@ public abstract class SWTControlFigure extends Figure implements IInstallOptions
         public void paintControl(PaintEvent e) 
         {
             final Control source = (Control) e.getSource();
-            if(!source.isDisposed() && source.handle > 0) {
-                if(mImage != null && !mImage.isDisposed()) {
-                    mImage.dispose();
-                }
-                mImage = getImage(source);
-                source.removePaintListener(mSWTPaintListener);
-                repaint();
+            if(source != null && !source.isDisposed() && source.handle > 0) {
                 try {
-                  source.getDisplay().asyncExec(new Runnable() {
-                      public void run() {
-                          if(!source.isDisposed()) {
-                              source.dispose();
-                          }
-                      }
-                  });
+                    if(mImage != null && !mImage.isDisposed()) {
+                        mImage.dispose();
+                    }
+                    mImage = getImage(source);
+                    source.removePaintListener(mSWTPaintListener);
+                    repaint();
                 }
-                catch(Exception e1) { }
+                catch(Exception ex) {
+                    ex.printStackTrace();
+                }
+                finally {
+                    source.getDisplay().asyncExec(new Runnable() {
+                        public void run() {
+                            try {
+                                if(!source.isDisposed()) {
+                                    source.dispose();
+                                }
+                            }
+                            catch(Exception ex) {
+                                ex.printStackTrace();
+                            }
+                        }
+                    });
+                }
             }
         }
     };
@@ -100,7 +109,7 @@ public abstract class SWTControlFigure extends Figure implements IInstallOptions
         mDisabled = disabled;
     }
 
-    protected boolean isDisabled()
+    public boolean isDisabled()
     {
         return mDisabled;
     }
@@ -249,6 +258,21 @@ public abstract class SWTControlFigure extends Figure implements IInstallOptions
     public void setVScroll(boolean scroll)
     {
         mVScroll = scroll;
+    }
+
+    protected void createScrollBars(Control control)
+    {
+        int style;
+        if(isHScroll() || isVScroll()) {
+            style = WinAPI.GetWindowLong(control.handle, WinAPI.GWL_STYLE);
+            if (isHScroll()) {
+                style |= WinAPI.WS_HSCROLL;
+            }
+            if (isVScroll()) {
+                style |= WinAPI.WS_VSCROLL;
+            }
+            WinAPI.SetWindowLong(control.handle,WinAPI.GWL_STYLE,style);
+        }
     }
 
     protected abstract Control createSWTControl(Composite parent, int style);

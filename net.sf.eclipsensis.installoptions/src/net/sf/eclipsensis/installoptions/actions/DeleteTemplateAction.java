@@ -9,6 +9,8 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.actions;
 
+import java.io.IOException;
+
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.template.InstallOptionsTemplate;
 import net.sf.eclipsensis.installoptions.template.InstallOptionsTemplateManager;
@@ -35,5 +37,11 @@ public class DeleteTemplateAction extends Action
     public void run() 
     {
         InstallOptionsTemplateManager.INSTANCE.removeTemplate(mTemplate);
+        try {
+            InstallOptionsTemplateManager.INSTANCE.save();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

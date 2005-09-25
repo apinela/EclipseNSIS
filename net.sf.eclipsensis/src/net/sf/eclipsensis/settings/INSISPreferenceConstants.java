@@ -17,6 +17,7 @@ public interface INSISPreferenceConstants
     public static final String NSIS_HOME = "nsisHome"; //$NON-NLS-1$
     public static final String USE_ECLIPSE_HELP = "useEclipseHelp"; //$NON-NLS-1$
     public static final String USE_GLOBALS = "useGlobals"; //$NON-NLS-1$
+    public static final String USE_PARENT = "useParent"; //$NON-NLS-1$
     public static final String HDRINFO = "hdrInfo"; //$NON-NLS-1$
     public static final String VERBOSITY = "verbosity"; //$NON-NLS-1$
     public static final String LICENSE = "license"; //$NON-NLS-1$

@@ -27,8 +27,8 @@ import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.viewer.CollectionContentProvider;
 
 import org.eclipse.draw2d.geometry.Dimension;
-import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
@@ -865,7 +865,7 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
         {
             super.configureShell(newShell);
             newShell.setText((Common.isEmpty(mCurrent.getName())?InstallOptionsPlugin.getResourceString("dialog.size.dialog.add.title"):InstallOptionsPlugin.getResourceString("dialog.size.dialog.edit.title"))); //$NON-NLS-1$ //$NON-NLS-2$
-            newShell.setImage(InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("installoptions.icon"))); //$NON-NLS-1$
+            newShell.setImage(InstallOptionsPlugin.getShellImage());
         }
         
         public void create()
@@ -887,8 +887,9 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
             String oldName = (mOriginal == null?"":mOriginal.getName().toLowerCase()); //$NON-NLS-1$
             String newName = mCurrent.getName().toLowerCase();
             if(((mOriginal == null || !oldName.equals(newName)) && mDialogSizesMap.containsKey(newName))) {
-                if(MessageDialog.openQuestion(getShell(),InstallOptionsPlugin.getResourceString("confirm.overwrite.title"), //$NON-NLS-1$
-                        InstallOptionsPlugin.getFormattedString("dialog.size.overwrite.message",new Object[]{mCurrent.getName()}))) { //$NON-NLS-1$
+                if(Common.openQuestion(getShell(),InstallOptionsPlugin.getResourceString("confirm.overwrite.title"), //$NON-NLS-1$
+                        InstallOptionsPlugin.getFormattedString("dialog.size.overwrite.message",new Object[]{mCurrent.getName()}), //$NON-NLS-1$
+                        InstallOptionsPlugin.getShellImage())) {
                     DialogSize old = (DialogSize)mDialogSizesMap.remove(newName);
                     if(old.equals(mDefaultDialogSize)) {
                         mDefaultDialogSize = null;

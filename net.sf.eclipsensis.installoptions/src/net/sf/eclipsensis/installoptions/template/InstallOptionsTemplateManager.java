@@ -15,6 +15,7 @@ import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.template.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.swt.graphics.Image;
 
 public class InstallOptionsTemplateManager extends AbstractTemplateManager
 {
@@ -149,5 +150,10 @@ public class InstallOptionsTemplateManager extends AbstractTemplateManager
     protected AbstractTemplateReaderWriter createReaderWriter()
     {
         return InstallOptionsTemplateReaderWriter.INSTANCE;
+    }
+
+    protected Image getShellImage()
+    {
+        return InstallOptionsPlugin.getShellImage();
     }
 }

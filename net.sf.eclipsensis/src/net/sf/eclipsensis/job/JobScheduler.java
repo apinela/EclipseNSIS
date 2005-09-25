@@ -11,6 +11,8 @@ package net.sf.eclipsensis.job;
 
 import java.util.*;
 
+import net.sf.eclipsensis.util.Common;
+
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.jobs.Job;
@@ -47,9 +49,14 @@ public class JobScheduler
         }
     }
     
+    public boolean isScheduled(Object family)
+    {
+        return !Common.isEmptyArray(Platform.getJobManager().find(family));
+    }
+    
     public void scheduleUIJob(String name, IJobStatusRunnable runnable)
     {
-        scheduleJob(null, name, runnable);
+        scheduleUIJob(null, name, runnable);
     }
     
     public void scheduleUIJob(Object family, String name, final IJobStatusRunnable runnable)
@@ -72,7 +79,7 @@ public class JobScheduler
     
     public void scheduleJob(String name, IJobStatusRunnable runnable)
     {
-        scheduleJob(null, runnable);
+        scheduleJob(null, name, runnable);
     }
     
     public void scheduleJob(Object family, String name, final IJobStatusRunnable runnable)

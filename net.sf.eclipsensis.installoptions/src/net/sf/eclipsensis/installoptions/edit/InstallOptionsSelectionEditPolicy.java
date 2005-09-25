@@ -9,17 +9,13 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.edit;
 
-import org.eclipse.draw2d.*;
-import org.eclipse.draw2d.geometry.*;
-import org.eclipse.gef.*;
+import org.eclipse.gef.EditPart;
+import org.eclipse.gef.Request;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.editpolicies.ComponentEditPolicy;
-import org.eclipse.gef.requests.LocationRequest;
-import org.eclipse.swt.widgets.Display;
 
 public class InstallOptionsSelectionEditPolicy extends ComponentEditPolicy
 {
-    private Label mToolTip;
     private EditPart mEditPart;
     
     public InstallOptionsSelectionEditPolicy(EditPart editPart)
@@ -27,23 +23,6 @@ public class InstallOptionsSelectionEditPolicy extends ComponentEditPolicy
         super();
         mEditPart = editPart;
     }
-    
-    private Label getToolTip()
-    {
-        if(mToolTip == null) {
-            InstallOptionsWidgetEditPart part = (InstallOptionsWidgetEditPart)getHost();
-            mToolTip = new Label(part.getTypeName());
-            mToolTip.setBorder(new LineBorder());
-            mToolTip.setOpaque(true);
-            mToolTip.setBackgroundColor(ColorConstants.tooltipBackground);
-            mToolTip.setForegroundColor(ColorConstants.tooltipForeground);
-            Dimension dim = FigureUtilities.getStringExtents(mToolTip.getText(),Display.getDefault().getSystemFont());
-            dim.expand(8,6);
-            mToolTip.setSize(dim);
-        }
-        return mToolTip;
-    }
-    
     
     public Command getCommand(Request request)
     {
@@ -53,59 +32,5 @@ public class InstallOptionsSelectionEditPolicy extends ComponentEditPolicy
         else {
             return super.getCommand(request);
         }
-    }
-
-    private Point computeTipLocation(IFigure tip, Point p) {
-        FigureCanvas figureCanvas = (FigureCanvas)((GraphicalEditPart)getHost().getRoot()).getViewer().getControl();
-        Viewport viewport = figureCanvas.getViewport();
-        Rectangle clientArea = viewport.getClientArea();
-        Point preferredLocation = new Point(p.x, p.y + 26);
-        
-        Dimension tipSize = tip.getSize();
-        
-        // Adjust location if tip is going to fall outside display
-        if (preferredLocation.y + tipSize.height > clientArea.height) {
-            preferredLocation.y = p.y - tipSize.height;
-        }
-        preferredLocation.y += clientArea.y;
-        
-        if (preferredLocation.x + tipSize.width > clientArea.width) {
-            preferredLocation.x -= (preferredLocation.x + tipSize.width) - clientArea.width;
-        }
-        preferredLocation.x += clientArea.x;
-        
-        return preferredLocation; 
-    }
-
-    public void eraseTargetFeedback(Request request)
-    {
-        if(request.getType().equals(RequestConstants.REQ_SELECTION_HOVER)) {
-            Label toolTip = getToolTip();
-            if(toolTip != null) {
-                IFigure figure = ((GraphicalEditPart)getHost().getRoot()).getFigure();
-                if(figure.getChildren().contains(toolTip)) {
-                    figure.remove(toolTip);
-                    return;
-                }
-            }
-        }
-        super.eraseTargetFeedback(request);
-    }
-    
-    public void showTargetFeedback(Request request)
-    {
-        if(request.getType().equals(RequestConstants.REQ_SELECTION_HOVER)) {
-            Label toolTip = getToolTip();
-            if(toolTip != null) {
-                LocationRequest req = (LocationRequest)request;
-                toolTip.setLocation(computeTipLocation(toolTip,req.getLocation()));
-                IFigure figure = ((GraphicalEditPart)getHost().getRoot()).getFigure();
-                if(!figure.getChildren().contains(toolTip)) {
-                    figure.add(toolTip);
-                }
-                return;
-            }
-        }
-        super.showTargetFeedback(request);
     }
 }

@@ -29,8 +29,10 @@ public class ColorEditor {
         mImage= new Image(parent.getDisplay(), mRect.x, mRect.y);
         
         GC gc= new GC(mImage);
+        Color color = gc.getBackground();
         gc.setBackground(mButton.getBackground());
         gc.fillRectangle(0, 0, mRect.x, mRect.y);
+        gc.setBackground(color);
         gc.dispose();
         
         mButton.setImage(mImage);
@@ -78,6 +80,8 @@ public class ColorEditor {
         Display display= mButton.getDisplay();
         
         GC gc= new GC(mImage);
+        Color fgColor = gc.getForeground();
+        Color bgColor = gc.getBackground();
         gc.setForeground(display.getSystemColor(SWT.COLOR_BLACK));
         gc.drawRectangle(0, 2, mRect.x - 1, mRect.y - 4);
         
@@ -88,6 +92,9 @@ public class ColorEditor {
         mColor= new Color(display, mRGB);
         gc.setBackground(mColor);
         gc.fillRectangle(1, 3, mRect.x - 2, mRect.y - 5);
+
+        gc.setForeground(fgColor);
+        gc.setBackground(bgColor);
         gc.dispose();
         
         mButton.setImage(mImage);
@@ -95,9 +102,11 @@ public class ColorEditor {
     
     protected Point calculateSize(Control window) {
         GC gc= new GC(window);
+        Font old = gc.getFont();
         Font f= JFaceResources.getFontRegistry().get(JFaceResources.DEFAULT_FONT);
         gc.setFont(f);
         int height= gc.getFontMetrics().getHeight();
+        gc.setFont(old);
         gc.dispose();
         Point p= new Point(height * 3 - 6, height);
         return p;

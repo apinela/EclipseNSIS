@@ -594,6 +594,12 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
                 long dg = (((botRGB.green << 10) - g)*4) / rect.height;
                 long db = (((botRGB.blue << 10) - b) * 4) / rect.height;
                 int ry = rect.y;
+                
+                //Save GC settings
+                Color fgColor = gc.getForeground();
+                Color bgColor = gc.getBackground();
+                Font font = gc.getFont();
+                
                 while(ry < (rect.y+rect.height)) {
                     Color color = new Color(display,(int)(r >> 10), (int)(g >> 10), (int)(b >> 10));
                     gc.setBackground(color);
@@ -622,6 +628,11 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
                 gc.setForeground(ColorManager.getNegativeColor(botRGB));
                 gc.setFont(messageFont);
                 gc.drawString(EclipseNSISPlugin.getResourceString("background.preview.escape.message"),10,rect.y+rect.height-20,true); //$NON-NLS-1$
+                
+                //Restore GC settings
+                gc.setForeground(fgColor);
+                gc.setBackground(bgColor);
+                gc.setFont(font);
             }
         });
         canvas.addDisposeListener(new DisposeListener() {

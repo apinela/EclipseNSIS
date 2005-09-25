@@ -78,4 +78,6 @@ public abstract class InstallOptionsEditPart extends AbstractGraphicalEditPart i
         ((InstallOptionsElement)getModel()).removeModelCommandListener(getModelCommandListener());
         super.removeNotify();
     }
+
+    protected abstract String getTypeName();
 }

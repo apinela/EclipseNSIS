@@ -37,9 +37,15 @@ import org.eclipse.ui.views.properties.*;
 public class InstallOptionsDialog extends InstallOptionsElement implements IInstallOptionsConstants
 {
     public static final String PROPERTY_SELECTION = "net.sf.eclipsensis.installoptions.selection"; //$NON-NLS-1$
+    public static final String OPTION_DEFAULT = ""; //$NON-NLS-1$
+    public static final String OPTION_NO = "0"; //$NON-NLS-1$
+    public static final String OPTION_YES = "1"; //$NON-NLS-1$
+        
+    private static final String GUIDES_PREFIX = "guides="; //$NON-NLS-1$
+    private static final String LOCKED_PREFIX = "locked="; //$NON-NLS-1$
     
     private static final int DEFAULT_OPTION = 0;
-    private static final String[] OPTION_DATA = {"","0","1"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    private static final String[] OPTION_DATA = {OPTION_DEFAULT,OPTION_NO,OPTION_YES};
     private static final String[] OPTION_DISPLAY = {InstallOptionsPlugin.getResourceString("option.default"), //$NON-NLS-1$
                                  InstallOptionsPlugin.getResourceString("option.no"), //$NON-NLS-1$
                                  InstallOptionsPlugin.getResourceString("option.yes")}; //$NON-NLS-1$
@@ -188,16 +194,16 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
         try {
             mSelectedIndices = parseSelection(selection);
             switch(type) {
-                case IInstallOptionsConstants.SEND_BACKWARD:
+                case IInstallOptionsConstants.ARRANGE_SEND_BACKWARD:
                     flag = canSendBackward();
                     break;
-                case IInstallOptionsConstants.SEND_TO_BACK:
+                case IInstallOptionsConstants.ARRANGE_SEND_TO_BACK:
                     flag = canSendToBack();
                     break;
-                case IInstallOptionsConstants.BRING_FORWARD:
+                case IInstallOptionsConstants.ARRANGE_BRING_FORWARD:
                     flag = canBringForward();
                     break;
-                case IInstallOptionsConstants.BRING_TO_FRONT:
+                case IInstallOptionsConstants.ARRANGE_BRING_TO_FRONT:
                 default:
                     return canBringToFront();
             }
@@ -213,16 +219,16 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
     public void move(int type)
     {
         switch(type) {
-            case IInstallOptionsConstants.SEND_BACKWARD:
+            case IInstallOptionsConstants.ARRANGE_SEND_BACKWARD:
                 sendBackward();
                 break;
-            case IInstallOptionsConstants.SEND_TO_BACK:
+            case IInstallOptionsConstants.ARRANGE_SEND_TO_BACK:
                 sendToBack();
                 break;
-            case IInstallOptionsConstants.BRING_FORWARD:
+            case IInstallOptionsConstants.ARRANGE_BRING_FORWARD:
                 bringForward();
                 break;
-            case IInstallOptionsConstants.BRING_TO_FRONT:
+            case IInstallOptionsConstants.ARRANGE_BRING_TO_FRONT:
             default:
                 bringToFront();
         }
@@ -239,42 +245,42 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
 
     public boolean canSendBackward()
     {
-        return mUpDownMover.canMoveUp();
+        return mUpDownMover.canMoveDown();
     }
 
     public boolean canSendToBack()
     {
-        return mUpDownMover.canMoveUp();
+        return mUpDownMover.canMoveDown();
     }
 
     public boolean canBringForward()
     {
-        return mUpDownMover.canMoveDown();
+        return mUpDownMover.canMoveUp();
     }
 
     public boolean canBringToFront()
     {
-        return mUpDownMover.canMoveDown();
+        return mUpDownMover.canMoveUp();
     }
     
     public void sendBackward()
     {
-        mUpDownMover.moveUp();
+        mUpDownMover.moveDown();
     }
     
     public void bringForward()
     {
-        mUpDownMover.moveDown();
+        mUpDownMover.moveUp();
     }
     
     public void sendToBack()
     {
-        mUpDownMover.moveToTop();
+        mUpDownMover.moveToBottom();
     }
     
     public void bringToFront()
     {
-        mUpDownMover.moveToBottom();
+        mUpDownMover.moveToTop();
     }
     
     public void setSelection(List selection)
@@ -476,8 +482,10 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
     public void setRTL(String rtl)
     {
         if(!Common.stringsAreEqual(mRTL,rtl)) {
+            String oldRTL = mRTL;
             mRTL = rtl;
             setDirty(true);
+            firePropertyChange(InstallOptionsModel.PROPERTY_RTL,oldRTL,mRTL);
         }
     }
     
@@ -547,11 +555,13 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
         setDirty(true);
     }
 
-    public void addChild(InstallOptionsWidget child){
+    public void addChild(InstallOptionsWidget child)
+    {
         addChild(child, -1);
     }
 
-    public void addChild(InstallOptionsWidget child, int index){
+    public void addChild(InstallOptionsWidget child, int index)
+    {
         if (index >= 0) {
             mChildren.add(index,child);
         }
@@ -569,7 +579,8 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
         setDirty(true);
     }
 
-    public void setChild(InstallOptionsWidget child, int index){
+    public void setChild(InstallOptionsWidget child, int index)
+    {
         if (index >= mChildren.size()) {
             addChild(child,index);
         }
@@ -749,109 +760,57 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
             }
             
             //Guides
-            if(dialog.getGuideComment() != null) {
-                String comment = dialog.getGuideComment().getText();
-                int n = comment.indexOf(GUIDE_PREFIX);
+            boolean hasGuides = false;
+            if(dialog.getMetadataComment() != null) {
+                String comment = dialog.getMetadataComment().getText().trim();
+                String prefix = METADATA_PREFIX;
+                int n = comment.indexOf(METADATA_PREFIX);
+                if(n < 0) {
+                    prefix = OLD_METADATA_PREFIX;
+                    n = comment.indexOf(OLD_METADATA_PREFIX);
+                }
                 if(n >= 0) {
-                    Font f = Display.getDefault().getSystemFont();
-                    comment = comment.substring(n+GUIDE_PREFIX.length()).trim();
-                    String[] tokens = Common.tokenize(comment,'#');
-                    for (int i = 0; i < tokens.length; i++) {
-                        String[] tokens2 = Common.tokenize(tokens[i],'|');
-                        if(tokens2.length > 0) {
-                            int orientation;
-                            try {
-                                orientation = Integer.parseInt(tokens2[0]);
-                            }
-                            catch(Exception ex) {
-                                orientation = -1;
-                            }
-                            if(orientation == PositionConstants.NORTH || orientation == PositionConstants.WEST) {
-                                int offset = 0;
-                                if(tokens2.length > 1) {
-                                    try {
-                                        offset = Integer.parseInt(tokens2[1]);
-                                        if(orientation == PositionConstants.NORTH) {
-                                            offset = FigureUtility.dialogUnitsToPixelsX(offset, f);
-                                        }
-                                        else {
-                                            offset = FigureUtility.dialogUnitsToPixelsY(offset, f);
-                                        }
-                                    }
-                                    catch(Exception ex) {
-                                        offset = 0;
-                                    }
+                    comment = comment.substring(n+prefix.length()).trim();
+                    String[] metadata = Common.tokenize(comment,',');
+                    if(!Common.isEmptyArray(metadata)) {
+                        if(prefix.equals(METADATA_PREFIX)) {
+                            for (int i = 0; i < metadata.length; i++) {
+                                if(metadata[i].startsWith(GUIDES_PREFIX)) {
+                                    hasGuides = loadGuides(dialog,metadata[i].substring(GUIDES_PREFIX.length()).trim());
+                                    break;
                                 }
-                                InstallOptionsRuler ruler = dialog.getRuler(orientation);
-                                InstallOptionsGuide guide = new InstallOptionsGuide(offset == PositionConstants.WEST);
-                                guide.setPosition(offset);
-                                ruler.addGuide(guide);
                             }
                         }
+                        else {
+                            hasGuides = loadGuides(dialog,metadata[0]);
+                        }
                     }
-                    for(Iterator iter=dialog.getChildren().iterator(); iter.hasNext(); ) {
-                        InstallOptionsWidget child = ((InstallOptionsWidget)iter.next());
-                        if(child != null && child.getGuideComment() != null) {
-                            comment = child.getGuideComment().getText();
-                            if(comment != null) {
-                                n = comment.indexOf(GUIDE_PREFIX);
-                                if(n >= 0) {
-                                    comment = comment.substring(n+GUIDE_PREFIX.length()).trim();
-                                    tokens = Common.tokenize(comment,'#');
-                                    if(tokens.length > 0) {
-                                        for (int i = 0; i < tokens.length; i++) {
-                                            String[] tokens2 = Common.tokenize(tokens[i],'|');
-                                            if(tokens2.length >= 2) {
-                                                int orientation;
-                                                try {
-                                                    orientation = Integer.parseInt(tokens2[0]);
-                                                }
-                                                catch(Exception ex) {
-                                                    orientation = -1;
-                                                }
-                                                if(orientation == PositionConstants.NORTH || orientation == PositionConstants.WEST) {
-                                                    try {
-                                                        index = Integer.parseInt(tokens2[1]);
-                                                    }
-                                                    catch(Exception ex) {
-                                                        index = -1;
-                                                    }
-                                                    if(index >= 0) {
-                                                        int alignment = 0;
-                                                        if(tokens2.length > 2) {
-                                                            try {
-                                                                alignment = Integer.parseInt(tokens2[2]);
-                                                            }
-                                                            catch(Exception ex) {
-                                                                alignment = 0;
-                                                            }
-                                                        }
-                                                        if(Math.abs(alignment) <= 1) {
-                                                            List guides = dialog.getRuler(orientation).getGuides();
-                                                            if(!Common.isEmptyCollection(guides) && guides.size() > index) {
-                                                                InstallOptionsGuide guide = (InstallOptionsGuide)guides.get(index);
-                                                                int offset = guide.getPosition();
-                                                                Position p = child.toGraphical(child.getPosition());
-                                                                int offset2 = -1;
-                                                                switch(alignment) {
-                                                                    case -1:
-                                                                        offset2 = (orientation == PositionConstants.NORTH?p.left:p.top);
-                                                                        break;
-                                                                    case 0:
-                                                                        offset2 = (orientation == PositionConstants.NORTH?p.left+p.right:p.top+p.bottom)/2;
-                                                                        break;
-                                                                    case 1:
-                                                                        offset2 = (orientation == PositionConstants.NORTH?p.right:p.bottom);
-                                                                }
-                                                                if(offset == offset2) {
-                                                                    guide.attachPart(child,alignment);
-                                                                }
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
+                }
+            }
+            for(Iterator iter=dialog.getChildren().iterator(); iter.hasNext(); ) {
+                InstallOptionsWidget child = ((InstallOptionsWidget)iter.next());
+                if(child != null && child.getMetadataComment() != null) {
+                    String comment = child.getMetadataComment().getText().trim();
+                    if(comment != null) {
+                        String prefix = METADATA_PREFIX;
+                        int n = comment.indexOf(METADATA_PREFIX);
+                        if(n < 0) {
+                            prefix = OLD_METADATA_PREFIX;
+                            n = comment.indexOf(OLD_METADATA_PREFIX);
+                        }
+                        if(n >= 0) {
+                            comment = comment.substring(n+prefix.length()).trim();
+                            if(hasGuides && prefix.equals(OLD_METADATA_PREFIX)) {
+                                loadChildGuides(dialog, child, comment);
+                            }
+                            else {
+                                String[] metadata = Common.tokenize(comment,',');
+                                for (int i = 0; i < metadata.length; i++) {
+                                    if(hasGuides && metadata[i].startsWith(GUIDES_PREFIX)) {
+                                        loadChildGuides(dialog, child, metadata[i].substring(GUIDES_PREFIX.length()));
+                                    }
+                                    else if(metadata[i].startsWith(LOCKED_PREFIX)) {
+                                        child.setLocked(Boolean.valueOf(metadata[i].substring(LOCKED_PREFIX.length())).booleanValue());
                                     }
                                 }
                             }
@@ -879,6 +838,109 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
         return dialog;
     }
     
+    private static boolean loadGuides(InstallOptionsDialog dialog, String guidesMetadata)
+    {
+        boolean loaded = false;
+        Font f = Display.getDefault().getSystemFont();
+        String[] tokens = Common.tokenize(guidesMetadata,'#');
+        for (int i = 0; i < tokens.length; i++) {
+            String[] tokens2 = Common.tokenize(tokens[i],'|');
+            if(tokens2.length > 0) {
+                int orientation;
+                try {
+                    orientation = Integer.parseInt(tokens2[0]);
+                }
+                catch(Exception ex) {
+                    orientation = -1;
+                }
+                if(orientation == PositionConstants.NORTH || orientation == PositionConstants.WEST) {
+                    int offset = 0;
+                    if(tokens2.length > 1) {
+                        try {
+                            offset = Integer.parseInt(tokens2[1]);
+                            if(orientation == PositionConstants.NORTH) {
+                                offset = FigureUtility.dialogUnitsToPixelsX(offset, f);
+                            }
+                            else {
+                                offset = FigureUtility.dialogUnitsToPixelsY(offset, f);
+                            }
+                        }
+                        catch(Exception ex) {
+                            offset = 0;
+                        }
+                    }
+                    InstallOptionsRuler ruler = dialog.getRuler(orientation);
+                    InstallOptionsGuide guide = new InstallOptionsGuide(offset == PositionConstants.WEST);
+                    guide.setPosition(offset);
+                    ruler.addGuide(guide);
+                    loaded = true;
+                }
+            }
+        }
+        return loaded;
+    }
+    
+    private static void loadChildGuides(InstallOptionsDialog parent, InstallOptionsWidget child, String guidesMetadata)
+    {
+        String[] tokens = Common.tokenize(guidesMetadata,'#');
+        if(tokens.length > 0) {
+            for (int i = 0; i < tokens.length; i++) {
+                String[] tokens2 = Common.tokenize(tokens[i],'|');
+                if(tokens2.length >= 2) {
+                    int orientation;
+                    try {
+                        orientation = Integer.parseInt(tokens2[0]);
+                    }
+                    catch(Exception ex) {
+                        orientation = -1;
+                    }
+                    if(orientation == PositionConstants.NORTH || orientation == PositionConstants.WEST) {
+                        int index;
+                        try {
+                            index = Integer.parseInt(tokens2[1]);
+                        }
+                        catch(Exception ex) {
+                            index = -1;
+                        }
+                        if(index >= 0) {
+                            int alignment = 0;
+                            if(tokens2.length > 2) {
+                                try {
+                                    alignment = Integer.parseInt(tokens2[2]);
+                                }
+                                catch(Exception ex) {
+                                    alignment = 0;
+                                }
+                            }
+                            if(Math.abs(alignment) <= 1) {
+                                List guides = parent.getRuler(orientation).getGuides();
+                                if(!Common.isEmptyCollection(guides) && guides.size() > index) {
+                                    InstallOptionsGuide guide = (InstallOptionsGuide)guides.get(index);
+                                    int offset = guide.getPosition();
+                                    Position p = child.toGraphical(child.getPosition());
+                                    int offset2 = -1;
+                                    switch(alignment) {
+                                        case -1:
+                                            offset2 = (orientation == PositionConstants.NORTH?p.left:p.top);
+                                            break;
+                                        case 0:
+                                            offset2 = (orientation == PositionConstants.NORTH?p.left+p.right:p.top+p.bottom)/2;
+                                            break;
+                                        case 1:
+                                            offset2 = (orientation == PositionConstants.NORTH?p.right:p.bottom);
+                                    }
+                                    if(offset == offset2) {
+                                        guide.attachPart(child,alignment);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     public boolean canUpdateINIFile()
     {
         if(!isDirty()) {
@@ -949,95 +1011,120 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
                 }
             }
 
-            section = getSection();
-            List verticalGuides = getRuler(PositionConstants.NORTH).getGuides();
-            List horizontalGuides = getRuler(PositionConstants.WEST).getGuides();
-            INIComment comment = getGuideComment();
-            if(verticalGuides.size() > 0 || horizontalGuides.size() > 0) {
-                StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
-                Font f = Display.getDefault().getSystemFont();
-                for (Iterator iter = horizontalGuides.iterator(); iter.hasNext();) {
-                    InstallOptionsGuide guide = (InstallOptionsGuide)iter.next();
-                    if(buf.length() > 0) {
-                        buf.append('#');
-                    }
-                    buf.append(PositionConstants.WEST).append('|').append(FigureUtility.pixelsToDialogUnitsY(guide.getPosition(),f));
-                }
-                for (Iterator iter = verticalGuides.iterator(); iter.hasNext();) {
-                    InstallOptionsGuide guide = (InstallOptionsGuide)iter.next();
-                    if(buf.length() > 0) {
-                        buf.append('#');
-                    }
-                    buf.append(PositionConstants.NORTH).append('|').append(FigureUtility.pixelsToDialogUnitsX(guide.getPosition(),f));
-                }
-                String text;
-                if(comment == null) {
-                    comment = new INIComment();
-                    section.addChild(0,comment);
-                    text = GUIDE_PREFIX+buf.toString();
-                }
-                else {
-                    text = comment.getText();
-                    int n = text.indexOf(GUIDE_PREFIX);
-                    text = text.substring(0,n+GUIDE_PREFIX.length())+buf.toString();
-                }
-                comment.setText(text);
-
-                for(Iterator iter = getChildren().iterator(); iter.hasNext(); ) {
-                    InstallOptionsWidget child = (InstallOptionsWidget)iter.next();
-                    InstallOptionsGuide horizontalGuide = child.getHorizontalGuide();
-                    InstallOptionsGuide verticalGuide = child.getVerticalGuide();
-                    if(horizontalGuide != null || verticalGuide != null) {
-                        buf = new StringBuffer(""); //$NON-NLS-1$
-                        if(horizontalGuide != null) {
-                            buf.append(PositionConstants.WEST).append('|');
-                            buf.append(getRuler(PositionConstants.WEST).getGuides().indexOf(horizontalGuide)).append('|');
-                            buf.append(horizontalGuide.getAlignment(child));
-                        }
-                        if(verticalGuide != null) {
-                            if(buf.length() > 0) {
-                                buf.append('#');
-                            }
-                            buf.append(PositionConstants.NORTH).append('|');
-                            buf.append(getRuler(PositionConstants.NORTH).getGuides().indexOf(verticalGuide)).append('|');
-                            buf.append(horizontalGuide.getAlignment(child));
-                        }
-                        comment = child.getGuideComment();
-                        if(comment == null) {
-                            comment = new INIComment();
-                            child.getSection().addChild(0, comment);
-                            text = GUIDE_PREFIX+buf.toString();
-                        }
-                        else {
-                            text = comment.getText();
-                            int n = text.indexOf(GUIDE_PREFIX);
-                            text = text.substring(0,n+GUIDE_PREFIX.length())+buf.toString();
-                        }
-                        comment.setText(text);
-                    }
-                    else {
-                        if(child.getGuideComment() != null) {
-                            child.getSection().removeChild(child.getGuideComment());
-                        }
-                    }
-                }
-            }
-            else {
-                if(comment != null) {
-                    section.removeChild(comment);
-                }
-                for(Iterator iter = getChildren().iterator(); iter.hasNext(); ) {
-                    InstallOptionsWidget child = (InstallOptionsWidget)iter.next();
-                    if(child.getGuideComment() != null) {
-                        child.getSection().removeChild(child.getGuideComment());
-                    }
-                }
+            boolean saveGuides = updateGuidesMetadata();
+            for(Iterator iter = getChildren().iterator(); iter.hasNext(); ) {
+                InstallOptionsWidget child = (InstallOptionsWidget)iter.next();
+                updateChildMetadata(child, saveGuides);
             }
             
             mINIFile.update();
             setDirty(false);
         }
         return mINIFile;
+    }
+    
+    private boolean updateGuidesMetadata()
+    {
+        INISection section = getSection();
+        List verticalGuides = getRuler(PositionConstants.NORTH).getGuides();
+        List horizontalGuides = getRuler(PositionConstants.WEST).getGuides();
+        INIComment comment = getMetadataComment();
+        if(verticalGuides.size() > 0 || horizontalGuides.size() > 0) {
+            StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
+            if(comment == null) {
+                comment = new INIComment();
+                section.addChild(0,comment);
+                buf.append(METADATA_PREFIX).append(" ").append(GUIDES_PREFIX); //$NON-NLS-1$
+            }
+            else {
+                String text = comment.getText();
+                int n = text.indexOf(METADATA_PREFIX);
+                if(n < 0) {
+                    n = text.indexOf(OLD_METADATA_PREFIX);
+                }
+                buf.append(text.substring(0,n)).append(METADATA_PREFIX).append(" ").append(GUIDES_PREFIX); //$NON-NLS-1$
+            }
+            Font f = Display.getDefault().getSystemFont();
+            int count = 0;
+            for (Iterator iter = horizontalGuides.iterator(); iter.hasNext();) {
+                InstallOptionsGuide guide = (InstallOptionsGuide)iter.next();
+                if(count > 0) {
+                    buf.append('#');
+                }
+                buf.append(PositionConstants.WEST).append('|').append(FigureUtility.pixelsToDialogUnitsY(guide.getPosition(),f));
+                count++;
+            }
+            for (Iterator iter = verticalGuides.iterator(); iter.hasNext();) {
+                InstallOptionsGuide guide = (InstallOptionsGuide)iter.next();
+                if(count > 0) {
+                    buf.append('#');
+                }
+                buf.append(PositionConstants.NORTH).append('|').append(FigureUtility.pixelsToDialogUnitsX(guide.getPosition(),f));
+                count++;
+            }
+            comment.setText(buf.toString());
+            return true;
+        }
+        else {
+            if(comment != null) {
+                section.removeChild(comment);
+            }
+            return false;
+        }
+    }
+
+    private void updateChildMetadata(InstallOptionsWidget child, boolean saveGuides)
+    {
+        StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
+        if(child.isLocked()) {
+            buf.append(LOCKED_PREFIX).append(Boolean.TRUE.toString());
+        }
+        if(saveGuides) {
+            InstallOptionsGuide horizontalGuide = child.getHorizontalGuide();
+            InstallOptionsGuide verticalGuide = child.getVerticalGuide();
+            if(horizontalGuide != null || verticalGuide != null) {
+                if(buf.length() > 0) {
+                    buf.append(","); //$NON-NLS-1$
+                }
+                buf.append(GUIDES_PREFIX);
+                if(horizontalGuide != null) {
+                    buf.append(PositionConstants.WEST).append('|');
+                    buf.append(getRuler(PositionConstants.WEST).getGuides().indexOf(horizontalGuide)).append('|');
+                    buf.append(horizontalGuide.getAlignment(child));
+                }
+                if(verticalGuide != null) {
+                    if(horizontalGuide != null) {
+                        buf.append('#');
+                    }
+                    buf.append(PositionConstants.NORTH).append('|');
+                    buf.append(getRuler(PositionConstants.NORTH).getGuides().indexOf(verticalGuide)).append('|');
+                    buf.append(verticalGuide.getAlignment(child));
+                }
+            }
+        }
+        if(buf.length() > 0) {
+            String text;
+            INIComment comment = child.getMetadataComment();
+            if(comment == null) {
+                comment = new INIComment();
+                child.getSection().addChild(0, comment);
+                text = new StringBuffer(METADATA_PREFIX).append(" ").append(buf.toString()).toString(); //$NON-NLS-1$
+            }
+            else {
+                text = comment.getText();
+                int n = text.indexOf(METADATA_PREFIX);
+                if(n < 0) {
+                    n = text.indexOf(OLD_METADATA_PREFIX);
+                }
+                text = new StringBuffer(text.substring(0,n)).append(METADATA_PREFIX).append(" ").append(buf.toString()).toString(); //$NON-NLS-1$
+            }
+            comment.setText(text);
+        }
+        else {
+            if(child.getMetadataComment() != null) {
+                child.getSection().removeChild(child.getMetadataComment());
+            }
+        }
     }
     
     protected String getSectionName()

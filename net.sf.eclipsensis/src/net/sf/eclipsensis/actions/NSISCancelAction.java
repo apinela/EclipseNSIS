@@ -28,22 +28,16 @@ public class NSISCancelAction extends NSISScriptAction
         }
 	}
 
-    /* (non-Javadoc)
-     * @see net.sf.eclipsensis.makensis.IMakeNSISRunListener#started()
-     */
     public void started()
     {
-        if(mAction != null) {
+        if(mAction != null && !mAction.isEnabled()) {
             mAction.setEnabled(true);
         }
     }
 
-    /* (non-Javadoc)
-     * @see net.sf.eclipsensis.makensis.IMakeNSISRunListener#stopped()
-     */
     public void stopped()
     {
-        if(mAction != null) {
+        if(mAction != null && mAction.isEnabled()) {
             mAction.setEnabled(false);
         }
     }

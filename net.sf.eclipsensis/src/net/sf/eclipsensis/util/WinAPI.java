@@ -30,6 +30,7 @@ public class WinAPI
     public static final int LWA_ALPHA = 2;
     
     public static final int WS_EX_LAYERED = 0x80000;
+    public static final int WS_EX_LAYOUTRTL = 0x00400000;
     
     public static final int HH_DISPLAY_TOPIC = 0x0;
     
@@ -67,6 +68,10 @@ public class WinAPI
     
     public static final int LB_SETHORIZONTALEXTENT = 0x194;
 
+    public static final int SM_CXVSCROLL = 0x2;
+    public static final int SM_CYVSCROLL = 0x14;
+    public static final int SM_CYHSCROLL = 0x3;
+
     private static native void init();
     public static native int SetWindowLong(int hWnd, int nIndex, int dwNewLong);
     public static native int GetWindowLong(int hWnd, int nIndex);
@@ -86,4 +91,8 @@ public class WinAPI
     public static final native void DrawWidgetThemeBackGround(int hWnd, int hDC, String theme, int partId, int stateId);
     
     public static final native int GetSysColor(int index);
+
+    public static final native int GetSystemMetrics (int nIndex);
+    
+    public static final native void SetObjectFieldValue(Object object, String field, int value);
 }

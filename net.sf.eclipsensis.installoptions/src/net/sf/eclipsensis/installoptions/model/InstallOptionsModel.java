@@ -40,6 +40,7 @@ public class InstallOptionsModel implements IPropertyChangeListener
     public static final String TYPE_COMBOBOX = "Combobox"; //$NON-NLS-1$
     public static final String TYPE_DROPLIST = "DropList"; //$NON-NLS-1$
     public static final String TYPE_LISTBOX = "Listbox"; //$NON-NLS-1$
+    public static final String TYPE_UNKNOWN = "Unknown"; //$NON-NLS-1$
     
     public static final String SECTION_SETTINGS = "Settings"; //$NON-NLS-1$
     public static final String SECTION_FIELD_PREFIX = "Field"; //$NON-NLS-1$
@@ -311,7 +312,11 @@ public class InstallOptionsModel implements IPropertyChangeListener
     
     public InstallOptionsModelTypeDef getControlTypeDef(String type)
     {
-        return (InstallOptionsModelTypeDef)mControlTypes.get(type);
+        InstallOptionsModelTypeDef typeDef = (InstallOptionsModelTypeDef)mControlTypes.get(type);
+        if(typeDef == null) {
+            typeDef = getControlTypeDef(TYPE_UNKNOWN);
+        }
+        return typeDef;
     }
     
     public Collection getControlRequiredSettings()

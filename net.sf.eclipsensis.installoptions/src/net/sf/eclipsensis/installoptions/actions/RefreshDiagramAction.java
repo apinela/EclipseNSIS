@@ -31,6 +31,7 @@ public class RefreshDiagramAction extends Action implements IUpdate
         ImageDescriptor imageDescriptor = InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("refresh.icon")); //$NON-NLS-1$
         setHoverImageDescriptor(imageDescriptor);
         setImageDescriptor(imageDescriptor);
+        setDisabledImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("refresh.disabled.icon"))); //$NON-NLS-1$
         setEnabled(isEnabled());
     }
 

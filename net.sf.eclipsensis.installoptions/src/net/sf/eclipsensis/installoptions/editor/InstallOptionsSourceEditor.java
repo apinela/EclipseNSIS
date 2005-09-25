@@ -9,13 +9,13 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.editor;
 
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.*;
 import java.util.regex.Matcher;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
+import net.sf.eclipsensis.installoptions.actions.PreviewAction;
 import net.sf.eclipsensis.installoptions.actions.SwitchEditorAction;
 import net.sf.eclipsensis.installoptions.builder.InstallOptionsNature;
 import net.sf.eclipsensis.installoptions.ini.*;
@@ -26,9 +26,9 @@ import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.gef.Disposable;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuCreator;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.CompositeImageDescriptor;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -41,11 +41,9 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.events.HelpListener;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.PreferencesUtil;
-import org.eclipse.ui.editors.text.EditorsUI;
-import org.eclipse.ui.editors.text.TextEditor;
+import org.eclipse.ui.editors.text.*;
 import org.eclipse.ui.ide.IGotoMarker;
 import org.eclipse.ui.texteditor.*;
 import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
@@ -53,6 +51,8 @@ import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
 public class InstallOptionsSourceEditor extends TextEditor implements IInstallOptionsEditor, IINIFileListener
 {
+    private static final String[] KEY_BINDING_SCOPES = new String[] { IInstallOptionsConstants.EDITING_INSTALLOPTIONS_SOURCE_CONTEXT_ID };
+
     private static final String MARKER_CATEGORY = "__installoptions_marker"; //$NON-NLS-1$
     
     private IPositionUpdater mMarkerPositionUpdater = new DefaultPositionUpdater(MARKER_CATEGORY);
@@ -92,9 +92,10 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
     {
         boolean valid = !mINIFile.hasErrors();
         if(!valid) {
-            MessageDialog.openError(getSite().getShell(),EclipseNSISPlugin.getResourceString("error.title"), //$NON-NLS-1$
+            Common.openError(getSite().getShell(),EclipseNSISPlugin.getResourceString("error.title"), //$NON-NLS-1$
                                     InstallOptionsPlugin.getFormattedString("editor.switch.error", //$NON-NLS-1$
-                                                            new String[]{((IFileEditorInput)getEditorInput()).getFile().getName()}));
+                                                            new String[]{((IFileEditorInput)getEditorInput()).getFile().getName()}),
+                                    InstallOptionsPlugin.getShellImage());
         }
         return valid;
     }
@@ -103,7 +104,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
     {
         if(!mSwitching) {
             mSwitching = true;
-            ((InstallOptionsEditorInput)getEditorInput()).prepareForSwitch();
+            ((IInstallOptionsEditorInput)getEditorInput()).prepareForSwitch();
         }
     }
 
@@ -127,6 +128,27 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
         IAction action = new SwitchEditorAction(this, INSTALLOPTIONS_DESIGN_EDITOR_ID);
         action.setActionDefinitionId(SWITCH_EDITOR_COMMAND_ID);
         setAction(action.getId(),action);
+        action = new PreviewAction(PREVIEW_CLASSIC, this);
+        setAction(action.getId(),action);
+        action = new PreviewAction(PREVIEW_MUI, this);
+        setAction(action.getId(),action);
+
+        ResourceBundle resourceBundle = InstallOptionsPlugin.getDefault().getResourceBundle();
+        action = new TextOperationAction(resourceBundle, "projection.expand.all.", this, ProjectionViewer.EXPAND_ALL, true); //$NON-NLS-1$
+        action.setActionDefinitionId(IFoldingCommandIds.FOLDING_EXPAND_ALL);
+        action.setEnabled(true);
+        setAction("net.sf.eclipsensis.installoptions.expand_all", action); //$NON-NLS-1$
+        
+        action= new TextOperationAction(resourceBundle, "projection.expand.", this, ProjectionViewer.EXPAND, true); //$NON-NLS-1$
+        action.setActionDefinitionId(IFoldingCommandIds.FOLDING_EXPAND);
+        action.setEnabled(true);
+        setAction("net.sf.eclipsensis.installoptions.expand", action); //$NON-NLS-1$
+        
+        action= new TextOperationAction(resourceBundle, "projection.collapse.", this, ProjectionViewer.COLLAPSE, true); //$NON-NLS-1$
+        action.setActionDefinitionId(IFoldingCommandIds.FOLDING_COLLAPSE);
+        action.setEnabled(true);
+        setAction("net.sf.eclipsensis.installoptions.collapse", action); //$NON-NLS-1$
+        
         action = getAction(ITextEditorActionConstants.CONTEXT_PREFERENCES);
         if(action != null) {
             final Shell shell;
@@ -156,16 +178,19 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
      */
     protected void initializeKeyBindingScopes()
     {
-        setKeyBindingScopes(new String[] { IInstallOptionsConstants.EDITING_INSTALLOPTIONS_SOURCE_CONTEXT_ID });
+        setKeyBindingScopes(KEY_BINDING_SCOPES);
     }
 
     public void dispose()
     {
         InstallOptionsModel.INSTANCE.removeModelListener(mModelListener);
         mJobScheduler.cancelJobs(mJobFamily);
-        InstallOptionsEditorInput input = (InstallOptionsEditorInput)getEditorInput();
-        IFile file = input.getFile();
-        file.getWorkspace().removeResourceChangeListener(mResourceListener);
+        IInstallOptionsEditorInput input = (IInstallOptionsEditorInput)getEditorInput();
+        Object source = input.getSource();
+        if(source instanceof IFile) {
+            IFile file = (IFile)source;
+            file.getWorkspace().removeResourceChangeListener(mResourceListener);
+        }
         mMarkerPositions.clear();
         IDocument document = getDocumentProvider().getDocument(input);
         document.removePositionUpdater(mMarkerPositionUpdater);
@@ -181,15 +206,26 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
         mINIFile.removeListener(this);
         ((TextViewer)getSourceViewer()).removePostSelectionChangedListener(mSelectionSynchronizer);
         getSourceViewer().getSelectionProvider().removeSelectionChangedListener(mSelectionSynchronizer);
+        IAction action = super.getAction(PreviewAction.PREVIEW_CLASSIC_ID);
+        if(action instanceof Disposable) {
+            ((Disposable)action).dispose();
+        }
+        action = super.getAction(PreviewAction.PREVIEW_MUI_ID);
+        if(action instanceof Disposable) {
+            ((Disposable)action).dispose();
+        }
         super.dispose();
     }
     
     protected void doSetInput(IEditorInput input) throws CoreException
     {
-        InstallOptionsEditorInput editorInput = (InstallOptionsEditorInput)getEditorInput();
+        IInstallOptionsEditorInput editorInput = (IInstallOptionsEditorInput)getEditorInput();
         if(editorInput != null) {
-            IFile file = editorInput.getFile();
-            file.getWorkspace().removeResourceChangeListener(mResourceListener);
+            Object source = editorInput.getSource();
+            if(source instanceof IFile) {
+                IFile file = (IFile)source;
+                file.getWorkspace().removeResourceChangeListener(mResourceListener);
+            }
             mMarkerPositions.clear();
             IDocumentProvider provider = getDocumentProvider();
             if(provider != null) {
@@ -209,31 +245,42 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
                 }
             }
         }
-        IFile file = ((IFileEditorInput)input).getFile();
         if(input != null) {
-            if(!(input instanceof InstallOptionsEditorInput)) {
-                InstallOptionsNature.addNature(file.getProject());
-                input = new InstallOptionsEditorInput((IFileEditorInput)input);
-                setDocumentProvider(((InstallOptionsEditorInput)input).getDocumentProvider());
+            if(!(input instanceof IInstallOptionsEditorInput)) {
+                if(input instanceof IFileEditorInput) {
+                    IFile file = ((IFileEditorInput)input).getFile();
+                    InstallOptionsNature.addNature(file.getProject());
+                    input = new InstallOptionsEditorInput((IFileEditorInput)input);
+                }
+                else if (input instanceof IPathEditorInput){
+                    input = new InstallOptionsExternalFileEditorInput((IPathEditorInput)input);
+                }
+                setDocumentProvider(((IInstallOptionsEditorInput)input).getDocumentProvider());
                 super.doSetInput(input);
             }
             else {
-                setDocumentProvider(((InstallOptionsEditorInput)input).getDocumentProvider());
+                setDocumentProvider(((IInstallOptionsEditorInput)input).getDocumentProvider());
                 super.doSetInput(input);
-                ((InstallOptionsEditorInput)input).completedSwitch();
+                ((IInstallOptionsEditorInput)input).completedSwitch();
             }
         }
         input = getEditorInput();
         if(input != null) {
-            file = ((IFileEditorInput)input).getFile();
-            file.getWorkspace().addResourceChangeListener(mResourceListener);
+            Object source = ((IInstallOptionsEditorInput)input).getSource();
+            IFile file = null;
+            if(source instanceof IFile) {
+                file = (IFile)source;
+                file.getWorkspace().addResourceChangeListener(mResourceListener);
+            }
             IDocument document = getDocumentProvider().getDocument(input);
             document.addPositionCategory(MARKER_CATEGORY);
             document.addPositionUpdater(mMarkerPositionUpdater);
             mINIFile.connect(document);
-            for(Iterator iter=InstallOptionsMarkerUtility.getMarkers(file).iterator(); iter.hasNext(); ) {
-                IMarker marker = (IMarker)iter.next();
-                addMarkerPosition(document, marker);
+            if(file != null) {
+                for(Iterator iter=InstallOptionsMarkerUtility.getMarkers(file).iterator(); iter.hasNext(); ) {
+                    IMarker marker = (IMarker)iter.next();
+                    addMarkerPosition(document, marker);
+                }
             }
         }
     }
@@ -369,15 +416,15 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
                                             try {
                                                 String name;
                                                 if(problem.getType() == INIProblem.TYPE_ERROR) {
-                                                    name = IInstallOptionsConstants.INSTALLOPTIONS_ANNOTATION_ERROR_NAME;
+                                                    name = IInstallOptionsConstants.INSTALLOPTIONS_ERROR_ANNOTATION_NAME;
                                                 }
                                                 else if(problem.getType() == INIProblem.TYPE_WARNING) {
-                                                    name = IInstallOptionsConstants.INSTALLOPTIONS_ANNOTATION_WARNING_NAME;
+                                                    name = IInstallOptionsConstants.INSTALLOPTIONS_WARNING_ANNOTATION_NAME;
                                                 }
                                                 else {
                                                     continue;
                                                 }
-                                                final IRegion region = doc.getLineInformation(problem.getLine()-1);
+                                                IRegion region = doc.getLineInformation(problem.getLine()-1);
                                                 model.addAnnotation(new Annotation(name,false,problem.getMessage()),
                                                         new Position(region.getOffset(),region.getLength()));
                                             }
@@ -728,7 +775,9 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
                         String type = values[0].getValue();
                         InstallOptionsModelTypeDef typeDef = InstallOptionsModel.INSTANCE.getControlTypeDef(type);
                         if(typeDef != null) {
-                            type = typeDef.getName();
+                            if(!typeDef.getName().equals(InstallOptionsModel.TYPE_UNKNOWN)) {
+                                type = typeDef.getName();
+                            }
                             String displayName = ""; //$NON-NLS-1$
                             values = ((INISection)element).findKeyValues(typeDef.getDisplayProperty());
                             if(!Common.isEmptyArray(values)) {

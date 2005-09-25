@@ -309,7 +309,7 @@ public class NSISTaskTagsPreferencePage extends PreferencePage implements IWorkb
                         mTableViewer.setChecked(taskTag,true);
                     }
                     else {
-                        Common.openError(getShell(),EclipseNSISPlugin.getResourceString("task.tag.dialog.missing.default")); //$NON-NLS-1$
+                        Common.openError(getShell(),EclipseNSISPlugin.getResourceString("task.tag.dialog.missing.default"), EclipseNSISPlugin.getShellImage()); //$NON-NLS-1$
                         return false;
                     }
                 }
@@ -320,7 +320,7 @@ public class NSISTaskTagsPreferencePage extends PreferencePage implements IWorkb
         boolean updateTaskTags = true;
         if(different) {
             MessageDialog dialog = new MessageDialog(getShell(),EclipseNSISPlugin.getResourceString("confirm.title"), //$NON-NLS-1$
-                    null,EclipseNSISPlugin.getResourceString("task.tags.settings.changed"),MessageDialog.QUESTION, //$NON-NLS-1$
+                    EclipseNSISPlugin.getShellImage(),EclipseNSISPlugin.getResourceString("task.tags.settings.changed"),MessageDialog.QUESTION, //$NON-NLS-1$
                     new String[] {IDialogConstants.YES_LABEL,IDialogConstants.NO_LABEL,IDialogConstants.CANCEL_LABEL},0);
             dialog.setBlockOnOpen(true);
             int rv = dialog.open();

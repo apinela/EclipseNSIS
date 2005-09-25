@@ -44,7 +44,7 @@ public class NSISWizardTemplateDialog extends AbstractTemplateDialog
 
     protected Image getShellImage()
     {
-        return EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("nsis.icon")); //$NON-NLS-1$
+        return EclipseNSISPlugin.getShellImage();
     }
 
     protected String getShellTitle()

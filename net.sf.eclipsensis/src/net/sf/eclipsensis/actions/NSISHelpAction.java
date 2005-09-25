@@ -18,7 +18,7 @@ import org.eclipse.ui.actions.ActionDelegate;
 public class NSISHelpAction extends ActionDelegate implements IEditorActionDelegate, INSISConstants
 {
     public static final String PLUGIN_HELP_URL = new StringBuffer("/").append(PLUGIN_ID).append( //$NON-NLS-1$
-                            "/").append(PLUGIN_HELP_LOCATION_PREFIX).append("Overview.html").toString(); //$NON-NLS-1$ //$NON-NLS-2$
+                            "/").append(PLUGIN_HELP_LOCATION_PREFIX).append("overview.html").toString(); //$NON-NLS-1$ //$NON-NLS-2$
     /**
      * 
      */

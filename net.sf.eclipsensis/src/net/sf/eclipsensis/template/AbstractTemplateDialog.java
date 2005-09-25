@@ -17,7 +17,8 @@ import net.sf.eclipsensis.wizard.util.NSISWizardDialogUtil;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -145,7 +146,7 @@ public abstract class AbstractTemplateDialog extends Dialog
                 mTemplateManager.save();
             }
             catch(IOException ioe) {
-                Common.openError(getShell(),ioe.getMessage());
+                Common.openError(getShell(),ioe.getMessage(), getShellImage());
             }
             super.okPressed();
         }

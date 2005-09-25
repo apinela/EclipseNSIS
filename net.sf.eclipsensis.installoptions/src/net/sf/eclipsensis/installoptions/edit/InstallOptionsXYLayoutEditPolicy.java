@@ -20,18 +20,19 @@ import net.sf.eclipsensis.installoptions.rulers.InstallOptionsGuide;
 import net.sf.eclipsensis.installoptions.template.CreateFromTemplateCommand;
 
 import org.eclipse.draw2d.*;
-import org.eclipse.draw2d.geometry.Insets;
-import org.eclipse.draw2d.geometry.Rectangle;
+import org.eclipse.draw2d.geometry.*;
 import org.eclipse.gef.*;
-import org.eclipse.gef.commands.Command;
-import org.eclipse.gef.commands.CompoundCommand;
+import org.eclipse.gef.commands.*;
 import org.eclipse.gef.editpolicies.XYLayoutEditPolicy;
-import org.eclipse.gef.requests.ChangeBoundsRequest;
-import org.eclipse.gef.requests.CreateRequest;
+import org.eclipse.gef.requests.*;
 import org.eclipse.gef.rulers.RulerProvider;
 
 public class InstallOptionsXYLayoutEditPolicy extends XYLayoutEditPolicy implements IInstallOptionsConstants
 {
+    private static final Point EMPTY_POINT = new Point(0,0);
+    private static final Command DUMMY_COMMAND = new Command() {
+    };
+
     private EditPart mEditPart;
     
     public InstallOptionsXYLayoutEditPolicy(EditPart editPart, XYLayout layout)
@@ -133,9 +134,28 @@ public class InstallOptionsXYLayoutEditPolicy extends XYLayoutEditPolicy impleme
     protected Command createChangeConstraintCommand(ChangeBoundsRequest request, EditPart child, Object constraint)
     {
         InstallOptionsWidget part = (InstallOptionsWidget)child.getModel();
+        Point moveDelta;
+        Dimension sizeDelta;
+        if(request instanceof AlignmentRequest) {
+            Position oldPos = part.toGraphical(part.getPosition());
+            Position newPos = (Position)constraint;
+            Dimension diff = oldPos.getLocation().getDifference(newPos.getLocation());
+            moveDelta = new Point(diff.width,diff.height);
+            sizeDelta = new Dimension(0,0);
+            if(moveDelta.equals(EMPTY_POINT) && sizeDelta.isEmpty()) {
+                return DUMMY_COMMAND;
+            }
+        }
+        else {
+            moveDelta = request.getMoveDelta();
+            sizeDelta = request.getSizeDelta();
+        }
+        if(part.isLocked()) {
+            return UnexecutableCommand.INSTANCE;
+        }
         Command result = new SetConstraintCommand(part, (Position)constraint,
-                                                  request.getMoveDelta(),
-                                                  request.getSizeDelta());
+                                                  moveDelta,
+                                                  sizeDelta);
 
         Boolean val = (Boolean)child.getViewer().getProperty(RulerProvider.PROPERTY_RULER_VISIBILITY);
         if (val != null && val.booleanValue()) {

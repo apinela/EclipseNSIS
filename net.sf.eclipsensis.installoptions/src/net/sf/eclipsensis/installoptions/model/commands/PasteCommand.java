@@ -51,10 +51,12 @@ public class PasteCommand extends Command
     public void execute()
     {
         CopyCommand.CopyContents mCopyContents = (CopyCommand.CopyContents)Clipboard.getDefault().getContents();
-        mPasteBounds = new Rectangle(mCopyContents.getBounds());
-        mPasteList.clear();
-        for (Iterator iter = mCopyContents.getChildren().iterator(); iter.hasNext();) {
-            mPasteList.add(((InstallOptionsWidget)iter.next()).clone());
+        if(mCopyContents != null) {
+            mPasteBounds = new Rectangle(mCopyContents.getBounds());
+            mPasteList.clear();
+            for (Iterator iter = mCopyContents.getChildren().iterator(); iter.hasNext();) {
+                mPasteList.add(((InstallOptionsWidget)iter.next()).clone());
+            }
         }
         redo();
     }
@@ -75,7 +77,9 @@ public class PasteCommand extends Command
             InstallOptionsWidget model = (InstallOptionsWidget)iter.next();
             Position pos = model.getPosition();
             pos = model.toGraphical(pos, size);
-            pos.setLocation(pos.left+delX,pos.top+delY);
+            if(!model.isLocked()) {
+                pos.setLocation(pos.left+delX,pos.top+delY);
+            }
             pos = model.toModel(pos, size);
             model.getPosition().set(pos.left,pos.top,pos.right,pos.bottom);
         }

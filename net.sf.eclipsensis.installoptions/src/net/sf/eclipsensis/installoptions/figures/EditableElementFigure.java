@@ -43,4 +43,9 @@ public abstract class EditableElementFigure extends SWTControlFigure implements 
     {
         mState = state;
     }
+
+    protected boolean supportsScrollBars()
+    {
+        return false;
+    }
 }

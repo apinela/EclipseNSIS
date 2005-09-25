@@ -9,6 +9,8 @@
  *******************************************************************************/
 package net.sf.eclipsensis.lang;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.io.*;
 import java.util.*;
 
@@ -23,6 +25,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 public class NSISLanguageManager implements INSISHomeListener, IEclipseNSISService
 {
     public static NSISLanguageManager INSTANCE = null;
+    public static final String PROPERTY_LANGUAGES="net.sf.eclipsensis.languages"; //$NON-NLS-1$
     
     private String mDefineMUILanguageText;
     private Map mLanguageMap = new CaseInsensitiveMap();
@@ -30,6 +33,7 @@ public class NSISLanguageManager implements INSISHomeListener, IEclipseNSISServi
     private Map mLocaleLanguageMap= null;
     private Map mLanguageIdLocaleMap = null;
     private Integer mDefaultLanguageId = null;
+    private PropertyChangeSupport mPropertyChangeSupport = new PropertyChangeSupport(this);
 
     public void start(IProgressMonitor monitor)
     {
@@ -59,6 +63,16 @@ public class NSISLanguageManager implements INSISHomeListener, IEclipseNSISServi
         loadLanguages(monitor);
     }
     
+    public void addPropertyChangedListener(PropertyChangeListener listener)
+    {
+        mPropertyChangeSupport.addPropertyChangeListener(listener);
+    }
+    
+    public void removePropertyChangedListener(PropertyChangeListener listener)
+    {
+        mPropertyChangeSupport.removePropertyChangeListener(listener);
+    }
+
     private void loadLanguages(IProgressMonitor monitor)
     {
         if(monitor != null) {
@@ -157,6 +171,7 @@ public class NSISLanguageManager implements INSISHomeListener, IEclipseNSISServi
                 }
             }
         }
+        mPropertyChangeSupport.firePropertyChange(PROPERTY_LANGUAGES,null,mLanguages);
     }
 
     public List getLanguages()

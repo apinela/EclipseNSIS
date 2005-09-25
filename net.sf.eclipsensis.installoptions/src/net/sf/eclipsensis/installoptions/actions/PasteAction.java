@@ -71,14 +71,14 @@ public class PasteAction extends WorkbenchPartAction implements PropertyChangeLi
 
     public void propertyChange(PropertyChangeEvent evt)
     {
-        if(evt.getPropertyName().equals(Clipboard.CONTENTS_SET_EVENT)) {
-            setEnabled(true);
+        if(evt.getPropertyName().equals(Clipboard.CONTENTS_AVAILABLE_EVENT)) {
+            setEnabled(((Boolean)evt.getNewValue()).booleanValue());
         }
     }
 
     protected boolean calculateEnabled() {
         Command command = null;
-        if(Clipboard.getDefault().getContents() != null) {
+        if(Clipboard.getDefault().isContentsAvailable()) {
             command = createPasteCommand();
         }
         return command != null && command.canExecute();

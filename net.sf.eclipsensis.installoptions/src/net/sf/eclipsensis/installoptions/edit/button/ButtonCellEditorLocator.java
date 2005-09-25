@@ -9,44 +9,25 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.edit.button;
 
+import net.sf.eclipsensis.installoptions.edit.InstallOptionsCellEditorLocator;
 import net.sf.eclipsensis.installoptions.figures.ButtonFigure;
 
 import org.eclipse.draw2d.geometry.Rectangle;
-import org.eclipse.gef.tools.CellEditorLocator;
-import org.eclipse.jface.viewers.CellEditor;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.widgets.Text;
 
-public class ButtonCellEditorLocator implements CellEditorLocator
+public class ButtonCellEditorLocator extends InstallOptionsCellEditorLocator
 {
     private static int X_OFFSET = -4;
     private static int W_OFFSET = 5;
 
-    private ButtonFigure mButton;
-
     public ButtonCellEditorLocator(ButtonFigure button) 
     {
-        setButton(button);
+        super(button);
     }
 
-    public void relocate(CellEditor celleditor) 
+    protected Rectangle transformLocation(Rectangle editArea, Point preferredSize)
     {
-        Text text = (Text)celleditor.getControl();
-
-        Rectangle rect = mButton.getClientArea().getCopy();
-        mButton.translateToAbsolute(rect);
-        Point p = text.computeSize(SWT.DEFAULT,SWT.DEFAULT);
-        
-        text.setBounds(rect.x + X_OFFSET, rect.y+(rect.height-p.y)/2, rect.width + W_OFFSET, p.y);    
-    }
-
-    protected ButtonFigure getButton() {
-        return mButton;
-    }
-
-    protected void setButton(ButtonFigure button) 
-    {
-        mButton = button;
+        return new Rectangle(editArea.x + X_OFFSET, editArea.y+(editArea.height-preferredSize.y)/2, 
+                             editArea.width + W_OFFSET, preferredSize.y);
     }
 }

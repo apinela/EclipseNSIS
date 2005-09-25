@@ -169,7 +169,7 @@ public class NSISPreferencePage	extends NSISSettingsPage
                         enableControls(true);
                     }
                     else {
-                        Common.openError(getShell(), EclipseNSISPlugin.getResourceString("invalid.nsis.home.message")); //$NON-NLS-1$ //$NON-NLS-2$
+                        Common.openError(getShell(), EclipseNSISPlugin.getResourceString("invalid.nsis.home.message"), EclipseNSISPlugin.getShellImage()); //$NON-NLS-1$ //$NON-NLS-2$
                         mNSISHome.getCombo().setText(""); //$NON-NLS-1$
                         mNSISHome.getCombo().setFocus();
                         enableControls(false);
@@ -293,7 +293,7 @@ public class NSISPreferencePage	extends NSISSettingsPage
                     mNSISHome.getCombo().setText(nsisHome);
                 }
                 if(!NSISValidator.validateNSISHome(nsisHome)) {
-                    Common.openError(getShell(),EclipseNSISPlugin.getResourceString("invalid.nsis.home.message")); //$NON-NLS-1$ //$NON-NLS-2$
+                    Common.openError(getShell(),EclipseNSISPlugin.getResourceString("invalid.nsis.home.message"), EclipseNSISPlugin.getShellImage()); //$NON-NLS-1$ //$NON-NLS-2$
                     mNSISHome.getCombo().setText(""); //$NON-NLS-1$
                     mNSISHome.getCombo().forceFocus();
                     mNSISVersion = Version.EMPTY_VERSION;

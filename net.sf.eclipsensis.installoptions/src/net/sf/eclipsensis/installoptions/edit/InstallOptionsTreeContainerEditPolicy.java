@@ -90,6 +90,9 @@ public class InstallOptionsTreeContainerEditPolicy extends TreeContainerEditPoli
         List editparts = request.getEditParts();
         List children = getHost().getChildren();
         int newIndex = findIndexOfTreeItemAt(request.getLocation());
+        if(newIndex < 0) {
+            newIndex = children.size();
+        }
 
         for (int i = 0; i < editparts.size(); i++) {
             EditPart child = (EditPart)editparts.get(i);

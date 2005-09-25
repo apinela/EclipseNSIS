@@ -14,7 +14,6 @@ import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
@@ -109,7 +108,7 @@ public class MultiLineTextCellEditor extends DialogCellEditor
         {
             super.configureShell(newShell);
             newShell.setText(InstallOptionsPlugin.getResourceString("multiline.text.dialog.title")); //$NON-NLS-1$
-            newShell.setImage(InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("installoptions.icon"))); //$NON-NLS-1$
+            newShell.setImage(InstallOptionsPlugin.getShellImage());
         }
 
         public String getValue()
@@ -156,7 +155,8 @@ public class MultiLineTextCellEditor extends DialogCellEditor
             if(validator != null) {
                 String error = validator.isValid(getValue());
                 if(!Common.isEmpty(error)) {
-                    MessageDialog.openError(getShell(),EclipseNSISPlugin.getResourceString("error.title"),error); //$NON-NLS-1$
+                    Common.openError(getShell(),EclipseNSISPlugin.getResourceString("error.title"),error, //$NON-NLS-1$
+                                     InstallOptionsPlugin.getShellImage());
                     return;
                 }
             }

@@ -10,31 +10,26 @@
 package net.sf.eclipsensis.installoptions.actions;
 
 import java.beans.*;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import net.sf.eclipsensis.installoptions.dnd.InstallOptionsObjectTransfer;
 
 import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.widgets.Display;
 
 public class Clipboard
 {
     /**
-     * The event name used for {@link Clipboard#fireContentsSet()}
+     * The event name used for {@link Clipboard#isContentsAvailable()}
      */
-    public static final String CONTENTS_SET_EVENT = "ContentsSet"; //$NON-NLS-1$
+    public static final String CONTENTS_AVAILABLE_EVENT = "ContentsAvailable"; //$NON-NLS-1$
 
     protected static Clipboard cInstance = new Clipboard();
        
-    private static final InstallOptionsObjectTransfer TRANSFER = new InstallOptionsObjectTransfer() {
-        private final String TYPE_NAME = "net.sf.eclipsensis.clipboard.transfer"; //$NON-NLS-1$
-        private final int TYPE_ID = registerType(TYPE_NAME);
-        protected int[] getTypeIds() {
-            return new int[] {TYPE_ID};
-        }
-        protected String[] getTypeNames() {
-            return new String[] {TYPE_NAME};
-        }
-    };
-    private PropertyChangeSupport mListeners = new PropertyChangeSupport(this );
+    private static InstallOptionsObjectTransfer mTransfer;
+    private PropertyChangeSupport mListeners = new PropertyChangeSupport(this);
+    private boolean mContentsAvailable = false;
 
     /**
      * Do not allow direct instantiation of a Clipboard
@@ -42,6 +37,37 @@ public class Clipboard
     private Clipboard() 
     {
         super();
+        mTransfer = new InstallOptionsObjectTransfer() {
+            private final String TYPE_NAME = "net.sf.eclipsensis.clipboard.transfer"; //$NON-NLS-1$
+            private final int TYPE_ID = registerType(TYPE_NAME);
+            protected int[] getTypeIds() {
+                return new int[] {TYPE_ID};
+            }
+            protected String[] getTypeNames() {
+                return new String[] {TYPE_NAME};
+            }
+        };
+        isContentsAvailable();
+        final Timer timer = new Timer(true);
+        timer.schedule(new TimerTask() {
+            Runnable runnable = new Runnable() {
+                public void run()
+                {
+                    isContentsAvailable();
+                }
+            };
+            
+            public void run()
+            {
+                Display.getDefault().asyncExec(runnable);
+            }
+        },0,10);
+        Display.getDefault().disposeExec(new Runnable() {
+           public void run()
+           {
+               timer.cancel();
+           }
+        });
     }
 
     /**
@@ -76,16 +102,24 @@ public class Clipboard
 <code>Clipboard</code> are set.
      *
      */
-    protected void fireContentsSet() 
+    public boolean isContentsAvailable() 
     {
-        PropertyChangeEvent event = new PropertyChangeEvent(this, CONTENTS_SET_EVENT, null, getContents() );
-        mListeners.firePropertyChange( event );
+        org.eclipse.swt.dnd.Clipboard cb = new org.eclipse.swt.dnd.Clipboard(null);
+        Object contents = cb.getContents(mTransfer);
+        cb.dispose();
+        if(mContentsAvailable != (contents != null)) {
+            mContentsAvailable = !mContentsAvailable;
+            PropertyChangeEvent event = new PropertyChangeEvent(this, CONTENTS_AVAILABLE_EVENT, 
+                            Boolean.valueOf(!mContentsAvailable), Boolean.valueOf(mContentsAvailable) );
+            mListeners.firePropertyChange( event );
+        }
+        return mContentsAvailable;
     }
    
     public Object getContents() 
     {
         org.eclipse.swt.dnd.Clipboard cb = new org.eclipse.swt.dnd.Clipboard(null);
-        Object contents = cb.getContents(TRANSFER);
+        Object contents = cb.getContents(mTransfer);
         cb.dispose();
         return contents;
     }
@@ -94,13 +128,12 @@ public class Clipboard
     {
         org.eclipse.swt.dnd.Clipboard cb = new org.eclipse.swt.dnd.Clipboard(null);
         if(contents != null) {
-            cb.setContents(new Object[] {contents}, new Transfer[] {TRANSFER});
+            cb.setContents(new Object[] {contents}, new Transfer[] {mTransfer});
         }
         else {
             cb.clearContents();
         }
         cb.dispose();
-        fireContentsSet();
     }
 }
 

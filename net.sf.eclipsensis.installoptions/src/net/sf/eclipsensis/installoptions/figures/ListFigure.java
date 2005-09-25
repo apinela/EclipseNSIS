@@ -140,7 +140,7 @@ public class ListFigure extends EditableElementFigure implements IListItemsFigur
                 int height=list.getItemHeight();
                 int count = bounds.height/height+10;
                 for(int i=listItems.size(); i<count; i++) {
-                    list.add("");
+                    list.add(""); //$NON-NLS-1$
                 }
             }
         }

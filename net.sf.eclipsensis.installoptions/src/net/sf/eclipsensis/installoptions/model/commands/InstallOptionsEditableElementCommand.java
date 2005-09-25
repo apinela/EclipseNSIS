@@ -11,34 +11,14 @@ package net.sf.eclipsensis.installoptions.model.commands;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsEditableElement;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
 
-import org.eclipse.gef.commands.Command;
-
-public class InstallOptionsEditableElementCommand extends Command
+public class InstallOptionsEditableElementCommand extends InstallOptionsDirectEditCommand
 {
-    private String mNewState;
-    private String mOldState;
-    private InstallOptionsEditableElement mEditable;
-
     public InstallOptionsEditableElementCommand(InstallOptionsEditableElement editable, String state) 
     {
-        mEditable = editable;
+        super(editable, InstallOptionsModel.PROPERTY_STATE, (state != null?state:"")); //$NON-NLS-1$
         setLabel(InstallOptionsPlugin.getFormattedString("editable.element.command.label",  //$NON-NLS-1$
-                                                         new Object[]{mEditable.getType()}));
-        if (state != null) {
-            mNewState = state;
-        }
-        else {
-            mNewState = "";  //$NON-NLS-1$
-        }
-        mOldState = mEditable.getState();
-    }
-
-    public void execute() {
-        mEditable.setState(mNewState);
-    }
-
-    public void undo() {
-        mEditable.setState(mOldState);
+                                                         new Object[]{editable.getType()}));
     }
 }

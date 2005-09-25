@@ -45,7 +45,7 @@ public abstract class StatusMessageDialog extends IconAndMessageDialog implement
     protected void configureShell(Shell newShell)
     {
         super.configureShell(newShell);
-        newShell.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("nsis.icon"))); //$NON-NLS-1$
+        newShell.setImage(EclipseNSISPlugin.getShellImage());
     }
 
     /**

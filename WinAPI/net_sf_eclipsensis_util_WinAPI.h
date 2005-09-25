@@ -38,6 +38,8 @@ extern "C" {
 #define net_sf_eclipsensis_util_WinAPI_LWA_ALPHA 2L
 #undef net_sf_eclipsensis_util_WinAPI_WS_EX_LAYERED
 #define net_sf_eclipsensis_util_WinAPI_WS_EX_LAYERED 524288L
+#undef net_sf_eclipsensis_util_WinAPI_WS_EX_LAYOUTRTL
+#define net_sf_eclipsensis_util_WinAPI_WS_EX_LAYOUTRTL 4194304L
 #undef net_sf_eclipsensis_util_WinAPI_HH_DISPLAY_TOPIC
 #define net_sf_eclipsensis_util_WinAPI_HH_DISPLAY_TOPIC 0L
 #undef net_sf_eclipsensis_util_WinAPI_HTTRANSPARENT
@@ -90,7 +92,12 @@ extern "C" {
 #define net_sf_eclipsensis_util_WinAPI_WS_VSCROLL 2097152L
 #undef net_sf_eclipsensis_util_WinAPI_LB_SETHORIZONTALEXTENT
 #define net_sf_eclipsensis_util_WinAPI_LB_SETHORIZONTALEXTENT 404L
-
+#undef net_sf_eclipsensis_util_WinAPI_SM_CXVSCROLL
+#define net_sf_eclipsensis_util_WinAPI_SM_CXVSCROLL 2L
+#undef net_sf_eclipsensis_util_WinAPI_SM_CYVSCROLL
+#define net_sf_eclipsensis_util_WinAPI_SM_CYVSCROLL 20L
+#undef net_sf_eclipsensis_util_WinAPI_SM_CYHSCROLL
+#define net_sf_eclipsensis_util_WinAPI_SM_CYHSCROLL 3L
 /*
  * Class:     net_sf_eclipsensis_util_WinAPI
  * Method:    init
@@ -210,6 +217,22 @@ JNIEXPORT void JNICALL Java_net_sf_eclipsensis_util_WinAPI_DrawWidgetThemeBackGr
  */
 JNIEXPORT jint JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetSysColor
   (JNIEnv *, jclass, jint);
+
+/*
+ * Class:     net_sf_eclipsensis_util_WinAPI
+ * Method:    GetSystemMetrics
+ * Signature: (I)I
+ */
+JNIEXPORT jint JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetSystemMetrics
+  (JNIEnv *, jclass, jint);
+
+/*
+ * Class:     net_sf_eclipsensis_util_WinAPI
+ * Method:    SetObjectFieldValue
+ * Signature: (Ljava/lang/Object;Ljava/lang/String;I)V
+ */
+JNIEXPORT void JNICALL Java_net_sf_eclipsensis_util_WinAPI_SetObjectFieldValue
+  (JNIEnv *, jclass, jobject, jstring, jint);
 
 #ifdef __cplusplus
 }

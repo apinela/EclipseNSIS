@@ -32,6 +32,15 @@
             id="%editor.id">
       </editor>
    </extension>
+   <extension 
+      point="org.eclipse.ui.editors.documentProviders">
+      <provider 
+         inputTypes="net.sf.eclipsensis.editor.NSISExternalFileEditorInput"
+         extensions="%nsis.extensions"
+         class="org.eclipse.ui.editors.text.TextFileDocumentProvider"
+         id="net.sf.eclipsensis.editor.ExternalFileDocumentProvider">
+      </provider>
+   </extension>
    <extension
         point="org.eclipse.ui.editors.annotationTypes">
         <type
@@ -104,11 +113,28 @@
          point="org.eclipse.ui.propertyPages">
       <page
             objectClass="org.eclipse.core.resources.IFile"
+            adaptable="true"
             icon="%property.page.icon"
             class="net.sf.eclipsensis.dialogs.NSISPropertyPage"
             nameFilter="%nsi.extension"
             name="%property.page.name"
-            id="%property.page.id">
+            id="%file.property.page.id">
+      </page>
+      <page
+            objectClass="org.eclipse.core.resources.IFolder"
+            adaptable="true"
+            icon="%property.page.icon"
+            class="net.sf.eclipsensis.dialogs.NSISPropertyPage"
+            name="%property.page.name"
+            id="%folder.property.page.id">
+      </page>
+      <page
+            objectClass="org.eclipse.core.resources.IProject"
+            adaptable="true"
+            icon="%property.page.icon"
+            class="net.sf.eclipsensis.dialogs.NSISPropertyPage"
+            name="%property.page.name"
+            id="%project.property.page.id">
       </page>
    </extension>
    <extension
@@ -301,6 +327,7 @@
                class="net.sf.eclipsensis.actions.NSISCompileTestAction"
                tooltip="%compile.test.action.tooltip"
                menubarPath="net.sf.eclipsensis.PopupMenu/net.sf.eclipsensis.PopupGroup"
+               definitionId="%popup.compile.test.command.id"
                id="%compile.test.popup.menu.id">
          </action>
          <action
@@ -310,6 +337,7 @@
                class="net.sf.eclipsensis.actions.NSISTestAction"
                tooltip="%test.action.tooltip"
                menubarPath="net.sf.eclipsensis.PopupMenu/net.sf.eclipsensis.PopupGroup"
+               definitionId="%popup.test.command.id"
                id="%test.popup.menu.id">
          </action>
          <action
@@ -319,6 +347,7 @@
                class="net.sf.eclipsensis.actions.NSISCompileAction"
                tooltip="%compile.action.tooltip"
                menubarPath="net.sf.eclipsensis.PopupMenu/net.sf.eclipsensis.PopupGroup"
+               definitionId="%popup.compile.command.id"
                id="%compile.popup.menu.id">
          </action>
       </objectContribution>
@@ -438,6 +467,24 @@
          description="%cancel.description"
          id="%cancel.command.id"
          categoryId="%category.id"/>
+      <command
+         name="%compile.name"
+         description="%compile.description"
+         id="%popup.compile.command.id"
+         defaultHandler="net.sf.eclipsensis.handlers.NSISCompileHandler"
+         categoryId="%category.id"/>
+      <command
+         name="%compile.test.name"
+         description="%compile.test.description"
+         id="%popup.compile.test.command.id"
+         defaultHandler="net.sf.eclipsensis.handlers.NSISCompileTestHandler"
+         categoryId="%category.id"/>
+      <command
+         name="%test.name"
+         description="%test.description"
+         id="%popup.test.command.id"
+         defaultHandler="net.sf.eclipsensis.handlers.NSISTestHandler"
+         categoryId="%category.id"/>
    </extension>
    <extension
          point="org.eclipse.ui.bindings">
@@ -500,6 +547,18 @@
           schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
           commandId="%test.command.id"
           contextId="%context.editingNSISSource.id"
+          sequence="%test.keysequence"/>
+      <key
+          schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+          commandId="%popup.compile.command.id"
+          sequence="%compile.keysequence"/>
+      <key
+          schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+          commandId="%popup.compile.test.command.id"
+          sequence="%compile.test.keysequence"/>
+      <key
+          schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+          commandId="%popup.test.command.id"
           sequence="%test.keysequence"/>
       <key
           schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
@@ -669,5 +728,10 @@
              %nsis.template.variable.color.description
           </description>
       </colorDefinition>
+   </extension>
+   <extension point="org.eclipse.core.filebuffers.annotationModelCreation">
+       <factory 
+         extensions="%nsis.extensions"
+         class="net.sf.eclipsensis.editor.NSISAnnotationModelFactory"/>
    </extension>
 </plugin>

@@ -26,8 +26,7 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.graphics.FontMetrics;
-import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -68,8 +67,10 @@ public abstract class AbstractTemplateSettings extends Composite
     protected void createContents()
     {
         GC gc = new GC(this);
+        Font old = gc.getFont();
         gc.setFont(JFaceResources.getDialogFont());
         FontMetrics fontMetrics = gc.getFontMetrics();
+        gc.setFont(old);
         gc.dispose();
 
         GridLayout layout= new GridLayout();
@@ -382,7 +383,7 @@ public abstract class AbstractTemplateSettings extends Composite
             }
         } 
         catch (Exception e) {
-            Common.openError(getShell(), e.getLocalizedMessage());
+            Common.openError(getShell(), e.getLocalizedMessage(), getShellImage());
         }
     }
     
@@ -402,14 +403,14 @@ public abstract class AbstractTemplateSettings extends Composite
         
         File file= new File(path);      
 
-        if (!file.exists() || Common.openConfirm(getShell(),EclipseNSISPlugin.getFormattedString("template.settings.export.save.confirm",new Object[]{file.getAbsolutePath()}))) { //$NON-NLS-1$
+        if (!file.exists() || Common.openConfirm(getShell(),EclipseNSISPlugin.getFormattedString("template.settings.export.save.confirm",new Object[]{file.getAbsolutePath()}), getShellImage())) { //$NON-NLS-1$
             OutputStream os = null;
             try {
                 os = new BufferedOutputStream(new FileOutputStream(file));
                 mTemplateManager.getReaderWriter().export(templates, os);
             } 
             catch (Exception e) {
-                Common.openError(getShell(),e.getLocalizedMessage());
+                Common.openError(getShell(),e.getLocalizedMessage(), getShellImage());
             }
             finally {
                 if(os != null) {
@@ -481,11 +482,12 @@ public abstract class AbstractTemplateSettings extends Composite
             return true;
         } 
         catch (IOException e) {
-            Common.openError(getShell(),e.getLocalizedMessage());
+            Common.openError(getShell(),e.getLocalizedMessage(), getShellImage());
             return false;
         }
     }   
     
     protected abstract AbstractTemplate createTemplate(String name);
     protected abstract Dialog createDialog(AbstractTemplate newTemplate);
+    protected abstract Image getShellImage();
 }

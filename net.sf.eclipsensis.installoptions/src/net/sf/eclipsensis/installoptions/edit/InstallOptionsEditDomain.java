@@ -9,13 +9,13 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.edit;
 
+import java.io.File;
 import java.util.Stack;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.model.commands.IModelCommandListener;
 import net.sf.eclipsensis.installoptions.model.commands.ModelCommandEvent;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.gef.DefaultEditDomain;
 import org.eclipse.gef.Tool;
@@ -27,7 +27,7 @@ import org.eclipse.ui.part.EditorActionBarContributor;
 
 public class InstallOptionsEditDomain extends DefaultEditDomain implements IAdaptable
 {
-    private IFile mFile;
+    private File mFile;
     private Tool mDefaultTool = new SelectionTool();
     
     /**
@@ -49,10 +49,10 @@ public class InstallOptionsEditDomain extends DefaultEditDomain implements IAdap
 
     public boolean isReadOnly()
     {
-        return mFile != null && mFile.isReadOnly();
+        return mFile != null && mFile.exists() && !mFile.canWrite();
     }
     
-    public void setFile(IFile file)
+    public void setFile(File file)
     {
         mFile = file;
     }

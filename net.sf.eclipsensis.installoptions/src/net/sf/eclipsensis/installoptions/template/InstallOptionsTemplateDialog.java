@@ -52,7 +52,7 @@ public class InstallOptionsTemplateDialog extends AbstractTemplateDialog
 
     protected Image getShellImage()
     {
-        return InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("installoptions.icon")); //$NON-NLS-1$
+        return InstallOptionsPlugin.getShellImage();
     }
 
     protected String getShellTitle()

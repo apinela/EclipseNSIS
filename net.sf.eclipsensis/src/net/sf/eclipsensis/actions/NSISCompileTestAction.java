@@ -9,35 +9,10 @@
  *******************************************************************************/
 package net.sf.eclipsensis.actions;
 
-import net.sf.eclipsensis.makensis.MakeNSISRunner;
-
 public class NSISCompileTestAction extends NSISCompileAction
 {
-    protected NSISCompileRunnable getRunnable()
+    protected boolean shouldTest()
     {
-        return new NSISCompileTestRunnable();
-    }
-    
-    protected class NSISCompileTestRunnable extends NSISCompileRunnable
-    {
-        /**
-         * 
-         */
-        public NSISCompileTestRunnable()
-        {
-            super();
-        }
-        
-        
-        /* (non-Javadoc)
-         * @see java.lang.Runnable#run()
-         */
-        public void run()
-        {
-            super.run();
-            if(mPlugin !=null && mOutputExeName != null) {
-                MakeNSISRunner.testInstaller(mOutputExeName);
-            }
-        }
+        return true;
     }
 }

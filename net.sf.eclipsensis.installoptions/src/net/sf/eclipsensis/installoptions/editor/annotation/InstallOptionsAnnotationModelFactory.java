@@ -9,31 +9,55 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.editor.annotation;
 
+import java.io.File;
+
 import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
 
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.text.source.AnnotationModel;
 import org.eclipse.jface.text.source.IAnnotationModel;
+import org.eclipse.ui.*;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.texteditor.ResourceMarkerAnnotationModelFactory;
 
 public class InstallOptionsAnnotationModelFactory extends ResourceMarkerAnnotationModelFactory
 {
+    private IEditorRegistry mEditorRegistry;
+    
+    public InstallOptionsAnnotationModelFactory()
+    {
+        IWorkbench workbench= PlatformUI.getWorkbench();
+        mEditorRegistry = workbench.getEditorRegistry();
+    }
+
     public IAnnotationModel createAnnotationModel(IPath location)
     {
-        IFile file= FileBuffers.getWorkspaceFileAtLocation(location);
+        String editorId = null;
         try {
-            String editorId = file.getPersistentProperty(IDE.EDITOR_KEY);
-            if(IInstallOptionsConstants.INSTALLOPTIONS_DESIGN_EDITOR_ID.equals(editorId) ||
-               IInstallOptionsConstants.INSTALLOPTIONS_SOURCE_EDITOR_ID.equals(editorId)) {
-                return new AnnotationModel();
+            //First see if this is a workbench file
+            IFile file= FileBuffers.getWorkspaceFileAtLocation(location);
+            editorId = file.getPersistentProperty(IDE.EDITOR_KEY);
+        }
+        catch(Exception e) {
+            try {
+                File f = new File(location.toOSString());
+                if(f.exists()) {
+                    //This is an external file. Check the default editor for it.
+                    IEditorDescriptor descriptor= mEditorRegistry.getDefaultEditor(f.getName());
+                    if (descriptor != null) {
+                        editorId = descriptor.getId();
+                    }
+                }
+            }
+            catch(Exception ex) {
+                editorId = null;
             }
         }
-        catch (CoreException e) {
-            e.printStackTrace();
+        if(IInstallOptionsConstants.INSTALLOPTIONS_DESIGN_EDITOR_ID.equals(editorId) ||
+           IInstallOptionsConstants.INSTALLOPTIONS_SOURCE_EDITOR_ID.equals(editorId)) {
+            return new AnnotationModel();
         }
         return super.createAnnotationModel(location);
     }

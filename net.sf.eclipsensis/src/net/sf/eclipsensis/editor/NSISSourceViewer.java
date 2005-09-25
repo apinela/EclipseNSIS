@@ -34,11 +34,9 @@ import org.eclipse.jface.text.source.projection.ProjectionViewer;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
@@ -64,7 +62,7 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
     private ILineTracker mLineTracker = null;
     private String[] mConfiguredContentTypes = null;
     private HashSet mPropertyQueue = new HashSet();
-    private SelectionAdapter mSelAdapter = null;
+    private NSISScrollTipHelper mScrollTipHelper = null;
     private IContentAssistant mInsertTemplateAssistant = null;
     private boolean mInsertTemplateAssistantInstalled = false;
     
@@ -81,6 +79,7 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
     {
         super(parent, ruler, overviewRuler, showsAnnotationOverview, styles);
         mLineTracker = new DefaultLineTracker();
+        mScrollTipHelper = new NSISScrollTipHelper(this);
     }
 
     public boolean mustProcessPropertyQueue()
@@ -182,78 +181,7 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
                 }
             }
         }
-        final StyledText st = getTextWidget();
-        if(st != null) {
-            final ScrollBar sb = st.getVerticalBar();
-            if(sb != null) {
-                mSelAdapter = new SelectionAdapter() {
-                    private Shell mShell = null;
-                    private Text mText = null;
-                    
-                    public void widgetSelected(SelectionEvent e) 
-                    {
-                        switch(e.detail) {
-                            case 0:
-                                if(mShell != null) {
-                                    mShell.dispose();
-                                    mShell = null;
-                                    mText = null;
-                                }
-                                break;
-                            case SWT.DRAG:
-                                if(mShell == null) {
-                                    makeShell();
-                                }
-                                String text = (getTopIndex()+1)+" - "+(getBottomIndex()+1); //$NON-NLS-1$
-                                mText.setText(text);
-                                break;
-                        }
-                    }
-
-                    private void makeShell()
-                    {
-                        Point stLoc = st.toDisplay(0,0);
-                        Point stSize = st.getSize();
-                        Point sbSize = sb.getSize();
-                        int x = stLoc.x+stSize.x-sbSize.x-5;
-                        int y = stLoc.y+5;
-                        mShell = new Shell(st.getShell(), SWT.NO_TRIM | SWT.NO_FOCUS | SWT.ON_TOP);
-                        Display display = mShell.getDisplay();
-                        mShell.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
-                        GridLayout layout = new GridLayout(1,true);
-                        layout.marginHeight=1;
-                        layout.marginWidth=1;
-                        mShell.setLayout(layout);
-                        GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
-                        mShell.setLayoutData(data);
-                        Composite composite = new Composite(mShell,SWT.NONE);
-                        data = new GridData(SWT.FILL, SWT.FILL, true, true);
-                        composite.setLayoutData(data);
-                        composite.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
-                        layout = new GridLayout(1,true);
-                        layout.marginHeight=2;
-                        layout.marginWidth=2;
-                        composite.setLayout(layout);
-                        mText= new Text(composite, SWT.SINGLE | SWT.READ_ONLY | SWT.RIGHT);
-                        data= new GridData(SWT.FILL, SWT.FILL, true, true);
-                        mText.setLayoutData(data);
-                        mText.setForeground(display.getSystemColor(SWT.COLOR_INFO_FOREGROUND));
-                        mText.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
-                        int lineCount = st.getLineCount();
-                        String text = new StringBuffer().append(lineCount).append(" - ").append(lineCount).toString(); //$NON-NLS-1$
-                        GC gc = new GC(mText);
-                        Point extent = gc.stringExtent(text);
-                        gc.dispose();
-                        int width = extent.x+2*(1+layout.marginWidth)+5;
-                        mShell.setBounds(x-width-5,y,width,extent.y+2*(1+layout.marginHeight));
-                        if(!mShell.isVisible()) {
-                            mShell.setVisible(true);
-                        }
-                    }
-                };
-                sb.addSelectionListener(mSelAdapter);
-            }
-        }
+        mScrollTipHelper.connect();
         
         final IVerticalRuler ruler = getVerticalRuler();
         if(ruler != null) {
@@ -303,15 +231,8 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
      */
     public void unconfigure()
     {
-        if(mSelAdapter != null) {
-            StyledText st = getTextWidget();
-            if(st != null) {
-                ScrollBar sb = st.getVerticalBar();
-                if(sb != null) {
-                    sb.removeSelectionListener(mSelAdapter);
-                }
-            }
-        }
+        mScrollTipHelper.disconnect();
+
         if (mInsertTemplateAssistant != null) {
             mInsertTemplateAssistant.uninstall();
             mInsertTemplateAssistantInstalled= false;

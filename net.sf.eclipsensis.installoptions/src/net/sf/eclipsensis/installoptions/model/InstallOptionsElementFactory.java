@@ -36,7 +36,9 @@ public class InstallOptionsElementFactory implements CreationFactory
             }
             return factory;
         }
-        return null;
+        else {
+            return getFactory(InstallOptionsModel.TYPE_UNKNOWN);
+        }
     }
     
     private InstallOptionsModelTypeDef mTypeDef;

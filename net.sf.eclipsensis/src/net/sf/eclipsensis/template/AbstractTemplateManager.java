@@ -18,6 +18,7 @@ import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Plugin;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 
 public abstract class AbstractTemplateManager
@@ -140,7 +141,7 @@ public abstract class AbstractTemplateManager
                     public void run()
                     {
                         if(!Common.openConfirm(null,EclipseNSISPlugin.getFormattedString("template.save.confirm", //$NON-NLS-1$
-                                                     new String[]{template.getName()}))) {
+                                                     new String[]{template.getName()}),getShellImage())) {
                             rv[0] = false;
                         }
                     }
@@ -204,7 +205,7 @@ public abstract class AbstractTemplateManager
                         public void run()
                         {
                             if(!Common.openConfirm(null,EclipseNSISPlugin.getFormattedString("template.save.confirm", //$NON-NLS-1$
-                                                         new String[]{template.getName()}))) {
+                                                         new String[]{template.getName()}),getShellImage())) {
                                 rv[0] = false;
                             }
                         }
@@ -311,6 +312,7 @@ public abstract class AbstractTemplateManager
     }
     
     protected abstract Plugin getPlugin();
+    protected abstract Image getShellImage();
     protected abstract IPath getTemplatesPath();
     protected abstract Class getTemplateClass();
     protected abstract AbstractTemplateReaderWriter createReaderWriter();

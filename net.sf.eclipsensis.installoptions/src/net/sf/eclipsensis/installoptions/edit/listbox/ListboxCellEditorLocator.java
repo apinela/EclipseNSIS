@@ -9,36 +9,21 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.edit.listbox;
 
+import net.sf.eclipsensis.installoptions.edit.InstallOptionsCellEditorLocator;
 import net.sf.eclipsensis.installoptions.figures.ListFigure;
 
 import org.eclipse.draw2d.geometry.Rectangle;
-import org.eclipse.gef.tools.CellEditorLocator;
-import org.eclipse.jface.viewers.CellEditor;
-import org.eclipse.swt.widgets.List;
+import org.eclipse.swt.graphics.Point;
 
-public class ListboxCellEditorLocator implements CellEditorLocator
+public class ListboxCellEditorLocator extends InstallOptionsCellEditorLocator
 {
-    private ListFigure mListbox;
-
     public ListboxCellEditorLocator(ListFigure listbox) 
     {
-        setListbox(listbox);
+        super(listbox);
     }
 
-    public void relocate(CellEditor celleditor) 
+    protected Rectangle transformLocation(Rectangle editArea, Point preferredSize)
     {
-        List list = (List)celleditor.getControl();
-        Rectangle rect = mListbox.getClientArea().getCopy();
-        mListbox.translateToAbsolute(rect);
-        list.setBounds(rect.x, rect.y, rect.width, rect.height);
-    }
-
-    protected ListFigure getListbox() {
-        return mListbox;
-    }
-
-    protected void setListbox(ListFigure listbox) 
-    {
-        mListbox = listbox;
+        return editArea;
     }
 }

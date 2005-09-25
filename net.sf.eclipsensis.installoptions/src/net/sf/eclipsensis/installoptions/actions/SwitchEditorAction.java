@@ -38,7 +38,8 @@ public class SwitchEditorAction extends Action
         return ID;
     }
 
-    public void run() {
+    public void run() 
+    {
         if(mEditor.canSwitch()) {
             BusyIndicator.showWhile(null,new Runnable(){
                 public void run()

@@ -12,8 +12,7 @@ import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
 import net.sf.eclipsensis.job.IJobStatusRunnable;
 import net.sf.eclipsensis.job.JobScheduler;
 import net.sf.eclipsensis.settings.NSISPreferences;
-import net.sf.eclipsensis.util.CaseInsensitiveSet;
-import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -27,8 +26,9 @@ import org.eclipse.ui.texteditor.IDocumentProvider;
 
 public class InstallOptionsBuilder extends IncrementalProjectBuilder implements IInstallOptionsConstants
 {
-    private static Set cExtensionsSet;
-    private static JobScheduler cJobScheduler = InstallOptionsPlugin.getDefault().getJobScheduler();
+    private static final Version cBuilderVersion;
+    private static final Set cExtensionsSet;
+    private static final JobScheduler cJobScheduler = InstallOptionsPlugin.getDefault().getJobScheduler();
 
     private IDocumentProvider mDocumentProvider = new FileDocumentProvider();
     private INIFile mINIFile = new INIFile();
@@ -36,6 +36,7 @@ public class InstallOptionsBuilder extends IncrementalProjectBuilder implements 
     private String mNSISVersion;
     
     static {
+        cBuilderVersion = new Version(InstallOptionsPlugin.getResourceString("builder.version")); //$NON-NLS-1$
         cExtensionsSet = new CaseInsensitiveSet();
         for(int i=0; i<INI_EXTENSIONS.length; i++) {
             cExtensionsSet.add("."+INI_EXTENSIONS[i]); //$NON-NLS-1$
@@ -155,7 +156,12 @@ public class InstallOptionsBuilder extends IncrementalProjectBuilder implements 
 				fullBuild(monitor);
 			} 
             else {
-				incrementalBuild(delta, monitor);
+                if(!checkBuilderVersion(getProject())) {
+                    fullBuild(monitor);
+                }
+                else {
+                    incrementalBuild(delta, monitor);
+                }
 			}
 		}
 		return null;
@@ -222,6 +228,7 @@ public class InstallOptionsBuilder extends IncrementalProjectBuilder implements 
                     return true;
                 }
             });
+            getProject().setPersistentProperty(PROJECTPROPERTY_BUILDER_VERSION, cBuilderVersion.toString());
 		} 
         catch (CoreException e) {
 		}
@@ -372,7 +379,7 @@ public class InstallOptionsBuilder extends IncrementalProjectBuilder implements 
                                     String buildNSISVersion = project.getPersistentProperty(PROJECTPROPERTY_NSIS_VERSION);
                                     String buildTimestamp = project.getPersistentProperty(RESOURCEPROPERTY_BUILD_TIMESTAMP);
                                     IProgressMonitor subMonitor = new SubProgressMonitor(monitor,1);
-                                    if(!nsisVersion.equals(buildNSISVersion) || Common.isEmpty(buildTimestamp)) {
+                                    if(!checkBuilderVersion(project) || !nsisVersion.equals(buildNSISVersion) || Common.isEmpty(buildTimestamp)) {
                                         internalBuildProject(project, FULL_BUILD, null, subMonitor);
                                     }
                                     else {
@@ -416,6 +423,13 @@ public class InstallOptionsBuilder extends IncrementalProjectBuilder implements 
                             }
                         }
                     });
+    }
+    
+    private static boolean checkBuilderVersion(IProject project) throws CoreException
+    {
+        String temp = project.getPersistentProperty(PROJECTPROPERTY_BUILDER_VERSION);
+        Version builderVersion = (temp == null?Version.EMPTY_VERSION:new Version(temp));
+        return (cBuilderVersion.compareTo(builderVersion) > 0);
     }
     
     private static class ProjectJobFamily

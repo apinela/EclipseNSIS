@@ -20,15 +20,17 @@ import net.sf.eclipsensis.installoptions.requests.ExtendedEditRequest;
 import net.sf.eclipsensis.installoptions.requests.ReorderPartRequest;
 import net.sf.eclipsensis.util.Common;
 
+import org.eclipse.draw2d.*;
 import org.eclipse.draw2d.IFigure;
+import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.*;
 import org.eclipse.gef.commands.Command;
-import org.eclipse.gef.tools.CellEditorLocator;
-import org.eclipse.gef.tools.DirectEditManager;
+import org.eclipse.gef.tools.*;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.swt.accessibility.AccessibleControlEvent;
 import org.eclipse.swt.accessibility.AccessibleEvent;
+import org.eclipse.swt.widgets.Display;
 
 public abstract class InstallOptionsWidgetEditPart extends InstallOptionsEditPart implements IDirectEditLabelProvider, IExtendedEditLabelProvider
 {
@@ -36,6 +38,30 @@ public abstract class InstallOptionsWidgetEditPart extends InstallOptionsEditPar
     private String mDirectEditLabel;
     private String mExtendedEditLabel;
     private boolean mNeedsRefresh = false;
+    private Label mToolTip;
+    
+    private Label getToolTip()
+    {
+        if(mToolTip == null) {
+            mToolTip = new Label();
+            mToolTip.setBorder(new MarginBorder(1,2,1,2));
+            mToolTip.setOpaque(true);
+            resetToolTipText();
+        }
+        return mToolTip;
+    }
+    
+    protected void resetToolTipText()
+    {
+        if(mToolTip != null) {
+            mToolTip.setText(getTypeName());
+            mToolTip.setBackgroundColor(ColorConstants.tooltipBackground);
+            mToolTip.setForegroundColor(ColorConstants.tooltipForeground);
+            Dimension dim = FigureUtilities.getStringExtents(mToolTip.getText(),Display.getDefault().getSystemFont());
+            dim.expand(8,6);
+            mToolTip.setSize(dim);
+        }
+    }
     
     public InstallOptionsWidgetEditPart()
     {
@@ -44,6 +70,11 @@ public abstract class InstallOptionsWidgetEditPart extends InstallOptionsEditPar
         setExtendedEditLabel(InstallOptionsPlugin.getResourceString(getExtendedEditLabelProperty()));
     }
     
+    public DragTracker getDragTracker(Request req)
+    {
+        return new InstallOptionsDragEditPartsTracker(this);
+    }
+
     protected String getDirectEditLabelProperty()
     {
         return "direct.edit.label"; //$NON-NLS-1$
@@ -192,6 +223,7 @@ public abstract class InstallOptionsWidgetEditPart extends InstallOptionsEditPar
     {
         IInstallOptionsFigure figure2 = createInstallOptionsFigure();
         figure2.setFocusTraversable(true);
+        figure2.setToolTip(getToolTip());
         return figure2;
     }
     
@@ -281,10 +313,33 @@ public abstract class InstallOptionsWidgetEditPart extends InstallOptionsEditPar
     {
         return true;
     }
+    
+    private static class InstallOptionsDragEditPartsTracker extends DragEditPartsTracker
+    {
+        public InstallOptionsDragEditPartsTracker(EditPart sourceEditPart)
+        {
+            super(sourceEditPart);
+        }
+
+        protected boolean handleDragStarted()
+        {
+            List list = getSourceEditPart().getViewer().getSelectedEditParts();
+            if(!Common.isEmptyCollection(list)) {
+                for (Iterator iter = list.iterator(); iter.hasNext();) {
+                    EditPart part = (EditPart)iter.next();
+                    if(part instanceof InstallOptionsWidgetEditPart) {
+                        if(((InstallOptionsWidget)part.getModel()).isLocked()) {
+                            return false;
+                        }
+                    }
+                }
+            }
+            return super.handleDragStarted();
+        }
+    }
 
     protected abstract DirectEditManager creatDirectEditManager(InstallOptionsWidgetEditPart part, Class clasz, CellEditorLocator locator);
     protected abstract CellEditorLocator createCellEditorLocator(IInstallOptionsFigure figure);
     protected abstract IInstallOptionsFigure createInstallOptionsFigure();
-    protected abstract String getTypeName();
     protected abstract String getAccessibleControlEventResult();
 }

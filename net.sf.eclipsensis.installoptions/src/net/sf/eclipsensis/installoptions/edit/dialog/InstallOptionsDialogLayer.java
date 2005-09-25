@@ -36,9 +36,12 @@ public class InstallOptionsDialogLayer extends FreeformLayer implements IInstall
     {
         super.paintFigure(graphics);
         if(mShowDialogSize && !mDialogSize.equals(0,0)) {
-            setForegroundColor(ColorConstants.blue);
+            graphics.pushState();
+            graphics.setForegroundColor(ColorConstants.blue);
             Dimension d = dialogUnitsToPixels(mDialogSize);
             graphics.drawRectangle(0,0,d.width,d.height);
+            graphics.popState();
+            graphics.restoreState();
         }
     }
     
@@ -64,8 +67,10 @@ public class InstallOptionsDialogLayer extends FreeformLayer implements IInstall
         for (Iterator iter = mChildren.iterator(); iter.hasNext(); ) {
             child = (IFigure)iter.next();
             if (child.isVisible() && child.intersects(graphics.getClip(clip))) {
+                graphics.pushState();
                 graphics.clipRect(child.getBounds());
                 child.paint(graphics);
+                graphics.popState();
                 graphics.restoreState();
             }
         }

@@ -139,11 +139,31 @@ public class PathRequestFigure extends Figure implements IEditableElementFigure
         mTextFigure.setVScroll(vScroll);
     }
 
+    public boolean isDisabled()
+    {
+        return mTextFigure.isDisabled();
+    }
+
+    public boolean isHScroll()
+    {
+        return mTextFigure.isHScroll();
+    }
+
+    public boolean isVScroll()
+    {
+        return mTextFigure.isVScroll();
+    }
+
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.installoptions.figures.IEditableElementFigure#getState()
      */
     public String getState()
     {
         return mTextFigure.getState();
+    }
+
+    public Rectangle getDirectEditArea()
+    {
+        return getTextFigure().getClientArea();
     }
 }

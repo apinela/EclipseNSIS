@@ -32,16 +32,16 @@ public class ArrangeCommand extends Command
         mType = type;
         String name;
         switch(mType) {
-            case IInstallOptionsConstants.SEND_BACKWARD:
+            case IInstallOptionsConstants.ARRANGE_SEND_BACKWARD:
                 name = "send.backward.command.name"; //$NON-NLS-1$
                 break;
-            case IInstallOptionsConstants.SEND_TO_BACK:
+            case IInstallOptionsConstants.ARRANGE_SEND_TO_BACK:
                 name = "send.to.back.command.name"; //$NON-NLS-1$
                 break;
-            case IInstallOptionsConstants.BRING_FORWARD:
+            case IInstallOptionsConstants.ARRANGE_BRING_FORWARD:
                 name = "bring.forward.command.name"; //$NON-NLS-1$
                 break;
-            case IInstallOptionsConstants.BRING_TO_FRONT:
+            case IInstallOptionsConstants.ARRANGE_BRING_TO_FRONT:
             default:
                 name = "bring.to.front.command.name"; //$NON-NLS-1$
                 break;

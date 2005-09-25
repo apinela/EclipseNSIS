@@ -72,6 +72,11 @@ public class ComboboxFigure extends Figure implements IListItemsFigure
         mComboFigure.setDisabled(disabled);
     }
 
+    public boolean isDisabled()
+    {
+        return mComboFigure.isDisabled();
+    }
+
     public void setState(String state)
     {
         mComboFigure.setState(state);
@@ -128,6 +133,21 @@ public class ComboboxFigure extends Figure implements IListItemsFigure
     public void setVScroll(boolean vScroll)
     {
         //Scrolling not supported
+    }
+
+    public boolean isHScroll()
+    {
+        return false;
+    }
+
+    public boolean isVScroll()
+    {
+        return false;
+    }
+
+    public Rectangle getDirectEditArea()
+    {
+        return getClientArea().getCopy();
     }
     
     private class CustomPropertySourceWrapper extends PropertySourceWrapper

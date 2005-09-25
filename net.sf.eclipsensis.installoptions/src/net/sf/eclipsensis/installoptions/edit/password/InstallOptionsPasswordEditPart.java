@@ -13,6 +13,7 @@ import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.edit.text.InstallOptionsTextEditPart;
 import net.sf.eclipsensis.installoptions.figures.IInstallOptionsFigure;
 import net.sf.eclipsensis.installoptions.figures.PasswordFigure;
+
 import org.eclipse.swt.widgets.Composite;
 
 public class InstallOptionsPasswordEditPart extends InstallOptionsTextEditPart

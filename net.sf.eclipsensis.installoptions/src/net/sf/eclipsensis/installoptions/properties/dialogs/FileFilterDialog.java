@@ -25,7 +25,6 @@ import net.sf.eclipsensis.viewer.CollectionContentProvider;
 import net.sf.eclipsensis.viewer.TableViewerUpDownMover;
 
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -71,7 +70,7 @@ public class FileFilterDialog extends Dialog
     {
         super.configureShell(newShell);
         newShell.setText(InstallOptionsPlugin.getResourceString("filter.dialog.name")); //$NON-NLS-1$
-        newShell.setImage(InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("installoptions.icon"))); //$NON-NLS-1$
+        newShell.setImage(InstallOptionsPlugin.getShellImage());
     }
     
     protected void okPressed()
@@ -80,7 +79,8 @@ public class FileFilterDialog extends Dialog
         if(validator != null) {
             String error = validator.isValid(getFilter());
             if(!Common.isEmpty(error)) {
-                MessageDialog.openError(getShell(),EclipseNSISPlugin.getResourceString("error.title"),error); //$NON-NLS-1$
+                Common.openError(getShell(),EclipseNSISPlugin.getResourceString("error.title"),error, //$NON-NLS-1$
+                                 InstallOptionsPlugin.getShellImage());
                 return;
             }
         }
@@ -293,7 +293,7 @@ public class FileFilterDialog extends Dialog
             public void modify(Object element, String property, Object value)
             {
                 if(value == null) {
-                    Common.openError(getShell(),textEditor.getErrorMessage());
+                    Common.openError(getShell(),textEditor.getErrorMessage(), InstallOptionsPlugin.getShellImage());
                 }
                 else {
                     FilePattern pattern = (FilePattern)((TableItem)element).getData();

@@ -223,6 +223,10 @@ public class INISection extends INILine implements IINIContainer
                         }
                     }
                 }
+                else {
+                    addProblem(INIProblem.TYPE_WARNING, InstallOptionsPlugin.getFormattedString("key.missing.warning", //$NON-NLS-1$
+                            new Object[]{InstallOptionsModel.PROPERTY_TYPE}));
+                }
             }
         }
     }

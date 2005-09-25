@@ -25,7 +25,6 @@ import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -39,6 +38,7 @@ import org.eclipse.ui.views.properties.*;
 public abstract class InstallOptionsWidget extends InstallOptionsElement
 {
     public static final String PROPERTY_BOUNDS = "Bounds"; //$NON-NLS-1$
+    public static final String PROPERTY_LOCKED = "Locked"; //$NON-NLS-1$
     private static final Position cDefaultPosition = new Position(0,0,63,35);
     
     private static LabelProvider cPositionLabelProvider = new LabelProvider(){
@@ -55,6 +55,18 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
     };
 
     private static LabelProvider cFlagsLabelProvider = new ListLabelProvider();
+    private static LabelProvider cLockedLabelProvider = new LabelProvider() {
+        private final String YES = InstallOptionsPlugin.getResourceString("option.yes"); //$NON-NLS-1$
+        private final String NO = InstallOptionsPlugin.getResourceString("option.no"); //$NON-NLS-1$
+
+        public String getText(Object element)
+        {
+            if(element instanceof Boolean) {
+                return (((Boolean)element).booleanValue()?YES:NO);
+            }
+            return NO;
+        }
+    };
     private static final String MISSING_DISPLAY_NAME = InstallOptionsPlugin.getResourceString("missing.outline.display.name"); //$NON-NLS-1$
 
     private InstallOptionsModelTypeDef mTypeDef;
@@ -64,6 +76,7 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
     protected InstallOptionsGuide mVerticalGuide;
     protected InstallOptionsGuide mHorizontalGuide;
     private List mFlags;
+    protected boolean mLocked;
 
     protected InstallOptionsWidget(INISection section)
     {
@@ -93,6 +106,7 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
         list.add(InstallOptionsModel.PROPERTY_INDEX);
         list.add(InstallOptionsModel.PROPERTY_POSITION);
         list.addAll(super.getPropertyNames());
+        list.add(PROPERTY_LOCKED);
         return list;
     }
 
@@ -148,6 +162,53 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
         else if(name.equals(InstallOptionsModel.PROPERTY_FLAGS)) {
             return new FlagsPropertyDescriptor();
         }
+        else if(name.equals(PROPERTY_LOCKED)) {
+            PropertyDescriptor descriptor = new PropertyDescriptor(PROPERTY_LOCKED, InstallOptionsPlugin.getResourceString("locked.property.name")) { //$NON-NLS-1$
+                public CellEditor createPropertyEditor(Composite parent)
+                {
+                    return new CellEditor(parent) {
+                        private boolean mValue;
+                        
+                        protected Control createControl(Composite parent)
+                        {
+                            final Button button = new Button(parent,SWT.CHECK);
+                            button.setSelection(mValue);
+                            button.addSelectionListener(new SelectionAdapter() {
+                                public void widgetSelected(SelectionEvent e)
+                                {
+                                    mValue = button.getSelection();
+                                    fireApplyEditorValue();
+                                }
+                            });
+                            return button;
+                        }
+
+                        protected Object doGetValue()
+                        {
+                            return Boolean.valueOf(mValue);
+                        }
+
+                        protected void doSetFocus()
+                        {
+                            getControl().setFocus();
+                        }
+
+                        protected void doSetValue(Object value)
+                        {
+                            if(value instanceof Boolean) {
+                                mValue = ((Boolean)value).booleanValue();
+                                Button control = (Button)getControl();
+                                if(control != null && !control.isDisposed() && control.getSelection() != mValue) {
+                                    control.setSelection(mValue);
+                                }
+                            }
+                        }
+                    };
+                }
+            };
+            descriptor.setLabelProvider(cLockedLabelProvider);
+            return descriptor;
+        }
         else {
             return null;
         }
@@ -178,6 +239,9 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
         if (PROPERTY_BOUNDS.equals(id)) {
             return toGraphical(getPosition()).getBounds();
         }
+        else if (PROPERTY_LOCKED.equals(id)) {
+            return Boolean.valueOf(isLocked());
+        }
         else if (InstallOptionsModel.PROPERTY_LEFT.equals(id)) {
             return new Integer(getPosition().left);
         }
@@ -193,13 +257,15 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
         else if (InstallOptionsModel.PROPERTY_POSITION.equals(id)) {
             return new PositionPropertySource(this);
         }
-        if (InstallOptionsModel.PROPERTY_INDEX.equals(id)) {
+        else if (InstallOptionsModel.PROPERTY_INDEX.equals(id)) {
             return new Integer(getIndex());
         }
-        if (InstallOptionsModel.PROPERTY_FLAGS.equals(id)) {
+        else if (InstallOptionsModel.PROPERTY_FLAGS.equals(id)) {
             return getFlags();
         }
-        return super.getPropertyValue(id);
+        else {
+            return super.getPropertyValue(id);
+        }
     }
     
     protected TypeConverter getTypeConverter(String property)
@@ -234,6 +300,9 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
         }
         else if (InstallOptionsModel.PROPERTY_BOTTOM.equals(id)) {
             getPosition().bottom = ((Integer)value).intValue();
+        }
+        else if (PROPERTY_LOCKED.equals(id)) {
+            setLocked(((Boolean)value).booleanValue());
         }
         else if(InstallOptionsModel.PROPERTY_INDEX.equals(id)) {
             if(mIndex != ((Integer)value).intValue()) {
@@ -395,6 +464,21 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
         }
     }
 
+    public boolean isLocked()
+    {
+        return mLocked;
+    }
+
+    public void setLocked(boolean locked)
+    {
+        boolean oldLocked = mLocked;
+        mLocked = locked;
+        if(mLocked != oldLocked) {
+            firePropertyChange(PROPERTY_LOCKED,Boolean.valueOf(oldLocked),Boolean.valueOf(mLocked));
+            setDirty(true);
+        }
+    }
+
     public Object clone()
     {
         InstallOptionsWidget element = (InstallOptionsWidget)super.clone();
@@ -525,7 +609,7 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
         {
             super.configureShell(newShell);
             newShell.setText(InstallOptionsPlugin.getFormattedString("flags.dialog.name", new String[]{mType})); //$NON-NLS-1$
-            newShell.setImage(InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("installoptions.icon"))); //$NON-NLS-1$
+            newShell.setImage(InstallOptionsPlugin.getShellImage());
         }
 
         public List getValues()
@@ -614,7 +698,8 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
             if(validator != null) {
                 String error = validator.isValid(mValues);
                 if(!Common.isEmpty(error)) {
-                    MessageDialog.openError(getShell(),EclipseNSISPlugin.getResourceString("error.title"),error); //$NON-NLS-1$
+                    Common.openError(getShell(),EclipseNSISPlugin.getResourceString("error.title"),error, //$NON-NLS-1$
+                                     InstallOptionsPlugin.getShellImage());
                     return;
                 }
             }

@@ -97,7 +97,7 @@ configured to be collapsed by default.<br>
         <dd>The Controls drawer contains creation tools for all controls supported by the InstallOptions plugin 
 		included in the version of NSIS configured in EclipseNSIS. In order to&nbsp; determine what controls are supported, 
 		please consult the <a
- href="javascript:redirectNSISContrib('InstallOptions/Readme.html');">InstallOptions Readme</a> file.  </dd>
+ href="javascript:redirectNSISContrib('InstallOptions/Readme.html');">InstallOptions Readme</a> file. In addition to these prebuilt controls, the EclipseNSIS InstallOptions editor provides an &quot;Unknown&quot; control type. This can be used to work with custom controls, e.g., in a modified version of InstallOptions. However, for &quot;Unknown&quot; controls, the EclipseNSIS InstallOptions editor only allows editing of the common attributes of all InstallOptions controls as defined in the <a href="javascript:redirectNSISContrib('InstallOptions/Readme.html');">InstallOptions Readme</a> file. </dd>
  </dl><br>
 <a name="a_templates_drawer"></a><dl id="id_templates_drawer">
         <dt>Templated Creation Tools Drawer</dt>
@@ -367,30 +367,56 @@ The following alignments are supported:<br>
       <li><img style="width: 16px; height: 16px;" alt="Align Middle"
  title="Align Middle" src="images/alignmid.gif">&nbsp;Align Middle</li>
       <li><img style="width: 16px; height: 16px;"
- alt="Align Bottom title=" bottom="" src="images/alignbottom.gif"
- align="">&nbsp;Align
-Bottom</li>
+ alt="Align Bottom" title="Align Bottom" src="images/alignbottom.gif">&nbsp;Align Bottom</li>
     </ul>
     <a href="javascript:history.go(-1)">&#8592;&nbsp;Back</a> </dd>
 </dl>
 <br>
 <a name="a_match_controls"></a>
 <dl id="id_match_controls">
-  <dt>Match Controls</dt>
-  <dd>Matches a dimension of the selected controls with
+  <dt>Match Control Sizes</dt>
+  <dd>Matches dimension(s) of the selected controls with
 the last selected control (the one that displays black selection
 handles). If the selection or marquee tool was dragged around a group
 of controls to select them, they are matched with the control at the
 back of the stacking order (also indicated by black selection handles).
-The following matchings are supported:<br>
+The following size matchings are supported:<br>
     <br>
     <ul>
       <li><img style="width: 16px; height: 16px;" alt="Match Width"
  title="Match Width" src="images/matchwidth.gif">&nbsp;Match Width</li>
       <li><img style="width: 16px; height: 16px;" alt="Match Height"
  title="Match Height" src="images/matchheight.gif">&nbsp;Match Height</li>
+      <li><img src="images/matchsize.gif" alt="Match Height and Width" style="width: 16px; height: 16px;"
+ title="Match Height and Width">&nbsp;Match Height and Width </li>
     </ul>
     <a href="javascript:history.go(-1)">&#8592;&nbsp;Back</a> </dd>
+</dl>
+<br>
+<a name="a_distribute_controls"></a>
+<dl id="id_distribute_controls">
+  <dt>Distribute Controls</dt>
+  <dd>Equally distributes the selected controls horizontally or vertically. The following distributions are supported:<br>
+  <br>
+      <ul>
+        <li><img style="width: 16px; height: 16px;" alt="Distribute Horizontal Interstices"
+ title="Distribute Horizontal Interstices" src="images/horizontalbetween.gif">&nbsp;Distribute Horizontal Interstices (space between controls)</li>
+        <li><img style="width: 16px; height: 16px;" alt="Distribute Left Edges"
+ title="Distribute Left Edges" src="images/horizontalleft.gif">&nbsp;Distribute Left Edges</li>
+        <li><img style="width: 16px; height: 16px;" alt="Distribute Horizontal Centers"
+ title="Distribute Horizontal Centers" src="images/horizontalcenter.gif">&nbsp;Distribute Horizontal Centers</li>
+        <li><img style="width: 16px; height: 16px;" alt="Distribute Right Edges"
+ title="Distribute Right Edges" src="images/horizontalright.gif">&nbsp;Distribute Right Edges</li>
+        <li><img style="width: 16px; height: 16px;" alt="Distribute Vertical Interstices"
+ title="Distribute Vertical Interstices" src="images/verticalbetween.gif">&nbsp;Distribute Vertical Interstices (space between controls)</li>
+        <li><img style="width: 16px; height: 16px;" alt="Distribute Top Edges"
+ title="Distribute Top Edges" src="images/verticaltop.gif">&nbsp;Distribute Top Edges</li>
+        <li><img style="width: 16px; height: 16px;" alt="Distribute Vertical Centers"
+ title="Distribute Vertical Centers" src="images/verticalcenter.gif">&nbsp;Distribute Vertical Centers</li>
+        <li><img style="width: 16px; height: 16px;" alt="Distribute Bottom Edges"
+ title="Distribute Bottom Edges" src="images/verticalbottom.gif">&nbsp;Distribute Bottom Edges</li>
+      </ul>
+      <a href="javascript:history.go(-1)">&#8592;&nbsp;Back</a></dd>
 </dl>
 <br>
 <a name="a_arrange_controls"></a>
@@ -413,6 +439,44 @@ following arrangements are supported:<br>
       <li><img style="width: 16px; height: 16px;" alt="Bring to Front"
  title="Bring to Front" src="images/front.gif">&nbsp;Bring
 to Front</li>
+    </ul>
+    <a href="javascript:history.go(-1)">&#8592;&nbsp;Back</a></dd>
+</dl>
+<br>
+<a name="a_lock_controls"></a>
+<dl id="id_lock_controls">
+  <dt>Lock/Unlock Controls</dt>
+  <dd>Locks/Unlocks the
+selected control(s). A locked control cannot have its position 
+(left, top, right and bottom attributes) modified using the design editor (they can, 
+however, be modified using the source editor). This is useful to prevent accidental
+repositioning of controls. A locked control can be distinguished from an unlocked control
+by the difference in the handles drawn when it is selected:<br>
+    <table style="vertical-align: top; text-align: left;" border="0"
+ cellpadding="2" cellspacing="2" width="100%">
+      <tbody>
+        <tr>
+          <td style="text-align: center; vertical-align: top;"><img
+ style="border: 0px solid ; width: 200px; height: 78px;" alt="Unlocked"
+ title="Unlocked" src="images/unlocked.gif"><br>
+Unlocked</td>
+          <td style="text-align: center; vertical-align: top;">&nbsp;
+&nbsp; &nbsp; &nbsp; &nbsp; <br>
+          </td>
+          <td style="text-align: center; vertical-align: top;"><img
+ style="border: 0px solid ; width: 200px; height: 78px;" alt="Locked"
+ title="Locked" src="images/locked.gif"><br>
+Locked</td>
+        </tr>
+      </tbody>
+    </table>
+The following commands are provided:<br>
+    <br>
+    <ul>
+      <li><img style="width: 16px; height: 16px;" alt="Lock"
+ title="Lock" src="images/lock.gif">&nbsp;Lock</li>
+      <li><img style="width: 16px; height: 16px;" alt="Unlock"
+ title="Unlock" src="images/unlock.gif">&nbsp;Unlock</li>
     </ul>
     <a href="javascript:history.go(-1)">&#8592;&nbsp;Back</a></dd>
 </dl>
@@ -443,6 +507,16 @@ dialog.</dd>
 refresh the entire InstallOptions dialog design diagram. It is useful
 when the diagram is not painted properly because of UI interference
 with the painting loop.&nbsp;<a href="javascript:history.go(-1)">&#8592;&nbsp;Back</a>
+  </dd>
+</dl>
+<br>
+<a name="a_preview"></a>
+<dl id="id_preview">
+  <dt>Preview</dt>
+  <dd>This command (<img style="width: 16px; height: 16px;"
+ alt="Preview" src="images/preview.gif">) is used to
+preview the current InstallOptions script using either the Standard (Classic) UI or the Modern UI. 
+The preview language may also be selected. &nbsp;<a href="javascript:history.go(-1)">&#8592;&nbsp;Back</a>
   </dd>
 </dl>
 <br>

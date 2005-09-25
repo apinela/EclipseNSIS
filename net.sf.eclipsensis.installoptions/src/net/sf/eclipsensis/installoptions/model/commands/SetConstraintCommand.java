@@ -15,8 +15,9 @@ import net.sf.eclipsensis.installoptions.model.Position;
 
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
+import org.eclipse.gef.commands.Command;
 
-public class SetConstraintCommand extends org.eclipse.gef.commands.Command
+public class SetConstraintCommand extends Command
 {
     private Position mNewPos;
     private Position mOldPos;

@@ -9,33 +9,45 @@
  *******************************************************************************/
 package net.sf.eclipsensis.makensis;
 
-import java.util.*;
+import java.io.File;
+import java.util.Collections;
+import java.util.List;
 
 public class MakeNSISResults
 {
     public static final int RETURN_SUCCESS = 0;
     public static final int RETURN_CANCEL = -1;
     
+    private long mCompileTimestamp = System.currentTimeMillis();
     private int mReturnCode = RETURN_SUCCESS;
     private String mOutputFileName = null;
-    private String mScriptFileName = null;
-    private ArrayList mErrors = null;
-    private ArrayList mWarnings = null;
+    private File mScriptFile = null;
+    private List mProblems = null;
     private boolean mCanceled = false;
     
-    /**
-     * @return Returns the errors.
-     */
-    public List getErrors()
+    
+    public MakeNSISResults(File file)
     {
-        return (mErrors==null?null:Collections.unmodifiableList(mErrors));
+        mScriptFile = file;
+    }
+
+    protected long getCompileTimestamp()
+    {
+        return mCompileTimestamp;
+    }
+    /**
+     * @return Returns the problems.
+     */
+    public List getProblems()
+    {
+        return (mProblems==null?null:Collections.unmodifiableList(mProblems));
     }
     /**
      * @param errors The error to set.
      */
-    void setErrors(ArrayList errors)
+    void setProblems(List errors)
     {
-        mErrors = errors;
+        mProblems = errors;
     }
     /**
      * @return Returns the outputFileName.
@@ -52,32 +64,18 @@ public class MakeNSISResults
         mOutputFileName = outputFileName;
     }
     /**
-     * @return Returns the scriptFileName.
+     * @return Returns the scriptFile.
      */
-    public String getScriptFileName()
+    public File getScriptFile()
     {
-        return mScriptFileName;
+        return mScriptFile;
     }
     /**
-     * @param scriptFileName The scriptFileName to set.
+     * @param scriptFile The scriptFile to set.
      */
-    void setScriptFileName(String scriptFileName)
+    void setScriptFile(File scriptFile)
     {
-        mScriptFileName = scriptFileName;
-    }
-    /**
-     * @return Returns the warnings.
-     */
-    public List getWarnings()
-    {
-        return (mWarnings==null?null:Collections.unmodifiableList(mWarnings));
-    }
-    /**
-     * @param warnings The warnings to set.
-     */
-    void setWarnings(ArrayList warnings)
-    {
-        mWarnings = warnings;
+        mScriptFile = scriptFile;
     }
     
     /**

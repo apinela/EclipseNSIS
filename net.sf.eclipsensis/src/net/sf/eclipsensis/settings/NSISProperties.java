@@ -24,11 +24,13 @@ public class NSISProperties extends NSISSettings implements INSISConstants
     private static HashMap cPropertiesCache = new HashMap();
     private static HashMap cQualifiedNames = new HashMap();
 
-    private IFile mFile = null;
-    private boolean mUseGlobals = true;
+    private IResource mResource = null;
+    private boolean mUseParent = true;
+    private NSISSettings mParentSettings;
     
     static {
         cQualifiedNames.put(USE_GLOBALS, new QualifiedName(PLUGIN_ID,USE_GLOBALS));
+        cQualifiedNames.put(USE_PARENT, new QualifiedName(PLUGIN_ID,USE_PARENT));
         cQualifiedNames.put(HDRINFO, new QualifiedName(PLUGIN_ID,HDRINFO));
         cQualifiedNames.put(VERBOSITY, new QualifiedName(PLUGIN_ID,VERBOSITY));
         cQualifiedNames.put(LICENSE, new QualifiedName(PLUGIN_ID,LICENSE));
@@ -40,13 +42,13 @@ public class NSISProperties extends NSISSettings implements INSISConstants
         cQualifiedNames.put(SYMBOLS, new QualifiedName(PLUGIN_ID,SYMBOLS));
     }
     
-    public static NSISProperties getProperties(IFile file)
+    public static NSISProperties getProperties(IResource resource)
     {
-        String fileName = file.getLocation().toString();
+        String fileName = resource.getLocation().toString();
         if(!cPropertiesCache.containsKey(fileName)) {
             synchronized(NSISProperties.class) {
                 if(!cPropertiesCache.containsKey(fileName)) {
-                    NSISProperties props = new NSISProperties(file);
+                    NSISProperties props = new NSISProperties(resource);
                     props.load();
                     cPropertiesCache.put(fileName,props);
                 }
@@ -55,10 +57,53 @@ public class NSISProperties extends NSISSettings implements INSISConstants
         return (NSISProperties)cPropertiesCache.get(fileName);
     }
     
+    protected NSISProperties(IResource resource)
+    {
+        mResource = resource;
+        if(mResource instanceof IProject) {
+            mParentSettings = NSISPreferences.INSTANCE;
+        }
+        else if(mResource instanceof IFile || mResource instanceof IFolder) {
+            mParentSettings = getProperties(resource.getParent());
+        }
+        else {
+            throw new IllegalArgumentException(resource.getLocation().toString());
+        }
+    }
+
+    protected void load()
+    {
+        String temp = getPersistentProperty(getQualifiedName(USE_PARENT));
+        if(temp == null) {
+            temp = getPersistentProperty(getQualifiedName(USE_GLOBALS));
+        }
+        setUseParent((temp == null || Boolean.valueOf(temp).booleanValue()));
+        if(!getUseParent()) {
+            super.load();
+        }
+    }
+    
+    public void store()
+    {
+        setValue(USE_PARENT,getUseParent());
+        if(getUseParent()) {
+            setHdrInfo(getDefaultHdrInfo());
+            setLicense(getDefaultLicense());
+            setNoConfig(getDefaultNoConfig());
+            setNoCD(getDefaultNoCD());
+            setVerbosity(getDefaultVerbosity());
+            setCompressor(getDefaultCompressor());
+            setSolidCompression(getDefaultSolidCompression());
+            setSymbols(getDefaultSymbols());
+            setInstructions(getDefaultInstructions());
+        }
+        super.store();
+    }
+
     public int getCompressor()
     {
-        if(getUseGlobals()) {
-            return NSISPreferences.INSTANCE.getCompressor();
+        if(getUseParent()) {
+            return mParentSettings.getCompressor();
         }
         else {
             return super.getCompressor();
@@ -67,8 +112,8 @@ public class NSISProperties extends NSISSettings implements INSISConstants
     
     public boolean getSolidCompression()
     {
-        if(getUseGlobals()) {
-            return NSISPreferences.INSTANCE.getSolidCompression();
+        if(getUseParent()) {
+            return mParentSettings.getSolidCompression();
         }
         else {
             return super.getSolidCompression();
@@ -77,8 +122,8 @@ public class NSISProperties extends NSISSettings implements INSISConstants
     
     public boolean getHdrInfo()
     {
-        if(getUseGlobals()) {
-            return NSISPreferences.INSTANCE.getHdrInfo();
+        if(getUseParent()) {
+            return mParentSettings.getHdrInfo();
         }
         else {
             return super.getHdrInfo();
@@ -87,8 +132,8 @@ public class NSISProperties extends NSISSettings implements INSISConstants
     
     public ArrayList getInstructions()
     {
-        if(getUseGlobals()) {
-            return NSISPreferences.INSTANCE.getInstructions();
+        if(getUseParent()) {
+            return mParentSettings.getInstructions();
         }
         else {
             return super.getInstructions();
@@ -97,8 +142,8 @@ public class NSISProperties extends NSISSettings implements INSISConstants
     
     public boolean getLicense()
     {
-        if(getUseGlobals()) {
-            return NSISPreferences.INSTANCE.getLicense();
+        if(getUseParent()) {
+            return mParentSettings.getLicense();
         }
         else {
             return super.getLicense();
@@ -107,8 +152,8 @@ public class NSISProperties extends NSISSettings implements INSISConstants
     
     public boolean getNoCD()
     {
-        if(getUseGlobals()) {
-            return NSISPreferences.INSTANCE.getNoCD();
+        if(getUseParent()) {
+            return mParentSettings.getNoCD();
         }
         else {
             return super.getNoCD();
@@ -117,8 +162,8 @@ public class NSISProperties extends NSISSettings implements INSISConstants
     
     public boolean getNoConfig()
     {
-        if(getUseGlobals()) {
-            return NSISPreferences.INSTANCE.getNoConfig();
+        if(getUseParent()) {
+            return mParentSettings.getNoConfig();
         }
         else {
             return super.getNoConfig();
@@ -127,8 +172,8 @@ public class NSISProperties extends NSISSettings implements INSISConstants
     
     public LinkedHashMap getSymbols()
     {
-        if(getUseGlobals()) {
-            return NSISPreferences.INSTANCE.getSymbols();
+        if(getUseParent()) {
+            return mParentSettings.getSymbols();
         }
         else {
             return super.getSymbols();
@@ -137,8 +182,8 @@ public class NSISProperties extends NSISSettings implements INSISConstants
     
     public int getVerbosity()
     {
-        if(getUseGlobals()) {
-            return NSISPreferences.INSTANCE.getVerbosity();
+        if(getUseParent()) {
+            return mParentSettings.getVerbosity();
         }
         else {
             return super.getVerbosity();
@@ -160,58 +205,24 @@ public class NSISProperties extends NSISSettings implements INSISConstants
         return qname;
     }
     
-    protected NSISProperties(IFile file)
+    public boolean getUseParent()
     {
-        mFile = file;
-    }
-
-    protected void load()
-    {
-        String temp = getPersistentProperty(getQualifiedName(USE_GLOBALS));
-        setUseGlobals((temp == null || Boolean.valueOf(temp).booleanValue()));
-        if(!getUseGlobals()) {
-            super.load();
-        }
-    }
-    
-    public void store()
-    {
-        setValue(USE_GLOBALS,getUseGlobals());
-        if(getUseGlobals()) {
-            setHdrInfo(getDefaultHdrInfo());
-            setLicense(getDefaultLicense());
-            setNoConfig(getDefaultNoConfig());
-            setNoCD(getDefaultNoCD());
-            setVerbosity(getDefaultVerbosity());
-            setCompressor(getDefaultCompressor());
-            setSolidCompression(getDefaultSolidCompression());
-            setSymbols(getDefaultSymbols());
-            setInstructions(getDefaultInstructions());
-        }
-        super.store();
-    }
-
-    /**
-     * @return Returns the useDefaults.
-     */
-    public boolean getUseGlobals()
-    {
-        return mUseGlobals;
+        return mUseParent;
     }
     
     /**
      * @param useGlobals The useGlobals to set.
      */
-    public void setUseGlobals(boolean useGlobals)
+    public void setUseParent(boolean useGlobals)
     {
-        mUseGlobals = useGlobals;
+        mUseParent = useGlobals;
     }
     
     private String getPersistentProperty(QualifiedName qname)
     {
         String value = null;
         try {
-            value = mFile.getPersistentProperty(qname);
+            value = mResource.getPersistentProperty(qname);
         }
         catch(CoreException ex){
             value = null;
@@ -222,7 +233,7 @@ public class NSISProperties extends NSISSettings implements INSISConstants
     private void setPersistentProperty(QualifiedName qname, String value)
     {
         try {
-            mFile.setPersistentProperty(qname, value);
+            mResource.setPersistentProperty(qname, value);
         }
         catch(CoreException ex){
         }
@@ -322,7 +333,7 @@ public class NSISProperties extends NSISSettings implements INSISConstants
         synchronizer.add(qname);
         InputStream is = null;
         try {
-            byte[] bytes = synchronizer.getSyncInfo(qname,mFile);
+            byte[] bytes = synchronizer.getSyncInfo(qname,mResource);
             if(!Common.isEmptyArray(bytes)) {
                 ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
                 is = new BufferedInputStream(bais);
@@ -356,7 +367,7 @@ public class NSISProperties extends NSISSettings implements INSISConstants
                     Common.writeObject(os,object);
                     os.close();
                     os = null;
-                    synchronizer.setSyncInfo(qname,mFile,baos.toByteArray());
+                    synchronizer.setSyncInfo(qname,mResource,baos.toByteArray());
                     return;
                 }
                 catch(IOException ioe) {
@@ -366,10 +377,15 @@ public class NSISProperties extends NSISSettings implements INSISConstants
                     Common.closeIO(os);
                 }
             }
-            synchronizer.setSyncInfo(qname,mFile,null);
+            synchronizer.setSyncInfo(qname,mResource,null);
         }
         catch (CoreException e) {
             e.printStackTrace();
         }
+    }
+    
+    public NSISSettings getParentSettings()
+    {
+        return mParentSettings;
     }
 }

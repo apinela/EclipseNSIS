@@ -69,7 +69,7 @@ public class NSISScriptWizard extends NSISWizard
                 }
             }
             catch(IOException ioe) {
-                Common.openError(getShell(), ioe.getLocalizedMessage());
+                Common.openError(getShell(), ioe.getLocalizedMessage(), EclipseNSISPlugin.getShellImage());
                 return false;
             }
         }
@@ -92,7 +92,7 @@ public class NSISScriptWizard extends NSISWizard
     	} 
         catch (InvocationTargetException e) {
     		Throwable realException = e.getTargetException();
-    		Common.openError(getShell(), realException.getLocalizedMessage()); //$NON-NLS-1$
+    		Common.openError(getShell(), realException.getLocalizedMessage(), EclipseNSISPlugin.getShellImage()); //$NON-NLS-1$
     		return false;
     	}
     	return true;
@@ -100,7 +100,8 @@ public class NSISScriptWizard extends NSISWizard
 
     public boolean performCancel()
     {
-        if(Common.openQuestion(getShell(),EclipseNSISPlugin.getResourceString("wizard.cancel.question"))) { //$NON-NLS-1$
+        if(Common.openQuestion(getShell(),EclipseNSISPlugin.getResourceString("wizard.cancel.question"), //$NON-NLS-1$
+                EclipseNSISPlugin.getShellImage())) {
             return super.performCancel();
         }
         else {

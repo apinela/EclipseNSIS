@@ -17,7 +17,8 @@ import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.wizard.*;
+import org.eclipse.jface.wizard.IWizard;
+import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.widgets.Composite;

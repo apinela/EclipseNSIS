@@ -9,6 +9,9 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.actions;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 
@@ -17,15 +20,27 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.draw2d.PositionConstants;
 import org.eclipse.gef.ui.actions.*;
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.*;
-import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.actions.RetargetAction;
+import org.eclipse.ui.actions.*;
 
 public class InstallOptionsDesignActionContributor extends ActionBarContributor
 {
     private MenuManager mInstallOptionsMenu;
     private SetDialogSizeMenuManager mSetDialogSizeMenu;
     private InstallOptionsXYStatusContribution mXYStatusContribution;
+    private ToggleLockRetargetAction mToggleLockAction;
+    private InstallOptionsWizardAction mWizardAction;
+    private InstallOptionsHelpAction mHelpAction;
+    private List mDropDownActions = new ArrayList();
+    private LanguageComboContributionItem mLanguageContributionItem;
+    
+    private void addDropDownAction(DropDownAction action)
+    {
+        addAction(action);
+        mDropDownActions.add(action);
+        getPage().addPartListener(action);
+    }
 
     protected void buildActions() 
     {
@@ -59,39 +74,87 @@ public class InstallOptionsDesignActionContributor extends ActionBarContributor
 
         addRetargetAction(new DeleteRetargetAction());
         
-        addRetargetAction(new ArrangeRetargetAction(IInstallOptionsConstants.SEND_BACKWARD));
-        addRetargetAction(new ArrangeRetargetAction(IInstallOptionsConstants.SEND_TO_BACK));
-        addRetargetAction(new ArrangeRetargetAction(IInstallOptionsConstants.BRING_FORWARD));
-        addRetargetAction(new ArrangeRetargetAction(IInstallOptionsConstants.BRING_TO_FRONT));
+        RetargetAction[] arrangeActions = {
+                new ArrangeRetargetAction(IInstallOptionsConstants.ARRANGE_SEND_BACKWARD),
+                new ArrangeRetargetAction(IInstallOptionsConstants.ARRANGE_SEND_TO_BACK),
+                new ArrangeRetargetAction(IInstallOptionsConstants.ARRANGE_BRING_FORWARD),
+                new ArrangeRetargetAction(IInstallOptionsConstants.ARRANGE_BRING_TO_FRONT)
+        };
+        for (int i = 0; i < arrangeActions.length; i++) {
+            addRetargetAction(arrangeActions[i]);
+        }
+        addDropDownAction(new DropDownAction(IInstallOptionsConstants.ARRANGE_GROUP,InstallOptionsPlugin.getDefault().getPreferenceStore(),arrangeActions));
         
-        addRetargetAction(new AlignmentRetargetAction(PositionConstants.LEFT));
-        addRetargetAction(new AlignmentRetargetAction(PositionConstants.CENTER));
-        addRetargetAction(new AlignmentRetargetAction(PositionConstants.RIGHT));
-        addRetargetAction(new AlignmentRetargetAction(PositionConstants.TOP));
-        addRetargetAction(new AlignmentRetargetAction(PositionConstants.MIDDLE));
-        addRetargetAction(new AlignmentRetargetAction(PositionConstants.BOTTOM));
+        RetargetAction[] alignmentActions = {
+                new AlignmentRetargetAction(PositionConstants.LEFT),
+                new AlignmentRetargetAction(PositionConstants.CENTER),
+                new AlignmentRetargetAction(PositionConstants.RIGHT),
+                new AlignmentRetargetAction(PositionConstants.TOP),
+                new AlignmentRetargetAction(PositionConstants.MIDDLE),
+                new AlignmentRetargetAction(PositionConstants.BOTTOM)
+        };
+        for (int i = 0; i < alignmentActions.length; i++) {
+            addRetargetAction(alignmentActions[i]);
+        }
+        addDropDownAction(new DropDownAction(IInstallOptionsConstants.ALIGN_GROUP,InstallOptionsPlugin.getDefault().getPreferenceStore(),alignmentActions));
+        
+        RetargetAction[] distributeActions = {
+                new DistributeRetargetAction(IInstallOptionsConstants.DISTRIBUTE_HORIZONTAL_BETWEEN),
+                new DistributeRetargetAction(IInstallOptionsConstants.DISTRIBUTE_HORIZONTAL_LEFT_EDGE),
+                new DistributeRetargetAction(IInstallOptionsConstants.DISTRIBUTE_HORIZONTAL_CENTER),
+                new DistributeRetargetAction(IInstallOptionsConstants.DISTRIBUTE_HORIZONTAL_RIGHT_EDGE),
+                new DistributeRetargetAction(IInstallOptionsConstants.DISTRIBUTE_VERTICAL_BETWEEN),
+                new DistributeRetargetAction(IInstallOptionsConstants.DISTRIBUTE_VERTICAL_TOP_EDGE),
+                new DistributeRetargetAction(IInstallOptionsConstants.DISTRIBUTE_VERTICAL_CENTER),
+                new DistributeRetargetAction(IInstallOptionsConstants.DISTRIBUTE_VERTICAL_BOTTOM_EDGE)
+        };
+        for (int i = 0; i < distributeActions.length; i++) {
+            addRetargetAction(distributeActions[i]);
+        }
+        addDropDownAction(new DropDownAction(IInstallOptionsConstants.DISTRIBUTE_GROUP,InstallOptionsPlugin.getDefault().getPreferenceStore(),distributeActions));
+        
+        retargetAction = new LabelRetargetAction(ToggleLockAction.ID,""); //$NON-NLS-1$
+        addRetargetAction(retargetAction);
+        mToggleLockAction = new ToggleLockRetargetAction();
+        getPage().addPartListener(mToggleLockAction);
         
         retargetAction = new RetargetAction(RefreshDiagramAction.ID, 
                 InstallOptionsPlugin.getResourceString("refresh.diagram.action.label")); //$NON-NLS-1$
         retargetAction.setToolTipText(InstallOptionsPlugin.getResourceString("refresh.diagram.action.tooltip")); //$NON-NLS-1$
         retargetAction.setImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("refresh.icon"))); //$NON-NLS-1$
+        retargetAction.setDisabledImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("refresh.disabled.icon"))); //$NON-NLS-1$
         addRetargetAction(retargetAction);
         
         retargetAction = new RetargetAction(CreateTemplateAction.ID, 
                 InstallOptionsPlugin.getResourceString("create.template.action.label")); //$NON-NLS-1$
         retargetAction.setToolTipText(InstallOptionsPlugin.getResourceString("create.template.action.tooltip")); //$NON-NLS-1$
-        retargetAction.setImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("create.template.action.icon"))); //$NON-NLS-1$
+        retargetAction.setImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("create.template.icon"))); //$NON-NLS-1$
+        retargetAction.setDisabledImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("create.template.disabled.icon"))); //$NON-NLS-1$
         addRetargetAction(retargetAction);
         
-        retargetAction = new RetargetAction(SwitchEditorAction.ID, InstallOptionsPlugin.getResourceString("switch.source.editor.action.name")); //$NON-NLS-1$
+        String label = InstallOptionsPlugin.getResourceString("switch.source.editor.action.name"); //$NON-NLS-1$
+        retargetAction = new RetargetAction(SwitchEditorAction.ID, label); //$NON-NLS-1$
+        retargetAction.setToolTipText(label);
         retargetAction.setImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("switch.editor.icon"))); //$NON-NLS-1$
         retargetAction.setActionDefinitionId(IInstallOptionsConstants.SWITCH_EDITOR_COMMAND_ID);
         addRetargetAction(retargetAction);
         
         addRetargetAction(new RetargetAction(IInstallOptionsConstants.GRID_SNAP_GLUE_SETTINGS_ACTION_ID,InstallOptionsPlugin.getResourceString("grid.snap.glue.action.name"))); //$NON-NLS-1$
 
-        addRetargetAction(new MatchWidthRetargetAction());
-        addRetargetAction(new MatchHeightRetargetAction());
+        retargetAction = new LabelRetargetAction(MatchSizeAction.ID,InstallOptionsPlugin.getResourceString("match.size.action.name")); //$NON-NLS-1$
+        retargetAction.setImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("match.size.icon"))); //$NON-NLS-1$
+        retargetAction.setDisabledImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("match.size.disabled.icon"))); //$NON-NLS-1$
+        retargetAction.setToolTipText(InstallOptionsPlugin.getResourceString("match.size.action.tooltip")); //$NON-NLS-1$
+
+        RetargetAction[] matchSizeActions = {
+                new MatchWidthRetargetAction(),
+                new MatchHeightRetargetAction(),
+                retargetAction
+        };
+        for (int i = 0; i < matchSizeActions.length; i++) {
+            addRetargetAction(matchSizeActions[i]);
+        }
+        addDropDownAction(new DropDownAction(IInstallOptionsConstants.MATCHSIZE_GROUP,InstallOptionsPlugin.getDefault().getPreferenceStore(),matchSizeActions));
         
         retargetAction = new RetargetAction(
                 ToggleDialogSizeVisibilityAction.ID, 
@@ -123,6 +186,24 @@ public class InstallOptionsDesignActionContributor extends ActionBarContributor
         retargetAction.setImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("show.guides.icon"))); //$NON-NLS-1$
         addRetargetAction(retargetAction);
 
+        PreviewRetargetAction[] previewActions = {
+                new PreviewRetargetAction(IInstallOptionsConstants.PREVIEW_CLASSIC),
+                new PreviewRetargetAction(IInstallOptionsConstants.PREVIEW_MUI)
+        };
+        for (int i = 0; i < previewActions.length; i++) {
+            addRetargetAction(previewActions[i]);
+        }
+        DropDownAction dropDownAction = new DropDownAction(IInstallOptionsConstants.PREVIEW_GROUP,InstallOptionsPlugin.getDefault().getPreferenceStore(),previewActions);
+        ImageDescriptor imageDescriptor = InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("preview.action.icon")); //$NON-NLS-1$
+        dropDownAction.setImageDescriptor(imageDescriptor);
+        dropDownAction.setHoverImageDescriptor(imageDescriptor);
+        dropDownAction.setDisabledImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("preview.action.disabled.icon"))); //$NON-NLS-1$
+        dropDownAction.setDetectCurrent(false);
+        addDropDownAction(dropDownAction);
+
+        mWizardAction = new InstallOptionsWizardAction();
+        mHelpAction = new InstallOptionsHelpAction();
+        
         mInstallOptionsMenu = new MenuManager(InstallOptionsPlugin.getResourceString("installoptions.menu.name")); //$NON-NLS-1$
         mInstallOptionsMenu.add(getAction(GEFActionConstants.TOGGLE_RULER_VISIBILITY));
         mInstallOptionsMenu.add(getAction(GEFActionConstants.TOGGLE_GRID_VISIBILITY));
@@ -130,30 +211,70 @@ public class InstallOptionsDesignActionContributor extends ActionBarContributor
         mInstallOptionsMenu.add(getAction(ToggleGuideVisibilityAction.ID));
         mInstallOptionsMenu.add(getAction(IInstallOptionsConstants.GRID_SNAP_GLUE_SETTINGS_ACTION_ID));
         mInstallOptionsMenu.add(new Separator());
-        mInstallOptionsMenu.add(getAction(GEFActionConstants.ALIGN_LEFT));
-        mInstallOptionsMenu.add(getAction(GEFActionConstants.ALIGN_CENTER));
-        mInstallOptionsMenu.add(getAction(GEFActionConstants.ALIGN_RIGHT));
+        
+        MenuManager submenu = new MenuManager(InstallOptionsPlugin.getResourceString("align.submenu.name")); //$NON-NLS-1$
+        submenu.add(getAction(GEFActionConstants.ALIGN_LEFT));
+        submenu.add(getAction(GEFActionConstants.ALIGN_CENTER));
+        submenu.add(getAction(GEFActionConstants.ALIGN_RIGHT));
+        submenu.add(new Separator());
+        submenu.add(getAction(GEFActionConstants.ALIGN_TOP));
+        submenu.add(getAction(GEFActionConstants.ALIGN_MIDDLE));
+        submenu.add(getAction(GEFActionConstants.ALIGN_BOTTOM));
+        mInstallOptionsMenu.add(submenu);
+
+        submenu = new MenuManager(InstallOptionsPlugin.getResourceString("match.size.submenu.name")); //$NON-NLS-1$
+        submenu.add(getAction(GEFActionConstants.MATCH_WIDTH));
+        submenu.add(getAction(GEFActionConstants.MATCH_HEIGHT));
+        submenu.add(getAction(MatchSizeAction.ID));
+        mInstallOptionsMenu.add(submenu);
+
+        submenu = new MenuManager(InstallOptionsPlugin.getResourceString("distribute.submenu.name")); //$NON-NLS-1$
+        submenu.add(getAction(DistributeAction.HORIZONTAL_BETWEEN_ID));
+        submenu.add(getAction(DistributeAction.HORIZONTAL_LEFT_EDGE_ID));
+        submenu.add(getAction(DistributeAction.HORIZONTAL_CENTER_ID));
+        submenu.add(getAction(DistributeAction.HORIZONTAL_RIGHT_EDGE_ID));
+        submenu.add(new Separator());
+        submenu.add(getAction(DistributeAction.VERTICAL_BETWEEN_ID));
+        submenu.add(getAction(DistributeAction.VERTICAL_TOP_EDGE_ID));
+        submenu.add(getAction(DistributeAction.VERTICAL_CENTER_ID));
+        submenu.add(getAction(DistributeAction.VERTICAL_BOTTOM_EDGE_ID));
+        mInstallOptionsMenu.add(submenu);
+
+        submenu = new MenuManager(InstallOptionsPlugin.getResourceString("arrange.submenu.name")); //$NON-NLS-1$
+        submenu.add(getAction(ArrangeAction.SEND_BACKWARD_ID));
+        submenu.add(getAction(ArrangeAction.SEND_TO_BACK_ID));
+        submenu.add(getAction(ArrangeAction.BRING_FORWARD_ID));
+        submenu.add(getAction(ArrangeAction.BRING_TO_FRONT_ID));
+        mInstallOptionsMenu.add(submenu);
+
+        mInstallOptionsMenu.add(getAction(ToggleLockAction.ID));
         mInstallOptionsMenu.add(new Separator());
-        mInstallOptionsMenu.add(getAction(GEFActionConstants.ALIGN_TOP));
-        mInstallOptionsMenu.add(getAction(GEFActionConstants.ALIGN_MIDDLE));
-        mInstallOptionsMenu.add(getAction(GEFActionConstants.ALIGN_BOTTOM));
-        mInstallOptionsMenu.add(new Separator());
-        mInstallOptionsMenu.add(getAction(GEFActionConstants.MATCH_WIDTH));
-        mInstallOptionsMenu.add(getAction(GEFActionConstants.MATCH_HEIGHT));
-        mInstallOptionsMenu.add(new Separator());
-        mInstallOptionsMenu.add(getAction(ArrangeAction.SEND_BACKWARD_ID));
-        mInstallOptionsMenu.add(getAction(ArrangeAction.SEND_TO_BACK_ID));
-        mInstallOptionsMenu.add(getAction(ArrangeAction.BRING_FORWARD_ID));
-        mInstallOptionsMenu.add(getAction(ArrangeAction.BRING_TO_FRONT_ID));
-        mInstallOptionsMenu.add(new Separator());
+
         mSetDialogSizeMenu = new SetDialogSizeMenuManager(mInstallOptionsMenu);
         mInstallOptionsMenu.add(mSetDialogSizeMenu);
         mInstallOptionsMenu.add(new Separator());
+        mInstallOptionsMenu.add(mWizardAction);
+        mInstallOptionsMenu.add(new PreviewSubMenuManager(previewActions));
         mInstallOptionsMenu.add(getAction(RefreshDiagramAction.ID));
-        mInstallOptionsMenu.add(new Separator());
         mInstallOptionsMenu.add(getAction(SwitchEditorAction.ID));
+        mInstallOptionsMenu.add(new Separator());
+        mInstallOptionsMenu.add(mHelpAction);
         
         mXYStatusContribution = new InstallOptionsXYStatusContribution();
+        mLanguageContributionItem = new LanguageComboContributionItem(getPage());
+    }
+
+    public void dispose()
+    {
+        for (int i = 0; i < mDropDownActions.size(); i++) {
+            DropDownAction action = (DropDownAction)mDropDownActions.get(i);
+            getPage().removePartListener(action);
+            action.dispose();
+        }
+        mToggleLockAction.dispose();
+        mLanguageContributionItem.dispose();
+        mXYStatusContribution.dispose();
+        super.dispose();
     }
 
     public void setActiveEditor(IEditorPart editor)
@@ -196,29 +317,26 @@ public class InstallOptionsDesignActionContributor extends ActionBarContributor
         tbm.add(getAction(ActionFactory.DELETE.getId()));
         
         tbm.add(new Separator());
-        tbm.add(getAction(GEFActionConstants.ALIGN_LEFT));
-        tbm.add(getAction(GEFActionConstants.ALIGN_CENTER));
-        tbm.add(getAction(GEFActionConstants.ALIGN_RIGHT));
-        tbm.add(new Separator());
-        tbm.add(getAction(GEFActionConstants.ALIGN_TOP));
-        tbm.add(getAction(GEFActionConstants.ALIGN_MIDDLE));
-        tbm.add(getAction(GEFActionConstants.ALIGN_BOTTOM));
-        
-        tbm.add(new Separator());   
-        tbm.add(getAction(GEFActionConstants.MATCH_WIDTH));
-        tbm.add(getAction(GEFActionConstants.MATCH_HEIGHT));
-        
-        tbm.add(new Separator());
-        tbm.add(getAction(ArrangeAction.SEND_BACKWARD_ID));
-        tbm.add(getAction(ArrangeAction.SEND_TO_BACK_ID));
-        tbm.add(getAction(ArrangeAction.BRING_FORWARD_ID));
-        tbm.add(getAction(ArrangeAction.BRING_TO_FRONT_ID));
+        tbm.add(getAction(IInstallOptionsConstants.ALIGN_GROUP));
+        tbm.add(getAction(IInstallOptionsConstants.MATCHSIZE_GROUP));
+        tbm.add(getAction(IInstallOptionsConstants.DISTRIBUTE_GROUP));
+        tbm.add(getAction(IInstallOptionsConstants.ARRANGE_GROUP));
+        tbm.add(mToggleLockAction);
 
         tbm.add(new Separator());
         tbm.add(getAction(CreateTemplateAction.ID));
 
         tbm.add(new Separator());
         tbm.add(getAction(RefreshDiagramAction.ID));
+        tbm.add(new Separator());
+        tbm.add(mWizardAction);
+        tbm.add(new Separator());
+        tbm.add(getAction(IInstallOptionsConstants.PREVIEW_GROUP));
+        tbm.add(mLanguageContributionItem);
+        tbm.add(new Separator());
+        tbm.add(getAction(SwitchEditorAction.ID));
+        tbm.add(new Separator());
+        tbm.add(mHelpAction);
     }
 
     public void contributeToMenu(IMenuManager menubar) 

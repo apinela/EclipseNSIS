@@ -58,6 +58,7 @@ public class InstallOptionsDesignMenuProvider extends org.eclipse.gef.ContextMen
         addContextMenu(manager, ActionFactory.PASTE.getId(), GEFActionConstants.GROUP_EDIT);
         addContextMenu(manager, ActionFactory.DELETE.getId(), GEFActionConstants.GROUP_EDIT);
         addContextMenu(manager, ToggleEnablementAction.ID, GEFActionConstants.GROUP_EDIT);
+        addContextMenu(manager, ToggleLockAction.ID, GEFActionConstants.GROUP_EDIT);
         
         List selected = getViewer().getSelectedEditParts();
         if(selected.size() == 1) {
@@ -101,7 +102,9 @@ public class InstallOptionsDesignMenuProvider extends org.eclipse.gef.ContextMen
         addContextMenu(submenu, GEFActionConstants.ALIGN_LEFT, null);
         addContextMenu(submenu, GEFActionConstants.ALIGN_CENTER, null);
         addContextMenu(submenu, GEFActionConstants.ALIGN_RIGHT, null);
-        submenu.add(new Separator());
+        if (!submenu.isEmpty()) {
+            submenu.add(new Separator());
+        }
 
         addContextMenu(submenu, GEFActionConstants.ALIGN_TOP, null);
         addContextMenu(submenu, GEFActionConstants.ALIGN_MIDDLE, null);
@@ -111,9 +114,29 @@ public class InstallOptionsDesignMenuProvider extends org.eclipse.gef.ContextMen
             manager.appendToGroup(GEFActionConstants.GROUP_EDIT, submenu);
         }
 
-        submenu = new MenuManager(InstallOptionsPlugin.getResourceString("match.submenu.name")); //$NON-NLS-1$
+        submenu = new MenuManager(InstallOptionsPlugin.getResourceString("match.size.submenu.name")); //$NON-NLS-1$
         addContextMenu(submenu, GEFActionConstants.MATCH_WIDTH, null);
         addContextMenu(submenu, GEFActionConstants.MATCH_HEIGHT, null);
+        addContextMenu(submenu, MatchSizeAction.ID, null);
+
+        if (!submenu.isEmpty()) {
+            manager.appendToGroup(GEFActionConstants.GROUP_EDIT, submenu);
+        }
+
+        submenu = new MenuManager(InstallOptionsPlugin.getResourceString("distribute.submenu.name")); //$NON-NLS-1$
+
+        addContextMenu(submenu, DistributeAction.HORIZONTAL_BETWEEN_ID, null);
+        addContextMenu(submenu, DistributeAction.HORIZONTAL_LEFT_EDGE_ID, null);
+        addContextMenu(submenu, DistributeAction.HORIZONTAL_CENTER_ID, null);
+        addContextMenu(submenu, DistributeAction.HORIZONTAL_RIGHT_EDGE_ID, null);
+        if (!submenu.isEmpty()) {
+            submenu.add(new Separator());
+        }
+
+        addContextMenu(submenu, DistributeAction.VERTICAL_BETWEEN_ID, null);
+        addContextMenu(submenu, DistributeAction.VERTICAL_TOP_EDGE_ID, null);
+        addContextMenu(submenu, DistributeAction.VERTICAL_CENTER_ID, null);
+        addContextMenu(submenu, DistributeAction.VERTICAL_BOTTOM_EDGE_ID, null);
 
         if (!submenu.isEmpty()) {
             manager.appendToGroup(GEFActionConstants.GROUP_EDIT, submenu);
@@ -142,6 +165,14 @@ public class InstallOptionsDesignMenuProvider extends org.eclipse.gef.ContextMen
         }
         addContextMenu(manager, CreateTemplateAction.ID, GEFActionConstants.GROUP_EDIT);
         addContextMenu(manager, RefreshDiagramAction.ID, GEFActionConstants.GROUP_EDIT);
+        
+        submenu = new MenuManager(InstallOptionsPlugin.getResourceString("preview.submenu.name")); //$NON-NLS-1$
+        addContextMenu(submenu, PreviewAction.PREVIEW_CLASSIC_ID, null);
+        addContextMenu(submenu, PreviewAction.PREVIEW_MUI_ID, null);
+
+        if (!submenu.isEmpty()) {
+            manager.appendToGroup(GEFActionConstants.GROUP_EDIT, submenu);
+        }
         
         addContextMenu(manager, "net.sf.eclipsensis.installoptions.design_editor_prefs", GEFActionConstants.GROUP_REST); //$NON-NLS-1$
         addContextMenu(manager, ActionFactory.SAVE.getId(), GEFActionConstants.GROUP_SAVE);

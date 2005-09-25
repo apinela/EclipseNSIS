@@ -23,7 +23,6 @@ import net.sf.eclipsensis.installoptions.properties.validators.NSISStringLengthV
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.viewer.CollectionContentProvider;
 
-import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
@@ -215,7 +214,7 @@ public class InstallOptionsListbox extends InstallOptionsCombobox
         {
             super.configureShell(newShell);
             newShell.setText(InstallOptionsPlugin.getFormattedString("select.listitems.dialog.name", new String[]{mType})); //$NON-NLS-1$
-            newShell.setImage(InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("installoptions.icon"))); //$NON-NLS-1$
+            newShell.setImage(InstallOptionsPlugin.getShellImage());
         }
 
         public List getSelection()
@@ -301,7 +300,8 @@ public class InstallOptionsListbox extends InstallOptionsCombobox
             if(validator != null) {
                 String error = validator.isValid(getSelection());
                 if(!Common.isEmpty(error)) {
-                    MessageDialog.openError(getShell(),EclipseNSISPlugin.getResourceString("error.title"),error); //$NON-NLS-1$
+                    Common.openError(getShell(),EclipseNSISPlugin.getResourceString("error.title"),error, //$NON-NLS-1$
+                                     InstallOptionsPlugin.getShellImage());
                     return;
                 }
             }

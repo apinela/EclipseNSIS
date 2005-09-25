@@ -13,7 +13,9 @@ import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsWidget;
 import net.sf.eclipsensis.installoptions.model.Position;
 
+import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ICellEditorValidator;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.views.properties.*;
 
 public class PositionPropertySource implements IPropertySource
@@ -40,16 +42,16 @@ public class PositionPropertySource implements IPropertySource
 
     private void createDescriptors()
     {
-        PropertyDescriptor leftProp = new TextPropertyDescriptor(ID_LEFT,
+        PropertyDescriptor leftProp = new CustomTextPropertyDescriptor(ID_LEFT,
                 InstallOptionsPlugin.getResourceString("left.property.name")); //$NON-NLS-1$ //$NON-NLS-2$
         leftProp.setValidator(cValidator);
-        PropertyDescriptor topProp = new TextPropertyDescriptor(ID_TOP,
+        PropertyDescriptor topProp = new CustomTextPropertyDescriptor(ID_TOP,
                 InstallOptionsPlugin.getResourceString("top.property.name")); //$NON-NLS-1$ //$NON-NLS-2$
         topProp.setValidator(cValidator);
-        PropertyDescriptor rightProp = new TextPropertyDescriptor(ID_RIGHT,
+        PropertyDescriptor rightProp = new CustomTextPropertyDescriptor(ID_RIGHT,
                 InstallOptionsPlugin.getResourceString("right.property.name")); //$NON-NLS-1$ //$NON-NLS-2$
         rightProp.setValidator(cValidator);
-        PropertyDescriptor bottomProp = new TextPropertyDescriptor(ID_BOTTOM,
+        PropertyDescriptor bottomProp = new CustomTextPropertyDescriptor(ID_BOTTOM,
                 InstallOptionsPlugin.getResourceString("bottom.property.name")); //$NON-NLS-1$ //$NON-NLS-2$
         bottomProp.setValidator(cValidator);
         mDescriptors = new IPropertyDescriptor[]{leftProp, topProp, rightProp, bottomProp};
@@ -144,5 +146,24 @@ public class PositionPropertySource implements IPropertySource
         return new StringBuffer("(").append(mPosition.left).append(",").append( //$NON-NLS-1$ //$NON-NLS-2$
             mPosition.top).append(",").append(mPosition.right).append(",").append( //$NON-NLS-1$ //$NON-NLS-2$
             mPosition.bottom).append(")").toString(); //$NON-NLS-1$
+    }
+    
+    private class CustomTextPropertyDescriptor extends TextPropertyDescriptor
+    {
+        public CustomTextPropertyDescriptor(Object id, String displayName)
+        {
+            super(id, displayName);
+        }
+
+        public CellEditor createPropertyEditor(Composite parent)
+        {
+            if(mWidget.isLocked()) {
+                return null;
+            }
+            else {
+                return super.createPropertyEditor(parent);
+            }
+        }
+        
     }
 }

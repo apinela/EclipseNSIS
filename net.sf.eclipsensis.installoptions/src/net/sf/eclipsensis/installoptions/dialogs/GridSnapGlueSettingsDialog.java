@@ -48,7 +48,7 @@ public class GridSnapGlueSettingsDialog extends Dialog implements IInstallOption
     {
         super.configureShell(newShell);
         newShell.setText(InstallOptionsPlugin.getResourceString("grid.snap.glue.settings.dialog.name")); //$NON-NLS-1$
-        newShell.setImage(InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("installoptions.icon"))); //$NON-NLS-1$
+        newShell.setImage(InstallOptionsPlugin.getShellImage());
     }
     
     private Object makeCopy(Object o)

@@ -13,6 +13,7 @@ import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.ini.INIKeyValue;
 import net.sf.eclipsensis.installoptions.ini.INIProblem;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsModelTypeDef;
 
 public class TypeKeyValueValidator implements IINIKeyValueValidator
 {
@@ -22,11 +23,14 @@ public class TypeKeyValueValidator implements IINIKeyValueValidator
     public boolean isValid(INIKeyValue keyValue)
     {
         String value = keyValue.getValue();
-        if(value.length() > 0 &&  InstallOptionsModel.INSTANCE.getControlTypeDef(value) != null) {
-            return true;
+        if(value.length() > 0) {
+            InstallOptionsModelTypeDef typeDef = InstallOptionsModel.INSTANCE.getControlTypeDef(value);
+            if(typeDef != null && !typeDef.getName().equals(InstallOptionsModel.TYPE_UNKNOWN)) {
+                return true;
+            }
         }
-        keyValue.addProblem(INIProblem.TYPE_ERROR,
-                            InstallOptionsPlugin.getFormattedString("type.value.error", //$NON-NLS-1$
+        keyValue.addProblem(INIProblem.TYPE_WARNING,
+                            InstallOptionsPlugin.getFormattedString("type.value.warning", //$NON-NLS-1$
                                     new Object[]{new Integer(value.length()),
                                     InstallOptionsModel.PROPERTY_TYPE,value}));
         return false;

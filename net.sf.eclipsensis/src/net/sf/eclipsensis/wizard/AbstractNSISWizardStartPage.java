@@ -16,7 +16,7 @@ import org.eclipse.swt.widgets.Shell;
 
 public abstract class AbstractNSISWizardStartPage extends AbstractNSISWizardPage
 {
-    private static final Image cShellImage = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("nsis.icon")); //$NON-NLS-1$
+    private static final Image cShellImage = EclipseNSISPlugin.getShellImage();
     
     private Image mOldShellImage = null;
     private Image[] mOldShellImages = null;

@@ -23,8 +23,8 @@ public class InstallOptionsSourceViewerConfiguration extends SourceViewerConfigu
 {
     public IAnnotationHover getAnnotationHover(ISourceViewer sourceViewer)
     {
-        return new NSISAnnotationHover(new String[]{IInstallOptionsConstants.INSTALLOPTIONS_ANNOTATION_ERROR_NAME,
-                                                    IInstallOptionsConstants.INSTALLOPTIONS_ANNOTATION_WARNING_NAME});
+        return new NSISAnnotationHover(new String[]{IInstallOptionsConstants.INSTALLOPTIONS_ERROR_ANNOTATION_NAME,
+                                                    IInstallOptionsConstants.INSTALLOPTIONS_WARNING_ANNOTATION_NAME});
     }
     
     /*

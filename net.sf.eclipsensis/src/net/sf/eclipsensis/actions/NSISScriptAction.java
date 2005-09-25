@@ -13,6 +13,7 @@ import net.sf.eclipsensis.makensis.IMakeNSISRunListener;
 import net.sf.eclipsensis.makensis.MakeNSISRunner;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -20,7 +21,7 @@ import org.eclipse.ui.*;
 
 public abstract class NSISScriptAction extends NSISAction implements IMakeNSISRunListener
 {
-    protected IFile mFile = null;
+    protected IPath mInput = null;
     
 	/**
 	 * The constructor.
@@ -54,10 +55,16 @@ public abstract class NSISScriptAction extends NSISAction implements IMakeNSISRu
     public void setActiveEditor(IAction action, IEditorPart targetEditor)
     {
         super.setActiveEditor(action, targetEditor);
+        mInput = null;
         if(mEditor != null) {
             IEditorInput editorInput = mEditor.getEditorInput();
-            if(editorInput !=null && editorInput instanceof IFileEditorInput) {
-                mFile = ((IFileEditorInput)editorInput).getFile();
+            if(editorInput !=null) {
+                if(editorInput instanceof IFileEditorInput) {
+                    mInput = ((IFileEditorInput)editorInput).getFile().getFullPath();
+                }
+                else if(editorInput instanceof IPathEditorInput) {
+                    mInput = ((IPathEditorInput)editorInput).getPath();
+                }
             }
         }
         updateActionState();
@@ -67,8 +74,7 @@ public abstract class NSISScriptAction extends NSISAction implements IMakeNSISRu
     {
         if(mAction != null) {
             try {
-                boolean enabled = isEnabled();
-                mAction.setEnabled(enabled);
+                mAction.setEnabled(isEnabled());
             }
             catch(Exception ex) {
                 ex.printStackTrace();
@@ -85,10 +91,10 @@ public abstract class NSISScriptAction extends NSISAction implements IMakeNSISRu
             //This is for the popup context menu handling
             IStructuredSelection structuredSelection = (IStructuredSelection)selection;
             if(!selection.isEmpty()) {
-                mFile = (IFile)(structuredSelection).getFirstElement();
+                mInput = ((IFile)structuredSelection.getFirstElement()).getFullPath();
             }
             else {
-                mFile = null;
+                mInput = null;
             }
         }
         updateActionState();
@@ -99,16 +105,10 @@ public abstract class NSISScriptAction extends NSISAction implements IMakeNSISRu
         return (mPlugin != null && mPlugin.isConfigured());
     }
 
-    /* (non-Javadoc)
-     * @see net.sf.eclipsensis.makensis.IMakeNSISRunListener#started()
-     */
     public void started()
     {
     }
 
-    /* (non-Javadoc)
-     * @see net.sf.eclipsensis.makensis.IMakeNSISRunListener#stopped()
-     */
     public void stopped()
     {
     }

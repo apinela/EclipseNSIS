@@ -41,8 +41,6 @@ public class TextFigure extends EditableElementFigure
         setOnlyNumbers(flags != null && flags.contains(InstallOptionsModel.FLAGS_ONLY_NUMBERS));
         setMultiLine(flags != null && flags.contains(InstallOptionsModel.FLAGS_MULTILINE));
         setNoWordWrap(flags != null && flags.contains(InstallOptionsModel.FLAGS_NOWORDWRAP));
-        setHScroll(flags != null && flags.contains(InstallOptionsModel.FLAGS_HSCROLL));
-        setVScroll(flags != null && flags.contains(InstallOptionsModel.FLAGS_VSCROLL));
         setReadOnly(flags != null && flags.contains(InstallOptionsModel.FLAGS_READONLY));
         super.init(propertySource);
    }
@@ -92,7 +90,18 @@ public class TextFigure extends EditableElementFigure
      */
     protected Control createSWTControl(Composite parent, int style)
     {
+        if(!isMultiLine()) {
+            if(isHScroll()) {
+                style &= ~SWT.H_SCROLL;
+            }
+            if(isVScroll()) {
+                style &= ~SWT.V_SCROLL;
+            }
+        }
         Text text = new Text(parent, style);
+        if(!isMultiLine()) {
+            createScrollBars(text);
+        }
         text.setText(getState());
         return text;
     }

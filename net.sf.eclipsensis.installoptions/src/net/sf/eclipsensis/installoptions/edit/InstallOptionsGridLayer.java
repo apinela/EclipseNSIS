@@ -72,8 +72,9 @@ public class InstallOptionsGridLayer extends GridLayer implements IInstallOption
             origin.y = y;
         }
         
+        g.pushState();
         if(GRID_STYLE_DOTS.equals(mStyle)) {
-            setForegroundColor(ColorConstants.black);
+            g.setForegroundColor(ColorConstants.black);
             if (gridX > 0 && gridY > 0) {
                 int n = (int)Math.round(origin.x/(gridX*mDpuX));
                 int x = origin.x;
@@ -91,7 +92,7 @@ public class InstallOptionsGridLayer extends GridLayer implements IInstallOption
         
         }
         else {
-            setForegroundColor(ColorConstants.lightGray);
+            g.setForegroundColor(ColorConstants.lightGray);
             if(gridX > 0) {
                 int n = (int)Math.round(origin.x/(gridX*mDpuX));
                 int x = origin.x;
@@ -109,6 +110,8 @@ public class InstallOptionsGridLayer extends GridLayer implements IInstallOption
                 }
             }
         }
+        g.popState();
+        g.restoreState();
     }
     
     public String getStyle()

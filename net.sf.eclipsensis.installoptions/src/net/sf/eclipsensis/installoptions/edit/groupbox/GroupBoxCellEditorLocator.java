@@ -9,44 +9,25 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.edit.groupbox;
 
+import net.sf.eclipsensis.installoptions.edit.InstallOptionsCellEditorLocator;
 import net.sf.eclipsensis.installoptions.figures.GroupBoxFigure;
 
 import org.eclipse.draw2d.geometry.Rectangle;
-import org.eclipse.gef.tools.CellEditorLocator;
-import org.eclipse.jface.viewers.CellEditor;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.widgets.Text;
 
-public class GroupBoxCellEditorLocator implements CellEditorLocator
+public class GroupBoxCellEditorLocator extends InstallOptionsCellEditorLocator
 {
     private static int TEXT_OFFSET = 10;
     private static int X_OFFSET = -4 + TEXT_OFFSET;
     private static int W_OFFSET = 5 - TEXT_OFFSET;
 
-    private GroupBoxFigure mGroupBox;
-
     public GroupBoxCellEditorLocator(GroupBoxFigure groupBox) 
     {
-        setGroupBox(groupBox);
+        super(groupBox);
     }
 
-    public void relocate(CellEditor celleditor) 
+    protected Rectangle transformLocation(Rectangle editArea, Point preferredSize)
     {
-        Text text = (Text)celleditor.getControl();
-
-        Rectangle rect = mGroupBox.getClientArea().getCopy();
-        mGroupBox.translateToAbsolute(rect);
-        Point p = text.computeSize(SWT.DEFAULT,SWT.DEFAULT);
-        text.setBounds(rect.x + X_OFFSET, rect.y, rect.width + W_OFFSET, p.y);    
-    }
-
-    protected GroupBoxFigure getGroupBox() {
-        return mGroupBox;
-    }
-
-    protected void setGroupBox(GroupBoxFigure groupBox) 
-    {
-        mGroupBox = groupBox;
+        return new Rectangle(editArea.x + X_OFFSET, editArea.y, editArea.width + W_OFFSET, preferredSize.y);
     }
 }

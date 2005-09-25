@@ -9,6 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.edit;
 
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,13 +22,14 @@ import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.*;
 import org.eclipse.gef.commands.Command;
+import org.eclipse.gef.commands.UnexecutableCommand;
 import org.eclipse.gef.editpolicies.ResizableEditPolicy;
 import org.eclipse.swt.graphics.Color;
 
 /**
  *  
  */
-public class InstallOptionsResizableEditPolicy extends ResizableEditPolicy
+public class InstallOptionsResizableEditPolicy extends ResizableEditPolicy implements PropertyChangeListener
 {
     private EditPart mEditPart;
     
@@ -36,6 +38,10 @@ public class InstallOptionsResizableEditPolicy extends ResizableEditPolicy
     {
         if(((InstallOptionsEditDomain)mEditPart.getViewer().getEditDomain()).isReadOnly()) {
             return null;
+        }
+        else if((REQ_RESIZE.equals(request.getType()) || REQ_MOVE.equals(request.getType())) && 
+                ((InstallOptionsWidget)mEditPart.getModel()).isLocked()) {
+            return UnexecutableCommand.INSTANCE;
         }
         else {
             return super.getCommand(request);
@@ -50,96 +56,132 @@ public class InstallOptionsResizableEditPolicy extends ResizableEditPolicy
 
     public void showSourceFeedback(Request request)
     {
-        if(!((InstallOptionsEditDomain)mEditPart.getViewer().getEditDomain()).isReadOnly()) {
+        if(!((InstallOptionsEditDomain)mEditPart.getViewer().getEditDomain()).isReadOnly() &&
+           !((InstallOptionsWidget)mEditPart.getModel()).isLocked()) {
             super.showSourceFeedback(request);
         }
     }
     
+    
+    public void deactivate()
+    {
+        Object model = getHost().getModel();
+        if(model instanceof InstallOptionsWidget) {
+            ((InstallOptionsWidget)model).removePropertyChangeListener(this);
+        }
+        super.deactivate();
+    }
+
+    public void activate()
+    {
+        super.activate();
+        Object model = getHost().getModel();
+        if(model instanceof InstallOptionsWidget) {
+            ((InstallOptionsWidget)model).addPropertyChangeListener(this);
+        }
+    }
+
+
+    public void propertyChange(java.beans.PropertyChangeEvent evt)
+    {
+        if(InstallOptionsWidget.PROPERTY_LOCKED.equals(evt.getPropertyName()) && 
+           getHost().getSelected() != EditPart.SELECTED_NONE) {
+            hideSelection();
+            showSelection();
+        }
+    }
+
     protected List createSelectionHandles()
     {
         List list = new ArrayList();
 
-        int directions = getResizeDirections();
-        if(directions == 0) {
-            InstallOptionsHandleKit.addNonResizableHandles((GraphicalEditPart)getHost(), list);
+        Object model = getHost().getModel();
+        if(model instanceof InstallOptionsWidget && ((InstallOptionsWidget)model).isLocked()) {
+            InstallOptionsHandleKit.addLockHandles((GraphicalEditPart)getHost(), list);
         }
         else {
-            if (directions != -1) {
-                InstallOptionsHandleKit.addMoveHandle((GraphicalEditPart)getHost(), list);
-                if ((directions & PositionConstants.EAST) != 0) {
-                    InstallOptionsHandleKit.addResizableHandle((GraphicalEditPart)getHost(), list, 
-                            PositionConstants.EAST);
-                }
-                else {
-                    InstallOptionsHandleKit.addNonResizableHandle((GraphicalEditPart)getHost(), list, 
-                            PositionConstants.EAST);
-                }
-                
-                if ((directions & PositionConstants.SOUTH_EAST) == PositionConstants.SOUTH_EAST) {
-                    InstallOptionsHandleKit.addResizableHandle((GraphicalEditPart)getHost(), list, 
-                            PositionConstants.SOUTH_EAST);
-                }
-                else {
-                    InstallOptionsHandleKit.addNonResizableHandle((GraphicalEditPart)getHost(), list,
-                            PositionConstants.SOUTH_EAST);
-                }
-                
-                if ((directions & PositionConstants.SOUTH) != 0) {
-                    InstallOptionsHandleKit.addResizableHandle((GraphicalEditPart)getHost(), list, 
-                            PositionConstants.SOUTH);
-                }
-                else {
-                    InstallOptionsHandleKit.addNonResizableHandle((GraphicalEditPart)getHost(), list, 
-                            PositionConstants.SOUTH);
-                }
-                
-                if ((directions & PositionConstants.SOUTH_WEST) == PositionConstants.SOUTH_WEST) {
-                    InstallOptionsHandleKit.addResizableHandle((GraphicalEditPart)getHost(), list, 
-                            PositionConstants.SOUTH_WEST);
-                }
-                else {
-                    InstallOptionsHandleKit.addNonResizableHandle((GraphicalEditPart)getHost(), list, 
-                                PositionConstants.SOUTH_WEST);
-                }
-                
-                if ((directions & PositionConstants.WEST) != 0) {
-                    InstallOptionsHandleKit.addResizableHandle((GraphicalEditPart)getHost(), list, 
-                            PositionConstants.WEST);
-                }
-                else {
-                    InstallOptionsHandleKit.addNonResizableHandle((GraphicalEditPart)getHost(), list, 
-                                PositionConstants.WEST);
-                }
-                
-                if ((directions & PositionConstants.NORTH_WEST) == PositionConstants.NORTH_WEST) {
-                    InstallOptionsHandleKit.addResizableHandle((GraphicalEditPart)getHost(), list, 
-                            PositionConstants.NORTH_WEST);
-                }
-                else {
-                    InstallOptionsHandleKit.addNonResizableHandle((GraphicalEditPart)getHost(), list, 
-                            PositionConstants.NORTH_WEST);
-                }
-                
-                if ((directions & PositionConstants.NORTH) != 0) {
-                    InstallOptionsHandleKit.addResizableHandle((GraphicalEditPart)getHost(), list, 
-                            PositionConstants.NORTH);
-                }
-                else {
-                    InstallOptionsHandleKit.addNonResizableHandle((GraphicalEditPart)getHost(), list, 
-                            PositionConstants.NORTH);
-                }
-                
-                if ((directions & PositionConstants.NORTH_EAST) == PositionConstants.NORTH_EAST) {
-                    InstallOptionsHandleKit.addResizableHandle((GraphicalEditPart)getHost(), list, 
-                            PositionConstants.NORTH_EAST);
-                }
-                else {
-                    InstallOptionsHandleKit.addNonResizableHandle((GraphicalEditPart)getHost(), list, 
-                                PositionConstants.NORTH_EAST);  
-                }
-            } 
+            int directions = getResizeDirections();
+            if(directions == 0) {
+                InstallOptionsHandleKit.addNonResizableHandles((GraphicalEditPart)getHost(), list);
+            }
             else {
-                InstallOptionsHandleKit.addResizableHandles((GraphicalEditPart)getHost(), list);
+                if (directions != -1) {
+                    InstallOptionsHandleKit.addMoveHandle((GraphicalEditPart)getHost(), list);
+                    if ((directions & PositionConstants.EAST) != 0) {
+                        InstallOptionsHandleKit.addResizableHandle((GraphicalEditPart)getHost(), list, 
+                                PositionConstants.EAST);
+                    }
+                    else {
+                        InstallOptionsHandleKit.addNonResizableHandle((GraphicalEditPart)getHost(), list, 
+                                PositionConstants.EAST);
+                    }
+                    
+                    if ((directions & PositionConstants.SOUTH_EAST) == PositionConstants.SOUTH_EAST) {
+                        InstallOptionsHandleKit.addResizableHandle((GraphicalEditPart)getHost(), list, 
+                                PositionConstants.SOUTH_EAST);
+                    }
+                    else {
+                        InstallOptionsHandleKit.addNonResizableHandle((GraphicalEditPart)getHost(), list,
+                                PositionConstants.SOUTH_EAST);
+                    }
+                    
+                    if ((directions & PositionConstants.SOUTH) != 0) {
+                        InstallOptionsHandleKit.addResizableHandle((GraphicalEditPart)getHost(), list, 
+                                PositionConstants.SOUTH);
+                    }
+                    else {
+                        InstallOptionsHandleKit.addNonResizableHandle((GraphicalEditPart)getHost(), list, 
+                                PositionConstants.SOUTH);
+                    }
+                    
+                    if ((directions & PositionConstants.SOUTH_WEST) == PositionConstants.SOUTH_WEST) {
+                        InstallOptionsHandleKit.addResizableHandle((GraphicalEditPart)getHost(), list, 
+                                PositionConstants.SOUTH_WEST);
+                    }
+                    else {
+                        InstallOptionsHandleKit.addNonResizableHandle((GraphicalEditPart)getHost(), list, 
+                                    PositionConstants.SOUTH_WEST);
+                    }
+                    
+                    if ((directions & PositionConstants.WEST) != 0) {
+                        InstallOptionsHandleKit.addResizableHandle((GraphicalEditPart)getHost(), list, 
+                                PositionConstants.WEST);
+                    }
+                    else {
+                        InstallOptionsHandleKit.addNonResizableHandle((GraphicalEditPart)getHost(), list, 
+                                    PositionConstants.WEST);
+                    }
+                    
+                    if ((directions & PositionConstants.NORTH_WEST) == PositionConstants.NORTH_WEST) {
+                        InstallOptionsHandleKit.addResizableHandle((GraphicalEditPart)getHost(), list, 
+                                PositionConstants.NORTH_WEST);
+                    }
+                    else {
+                        InstallOptionsHandleKit.addNonResizableHandle((GraphicalEditPart)getHost(), list, 
+                                PositionConstants.NORTH_WEST);
+                    }
+                    
+                    if ((directions & PositionConstants.NORTH) != 0) {
+                        InstallOptionsHandleKit.addResizableHandle((GraphicalEditPart)getHost(), list, 
+                                PositionConstants.NORTH);
+                    }
+                    else {
+                        InstallOptionsHandleKit.addNonResizableHandle((GraphicalEditPart)getHost(), list, 
+                                PositionConstants.NORTH);
+                    }
+                    
+                    if ((directions & PositionConstants.NORTH_EAST) == PositionConstants.NORTH_EAST) {
+                        InstallOptionsHandleKit.addResizableHandle((GraphicalEditPart)getHost(), list, 
+                                PositionConstants.NORTH_EAST);
+                    }
+                    else {
+                        InstallOptionsHandleKit.addNonResizableHandle((GraphicalEditPart)getHost(), list, 
+                                    PositionConstants.NORTH_EAST);  
+                    }
+                } 
+                else {
+                    InstallOptionsHandleKit.addResizableHandles((GraphicalEditPart)getHost(), list);
+                }
             }
         }
         return list;
@@ -231,9 +273,12 @@ public class InstallOptionsResizableEditPolicy extends ResizableEditPolicy
                 int delY = bounds.height-dim.height;
                 if(delX > 0 && delY > 0) {
                     Color fgColor = getForegroundColor();
+                    graphics.pushState();
                     graphics.setForegroundColor(ColorConstants.listForeground);
                     graphics.drawText(mText,bounds.x+delX/2,bounds.y+delY/2);
                     graphics.setForegroundColor(fgColor);
+                    graphics.popState();
+                    graphics.restoreState();
                 }                
             }
         }

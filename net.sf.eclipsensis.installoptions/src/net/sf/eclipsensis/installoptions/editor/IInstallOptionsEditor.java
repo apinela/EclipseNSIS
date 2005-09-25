@@ -10,6 +10,7 @@
 package net.sf.eclipsensis.installoptions.editor;
 
 import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
+import net.sf.eclipsensis.installoptions.ini.INIFile;
 
 import org.eclipse.ui.IEditorPart;
 
@@ -17,4 +18,5 @@ public interface IInstallOptionsEditor extends IEditorPart, IInstallOptionsConst
 {
     public boolean canSwitch();
     public void prepareForSwitch();
+    public INIFile getINIFile();
 }

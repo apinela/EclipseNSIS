@@ -112,7 +112,7 @@ public abstract class NSISWizard extends Wizard implements IAdaptable, INewWizar
         }
         else {
             String error = EclipseNSISPlugin.getFormattedString("wizard.unconfigured.error", new Object[]{getWindowTitle()}); //$NON-NLS-1$
-            Common.openError(getShell(), error);
+            Common.openError(getShell(), error, EclipseNSISPlugin.getShellImage());
             throw new UnsupportedOperationException(error);
         }
 	}

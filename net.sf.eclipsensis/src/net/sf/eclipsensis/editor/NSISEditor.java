@@ -9,6 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.editor;
 
+import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
@@ -22,6 +23,9 @@ import net.sf.eclipsensis.editor.codeassist.NSISInformationProvider;
 import net.sf.eclipsensis.editor.outline.*;
 import net.sf.eclipsensis.editor.text.NSISPartitionScanner;
 import net.sf.eclipsensis.editor.text.NSISTextUtility;
+import net.sf.eclipsensis.makensis.MakeNSISResults;
+import net.sf.eclipsensis.makensis.MakeNSISRunner;
+import net.sf.eclipsensis.script.NSISScriptProblem;
 import net.sf.eclipsensis.settings.*;
 import net.sf.eclipsensis.util.Common;
 
@@ -33,8 +37,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.information.InformationPresenter;
-import org.eclipse.jface.text.source.ISourceViewer;
-import org.eclipse.jface.text.source.IVerticalRuler;
+import org.eclipse.jface.text.source.*;
 import org.eclipse.jface.text.source.projection.ProjectionSupport;
 import org.eclipse.jface.text.source.projection.ProjectionViewer;
 import org.eclipse.jface.viewers.*;
@@ -44,21 +47,18 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
-import org.eclipse.ui.editors.text.EditorsUI;
-import org.eclipse.ui.editors.text.TextEditor;
+import org.eclipse.ui.editors.text.*;
 import org.eclipse.ui.texteditor.*;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
 public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeListener, ISelectionChangedListener
 {
-    private static HashSet cEditors = new HashSet();
-    
     private HashSet mActions = new HashSet();
     private ProjectionSupport mProjectionSupport;
     private NSISContentOutlinePage mOutlinePage;
     private NSISOutlineContentProvider mOutlineContentProvider;
     private Position mCurrentPosition = null;
-    private NSISEditor.Mutex mMutex = new NSISEditor.Mutex();
+    private MutEx mMutEx = new MutEx();
     
     /**
      * 
@@ -74,7 +74,7 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
         Object source = event.getSource();
         ISelection selection = event.getSelection();
         ISourceViewer sourceViewer = getSourceViewer();
-        boolean acquiredMutex = mMutex.acquireWithoutBlocking(source);
+        boolean acquiredMutex = mMutEx.acquireWithoutBlocking(source);
         if(source.equals(sourceViewer) && selection instanceof ITextSelection) {
             IAction action = getAction("NSISAddBlockComment"); //$NON-NLS-1$
             if(action != null) {
@@ -112,7 +112,7 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
                         }
                     }
                     finally {
-                        mMutex.release(source);
+                        mMutEx.release(source);
                     }
                 }
                 else {
@@ -158,7 +158,7 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
                         }
                     }
                     finally {
-                        mMutex.release(source);
+                        mMutEx.release(source);
                     }
                 }
             }
@@ -193,6 +193,7 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
         mOutlineContentProvider = new NSISOutlineContentProvider(this);
         getSelectionProvider().addSelectionChangedListener(this);
         viewer.addPostSelectionChangedListener(this);
+        updateAnnotations();
     }
     
     protected void createActions() 
@@ -246,6 +247,21 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
         a = new TextOperationAction(resourceBundle,"remove.block.comment.",this,NSISSourceViewer.REMOVE_BLOCK_COMMENT,false); //$NON-NLS-1$
         a.setActionDefinitionId(REMOVE_BLOCK_COMMENT_COMMAND_ID);
         setAction("NSISRemoveBlockComment", a); //$NON-NLS-1$
+
+        a = new TextOperationAction(resourceBundle, "projection.expand.all.", this, ProjectionViewer.EXPAND_ALL, true); //$NON-NLS-1$
+        a.setActionDefinitionId(IFoldingCommandIds.FOLDING_EXPAND_ALL);
+        a.setEnabled(true);
+        setAction("ExpandAll", a); //$NON-NLS-1$
+        
+        a= new TextOperationAction(resourceBundle, "projection.expand.", this, ProjectionViewer.EXPAND, true); //$NON-NLS-1$
+        a.setActionDefinitionId(IFoldingCommandIds.FOLDING_EXPAND);
+        a.setEnabled(true);
+        setAction("Expand", a); //$NON-NLS-1$
+        
+        a= new TextOperationAction(resourceBundle, "projection.collapse.", this, ProjectionViewer.COLLAPSE, true); //$NON-NLS-1$
+        a.setActionDefinitionId(IFoldingCommandIds.FOLDING_COLLAPSE);
+        a.setEnabled(true);
+        setAction("Collapse", a); //$NON-NLS-1$
     }
     
     public void dispose() 
@@ -271,12 +287,6 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
     {
         IEditorInput oldInput = getEditorInput();
         super.doSetInput(input);
-        if(oldInput != null) {
-            cEditors.remove(this);
-        }
-        if(input != null) {
-            cEditors.add(this);
-        }
         if (mOutlinePage != null) {
             mCurrentPosition = null;
             mOutlinePage.setInput(input);
@@ -467,14 +477,82 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
         }
     }
 
+    private void updateAnnotations()
+    {
+        IEditorInput input = getEditorInput();
+        if(input instanceof IPathEditorInput && !(input instanceof IFileEditorInput)){
+            File file = new File(((IPathEditorInput)input).getPath().toOSString());
+            if(file != null && file.exists() && file.isFile()) {
+                MakeNSISResults results = MakeNSISRunner.getResults(file);
+                if(results != null) {
+                    updateAnnotations(this, results);
+                }
+            }
+        }
+    }
+    
+    private static void updateAnnotations(NSISEditor editor, MakeNSISResults results)
+    {
+        ISourceViewer viewer = editor.getSourceViewer();
+        if(viewer != null) {
+            AnnotationModel annotationModel = (AnnotationModel)viewer.getAnnotationModel();
+            if(annotationModel != null) {
+                annotationModel.removeAllAnnotations();
+                List problems = results.getProblems();
+                if(!Common.isEmptyCollection(problems)) {
+                    IDocument doc = editor.getDocumentProvider().getDocument(editor.getEditorInput());
+                    for(Iterator iter=problems.iterator(); iter.hasNext(); ) {
+                        NSISScriptProblem problem = (NSISScriptProblem)iter.next();
+                        if(problem.getLine() > 0) {
+                            try {
+                                String name;
+                                if(problem.getType() == NSISScriptProblem.TYPE_ERROR) {
+                                    name = INSISConstants.ERROR_ANNOTATION_NAME;
+                                }
+                                else if(problem.getType() == NSISScriptProblem.TYPE_WARNING) {
+                                    name = INSISConstants.WARNING_ANNOTATION_NAME;
+                                }
+                                else {
+                                    continue;
+                                }
+                                IRegion region = doc.getLineInformation(problem.getLine()-1);
+                                annotationModel.addAnnotation(new Annotation(name,false,problem.getText()),
+                                        new Position(region.getOffset(),region.getLength()));
+                            }
+                            catch (BadLocationException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     public static void updatePresentations()
     {
-        if(cEditors.size() > 0) {
+        final Collection editors = new ArrayList();
+        IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
+        for (int i = 0; i < windows.length; i++) {
+            IWorkbenchPage[] pages = windows[i].getPages();
+            for (int j = 0; j < pages.length; j++) {
+                IEditorReference[] editorRefs = pages[i].getEditorReferences();
+                for (int k = 0; k < editorRefs.length; k++) {
+                    if(INSISConstants.EDITOR_ID.equals(editorRefs[k].getId())) {
+                        NSISEditor editor = (NSISEditor)editorRefs[k].getEditor(false);
+                        if(editor != null) {
+                            editors.add(editor);
+                        }
+                    }
+                }
+            }
+        }
+        if(editors.size() > 0) {
             final IRunnableWithProgress op = new IRunnableWithProgress(){
                 public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException
                 {
-                    monitor.beginTask(EclipseNSISPlugin.getResourceString("updating.presentation.message"),cEditors.size()); //$NON-NLS-1$
-                    for(Iterator iter=cEditors.iterator(); iter.hasNext(); ) {
+                    monitor.beginTask(EclipseNSISPlugin.getResourceString("updating.presentation.message"),editors.size()); //$NON-NLS-1$
+                    for(Iterator iter=editors.iterator(); iter.hasNext(); ) {
                         try {
                             NSISEditor editor = (NSISEditor)iter.next();
                             ISourceViewer sourceViewer = editor.getSourceViewer();
@@ -502,9 +580,28 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
         }
     }
 
-    public static Collection getEditors()
+    public static void updateAnnotations(MakeNSISResults results)
     {
-        return Collections.unmodifiableSet(cEditors);
+        IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
+        for (int i = 0; i < windows.length; i++) {
+            IWorkbenchPage[] pages = windows[i].getPages();
+            for (int j = 0; j < pages.length; j++) {
+                IEditorReference[] editorRefs = pages[i].getEditorReferences();
+                for (int k = 0; k < editorRefs.length; k++) {
+                    if(INSISConstants.EDITOR_ID.equals(editorRefs[k].getId())) {
+                        NSISEditor editor = (NSISEditor)editorRefs[k].getEditor(false);
+                        if(editor != null) {
+                            IEditorInput input = editor.getEditorInput();
+                            if(!(input instanceof IFileEditorInput) && input instanceof IPathEditorInput) {
+                                if(results.getScriptFile().getAbsolutePath().equals(((IPathEditorInput)input).getPath().toOSString())) {
+                                    updateAnnotations(editor, results);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
     
     /**
@@ -553,7 +650,7 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
         }
     }
     
-    private static class Mutex
+    private static class MutEx
     {
         private static int cCounter = 0;
         private Object mOwner = null;
@@ -567,7 +664,7 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
 
         private static int newId()
         {
-            synchronized(NSISEditor.Mutex.class) {
+            synchronized(NSISEditor.MutEx.class) {
                 cCounter++;
                 return cCounter;
             }
@@ -618,7 +715,7 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
          * as it was acquired to actually unlock the resource. The mutex
          * must be released by the thread that acquired it
          *
-         * @throws Mutex.OwnershipException (a RuntimeException) if a thread
+         * @throws MutEx.OwnershipException (a RuntimeException) if a thread
          *      other than the current owner tries to release the mutex.
          */
          public synchronized void release(Object owner)

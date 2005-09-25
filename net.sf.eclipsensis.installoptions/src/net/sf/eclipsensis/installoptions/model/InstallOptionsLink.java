@@ -69,6 +69,13 @@ public class InstallOptionsLink extends InstallOptionsUneditableElement
         return InstallOptionsPlugin.getResourceString("link.text.default"); //$NON-NLS-1$
     }
 
+    public void setText(String s)
+    {
+    	//Convert special characters back to escaped form.
+        s = (String)TypeConverter.INI_STRING_CONVERTER.asType(s,""); //$NON-NLS-1$
+        super.setText(s);
+    }
+
     /**
      * @return
      */

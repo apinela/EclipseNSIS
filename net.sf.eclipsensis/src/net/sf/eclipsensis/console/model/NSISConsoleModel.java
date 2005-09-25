@@ -15,15 +15,18 @@ import net.sf.eclipsensis.console.NSISConsoleLine;
 
 public class NSISConsoleModel
 {
-    public static final NSISConsoleModel INSTANCE = new NSISConsoleModel();
-    
     private HashSet mListeners = new HashSet();
     private List mContents = Collections.synchronizedList(new ArrayList());
     private ArrayList mErrors = new ArrayList();
     private ArrayList mWarnings = new ArrayList();
 
-    private NSISConsoleModel()
+    public NSISConsoleModel()
     {
+    }
+    
+    public boolean supportsStatistics()
+    {
+        return true;
     }
 
     public void addModelListener(INSISConsoleModelListener listener)

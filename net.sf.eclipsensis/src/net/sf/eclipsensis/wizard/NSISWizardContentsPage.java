@@ -547,7 +547,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
                                     continue;
                                 }
                                 else if(buttonId != IDialogConstants.YES_TO_ALL_ID) {
-                                    int index = new MessageDialog(getShell(),cDeleteConfirmTitle,null,
+                                    int index = new MessageDialog(getShell(),cDeleteConfirmTitle,EclipseNSISPlugin.getShellImage(),
                                             MessageFormat.format(cDeleteConfirmMessageFormat,new String[]{element.getDisplayName()}), MessageDialog.QUESTION, 
                                             new String[]{IDialogConstants.YES_LABEL, IDialogConstants.YES_TO_ALL_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.NO_TO_ALL_LABEL}, 0).open();
                                     if(index >= 0) {
