@@ -28,9 +28,15 @@
       <category name="Current Releases"/>
    </feature>
    <feature url="features/net.sf.eclipsensis.installoptions_0.9.2.jar" id="net.sf.eclipsensis.installoptions" version="0.9.2" os="win32" ws="win32" arch="x86">
-      <category name="Current Releases"/>
+      <category name="Previous Releases"/>
    </feature>
    <feature url="features/net.sf.eclipsensis_0.9.2.jar" id="net.sf.eclipsensis" version="0.9.2" os="win32" ws="win32" arch="x86">
+      <category name="Previous Releases"/>
+   </feature>
+   <feature url="features/net.sf.eclipsensis.installoptions_0.9.3.jar" id="net.sf.eclipsensis.installoptions" version="0.9.3" os="win32" ws="win32" arch="x86">
+      <category name="Current Releases"/>
+   </feature>
+   <feature url="features/net.sf.eclipsensis_0.9.3.jar" id="net.sf.eclipsensis" version="0.9.3" os="win32" ws="win32" arch="x86">
       <category name="Current Releases"/>
    </feature>
    <category-def name="Current Releases" label="Current Releases"/>
