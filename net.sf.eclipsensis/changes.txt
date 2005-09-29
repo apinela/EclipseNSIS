@@ -2,8 +2,10 @@ Revision History
 ================
 
 0.9.3 (09/29/2005)
-    * External files are now supported- including compiling, testing, code folding and annotations.
-    * Compilation properties can now also be set at the project or folder levels.
+    * External files are now supported- including compiling, testing, code 
+      folding and annotations.
+    * Compilation properties can now also be set at the project or folder 
+      levels.
     * Bug fixes:
         o 1295438
     * Other minor bug fixes.
