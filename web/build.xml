@@ -13,14 +13,14 @@
         <copy todir="help/eclipsensis" includeEmptyDirs="false">
             <fileset dir="../net.sf.eclipsensis/help" excludes="**/CVS/*"/>
         </copy>
-        <copy todir="help/eclipsensis" overwrite="true">
+        <copy todir="help/eclipsensis" overwrite="true" preservelastmodified="true">
             <fileset file="help/redirect.js"/>
         	<fileset file="help/nsiscontrib.js"/>
         </copy>
         <copy todir="help/installoptions" includeEmptyDirs="false">
             <fileset dir="../net.sf.eclipsensis.installoptions/help" excludes="**/CVS/*"/>
         </copy>
-        <copy todir="help/installoptions" overwrite="true">
+        <copy todir="help/installoptions" overwrite="true" preservelastmodified="true">
             <fileset file="help/redirect.js"/>
         	<fileset file="help/nsiscontrib.js"/>
         </copy>
