@@ -8,11 +8,4 @@
 	</buildSpec>
 	<natures>
 	</natures>
-	<linkedResources>
-		<link>
-			<name>sourcebuild.xml</name>
-			<type>1</type>
-			<location>C:/projects/EclipseNSIS/sourcebuild.xml</location>
-		</link>
-	</linkedResources>
 </projectDescription>
