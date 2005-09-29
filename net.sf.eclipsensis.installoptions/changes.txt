@@ -1,11 +1,11 @@
 Revision History
 ================
 
-0.9.3 (09/20/2005)
+0.9.3 (09/29/2005)
     * Added support for Unknown control in design editor.
     * Added distribution, locking actions to design editor.
     * Added preview support in both source and design editors.
-    * Improved RTL support.
+    * Improved RTL support on Windows 2000 and better.
     * Fixed Z-ordering of controls.
     * External files are now supported- including code folding and annotations.
     * Bug fixes:

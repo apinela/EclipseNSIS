@@ -186,8 +186,9 @@ public class EditableComboBoxCellEditor extends CellEditor
     public LayoutData getLayoutData()
     {
         LayoutData layoutData = super.getLayoutData();
-        if ((mCombo == null) || mCombo.isDisposed())
+        if ((mCombo == null) || mCombo.isDisposed()) {
             layoutData.minimumWidth = 60;
+        }
         else {
             // make the comboBox 10 characters wide
             GC gc = new GC(mCombo);

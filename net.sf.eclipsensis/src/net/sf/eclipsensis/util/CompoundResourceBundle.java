@@ -13,8 +13,9 @@ import java.util.*;
 
 public class CompoundResourceBundle extends ResourceBundle
 {
+    private static final Locale EMPTY_LOCALE = new Locale("","",""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+
     private ResourceBundle[] mResourceBundles = null;
-    private final Locale EMPTY_LOCALE = new Locale("","",""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     
     public CompoundResourceBundle(String[] bundleNames)
     {

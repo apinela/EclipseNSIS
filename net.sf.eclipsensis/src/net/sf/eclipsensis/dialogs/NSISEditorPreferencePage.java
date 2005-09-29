@@ -57,7 +57,7 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
     };
     private static final String[] cPreferenceKeys;
     
-    private HashMap mStyleMap = new HashMap();
+    private Map mStyleMap = new HashMap();
     private PreferenceStoreWrapper mPreferenceStore;
     private NSISSourceViewer mPreviewer;
     

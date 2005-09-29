@@ -14,6 +14,7 @@ import java.beans.PropertyChangeSupport;
 import java.util.*;
 
 import net.sf.eclipsensis.INSISConstants;
+import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.ini.*;
 import net.sf.eclipsensis.installoptions.model.commands.*;
 import net.sf.eclipsensis.installoptions.util.TypeConverter;
@@ -219,7 +220,7 @@ public abstract class InstallOptionsElement implements IPropertySource, Cloneabl
             return element;
         }
         catch(CloneNotSupportedException e) {
-            e.printStackTrace();
+            InstallOptionsPlugin.getDefault().log(e);
             return null;
         }
     }

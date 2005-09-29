@@ -27,7 +27,7 @@ import org.eclipse.swt.widgets.List;
  */
 public class ListCellEditor extends CellEditor
 {
-    private static final int defaultStyle = SWT.SINGLE;
+    private static final int DEFAULT_STYLE = SWT.SINGLE;
 
     private java.util.List mItems;
     private String mSelection;
@@ -35,12 +35,12 @@ public class ListCellEditor extends CellEditor
 
     public ListCellEditor()
     {
-        setStyle(defaultStyle);
+        setStyle(DEFAULT_STYLE);
     }
 
     public ListCellEditor(Composite parent, java.util.List items)
     {
-        this(parent, items, defaultStyle);
+        this(parent, items, DEFAULT_STYLE);
     }
 
     public ListCellEditor(Composite parent, java.util.List items, int style)
@@ -137,8 +137,9 @@ public class ListCellEditor extends CellEditor
     public LayoutData getLayoutData()
     {
         LayoutData layoutData = super.getLayoutData();
-        if ((mList == null) || mList.isDisposed())
+        if ((mList == null) || mList.isDisposed()) {
             layoutData.minimumWidth = 60;
+        }
         else {
             // make the comboBox 10 characters wide
             GC gc = new GC(mList);

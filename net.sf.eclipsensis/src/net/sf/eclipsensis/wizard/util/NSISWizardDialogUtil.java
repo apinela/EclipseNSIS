@@ -33,6 +33,10 @@ public class NSISWizardDialogUtil
     public static final String LABEL = "LABEL"; //$NON-NLS-1$
     public static final String IMAGE = "IMAGE"; //$NON-NLS-1$
 
+    private NSISWizardDialogUtil()
+    {
+    }
+
     private static void addSlave(MasterSlaveController masterSlaveController, Control slave)
     {
         if(masterSlaveController != null) {

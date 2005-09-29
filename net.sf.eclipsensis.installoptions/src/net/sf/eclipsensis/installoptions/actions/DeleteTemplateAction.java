@@ -41,7 +41,7 @@ public class DeleteTemplateAction extends Action
             InstallOptionsTemplateManager.INSTANCE.save();
         }
         catch (IOException e) {
-            e.printStackTrace();
+            InstallOptionsPlugin.getDefault().log(e);
         }
     }
 }

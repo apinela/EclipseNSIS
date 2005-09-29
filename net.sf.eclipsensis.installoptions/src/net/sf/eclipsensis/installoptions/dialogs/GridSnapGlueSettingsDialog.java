@@ -10,6 +10,7 @@
 package net.sf.eclipsensis.installoptions.dialogs;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
@@ -25,8 +26,8 @@ import org.eclipse.swt.widgets.*;
 public class GridSnapGlueSettingsDialog extends Dialog implements IInstallOptionsConstants
 {
     private GraphicalViewer mViewer;
-    private HashMap mGridSettingsMap = new HashMap();;
-    private HashMap mSnapGlueSettingsMap = new HashMap();
+    private Map mGridSettingsMap = new HashMap();;
+    private Map mSnapGlueSettingsMap = new HashMap();
     
     /**
      * @param parentShell
@@ -62,7 +63,7 @@ public class GridSnapGlueSettingsDialog extends Dialog implements IInstallOption
         return o;
     }
     
-    private void loadViewerProperty(HashMap map, String mapName, String name, Object defaultValue)
+    private void loadViewerProperty(Map map, String mapName, String name, Object defaultValue)
     {
         Object o = null;
         try {
@@ -76,7 +77,7 @@ public class GridSnapGlueSettingsDialog extends Dialog implements IInstallOption
         map.put(mapName,makeCopy(o));
     }
 
-    private void saveViewerProperty(HashMap map, String mapName, String name, Object defaultValue)
+    private void saveViewerProperty(Map map, String mapName, String name, Object defaultValue)
     {
         Object o = null;
         try {

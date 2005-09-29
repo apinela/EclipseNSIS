@@ -104,12 +104,10 @@ public class InstallOptionsFileRequest extends InstallOptionsPathRequest
     
     protected void addPropertyName(List list, String setting)
     {
-        if(setting.equalsIgnoreCase(InstallOptionsModel.PROPERTY_TEXT)) {
-        }
-        else if (setting.equalsIgnoreCase(InstallOptionsModel.PROPERTY_FILTER)) {
+        if (setting.equalsIgnoreCase(InstallOptionsModel.PROPERTY_FILTER)) {
             list.add(InstallOptionsModel.PROPERTY_FILTER);
         }
-        else {
+        else if(!setting.equalsIgnoreCase(InstallOptionsModel.PROPERTY_TEXT)) {
             super.addPropertyName(list, setting);
         }
     }

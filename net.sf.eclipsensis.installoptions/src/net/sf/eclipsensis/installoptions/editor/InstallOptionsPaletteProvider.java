@@ -30,11 +30,15 @@ public class InstallOptionsPaletteProvider
 {
     private static final ImageDescriptor cImageDescriptor = InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("templates.icon")); //$NON-NLS-1$
 
+    private InstallOptionsPaletteProvider()
+    {
+    }
+
     private static List createCategories(GraphicalViewer viewer, PaletteRoot root)
     {
         List categories = new ArrayList();
 
-        categories.add(createControlGroup(viewer, root));
+        categories.add(createControlGroup(root));
         categories.add(createComponentsDrawer(viewer));
         categories.add(createTemplatesDrawer(viewer));
         return categories;
@@ -200,7 +204,7 @@ public class InstallOptionsPaletteProvider
         return entry;
     }
 
-    private static PaletteContainer createControlGroup(GraphicalViewer viewer, PaletteRoot root)
+    private static PaletteContainer createControlGroup(PaletteRoot root)
     {
         PaletteGroup controlGroup = new PaletteGroup(InstallOptionsPlugin.getResourceString("palette.control.group.name")); //$NON-NLS-1$
 

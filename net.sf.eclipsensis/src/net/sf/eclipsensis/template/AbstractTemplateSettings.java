@@ -240,7 +240,7 @@ public abstract class AbstractTemplateSettings extends Composite
         mImportButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         mImportButton.addListener(SWT.Selection, new Listener() {
             public void handleEvent(Event e) {
-                import_();
+                import$();
             }
         });
         
@@ -354,7 +354,7 @@ public abstract class AbstractTemplateSettings extends Composite
         }
     }
 
-    private void import_() 
+    private void import$() 
     {
         FileDialog dialog= new FileDialog(getShell());
         dialog.setText(EclipseNSISPlugin.getResourceString("template.settings.import.title")); //$NON-NLS-1$
@@ -369,7 +369,7 @@ public abstract class AbstractTemplateSettings extends Composite
             File file= new File(path);
             if (file.exists()) {
                 InputStream input= new BufferedInputStream(new FileInputStream(file));
-                Collection coll = mTemplateManager.getReaderWriter().import_(input);
+                Collection coll = mTemplateManager.getReaderWriter().import$(input);
                 input.close();
                 if(!Common.isEmptyCollection(coll)) {
                     for (Iterator iter=coll.iterator(); iter.hasNext(); ) {
@@ -418,7 +418,7 @@ public abstract class AbstractTemplateSettings extends Composite
                         os.close();
                     }
                     catch (IOException e1) {
-                        e1.printStackTrace();
+                        EclipseNSISPlugin.getDefault().log(e1);
                     }
                 }
             }

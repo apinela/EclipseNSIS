@@ -9,8 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.model.commands;
 
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.*;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.figures.FigureUtility;
@@ -25,7 +24,7 @@ import org.eclipse.swt.widgets.Display;
 public class MoveGuideCommand extends Command
 {
     private int mPositionDelta;
-    private HashMap mOldPositions = new HashMap();
+    private Map mOldPositions = new HashMap();
     private InstallOptionsGuide mGuide;
 
     public MoveGuideCommand(InstallOptionsGuide guide, int positionDelta)

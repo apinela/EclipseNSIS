@@ -39,7 +39,7 @@ public class NSISTaskTagUpdater implements INSISConstants
             mDocumentProvider.disconnect(input);
         }
         catch (CoreException e) {
-            e.printStackTrace();
+            EclipseNSISPlugin.getDefault().log(e);
         }
     }
     
@@ -84,7 +84,7 @@ public class NSISTaskTagUpdater implements INSISConstants
                                 createTaskMarker(map, regions[j], file, document, line, start,lineEnd-start);
                         }
                             catch (BadLocationException e1) {
-                                e1.printStackTrace();
+                                EclipseNSISPlugin.getDefault().log(e1);
                             }
                         }
                     }
@@ -92,7 +92,7 @@ public class NSISTaskTagUpdater implements INSISConstants
             }
         }
         catch (CoreException e) {
-            e.printStackTrace();
+            EclipseNSISPlugin.getDefault().log(e);
         }
     }
 
@@ -217,7 +217,7 @@ public class NSISTaskTagUpdater implements INSISConstants
                         monitor.worked(1);
                     }
                     catch(CoreException ce) {
-                        ce.printStackTrace();
+                        EclipseNSISPlugin.getDefault().log(ce);
                     }
                     finally {
                         monitor.done();

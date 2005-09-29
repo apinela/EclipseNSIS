@@ -9,6 +9,8 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.editor;
 
+import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.CoreException;
@@ -35,6 +37,11 @@ public class InstallOptionsEditorInput extends FileEditorInput implements IInsta
         mDocumentProvider = new TextFileDocumentProvider();
     }
     
+    public int hashCode()
+    {
+        return mInput.hashCode();
+    }
+
     public boolean equals(Object obj)
     {
         if(obj instanceof InstallOptionsEditorInput) {
@@ -54,7 +61,7 @@ public class InstallOptionsEditorInput extends FileEditorInput implements IInsta
                 mDocumentProvider.connect(this);
             }
             catch (CoreException e) {
-                e.printStackTrace();
+                InstallOptionsPlugin.getDefault().log(e);
             }
         }
     }

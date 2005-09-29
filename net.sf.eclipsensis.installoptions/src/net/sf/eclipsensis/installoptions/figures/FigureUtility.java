@@ -9,8 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.figures;
 
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 import net.sf.eclipsensis.installoptions.model.*;
 import net.sf.eclipsensis.util.WinAPI;
@@ -23,7 +22,7 @@ import org.eclipse.ui.views.properties.IPropertySource;
 
 public class FigureUtility
 {
-    private static HashMap cFontSizes = new HashMap();
+    private static Map cFontSizes = new HashMap();
     
     private static long div(long dividend, long divisor)
     {
@@ -36,10 +35,12 @@ public class FigureUtility
     private static int muldiv(int v, int multiplicand, int divisor)
     {
         long l = muldiv((long)v, multiplicand, divisor);
-        if (l > Integer.MAX_VALUE)
+        if (l > Integer.MAX_VALUE) {
             return Integer.MAX_VALUE;
-        if (l < Integer.MIN_VALUE)
+        }
+        if (l < Integer.MIN_VALUE) {
             return Integer.MIN_VALUE;
+        }
         return (int)l;
     }
     
@@ -51,8 +52,9 @@ public class FigureUtility
         if (v > (Long.MAX_VALUE / multiplicand - multiplicand))
         {
             v = div(v, divisor);
-            if (v > Long.MAX_VALUE / multiplicand)
+            if (v > Long.MAX_VALUE / multiplicand) {
                 return Long.MAX_VALUE;
+            }
             return v * multiplicand;
         }
         v *= multiplicand;

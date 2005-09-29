@@ -232,7 +232,7 @@ public class NSISPreferencePage	extends NSISSettingsPage
                 Common.writeObject(cNSISHomesListFile,nsisHomes);
             }
             catch (IOException e) {
-                e.printStackTrace();
+                EclipseNSISPlugin.getDefault().log(e);
             }
             mNSISHome.refresh();
             combo.setText(home);

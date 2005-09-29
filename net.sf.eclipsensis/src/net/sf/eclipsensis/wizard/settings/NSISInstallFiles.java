@@ -134,7 +134,7 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
         if(getChildren().length > 0) {
             Iterator iter = getChildrenIterator();
             buf.append(((FileItem)iter.next()).getName());
-            for(; iter.hasNext(); ) {
+            while(iter.hasNext()) {
                 buf.append(SEPARATOR).append(((FileItem)iter.next()).getName());
             }
         }
@@ -197,7 +197,7 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
          */
         public boolean equals(Object obj)
         {
-            if(obj != null && obj instanceof FileItem) {
+            if(obj instanceof FileItem) {
                 return ((FileItem)obj).mName.equals(mName);
             }
             return false;

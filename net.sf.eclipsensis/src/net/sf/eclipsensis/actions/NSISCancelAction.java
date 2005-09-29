@@ -9,6 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.actions;
 
+import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.makensis.MakeNSISRunner;
 
 import org.eclipse.jface.action.IAction;
@@ -24,7 +25,7 @@ public class NSISCancelAction extends NSISScriptAction
         }
         catch(Exception ex)
         {
-            ex.printStackTrace();
+            EclipseNSISPlugin.getDefault().log(ex);
         }
 	}
 
@@ -48,7 +49,7 @@ public class NSISCancelAction extends NSISScriptAction
     public boolean isEnabled()
     {
         if(super.isEnabled()) {
-            return (MakeNSISRunner.isCompiling());
+            return MakeNSISRunner.isCompiling();
         }
         return false;
     }

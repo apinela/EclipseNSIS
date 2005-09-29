@@ -72,7 +72,7 @@ public class NSISTemplateEditorDialog extends StatusMessageDialog
      * @param isNameModifiable whether the name of the template may be modified
      * @param registry the context type registry to use
      */
-    public NSISTemplateEditorDialog(Shell parent, Template template, boolean edit, boolean isNameModifiable, ContextTypeRegistry contextTypeRegistry) 
+    public NSISTemplateEditorDialog(Shell parent, Template template, boolean isNameModifiable, ContextTypeRegistry contextTypeRegistry) 
     {
         super(parent);
         
@@ -311,8 +311,9 @@ public class NSISTemplateEditorDialog extends StatusMessageDialog
         
         viewer.addTextListener(new ITextListener() {
             public void textChanged(TextEvent event) {
-                if (event .getDocumentEvent() != null)
+                if (event .getDocumentEvent() != null) {
                     doSourceChanged(event.getDocumentEvent().getDocument());
+                }
             }
         });
 
@@ -436,8 +437,9 @@ public class NSISTemplateEditorDialog extends StatusMessageDialog
     private void updateSelectionDependentActions() 
     {
         Iterator iterator= mSelectionActions.iterator();
-        while (iterator.hasNext())
-            updateAction((String)iterator.next());      
+        while (iterator.hasNext()) {
+            updateAction((String)iterator.next());
+        }
     }
 
     private void updateUndoAction() 

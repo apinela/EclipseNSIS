@@ -24,8 +24,8 @@ import org.eclipse.ui.*;
 public class MinimalProgressMonitorDialog extends ProgressMonitorDialog
 {
     private static final int MINIMUM_WIDTH = 500;
-    private static int BAR_DLUS = 9;
-    private static int VERTICAL_OFFSET = 85;
+    private static final int BAR_DLUS = 9;
+    private static final int VERTICAL_OFFSET = 85;
     
     private String mCaption = EclipseNSISPlugin.getDefault().getName();
     

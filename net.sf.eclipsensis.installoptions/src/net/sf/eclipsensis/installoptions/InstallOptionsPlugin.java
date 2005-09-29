@@ -20,7 +20,7 @@ import net.sf.eclipsensis.installoptions.util.TypeConverter;
 import net.sf.eclipsensis.job.JobScheduler;
 import net.sf.eclipsensis.util.*;
 
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.*;
 import org.eclipse.gef.GEFPlugin;
 import org.eclipse.gef.ui.palette.PaletteViewerPreferences;
 import org.eclipse.jface.dialogs.*;
@@ -42,7 +42,7 @@ public class InstallOptionsPlugin extends AbstractUIPlugin implements IInstallOp
     private static File cStateLocation = null;
 
     private static InstallOptionsPlugin cPlugin;
-    private HashMap mResourceBundles = new HashMap();
+    private Map mResourceBundles = new HashMap();
     public static final String[] BUNDLE_NAMES = new String[]{RESOURCE_BUNDLE,MESSAGE_BUNDLE};
     private ImageManager mImageManager;
     private String mName = null;
@@ -252,6 +252,19 @@ public class InstallOptionsPlugin extends AbstractUIPlugin implements IInstallOp
     public JobScheduler getJobScheduler()
     {
         return mJobScheduler;
+    }
+
+    public void log(Throwable t)
+    {
+        ILog log = getLog();
+        if(log != null) {
+            String message = t.getMessage();
+            log.log(new Status(IStatus.ERROR,PLUGIN_ID,IStatus.ERROR,
+                         message==null?t.getClass().getName():message,t));
+        }
+        else {
+            t.printStackTrace();
+        }
     }
 
     public static void checkEditorAssociation()

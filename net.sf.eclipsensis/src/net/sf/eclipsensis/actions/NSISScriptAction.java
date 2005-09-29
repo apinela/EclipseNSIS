@@ -9,6 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.actions;
 
+import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.makensis.IMakeNSISRunListener;
 import net.sf.eclipsensis.makensis.MakeNSISRunner;
 
@@ -23,14 +24,6 @@ public abstract class NSISScriptAction extends NSISAction implements IMakeNSISRu
 {
     protected IPath mInput = null;
     
-	/**
-	 * The constructor.
-	 */
-	public NSISScriptAction() 
-    {
-        super();
-	}
-
     /* (non-Javadoc)
      * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
      */
@@ -77,7 +70,7 @@ public abstract class NSISScriptAction extends NSISAction implements IMakeNSISRu
                 mAction.setEnabled(isEnabled());
             }
             catch(Exception ex) {
-                ex.printStackTrace();
+                EclipseNSISPlugin.getDefault().log(ex);
             }
         }
     }
@@ -87,7 +80,7 @@ public abstract class NSISScriptAction extends NSISAction implements IMakeNSISRu
      */
     public void selectionChanged(IAction action, ISelection selection)
     {  
-        if(selection !=null && selection instanceof IStructuredSelection) {
+        if(selection instanceof IStructuredSelection) {
             //This is for the popup context menu handling
             IStructuredSelection structuredSelection = (IStructuredSelection)selection;
             if(!selection.isEmpty()) {

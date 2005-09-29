@@ -54,7 +54,6 @@ public class ToggleGuideVisibilityAction extends Action
      */
     public void run() 
     {
-        boolean val = !isChecked();
-        diagramViewer.setProperty(PROPERTY_GUIDE_VISIBILITY, new Boolean(val));
+        diagramViewer.setProperty(PROPERTY_GUIDE_VISIBILITY, (isChecked()?Boolean.FALSE:Boolean.TRUE));
     }
 }

@@ -14,28 +14,28 @@ import org.eclipse.core.runtime.IPath;
 
 public class NSISConsoleLine
 {
-    public static final int INFO = 0;
-    public static final int WARNING = 1;
-    public static final int ERROR = 2;
+    public static final int TYPE_INFO = 0;
+    public static final int TYPE_WARNING = 1;
+    public static final int TYPE_ERROR = 2;
 
     private String mText = null;
-    private int mType = INFO;
+    private int mType = TYPE_INFO;
     private IPath mSource = null;
     private int mLineNum = 0;
 
     public static NSISConsoleLine info(String text)
     {
-        return new NSISConsoleLine(text,INFO);
+        return new NSISConsoleLine(text,TYPE_INFO);
     }
 
     public static NSISConsoleLine warning(String text)
     {
-        return new NSISConsoleLine(text,WARNING);
+        return new NSISConsoleLine(text,TYPE_WARNING);
     }
 
     public static NSISConsoleLine error(String text)
     {
-        return new NSISConsoleLine(text,ERROR);
+        return new NSISConsoleLine(text,TYPE_ERROR);
     }
     
     /**

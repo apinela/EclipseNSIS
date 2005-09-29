@@ -11,6 +11,7 @@ package net.sf.eclipsensis.installoptions.figures;
 
 import java.util.List;
 
+import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsWidget;
 import net.sf.eclipsensis.util.WinAPI;
@@ -43,15 +44,11 @@ public abstract class SWTControlFigure extends ScrollBarsFigure
             final Control source = (Control) e.getSource();
             if(source != null && !source.isDisposed() && source.handle > 0) {
                 try {
-                    if(mImage != null && !mImage.isDisposed()) {
-                        mImage.dispose();
-                    }
-                    mImage = getImage(source);
                     source.removePaintListener(mSWTPaintListener);
-                    repaint();
+                    scrapeImage(source);
                 }
                 catch(Exception ex) {
-                    ex.printStackTrace();
+                    InstallOptionsPlugin.getDefault().log(ex);
                 }
                 finally {
                     source.getDisplay().asyncExec(new Runnable() {
@@ -62,7 +59,7 @@ public abstract class SWTControlFigure extends ScrollBarsFigure
                                 }
                             }
                             catch(Exception ex) {
-                                ex.printStackTrace();
+                                InstallOptionsPlugin.getDefault().log(ex);
                             }
                         }
                     });
@@ -156,19 +153,6 @@ public abstract class SWTControlFigure extends ScrollBarsFigure
         }
     }
 
-    private Image getImage(Control control)
-    {
-        org.eclipse.swt.graphics.Rectangle rect = control.getBounds();
-        if (rect.width <= 0 || rect.height <= 0) {
-            return new Image(control.getDisplay(), 1, 1);
-        }
-        Image image = new Image (control.getDisplay(), rect.width, rect.height);
-        GC gc = new GC (image);
-        WinAPI.SendMessage (control.handle, WinAPI.WM_PRINT, gc.handle, PRINT_BITS);
-        gc.dispose ();
-        return image;
-    }
-
     /*
      * @see org.eclipse.draw2d.Figure#layout()
      */
@@ -207,9 +191,10 @@ public abstract class SWTControlFigure extends ScrollBarsFigure
                 control.addPaintListener(mSWTPaintListener);
                 setNeedsReScrape(false);
                 
+                scrapeImage(control);
+                
                 //Force a repaint
-                control.setVisible(false);
-                control.setVisible(true);
+                control.redraw();
             }
         }
         super.layout();
@@ -273,6 +258,38 @@ public abstract class SWTControlFigure extends ScrollBarsFigure
             }
             WinAPI.SetWindowLong(control.handle,WinAPI.GWL_STYLE,style);
         }
+    }
+
+    private void scrapeImage(Control control)
+    {
+        org.eclipse.swt.graphics.Rectangle rect = control.getBounds();
+        if (rect.width <= 0 || rect.height <= 0) {
+            if(mImage != null && !mImage.isDisposed()) {
+                mImage.dispose();
+                mImage = null;
+            }
+            mImage = new Image(control.getDisplay(), 1, 1);
+        }
+        else {
+            if(mImage != null) {
+                if(!mImage.isDisposed()) {
+                    if(!mImage.getBounds().equals(rect)) {
+                        mImage.dispose();
+                        mImage = null;
+                    }
+                }
+                else {
+                    mImage = null;
+                }
+            }
+            if(mImage == null) {
+                mImage = new Image (control.getDisplay(), rect.width, rect.height);
+            }
+            GC gc = new GC (mImage);
+            WinAPI.SendMessage (control.handle, WinAPI.WM_PRINT, gc.handle, PRINT_BITS);
+            gc.dispose ();
+        }
+        repaint();
     }
 
     protected abstract Control createSWTControl(Composite parent, int style);

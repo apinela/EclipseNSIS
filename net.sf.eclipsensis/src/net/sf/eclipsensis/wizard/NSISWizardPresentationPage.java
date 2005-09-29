@@ -34,7 +34,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
     public static final String NAME = "nsisWizardPresentation"; //$NON-NLS-1$
     
     private static final long DEFAULT_RESOLUTION = 32; //32 FPS
-    private static final double cOSVersion;
+    private static final double OS_VERSION;
 
     private static final int LICDATA_CHECK=1;
     private static final int SPLIMG_CHECK=2;
@@ -63,7 +63,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
         catch(Exception ex) {
             version = 0;
         }
-        cOSVersion = version;
+        OS_VERSION = version;
     }
     
     /**
@@ -717,7 +717,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
             }
             catch (Exception e1) {
                 clip = null;
-                e1.printStackTrace();
+                EclipseNSISPlugin.getDefault().log(e1);
             }
             finally {
                 if(ais != null) {
@@ -725,7 +725,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
                         ais.close();
                     }
                     catch (IOException e) {
-                        e.printStackTrace();
+                        EclipseNSISPlugin.getDefault().log(e);
                     }
                     ais = null;
                 }
@@ -772,7 +772,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
                 mShell.dispose();
             }
 
-            if(cOSVersion >= 5.0) {
+            if(OS_VERSION >= 5.0) {
                 mResolution = DEFAULT_RESOLUTION;
                 mFadeInDelay = settings.getFadeInDelay() >> 5;
                 mDisplayDelay = settings.getSplashDelay() >> 5;
@@ -785,7 +785,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
                 mFadeOutDelay = 0;
             }
 
-            mAdvSplash = cOSVersion >= 5.0 && (mFadeInDelay > 0 || mFadeOutDelay > 0);
+            mAdvSplash = OS_VERSION >= 5.0 && (mFadeInDelay > 0 || mFadeOutDelay > 0);
             mShell = new Shell(getShell().getDisplay(), SWT.APPLICATION_MODAL | SWT.NO_TRIM | SWT.NO_BACKGROUND);
             mShell.setText(EclipseNSISPlugin.getResourceString("splash.preview.title")); //$NON-NLS-1$
             if(mAdvSplash) {

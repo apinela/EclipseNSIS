@@ -12,12 +12,17 @@ package net.sf.eclipsensis.installoptions.editor;
 import java.util.*;
 
 import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
+import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 
 public class InstallOptionsMarkerUtility
 {
+    private InstallOptionsMarkerUtility()
+    {
+    }
+
     public static Collection getMarkers(IFile file)
     {
         List list = new ArrayList();
@@ -30,7 +35,7 @@ public class InstallOptionsMarkerUtility
                 }
             }
             catch (CoreException e) {
-                e.printStackTrace();
+                InstallOptionsPlugin.getDefault().log(e);
             }
         }
         return list;

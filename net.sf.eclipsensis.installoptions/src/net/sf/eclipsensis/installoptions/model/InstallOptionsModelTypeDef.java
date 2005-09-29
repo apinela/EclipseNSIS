@@ -54,7 +54,7 @@ public class InstallOptionsModelTypeDef
         }
         catch (Exception e) {
             constructor = null;
-            e.printStackTrace();
+            InstallOptionsPlugin.getDefault().log(e);
         }
         
         return constructor;
@@ -98,7 +98,7 @@ public class InstallOptionsModelTypeDef
                 model = mModelConstructor.newInstance(new Object[]{section});
             }
             catch (Exception e) {
-                e.printStackTrace();
+                InstallOptionsPlugin.getDefault().log(e);
                 model = null;
             }
         }
@@ -113,7 +113,7 @@ public class InstallOptionsModelTypeDef
                 part = (EditPart)mEditPartConstructor.newInstance(null);
             }
             catch (Exception e) {
-                e.printStackTrace();
+                InstallOptionsPlugin.getDefault().log(e);
                 part = null;
             }
         }

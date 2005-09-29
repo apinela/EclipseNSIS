@@ -12,6 +12,7 @@ package net.sf.eclipsensis.wizard.settings;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
+import java.util.Map;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.util.Common;
@@ -21,7 +22,7 @@ import org.w3c.dom.Node;
 
 public class NSISInstallElementFactory
 {
-    private static HashMap cElementMap = new HashMap();
+    private static Map cElementMap = new HashMap();
     private static final Class[] EMPTY_CLASS_ARRAY = new Class[0];
     private static final Object[] EMPTY_OBJECT_ARRAY = new Object[0];
     

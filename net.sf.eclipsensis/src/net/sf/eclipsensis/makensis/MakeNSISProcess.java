@@ -130,7 +130,7 @@ public class MakeNSISProcess extends Process
                 mCanceled = true;
             }
             catch (Exception ex) {
-                ex.printStackTrace();
+                EclipseNSISPlugin.getDefault().log(ex);
             }
         }
     }
@@ -185,11 +185,12 @@ public class MakeNSISProcess extends Process
         destroy(mHandle);
     }
 
-    public void finalize() 
+    protected void finalize() throws Throwable
     {
         if(mHandle > 0) {
             close(mHandle);
         }
+        super.finalize();
     }
 
     private static native void init(Class clasz, String vmName, int vmMajorVersion, int vmMinorVersion);

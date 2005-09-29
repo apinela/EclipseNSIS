@@ -19,14 +19,7 @@ public class NSISHelpAction extends ActionDelegate implements IEditorActionDeleg
 {
     public static final String PLUGIN_HELP_URL = new StringBuffer("/").append(PLUGIN_ID).append( //$NON-NLS-1$
                             "/").append(PLUGIN_HELP_LOCATION_PREFIX).append("overview.html").toString(); //$NON-NLS-1$ //$NON-NLS-2$
-    /**
-     * 
-     */
-    public NSISHelpAction()
-    {
-        super();
-    }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.ui.IEditorActionDelegate#setActiveEditor(org.eclipse.jface.action.IAction, org.eclipse.ui.IEditorPart)
      */

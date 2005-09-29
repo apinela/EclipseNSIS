@@ -60,8 +60,9 @@ public class InstallOptionsTreeViewerDropTargetListener extends AbstractTransfer
     }
 
     protected String getCommandName() {
-        if (isMove())
+        if (isMove()) {
             return RequestConstants.REQ_MOVE;
+        }
         return RequestConstants.REQ_ADD;
     }
 
@@ -87,8 +88,9 @@ public class InstallOptionsTreeViewerDropTargetListener extends AbstractTransfer
         List selection = (List)InstallOptionsTreeViewerTransfer.INSTANCE.getObject();
         if (selection == null
           || selection.isEmpty()
-          || !(selection.get(0) instanceof EditPart))
+          || !(selection.get(0) instanceof EditPart)) {
             return null;
+        }
         return (EditPart)selection.get(0);
     }
 

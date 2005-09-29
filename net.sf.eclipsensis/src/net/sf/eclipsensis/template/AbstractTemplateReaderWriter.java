@@ -38,12 +38,12 @@ public abstract class AbstractTemplateReaderWriter
      * @return the read templates
      * @throws IOException if reading from the stream fails 
      */ 
-    public Collection import_(InputStream stream) throws IOException 
+    public Collection import$(InputStream stream) throws IOException 
     {
-        return import_(new InputSource(stream));
+        return import$(new InputSource(stream));
     }
     
-    public Collection import_(InputSource source) throws IOException 
+    public Collection import$(InputSource source) throws IOException 
     {
         try {
             Collection templates= new HashSet();

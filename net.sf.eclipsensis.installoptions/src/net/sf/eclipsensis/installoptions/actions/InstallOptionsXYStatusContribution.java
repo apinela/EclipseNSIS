@@ -49,7 +49,7 @@ public class InstallOptionsXYStatusContribution extends StatusLineContributionIt
         }
         mEditor = null;
 
-        if (part != null && part instanceof InstallOptionsDesignEditor) {
+        if (part instanceof InstallOptionsDesignEditor) {
             try {
                 InstallOptionsRootEditPart editPart = (InstallOptionsRootEditPart)((InstallOptionsDesignEditor)part).getGraphicalViewer().getRootEditPart();
                 mFigureCanvas = (FigureCanvas)editPart.getViewer().getControl();

@@ -53,8 +53,9 @@ public class NSISDoubleClickSelector extends NSISCharacterPairMatcher implements
 
 			while (pos >= 0) {
 				c= mDocument.getChar(pos);
-				if (!Character.isJavaIdentifierPart(c))
+				if (!Character.isJavaIdentifierPart(c)) {
 					break;
+                }
 				--pos;
 			}
 
@@ -65,8 +66,9 @@ public class NSISDoubleClickSelector extends NSISCharacterPairMatcher implements
 
 			while (pos < length) {
 				c= mDocument.getChar(pos);
-				if (!Character.isJavaIdentifierPart(c))
+				if (!Character.isJavaIdentifierPart(c)) {
 					break;
+                }
 				++pos;
 			}
 
@@ -88,10 +90,12 @@ public class NSISDoubleClickSelector extends NSISCharacterPairMatcher implements
      {
 		if (matchBracketsAt() || matchStringAt()) {
 
-			if (mStartPos == mEndPos)
+			if (mStartPos == mEndPos) {
 				text.setSelectedRange(mStartPos, 0);
-			else
+            }
+			else {
 				text.setSelectedRange(mStartPos + 1, mEndPos - mStartPos - 1);
+            }
 
 			return true;
 		}
@@ -101,13 +105,16 @@ public class NSISDoubleClickSelector extends NSISCharacterPairMatcher implements
 	/**
 	 * Select the word at the current selection. 
 	 */
-	 protected void selectWord(ITextViewer text) {
+	 protected void selectWord(ITextViewer text) 
+     {
 		if (matchWord()) {
 
-			if (mStartPos == mEndPos)
+			if (mStartPos == mEndPos) {
 				text.setSelectedRange(mStartPos, 0);
-			else
+            }
+			else {
 				text.setSelectedRange(mStartPos + 1, mEndPos - mStartPos - 1);
+            }
 		}
 	}
 }

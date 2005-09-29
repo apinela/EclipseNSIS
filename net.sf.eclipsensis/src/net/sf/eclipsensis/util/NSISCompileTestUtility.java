@@ -164,7 +164,7 @@ public class NSISCompileTestUtility
                     }
                 }
                 catch(Exception ex) {
-                    ex.printStackTrace();
+                    EclipseNSISPlugin.getDefault().log(ex);
                 }
             }
         }
@@ -263,7 +263,7 @@ public class NSISCompileTestUtility
             else {
                 line = NSISConsoleLine.info(text);
             }
-            if(line.getType() == NSISConsoleLine.WARNING) {
+            if(line.getType() == NSISConsoleLine.TYPE_WARNING) {
                 Matcher matcher = MakeNSISRunner.MAKENSIS_WARNING_PATTERN.matcher(text);
                 if(matcher.matches()) {
                     setLineInfo(line, new Path(matcher.group(1)), Integer.parseInt(matcher.group(2)));

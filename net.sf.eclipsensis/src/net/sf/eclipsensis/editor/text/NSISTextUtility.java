@@ -11,6 +11,7 @@ package net.sf.eclipsensis.editor.text;
 
 import java.util.*;
 
+import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.util.Common;
 
@@ -46,6 +47,10 @@ public class NSISTextUtility implements INSISConstants
     public static final int REGION1_OVERLAPS_RIGHT_REGION2 = 3;
     public static final int REGION1_CONTAINED_BY_REGION2= 4;
     public static final int REGION1_AFTER_REGION2 = 5;
+
+    private NSISTextUtility()
+    {
+    }
 
     public static int computeOffset(ISourceViewer sourceViewer, boolean hoverOnly)
     {
@@ -595,7 +600,7 @@ public class NSISTextUtility implements INSISConstants
                             continue;
                         }
                         catch(Exception ex) { 
-                            ex.printStackTrace();
+                            EclipseNSISPlugin.getDefault().log(ex);
                         }
                     }
                     map.put(key,null);
@@ -661,7 +666,7 @@ public class NSISTextUtility implements INSISConstants
         });
     }
 
-    private static Color createColor(HashMap map, IPreferenceStore store, String key, String defaultKey, Display display) 
+    private static Color createColor(Map map, IPreferenceStore store, String key, String defaultKey, Display display) 
     {
         if(!store.getBoolean(defaultKey)) {
             if (store.contains(key)) {

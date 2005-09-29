@@ -22,14 +22,6 @@ import org.eclipse.gef.internal.ui.rulers.DragGuidePolicy;
 
 public class InstallOptionsDragGuidePolicy extends DragGuidePolicy
 {
-    /**
-     * 
-     */
-    public InstallOptionsDragGuidePolicy()
-    {
-        super();
-    }
-
     protected boolean isMoveValid(int zoomedPosition)
     {
         if(zoomedPosition < 0) {

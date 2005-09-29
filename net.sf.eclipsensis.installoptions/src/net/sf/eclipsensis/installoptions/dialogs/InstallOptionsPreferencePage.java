@@ -745,7 +745,7 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
                 mDialogSizesMap.put(element.getName().toLowerCase(),element.clone());
             }
             catch (CloneNotSupportedException e) {
-                e.printStackTrace();
+                InstallOptionsPlugin.getDefault().log(e);
             }
         }
         updateDialogSizeViewerInput();

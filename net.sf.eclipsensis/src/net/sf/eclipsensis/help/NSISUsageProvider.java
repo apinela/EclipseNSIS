@@ -114,7 +114,7 @@ public class NSISUsageProvider implements IEclipseNSISService
                     cacheFile.setLastModified(exeTimeStamp);
                 }
                 catch (IOException e) {
-                    e.printStackTrace();
+                    EclipseNSISPlugin.getDefault().log(e);
                 }
             }
             else {
@@ -122,7 +122,7 @@ public class NSISUsageProvider implements IEclipseNSISService
                     mUsages = (Map)Common.readObject(cacheFile);
                 }
                 catch (Exception e) {
-                    e.printStackTrace();
+                    EclipseNSISPlugin.getDefault().log(e);
                 }
             }
         }

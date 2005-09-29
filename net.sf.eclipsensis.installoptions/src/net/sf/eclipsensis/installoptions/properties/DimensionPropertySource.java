@@ -17,9 +17,9 @@ import org.eclipse.ui.views.properties.*;
 
 public class DimensionPropertySource implements IPropertySource
 {
-    public static String ID_WIDTH = "width"; //$NON-NLS-1$
+    public static final String ID_WIDTH = "width"; //$NON-NLS-1$
 
-    public static String ID_HEIGHT = "height";//$NON-NLS-1$
+    public static final String ID_HEIGHT = "height";//$NON-NLS-1$
 
     protected static IPropertyDescriptor[] mDescriptors;
 
@@ -53,10 +53,10 @@ public class DimensionPropertySource implements IPropertySource
     public Object getPropertyValue(String propName)
     {
         if (ID_HEIGHT.equals(propName)) {
-            return new String(new Integer(mDimension.height).toString());
+            return new Integer(mDimension.height).toString();
         }
         if (ID_WIDTH.equals(propName)) {
-            return new String(new Integer(mDimension.width).toString());
+            return new Integer(mDimension.width).toString();
         }
         return null;
     }
@@ -98,13 +98,14 @@ public class DimensionPropertySource implements IPropertySource
 
     public boolean isPropertySet(String propName)
     {
-        if (ID_HEIGHT.equals(propName) || ID_WIDTH.equals(propName))
+        if (ID_HEIGHT.equals(propName) || ID_WIDTH.equals(propName)) {
             return true;
+        }
         return false;
     }
 
     public String toString()
     {
-        return new String("(" + mDimension.width + "," + mDimension.height + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        return new StringBuffer("(").append(mDimension.width).append(",").append(mDimension.height).append(")").toString(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     }
 }

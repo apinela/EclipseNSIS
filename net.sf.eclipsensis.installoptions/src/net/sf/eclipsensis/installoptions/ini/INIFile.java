@@ -206,7 +206,7 @@ public class INIFile implements IDocumentListener, IINIContainer
             writer.write(toString());
         }
         catch (IOException e) {
-            e.printStackTrace();
+            InstallOptionsPlugin.getDefault().log(e);
         }
         finally {
             Common.closeIO(writer);
@@ -219,7 +219,7 @@ public class INIFile implements IDocumentListener, IINIContainer
             return load(new FileReader(file));
         }
         catch (FileNotFoundException e) {
-            e.printStackTrace();
+            InstallOptionsPlugin.getDefault().log(e);
             return null;
         }
     }
@@ -253,7 +253,7 @@ public class INIFile implements IDocumentListener, IINIContainer
             }
         }
         catch (Exception e) {
-            e.printStackTrace();
+            InstallOptionsPlugin.getDefault().log(e);
         }
         finally {
             Common.closeIO(br);
@@ -279,13 +279,13 @@ public class INIFile implements IDocumentListener, IINIContainer
                         doc.addPosition(INIFILE_CATEGORY,pos);
                     }
                     catch (BadPositionCategoryException e1) {
-                        e1.printStackTrace();
+                        InstallOptionsPlugin.getDefault().log(e1);
                     }
                 }
                 lines.add(line);
             }
             catch (BadLocationException e) {
-                e.printStackTrace();
+                InstallOptionsPlugin.getDefault().log(e);
             }
         }
         return lines;
@@ -318,7 +318,7 @@ public class INIFile implements IDocumentListener, IINIContainer
                     doc.removePositionCategory(INIFILE_CATEGORY);
                 }
                 catch (BadPositionCategoryException e) {
-                    e.printStackTrace();
+                    InstallOptionsPlugin.getDefault().log(e);
                 }
             }
             mChildren.clear();

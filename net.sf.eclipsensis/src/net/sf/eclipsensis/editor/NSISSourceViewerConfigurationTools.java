@@ -31,6 +31,10 @@ public class NSISSourceViewerConfigurationTools
         System.arraycopy(NSISPartitionScanner.NSIS_PARTITION_TYPES,0,CONFIGURED_CONTENT_TYPES,1,NSISPartitionScanner.NSIS_PARTITION_TYPES.length);
     }
     
+    private NSISSourceViewerConfigurationTools()
+    {
+    }
+
     /*
      * (non-Javadoc) Method declared on SourceViewerConfiguration
      */

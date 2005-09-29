@@ -22,7 +22,7 @@ import net.sf.eclipsensis.makensis.MakeNSISRunner;
 
 public class NSISValidator implements INSISConstants
 {
-    public static Version MINIMUM_NSIS_VERSION = new Version(EclipseNSISPlugin.getResourceString("minimum.nsis.version")); //$NON-NLS-1$
+    public static final Version MINIMUM_NSIS_VERSION = new Version(EclipseNSISPlugin.getResourceString("minimum.nsis.version")); //$NON-NLS-1$
     private static Pattern cVersionPattern = Pattern.compile("v(\\d+(?:\\.\\d+)?(?:[A-Za-z]+\\d*)?)"); //$NON-NLS-1$
     private static Pattern cCVSVersionPattern = Pattern.compile("v([0-3][0-9]-[a-zA-Z]{3}-20[0-9]{2})\\.cvs"); //$NON-NLS-1$
     private static SimpleDateFormat cCVSDateFormat = new SimpleDateFormat("dd-MMM-yyyy"); //$NON-NLS-1$
@@ -48,11 +48,15 @@ public class NSISValidator implements INSISConstants
                 d = sdf.parse(value);
             }
             catch (ParseException e) {
-                e.printStackTrace();
+                EclipseNSISPlugin.getDefault().log(e);
                 d = new Date(0);
             }
             cVersionDateMap.put(v,d);
         }
+    }
+
+    private NSISValidator()
+    {
     }
 
     public static File findNSISExe(File nsisHome)
@@ -128,7 +132,7 @@ public class NSISValidator implements INSISConstants
                             cvsDate = cCVSDateFormat.parse(matcher.group(1));
                         }
                         catch (ParseException e) {
-                            e.printStackTrace();
+                            EclipseNSISPlugin.getDefault().log(e);
                             cvsDate = new Date(0);
                         }
                         

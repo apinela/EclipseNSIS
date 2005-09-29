@@ -91,7 +91,7 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
                         }
                     }
                     catch(PartInitException pie) {
-                        pie.printStackTrace();
+                        EclipseNSISPlugin.getDefault().log(pie);
                     }
                 }
             });
@@ -107,15 +107,15 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
         int type = -1;
         if(property.equals(CONSOLE_INFO_COLOR)) {
             mInfoColor = mColorRegistry.get(property);
-            type = NSISConsoleLine.INFO;
+            type = NSISConsoleLine.TYPE_INFO;
         }
         else if(property.equals(CONSOLE_WARNING_COLOR)) {
             mWarningColor = mColorRegistry.get(property);
-            type = NSISConsoleLine.WARNING;
+            type = NSISConsoleLine.TYPE_WARNING;
         }
         else if(property.equals(CONSOLE_ERROR_COLOR)) {
             mErrorColor = mColorRegistry.get(property);
-            type = NSISConsoleLine.ERROR;
+            type = NSISConsoleLine.TYPE_ERROR;
         }
         else if(property.equals(CONSOLE_FONT)) {
             mFont = mFontRegistry.get(CONSOLE_FONT);
@@ -178,7 +178,7 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
                                 processModelEvent(event);
                             }
                             catch(Exception ex) {
-                                ex.printStackTrace();
+                                EclipseNSISPlugin.getDefault().log(ex);
                             }
                         }
                     }
@@ -354,14 +354,23 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
     private Action makeAction(Action action, String text, String tooltipText, String image, String disabledImage,
                               ActionFactory globalActionFactory, boolean enabled)
     {
-        if(!Common.isEmpty(text)) action.setText(text);
-        if(!Common.isEmpty(tooltipText)) action.setToolTipText(tooltipText);
-        if(!Common.isEmpty(image)) action.setImageDescriptor(EclipseNSISPlugin.getImageManager().getImageDescriptor(image));
-        if(!Common.isEmpty(disabledImage)) action.setDisabledImageDescriptor(EclipseNSISPlugin.getImageManager().getImageDescriptor(disabledImage));
+        if(!Common.isEmpty(text)) {
+            action.setText(text);
+        }
+        if(!Common.isEmpty(tooltipText)) {
+            action.setToolTipText(tooltipText);
+        }
+        if(!Common.isEmpty(image)) {
+            action.setImageDescriptor(EclipseNSISPlugin.getImageManager().getImageDescriptor(image));
+        }
+        if(!Common.isEmpty(disabledImage)) {
+            action.setDisabledImageDescriptor(EclipseNSISPlugin.getImageManager().getImageDescriptor(disabledImage));
+        }
         action.setEnabled(enabled);
-        if(globalActionFactory != null)  getViewSite().getActionBars().setGlobalActionHandler(
-                                                                        globalActionFactory.getId(),
-                                                                        action);
+        if(globalActionFactory != null)  {
+            getViewSite().getActionBars().setGlobalActionHandler(globalActionFactory.getId(),
+                                                                 action);
+        }
         return action;
     }
     
@@ -442,7 +451,7 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
                             }
                         }
                         else if(path.getDevice() != null) {
-                            gotoFileMarker(lineNum, new File(path.toOSString()), editor);
+                            gotoFileMarker(lineNum, editor);
                         }
                     }
                 }
@@ -454,16 +463,16 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
                 else if(path.getDevice() != null) {
                     File file = new File(path.toOSString());
                     IEditorPart editor = IDE.openEditor(getSite().getPage(),new NSISExternalFileEditorInput(file), INSISConstants.EDITOR_ID);
-                    gotoFileMarker(lineNum, file, editor);
+                    gotoFileMarker(lineNum, editor);
                 }
             }
             catch (PartInitException e) {
-                e.printStackTrace();
+                EclipseNSISPlugin.getDefault().log(e);
             }
         }
     }
 
-    private void gotoFileMarker(int lineNum, File file, IEditorPart editor)
+    private void gotoFileMarker(int lineNum, IEditorPart editor)
     {
         if(editor instanceof TextEditor) {
             IDocument doc = ((TextEditor)editor).getDocumentProvider().getDocument(editor.getEditorInput());
@@ -475,7 +484,7 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
                     ((TextEditor)editor).getSelectionProvider().setSelection(new TextSelection(doc,region.getOffset(),region.getLength()+(delim==null?0:delim.length())));
                 }
                 catch (BadLocationException e) {
-                    e.printStackTrace();
+                    EclipseNSISPlugin.getDefault().log(e);
                 }
             }
         }
@@ -581,7 +590,7 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
         }
         
         public Object[] getElements(Object parent) {
-            if(mInput != null && mInput instanceof NSISConsoleModel) {
+            if(mInput instanceof NSISConsoleModel) {
                 return ((NSISConsoleModel)mInput).getContents().toArray();
             }
             else {
@@ -615,9 +624,9 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
             if(obj instanceof NSISConsoleLine) {
                 NSISConsoleLine line = (NSISConsoleLine)obj;
                 switch(line.getType()) {
-                    case NSISConsoleLine.ERROR:
+                    case NSISConsoleLine.TYPE_ERROR:
                         return mErrorImage;
-                    case NSISConsoleLine.WARNING:
+                    case NSISConsoleLine.TYPE_WARNING:
                         return mWarningImage;
                 }
             }
@@ -641,13 +650,13 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
             if(element instanceof NSISConsoleLine) {
                 NSISConsoleLine line = (NSISConsoleLine)element;
                 switch(line.getType()) {
-                    case NSISConsoleLine.INFO:
+                    case NSISConsoleLine.TYPE_INFO:
                         color = mInfoColor;
                         break;
-                    case NSISConsoleLine.WARNING:
+                    case NSISConsoleLine.TYPE_WARNING:
                         color = mWarningColor;
                         break;
-                    case NSISConsoleLine.ERROR:
+                    case NSISConsoleLine.TYPE_ERROR:
                         color = mErrorColor;
                         break;
                     default:
@@ -988,10 +997,7 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
         private boolean mUpwards = false;;
         private boolean mRunning = true;
 
-        /**
-         * @param y
-         */
-        private NSISConsoleScroller(int startIndex, int endIndex, boolean upwards)
+        public NSISConsoleScroller(int startIndex, int endIndex, boolean upwards)
         {
             mStartIndex = startIndex;
             mUpwards = upwards;
@@ -1003,17 +1009,17 @@ public class NSISConsole extends ViewPart implements INSISConstants, IMakeNSISRu
             mEndIndex = selectItems(table,mStartIndex,endIndex,(upwards?mTopIndex:bottomIndex));
         }
         
-        private boolean isRunning()
+        public boolean isRunning()
         {
             return mRunning;
         }
 
-        private int getEndIndex()
+        public int getEndIndex()
         {
             return mEndIndex;
         }
         
-        private boolean isUpwards()
+        public boolean isUpwards()
         {
             return mUpwards;
         }

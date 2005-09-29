@@ -12,6 +12,8 @@ package net.sf.eclipsensis.util;
 import java.io.*;
 import java.util.ArrayList;
 
+import net.sf.eclipsensis.EclipseNSISPlugin;
+
 public class RunnableInputStreamReader implements Runnable
 {
     private InputStream mInputStream = null;
@@ -54,7 +56,7 @@ public class RunnableInputStreamReader implements Runnable
                 }
             }
             catch(IOException ioe) {
-                ioe.printStackTrace();
+                EclipseNSISPlugin.getDefault().log(ioe);
             }
             finally {
                 Common.closeIO(br);

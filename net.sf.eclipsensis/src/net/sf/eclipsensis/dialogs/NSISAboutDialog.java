@@ -156,7 +156,7 @@ public class NSISAboutDialog extends Dialog implements INSISConstants
             mLaunchURL.run(null);
         }
         catch (Exception ex) {
-            ex.printStackTrace();
+            EclipseNSISPlugin.getDefault().log(ex);
         }
     }
 }

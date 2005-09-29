@@ -82,8 +82,9 @@ public class NSISInstallShortcutDialog extends AbstractNSISInstallItemDialog imp
         if(!Common.isEmpty(temp)) {
             String[] additionalPaths = Common.tokenize(temp,','); //$NON-NLS-1$
             for (int i = 0; i < additionalPaths.length; i++) {
-                if(!input.contains(additionalPaths[i]))
-                input.add(additionalPaths[i]);
+                if(!input.contains(additionalPaths[i])) {
+                    input.add(additionalPaths[i]);
+                }
             }
         }
         ComboViewer cv = new ComboViewer(c1);

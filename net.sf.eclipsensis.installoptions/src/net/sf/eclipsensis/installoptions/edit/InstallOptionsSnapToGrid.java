@@ -51,8 +51,9 @@ public class InstallOptionsSnapToGrid extends SnapToGrid
                 double leftCorrection = Math.IEEEremainder(rect.preciseX - origin.x*mDpuX,
                         gridX*mDpuX);
                 correction.preciseX -= leftCorrection;
-                if ((snapLocations & HORIZONTAL) == 0)
+                if ((snapLocations & HORIZONTAL) == 0) {
                     correction.preciseWidth += leftCorrection;
+                }
                 snapLocations &= ~(WEST | HORIZONTAL);
             }
             
@@ -66,8 +67,9 @@ public class InstallOptionsSnapToGrid extends SnapToGrid
                 double topCorrection = Math.IEEEremainder(
                         rect.preciseY - origin.y*mDpuY, gridY*mDpuY);
                 correction.preciseY -= topCorrection;
-                if ((snapLocations & VERTICAL) == 0)
+                if ((snapLocations & VERTICAL) == 0) {
                     correction.preciseHeight += topCorrection;
+                }
                 snapLocations &= ~(NORTH | VERTICAL);
             }
     

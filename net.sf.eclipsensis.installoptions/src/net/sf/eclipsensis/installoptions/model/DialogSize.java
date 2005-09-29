@@ -27,7 +27,7 @@ public class DialogSize implements Cloneable
     
     public Object clone() throws CloneNotSupportedException
     {
-        return new DialogSize(mName, mDefault, mSize);
+        return new DialogSize(mName, mDefault, mSize.getCopy());
     }
     
     public boolean isDefault()

@@ -50,13 +50,13 @@ public class MakeNSISRunner implements INSISConstants
 
     private static final int STARTED = 0;
     private static final int STOPPED = 1;
-    private static Long ZERO = new Long(0);
+    private static final Long ZERO = new Long(0);
     private static MakeNSISProcess cCompileProcess = null;
     private static String cBestCompressorFormat = null;
     private static String cCompileLock = "lock"; //$NON-NLS-1$
     private static String cHwndLock = "lock"; //$NON-NLS-1$
     private static long cHwnd = 0;
-    private static HashSet cListeners = new HashSet();
+    private static Set cListeners = new HashSet();
     public static final int COMPRESSOR_DEFAULT = 0;
     public static final int COMPRESSOR_BEST;
     public static final String[] COMPRESSOR_DISPLAY_ARRAY;
@@ -91,6 +91,10 @@ public class MakeNSISRunner implements INSISConstants
         COMPRESSOR_BEST = index;
         COMPRESSOR_NAME_ARRAY[COMPRESSOR_BEST] = "best"; //$NON-NLS-1$
         COMPRESSOR_DISPLAY_ARRAY[COMPRESSOR_BEST] = EclipseNSISPlugin.getResourceString("compressor.best.text"); //$NON-NLS-1$
+    }
+
+    private MakeNSISRunner()
+    {
     }
 
     public static void addListener(IMakeNSISRunListener listener)
@@ -312,7 +316,7 @@ public class MakeNSISRunner implements INSISConstants
                 script.getProject().refreshLocal(IResource.DEPTH_INFINITE,null);
             }
             catch(CoreException cex) {
-                cex.printStackTrace();
+                EclipseNSISPlugin.getDefault().log(cex);
             }
         }
         return results;
@@ -523,7 +527,7 @@ public class MakeNSISRunner implements INSISConstants
                     }
                 }
                 catch(Throwable t) {
-                    t.printStackTrace();
+                    EclipseNSISPlugin.getDefault().log(t);
                 }
                 finally {
                     processProblems(script, model, results);
@@ -558,7 +562,7 @@ public class MakeNSISRunner implements INSISConstants
                             updateMarkers(file, NSISConsole.MODEL, results);
                         }
                         catch(CoreException cex) {
-                            cex.printStackTrace();
+                            EclipseNSISPlugin.getDefault().log(cex);
                         }
                     }
                 }
@@ -718,11 +722,11 @@ public class MakeNSISRunner implements INSISConstants
             }
         }
         catch (IOException e) {
-            e.printStackTrace();
+            EclipseNSISPlugin.getDefault().log(e);
             output = null;
         }
         catch (InterruptedException e) {
-            e.printStackTrace();
+            EclipseNSISPlugin.getDefault().log(e);
             output = null;
         }
     

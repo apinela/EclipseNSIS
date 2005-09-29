@@ -28,10 +28,12 @@ public class AddCommand extends org.eclipse.gef.commands.Command
 
     public void execute()
     {
-        if (mIndex < 0)
+        if (mIndex < 0) {
             mParent.addChild(mChild);
-        else
+        }
+        else {
             mParent.addChild(mChild, mIndex);
+        }
     }
 
     public InstallOptionsDialog getParent()
@@ -41,10 +43,12 @@ public class AddCommand extends org.eclipse.gef.commands.Command
 
     public void redo()
     {
-        if (mIndex < 0)
+        if (mIndex < 0) {
             mParent.addChild(mChild);
-        else
+        }
+        else {
             mParent.addChild(mChild, mIndex);
+        }
     }
 
     public void setChild(InstallOptionsWidget subpart)

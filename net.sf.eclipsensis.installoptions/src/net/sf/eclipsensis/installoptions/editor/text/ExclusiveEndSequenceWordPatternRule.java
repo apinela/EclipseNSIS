@@ -59,9 +59,11 @@ public class ExclusiveEndSequenceWordPatternRule extends BeginningOfLineRule
      *
      * @param scanner the scanner to be used
      */
-    protected void unreadBuffer(ICharacterScanner scanner) {
+    protected void unreadBuffer(ICharacterScanner scanner) 
+    {
         mBuffer.insert(0, fStartSequence);
-        for (int i= mBuffer.length() - 1; i > 0; i--)
+        for (int i= mBuffer.length() - 1; i > 0; i--) {
             scanner.unread();
+        }
     }
 }

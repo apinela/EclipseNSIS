@@ -17,7 +17,6 @@ import net.sf.eclipsensis.installoptions.model.commands.InstallOptionsUneditable
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.Request;
 import org.eclipse.gef.commands.Command;
-import org.eclipse.gef.editpolicies.DirectEditPolicy;
 import org.eclipse.gef.requests.DirectEditRequest;
 
 public class UneditableElementDirectEditPolicy extends InstallOptionsDirectEditPolicy
@@ -36,9 +35,7 @@ public class UneditableElementDirectEditPolicy extends InstallOptionsDirectEditP
             return super.getCommand(request);
         }
     }
-    /**
-     * @see DirectEditPolicy#getDirectEditCommand(DirectEditRequest)
-     */
+
     protected Command getDirectEditCommand(DirectEditRequest edit) 
     {
         String text = (String)edit.getCellEditor().getValue();

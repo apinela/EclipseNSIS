@@ -16,11 +16,6 @@ import org.eclipse.swt.widgets.*;
 
 public abstract class NSISHandler extends AbstractHandler
 {
-    public NSISHandler()
-    {
-        super();
-    }
-
     public Object execute(ExecutionEvent event) throws ExecutionException
     {
         Widget w = ((Event)event.getTrigger()).widget;

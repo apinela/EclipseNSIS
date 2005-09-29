@@ -188,7 +188,7 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
                                 cacheFile.setLastModified(htmlHelpTimeStamp);
                             }
                             catch (Exception e) {
-                                e.printStackTrace();
+                                EclipseNSISPlugin.getDefault().log(e);
                             }
                             tocFile.delete();
                         }
@@ -209,7 +209,7 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
                             }
                         } 
                         catch (IOException io) {
-                            io.printStackTrace();
+                            EclipseNSISPlugin.getDefault().log(io);
                         } 
                         finally {
                             if (reader != null) {
@@ -231,7 +231,7 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
                     }
                     catch (Exception e) {
                         obj = null;
-                        e.printStackTrace();
+                        EclipseNSISPlugin.getDefault().log(e);
                     }
                     if(obj != null && obj.getClass().isArray()) {
                         mHelpURLs = (Map)((Object[])obj)[0];

@@ -20,10 +20,10 @@ import org.eclipse.ui.views.properties.*;
 
 public class PositionPropertySource implements IPropertySource
 {
-    public static String ID_LEFT = "left"; //$NON-NLS-1$
-    public static String ID_TOP = "top";//$NON-NLS-1$
-    public static String ID_RIGHT = "right"; //$NON-NLS-1$
-    public static String ID_BOTTOM = "bottom";//$NON-NLS-1$
+    public static final String ID_LEFT = "left"; //$NON-NLS-1$
+    public static final String ID_TOP = "top";//$NON-NLS-1$
+    public static final String ID_RIGHT = "right"; //$NON-NLS-1$
+    public static final String ID_BOTTOM = "bottom";//$NON-NLS-1$
 
     private static ICellEditorValidator cValidator = new ICellEditorValidator(){
         public String isValid(Object value)
@@ -80,16 +80,16 @@ public class PositionPropertySource implements IPropertySource
     public Object getPropertyValue(String propName)
     {
         if (ID_TOP.equals(propName)) {
-            return new String(new Integer(mPosition.top).toString());
+            return new Integer(mPosition.top).toString();
         }
         if (ID_LEFT.equals(propName)) {
-            return new String(new Integer(mPosition.left).toString());
+            return new Integer(mPosition.left).toString();
         }
         if (ID_RIGHT.equals(propName)) {
-            return new String(new Integer(mPosition.right).toString());
+            return new Integer(mPosition.right).toString();
         }
         if (ID_BOTTOM.equals(propName)) {
-            return new String(new Integer(mPosition.bottom).toString());
+            return new Integer(mPosition.bottom).toString();
         }
         return null;
     }
@@ -135,10 +135,8 @@ public class PositionPropertySource implements IPropertySource
 
     public boolean isPropertySet(String propName)
     {
-        if (ID_TOP.equals(propName) || ID_LEFT.equals(propName) || 
-            ID_RIGHT.equals(propName) || ID_BOTTOM.equals(propName))
-            return true;
-        return false;
+        return (ID_TOP.equals(propName) || ID_LEFT.equals(propName) || 
+            ID_RIGHT.equals(propName) || ID_BOTTOM.equals(propName));
     }
 
     public String toString()

@@ -18,7 +18,11 @@ import org.eclipse.gef.EditPartFactory;
 
 public class GraphicalPartFactory implements EditPartFactory
 {
-    public static GraphicalPartFactory INSTANCE = new GraphicalPartFactory();
+    public static final GraphicalPartFactory INSTANCE = new GraphicalPartFactory();
+
+    private GraphicalPartFactory()
+    {
+    }
 
     public EditPart createEditPart(EditPart context, Object model)
     {

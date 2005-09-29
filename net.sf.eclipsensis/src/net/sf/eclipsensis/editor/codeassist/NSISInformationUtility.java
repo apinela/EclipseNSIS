@@ -33,7 +33,7 @@ public class NSISInformationUtility implements INSISConstants
     private static final Comparator cCompletionProposalComparator = new Comparator() {
         public int compare(Object o1, Object o2)
         {
-            return (((ICompletionProposal)o1).getDisplayString()).compareToIgnoreCase(((ICompletionProposal)o2).getDisplayString());
+            return ((ICompletionProposal)o1).getDisplayString().compareToIgnoreCase(((ICompletionProposal)o2).getDisplayString());
         }
     };
 
@@ -155,12 +155,12 @@ public class NSISInformationUtility implements INSISConstants
                                 break;
                             }
                             i--;
-                        };
+                        }
                         int offset3 = region.getOffset()+i+1;
                         region = new Region(offset3,offset-offset3);
                     }
                     catch (BadLocationException e) {
-                        e.printStackTrace();
+                        EclipseNSISPlugin.getDefault().log(e);
                     }
                 }
             }

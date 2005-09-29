@@ -19,7 +19,7 @@ public abstract class AbstractNSISInstallGroup extends AbstractNSISInstallElemen
 {
 	private static final long serialVersionUID = 6871218426689788748L;
 
-    private LinkedHashSet mChildTypes = new LinkedHashSet();
+    private Set mChildTypes = new LinkedHashSet();
     private ArrayList mChildren = new ArrayList();
     private transient boolean mExpanded = true;
     

@@ -29,8 +29,8 @@ import org.eclipse.ui.part.ViewPart;
 public class NSISHTMLHelp extends ViewPart implements INSISConstants
 {
     private static String cFirstPage = null;
-    private static final String cImageLocationFormat = EclipseNSISPlugin.getResourceString("help.browser.throbber.icon.format"); //$NON-NLS-1$
-    private static final int cImageCount = Integer.parseInt(EclipseNSISPlugin.getResourceString("help.browser.throbber.icon.count")); //$NON-NLS-1$
+    private static final String IMAGE_LOCATION_FORMAT = EclipseNSISPlugin.getResourceString("help.browser.throbber.icon.format"); //$NON-NLS-1$
+    private static final int IMAGE_COUNT = Integer.parseInt(EclipseNSISPlugin.getResourceString("help.browser.throbber.icon.count")); //$NON-NLS-1$
 
     private Browser mBrowser;
     private ToolBar mToolBar;
@@ -82,7 +82,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
                 }
                 catch(PartInitException pie) {
                     result[0] = false;
-                    pie.printStackTrace();
+                    EclipseNSISPlugin.getDefault().log(pie);
                 }
             }
         });
@@ -150,19 +150,18 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
     private void initResources() 
     {
         if (mImages == null) {
-            MessageFormat mf = new MessageFormat(cImageLocationFormat);
-            mImages = new Image[cImageCount];
-            for (int i = 0; i < cImageCount; ++i) {
+            MessageFormat mf = new MessageFormat(IMAGE_LOCATION_FORMAT);
+            mImages = new Image[IMAGE_COUNT];
+            for (int i = 0; i < IMAGE_COUNT; ++i) {
                 mImages[i] = EclipseNSISPlugin.getImageManager().getImage(mf.format(new Object[]{new Integer(i)}));
             }
         }
     }
 
-    private ToolItem createToolItem(ToolBar bar, String tooltip, String text, String icon)
+    private ToolItem createToolItem(ToolBar bar, String tooltip, String icon)
     {
         ToolItem item = new ToolItem(bar, SWT.NONE);
         item.setToolTipText(EclipseNSISPlugin.getResourceString(tooltip));
-//        item.setText(EclipseNSISPlugin.getResourceString(text));
         item.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString(icon)));
         return item;
     }
@@ -175,26 +174,26 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
         mToolBar.setLayoutData(data);
         
         // Add a button to navigate backwards through previously visited pages
-        mBack = createToolItem(mToolBar,"help.browser.back.tooltip","help.browser.back.text", //$NON-NLS-1$ //$NON-NLS-2$
+        mBack = createToolItem(mToolBar,"help.browser.back.tooltip", //$NON-NLS-1$ //$NON-NLS-2$
                                "help.browser.back.icon"); //$NON-NLS-1$
     
         // Add a button to navigate forward through previously visited pages
-        mForward = createToolItem(mToolBar,"help.browser.forward.tooltip","help.browser.forward.text", //$NON-NLS-1$ //$NON-NLS-2$
+        mForward = createToolItem(mToolBar,"help.browser.forward.tooltip", //$NON-NLS-1$ //$NON-NLS-2$
                 "help.browser.forward.icon"); //$NON-NLS-1$
     
         // Add a separator
         new ToolItem(mToolBar, SWT.SEPARATOR);
         
         // Add a button to refresh the current web page
-        mRefresh = createToolItem(mToolBar,"help.browser.refresh.tooltip","help.browser.refresh.text", //$NON-NLS-1$ //$NON-NLS-2$
+        mRefresh = createToolItem(mToolBar,"help.browser.refresh.tooltip", //$NON-NLS-1$ //$NON-NLS-2$
                 "help.browser.refresh.icon"); //$NON-NLS-1$
 
         // Add a button to abort web page loading
-        mStop = createToolItem(mToolBar,"help.browser.stop.tooltip","help.browser.stop.text", //$NON-NLS-1$ //$NON-NLS-2$
+        mStop = createToolItem(mToolBar,"help.browser.stop.tooltip", //$NON-NLS-1$ //$NON-NLS-2$
                 "help.browser.stop.icon"); //$NON-NLS-1$
         
         // Add a button to navigate to the Home page
-        mHome = createToolItem(mToolBar,"help.browser.home.tooltip","help.browser.home.text", //$NON-NLS-1$ //$NON-NLS-2$
+        mHome = createToolItem(mToolBar,"help.browser.home.tooltip", //$NON-NLS-1$ //$NON-NLS-2$
                 "help.browser.home.icon"); //$NON-NLS-1$
 
         Listener listener = new Listener() {
@@ -290,7 +289,9 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
         mBrowser.addProgressListener(new ProgressListener() {
             public void changed(ProgressEvent event) 
             {
-                if (event.total == 0) return;                            
+                if (event.total == 0) {
+                    return;                            
+                }
                 int ratio = event.current * 100 / event.total;
                 mProgressBar.setSelection(ratio);
                 mBusy = event.current != event.total;

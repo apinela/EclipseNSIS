@@ -14,6 +14,8 @@ import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.*;
 
+import net.sf.eclipsensis.EclipseNSISPlugin;
+
 import org.w3c.dom.*;
 
 public abstract class AbstractNodeConvertible implements INodeConvertible, Serializable, Cloneable
@@ -79,7 +81,7 @@ public abstract class AbstractNodeConvertible implements INodeConvertible, Seria
                                         writeMethod.invoke(this,new Object[]{getNodeValue(childNode, propertyName, paramTypes[0])});
                                     }
                                     catch (Exception e1) {
-                                        e1.printStackTrace();
+                                        EclipseNSISPlugin.getDefault().log(e1);
                                     }
                                 }
                             }
@@ -88,7 +90,7 @@ public abstract class AbstractNodeConvertible implements INodeConvertible, Seria
                 }
             }
             catch (IntrospectionException e) {
-                e.printStackTrace();
+                EclipseNSISPlugin.getDefault().log(e);
             }
         }
     }
@@ -126,12 +128,12 @@ public abstract class AbstractNodeConvertible implements INodeConvertible, Seria
                     }
                 }
                 catch(Exception ex) {
-                    ex.printStackTrace();
+                    EclipseNSISPlugin.getDefault().log(ex);
                 }
             }
         }
         catch (IntrospectionException e) {
-            e.printStackTrace();
+            EclipseNSISPlugin.getDefault().log(e);
         }
         return node;
     }

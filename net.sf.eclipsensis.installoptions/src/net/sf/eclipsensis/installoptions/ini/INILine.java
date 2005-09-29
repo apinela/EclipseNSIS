@@ -130,7 +130,7 @@ public class INILine implements Cloneable, Serializable
             return line;
         }
         catch (CloneNotSupportedException e) {
-            e.printStackTrace();
+            InstallOptionsPlugin.getDefault().log(e);
             return null;
         }
     }

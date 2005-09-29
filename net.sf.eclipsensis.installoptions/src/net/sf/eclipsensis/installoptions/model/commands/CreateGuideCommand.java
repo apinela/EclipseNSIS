@@ -37,8 +37,9 @@ public class CreateGuideCommand extends Command
 
     public void execute()
     {
-        if (mGuide == null)
+        if (mGuide == null) {
             mGuide = new InstallOptionsGuide(!mParent.isHorizontal());
+        }
         mGuide.setPosition(mPosition);
         mParent.addGuide(mGuide);
     }

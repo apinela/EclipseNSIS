@@ -12,6 +12,7 @@ package net.sf.eclipsensis.installoptions.ini.validators;
 import java.lang.reflect.Constructor;
 import java.util.*;
 
+import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.util.CaseInsensitiveMap;
 
 public class INIKeyValueValidatorRegistry
@@ -46,7 +47,7 @@ public class INIKeyValueValidatorRegistry
                     mRegistry.put(key,validator);
                 }
                 catch(Exception e) {
-                    e.printStackTrace();
+                    InstallOptionsPlugin.getDefault().log(e);
                 }
             }            
         }

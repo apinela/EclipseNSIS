@@ -35,10 +35,12 @@ public class NSISAutoIndentStrategy extends NSISAutoEditStrategy
         return end;
     }
     
-    protected void autoIndentAfterNewLine(IDocument doc, DocumentCommand cmd) {
+    protected void autoIndentAfterNewLine(IDocument doc, DocumentCommand cmd) 
+    {
         
-        if (cmd.offset == -1 || doc.getLength() == 0)
+        if (cmd.offset == -1 || doc.getLength() == 0) {
             return;
+        }
             
         try {
             // find start of line

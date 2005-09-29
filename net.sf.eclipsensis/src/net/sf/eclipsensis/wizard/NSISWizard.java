@@ -82,9 +82,9 @@ public abstract class NSISWizard extends Wizard implements IAdaptable, INewWizar
             mPageChangeProvider = null;
         }
         super.setContainer(wizardContainer);
-        if(getContainer() != null && getContainer() instanceof IPageChangeProvider) {
+        if(getContainer() instanceof IPageChangeProvider) {
             IPageChangeProvider pageChangeProvider = (IPageChangeProvider)getContainer();
-            if(mPageChangeProvider != null && mPageChangeProvider instanceof PageChangeProvider) {
+            if(mPageChangeProvider instanceof PageChangeProvider) {
                 for(Iterator iter=((PageChangeProvider)mPageChangeProvider).getListeners().iterator(); iter.hasNext(); ) {
                     pageChangeProvider.addPageChangedListener((IPageChangedListener)iter.next());
                     iter.remove();

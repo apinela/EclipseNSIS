@@ -120,7 +120,7 @@ public class InstallOptionsWizardPage2 extends WizardNewFileCreationPage
                     newFile.setPersistentProperty(IDE.EDITOR_KEY,editorId);
                 }
                 catch (CoreException e1) {
-                    e1.printStackTrace();
+                    InstallOptionsPlugin.getDefault().log(e1);
                 }
                 
     			IWorkbenchWindow dwindow = mWorkbench.getActiveWorkbenchWindow();
@@ -131,7 +131,7 @@ public class InstallOptionsWizardPage2 extends WizardNewFileCreationPage
     		}
     	} 
         catch (PartInitException e) {
-    		e.printStackTrace();
+            InstallOptionsPlugin.getDefault().log(e);
     		return false;
     	}
     	return true;

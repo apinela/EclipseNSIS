@@ -55,12 +55,12 @@ public class SwitchEditorAction extends Action
                                 ((IFileEditorInput)input).getFile().setPersistentProperty(IDE.EDITOR_KEY,mSwitchToEditorId);
                             }
                             catch (CoreException e1) {
-                                e1.printStackTrace();
+                                InstallOptionsPlugin.getDefault().log(e1);
                             }
                         }
                     }
                     catch (PartInitException e) {
-                        e.printStackTrace();
+                        InstallOptionsPlugin.getDefault().log(e);
                     }
                 }
             });

@@ -34,7 +34,6 @@ import org.eclipse.ui.*;
 public class NSISTaskTagsPreferencePage extends PreferencePage implements IWorkbenchPreferencePage
 {
     private CheckboxTableViewer mTableViewer = null;
-    private Button mAddButton = null;
     private Button mEditButton = null;
     private Button mRemoveButton = null;
     private Button mCaseSensitiveButton = null;
@@ -146,11 +145,11 @@ public class NSISTaskTagsPreferencePage extends PreferencePage implements IWorkb
         layout.marginWidth= 0;
         buttons.setLayout(layout);
 
-        mAddButton= new Button(buttons, SWT.PUSH);
-        mAddButton.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("add.icon"))); //$NON-NLS-1$
-        mAddButton.setToolTipText(EclipseNSISPlugin.getResourceString("new.tooltip")); //$NON-NLS-1$
-        mAddButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-        mAddButton.addListener(SWT.Selection, new Listener() {
+        Button addButton = new Button(buttons, SWT.PUSH);
+        addButton.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("add.icon"))); //$NON-NLS-1$
+        addButton.setToolTipText(EclipseNSISPlugin.getResourceString("new.tooltip")); //$NON-NLS-1$
+        addButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+        addButton.addListener(SWT.Selection, new Listener() {
             public void handleEvent(Event e) {
                 add();
             }

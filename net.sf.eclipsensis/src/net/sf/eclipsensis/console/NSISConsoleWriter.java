@@ -11,6 +11,7 @@ package net.sf.eclipsensis.console;
 
 import java.io.*;
 
+import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.console.model.NSISConsoleModel;
 import net.sf.eclipsensis.makensis.MakeNSISProcess;
 import net.sf.eclipsensis.util.Common;
@@ -62,7 +63,7 @@ public class NSISConsoleWriter implements Runnable
             }
         }
         catch(Exception ex) {
-            ex.printStackTrace();
+            EclipseNSISPlugin.getDefault().log(ex);
             mModel.add(NSISConsoleLine.error(ex.getLocalizedMessage()));
         }
         finally {

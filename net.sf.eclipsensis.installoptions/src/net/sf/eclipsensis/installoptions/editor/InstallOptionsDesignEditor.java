@@ -596,7 +596,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
                             updateDocument(doc);
                         }
                         catch (CoreException e1) {
-                            e1.printStackTrace();
+                            InstallOptionsPlugin.getDefault().log(e1);
                         }
                     }
                     input.getDocumentProvider().disconnect(input);
@@ -647,8 +647,9 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
                 String title= InstallOptionsPlugin.getResourceString("outofsync.error.save.title"); //$NON-NLS-1$
                 String msg= InstallOptionsPlugin.getResourceString("outofsync.error.save.message"); //$NON-NLS-1$
                 
-                if (Common.openQuestion(shell, title, msg, InstallOptionsPlugin.getShellImage()))
+                if (Common.openQuestion(shell, title, msg, InstallOptionsPlugin.getShellImage())) {
                     performSave(input, p, true, progressMonitor);
+                }
                 else {
                     if (progressMonitor != null) {
                         progressMonitor.setCanceled(true);
@@ -684,7 +685,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
             }
         }
         catch (Exception e) {
-            e.printStackTrace();
+            InstallOptionsPlugin.getDefault().log(e);
         }
     }
     
@@ -709,7 +710,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
             }
         }
         catch (Exception e) {
-            e.printStackTrace();
+            InstallOptionsPlugin.getDefault().log(e);
         }
     }
     
@@ -1089,15 +1090,18 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
         getEditorSite().getKeyBindingService().registerAction(action);
         
         final Shell shell;
-        if (getGraphicalViewer() != null)
+        if (getGraphicalViewer() != null) {
             shell= getGraphicalViewer().getControl().getShell();
-        else
+        }
+        else {
             shell= null;
+        }
         action = new Action(){
             public void run() {
                 String[] preferencePages= {IInstallOptionsConstants.INSTALLOPTIONS_PREFERENCE_PAGE_ID};
-                if (preferencePages.length > 0 && (shell == null || !shell.isDisposed()))
+                if (preferencePages.length > 0 && (shell == null || !shell.isDisposed())) {
                     PreferencesUtil.createPreferenceDialogOn(shell, preferencePages[0], preferencePages, InstallOptionsDesignEditor.class).open();
+                }
             }
         };
         action.setId("net.sf.eclipsensis.installoptions.design_editor_prefs"); //$NON-NLS-1$
@@ -1375,7 +1379,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
                     getCommandStack().markSaveLocation();
                 }
                 catch (Exception e) {
-                    e.printStackTrace();
+                    InstallOptionsPlugin.getDefault().log(e);
                 }
             }
         }
@@ -1402,7 +1406,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
             file.setPersistentProperty(name, converter.asString(value, defaultValue));
         }
         catch (Exception e) {
-            e.printStackTrace();
+            InstallOptionsPlugin.getDefault().log(e);
         }
     }
 
@@ -1537,7 +1541,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
                 }
             }
             catch (CoreException e) {
-                e.printStackTrace();
+                InstallOptionsPlugin.getDefault().log(e);
             }
         }
 
@@ -1606,7 +1610,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
                     }
                 }
                 catch(PartInitException pie) {
-                    pie.printStackTrace();
+                    InstallOptionsPlugin.getDefault().log(pie);
                 }
             }
         });
@@ -2028,7 +2032,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
         {
             if(property.equals(PREFERENCE_UNLOAD_CREATION_TOOL_WHEN_FINISHED)) {
                 firePropertyChanged(property,
-                        new Boolean(getUnloadCreationToolWhenFinished()));
+                        (getUnloadCreationToolWhenFinished()?Boolean.TRUE:Boolean.FALSE));
             }
             else {
                 super.handlePreferenceStorePropertyChanged(property);

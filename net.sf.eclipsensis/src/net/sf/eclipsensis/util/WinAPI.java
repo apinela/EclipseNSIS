@@ -95,4 +95,8 @@ public class WinAPI
     public static final native int GetSystemMetrics (int nIndex);
     
     public static final native void SetObjectFieldValue(Object object, String field, int value);
+
+    private WinAPI()
+    {
+    }
 }

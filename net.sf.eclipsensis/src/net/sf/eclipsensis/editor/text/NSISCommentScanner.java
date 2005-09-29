@@ -58,14 +58,10 @@ public class NSISCommentScanner extends NSISRuleBasedScanner
         }
     }
 
-    protected IRule getTaskTagsRule()
+    protected synchronized IRule getTaskTagsRule()
     {
         if(mTaskTagsRule == null) {
-            synchronized (this) {
-                if(mTaskTagsRule == null) {
-                    mTaskTagsRule = new NSISTaskTagRule(createTokenFromPreference(INSISPreferenceConstants.TASK_TAGS_STYLE));
-                }
-            }
+            mTaskTagsRule = new NSISTaskTagRule(createTokenFromPreference(INSISPreferenceConstants.TASK_TAGS_STYLE));
         }
         return mTaskTagsRule;
     }

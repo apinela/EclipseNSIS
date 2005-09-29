@@ -9,6 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.wizard.template;
 
+import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.template.AbstractTemplate;
 import net.sf.eclipsensis.wizard.settings.NSISWizardSettings;
 
@@ -74,7 +75,7 @@ public class NSISWizardTemplate extends AbstractTemplate
             template.mSettings = (mSettings==null?null:(NSISWizardSettings)mSettings.clone());
         }
         catch (CloneNotSupportedException e) {
-            e.printStackTrace();
+            EclipseNSISPlugin.getDefault().log(e);
             template.mSettings = new NSISWizardSettings();
         }
         return template;
@@ -83,14 +84,10 @@ public class NSISWizardTemplate extends AbstractTemplate
     /**
      * @return Returns the settings.
      */
-    public NSISWizardSettings getSettings()
+    public synchronized NSISWizardSettings getSettings()
     {
         if(mSettings == null) {
-            synchronized(this) {
-                if(mSettings == null) {
-                    mSettings = new NSISWizardSettings();
-                }
-            }
+            mSettings = new NSISWizardSettings();
         }
         return mSettings;
     }

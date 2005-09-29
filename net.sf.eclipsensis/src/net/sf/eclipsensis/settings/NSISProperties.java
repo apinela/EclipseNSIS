@@ -12,6 +12,7 @@ package net.sf.eclipsensis.settings;
 import java.io.*;
 import java.util.*;
 
+import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.util.Common;
 
@@ -21,8 +22,8 @@ import org.eclipse.core.runtime.QualifiedName;
 
 public class NSISProperties extends NSISSettings implements INSISConstants
 {
-    private static HashMap cPropertiesCache = new HashMap();
-    private static HashMap cQualifiedNames = new HashMap();
+    private static Map cPropertiesCache = new HashMap();
+    private static Map cQualifiedNames = new HashMap();
 
     private IResource mResource = null;
     private boolean mUseParent = true;
@@ -342,7 +343,7 @@ public class NSISProperties extends NSISSettings implements INSISConstants
             }
         }
         catch(Exception e) {
-            e.printStackTrace();
+            EclipseNSISPlugin.getDefault().log(e);
         }
         finally {
             Common.closeIO(is);
@@ -371,7 +372,7 @@ public class NSISProperties extends NSISSettings implements INSISConstants
                     return;
                 }
                 catch(IOException ioe) {
-                    ioe.printStackTrace();
+                    EclipseNSISPlugin.getDefault().log(ioe);
                 }
                 finally {
                     Common.closeIO(os);
@@ -380,7 +381,7 @@ public class NSISProperties extends NSISSettings implements INSISConstants
             synchronizer.setSyncInfo(qname,mResource,null);
         }
         catch (CoreException e) {
-            e.printStackTrace();
+            EclipseNSISPlugin.getDefault().log(e);
         }
     }
     

@@ -48,7 +48,7 @@ public class SetDialogSizeAction extends Action implements IUpdate
 
     public boolean isEnabled()
     {
-        if (mDialogSize != null && mEditor != null && mEditor instanceof InstallOptionsDesignEditor && 
+        if (mDialogSize != null && mEditor instanceof InstallOptionsDesignEditor && 
                 !((InstallOptionsDesignEditor)mEditor).isDisposed() && ((InstallOptionsDesignEditor)mEditor).getGraphicalViewer() != null) {
             return true;
         }

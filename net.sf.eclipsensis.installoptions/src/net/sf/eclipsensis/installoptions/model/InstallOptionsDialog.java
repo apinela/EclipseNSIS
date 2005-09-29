@@ -49,7 +49,7 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
     private static final String[] OPTION_DISPLAY = {InstallOptionsPlugin.getResourceString("option.default"), //$NON-NLS-1$
                                  InstallOptionsPlugin.getResourceString("option.no"), //$NON-NLS-1$
                                  InstallOptionsPlugin.getResourceString("option.yes")}; //$NON-NLS-1$
-    public static Image INSTALLOPTIONS_ICON = InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("installoptions.dialog.icon")); //$NON-NLS-1$
+    public static final Image INSTALLOPTIONS_ICON = InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("installoptions.dialog.icon")); //$NON-NLS-1$
     private static LabelProvider cDefaultLabelProvider = new LabelProvider(){
         public String getText(Object element)
         {

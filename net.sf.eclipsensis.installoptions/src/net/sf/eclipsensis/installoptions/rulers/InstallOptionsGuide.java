@@ -76,8 +76,9 @@ public class InstallOptionsGuide
      */
     public void attachPart(InstallOptionsWidget part, int alignment)
     {
-        if (getMap().containsKey(part) && getAlignment(part) == alignment)
+        if (getMap().containsKey(part) && getAlignment(part) == alignment) {
             return;
+        }
 
         getMap().put(part, new Integer(alignment));
         InstallOptionsGuide oldGuide = isHorizontal()?part.getHorizontalGuide():part
@@ -117,8 +118,9 @@ public class InstallOptionsGuide
 
     public int getAlignment(InstallOptionsWidget part)
     {
-        if (getMap().get(part) != null)
+        if (getMap().get(part) != null) {
             return ((Integer)getMap().get(part)).intValue();
+        }
         return -2;
     }
 

@@ -16,7 +16,7 @@ import org.eclipse.jface.viewers.ICellEditorValidator;
 
 public class NumberCellEditorValidator implements ICellEditorValidator
 {
-    public static NumberCellEditorValidator INSTANCE = new NumberCellEditorValidator(0,Integer.MAX_VALUE,false);
+    public static final NumberCellEditorValidator INSTANCE = new NumberCellEditorValidator(0,Integer.MAX_VALUE,false);
     private int mMinValue;
     private int mMaxValue;
     private boolean mBlankAllowed;

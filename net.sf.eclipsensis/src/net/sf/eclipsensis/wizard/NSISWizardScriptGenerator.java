@@ -149,7 +149,7 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
                         IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
                         if(page != null) {
                             IEditorPart editor = page.getActiveEditor();
-                            if(editor != null && editor instanceof NSISEditor) {
+                            if(editor instanceof NSISEditor) {
                                 IAction action = null;
                                 if(mSettings.isTestScript()) {
                                     action = ((NSISEditor)editor).getAction(INSISConstants.COMPILE_TEST_ACTION_ID);

@@ -32,10 +32,6 @@ public class NSISTemplateVariableProcessor extends NSISCompletionProcessor imple
             
             return proposal0.getDisplayString().compareTo(proposal1.getDisplayString());
         }
-
-        public boolean equals(Object arg0) {
-            return false;
-        }
     };
     
     private TemplateContextType mContextType;

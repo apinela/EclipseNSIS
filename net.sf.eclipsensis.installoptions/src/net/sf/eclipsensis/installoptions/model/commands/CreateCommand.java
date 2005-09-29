@@ -42,8 +42,9 @@ public class CreateCommand extends org.eclipse.gef.commands.Command
         if (mRect != null) {
             Position p  = mChild.getPosition();
             p.setLocation(mRect.getLocation());
-            if (!mRect.isEmpty())
+            if (!mRect.isEmpty()) {
                 p.setSize(mRect.getSize());
+            }
         }
         redo();
     }

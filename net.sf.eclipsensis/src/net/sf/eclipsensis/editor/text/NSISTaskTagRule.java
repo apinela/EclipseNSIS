@@ -126,8 +126,10 @@ public class NSISTaskTagRule implements IRule
      *
      * @param scanner the scanner to be used
      */
-    protected void unreadBuffer(StringBuffer buffer, ICharacterScanner scanner) {
-        for (int i= buffer.length() - 1; i >= 0; i--)
+    protected void unreadBuffer(StringBuffer buffer, ICharacterScanner scanner) 
+    {
+        for (int i= buffer.length() - 1; i >= 0; i--) {
             scanner.unread();
+        }
     }
 }

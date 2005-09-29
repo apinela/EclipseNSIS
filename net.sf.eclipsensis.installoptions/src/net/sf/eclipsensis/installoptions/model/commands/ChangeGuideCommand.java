@@ -50,8 +50,9 @@ public class ChangeGuideCommand extends Command
     {
         // Cache the old values
         mOldGuide = mHorizontal?mPart.getHorizontalGuide():mPart.getVerticalGuide();
-        if (mOldGuide != null)
+        if (mOldGuide != null) {
             mOldAlign = mOldGuide.getAlignment(mPart);
+        }
 
         redo();
     }

@@ -113,16 +113,20 @@ public class DistributionRequest extends ChangeBoundsRequest
         Rectangle reference = getAlignmentRectangle();
 
         if (result instanceof PrecisionRectangle) {
-            if (reference instanceof PrecisionRectangle)
+            if (reference instanceof PrecisionRectangle) {
                 doPrecisionAlignment(
                     (PrecisionRectangle)result,
                     (PrecisionRectangle)reference);
-            else
+            }
+            else {
                 doPrecisionAlignment(
                     (PrecisionRectangle)result,
                     new PrecisionRectangle(reference));
-        } else
+            }
+        } 
+        else {
             doNormalAlignment(result, reference);
+        }
         return result;
     }
 

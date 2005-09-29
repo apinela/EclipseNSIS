@@ -16,7 +16,7 @@ import org.eclipse.swt.graphics.Image;
 
 public class InstallOptionsIcon extends InstallOptionsPicture
 {
-    private static Image ICON_IMAGE = InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("icon.image")); //$NON-NLS-1$
+    private static final Image ICON_IMAGE = InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("icon.image")); //$NON-NLS-1$
 
     protected InstallOptionsIcon(INISection section)
     {

@@ -155,7 +155,7 @@ public class InstallOptionsListbox extends InstallOptionsCombobox
         private boolean mMultiSelect = false;
         private List mListItems;
         
-        private SelectListItemsCellEditor(Composite parent, List listItems, boolean multiSelect)
+        protected SelectListItemsCellEditor(Composite parent, List listItems, boolean multiSelect)
         {
             super(parent);
             setListItems(listItems);

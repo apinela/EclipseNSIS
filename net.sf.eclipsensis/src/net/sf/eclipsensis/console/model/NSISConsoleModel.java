@@ -15,15 +15,11 @@ import net.sf.eclipsensis.console.NSISConsoleLine;
 
 public class NSISConsoleModel
 {
-    private HashSet mListeners = new HashSet();
+    private Set mListeners = new HashSet();
     private List mContents = Collections.synchronizedList(new ArrayList());
     private ArrayList mErrors = new ArrayList();
     private ArrayList mWarnings = new ArrayList();
 
-    public NSISConsoleModel()
-    {
-    }
-    
     public boolean supportsStatistics()
     {
         return true;
@@ -51,10 +47,10 @@ public class NSISConsoleModel
     public void add(NSISConsoleLine line)
     {
         mContents.add(line);
-        if(line.getType() == NSISConsoleLine.ERROR) {
+        if(line.getType() == NSISConsoleLine.TYPE_ERROR) {
             mErrors.add(line);
         }
-        else if(line.getType() == NSISConsoleLine.WARNING) {
+        else if(line.getType() == NSISConsoleLine.TYPE_WARNING) {
             mWarnings.add(line);
         }
         notifyListeners(NSISConsoleModelEvent.ADD, line);
@@ -63,10 +59,10 @@ public class NSISConsoleModel
     public void remove(NSISConsoleLine line)
     {
         mContents.remove(line);
-        if(line.getType() == NSISConsoleLine.ERROR) {
+        if(line.getType() == NSISConsoleLine.TYPE_ERROR) {
             mErrors.remove(line);
         }
-        else if(line.getType() == NSISConsoleLine.WARNING) {
+        else if(line.getType() == NSISConsoleLine.TYPE_WARNING) {
             mWarnings.remove(line);
         }
         notifyListeners(NSISConsoleModelEvent.REMOVE, line);

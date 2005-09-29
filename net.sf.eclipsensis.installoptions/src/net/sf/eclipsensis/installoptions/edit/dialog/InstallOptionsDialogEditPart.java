@@ -276,8 +276,9 @@ public class InstallOptionsDialogEditPart extends InstallOptionsEditPart impleme
     public DragTracker getDragTracker(Request req)
     {
         if (req instanceof SelectionRequest
-                && ((SelectionRequest)req).getLastButtonPressed() == 3)
+                && ((SelectionRequest)req).getLastButtonPressed() == 3) {
             return new DeselectAllTracker(this);
+        }
         return new MarqueeDragTracker();
     }
 

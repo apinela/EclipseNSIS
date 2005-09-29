@@ -54,6 +54,10 @@ public class ColorManager
         return cColorRegistry;
     }
     
+    private ColorManager()
+    {
+    }
+    
     public static Color getSystemColor(int colorId)
     {
         int pixel = WinAPI.GetSysColor(colorId);

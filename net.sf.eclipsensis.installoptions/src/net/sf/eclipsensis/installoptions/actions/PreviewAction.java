@@ -144,7 +144,7 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
                     doPreview(file.getLocation().toFile());
                 }
                 catch (final IOException e) {
-                    e.printStackTrace();
+                    InstallOptionsPlugin.getDefault().log(e);
                     Common.openError(shell,e.getMessage(),InstallOptionsPlugin.getShellImage());
                 }
             }
@@ -246,7 +246,7 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
                                 }
                             }
                             catch (final Exception e) {
-                                e.printStackTrace();
+                                InstallOptionsPlugin.getDefault().log(e);
                                 shell.getDisplay().asyncExec(new Runnable() {
                                     public void run() {
                                         Common.openError(shell, e.getMessage(), InstallOptionsPlugin.getShellImage());
@@ -257,7 +257,7 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
                     },true,pmd.getProgressMonitor(),shell.getDisplay());
                 }
                 catch (Exception e) {
-                    e.printStackTrace();
+                    InstallOptionsPlugin.getDefault().log(e);
                     Common.openError(shell, e.getMessage(), InstallOptionsPlugin.getShellImage());
                 }
             }
@@ -297,11 +297,6 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
     
     private class PreviewSettings extends NSISSettings
     {
-        public PreviewSettings()
-        {
-            super();
-        }
-        
         protected boolean getBoolean(String name)
         {
             return false;

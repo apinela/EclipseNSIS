@@ -265,38 +265,44 @@ public class MultiLineTextPropertyDescriptor extends TextPropertyDescriptor impl
 
         public void deactivate() 
         {
-            if(mDelegate != null)
+            if(mDelegate != null) {
                 mDelegate.deactivate();
+            }
             super.deactivate();
         }
 
         public void addListener(ICellEditorListener listener)
         {
             mListeners.add(listener);
-            if(mDelegate != null)
+            if(mDelegate != null) {
                 mDelegate.addListener(listener);
+            }
         }
         
         public void addPropertyChangeListener(IPropertyChangeListener listener)
         {
             mPropertyChangeListeners.add(listener);
-            if(mDelegate != null)
+            if(mDelegate != null) {
                 mDelegate.addPropertyChangeListener(listener);
+            }
         }
         
         public void dispose()
         {
-            if(mDelegate != null)
+            if(mDelegate != null) {
                 mDelegate.dispose();
+            }
             super.dispose();
         }
         
         public String getErrorMessage()
         {
-            if(mDelegate != null)
+            if(mDelegate != null) {
                 return mDelegate.getErrorMessage();
-            else
+            }
+            else {
                 return null;
+            }
         }
 
         public ICellEditorValidator getValidator()
@@ -306,157 +312,190 @@ public class MultiLineTextPropertyDescriptor extends TextPropertyDescriptor impl
 
         public boolean isCopyEnabled()
         {
-            if(mDelegate != null)
+            if(mDelegate != null) {
                 return mDelegate.isCopyEnabled();
-            else
+            }
+            else {
                 return super.isCopyEnabled();
+            }
         }
         
         public boolean isCutEnabled()
         {
-            if(mDelegate != null)
+            if(mDelegate != null) {
                 return mDelegate.isCutEnabled();
-            else
+            }
+            else {
                 return super.isCutEnabled();
+            }
         }
 
         public boolean isDeleteEnabled()
         {
-            if(mDelegate != null)
+            if(mDelegate != null) {
                 return mDelegate.isDeleteEnabled();
-            else
+            }
+            else {
                 return super.isDeleteEnabled();
+            }
         }
 
         public boolean isDirty()
         {
-            if(mDelegate != null)
+            if(mDelegate != null) {
                 return mDelegate.isDirty();
-            else
+            }
+            else {
                 return super.isDirty();
+            }
         }
 
         public boolean isFindEnabled()
         {
-            if(mDelegate != null)
+            if(mDelegate != null) {
                 return mDelegate.isFindEnabled();
-            else
+            }
+            else {
                 return super.isFindEnabled();
+            }
         }
         
         public boolean isPasteEnabled()
         {
-            if(mDelegate != null)
+            if(mDelegate != null) {
                 return mDelegate.isPasteEnabled();
-            else
+            }
+            else {
                 return super.isPasteEnabled();
+            }
         }
         
         public boolean isRedoEnabled()
         {
-            if(mDelegate != null)
+            if(mDelegate != null) {
                 return mDelegate.isRedoEnabled();
-            else
+            }
+            else {
                 return super.isRedoEnabled();
+            }
         }
         
         public boolean isSelectAllEnabled()
         {
-            if(mDelegate != null)
+            if(mDelegate != null) {
                 return mDelegate.isSelectAllEnabled();
-            else
+            }
+            else {
                 return super.isSelectAllEnabled();
+            }
         }
         
         public boolean isUndoEnabled()
         {
-            if(mDelegate != null)
+            if(mDelegate != null) {
                 return mDelegate.isUndoEnabled();
-            else
+            }
+            else {
                 return super.isUndoEnabled();
+            }
         }
         
         public boolean isValueValid()
         {
-            if(mDelegate != null)
+            if(mDelegate != null) {
                 return mDelegate.isValueValid();
-            else
+            }
+            else {
                 return super.isValueValid();
+            }
         }
         
         public void performCopy()
         {
-            if(mDelegate != null)
+            if(mDelegate != null) {
                 mDelegate.performCopy();
+            }
         }
         
         public void performCut()
         {
-            if(mDelegate != null)
+            if(mDelegate != null) {
                 mDelegate.performCut();
+            }
         }
         
         public void performDelete()
         {
-            if(mDelegate != null)
+            if(mDelegate != null) {
                 mDelegate.performDelete();
+            }
         }
         
         public void performFind()
         {
-            mDelegate.performFind();
+            if(mDelegate != null) {
+                mDelegate.performFind();
+            }
         }
         
         public void performPaste()
         {
-            if(mDelegate != null)
+            if(mDelegate != null) {
                 mDelegate.performPaste();
+            }
         }
         
         public void performRedo()
         {
-            if(mDelegate != null)
+            if(mDelegate != null) {
                 mDelegate.performRedo();
+            }
         }
         
         public void performSelectAll()
         {
-            if(mDelegate != null)
+            if(mDelegate != null) {
                 mDelegate.performSelectAll();
+            }
         }
         
         public void performUndo()
         {
-            if(mDelegate != null)
+            if(mDelegate != null) {
                 mDelegate.performUndo();
+            }
         }
         
         public void removeListener(ICellEditorListener listener)
         {
             mListeners.remove(listener);
-            if(mDelegate != null)
+            if(mDelegate != null) {
                 mDelegate.removeListener(listener);
+            }
         }
         
         public void removePropertyChangeListener(
                 IPropertyChangeListener listener)
         {
             mPropertyChangeListeners.remove(listener);
-            if(mDelegate != null)
+            if(mDelegate != null) {
                 mDelegate.removePropertyChangeListener(listener);
+            }
         }
         
         public void setFocus()
         {
-            if(mDelegate != null)
+            if(mDelegate != null) {
                 mDelegate.setFocus();
+            }
         }
         
         public void setValidator(ICellEditorValidator validator)
         {
             mValidator = validator;
-            if(mDelegate != null)
+            if(mDelegate != null) {
                 mDelegate.setValidator(validator);
+            }
         }
         
         /* (non-Javadoc)
@@ -464,11 +503,13 @@ public class MultiLineTextPropertyDescriptor extends TextPropertyDescriptor impl
          */
         protected Object doGetValue()
         {
-            if(mDelegate != null)
+            if(mDelegate != null) {
                 mValue = mDelegate.getValue();
+            }
 
-            if(mValue == null)
+            if(mValue == null) {
                 mValue = ""; //$NON-NLS-1$
+            }
             return mValue;
         }
 
@@ -481,8 +522,9 @@ public class MultiLineTextPropertyDescriptor extends TextPropertyDescriptor impl
                 value = ""; //$NON-NLS-1$
             }
             mValue = value;
-            if(mDelegate != null)
+            if(mDelegate != null) {
                 mDelegate.setValue(value);
+            }
         }
 
         /* (non-Javadoc)

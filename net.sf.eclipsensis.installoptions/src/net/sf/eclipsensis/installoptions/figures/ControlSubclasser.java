@@ -10,7 +10,9 @@
 package net.sf.eclipsensis.installoptions.figures;
 
 import java.util.HashMap;
+import java.util.Map;
 
+import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.util.WinAPI;
 
 import org.eclipse.swt.SWT;
@@ -27,10 +29,7 @@ import org.eclipse.swt.widgets.Display;
 public class ControlSubclasser
 {
     private static int cNewProc;
-    private static HashMap cProcMap = new HashMap(101);
-    
-    int mOldProc, mNewProc;
-    int mControlHandle;
+    private static Map cProcMap = new HashMap(101);
     
     static {
         SubclassCallback subCallback = new SubclassCallback();
@@ -44,6 +43,10 @@ public class ControlSubclasser
         cNewProc = callback.getAddress();
     }
     
+    private ControlSubclasser()
+    {
+    }
+
     public static void subclassControl(Control control, SWTControlFigure figure)
     {
         final int handle = control.handle;
@@ -60,9 +63,9 @@ public class ControlSubclasser
         });
     }
     
-    public static class SubclassCallback
+    private static class SubclassCallback
     {
-        private SubclassCallback()
+        public SubclassCallback()
         {
         }
         
@@ -98,7 +101,7 @@ public class ControlSubclasser
                                                   hWnd, msg, wParam, lParam);
                     }
                     catch(Throwable t) {
-                        //Ignore any errors
+                        InstallOptionsPlugin.getDefault().log(t);
                         res = 0;
                     }
             }

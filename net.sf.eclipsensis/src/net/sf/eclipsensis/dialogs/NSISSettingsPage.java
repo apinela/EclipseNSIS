@@ -51,10 +51,6 @@ public abstract class NSISSettingsPage extends PropertyPage implements IWorkbenc
     private TabFolder mFolder = null;
     private Group mGroup = null;
 
-    public NSISSettingsPage() 
-    {
-	}
-    
     /* (non-Javadoc)
      * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
      */
@@ -91,7 +87,7 @@ public abstract class NSISSettingsPage extends PropertyPage implements IWorkbenc
                             }
                         }
                         catch(Exception ex) {
-                            ex.printStackTrace();
+                            EclipseNSISPlugin.getDefault().log(ex);
                         }
                     }
                 });

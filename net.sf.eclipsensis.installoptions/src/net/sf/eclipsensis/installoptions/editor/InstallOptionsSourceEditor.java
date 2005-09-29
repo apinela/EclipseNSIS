@@ -57,7 +57,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
     
     private IPositionUpdater mMarkerPositionUpdater = new DefaultPositionUpdater(MARKER_CATEGORY);
     private ResourceTracker mResourceListener = new ResourceTracker();
-    private HashMap mMarkerPositions = new HashMap();
+    private Map mMarkerPositions = new HashMap();
     private boolean mSwitching = false;
     private INIFile mINIFile = new INIFile();
     private SelectionSynchronizer mSelectionSynchronizer = new SelectionSynchronizer();
@@ -152,15 +152,18 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
         action = getAction(ITextEditorActionConstants.CONTEXT_PREFERENCES);
         if(action != null) {
             final Shell shell;
-            if (getSourceViewer() != null)
+            if (getSourceViewer() != null) {
                 shell= getSourceViewer().getTextWidget().getShell();
-            else
+            }
+            else {
                 shell= null;
+            }
             IAction action2= new ActionWrapper(action, new Runnable() {
                 public void run() {
                     String[] preferencePages= collectContextMenuPreferencePages();
-                    if (preferencePages.length > 0 && (shell == null || !shell.isDisposed()))
+                    if (preferencePages.length > 0 && (shell == null || !shell.isDisposed())) {
                         PreferencesUtil.createPreferenceDialogOn(shell, preferencePages[0], preferencePages, InstallOptionsSourceEditor.class).open();
+                    }
                 }
             });
             setAction(ITextEditorActionConstants.CONTEXT_PREFERENCES, action2);
@@ -199,7 +202,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
                 document.removePositionCategory(MARKER_CATEGORY);
             }
             catch (BadPositionCategoryException e) {
-                e.printStackTrace();
+                InstallOptionsPlugin.getDefault().log(e);
             }
         }
         mINIFile.disconnect(document);
@@ -237,7 +240,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
                             document.removePositionCategory(MARKER_CATEGORY);
                         }
                         catch (BadPositionCategoryException e) {
-                            e.printStackTrace();
+                            InstallOptionsPlugin.getDefault().log(e);
                         }
                     }
                     provider.disconnect(editorInput);
@@ -294,7 +297,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
                     document.removePosition(MARKER_CATEGORY, p);
                 }
                 catch (BadPositionCategoryException e) {
-                    e.printStackTrace();
+                    InstallOptionsPlugin.getDefault().log(e);
                 }
             }
         }        
@@ -315,7 +318,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
                         p = new Position(region.getOffset(),region.getLength());
                     }
                     catch (BadLocationException e) {
-                        e.printStackTrace();
+                        InstallOptionsPlugin.getDefault().log(e);
                         return;
                     }
                 }
@@ -331,7 +334,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
                 mMarkerPositions.put(marker,p);
             }
             catch (Exception e) {
-                e.printStackTrace();
+                InstallOptionsPlugin.getDefault().log(e);
                 return;
             }
         }
@@ -429,7 +432,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
                                                         new Position(region.getOffset(),region.getLength()));
                                             }
                                             catch (BadLocationException e) {
-                                                e.printStackTrace();
+                                                InstallOptionsPlugin.getDefault().log(e);
                                             }
                                         }
                                     }
@@ -713,7 +716,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
                                       return Status.OK_STATUS;
                                   }
                                   catch(Exception e) {
-                                      e.printStackTrace();
+                                      InstallOptionsPlugin.getDefault().log(e);
                                       return new Status(IStatus.ERROR,IInstallOptionsConstants.PLUGIN_ID,-1,e.getMessage(),e);
                                   }
                               }
@@ -888,7 +891,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
                 doc = getDocumentProvider().getDocument(getEditorInput());
             }
             catch(Exception ex) {
-                ex.printStackTrace();
+                InstallOptionsPlugin.getDefault().log(ex);
                 doc = null;
             }
             if (delta.getKind() == IResourceDelta.REMOVED) {

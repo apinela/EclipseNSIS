@@ -22,7 +22,7 @@ public class DialogSizeManager
 {
     public static final String PROPERTY_DIALOGSIZES_PREFIX = "dialogsizes."; //$NON-NLS-1$
     public static final String PROPERTY_DIALOGSIZES_COUNT = PROPERTY_DIALOGSIZES_PREFIX + "count"; //$NON-NLS-1$
-    private static String SEPARATOR = new String(new char[]{'\u00FF'});
+    private static final String SEPARATOR = new String(new char[]{'\u00FF'});
     private static List cDefaultDialogSizes = null;
     private static List cDialogSizes = null;
 

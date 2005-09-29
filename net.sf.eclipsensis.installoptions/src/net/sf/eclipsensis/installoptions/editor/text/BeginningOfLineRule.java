@@ -16,7 +16,7 @@ import org.eclipse.jface.text.rules.*;
 
 public class BeginningOfLineRule extends SingleLineRule
 {
-    protected static final char[] DUMMY_START_SEQUENCE = {'\0'};
+    protected static final String DUMMY_START_SEQUENCE = "\0"; //$NON-NLS-1$
     public BeginningOfLineRule(String startSequence, String endSequence, IToken token)
     {
         this(startSequence, endSequence, token, false);
@@ -24,7 +24,7 @@ public class BeginningOfLineRule extends SingleLineRule
 
     public BeginningOfLineRule(String startSequence, String endSequence, IToken token, boolean breaksOnEOF)
     {
-        super((Common.isEmpty(startSequence)?new String(DUMMY_START_SEQUENCE):startSequence), endSequence, token, (char)0, true, breaksOnEOF);
+        super((Common.isEmpty(startSequence)?DUMMY_START_SEQUENCE:startSequence), endSequence, token, (char)0, true, breaksOnEOF);
     }
 
     protected IToken doEvaluate(ICharacterScanner scanner, boolean resume)
@@ -66,7 +66,7 @@ public class BeginningOfLineRule extends SingleLineRule
                 }
             } 
             else {
-                if(fStartSequence.length == 1 && fStartSequence[0] == DUMMY_START_SEQUENCE[0]) {
+                if(fStartSequence.length == 1 && fStartSequence[0] == DUMMY_START_SEQUENCE.charAt(0)) {
                     if (endSequenceDetected(scanner)) {
                         token = fToken;
                     }

@@ -165,7 +165,7 @@ public class NSISLanguageManager implements INSISHomeListener, IEclipseNSISServi
                             mLanguages.add(language);
                         }
                         catch(Exception ex) {
-                            ex.printStackTrace();
+                            EclipseNSISPlugin.getDefault().log(ex);
                         }
                     }
                 }

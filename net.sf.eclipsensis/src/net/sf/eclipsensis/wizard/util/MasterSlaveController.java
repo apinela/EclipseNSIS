@@ -9,8 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.wizard.util;
 
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.*;
 
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.widgets.*;
@@ -18,7 +17,7 @@ import org.eclipse.swt.widgets.*;
 public class MasterSlaveController extends SelectionAdapter
 {
     private Button mMaster;
-    private HashMap mSlaves = new HashMap();
+    private Map mSlaves = new HashMap();
     private boolean mIsReverse = false;
     
     public MasterSlaveController(Button button)

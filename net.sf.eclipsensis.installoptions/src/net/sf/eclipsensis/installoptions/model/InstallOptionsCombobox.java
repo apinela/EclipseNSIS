@@ -209,7 +209,7 @@ public class InstallOptionsCombobox extends InstallOptionsEditableElement
         
     protected class ListItemsCellEditor extends DialogCellEditor
     {
-        private ListItemsCellEditor(Composite parent)
+        protected ListItemsCellEditor(Composite parent)
         {
             super(parent);
         }

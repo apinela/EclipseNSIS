@@ -94,7 +94,7 @@ public class InstallOptionsModel implements IPropertyChangeListener
     public static final String OPTION_NO="0"; //$NON-NLS-1$
     public static final String OPTION_YES="1"; //$NON-NLS-1$
 
-    public static InstallOptionsModel INSTANCE = new InstallOptionsModel();
+    public static final InstallOptionsModel INSTANCE = new InstallOptionsModel();
     
     private List mListeners = new ArrayList();
     private Set mDialogSettings = new CaseInsensitiveSet();

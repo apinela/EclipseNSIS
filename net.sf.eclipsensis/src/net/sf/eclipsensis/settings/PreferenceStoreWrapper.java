@@ -73,7 +73,7 @@ public class PreferenceStoreWrapper implements IPreferenceStore
             }
         }
     };
-    private HashMap mNamesMap = new HashMap();
+    private Map mNamesMap = new HashMap();
     /**
      * @param preferenceStore
      */

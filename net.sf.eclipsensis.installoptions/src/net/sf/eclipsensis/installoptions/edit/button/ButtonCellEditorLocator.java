@@ -17,8 +17,8 @@ import org.eclipse.swt.graphics.Point;
 
 public class ButtonCellEditorLocator extends InstallOptionsCellEditorLocator
 {
-    private static int X_OFFSET = -4;
-    private static int W_OFFSET = 5;
+    private static final int X_OFFSET = -4;
+    private static final int W_OFFSET = 5;
 
     public ButtonCellEditorLocator(ButtonFigure button) 
     {

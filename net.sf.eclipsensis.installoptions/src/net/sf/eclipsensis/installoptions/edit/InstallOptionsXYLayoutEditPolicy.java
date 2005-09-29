@@ -88,9 +88,10 @@ public class InstallOptionsXYLayoutEditPolicy extends XYLayoutEditPolicy impleme
         Integer guidePos = (Integer)request.getExtendedData().get(
                 horizontal?SnapToGuides.KEY_HORIZONTAL_GUIDE
                         :SnapToGuides.KEY_VERTICAL_GUIDE);
-        if (guidePos == null)
+        if (guidePos == null) {
             result = result.chain(new ChangeGuideCommand(part, horizontal));
-
+        }
+        
         return result;
     }
 
@@ -177,12 +178,15 @@ public class InstallOptionsXYLayoutEditPolicy extends XYLayoutEditPolicy impleme
                             // detach the part from the guide; otherwise, we leave it alone.
                             int alignment = part.getHorizontalGuide().getAlignment(part);
                             int edgeBeingResized = 0;
-                            if ((request.getResizeDirection() & PositionConstants.NORTH) != 0)
+                            if ((request.getResizeDirection() & PositionConstants.NORTH) != 0) {
                                 edgeBeingResized = -1;
-                            else
+                            }
+                            else {
                                 edgeBeingResized = 1;
-                            if (alignment == edgeBeingResized)
+                            }
+                            if (alignment == edgeBeingResized) {
                                 result = result.chain(new ChangeGuideCommand(part, true));
+                            }
                         }
                     }
             
@@ -196,12 +200,15 @@ public class InstallOptionsXYLayoutEditPolicy extends XYLayoutEditPolicy impleme
                         else if (part.getVerticalGuide() != null) {
                             int alignment = part.getVerticalGuide().getAlignment(part);
                             int edgeBeingResized = 0;
-                            if ((request.getResizeDirection() & PositionConstants.WEST) != 0)
+                            if ((request.getResizeDirection() & PositionConstants.WEST) != 0) {
                                 edgeBeingResized = -1;
-                            else
+                            }
+                            else {
                                 edgeBeingResized = 1;
-                            if (alignment == edgeBeingResized)
+                            }
+                            if (alignment == edgeBeingResized) {
                                 result = result.chain(new ChangeGuideCommand(part, false));
+                            }
                         }
                     }
             

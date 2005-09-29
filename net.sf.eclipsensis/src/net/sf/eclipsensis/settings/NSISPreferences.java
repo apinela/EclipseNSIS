@@ -97,7 +97,7 @@ public class NSISPreferences extends NSISSettings
                             ((INSISHomeListener)iter.next()).nsisHomeChanged(monitor, oldHome, newHome);
                         }
                         catch (Exception e) {
-                            e.printStackTrace();
+                            EclipseNSISPlugin.getDefault().log(e);
                         }
                         monitor.worked(10);
                     }
@@ -108,7 +108,7 @@ public class NSISPreferences extends NSISSettings
                 dialog.run(false,false,op);
             }
             catch (Exception e) {
-                e.printStackTrace();
+                EclipseNSISPlugin.getDefault().log(e);
             }
         }
     }
@@ -236,7 +236,7 @@ public class NSISPreferences extends NSISSettings
                         tag = new NSISTaskTag(taskTags[i],Integer.parseInt(taskTagPriorities[i]));
                     }
                     catch(NumberFormatException nfe) {
-                        nfe.printStackTrace();
+                        EclipseNSISPlugin.getDefault().log(nfe);
                         tag = new NSISTaskTag(taskTags[i],IMarker.PRIORITY_NORMAL);
                     }
                 }
@@ -506,7 +506,7 @@ public class NSISPreferences extends NSISSettings
             }
             catch(IOException ioe) {
                 setValue(name,""); //$NON-NLS-1$
-                ioe.printStackTrace();
+                EclipseNSISPlugin.getDefault().log(ioe);
             }
         }
     }

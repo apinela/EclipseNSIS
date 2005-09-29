@@ -113,8 +113,9 @@ public class CustomComboBoxCellEditor extends CellEditor
     public LayoutData getLayoutData() 
     {
         LayoutData layoutData = super.getLayoutData();
-        if ((mCombo == null) || mCombo.isDisposed())
+        if ((mCombo == null) || mCombo.isDisposed()) {
             layoutData.minimumWidth = 60;
+        }
         else {
             // make the comboBox 10 characters wide
             GC gc = new GC(mCombo);
@@ -142,8 +143,9 @@ public class CustomComboBoxCellEditor extends CellEditor
     {
         if (mCombo != null && mItems != null) {
             mCombo.removeAll();
-            for (Iterator iter = mItems.iterator(); iter.hasNext(); )
+            for (Iterator iter = mItems.iterator(); iter.hasNext(); ) {
                 mCombo.add((String)iter.next());
+            }
 
             setValueValid(true);
             mSelection = ""; //$NON-NLS-1$

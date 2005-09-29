@@ -34,7 +34,8 @@ import org.eclipse.jface.text.source.projection.ProjectionViewer;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.*;
@@ -61,7 +62,7 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
     private NSISTabConversionStrategy mTabConversionStrategy = null;
     private ILineTracker mLineTracker = null;
     private String[] mConfiguredContentTypes = null;
-    private HashSet mPropertyQueue = new HashSet();
+    private Set mPropertyQueue = new HashSet();
     private NSISScrollTipHelper mScrollTipHelper = null;
     private IContentAssistant mInsertTemplateAssistant = null;
     private boolean mInsertTemplateAssistantInstalled = false;
@@ -301,17 +302,22 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
             StringBuffer prefix= new StringBuffer();
 
             if (useSpaces) {
-                for (int j= 0; j + i < tabWidth; j++)
+                for (int j= 0; j + i < tabWidth; j++) {
                     prefix.append(' ');
+                }
                 
-                if (i != 0)
-                    prefix.append('\t');                
-            } else {    
-                for (int j= 0; j < i; j++)
-                    prefix.append(' ');
-                
-                if (i != tabWidth)
+                if (i != 0) {
                     prefix.append('\t');
+                }
+            } 
+            else {    
+                for (int j= 0; j < i; j++) {
+                    prefix.append(' ');
+                }
+                
+                if (i != tabWidth) {
+                    prefix.append('\t');
+                }
             }
             
             list.add(prefix.toString());
@@ -403,9 +409,9 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
                     IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
                     if(page != null) {
                         IEditorPart editor = page.getActiveEditor();
-                        if(editor != null && editor instanceof NSISEditor) {
+                        if(editor instanceof NSISEditor) {
                             IEditorInput editorInput = editor.getEditorInput();
-                            if(editorInput != null && editorInput instanceof IFileEditorInput) {
+                            if(editorInput instanceof IFileEditorInput) {
                                 IFile file = ((IFileEditorInput)editorInput).getFile();
                                 if(file != null) {
                                     text = Common.makeRelativeLocation(file, text);
@@ -523,7 +529,7 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
             }
         }
         catch (BadLocationException e) {
-            e.printStackTrace();
+            EclipseNSISPlugin.getDefault().log(e);
         }
         
     }
@@ -571,7 +577,7 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
             doc.replace(startPos,endPos-startPos+1,newText.toString());
         }
         catch (BadLocationException e) {
-            e.printStackTrace();
+            EclipseNSISPlugin.getDefault().log(e);
         }
     }
     
@@ -618,7 +624,7 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
             doc.replace(startPos,length,newText.toString());
         }
         catch (BadLocationException e) {
-            e.printStackTrace();
+            EclipseNSISPlugin.getDefault().log(e);
         }
     }
     
@@ -657,7 +663,7 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
         // This is a hack so that the Hover control creator for hover help isn't used in the
         // Overview ruler.
         IInformationControlCreator oldControlCreator = fHoverControlCreator;
-        if (fOverviewRulerAnnotationHover != null && fOverviewRulerAnnotationHover instanceof IAnnotationHoverExtension)  {
+        if (fOverviewRulerAnnotationHover instanceof IAnnotationHoverExtension)  {
             IInformationControlCreator controlCreator = ((IAnnotationHoverExtension)fOverviewRulerAnnotationHover).getHoverControlCreator();
             if(controlCreator != null) {
                 fHoverControlCreator = controlCreator;

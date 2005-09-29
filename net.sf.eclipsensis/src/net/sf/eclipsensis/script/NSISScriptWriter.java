@@ -52,8 +52,9 @@ public class NSISScriptWriter extends PrintWriter
     public void unindent()
     {
         mIndentSize--;
-        if(mIndentSize < 0)
+        if(mIndentSize < 0) {
             mIndentSize = 0;
+        }
     }
 
     public void print(String s)

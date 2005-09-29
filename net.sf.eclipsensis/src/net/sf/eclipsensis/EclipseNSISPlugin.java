@@ -58,7 +58,7 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
     private TemplateStore mTemplateStore;
     private ContributionContextTypeRegistry mContextTypeRegistry;
     private Locale mLocale;
-    private HashMap mResourceBundles = new HashMap();
+    private Map mResourceBundles = new HashMap();
     public static final String[] BUNDLE_NAMES = new String[]{RESOURCE_BUNDLE,MESSAGE_BUNDLE};
     private ImageManager mImageManager;
     private boolean mIsNT = false;
@@ -79,7 +79,7 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
 			mResourceBundles.put(mLocale,new CompoundResourceBundle(mLocale, BUNDLE_NAMES));
 		} 
         catch (MissingResourceException x) {
-			x.printStackTrace();
+            log(x);
 		}
         mImageManager = new ImageManager(this);
 	}
@@ -188,7 +188,7 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
                             mServices.push(service);
                         }
                         catch (Exception e) {
-                            e.printStackTrace();
+                            log(e);
                         }
                         monitor.worked(1);
                     }
@@ -207,7 +207,7 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
                 }
             }
             catch (Exception e) {
-                e.printStackTrace();
+                log(e);
             }
         }
     }
@@ -456,7 +456,7 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
                 mTemplateStore.load();
             } 
             catch (IOException e) {
-                e.printStackTrace();
+                log(e);
             }
         }
         return mTemplateStore;
@@ -505,6 +505,19 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
     public boolean isConfigured()
     {
         return (NSISPreferences.INSTANCE.getNSISExe() != null);
+    }
+
+    public void log(Throwable t)
+    {
+        ILog log = getLog();
+        if(log != null) {
+            String message = t.getMessage();
+            log.log(new Status(IStatus.ERROR,PLUGIN_ID,IStatus.ERROR,
+                         message==null?t.getClass().getName():message,t));
+        }
+        else {
+            t.printStackTrace();
+        }
     }
 
     public static Image getShellImage()

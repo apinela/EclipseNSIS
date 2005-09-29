@@ -54,7 +54,7 @@ public abstract class AbstractTemplateManager
             mDefaultTemplatesMap = loadDefaultTemplateStore();
         }
         catch (Exception e1) {
-            e1.printStackTrace();
+            EclipseNSISPlugin.getDefault().log(e1);
             mDefaultTemplatesMap = new LinkedHashMap();
         }
         finally {
@@ -71,7 +71,7 @@ public abstract class AbstractTemplateManager
             }
         }
         catch (Exception e) {
-            e.printStackTrace();
+            EclipseNSISPlugin.getDefault().log(e);
         }
         
         mReaderWriter = createReaderWriter();

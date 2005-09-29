@@ -58,7 +58,10 @@ public class Common
     private static Pattern cValidFileName = Pattern.compile("(\\.?[A-Za-z0-9\\$%\\'`\\-@\\{\\}~\\!#\\(\\&_\\^\\x20])+"); //$NON-NLS-1$
     private static Pattern cValidURL = Pattern.compile("(?:(?:ftp|https?):\\/\\/)?(?:[a-z0-9](?:[-a-z0-9]*[a-z0-9])?\\.)+(?:com|edu|biz|org|gov|int|info|mil|net|name|museum|coop|aero|[a-z][a-z])\\b(?:\\d+)?(?:\\/[^;\"'<>()\\[\\]{}\\s\\x7f-\\xff]*(?:[.,?]+[^;\"'<>()\\[\\]{}\\s\\x7f-\\xff]+)*)?"); //$NON-NLS-1$
 
-    
+    private Common()
+    {
+    }
+
     public static String encodePath(String path)
     {
         String nsisdirKeyword = NSISKeywords.INSTANCE.getKeyword("${NSISDIR}"); //$NON-NLS-1$
@@ -179,7 +182,7 @@ public class Common
                                 Thread.sleep(10);
                             }
                             catch (InterruptedException e1) {
-                                e1.printStackTrace();
+                                EclipseNSISPlugin.getDefault().log(e1);
                             }
                             count++;
                         }
@@ -194,13 +197,13 @@ public class Common
                         w.flush();
                     }
                     catch (IOException e) {
-                        e.printStackTrace();
+                        EclipseNSISPlugin.getDefault().log(e);
                     }
                     w.close();
                 }
             }
             catch (IOException e) {
-                e.printStackTrace();
+                EclipseNSISPlugin.getDefault().log(e);
             }
         }
     }
@@ -685,13 +688,13 @@ public class Common
                         }
                     }
                     catch (Exception e1) {
-                        e1.printStackTrace();
+                        EclipseNSISPlugin.getDefault().log(e1);
                     }
                 }
             }
         }
         catch (IntrospectionException e) {
-            e.printStackTrace();
+            EclipseNSISPlugin.getDefault().log(e);
         }
     }
 
@@ -733,13 +736,13 @@ public class Common
                         m.invoke(bean, args);
                     }
                     catch (Exception e1) {
-                        e1.printStackTrace();
+                        EclipseNSISPlugin.getDefault().log(e1);
                     }
                 }
             }
         }
         catch (IntrospectionException e) {
-            e.printStackTrace();
+            EclipseNSISPlugin.getDefault().log(e);
         }
     }
 
@@ -885,17 +888,17 @@ public class Common
             fos.getChannel().write(buf);
         }
         catch (FileNotFoundException e) {
-            e.printStackTrace();
+            EclipseNSISPlugin.getDefault().log(e);
         }
         catch (IOException e) {
-            e.printStackTrace();
+            EclipseNSISPlugin.getDefault().log(e);
         }
         finally {
             try {
                 fos.close();
             }
             catch (IOException e) {
-                e.printStackTrace();
+                EclipseNSISPlugin.getDefault().log(e);
             }
         }
     }
@@ -909,10 +912,10 @@ public class Common
                 bytes = readChannel(fis.getChannel());
             }
             catch (FileNotFoundException e) {
-                e.printStackTrace();
+                EclipseNSISPlugin.getDefault().log(e);
             }
             catch (IOException e) {
-                e.printStackTrace();
+                EclipseNSISPlugin.getDefault().log(e);
             }
             finally {
                 if(fis != null) {
@@ -920,7 +923,7 @@ public class Common
                         fis.close();
                     }
                     catch (IOException e) {
-                        e.printStackTrace();
+                        EclipseNSISPlugin.getDefault().log(e);
                     }
                 }
             }
@@ -934,7 +937,7 @@ public class Common
             return readChannel(Channels.newChannel(stream));
         }
         catch (IOException e) {
-            e.printStackTrace();
+            EclipseNSISPlugin.getDefault().log(e);
             return new byte[0];
         }
     }
@@ -1008,7 +1011,6 @@ public class Common
         MessageDialog dialog = new MessageDialog(parent, title, icon,
                 message, MessageDialog.ERROR, new String[] { IDialogConstants.OK_LABEL }, 0);
         dialog.open();
-        return;
     }
 
     public static void openInformation(Shell parent, String title, String message, Image icon) 
@@ -1017,7 +1019,6 @@ public class Common
                 message, MessageDialog.INFORMATION,
                 new String[] { IDialogConstants.OK_LABEL }, 0);
         dialog.open();
-        return;
     }
 
     public static boolean openQuestion(Shell parent, String title, String message, Image icon) 
@@ -1033,6 +1034,5 @@ public class Common
         MessageDialog dialog = new MessageDialog(parent, title, icon, 
                 message, MessageDialog.WARNING, new String[] { IDialogConstants.OK_LABEL }, 0);
         dialog.open();
-        return;
     }
 }

@@ -180,26 +180,18 @@ public class NSISCodeScanner extends NSISStringScanner
         return mCompileTimeCommandsRule;
     }
 
-    protected IRule getNumberRule()
+    protected synchronized IRule getNumberRule()
     {
         if(mNumberRule == null) {
-            synchronized(this) {
-                if(mNumberRule == null) {
-                    mNumberRule = new NumberRule(createTokenFromPreference(INSISPreferenceConstants.NUMBERS_STYLE));
-                }
-            }
+            mNumberRule = new NumberRule(createTokenFromPreference(INSISPreferenceConstants.NUMBERS_STYLE));
         }
         return mNumberRule;
     }
 
-    protected IRule getHexNumberRule()
+    protected synchronized IRule getHexNumberRule()
     {
         if(mHexNumberRule == null) {
-            synchronized(this) {
-                if(mHexNumberRule == null) {
-                    mHexNumberRule = new NSISHexNumberRule(createTokenFromPreference(INSISPreferenceConstants.NUMBERS_STYLE));
-                }
-            }
+            mHexNumberRule = new NSISHexNumberRule(createTokenFromPreference(INSISPreferenceConstants.NUMBERS_STYLE));
         }
         return mHexNumberRule;
     }

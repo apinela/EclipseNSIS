@@ -23,11 +23,6 @@ public class JobScheduler
     private boolean mRunning = false;
     private Set mJobFamilies = new HashSet();
     
-    public JobScheduler()
-    {
-        super();
-    }
-    
     public void start()
     {
         if(!mRunning) {

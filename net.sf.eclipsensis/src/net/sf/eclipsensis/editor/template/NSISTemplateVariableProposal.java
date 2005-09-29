@@ -55,7 +55,7 @@ public class NSISTemplateVariableProposal implements ICompletionProposal
             mSelection= new Point(mOffset + variable.length(), 0);
 
         } catch (BadLocationException e) {
-            e.printStackTrace();
+            EclipseNSISPlugin.getDefault().log(e);
 
             Shell shell= mViewer.getTextWidget().getShell();
             Common.openError(shell, e.getLocalizedMessage(), EclipseNSISPlugin.getShellImage()); //$NON-NLS-1$

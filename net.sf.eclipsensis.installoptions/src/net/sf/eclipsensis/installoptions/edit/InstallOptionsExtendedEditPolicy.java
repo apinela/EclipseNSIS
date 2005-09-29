@@ -52,13 +52,8 @@ public abstract class InstallOptionsExtendedEditPolicy extends GraphicalEditPoli
         if (IInstallOptionsConstants.REQ_EXTENDED_EDIT.equals(request.getType())||
             RequestConstants.REQ_OPEN.equals(request.getType())) {
             InstallOptionsModelTypeDef typeDef = InstallOptionsModel.INSTANCE.getControlTypeDef(((InstallOptionsWidget)mEditPart.getModel()).getType());
-            if(typeDef == null || !typeDef.getSettings().contains(getExtendedEditProperty()) ||
-               ((InstallOptionsEditDomain)mEditPart.getViewer().getEditDomain()).isReadOnly()) {
-                return false;
-            }
-            else {
-                return true;
-            }
+            return (typeDef != null && typeDef.getSettings().contains(getExtendedEditProperty()) &&
+               !((InstallOptionsEditDomain)mEditPart.getViewer().getEditDomain()).isReadOnly());
         }
         return super.understandsRequest(request);
     }

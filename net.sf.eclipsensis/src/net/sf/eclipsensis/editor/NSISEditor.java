@@ -53,7 +53,7 @@ import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
 public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeListener, ISelectionChangedListener
 {
-    private HashSet mActions = new HashSet();
+    private Set mActions = new HashSet();
     private ProjectionSupport mProjectionSupport;
     private NSISContentOutlinePage mOutlinePage;
     private NSISOutlineContentProvider mOutlineContentProvider;
@@ -375,8 +375,9 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
         
         if (mProjectionSupport != null) {
             Object adapter= mProjectionSupport.getAdapter(sourceViewer, required);
-            if (adapter != null)
+            if (adapter != null) {
                 return adapter;
+            }
         }
         
         return super.getAdapter(required);
@@ -451,7 +452,7 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
             op.run(null);
         }
         catch (Exception e) {
-            e.printStackTrace();
+            EclipseNSISPlugin.getDefault().log(e);
         }
     }
     
@@ -520,7 +521,7 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
                                         new Position(region.getOffset(),region.getLength()));
                             }
                             catch (BadLocationException e) {
-                                e.printStackTrace();
+                                EclipseNSISPlugin.getDefault().log(e);
                             }
                         }
                     }
@@ -564,7 +565,7 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
                             }
                         }
                         catch(Exception ex) {
-                            ex.printStackTrace();
+                            EclipseNSISPlugin.getDefault().log(ex);
                         }
                         monitor.worked(1);
                     }
@@ -575,7 +576,7 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
                 dialog.run(false,false,op);
             }
             catch (Exception e) {
-                e.printStackTrace();
+                EclipseNSISPlugin.getDefault().log(e);
             }
         }
     }
@@ -681,7 +682,7 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
          */
         public synchronized void acquire(Object owner, long timeout) throws InterruptedException
         {
-            while( acquireWithoutBlocking(owner) == false) {
+            while( !acquireWithoutBlocking(owner)) {
                 this.wait(timeout);
             }
         }
@@ -723,7 +724,7 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
              if( mOwner == owner ) {
                  if( --mLockCount <= 0 ) {   
                      mOwner = null;
-                     notify();
+                     notifyAll();
                  }
              }
          }

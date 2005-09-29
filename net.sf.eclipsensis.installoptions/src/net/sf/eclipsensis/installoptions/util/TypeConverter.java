@@ -13,6 +13,7 @@ import java.lang.reflect.Method;
 import java.util.*;
 
 import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
+import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.util.ColorManager;
 import net.sf.eclipsensis.util.Common;
 
@@ -22,10 +23,6 @@ import org.eclipse.swt.graphics.RGB;
 
 public abstract class TypeConverter
 {
-    public TypeConverter()
-    {
-    }
-    
     public abstract String asString(Object o);
     public abstract Object asType(String s);
     public abstract Object makeCopy(Object o);
@@ -174,7 +171,7 @@ public abstract class TypeConverter
                     return method.invoke(o,null);
                 }
                 catch (Exception e) {
-                    e.printStackTrace();
+                    InstallOptionsPlugin.getDefault().log(e);
                 }
             }
             return (List)(new ArrayList((List)o)).clone();

@@ -107,17 +107,20 @@ public class InstallOptionsRulerComposite extends Composite
     }
 
     private void disposeResources() {
-        if (mViewer != null)
+        if (mViewer != null) {
             mViewer.removePropertyChangeListener(mPropertyListener);
-        if (mFont != null)
+        }
+        if (mFont != null) {
             mFont.dispose();
+        }
         // layoutListener is not being removed from the scroll bars because they are already
         // disposed at this point.
     }
 
     private void disposeRulerViewer(GraphicalViewer viewer) {
-        if (viewer == null)
+        if (viewer == null) {
             return;
+        }
         /*
          * There's a tie from the editor's range model to the RulerViewport (via a listener) 
          * to the RulerRootEditPart to the RulerViewer.  Break this tie so that the viewer 
@@ -134,8 +137,9 @@ public class InstallOptionsRulerComposite extends Composite
     private void doLayout() {
         if (mLeft == null && mTop == null) {
             Rectangle area = getClientArea();
-            if (!mEditor.getBounds().equals(area))
+            if (!mEditor.getBounds().equals(area)) {
                 mEditor.setBounds(area);
+            }
             return;
         }
         
@@ -150,11 +154,13 @@ public class InstallOptionsRulerComposite extends Composite
         Point size = getSize();
         Point editorSize = new Point(size.x - (leftWidth + rightWidth), 
                    size.y - (topHeight + bottomHeight));
-        if (!mEditor.getSize().equals(editorSize))
+        if (!mEditor.getSize().equals(editorSize)) {
             mEditor.setSize(editorSize);     
+        }
         Point editorLocation = new Point(leftWidth, topHeight);
-        if (!mEditor.getLocation().equals(editorLocation))
+        if (!mEditor.getLocation().equals(editorLocation)) {
             mEditor.setLocation(editorLocation);
+        }
 
         int vBarWidth = 0, hBarHeight = 0;
         Rectangle trim = mEditor.computeTrim(0, 0, 0, 0);
@@ -163,22 +169,26 @@ public class InstallOptionsRulerComposite extends Composite
          * Motif leaves a few pixels of space around the Canvas which
          * can cause the rulers to misaligned.
          */
-        if (mEditor.getVerticalBar().getVisible())
+        if (mEditor.getVerticalBar().getVisible()) {
             vBarWidth = trim.width + ("motif".equals(SWT.getPlatform()) ? trim.x * 2 : 0); //$NON-NLS-1$
-        if (mEditor.getHorizontalBar().getVisible())
+        }
+        if (mEditor.getHorizontalBar().getVisible()) {
             hBarHeight = trim.height + ("motif".equals(SWT.getPlatform()) ? trim.y * 2 : 0); //$NON-NLS-1$
+        }
         
         if (mLeft != null) {
             Rectangle leftBounds = new Rectangle(
                     0, topHeight - 1, leftWidth, editorSize.y - hBarHeight);
-            if (!mLeft.getControl().getBounds().equals(leftBounds))
+            if (!mLeft.getControl().getBounds().equals(leftBounds)) {
                 mLeft.getControl().setBounds(leftBounds);
+            }
         }
         if (mTop != null) {
             Rectangle topBounds = new Rectangle(
                     leftWidth - 1, 0, editorSize.x - vBarWidth, topHeight);
-            if (!mTop.getControl().getBounds().equals(topBounds))
+            if (!mTop.getControl().getBounds().equals(topBounds)) {
                 mTop.getControl().setBounds(topBounds);
+            }
         }
     }
 
@@ -274,9 +284,10 @@ public class InstallOptionsRulerComposite extends Composite
 
     private void setRuler(InstallOptionsDialog dialog, RulerProvider provider, int orientation) {
         Object ruler = null;
-        if (mIsRulerVisible && provider != null)
+        if (mIsRulerVisible && provider != null) {
             // provider.getRuler() might return null (at least the API does not prevent that)
             ruler = provider.getRuler();
+        }
         
         if (ruler == null) {
             // Ruler is not visible or is not present
@@ -300,13 +311,15 @@ public class InstallOptionsRulerComposite extends Composite
 
     private void setRulerContainer(GraphicalViewer container, int orientation) {
         if (orientation == PositionConstants.NORTH) {
-            if (mTop == container)
+            if (mTop == container) {
                 return;
+            }
             disposeRulerViewer(mTop);
             mTop = container;        
         } else if (orientation == PositionConstants.WEST) {
-            if (mLeft == container)
+            if (mLeft == container) {
                 return;
+            }
             disposeRulerViewer(mLeft);
             mLeft = container;       
         }
@@ -378,8 +391,9 @@ public class InstallOptionsRulerComposite extends Composite
          * @see org.eclipse.gef.EditPartViewer#appendSelection(org.eclipse.gef.EditPart)
          */
         public void appendSelection(EditPart editpart) {
-            if (editpart instanceof RootEditPart)
+            if (editpart instanceof RootEditPart) {
                 editpart = ((RootEditPart)editpart).getContents();
+            }
             setFocus(editpart);
             super.appendSelection(editpart);
         }
@@ -389,8 +403,9 @@ public class InstallOptionsRulerComposite extends Composite
         public Handle findHandleAt(org.eclipse.draw2d.geometry.Point p) {
             final GraphicalEditPart gep = 
                     (GraphicalEditPart)findObjectAtExcluding(p, new ArrayList());
-            if (gep == null || !(gep instanceof GuideEditPart))
+            if (!(gep instanceof GuideEditPart)) {
                 return null;
+            }
             return new Handle() {
                 public DragTracker getDragTracker() {
                     return ((GuideEditPart)gep).getDragTracker(null);
@@ -414,8 +429,9 @@ public class InstallOptionsRulerComposite extends Composite
          * @see org.eclipse.gef.EditPartViewer#reveal(org.eclipse.gef.EditPart)
          */
         public void reveal(EditPart part) {
-            if (part != getContents())
+            if (part != getContents()) {
                 super.reveal(part);
+            }
         }
         /**
          * @see org.eclipse.gef.EditPartViewer#setContents(org.eclipse.gef.EditPart)
@@ -454,8 +470,9 @@ public class InstallOptionsRulerComposite extends Composite
                     // ALT + UP_ARROW pressed
                     // If a guide has focus, give focus to the ruler
                     EditPart parent = getFocusEditPart().getParent();
-                    if (parent instanceof RulerEditPart)
+                    if (parent instanceof RulerEditPart) {
                         navigateTo(getFocusEditPart().getParent(), event);
+                    }
                     return true;
                 }
                 return super.keyPressed(event);

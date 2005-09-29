@@ -17,9 +17,9 @@ import org.eclipse.swt.graphics.Point;
 
 public class GroupBoxCellEditorLocator extends InstallOptionsCellEditorLocator
 {
-    private static int TEXT_OFFSET = 10;
-    private static int X_OFFSET = -4 + TEXT_OFFSET;
-    private static int W_OFFSET = 5 - TEXT_OFFSET;
+    private static final int TEXT_OFFSET = 10;
+    private static final int X_OFFSET = -4 + TEXT_OFFSET;
+    private static final int W_OFFSET = 5 - TEXT_OFFSET;
 
     public GroupBoxCellEditorLocator(GroupBoxFigure groupBox) 
     {

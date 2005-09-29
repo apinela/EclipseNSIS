@@ -44,16 +44,18 @@ public abstract class InstallOptionsEditPart extends AbstractGraphicalEditPart i
      */
     public void deactivate()
     {
-        if (!isActive())
+        if (!isActive()) {
             return;
+        }
         super.deactivate();
         getInstallOptionsElement().removePropertyChangeListener(this);
     }
 
     protected AccessibleEditPart getAccessibleEditPart()
     {
-        if (mAccessible == null)
+        if (mAccessible == null) {
             mAccessible = createAccessible();
+        }
         return mAccessible;
     }
 

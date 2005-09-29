@@ -102,10 +102,16 @@ public class NSISExternalFileEditorInput implements IPathEditorInput, ILocationP
         return null;
     }
 
+    public int hashCode()
+    {
+        return mFile.hashCode();
+    }
+
     public boolean equals(Object o)
     {
-        if (o == this)
+        if (o == this) {
             return true;
+        }
 
         if (o instanceof NSISExternalFileEditorInput) {
             NSISExternalFileEditorInput input= (NSISExternalFileEditorInput) o;
