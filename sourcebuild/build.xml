@@ -1,0 +1,94 @@
+<project name="EclipseNSIS Sources" default="all">
+<target name="eclipsensis">
+	<antcall target="eclipsensis.internal"/>
+</target>
+<target name="eclipsensis.internal">
+	<property file="../net.sf.eclipsensis/META-INF/MANIFEST.MF"/>
+	<zip destfile="net.sf.eclipsensis_${Bundle-Version}-source.zip">
+	    <fileset dir="..">
+	       <exclude name="**/CVS/*"/>
+	       <exclude name="**/.cvsignore"/>
+	       <include name="CreateEnv/*"/>
+	       <include name="MakeNSISRunner/*.cpp"/>
+	       <include name="MakeNSISRunner/*.h"/>
+	       <include name="MakeNSISRunner/.project"/>
+	       <include name="MakeNSISRunner/build.bat"/>
+	       <include name="MakeNSISRunner/MakeNSISRunner.ds*"/>
+	       <include name="MakeNSISRunner/MakeNSISRunner.mak"/>
+	       <include name="net.sf.eclipsensis/**/*"/>
+	       <exclude name="net.sf.eclipsensis/bin/**/*"/>
+	       <exclude name="net.sf.eclipsensis/discards/**/*"/>
+	       <exclude name="net.sf.eclipsensis/.settings/**/*"/>
+	       <include name="net.sf.eclipsensis.feature/**/*"/>
+	       <include name="WinAPI/*.cpp"/>
+	       <include name="WinAPI/*.h"/>
+	       <include name="WinAPI/.project"/>
+	       <include name="WinAPI/build.bat"/>
+	       <include name="WinAPI/WinAPI.ds*"/>
+	       <include name="WinAPI/WinAPI.mak"/>
+	    </fileset>
+	</zip>
+</target>
+<target name="clean.eclipsensis">
+	<antcall target="clean.eclipsensis.internal"/>
+</target>
+<target name="clean.eclipsensis.internal">
+	<property file="../net.sf.eclipsensis/META-INF/MANIFEST.MF"/>
+    <delete file="net.sf.eclipsensis_${Bundle-Version}-source.zip"/>
+</target>
+<target name="installoptions">
+	<antcall target="installoptions.internal"/>
+</target>
+<target name="installoptions.internal">
+	<property file="../net.sf.eclipsensis.installoptions/META-INF/MANIFEST.MF"/>
+	<zip destfile="net.sf.eclipsensis.installoptions_${Bundle-Version}-source.zip">
+	    <fileset dir="..">
+	       <exclude name="**/CVS/*"/>
+	       <exclude name="**/.cvsignore"/>
+	       <include name="net.sf.eclipsensis.installoptions/**/*"/>
+	       <exclude name="net.sf.eclipsensis.installoptions/howto.txt"/>
+	       <exclude name="net.sf.eclipsensis.installoptions/bin/**/*"/>
+	       <exclude name="net.sf.eclipsensis.installoptions/.settings/**/*"/>
+	       <include name="net.sf.eclipsensis.installoptions.feature/**/*"/>
+	    </fileset>
+	</zip>
+</target>
+<target name="clean.installoptions">
+	<antcall target="clean.installoptions.internal"/>
+</target>
+<target name="clean.installoptions.internal">
+	<property file="../net.sf.eclipsensis.installoptions/META-INF/MANIFEST.MF"/>
+    <delete file="net.sf.eclipsensis.installoptions_${Bundle-Version}-source.zip"/>
+</target>
+<target name="utilities">
+	<antcall target="utilities.internal"/>
+</target>
+<target name="utilities.internal">
+	<property file="../net.sf.eclipsensis.utilities/META-INF/MANIFEST.MF"/>
+	<zip destfile="net.sf.eclipsensis.utilities_${Bundle-Version}-source.zip">
+	    <fileset dir="..">
+	       <exclude name="**/CVS/*"/>
+	       <exclude name="**/.cvsignore"/>
+	       <include name="net.sf.eclipsensis.utilities/**/*"/>
+	       <exclude name="net.sf.eclipsensis.utilities/bin/**/*"/>
+	       <exclude name="net.sf.eclipsensis.utilities/.settings/**/*"/>
+	       <include name="JNIGen/**/*"/>
+	       <exclude name="JNIGen/bin/**/*"/>
+	       <exclude name="JNIGen/.settings/**/*"/>
+	       <include name="JARSigner/**/*"/>
+	       <exclude name="JARSigner/bin/**/*"/>
+	       <exclude name="JARSigner/.settings/**/*"/>
+	       <include name="net.sf.eclipsensis.utilities.feature/**/*"/>
+	    </fileset>
+	</zip>
+</target>
+<target name="clean.utilities">
+	<antcall target="clean.utilities.internal"/>
+</target>
+<target name="clean.utilities.internal">
+	<property file="../net.sf.eclipsensis.utilities/META-INF/MANIFEST.MF"/>
+    <delete file="net.sf.eclipsensis.utilities_${Bundle-Version}-source.zip"/>
+</target>
+<target name="all" depends="eclipsensis,installoptions,utilities"/>
+<target name="clean" depends="clean.eclipsensis,clean.installoptions,clean.utilities"/>
+</project>
