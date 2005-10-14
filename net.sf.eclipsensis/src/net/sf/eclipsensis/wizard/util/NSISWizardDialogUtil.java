@@ -296,7 +296,7 @@ public class NSISWizardDialogUtil
 
     public static Combo createCombo(Composite parent, String[] items, int selectedItem, boolean isReadOnly, String labelResource, boolean enabled, MasterSlaveController masterSlaveController, boolean isRequired)
     {
-        return createCombo(parent, items, items[selectedItem],isReadOnly,labelResource, enabled, masterSlaveController, isRequired);
+        return createCombo(parent, items, (selectedItem >=0 && selectedItem < items.length?items[selectedItem]:""),isReadOnly,labelResource, enabled, masterSlaveController, isRequired);
     }
 
     public static Combo createCombo(Composite parent, String[] items, String selectedItem, boolean isReadOnly, String labelResource, boolean enabled, MasterSlaveController masterSlaveController, boolean isRequired)

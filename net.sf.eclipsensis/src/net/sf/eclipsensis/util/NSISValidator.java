@@ -23,13 +23,26 @@ import net.sf.eclipsensis.makensis.MakeNSISRunner;
 public class NSISValidator implements INSISConstants
 {
     public static final Version MINIMUM_NSIS_VERSION = new Version(EclipseNSISPlugin.getResourceString("minimum.nsis.version")); //$NON-NLS-1$
-    private static Pattern cVersionPattern = Pattern.compile("v(\\d+(?:\\.\\d+)?(?:[A-Za-z]+\\d*)?)"); //$NON-NLS-1$
-    private static Pattern cCVSVersionPattern = Pattern.compile("v([0-3][0-9]-[a-zA-Z]{3}-20[0-9]{2})\\.cvs"); //$NON-NLS-1$
-    private static SimpleDateFormat cCVSDateFormat = new SimpleDateFormat("dd-MMM-yyyy"); //$NON-NLS-1$
+    private static final Pattern cVersionPattern = Pattern.compile("v(\\d+(?:\\.\\d+)?(?:[A-Za-z]+\\d*)?)"); //$NON-NLS-1$
+    private static final Pattern cCVSVersionPattern = Pattern.compile("v([0-3][0-9]-[a-zA-Z]{3}-20[0-9]{2})\\.cvs"); //$NON-NLS-1$
+    private static final SimpleDateFormat cCVSDateFormat;
+    private static final SimpleDateFormat cCVSEnglishDateFormat;
     public static final String DEFINED_SYMBOLS_PREFIX = "Defined symbols: "; //$NON-NLS-1$
     private static Map cVersionDateMap;
 
     static {
+        TimeZone tz = TimeZone.getTimeZone("GMT");
+        cCVSDateFormat = new SimpleDateFormat("dd-MMM-yyyy"); //$NON-NLS-1$
+        cCVSDateFormat.setTimeZone(tz);
+        if(Locale.getDefault().getLanguage().equals(Locale.ENGLISH.getLanguage())) {
+            cCVSEnglishDateFormat = null;
+        }
+        else {
+            cCVSEnglishDateFormat = new SimpleDateFormat("dd-MMM-yyyy",Locale.ENGLISH);
+            cCVSEnglishDateFormat.setTimeZone(tz);
+        }
+        
+        
         ResourceBundle bundle;
         try {
             bundle = ResourceBundle.getBundle(NSISValidator.class.getName());
@@ -38,6 +51,7 @@ public class NSISValidator implements INSISConstants
         }
         Map map = Common.loadMapProperty(bundle,"version.dates"); //$NON-NLS-1$
         SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm"); //$NON-NLS-1$
+        sdf.setTimeZone(tz);
         cVersionDateMap = new LinkedHashMap();
         for(Iterator iter=map.keySet().iterator(); iter.hasNext(); ) {
             String key = (String)iter.next();
@@ -132,8 +146,19 @@ public class NSISValidator implements INSISConstants
                             cvsDate = cCVSDateFormat.parse(matcher.group(1));
                         }
                         catch (ParseException e) {
-                            EclipseNSISPlugin.getDefault().log(e);
-                            cvsDate = new Date(0);
+                            if(cCVSEnglishDateFormat != null) {
+                                try {
+                                    cvsDate = cCVSEnglishDateFormat.parse(matcher.group(1));
+                                }
+                                catch (ParseException e1) {
+                                    EclipseNSISPlugin.getDefault().log(e1);
+                                    cvsDate = new Date(0);
+                                }
+                            }
+                            else {
+                                EclipseNSISPlugin.getDefault().log(e);
+                                cvsDate = new Date(0);
+                            }
                         }
                         
                         for(Iterator iter=cVersionDateMap.keySet().iterator(); iter.hasNext(); ) {

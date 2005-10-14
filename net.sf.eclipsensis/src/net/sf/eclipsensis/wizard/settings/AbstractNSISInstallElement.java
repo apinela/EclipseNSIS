@@ -93,4 +93,14 @@ public abstract class AbstractNSISInstallElement extends AbstractNodeConvertible
     {
         return NODE; //$NON-NLS-1$
     }
+
+    public final String validate()
+    {
+        return validate(true);
+    }
+
+    public String validate(boolean recursive)
+    {
+        return null;
+    }
 }

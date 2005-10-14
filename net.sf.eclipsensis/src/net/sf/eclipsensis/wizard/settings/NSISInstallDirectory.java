@@ -11,6 +11,7 @@ package net.sf.eclipsensis.wizard.settings;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.help.NSISKeywords;
+import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.wizard.NSISWizard;
 import net.sf.eclipsensis.wizard.settings.dialogs.NSISInstallDirectoryDialog;
 
@@ -31,7 +32,7 @@ public class NSISInstallDirectory extends AbstractNSISInstallItem implements INS
     private boolean mRecursive = false;
     
     static {
-        NSISInstallElementFactory.register(TYPE, IMAGE, NSISInstallDirectory.class);
+        NSISInstallElementFactory.register(TYPE, EclipseNSISPlugin.getResourceString("wizard.directory.type.name"), IMAGE, NSISInstallDirectory.class);
     }
 
     /* (non-Javadoc)
@@ -133,5 +134,18 @@ public class NSISInstallDirectory extends AbstractNSISInstallItem implements INS
     public void setRecursive(boolean recursive)
     {
         mRecursive = recursive;
+    }
+
+    public String validate(boolean recursive)
+    {
+        if(!Common.isValidPath(Common.decodePath(getName()))) { //$NON-NLS-1$
+            return EclipseNSISPlugin.getResourceString("wizard.invalid.directory.name.error"); //$NON-NLS-1$
+        }
+        else if(!Common.isValidNSISPathName(getDestination())) { //$NON-NLS-1$
+            return EclipseNSISPlugin.getResourceString("wizard.invalid.directory.destination.error"); //$NON-NLS-1$
+        }
+        else {
+            return super.validate(recursive);
+        }
     }
 }

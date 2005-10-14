@@ -11,6 +11,7 @@ package net.sf.eclipsensis.wizard.settings;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.help.NSISKeywords;
+import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.wizard.NSISWizard;
 import net.sf.eclipsensis.wizard.settings.dialogs.NSISInstallFileDialog;
 
@@ -29,7 +30,7 @@ public class NSISInstallFile extends AbstractNSISInstallItem implements INSISIns
     private int mOverwriteMode = OVERWRITE_ON; 
 
     static {
-        NSISInstallElementFactory.register(TYPE, IMAGE, NSISInstallFile.class);
+        NSISInstallElementFactory.register(TYPE, EclipseNSISPlugin.getResourceString("wizard.file.type.name"), IMAGE, NSISInstallFile.class);
     }
 
      /* (non-Javadoc)
@@ -115,5 +116,18 @@ public class NSISInstallFile extends AbstractNSISInstallItem implements INSISIns
     public void setOverwriteMode(int overwriteMode)
     {
         mOverwriteMode = overwriteMode;
+    }
+
+    public String validate(boolean recursive)
+    {
+        if(!Common.isValidFile(Common.decodePath(getName()))) { //$NON-NLS-1$
+            return EclipseNSISPlugin.getResourceString("wizard.invalid.file.name.error"); //$NON-NLS-1$
+        }
+        else if(!Common.isValidNSISPathName(getDestination())) { //$NON-NLS-1$
+            return EclipseNSISPlugin.getResourceString("wizard.invalid.file.destination.error"); //$NON-NLS-1$
+        }
+        else {
+            return super.validate(recursive);
+        }
     }
 }

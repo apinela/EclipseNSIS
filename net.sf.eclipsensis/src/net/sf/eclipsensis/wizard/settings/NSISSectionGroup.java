@@ -12,7 +12,9 @@ package net.sf.eclipsensis.wizard.settings;
 import java.text.MessageFormat;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.help.INSISKeywordsListener;
 import net.sf.eclipsensis.help.NSISKeywords;
+import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.wizard.NSISWizard;
 import net.sf.eclipsensis.wizard.settings.dialogs.NSISSectionGroupDialog;
 
@@ -34,7 +36,13 @@ public class NSISSectionGroup extends AbstractNSISInstallGroup
     private boolean mBold = false;
 
     static {
-        NSISInstallElementFactory.register(TYPE, IMAGE, NSISSectionGroup.class);
+        NSISInstallElementFactory.register(TYPE, NSISKeywords.INSTANCE.getKeyword(TYPE), IMAGE, NSISSectionGroup.class);
+        NSISKeywords.INSTANCE.addKeywordsListener(new INSISKeywordsListener() {
+            public void keywordsChanged()
+            {
+                NSISInstallElementFactory.setTypeName(TYPE, NSISKeywords.INSTANCE.getKeyword(TYPE));
+            }
+        });
     }
 
     /* (non-Javadoc)
@@ -167,5 +175,15 @@ public class NSISSectionGroup extends AbstractNSISInstallGroup
             value = document.createTextNode((String)value); //$NON-NLS-1$
         }
         return super.createChildNode(document, name, value);
+    }
+
+    public String validate(boolean recursive)
+    {
+        if(Common.isEmpty(getCaption())) { //$NON-NLS-1$
+            return EclipseNSISPlugin.getResourceString("wizard.missing.sectiongroup.caption.error"); //$NON-NLS-1$
+        }
+        else {
+            return super.validate(recursive);
+        }
     }
 }

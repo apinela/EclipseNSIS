@@ -9,13 +9,12 @@
  *******************************************************************************/
 package net.sf.eclipsensis.dialogs;
 
-import java.util.Hashtable;
+import java.net.URL;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.settings.NSISPreferences;
 
-import org.eclipse.help.ui.browser.LaunchURL;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.JFaceColors;
@@ -28,6 +27,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.PlatformUI;
 
 public class NSISAboutDialog extends Dialog implements INSISConstants
 {
@@ -35,9 +35,6 @@ public class NSISAboutDialog extends Dialog implements INSISConstants
     private static final String cAboutTitle;
     private static final String cAboutHeader;
     private static final String cAboutText;
-    
-    private LaunchURL mLaunchURL = new LaunchURL();
-    private Hashtable mURLData = new Hashtable();
     
     static {
         cAboutImage = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("about.icon")); //$NON-NLS-1$
@@ -150,10 +147,13 @@ public class NSISAboutDialog extends Dialog implements INSISConstants
 
     public synchronized void openLink(String link)
     {
-        mURLData.put("url",link); //$NON-NLS-1$
         try {
-            mLaunchURL.setInitializationData(null,null,mURLData);
-            mLaunchURL.run(null);
+            try {
+                PlatformUI.getWorkbench().getBrowserSupport().getExternalBrowser().openURL(new URL(link));
+            }
+            catch (Throwable t) {
+                EclipseNSISPlugin.getDefault().log(t);
+            }
         }
         catch (Exception ex) {
             EclipseNSISPlugin.getDefault().log(ex);

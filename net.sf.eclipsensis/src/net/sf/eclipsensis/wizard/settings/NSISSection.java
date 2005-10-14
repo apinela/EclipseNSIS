@@ -12,6 +12,7 @@ package net.sf.eclipsensis.wizard.settings;
 import java.text.MessageFormat;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.help.INSISKeywordsListener;
 import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.wizard.NSISWizard;
 import net.sf.eclipsensis.wizard.settings.dialogs.NSISSectionDialog;
@@ -36,7 +37,13 @@ public class NSISSection extends AbstractNSISInstallGroup
     private boolean mDefaultUnselected = false;
 
     static {
-        NSISInstallElementFactory.register(TYPE, IMAGE, NSISSection.class);
+        NSISInstallElementFactory.register(TYPE, NSISKeywords.INSTANCE.getKeyword(TYPE), IMAGE, NSISSection.class);
+        NSISKeywords.INSTANCE.addKeywordsListener(new INSISKeywordsListener() {
+            public void keywordsChanged()
+            {
+                NSISInstallElementFactory.setTypeName(TYPE, NSISKeywords.INSTANCE.getKeyword(TYPE));
+            }
+        });
     }
     
     /* (non-Javadoc)

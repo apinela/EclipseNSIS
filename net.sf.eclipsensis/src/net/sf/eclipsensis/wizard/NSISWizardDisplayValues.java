@@ -9,16 +9,21 @@
  *******************************************************************************/
 package net.sf.eclipsensis.wizard;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.makensis.MakeNSISRunner;
+import net.sf.eclipsensis.util.Common;
 
 public class NSISWizardDisplayValues implements INSISWizardConstants
 {
     public static final String[] INSTALLER_TYPE_NAMES = new String[INSTALLER_TYPE_MUI+1];
     public static final String[] LICENSE_BUTTON_TYPE_NAMES = new String[LICENSE_BUTTON_RADIO+1];
     public static final String[] COMPRESSOR_TYPE_NAMES = new String[MakeNSISRunner.COMPRESSOR_DISPLAY_ARRAY.length-1];
-    public static final String[] HKEY_NAMES = {"HKEY_CLASSES_ROOT","HKEY_LOCAL_MACHINE","HKEY_CURRENT_USER","HKEY_USERS", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-                                               "HKEY_CURRENT_CONFIG","HKEY_DYN_DATA","HKEY_PERFORMANCE_DATA"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    private static final String[] HKEY_NAMES = {"HKEY_CLASSES_ROOT","HKEY_LOCAL_MACHINE","HKEY_CURRENT_USER","HKEY_USERS", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                                               "HKEY_CURRENT_CONFIG","HKEY_DYN_DATA","HKEY_PERFORMANCE_DATA","SHELL_CONTEXT"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     public static final String[] SHORTCUT_TYPE_NAMES = new String[SHORTCUT_INSTALLELEMENT+1];
     public static final String[] OVERWRITE_MODE_NAMES = new String[OVERWRITE_IFDIFF+1];
     public static final String[] REG_VALUE_TYPES = new String[REG_DWORD+1];
@@ -46,5 +51,16 @@ public class NSISWizardDisplayValues implements INSISWizardConstants
 
         REG_VALUE_TYPES[REG_SZ] = EclipseNSISPlugin.getResourceString("reg.value.string"); //$NON-NLS-1$;
         REG_VALUE_TYPES[REG_DWORD] = EclipseNSISPlugin.getResourceString("reg.value.dword"); //$NON-NLS-1$;
+    }
+    
+    public static String[] getHKEYNames()
+    {
+        List list = new ArrayList();
+        for (int i = 0; i < HKEY_NAMES.length; i++) {
+            if(NSISKeywords.INSTANCE.isValidKeyword(HKEY_NAMES[i])) {
+                list.add(HKEY_NAMES[i]);
+            }
+        }
+        return (String[])list.toArray(Common.EMPTY_STRING_ARRAY);
     }
 }

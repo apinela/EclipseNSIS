@@ -12,6 +12,7 @@
 ###############################################################################
 -->
 <plugin>
+   <extension-point id="helpBrowserLocalFileHandler" name="Help Browser Local File Handler" schema="schema/helpBrowserLocalFileHandler.exsd"/>
    <extension
          point="org.eclipse.core.runtime.products">
       <product name="%product.name" application="org.eclipse.ui.ide.workbench" description="%product.description"> 
@@ -733,5 +734,15 @@
        <factory 
          extensions="%nsis.extensions"
          class="net.sf.eclipsensis.editor.NSISAnnotationModelFactory"/>
+   </extension>
+   <extension
+         id="localFileHandlers"
+         point="net.sf.eclipsensis.helpBrowserLocalFileHandler">
+      <handler
+            class="net.sf.eclipsensis.help.DefaultLocalFileHandler"
+            extensions="%default.help.file.extensions"/>
+      <handler
+            class="net.sf.eclipsensis.help.NSISLocalFileHandler"
+            extensions="%nsis.extensions"/>
    </extension>
 </plugin>

@@ -148,7 +148,7 @@ JNIEXPORT jstring JNICALL Java_net_sf_eclipsensis_util_WinAPI_RegQueryStrValue(J
     if(ERROR_SUCCESS == (rv = RegOpenKeyEx((HKEY)hRootKey,
                                       str1,0, KEY_QUERY_VALUE, &hKey))) {
         if(ERROR_SUCCESS == (rv = RegQueryValueEx(hKey, str2, 0, &type, NULL, &cbData))) {
-            value = (TCHAR *)GlobalAlloc(GPTR, cbData);
+            value = (TCHAR *)GlobalAlloc(GPTR, cbData*sizeof(TCHAR));
             if(ERROR_SUCCESS == (rv = RegQueryValueEx(hKey, str2, 0, &type, (LPBYTE)value, &cbData))) {
                 result = pEnv->NewStringUTF(value);
             }
@@ -191,7 +191,7 @@ JNIEXPORT jstring JNICALL Java_net_sf_eclipsensis_util_WinAPI_ExtractHtmlHelpAnd
     if(hr == S_OK || hr == S_FALSE) {
         TCHAR *tocFile = NULL;
 		int length = MAX_PATH*sizeof(TCHAR);
-        tocFile = (TCHAR *)GlobalAlloc(GPTR, length+1);
+        tocFile = (TCHAR *)GlobalAlloc(GPTR, (length+1)*sizeof(TCHAR));
 
         LPCWSTR str1 = (LPCWSTR)pEnv->GetStringChars(pszFile, 0);
         LPCSTR str2 = (LPCSTR)pEnv->GetStringUTFChars(pszFolder, 0);
@@ -356,7 +356,7 @@ JNIEXPORT jint JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetSystemMetrics(JNIE
     return GetSystemMetrics(index);
 }
 
-JNIEXPORT void JNICALL Java_net_sf_eclipsensis_util_WinAPI_SetObjectFieldValue (JNIEnv *pEnv, jclass jClass, jobject object, jstring field, jint value)
+JNIEXPORT void JNICALL Java_net_sf_eclipsensis_util_WinAPI_SetObjectFieldValue(JNIEnv *pEnv, jclass jClass, jobject object, jstring field, jint value)
 {
     jclass clasz = pEnv->GetObjectClass(object);
     LPCSTR fieldName = (LPCSTR)pEnv->GetStringUTFChars(field, 0);
@@ -365,3 +365,24 @@ JNIEXPORT void JNICALL Java_net_sf_eclipsensis_util_WinAPI_SetObjectFieldValue (
     pEnv->SetIntField(object, fieldId, value);
 }
 
+JNIEXPORT jstring JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetEnvironmentVariable(JNIEnv *pEnv, jclass jClass, jstring name)
+{
+    jstring result = NULL;
+    TCHAR *value = NULL;
+	LONG rv;
+
+    LPCSTR lpName = (LPCSTR)pEnv->GetStringUTFChars(name, 0);
+    rv = GetEnvironmentVariable(lpName, NULL, 0);
+    if(rv) {
+        value = (TCHAR *)GlobalAlloc(GPTR, rv*sizeof(TCHAR));
+        if(value) {
+            rv = GetEnvironmentVariable(lpName, (LPTSTR)value, rv);
+            if(rv) {
+                result = pEnv->NewStringUTF(value);
+            }
+            GlobalFree(value);
+        }
+    }
+    
+    return result;
+}

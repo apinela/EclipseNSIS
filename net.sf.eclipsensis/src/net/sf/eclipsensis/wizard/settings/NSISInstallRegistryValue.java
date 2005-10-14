@@ -10,8 +10,8 @@
 package net.sf.eclipsensis.wizard.settings;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.wizard.NSISWizard;
-import net.sf.eclipsensis.wizard.NSISWizardDisplayValues;
+import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.wizard.*;
 import net.sf.eclipsensis.wizard.settings.dialogs.NSISInstallRegistryValueDialog;
 
 import org.eclipse.jface.window.Window;
@@ -32,7 +32,7 @@ public class NSISInstallRegistryValue extends AbstractNSISInstallItem
     private int mValueType = REG_SZ;
 
     static {
-        NSISInstallElementFactory.register(TYPE, STR_IMAGE, NSISInstallRegistryValue.class);
+        NSISInstallElementFactory.register(TYPE, EclipseNSISPlugin.getResourceString("wizard.regvalue.type.name"), STR_IMAGE, NSISInstallRegistryValue.class);
     }
 
     /* (non-Javadoc)
@@ -48,8 +48,12 @@ public class NSISInstallRegistryValue extends AbstractNSISInstallItem
      */
     public String getDisplayName()
     {
-        return new StringBuffer(NSISWizardDisplayValues.HKEY_NAMES[mRootKey]).append(
-        "\\").append(mSubKey).append("\\").append(mValue).toString(); //$NON-NLS-1$ //$NON-NLS-2$
+        String[] hkeyNames = NSISWizardDisplayValues.getHKEYNames();
+        StringBuffer buf = new StringBuffer("");
+        if(mRootKey >= 0 && mRootKey < hkeyNames.length) {
+            buf.append(hkeyNames[mRootKey]);
+        }
+        return buf.append("\\").append(mSubKey).append("\\").append(mValue).toString(); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     /* (non-Javadoc)
@@ -157,5 +161,25 @@ public class NSISInstallRegistryValue extends AbstractNSISInstallItem
     public void setValueType(int valueType)
     {
         mValueType = valueType;
+    }
+
+    public String validate(boolean recursive)
+    {
+        String[] hkeyNames = NSISWizardDisplayValues.getHKEYNames();
+        if(mRootKey < 0 || mRootKey >= hkeyNames.length) {
+            return EclipseNSISPlugin.getResourceString("wizard.invalid.root.key.error"); //$NON-NLS-1$
+        }
+        else {
+            String subKey = Common.trim(getSubKey());
+            if(Common.isEmpty(subKey) || subKey.endsWith("\\") || subKey.startsWith("\\")) { //$NON-NLS-1$ //$NON-NLS-2$
+                return EclipseNSISPlugin.getResourceString("wizard.invalid.sub.key.error"); //$NON-NLS-1$
+            }
+            else if(getValueType() != INSISWizardConstants.REG_SZ && Common.isEmpty(getData())) {
+                return EclipseNSISPlugin.getResourceString("wizard.invalid.reg.value.error"); //$NON-NLS-1$
+            }
+            else {
+                return super.validate(recursive);
+            }
+        }
     }
 }

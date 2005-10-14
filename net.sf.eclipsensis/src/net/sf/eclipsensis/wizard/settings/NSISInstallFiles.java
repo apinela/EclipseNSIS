@@ -33,7 +33,7 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
     private int mOverwriteMode = OVERWRITE_ON;
 
     static {
-        NSISInstallElementFactory.register(TYPE, IMAGE, NSISInstallFiles.class);
+        NSISInstallElementFactory.register(TYPE, EclipseNSISPlugin.getResourceString("wizard.files.type.name"), IMAGE, NSISInstallFiles.class);
     }
 
     protected void addSkippedProperties(Collection skippedProperties)
@@ -179,6 +179,16 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
     {
         mOverwriteMode = overwriteMode;
     }
+
+    public String validate(boolean recursive)
+    {
+        if(!Common.isValidNSISPathName(getDestination())) { //$NON-NLS-1$
+            return EclipseNSISPlugin.getResourceString("wizard.invalid.fileset.destination.error"); //$NON-NLS-1$
+        }
+        else {
+            return super.validate(recursive);
+        }
+    }
     
     public static class FileItem extends AbstractNSISInstallItem
     {
@@ -189,7 +199,7 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
         private String mName = null;
         
         static {
-            NSISInstallElementFactory.register(TYPE, IMAGE, FileItem.class);
+            NSISInstallElementFactory.register(TYPE, EclipseNSISPlugin.getResourceString("wizard.fileitem.type.name"), IMAGE, FileItem.class);
         }
         
         /* (non-Javadoc)
@@ -265,6 +275,16 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
         public boolean isEditable()
         {
             return false;
+        }
+
+        public String validate(boolean recursive)
+        {
+            if(!Common.isValidFile(Common.decodePath(getName()))) { //$NON-NLS-1$
+                return EclipseNSISPlugin.getResourceString("wizard.invalid.file.name.error"); //$NON-NLS-1$
+            }
+            else {
+                return super.validate(recursive);
+            }
         }
     }
 }

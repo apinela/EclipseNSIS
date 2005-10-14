@@ -32,6 +32,7 @@ public interface INSISWizardConstants
     public static final int HKCC = 4;
     public static final int HKDD = 5;
     public static final int HKPD = 6;
+    public static final int SHCTX = 7;
     
     public static final int REG_SZ = 0;
     public static final int REG_DWORD = 1;

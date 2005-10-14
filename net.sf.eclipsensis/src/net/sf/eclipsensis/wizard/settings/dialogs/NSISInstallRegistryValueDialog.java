@@ -30,6 +30,7 @@ import org.eclipse.swt.widgets.*;
 public class NSISInstallRegistryValueDialog extends AbstractNSISInstallItemDialog
 {
     private static ArrayList cProperties = new ArrayList();
+    private String[] mHKEYNames;
     
     static {
         cProperties.add("rootKey"); //$NON-NLS-1$
@@ -42,6 +43,7 @@ public class NSISInstallRegistryValueDialog extends AbstractNSISInstallItemDialo
     public NSISInstallRegistryValueDialog(NSISWizard wizard, NSISInstallRegistryValue item)
     {
         super(wizard, item);
+        mHKEYNames = NSISWizardDisplayValues.getHKEYNames();
     }
 
     /* (non-Javadoc)
@@ -63,11 +65,15 @@ public class NSISInstallRegistryValueDialog extends AbstractNSISInstallItemDialo
         layout.marginWidth = 0;
         composite.setLayout(layout);
         
-        final Combo c1 = NSISWizardDialogUtil.createCombo(composite,NSISWizardDisplayValues.HKEY_NAMES,mStore.getInt("rootKey"), //$NON-NLS-1$
+        if(mStore.getInt("rootKey") >= mHKEYNames.length) {
+            mStore.setValue("rootKey","-1");
+        }
+        final Combo c1 = NSISWizardDialogUtil.createCombo(composite,mHKEYNames,mStore.getInt("rootKey"), //$NON-NLS-1$
                             true,"wizard.root.key.label",true,null,false); //$NON-NLS-1$
         c1.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 mStore.setValue("rootKey",c1.getSelectionIndex()); //$NON-NLS-1$
+                validate();
             }
         });
         final Text t1 = NSISWizardDialogUtil.createText(composite,mStore.getString("subKey"),"wizard.sub.key.label",true, //$NON-NLS-1$ //$NON-NLS-2$
@@ -174,15 +180,21 @@ public class NSISInstallRegistryValueDialog extends AbstractNSISInstallItemDialo
     
     protected String checkForErrors()
     {
-        String subKey = mStore.getString("subKey").trim(); //$NON-NLS-1$
-        if(Common.isEmpty(subKey) || subKey.endsWith("\\") || subKey.startsWith("\\")) { //$NON-NLS-1$ //$NON-NLS-2$
-            return EclipseNSISPlugin.getResourceString("wizard.invalid.sub.key"); //$NON-NLS-1$
-        }
-        else if(mStore.getInt("valueType") != INSISWizardConstants.REG_SZ && Common.isEmpty(mStore.getString("data"))) { //$NON-NLS-1$ //$NON-NLS-2$
-            return EclipseNSISPlugin.getResourceString("wizard.invalid.reg.value"); //$NON-NLS-1$
+        int rootKey = mStore.getInt("rootKey"); //$NON-NLS-1$
+        if(rootKey < 0 || rootKey >= 7) {
+            return EclipseNSISPlugin.getResourceString("wizard.invalid.root.key"); //$NON-NLS-1$
         }
         else {
-            return ""; //$NON-NLS-1$
+            String subKey = mStore.getString("subKey").trim(); //$NON-NLS-1$
+            if(Common.isEmpty(subKey) || subKey.endsWith("\\") || subKey.startsWith("\\")) { //$NON-NLS-1$ //$NON-NLS-2$
+                return EclipseNSISPlugin.getResourceString("wizard.invalid.sub.key"); //$NON-NLS-1$
+            }
+            else if(mStore.getInt("valueType") != INSISWizardConstants.REG_SZ && Common.isEmpty(mStore.getString("data"))) { //$NON-NLS-1$ //$NON-NLS-2$
+                return EclipseNSISPlugin.getResourceString("wizard.invalid.reg.value"); //$NON-NLS-1$
+            }
+            else {
+                return ""; //$NON-NLS-1$
+            }
         }
     }
 }

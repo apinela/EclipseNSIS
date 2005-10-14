@@ -1,6 +1,17 @@
 Revision History
 ================
 
+0.9.4
+    * Scroll tip now moves with scroll bar.
+    * SubSection/SubSectionEnd supported even when deprecated (NSIS 2.05 and 
+      above).
+    * Clicking on a NSIS file link in EclipseNSIS help or NSIS Users Manual 
+      view now opens the file in Eclipse.
+    * Added support for nightly CVS builds.
+    * Added support for SHCTX registry root key in EclipseNSIS Script Wizard.
+    * Added error markers and tooltips in EclipseNSIS Script Wizard Contents
+      page.
+
 0.9.3 (09/29/2005)
     * External files are now supported- including compiling, testing, code 
       folding and annotations.

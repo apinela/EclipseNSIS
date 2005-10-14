@@ -25,7 +25,7 @@ public class NSISInstaller extends AbstractNSISInstallGroup
     private static final long serialVersionUID = 3601773736043608518L;
 
     static {
-        NSISInstallElementFactory.register(TYPE, IMAGE, NSISInstaller.class);
+        NSISInstallElementFactory.register(TYPE, EclipseNSISPlugin.getResourceString("wizard.installer.type.name"), IMAGE, NSISInstaller.class);
     }
 
     public NSISInstaller()

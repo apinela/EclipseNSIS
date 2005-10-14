@@ -41,7 +41,7 @@ public class NSISScrollTipHelper
                 if(sb != null) {
                     mSelAdapter = new SelectionAdapter() {
                         private Shell mShell = null;
-                        private Text mText = null;
+                        private Label mLabel = null;
                         
                         public void widgetSelected(SelectionEvent e) 
                         {
@@ -50,7 +50,7 @@ public class NSISScrollTipHelper
                                     if(mShell != null) {
                                         mShell.dispose();
                                         mShell = null;
-                                        mText = null;
+                                        mLabel = null;
                                     }
                                     break;
                                 case SWT.DRAG:
@@ -66,7 +66,7 @@ public class NSISScrollTipHelper
                                     }
                                     
                                     String text = new StringBuffer().append(mTextViewer.getTopIndex()+1).append(" - ").append(mTextViewer.getBottomIndex()+1).toString(); //$NON-NLS-1$
-                                    mText.setText(text);
+                                    mLabel.setText(text);
                                     Point extent = mShell.computeSize(SWT.DEFAULT,SWT.DEFAULT);
                                     int x = stLoc.x+stSize.x-sbSize.x-extent.x-4;
                                     mShell.setBounds(x,scrollTop + (sb.getSelection()-sb.getMinimum())*scrollHeight/(sb.getMaximum()-sb.getMinimum()),
@@ -97,11 +97,11 @@ public class NSISScrollTipHelper
                             layout.marginHeight=2;
                             layout.marginWidth=2;
                             composite.setLayout(layout);
-                            mText= new Text(composite, SWT.SINGLE | SWT.READ_ONLY | SWT.RIGHT);
+                            mLabel= new Label(composite, SWT.RIGHT);
                             data= new GridData(SWT.FILL, SWT.FILL, true, true);
-                            mText.setLayoutData(data);
-                            mText.setForeground(display.getSystemColor(SWT.COLOR_INFO_FOREGROUND));
-                            mText.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+                            mLabel.setLayoutData(data);
+                            mLabel.setForeground(display.getSystemColor(SWT.COLOR_INFO_FOREGROUND));
+                            mLabel.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
                         }
                     };
                     sb.addSelectionListener(mSelAdapter);

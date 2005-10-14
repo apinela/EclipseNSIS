@@ -9,6 +9,8 @@
  *******************************************************************************/
 package net.sf.eclipsensis.handlers;
 
+import net.sf.eclipsensis.INSISConstants;
+
 import org.eclipse.core.commands.*;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
@@ -23,7 +25,7 @@ public abstract class NSISHandler extends AbstractHandler
             TreeItem[] items = ((Tree)w).getSelection();
             for (int i = 0; i < items.length; i++) {
                 Object object = items[i].getData();
-                if(object instanceof IFile) {
+                if(object instanceof IFile && ((IFile)object).getFileExtension().equalsIgnoreCase(INSISConstants.NSI_EXTENSION)) {
                     handleScript(((IFile)object).getFullPath());
                 }
             }

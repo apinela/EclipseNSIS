@@ -47,7 +47,9 @@ public class NSISOutlineContentProvider implements ITreeContentProvider, INSISCo
     public static final int FUNCTIONEND = FUNCTION+1;
     public static final int SECTION = FUNCTIONEND+1;
     public static final int SECTIONEND = SECTION+1;
-    public static final int SECTIONGROUP = SECTIONEND+1;
+    public static final int SUBSECTION = SECTIONEND+1;
+    public static final int SUBSECTIONEND = SUBSECTION+1;
+    public static final int SECTIONGROUP = SUBSECTIONEND+1;
     public static final int SECTIONGROUPEND = SECTIONGROUP+1;
     public static final int PAGE = SECTIONGROUPEND+1;
     public static final int PAGEEX = PAGE+1;
@@ -206,6 +208,7 @@ public class NSISOutlineContentProvider implements ITreeContentProvider, INSISCo
                             case MACRO:
                             case FUNCTION:
                             case SECTION:
+                            case SUBSECTION:
                             case SECTIONGROUP:
                             case PAGE:
                             case PAGEEX:
@@ -274,7 +277,7 @@ public class NSISOutlineContentProvider implements ITreeContentProvider, INSISCo
                                                         break outer;
                                                     }
                                                 }
-                                                if(type == SECTIONGROUP) {
+                                                if(type == SECTIONGROUP || type == SUBSECTION) {
                                                     if(regionType.equals(IDocument.DEFAULT_CONTENT_TYPE)) {
                                                         if(temp.equalsIgnoreCase("/e")) { //$NON-NLS-1$
                                                             continue;
@@ -357,7 +360,7 @@ public class NSISOutlineContentProvider implements ITreeContentProvider, INSISCo
                                                      new int[]{MACRO});
                                 break;
                             case FUNCTION:
-                                current = openElement(current, element, new int[]{SECTION,SECTIONGROUP,FUNCTION});
+                                current = openElement(current, element, new int[]{SECTION,SUBSECTION,SECTIONGROUP,FUNCTION});
                                 break;
                             case FUNCTIONEND:
                                 current = closeElement(document, current, element, 
@@ -370,12 +373,14 @@ public class NSISOutlineContentProvider implements ITreeContentProvider, INSISCo
                                 current = closeElement(document, current, element, 
                                                      new int[]{SECTION});
                                 break;
+                            case SUBSECTION:
                             case SECTIONGROUP:
                                 current = openElement(current, element, new int[]{SECTION,FUNCTION});
                                 break;
+                            case SUBSECTIONEND:
                             case SECTIONGROUPEND:
                                 current = closeElement(document, current, element, 
-                                                     new int[]{SECTIONGROUP});
+                                                     new int[]{SECTIONGROUP,SUBSECTION});
                                 break;
                             case PAGE:
                             case INCLUDE:
@@ -384,7 +389,7 @@ public class NSISOutlineContentProvider implements ITreeContentProvider, INSISCo
                                 }
                                 break;
                             case PAGEEX:
-                                current = openElement(current, element, new int[]{SECTION,SECTIONGROUP,FUNCTION});
+                                current = openElement(current, element, new int[]{SECTION,SUBSECTION,SECTIONGROUP,FUNCTION});
                                 break;
                             case PAGEEXEND:
                                 current = closeElement(document, current, element, 

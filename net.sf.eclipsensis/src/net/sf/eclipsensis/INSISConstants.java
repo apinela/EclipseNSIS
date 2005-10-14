@@ -16,6 +16,8 @@ public interface INSISConstants
     public static final String PLUGIN_ID = EclipseNSISPlugin.getDefault().getBundle().getSymbolicName();
 
     public static final String MAKENSIS_EXE = "makensis.exe"; //$NON-NLS-1$
+    public static final String NSISCONF_NSH = "nsisconf.nsh"; //$NON-NLS-1$
+    public static final String NSI_EXTENSION = "nsi"; //$NON-NLS-1$
 
     public static final String PLUGIN_CONTEXT_PREFIX = PLUGIN_ID + "."; //$NON-NLS-1$
     

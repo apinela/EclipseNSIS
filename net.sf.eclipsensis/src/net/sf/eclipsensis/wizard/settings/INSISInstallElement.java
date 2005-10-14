@@ -41,4 +41,6 @@ public interface INSISInstallElement extends INSISWizardConstants, Serializable,
     public void setSettings(NSISWizardSettings settings);
     public NSISWizardSettings getSettings();
     public Object clone() throws CloneNotSupportedException;
+    public String validate();
+    public String validate(boolean recursive);
 }

@@ -10,6 +10,7 @@
 package net.sf.eclipsensis.wizard.settings;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.wizard.NSISWizard;
 import net.sf.eclipsensis.wizard.NSISWizardDisplayValues;
 import net.sf.eclipsensis.wizard.settings.dialogs.NSISInstallRegistryKeyDialog;
@@ -28,7 +29,7 @@ public class NSISInstallRegistryKey extends AbstractNSISInstallItem
     private String mSubKey = null;
 
     static {
-        NSISInstallElementFactory.register(TYPE, IMAGE, NSISInstallRegistryKey.class);
+        NSISInstallElementFactory.register(TYPE, EclipseNSISPlugin.getResourceString("wizard.regkey.type.name"), IMAGE, NSISInstallRegistryKey.class);
     }
 
     /* (non-Javadoc)
@@ -44,8 +45,12 @@ public class NSISInstallRegistryKey extends AbstractNSISInstallItem
      */
     public String getDisplayName()
     {
-        return new StringBuffer(NSISWizardDisplayValues.HKEY_NAMES[mRootKey]).append(
-                "\\").append(mSubKey).toString(); //$NON-NLS-1$
+        String[] hkeyNames = NSISWizardDisplayValues.getHKEYNames();
+        StringBuffer buf = new StringBuffer("");
+        if(mRootKey >= 0 && mRootKey < hkeyNames.length) {
+            buf.append(hkeyNames[mRootKey]);
+        }
+        return buf.append("\\").append(mSubKey).toString(); //$NON-NLS-1$
     }
 
     /* (non-Javadoc)
@@ -99,5 +104,20 @@ public class NSISInstallRegistryKey extends AbstractNSISInstallItem
     public void setSubKey(String subKey)
     {
         mSubKey = subKey;
+    }
+
+    public String validate(boolean recursive)
+    {
+        String[] hkeyNames = NSISWizardDisplayValues.getHKEYNames();
+        if(mRootKey < 0 || mRootKey >= hkeyNames.length) {
+            return EclipseNSISPlugin.getResourceString("wizard.invalid.root.key.error"); //$NON-NLS-1$
+        }
+        else {
+            String subKey = Common.trim(getSubKey());
+            if(Common.isEmpty(subKey) || subKey.endsWith("\\") || subKey.startsWith("\\")) { //$NON-NLS-1$ //$NON-NLS-2$
+                return EclipseNSISPlugin.getResourceString("wizard.invalid.sub.key.error"); //$NON-NLS-1$
+            }
+            return super.validate(recursive);
+        }
     }
 }

@@ -27,8 +27,8 @@ public class NSISOutlineContentResources implements IEclipseNSISService,  INSISK
     private static final String[] cTypes = {"!define", "!ifdef", "!ifndef", "!ifmacrodef",  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
                                             "!ifnmacrodef", "!endif", "!macro", "!macroend",  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
                                             "Function", "FunctionEnd", "Section", "SectionEnd",  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-                                            "SubSection", "SubSectionEnd", "Page", "PageEx",  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-                                            "Pageexend","!include"}; //$NON-NLS-1$ //$NON-NLS-2$
+                                            "SubSection", "SubSectionEnd", "SectionGroup", "SectionGroupEnd",  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                                            "Page", "PageEx", "Pageexend","!include"}; //$NON-NLS-1$ //$NON-NLS-2$
 
     private final List mTypeList = Arrays.asList(cTypes);
     private final Map mTypes = new CaseInsensitiveMap();
@@ -42,7 +42,7 @@ public class NSISOutlineContentResources implements IEclipseNSISService,  INSISK
         mTypeNames.clear();
         mImages.clear();
         for(int i=0; i<cTypes.length; i++) {
-            String typeName = NSISKeywords.INSTANCE.getKeyword(cTypes[i]);
+            String typeName = NSISKeywords.INSTANCE.getKeyword(cTypes[i], false);
             if(NSISKeywords.INSTANCE.isValidKeyword(typeName)) {
                 mTypes.put(typeName,cTypes[i]);
                 mTypeNames.put(cTypes[i], typeName);
@@ -96,7 +96,7 @@ public class NSISOutlineContentResources implements IEclipseNSISService,  INSISK
 
     public int getTypeIndex(String type)
     {
-        return mTypeList.indexOf(type);
+        return (mTypes.containsKey(type)?mTypeList.indexOf(type):-1);
     }
     
     public String getTypeName(String type)

@@ -20,9 +20,11 @@ import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.IHelpContentProducer;
+import org.eclipse.swt.program.Program;
 
 public class NSISHelpProducer implements IExecutableExtension, IHelpContentProducer, INSISConstants
 {
+    private static final byte[] GO_BACK = "<html><head><script language=\"javascript\">\n<!--\nhistory.go(-1);\n//-->\n</script></head></html>".getBytes();
     private static final File cHelpCacheLocation = new File(EclipseNSISPlugin.getPluginStateLocation(),PLUGIN_HELP_LOCATION_PREFIX);
     private String mPluginId = PLUGIN_ID;
     private boolean mJavascriptOnly = false;
@@ -67,11 +69,28 @@ public class NSISHelpProducer implements IExecutableExtension, IHelpContentProdu
                         else {
                             helpFile = new File(nsisDir,href2);
                         }
-                        if(helpFile != null && helpFile.exists() && helpFile.isFile()) {
-                            try {
-                                return new BufferedInputStream(new FileInputStream(helpFile));
+                        if(helpFile != null && helpFile.exists()) {
+                            if(helpFile.isFile()) {
+                                if(HelpBrowserLocalFileHandlerManager.INSTANCE.handleFile(helpFile)) {
+                                    return new ByteArrayInputStream(GO_BACK);
+                                }
+                                else {
+                                    try {
+                                        return new BufferedInputStream(new FileInputStream(helpFile));
+                                    }
+                                    catch (FileNotFoundException e) {
+                                        EclipseNSISPlugin.getDefault().log(e);
+                                    }
+                                }
                             }
-                            catch (FileNotFoundException e) {
+                            else {
+                                try {
+                                    Program.launch(helpFile.getCanonicalPath());
+                                    return new ByteArrayInputStream(GO_BACK);
+                               }
+                                catch (IOException e) {
+                                    EclipseNSISPlugin.getDefault().log(e);
+                                }
                             }
                         }
                         if(isDocs) {

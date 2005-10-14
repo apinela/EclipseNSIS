@@ -32,7 +32,7 @@ public class NSISInstallShortcut extends AbstractNSISInstallItem
     private int mShortcutType = SHORTCUT_URL; 
 
     static {
-        NSISInstallElementFactory.register(TYPE, IMAGE, NSISInstallShortcut.class);
+        NSISInstallElementFactory.register(TYPE, EclipseNSISPlugin.getResourceString("wizard.shortcut.type.name"), IMAGE, NSISInstallShortcut.class);
     }
 
     /**
@@ -155,6 +155,27 @@ public class NSISInstallShortcut extends AbstractNSISInstallItem
         if(settings != null && !Common.isEmpty(getSettings().getStartMenuGroup()) && Common.isEmpty(mLocation)) {
             mLocation = new StringBuffer(NSISKeywords.INSTANCE.getKeyword("$SMPROGRAMS")).append("\\").append( //$NON-NLS-1$ //$NON-NLS-2$
                     getSettings().getStartMenuGroup()).toString(); //$NON-NLS-1$
+        }
+    }
+    public String validate(boolean recursive)
+    {
+        if(!Common.isValidNSISPathName(getLocation())) {
+            return EclipseNSISPlugin.getResourceString("wizard.invalid.shortcut.location.error"); //$NON-NLS-1$
+        }
+        else if(!Common.isValidFileName(getName())) {
+            return EclipseNSISPlugin.getResourceString("wizard.invalid.shortcut.name.error"); //$NON-NLS-1$
+        }
+        else {
+            int n = getShortcutType();
+            if((n == SHORTCUT_INSTALLELEMENT && !Common.isValidNSISPathName(getPath()))) {
+                return EclipseNSISPlugin.getResourceString("wizard.invalid.shortcut.file.error"); //$NON-NLS-1$
+            }
+            else if((n == SHORTCUT_URL && !Common.isValidURL(getUrl()))) {
+                return EclipseNSISPlugin.getResourceString("wizard.invalid.shortcut.url.error"); //$NON-NLS-1$
+            }
+            else {
+                return super.validate(recursive);
+            }
         }
     }
 }

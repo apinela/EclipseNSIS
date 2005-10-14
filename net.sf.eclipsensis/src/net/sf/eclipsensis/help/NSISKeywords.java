@@ -48,7 +48,7 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
     public static final String PLUGIN_CALLS="PLUGINS"; //$NON-NLS-1$
     
     private Map mKeywordGroupsMap = new HashMap();
-    private Map mKeywordsMap = new CaseInsensitiveMap();
+    private Map mNewerKeywordsMap = new CaseInsensitiveMap();
     private Map mPluginsMap = null;
     private Set mAllKeywordsSet = new CaseInsensitiveSet();
     private ArrayList mListeners = new ArrayList();
@@ -166,7 +166,7 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
         if(monitor != null) {
             monitor.subTask(EclipseNSISPlugin.getResourceString("loading.keywords.message")); //$NON-NLS-1$
         }
-        mKeywordsMap.clear();
+        mNewerKeywordsMap.clear();
         mAllKeywordsSet.clear();
         
         ResourceBundle bundle;
@@ -176,21 +176,21 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
         } catch (MissingResourceException x) {
             bundle = null;
         }
-        Map registers = new CaseInsensitiveMap();
-        Map pathVariables = new CaseInsensitiveMap();
-        Map variables = new CaseInsensitiveMap();
-        Map pathConstants = new CaseInsensitiveMap();
-        Map stringConstants = new CaseInsensitiveMap();
-        Map predefines = new CaseInsensitiveMap();
-        Map singlelineCompiletimeCommands = new CaseInsensitiveMap();
-        Map multilineCompiletimeCommands = new CaseInsensitiveMap();
-        Map installerAttributes = new CaseInsensitiveMap();
-        Map commands = new CaseInsensitiveMap();
-        Map instructions = new CaseInsensitiveMap();
-        Map installerPages = new CaseInsensitiveMap();
-        Map instructionParameters = new CaseInsensitiveMap();
-        Map instructionOptions = new CaseInsensitiveMap();
-        Map callbacks = new CaseInsensitiveMap();
+        Set registers = new CaseInsensitiveSet();
+        Set pathVariables = new CaseInsensitiveSet();
+        Set variables = new CaseInsensitiveSet();
+        Set pathConstants = new CaseInsensitiveSet();
+        Set stringConstants = new CaseInsensitiveSet();
+        Set predefines = new CaseInsensitiveSet();
+        Set singlelineCompiletimeCommands = new CaseInsensitiveSet();
+        Set multilineCompiletimeCommands = new CaseInsensitiveSet();
+        Set installerAttributes = new CaseInsensitiveSet();
+        Set commands = new CaseInsensitiveSet();
+        Set instructions = new CaseInsensitiveSet();
+        Set installerPages = new CaseInsensitiveSet();
+        Set instructionParameters = new CaseInsensitiveSet();
+        Set instructionOptions = new CaseInsensitiveSet();
+        Set callbacks = new CaseInsensitiveSet();
 
         if(bundle != null && nsisVersion != null) {
             HashMap versionMap = new HashMap();
@@ -221,90 +221,102 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
                     String key = element[1];
                     String[] values = Common.loadArrayProperty(bundle,key);
                     if(!Common.isEmptyArray(values)) {
-                        Map map = null;
+                        Set set = null;
                         if(name.equals("registers")) { //$NON-NLS-1$
-                            map = registers;
+                            set = registers;
                         }
                         else if(name.equals("path.variables")) { //$NON-NLS-1$
-                            map = pathVariables;
+                            set = pathVariables;
                         }
                         else if(name.equals("variables")) { //$NON-NLS-1$
-                            map = variables;
+                            set = variables;
                         }
                         else if(name.equals("path.constants")) { //$NON-NLS-1$
-                            map = pathConstants;
+                            set = pathConstants;
                         }
                         else if(name.equals("string.constants")) { //$NON-NLS-1$
-                            map = stringConstants;
+                            set = stringConstants;
                         }
                         else if(name.equals("predefines")) { //$NON-NLS-1$
-                            map = predefines;
+                            set = predefines;
                         }
                         else if(name.equals("singleline.compiletime.commands")) { //$NON-NLS-1$
-                            map = singlelineCompiletimeCommands;
+                            set = singlelineCompiletimeCommands;
                         }
                         else if(name.equals("multiline.compiletime.commands")) { //$NON-NLS-1$
-                            map = multilineCompiletimeCommands;
+                            set = multilineCompiletimeCommands;
                         }
                         else if(name.equals("installer.attributes")) { //$NON-NLS-1$
-                            map = installerAttributes;
+                            set = installerAttributes;
                         }
                         else if(name.equals("commands")) { //$NON-NLS-1$
-                            map = commands;
+                            set = commands;
                         }
                         else if(name.equals("instructions")) { //$NON-NLS-1$
-                            map = instructions;
+                            set = instructions;
                         }
                         else if(name.equals("installer.pages")) { //$NON-NLS-1$
-                            map = installerPages;
+                            set = installerPages;
                         }
                         else if(name.equals("instruction.parameters")) { //$NON-NLS-1$
-                            map = instructionParameters;
+                            set = instructionParameters;
                         }
                         else if(name.equals("instruction.options")) { //$NON-NLS-1$
-                            map = instructionOptions;
+                            set = instructionOptions;
                         }
                         else if(name.equals("callbacks")) { //$NON-NLS-1$
-                            map = callbacks;
+                            set = callbacks;
                         }
     
                         for (int i = 0; i < values.length; i++) {
+                            int m = values[i].indexOf('^');
                             int n = values[i].indexOf('~');
                             if(values[i].charAt(0) == '-') {
-                                map.remove(values[i].substring(1));
+                                set.remove(values[i].substring(1));
+                            }
+                            else if(m > 0) {
+                                String oldValue = values[i].substring(0,m);
+                                String newValue = values[i].substring(m+1);
+                                List list2 = (List)mNewerKeywordsMap.get(oldValue);
+                                if(list2 == null) {
+                                    list2 = new ArrayList();
+                                    list2.add(oldValue);
+                                    mNewerKeywordsMap.put(oldValue,list2);
+                                }
+                                if(!list2.contains(newValue)) {
+                                    list2.add(newValue);
+                                }
+                                set.add(oldValue);
+                                set.add(newValue);
                             }
                             else if(n > 0) {
                                 String oldValue = values[i].substring(0,n);
                                 String newValue = values[i].substring(n+1);
-                                map.put(oldValue,newValue);
+                                List list2 = (List)mNewerKeywordsMap.get(oldValue);
+                                if(list2 == null) {
+                                    list2 = new ArrayList();
+                                    mNewerKeywordsMap.put(oldValue,list2);
+                                }
+                                else {
+                                    list2.remove(oldValue);
+                                }
+                                if(!list2.contains(newValue)) {
+                                    list2.add(newValue);
+                                }
+                                set.remove(oldValue);
+                                set.add(newValue);
                             }
                             else {
                                 if(values[i].charAt(0) == '+') {
                                     values[i] = values[i].substring(1);
                                 }
-                                map.put(values[i],values[i]);
+                                set.add(values[i]);
                             }
                         }
                     }
                 }
             }
         }
-        
-        mKeywordsMap.putAll(registers);
-        mKeywordsMap.putAll(pathVariables);
-        mKeywordsMap.putAll(variables);
-        mKeywordsMap.putAll(pathConstants);
-        mKeywordsMap.putAll(stringConstants);
-        mKeywordsMap.putAll(predefines);
-        mKeywordsMap.putAll(singlelineCompiletimeCommands);
-        mKeywordsMap.putAll(multilineCompiletimeCommands);
-        mKeywordsMap.putAll(installerAttributes);
-        mKeywordsMap.putAll(commands);
-        mKeywordsMap.putAll(instructions);
-        mKeywordsMap.putAll(installerPages);
-        mKeywordsMap.putAll(instructionParameters);
-        mKeywordsMap.putAll(instructionOptions);
-        mKeywordsMap.putAll(callbacks);
         
         String[] temp = Common.EMPTY_STRING_ARRAY;
         String[] temp2;
@@ -426,12 +438,12 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
         notifyListeners(monitor);
     }
     
-    private Set getValidKeywords(Map keywordMap)
+    private Set getValidKeywords(Set keywordSet)
     {
         HashSet set = new HashSet();
-        for (Iterator iter = keywordMap.values().iterator(); iter.hasNext();) {
+        for (Iterator iter = keywordSet.iterator(); iter.hasNext();) {
             String keyword = (String)iter.next();
-            String mappedKeyword = getKeyword(keyword);
+            String mappedKeyword = getKeyword(keyword, false);
             if(mappedKeyword.equalsIgnoreCase(keyword)) {
                 set.add(keyword);
             }
@@ -482,24 +494,39 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
 
     public String getKeyword(String name)
     {
-        if(mKeywordsMap.containsKey(name)) {
-            String newName = (String)mKeywordsMap.get(name);
-            if(!newName.equalsIgnoreCase(name)) {
-                //This has been renamed. Check if it has been renamed again
-                return getKeyword(newName);
-            }
-            else {
-                return newName;
+        return getKeyword(name, true);
+    }
+
+    public String getKeyword(String name, boolean getNewest)
+    {
+        if((!mAllKeywordsSet.contains(name) || getNewest) && mNewerKeywordsMap.containsKey(name)) {
+            List list = (List)mNewerKeywordsMap.get(name);
+            if(list.size() > 0) {
+                if(getNewest) {
+                    return getKeyword((String)list.get(list.size()-1), getNewest);
+                }
+                else {
+                    return (String)list.get(0);
+                }
             }
         }
-        else {
-            return name;
-        }
+        return name;
     }
     
     public VariableMatcher createVariableMatcher()
     {
         return new VariableMatcher();
+    }
+    
+    public String[] getPluginExports(String name)
+    {
+        PluginInfo pi = (PluginInfo)mPluginsMap.get(name);
+        if(pi != null) {
+            return pi.getExports();
+        }
+        else {
+            return Common.EMPTY_STRING_ARRAY;
+        }
     }
 
     public class VariableMatcher
@@ -548,17 +575,6 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
         public boolean isMatch()
         {
             return (mPotentialMatchIndex >= 0 && mKeywords[mPotentialMatchIndex].equalsIgnoreCase(mText));
-        }
-    }
-    
-    public String[] getPluginExports(String name)
-    {
-        PluginInfo pi = (PluginInfo)mPluginsMap.get(name);
-        if(pi != null) {
-            return pi.getExports();
-        }
-        else {
-            return Common.EMPTY_STRING_ARRAY;
         }
     }
 

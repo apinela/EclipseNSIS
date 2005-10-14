@@ -62,6 +62,16 @@ public class Common
     {
     }
 
+    public static String getFileExtension(File file)
+    {
+        String name = file.getName();
+        int n = name.lastIndexOf('.');
+        if(n >= 0) {
+            return name.substring(n+1);
+        }
+        return null;
+    }
+    
     public static String encodePath(String path)
     {
         String nsisdirKeyword = NSISKeywords.INSTANCE.getKeyword("${NSISDIR}"); //$NON-NLS-1$
@@ -1034,5 +1044,13 @@ public class Common
         MessageDialog dialog = new MessageDialog(parent, title, icon, 
                 message, MessageDialog.WARNING, new String[] { IDialogConstants.OK_LABEL }, 0);
         dialog.open();
+    }
+    
+    public static String trim(String str)
+    {
+        if(str != null) {
+            return str.trim();
+        }
+        return null;
     }
 }

@@ -56,6 +56,7 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
     private int mSectionCounter = 0;
     private int mSectionGroupCounter = 0;
     private INSISScriptElement mSectionsPlaceHolder;
+    private String[] mHKeyNames;
     
     public NSISWizardScriptGenerator(NSISWizardSettings settings)
     {
@@ -67,6 +68,7 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
                                 getKeyword("/REBOOTOK")).toString().toUpperCase(); //$NON-NLS-1$
             mNewRmDirUsage = (usage.indexOf(search) < 0);
         }
+        mHKeyNames = NSISWizardDisplayValues.getHKEYNames();
     }
 
     private void updateMonitorTask(String resource, Object arg, int flag)
@@ -1039,7 +1041,10 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
             }
             else if (type.equals(NSISInstallRegistryKey.TYPE)) {
                 NSISInstallRegistryKey regKey = (NSISInstallRegistryKey)children[i];
-                String rootKey = NSISWizardDisplayValues.HKEY_NAMES[regKey.getRootKey()];
+                String rootKey = "";
+                if(regKey.getRootKey() >= 0 && regKey.getRootKey() < mHKeyNames.length) {
+                    rootKey = mHKeyNames[regKey.getRootKey()];
+                }
                 section.addElement(new NSISScriptInstruction("WriteRegStr", //$NON-NLS-1$
                                    new String[]{
                                        rootKey,
@@ -1054,7 +1059,10 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
             }
             else if (type.equals(NSISInstallRegistryValue.TYPE)) {
                 NSISInstallRegistryValue regValue = (NSISInstallRegistryValue)children[i];
-                String rootKey = NSISWizardDisplayValues.HKEY_NAMES[regValue.getRootKey()];
+                String rootKey = "";
+                if(regValue.getRootKey() >= 0 && regValue.getRootKey() < mHKeyNames.length) {
+                    rootKey = mHKeyNames[regValue.getRootKey()];
+                }
                 section.addElement(new NSISScriptInstruction(
                                    (regValue.getValueType()==REG_DWORD?"WriteRegDWORD":"WriteRegStr"), //$NON-NLS-1$ //$NON-NLS-2$
                                    new String[]{rootKey,regValue.getSubKey(),regValue.getValue(),

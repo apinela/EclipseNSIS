@@ -234,6 +234,14 @@ JNIEXPORT jint JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetSystemMetrics
 JNIEXPORT void JNICALL Java_net_sf_eclipsensis_util_WinAPI_SetObjectFieldValue
   (JNIEnv *, jclass, jobject, jstring, jint);
 
+/*
+ * Class:     net_sf_eclipsensis_util_WinAPI
+ * Method:    GetEnvironmentVariable
+ * Signature: (Ljava/lang/String;)Ljava/lang/String;
+ */
+JNIEXPORT jstring JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetEnvironmentVariable
+  (JNIEnv *, jclass, jstring);
+
 #ifdef __cplusplus
 }
 #endif

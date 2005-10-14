@@ -21,6 +21,14 @@ public class NSISScript extends AbstractNSISScriptElementContainer
     /**
      * @param name
      */
+    public NSISScript()
+    {
+        this("");
+    }
+
+    /**
+     * @param name
+     */
     public NSISScript(String name)
     {
         super("Name",name); //$NON-NLS-1$

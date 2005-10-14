@@ -16,6 +16,7 @@ import net.sf.eclipsensis.dialogs.StatusMessageDialog;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.wizard.NSISWizard;
 import net.sf.eclipsensis.wizard.settings.INSISInstallElement;
+import net.sf.eclipsensis.wizard.settings.NSISInstallElementFactory;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.Dialog;
@@ -83,7 +84,7 @@ public abstract class AbstractNSISInstallItemDialog extends StatusMessageDialog
     {
         super.configureShell(newShell);
         newShell.setText(EclipseNSISPlugin.getFormattedString("wizard.installitem.dialog.title.format", //$NON-NLS-1$
-                new String[]{mItem.getType()}));
+                new String[]{NSISInstallElementFactory.getTypeName(mItem.getType())})); //TODO replace with getTypeName()
     }
 
     /* (non-Javadoc)

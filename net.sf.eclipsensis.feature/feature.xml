@@ -1,8 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+###############################################################################
+# Copyright (c) 2004, 2005 Sunil Kamath (IcemanK).
+# All rights reserved.
+# This program is made available under the terms of the Common Public License
+# v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
+# 
+# Contributors:
+#     Sunil Kamath (IcemanK) - initial API and implementation
+###############################################################################
+-->
 <feature
       id="net.sf.eclipsensis"
       label="%feature.name"
-      version="0.9.3"
+      version="0.9.4"
       provider-name="%provider.name"
       os="win32"
       ws="win32"
@@ -46,7 +57,7 @@
          id="net.sf.eclipsensis"
          download-size="1773"
          install-size="1773"
-         version="0.9.3"
+         version="0.9.4"
          unpack="false"/>
 
 </feature>

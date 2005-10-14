@@ -9,12 +9,16 @@
  *******************************************************************************/
 package net.sf.eclipsensis.help;
 
+import java.io.File;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.MessageFormat;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.settings.INSISHomeListener;
 import net.sf.eclipsensis.settings.NSISPreferences;
+import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.SWT;
@@ -28,6 +32,7 @@ import org.eclipse.ui.part.ViewPart;
 
 public class NSISHTMLHelp extends ViewPart implements INSISConstants
 {
+    private static final String FILE_URI_SCHEME = "file:///";
     private static String cFirstPage = null;
     private static final String IMAGE_LOCATION_FORMAT = EclipseNSISPlugin.getResourceString("help.browser.throbber.icon.format"); //$NON-NLS-1$
     private static final int IMAGE_COUNT = Integer.parseInt(EclipseNSISPlugin.getResourceString("help.browser.throbber.icon.count")); //$NON-NLS-1$
@@ -130,7 +135,27 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
             {
                 mBusy = true;
             }
-            public void changing(LocationEvent event) {
+            
+            public void changing(LocationEvent event) 
+            {
+                if(!Common.isEmpty(event.location)) {
+                    File f = null;
+                    if(event.location.regionMatches(true,0,FILE_URI_SCHEME,0,FILE_URI_SCHEME.length())) {
+                        try {
+                            URI url = new URI(event.location);
+                            f = new File(url);
+                        }
+                        catch (URISyntaxException e) {
+                            EclipseNSISPlugin.getDefault().log(e);
+                        }
+                    }
+                    else {
+                        f = new File(event.location);
+                    }
+                    if(f != null && f.isFile()) {
+                        event.doit = !HelpBrowserLocalFileHandlerManager.INSTANCE.handleFile(f);
+                    }
+                }
             }
         });
 

@@ -75,15 +75,15 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
         ISelection selection = event.getSelection();
         ISourceViewer sourceViewer = getSourceViewer();
         boolean acquiredMutex = mMutEx.acquireWithoutBlocking(source);
-        if(source.equals(sourceViewer) && selection instanceof ITextSelection) {
-            IAction action = getAction("NSISAddBlockComment"); //$NON-NLS-1$
-            if(action != null) {
-                action.setEnabled(sourceViewer.getSelectedRange().y > 0);
-            }
-    
-            if(mOutlineContentProvider != null) {
-                if(acquiredMutex) {
-                    try {
+        try {
+            if(source.equals(sourceViewer) && selection instanceof ITextSelection) {
+                IAction action = getAction("NSISAddBlockComment"); //$NON-NLS-1$
+                if(action != null) {
+                    action.setEnabled(sourceViewer.getSelectedRange().y > 0);
+                }
+   
+                if(mOutlineContentProvider != null) {
+                    if(acquiredMutex) {
                         ITextSelection textSelection = (ITextSelection)selection;
                         IStructuredSelection sel = StructuredSelection.EMPTY;
                         NSISOutlineElement element = mOutlineContentProvider.findElement(textSelection.getOffset(),textSelection.getLength());
@@ -111,28 +111,24 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
                             }
                         }
                     }
-                    finally {
-                        mMutEx.release(source);
+                    else {
+                        return;
                     }
                 }
-                else {
-                    return;
-                }
-            }
-            mCurrentPosition = null;
-        }
-        else if(source instanceof TreeViewer) {
-            if (selection.isEmpty()) {
                 mCurrentPosition = null;
-                resetHighlightRange();
             }
-            else {
-                NSISOutlineElement element = (NSISOutlineElement) ((IStructuredSelection) selection).getFirstElement();
-                Position position = element.getPosition();
-                if(mCurrentPosition == null || !position.equals(mCurrentPosition)) {
-                    mCurrentPosition = position;
-                    try {
-                        boolean moveCursor = acquiredMutex;
+            else if(source instanceof TreeViewer) {
+                if (selection.isEmpty()) {
+                    mCurrentPosition = null;
+                    resetHighlightRange();
+                }
+                else {
+                    NSISOutlineElement element = (NSISOutlineElement) ((IStructuredSelection) selection).getFirstElement();
+                    Position position = element.getPosition();
+                    if(mCurrentPosition == null || !position.equals(mCurrentPosition)) {
+                        mCurrentPosition = position;
+                        try {
+                            boolean moveCursor = acquiredMutex;
 //                        ISelection sel = getSelectionProvider().getSelection();
 //                        if(sel != null && sel instanceof ITextSelection) {
 //                            int offset = ((ITextSelection)sel).getOffset();
@@ -140,27 +136,28 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
 //                                moveCursor = false;
 //                            }
 //                        }
-                        
-                        setHighlightRange(mCurrentPosition.getOffset(), 
-                                          mCurrentPosition.getLength(), 
-                                          moveCursor);
+                            
+                            setHighlightRange(mCurrentPosition.getOffset(), 
+                                              mCurrentPosition.getLength(), 
+                                              moveCursor);
+                        }
+                        catch (IllegalArgumentException x) {
+                            resetHighlightRange();
+                        }
                     }
-                    catch (IllegalArgumentException x) {
-                        resetHighlightRange();
-                    }
-                }
 
-                if(acquiredMutex) {
-                    try {
+                    if(acquiredMutex) {
                         Position selectPosition = element.getSelectPosition();
                         if(selectPosition != null) {
                             sourceViewer.setSelectedRange(selectPosition.getOffset(),selectPosition.getLength());
                         }
                     }
-                    finally {
-                        mMutEx.release(source);
-                    }
                 }
+            }
+        }
+        finally {
+            if(acquiredMutex) {
+                mMutEx.release(source);
             }
         }
     }

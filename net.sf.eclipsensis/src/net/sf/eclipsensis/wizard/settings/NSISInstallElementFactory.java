@@ -45,11 +45,11 @@ public class NSISInstallElementFactory
     {
     }
 
-    public static void register(String type, Image image, Class clasz)
+    public static void register(String type, String typeName, Image image, Class clasz)
     {
         if(!cElementMap.containsKey(type)) {
             try {
-                NSISInstallElementDescriptor descriptor = new NSISInstallElementDescriptor(clasz, image);
+                NSISInstallElementDescriptor descriptor = new NSISInstallElementDescriptor(clasz, typeName, image);
                 cElementMap.put(type, descriptor);
             }
             catch(Exception ex) {
@@ -106,16 +106,43 @@ public class NSISInstallElementFactory
         return null;
     }
     
+    public static String getTypeName(String type)
+    {
+        NSISInstallElementDescriptor descriptor = (NSISInstallElementDescriptor)cElementMap.get(type);
+        if(descriptor != null) {
+            return descriptor.getTypeName();
+        }
+        return null;
+    }
+    
+    static void setImage(String type, Image image)
+    {
+        NSISInstallElementDescriptor descriptor = (NSISInstallElementDescriptor)cElementMap.get(type);
+        if(descriptor != null) {
+            descriptor.setImage(image);
+        }
+    }
+    
+    static void setTypeName(String type, String typeName)
+    {
+        NSISInstallElementDescriptor descriptor = (NSISInstallElementDescriptor)cElementMap.get(type);
+        if(descriptor != null) {
+            descriptor.setTypeName(typeName);
+        }
+    }
+    
     private static class NSISInstallElementDescriptor
     {
+        public String mTypeName;
         public Image mImage;
         public Class mElementClass;
         public Constructor mConstructor;
         
-        public NSISInstallElementDescriptor(Class clasz, Image image) throws SecurityException, NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException
+        public NSISInstallElementDescriptor(Class clasz, String typeName, Image image) throws SecurityException, NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException
         {
             mElementClass = clasz;
             mConstructor = clasz.getConstructor(EMPTY_CLASS_ARRAY);
+            mTypeName = typeName;
             mImage = image;
         }
         
@@ -135,12 +162,27 @@ public class NSISInstallElementFactory
             return mConstructor;
         }
         
+        public String getTypeName()
+        {
+            return mTypeName;
+        }
+
         /**
          * @return Returns the image.
          */
         public Image getImage()
         {
             return mImage;
+        }
+
+        public void setImage(Image image)
+        {
+            mImage = image;
+        }
+
+        public void setTypeName(String typeName)
+        {
+            mTypeName = typeName;
         }
     }
 }

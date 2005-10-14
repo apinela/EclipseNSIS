@@ -11,6 +11,7 @@ package net.sf.eclipsensis.wizard.settings;
 
 import java.util.*;
 
+import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.util.Common;
 
 import org.w3c.dom.*;
@@ -253,5 +254,24 @@ public abstract class AbstractNSISInstallGroup extends AbstractNSISInstallElemen
         }
     }
     
+    public String validate(boolean recursive)
+    {
+        String error = null;
+        if(hasChildren()) {
+            if(recursive) {
+                INSISInstallElement[] children = getChildren();
+                for (int i = 0; i < children.length; i++) {
+                    if((error = children[i].validate()) != null) {
+                        break;
+                    }
+                }
+            }
+        }
+        else {
+            error = EclipseNSISPlugin.getFormattedString("empty.contents.error",new Object[]{getDisplayName()}); //$NON-NLS-1$
+        }
+        return (error==null?super.validate(recursive):error);
+    }
+
     public abstract void setChildTypes();
 }

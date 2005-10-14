@@ -95,7 +95,8 @@ public abstract class NSISScriptAction extends NSISAction implements IMakeNSISRu
     
     public boolean isEnabled()
     {
-        return (mPlugin != null && mPlugin.isConfigured());
+        return (mPlugin != null && mPlugin.isConfigured() && mInput != null && 
+                mInput.getFileExtension().equalsIgnoreCase(NSI_EXTENSION));
     }
 
     public void started()

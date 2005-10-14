@@ -18,7 +18,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 
-public class NSISWizardAction extends NSISScriptAction
+public class NSISWizardAction extends NSISAction
 {
     /* (non-Javadoc)
      * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
@@ -36,5 +36,10 @@ public class NSISWizardAction extends NSISScriptAction
             }
         });
         wizardDialog[0].open();
+    }
+
+    public boolean isEnabled()
+    {
+        return (mPlugin != null && mPlugin.isConfigured());
     }
 }
