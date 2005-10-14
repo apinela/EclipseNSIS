@@ -116,36 +116,7 @@ public class InstallOptionsDialogEditPart extends InstallOptionsEditPart impleme
                     setLayoutConstraint(part, fig, constraint);
                 }
             }
-
-/*            List modelChildren = getModelChildren();
-            List children = getChildren();
-            int n = Math.min(modelChildren.size(), children.size())+1;
-            int i=1;
-            for(; i<n; i++) {
-                Object model = modelChildren.get(modelChildren.size()-i);
-                EditPart part = (EditPart)children.get(children.size()-i);
-                if(model != part.getModel()) {
-                    break;
-                }
-            }
-            refreshChildren();
-            n = children.size();
-            if(i >= 0 && i <n) {
-                n = n - i;
-                for(int j=n; j>=0; j--) {
-                    GraphicalEditPart part = (GraphicalEditPart)children.get(j);
-                    IFigure fig = part.getFigure();
-                    LayoutManager layout = getContentPane().getLayoutManager();
-                    Object constraint = null;
-                    if (layout != null) {
-                        constraint = layout.getConstraint(fig);
-                    }
-                    getContentPane().remove(fig);
-                    getContentPane().add(fig);
-                    setLayoutConstraint(part, fig, constraint);
-                }
-            }
-*/        }
+        }
     }
 
     /**

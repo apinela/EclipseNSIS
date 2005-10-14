@@ -9,7 +9,8 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.ini.validators;
 
-public class PositiveNumberKeyValueValidator extends RequiredNumberKeyValueValidator
+
+public class PositiveNumberKeyValueValidator extends NumberKeyValueValidator
 {
     protected boolean isNegativeAllowed()
     {

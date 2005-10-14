@@ -18,11 +18,18 @@ public class GroupBoxFigure extends UneditableElementFigure
     public GroupBoxFigure(Composite parent, IPropertySource propertySource, int style)
     {
         super(parent, propertySource, style);
+        setOpaque(false);
     }
 
     public GroupBoxFigure(Composite parent, IPropertySource propertySource)
     {
         super(parent, propertySource);
+        setOpaque(false);
+    }
+
+    public boolean isTransparent()
+    {
+        return true;
     }
 
     /**

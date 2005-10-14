@@ -18,10 +18,11 @@ import net.sf.eclipsensis.util.WinAPI;
 
 import org.eclipse.draw2d.*;
 import org.eclipse.draw2d.geometry.*;
+import org.eclipse.draw2d.geometry.Point;
+import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.views.properties.IPropertySource;
@@ -245,6 +246,11 @@ public abstract class SWTControlFigure extends ScrollBarsFigure
         mVScroll = scroll;
     }
 
+    public boolean isTransparent()
+    {
+        return false;
+    }
+    
     protected void createScrollBars(Control control)
     {
         int style;
@@ -288,6 +294,12 @@ public abstract class SWTControlFigure extends ScrollBarsFigure
             GC gc = new GC (mImage);
             WinAPI.SendMessage (control.handle, WinAPI.WM_PRINT, gc.handle, PRINT_BITS);
             gc.dispose ();
+            if(isTransparent()) {
+                ImageData id = mImage.getImageData();
+                mImage.dispose();
+                id.transparentPixel=id.getPixel(0,0);
+                mImage = new Image(control.getDisplay(), id);
+            }
         }
         repaint();
     }

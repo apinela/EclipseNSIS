@@ -762,10 +762,10 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
     {
         private static final String MISSING_DISPLAY_NAME = InstallOptionsPlugin.getResourceString("missing.outline.display.name"); //$NON-NLS-1$
 
-        private ImageData mErrorImageData = InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("error.decoration.icon")).getImageData(); //$NON-NLS-1$
-        private ImageData mWarningImageData = InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("warning.decoration.icon")).getImageData(); //$NON-NLS-1$
-        private Image mUnknownImage = InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("unknown.icon")); //$NON-NLS-1$
-        private Image mSectionImage = InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("inisection.icon")); //$NON-NLS-1$
+        private static ImageData cErrorImageData = InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("error.decoration.icon")).getImageData(); //$NON-NLS-1$
+        private static ImageData cWarningImageData = InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("warning.decoration.icon")).getImageData(); //$NON-NLS-1$
+        private static Image cUnknownImage = InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("unknown.icon")); //$NON-NLS-1$
+        private static Image cSectionImage = InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("inisection.icon")); //$NON-NLS-1$
         
         public String getText(Object element)
         {
@@ -817,13 +817,13 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
                     }
                     else {
                         name="section"; //$NON-NLS-1$
-                        image = mSectionImage;
+                        image = cSectionImage;
                     }
                 }
                 
                 if(image == null) {
                     name = "unknown"; //$NON-NLS-1$
-                    image = mUnknownImage;
+                    image = cUnknownImage;
                 }
                 return decorateImage(name, image,(INISection)element);
             }
@@ -835,11 +835,11 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
             final ImageData data;
             if(element.hasErrors()) {
                 name = name.toLowerCase() + "$error"; //$NON-NLS-1$
-                data = mErrorImageData;
+                data = cErrorImageData;
             }
             else if(element.hasWarnings()) {
                 name = name.toLowerCase() + "$warning"; //$NON-NLS-1$
-                data = mWarningImageData;
+                data = cWarningImageData;
             }
             else {
                 return image;

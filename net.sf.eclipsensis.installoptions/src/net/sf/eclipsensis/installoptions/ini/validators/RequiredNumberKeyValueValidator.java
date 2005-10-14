@@ -9,49 +9,10 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.ini.validators;
 
-import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
-import net.sf.eclipsensis.installoptions.ini.INIKeyValue;
-import net.sf.eclipsensis.installoptions.ini.INIProblem;
-import net.sf.eclipsensis.util.Common;
-
-public class RequiredNumberKeyValueValidator implements IINIKeyValueValidator
+public class RequiredNumberKeyValueValidator extends NumberKeyValueValidator
 {
-    protected boolean isNegativeAllowed()
+    protected boolean isEmptyAllowed()
     {
-        return true;
+        return false;
     }
-
-    /* (non-Javadoc)
-     * @see net.sf.eclipsensis.installoptions.ini.validators.IINIKeyValueValidator#validate(net.sf.eclipsensis.installoptions.ini.INIKeyValue)
-     */
-    public boolean isValid(INIKeyValue keyValue)
-    {
-        String value = keyValue.getValue();
-        if(!Common.isEmpty(value)) {
-            try {
-                int i = Integer.parseInt(value);
-                if(i < 0 && !isNegativeAllowed()) {
-                    addError(keyValue, "positive.numeric.value.error"); //$NON-NLS-1$
-                    return false;
-                }
-            }
-            catch(Exception e) {
-                addError(keyValue, "numeric.value.error"); //$NON-NLS-1$
-                return false;
-            }
-        }
-        else {
-            addError(keyValue, "numeric.value.error"); //$NON-NLS-1$
-            return false;
-        }
-        return true;
-    }
-
-    protected void addError(INIKeyValue keyValue, String resourceString)
-    {
-        keyValue.addProblem(INIProblem.TYPE_ERROR,
-                            InstallOptionsPlugin.getFormattedString(resourceString,
-                                    new String[]{keyValue.getKey()}));
-    }
-
 }

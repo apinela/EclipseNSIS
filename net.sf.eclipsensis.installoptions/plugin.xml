@@ -201,4 +201,11 @@
          extensions="%ini.extensions"
          class="net.sf.eclipsensis.installoptions.editor.annotation.InstallOptionsAnnotationModelFactory"/>
    </extension>
+   <extension
+         id="installOptionsLocalFileHandler"
+         point="net.sf.eclipsensis.helpBrowserLocalFileHandler">
+      <handler
+            class="net.sf.eclipsensis.installoptions.help.InstallOptionsLocalFileHandler"
+            extensions="%ini.extensions"/>
+   </extension>
 </plugin>

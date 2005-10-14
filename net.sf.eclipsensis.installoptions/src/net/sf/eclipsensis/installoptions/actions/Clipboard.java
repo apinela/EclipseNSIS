@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.Display;
 public class Clipboard
 {
     /**
-     * The event name used for {@link Clipboard#isContentsAvailable()}
+     * The event name used for {@link Clipboard#fireContentsAvailable()}
      */
     public static final String CONTENTS_AVAILABLE_EVENT = "ContentsAvailable"; //$NON-NLS-1$
 
@@ -47,13 +47,13 @@ public class Clipboard
                 return new String[] {TYPE_NAME};
             }
         };
-        isContentsAvailable();
+        fireContentsAvailable();
         final Timer timer = new Timer(true);
         timer.schedule(new TimerTask() {
             Runnable runnable = new Runnable() {
                 public void run()
                 {
-                    isContentsAvailable();
+                    fireContentsAvailable();
                 }
             };
             
@@ -97,23 +97,24 @@ public class Clipboard
         mListeners.removePropertyChangeListener(l);
     }
 
+    public boolean isContentsAvailable() 
+    {
+        return (getContents() != null);
+    }
+   
     /**
      * Fires a {@link PropertyChangeEvent} anytime the contents of the 
 <code>Clipboard</code> are set.
      *
      */
-    public boolean isContentsAvailable() 
+    public void fireContentsAvailable() 
     {
-        org.eclipse.swt.dnd.Clipboard cb = new org.eclipse.swt.dnd.Clipboard(null);
-        Object contents = cb.getContents(mTransfer);
-        cb.dispose();
-        if(mContentsAvailable != (contents != null)) {
+        if(mContentsAvailable != isContentsAvailable()) {
             mContentsAvailable = !mContentsAvailable;
             PropertyChangeEvent event = new PropertyChangeEvent(this, CONTENTS_AVAILABLE_EVENT, 
                             Boolean.valueOf(!mContentsAvailable), Boolean.valueOf(mContentsAvailable) );
             mListeners.firePropertyChange( event );
         }
-        return mContentsAvailable;
     }
    
     public Object getContents() 

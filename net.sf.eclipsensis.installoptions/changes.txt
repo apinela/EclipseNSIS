@@ -1,6 +1,11 @@
 Revision History
 ================
 
+0.9.4
+    * Fixed GroupBox transparency.
+    * Preview can now also handle external files.
+    * Improved clipboard handling.
+
 0.9.3 (09/29/2005)
     * Added support for Unknown control in design editor.
     * Added distribution, locking actions to design editor.
