@@ -153,7 +153,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
                         f = new File(event.location);
                     }
                     if(f != null && f.isFile()) {
-                        event.doit = !HelpBrowserLocalFileHandlerManager.INSTANCE.handleFile(f);
+                        event.doit = !HelpBrowserLocalFileHandler.INSTANCE.handle(f);
                     }
                 }
             }

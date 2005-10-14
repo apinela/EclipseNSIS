@@ -71,7 +71,7 @@ public class NSISHelpProducer implements IExecutableExtension, IHelpContentProdu
                         }
                         if(helpFile != null && helpFile.exists()) {
                             if(helpFile.isFile()) {
-                                if(HelpBrowserLocalFileHandlerManager.INSTANCE.handleFile(helpFile)) {
+                                if(HelpBrowserLocalFileHandler.INSTANCE.handle(helpFile)) {
                                     return new ByteArrayInputStream(GO_BACK);
                                 }
                                 else {

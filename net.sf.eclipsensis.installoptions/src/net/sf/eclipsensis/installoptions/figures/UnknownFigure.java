@@ -24,7 +24,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.views.properties.IPropertySource;
 
-public class UnknownFigure extends Figure implements IUnknownFigure
+public class UnknownFigure extends AbstractInstallOptionsFigure implements IUnknownFigure
 {
     private String mType;
     private LabelFigure mOuterLabelFigure;

@@ -30,9 +30,11 @@ import org.eclipse.ui.views.properties.IPropertySource;
 public abstract class SWTControlFigure extends ScrollBarsFigure
 {
     private static final int PRINT_BITS = WinAPI.PRF_NONCLIENT | WinAPI.PRF_CLIENT | WinAPI.PRF_ERASEBKGND | WinAPI.PRF_CHILDREN;
-
+    private static final int TRANSPARENCY_TOLERANCE = 2;
+    
     private Composite mParent;
     private Image mImage;
+    private ImageData mImageData;
     private boolean mNeedsReScrape = true;
 
     private boolean mDisabled = false;
@@ -164,6 +166,7 @@ public abstract class SWTControlFigure extends ScrollBarsFigure
                 mImage.dispose();
             }
             mImage = null;
+            mImageData = null;
             if(isVisible()) {
                 int style = (mStyle <0?getDefaultStyle():mStyle);
                 if(isHScroll()) {
@@ -201,6 +204,28 @@ public abstract class SWTControlFigure extends ScrollBarsFigure
         super.layout();
     }
     
+    protected boolean isTransparentAt(int x, int y)
+    {
+        int pixel = (mImageData != null?mImageData.transparentPixel:-1);
+        if(pixel != -1) {
+            Rectangle rect = new Rectangle(x-TRANSPARENCY_TOLERANCE,y-TRANSPARENCY_TOLERANCE,
+                                           2*TRANSPARENCY_TOLERANCE+1,2*TRANSPARENCY_TOLERANCE+1);
+            rect = rect.intersect(getBounds().crop(getInsets()));
+            if(!rect.isEmpty()) {
+                for(int i=0; i<rect.width; i++) {
+                    for(int j=0; j<rect.height; j++) {
+                        int p = mImageData.getPixel(i,j);
+                        if(p != pixel) {
+                            return false;
+                        }
+                    }
+                }
+                return true;
+            }
+        }
+        return false;
+    }
+
     protected boolean isNeedsTheme()
     {
         return false;
@@ -269,6 +294,7 @@ public abstract class SWTControlFigure extends ScrollBarsFigure
     private void scrapeImage(Control control)
     {
         org.eclipse.swt.graphics.Rectangle rect = control.getBounds();
+        mImageData = null;
         if (rect.width <= 0 || rect.height <= 0) {
             if(mImage != null && !mImage.isDisposed()) {
                 mImage.dispose();
@@ -300,6 +326,12 @@ public abstract class SWTControlFigure extends ScrollBarsFigure
                 id.transparentPixel=id.getPixel(0,0);
                 mImage = new Image(control.getDisplay(), id);
             }
+        }
+        mImageData = mImage.getImageData();
+        if(isTransparent()) {
+            mImage.dispose();
+            mImageData.transparentPixel=mImageData.getPixel(0,0);
+            mImage = new Image(control.getDisplay(), mImageData);
         }
         repaint();
     }

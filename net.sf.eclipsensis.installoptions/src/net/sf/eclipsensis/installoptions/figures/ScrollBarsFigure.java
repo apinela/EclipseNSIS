@@ -11,10 +11,9 @@ package net.sf.eclipsensis.installoptions.figures;
 
 import net.sf.eclipsensis.util.WinAPI;
 
-import org.eclipse.draw2d.Figure;
 import org.eclipse.draw2d.geometry.Rectangle;
 
-public abstract class ScrollBarsFigure extends Figure implements IInstallOptionsFigure
+public abstract class ScrollBarsFigure extends AbstractInstallOptionsFigure
 {
     public Rectangle getDirectEditArea()
     {

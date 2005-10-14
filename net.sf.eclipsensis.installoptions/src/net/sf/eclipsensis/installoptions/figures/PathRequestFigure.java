@@ -16,7 +16,6 @@ import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsWidget;
 import net.sf.eclipsensis.installoptions.properties.PropertySourceWrapper;
 
-import org.eclipse.draw2d.Figure;
 import org.eclipse.draw2d.XYLayout;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.swt.graphics.Font;
@@ -24,7 +23,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.views.properties.IPropertySource;
 
-public class PathRequestFigure extends Figure implements IEditableElementFigure
+public class PathRequestFigure extends AbstractInstallOptionsFigure implements IEditableElementFigure
 {
     public static final String BROWSE_BUTTON_TEXT = "..."; //$NON-NLS-1$
     public static final int BROWSE_BUTTON_WIDTH;

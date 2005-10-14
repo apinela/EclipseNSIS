@@ -13,10 +13,10 @@ import java.util.*;
 
 import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
 import net.sf.eclipsensis.installoptions.figures.FigureUtility;
+import net.sf.eclipsensis.installoptions.figures.IInstallOptionsFigure;
 
 import org.eclipse.draw2d.*;
-import org.eclipse.draw2d.geometry.Dimension;
-import org.eclipse.draw2d.geometry.Rectangle;
+import org.eclipse.draw2d.geometry.*;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Display;
 
@@ -99,6 +99,48 @@ public class InstallOptionsDialogLayer extends FreeformLayer implements IInstall
         if(mShowDialogSize != showDialogSize) {
             mShowDialogSize = showDialogSize;
             repaint();
+        }
+    }
+
+    public IFigure findFigureAt(int x, int y, TreeSearch search)
+    {
+        IFigure figure = super.findFigureAt(x, y, search);
+        if(figure instanceof IInstallOptionsFigure) {
+            IInstallOptionsFigure ioFigure = ((IInstallOptionsFigure)figure);
+            if(ioFigure.isTransparent()) {
+                Point p = new Point(x,y);
+                translateToAbsolute(p);
+                Point p2 = new Point();
+
+                p2.setLocation(p);
+                ioFigure.translateToRelative(p2);
+                if(!ioFigure.hitTest(p2.x,p2.y)) {
+                    figure = findFigureAt(x, y, new WrappedExclusionSearch(search, Collections.singleton(ioFigure)));
+                    if(figure == null || figure == this) {
+                        figure = ioFigure;
+                    }
+                }
+            }
+        }
+        return figure;
+    }
+    
+    private class WrappedExclusionSearch extends ExclusionSearch
+    {
+        private TreeSearch mDelegate;
+        
+        public WrappedExclusionSearch(TreeSearch delegate, Collection exclusions)
+        {
+            super(exclusions);
+            mDelegate = delegate;
+        }
+
+        public boolean prune(IFigure f)
+        {
+            if(!mDelegate.prune(f)) {
+                return super.prune(f);
+            }
+            return true;
         }
     }
 }
