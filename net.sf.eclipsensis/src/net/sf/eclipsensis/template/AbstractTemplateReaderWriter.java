@@ -18,7 +18,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.XMLUtil;
 
 import org.w3c.dom.*;
 import org.xml.sax.InputSource;
@@ -63,7 +63,7 @@ public abstract class AbstractTemplateReaderWriter
                     continue;
                 }
                 
-                String name= getStringValue(attributes, NAME_ATTRIBUTE);
+                String name= XMLUtil.getStringValue(attributes, NAME_ATTRIBUTE);
                 if (name == null) {
                     throw new IOException(EclipseNSISPlugin.getFormattedString("template.readerwriter.error.missing.attribute", new Object[]{NAME_ATTRIBUTE})); //$NON-NLS-1$
                 }
@@ -79,7 +79,7 @@ public abstract class AbstractTemplateReaderWriter
                     for (int j= 0; j != children.getLength(); j++) {
                         Node item = children.item(j);
                         if(item.getNodeName().equals(DESCRIPTION_NODE)) {
-                            template.setDescription(readTextNode(item));
+                            template.setDescription(XMLUtil.readTextNode(item));
                         }
                         else if(item.getNodeName().equals(getContentsNodeName())) {
                             importContents(template, item);
@@ -141,7 +141,7 @@ public abstract class AbstractTemplateReaderWriter
                 Node node= document.createElement(TEMPLATE_ELEMENT);
                 root.appendChild(node);
                 
-                Common.addAttribute(document, node, NAME_ATTRIBUTE, template.getName());
+                XMLUtil.addAttribute(document, node, NAME_ATTRIBUTE, template.getName());
     
                 Element description = document.createElement(DESCRIPTION_NODE);
                 Text data= document.createTextNode(template.getDescription());
@@ -174,36 +174,6 @@ public abstract class AbstractTemplateReaderWriter
         catch (Exception e) {
             throw new IOException(e.getMessage());
         }       
-    }
-    
-    private String getStringValue(NamedNodeMap attributes, String name) throws SAXException 
-    {
-        String val= getStringValue(attributes, name, null);
-        if (val == null) {
-            throw new SAXException(EclipseNSISPlugin.getFormattedString("template.readerwriter.error.missing.attribute", new Object[]{NAME_ATTRIBUTE})); //$NON-NLS-1$
-        }
-        return val;
-    }
-
-    private String getStringValue(NamedNodeMap attributes, String name, String defaultValue) 
-    {
-        Node node= attributes.getNamedItem(name);
-        return node == null ? defaultValue : node.getNodeValue();
-    }
-
-    protected String readTextNode(Node item)
-    {
-        StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
-        NodeList children2 = item.getChildNodes();
-        if(children2 != null) {
-            for (int k = 0; k < children2.getLength(); k++) {
-               Node item2 = children2.item(k);
-               if(item2 != null) {
-                   buf.append(item2.getNodeValue());
-               }
-            }
-        }
-        return buf.toString();
     }
     
     protected abstract String getContentsNodeName();

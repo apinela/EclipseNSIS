@@ -17,6 +17,7 @@ import net.sf.eclipsensis.installoptions.ini.INISection;
 import net.sf.eclipsensis.template.AbstractTemplate;
 import net.sf.eclipsensis.template.AbstractTemplateReaderWriter;
 import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.XMLUtil;
 
 import org.w3c.dom.*;
 
@@ -60,7 +61,7 @@ class InstallOptionsTemplateReaderWriter extends AbstractTemplateReaderWriter
 
     protected void importContents(AbstractTemplate template, Node item)
     {
-        String sections = readTextNode(item);
+        String sections = XMLUtil.readTextNode(item);
         if(!Common.isEmpty(sections)) {
             INIFile iniFile = INIFile.load(new StringReader(sections));
             INISection[] iniSections = iniFile.getSections();

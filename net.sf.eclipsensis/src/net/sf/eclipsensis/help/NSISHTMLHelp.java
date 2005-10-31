@@ -341,7 +341,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
     private void openHelp()
     {
         if (isActivated()) {
-            mStartPage = NSISHelpURLProvider.INSTANCE.getCHMHelpStartPage();
+            mStartPage = NSISHelpURLProvider.getInstance().getCHMHelpStartPage();
             if(mStartPage == null) {
                 mStartPage = "about:blank"; //$NON-NLS-1$
             }

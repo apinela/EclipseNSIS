@@ -125,15 +125,11 @@ public class InstallOptionsPlugin extends AbstractUIPlugin implements IInstallOp
         return getResourceBundle(Locale.getDefault());
     }
 
-    public ResourceBundle getResourceBundle(Locale locale) 
+    public synchronized ResourceBundle getResourceBundle(Locale locale) 
     {
         if(!mResourceBundles.containsKey(locale)) {
-            synchronized(this) {
-                if(!mResourceBundles.containsKey(locale)) {
-                    mResourceBundles.put(locale,new CompoundResourceBundle(getClass().getClassLoader(),locale, BUNDLE_NAMES));
-                }                
-            }
-        }
+            mResourceBundles.put(locale,new CompoundResourceBundle(getClass().getClassLoader(),locale, BUNDLE_NAMES));
+        }                
         return (ResourceBundle)mResourceBundles.get(locale);
     }
     
@@ -267,44 +263,40 @@ public class InstallOptionsPlugin extends AbstractUIPlugin implements IInstallOp
         }
     }
 
-    public static void checkEditorAssociation()
+    public static synchronized void checkEditorAssociation()
     {
         if(!cCheckedEditorAssociation) {
-            synchronized (InstallOptionsPlugin.class) {
-                if(!cCheckedEditorAssociation) {
-                    cCheckedEditorAssociation = true;
-                    final boolean toggleState = getDefault().getPreferenceStore().getBoolean(PREFERENCE_CHECK_EDITOR_ASSOCIATION);
-                    if(toggleState) {
-                        final IEditorRegistry editorRegistry = PlatformUI.getWorkbench().getEditorRegistry();
-                        for(int i=0; i<INI_EXTENSIONS.length; i++) {
-                            IEditorDescriptor descriptor = editorRegistry.getDefaultEditor("*."+INI_EXTENSIONS[i]); //$NON-NLS-1$
-                            if(descriptor == null || (!descriptor.getId().equals(INSTALLOPTIONS_DESIGN_EDITOR_ID) && !descriptor.getId().equals(INSTALLOPTIONS_SOURCE_EDITOR_ID))) {
-                                Display.getDefault().asyncExec(new Runnable(){
-                                    public void run()
-                                    {
-                                        MessageDialogWithToggle dialog = new MessageDialogWithToggle(
-                                                PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
-                                                getDefault().getName(),
-                                                InstallOptionsPlugin.getShellImage(), 
-                                                getResourceString("check.default.editor.question"),  //$NON-NLS-1$
-                                                MessageDialog.QUESTION, 
-                                                new String[] { IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL }, 0, 
-                                                getResourceString("check.default.editor.toggle"), !toggleState); //$NON-NLS-1$
-                                        dialog.setPrefStore(getDefault().getPreferenceStore());
-                                        dialog.setPrefKey(PREFERENCE_CHECK_EDITOR_ASSOCIATION);
-                                        dialog.open();
-                                        if(dialog.getReturnCode() == IDialogConstants.YES_ID) {
-                                            for(int i=0; i<INI_EXTENSIONS.length; i++) {
-                                                editorRegistry.setDefaultEditor("*."+INI_EXTENSIONS[i],INSTALLOPTIONS_DESIGN_EDITOR_ID); //$NON-NLS-1$
-                                            }
-                                            //Cast to inner class because otherwise it cannot be saved.
-                                            ((EditorRegistry)editorRegistry).saveAssociations();
-                                        }
+            cCheckedEditorAssociation = true;
+            final boolean toggleState = getDefault().getPreferenceStore().getBoolean(PREFERENCE_CHECK_EDITOR_ASSOCIATION);
+            if(toggleState) {
+                final IEditorRegistry editorRegistry = PlatformUI.getWorkbench().getEditorRegistry();
+                for(int i=0; i<INI_EXTENSIONS.length; i++) {
+                    IEditorDescriptor descriptor = editorRegistry.getDefaultEditor("*."+INI_EXTENSIONS[i]); //$NON-NLS-1$
+                    if(descriptor == null || (!descriptor.getId().equals(INSTALLOPTIONS_DESIGN_EDITOR_ID) && !descriptor.getId().equals(INSTALLOPTIONS_SOURCE_EDITOR_ID))) {
+                        Display.getDefault().asyncExec(new Runnable(){
+                            public void run()
+                            {
+                                MessageDialogWithToggle dialog = new MessageDialogWithToggle(
+                                        PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
+                                        getDefault().getName(),
+                                        InstallOptionsPlugin.getShellImage(), 
+                                        getResourceString("check.default.editor.question"),  //$NON-NLS-1$
+                                        MessageDialog.QUESTION, 
+                                        new String[] { IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL }, 0, 
+                                        getResourceString("check.default.editor.toggle"), !toggleState); //$NON-NLS-1$
+                                dialog.setPrefStore(getDefault().getPreferenceStore());
+                                dialog.setPrefKey(PREFERENCE_CHECK_EDITOR_ASSOCIATION);
+                                dialog.open();
+                                if(dialog.getReturnCode() == IDialogConstants.YES_ID) {
+                                    for(int i=0; i<INI_EXTENSIONS.length; i++) {
+                                        editorRegistry.setDefaultEditor("*."+INI_EXTENSIONS[i],INSTALLOPTIONS_DESIGN_EDITOR_ID); //$NON-NLS-1$
                                     }
-                                });
-                                break;
+                                    //Cast to inner class because otherwise it cannot be saved.
+                                    ((EditorRegistry)editorRegistry).saveAssociations();
+                                }
                             }
-                        }
+                        });
+                        break;
                     }
                 }
             }
@@ -316,17 +308,13 @@ public class InstallOptionsPlugin extends AbstractUIPlugin implements IInstallOp
         return cShellImage;
     }
     
-    public static File getPluginStateLocation()
+    public static synchronized File getPluginStateLocation()
     {
         if(cStateLocation == null) {
-            synchronized(InstallOptionsPlugin.class) {
-                if(cStateLocation == null) {
-                    InstallOptionsPlugin plugin = getDefault();
-                    if(plugin != null) {
-                        cStateLocation = plugin.getStateLocation().toFile();
-                    }                    
-                }
-            }
+            InstallOptionsPlugin plugin = getDefault();
+            if(plugin != null) {
+                cStateLocation = plugin.getStateLocation().toFile();
+            }                    
         }
         return cStateLocation;
     }

@@ -61,39 +61,32 @@ public class SetDialogSizeMenuManager extends MenuManager implements IPropertyCh
         }
     }
 
-    public void rebuild()
+    public synchronized void rebuild()
     {
         if(mNeedsRebuild) {
-            synchronized(this) {
-                if(mNeedsRebuild) {
-                    List dialogSizes = DialogSizeManager.getDialogSizes();
-                    mActionMap.keySet().retainAll(dialogSizes);
-                    for (Iterator iter = dialogSizes.iterator(); iter.hasNext();) {
-                        DialogSize element = (DialogSize)iter.next();
-                        if(!mActionMap.containsKey(element)) {
-                            mActionMap.put(element,new SetDialogSizeAction(element));
-                        }
-                    }
-                    
-                    IContributionItem[] items = getItems();
-                    for (int i = 0; i < items.length; i++) {
-                        remove(items[i]);
-                        items[i].dispose();
-                    }
-                    if(Common.isEmptyCollection(dialogSizes)) {
-                        add(DUMMY_ACTION);
-                    }
-                    else {
-                        for (Iterator iter = dialogSizes.iterator(); iter.hasNext();) {
-                            add((IAction)mActionMap.get(iter.next()));
-                        }
-                    }
-                    mNeedsRebuild = false;
-                }
-                else {
-                    updateActions();
+            List dialogSizes = DialogSizeManager.getDialogSizes();
+            mActionMap.keySet().retainAll(dialogSizes);
+            for (Iterator iter = dialogSizes.iterator(); iter.hasNext();) {
+                DialogSize element = (DialogSize)iter.next();
+                if(!mActionMap.containsKey(element)) {
+                    mActionMap.put(element,new SetDialogSizeAction(element));
                 }
             }
+            
+            IContributionItem[] items = getItems();
+            for (int i = 0; i < items.length; i++) {
+                remove(items[i]);
+                items[i].dispose();
+            }
+            if(Common.isEmptyCollection(dialogSizes)) {
+                add(DUMMY_ACTION);
+            }
+            else {
+                for (Iterator iter = dialogSizes.iterator(); iter.hasNext();) {
+                    add((IAction)mActionMap.get(iter.next()));
+                }
+            }
+            mNeedsRebuild = false;
         }
         else {
             updateActions();

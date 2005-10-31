@@ -114,7 +114,7 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
     public void keywordsChanged()
     {
         if(fPresentationReconciler != null) {
-            HashSet contentTypes = new HashSet();
+            final HashSet contentTypes = new HashSet();
             for(int i=0; i<mConfiguredContentTypes.length; i++) {
                 IPresentationDamager damager = fPresentationReconciler.getDamager(mConfiguredContentTypes[i]);
                 if(damager instanceof NSISDamagerRepairer) {
@@ -123,7 +123,17 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
                 }
             }
             
-            updatePresentation(contentTypes);
+            if(Display.getCurrent() == null) {
+                Display.getDefault().asyncExec(new Runnable() {
+                    public void run()
+                    {
+                        updatePresentation(contentTypes);
+                    }
+                });
+            }
+            else {
+                updatePresentation(contentTypes);
+            }
         }
     }
     
@@ -162,7 +172,7 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
             mPreferenceStore = ((NSISSourceViewerConfiguration)configuration).getPreferenceStore();
         }
         super.configure(configuration);
-        NSISKeywords.INSTANCE.addKeywordsListener(this);
+        NSISKeywords.getInstance().addKeywordsListener(this);
         if(configuration instanceof NSISSourceViewerConfiguration) {
             mConfiguredContentTypes = configuration.getConfiguredContentTypes(this);
             mPreferenceStore.addPropertyChangeListener(this);
@@ -247,7 +257,7 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
             mPreferenceStore = null;
         }
         mConfiguredContentTypes = null;
-        NSISKeywords.INSTANCE.removeKeywordsListener(this);
+        NSISKeywords.getInstance().removeKeywordsListener(this);
         super.unconfigure();
     }
 
@@ -654,7 +664,7 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
             String keyword;
             IRegion region = NSISInformationUtility.getInformationRegionAtOffset(this,offset,false);
             keyword = NSISTextUtility.getRegionText(getDocument(),region);
-            NSISHelpURLProvider.INSTANCE.showHelpURL(keyword);
+            NSISHelpURLProvider.getInstance().showHelpURL(keyword);
         }
     }
 

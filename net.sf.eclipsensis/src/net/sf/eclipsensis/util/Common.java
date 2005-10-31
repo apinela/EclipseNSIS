@@ -38,7 +38,6 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.osgi.framework.Bundle;
-import org.w3c.dom.*;
 
 /**
  * Common class is the Swiss Army Knife of the project. Most miscellaneous utility functions
@@ -53,9 +52,11 @@ public class Common
     private static final String cPathSeparator = System.getProperty("file.separator"); //$NON-NLS-1$
     private static final String cOnePathLevelUp = ".." + cPathSeparator; //$NON-NLS-1$
 
-    private static Pattern cValidPathName = Pattern.compile("([A-Za-z]:)?\\\\?(((\\.?[A-Za-z0-9\\$%\\'`\\-@\\{\\}~\\!#\\(\\&_\\^\\x20])+|\\.{1,2}+)\\\\)*(\\.?[A-Za-z0-9\\$%\\'`\\-@\\{\\}~\\!#\\(\\&_\\^\\x20])+"); //$NON-NLS-1$
-    private static Pattern cValidNSISPrefixedPathNameSuffix = Pattern.compile("\\\\(((\\.?[A-Za-z0-9\\$%\\'`\\-@\\{\\}~\\!#\\(\\&_\\^\\x20])+|\\.{1,2}+)\\\\)*(\\.?[A-Za-z0-9\\$%\\'`\\-@\\{\\}~\\!#\\(\\&_\\^\\x20])+"); //$NON-NLS-1$
-    private static Pattern cValidFileName = Pattern.compile("(\\.?[A-Za-z0-9\\$%\\'`\\-@\\{\\}~\\!#\\(\\&_\\^\\x20])+"); //$NON-NLS-1$
+    private static Pattern cValidPathName = Pattern.compile("([A-Za-z]:)?\\\\?(((\\.?[A-Za-z0-9\\$%\\'`\\-@\\{\\}~\\!#\\(\\)\\&_\\^\\x20\\+\\,\\=\\[\\]])+|\\.{1,2}+)\\\\)*(\\.?[A-Za-z0-9\\$%\\'`\\-@\\{\\}~\\!#\\(\\)\\&_\\^\\x20\\+\\,\\=\\[\\]])+"); //$NON-NLS-1$
+    private static Pattern cValidNSISPrefixedPathNameSuffix = Pattern.compile("\\\\(((\\.?[A-Za-z0-9\\$%\\'`\\-@\\{\\}~\\!#\\(\\)\\&_\\^\\x20\\+\\,\\=\\[\\]])+|\\.{1,2}+)\\\\)*(\\.?[A-Za-z0-9\\$%\\'`\\-@\\{\\}~\\!#\\(\\)\\&_\\^\\x20\\+\\,\\=\\[\\]])+"); //$NON-NLS-1$
+    private static Pattern cValidPathSpec = Pattern.compile("([A-Za-z]:)?\\\\?(((\\.?[A-Za-z0-9\\*\\?\\$%\\'`\\-@\\{\\}~\\!#\\(\\)\\&_\\^\\x20\\+\\,\\=\\[\\]])+|\\.{1,2}+)\\\\)*(\\.?[A-Za-z0-9\\*\\?\\$%\\'`\\-@\\{\\}~\\!#\\(\\)\\&_\\^\\x20\\+\\,\\=\\[\\]])+"); //$NON-NLS-1$
+    private static Pattern cValidNSISPrefixedPathSpecSuffix = Pattern.compile("\\\\(((\\.?[A-Za-z0-9\\*\\?\\$%\\'`\\-@\\{\\}~\\!#\\(\\)\\&_\\^\\x20\\+\\,\\=\\[\\]])+|\\.{1,2}+)\\\\)*(\\.?[A-Za-z0-9\\*\\?\\$%\\'`\\-@\\{\\}~\\!#\\(\\)\\&_\\^\\x20\\+\\,\\=\\[\\]])+"); //$NON-NLS-1$
+    private static Pattern cValidFileName = Pattern.compile("(\\.?[A-Za-z0-9\\$%\\'`\\-@\\{\\}~\\!#\\(\\)\\&_\\^\\x20\\+\\,\\=\\[\\]])+"); //$NON-NLS-1$
     private static Pattern cValidURL = Pattern.compile("(?:(?:ftp|https?):\\/\\/)?(?:[a-z0-9](?:[-a-z0-9]*[a-z0-9])?\\.)+(?:com|edu|biz|org|gov|int|info|mil|net|name|museum|coop|aero|[a-z][a-z])\\b(?:\\d+)?(?:\\/[^;\"'<>()\\[\\]{}\\s\\x7f-\\xff]*(?:[.,?]+[^;\"'<>()\\[\\]{}\\s\\x7f-\\xff]+)*)?"); //$NON-NLS-1$
 
     private Common()
@@ -74,7 +75,7 @@ public class Common
     
     public static String encodePath(String path)
     {
-        String nsisdirKeyword = NSISKeywords.INSTANCE.getKeyword("${NSISDIR}"); //$NON-NLS-1$
+        String nsisdirKeyword = NSISKeywords.getInstance().getKeyword("${NSISDIR}"); //$NON-NLS-1$
         String nsisHome = NSISPreferences.INSTANCE.getNSISHome().toLowerCase();
         if(path.toLowerCase().startsWith(nsisHome)) {
             path = nsisdirKeyword + path.substring(nsisHome.length());
@@ -84,7 +85,7 @@ public class Common
 
     public static String decodePath(String path)
     {
-        String nsisdirKeyword = NSISKeywords.INSTANCE.getKeyword("${NSISDIR}").toLowerCase(); //$NON-NLS-1$
+        String nsisdirKeyword = NSISKeywords.getInstance().getKeyword("${NSISDIR}").toLowerCase(); //$NON-NLS-1$
         String nsisHome = NSISPreferences.INSTANCE.getNSISHome();
         if(path.toLowerCase().startsWith(nsisdirKeyword)) {
             path = nsisHome + path.substring(nsisdirKeyword.length());
@@ -543,7 +544,7 @@ public class Common
                 }
                 else {
                     list.add(buf.toString());
-                    buf.delete(0,buf.length());
+                    buf.setLength(0);
                 }
             }
             list.add(buf.toString().trim());
@@ -606,6 +607,27 @@ public class Common
 
     public static boolean isValidNSISPathName(String pathName)
     {
+        return isValidNSISPathNameOrSpec(pathName, cValidNSISPrefixedPathNameSuffix, cValidPathName);
+    }
+
+    public static boolean isValidNSISPathSpec(String pathName)
+    {
+        return isValidNSISPathNameOrSpec(pathName, cValidNSISPrefixedPathSpecSuffix, cValidPathSpec);
+    }
+
+    public static boolean isValidPathName(String pathName)
+    {
+        return isValidPathNameOrSpec(pathName, cValidPathName);
+    }
+
+
+    public static boolean isValidPathSpec(String pathName)
+    {
+        return isValidPathNameOrSpec(pathName, cValidPathSpec);
+    }
+
+    private static boolean isValidNSISPathNameOrSpec(String pathName, Pattern nsisPath, Pattern path)
+    {
         int n = pathName.indexOf('\\');
         String suffix = null;
         String prefix = null;
@@ -617,23 +639,23 @@ public class Common
             prefix = pathName;
         }
         if(!Common.isEmpty(prefix)) {
-            String[] array = NSISKeywords.INSTANCE.getKeywordsGroup(NSISKeywords.PATH_CONSTANTS_AND_VARIABLES);
+            String[] array = NSISKeywords.getInstance().getKeywordsGroup(NSISKeywords.PATH_CONSTANTS_AND_VARIABLES);
             for(int i=0; i<array.length; i++) {
                 if(array[i].equalsIgnoreCase(prefix)) {
                     if(!Common.isEmpty(suffix)) {
-                        Matcher matcher = cValidNSISPrefixedPathNameSuffix.matcher(suffix);
+                        Matcher matcher = nsisPath.matcher(suffix);
                         return matcher.matches();
                     }
                     return true;
                 }
             }
         }
-        return isValidPathName(pathName);
+        return isValidPathNameOrSpec(pathName, path);
     }
 
-    public static boolean isValidPathName(String pathName)
+    private static boolean isValidPathNameOrSpec(String pathName, Pattern path)
     {
-        Matcher matcher = cValidPathName.matcher(pathName);
+        Matcher matcher = path.matcher(pathName);
         return matcher.matches();
     }
 
@@ -815,7 +837,7 @@ public class Common
             lineLength = lineLength + word.length();
             if (lineLength >= maxLength) {
                 lines.add(buf.toString());
-                buf.delete(0,buf.length());
+                buf.setLength(0);
                 lineLength = word.length();
             }
             buf.append(word);
@@ -878,14 +900,6 @@ public class Common
         return pt;
     }
     
-    public static void addAttribute(Document document, Node node, String name, String value)
-    {
-        if(value != null) {
-            Attr attribute = document.createAttribute(name);
-            attribute.setValue(value);
-            node.getAttributes().setNamedItem(attribute);
-        }
-    }
     public static void writeContentToFile(File file, byte[] content)
     {
         if(!file.canWrite()) {

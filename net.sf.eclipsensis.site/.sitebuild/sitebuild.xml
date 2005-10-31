@@ -4,6 +4,6 @@
       scrub-output="false"
       use-console="true">
    <feature id="net.sf.eclipsensis.utilities" version="0.5.0"/>
-   <feature id="net.sf.eclipsensis" version="0.9.2"/>
-   <feature id="net.sf.eclipsensis.installoptions" version="0.9.2"/>
+   <feature id="net.sf.eclipsensis" version="0.9.3.1"/>
+   <feature id="net.sf.eclipsensis.installoptions" version="0.9.3.1"/>
 </site-build>

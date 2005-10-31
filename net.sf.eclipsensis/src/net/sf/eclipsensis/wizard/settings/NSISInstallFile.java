@@ -26,7 +26,7 @@ public class NSISInstallFile extends AbstractNSISInstallItem implements INSISIns
     private static final Image IMAGE = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("wizard.file.icon")); //$NON-NLS-1$
     
     private String mName = null;
-    private String mDestination = NSISKeywords.INSTANCE.getKeyword("$INSTDIR"); //$NON-NLS-1$
+    private String mDestination = NSISKeywords.getInstance().getKeyword("$INSTDIR"); //$NON-NLS-1$
     private int mOverwriteMode = OVERWRITE_ON; 
 
     static {

@@ -9,7 +9,14 @@
  *******************************************************************************/
 package net.sf.eclipsensis.lang;
 
-import java.io.Serializable;
+import java.io.*;
+import java.util.Map;
+
+import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.INSISConstants;
+import net.sf.eclipsensis.settings.NSISPreferences;
+import net.sf.eclipsensis.util.CaseInsensitiveMap;
+import net.sf.eclipsensis.util.Common;
 
 public class NSISLanguage implements Serializable
 {
@@ -19,6 +26,8 @@ public class NSISLanguage implements Serializable
     private String mDisplayName;
     private int mLangId;
     private String mLangDef;
+    
+    private transient Map mLangStrings = null;
     
     /**
      * @param name
@@ -72,15 +81,54 @@ public class NSISLanguage implements Serializable
     
     public int hashCode()
     {
-        return mLangId;
+        return mName.hashCode() | mLangId << 16;
     }
     
     public boolean equals(Object o)
     {
         if(o instanceof NSISLanguage) {
             NSISLanguage language = (NSISLanguage)o;
-            return mName.equals(language.mName) && (mLangId == language.mLangId);
+            return (mName.equals(language.mName) && mLangId == language.mLangId);
         }
         return false;
+    }
+    
+    public synchronized String getLangString(String key)
+    {
+        String nsisHome = NSISPreferences.INSTANCE.getNSISHome();
+        if(!Common.isEmpty(nsisHome)) {
+            if(mLangStrings == null) {
+                mLangStrings = new CaseInsensitiveMap();
+                File langFile = new File(new File(nsisHome,INSISConstants.LANGUAGE_FILES_LOCATION),mName+INSISConstants.LANGUAGE_FILES_EXTENSION);
+                if(langFile.exists()) {
+                    BufferedReader br = null;
+                    try {
+                        br = new BufferedReader(new FileReader(langFile));
+                        String line = br.readLine();
+                        while(line != null) {
+                            line = line.trim();
+                            if(line.charAt(0) == '#') {
+                                line = line.substring(1).trim();
+                                if(line.charAt(0) == '^') {
+                                    String name = line;
+                                    if(line != null) {
+                                        mLangStrings.put(name,line);
+                                    }
+                                }
+                            }
+                            line = br.readLine();
+                        }
+                    }
+                    catch (IOException e) {
+                        EclipseNSISPlugin.getDefault().log(e);
+                    }
+                    finally {
+                        Common.closeIO(br);
+                    }
+                }
+            }
+            return (String)mLangStrings.get(key);
+        }
+        return null;
     }
 }

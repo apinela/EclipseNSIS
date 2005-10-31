@@ -117,7 +117,7 @@ public class NSISSectionGroupDialog extends AbstractNSISInstallItemDialog
         });
         int textLimit;
         try {
-            textLimit = Integer.parseInt(NSISPreferences.INSTANCE.getNSISOption("NSIS_MAX_STRLEN")); //$NON-NLS-1$
+            textLimit = Integer.parseInt(NSISPreferences.INSTANCE.getNSISDefaultSymbol("NSIS_MAX_STRLEN")); //$NON-NLS-1$
         }
         catch(Exception ex){
             textLimit = INSISConstants.DEFAULT_NSIS_TEXT_LIMIT;

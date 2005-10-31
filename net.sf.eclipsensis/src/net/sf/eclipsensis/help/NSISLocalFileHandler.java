@@ -40,6 +40,7 @@ public class NSISLocalFileHandler implements IHelpBrowserLocalFileHandler
                     else {
                         IDE.openEditor(page, new FileEditorInput(files[0]), getEditorID(files[0]));
                     }
+                    page.getWorkbenchWindow().getShell().forceActive();
                     result[0] = true;
                 }
                 catch (PartInitException e) {

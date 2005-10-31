@@ -36,7 +36,7 @@ public class NSISHelpProducer implements IExecutableExtension, IHelpContentProdu
     {
         if(pluginID.equals(mPluginId)) {
             if(href.equals(NSISCONTRIB_JS_LOCATION)) {
-                String nsisContribPath = NSISHelpURLProvider.INSTANCE.getNSISContribPath();
+                String nsisContribPath = NSISHelpURLProvider.getInstance().getNSISContribPath();
                 StringBuffer buf = new StringBuffer("<!--").append(LINE_SEPARATOR); //$NON-NLS-1$
                 buf.append("var nsisContribPath="); //$NON-NLS-1$
                 if(nsisContribPath == null) {

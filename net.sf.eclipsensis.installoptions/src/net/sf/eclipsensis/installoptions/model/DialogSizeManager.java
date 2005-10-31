@@ -44,49 +44,41 @@ public class DialogSizeManager
         return IInstallOptionsConstants.DIALOG_SIZE_DEFAULT;
     }
 
-    public static List getDialogSizes()
+    public static synchronized List getDialogSizes()
     {
         if(cDialogSizes == null) {
-            synchronized(DialogSize.class) {
-                if(cDialogSizes == null) {
-                    IPreferenceStore store = InstallOptionsPlugin.getDefault().getPreferenceStore();
-                    String temp = store.getString(PROPERTY_DIALOGSIZES_COUNT); //$NON-NLS-1$
-                    if(Common.isEmpty(temp)) {
-                        cDialogSizes = new ArrayList();
-                        for(Iterator iter=getPresetDialogSizes().iterator(); iter.hasNext(); ) {
-                            try {
-                                cDialogSizes.add(((DialogSize)iter.next()).clone());
-                            }
-                            catch (CloneNotSupportedException e) {
-                            }
-                        }
+            IPreferenceStore store = InstallOptionsPlugin.getDefault().getPreferenceStore();
+            String temp = store.getString(PROPERTY_DIALOGSIZES_COUNT); //$NON-NLS-1$
+            if(Common.isEmpty(temp)) {
+                cDialogSizes = new ArrayList();
+                for(Iterator iter=getPresetDialogSizes().iterator(); iter.hasNext(); ) {
+                    try {
+                        cDialogSizes.add(((DialogSize)iter.next()).clone());
                     }
-                    else {
-                        cDialogSizes = loadDialogSizes(store);
+                    catch (CloneNotSupportedException e) {
                     }
                 }
+            }
+            else {
+                cDialogSizes = loadDialogSizes(store);
             }
         }
         
         return cDialogSizes;
     }
 
-    public static List getPresetDialogSizes()
+    public static synchronized List getPresetDialogSizes()
     {
         if(cDefaultDialogSizes == null) {
-            synchronized(DialogSize.class) {
-                if(cDefaultDialogSizes == null) {
-                    Object source;
-                    try {
-                        source = ResourceBundle.getBundle(DialogSize.class.getPackage().getName()+".DialogSizes"); //$NON-NLS-1$
-                    }
-                    catch(MissingResourceException mre) {
-                        source = null;
-                    }
-                    cDefaultDialogSizes = loadDialogSizes(source);
-                }                
+            Object source;
+            try {
+                source = ResourceBundle.getBundle(DialogSize.class.getPackage().getName()+".DialogSizes"); //$NON-NLS-1$
             }
-        }
+            catch(MissingResourceException mre) {
+                source = null;
+            }
+            cDefaultDialogSizes = loadDialogSizes(source);
+        }                
         return cDefaultDialogSizes;
     }
 

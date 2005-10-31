@@ -111,7 +111,7 @@ public class NSISWizardGeneralPage extends AbstractNSISWizardPage
     {
         Group group = NSISWizardDialogUtil.createGroup(parent, 2, "application.group.label", null, true); //$NON-NLS-1$
         NSISWizardSettings settings = mWizard.getSettings();
-        final String programFiles =NSISKeywords.INSTANCE.getKeyword("$PROGRAMFILES"); //$NON-NLS-1$
+        final String programFiles =NSISKeywords.getInstance().getKeyword("$PROGRAMFILES"); //$NON-NLS-1$
 
         final Text t = NSISWizardDialogUtil.createText(group, settings.getName(), "application.name.label", true, null, true); //$NON-NLS-1$
         t.addModifyListener(new ModifyListener(){
@@ -232,8 +232,8 @@ public class NSISWizardGeneralPage extends AbstractNSISWizardPage
                         NSISWizardDisplayValues.COMPRESSOR_TYPE_NAMES[settings.getCompressorType()],
                         true, true, null);
 
-        String solidKeyword = NSISKeywords.INSTANCE.getKeyword("/SOLID"); //$NON-NLS-1$
-        if(NSISKeywords.INSTANCE.isValidKeyword(solidKeyword)) {
+        String solidKeyword = NSISKeywords.getInstance().getKeyword("/SOLID"); //$NON-NLS-1$
+        if(NSISKeywords.getInstance().isValidKeyword(solidKeyword)) {
             ((GridData)c.getLayoutData()).horizontalSpan = 1;
             int index = c.getSelectionIndex();
             cb = NSISWizardDialogUtil.createCheckBox(composite,"solid.compression.text",settings.isSolidCompression(), //$NON-NLS-1$

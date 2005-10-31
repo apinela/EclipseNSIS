@@ -15,6 +15,7 @@ import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.editor.text.*;
 import net.sf.eclipsensis.help.NSISKeywords;
+import net.sf.eclipsensis.help.NSISPluginManager;
 import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.jface.text.*;
@@ -175,27 +176,29 @@ public class NSISInformationUtility implements INSISConstants
                     if(pos > 0) {
                         String pluginName = text.substring(0,pos);
                         text = text.substring(pos+2);
-                        String[] exports = NSISKeywords.INSTANCE.getPluginExports(pluginName);
-                        int textlen = text.length();
-                        for (int i = 0; i < exports.length; i++) {
-                            if(!Common.isEmpty(text)) {
-                                if((exports[i].compareToIgnoreCase(text) < 0) ||
-                                    !exports[i].regionMatches(true,0,text,0,textlen)) {
-                                    continue;
+                        String[] exports = NSISPluginManager.INSTANCE.getDefaultPluginExports(pluginName);
+                        if(!Common.isEmptyArray(exports)) {
+                            int textlen = text.length();
+                            for (int i = 0; i < exports.length; i++) {
+                                if(!Common.isEmpty(text)) {
+                                    if((exports[i].compareToIgnoreCase(text) < 0) ||
+                                        !exports[i].regionMatches(true,0,text,0,textlen)) {
+                                        continue;
+                                    }
                                 }
+                                list.add(new CompletionProposal(exports[i],
+                                        region.getOffset()+pos+2,
+                                        textlen,
+                                        exports[i].length(),
+                                        PLUGIN_IMAGE, 
+                                        null, null, null));
+                                
                             }
-                            list.add(new CompletionProposal(exports[i],
-                                    region.getOffset()+pos+2,
-                                    textlen,
-                                    exports[i].length(),
-                                    PLUGIN_IMAGE, 
-                                    null, null, null));
-                            
                         }
                     }
                     else {
                         int textlen = text.length();
-                        String[] allKeywords = NSISKeywords.INSTANCE.getKeywordsGroup(NSISKeywords.ALL_KEYWORDS);
+                        String[] allKeywords = NSISKeywords.getInstance().getKeywordsGroup(NSISKeywords.ALL_KEYWORDS);
                         for(int i=0; i<allKeywords.length; i++) {
                             int n = allKeywords[i].compareToIgnoreCase(text);
                             if(n >= 0) {
@@ -213,7 +216,7 @@ public class NSISInformationUtility implements INSISConstants
                             }
                             continue;
                         }
-                        String[] plugins = NSISKeywords.INSTANCE.getKeywordsGroup(NSISKeywords.PLUGINS);
+                        String[] plugins = NSISKeywords.getInstance().getKeywordsGroup(NSISKeywords.PLUGINS);
                         for(int i=0; i<plugins.length; i++) {
                             int n = plugins[i].compareToIgnoreCase(text);
                             if(n >= 0) {
@@ -244,7 +247,7 @@ public class NSISInformationUtility implements INSISConstants
     private static class VariablesAndSymbolsProcessor extends AnyWordProcessor
     {
         protected boolean mIsSymbol = false;
-        protected NSISKeywords.VariableMatcher mVariableMatcher = NSISKeywords.INSTANCE.createVariableMatcher();
+        protected NSISKeywords.VariableMatcher mVariableMatcher = NSISKeywords.getInstance().createVariableMatcher();
         private int mMatchOffset = -1;
         private boolean mIsComplete = false;
         
@@ -429,7 +432,7 @@ public class NSISInformationUtility implements INSISConstants
                     return true;
                 }
             }
-            mBuffer.delete(0,Integer.MAX_VALUE);
+            mBuffer.setLength(0);
             mFirstNonWhitespaceOffset = -1;
             return false;
         }

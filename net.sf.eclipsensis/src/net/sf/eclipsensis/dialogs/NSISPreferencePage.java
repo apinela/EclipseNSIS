@@ -12,19 +12,20 @@ package net.sf.eclipsensis.dialogs;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.Collator;
 import java.util.*;
+import java.util.List;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.job.IJobStatusRunnable;
+import net.sf.eclipsensis.job.JobScheduler;
 import net.sf.eclipsensis.makensis.MakeNSISRunner;
-import net.sf.eclipsensis.settings.NSISPreferences;
-import net.sf.eclipsensis.settings.NSISSettings;
+import net.sf.eclipsensis.settings.*;
 import net.sf.eclipsensis.util.*;
 import net.sf.eclipsensis.viewer.CollectionContentProvider;
 import net.sf.eclipsensis.viewer.CollectionLabelProvider;
 
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.viewers.ComboViewer;
-import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
@@ -35,19 +36,98 @@ import org.eclipse.ui.dialogs.PreferencesUtil;
 
 public class NSISPreferencePage	extends NSISSettingsPage
 {
-    private static final String SOLID_OPTION = "/SOLID"; //$NON-NLS-1$
-    private static final String SET_COMPRESSOR_CMD = "SetCompressor"; //$NON-NLS-1$
+    public static final List NSIS_HOMES;
+    
+    private static final List cInternalNSISHomes;
     private static File cNSISHomesListFile = new File(EclipseNSISPlugin.getPluginStateLocation(),
                                                 NSISPreferencePage.class.getName()+".NSISHomesList.ser"); //$NON-NLS-1$
+    private static IJobStatusRunnable cSaveNSISHomesRunnable = new IJobStatusRunnable() {
+        public IStatus run(IProgressMonitor monitor)
+        {
+            try {
+                Common.writeObject(cNSISHomesListFile,cInternalNSISHomes);
+                return Status.OK_STATUS;
+            }
+            catch (IOException e) {
+                EclipseNSISPlugin.getDefault().log(e);
+                return new Status(IStatus.ERROR,PLUGIN_ID,IStatus.ERROR,e.getMessage(),e);
+            }
+        }
+    };
+    private static final String SOLID_OPTION = "/SOLID"; //$NON-NLS-1$
+    private static final String SET_COMPRESSOR_CMD = "SetCompressor"; //$NON-NLS-1$
+
     private ComboViewer mNSISHome = null;
     private Button mUseEclipseHelp = null;
     private Button mAutoShowConsole = null;
+    private Button mNotifyMakeNSISChanged = null;
     private Version mNSISVersion = Version.EMPTY_VERSION;
     private File mNSISExe = null;
     private boolean mNSISHomeDirty = false;
+    private boolean mHandlingNSISHomeChange = false;
     
     private static Map cSolidCompressionMap = new HashMap();
     
+    static {
+        Collection nsisHomes;
+        if(cNSISHomesListFile.exists()) {
+            try {
+                nsisHomes = (Collection)Common.readObject(cNSISHomesListFile);
+                if(!(nsisHomes instanceof List)) {
+                    nsisHomes = new ArrayList(nsisHomes);
+                }
+            }
+            catch (Exception e1) {
+                nsisHomes = new ArrayList();
+            }
+        }
+        else {
+            nsisHomes = new ArrayList();
+        }
+        cInternalNSISHomes = (List)nsisHomes;
+        NSIS_HOMES = Collections.unmodifiableList(cInternalNSISHomes);
+    }
+    
+    public static boolean addNSISHome(String nsisHome)
+    {
+        return addNSISHome(cInternalNSISHomes,nsisHome);
+    }
+    
+    private static boolean addNSISHome(List nsisHomesList, String nsisHome)
+    {
+        if(nsisHomesList.size() > 0) {
+            if(((String)nsisHomesList.get(0)).equalsIgnoreCase(nsisHome)) {
+                return false;
+            }
+            removeNSISHome(nsisHomesList, nsisHome);
+        }
+        nsisHomesList.add(0,nsisHome);
+        return true;
+    }
+    
+    public static boolean removeNSISHome(String nsisHome)
+    {
+        return removeNSISHome(cInternalNSISHomes, nsisHome);
+    }
+
+    private static boolean removeNSISHome(List nsisHomesList, String nsisHome)
+    {
+        for(Iterator iter=nsisHomesList.iterator(); iter.hasNext(); ) {
+            if(((String)iter.next()).equalsIgnoreCase(nsisHome)) {
+                iter.remove();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static void saveNSISHomes()
+    {
+        JobScheduler scheduler = EclipseNSISPlugin.getDefault().getJobScheduler();
+        scheduler.cancelJobs(NSISPreferencePage.class);
+        scheduler.scheduleJob(NSISPreferencePage.class, "Save NSIS Homes", cSaveNSISHomesRunnable);
+    }
+
     public static void show()
     {
         PreferencesUtil.createPreferenceDialogOn(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
@@ -106,31 +186,13 @@ public class NSISPreferencePage	extends NSISSettingsPage
         data = new GridData(SWT.FILL, SWT.CENTER, true, false);
         c.setLayoutData(data);
         
-        final Collection nsisHomes;
-        if(cNSISHomesListFile.exists()) {
-            Collection temp;
-            try {
-                temp = (Collection)Common.readObject(cNSISHomesListFile);
-            }
-            catch (Exception e1) {
-                temp = new CaseInsensitiveSet();
-            }
-            nsisHomes = temp;
-        }
-        else {
-            nsisHomes = new CaseInsensitiveSet();
-        }
+        List nsisHomes = new ArrayList(cInternalNSISHomes);
         String home = ((NSISPreferences)getSettings()).getNSISHome();
-        if(!nsisHomes.contains(home)) {
-            nsisHomes.add(home);
-        }
+        addNSISHome(nsisHomes, home);
 
         mNSISHome = new ComboViewer(c);
         mNSISHome.setContentProvider(new CollectionContentProvider());
         mNSISHome.setLabelProvider(new CollectionLabelProvider());
-        Collator collator = Collator.getInstance();
-        collator.setStrength(Collator.PRIMARY);
-        mNSISHome.setSorter(new ViewerSorter(collator));
         mNSISHome.setInput(nsisHomes);
         
         c.setText(home);
@@ -144,13 +206,13 @@ public class NSISPreferencePage	extends NSISSettingsPage
             public void widgetSelected(SelectionEvent e)
             {
                 mNSISHomeDirty = true;
-                handleNSISHomeChange();
+                handleNSISHomeChange(true);
             }
         });
         c.addFocusListener(new FocusAdapter() {
             public void focusLost(FocusEvent e) 
             {
-                handleNSISHomeChange();
+                handleNSISHomeChange(false);
             }
         });
 
@@ -162,6 +224,8 @@ public class NSISPreferencePage	extends NSISSettingsPage
                 Shell shell = getShell();
                 DirectoryDialog dialog = new DirectoryDialog(shell);
                 dialog.setMessage(EclipseNSISPlugin.getResourceString("nsis.home.message")); //$NON-NLS-1$
+                String text = mNSISHome.getCombo().getText();
+                dialog.setFilterPath(text);
                 String nsisHome = dialog.open();
                 if (!Common.isEmpty(nsisHome)) { 
                     if(NSISValidator.validateNSISHome(nsisHome)) {
@@ -187,6 +251,11 @@ public class NSISPreferencePage	extends NSISSettingsPage
                                       EclipseNSISPlugin.getResourceString("use.eclipse.help.tooltip"), //$NON-NLS-1$
                                       ((NSISPreferences)getSettings()).isUseEclipseHelp());
         ((GridData)mUseEclipseHelp.getLayoutData()).horizontalSpan = 2;
+
+        mNotifyMakeNSISChanged = createCheckBox(composite, EclipseNSISPlugin.getResourceString("notify.makensis.changed.text"), //$NON-NLS-1$
+                                      EclipseNSISPlugin.getResourceString("notify.makensis.changed.tooltip"), //$NON-NLS-1$
+                                      NSISPreferences.INSTANCE.getPreferenceStore().getBoolean(INSISPreferenceConstants.NOTIFY_MAKENSIS_CHANGED));
+        ((GridData)mNotifyMakeNSISChanged.getLayoutData()).horizontalSpan = 2;
         return composite;
     }
     
@@ -197,6 +266,7 @@ public class NSISPreferencePage	extends NSISSettingsPage
     {
         mAutoShowConsole.setEnabled(state);
         mUseEclipseHelp.setEnabled(state);
+        mNotifyMakeNSISChanged.setEnabled(state);
         super.enableControls(state);
     }
     
@@ -223,24 +293,45 @@ public class NSISPreferencePage	extends NSISSettingsPage
      */
     public boolean performOk()
     {
+        if(!handleNSISHomeChange(true)) {
+            return false;
+        }
         Combo combo = mNSISHome.getCombo();
         String home = combo.getText();
-        Collection nsisHomes = (Collection)mNSISHome.getInput();
-        if(!nsisHomes.contains(home)) {
-            nsisHomes.add(home);
-            try {
-                Common.writeObject(cNSISHomesListFile,nsisHomes);
-            }
-            catch (IOException e) {
-                EclipseNSISPlugin.getDefault().log(e);
-            }
+        
+        List nsisHomes = (List)mNSISHome.getInput();
+        if(addNSISHome(nsisHomes, home)) {
             mNSISHome.refresh();
             combo.setText(home);
         }
+
+        boolean dirty = false;
+        if(cInternalNSISHomes.size()==nsisHomes.size()) {
+            ListIterator e1 = cInternalNSISHomes.listIterator();
+            ListIterator e2 = ((List)nsisHomes).listIterator();
+            while(e1.hasNext() && e2.hasNext()) {
+                String s1 = (String)e1.next();
+                String s2 = (String)e2.next();
+                if (!Common.stringsAreEqual(s1, s2, true)) {
+                    dirty = true;
+                    break;
+                }
+            }
+        }
+        else {
+            dirty = true;
+        }
+        if(dirty) {
+            cInternalNSISHomes.clear();
+            cInternalNSISHomes.addAll(nsisHomes);
+            saveNSISHomes();
+        }
+        
         NSISPreferences preferences = (NSISPreferences)getSettings();
         preferences.setNSISHome(home);
         preferences.setAutoShowConsole(mAutoShowConsole.getSelection());
         preferences.setUseEclipseHelp(mUseEclipseHelp.getSelection());
+        preferences.getPreferenceStore().setValue(INSISPreferenceConstants.NOTIFY_MAKENSIS_CHANGED,mNotifyMakeNSISChanged.getSelection());
         return super.performOk();
     }
 
@@ -282,33 +373,49 @@ public class NSISPreferencePage	extends NSISSettingsPage
         return false;
     }
 
-    private void handleNSISHomeChange()
+    private boolean handleNSISHomeChange(boolean eraseInvalid)
     {
-        if(mNSISHomeDirty) {
-            boolean state = false;
-            String nsisHome = mNSISHome.getCombo().getText();
-            if(!Common.isEmpty(nsisHome)) { 
-                if(nsisHome.endsWith("\\") && !nsisHome.endsWith(":\\")) { //$NON-NLS-1$ //$NON-NLS-2$
-                    nsisHome = nsisHome.substring(0,nsisHome.length()-1);
-                    mNSISHome.getCombo().setText(nsisHome);
-                }
-                if(!NSISValidator.validateNSISHome(nsisHome)) {
-                    Common.openError(getShell(),EclipseNSISPlugin.getResourceString("invalid.nsis.home.message"), EclipseNSISPlugin.getShellImage()); //$NON-NLS-1$ //$NON-NLS-2$
-                    mNSISHome.getCombo().setText(""); //$NON-NLS-1$
-                    mNSISHome.getCombo().forceFocus();
-                    mNSISVersion = Version.EMPTY_VERSION;
-                    mNSISExe = null;
-                    mSolidCompression.setVisible(false);
+        if(mNSISHomeDirty && !mHandlingNSISHomeChange) {
+            try {
+                mHandlingNSISHomeChange = true;
+                boolean state = false;
+                String nsisHome = mNSISHome.getCombo().getText();
+                if(!Common.isEmpty(nsisHome)) { 
+                    if(nsisHome.endsWith("\\") && !nsisHome.endsWith(":\\")) { //$NON-NLS-1$ //$NON-NLS-2$
+                        nsisHome = nsisHome.substring(0,nsisHome.length()-1);
+                            mNSISHome.getCombo().setText(nsisHome);
+                    }
+                    if (!NSISValidator.validateNSISHome(nsisHome)) {
+                        if(eraseInvalid) {
+                            Common.openError(getShell(),
+                                             EclipseNSISPlugin.getResourceString("invalid.nsis.home.message"), EclipseNSISPlugin.getShellImage()); //$NON-NLS-1$ //$NON-NLS-2$
+                            mNSISHome.getCombo().setText(""); //$NON-NLS-1$
+                            mNSISHome.getCombo().forceFocus();
+                            mNSISHomeDirty = false;
+                        }
+                        mNSISVersion = Version.EMPTY_VERSION;
+                        mNSISExe = null;
+                        mSolidCompression.setVisible(false);
+                    }
+                    else {
+                        state = true;
+                        mNSISExe = new File(nsisHome, MAKENSIS_EXE);
+                        mNSISVersion = NSISValidator.getNSISVersion(mNSISExe);
+                        mSolidCompression.setVisible(isSolidCompressionSupported());
+                        mNSISHomeDirty = false;
+                    }
                 }
                 else {
-                    state = true;
-                    mNSISExe = new File(nsisHome,MAKENSIS_EXE);
-                    mNSISVersion = NSISValidator.getNSISVersion(mNSISExe);
-                    mSolidCompression.setVisible(isSolidCompressionSupported());
+                    mNSISHomeDirty = false;
                 }
+                setValid(state);
+                enableControls(state);
+                return state;
             }
-            enableControls(state);
-            mNSISHomeDirty = false;
+            finally {
+                mHandlingNSISHomeChange = false;
+            }
         }
+        return true;
     }
 }

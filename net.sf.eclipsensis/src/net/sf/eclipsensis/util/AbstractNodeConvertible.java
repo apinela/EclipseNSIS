@@ -31,15 +31,11 @@ public abstract class AbstractNodeConvertible implements INodeConvertible, Seria
         return super.clone();
     }
 
-    public Collection getSkippedProperties()
+    public synchronized Collection getSkippedProperties()
     {
         if(mSkippedProperties == null) {
-            synchronized(this) {
-                if(mSkippedProperties == null) {
-                    mSkippedProperties = new HashSet();
-                    addSkippedProperties(mSkippedProperties);
-                }
-            }
+            mSkippedProperties = new HashSet();
+            addSkippedProperties(mSkippedProperties);
         }
         return mSkippedProperties;
     }
@@ -180,7 +176,7 @@ public abstract class AbstractNodeConvertible implements INodeConvertible, Seria
     protected Node createChildNode(Document document, String name, Object value)
     {
         Node childNode = document.createElement(getChildNodeName()); //$NON-NLS-1$
-        Common.addAttribute(document, childNode, NAME_ATTRIBUTE, name); //$NON-NLS-1$
+        XMLUtil.addAttribute(document, childNode, NAME_ATTRIBUTE, name); //$NON-NLS-1$
         if(value instanceof INodeConvertible) {
             childNode.appendChild(((INodeConvertible)value).toNode(document));
         }
@@ -195,7 +191,7 @@ public abstract class AbstractNodeConvertible implements INodeConvertible, Seria
             }
         }
         else {
-            Common.addAttribute(document, childNode, VALUE_ATTRIBUTE, convertToString(name, value)); //$NON-NLS-1$
+            XMLUtil.addAttribute(document, childNode, VALUE_ATTRIBUTE, convertToString(name, value)); //$NON-NLS-1$
         }
         return childNode;
     }

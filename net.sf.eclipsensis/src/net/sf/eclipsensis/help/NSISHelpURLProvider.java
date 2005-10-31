@@ -26,7 +26,7 @@ import org.eclipse.ui.PlatformUI;
 
 public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListener, IEclipseNSISService
 {
-    public static NSISHelpURLProvider INSTANCE = null;
+    private static NSISHelpURLProvider cInstance = null;
     
     private static final String CHMLINK_JS = "chmlink.js"; //$NON-NLS-1$
     private static final String NSIS_HELP_FORMAT = new StringBuffer("/").append( //$NON-NLS-1$
@@ -37,35 +37,55 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
                                     INSISConstants.NSIS_HELP_PREFIX).append("Docs/(.*)").toString()); //$NON-NLS-1$
     private static final String NSIS_CHM_HELP_FORMAT = "mk:@MSITStore:{0}::/{1}"; //$NON-NLS-1$
     
-    private ParserDelegator mParserDelegator = new ParserDelegator();
 
     private String mStartPage = null;
     private String mCHMStartPage = null;
     private Map mHelpURLs = null;
     private Map mCHMHelpURLs = null;
-    private Map mNSISContribPaths = new LinkedHashMap();
+    private ParserDelegator mParserDelegator;
+    private Map mNSISContribPaths;
     
     private ResourceBundle mBundle;
     
+    public static NSISHelpURLProvider getInstance()
+    {
+        return cInstance;
+    }
+
     public void start(IProgressMonitor monitor)
     {
-        monitor.subTask(EclipseNSISPlugin.getResourceString("loading.helpurls.message")); //$NON-NLS-1$
-        try {
-            mBundle = ResourceBundle.getBundle(NSISHelpURLProvider.class.getName());
-        } 
-        catch (MissingResourceException x) {
-            mBundle = null;
+        if (cInstance == null) {
+            monitor.subTask(EclipseNSISPlugin
+                    .getResourceString("loading.helpurls.message")); //$NON-NLS-1$
+            try {
+                mBundle = ResourceBundle.getBundle(NSISHelpURLProvider.class
+                        .getName());
+            }
+            catch (MissingResourceException x) {
+                mBundle = null;
+            }
+            mParserDelegator = new ParserDelegator();
+            mNSISContribPaths = new LinkedHashMap();
+            loadNSISContribPaths();
+            loadHelpURLs();
+            NSISKeywords.getInstance().addKeywordsListener(this);
+            cInstance = this;
         }
-        loadNSISContribPaths();
-        loadHelpURLs();
-        NSISKeywords.INSTANCE.addKeywordsListener(this);
-        INSTANCE = this;
     }
 
     public void stop(IProgressMonitor monitor)
     {
-        NSISKeywords.INSTANCE.removeKeywordsListener(this);
-        INSTANCE = null;
+        if (cInstance == this) {
+            cInstance = null;
+            mStartPage = null;
+            mCHMStartPage = null;
+            mHelpURLs = null;
+            mCHMHelpURLs = null;
+            mParserDelegator = null;
+            mNSISContribPaths = null;
+            mBundle = null;
+            NSISKeywords.getInstance().removeKeywordsListener(this);
+        }
     }
     
     private void loadNSISContribPaths()
@@ -135,8 +155,8 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
                             if(!Common.isEmptyArray(keywords)) {
                                 ArrayList list = new ArrayList();
                                 for (int j = 0; j < keywords.length; j++) {
-                                    keywords[j] = NSISKeywords.INSTANCE.getKeyword(keywords[j]);
-                                    if(NSISKeywords.INSTANCE.isValidKeyword(keywords[j])) {
+                                    keywords[j] = NSISKeywords.getInstance().getKeyword(keywords[j]);
+                                    if(NSISKeywords.getInstance().isValidKeyword(keywords[j])) {
                                         list.add(keywords[j]);
                                     }
                                 }
@@ -170,8 +190,8 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
                                     StringBuffer chmBuf = new StringBuffer();
                                     String[] chmArgs = new String[]{htmlHelpFile.getAbsolutePath(),null};
                                     for (Iterator iter = keywordHelpMap.keySet().iterator(); iter.hasNext();) {
-                                        buf.delete(0,buf.length());
-                                        chmBuf.delete(0,chmBuf.length());
+                                        buf.setLength(0);
+                                        chmBuf.setLength(0);
 
                                         String keyword = (String)iter.next();
                                         String location = (String)keywordHelpMap.get(keyword);

@@ -43,17 +43,13 @@ public class NSISProperties extends NSISSettings implements INSISConstants
         cQualifiedNames.put(SYMBOLS, new QualifiedName(PLUGIN_ID,SYMBOLS));
     }
     
-    public static NSISProperties getProperties(IResource resource)
+    public static synchronized NSISProperties getProperties(IResource resource)
     {
         String fileName = resource.getLocation().toString();
         if(!cPropertiesCache.containsKey(fileName)) {
-            synchronized(NSISProperties.class) {
-                if(!cPropertiesCache.containsKey(fileName)) {
-                    NSISProperties props = new NSISProperties(resource);
-                    props.load();
-                    cPropertiesCache.put(fileName,props);
-                }
-            }
+            NSISProperties props = new NSISProperties(resource);
+            props.load();
+            cPropertiesCache.put(fileName,props);
         }
         return (NSISProperties)cPropertiesCache.get(fileName);
     }
@@ -191,17 +187,12 @@ public class NSISProperties extends NSISSettings implements INSISConstants
         }
     }
     
-    private static QualifiedName getQualifiedName(String name)
+    private static synchronized QualifiedName getQualifiedName(String name)
     {
         QualifiedName qname = (QualifiedName)cQualifiedNames.get(name);
         if(qname == null) {
-            synchronized(NSISProperties.class) {
-                qname = (QualifiedName)cQualifiedNames.get(name);
-                if(qname == null) {
-                    qname = new QualifiedName(PLUGIN_ID,name);
-                    cQualifiedNames.put(name,qname);
-                }
-            }
+            qname = new QualifiedName(PLUGIN_ID,name);
+            cQualifiedNames.put(name,qname);
         }
         return qname;
     }

@@ -124,7 +124,7 @@ public abstract class NSISRuleBasedScanner extends BufferedRuleBasedScanner impl
     {
         boolean caseSensitive = isCaseSensitive();
         IToken token = createTokenFromPreference(preferenceName);
-        String[] array = NSISKeywords.INSTANCE.getKeywordsGroup(keywordsGroup);
+        String[] array = NSISKeywords.getInstance().getKeywordsGroup(keywordsGroup);
         if(!Common.isEmptyArray(array)) {
             for (int i = 0; i < array.length; i++) {
                 wordRule.addWord((caseSensitive?array[i]:array[i].toLowerCase()), token);

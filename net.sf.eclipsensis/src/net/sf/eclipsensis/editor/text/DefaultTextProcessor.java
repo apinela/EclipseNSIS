@@ -25,7 +25,7 @@ public class DefaultTextProcessor implements INSISTextProcessor, INSISConstants
     public void setScanner(ICharacterScanner scanner)
     {
         mScanner = scanner;
-        mBuffer.delete(0,Integer.MAX_VALUE);
+        mBuffer.setLength(0);
     }
 
     /* (non-Javadoc)

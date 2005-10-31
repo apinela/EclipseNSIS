@@ -61,7 +61,7 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
     public NSISWizardScriptGenerator(NSISWizardSettings settings)
     {
         mSettings = settings;
-        String usage = NSISUsageProvider.INSTANCE.getUsage(getKeyword("RmDir")); //$NON-NLS-1$
+        String usage = NSISUsageProvider.getInstance().getUsage(getKeyword("RmDir")); //$NON-NLS-1$
         if(!Common.isEmpty(usage)) {
             usage = usage.toUpperCase();
             String search = new StringBuffer(getKeyword("/r")).append("|").append( //$NON-NLS-1$ //$NON-NLS-2$
@@ -224,8 +224,8 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
         
         if(mSettings.getCompressorType() != MakeNSISRunner.COMPRESSOR_DEFAULT) {
             Object args;
-            String solidKeyword = NSISKeywords.INSTANCE.getKeyword("/SOLID"); //$NON-NLS-1$
-            if(NSISKeywords.INSTANCE.isValidKeyword(solidKeyword) && mSettings.isSolidCompression()) {
+            String solidKeyword = NSISKeywords.getInstance().getKeyword("/SOLID"); //$NON-NLS-1$
+            if(NSISKeywords.getInstance().isValidKeyword(solidKeyword) && mSettings.isSolidCompression()) {
                 args = new String[]{solidKeyword,MakeNSISRunner.COMPRESSOR_NAME_ARRAY[mSettings.getCompressorType()]};
             }
             else {
@@ -551,13 +551,13 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
         }
         else {
             if(isMUI) {
-                defaultLanguage = NSISLanguageManager.INSTANCE.getLanguage("English"); //$NON-NLS-1$
+                defaultLanguage = NSISLanguageManager.getInstance().getLanguage("English"); //$NON-NLS-1$
                 mScript.insertAfterElement(pagesPlaceHolder,new NSISScriptBlankLine());
                 mScript.insertAfterElement(pagesPlaceHolder,new NSISScriptInsertMacro("MUI_LANGUAGE",defaultLanguage.getName())); //$NON-NLS-1$
                 mScript.insertAfterElement(pagesPlaceHolder,new NSISScriptSingleLineComment(EclipseNSISPlugin.getResourceString("scriptgen.languages.comment"))); //$NON-NLS-1$
             }
             else {
-                defaultLanguage = NSISLanguageManager.INSTANCE.getDefaultLanguage();
+                defaultLanguage = NSISLanguageManager.getInstance().getDefaultLanguage();
             }
         }
 
@@ -829,13 +829,13 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
         }
 
         if(mSettings.isEnableLanguageSupport()) {
-            Locale defaultLocale = NSISLanguageManager.INSTANCE.getDefaultLocale();
+            Locale defaultLocale = NSISLanguageManager.getInstance().getDefaultLocale();
             ResourceBundle defaultBundle = EclipseNSISPlugin.getDefault().getResourceBundle(defaultLocale);
             NSISScriptlet smScriptlet = new NSISScriptlet();
             NSISScriptlet unlinkScriptlet = new NSISScriptlet();
             for (Iterator iter = languages.iterator(); iter.hasNext();) {
                 NSISLanguage language = (NSISLanguage) iter.next();
-                Locale locale = NSISLanguageManager.INSTANCE.getLocaleForLangId(language.getLangId());
+                Locale locale = NSISLanguageManager.getInstance().getLocaleForLangId(language.getLangId());
                 ResourceBundle bundle;
                 if(locale.equals(defaultLocale)) {
                     bundle = defaultBundle;
@@ -1104,7 +1104,7 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
     
     private String getKeyword(String keyword)
     {
-        return NSISKeywords.INSTANCE.getKeyword(keyword);
+        return NSISKeywords.getInstance().getKeyword(keyword);
     }
     
     private String flattenRGB(RGB rgb, String separator)

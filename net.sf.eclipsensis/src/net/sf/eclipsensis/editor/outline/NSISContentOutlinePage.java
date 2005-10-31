@@ -58,7 +58,7 @@ public class NSISContentOutlinePage extends ContentOutlinePage
 
         super.createControl(parent);
         if(mEditor != null) {
-            NSISOutlineContentResources.INSTANCE.connect(this);
+            NSISOutlineContentResources.getInstance().connect(this);
             NSISOutlineContentProvider contentProvider = mEditor.getOutlineContentProvider();
             if(contentProvider != null) {
                 TreeViewer viewer = getTreeViewer();
@@ -94,7 +94,7 @@ public class NSISContentOutlinePage extends ContentOutlinePage
                 provider.inputChanged(null, mEditor.getEditorInput());
             }
         }
-        NSISOutlineContentResources.INSTANCE.disconnect(this);
+        NSISOutlineContentResources.getInstance().disconnect(this);
         mDisposed = true;
     }
     

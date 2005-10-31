@@ -19,10 +19,11 @@ import net.sf.eclipsensis.util.CaseInsensitiveMap;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Display;
 
 public class NSISOutlineContentResources implements IEclipseNSISService,  INSISKeywordsListener
 {
-    public static NSISOutlineContentResources INSTANCE = null;  //$NON-NLS-1$
+    private static NSISOutlineContentResources cInstance = null;  //$NON-NLS-1$
     
     private static final String[] cTypes = {"!define", "!ifdef", "!ifndef", "!ifmacrodef",  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
                                             "!ifnmacrodef", "!endif", "!macro", "!macroend",  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
@@ -30,20 +31,25 @@ public class NSISOutlineContentResources implements IEclipseNSISService,  INSISK
                                             "SubSection", "SubSectionEnd", "SectionGroup", "SectionGroupEnd",  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
                                             "Page", "PageEx", "Pageexend","!include"}; //$NON-NLS-1$ //$NON-NLS-2$
 
-    private final List mTypeList = Arrays.asList(cTypes);
-    private final Map mTypes = new CaseInsensitiveMap();
-    private final Map mTypeNames = new HashMap();
-    private final Map mImages = new HashMap();
-    private final List mPages = new ArrayList();
+    private List mTypeList = null;
+    private Map mTypes = null;
+    private Map mTypeNames = null;
+    private Map mImages = null;
+    private List mPages = null;
     
+    public static NSISOutlineContentResources getInstance()
+    {
+        return cInstance;
+    }
+
     private void load()
     {
         mTypes.clear();
         mTypeNames.clear();
         mImages.clear();
         for(int i=0; i<cTypes.length; i++) {
-            String typeName = NSISKeywords.INSTANCE.getKeyword(cTypes[i], false);
-            if(NSISKeywords.INSTANCE.isValidKeyword(typeName)) {
+            String typeName = NSISKeywords.getInstance().getKeyword(cTypes[i], false);
+            if(NSISKeywords.getInstance().isValidKeyword(typeName)) {
                 mTypes.put(typeName,cTypes[i]);
                 mTypeNames.put(cTypes[i], typeName);
                 mImages.put(cTypes[i],EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString(new StringBuffer("outline.").append( //$NON-NLS-1$
@@ -54,16 +60,31 @@ public class NSISOutlineContentResources implements IEclipseNSISService,  INSISK
 
     public void start(IProgressMonitor monitor)
     {
-        monitor.subTask(EclipseNSISPlugin.getResourceString("loading.outline.message")); //$NON-NLS-1$
-        load();
-        NSISKeywords.INSTANCE.addKeywordsListener(this);
-        INSTANCE = this;
+        if (cInstance == null) {
+            mTypeList = Arrays.asList(cTypes);
+            mTypes = new CaseInsensitiveMap();
+            mTypeNames = new HashMap();
+            mImages = new HashMap();
+            mPages = new ArrayList();
+            monitor.subTask(EclipseNSISPlugin
+                    .getResourceString("loading.outline.message")); //$NON-NLS-1$
+            load();
+            NSISKeywords.getInstance().addKeywordsListener(this);
+            cInstance = this;
+        }
     }
 
     public void stop(IProgressMonitor monitor)
     {
-        INSTANCE = null;
-        NSISKeywords.INSTANCE.removeKeywordsListener(this);
+        if (cInstance == this) {
+            cInstance = null;
+            NSISKeywords.getInstance().removeKeywordsListener(this);
+            mTypeList = null;
+            mTypes = null;
+            mTypeNames = null;
+            mImages = null;
+            mPages = null;
+        }
     }
 
     void connect(NSISContentOutlinePage page)
@@ -84,6 +105,21 @@ public class NSISOutlineContentResources implements IEclipseNSISService,  INSISK
     public void keywordsChanged()
     {
         load();
+        if(Display.getCurrent() == null) {
+            Display.getDefault().asyncExec(new Runnable() {
+                public void run()
+                {
+                    refreshPages();
+                }
+            });
+        }
+        else {
+            refreshPages();
+        }
+    }
+
+    private void refreshPages()
+    {
         for(Iterator iter=mPages.iterator(); iter.hasNext(); ) {
             ((NSISContentOutlinePage)iter.next()).refresh();
         }

@@ -24,17 +24,14 @@ public class InstallOptionsElementFactory implements CreationFactory
     {
         InstallOptionsModelTypeDef typeDef = InstallOptionsModel.INSTANCE.getControlTypeDef(type);
         if(typeDef != null) {
-            InstallOptionsElementFactory factory = (InstallOptionsElementFactory)cCachedFactories.get(typeDef.getType());
-            if(factory == null) {
-                synchronized (InstallOptionsElementFactory.class) {
-                    factory = (InstallOptionsElementFactory)cCachedFactories.get(typeDef.getType());
-                    if(factory == null) {
-                        factory = new InstallOptionsElementFactory(typeDef);
-                        cCachedFactories.put(typeDef.getType(), factory);
-                    }
+            synchronized(typeDef) {
+                InstallOptionsElementFactory factory = (InstallOptionsElementFactory)cCachedFactories.get(typeDef.getType());
+                if(factory == null) {
+                    factory = new InstallOptionsElementFactory(typeDef);
+                    cCachedFactories.put(typeDef.getType(), factory);
                 }
+                return factory;
             }
-            return factory;
         }
         else {
             return getFactory(InstallOptionsModel.TYPE_UNKNOWN);

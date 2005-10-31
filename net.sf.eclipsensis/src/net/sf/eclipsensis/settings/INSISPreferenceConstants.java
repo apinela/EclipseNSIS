@@ -15,6 +15,7 @@ public interface INSISPreferenceConstants
 {
     public static final String CUSTOM_TEMPLATES = "customTemplates"; //$NON-NLS-1$
     public static final String NSIS_HOME = "nsisHome"; //$NON-NLS-1$
+    public static final String NOTIFY_MAKENSIS_CHANGED = "notifyMakeNSISChanged"; //$NON-NLS-1$
     public static final String USE_ECLIPSE_HELP = "useEclipseHelp"; //$NON-NLS-1$
     public static final String USE_GLOBALS = "useGlobals"; //$NON-NLS-1$
     public static final String USE_PARENT = "useParent"; //$NON-NLS-1$

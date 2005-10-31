@@ -123,14 +123,14 @@ public class NSISCompileTestUtility
     private String getExeName(File file)
     {
         MakeNSISResults results = MakeNSISRunner.getResults(file);
-        if(results != null) {
+        if (results != null) {
             String outputFileName = results.getOutputFileName();
-            if(outputFileName != null) {
+            if (outputFileName != null) {
                 File exeFile = new File(outputFileName);
-                if(exeFile != null && exeFile.exists() && exeFile.isFile()) {
+                if (exeFile != null && exeFile.exists() && exeFile.isFile()) {
                     long exeTimestamp = exeFile.lastModified();
                     long fileTimestamp = file.lastModified();
-                    if(exeTimestamp >= fileTimestamp) {
+                    if (exeTimestamp >= fileTimestamp) {
                         return exeFile.getAbsolutePath();
                     }
                 }

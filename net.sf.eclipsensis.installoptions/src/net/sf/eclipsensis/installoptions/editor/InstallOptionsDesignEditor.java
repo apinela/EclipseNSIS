@@ -605,6 +605,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
             }
         }
 
+        getSite().getWorkbenchWindow().getPartService().removePartListener(mPartListener);
         mPartListener = null;
         if(!hasErrors && file != null) {
             saveProperties(file);

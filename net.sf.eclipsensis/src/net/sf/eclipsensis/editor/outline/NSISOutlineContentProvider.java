@@ -80,7 +80,7 @@ public class NSISOutlineContentProvider implements ITreeContentProvider, INSISCo
         boolean found = false;
         if(!Common.isEmptyArray(invalidParents)) {
             for(int i=0; i<invalidParents.length; i++) {
-                if(NSISOutlineContentResources.INSTANCE.getTypeIndex(current.getType()) == invalidParents[i]) {
+                if(NSISOutlineContentResources.getInstance().getTypeIndex(current.getType()) == invalidParents[i]) {
                     found = true;
                     break;
                 }
@@ -100,7 +100,7 @@ public class NSISOutlineContentProvider implements ITreeContentProvider, INSISCo
             while(current.getType() != ROOT) {
                 boolean found = false;
                 for (int i = 0; i < validTypes.length; i++) {
-                    if(NSISOutlineContentResources.INSTANCE.getTypeIndex(current.getType()) == validTypes[i]) {
+                    if(NSISOutlineContentResources.getInstance().getTypeIndex(current.getType()) == validTypes[i]) {
                         found = true;
                         break;
                     }
@@ -198,7 +198,7 @@ public class NSISOutlineContentProvider implements ITreeContentProvider, INSISCo
                         IRegion region2 = nsisToken.getRegion();
                         Position position = new Position(region2.getOffset(),region2.getLength());
                         StringBuffer name = new StringBuffer(""); //$NON-NLS-1$
-                        int type = NSISOutlineContentResources.INSTANCE.getTypeIndex(nsisToken.getType());
+                        int type = NSISOutlineContentResources.getInstance().getTypeIndex(nsisToken.getType());
                         switch(type) {
                             case DEFINE:
                             case IFDEF:
@@ -664,7 +664,7 @@ public class NSISOutlineContentProvider implements ITreeContentProvider, INSISCo
                             }
                         }
                     }
-                    String type = NSISOutlineContentResources.INSTANCE.getType(text);
+                    String type = NSISOutlineContentResources.getInstance().getType(text);
     
                     return (type == null?Token.UNDEFINED:new Token(new NSISOutlineData(type, new Region(startOffset,length))));
                 }

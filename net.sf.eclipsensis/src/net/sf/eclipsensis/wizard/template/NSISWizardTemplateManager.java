@@ -10,13 +10,15 @@
 package net.sf.eclipsensis.wizard.template;
 
 import java.io.*;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.lang.NSISLanguage;
+import net.sf.eclipsensis.lang.NSISLanguageManager;
 import net.sf.eclipsensis.template.AbstractTemplateManager;
 import net.sf.eclipsensis.template.AbstractTemplateReaderWriter;
 import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.wizard.settings.NSISWizardSettings;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.swt.graphics.Image;
@@ -34,6 +36,40 @@ public class NSISWizardTemplateManager extends AbstractTemplateManager
         cPatches[0][2] = new byte[]{(byte)0x2D, (byte)0x38, (byte)0x37, (byte)0x33, (byte)0x34, (byte)0x34, (byte)0x30, (byte)0x32};
     }
 
+    public NSISWizardTemplateManager()
+    {
+        super();
+        Collection templates = getDefaultTemplates();
+        for (Iterator iter = templates.iterator(); iter.hasNext();) {
+            updateTemplateLanguages((NSISWizardTemplate)iter.next());
+        }
+        templates = getTemplates();
+        for (Iterator iter = templates.iterator(); iter.hasNext();) {
+            NSISWizardTemplate template = (NSISWizardTemplate)iter.next();
+            if(template.getType() != NSISWizardTemplate.TYPE_DEFAULT) {
+                updateTemplateLanguages(template);
+            }
+        }
+    }
+
+    private void updateTemplateLanguages(NSISWizardTemplate template)
+    {
+        NSISWizardSettings settings = template.getSettings();
+        if(settings != null) {
+            ArrayList languages = settings.getLanguages();
+            for(ListIterator iter = languages.listIterator(); iter.hasNext(); ) {
+                NSISLanguage lang = (NSISLanguage)iter.next();
+                NSISLanguage lang2 = NSISLanguageManager.getInstance().getLanguage(lang.getName());
+                if(lang2 != null) {
+                    iter.set(lang2);
+                }
+                else {
+                    iter.remove();
+                }
+            }
+        }
+    }
+    
     protected Map loadUserTemplateStore() throws IOException, ClassNotFoundException
     {
         Map map = null;

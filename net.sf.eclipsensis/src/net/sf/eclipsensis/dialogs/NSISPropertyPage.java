@@ -160,6 +160,6 @@ public class NSISPropertyPage extends NSISSettingsPage
 
     protected boolean isSolidCompressionSupported()
     {
-        return NSISKeywords.INSTANCE.isValidKeyword("/SOLID"); //$NON-NLS-1$
+        return NSISKeywords.getInstance().isValidKeyword("/SOLID"); //$NON-NLS-1$
     }
 }

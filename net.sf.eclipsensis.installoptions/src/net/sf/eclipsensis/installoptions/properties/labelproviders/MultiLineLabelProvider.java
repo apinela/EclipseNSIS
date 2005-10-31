@@ -15,11 +15,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 
 public class MultiLineLabelProvider extends LabelProvider
 {
-    public static final MultiLineLabelProvider INSTANCE;
-    
-    static {
-        INSTANCE = new MultiLineLabelProvider();
-    }
+    public static final MultiLineLabelProvider INSTANCE = new MultiLineLabelProvider();
 
     private MultiLineLabelProvider()
     {

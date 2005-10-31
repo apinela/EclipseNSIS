@@ -45,7 +45,7 @@ public class NSISInformationProvider implements IInformationProvider,
         if (subject != null) {
             if (subject.getLength() > -1) {
                 String word = NSISTextUtility.getRegionText(textViewer.getDocument(),subject);
-                return NSISUsageProvider.INSTANCE.getUsage(word);
+                return NSISUsageProvider.getInstance().getUsage(word);
             }
         }
         return null;

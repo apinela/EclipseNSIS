@@ -38,6 +38,6 @@ public class NSISPathVariableVariableResolver extends TemplateVariableResolver
      */
     protected String[] resolveAll(TemplateContext context)
     {
-        return NSISKeywords.INSTANCE.getKeywordsGroup(NSISKeywords.PATH_VARIABLES);
+        return NSISKeywords.getInstance().getKeywordsGroup(NSISKeywords.PATH_VARIABLES);
     }
 }

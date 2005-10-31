@@ -25,7 +25,7 @@ public class NSISSection extends AbstractNSISInstallGroup
 {
 	private static final long serialVersionUID = -971949137266423189L;
 
-    public static final String TYPE = NSISKeywords.INSTANCE.getKeyword(EclipseNSISPlugin.getResourceString("wizard.section.type")); //$NON-NLS-1$
+    public static final String TYPE = NSISKeywords.getInstance().getKeyword(EclipseNSISPlugin.getResourceString("wizard.section.type")); //$NON-NLS-1$
 
     private static final Image IMAGE = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("wizard.section.icon")); //$NON-NLS-1$
     private static final String FORMAT = EclipseNSISPlugin.getResourceString("wizard.section.format"); //$NON-NLS-1$
@@ -37,11 +37,11 @@ public class NSISSection extends AbstractNSISInstallGroup
     private boolean mDefaultUnselected = false;
 
     static {
-        NSISInstallElementFactory.register(TYPE, NSISKeywords.INSTANCE.getKeyword(TYPE), IMAGE, NSISSection.class);
-        NSISKeywords.INSTANCE.addKeywordsListener(new INSISKeywordsListener() {
+        NSISInstallElementFactory.register(TYPE, NSISKeywords.getInstance().getKeyword(TYPE), IMAGE, NSISSection.class);
+        NSISKeywords.getInstance().addKeywordsListener(new INSISKeywordsListener() {
             public void keywordsChanged()
             {
-                NSISInstallElementFactory.setTypeName(TYPE, NSISKeywords.INSTANCE.getKeyword(TYPE));
+                NSISInstallElementFactory.setTypeName(TYPE, NSISKeywords.getInstance().getKeyword(TYPE));
             }
         });
     }
@@ -73,7 +73,7 @@ public class NSISSection extends AbstractNSISInstallGroup
      */
     public String getDisplayName()
     {
-        return MessageFormat.format(FORMAT,new Object[]{mName,NSISKeywords.INSTANCE.getKeyword(TYPE)}).trim();
+        return MessageFormat.format(FORMAT,new Object[]{mName,NSISKeywords.getInstance().getKeyword(TYPE)}).trim();
     }
 
     /* (non-Javadoc)

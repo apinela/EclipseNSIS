@@ -12,7 +12,6 @@ package net.sf.eclipsensis.installoptions.dnd;
 
 public class InstallOptionsTemplateTransfer extends InstallOptionsObjectTransfer
 {
-
     public static final InstallOptionsTemplateTransfer INSTANCE = new InstallOptionsTemplateTransfer();
     private static final String[] TYPE_NAMES = {new StringBuffer("InstallOptions Template transfer").append( //$NON-NLS-1$
                                                              System.currentTimeMillis()).append(

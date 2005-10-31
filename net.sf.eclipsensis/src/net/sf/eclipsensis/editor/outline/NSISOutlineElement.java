@@ -67,7 +67,7 @@ public class NSISOutlineElement
      */
     public Image getIcon()
     {
-        return NSISOutlineContentResources.INSTANCE.getImage(mType);
+        return NSISOutlineContentResources.getInstance().getImage(mType);
     }
 
     public String getType()
@@ -80,7 +80,7 @@ public class NSISOutlineElement
      */
     public String getTypeName()
     {
-        return NSISOutlineContentResources.INSTANCE.getTypeName(mType);
+        return NSISOutlineContentResources.getInstance().getTypeName(mType);
     }
     /**
      * @return Returns the position.

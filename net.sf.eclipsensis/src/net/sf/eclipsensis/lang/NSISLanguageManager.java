@@ -24,38 +24,64 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 public class NSISLanguageManager implements INSISHomeListener, IEclipseNSISService
 {
-    public static NSISLanguageManager INSTANCE = null;
+    private static NSISLanguageManager cInstance = null;
     public static final String PROPERTY_LANGUAGES="net.sf.eclipsensis.languages"; //$NON-NLS-1$
     
-    private String mDefineMUILanguageText;
-    private Map mLanguageMap = new CaseInsensitiveMap();
-    private List mLanguages = new ArrayList();;
+    private String mDefineMUILanguageText = null;
+    private Map mLanguageMap = null;
+    private List mLanguages = null;
     private Map mLocaleLanguageMap= null;
     private Map mLanguageIdLocaleMap = null;
     private Integer mDefaultLanguageId = null;
-    private PropertyChangeSupport mPropertyChangeSupport = new PropertyChangeSupport(this);
+    private PropertyChangeSupport mPropertyChangeSupport = null;
+    private File mLangDir;
+    private File mMuiLangDir;
+
+    public static NSISLanguageManager getInstance()
+    {
+        return cInstance;
+    }
 
     public void start(IProgressMonitor monitor)
     {
-        mDefineMUILanguageText = NSISKeywords.INSTANCE.getKeyword("!DEFINE").toUpperCase()+" MUI_LANGNAME "; //$NON-NLS-1$ //$NON-NLS-2$
-        try {
-            ResourceBundle bundle = ResourceBundle.getBundle(NSISLanguageManager.class.getName());
-            mLocaleLanguageMap = Common.loadMapProperty(bundle,"locale.language.map"); //$NON-NLS-1$
-            mLanguageIdLocaleMap = Common.loadMapProperty(bundle,"langid.locale.map"); //$NON-NLS-1$
-            mDefaultLanguageId = Integer.valueOf(bundle.getString("default.langid")); //$NON-NLS-1$
+        if (cInstance == null) {
+            mLanguageMap = new CaseInsensitiveMap();
+            mLanguages = new ArrayList();;
+            mPropertyChangeSupport = new PropertyChangeSupport(this);
+            mDefineMUILanguageText = NSISKeywords.getInstance()
+                    .getKeyword("!DEFINE").toUpperCase() + " MUI_LANGNAME "; //$NON-NLS-1$ //$NON-NLS-2$
+            try {
+                ResourceBundle bundle = ResourceBundle
+                        .getBundle(NSISLanguageManager.class.getName());
+                mLocaleLanguageMap = Common.loadMapProperty(bundle,
+                        "locale.language.map"); //$NON-NLS-1$
+                mLanguageIdLocaleMap = Common.loadMapProperty(bundle,
+                        "langid.locale.map"); //$NON-NLS-1$
+                mDefaultLanguageId = Integer.valueOf(bundle
+                        .getString("default.langid")); //$NON-NLS-1$
+            }
+            catch (Exception ex) {
+                mDefaultLanguageId = new Integer(1033);
+            }
+            loadLanguages(monitor);
+            NSISPreferences.INSTANCE.addListener(this);
+            cInstance = this;
         }
-        catch(Exception ex) {
-            mDefaultLanguageId = new Integer(1033);
-        }
-        loadLanguages(monitor);
-        NSISPreferences.INSTANCE.addListener(this);
-        INSTANCE = this;
     }
 
     public void stop(IProgressMonitor monitor)
     {
-        INSTANCE = null;
-        NSISPreferences.INSTANCE.removeListener(this);
+        if (cInstance == this) {
+            cInstance = null;
+            NSISPreferences.INSTANCE.removeListener(this);
+            mDefineMUILanguageText = null;
+            mLanguageMap = null;
+            mLanguages = null;
+            mLocaleLanguageMap= null;
+            mLanguageIdLocaleMap = null;
+            mDefaultLanguageId = null;
+            mPropertyChangeSupport = null;
+        }
     }
     
     public void nsisHomeChanged(IProgressMonitor monitor, String oldHome, String newHome)
@@ -80,98 +106,111 @@ public class NSISLanguageManager implements INSISHomeListener, IEclipseNSISServi
         }
         mLanguageMap.clear();
         mLanguages.clear();
+        mLangDir = null;
+        mMuiLangDir = null;
         if(EclipseNSISPlugin.getDefault().isConfigured()) {
             File nsisHome = new File(NSISPreferences.INSTANCE.getNSISHome());
             if(nsisHome.exists()) {
-                File langDir = new File(nsisHome,INSISConstants.LANGUAGE_FILES_LOCATION);
-                if(langDir.exists()) {
-                    File muiLangDir = new File(nsisHome,INSISConstants.MUI_LANGUAGE_FILES_LOCATION);
-
-                    File[] langFiles = langDir.listFiles(new FileFilter() {
+                mLangDir = new File(nsisHome,INSISConstants.LANGUAGE_FILES_LOCATION);
+                mMuiLangDir = new File(nsisHome,INSISConstants.MUI_LANGUAGE_FILES_LOCATION);
+                if(mLangDir.exists()) {
+                    File[] langFiles = mLangDir.listFiles(new FileFilter() {
                        public boolean accept(File pathName)
                        {
                            return (pathName != null && pathName.isFile() && pathName.getName().toLowerCase().endsWith(INSISConstants.LANGUAGE_FILES_EXTENSION));
                        }
                     });
                     for (int i = 0; i < langFiles.length; i++) {
-                        try {
-                            String filename = langFiles[i].getName();
-                            String name = filename.substring(0,filename.length()-INSISConstants.LANGUAGE_FILES_EXTENSION.length());
-                            String displayName = name; 
-                            int langId = 0;
-
-                            BufferedReader br = new BufferedReader(new FileReader(langFiles[i]));
-                            //The second non-comment line is the codepage
-                            int n = 0;
-                            while(n < 2) {
-                                String line = br.readLine();
-                                if(line != null) {
-                                    line = line.trim();
-                                    char c=line.charAt(0);
-                                    if(c != '#' && c != ';') {
-                                        if(n > 0) {
-                                            langId = Integer.parseInt(line);
-                                        }
-                                        n++;
-                                    }
-                                }
-                                else {
-                                    break;
-                                }
-                            }
-                            br.close();
-                            if(muiLangDir.exists() && muiLangDir.isDirectory()) {
-                                File muiLangFile = new File(muiLangDir,name+INSISConstants.MUI_LANGUAGE_FILES_EXTENSION);
-                                if(muiLangFile.exists() && muiLangFile.isFile()) {
-                                    br = new BufferedReader(new FileReader(muiLangFile));
-                                    while(true) {
-                                        String line = br.readLine();
-                                        if(line != null) {
-                                            line = line.trim();
-                                            int m = line.indexOf(';');
-                                            if(m < 0) {
-                                                m = line.indexOf('#');
-                                            }
-                                            if(m >= 0) {
-                                                line = line.substring(0,m);
-                                            }
-                                            if(line.toUpperCase().startsWith(mDefineMUILanguageText)) {
-                                                line = line.substring(mDefineMUILanguageText.length()).trim();
-                                                //Check for quotes.
-                                                m = line.indexOf('"');
-                                                if(m >= 0) {
-                                                    n = line.indexOf('"',m+1);
-                                                    if(n >= 0) {
-                                                        line = line.substring(m+1,n);
-                                                    }
-                                                    else {
-                                                        line = line.substring(m+1);
-                                                    }
-                                                }
-                                                displayName = line;
-                                                break;
-                                            }
-                                        }
-                                        else {
-                                            break;
-                                        }
-                                    }
-                                    br.close();
-                                }
-                            }
-                            NSISLanguage language = new NSISLanguage(name,displayName,langId);
-                            mLanguageMap.put(name,language);
-                            mLanguageMap.put(new Integer(langId),language);
+                        NSISLanguage language = loadLanguage(langFiles[i]);
+                        if (language != null) {
+                            mLanguageMap.put(language.getName(), language);
+                            mLanguageMap.put(new Integer(language.getLangId()), language);
                             mLanguages.add(language);
-                        }
-                        catch(Exception ex) {
-                            EclipseNSISPlugin.getDefault().log(ex);
                         }
                     }
                 }
             }
         }
         mPropertyChangeSupport.firePropertyChange(PROPERTY_LANGUAGES,null,mLanguages);
+    }
+
+    private NSISLanguage loadLanguage(File langFile)
+    {
+        NSISLanguage language = null;
+        try {
+            String filename = langFile.getName();
+            if(filename.endsWith(INSISConstants.LANGUAGE_FILES_EXTENSION)) {
+                String name = filename.substring(0,filename.length()-INSISConstants.LANGUAGE_FILES_EXTENSION.length());
+                String displayName = name; 
+                int langId = 0;
+    
+                BufferedReader br = new BufferedReader(new FileReader(langFile));
+                //The second non-comment line is the codepage
+                int n = 0;
+                while(n < 2) {
+                    String line = br.readLine();
+                    if(line != null) {
+                        line = line.trim();
+                        char c=line.charAt(0);
+                        if(c != '#' && c != ';') {
+                            if(n > 0) {
+                                langId = Integer.parseInt(line);
+                            }
+                            n++;
+                        }
+                    }
+                    else {
+                        break;
+                    }
+                }
+                br.close();
+                if(mMuiLangDir.exists() && mMuiLangDir.isDirectory()) {
+                    File muiLangFile = new File(mMuiLangDir,name+INSISConstants.MUI_LANGUAGE_FILES_EXTENSION);
+                    if(muiLangFile.exists() && muiLangFile.isFile()) {
+                        br = new BufferedReader(new FileReader(muiLangFile));
+                        while(true) {
+                            String line = br.readLine();
+                            if(line != null) {
+                                line = line.trim();
+                                int m = line.indexOf(';');
+                                if(m < 0) {
+                                    m = line.indexOf('#');
+                                }
+                                if(m >= 0) {
+                                    line = line.substring(0,m);
+                                }
+                                if(line.toUpperCase().startsWith(mDefineMUILanguageText)) {
+                                    line = line.substring(mDefineMUILanguageText.length()).trim();
+                                    //Check for quotes.
+                                    m = line.indexOf('"');
+                                    if(m >= 0) {
+                                        n = line.indexOf('"',m+1);
+                                        if(n >= 0) {
+                                            line = line.substring(m+1,n);
+                                        }
+                                        else {
+                                            line = line.substring(m+1);
+                                        }
+                                    }
+                                    displayName = line;
+                                    break;
+                                }
+                            }
+                            else {
+                                break;
+                            }
+                        }
+                        br.close();
+                    }
+                }
+                language = new NSISLanguage(name,displayName,langId);
+            }
+        }
+        catch(Exception ex) {
+            EclipseNSISPlugin.getDefault().log(ex);
+            language = null;
+        }
+        return language;
     }
 
     public List getLanguages()
@@ -213,6 +252,28 @@ public class NSISLanguageManager implements INSISHomeListener, IEclipseNSISServi
     public NSISLanguage getLanguage(String name)
     {
         return (NSISLanguage)mLanguageMap.get(name);
+    }
+    
+    public NSISLanguage getLanguage(int langId)
+    {
+        return (NSISLanguage)mLanguageMap.get(new Integer(langId));
+    }
+    
+    public NSISLanguage getLanguage(File langFile)
+    {
+        if(langFile.exists()) {
+            if(langFile.getParent().equals(mLangDir)) {
+                String name = langFile.getName();
+                if(name.endsWith(INSISConstants.LANGUAGE_FILES_EXTENSION)) {
+                    return getLanguage(name.substring(0,name.length()-INSISConstants.LANGUAGE_FILES_EXTENSION.length()));
+                }
+                else {
+                    return null;
+                }
+            }
+            return loadLanguage(langFile);
+        }
+        return null;
     }
 
     public Locale getLocaleForLangId(int langId)

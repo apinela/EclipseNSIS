@@ -79,7 +79,7 @@ public class LanguageComboContributionItem extends ContributionItem implements P
         super();
         mPartService = partService;
         mPartService.addPartListener(mPartListener);
-        NSISLanguageManager.INSTANCE.addPropertyChangedListener(this);
+        NSISLanguageManager.getInstance().addPropertyChangedListener(this);
         mPreferenceStore.addPropertyChangeListener(this);
     }
 
@@ -97,7 +97,7 @@ public class LanguageComboContributionItem extends ContributionItem implements P
                     newSel = DEFAULT;
                 }
                 else {
-                    newSel = NSISLanguageManager.INSTANCE.getLanguage(newValue);
+                    newSel = NSISLanguageManager.getInstance().getLanguage(newValue);
                 }
                 IStructuredSelection sel = (IStructuredSelection)mComboViewer.getSelection();
                 if(!sel.isEmpty()) {
@@ -129,7 +129,7 @@ public class LanguageComboContributionItem extends ContributionItem implements P
         }
         String pref = mPreferenceStore.getString(IInstallOptionsConstants.PREFERENCE_PREVIEW_LANG);
         Object sel;
-        List languages = new ArrayList(NSISLanguageManager.INSTANCE.getLanguages());
+        List languages = new ArrayList(NSISLanguageManager.getInstance().getLanguages());
         Collections.sort(languages, cLanguageComparator);
         languages.add(0,DEFAULT);
         mComboViewer.setInput(languages);
@@ -137,7 +137,7 @@ public class LanguageComboContributionItem extends ContributionItem implements P
             sel = DEFAULT;
         }
         else {
-            sel = NSISLanguageManager.INSTANCE.getLanguage(pref);
+            sel = NSISLanguageManager.getInstance().getLanguage(pref);
         }
         if(!languages.contains(sel)) {
             mPreferenceStore.setValue(IInstallOptionsConstants.PREFERENCE_PREVIEW_LANG,""); //$NON-NLS-1$
@@ -197,7 +197,7 @@ public class LanguageComboContributionItem extends ContributionItem implements P
 
     public void dispose() 
     {
-        NSISLanguageManager.INSTANCE.removePropertyChangedListener(this);
+        NSISLanguageManager.getInstance().removePropertyChangedListener(this);
         mPreferenceStore.removePropertyChangeListener(this);
         if (mPartListener == null) {
             return;

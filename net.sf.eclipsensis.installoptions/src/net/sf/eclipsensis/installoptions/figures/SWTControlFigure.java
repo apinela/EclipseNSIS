@@ -210,10 +210,13 @@ public abstract class SWTControlFigure extends ScrollBarsFigure
         if(pixel != -1) {
             Rectangle rect = new Rectangle(x-TRANSPARENCY_TOLERANCE,y-TRANSPARENCY_TOLERANCE,
                                            2*TRANSPARENCY_TOLERANCE+1,2*TRANSPARENCY_TOLERANCE+1);
-            rect = rect.intersect(getBounds().crop(getInsets()));
+            Rectangle cropped = getBounds().crop(getInsets());
+            rect = rect.intersect(cropped).getTranslated(cropped.getLocation().getNegated());
             if(!rect.isEmpty()) {
-                for(int i=0; i<rect.width; i++) {
-                    for(int j=0; j<rect.height; j++) {
+                int right = rect.x+rect.width;
+                for(int i=rect.x; i<right; i++) {
+                    int bottom = rect.y+rect.height;
+                    for(int j=rect.y; j<bottom; j++) {
                         int p = mImageData.getPixel(i,j);
                         if(p != pixel) {
                             return false;

@@ -11,6 +11,7 @@ package net.sf.eclipsensis.job;
 
 import java.util.*;
 
+import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.core.runtime.*;
@@ -100,6 +101,12 @@ public class JobScheduler
         if(family != null && mRunning && mJobFamilies.contains(family)) {
             mJobFamilies.remove(family);
             Platform.getJobManager().cancel(family);
+            try {
+                Platform.getJobManager().join(family, new NullProgressMonitor());
+            }
+            catch (Exception e) {
+                EclipseNSISPlugin.getDefault().log(e);
+            }
         }
     }
 }

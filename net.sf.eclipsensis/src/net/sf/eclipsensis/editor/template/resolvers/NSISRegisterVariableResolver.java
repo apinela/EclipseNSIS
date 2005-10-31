@@ -38,6 +38,6 @@ public class NSISRegisterVariableResolver extends TemplateVariableResolver
      */
     protected String[] resolveAll(TemplateContext context)
     {
-        return NSISKeywords.INSTANCE.getKeywordsGroup(NSISKeywords.REGISTERS);
+        return NSISKeywords.getInstance().getKeywordsGroup(NSISKeywords.REGISTERS);
     }
 }

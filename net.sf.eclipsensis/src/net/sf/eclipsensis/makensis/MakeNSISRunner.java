@@ -32,10 +32,10 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 public class MakeNSISRunner implements INSISConstants
 {
-    public static final MakeNSISRunner INSTANCE = null;
     public static final Pattern MAKENSIS_SYNTAX_ERROR_PATTERN = Pattern.compile("[\\w]+ expects [0-9\\-\\+]+ parameters, got [0-9]\\."); //$NON-NLS-1$
     public static final Pattern MAKENSIS_ERROR_PATTERN = Pattern.compile("error in script \"(.+)\" on line (\\d+).*",Pattern.CASE_INSENSITIVE); //$NON-NLS-1$
     public static final Pattern MAKENSIS_WARNING_PATTERN = Pattern.compile(".+\\((.+):(\\d+)\\).*"); //$NON-NLS-1$
+    public static final Pattern MAKENSIS_OUTFILE_PATTERN = Pattern.compile("Output: \"?([^\"]+)\"?"); //$NON-NLS-1$
 
     public static final String MAKENSIS_NOTIFYHWND_OPTION = EclipseNSISPlugin.getResourceString("makensis.notifyhwnd.option"); //$NON-NLS-1$
     public static final String MAKENSIS_EXECUTE_OPTION = EclipseNSISPlugin.getResourceString("makensis.execute.option"); //$NON-NLS-1$
@@ -211,7 +211,7 @@ public class MakeNSISRunner implements INSISConstants
                         if(buf.length() > 0) {
                             problems.add(new NSISScriptProblem(path,NSISScriptProblem.TYPE_ERROR,buf.toString()));
                         }
-                        buf.delete(0,buf.length());
+                        buf.setLength(0);
                     }
                     else {
                         buf.append(text);
@@ -359,7 +359,7 @@ public class MakeNSISRunner implements INSISConstants
                     options.add(MAKENSIS_VERBOSITY_OPTION+settings.getVerbosity()); //$NON-NLS-1$
                 }
                 
-                NSISKeywords keywords = NSISKeywords.INSTANCE;
+                NSISKeywords keywords = NSISKeywords.getInstance();
                 String setCompressorFinalOption = new StringBuffer(MAKENSIS_EXECUTE_OPTION).append(
                                                                  keywords.getKeyword("SetCompressor")).append( //$NON-NLS-1$
                                                                  " ").append(keywords.getKeyword("/FINAL")).append( //$NON-NLS-1$ //$NON-NLS-2$
@@ -582,6 +582,11 @@ public class MakeNSISRunner implements INSISConstants
         long n = System.currentTimeMillis();
         MakeNSISResults results = new MakeNSISResults(new File(cmdArray[cmdArray.length-1]));
         try {
+            if(EclipseNSISPlugin.getDefault().isDebugging()) {
+                EclipseNSISPlugin.getDefault().log(new StringBuffer("Command Line:").append(LINE_SEPARATOR).append(
+                        NSISPreferences.INSTANCE.getNSISExe()).append(" ").append(
+                        Common.flatten(cmdArray,' ')).toString());
+            }
             MakeNSISProcess proc = createProcess(NSISPreferences.INSTANCE.getNSISExe(),cmdArray,env,workDir);
             setCompileProcess(proc);
             Process process = proc.getProcess();
@@ -601,6 +606,9 @@ public class MakeNSISRunner implements INSISConstants
                     })).start();
     
             int rv = process.waitFor();
+            if(EclipseNSISPlugin.getDefault().isDebugging()) {
+                EclipseNSISPlugin.getDefault().log("Return Code: "+rv);
+            }
             if(proc.isCanceled()) {
                 rv = MakeNSISResults.RETURN_CANCEL;
             }
@@ -608,7 +616,34 @@ public class MakeNSISRunner implements INSISConstants
             String outputFileName = null;
             if(results.getReturnCode() == MakeNSISResults.RETURN_SUCCESS) {
                 outputFileName = getOutputFileName();
+                if(outputFileName == null) {
+                    int i=0;
+                    while(outputFileName == null && i<10) {
+                        try {
+                            Thread.sleep(100);
+                        }
+                        catch (Exception e) {
+                        }
+                        outputFileName = getOutputFileName();
+                    }
+                    if(outputFileName == null) {
+                        //See if we can grab from console
+                        List contents = model.getContents();
+                        int size = contents.size();
+                        for(i=size-1; i>= 0; i--) {
+                            String text = ((NSISConsoleLine)contents.get(i)).toString();
+                            Matcher m = MAKENSIS_OUTFILE_PATTERN.matcher(text);
+                            if(m.matches()) {
+                                outputFileName = m.group(1);
+                                break;
+                            }
+                        }
+                    }
+                }
                 results.setOutputFileName(outputFileName);
+                if(EclipseNSISPlugin.getDefault().isDebugging()) {
+                    EclipseNSISPlugin.getDefault().log("Output File Name: "+outputFileName);
+                }
             }
             else {
                 results.setCanceled(proc.isCanceled());
@@ -679,25 +714,21 @@ public class MakeNSISRunner implements INSISConstants
         }
     } 
     
-    public static void startup()
+    public synchronized static void startup()
     {
-        if(cHwnd <= 0) {
-            synchronized(cHwndLock) {
-                if(cHwnd <= 0) {
-                    cHwnd = init();
-                }
+        synchronized(cHwndLock) {
+            if(cHwnd <= 0) {
+                cHwnd = init();
             }
         }
     }
     
     public static void shutdown()
     {
-        if(cHwnd > 0) {
-            synchronized(cHwndLock) {
-                if(cHwnd > 0) {
-                    destroy();
-                    cHwnd = 0;
-                }
+        synchronized(cHwndLock) {
+            if(cHwnd > 0) {
+                destroy();
+                cHwnd = 0;
             }
         }
     }

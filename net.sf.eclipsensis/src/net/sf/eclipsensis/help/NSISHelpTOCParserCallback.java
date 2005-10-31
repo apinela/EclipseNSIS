@@ -41,12 +41,12 @@ public class NSISHelpTOCParserCallback extends HTMLEditorKit.ParserCallback
                     List keywords = (List)mTopicMap.get(mKeyword);
                     for (Iterator iter = keywords.iterator(); iter.hasNext();) {
                         String keyword = (String)iter.next();
-                        if(NSISKeywords.INSTANCE.isValidKeyword(keyword)) {
+                        if(NSISKeywords.getInstance().isValidKeyword(keyword)) {
                             mKeywordHelpMap.put(keyword, mLocation);
                         }
                     }
                 }
-                else if(NSISKeywords.INSTANCE.isValidKeyword(mKeyword)) {
+                else if(NSISKeywords.getInstance().isValidKeyword(mKeyword)) {
                     mKeywordHelpMap.put(mKeyword,mLocation);
                 }
             }

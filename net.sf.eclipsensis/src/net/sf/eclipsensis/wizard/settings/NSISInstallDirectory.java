@@ -27,7 +27,7 @@ public class NSISInstallDirectory extends AbstractNSISInstallItem implements INS
     private static final Image RECURSIVE_IMAGE = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("wizard.recursive.directory.icon")); //$NON-NLS-1$
     
     private String mName = null;
-    private String mDestination = NSISKeywords.INSTANCE.getKeyword("$INSTDIR"); //$NON-NLS-1$
+    private String mDestination = NSISKeywords.getInstance().getKeyword("$INSTDIR"); //$NON-NLS-1$
     private int mOverwriteMode = OVERWRITE_ON;
     private boolean mRecursive = false;
     

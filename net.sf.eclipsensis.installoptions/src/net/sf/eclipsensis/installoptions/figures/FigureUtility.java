@@ -156,18 +156,14 @@ public class FigureUtility
         return (int)div(dim.width,52);
     }
     
-    private static Dimension getFontSize(Font f)
+    private static synchronized Dimension getFontSize(Font f)
     {
         Dimension size = (Dimension)cFontSizes.get(f);
         if(size == null) {
-            synchronized (FigureUtility.class) {
-                size = (Dimension)cFontSizes.get(f);
-                if(size == null) {
-                    size = new Dimension(getFontAverageCharWidth(f),getFontHeight(f));
-                    cFontSizes.put(f,size);
-                }
-            }
+            size = new Dimension(getFontAverageCharWidth(f),getFontHeight(f));
+            cFontSizes.put(f,size);
         }
+
         return size;
     }
 

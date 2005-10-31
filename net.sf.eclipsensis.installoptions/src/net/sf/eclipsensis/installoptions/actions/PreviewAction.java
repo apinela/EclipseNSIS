@@ -160,17 +160,17 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
             String pref = InstallOptionsPlugin.getDefault().getPreferenceStore().getString(IInstallOptionsConstants.PREFERENCE_PREVIEW_LANG);
             NSISLanguage lang;
             if(pref.equals("")) { //$NON-NLS-1$
-                lang = NSISLanguageManager.INSTANCE.getDefaultLanguage();
+                lang = NSISLanguageManager.getInstance().getDefaultLanguage();
             }
             else {
-                lang = NSISLanguageManager.INSTANCE.getLanguage(pref); 
+                lang = NSISLanguageManager.getInstance().getLanguage(pref); 
                 if(lang == null) {
-                    lang = NSISLanguageManager.INSTANCE.getDefaultLanguage();
+                    lang = NSISLanguageManager.getInstance().getDefaultLanguage();
                     InstallOptionsPlugin.getDefault().getPreferenceStore().setValue(IInstallOptionsConstants.PREFERENCE_PREVIEW_LANG, ""); //$NON-NLS-1$
                 }
             }
             symbols.put("PREVIEW_LANG",lang.getName()); //$NON-NLS-1$
-            Locale locale = NSISLanguageManager.INSTANCE.getLocaleForLangId(lang.getLangId());
+            Locale locale = NSISLanguageManager.getInstance().getLocaleForLangId(lang.getLangId());
             if(getId().equals(PREVIEW_MUI_ID)) {
                 symbols.put("PREVIEW_TITLE",InstallOptionsPlugin.getResourceString(locale,"preview.setup.title")); //$NON-NLS-1$ //$NON-NLS-2$
                 symbols.put("PREVIEW_SUBTITLE",InstallOptionsPlugin.getResourceString(locale,"preview.setup.subtitle")); //$NON-NLS-1$ //$NON-NLS-2$

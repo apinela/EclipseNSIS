@@ -89,7 +89,7 @@ public class NSISValidator implements INSISConstants
         return null;
     }
 
-    public static Properties loadNSISOptions(File nsisEXE)
+    public static Properties loadNSISDefaultSymbols(File nsisEXE)
     {
         Properties props = new Properties();
         String exeName = nsisEXE.getAbsoluteFile().getAbsolutePath();

@@ -11,25 +11,31 @@ package net.sf.eclipsensis.settings;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.dialogs.MinimalProgressMonitorDialog;
+import net.sf.eclipsensis.dialogs.NSISPreferencePage;
 import net.sf.eclipsensis.editor.NSISTaskTag;
 import net.sf.eclipsensis.editor.text.NSISSyntaxStyle;
+import net.sf.eclipsensis.filemon.FileMonitor;
+import net.sf.eclipsensis.filemon.IFileChangeListener;
 import net.sf.eclipsensis.util.*;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.StringConverter;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 
-public class NSISPreferences extends NSISSettings
+public class NSISPreferences extends NSISSettings implements IFileChangeListener
 {
     public static final RGB SYNTAX_COMMENTS = new RGB(0x7f,0x9f,0xbf);
     public static final RGB SYNTAX_ATTRIBUTES = new RGB(0x80,0,0);
@@ -54,7 +60,7 @@ public class NSISPreferences extends NSISSettings
     private Version mNSISVersion = null;
     private boolean mUseEclipseHelp = true;
     private boolean mAutoShowConsole = true;
-    private Properties mNSISOptions = null;
+    private Properties mNSISDefaultSymbols = null;
     private Collection mTaskTags = null;
     private Collection mDefaultTaskTags = null;
     private boolean mCaseSensitiveTaskTags = true;
@@ -85,33 +91,6 @@ public class NSISPreferences extends NSISSettings
         mListeners.remove(listener);
     }
 
-    private void notifyListeners(final String oldHome, final String newHome)
-    {
-        if(mListeners.size() > 0) {
-            final IRunnableWithProgress op = new IRunnableWithProgress(){
-                public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException
-                {
-                    monitor.beginTask(EclipseNSISPlugin.getResourceString("propagating.home.message"),10*mListeners.size()); //$NON-NLS-1$
-                    for (Iterator iter = mListeners.iterator(); iter.hasNext();) {
-                        try {
-                            ((INSISHomeListener)iter.next()).nsisHomeChanged(monitor, oldHome, newHome);
-                        }
-                        catch (Exception e) {
-                            EclipseNSISPlugin.getDefault().log(e);
-                        }
-                        monitor.worked(10);
-                    }
-                }
-            };
-            ProgressMonitorDialog dialog = new MinimalProgressMonitorDialog(Display.getDefault().getActiveShell());
-            try {
-                dialog.run(false,false,op);
-            }
-            catch (Exception e) {
-                EclipseNSISPlugin.getDefault().log(e);
-            }
-        }
-    }
     /**
      * @return Returns the preferenceStore.
      */
@@ -151,6 +130,7 @@ public class NSISPreferences extends NSISSettings
     private void initializeNSISPreferences()
     {
         initializePreference(NSIS_HOME,""); //$NON-NLS-1$
+        initializePreference(NOTIFY_MAKENSIS_CHANGED, Boolean.TRUE);
         initializePreference(USE_ECLIPSE_HELP,Boolean.FALSE); //$NON-NLS-1$
         initializePreference(HDRINFO,(getDefaultHdrInfo()?Boolean.TRUE:Boolean.FALSE));
         initializePreference(LICENSE,(getDefaultLicense()?Boolean.TRUE:Boolean.FALSE));
@@ -334,20 +314,144 @@ public class NSISPreferences extends NSISSettings
      */
     public void setNSISHome(String nsisHome)
     {
-        String oldHome = mNSISHome;
+        final String oldHome = mNSISHome;
+        internalSetNSISHome(nsisHome);
+        if(Display.getCurrent() != null) {
+            fireNSISHomeChanged(oldHome, mNSISHome);
+        }
+        else {
+            Display.getDefault().asyncExec(new Runnable() {
+                public void run()
+                {
+                    fireNSISHomeChanged(oldHome, mNSISHome);
+                }
+            });
+        }
+    }
+    
+    private void fireNSISHomeChanged(final String oldHome, final String newHome)
+    {
+        if(!Common.stringsAreEqual(oldHome, newHome) && mListeners.size() > 0) {
+           ProgressMonitorDialog dialog = new MinimalProgressMonitorDialog(Display.getDefault().getActiveShell());
+           try {
+               dialog.run(false,false,new NSISHomeChangedRunnable(oldHome, newHome));
+           }
+           catch (Exception e) {
+               EclipseNSISPlugin.getDefault().log(e);
+           }
+        }
+    }
+    
+    /**
+     * @param nsisHome The NSISHome to set.
+     */
+    private void internalSetNSISHome(String nsisHome)
+    {
+        if(mNSISExe != null) {
+            FileMonitor.INSTANCE.unregister(mNSISExe,this);
+        }
         mNSISExe = (nsisHome==null?null:NSISValidator.findNSISExe(new File(nsisHome)));
         if(mNSISExe != null) {
             mNSISHome = nsisHome;
             mNSISVersion = NSISValidator.getNSISVersion(mNSISExe);
-            mNSISOptions = NSISValidator.loadNSISOptions(mNSISExe);
+            mNSISDefaultSymbols = NSISValidator.loadNSISDefaultSymbols(mNSISExe);
+            FileMonitor.INSTANCE.register(mNSISExe,this);
         }
         else {
             mNSISHome = ""; //$NON-NLS-1$
             mNSISVersion = Version.EMPTY_VERSION;
-            mNSISOptions = null;
+            mNSISDefaultSymbols = null;
         }
-        if(!Common.stringsAreEqual(oldHome, mNSISHome)) {
-            notifyListeners(oldHome, mNSISHome);
+    }
+    
+    private void setBestNSISHome(String nsisHome)
+    {
+        internalSetNSISHome(nsisHome);
+        boolean dirty = false;
+        while(Common.isEmpty(mNSISHome)) {
+            dirty = true;
+            NSISPreferencePage.removeNSISHome(nsisHome);
+            if(NSISPreferencePage.NSIS_HOMES.size() > 0) {
+                nsisHome = (String)NSISPreferencePage.NSIS_HOMES.get(0);
+                internalSetNSISHome(nsisHome);
+            }
+            else {
+                break;
+            }
+        }
+        if(dirty) {
+            NSISPreferencePage.saveNSISHomes();
+        }
+    }
+
+    public void fileChanged(int type, File file)
+    {
+        if(file.equals(mNSISExe)) {
+            final String message;
+            if(type == FileMonitor.FILE_MODIFIED) {
+                message = EclipseNSISPlugin.getResourceString("makensis.modified.message");
+            }
+            else if(type == FileMonitor.FILE_DELETED) {
+                message = EclipseNSISPlugin.getResourceString("makensis.deleted.message");
+            }
+            else {
+                return;
+            }
+            final String nsisHome = mNSISHome;
+            mNSISHome = null;
+            final boolean silent = !mPreferenceStore.getBoolean(NOTIFY_MAKENSIS_CHANGED);
+            if(silent) {
+                setBestNSISHome(nsisHome);
+                if(mListeners.size() > 0) {
+                    new NSISHomeChangedRunnable(null, mNSISHome).run(new NullProgressMonitor());
+                }
+                
+                Display.getDefault().syncExec(new Runnable() {
+                    public void run()
+                    {
+                        maybeConfigure();
+                    }
+                });
+            }
+            else {
+                Display.getDefault().asyncExec(new Runnable() {
+                    public void run()
+                    {
+                        Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+                        MessageDialogWithToggle dialog = new MessageDialogWithToggle(
+                                shell,
+                                EclipseNSISPlugin.getDefault().getName(),
+                                EclipseNSISPlugin.getShellImage(), 
+                                message,
+                                MessageDialog.WARNING, 
+                                new String[] { IDialogConstants.OK_LABEL }, 0, 
+                                EclipseNSISPlugin.getResourceString("notify.makensis.changed.toggle"), silent); //$NON-NLS-1$
+                        dialog.setPrefStore(mPreferenceStore);
+                        dialog.setPrefKey(NOTIFY_MAKENSIS_CHANGED);
+                        dialog.open();
+                        BusyIndicator.showWhile(shell.getDisplay(), new Runnable() {
+                            public void run()
+                            {
+                                setBestNSISHome(nsisHome);
+                                fireNSISHomeChanged(null, mNSISHome);
+                            }
+                        });
+                        maybeConfigure();
+                    }
+                });
+            }
+        }
+        
+    }
+
+    private void maybeConfigure()
+    {
+        if(Common.isEmpty(mNSISHome)) {
+           Common.openWarning(Display.getDefault().getActiveShell(),
+                   EclipseNSISPlugin.getDefault().getName(),
+                   EclipseNSISPlugin.getResourceString("unconfigured.warning"),
+                   EclipseNSISPlugin.getShellImage());
+           NSISPreferencePage.show();
         }
     }
 
@@ -364,9 +468,9 @@ public class NSISPreferences extends NSISSettings
     /**
      * @return Returns the NSIS Options.
      */
-    public Properties getNSISOptions()
+    public Properties getNSISDefaultSymbols()
     {
-        return mNSISOptions;
+        return mNSISDefaultSymbols;
     }
     
     /**
@@ -481,9 +585,9 @@ public class NSISPreferences extends NSISSettings
         mPreferenceStore.setValue(name, IPreferenceStore.STRING_DEFAULT_DEFAULT);
     }
 
-    public String getNSISOption(String option)
+    public String getNSISDefaultSymbol(String symbol)
     {
-        return mNSISOptions.getProperty(option);
+        return mNSISDefaultSymbols.getProperty(symbol);
     }
     
     protected void storeObject(String name, Object object)
@@ -531,5 +635,31 @@ public class NSISPreferences extends NSISSettings
     private String makeSettingFileName(String name)
     {
         return new StringBuffer(getClass().getName()).append(".").append(name).append(".ser").toString(); //$NON-NLS-1$ //$NON-NLS-2$
+    }
+
+    private class NSISHomeChangedRunnable implements IRunnableWithProgress
+    {
+        private String mOldHome;
+        private String mNewHome;
+
+        public NSISHomeChangedRunnable(String oldHome, String newHome)
+        {
+            mOldHome = oldHome;
+            mNewHome = newHome;
+        }
+
+        public void run(IProgressMonitor monitor)
+        {
+            monitor.beginTask(EclipseNSISPlugin.getResourceString("propagating.home.message"),10*mListeners.size()); //$NON-NLS-1$
+            for (Iterator iter = mListeners.iterator(); iter.hasNext();) {
+                try {
+                    ((INSISHomeListener)iter.next()).nsisHomeChanged(monitor, mOldHome, mNewHome);
+                }
+                catch (Exception e) {
+                    EclipseNSISPlugin.getDefault().log(e);
+                }
+                monitor.worked(10);
+            }
+        }
     }
 }

@@ -20,14 +20,10 @@ import org.eclipse.swt.graphics.Image;
 public class InstallOptionsTemplateManager extends AbstractTemplateManager
 {
     private static final Path cPath = new Path("templates"); //$NON-NLS-1$
-    public static final InstallOptionsTemplateManager INSTANCE;
+    public static final InstallOptionsTemplateManager INSTANCE = new InstallOptionsTemplateManager();
     
     private List mListeners = new ArrayList();
     private Map mTemplateFactories = new HashMap();
-    
-    static {
-        INSTANCE = new InstallOptionsTemplateManager();
-    }
 
     private InstallOptionsTemplateManager()
     {
@@ -49,18 +45,13 @@ public class InstallOptionsTemplateManager extends AbstractTemplateManager
         return InstallOptionsTemplate.class;
     }
     
-    public InstallOptionsTemplateCreationFactory getTemplateFactory(InstallOptionsTemplate template)
+    public synchronized InstallOptionsTemplateCreationFactory getTemplateFactory(InstallOptionsTemplate template)
     {
         InstallOptionsTemplateCreationFactory factory = (InstallOptionsTemplateCreationFactory)mTemplateFactories.get(template);
         if(factory == null) {
-            synchronized (this) {
-                factory = (InstallOptionsTemplateCreationFactory)mTemplateFactories.get(template);
-                if(factory == null) {
-                    if(getTemplates().contains(template)) {
-                        factory = new InstallOptionsTemplateCreationFactory(template);
-                        mTemplateFactories.put(template, factory);
-                    }
-                }
+            if(getTemplates().contains(template)) {
+                factory = new InstallOptionsTemplateCreationFactory(template);
+                mTemplateFactories.put(template, factory);
             }
         }
         return factory;

@@ -25,29 +25,43 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 public class NSISUsageProvider implements IEclipseNSISService
 {
-    public static NSISUsageProvider INSTANCE = null;
+    private static NSISUsageProvider cInstance = null;
     
-    private Map mUsages = new CaseInsensitiveMap();
+    private Map mUsages = null;
     private String mLineSeparator;
-    private INSISHomeListener mNSISHomeListener = new INSISHomeListener() {
-        public void nsisHomeChanged(IProgressMonitor monitor, String oldHome, String newHome)
-        {
-            loadUsages(monitor);
-        }
-    };
+    private INSISHomeListener mNSISHomeListener = null;
+
+    public static NSISUsageProvider getInstance()
+    {
+        return cInstance;
+    }
 
     public void start(IProgressMonitor monitor)
     {
-        mLineSeparator = System.getProperty("line.separator"); //$NON-NLS-1$
-        loadUsages(monitor);
-        NSISPreferences.INSTANCE.addListener(mNSISHomeListener);
-        INSTANCE = this;
+        if (cInstance == null) {
+            mUsages = new CaseInsensitiveMap();
+            mNSISHomeListener = new INSISHomeListener() {
+                public void nsisHomeChanged(IProgressMonitor monitor, String oldHome, String newHome)
+                {
+                    loadUsages(monitor);
+                }
+            };
+            mLineSeparator = System.getProperty("line.separator"); //$NON-NLS-1$
+            loadUsages(monitor);
+            NSISPreferences.INSTANCE.addListener(mNSISHomeListener);
+            cInstance = this;
+        }
     }
 
     public void stop(IProgressMonitor monitor)
     {
-        INSTANCE = null;
-        NSISPreferences.INSTANCE.removeListener(mNSISHomeListener);
+        if (cInstance == this) {
+            cInstance = null;
+            NSISPreferences.INSTANCE.removeListener(mNSISHomeListener);
+            mUsages = null;
+            mNSISHomeListener = null;
+            mLineSeparator = null;
+        }
     }
     
     public String getUsage(String keyWord)

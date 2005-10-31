@@ -153,7 +153,7 @@ public class NSISInstallShortcut extends AbstractNSISInstallItem
     {
         super.setSettings(settings);
         if(settings != null && !Common.isEmpty(getSettings().getStartMenuGroup()) && Common.isEmpty(mLocation)) {
-            mLocation = new StringBuffer(NSISKeywords.INSTANCE.getKeyword("$SMPROGRAMS")).append("\\").append( //$NON-NLS-1$ //$NON-NLS-2$
+            mLocation = new StringBuffer(NSISKeywords.getInstance().getKeyword("$SMPROGRAMS")).append("\\").append( //$NON-NLS-1$ //$NON-NLS-2$
                     getSettings().getStartMenuGroup()).toString(); //$NON-NLS-1$
         }
     }

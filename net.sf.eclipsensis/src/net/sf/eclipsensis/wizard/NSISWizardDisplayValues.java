@@ -57,7 +57,7 @@ public class NSISWizardDisplayValues implements INSISWizardConstants
     {
         List list = new ArrayList();
         for (int i = 0; i < HKEY_NAMES.length; i++) {
-            if(NSISKeywords.INSTANCE.isValidKeyword(HKEY_NAMES[i])) {
+            if(NSISKeywords.getInstance().isValidKeyword(HKEY_NAMES[i])) {
                 list.add(HKEY_NAMES[i]);
             }
         }

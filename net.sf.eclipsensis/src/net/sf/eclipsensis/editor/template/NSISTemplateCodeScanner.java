@@ -52,42 +52,38 @@ public class NSISTemplateCodeScanner extends NSISCodeScanner
         super.reset(full);
     }
     
-    protected IRule getTemplateVariableRule()
+    protected synchronized IRule getTemplateVariableRule()
     {
         if(mTemplateVariableRule == null) {
-            synchronized(this) {
-                if(mTemplateVariableRule == null) {
-                    mTemplateVariableRule = new NSISWordPatternRule(new NSISWordDetector(){
-                        private boolean mFoundEndSequence = false;
-                        /*
-                         * (non-Javadoc) Method declared on IWordDetector.
-                         */
-                        public boolean isWordStart(char character)
-                        {
-                            mFoundEndSequence = false;
-                            return Character.isLetter(character);
-                        }
-                        
-                        public boolean isWordPart(char character)
-                        {
-                            if(!mFoundEndSequence) {
-                                if(character == '%') {
-                                    mFoundEndSequence = true;
-                                    return true;
-                                }
-                                else {
-                                    mFoundEndSequence = false;
-                                    return super.isWordPart(character);
-                                }
-                            }
-                            else {
-                                mFoundEndSequence = false;
-                                return false;
-                            }
-                        }
-                    }, "%","%",new Token(new TextAttribute(JFaceResources.getColorRegistry().get(INSISPreferenceConstants.TEMPLATE_VARIABLE_COLOR)))); //$NON-NLS-1$ //$NON-NLS-2$
+            mTemplateVariableRule = new NSISWordPatternRule(new NSISWordDetector(){
+                private boolean mFoundEndSequence = false;
+                /*
+                 * (non-Javadoc) Method declared on IWordDetector.
+                 */
+                public boolean isWordStart(char character)
+                {
+                    mFoundEndSequence = false;
+                    return Character.isLetter(character);
                 }
-            }
+                
+                public boolean isWordPart(char character)
+                {
+                    if(!mFoundEndSequence) {
+                        if(character == '%') {
+                            mFoundEndSequence = true;
+                            return true;
+                        }
+                        else {
+                            mFoundEndSequence = false;
+                            return super.isWordPart(character);
+                        }
+                    }
+                    else {
+                        mFoundEndSequence = false;
+                        return false;
+                    }
+                }
+            }, "%","%",new Token(new TextAttribute(JFaceResources.getColorRegistry().get(INSISPreferenceConstants.TEMPLATE_VARIABLE_COLOR)))); //$NON-NLS-1$ //$NON-NLS-2$
         }
         return mTemplateVariableRule;
     }

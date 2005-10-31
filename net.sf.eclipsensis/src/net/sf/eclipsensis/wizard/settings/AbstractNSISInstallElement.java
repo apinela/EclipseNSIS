@@ -12,7 +12,7 @@ package net.sf.eclipsensis.wizard.settings;
 import java.util.Collection;
 
 import net.sf.eclipsensis.util.AbstractNodeConvertible;
-import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.XMLUtil;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -80,7 +80,7 @@ public abstract class AbstractNSISInstallElement extends AbstractNodeConvertible
     public Node toNode(Document document)
     {
         Node node = super.toNode(document);
-        Common.addAttribute(document,node,TYPE_ATTRIBUTE,getType()); //$NON-NLS-1$
+        XMLUtil.addAttribute(document,node,TYPE_ATTRIBUTE,getType()); //$NON-NLS-1$
         return node;
     }
 

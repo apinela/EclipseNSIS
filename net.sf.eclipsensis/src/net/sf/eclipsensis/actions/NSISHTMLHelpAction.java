@@ -31,6 +31,6 @@ public class NSISHTMLHelpAction extends ActionDelegate implements IEditorActionD
      */
     public void run(IAction action)
     {
-        NSISHelpURLProvider.INSTANCE.showHelp();
+        NSISHelpURLProvider.getInstance().showHelp();
     }
 }

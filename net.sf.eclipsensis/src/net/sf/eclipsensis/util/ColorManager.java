@@ -29,26 +29,22 @@ public class ColorManager
 
     private static ColorRegistry cColorRegistry;
     
-    private static ColorRegistry getColorRegistry()
+    private static synchronized ColorRegistry getColorRegistry()
     {
         if(cColorRegistry == null) {
-            synchronized(ColorManager.class) {
-                if(cColorRegistry == null) {
-                    if(Display.getCurrent() != null) {
-                        cColorRegistry = new ColorRegistry(Display.getCurrent());
+            if(Display.getCurrent() != null) {
+                cColorRegistry = new ColorRegistry(Display.getCurrent());
+            }
+            else if(PlatformUI.isWorkbenchRunning()) {
+                cColorRegistry = new ColorRegistry(PlatformUI.getWorkbench().getDisplay());
+            }
+            else {
+                Display.getDefault().syncExec(new Runnable(){
+                    public void run()
+                    {
+                        cColorRegistry = new ColorRegistry(Display.getDefault());
                     }
-                    else if(PlatformUI.isWorkbenchRunning()) {
-                        cColorRegistry = new ColorRegistry(PlatformUI.getWorkbench().getDisplay());
-                    }
-                    else {
-                        Display.getDefault().syncExec(new Runnable(){
-                            public void run()
-                            {
-                                cColorRegistry = new ColorRegistry(Display.getDefault());
-                            }
-                        });
-                    }
-                }
+                });
             }
         }
         return cColorRegistry;
@@ -77,15 +73,12 @@ public class ColorManager
         Color color = null;
         if(rgb != null) {
             String rgbName = rgb.toString();
-            ColorRegistry colorRegistry = getColorRegistry();
-            color = (Color) colorRegistry.get(rgbName);
-            if (color == null) {
-                synchronized(ColorManager.class) {
+            synchronized(rgbName.intern()) {
+                ColorRegistry colorRegistry = getColorRegistry();
+                color = (Color) colorRegistry.get(rgbName);
+                if (color == null) {
+                    colorRegistry.put(rgbName, rgb);
                     color = (Color) colorRegistry.get(rgbName);
-                    if (color == null) {
-                        colorRegistry.put(rgbName, rgb);
-                        color = (Color) colorRegistry.get(rgbName);
-                    }
                 }
             }
         }

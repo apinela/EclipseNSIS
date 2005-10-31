@@ -138,13 +138,13 @@ public class NSISInstructionDialog extends StatusMessageDialog
         
         Combo combo = new Combo(composite, SWT.DROP_DOWN|SWT.BORDER);
         combo.setToolTipText(tooltipText);
-        String[] items = NSISKeywords.INSTANCE.getKeywordsGroup(NSISKeywords.SINGLELINE_COMPILETIME_COMMANDS);
+        String[] items = NSISKeywords.getInstance().getKeywordsGroup(NSISKeywords.SINGLELINE_COMPILETIME_COMMANDS);
         if(!Common.isEmptyArray(items)) {
             for(int i=0; i<items.length; i++) {
                 combo.add(items[i]);
             }
         }
-        items = NSISKeywords.INSTANCE.getKeywordsGroup(NSISKeywords.INSTALLER_ATTRIBUTES);
+        items = NSISKeywords.getInstance().getKeywordsGroup(NSISKeywords.INSTALLER_ATTRIBUTES);
         if(!Common.isEmptyArray(items)) {
             for(int i=0; i<items.length; i++) {
                 combo.add(items[i]);

@@ -12,8 +12,7 @@
 # Sunil Kamath (IcemanK) - initial API and implementation
 ###############################################################################
 -->
-  <title>EclipseNSIS - EclipseNSIS
-Preferences</title>
+  <title>EclipseNSIS - EclipseNSIS Preferences</title>
   <link rel="stylesheet" href="book.css" charset="ISO-8859-1"
  type="text/css">
   <meta http-equiv="Content-Type"
@@ -71,6 +70,13 @@ Eclipse Platform help browser</dt>
 help browser to display NSIS help. If
 this option is unchecked, then the <a href="editing.html#detailedhelp">EclipseNSIS integrated help browser</a> is used. <a href="javascript:history.go(-1)">&larr;
 Back</a></dd></dl>
+  <a name="a_notify"></a><dl id="id_notify"><dt>Notify when MakeNSIS.exe has been modified or deleted</dt>
+  <dd>EclipseNSIS monitors the status of the MakeNSIS.exe executable in the chosen NSIS home. If this executable
+  is modified, EclipseNSIS needs to reconfigure itself. If this option is checked, EclipseNSIS issues
+  visual notifications in the form of a message box alert and a progress dialog, otherwise it is done silently.
+  and a notification is only issued if an alternate NSIS home cannot be found. <a href="javascript:history.go(-1)">&larr;
+Back</a></dd>
+  </dl>
   <a name="a_hdrinfo"></a><dl id="id_hdrinfo"><dt>Print
 NSIS header info</dt>
   <dd>Prints out information on
@@ -182,39 +188,41 @@ to Preferences</a><br>
 (IcemanK).</small></strong></p>
 <map name="preferences1">
 <area id="down1" onclick="highlightDef('id_down1');" shape="RECT"
- href="#a_down1" alt="Move down" coords="385,397, 415,421">
+ href="#a_down1" alt="Move down" coords="383,419,413,443">
 <area id="up1" onclick="highlightDef('id_up1');" shape="RECT"
- href="#a_up1" alt="Move up" coords="385,366, 415,390">
+ href="#a_up1" alt="Move up" coords="383,389,413,413">
 <area id="delete1" onclick="highlightDef('id_delete1');" shape="RECT"
- href="#a_delete1" alt="Delete" coords="385,336, 415,360">
+ href="#a_delete1" alt="Delete" coords="383,358,413,382">
 <area id="edit1" onclick="highlightDef('id_edit1');" shape="RECT"
- href="#a_edit1" alt="Edit" coords="385,305, 415,329">
+ href="#a_edit1" alt="Edit" coords="383,326,413,350">
 <area id="add1" onclick="highlightDef('id_add1');" shape="RECT"
- href="#a_add1" alt="Add" coords="385,274, 415,298">
+ href="#a_add1" alt="Add" coords="383,295,413,319">
 <area id="instructions" onclick="highlightDef('id_instructions');"
  shape="RECT" href="#a_instructions" alt="Instructions"
- coords="17,272, 379,460">
+ coords="17,275,382,462">
 <area id="compressor" onclick="highlightDef('id_compressor');"
  shape="RECT" href="#a_compressor" alt="Compressor settings"
- coords="27,215, 322,237">
+ coords="27,236,322,258">
 <area id="verbosity" onclick="highlightDef('id_verbosity');"
  shape="RECT" href="#a_verbosity" alt="Compiler verbosity"
- coords="26,189, 279,211">
+ coords="26,210,279,232">
 <area id="nocd" onclick="highlightDef('id_nocd');" shape="RECT"
- href="#a_nocd" alt="Don't change directory" coords="208,169, 336,183">
+ href="#a_nocd" alt="Don't change directory" coords="209,190,337,204">
 <area id="noconfig" onclick="highlightDef('id_noconfig');" shape="RECT"
- href="#a_noconfig" alt="Exclude NSIS config" coords="26,169, 201,183">
+ href="#a_noconfig" alt="Exclude NSIS config" coords="26,190,201,204">
 <area id="license" onclick="highlightDef('id_license');" shape="RECT"
- href="#a_license" alt="Print license" coords="208,148, 310,162">
+ href="#a_license" alt="Print license" coords="208,169,310,183">
 <area id="hdrinfo" onclick="highlightDef('id_hdrinfo');" shape="RECT"
- href="#a_hdrinfo" alt="Print header info" coords="26,148, 151,162">
+ href="#a_hdrinfo" alt="Print header info" coords="26,170,151,184">
+<area id="notify" onclick="highlightDef('id_notify');" shape="RECT"
+ href="#a_notify" alt="Notify when MakeNSIS.exe has changed" coords="19,125,311,141">
 <area id="help" onclick="highlightDef('id_help');" shape="RECT"
  href="#a_help" alt="Use Eclipse Platform Help" coords="19,104, 322,118">
 <area id="autoconsole" onclick="highlightDef('id_autoconsole');"
  shape="RECT" href="#a_autoconsole" alt="Auto-open Console"
  coords="18,83, 314,97">
 <area id="nsishome" onclick="highlightDef('id_nsishome');" shape="RECT"
- href="#a_nsishome" alt="NSIS Home" coords="18,55, 406,77">
+ href="#a_nsishome" alt="NSIS Home" coords="18,55,411,78">
 </map>
 <map name="preferences2">
 <area id="add2" onclick="highlightDef('id_add2');" shape="RECT"

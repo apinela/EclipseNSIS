@@ -452,7 +452,7 @@ public class NSISWizardDialogUtil
         composite.setLayout(layout);
         
         final Combo c2 = createCombo(composite,1,
-                NSISKeywords.INSTANCE.getKeywordsGroup(NSISKeywords.PATH_CONSTANTS_AND_VARIABLES),
+                NSISKeywords.getInstance().getKeywordsGroup(NSISKeywords.PATH_CONSTANTS_AND_VARIABLES),
                 value,false,enabled,masterSlaveController);
         gd = (GridData)c2.getLayoutData();
         gd.grabExcessHorizontalSpace = true;

@@ -38,9 +38,9 @@ public class NSISLiveHelpAction implements ILiveHelpAction
                     NSISPreferencePage.show();
                 }
                 else {
-                    String chmURL = NSISHelpURLProvider.INSTANCE.convertHelpURLToCHMHelpURL(mData);
+                    String chmURL = NSISHelpURLProvider.getInstance().convertHelpURLToCHMHelpURL(mData);
                     if(!Common.isEmpty(chmURL)) {
-                        NSISHelpURLProvider.INSTANCE.openCHMHelpURL(chmURL);
+                        NSISHelpURLProvider.getInstance().openCHMHelpURL(chmURL);
                     }
                 }
             }

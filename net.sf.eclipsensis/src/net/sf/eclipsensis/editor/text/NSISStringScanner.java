@@ -46,107 +46,91 @@ public class NSISStringScanner extends NSISRuleBasedScanner
      * @param provider
      * @return
      */
-    protected IToken getDefaultToken()
+    protected synchronized IToken getDefaultToken()
     {
         if(mDefaultToken == null) {
-            synchronized(this) {
-                if(mDefaultToken == null) {
-                    mDefaultToken= createTokenFromPreference(INSISPreferenceConstants.STRINGS_STYLE);
-                }
-            }
+            mDefaultToken= createTokenFromPreference(INSISPreferenceConstants.STRINGS_STYLE);
         }
         return mDefaultToken;
     }
 
-    protected IRule getSymbolsRule()
+    protected synchronized IRule getSymbolsRule()
     {
         if(mSymbolsRule == null) {
-            synchronized(this) {
-                if(mSymbolsRule == null) {
-                    mSymbolsRule = new NSISWordPatternRule(new NSISWordDetector(){
-                        private boolean mFoundEndSequence = false;
-                        /*
-                         * (non-Javadoc) Method declared on IWordDetector.
-                         */
-                        public boolean isWordStart(char character)
-                        {
-                            mFoundEndSequence = false;
-                            return (Character.isLetterOrDigit(character) || character == '_');
-                        }
-                        
-                        public boolean isWordPart(char character)
-                        {
-                            if(!mFoundEndSequence) {
-                                if(character == '}') {
-                                    mFoundEndSequence = true;
-                                    return true;
-                                }
-                                else {
-                                    mFoundEndSequence = false;
-                                    return super.isWordPart(character);
-                                }
-                            }
-                            else {
-                                mFoundEndSequence = false;
-                                return false;
-                            }
-                        }
-                    }, "${","}",createTokenFromPreference(INSISPreferenceConstants.SYMBOLS_STYLE)); //$NON-NLS-1$ //$NON-NLS-2$
+            mSymbolsRule = new NSISWordPatternRule(new NSISWordDetector(){
+                private boolean mFoundEndSequence = false;
+                /*
+                 * (non-Javadoc) Method declared on IWordDetector.
+                 */
+                public boolean isWordStart(char character)
+                {
+                    mFoundEndSequence = false;
+                    return (Character.isLetterOrDigit(character) || character == '_');
                 }
-            }
+                
+                public boolean isWordPart(char character)
+                {
+                    if(!mFoundEndSequence) {
+                        if(character == '}') {
+                            mFoundEndSequence = true;
+                            return true;
+                        }
+                        else {
+                            mFoundEndSequence = false;
+                            return super.isWordPart(character);
+                        }
+                    }
+                    else {
+                        mFoundEndSequence = false;
+                        return false;
+                    }
+                }
+            }, "${","}",createTokenFromPreference(INSISPreferenceConstants.SYMBOLS_STYLE)); //$NON-NLS-1$ //$NON-NLS-2$
         }
         return mSymbolsRule;
     }
 
-    protected IRule getLangstringsRule()
+    protected synchronized IRule getLangstringsRule()
     {
         if(mLangstringsRule == null) {
-            synchronized(this) {
-                if(mLangstringsRule == null) {
-                    mLangstringsRule = new NSISWordPatternRule(new NSISWordDetector(){
-                        private boolean mFoundEndSequence = false;
-                        /*
-                         * (non-Javadoc) Method declared on IWordDetector.
-                         */
-                        public boolean isWordStart(char character)
-                        {
-                            mFoundEndSequence = false;
-                            return (Character.isLetterOrDigit(character) || character == '_' || character == '^');
-                        }
-                        
-                        public boolean isWordPart(char character)
-                        {
-                            if(!mFoundEndSequence) {
-                                if(character == ')') {
-                                    mFoundEndSequence = true;
-                                    return true;
-                                }
-                                else {
-                                    mFoundEndSequence = false;
-                                    return super.isWordPart(character);
-                                }
-                            }
-                            else {
-                                mFoundEndSequence = false;
-                                return false;
-                            }
-                        }
-                    }, "$(",")",createTokenFromPreference(INSISPreferenceConstants.LANGSTRINGS_STYLE)); //$NON-NLS-1$ //$NON-NLS-2$
+            mLangstringsRule = new NSISWordPatternRule(new NSISWordDetector(){
+                private boolean mFoundEndSequence = false;
+                /*
+                 * (non-Javadoc) Method declared on IWordDetector.
+                 */
+                public boolean isWordStart(char character)
+                {
+                    mFoundEndSequence = false;
+                    return (Character.isLetterOrDigit(character) || character == '_' || character == '^');
                 }
-            }
+                
+                public boolean isWordPart(char character)
+                {
+                    if(!mFoundEndSequence) {
+                        if(character == ')') {
+                            mFoundEndSequence = true;
+                            return true;
+                        }
+                        else {
+                            mFoundEndSequence = false;
+                            return super.isWordPart(character);
+                        }
+                    }
+                    else {
+                        mFoundEndSequence = false;
+                        return false;
+                    }
+                }
+            }, "$(",")",createTokenFromPreference(INSISPreferenceConstants.LANGSTRINGS_STYLE)); //$NON-NLS-1$ //$NON-NLS-2$
         }
         return mLangstringsRule;
     }
 
-    protected IRule getVariablesRule()
+    protected synchronized IRule getVariablesRule()
     {
         if(mVariablesWordRule == null) {
-            synchronized(this) {
-                if(mVariablesWordRule == null) {
-                    mVariablesWordRule = new NSISVariablesWordRule(createTokenFromPreference(INSISPreferenceConstants.PREDEFINED_VARIABLES_STYLE),
-                                                                   createTokenFromPreference(INSISPreferenceConstants.USERDEFINED_VARIABLES_STYLE));
-                }
-            }
+            mVariablesWordRule = new NSISVariablesWordRule(createTokenFromPreference(INSISPreferenceConstants.PREDEFINED_VARIABLES_STYLE),
+                                                           createTokenFromPreference(INSISPreferenceConstants.USERDEFINED_VARIABLES_STYLE));
         }
         return mVariablesWordRule;
     }
