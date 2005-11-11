@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -28,7 +28,7 @@ public class ColorManager
     public static final RGB BLACK = new RGB(0, 0, 0);
 
     private static ColorRegistry cColorRegistry;
-    
+
     private static synchronized ColorRegistry getColorRegistry()
     {
         if(cColorRegistry == null) {
@@ -49,11 +49,11 @@ public class ColorManager
         }
         return cColorRegistry;
     }
-    
+
     private ColorManager()
     {
     }
-    
+
     public static Color getSystemColor(int colorId)
     {
         int pixel = WinAPI.GetSysColor(colorId);
@@ -75,10 +75,10 @@ public class ColorManager
             String rgbName = rgb.toString();
             synchronized(rgbName.intern()) {
                 ColorRegistry colorRegistry = getColorRegistry();
-                color = (Color) colorRegistry.get(rgbName);
+                color = colorRegistry.get(rgbName);
                 if (color == null) {
                     colorRegistry.put(rgbName, rgb);
-                    color = (Color) colorRegistry.get(rgbName);
+                    color = colorRegistry.get(rgbName);
                 }
             }
         }
@@ -89,12 +89,12 @@ public class ColorManager
     {
         return getColor(new RGB(255 & ~rgb.red, 255 & ~rgb.green, 255 & ~rgb.blue));
     }
-    
+
     public static Color getNegativeColor(Color color)
     {
         return getNegativeColor(color.getRGB());
     }
-    
+
     /**
      * @param rgb
      * @return
@@ -107,7 +107,7 @@ public class ColorManager
         rgb.blue = Integer.parseInt(hexString.substring(4),16);
         return rgb;
     }
-    
+
     /**
      * @param rgb
      * @return

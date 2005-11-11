@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -33,27 +33,27 @@ public abstract class AbstractTemplateReaderWriter
 
     /**
      * Reads templates from a stream and adds them to the templates.
-     * 
+     *
      * @param stream the byte stream to read templates from
      * @return the read templates
-     * @throws IOException if reading from the stream fails 
-     */ 
-    public Collection import$(InputStream stream) throws IOException 
+     * @throws IOException if reading from the stream fails
+     */
+    public Collection import$(InputStream stream) throws IOException
     {
         return import$(new InputSource(stream));
     }
-    
-    public Collection import$(InputSource source) throws IOException 
+
+    public Collection import$(InputSource source) throws IOException
     {
         try {
             Collection templates= new HashSet();
-            
+
             DocumentBuilderFactory factory= DocumentBuilderFactory.newInstance();
-            DocumentBuilder parser= factory.newDocumentBuilder();       
+            DocumentBuilder parser= factory.newDocumentBuilder();
             Document document= parser.parse(source);
-            
+
             NodeList elements= document.getElementsByTagName(TEMPLATE_ELEMENT);
-            
+
             int count= elements.getLength();
             for (int i= 0; i != count; i++) {
                 Node node= elements.item(i);
@@ -62,7 +62,7 @@ public abstract class AbstractTemplateReaderWriter
                 if (attributes == null) {
                     continue;
                 }
-                
+
                 String name= XMLUtil.getStringValue(attributes, NAME_ATTRIBUTE);
                 if (name == null) {
                     throw new IOException(EclipseNSISPlugin.getFormattedString("template.readerwriter.error.missing.attribute", new Object[]{NAME_ATTRIBUTE})); //$NON-NLS-1$
@@ -73,7 +73,7 @@ public abstract class AbstractTemplateReaderWriter
 
                 template.setDeleted(false);
                 template.setEnabled(true);
-                
+
                 NodeList children = node.getChildNodes();
                 if(children != null) {
                     for (int j= 0; j != children.getLength(); j++) {
@@ -89,12 +89,12 @@ public abstract class AbstractTemplateReaderWriter
 
                 templates.add(template);
             }
-            
+
             return templates;
         }
         catch (ParserConfigurationException e) {
             throw new IOException(e.getMessage());
-        } 
+        }
         catch (SAXException e) {
             Throwable t= e.getCause();
             if (t instanceof IOException) {
@@ -105,53 +105,53 @@ public abstract class AbstractTemplateReaderWriter
             }
         }
     }
-    
+
     /**
      * Saves the templates as XML, encoded as UTF-8 onto the given byte stream.
-     * 
+     *
      * @param templates the templates to save
      * @param stream the byte output to write the templates to in XML
-     * @throws IOException if writing the templates fails 
+     * @throws IOException if writing the templates fails
      */
-    public void export(Collection templates, OutputStream stream) throws IOException 
+    public void export(Collection templates, OutputStream stream) throws IOException
     {
         export(templates, new StreamResult(stream));
     }
-    
+
     /**
      * Saves the templates as XML.
-     * 
+     *
      * @param templates the templates to save
      * @param result the stream result to write to
-     * @throws IOException if writing the templates fails 
+     * @throws IOException if writing the templates fails
      */
-    public void export(Collection templates, StreamResult result) throws IOException 
+    public void export(Collection templates, StreamResult result) throws IOException
     {
         try {
             DocumentBuilderFactory factory= DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder= factory.newDocumentBuilder();      
+            DocumentBuilder builder= factory.newDocumentBuilder();
             Document document= builder.newDocument();
 
-            Node root= document.createElement(TEMPLATE_ROOT); //$NON-NLS-1$
+            Node root= document.createElement(TEMPLATE_ROOT);
             document.appendChild(root);
-            
+
             for (Iterator iter=templates.iterator(); iter.hasNext(); ) {
                 AbstractTemplate template= (AbstractTemplate)iter.next();
-                
+
                 Node node= document.createElement(TEMPLATE_ELEMENT);
                 root.appendChild(node);
-                
+
                 XMLUtil.addAttribute(document, node, NAME_ATTRIBUTE, template.getName());
-    
+
                 Element description = document.createElement(DESCRIPTION_NODE);
                 Text data= document.createTextNode(template.getDescription());
                 description.appendChild(data);
                 node.appendChild(description);
-                
+
                 node.appendChild(exportContents(template, document));
-            }       
-            
-            
+            }
+
+
             Transformer transformer=TransformerFactory.newInstance().newTransformer();
             transformer.setOutputProperty(OutputKeys.METHOD, "xml"); //$NON-NLS-1$
             transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8"); //$NON-NLS-1$
@@ -159,10 +159,10 @@ public abstract class AbstractTemplateReaderWriter
             DOMSource source = new DOMSource(document);
 
             transformer.transform(source, result);
-        } 
+        }
         catch (ParserConfigurationException e) {
             throw new IOException(e.getMessage());
-        } 
+        }
         catch (TransformerException e) {
             if (e.getException() instanceof IOException) {
                 throw (IOException) e.getException();
@@ -170,12 +170,12 @@ public abstract class AbstractTemplateReaderWriter
             else {
                 throw new IOException(e.getMessage());
             }
-        }       
+        }
         catch (Exception e) {
             throw new IOException(e.getMessage());
-        }       
+        }
     }
-    
+
     protected abstract String getContentsNodeName();
     protected abstract Node exportContents(AbstractTemplate template, Document doc);
     protected abstract void importContents(AbstractTemplate template, Node item);

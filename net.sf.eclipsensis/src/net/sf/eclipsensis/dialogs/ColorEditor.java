@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -21,20 +21,20 @@ public class ColorEditor {
     private RGB mRGB;
     private Color mColor;
     private Button mButton;
-    
+
     public ColorEditor(Composite parent) {
-        
+
         mButton= new Button(parent, SWT.PUSH);
         mRect= calculateSize(parent);
         mImage= new Image(parent.getDisplay(), mRect.x, mRect.y);
-        
+
         GC gc= new GC(mImage);
         Color color = gc.getBackground();
         gc.setBackground(mButton.getBackground());
         gc.fillRectangle(0, 0, mRect.x, mRect.y);
         gc.setBackground(color);
         gc.dispose();
-        
+
         mButton.setImage(mImage);
         mButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent event) {
@@ -47,7 +47,7 @@ public class ColorEditor {
                 }
             }
         });
-        
+
         mButton.addDisposeListener(new DisposeListener() {
             public void widgetDisposed(DisposeEvent event) {
                 if (mImage != null)  {
@@ -61,34 +61,34 @@ public class ColorEditor {
             }
         });
     }
-    
+
     public RGB getRGB() {
         return mRGB;
     }
-    
+
     public void setRGB(RGB rgb) {
         mRGB= rgb;
         updateColor();
     }
-    
+
     public Button getButton() {
         return mButton;
     }
-    
+
     protected void updateColor() {
-        
+
         Display display= mButton.getDisplay();
-        
+
         GC gc= new GC(mImage);
         Color fgColor = gc.getForeground();
         Color bgColor = gc.getBackground();
         gc.setForeground(display.getSystemColor(SWT.COLOR_BLACK));
         gc.drawRectangle(0, 2, mRect.x - 1, mRect.y - 4);
-        
+
         if (mColor != null) {
             mColor.dispose();
         }
-            
+
         mColor= new Color(display, mRGB);
         gc.setBackground(mColor);
         gc.fillRectangle(1, 3, mRect.x - 2, mRect.y - 5);
@@ -96,10 +96,10 @@ public class ColorEditor {
         gc.setForeground(fgColor);
         gc.setBackground(bgColor);
         gc.dispose();
-        
+
         mButton.setImage(mImage);
     }
-    
+
     protected Point calculateSize(Control window) {
         GC gc= new GC(window);
         Font old = gc.getFont();

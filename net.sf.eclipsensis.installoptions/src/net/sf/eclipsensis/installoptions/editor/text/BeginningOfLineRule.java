@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -64,7 +64,7 @@ public class BeginningOfLineRule extends SingleLineRule
                 else {
                     scanner.unread();
                 }
-            } 
+            }
             else {
                 if(fStartSequence.length == 1 && fStartSequence[0] == DUMMY_START_SEQUENCE.charAt(0)) {
                     if (endSequenceDetected(scanner)) {
@@ -83,7 +83,7 @@ public class BeginningOfLineRule extends SingleLineRule
                     }
                 }
             }
-            
+
             if(token.isUndefined()) {
                 while(n > 0) {
                     scanner.unread();

@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -35,7 +35,7 @@ public class CaseInsensitiveSet implements Set, Serializable
     {
         return (value !=null && value instanceof String?((String)value).toUpperCase():value);
     }
-    
+
     /* (non-Javadoc)
      * @see java.util.Set#size()
      */
@@ -193,7 +193,7 @@ public class CaseInsensitiveSet implements Set, Serializable
     {
         return mSet.toArray(a);
     }
-    
+
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */

@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -63,7 +63,7 @@ public abstract class AbstractNSISScriptElementContainer extends AbstractNSISScr
 	        return element;
         }
         else {
-    	    throw new IndexOutOfBoundsException(Integer.toString(index));            
+    	    throw new IndexOutOfBoundsException(Integer.toString(index));
         }
     }
 
@@ -77,15 +77,15 @@ public abstract class AbstractNSISScriptElementContainer extends AbstractNSISScr
             element.write(writer);
         }
     }
-    
+
     public int size()
     {
         return mElements.size();
     }
-    
+
     protected void validateElement(INSISScriptElement element) throws InvalidNSISScriptElementException
     {
-        if(element instanceof NSISScriptMultiLineComment || element instanceof NSISScriptBlankLine || 
+        if(element instanceof NSISScriptMultiLineComment || element instanceof NSISScriptBlankLine ||
            element instanceof NSISScriptDefine || element instanceof NSISScriptInsertMacro) {
             return;
         }

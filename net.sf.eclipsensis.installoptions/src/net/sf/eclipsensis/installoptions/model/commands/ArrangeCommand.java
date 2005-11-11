@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -22,7 +22,7 @@ import org.eclipse.gef.commands.Command;
 public class ArrangeCommand extends Command
 {
     private int mType;
-    
+
     private InstallOptionsDialog mParent;
     private List mSelection;
     private List mOldChildren;
@@ -46,7 +46,7 @@ public class ArrangeCommand extends Command
                 name = "bring.to.front.command.name"; //$NON-NLS-1$
                 break;
         }
-        setLabel(InstallOptionsPlugin.getResourceString(name)); //$NON-NLS-1$
+        setLabel(InstallOptionsPlugin.getResourceString(name));
     }
 
     public boolean canExecute()
@@ -58,7 +58,7 @@ public class ArrangeCommand extends Command
         }
         return false;
     }
-    
+
     public void execute()
     {
         if(mParent != null) {

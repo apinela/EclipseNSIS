@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -22,12 +22,12 @@ public class ComboboxCellEditorLocator implements CellEditorLocator
 {
     private ComboboxFigure mCombobox;
 
-    public ComboboxCellEditorLocator(ComboboxFigure combobox) 
+    public ComboboxCellEditorLocator(ComboboxFigure combobox)
     {
         setCombobox(combobox);
     }
 
-    public void relocate(CellEditor celleditor) 
+    public void relocate(CellEditor celleditor)
     {
         Combo combo = (Combo)celleditor.getControl();
 
@@ -48,7 +48,7 @@ public class ComboboxCellEditorLocator implements CellEditorLocator
         return mCombobox;
     }
 
-    protected void setCombobox(ComboboxFigure combobox) 
+    protected void setCombobox(ComboboxFigure combobox)
     {
         mCombobox = combobox;
     }

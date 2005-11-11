@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -20,14 +20,14 @@ public class ButtonCellEditorLocator extends InstallOptionsCellEditorLocator
     private static final int X_OFFSET = -4;
     private static final int W_OFFSET = 5;
 
-    public ButtonCellEditorLocator(ButtonFigure button) 
+    public ButtonCellEditorLocator(ButtonFigure button)
     {
         super(button);
     }
 
     protected Rectangle transformLocation(Rectangle editArea, Point preferredSize)
     {
-        return new Rectangle(editArea.x + X_OFFSET, editArea.y+(editArea.height-preferredSize.y)/2, 
+        return new Rectangle(editArea.x + X_OFFSET, editArea.y+(editArea.height-preferredSize.y)/2,
                              editArea.width + W_OFFSET, preferredSize.y);
     }
 }

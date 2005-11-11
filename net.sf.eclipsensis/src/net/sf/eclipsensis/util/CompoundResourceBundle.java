@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -16,7 +16,7 @@ public class CompoundResourceBundle extends ResourceBundle
     private static final Locale EMPTY_LOCALE = new Locale("","",""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
     private ResourceBundle[] mResourceBundles = null;
-    
+
     public CompoundResourceBundle(String[] bundleNames)
     {
         this(CompoundResourceBundle.class.getClassLoader(), bundleNames);
@@ -85,7 +85,7 @@ public class CompoundResourceBundle extends ResourceBundle
         }
         return null;
     }
-    
+
     /* (non-Javadoc)
      * @see java.util.ResourceBundle#getLocale()
      */

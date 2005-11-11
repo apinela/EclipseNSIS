@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -21,7 +21,7 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
-public class CustomComboBoxCellEditor extends CellEditor 
+public class CustomComboBoxCellEditor extends CellEditor
 {
     private List mItems = new ArrayList();
     private String mSelection;
@@ -41,7 +41,7 @@ public class CustomComboBoxCellEditor extends CellEditor
         return mItems;
     }
 
-    public void setItems(List items) 
+    public void setItems(List items)
     {
         mItems.clear();
         mItems.addAll(items);
@@ -51,13 +51,13 @@ public class CustomComboBoxCellEditor extends CellEditor
     /* (non-Javadoc)
      * Method declared on CellEditor.
      */
-    protected Control createControl(Composite parent) 
+    protected Control createControl(Composite parent)
     {
         mCombo = new CCombo(parent, getStyle());
         mCombo.setFont(parent.getFont());
 
         mCombo.addKeyListener(new KeyAdapter() {
-            public void keyPressed(KeyEvent e) 
+            public void keyPressed(KeyEvent e)
             {
                 keyReleaseOccured(e);
             }
@@ -69,9 +69,9 @@ public class CustomComboBoxCellEditor extends CellEditor
                 mSelection = mCombo.getText();
             }
         });
-        
+
         mCombo.addSelectionListener(new SelectionAdapter() {
-            public void widgetDefaultSelected(SelectionEvent event) 
+            public void widgetDefaultSelected(SelectionEvent event)
             {
                 applyEditorValueAndDeactivate();
             }
@@ -82,7 +82,7 @@ public class CustomComboBoxCellEditor extends CellEditor
         });
 
         mCombo.addTraverseListener(new TraverseListener() {
-            public void keyTraversed(TraverseEvent e) 
+            public void keyTraversed(TraverseEvent e)
             {
                 if (e.detail == SWT.TRAVERSE_ESCAPE
                         || e.detail == SWT.TRAVERSE_RETURN) {
@@ -92,7 +92,7 @@ public class CustomComboBoxCellEditor extends CellEditor
         });
 
         mCombo.addFocusListener(new FocusAdapter() {
-            public void focusLost(FocusEvent e) 
+            public void focusLost(FocusEvent e)
             {
                 CustomComboBoxCellEditor.this.focusLost();
             }
@@ -100,17 +100,17 @@ public class CustomComboBoxCellEditor extends CellEditor
         return mCombo;
     }
 
-    protected Object doGetValue() 
+    protected Object doGetValue()
     {
         return mSelection;
     }
 
-    protected void doSetFocus() 
+    protected void doSetFocus()
     {
         mCombo.setFocus();
     }
 
-    public LayoutData getLayoutData() 
+    public LayoutData getLayoutData()
     {
         LayoutData layoutData = super.getLayoutData();
         if ((mCombo == null) || mCombo.isDisposed()) {
@@ -126,7 +126,7 @@ public class CustomComboBoxCellEditor extends CellEditor
         return layoutData;
     }
 
-    protected void doSetValue(Object value) 
+    protected void doSetValue(Object value)
     {
         mSelection = (String)value;
         int n = mItems.indexOf(mSelection);
@@ -139,7 +139,7 @@ public class CustomComboBoxCellEditor extends CellEditor
         mCombo.setText(mSelection);
     }
 
-    private void populateComboBoxItems() 
+    private void populateComboBoxItems()
     {
         if (mCombo != null && mItems != null) {
             mCombo.removeAll();
@@ -152,7 +152,7 @@ public class CustomComboBoxCellEditor extends CellEditor
         }
     }
 
-    private void applyEditorValueAndDeactivate() 
+    private void applyEditorValueAndDeactivate()
     {
         //  must set the selection before getting value
         mSelection = mCombo.getText();
@@ -169,14 +169,14 @@ public class CustomComboBoxCellEditor extends CellEditor
         deactivate();
     }
 
-    protected void focusLost() 
+    protected void focusLost()
     {
         if (isActivated()) {
             applyEditorValueAndDeactivate();
         }
     }
 
-    protected void keyReleaseOccured(KeyEvent keyEvent) 
+    protected void keyReleaseOccured(KeyEvent keyEvent)
     {
         if (keyEvent.character == '\u001b') { // Escape character
             fireCancelEditor();

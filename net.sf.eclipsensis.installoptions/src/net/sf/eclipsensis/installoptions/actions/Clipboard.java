@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -26,7 +26,7 @@ public class Clipboard
     public static final String CONTENTS_AVAILABLE_EVENT = "ContentsAvailable"; //$NON-NLS-1$
 
     protected static Clipboard cInstance = new Clipboard();
-       
+
     private static InstallOptionsObjectTransfer mTransfer;
     private PropertyChangeSupport mListeners = new PropertyChangeSupport(this);
     private boolean mContentsAvailable = false;
@@ -34,7 +34,7 @@ public class Clipboard
     /**
      * Do not allow direct instantiation of a Clipboard
      */
-    private Clipboard() 
+    private Clipboard()
     {
         super();
         mTransfer = new InstallOptionsObjectTransfer() {
@@ -56,7 +56,7 @@ public class Clipboard
                     fireContentsAvailable();
                 }
             };
-            
+
             public void run()
             {
                 Display.getDefault().asyncExec(runnable);
@@ -74,11 +74,11 @@ public class Clipboard
      * Get the default Clipboard
      * @return - The default Clipboard
      */
-    public static Clipboard getDefault() 
+    public static Clipboard getDefault()
     {
         return cInstance;
     }
-   
+
     /**
      * Add a {@link PropertyChangeListener} to this Clipboard
      * @param l
@@ -97,27 +97,27 @@ public class Clipboard
         mListeners.removePropertyChangeListener(l);
     }
 
-    public boolean isContentsAvailable() 
+    public boolean isContentsAvailable()
     {
         return (getContents() != null);
     }
-   
+
     /**
-     * Fires a {@link PropertyChangeEvent} anytime the contents of the 
+     * Fires a {@link PropertyChangeEvent} anytime the contents of the
 <code>Clipboard</code> are set.
      *
      */
-    public void fireContentsAvailable() 
+    public void fireContentsAvailable()
     {
         if(mContentsAvailable != isContentsAvailable()) {
             mContentsAvailable = !mContentsAvailable;
-            PropertyChangeEvent event = new PropertyChangeEvent(this, CONTENTS_AVAILABLE_EVENT, 
+            PropertyChangeEvent event = new PropertyChangeEvent(this, CONTENTS_AVAILABLE_EVENT,
                             Boolean.valueOf(!mContentsAvailable), Boolean.valueOf(mContentsAvailable) );
             mListeners.firePropertyChange( event );
         }
     }
-   
-    public Object getContents() 
+
+    public Object getContents()
     {
         org.eclipse.swt.dnd.Clipboard cb = new org.eclipse.swt.dnd.Clipboard(null);
         Object contents = cb.getContents(mTransfer);
@@ -125,7 +125,7 @@ public class Clipboard
         return contents;
     }
 
-    public void setContents(Object contents) 
+    public void setContents(Object contents)
     {
         org.eclipse.swt.dnd.Clipboard cb = new org.eclipse.swt.dnd.Clipboard(null);
         if(contents != null) {

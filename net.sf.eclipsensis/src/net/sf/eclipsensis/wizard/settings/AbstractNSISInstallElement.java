@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -76,22 +76,22 @@ public abstract class AbstractNSISInstallElement extends AbstractNodeConvertible
             super.fromNode(node);
         }
     }
-    
+
     public Node toNode(Document document)
     {
         Node node = super.toNode(document);
-        XMLUtil.addAttribute(document,node,TYPE_ATTRIBUTE,getType()); //$NON-NLS-1$
+        XMLUtil.addAttribute(document,node,TYPE_ATTRIBUTE,getType());
         return node;
     }
 
     protected String getChildNodeName()
     {
-        return CHILD_NODE; //$NON-NLS-1$
+        return CHILD_NODE;
     }
-    
+
     protected String getNodeName()
     {
-        return NODE; //$NON-NLS-1$
+        return NODE;
     }
 
     public final String validate()

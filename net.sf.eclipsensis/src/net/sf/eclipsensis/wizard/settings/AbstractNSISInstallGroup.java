@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -23,16 +23,16 @@ public abstract class AbstractNSISInstallGroup extends AbstractNSISInstallElemen
     private Set mChildTypes = new LinkedHashSet();
     private ArrayList mChildren = new ArrayList();
     private transient boolean mExpanded = true;
-    
+
     /**
-     * 
+     *
      */
     public AbstractNSISInstallGroup()
     {
         super();
         setChildTypes();
     }
-    
+
     public Object clone() throws CloneNotSupportedException
     {
         AbstractNSISInstallGroup group = (AbstractNSISInstallGroup)super.clone();
@@ -45,13 +45,13 @@ public abstract class AbstractNSISInstallGroup extends AbstractNSISInstallElemen
         group.mChildTypes.addAll(mChildTypes);
         return group;
     }
-    
+
     protected void addSkippedProperties(Collection skippedProperties)
     {
         super.addSkippedProperties(skippedProperties);
         skippedProperties.add("expanded"); //$NON-NLS-1$
     }
-    
+
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#hasChildren()
      */
@@ -83,7 +83,7 @@ public abstract class AbstractNSISInstallGroup extends AbstractNSISInstallElemen
     {
         return (String[])mChildTypes.toArray(new String[0]);
     }
-    
+
     protected final void clearChildTypes()
     {
         mChildTypes.clear();
@@ -93,7 +93,7 @@ public abstract class AbstractNSISInstallGroup extends AbstractNSISInstallElemen
     {
         mChildTypes.add(childType);
     }
-    
+
     protected final Iterator getChildrenIterator()
     {
         return mChildren.iterator();
@@ -147,7 +147,7 @@ public abstract class AbstractNSISInstallGroup extends AbstractNSISInstallElemen
     {
         return mExpanded;
     }
-    
+
     /**
      * @param expanded The expanded to set.
      */
@@ -155,7 +155,7 @@ public abstract class AbstractNSISInstallGroup extends AbstractNSISInstallElemen
     {
         setExpanded(expanded, false);
     }
-    
+
     /**
      * @param expanded The expanded to set.
      * @param recursive Perform recursively
@@ -184,7 +184,7 @@ public abstract class AbstractNSISInstallGroup extends AbstractNSISInstallElemen
             }
         }
     }
-    
+
     public final void resetChildTypes(boolean recursive)
     {
         setChildTypes();
@@ -199,14 +199,14 @@ public abstract class AbstractNSISInstallGroup extends AbstractNSISInstallElemen
             }
         }
     }
-    
+
     protected Node createChildNode(Document document, String name, Object value)
     {
         if(name.equals("children")) { //$NON-NLS-1$
             final Node[] children;
             if(!Common.isEmptyArray(value)) {
                 INSISInstallElement[] elements = (INSISInstallElement[])value;
-                children = new Node[elements.length]; //$NON-NLS-1$
+                children = new Node[elements.length];
                 for (int i=0; i<elements.length; i++) {
                     children[i] = elements[i].toNode(document);
                 }
@@ -238,7 +238,7 @@ public abstract class AbstractNSISInstallGroup extends AbstractNSISInstallElemen
                 int n = children.getLength();
                 for(int i=0; i<n; i++) {
                     Node child = children.item(i);
-                    if(child.getNodeName().equals(getNodeName())) { //$NON-NLS-1$
+                    if(child.getNodeName().equals(getNodeName())) {
                         INSISInstallElement installElement = NSISInstallElementFactory.createFromNode(child);
                         if(installElement != null) {
                             addChild(installElement);
@@ -253,7 +253,7 @@ public abstract class AbstractNSISInstallGroup extends AbstractNSISInstallElemen
             return super.getNodeValue(node, name, clasz);
         }
     }
-    
+
     public String validate(boolean recursive)
     {
         String error = null;

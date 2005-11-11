@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -28,13 +28,13 @@ import org.eclipse.ui.PlatformUI;
 public abstract class AbstractNSISWizardPage extends WizardPage implements INSISWizardConstants, IPageChangedListener
 {
     protected NSISWizard mWizard = null;
-    private Object mSelectedPage = null; 
+    private Object mSelectedPage = null;
     private boolean mCurrentPage = false;
     private boolean mPreviousPage = false;
     private List mPageChangeRunnables = new ArrayList();
 
     protected VerifyListener mNumberVerifyListener = new VerifyListener() {
-        public void verifyText(VerifyEvent e) 
+        public void verifyText(VerifyEvent e)
         {
             char[] chars = e.text.toCharArray();
             for(int i=0; i< chars.length; i++) {
@@ -45,15 +45,15 @@ public abstract class AbstractNSISWizardPage extends WizardPage implements INSIS
             }
         }
     };
-    
+
     private static ImageDescriptor cImage = EclipseNSISPlugin.getImageManager().getImageDescriptor(EclipseNSISPlugin.getResourceString("wizard.title.image")); //$NON-NLS-1$
-    
-	public AbstractNSISWizardPage(String pageName, String title, String description) 
+
+	public AbstractNSISWizardPage(String pageName, String title, String description)
     {
 		super(pageName,title,cImage);
         setDescription(description);
 	}
-    
+
     protected String getArrayStringResource(String[] array, int index, String defaultString)
     {
         return EclipseNSISPlugin.getResourceString(Common.isEmptyArray(array) || array.length <= index || Common.isEmpty(array[index])?defaultString:array[index]);
@@ -149,7 +149,7 @@ public abstract class AbstractNSISWizardPage extends WizardPage implements INSIS
         }
         return true;
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.jface.wizard.IWizardPage#setWizard(org.eclipse.jface.wizard.IWizard)
      */
@@ -171,7 +171,7 @@ public abstract class AbstractNSISWizardPage extends WizardPage implements INSIS
         }
     }
 
-    
+
     public final void setVisible(boolean visible)
     {
         super.setVisible(visible);
@@ -186,7 +186,7 @@ public abstract class AbstractNSISWizardPage extends WizardPage implements INSIS
             mPageChangeRunnables.add(r);
         }
     }
-    
+
     protected void removePageChangedRunnable(Runnable r)
     {
         mPageChangeRunnables.remove(r);
@@ -216,7 +216,7 @@ public abstract class AbstractNSISWizardPage extends WizardPage implements INSIS
     {
         return mSelectedPage;
     }
-    
+
     protected boolean isTemplateWizard()
     {
         return (mWizard instanceof NSISTemplateWizard);

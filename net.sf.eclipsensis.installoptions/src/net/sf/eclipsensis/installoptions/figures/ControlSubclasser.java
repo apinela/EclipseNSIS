@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -30,7 +30,7 @@ public class ControlSubclasser
 {
     private static int cNewProc;
     private static Map cProcMap = new HashMap(101);
-    
+
     static {
         SubclassCallback subCallback = new SubclassCallback();
         final Callback callback = new Callback(subCallback,"windowProc",4); //$NON-NLS-1$
@@ -42,7 +42,7 @@ public class ControlSubclasser
         });
         cNewProc = callback.getAddress();
     }
-    
+
     private ControlSubclasser()
     {
     }
@@ -62,17 +62,17 @@ public class ControlSubclasser
             }
         });
     }
-    
+
     private static class SubclassCallback
     {
         public SubclassCallback()
         {
         }
-        
+
         public int windowProc(int hWnd, int msg, int wParam, int lParam)
         {
             int res;
-            
+
             switch (msg)
             {
                 case WinAPI.WM_NCHITTEST:
@@ -105,16 +105,16 @@ public class ControlSubclasser
                         res = 0;
                     }
             }
-            
+
             return res;
         }
     }
-    
+
     private static class ControlInfo
     {
         int oldProc;
         SWTControlFigure figure;
-        
+
         public ControlInfo(int oldProc, SWTControlFigure figure)
         {
             super();

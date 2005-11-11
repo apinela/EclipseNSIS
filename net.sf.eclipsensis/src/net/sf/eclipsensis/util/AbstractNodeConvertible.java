@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -56,7 +56,7 @@ public abstract class AbstractNodeConvertible implements INodeConvertible, Seria
                 Map propertyMap = new HashMap();
                 for (int i = 0; i < propertyDescriptors.length; i++) {
                     propertyMap.put(propertyDescriptors[i].getName(),propertyDescriptors[i]);
-                    
+
                 }
                 NodeList childNodes = node.getChildNodes();
                 int n = childNodes.getLength();
@@ -116,7 +116,7 @@ public abstract class AbstractNodeConvertible implements INodeConvertible, Seria
                         Method readMethod = descriptor.getReadMethod();
                         if(readMethod != null) {
                             Object obj = readMethod.invoke(this,null);
-            
+
                             if(obj != null) {
                                 node.appendChild(createChildNode(document, name, obj));
                             }
@@ -133,7 +133,7 @@ public abstract class AbstractNodeConvertible implements INodeConvertible, Seria
         }
         return node;
     }
-    
+
     protected String convertToString(String name, Object obj)
     {
         return (obj==null?null:obj.toString());
@@ -175,8 +175,8 @@ public abstract class AbstractNodeConvertible implements INodeConvertible, Seria
 
     protected Node createChildNode(Document document, String name, Object value)
     {
-        Node childNode = document.createElement(getChildNodeName()); //$NON-NLS-1$
-        XMLUtil.addAttribute(document, childNode, NAME_ATTRIBUTE, name); //$NON-NLS-1$
+        Node childNode = document.createElement(getChildNodeName());
+        XMLUtil.addAttribute(document, childNode, NAME_ATTRIBUTE, name);
         if(value instanceof INodeConvertible) {
             childNode.appendChild(((INodeConvertible)value).toNode(document));
         }
@@ -191,7 +191,7 @@ public abstract class AbstractNodeConvertible implements INodeConvertible, Seria
             }
         }
         else {
-            XMLUtil.addAttribute(document, childNode, VALUE_ATTRIBUTE, convertToString(name, value)); //$NON-NLS-1$
+            XMLUtil.addAttribute(document, childNode, VALUE_ATTRIBUTE, convertToString(name, value));
         }
         return childNode;
     }

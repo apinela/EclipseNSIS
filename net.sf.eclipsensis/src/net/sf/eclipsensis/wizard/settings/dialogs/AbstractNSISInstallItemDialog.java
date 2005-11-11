@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -33,7 +33,7 @@ public abstract class AbstractNSISInstallItemDialog extends StatusMessageDialog
     protected INSISInstallElement mItem;
     protected IPreferenceStore mStore;
     protected NSISWizard mWizard;
-    
+
     public AbstractNSISInstallItemDialog(NSISWizard wizard, INSISInstallElement item)
     {
         super(wizard.getShell());
@@ -43,7 +43,7 @@ public abstract class AbstractNSISInstallItemDialog extends StatusMessageDialog
         Common.beanToStore(mItem, mStore, getProperties());
     }
 
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
      */
@@ -54,12 +54,12 @@ public abstract class AbstractNSISInstallItemDialog extends StatusMessageDialog
         layout.marginHeight = 0;
         layout.marginWidth = 0;
         composite.setLayout(layout);
-        
+
         Control control = createControlContents(composite);
         GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
         gd.widthHint = convertWidthInCharsToPixels(65);
         control.setLayoutData(gd);
-        
+
         Dialog.applyDialogFont(composite);
         String helpContextId = getHelpContextId();
         if(helpContextId != null) {
@@ -67,7 +67,7 @@ public abstract class AbstractNSISInstallItemDialog extends StatusMessageDialog
         }
         return composite;
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.jface.window.Window#create()
      */
@@ -76,7 +76,7 @@ public abstract class AbstractNSISInstallItemDialog extends StatusMessageDialog
         super.create();
         validate();
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
      */

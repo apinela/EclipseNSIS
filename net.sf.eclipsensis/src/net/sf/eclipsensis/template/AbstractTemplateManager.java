@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -29,17 +29,17 @@ public abstract class AbstractTemplateManager
     private Map mTemplatesMap;
     private Map mDefaultTemplatesMap;
     private AbstractTemplateReaderWriter mReaderWriter;
-    
+
     public AbstractTemplateManager()
     {
         String fileName = getClass().getName()+".Templates.ser"; //$NON-NLS-1$
 
-        mDefaultTemplatesStore = getPlugin().getBundle().getResource(getTemplatesPath().append(fileName).makeAbsolute().toString()); //$NON-NLS-1$
-        
+        mDefaultTemplatesStore = getPlugin().getBundle().getResource(getTemplatesPath().append(fileName).makeAbsolute().toString());
+
         File parentFolder = getPlugin().getStateLocation().toFile();
         File location = null;
         if(parentFolder != null) {
-            location = new File(parentFolder,getTemplatesPath().toString()); //$NON-NLS-1$
+            location = new File(parentFolder,getTemplatesPath().toString());
             if(location.exists() && location.isFile()) {
                 location.delete();
             }
@@ -47,7 +47,7 @@ public abstract class AbstractTemplateManager
                 location.mkdirs();
             }
         }
-        
+
         mUserTemplatesStore = new File(location,fileName);
 
         try {
@@ -62,7 +62,7 @@ public abstract class AbstractTemplateManager
                 mDefaultTemplatesMap = new LinkedHashMap();
             }
         }
-        
+
         mTemplatesMap = new LinkedHashMap(mDefaultTemplatesMap);
         try {
             Map map = loadUserTemplateStore();
@@ -73,7 +73,7 @@ public abstract class AbstractTemplateManager
         catch (Exception e) {
             EclipseNSISPlugin.getDefault().log(e);
         }
-        
+
         mReaderWriter = createReaderWriter();
     }
 
@@ -89,7 +89,7 @@ public abstract class AbstractTemplateManager
             InputStream stream = mDefaultTemplatesStore.openStream();
             map = (Map)Common.readObject(stream, getClass().getClassLoader());
         }
-        
+
         return  map;
     }
 
@@ -103,7 +103,7 @@ public abstract class AbstractTemplateManager
         }
         return map;
     }
-    
+
     protected URL getDefaultTemplatesStore()
     {
         return mDefaultTemplatesStore;
@@ -113,7 +113,7 @@ public abstract class AbstractTemplateManager
     {
         return mUserTemplatesStore;
     }
-    
+
     public AbstractTemplate getTemplate(String name)
     {
         return (AbstractTemplate)mTemplatesMap.get(name);
@@ -123,12 +123,12 @@ public abstract class AbstractTemplateManager
     {
         return mTemplatesMap.values();
     }
-    
+
     public Collection getDefaultTemplates()
     {
         return mDefaultTemplatesMap.values();
     }
-    
+
     public boolean addTemplate(final AbstractTemplate template)
     {
         checkClass(template);
@@ -171,7 +171,7 @@ public abstract class AbstractTemplateManager
         mTemplatesMap.put(template.getName(),template);
         return true;
     }
-    
+
     public boolean removeTemplate(final AbstractTemplate template)
     {
         checkClass(template);
@@ -189,8 +189,8 @@ public abstract class AbstractTemplateManager
         }
         return false;
     }
- 
-    
+
+
     public boolean updateTemplate(AbstractTemplate oldTemplate, final AbstractTemplate template)
     {
         checkClass(oldTemplate);
@@ -280,16 +280,16 @@ public abstract class AbstractTemplateManager
         }
         return null;
     }
-    
+
     public boolean canRevert(AbstractTemplate template)
     {
         checkClass(template);
         return (mTemplatesMap.containsKey(template.getName()) && (template.getType() == AbstractTemplate.TYPE_CUSTOM));
     }
-    
+
     /**
      * @throws IOException
-     * 
+     *
      */
     public void save() throws IOException
     {
@@ -303,14 +303,14 @@ public abstract class AbstractTemplateManager
         }
         Common.writeObject(mUserTemplatesStore, map);
     }
-    
+
     private void checkClass(AbstractTemplate template)
     {
         if(template != null && !template.getClass().equals(getTemplateClass())) {
             throw new IllegalArgumentException(template.getClass().getName());
         }
     }
-    
+
     protected abstract Plugin getPlugin();
     protected abstract Image getShellImage();
     protected abstract IPath getTemplatesPath();

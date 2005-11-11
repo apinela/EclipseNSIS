@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -56,7 +56,7 @@ public abstract class AbstractTemplateDialog extends Dialog
     {
         return mTemplate;
     }
-    
+
     private void setCreate(boolean create)
     {
         mCreate = create;
@@ -79,8 +79,8 @@ public abstract class AbstractTemplateDialog extends Dialog
     protected void configureShell(Shell newShell)
     {
         super.configureShell(newShell);
-        newShell.setText(getShellTitle()); //$NON-NLS-1$
-        newShell.setImage(getShellImage()); //$NON-NLS-1$
+        newShell.setText(getShellTitle());
+        newShell.setImage(getShellImage());
     }
 
     /* (non-Javadoc)
@@ -90,7 +90,7 @@ public abstract class AbstractTemplateDialog extends Dialog
     {
         Composite composite = (Composite)super.createDialogArea(parent);
         ((GridLayout)composite.getLayout()).numColumns=2;
-        
+
         mTemplateName = NSISWizardDialogUtil.createText(composite,(mTemplate==null?"":mTemplate.getName()),"template.dialog.name.label",true,null,true); //$NON-NLS-1$ //$NON-NLS-2$
         mTemplateName.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e)
@@ -98,11 +98,11 @@ public abstract class AbstractTemplateDialog extends Dialog
                 getButton(IDialogConstants.OK_ID).setEnabled(!Common.isEmpty(((Text)e.widget).getText()));
             }
         });
-        
+
         Label l = NSISWizardDialogUtil.createLabel(composite,"template.dialog.description.label",true,null,false); //$NON-NLS-1$
         GridData data = (GridData)l.getLayoutData();
         data.horizontalSpan=2;
-        
+
         mTemplateDescription = NSISWizardDialogUtil.createText(composite,(mTemplate==null?"":mTemplate.getDescription()),SWT.BORDER|SWT.MULTI|SWT.WRAP,2,true,null); //$NON-NLS-1$
         Dialog.applyDialogFont(mTemplateDescription);
 
@@ -115,7 +115,7 @@ public abstract class AbstractTemplateDialog extends Dialog
         data.horizontalSpan=2;
         return composite;
     }
-    
+
     protected void createUpdateTemplate()
     {
         if(mTemplate == null) {

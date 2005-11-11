@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -18,7 +18,7 @@ import org.osgi.framework.Version;
 public class Common
 {
     public static final Integer ZERO = new Integer(0);
-    
+
     private Common()
     {
         super();
@@ -28,7 +28,7 @@ public class Common
     {
         return (str == null || str.trim().length() == 0);
     }
-    
+
     public static boolean isEmptyCollection(Collection collection)
     {
         if(collection != null) {
@@ -87,7 +87,7 @@ public class Common
     public static Version parseVersion(String ver)
     {
         int[] parts={0,0,0};
-    
+
         List list = tokenize(ver,'.');
         int n = Math.min(parts.length,list.size());
         String temp=""; //$NON-NLS-1$
@@ -109,15 +109,15 @@ public class Common
         for(int i=n; i<list.size(); i++) {
             buf.append(".").append(list.get(i)); //$NON-NLS-1$
         }
-        
+
         return new Version(parts[0], parts[1], parts[2], buf.toString());
     }
-    
+
     public static IVMInstall getVMInstall(Version minVersion)
     {
         return getVMInstall(minVersion, null);
     }
-    
+
     public static IVMInstall getVMInstall(Version minVersion, Version matchVersion)
     {
         if(matchVersion == null) {

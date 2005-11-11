@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -29,9 +29,9 @@ public abstract class AbstractJAROptionsDialog extends AbstractToolsUtilityDialo
 
     /**
      * @param parentShell
-     * @throws KeyStoreException 
+     * @throws KeyStoreException
      */
-    public AbstractJAROptionsDialog(Shell parentShell, List selection) throws KeyStoreException
+    public AbstractJAROptionsDialog(Shell parentShell, List selection)
     {
         super(parentShell, selection);
     }
@@ -57,7 +57,7 @@ public abstract class AbstractJAROptionsDialog extends AbstractToolsUtilityDialo
         }
         return ""; //$NON-NLS-1$
     }
-    
+
     protected void okPressed()
     {
        getDialogSettings().put(KEY_STORE,getKeyStore());
@@ -88,12 +88,12 @@ public abstract class AbstractJAROptionsDialog extends AbstractToolsUtilityDialo
     {
         if(super.isValid()) {
             boolean state = true;
-            
+
             if(!Common.isEmpty(getKeyStore())) {
                 File f = new File(getKeyStore());
                 state = (f.exists() && f.isFile());
             }
-    
+
             return state;
         }
         return false;

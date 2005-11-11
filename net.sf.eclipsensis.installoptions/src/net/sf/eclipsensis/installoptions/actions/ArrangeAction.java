@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -32,7 +32,7 @@ public class ArrangeAction extends SelectionAction
     public static final String BRING_FORWARD_ID = GROUP+"bring.forward"; //$NON-NLS-1$
     public static final String SEND_TO_BACK_ID = GROUP+"send.to.back"; //$NON-NLS-1$
     public static final String SEND_BACKWARD_ID = GROUP+"send.backward"; //$NON-NLS-1$
-    
+
     private int mType;
     /**
      * @param part
@@ -48,7 +48,7 @@ public class ArrangeAction extends SelectionAction
     /**
      * Initializes this action's text and images.
      */
-    protected void initUI() 
+    protected void initUI()
     {
         String id;
         switch(mType) {
@@ -66,7 +66,7 @@ public class ArrangeAction extends SelectionAction
                 id = BRING_TO_FRONT_ID;
                 break;
         }
-        
+
         setId(id);
         String prefix = id.substring(GROUP.length());
         setText(InstallOptionsPlugin.getResourceString(prefix+".action.name")); //$NON-NLS-1$
@@ -99,7 +99,7 @@ public class ArrangeAction extends SelectionAction
             }
             command.setSelection(modelSelection);
         }
-        
+
         return command;
     }
 

@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -43,7 +43,7 @@ public class CreateFromTemplateCommand extends org.eclipse.gef.commands.Command
             int maxX = Integer.MIN_VALUE;
             int maxY = Integer.MIN_VALUE;
             int width, height;
-            
+
             Dimension size = getParent().getDialogSize();
             for (int i = 0; i < mChildren.length; i++) {
                 Position p = mChildren[i].toGraphical(mChildren[i].getPosition(),size,false);
@@ -74,8 +74,8 @@ public class CreateFromTemplateCommand extends org.eclipse.gef.commands.Command
             for (int i = 0; i < mChildren.length; i++) {
                 Position p = mChildren[i].toGraphical(mChildren[i].getPosition(),size,false);
                 if(needsScaling) {
-                    Dimension delta2 = new Dimension(delta.width + (int)((double)(p.left-minX)*(scaleX-1)),
-                                                     delta.height + (int)((double)(p.top-minY)*(scaleY-1)));
+                    Dimension delta2 = new Dimension(delta.width + (int)((p.left-minX)*(scaleX-1)),
+                                                     delta.height + (int)((p.top-minY)*(scaleY-1)));
                     p.move(delta2);
                     p.setSize(p.getSize().scale(scaleX, scaleY));
                 }

@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -36,7 +36,7 @@ public class CreateTemplateAction extends SelectionAction
     /**
      * Initializes this action's text and images.
      */
-    protected void init() 
+    protected void init()
     {
         super.init();
         setText(InstallOptionsPlugin.getResourceString("create.template.action.label")); //$NON-NLS-1$
@@ -49,7 +49,7 @@ public class CreateTemplateAction extends SelectionAction
         setEnabled(false);
     }
 
-    protected boolean calculateEnabled() 
+    protected boolean calculateEnabled()
     {
         List objects = getSelectedObjects();
         if (objects.isEmpty()) {
@@ -62,11 +62,11 @@ public class CreateTemplateAction extends SelectionAction
                 return false;
             }
         }
-        
+
         return true;
     }
 
-    public void run() 
+    public void run()
     {
         List objects = new ArrayList();
 
@@ -74,7 +74,7 @@ public class CreateTemplateAction extends SelectionAction
             InstallOptionsWidgetEditPart object = (InstallOptionsWidgetEditPart)iter.next();
             objects.add(object.getModel());
         }
-        
+
         InstallOptionsTemplateDialog dialog = new InstallOptionsTemplateDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), (InstallOptionsWidget[])objects.toArray(new InstallOptionsWidget[objects.size()]));
         dialog.open();
     }

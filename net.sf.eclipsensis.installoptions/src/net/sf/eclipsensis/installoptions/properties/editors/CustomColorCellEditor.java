@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -31,13 +31,13 @@ public class CustomColorCellEditor extends DialogCellEditor
     private ILabelProvider mLabelProvider;
     private RGB mDefaultColor;
     private Button mButton;
-    
-    public CustomColorCellEditor(Composite parent) 
+
+    public CustomColorCellEditor(Composite parent)
     {
         this(parent, SWT.NONE);
     }
 
-    public CustomColorCellEditor(Composite parent, int style) 
+    public CustomColorCellEditor(Composite parent, int style)
     {
         super(parent, style);
     }
@@ -48,7 +48,7 @@ public class CustomColorCellEditor extends DialogCellEditor
         FontMetrics fm = gc.getFontMetrics();
         int size = fm.getAscent();
         gc.dispose();
-    
+
         int indent = 6;
         int extent = DEFAULT_EXTENT;
         if (control instanceof Table) {
@@ -57,22 +57,22 @@ public class CustomColorCellEditor extends DialogCellEditor
         else if (control instanceof Tree) {
             extent = ((Tree) control).getItemHeight() - 1;
         }
-    
+
         if (size > extent) {
             size = extent;
         }
-    
+
         int width = indent + size;
         int height = extent;
-    
+
         int xoffset = indent;
         int yoffset = (height - size) / 2;
-    
+
         RGB black = new RGB(0, 0, 0);
         PaletteData dataPalette = new PaletteData(new RGB[] {black, black, color});
         ImageData data = new ImageData(width, height, 4, dataPalette);
         data.transparentPixel = 0;
-    
+
         int end = size - 1;
         for (int y = 0; y < size; y++) {
             for (int x = 0; x < size; x++) {
@@ -84,14 +84,14 @@ public class CustomColorCellEditor extends DialogCellEditor
                 }
             }
         }
-    
+
         return data;
     }
-    
+
     /* (non-Javadoc)
      * Method declared on DialogCellEditor.
      */
-    protected Control createContents(Composite cell) 
+    protected Control createContents(Composite cell)
     {
         Color bg = cell.getBackground();
         mComposite = new Composite(cell, getStyle());
@@ -106,7 +106,7 @@ public class CustomColorCellEditor extends DialogCellEditor
         mButton.setText(InstallOptionsPlugin.getResourceString("restore.default.label")); //$NON-NLS-1$
         mButton.setFont(cell.getFont());
         mButton.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent event) 
+            public void widgetSelected(SelectionEvent event)
             {
                 markDirty();
                 doSetValue(null);
@@ -118,7 +118,7 @@ public class CustomColorCellEditor extends DialogCellEditor
     /* (non-Javadoc)
      * Method declared on CellEditor.
      */
-    public void dispose() 
+    public void dispose()
     {
         if (mImage != null) {
             mImage.dispose();
@@ -126,11 +126,11 @@ public class CustomColorCellEditor extends DialogCellEditor
         }
         super.dispose();
     }
-    
+
     /* (non-Javadoc)
      * Method declared on DialogCellEditor.
      */
-    protected Object openDialogBox(Control cellEditorWindow) 
+    protected Object openDialogBox(Control cellEditorWindow)
     {
         ColorDialog dialog = new ColorDialog(cellEditorWindow.getShell());
         RGB value = (RGB)getValue();
@@ -148,12 +148,12 @@ public class CustomColorCellEditor extends DialogCellEditor
     {
         return mLabelProvider;
     }
-    
+
     public void setLabelProvider(ILabelProvider labelProvider)
     {
         mLabelProvider = labelProvider;
     }
-    
+
     public RGB getDefaultColor()
     {
         if(mDefaultColor == null) {
@@ -170,7 +170,7 @@ public class CustomColorCellEditor extends DialogCellEditor
     /* (non-Javadoc)
      * Method declared on DialogCellEditor.
      */
-    protected void updateContents(Object value) 
+    protected void updateContents(Object value)
     {
         RGB rgb = (RGB) value;
         if (rgb == null) {
@@ -179,12 +179,12 @@ public class CustomColorCellEditor extends DialogCellEditor
         if (mImage != null) {
             mImage.dispose();
         }
-    
+
         ImageData id = createColorImage(mColorLabel.getParent().getParent(), rgb);
         ImageData mask = id.getTransparencyMask();
         mImage = new Image(mColorLabel.getDisplay(), id, mask);
         mColorLabel.setImage(mImage);
-    
+
         if(getLabelProvider() != null) {
             mRGBLabel.setText(getLabelProvider().getText(rgb));
         }
@@ -192,13 +192,13 @@ public class CustomColorCellEditor extends DialogCellEditor
             mRGBLabel.setText("(" + rgb.red + "," + rgb.green + "," + rgb.blue + ")");//$NON-NLS-4$//$NON-NLS-3$//$NON-NLS-2$//$NON-NLS-1$
         }
     }
-    
+
     /**
      * Internal class for laying out this cell editor.
      */
-    private class ColorCellLayout extends Layout 
+    private class ColorCellLayout extends Layout
     {
-        public Point computeSize(Composite composite, int wHint, int hHint, boolean flushCache) 
+        public Point computeSize(Composite composite, int wHint, int hHint, boolean flushCache)
         {
             if (wHint != SWT.DEFAULT && hHint != SWT.DEFAULT) {
                 return new Point(wHint, hHint);
@@ -206,11 +206,11 @@ public class CustomColorCellEditor extends DialogCellEditor
             Point colorSize = mColorLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT, flushCache);
             Point rgbSize = mRGBLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT, flushCache);
             Point buttonSize = mButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, flushCache);
-            return new Point(colorSize.x + rgbSize.x + buttonSize.x + 2*GAP, 
-                            Math.max(Math.max(colorSize.y, rgbSize.y),buttonSize.y)); 
+            return new Point(colorSize.x + rgbSize.x + buttonSize.x + 2*GAP,
+                            Math.max(Math.max(colorSize.y, rgbSize.y),buttonSize.y));
         }
-        
-        public void layout(Composite composite, boolean flushCache) 
+
+        public void layout(Composite composite, boolean flushCache)
         {
             Rectangle bounds = composite.getClientArea();
             Point colorSize = mColorLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT, flushCache);
@@ -221,13 +221,13 @@ public class CustomColorCellEditor extends DialogCellEditor
             if (ty < 0) {
                 ty = 0;
             }
-            
+
             mColorLabel.setBounds(-1, 0, colorSize.x, colorSize.y);
-            mRGBLabel.setBounds(colorSize.x + GAP - 1, ty, 
-                                bounds.width - colorSize.x - buttonSize.x - 2*GAP, 
-                                bounds.height); 
-            mButton.setBounds(bounds.width - buttonSize.x - 1, 0, 
-                              buttonSize.x, bounds.height); 
+            mRGBLabel.setBounds(colorSize.x + GAP - 1, ty,
+                                bounds.width - colorSize.x - buttonSize.x - 2*GAP,
+                                bounds.height);
+            mButton.setBounds(bounds.width - buttonSize.x - 1, 0,
+                              buttonSize.x, bounds.height);
         }
     }
 }

@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -19,7 +19,7 @@ import org.eclipse.ui.views.properties.PropertyDescriptor;
 public class CustomColorPropertyDescriptor extends PropertyDescriptor
 {
     private RGB mDefaultColor = null;
-    
+
     /**
      * @param id
      * @param displayName
@@ -33,13 +33,13 @@ public class CustomColorPropertyDescriptor extends PropertyDescriptor
     {
         return mDefaultColor;
     }
-    
+
     public void setDefaultColor(RGB defaultColor)
     {
         mDefaultColor = defaultColor;
     }
-    
-    public CellEditor createPropertyEditor(Composite parent) 
+
+    public CellEditor createPropertyEditor(Composite parent)
     {
         CustomColorCellEditor editor = new CustomColorCellEditor(parent);
         if(mDefaultColor != null) {

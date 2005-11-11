@@ -42,7 +42,7 @@ import org.osgi.framework.Bundle;
 /**
  * Common class is the Swiss Army Knife of the project. Most miscellaneous utility functions
  * have been dumped in here.
- * 
+ *
  * @author Sunil.Kamath
  */
 public class Common
@@ -72,7 +72,7 @@ public class Common
         }
         return null;
     }
-    
+
     public static String encodePath(String path)
     {
         String nsisdirKeyword = NSISKeywords.getInstance().getKeyword("${NSISDIR}"); //$NON-NLS-1$
@@ -107,7 +107,7 @@ public class Common
     {
         return readObject(inputStream, null);
     }
-    
+
     public static Object readObject(InputStream inputStream, final ClassLoader classLoader) throws IOException, ClassNotFoundException
     {
         ObjectInputStream ois = null;
@@ -135,7 +135,7 @@ public class Common
             closeIO(inputStream);
         }
     }
-    
+
     /*
      *     protected Class resolveClass(ObjectStreamClass desc)
     throws IOException, ClassNotFoundException
@@ -228,7 +228,7 @@ public class Common
     {
         if(object != null) {
             ObjectOutputStream oos = null;
-    
+
             try {
                 if(!(outputStream instanceof BufferedOutputStream)) {
                     outputStream = new BufferedOutputStream(outputStream);
@@ -253,7 +253,7 @@ public class Common
      *
      * @param array       Array to be resized
      */
-    public static void flipArray(Object array) 
+    public static void flipArray(Object array)
     {
         if(array != null && array.getClass().isArray()) {
             int len = Array.getLength(array);
@@ -278,7 +278,7 @@ public class Common
      * @param newLength   New length of array
      * @return            New array of different size
      */
-    public static Object resizeArray(Object array, int offset, int newLength) 
+    public static Object resizeArray(Object array, int offset, int newLength)
     {
         if (array == null || newLength < 0)
         {
@@ -307,11 +307,11 @@ public class Common
      * @param newLength   New length of array
      * @return            New array of different size
      */
-    public static Object resizeArray(Object array, int newLength) 
+    public static Object resizeArray(Object array, int newLength)
     {
         return resizeArray(array,0,newLength);
     }
-    
+
     /**
      * Get subset of array
      *
@@ -335,7 +335,7 @@ public class Common
             throw new IllegalArgumentException();
         }
     }
-    
+
     public static Object joinArrays(Object[] arrays)
     {
         Object newArray = null;
@@ -350,7 +350,7 @@ public class Common
                         lengths[i] = Array.getLength(arrays[i]);
                         count += lengths[i];
                         if(clasz == null) {
-                            clasz = arrayClass.getComponentType(); 
+                            clasz = arrayClass.getComponentType();
                         }
                         else {
                             Class clasz2 = arrayClass.getComponentType();
@@ -375,7 +375,7 @@ public class Common
                     lengths[i] = 0;
                 }
             }
-            
+
             newArray = Array.newInstance(clasz, count);
             int n = 0;
             for (int i = 0; i < arrays.length; i++) {
@@ -395,7 +395,7 @@ public class Common
      * @param newArray    The array to be appended
      * @return            Appended array
      */
-    public static Object appendArray(Object oldArray, Object newArray) 
+    public static Object appendArray(Object oldArray, Object newArray)
     {
         return appendArray(oldArray, newArray, 0, Array.getLength(newArray));
     }
@@ -407,7 +407,7 @@ public class Common
      * @param newArray    The array to be appended
      * @return            Appended array
      */
-    public static Object appendArray(Object oldArray, Object newArray, int startIndex, int length) 
+    public static Object appendArray(Object oldArray, Object newArray, int startIndex, int length)
     {
         if (isEmptyArray(newArray))
         {
@@ -424,7 +424,7 @@ public class Common
         if(!oldClass.isArray()) {
             throw new IllegalArgumentException();
         }
-        
+
         Object appendedArray = null;
         if(newClass.equals(oldClass) || oldClass.isAssignableFrom(newClass)) {
             int oldLength = Array.getLength(oldArray);
@@ -443,7 +443,7 @@ public class Common
      * @param array       Array to be cloned
      * @return            Clone of the array
      */
-    public static Object cloneArray(Object array) 
+    public static Object cloneArray(Object array)
     {
 
         Class clasz = array.getClass();
@@ -457,7 +457,7 @@ public class Common
             throw new IllegalArgumentException();
         }
     }
-    
+
     /**
      * Check for an empty array
      *
@@ -789,11 +789,68 @@ public class Common
                 (str1 !=null && str2 != null && (ignoreCase?str1.equalsIgnoreCase(str2):str1.equals(str2))));
     }
 
+    public static String maybeQuote(String text)
+    {
+        if(shouldQuote(text)) {
+            text = quote(text);
+        }
+        return text;
+    }
+
+    public static boolean shouldQuote(String text)
+    {
+        boolean shouldQuote = false;
+        for(int i=0; i<text.length(); i++) {
+            if(Character.isWhitespace(text.charAt(i))) {
+                shouldQuote = true;
+            }
+        }
+        return shouldQuote;
+    }
+
+    public static String quote(String text)
+    {
+        return new StringBuffer("\"").append(text).append("\"").toString(); //$NON-NLS-1$ //$NON-NLS-2$
+    }
+
+    public static String makeNSISRelativeLocation(String pathName)
+    {
+        if(!Common.isEmpty(pathName)) {
+            String nsisHome = NSISPreferences.INSTANCE.getNSISHome();
+            if(!Common.isEmpty(nsisHome) && pathName.regionMatches(true,0,nsisHome,0,nsisHome.length())) {
+                boolean shouldQuote = shouldQuote(pathName);
+                pathName = NSISKeywords.getInstance().getKeyword("${NSISDIR}")+pathName.substring(nsisHome.length()); //$NON-NLS-1$
+                if(shouldQuote) {
+                    pathName = quote(pathName);
+                }
+            }
+        }
+        return pathName;
+    }
+
     public static String makeRelativeLocation(IResource resource, String pathname)
     {
-        Path childPath = new Path(pathname);
         if(resource instanceof IContainer || resource instanceof IFile) {
-            IPath reference = (resource instanceof IContainer?(IContainer)resource:((IFile)resource).getParent()).getLocation();
+            return makeRelativeLocation((resource instanceof IContainer?(IContainer)resource:((IFile)resource).getParent()).getLocation(), pathname);
+        }
+        return pathname;
+    }
+
+    public static String makeRelativeLocation(File file, String pathname)
+    {
+        if(file != null) {
+            String filepath = file.isFile()?file.getParent():file.getPath();
+            if(filepath != null) {
+                return makeRelativeLocation(new Path(filepath), pathname);
+            }
+        }
+        return pathname;
+    }
+
+    private static String makeRelativeLocation(IPath reference, String pathname)
+    {
+        if(!Common.isEmpty(pathname)) {
+            IPath childPath = new Path(pathname);
             if(reference.isAbsolute() && childPath.isAbsolute()) {
               if(stringsAreEqual(reference.getDevice(), childPath.getDevice(), true)) {
                   StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
@@ -818,11 +875,12 @@ public class Common
                   childPath = new Path(buf.toString());
               }
             }
+            return childPath.toOSString();
         }
-        return childPath.toOSString();
+        return pathname;
     }
 
-    public static String[] formatLines(String text, int maxLength) 
+    public static String[] formatLines(String text, int maxLength)
     {
         ArrayList lines = new ArrayList();
         BreakIterator boundary = BreakIterator.getLineInstance();
@@ -830,7 +888,7 @@ public class Common
         int start = boundary.first();
         int end = boundary.next();
         int lineLength = 0;
-    
+
         StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
         while (end != BreakIterator.DONE) {
             String word = text.substring(start,end);
@@ -849,7 +907,7 @@ public class Common
         }
         return (String[])lines.toArray(EMPTY_STRING_ARRAY);
     }
-    
+
     public static String generateUniqueName(String prefix, String suffix)
     {
         StringBuffer name = new StringBuffer(""); //$NON-NLS-1$
@@ -862,29 +920,29 @@ public class Common
         }
         return name.toString();
     }
-    
+
     public static void openError(Shell shell, String message, Image icon)
     {
         openError(shell, EclipseNSISPlugin.getResourceString("error.title"), message, icon); //$NON-NLS-1$
     }
-    
+
     public static void openWarning(Shell shell, String message, Image icon)
     {
         openWarning(shell, EclipseNSISPlugin.getResourceString("warning.title"), message, icon); //$NON-NLS-1$
     }
-    
+
     public static boolean openConfirm(Shell shell, String message, Image icon)
     {
         return openConfirm(shell,EclipseNSISPlugin.getResourceString("confirm.title"), //$NON-NLS-1$
                                           message, icon);
     }
-    
+
     public static boolean openQuestion(Shell shell, String message, Image icon)
     {
         return openQuestion(shell,EclipseNSISPlugin.getResourceString("confirm.title"), //$NON-NLS-1$
                                           message, icon);
     }
-    
+
     public static Point calculateControlSize(Control control, int chars, int lines)
     {
         Point pt = new Point(0,0);
@@ -899,7 +957,7 @@ public class Common
         gc.dispose();
         return pt;
     }
-    
+
     public static void writeContentToFile(File file, byte[] content)
     {
         if(!file.canWrite()) {
@@ -981,7 +1039,7 @@ public class Common
         }
         return bytes;
     }
-    
+
     public static String padString(String str, int length)
     {
         if(str != null) {
@@ -993,7 +1051,7 @@ public class Common
         }
         return str;
     }
-    
+
     public static void printBundleExtensions(Bundle bundle)
     {
         IExtensionRegistry registry = Platform.getExtensionRegistry();
@@ -1019,10 +1077,10 @@ public class Common
                 }
                 printChildren(prefix,elements[j].getChildren());
             }
-        }        
+        }
     }
 
-    public static boolean openConfirm(Shell parent, String title, String message, Image icon) 
+    public static boolean openConfirm(Shell parent, String title, String message, Image icon)
     {
         MessageDialog dialog = new MessageDialog(parent, title, icon,
                 message, MessageDialog.QUESTION, new String[] { IDialogConstants.OK_LABEL,
@@ -1030,14 +1088,14 @@ public class Common
         return dialog.open() == 0;
     }
 
-    public static void openError(Shell parent, String title, String message, Image icon) 
+    public static void openError(Shell parent, String title, String message, Image icon)
     {
         MessageDialog dialog = new MessageDialog(parent, title, icon,
                 message, MessageDialog.ERROR, new String[] { IDialogConstants.OK_LABEL }, 0);
         dialog.open();
     }
 
-    public static void openInformation(Shell parent, String title, String message, Image icon) 
+    public static void openInformation(Shell parent, String title, String message, Image icon)
     {
         MessageDialog dialog = new MessageDialog(parent, title, icon,
                 message, MessageDialog.INFORMATION,
@@ -1045,7 +1103,7 @@ public class Common
         dialog.open();
     }
 
-    public static boolean openQuestion(Shell parent, String title, String message, Image icon) 
+    public static boolean openQuestion(Shell parent, String title, String message, Image icon)
     {
         MessageDialog dialog = new MessageDialog(parent, title, icon,
                 message, MessageDialog.QUESTION, new String[] { IDialogConstants.YES_LABEL,
@@ -1053,18 +1111,34 @@ public class Common
         return dialog.open() == 0;
     }
 
-    public static void openWarning(Shell parent, String title, String message, Image icon) 
+    public static void openWarning(Shell parent, String title, String message, Image icon)
     {
-        MessageDialog dialog = new MessageDialog(parent, title, icon, 
+        MessageDialog dialog = new MessageDialog(parent, title, icon,
                 message, MessageDialog.WARNING, new String[] { IDialogConstants.OK_LABEL }, 0);
         dialog.open();
     }
-    
+
     public static String trim(String str)
     {
         if(str != null) {
             return str.trim();
         }
         return null;
+    }
+
+    public static String escapeQuotes(String text)
+    {
+        if(!isEmpty(text)) {
+            StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
+            char[] chars = text.toCharArray();
+            for (int i = 0; i < chars.length; i++) {
+                if(chars[i] == '"' || chars[i] == '\'' || chars[i] == '`') {
+                    buf.append("$\\"); //$NON-NLS-1$
+                }
+                buf.append(chars[i]);
+            }
+            text = buf.toString();
+        }
+        return text;
     }
 }

@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -31,9 +31,9 @@ public class ComboboxFigure extends AbstractInstallOptionsFigure implements ILis
     private ListFigure mListFigure;
     private ComboFigure mComboFigure;
     private int mComboHeight;
-    
+
     /**
-     * 
+     *
      */
     public ComboboxFigure(Composite parent, final IPropertySource propertySource)
     {
@@ -44,7 +44,7 @@ public class ComboboxFigure extends AbstractInstallOptionsFigure implements ILis
         Point p = cb.computeSize(SWT.DEFAULT,SWT.DEFAULT);
         cb.dispose();
         mComboHeight = p.y;
-        
+
         setLayoutManager(new XYLayout());
         Rectangle[] bounds = calculateBounds((Rectangle)propertySource.getPropertyValue(InstallOptionsWidget.PROPERTY_BOUNDS));
         mComboFigure = new ComboFigure(parent, new CustomPropertySourceWrapper(propertySource, bounds[0]));
@@ -53,12 +53,12 @@ public class ComboboxFigure extends AbstractInstallOptionsFigure implements ILis
         add(mComboFigure);
         add(mListFigure);
     }
-        
+
     public ListFigure getListFigure()
     {
         return mListFigure;
     }
-    
+
     public ComboFigure getComboFigure()
     {
         return mComboFigure;
@@ -99,7 +99,7 @@ public class ComboboxFigure extends AbstractInstallOptionsFigure implements ILis
         return new Rectangle[] {rect1,
                                 new Rectangle(0,Math.max(0,rect1.height),rect.width,Math.max(0,rect.height-rect1.height))};
     }
-    
+
     public void setBounds(Rectangle rect)
     {
         Rectangle[] bounds = calculateBounds(rect);
@@ -120,7 +120,7 @@ public class ComboboxFigure extends AbstractInstallOptionsFigure implements ILis
     {
         return mListFigure.getListItems();
     }
-    
+
     public void setListItems(List listItems)
     {
         mListFigure.setListItems(listItems);
@@ -150,7 +150,7 @@ public class ComboboxFigure extends AbstractInstallOptionsFigure implements ILis
     {
         return getClientArea().getCopy();
     }
-    
+
     private class CustomPropertySourceWrapper extends PropertySourceWrapper
     {
         private Rectangle mBounds;
@@ -159,7 +159,7 @@ public class ComboboxFigure extends AbstractInstallOptionsFigure implements ILis
             super(delegate);
             mBounds = bounds;
         }
-        
+
         public Object getPropertyValue(Object id)
         {
             if(InstallOptionsWidget.PROPERTY_BOUNDS.equals(id)) {

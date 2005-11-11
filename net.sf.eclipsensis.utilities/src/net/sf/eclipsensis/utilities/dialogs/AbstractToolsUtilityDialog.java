@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -41,7 +41,7 @@ public abstract class AbstractToolsUtilityDialog extends Dialog
     protected static final String ATTR_BUTTON = "button"; //$NON-NLS-1$
     protected static final String ATTR_LABEL = "label"; //$NON-NLS-1$
     protected static final String ATTR_TEXT = "text"; //$NON-NLS-1$
-    
+
     protected static final String TOOLS_JAR = "tools.jar"; //$NON-NLS-1$
     protected static final String VERBOSE = "verbose"; //$NON-NLS-1$
     protected static final String IGNORE_ERRORS = "ignore.errors"; //$NON-NLS-1$
@@ -53,10 +53,10 @@ public abstract class AbstractToolsUtilityDialog extends Dialog
     private IVMInstall mVMInstall = null;
     private String mToolsMainClassName = null;
     private List mSelection = Collections.EMPTY_LIST;
-    
+
     /**
      * @param parentShell
-     * @throws KeyStoreException 
+     * @throws KeyStoreException
      */
     public AbstractToolsUtilityDialog(Shell parentShell, List selection)
     {
@@ -71,7 +71,7 @@ public abstract class AbstractToolsUtilityDialog extends Dialog
         mValues = new HashMap();
         init();
     }
-    
+
     protected void init()
     {
         String toolsJar = getStringDialogSetting(TOOLS_JAR);
@@ -115,7 +115,7 @@ public abstract class AbstractToolsUtilityDialog extends Dialog
         String str = mDialogSettings.get(name);
         return (str==null?"":str); //$NON-NLS-1$
     }
-    
+
     protected final Integer getIntDialogSetting(String name)
     {
         try {
@@ -129,10 +129,10 @@ public abstract class AbstractToolsUtilityDialog extends Dialog
     protected final void configureShell(Shell newShell)
     {
         super.configureShell(newShell);
-        newShell.setText(getDialogTitle()); //$NON-NLS-1$
+        newShell.setText(getDialogTitle());
         newShell.setImage(UtilitiesPlugin.getDefault().getShellImage());
     }
-    
+
     protected final void makeBold(Control c)
     {
         FontData[] fd = c.getFont().getFontData();
@@ -148,7 +148,7 @@ public abstract class AbstractToolsUtilityDialog extends Dialog
             }
         });
     }
-    
+
     protected final Button makeRadio(Composite parent, String label, final String property, boolean isRequired,
                                      final Object data)
     {
@@ -163,12 +163,12 @@ public abstract class AbstractToolsUtilityDialog extends Dialog
         b.setText(label);
         b.setSelection(data.equals(getValues().get(property)));
         b.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) 
+            public void widgetSelected(SelectionEvent e)
             {
                 setValue(property, data);
             }
         });
-        
+
         return b;
     }
 
@@ -179,20 +179,20 @@ public abstract class AbstractToolsUtilityDialog extends Dialog
         if(isRequired) {
             makeBold(b);
         }
-        b.setText(label); //$NON-NLS-1$
+        b.setText(label);
         b.setSelection(((Boolean)mValues.get(property)).booleanValue());
         GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
         gd.horizontalSpan = layout.numColumns;
         b.setLayoutData(gd);
         b.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) 
+            public void widgetSelected(SelectionEvent e)
             {
                 setValue(property,b.getSelection()?Boolean.TRUE:Boolean.FALSE);
             }
         });
         return b;
     }
-    
+
     protected final Text makeText(Composite composite, String label, final String property, boolean isRequired)
     {
         GridLayout layout = (GridLayout)composite.getLayout();
@@ -208,8 +208,8 @@ public abstract class AbstractToolsUtilityDialog extends Dialog
                 setValue(property, text.getText());
             }
         });
-        
-        text.setData(ATTR_LABEL,l); //$NON-NLS-1$
+
+        text.setData(ATTR_LABEL,l);
         return text;
     }
 
@@ -235,9 +235,9 @@ public abstract class AbstractToolsUtilityDialog extends Dialog
         if(listener != null) {
             b.addSelectionListener(listener);
         }
-        text.setData(ATTR_LABEL,l); //$NON-NLS-1$
-        text.setData(ATTR_BUTTON,b); //$NON-NLS-1$
-        b.setData(ATTR_TEXT,text); //$NON-NLS-1$
+        text.setData(ATTR_LABEL,l);
+        text.setData(ATTR_BUTTON,b);
+        b.setData(ATTR_TEXT,text);
         return text;
     }
 
@@ -247,7 +247,7 @@ public abstract class AbstractToolsUtilityDialog extends Dialog
         if(isRequired) {
             makeBold(l);
         }
-        l.setText(label); //$NON-NLS-1$
+        l.setText(label);
         l.setLayoutData(new GridData());
         return l;
     }
@@ -256,7 +256,7 @@ public abstract class AbstractToolsUtilityDialog extends Dialog
     {
         parent = (Composite)super.createDialogArea(parent);
         GridLayout layout = (GridLayout)parent.getLayout();
-        
+
         Composite composite = new Composite(parent,SWT.NONE);
         GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
         gridData.horizontalSpan = layout.numColumns;
@@ -266,7 +266,7 @@ public abstract class AbstractToolsUtilityDialog extends Dialog
         layout.marginWidth = 0;
         composite.setLayout(layout);
         applyDialogFont(composite);
-        
+
         createValuesDialogArea(composite);
 
         if(mSelection.size() > 1) {
@@ -274,7 +274,7 @@ public abstract class AbstractToolsUtilityDialog extends Dialog
         }
         makeCheckBox(composite,UtilitiesPlugin.getResourceString(VERBOSE+".label"),VERBOSE,false); //$NON-NLS-1$
         createFlagsDialogArea(composite);
-        
+
         Composite composite2 = new Composite(composite,SWT.NONE);
         gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
         gridData.horizontalSpan = layout.numColumns;
@@ -286,18 +286,18 @@ public abstract class AbstractToolsUtilityDialog extends Dialog
         applyDialogFont(composite2);
         makeFileBrowser(composite2,UtilitiesPlugin.getResourceString("tools.jar.location"), TOOLS_JAR,  //$NON-NLS-1$
                 new FileSelectionAdapter(UtilitiesPlugin.getResourceString("tools.jar.location.message"), //$NON-NLS-1$
-                        UtilitiesPlugin.getResourceString("tools.jar.name"),false), //$NON-NLS-1$ 
-                true); //$NON-NLS-1$
+                        UtilitiesPlugin.getResourceString("tools.jar.name"),false), //$NON-NLS-1$
+                true);
 
         return parent;
     }
-    
+
     public void create()
     {
         super.create();
         updateButtons();
     }
-    
+
     protected void handleToolsJarChanged(String oldToolsJar, String newToolsJar)
     {
         if(!Common.stringsAreEqual(oldToolsJar, newToolsJar)) {
@@ -328,7 +328,7 @@ public abstract class AbstractToolsUtilityDialog extends Dialog
                         jarfile = null;
                         toolsJarVersion = new Version(0,0,0);
                     }
-                    
+
                     if(toolsJarVersion == null) {
                         return;
                     }
@@ -338,7 +338,7 @@ public abstract class AbstractToolsUtilityDialog extends Dialog
                                 UtilitiesPlugin.getResourceString("mismatched.tools.jar.vm.version")); //$NON-NLS-1$
                     }
                 }
-                
+
                 if(vmInstall != null) {
                     toolsMainClassName = getToolsMainClassName(Common.parseVersion(((IVMInstall2)vmInstall).getJavaVersion()));
                     ZipEntry entry = jarfile.getEntry(toolsMainClassName.replace('.','/')+".class"); //$NON-NLS-1$
@@ -352,7 +352,7 @@ public abstract class AbstractToolsUtilityDialog extends Dialog
             setToolsMainClassName(toolsMainClassName);
         }
     }
-    
+
     protected void okPressed()
     {
         mDialogSettings.put(TOOLS_JAR,getToolsJar());
@@ -385,7 +385,7 @@ public abstract class AbstractToolsUtilityDialog extends Dialog
             button.setEnabled(isValid());
         }
     }
-    
+
     protected void setValue(String name, Object value)
     {
         Object oldValue = mValues.put(name,value);
@@ -411,7 +411,7 @@ public abstract class AbstractToolsUtilityDialog extends Dialog
     {
         return mVMInstall;
     }
-    
+
     protected void setToolsMainClassName(String className)
     {
         mToolsMainClassName = className;
@@ -433,21 +433,21 @@ public abstract class AbstractToolsUtilityDialog extends Dialog
         }
         return false;
     }
-    
+
     protected abstract String getDialogTitle();
     protected abstract AbstractUIPlugin getPlugin();
     protected abstract Version getMinJDKVersion();
     protected abstract void createValuesDialogArea(Composite parent);
     protected abstract void createFlagsDialogArea(Composite parent);
     protected abstract String getToolsMainClassName(Version toolsJarVersion);
-    
+
     protected class FileSelectionAdapter extends SelectionAdapter
     {
         private boolean mOpen;
         private String mDialogText;
         private String mDefaultFile;
-        
-        
+
+
         public FileSelectionAdapter(String text, String file, boolean open)
         {
             super();
@@ -456,18 +456,18 @@ public abstract class AbstractToolsUtilityDialog extends Dialog
             mOpen = open;
         }
 
-        public void widgetSelected(SelectionEvent e) 
+        public void widgetSelected(SelectionEvent e)
         {
             Button b = (Button)e.widget;
             if(b == null) {
                 b = (Button)e.item;
             }
-            Text text = (Text)b.getData(ATTR_TEXT); //$NON-NLS-1$
+            Text text = (Text)b.getData(ATTR_TEXT);
             if(text != null) {
                 FileDialog dialog = new FileDialog(getShell(),(mOpen?SWT.OPEN:SWT.SAVE));
-                dialog.setText(mDialogText); //$NON-NLS-1$
+                dialog.setText(mDialogText);
                 String file = text.getText();
-                dialog.setFileName(Common.isEmpty(file)?mDefaultFile:file); //$NON-NLS-1$
+                dialog.setFileName(Common.isEmpty(file)?mDefaultFile:file);
                 file = dialog.open();
                 if(file != null) {
                     text.setText(file);

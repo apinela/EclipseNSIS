@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -20,7 +20,7 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.console.*;
 
-public abstract class AbstractToolsUtility implements IJavaLaunchConfigurationConstants 
+public abstract class AbstractToolsUtility implements IJavaLaunchConfigurationConstants
 {
     protected File mToolsJar = null;
     protected boolean mVerbose = false;
@@ -28,7 +28,7 @@ public abstract class AbstractToolsUtility implements IJavaLaunchConfigurationCo
     protected IVMInstall mVMInstall;
     protected String mMainClassName;
     protected List mSelection;
-    
+
     public AbstractToolsUtility(IVMInstall vmInstall, String toolsJar, String mainClassName, List selection)
     {
         mVMInstall = vmInstall;
@@ -36,7 +36,7 @@ public abstract class AbstractToolsUtility implements IJavaLaunchConfigurationCo
         mMainClassName = mainClassName;
         mSelection = selection;
     }
-    
+
     protected String maybeQuote(String str)
     {
         if(!Common.isEmpty(str)) {
@@ -67,11 +67,11 @@ public abstract class AbstractToolsUtility implements IJavaLaunchConfigurationCo
         Display.getDefault().syncExec(new Runnable() {
             public void run()
             {
-                stream.print(message); //$NON-NLS-1$
+                stream.print(message);
             }
         });
     }
-    
+
     public IStatus run(IProgressMonitor monitor)
     {
         try {
@@ -86,27 +86,27 @@ public abstract class AbstractToolsUtility implements IJavaLaunchConfigurationCo
 
             ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
             ILaunchConfigurationType type = manager.getLaunchConfigurationType(ID_JAVA_APPLICATION);
-            
-            ILaunchConfigurationWorkingCopy workingCopy = type.newInstance(null, getLaunchTitle()); //$NON-NLS-1$
-            
+
+            ILaunchConfigurationWorkingCopy workingCopy = type.newInstance(null, getLaunchTitle());
+
             // specify a JRE
             workingCopy.setAttribute(ATTR_VM_INSTALL_NAME, mVMInstall.getName());
             workingCopy.setAttribute(ATTR_VM_INSTALL_TYPE, mVMInstall.getVMInstallType().getId());
-            
+
             // specify main type and program arguments
-            workingCopy.setAttribute(ATTR_MAIN_TYPE_NAME, mMainClassName); //$NON-NLS-1$
+            workingCopy.setAttribute(ATTR_MAIN_TYPE_NAME, mMainClassName);
             workingCopy.setAttribute(ATTR_CLASSPATH, classpath);
             workingCopy.setAttribute(ATTR_DEFAULT_CLASSPATH, false);
-            
+
             final MessageConsoleStream[] streams = new MessageConsoleStream[2];
-            monitor.beginTask(getTaskName(), mSelection.size()); //$NON-NLS-1$
-            final MessageConsole console = new MessageConsole(getConsoleTitle(),null); //$NON-NLS-1$
+            monitor.beginTask(getTaskName(), mSelection.size());
+            final MessageConsole console = new MessageConsole(getConsoleTitle(),null);
             Display.getDefault().syncExec(new Runnable() {
                 public void run() {
                     final IConsoleManager consoleManager = ConsolePlugin.getDefault().getConsoleManager();
                     consoleManager.addConsoles(new IConsole[]{console});
                     streams[0] = console.newMessageStream();
-    
+
                     streams[1] = console.newMessageStream();
                     streams[1].setColor(JFaceResources.getColorRegistry().get("ERROR_COLOR")); //$NON-NLS-1$
                     consoleManager.showConsoleView(console);
@@ -141,10 +141,10 @@ public abstract class AbstractToolsUtility implements IJavaLaunchConfigurationCo
                             Thread.sleep(100);
                         }
                         if(process.getExitValue() != 0) {
-                            writeLogMessage(streams[1],getFailMessage(target)); //$NON-NLS-1$
+                            writeLogMessage(streams[1],getFailMessage(target));
                         }
                         else {
-                            writeLogMessage(streams[0],getSuccessMessage(target)); //$NON-NLS-1$
+                            writeLogMessage(streams[0],getSuccessMessage(target));
                         }
                     }
                     else if(status.matches(IStatus.CANCEL)) {
@@ -154,7 +154,7 @@ public abstract class AbstractToolsUtility implements IJavaLaunchConfigurationCo
                         }
                     }
                     else {
-                        writeLogMessage(streams[1], status.getMessage()); //$NON-NLS-1$
+                        writeLogMessage(streams[1], status.getMessage());
                         if(!mIgnoreErrors) {
                             return status;
                         }
@@ -200,7 +200,7 @@ public abstract class AbstractToolsUtility implements IJavaLaunchConfigurationCo
         }
         return message;
     }
-    
+
     protected IStatus preProcess(Object target, IProgressMonitor monitor)
     {
         if(monitor.isCanceled()) {
@@ -208,7 +208,7 @@ public abstract class AbstractToolsUtility implements IJavaLaunchConfigurationCo
         }
         return Status.OK_STATUS;
     }
-    
+
     protected IStatus postProcess(Object target, IProgressMonitor monitor)
     {
         if(monitor.isCanceled()) {
@@ -235,7 +235,7 @@ public abstract class AbstractToolsUtility implements IJavaLaunchConfigurationCo
     protected abstract String getConsoleTitle();
 
     protected abstract String getLaunchTitle();
-    
+
     protected abstract String getTaskName();
     protected abstract String getSubTaskName(Object target);
 }

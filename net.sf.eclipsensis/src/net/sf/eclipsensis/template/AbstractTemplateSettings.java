@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -45,7 +45,7 @@ public abstract class AbstractTemplateSettings extends Composite
     private StyledText mDescriptionText = null;
 
     /**
-     * 
+     *
      */
     public AbstractTemplateSettings(Composite parent, int style, AbstractTemplateManager manager)
     {
@@ -78,7 +78,7 @@ public abstract class AbstractTemplateSettings extends Composite
         layout.marginHeight= 0;
         layout.marginWidth= 0;
         this.setLayout(layout);
-        
+
         Composite innerParent= new Composite(this, SWT.NONE);
         GridLayout innerLayout= new GridLayout();
         innerLayout.numColumns= 2;
@@ -90,19 +90,19 @@ public abstract class AbstractTemplateSettings extends Composite
         innerParent.setLayoutData(gd);
 
         Table table= new Table(innerParent, SWT.CHECK | SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION | SWT.V_SCROLL);
-        
+
         GridData data= new GridData(SWT.FILL, SWT.FILL, true, true);
         data.widthHint= fontMetrics.getAverageCharWidth()*3;
         data.heightHint= fontMetrics.getHeight()*10;
         table.setLayoutData(data);
 
         table.setHeaderVisible(true);
-        table.setLinesVisible(true);        
+        table.setLinesVisible(true);
 
-        TableColumn[] columns= {new TableColumn(table, SWT.NONE)};      
+        TableColumn[] columns= {new TableColumn(table, SWT.NONE)};
         columns[0].setText(EclipseNSISPlugin.getResourceString("template.name.label")); //$NON-NLS-1$
-        
-        mTableViewer= new CheckboxTableViewer(table);       
+
+        mTableViewer= new CheckboxTableViewer(table);
         mTableViewer.setLabelProvider(new CollectionLabelProvider());
         mTableViewer.setContentProvider(new EmptyContentProvider() {
             /* (non-Javadoc)
@@ -120,7 +120,7 @@ public abstract class AbstractTemplateSettings extends Composite
         Collator collator = Collator.getInstance();
         collator.setStrength(Collator.PRIMARY);
         mTableViewer.setSorter(new ViewerSorter(collator));
-        
+
         ViewerFilter filter = new ViewerFilter() {
             public boolean select(Viewer viewer, Object parentElement, Object element)
             {
@@ -137,7 +137,7 @@ public abstract class AbstractTemplateSettings extends Composite
                 edit();
             }
         });
-        
+
         mTableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
             public void selectionChanged(SelectionChangedEvent e) {
                 doSelectionChanged();
@@ -173,7 +173,7 @@ public abstract class AbstractTemplateSettings extends Composite
         data= new GridData();
         data.horizontalSpan= 2;
         label.setLayoutData(data);
-        
+
         mDescriptionText = new StyledText(this,SWT.BORDER|SWT.MULTI|SWT.READ_ONLY|SWT.WRAP);
         mDescriptionText.setBackground(getShell().getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
         mDescriptionText.setCursor(null);
@@ -185,11 +185,11 @@ public abstract class AbstractTemplateSettings extends Composite
 
         mTableViewer.setInput(mTemplateManager);
         mTableViewer.setAllChecked(false);
-        mTableViewer.setCheckedElements(getEnabledTemplates());     
+        mTableViewer.setCheckedElements(getEnabledTemplates());
 
         updateButtons();
         table.addControlListener(new TableResizer());
-        
+
         Dialog.applyDialogFont(this);
     }
 
@@ -214,7 +214,7 @@ public abstract class AbstractTemplateSettings extends Composite
         });
 
         createSeparator(parent);
-                
+
         mRestoreButton= new Button(parent, SWT.PUSH);
         mRestoreButton.setText(EclipseNSISPlugin.getResourceString("template.settings.restore.label")); //$NON-NLS-1$
         mRestoreButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
@@ -232,7 +232,7 @@ public abstract class AbstractTemplateSettings extends Composite
                 revert();
             }
         });
-        
+
         createSeparator(parent);
 
         mImportButton= new Button(parent, SWT.PUSH);
@@ -243,7 +243,7 @@ public abstract class AbstractTemplateSettings extends Composite
                 import$();
             }
         });
-        
+
         mExportButton= new Button(parent, SWT.PUSH);
         mExportButton.setText(EclipseNSISPlugin.getResourceString("template.settings.export.label")); //$NON-NLS-1$
         mExportButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
@@ -253,13 +253,13 @@ public abstract class AbstractTemplateSettings extends Composite
             }
         });
     }
-    
+
     /**
      * Creates a separator between buttons
      * @param parent
      * @return
      */
-    private Label createSeparator(Composite parent) 
+    private Label createSeparator(Composite parent)
     {
         Label separator= new Label(parent, SWT.NONE);
         separator.setVisible(false);
@@ -269,7 +269,7 @@ public abstract class AbstractTemplateSettings extends Composite
         return separator;
     }
 
-    private AbstractTemplate[] getEnabledTemplates() 
+    private AbstractTemplate[] getEnabledTemplates()
     {
         List enabled= new ArrayList();
         Collection coll = mTemplateManager.getTemplates();
@@ -281,25 +281,25 @@ public abstract class AbstractTemplateSettings extends Composite
         }
         return (AbstractTemplate[]) enabled.toArray(new AbstractTemplate[enabled.size()]);
     }
-    
-    private void doSelectionChanged() 
-    {      
+
+    private void doSelectionChanged()
+    {
         updateViewerInput();
         updateButtons();
     }
-    
+
     /**
      * Updates the description.
      */
-    protected void updateViewerInput() 
+    protected void updateViewerInput()
     {
         IStructuredSelection selection= (IStructuredSelection) mTableViewer.getSelection();
 
         if (selection.size() == 1) {
             AbstractTemplate template= (AbstractTemplate) selection.getFirstElement();
             mDescriptionText.setText(template.getDescription());
-        } 
-        else {        
+        }
+        else {
             mDescriptionText.setText(""); //$NON-NLS-1$
         }
     }
@@ -307,7 +307,7 @@ public abstract class AbstractTemplateSettings extends Composite
     /**
      * Updates the buttons.
      */
-    protected void updateButtons() 
+    protected void updateButtons()
     {
         IStructuredSelection selection= (IStructuredSelection) mTableViewer.getSelection();
         int selectionCount= selection.size();
@@ -320,7 +320,7 @@ public abstract class AbstractTemplateSettings extends Composite
                 break;
             }
         }
-        
+
         mEditButton.setEnabled(selectionCount == 1);
         mExportButton.setEnabled(selectionCount > 0);
         mRemoveButton.setEnabled(selectionCount > 0 && selectionCount <= itemCount);
@@ -328,20 +328,20 @@ public abstract class AbstractTemplateSettings extends Composite
         mRevertButton.setEnabled(canRevert);
     }
 
-    private void edit() 
+    private void edit()
     {
         IStructuredSelection selection= (IStructuredSelection) mTableViewer.getSelection();
 
-        Object[] objects= selection.toArray();      
+        Object[] objects= selection.toArray();
         if ((objects == null) || (objects.length != 1)) {
             return;
         }
-        
+
         AbstractTemplate data= (AbstractTemplate)selection.getFirstElement();
         edit(data);
     }
 
-    private void edit(AbstractTemplate oldTemplate) 
+    private void edit(AbstractTemplate oldTemplate)
     {
         AbstractTemplate newTemplate = (AbstractTemplate)oldTemplate.clone();
         Dialog dialog= createDialog(newTemplate);
@@ -350,21 +350,21 @@ public abstract class AbstractTemplateSettings extends Composite
             mTableViewer.refresh(true);
             doSelectionChanged();
             mTableViewer.setChecked(newTemplate, newTemplate.isEnabled());
-            mTableViewer.setSelection(new StructuredSelection(newTemplate));           
+            mTableViewer.setSelection(new StructuredSelection(newTemplate));
         }
     }
 
-    private void import$() 
+    private void import$()
     {
         FileDialog dialog= new FileDialog(getShell());
         dialog.setText(EclipseNSISPlugin.getResourceString("template.settings.import.title")); //$NON-NLS-1$
         dialog.setFilterExtensions(new String[] {EclipseNSISPlugin.getResourceString("template.settings.import.extension")}); //$NON-NLS-1$
         String path= dialog.open();
-        
+
         if (path == null) {
             return;
         }
-        
+
         try {
             File file= new File(path);
             if (file.exists()) {
@@ -375,19 +375,19 @@ public abstract class AbstractTemplateSettings extends Composite
                     for (Iterator iter=coll.iterator(); iter.hasNext(); ) {
                         mTemplateManager.addTemplate((AbstractTemplate)iter.next());
                     }
-                    
+
                     mTableViewer.refresh();
                     mTableViewer.setAllChecked(false);
                     mTableViewer.setCheckedElements(getEnabledTemplates());
                 }
             }
-        } 
+        }
         catch (Exception e) {
             Common.openError(getShell(), e.getLocalizedMessage(), getShellImage());
         }
     }
-    
-    private void export() 
+
+    private void export()
     {
         IStructuredSelection selection= (IStructuredSelection) mTableViewer.getSelection();
         Collection templates= selection.toList();
@@ -396,19 +396,19 @@ public abstract class AbstractTemplateSettings extends Composite
         dialog.setFilterExtensions(new String[] {EclipseNSISPlugin.getResourceString("template.settings.import.extension")}); //$NON-NLS-1$
         dialog.setFileName(EclipseNSISPlugin.getResourceString("template.settings.export.filename")); //$NON-NLS-1$
         String path= dialog.open();
-        
+
         if (path == null) {
             return;
         }
-        
-        File file= new File(path);      
+
+        File file= new File(path);
 
         if (!file.exists() || Common.openConfirm(getShell(),EclipseNSISPlugin.getFormattedString("template.settings.export.save.confirm",new Object[]{file.getAbsolutePath()}), getShellImage())) { //$NON-NLS-1$
             OutputStream os = null;
             try {
                 os = new BufferedOutputStream(new FileOutputStream(file));
                 mTemplateManager.getReaderWriter().export(templates, os);
-            } 
+            }
             catch (Exception e) {
                 Common.openError(getShell(),e.getLocalizedMessage(), getShellImage());
             }
@@ -425,7 +425,7 @@ public abstract class AbstractTemplateSettings extends Composite
         }
     }
 
-    private void remove() 
+    private void remove()
     {
         IStructuredSelection selection= (IStructuredSelection) mTableViewer.getSelection();
 
@@ -435,32 +435,32 @@ public abstract class AbstractTemplateSettings extends Composite
                 AbstractTemplate template= (AbstractTemplate) elements.next();
                 mTemplateManager.removeTemplate(template);
             }
-    
+
             mTableViewer.refresh(true);
         }
     }
-    
-    private void restoreDeleted() 
+
+    private void restoreDeleted()
     {
         mTemplateManager.restore();
         mTableViewer.refresh(true);
         mTableViewer.setCheckedElements(getEnabledTemplates());
         updateButtons();
     }
-    
-    private void revert() 
+
+    private void revert()
     {
         IStructuredSelection selection= (IStructuredSelection) mTableViewer.getSelection();
 
         if(!selection.isEmpty()) {
             ArrayList list = new ArrayList();
             for (Iterator iter= selection.iterator(); iter.hasNext(); ) {
-                AbstractTemplate temp = (AbstractTemplate)mTemplateManager.revert((AbstractTemplate) iter.next());
+                AbstractTemplate temp = mTemplateManager.revert((AbstractTemplate) iter.next());
                 if(temp != null) {
                     list.add(temp);
                 }
             }
-    
+
             mTableViewer.refresh(true);
             mTableViewer.setSelection(new StructuredSelection(list));
             doSelectionChanged();
@@ -468,25 +468,25 @@ public abstract class AbstractTemplateSettings extends Composite
             mTableViewer.getTable().setFocus();
         }
     }
-    
+
     public void performDefaults() {
         mTemplateManager.resetToDefaults();
         mTableViewer.refresh(true);
         mTableViewer.setAllChecked(false);
-        mTableViewer.setCheckedElements(getEnabledTemplates());     
+        mTableViewer.setCheckedElements(getEnabledTemplates());
     }
 
     public boolean performOk() {
         try {
             mTemplateManager.save();
             return true;
-        } 
+        }
         catch (IOException e) {
             Common.openError(getShell(),e.getLocalizedMessage(), getShellImage());
             return false;
         }
-    }   
-    
+    }
+
     protected abstract AbstractTemplate createTemplate(String name);
     protected abstract Dialog createDialog(AbstractTemplate newTemplate);
     protected abstract Image getShellImage();

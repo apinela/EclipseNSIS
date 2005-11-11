@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -49,7 +49,7 @@ public class CopyCommand extends Command
             mMinY = Math.min(mMinY,bounds.y);
             mMaxY = Math.max(mMaxY,bounds.y+bounds.height-1);
         }
-        
+
         mCopies.add(part.clone());
     }
 
@@ -58,13 +58,13 @@ public class CopyCommand extends Command
         mBounds = new Rectangle(mMinX,mMinY,mMaxX-mMinX+1,mMaxY-mMinY+1);
         redo();
     }
-    
+
     public void redo()
     {
-        Clipboard clipboard = (Clipboard)Clipboard.getDefault();
+        Clipboard clipboard = Clipboard.getDefault();
         clipboard.setContents(mNewContents);
     }
-    
+
     public class CopyContents
     {
         public Rectangle getBounds()

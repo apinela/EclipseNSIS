@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -32,7 +32,7 @@ public class CheckBoxFigure extends ButtonFigure
     {
         super(parent, propertySource);
     }
-    
+
     protected void init(IPropertySource propertySource)
     {
         List flags = (List)propertySource.getPropertyValue(InstallOptionsModel.PROPERTY_FLAGS);
@@ -40,17 +40,17 @@ public class CheckBoxFigure extends ButtonFigure
         setState(InstallOptionsModel.STATE_CHECKED.equals(propertySource.getPropertyValue(InstallOptionsModel.PROPERTY_STATE)));
         super.init(propertySource);
     }
-    
+
     public void setState(boolean state)
     {
         mState = state;
     }
-    
+
     public void setLeftText(boolean leftText)
     {
         mLeftText = leftText;
     }
-    
+
     public boolean isLeftText()
     {
         return mLeftText;

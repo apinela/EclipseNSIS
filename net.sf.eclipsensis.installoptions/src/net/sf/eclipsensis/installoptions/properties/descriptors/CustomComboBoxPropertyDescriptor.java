@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -22,11 +22,11 @@ public class CustomComboBoxPropertyDescriptor extends ComboBoxPropertyDescriptor
 
     public CustomComboBoxPropertyDescriptor(String id, String displayName, String[] data, String[] display, int default1)
     {
-        super(id, displayName, new String[0]); //$NON-NLS-1$
+        super(id, displayName, new String[0]);
         mData = data;
         mDisplay = display;
         mDefault = default1;
-        
+
         setLabelProvider(new LabelProvider(){
             public String getText(Object element)
             {
@@ -50,7 +50,7 @@ public class CustomComboBoxPropertyDescriptor extends ComboBoxPropertyDescriptor
 
     private class InternalComboBoxCellEditor extends ComboBoxCellEditor
     {
-        
+
         public InternalComboBoxCellEditor(Composite parent)
         {
             super(parent,mDisplay,SWT.READ_ONLY);

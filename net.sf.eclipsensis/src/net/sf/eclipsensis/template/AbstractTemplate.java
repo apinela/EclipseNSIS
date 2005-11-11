@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -18,7 +18,7 @@ public abstract class AbstractTemplate implements Serializable, Cloneable
     public static final int TYPE_DEFAULT = 0;
     public static final int TYPE_CUSTOM = 1;
     public static final int TYPE_USER = 2;
-    
+
     private String mName = null;
     private String mDescription = null;
     private boolean mEnabled = true;
@@ -36,7 +36,7 @@ public abstract class AbstractTemplate implements Serializable, Cloneable
     {
         this(name,""); //$NON-NLS-1$
     }
-    
+
     /**
      * @param name
      * @param description
@@ -48,7 +48,7 @@ public abstract class AbstractTemplate implements Serializable, Cloneable
         mDescription = (description==null?"":description); //$NON-NLS-1$
         mType = TYPE_USER;
     }
-    
+
     /**
      * @return Returns the description.
      */
@@ -56,7 +56,7 @@ public abstract class AbstractTemplate implements Serializable, Cloneable
     {
         return mDescription;
     }
-    
+
     /**
      * @return Returns the name.
      */
@@ -104,7 +104,7 @@ public abstract class AbstractTemplate implements Serializable, Cloneable
     {
         return getName();
     }
-    
+
     /* (non-Javadoc)
      * @see java.lang.Object#equals(java.lang.Object)
      */
@@ -116,7 +116,7 @@ public abstract class AbstractTemplate implements Serializable, Cloneable
         }
         return false;
     }
-    
+
     /* (non-Javadoc)
      * @see java.lang.Object#hashCode()
      */
@@ -124,7 +124,7 @@ public abstract class AbstractTemplate implements Serializable, Cloneable
     {
         return mName.hashCode()+mType;
     }
-    
+
     /**
      * @return Returns the deleted.
      */
@@ -146,7 +146,7 @@ public abstract class AbstractTemplate implements Serializable, Cloneable
     {
         return mType;
     }
-    
+
     /**
      * @param type The type to set.
      */

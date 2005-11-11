@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -13,15 +13,15 @@ package net.sf.eclipsensis.script;
 import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.util.Common;
 
-public abstract class AbstractNSISScriptElement implements INSISScriptElement 
+public abstract class AbstractNSISScriptElement implements INSISScriptElement
 {
     protected String mName = null;
     protected String[] mArgs = null;
-    
+
     /**
      * @param name
      */
-    public AbstractNSISScriptElement(String name) 
+    public AbstractNSISScriptElement(String name)
     {
         this(name,null);
     }
@@ -30,7 +30,7 @@ public abstract class AbstractNSISScriptElement implements INSISScriptElement
      * @param name
      * @param arg
      */
-    public AbstractNSISScriptElement(String name, Object arg) 
+    public AbstractNSISScriptElement(String name, Object arg)
     {
         mName = name;
         updateArgs(arg);
@@ -54,7 +54,7 @@ public abstract class AbstractNSISScriptElement implements INSISScriptElement
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.script.INSISScriptElement#write(net.sf.eclipsensis.script.NSISScriptWriter)
      */
-    public void write(NSISScriptWriter writer) 
+    public void write(NSISScriptWriter writer)
     {
         writer.printValue(getKeyword(mName));
         if(!Common.isEmptyArray(mArgs)) {
@@ -85,7 +85,7 @@ public abstract class AbstractNSISScriptElement implements INSISScriptElement
         }
         return array;
     }
-    
+
     protected static String getKeyword(String keyword)
     {
         return NSISKeywords.getInstance().getKeyword(keyword);
