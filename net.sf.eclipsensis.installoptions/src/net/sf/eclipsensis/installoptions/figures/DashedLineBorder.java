@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -17,13 +17,13 @@ import org.eclipse.draw2d.geometry.Insets;
 public class DashedLineBorder extends LineBorder
 {
     private static final int[] DASHES = {16,8};
-    
+
     public DashedLineBorder()
     {
         super(ColorManager.getColor(ColorManager.BLACK),1);
     }
 
-    public void paint(IFigure figure, Graphics graphics, Insets insets) 
+    public void paint(IFigure figure, Graphics graphics, Insets insets)
     {
         //Hack until setLineDashes is fixed.
         //XXX Remove when it is fixed.
@@ -33,16 +33,16 @@ public class DashedLineBorder extends LineBorder
         if (getColor() != null) {
             graphics.setForegroundColor(getColor());
         }
-        
+
         int[] dashInfo = {0, DASHES[0]};
         drawLine(graphics, tempRect.x, tempRect.y, tempRect.x+tempRect.width-1, tempRect.y, dashInfo);
         drawLine(graphics, tempRect.x+tempRect.width-1, tempRect.y, tempRect.x+tempRect.width-1, tempRect.y+tempRect.height-1, dashInfo);
         drawLine(graphics, tempRect.x+tempRect.width-1, tempRect.y+tempRect.height-1, tempRect.x, tempRect.y+tempRect.height-1, dashInfo);
         drawLine(graphics, tempRect.x, tempRect.y+tempRect.height-1, tempRect.x, tempRect.y, dashInfo);
-        
+
         graphics.popState();
     }
-    
+
     private void drawLine(Graphics graphics, int x1, int y1, int x2, int y2, int[] dashInfo)
     {
         boolean horizontal;

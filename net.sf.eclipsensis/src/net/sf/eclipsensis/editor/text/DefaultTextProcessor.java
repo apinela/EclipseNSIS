@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -18,7 +18,7 @@ public class DefaultTextProcessor implements INSISTextProcessor, INSISConstants
 {
     protected ICharacterScanner mScanner;
     protected StringBuffer mBuffer = new StringBuffer(""); //$NON-NLS-1$
-    
+
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.editor.codeassist.NSISTextUtility.INSISTextProcessor#setScanner(org.eclipse.jface.text.rules.ICharacterScanner)
      */

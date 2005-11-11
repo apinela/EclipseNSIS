@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -39,7 +39,7 @@ public class NSISTextUtility implements INSISConstants
     public static final IRegion EMPTY_REGION = new Region(0,0);
     private static final String[] cValidPartitionTypes = {IDocument.DEFAULT_CONTENT_TYPE,
                                                           NSISPartitionScanner.NSIS_STRING};
-    
+
     public static final int INVALID_REGIONS = -1;
     public static final int REGION1_BEFORE_REGION2 = 0;
     public static final int REGION1_OVERLAPS_LEFT_REGION2 = 1;
@@ -57,20 +57,20 @@ public class NSISTextUtility implements INSISConstants
         if (sourceViewer == null) {
             return -1;
         }
-            
+
         if (sourceViewer instanceof ITextViewerExtension4)  {
             ITextViewerExtension4 extension4= (ITextViewerExtension4) sourceViewer;
             if (extension4.moveFocusToWidgetToken()) {
                 return -100;
             }
         }
-        
+
         if (!(sourceViewer instanceof ITextViewerExtension2)) {
             return -1;
         }
-            
+
         ITextViewerExtension2 textViewerExtension2= (ITextViewerExtension2) sourceViewer;
-        
+
         // does a text hover exist?
         ITextHover textHover= textViewerExtension2.getCurrentTextHover();
         int offset;
@@ -93,9 +93,9 @@ public class NSISTextUtility implements INSISConstants
     {
         StyledText styledText= sourceViewer.getTextWidget();
         IDocument document= sourceViewer.getDocument();
-        
+
         if (document == null) {
-            return -1;      
+            return -1;
         }
 
         try {
@@ -103,17 +103,17 @@ public class NSISTextUtility implements INSISConstants
             if (sourceViewer instanceof ITextViewerExtension5) {
                 ITextViewerExtension5 extension= (ITextViewerExtension5) sourceViewer;
                 return extension.widgetOffset2ModelOffset(widgetLocation);
-            } 
+            }
             else {
                 IRegion visibleRegion= sourceViewer.getVisibleRegion();
                 return widgetLocation + visibleRegion.getOffset();
             }
-        } 
+        }
         catch (IllegalArgumentException e) {
-            return -1;  
+            return -1;
         }
     }
-    
+
     public static int getOverlapType(IRegion region1, IRegion region2)
     {
         int start1 = region1.getOffset();
@@ -138,7 +138,7 @@ public class NSISTextUtility implements INSISConstants
                     return REGION1_AFTER_REGION2;
                 }
             }
-            
+
         }
         return INVALID_REGIONS;
     }
@@ -161,16 +161,16 @@ public class NSISTextUtility implements INSISConstants
                     return (end2 < end1 ? new Region(start1, (end2-start1+1)) : region1);
                 }
             }
-            
+
         }
         return EMPTY_REGION;
     }
-    
+
     public static ITypedRegion[][] getNSISLines(IDocument doc)
     {
         return getNSISLines(doc, getNSISPartitions(doc));
     }
-    
+
     public static boolean contains(IRegion region, int offset)
     {
         return (region !=null && offset >= region.getOffset() && offset < region.getOffset()+region.getLength());
@@ -292,7 +292,7 @@ public class NSISTextUtility implements INSISConstants
                         }
                         typedRegions[0] = new TypedRegion(line.getOffset(),typedRegions[0].getOffset()+typedRegions[0].getLength()-line.getOffset(),typedRegions[0].getType());
                         endIndex -= startIndex;
-                        typedRegions[endIndex] = new TypedRegion(typedRegions[endIndex].getOffset(),line.getOffset()+line.getLength()-typedRegions[endIndex].getOffset(),typedRegions[endIndex].getType()); 
+                        typedRegions[endIndex] = new TypedRegion(typedRegions[endIndex].getOffset(),line.getOffset()+line.getLength()-typedRegions[endIndex].getOffset(),typedRegions[endIndex].getType());
                     }
                 }
             }
@@ -312,23 +312,23 @@ public class NSISTextUtility implements INSISConstants
                     for(int i=0; i<delims.length; i++) {
                         delims[i] = "\\"+delims[i]; //$NON-NLS-1$
                     }
-                    
+
                     int firstLine = doc.getLineOfOffset(typedRegions[0].getOffset());
                     ITypedRegion lastRegion = typedRegions[typedRegions.length-1];
                     int lastLine = doc.getLineOfOffset(lastRegion.getOffset()+lastRegion.getLength()-1);
                     for(int i=firstLine, index = 0; index < typedRegions.length && i<= lastLine; i++) {
-                        ArrayList lineRegions = new ArrayList(); 
+                        ArrayList lineRegions = new ArrayList();
                         IRegion line = doc.getLineInformation(i);
                         String lineDelim = doc.getLineDelimiter(i);
 //                        int start = line.getOffset();
                         int start = Math.max(line.getOffset(),typedRegions[index].getOffset());
                         int end = line.getOffset() + line.getLength() - 1 + (lineDelim != null?lineDelim.length():0);
-                        
+
                         int partitionEnd = typedRegions[index].getOffset() + typedRegions[index].getLength() - 1;
                         String type = typedRegions[index].getType();
                         boolean validPartition = type.equals(NSISPartitionScanner.NSIS_STRING) ||
                                                  type.equals(IDocument.DEFAULT_CONTENT_TYPE);
-                        
+
                         while(end >= start) {
                             if(partitionEnd > end) {
                                 if(validPartition) {
@@ -379,7 +379,7 @@ public class NSISTextUtility implements INSISConstants
                                 break;
                             }
                         }
-                        
+
                         if(lineRegions.size() > 0) {
                             regions.add(lineRegions.toArray(new ITypedRegion[0]));
                         }
@@ -391,7 +391,7 @@ public class NSISTextUtility implements INSISConstants
         }
         return (ITypedRegion[][])regions.toArray(new ITypedRegion[0][]);
     }
-    
+
     /**
      * @param doc
      * @return
@@ -423,7 +423,7 @@ public class NSISTextUtility implements INSISConstants
         }
         return typedRegions;
     }
-    
+
     /**
      * @param regionType
      * @param partitionTypes
@@ -473,8 +473,8 @@ public class NSISTextUtility implements INSISConstants
             c = scanner.read();
             if (c == ICharacterScanner.EOF && eofAllowed) {
                 return true;
-            } 
-            
+            }
+
             if (c == LINE_CONTINUATION_CHAR) {
                 int c2 = scanner.read();
                 if(delimitersDetected(scanner, c2)) {
@@ -491,13 +491,13 @@ public class NSISTextUtility implements INSISConstants
                     scanner.unread();
                 }
             }
-    
+
             if (c != sequence[i]) {
                 unread(scanner, ((NSISScanner)scanner).getOffset() - offset);
                 return false;
             }
         }
-        
+
         return true;
     }
 
@@ -528,16 +528,16 @@ public class NSISTextUtility implements INSISConstants
         }
         return false;
     }
-    
+
     public static boolean stringEscapeSequencesDetected(ICharacterScanner scanner, int c)
     {
         if(!(stringEscapeSequencesDetected(scanner, c, QUOTE_ESCAPE_SEQUENCES, true))) {
             stringEscapeSequencesDetected(scanner, c, WHITESPACE_ESCAPE_SEQUENCES, false);
         }
-        
+
         return true;
     }
-    
+
     public static String getRegionText(IDocument document, IRegion region)
     {
         String text = null;
@@ -566,7 +566,7 @@ public class NSISTextUtility implements INSISConstants
             return remainder;
         }
     }
-    
+
     public static String flattenSyntaxStylesMap(Map map)
     {
         StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
@@ -583,7 +583,7 @@ public class NSISTextUtility implements INSISConstants
         }
         return buf.toString();
     }
-    
+
     public static Map parseSyntaxStylesMap(String text)
     {
         Map map = new LinkedHashMap();
@@ -599,7 +599,7 @@ public class NSISTextUtility implements INSISConstants
                             map.put(key, style);
                             continue;
                         }
-                        catch(Exception ex) { 
+                        catch(Exception ex) {
                             EclipseNSISPlugin.getDefault().log(ex);
                         }
                     }
@@ -609,11 +609,11 @@ public class NSISTextUtility implements INSISConstants
         }
         return map;
     }
-    
+
     public static void hookSourceViewer(final ISourceViewer viewer)
     {
         final StyledText textWidget = viewer.getTextWidget();
-        
+
         final FontRegistry fontRegistry = JFaceResources.getFontRegistry();
         textWidget.setFont(fontRegistry.get(JFaceResources.TEXT_FONT));
         final IPropertyChangeListener fontListener = new IPropertyChangeListener() {
@@ -629,7 +629,7 @@ public class NSISTextUtility implements INSISConstants
         final Display display = textWidget.getDisplay();
         final HashMap map = new HashMap();
         final IPreferenceStore store = EditorsUI.getPreferenceStore();
-        
+
         textWidget.setBackground(createColor(map, store, AbstractDecoratedTextEditor.PREFERENCE_COLOR_BACKGROUND,
                 AbstractDecoratedTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT, display));
         textWidget.setForeground(createColor(map, store, AbstractDecoratedTextEditor.PREFERENCE_COLOR_FOREGROUND,
@@ -666,7 +666,7 @@ public class NSISTextUtility implements INSISConstants
         });
     }
 
-    private static Color createColor(Map map, IPreferenceStore store, String key, String defaultKey, Display display) 
+    private static Color createColor(Map map, IPreferenceStore store, String key, String defaultKey, Display display)
     {
         if(!store.getBoolean(defaultKey)) {
             if (store.contains(key)) {

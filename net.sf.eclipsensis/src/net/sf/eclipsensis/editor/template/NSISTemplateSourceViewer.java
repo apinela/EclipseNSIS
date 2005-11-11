@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  */
@@ -22,7 +22,7 @@ public class NSISTemplateSourceViewer extends NSISSourceViewer
     public static final int INSERT_TEMPLATE_VARIABLE = REMOVE_BLOCK_COMMENT+1;
     private IContentAssistant mInsertTemplateVariableAssistant = null;
     private boolean mInsertTemplateVariableAssistantInstalled = false;
-    
+
     private ColorRegistry mColorRegistry = null;
     /**
      * @param parent
@@ -37,7 +37,7 @@ public class NSISTemplateSourceViewer extends NSISSourceViewer
     {
         super(parent, ruler, overviewRuler, showsAnnotationOverview, styles);
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.jface.text.source.ISourceViewer#configure(org.eclipse.jface.text.source.SourceViewerConfiguration)
      */
@@ -54,7 +54,7 @@ public class NSISTemplateSourceViewer extends NSISSourceViewer
         }
         super.configure(configuration);
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.jface.text.source.ISourceViewerExtension2#unconfigure()
      */
@@ -84,7 +84,7 @@ public class NSISTemplateSourceViewer extends NSISSourceViewer
                         mInsertTemplateVariableAssistant.install(this);
                         mInsertTemplateVariableAssistantInstalled= true;
                     }
-                } 
+                }
                 else if (mInsertTemplateVariableAssistantInstalled) {
                     mInsertTemplateVariableAssistant.uninstall();
                     mInsertTemplateVariableAssistantInstalled= false;
@@ -94,7 +94,7 @@ public class NSISTemplateSourceViewer extends NSISSourceViewer
                 super.enableOperation(operation, enable);
         }
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.jface.text.ITextOperationTarget#canDoOperation(int)
      */

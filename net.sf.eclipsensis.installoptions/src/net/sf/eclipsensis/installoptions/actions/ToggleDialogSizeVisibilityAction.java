@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -34,32 +34,32 @@ public class ToggleDialogSizeVisibilityAction extends Action
         setEnabled(isEnabled());
         setChecked(isChecked());
     }
-    
+
     public void run()
     {
         if(isEnabled()) {
             if(isEnabled()) {
-                GraphicalViewer viewer = ((InstallOptionsDesignEditor)mEditor).getGraphicalViewer();
-                Boolean b = (Boolean)viewer.getProperty(IInstallOptionsConstants.PROPERTY_SHOW_DIALOG_SIZE); 
+                GraphicalViewer viewer = mEditor.getGraphicalViewer();
+                Boolean b = (Boolean)viewer.getProperty(IInstallOptionsConstants.PROPERTY_SHOW_DIALOG_SIZE);
                 viewer.setProperty(IInstallOptionsConstants.PROPERTY_SHOW_DIALOG_SIZE,b.booleanValue()?Boolean.FALSE:Boolean.TRUE);
             }
         }
     }
-    
+
     public boolean isEnabled()
     {
-        GraphicalViewer viewer = ((InstallOptionsDesignEditor)mEditor).getGraphicalViewer();
+        GraphicalViewer viewer = mEditor.getGraphicalViewer();
         if(viewer != null) {
             return (viewer.getProperty(IInstallOptionsConstants.PROPERTY_SHOW_DIALOG_SIZE) != null);
         }
         return false;
     }
-    
+
     public boolean isChecked()
     {
         if(isEnabled()) {
-            GraphicalViewer viewer = ((InstallOptionsDesignEditor)mEditor).getGraphicalViewer();
-            Boolean b = (Boolean)viewer.getProperty(IInstallOptionsConstants.PROPERTY_SHOW_DIALOG_SIZE); 
+            GraphicalViewer viewer = mEditor.getGraphicalViewer();
+            Boolean b = (Boolean)viewer.getProperty(IInstallOptionsConstants.PROPERTY_SHOW_DIALOG_SIZE);
             return b.booleanValue();
         }
         return false;

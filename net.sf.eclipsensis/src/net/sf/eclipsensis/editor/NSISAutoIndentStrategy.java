@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -34,25 +34,25 @@ public class NSISAutoIndentStrategy extends NSISAutoEditStrategy
         }
         return end;
     }
-    
-    protected void autoIndentAfterNewLine(IDocument doc, DocumentCommand cmd) 
+
+    protected void autoIndentAfterNewLine(IDocument doc, DocumentCommand cmd)
     {
-        
+
         if (cmd.offset == -1 || doc.getLength() == 0) {
             return;
         }
-            
+
         try {
             // find start of line
             int p= (cmd.offset == doc.getLength() ? cmd.offset  - 1 : cmd.offset);
             IRegion info= doc.getLineInformationOfOffset(p);
             int start= info.getOffset();
-                
+
             // find white spaces
             int end= findEndOfWhiteSpace(doc, start, cmd.offset);
-                
+
             StringBuffer buf= new StringBuffer(cmd.text);
-            if (end > start) {          
+            if (end > start) {
                 // append to input
                 String indent = doc.get(start, end - start);
                 if(mUseSpacesForTabs) {
@@ -72,14 +72,14 @@ public class NSISAutoIndentStrategy extends NSISAutoEditStrategy
                     buf.append(indent);
                 }
             }
-            
+
             cmd.text= buf.toString();
-                
+
         } catch (BadLocationException excp) {
             // stop work
-        }   
+        }
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.jface.text.IAutoEditStrategy#customizeDocumentCommand(org.eclipse.jface.text.IDocument, org.eclipse.jface.text.DocumentCommand)
      */

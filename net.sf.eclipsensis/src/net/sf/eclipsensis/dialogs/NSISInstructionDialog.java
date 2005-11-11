@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -27,7 +27,7 @@ public class NSISInstructionDialog extends StatusMessageDialog
     private String mInstruction = ""; //$NON-NLS-1$
     private Combo mInstructionCombo = null;
     private Text mParametersText = null;
-    
+
     /**
      * @param parentShell
      */
@@ -59,7 +59,7 @@ public class NSISInstructionDialog extends StatusMessageDialog
     {
         Composite composite = new Composite(parent,SWT.NONE);
         composite.setLayout(new GridLayout(2,false));
-        
+
         String instruction;
         String parameters;
         int n = mInstruction.indexOf(" "); //$NON-NLS-1$
@@ -71,7 +71,7 @@ public class NSISInstructionDialog extends StatusMessageDialog
             instruction = mInstruction;
             parameters = ""; //$NON-NLS-1$
         }
-        
+
         mInstructionCombo = createCombo(composite, EclipseNSISPlugin.getResourceString("instructions.instruction.text"), //$NON-NLS-1$
                                         EclipseNSISPlugin.getResourceString("instructions.instruction.tooltip"), //$NON-NLS-1$
                                         instruction);
@@ -102,19 +102,19 @@ public class NSISInstructionDialog extends StatusMessageDialog
                 validate();
             }
         });
-        
+
         mParametersText = createText(composite, EclipseNSISPlugin.getResourceString("instructions.parameters.text"), //$NON-NLS-1$
                                      EclipseNSISPlugin.getResourceString("instructions.parameters.tooltip"),parameters); //$NON-NLS-1$
         mParametersText.setTextLimit(INSISConstants.DIALOG_TEXT_LIMIT);
         return composite;
     }
-    
+
     public void create()
     {
         super.create();
         validate();
     }
-    
+
     private void validate()
     {
         DialogStatus status = getStatus();
@@ -135,7 +135,7 @@ public class NSISInstructionDialog extends StatusMessageDialog
         GridData data = new GridData(SWT.FILL, SWT.CENTER, false, false);
         data.horizontalSpan = 1;
         label.setLayoutData(data);
-        
+
         Combo combo = new Combo(composite, SWT.DROP_DOWN|SWT.BORDER);
         combo.setToolTipText(tooltipText);
         String[] items = NSISKeywords.getInstance().getKeywordsGroup(NSISKeywords.SINGLELINE_COMPILETIME_COMMANDS);
@@ -150,13 +150,13 @@ public class NSISInstructionDialog extends StatusMessageDialog
                 combo.add(items[i]);
             }
         }
-        
+
         data = new GridData(SWT.FILL, SWT.CENTER, false, false);
         data.horizontalSpan = 1;
         combo.setLayoutData(data);
         return combo;
     }
-    
+
     protected Text createText(Composite composite, String labelText, String tooltipText, String value)
     {
         Label label = new Label(composite, SWT.LEFT);
@@ -164,17 +164,17 @@ public class NSISInstructionDialog extends StatusMessageDialog
         GridData data = new GridData(SWT.FILL, SWT.CENTER, false, false);
         data.horizontalSpan = 1;
         label.setLayoutData(data);
-        
+
         Text text = new Text(composite, SWT.SINGLE | SWT.BORDER);
         text.setToolTipText(tooltipText);
         data = new GridData(SWT.FILL, SWT.CENTER, true, false);
         data.widthHint = convertWidthInCharsToPixels(40);
         text.setLayoutData(data);
         text.setText(value);
-        
+
         return text;
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.Dialog#okPressed()
      */
@@ -191,7 +191,7 @@ public class NSISInstructionDialog extends StatusMessageDialog
     {
         return mInstruction;
     }
-    
+
     /**
      * @see org.eclipse.jface.dialogs.Dialog#createButtonBar(Composite)
      */

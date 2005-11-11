@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -28,7 +28,7 @@ public class InstallOptionsTreeEditPart extends AbstractTreeEditPart implements 
 {
     /**
      * Constructor initializes this with the given model.
-     * 
+     *
      * @param model
      *            Model for this.
      */
@@ -67,7 +67,7 @@ public class InstallOptionsTreeEditPart extends AbstractTreeEditPart implements 
 
     /**
      * Returns the model of this as a InstallOptionsElement.
-     * 
+     *
      * @return Model of this.
      */
     protected InstallOptionsElement getInstallOptionsElement()
@@ -78,7 +78,7 @@ public class InstallOptionsTreeEditPart extends AbstractTreeEditPart implements 
     /**
      * Returns <code>null</code> as a Tree EditPart holds no children under
      * it.
-     * 
+     *
      * @return <code>null</code>
      */
     protected List getModelChildren()
@@ -122,7 +122,7 @@ public class InstallOptionsTreeEditPart extends AbstractTreeEditPart implements 
     /**
      * Refreshes the Widget of this based on the property given to update. All
      * major properties are updated irrespective of the property input.
-     * 
+     *
      * @param property
      *            Property to be refreshed.
      */

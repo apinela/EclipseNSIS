@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -25,9 +25,9 @@ import org.eclipse.swt.widgets.*;
 public class NSISWizardTemplatePage extends AbstractNSISWizardStartPage
 {
     public static final String NAME = "nsisWizardTemplate"; //$NON-NLS-1$
-    
+
     private NSISWizardTemplate mTemplate = null;
-    
+
     /**
      * @param pageName
      * @param title
@@ -42,7 +42,7 @@ public class NSISWizardTemplatePage extends AbstractNSISWizardStartPage
     {
         return INSISConstants.PLUGIN_CONTEXT_PREFIX+"nsis_scrtmpltdlg_context"; //$NON-NLS-1$
     }
-    
+
     protected Control createPageControl(Composite parent)
     {
         mTemplate = mWizard.getTemplate();
@@ -52,8 +52,8 @@ public class NSISWizardTemplatePage extends AbstractNSISWizardStartPage
         final GridLayout layout = new GridLayout(2,false);
         composite.setLayout(layout);
         ((GridLayout)composite.getLayout()).numColumns=2;
-        
-        Text t = NSISWizardDialogUtil.createText(composite,mTemplate.getName(),"template.dialog.name.label",true,null,true); //$NON-NLS-1$ //$NON-NLS-2$
+
+        Text t = NSISWizardDialogUtil.createText(composite,mTemplate.getName(),"template.dialog.name.label",true,null,true); //$NON-NLS-1$
         t.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e)
             {
@@ -61,18 +61,18 @@ public class NSISWizardTemplatePage extends AbstractNSISWizardStartPage
                 validatePage(0xffff);
             }
         });
-        
+
         Label l = NSISWizardDialogUtil.createLabel(composite,"template.dialog.description.label",true,null,false); //$NON-NLS-1$
         GridData data = (GridData)l.getLayoutData();
         data.horizontalSpan=2;
-        
-        t = NSISWizardDialogUtil.createText(composite,mTemplate.getDescription(),SWT.BORDER|SWT.MULTI|SWT.WRAP,2,true,null); //$NON-NLS-1$
+
+        t = NSISWizardDialogUtil.createText(composite,mTemplate.getDescription(),SWT.BORDER|SWT.MULTI|SWT.WRAP,2,true,null);
         Dialog.applyDialogFont(t);
         data = (GridData)t.getLayoutData();
         data.horizontalAlignment=GridData.FILL;
         data.grabExcessHorizontalSpace=true;
         data.heightHint = Common.calculateControlSize(t,0,10).y;
-        
+
         t.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e)
             {
@@ -84,14 +84,14 @@ public class NSISWizardTemplatePage extends AbstractNSISWizardStartPage
         data = (GridData)b.getLayoutData();
         data.horizontalSpan=2;
         b.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) 
+            public void widgetSelected(SelectionEvent e)
             {
                 mTemplate.setEnabled(((Button)e.widget).getSelection());
             }
         });
 
         validatePage(0xffff);
-        
+
         return composite;
     }
 

@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -36,11 +36,11 @@ import org.eclipse.swt.widgets.*;
 public class NSISWizardWelcomePage extends AbstractNSISWizardStartPage
 {
     public static final String NAME = "nsisWizardWelcome"; //$NON-NLS-1$
-    
+
     private NSISWizardTemplate mTemplate = null;
     private boolean mCreateFromTemplate = false;
     private boolean mUsingTemplate = false;
-    
+
     /**
      * @param pageName
      * @param title
@@ -55,7 +55,7 @@ public class NSISWizardWelcomePage extends AbstractNSISWizardStartPage
     {
         return INSISConstants.PLUGIN_CONTEXT_PREFIX+"nsis_wizwelcome_context"; //$NON-NLS-1$
     }
-    
+
     protected Control createPageControl(Composite parent)
     {
         final Composite composite = new Composite(parent, SWT.NONE);
@@ -75,10 +75,10 @@ public class NSISWizardWelcomePage extends AbstractNSISWizardStartPage
         NSISWizardDialogUtil.createLabel(composite,"wizard.required.text", true, null, true); //$NON-NLS-1$
 
         createTemplatesGroup(composite);
-        
+
         composite.addListener (SWT.Resize,  new Listener () {
             boolean init = false;
-            
+
             public void handleEvent (Event e) {
                 if(init) {
                     Point size = composite.getSize();
@@ -92,38 +92,38 @@ public class NSISWizardWelcomePage extends AbstractNSISWizardStartPage
         });
 
         validatePage(1);
-        
+
         return composite;
     }
-    
+
     private Group createTemplatesGroup(Composite parent)
     {
-        Group group = NSISWizardDialogUtil.createGroup(parent, 1, null,null,false); //$NON-NLS-1$
+        Group group = NSISWizardDialogUtil.createGroup(parent, 1, null,null,false);
         ((GridLayout)group.getLayout()).makeColumnsEqualWidth = true;
         GridData data = (GridData)group.getLayoutData();
         data.grabExcessVerticalSpace = true;
         data.verticalAlignment = GridData.FILL;
-        
+
         final Button b = NSISWizardDialogUtil.createCheckBox(group,"create.from.template.button.text",false,true,null,false); //$NON-NLS-1$
-        
+
         MasterSlaveController m = new MasterSlaveController(b);
         SashForm form = new SashForm(group,SWT.HORIZONTAL);
         data = new GridData(SWT.FILL, SWT.FILL, true, true);
         form.setLayoutData(data);
-        
+
         MasterSlaveEnabler mse = new MasterSlaveEnabler() {
             public boolean canEnable(Control control)
             {
                 return true;
             }
-            
+
             public void enabled(Control control, boolean flag)
             {
                 int id = (flag?SWT.COLOR_LIST_BACKGROUND:SWT.COLOR_WIDGET_BACKGROUND);
                 control.setBackground(getShell().getDisplay().getSystemColor(id));
             }
         };
-        
+
         Composite composite = new Composite(form,SWT.NONE);
         GridLayout layout = new GridLayout(1,false);
         layout.marginHeight = 0;
@@ -159,7 +159,7 @@ public class NSISWizardWelcomePage extends AbstractNSISWizardStartPage
         Collator collator = Collator.getInstance();
         collator.setStrength(Collator.PRIMARY);
         viewer.setSorter(new ViewerSorter(collator));
-        
+
         ViewerFilter filter = new ViewerFilter() {
             public boolean select(Viewer viewer, Object parentElement, Object element)
             {
@@ -171,7 +171,7 @@ public class NSISWizardWelcomePage extends AbstractNSISWizardStartPage
             }
         };
         viewer.addFilter(filter);
-        
+
         viewer.addSelectionChangedListener(new ISelectionChangedListener() {
             public void selectionChanged(SelectionChangedEvent event)
             {
@@ -191,15 +191,15 @@ public class NSISWizardWelcomePage extends AbstractNSISWizardStartPage
         });
 
         b.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) 
+            public void widgetSelected(SelectionEvent e)
             {
                 mCreateFromTemplate = b.getSelection();
                 validatePage(0xffff);
-            }            
+            }
         });
-        
+
         m.updateSlaves();
-        
+
         addPageChangedRunnable(new Runnable() {
             public void run()
             {

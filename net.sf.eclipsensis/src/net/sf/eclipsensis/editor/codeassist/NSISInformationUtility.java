@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -27,7 +27,7 @@ import org.eclipse.swt.graphics.Image;
 public class NSISInformationUtility implements INSISConstants
 {
     public static final ICompletionProposal[] EMPTY_COMPLETION_PROPOSAL_ARRAY = new ICompletionProposal[0];
-    
+
     private static final char[] COMPLETION_AUTO_ACTIVATION_CHARS = { '.', '/','$','!',':' };
     private static final Image KEYWORD_IMAGE = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("keyword.icon")); //$NON-NLS-1$
     private static final Image PLUGIN_IMAGE = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("plugin.icon")); //$NON-NLS-1$
@@ -136,7 +136,7 @@ public class NSISInformationUtility implements INSISConstants
     {
         return COMPLETION_AUTO_ACTIVATION_CHARS;
     }
-    
+
     public static ICompletionProposal[] getCompletionsAtOffset(ITextViewer viewer, int offset)
     {
         if(offset > 0) {
@@ -190,9 +190,9 @@ public class NSISInformationUtility implements INSISConstants
                                         region.getOffset()+pos+2,
                                         textlen,
                                         exports[i].length(),
-                                        PLUGIN_IMAGE, 
+                                        PLUGIN_IMAGE,
                                         null, null, null));
-                                
+
                             }
                         }
                     }
@@ -207,7 +207,7 @@ public class NSISInformationUtility implements INSISConstants
                                                                     region.getOffset(),
                                                                     offset-region.getOffset(),
                                                                     allKeywords[i].length(),
-                                                                    KEYWORD_IMAGE, 
+                                                                    KEYWORD_IMAGE,
                                                                     null, null, null));
                                 }
                                 else {
@@ -225,7 +225,7 @@ public class NSISInformationUtility implements INSISConstants
                                                                     region.getOffset(),
                                                                     offset-region.getOffset(),
                                                                     plugins[i].length(),
-                                                                    PLUGIN_IMAGE, 
+                                                                    PLUGIN_IMAGE,
                                                                     null, null, null));
                                 }
                                 else {
@@ -250,7 +250,7 @@ public class NSISInformationUtility implements INSISConstants
         protected NSISKeywords.VariableMatcher mVariableMatcher = NSISKeywords.getInstance().createVariableMatcher();
         private int mMatchOffset = -1;
         private boolean mIsComplete = false;
-        
+
         /**
           * @param offset
           */
@@ -258,7 +258,7 @@ public class NSISInformationUtility implements INSISConstants
         {
             super(offset);
         }
-        
+
         /* (non-Javadoc)
          * @see net.sf.eclipsensis.editor.text.INSISTextProcessor#isValid(int)
          */
@@ -291,7 +291,7 @@ public class NSISInformationUtility implements INSISConstants
             }
             return true;
         }
-        
+
         protected boolean testComplete()
         {
             boolean isComplete = false;
@@ -335,7 +335,7 @@ public class NSISInformationUtility implements INSISConstants
             }
             return isComplete;
         }
-    
+
         /* (non-Javadoc)
          * @see net.sf.eclipsensis.editor.text.INSISTextProcessor#setScanner(org.eclipse.jface.text.rules.ICharacterScanner)
          */
@@ -350,7 +350,7 @@ public class NSISInformationUtility implements INSISConstants
     {
         private char mStringChar = (char)0;
         private int mStartOffset = -1;
-    
+
         /* (non-Javadoc)
          * @see net.sf.eclipsensis.editor.codeassist.NSISTextUtility.INSISTextProcessor#createToken()
          */
@@ -363,7 +363,7 @@ public class NSISInformationUtility implements INSISConstants
                 return Token.UNDEFINED;
             }
         }
-    
+
         /* (non-Javadoc)
          * @see net.sf.eclipsensis.editor.codeassist.NSISTextUtility.INSISTextProcessor#isValid(int)
          */
@@ -403,7 +403,7 @@ public class NSISInformationUtility implements INSISConstants
         {
             super(offset);
         }
-        
+
         /* (non-Javadoc)
          * @see net.sf.eclipsensis.editor.text.INSISTextProcessor#isValid(int)
          */
@@ -423,7 +423,7 @@ public class NSISInformationUtility implements INSISConstants
             }
             return b;
         }
-        
+
         protected boolean testComplete()
         {
             if(mOffset >=0 && mFirstNonWhitespaceOffset >= 0 && mBuffer.length() > 0) {
@@ -442,7 +442,7 @@ public class NSISInformationUtility implements INSISConstants
     {
         protected int mOffset;
         protected int mFirstNonWhitespaceOffset;
-        
+
         /**
          * @param offset
          */
@@ -450,7 +450,7 @@ public class NSISInformationUtility implements INSISConstants
         {
             mOffset = offset;
         }
-    
+
         /* (non-Javadoc)
          * @see net.sf.eclipsensis.editor.codeassist.NSISTextUtility.INSISTextProcessor#createToken()
          */
@@ -464,7 +464,7 @@ public class NSISInformationUtility implements INSISConstants
             }
             return Token.UNDEFINED;
         }
-    
+
         /* (non-Javadoc)
          * @see net.sf.eclipsensis.editor.codeassist.NSISTextUtility.INSISTextProcessor#isValid(int)
          */
@@ -487,7 +487,7 @@ public class NSISInformationUtility implements INSISConstants
             }
             return (mFirstNonWhitespaceOffset < 0);
         }
-    
+
         /* (non-Javadoc)
          * @see net.sf.eclipsensis.editor.codeassist.NSISTextUtility.INSISTextProcessor#setScanner(org.eclipse.jface.text.rules.ICharacterScanner)
          */
@@ -507,7 +507,7 @@ public class NSISInformationUtility implements INSISConstants
         {
             super(offset);
         }
-    
+
         /* (non-Javadoc)
          * @see net.sf.eclipsensis.editor.codeassist.NSISTextUtility.INSISTextProcessor#isValid(int)
          */
@@ -539,11 +539,11 @@ public class NSISInformationUtility implements INSISConstants
     private static class OnlyWhitespaceProcessor implements INSISTextProcessor
     {
         protected boolean mFoundNonWhitespace = false;
-    
+
         public void setScanner(ICharacterScanner scanner)
         {
         }
-    
+
         public boolean isValid(int c)
         {
             boolean temp = Character.isWhitespace((char)c);
@@ -552,7 +552,7 @@ public class NSISInformationUtility implements INSISConstants
             }
             return temp;
         }
-    
+
         public IToken createToken()
         {
             return (mFoundNonWhitespace?Token.UNDEFINED:Token.WHITESPACE);

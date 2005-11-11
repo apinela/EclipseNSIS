@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -15,7 +15,7 @@ import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
 
 public class InstallOptionsEditableElementCommand extends InstallOptionsDirectEditCommand
 {
-    public InstallOptionsEditableElementCommand(InstallOptionsEditableElement editable, String state) 
+    public InstallOptionsEditableElementCommand(InstallOptionsEditableElement editable, String state)
     {
         super(editable, InstallOptionsModel.PROPERTY_STATE, (state != null?state:"")); //$NON-NLS-1$
         setLabel(InstallOptionsPlugin.getFormattedString("editable.element.command.label",  //$NON-NLS-1$

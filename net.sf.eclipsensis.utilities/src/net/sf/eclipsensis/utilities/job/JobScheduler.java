@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -20,12 +20,12 @@ public class JobScheduler
 {
     private boolean mRunning = false;
     private Set mJobFamilies = new HashSet();
-    
+
     public JobScheduler()
     {
         super();
     }
-    
+
     public void start()
     {
         if(!mRunning) {
@@ -46,16 +46,16 @@ public class JobScheduler
             }
         }
     }
-    
+
     public void scheduleUIJob(String name, IJobStatusRunnable runnable)
     {
         scheduleJob(null, name, runnable);
     }
-    
+
     public void scheduleUIJob(Object family, String name, final IJobStatusRunnable runnable)
     {
         final Object jobFamily = (family == null?this:family);
-        
+
         new UIJob(name) {
             public IStatus runInUIThread(IProgressMonitor monitor)
             {
@@ -66,19 +66,19 @@ public class JobScheduler
             {
                 return jobFamily.equals(family);
             }
-            
+
         }.schedule();
     }
-    
+
     public void scheduleJob(String name, IJobStatusRunnable runnable)
     {
         scheduleJob(null, runnable);
     }
-    
+
     public void scheduleJob(Object family, String name, final IJobStatusRunnable runnable)
     {
         final Object jobFamily = (family == null?this:family);
-        
+
         new Job(name) {
             public IStatus run(IProgressMonitor monitor)
             {
@@ -89,10 +89,10 @@ public class JobScheduler
             {
                 return jobFamily.equals(family);
             }
-            
+
         }.schedule();
     }
-    
+
     public void cancelJobs(Object family)
     {
         if(family != null && mRunning && mJobFamilies.contains(family)) {

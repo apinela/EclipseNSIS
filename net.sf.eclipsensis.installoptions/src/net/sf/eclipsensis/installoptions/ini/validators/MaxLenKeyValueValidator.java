@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -26,7 +26,7 @@ public class MaxLenKeyValueValidator extends PositiveNumberKeyValueValidator
             if(!Common.isEmpty(value)) {
                 maxValue = Integer.parseInt(value);
             }
-            
+
             int minValue = 0;
             INIKeyValue[] keyValues = ((INISection)keyValue.getParent()).findKeyValues(InstallOptionsModel.PROPERTY_MINLEN);
             if(!Common.isEmptyArray(keyValues)) {

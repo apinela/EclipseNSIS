@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -25,7 +25,7 @@ public class InstallOptionsDialogLayer extends FreeformLayer implements IInstall
     private List mChildren = new ArrayList();
     private Dimension mDialogSize = new Dimension(100,100);
     private boolean mShowDialogSize = false;
-    
+
     private Dimension dialogUnitsToPixels(Dimension d)
     {
         Font f = Display.getDefault().getSystemFont();
@@ -44,7 +44,7 @@ public class InstallOptionsDialogLayer extends FreeformLayer implements IInstall
             graphics.restoreState();
         }
     }
-    
+
     public void add(IFigure child, Object constraint, int index)
     {
         mChildren.add(child);
@@ -88,12 +88,12 @@ public class InstallOptionsDialogLayer extends FreeformLayer implements IInstall
             repaint();
         }
     }
-    
+
     public boolean isShowDialogSize()
     {
         return mShowDialogSize;
     }
-    
+
     public void setShowDialogSize(boolean showDialogSize)
     {
         if(mShowDialogSize != showDialogSize) {
@@ -124,11 +124,11 @@ public class InstallOptionsDialogLayer extends FreeformLayer implements IInstall
         }
         return figure;
     }
-    
+
     private class WrappedExclusionSearch extends ExclusionSearch
     {
         private TreeSearch mDelegate;
-        
+
         public WrappedExclusionSearch(TreeSearch delegate, Collection exclusions)
         {
             super(exclusions);

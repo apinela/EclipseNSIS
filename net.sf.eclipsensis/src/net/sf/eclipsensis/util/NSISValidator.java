@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -41,8 +41,8 @@ public class NSISValidator implements INSISConstants
             cCVSEnglishDateFormat = new SimpleDateFormat("dd-MMM-yyyy",Locale.ENGLISH);
             cCVSEnglishDateFormat.setTimeZone(tz);
         }
-        
-        
+
+
         ResourceBundle bundle;
         try {
             bundle = ResourceBundle.getBundle(NSISValidator.class.getName());
@@ -128,7 +128,7 @@ public class NSISValidator implements INSISConstants
     {
         Version version = null;
         String exeName = exeFile.getAbsoluteFile().getAbsolutePath();
-        String[] output = MakeNSISRunner.runProcessWithOutput(exeName, 
+        String[] output = MakeNSISRunner.runProcessWithOutput(exeName,
                                                               new String[]{MakeNSISRunner.MAKENSIS_VERSION_OPTION},
                                                               exeFile.getParentFile());
         if(!Common.isEmptyArray(output)) {
@@ -160,7 +160,7 @@ public class NSISValidator implements INSISConstants
                                 cvsDate = new Date(0);
                             }
                         }
-                        
+
                         for(Iterator iter=cVersionDateMap.keySet().iterator(); iter.hasNext(); ) {
                             Version v = (Version)iter.next();
                             Date d = (Date)cVersionDateMap.get(v);
@@ -179,7 +179,7 @@ public class NSISValidator implements INSISConstants
                 }
             }
         }
-        
+
         return (version == null?Version.EMPTY_VERSION:version);
     }
 

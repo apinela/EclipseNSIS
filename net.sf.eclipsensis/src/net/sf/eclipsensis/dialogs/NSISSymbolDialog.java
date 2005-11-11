@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -29,7 +29,7 @@ public class NSISSymbolDialog extends StatusMessageDialog
     private Text mNameText = null;
     private Text mValueText = null;
     private Collection mExistingSymbols = null;
-    
+
     /**
      * @param parentShell
      */
@@ -52,7 +52,7 @@ public class NSISSymbolDialog extends StatusMessageDialog
     {
         mExistingSymbols = existingSymbols;
     }
-    
+
     /**
      * @see org.eclipse.jface.window.Window#configureShell(Shell)
      */
@@ -73,12 +73,12 @@ public class NSISSymbolDialog extends StatusMessageDialog
         layout.marginHeight = 0;
         layout.marginWidth = 0;
         composite.setLayout(layout);
-        
+
         mNameText = createText(composite, EclipseNSISPlugin.getResourceString("symbols.name.text"), //$NON-NLS-1$
                                EclipseNSISPlugin.getResourceString("symbols.name.tooltip"),mName); //$NON-NLS-1$
 
         mNameText.addVerifyListener(new VerifyListener() {
-            public void verifyText(VerifyEvent e) 
+            public void verifyText(VerifyEvent e)
             {
                 char[] chars = e.text.toCharArray();
                 for(int i=0; i< chars.length; i++) {
@@ -90,7 +90,7 @@ public class NSISSymbolDialog extends StatusMessageDialog
                 e.text = e.text.toUpperCase();
             }
         });
-        
+
         mNameText.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e)
             {
@@ -98,30 +98,30 @@ public class NSISSymbolDialog extends StatusMessageDialog
             }
         });
         mNameText.setTextLimit(INSISConstants.DIALOG_TEXT_LIMIT);
-        
+
         mValueText = createText(composite, EclipseNSISPlugin.getResourceString("symbols.value.text"), //$NON-NLS-1$
                                EclipseNSISPlugin.getResourceString("symbols.value.tooltip"),mValue); //$NON-NLS-1$
         mValueText.setTextLimit(INSISConstants.DIALOG_TEXT_LIMIT);
         Dialog.applyDialogFont(composite);
         return composite;
     }
-    
+
     protected Text createText(Composite composite, String labelText, String tooltipText, String value)
     {
         Label label = new Label(composite, SWT.LEFT);
         label.setText(labelText);
         label.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
-        
+
         Text text = new Text(composite, SWT.SINGLE | SWT.BORDER);
         text.setToolTipText(tooltipText);
         GridData gridData = new GridData(SWT.FILL, SWT.CENTER, true, false);
         gridData.widthHint = convertWidthInCharsToPixels(40);
         text.setLayoutData(gridData);
         text.setText(value);
-        
+
         return text;
     }
-    
+
     /**
      * @return Returns the name.
      */
@@ -129,7 +129,7 @@ public class NSISSymbolDialog extends StatusMessageDialog
     {
         return mName;
     }
-    
+
     /**
      * @return Returns the value.
      */
@@ -137,7 +137,7 @@ public class NSISSymbolDialog extends StatusMessageDialog
     {
         return mValue;
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.Dialog#okPressed()
      */
@@ -146,7 +146,7 @@ public class NSISSymbolDialog extends StatusMessageDialog
         mName = mNameText.getText();
         if(!Common.isEmptyCollection(mExistingSymbols) && mExistingSymbols.contains(mName)) {
             if(!Common.openConfirm(getShell(), EclipseNSISPlugin.getFormattedString("symbol.overwrite.confirm", //$NON-NLS-1$
-                                                                  new String[]{mName}), 
+                                                                  new String[]{mName}),
                                    EclipseNSISPlugin.getShellImage())) {
                 return;
             }
@@ -155,7 +155,7 @@ public class NSISSymbolDialog extends StatusMessageDialog
         mValue = mValueText.getText();
         super.okPressed();
     }
-    
+
     private void validate()
     {
         DialogStatus status = getStatus();

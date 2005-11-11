@@ -3,13 +3,12 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
 package net.sf.jarsigner.dialogs;
 
-import java.security.KeyStoreException;
 import java.util.*;
 import java.util.List;
 
@@ -24,13 +23,12 @@ import org.eclipse.swt.widgets.*;
 public class JARVerifierOptionsDialog extends AbstractJAROptionsDialog
 {
     private static final String CERTS = "certs"; //$NON-NLS-1$
-    
+
     private List mControlsList;
     /**
      * @param parentShell
-     * @throws KeyStoreException 
      */
-    public JARVerifierOptionsDialog(Shell parentShell, List selection) throws KeyStoreException
+    public JARVerifierOptionsDialog(Shell parentShell, List selection)
     {
         super(parentShell, selection);
     }
@@ -68,22 +66,22 @@ public class JARVerifierOptionsDialog extends AbstractJAROptionsDialog
             keystore = ".keystore"; //$NON-NLS-1$
         }
         Text t = makeFileBrowser(composite,JARSignerPlugin.getResourceString("key.store.location"), KEY_STORE,  //$NON-NLS-1$
-                new FileSelectionAdapter(JARSignerPlugin.getResourceString("key.store.location.message"),keystore,true), //$NON-NLS-1$ //$NON-NLS-2$
-                false); //$NON-NLS-1$
+                new FileSelectionAdapter(JARSignerPlugin.getResourceString("key.store.location.message"),keystore,true), //$NON-NLS-1$
+                false);
         gd = (GridData)t.getLayoutData();
         gd.widthHint = convertWidthInCharsToPixels(50);
         mControlsList.add(t);
-        
+
         Label l = (Label)t.getData(ATTR_LABEL);
         mControlsList.add(l);
 
         Button b = (Button)t.getData(ATTR_BUTTON);
         mControlsList.add(b);
 
-        b = makeCheckBox(composite,JARSignerPlugin.getResourceString(CERTS),CERTS, false); //$NON-NLS-1$
+        b = makeCheckBox(composite,JARSignerPlugin.getResourceString(CERTS),CERTS, false);
         mControlsList.add(b);
     }
-    
+
     protected void valueChanged(String name, Object oldValue, Object newValue)
     {
         if(name.equals(VERBOSE)) {

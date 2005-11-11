@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -36,12 +36,12 @@ public class InstallOptionsListboxEditManager extends InstallOptionsEditableElem
         ListCellEditor cellEditor = new ListCellEditor(composite,items,getCellEditorStyle());
         return cellEditor;
     }
-    
+
     protected void selectCellEditorText()
     {
     }
 
-    protected int getCellEditorStyle() 
+    protected int getCellEditorStyle()
     {
         List flags = ((InstallOptionsListbox)getEditPart().getModel()).getFlags();
         return (flags.contains(InstallOptionsModel.FLAGS_MULTISELECT)||

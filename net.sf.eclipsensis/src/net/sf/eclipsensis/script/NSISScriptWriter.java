@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -96,7 +96,7 @@ public class NSISScriptWriter extends PrintWriter
     /* (non-Javadoc)
      * @see java.io.PrintWriter#print(boolean)
      */
-    public void print(boolean b) 
+    public void print(boolean b)
     {
         print(b ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
     }
@@ -104,7 +104,7 @@ public class NSISScriptWriter extends PrintWriter
     /* (non-Javadoc)
      * @see java.io.PrintWriter#print(char)
      */
-    public void print(char c) 
+    public void print(char c)
     {
         printIndent();
         super.print(c);
@@ -120,7 +120,7 @@ public class NSISScriptWriter extends PrintWriter
         super.print(s);
         mPosition += s.length;
     }
-    
+
     /* (non-Javadoc)
      * @see java.io.PrintWriter#print(double)
      */
@@ -128,27 +128,27 @@ public class NSISScriptWriter extends PrintWriter
     {
         print(String.valueOf(d));
     }
-    
+
     /* (non-Javadoc)
      * @see java.io.PrintWriter#print(float)
      */
-    public void print(float f) 
+    public void print(float f)
     {
         print(String.valueOf(f));
     }
-    
+
     /* (non-Javadoc)
      * @see java.io.PrintWriter#print(int)
      */
-    public void print(int i) 
+    public void print(int i)
     {
         print(String.valueOf(i));
     }
-    
+
     /* (non-Javadoc)
      * @see java.io.PrintWriter#print(long)
      */
-    public void print(long l) 
+    public void print(long l)
     {
         print(String.valueOf(l));
     }
@@ -182,7 +182,7 @@ public class NSISScriptWriter extends PrintWriter
             print(new StringBuffer((quoted?"\"":"")).append(value).append((quoted?"\"":"")).toString()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
         }
     }
-    
+
     /**
      * @return Returns the stopIndenting.
      */
@@ -190,7 +190,7 @@ public class NSISScriptWriter extends PrintWriter
     {
         return mIndenting;
     }
-    
+
     /**
      * @param stopIndenting The stopIndenting to set.
      */

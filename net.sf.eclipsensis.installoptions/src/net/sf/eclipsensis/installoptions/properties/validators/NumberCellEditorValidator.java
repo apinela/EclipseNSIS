@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -20,7 +20,7 @@ public class NumberCellEditorValidator implements ICellEditorValidator
     private int mMinValue;
     private int mMaxValue;
     private boolean mBlankAllowed;
-    
+
     public NumberCellEditorValidator(int minValue, int maxValue, boolean blankAllowed)
     {
         super();
@@ -47,17 +47,17 @@ public class NumberCellEditorValidator implements ICellEditorValidator
             return InstallOptionsPlugin.getResourceString("number.error.message"); //$NON-NLS-1$
         }
     }
-    
+
     public boolean isBlankAllowed()
     {
         return mBlankAllowed;
     }
-    
+
     public int getMinValue()
     {
         return mMinValue;
     }
-    
+
     public int getMaxValue()
     {
         return mMaxValue;

@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -56,7 +56,7 @@ public class NSISWizardDialogUtil
         GridData data = new GridData(SWT.BEGINNING, SWT.CENTER, false, false);
         l.setLayoutData(data);
         l.setEnabled(enabled);
-        
+
         addSlave(masterSlaveController, l);
         return l;
     }
@@ -87,7 +87,7 @@ public class NSISWizardDialogUtil
             GridData data = new GridData(SWT.FILL, SWT.CENTER, true, false);
             data.horizontalSpan = layout.numColumns;
             parent.setLayoutData(data);
-            
+
             layout = new GridLayout(numColumns,layout.makeColumnsEqualWidth);
             layout.marginHeight = 0;
             layout.marginWidth = 0;
@@ -120,7 +120,7 @@ public class NSISWizardDialogUtil
         t.setLayoutData(data);
         t.setEnabled(enabled);
         addSlave(masterSlaveController, t);
-        
+
         return t;
     }
 
@@ -130,17 +130,17 @@ public class NSISWizardDialogUtil
         GridLayout layout = (GridLayout)parent.getLayout();
         final Text t = createText(parent, value, labelResource, enabled, masterSlaveController, isRequired);
         ((GridData)t.getLayoutData()).horizontalSpan = layout.numColumns - 2;
-    
+
         final Button button = new Button(parent, SWT.PUSH | SWT.CENTER);
         button.setText(EclipseNSISPlugin.getResourceString("browse.text")); //$NON-NLS-1$
         button.setToolTipText(EclipseNSISPlugin.getResourceString("browse.tooltip")); //$NON-NLS-1$
         button.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) 
+            public void widgetSelected(SelectionEvent e)
             {
                 Shell shell = button.getShell();
                 DirectoryDialog dialog = new DirectoryDialog(shell, SWT.NONE);
                 String directory = dialog.open();
-                if (!Common.isEmpty(directory)) { 
+                if (!Common.isEmpty(directory)) {
                     t.setText(Common.encodePath(directory));
                 }
             }
@@ -149,7 +149,7 @@ public class NSISWizardDialogUtil
         button.setLayoutData(data);
         button.setEnabled(enabled);
         addSlave(masterSlaveController, button);
-        
+
         return t;
     }
 
@@ -159,9 +159,9 @@ public class NSISWizardDialogUtil
         GridLayout layout = (GridLayout)parent.getLayout();
         final Text t = createText(parent, value, labelResource, enabled, masterSlaveController, isRequired);
         ((GridData)t.getLayoutData()).horizontalSpan = layout.numColumns - 2;
-    
+
         createFileBrowserButton(parent, isSave, filterNames, filterExtensions, t, enabled, masterSlaveController);
-        
+
         return t;
     }
 
@@ -179,7 +179,7 @@ public class NSISWizardDialogUtil
         button.setText(EclipseNSISPlugin.getResourceString("browse.text")); //$NON-NLS-1$
         button.setToolTipText(EclipseNSISPlugin.getResourceString("browse.tooltip")); //$NON-NLS-1$
         button.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) 
+            public void widgetSelected(SelectionEvent e)
             {
                 Shell shell = button.getShell();
                 FileDialog dialog = new FileDialog(shell, (isSave?SWT.SAVE:SWT.OPEN));
@@ -187,7 +187,7 @@ public class NSISWizardDialogUtil
                 dialog.setFilterNames(filterNames);
                 dialog.setFilterExtensions(filterExtensions);
                 String file = dialog.open();
-                if (!Common.isEmpty(file)) { 
+                if (!Common.isEmpty(file)) {
                     t.setText(Common.encodePath(file));
                 }
             }
@@ -196,7 +196,7 @@ public class NSISWizardDialogUtil
         button.setLayoutData(data);
         button.setEnabled(enabled);
         addSlave(masterSlaveController, button);
-        
+
         return button;
     }
 
@@ -204,7 +204,7 @@ public class NSISWizardDialogUtil
     {
         parent = checkParentLayoutColumns(parent, 2);
         GridLayout layout = (GridLayout)parent.getLayout();
-        Label l = createLabel(parent, labelResource, enabled, masterSlaveController, isRequired); 
+        Label l = createLabel(parent, labelResource, enabled, masterSlaveController, isRequired);
         parent = new Composite(parent,SWT.NONE);
         GridData data = new GridData(SWT.FILL, SWT.CENTER, false, false);
         data.horizontalSpan = layout.numColumns - 1;
@@ -217,7 +217,7 @@ public class NSISWizardDialogUtil
         t.setData(LABEL,l);
 
         createFileBrowserButton(parent, false, filterNames, filterExtensions, t, enabled, masterSlaveController);
-        
+
         final Label l2 = new Label(parent, SWT.BORDER | SWT.SHADOW_IN | SWT.CENTER);
         data = new GridData(SWT.CENTER, SWT.CENTER, false, false);
         if(size != null) {
@@ -232,14 +232,14 @@ public class NSISWizardDialogUtil
         l2.setEnabled(enabled);
         t.setData(IMAGE,l2);
         addSlave(masterSlaveController, l2);
-        
+
         t.addModifyListener(new ModifyListener(){
             public void modifyText(ModifyEvent e)
             {
                 loadImage((Text)e.widget);
             }
          });
-        
+
         return t;
     }
 
@@ -257,7 +257,7 @@ public class NSISWizardDialogUtil
                     }
                     else {
                         GridData data = (GridData)l.getLayoutData();
-                        Point size = (Point)l.computeSize(data.widthHint,data.heightHint);
+                        Point size = l.computeSize(data.widthHint,data.heightHint);
                         ImageData[] imageData = new ImageLoader().load(fileName);
                         if(!Common.isEmptyArray(imageData)) {
                             ImageData bestData = null;
@@ -280,7 +280,7 @@ public class NSISWizardDialogUtil
                             if(bestData == null) {
                                 bestData = imageData[0];
                             }
-                            image = new Image(display,bestData); 
+                            image = new Image(display,bestData);
                             EclipseNSISPlugin.getImageManager().putImage(url,image);
                         }
                     }
@@ -296,17 +296,17 @@ public class NSISWizardDialogUtil
 
     public static Combo createCombo(Composite parent, String[] items, int selectedItem, boolean isReadOnly, String labelResource, boolean enabled, MasterSlaveController masterSlaveController, boolean isRequired)
     {
-        return createCombo(parent, items, (selectedItem >=0 && selectedItem < items.length?items[selectedItem]:""),isReadOnly,labelResource, enabled, masterSlaveController, isRequired);
+        return createCombo(parent, items, (selectedItem >=0 && selectedItem < items.length?items[selectedItem]:""),isReadOnly,labelResource, enabled, masterSlaveController, isRequired); //$NON-NLS-1$
     }
 
     public static Combo createCombo(Composite parent, String[] items, String selectedItem, boolean isReadOnly, String labelResource, boolean enabled, MasterSlaveController masterSlaveController, boolean isRequired)
     {
         parent = checkParentLayoutColumns(parent, 2);
         Label l = createLabel(parent, labelResource, enabled, masterSlaveController, isRequired);
-    
+
         Combo c = createCombo(parent, ((GridLayout)parent.getLayout()).numColumns - 1, items, selectedItem, isReadOnly, enabled, masterSlaveController);
         c.setData(LABEL,l);
-        
+
         return c;
     }
 
@@ -328,7 +328,7 @@ public class NSISWizardDialogUtil
             }
         }
         c.setText(selectedItem);
-    
+
         GridData data = new GridData(SWT.BEGINNING, SWT.CENTER, false, false);
         data.horizontalSpan = horizontalSpan;
         c.setLayoutData(data);
@@ -341,7 +341,7 @@ public class NSISWizardDialogUtil
     {
         parent = checkParentLayoutColumns(parent, 2);
         Label l = createLabel(parent, labelResource, enabled, masterSlaveController, isRequired);
-    
+
         GridLayout layout = (GridLayout)parent.getLayout();
         ColorEditor ce = new ColorEditor(parent);
         ce.setRGB(value);
@@ -352,7 +352,7 @@ public class NSISWizardDialogUtil
         b.setEnabled(enabled);
         addSlave(masterSlaveController, b);
         b.setData(LABEL,l);
-        
+
         return ce;
     }
 
@@ -360,7 +360,7 @@ public class NSISWizardDialogUtil
     {
         parent = checkParentLayoutColumns(parent, 2);
         Label l = createLabel(parent, labelResource, enabled, masterSlaveController, isRequired);
-    
+
         GridLayout layout = (GridLayout)parent.getLayout();
         parent = new Composite(parent,SWT.NONE);
         GridData gd = new GridData(SWT.BEGINNING, SWT.CENTER, false, false);
@@ -370,7 +370,7 @@ public class NSISWizardDialogUtil
         layout.marginHeight = 0;
         layout.marginWidth = 0;
         parent.setLayout(layout);
-        
+
         Button[] buttons = new Button[items.length];
         for (int i = 0; i < items.length; i++) {
             buttons[i] = new Button(parent, SWT.RADIO | SWT.LEFT);
@@ -384,7 +384,7 @@ public class NSISWizardDialogUtil
             addSlave(masterSlaveController, buttons[i]);
             buttons[i].setData(LABEL,l);
         }
-        
+
         return buttons;
     }
 
@@ -403,7 +403,7 @@ public class NSISWizardDialogUtil
         GridLayout layout = new GridLayout(numColumns,false);
         group.setLayout(layout);
         addSlave(masterSlaveController, group);
-        
+
         return group;
     }
 
@@ -416,7 +416,7 @@ public class NSISWizardDialogUtil
         button.setSelection(state);
         button.setEnabled(enabled);
         addSlave(masterSlaveController, button);
-        
+
         if(isRequired) {
             setRequiredElementFont(button);
         }
@@ -450,7 +450,7 @@ public class NSISWizardDialogUtil
         layout.marginHeight = 0;
         layout.marginWidth = 0;
         composite.setLayout(layout);
-        
+
         final Combo c2 = createCombo(composite,1,
                 NSISKeywords.getInstance().getKeywordsGroup(NSISKeywords.PATH_CONSTANTS_AND_VARIABLES),
                 value,false,enabled,masterSlaveController);
@@ -458,7 +458,7 @@ public class NSISWizardDialogUtil
         gd.grabExcessHorizontalSpace = true;
         gd.horizontalAlignment = GridData.FILL;
         c2.setData(LABEL, l);
-        
+
         final Button b = new Button(composite, SWT.PUSH);
         b.setText(EclipseNSISPlugin.getResourceString("browse.text")); //$NON-NLS-1$
         gd = new GridData(SWT.CENTER, SWT.CENTER, false, false);

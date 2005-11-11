@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -36,17 +36,17 @@ public class InstallOptionsSnapToGrid extends SnapToGrid
     {
         if(!((InstallOptionsEditDomain)container.getViewer().getEditDomain()).isReadOnly()) {
             rect = rect.getPreciseCopy();
-            
+
             makeRelative(container.getContentPane(), rect);
             PrecisionRectangle correction = new PrecisionRectangle();
             makeRelative(container.getContentPane(), correction);
-            
+
             if (gridX > 0 && (snapLocations & EAST) != 0) {
                 correction.preciseWidth -= Math.IEEEremainder(rect.preciseRight()
                         - origin.x*mDpuX - 1, gridX*mDpuX);
                 snapLocations &= ~EAST;
             }
-            
+
             if ((snapLocations & (WEST | HORIZONTAL)) != 0 && gridX > 0) {
                 double leftCorrection = Math.IEEEremainder(rect.preciseX - origin.x*mDpuX,
                         gridX*mDpuX);
@@ -56,13 +56,13 @@ public class InstallOptionsSnapToGrid extends SnapToGrid
                 }
                 snapLocations &= ~(WEST | HORIZONTAL);
             }
-            
+
             if ((snapLocations & SOUTH) != 0 && gridY > 0) {
                 correction.preciseHeight -= Math.IEEEremainder(rect.preciseBottom()
                         - origin.y*mDpuY - 1, gridY*mDpuY);
                 snapLocations &= ~SOUTH;
             }
-            
+
             if ((snapLocations & (NORTH | VERTICAL)) != 0 && gridY > 0) {
                 double topCorrection = Math.IEEEremainder(
                         rect.preciseY - origin.y*mDpuY, gridY*mDpuY);
@@ -72,7 +72,7 @@ public class InstallOptionsSnapToGrid extends SnapToGrid
                 }
                 snapLocations &= ~(NORTH | VERTICAL);
             }
-    
+
             correction.updateInts();
             makeAbsolute(container.getContentPane(), correction);
             result.preciseX += correction.preciseX;

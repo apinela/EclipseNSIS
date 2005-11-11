@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -26,12 +26,12 @@ public class MinimalProgressMonitorDialog extends ProgressMonitorDialog
     private static final int MINIMUM_WIDTH = 500;
     private static final int BAR_DLUS = 9;
     private static final int VERTICAL_OFFSET = 85;
-    
+
     private String mCaption = EclipseNSISPlugin.getDefault().getName();
-    
+
     /**
      * Construct an instance of this dialog.
-     * 
+     *
      * @param parent
      */
     public MinimalProgressMonitorDialog(Shell parent)
@@ -39,7 +39,7 @@ public class MinimalProgressMonitorDialog extends ProgressMonitorDialog
         super(parent);
         setShellStyle(SWT.NONE);
     }
-    
+
     public String getCaption()
     {
         return mCaption;
@@ -50,7 +50,7 @@ public class MinimalProgressMonitorDialog extends ProgressMonitorDialog
         mCaption = caption;
     }
 
-    protected Control createContents(Composite parent) 
+    protected Control createContents(Composite parent)
     {
         Composite container = new Composite(parent, SWT.NONE);
         GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
@@ -74,13 +74,13 @@ public class MinimalProgressMonitorDialog extends ProgressMonitorDialog
 
         return container;
     }
-    
+
     protected Image getImage()
     {
         return null;
     }
 
-    protected Control createDialogArea(Composite parent) 
+    protected Control createDialogArea(Composite parent)
     {
         // progress indicator
         progressIndicator = new ProgressIndicator(parent);
@@ -95,7 +95,7 @@ public class MinimalProgressMonitorDialog extends ProgressMonitorDialog
         gd.minimumWidth = MINIMUM_WIDTH / 2;
         subTaskLabel.setLayoutData(gd);
         subTaskLabel.setFont(parent.getFont());
-        
+
         Label label = new Label(parent, SWT.RIGHT);
         label.moveBelow(subTaskLabel);
         gd = new GridData(SWT.RIGHT);
@@ -106,11 +106,11 @@ public class MinimalProgressMonitorDialog extends ProgressMonitorDialog
     }
 
     /*
-     * see org.eclipse.jface.Window.getInitialLocation() 
+     * see org.eclipse.jface.Window.getInitialLocation()
      */
     protected Point getInitialLocation(Point initialSize) {
         Composite parent = getShell().getParent();
-        
+
         if (parent == null) {
             return super.getInitialLocation(initialSize);
         }
@@ -128,12 +128,12 @@ public class MinimalProgressMonitorDialog extends ProgressMonitorDialog
             bounds = monitor.getBounds();
         }
         Point center = Geometry.centerPoint(bounds);
-        
+
         return new Point(center.x - (initialSize.x / 2),
                 Math.max(bounds.y, Math.min(center.y +VERTICAL_OFFSET, bounds.y+ bounds.height - initialSize.y)));
     }
 
-    protected Point getInitialSize() 
+    protected Point getInitialSize()
     {
         Point calculatedSize = getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT,true);
         if (calculatedSize.x < MINIMUM_WIDTH) {
@@ -142,8 +142,8 @@ public class MinimalProgressMonitorDialog extends ProgressMonitorDialog
         return calculatedSize;
     }
 
-    protected Control createButtonBar(Composite parent) 
+    protected Control createButtonBar(Composite parent)
     {
-        return null; 
+        return null;
     }
 }

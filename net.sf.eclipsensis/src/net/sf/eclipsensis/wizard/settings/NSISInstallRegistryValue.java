@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -24,7 +24,7 @@ public class NSISInstallRegistryValue extends AbstractNSISInstallItem
     public static final String TYPE = EclipseNSISPlugin.getResourceString("wizard.regvalue.type"); //$NON-NLS-1$
     private static final Image STR_IMAGE = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("wizard.regstr.icon")); //$NON-NLS-1$
     private static final Image DWORD_IMAGE = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("wizard.regdword.icon")); //$NON-NLS-1$
-    
+
     private int mRootKey = HKLM;
     private String mSubKey = null;
     private String mData = null;
@@ -122,7 +122,7 @@ public class NSISInstallRegistryValue extends AbstractNSISInstallItem
     {
         return mSubKey;
     }
-    
+
     /**
      * @param subKey The subKey to set.
      */
@@ -130,7 +130,7 @@ public class NSISInstallRegistryValue extends AbstractNSISInstallItem
     {
         mSubKey = subKey;
     }
-    
+
     /**
      * @return Returns the value.
      */
@@ -138,7 +138,7 @@ public class NSISInstallRegistryValue extends AbstractNSISInstallItem
     {
         return mValue;
     }
-    
+
     /**
      * @param value The value to set.
      */
@@ -146,7 +146,7 @@ public class NSISInstallRegistryValue extends AbstractNSISInstallItem
     {
         mValue = value;
     }
-    
+
     /**
      * @return Returns the valueType.
      */
@@ -154,7 +154,7 @@ public class NSISInstallRegistryValue extends AbstractNSISInstallItem
     {
         return mValueType;
     }
-    
+
     /**
      * @param valueType The valueType to set.
      */

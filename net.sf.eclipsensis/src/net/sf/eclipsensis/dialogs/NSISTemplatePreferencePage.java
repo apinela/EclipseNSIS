@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -32,9 +32,9 @@ public class NSISTemplatePreferencePage extends TemplatePreferencePage
 {
     private EclipseNSISPlugin mPlugin = null;
     private NSISTemplateSourceViewer mViewer = null;
-    
+
     /**
-     * 
+     *
      */
     public NSISTemplatePreferencePage()
     {
@@ -56,19 +56,19 @@ public class NSISTemplatePreferencePage extends TemplatePreferencePage
     /*
      * @see org.eclipse.ui.texteditor.templates.TemplatePreferencePage#isShowFormatterSetting()
      */
-    protected boolean isShowFormatterSetting() 
+    protected boolean isShowFormatterSetting()
     {
         return false;
     }
-    
+
     /*
      * @see org.eclipse.ui.texteditor.templates.TemplatePreferencePage#getFormatterPreferenceKey()
      */
-    protected String getFormatterPreferenceKey() 
+    protected String getFormatterPreferenceKey()
     {
         return null;
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.ui.texteditor.templates.TemplatePreferencePage#createViewer(org.eclipse.swt.widgets.Composite)
      */
@@ -78,24 +78,24 @@ public class NSISTemplatePreferencePage extends TemplatePreferencePage
         NSISTextUtility.hookSourceViewer(mViewer);
         SourceViewerConfiguration configuration= new NSISTemplateSourceViewerConfiguration(new ChainedPreferenceStore(new IPreferenceStore[]{getPreferenceStore(), EditorsUI.getPreferenceStore()}));
         mViewer.configure(configuration);
-        
+
         IDocument document= new Document();
         new NSISDocumentSetupParticipant().setup(document);
         mViewer.setDocument(document);
         mViewer.setEditable(false);
-        
+
         return mViewer;
     }
-    
+
     /*
      * @see org.eclipse.jface.preference.IPreferencePage#performOk()
      */
-    public boolean performOk() 
+    public boolean performOk()
     {
         boolean ok= super.performOk();
-        
+
         mPlugin.savePluginPreferences();
-        
+
         return ok;
     }
     /* (non-Javadoc)

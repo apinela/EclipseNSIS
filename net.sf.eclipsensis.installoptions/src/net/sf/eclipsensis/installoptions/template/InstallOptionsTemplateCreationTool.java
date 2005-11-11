@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -63,9 +63,9 @@ public class InstallOptionsTemplateCreationTool extends CreationTool
                 Object editpart = viewer.getEditPartRegistry().get(models[i]);
                 if (editpart instanceof EditPart) {
                     selection.add(editpart);
-                }                
+                }
             }
-            //Force the new object to get positioned in the viewer. 
+            //Force the new object to get positioned in the viewer.
             viewer.flush();
             viewer.setSelection(new StructuredSelection(selection));
         }

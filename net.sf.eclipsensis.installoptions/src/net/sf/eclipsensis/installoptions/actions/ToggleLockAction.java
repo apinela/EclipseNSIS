@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -31,9 +31,9 @@ public class ToggleLockAction extends SelectionAction
     static final ImageDescriptor LOCK_DISABLED_IMAGE = InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("lock.disabled.icon")); //$NON-NLS-1$
     static final ImageDescriptor UNLOCK_IMAGE = InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("unlock.icon")); //$NON-NLS-1$
     static final ImageDescriptor UNLOCK_DISABLED_IMAGE = InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("unlock.disabled.icon")); //$NON-NLS-1$
-    
+
     private boolean mShouldLock = true;
-    
+
     /**
      * @param part
      */
@@ -47,14 +47,14 @@ public class ToggleLockAction extends SelectionAction
     /**
      * Initializes this action's text and images.
      */
-    protected void init() 
+    protected void init()
     {
         super.init();
         setId(ID);
         setEnabled(false);
     }
 
-    public Command createToggleLockCommand(List objects) 
+    public Command createToggleLockCommand(List objects)
     {
         if (Common.isEmptyCollection(objects)) {
             return null;

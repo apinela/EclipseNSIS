@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -25,30 +25,30 @@ public class InstallOptionsTreeViewerTransfer extends InstallOptionsObjectTransf
 
     private static EditPartViewer viewer;
 
-    private InstallOptionsTreeViewerTransfer() 
+    private InstallOptionsTreeViewerTransfer()
     {
     }
 
-    protected int[] getTypeIds() 
+    protected int[] getTypeIds()
     {
         return TYPE_IDS;
     }
 
-    protected String[] getTypeNames() 
+    protected String[] getTypeNames()
     {
         return TYPE_NAMES;
     }
 
-    public EditPartViewer getViewer() 
+    public EditPartViewer getViewer()
     {
         return viewer;
     }
 
-    public void setViewer(EditPartViewer epv) 
+    public void setViewer(EditPartViewer epv)
     {
         viewer = epv;
     }
-    
+
     public boolean isSupportedType(TransferData transferData)
     {
         EditDomain domain = getViewer().getEditDomain();

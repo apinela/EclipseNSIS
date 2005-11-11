@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -80,7 +80,7 @@ public class InstallOptionsUnknownEditPart extends InstallOptionsWidgetEditPart
     protected IInstallOptionsFigure createInstallOptionsFigure()
     {
         if(cIsNT) {
-            //This is a hack because Windows NT Labels don't seem to respond to the 
+            //This is a hack because Windows NT Labels don't seem to respond to the
             //WM_PRINT message (see SWTControl.getImage(Control)
             //XXX Remove once the cause (and fix) is known.
             return new NTUnknownFigure(getInstallOptionsWidget());
@@ -92,7 +92,7 @@ public class InstallOptionsUnknownEditPart extends InstallOptionsWidgetEditPart
 
     public void doPropertyChange(PropertyChangeEvent evt)
     {
-        if (evt.getPropertyName().equalsIgnoreCase(InstallOptionsModel.PROPERTY_TYPE)) {//$NON-NLS-1$
+        if (evt.getPropertyName().equalsIgnoreCase(InstallOptionsModel.PROPERTY_TYPE)) {
             IUnknownFigure figure2 = (IUnknownFigure)getFigure();
             figure2.setType((String)evt.getNewValue());
             resetToolTipText();
@@ -107,26 +107,26 @@ public class InstallOptionsUnknownEditPart extends InstallOptionsWidgetEditPart
     {
         return "unknown.direct.edit.label"; //$NON-NLS-1$
     }
-    
+
     protected String getTypeName()
     {
         String type = getInstallOptionsWidget().getType();
         return (Common.isEmpty(type)?InstallOptionsPlugin.getResourceString("unknown.type.name"):type); //$NON-NLS-1$
     }
-    
+
     public static interface IUnknownFigure extends IInstallOptionsFigure
     {
         public void setType(String type);
     }
 
-    //This is a hack because Windows NT Labels don't seem to respond to the 
+    //This is a hack because Windows NT Labels don't seem to respond to the
     //WM_PRINT message (see SWTControl.getImage(Control)
     //XXX Remove once the cause (and fix) is known.
     private static class NTUnknownFigure extends NTFigure implements IUnknownFigure
     {
         private String mType;
         private Figure mFigure;
-        
+
         public NTUnknownFigure(IPropertySource propertySource)
         {
             super(propertySource);
@@ -144,7 +144,7 @@ public class InstallOptionsUnknownEditPart extends InstallOptionsWidgetEditPart
                 public void paintClientArea(Graphics graphics)
                 {
                     graphics.pushState();
-                    
+
                     super.paintClientArea(graphics);
                     String text = getType();
                     Rectangle bounds = getBounds();
@@ -186,12 +186,12 @@ public class InstallOptionsUnknownEditPart extends InstallOptionsWidgetEditPart
         {
             setConstraint(mFigure, bounds);
         }
-        
+
         public String getType()
         {
             return mType==null?"":mType; //$NON-NLS-1$
         }
-    
+
         public void setType(String type)
         {
             if(!Common.stringsAreEqual(mType, type)) {

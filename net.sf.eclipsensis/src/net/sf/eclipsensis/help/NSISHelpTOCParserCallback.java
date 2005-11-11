@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -23,7 +23,7 @@ public class NSISHelpTOCParserCallback extends HTMLEditorKit.ParserCallback
     private static final String ATTR_VALUE_TEXT_SITEMAP="text/sitemap"; //$NON-NLS-1$
     private static final String ATTR_VALUE_LOCAL="Local"; //$NON-NLS-1$
     private static final String ATTR_VALUE_NAME="Name"; //$NON-NLS-1$
-    
+
     private Map mTopicMap = null;
     private Map mKeywordHelpMap = new CaseInsensitiveMap();
     private boolean mCanProcess = false;
@@ -96,7 +96,7 @@ public class NSISHelpTOCParserCallback extends HTMLEditorKit.ParserCallback
     {
         mTopicMap = topicMap;
     }
-    
+
     /**
      * @return Returns the keywordMap.
      */

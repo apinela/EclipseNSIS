@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -35,15 +35,15 @@ public class NSISAboutDialog extends Dialog implements INSISConstants
     private static final String cAboutTitle;
     private static final String cAboutHeader;
     private static final String cAboutText;
-    
+
     static {
         cAboutImage = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("about.icon")); //$NON-NLS-1$
-        
+
         EclipseNSISPlugin plugin = EclipseNSISPlugin.getDefault();
         String name = plugin.getName();
         cAboutTitle = EclipseNSISPlugin.getFormattedString("about.title.format", //$NON-NLS-1$
                                            new Object[]{name});
-        
+
         cAboutHeader = EclipseNSISPlugin.getFormattedString("about.header.format", //$NON-NLS-1$
                                            new Object[]{name, plugin.getVersion()});
 
@@ -64,10 +64,10 @@ public class NSISAboutDialog extends Dialog implements INSISConstants
     protected void configureShell(Shell newShell)
     {
         super.configureShell(newShell);
-        newShell.setImage(EclipseNSISPlugin.getShellImage()); //$NON-NLS-1$
+        newShell.setImage(EclipseNSISPlugin.getShellImage());
         newShell.setText(cAboutTitle);
     }
-    
+
     /**
      * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(Composite)
      */
@@ -82,7 +82,7 @@ public class NSISAboutDialog extends Dialog implements INSISConstants
         final Display display = getShell().getDisplay();
         Color background = JFaceColors.getBannerBackground(display);
         Color foreground = JFaceColors.getBannerForeground(display);
-        
+
         Composite composite = (Composite)super.createDialogArea(parent);
         composite.setBackground(background);
         GridLayout layout = new GridLayout(2,false);
@@ -105,7 +105,7 @@ public class NSISAboutDialog extends Dialog implements INSISConstants
         GridData data = new GridData(SWT.FILL, SWT.BEGINNING, true, false);
         data.horizontalSpan = 1;
         label.setLayoutData(data);
-        
+
         label = new Label(composite, SWT.CENTER);
         label.setBackground(background);
         label.setForeground(foreground);
@@ -113,7 +113,7 @@ public class NSISAboutDialog extends Dialog implements INSISConstants
         data = new GridData(SWT.END, SWT.BEGINNING, false, false);
         data.horizontalSpan = 1;
         label.setLayoutData(data);
-        
+
         Link link = new Link(composite, SWT.WRAP);
         data = new GridData(SWT.FILL, SWT.BEGINNING, false, false);
         data.horizontalSpan = 2;

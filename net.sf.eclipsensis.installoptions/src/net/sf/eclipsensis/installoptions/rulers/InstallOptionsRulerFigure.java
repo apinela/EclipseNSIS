@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -20,20 +20,20 @@ import org.eclipse.swt.widgets.Display;
 
 public class InstallOptionsRulerFigure extends RulerFigure
 {
-    private double mDPU = -1.0; 
+    private double mDPU = -1.0;
     private int mUnit;
-    
-    public InstallOptionsRulerFigure(EditPart editPart, boolean isHorizontal, int measurementUnit) 
+
+    public InstallOptionsRulerFigure(EditPart editPart, boolean isHorizontal, int measurementUnit)
     {
         super(isHorizontal, measurementUnit);
     }
 
-    public int getUnit() 
+    public int getUnit()
     {
         return mUnit;
     }
 
-    public void setUnit(int newUnit) 
+    public void setUnit(int newUnit)
     {
         if (mUnit != newUnit) {
             mUnit = newUnit;
@@ -42,7 +42,7 @@ public class InstallOptionsRulerFigure extends RulerFigure
         }
     }
 
-    protected void handleZoomChanged() 
+    protected void handleZoomChanged()
     {
         mDPU = -1.0;
         repaint();
@@ -52,13 +52,13 @@ public class InstallOptionsRulerFigure extends RulerFigure
     /* (non-Javadoc)
      * @see org.eclipse.draw2d.Figure#invalidate()
      */
-    public void invalidate() 
+    public void invalidate()
     {
         super.invalidate();
         mDPU = -1.0;
     }
 
-    protected double getDPU() 
+    protected double getDPU()
     {
         if (mDPU <= 0) {
             if (getUnit() == RulerProvider.UNIT_PIXELS) {
@@ -73,7 +73,7 @@ public class InstallOptionsRulerFigure extends RulerFigure
                     mDPU = (FigureUtility.dialogUnitsToPixelsY(1000,font)/1000.0);
                 }
             }
-            else 
+            else
             {
                 mDPU = transposer.t(new Dimension(Display.getCurrent().getDPI())).height;
                 if (getUnit() == RulerProvider.UNIT_CENTIMETERS) {

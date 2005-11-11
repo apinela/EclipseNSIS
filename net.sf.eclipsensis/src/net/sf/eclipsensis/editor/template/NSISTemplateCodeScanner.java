@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -31,7 +31,7 @@ public class NSISTemplateCodeScanner extends NSISCodeScanner
     {
         super(preferenceStore);
     }
-    
+
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.editor.text.NSISRuleBasedScanner#addRules(java.util.List, org.eclipse.jface.text.rules.IToken)
      */
@@ -40,7 +40,7 @@ public class NSISTemplateCodeScanner extends NSISCodeScanner
         rules.add(getTemplateVariableRule());
         super.addRules(rules);
     }
-    
+
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.editor.text.NSISRuleBasedScanner#reset(boolean)
      */
@@ -51,7 +51,7 @@ public class NSISTemplateCodeScanner extends NSISCodeScanner
         }
         super.reset(full);
     }
-    
+
     protected synchronized IRule getTemplateVariableRule()
     {
         if(mTemplateVariableRule == null) {
@@ -65,7 +65,7 @@ public class NSISTemplateCodeScanner extends NSISCodeScanner
                     mFoundEndSequence = false;
                     return Character.isLetter(character);
                 }
-                
+
                 public boolean isWordPart(char character)
                 {
                     if(!mFoundEndSequence) {

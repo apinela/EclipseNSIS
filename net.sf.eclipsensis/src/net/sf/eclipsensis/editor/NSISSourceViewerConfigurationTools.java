@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -30,7 +30,7 @@ public class NSISSourceViewerConfigurationTools
         CONFIGURED_CONTENT_TYPES[0]=IDocument.DEFAULT_CONTENT_TYPE;
         System.arraycopy(NSISPartitionScanner.NSIS_PARTITION_TYPES,0,CONFIGURED_CONTENT_TYPES,1,NSISPartitionScanner.NSIS_PARTITION_TYPES.length);
     }
-    
+
     private NSISSourceViewerConfigurationTools()
     {
     }
@@ -38,7 +38,7 @@ public class NSISSourceViewerConfigurationTools
     /*
      * (non-Javadoc) Method declared on SourceViewerConfiguration
      */
-    public static IContentAssistant createContentAssistant(ISourceViewer sourceViewer, 
+    public static IContentAssistant createContentAssistant(ISourceViewer sourceViewer,
                                         IContentAssistProcessor[] contentAssistProcessors,
                                         String[][] contentTypes, boolean autoActivation)
     {
@@ -51,6 +51,7 @@ public class NSISSourceViewerConfigurationTools
             }
         }
 
+        assistant.enableAutoInsert(true);
         assistant.enableAutoActivation(autoActivation);
         assistant.setAutoActivationDelay(100);
         assistant.setProposalPopupOrientation(IContentAssistant.PROPOSAL_OVERLAY);

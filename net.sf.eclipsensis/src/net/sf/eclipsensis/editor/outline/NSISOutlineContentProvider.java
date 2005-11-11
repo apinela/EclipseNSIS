@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -55,16 +55,16 @@ public class NSISOutlineContentProvider implements ITreeContentProvider, INSISCo
     public static final int PAGEEX = PAGE+1;
     public static final int PAGEEXEND = PAGEEX+1;
     public static final int INCLUDE = PAGEEXEND+1;
-    
+
     private static final String ROOT = "ROOT"; //$NON-NLS-1$
-    
+
     private ITextEditor mEditor;
     private IAnnotationModel mAnnotationModel;
     private IPositionUpdater mPositionUpdater = new DefaultPositionUpdater(NSIS_OUTLINE);
     private IPositionUpdater mSelectPositionUpdater = new DefaultPositionUpdater(NSIS_OUTLINE_SELECT);
 
     private NSISOutlineElement[] mOutlineElements = null;
-    
+
     /**
      * @param page
      */
@@ -73,7 +73,7 @@ public class NSISOutlineContentProvider implements ITreeContentProvider, INSISCo
         mEditor = editor;
         inputChanged(null, mEditor.getEditorInput());
     }
-    
+
     private NSISOutlineElement openElement(NSISOutlineElement current, NSISOutlineElement element,
                                            int[] invalidParents)
     {
@@ -125,8 +125,8 @@ public class NSISOutlineContentProvider implements ITreeContentProvider, INSISCo
         }
         return current;
     }
-    
-    private void addLine(IDocument document, NSISOutlineElement current, 
+
+    private void addLine(IDocument document, NSISOutlineElement current,
                          NSISOutlineElement element) throws BadLocationException, BadPositionCategoryException
     {
         document.addPosition(NSIS_OUTLINE,element.getPosition());
@@ -352,25 +352,25 @@ public class NSISOutlineContentProvider implements ITreeContentProvider, INSISCo
                                 current = openElement(current, element, null);
                                 break;
                             case ENDIF:
-                                current = closeElement(document, current, element, 
+                                current = closeElement(document, current, element,
                                                      new int[]{IFDEF, IFNDEF, IFMACRODEF, IFNMACRODEF});
                                 break;
                             case MACROEND:
-                                current = closeElement(document, current, element, 
+                                current = closeElement(document, current, element,
                                                      new int[]{MACRO});
                                 break;
                             case FUNCTION:
                                 current = openElement(current, element, new int[]{SECTION,SUBSECTION,SECTIONGROUP,FUNCTION});
                                 break;
                             case FUNCTIONEND:
-                                current = closeElement(document, current, element, 
+                                current = closeElement(document, current, element,
                                                      new int[]{FUNCTION});
                                 break;
                             case SECTION:
                                 current = openElement(current, element, new int[]{SECTION,FUNCTION});
                                 break;
                             case SECTIONEND:
-                                current = closeElement(document, current, element, 
+                                current = closeElement(document, current, element,
                                                      new int[]{SECTION});
                                 break;
                             case SUBSECTION:
@@ -379,7 +379,7 @@ public class NSISOutlineContentProvider implements ITreeContentProvider, INSISCo
                                 break;
                             case SUBSECTIONEND:
                             case SECTIONGROUPEND:
-                                current = closeElement(document, current, element, 
+                                current = closeElement(document, current, element,
                                                      new int[]{SECTIONGROUP,SUBSECTION});
                                 break;
                             case PAGE:
@@ -392,7 +392,7 @@ public class NSISOutlineContentProvider implements ITreeContentProvider, INSISCo
                                 current = openElement(current, element, new int[]{SECTION,SUBSECTION,SECTIONGROUP,FUNCTION});
                                 break;
                             case PAGEEXEND:
-                                current = closeElement(document, current, element, 
+                                current = closeElement(document, current, element,
                                                        new int[]{PAGEEX});
                                 break;
                         }
@@ -401,7 +401,7 @@ public class NSISOutlineContentProvider implements ITreeContentProvider, INSISCo
                 catch(Exception ex) {
                 }
             }
-            
+
             mOutlineElements = (NSISOutlineElement[])getChildren(rootElement);
         }
     }
@@ -427,9 +427,9 @@ public class NSISOutlineContentProvider implements ITreeContentProvider, INSISCo
                 }
                 mAnnotationModel = null;
             }
-    
+
             mOutlineElements = null;
-    
+
             if (newInput != null) {
                 mAnnotationModel = (IAnnotationModel) mEditor.getAdapter(ProjectionAnnotationModel.class);
                 IDocument document = mEditor.getDocumentProvider().getDocument(newInput);
@@ -438,7 +438,7 @@ public class NSISOutlineContentProvider implements ITreeContentProvider, INSISCo
                     document.addPositionUpdater(mPositionUpdater);
                     document.addPositionCategory(NSIS_OUTLINE_SELECT);
                     document.addPositionUpdater(mSelectPositionUpdater);
-    
+
                     parse(document);
                 }
             }
@@ -512,7 +512,7 @@ public class NSISOutlineContentProvider implements ITreeContentProvider, INSISCo
         }
         return children;
     }
-    
+
     private boolean positionContains(Position position, int offset, int length)
     {
         return (offset >= position.getOffset() && offset+length <= position.getOffset()+position.getLength());
@@ -556,17 +556,17 @@ public class NSISOutlineContentProvider implements ITreeContentProvider, INSISCo
         }
         return null;
     }
-    
+
     private class NSISOutlineRule implements IRule, INSISConstants
     {
         private boolean mIsString;
         private boolean mMatchKeywords;
-        
+
         public NSISOutlineRule(boolean isString)
         {
             this(isString, true);
         }
-        
+
         /**
          * @param isString
          * @param matchKeywords
@@ -622,7 +622,7 @@ public class NSISOutlineContentProvider implements ITreeContentProvider, INSISCo
                                 break outer;
                             }
                         }
-    
+
                         buf.append((char)c);
                     }
                     else {
@@ -641,12 +641,12 @@ public class NSISOutlineContentProvider implements ITreeContentProvider, INSISCo
                     }
                 }
             }
-        
+
             int offset2 = ((NSISScanner)scanner).getOffset();
             String text = buf.toString();
             return createToken(text,offset,offset2-offset);
         }
-        
+
         protected IToken createToken(String text, int startOffset, int length)
         {
             if(mMatchKeywords) {
@@ -665,7 +665,7 @@ public class NSISOutlineContentProvider implements ITreeContentProvider, INSISCo
                         }
                     }
                     String type = NSISOutlineContentResources.getInstance().getType(text);
-    
+
                     return (type == null?Token.UNDEFINED:new Token(new NSISOutlineData(type, new Region(startOffset,length))));
                 }
             }
@@ -674,12 +674,12 @@ public class NSISOutlineContentProvider implements ITreeContentProvider, INSISCo
             }
         }
     }
-    
+
     private class NSISOutlineData
     {
         private String  mType;
         private IRegion mRegion;
-        
+
         /**
          * @param type
          * @param region
@@ -689,7 +689,7 @@ public class NSISOutlineContentProvider implements ITreeContentProvider, INSISCo
             mType = type;
             mRegion = region;
         }
-        
+
         /**
          * @return Returns the region.
          */
@@ -697,7 +697,7 @@ public class NSISOutlineContentProvider implements ITreeContentProvider, INSISCo
         {
             return mRegion;
         }
-        
+
         /**
          * @return Returns the type.
          */
@@ -711,7 +711,7 @@ public class NSISOutlineContentProvider implements ITreeContentProvider, INSISCo
     {
         private String mName;
         private ITypedRegion mRegion;
-        
+
         /**
          * @param name
          * @param region

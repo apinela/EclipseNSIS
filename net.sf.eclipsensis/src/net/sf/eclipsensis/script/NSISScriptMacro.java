@@ -3,13 +3,13 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
 package net.sf.eclipsensis.script;
 
-public class NSISScriptMacro extends AbstractNSISScriptElementContainer 
+public class NSISScriptMacro extends AbstractNSISScriptElementContainer
 {
     private String mName;
     private Object mArg;
@@ -21,7 +21,7 @@ public class NSISScriptMacro extends AbstractNSISScriptElementContainer
     {
         this(name, null);
     }
-    
+
     /**
      * @param name
      * @param arg
@@ -68,7 +68,7 @@ public class NSISScriptMacro extends AbstractNSISScriptElementContainer
             throw new InvalidNSISScriptElementException(element);
         }
     }
-    
+
     /**
      * @return Returns the arg.
      */
@@ -76,7 +76,7 @@ public class NSISScriptMacro extends AbstractNSISScriptElementContainer
     {
         return mArg;
     }
-    
+
     /**
      * @param arg The arg to set.
      */

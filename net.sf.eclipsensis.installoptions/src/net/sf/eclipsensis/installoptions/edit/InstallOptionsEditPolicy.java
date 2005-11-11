@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -22,13 +22,13 @@ import org.eclipse.gef.requests.GroupRequest;
 public class InstallOptionsEditPolicy extends ComponentEditPolicy
 {
     private EditPart mEditPart;
-    
+
     public InstallOptionsEditPolicy(EditPart editPart)
     {
         super();
         mEditPart = editPart;
     }
-    
+
     protected Command createDeleteCommand(GroupRequest request)
     {
         Object parent = getHost().getParent().getModel();
@@ -37,7 +37,7 @@ public class InstallOptionsEditPolicy extends ComponentEditPolicy
         deleteCmd.setChild((InstallOptionsWidget)getHost().getModel());
         return deleteCmd;
     }
-    
+
     public Command getCommand(Request request)
     {
         if(((InstallOptionsEditDomain)mEditPart.getViewer().getEditDomain()).isReadOnly()) {

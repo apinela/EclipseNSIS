@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -24,19 +24,19 @@ public class NSISTaskTag implements Serializable
     private String mTag;
     private int mPriority;
     private boolean mDefault = false;
-    
+
     static {
         PRIORITY_LABELS = Common.loadArrayProperty(EclipseNSISPlugin.getDefault().getResourceBundle(),"task.priority.labels"); //$NON-NLS-1$
     }
 
     /**
-     * 
+     *
      */
     public NSISTaskTag()
     {
         this("",IMarker.PRIORITY_NORMAL); //$NON-NLS-1$
     }
-    
+
     /**
      * @param tag
      * @param priority
@@ -47,7 +47,7 @@ public class NSISTaskTag implements Serializable
         mTag = tag;
         mPriority = priority;
     }
-    
+
     /**
      * @param name
      * @param priority
@@ -57,7 +57,7 @@ public class NSISTaskTag implements Serializable
         this(taskTag.getTag(),taskTag.getPriority());
         setDefault(taskTag.isDefault());
     }
-    
+
     /**
      * @return Returns the name.
      */
@@ -65,7 +65,7 @@ public class NSISTaskTag implements Serializable
     {
         return mTag;
     }
-    
+
     /**
      * @param name The name to set.
      */
@@ -73,7 +73,7 @@ public class NSISTaskTag implements Serializable
     {
         mTag = name;
     }
-    
+
     /**
      * @return Returns the priority.
      */
@@ -81,7 +81,7 @@ public class NSISTaskTag implements Serializable
     {
         return mPriority;
     }
-    
+
     /**
      * @param priority The priority to set.
      */
@@ -89,7 +89,7 @@ public class NSISTaskTag implements Serializable
     {
         mPriority = priority;
     }
-    
+
     /**
      * @return Returns the default.
      */
@@ -97,7 +97,7 @@ public class NSISTaskTag implements Serializable
     {
         return mDefault;
     }
-    
+
     /**
      * @param default1 The default to set.
      */
@@ -105,7 +105,7 @@ public class NSISTaskTag implements Serializable
     {
         mDefault = default1;
     }
-    
+
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
@@ -113,7 +113,7 @@ public class NSISTaskTag implements Serializable
     {
         return getTag();
     }
-    
+
     public boolean equals(Object obj)
     {
         if(obj instanceof NSISTaskTag) {
@@ -123,7 +123,7 @@ public class NSISTaskTag implements Serializable
         }
         return false;
     }
-    
+
     public int hashCode()
     {
         return mTag.hashCode()+mPriority+(mDefault?1:0);

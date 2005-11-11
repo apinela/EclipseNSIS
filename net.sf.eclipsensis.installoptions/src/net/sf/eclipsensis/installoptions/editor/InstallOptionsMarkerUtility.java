@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -28,7 +28,7 @@ public class InstallOptionsMarkerUtility
         List list = new ArrayList();
         if(file != null) {
             try {
-                IMarker[] markers = file.findMarkers(IInstallOptionsConstants.INSTALLOPTIONS_PROBLEM_MARKER_ID, 
+                IMarker[] markers = file.findMarkers(IInstallOptionsConstants.INSTALLOPTIONS_PROBLEM_MARKER_ID,
                                                      false,IResource.DEPTH_ZERO);
                 for (int i = 0; i < markers.length; i++) {
                     list.add(markers[i]);
@@ -40,7 +40,7 @@ public class InstallOptionsMarkerUtility
         }
         return list;
     }
-    
+
     public static int getMarkerIntAttribute(IMarker marker, String attribute)
     {
         try {

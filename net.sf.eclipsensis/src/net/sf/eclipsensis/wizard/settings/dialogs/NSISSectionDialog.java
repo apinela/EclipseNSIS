@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -30,7 +30,7 @@ import org.eclipse.swt.widgets.*;
 public class NSISSectionDialog extends AbstractNSISInstallItemDialog
 {
     private static ArrayList cProperties = new ArrayList();
-    
+
     static {
         cProperties.add("bold"); //$NON-NLS-1$
         cProperties.add("defaultUnselected"); //$NON-NLS-1$
@@ -48,7 +48,7 @@ public class NSISSectionDialog extends AbstractNSISInstallItemDialog
     {
         return INSISConstants.PLUGIN_CONTEXT_PREFIX+"nsis_sectiondlg_context"; //$NON-NLS-1$
     }
-    
+
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.wizard.settings.dialogs.AbstractNSISInstallItemDialog#getProperties()
      */
@@ -67,11 +67,11 @@ public class NSISSectionDialog extends AbstractNSISInstallItemDialog
         layout.marginHeight = 0;
         layout.marginWidth = 0;
         composite.setLayout(layout);
-        
+
         final Text t = NSISWizardDialogUtil.createText(composite,mStore.getString("name"), //$NON-NLS-1$
                             "wizard.name.label",true,null,false); //$NON-NLS-1$
         t.addVerifyListener(new VerifyListener() {
-            public void verifyText(VerifyEvent e) 
+            public void verifyText(VerifyEvent e)
             {
                 String text = ((Text)e.widget).getText();
                 StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
@@ -79,7 +79,7 @@ public class NSISSectionDialog extends AbstractNSISInstallItemDialog
                 text = buf.toString();
                 if(text.length() > 0) {
                     char c = text.charAt(0);
-                    if(text.equalsIgnoreCase(INSISConstants.UNINSTALL_SECTION_NAME) || //$NON-NLS-1$
+                    if(text.equalsIgnoreCase(INSISConstants.UNINSTALL_SECTION_NAME) ||
                        (text.length()>=3 && text.substring(0,3).equalsIgnoreCase("un.")) || //$NON-NLS-1$
                        Character.isWhitespace(c) || c == '!' || c == '-') {
                         e.doit = false;
@@ -120,12 +120,12 @@ public class NSISSectionDialog extends AbstractNSISInstallItemDialog
             textLimit = INSISConstants.DEFAULT_NSIS_TEXT_LIMIT;
         }
         t2.setTextLimit(textLimit);
-        
+
         Composite composite2 = new Composite(parent, SWT.NONE);
         gd = new GridData(SWT.FILL, SWT.CENTER, false, false);
         gd.horizontalSpan = 2;
         composite2.setLayoutData(gd);
-        
+
         layout = new GridLayout(3,false);
         layout.marginHeight = 0;
         layout.marginWidth = 0;
@@ -138,7 +138,7 @@ public class NSISSectionDialog extends AbstractNSISInstallItemDialog
             }
         });
         ((GridData)cb1.getLayoutData()).horizontalSpan = 1;
-        
+
         MasterSlaveController m = new MasterSlaveController(cb1,true);
         final Button cb2 = NSISWizardDialogUtil.createCheckBox(composite2,"wizard.bold.label",mStore.getBoolean("bold"),true,m,false); //$NON-NLS-1$ //$NON-NLS-2$
         cb2.addSelectionListener(new SelectionAdapter() {
@@ -157,13 +157,13 @@ public class NSISSectionDialog extends AbstractNSISInstallItemDialog
         ((GridData)cb3.getLayoutData()).horizontalSpan = 1;
         return composite;
     }
-    
-    
+
+
     protected String checkForErrors()
     {
         return ""; //$NON-NLS-1$
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.Dialog#okPressed()
      */

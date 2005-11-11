@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -16,7 +16,7 @@ import org.eclipse.jface.text.templates.*;
 
 public class NSISTemplateContextType extends TemplateContextType
 {
-	public static final String NSIS_TEMPLATE_CONTEXT_TYPE= NSISTemplateContextType.class.getName(); //$NON-NLS-1$
+	public static final String NSIS_TEMPLATE_CONTEXT_TYPE= NSISTemplateContextType.class.getName();
 
 	public NSISTemplateContextType() {
 		addResolver(new GlobalTemplateVariables.Cursor());
@@ -28,7 +28,7 @@ public class NSISTemplateContextType extends TemplateContextType
 		addResolver(new GlobalTemplateVariables.User());
         addResolver(new NSISPercentVariableResolver());
 	}
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.jface.text.templates.TemplateContextType#validate(java.lang.String)
      */

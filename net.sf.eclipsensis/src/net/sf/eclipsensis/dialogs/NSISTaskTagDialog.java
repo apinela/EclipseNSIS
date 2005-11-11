@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -69,7 +69,7 @@ public class NSISTaskTagDialog extends StatusMessageDialog
         super.create();
         validate();
     }
-    
+
     protected Control createControl(Composite parent)
     {
         Composite composite = new Composite(parent, SWT.NONE);
@@ -77,17 +77,17 @@ public class NSISTaskTagDialog extends StatusMessageDialog
         gridLayout.marginHeight = 0;
         gridLayout.marginWidth = 0;
         composite.setLayout(gridLayout);
-        
+
         Label label = new Label(composite, SWT.LEFT);
         label.setText(EclipseNSISPlugin.getResourceString("task.tag.label")); //$NON-NLS-1$
         label.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
-        
+
         final Text text = new Text(composite, SWT.SINGLE | SWT.BORDER);
         GridData data = new GridData(SWT.FILL, SWT.CENTER, true, false);
         data.widthHint = convertWidthInCharsToPixels(50);
         text.setLayoutData(data);
         text.setText(mTaskTag.getTag());
-        
+
         text.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e)
             {
@@ -95,7 +95,7 @@ public class NSISTaskTagDialog extends StatusMessageDialog
                 validate();
             }
         });
-        
+
         label = new Label(composite, SWT.LEFT);
         label.setText(EclipseNSISPlugin.getResourceString("task.tag.priority.label")); //$NON-NLS-1$
         label.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
@@ -109,7 +109,7 @@ public class NSISTaskTagDialog extends StatusMessageDialog
             combo.select(priority);
         }
         combo.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) 
+            public void widgetSelected(SelectionEvent e)
             {
                 mTaskTag.setPriority(combo.getSelectionIndex());
             }

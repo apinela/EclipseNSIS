@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -23,14 +23,14 @@ public class ToggleEnablementCommand extends Command
     private boolean mShouldEnable;
     private InstallOptionsWidget[] mParts;
 
-    public ToggleEnablementCommand(InstallOptionsWidget[] parts, boolean shouldEnable) 
+    public ToggleEnablementCommand(InstallOptionsWidget[] parts, boolean shouldEnable)
     {
         mParts = parts;
         mShouldEnable = shouldEnable;
         setLabel(InstallOptionsPlugin.getResourceString((mShouldEnable?"enable.command.name":"disable.command.name"))); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
-    public void execute() 
+    public void execute()
     {
         setEnablement(mShouldEnable);
     }
@@ -51,7 +51,7 @@ public class ToggleEnablementCommand extends Command
         }
     }
 
-    public void undo() 
+    public void undo()
     {
         setEnablement(!mShouldEnable);
     }

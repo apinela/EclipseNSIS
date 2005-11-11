@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -21,10 +21,10 @@ import org.eclipse.ui.ide.IDE;
 public class SwitchEditorAction extends Action
 {
     public static final String ID = "net.sf.eclipsensis.installoptions.switch_editor"; //$NON-NLS-1$
-    
+
     private IInstallOptionsEditor mEditor;
     private String mSwitchToEditorId;
-    
+
     public SwitchEditorAction(IInstallOptionsEditor editor, String switchToEditorId)
     {
         super();
@@ -32,13 +32,13 @@ public class SwitchEditorAction extends Action
         mSwitchToEditorId = switchToEditorId;
         setImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("switch.editor.icon"))); //$NON-NLS-1$
     }
-    
+
     public String getId()
     {
         return ID;
     }
 
-    public void run() 
+    public void run()
     {
         if(mEditor.canSwitch()) {
             BusyIndicator.showWhile(null,new Runnable(){

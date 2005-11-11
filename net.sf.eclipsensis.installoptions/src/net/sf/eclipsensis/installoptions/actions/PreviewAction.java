@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -53,10 +53,10 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
             return false;
         }
     };
-   
+
     private IInstallOptionsEditor mEditor;
     private PreviewSettings mSettings = new PreviewSettings();
-    
+
     public PreviewAction(int type, IInstallOptionsEditor editor)
     {
         super();
@@ -76,12 +76,12 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
         mSettings.setVerbosity(INSISPreferenceConstants.VERBOSITY_ERRORS);
         mSettings.setSymbols(symbols);
         String label = InstallOptionsPlugin.getResourceString(resource);
-        setText(label); //$NON-NLS-1$
-        setToolTipText(label); //$NON-NLS-1$
+        setText(label);
+        setToolTipText(label);
         MakeNSISRunner.addListener(this);
         updateEnabled();
     }
-    
+
     private void updateEnabled()
     {
         setEnabled((mEditor != null && EclipseNSISPlugin.getDefault().isConfigured() && !MakeNSISRunner.isCompiling()));
@@ -107,7 +107,7 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
         MakeNSISRunner.removeListener(this);
     }
 
-    public void run() 
+    public void run()
     {
         if(mEditor != null) {
             Shell shell = mEditor.getSite().getShell();
@@ -150,7 +150,7 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
             }
         }
     }
-    
+
     private void doPreview(File file)
     {
         try {
@@ -163,7 +163,7 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
                 lang = NSISLanguageManager.getInstance().getDefaultLanguage();
             }
             else {
-                lang = NSISLanguageManager.getInstance().getLanguage(pref); 
+                lang = NSISLanguageManager.getInstance().getLanguage(pref);
                 if(lang == null) {
                     lang = NSISLanguageManager.getInstance().getDefaultLanguage();
                     InstallOptionsPlugin.getDefault().getPreferenceStore().setValue(IInstallOptionsConstants.PREFERENCE_PREVIEW_LANG, ""); //$NON-NLS-1$
@@ -176,7 +176,7 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
                 symbols.put("PREVIEW_SUBTITLE",InstallOptionsPlugin.getResourceString(locale,"preview.setup.subtitle")); //$NON-NLS-1$ //$NON-NLS-2$
             }
             symbols.put("PREVIEW_NAME",InstallOptionsPlugin.getResourceString(locale,"preview.setup.name")); //$NON-NLS-1$ //$NON-NLS-2$
-    
+
             mSettings.setSymbols(symbols);
             final File previewScript = getPreviewScript();
             final ProgressMonitorDialog pmd = new ProgressMonitorDialog(shell) {
@@ -186,7 +186,7 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
                     Rectangle rect = shell.getDisplay().getBounds();
                     shell.setLocation(rect.x+rect.width+1,rect.y+rect.height+1);
                 }
-    
+
                 protected Rectangle getConstrainedShellBounds(Rectangle preferredSize)
                 {
                     Rectangle rect = shell.getDisplay().getBounds();
@@ -208,7 +208,7 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
                                         {
                                             return NSISConsoleLine.info(text);
                                         }
-        
+
                                         public void reset()
                                         {
                                         }
@@ -270,7 +270,7 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
             Common.openError(mEditor.getSite().getShell(),e.getMessage(),InstallOptionsPlugin.getShellImage());
         }
     }
-    
+
     private File getPreviewScript() throws IOException
     {
         File previewFolder = new File(InstallOptionsPlugin.getPluginStateLocation(),"preview"); //$NON-NLS-1$
@@ -300,7 +300,7 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
         }
         return previewScript;
     }
-    
+
     private class PreviewSettings extends NSISSettings
     {
         protected boolean getBoolean(String name)

@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -36,11 +36,11 @@ public class NSISTemplateCompletionProcessor extends TemplateCompletionProcessor
             }
             return 0;
         }
-        
+
     };
 
     /**
-     * 
+     *
      */
     public NSISTemplateCompletionProcessor()
     {
@@ -116,7 +116,7 @@ public class NSISTemplateCompletionProcessor extends TemplateCompletionProcessor
                 }
             }
             Collections.sort(list, PROPOSAL_COMPARATOR);
-            proposals = (ICompletionProposal[])Common.appendArray(list.toArray(NSISInformationUtility.EMPTY_COMPLETION_PROPOSAL_ARRAY), 
+            proposals = (ICompletionProposal[])Common.appendArray(list.toArray(NSISInformationUtility.EMPTY_COMPLETION_PROPOSAL_ARRAY),
                                                                   NSISInformationUtility.getCompletionsAtOffset(viewer, offset));
         }
         return proposals;
@@ -130,18 +130,18 @@ public class NSISTemplateCompletionProcessor extends TemplateCompletionProcessor
     {
         return new NSISTemplateProposal(template, context, region, getImage(template), relevance);
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.jface.text.templates.TemplateCompletionProcessor#getRelevance(org.eclipse.jface.text.templates.Template, java.lang.String)
      */
     protected int getRelevance(Template template, String prefix)
     {
         if (template.getName().toLowerCase().startsWith(prefix.toLowerCase())) {
-            return 90; 
+            return 90;
         }
         return 0;
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#getCompletionProposalAutoActivationCharacters()
      */

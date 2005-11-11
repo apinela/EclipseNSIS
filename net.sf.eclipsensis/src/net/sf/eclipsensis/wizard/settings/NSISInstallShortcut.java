@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -24,15 +24,15 @@ public class NSISInstallShortcut extends AbstractNSISInstallItem
 
     public static final String TYPE = EclipseNSISPlugin.getResourceString("wizard.shortcut.type"); //$NON-NLS-1$
     private static final Image IMAGE = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("wizard.shortcut.icon")); //$NON-NLS-1$
-    
+
     private String mName = null;
     private String mLocation = null;
     private String mUrl = null;
     private String mPath = null;
-    private int mShortcutType = SHORTCUT_URL; 
+    private int mShortcutType = SHORTCUT_URL;
 
     static {
-        NSISInstallElementFactory.register(TYPE, EclipseNSISPlugin.getResourceString("wizard.shortcut.type.name"), IMAGE, NSISInstallShortcut.class);
+        NSISInstallElementFactory.register(TYPE, EclipseNSISPlugin.getResourceString("wizard.shortcut.type.name"), IMAGE, NSISInstallShortcut.class); //$NON-NLS-1$
     }
 
     /**
@@ -113,7 +113,7 @@ public class NSISInstallShortcut extends AbstractNSISInstallItem
     {
         return IMAGE;
     }
-    
+
     /**
      * @return Returns the name.
      */
@@ -154,7 +154,7 @@ public class NSISInstallShortcut extends AbstractNSISInstallItem
         super.setSettings(settings);
         if(settings != null && !Common.isEmpty(getSettings().getStartMenuGroup()) && Common.isEmpty(mLocation)) {
             mLocation = new StringBuffer(NSISKeywords.getInstance().getKeyword("$SMPROGRAMS")).append("\\").append( //$NON-NLS-1$ //$NON-NLS-2$
-                    getSettings().getStartMenuGroup()).toString(); //$NON-NLS-1$
+                    getSettings().getStartMenuGroup()).toString();
         }
     }
     public String validate(boolean recursive)

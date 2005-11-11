@@ -3,17 +3,17 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
 package net.sf.eclipsensis.script;
 
-public class NSISScriptInsertMacro extends AbstractNSISScriptElement 
+public class NSISScriptInsertMacro extends AbstractNSISScriptElement
 {
     private String mName = null;
     private Object mArg = null;
-    
+
     /**
      * @param name
      */
@@ -41,12 +41,12 @@ public class NSISScriptInsertMacro extends AbstractNSISScriptElement
         mName = name;
         mArg = arg;
     }
-    
+
     private void updateArgs()
     {
         updateArgs(makeArray(mName,mArg));
     }
-    
+
     /**
      * @return Returns the arg.
      */
@@ -54,7 +54,7 @@ public class NSISScriptInsertMacro extends AbstractNSISScriptElement
     {
         return mArg;
     }
-    
+
     /**
      * @param arg The arg to set.
      */
@@ -63,7 +63,7 @@ public class NSISScriptInsertMacro extends AbstractNSISScriptElement
         mArg = arg;
         updateArgs();
     }
-    
+
     /**
      * @return Returns the name.
      */
@@ -71,7 +71,7 @@ public class NSISScriptInsertMacro extends AbstractNSISScriptElement
     {
         return mName;
     }
-    
+
     /**
      * @param name The name to set.
      */

@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -50,7 +50,7 @@ public class GridSettings extends Composite implements IInstallOptionsConstants
             }
         }
     };
- 
+
     private VerifyListener mPositiveNumberVerifyListener = new VerifyListener() {
         public void verifyText(VerifyEvent e)
         {
@@ -74,7 +74,7 @@ public class GridSettings extends Composite implements IInstallOptionsConstants
 		initialize();
         setSettings(settings);
     }
-    
+
     public void setSettings(Map settings)
     {
         mSettings = settings;
@@ -90,7 +90,7 @@ public class GridSettings extends Composite implements IInstallOptionsConstants
         }
         mGridSpacingWidth.setText(Integer.toString(d.width));
         mGridSpacingHeight.setText(Integer.toString(d.height));
-        
+
         Point p = null;
         try {
             p = (Point)mSettings.get(PREFERENCE_GRID_ORIGIN);
@@ -103,9 +103,9 @@ public class GridSettings extends Composite implements IInstallOptionsConstants
         }
         mGridOriginX.setText(Integer.toString(p.x));
         mGridOriginY.setText(Integer.toString(p.y));
-        
+
         String style = null;
-        
+
         try {
             style = (String)mSettings.get(PREFERENCE_GRID_STYLE);
         }
@@ -124,7 +124,7 @@ public class GridSettings extends Composite implements IInstallOptionsConstants
         }
     }
 
-    private void initialize() 
+    private void initialize()
     {
         setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         GridLayout gridLayout = new GridLayout();
@@ -140,20 +140,20 @@ public class GridSettings extends Composite implements IInstallOptionsConstants
 
         Label l = new Label(group,SWT.NONE);
         l.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-        
+
         l = new Label(group,SWT.NONE);
         l.setText(InstallOptionsPlugin.getResourceString("grid.settings.horizontal.label")); //$NON-NLS-1$
         l.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-        
+
         l = new Label(group,SWT.NONE);
         l.setText(InstallOptionsPlugin.getResourceString("grid.settings.vertical.label")); //$NON-NLS-1$
         l.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-        
+
         l = new Label(group,SWT.NONE);
         l.setText(InstallOptionsPlugin.getResourceString("grid.settings.grid.spacing.label")); //$NON-NLS-1$
         l.setToolTipText(InstallOptionsPlugin.getResourceString("grid.settings.grid.spacing.tooltip")); //$NON-NLS-1$
         l.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-        
+
         mGridSpacingWidth = new Text(group,SWT.BORDER);
         mGridSpacingWidth.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         mGridSpacingWidth.addVerifyListener(mPositiveNumberVerifyListener);
@@ -185,7 +185,7 @@ public class GridSettings extends Composite implements IInstallOptionsConstants
                 }
             }
         });
-        
+
         l = new Label(group,SWT.NONE);
         l.setText(InstallOptionsPlugin.getResourceString("grid.settings.grid.origin.label")); //$NON-NLS-1$
         l.setToolTipText(InstallOptionsPlugin.getResourceString("grid.settings.grid.origin.tooltip")); //$NON-NLS-1$
@@ -228,7 +228,7 @@ public class GridSettings extends Composite implements IInstallOptionsConstants
         l.setText(InstallOptionsPlugin.getResourceString("grid.settings.grid.style.label")); //$NON-NLS-1$
         l.setToolTipText(InstallOptionsPlugin.getResourceString("grid.settings.grid.style.tooltip")); //$NON-NLS-1$
         l.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-        
+
         final Combo mGridStyle = new Combo(group,SWT.READ_ONLY|SWT.DROP_DOWN);
         mGridStyle.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         mGridStyleViewer = new ComboViewer(mGridStyle);
@@ -238,7 +238,7 @@ public class GridSettings extends Composite implements IInstallOptionsConstants
             {
                 return ((String[])element)[1];
             }
-            
+
         });
         mGridStyleViewer.setInput(GRID_STYLE_CONTENTS);
         mGridStyleViewer.addSelectionChangedListener(new ISelectionChangedListener() {

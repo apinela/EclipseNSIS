@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -47,22 +47,22 @@ public class EditableComboBoxCellEditor extends CellEditor
         super.deactivate();
         mDownArrowPressed = false;
     }
-    
+
     public boolean isAutoApplyEditorValue()
     {
         return mAutoApplyEditorValue;
     }
-    
+
     public void setAutoApplyEditorValue(boolean autoApplyEditorValue)
     {
         mAutoApplyEditorValue = autoApplyEditorValue;
     }
-    
+
     public boolean isAutoDropDown()
     {
         return mAutoDropDown;
     }
-    
+
     public void setAutoDropDown(boolean autoDropDown)
     {
         if(mAutoDropDown != autoDropDown) {
@@ -75,7 +75,7 @@ public class EditableComboBoxCellEditor extends CellEditor
             }
         }
     }
-    
+
     public List getItems()
     {
         return (mItems == null?Collections.EMPTY_LIST:mItems);
@@ -101,7 +101,7 @@ public class EditableComboBoxCellEditor extends CellEditor
                 mNewSelection = mCombo.getText();
             }
         });
-        
+
         mCombo.addKeyListener(new KeyAdapter() {
             public void keyPressed(KeyEvent e)
             {
@@ -157,7 +157,7 @@ public class EditableComboBoxCellEditor extends CellEditor
 
 
     /**
-     * 
+     *
      */
     private void computeSelection()
     {
@@ -219,7 +219,7 @@ public class EditableComboBoxCellEditor extends CellEditor
             for (int i = 0; i < mItems.size(); i++) {
                 mCombo.add((String)mItems.get(i), i);
             }
-            
+
             if(mSelection == null) {
                 setValueValid(true);
                 mSelection = ""; //$NON-NLS-1$

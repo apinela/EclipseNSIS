@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -97,12 +97,12 @@ public class NSISContentOutlinePage extends ContentOutlinePage
         NSISOutlineContentResources.getInstance().disconnect(this);
         mDisposed = true;
     }
-    
+
     public boolean isDisposed()
     {
         return mDisposed;
     }
-    
+
     /**
      * Sets the input of the outline page
      */

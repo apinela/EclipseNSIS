@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -40,7 +40,7 @@ public class InstallOptionsComboboxEditManager extends InstallOptionsEditableEle
         cellEditor.setAutoDropDown(true);
         return cellEditor;
     }
-    
+
     protected void selectCellEditorText()
     {
         Combo combo = (Combo)getCellEditor().getControl();
@@ -49,8 +49,8 @@ public class InstallOptionsComboboxEditManager extends InstallOptionsEditableEle
             combo.setSelection(new Point(0,text.length()));
         }
     }
-    
-    protected int getCellEditorStyle() 
+
+    protected int getCellEditorStyle()
     {
         return SWT.DROP_DOWN;
     }

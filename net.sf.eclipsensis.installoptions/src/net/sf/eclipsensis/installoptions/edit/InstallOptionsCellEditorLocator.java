@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.Control;
 public abstract class InstallOptionsCellEditorLocator implements CellEditorLocator
 {
     private IInstallOptionsFigure mFigure;
-    
+
     public InstallOptionsCellEditorLocator(IInstallOptionsFigure figure)
     {
         super();
@@ -36,13 +36,13 @@ public abstract class InstallOptionsCellEditorLocator implements CellEditorLocat
         getFigure().translateToAbsolute(editArea);
         Point preferredSize = ctrl.computeSize(SWT.DEFAULT,SWT.DEFAULT);
         editArea = transformLocation(editArea, preferredSize);
-        ctrl.setBounds(editArea.x, editArea.y, editArea.width, editArea.height);    
+        ctrl.setBounds(editArea.x, editArea.y, editArea.width, editArea.height);
     }
 
     protected IInstallOptionsFigure getFigure()
     {
         return mFigure;
     }
-    
+
     protected abstract Rectangle transformLocation(Rectangle editArea, Point preferredSize);
 }

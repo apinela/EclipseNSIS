@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -31,8 +31,8 @@ public class InstallOptionsGuideEditPart extends GuideEditPart
         super.createEditPolicies();
         installEditPolicy(EditPolicy.PRIMARY_DRAG_ROLE, new InstallOptionsDragGuidePolicy());
     }
-    
-    public void updateLocationOfFigures(int position) 
+
+    public void updateLocationOfFigures(int position)
     {
         Font f = Display.getDefault().getSystemFont();
         position = (isHorizontal()?FigureUtility.pixelsToDialogUnitsY(position,f):FigureUtility.pixelsToDialogUnitsX(position,f));

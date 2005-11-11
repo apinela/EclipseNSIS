@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -35,17 +35,17 @@ public class InstallOptionsCombobox extends InstallOptionsEditableElement
 {
     protected static LabelProvider cListItemsLabelProvider = new ListLabelProvider();
     private List mListItems;
-    
+
     protected InstallOptionsCombobox(INISection section)
     {
         super(section);
     }
-    
+
     public String getType()
     {
         return InstallOptionsModel.TYPE_COMBOBOX;
     }
-    
+
     protected void init()
     {
         super.init();
@@ -56,7 +56,7 @@ public class InstallOptionsCombobox extends InstallOptionsEditableElement
     {
         return new Position(0,0,99,99);
     }
-    
+
     protected void addPropertyName(List list, String setting)
     {
         if(setting.equalsIgnoreCase(InstallOptionsModel.PROPERTY_LISTITEMS)) {
@@ -76,7 +76,7 @@ public class InstallOptionsCombobox extends InstallOptionsEditableElement
             return super.getTypeConverter(property);
         }
     }
-    
+
     protected IPropertyDescriptor createPropertyDescriptor(String name)
     {
         if(name.equals(InstallOptionsModel.PROPERTY_LISTITEMS)) {
@@ -97,7 +97,7 @@ public class InstallOptionsCombobox extends InstallOptionsEditableElement
         }
         return super.getPropertyValue(propName);
     }
-    
+
     public void setPropertyValue(Object id, Object value)
     {
         if(id.equals(InstallOptionsModel.PROPERTY_LISTITEMS)) {
@@ -122,19 +122,19 @@ public class InstallOptionsCombobox extends InstallOptionsEditableElement
             setDirty(true);
         }
     }
-    
+
     protected boolean isStateEditable()
     {
         return true;
     }
-    
+
     public Object clone()
     {
         InstallOptionsCombobox clone = (InstallOptionsCombobox)super.clone();
         clone.setListItems(new ArrayList(mListItems));
         return clone;
     }
- 
+
     protected class ComboStatePropertyDescriptor extends PropertyDescriptor implements PropertyChangeListener
     {
         private CustomComboBoxCellEditor mEditor;
@@ -156,12 +156,12 @@ public class InstallOptionsCombobox extends InstallOptionsEditableElement
         {
             return mStyle;
         }
-        
+
         public void setStyle(int style)
         {
             mStyle = style;
         }
-        
+
         public void propertyChange(PropertyChangeEvent evt)
         {
             if(evt.getPropertyName().equals(InstallOptionsModel.PROPERTY_LISTITEMS)) {
@@ -178,7 +178,7 @@ public class InstallOptionsCombobox extends InstallOptionsEditableElement
             }
             return mEditor;
         }
-        
+
         public void setListItems(List listItems)
         {
             if(mEditor != null) {
@@ -206,7 +206,7 @@ public class InstallOptionsCombobox extends InstallOptionsEditableElement
             return cellEditor;
         }
     }
-        
+
     protected class ListItemsCellEditor extends DialogCellEditor
     {
         protected ListItemsCellEditor(Composite parent)
@@ -214,7 +214,7 @@ public class InstallOptionsCombobox extends InstallOptionsEditableElement
             super(parent);
         }
 
-        protected void updateContents(Object value) 
+        protected void updateContents(Object value)
         {
             Label label = getDefaultLabel();
             if (label != null) {

@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -15,7 +15,7 @@ import net.sf.eclipsensis.installoptions.model.InstallOptionsUneditableElement;
 
 public class InstallOptionsUneditableElementCommand extends InstallOptionsDirectEditCommand
 {
-    public InstallOptionsUneditableElementCommand(InstallOptionsUneditableElement uneditable, String text) 
+    public InstallOptionsUneditableElementCommand(InstallOptionsUneditableElement uneditable, String text)
     {
         super(uneditable, InstallOptionsModel.PROPERTY_TEXT, (text != null?text:"")); //$NON-NLS-1$
         setLabel(InstallOptionsPlugin.getFormattedString("uneditable.element.command.label",  //$NON-NLS-1$

@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -33,7 +33,7 @@ public class ListItemsDialog extends Dialog
     private List mValues;
     private String mType;
     private ICellEditorValidator mValidator;
-    
+
     public ListItemsDialog(Shell parent, List values, String type)
     {
         super(parent);
@@ -45,12 +45,12 @@ public class ListItemsDialog extends Dialog
     {
         return mValidator;
     }
-    
+
     public void setValidator(ICellEditorValidator validator)
     {
         mValidator = validator;
     }
-    
+
     protected void configureShell(Shell newShell)
     {
         super.configureShell(newShell);
@@ -69,7 +69,7 @@ public class ListItemsDialog extends Dialog
         GridLayout layout = (GridLayout)composite.getLayout();
         layout.numColumns = 2;
         layout.makeColumnsEqualWidth = false;
-        
+
         Table table = new Table(composite,SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION | SWT.V_SCROLL);
         initializeDialogUnits(table);
         GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
@@ -78,7 +78,7 @@ public class ListItemsDialog extends Dialog
         table.setLayoutData(data);
         table.setLinesVisible(true);
         new TableColumn(table,SWT.LEFT);
-        
+
         final TableViewer viewer = new TableViewer(table);
         viewer.setContentProvider(new CollectionContentProvider());
         viewer.setLabelProvider(new LabelProvider());
@@ -122,14 +122,14 @@ public class ListItemsDialog extends Dialog
                 }
             }
         });
-        
+
         final Composite buttons = new Composite(composite,SWT.NONE);
         buttons.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false));
         layout = new GridLayout(1,false);
         layout.marginWidth = 0;
         layout.marginHeight = 0;
         buttons.setLayout(layout);
-        
+
         final Button add = new Button(buttons,SWT.PUSH);
         add.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("add.icon"))); //$NON-NLS-1$
         add.setToolTipText(EclipseNSISPlugin.getResourceString("new.tooltip")); //$NON-NLS-1$
@@ -153,7 +153,7 @@ public class ListItemsDialog extends Dialog
                 }
             }
         });
-        
+
         final Button del = new Button(buttons, SWT.PUSH);
         del.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("delete.icon"))); //$NON-NLS-1$
         del.setToolTipText(EclipseNSISPlugin.getResourceString("remove.tooltip")); //$NON-NLS-1$
@@ -194,7 +194,7 @@ public class ListItemsDialog extends Dialog
         up.setEnabled(mover.canMoveUp());
         up.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         up.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) 
+            public void widgetSelected(SelectionEvent e)
             {
                 mover.moveUp();
             }
@@ -211,7 +211,7 @@ public class ListItemsDialog extends Dialog
                 mover.moveDown();
             }
         });
-        
+
 
         viewer.addSelectionChangedListener(new ISelectionChangedListener() {
             public void selectionChanged(SelectionChangedEvent event)
@@ -227,7 +227,7 @@ public class ListItemsDialog extends Dialog
         viewer.setInput(mValues);
         return composite;
     }
-    
+
     protected void okPressed()
     {
         ICellEditorValidator validator = getValidator();

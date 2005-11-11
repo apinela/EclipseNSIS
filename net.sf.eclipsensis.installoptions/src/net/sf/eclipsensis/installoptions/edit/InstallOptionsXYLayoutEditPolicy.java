@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -34,14 +34,14 @@ public class InstallOptionsXYLayoutEditPolicy extends XYLayoutEditPolicy impleme
     };
 
     private EditPart mEditPart;
-    
+
     public InstallOptionsXYLayoutEditPolicy(EditPart editPart, XYLayout layout)
     {
         super();
         mEditPart = editPart;
         setXyLayout(layout);
     }
-    
+
     public Command getCommand(Request request)
     {
         if(((InstallOptionsEditDomain)mEditPart.getViewer().getEditDomain()).isReadOnly()) {
@@ -91,7 +91,7 @@ public class InstallOptionsXYLayoutEditPolicy extends XYLayoutEditPolicy impleme
         if (guidePos == null) {
             result = result.chain(new ChangeGuideCommand(part, horizontal));
         }
-        
+
         return result;
     }
 
@@ -189,7 +189,7 @@ public class InstallOptionsXYLayoutEditPolicy extends XYLayoutEditPolicy impleme
                             }
                         }
                     }
-            
+
                     if ((request.getResizeDirection() & PositionConstants.EAST_WEST) != 0) {
                         Integer guidePos = (Integer)request.getExtendedData().get(
                                 SnapToGuides.KEY_VERTICAL_GUIDE);
@@ -211,7 +211,7 @@ public class InstallOptionsXYLayoutEditPolicy extends XYLayoutEditPolicy impleme
                             }
                         }
                     }
-            
+
                     if (request.getType().equals(REQ_MOVE_CHILDREN)
                             || request.getType().equals(REQ_ALIGN_CHILDREN)) {
                         result = chainGuideAttachmentCommand(request, part, result, true);
@@ -232,7 +232,7 @@ public class InstallOptionsXYLayoutEditPolicy extends XYLayoutEditPolicy impleme
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.gef.editpolicies.LayoutEditPolicy#createSizeOnDropFeedback(org.eclipse.gef.requests.CreateRequest)
      */
     protected IFigure createSizeOnDropFeedback(CreateRequest createRequest)
@@ -296,7 +296,7 @@ public class InstallOptionsXYLayoutEditPolicy extends XYLayoutEditPolicy impleme
      * Override to return the <code>Command</code> to perform an {@link
      * RequestConstants#REQ_CLONE CLONE}. By default, <code>null</code> is
      * returned.
-     * 
+     *
      * @param request
      *            the Clone Request
      * @return A command to perform the Clone.
@@ -367,7 +367,7 @@ public class InstallOptionsXYLayoutEditPolicy extends XYLayoutEditPolicy impleme
         return create;
     }
 
-    public EditPart getTargetEditPart(Request request) 
+    public EditPart getTargetEditPart(Request request)
     {
         if (IInstallOptionsConstants.REQ_CREATE_FROM_TEMPLATE.equals(request.getType())) {
             return getHost();
@@ -390,7 +390,7 @@ public class InstallOptionsXYLayoutEditPolicy extends XYLayoutEditPolicy impleme
 
     /**
      * Returns the layer used for displaying feedback.
-     *  
+     *
      * @return the feedback layer
      */
     protected IFigure getFeedbackLayer()
@@ -416,7 +416,7 @@ public class InstallOptionsXYLayoutEditPolicy extends XYLayoutEditPolicy impleme
         }
     }
 
-    public void eraseTargetFeedback(Request request) 
+    public void eraseTargetFeedback(Request request)
     {
         if(IInstallOptionsConstants.REQ_CREATE_FROM_TEMPLATE.equals(request.getType())) {
             eraseLayoutTargetFeedback(request);

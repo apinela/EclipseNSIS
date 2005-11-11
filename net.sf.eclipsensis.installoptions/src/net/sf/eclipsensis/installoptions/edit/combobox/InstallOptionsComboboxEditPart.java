@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -34,7 +34,7 @@ public class InstallOptionsComboboxEditPart extends InstallOptionsEditableElemen
         public boolean performExtendedEdit()
         {
             InstallOptionsCombobox model = (InstallOptionsCombobox)getModel();
-            ListItemsDialog dialog = new ListItemsDialog(getViewer().getControl().getShell(), 
+            ListItemsDialog dialog = new ListItemsDialog(getViewer().getControl().getShell(),
                                                          model.getListItems(), model.getType());
             dialog.setValidator(new NSISStringLengthValidator(InstallOptionsModel.PROPERTY_LISTITEMS));
             if (dialog.open() == Window.OK) {
@@ -50,15 +50,15 @@ public class InstallOptionsComboboxEditPart extends InstallOptionsEditableElemen
         {
             return mNewValue;
         }
-        
+
     };
-    
+
     protected void createEditPolicies()
     {
         super.createEditPolicies();
         installEditPolicy(InstallOptionsExtendedEditPolicy.ROLE, new InstallOptionsComboboxExtendedEditPolicy(this));
     }
-    
+
     public Object getAdapter(Class key)
     {
         if(IExtendedEditSupport.class.equals(key)) {
@@ -66,25 +66,25 @@ public class InstallOptionsComboboxEditPart extends InstallOptionsEditableElemen
         }
         return super.getAdapter(key);
     }
-    
+
     protected String getDirectEditLabelProperty()
     {
         return "combobox.direct.edit.label"; //$NON-NLS-1$
     }
-    
+
     protected String getExtendedEditLabelProperty()
     {
         return "combobox.extended.edit.label"; //$NON-NLS-1$
     }
 
-    protected IInstallOptionsFigure createInstallOptionsFigure() 
+    protected IInstallOptionsFigure createInstallOptionsFigure()
     {
         return new ComboboxFigure((Composite)getViewer().getControl(), getInstallOptionsWidget());
     }
 
     public void doPropertyChange(PropertyChangeEvent evt)
     {
-        if (evt.getPropertyName().equalsIgnoreCase(InstallOptionsModel.PROPERTY_LISTITEMS)) {//$NON-NLS-1$
+        if (evt.getPropertyName().equalsIgnoreCase(InstallOptionsModel.PROPERTY_LISTITEMS)) {
             IListItemsFigure figure2 = (IListItemsFigure)getFigure();
             figure2.setListItems((List)evt.getNewValue());
             setNeedsRefresh(true);
@@ -93,7 +93,7 @@ public class InstallOptionsComboboxEditPart extends InstallOptionsEditableElemen
             super.doPropertyChange(evt);
         }
     }
-    
+
     protected boolean supportsScrolling()
     {
         return false;

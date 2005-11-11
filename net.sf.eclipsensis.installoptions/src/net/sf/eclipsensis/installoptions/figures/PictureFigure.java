@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -19,7 +19,7 @@ import org.eclipse.ui.views.properties.IPropertySource;
 public class PictureFigure extends UneditableElementFigure
 {
     private Image mImage;
-    
+
     public PictureFigure(Composite parent, IPropertySource propertySource)
     {
         super(parent, propertySource);

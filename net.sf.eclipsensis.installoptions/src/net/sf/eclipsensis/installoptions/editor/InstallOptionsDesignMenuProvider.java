@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -42,7 +42,7 @@ public class InstallOptionsDesignMenuProvider extends org.eclipse.gef.ContextMen
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.gef.ContextMenuProvider#menuAboutToShow(org.eclipse.jface.action.IMenuManager)
      */
     public void buildContextMenu(IMenuManager manager)
@@ -59,7 +59,7 @@ public class InstallOptionsDesignMenuProvider extends org.eclipse.gef.ContextMen
         addContextMenu(manager, ActionFactory.DELETE.getId(), GEFActionConstants.GROUP_EDIT);
         addContextMenu(manager, ToggleEnablementAction.ID, GEFActionConstants.GROUP_EDIT);
         addContextMenu(manager, ToggleLockAction.ID, GEFActionConstants.GROUP_EDIT);
-        
+
         List selected = getViewer().getSelectedEditParts();
         if(selected.size() == 1) {
             EditPart editPart = (EditPart)selected.get(0);
@@ -152,7 +152,7 @@ public class InstallOptionsDesignMenuProvider extends org.eclipse.gef.ContextMen
         if (!submenu.isEmpty()) {
             manager.appendToGroup(GEFActionConstants.GROUP_EDIT, submenu);
         }
-        
+
         if(mEditor != null && selected.size() == 0) {
             if(mSetDialogSizeMenu == null) {
                 mSetDialogSizeMenu = new SetDialogSizeMenuManager(manager);
@@ -165,7 +165,7 @@ public class InstallOptionsDesignMenuProvider extends org.eclipse.gef.ContextMen
         }
         addContextMenu(manager, CreateTemplateAction.ID, GEFActionConstants.GROUP_EDIT);
         addContextMenu(manager, RefreshDiagramAction.ID, GEFActionConstants.GROUP_EDIT);
-        
+
         submenu = new MenuManager(InstallOptionsPlugin.getResourceString("preview.submenu.name")); //$NON-NLS-1$
         addContextMenu(submenu, PreviewAction.PREVIEW_CLASSIC_ID, null);
         addContextMenu(submenu, PreviewAction.PREVIEW_MUI_ID, null);
@@ -173,7 +173,7 @@ public class InstallOptionsDesignMenuProvider extends org.eclipse.gef.ContextMen
         if (!submenu.isEmpty()) {
             manager.appendToGroup(GEFActionConstants.GROUP_EDIT, submenu);
         }
-        
+
         addContextMenu(manager, "net.sf.eclipsensis.installoptions.design_editor_prefs", GEFActionConstants.GROUP_REST); //$NON-NLS-1$
         addContextMenu(manager, ActionFactory.SAVE.getId(), GEFActionConstants.GROUP_SAVE);
     }

@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -22,7 +22,7 @@ import org.eclipse.jface.text.rules.*;
 public abstract class InstallOptionsSyntaxScanner extends BufferedRuleBasedScanner implements IInstallOptionsScanner
 {
     private Map mSyntaxStylesMap;
-    
+
     public InstallOptionsSyntaxScanner()
     {
         super();
@@ -50,7 +50,7 @@ public abstract class InstallOptionsSyntaxScanner extends BufferedRuleBasedScann
     {
         return fDocument;
     }
-    
+
     protected IToken createToken(String name)
     {
         NSISSyntaxStyle style = (NSISSyntaxStyle)mSyntaxStylesMap.get(name);
@@ -59,6 +59,6 @@ public abstract class InstallOptionsSyntaxScanner extends BufferedRuleBasedScann
         }
         return Token.UNDEFINED;
     }
-    
+
     protected abstract void reset();
 }

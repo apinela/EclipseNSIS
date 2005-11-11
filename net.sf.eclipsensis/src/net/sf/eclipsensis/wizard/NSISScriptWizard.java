@@ -3,13 +3,12 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
 package net.sf.eclipsensis.wizard;
 
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
@@ -26,7 +25,7 @@ public class NSISScriptWizard extends NSISWizard
     private boolean mSaveAsTemplate = false;
     private NSISWizardTemplateManager mTemplateManager = new NSISWizardTemplateManager();
     /**
-     * 
+     *
      */
     public NSISScriptWizard()
     {
@@ -39,7 +38,7 @@ public class NSISScriptWizard extends NSISWizard
     {
         return INSISConstants.PLUGIN_CONTEXT_PREFIX+"nsis_wizard_context"; //$NON-NLS-1$
     }
-    
+
     /**
      * @return Returns the templateManager.
      */
@@ -48,7 +47,7 @@ public class NSISScriptWizard extends NSISWizard
         return mTemplateManager;
     }
 
-    private boolean saveTemplate() throws IOException
+    private boolean saveTemplate()
     {
         NSISWizardTemplateDialog dialog = new NSISWizardTemplateDialog(getShell(),getTemplateManager(), (NSISWizardTemplate)getTemplate().clone(),getSettings());
         return(dialog.open() == Window.OK);
@@ -63,13 +62,7 @@ public class NSISScriptWizard extends NSISWizard
     public boolean performFinish()
     {
         if(mSaveAsTemplate) {
-            try {
-                if(!saveTemplate()) {
-                    return false;
-                }
-            }
-            catch(IOException ioe) {
-                Common.openError(getShell(), ioe.getLocalizedMessage(), EclipseNSISPlugin.getShellImage());
+            if(!saveTemplate()) {
                 return false;
             }
         }
@@ -86,13 +79,13 @@ public class NSISScriptWizard extends NSISWizard
     	};
     	try {
     		getContainer().run(true, false, op);
-    	} 
+    	}
         catch (InterruptedException e) {
     		return false;
-    	} 
+    	}
         catch (InvocationTargetException e) {
     		Throwable realException = e.getTargetException();
-    		Common.openError(getShell(), realException.getLocalizedMessage(), EclipseNSISPlugin.getShellImage()); //$NON-NLS-1$
+    		Common.openError(getShell(), realException.getLocalizedMessage(), EclipseNSISPlugin.getShellImage());
     		return false;
     	}
     	return true;
@@ -126,7 +119,7 @@ public class NSISScriptWizard extends NSISWizard
     }
 
     /**
-     * 
+     *
      */
     protected void addStartPage()
     {

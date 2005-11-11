@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -53,7 +53,7 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
     private static File cStateLocation = null;
     private static String cInvalidException = null;
     private static Image cShellImage;
-    
+
     private String mName = null;
     private String mVersion = null;
     private TemplateStore mTemplateStore;
@@ -71,14 +71,14 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
 	/**
 	 * The constructor.
 	 */
-	public EclipseNSISPlugin() 
+	public EclipseNSISPlugin()
     {
 		super();
 		cPlugin = this;
         mLocale = Locale.getDefault();
 		try {
 			mResourceBundles.put(mLocale,new CompoundResourceBundle(mLocale, BUNDLE_NAMES));
-		} 
+		}
         catch (MissingResourceException x) {
             log(x);
 		}
@@ -88,11 +88,11 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
 	/**
 	 * This method is called upon plug-in activation
 	 */
-	public void start(BundleContext context) throws Exception 
+	public void start(BundleContext context) throws Exception
     {
         super.start(context);
         if(!isDebugging()) {
-            if(Boolean.getBoolean("net.sf.eclipsensis/debug")) {
+            if(Boolean.getBoolean("net.sf.eclipsensis/debug")) { //$NON-NLS-1$
                 setDebugging(true);
             }
         }
@@ -138,7 +138,7 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
                                                                 }
                                                             });
                         }
-                        
+
                         public void windowActivated(IWorkbenchWindow window)
                         {
                             if(window == wwindow && window.getShell().isVisible()) {
@@ -172,7 +172,7 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
                 NSISPreferences.INSTANCE.store();
             }
         }
-        
+
         FileMonitor.INSTANCE.start();
         startServices();
         mJobScheduler.start();
@@ -189,10 +189,10 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
 //                }
 //                return Status.OK_STATUS;
 //            }
-//            
+//
 //        });
 	}
-    
+
     private void startServices()
     {
         final String[] services = Common.loadArrayProperty(getResourceBundle(),"services"); //$NON-NLS-1$
@@ -233,7 +233,7 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
             }
         }
     }
-    
+
     private void configure()
     {
         Display.getDefault().syncExec(new Runnable() {
@@ -246,7 +246,7 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
                 while(!Common.isEmpty(nsisHome)) {
                     NSISPreferences.INSTANCE.setNSISHome(nsisHome);
                     if(!isConfigured()) {
-                        Common.openError(shell,EclipseNSISPlugin.getResourceString("invalid.nsis.home.message"), getShellImage()); //$NON-NLS-1$ //$NON-NLS-2$
+                        Common.openError(shell,EclipseNSISPlugin.getResourceString("invalid.nsis.home.message"), getShellImage()); //$NON-NLS-1$
                         nsisHome = dialog.open();
                     }
                     else {
@@ -307,7 +307,7 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
                                     new RuntimeException(osError)));
         }
     }
-    
+
 
     private void validateVM() throws CoreException
     {
@@ -347,11 +347,11 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
     {
         return getDefault().mImageManager;
     }
-    
+
     /**
 	 * This method is called when the plug-in is stopped
 	 */
-	public void stop(BundleContext context) throws Exception 
+	public void stop(BundleContext context) throws Exception
     {
         mJobScheduler.stop();
         MakeNSISRunner.shutdown();
@@ -374,14 +374,14 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
 	public static EclipseNSISPlugin getDefault() {
 		return cPlugin;
 	}
-    
+
     public static synchronized File getPluginStateLocation()
     {
         if(cStateLocation == null) {
             EclipseNSISPlugin plugin = getDefault();
             if(plugin != null) {
                 cStateLocation = plugin.getStateLocation().toFile();
-            }                    
+            }
         }
         return cStateLocation;
     }
@@ -399,7 +399,7 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
      * Returns the string from the plugin bundle's resource bundle,
      * or 'key' if not found.
      */
-    public static String getBundleResourceString(String key) 
+    public static String getBundleResourceString(String key)
     {
         return Platform.getResourceString(getDefault().getBundle(), key);
     }
@@ -408,12 +408,12 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
 	 * Returns the string from the plugin's resource bundle,
 	 * or 'key' if not found.
 	 */
-	public static String getResourceString(String key) 
+	public static String getResourceString(String key)
    {
         return getResourceString(key, key);
 	}
 
-    public static String getResourceString(Locale locale, String key) 
+    public static String getResourceString(Locale locale, String key)
     {
         return getResourceString(locale, key, key);
     }
@@ -440,7 +440,7 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
 	/**
 	 * Returns the plugin's resource bundle,
 	 */
-	public ResourceBundle getResourceBundle() 
+	public ResourceBundle getResourceBundle()
     {
 		return getResourceBundle(mLocale);
 	}
@@ -448,28 +448,28 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
     /**
      * Returns the plugin's resource bundle,
      */
-    public synchronized ResourceBundle getResourceBundle(Locale locale) 
+    public synchronized ResourceBundle getResourceBundle(Locale locale)
     {
         if(!mResourceBundles.containsKey(locale)) {
             mResourceBundles.put(locale,new CompoundResourceBundle(locale, BUNDLE_NAMES));
-        }                
+        }
         return (ResourceBundle)mResourceBundles.get(locale);
     }
-    
+
     /**
      * Returns this plug-in's template store.
-     * 
+     *
      * @return the template store of this plug-in instance
      */
-    public TemplateStore getTemplateStore() 
+    public TemplateStore getTemplateStore()
     {
         if (mTemplateStore == null) {
-            mTemplateStore= new ContributionTemplateStore(getContextTypeRegistry(), 
-                            NSISPreferences.INSTANCE.getPreferenceStore(), 
+            mTemplateStore= new ContributionTemplateStore(getContextTypeRegistry(),
+                            NSISPreferences.INSTANCE.getPreferenceStore(),
                             INSISPreferenceConstants.CUSTOM_TEMPLATES);
             try {
                 mTemplateStore.load();
-            } 
+            }
             catch (IOException e) {
                 log(e);
             }
@@ -479,10 +479,10 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
 
     /**
      * Returns this plug-in's context type registry.
-     * 
+     *
      * @return the context type registry for this plug-in instance
      */
-    public ContextTypeRegistry getContextTypeRegistry() 
+    public ContextTypeRegistry getContextTypeRegistry()
     {
         if (mContextTypeRegistry == null) {
             mContextTypeRegistry= new ContributionContextTypeRegistry();
@@ -490,7 +490,7 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
         }
         return mContextTypeRegistry;
     }
-    
+
     /**
      * @return Returns the name.
      */
@@ -498,7 +498,7 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
     {
         return mName;
     }
-    
+
     /**
      * @return Returns the version.
      */
@@ -506,7 +506,7 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
     {
         return mVersion;
     }
-    
+
     public String getJavaVendor()
     {
         return mJavaVendor;

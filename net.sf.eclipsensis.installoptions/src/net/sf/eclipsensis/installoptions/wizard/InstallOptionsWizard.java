@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -23,17 +23,17 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 
-public class InstallOptionsWizard extends Wizard implements INewWizard 
+public class InstallOptionsWizard extends Wizard implements INewWizard
 {
     private static final Image cShellImage = InstallOptionsPlugin.getShellImage();
-    
+
     private InstallOptionsTemplate mTemplate = null;
 	private IStructuredSelection mSelection;
 	private IWorkbench mWorkbench;
     private IPageChangedListener mPageChangedListener = new IPageChangedListener() {
         private Image mOldImage;
         private Image[] mOldImages;
-        
+
         public void pageChanged(PageChangedEvent event)
         {
             Shell shell = getContainer().getShell();
@@ -53,27 +53,27 @@ public class InstallOptionsWizard extends Wizard implements INewWizard
             }
         }
     };
-    
+
     /** (non-Javadoc)
      * Method declared on Wizard.
      */
-    public void addPages() 
+    public void addPages()
     {
     	addPage(new InstallOptionsWizardPage());
         addPage(new InstallOptionsWizardPage2(mWorkbench, mSelection));
     }
-    
+
     /** (non-Javadoc)
      * Method declared on INewWizard
      */
-    public void init(IWorkbench workbench,IStructuredSelection selection) 
+    public void init(IWorkbench workbench,IStructuredSelection selection)
     {
     	mWorkbench = workbench;
     	mSelection = selection;
     	setWindowTitle(InstallOptionsPlugin.getResourceString("wizard.window.title")); //$NON-NLS-1$
     	setDefaultPageImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("wizard.title.image"))); //$NON-NLS-1$
     }
-    
+
     public void setContainer(IWizardContainer wizardContainer)
     {
         if(getContainer() instanceof IPageChangeProvider) {
@@ -98,7 +98,7 @@ public class InstallOptionsWizard extends Wizard implements INewWizard
     /** (non-Javadoc)
      * Method declared on IWizard
      */
-    public boolean performFinish() 
+    public boolean performFinish()
     {
     	return ((InstallOptionsWizardPage2)getPages()[getPageCount()-1]).finish();
     }

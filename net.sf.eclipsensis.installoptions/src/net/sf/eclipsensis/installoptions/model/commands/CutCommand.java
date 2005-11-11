@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -29,7 +29,7 @@ public class CutCommand extends CopyCommand
             return w2.getIndex()-w1.getIndex();
         }
     };
-    
+
     public CutCommand()
     {
         super(InstallOptionsPlugin.getResourceString("cut.command.name")); //$NON-NLS-1$
@@ -70,7 +70,7 @@ public class CutCommand extends CopyCommand
         }
         super.undo();
     }
-    
+
     private class CutInfo
     {
         InstallOptionsWidget mElement;
@@ -78,7 +78,7 @@ public class CutCommand extends CopyCommand
         int mVerticalAlign;
         InstallOptionsGuide mHorizontalGuide;
         int mHorizontalAlign;
-        
+
         public CutInfo(InstallOptionsWidget element)
         {
             mElement = element;
@@ -91,7 +91,7 @@ public class CutCommand extends CopyCommand
                 mHorizontalAlign = mHorizontalGuide.getAlignment(element);
             }
         }
-        
+
         public void cut()
         {
             if(mVerticalGuide != null) {
@@ -102,7 +102,7 @@ public class CutCommand extends CopyCommand
             }
             mParent.removeChild(mElement.getIndex());
         }
-        
+
         public void uncut()
         {
             mParent.addChild(mElement,mElement.getIndex());

@@ -4,7 +4,7 @@ Bundle-Name: %plugin.name
 Bundle-SymbolicName: net.sf.eclipsensis; singleton:=true
 Bundle-Version: 0.9.4
 Bundle-Activator: net.sf.eclipsensis.EclipseNSISPlugin
-Bundle-Vendor: Sunil Kamath (IcemanK)
+Bundle-Vendor: %plugin.vendor
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.core.filebuffers;bundle-version="3.1.0",
  org.eclipse.core.resources;bundle-version="3.1.0",

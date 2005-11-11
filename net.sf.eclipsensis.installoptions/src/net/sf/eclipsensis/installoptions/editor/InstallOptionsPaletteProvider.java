@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -48,7 +48,7 @@ public class InstallOptionsPaletteProvider
     {
         final PaletteDrawer drawer = new PaletteDrawer(InstallOptionsPlugin.getResourceString("palette.components.drawer.name"), InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("controls.icon"))); //$NON-NLS-1$ //$NON-NLS-2$
         final Map entryMap = new HashMap();
-        
+
         final Runnable op = new Runnable() {
             public void run()
             {
@@ -64,7 +64,7 @@ public class InstallOptionsPaletteProvider
                     }
                     entries.add(entry);
                 }
-                 
+
                 drawer.setChildren(entries);
             }
         };
@@ -87,10 +87,10 @@ public class InstallOptionsPaletteProvider
                     }
                 }
             }
-        }; 
-        
+        };
+
         InstallOptionsPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(listener2);
-        
+
         viewer.getControl().addDisposeListener(new DisposeListener(){
             public void widgetDisposed(DisposeEvent e)
             {
@@ -98,7 +98,7 @@ public class InstallOptionsPaletteProvider
                 InstallOptionsPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(listener2);
             }
         });
-        
+
         return drawer;
     }
 
@@ -107,7 +107,7 @@ public class InstallOptionsPaletteProvider
         CombinedTemplateCreationEntry entry = new CombinedTemplateCreationEntry(
                 typeDef.getName(),
                 typeDef.getDescription(),
-                typeDef.getType(), 
+                typeDef.getType(),
                 InstallOptionsElementFactory.getFactory(typeDef.getType()),
                 InstallOptionsPlugin.getImageManager().getImageDescriptor(typeDef.getSmallIcon()),
                 InstallOptionsPlugin.getImageManager().getImageDescriptor(typeDef.getLargeIcon()));
@@ -117,7 +117,7 @@ public class InstallOptionsPaletteProvider
     private static PaletteContainer createTemplatesDrawer(final GraphicalViewer viewer)
     {
         final PaletteDrawer drawer = new PaletteDrawer(InstallOptionsPlugin.getResourceString("palette.templates.drawer.name"),  //$NON-NLS-1$
-                cImageDescriptor); //$NON-NLS-1$ //$NON-NLS-2$
+                cImageDescriptor);
         final Map entryMap = new HashMap();
         List children = new ArrayList();
         Boolean unload = Boolean.valueOf(InstallOptionsPlugin.getDefault().getPreferenceStore().getBoolean(IInstallOptionsConstants.PREFERENCE_UNLOAD_CREATION_TOOL_WHEN_FINISHED));
@@ -129,7 +129,7 @@ public class InstallOptionsPaletteProvider
             children.add(entry);
         }
         drawer.setChildren(children);
-        
+
         final IInstallOptionsTemplateListener listener = new IInstallOptionsTemplateListener() {
             public void templateChanged(InstallOptionsTemplateEvent event)
             {
@@ -160,11 +160,11 @@ public class InstallOptionsPaletteProvider
                         }
                         break;
                 }
-                
+
             }
         };
         InstallOptionsTemplateManager.INSTANCE.addTemplateListener(listener);
-        
+
         final IPropertyChangeListener listener2 = new IPropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent event)
             {
@@ -175,8 +175,8 @@ public class InstallOptionsPaletteProvider
                     }
                 }
             }
-        }; 
-        
+        };
+
         InstallOptionsPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(listener2);
 
         viewer.getControl().addDisposeListener(new DisposeListener(){
@@ -186,7 +186,7 @@ public class InstallOptionsPaletteProvider
                 InstallOptionsPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(listener2);
             }
         });
-        
+
         return drawer;
     }
 

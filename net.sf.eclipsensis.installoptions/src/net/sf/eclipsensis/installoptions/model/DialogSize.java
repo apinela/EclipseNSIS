@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -16,7 +16,7 @@ public class DialogSize implements Cloneable
     private String mName;
     private boolean mDefault;
     private Dimension mSize;
-    
+
     public DialogSize(String name, boolean isDefault, Dimension size)
     {
         super();
@@ -24,43 +24,43 @@ public class DialogSize implements Cloneable
         mSize = size;
         mDefault = isDefault;
     }
-    
+
     public Object clone() throws CloneNotSupportedException
     {
         return new DialogSize(mName, mDefault, mSize.getCopy());
     }
-    
+
     public boolean isDefault()
     {
         return mDefault;
     }
-    
+
     public void setDefault(boolean default1)
     {
         mDefault = default1;
     }
-    
+
     public String getName()
     {
         return mName;
     }
-    
+
     public void setName(String name)
     {
         mName = name;
     }
-    
+
     public Dimension getSize()
     {
         return mSize;
     }
-    
+
     public void setSize(Dimension size)
     {
         mSize = size;
     }
-    
-    public boolean equals(Object o) 
+
+    public boolean equals(Object o)
     {
         if(o instanceof DialogSize) {
             DialogSize ds = (DialogSize)o;
@@ -68,7 +68,7 @@ public class DialogSize implements Cloneable
         }
         return false;
     }
-    
+
     public int hashCode()
     {
         return mName.hashCode()+mSize.hashCode();

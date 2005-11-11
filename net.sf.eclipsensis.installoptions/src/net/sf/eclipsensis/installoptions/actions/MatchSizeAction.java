@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -19,7 +19,7 @@ import org.eclipse.ui.IWorkbenchPart;
 public class MatchSizeAction extends MatchWidthAction
 {
     public static final String ID = "net.sf.eclipsensis.installoptions.match_size"; //$NON-NLS-1$
-    
+
     public MatchSizeAction(IWorkbenchPart part)
     {
         super(part);
@@ -32,7 +32,7 @@ public class MatchSizeAction extends MatchWidthAction
         setToolTipText(InstallOptionsPlugin.getResourceString("match.size.action.tooltip")); //$NON-NLS-1$
     }
 
-    protected double getPreciseHeightDelta(PrecisionRectangle precisePartBounds, PrecisionRectangle precisePrimaryBounds) 
+    protected double getPreciseHeightDelta(PrecisionRectangle precisePartBounds, PrecisionRectangle precisePrimaryBounds)
     {
         return precisePrimaryBounds.preciseHeight - precisePartBounds.preciseHeight;
     }

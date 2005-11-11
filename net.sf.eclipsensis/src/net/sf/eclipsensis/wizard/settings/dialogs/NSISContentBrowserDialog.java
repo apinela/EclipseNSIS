@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -35,7 +35,7 @@ public class NSISContentBrowserDialog extends Dialog
                                                         NSISInstallFile.TYPE,
                                                         NSISInstallFiles.FileItem.TYPE
                                                      }));
-    
+
     /**
      * @param parentShell
      */
@@ -45,7 +45,7 @@ public class NSISContentBrowserDialog extends Dialog
         setShellStyle(getShellStyle() | SWT.RESIZE);
         mSettings = settings;
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
      */
@@ -80,7 +80,7 @@ public class NSISContentBrowserDialog extends Dialog
         mElement = null;
         super.cancelPressed();
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
      */
@@ -88,7 +88,7 @@ public class NSISContentBrowserDialog extends Dialog
     {
         Composite composite = (Composite)super.createDialogArea(parent);
         NSISWizardDialogUtil.createLabel(composite,"wizard.select.shortcut.message",true,null,false); //$NON-NLS-1$
-        
+
         ViewerFilter vf = new ViewerFilter() {
             private HashSet mTypes = new HashSet(Arrays.asList(new String[]{
                                                     NSISInstaller.TYPE,
@@ -99,7 +99,7 @@ public class NSISContentBrowserDialog extends Dialog
                                                     NSISInstallFiles.TYPE,
                                                     NSISInstallFiles.FileItem.TYPE
                                                  }));
-            
+
             public boolean select(Viewer viewer, Object parentElement, Object element)
             {
                 if(element instanceof INSISInstallElement) {
@@ -115,7 +115,7 @@ public class NSISContentBrowserDialog extends Dialog
         tv.setLabelProvider(new NSISInstallElementLabelProvider());
         tv.setContentProvider(new NSISInstallElementTreeContentProvider(mSettings));
         tv.addSelectionChangedListener(new ISelectionChangedListener(){
-            public void selectionChanged(SelectionChangedEvent event) 
+            public void selectionChanged(SelectionChangedEvent event)
             {
                 getButton(IDialogConstants.OK_ID).setEnabled(setElement(event.getSelection()));
             }
@@ -133,7 +133,7 @@ public class NSISContentBrowserDialog extends Dialog
 
         return composite;
     }
-    
+
     private boolean setElement(ISelection sel)
     {
         boolean ok = false;

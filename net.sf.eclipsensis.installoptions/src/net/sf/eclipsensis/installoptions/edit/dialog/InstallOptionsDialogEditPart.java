@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -121,7 +121,7 @@ public class InstallOptionsDialogEditPart extends InstallOptionsEditPart impleme
 
     /**
      * Returns the Children of this through the model.
-     * 
+     *
      * @return Children of this as a List.
      */
     protected List getModelChildren()
@@ -170,7 +170,7 @@ public class InstallOptionsDialogEditPart extends InstallOptionsEditPart impleme
 
     /**
      * Returns a Figure to represent this.
-     * 
+     *
      * @return Figure.
      */
     protected IFigure createFigure()
@@ -190,7 +190,7 @@ public class InstallOptionsDialogEditPart extends InstallOptionsEditPart impleme
     {
         if (adapter == SnapToHelper.class) {
             List snapStrategies = new ArrayList();
-            
+
             Boolean val = (Boolean)getViewer().getProperty(RulerProvider.PROPERTY_RULER_VISIBILITY);
             if (val != null && val.booleanValue()) {
                 val = (Boolean)getViewer().getProperty(PROPERTY_SNAP_TO_GUIDES);
@@ -198,12 +198,12 @@ public class InstallOptionsDialogEditPart extends InstallOptionsEditPart impleme
                     snapStrategies.add(new InstallOptionsSnapToGuides(this));
                 }
             }
-            
+
             val = (Boolean)getViewer().getProperty(SnapToGeometry.PROPERTY_SNAP_ENABLED);
             if (val != null && val.booleanValue()) {
                 snapStrategies.add(new InstallOptionsSnapToGeometry(this));
             }
-            
+
             val = (Boolean)getViewer().getProperty(SnapToGrid.PROPERTY_GRID_VISIBLE);
             if (val != null && val.booleanValue()) {
                 val = (Boolean)getViewer().getProperty(SnapToGrid.PROPERTY_GRID_ENABLED);
@@ -216,7 +216,7 @@ public class InstallOptionsDialogEditPart extends InstallOptionsEditPart impleme
                 return null;
             }
             if (snapStrategies.size() == 1) {
-                return (SnapToHelper)snapStrategies.get(0);
+                return snapStrategies.get(0);
             }
 
             SnapToHelper ss[] = new SnapToHelper[snapStrategies.size()];
@@ -231,13 +231,13 @@ public class InstallOptionsDialogEditPart extends InstallOptionsEditPart impleme
     public void addNotify()
     {
         super.addNotify();
-        getViewer().setProperty(IInstallOptionsConstants.PROPERTY_DIALOG_SIZE, 
+        getViewer().setProperty(IInstallOptionsConstants.PROPERTY_DIALOG_SIZE,
                     getInstallOptionsDialog().getDialogSize().getCopy());
-        getViewer().setProperty(IInstallOptionsConstants.PROPERTY_SHOW_DIALOG_SIZE, 
+        getViewer().setProperty(IInstallOptionsConstants.PROPERTY_SHOW_DIALOG_SIZE,
                     Boolean.valueOf(getInstallOptionsDialog().isShowDialogSize()));
         getViewer().addPropertyChangeListener(mPropertyChangeListener);
     }
-    
+
     public void removeNotify()
     {
         getViewer().removePropertyChangeListener(mPropertyChangeListener);

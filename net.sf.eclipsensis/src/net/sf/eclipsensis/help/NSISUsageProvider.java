@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -26,7 +26,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 public class NSISUsageProvider implements IEclipseNSISService
 {
     private static NSISUsageProvider cInstance = null;
-    
+
     private Map mUsages = null;
     private String mLineSeparator;
     private INSISHomeListener mNSISHomeListener = null;
@@ -63,7 +63,7 @@ public class NSISUsageProvider implements IEclipseNSISService
             mLineSeparator = null;
         }
     }
-    
+
     public String getUsage(String keyWord)
     {
         if(!Common.isEmpty(keyWord)) {
@@ -83,14 +83,14 @@ public class NSISUsageProvider implements IEclipseNSISService
         File exeFile = NSISPreferences.INSTANCE.getNSISExeFile();
         if(exeFile != null && exeFile.exists()) {
             long exeTimeStamp = exeFile.lastModified();
-            
+
             File stateLocation = EclipseNSISPlugin.getPluginStateLocation();
             File cacheFile = new File(stateLocation,NSISUsageProvider.class.getName()+".Usages.ser"); //$NON-NLS-1$
             long cacheTimeStamp = 0;
             if(cacheFile.exists()) {
                 cacheTimeStamp = cacheFile.lastModified();
             }
-            
+
             if(exeTimeStamp != cacheTimeStamp) {
                 String[] output = MakeNSISRunner.runProcessWithOutput(exeFile.getAbsolutePath(),new String[]{
                                                                       MakeNSISRunner.MAKENSIS_VERBOSITY_OPTION+"1", //$NON-NLS-1$

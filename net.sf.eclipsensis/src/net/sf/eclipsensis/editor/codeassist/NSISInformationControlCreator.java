@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -55,7 +55,7 @@ public class NSISInformationControlCreator implements IInformationControlCreator
     {
         this(commandIds,SWT.NONE);
     }
-    
+
     public NSISInformationControlCreator(String[] commandIds, int style)
     {
         ArrayList list = new ArrayList();
@@ -97,7 +97,7 @@ public class NSISInformationControlCreator implements IInformationControlCreator
                             }
                         }
                     }
-                }       
+                }
             }
             if(params.size() > 0) {
                 String format = EclipseNSISPlugin.getResourceString("information.status.format."+params.size()/2); //$NON-NLS-1$
@@ -106,7 +106,7 @@ public class NSISInformationControlCreator implements IInformationControlCreator
                 }
             }
         }
-        
+
         return statusText;
     }
 

@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -20,14 +20,14 @@ public abstract class NSISAutoEditStrategy implements IAutoEditStrategy
     protected boolean mUseSpacesForTabs;
     protected int mTabWidth;
     protected IPreferenceStore mPreferenceStore;
-    
+
     public NSISAutoEditStrategy(IPreferenceStore preferenceStore)
     {
         super();
         mPreferenceStore = preferenceStore;
         updateFromPreferences();
     }
-    
+
     public void updateFromPreferences()
     {
         mUseSpacesForTabs = mPreferenceStore.getBoolean(INSISPreferenceConstants.USE_SPACES_FOR_TABS);

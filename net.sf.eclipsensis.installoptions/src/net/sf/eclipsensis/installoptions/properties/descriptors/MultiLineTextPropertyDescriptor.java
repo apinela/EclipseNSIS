@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -65,7 +65,7 @@ public class MultiLineTextPropertyDescriptor extends TextPropertyDescriptor impl
     {
         return mMultiLine;
     }
-    
+
     public void setMultiLine(boolean multiLine)
     {
         if(mMultiLine != multiLine) {
@@ -74,12 +74,12 @@ public class MultiLineTextPropertyDescriptor extends TextPropertyDescriptor impl
             mPropertyChangeSupport.firePropertyChange(InstallOptionsModel.FLAGS_MULTILINE,oldMultiLine,mMultiLine);
         }
     }
-    
+
     public boolean isOnlyNumbers()
     {
         return mOnlyNumbers;
     }
-    
+
     public void setOnlyNumbers(boolean onlyNumbers)
     {
         if(mOnlyNumbers != onlyNumbers) {
@@ -88,15 +88,15 @@ public class MultiLineTextPropertyDescriptor extends TextPropertyDescriptor impl
             mPropertyChangeSupport.firePropertyChange(InstallOptionsModel.FLAGS_ONLY_NUMBERS,oldOnlyNumbers,mOnlyNumbers);
         }
     }
-    
+
     public void setLabelProvider(ILabelProvider provider)
     {
         ILabelProvider oldProvider = getLabelProvider();
         super.setLabelProvider(provider);
         mPropertyChangeSupport.firePropertyChange(PROPERTY_LABEL_PROVIDER,oldProvider,getLabelProvider());
     }
-    
-    public CellEditor createPropertyEditor(Composite parent) 
+
+    public CellEditor createPropertyEditor(Composite parent)
     {
         final ProxyTextCellEditor editor = new ProxyTextCellEditor(parent, isMultiLine(), getLabelProvider());
         final PropertyChangeListener listener = new PropertyChangeListener(){
@@ -137,13 +137,13 @@ public class MultiLineTextPropertyDescriptor extends TextPropertyDescriptor impl
         private boolean mOnlyNumbers = false;
         private VerifyListener mNumberVerifyListener;
         private ILabelProvider mLabelProvider;
-        
+
         public ProxyTextCellEditor(Composite parent, boolean multiLine, ILabelProvider labelProvider)
         {
             super(parent,(multiLine?1:0));
             mParent = parent;
             setLabelProvider(labelProvider);
-            
+
         }
 
         public void setLabelProvider(ILabelProvider labelProvider)
@@ -153,7 +153,7 @@ public class MultiLineTextPropertyDescriptor extends TextPropertyDescriptor impl
                 ((MultiLineTextCellEditor)mDelegate).setLabelProvider(labelProvider);
             }
         }
-        
+
         private VerifyListener getNumberVerifyListener()
         {
             if(mNumberVerifyListener == null) {
@@ -178,12 +178,12 @@ public class MultiLineTextPropertyDescriptor extends TextPropertyDescriptor impl
             dispose();
             create(mParent);
         }
-        
+
         public Composite getParent()
         {
             return mParent;
         }
-        
+
         public void setOnlyNumbers(boolean onlyNumbers)
         {
             if(mOnlyNumbers != onlyNumbers) {
@@ -191,7 +191,7 @@ public class MultiLineTextPropertyDescriptor extends TextPropertyDescriptor impl
                 updateNumberVerifier();
             }
         }
-        
+
         private void updateNumberVerifier()
         {
             if(mDelegate != null) {
@@ -220,7 +220,7 @@ public class MultiLineTextPropertyDescriptor extends TextPropertyDescriptor impl
             createInnerEditor(parent,getStyle()==1);
             return mDelegate.getControl();
         }
-        
+
         protected void createInnerEditor(Composite parent, boolean multiLine)
         {
             if(mDelegate != null) {
@@ -263,7 +263,7 @@ public class MultiLineTextPropertyDescriptor extends TextPropertyDescriptor impl
             super.activate();
         }
 
-        public void deactivate() 
+        public void deactivate()
         {
             if(mDelegate != null) {
                 mDelegate.deactivate();
@@ -278,7 +278,7 @@ public class MultiLineTextPropertyDescriptor extends TextPropertyDescriptor impl
                 mDelegate.addListener(listener);
             }
         }
-        
+
         public void addPropertyChangeListener(IPropertyChangeListener listener)
         {
             mPropertyChangeListeners.add(listener);
@@ -286,7 +286,7 @@ public class MultiLineTextPropertyDescriptor extends TextPropertyDescriptor impl
                 mDelegate.addPropertyChangeListener(listener);
             }
         }
-        
+
         public void dispose()
         {
             if(mDelegate != null) {
@@ -294,7 +294,7 @@ public class MultiLineTextPropertyDescriptor extends TextPropertyDescriptor impl
             }
             super.dispose();
         }
-        
+
         public String getErrorMessage()
         {
             if(mDelegate != null) {
@@ -319,7 +319,7 @@ public class MultiLineTextPropertyDescriptor extends TextPropertyDescriptor impl
                 return super.isCopyEnabled();
             }
         }
-        
+
         public boolean isCutEnabled()
         {
             if(mDelegate != null) {
@@ -359,7 +359,7 @@ public class MultiLineTextPropertyDescriptor extends TextPropertyDescriptor impl
                 return super.isFindEnabled();
             }
         }
-        
+
         public boolean isPasteEnabled()
         {
             if(mDelegate != null) {
@@ -369,7 +369,7 @@ public class MultiLineTextPropertyDescriptor extends TextPropertyDescriptor impl
                 return super.isPasteEnabled();
             }
         }
-        
+
         public boolean isRedoEnabled()
         {
             if(mDelegate != null) {
@@ -379,7 +379,7 @@ public class MultiLineTextPropertyDescriptor extends TextPropertyDescriptor impl
                 return super.isRedoEnabled();
             }
         }
-        
+
         public boolean isSelectAllEnabled()
         {
             if(mDelegate != null) {
@@ -389,7 +389,7 @@ public class MultiLineTextPropertyDescriptor extends TextPropertyDescriptor impl
                 return super.isSelectAllEnabled();
             }
         }
-        
+
         public boolean isUndoEnabled()
         {
             if(mDelegate != null) {
@@ -399,7 +399,7 @@ public class MultiLineTextPropertyDescriptor extends TextPropertyDescriptor impl
                 return super.isUndoEnabled();
             }
         }
-        
+
         public boolean isValueValid()
         {
             if(mDelegate != null) {
@@ -409,63 +409,63 @@ public class MultiLineTextPropertyDescriptor extends TextPropertyDescriptor impl
                 return super.isValueValid();
             }
         }
-        
+
         public void performCopy()
         {
             if(mDelegate != null) {
                 mDelegate.performCopy();
             }
         }
-        
+
         public void performCut()
         {
             if(mDelegate != null) {
                 mDelegate.performCut();
             }
         }
-        
+
         public void performDelete()
         {
             if(mDelegate != null) {
                 mDelegate.performDelete();
             }
         }
-        
+
         public void performFind()
         {
             if(mDelegate != null) {
                 mDelegate.performFind();
             }
         }
-        
+
         public void performPaste()
         {
             if(mDelegate != null) {
                 mDelegate.performPaste();
             }
         }
-        
+
         public void performRedo()
         {
             if(mDelegate != null) {
                 mDelegate.performRedo();
             }
         }
-        
+
         public void performSelectAll()
         {
             if(mDelegate != null) {
                 mDelegate.performSelectAll();
             }
         }
-        
+
         public void performUndo()
         {
             if(mDelegate != null) {
                 mDelegate.performUndo();
             }
         }
-        
+
         public void removeListener(ICellEditorListener listener)
         {
             mListeners.remove(listener);
@@ -473,7 +473,7 @@ public class MultiLineTextPropertyDescriptor extends TextPropertyDescriptor impl
                 mDelegate.removeListener(listener);
             }
         }
-        
+
         public void removePropertyChangeListener(
                 IPropertyChangeListener listener)
         {
@@ -482,14 +482,14 @@ public class MultiLineTextPropertyDescriptor extends TextPropertyDescriptor impl
                 mDelegate.removePropertyChangeListener(listener);
             }
         }
-        
+
         public void setFocus()
         {
             if(mDelegate != null) {
                 mDelegate.setFocus();
             }
         }
-        
+
         public void setValidator(ICellEditorValidator validator)
         {
             mValidator = validator;
@@ -497,7 +497,7 @@ public class MultiLineTextPropertyDescriptor extends TextPropertyDescriptor impl
                 mDelegate.setValidator(validator);
             }
         }
-        
+
         /* (non-Javadoc)
          * @see org.eclipse.jface.viewers.CellEditor#doGetValue()
          */

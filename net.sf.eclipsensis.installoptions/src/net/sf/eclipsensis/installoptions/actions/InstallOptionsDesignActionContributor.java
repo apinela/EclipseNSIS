@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -34,7 +34,7 @@ public class InstallOptionsDesignActionContributor extends ActionBarContributor
     private InstallOptionsHelpAction mHelpAction;
     private List mDropDownActions = new ArrayList();
     private LanguageComboContributionItem mLanguageContributionItem;
-    
+
     private void addDropDownAction(DropDownAction action)
     {
         addAction(action);
@@ -42,11 +42,11 @@ public class InstallOptionsDesignActionContributor extends ActionBarContributor
         getPage().addPartListener(action);
     }
 
-    protected void buildActions() 
+    protected void buildActions()
     {
         ISharedImages sharedImages = PlatformUI.getWorkbench().getSharedImages();
         RetargetAction retargetAction;
-        
+
         addRetargetAction(new UndoRetargetAction());
         addRetargetAction(new RedoRetargetAction());
 
@@ -59,13 +59,13 @@ public class InstallOptionsDesignActionContributor extends ActionBarContributor
         retargetAction.setImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_CUT));
         retargetAction.setDisabledImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_CUT_DISABLED));
         addRetargetAction(retargetAction);
-        
+
         retargetAction = new RetargetAction(ActionFactory.COPY.getId(),InstallOptionsPlugin.getResourceString("copy.action.label")); //$NON-NLS-1$
         retargetAction.setToolTipText(InstallOptionsPlugin.getResourceString("copy.action.tooltip")); //$NON-NLS-1$
         retargetAction.setImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
         retargetAction.setDisabledImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_COPY_DISABLED));
         addRetargetAction(retargetAction);
-        
+
         retargetAction = new RetargetAction(ActionFactory.PASTE.getId(),InstallOptionsPlugin.getResourceString("paste.action.label")); //$NON-NLS-1$
         retargetAction.setToolTipText(InstallOptionsPlugin.getResourceString("paste.action.tooltip")); //$NON-NLS-1$
         retargetAction.setImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE));
@@ -73,7 +73,7 @@ public class InstallOptionsDesignActionContributor extends ActionBarContributor
         addRetargetAction(retargetAction);
 
         addRetargetAction(new DeleteRetargetAction());
-        
+
         RetargetAction[] arrangeActions = {
                 new ArrangeRetargetAction(IInstallOptionsConstants.ARRANGE_SEND_BACKWARD),
                 new ArrangeRetargetAction(IInstallOptionsConstants.ARRANGE_SEND_TO_BACK),
@@ -84,7 +84,7 @@ public class InstallOptionsDesignActionContributor extends ActionBarContributor
             addRetargetAction(arrangeActions[i]);
         }
         addDropDownAction(new DropDownAction(IInstallOptionsConstants.ARRANGE_GROUP,InstallOptionsPlugin.getDefault().getPreferenceStore(),arrangeActions));
-        
+
         RetargetAction[] alignmentActions = {
                 new AlignmentRetargetAction(PositionConstants.LEFT),
                 new AlignmentRetargetAction(PositionConstants.CENTER),
@@ -97,7 +97,7 @@ public class InstallOptionsDesignActionContributor extends ActionBarContributor
             addRetargetAction(alignmentActions[i]);
         }
         addDropDownAction(new DropDownAction(IInstallOptionsConstants.ALIGN_GROUP,InstallOptionsPlugin.getDefault().getPreferenceStore(),alignmentActions));
-        
+
         RetargetAction[] distributeActions = {
                 new DistributeRetargetAction(IInstallOptionsConstants.DISTRIBUTE_HORIZONTAL_BETWEEN),
                 new DistributeRetargetAction(IInstallOptionsConstants.DISTRIBUTE_HORIZONTAL_LEFT_EDGE),
@@ -112,33 +112,33 @@ public class InstallOptionsDesignActionContributor extends ActionBarContributor
             addRetargetAction(distributeActions[i]);
         }
         addDropDownAction(new DropDownAction(IInstallOptionsConstants.DISTRIBUTE_GROUP,InstallOptionsPlugin.getDefault().getPreferenceStore(),distributeActions));
-        
+
         retargetAction = new LabelRetargetAction(ToggleLockAction.ID,""); //$NON-NLS-1$
         addRetargetAction(retargetAction);
         mToggleLockAction = new ToggleLockRetargetAction();
         getPage().addPartListener(mToggleLockAction);
-        
-        retargetAction = new RetargetAction(RefreshDiagramAction.ID, 
+
+        retargetAction = new RetargetAction(RefreshDiagramAction.ID,
                 InstallOptionsPlugin.getResourceString("refresh.diagram.action.label")); //$NON-NLS-1$
         retargetAction.setToolTipText(InstallOptionsPlugin.getResourceString("refresh.diagram.action.tooltip")); //$NON-NLS-1$
         retargetAction.setImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("refresh.icon"))); //$NON-NLS-1$
         retargetAction.setDisabledImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("refresh.disabled.icon"))); //$NON-NLS-1$
         addRetargetAction(retargetAction);
-        
-        retargetAction = new RetargetAction(CreateTemplateAction.ID, 
+
+        retargetAction = new RetargetAction(CreateTemplateAction.ID,
                 InstallOptionsPlugin.getResourceString("create.template.action.label")); //$NON-NLS-1$
         retargetAction.setToolTipText(InstallOptionsPlugin.getResourceString("create.template.action.tooltip")); //$NON-NLS-1$
         retargetAction.setImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("create.template.icon"))); //$NON-NLS-1$
         retargetAction.setDisabledImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("create.template.disabled.icon"))); //$NON-NLS-1$
         addRetargetAction(retargetAction);
-        
+
         String label = InstallOptionsPlugin.getResourceString("switch.source.editor.action.name"); //$NON-NLS-1$
-        retargetAction = new RetargetAction(SwitchEditorAction.ID, label); //$NON-NLS-1$
+        retargetAction = new RetargetAction(SwitchEditorAction.ID, label);
         retargetAction.setToolTipText(label);
         retargetAction.setImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("switch.editor.icon"))); //$NON-NLS-1$
         retargetAction.setActionDefinitionId(IInstallOptionsConstants.SWITCH_EDITOR_COMMAND_ID);
         addRetargetAction(retargetAction);
-        
+
         addRetargetAction(new RetargetAction(IInstallOptionsConstants.GRID_SNAP_GLUE_SETTINGS_ACTION_ID,InstallOptionsPlugin.getResourceString("grid.snap.glue.action.name"))); //$NON-NLS-1$
 
         retargetAction = new LabelRetargetAction(MatchSizeAction.ID,InstallOptionsPlugin.getResourceString("match.size.action.name")); //$NON-NLS-1$
@@ -155,33 +155,33 @@ public class InstallOptionsDesignActionContributor extends ActionBarContributor
             addRetargetAction(matchSizeActions[i]);
         }
         addDropDownAction(new DropDownAction(IInstallOptionsConstants.MATCHSIZE_GROUP,InstallOptionsPlugin.getDefault().getPreferenceStore(),matchSizeActions));
-        
+
         retargetAction = new RetargetAction(
-                ToggleDialogSizeVisibilityAction.ID, 
+                ToggleDialogSizeVisibilityAction.ID,
                 InstallOptionsPlugin.getResourceString("show.dialog.size.action.name"), IAction.AS_CHECK_BOX); //$NON-NLS-1$
         retargetAction.setImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("show.dialog.size.icon"))); //$NON-NLS-1$
         addRetargetAction(retargetAction);
-        
+
         retargetAction = new RetargetAction(
-                GEFActionConstants.TOGGLE_RULER_VISIBILITY, 
+                GEFActionConstants.TOGGLE_RULER_VISIBILITY,
                 InstallOptionsPlugin.getResourceString("toggle.ruler.label"), IAction.AS_CHECK_BOX); //$NON-NLS-1$
         retargetAction.setToolTipText(InstallOptionsPlugin.getResourceString("toggle.ruler.tooltip")); //$NON-NLS-1$
         retargetAction.setImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("show.rulers.icon"))); //$NON-NLS-1$
         addRetargetAction(retargetAction);
-        
+
         retargetAction = new RetargetAction(
-                GEFActionConstants.TOGGLE_SNAP_TO_GEOMETRY, 
+                GEFActionConstants.TOGGLE_SNAP_TO_GEOMETRY,
                 InstallOptionsPlugin.getResourceString("toggle.snap.label"), IAction.AS_CHECK_BOX); //$NON-NLS-1$
         retargetAction.setToolTipText(InstallOptionsPlugin.getResourceString("toggle.snap.tooltip")); //$NON-NLS-1$
         addRetargetAction(retargetAction);
 
-        retargetAction = new RetargetAction(GEFActionConstants.TOGGLE_GRID_VISIBILITY, 
+        retargetAction = new RetargetAction(GEFActionConstants.TOGGLE_GRID_VISIBILITY,
                 InstallOptionsPlugin.getResourceString("toggle.grid.label"), IAction.AS_CHECK_BOX); //$NON-NLS-1$
         retargetAction.setToolTipText(InstallOptionsPlugin.getResourceString("toggle.grid.tooltip")); //$NON-NLS-1$
         retargetAction.setImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("show.grid.icon"))); //$NON-NLS-1$
         addRetargetAction(retargetAction);
 
-        retargetAction = new RetargetAction(ToggleGuideVisibilityAction.ID, 
+        retargetAction = new RetargetAction(ToggleGuideVisibilityAction.ID,
                 InstallOptionsPlugin.getResourceString("show.guides.action.name"), IAction.AS_CHECK_BOX); //$NON-NLS-1$
         retargetAction.setImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("show.guides.icon"))); //$NON-NLS-1$
         addRetargetAction(retargetAction);
@@ -203,7 +203,7 @@ public class InstallOptionsDesignActionContributor extends ActionBarContributor
 
         mWizardAction = new InstallOptionsWizardAction();
         mHelpAction = new InstallOptionsHelpAction();
-        
+
         mInstallOptionsMenu = new MenuManager(InstallOptionsPlugin.getResourceString("installoptions.menu.name")); //$NON-NLS-1$
         mInstallOptionsMenu.add(getAction(GEFActionConstants.TOGGLE_RULER_VISIBILITY));
         mInstallOptionsMenu.add(getAction(GEFActionConstants.TOGGLE_GRID_VISIBILITY));
@@ -211,7 +211,7 @@ public class InstallOptionsDesignActionContributor extends ActionBarContributor
         mInstallOptionsMenu.add(getAction(ToggleGuideVisibilityAction.ID));
         mInstallOptionsMenu.add(getAction(IInstallOptionsConstants.GRID_SNAP_GLUE_SETTINGS_ACTION_ID));
         mInstallOptionsMenu.add(new Separator());
-        
+
         MenuManager submenu = new MenuManager(InstallOptionsPlugin.getResourceString("align.submenu.name")); //$NON-NLS-1$
         submenu.add(getAction(GEFActionConstants.ALIGN_LEFT));
         submenu.add(getAction(GEFActionConstants.ALIGN_CENTER));
@@ -259,7 +259,7 @@ public class InstallOptionsDesignActionContributor extends ActionBarContributor
         mInstallOptionsMenu.add(getAction(SwitchEditorAction.ID));
         mInstallOptionsMenu.add(new Separator());
         mInstallOptionsMenu.add(mHelpAction);
-        
+
         mXYStatusContribution = new InstallOptionsXYStatusContribution();
         mLanguageContributionItem = new LanguageComboContributionItem(getPage());
     }
@@ -290,7 +290,7 @@ public class InstallOptionsDesignActionContributor extends ActionBarContributor
                         }
                         return null;
                     }
-    
+
                     public Class[] getAdapterList()
                     {
                         return new Class[]{ActionRegistry.class};
@@ -300,13 +300,13 @@ public class InstallOptionsDesignActionContributor extends ActionBarContributor
         super.setActiveEditor(editor);
     }
 
-    protected void declareGlobalActionKeys() 
+    protected void declareGlobalActionKeys()
     {
         addGlobalActionKey(ActionFactory.PRINT.getId());
         addGlobalActionKey(ActionFactory.SELECT_ALL.getId());
     }
 
-    public void contributeToToolBar(IToolBarManager tbm) 
+    public void contributeToToolBar(IToolBarManager tbm)
     {
         tbm.add(getAction(ActionFactory.UNDO.getId()));
         tbm.add(getAction(ActionFactory.REDO.getId()));
@@ -315,7 +315,7 @@ public class InstallOptionsDesignActionContributor extends ActionBarContributor
         tbm.add(getAction(ActionFactory.COPY.getId()));
         tbm.add(getAction(ActionFactory.PASTE.getId()));
         tbm.add(getAction(ActionFactory.DELETE.getId()));
-        
+
         tbm.add(new Separator());
         tbm.add(getAction(IInstallOptionsConstants.ALIGN_GROUP));
         tbm.add(getAction(IInstallOptionsConstants.MATCHSIZE_GROUP));
@@ -339,12 +339,12 @@ public class InstallOptionsDesignActionContributor extends ActionBarContributor
         tbm.add(mHelpAction);
     }
 
-    public void contributeToMenu(IMenuManager menubar) 
+    public void contributeToMenu(IMenuManager menubar)
     {
         menubar.insertBefore(IWorkbenchActionConstants.M_WINDOW, mInstallOptionsMenu);
     }
 
-    public void contributeToStatusLine(IStatusLineManager statusLineManager) 
+    public void contributeToStatusLine(IStatusLineManager statusLineManager)
     {
         statusLineManager.add(mXYStatusContribution);
     }

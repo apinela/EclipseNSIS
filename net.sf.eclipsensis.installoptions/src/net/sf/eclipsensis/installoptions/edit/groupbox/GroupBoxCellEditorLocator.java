@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -21,7 +21,7 @@ public class GroupBoxCellEditorLocator extends InstallOptionsCellEditorLocator
     private static final int X_OFFSET = -4 + TEXT_OFFSET;
     private static final int W_OFFSET = 5 - TEXT_OFFSET;
 
-    public GroupBoxCellEditorLocator(GroupBoxFigure groupBox) 
+    public GroupBoxCellEditorLocator(GroupBoxFigure groupBox)
     {
         super(groupBox);
     }

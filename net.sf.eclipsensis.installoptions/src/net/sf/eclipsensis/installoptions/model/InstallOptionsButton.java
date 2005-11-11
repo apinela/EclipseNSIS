@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -26,13 +26,13 @@ public class InstallOptionsButton extends InstallOptionsUneditableElement
     {
         super(section);
     }
-    
+
     protected void init()
     {
         super.init();
         mState = ""; //$NON-NLS-1$
     }
-    
+
     public String getType()
     {
         return InstallOptionsModel.TYPE_BUTTON;
@@ -79,7 +79,7 @@ public class InstallOptionsButton extends InstallOptionsUneditableElement
             return super.createPropertyDescriptor(name);
         }
     }
-    
+
     public Object getPropertyValue(Object propName)
     {
         if (InstallOptionsModel.PROPERTY_STATE.equals(propName)) {
@@ -87,7 +87,7 @@ public class InstallOptionsButton extends InstallOptionsUneditableElement
         }
         return super.getPropertyValue(propName);
     }
-    
+
     public void setPropertyValue(Object id, Object value)
     {
         if(id.equals(InstallOptionsModel.PROPERTY_STATE)) {
@@ -97,12 +97,12 @@ public class InstallOptionsButton extends InstallOptionsUneditableElement
             super.setPropertyValue(id, value);
         }
     }
-    
+
     public String getState()
     {
         return mState;
     }
-    
+
     public void setState(String state)
     {
         if(!mState.equals(state)) {

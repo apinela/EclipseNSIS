@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -28,7 +28,7 @@ public class NSISDamagerRepairer extends DefaultDamagerRepairer implements IProp
     {
         super(scanner);
     }
-    
+
     public void reset()
     {
         if(fScanner instanceof NSISRuleBasedScanner) {
@@ -61,7 +61,7 @@ public class NSISDamagerRepairer extends DefaultDamagerRepairer implements IProp
                 return super.getDamageRegion(partition, e, documentPartitioningChanged);
             }
         }
-        
+
         return partition;
     }
 

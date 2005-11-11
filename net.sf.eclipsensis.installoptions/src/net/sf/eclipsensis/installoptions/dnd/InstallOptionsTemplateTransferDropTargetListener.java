@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -35,7 +35,7 @@ public class InstallOptionsTemplateTransferDropTargetListener extends TemplateTr
         setTransfer(InstallOptionsTemplateTransfer.INSTANCE);
     }
 
-    protected Request createTargetRequest() 
+    protected Request createTargetRequest()
     {
         Request request = super.createTargetRequest();
         if(request instanceof CreateRequest) {
@@ -48,7 +48,7 @@ public class InstallOptionsTemplateTransferDropTargetListener extends TemplateTr
         return request;
     }
 
-    protected CreationFactory getFactory(Object type) 
+    protected CreationFactory getFactory(Object type)
     {
         if (type instanceof String) {
             return InstallOptionsElementFactory.getFactory((String)type);
@@ -58,13 +58,13 @@ public class InstallOptionsTemplateTransferDropTargetListener extends TemplateTr
         }
         return null;
     }
-    
+
     protected void handleDrop() {
         super.handleDrop();
         selectAddedObjects();
     }
 
-    protected void selectAddedObjects() 
+    protected void selectAddedObjects()
     {
         Object model = getCreateRequest().getNewObject();
         if (model == null || !model.getClass().isArray()) {

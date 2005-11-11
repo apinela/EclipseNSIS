@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -25,10 +25,10 @@ import org.eclipse.ui.views.properties.IPropertySource;
 
 public abstract class InstallOptionsPictureEditPart extends InstallOptionsLabelEditPart
 {
-    protected IInstallOptionsFigure createInstallOptionsFigure() 
+    protected IInstallOptionsFigure createInstallOptionsFigure()
     {
         if(cIsNT) {
-            //This is a hack because Windows NT Labels don't seem to respond to the 
+            //This is a hack because Windows NT Labels don't seem to respond to the
             //WM_PRINT message (see SWTControl.getImage(Control)
             //XXX Remove once the cause (and fix) is known.
              return new NTPictureFigure(getInstallOptionsWidget());
@@ -47,20 +47,20 @@ public abstract class InstallOptionsPictureEditPart extends InstallOptionsLabelE
     {
         return null;
     }
-    
-    //This is a hack because Windows NT Labels don't seem to respond to the 
+
+    //This is a hack because Windows NT Labels don't seem to respond to the
     //WM_PRINT message (see SWTControl.getImage(Control)
     //XXX Remove once the cause (and fix) is known.
     private class NTPictureFigure extends NTFigure
     {
         protected ImageFigure mImageFigure;
         protected Image mImage;
-        
+
         public NTPictureFigure(IPropertySource propertySource)
         {
             super(propertySource);
         }
-        
+
         protected void createChildFigures()
         {
             mImageFigure = new ImageFigure();
@@ -73,7 +73,7 @@ public abstract class InstallOptionsPictureEditPart extends InstallOptionsLabelE
             super.init(propertySource);
             setImage((Image)propertySource.getPropertyValue(InstallOptionsPicture.PROPERTY_IMAGE));
         }
-        
+
         protected void setChildConstraints(Rectangle rect)
         {
             setConstraint(mImageFigure, new Rectangle(0,0,rect.width,rect.height));

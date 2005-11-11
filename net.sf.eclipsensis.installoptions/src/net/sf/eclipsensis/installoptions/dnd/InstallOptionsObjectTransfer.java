@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -23,7 +23,7 @@ public abstract class InstallOptionsObjectTransfer extends ByteArrayTransfer
         return mObject;
     }
 
-    public void javaToNative(Object object, TransferData transferData) 
+    public void javaToNative(Object object, TransferData transferData)
     {
         setObject(object);
         mStartTime = System.currentTimeMillis();
@@ -32,7 +32,7 @@ public abstract class InstallOptionsObjectTransfer extends ByteArrayTransfer
         }
     }
 
-    public Object nativeToJava(TransferData transferData) 
+    public Object nativeToJava(TransferData transferData)
     {
         byte[] bytes = (byte[])super.nativeToJava(transferData);
         //Now, only retain numeric bytes
@@ -48,7 +48,7 @@ public abstract class InstallOptionsObjectTransfer extends ByteArrayTransfer
         return (this.mStartTime == startTime?getObject():null);
     }
 
-    public void setObject(Object obj) 
+    public void setObject(Object obj)
     {
         mObject = obj;
     }

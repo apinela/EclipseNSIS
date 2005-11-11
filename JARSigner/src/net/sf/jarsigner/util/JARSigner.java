@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -19,7 +19,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.launching.IVMInstall;
 
-public class JARSigner extends AbstractJARUtil 
+public class JARSigner extends AbstractJARUtil
 {
     private String mStorePass = ""; //$NON-NLS-1$
     private String mAlias = ""; //$NON-NLS-1$
@@ -29,7 +29,7 @@ public class JARSigner extends AbstractJARUtil
     private String mSignedJar = ""; //$NON-NLS-1$
     private boolean mInternalSF = false;
     private boolean mSectionsOnly = false;
-    
+
     public JARSigner(IVMInstall vmInstall, String toolsJar, List targetJars, String keyStore, String storePass, String alias)
     {
         super(vmInstall, toolsJar,targetJars);

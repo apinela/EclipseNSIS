@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -37,7 +37,7 @@ public class FileFilterDialog extends Dialog
     private List mFilter;
     private FileFilter mCurrent = null;
     private ICellEditorValidator mValidator;
-    
+
     /**
      * @param parentShell
      */
@@ -50,17 +50,17 @@ public class FileFilterDialog extends Dialog
             mFilter.add(new FileFilter(f));
         }
     }
-    
+
     public ICellEditorValidator getValidator()
     {
         return mValidator;
     }
-    
+
     public void setValidator(ICellEditorValidator validator)
     {
         mValidator = validator;
     }
-    
+
     public List getFilter()
     {
         return mFilter;
@@ -72,7 +72,7 @@ public class FileFilterDialog extends Dialog
         newShell.setText(InstallOptionsPlugin.getResourceString("filter.dialog.name")); //$NON-NLS-1$
         newShell.setImage(InstallOptionsPlugin.getShellImage());
     }
-    
+
     protected void okPressed()
     {
         ICellEditorValidator validator = getValidator();
@@ -86,12 +86,12 @@ public class FileFilterDialog extends Dialog
         }
         super.okPressed();
     }
-    
+
     protected Control createDialogArea(Composite parent)
     {
         GridLayout layout;
         Composite composite = (Composite)super.createDialogArea(parent);
-        
+
         final Group group1 = new Group(composite,SWT.SHADOW_ETCHED_IN);
         group1.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         group1.setLayout(new GridLayout(2, false));
@@ -100,25 +100,25 @@ public class FileFilterDialog extends Dialog
         table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         table.setLinesVisible(true);
         table.setHeaderVisible(true);
-        
+
         TableColumn[] columns = new TableColumn[2];
         columns[0] = new TableColumn(table,SWT.LEFT);
         columns[0].setText(InstallOptionsPlugin.getResourceString("filter.description")); //$NON-NLS-1$
         columns[1] = new TableColumn(table,SWT.LEFT);
         columns[1].setText(InstallOptionsPlugin.getResourceString("filter.patterns")); //$NON-NLS-1$
         table.addControlListener(new TableResizer());
-        
+
         final TableViewer viewer1 = new TableViewer(table);
         viewer1.setContentProvider(new CollectionContentProvider());
         viewer1.setLabelProvider(new FileFilterLabelProvider());
-        
+
         final Composite buttons = new Composite(group1,SWT.NONE);
         buttons.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false));
         layout= new GridLayout();
         layout.marginHeight= 0;
         layout.marginWidth= 0;
         buttons.setLayout(layout);
-        
+
         final Button add = new Button(buttons,SWT.PUSH);
         add.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("add.icon"))); //$NON-NLS-1$
         add.setToolTipText(EclipseNSISPlugin.getResourceString("new.tooltip")); //$NON-NLS-1$
@@ -142,11 +142,11 @@ public class FileFilterDialog extends Dialog
                     list.add(f);
                     viewer1.refresh(false);
                     viewer1.setSelection(new StructuredSelection(f));
-                    
+
                 }
             }
         });
-        
+
         final Button del = new Button(buttons, SWT.PUSH);
         del.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("delete.icon"))); //$NON-NLS-1$
         del.setToolTipText(EclipseNSISPlugin.getResourceString("remove.tooltip")); //$NON-NLS-1$
@@ -187,7 +187,7 @@ public class FileFilterDialog extends Dialog
         up.setEnabled(mover.canMoveUp());
         up.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         up.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) 
+            public void widgetSelected(SelectionEvent e)
             {
                 mover.moveUp();
             }
@@ -204,7 +204,7 @@ public class FileFilterDialog extends Dialog
                 mover.moveDown();
             }
         });
-        
+
         final Group group2 = new Group(composite,SWT.SHADOW_ETCHED_IN);
         group2.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         group2.setLayout(new GridLayout(1, false));
@@ -222,7 +222,7 @@ public class FileFilterDialog extends Dialog
         label.setText(InstallOptionsPlugin.getResourceString("filter.description")); //$NON-NLS-1$
         label.setLayoutData(new GridData());
         label.setEnabled(!isNull);
-        
+
         final Text text = new Text(composite2,SWT.BORDER);
         text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         text.addModifyListener(new ModifyListener() {
@@ -247,7 +247,7 @@ public class FileFilterDialog extends Dialog
         layout.marginHeight = 0;
         layout.marginWidth = 0;
         composite2.setLayout(layout);
-        
+
         final Table table2 = new Table(composite2,SWT.BORDER|SWT.MULTI|SWT.FULL_SELECTION);
         table2.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         table2.setLinesVisible(true);
@@ -257,7 +257,7 @@ public class FileFilterDialog extends Dialog
         ((Text) textEditor.getControl()).addVerifyListener(new VerifyListener() {
             public void verifyText(VerifyEvent e) {
                 e.doit = e.text.indexOf(IInstallOptionsConstants.LIST_SEPARATOR) < 0 && e.text.indexOf(InstallOptionsFileRequest.FILTER_SEPARATOR) < 0;
-                        
+
             }
         });
         table2.addControlListener(new TableResizer());
@@ -273,7 +273,7 @@ public class FileFilterDialog extends Dialog
                 }
             }
         });
-        
+
         final TableViewer viewer2 = new TableViewer(table2);
         viewer2.setColumnProperties(new String[]{"pattern"}); //$NON-NLS-1$
         viewer2.setContentProvider(new ArrayContentProvider());
@@ -310,7 +310,7 @@ public class FileFilterDialog extends Dialog
         layout.marginHeight= 0;
         layout.marginWidth= 0;
         buttons2.setLayout(layout);
-        
+
         final Button add2 = new Button(buttons2,SWT.PUSH);
         add2.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("add.icon"))); //$NON-NLS-1$
         add2.setToolTipText(EclipseNSISPlugin.getResourceString("new.tooltip")); //$NON-NLS-1$
@@ -321,7 +321,7 @@ public class FileFilterDialog extends Dialog
                     FilePattern[] patterns = (FilePattern[])viewer2.getInput();
                     patterns = (FilePattern[])Common.resizeArray(patterns,patterns.length+1);
                     String filter = InstallOptionsPlugin.getResourceString("default.filter.pattern"); //$NON-NLS-1$
-                    patterns[patterns.length-1] = new FilePattern(filter); //$NON-NLS-1$
+                    patterns[patterns.length-1] = new FilePattern(filter);
                     mCurrent.setPatterns(patterns);
                     viewer2.setInput(patterns);
                     viewer2.setSelection(new StructuredSelection(patterns[patterns.length-1]));
@@ -332,13 +332,13 @@ public class FileFilterDialog extends Dialog
             }
         });
         add2.setEnabled(!isNull);
-        
+
         final Button del2 = new Button(buttons2, SWT.PUSH);
         del2.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("delete.icon"))); //$NON-NLS-1$
         del2.setToolTipText(EclipseNSISPlugin.getResourceString("remove.tooltip")); //$NON-NLS-1$
         del2.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         del2.addListener(SWT.Selection, new Listener() {
-            public void handleEvent(Event e) 
+            public void handleEvent(Event e)
             {
                 if(mCurrent != null) {
                     FilePattern[] patterns = (FilePattern[])viewer2.getInput();
@@ -394,7 +394,7 @@ public class FileFilterDialog extends Dialog
         up2.setEnabled(!isNull && mover2.canMoveUp());
         up2.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         up2.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) 
+            public void widgetSelected(SelectionEvent e)
             {
                 mover2.moveUp();
             }
@@ -411,7 +411,7 @@ public class FileFilterDialog extends Dialog
                 mover2.moveDown();
             }
         });
-        
+
         viewer2.addSelectionChangedListener(new ISelectionChangedListener() {
             public void selectionChanged(SelectionChangedEvent event)
             {
@@ -423,7 +423,7 @@ public class FileFilterDialog extends Dialog
                 down2.setEnabled(mover2.canMoveDown());
             }
         });
-        
+
         viewer1.addSelectionChangedListener(new ISelectionChangedListener() {
             public void selectionChanged(SelectionChangedEvent event)
             {
@@ -453,7 +453,7 @@ public class FileFilterDialog extends Dialog
                 down2.setEnabled(!isNull && mover2.canMoveDown());
             }
         });
-        
+
         applyDialogFont(composite);
         ((GridData)composite.getLayoutData()).widthHint = convertWidthInCharsToPixels(80);
         viewer1.setInput(mFilter);

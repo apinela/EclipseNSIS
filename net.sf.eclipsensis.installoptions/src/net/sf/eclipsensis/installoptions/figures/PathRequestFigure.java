@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -31,15 +31,15 @@ public class PathRequestFigure extends AbstractInstallOptionsFigure implements I
 
     private TextFigure mTextFigure;
     private ButtonFigure mButtonFigure;
-    
+
     static {
         Font f = Display.getDefault().getSystemFont();
         BROWSE_BUTTON_WIDTH = FigureUtility.dialogUnitsToPixelsX(15,f);
         SPACING = FigureUtility.dialogUnitsToPixelsX(3,f);
     }
-    
+
     /**
-     * 
+     *
      */
     public PathRequestFigure(Composite parent, final IPropertySource propertySource)
     {
@@ -79,12 +79,12 @@ public class PathRequestFigure extends AbstractInstallOptionsFigure implements I
         add(mTextFigure);
         add(mButtonFigure);
     }
-    
+
     public TextFigure getTextFigure()
     {
         return mTextFigure;
     }
-    
+
     public ButtonFigure getButtonFigure()
     {
         return mButtonFigure;
@@ -117,7 +117,7 @@ public class PathRequestFigure extends AbstractInstallOptionsFigure implements I
     {
         return new Rectangle[]{new Rectangle(0,0,Math.max(0,rect.width-(BROWSE_BUTTON_WIDTH+SPACING)),rect.height),
                                new Rectangle(Math.max(0,rect.width-BROWSE_BUTTON_WIDTH),0,Math.min(rect.width,BROWSE_BUTTON_WIDTH),rect.height)};
-        
+
     }
 
     public void setBounds(Rectangle rect)

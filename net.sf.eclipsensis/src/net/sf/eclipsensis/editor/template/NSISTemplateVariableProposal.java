@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -24,14 +24,14 @@ public class NSISTemplateVariableProposal implements ICompletionProposal
 {
     private TemplateVariableResolver mResolver;
     private int mOffset;
-    private int mLength;    
+    private int mLength;
     private ITextViewer mViewer;
-    
+
     private Point mSelection;
 
     /**
      * Creates a template variable proposal.
-     * 
+     *
      * @param variable the template variable
      * @param offset the offset to replace
      * @param length the length to replace
@@ -43,7 +43,7 @@ public class NSISTemplateVariableProposal implements ICompletionProposal
         mLength= length;
         mViewer= viewer;
     }
-    
+
     /*
      * @see ICompletionProposal#apply(IDocument)
      */
@@ -58,7 +58,7 @@ public class NSISTemplateVariableProposal implements ICompletionProposal
             EclipseNSISPlugin.getDefault().log(e);
 
             Shell shell= mViewer.getTextWidget().getShell();
-            Common.openError(shell, e.getLocalizedMessage(), EclipseNSISPlugin.getShellImage()); //$NON-NLS-1$
+            Common.openError(shell, e.getLocalizedMessage(), EclipseNSISPlugin.getShellImage());
         }
     }
 

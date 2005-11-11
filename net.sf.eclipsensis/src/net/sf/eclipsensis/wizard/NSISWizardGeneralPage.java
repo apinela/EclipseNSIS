@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -42,7 +42,7 @@ public class NSISWizardGeneralPage extends AbstractNSISWizardPage
     private static String[] cInstallFileErrors = {"empty.installer.file.error"}; //$NON-NLS-1$
     private static String[] cUninstallFileErrors = {"empty.uninstaller.file.error"}; //$NON-NLS-1$
 
-    
+
     /**
      * @param pageName
      * @param title
@@ -70,8 +70,8 @@ public class NSISWizardGeneralPage extends AbstractNSISWizardPage
         }
         else {
             NSISWizardSettings settings = mWizard.getSettings();
-    
-            boolean b = ((flag & APPNAME_CHECK) == 0 || validateAppName()) && 
+
+            boolean b = ((flag & APPNAME_CHECK) == 0 || validateAppName()) &&
                    ((flag & PUBURL_CHECK) == 0 || validateEmptyOrValidURL(settings.getUrl(),null)) &&
                    ((flag & INSTFILE_CHECK) == 0 || validatePathName(Common.decodePath(settings.getOutFile()),cInstallFileErrors)) &&
                    ((flag & INSTICON_CHECK) == 0 || validateEmptyOrValidFile(Common.decodePath(settings.getIcon()),null)) &&
@@ -89,24 +89,24 @@ public class NSISWizardGeneralPage extends AbstractNSISWizardPage
     {
         return INSISConstants.PLUGIN_CONTEXT_PREFIX+"nsis_wizgeneral_context"; //$NON-NLS-1$
     }
-    
+
     protected Control createPageControl(Composite parent)
     {
         final Composite composite = new Composite(parent, SWT.NONE);
         setControl(composite);
- 
+
         GridLayout layout = new GridLayout(1,false);
         composite.setLayout(layout);
 
         createApplicationGroup(composite);
         createInstallerGroup(composite);
         createUninstallerGroup(composite);
-        
+
         validatePage(ALL_CHECK);
-        
+
         return composite;
     }
-    
+
     private void createApplicationGroup(Composite parent)
     {
         Group group = NSISWizardDialogUtil.createGroup(parent, 2, "application.group.label", null, true); //$NON-NLS-1$
@@ -132,7 +132,7 @@ public class NSISWizardGeneralPage extends AbstractNSISWizardPage
                validateField(APPNAME_CHECK);
            }
         });
-        
+
         final Text t2 = NSISWizardDialogUtil.createText(group, settings.getVersion(), "application.version.label", true, null, false); //$NON-NLS-1$
         t2.addModifyListener(new ModifyListener(){
            public void modifyText(ModifyEvent e)
@@ -175,7 +175,7 @@ public class NSISWizardGeneralPage extends AbstractNSISWizardPage
         NSISWizardSettings settings = mWizard.getSettings();
 
         ResourceBundle bundle = EclipseNSISPlugin.getDefault().getResourceBundle();
-        final Text t = NSISWizardDialogUtil.createFileBrowser(group, settings.getOutFile(), true, 
+        final Text t = NSISWizardDialogUtil.createFileBrowser(group, settings.getOutFile(), true,
                                    Common.loadArrayProperty(bundle,"installer.file.filternames"),  //$NON-NLS-1$
                                    Common.loadArrayProperty(bundle,"installer.file.filters"), "installer.file.label", //$NON-NLS-1$ //$NON-NLS-2$
                                    true, null,true);
@@ -186,10 +186,10 @@ public class NSISWizardGeneralPage extends AbstractNSISWizardPage
                validateField(INSTFILE_CHECK);
            }
         });
-    
-        final Text t2 = NSISWizardDialogUtil.createImageBrowser(group, settings.getIcon(), new Point(32,32), 
+
+        final Text t2 = NSISWizardDialogUtil.createImageBrowser(group, settings.getIcon(), new Point(32,32),
                                           Common.loadArrayProperty(bundle,"installer.icon.filternames"),  //$NON-NLS-1$
-                                          Common.loadArrayProperty(bundle,"installer.icon.filters"), "installer.icon.label", //$NON-NLS-1$ //$NON-NLS-2$ 
+                                          Common.loadArrayProperty(bundle,"installer.icon.filters"), "installer.icon.label", //$NON-NLS-1$ //$NON-NLS-2$
                                           true, null, false);
         t2.addModifyListener(new ModifyListener(){
            public void modifyText(ModifyEvent e)
@@ -199,8 +199,8 @@ public class NSISWizardGeneralPage extends AbstractNSISWizardPage
            }
         });
         NSISWizardDialogUtil.loadImage(t2);
-    
-        final Button[] radio = NSISWizardDialogUtil.createRadioGroup(group, NSISWizardDisplayValues.INSTALLER_TYPE_NAMES, 
+
+        final Button[] radio = NSISWizardDialogUtil.createRadioGroup(group, NSISWizardDisplayValues.INSTALLER_TYPE_NAMES,
                                            settings.getInstallerType(),"installer.type.label", //$NON-NLS-1$
                                            true, null,false);
         SelectionAdapter sa = new SelectionAdapter() {
@@ -227,8 +227,8 @@ public class NSISWizardGeneralPage extends AbstractNSISWizardPage
         layout.marginHeight = 0;
         layout.marginWidth = 0;
         composite.setLayout(layout);
-        final Combo c = NSISWizardDialogUtil.createCombo(composite, 2, 
-                        NSISWizardDisplayValues.COMPRESSOR_TYPE_NAMES, 
+        final Combo c = NSISWizardDialogUtil.createCombo(composite, 2,
+                        NSISWizardDisplayValues.COMPRESSOR_TYPE_NAMES,
                         NSISWizardDisplayValues.COMPRESSOR_TYPE_NAMES[settings.getCompressorType()],
                         true, true, null);
 
@@ -260,7 +260,7 @@ public class NSISWizardGeneralPage extends AbstractNSISWizardPage
                 }
             }
         });
-        
+
         mWizard.addSettingsListener(new INSISWizardSettingsListener() {
             public void settingsChanged()
             {
@@ -298,16 +298,16 @@ public class NSISWizardGeneralPage extends AbstractNSISWizardPage
         final Button b = NSISWizardDialogUtil.createCheckBox(group,"create.uninstaller.label",settings.isCreateUninstaller(), //$NON-NLS-1$
                                         true, null, false);
         b.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) 
+            public void widgetSelected(SelectionEvent e)
             {
                 boolean selection = b.getSelection();
                 mWizard.getSettings().setCreateUninstaller(selection);
                 validatePage(ALL_CHECK);
             }
         });
-        
+
         final MasterSlaveController m = new MasterSlaveController(b);
-        
+
         ResourceBundle bundle = EclipseNSISPlugin.getDefault().getResourceBundle();
         final Text t = NSISWizardDialogUtil.createText(group, settings.getUninstallFile(), "uninstaller.file.label", true, //$NON-NLS-1$
                             m,true);
@@ -318,10 +318,10 @@ public class NSISWizardGeneralPage extends AbstractNSISWizardPage
                validateField(UNINSTFILE_CHECK);
            }
         });
-    
-        final Text t2 = NSISWizardDialogUtil.createImageBrowser(group, settings.getUninstallIcon(), new Point(32,32), 
+
+        final Text t2 = NSISWizardDialogUtil.createImageBrowser(group, settings.getUninstallIcon(), new Point(32,32),
                                           Common.loadArrayProperty(bundle,"uninstaller.icon.filternames"),  //$NON-NLS-1$
-                                          Common.loadArrayProperty(bundle,"uninstaller.icon.filters"), "uninstaller.icon.label", //$NON-NLS-1$ //$NON-NLS-2$ 
+                                          Common.loadArrayProperty(bundle,"uninstaller.icon.filters"), "uninstaller.icon.label", //$NON-NLS-1$ //$NON-NLS-2$
                                           true, m, false);
         t2.addModifyListener(new ModifyListener(){
            public void modifyText(ModifyEvent e)
@@ -344,7 +344,7 @@ public class NSISWizardGeneralPage extends AbstractNSISWizardPage
                 m.updateSlaves();
             }});
     }
-    
+
     private boolean validateAppName()
     {
         if(!Common.isEmpty(mWizard.getSettings().getName())) {

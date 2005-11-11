@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -29,7 +29,7 @@ public class NSISSection extends AbstractNSISInstallGroup
 
     private static final Image IMAGE = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("wizard.section.icon")); //$NON-NLS-1$
     private static final String FORMAT = EclipseNSISPlugin.getResourceString("wizard.section.format"); //$NON-NLS-1$
-    
+
     private String mDescription = null;
     private String mName = null;
     private boolean mBold = false;
@@ -45,7 +45,7 @@ public class NSISSection extends AbstractNSISInstallGroup
             }
         });
     }
-    
+
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.wizard.settings.AbstractNSISInstallGroup#resetChildTypes()
      */
@@ -169,7 +169,7 @@ public class NSISSection extends AbstractNSISInstallGroup
     {
         mDescription = description;
     }
-    
+
     protected Object getNodeValue(Node node, String name, Class clasz)
     {
         if(name.equals("description")) { //$NON-NLS-1$
@@ -192,7 +192,7 @@ public class NSISSection extends AbstractNSISInstallGroup
     protected Node createChildNode(Document document, String name, Object value)
     {
         if(name.equals("description")) { //$NON-NLS-1$
-            value = document.createTextNode((String)value); //$NON-NLS-1$
+            value = document.createTextNode((String)value);
         }
         return super.createChildNode(document, name, value);
     }

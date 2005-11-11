@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -19,7 +19,7 @@ import net.sf.eclipsensis.makensis.MakeNSISRunner;
 public abstract class NSISSettings implements INSISPreferenceConstants
 {
     protected static File cPluginStateLocation = EclipseNSISPlugin.getPluginStateLocation();
-    
+
     private boolean mHdrInfo = false;
     private boolean mLicense = false;
     private boolean mNoConfig = false;
@@ -29,7 +29,7 @@ public abstract class NSISSettings implements INSISPreferenceConstants
     private boolean mSolidCompression = false;
     private ArrayList mInstructions = null;
     private LinkedHashMap mSymbols = null;
-    
+
     protected abstract String getString(String name);
     protected abstract boolean getBoolean(String name);
     protected abstract int getInt(String name);
@@ -39,7 +39,7 @@ public abstract class NSISSettings implements INSISPreferenceConstants
     protected abstract void removeString(String name);
     protected abstract void removeBoolean(String name);
     protected abstract void removeInt(String name);
-    
+
     protected void load()
     {
         setHdrInfo(getBoolean(HDRINFO));
@@ -52,7 +52,7 @@ public abstract class NSISSettings implements INSISPreferenceConstants
         setInstructions((ArrayList)loadObject(INSTRUCTIONS));
         setSymbols((LinkedHashMap)loadObject(SYMBOLS));
     }
-    
+
     public void store()
     {
         setValue(HDRINFO,mHdrInfo);
@@ -70,17 +70,17 @@ public abstract class NSISSettings implements INSISPreferenceConstants
     {
         return mSolidCompression;
     }
-    
+
     public boolean getDefaultSolidCompression()
     {
         return false;
     }
-    
+
     public void setSolidCompression(boolean solidCompression)
     {
         mSolidCompression = solidCompression;
     }
-    
+
     /**
      * @return Returns the compressor.
      */
@@ -104,7 +104,7 @@ public abstract class NSISSettings implements INSISPreferenceConstants
     {
         mCompressor = compressor;
     }
-    
+
     /**
      * @return Returns the headerInfo.
      */
@@ -112,7 +112,7 @@ public abstract class NSISSettings implements INSISPreferenceConstants
     {
         return mHdrInfo;
     }
-    
+
     /**
      * @return Returns the headerInfo.
      */
@@ -120,7 +120,7 @@ public abstract class NSISSettings implements INSISPreferenceConstants
     {
         return false;
     }
-    
+
     /**
      * @param headerInfo The headerInfo to set.
      */
@@ -128,7 +128,7 @@ public abstract class NSISSettings implements INSISPreferenceConstants
     {
         mHdrInfo = headerInfo;
     }
-    
+
     /**
      * @return Returns the license.
      */
@@ -151,7 +151,7 @@ public abstract class NSISSettings implements INSISPreferenceConstants
     {
         mLicense = license;
     }
-    
+
     /**
      * @return Returns the noCD.
      */
@@ -159,7 +159,7 @@ public abstract class NSISSettings implements INSISPreferenceConstants
     {
         return mNoCD;
     }
-    
+
     /**
      * @return Returns the default noCD.
      */
@@ -167,7 +167,7 @@ public abstract class NSISSettings implements INSISPreferenceConstants
     {
         return false;
     }
-    
+
     /**
      * @param noCD The noCD to set.
      */
@@ -175,7 +175,7 @@ public abstract class NSISSettings implements INSISPreferenceConstants
     {
         mNoCD = noCD;
     }
-    
+
     /**
      * @return Returns the noConfig.
      */
@@ -206,7 +206,7 @@ public abstract class NSISSettings implements INSISPreferenceConstants
     {
         return mVerbosity;
     }
-    
+
     /**
      * @return Returns the default verbosity.
      */
@@ -214,7 +214,7 @@ public abstract class NSISSettings implements INSISPreferenceConstants
     {
         return VERBOSITY_ALL;
     }
-    
+
     /**
      * @param verbosity The verbosity to set.
      */
@@ -222,7 +222,7 @@ public abstract class NSISSettings implements INSISPreferenceConstants
     {
         mVerbosity = verbosity;
     }
-    
+
     /**
      * @return Returns the default instructions.
      */
@@ -230,7 +230,7 @@ public abstract class NSISSettings implements INSISPreferenceConstants
     {
         return new ArrayList();
     }
-    
+
     /**
      * @return Returns the instructions.
      */
@@ -254,7 +254,7 @@ public abstract class NSISSettings implements INSISPreferenceConstants
     {
         return new LinkedHashMap();
     }
-    
+
     /**
      * @return Returns the symbols.
      */
@@ -270,7 +270,7 @@ public abstract class NSISSettings implements INSISPreferenceConstants
     {
         mSymbols = (symbols==null?new LinkedHashMap():symbols);
     }
-    
+
     protected abstract void storeObject(String name, Object object);
     protected abstract Object loadObject(String name);
 }

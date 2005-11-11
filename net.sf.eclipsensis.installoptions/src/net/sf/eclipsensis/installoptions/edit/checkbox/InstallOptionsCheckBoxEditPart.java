@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -44,7 +44,7 @@ public class InstallOptionsCheckBoxEditPart extends InstallOptionsButtonEditPart
         {
             return mNewValue;
         }
-        
+
     };
 
     public Object getAdapter(Class key)
@@ -54,7 +54,7 @@ public class InstallOptionsCheckBoxEditPart extends InstallOptionsButtonEditPart
         }
         return super.getAdapter(key);
     }
-    
+
     protected String getDirectEditLabelProperty()
     {
         return "checkbox.direct.edit.label"; //$NON-NLS-1$
@@ -80,7 +80,7 @@ public class InstallOptionsCheckBoxEditPart extends InstallOptionsButtonEditPart
         super.createEditPolicies();
         installEditPolicy(InstallOptionsExtendedEditPolicy.ROLE, new InstallOptionsCheckBoxExtendedEditPolicy(this));
     }
-    
+
     protected String getExtendedEditLabelProperty()
     {
         return "checkbox.extended.edit.label"; //$NON-NLS-1$
@@ -115,9 +115,9 @@ public class InstallOptionsCheckBoxEditPart extends InstallOptionsButtonEditPart
 
     protected void doPropertyChange(PropertyChangeEvent evt)
     {
-        if (evt.getPropertyName().equalsIgnoreCase(InstallOptionsModel.PROPERTY_STATE)) {//$NON-NLS-1$
+        if (evt.getPropertyName().equalsIgnoreCase(InstallOptionsModel.PROPERTY_STATE)) {
             CheckBoxFigure figure2 = (CheckBoxFigure)getFigure();
-            figure2.setState(InstallOptionsModel.STATE_CHECKED.equals((String)evt.getNewValue()));
+            figure2.setState(InstallOptionsModel.STATE_CHECKED.equals(evt.getNewValue()));
             setNeedsRefresh(true);
         }
         else {

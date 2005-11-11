@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -21,7 +21,7 @@ public class ModifyFilterCommand extends Command
     private InstallOptionsFileRequest mModel;
     private List mOldFilter;
     private List mNewFilter;
-    
+
     public ModifyFilterCommand(InstallOptionsFileRequest model, List newListItems)
     {
         mModel = model;
@@ -29,12 +29,12 @@ public class ModifyFilterCommand extends Command
         mOldFilter = mModel.getFilter();
         setLabel(InstallOptionsPlugin.getFormattedString("modify.filter.command.label", new Object[]{mModel.getType()})); //$NON-NLS-1$
     }
-    
+
     public void execute()
     {
         mModel.setFilter(mNewFilter);
     }
-    
+
     public void undo()
     {
         mModel.setFilter(mOldFilter);

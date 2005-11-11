@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -26,7 +26,7 @@ public abstract class TypeConverter
     public abstract String asString(Object o);
     public abstract Object asType(String s);
     public abstract Object makeCopy(Object o);
-    
+
     public String asString(Object o, Object defaultValue)
     {
         try {
@@ -46,13 +46,13 @@ public abstract class TypeConverter
             return makeCopy(defaultValue);
         }
     }
-    
+
     public static final TypeConverter POINT_CONVERTER = new TypeConverter() {
         public String asString(Object o)
         {
             return Common.flatten(new String[]{Integer.toString(((Point)o).x),Integer.toString(((Point)o).y)},',');
         }
-        
+
         public Object asType(String s)
         {
             Point p = null;
@@ -70,13 +70,13 @@ public abstract class TypeConverter
             return new Point((Point)o);
         }
     };
-    
+
     public static final TypeConverter BOOLEAN_CONVERTER = new TypeConverter() {
         public String asString(Object o)
         {
             return ((Boolean)o).toString();
         }
-        
+
         public Object asType(String s)
         {
             return (s == null?null:Boolean.valueOf(s));
@@ -84,10 +84,10 @@ public abstract class TypeConverter
 
         public Object makeCopy(Object o)
         {
-            return (Boolean)o;
+            return o;
         }
     };
-    
+
     public static final TypeConverter RGB_CONVERTER = new TypeConverter() {
         public String asString(Object o)
         {
@@ -96,7 +96,7 @@ public abstract class TypeConverter
             buf.append(ColorManager.rgbToHex(rgb));
             return buf.toString();
         }
-        
+
         public Object asType(String s)
         {
             if(s != null && s.startsWith("0x") && s.length()==8) { //$NON-NLS-1$
@@ -123,7 +123,7 @@ public abstract class TypeConverter
         {
             return ((Integer)o).toString();
         }
-        
+
         public Object asType(String s)
         {
             return (Common.isEmpty(s)?null:Integer.valueOf(s));
@@ -131,16 +131,16 @@ public abstract class TypeConverter
 
         public Object makeCopy(Object o)
         {
-            return (Integer)o;
+            return o;
         }
     };
-    
+
     public static final TypeConverter STRING_ARRAY_CONVERTER = new TypeConverter() {
         public String asString(Object o)
         {
             return Common.flatten((String[])o,IInstallOptionsConstants.LIST_SEPARATOR);
         }
-        
+
         public Object asType(String s)
         {
             return Common.tokenize(s,IInstallOptionsConstants.LIST_SEPARATOR);
@@ -148,16 +148,16 @@ public abstract class TypeConverter
 
         public Object makeCopy(Object o)
         {
-            return (String[])((String[])o).clone();
+            return ((String[])o).clone();
         }
     };
-    
+
     public static final TypeConverter STRING_LIST_CONVERTER = new TypeConverter() {
         public String asString(Object o)
         {
-            return Common.flatten((String[])((List)o).toArray(Common.EMPTY_STRING_ARRAY),IInstallOptionsConstants.LIST_SEPARATOR);
+            return Common.flatten(((List)o).toArray(Common.EMPTY_STRING_ARRAY),IInstallOptionsConstants.LIST_SEPARATOR);
         }
-        
+
         public Object asType(String s)
         {
             return new ArrayList(Arrays.asList(Common.tokenize(s,IInstallOptionsConstants.LIST_SEPARATOR)));
@@ -174,16 +174,16 @@ public abstract class TypeConverter
                     InstallOptionsPlugin.getDefault().log(e);
                 }
             }
-            return (List)(new ArrayList((List)o)).clone();
+            return (new ArrayList((List)o)).clone();
         }
     };
-    
+
     public static final TypeConverter STRING_CONVERTER = new TypeConverter() {
         public String asString(Object o)
         {
             return (String)o;
         }
-        
+
         public Object asType(String s)
         {
             return s;
@@ -191,10 +191,10 @@ public abstract class TypeConverter
 
         public Object makeCopy(Object o)
         {
-            return (String)o;
+            return o;
         }
     };
-    
+
     public static final TypeConverter INI_STRING_CONVERTER = new TypeConverter() {
         public String asString(Object o)
         {
@@ -235,15 +235,15 @@ public abstract class TypeConverter
                     buf.append("\\"); //$NON-NLS-1$
                 }
             }
-            
+
             return buf.toString();
         }
-        
+
         public Object asType(String s)
         {
             StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
             if(s != null) {
-                char[] chars = ((String)s).toCharArray();
+                char[] chars = s.toCharArray();
                 for (int i = 0; i < chars.length; i++) {
                     switch(chars[i]) {
                         case '\r':
@@ -263,22 +263,22 @@ public abstract class TypeConverter
                     }
                 }
             }
-            
+
             return buf.toString();
         }
 
         public Object makeCopy(Object o)
         {
-            return (String)o;
+            return o;
         }
     };
-    
+
     public static final TypeConverter DIMENSION_CONVERTER = new TypeConverter() {
         public String asString(Object o)
         {
             return Common.flatten(new String[]{Integer.toString(((Dimension)o).width),Integer.toString(((Dimension)o).height)},',');
         }
-        
+
         public Object asType(String s)
         {
             Dimension d = null;

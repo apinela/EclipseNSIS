@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -17,7 +17,7 @@ import org.eclipse.jface.text.rules.*;
 public class InstallOptionsPartitionScanner extends RuleBasedPartitionScanner implements IInstallOptionsScanner
 {
     public static final String INSTALLOPTIONS_COMMENT = "__installoptions_comment";  //$NON-NLS-1$
-    
+
     public static final String[] INSTALLOPTIONS_PARTITION_TYPES = new String[] {
             INSTALLOPTIONS_COMMENT
     };
@@ -27,8 +27,8 @@ public class InstallOptionsPartitionScanner extends RuleBasedPartitionScanner im
     public InstallOptionsPartitionScanner()
     {
         super();
-        IToken singlelineComment = new Token(INSTALLOPTIONS_COMMENT); 
-        
+        IToken singlelineComment = new Token(INSTALLOPTIONS_COMMENT);
+
         List rules = new ArrayList();
         rules.add(new CompleteLineRule(";", singlelineComment));  //$NON-NLS-1$
 
@@ -36,7 +36,7 @@ public class InstallOptionsPartitionScanner extends RuleBasedPartitionScanner im
         rules.toArray(result);
         setPredicateRules(result);
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.jface.text.rules.IPartitionTokenScanner#setPartialRange(org.eclipse.jface.text.IDocument, int, int, java.lang.String, int)
      */

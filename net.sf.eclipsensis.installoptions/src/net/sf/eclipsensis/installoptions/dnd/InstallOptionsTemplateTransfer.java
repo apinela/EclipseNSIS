@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -18,26 +18,26 @@ public class InstallOptionsTemplateTransfer extends InstallOptionsObjectTransfer
                                                              ":").append(INSTANCE.hashCode()).toString()};//$NON-NLS-1$
     private static final int[] TYPEIDS = {registerType(TYPE_NAMES[0])};
 
-    private InstallOptionsTemplateTransfer() 
-    { 
+    private InstallOptionsTemplateTransfer()
+    {
     }
 
-    protected int[] getTypeIds() 
+    protected int[] getTypeIds()
     {
         return TYPEIDS;
     }
 
-    protected String[] getTypeNames() 
+    protected String[] getTypeNames()
     {
         return TYPE_NAMES;
     }
 
-    public void setTemplate(Object template) 
+    public void setTemplate(Object template)
     {
         setObject(template);
     }
 
-    public Object getTemplate() 
+    public Object getTemplate()
     {
         return getObject();
     }

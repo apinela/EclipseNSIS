@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -30,13 +30,13 @@ public class UnknownFigure extends AbstractInstallOptionsFigure implements IUnkn
     private LabelFigure mOuterLabelFigure;
     private IFigure mFigure;
     private LabelFigure mInnerLabelFigure;
-    
+
     public UnknownFigure(Composite parent, final IPropertySource propertySource, int style)
     {
         super();
         setOpaque(true);
         setLayoutManager(new XYLayout());
-        
+
         final List flags = new ArrayList((List)propertySource.getPropertyValue(InstallOptionsModel.PROPERTY_FLAGS));
         boolean hScroll = flags.remove(InstallOptionsModel.FLAGS_HSCROLL);
         boolean vScroll = flags.remove(InstallOptionsModel.FLAGS_VSCROLL);
@@ -183,7 +183,7 @@ public class UnknownFigure extends AbstractInstallOptionsFigure implements IUnkn
         mInnerLabelFigure.refresh();
         mOuterLabelFigure.refresh();
     }
-    
+
     public Rectangle getDirectEditArea()
     {
         return mInnerLabelFigure.getDirectEditArea();

@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -25,7 +25,7 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.*;
 
-public class JARSignerAction implements IObjectActionDelegate 
+public class JARSignerAction implements IObjectActionDelegate
 {
     ISelection mSelection = null;
     IWorkbenchPart mPart = null;
@@ -40,15 +40,15 @@ public class JARSignerAction implements IObjectActionDelegate
 	/**
 	 * @see IObjectActionDelegate#setActivePart(IAction, IWorkbenchPart)
 	 */
-	public void setActivePart(IAction action, IWorkbenchPart targetPart) 
+	public void setActivePart(IAction action, IWorkbenchPart targetPart)
     {
         mPart = targetPart;
 	}
-    
+
 	/**
 	 * @see IActionDelegate#run(IAction)
 	 */
-	public void run(IAction action) 
+	public void run(IAction action)
     {
         if (mSelection != null && !mSelection.isEmpty() && mSelection instanceof IStructuredSelection) {
             IStructuredSelection sel = (IStructuredSelection)mSelection;
@@ -85,7 +85,7 @@ public class JARSignerAction implements IObjectActionDelegate
     /**
 	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
 	 */
-	public void selectionChanged(IAction action, ISelection selection) 
+	public void selectionChanged(IAction action, ISelection selection)
     {
         mSelection = selection;
 	}

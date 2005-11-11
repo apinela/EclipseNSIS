@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -39,7 +39,7 @@ public class NSISActionContributor extends TextEditorActionContributor implement
 	/**
 	 * Default constructor.
 	 */
-	public NSISActionContributor() 
+	public NSISActionContributor()
     {
 		super();
 		ResourceBundle bundle = EclipseNSISPlugin.getDefault().getResourceBundle();
@@ -48,27 +48,27 @@ public class NSISActionContributor extends TextEditorActionContributor implement
 
         mInsertTemplate= new RetargetTextEditorAction(bundle, "insert.template."); //$NON-NLS-1$
         mInsertTemplate.setActionDefinitionId(INSERT_TEMPLATE_COMMAND_ID);
-        
+
         mTabsToSpaces= new RetargetTextEditorAction(bundle, "tabs.to.spaces."); //$NON-NLS-1$
         mTabsToSpaces.setActionDefinitionId(TABS_TO_SPACES_COMMAND_ID);
-        
+
         mToggleComment= new RetargetTextEditorAction(bundle, "toggle.comment."); //$NON-NLS-1$
         mToggleComment.setActionDefinitionId(TOGGLE_COMMENT_COMMAND_ID);
-        
+
         mAddBlockComment= new RetargetTextEditorAction(bundle, "add.block.comment."); //$NON-NLS-1$
         mAddBlockComment.setActionDefinitionId(ADD_BLOCK_COMMENT_COMMAND_ID);
-        
+
         mRemoveBlockComment= new RetargetTextEditorAction(bundle, "remove.block.comment."); //$NON-NLS-1$
         mRemoveBlockComment.setActionDefinitionId(REMOVE_BLOCK_COMMENT_COMMAND_ID);
-        
+
         mInsertFile= new RetargetTextEditorAction(bundle, "insert.file."); //$NON-NLS-1$
         mInsertFile.setImageDescriptor(EclipseNSISPlugin.getImageManager().getImageDescriptor(bundle.getString("insert.file.image"))); //$NON-NLS-1$
         mInsertFile.setActionDefinitionId(INSERT_FILE_COMMAND_ID);
-        
+
         mInsertDirectory= new RetargetTextEditorAction(bundle, "insert.directory."); //$NON-NLS-1$
         mInsertDirectory.setImageDescriptor(EclipseNSISPlugin.getImageManager().getImageDescriptor(bundle.getString("insert.directory.image"))); //$NON-NLS-1$
         mInsertDirectory.setActionDefinitionId(INSERT_DIRECTORY_COMMAND_ID);
-        
+
         mInsertColor= new RetargetTextEditorAction(bundle, "insert.color."); //$NON-NLS-1$
         mInsertColor.setImageDescriptor(EclipseNSISPlugin.getImageManager().getImageDescriptor(bundle.getString("insert.color.image"))); //$NON-NLS-1$
         mInsertColor.setActionDefinitionId(INSERT_COLOR_COMMAND_ID);
@@ -77,10 +77,10 @@ public class NSISActionContributor extends TextEditorActionContributor implement
 	/*
 	 * @see IEditorActionBarContributor#init(IActionBars)
 	 */
-	public void init(IActionBars bars) 
+	public void init(IActionBars bars)
     {
 		super.init(bars);
-        
+
 		IMenuManager menuManager= bars.getMenuManager();
 		IMenuManager editMenu= menuManager.findMenuUsingPath(IWorkbenchActionConstants.M_EDIT);
 		if (editMenu != null) {
@@ -111,7 +111,7 @@ public class NSISActionContributor extends TextEditorActionContributor implement
         });
 	}
 	
-	private void doSetActiveEditor(IEditorPart part) 
+	private void doSetActiveEditor(IEditorPart part)
     {
 		super.setActiveEditor(part);
 
@@ -134,7 +134,7 @@ public class NSISActionContributor extends TextEditorActionContributor implement
 	/*
 	 * @see IEditorActionBarContributor#setActiveEditor(IEditorPart)
 	 */
-	public void setActiveEditor(IEditorPart part) 
+	public void setActiveEditor(IEditorPart part)
     {
 		super.setActiveEditor(part);
 		doSetActiveEditor(part);
@@ -143,7 +143,7 @@ public class NSISActionContributor extends TextEditorActionContributor implement
 	/*
 	 * @see IEditorActionBarContributor#dispose()
 	 */
-	public void dispose() 
+	public void dispose()
     {
 		doSetActiveEditor(null);
 		super.dispose();

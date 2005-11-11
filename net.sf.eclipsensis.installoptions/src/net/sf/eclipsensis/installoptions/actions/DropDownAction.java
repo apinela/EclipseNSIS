@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -101,7 +101,7 @@ public class DropDownAction extends PartEventAction implements IPropertyChangeLi
             }
         }
     };
-    
+
     public DropDownAction(String id, IPreferenceStore preferenceStore, RetargetAction[] delegates)
     {
         super("",IAction.AS_DROP_DOWN_MENU); //$NON-NLS-1$
@@ -139,19 +139,19 @@ public class DropDownAction extends PartEventAction implements IPropertyChangeLi
         updateEnabled();
     }
 
-    public void partActivated(IWorkbenchPart part) 
+    public void partActivated(IWorkbenchPart part)
     {
         super.partActivated(part);
         updateEnabled();
     }
 
-    public void partClosed(IWorkbenchPart part) 
+    public void partClosed(IWorkbenchPart part)
     {
         updateEnabled();
         super.partClosed(part);
     }
 
-    public void partDeactivated(IWorkbenchPart part) 
+    public void partDeactivated(IWorkbenchPart part)
     {
         super.partDeactivated(part);
         updateEnabled();
@@ -161,7 +161,7 @@ public class DropDownAction extends PartEventAction implements IPropertyChangeLi
     {
         setEnabled(mEnabledActions.size() > 0);
     }
-    
+
     public void propertyChange(PropertyChangeEvent event)
     {
         if(getId().equals(event.getProperty())) {
@@ -238,7 +238,7 @@ public class DropDownAction extends PartEventAction implements IPropertyChangeLi
     private class DropDownActionWrapper extends Action implements IPropertyChangeListener
     {
         private RetargetAction mDelegate;
-        
+
         public DropDownActionWrapper(RetargetAction delegate)
         {
             super(delegate.getText(), IAction.AS_CHECK_BOX);
@@ -293,7 +293,7 @@ public class DropDownAction extends PartEventAction implements IPropertyChangeLi
             if (event.getProperty().equals(IAction.ENABLED)) {
                 Boolean bool = (Boolean) event.getNewValue();
                 setEnabled(bool.booleanValue());
-            } 
+            }
             else if (event.getProperty().equals(IAction.CHECKED)) {
                 Boolean bool = (Boolean) event.getNewValue();
                 setChecked(bool.booleanValue());

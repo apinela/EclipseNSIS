@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -24,7 +24,7 @@ public class TextFigure extends EditableElementFigure
     private boolean mReadOnly;
     private boolean mNoWordWrap;
     private boolean mOnlyNumbers;
-    
+
     public TextFigure(Composite parent, IPropertySource propertySource, int style)
     {
         super(parent, propertySource, style);
@@ -34,7 +34,7 @@ public class TextFigure extends EditableElementFigure
     {
         super(parent, propertySource);
     }
-    
+
     protected void init(IPropertySource propertySource)
     {
         List flags = (List)propertySource.getPropertyValue(InstallOptionsModel.PROPERTY_FLAGS);
@@ -54,37 +54,37 @@ public class TextFigure extends EditableElementFigure
     {
         mOnlyNumbers = onlyNumbers;
     }
-    
+
     public boolean isMultiLine()
     {
         return mMultiLine;
     }
-    
+
     public void setMultiLine(boolean multiLine)
     {
         mMultiLine = multiLine;
     }
-    
+
     public boolean isNoWordWrap()
     {
         return mNoWordWrap;
     }
-    
+
     public void setNoWordWrap(boolean noWordWrap)
     {
         mNoWordWrap = noWordWrap;
     }
-    
+
     public boolean isReadOnly()
     {
         return mReadOnly;
     }
-    
+
     public void setReadOnly(boolean readOnly)
     {
         mReadOnly = readOnly;
     }
-    
+
     /**
      * @return
      */

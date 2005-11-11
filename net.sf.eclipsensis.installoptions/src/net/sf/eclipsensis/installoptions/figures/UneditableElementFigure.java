@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -23,24 +23,24 @@ public abstract class UneditableElementFigure extends SWTControlFigure implement
     {
         super(parent, propertySource, style);
     }
-    
+
     public UneditableElementFigure(Composite parent, IPropertySource propertySource)
     {
         super(parent, propertySource);
     }
-    
+
     protected void init(IPropertySource propertySource)
     {
         setText((String)propertySource.getPropertyValue(InstallOptionsModel.PROPERTY_TEXT));
         super.init(propertySource);
    }
-    
+
     public String getText()
     {
         return mText==null?"":mText; //$NON-NLS-1$
     }
-    
-    public void setText(String text) 
+
+    public void setText(String text)
     {
         mText = text;
     }

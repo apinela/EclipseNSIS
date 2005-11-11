@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -31,7 +31,7 @@ public abstract class SWTControlFigure extends ScrollBarsFigure
 {
     private static final int PRINT_BITS = WinAPI.PRF_NONCLIENT | WinAPI.PRF_CLIENT | WinAPI.PRF_ERASEBKGND | WinAPI.PRF_CHILDREN;
     private static final int TRANSPARENCY_TOLERANCE = 2;
-    
+
     private Composite mParent;
     private Image mImage;
     private ImageData mImageData;
@@ -42,7 +42,7 @@ public abstract class SWTControlFigure extends ScrollBarsFigure
     private boolean mVScroll;
     private int mStyle = -1;
     private PaintListener mSWTPaintListener = new PaintListener() {
-        public void paintControl(PaintEvent e) 
+        public void paintControl(PaintEvent e)
         {
             final Control source = (Control) e.getSource();
             if(source != null && !source.isDisposed() && source.handle > 0) {
@@ -140,7 +140,7 @@ public abstract class SWTControlFigure extends ScrollBarsFigure
         super.setBounds(rect);
     }
 
-    protected void paintFigure(Graphics g) 
+    protected void paintFigure(Graphics g)
     {
         super.paintFigure(g);
         if (mImage != null && !mImage.isDisposed()) {
@@ -159,7 +159,7 @@ public abstract class SWTControlFigure extends ScrollBarsFigure
     /*
      * @see org.eclipse.draw2d.Figure#layout()
      */
-    protected synchronized void layout() 
+    protected synchronized void layout()
     {
         if(isNeedsReScrape()) {
             if (mImage != null && !mImage.isDisposed()) {
@@ -189,21 +189,21 @@ public abstract class SWTControlFigure extends ScrollBarsFigure
                 else {
                     insets = new Insets(0,0,0,0);
                 }
-                control.setBounds(bounds.x + p1.x + insets.left, bounds.y + p1.y + insets.right, 
-                                   bounds.width - (insets.left+insets.right), 
+                control.setBounds(bounds.x + p1.x + insets.left, bounds.y + p1.y + insets.right,
+                                   bounds.width - (insets.left+insets.right),
                                    bounds.height - (insets.top+insets.bottom));
                 control.addPaintListener(mSWTPaintListener);
                 setNeedsReScrape(false);
-                
+
                 scrapeImage(control);
-                
+
                 //Force a repaint
                 control.redraw();
             }
         }
         super.layout();
     }
-    
+
     protected boolean isTransparentAt(int x, int y)
     {
         int pixel = (mImageData != null?mImageData.transparentPixel:-1);
@@ -238,12 +238,12 @@ public abstract class SWTControlFigure extends ScrollBarsFigure
     {
         return null;
     }
-    
+
     protected int getThemePartId()
     {
         return 0;
     }
-    
+
     protected int getThemeStateId()
     {
         return 0;
@@ -278,7 +278,7 @@ public abstract class SWTControlFigure extends ScrollBarsFigure
     {
         return false;
     }
-    
+
     protected void createScrollBars(Control control)
     {
         int style;

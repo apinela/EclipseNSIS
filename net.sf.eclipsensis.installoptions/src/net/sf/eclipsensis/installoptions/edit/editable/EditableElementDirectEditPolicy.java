@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -25,7 +25,7 @@ public class EditableElementDirectEditPolicy extends InstallOptionsDirectEditPol
     {
         super(editPart);
     }
-    
+
     public Command getCommand(Request request)
     {
         if(((InstallOptionsEditDomain)mEditPart.getViewer().getEditDomain()).isReadOnly()) {
@@ -35,8 +35,8 @@ public class EditableElementDirectEditPolicy extends InstallOptionsDirectEditPol
             return super.getCommand(request);
         }
     }
-    
-    protected Command getDirectEditCommand(DirectEditRequest edit) 
+
+    protected Command getDirectEditCommand(DirectEditRequest edit)
     {
         String text = (String)edit.getCellEditor().getValue();
         InstallOptionsEditableElementEditPart control = (InstallOptionsEditableElementEditPart)getHost();

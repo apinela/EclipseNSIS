@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -42,7 +42,7 @@ public interface INSISPreferenceConstants
                                                                 EclipseNSISPlugin.getResourceString("verbosity.all.text")}; //$NON-NLS-1$
 
     public static final String USE_SPACES_FOR_TABS = "useSpacesForTabs"; //$NON-NLS-1$
-    
+
     public final static String MATCHING_DELIMITERS = "matchingDelimiters"; //$NON-NLS-1$
     public final static String MATCHING_DELIMITERS_COLOR = "matchingDelimitersColor"; //$NON-NLS-1$
 
@@ -62,7 +62,7 @@ public interface INSISPreferenceConstants
     public static final String LANGSTRINGS_STYLE = "langstringsStyle"; //$NON-NLS-1$
     public static final String TASK_TAGS_STYLE = "taskTagsStyle"; //$NON-NLS-1$
     public static final String PLUGINS_STYLE = "pluginsStyle"; //$NON-NLS-1$
-    
+
     public static final String AUTO_SHOW_CONSOLE = "autoShowConsole"; //$NON-NLS-1$
     public static final String CONSOLE_FONT = "net.sf.eclipsensis.console.Font"; //$NON-NLS-1$
     public static final String CONSOLE_INFO_COLOR = "net.sf.eclipsensis.console.InfoColor"; //$NON-NLS-1$

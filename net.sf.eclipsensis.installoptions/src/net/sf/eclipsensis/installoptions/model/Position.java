@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -17,9 +17,9 @@ public class Position implements Cloneable
     public int top;
     public int right;
     public int bottom;
-    
+
     /**
-     * 
+     *
      */
     public Position()
     {
@@ -43,7 +43,7 @@ public class Position implements Cloneable
         this.right = right;
         this.bottom = bottom;
     }
-    
+
     public Position getCopy()
     {
         return new Position(left,top,right,bottom);
@@ -63,17 +63,17 @@ public class Position implements Cloneable
     {
         return new Rectangle(left,top,right-left+1,bottom-top+1);
     }
-    
+
     public Point getLocation()
     {
         return new Point(left,top);
     }
-    
+
     public Dimension getSize()
     {
         return new Dimension(right-left+1,bottom-top+1);
     }
-    
+
     public void setLocation(Point p)
     {
         setLocation(p.x,p.y);
@@ -96,7 +96,7 @@ public class Position implements Cloneable
     {
         move(offset.width, offset.height);
     }
-    
+
     public void setSize(Dimension d)
     {
         setSize(d.width, d.height);
@@ -107,7 +107,7 @@ public class Position implements Cloneable
         right = left + width - 1;
         bottom = top + height - 1;
     }
-    
+
     public boolean equals(Object obj)
     {
         if(obj instanceof Position) {
@@ -116,7 +116,7 @@ public class Position implements Cloneable
         }
         return false;
     }
-    
+
     public int hashCode()
     {
         return left+top+right+bottom;

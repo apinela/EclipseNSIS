@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -23,18 +23,18 @@ import org.eclipse.swt.graphics.Image;
 
 public class InstallOptionsHandleKit
 {
-    public static void addResizableHandle(GraphicalEditPart part, List handles, int direction) 
+    public static void addResizableHandle(GraphicalEditPart part, List handles, int direction)
     {
-        handles.add(createResizableHandle(part, direction)); 
+        handles.add(createResizableHandle(part, direction));
     }
 
-    public static void addResizableHandle(GraphicalEditPart part, List handles, int direction, 
-                                 DragTracker tracker, Cursor cursor) 
+    public static void addResizableHandle(GraphicalEditPart part, List handles, int direction,
+                                 DragTracker tracker, Cursor cursor)
     {
-        handles.add(createResizableHandle(part, direction, tracker, cursor));    
+        handles.add(createResizableHandle(part, direction, tracker, cursor));
     }
-        
-    public static void addResizableHandles(GraphicalEditPart part, List handles) 
+
+    public static void addResizableHandles(GraphicalEditPart part, List handles)
     {
         addMoveHandle(part, handles);
         handles.add(createResizableHandle(part, PositionConstants.EAST));
@@ -55,7 +55,7 @@ public class InstallOptionsHandleKit
                 return null;
             }
 
-            protected void initialize() 
+            protected void initialize()
             {
                 super.initialize();
                 setCursor(null);
@@ -71,20 +71,20 @@ public class InstallOptionsHandleKit
         handles.add(createLockHandle(part, PositionConstants.NORTH_EAST));
     }
 
-    static Handle createLockHandle(GraphicalEditPart owner, int direction) 
+    static Handle createLockHandle(GraphicalEditPart owner, int direction)
     {
         InstallOptionsLockHandle handle = new InstallOptionsLockHandle(owner, direction);
         return handle;
     }
 
-    static Handle createResizableHandle(GraphicalEditPart owner, int direction) 
+    static Handle createResizableHandle(GraphicalEditPart owner, int direction)
     {
         ResizeHandle handle = new InstallOptionsResizeHandle(owner, direction);
         return handle;
     }
 
     static Handle createResizableHandle(GraphicalEditPart owner, int direction, DragTracker tracker,
-                               Cursor cursor) 
+                               Cursor cursor)
     {
         ResizeHandle handle = new InstallOptionsResizeHandle(owner, direction);
         handle.setDragTracker(tracker);
@@ -147,38 +147,38 @@ public class InstallOptionsHandleKit
         return handle;
     }
 
-    public static void addMoveHandle(GraphicalEditPart f, List handles) 
+    public static void addMoveHandle(GraphicalEditPart f, List handles)
     {
         handles.add(moveHandle(f));
     }
 
     public static void addMoveHandle(GraphicalEditPart f, List handles, DragTracker tracker,
-                                     Cursor cursor) 
+                                     Cursor cursor)
     {
         handles.add(moveHandle(f, tracker, cursor));
     }
 
-    public static Handle moveHandle(GraphicalEditPart owner) 
+    public static Handle moveHandle(GraphicalEditPart owner)
     {
         return new InstallOptionsMoveHandle(owner);
     }
 
-    public static Handle moveHandle(GraphicalEditPart owner, DragTracker tracker, 
-                                    Cursor cursor) 
+    public static Handle moveHandle(GraphicalEditPart owner, DragTracker tracker,
+                                    Cursor cursor)
     {
         MoveHandle moveHandle = new InstallOptionsMoveHandle(owner);
         moveHandle.setDragTracker(tracker);
         moveHandle.setCursor(cursor);
-        return moveHandle;      
+        return moveHandle;
     }
-    
+
     private static class InstallOptionsMoveHandle extends MoveHandle
     {
         public InstallOptionsMoveHandle(GraphicalEditPart owner)
         {
             super(owner);
         }
-        
+
         public InstallOptionsMoveHandle(GraphicalEditPart owner, Locator loc)
         {
             super(owner, loc);
@@ -194,7 +194,7 @@ public class InstallOptionsHandleKit
             }
         }
     }
-    
+
     private static class InstallOptionsResizeHandle extends ResizeHandle
     {
 
@@ -218,11 +218,11 @@ public class InstallOptionsHandleKit
             }
         }
     }
-    
+
     private static class InstallOptionsLockHandle extends AbstractHandle
     {
         private static Image cLockImage = InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("lock.handle.icon")); //$NON-NLS-1$
-        
+
         public InstallOptionsLockHandle(GraphicalEditPart owner, int direction)
         {
             super();
@@ -236,7 +236,7 @@ public class InstallOptionsHandleKit
                                                      cLockImage.getBounds().y,
                                                      cLockImage.getBounds().width,
                                                      cLockImage.getBounds().height));
-            
+
         }
 
         protected DragTracker createDragTracker()

@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -23,17 +23,17 @@ public class InstallOptionsTreeViewerDragSourceListener extends AbstractTransfer
 {
     private List mModelSelection;
 
-    public InstallOptionsTreeViewerDragSourceListener(EditPartViewer viewer) 
+    public InstallOptionsTreeViewerDragSourceListener(EditPartViewer viewer)
     {
         super(viewer, InstallOptionsTreeViewerTransfer.INSTANCE);
     }
 
-    public void dragSetData(DragSourceEvent event) 
+    public void dragSetData(DragSourceEvent event)
     {
         event.data = getViewer().getSelectedEditParts();
     }
 
-    public void dragStart(DragSourceEvent event) 
+    public void dragStart(DragSourceEvent event)
     {
         InstallOptionsTreeViewerTransfer.INSTANCE.setViewer(getViewer());
         List selection = getViewer().getSelectedEditParts();
@@ -41,14 +41,14 @@ public class InstallOptionsTreeViewerDragSourceListener extends AbstractTransfer
         saveModelSelection(selection);
     }
 
-    public void dragFinished(DragSourceEvent event) 
+    public void dragFinished(DragSourceEvent event)
     {
         InstallOptionsTreeViewerTransfer.INSTANCE.setObject(null);
         InstallOptionsTreeViewerTransfer.INSTANCE.setViewer(null);
         revertModelSelection();
     }
 
-    protected void revertModelSelection() 
+    protected void revertModelSelection()
     {
         List list = new ArrayList();
         for (int i = 0; i < mModelSelection.size(); i++) {
@@ -57,7 +57,7 @@ public class InstallOptionsTreeViewerDragSourceListener extends AbstractTransfer
         getViewer().setSelection(new StructuredSelection(list));
     }
 
-    protected void saveModelSelection(List editPartSelection) 
+    protected void saveModelSelection(List editPartSelection)
     {
         mModelSelection = new ArrayList();
         for (int i = 0; i < editPartSelection.size(); i++) {

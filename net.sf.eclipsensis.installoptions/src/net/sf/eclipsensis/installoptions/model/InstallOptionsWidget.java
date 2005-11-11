@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -40,7 +40,7 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
     public static final String PROPERTY_BOUNDS = "Bounds"; //$NON-NLS-1$
     public static final String PROPERTY_LOCKED = "Locked"; //$NON-NLS-1$
     private static final Position cDefaultPosition = new Position(0,0,63,35);
-    
+
     private static LabelProvider cPositionLabelProvider = new LabelProvider(){
         public String getText(Object element)
         {
@@ -83,14 +83,14 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
         super(section);
         mTypeDef = InstallOptionsModel.INSTANCE.getControlTypeDef(getType());
     }
-    
+
     protected void init()
     {
         super.init();
         mIndex = -1;
         mPosition = new Position();
     }
-    
+
     protected void setDefaults()
     {
         super.setDefaults();
@@ -98,7 +98,7 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
     }
 
     /**
-     * 
+     *
      */
     protected final Collection getPropertyNames()
     {
@@ -111,7 +111,7 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
     }
 
     /**
-     * 
+     *
      */
     protected final Collection doGetPropertyNames()
     {
@@ -126,7 +126,7 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
         }
         return list;
     }
-    
+
     protected void addPropertyName(List list, String setting)
     {
         if(setting.equalsIgnoreCase(InstallOptionsModel.PROPERTY_LEFT)) {
@@ -168,7 +168,7 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
                 {
                     return new CellEditor(parent) {
                         private boolean mValue;
-                        
+
                         protected Control createControl(Composite parent)
                         {
                             final Button button = new Button(parent,SWT.CHECK);
@@ -267,7 +267,7 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
             return super.getPropertyValue(id);
         }
     }
-    
+
     protected TypeConverter getTypeConverter(String property)
     {
         if (InstallOptionsModel.PROPERTY_LEFT.equals(property) ||
@@ -283,7 +283,7 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
             return super.getTypeConverter(property);
         }
     }
-    
+
     public void setPropertyValue(Object id, Object value)
     {
         if(InstallOptionsModel.PROPERTY_POSITION.equals(id)) {
@@ -328,12 +328,12 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
         mParent = parent;
         setDirty(true);
     }
-    
+
     public int getIndex()
     {
         return mIndex;
     }
-    
+
     void setIndex(int index)
     {
         mIndex = index;
@@ -344,7 +344,7 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
     {
         String displayName = getDisplayName();
         return InstallOptionsPlugin.getFormattedString("design.outline.display.name.format", //$NON-NLS-1$
-                new Object[]{new Integer(getIndex()+1), getType(), 
+                new Object[]{new Integer(getIndex()+1), getType(),
                             (Common.isEmpty(displayName)?MISSING_DISPLAY_NAME:displayName)});
     }
 
@@ -365,7 +365,7 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
             setDirty(true);
         }
     }
-    
+
     private int toGraphical(int value, int refValue)
     {
         if(value < 0) {
@@ -453,7 +453,7 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
     {
         return mPosition;
     }
-    
+
     public void setPosition(Position position)
     {
         Position mOldPosition = mPosition;
@@ -490,17 +490,17 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
         element.setIndex(-1);
         return element;
     }
-    
+
     protected Position getDefaultPosition()
     {
         return cDefaultPosition.getCopy();
     }
-    
+
     protected final String getDisplayName()
     {
-        return (String)getPropertyValue(mTypeDef.getDisplayProperty()); //$NON-NLS-1$
+        return (String)getPropertyValue(mTypeDef.getDisplayProperty());
     }
-    
+
     protected String getSectionName()
     {
         return InstallOptionsModel.SECTION_FIELD_FORMAT.format(new Object[]{new Integer(getIndex()+1)});
@@ -510,7 +510,7 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
     {
         return InstallOptionsPlugin.getImageManager().getImage(mTypeDef.getSmallIcon());
     }
-    
+
     private class IndexPropertyDescriptor extends ComboBoxPropertyDescriptor
     {
         public IndexPropertyDescriptor()
@@ -534,7 +534,7 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
             return editor;
         }
     }
-    
+
     private class FlagsPropertyDescriptor extends PropertyDescriptor
     {
         public FlagsPropertyDescriptor()
@@ -554,14 +554,14 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
             return cellEditor;
         }
     }
-        
+
     private final class FlagsCellEditor extends DialogCellEditor
     {
         private FlagsCellEditor(Composite parent)
         {
             super(parent);
         }
-        protected void updateContents(Object value) 
+        protected void updateContents(Object value)
         {
             Label label = getDefaultLabel();
             if (label != null) {
@@ -585,7 +585,7 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
         private Table mTable;
         private String mType;
         private Collection mAvailableFlags;
-        
+
         public FlagsDialog(Shell parent, List values, String type)
         {
             super(parent);
@@ -599,12 +599,12 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
         {
             return mValidator;
         }
-        
+
         public void setValidator(ICellEditorValidator validator)
         {
             mValidator = validator;
         }
-        
+
         protected void configureShell(Shell newShell)
         {
             super.configureShell(newShell);
@@ -626,7 +626,7 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
             layout.marginHeight = 0;
             layout.marginWidth = 0;
             composite2.setLayout(layout);
-            
+
             mTable = new Table(composite2,SWT.CHECK| SWT.BORDER | SWT.MULTI | SWT.HIDE_SELECTION | SWT.V_SCROLL);
             mTable.addSelectionListener(new SelectionAdapter(){
                 public void widgetSelected(SelectionEvent e)
@@ -656,7 +656,7 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
             Button b = new Button(composite2,SWT.PUSH);
             b.setText(InstallOptionsPlugin.getResourceString("select.all.label")); //$NON-NLS-1$
             b.addSelectionListener(new SelectionAdapter(){
-                public void widgetSelected(SelectionEvent e) 
+                public void widgetSelected(SelectionEvent e)
                 {
                     selectAll(true);
                 }
@@ -665,7 +665,7 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
             b = new Button(composite2,SWT.PUSH);
             b.setText(InstallOptionsPlugin.getResourceString("deselect.all.label")); //$NON-NLS-1$
             b.addSelectionListener(new SelectionAdapter(){
-                public void widgetSelected(SelectionEvent e) 
+                public void widgetSelected(SelectionEvent e)
                 {
                     selectAll(false);
                 }

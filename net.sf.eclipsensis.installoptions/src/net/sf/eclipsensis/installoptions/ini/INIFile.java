@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -27,7 +27,7 @@ public class INIFile implements IDocumentListener, IINIContainer
     public static final int INIFILE_DISCONNECTED = 2;
 
     public static final String INIFILE_CATEGORY = "__installoptions_inifile"; //$NON-NLS-1$
-    
+
     private List mChildren = new ArrayList();
     private IPositionUpdater mPositionUpdater = new DefaultPositionUpdater(INIFILE_CATEGORY);
     private List mLines = new ArrayList();
@@ -35,7 +35,7 @@ public class INIFile implements IDocumentListener, IINIContainer
     private int mChangeStartLine = -1;
     private int mChangeEndLine = -1;
     private IDocument mDocument = null;
-    
+
     private boolean mDirty = false;
     private List mErrors = new ArrayList();
     private List mWarnings = new ArrayList();
@@ -47,12 +47,12 @@ public class INIFile implements IDocumentListener, IINIContainer
             mListeners.add(listener);
         }
     }
-    
+
     public void removeListener(IINIFileListener listener)
     {
         mListeners.remove(listener);
     }
-    
+
     private void notifyListeners(int event)
     {
         for (Iterator iter = mListeners.iterator(); iter.hasNext();) {
@@ -81,7 +81,7 @@ public class INIFile implements IDocumentListener, IINIContainer
     {
         return mChildren;
     }
-    
+
     public INISection[] findSections(String name)
     {
         List list = new ArrayList();
@@ -93,7 +93,7 @@ public class INIFile implements IDocumentListener, IINIContainer
         }
         return (INISection[])list.toArray(new INISection[0]);
     }
-    
+
     public INISection[] getSections()
     {
         List list = new ArrayList();
@@ -105,7 +105,7 @@ public class INIFile implements IDocumentListener, IINIContainer
         }
         return (INISection[])list.toArray(new INISection[0]);
     }
-    
+
     private static INIComment parseComment(String text)
     {
         if(text.startsWith(";")) { //$NON-NLS-1$
@@ -113,7 +113,7 @@ public class INIFile implements IDocumentListener, IINIContainer
         }
         return null;
     }
-    
+
     private static INISection parseSection(String text)
     {
         if(text.startsWith("[")) { //$NON-NLS-1$
@@ -129,7 +129,7 @@ public class INIFile implements IDocumentListener, IINIContainer
         }
         return null;
     }
-    
+
     private static INIKeyValue parseKeyValue(String text)
     {
         if(text.length() > 0) {
@@ -142,7 +142,7 @@ public class INIFile implements IDocumentListener, IINIContainer
         }
         return null;
     }
-    
+
     public void update()
     {
         mLines.clear();
@@ -156,7 +156,7 @@ public class INIFile implements IDocumentListener, IINIContainer
         }
         validate();
     }
-    
+
     public void updateDocument(IDocument doc)
     {
         if(mDocument == doc) {
@@ -223,7 +223,7 @@ public class INIFile implements IDocumentListener, IINIContainer
             return null;
         }
     }
-    
+
     public static INIFile load(Reader r)
     {
         INIFile iniFile = new INIFile();
@@ -258,10 +258,10 @@ public class INIFile implements IDocumentListener, IINIContainer
         finally {
             Common.closeIO(br);
         }
-        
+
         return iniFile;
     }
-    
+
     private List parseLines(IDocument doc, int startLine, int endLine)
     {
         List lines = new ArrayList();
@@ -290,7 +290,7 @@ public class INIFile implements IDocumentListener, IINIContainer
         }
         return lines;
     }
-    
+
     private static INILine parse(String text)
     {
         INILine line;
@@ -347,7 +347,7 @@ public class INIFile implements IDocumentListener, IINIContainer
         }
         return new int[]{startLine,endLine};
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.jface.text.IDocumentListener#documentAboutToBeChanged(org.eclipse.jface.text.DocumentEvent)
      */
@@ -394,7 +394,7 @@ public class INIFile implements IDocumentListener, IINIContainer
                     index = (container == this?childIndex:mChildren.indexOf(container)+1);
                 }
             }
-    
+
             String text = event.getText();
             int[] lineRange = getLineRange(event.getDocument(),event.getOffset(),(text==null?0:text.length()));
             List newLines = parseLines(event.getDocument(),lineRange[0],lineRange[1]);
@@ -423,7 +423,7 @@ public class INIFile implements IDocumentListener, IINIContainer
             notifyListeners(INIFILE_MODIFIED);
         }
     }
-    
+
     public String toString()
     {
         StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
@@ -432,7 +432,7 @@ public class INIFile implements IDocumentListener, IINIContainer
         }
         return buf.toString();
     }
-    
+
     public INISection findSection(int offset, int length)
     {
         INISection[] sections = getSections();
@@ -463,7 +463,7 @@ public class INIFile implements IDocumentListener, IINIContainer
         }
         return null;
     }
-    
+
     public void validate()
     {
         validate(false);
@@ -562,7 +562,7 @@ public class INIFile implements IDocumentListener, IINIContainer
             }
         }
     }
-    
+
     public INIProblem[] getProblems()
     {
         validate();

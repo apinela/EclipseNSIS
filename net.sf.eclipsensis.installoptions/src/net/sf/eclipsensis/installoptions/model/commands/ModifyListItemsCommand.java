@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -21,7 +21,7 @@ public class ModifyListItemsCommand extends Command
     private InstallOptionsCombobox mModel;
     private List mOldListItems;
     private List mNewListItems;
-    
+
     public ModifyListItemsCommand(InstallOptionsCombobox model, List newListItems)
     {
         mModel = model;
@@ -29,12 +29,12 @@ public class ModifyListItemsCommand extends Command
         mOldListItems = mModel.getListItems();
         setLabel(InstallOptionsPlugin.getFormattedString("modify.listitems.command.label", new Object[]{mModel.getType()})); //$NON-NLS-1$
     }
-    
+
     public void execute()
     {
         mModel.setListItems(mNewListItems);
     }
-    
+
     public void undo()
     {
         mModel.setListItems(mOldListItems);

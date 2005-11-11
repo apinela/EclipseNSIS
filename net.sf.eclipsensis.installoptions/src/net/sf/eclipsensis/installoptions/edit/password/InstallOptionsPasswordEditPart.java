@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -23,7 +23,7 @@ public class InstallOptionsPasswordEditPart extends InstallOptionsTextEditPart
         return "password.direct.edit.label"; //$NON-NLS-1$
     }
 
-    protected IInstallOptionsFigure createInstallOptionsFigure() 
+    protected IInstallOptionsFigure createInstallOptionsFigure()
     {
         return new PasswordFigure((Composite)getViewer().getControl(), getInstallOptionsWidget());
     }

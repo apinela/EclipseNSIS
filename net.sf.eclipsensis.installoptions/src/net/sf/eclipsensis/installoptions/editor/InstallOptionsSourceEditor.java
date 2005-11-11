@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -54,7 +54,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
     private static final String[] KEY_BINDING_SCOPES = new String[] { IInstallOptionsConstants.EDITING_INSTALLOPTIONS_SOURCE_CONTEXT_ID };
 
     private static final String MARKER_CATEGORY = "__installoptions_marker"; //$NON-NLS-1$
-    
+
     private IPositionUpdater mMarkerPositionUpdater = new DefaultPositionUpdater(MARKER_CATEGORY);
     private ResourceTracker mResourceListener = new ResourceTracker();
     private Map mMarkerPositions = new HashMap();
@@ -76,7 +76,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
     };
     private GotoMarker mGotoMarker = null;
     private JobScheduler mJobScheduler = InstallOptionsPlugin.getDefault().getJobScheduler();
-    
+
     public InstallOptionsSourceEditor()
     {
         super();
@@ -99,7 +99,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
         }
         return valid;
     }
-    
+
     public void prepareForSwitch()
     {
         if(!mSwitching) {
@@ -112,7 +112,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
     {
         return mINIFile;
     }
-    
+
     public void iniFileChanged(INIFile iniFile, int event)
     {
         iniFile.validate();
@@ -138,17 +138,17 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
         action.setActionDefinitionId(IFoldingCommandIds.FOLDING_EXPAND_ALL);
         action.setEnabled(true);
         setAction("net.sf.eclipsensis.installoptions.expand_all", action); //$NON-NLS-1$
-        
+
         action= new TextOperationAction(resourceBundle, "projection.expand.", this, ProjectionViewer.EXPAND, true); //$NON-NLS-1$
         action.setActionDefinitionId(IFoldingCommandIds.FOLDING_EXPAND);
         action.setEnabled(true);
         setAction("net.sf.eclipsensis.installoptions.expand", action); //$NON-NLS-1$
-        
+
         action= new TextOperationAction(resourceBundle, "projection.collapse.", this, ProjectionViewer.COLLAPSE, true); //$NON-NLS-1$
         action.setActionDefinitionId(IFoldingCommandIds.FOLDING_COLLAPSE);
         action.setEnabled(true);
         setAction("net.sf.eclipsensis.installoptions.collapse", action); //$NON-NLS-1$
-        
+
         action = getAction(ITextEditorActionConstants.CONTEXT_PREFERENCES);
         if(action != null) {
             final Shell shell;
@@ -170,7 +170,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
         }
     }
 
-    protected String[] collectContextMenuPreferencePages() 
+    protected String[] collectContextMenuPreferencePages()
     {
         String[] pages = {IInstallOptionsConstants.INSTALLOPTIONS_PREFERENCE_PAGE_ID};
         return (String[])Common.joinArrays(new Object[]{pages,super.collectContextMenuPreferencePages()});
@@ -219,7 +219,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
         }
         super.dispose();
     }
-    
+
     protected void doSetInput(IEditorInput input) throws CoreException
     {
         IInstallOptionsEditorInput editorInput = (IInstallOptionsEditorInput)getEditorInput();
@@ -300,7 +300,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
                     InstallOptionsPlugin.getDefault().log(e);
                 }
             }
-        }        
+        }
     }
 
     private void addMarkerPosition(IDocument document, IMarker marker)
@@ -339,13 +339,13 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
             }
         }
     }
-    
+
     protected void initializeEditor()
     {
         super.initializeEditor();
         setSourceViewerConfiguration(new InstallOptionsSourceViewerConfiguration());
     }
-    
+
     protected ISourceViewer createSourceViewer(Composite parent, IVerticalRuler ruler, int styles)
     {
 //        fAnnotationAccess= createAnnotationAccess();
@@ -398,7 +398,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
                         }
                         mAnnotationModel.modifyAnnotations(mAnnotations,annotations,null);
                         mAnnotations = (Annotation[])annotations.keySet().toArray(new Annotation[annotations.size()]);
-                        
+
                         ISourceViewer viewer = getSourceViewer();
                         if(viewer != null) {
                             AnnotationModel model = (AnnotationModel)viewer.getAnnotationModel();
@@ -446,7 +446,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
                     }
                 });
     }
-    
+
     public Object getAdapter(Class type)
     {
         if (type == IContentOutlinePage.class) {
@@ -468,7 +468,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
     {
         private IAction mDelegate;
         private Runnable mRunnable;
-        
+
         public ActionWrapper(IAction delegate, Runnable runnable)
         {
             super();
@@ -640,7 +640,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
     private class OutlinePage extends ContentOutlinePage
     {
         private String mJobFamily = getClass().getName()+System.currentTimeMillis();
-        
+
         public void createControl(Composite parent)
         {
             super.createControl(parent);
@@ -697,7 +697,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
             super.dispose();
             mOutlinePage = null;
         }
-        
+
         /* (non-Javadoc)
          * @see net.sf.eclipsensis.installoptions.ini.IINIFileListener#iniFileChanged(net.sf.eclipsensis.installoptions.ini.INIFile)
          */
@@ -723,7 +723,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
                           });
         }
 
-        public void setSelection(ISelection selection) 
+        public void setSelection(ISelection selection)
         {
             TreeViewer viewer = getTreeViewer();
             if (viewer != null) {
@@ -731,11 +731,11 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
             }
         }
     }
-    
+
     private class GotoMarker implements IGotoMarker
     {
         private IGotoMarker mDelegate;
-        
+
         public GotoMarker(Object o)
         {
             if(o instanceof IGotoMarker) {
@@ -757,7 +757,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
             }
         }
     }
-    
+
     private static class OutlineLabelProvider extends LabelProvider
     {
         private static final String MISSING_DISPLAY_NAME = InstallOptionsPlugin.getResourceString("missing.outline.display.name"); //$NON-NLS-1$
@@ -766,7 +766,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
         private static ImageData cWarningImageData = InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("warning.decoration.icon")).getImageData(); //$NON-NLS-1$
         private static Image cUnknownImage = InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("unknown.icon")); //$NON-NLS-1$
         private static Image cSectionImage = InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("inisection.icon")); //$NON-NLS-1$
-        
+
         public String getText(Object element)
         {
             if(element instanceof INISection) {
@@ -795,7 +795,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
             }
             return super.getText(element);
         }
-        
+
         public Image getImage(Object element) {
             if(element instanceof INISection) {
                 Image image = null;
@@ -820,7 +820,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
                         image = cSectionImage;
                     }
                 }
-                
+
                 if(image == null) {
                     name = "unknown"; //$NON-NLS-1$
                     image = cUnknownImage;
@@ -853,7 +853,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
                                 drawImage(image.getImageData(),0,0);
                                 drawImage(data,0,getSize().y-data.height);
                             }
-        
+
                             protected Point getSize()
                             {
                                 return new Point(image.getBounds().width,image.getBounds().height);
@@ -863,7 +863,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
             }
             return image2;
         }
-    }   
+    }
     private class ResourceTracker implements IResourceChangeListener, IResourceDeltaVisitor
     {
         public void resourceChanged(IResourceChangeEvent event)
@@ -920,12 +920,12 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
             return false;
         }
     }
-    
+
     private class SelectionSynchronizer implements ISelectionChangedListener
     {
         private boolean mIsDispatching = false;
 
-        public void selectionChanged(SelectionChangedEvent event) 
+        public void selectionChanged(SelectionChangedEvent event)
         {
             if (!mIsDispatching) {
                 mIsDispatching = true;

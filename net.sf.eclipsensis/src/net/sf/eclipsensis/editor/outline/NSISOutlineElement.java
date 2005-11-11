@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -89,7 +89,7 @@ public class NSISOutlineElement
     {
         return mPosition;
     }
-    
+
     /**
      * @param position The position to set.
      */
@@ -102,12 +102,12 @@ public class NSISOutlineElement
     {
         mSelectPosition = selectPosition;
     }
-    
+
     public Position getSelectPosition()
     {
         return mSelectPosition;
     }
-    
+
     public void setParent(NSISOutlineElement parent)
     {
         if(mParent != null) {
@@ -118,7 +118,7 @@ public class NSISOutlineElement
             mParent.addChild(this);
         }
     }
-    
+
     /**
      * @return Returns the parent.
      */
@@ -136,7 +136,7 @@ public class NSISOutlineElement
             mChildren.remove(child);
         }
     }
-    
+
     public void addChild(NSISOutlineElement child)
     {
         if(child !=null && !mChildren.contains(child)) {
@@ -144,7 +144,7 @@ public class NSISOutlineElement
             child.setParent(this);
         }
     }
-    
+
     public void merge(Position position)
     {
         if(position != null) {

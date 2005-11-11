@@ -242,6 +242,14 @@ JNIEXPORT void JNICALL Java_net_sf_eclipsensis_util_WinAPI_SetObjectFieldValue
 JNIEXPORT jstring JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetEnvironmentVariable
   (JNIEnv *, jclass, jstring);
 
+/*
+ * Class:     net_sf_eclipsensis_util_WinAPI
+ * Method:    strftime
+ * Signature: (Ljava/lang/String;)Ljava/lang/String;
+ */
+JNIEXPORT jstring JNICALL Java_net_sf_eclipsensis_util_WinAPI_strftime
+  (JNIEnv *, jclass, jstring);
+
 #ifdef __cplusplus
 }
 #endif

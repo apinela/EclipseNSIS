@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -32,9 +32,9 @@ public class InstallOptionsDragGuidePolicy extends DragGuidePolicy
             return false;
         }
         if(super.isMoveValid(zoomedPosition)) {
-            Iterator i = getGuideEditPart().getRulerProvider().getAttachedEditParts(getHost().getModel(), 
+            Iterator i = getGuideEditPart().getRulerProvider().getAttachedEditParts(getHost().getModel(),
                     ((InstallOptionsRulerEditPart)getHost().getParent()).getDiagramViewer()).iterator();
-            
+
             int delta = zoomedPosition - getGuideEditPart().getZoomedPosition();
             while (i.hasNext()) {
                 InstallOptionsWidgetEditPart part = (InstallOptionsWidgetEditPart)i.next();

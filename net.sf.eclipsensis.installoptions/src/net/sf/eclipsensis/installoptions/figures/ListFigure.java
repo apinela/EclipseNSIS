@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -27,17 +27,17 @@ public class ListFigure extends EditableElementFigure implements IListItemsFigur
 {
     private java.util.List mListItems;
     private java.util.List mSelected;
-    
+
     public ListFigure(Composite parent, IPropertySource propertySource, int style)
     {
         super(parent, propertySource, style);
     }
-    
+
     public ListFigure(Composite parent, IPropertySource propertySource)
     {
         super(parent, propertySource);
     }
-    
+
     protected void init(IPropertySource propertySource)
     {
         setListItems((java.util.List)propertySource.getPropertyValue(InstallOptionsModel.PROPERTY_LISTITEMS));
@@ -53,7 +53,7 @@ public class ListFigure extends EditableElementFigure implements IListItemsFigur
     {
         return mListItems==null?Collections.EMPTY_LIST:mListItems;
     }
-    
+
     public void setListItems(java.util.List items)
     {
         mListItems = items;
@@ -68,7 +68,7 @@ public class ListFigure extends EditableElementFigure implements IListItemsFigur
         mSelected.clear();
         mSelected.addAll(Arrays.asList(Common.tokenize(state,IInstallOptionsConstants.LIST_SEPARATOR)));
     }
-    
+
     /**
      * @return
      */
@@ -101,7 +101,7 @@ public class ListFigure extends EditableElementFigure implements IListItemsFigur
             boolean vsVisible = (rect.width < (bounds.width - 2*borderWidth));
             boolean showHScrollbar = false;
             boolean showVScrollbar = false;
-            
+
             ScrollBar hbar = list.getHorizontalBar();
             ScrollBar vbar = list.getVerticalBar();
 

@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -46,36 +46,36 @@ public class NSISTemplateEditorDialog extends StatusMessageDialog
     private String mDescription;
     private String mPattern;
     private String mContextTypeId;
-    
+
     private Text mNameText = null;
     private Text mDescriptionText = null;
     private Combo mContextCombo = null;
-    private SourceViewer mPatternEditor = null;    
+    private SourceViewer mPatternEditor = null;
     private Button mInsertVariableButton = null;
     private boolean mIsNameModifiable = false;
 
     private DialogStatus mValidationStatus = new DialogStatus(IStatus.OK,""); //$NON-NLS-1$
     private Map mGlobalActions= new HashMap(10);
-    private List mSelectionActions = new ArrayList(3);  
+    private List mSelectionActions = new ArrayList(3);
     private String[][] mContextTypes = null;
-    
-    private ContextTypeRegistry mContextTypeRegistry; 
-    
+
+    private ContextTypeRegistry mContextTypeRegistry;
+
     private TemplateContextType mTemplateContextType = null;
-        
+
     /**
      * Creates a new dialog.
-     * 
+     *
      * @param parent the shell parent of the dialog
      * @param template the template to edit
      * @param edit whether this is a new template or an existing being edited
      * @param isNameModifiable whether the name of the template may be modified
      * @param registry the context type registry to use
      */
-    public NSISTemplateEditorDialog(Shell parent, Template template, boolean isNameModifiable, ContextTypeRegistry contextTypeRegistry) 
+    public NSISTemplateEditorDialog(Shell parent, Template template, boolean isNameModifiable, ContextTypeRegistry contextTypeRegistry)
     {
         super(parent);
-        
+
         setShellStyle(getShellStyle() | SWT.MAX | SWT.RESIZE);
 
         if(template != null) {
@@ -85,19 +85,19 @@ public class NSISTemplateEditorDialog extends StatusMessageDialog
             mContextTypeId = template.getContextTypeId();
         }
         mIsNameModifiable = isNameModifiable;
-        
+
         mContextTypeRegistry = contextTypeRegistry;
-        
+
         List contexts= new ArrayList();
         for (Iterator it= mContextTypeRegistry.contextTypes(); it.hasNext();) {
             TemplateContextType type= (TemplateContextType) it.next();
             contexts.add(new String[] { type.getId(), type.getName() });
         }
         mContextTypes= (String[][]) contexts.toArray(new String[contexts.size()][]);
-                
+
         mTemplateContextType = mContextTypeRegistry.getContextType(template.getContextTypeId());
     }
-    
+
     /**
      * @see org.eclipse.jface.window.Window#configureShell(Shell)
      */
@@ -108,7 +108,7 @@ public class NSISTemplateEditorDialog extends StatusMessageDialog
                                                                                            "edit.template.dialog.title"))); //$NON-NLS-1$
     }
 
-    public void create() 
+    public void create()
     {
         super.create();
         if(mPatternEditor != null && Common.isEmpty(mPatternEditor.getTextWidget().getText())) {
@@ -121,7 +121,7 @@ public class NSISTemplateEditorDialog extends StatusMessageDialog
         }
     }
 
-    protected Control createControl(Composite parent) 
+    protected Control createControl(Composite parent)
     {
         Composite composite= new Composite(parent, SWT.NONE);
         GridLayout layout= new GridLayout();
@@ -129,24 +129,24 @@ public class NSISTemplateEditorDialog extends StatusMessageDialog
         layout.marginHeight = 0;
         layout.marginHeight = 0;
         composite.setLayout(layout);
-        
+
         ModifyListener listener= new ModifyListener() {
             public void modifyText(ModifyEvent e) {
                 doTextWidgetChanged(e.widget);
             }
         };
-        
+
         if (mIsNameModifiable) {
-            createLabel(composite, EclipseNSISPlugin.getResourceString("template.name.label")); //$NON-NLS-1$ 
-            
+            createLabel(composite, EclipseNSISPlugin.getResourceString("template.name.label")); //$NON-NLS-1$
+
             Composite composite3= new Composite(composite, SWT.NONE);
             composite3.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-            layout= new GridLayout();       
+            layout= new GridLayout();
             layout.numColumns= 3;
             layout.marginWidth= 0;
             layout.marginHeight= 0;
             composite3.setLayout(layout);
-            
+
             mNameText= createText(composite3);
             mNameText.addModifyListener(listener);
             mNameText.addFocusListener(new FocusListener() {
@@ -158,46 +158,46 @@ public class NSISTemplateEditorDialog extends StatusMessageDialog
                     updateButtons();
                 }
             });
-            
-            createLabel(composite3, EclipseNSISPlugin.getResourceString("template.context.label")); //$NON-NLS-1$       
+
+            createLabel(composite3, EclipseNSISPlugin.getResourceString("template.context.label")); //$NON-NLS-1$
             mContextCombo= new Combo(composite3, SWT.READ_ONLY);
-    
+
             for (int i= 0; i < mContextTypes.length; i++) {
                 mContextCombo.add(mContextTypes[i][1]);
             }
-    
+
             mContextCombo.addModifyListener(listener);
         }
-        
-        createLabel(composite, EclipseNSISPlugin.getResourceString("template.description.label")); //$NON-NLS-1$      
-        
+
+        createLabel(composite, EclipseNSISPlugin.getResourceString("template.description.label")); //$NON-NLS-1$
+
         int descFlags= mIsNameModifiable ? SWT.BORDER : SWT.BORDER | SWT.READ_ONLY;
         mDescriptionText= new Text(composite, descFlags );
-        mDescriptionText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false)); 
-        
+        mDescriptionText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+
         mDescriptionText.addModifyListener(listener);
 
         Label patternLabel= createLabel(composite, EclipseNSISPlugin.getResourceString("template.pattern.label")); //$NON-NLS-1$
         patternLabel.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false));
         mPatternEditor= createEditor(composite);
-        
-        Label filler= new Label(composite, SWT.NONE);      
+
+        Label filler= new Label(composite, SWT.NONE);
         filler.setLayoutData(new GridData());
-        
+
         Composite composite3= new Composite(composite, SWT.NONE);
-        layout= new GridLayout();       
+        layout= new GridLayout();
         layout.marginWidth= 0;
         layout.marginHeight= 0;
-        composite3.setLayout(layout);        
+        composite3.setLayout(layout);
         composite3.setLayoutData(new GridData());
-        
+
         mInsertVariableButton= new Button(composite3, SWT.NONE);
         mInsertVariableButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         mInsertVariableButton.setText(EclipseNSISPlugin.getResourceString("template.insert.variable.label")); //$NON-NLS-1$
         mInsertVariableButton.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent e) {
                 mPatternEditor.getTextWidget().setFocus();
-                mPatternEditor.doOperation(NSISTemplateSourceViewer.INSERT_TEMPLATE_VARIABLE);          
+                mPatternEditor.doOperation(NSISTemplateSourceViewer.INSERT_TEMPLATE_VARIABLE);
             }
 
             public void widgetDefaultSelected(SelectionEvent e) {}
@@ -217,37 +217,37 @@ public class NSISTemplateEditorDialog extends StatusMessageDialog
         PlatformUI.getWorkbench().getHelpSystem().setHelp(composite,INSISConstants.PLUGIN_CONTEXT_PREFIX+"nsis_templatedlg_context"); //$NON-NLS-1$
         return composite;
     }
-    
-    private void doTextWidgetChanged(Widget w) 
+
+    private void doTextWidgetChanged(Widget w)
     {
         if (w == mNameText) {
             mName = mNameText.getText();
-            updateButtons();            
-        } 
+            updateButtons();
+        }
         else if (w == mContextCombo) {
             mContextTypeId = getContextId(mContextCombo.getText());
             mTemplateContextType = mContextTypeRegistry.getContextType(mContextTypeId);
-        } 
+        }
         else if (w == mDescriptionText) {
             mDescription = mDescriptionText.getText();
-        }   
+        }
     }
-    
-    private String getContextId(String name) 
+
+    private String getContextId(String name)
     {
         if (name == null) {
             return name;
         }
-        
+
         for (int i= 0; i < mContextTypes.length; i++) {
             if (name.equals(mContextTypes[i][1])) {
-                return mContextTypes[i][0]; 
+                return mContextTypes[i][0];
             }
         }
         return name;
     }
 
-    private void doSourceChanged(IDocument document) 
+    private void doSourceChanged(IDocument document)
     {
         mPattern = document.get();
         if(Common.isEmpty(mPattern)) {
@@ -267,9 +267,9 @@ public class NSISTemplateEditorDialog extends StatusMessageDialog
 
         updateUndoAction();
         updateButtons();
-    }   
+    }
 
-    private static Label createLabel(Composite parent, String name) 
+    private static Label createLabel(Composite parent, String name)
     {
         Label label= new Label(parent, SWT.NULL);
         label.setText(name);
@@ -278,15 +278,15 @@ public class NSISTemplateEditorDialog extends StatusMessageDialog
         return label;
     }
 
-    private static Text createText(Composite parent) 
+    private static Text createText(Composite parent)
     {
         Text text= new Text(parent, SWT.BORDER);
-        text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));     
-        
+        text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+
         return text;
     }
 
-    private SourceViewer createEditor(Composite parent) 
+    private SourceViewer createEditor(Composite parent)
     {
         SourceViewer viewer= createViewer(parent);
 
@@ -294,21 +294,21 @@ public class NSISTemplateEditorDialog extends StatusMessageDialog
         new NSISDocumentSetupParticipant().setup(document);
         viewer.setDocument(document);
         viewer.setEditable(true);
-        
+
         int nLines= document.getNumberOfLines();
         if (nLines < 5) {
             nLines= 5;
-        } 
-        else if (nLines > 12) {
-            nLines= 12; 
         }
-                
+        else if (nLines > 12) {
+            nLines= 12;
+        }
+
         Control control= viewer.getControl();
         GridData data= new GridData(SWT.FILL, SWT.FILL, true, true);
         data.widthHint= convertWidthInCharsToPixels(80);
         data.heightHint= convertHeightInCharsToPixels(nLines);
         control.setLayoutData(data);
-        
+
         viewer.addTextListener(new ITextListener() {
             public void textChanged(TextEvent event) {
                 if (event .getDocumentEvent() != null) {
@@ -317,7 +317,7 @@ public class NSISTemplateEditorDialog extends StatusMessageDialog
             }
         });
 
-        viewer.addSelectionChangedListener(new ISelectionChangedListener() {            
+        viewer.addSelectionChangedListener(new ISelectionChangedListener() {
             public void selectionChanged(SelectionChangedEvent event) {
                 updateSelectionDependentActions();
             }
@@ -328,17 +328,17 @@ public class NSISTemplateEditorDialog extends StatusMessageDialog
                 handleVerifyKeyPressed(event);
             }
         });
-        
+
         return viewer;
     }
-    
+
     /**
      * Creates the viewer to be used to display the pattern. Subclasses may override.
-     * 
+     *
      * @param parent the parent composite of the viewer
      * @return a configured <code>SourceViewer</code>
      */
-    private SourceViewer createViewer(Composite parent) 
+    private SourceViewer createViewer(Composite parent)
     {
         final SourceViewer viewer= new NSISTemplateSourceViewer(parent, null, null, false, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
         NSISTextUtility.hookSourceViewer(viewer);
@@ -348,7 +348,7 @@ public class NSISTemplateEditorDialog extends StatusMessageDialog
         return viewer;
     }
 
-    private void handleVerifyKeyPressed(VerifyEvent event) 
+    private void handleVerifyKeyPressed(VerifyEvent event)
     {
         if (!event.doit) {
             return;
@@ -366,11 +366,11 @@ public class NSISTemplateEditorDialog extends StatusMessageDialog
             case 'z' - 'a' + 1:
                 mPatternEditor.doOperation(ITextOperationTarget.UNDO);
                 event.doit= false;
-                break;              
+                break;
         }
     }
 
-    private void initializeActions() 
+    private void initializeActions()
     {
         TextViewerAction action= new TextViewerAction(mPatternEditor, ITextOperationTarget.UNDO);
         action.setText(EclipseNSISPlugin.getResourceString("undo.action.name")); //$NON-NLS-1$
@@ -403,7 +403,7 @@ public class NSISTemplateEditorDialog extends StatusMessageDialog
         mSelectionActions.add(ITextEditorActionConstants.CUT);
         mSelectionActions.add(ITextEditorActionConstants.COPY);
         mSelectionActions.add(ITextEditorActionConstants.PASTE);
-        
+
         // create context menu
         MenuManager manager= new MenuManager(null, null);
         manager.setRemoveAllWhenShown(true);
@@ -413,28 +413,28 @@ public class NSISTemplateEditorDialog extends StatusMessageDialog
             }
         });
 
-        StyledText text= mPatternEditor.getTextWidget();        
+        StyledText text= mPatternEditor.getTextWidget();
         Menu menu= manager.createContextMenu(text);
         text.setMenu(menu);
     }
 
-    private void fillContextMenu(IMenuManager menu) 
+    private void fillContextMenu(IMenuManager menu)
     {
         menu.add(new GroupMarker(ITextEditorActionConstants.GROUP_UNDO));
         menu.appendToGroup(ITextEditorActionConstants.GROUP_UNDO, (IAction) mGlobalActions.get(ITextEditorActionConstants.UNDO));
-        
-        menu.add(new Separator(ITextEditorActionConstants.GROUP_EDIT));     
+
+        menu.add(new Separator(ITextEditorActionConstants.GROUP_EDIT));
         menu.appendToGroup(ITextEditorActionConstants.GROUP_EDIT, (IAction) mGlobalActions.get(ITextEditorActionConstants.CUT));
         menu.appendToGroup(ITextEditorActionConstants.GROUP_EDIT, (IAction) mGlobalActions.get(ITextEditorActionConstants.COPY));
         menu.appendToGroup(ITextEditorActionConstants.GROUP_EDIT, (IAction) mGlobalActions.get(ITextEditorActionConstants.PASTE));
         menu.appendToGroup(ITextEditorActionConstants.GROUP_EDIT, (IAction) mGlobalActions.get(ITextEditorActionConstants.SELECT_ALL));
-        menu.appendToGroup(ITextEditorActionConstants.GROUP_EDIT, (IAction) mGlobalActions.get("ContentAssistProposal")); //$NON-NLS-1$ //$NON-NLS-2$
+        menu.appendToGroup(ITextEditorActionConstants.GROUP_EDIT, (IAction) mGlobalActions.get("ContentAssistProposal")); //$NON-NLS-1$
 
         menu.add(new Separator("templates")); //$NON-NLS-1$
         menu.appendToGroup("templates", (IAction) mGlobalActions.get("InsertTemplateVariableProposal")); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
-    private void updateSelectionDependentActions() 
+    private void updateSelectionDependentActions()
     {
         Iterator iterator= mSelectionActions.iterator();
         while (iterator.hasNext()) {
@@ -442,7 +442,7 @@ public class NSISTemplateEditorDialog extends StatusMessageDialog
         }
     }
 
-    private void updateUndoAction() 
+    private void updateUndoAction()
     {
         IAction action= (IAction) mGlobalActions.get(ITextEditorActionConstants.UNDO);
         if (action instanceof IUpdate) {
@@ -450,7 +450,7 @@ public class NSISTemplateEditorDialog extends StatusMessageDialog
         }
     }
 
-    private void updateAction(String actionId) 
+    private void updateAction(String actionId)
     {
         IAction action= (IAction) mGlobalActions.get(actionId);
         if (action instanceof IUpdate) {
@@ -458,30 +458,30 @@ public class NSISTemplateEditorDialog extends StatusMessageDialog
         }
     }
 
-    private int getIndex(String contextid) 
+    private int getIndex(String contextid)
     {
         if (contextid == null) {
             return -1;
         }
-        
+
         for (int i= 0; i < mContextTypes.length; i++) {
             if (contextid.equals(mContextTypes[i][0])) {
-                return i;   
+                return i;
             }
         }
         return -1;
     }
-    
-    private void updateButtons() 
-    {      
+
+    private void updateButtons()
+    {
         DialogStatus status;
 
         boolean valid= mNameText == null || mNameText.getText().trim().length() != 0;
         if (!valid) {
             status = new DialogStatus(IStatus.ERROR,EclipseNSISPlugin.getResourceString("template.error.no.name")); //$NON-NLS-1$
-        } 
+        }
         else {
-            status= mValidationStatus; 
+            status= mValidationStatus;
         }
         updateStatus(status);
     }
@@ -490,46 +490,46 @@ public class NSISTemplateEditorDialog extends StatusMessageDialog
     {
         return new Template(mName, mDescription, mContextTypeId, mPattern, false);
     }
-    
-    private static class TextViewerAction extends Action implements IUpdate 
+
+    private static class TextViewerAction extends Action implements IUpdate
     {
         private int mOperationCode= -1;
         private ITextOperationTarget mOperationTarget;
-    
-        /** 
+
+        /**
          * Creates a new action.
-         * 
+         *
          * @param viewer the viewer
          * @param operationCode the opcode
          */
-        public TextViewerAction(ITextViewer viewer, int operationCode) 
+        public TextViewerAction(ITextViewer viewer, int operationCode)
         {
             mOperationCode= operationCode;
             mOperationTarget= viewer.getTextOperationTarget();
             update();
         }
-    
+
         /**
          * Updates the enabled state of the action.
          * Fires a property change if the enabled state changes.
-         * 
+         *
          * @see Action#firePropertyChange(String, Object, Object)
          */
-        public void update() 
+        public void update()
         {
             boolean wasEnabled= isEnabled();
             boolean isEnabled= (mOperationTarget != null && mOperationTarget.canDoOperation(mOperationCode));
             setEnabled(isEnabled);
-    
+
             if (wasEnabled != isEnabled) {
                 firePropertyChange(ENABLED, wasEnabled ? Boolean.TRUE : Boolean.FALSE, isEnabled ? Boolean.TRUE : Boolean.FALSE);
             }
         }
-        
+
         /**
          * @see Action#run()
          */
-        public void run() 
+        public void run()
         {
             if (mOperationCode != -1 && mOperationTarget != null) {
                 mOperationTarget.doOperation(mOperationCode);

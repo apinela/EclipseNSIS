@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -19,7 +19,7 @@ import org.eclipse.jface.text.rules.*;
 public class NSISPluginRule implements IRule
 {
     public static final String PLUGIN_CALL_VALID_CHARS="$%'`-@{}~!#()&^:";
-    
+
     private IWordDetector mDetector;
     private IToken mToken;
     private StringBuffer mBuffer = new StringBuffer("");
@@ -36,7 +36,7 @@ public class NSISPluginRule implements IRule
         if (c != ICharacterScanner.EOF && mDetector.isWordStart((char) c)) {
             int offset = ((NSISScanner)scanner).getOffset();
             mBuffer.setLength(0);
-            
+
             mBuffer.append((char) c);
             while ((c = scanner.read()) != ICharacterScanner.EOF) {
                 if(c == INSISConstants.LINE_CONTINUATION_CHAR) {
@@ -53,14 +53,14 @@ public class NSISPluginRule implements IRule
                 }
             }
             scanner.unread();
-            
+
             Matcher m = NSISPluginManager.PLUGIN_CALL_PATTERN.matcher(mBuffer.toString());
             if(m.matches()) {
                 return mToken;
             }
             NSISTextUtility.unread(scanner, ((NSISScanner)scanner).getOffset()-offset);
         }
-        
+
         scanner.unread();
         return Token.UNDEFINED;
     }

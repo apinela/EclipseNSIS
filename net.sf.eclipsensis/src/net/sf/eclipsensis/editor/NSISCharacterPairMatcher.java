@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -51,7 +51,7 @@ public class NSISCharacterPairMatcher implements ICharacterPairMatcher
         if (mPos >= 0) {
             mDocument= document;
 
-            if (mDocument != null) { 
+            if (mDocument != null) {
                 if ( (matchBracketsAt() || matchStringAt()) && mStartPos != mEndPos) {
                     return new Region(mStartPos, mEndPos - mStartPos + 1);
                 }
@@ -72,7 +72,7 @@ public class NSISCharacterPairMatcher implements ICharacterPairMatcher
     {
         mStartPos= -1;
         mEndPos= -1;
-    
+
         // get the chars preceding and following the start mPosition
         try {
             ITypedRegion typedRegion = NSISTextUtility.getNSISPartitionAtOffset(mDocument,mPos);
@@ -109,7 +109,7 @@ public class NSISCharacterPairMatcher implements ICharacterPairMatcher
         }
         return false;
     }
-    
+
     /**
      * Match the brackets at the current selection. Return true if successful,
      * false otherwise.
@@ -117,18 +117,18 @@ public class NSISCharacterPairMatcher implements ICharacterPairMatcher
     protected boolean matchBracketsAt()
     {
     	char prevChar, nextChar;
-    
+
     	int i;
     	int bracketIndex1= BRACKETS.length;
     	int bracketIndex2= BRACKETS.length;
-    
+
     	mStartPos= -1;
     	mEndPos= -1;
-    
+
     	try {
     		prevChar= mDocument.getChar(Math.max(mPos - 1,0));
     		nextChar= (mAlwaysUsePrevChar?prevChar:mDocument.getChar(mPos));
-    
+
     		for (i= 0; i < BRACKETS.length; i= i + 2) {
     			if (prevChar == BRACKETS[i]) {
     				mStartPos= mPos - 1;
@@ -143,7 +143,7 @@ public class NSISCharacterPairMatcher implements ICharacterPairMatcher
                     break;
     			}
     		}
-    
+
     		if (mStartPos > -1 && bracketIndex1 < bracketIndex2) {
                 mAnchor= LEFT;
     			mEndPos= searchForClosingBracket(mStartPos, BRACKETS[bracketIndex1], BRACKETS[bracketIndex1 + 1], mDocument);
@@ -153,7 +153,7 @@ public class NSISCharacterPairMatcher implements ICharacterPairMatcher
     			else {
     				mStartPos= -1;
                 }
-    		} 
+    		}
             else if (mEndPos > -1) {
                 mAnchor= RIGHT;
     			mStartPos= searchForOpenBracket(mEndPos, BRACKETS[bracketIndex2 - 1], BRACKETS[bracketIndex2], mDocument);
@@ -164,11 +164,11 @@ public class NSISCharacterPairMatcher implements ICharacterPairMatcher
     				mEndPos= -1;
                 }
     		}
-    
-    	} 
+
+    	}
         catch (BadLocationException x) {
     	}
-    
+
     	return false;
     }
 
@@ -186,7 +186,7 @@ public class NSISCharacterPairMatcher implements ICharacterPairMatcher
     	int closePosition= startPosition + 1;
     	int length= document.getLength();
     	char nextChar;
-    
+
     	while (closePosition < length && stack > 0) {
     		nextChar= document.getChar(closePosition);
     		if (nextChar == openBracket && nextChar != closeBracket) {
@@ -197,7 +197,7 @@ public class NSISCharacterPairMatcher implements ICharacterPairMatcher
             }
     		closePosition++;
     	}
-    
+
     	if (stack == 0) {
     		return closePosition - 1;
         }
@@ -219,7 +219,7 @@ public class NSISCharacterPairMatcher implements ICharacterPairMatcher
     	int stack= 1;
     	int openPos= startPosition - 1;
     	char nextChar;
-    
+
     	while (openPos >= 0 && stack > 0) {
     		nextChar= document.getChar(openPos);
     		if (nextChar == closeBracket && nextChar != openBracket) {
@@ -230,7 +230,7 @@ public class NSISCharacterPairMatcher implements ICharacterPairMatcher
             }
     		openPos--;
     	}
-    
+
     	if (stack == 0) {
     		return openPos + 1;
         }

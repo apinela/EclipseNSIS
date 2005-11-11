@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -27,12 +27,12 @@ public class PasteCommand extends Command
     private Rectangle mPasteBounds;
     private List mPasteList = new ArrayList();
     private Rectangle mClientArea;
-     
+
     public PasteCommand()
     {
         super(InstallOptionsPlugin.getResourceString("paste.command.name")); //$NON-NLS-1$
     }
-    
+
     public void setParent(InstallOptionsDialog parent)
     {
         mParent = parent;

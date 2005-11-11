@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -28,13 +28,13 @@ import org.eclipse.gef.requests.CreateRequest;
 public class InstallOptionsTreeContainerEditPolicy extends TreeContainerEditPolicy
 {
     private EditPart mEditPart;
-    
+
     public InstallOptionsTreeContainerEditPolicy(EditPart editPart)
     {
         super();
         mEditPart = editPart;
     }
-    
+
     public Command getCommand(Request request)
     {
         if(((InstallOptionsEditDomain)mEditPart.getViewer().getEditDomain()).isReadOnly()) {
@@ -44,11 +44,11 @@ public class InstallOptionsTreeContainerEditPolicy extends TreeContainerEditPoli
             return super.getCommand(request);
         }
     }
-    
-    
+
+
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.gef.editpolicies.TreeContainerEditPolicy#getAddCommand(org.eclipse.gef.requests.ChangeBoundsRequest)
      */
     protected Command getAddCommand(ChangeBoundsRequest request)

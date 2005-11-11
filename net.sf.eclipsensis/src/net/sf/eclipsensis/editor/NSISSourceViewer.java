@@ -3,12 +3,13 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
 package net.sf.eclipsensis.editor;
 
+import java.io.File;
 import java.util.*;
 import java.util.List;
 
@@ -40,6 +41,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.editors.text.ILocationProvider;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.MarkerAnnotation;
 import org.eclipse.ui.views.markers.MarkerViewUtil;
@@ -56,7 +58,7 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
     public static final int TOGGLE_COMMENT = TABS_TO_SPACES + 1;
     public static final int ADD_BLOCK_COMMENT = TOGGLE_COMMENT + 1;
     public static final int REMOVE_BLOCK_COMMENT = ADD_BLOCK_COMMENT + 1;
-    
+
     private IPreferenceStore mPreferenceStore = null;
     private NSISAutoIndentStrategy mAutoIndentStrategy = null;
     private NSISTabConversionStrategy mTabConversionStrategy = null;
@@ -66,7 +68,7 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
     private NSISScrollTipHelper mScrollTipHelper = null;
     private IContentAssistant mInsertTemplateAssistant = null;
     private boolean mInsertTemplateAssistantInstalled = false;
-    
+
    /**
      * @param parent
      * @param ruler
@@ -104,7 +106,7 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
                 }
             }
         }
-        
+
         updatePresentation(contentTypes);
     }
 
@@ -122,7 +124,7 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
                     contentTypes.add(mConfiguredContentTypes[i]);
                 }
             }
-            
+
             if(Display.getCurrent() == null) {
                 Display.getDefault().asyncExec(new Runnable() {
                     public void run()
@@ -136,7 +138,7 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
             }
         }
     }
-    
+
     /**
      * @param contentTypes
      */
@@ -193,19 +195,19 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
             }
         }
         mScrollTipHelper.connect();
-        
+
         final IVerticalRuler ruler = getVerticalRuler();
         if(ruler != null) {
             ruler.getControl().addMouseListener(new MouseAdapter()
             {
-                public void mouseUp(MouseEvent e) 
+                public void mouseUp(MouseEvent e)
                 {
                     try {
                         IAnnotationModel model = getAnnotationModel();
                         IDocument document= getDocument();
                         int lineNumber = ruler.toDocumentLineNumber(e.y);
                         IRegion info= document.getLineInformation(lineNumber);
-                        
+
                         if (model != null) {
                             for(Iterator iter= model.getAnnotationIterator(); iter.hasNext(); ) {
                                 Annotation a= (Annotation) iter.next();
@@ -229,7 +231,7 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
                                 }
                             }
                         }
-                    } 
+                    }
                     catch (Exception ex) {
                     }
                 }
@@ -272,7 +274,7 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
             for(Iterator iter=fIndentChars.keySet().iterator(); iter.hasNext(); ) {
                 setIndentPrefixes(calculatePrefixes(),(String)iter.next());
             }
-            
+
             for(Iterator iter=fAutoIndentStrategies.keySet().iterator(); iter.hasNext(); ) {
                 String contentType = (String)iter.next();
                 List list = (List)fAutoIndentStrategies.get(contentType);
@@ -298,16 +300,16 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
             }
         }
     }
-    
+
     public String[] calculatePrefixes()
     {
         ArrayList list= new ArrayList();
 
         // prefix[0] is either '\t' or ' ' x tabWidth, depending on useSpaces
-                
+
         int tabWidth= mPreferenceStore.getInt(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH);
         boolean useSpaces= mPreferenceStore.getBoolean(INSISPreferenceConstants.USE_SPACES_FOR_TABS);
-        
+
         for (int i= 0; i <= tabWidth; i++) {
             StringBuffer prefix= new StringBuffer();
 
@@ -315,24 +317,24 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
                 for (int j= 0; j + i < tabWidth; j++) {
                     prefix.append(' ');
                 }
-                
+
                 if (i != 0) {
                     prefix.append('\t');
                 }
-            } 
-            else {    
+            }
+            else {
                 for (int j= 0; j < i; j++) {
                     prefix.append(' ');
                 }
-                
+
                 if (i != tabWidth) {
                     prefix.append('\t');
                 }
             }
-            
+
             list.add(prefix.toString());
         }
-        
+
         return (String[]) list.toArray(new String[list.size()]);
     }
 
@@ -351,7 +353,7 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
                         mInsertTemplateAssistant.install(this);
                         mInsertTemplateAssistantInstalled= true;
                     }
-                } 
+                }
                 else if (mInsertTemplateAssistantInstalled) {
                     mInsertTemplateAssistant.uninstall();
                     mInsertTemplateAssistantInstalled= false;
@@ -361,7 +363,7 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
                 super.enableOperation(operation, enable);
         }
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.jface.text.ITextOperationTarget#canDoOperation(int)
      */
@@ -404,7 +406,7 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
             }
             case INSERT_FILE:
             case INSERT_DIRECTORY:
-                
+
                 if(operation == INSERT_FILE) {
                     FileDialog dialog = new FileDialog(getControl().getShell(),SWT.OPEN);
                     dialog.setText(EclipseNSISPlugin.getResourceString("insert.file.description")); //$NON-NLS-1$
@@ -416,18 +418,30 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
                     text = dialog.open();
                 }
                 if(!Common.isEmpty(text)) {
-                    IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-                    if(page != null) {
-                        IEditorPart editor = page.getActiveEditor();
-                        if(editor instanceof NSISEditor) {
-                            IEditorInput editorInput = editor.getEditorInput();
-                            if(editorInput instanceof IFileEditorInput) {
-                                IFile file = ((IFileEditorInput)editorInput).getFile();
-                                if(file != null) {
-                                    text = Common.makeRelativeLocation(file, text);
+                    text = Common.escapeQuotes(text);
+                    String newText = Common.makeNSISRelativeLocation(text);
+                    if(newText.equalsIgnoreCase(text)) {
+                        IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+                        if(page != null) {
+                            IEditorPart editor = page.getActiveEditor();
+                            if(editor instanceof NSISEditor) {
+                                IEditorInput editorInput = editor.getEditorInput();
+                                if(editorInput instanceof IFileEditorInput) {
+                                    IFile file = ((IFileEditorInput)editorInput).getFile();
+                                    if(file != null) {
+                                        text = Common.makeRelativeLocation(file, text);
+                                    }
+                                }
+                                else if(editorInput instanceof ILocationProvider) {
+                                    File f = new File(((ILocationProvider)editorInput).getPath(editorInput).toOSString());
+                                    text = Common.makeRelativeLocation(f, text);
                                 }
                             }
                         }
+                        text = Common.maybeQuote(text);
+                    }
+                    else {
+                        text = newText;
                     }
                 }
                 break;
@@ -477,7 +491,7 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
             }
         }
     }
-    
+
     private void doAddBlockComment()
     {
         try {
@@ -541,9 +555,9 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
         catch (BadLocationException e) {
             EclipseNSISPlugin.getDefault().log(e);
         }
-        
+
     }
-    
+
     private void doRemoveBlockComment()
     {
         try {
@@ -590,7 +604,7 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
             EclipseNSISPlugin.getDefault().log(e);
         }
     }
-    
+
     private void doToggleComment()
     {
         try {
@@ -609,7 +623,7 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
                     allAreCommented = false;
                 }
             }
-            
+
             int startPos = doc.getLineOffset(startLine);
             int length = region.getOffset()+region.getLength()-startPos;
 
@@ -630,14 +644,14 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
                     newText.append(";").append(text[i-startLine]); //$NON-NLS-1$
                 }
             }
-            
+
             doc.replace(startPos,length,newText.toString());
         }
         catch (BadLocationException e) {
             EclipseNSISPlugin.getDefault().log(e);
         }
     }
-    
+
     private void doConvertTabsToSpaces()
     {
         int tabWidth = mPreferenceStore.getInt(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH);
@@ -691,19 +705,19 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
                 StringBuffer buffer= new StringBuffer();
                 mLineTracker.set(text);
                 int lines= mLineTracker.getNumberOfLines();
-                
+
                 try {
                     for (int i= 0; i < lines; i++) {
                         int offset= mLineTracker.getLineOffset(i);
                         int endOffset= offset + mLineTracker.getLineLength(i);
                         String line= text.substring(offset, endOffset);
-                        
+
                         int position= 0;
                         if (i == 0) {
                             IRegion firstLine= doc.getLineInformationOfOffset(textOffset);
-                            position= textOffset - firstLine.getOffset();   
+                            position= textOffset - firstLine.getOffset();
                         }
-                        
+
                         int length= line.length();
                         for (int j= 0; j < length; j++) {
                             char c= line.charAt(j);
@@ -715,7 +729,7 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
                             }
                         }
                     }
-                    
+
                     text= buffer.toString();
                 } catch (BadLocationException x) {
                 }
@@ -742,7 +756,7 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
             if(mUseSpacesForTabs) {
                 if (cmd.length == 0 && cmd.text != null) {
                     cmd.text = convertTabsToSpaces(doc, cmd.offset, cmd.text, mTabWidth);
-                }            
+                }
             }
         }
     }

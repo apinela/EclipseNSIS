@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -22,12 +22,12 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 public class NSISExternalFileEditorInput implements IPathEditorInput, ILocationProvider, IWorkbenchAdapter
 {
     private File mFile;
-    
+
     public NSISExternalFileEditorInput(File file)
     {
         mFile = file;
     }
-    
+
     protected File getFile()
     {
         return mFile;

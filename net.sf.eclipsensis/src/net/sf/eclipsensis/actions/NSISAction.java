@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -23,11 +23,11 @@ public abstract class NSISAction extends ActionDelegate implements IEditorAction
     protected EclipseNSISPlugin mPlugin = null;
     protected NSISEditor mEditor = null;
     protected IAction mAction = null;
-    
+
 	/**
 	 * The constructor.
 	 */
-	public NSISAction() 
+	public NSISAction()
     {
         mPlugin = EclipseNSISPlugin.getDefault();
 	}
@@ -40,7 +40,7 @@ public abstract class NSISAction extends ActionDelegate implements IEditorAction
         super.init(action);
         mAction = action;
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.ui.IActionDelegate2#dispose()
      */
@@ -49,7 +49,7 @@ public abstract class NSISAction extends ActionDelegate implements IEditorAction
         super.dispose();
         mAction = null;
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.ui.IEditorActionDelegate#setActiveEditor(org.eclipse.jface.action.IAction, org.eclipse.ui.IEditorPart)
      */

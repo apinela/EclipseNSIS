@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -18,10 +18,10 @@ public class NSISPatternRule implements IPredicateRule, INSISConstants
     protected IToken mSuccessToken = null;
     protected char[] mStartSequence = null;
     protected char[] mEndSequence = null;
-    
+
     protected boolean mBreaksOnEOL = false;
     protected boolean mBreaksOnEOF = false;
-    
+
     /**
      * @param successToken
      * @param startSequence
@@ -58,7 +58,7 @@ public class NSISPatternRule implements IPredicateRule, INSISConstants
         this(startSequence, endSequence, successToken, breaksOnEOL);
         mBreaksOnEOF = breaksOnEOF;
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.jface.text.rules.IPredicateRule#getSuccessToken()
      */
@@ -76,7 +76,7 @@ public class NSISPatternRule implements IPredicateRule, INSISConstants
             if (endSequenceDetected(scanner, resume)) {
                 return mSuccessToken;
             }
-        } 
+        }
         else {
             if (startSequenceDetected(scanner)) {
                 if (endSequenceDetected(scanner, resume)) {
@@ -84,7 +84,7 @@ public class NSISPatternRule implements IPredicateRule, INSISConstants
                 }
             }
         }
-        
+
         return Token.UNDEFINED;
     }
 
@@ -99,17 +99,17 @@ public class NSISPatternRule implements IPredicateRule, INSISConstants
         scanner.unread();
         return false;
     }
-    
+
     protected boolean preProcess(ICharacterScanner scanner, int c)
     {
         return true;
     }
-    
+
     protected boolean postProcess(ICharacterScanner scanner, int c)
     {
         return true;
     }
-    
+
     protected boolean endSequenceDetected(ICharacterScanner scanner, boolean resume) {
         int c;
         while ((c= scanner.read()) != ICharacterScanner.EOF) {
@@ -126,13 +126,13 @@ public class NSISPatternRule implements IPredicateRule, INSISConstants
                     scanner.unread();
                 }
             }
-            
+
             if (mEndSequence.length > 0 && c == mEndSequence[0]) {
                 // Check if the specified end sequence has been found.
                 if (NSISTextUtility.sequenceDetected(scanner, mEndSequence, true, true)) {
                     return true;
                 }
-            } 
+            }
             else if (mBreaksOnEOL) {
                 // Check for end of line since it can be used to terminate the pattern.
                 if(NSISTextUtility.delimitersDetected(scanner, c)) {

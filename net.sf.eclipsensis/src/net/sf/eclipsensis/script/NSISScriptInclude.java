@@ -3,16 +3,16 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
 package net.sf.eclipsensis.script;
 
-public class NSISScriptInclude extends AbstractNSISScriptElement 
+public class NSISScriptInclude extends AbstractNSISScriptElement
 {
     private String mFileName;
-    
+
     /**
      * @param fileName
      */
@@ -29,7 +29,7 @@ public class NSISScriptInclude extends AbstractNSISScriptElement
     {
         return mFileName;
     }
-    
+
     /**
      * @param fileName The fileName to set.
      */

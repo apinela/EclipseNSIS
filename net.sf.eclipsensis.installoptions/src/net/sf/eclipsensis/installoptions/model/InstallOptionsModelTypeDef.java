@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -31,7 +31,7 @@ public class InstallOptionsModelTypeDef
     private Constructor mEditPartConstructor;
     private Set mFlags = null;
     private Set mSettings = null;
-    
+
     InstallOptionsModelTypeDef(String type, String name, String description, String smallIcon, String largeIcon, String displayProperty, String model, String part)
     {
         mType = type;
@@ -43,7 +43,7 @@ public class InstallOptionsModelTypeDef
         mModelConstructor = createConstructor(model, cModelParamTypes);
         mEditPartConstructor = createConstructor(part, null);
     }
-    
+
     private Constructor createConstructor(String name, Class[] paramTypes)
     {
         Constructor constructor = null;
@@ -56,7 +56,7 @@ public class InstallOptionsModelTypeDef
             constructor = null;
             InstallOptionsPlugin.getDefault().log(e);
         }
-        
+
         return constructor;
     }
 
@@ -74,7 +74,7 @@ public class InstallOptionsModelTypeDef
     {
         return mType;
     }
-    
+
     public String getDescription()
     {
         return mDescription;
@@ -104,7 +104,7 @@ public class InstallOptionsModelTypeDef
         }
         return model;
     }
-    
+
     public EditPart createEditPart()
     {
         EditPart part = null;

@@ -3,13 +3,13 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
 package net.sf.eclipsensis.script;
 
-public class NSISScriptInstruction extends AbstractNSISScriptElement 
+public class NSISScriptInstruction extends AbstractNSISScriptElement
 {
     private String mName = null;
     private Object mArg = null;
@@ -17,7 +17,7 @@ public class NSISScriptInstruction extends AbstractNSISScriptElement
     /**
      * @param name
      */
-    public NSISScriptInstruction(String name) 
+    public NSISScriptInstruction(String name)
     {
         super(name);
         mName = name;
@@ -27,7 +27,7 @@ public class NSISScriptInstruction extends AbstractNSISScriptElement
      * @param name
      * @param arg
      */
-    public NSISScriptInstruction(String name, Object arg) 
+    public NSISScriptInstruction(String name, Object arg)
     {
         super(name,arg);
         mName = name;
@@ -52,7 +52,7 @@ public class NSISScriptInstruction extends AbstractNSISScriptElement
     }
 
     /**
-     * 
+     *
      */
     private void updateArgs()
     {

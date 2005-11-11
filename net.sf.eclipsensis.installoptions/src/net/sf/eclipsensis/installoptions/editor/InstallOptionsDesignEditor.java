@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -248,7 +248,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
     /**
      * @see org.eclipse.ui.part.WorkbenchPart#firePropertyChange(int)
      */
-    protected void firePropertyChange(int property) 
+    protected void firePropertyChange(int property)
     {
         super.firePropertyChange(property);
         updateActions(mPropertyActions);
@@ -258,7 +258,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
      * Lazily creates and returns the action registry.
      * @return the action registry
      */
-    public ActionRegistry getActionRegistry() 
+    public ActionRegistry getActionRegistry()
     {
         if (mActionRegistry == null) {
             mActionRegistry = new ActionRegistry();
@@ -270,7 +270,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
      * Returns the command stack.
      * @return the command stack
      */
-    protected CommandStack getCommandStack() 
+    protected CommandStack getCommandStack()
     {
         return getEditDomain().getCommandStack();
     }
@@ -279,7 +279,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
      * Returns the edit domain.
      * @return the edit domain
      */
-    protected DefaultEditDomain getEditDomain() 
+    protected DefaultEditDomain getEditDomain()
     {
         return mEditDomain;
     }
@@ -288,7 +288,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
      * Returns the graphical viewer.
      * @return the graphical viewer
      */
-    public GraphicalViewer getGraphicalViewer() 
+    public GraphicalViewer getGraphicalViewer()
     {
         return mGraphicalViewer;
     }
@@ -299,7 +299,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
      * can be updated in response to property changes.  An example is the "Save" action.
      * @return the list of property-dependant actions
      */
-    protected List getPropertyActions() 
+    protected List getPropertyActions()
     {
         return mPropertyActions;
     }
@@ -311,7 +311,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
      * the Delete action.
      * @return the list of selection-dependant actions
      */
-    protected List getSelectionActions() 
+    protected List getSelectionActions()
     {
         return mSelectionActions;
     }
@@ -321,7 +321,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
      * selection of 2 or more EditPartViewers.
      * @return the syncrhonizer
      */
-    protected SelectionSynchronizer getSelectionSynchronizer() 
+    protected SelectionSynchronizer getSelectionSynchronizer()
     {
         if (mSynchronizer == null) {
             mSynchronizer = new SelectionSynchronizer();
@@ -330,12 +330,12 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
     }
 
     /**
-     * Returns the list of {@link IAction IActions} dependant on the CommmandStack's state. 
+     * Returns the list of {@link IAction IActions} dependant on the CommmandStack's state.
      * These actions should implement the {@link UpdateAction} interface so that they can be
      * updated in response to command stack changes.  An example is the "undo" action.
      * @return the list of stack-dependant actions
      */
-    protected List getStackActions() 
+    protected List getStackActions()
     {
         return mStackActions;
     }
@@ -346,7 +346,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
      * EditPartViewers in sync.  The viewer is also registered as the ISelectionProvider
      * for the Editor's PartSite.
      */
-    protected void hookGraphicalViewer() 
+    protected void hookGraphicalViewer()
     {
         getSelectionSynchronizer().addViewer(getGraphicalViewer());
         getSite().setSelectionProvider(getGraphicalViewer());
@@ -363,7 +363,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
      * Sets the site and input for this editor then creates and initializes the actions.
      * @see org.eclipse.ui.IEditorPart#init(IEditorSite, IEditorInput)
      */
-    public void init(IEditorSite site, IEditorInput input) throws PartInitException 
+    public void init(IEditorSite site, IEditorInput input) throws PartInitException
     {
         setSite(site);
         setInput(input);
@@ -379,17 +379,17 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
      * <P>This method may be called on Editor creation, or lazily the first time {@link
      * #getActionRegistry()} is called.
      */
-    protected void initializeActionRegistry() 
+    protected void initializeActionRegistry()
     {
         createActions();
         updateActions(mPropertyActions);
         updateActions(mStackActions);
-    } 
+    }
 
     /**
      * @see org.eclipse.ui.ISelectionListener#selectionChanged(IWorkbenchPart, ISelection)
      */
-    public void selectionChanged(IWorkbenchPart part, ISelection selection) 
+    public void selectionChanged(IWorkbenchPart part, ISelection selection)
     {
         if(!mCreatedEmptyPart) {
             // If not the active editor, ignore selection changed.
@@ -407,15 +407,15 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
      * Sets the ActionRegistry for this EditorPart.
      * @param registry the registry
      */
-    public void setActionRegistry(ActionRegistry registry) 
+    public void setActionRegistry(ActionRegistry registry)
     {
         mActionRegistry = registry;
-    } 
+    }
 
     /**
      * @see org.eclipse.ui.IWorkbenchPart#setFocus()
      */
-    public void setFocus() 
+    public void setFocus()
     {
         if(!mCreatedEmptyPart) {
             getGraphicalViewer().getControl().setFocus();
@@ -426,7 +426,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
      * Sets the graphicalViewer for this EditorPart.
      * @param viewer the graphical viewer
      */
-    protected void setGraphicalViewer(GraphicalViewer viewer) 
+    protected void setGraphicalViewer(GraphicalViewer viewer)
     {
         this.mGraphicalViewer = viewer;
         getEditDomain().addViewer(viewer);
@@ -440,7 +440,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
      * its <code>update()</code> method called.
      * @param actionIds the list of IDs to update
      */
-    protected void updateActions(List actionIds) 
+    protected void updateActions(List actionIds)
     {
         ActionRegistry registry = getActionRegistry();
         Iterator iter = actionIds.iterator();
@@ -455,7 +455,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
     /**
      * @see GraphicalEditor#createPartControl(Composite)
      */
-    public void createPartControl(Composite parent) 
+    public void createPartControl(Composite parent)
     {
         if(!mINIFile.hasErrors()) {
             mPalette = new FlyoutPaletteComposite(parent, SWT.NONE, getSite().getPage(),
@@ -475,12 +475,12 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
     /**
      * Returns the palette viewer provider that is used to create palettes for the view and
      * the flyout.  Creates one if it doesn't already exist.
-     * 
+     *
      * @return  the PaletteViewerProvider that can be used to create PaletteViewers for
      *          this editor
      * @see #createPaletteViewerProvider()
      */
-    protected final PaletteViewerProvider getPaletteViewerProvider() 
+    protected final PaletteViewerProvider getPaletteViewerProvider()
     {
         if (mPaletteProvider == null) {
             mPaletteProvider = createPaletteViewerProvider();
@@ -490,10 +490,10 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
 
     /**
      * Sets the edit domain for this editor.
-     * 
+     *
      * @param   editDomain  The new EditDomain
      */
-    protected void setEditDomain(DefaultEditDomain editDomain) 
+    protected void setEditDomain(DefaultEditDomain editDomain)
     {
         mEditDomain = editDomain;
     }
@@ -525,7 +525,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
 
         InstallOptionsRootEditPart root = new InstallOptionsRootEditPart();
         viewer.setRootEditPart(root);
-       
+
         viewer.setEditPartFactory(GraphicalPartFactory.INSTANCE);
         ContextMenuProvider provider = new InstallOptionsDesignMenuProvider(this,//viewer,
                                                                     getActionRegistry());
@@ -546,7 +546,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
 
         IAction showGrid = new ToggleGridVisibilityAction(getGraphicalViewer());
         getActionRegistry().registerAction(showGrid);
-        
+
         IAction showGuides = new ToggleGuideVisibilityAction(getGraphicalViewer());
         getActionRegistry().registerAction(showGuides);
     }
@@ -559,7 +559,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
     protected PaletteViewerProvider createPaletteViewerProvider()
     {
         return new PaletteViewerProvider(getEditDomain()) {
-            protected void configurePaletteViewer(PaletteViewer viewer) 
+            protected void configurePaletteViewer(PaletteViewer viewer)
             {
                 super.configurePaletteViewer(viewer);
                 viewer.setContextMenu(new CustomPaletteContextMenuProvider(viewer));
@@ -592,12 +592,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
                 IDocument doc = provider.getDocument(input);
                 if(doc != null) {
                     if(isSwitching()) {
-                        try {
-                            updateDocument(doc);
-                        }
-                        catch (CoreException e1) {
-                            InstallOptionsPlugin.getDefault().log(e1);
-                        }
+                        updateDocument(doc);
                     }
                     input.getDocumentProvider().disconnect(input);
                     mINIFile.disconnect(doc);
@@ -624,16 +619,16 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
         return mDisposed;
     }
 
-    protected void handleExceptionOnSave(IInstallOptionsEditorInput input, IDocumentProvider p, 
-                                         CoreException exception, IProgressMonitor progressMonitor) 
+    protected void handleExceptionOnSave(IInstallOptionsEditorInput input, IDocumentProvider p,
+                                         CoreException exception, IProgressMonitor progressMonitor)
     {
         try {
             ++ mErrorCorrectionOnSave;
-            
+
             Shell shell= getSite().getShell();
-            
+
             boolean isSynchronized= false;
-            
+
             if (p instanceof IDocumentProviderExtension3)  {
                 IDocumentProviderExtension3 p3= (IDocumentProviderExtension3) p;
                 isSynchronized= p3.isSynchronized(input);
@@ -642,12 +637,12 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
                 long synchStamp= p.getSynchronizationStamp(input);
                 isSynchronized= (modifiedStamp == synchStamp);
             }
-            
+
             if (mErrorCorrectionOnSave == 1 && !isSynchronized) {
-                
+
                 String title= InstallOptionsPlugin.getResourceString("outofsync.error.save.title"); //$NON-NLS-1$
                 String msg= InstallOptionsPlugin.getResourceString("outofsync.error.save.message"); //$NON-NLS-1$
-                
+
                 if (Common.openQuestion(shell, title, msg, InstallOptionsPlugin.getShellImage())) {
                     performSave(input, p, true, progressMonitor);
                 }
@@ -656,17 +651,17 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
                         progressMonitor.setCanceled(true);
                     }
                 }
-            } 
+            }
             else {
                 String title= InstallOptionsPlugin.getResourceString("error.save.title"); //$NON-NLS-1$
                 String msg= InstallOptionsPlugin.getFormattedString("error.save.message", new Object[] { exception.getMessage() }); //$NON-NLS-1$
                 ErrorDialog.openError(shell, title, msg, exception.getStatus());
-                
+
                 if (progressMonitor != null) {
                     progressMonitor.setCanceled(true);
                 }
             }
-        } 
+        }
         finally {
             -- mErrorCorrectionOnSave;
         }
@@ -689,7 +684,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
             InstallOptionsPlugin.getDefault().log(e);
         }
     }
-    
+
     protected void editorSaved(IInstallOptionsEditorInput input)
     {
         Object source = input.getSource();
@@ -698,8 +693,8 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
             saveProperties(file);
         }
     }
-    
-    public void doRevertToSaved() 
+
+    public void doRevertToSaved()
     {
         try {
             IInstallOptionsEditorInput input = (IInstallOptionsEditorInput)getEditorInput();
@@ -714,19 +709,19 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
             InstallOptionsPlugin.getDefault().log(e);
         }
     }
-    
-    protected void performRevert(IInstallOptionsEditorInput input, IDocumentProvider provider) 
+
+    protected void performRevert(IInstallOptionsEditorInput input, IDocumentProvider provider)
     {
         if (provider == null) {
             return;
         }
-            
+
         try {
             mEditorSaving = true;
             provider.aboutToChange(getEditorInput());
             provider.resetDocument(getEditorInput());
             editorSaved(input);
-        } 
+        }
         catch (CoreException x) {
             IStatus status= x.getStatus();
             if (status == null || status.getSeverity() != IStatus.CANCEL ) {
@@ -735,7 +730,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
                 String msg= InstallOptionsPlugin.getResourceString("error.revert.message"); //$NON-NLS-1$
                 ErrorDialog.openError(shell, title, msg, x.getStatus());
             }
-        } 
+        }
         finally {
             provider.changed(getEditorInput());
             mEditorSaving = false;
@@ -744,33 +739,33 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
         }
     }
 
-    protected void performSave(IInstallOptionsEditorInput input, IDocumentProvider provider, boolean overwrite, IProgressMonitor progressMonitor) 
+    protected void performSave(IInstallOptionsEditorInput input, IDocumentProvider provider, boolean overwrite, IProgressMonitor progressMonitor)
     {
         if (provider == null) {
             return;
         }
-        
+
         try {
             mEditorSaving = true;
             provider.aboutToChange(input);
             provider.saveDocument(progressMonitor, input, provider.getDocument(input), overwrite);
             editorSaved(input);
             getCommandStack().markSaveLocation();
-        } 
-        catch (CoreException x) 
+        }
+        catch (CoreException x)
         {
             IStatus status= x.getStatus();
             if (status == null || status.getSeverity() != IStatus.CANCEL) {
                 handleExceptionOnSave(input, provider, x, progressMonitor);
             }
-        } 
+        }
         finally {
             provider.changed(input);
             mEditorSaving = false;
         }
     }
 
-    private void updateDocument(IDocument doc) throws CoreException
+    private void updateDocument(IDocument doc)
     {
         InstallOptionsDialog dialog = getInstallOptionsDialog();
         if(doc != null && dialog != null && dialog.canUpdateINIFile()) {
@@ -783,7 +778,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
     {
         performSaveAs();
     }
-    
+
     public Object getAdapter(Class type)
     {
         if(type == getClass()) {
@@ -914,19 +909,19 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
     {
         ActionRegistry registry = getActionRegistry();
         IAction action;
-        
+
         action = new PreviewAction(PREVIEW_CLASSIC, this);
         registry.registerAction(action);
-        
+
         action = new PreviewAction(PREVIEW_MUI, this);
         registry.registerAction(action);
-        
+
         action = new RefreshDiagramAction(this);
         registry.registerAction(action);
-        
+
         action = new ToggleDialogSizeVisibilityAction(this);
         registry.registerAction(action);
-        
+
         action = new ToggleEnablementAction(this);
         registry.registerAction(action);
         getSelectionActions().add(action.getId());
@@ -950,26 +945,26 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
         action = new UndoAction(this);
         registry.registerAction(action);
         getStackActions().add(action.getId());
-        
+
         action = new RedoAction(this);
         registry.registerAction(action);
         getStackActions().add(action.getId());
-        
+
         action = new SelectAllAction(this);
         registry.registerAction(action);
-        
+
         action = new DeleteAction((IWorkbenchPart)this);
         registry.registerAction(action);
         getSelectionActions().add(action.getId());
-        
+
         action = new SaveAction(this);
         registry.registerAction(action);
         getPropertyActions().add(action.getId());
-        
+
         action = new RevertToSavedAction(this);
         registry.registerAction(action);
         getPropertyActions().add(action.getId());
-        
+
         action = new PrintAction(this);
         registry.registerAction(action);
 
@@ -1000,19 +995,19 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
         action = new ArrangeAction(this, ARRANGE_BRING_TO_FRONT);
         getSelectionActions().add(action.getId());
         registry.registerAction(action);
-        
+
         action = new DistributeAction(this, DISTRIBUTE_HORIZONTAL_LEFT_EDGE);
         getSelectionActions().add(action.getId());
         registry.registerAction(action);
-        
+
         action = new DistributeAction(this, DISTRIBUTE_HORIZONTAL_RIGHT_EDGE);
         getSelectionActions().add(action.getId());
         registry.registerAction(action);
-        
+
         action = new DistributeAction(this, DISTRIBUTE_HORIZONTAL_CENTER);
         getSelectionActions().add(action.getId());
         registry.registerAction(action);
-        
+
         action = new DistributeAction(this, DISTRIBUTE_HORIZONTAL_BETWEEN);
         getSelectionActions().add(action.getId());
         registry.registerAction(action);
@@ -1020,15 +1015,15 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
         action = new DistributeAction(this, DISTRIBUTE_VERTICAL_TOP_EDGE);
         getSelectionActions().add(action.getId());
         registry.registerAction(action);
-        
+
         action = new DistributeAction(this, DISTRIBUTE_VERTICAL_BOTTOM_EDGE);
         getSelectionActions().add(action.getId());
         registry.registerAction(action);
-        
+
         action = new DistributeAction(this, DISTRIBUTE_VERTICAL_CENTER);
         getSelectionActions().add(action.getId());
         registry.registerAction(action);
-        
+
         action = new DistributeAction(this, DISTRIBUTE_VERTICAL_BETWEEN);
         getSelectionActions().add(action.getId());
         registry.registerAction(action);
@@ -1056,7 +1051,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
         registry.registerAction(action);
         getSelectionActions().add(action.getId());
 
-        action = new ExtendedEditAction((IWorkbenchPart)this);
+        action = new ExtendedEditAction(this);
         registry.registerAction(action);
         getSelectionActions().add(action.getId());
 
@@ -1084,12 +1079,12 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
         action = new AlignmentAction((IWorkbenchPart)this,PositionConstants.MIDDLE);
         registry.registerAction(action);
         getSelectionActions().add(action.getId());
-        
+
         action = new SwitchEditorAction(this, INSTALLOPTIONS_SOURCE_EDITOR_ID);
         action.setActionDefinitionId(IInstallOptionsConstants.SWITCH_EDITOR_COMMAND_ID);
         registry.registerAction(action);
         getEditorSite().getKeyBindingService().registerAction(action);
-        
+
         final Shell shell;
         if (getGraphicalViewer() != null) {
             shell= getGraphicalViewer().getControl().getShell();
@@ -1113,7 +1108,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.gef.ui.parts.GraphicalEditor#createGraphicalViewer(org.eclipse.swt.widgets.Composite)
      */
     protected void createGraphicalViewer(Composite parent)
@@ -1125,40 +1120,40 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
             {
                 if(listener.getTransfer() instanceof TemplateTransfer) {
                     super.addDropTargetListener(new TransferDropTargetListener() {
-                        public void dragEnter(DropTargetEvent event) 
+                        public void dragEnter(DropTargetEvent event)
                         {
                             listener.dragEnter(event);
                         }
-                        
+
                         public void dragLeave(DropTargetEvent event) {
                             listener.dragLeave(event);
                         }
-                        
-                        public void dragOperationChanged(DropTargetEvent event) 
+
+                        public void dragOperationChanged(DropTargetEvent event)
                         {
                             listener.dragOperationChanged(event);
                         }
-                        
-                        public void dragOver(DropTargetEvent event) 
+
+                        public void dragOver(DropTargetEvent event)
                         {
                             listener.dragOver(event);
                         }
 
-                        public void drop(DropTargetEvent event) 
+                        public void drop(DropTargetEvent event)
                         {
                             listener.drop(event);
                         }
 
-                        public void dropAccept(DropTargetEvent event) 
+                        public void dropAccept(DropTargetEvent event)
                         {
                             listener.dropAccept(event);
                         }
-                        
+
                         public Transfer getTransfer() {
                             return InstallOptionsTemplateTransfer.INSTANCE;
                         }
-                        
-                        public boolean isEnabled(DropTargetEvent event) 
+
+                        public boolean isEnabled(DropTargetEvent event)
                         {
                             return listener.isEnabled(event);
                         }
@@ -1246,23 +1241,23 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
                     provider = new InstallOptionsRulerProvider(ruler);
                 }
                 viewer.setProperty(RulerProvider.PROPERTY_VERTICAL_RULER,provider);
-                
+
                 ruler = dialog.getRuler(PositionConstants.NORTH);
                 provider = null;
                 if (ruler != null) {
                     provider = new InstallOptionsRulerProvider(ruler);
                 }
                 viewer.setProperty(RulerProvider.PROPERTY_HORIZONTAL_RULER, provider);
-                
+
                 viewer.setProperty(RulerProvider.PROPERTY_RULER_VISIBILITY,
                         loadFileProperty(file, FILEPROPERTY_SHOW_RULERS,TypeConverter.BOOLEAN_CONVERTER,
                                 SHOW_RULERS_DEFAULT));
-        
+
                 // Snap to Geometry property
                 viewer.setProperty(SnapToGeometry.PROPERTY_SNAP_ENABLED,
                         loadFileProperty(file, FILEPROPERTY_SNAP_TO_GEOMETRY,TypeConverter.BOOLEAN_CONVERTER,
                                 SNAP_TO_GEOMETRY_DEFAULT));
-        
+
                 // Grid properties
                 viewer.setProperty(SnapToGrid.PROPERTY_GRID_ENABLED,
                         loadFileProperty(file, FILEPROPERTY_SNAP_TO_GRID,TypeConverter.BOOLEAN_CONVERTER,
@@ -1279,7 +1274,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
                 viewer.setProperty(SnapToGrid.PROPERTY_GRID_VISIBLE,
                         loadFileProperty(file, FILEPROPERTY_SHOW_GRID,TypeConverter.BOOLEAN_CONVERTER,
                                 SHOW_GRID_DEFAULT));
-        
+
                 // Guides properties
                 viewer.setProperty(PROPERTY_SNAP_TO_GUIDES,
                         loadFileProperty(file, FILEPROPERTY_SNAP_TO_GUIDES,TypeConverter.BOOLEAN_CONVERTER,
@@ -1291,7 +1286,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
                         loadFileProperty(file, FILEPROPERTY_SHOW_GUIDES,TypeConverter.BOOLEAN_CONVERTER,
                                 SHOW_GUIDES_DEFAULT));
             }
-            
+
             dialog.setDialogSize((Dimension)loadFileProperty(file, FILEPROPERTY_DIALOG_SIZE,TypeConverter.DIMENSION_CONVERTER,
                             DialogSizeManager.getDefaultDialogSizeDimension()));
             dialog.setShowDialogSize(((Boolean)loadFileProperty(file, FILEPROPERTY_SHOW_DIALOG_SIZE,TypeConverter.BOOLEAN_CONVERTER,
@@ -1309,24 +1304,22 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
             dialog.setOriginalFile(original);
         }
         else {
-            if(input instanceof IPathEditorInput) {
-                dialog.setOriginalName(((IPathEditorInput)input).getPath().lastSegment());
-            }
+            dialog.setOriginalName(((IPathEditorInput)input).getPath().lastSegment());
         }
         dialog.create();
-        
+
         IDocumentProvider provider= input.getDocumentProvider();
         if (provider == null) {
             // editor has programmatically been  closed while the dialog was open
             return false;
         }
-        
+
         if (provider.isDeleted(input) && original != null) {
             String message= InstallOptionsPlugin.getFormattedString("warning.save.delete", new Object[] { original.getName() }); //$NON-NLS-1$
             dialog.setErrorMessage(null);
             dialog.setMessage(message, IMessageProvider.WARNING);
         }
-        
+
         if (dialog.open() == Window.CANCEL) {
             return false;
         }
@@ -1338,7 +1331,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
         IWorkspace workspace = ResourcesPlugin.getWorkspace();
         final IFile file = workspace.getRoot().getFile(path);
         final IEditorInput newInput= new FileEditorInput(file);
-        
+
         boolean success= false;
         if(!file.exists()) {
             try {
@@ -1348,13 +1341,13 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
                 provider.saveDocument(new NullProgressMonitor(), newInput, doc, true);
                 saveProperties(file);
                 success= true;
-            } 
+            }
             catch (CoreException x) {
                 IStatus status= x.getStatus();
                 if (status == null || status.getSeverity() != IStatus.CANCEL) {
                     String title= InstallOptionsPlugin.getResourceString("error.saveas.title"); //$NON-NLS-1$
                     String msg= InstallOptionsPlugin.getFormattedString("error.save.message", new Object[] { x.getMessage() }); //$NON-NLS-1$
-                    
+
                     if (status != null) {
                         switch (status.getSeverity()) {
                             case IStatus.INFO:
@@ -1373,7 +1366,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
             } finally {
                 provider.changed(newInput);
             }
-    
+
             if(success) {
                 try {
                     superSetInput(createInput(file));
@@ -1419,12 +1412,12 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
             saveFileProperty(file, FILEPROPERTY_SHOW_RULERS,TypeConverter.BOOLEAN_CONVERTER,
                     viewer.getProperty(RulerProvider.PROPERTY_RULER_VISIBILITY),
                     SHOW_RULERS_DEFAULT);
-    
+
             // Snap to Geometry property
             saveFileProperty(file, FILEPROPERTY_SNAP_TO_GEOMETRY,TypeConverter.BOOLEAN_CONVERTER,
                     viewer.getProperty(SnapToGeometry.PROPERTY_SNAP_ENABLED),
                     SNAP_TO_GEOMETRY_DEFAULT);
-    
+
             // Grid properties
             saveFileProperty(file, FILEPROPERTY_SNAP_TO_GRID,TypeConverter.BOOLEAN_CONVERTER,
                     viewer.getProperty(SnapToGrid.PROPERTY_GRID_ENABLED),
@@ -1441,7 +1434,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
             saveFileProperty(file, FILEPROPERTY_SHOW_GRID,TypeConverter.BOOLEAN_CONVERTER,
                     viewer.getProperty(SnapToGrid.PROPERTY_GRID_VISIBLE),
                     SHOW_GRID_DEFAULT);
-    
+
             // Guides properties
             saveFileProperty(file, FILEPROPERTY_SNAP_TO_GUIDES,TypeConverter.BOOLEAN_CONVERTER,
                     viewer.getProperty(PROPERTY_SNAP_TO_GUIDES),
@@ -1452,7 +1445,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
             saveFileProperty(file, FILEPROPERTY_SHOW_GUIDES,TypeConverter.BOOLEAN_CONVERTER,
                     viewer.getProperty(ToggleGuideVisibilityAction.PROPERTY_GUIDE_VISIBILITY),
                     SHOW_GUIDES_DEFAULT);
-    
+
             saveFileProperty(file, FILEPROPERTY_DIALOG_SIZE,TypeConverter.DIMENSION_CONVERTER,
                     dialog.getDialogSize(),
                     DialogSizeManager.getDefaultDialogSizeDimension());
@@ -1482,7 +1475,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
         else {
             dialog = new InstallOptionsDialog(null);
         }
-        
+
         setInstallOptionsDialog(dialog);
         if (!mEditorSaving) {
             IFile file = null;
@@ -1569,12 +1562,12 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
         super.setSite(site);
         getSite().getWorkbenchWindow().getPartService().addPartListener(mPartListener);
     }
-    
+
     private boolean isSwitching()
     {
         return mSwitching;
     }
-    
+
     public boolean canSwitch()
     {
         return true;
@@ -1584,7 +1577,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
     {
         return mINIFile;
     }
-    
+
     public void prepareForSwitch()
     {
         if(!mSwitching) {
@@ -1601,7 +1594,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
                 try {
                     IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
                     if(activePage != null) {
-                        IViewPart view = (IViewPart)activePage.findView(IPageLayout.ID_PROP_SHEET);
+                        IViewPart view = activePage.findView(IPageLayout.ID_PROP_SHEET);
                         if(view == null) {
                             activePage.showView(IPageLayout.ID_PROP_SHEET, null, IWorkbenchPage.VIEW_VISIBLE);
                         }
@@ -1642,20 +1635,20 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
         }
     }
 
-    protected class CustomPalettePage extends PaletteViewerPage 
+    protected class CustomPalettePage extends PaletteViewerPage
     {
         /**
          * Constructor
          * @param provider  the provider used to create a PaletteViewer
          */
-        public CustomPalettePage(PaletteViewerProvider provider) 
+        public CustomPalettePage(PaletteViewerProvider provider)
         {
             super(provider);
         }
         /**
          * @see org.eclipse.ui.part.IPage#createControl(org.eclipse.swt.widgets.Composite)
          */
-        public void createControl(Composite parent) 
+        public void createControl(Composite parent)
         {
             super.createControl(parent);
             if (mPalette != null) {
@@ -1665,7 +1658,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
         /**
          * @see org.eclipse.ui.part.IPage#dispose()
          */
-        public void dispose() 
+        public void dispose()
         {
             if (mPalette != null) {
                 mPalette.setExternalViewer(null);
@@ -1675,7 +1668,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
         /**
          * @return  the PaletteViewer created and displayed by this page
          */
-        public PaletteViewer getPaletteViewer() 
+        public PaletteViewer getPaletteViewer()
         {
             return viewer;
         }
@@ -1885,7 +1878,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
 
             if (delta.getKind() == IResourceDelta.REMOVED) {
                 Display display = getSite().getShell().getDisplay();
-                if ((IResourceDelta.MOVED_TO & delta.getFlags()) == 0) { 
+                if ((IResourceDelta.MOVED_TO & delta.getFlags()) == 0) {
                     // If the file was deleted
                     // NOTE: The case where an open, unsaved file is deleted is
                     // being handled by the
@@ -1940,14 +1933,14 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
             addDragSourceListener(new InstallOptionsTreeViewerDragSourceListener(this));
             addDropTargetListener(new InstallOptionsTreeViewerDropTargetListener(this));
         }
-        
+
         public void addDragSourceListener(TransferDragSourceListener listener)
         {
             if(listener instanceof InstallOptionsTreeViewerDragSourceListener) {
                 super.addDragSourceListener(listener);
             }
         }
-        
+
         public void addDropTargetListener(TransferDropTargetListener listener)
         {
             if(listener instanceof InstallOptionsTreeViewerDropTargetListener) {
@@ -1979,7 +1972,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
                 }
             }
             menu.appendToGroup(GEFActionConstants.GROUP_REST, new PaletteSettingsAction(getPaletteViewer()));
-            
+
             EditPart selectedPart = (EditPart)getPaletteViewer().getSelectedEditParts().get(0);
             Object model = selectedPart.getModel();
             if (model instanceof CombinedTemplateCreationEntry) {
@@ -1990,22 +1983,22 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
                 }
             }
         }
-        
+
     }
 
     private class PaletteSettingsAction extends SettingsAction
     {
         private PaletteViewer mPaletteViewer;
-        
+
         public PaletteSettingsAction(PaletteViewer palette)
         {
             super(palette);
             mPaletteViewer = palette;
         }
 
-        public void run() 
+        public void run()
         {
-            Dialog settings = new CustomPaletteSettingsDialog(mPaletteViewer.getControl().getShell(), 
+            Dialog settings = new CustomPaletteSettingsDialog(mPaletteViewer.getControl().getShell(),
                                                               mPaletteViewer.getPaletteViewerPreferences());
             settings.open();
         }
@@ -2018,12 +2011,12 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
             super(store);
             getPreferenceStore().setDefault(PREFERENCE_UNLOAD_CREATION_TOOL_WHEN_FINISHED, true);
         }
-        
+
         public void setUnloadCreationToolWhenFinished(boolean value)
         {
             getPreferenceStore().setValue(PREFERENCE_UNLOAD_CREATION_TOOL_WHEN_FINISHED, value);
         }
-        
+
         public boolean getUnloadCreationToolWhenFinished()
         {
             return getPreferenceStore().getBoolean(PREFERENCE_UNLOAD_CREATION_TOOL_WHEN_FINISHED);
@@ -2040,15 +2033,15 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
             }
         }
     }
-    
+
     private class CustomPaletteSettingsDialog extends PaletteSettingsDialog
     {
         protected static final String CACHE_UNLOAD_CREATION_TOOL_WHEN_FINISHED = "unload creation tool when finished"; //$NON-NLS-1$
         protected static final int UNLOAD_CREATION_TOOL_WHEN_FINISHED_ID = CLIENT_ID + 1;
-        
+
         private org.eclipse.gef.ui.palette.PaletteViewerPreferences mPrefs;
         private AbstractTemplateSettings mTemplateSettings;
-        
+
         public CustomPaletteSettingsDialog(Shell parentShell, org.eclipse.gef.ui.palette.PaletteViewerPreferences prefs)
         {
             super(parentShell, prefs);
@@ -2081,7 +2074,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
             composite.setLayout(layout);
             composite.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true));
             applyDialogFont(composite);
-            
+
             TabFolder mFolder = new TabFolder(parent, SWT.NONE);
             mFolder.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true));
             Dialog.applyDialogFont(mFolder);
@@ -2091,15 +2084,15 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
             item = new TabItem(mFolder, SWT.NONE);
             item.setText(InstallOptionsPlugin.getResourceString("templates.settings.tab.name")); //$NON-NLS-1$
             item.setControl(createTemplatesTab(mFolder));
-            
+
             return parent;
         }
-        
+
         private Control createTemplatesTab(Composite parent)
         {
             Composite composite = new Composite(parent, SWT.NONE);
             composite.setLayout(new GridLayout(1,false));
-            
+
             mTemplateSettings = new AbstractTemplateSettings(composite, SWT.NONE, InstallOptionsTemplateManager.INSTANCE) {
                 protected AbstractTemplate createTemplate(String name)
                 {
@@ -2131,7 +2124,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
                 }
             };
             mTemplateSettings.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true));
-            
+
             Button b = new Button(composite,SWT.PUSH);
             b.setText(InstallOptionsPlugin.getResourceString("restore.defaults.label")); //$NON-NLS-1$
             b.setLayoutData(new GridData(SWT.RIGHT,SWT.CENTER,false, false));
@@ -2147,7 +2140,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
         private Control createPaletteTab(Composite parent)
         {
             Composite composite = (Composite)super.createDialogArea(parent);
-            
+
             GridLayout layout = (GridLayout)composite.getLayout();
 
             Label label = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
@@ -2160,7 +2153,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
             data.horizontalSpan = layout.numColumns;
             data.horizontalIndent = 5;
             child.setLayoutData(data);
-            
+
             return composite;
         }
 
@@ -2177,7 +2170,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
             label.setText(InstallOptionsPlugin.getResourceString("creation.tools.options")); //$NON-NLS-1$
             GridData data = new GridData(SWT.FILL, SWT.CENTER, false, false);
             label.setLayoutData(data);
-            
+
             Button b = createButton(composite, UNLOAD_CREATION_TOOL_WHEN_FINISHED_ID,
                     InstallOptionsPlugin.getResourceString("unload.creation.tool.when.finished.label"), //$NON-NLS-1$
                     SWT.CHECK,null);
@@ -2211,7 +2204,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
                 super.buttonPressed(buttonId);
             }
         }
-        
+
         private void handleUnloadCreationToolWhenFinishedChanged(boolean value)
         {
             if(mPrefs instanceof PaletteViewerPreferences) {

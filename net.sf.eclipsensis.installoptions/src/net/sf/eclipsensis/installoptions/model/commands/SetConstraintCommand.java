@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -32,11 +32,11 @@ public class SetConstraintCommand extends Command
         Position oldPos = mModel.toGraphical(mOldPos,false);
         mGraphicalPos = pos;
         pos = mModel.toGraphical(mModel.toModel(pos),false);
-        
+
         if(moveDelta != null) {
             int left = pos.left;
             int top = pos.top;
-            
+
             if(moveDelta.x == 0) {
                 left = oldPos.left;
             }
@@ -47,13 +47,13 @@ public class SetConstraintCommand extends Command
                 pos.setLocation(left, top);
             }
         }
-        
+
         if(sizeDelta != null) {
             Dimension newSize = pos.getSize();
             Dimension oldSize = oldPos.getSize();
             int width = newSize.width;
             int height = newSize.width;
-            
+
             if(sizeDelta.width == 0) {
                 width = oldSize.width;
             }

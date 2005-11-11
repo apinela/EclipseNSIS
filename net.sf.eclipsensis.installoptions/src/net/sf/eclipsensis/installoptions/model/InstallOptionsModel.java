@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -41,7 +41,7 @@ public class InstallOptionsModel implements IPropertyChangeListener
     public static final String TYPE_DROPLIST = "DropList"; //$NON-NLS-1$
     public static final String TYPE_LISTBOX = "Listbox"; //$NON-NLS-1$
     public static final String TYPE_UNKNOWN = "Unknown"; //$NON-NLS-1$
-    
+
     public static final String SECTION_SETTINGS = "Settings"; //$NON-NLS-1$
     public static final String SECTION_FIELD_PREFIX = "Field"; //$NON-NLS-1$
     public static final Pattern SECTION_FIELD_PATTERN = Pattern.compile(SECTION_FIELD_PREFIX+" ([1-9][0-9]*)",Pattern.CASE_INSENSITIVE); //$NON-NLS-1$
@@ -86,25 +86,25 @@ public class InstallOptionsModel implements IPropertyChangeListener
     public static final String FLAGS_READONLY = "READONLY"; //$NON-NLS-1$
     public static final String FLAGS_MULTISELECT = "MULTISELECT"; //$NON-NLS-1$
     public static final String FLAGS_EXTENDEDSELECT = "EXTENDEDSELCT"; //$NON-NLS-1$
-    
+
     public static final String STATE_UNCHECKED="0"; //$NON-NLS-1$
     public static final String STATE_CHECKED="1"; //$NON-NLS-1$
-    
+
     public static final String OPTION_DEFAULT=""; //$NON-NLS-1$
     public static final String OPTION_NO="0"; //$NON-NLS-1$
     public static final String OPTION_YES="1"; //$NON-NLS-1$
 
     public static final InstallOptionsModel INSTANCE = new InstallOptionsModel();
-    
+
     private List mListeners = new ArrayList();
     private Set mDialogSettings = new CaseInsensitiveSet();
     private Map mCachedControlTypes = new CaseInsensitiveMap();
     private Map mControlTypes = new CaseInsensitiveMap();
     private Set mControlRequiredSettings = new CaseInsensitiveSet();
     private int mMaxLength;
-    
+
     /**
-     * 
+     *
      */
     private InstallOptionsModel()
     {
@@ -112,7 +112,7 @@ public class InstallOptionsModel implements IPropertyChangeListener
         loadModel();
         NSISPreferences.INSTANCE.getPreferenceStore().addPropertyChangeListener(this);
     }
-    
+
     public int getMaxLength()
     {
         return mMaxLength;
@@ -124,12 +124,12 @@ public class InstallOptionsModel implements IPropertyChangeListener
             mListeners.add(listener);
         }
     }
-    
+
     public void removeModelListener(IModelListener listener)
     {
         mListeners.remove(listener);
     }
-    
+
     private void notifyListeners()
     {
         for (Iterator iter = mListeners.iterator(); iter.hasNext();) {
@@ -179,7 +179,7 @@ public class InstallOptionsModel implements IPropertyChangeListener
             }
             ArrayList versionList = new ArrayList(versionMap.keySet());
             Collections.sort(versionList);
-            
+
             for (Iterator iter = versionList.iterator(); iter.hasNext();) {
                 Version version = (Version)iter.next();
                 ArrayList nameList = (ArrayList)versionMap.get(version);
@@ -187,7 +187,7 @@ public class InstallOptionsModel implements IPropertyChangeListener
                     String[] element = (String[])iter2.next();
                     String name = element[0];
                     String key = element[1];
-                    
+
                     String[] values = Common.loadArrayProperty(bundle,key);
                     List list = null;
                     if(name.equals("Dialog.Settings")) { //$NON-NLS-1$
@@ -231,7 +231,7 @@ public class InstallOptionsModel implements IPropertyChangeListener
 
         mDialogSettings.clear();
         mDialogSettings.addAll(dialogSettings);
-        
+
         mControlRequiredSettings.clear();
         mControlRequiredSettings.addAll(controlRequiredSettings);
 
@@ -259,7 +259,7 @@ public class InstallOptionsModel implements IPropertyChangeListener
             typeDef.setSettings(list);
             typeDef.setFlags((List)controlFlags.get(type));
         }
-        
+
         try {
             mMaxLength = Integer.parseInt(NSISPreferences.INSTANCE.getNSISDefaultSymbol("NSIS_MAX_STRLEN")); //$NON-NLS-1$
         }
@@ -281,7 +281,7 @@ public class InstallOptionsModel implements IPropertyChangeListener
         }
         return nsisVersion;
     }
-    
+
     private void processValues(List list, String[] values)
     {
         for (int i = 0; i < values.length; i++) {
@@ -309,7 +309,7 @@ public class InstallOptionsModel implements IPropertyChangeListener
             }
         }
     }
-    
+
     public InstallOptionsModelTypeDef getControlTypeDef(String type)
     {
         InstallOptionsModelTypeDef typeDef = (InstallOptionsModelTypeDef)mControlTypes.get(type);
@@ -318,17 +318,17 @@ public class InstallOptionsModel implements IPropertyChangeListener
         }
         return typeDef;
     }
-    
+
     public Collection getControlRequiredSettings()
     {
         return Collections.unmodifiableSet(mControlRequiredSettings);
     }
-    
+
     public Collection getControlTypeDefs()
     {
         return Collections.unmodifiableCollection(mControlTypes.values());
     }
-    
+
     public Collection getDialogSettings()
     {
         return Collections.unmodifiableSet(mDialogSettings);

@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -27,7 +27,7 @@ public class SetDialogSizeMenuManager extends MenuManager implements IPropertyCh
     private Map mActionMap = new LinkedHashMap();
     private boolean mNeedsRebuild = true;
     private static final Action DUMMY_ACTION = new SetDialogSizeAction(null);
-    
+
     public SetDialogSizeMenuManager(IMenuManager parent)
     {
         this(parent, null);
@@ -72,7 +72,7 @@ public class SetDialogSizeMenuManager extends MenuManager implements IPropertyCh
                     mActionMap.put(element,new SetDialogSizeAction(element));
                 }
             }
-            
+
             IContributionItem[] items = getItems();
             for (int i = 0; i < items.length; i++) {
                 remove(items[i]);

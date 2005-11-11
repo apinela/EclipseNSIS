@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -53,7 +53,7 @@ public class NSISSyntaxStyle implements Cloneable
     {
         if(obj instanceof NSISSyntaxStyle) {
             NSISSyntaxStyle style = (NSISSyntaxStyle)obj;
-            if(mBold == style.mBold && mItalic == style.mItalic && 
+            if(mBold == style.mBold && mItalic == style.mItalic &&
                mUnderline == style.mUnderline && mStrikethrough == style.mStrikethrough) {
                 return rgbsAreEqual(mForeground,style.mForeground) &&
                        rgbsAreEqual(mBackground,style.mBackground);
@@ -62,7 +62,7 @@ public class NSISSyntaxStyle implements Cloneable
         return false;
     }
 
-    private boolean rgbsAreEqual(RGB rgb1, RGB rgb2) 
+    private boolean rgbsAreEqual(RGB rgb1, RGB rgb2)
     {
         if(rgb1 == null && rgb2 == null) {
             return true;
@@ -114,7 +114,7 @@ public class NSISSyntaxStyle implements Cloneable
         buf.append(StringConverter.asString(mUnderline));
         buf.append("|"); //$NON-NLS-1$
         buf.append(StringConverter.asString(mStrikethrough));
-        
+
         return buf.toString();
     }
 
@@ -147,11 +147,11 @@ public class NSISSyntaxStyle implements Cloneable
         }
         return style;
     }
-    
+
     public TextAttribute createTextAttribute()
     {
-        int style = (mBold?SWT.BOLD:0) | (mItalic?SWT.ITALIC:0) | 
-                    (mUnderline?TextAttribute.UNDERLINE:0) | 
+        int style = (mBold?SWT.BOLD:0) | (mItalic?SWT.ITALIC:0) |
+                    (mUnderline?TextAttribute.UNDERLINE:0) |
                     (mStrikethrough?TextAttribute.STRIKETHROUGH:0);
         return new TextAttribute(ColorManager.getColor(mForeground),
                                  ColorManager.getColor(mBackground),
@@ -217,7 +217,7 @@ public class NSISSyntaxStyle implements Cloneable
     {
         mUnderline = underline;
     }
-    
+
     public void setStyle(int style, boolean flag)
     {
         switch(style) {

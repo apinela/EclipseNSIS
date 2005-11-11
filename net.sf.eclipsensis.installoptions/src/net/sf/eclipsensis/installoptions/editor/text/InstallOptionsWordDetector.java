@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -17,14 +17,14 @@ class InstallOptionsWordDetector implements IWordDetector
     private boolean mFoundWordEnd = false;
     private char mStartChar;
     private char mEndChar;
-    
+
     InstallOptionsWordDetector(char startChar, char endChar)
     {
         super();
         mStartChar = startChar;
         mEndChar = endChar;
     }
-    
+
     public boolean isWordStart(char c)
     {
         return c == mStartChar;

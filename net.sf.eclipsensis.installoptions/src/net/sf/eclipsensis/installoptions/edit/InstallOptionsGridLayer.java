@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -26,7 +26,7 @@ public class InstallOptionsGridLayer extends GridLayer implements IInstallOption
     public static final String PROPERTY_GRID_STYLE="net.sf.eclipsensis.installoptions.grid_style"; //$NON-NLS-1$
     private double mDpuX;
     private double mDpuY;
-    
+
     public InstallOptionsGridLayer()
     {
         super();
@@ -71,7 +71,7 @@ public class InstallOptionsGridLayer extends GridLayer implements IInstallOption
             }
             origin.y = y;
         }
-        
+
         g.pushState();
         if(GRID_STYLE_DOTS.equals(mStyle)) {
             g.setForegroundColor(ColorConstants.black);
@@ -79,17 +79,17 @@ public class InstallOptionsGridLayer extends GridLayer implements IInstallOption
                 int n = (int)Math.round(origin.x/(gridX*mDpuX));
                 int x = origin.x;
                 while(x < clip.x+clip.width) {
-                    x = (int)((n++)*gridX*mDpuX); 
+                    x = (int)((n++)*gridX*mDpuX);
 
                     int m = (int)Math.round(origin.y/(gridY*mDpuY));
                     int y = origin.y;
                     while(y < clip.y+clip.height) {
-                        y = (int)((m++)*gridY*mDpuY); 
+                        y = (int)((m++)*gridY*mDpuY);
                         g.drawPoint(x, y);
                     }
                 }
             }
-        
+
         }
         else {
             g.setForegroundColor(ColorConstants.lightGray);
@@ -105,7 +105,7 @@ public class InstallOptionsGridLayer extends GridLayer implements IInstallOption
                 int n = (int)Math.round(origin.y/(gridY*mDpuY));
                 int y = origin.y;
                 while(y < clip.y+clip.height) {
-                    y = (int)((n++)*gridY*mDpuY); 
+                    y = (int)((n++)*gridY*mDpuY);
                     g.drawLine(clip.x, y, clip.x + clip.width, y);
                 }
             }
@@ -113,12 +113,12 @@ public class InstallOptionsGridLayer extends GridLayer implements IInstallOption
         g.popState();
         g.restoreState();
     }
-    
+
     public String getStyle()
     {
         return mStyle;
     }
-    
+
     public void setStyle(String style)
     {
         if (style == null || !InstallOptionsGridLayer.GRID_STYLE_DOTS.equals(style)) {

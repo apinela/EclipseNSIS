@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -24,7 +24,7 @@ import org.eclipse.swt.widgets.Composite;
 public class InstallOptionsSourceViewer extends InstallOptionsSourcePreviewer
 {
     private NSISScrollTipHelper mScrollTipHelper;
-    
+
     public InstallOptionsSourceViewer(Composite parent, IVerticalRuler verticalRuler, IOverviewRuler overviewRuler,
             boolean showAnnotationsOverview, int styles)
     {
@@ -44,7 +44,7 @@ public class InstallOptionsSourceViewer extends InstallOptionsSourcePreviewer
                 }
             }
         };
-        
+
         InstallOptionsPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(listener);
         getControl().addDisposeListener(new DisposeListener(){
             public void widgetDisposed(DisposeEvent e)

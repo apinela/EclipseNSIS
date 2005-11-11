@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -29,7 +29,7 @@ public class InstallOptionsEditDomain extends DefaultEditDomain implements IAdap
 {
     private File mFile;
     private Tool mDefaultTool = new SelectionTool();
-    
+
     /**
      * @param editorPart
      */
@@ -51,12 +51,12 @@ public class InstallOptionsEditDomain extends DefaultEditDomain implements IAdap
     {
         return mFile != null && mFile.exists() && !mFile.canWrite();
     }
-    
+
     public void setFile(File file)
     {
         mFile = file;
     }
-    
+
     public void setActiveTool(Tool tool)
     {
         if(!isReadOnly() || tool instanceof SelectionTool) {
@@ -66,7 +66,7 @@ public class InstallOptionsEditDomain extends DefaultEditDomain implements IAdap
             super.setActiveTool(mDefaultTool);
         }
     }
-    
+
     public void setDefaultTool(Tool tool)
     {
         if(!isReadOnly() || tool instanceof SelectionTool) {
@@ -80,19 +80,19 @@ public class InstallOptionsEditDomain extends DefaultEditDomain implements IAdap
     private class InstallOptionsCommandStack extends CommandStack implements IModelCommandListener
     {
         private Stack mCurrentCommands = new Stack();
-        
+
         public synchronized void execute(Command command)
         {
             if(!isReadOnly()) {
                 CompoundCommand cmd = new CompoundCommand(command.getLabel());
                 cmd.add(command);
                 command = cmd;
-                mCurrentCommands.push(command); 
+                mCurrentCommands.push(command);
                 super.execute(command);
                 mCurrentCommands.pop();
             }
             else {
-                IEditorActionBarContributor contributor= getEditorPart().getEditorSite().getActionBarContributor();     
+                IEditorActionBarContributor contributor= getEditorPart().getEditorSite().getActionBarContributor();
                 if ((contributor instanceof EditorActionBarContributor)) {
                     IActionBars actionBars= ((EditorActionBarContributor) contributor).getActionBars();
                     if (actionBars != null) {

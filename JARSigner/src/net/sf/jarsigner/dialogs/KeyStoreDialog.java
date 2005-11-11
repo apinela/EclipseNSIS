@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -28,7 +28,7 @@ public class KeyStoreDialog extends Dialog
     private String mKeyStoreName;
     private String mStorePassword;
     private KeyStore mKeyStore = null;
-    
+
     public KeyStoreDialog(Shell parentShell, String keyStoreName, String storePassword)
     {
         super(parentShell);
@@ -55,7 +55,7 @@ public class KeyStoreDialog extends Dialog
         layout.marginWidth = 0;
         composite.setLayout(layout);
         applyDialogFont(composite);
-        
+
         Label l = new Label(composite, SWT.NONE);
         l.setText(JARSignerPlugin.getResourceString("key.store.location")); //$NON-NLS-1$
         l.setLayoutData(new GridData());
@@ -73,7 +73,7 @@ public class KeyStoreDialog extends Dialog
         b.setLayoutData(new GridData());
         b.setText(UtilitiesPlugin.getResourceString("browse.label")); //$NON-NLS-1$
         b.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) 
+            public void widgetSelected(SelectionEvent e)
             {
                 FileDialog dialog = new FileDialog(getShell(),SWT.OPEN);
                 dialog.setText(JARSignerPlugin.getResourceString("key.store.location.message")); //$NON-NLS-1$
@@ -85,7 +85,7 @@ public class KeyStoreDialog extends Dialog
                 }
             }
         });
-        
+
         l = new Label(composite, SWT.NONE);
         l.setText(JARSignerPlugin.getResourceString("store.pass")); //$NON-NLS-1$
         l.setLayoutData(new GridData());
@@ -101,7 +101,7 @@ public class KeyStoreDialog extends Dialog
                 mStorePassword = text2.getText();
             }
         });
-        
+
         return parent;
     }
 

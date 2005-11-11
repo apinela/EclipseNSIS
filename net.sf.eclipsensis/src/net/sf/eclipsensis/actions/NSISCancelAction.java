@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -14,7 +14,7 @@ import net.sf.eclipsensis.makensis.MakeNSISRunner;
 
 import org.eclipse.jface.action.IAction;
 
-public class NSISCancelAction extends NSISScriptAction 
+public class NSISCancelAction extends NSISScriptAction
 {
     /* (non-Javadoc)
      * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)

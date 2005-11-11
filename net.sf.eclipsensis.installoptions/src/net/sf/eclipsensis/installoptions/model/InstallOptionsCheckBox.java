@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -29,7 +29,7 @@ public class InstallOptionsCheckBox extends InstallOptionsButton
     {
         super(section);
     }
-    
+
     public String getType()
     {
         return InstallOptionsModel.TYPE_CHECKBOX;
@@ -48,7 +48,7 @@ public class InstallOptionsCheckBox extends InstallOptionsButton
     protected IPropertyDescriptor createPropertyDescriptor(String name)
     {
         if(name.equals(InstallOptionsModel.PROPERTY_STATE)) {
-            CustomComboBoxPropertyDescriptor descriptor = new CustomComboBoxPropertyDescriptor(InstallOptionsModel.PROPERTY_STATE, 
+            CustomComboBoxPropertyDescriptor descriptor = new CustomComboBoxPropertyDescriptor(InstallOptionsModel.PROPERTY_STATE,
                     InstallOptionsPlugin.getResourceString("state.property.name"), //$NON-NLS-1$
                     getStateData(), getStateDisplay(), getStateDefault());
             descriptor.setValidator(new NSISStringLengthValidator(InstallOptionsModel.PROPERTY_STATE));

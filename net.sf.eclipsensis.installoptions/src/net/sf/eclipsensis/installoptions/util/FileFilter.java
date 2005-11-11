@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -18,7 +18,7 @@ public class FileFilter implements Cloneable
     private static final FilePattern[] EMPTY_PATTERN_ARRAY = new FilePattern[0];
     private String mDescription;
     private FilePattern[] mPatterns = EMPTY_PATTERN_ARRAY;
-    
+
     public FileFilter()
     {
     }
@@ -29,7 +29,7 @@ public class FileFilter implements Cloneable
         setDescription(description);
         setPatterns(patterns);
     }
-    
+
     public FileFilter(FileFilter filter)
     {
         this();
@@ -69,15 +69,15 @@ public class FileFilter implements Cloneable
     {
         mPatterns = (patterns==null?EMPTY_PATTERN_ARRAY:patterns);
     }
-    
+
     public String toString()
     {
         StringBuffer buf = new StringBuffer(mDescription);
-        buf.append(IInstallOptionsConstants.LIST_SEPARATOR); //$NON-NLS-1$
+        buf.append(IInstallOptionsConstants.LIST_SEPARATOR);
         buf.append(getPatternString());
         return buf.toString();
     }
-    
+
     public String getPatternString()
     {
         return Common.flatten(mPatterns,InstallOptionsFileRequest.FILTER_SEPARATOR);

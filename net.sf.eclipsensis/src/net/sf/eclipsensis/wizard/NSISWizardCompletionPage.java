@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -31,7 +31,7 @@ import org.eclipse.ui.dialogs.SaveAsDialog;
 public class NSISWizardCompletionPage extends AbstractNSISWizardPage
 {
     public static final String NAME = "nsisWizardCompletion"; //$NON-NLS-1$
-    
+
     private static final int PROGRAM_FILE_CHECK=1;
     private static final int README_FILE_CHECK=2;
     private static final int SAVE_PATH_CHECK=4;
@@ -56,7 +56,7 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
             return false;
         }
     }
-    
+
     private boolean validateSavePath()
     {
         String pathname = mWizard.getSettings().getSavePath();
@@ -78,7 +78,7 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
         }
         else {
             NSISWizardSettings settings = mWizard.getSettings();
-    
+
             boolean b = (((flag & PROGRAM_FILE_CHECK) == 0) || validateNSISPath(settings.getRunProgramAfterInstall())&&
                          ((flag & README_FILE_CHECK) == 0) || validateNSISPath(settings.getOpenReadmeAfterInstall())&&
                          ((flag & SAVE_PATH_CHECK) == 0) || validateSavePath());
@@ -106,7 +106,7 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
     {
         return INSISConstants.PLUGIN_CONTEXT_PREFIX+"nsis_wizcomplete_context"; //$NON-NLS-1$
     }
-    
+
     protected Control createPageControl(Composite parent)
     {
         final Composite composite = new Composite(parent, SWT.NONE);
@@ -114,14 +114,14 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
 
         GridLayout layout = new GridLayout(1,false);
         composite.setLayout(layout);
-    
+
         createMiscInstallerSettingsGroup(composite);
         createPostInstallationActionsGroup(composite);
         createMiscUninstallerSettingsGroup(composite);
         createScriptSaveSettingsGroup(composite);
 
         validatePage(ALL_CHECK);
-        
+
         return composite;
     }
 
@@ -151,7 +151,7 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
                 mWizard.getSettings().setAutoCloseInstaller(((Button)e.widget).getSelection());
             }
         });
-        
+
         final Button b3 = NSISWizardDialogUtil.createCheckBox(group, "uninstaller.shortcut.startmenu.label", //$NON-NLS-1$
                                         settings.isCreateUninstallerStartMenuShortcut(),
                                         settings.isCreateUninstaller(), null, false);
@@ -161,7 +161,7 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
                 mWizard.getSettings().setCreateUninstallerStartMenuShortcut(((Button)e.widget).getSelection());
             }
         });
-        
+
         final Button b4 = NSISWizardDialogUtil.createCheckBox(group, "uninstaller.entry.control.panel.label", //$NON-NLS-1$
                                         settings.isCreateUninstallerControlPanelEntry(),
                                         settings.isCreateUninstaller(), null, false);
@@ -222,7 +222,7 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
         if(l != null) {
             ((GridData)l.getLayoutData()).horizontalIndent=8;
         }
-        
+
         c1.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e)
             {
@@ -234,7 +234,7 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
                 }
             }
         });
-        
+
         final Combo c2 = NSISWizardDialogUtil.createContentBrowser(group, "open.readme.label", settings.getOpenReadmeAfterInstall(), mWizard, true, null, false); //$NON-NLS-1$
         c2.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e)
@@ -272,7 +272,7 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
                 validateField(SAVE_PATH_CHECK);
             }
         });
-        
+
         Button b = new Button(group,SWT.PUSH);
         b.setText(EclipseNSISPlugin.getResourceString("browse.text")); //$NON-NLS-1$
         b.setToolTipText(EclipseNSISPlugin.getResourceString("browse.tooltip")); //$NON-NLS-1$
@@ -300,7 +300,7 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
                 }
             }
         });
-        
+
         final Button b2 = NSISWizardDialogUtil.createCheckBox(group, "make.paths.relative.label", //$NON-NLS-1$
                 settings.isMakePathsRelative(),true, null, false);
         b2.addSelectionListener(new SelectionAdapter(){
@@ -309,7 +309,7 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
                 mWizard.getSettings().setMakePathsRelative(((Button)e.widget).getSelection());
             }
         });
-        
+
         final Button b3 = NSISWizardDialogUtil.createCheckBox(group, "compile.label", //$NON-NLS-1$
                                         settings.isCompileScript(),
                                         true, null, false);
@@ -332,12 +332,12 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
                 mWizard.getSettings().setTestScript(((Button)e.widget).getSelection());
             }
         });
- 
+
         if(mWizard instanceof NSISScriptWizard) {
             final NSISScriptWizard scriptWizard = (NSISScriptWizard)mWizard;
             final Button button = NSISWizardDialogUtil.createCheckBox(group,"save.wizard.template.label",scriptWizard.isSaveAsTemplate(),true,null,false); //$NON-NLS-1$
             button.addSelectionListener(new SelectionAdapter() {
-                public void widgetSelected(SelectionEvent e) 
+                public void widgetSelected(SelectionEvent e)
                 {
                     scriptWizard.setSaveAsTemplate(button.getSelection());
                 }
@@ -372,7 +372,7 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
 
         final Group group = NSISWizardDialogUtil.createGroup(parent, 1, "miscellaneous.uninstaller.settings.group.label",null,false); //$NON-NLS-1$
         group.setEnabled(settings.isCreateUninstaller());
-        
+
         final Button b = NSISWizardDialogUtil.createCheckBox(group, "silent.uninstaller", //$NON-NLS-1$
                 settings.isSilentUninstaller(),true, null, false);
         b.addSelectionListener(new SelectionAdapter(){
@@ -382,7 +382,7 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
             }
         });
         final MasterSlaveController m = new MasterSlaveController(b,true);
-        
+
         final Button b1 = NSISWizardDialogUtil.createCheckBox(group, "show.uninstaller.details.label", //$NON-NLS-1$
                               settings.isShowUninstDetails(),true, m, false);
         b1.addSelectionListener(new SelectionAdapter(){
@@ -401,7 +401,7 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
             }
         });
         m.updateSlaves();
-        
+
         addPageChangedRunnable(new Runnable() {
             public void run()
             {

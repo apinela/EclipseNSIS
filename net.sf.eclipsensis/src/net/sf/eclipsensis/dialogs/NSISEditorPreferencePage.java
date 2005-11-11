@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -56,11 +56,11 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
             {EclipseNSISPlugin.getResourceString("numbers.label"),NUMBERS_STYLE} //$NON-NLS-1$
     };
     private static final String[] cPreferenceKeys;
-    
+
     private Map mStyleMap = new HashMap();
     private PreferenceStoreWrapper mPreferenceStore;
     private NSISSourceViewer mPreviewer;
-    
+
     private Map mCheckBoxes= new HashMap();
     private SelectionListener mCheckBoxListener= new SelectionListener() {
         public void widgetDefaultSelected(SelectionEvent e) {
@@ -70,7 +70,7 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
             mPreferenceStore.setValue((String) mCheckBoxes.get(button), button.getSelection());
         }
     };
-    
+
     private List mSyntaxStyleList;
     private ColorEditor mSyntaxColorEditor;
     private Button mStyleBold;
@@ -106,19 +106,19 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
         cPreferenceKeys[i++] = MATCHING_DELIMITERS;
         cPreferenceKeys[i++] = MATCHING_DELIMITERS_COLOR;
     }
-    
-    public NSISEditorPreferencePage() 
+
+    public NSISEditorPreferencePage()
     {
         super();
         setDescription(EclipseNSISPlugin.getResourceString("editor.preferences.description")); //$NON-NLS-1$
         setPreferenceStore(NSISPreferences.INSTANCE.getPreferenceStore());
         mPreferenceStore= new PreferenceStoreWrapper(getPreferenceStore());
-        ((PreferenceStoreWrapper)mPreferenceStore).load(cPreferenceKeys);
+        mPreferenceStore.load(cPreferenceKeys);
     }
 
     /*
      * @see IWorkbenchPreferencePage#init()
-     */ 
+     */
     public void init(IWorkbench workbench) {
     }
 
@@ -131,7 +131,7 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
     }
 
     private void handleSyntaxStyleListSelection()
-    { 
+    {
         int i= mSyntaxStyleList.getSelectionIndex();
         String key= cSyntaxStyleListModel[i][1];
         NSISSyntaxStyle style = getStyle(key);
@@ -141,7 +141,7 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
         mStyleUnderline.setSelection(style.isUnderline());
         mStyleStrikethrough.setSelection(style.isStrikethrough());
     }
-    
+
     private NSISSyntaxStyle getStyle(String key)
     {
         NSISSyntaxStyle style = (NSISSyntaxStyle)mStyleMap.get(key);
@@ -151,17 +151,17 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
         }
         return style;
     }
-    
+
     private Control createAppearanceGroup(Composite parent)
     {
         Composite appearanceComposite= new Composite(parent, SWT.NONE);
-        GridLayout layout= new GridLayout(); 
+        GridLayout layout= new GridLayout();
         layout.numColumns= 2;
         appearanceComposite.setLayout(layout);
 
         String label = EclipseNSISPlugin.getResourceString("use.spaces"); //$NON-NLS-1$
         addCheckBox(appearanceComposite, label, USE_SPACES_FOR_TABS, 0);
-        
+
         label= EclipseNSISPlugin.getResourceString("show.matching.delimiters"); //$NON-NLS-1$
         Button cb = addCheckBox(appearanceComposite, label, MATCHING_DELIMITERS, 0);
         Label l = new Label(appearanceComposite, SWT.NONE);
@@ -169,7 +169,7 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
         GridData gd= new GridData(SWT.BEGINNING, SWT.CENTER, false, false);
         gd.horizontalIndent= 20;
         l.setLayoutData(gd);
-        
+
         mMatchingDelimsColorEditor = new ColorEditor(appearanceComposite);
         Button button = mMatchingDelimsColorEditor.getButton();
         button.setLayoutData(new GridData());
@@ -181,21 +181,21 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
         mMasterSlaveController = new MasterSlaveController(cb);
         mMasterSlaveController.addSlave(l);
         mMasterSlaveController.addSlave(button);
-        
+
         return appearanceComposite;
     }
-    
+
     private Button makeStyleButton(Composite parent, String labelResource, final int styleFlag)
     {
         final Button styleButton = new Button(parent, SWT.CHECK);
-        styleButton.setText(EclipseNSISPlugin.getResourceString(labelResource)); //$NON-NLS-1$
+        styleButton.setText(EclipseNSISPlugin.getResourceString(labelResource));
         GridData gd= new GridData(SWT.BEGINNING, SWT.CENTER, true, false);
         gd.horizontalSpan= 2;
         styleButton.setLayoutData(gd);
         styleButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 boolean state = styleButton.getSelection();
-                
+
                 int i= mSyntaxStyleList.getSelectionIndex();
                 String key= cSyntaxStyleListModel[i][1];
                 if (key != null) {
@@ -211,7 +211,7 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
     private Control createSyntaxGroup(Composite parent)
     {
         Composite syntaxComposite= new Composite(parent, SWT.NONE);
-        GridLayout layout= new GridLayout(1, false); 
+        GridLayout layout= new GridLayout(1, false);
         syntaxComposite.setLayout(layout);
 
         Label l= new Label(syntaxComposite, SWT.LEFT);
@@ -223,21 +223,21 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
         layout.marginHeight= 0;
         layout.marginWidth= 0;
         listComposite.setLayout(layout);
-        listComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));      
+        listComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 
         mSyntaxStyleList= new List(listComposite, SWT.SINGLE | SWT.V_SCROLL | SWT.BORDER);
         GridData gd= new GridData(SWT.FILL, SWT.BEGINNING, true, true);
         gd.heightHint= convertHeightInCharsToPixels(9);
         gd.widthHint= convertWidthInCharsToPixels(30);
         mSyntaxStyleList.setLayoutData(gd);
-                        
+
         Composite stylesComposite= new Composite(listComposite, SWT.NONE);
         layout= new GridLayout(2, false);
         layout.marginHeight= 0;
         layout.marginWidth= 0;
         stylesComposite.setLayout(layout);
         stylesComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-        
+
         l= new Label(stylesComposite, SWT.LEFT);
         l.setText(EclipseNSISPlugin.getResourceString("color")); //$NON-NLS-1$
         l.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
@@ -245,7 +245,7 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
         mSyntaxColorEditor= new ColorEditor(stylesComposite);
         Button foregroundColorButton= mSyntaxColorEditor.getButton();
         foregroundColorButton.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, true, false));
-        
+
         mSyntaxStyleList.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 handleSyntaxStyleListSelection();
@@ -260,7 +260,7 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
                 saveStyle(key, style);
             }
         });
-        
+
         mStyleBold = makeStyleButton(stylesComposite, "bold", SWT.BOLD); //$NON-NLS-1$
         mStyleItalic = makeStyleButton(stylesComposite, "italic", SWT.ITALIC); //$NON-NLS-1$
         mStyleUnderline = makeStyleButton(stylesComposite, "underline", TextAttribute.UNDERLINE); //$NON-NLS-1$
@@ -278,7 +278,7 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
 
         return syntaxComposite;
     }
-    
+
     private void saveStyle(String key, NSISSyntaxStyle style)
     {
         mPreferenceStore.setValue(key, style.toString());
@@ -286,34 +286,34 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
             mPreviewer.processPropertyQueue();
         }
     }
-    
+
     private Control createPreviewer(Composite parent)
     {
         mPreviewer= new NSISSourceViewer(parent, null, null, false, SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
         NSISTextUtility.hookSourceViewer(mPreviewer);
         SourceViewerConfiguration configuration= new NSISSourceViewerConfiguration(new ChainedPreferenceStore(new IPreferenceStore[]{mPreferenceStore,getPreferenceStore(), EditorsUI.getPreferenceStore()}));
         mPreviewer.configure(configuration);
-        
+
         String content= new String(Common.loadContentFromStream(getClass().getResourceAsStream("NSISPreview.txt"))); //$NON-NLS-1$
         IDocument document= new Document(content);
         new NSISDocumentSetupParticipant().setup(document);
         mPreviewer.setDocument(document);
         mPreviewer.setEditable(false);
-        
+
         return mPreviewer.getControl();
     }
-    
+
     /*
      * @see PreferencePage#createContents(Composite)
      */
-    protected Control createContents(Composite parent) 
+    protected Control createContents(Composite parent)
     {
         parent = new Composite(parent,SWT.NONE);
         GridLayout layout = new GridLayout(1,false);
         layout.marginWidth = 0;
         layout.marginHeight = 0;
         parent.setLayout(layout);
-        
+
         Link link= new Link(parent, SWT.NONE);
         link.setText(EclipseNSISPlugin.getResourceString("editor.preferences.note")); //$NON-NLS-1$
         link.addSelectionListener(new SelectionAdapter() {
@@ -321,7 +321,7 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
                 PreferencesUtil.createPreferenceDialogOn(getShell(), "org.eclipse.ui.preferencePages.GeneralTextEditor", null, null); //$NON-NLS-1$
             }
         });
-        
+
         Group group = new Group(parent,SWT.SHADOW_ETCHED_IN);
         group.setText(EclipseNSISPlugin.getResourceString("appearances.group.label")); //$NON-NLS-1$
         group.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
@@ -338,9 +338,9 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
         Dialog.applyDialogFont(parent);
         return parent;
     }
-    
+
     private void initialize() {
-        
+
         initializeFields();
 
         for (int i= 0; i < cSyntaxStyleListModel.length; i++) {
@@ -355,8 +355,8 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
             }
         });
     }
-    
-    private void initializeFields() 
+
+    private void initializeFields()
     {
         Iterator e= mCheckBoxes.keySet().iterator();
         while (e.hasNext()) {
@@ -368,7 +368,7 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
         mMasterSlaveController.updateSlaves();
         mStyleMap.clear();
     }
-    
+
     /*
      * @see PreferencePage#performOk()
      */
@@ -377,14 +377,14 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
         NSISEditor.updatePresentations();
         return super.performOk();
     }
-    
+
     /*
      * @see PreferencePage#performDefaults()
      */
     protected void performDefaults() {
 
         mPreferenceStore.loadDefaults();
-        
+
         initializeFields();
 
         handleSyntaxStyleListSelection();
@@ -394,31 +394,31 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
 
         super.performDefaults();
     }
-    
+
     /*
      * @see DialogPage#dispose()
      */
     public void dispose() {
-        
+
         if (mPreferenceStore != null) {
-            ((PreferenceStoreWrapper)mPreferenceStore).dispose();
+            mPreferenceStore.dispose();
             mPreferenceStore= null;
         }
         super.dispose();
     }
-    
-    private Button addCheckBox(Composite parent, String label, String key, int indentation) {       
+
+    private Button addCheckBox(Composite parent, String label, String key, int indentation) {
         Button checkBox= new Button(parent, SWT.CHECK);
         checkBox.setText(label);
-        
+
         GridData gd= new GridData(SWT.BEGINNING, SWT.CENTER, false, false);
         gd.horizontalIndent= indentation;
         gd.horizontalSpan= 2;
         checkBox.setLayoutData(gd);
         checkBox.addSelectionListener(mCheckBoxListener);
-        
+
         mCheckBoxes.put(checkBox, key);
-        
+
         return checkBox;
     }
 }

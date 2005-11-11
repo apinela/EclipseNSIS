@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -13,11 +13,11 @@ import java.util.Iterator;
 
 import net.sf.eclipsensis.INSISConstants;
 
-public class NSISScript extends AbstractNSISScriptElementContainer 
+public class NSISScript extends AbstractNSISScriptElementContainer
 {
     private String mName;
     private boolean mHasUninstall = false;
-    
+
     /**
      * @param name
      */
@@ -51,29 +51,29 @@ public class NSISScript extends AbstractNSISScriptElementContainer
         mName = name;
         updateArgs(name);
     }
-    
+
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.script.INSISScriptElement#write(net.sf.eclipsensis.script.NSISScriptWriter)
      */
-    public void write(NSISScriptWriter writer) 
+    public void write(NSISScriptWriter writer)
     {
         super.write(writer);
         writeElements(writer);
     }
-    
+
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.script.AbstractNSISScriptElementContainer#validateElement(net.sf.eclipsensis.script.INSISScriptElement)
      */
     protected void validateElement(INSISScriptElement element) throws InvalidNSISScriptElementException
     {
         if(element != null) {
-            if(element instanceof NSISScriptAttribute || element instanceof NSISScriptFunction || 
+            if(element instanceof NSISScriptAttribute || element instanceof NSISScriptFunction ||
                element instanceof NSISScriptSectionGroup || element instanceof NSISScriptInclude ||
                element instanceof NSISScriptMacro) {
                 return;
             }
             else if(element instanceof NSISScriptSection) {
-                if(!((NSISScriptSection)element).getName().equalsIgnoreCase(INSISConstants.UNINSTALL_SECTION_NAME)) { //$NON-NLS-1$
+                if(!((NSISScriptSection)element).getName().equalsIgnoreCase(INSISConstants.UNINSTALL_SECTION_NAME)) {
                     return;
                 }
                 else if(!mHasUninstall) {
@@ -84,7 +84,7 @@ public class NSISScript extends AbstractNSISScriptElementContainer
         }
         super.validateElement(element);
     }
-    
+
     public void append(NSISScriptlet scriptlet) throws InvalidNSISScriptElementException
     {
         for(Iterator iter = scriptlet.mElements.iterator(); iter.hasNext(); ) {

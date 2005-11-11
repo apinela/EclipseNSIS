@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -29,13 +29,13 @@ public class MakeNSISProcess extends Process
     private OutputStream mOutputStream;
     private InputStream mInputStream;
     private InputStream mErrorStream;
-    
+
     static
     {
         EclipseNSISPlugin plugin = EclipseNSISPlugin.getDefault();
         if(!plugin.isNT()) {
-            init(FileDescriptor.class, plugin.getJavaVendor(), 
-                 plugin.getJavaVersion().getNumber(Version.MAJOR), 
+            init(FileDescriptor.class, plugin.getJavaVendor(),
+                 plugin.getJavaVersion().getNumber(Version.MAJOR),
                  plugin.getJavaVersion().getNumber(Version.MINOR));
         }
     }
@@ -44,11 +44,11 @@ public class MakeNSISProcess extends Process
     {
         setProcess(process);
     }
-    
+
     /**
      * @param process
      */
-    MakeNSISProcess(String nsisExe, String[] args, String[] env, File workingDir) throws IOException
+    MakeNSISProcess(String nsisExe, String[] args, String[] env, File workingDir)
     {
         StringBuffer cmdbuf = new StringBuffer();
         appendArg(cmdbuf, nsisExe);
@@ -141,7 +141,7 @@ public class MakeNSISProcess extends Process
             return mCanceled;
         }
     }
-    
+
     private void checkHandle()
     {
         if(mHandle <= 0) {
@@ -194,7 +194,7 @@ public class MakeNSISProcess extends Process
     }
 
     private static native void init(Class clasz, String vmName, int vmMajorVersion, int vmMinorVersion);
-    
+
     private native int exitValue(long handle);
 
     private native int waitFor(long handle) throws InterruptedException;

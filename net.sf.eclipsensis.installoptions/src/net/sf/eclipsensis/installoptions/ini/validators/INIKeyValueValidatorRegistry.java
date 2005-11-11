@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -18,7 +18,7 @@ import net.sf.eclipsensis.util.CaseInsensitiveMap;
 public class INIKeyValueValidatorRegistry
 {
     private static Map mRegistry = new CaseInsensitiveMap();
-    
+
     static {
         ResourceBundle bundle;
         try {
@@ -34,7 +34,7 @@ public class INIKeyValueValidatorRegistry
                     IINIKeyValueValidator validator;
 
                     String key = (String)enum.nextElement();
-                    String className = (String)bundle.getString(key);
+                    String className = bundle.getString(key);
                     Class clasz = Class.forName(className);
                     if(map.containsKey(clasz)) {
                         validator = (IINIKeyValueValidator)map.get(clasz);
@@ -49,14 +49,14 @@ public class INIKeyValueValidatorRegistry
                 catch(Exception e) {
                     InstallOptionsPlugin.getDefault().log(e);
                 }
-            }            
+            }
         }
     }
-    
+
     private INIKeyValueValidatorRegistry()
     {
     }
-    
+
     public static IINIKeyValueValidator getKeyValueValidator(String name)
     {
         return (IINIKeyValueValidator)mRegistry.get(name);

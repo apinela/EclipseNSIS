@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -19,14 +19,14 @@ public class ToggleLockCommand extends Command
     private boolean mShouldLock;
     private InstallOptionsWidget[] mParts;
 
-    public ToggleLockCommand(InstallOptionsWidget[] parts, boolean shouldLock) 
+    public ToggleLockCommand(InstallOptionsWidget[] parts, boolean shouldLock)
     {
         mParts = parts;
         mShouldLock = shouldLock;
         setLabel(InstallOptionsPlugin.getResourceString((mShouldLock?"lock.command.name":"unlock.command.name"))); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
-    public void execute() 
+    public void execute()
     {
         setLocked(mShouldLock);
     }
@@ -38,7 +38,7 @@ public class ToggleLockCommand extends Command
         }
     }
 
-    public void undo() 
+    public void undo()
     {
         setLocked(!mShouldLock);
     }

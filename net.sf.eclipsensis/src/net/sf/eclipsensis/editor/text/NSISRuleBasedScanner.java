@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -23,7 +23,7 @@ import org.eclipse.jface.text.rules.*;
 public abstract class NSISRuleBasedScanner extends BufferedRuleBasedScanner implements NSISScanner, IPropertyAdaptable
 {
     protected IPreferenceStore mPreferenceStore;
-    
+
     public NSISRuleBasedScanner(IPreferenceStore preferenceStore)
     {
         mPreferenceStore = preferenceStore;
@@ -34,12 +34,12 @@ public abstract class NSISRuleBasedScanner extends BufferedRuleBasedScanner impl
     {
         return false;
     }
-    
+
     public final void reset()
     {
         reset(false);
     }
-    
+
     public void reset(boolean full)
     {
         setDefaultReturnToken(getDefaultToken());
@@ -67,7 +67,7 @@ public abstract class NSISRuleBasedScanner extends BufferedRuleBasedScanner impl
     {
         return fOffset;
     }
-    
+
     protected IToken createTokenFromPreference(String name)
     {
         TextAttribute attr = null;
@@ -84,7 +84,7 @@ public abstract class NSISRuleBasedScanner extends BufferedRuleBasedScanner impl
         if(syntaxStyle != null) {
             attr = syntaxStyle.createTextAttribute();
         }
-        
+
         return (attr == null?fDefaultReturnToken:new Token(attr));
     }
 
@@ -101,7 +101,7 @@ public abstract class NSISRuleBasedScanner extends BufferedRuleBasedScanner impl
             }
         });
     }
- 
+
     /**
      * @return Returns the preferenceStore.
      */
@@ -109,7 +109,7 @@ public abstract class NSISRuleBasedScanner extends BufferedRuleBasedScanner impl
     {
         return mPreferenceStore;
     }
-    
+
     /**
      * @return
      */

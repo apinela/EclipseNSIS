@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -23,7 +23,7 @@ import org.eclipse.gef.rulers.RulerProvider;
 public class InstallOptionsRulerProvider extends RulerProvider
 {
     public static final int UNIT_DLU = 3;
-    
+
     private InstallOptionsRuler mRuler;
 
     private PropertyChangeListener mRulerListener = new PropertyChangeListener() {

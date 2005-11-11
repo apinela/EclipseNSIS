@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -48,13 +48,13 @@ public class InstallOptionsGraphicalViewer extends GraphicalViewerImpl
         mDialog = dialog;
         mStyle = style;
     }
-    
+
     public InstallOptionsDialog getDialog()
     {
         return mDialog;
     }
 
-    public final Control createControl(Composite parent) 
+    public final Control createControl(Composite parent)
     {
         if(mDialog != null) {
             String rtl = mDialog.getRTL();
@@ -104,13 +104,13 @@ public class InstallOptionsGraphicalViewer extends GraphicalViewerImpl
         installRootFigure();
         return canvas;
     }
-    
-    protected FigureCanvas getFigureCanvas() 
+
+    protected FigureCanvas getFigureCanvas()
     {
         return (FigureCanvas)getControl();
     }
-    
-    private void installRootFigure() 
+
+    private void installRootFigure()
     {
         if (getFigureCanvas() == null) {
             return;
@@ -122,7 +122,7 @@ public class InstallOptionsGraphicalViewer extends GraphicalViewerImpl
             getFigureCanvas().setContents(mRootFigure);
         }
     }
-    
+
     public void reveal(EditPart part)
     {
         super.reveal(part);
@@ -135,9 +135,9 @@ public class InstallOptionsGraphicalViewer extends GraphicalViewerImpl
             target = target.getParent();
         }
         exposeRegion.expand(5, 5);
-        
+
         Dimension viewportSize = port.getClientArea().getSize();
-    
+
         Point topLeft = exposeRegion.getTopLeft();
         Point bottomRight = exposeRegion.getBottomRight().translate(viewportSize.getNegated());
         Point finalLocation = new Point();
@@ -147,23 +147,23 @@ public class InstallOptionsGraphicalViewer extends GraphicalViewerImpl
         else {
             finalLocation.x = Math.min(topLeft.x, Math.max(bottomRight.x, port.getViewLocation().x));
         }
-    
+
         if (viewportSize.height < exposeRegion.height) {
             finalLocation.y = Math.min(bottomRight.y, Math.max(topLeft.y, port.getViewLocation().y));
         }
         else {
             finalLocation.y = Math.min(topLeft.y, Math.max(bottomRight.y, port.getViewLocation().y));
         }
-        
-        getFigureCanvas().scrollSmoothTo(finalLocation.x, finalLocation.y); 
+
+        getFigureCanvas().scrollSmoothTo(finalLocation.x, finalLocation.y);
     }
-    
+
     protected IFigure getRootFigure()
     {
         return mRootFigure;
     }
 
-    protected void setRootFigure(IFigure figure) 
+    protected void setRootFigure(IFigure figure)
     {
         mRootFigure = figure;
         installRootFigure();
@@ -173,40 +173,40 @@ public class InstallOptionsGraphicalViewer extends GraphicalViewerImpl
     {
         if(listener.getTransfer() instanceof TemplateTransfer) {
             super.addDropTargetListener(new TransferDropTargetListener() {
-                public void dragEnter(DropTargetEvent event) 
+                public void dragEnter(DropTargetEvent event)
                 {
                     listener.dragEnter(event);
                 }
-                
+
                 public void dragLeave(DropTargetEvent event) {
                     listener.dragLeave(event);
                 }
-                
-                public void dragOperationChanged(DropTargetEvent event) 
+
+                public void dragOperationChanged(DropTargetEvent event)
                 {
                     listener.dragOperationChanged(event);
                 }
-                
-                public void dragOver(DropTargetEvent event) 
+
+                public void dragOver(DropTargetEvent event)
                 {
                     listener.dragOver(event);
                 }
 
-                public void drop(DropTargetEvent event) 
+                public void drop(DropTargetEvent event)
                 {
                     listener.drop(event);
                 }
 
-                public void dropAccept(DropTargetEvent event) 
+                public void dropAccept(DropTargetEvent event)
                 {
                     listener.dropAccept(event);
                 }
-                
+
                 public Transfer getTransfer() {
                     return InstallOptionsTemplateTransfer.INSTANCE;
                 }
-                
-                public boolean isEnabled(DropTargetEvent event) 
+
+                public boolean isEnabled(DropTargetEvent event)
                 {
                     return listener.isEnabled(event);
                 }

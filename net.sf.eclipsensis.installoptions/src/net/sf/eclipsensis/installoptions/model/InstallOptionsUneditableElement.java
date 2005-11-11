@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -26,20 +26,20 @@ public abstract class InstallOptionsUneditableElement extends InstallOptionsWidg
     {
         super(section);
     }
-    
+
     protected void init()
     {
         super.init();
         mText = ""; //$NON-NLS-1$
     }
-    
+
     /**
      * @param type
      */
     protected void setDefaults()
     {
         super.setDefaults();
-        mText = getDefaultText(); //$NON-NLS-1$
+        mText = getDefaultText();
     }
 
     public Object clone()
@@ -70,7 +70,7 @@ public abstract class InstallOptionsUneditableElement extends InstallOptionsWidg
             return super.createPropertyDescriptor(name);
         }
     }
-    
+
     public Object getPropertyValue(Object propName)
     {
         if (InstallOptionsModel.PROPERTY_TEXT.equals(propName)) {
@@ -78,7 +78,7 @@ public abstract class InstallOptionsUneditableElement extends InstallOptionsWidg
         }
         return super.getPropertyValue(propName);
     }
-    
+
     public void setPropertyValue(Object id, Object value)
     {
         if(id.equals(InstallOptionsModel.PROPERTY_TEXT)) {
@@ -103,7 +103,7 @@ public abstract class InstallOptionsUneditableElement extends InstallOptionsWidg
             setDirty(true);
         }
     }
- 
+
     protected String getDefaultText()
     {
         return ""; //$NON-NLS-1$

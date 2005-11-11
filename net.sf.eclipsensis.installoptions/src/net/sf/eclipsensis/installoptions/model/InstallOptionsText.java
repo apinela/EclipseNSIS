@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -26,12 +26,12 @@ public class InstallOptionsText extends InstallOptionsEditableElement
     {
         super(section);
     }
-    
+
     public String getType()
     {
         return InstallOptionsModel.TYPE_TEXT;
     }
-    
+
     /**
      * @return
      */
@@ -65,7 +65,7 @@ public class InstallOptionsText extends InstallOptionsEditableElement
     {
         return new Position(0,0,122,13);
     }
-    
+
     protected IPropertyDescriptor createPropertyDescriptor(String name)
     {
         if(name.equals(InstallOptionsModel.PROPERTY_STATE)) {

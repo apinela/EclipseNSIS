@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -28,7 +28,7 @@ import org.eclipse.ui.views.properties.PropertyDescriptor;
 public class InstallOptionsFileRequest extends InstallOptionsPathRequest
 {
     public  static final char FILTER_SEPARATOR = ';';
-    
+
     private static final TypeConverter FILTER_LIST_CONVERTER = new TypeConverter(){
         public String asString(Object o)
         {
@@ -62,7 +62,7 @@ public class InstallOptionsFileRequest extends InstallOptionsPathRequest
     };
 
     public static final LabelProvider FILTER_LABEL_PROVIDER = new LabelProvider(){
-        public String getText(Object element) 
+        public String getText(Object element)
         {
             if(element instanceof List) {
                 return FILTER_LIST_CONVERTER.asString(element);
@@ -85,7 +85,7 @@ public class InstallOptionsFileRequest extends InstallOptionsPathRequest
         super.init();
         mFilter = new ArrayList();
     }
-    
+
     public String getType()
     {
         return InstallOptionsModel.TYPE_FILEREQUEST;
@@ -101,7 +101,7 @@ public class InstallOptionsFileRequest extends InstallOptionsPathRequest
         clone.setFilter(list);
         return clone;
     }
-    
+
     protected void addPropertyName(List list, String setting)
     {
         if (setting.equalsIgnoreCase(InstallOptionsModel.PROPERTY_FILTER)) {
@@ -121,12 +121,12 @@ public class InstallOptionsFileRequest extends InstallOptionsPathRequest
             return super.getTypeConverter(property);
         }
     }
-    
+
     protected IPropertyDescriptor createPropertyDescriptor(String name)
     {
         if(name.equals(InstallOptionsModel.PROPERTY_FILTER)) {
             PropertyDescriptor descriptor = new PropertyDescriptor(InstallOptionsModel.PROPERTY_FILTER, InstallOptionsPlugin.getResourceString("filter.property.name")){ //$NON-NLS-1$
-                public CellEditor createPropertyEditor(Composite parent) 
+                public CellEditor createPropertyEditor(Composite parent)
                 {
                     FileFilterCellEditor editor = new FileFilterCellEditor(InstallOptionsFileRequest.this, parent);
                     editor.setValidator(getValidator());
@@ -159,7 +159,7 @@ public class InstallOptionsFileRequest extends InstallOptionsPathRequest
             super.setPropertyValue(id, value);
         }
     }
-    
+
     public List getFilter()
     {
         return mFilter;

@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -25,7 +25,7 @@ class InstallOptionsTemplateReaderWriter extends AbstractTemplateReaderWriter
 {
     private static final String SECTIONS_NODE= "sections"; //$NON-NLS-1$
     static final InstallOptionsTemplateReaderWriter INSTANCE = new InstallOptionsTemplateReaderWriter();
-    
+
     private InstallOptionsTemplateReaderWriter()
     {
         super();
@@ -69,6 +69,6 @@ class InstallOptionsTemplateReaderWriter extends AbstractTemplateReaderWriter
                 iniSections[i] = (INISection)iniSections[i].trim().clone();
             }
             ((InstallOptionsTemplate)template).setSections(iniSections);
-        }        
+        }
     }
 }

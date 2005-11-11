@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -28,7 +28,7 @@ public class NSISProperties extends NSISSettings implements INSISConstants
     private IResource mResource = null;
     private boolean mUseParent = true;
     private NSISSettings mParentSettings;
-    
+
     static {
         cQualifiedNames.put(USE_GLOBALS, new QualifiedName(PLUGIN_ID,USE_GLOBALS));
         cQualifiedNames.put(USE_PARENT, new QualifiedName(PLUGIN_ID,USE_PARENT));
@@ -42,7 +42,7 @@ public class NSISProperties extends NSISSettings implements INSISConstants
         cQualifiedNames.put(INSTRUCTIONS, new QualifiedName(PLUGIN_ID,INSTRUCTIONS));
         cQualifiedNames.put(SYMBOLS, new QualifiedName(PLUGIN_ID,SYMBOLS));
     }
-    
+
     public static synchronized NSISProperties getProperties(IResource resource)
     {
         String fileName = resource.getLocation().toString();
@@ -53,7 +53,7 @@ public class NSISProperties extends NSISSettings implements INSISConstants
         }
         return (NSISProperties)cPropertiesCache.get(fileName);
     }
-    
+
     protected NSISProperties(IResource resource)
     {
         mResource = resource;
@@ -79,7 +79,7 @@ public class NSISProperties extends NSISSettings implements INSISConstants
             super.load();
         }
     }
-    
+
     public void store()
     {
         setValue(USE_PARENT,getUseParent());
@@ -106,7 +106,7 @@ public class NSISProperties extends NSISSettings implements INSISConstants
             return super.getCompressor();
         }
     }
-    
+
     public boolean getSolidCompression()
     {
         if(getUseParent()) {
@@ -116,7 +116,7 @@ public class NSISProperties extends NSISSettings implements INSISConstants
             return super.getSolidCompression();
         }
     }
-    
+
     public boolean getHdrInfo()
     {
         if(getUseParent()) {
@@ -126,7 +126,7 @@ public class NSISProperties extends NSISSettings implements INSISConstants
             return super.getHdrInfo();
         }
     }
-    
+
     public ArrayList getInstructions()
     {
         if(getUseParent()) {
@@ -136,7 +136,7 @@ public class NSISProperties extends NSISSettings implements INSISConstants
             return super.getInstructions();
         }
     }
-    
+
     public boolean getLicense()
     {
         if(getUseParent()) {
@@ -146,7 +146,7 @@ public class NSISProperties extends NSISSettings implements INSISConstants
             return super.getLicense();
         }
     }
-    
+
     public boolean getNoCD()
     {
         if(getUseParent()) {
@@ -156,7 +156,7 @@ public class NSISProperties extends NSISSettings implements INSISConstants
             return super.getNoCD();
         }
     }
-    
+
     public boolean getNoConfig()
     {
         if(getUseParent()) {
@@ -166,7 +166,7 @@ public class NSISProperties extends NSISSettings implements INSISConstants
             return super.getNoConfig();
         }
     }
-    
+
     public LinkedHashMap getSymbols()
     {
         if(getUseParent()) {
@@ -176,7 +176,7 @@ public class NSISProperties extends NSISSettings implements INSISConstants
             return super.getSymbols();
         }
     }
-    
+
     public int getVerbosity()
     {
         if(getUseParent()) {
@@ -186,7 +186,7 @@ public class NSISProperties extends NSISSettings implements INSISConstants
             return super.getVerbosity();
         }
     }
-    
+
     private static synchronized QualifiedName getQualifiedName(String name)
     {
         QualifiedName qname = (QualifiedName)cQualifiedNames.get(name);
@@ -196,12 +196,12 @@ public class NSISProperties extends NSISSettings implements INSISConstants
         }
         return qname;
     }
-    
+
     public boolean getUseParent()
     {
         return mUseParent;
     }
-    
+
     /**
      * @param useGlobals The useGlobals to set.
      */
@@ -209,7 +209,7 @@ public class NSISProperties extends NSISSettings implements INSISConstants
     {
         mUseParent = useGlobals;
     }
-    
+
     private String getPersistentProperty(QualifiedName qname)
     {
         String value = null;
@@ -221,7 +221,7 @@ public class NSISProperties extends NSISSettings implements INSISConstants
         }
         return value;
     }
-    
+
     private void setPersistentProperty(QualifiedName qname, String value)
     {
         try {
@@ -230,7 +230,7 @@ public class NSISProperties extends NSISSettings implements INSISConstants
         catch(CoreException ex){
         }
     }
-    
+
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.settings.NSISSettings#getBoolean(java.lang.String)
      */
@@ -239,7 +239,7 @@ public class NSISProperties extends NSISSettings implements INSISConstants
         String value = getPersistentProperty(getQualifiedName(name));
         return (value !=null && Boolean.valueOf(value).booleanValue());
     }
-    
+
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.settings.NSISSettings#getInt(java.lang.String)
      */
@@ -258,7 +258,7 @@ public class NSISProperties extends NSISSettings implements INSISConstants
             return 0;
         }
     }
-    
+
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.settings.NSISSettings#getString(java.lang.String)
      */
@@ -266,7 +266,7 @@ public class NSISProperties extends NSISSettings implements INSISConstants
     {
         return getPersistentProperty(getQualifiedName(name));
     }
-    
+
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.settings.NSISSettings#setValue(java.lang.String, boolean)
      */
@@ -274,7 +274,7 @@ public class NSISProperties extends NSISSettings implements INSISConstants
     {
         setPersistentProperty(getQualifiedName(name), Boolean.toString(value));
     }
-    
+
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.settings.NSISSettings#setValue(java.lang.String, int)
      */
@@ -282,7 +282,7 @@ public class NSISProperties extends NSISSettings implements INSISConstants
     {
         setPersistentProperty(getQualifiedName(name), Integer.toString(value));
     }
-    
+
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.settings.NSISSettings#setValue(java.lang.String, java.lang.String)
      */
@@ -314,7 +314,7 @@ public class NSISProperties extends NSISSettings implements INSISConstants
     {
         setPersistentProperty(getQualifiedName(name), null);
     }
-    
+
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.settings.NSISSettings#loadObject(java.lang.String)
      */
@@ -341,7 +341,7 @@ public class NSISProperties extends NSISSettings implements INSISConstants
         }
         return null;
     }
-    
+
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.settings.NSISSettings#storeObject(java.lang.String, java.lang.Object)
      */
@@ -375,7 +375,7 @@ public class NSISProperties extends NSISSettings implements INSISConstants
             EclipseNSISPlugin.getDefault().log(e);
         }
     }
-    
+
     public NSISSettings getParentSettings()
     {
         return mParentSettings;

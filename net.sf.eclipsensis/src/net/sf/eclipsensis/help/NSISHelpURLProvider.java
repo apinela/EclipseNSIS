@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -27,7 +27,7 @@ import org.eclipse.ui.PlatformUI;
 public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListener, IEclipseNSISService
 {
     private static NSISHelpURLProvider cInstance = null;
-    
+
     private static final String CHMLINK_JS = "chmlink.js"; //$NON-NLS-1$
     private static final String NSIS_HELP_FORMAT = new StringBuffer("/").append( //$NON-NLS-1$
                                     INSISConstants.PLUGIN_ID).append("/").append( //$NON-NLS-1$
@@ -36,7 +36,7 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
     private static final Pattern NSIS_HELP_PATTERN = Pattern.compile(new StringBuffer(".*/").append( //$NON-NLS-1$
                                     INSISConstants.NSIS_HELP_PREFIX).append("Docs/(.*)").toString()); //$NON-NLS-1$
     private static final String NSIS_CHM_HELP_FORMAT = "mk:@MSITStore:{0}::/{1}"; //$NON-NLS-1$
-    
+
 
     private String mStartPage = null;
     private String mCHMStartPage = null;
@@ -44,9 +44,9 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
     private Map mCHMHelpURLs = null;
     private ParserDelegator mParserDelegator;
     private Map mNSISContribPaths;
-    
+
     private ResourceBundle mBundle;
-    
+
     public static NSISHelpURLProvider getInstance()
     {
         return cInstance;
@@ -87,7 +87,7 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
             NSISKeywords.getInstance().removeKeywordsListener(this);
         }
     }
-    
+
     private void loadNSISContribPaths()
     {
         Map temp = new HashMap();
@@ -110,7 +110,7 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
         Collections.sort(list);
         for(Iterator iter=list.iterator(); iter.hasNext(); ) {
             Version v = (Version)iter.next();
-            mNSISContribPaths.put(v, (String)mBundle.getString((String)temp.get(v)));
+            mNSISContribPaths.put(v, mBundle.getString((String)temp.get(v)));
         }
     }
 
@@ -132,14 +132,14 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
                 }
                 catch(MissingResourceException mre) {
                 }
-                
+
                 File stateLocation = EclipseNSISPlugin.getPluginStateLocation();
                 File cacheFile = new File(stateLocation,getClass().getName()+".HelpURLs.ser"); //$NON-NLS-1$
                 long cacheTimeStamp = 0;
                 if(cacheFile.exists()) {
                     cacheTimeStamp = cacheFile.lastModified();
                 }
-                
+
                 long htmlHelpTimeStamp = htmlHelpFile.lastModified();
                 if(htmlHelpTimeStamp != cacheTimeStamp) {
                     if(cacheFile.exists()) {
@@ -147,7 +147,7 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
                     }
 
                     Map topicMap = new CaseInsensitiveMap();
-                    
+
                     String[] mappedHelpTopics = Common.loadArrayProperty(mBundle, "mapped.help.topics"); //$NON-NLS-1$
                     if(!Common.isEmptyArray(mappedHelpTopics)) {
                         for (int i = 0; i < mappedHelpTopics.length; i++) {
@@ -203,7 +203,7 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
                                         mCHMHelpURLs.put(keyword,chmFormat.format(chmArgs,chmBuf,null).toString());
                                     }
                                 }
-                                
+
                                 Common.writeObject(cacheFile,new Object[]{mHelpURLs,mCHMHelpURLs});
                                 cacheFile.setLastModified(htmlHelpTimeStamp);
                             }
@@ -212,7 +212,7 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
                             }
                             tocFile.delete();
                         }
-                        
+
                         //Fix the chmlink.js
                         File chmlinkJs = new File(helpLocation,CHMLINK_JS);
                         if(chmlinkJs.exists()) {
@@ -227,15 +227,15 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
                             while ((line=reader.readLine()) != null) {
                                 writer.println(line);
                             }
-                        } 
+                        }
                         catch (IOException io) {
                             EclipseNSISPlugin.getDefault().log(io);
-                        } 
+                        }
                         finally {
                             if (reader != null) {
-                                try { 
+                                try {
                                     reader.close();
-                                } 
+                                }
                                 catch (IOException e) {}
                             }
                             if (writer != null) {
@@ -261,22 +261,22 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
             }
         }
     }
-    
+
     public String getHelpStartPage()
     {
         return mStartPage;
     }
-    
+
     public String getCHMHelpStartPage()
     {
         return mCHMStartPage;
     }
-    
+
     public void keywordsChanged()
     {
         loadHelpURLs();
     }
-    
+
     public String convertHelpURLToCHMHelpURL(String helpURL)
     {
         String chmHelpURL = null;
@@ -297,7 +297,7 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
         }
         return chmHelpURL;
     }
-    
+
     private String getHelpURL(String keyWord, boolean useEclipseHelp)
     {
         if(!Common.isEmpty(keyWord)) {
@@ -314,7 +314,7 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
         }
         return null;
     }
-    
+
     public void showHelp()
     {
         String url = null;
@@ -331,7 +331,7 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
             PlatformUI.getWorkbench().getHelpSystem().displayHelpResource(url);
         }
     }
-    
+
     public void showHelpURL(String keyword)
     {
         String url = null;
@@ -358,7 +358,7 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
             WinAPI.HtmlHelp(WinAPI.GetDesktopWindow(),url,WinAPI.HH_DISPLAY_TOPIC,0);
         }
     }
-    
+
     public String getNSISContribPath()
     {
         Version nsisVersion = NSISPreferences.INSTANCE.getNSISVersion();

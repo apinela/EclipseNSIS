@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -30,14 +30,14 @@ public class InstallOptionsSourceActionContributor extends TextEditorActionContr
     private LanguageComboContributionItem mLanguageContributionItem;
     private InstallOptionsWizardAction mWizardAction;
     private InstallOptionsHelpAction mHelpAction;
-    
+
     public void buildActions()
     {
         mWizardAction = new InstallOptionsWizardAction();
         mHelpAction = new InstallOptionsHelpAction();
         mInstallOptionsMenu = new MenuManager(InstallOptionsPlugin.getResourceString("installoptions.menu.name")); //$NON-NLS-1$
         String label = InstallOptionsPlugin.getResourceString("switch.design.editor.action.name"); //$NON-NLS-1$
-        mSwitchEditorAction = new RetargetAction(SwitchEditorAction.ID, label); //$NON-NLS-1$
+        mSwitchEditorAction = new RetargetAction(SwitchEditorAction.ID, label);
         mSwitchEditorAction.setToolTipText(label);
         mSwitchEditorAction.setImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("switch.editor.icon"))); //$NON-NLS-1$
         mSwitchEditorAction.setActionDefinitionId(IInstallOptionsConstants.SWITCH_EDITOR_COMMAND_ID);
@@ -68,7 +68,7 @@ public class InstallOptionsSourceActionContributor extends TextEditorActionContr
         mInstallOptionsMenu.add(mSwitchEditorAction);
         mInstallOptionsMenu.add(new Separator());
         mInstallOptionsMenu.add(mHelpAction);
-        
+
         mLanguageContributionItem = new LanguageComboContributionItem(getPage());
     }
 
@@ -95,7 +95,7 @@ public class InstallOptionsSourceActionContributor extends TextEditorActionContr
         buildActions();
         super.init(bars);
     }
-    
+
     public void setActiveEditor(IEditorPart part)
     {
         super.setActiveEditor(part);
@@ -111,7 +111,7 @@ public class InstallOptionsSourceActionContributor extends TextEditorActionContr
     {
         bars.setGlobalActionHandler(id,(editor == null?null:editor.getAction(id)));
     }
-    
+
     public void dispose()
     {
         getPage().removePartListener(mSwitchEditorAction);

@@ -3,14 +3,13 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
 package net.sf.eclipsensis.wizard.settings;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,7 +24,7 @@ public class NSISInstallElementFactory
     private static Map cElementMap = new HashMap();
     private static final Class[] EMPTY_CLASS_ARRAY = new Class[0];
     private static final Object[] EMPTY_OBJECT_ARRAY = new Object[0];
-    
+
     static {
         EclipseNSISPlugin plugin = EclipseNSISPlugin.getDefault();
         if(plugin != null) {
@@ -40,7 +39,7 @@ public class NSISInstallElementFactory
             }
         }
     }
-    
+
     private NSISInstallElementFactory()
     {
     }
@@ -56,14 +55,14 @@ public class NSISInstallElementFactory
             }
         }
     }
-    
+
     public static void unregister(String type, Class clasz)
     {
         if(!cElementMap.containsKey(type) && ((NSISInstallElementDescriptor)cElementMap.get(type)).getElementClass().equals(clasz)) {
             cElementMap.remove(type);
         }
     }
-    
+
     public static INSISInstallElement create(String type)
     {
         NSISInstallElementDescriptor descriptor = (NSISInstallElementDescriptor)cElementMap.get(type);
@@ -76,16 +75,16 @@ public class NSISInstallElementFactory
         }
         return null;
     }
-    
+
     public static INSISInstallElement createFromNode(Node node)
     {
         return createFromNode(node,null);
     }
-    
+
     public static INSISInstallElement createFromNode(Node node, String type)
     {
-        if(node.getNodeName().equals(INSISInstallElement.NODE)) { //$NON-NLS-1$
-            String nodeType = node.getAttributes().getNamedItem(INSISInstallElement.TYPE_ATTRIBUTE).getNodeValue(); //$NON-NLS-1$
+        if(node.getNodeName().equals(INSISInstallElement.NODE)) {
+            String nodeType = node.getAttributes().getNamedItem(INSISInstallElement.TYPE_ATTRIBUTE).getNodeValue();
             if(Common.isEmpty(type) || nodeType.equals(type)) {
                 INSISInstallElement element = create(nodeType);
                 if(element != null) {
@@ -96,7 +95,7 @@ public class NSISInstallElementFactory
         }
         return null;
     }
-    
+
     public static Image getImage(String type)
     {
         NSISInstallElementDescriptor descriptor = (NSISInstallElementDescriptor)cElementMap.get(type);
@@ -105,7 +104,7 @@ public class NSISInstallElementFactory
         }
         return null;
     }
-    
+
     public static String getTypeName(String type)
     {
         NSISInstallElementDescriptor descriptor = (NSISInstallElementDescriptor)cElementMap.get(type);
@@ -114,7 +113,7 @@ public class NSISInstallElementFactory
         }
         return null;
     }
-    
+
     static void setImage(String type, Image image)
     {
         NSISInstallElementDescriptor descriptor = (NSISInstallElementDescriptor)cElementMap.get(type);
@@ -122,7 +121,7 @@ public class NSISInstallElementFactory
             descriptor.setImage(image);
         }
     }
-    
+
     static void setTypeName(String type, String typeName)
     {
         NSISInstallElementDescriptor descriptor = (NSISInstallElementDescriptor)cElementMap.get(type);
@@ -130,22 +129,22 @@ public class NSISInstallElementFactory
             descriptor.setTypeName(typeName);
         }
     }
-    
+
     private static class NSISInstallElementDescriptor
     {
         public String mTypeName;
         public Image mImage;
         public Class mElementClass;
         public Constructor mConstructor;
-        
-        public NSISInstallElementDescriptor(Class clasz, String typeName, Image image) throws SecurityException, NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException
+
+        public NSISInstallElementDescriptor(Class clasz, String typeName, Image image) throws SecurityException, NoSuchMethodException, IllegalArgumentException
         {
             mElementClass = clasz;
             mConstructor = clasz.getConstructor(EMPTY_CLASS_ARRAY);
             mTypeName = typeName;
             mImage = image;
         }
-        
+
         /**
          * @return Returns the class.
          */
@@ -153,7 +152,7 @@ public class NSISInstallElementFactory
         {
             return mElementClass;
         }
-        
+
         /**
          * @return Returns the constructor.
          */
@@ -161,7 +160,7 @@ public class NSISInstallElementFactory
         {
             return mConstructor;
         }
-        
+
         public String getTypeName()
         {
             return mTypeName;

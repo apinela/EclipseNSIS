@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -21,14 +21,14 @@ public abstract class InstallOptionsExtendedEditPolicy extends GraphicalEditPoli
 {
     public static final String ROLE = "ExtendedEditPolicy"; //$NON-NLS-1$
     private EditPart mEditPart;
-    
+
     public InstallOptionsExtendedEditPolicy(EditPart editPart)
     {
         super();
         mEditPart = editPart;
     }
-    
-    
+
+
     public Command getCommand(Request request)
     {
         if(((InstallOptionsEditDomain)mEditPart.getViewer().getEditDomain()).isReadOnly()) {
@@ -47,7 +47,7 @@ public abstract class InstallOptionsExtendedEditPolicy extends GraphicalEditPoli
         }
     }
 
-    public boolean understandsRequest(Request request) 
+    public boolean understandsRequest(Request request)
     {
         if (IInstallOptionsConstants.REQ_EXTENDED_EDIT.equals(request.getType())||
             RequestConstants.REQ_OPEN.equals(request.getType())) {
@@ -58,7 +58,7 @@ public abstract class InstallOptionsExtendedEditPolicy extends GraphicalEditPoli
         return super.understandsRequest(request);
     }
 
-    
+
     protected abstract String getExtendedEditProperty();
     protected abstract Command getExtendedEditCommand(ExtendedEditRequest request);
 }

@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -47,7 +47,7 @@ public abstract class NSISSettingsPage extends PropertyPage implements IWorkbenc
     protected Button mSolidCompression = null;
     protected TableViewer mInstructions = null;
     protected TableViewer mSymbols = null;
-    
+
     private TabFolder mFolder = null;
     private Group mGroup = null;
 
@@ -57,7 +57,7 @@ public abstract class NSISSettingsPage extends PropertyPage implements IWorkbenc
     public void init(IWorkbench workbench)
     {
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
      */
@@ -65,12 +65,12 @@ public abstract class NSISSettingsPage extends PropertyPage implements IWorkbenc
     {
         mSettings = loadSettings();
         mFolder = new TabFolder(parent, SWT.NONE);
-        
+
         TabItem item = new TabItem(mFolder, SWT.NONE);
         item.setText(EclipseNSISPlugin.getResourceString("general.tab.text")); //$NON-NLS-1$
         item.setToolTipText(EclipseNSISPlugin.getResourceString("general.tab.tooltip")); //$NON-NLS-1$
         item.setControl(createGeneralPage(mFolder));
-        
+
         item = new TabItem(mFolder, SWT.NONE);
         item.setText(EclipseNSISPlugin.getResourceString("symbols.tab.text")); //$NON-NLS-1$
         item.setToolTipText(EclipseNSISPlugin.getResourceString("symbols.tab.tooltip")); //$NON-NLS-1$
@@ -91,11 +91,11 @@ public abstract class NSISSettingsPage extends PropertyPage implements IWorkbenc
                         }
                     }
                 });
-        
+
         Dialog.applyDialogFont(mFolder);
         return mFolder;
     }
-    
+
     public void createControl(Composite parent)
     {
         setDescription(getPageDescription());
@@ -109,7 +109,7 @@ public abstract class NSISSettingsPage extends PropertyPage implements IWorkbenc
         Composite composite = new Composite(parent,SWT.NONE);
         GridLayout layout = new GridLayout(1,false);
         composite.setLayout(layout);
-        
+
         Composite child = createMasterControl(composite);
         GridData data = new GridData(SWT.FILL, SWT.CENTER, true, false);
         child.setLayoutData(data);
@@ -117,11 +117,11 @@ public abstract class NSISSettingsPage extends PropertyPage implements IWorkbenc
         mGroup = createNSISOptionsGroup(composite);
         data = new GridData(SWT.FILL, SWT.FILL, true, false);
         mGroup.setLayoutData(data);
-        
+
         createInstructionsViewer(composite);
         return composite;
     }
-    
+
     private void enableComposite(Composite composite, boolean state)
     {
         Control[] controls = composite.getChildren();
@@ -132,7 +132,7 @@ public abstract class NSISSettingsPage extends PropertyPage implements IWorkbenc
             controls[i].setEnabled(state);
         }
     }
-    
+
     protected void enableControls(boolean state)
     {
         enableComposite(mGroup,state);
@@ -148,22 +148,22 @@ public abstract class NSISSettingsPage extends PropertyPage implements IWorkbenc
             tabItems[i].getControl().setEnabled(state);
         }
     }
-    
+
     private Group createNSISOptionsGroup(Composite parent)
     {
         Group group = new Group(parent, SWT.SHADOW_ETCHED_IN);
         group.setText(EclipseNSISPlugin.getResourceString("nsis.options.group.text")); //$NON-NLS-1$
         GridLayout layout = new GridLayout(2,false);
         group.setLayout(layout);
-        
+
         mHdrInfo = createCheckBox(group, EclipseNSISPlugin.getResourceString("hdrinfo.text"), //$NON-NLS-1$
                                   EclipseNSISPlugin.getResourceString("hdrinfo.tooltip"), //$NON-NLS-1$
                                   mSettings.getHdrInfo());
-        
+
         mLicense = createCheckBox(group, EclipseNSISPlugin.getResourceString("license.text"), //$NON-NLS-1$
                                   EclipseNSISPlugin.getResourceString("license.tooltip"), //$NON-NLS-1$
                                   mSettings.getLicense());
-        
+
         mNoConfig = createCheckBox(group, EclipseNSISPlugin.getResourceString("noconfig.text"), //$NON-NLS-1$
                                    EclipseNSISPlugin.getResourceString("noconfig.tooltip"), //$NON-NLS-1$
                                    mSettings.getNoConfig());
@@ -181,12 +181,12 @@ public abstract class NSISSettingsPage extends PropertyPage implements IWorkbenc
         layout.marginWidth = 0;
         layout.marginHeight = 0;
         composite.setLayout(layout);
-        
+
         mVerbosity = createCombo(composite,EclipseNSISPlugin.getResourceString("verbosity.text"),EclipseNSISPlugin.getResourceString("verbosity.tooltip"), //$NON-NLS-1$ //$NON-NLS-2$
                                  INSISPreferenceConstants.VERBOSITY_ARRAY, mSettings.getVerbosity());
         Label l = new Label(composite,SWT.None);
         l.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
-        
+
         mCompressor = createCombo(composite,EclipseNSISPlugin.getResourceString("compressor.text"),EclipseNSISPlugin.getResourceString("compressor.tooltip"), //$NON-NLS-1$ //$NON-NLS-2$
                                  MakeNSISRunner.COMPRESSOR_DISPLAY_ARRAY,mSettings.getCompressor());
         mSolidCompression = createCheckBox(composite, EclipseNSISPlugin.getResourceString("solid.compression.text"), //$NON-NLS-1$
@@ -207,7 +207,7 @@ public abstract class NSISSettingsPage extends PropertyPage implements IWorkbenc
         int n = mCompressor.getSelectionIndex();
         mSolidCompression.setEnabled(n != MakeNSISRunner.COMPRESSOR_DEFAULT && n != MakeNSISRunner.COMPRESSOR_BEST);
     }
-    
+
     protected Button createCheckBox(Composite parent, String text, String tooltipText, boolean state)
     {
         Button button = new Button(parent, SWT.CHECK | SWT.LEFT);
@@ -242,7 +242,7 @@ public abstract class NSISSettingsPage extends PropertyPage implements IWorkbenc
     }
 
     protected TableViewer createTableViewer(Composite composite, final Object input, IContentProvider contentProvider,
-                                            ILabelProvider labelProvider, String description, String[] columnNames, 
+                                            ILabelProvider labelProvider, String description, String[] columnNames,
                                             String addTooltip, String editTooltip, String removeTooltip,
                                             SelectionListener addAdapter, SelectionListener editAdapter,
                                             SelectionListener removeAdapter, IDoubleClickListener doubleClickListener,
@@ -250,13 +250,13 @@ public abstract class NSISSettingsPage extends PropertyPage implements IWorkbenc
     {
         GridLayout layout = new GridLayout(2,false);
         composite.setLayout(layout);
-  
+
         Label label = new Label(composite, SWT.LEFT);
         label.setText(description);
         GridData data = new GridData(SWT.FILL, SWT.CENTER, false, false);
         data.horizontalSpan = 2;
         label.setLayoutData(data);
-        
+
         Table table = new Table(composite, SWT.FULL_SELECTION | SWT.MULTI | SWT.V_SCROLL | SWT.BORDER);
         table.setLinesVisible(true);
         table.setHeaderVisible(true);
@@ -299,22 +299,22 @@ public abstract class NSISSettingsPage extends PropertyPage implements IWorkbenc
                                                        EclipseNSISPlugin.getResourceString("up.tooltip")); //$NON-NLS-1$
         upButton.setEnabled(mover.canMoveUp());
         upButton.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) 
+            public void widgetSelected(SelectionEvent e)
             {
                 mover.moveUp();
             }
         });
-        
+
         final Button downButton = createButton(composite,EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("down.icon")), //$NON-NLS-1$
                                                          EclipseNSISPlugin.getResourceString("down.tooltip")); //$NON-NLS-1$
         downButton.setEnabled(mover.canMoveDown());
         downButton.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) 
+            public void widgetSelected(SelectionEvent e)
             {
                 mover.moveDown();
             }
         });
-        
+
         viewer.addSelectionChangedListener(new ISelectionChangedListener() {
             public void selectionChanged(SelectionChangedEvent event) {
                 IStructuredSelection selection = (IStructuredSelection)event.getSelection();
@@ -327,10 +327,10 @@ public abstract class NSISSettingsPage extends PropertyPage implements IWorkbenc
 
         viewer.addDoubleClickListener(doubleClickListener);
         table.addControlListener(new TableResizer());
-        
+
         return viewer;
     }
-    
+
     protected Button createButton(Composite parent, Object object, String tooltipText)
     {
         Button button = new Button(parent, SWT.PUSH | SWT.CENTER);
@@ -345,25 +345,25 @@ public abstract class NSISSettingsPage extends PropertyPage implements IWorkbenc
         button.setLayoutData(data);
         return button;
     }
-    
+
     private Control createSymbolsViewer(Composite parent)
     {
         Composite composite = new Composite(parent,SWT.NONE);
         SelectionAdapter addAdapter = new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) 
+            public void widgetSelected(SelectionEvent e)
             {
                 addOrEditSymbol("",""); //$NON-NLS-1$ //$NON-NLS-2$
             }
         };
         SelectionAdapter editAdapter = new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) 
+            public void widgetSelected(SelectionEvent e)
             {
                 Map.Entry entry = (Map.Entry)((IStructuredSelection)mSymbols.getSelection()).getFirstElement();
                 addOrEditSymbol((String)entry.getKey(),(String)entry.getValue());
             }
         };
         SelectionAdapter removeAdapter = new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) 
+            public void widgetSelected(SelectionEvent e)
             {
                 Map map = (Map)mSymbols.getInput();
                 IStructuredSelection selection = (IStructuredSelection)mSymbols.getSelection();
@@ -389,9 +389,9 @@ public abstract class NSISSettingsPage extends PropertyPage implements IWorkbenc
                     ((LinkedHashMap)input).put(entry.getKey(),entry.getValue());
                 }
             }
-            
+
         };
-        
+
         IDoubleClickListener doubleClickListener = new IDoubleClickListener() {
             public void doubleClick(DoubleClickEvent event)
             {
@@ -399,7 +399,7 @@ public abstract class NSISSettingsPage extends PropertyPage implements IWorkbenc
                 addOrEditSymbol((String)entry.getKey(),(String)entry.getValue());
             }
         };
-        
+
         mSymbols = createTableViewer(composite, mSettings.getSymbols(), new MapContentProvider(), new MapLabelProvider(),
                                      EclipseNSISPlugin.getResourceString("symbols.description"), //$NON-NLS-1$
                                      new String[] {
@@ -408,7 +408,7 @@ public abstract class NSISSettingsPage extends PropertyPage implements IWorkbenc
                                          EclipseNSISPlugin.getResourceString("symbols.add.tooltip"), //$NON-NLS-1$
                                          EclipseNSISPlugin.getResourceString("symbols.edit.tooltip"), //$NON-NLS-1$
                                          EclipseNSISPlugin.getResourceString("symbols.remove.tooltip"), //$NON-NLS-1$
-                                     addAdapter,editAdapter,removeAdapter, doubleClickListener, 
+                                     addAdapter,editAdapter,removeAdapter, doubleClickListener,
                                      mover);
         return composite;
     }
@@ -417,19 +417,19 @@ public abstract class NSISSettingsPage extends PropertyPage implements IWorkbenc
     {
         Composite composite = new Composite(parent,SWT.NONE);
         SelectionAdapter addAdapter = new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) 
+            public void widgetSelected(SelectionEvent e)
             {
                 addOrEditInstruction(""); //$NON-NLS-1$
             }
         };
         SelectionAdapter editAdapter = new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) 
+            public void widgetSelected(SelectionEvent e)
             {
                 addOrEditInstruction(((String)((IStructuredSelection)mInstructions.getSelection()).getFirstElement()).trim());
             }
         };
         SelectionAdapter removeAdapter = new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) 
+            public void widgetSelected(SelectionEvent e)
             {
                 Collection collection = (Collection)mInstructions.getInput();
                 IStructuredSelection selection = (IStructuredSelection)mInstructions.getSelection();
@@ -457,11 +457,11 @@ public abstract class NSISSettingsPage extends PropertyPage implements IWorkbenc
         IDoubleClickListener doubleClickListener = new IDoubleClickListener() {
             public void doubleClick(DoubleClickEvent event)
             {
-                
+
                 addOrEditInstruction(((String)((IStructuredSelection)event.getSelection()).getFirstElement()).trim());
             }
         };
-        
+
         mInstructions = createTableViewer(composite, mSettings.getInstructions(),
                                       new CollectionContentProvider(), new CollectionLabelProvider(),
                                       EclipseNSISPlugin.getResourceString("instructions.description"), //$NON-NLS-1$
@@ -473,10 +473,10 @@ public abstract class NSISSettingsPage extends PropertyPage implements IWorkbenc
         ((GridLayout)composite.getLayout()).marginWidth = 0;
         GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
         composite.setLayoutData(data);
-        
+
         return composite;
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.jface.preference.IPreferencePage#performOk()
      */
@@ -492,12 +492,12 @@ public abstract class NSISSettingsPage extends PropertyPage implements IWorkbenc
             mSettings.setSolidCompression(mSolidCompression.getSelection());
             mSettings.setInstructions((ArrayList)mInstructions.getInput());
             mSettings.setSymbols((LinkedHashMap)mSymbols.getInput());
-            mSettings.store(); 
+            mSettings.store();
             return true;
         }
         return false;
     }
-    
+
     private void addOrEditSymbol(String oldName, String oldValue)
     {
         Map map = (Map)mSymbols.getInput();
@@ -517,7 +517,7 @@ public abstract class NSISSettingsPage extends PropertyPage implements IWorkbenc
             mSymbols.refresh(true);
         }
     }
-    
+
     private void addOrEditInstruction(String oldInstruction)
     {
         NSISInstructionDialog dialog = new NSISInstructionDialog(getShell(),oldInstruction);
@@ -533,7 +533,7 @@ public abstract class NSISSettingsPage extends PropertyPage implements IWorkbenc
             mInstructions.refresh(true);
         }
     }
-    
+
     /**
      * @return Returns the settings.
      */
@@ -543,7 +543,7 @@ public abstract class NSISSettingsPage extends PropertyPage implements IWorkbenc
     }
 
     protected abstract String getPageDescription();
-    
+
     protected abstract boolean canEnableControls();
 
     protected abstract NSISSettings loadSettings();
@@ -557,6 +557,6 @@ public abstract class NSISSettingsPage extends PropertyPage implements IWorkbenc
      * @return
      */
     protected abstract String getContextId();
-    
+
     protected abstract boolean isSolidCompressionSupported();
 }

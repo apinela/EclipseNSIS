@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -39,7 +39,7 @@ public class LanguageComboContributionItem extends ContributionItem implements P
             return o1.toString().compareTo(o2.toString());
         }
     };
-    
+
     private ComboViewer mComboViewer;
     private ToolItem mToolitem;
     private IPartService mPartService;
@@ -117,7 +117,7 @@ public class LanguageComboContributionItem extends ContributionItem implements P
             loadLanguages();
         }
     }
-    
+
     private void loadLanguages()
     {
         if(mComboViewer == null) {
@@ -147,7 +147,7 @@ public class LanguageComboContributionItem extends ContributionItem implements P
         }
     }
 
-    protected Control createControl(Composite parent) 
+    protected Control createControl(Composite parent)
     {
         String tooltip = InstallOptionsPlugin.getResourceString("preview.lang.tooltip"); //$NON-NLS-1$
         Composite composite = new Composite(parent,SWT.NONE);
@@ -185,7 +185,7 @@ public class LanguageComboContributionItem extends ContributionItem implements P
                 return super.getText(element);
             }
         });
-        
+
         // Initialize width of combo
         loadLanguages();
         boolean b = mPartService.getActivePart() instanceof IInstallOptionsEditor;
@@ -195,7 +195,7 @@ public class LanguageComboContributionItem extends ContributionItem implements P
         return composite;
     }
 
-    public void dispose() 
+    public void dispose()
     {
         NSISLanguageManager.getInstance().removePropertyChangedListener(this);
         mPreferenceStore.removePropertyChangeListener(this);
@@ -214,19 +214,19 @@ public class LanguageComboContributionItem extends ContributionItem implements P
         mComboViewer = null;
     }
 
-    public final void fill(Composite parent) 
+    public final void fill(Composite parent)
     {
         createControl(parent);
     }
 
-    public final void fill(Menu parent, int index) 
+    public final void fill(Menu parent, int index)
     {
     }
 
-    public void fill(ToolBar parent, int index) 
+    public void fill(ToolBar parent, int index)
     {
         mToolitem = new ToolItem(parent, SWT.SEPARATOR, index);
         Control control = createControl(parent);
-        mToolitem.setControl(control);   
+        mToolitem.setControl(control);
     }
 }

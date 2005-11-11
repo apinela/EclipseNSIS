@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.Composite;
 public class NSISPropertyPage extends NSISSettingsPage
 {
     private Button mUseParent = null;
-    
+
     /**
      * @return
      */
@@ -71,17 +71,17 @@ public class NSISPropertyPage extends NSISSettingsPage
             label = "global.options.label"; //$NON-NLS-1$
             tooltip = "global.options.tooltip"; //$NON-NLS-1$
         }
-        mUseParent = createCheckBox(composite, 
+        mUseParent = createCheckBox(composite,
                                     EclipseNSISPlugin.getResourceString(label),
                                     EclipseNSISPlugin.getResourceString(tooltip),
                                     ((NSISProperties)getSettings()).getUseParent());
         mUseParent.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) 
+            public void widgetSelected(SelectionEvent e)
             {
                 enableControls(canEnableControls());
             }
         });
-        
+
         return composite;
     }
 
@@ -93,7 +93,7 @@ public class NSISPropertyPage extends NSISSettingsPage
         }
         super.enableControls(state);
     }
-    
+
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.dialogs.NSISSettingsPage#getPageDescription()
      */
@@ -110,9 +110,9 @@ public class NSISPropertyPage extends NSISSettingsPage
         else {
             label = "project.properties.header.text"; //$NON-NLS-1$
         }
-        return EclipseNSISPlugin.getResourceString(label); //$NON-NLS-1$
+        return EclipseNSISPlugin.getResourceString(label);
     }
-    
+
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.dialogs.NSISSettingsPage#loadSettings()
      */
@@ -120,14 +120,14 @@ public class NSISPropertyPage extends NSISSettingsPage
     {
         return NSISProperties.getProperties((IResource)getElement());
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
      */
     protected void performDefaults()
     {
         if(!mUseParent.getSelection()) {
-            NSISSettings properties = (NSISProperties)getSettings();
+            NSISSettings properties = getSettings();
             mHdrInfo.setSelection(properties.getDefaultHdrInfo());
             mLicense.setSelection(properties.getDefaultLicense());
             mNoConfig.setSelection(properties.getDefaultNoConfig());

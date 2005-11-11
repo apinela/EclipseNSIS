@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -39,7 +39,7 @@ public class NSISDocumentTemplateContext extends DocumentTemplateContext
             template.matches(key, getContextType().getId()) &&
             (mInsertTemplatesMode || (key.length() != 0 && template.getName().toLowerCase().startsWith(key.toLowerCase())));
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.jface.text.templates.TemplateContext#evaluate(org.eclipse.jface.text.templates.Template)
      */
@@ -48,12 +48,12 @@ public class NSISDocumentTemplateContext extends DocumentTemplateContext
         if (!canEvaluate(template)) {
             return null;
         }
-        
+
         TemplateTranslator translator= new NSISTemplateTranslator();
         TemplateBuffer buffer= translator.translate(template);
-        
+
         getContextType().resolve(buffer, this);
-        
+
         return buffer;
     }
 }

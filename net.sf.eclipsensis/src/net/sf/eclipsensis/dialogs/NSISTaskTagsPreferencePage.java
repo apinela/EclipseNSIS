@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -39,15 +39,15 @@ public class NSISTaskTagsPreferencePage extends PreferencePage implements IWorkb
     private Button mCaseSensitiveButton = null;
     private Collection mOriginalTags = null;
     private Font mBoldFont = null;
-    
+
     /**
-     * 
+     *
      */
     public NSISTaskTagsPreferencePage()
     {
         super();
         String descriptionText = EclipseNSISPlugin.getResourceString("task.tags.preferences.description"); //$NON-NLS-1$
-        setDescription(descriptionText); //$NON-NLS-1$
+        setDescription(descriptionText);
     }
 
     /* (non-Javadoc)
@@ -85,17 +85,17 @@ public class NSISTaskTagsPreferencePage extends PreferencePage implements IWorkb
         data.widthHint= convertWidthInCharsToPixels(65);
         data.heightHint= convertHeightInCharsToPixels(10);
         table.setLayoutData(data);
-        
+
         table.setHeaderVisible(true);
         table.setLinesVisible(true);
 
         TableColumn[] columns = new TableColumn[2];
-        columns[0] = new TableColumn(table, SWT.NONE);      
+        columns[0] = new TableColumn(table, SWT.NONE);
         columns[0].setText(EclipseNSISPlugin.getResourceString("task.tag.label")); //$NON-NLS-1$
-        
-        columns[1] = new TableColumn(table, SWT.NONE);      
+
+        columns[1] = new TableColumn(table, SWT.NONE);
         columns[1].setText(EclipseNSISPlugin.getResourceString("task.tag.priority.label")); //$NON-NLS-1$
-        mTableViewer= new CheckboxTableViewer(table);       
+        mTableViewer= new CheckboxTableViewer(table);
         mTableViewer.setLabelProvider(new TaskTagLabelProvider());
         mTableViewer.setContentProvider(new CollectionContentProvider());
 
@@ -131,13 +131,13 @@ public class NSISTaskTagsPreferencePage extends PreferencePage implements IWorkb
                 updateButtons();
             }
         });
-        
+
         mTableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
             public void selectionChanged(SelectionChangedEvent e) {
                 updateButtons();
             }
         });
-        
+
         Composite buttons= new Composite(composite, SWT.NONE);
         buttons.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false));
         layout= new GridLayout();
@@ -174,18 +174,18 @@ public class NSISTaskTagsPreferencePage extends PreferencePage implements IWorkb
                 remove();
             }
         });
-        
+
         mCaseSensitiveButton = new Button(composite, SWT.CHECK);
         mCaseSensitiveButton.setText(EclipseNSISPlugin.getResourceString("task.tags.case.sensitive.label")); //$NON-NLS-1$
         mCaseSensitiveButton.setSelection(NSISPreferences.INSTANCE.isCaseSensitiveTaskTags());
         data = new GridData(SWT.FILL, SWT.CENTER, true, false);
         data.horizontalSpan = 2;
-        
+
         Dialog.applyDialogFont(composite);
         FontData fontData = table.getFont().getFontData()[0];
         fontData.setStyle(SWT.BOLD);
         mBoldFont = new Font(getShell().getDisplay(),fontData);
-        
+
         mOriginalTags = NSISPreferences.INSTANCE.getTaskTags();
         Collection taskTags = NSISPreferences.INSTANCE.getTaskTags();
         mTableViewer.setInput(NSISPreferences.INSTANCE.getTaskTags());
@@ -207,7 +207,7 @@ public class NSISTaskTagsPreferencePage extends PreferencePage implements IWorkb
     /**
      * Updates the buttons.
      */
-    protected void updateButtons() 
+    protected void updateButtons()
     {
         IStructuredSelection selection= (IStructuredSelection) mTableViewer.getSelection();
         int selectionCount= selection.size();
@@ -268,7 +268,7 @@ public class NSISTaskTagsPreferencePage extends PreferencePage implements IWorkb
             mTableViewer.refresh();
         }
     }
-    
+
 
     /* (non-Javadoc)
      * @see org.eclipse.jface.preference.IPreferencePage#performOk()
@@ -338,7 +338,7 @@ public class NSISTaskTagsPreferencePage extends PreferencePage implements IWorkb
         }
         return super.performOk();
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
      */
@@ -356,23 +356,23 @@ public class NSISTaskTagsPreferencePage extends PreferencePage implements IWorkb
     {
     }
 
-    private class TaskTagLabelProvider extends LabelProvider implements ITableLabelProvider, IFontProvider 
+    private class TaskTagLabelProvider extends LabelProvider implements ITableLabelProvider, IFontProvider
     {
         /*
          * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java.lang.Object, int)
          */
-        public Image getColumnImage(Object element, int columnIndex) 
+        public Image getColumnImage(Object element, int columnIndex)
         {
             return null;
         }
-    
+
         /*
          * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object, int)
          */
-        public String getColumnText(Object element, int columnIndex) 
+        public String getColumnText(Object element, int columnIndex)
         {
             NSISTaskTag tag = (NSISTaskTag) element;
-            
+
             switch (columnIndex) {
                 case 0:
                     if(tag.isDefault()) {

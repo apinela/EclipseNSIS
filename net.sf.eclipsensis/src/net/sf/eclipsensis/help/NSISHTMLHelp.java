@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -32,7 +32,7 @@ import org.eclipse.ui.part.ViewPart;
 
 public class NSISHTMLHelp extends ViewPart implements INSISConstants
 {
-    private static final String FILE_URI_SCHEME = "file:///";
+    private static final String FILE_URI_SCHEME = "file:///"; //$NON-NLS-1$
     private static String cFirstPage = null;
     private static final String IMAGE_LOCATION_FORMAT = EclipseNSISPlugin.getResourceString("help.browser.throbber.icon.format"); //$NON-NLS-1$
     private static final int IMAGE_COUNT = Integer.parseInt(EclipseNSISPlugin.getResourceString("help.browser.throbber.icon.count")); //$NON-NLS-1$
@@ -49,7 +49,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
     private ToolItem mHome;
     private ToolItem mStop;
     private ToolItem mRefresh;
-    
+
     private String mStartPage;
     private int mIndex;
     private boolean mBusy;
@@ -62,7 +62,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
             openHelp();
         }
     };
-    
+
     public static boolean showHelp(final String url)
     {
         final boolean[] result = {false};
@@ -93,17 +93,17 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
         });
         return result[0];
     }
-    
+
     private Browser getBrowser()
     {
         return mBrowser;
     }
-    
+
     private boolean isActivated()
     {
         return getBrowser() != null;
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.ui.part.WorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
      */
@@ -131,12 +131,12 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
         data.bottom = new FormAttachment(mStatusText, -5, SWT.DEFAULT);
         mBrowser.setLayoutData(data);
         mBrowser.addLocationListener(new LocationListener() {
-            public void changed(LocationEvent event) 
+            public void changed(LocationEvent event)
             {
                 mBusy = true;
             }
-            
-            public void changing(LocationEvent event) 
+
+            public void changing(LocationEvent event)
             {
                 if(!Common.isEmpty(event.location)) {
                     File f = null;
@@ -162,7 +162,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
         openHelp();
         NSISPreferences.INSTANCE.addListener(mNSISHomeListener);
     }
-    
+
     public void dispose()
     {
         NSISPreferences.INSTANCE.removeListener(mNSISHomeListener);
@@ -172,7 +172,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
     /**
      * Loads the resources
      */
-    private void initResources() 
+    private void initResources()
     {
         if (mImages == null) {
             MessageFormat mf = new MessageFormat(IMAGE_LOCATION_FORMAT);
@@ -197,35 +197,35 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
         FormData data = new FormData();
         data.top = new FormAttachment(0, 5);
         mToolBar.setLayoutData(data);
-        
+
         // Add a button to navigate backwards through previously visited pages
-        mBack = createToolItem(mToolBar,"help.browser.back.tooltip", //$NON-NLS-1$ //$NON-NLS-2$
+        mBack = createToolItem(mToolBar,"help.browser.back.tooltip", //$NON-NLS-1$
                                "help.browser.back.icon"); //$NON-NLS-1$
-    
+
         // Add a button to navigate forward through previously visited pages
-        mForward = createToolItem(mToolBar,"help.browser.forward.tooltip", //$NON-NLS-1$ //$NON-NLS-2$
+        mForward = createToolItem(mToolBar,"help.browser.forward.tooltip", //$NON-NLS-1$
                 "help.browser.forward.icon"); //$NON-NLS-1$
-    
+
         // Add a separator
         new ToolItem(mToolBar, SWT.SEPARATOR);
-        
+
         // Add a button to refresh the current web page
-        mRefresh = createToolItem(mToolBar,"help.browser.refresh.tooltip", //$NON-NLS-1$ //$NON-NLS-2$
+        mRefresh = createToolItem(mToolBar,"help.browser.refresh.tooltip", //$NON-NLS-1$
                 "help.browser.refresh.icon"); //$NON-NLS-1$
 
         // Add a button to abort web page loading
-        mStop = createToolItem(mToolBar,"help.browser.stop.tooltip", //$NON-NLS-1$ //$NON-NLS-2$
+        mStop = createToolItem(mToolBar,"help.browser.stop.tooltip", //$NON-NLS-1$
                 "help.browser.stop.icon"); //$NON-NLS-1$
-        
+
         // Add a button to navigate to the Home page
-        mHome = createToolItem(mToolBar,"help.browser.home.tooltip", //$NON-NLS-1$ //$NON-NLS-2$
+        mHome = createToolItem(mToolBar,"help.browser.home.tooltip", //$NON-NLS-1$
                 "help.browser.home.icon"); //$NON-NLS-1$
 
         Listener listener = new Listener() {
             public void handleEvent(Event event) {
                 ToolItem item = (ToolItem)event.widget;
                 if (item == mBack) {
-                    mBrowser.back(); 
+                    mBrowser.back();
                 }
                 else if (item == mForward) {
                     mBrowser.forward();
@@ -255,11 +255,11 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
         data.top = new FormAttachment(0, 5);
         data.right = new FormAttachment(100, -5);
         mThrobber.setLayoutData(data);
-        
+
         mThrobber.addListener(SWT.Paint, new Listener() {
             public void handleEvent(Event e) {
                 Point pt = ((Canvas)e.widget).getSize();
-                e.gc.drawImage(mImages[mIndex], 0, 0, rect.width, rect.height, 0, 0, pt.x, pt.y);         
+                e.gc.drawImage(mImages[mIndex], 0, 0, rect.width, rect.height, 0, 0, pt.x, pt.y);
             }
         });
         mThrobber.addListener(SWT.MouseDown, new Listener() {
@@ -267,10 +267,10 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
                 mBrowser.setUrl(mStartPage);
             }
         });
-        
+
         final Display display = displayArea.getDisplay();
         display.asyncExec(new Runnable() {
-            
+
             public void run() {
                 if (mThrobber.isDisposed()) {
                     return;
@@ -286,8 +286,8 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
             }
         });
     }
-    
-    private void createStatusArea(Composite composite) 
+
+    private void createStatusArea(Composite composite)
     {
         // Add a label for displaying status messages as they are received from the control
         mStatusText = new Label(composite, SWT.SINGLE | SWT.READ_ONLY | SWT.BORDER);
@@ -299,23 +299,23 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
         data.right = new FormAttachment(mProgressBar, 0, SWT.DEFAULT);
         data.bottom = new FormAttachment(100, -5);
         mStatusText.setLayoutData(data);
-        
+
         data = new FormData();
         data.right = new FormAttachment(100, -5);
         data.bottom = new FormAttachment(100, -5);
         mProgressBar.setLayoutData(data);
-        
+
         mBrowser.addStatusTextListener(new StatusTextListener() {
             public void changed(StatusTextEvent event) {
-                mStatusText.setText(event.text); 
+                mStatusText.setText(event.text);
             }
         });
 
         mBrowser.addProgressListener(new ProgressListener() {
-            public void changed(ProgressEvent event) 
+            public void changed(ProgressEvent event)
             {
                 if (event.total == 0) {
-                    return;                            
+                    return;
                 }
                 int ratio = event.current * 100 / event.total;
                 mProgressBar.setSelection(ratio);
@@ -325,8 +325,8 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
                     mThrobber.redraw();
                 }
             }
-            
-            public void completed(ProgressEvent event) 
+
+            public void completed(ProgressEvent event)
             {
                 mProgressBar.setSelection(0);
                 mBusy = false;
@@ -336,7 +336,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
                 mThrobber.redraw();
             }
         });
-    }   
+    }
 
     private void openHelp()
     {

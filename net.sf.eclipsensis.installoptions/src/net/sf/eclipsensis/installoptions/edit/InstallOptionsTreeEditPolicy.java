@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -18,13 +18,13 @@ import org.eclipse.gef.editpolicies.AbstractEditPolicy;
 public class InstallOptionsTreeEditPolicy extends AbstractEditPolicy
 {
     private EditPart mEditPart;
-    
+
     public InstallOptionsTreeEditPolicy(EditPart editPart)
     {
         super();
         mEditPart = editPart;
     }
-    
+
     public Command getCommand(Request req)
     {
         if(((InstallOptionsEditDomain)mEditPart.getViewer().getEditDomain()).isReadOnly()) {
@@ -45,7 +45,7 @@ public class InstallOptionsTreeEditPolicy extends AbstractEditPolicy
             Command cmd = parent.getCommand(req);
             req.setType(REQ_MOVE);
             return cmd;
-        } 
+        }
         else {
             return UnexecutableCommand.INSTANCE;
         }

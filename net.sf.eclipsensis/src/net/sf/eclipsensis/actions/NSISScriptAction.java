@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -23,7 +23,7 @@ import org.eclipse.ui.*;
 public abstract class NSISScriptAction extends NSISAction implements IMakeNSISRunListener
 {
     protected IPath mInput = null;
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
      */
@@ -32,7 +32,7 @@ public abstract class NSISScriptAction extends NSISAction implements IMakeNSISRu
         super.init(action);
         MakeNSISRunner.addListener(this);
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.ui.IActionDelegate2#dispose()
      */
@@ -41,7 +41,7 @@ public abstract class NSISScriptAction extends NSISAction implements IMakeNSISRu
         super.dispose();
         MakeNSISRunner.removeListener(this);
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.ui.IEditorActionDelegate#setActiveEditor(org.eclipse.jface.action.IAction, org.eclipse.ui.IEditorPart)
      */
@@ -74,12 +74,12 @@ public abstract class NSISScriptAction extends NSISAction implements IMakeNSISRu
             }
         }
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
      */
     public void selectionChanged(IAction action, ISelection selection)
-    {  
+    {
         if(selection instanceof IStructuredSelection) {
             //This is for the popup context menu handling
             IStructuredSelection structuredSelection = (IStructuredSelection)selection;
@@ -92,10 +92,10 @@ public abstract class NSISScriptAction extends NSISAction implements IMakeNSISRu
         }
         updateActionState();
     }
-    
+
     public boolean isEnabled()
     {
-        return (mPlugin != null && mPlugin.isConfigured() && mInput != null && 
+        return (mPlugin != null && mPlugin.isConfigured() && mInput != null &&
                 mInput.getFileExtension().equalsIgnoreCase(NSI_EXTENSION));
     }
 

@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -23,7 +23,7 @@ public class TableResizer extends ControlAdapter
     private double[] mWeights;
     private double[] mCachedWeights;
     private double mTotalWeight;
-    
+
     public TableResizer()
     {
         this(null);
@@ -36,8 +36,8 @@ public class TableResizer extends ControlAdapter
         mCachedWeights = null;
         mTotalWeight = 0;
     }
-    
-    public void controlResized(ControlEvent e) 
+
+    public void controlResized(ControlEvent e)
     {
         Table table = (Table)e.widget;
         int width = table.getClientArea().width;
@@ -45,7 +45,7 @@ public class TableResizer extends ControlAdapter
         TableColumn[] columns = table.getColumns();
         if(!Common.isEmptyArray(columns)) {
             width -= (columns.length-1)*lineWidth;
-            
+
             if(mCachedWeights == null || columns.length != mCachedWeights.length) {
                 if(Common.isEmptyArray(mWeights)) {
                     mCachedWeights = new double[columns.length];

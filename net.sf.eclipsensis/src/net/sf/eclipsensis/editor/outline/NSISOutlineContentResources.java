@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -23,20 +23,20 @@ import org.eclipse.swt.widgets.Display;
 
 public class NSISOutlineContentResources implements IEclipseNSISService,  INSISKeywordsListener
 {
-    private static NSISOutlineContentResources cInstance = null;  //$NON-NLS-1$
-    
+    private static NSISOutlineContentResources cInstance = null;
+
     private static final String[] cTypes = {"!define", "!ifdef", "!ifndef", "!ifmacrodef",  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
                                             "!ifnmacrodef", "!endif", "!macro", "!macroend",  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
                                             "Function", "FunctionEnd", "Section", "SectionEnd",  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
                                             "SubSection", "SubSectionEnd", "SectionGroup", "SectionGroupEnd",  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-                                            "Page", "PageEx", "Pageexend","!include"}; //$NON-NLS-1$ //$NON-NLS-2$
+                                            "Page", "PageEx", "Pageexend","!include"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 
     private List mTypeList = null;
     private Map mTypes = null;
     private Map mTypeNames = null;
     private Map mImages = null;
     private List mPages = null;
-    
+
     public static NSISOutlineContentResources getInstance()
     {
         return cInstance;
@@ -134,12 +134,12 @@ public class NSISOutlineContentResources implements IEclipseNSISService,  INSISK
     {
         return (mTypes.containsKey(type)?mTypeList.indexOf(type):-1);
     }
-    
+
     public String getTypeName(String type)
     {
         return (String)mTypeNames.get(type);
     }
-    
+
     public Image getImage(String type)
     {
         return (Image)mImages.get(type);

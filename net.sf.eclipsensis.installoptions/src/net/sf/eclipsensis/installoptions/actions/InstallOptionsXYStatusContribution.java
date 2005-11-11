@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -53,7 +53,7 @@ public class InstallOptionsXYStatusContribution extends StatusLineContributionIt
             try {
                 InstallOptionsRootEditPart editPart = (InstallOptionsRootEditPart)((InstallOptionsDesignEditor)part).getGraphicalViewer().getRootEditPart();
                 mFigureCanvas = (FigureCanvas)editPart.getViewer().getControl();
-                mViewport = mFigureCanvas.getViewport(); 
+                mViewport = mFigureCanvas.getViewport();
                 mFigureCanvas.addMouseListener(mMouseListener);
                 mFigureCanvas.addMouseMoveListener(mMouseListener);
                 mEditor = (InstallOptionsDesignEditor)part;
@@ -61,7 +61,7 @@ public class InstallOptionsXYStatusContribution extends StatusLineContributionIt
                     public void keyPressed(KeyEvent e)
                     {
                         if((e.stateMask & SWT.ALT) == 0 && (e.stateMask & SWT.CTRL) == 0) {
-                            mKey = (int)e.character;
+                            mKey = e.character;
                         }
                         else {
                             mKey = -1;
@@ -84,7 +84,7 @@ public class InstallOptionsXYStatusContribution extends StatusLineContributionIt
     {
         private boolean mMouseDown = false;
         private Point mOrigin = null;
-        
+
         public void mouseDown(MouseEvent e)
         {
             mMouseDown = true;
@@ -99,7 +99,7 @@ public class InstallOptionsXYStatusContribution extends StatusLineContributionIt
                 }
             }
         }
-        
+
         public void mouseUp(MouseEvent e)
         {
             mMouseDown = false;

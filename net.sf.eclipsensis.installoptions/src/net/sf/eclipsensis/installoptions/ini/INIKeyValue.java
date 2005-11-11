@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -19,18 +19,18 @@ import net.sf.eclipsensis.util.Common;
 public class INIKeyValue extends INILine
 {
     private static final long serialVersionUID = -1955779348753709847L;
-    
+
     private String mKey = ""; //$NON-NLS-1$
     private String mValue = ""; //$NON-NLS-1$
     private String mOriginalValue = ""; //$NON-NLS-1$
     private boolean mQuoted = false;
-    
+
     public INIKeyValue(String key)
     {
         super();
         mKey = key;
     }
-    
+
     INIKeyValue(String key, String value)
     {
         this(key);
@@ -41,22 +41,22 @@ public class INIKeyValue extends INILine
         setValue(value);
         mOriginalValue = getValue();
     }
-    
+
     public String getKey()
     {
         return mKey;
     }
-    
+
     public String getValue()
     {
         return mValue;
     }
-    
+
     public void setValue(String value)
     {
         mValue = (value==null?"":TypeConverter.INI_STRING_CONVERTER.asString(value)); //$NON-NLS-1$
     }
-    
+
     protected void checkProblems()
     {
         if(getParent() instanceof INISection) {
@@ -122,7 +122,7 @@ public class INIKeyValue extends INILine
             mOriginalValue = mValue;
         }
     }
-    
+
     private String maybeQuote(String text)
     {
         mQuoted = false;
@@ -134,7 +134,7 @@ public class INIKeyValue extends INILine
         }
         return text;
     }
-    
+
     private String quote(String text)
     {
         return new StringBuffer("\"").append(text).append("\"").toString(); //$NON-NLS-1$ //$NON-NLS-2$

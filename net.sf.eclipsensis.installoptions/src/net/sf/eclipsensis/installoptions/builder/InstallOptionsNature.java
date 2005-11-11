@@ -6,16 +6,16 @@ import net.sf.eclipsensis.util.Common;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 
-public class InstallOptionsNature implements IProjectNature 
+public class InstallOptionsNature implements IProjectNature
 {
 	private IProject mProject;
 
     /*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.resources.IProjectNature#configure()
 	 */
-	public void configure() throws CoreException 
+	public void configure() throws CoreException
     {
 		IProjectDescription desc = mProject.getDescription();
 		ICommand[] commands = desc.getBuildSpec();
@@ -36,10 +36,10 @@ public class InstallOptionsNature implements IProjectNature
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.resources.IProjectNature#deconfigure()
 	 */
-	public void deconfigure() throws CoreException 
+	public void deconfigure() throws CoreException
     {
 		IProjectDescription description = getProject().getDescription();
 		ICommand[] commands = description.getBuildSpec();
@@ -56,24 +56,24 @@ public class InstallOptionsNature implements IProjectNature
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.resources.IProjectNature#getProject()
 	 */
-	public IProject getProject() 
+	public IProject getProject()
     {
 		return mProject;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.resources.IProjectNature#setProject(org.eclipse.core.resources.IProject)
 	 */
-	public void setProject(IProject project) 
+	public void setProject(IProject project)
     {
 		mProject = project;
 	}
-    
+
 	public static void addNature(IProject project)
     {
         try {
@@ -92,7 +92,7 @@ public class InstallOptionsNature implements IProjectNature
             description.setNatureIds(natures);
             project.setDescription(description, null);
             InstallOptionsBuilder.buildProject(project, IncrementalProjectBuilder.FULL_BUILD, null);
-        } 
+        }
         catch (CoreException e) {
         }
     }

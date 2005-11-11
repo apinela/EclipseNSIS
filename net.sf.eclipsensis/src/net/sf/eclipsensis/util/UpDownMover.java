@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -40,7 +40,7 @@ public abstract class UpDownMover
         }
         return false;
     }
-    
+
     public void moveToTop()
     {
         List move = getMoveElements();
@@ -59,7 +59,7 @@ public abstract class UpDownMover
         updateElements(elements, move, true);
     }
 
-    public void moveDown() 
+    public void moveDown()
     {
         List elements = getAllElements();
         List move = getMoveElements();
@@ -69,13 +69,13 @@ public abstract class UpDownMover
         updateElements(elements, move, true);
     }
 
-    public void moveUp() 
+    public void moveUp()
     {
         List move = getMoveElements();
         updateElements(move(getAllElements(), move), move, false);
     }
-    
-    private List move(List elements, List move) 
+
+    private List move(List elements, List move)
     {
         int nElements= elements.size();
         List res= new ArrayList(nElements);
@@ -103,14 +103,14 @@ public abstract class UpDownMover
         List allElements = getAllElements();
         if(!Common.isEmptyCollection(allElements)) {
             int[] selectedIndices = getSelectedIndices();
-            
+
             if(!Common.isEmptyArray(selectedIndices)) {
                 for (int i = 0; i < selectedIndices.length; i++) {
                     moveElements.add(allElements.get(selectedIndices[i]));
                 }
             }
         }
-        
+
         return moveElements;
     }
 

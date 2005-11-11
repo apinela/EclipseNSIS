@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -68,7 +68,7 @@ public class ImageManager
                 mImageRegistry.put(urlString.toLowerCase(), imageDescriptor);
             }
         }
-        
+
         return imageDescriptor;
     }
 
@@ -88,7 +88,7 @@ public class ImageManager
         return imageDescriptor;
     }
 
-    public synchronized Image getImage(String location) 
+    public synchronized Image getImage(String location)
     {
         Image image = mImageRegistry.get(location==null?null:location.toLowerCase());
         if(image == null) {
@@ -97,27 +97,27 @@ public class ImageManager
         return image;
     }
 
-    public synchronized boolean containsImage(URL url) 
+    public synchronized boolean containsImage(URL url)
     {
         return (mImageRegistry.get(url==null?null:url.toString().toLowerCase()) != null);
     }
 
-    public synchronized void putImage(URL url, Image image) 
+    public synchronized void putImage(URL url, Image image)
     {
         putImage(url == null?null:url.toString(),image);
     }
 
-    public synchronized void putImage(String s, Image image) 
-    {
-        mImageRegistry.put(s==null?null:s.toLowerCase(),image);
-    }
-    
-    public synchronized void putImageDescriptor(String s, ImageDescriptor image) 
+    public synchronized void putImage(String s, Image image)
     {
         mImageRegistry.put(s==null?null:s.toLowerCase(),image);
     }
 
-    public synchronized Image getImage(URL url) 
+    public synchronized void putImageDescriptor(String s, ImageDescriptor image)
+    {
+        mImageRegistry.put(s==null?null:s.toLowerCase(),image);
+    }
+
+    public synchronized Image getImage(URL url)
     {
         Image image = null;
         if(url != null) {

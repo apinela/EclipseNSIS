@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -54,20 +54,20 @@ public class NSISWordRule extends WordRule implements INSISConstants
                     }
                 }
                 scanner.unread();
-                
+
                 IToken token= (IToken)fWords.get(buffer.toString());
                 if (token != null) {
                     return token;
                 }
-                    
+
                 if (fDefaultToken.isUndefined()) {
                     NSISTextUtility.unread(scanner, ((NSISScanner)scanner).getOffset()-offset);
                 }
-                    
+
                 return fDefaultToken;
             }
         }
-        
+
         scanner.unread();
         return Token.UNDEFINED;
     }

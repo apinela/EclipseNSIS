@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -30,12 +30,12 @@ public class InstallOptionsTemplate extends AbstractTemplate
     };
 
     private INISection[] mSections;
-    
+
     public InstallOptionsTemplate(String name)
     {
         super(name);
     }
-    
+
     public InstallOptionsTemplate(String name, File file)
     {
         this(name);
@@ -46,7 +46,7 @@ public class InstallOptionsTemplate extends AbstractTemplate
         }
         setSections(sections);
     }
-    
+
     public InstallOptionsTemplate(String name, InstallOptionsWidget[] widgets)
     {
         this(name);
@@ -69,7 +69,7 @@ public class InstallOptionsTemplate extends AbstractTemplate
     {
         return mSections;
     }
-    
+
     void setSections(INISection[] sections)
     {
         mSections = sections;
@@ -90,7 +90,7 @@ public class InstallOptionsTemplate extends AbstractTemplate
         }
         return (InstallOptionsWidget[])list.toArray(new InstallOptionsWidget[list.size()]);
     }
-    
+
     public Object clone()
     {
         InstallOptionsTemplate template = (InstallOptionsTemplate)super.clone();

@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -31,7 +31,7 @@ public abstract class InstallOptionsEditableElement extends InstallOptionsWidget
     {
         super(section);
     }
-    
+
     protected void init()
     {
         super.init();
@@ -41,7 +41,7 @@ public abstract class InstallOptionsEditableElement extends InstallOptionsWidget
         mMinLen = ""; //$NON-NLS-1$
         mValidateText = ""; //$NON-NLS-1$
     }
-    
+
     protected void setDefaults()
     {
         super.setDefaults();
@@ -58,7 +58,7 @@ public abstract class InstallOptionsEditableElement extends InstallOptionsWidget
         clone.setValidateText(getValidateText());
         return clone;
     }
-    
+
     protected String getDefaultState()
     {
         return ""; //$NON-NLS-1$
@@ -141,12 +141,12 @@ public abstract class InstallOptionsEditableElement extends InstallOptionsWidget
             return super.createPropertyDescriptor(name);
         }
     }
-    
+
     protected int getDefaultMinLen()
     {
         return 0;
     }
-    
+
     protected int getDefaultMaxLen()
     {
         return InstallOptionsModel.INSTANCE.getMaxLength();
@@ -171,7 +171,7 @@ public abstract class InstallOptionsEditableElement extends InstallOptionsWidget
         }
         return super.getPropertyValue(propName);
     }
-    
+
     public void setPropertyValue(Object id, Object value)
     {
         if(id.equals(InstallOptionsModel.PROPERTY_TEXT)) {
@@ -198,7 +198,7 @@ public abstract class InstallOptionsEditableElement extends InstallOptionsWidget
     {
         return new Position(0,0,122,13);
     }
-    
+
     public String getText()
     {
         return mText;
@@ -213,12 +213,12 @@ public abstract class InstallOptionsEditableElement extends InstallOptionsWidget
             setDirty(true);
         }
     }
-    
+
     public String getState()
     {
         return mState;
     }
-    
+
     public void setState(String state)
     {
         if(!mState.equals(state)) {
@@ -233,7 +233,7 @@ public abstract class InstallOptionsEditableElement extends InstallOptionsWidget
     {
         return mMaxLen;
     }
-    
+
     public void setMaxLen(String maxLen)
     {
         if(!mMaxLen.equals(maxLen)) {
@@ -243,12 +243,12 @@ public abstract class InstallOptionsEditableElement extends InstallOptionsWidget
             setDirty(true);
         }
     }
-    
+
     public String getMinLen()
     {
         return mMinLen;
     }
-    
+
     public void setMinLen(String minLen)
     {
         if(!mMinLen.equals(minLen)) {
@@ -263,7 +263,7 @@ public abstract class InstallOptionsEditableElement extends InstallOptionsWidget
     {
         return mValidateText;
     }
-    
+
     public void setValidateText(String validateText)
     {
         if(!mValidateText.equals(validateText)) {

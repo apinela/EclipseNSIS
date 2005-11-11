@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -30,9 +30,9 @@ public class HelpBrowserLocalFileHandler implements IExtensionChangeHandler, IHe
     private static final String HANDLER_CLASS = "class";
 
     public static final HelpBrowserLocalFileHandler INSTANCE = new HelpBrowserLocalFileHandler();
-    
+
     private Map mExtensions = new LinkedHashMap();
-    
+
     private HelpBrowserLocalFileHandler()
     {
         super();
@@ -40,7 +40,7 @@ public class HelpBrowserLocalFileHandler implements IExtensionChangeHandler, IHe
         loadExtensions(tracker);
         tracker.registerHandler(this, ExtensionTracker.createExtensionPointFilter(getExtensionPointFilter()));
     }
-    
+
     public boolean handle(File file)
     {
         String ext = Common.getFileExtension(file);
@@ -105,7 +105,7 @@ public class HelpBrowserLocalFileHandler implements IExtensionChangeHandler, IHe
                     }
                     descriptor.extensions.addAll(Common.tokenizeList(elements[i].getAttribute(HANDLER_EXTENSIONS),','));
                     descriptor.handler = (IHelpBrowserLocalFileHandler)elements[i].createExecutableExtension(HANDLER_CLASS);
-                    
+
                     tracker.registerObject(extension, descriptor,IExtensionTracker.REF_WEAK);
                     handlers.add(descriptor);
                 }
@@ -114,7 +114,7 @@ public class HelpBrowserLocalFileHandler implements IExtensionChangeHandler, IHe
                 }
             }
             mExtensions.put(extension.getUniqueIdentifier(), handlers);
-        }        
+        }
     }
 
     public void removeExtension(IExtension extension, Object[] objects)
@@ -123,7 +123,7 @@ public class HelpBrowserLocalFileHandler implements IExtensionChangeHandler, IHe
             mExtensions.remove(extension.getUniqueIdentifier());
         }
     }
-    
+
     private class HandlerDescriptor
     {
         String id = "";

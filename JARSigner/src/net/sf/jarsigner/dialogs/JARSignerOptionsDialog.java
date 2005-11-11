@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -40,12 +40,11 @@ public class JARSignerOptionsDialog extends AbstractJAROptionsDialog
 
     private List mAliases;
     private ComboViewer mComboViewer;
-    
+
     /**
      * @param parentShell
-     * @throws KeyStoreException 
      */
-    public JARSignerOptionsDialog(Shell parentShell, List selection) throws KeyStoreException
+    public JARSignerOptionsDialog(Shell parentShell, List selection)
     {
         super(parentShell, selection);
     }
@@ -113,10 +112,10 @@ public class JARSignerOptionsDialog extends AbstractJAROptionsDialog
         applyDialogFont(composite);
 
         SelectionAdapter sa = new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) 
+            public void widgetSelected(SelectionEvent e)
             {
                 Button b = (Button)e.widget;
-                Text text = (Text)b.getData(ATTR_TEXT); //$NON-NLS-1$
+                Text text = (Text)b.getData(ATTR_TEXT);
                 if(text != null) {
                     String store = getKeyStore();
                     if(Common.isEmpty(store)) {
@@ -156,7 +155,7 @@ public class JARSignerOptionsDialog extends AbstractJAROptionsDialog
         gd = (GridData)t.getLayoutData();
         gd.widthHint = convertWidthInCharsToPixels(50);
 
-        makeLabel(composite, JARSignerPlugin.getResourceString(ALIAS), true); //$NON-NLS-1$
+        makeLabel(composite, JARSignerPlugin.getResourceString(ALIAS), true);
         final Combo combo = new Combo(composite,SWT.BORDER|SWT.DROP_DOWN|SWT.READ_ONLY);
         gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
         gd.horizontalSpan = 2;
@@ -172,17 +171,17 @@ public class JARSignerOptionsDialog extends AbstractJAROptionsDialog
         });
         mComboViewer.setInput(mAliases);
         mComboViewer.setSelection(new StructuredSelection(getAlias()));
-        
-        makeText(composite,JARSignerPlugin.getResourceString(STORE_TYPE),STORE_TYPE,false); //$NON-NLS-1$
-        makeText(composite,JARSignerPlugin.getResourceString(KEY_PASS),KEY_PASS,false); //$NON-NLS-1$
-        makeText(composite,JARSignerPlugin.getResourceString(SIG_FILE),SIG_FILE,false); //$NON-NLS-1$
+
+        makeText(composite,JARSignerPlugin.getResourceString(STORE_TYPE),STORE_TYPE,false);
+        makeText(composite,JARSignerPlugin.getResourceString(KEY_PASS),KEY_PASS,false);
+        makeText(composite,JARSignerPlugin.getResourceString(SIG_FILE),SIG_FILE,false);
 
         if(getSelection().size() <= 1) {
             makeFileBrowser(composite,JARSignerPlugin.getResourceString("signed.jar.location"), SIGNED_JAR,  //$NON-NLS-1$
                     new FileSelectionAdapter("signed.jar.location.message","",false), //$NON-NLS-1$ //$NON-NLS-2$
-                    false); //$NON-NLS-1$
+                    false);
         }
-        
+
     }
 
     protected void createFlagsDialogArea(Composite parent)
@@ -196,10 +195,10 @@ public class JARSignerOptionsDialog extends AbstractJAROptionsDialog
         layout.marginWidth = 0;
         composite.setLayout(layout);
         applyDialogFont(composite);
-        makeCheckBox(composite,JARSignerPlugin.getResourceString(INTERNAL_SF),INTERNAL_SF,false); //$NON-NLS-1$
-        makeCheckBox(composite,JARSignerPlugin.getResourceString(SECTIONS_ONLY),SECTIONS_ONLY,false); //$NON-NLS-1$
+        makeCheckBox(composite,JARSignerPlugin.getResourceString(INTERNAL_SF),INTERNAL_SF,false);
+        makeCheckBox(composite,JARSignerPlugin.getResourceString(SECTIONS_ONLY),SECTIONS_ONLY,false);
     }
-    
+
     protected boolean isValid()
     {
         if(super.isValid()) {

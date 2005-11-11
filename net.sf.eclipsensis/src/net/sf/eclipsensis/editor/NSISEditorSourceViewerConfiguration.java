@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -34,7 +34,7 @@ public class NSISEditorSourceViewerConfiguration extends NSISSourceViewerConfigu
     {
         super(preferenceStore);
         mTextHover = new NSISTextHover();
-        
+
         NSISInformationProvider informationProvider = new NSISInformationProvider();
         mInformationControlCreator = new NSISInformationControlCreator(null);
         IInformationControlCreator informationControlCreator = new NSISInformationControlCreator(null,SWT.V_SCROLL|SWT.H_SCROLL);
@@ -84,7 +84,7 @@ public class NSISEditorSourceViewerConfiguration extends NSISSourceViewerConfigu
     {
         return mInformationPresenter;
     }
-    
+
     /*
      * (non-Javadoc) Method declared on SourceViewerConfiguration
      */

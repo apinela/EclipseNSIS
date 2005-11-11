@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -42,11 +42,11 @@ public abstract class NSISWizard extends Wizard implements IAdaptable, INewWizar
     private ArrayList mSettingsListeners = new ArrayList();
     private IPageChangeProvider mPageChangeProvider;
     private AbstractNSISWizardPage mCurrentPage = null;
-    
+
     /**
 	 * Constructor for NSISWizard.
 	 */
-	public NSISWizard() 
+	public NSISWizard()
     {
 		super();
         setTitleBarColor(ColorManager.WHITE);
@@ -98,7 +98,7 @@ public abstract class NSISWizard extends Wizard implements IAdaptable, INewWizar
     /**
 	 * Adding the page to the wizard.
 	 */
-	public final void addPages() 
+	public final void addPages()
     {
         if(EclipseNSISPlugin.getDefault().isConfigured()) {
             initSettings();
@@ -124,7 +124,7 @@ public abstract class NSISWizard extends Wizard implements IAdaptable, INewWizar
     {
         return mSettings;
     }
-   
+
     protected void setSettings(NSISWizardSettings settings)
     {
         mSettings = settings;
@@ -143,14 +143,14 @@ public abstract class NSISWizard extends Wizard implements IAdaptable, INewWizar
             getContainer().updateButtons();
         }
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.jface.wizard.IWizard#getNextPage(org.eclipse.jface.wizard.IWizardPage)
      */
     public IWizardPage getNextPage(IWizardPage page)
     {
         IWizardPage nextPage = super.getNextPage(page);
-        if(mSettings.getInstallerType() == INSTALLER_TYPE_SILENT && nextPage != null &&  
+        if(mSettings.getInstallerType() == INSTALLER_TYPE_SILENT && nextPage != null &&
            nextPage.getName().equals(NSISWizardPresentationPage.NAME)) {
             nextPage = super.getNextPage(nextPage);
         }
@@ -180,7 +180,7 @@ public abstract class NSISWizard extends Wizard implements IAdaptable, INewWizar
             d.heightHint = SIZING_WIZARD_HEIGHT;
         }
     }
-    
+
     public void addSettingsListener(INSISWizardSettingsListener listener)
     {
         mSettingsListeners.add(listener);
@@ -218,18 +218,18 @@ public abstract class NSISWizard extends Wizard implements IAdaptable, INewWizar
     }
 
     public abstract String getHelpContextId();
-    
+
     private class PageChangeProvider implements IPageChangeProvider
     {
         private List mListeners = new ArrayList();
-        
+
         public void addPageChangedListener(IPageChangedListener listener)
         {
             if(!mListeners.contains(listener)) {
                 mListeners.add(listener);
             }
         }
-        
+
         public List getListeners()
         {
             return mListeners;

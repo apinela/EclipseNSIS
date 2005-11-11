@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -17,10 +17,10 @@ import net.sf.jarsigner.JARSignerPlugin;
 
 import org.eclipse.jdt.launching.IVMInstall;
 
-public class JARVerifier extends AbstractJARUtil 
+public class JARVerifier extends AbstractJARUtil
 {
     private boolean mCerts = false;
-    
+
     public JARVerifier(IVMInstall vmInstall, String toolsJar, List targetJars)
     {
         super(vmInstall, toolsJar, targetJars);

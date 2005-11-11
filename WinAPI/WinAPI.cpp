@@ -10,6 +10,7 @@
 #include <windows.h>
 #include <windowsx.h>
 #include <tchar.h>
+#include <time.h>
 #include "htmlhelp.h"
 #include "ITStorage.h"
 #include "VisualStylesXP.h"
@@ -383,6 +384,29 @@ JNIEXPORT jstring JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetEnvironmentVari
             GlobalFree(value);
         }
     }
+    pEnv->ReleaseStringUTFChars(name, lpName);
     
     return result;
+}
+
+JNIEXPORT jstring JNICALL Java_net_sf_eclipsensis_util_WinAPI_strftime(JNIEnv *pEnv, jclass jClass, jstring format)
+{
+    TCHAR *szFormat = (TCHAR *)pEnv->GetStringUTFChars(format, 0);
+    char datebuf[256];
+    
+    time_t rawtime;
+    time(&rawtime);
+
+    datebuf[0]=0;
+    size_t s=strftime(datebuf,sizeof(datebuf),szFormat,localtime(&rawtime));
+
+    if (s < 0) {
+      datebuf[0]=0;
+    }
+    else {
+      datebuf[max(s,sizeof(datebuf)-1)]=0;
+    }
+    pEnv->ReleaseStringUTFChars(format, szFormat);
+    
+    return pEnv->NewStringUTF(datebuf);
 }

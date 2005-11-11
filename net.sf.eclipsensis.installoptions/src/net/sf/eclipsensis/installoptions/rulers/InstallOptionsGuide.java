@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -46,7 +46,7 @@ public class InstallOptionsGuide
 
     /**
      * Constructor
-     * 
+     *
      * @param isHorizontal
      *            <code>true</code> if the guide is mHorizontal (i.e., placed
      *            on a vertical ruler)
@@ -67,7 +67,7 @@ public class InstallOptionsGuide
     /**
      * Attaches the given part along the given edge to this guide. The
      * InstallOptionsElement is also updated to reflect this attachment.
-     * 
+     *
      * @param part
      *            The part that is to be attached to this guide; if the part is
      *            already attached, its alignment is updated
@@ -98,7 +98,7 @@ public class InstallOptionsGuide
     /**
      * Detaches the given part from this guide. The InstallOptionsElement is also updated
      * to reflect this change.
-     * 
+     *
      * @param part
      *            the part that is to be detached from this guide
      */
@@ -173,7 +173,7 @@ public class InstallOptionsGuide
 
     /**
      * Sets the orientation of the guide
-     * 
+     *
      * @param isHorizontal
      *            <code>true</code> if this guide is to be placed on a
      *            vertical ruler
@@ -185,7 +185,7 @@ public class InstallOptionsGuide
 
     /**
      * Sets the location of the guide
-     * 
+     *
      * @param offset
      *            The location of the guide (in pixels)
      */

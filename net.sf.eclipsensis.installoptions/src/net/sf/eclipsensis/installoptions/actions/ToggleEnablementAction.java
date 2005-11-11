@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -25,7 +25,7 @@ import org.eclipse.ui.IWorkbenchPart;
 public class ToggleEnablementAction extends SelectionAction
 {
     public static final String ID = "net.sf.eclipsensis.installoptions.toggle_enablement"; //$NON-NLS-1$
-    
+
     /**
      * @param part
      */
@@ -38,14 +38,14 @@ public class ToggleEnablementAction extends SelectionAction
     /**
      * Initializes this action's text and images.
      */
-    protected void init() 
+    protected void init()
     {
         super.init();
         setId(ID);
         setEnabled(false);
     }
 
-    public Command createToggleEnablementCommand(List objects) 
+    public Command createToggleEnablementCommand(List objects)
     {
         if (objects.isEmpty()) {
             return null;

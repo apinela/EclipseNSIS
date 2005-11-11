@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -38,7 +38,7 @@ public abstract class InstallOptionsUneditableElementEditPart extends InstallOpt
 
     protected void doPropertyChange(PropertyChangeEvent evt)
     {
-        if (evt.getPropertyName().equalsIgnoreCase(InstallOptionsModel.PROPERTY_TEXT)) {//$NON-NLS-1$
+        if (evt.getPropertyName().equalsIgnoreCase(InstallOptionsModel.PROPERTY_TEXT)) {
             IUneditableElementFigure figure2 = (IUneditableElementFigure)getFigure();
             figure2.setText((String)evt.getNewValue());
             setNeedsRefresh(true);

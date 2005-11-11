@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -17,7 +17,7 @@ import org.eclipse.swt.graphics.Rectangle;
 public abstract class InstallOptionsPicture extends InstallOptionsUneditableElement
 {
     public static final String PROPERTY_IMAGE = "Image"; //$NON-NLS-1$
-    
+
     protected InstallOptionsPicture(INISection section)
     {
         super(section);
@@ -38,7 +38,7 @@ public abstract class InstallOptionsPicture extends InstallOptionsUneditableElem
         Rectangle rect = getImage().getBounds();
         return new Position(0,0,rect.width-1,rect.height-1);
     }
-    
+
     public Object getPropertyValue(Object propName)
     {
         if(PROPERTY_IMAGE.equals(propName)) {
@@ -48,6 +48,6 @@ public abstract class InstallOptionsPicture extends InstallOptionsUneditableElem
             return super.getPropertyValue(propName);
         }
     }
-    
+
     public abstract Image getImage();
 }

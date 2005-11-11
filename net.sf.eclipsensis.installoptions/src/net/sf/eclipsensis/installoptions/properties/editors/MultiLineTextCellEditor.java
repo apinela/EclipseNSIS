@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -25,7 +25,7 @@ public class MultiLineTextCellEditor extends DialogCellEditor
 {
     private ILabelProvider mLabelProvider = null;
     private boolean mOnlyNumbers = false;
-    
+
     /**
      * @param parent
      */
@@ -38,12 +38,12 @@ public class MultiLineTextCellEditor extends DialogCellEditor
     {
         return mOnlyNumbers;
     }
-    
+
     public void setOnlyNumbers(boolean onlyNumbers)
     {
         mOnlyNumbers = onlyNumbers;
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.jface.viewers.DialogCellEditor#openDialogBox(org.eclipse.swt.widgets.Control)
      */
@@ -72,7 +72,7 @@ public class MultiLineTextCellEditor extends DialogCellEditor
             label.setText(text);
         }
     }
-    
+
     public ILabelProvider getLabelProvider()
     {
         return mLabelProvider;
@@ -87,7 +87,7 @@ public class MultiLineTextCellEditor extends DialogCellEditor
     {
         private String mValue;
         private ICellEditorValidator mValidator;
-        
+
         public MultiLineTextDialog(Shell parent, String value)
         {
             super(parent);
@@ -98,12 +98,12 @@ public class MultiLineTextCellEditor extends DialogCellEditor
         {
             return mValidator;
         }
-        
+
         public void setValidator(ICellEditorValidator validator)
         {
             mValidator = validator;
         }
-        
+
         protected void configureShell(Shell newShell)
         {
             super.configureShell(newShell);
@@ -148,7 +148,7 @@ public class MultiLineTextCellEditor extends DialogCellEditor
             });
             return composite;
         }
-        
+
         protected void okPressed()
         {
             ICellEditorValidator validator = getValidator();

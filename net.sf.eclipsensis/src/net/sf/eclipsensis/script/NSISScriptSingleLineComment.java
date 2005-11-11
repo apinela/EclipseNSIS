@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -15,8 +15,8 @@ public class NSISScriptSingleLineComment extends NSISScriptMultiLineComment
 {
     public static final String PREFIX_SEMICOLON = ";"; //$NON-NLS-1$
     public static final String PREFIX_HASH = "#"; //$NON-NLS-1$
-    private String mPrefix = PREFIX_HASH; //$NON-NLS-1$
-    
+    private String mPrefix = PREFIX_HASH;
+
     /**
      * @param text
      */
@@ -42,7 +42,7 @@ public class NSISScriptSingleLineComment extends NSISScriptMultiLineComment
     {
         return mPrefix;
     }
-    
+
     /**
      * @param prefix The prefix to set.
      */

@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -17,7 +17,7 @@ public class NSISWordPatternRule extends NSISSingleLineRule
 {
     protected IWordDetector mWordDetector;
     protected int mStartSequenceSize = 0;
-    
+
     /**
      * @param startSequence
      * @param endSequence
@@ -54,13 +54,13 @@ public class NSISWordPatternRule extends NSISSingleLineRule
         return result;
     }
 
-    protected boolean endSequenceDetected(ICharacterScanner scanner, boolean resume) 
+    protected boolean endSequenceDetected(ICharacterScanner scanner, boolean resume)
     {
         StringBuffer buffer = new StringBuffer();
         int offset = ((NSISScanner)scanner).getOffset();
 
         int c= scanner.read();
-        
+
         boolean foundWordStart = false;
         while (true) {
             if(c == INSISConstants.LINE_CONTINUATION_CHAR) {
@@ -91,7 +91,7 @@ public class NSISWordPatternRule extends NSISSingleLineRule
             c= scanner.read();
         }
         scanner.unread();
-        
+
         if(testEndSequence(buffer.toString())) {
             mStartSequenceSize = 0;
             return true;
@@ -102,7 +102,7 @@ public class NSISWordPatternRule extends NSISSingleLineRule
             return false;
         }
     }
-    
+
     protected boolean testEndSequence(String endSequence)
     {
         if (endSequence.length() >= mEndSequence.length) {

@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -20,36 +20,36 @@ import org.eclipse.jface.text.source.*;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.texteditor.MarkerAnnotation;
 
-/** 
+/**
  * The NSISAnnotationHover provides the hover support for NSIS editors.
  */
 public class NSISAnnotationHover implements IAnnotationHover, INSISConstants, IAnnotationHoverExtension
 {
     private Set mAnnotationTypes;
-    
+
     private IInformationControlCreator mHoverControlCreator = new IInformationControlCreator(){
         public IInformationControl createInformationControl(Shell parent)
         {
             return new DefaultInformationControl(parent);
         }
     };
-    
+
     public NSISAnnotationHover(String[] annotationTypes)
     {
         super();
         mAnnotationTypes = new HashSet(Arrays.asList(annotationTypes));
     }
-    
+
 	/* (non-Javadoc)
 	 * Method declared on IAnnotationHover
 	 */
-	public String getHoverInfo(ISourceViewer sourceViewer, int lineNumber) 
+	public String getHoverInfo(ISourceViewer sourceViewer, int lineNumber)
     {
 		try {
             IAnnotationModel model = sourceViewer.getAnnotationModel();
             IDocument document= sourceViewer.getDocument();
 			IRegion info= document.getLineInformation(lineNumber);
-            
+
             if (model != null) {
                 ArrayList messages = new ArrayList();
                 for(Iterator e= model.getAnnotationIterator(); e.hasNext(); ) {
@@ -77,13 +77,13 @@ public class NSISAnnotationHover implements IAnnotationHover, INSISConstants, IA
                     return buf.toString();
                 }
             }
-		} 
+		}
         catch (Exception ex) {
 		}
 
 		return null;
 	}
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.jface.text.source.IAnnotationHoverExtension#canHandleMouseCursor()
      */

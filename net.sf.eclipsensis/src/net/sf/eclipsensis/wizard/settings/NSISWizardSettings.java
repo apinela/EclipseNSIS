@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -30,7 +30,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
 {
     public static final String NODE = "settings"; //$NON-NLS-1$
     public static final String CHILD_NODE = "attribute"; //$NON-NLS-1$
-    
+
     private static final long serialVersionUID = -3872062583870145866L;
 
     private String mName = EclipseNSISPlugin.getResourceString("wizard.default.name",""); //$NON-NLS-1$ //$NON-NLS-2$
@@ -76,7 +76,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     private boolean mCreateUninstallerControlPanelEntry = true;
     private boolean mSilentUninstaller = false;
     private boolean mSelectComponents = false;
-    
+
     private boolean mCreateUninstaller = true;
     private String mUninstallIcon = ""; //$NON-NLS-1$
     private String mUninstallFile = EclipseNSISPlugin.getResourceString("wizard.default.uninstaller",""); //$NON-NLS-1$ //$NON-NLS-2$
@@ -84,11 +84,11 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     private boolean mMakePathsRelative = true;
     private boolean mCompileScript = true;
     private boolean mTestScript = false;
-    
+
     private INSISInstallElement mInstaller;
 
     private transient NSISWizard mWizard = null;
-    
+
     public NSISWizardSettings()
     {
         this(false);
@@ -110,7 +110,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
             mInstaller = null;
         }
     }
-    
+
     /**
      * @return Returns the wizard.
      */
@@ -164,7 +164,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     {
         return mShowBackground;
     }
- 
+
     /**
      * @param gradient The bGGradient to set.
      */
@@ -188,7 +188,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     {
         mBackgroundBMP = backgroundBMP;
     }
-    
+
     /**
      * @return Returns the backgroundWAV.
      */
@@ -211,7 +211,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     {
         return mBGTextColor;
     }
-    
+
     /**
      * @param textColor The bGTextColor to set.
      */
@@ -219,7 +219,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     {
         mBGTextColor = textColor;
     }
-    
+
     /**
      * @return Returns the bGTopColor.
      */
@@ -227,7 +227,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     {
         return mBGTopColor;
     }
-    
+
     /**
      * @param topColor The bGTopColor to set.
      */
@@ -235,7 +235,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     {
         mBGTopColor = topColor;
     }
-    
+
     /**
      * @return Returns the changeInstallDir.
      */
@@ -243,7 +243,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     {
         return mChangeInstallDir;
     }
-    
+
     /**
      * @param changeInstallDir The changeInstallDir to set.
      */
@@ -251,7 +251,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     {
         mChangeInstallDir = changeInstallDir;
     }
-    
+
     /**
      * @return Returns the changeProgramGroup.
      */
@@ -259,7 +259,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     {
         return mChangeStartMenuGroup;
     }
-    
+
     /**
      * @param changeStartMenuGroup The changeStartMenuGroup to set.
      */
@@ -267,7 +267,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     {
         mChangeStartMenuGroup = changeStartMenuGroup;
     }
-    
+
     /**
      * @return Returns the company.
      */
@@ -275,7 +275,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     {
         return mCompany;
     }
-    
+
     /**
      * @param company The company to set.
      */
@@ -283,7 +283,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     {
         mCompany = company;
     }
-    
+
     /**
      * @return Returns the createStartMenuGroup.
      */
@@ -291,7 +291,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     {
         return mCreateStartMenuGroup;
     }
-    
+
     /**
      * @param createStartMenuGroup The createStartMenuGroup to set.
      */
@@ -299,7 +299,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     {
         mCreateStartMenuGroup = createStartMenuGroup;
     }
-    
+
     /**
      * @return Returns the createUninstaller.
      */
@@ -307,7 +307,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     {
         return mCreateUninstaller;
     }
-    
+
     /**
      * @param createUninstaller The createUninstaller to set.
      */
@@ -315,7 +315,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     {
         mCreateUninstaller = createUninstaller;
     }
-    
+
     /**
      * @return Returns the fadeInTime.
      */
@@ -323,7 +323,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     {
         return mFadeInDelay;
     }
-    
+
     /**
      * @param fadeInDelay The fadeInDelay to set.
      */
@@ -331,7 +331,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     {
         mFadeInDelay = fadeInDelay;
     }
-    
+
     /**
      * @return Returns the fadeOutTime.
      */
@@ -339,7 +339,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     {
         return mFadeOutDelay;
     }
-    
+
     /**
      * @param fadeOutDelay The fadeOutDelay to set.
      */
@@ -347,7 +347,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     {
         mFadeOutDelay = fadeOutDelay;
     }
-    
+
     /**
      * @return Returns the installDir.
      */
@@ -355,7 +355,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     {
         return mInstallDir;
     }
-    
+
     /**
      * @param installDir The installDir to set.
      */
@@ -363,7 +363,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     {
         mInstallDir = installDir;
     }
-    
+
     /**
      * @return Returns the icon.
      */
@@ -371,7 +371,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     {
         return mIcon;
     }
-    
+
     /**
      * @param icon The icon to set.
      */
@@ -379,7 +379,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     {
         mIcon = icon;
     }
-    
+
     /**
      * @return Returns the installType.
      */
@@ -387,7 +387,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     {
         return mInstallerType;
     }
-    
+
     /**
      * @param installType The installType to set.
      */
@@ -395,7 +395,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     {
         mInstallerType = installerType;
     }
-    
+
     /**
      * @return Returns the licenseButtonType.
      */
@@ -403,7 +403,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     {
         return mLicenseButtonType;
     }
-    
+
     /**
      * @param licenseButtonType The licenseButtonType to set.
      */
@@ -411,7 +411,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     {
         mLicenseButtonType = licenseButtonType;
     }
-    
+
     /**
      * @return Returns the licenseData.
      */
@@ -419,7 +419,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     {
         return mLicenseData;
     }
-    
+
     /**
      * @param licenseData The licenseData to set.
      */
@@ -427,7 +427,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     {
         mLicenseData = licenseData;
     }
-    
+
     /**
      * @return Returns the name.
      */
@@ -435,7 +435,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     {
         return mName;
     }
-    
+
     /**
      * @param name The name to set.
      */
@@ -443,7 +443,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     {
         mName = name;
     }
-    
+
     /**
      * @return Returns the outFile.
      */
@@ -451,7 +451,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     {
         return mOutFile;
     }
-    
+
     /**
      * @param outFile The outFile to set.
      */
@@ -459,7 +459,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     {
         mOutFile = outFile;
     }
-    
+
     /**
      * @return Returns the startMenuGroup.
      */
@@ -467,7 +467,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     {
         return mStartMenuGroup;
     }
-    
+
     /**
      * @param startMenuGroup The startMenuGroup to set.
      */
@@ -475,7 +475,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     {
         mStartMenuGroup = startMenuGroup;
     }
-    
+
     /**
      * @return Returns the runProgramAfterInstall.
      */
@@ -483,7 +483,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     {
         return mRunProgramAfterInstall;
     }
-    
+
     /**
      * @param runAfterInstall The runProgramAfterInstall to set.
      */
@@ -499,7 +499,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     {
         return mShowInstDetails;
     }
-    
+
     /**
      * @param showInstDetails The showInstDetails to set.
      */
@@ -507,7 +507,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     {
         mShowInstDetails = showInstDetails;
     }
-    
+
     /**
      * @return Returns the showLicense.
      */
@@ -515,7 +515,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     {
         return mShowLicense;
     }
-    
+
     /**
      * @param showLicense The showLicense to set.
      */
@@ -523,7 +523,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     {
         mShowLicense = showLicense;
     }
-    
+
     /**
      * @return Returns the splashBMP.
      */
@@ -531,7 +531,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     {
         return mSplashBMP;
     }
-    
+
     /**
      * @param splashBMP The splashBMP to set.
      */
@@ -539,7 +539,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     {
         mSplashBMP = splashBMP;
     }
-    
+
     /**
      * @return Returns the splashTime.
      */
@@ -547,7 +547,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     {
         return mSplashDelay;
     }
-    
+
     /**
      * @param splashDelay The splashDelay to set.
      */
@@ -555,7 +555,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     {
         mSplashDelay = splashDelay;
     }
-    
+
     /**
      * @return Returns the splashWAV.
      */
@@ -563,7 +563,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     {
         return mSplashWAV;
     }
-    
+
     /**
      * @param splashWAV The splashWAV to set.
      */
@@ -571,7 +571,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     {
         mSplashWAV = splashWAV;
     }
-    
+
     /**
      * @return Returns the uninstallFile.
      */
@@ -579,7 +579,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     {
         return mUninstallFile;
     }
-    
+
     /**
      * @param uninstallFile The uninstallFile to set.
      */
@@ -587,7 +587,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     {
         mUninstallFile = uninstallFile;
     }
-    
+
     /**
      * @return Returns the uninstallIcon.
      */
@@ -595,7 +595,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     {
         return mUninstallIcon;
     }
-    
+
     /**
      * @param uninstallIcon The uninstallIcon to set.
      */
@@ -603,7 +603,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     {
         mUninstallIcon = uninstallIcon;
     }
-    
+
     /**
      * @return Returns the url.
      */
@@ -611,7 +611,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     {
         return mUrl;
     }
-    
+
     /**
      * @param url The url to set.
      */
@@ -619,7 +619,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     {
         mUrl = url;
     }
-    
+
     /**
      * @return Returns the version.
      */
@@ -627,7 +627,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     {
         return mVersion;
     }
-    
+
     /**
      * @param version The version to set.
      */
@@ -643,7 +643,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     {
         return mEnableLanguageSupport;
     }
-    
+
     /**
      * @param createMultilingual The createMultilingual to set.
      */
@@ -651,7 +651,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     {
         mEnableLanguageSupport = enableLanguageSupport;
     }
-    
+
     /**
      * @return Returns the selectLanguage.
      */
@@ -659,7 +659,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     {
         return mSelectLanguage;
     }
-    
+
     /**
      * @param selectLanguage The selectLanguage to set.
      */
@@ -667,7 +667,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     {
         mSelectLanguage = selectLanguage;
     }
-    
+
     /**
      * @return Returns the languages.
      */
@@ -675,7 +675,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     {
         return mLanguages;
     }
-    
+
     /**
      * @param languages The languages to set.
      */
@@ -686,7 +686,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
             mLanguages.addAll(languages);
         }
     }
-    
+
     /**
      * @return Returns the showSplash.
      */
@@ -694,7 +694,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     {
         return mShowSplash;
     }
-    
+
     /**
      * @param showSplash The showSplash to set.
      */
@@ -750,7 +750,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     {
         mMakePathsRelative = makePathsRelative;
     }
-    
+
     /**
      * @return Returns the savePath.
      */
@@ -758,7 +758,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     {
         return mSavePath;
     }
-    
+
     /**
      * @param savePath The savePath to set.
      */
@@ -796,12 +796,12 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     {
         return mInstaller;
     }
-    
+
     public void setInstaller(INSISInstallElement installer)
     {
         mInstaller = installer;
     }
-    
+
     /**
      * @return Returns the autoCloseUninstaller.
      */
@@ -809,7 +809,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     {
         return mAutoCloseUninstaller;
     }
-    
+
     /**
      * @param autoCloseUninstaller The autoCloseUninstaller to set.
      */
@@ -817,7 +817,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     {
         mAutoCloseUninstaller = autoCloseUninstaller;
     }
-    
+
     /**
      * @return Returns the openReadmeAfterInstall.
      */
@@ -825,7 +825,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     {
         return mOpenReadmeAfterInstall;
     }
-    
+
     /**
      * @param openReadmeAfterInstall The openReadmeAfterInstall to set.
      */
@@ -833,7 +833,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     {
         mOpenReadmeAfterInstall = openReadmeAfterInstall;
     }
-    
+
     /**
      * @return Returns the runProgramAfterInstallParams.
      */
@@ -841,7 +841,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     {
         return mRunProgramAfterInstallParams;
     }
-    
+
     /**
      * @param runProgramAfterInstallParams The runProgramAfterInstallParams to set.
      */
@@ -850,7 +850,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     {
         mRunProgramAfterInstallParams = runProgramAfterInstallParams;
     }
-    
+
     /**
      * @return Returns the showUninstDetails.
      */
@@ -858,7 +858,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     {
         return mShowUninstDetails;
     }
-    
+
     /**
      * @param showUninstDetails The showUninstDetails to set.
      */
@@ -866,7 +866,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     {
         mShowUninstDetails = showUninstDetails;
     }
-    
+
     /**
      * @return Returns the createUninstallerControlPanelEntry.
      */
@@ -874,7 +874,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     {
         return mCreateUninstallerControlPanelEntry;
     }
-    
+
     /**
      * @param createUninstallerControlPanelEntry The createUninstallerControlPanelEntry to set.
      */
@@ -883,7 +883,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     {
         mCreateUninstallerControlPanelEntry = createUninstallerControlPanelEntry;
     }
-    
+
     /**
      * @return Returns the createUninstallerStartMenuShortcut.
      */
@@ -891,7 +891,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     {
         return mCreateUninstallerStartMenuShortcut;
     }
-    
+
     /**
      * @param createUninstallerStartMenuShortcut The createUninstallerStartMenuShortcut to set.
      */
@@ -900,7 +900,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     {
         mCreateUninstallerStartMenuShortcut = createUninstallerStartMenuShortcut;
     }
-    
+
     /**
      * @return Returns the silentUninstaller.
      */
@@ -908,7 +908,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     {
         return mSilentUninstaller;
     }
-    
+
     /**
      * @param silentUninstaller The silentUninstaller to set.
      */
@@ -916,7 +916,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     {
         mSilentUninstaller = silentUninstaller;
     }
-    
+
     /**
      * @return Returns the selectComponents.
      */
@@ -924,7 +924,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     {
         return mSelectComponents;
     }
-    
+
     /**
      * @param selectComponents The selectComponents to set.
      */
@@ -955,17 +955,17 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
             return super.getNodeValue(node, name, clasz);
         }
     }
-    
+
     protected String getNodeName()
     {
-        return NODE; //$NON-NLS-1$
+        return NODE;
     }
 
     protected String getChildNodeName()
     {
         return CHILD_NODE;
     }
-    
+
     protected String convertToString(String name, Object obj)
     {
         if(obj instanceof RGB) {
@@ -1007,7 +1007,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
             return super.convertFromString(name, string, clasz);
         }
     }
-    
+
     public Object clone() throws CloneNotSupportedException
     {
         NSISWizardSettings settings = (NSISWizardSettings)super.clone();

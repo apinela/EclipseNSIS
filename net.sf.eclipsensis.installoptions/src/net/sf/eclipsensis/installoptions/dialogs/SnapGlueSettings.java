@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -39,7 +39,7 @@ public class SnapGlueSettings extends Composite implements IInstallOptionsConsta
 		initialize();
         setSettings(settings);
     }
-    
+
     private boolean getSetting(String name, Boolean defaultSetting)
     {
         boolean b = defaultSetting.booleanValue();
@@ -61,7 +61,7 @@ public class SnapGlueSettings extends Composite implements IInstallOptionsConsta
         mGlueToGuides.setSelection(getSetting(PREFERENCE_GLUE_TO_GUIDES,GLUE_TO_GUIDES_DEFAULT));
     }
 
-    private void initialize() 
+    private void initialize()
     {
         setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         GridLayout gridLayout = new GridLayout();
@@ -84,7 +84,7 @@ public class SnapGlueSettings extends Composite implements IInstallOptionsConsta
                 mSettings.put(PREFERENCE_SNAP_TO_GRID,Boolean.valueOf(mSnapToGrid.getSelection()));
             }
         });
-        
+
         mSnapToGeometry = new Button(group, SWT.CHECK);
         mSnapToGeometry.setText(InstallOptionsPlugin.getResourceString("snap.glue.settings.snap.geometry.label")); //$NON-NLS-1$
         mSnapToGeometry.setToolTipText(InstallOptionsPlugin.getResourceString("snap.glue.settings.snap.geometry.tooltip")); //$NON-NLS-1$
@@ -94,7 +94,7 @@ public class SnapGlueSettings extends Composite implements IInstallOptionsConsta
                 mSettings.put(PREFERENCE_SNAP_TO_GEOMETRY,Boolean.valueOf(mSnapToGeometry.getSelection()));
             }
         });
-        
+
         mSnapToGuides = new Button(group, SWT.CHECK);
         mSnapToGuides.setText(InstallOptionsPlugin.getResourceString("snap.glue.settings.snap.guides.label")); //$NON-NLS-1$
         mSnapToGuides.setToolTipText(InstallOptionsPlugin.getResourceString("snap.glue.settings.snap.guides.tooltip")); //$NON-NLS-1$
@@ -104,7 +104,7 @@ public class SnapGlueSettings extends Composite implements IInstallOptionsConsta
                 mSettings.put(PREFERENCE_SNAP_TO_GUIDES,Boolean.valueOf(mSnapToGuides.getSelection()));
             }
         });
-        
+
         mGlueToGuides = new Button(group, SWT.CHECK);
         mGlueToGuides.setText(InstallOptionsPlugin.getResourceString("snap.glue.settings.glue.guides.label")); //$NON-NLS-1$
         mGlueToGuides.setToolTipText(InstallOptionsPlugin.getResourceString("snap.glue.settings.glue.guides.tooltip")); //$NON-NLS-1$

@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -14,17 +14,17 @@ import net.sf.eclipsensis.editor.NSISCharacterPairMatcher;
 
 import org.eclipse.jface.text.*;
 
-public class NSISDoubleClickSelector extends NSISCharacterPairMatcher implements ITextDoubleClickStrategy 
+public class NSISDoubleClickSelector extends NSISCharacterPairMatcher implements ITextDoubleClickStrategy
 {
     /**
-     * 
+     *
      */
     public NSISDoubleClickSelector()
     {
         super();
         mAlwaysUsePrevChar = false;
     }
-    
+
 	/* (non-Javadoc)
 	 * Method declared on ITextDoubleClickStrategy
 	 */
@@ -34,7 +34,7 @@ public class NSISDoubleClickSelector extends NSISCharacterPairMatcher implements
 
 		if (mPos >= 0) {
     		mDocument = text.getDocument();
-    
+
     		if (!selectBracketBlock(text)) {
     			selectWord(text);
             }
@@ -45,7 +45,7 @@ public class NSISDoubleClickSelector extends NSISCharacterPairMatcher implements
 	 * Select the word at the current selection. Return true if successful,
 	 * false otherwise.
 	 */
-	 protected boolean matchWord() 
+	 protected boolean matchWord()
      {
 		try {
 			int pos= mPos;
@@ -103,9 +103,9 @@ public class NSISDoubleClickSelector extends NSISCharacterPairMatcher implements
 	}
 	
 	/**
-	 * Select the word at the current selection. 
+	 * Select the word at the current selection.
 	 */
-	 protected void selectWord(ITextViewer text) 
+	 protected void selectWord(ITextViewer text)
      {
 		if (matchWord()) {
 

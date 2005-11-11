@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -18,10 +18,10 @@ public class NSISConsoleModelEvent extends Event
     public static final int ADD=0;
     public static final int REMOVE=1;
     public static final int CLEAR=2;
-    
+
     private int mType;
     private NSISConsoleLine mLine;
-    
+
     /**
      * @param type
      * @param line

@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -17,15 +17,15 @@ public class MakeNSISResults
 {
     public static final int RETURN_SUCCESS = 0;
     public static final int RETURN_CANCEL = -1;
-    
+
     private long mCompileTimestamp = System.currentTimeMillis();
     private int mReturnCode = RETURN_SUCCESS;
     private String mOutputFileName = null;
     private File mScriptFile = null;
     private List mProblems = null;
     private boolean mCanceled = false;
-    
-    
+
+
     public MakeNSISResults(File file)
     {
         mScriptFile = file;
@@ -77,7 +77,7 @@ public class MakeNSISResults
     {
         mScriptFile = scriptFile;
     }
-    
+
     /**
      * @return Returns the returnCode.
      */
@@ -85,7 +85,7 @@ public class MakeNSISResults
     {
         return mReturnCode;
     }
-    
+
     /**
      * @param returnCode The returnCode to set.
      */
@@ -93,7 +93,7 @@ public class MakeNSISResults
     {
         mReturnCode = returnCode;
     }
-    
+
     /**
      * @return Returns the canceled.
      */
@@ -101,7 +101,7 @@ public class MakeNSISResults
     {
         return mCanceled;
     }
-    
+
     /**
      * @param canceled The canceled to set.
      */

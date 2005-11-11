@@ -34,7 +34,7 @@ public class InstallOptionsBuilder extends IncrementalProjectBuilder implements 
     private INIFile mINIFile = new INIFile();
     private long mFullBuildTimestamp;
     private String mNSISVersion;
-    
+
     static {
         cBuilderVersion = new Version(InstallOptionsPlugin.getResourceString("builder.version")); //$NON-NLS-1$
         cExtensionsSet = new CaseInsensitiveSet();
@@ -52,9 +52,9 @@ public class InstallOptionsBuilder extends IncrementalProjectBuilder implements 
     protected void startupOnInitialize()
     {
         super.startupOnInitialize();
-        
+
         String nsisVersion;
-        
+
         nsisVersion = InstallOptionsModel.INSTANCE.getNSISVersion().toString();
         try {
             mNSISVersion = getProject().getPersistentProperty(PROJECTPROPERTY_NSIS_VERSION);
@@ -62,7 +62,7 @@ public class InstallOptionsBuilder extends IncrementalProjectBuilder implements 
         catch (CoreException e) {
             mNSISVersion = null;
         }
-        
+
         if(!nsisVersion.equals(mNSISVersion)) {
             resetNSISVersion(nsisVersion);
         }
@@ -88,7 +88,7 @@ public class InstallOptionsBuilder extends IncrementalProjectBuilder implements 
                 resetBuildTimestamp();
             }
         }
-        
+
         final IModelListener modelListener = new IModelListener(){
             public void modelChanged()
             {
@@ -100,7 +100,7 @@ public class InstallOptionsBuilder extends IncrementalProjectBuilder implements 
             }
         };
         InstallOptionsModel.INSTANCE.addModelListener(modelListener);
-        
+
         getProject().getWorkspace().addResourceChangeListener(new IResourceChangeListener(){
             public void resourceChanged(IResourceChangeEvent event)
             {
@@ -138,23 +138,23 @@ public class InstallOptionsBuilder extends IncrementalProjectBuilder implements 
         }
     }
 
-    
+
     /*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.internal.events.InternalBuilder#build(int,
 	 *      java.util.Map, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException 
+	protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException
     {
 		if (kind == FULL_BUILD) {
 			fullBuild(monitor);
-		} 
+		}
         else {
 			IResourceDelta delta = getDelta(getProject());
 			if (delta == null) {
 				fullBuild(monitor);
-			} 
+			}
             else {
                 if(!checkBuilderVersion(getProject())) {
                     fullBuild(monitor);
@@ -178,7 +178,7 @@ public class InstallOptionsBuilder extends IncrementalProjectBuilder implements 
         }
     }
 
-    private void checkINI(IResource resource) 
+    private void checkINI(IResource resource)
     {
 		if (resource instanceof IFile && cExtensionsSet.contains(getExtension(resource.getName()))) {
 			IFile file = (IFile) resource;
@@ -214,12 +214,12 @@ public class InstallOptionsBuilder extends IncrementalProjectBuilder implements 
 		}
 	}
 
-	protected void fullBuild(final IProgressMonitor monitor) throws CoreException 
+	protected void fullBuild(final IProgressMonitor monitor)
     {
 		try {
             resetBuildTimestamp();
 			getProject().accept(new IResourceVisitor() {
-                public boolean visit(IResource resource) 
+                public boolean visit(IResource resource)
                 {
                     if(monitor.isCanceled()) {
                         return false;
@@ -229,15 +229,15 @@ public class InstallOptionsBuilder extends IncrementalProjectBuilder implements 
                 }
             });
             getProject().setPersistentProperty(PROJECTPROPERTY_BUILDER_VERSION, cBuilderVersion.toString());
-		} 
+		}
         catch (CoreException e) {
 		}
 	}
 
-	protected void incrementalBuild(IResourceDelta delta, final IProgressMonitor monitor) throws CoreException 
+	protected void incrementalBuild(IResourceDelta delta, final IProgressMonitor monitor) throws CoreException
     {
 		delta.accept(new IResourceDeltaVisitor() {
-            public boolean visit(IResourceDelta delta) throws CoreException 
+            public boolean visit(IResourceDelta delta) throws CoreException
             {
                 if(monitor.isCanceled()) {
                     return false;
@@ -271,7 +271,7 @@ public class InstallOptionsBuilder extends IncrementalProjectBuilder implements 
                             INIProblem[] problems = iniFile.getProblems();
                             for (int i = 0; i < problems.length; i++) {
                                 IMarker marker = file.createMarker(IInstallOptionsConstants.INSTALLOPTIONS_PROBLEM_MARKER_ID);
-                                marker.setAttribute(IMarker.SEVERITY, 
+                                marker.setAttribute(IMarker.SEVERITY,
                                         problems[i].getType()==INIProblem.TYPE_WARNING?
                                                 IMarker.SEVERITY_WARNING:
                                                 IMarker.SEVERITY_ERROR);
@@ -365,7 +365,7 @@ public class InstallOptionsBuilder extends IncrementalProjectBuilder implements 
             }
         });
     }
-    
+
     private static void checkBuildProject(final IProject project)
     {
         cJobScheduler.scheduleJob(new ProjectJobFamily(project),
@@ -409,7 +409,7 @@ public class InstallOptionsBuilder extends IncrementalProjectBuilder implements 
                                             }
                                             return true;
                                         }
-                                        
+
                                     }, IContainer.EXCLUDE_DERIVED);
                                 }
                                 if(monitor.isCanceled()) {
@@ -424,23 +424,23 @@ public class InstallOptionsBuilder extends IncrementalProjectBuilder implements 
                         }
                     });
     }
-    
+
     private static boolean checkBuilderVersion(IProject project) throws CoreException
     {
         String temp = project.getPersistentProperty(PROJECTPROPERTY_BUILDER_VERSION);
         Version builderVersion = (temp == null?Version.EMPTY_VERSION:new Version(temp));
         return (cBuilderVersion.compareTo(builderVersion) > 0);
     }
-    
+
     private static class ProjectJobFamily
     {
         private IProject mProject;
-        
+
         public ProjectJobFamily(IProject project)
         {
             mProject = project;
         }
-        
+
         public boolean equals(Object other)
         {
             if(other instanceof ProjectJobFamily) {

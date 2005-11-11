@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -111,7 +111,7 @@ public abstract class InstallOptionsElement implements IPropertySource, Cloneabl
     {
         return mDirty;
     }
-    
+
     protected void setDirty(boolean dirty)
     {
         mDirty = dirty;
@@ -128,7 +128,7 @@ public abstract class InstallOptionsElement implements IPropertySource, Cloneabl
     {
         mModelCommandListeners.remove(l);
     }
-    
+
     protected void fireModelCommand(Command cmd)
     {
         ModelCommandEvent e = new ModelCommandEvent(this,cmd);
@@ -144,7 +144,7 @@ public abstract class InstallOptionsElement implements IPropertySource, Cloneabl
         ArrayList list = new ArrayList();
         for (Iterator iter = names.iterator(); iter.hasNext();) {
             String name = (String)iter.next();
-            IPropertyDescriptor descriptor = (IPropertyDescriptor)mDescriptors.get(name); 
+            IPropertyDescriptor descriptor = (IPropertyDescriptor)mDescriptors.get(name);
             if(descriptor == null) {
                 descriptor = createPropertyDescriptor(name);
                 if(descriptor != null) {
@@ -270,12 +270,12 @@ public abstract class InstallOptionsElement implements IPropertySource, Cloneabl
         }
         setDirty(false);
     }
-    
+
     INISection getSection()
     {
         return mSection;
     }
-    
+
     public final INISection updateSection()
     {
         if(mSection == null) {
@@ -300,7 +300,7 @@ public abstract class InstallOptionsElement implements IPropertySource, Cloneabl
                 Object propertyValue = getPropertyValue(property);
                 String value = (propertyValue != null?(converter != null?converter.asString(propertyValue):propertyValue.toString()):""); //$NON-NLS-1$
                 value = (value == null?"":value); //$NON-NLS-1$
-    
+
                 INIKeyValue[] keyValues = mSection.findKeyValues(property);
                 if(!Common.isEmptyArray(keyValues)) {
                     keyValues[0].setValue(value);
@@ -313,7 +313,7 @@ public abstract class InstallOptionsElement implements IPropertySource, Cloneabl
                     }
                 }
             }
-            
+
             for(Iterator iter=mSection.getChildren().iterator(); iter.hasNext(); ) {
                 INILine line = (INILine)iter.next();
                 if(iter.hasNext() && line.getDelimiter() == null) {
@@ -324,22 +324,22 @@ public abstract class InstallOptionsElement implements IPropertySource, Cloneabl
         }
         return mSection;
     }
-    
+
     protected TypeConverter getTypeConverter(String property)
     {
         return null;
     }
-    
+
     public Image getIconImage()
     {
         return null;
     }
-    
+
     protected Collection getPropertyNames()
     {
         return doGetPropertyNames();
     }
-    
+
     protected abstract Collection doGetPropertyNames();
     protected abstract IPropertyDescriptor createPropertyDescriptor(String name);
     public abstract String getType();

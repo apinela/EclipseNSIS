@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -23,7 +23,7 @@ public class NSISTaskTagRule implements IRule
     private Map mTaskTags;
     private String[] mMatchStrings;
     /**
-     * 
+     *
      */
     public NSISTaskTagRule(IToken token)
     {
@@ -35,7 +35,7 @@ public class NSISTaskTagRule implements IRule
     {
         loadTaskTags();
     }
-    
+
     private void loadTaskTags()
     {
         Collection taskTags = NSISPreferences.INSTANCE.getTaskTags();
@@ -104,7 +104,7 @@ public class NSISTaskTagRule implements IRule
                     isCandidate = true;
                 }
                 scanner.unread();
-                
+
                 if (isCandidate) {
                     String tagName = fBuffer.toString();
                     if(mTaskTags.containsKey(tagName)) {
@@ -112,21 +112,21 @@ public class NSISTaskTagRule implements IRule
                     }
                 }
                 unreadBuffer(fBuffer, scanner);
-                    
+
                 return Token.UNDEFINED;
             }
         }
-        
+
         scanner.unread();
         return Token.UNDEFINED;
     }
-    
+
     /**
      * Returns the characters in the buffer to the scanner.
      *
      * @param scanner the scanner to be used
      */
-    protected void unreadBuffer(StringBuffer buffer, ICharacterScanner scanner) 
+    protected void unreadBuffer(StringBuffer buffer, ICharacterScanner scanner)
     {
         for (int i= buffer.length() - 1; i >= 0; i--) {
             scanner.unread();

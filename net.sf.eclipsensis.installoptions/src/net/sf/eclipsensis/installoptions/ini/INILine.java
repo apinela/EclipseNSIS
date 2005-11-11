@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -25,7 +25,7 @@ public class INILine implements Cloneable, Serializable
     private IINIContainer mParent;
     private List mErrors = new ArrayList();
     private List mWarnings = new ArrayList();
-    
+
     public void setText(String text)
     {
         mText = text;
@@ -35,17 +35,17 @@ public class INILine implements Cloneable, Serializable
     {
         return mText;
     }
-    
+
     public String getDelimiter()
     {
         return mDelimiter;
     }
-    
+
     public void setDelimiter(String delimiter)
     {
         mDelimiter = delimiter;
     }
-    
+
     public int getLength()
     {
         String text = getText();
@@ -56,12 +56,12 @@ public class INILine implements Cloneable, Serializable
     {
         return mParent;
     }
-    
+
     public void setParent(IINIContainer parent)
     {
         mParent = parent;
     }
-    
+
     public void update()
     {
     }
@@ -70,7 +70,7 @@ public class INILine implements Cloneable, Serializable
     {
         return (mText != null?mText:"")+(mDelimiter != null?mDelimiter:""); //$NON-NLS-1$ //$NON-NLS-2$
     }
-    
+
     public boolean hasErrors()
     {
         return mErrors.size() > 0;
@@ -80,31 +80,31 @@ public class INILine implements Cloneable, Serializable
     {
         return mWarnings.size() > 0;
     }
-    
+
     final void validate()
     {
         mErrors.clear();
         mWarnings.clear();
         checkProblems();
     }
-    
+
     protected void checkProblems()
     {
         if(!Common.isEmpty(getText())) {
             addProblem(INIProblem.TYPE_WARNING,InstallOptionsPlugin.getResourceString("line.ignored.warning")); //$NON-NLS-1$
         }
     }
-    
+
     public List getErrors()
     {
         return (mErrors == null?Collections.EMPTY_LIST:mErrors);
     }
-    
+
     public List getWarnings()
     {
         return (mWarnings == null?Collections.EMPTY_LIST:mWarnings);
     }
-    
+
     public void addProblem(int type, String problem)
     {
         switch(type) {

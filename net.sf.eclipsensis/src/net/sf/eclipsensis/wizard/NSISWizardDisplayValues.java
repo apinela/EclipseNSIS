@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -27,22 +27,22 @@ public class NSISWizardDisplayValues implements INSISWizardConstants
     public static final String[] SHORTCUT_TYPE_NAMES = new String[SHORTCUT_INSTALLELEMENT+1];
     public static final String[] OVERWRITE_MODE_NAMES = new String[OVERWRITE_IFDIFF+1];
     public static final String[] REG_VALUE_TYPES = new String[REG_DWORD+1];
-    
+
     static {
         INSTALLER_TYPE_NAMES[INSTALLER_TYPE_SILENT] = EclipseNSISPlugin.getResourceString("installer.type.silent"); //$NON-NLS-1$
         INSTALLER_TYPE_NAMES[INSTALLER_TYPE_CLASSIC] = EclipseNSISPlugin.getResourceString("installer.type.classic"); //$NON-NLS-1$
         INSTALLER_TYPE_NAMES[INSTALLER_TYPE_MUI] = EclipseNSISPlugin.getResourceString("installer.type.mui"); //$NON-NLS-1$
-        
+
         LICENSE_BUTTON_TYPE_NAMES[LICENSE_BUTTON_CLASSIC] = EclipseNSISPlugin.getResourceString("license.button.classic"); //$NON-NLS-1$
         LICENSE_BUTTON_TYPE_NAMES[LICENSE_BUTTON_CHECKED] = EclipseNSISPlugin.getResourceString("license.button.checked"); //$NON-NLS-1$
         LICENSE_BUTTON_TYPE_NAMES[LICENSE_BUTTON_RADIO] = EclipseNSISPlugin.getResourceString("license.button.radio"); //$NON-NLS-1$
-        
+
         System.arraycopy(MakeNSISRunner.COMPRESSOR_DISPLAY_ARRAY,0,COMPRESSOR_TYPE_NAMES,0,COMPRESSOR_TYPE_NAMES.length);
         COMPRESSOR_TYPE_NAMES[MakeNSISRunner.COMPRESSOR_DEFAULT] = EclipseNSISPlugin.getResourceString("default.compressor.label"); //$NON-NLS-1$
-        
+
         SHORTCUT_TYPE_NAMES[SHORTCUT_URL] = EclipseNSISPlugin.getResourceString("shortcut.type.url"); //$NON-NLS-1$
         SHORTCUT_TYPE_NAMES[SHORTCUT_INSTALLELEMENT] = EclipseNSISPlugin.getResourceString("shortcut.type.installelement"); //$NON-NLS-1$
-        
+
         OVERWRITE_MODE_NAMES[OVERWRITE_ON] = EclipseNSISPlugin.getResourceString("overwrite.on"); //$NON-NLS-1$;
         OVERWRITE_MODE_NAMES[OVERWRITE_OFF] = EclipseNSISPlugin.getResourceString("overwrite.off"); //$NON-NLS-1$;
         OVERWRITE_MODE_NAMES[OVERWRITE_TRY] = EclipseNSISPlugin.getResourceString("overwrite.try"); //$NON-NLS-1$;
@@ -52,7 +52,7 @@ public class NSISWizardDisplayValues implements INSISWizardConstants
         REG_VALUE_TYPES[REG_SZ] = EclipseNSISPlugin.getResourceString("reg.value.string"); //$NON-NLS-1$;
         REG_VALUE_TYPES[REG_DWORD] = EclipseNSISPlugin.getResourceString("reg.value.dword"); //$NON-NLS-1$;
     }
-    
+
     public static String[] getHKEYNames()
     {
         List list = new ArrayList();

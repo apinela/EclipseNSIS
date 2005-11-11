@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -19,7 +19,7 @@ import org.eclipse.jface.text.templates.*;
 public class NSISTemplateTranslator extends TemplateTranslator implements INSISTemplateConstants
 {
     private String mErrorMessage = null;
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.jface.text.templates.TemplateTranslator#getErrorMessage()
      */
@@ -34,17 +34,16 @@ public class NSISTemplateTranslator extends TemplateTranslator implements INSIST
     public TemplateBuffer translate(String string) throws TemplateException
     {
         StringBuffer buffer = new StringBuffer(""); //$NON-NLS-1$
-        
+
         int state= TEXT;
         mErrorMessage= null;
         Map map = new CaseInsensitiveMap();
-        
+
         int n=0;
         int offset = -1;
-        outer:
         for (int i= 0; i != string.length(); i++) {
             char ch= string.charAt(i);
-            
+
             switch (state) {
             case TEXT:
                 switch (ch) {
@@ -100,14 +99,14 @@ public class NSISTemplateTranslator extends TemplateTranslator implements INSIST
                 break;
             }
         }
-        
+
         switch (state) {
             case TEXT:
                 break;
             default:
                 throw new TemplateException(EclipseNSISPlugin.getResourceString("template.incomplete.variable.error")); //$NON-NLS-1$
-        }           
-        
+        }
+
         String translatedString= buffer.toString();
         TemplateVariable[] variables= new TemplateVariable[map.size()];
         int i=0;

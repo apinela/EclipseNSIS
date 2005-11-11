@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -37,22 +37,22 @@ public class PositionPropertySource implements IPropertySource
             }
         }
     };
-    
+
     private IPropertyDescriptor[] mDescriptors;
 
     private void createDescriptors()
     {
         PropertyDescriptor leftProp = new CustomTextPropertyDescriptor(ID_LEFT,
-                InstallOptionsPlugin.getResourceString("left.property.name")); //$NON-NLS-1$ //$NON-NLS-2$
+                InstallOptionsPlugin.getResourceString("left.property.name")); //$NON-NLS-1$
         leftProp.setValidator(cValidator);
         PropertyDescriptor topProp = new CustomTextPropertyDescriptor(ID_TOP,
-                InstallOptionsPlugin.getResourceString("top.property.name")); //$NON-NLS-1$ //$NON-NLS-2$
+                InstallOptionsPlugin.getResourceString("top.property.name")); //$NON-NLS-1$
         topProp.setValidator(cValidator);
         PropertyDescriptor rightProp = new CustomTextPropertyDescriptor(ID_RIGHT,
-                InstallOptionsPlugin.getResourceString("right.property.name")); //$NON-NLS-1$ //$NON-NLS-2$
+                InstallOptionsPlugin.getResourceString("right.property.name")); //$NON-NLS-1$
         rightProp.setValidator(cValidator);
         PropertyDescriptor bottomProp = new CustomTextPropertyDescriptor(ID_BOTTOM,
-                InstallOptionsPlugin.getResourceString("bottom.property.name")); //$NON-NLS-1$ //$NON-NLS-2$
+                InstallOptionsPlugin.getResourceString("bottom.property.name")); //$NON-NLS-1$
         bottomProp.setValidator(cValidator);
         mDescriptors = new IPropertyDescriptor[]{leftProp, topProp, rightProp, bottomProp};
     }
@@ -135,7 +135,7 @@ public class PositionPropertySource implements IPropertySource
 
     public boolean isPropertySet(String propName)
     {
-        return (ID_TOP.equals(propName) || ID_LEFT.equals(propName) || 
+        return (ID_TOP.equals(propName) || ID_LEFT.equals(propName) ||
             ID_RIGHT.equals(propName) || ID_BOTTOM.equals(propName));
     }
 
@@ -145,7 +145,7 @@ public class PositionPropertySource implements IPropertySource
             mPosition.top).append(",").append(mPosition.right).append(",").append( //$NON-NLS-1$ //$NON-NLS-2$
             mPosition.bottom).append(")").toString(); //$NON-NLS-1$
     }
-    
+
     private class CustomTextPropertyDescriptor extends TextPropertyDescriptor
     {
         public CustomTextPropertyDescriptor(Object id, String displayName)
@@ -162,6 +162,6 @@ public class PositionPropertySource implements IPropertySource
                 return super.createPropertyEditor(parent);
             }
         }
-        
+
     }
 }

@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -25,7 +25,7 @@ import org.eclipse.ui.views.properties.IPropertySource;
 public class LinkFigure extends LabelFigure implements ILinkFigure
 {
     private RGB mTxtColor;
-    
+
     public LinkFigure(Composite parent, IPropertySource propertySource, int style)
     {
         super(parent, propertySource, style);
@@ -35,13 +35,13 @@ public class LinkFigure extends LabelFigure implements ILinkFigure
     {
         super(parent, propertySource);
     }
-    
+
     protected void init(IPropertySource propertySource)
     {
         setTxtColor((RGB)propertySource.getPropertyValue(InstallOptionsModel.PROPERTY_TXTCOLOR));
         super.init(propertySource);
    }
-    
+
     public RGB getTxtColor()
     {
         return mTxtColor==null?InstallOptionsLink.DEFAULT_TXTCOLOR:mTxtColor;

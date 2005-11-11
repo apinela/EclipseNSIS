@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -30,7 +30,7 @@ import org.eclipse.swt.widgets.*;
 public class NSISInstallDirectoryDialog extends AbstractNSISInstallItemDialog
 {
     private static ArrayList cProperties = new ArrayList();
-    
+
     static {
         cProperties.add("destination"); //$NON-NLS-1$
         cProperties.add("name"); //$NON-NLS-1$
@@ -55,7 +55,7 @@ public class NSISInstallDirectoryDialog extends AbstractNSISInstallItemDialog
     {
         return INSISConstants.PLUGIN_CONTEXT_PREFIX+"nsis_folderdlg_context"; //$NON-NLS-1$
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
      */
@@ -66,7 +66,7 @@ public class NSISInstallDirectoryDialog extends AbstractNSISInstallItemDialog
         layout.marginHeight = 0;
         layout.marginWidth = 0;
         composite.setLayout(layout);
-        
+
         final Text t = NSISWizardDialogUtil.createDirectoryBrowser(composite,mStore.getString("name"), //$NON-NLS-1$
                             "wizard.source.directory.label",true,null,true); //$NON-NLS-1$
         t.addModifyListener(new ModifyListener() {
@@ -96,7 +96,7 @@ public class NSISInstallDirectoryDialog extends AbstractNSISInstallItemDialog
                 mStore.setValue("overwrite",c2.getSelectionIndex()); //$NON-NLS-1$
             }
         });
-        
+
         final Button cb1 = NSISWizardDialogUtil.createCheckBox(composite,"wizard.recursive.label",mStore.getBoolean("recursive"),true,null,false); //$NON-NLS-1$ //$NON-NLS-2$
         cb1.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
@@ -107,7 +107,7 @@ public class NSISInstallDirectoryDialog extends AbstractNSISInstallItemDialog
 
         return composite;
     }
- 
+
     protected String checkForErrors()
     {
         if(!Common.isValidPath(Common.decodePath(mStore.getString("name")))) { //$NON-NLS-1$

@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -35,7 +35,7 @@ import org.eclipse.swt.widgets.*;
 public class NSISInstallShortcutDialog extends AbstractNSISInstallItemDialog implements INSISWizardConstants
 {
     private static ArrayList cProperties = new ArrayList();
-    
+
     static {
         cProperties.add("location"); //$NON-NLS-1$
         cProperties.add("name"); //$NON-NLS-1$
@@ -53,7 +53,7 @@ public class NSISInstallShortcutDialog extends AbstractNSISInstallItemDialog imp
     {
         return INSISConstants.PLUGIN_CONTEXT_PREFIX+"nsis_shortcutdlg_context"; //$NON-NLS-1$
     }
-    
+
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.wizard.settings.dialogs.AbstractNSISInstallItemDialog#getProperties()
      */
@@ -72,7 +72,7 @@ public class NSISInstallShortcutDialog extends AbstractNSISInstallItemDialog imp
         layout.marginHeight = 0;
         layout.marginWidth = 0;
         composite.setLayout(layout);
-        
+
         final Combo c1 = NSISWizardDialogUtil.createCombo(composite,null,"", //$NON-NLS-1$
                                                           false,"wizard.location.label",true,null,true); //$NON-NLS-1$
         GridData gd = (GridData)c1.getLayoutData();
@@ -80,7 +80,7 @@ public class NSISInstallShortcutDialog extends AbstractNSISInstallItemDialog imp
         ArrayList input = new ArrayList(Arrays.asList(NSISKeywords.getInstance().getKeywordsGroup(NSISKeywords.PATH_CONSTANTS_AND_VARIABLES)));
         String temp = EclipseNSISPlugin.getResourceString("wizard.additional.shortcut.locations",""); //$NON-NLS-1$ //$NON-NLS-2$
         if(!Common.isEmpty(temp)) {
-            String[] additionalPaths = Common.tokenize(temp,','); //$NON-NLS-1$
+            String[] additionalPaths = Common.tokenize(temp,',');
             for (int i = 0; i < additionalPaths.length; i++) {
                 if(!input.contains(additionalPaths[i])) {
                     input.add(additionalPaths[i]);
@@ -128,14 +128,14 @@ public class NSISInstallShortcutDialog extends AbstractNSISInstallItemDialog imp
                     mStore.setValue("shortcutType",n); //$NON-NLS-1$
                     validate();
                 }
-            }            
+            }
         };
         for (int i = 0; i < radio.length; i++) {
             radio[i].addSelectionListener(sa);
         }
         MasterSlaveController m1 = new MasterSlaveController(radio[SHORTCUT_URL]);
         MasterSlaveController m2 = new MasterSlaveController(radio[SHORTCUT_INSTALLELEMENT]);
-        
+
         final Text t2 = NSISWizardDialogUtil.createText(composite,mStore.getString("url"),"wizard.url.label",true,m1,true); //$NON-NLS-1$ //$NON-NLS-2$
         t2.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e)
@@ -144,7 +144,7 @@ public class NSISInstallShortcutDialog extends AbstractNSISInstallItemDialog imp
                 validate();
             }
         });
-        
+
         final Combo c2 = NSISWizardDialogUtil.createContentBrowser(composite, "wizard.path.label", mStore.getString("path"), mWizard, true, m2, true); //$NON-NLS-1$ //$NON-NLS-2$
 
         c2.addModifyListener(new ModifyListener() {
@@ -157,10 +157,10 @@ public class NSISInstallShortcutDialog extends AbstractNSISInstallItemDialog imp
 
         m2.updateSlaves();
         m1.updateSlaves();
-        
+
         return composite;
     }
-    
+
     protected String checkForErrors()
     {
         if(!Common.isValidNSISPathName(mStore.getString("location"))) { //$NON-NLS-1$

@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -28,7 +28,7 @@ public class NSISWizardTemplateManager extends AbstractTemplateManager
 {
     private static final Path cPath = new Path("wizard"); //$NON-NLS-1$
     private static Object[][] cPatches;
-    
+
     static {
         cPatches = new Object[1][3];
         cPatches[0][0] = RGB.class.getName().getBytes();
@@ -69,7 +69,7 @@ public class NSISWizardTemplateManager extends AbstractTemplateManager
             }
         }
     }
-    
+
     protected Map loadUserTemplateStore() throws IOException, ClassNotFoundException
     {
         Map map = null;
@@ -93,8 +93,8 @@ public class NSISWizardTemplateManager extends AbstractTemplateManager
         }
         return map;
     }
-    
-    private static void patchUserTemplateStore(File store) throws IOException
+
+    private static void patchUserTemplateStore(File store)
     {
         byte[] contents = Common.loadContentFromFile(store);
         boolean changed = false;

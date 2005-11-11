@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -41,7 +41,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
     private static final String cDeleteConfirmTitle = EclipseNSISPlugin.getResourceString("delete.confirmation.title"); //$NON-NLS-1$
 
     private static final String cDeleteConfirmMessageFormat = EclipseNSISPlugin.getResourceString("delete.confirmation.message"); //$NON-NLS-1$
-    
+
     /**
      * @param pageName
      * @param title
@@ -51,31 +51,31 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
         super(NAME, EclipseNSISPlugin.getResourceString("wizard.contents.title"), //$NON-NLS-1$
               EclipseNSISPlugin.getResourceString("wizard.contents.description")); //$NON-NLS-1$
     }
-    
+
     protected String getHelpContextId()
     {
         return INSISConstants.PLUGIN_CONTEXT_PREFIX+"nsis_wizcontents_context"; //$NON-NLS-1$
     }
-    
+
     protected Control createPageControl(Composite parent)
     {
         NSISWizardSettings settings = mWizard.getSettings();
 
         final Composite composite = new Composite(parent, SWT.NONE);
         setControl(composite);
-    
+
         final GridLayout layout = new GridLayout(1,false);
         composite.setLayout(layout);
-        
+
         ResourceBundle bundle = EclipseNSISPlugin.getDefault().getResourceBundle();
-    
+
         Label l = NSISWizardDialogUtil.createLabel(composite,"wizard.contents.text",true,null,false); //$NON-NLS-1$
         Dialog.applyDialogFont(l);
         final GridData gridData = (GridData)l.getLayoutData();
         gridData.widthHint = Common.calculateControlSize(l,80,0).x;
         composite.addListener (SWT.Resize,  new Listener () {
             boolean init = false;
-            
+
             public void handleEvent (Event e) {
                 if(init) {
                     Point size = composite.getSize();
@@ -87,17 +87,17 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
                 }
             }
         });
-        
+
         Group group = NSISWizardDialogUtil.createGroup(composite,1,"",null,false); //$NON-NLS-1$
         GridData gd = (GridData)group.getLayoutData();
         gd.grabExcessVerticalSpace = true;
         gd.verticalAlignment = GridData.FILL;
-        
+
         final ToolBar toolbar = createToolBar(group, bundle);
         gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
         gd.horizontalSpan = 1;
         toolbar.setLayoutData(gd);
-    
+
         final ToolItem addToolItem = toolbar.getItem(0);
         final ToolItem editToolItem = toolbar.getItem(1);
         final ToolItem deleteToolItem = toolbar.getItem(2);
@@ -106,12 +106,12 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
         gd = new GridData(SWT.FILL, SWT.FILL, true, true);
         gd.horizontalSpan = 1;
         composite2.setLayoutData(gd);
-        
+
         GridLayout layout2 = new GridLayout(2,false);
         layout.marginHeight = 0;
         layout.marginWidth = 0;
         composite2.setLayout(layout2);
-        
+
         final Tree tree = new Tree(composite2,SWT.MULTI|SWT.BORDER);
         gd = new GridData(SWT.FILL, SWT.FILL, true, true);
         gd.horizontalSpan = 1;
@@ -123,14 +123,14 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
         tv.setContentProvider(new NSISInstallElementTreeContentProvider(settings));
         tv.setAutoExpandLevel(TreeViewer.ALL_LEVELS);
         tv.setInput(settings);
-        
+
         final Listener labelListener = new Listener () {
             public void handleEvent (Event event) {
                 Label label = (Label)event.widget;
                 Shell shell = label.getShell ();
                 switch (event.type) {
                     case SWT.MouseDown:
-                        tv.setSelection (new StructuredSelection(label.getData ("_INSTALLITEM")));
+                        tv.setSelection (new StructuredSelection(label.getData ("_INSTALLITEM"))); //$NON-NLS-1$
                         // fall through
                     case SWT.MouseExit:
                         shell.dispose ();
@@ -138,7 +138,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
                 }
             }
         };
-        
+
         Listener treeListener = new Listener () {
             Shell tip = null;
             Label label = null;
@@ -151,10 +151,10 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
                         TreeItem item = tree.getItem (new Point (event.x, event.y));
                         if (item != null) {
                             Object data = item.getData();
-                            if(data == label.getData("_INSTALLITEM")) {
+                            if(data == label.getData("_INSTALLITEM")) { //$NON-NLS-1$
                                 break;
                             }
-                        }    
+                        }
                     }
                     case SWT.FocusOut:
                     case SWT.Dispose:
@@ -185,8 +185,8 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
                                     label = new Label (tip, SWT.NONE);
                                     label.setForeground (tip.getDisplay().getSystemColor (SWT.COLOR_INFO_FOREGROUND));
                                     label.setBackground (tip.getDisplay().getSystemColor (SWT.COLOR_INFO_BACKGROUND));
-                                    label.setData ("_INSTALLITEM", data);
-                                    label.setText (EclipseNSISPlugin.getFormattedString("wizard.error.message.format",new String[]{tooltip}));
+                                    label.setData ("_INSTALLITEM", data); //$NON-NLS-1$
+                                    label.setText (EclipseNSISPlugin.getFormattedString("wizard.error.message.format",new String[]{tooltip})); //$NON-NLS-1$
                                     label.addListener (SWT.MouseExit, labelListener);
                                     label.addListener (SWT.MouseDown, labelListener);
                                     Point size = tip.computeSize (SWT.DEFAULT, SWT.DEFAULT);
@@ -200,16 +200,16 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
                 }
             }
         };
-        tree.setToolTipText("");
+        tree.setToolTipText(""); //$NON-NLS-1$
         tree.addListener (SWT.FocusOut, treeListener);
         tree.addListener (SWT.Dispose, treeListener);
         tree.addListener (SWT.KeyDown, treeListener);
         tree.addListener (SWT.MouseMove, treeListener);
         tree.addListener (SWT.MouseHover, treeListener);
-    
+
         final StructuredViewerUpDownMover mover = new StructuredViewerUpDownMover() {
             private TreeViewer mTreeViewer = null;
-            
+
             public void setViewer(StructuredViewer viewer)
             {
                 mTreeViewer = (TreeViewer)viewer;
@@ -257,7 +257,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
                 }
                 return parent;
             }
-            
+
             protected int[] getSelectedIndices()
             {
                 List list = getSelectionList();
@@ -269,7 +269,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
                     for(Iterator iter=list.iterator(); iter.hasNext(); ) {
                         selectedIndices[i++] = allElements.indexOf(iter.next());
                     }
-                    
+
                     return selectedIndices;
                 }
                 return new int[0];
@@ -311,7 +311,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
             protected void refreshViewer(StructuredViewer viewer, List elements, List move, boolean isDown)
             {
             }
-            
+
             private void expandGroup(AbstractNSISInstallGroup group)
             {
                 if(mTreeViewer.getExpandedState(group) != group.isExpanded()) {
@@ -328,47 +328,47 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
             }
         };
         mover.setViewer(tv);
-        
+
         Composite composite3 = new Composite(composite2,SWT.NONE);
         gd = new GridData();
         composite3.setLayoutData(gd);
-        
+
         layout2 = new GridLayout();
         layout.marginHeight = 0;
         layout.marginWidth = 0;
         composite3.setLayout(layout2);
-        
+
         final Button upButton = new Button(composite3,SWT.PUSH);
         upButton.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("up.icon"))); //$NON-NLS-1$
         upButton.setToolTipText(EclipseNSISPlugin.getResourceString("up.tooltip")); //$NON-NLS-1$
         upButton.setEnabled(mover.canMoveUp());
         upButton.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) 
+            public void widgetSelected(SelectionEvent e)
             {
                 mover.moveUp();
             }
         });
-        
+
         final Button downButton = new Button(composite3,SWT.PUSH);
         downButton.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("down.icon"))); //$NON-NLS-1$
         downButton.setToolTipText(EclipseNSISPlugin.getResourceString("down.tooltip")); //$NON-NLS-1$
         downButton.setEnabled(mover.canMoveDown());
         downButton.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) 
+            public void widgetSelected(SelectionEvent e)
             {
                 mover.moveDown();
             }
         });
-        
+
         tv.addSelectionChangedListener(new ISelectionChangedListener(){
-            public void selectionChanged(SelectionChangedEvent event) 
+            public void selectionChanged(SelectionChangedEvent event)
             {
                 enableItems(event.getSelection(),addToolItem,editToolItem,deleteToolItem);
                 upButton.setEnabled(mover.canMoveUp());
                 downButton.setEnabled(mover.canMoveDown());
             }
         });
-        
+
         tv.addTreeListener(new ITreeViewerListener() {
             public void setState(TreeExpansionEvent event, boolean state)
             {
@@ -377,7 +377,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
                     ((AbstractNSISInstallGroup)element).setExpanded(state);
                 }
             }
-            
+
             public void treeCollapsed(TreeExpansionEvent event)
             {
                 setState(event, false);
@@ -388,7 +388,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
                 setState(event, true);
             }
         });
-        
+
         mWizard.addSettingsListener(new INSISWizardSettingsListener() {
             public void settingsChanged()
             {
@@ -411,7 +411,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
                 }
             }
         };
-        
+
         SelectionAdapter deleteSelectionAdapter = new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e)
             {
@@ -422,7 +422,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
                 }
             }
         };
-        
+
         final SelectionAdapter addSelectionAdapter = new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e)
             {
@@ -484,7 +484,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
                 tv.collapseAll();
             }
         });
-        
+
         final Menu itemPopupMenu = createMenu(bundle);
         final Menu addDropdownMenu = new Menu(getShell(),SWT.DROP_DOWN);
 
@@ -510,7 +510,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
                 }
             }
         });
-        
+
         tree.addMouseListener(new MouseAdapter() {
             public void mouseUp(MouseEvent e) {
                 if(e.button == 3) {
@@ -526,7 +526,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
                 }
             }
         });
-        
+
         tree.addKeyListener(new KeyAdapter() {
             public void keyReleased(KeyEvent e) {
                 if(e.character == SWT.DEL) {
@@ -538,7 +538,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
                                 updateSelectComponents();
                             }
                         }
-                        
+
                     }
                 }
             }
@@ -552,10 +552,10 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
         });
 
         setPageComplete(validatePage(ALL_CHECK));
-        
+
         return composite;
     }
-    
+
     private boolean shouldSelectComponents(INSISInstallElement item)
     {
         if(item instanceof NSISSection) {
@@ -571,7 +571,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
                 }
             }
         }
-        
+
         return false;
     }
 
@@ -630,7 +630,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
                                 }
                                 else if(buttonId != IDialogConstants.YES_TO_ALL_ID) {
                                     int index = new MessageDialog(getShell(),cDeleteConfirmTitle,EclipseNSISPlugin.getShellImage(),
-                                            MessageFormat.format(cDeleteConfirmMessageFormat,new String[]{element.getDisplayName()}), MessageDialog.QUESTION, 
+                                            MessageFormat.format(cDeleteConfirmMessageFormat,new String[]{element.getDisplayName()}), MessageDialog.QUESTION,
                                             new String[]{IDialogConstants.YES_LABEL, IDialogConstants.YES_TO_ALL_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.NO_TO_ALL_LABEL}, 0).open();
                                     if(index >= 0) {
                                         buttonId = cDeleteConfirmButtonIds[index];
@@ -638,7 +638,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
                                     else {
                                         return;
                                     }
-    
+
                                     if(buttonId == IDialogConstants.NO_ID || buttonId == IDialogConstants.NO_TO_ALL_ID) {
                                         continue;
                                     }
@@ -792,7 +792,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
                                 mi.setText(NSISInstallElementFactory.getTypeName(childTypes[i]));
                                 mi.setImage(NSISInstallElementFactory.getImage(childTypes[i]));
                             }
-                            
+
                         }
                     }
                 }
@@ -806,8 +806,8 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
      */
     private ToolBar createToolBar(Composite parent, ResourceBundle bundle)
     {
-        ToolBar toolbar = new ToolBar(parent, SWT.FLAT); //$NON-NLS-1$
-        
+        ToolBar toolbar = new ToolBar(parent, SWT.FLAT);
+
         int[] styles = {SWT.DROP_DOWN,SWT.PUSH,SWT.PUSH,SWT.PUSH,SWT.PUSH};
         String[] images = {"add.icon","edit.icon","delete.icon","installitem.expandall.icon","installitem.collapseall.icon"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
         String[] disabledImages = {"add.disabledicon","edit.disabledicon","delete.disabledicon","installitem.expandall.disabledicon","installitem.collapseall.disabledicon"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
@@ -829,8 +829,8 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
      */
     private Menu createMenu(ResourceBundle bundle)
     {
-        Menu menu = new Menu(getShell(), SWT.POP_UP); //$NON-NLS-1$
-        
+        Menu menu = new Menu(getShell(), SWT.POP_UP);
+
         int[] styles = {SWT.CASCADE,SWT.PUSH,SWT.PUSH};
         String[] images = {"add.icon","edit.icon","delete.icon"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         String[] tooltips = {"add.tooltip","edit.tooltip","delete.tooltip"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -842,7 +842,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
         }
         return menu;
     }
-    
+
     private void checkUnselectedSections()
     {
         NSISWizardSettings settings = mWizard.getSettings();
@@ -885,7 +885,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
         }
         else {
             NSISWizardSettings settings = mWizard.getSettings();
-    
+
             String error = settings.getInstaller().validate();
             setErrorMessage(error);
             boolean b = (error == null);

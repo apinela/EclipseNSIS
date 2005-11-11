@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -27,7 +27,7 @@ public class InstallOptionsLink extends InstallOptionsUneditableElement
 {
     public static final RGB DEFAULT_TXTCOLOR = new RGB(0,0,255);
     private static ILabelProvider cLabelProvider = new LabelProvider(){
-        public String getText(Object element) 
+        public String getText(Object element)
         {
             if(element instanceof RGB) {
                 String s = TypeConverter.RGB_CONVERTER.asString(element);
@@ -41,15 +41,15 @@ public class InstallOptionsLink extends InstallOptionsUneditableElement
             }
         }
     };
-    
+
     private String mState;
     private RGB mTxtColor;
-    
+
     protected InstallOptionsLink(INISection section)
     {
         super(section);
     }
-    
+
     public String getType()
     {
         return InstallOptionsModel.TYPE_LINK;
@@ -83,12 +83,12 @@ public class InstallOptionsLink extends InstallOptionsUneditableElement
     {
         return new Position(0,0,15,9);
     }
-    
+
     public String getState()
     {
         return mState;
     }
-    
+
     public void setState(String state)
     {
         if(!mState.equals(state)) {
@@ -98,12 +98,12 @@ public class InstallOptionsLink extends InstallOptionsUneditableElement
             setDirty(true);
         }
     }
-    
+
     public RGB getTxtColor()
     {
         return mTxtColor;
     }
-    
+
     public void setTxtColor(RGB txtColor)
     {
         if((mTxtColor == null && txtColor != null) || (mTxtColor != null && !mTxtColor.equals(txtColor))) {
@@ -113,7 +113,7 @@ public class InstallOptionsLink extends InstallOptionsUneditableElement
             setDirty(true);
         }
     }
-    
+
     protected TypeConverter getTypeConverter(String property)
     {
         if(property.equalsIgnoreCase(InstallOptionsModel.PROPERTY_TXTCOLOR)) {
@@ -154,7 +154,7 @@ public class InstallOptionsLink extends InstallOptionsUneditableElement
             return super.createPropertyDescriptor(name);
         }
     }
-    
+
     public Object clone()
     {
         InstallOptionsLink clone = (InstallOptionsLink)super.clone();
@@ -164,7 +164,7 @@ public class InstallOptionsLink extends InstallOptionsUneditableElement
         }
         return clone;
     }
-    
+
     public Object getPropertyValue(Object propName)
     {
         if (InstallOptionsModel.PROPERTY_STATE.equals(propName)) {
@@ -175,7 +175,7 @@ public class InstallOptionsLink extends InstallOptionsUneditableElement
         }
         return super.getPropertyValue(propName);
     }
-    
+
     public void setPropertyValue(Object id, Object value)
     {
         if(id.equals(InstallOptionsModel.PROPERTY_STATE)) {

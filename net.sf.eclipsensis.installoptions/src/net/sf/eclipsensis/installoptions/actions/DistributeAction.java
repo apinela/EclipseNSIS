@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -35,7 +35,7 @@ public class DistributeAction extends SelectionAction implements IInstallOptions
     public static final String VERTICAL_CENTER_ID=GROUP+"vertical.center"; //$NON-NLS-1$
     public static final String VERTICAL_BOTTOM_EDGE_ID=GROUP+"vertical.bottom"; //$NON-NLS-1$
     public static final String VERTICAL_BETWEEN_ID=GROUP+"vertical.between"; //$NON-NLS-1$
-    
+
     private int mType;
     private Comparator mComparator;
 
@@ -110,7 +110,7 @@ public class DistributeAction extends SelectionAction implements IInstallOptions
             }
         };
     }
-    
+
     private double midpoint(double p, double d)
     {
         return p+(d-1.0)/2.0;
@@ -210,7 +210,7 @@ public class DistributeAction extends SelectionAction implements IInstallOptions
         PrecisionRectangle precisePartBounds = null;
         Command cmd = null;
         CompoundCommand command = new CompoundCommand();
-        
+
         for (int i = 1; i < objects.size()-1; i++) {
             part = (GraphicalEditPart)objects.get(i);
             request = new ChangeBoundsRequest(RequestConstants.REQ_MOVE);
@@ -245,17 +245,17 @@ public class DistributeAction extends SelectionAction implements IInstallOptions
                     precisePoint.preciseY = reference + mean - precisePartBounds.preciseY;
                     reference = reference + mean + precisePartBounds.preciseHeight-1;
             }
-            
+
             precisePoint.updateInts();
-            
+
             request.setMoveDelta(precisePoint);
-            
+
             cmd = part.getCommand(request);
-            if (cmd != null) { 
+            if (cmd != null) {
                 command.add(cmd);
             }
         }
-        
+
         return command;
     }
 

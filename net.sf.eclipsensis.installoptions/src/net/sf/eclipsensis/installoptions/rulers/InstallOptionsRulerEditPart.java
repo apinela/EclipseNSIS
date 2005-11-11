@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -29,7 +29,7 @@ public class InstallOptionsRulerEditPart extends RulerEditPart
     {
         return super.getDiagramViewer();
     }
-    
+
     public DragTracker getDragTracker(Request request) {
         if (request.getType().equals(REQ_SELECTION) && ((SelectionRequest)request).getLastButtonPressed() != 1) {
             return null;
@@ -37,7 +37,7 @@ public class InstallOptionsRulerEditPart extends RulerEditPart
         return new InstallOptionsRulerDragTracker(this);
     }
 
-    protected IFigure createFigure() 
+    protected IFigure createFigure()
     {
         RulerFigure ruler =  new InstallOptionsRulerFigure(this, isHorizontal(), getRulerProvider().getUnit());
         ruler.setInterval(100, 10);

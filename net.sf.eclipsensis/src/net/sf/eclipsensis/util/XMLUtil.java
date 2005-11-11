@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -12,7 +12,6 @@ package net.sf.eclipsensis.util;
 import net.sf.eclipsensis.EclipseNSISPlugin;
 
 import org.w3c.dom.*;
-import org.xml.sax.SAXException;
 
 public class XMLUtil
 {
@@ -29,15 +28,26 @@ public class XMLUtil
         }
     }
 
-    public static String getStringValue(NamedNodeMap values, String name) throws SAXException 
+    public static String getStringValue(NamedNodeMap values, String name)
     {
         return getStringValue(values, name, null);
     }
 
-    public static String getStringValue(NamedNodeMap values, String name, String defaultValue) 
+    public static String getStringValue(NamedNodeMap values, String name, String defaultValue)
     {
         Node node= values.getNamedItem(name);
         return node == null ? defaultValue : node.getNodeValue();
+    }
+
+    public static boolean getBooleanValue(NamedNodeMap values, String name)
+    {
+        return getBooleanValue(values, name, false);
+    }
+
+    public static boolean getBooleanValue(NamedNodeMap values, String name, boolean defaultValue)
+    {
+        Node node= values.getNamedItem(name);
+        return node == null ? defaultValue : Boolean.valueOf(node.getNodeValue()).booleanValue();
     }
 
     public static String readTextNode(Node item)
@@ -55,12 +65,12 @@ public class XMLUtil
         return buf.toString();
     }
 
-    public static int getIntValue(NamedNodeMap values, String name) 
+    public static int getIntValue(NamedNodeMap values, String name)
     {
         return getIntValue(values, name, 0);
     }
 
-    public static int getIntValue(NamedNodeMap values, String name, int defaultValue) 
+    public static int getIntValue(NamedNodeMap values, String name, int defaultValue)
     {
         Node node= values.getNamedItem(name);
         try {

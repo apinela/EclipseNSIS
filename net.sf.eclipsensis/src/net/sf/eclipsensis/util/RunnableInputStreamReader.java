@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -19,18 +19,18 @@ public class RunnableInputStreamReader implements Runnable
     private InputStream mInputStream = null;
     private String[] mOutput = null;
     private boolean mSaveOutput = true;
-    
+
     public RunnableInputStreamReader(InputStream inputStream)
     {
         this(inputStream,true);
     }
-    
+
     public RunnableInputStreamReader(InputStream inputStream, boolean saveOutput)
     {
         mInputStream = inputStream;
         mSaveOutput = saveOutput;
     }
-    
+
     /* (non-Javadoc)
      * @see java.lang.Runnable#run()
      */

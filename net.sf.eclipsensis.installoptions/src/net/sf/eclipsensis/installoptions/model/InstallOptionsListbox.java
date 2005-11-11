@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -40,12 +40,12 @@ public class InstallOptionsListbox extends InstallOptionsCombobox
     {
         super(section);
     }
-    
+
     public String getType()
     {
         return InstallOptionsModel.TYPE_LISTBOX;
     }
-    
+
     protected IPropertyDescriptor createPropertyDescriptor(String name)
     {
         if(name.equals(InstallOptionsModel.PROPERTY_STATE)) {
@@ -101,13 +101,13 @@ public class InstallOptionsListbox extends InstallOptionsCombobox
                 mEditor = null;
             }
          };
-        
+
         public SelectListItemsPropertyDescriptor()
         {
             super(InstallOptionsModel.PROPERTY_STATE, InstallOptionsPlugin.getResourceString("state.property.name")); //$NON-NLS-1$
             setValidator(new NSISStringLengthValidator(InstallOptionsModel.PROPERTY_STATE));
         }
-        
+
         public void propertyChange(PropertyChangeEvent evt)
         {
             if(evt.getPropertyName().equals(InstallOptionsModel.PROPERTY_LISTITEMS)) {
@@ -149,12 +149,12 @@ public class InstallOptionsListbox extends InstallOptionsCombobox
             return mEditor;
         }
     }
-        
+
     protected class SelectListItemsCellEditor extends DialogCellEditor
     {
         private boolean mMultiSelect = false;
         private List mListItems;
-        
+
         protected SelectListItemsCellEditor(Composite parent, List listItems, boolean multiSelect)
         {
             super(parent);
@@ -171,7 +171,7 @@ public class InstallOptionsListbox extends InstallOptionsCombobox
         {
             mMultiSelect = multiSelect;
         }
-        
+
         protected Object openDialogBox(Control cellEditorWindow)
         {
             Object oldValue = getValue();
@@ -191,7 +191,7 @@ public class InstallOptionsListbox extends InstallOptionsCombobox
         private String mType;
         private ICellEditorValidator mValidator;
         private TableViewer mViewer;
-        
+
         public SelectListItemsDialog(Shell parent, List values, List selection, boolean multiSelect, String type)
         {
             super(parent);
@@ -205,7 +205,7 @@ public class InstallOptionsListbox extends InstallOptionsCombobox
         {
             return mValidator;
         }
-        
+
         public void setValidator(ICellEditorValidator validator)
         {
             mValidator = validator;
@@ -228,7 +228,7 @@ public class InstallOptionsListbox extends InstallOptionsCombobox
             GridLayout layout = (GridLayout)composite.getLayout();
             layout.numColumns = 2;
             layout.makeColumnsEqualWidth = false;
-            
+
             Table table = new Table(composite,SWT.BORDER | (mMultiSelect?SWT.MULTI:SWT.SINGLE) | SWT.FULL_SELECTION | SWT.V_SCROLL);
             initializeDialogUnits(table);
             GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
@@ -238,7 +238,7 @@ public class InstallOptionsListbox extends InstallOptionsCombobox
             table.setLinesVisible(true);
             new TableColumn(table,SWT.LEFT);
             table.addControlListener(new TableResizer());
-            
+
             mViewer = new TableViewer(table);
             mViewer.setContentProvider(new CollectionContentProvider());
             mViewer.setLabelProvider(new LabelProvider());
@@ -257,7 +257,7 @@ public class InstallOptionsListbox extends InstallOptionsCombobox
             layout.marginWidth = 0;
             layout.marginHeight = 0;
             buttons.setLayout(layout);
-            
+
             Button selectAll = new Button(buttons,SWT.PUSH);
             selectAll.setText(InstallOptionsPlugin.getResourceString("select.all.label")); //$NON-NLS-1$
             selectAll.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
@@ -289,7 +289,7 @@ public class InstallOptionsListbox extends InstallOptionsCombobox
         public void create()
         {
             super.create();
-            // Set the initial selection here because of Windows bug which creates blank rows 
+            // Set the initial selection here because of Windows bug which creates blank rows
             // if the selection is set in createDialogArea
             mViewer.setSelection(new StructuredSelection(mSelection));
         }

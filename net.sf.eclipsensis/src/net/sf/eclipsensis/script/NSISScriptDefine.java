@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -13,7 +13,7 @@ public class NSISScriptDefine extends AbstractNSISScriptElement
 {
     private String mName = null;
     private String mValue = null;
-    
+
     /**
      * @param name
      * @param value
@@ -36,7 +36,7 @@ public class NSISScriptDefine extends AbstractNSISScriptElement
     {
         updateArgs(makeArray(mName,mValue));
     }
-    
+
     /**
      * @return Returns the name.
      */
@@ -53,7 +53,7 @@ public class NSISScriptDefine extends AbstractNSISScriptElement
         mName = name;
         updateArgs();
     }
-    
+
     /**
      * @return Returns the value.
      */
@@ -61,7 +61,7 @@ public class NSISScriptDefine extends AbstractNSISScriptElement
     {
         return mValue;
     }
-    
+
     /**
      * @param value The value to set.
      */

@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -31,16 +31,16 @@ import org.eclipse.ui.views.properties.IPropertySource;
 public class InstallOptionsLabelEditPart extends InstallOptionsUneditableElementEditPart
 {
     protected static boolean cIsNT = "Windows NT".equals(System.getProperty("os.name")); //$NON-NLS-1$ //$NON-NLS-2$
-    
+
     protected String getDirectEditLabelProperty()
     {
         return "label.direct.edit.label"; //$NON-NLS-1$
     }
-    
-    protected IInstallOptionsFigure createInstallOptionsFigure() 
+
+    protected IInstallOptionsFigure createInstallOptionsFigure()
     {
         if(cIsNT) {
-            //This is a hack because Windows NT Labels don't seem to respond to the 
+            //This is a hack because Windows NT Labels don't seem to respond to the
             //WM_PRINT message (see SWTControl.getImage(Control)
             //XXX Remove once the cause (and fix) is known.
             return new NTLabelFigure(getInstallOptionsWidget());
@@ -73,13 +73,13 @@ public class InstallOptionsLabelEditPart extends InstallOptionsUneditableElement
     {
         return new LabelCellEditorLocator((ILabelFigure)getFigure());
     }
-    
+
     public static interface ILabelFigure extends IUneditableElementFigure
     {
 //    Marker interface
     }
 
-    //This is a hack because Windows NT Labels don't seem to respond to the 
+    //This is a hack because Windows NT Labels don't seem to respond to the
     //WM_PRINT message (see SWTControl.getImage(Control)
     //XXX Remove once the cause (and fix) is known.
     protected class NTLabelFigure extends NTFigure implements ILabelFigure
@@ -94,7 +94,7 @@ public class InstallOptionsLabelEditPart extends InstallOptionsUneditableElement
         {
             super(propertySource);
         }
-        
+
         protected void createChildFigures()
         {
             mShadowTextFlow = new TextFlow(""); //$NON-NLS-1$
@@ -102,7 +102,7 @@ public class InstallOptionsLabelEditPart extends InstallOptionsUneditableElement
             mShadowFlowPage.setVisible(false);
             mShadowFlowPage.add(mShadowTextFlow);
             add(mShadowFlowPage);
-            
+
             mTextFlow = new TextFlow(""); //$NON-NLS-1$
             mFlowPage = new FlowPage();
             mFlowPage.add(mTextFlow);
@@ -116,12 +116,12 @@ public class InstallOptionsLabelEditPart extends InstallOptionsUneditableElement
             mShadowTextFlow.setForegroundColor(ColorManager.getSystemColor(WinAPI.COLOR_3DHILIGHT));
             setText((String)propertySource.getPropertyValue(InstallOptionsModel.PROPERTY_TEXT));
         }
-        
+
         public String getText()
         {
             return mText==null?"":mText; //$NON-NLS-1$
         }
-    
+
         public void setText(String text)
         {
             if(!Common.stringsAreEqual(mText, text)) {
@@ -129,7 +129,7 @@ public class InstallOptionsLabelEditPart extends InstallOptionsUneditableElement
                 refresh();
             }
         }
-    
+
         public RGB getTxtColor()
         {
             return Display.getDefault().getSystemColor(SWT.COLOR_WIDGET_FOREGROUND).getRGB();

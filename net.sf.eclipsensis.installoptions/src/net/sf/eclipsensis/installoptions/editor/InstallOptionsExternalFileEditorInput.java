@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -45,7 +45,7 @@ public class InstallOptionsExternalFileEditorInput implements IInstallOptionsEdi
             }
         }
     }
-    
+
     public void completedSwitch()
     {
         if(mSwitching) {
@@ -129,7 +129,7 @@ public class InstallOptionsExternalFileEditorInput implements IInstallOptionsEdi
             if(mStorage == null) {
                 mStorage = new IStorage() {
                     private File mFile = new File(mInput.getPath().toOSString());
-                    
+
                     public InputStream getContents() throws CoreException
                     {
                         try {
@@ -140,22 +140,22 @@ public class InstallOptionsExternalFileEditorInput implements IInstallOptionsEdi
                                                                1,e.getMessage(),e));
                         }
                     }
-        
+
                     public IPath getFullPath()
                     {
                         return getPath();
                     }
-        
+
                     public String getName()
                     {
                         return InstallOptionsExternalFileEditorInput.this.getName();
                     }
-        
+
                     public boolean isReadOnly()
                     {
                         return (mFile != null && mFile.exists() && !mFile.canWrite());
                     }
-        
+
                     public Object getAdapter(Class adapter)
                     {
                         return InstallOptionsExternalFileEditorInput.this.getAdapter(adapter);

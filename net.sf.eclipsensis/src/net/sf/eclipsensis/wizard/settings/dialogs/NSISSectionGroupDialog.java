@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -30,7 +30,7 @@ import org.eclipse.swt.widgets.*;
 public class NSISSectionGroupDialog extends AbstractNSISInstallItemDialog
 {
     private static ArrayList cProperties = new ArrayList();
-    
+
     static {
         cProperties.add("bold"); //$NON-NLS-1$
         cProperties.add("caption"); //$NON-NLS-1$
@@ -47,7 +47,7 @@ public class NSISSectionGroupDialog extends AbstractNSISInstallItemDialog
     {
         return INSISConstants.PLUGIN_CONTEXT_PREFIX+"nsis_sectiongrpdlg_context"; //$NON-NLS-1$
     }
-    
+
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.wizard.settings.dialogs.AbstractNSISInstallItemDialog#getProperties()
      */
@@ -66,12 +66,12 @@ public class NSISSectionGroupDialog extends AbstractNSISInstallItemDialog
         GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
         gd.widthHint = Common.calculateControlSize(composite,60,0).x;
         composite.setLayoutData(gd);
-        
+
         GridLayout layout = new GridLayout(2,false);
         layout.marginHeight = 0;
         layout.marginWidth = 0;
         composite.setLayout(layout);
-        
+
         final Text t = NSISWizardDialogUtil.createText(composite,mStore.getString("caption"), //$NON-NLS-1$
                             "wizard.caption.label",true,null,true); //$NON-NLS-1$
         t.addModifyListener(new ModifyListener() {
@@ -82,7 +82,7 @@ public class NSISSectionGroupDialog extends AbstractNSISInstallItemDialog
             }
         });
         t.addVerifyListener(new VerifyListener() {
-            public void verifyText(VerifyEvent e) 
+            public void verifyText(VerifyEvent e)
             {
                 String text = ((Text)e.widget).getText();
                 StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
@@ -123,12 +123,12 @@ public class NSISSectionGroupDialog extends AbstractNSISInstallItemDialog
             textLimit = INSISConstants.DEFAULT_NSIS_TEXT_LIMIT;
         }
         t2.setTextLimit(textLimit);
-        
+
         Composite composite2 = new Composite(parent, SWT.NONE);
         gd = new GridData(SWT.FILL, SWT.CENTER, false, false);
         gd.horizontalSpan = 2;
         composite2.setLayoutData(gd);
-        
+
         layout = new GridLayout(2,false);
         layout.marginHeight = 0;
         layout.marginWidth = 0;
@@ -150,7 +150,7 @@ public class NSISSectionGroupDialog extends AbstractNSISInstallItemDialog
         ((GridData)cb2.getLayoutData()).horizontalSpan = 1;
         return composite;
     }
-    
+
     protected String checkForErrors()
     {
         if(Common.isEmpty(mStore.getString("caption"))) { //$NON-NLS-1$

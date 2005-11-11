@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -35,7 +35,7 @@ public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
 {
     private static ArrayList cProperties = new ArrayList();
     private Collection mFiles = null;
-    
+
     static {
         cProperties.add("destination"); //$NON-NLS-1$
         cProperties.add("files"); //$NON-NLS-1$
@@ -61,7 +61,7 @@ public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
     {
         return INSISConstants.PLUGIN_CONTEXT_PREFIX+"nsis_filesetdlg_context"; //$NON-NLS-1$
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
      */
@@ -72,29 +72,29 @@ public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
         GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
         gd.widthHint = Common.calculateControlSize(composite,60,0).x;
         composite.setLayoutData(gd);
-        
+
         GridLayout layout = new GridLayout(2,false);
         layout.marginHeight = 0;
         layout.marginWidth = 0;
         composite.setLayout(layout);
-        
+
         Label label = new Label(composite, SWT.LEFT);
         label.setText(EclipseNSISPlugin.getResourceString("wizard.source.files.label")); //$NON-NLS-1$
         gd = new GridData(SWT.FILL, SWT.CENTER, false, false);
         gd.horizontalSpan = 2;
         label.setLayoutData(gd);
-        
+
         Composite composite2 = new Composite(composite, SWT.NONE);
         gd = new GridData(SWT.FILL, SWT.FILL, true, true);
         gd.horizontalSpan = 2;
         gd.heightHint = convertHeightInCharsToPixels(10);
         composite2.setLayoutData(gd);
-        
+
         layout = new GridLayout(2,false);
         layout.marginHeight = 0;
         layout.marginWidth = 0;
         composite2.setLayout(layout);
-  
+
         Table table = new Table(composite2, SWT.FULL_SELECTION | SWT.MULTI | SWT.V_SCROLL | SWT.BORDER);
         table.setLinesVisible(true);
         table.setHeaderVisible(true);
@@ -104,12 +104,12 @@ public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
 
         TableColumn[] columns = {new TableColumn(table,SWT.LEFT,0)};
         columns[0].setText(EclipseNSISPlugin.getResourceString("wizard.file.name.label")); //$NON-NLS-1$
-        
+
         final TableViewer viewer = new TableViewer(table);
         viewer.setContentProvider(new CollectionContentProvider());
         viewer.setLabelProvider(new CollectionLabelProvider());
         viewer.setInput(mFiles);
-        
+
         final TableViewerUpDownMover mover = new TableViewerUpDownMover(){
             protected List getAllElements()
             {
@@ -130,12 +130,12 @@ public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
         };
 
         mover.setViewer(viewer);
-        
+
         composite2 = new Composite(composite2, SWT.NONE);
         gd = new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false);
         gd.horizontalSpan = 1;
         composite2.setLayoutData(gd);
-        
+
         layout = new GridLayout(1,false);
         layout.marginHeight = 0;
         layout.marginWidth = 0;
@@ -153,14 +153,14 @@ public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
         gd = new GridData(SWT.FILL, SWT.BEGINNING, false, false);
         removeButton.setLayoutData(gd);
         removeButton.setEnabled(false);
-        
+
         final Button upButton = new Button(composite2,SWT.PUSH);
         gd = new GridData(SWT.FILL, SWT.BEGINNING, false, false);
         upButton.setLayoutData(gd);
         upButton.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("up.icon"))); //$NON-NLS-1$
         upButton.setToolTipText(EclipseNSISPlugin.getResourceString("up.tooltip")); //$NON-NLS-1$
         upButton.setEnabled(mover.canMoveUp());
-        
+
         final Button downButton = new Button(composite2,SWT.PUSH);
         gd = new GridData(SWT.FILL, SWT.BEGINNING, false, false);
         downButton.setLayoutData(gd);
@@ -171,8 +171,8 @@ public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
         final ResourceBundle bundle = EclipseNSISPlugin.getDefault().getResourceBundle();
         addButton.addSelectionListener(new SelectionAdapter() {
             String filterPath = ""; //$NON-NLS-1$
-            
-            public void widgetSelected(SelectionEvent e) 
+
+            public void widgetSelected(SelectionEvent e)
             {
                 FileDialog dialog = new FileDialog(getShell(),SWT.OPEN|SWT.MULTI|SWT.PRIMARY_MODAL);
                 dialog.setText(EclipseNSISPlugin.getResourceString("wizard.files.dialog.title")); //$NON-NLS-1$
@@ -194,7 +194,7 @@ public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
         });
 
         removeButton.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) 
+            public void widgetSelected(SelectionEvent e)
             {
                 IStructuredSelection selection = (IStructuredSelection)viewer.getSelection();
                 for(Iterator iter = selection.iterator(); iter.hasNext(); ) {
@@ -204,16 +204,16 @@ public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
                 validate();
             }
         });
-        
+
         upButton.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent se) 
+            public void widgetSelected(SelectionEvent se)
             {
                 mover.moveUp();
             }
         });
-        
+
         downButton.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent se) 
+            public void widgetSelected(SelectionEvent se)
             {
                 mover.moveDown();
             }
@@ -228,7 +228,7 @@ public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
             }
         });
         table.addControlListener(new TableResizer());
-        
+
         final Combo c1 = NSISWizardDialogUtil.createCombo(composite,
                                                          NSISKeywords.getInstance().getKeywordsGroup(NSISKeywords.PATH_CONSTANTS_AND_VARIABLES),
                                                          mStore.getString("destination"), //$NON-NLS-1$
@@ -271,7 +271,7 @@ public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
 
     protected String checkForErrors()
     {
-        if(mFiles.size() == 0) { //$NON-NLS-1$
+        if(mFiles.size() == 0) {
             return EclipseNSISPlugin.getResourceString("wizard.invalid.fileset"); //$NON-NLS-1$
         }
         else if(!Common.isValidNSISPathName(mStore.getString("destination"))) { //$NON-NLS-1$

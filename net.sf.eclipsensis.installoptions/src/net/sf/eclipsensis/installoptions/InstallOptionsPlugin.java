@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -48,9 +48,9 @@ public class InstallOptionsPlugin extends AbstractUIPlugin implements IInstallOp
     private String mName = null;
     private static boolean cCheckedEditorAssociation = false;
     private JobScheduler mJobScheduler = new JobScheduler();
-    
+
     /**
-     * 
+     *
      */
     public InstallOptionsPlugin()
     {
@@ -69,17 +69,17 @@ public class InstallOptionsPlugin extends AbstractUIPlugin implements IInstallOp
     {
         return getDefault().mImageManager;
     }
-    
+
     /**
      * Returns the string from the plugin's resource bundle,
      * or 'key' if not found.
      */
-    public static String getResourceString(String key) 
+    public static String getResourceString(String key)
     {
         return getResourceString(key, key);
     }
 
-    public static String getResourceString(Locale locale, String key) 
+    public static String getResourceString(Locale locale, String key)
     {
         return getResourceString(locale, key, key);
     }
@@ -96,14 +96,14 @@ public class InstallOptionsPlugin extends AbstractUIPlugin implements IInstallOp
             ResourceBundle bundle = plugin.getResourceBundle(locale);
             try {
                 return (bundle != null) ? bundle.getString(key) : defaultValue;
-            } 
+            }
             catch (MissingResourceException e) {
             }
         }
         return defaultValue;
     }
-        
-    
+
+
     public static String getFormattedString(String key, Object[] args)
     {
         return MessageFormat.format(getResourceString(key),args);
@@ -113,7 +113,7 @@ public class InstallOptionsPlugin extends AbstractUIPlugin implements IInstallOp
      * Returns the string from the plugin bundle's resource bundle,
      * or 'key' if not found.
      */
-    public static String getBundleResourceString(String key) 
+    public static String getBundleResourceString(String key)
     {
         return Platform.getResourceString(getDefault().getBundle(), key);
     }
@@ -125,14 +125,14 @@ public class InstallOptionsPlugin extends AbstractUIPlugin implements IInstallOp
         return getResourceBundle(Locale.getDefault());
     }
 
-    public synchronized ResourceBundle getResourceBundle(Locale locale) 
+    public synchronized ResourceBundle getResourceBundle(Locale locale)
     {
         if(!mResourceBundles.containsKey(locale)) {
             mResourceBundles.put(locale,new CompoundResourceBundle(getClass().getClassLoader(),locale, BUNDLE_NAMES));
-        }                
+        }
         return (ResourceBundle)mResourceBundles.get(locale);
     }
-    
+
     private void initializePreference(IPreferenceStore store, String name, String defaultValue)
     {
         store.setDefault(name,defaultValue);
@@ -156,11 +156,11 @@ public class InstallOptionsPlugin extends AbstractUIPlugin implements IInstallOp
         initializePreference(store,PREFERENCE_GRID_ORIGIN,TypeConverter.POINT_CONVERTER.asString(GRID_ORIGIN_DEFAULT));
         initializePreference(store,PREFERENCE_GRID_STYLE,GRID_STYLE_DEFAULT);
         initializePreference(store,PREFERENCE_CHECK_EDITOR_ASSOCIATION,CHECK_EDITOR_ASSOCIATION_DEFAULT.toString());
-        
+
         String preference = store.getString(IInstallOptionsConstants.PREFERENCE_SYNTAX_STYLES);
         Map map;
         if(!Common.isEmpty(preference)) {
-            map = NSISTextUtility.parseSyntaxStylesMap(preference); 
+            map = NSISTextUtility.parseSyntaxStylesMap(preference);
         }
         else {
             map = new LinkedHashMap();
@@ -171,7 +171,7 @@ public class InstallOptionsPlugin extends AbstractUIPlugin implements IInstallOp
         }
         initializePaletteViewerPreferences(store);
     }
-    
+
     private void initializePaletteViewerPreferences(IPreferenceStore store)
     {
         //This should be done just once.
@@ -183,7 +183,7 @@ public class InstallOptionsPlugin extends AbstractUIPlugin implements IInstallOp
                     PaletteViewerPreferences.PREFERENCE_LIST_ICON_SIZE,
                     PaletteViewerPreferences.PREFERENCE_ICONS_ICON_SIZE,
                     PaletteViewerPreferences.PREFERENCE_DETAILS_ICON_SIZE,
-                    PaletteViewerPreferences.PREFERENCE_FONT 
+                    PaletteViewerPreferences.PREFERENCE_FONT
                 };
             IPreferenceStore gefStore = GEFPlugin.getDefault().getPreferenceStore();
             for (int i = 0; i < properties.length; i++) {
@@ -204,7 +204,7 @@ public class InstallOptionsPlugin extends AbstractUIPlugin implements IInstallOp
         changed |= setSyntaxStyle(map,IInstallOptionsConstants.NUMBER_STYLE,new NSISSyntaxStyle(SYNTAX_NUMBERS,null,true,false,false,false));
         return changed;
     }
-    
+
     private boolean setSyntaxStyle(Map map, String name, NSISSyntaxStyle style)
     {
         if(!map.containsKey(name) || map.get(name) == null) {
@@ -213,7 +213,7 @@ public class InstallOptionsPlugin extends AbstractUIPlugin implements IInstallOp
         }
         return false;
     }
-    
+
     /**
      * @return Returns the name.
      */
@@ -244,7 +244,7 @@ public class InstallOptionsPlugin extends AbstractUIPlugin implements IInstallOp
         mImageManager = null;
         super.stop(context);
     }
-    
+
     public JobScheduler getJobScheduler()
     {
         return mJobScheduler;
@@ -279,10 +279,10 @@ public class InstallOptionsPlugin extends AbstractUIPlugin implements IInstallOp
                                 MessageDialogWithToggle dialog = new MessageDialogWithToggle(
                                         PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
                                         getDefault().getName(),
-                                        InstallOptionsPlugin.getShellImage(), 
+                                        InstallOptionsPlugin.getShellImage(),
                                         getResourceString("check.default.editor.question"),  //$NON-NLS-1$
-                                        MessageDialog.QUESTION, 
-                                        new String[] { IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL }, 0, 
+                                        MessageDialog.QUESTION,
+                                        new String[] { IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL }, 0,
                                         getResourceString("check.default.editor.toggle"), !toggleState); //$NON-NLS-1$
                                 dialog.setPrefStore(getDefault().getPreferenceStore());
                                 dialog.setPrefKey(PREFERENCE_CHECK_EDITOR_ASSOCIATION);
@@ -307,14 +307,14 @@ public class InstallOptionsPlugin extends AbstractUIPlugin implements IInstallOp
     {
         return cShellImage;
     }
-    
+
     public static synchronized File getPluginStateLocation()
     {
         if(cStateLocation == null) {
             InstallOptionsPlugin plugin = getDefault();
             if(plugin != null) {
                 cStateLocation = plugin.getStateLocation().toFile();
-            }                    
+            }
         }
         return cStateLocation;
     }

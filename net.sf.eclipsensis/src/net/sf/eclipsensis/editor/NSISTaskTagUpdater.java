@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -29,7 +29,7 @@ import org.eclipse.ui.part.FileEditorInput;
 public class NSISTaskTagUpdater implements INSISConstants
 {
     private FileDocumentProvider mDocumentProvider = new FileDocumentProvider();
-    
+
     public void updateTaskTags(IFile file)
     {
         try {
@@ -42,7 +42,7 @@ public class NSISTaskTagUpdater implements INSISConstants
             EclipseNSISPlugin.getDefault().log(e);
         }
     }
-    
+
     public void updateTaskTags(IFile file, IDocument document)
     {
         try {
@@ -75,7 +75,7 @@ public class NSISTaskTagUpdater implements INSISConstants
                                 IRegion lineRegion = NSISTextUtility.intersection(typedRegions[i],document.getLineInformation(line));
                                 int start = regions[j].getOffset();
                                 int lineEnd = lineRegion.getOffset()+lineRegion.getLength();
-    
+
                                 while(j < (regions.length-1) && (lineEnd > regions[j+1].getOffset())) {
                                     createTaskMarker(map, regions[j], file, document, line, start,regions[j+1].getOffset()-start);
                                     j++;
@@ -96,7 +96,7 @@ public class NSISTaskTagUpdater implements INSISConstants
         }
     }
 
-    
+
     private void createTaskMarker(Map regionMap, IRegion region, IFile file, IDocument document, int line, int start, int length) throws BadLocationException, CoreException
     {
         IToken token = (IToken)regionMap.get(region);
@@ -111,7 +111,7 @@ public class NSISTaskTagUpdater implements INSISConstants
         marker.setAttribute(IMarker.CHAR_START,start);
         marker.setAttribute(IMarker.CHAR_END,start+message.length());
     }
-    
+
     public void updateTaskTags()
     {
         final String taskName = EclipseNSISPlugin.getResourceString("task.tags.job.title"); //$NON-NLS-1$
@@ -181,12 +181,12 @@ public class NSISTaskTagUpdater implements INSISConstants
                                 }
                                 return false;
                             }
-                            
+
                         });
                         if(monitor.isCanceled()) {
                             return Status.CANCEL_STATUS;
                         }
-                        
+
                         monitor.setTaskName(taskName);
                         String taskName2 = EclipseNSISPlugin.getResourceString("task.tags.update.task.name"); //$NON-NLS-1$
                         SubProgressMonitor subMonitor = new SubProgressMonitor(monitor,1);

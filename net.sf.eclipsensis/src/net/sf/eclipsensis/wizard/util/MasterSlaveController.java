@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -19,12 +19,12 @@ public class MasterSlaveController extends SelectionAdapter
     private Button mMaster;
     private Map mSlaves = new HashMap();
     private boolean mIsReverse = false;
-    
+
     public MasterSlaveController(Button button)
     {
         this(button,false);
     }
-    
+
     public MasterSlaveController(Button button, boolean isReverse)
     {
         mMaster = button;
@@ -39,24 +39,24 @@ public class MasterSlaveController extends SelectionAdapter
                     }
                 });
     }
-    
+
     public void addSlave(Control control)
     {
         mSlaves.put(control, null);
     }
-    
+
     public void addSlave(Control control, MasterSlaveEnabler enabler)
     {
         mSlaves.put(control, enabler);
     }
-    
+
     public void setEnabler(Control control, MasterSlaveEnabler enabler)
     {
         if(mSlaves.containsKey(control)) {
             mSlaves.put(control, enabler);
         }
     }
-    
+
     public void removeSlave(Control control)
     {
         mSlaves.remove(control);
@@ -71,7 +71,7 @@ public class MasterSlaveController extends SelectionAdapter
             recursiveSetEnabled(slave, (mIsReverse?!selection:selection), enabler);
         }
     }
-    
+
     private void recursiveSetEnabled(Control control, boolean enabled, MasterSlaveEnabler enabler)
     {
         if(control instanceof Composite) {

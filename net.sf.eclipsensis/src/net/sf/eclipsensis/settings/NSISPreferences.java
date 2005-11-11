@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -53,7 +53,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
     public static final RGB SYNTAX_PLUGINS   = new RGB(0x54,0x4a,0x3d);
 
     public static final NSISPreferences INSTANCE;
-    
+
     private IPreferenceStore mPreferenceStore = null;
     private File mNSISExe = null;
     private String mNSISHome = null;
@@ -73,7 +73,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
         instance.load();
         INSTANCE = instance;
     }
-    
+
     protected NSISPreferences(IPreferenceStore preferenceStore)
     {
         mPreferenceStore = preferenceStore;
@@ -98,7 +98,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
     {
         return mPreferenceStore;
     }
-    
+
     private void initializePreference(String name, Object defaultValue)
     {
         if(defaultValue != null) {
@@ -131,7 +131,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
     {
         initializePreference(NSIS_HOME,""); //$NON-NLS-1$
         initializePreference(NOTIFY_MAKENSIS_CHANGED, Boolean.TRUE);
-        initializePreference(USE_ECLIPSE_HELP,Boolean.FALSE); //$NON-NLS-1$
+        initializePreference(USE_ECLIPSE_HELP,Boolean.FALSE);
         initializePreference(HDRINFO,(getDefaultHdrInfo()?Boolean.TRUE:Boolean.FALSE));
         initializePreference(LICENSE,(getDefaultLicense()?Boolean.TRUE:Boolean.FALSE));
         initializePreference(NOCONFIG,(getDefaultNoConfig()?Boolean.TRUE:Boolean.FALSE));
@@ -142,7 +142,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
         initializePreference(AUTO_SHOW_CONSOLE,Boolean.TRUE);
         initializePreference(INSTRUCTIONS,""); //$NON-NLS-1$
         initializePreference(SYMBOLS,""); //$NON-NLS-1$
-        
+
         setNSISHome(mPreferenceStore.getString(NSIS_HOME));
         setUseEclipseHelp(mPreferenceStore.getBoolean(USE_ECLIPSE_HELP));
     }
@@ -154,8 +154,8 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
 
         initializePreference(USE_SPACES_FOR_TABS,Boolean.TRUE);
     }
-    
-    private void initializeSyntaxPreference(String name, RGB foreground, RGB background, boolean bold, 
+
+    private void initializeSyntaxPreference(String name, RGB foreground, RGB background, boolean bold,
                                             boolean italic, boolean underline, boolean strikethrough)
     {
         NSISSyntaxStyle style = new NSISSyntaxStyle(foreground, background, bold, italic,
@@ -194,13 +194,13 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
         initializeDefaultTaskTags();
         initializePreference(TASK_TAGS,""); //$NON-NLS-1$
         mTaskTags = (Collection)loadObject(TASK_TAGS);
-        initializePreference(CASE_SENSITIVE_TASK_TAGS,Boolean.TRUE); //$NON-NLS-1$
+        initializePreference(CASE_SENSITIVE_TASK_TAGS,Boolean.TRUE);
         mCaseSensitiveTaskTags = getBoolean(CASE_SENSITIVE_TASK_TAGS);
         super.load();
     }
-    
+
     /**
-     * 
+     *
      */
     private void initializeDefaultTaskTags()
     {
@@ -255,7 +255,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
     {
         return (mTaskTags == null?getDefaultTaskTags():createCopy(mTaskTags));
     }
-    
+
     /**
      * @param taskTags The taskTags to set.
      */
@@ -275,8 +275,8 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
         }
         mTaskTags = taskTags;
     }
-    
-    
+
+
     /**
      * @return Returns the defaultTaskTags.
      */
@@ -284,7 +284,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
     {
         return createCopy(mDefaultTaskTags);
     }
-    
+
     /**
      * @return Returns the caseSensitiveTaskTags.
      */
@@ -292,7 +292,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
     {
         return mCaseSensitiveTaskTags;
     }
-    
+
     /**
      * @param caseSensitiveTaskTags The caseSensitiveTaskTags to set.
      */
@@ -300,7 +300,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
     {
         mCaseSensitiveTaskTags = caseSensitiveTaskTags;
     }
-    
+
     /**
      * @return Returns the NSISHome.
      */
@@ -308,7 +308,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
     {
         return mNSISHome;
     }
-    
+
     /**
      * @param nsisHome The NSISHome to set.
      */
@@ -328,7 +328,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
             });
         }
     }
-    
+
     private void fireNSISHomeChanged(final String oldHome, final String newHome)
     {
         if(!Common.stringsAreEqual(oldHome, newHome) && mListeners.size() > 0) {
@@ -341,7 +341,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
            }
         }
     }
-    
+
     /**
      * @param nsisHome The NSISHome to set.
      */
@@ -363,7 +363,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
             mNSISDefaultSymbols = null;
         }
     }
-    
+
     private void setBestNSISHome(String nsisHome)
     {
         internalSetNSISHome(nsisHome);
@@ -389,10 +389,10 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
         if(file.equals(mNSISExe)) {
             final String message;
             if(type == FileMonitor.FILE_MODIFIED) {
-                message = EclipseNSISPlugin.getResourceString("makensis.modified.message");
+                message = EclipseNSISPlugin.getResourceString("makensis.modified.message"); //$NON-NLS-1$
             }
             else if(type == FileMonitor.FILE_DELETED) {
-                message = EclipseNSISPlugin.getResourceString("makensis.deleted.message");
+                message = EclipseNSISPlugin.getResourceString("makensis.deleted.message"); //$NON-NLS-1$
             }
             else {
                 return;
@@ -405,7 +405,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
                 if(mListeners.size() > 0) {
                     new NSISHomeChangedRunnable(null, mNSISHome).run(new NullProgressMonitor());
                 }
-                
+
                 Display.getDefault().syncExec(new Runnable() {
                     public void run()
                     {
@@ -421,10 +421,10 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
                         MessageDialogWithToggle dialog = new MessageDialogWithToggle(
                                 shell,
                                 EclipseNSISPlugin.getDefault().getName(),
-                                EclipseNSISPlugin.getShellImage(), 
+                                EclipseNSISPlugin.getShellImage(),
                                 message,
-                                MessageDialog.WARNING, 
-                                new String[] { IDialogConstants.OK_LABEL }, 0, 
+                                MessageDialog.WARNING,
+                                new String[] { IDialogConstants.OK_LABEL }, 0,
                                 EclipseNSISPlugin.getResourceString("notify.makensis.changed.toggle"), silent); //$NON-NLS-1$
                         dialog.setPrefStore(mPreferenceStore);
                         dialog.setPrefKey(NOTIFY_MAKENSIS_CHANGED);
@@ -441,7 +441,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
                 });
             }
         }
-        
+
     }
 
     private void maybeConfigure()
@@ -449,7 +449,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
         if(Common.isEmpty(mNSISHome)) {
            Common.openWarning(Display.getDefault().getActiveShell(),
                    EclipseNSISPlugin.getDefault().getName(),
-                   EclipseNSISPlugin.getResourceString("unconfigured.warning"),
+                   EclipseNSISPlugin.getResourceString("unconfigured.warning"), //$NON-NLS-1$
                    EclipseNSISPlugin.getShellImage());
            NSISPreferencePage.show();
         }
@@ -464,7 +464,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
     {
         return mNSISExe;
     }
-    
+
     /**
      * @return Returns the NSIS Options.
      */
@@ -472,7 +472,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
     {
         return mNSISDefaultSymbols;
     }
-    
+
     /**
      * @return Returns the NSIS Version.
      */
@@ -480,7 +480,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
     {
         return mNSISVersion;
     }
-    
+
     /**
      * @return Returns the useIntegratedHelp.
      */
@@ -496,7 +496,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
     {
         mUseEclipseHelp = useEclipseHelp;
     }
-    
+
     /**
      * @return Returns the autoShowConsole.
      */
@@ -504,7 +504,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
     {
         return mAutoShowConsole;
     }
-    
+
     /**
      * @param autoShowConsole The autoShowConsole to set.
      */
@@ -512,7 +512,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
     {
         mAutoShowConsole = autoShowConsole;
     }
-    
+
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.settings.NSISSettings#getBoolean(java.lang.String)
      */
@@ -520,7 +520,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
     {
         return mPreferenceStore.getBoolean(name);
     }
-    
+
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.settings.NSISSettings#getInt(java.lang.String)
      */
@@ -528,7 +528,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
     {
         return mPreferenceStore.getInt(name);
     }
-    
+
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.settings.NSISSettings#getString(java.lang.String)
      */
@@ -536,7 +536,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
     {
         return mPreferenceStore.getString(name);
     }
-    
+
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.settings.NSISSettings#setValue(java.lang.String, boolean)
      */
@@ -544,7 +544,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
     {
         mPreferenceStore.setValue(name, value);
     }
-    
+
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.settings.NSISSettings#setValue(java.lang.String, int)
      */
@@ -552,7 +552,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
     {
         mPreferenceStore.setValue(name, value);
     }
-    
+
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.settings.NSISSettings#setValue(java.lang.String, java.lang.String)
      */
@@ -589,7 +589,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
     {
         return mNSISDefaultSymbols.getProperty(symbol);
     }
-    
+
     protected void storeObject(String name, Object object)
     {
         String fileName = getString(name);
@@ -628,10 +628,10 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
                 object = null;
             }
         }
-        
+
         return object;
     }
-    
+
     private String makeSettingFileName(String name)
     {
         return new StringBuffer(getClass().getName()).append(".").append(name).append(".ser").toString(); //$NON-NLS-1$ //$NON-NLS-2$

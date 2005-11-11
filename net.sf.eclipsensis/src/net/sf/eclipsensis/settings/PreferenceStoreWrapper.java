@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -83,14 +83,14 @@ public class PreferenceStoreWrapper implements IPreferenceStore
         mInternalStore = new PreferenceStore();
         mParentStore.addPropertyChangeListener(mPropertyChangeListener);
     }
-    
+
     public void load(String[] names)
     {
         for (int i = 0; i < names.length; i++) {
             checkString(names[i]);
         }
     }
-    
+
     public void update()
     {
         for(Iterator iter = mNamesMap.entrySet().iterator(); iter.hasNext(); ) {
@@ -117,14 +117,14 @@ public class PreferenceStoreWrapper implements IPreferenceStore
             }
         }
     }
-    
+
     public void loadDefaults()
     {
         for(Iterator iter = mNamesMap.keySet().iterator(); iter.hasNext(); ) {
             mInternalStore.setToDefault((String)iter.next());
         }
     }
-    
+
     public void dispose()
     {
         mParentStore.removePropertyChangeListener(mPropertyChangeListener);

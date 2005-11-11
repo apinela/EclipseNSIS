@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -35,7 +35,7 @@ public class CustomPropertySheetPage extends PropertySheetPage
     };
 
     private InstallOptionsEditDomain mEditDomain;
-    
+
     public CustomPropertySheetPage(InstallOptionsEditDomain editDomain)
     {
         super();
@@ -79,7 +79,7 @@ public class CustomPropertySheetPage extends PropertySheetPage
     {
         private IPropertySource mDelegate;
         private Map mDescriptors = new HashMap();
-        
+
         public CustomPropertySource(IPropertySource delegate)
         {
             super();
@@ -141,9 +141,9 @@ public class CustomPropertySheetPage extends PropertySheetPage
     private class ReadOnlyPropertyDescriptor implements IPropertyDescriptor
     {
         private IPropertyDescriptor mDelegate;
-        
+
         /**
-         * 
+         *
          */
         public ReadOnlyPropertyDescriptor(IPropertyDescriptor delegate)
         {

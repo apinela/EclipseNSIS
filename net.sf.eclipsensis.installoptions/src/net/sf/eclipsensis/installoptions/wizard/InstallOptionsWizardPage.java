@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -35,7 +35,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
 
-public class InstallOptionsWizardPage extends WizardPage 
+public class InstallOptionsWizardPage extends WizardPage
 {
     public static final String NAME = "installOptionsWizardPage"; //$NON-NLS-1$
     private boolean mCreateFromTemplate = false;
@@ -46,7 +46,7 @@ public class InstallOptionsWizardPage extends WizardPage
      * @param workbench  the workbench on which the page should be created
      * @param selection  the current selection
      */
-    public InstallOptionsWizardPage() 
+    public InstallOptionsWizardPage()
     {
     	super(NAME);
     	this.setTitle(InstallOptionsPlugin.getResourceString("wizard.page.title")); //$NON-NLS-1$
@@ -56,7 +56,7 @@ public class InstallOptionsWizardPage extends WizardPage
     /** (non-Javadoc)
      * Method declared on IDialogPage.
      */
-    public void createControl(Composite parent) 
+    public void createControl(Composite parent)
     {
         final Composite composite = new Composite(parent, SWT.NONE);
         setControl(composite);
@@ -74,10 +74,10 @@ public class InstallOptionsWizardPage extends WizardPage
         gridData.widthHint = Common.calculateControlSize(l2,80,0).x;
 
         createTemplatesGroup(composite);
-        
+
         composite.addListener (SWT.Resize,  new Listener () {
             boolean init = false;
-            
+
             public void handleEvent (Event e) {
                 if(init) {
                     Point size = composite.getSize();
@@ -92,35 +92,35 @@ public class InstallOptionsWizardPage extends WizardPage
 
         setPageComplete(validatePage());
     }
-    
+
     private Group createTemplatesGroup(Composite parent)
     {
-        Group group = NSISWizardDialogUtil.createGroup(parent, 1, null,null,false); //$NON-NLS-1$
+        Group group = NSISWizardDialogUtil.createGroup(parent, 1, null,null,false);
         ((GridLayout)group.getLayout()).makeColumnsEqualWidth = true;
         GridData data = (GridData)group.getLayoutData();
         data.grabExcessVerticalSpace = true;
         data.verticalAlignment = GridData.FILL;
-        
+
         final Button b = NSISWizardDialogUtil.createCheckBox(group,"create.from.template.button.text",false,true,null,false); //$NON-NLS-1$
-        
+
         MasterSlaveController m = new MasterSlaveController(b);
         SashForm form = new SashForm(group,SWT.HORIZONTAL);
         data = new GridData(SWT.FILL, SWT.FILL, true, true);
         form.setLayoutData(data);
-        
+
         MasterSlaveEnabler mse = new MasterSlaveEnabler() {
             public boolean canEnable(Control control)
             {
                 return true;
             }
-            
+
             public void enabled(Control control, boolean flag)
             {
                 int id = (flag?SWT.COLOR_LIST_BACKGROUND:SWT.COLOR_WIDGET_BACKGROUND);
                 control.setBackground(getShell().getDisplay().getSystemColor(id));
             }
         };
-        
+
         Composite composite = new Composite(form,SWT.NONE);
         GridLayout layout = new GridLayout(1,false);
         layout.marginHeight = 0;
@@ -155,7 +155,7 @@ public class InstallOptionsWizardPage extends WizardPage
         Collator collator = Collator.getInstance();
         collator.setStrength(Collator.PRIMARY);
         viewer.setSorter(new ViewerSorter(collator));
-        
+
         ViewerFilter filter = new ViewerFilter() {
             public boolean select(Viewer viewer, Object parentElement, Object element)
             {
@@ -167,7 +167,7 @@ public class InstallOptionsWizardPage extends WizardPage
             }
         };
         viewer.addFilter(filter);
-        
+
         viewer.addSelectionChangedListener(new ISelectionChangedListener() {
             public void selectionChanged(SelectionChangedEvent event)
             {
@@ -188,13 +188,13 @@ public class InstallOptionsWizardPage extends WizardPage
         });
 
         b.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) 
+            public void widgetSelected(SelectionEvent e)
             {
                 mCreateFromTemplate = b.getSelection();
                 setPageComplete(validatePage());
-            }            
+            }
         });
-        
+
         m.updateSlaves();
         return group;
     }

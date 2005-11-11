@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -40,10 +40,10 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
     public static final String OPTION_DEFAULT = ""; //$NON-NLS-1$
     public static final String OPTION_NO = "0"; //$NON-NLS-1$
     public static final String OPTION_YES = "1"; //$NON-NLS-1$
-        
+
     private static final String GUIDES_PREFIX = "guides="; //$NON-NLS-1$
     private static final String LOCKED_PREFIX = "locked="; //$NON-NLS-1$
-    
+
     private static final int DEFAULT_OPTION = 0;
     private static final String[] OPTION_DATA = {OPTION_DEFAULT,OPTION_NO,OPTION_YES};
     private static final String[] OPTION_DISPLAY = {InstallOptionsPlugin.getResourceString("option.default"), //$NON-NLS-1$
@@ -64,7 +64,7 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
             return super.getText(element);
         }
     };
-    
+
     protected List mChildren = new ArrayList();
     protected InstallOptionsRuler mVerticalRuler;
     protected InstallOptionsRuler mHorizontalRuler;
@@ -84,7 +84,7 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
     private Map mINISectionMap;
     private Dimension mDialogSize;
     private boolean mShowDialogSize;
-    
+
     public InstallOptionsDialog(INISection section)
     {
         super(section);
@@ -122,7 +122,7 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
                 setDirty(true);
             }
         };
-        
+
         final PropertyChangeListener rulerListener = new PropertyChangeListener(){
             public void propertyChange(PropertyChangeEvent evt)
             {
@@ -139,7 +139,7 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
                 }
             }
         };
-        
+
         mVerticalRuler = new InstallOptionsRuler(false, InstallOptionsRulerProvider.UNIT_DLU);
         mVerticalRuler.addPropertyChangeListener(rulerListener);
         mHorizontalRuler = new InstallOptionsRuler(true, InstallOptionsRulerProvider.UNIT_DLU);
@@ -171,22 +171,22 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
     {
         return mDialogSize;
     }
-    
+
     public void setDialogSize(Dimension dialogSize)
     {
         mDialogSize = dialogSize;
     }
-    
+
     public boolean isShowDialogSize()
     {
         return mShowDialogSize;
     }
-    
+
     public void setShowDialogSize(boolean showDialogSize)
     {
         mShowDialogSize = showDialogSize;
     }
-    
+
     public boolean canMove(int type, List selection)
     {
         boolean flag = false;
@@ -211,10 +211,10 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
         finally {
             mSelectedIndices = oldSelection;
         }
-        
+
         return flag;
     }
-    
+
 
     public void move(int type)
     {
@@ -262,27 +262,27 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
     {
         return mUpDownMover.canMoveUp();
     }
-    
+
     public void sendBackward()
     {
         mUpDownMover.moveDown();
     }
-    
+
     public void bringForward()
     {
         mUpDownMover.moveUp();
     }
-    
+
     public void sendToBack()
     {
         mUpDownMover.moveToBottom();
     }
-    
+
     public void bringToFront()
     {
         mUpDownMover.moveToTop();
     }
-    
+
     public void setSelection(List selection)
     {
         mSelectedIndices = parseSelection(selection);
@@ -294,7 +294,7 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
         }
         firePropertyChange(PROPERTY_SELECTION,null,selection);
     }
-    
+
     private int[] parseSelection(List selection)
     {
         selection.retainAll(mChildren);
@@ -318,7 +318,7 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
             descriptor.setValidator(new NSISStringLengthValidator(InstallOptionsModel.PROPERTY_TITLE));
         }
         else if(name.equals(InstallOptionsModel.PROPERTY_CANCEL_ENABLED)) {
-            descriptor = new CustomComboBoxPropertyDescriptor(InstallOptionsModel.PROPERTY_CANCEL_ENABLED, InstallOptionsPlugin.getResourceString("cancel.enabled.property.name"), OPTION_DATA, OPTION_DISPLAY, DEFAULT_OPTION); //$NON-NLS-1$ 
+            descriptor = new CustomComboBoxPropertyDescriptor(InstallOptionsModel.PROPERTY_CANCEL_ENABLED, InstallOptionsPlugin.getResourceString("cancel.enabled.property.name"), OPTION_DATA, OPTION_DISPLAY, DEFAULT_OPTION); //$NON-NLS-1$
         }
         else if(name.equals(InstallOptionsModel.PROPERTY_CANCEL_SHOW)) {
             descriptor = new CustomComboBoxPropertyDescriptor(InstallOptionsModel.PROPERTY_CANCEL_SHOW, InstallOptionsPlugin.getResourceString("cancel.show.property.name"), OPTION_DATA, OPTION_DISPLAY, DEFAULT_OPTION); //$NON-NLS-1$
@@ -387,7 +387,7 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
     {
         return mBackButtonText;
     }
-    
+
     public void setBackButtonText(String backButtonText)
     {
         if(!Common.stringsAreEqual(mBackButtonText,backButtonText)) {
@@ -395,12 +395,12 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
             setDirty(true);
         }
     }
-    
+
     public String getBackEnabled()
     {
         return mBackEnabled;
     }
-    
+
     public void setBackEnabled(String backEnabled)
     {
         if(!Common.stringsAreEqual(mBackEnabled,backEnabled)) {
@@ -408,12 +408,12 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
             setDirty(true);
         }
     }
-    
+
     public String getCancelButtonText()
     {
         return mCancelButtonText;
     }
-    
+
     public void setCancelButtonText(String cancelButtonText)
     {
         if(!Common.stringsAreEqual(mCancelButtonText,cancelButtonText)) {
@@ -421,12 +421,12 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
             setDirty(true);
         }
     }
-    
+
     public String getCancelEnabled()
     {
         return mCancelEnabled;
     }
-    
+
     public void setCancelEnabled(String cancelEnabled)
     {
         if(!Common.stringsAreEqual(mCancelEnabled,cancelEnabled)) {
@@ -434,12 +434,12 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
             setDirty(true);
         }
     }
-    
+
     public String getCancelShow()
     {
         return mCancelShow;
     }
-    
+
     public void setCancelShow(String cancelShow)
     {
         if(!Common.stringsAreEqual(mCancelShow,cancelShow)) {
@@ -447,12 +447,12 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
             setDirty(true);
         }
     }
-    
+
     public String getNextButtonText()
     {
         return mNextButtonText;
     }
-    
+
     public void setNextButtonText(String nextButtonText)
     {
         if(!Common.stringsAreEqual(mNextButtonText,nextButtonText)) {
@@ -460,12 +460,12 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
             setDirty(true);
         }
     }
-    
+
     public String getRect()
     {
         return mRect;
     }
-    
+
     public void setRect(String rect)
     {
         if(!Common.stringsAreEqual(mRect,rect)) {
@@ -473,12 +473,12 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
             setDirty(true);
         }
     }
-    
+
     public String getRTL()
     {
         return mRTL;
     }
-    
+
     public void setRTL(String rtl)
     {
         if(!Common.stringsAreEqual(mRTL,rtl)) {
@@ -488,12 +488,12 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
             firePropertyChange(InstallOptionsModel.PROPERTY_RTL,oldRTL,mRTL);
         }
     }
-    
+
     public String getTitle()
     {
         return mTitle;
     }
-    
+
     public void setTitle(String title)
     {
         if(!Common.stringsAreEqual(mTitle,title)) {
@@ -501,7 +501,7 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
             setDirty(true);
         }
     }
-    
+
     public Object getPropertyValue(Object id)
     {
         if (InstallOptionsModel.PROPERTY_NUMFIELDS.equals(id)) {
@@ -537,19 +537,19 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
         return super.getPropertyValue(id);
     }
 
-    protected void fireChildAdded(String prop, Object child, Object index) 
+    protected void fireChildAdded(String prop, Object child, Object index)
     {
         mListeners.firePropertyChange(prop, index, child);
         setDirty(true);
     }
 
-    protected void fireChildMoved(String prop, Object child, Object index) 
+    protected void fireChildMoved(String prop, Object child, Object index)
     {
         mListeners.firePropertyChange(prop, child, index);
         setDirty(true);
     }
 
-    protected void fireChildRemoved(String prop, Object child) 
+    protected void fireChildRemoved(String prop, Object child)
     {
         mListeners.firePropertyChange(prop, child, null);
         setDirty(true);
@@ -600,7 +600,7 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
             setDirty(true);
         }
     }
-    
+
     private void updateChildIndices(int index)
     {
         updateChildIndices(index,mChildren.size()-1);
@@ -704,17 +704,17 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
     {
         return InstallOptionsModel.INSTANCE.getDialogSettings();
     }
-    
+
     public String toString()
     {
         return InstallOptionsPlugin.getResourceString("install.options.dialog.name"); //$NON-NLS-1$
     }
-    
+
     private void setINIFile(INIFile file)
     {
         mINIFile = file;
     }
-    
+
     public static InstallOptionsDialog loadINIFile(INIFile file)
     {
         INISection[] sections = file.getSections();
@@ -758,7 +758,7 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
                     widget.setDirty(false);
                 }
             }
-            
+
             //Guides
             boolean hasGuides = false;
             if(dialog.getMetadataComment() != null) {
@@ -819,7 +819,7 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
                 }
             }
             dialog.setDirty(false);
-            
+
             //Remove null entries
             int oldSize = dialog.mChildren.size();
             for (Iterator iter = dialog.mChildren.iterator(); iter.hasNext(); ) {
@@ -837,7 +837,7 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
         dialog.setINIFile(file);
         return dialog;
     }
-    
+
     private static boolean loadGuides(InstallOptionsDialog dialog, String guidesMetadata)
     {
         boolean loaded = false;
@@ -879,7 +879,7 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
         }
         return loaded;
     }
-    
+
     private static void loadChildGuides(InstallOptionsDialog parent, InstallOptionsWidget child, String guidesMetadata)
     {
         String[] tokens = Common.tokenize(guidesMetadata,'#');
@@ -954,14 +954,14 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
         }
         return true;
     }
-    
+
     public INIFile updateINIFile()
     {
         if(canUpdateINIFile()) {
             HashMap tempMap = new HashMap();
             INISection section;
             section = updateSection();
-            
+
             if(!mINISectionMap.containsKey(section)) {
                 mINISectionMap.put(section,this);
             }
@@ -1016,13 +1016,13 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
                 InstallOptionsWidget child = (InstallOptionsWidget)iter.next();
                 updateChildMetadata(child, saveGuides);
             }
-            
+
             mINIFile.update();
             setDirty(false);
         }
         return mINIFile;
     }
-    
+
     private boolean updateGuidesMetadata()
     {
         INISection section = getSection();
@@ -1126,7 +1126,7 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
             }
         }
     }
-    
+
     protected String getSectionName()
     {
         return InstallOptionsModel.SECTION_SETTINGS;

@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -28,7 +28,7 @@ public class InstallOptionsUnknownEditManager extends InstallOptionsDirectEditMa
         super(source, editorType, locator);
     }
 
-    protected void initCellEditor() 
+    protected void initCellEditor()
     {
         InstallOptionsUnknown control = (InstallOptionsUnknown)getEditPart().getModel();
         String initialText = control.getType();
@@ -37,17 +37,17 @@ public class InstallOptionsUnknownEditManager extends InstallOptionsDirectEditMa
         text.selectAll();
     }
 
-    protected CellEditor createCellEditor(Composite composite) 
+    protected CellEditor createCellEditor(Composite composite)
     {
         return new TextCellEditor(composite, getCellEditorStyle());
     }
-    
+
     protected String getDirectEditProperty()
     {
         return InstallOptionsModel.PROPERTY_TYPE;
     }
 
-    protected int getCellEditorStyle() 
+    protected int getCellEditorStyle()
     {
         return SWT.SINGLE|SWT.CENTER;
     }

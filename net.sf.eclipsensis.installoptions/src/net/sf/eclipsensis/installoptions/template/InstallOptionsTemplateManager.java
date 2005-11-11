@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -21,7 +21,7 @@ public class InstallOptionsTemplateManager extends AbstractTemplateManager
 {
     private static final Path cPath = new Path("templates"); //$NON-NLS-1$
     public static final InstallOptionsTemplateManager INSTANCE = new InstallOptionsTemplateManager();
-    
+
     private List mListeners = new ArrayList();
     private Map mTemplateFactories = new HashMap();
 
@@ -29,22 +29,22 @@ public class InstallOptionsTemplateManager extends AbstractTemplateManager
     {
         super();
     }
-    
+
     protected Plugin getPlugin()
     {
         return InstallOptionsPlugin.getDefault();
     }
-    
+
     protected IPath getTemplatesPath()
     {
         return cPath;
     }
-    
+
     protected Class getTemplateClass()
     {
         return InstallOptionsTemplate.class;
     }
-    
+
     public synchronized InstallOptionsTemplateCreationFactory getTemplateFactory(InstallOptionsTemplate template)
     {
         InstallOptionsTemplateCreationFactory factory = (InstallOptionsTemplateCreationFactory)mTemplateFactories.get(template);
@@ -65,7 +65,7 @@ public class InstallOptionsTemplateManager extends AbstractTemplateManager
         }
         return false;
     }
-    
+
     public boolean updateTemplate(AbstractTemplate oldTemplate, AbstractTemplate newTemplate)
     {
         if(super.updateTemplate(oldTemplate, newTemplate)) {
@@ -76,7 +76,7 @@ public class InstallOptionsTemplateManager extends AbstractTemplateManager
             return false;
         }
     }
-    
+
     public boolean removeTemplate(AbstractTemplate template)
     {
         if(super.removeTemplate(template)) {
@@ -124,12 +124,12 @@ public class InstallOptionsTemplateManager extends AbstractTemplateManager
             mListeners.add(listener);
         }
     }
-    
+
     public void removeTemplateListener(IInstallOptionsTemplateListener listener)
     {
         mListeners.remove(listener);
     }
-    
+
     private void notifyListeners(int type, InstallOptionsTemplate oldTemplate, InstallOptionsTemplate newTemplate)
     {
         InstallOptionsTemplateEvent event = new InstallOptionsTemplateEvent(type, oldTemplate, newTemplate);

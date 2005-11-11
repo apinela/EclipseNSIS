@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -20,19 +20,19 @@ import org.eclipse.swt.dnd.DropTargetEvent;
 
 public class InstallOptionsTreeViewerDropTargetListener extends AbstractTransferDropTargetListener
 {
-    public InstallOptionsTreeViewerDropTargetListener(EditPartViewer viewer) 
+    public InstallOptionsTreeViewerDropTargetListener(EditPartViewer viewer)
     {
         super(viewer, InstallOptionsTreeViewerTransfer.INSTANCE);
     }
 
-    protected Request createTargetRequest() 
+    protected Request createTargetRequest()
     {
         ChangeBoundsRequest request = new ChangeBoundsRequest(RequestConstants.REQ_MOVE);
         request.setEditParts((List)InstallOptionsTreeViewerTransfer.INSTANCE.getObject());
         return request;
     }
 
-    protected Command getCommand() 
+    protected Command getCommand()
     {
         CompoundCommand command = new CompoundCommand();
 
@@ -73,7 +73,7 @@ public class InstallOptionsTreeViewerDropTargetListener extends AbstractTransfer
         return exclude;
     }
 
-    protected void handleDragOver() 
+    protected void handleDragOver()
     {
         if (InstallOptionsTreeViewerTransfer.INSTANCE.getViewer() != getViewer()) {
             getCurrentEvent().detail = DND.DROP_NONE;
@@ -83,7 +83,7 @@ public class InstallOptionsTreeViewerDropTargetListener extends AbstractTransfer
         super.handleDragOver();
     }
 
-    protected EditPart getSourceEditPart() 
+    protected EditPart getSourceEditPart()
     {
         List selection = (List)InstallOptionsTreeViewerTransfer.INSTANCE.getObject();
         if (selection == null
@@ -94,7 +94,7 @@ public class InstallOptionsTreeViewerDropTargetListener extends AbstractTransfer
         return (EditPart)selection.get(0);
     }
 
-    protected List includeChildren(List list) 
+    protected List includeChildren(List list)
     {
         List result = new ArrayList();
         for (int i = 0; i < list.size(); i++) {
@@ -105,7 +105,7 @@ public class InstallOptionsTreeViewerDropTargetListener extends AbstractTransfer
         return result;
     }
 
-    public boolean isEnabled(DropTargetEvent event) 
+    public boolean isEnabled(DropTargetEvent event)
     {
         if (event.detail != DND.DROP_MOVE) {
             return false;
@@ -113,7 +113,7 @@ public class InstallOptionsTreeViewerDropTargetListener extends AbstractTransfer
         return super.isEnabled(event);
     }
 
-    protected boolean isMove() 
+    protected boolean isMove()
     {
         EditPart source = getSourceEditPart();
         List selection = (List)InstallOptionsTreeViewerTransfer.INSTANCE.getObject();
@@ -125,7 +125,7 @@ public class InstallOptionsTreeViewerDropTargetListener extends AbstractTransfer
         return source.getParent() == getTargetEditPart();
     }
 
-    protected void updateTargetRequest() 
+    protected void updateTargetRequest()
     {
         ChangeBoundsRequest request = (ChangeBoundsRequest)getTargetRequest();
         request.setLocation(getDropLocation());

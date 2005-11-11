@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -27,13 +27,13 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
 
     public static final String TYPE = EclipseNSISPlugin.getResourceString("wizard.files.type"); //$NON-NLS-1$
     private static final Image IMAGE = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("wizard.files.icon")); //$NON-NLS-1$
-    public static final char SEPARATOR = '\0'; 
-    
+    public static final char SEPARATOR = '\0';
+
     private String mDestination = NSISKeywords.getInstance().getKeyword("$INSTDIR"); //$NON-NLS-1$
     private int mOverwriteMode = OVERWRITE_ON;
 
     static {
-        NSISInstallElementFactory.register(TYPE, EclipseNSISPlugin.getResourceString("wizard.files.type.name"), IMAGE, NSISInstallFiles.class);
+        NSISInstallElementFactory.register(TYPE, EclipseNSISPlugin.getResourceString("wizard.files.type.name"), IMAGE, NSISInstallFiles.class); //$NON-NLS-1$
     }
 
     protected void addSkippedProperties(Collection skippedProperties)
@@ -41,7 +41,7 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
         super.addSkippedProperties(skippedProperties);
         skippedProperties.add("files"); //$NON-NLS-1$
     }
-    
+
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.wizard.settings.AbstractNSISInstallGroup#resetChildTypes()
      */
@@ -71,7 +71,7 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
             throw new UnsupportedOperationException(EclipseNSISPlugin.getResourceString("wizard.fileset.delete.exception")); //$NON-NLS-1$
         }
     }
-    
+
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#getType()
      */
@@ -124,7 +124,7 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
     {
         mDestination = destination;
     }
-    
+
     /**
      * @return Returns the filenames.
      */
@@ -182,14 +182,14 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
 
     public String validate(boolean recursive)
     {
-        if(!Common.isValidNSISPathName(getDestination())) { //$NON-NLS-1$
+        if(!Common.isValidNSISPathName(getDestination())) {
             return EclipseNSISPlugin.getResourceString("wizard.invalid.fileset.destination.error"); //$NON-NLS-1$
         }
         else {
             return super.validate(recursive);
         }
     }
-    
+
     public static class FileItem extends AbstractNSISInstallItem
     {
         private static final long serialVersionUID = 3744853352840436396L;
@@ -197,11 +197,11 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
         private static final Image IMAGE = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("wizard.file.icon")); //$NON-NLS-1$
 
         private String mName = null;
-        
+
         static {
-            NSISInstallElementFactory.register(TYPE, EclipseNSISPlugin.getResourceString("wizard.fileitem.type.name"), IMAGE, FileItem.class);
+            NSISInstallElementFactory.register(TYPE, EclipseNSISPlugin.getResourceString("wizard.fileitem.type.name"), IMAGE, FileItem.class); //$NON-NLS-1$
         }
-        
+
         /* (non-Javadoc)
          * @see java.lang.Object#equals(java.lang.Object)
          */
@@ -279,7 +279,7 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
 
         public String validate(boolean recursive)
         {
-            if(!Common.isValidFile(Common.decodePath(getName()))) { //$NON-NLS-1$
+            if(!Common.isValidFile(Common.decodePath(getName()))) {
                 return EclipseNSISPlugin.getResourceString("wizard.invalid.file.name.error"); //$NON-NLS-1$
             }
             else {

@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -36,13 +36,13 @@ public class PasteAction extends WorkbenchPartAction implements PropertyChangeLi
     {
         super(part);
         setLazyEnablementCalculation(true);
-        ((Clipboard)Clipboard.getDefault()).addPropertyChangeListener(this);
+        Clipboard.getDefault().addPropertyChangeListener(this);
     }
 
     /**
      * Initializes this action's text and images.
      */
-    protected void init() 
+    protected void init()
     {
         super.init();
         ISharedImages sharedImages = PlatformUI.getWorkbench().getSharedImages();
@@ -65,7 +65,7 @@ public class PasteAction extends WorkbenchPartAction implements PropertyChangeLi
             }
             pasteCommand = new PasteCommand();
         }
-        
+
         return pasteCommand;
     }
 

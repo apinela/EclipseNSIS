@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -33,7 +33,7 @@ public class NSISWizardTemplatePreferencePage extends PreferencePage implements 
     private AbstractTemplateSettings mTemplateSettings;
 
     /**
-     * 
+     *
      */
     public NSISWizardTemplatePreferencePage()
     {
@@ -70,7 +70,7 @@ public class NSISWizardTemplatePreferencePage extends PreferencePage implements 
                 super.createButtons(parent);
             }
 
-            private void add() 
+            private void add()
             {
                 NSISWizardTemplate template = new NSISWizardTemplate(""); //$NON-NLS-1$
                 Dialog dialog= createDialog(template);
@@ -78,7 +78,7 @@ public class NSISWizardTemplatePreferencePage extends PreferencePage implements 
                     getTemplateManager().addTemplate(template);
                     getTableViewer().refresh(true);
                     getTableViewer().setChecked(template, template.isEnabled());
-                    getTableViewer().setSelection(new StructuredSelection(template));           
+                    getTableViewer().setSelection(new StructuredSelection(template));
                 }
             }
 
@@ -106,7 +106,7 @@ public class NSISWizardTemplatePreferencePage extends PreferencePage implements 
                 return EclipseNSISPlugin.getShellImage();
             }
         };
-        
+
         return mTemplateSettings;
     }
 
@@ -116,23 +116,23 @@ public class NSISWizardTemplatePreferencePage extends PreferencePage implements 
     public void init(IWorkbench workbench)
     {
     }
-    
+
     /*
      * @see PreferencePage#performDefaults()
      */
-    protected void performDefaults() 
+    protected void performDefaults()
     {
         mTemplateSettings.performDefaults();
     }
 
     /*
      * @see PreferencePage#performOk()
-     */ 
-    public boolean performOk() 
+     */
+    public boolean performOk()
     {
         if(mTemplateSettings.performOk()) {
             return super.performOk();
         }
         return false;
-    }   
+    }
 }

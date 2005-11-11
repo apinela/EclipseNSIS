@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -22,7 +22,7 @@ public class MultiLineLabelProvider extends LabelProvider
         super();
     }
 
-    public String getText(Object element) 
+    public String getText(Object element)
     {
         if(element instanceof String) {
             return (String)TypeConverter.INI_STRING_CONVERTER.asType((String)element);

@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -28,7 +28,7 @@ public class InstallOptionsEditorInput extends FileEditorInput implements IInsta
 
     /**
      * @throws CoreException
-     * 
+     *
      */
     public InstallOptionsEditorInput(IFileEditorInput input)
     {
@@ -36,7 +36,7 @@ public class InstallOptionsEditorInput extends FileEditorInput implements IInsta
         mInput = input;
         mDocumentProvider = new TextFileDocumentProvider();
     }
-    
+
     public int hashCode()
     {
         return mInput.hashCode();
@@ -52,7 +52,7 @@ public class InstallOptionsEditorInput extends FileEditorInput implements IInsta
         }
         return super.equals(obj);
     }
-    
+
     public void prepareForSwitch()
     {
         if(!mSwitching) {
@@ -65,7 +65,7 @@ public class InstallOptionsEditorInput extends FileEditorInput implements IInsta
             }
         }
     }
-    
+
     public void completedSwitch()
     {
         if(mSwitching) {
@@ -93,7 +93,7 @@ public class InstallOptionsEditorInput extends FileEditorInput implements IInsta
     {
         return getFile();
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.ui.IStorageEditorInput#getStorage()
      */

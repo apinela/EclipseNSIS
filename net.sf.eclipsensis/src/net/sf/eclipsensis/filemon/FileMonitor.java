@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -22,7 +22,7 @@ public class FileMonitor
     public static final int FILE_DELETED = 1;
 
     public static final FileMonitor INSTANCE = new FileMonitor();
-    
+
     private static final WeakReference[] EMPTY_ARRAY = new WeakReference[0];
     private Timer mTimer;
     private Map mRegistry = new LinkedHashMap();
@@ -30,14 +30,14 @@ public class FileMonitor
     static {
         long interval;
         try {
-            interval = Long.parseLong(EclipseNSISPlugin.getResourceString("file.change.monitor.poll.interval","250"));
+            interval = Long.parseLong(EclipseNSISPlugin.getResourceString("file.change.monitor.poll.interval","500"));
         }
         catch(Throwable t) {
-            interval = 250;
+            interval = 500;
         }
         POLL_INTERVAL = interval;
     }
-    
+
     private FileMonitor()
     {
         super();
@@ -106,22 +106,32 @@ public class FileMonitor
                 File file = files[i];
                 FileChangeRegistryEntry entry = (FileChangeRegistryEntry)mRegistry.get(file);
                 if(!file.exists() || !file.isFile()) {
-                    mRegistry.remove(file);
-                    fireChanged(FILE_DELETED, file, entry);
-                }
-                else {
-                    long lastModified = file.lastModified();
-                    if(lastModified != entry.lastModified) {
-                        entry.lastModified = lastModified;
-                        fireChanged(FILE_MODIFIED, file, entry);
+                    /* Sleep 50 ms & see if the file shows up again- i.e.,
+                     * we caught the event in the middle of a move operation. */
+                    try {
+                        Thread.sleep(50);
                     }
-                    if(entry.listeners.isEmpty()) {
+                    catch (InterruptedException e) {
+                        EclipseNSISPlugin.getDefault().log(e);
+                    }
+                    if(!file.exists() || !file.isFile()) {
+                        /* Yup, it's really gone. Bummer. */
                         mRegistry.remove(file);
+                        fireChanged(FILE_DELETED, file, entry);
+                        continue;
                     }
+                }
+                long lastModified = file.lastModified();
+                if(lastModified != entry.lastModified) {
+                    entry.lastModified = lastModified;
+                    fireChanged(FILE_MODIFIED, file, entry);
+                }
+                if(entry.listeners.isEmpty()) {
+                    mRegistry.remove(file);
                 }
             }
         }
-        
+
         private void fireChanged(int type, File file, FileChangeRegistryEntry entry)
         {
             WeakReference[] listeners = (WeakReference[])entry.listeners.toArray(EMPTY_ARRAY);
@@ -136,7 +146,7 @@ public class FileMonitor
             }
         }
     }
-    
+
     private class FileChangeRegistryEntry
     {
         long lastModified;

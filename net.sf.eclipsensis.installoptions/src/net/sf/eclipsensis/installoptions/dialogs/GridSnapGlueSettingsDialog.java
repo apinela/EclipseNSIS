@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -26,9 +26,9 @@ import org.eclipse.swt.widgets.*;
 public class GridSnapGlueSettingsDialog extends Dialog implements IInstallOptionsConstants
 {
     private GraphicalViewer mViewer;
-    private Map mGridSettingsMap = new HashMap();;
+    private Map mGridSettingsMap = new HashMap();
     private Map mSnapGlueSettingsMap = new HashMap();
-    
+
     /**
      * @param parentShell
      */
@@ -44,14 +44,14 @@ public class GridSnapGlueSettingsDialog extends Dialog implements IInstallOption
         loadViewerProperty(mSnapGlueSettingsMap, PREFERENCE_SNAP_TO_GUIDES, PROPERTY_SNAP_TO_GUIDES, SNAP_TO_GUIDES_DEFAULT);
         loadViewerProperty(mSnapGlueSettingsMap, PREFERENCE_GLUE_TO_GUIDES, PROPERTY_GLUE_TO_GUIDES, GLUE_TO_GUIDES_DEFAULT);
     }
-    
+
     protected void configureShell(Shell newShell)
     {
         super.configureShell(newShell);
         newShell.setText(InstallOptionsPlugin.getResourceString("grid.snap.glue.settings.dialog.name")); //$NON-NLS-1$
         newShell.setImage(InstallOptionsPlugin.getShellImage());
     }
-    
+
     private Object makeCopy(Object o)
     {
         if(o instanceof Point) {
@@ -62,7 +62,7 @@ public class GridSnapGlueSettingsDialog extends Dialog implements IInstallOption
         }
         return o;
     }
-    
+
     private void loadViewerProperty(Map map, String mapName, String name, Object defaultValue)
     {
         Object o = null;
@@ -97,7 +97,7 @@ public class GridSnapGlueSettingsDialog extends Dialog implements IInstallOption
 
         new GridSettings(composite,mGridSettingsMap);
         new SnapGlueSettings(composite,mSnapGlueSettingsMap);
-        
+
         initializeDialogUnits(composite);
         GridData data = (GridData)composite.getLayoutData();
         data.widthHint = convertWidthInCharsToPixels(50);

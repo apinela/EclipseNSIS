@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -24,13 +24,13 @@ public class NSISInstallFile extends AbstractNSISInstallItem implements INSISIns
 
     public static final String TYPE = EclipseNSISPlugin.getResourceString("wizard.file.type"); //$NON-NLS-1$
     private static final Image IMAGE = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("wizard.file.icon")); //$NON-NLS-1$
-    
+
     private String mName = null;
     private String mDestination = NSISKeywords.getInstance().getKeyword("$INSTDIR"); //$NON-NLS-1$
-    private int mOverwriteMode = OVERWRITE_ON; 
+    private int mOverwriteMode = OVERWRITE_ON;
 
     static {
-        NSISInstallElementFactory.register(TYPE, EclipseNSISPlugin.getResourceString("wizard.file.type.name"), IMAGE, NSISInstallFile.class);
+        NSISInstallElementFactory.register(TYPE, EclipseNSISPlugin.getResourceString("wizard.file.type.name"), IMAGE, NSISInstallFile.class); //$NON-NLS-1$
     }
 
      /* (non-Javadoc)
@@ -85,7 +85,7 @@ public class NSISInstallFile extends AbstractNSISInstallItem implements INSISIns
     {
         mDestination = destination;
     }
-    
+
     /**
      * @return Returns the name.
      */
@@ -120,10 +120,10 @@ public class NSISInstallFile extends AbstractNSISInstallItem implements INSISIns
 
     public String validate(boolean recursive)
     {
-        if(!Common.isValidFile(Common.decodePath(getName()))) { //$NON-NLS-1$
+        if(!Common.isValidFile(Common.decodePath(getName()))) {
             return EclipseNSISPlugin.getResourceString("wizard.invalid.file.name.error"); //$NON-NLS-1$
         }
-        else if(!Common.isValidNSISPathName(getDestination())) { //$NON-NLS-1$
+        else if(!Common.isValidNSISPathName(getDestination())) {
             return EclipseNSISPlugin.getResourceString("wizard.invalid.file.destination.error"); //$NON-NLS-1$
         }
         else {

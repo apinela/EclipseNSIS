@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -84,12 +84,12 @@ public class DistributionRequest extends ChangeBoundsRequest
                 break;
         }
 
-        
+
     }
 
     /**
      * Returns the alignment.  Possible values are {@link PositionConstants#LEFT},
-     * {@link PositionConstants#RIGHT}, {@link PositionConstants#TOP} and 
+     * {@link PositionConstants#RIGHT}, {@link PositionConstants#TOP} and
      * {@link PositionConstants#BOTTOM}.
      * @return the alignment
      */
@@ -123,7 +123,7 @@ public class DistributionRequest extends ChangeBoundsRequest
                     (PrecisionRectangle)result,
                     new PrecisionRectangle(reference));
             }
-        } 
+        }
         else {
             doNormalAlignment(result, reference);
         }

@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -30,7 +30,7 @@ public class JARSignerPlugin extends AbstractUIPlugin {
 	/**
 	 * The constructor.
 	 */
-	public JARSignerPlugin() 
+	public JARSignerPlugin()
     {
 		cPlugin = this;
         try {
@@ -43,7 +43,7 @@ public class JARSignerPlugin extends AbstractUIPlugin {
 	/**
 	 * This method is called upon plug-in activation
 	 */
-	public void start(BundleContext context) throws Exception 
+	public void start(BundleContext context) throws Exception
     {
 		super.start(context);
 	}
@@ -59,7 +59,7 @@ public class JARSignerPlugin extends AbstractUIPlugin {
     /**
 	 * Returns the shared instance.
 	 */
-	public static JARSignerPlugin getDefault() 
+	public static JARSignerPlugin getDefault()
     {
 		return cPlugin;
 	}
@@ -68,7 +68,7 @@ public class JARSignerPlugin extends AbstractUIPlugin {
      * Returns the string from the plugin's resource bundle,
      * or 'key' if not found.
      */
-    public static String getResourceString(String key) 
+    public static String getResourceString(String key)
     {
         ResourceBundle bundle = getDefault().getResourceBundle();
         try {
@@ -77,7 +77,7 @@ public class JARSignerPlugin extends AbstractUIPlugin {
             return key;
         }
     }
-    
+
     public static String getFormattedString(String key, Object[] args)
     {
         return MessageFormat.format(getResourceString(key),args);
@@ -89,7 +89,7 @@ public class JARSignerPlugin extends AbstractUIPlugin {
     public ResourceBundle getResourceBundle() {
         return mResourceBundle;
     }
-    
+
     public static KeyStore loadKeyStore(String keyStoreLocation, String storePassword)
     {
         InputStream is = null;

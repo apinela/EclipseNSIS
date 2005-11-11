@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -32,7 +32,7 @@ import org.eclipse.swt.widgets.Control;
 public class NSISWizardPresentationPage extends AbstractNSISWizardPage
 {
     public static final String NAME = "nsisWizardPresentation"; //$NON-NLS-1$
-    
+
     private static final long DEFAULT_RESOLUTION = 32; //32 FPS
     private static final double OS_VERSION;
 
@@ -47,14 +47,14 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
     private static final String[] cLicFileErrors = {"empty.license.file.error"}; //$NON-NLS-1$
     private static final String[] cSplashImageErrors = {"empty.splash.image.error"}; //$NON-NLS-1$
     private static final String[] cSplashDelayErrors = {"zero.splash.delay.error"}; //$NON-NLS-1$
-    
+
     private Button mSplashPreviewButton = null;
     private Button mBGPreviewButton = null;
     private FontData mBGPreviewFontData;
     private FontData mBGPreviewEscapeFontData;
     private Point mBGPreviewTextLocation;
     private int mBGPreviewGradientHeight;
-    
+
     static {
         double version;
         try {
@@ -65,7 +65,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
         }
         OS_VERSION = version;
     }
-    
+
     /**
      * @param pageName
      * @param title
@@ -80,12 +80,12 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
                                            Integer.parseInt(EclipseNSISPlugin.getResourceString("background.preview.text.y","8"))); //$NON-NLS-1$ //$NON-NLS-2$
         mBGPreviewGradientHeight = Integer.parseInt(EclipseNSISPlugin.getResourceString("background.preview.gradient.height","4")); //$NON-NLS-1$ //$NON-NLS-2$
     }
-    
+
     protected String getHelpContextId()
     {
         return INSISConstants.PLUGIN_CONTEXT_PREFIX+"nsis_wizpresentation_context"; //$NON-NLS-1$
     }
-    
+
     protected Control createPageControl(Composite parent)
     {
         final Composite composite = new Composite(parent, SWT.NONE);
@@ -93,7 +93,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
 
         GridLayout layout = new GridLayout(1,false);
         composite.setLayout(layout);
-        
+
         ResourceBundle bundle = EclipseNSISPlugin.getDefault().getResourceBundle();
 
         createLicenseGroup(composite, bundle);
@@ -101,10 +101,10 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
         createBackgroundGroup(composite, bundle);
 
         setPageComplete(validatePage(ALL_CHECK));
-        
+
         return composite;
     }
-    
+
     /**
      * @param composite
      * @param bundle
@@ -115,13 +115,13 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
 
         final MasterSlaveEnabler mse = new MasterSlaveEnabler() {
             public void enabled(Control control, boolean flag) { }
-            
+
             public boolean canEnable(Control control)
             {
                 NSISWizardSettings settings = mWizard.getSettings();
 
                 if(control == mBGPreviewButton) {
-                    return (settings.isShowBackground() && 
+                    return (settings.isShowBackground() &&
                             validateEmptyOrValidFile(Common.decodePath(settings.getBackgroundBMP()),null) &&
                             validateEmptyOrValidFile(Common.decodePath(settings.getBackgroundWAV()),null));
                 }
@@ -130,13 +130,13 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
                 }
             }
         };
-        
+
         Group group = NSISWizardDialogUtil.createGroup(parent, 1, "background.group.label", null, false);  //$NON-NLS-1$
 
         final Button b = NSISWizardDialogUtil.createCheckBox(group,"show.background.label",settings.isShowBackground(), //$NON-NLS-1$
                                          true, null, false);
         b.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) 
+            public void widgetSelected(SelectionEvent e)
             {
                 boolean selection = b.getSelection();
                 mWizard.getSettings().setShowBackground(selection);
@@ -148,7 +148,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
         });
 
         final MasterSlaveController m = new MasterSlaveController(b);
-        
+
         Composite composite = new Composite(group,SWT.NONE);
         GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
         composite.setLayoutData(gd);
@@ -156,7 +156,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
         layout.marginHeight = 0;
         layout.marginWidth = 0;
         composite.setLayout(layout);
-        final Text t = NSISWizardDialogUtil.createFileBrowser(composite, settings.getBackgroundBMP(), false, 
+        final Text t = NSISWizardDialogUtil.createFileBrowser(composite, settings.getBackgroundBMP(), false,
                               Common.loadArrayProperty(bundle,"background.image.filternames"),  //$NON-NLS-1$
                               Common.loadArrayProperty(bundle,"background.image.filters"), "background.image.label", //$NON-NLS-1$ //$NON-NLS-2$
                               true,m, false);
@@ -171,8 +171,8 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
                 }
             }
         });
-        
-        final Text t2 = NSISWizardDialogUtil.createFileBrowser(composite, settings.getBackgroundWAV(), false, 
+
+        final Text t2 = NSISWizardDialogUtil.createFileBrowser(composite, settings.getBackgroundWAV(), false,
                               Common.loadArrayProperty(bundle,"background.sound.filternames"),  //$NON-NLS-1$
                               Common.loadArrayProperty(bundle,"background.sound.filters"), "background.sound.label", //$NON-NLS-1$ //$NON-NLS-2$
                               true, m, false);
@@ -187,7 +187,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
                 }
             }
         });
-        
+
         composite = new Composite(group,SWT.NONE);
         gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
         composite.setLayoutData(gd);
@@ -195,7 +195,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
         layout.marginHeight = 0;
         layout.marginWidth = 0;
         composite.setLayout(layout);
-        
+
         Group group2 = NSISWizardDialogUtil.createGroup(composite, 3, "background.colors.label", m, false); //$NON-NLS-1$
         ((GridLayout)group2.getLayout()).makeColumnsEqualWidth = true;
         ((GridData)group2.getLayoutData()).horizontalSpan = 1;
@@ -203,7 +203,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
         String[] labels = {"background.topcolor.label","background.bottomcolor.label","background.textcolor.label"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         RGB[] values = {settings.getBGTopColor(),settings.getBGBottomColor(),settings.getBGTextColor()};
         final ColorEditor[] ce = new ColorEditor[labels.length];
-        
+
         SelectionAdapter sa = new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 NSISWizardSettings settings = mWizard.getSettings();
@@ -243,7 +243,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
         mBGPreviewButton.setText(bundle.getString("preview.label")); //$NON-NLS-1$
         mBGPreviewButton.setLayoutData(new GridData(SWT.END, SWT.CENTER, false, false));
         mBGPreviewButton.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) 
+            public void widgetSelected(SelectionEvent e)
             {
                 previewBackground();
             }
@@ -277,7 +277,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
         final Button b = NSISWizardDialogUtil.createCheckBox(group,"show.license.label",settings.isShowLicense(),  //$NON-NLS-1$
                                         true, null, false);
         b.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) 
+            public void widgetSelected(SelectionEvent e)
             {
                 boolean selection = b.getSelection();
                 mWizard.getSettings().setShowLicense(selection);
@@ -286,7 +286,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
         });
 
         final MasterSlaveController m = new MasterSlaveController(b);
-        final Text t = NSISWizardDialogUtil.createFileBrowser(group, settings.getLicenseData(), false, 
+        final Text t = NSISWizardDialogUtil.createFileBrowser(group, settings.getLicenseData(), false,
                                    Common.loadArrayProperty(bundle,"license.file.filternames"),  //$NON-NLS-1$
                                    Common.loadArrayProperty(bundle,"license.file.filters"), "license.file.label", //$NON-NLS-1$ //$NON-NLS-2$
                                    true, m, true);
@@ -299,11 +299,11 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
             }
         });
 
-        final Combo c = NSISWizardDialogUtil.createCombo(group, NSISWizardDisplayValues.LICENSE_BUTTON_TYPE_NAMES, 
+        final Combo c = NSISWizardDialogUtil.createCombo(group, NSISWizardDisplayValues.LICENSE_BUTTON_TYPE_NAMES,
                                     settings.getLicenseButtonType(),true,"license.button.label", //$NON-NLS-1$
                                     (settings.getInstallerType() != INSTALLER_TYPE_SILENT && settings.isShowLicense()), m, false);
         final Label l = (Label)c.getData(NSISWizardDialogUtil.LABEL);
-        
+
         c.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e)
             {
@@ -312,7 +312,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
         });
         final MasterSlaveEnabler mse = new MasterSlaveEnabler() {
             public void enabled(Control control, boolean flag) { }
-            
+
             public boolean canEnable(Control control)
             {
                 NSISWizardSettings settings = mWizard.getSettings();
@@ -329,7 +329,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
         if(l != null) {
             m.setEnabler(l,mse);
         }
-        
+
         addPageChangedRunnable(new Runnable() {
             public void run()
             {
@@ -371,15 +371,15 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
 
         final MasterSlaveEnabler mse = new MasterSlaveEnabler() {
             public void enabled(Control control, boolean flag) { }
-            
+
             public boolean canEnable(Control control)
             {
                 NSISWizardSettings settings = mWizard.getSettings();
 
                 if(control == mSplashPreviewButton) {
-                    return (settings.isShowSplash() && 
+                    return (settings.isShowSplash() &&
                             Common.isValidFile(Common.decodePath(settings.getSplashBMP())) &&
-                            validateEmptyOrValidFile(Common.decodePath(settings.getSplashWAV()),null) && 
+                            validateEmptyOrValidFile(Common.decodePath(settings.getSplashWAV()),null) &&
                             settings.getSplashDelay() > 0);
                 }
                 else {
@@ -387,13 +387,13 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
                 }
             }
         };
-        
+
         Group group = NSISWizardDialogUtil.createGroup(parent, 1, "splash.group.label", null, false); //$NON-NLS-1$
-    
+
         final Button b = NSISWizardDialogUtil.createCheckBox(group,"show.splash.label",settings.isShowSplash(), //$NON-NLS-1$
                                          true, null, false);
         b.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) 
+            public void widgetSelected(SelectionEvent e)
             {
                 boolean selection = ((Button)e.widget).getSelection();
                 mWizard.getSettings().setShowSplash(selection);
@@ -403,9 +403,9 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
                 }
             }
         });
-    
+
         final MasterSlaveController m = new MasterSlaveController(b);
-        
+
         Composite composite = new Composite(group,SWT.NONE);
         GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
         composite.setLayoutData(gd);
@@ -413,7 +413,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
         layout.marginHeight = 0;
         layout.marginWidth = 0;
         composite.setLayout(layout);
-        final Text t = NSISWizardDialogUtil.createFileBrowser(composite, settings.getSplashBMP(), false, 
+        final Text t = NSISWizardDialogUtil.createFileBrowser(composite, settings.getSplashBMP(), false,
                               Common.loadArrayProperty(bundle,"splash.image.filternames"),  //$NON-NLS-1$
                               Common.loadArrayProperty(bundle,"splash.image.filters"), "splash.image.label", //$NON-NLS-1$ //$NON-NLS-2$
                               true,m, true);
@@ -428,8 +428,8 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
                 }
             }
         });
-        
-        final Text t2 = NSISWizardDialogUtil.createFileBrowser(composite, settings.getSplashWAV(), false, 
+
+        final Text t2 = NSISWizardDialogUtil.createFileBrowser(composite, settings.getSplashWAV(), false,
                               Common.loadArrayProperty(bundle,"splash.sound.filternames"),  //$NON-NLS-1$
                               Common.loadArrayProperty(bundle,"splash.sound.filters"), "splash.sound.label", //$NON-NLS-1$ //$NON-NLS-2$
                               true, m, false);
@@ -444,7 +444,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
                 }
             }
         });
-        
+
         composite = new Composite(group,SWT.NONE);
         gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
         composite.setLayoutData(gd);
@@ -452,14 +452,14 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
         layout.marginHeight = 0;
         layout.marginWidth = 0;
         composite.setLayout(layout);
-        
+
         Group group2 = NSISWizardDialogUtil.createGroup(composite, 3, "splash.delay.label", m, false); //$NON-NLS-1$
         ((GridLayout)group2.getLayout()).makeColumnsEqualWidth = true;
         ((GridData)group2.getLayoutData()).horizontalSpan = 1;
         String[] labels = {"splash.display.label","splash.fadein.label","splash.fadeout.label"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         int[] values = {settings.getSplashDelay(),settings.getFadeInDelay(),settings.getFadeOutDelay()};
         boolean[] required = {true, false, false};
-        
+
         ModifyListener ml = new ModifyListener() {
             public void modifyText(ModifyEvent e)
             {
@@ -505,7 +505,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
         mSplashPreviewButton.setText(bundle.getString("preview.label")); //$NON-NLS-1$
         mSplashPreviewButton.setLayoutData(new GridData(SWT.END, SWT.CENTER, false, false));
         mSplashPreviewButton.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) 
+            public void widgetSelected(SelectionEvent e)
             {
                 previewSplash();
             }
@@ -533,15 +533,15 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
         }
         return ""; //$NON-NLS-1$
     }
-    
+
     private void previewSplash()
     {
         if(Common.isValidFile(Common.decodePath(mWizard.getSettings().getSplashBMP()))) {
             SplashPreviewTask task = new SplashPreviewTask();
-            new Timer().scheduleAtFixedRate(task,0,task.getResolution()); 
+            new Timer().scheduleAtFixedRate(task,0,task.getResolution());
         }
     }
-    
+
     private void previewBackground()
     {
         final NSISWizardSettings settings = mWizard.getSettings();
@@ -556,11 +556,11 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
         shell.setLayout(fillLayout);
         final Rectangle rect = display.getBounds();
         shell.setBounds(rect.x,rect.y,rect.width,rect.height);
-        
+
         final Font previewFont = new Font(display,mBGPreviewFontData);
         final Font messageFont = new Font(display,mBGPreviewEscapeFontData);
         final Clip clip = loadAudioClip(Common.decodePath(settings.getBackgroundWAV()));
-        
+
         shell.addKeyListener(new KeyAdapter(){
             public void keyReleased(KeyEvent e) {
                 if(e.character == SWT.ESC) {
@@ -594,12 +594,12 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
                 long dg = (((botRGB.green << 10) - g)*4) / rect.height;
                 long db = (((botRGB.blue << 10) - b) * 4) / rect.height;
                 int ry = rect.y;
-                
+
                 //Save GC settings
                 Color fgColor = gc.getForeground();
                 Color bgColor = gc.getBackground();
                 Font font = gc.getFont();
-                
+
                 while(ry < (rect.y+rect.height)) {
                     Color color = new Color(display,(int)(r >> 10), (int)(g >> 10), (int)(b >> 10));
                     gc.setBackground(color);
@@ -610,7 +610,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
                     g += dg;
                     b += db;
                 }
-                
+
                 String backgroundBMP = Common.decodePath(settings.getBackgroundBMP());
                 if(Common.isValidFile(backgroundBMP)) {
                     ImageData imageData = new ImageData(backgroundBMP);
@@ -624,11 +624,11 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
                 gc.setForeground(ColorManager.getColor(settings.getBGTextColor()));
                 gc.setFont(previewFont);
                 gc.drawString(previewText, mBGPreviewTextLocation.x, mBGPreviewTextLocation.y, true);
-                
+
                 gc.setForeground(ColorManager.getNegativeColor(botRGB));
                 gc.setFont(messageFont);
                 gc.drawString(EclipseNSISPlugin.getResourceString("background.preview.escape.message"),10,rect.y+rect.height-20,true); //$NON-NLS-1$
-                
+
                 //Restore GC settings
                 gc.setForeground(fgColor);
                 gc.setBackground(bgColor);
@@ -652,7 +652,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
             return false;
         }
     }
-    
+
     private boolean validateDelay(int delay, String[] messageResource)
     {
         if(delay <= 0) {
@@ -669,12 +669,12 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
         }
         else {
             NSISWizardSettings settings = mWizard.getSettings();
-    
+
             boolean b = (!settings.isShowLicense() || ((flag & LICDATA_CHECK) == 0 || validateFile(Common.decodePath(settings.getLicenseData()),cLicFileErrors))) &&
                         (!settings.isShowSplash() || (((flag & SPLIMG_CHECK) == 0 || validateFile(Common.decodePath(settings.getSplashBMP()), cSplashImageErrors)) &&
                                                     ((flag & SPLWAV_CHECK) == 0 || validateEmptyOrValidFile(Common.decodePath(settings.getSplashWAV()),null)) &&
                                                     ((flag & SPLDLY_CHECK) == 0 || validateDelay(settings.getSplashDelay(),cSplashDelayErrors)))) &&
-                        (!settings.isShowBackground() || (((flag & BGIMG_CHECK) == 0 || validateEmptyOrValidFile(Common.decodePath(settings.getBackgroundBMP()),null)) && 
+                        (!settings.isShowBackground() || (((flag & BGIMG_CHECK) == 0 || validateEmptyOrValidFile(Common.decodePath(settings.getBackgroundBMP()),null)) &&
                                                        ((flag & BGWAV_CHECK) == 0 || validateEmptyOrValidFile(Common.decodePath(settings.getBackgroundWAV()),null))));
             setPageComplete(b);
             if(b) {
@@ -685,7 +685,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
     }
 
     /**
-     * 
+     *
      */
     private Clip loadAudioClip(String fileName)
     {
@@ -708,7 +708,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
                         ais = AudioSystem.getAudioInputStream(format, ais);
                     }
                 }
-                
+
                 DataLine.Info info = new DataLine.Info(Clip.class, format);
                 if(AudioSystem.isLineSupported(info)) {
                     clip = (Clip)AudioSystem.getLine(info);
@@ -739,7 +739,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
         public static final int STATE_FADE_IN = 0;
         public static final int STATE_DISPLAY = 1;
         public static final int STATE_FADE_OUT = 2;
-        
+
         private int mState = STATE_FADE_IN;
         private int mTimeLeft = 0;
         private Image mImage = null;
@@ -792,7 +792,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
                 WinAPI.SetWindowLong(mShell.handle, WinAPI.GWL_EXSTYLE,
                                      WinAPI.GetWindowLong(mShell.handle, WinAPI.GWL_EXSTYLE) | WinAPI.WS_EX_LAYERED);
             }
-            
+
             mDisplay = mShell.getDisplay();
             FillLayout fillLayout = new FillLayout();
             fillLayout.marginHeight=0;

@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -26,7 +26,7 @@ public class InstallOptionsSourceViewerConfiguration extends SourceViewerConfigu
         return new NSISAnnotationHover(new String[]{IInstallOptionsConstants.INSTALLOPTIONS_ERROR_ANNOTATION_NAME,
                                                     IInstallOptionsConstants.INSTALLOPTIONS_WARNING_ANNOTATION_NAME});
     }
-    
+
     /*
      * (non-Javadoc) Method declared on SourceViewerConfiguration
      */
@@ -37,7 +37,7 @@ public class InstallOptionsSourceViewerConfiguration extends SourceViewerConfigu
         DefaultDamagerRepairer dr = new InstallOptionsDamagerRepairer(new InstallOptionsCommentScanner());
         reconciler.setDamager(dr, InstallOptionsPartitionScanner.INSTALLOPTIONS_COMMENT);
         reconciler.setRepairer(dr, InstallOptionsPartitionScanner.INSTALLOPTIONS_COMMENT);
-        
+
         dr = new InstallOptionsDamagerRepairer(new InstallOptionsRuleBasedScanner());
         reconciler.setDamager(dr, IDocument.DEFAULT_CONTENT_TYPE);
         reconciler.setRepairer(dr, IDocument.DEFAULT_CONTENT_TYPE);

@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -32,7 +32,7 @@ public class InstallOptionsDirRequest extends InstallOptionsPathRequest
         super.init();
         mRoot = ""; //$NON-NLS-1$
     }
-    
+
     public String getType()
     {
         return InstallOptionsModel.TYPE_DIRREQUEST;
@@ -44,7 +44,7 @@ public class InstallOptionsDirRequest extends InstallOptionsPathRequest
         clone.setRoot(getRoot());
         return clone;
     }
-    
+
     protected void addPropertyName(List list, String setting)
     {
         if (setting.equalsIgnoreCase(InstallOptionsModel.PROPERTY_ROOT)) {
@@ -84,7 +84,7 @@ public class InstallOptionsDirRequest extends InstallOptionsPathRequest
             super.setPropertyValue(id, value);
         }
     }
-    
+
     public String getRoot()
     {
         return mRoot;

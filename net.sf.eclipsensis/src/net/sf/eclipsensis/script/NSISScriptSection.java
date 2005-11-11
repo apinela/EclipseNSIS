@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -12,14 +12,14 @@ package net.sf.eclipsensis.script;
 import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.util.Common;
 
-public class NSISScriptSection extends AbstractNSISScriptElementContainer 
+public class NSISScriptSection extends AbstractNSISScriptElementContainer
 {
     private String mName = null;
     private boolean mBold = false;
     private boolean mHidden = false;
     private boolean mDefaultUnselected = false;
     private String mIndex = null;
-    
+
     /**
      * @param name
      */
@@ -47,14 +47,14 @@ public class NSISScriptSection extends AbstractNSISScriptElementContainer
     }
 
     /**
-     * 
+     *
      */
     private static String[] makeArray(String name, boolean bold, boolean hidden, boolean defaultUnselected, String index)
     {
         String[] args = null;
-        
-        if(name.equalsIgnoreCase(INSISConstants.UNINSTALL_SECTION_NAME)) { //$NON-NLS-1$
-            args = new String[] {INSISConstants.UNINSTALL_SECTION_NAME}; //$NON-NLS-1$
+
+        if(name.equalsIgnoreCase(INSISConstants.UNINSTALL_SECTION_NAME)) {
+            args = new String[] {INSISConstants.UNINSTALL_SECTION_NAME};
         }
         else {
             int size = 1 + (defaultUnselected?1:0) + (index!=null?1:0);
@@ -78,7 +78,7 @@ public class NSISScriptSection extends AbstractNSISScriptElementContainer
     {
         return mBold;
     }
-    
+
     /**
      * @param bold The bold to set.
      */
@@ -87,7 +87,7 @@ public class NSISScriptSection extends AbstractNSISScriptElementContainer
         mBold = bold;
         updateArgs();
     }
-    
+
     /**
      * @return Returns the defaultUnselected.
      */
@@ -95,7 +95,7 @@ public class NSISScriptSection extends AbstractNSISScriptElementContainer
     {
         return mDefaultUnselected;
     }
-    
+
     /**
      * @param defaultUnselected The defaultUnselected to set.
      */
@@ -104,7 +104,7 @@ public class NSISScriptSection extends AbstractNSISScriptElementContainer
         mDefaultUnselected = defaultUnselected;
         updateArgs();
     }
-    
+
     /**
      * @return Returns the hidden.
      */
@@ -112,7 +112,7 @@ public class NSISScriptSection extends AbstractNSISScriptElementContainer
     {
         return mHidden;
     }
-    
+
     /**
      * @param hidden The hidden to set.
      */
@@ -121,7 +121,7 @@ public class NSISScriptSection extends AbstractNSISScriptElementContainer
         mHidden = hidden;
         updateArgs();
     }
-    
+
     /**
      * @return Returns the name.
      */
@@ -129,7 +129,7 @@ public class NSISScriptSection extends AbstractNSISScriptElementContainer
     {
         return mName;
     }
-    
+
     /**
      * @param name The name to set.
      */
@@ -138,7 +138,7 @@ public class NSISScriptSection extends AbstractNSISScriptElementContainer
         mName = name;
         updateArgs();
     }
-    
+
     /**
      * @return Returns the index.
      */
@@ -146,7 +146,7 @@ public class NSISScriptSection extends AbstractNSISScriptElementContainer
     {
         return mIndex;
     }
-    
+
     /**
      * @param index The index to set.
      */

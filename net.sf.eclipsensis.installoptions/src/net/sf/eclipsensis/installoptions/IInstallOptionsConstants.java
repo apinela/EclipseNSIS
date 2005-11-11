@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -32,17 +32,17 @@ public interface IInstallOptionsConstants
     public static final String SWITCH_EDITOR_COMMAND_ID = InstallOptionsPlugin.getBundleResourceString("%switch.editor.command.id"); //$NON-NLS-1$
     public static final String EDITING_INSTALLOPTIONS_SOURCE_CONTEXT_ID = InstallOptionsPlugin.getBundleResourceString("%editing.installoptions.source.id"); //$NON-NLS-1$
     public static final String EDITING_INSTALLOPTIONS_DESIGN_CONTEXT_ID = InstallOptionsPlugin.getBundleResourceString("%editing.installoptions.design.id"); //$NON-NLS-1$
-    
+
     public static final String INSTALLOPTIONS_PROBLEM_MARKER_ID = InstallOptionsPlugin.getBundleResourceString("%installoptions.problem.marker.id"); //$NON-NLS-1$
     public static final String INSTALLOPTIONS_ERROR_ANNOTATION_NAME = InstallOptionsPlugin.getBundleResourceString("%installoptions.error.annotation.name"); //$NON-NLS-1$
     public static final String INSTALLOPTIONS_WARNING_ANNOTATION_NAME = InstallOptionsPlugin.getBundleResourceString("%installoptions.warning.annotation.name"); //$NON-NLS-1$
-    
+
     public static final String INSTALLOPTIONS_NATURE_ID = InstallOptionsPlugin.getBundleResourceString("%installoptions.nature.id"); //$NON-NLS-1$
     public static final String INSTALLOPTIONS_BUILDER_ID = InstallOptionsPlugin.getBundleResourceString("%installoptions.builder.id"); //$NON-NLS-1$
 
     public static final String GRID_STYLE_LINES="GridStyleLines"; //$NON-NLS-1$
     public static final String GRID_STYLE_DOTS="GridStyleDots"; //$NON-NLS-1$
-    
+
     public static Boolean SHOW_GRID_DEFAULT = Boolean.FALSE;
     public static Boolean SHOW_RULERS_DEFAULT = Boolean.FALSE;
     public static Boolean SHOW_GUIDES_DEFAULT = Boolean.TRUE;
@@ -56,7 +56,7 @@ public interface IInstallOptionsConstants
     public static String GRID_STYLE_DEFAULT = GRID_STYLE_LINES;
     public static Dimension DIALOG_SIZE_DEFAULT = new Dimension(300,140);
     public static Boolean CHECK_EDITOR_ASSOCIATION_DEFAULT = Boolean.TRUE;
-   
+
     public static final String PREFERENCE_SHOW_GRID = "ShowGrid"; //$NON-NLS-1$
     public static final String PREFERENCE_SHOW_RULERS = "ShowRulers"; //$NON-NLS-1$
     public static final String PREFERENCE_SHOW_GUIDES = "ShowGuides"; //$NON-NLS-1$
@@ -79,9 +79,9 @@ public interface IInstallOptionsConstants
     public static final String KEY_STYLE = "KeyStyle";     //$NON-NLS-1$
     public static final String KEY_VALUE_DELIM_STYLE = "KeyValueDelimStyle";     //$NON-NLS-1$
     public static final String NUMBER_STYLE = "NumberStyle";     //$NON-NLS-1$
-    
+
     public static final String QUALIFIED_NAME_PREFIX = PLUGIN_ID;
-    
+
     public static final QualifiedName FILEPROPERTY_SHOW_GRID = new QualifiedName(QUALIFIED_NAME_PREFIX,PREFERENCE_SHOW_GRID);
     public static final QualifiedName FILEPROPERTY_SHOW_RULERS = new QualifiedName(QUALIFIED_NAME_PREFIX,PREFERENCE_SHOW_RULERS);
     public static final QualifiedName FILEPROPERTY_SHOW_GUIDES = new QualifiedName(QUALIFIED_NAME_PREFIX,PREFERENCE_SHOW_GUIDES);
@@ -97,20 +97,20 @@ public interface IInstallOptionsConstants
     public static final QualifiedName RESOURCEPROPERTY_BUILD_TIMESTAMP = new QualifiedName(QUALIFIED_NAME_PREFIX,"BuildTimestamp"); //$NON-NLS-1$
     public static final QualifiedName PROJECTPROPERTY_BUILDER_VERSION = new QualifiedName(QUALIFIED_NAME_PREFIX,"BuilderVersion"); //$NON-NLS-1$
     public static final QualifiedName PROJECTPROPERTY_NSIS_VERSION = new QualifiedName(QUALIFIED_NAME_PREFIX,"NSISVersion"); //$NON-NLS-1$
-    
+
     public static final String PROPERTY_SNAP_TO_GUIDES = "net.sf.eclipsensis.installoptions.snap_to_guides"; //$NON-NLS-1$
     public static final String PROPERTY_GLUE_TO_GUIDES = "net.sf.eclipsensis.installoptions.glue_to_guides"; //$NON-NLS-1$
     public static final String PROPERTY_DIALOG_SIZE = "net.sf.eclipsensis.installoptions.dialog_size"; //$NON-NLS-1$
     public static final String PROPERTY_SHOW_DIALOG_SIZE = "net.sf.eclipsensis.installoptions.show_dialog_size"; //$NON-NLS-1$
-    
+
     public static final String GRID_SNAP_GLUE_SETTINGS_ACTION_ID = "net.sf.eclipsensis.installoptions.grid_snap_glue_settings"; //$NON-NLS-1$
 
     public static final Color GHOST_FILL_COLOR = new Color(null, 31, 31, 31);
-    
+
     public static final String REQ_REORDER_PART="reorder part"; //$NON-NLS-1$
     public static final String REQ_EXTENDED_EDIT="extended edit"; //$NON-NLS-1$
     public static final String REQ_CREATE_FROM_TEMPLATE="create from template"; //$NON-NLS-1$
-    
+
     public static final int ARRANGE_SEND_BACKWARD = 1;
     public static final int ARRANGE_SEND_TO_BACK = 2;
     public static final int ARRANGE_BRING_FORWARD = 3;
@@ -127,7 +127,7 @@ public interface IInstallOptionsConstants
 
     public static final int PREVIEW_CLASSIC = 1;
     public static final int PREVIEW_MUI = 2;
-    
+
     public static final char LIST_SEPARATOR = '|';
     public static final String MATCHSIZE_GROUP = "net.sf.eclipsensis.installoptions.matchsize"; //$NON-NLS-1$
     public static final String DISTRIBUTE_GROUP = "net.sf.eclipsensis.installoptions.distribute"; //$NON-NLS-1$

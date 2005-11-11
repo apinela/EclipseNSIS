@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -123,7 +123,7 @@ public class NSISSectionGroup extends AbstractNSISInstallGroup
     {
         mBold = bold;
     }
-    
+
     /**
      * @return Returns the description.
      */
@@ -131,7 +131,7 @@ public class NSISSectionGroup extends AbstractNSISInstallGroup
     {
         return mDescription;
     }
-    
+
     /**
      * @param description The description to set.
      */
@@ -139,17 +139,17 @@ public class NSISSectionGroup extends AbstractNSISInstallGroup
     {
         mDescription = description;
     }
-    
+
     public boolean isDefaultExpanded()
     {
         return mDefaultExpanded;
     }
-    
+
     public void setDefaultExpanded(boolean defaultExpanded)
     {
         mDefaultExpanded = defaultExpanded;
     }
-    
+
     protected Object getNodeValue(Node node, String name, Class clasz)
     {
         if(name.equals("description")) { //$NON-NLS-1$
@@ -168,18 +168,18 @@ public class NSISSectionGroup extends AbstractNSISInstallGroup
             return super.getNodeValue(node, name, clasz);
         }
     }
-    
+
     protected Node createChildNode(Document document, String name, Object value)
     {
         if(name.equals("description")) { //$NON-NLS-1$
-            value = document.createTextNode((String)value); //$NON-NLS-1$
+            value = document.createTextNode((String)value);
         }
         return super.createChildNode(document, name, value);
     }
 
     public String validate(boolean recursive)
     {
-        if(Common.isEmpty(getCaption())) { //$NON-NLS-1$
+        if(Common.isEmpty(getCaption())) {
             return EclipseNSISPlugin.getResourceString("wizard.missing.sectiongroup.caption.error"); //$NON-NLS-1$
         }
         else {

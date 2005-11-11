@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -30,7 +30,7 @@ import org.eclipse.swt.widgets.*;
 public class NSISInstallFileDialog extends AbstractNSISInstallItemDialog
 {
     private static ArrayList cProperties = new ArrayList();
-    
+
     static {
         cProperties.add("destination"); //$NON-NLS-1$
         cProperties.add("name"); //$NON-NLS-1$
@@ -46,7 +46,7 @@ public class NSISInstallFileDialog extends AbstractNSISInstallItemDialog
     {
         return INSISConstants.PLUGIN_CONTEXT_PREFIX+"nsis_filedlg_context"; //$NON-NLS-1$
     }
-    
+
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.wizard.settings.dialogs.AbstractNSISInstallItemDialog#getProperties()
      */
@@ -65,7 +65,7 @@ public class NSISInstallFileDialog extends AbstractNSISInstallItemDialog
         layout.marginHeight = 0;
         layout.marginWidth = 0;
         composite.setLayout(layout);
-        
+
         final Text t = NSISWizardDialogUtil.createFileBrowser(composite,mStore.getString("name"),false, //$NON-NLS-1$
                             Common.loadArrayProperty(EclipseNSISPlugin.getDefault().getResourceBundle(),"wizard.source.file.filternames"), //$NON-NLS-1$
                             Common.loadArrayProperty(EclipseNSISPlugin.getDefault().getResourceBundle(),"wizard.source.file.filters"), //$NON-NLS-1$

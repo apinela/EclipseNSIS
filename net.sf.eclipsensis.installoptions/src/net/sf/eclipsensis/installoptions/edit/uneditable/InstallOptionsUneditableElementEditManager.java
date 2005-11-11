@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -27,7 +27,7 @@ public abstract class InstallOptionsUneditableElementEditManager extends Install
         super(source, editorType, locator);
     }
 
-    protected void initCellEditor() 
+    protected void initCellEditor()
     {
         InstallOptionsUneditableElement control = (InstallOptionsUneditableElement)getEditPart().getModel();
         String initialText = control.getText();
@@ -36,15 +36,15 @@ public abstract class InstallOptionsUneditableElementEditManager extends Install
         text.selectAll();
     }
 
-    protected CellEditor createCellEditor(Composite composite) 
+    protected CellEditor createCellEditor(Composite composite)
     {
         return new TextCellEditor(composite, getCellEditorStyle());
     }
-    
+
     protected String getDirectEditProperty()
     {
         return InstallOptionsModel.PROPERTY_TEXT;
     }
-    
+
     protected abstract int getCellEditorStyle();
 }

@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -39,7 +39,7 @@ public abstract class InstallOptionsWidgetEditPart extends InstallOptionsEditPar
     private String mExtendedEditLabel;
     private boolean mNeedsRefresh = false;
     private Label mToolTip;
-    
+
     private Label getToolTip()
     {
         if(mToolTip == null) {
@@ -50,7 +50,7 @@ public abstract class InstallOptionsWidgetEditPart extends InstallOptionsEditPar
         }
         return mToolTip;
     }
-    
+
     protected void resetToolTipText()
     {
         if(mToolTip != null) {
@@ -62,14 +62,14 @@ public abstract class InstallOptionsWidgetEditPart extends InstallOptionsEditPar
             mToolTip.setSize(dim);
         }
     }
-    
+
     public InstallOptionsWidgetEditPart()
     {
         super();
         setDirectEditLabel(InstallOptionsPlugin.getResourceString(getDirectEditLabelProperty()));
         setExtendedEditLabel(InstallOptionsPlugin.getResourceString(getExtendedEditLabelProperty()));
     }
-    
+
     public DragTracker getDragTracker(Request req)
     {
         return new InstallOptionsDragEditPartsTracker(this);
@@ -79,7 +79,7 @@ public abstract class InstallOptionsWidgetEditPart extends InstallOptionsEditPar
     {
         return "direct.edit.label"; //$NON-NLS-1$
     }
-    
+
     protected String getExtendedEditLabelProperty()
     {
         return ""; //$NON-NLS-1$
@@ -99,27 +99,27 @@ public abstract class InstallOptionsWidgetEditPart extends InstallOptionsEditPar
         }
         return super.getAdapter(key);
     }
-    
+
     public String getDirectEditLabel()
     {
         return mDirectEditLabel;
     }
-    
+
     public void setDirectEditLabel(String directEditLabel)
     {
         mDirectEditLabel = directEditLabel;
     }
-    
+
     public String getExtendedEditLabel()
     {
         return mExtendedEditLabel;
     }
-    
+
     public void setExtendedEditLabel(String extendedEditLabel)
     {
         mExtendedEditLabel = extendedEditLabel;
     }
-    
+
     protected final AccessibleEditPart createAccessible() {
         return new AccessibleGraphicalEditPart(){
             public void getValue(AccessibleControlEvent e) {
@@ -127,7 +127,7 @@ public abstract class InstallOptionsWidgetEditPart extends InstallOptionsEditPar
             }
 
             public void getName(AccessibleEvent e) {
-                e.result = getTypeName(); //$NON-NLS-1$
+                e.result = getTypeName();
             }
         };
     }
@@ -136,12 +136,12 @@ public abstract class InstallOptionsWidgetEditPart extends InstallOptionsEditPar
     {
         return mNeedsRefresh;
     }
-    
+
     public void setNeedsRefresh(boolean needsRefresh)
     {
         mNeedsRefresh = needsRefresh;
     }
-    
+
     public final void propertyChange(PropertyChangeEvent evt)
     {
         String prop = evt.getPropertyName();
@@ -165,7 +165,7 @@ public abstract class InstallOptionsWidgetEditPart extends InstallOptionsEditPar
             }
         }
     }
-    
+
     protected void doPropertyChange(PropertyChangeEvent evt)
     {
         String prop = evt.getPropertyName();
@@ -182,7 +182,7 @@ public abstract class InstallOptionsWidgetEditPart extends InstallOptionsEditPar
             }
         }
     }
-    
+
     protected void handleFlagRemoved(String flag)
     {
         if(flag.equals(InstallOptionsModel.FLAGS_DISABLED)) {
@@ -200,7 +200,7 @@ public abstract class InstallOptionsWidgetEditPart extends InstallOptionsEditPar
             }
         }
     }
-    
+
     protected void handleFlagAdded(String flag)
     {
         if(flag.equals(InstallOptionsModel.FLAGS_DISABLED)) {
@@ -226,7 +226,7 @@ public abstract class InstallOptionsWidgetEditPart extends InstallOptionsEditPar
         figure2.setToolTip(getToolTip());
         return figure2;
     }
-    
+
     /**
      * Updates the visual aspect of this.
      */
@@ -234,7 +234,7 @@ public abstract class InstallOptionsWidgetEditPart extends InstallOptionsEditPar
     {
         InstallOptionsWidget widget = (InstallOptionsWidget)getInstallOptionsElement();
         Position pos = widget.getPosition();
-        pos = widget.toGraphical(pos); 
+        pos = widget.toGraphical(pos);
         Rectangle r = new Rectangle(pos.left,pos.top,(pos.right-pos.left)+1,(pos.bottom-pos.top)+1);
 
         ((GraphicalEditPart)getParent()).setLayoutConstraint(this, getFigure(), r);
@@ -245,7 +245,7 @@ public abstract class InstallOptionsWidgetEditPart extends InstallOptionsEditPar
         super.createEditPolicies();
         installEditPolicy(EditPolicy.SELECTION_FEEDBACK_ROLE, new InstallOptionsSelectionEditPolicy(this));
     }
-    
+
 
     public void performRequest(Request request)
     {
@@ -281,7 +281,7 @@ public abstract class InstallOptionsWidgetEditPart extends InstallOptionsEditPar
     protected void performDirectEdit()
     {
         if(mManager == null) {
-            mManager = creatDirectEditManager(this, getCellEditorClass(), 
+            mManager = creatDirectEditManager(this, getCellEditorClass(),
                             createCellEditorLocator((IInstallOptionsFigure)getFigure()));
         }
         if(mManager != null) {
@@ -298,7 +298,7 @@ public abstract class InstallOptionsWidgetEditPart extends InstallOptionsEditPar
     {
         return (InstallOptionsWidget)getModel();
     }
-    
+
     public void addNotify()
     {
         super.addNotify();
@@ -308,12 +308,12 @@ public abstract class InstallOptionsWidgetEditPart extends InstallOptionsEditPar
     {
         super.removeNotify();
     }
-    
+
     protected boolean supportsScrolling()
     {
         return true;
     }
-    
+
     private static class InstallOptionsDragEditPartsTracker extends DragEditPartsTracker
     {
         public InstallOptionsDragEditPartsTracker(EditPart sourceEditPart)

@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -35,7 +35,7 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.WizardNewFileCreationPage;
 import org.eclipse.ui.ide.IDE;
 
-public class InstallOptionsWizardPage2 extends WizardNewFileCreationPage 
+public class InstallOptionsWizardPage2 extends WizardNewFileCreationPage
 {
     public static final String NAME = "installOptionsWizardPage2"; //$NON-NLS-1$
     private String[] mEditorIds = {IInstallOptionsConstants.INSTALLOPTIONS_DESIGN_EDITOR_ID,
@@ -45,14 +45,14 @@ public class InstallOptionsWizardPage2 extends WizardNewFileCreationPage
 	// widgets
 	private Button  mOpenFileCheckbox;
     private Combo mEditorIdCombo;
-    
+
     /**
      * Creates the page for the readme creation wizard.
      *
      * @param workbench  the workbench on which the page should be created
      * @param selection  the current selection
      */
-    public InstallOptionsWizardPage2(IWorkbench workbench, IStructuredSelection selection) 
+    public InstallOptionsWizardPage2(IWorkbench workbench, IStructuredSelection selection)
     {
     	super(NAME, selection);
     	this.setTitle(InstallOptionsPlugin.getResourceString("wizard.page2.title")); //$NON-NLS-1$
@@ -63,20 +63,20 @@ public class InstallOptionsWizardPage2 extends WizardNewFileCreationPage
     /** (non-Javadoc)
      * Method declared on IDialogPage.
      */
-    public void createControl(Composite parent) 
+    public void createControl(Composite parent)
     {
     	// inherit default container and name specification widgets
     	super.createControl(parent);
         PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),IInstallOptionsConstants.PLUGIN_CONTEXT_PREFIX+"installoptions_wizard_context2"); //$NON-NLS-1$
-        
+
     	Composite composite = new Composite((Composite)getControl(),SWT.NULL);
         GridLayout layout = new GridLayout(2,false);
         layout.marginHeight = 0;
         layout.marginWidth = 0;
         composite.setLayout(layout);
     	
-    	this.setFileName(InstallOptionsPlugin.getResourceString("wizard.default.file.name")); //$NON-NLS-1$ //$NON-NLS-2$
-    
+    	this.setFileName(InstallOptionsPlugin.getResourceString("wizard.default.file.name")); //$NON-NLS-1$
+
     	// open file for editing checkbox
     	mOpenFileCheckbox = new Button(composite,SWT.CHECK);
     	mOpenFileCheckbox.setText(InstallOptionsPlugin.getResourceString("wizard.open.file.label")); //$NON-NLS-1$
@@ -87,10 +87,10 @@ public class InstallOptionsWizardPage2 extends WizardNewFileCreationPage
         mEditorIdCombo.add(InstallOptionsPlugin.getResourceString("wizard.design.editor.label")); //$NON-NLS-1$
         mEditorIdCombo.add(InstallOptionsPlugin.getResourceString("wizard.source.editor.label")); //$NON-NLS-1$
         mEditorIdCombo.select(0);
-        
+
         MasterSlaveController msc = new MasterSlaveController(mOpenFileCheckbox);
         msc.addSlave(mEditorIdCombo);
-        
+
     	setPageComplete(validatePage());
     	
     }
@@ -103,14 +103,14 @@ public class InstallOptionsWizardPage2 extends WizardNewFileCreationPage
      * @return whether creation was successful
      * @see InstallOptionsWizard#performFinish()
      */
-    public boolean finish() 
+    public boolean finish()
     {
     	// create the new file resource
     	IFile newFile = createNewFile();
     	if (newFile == null) {
     		return false;	// ie.- creation was unsuccessful
         }
-    
+
     	// Since the file resource was created fine, open it for editing
     	// if requested by the user
     	try {
@@ -122,22 +122,22 @@ public class InstallOptionsWizardPage2 extends WizardNewFileCreationPage
                 catch (CoreException e1) {
                     InstallOptionsPlugin.getDefault().log(e1);
                 }
-                
+
     			IWorkbenchWindow dwindow = mWorkbench.getActiveWorkbenchWindow();
     			IWorkbenchPage page = dwindow.getActivePage();
     			if (page != null) {
     				IDE.openEditor(page, newFile, true);
     			}
     		}
-    	} 
+    	}
         catch (PartInitException e) {
             InstallOptionsPlugin.getDefault().log(e);
     		return false;
     	}
     	return true;
     }
-    
-    protected InputStream getInitialContents() 
+
+    protected InputStream getInitialContents()
     {
         InstallOptionsDialog dialog = InstallOptionsDialog.loadINIFile(new INIFile());
         InstallOptionsTemplate template = ((InstallOptionsWizard)getWizard()).getTemplate();
@@ -165,7 +165,7 @@ public class InstallOptionsWizardPage2 extends WizardNewFileCreationPage
     /** (non-Javadoc)
      * Method declared on WizardNewFileCreationPage.
      */
-    protected String getNewFileLabel() 
+    protected String getNewFileLabel()
     {
     	return InstallOptionsPlugin.getResourceString("wizard.file.name.label"); //$NON-NLS-1$
     }

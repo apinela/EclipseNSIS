@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -25,7 +25,7 @@ public class NSISScrollTipHelper
 {
     private ITextViewer mTextViewer;
     private SelectionAdapter mSelAdapter = null;
-    
+
     public NSISScrollTipHelper(ITextViewer textViewer)
     {
         super();
@@ -42,8 +42,8 @@ public class NSISScrollTipHelper
                     mSelAdapter = new SelectionAdapter() {
                         private Shell mShell = null;
                         private Label mLabel = null;
-                        
-                        public void widgetSelected(SelectionEvent e) 
+
+                        public void widgetSelected(SelectionEvent e)
                         {
                             switch(e.detail) {
                                 case SWT.NONE:
@@ -60,11 +60,11 @@ public class NSISScrollTipHelper
                                     int arrowHeight = WinAPI.GetSystemMetrics(WinAPI.SM_CYVSCROLL);
                                     int scrollTop = stLoc.y+arrowHeight;
                                     int scrollHeight = sbSize.y-2*arrowHeight;
-        
+
                                     if(mShell == null) {
                                         makeShell();
                                     }
-                                    
+
                                     String text = new StringBuffer().append(mTextViewer.getTopIndex()+1).append(" - ").append(mTextViewer.getBottomIndex()+1).toString(); //$NON-NLS-1$
                                     mLabel.setText(text);
                                     Point extent = mShell.computeSize(SWT.DEFAULT,SWT.DEFAULT);
@@ -77,7 +77,7 @@ public class NSISScrollTipHelper
                                     break;
                             }
                         }
-        
+
                         private void makeShell()
                         {
                             mShell = new Shell(st.getShell(), SWT.TOOL | SWT.NO_TRIM | SWT.NO_FOCUS | SWT.ON_TOP);

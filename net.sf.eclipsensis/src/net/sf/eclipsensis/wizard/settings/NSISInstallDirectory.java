@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -25,14 +25,14 @@ public class NSISInstallDirectory extends AbstractNSISInstallItem implements INS
     public static final String TYPE = EclipseNSISPlugin.getResourceString("wizard.directory.type"); //$NON-NLS-1$
     private static final Image IMAGE = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("wizard.directory.icon")); //$NON-NLS-1$
     private static final Image RECURSIVE_IMAGE = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("wizard.recursive.directory.icon")); //$NON-NLS-1$
-    
+
     private String mName = null;
     private String mDestination = NSISKeywords.getInstance().getKeyword("$INSTDIR"); //$NON-NLS-1$
     private int mOverwriteMode = OVERWRITE_ON;
     private boolean mRecursive = false;
-    
+
     static {
-        NSISInstallElementFactory.register(TYPE, EclipseNSISPlugin.getResourceString("wizard.directory.type.name"), IMAGE, NSISInstallDirectory.class);
+        NSISInstallElementFactory.register(TYPE, EclipseNSISPlugin.getResourceString("wizard.directory.type.name"), IMAGE, NSISInstallDirectory.class); //$NON-NLS-1$
     }
 
     /* (non-Javadoc)
@@ -48,7 +48,7 @@ public class NSISInstallDirectory extends AbstractNSISInstallItem implements INS
      */
     public String getDisplayName()
     {
-        return mName; //$NON-NLS-1$ //$NON-NLS-2$
+        return mName;
     }
 
     /* (non-Javadoc)
@@ -87,7 +87,7 @@ public class NSISInstallDirectory extends AbstractNSISInstallItem implements INS
     {
         mDestination = destination;
     }
-    
+
     /**
      * @return Returns the name.
      */
@@ -119,7 +119,7 @@ public class NSISInstallDirectory extends AbstractNSISInstallItem implements INS
     {
         mOverwriteMode = overwriteMode;
     }
-    
+
     /**
      * @return Returns the recursive.
      */
@@ -127,7 +127,7 @@ public class NSISInstallDirectory extends AbstractNSISInstallItem implements INS
     {
         return mRecursive;
     }
-    
+
     /**
      * @param recursive The recursive to set.
      */
@@ -138,10 +138,10 @@ public class NSISInstallDirectory extends AbstractNSISInstallItem implements INS
 
     public String validate(boolean recursive)
     {
-        if(!Common.isValidPath(Common.decodePath(getName()))) { //$NON-NLS-1$
+        if(!Common.isValidPath(Common.decodePath(getName()))) {
             return EclipseNSISPlugin.getResourceString("wizard.invalid.directory.name.error"); //$NON-NLS-1$
         }
-        else if(!Common.isValidNSISPathName(getDestination())) { //$NON-NLS-1$
+        else if(!Common.isValidNSISPathName(getDestination())) {
             return EclipseNSISPlugin.getResourceString("wizard.invalid.directory.destination.error"); //$NON-NLS-1$
         }
         else {

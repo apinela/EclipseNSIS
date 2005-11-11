@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -18,25 +18,25 @@ import org.eclipse.ui.actions.ActionFactory;
 
 public class RevertToSavedAction extends EditorPartAction
 {
-    public RevertToSavedAction(IEditorPart editor) 
+    public RevertToSavedAction(IEditorPart editor)
     {
         super(editor);
         setLazyEnablementCalculation(false);
     }
 
-    protected boolean calculateEnabled() 
+    protected boolean calculateEnabled()
     {
         return getEditorPart().isDirty();
     }
 
-    protected void init() 
+    protected void init()
     {
         setText(InstallOptionsPlugin.getResourceString("revert.action.label")); //$NON-NLS-1$
         setToolTipText(InstallOptionsPlugin.getResourceString("revert.action.tooltip")); //$NON-NLS-1$
         setId(ActionFactory.REVERT.getId());
     }
 
-    public void run() 
+    public void run()
     {
         ((InstallOptionsDesignEditor)getEditorPart()).doRevertToSaved();
     }

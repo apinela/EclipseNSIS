@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: EclipseNSIS Utilities
+Bundle-Name: %plugin.name
 Bundle-SymbolicName: net.sf.eclipsensis.utilities; singleton := true
 Bundle-Version: 0.5.0
-Bundle-Vendor: Sunil Kamath (IcemanK)
+Bundle-Vendor: %plugin.vendor
 Bundle-Activator: net.sf.eclipsensis.utilities.UtilitiesPlugin
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.core.runtime,

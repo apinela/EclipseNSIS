@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -20,7 +20,7 @@ import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 public class InstallOptionsUnknown extends InstallOptionsWidget
 {
     private String mType;
-    
+
     public InstallOptionsUnknown(INISection section)
     {
         super(section);
@@ -49,7 +49,7 @@ public class InstallOptionsUnknown extends InstallOptionsWidget
     {
         return mType;
     }
-    
+
     public void setType(String type)
     {
         String oldType = mType;
@@ -73,7 +73,7 @@ public class InstallOptionsUnknown extends InstallOptionsWidget
     {
         return new Position(0,0,50,50);
     }
-    
+
     protected IPropertyDescriptor createPropertyDescriptor(String name)
     {
         if(name.equals(InstallOptionsModel.PROPERTY_TYPE)) {

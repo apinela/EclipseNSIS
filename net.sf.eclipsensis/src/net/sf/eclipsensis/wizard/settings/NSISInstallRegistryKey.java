@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -24,7 +24,7 @@ public class NSISInstallRegistryKey extends AbstractNSISInstallItem
 
     public static final String TYPE = EclipseNSISPlugin.getResourceString("wizard.regkey.type"); //$NON-NLS-1$
     private static final Image IMAGE = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("wizard.regkey.icon")); //$NON-NLS-1$
-    
+
     private int mRootKey = HKLM;
     private String mSubKey = null;
 

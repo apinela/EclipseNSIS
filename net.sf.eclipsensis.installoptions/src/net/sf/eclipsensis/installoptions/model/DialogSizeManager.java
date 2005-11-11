@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -48,7 +48,7 @@ public class DialogSizeManager
     {
         if(cDialogSizes == null) {
             IPreferenceStore store = InstallOptionsPlugin.getDefault().getPreferenceStore();
-            String temp = store.getString(PROPERTY_DIALOGSIZES_COUNT); //$NON-NLS-1$
+            String temp = store.getString(PROPERTY_DIALOGSIZES_COUNT);
             if(Common.isEmpty(temp)) {
                 cDialogSizes = new ArrayList();
                 for(Iterator iter=getPresetDialogSizes().iterator(); iter.hasNext(); ) {
@@ -63,7 +63,7 @@ public class DialogSizeManager
                 cDialogSizes = loadDialogSizes(store);
             }
         }
-        
+
         return cDialogSizes;
     }
 
@@ -78,7 +78,7 @@ public class DialogSizeManager
                 source = null;
             }
             cDefaultDialogSizes = loadDialogSizes(source);
-        }                
+        }
         return cDefaultDialogSizes;
     }
 
@@ -98,17 +98,17 @@ public class DialogSizeManager
         if(source != null) {
             int count = 0;
             try {
-                count = Integer.parseInt(getString(source, PROPERTY_DIALOGSIZES_COUNT)); //$NON-NLS-1$
+                count = Integer.parseInt(getString(source, PROPERTY_DIALOGSIZES_COUNT));
             }
             catch(RuntimeException re) {
                 count = 0;
             }
-            
+
             for(int i=0; i<count; i++) {
                 try {
-                    String text = getString(source,PROPERTY_DIALOGSIZES_PREFIX+i); //$NON-NLS-1$
+                    String text = getString(source,PROPERTY_DIALOGSIZES_PREFIX+i);
                     if(!Common.isEmpty(text)) {
-                        StringTokenizer st = new StringTokenizer(text,SEPARATOR); //$NON-NLS-1$
+                        StringTokenizer st = new StringTokenizer(text,SEPARATOR);
                         String name = st.nextToken();
                         boolean isDefault = Boolean.valueOf(st.nextToken()).booleanValue();
                         Dimension dim = new Dimension(Integer.parseInt(st.nextToken()),Integer.parseInt(st.nextToken()));
@@ -119,7 +119,7 @@ public class DialogSizeManager
                 }
             }
         }
-        
+
         return result;
     }
 

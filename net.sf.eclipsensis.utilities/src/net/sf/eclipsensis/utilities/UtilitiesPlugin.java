@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -24,7 +24,7 @@ import org.osgi.framework.BundleContext;
 /**
  * The main plugin class to be used in the desktop.
  */
-public class UtilitiesPlugin extends AbstractUIPlugin 
+public class UtilitiesPlugin extends AbstractUIPlugin
 {
 	//The shared instance.
 	private static UtilitiesPlugin cPlugin;
@@ -35,7 +35,7 @@ public class UtilitiesPlugin extends AbstractUIPlugin
 	/**
 	 * The constructor.
 	 */
-	public UtilitiesPlugin() 
+	public UtilitiesPlugin()
     {
 		cPlugin = this;
         try {
@@ -47,7 +47,7 @@ public class UtilitiesPlugin extends AbstractUIPlugin
 	/**
 	 * Returns the shared instance.
 	 */
-	public static UtilitiesPlugin getDefault() 
+	public static UtilitiesPlugin getDefault()
     {
 		return cPlugin;
 	}
@@ -56,7 +56,7 @@ public class UtilitiesPlugin extends AbstractUIPlugin
      * Returns the string from the plugin's resource bundle,
      * or 'key' if not found.
      */
-    public static String getResourceString(String key) 
+    public static String getResourceString(String key)
     {
         ResourceBundle bundle = getDefault().getResourceBundle();
         try {
@@ -65,7 +65,7 @@ public class UtilitiesPlugin extends AbstractUIPlugin
             return key;
         }
     }
-    
+
     public static String getFormattedString(String key, Object[] args)
     {
         return MessageFormat.format(getResourceString(key),args);
@@ -77,7 +77,7 @@ public class UtilitiesPlugin extends AbstractUIPlugin
     public ResourceBundle getResourceBundle() {
         return mResourceBundle;
     }
-    
+
     public void start(BundleContext context) throws Exception
     {
         super.start(context);
@@ -86,17 +86,17 @@ public class UtilitiesPlugin extends AbstractUIPlugin
         getImageRegistry().put("utilities.icon", ImageDescriptor.createFromURL(entry)); //$NON-NLS-1$
         mShellImage = getImageRegistry().get("utilities.icon"); //$NON-NLS-1$
     }
-    
+
     public Image getShellImage()
     {
         return mShellImage;
     }
-    
+
     public JobScheduler getJobScheduler()
     {
         return mJobScheduler;
     }
-    
+
     public void stop(BundleContext context) throws Exception
     {
         mJobScheduler.stop();

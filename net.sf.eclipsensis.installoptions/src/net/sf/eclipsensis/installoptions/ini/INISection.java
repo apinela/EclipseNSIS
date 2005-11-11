@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -23,13 +23,13 @@ import org.eclipse.jface.text.Position;
 public class INISection extends INILine implements IINIContainer
 {
     private static final long serialVersionUID = -1320834864833847467L;
-    
+
     private boolean mDirty = false;
     private List mChildren = new ArrayList();
     private String mName;
     private String mOriginalName;
     private Position mPosition;
-    
+
     public INISection()
     {
         super();
@@ -41,17 +41,17 @@ public class INISection extends INILine implements IINIContainer
         mName = name;
         mOriginalName = name;
     }
-    
+
     public String getName()
     {
         return mName;
     }
-    
+
     public void setName(String name)
     {
         mName = name;
     }
-    
+
     public Position getPosition()
     {
         if(mDirty) {
@@ -85,7 +85,7 @@ public class INISection extends INILine implements IINIContainer
         line.setParent(this);
         mDirty = true;
     }
-    
+
     public void removeChild(INILine line)
     {
         if(mChildren.remove(line)) {
@@ -98,7 +98,7 @@ public class INISection extends INILine implements IINIContainer
     {
         return mChildren;
     }
-    
+
     public INIKeyValue[] getKeyValues()
     {
         List list = new ArrayList();
@@ -110,7 +110,7 @@ public class INISection extends INILine implements IINIContainer
         }
         return (INIKeyValue[])list.toArray(new INIKeyValue[list.size()]);
     }
-    
+
     public INIKeyValue[] findKeyValues(String key)
     {
         List list = new ArrayList();
@@ -122,7 +122,7 @@ public class INISection extends INILine implements IINIContainer
         }
         return (INIKeyValue[])list.toArray(new INIKeyValue[list.size()]);
     }
-    
+
     public String toString()
     {
         StringBuffer buf = new StringBuffer(super.toString());
@@ -131,7 +131,7 @@ public class INISection extends INILine implements IINIContainer
         }
         return buf.toString();
     }
-    
+
     public boolean hasErrors()
     {
         if(!super.hasErrors()) {
@@ -144,7 +144,7 @@ public class INISection extends INILine implements IINIContainer
         }
         return true;
     }
-    
+
     public boolean hasWarnings()
     {
         if(!super.hasWarnings()) {
@@ -157,7 +157,7 @@ public class INISection extends INILine implements IINIContainer
         }
         return true;
     }
-    
+
     protected void checkProblems()
     {
         //Validate section
@@ -205,7 +205,7 @@ public class INISection extends INILine implements IINIContainer
                     addProblem(INIProblem.TYPE_ERROR, InstallOptionsPlugin.getFormattedString("required.keys.missing", //$NON-NLS-1$
                                     new Object[]{buf.toString(), n}));
                 }
-                
+
                 INIKeyValue[] keyValues = findKeyValues(InstallOptionsModel.PROPERTY_TYPE);
                 if(!Common.isEmptyArray(keyValues)) {
                     String type = keyValues[0].getValue();
@@ -230,7 +230,7 @@ public class INISection extends INILine implements IINIContainer
             }
         }
     }
-    
+
     public void update()
     {
         if(!Common.stringsAreEqual(mName,mOriginalName)) {
@@ -258,12 +258,12 @@ public class INISection extends INILine implements IINIContainer
             ((INILine)iter.next()).update();
         }
     }
-    
+
     public int getSize()
     {
         return mChildren.size();
     }
-    
+
     public INILine getChild(int index)
     {
         return (INILine)mChildren.get(index);

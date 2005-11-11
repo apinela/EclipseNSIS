@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -34,7 +34,7 @@ public class InstallOptionsLinkEditPart extends InstallOptionsLabelEditPart
         {
             InstallOptionsLink model = (InstallOptionsLink)getModel();
             ColorDialog dialog = new ColorDialog(getViewer().getControl().getShell());
-            RGB value = (RGB)model.getTxtColor();
+            RGB value = model.getTxtColor();
             if (value != null) {
                 dialog.setRGB(value);
             }
@@ -54,7 +54,7 @@ public class InstallOptionsLinkEditPart extends InstallOptionsLabelEditPart
         {
             return mNewValue;
         }
-        
+
     };
 
     public Object getAdapter(Class key)
@@ -64,13 +64,13 @@ public class InstallOptionsLinkEditPart extends InstallOptionsLabelEditPart
         }
         return super.getAdapter(key);
     }
-    
+
     protected void createEditPolicies()
     {
         super.createEditPolicies();
         installEditPolicy(InstallOptionsExtendedEditPolicy.ROLE, new InstallOptionsLinkExtendedEditPolicy(this));
     }
-    
+
     protected String getExtendedEditLabelProperty()
     {
         return "link.extended.edit.label"; //$NON-NLS-1$
@@ -81,10 +81,10 @@ public class InstallOptionsLinkEditPart extends InstallOptionsLabelEditPart
         return "link.direct.edit.label"; //$NON-NLS-1$
     }
 
-    protected IInstallOptionsFigure createInstallOptionsFigure() 
+    protected IInstallOptionsFigure createInstallOptionsFigure()
     {
         if(cIsNT) {
-            //This is a hack because Windows NT Labels don't seem to respond to the 
+            //This is a hack because Windows NT Labels don't seem to respond to the
             //WM_PRINT message (see SWTControl.getImage(Control)
             //XXX Remove once the cause (and fix) is known.
             return new NTLinkFigure(getInstallOptionsWidget());
@@ -96,7 +96,7 @@ public class InstallOptionsLinkEditPart extends InstallOptionsLabelEditPart
 
     protected void doPropertyChange(PropertyChangeEvent evt)
     {
-        if (evt.getPropertyName().equalsIgnoreCase(InstallOptionsModel.PROPERTY_TXTCOLOR)) {//$NON-NLS-1$
+        if (evt.getPropertyName().equalsIgnoreCase(InstallOptionsModel.PROPERTY_TXTCOLOR)) {
             ILinkFigure figure2 = (ILinkFigure)getFigure();
             figure2.setTxtColor((RGB)evt.getNewValue());
             setNeedsRefresh(true);
@@ -124,7 +124,7 @@ public class InstallOptionsLinkEditPart extends InstallOptionsLabelEditPart
         public void setTxtColor(RGB rgb);
     }
 
-    //This is a hack because Windows NT Labels don't seem to respond to the 
+    //This is a hack because Windows NT Labels don't seem to respond to the
     //WM_PRINT message (see SWTControl.getImage(Control)
     //XXX Remove once the cause (and fix) is known.
     protected class NTLinkFigure extends NTLabelFigure implements ILinkFigure
@@ -141,7 +141,7 @@ public class InstallOptionsLinkEditPart extends InstallOptionsLabelEditPart
             super.init(propertySource);
             setTxtColor((RGB)propertySource.getPropertyValue(InstallOptionsModel.PROPERTY_TXTCOLOR));
        }
-        
+
         public RGB getTxtColor()
         {
             return mTxtColor==null?InstallOptionsLink.DEFAULT_TXTCOLOR:mTxtColor;

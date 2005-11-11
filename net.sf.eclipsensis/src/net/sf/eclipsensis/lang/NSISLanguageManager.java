@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -26,7 +26,7 @@ public class NSISLanguageManager implements INSISHomeListener, IEclipseNSISServi
 {
     private static NSISLanguageManager cInstance = null;
     public static final String PROPERTY_LANGUAGES="net.sf.eclipsensis.languages"; //$NON-NLS-1$
-    
+
     private String mDefineMUILanguageText = null;
     private Map mLanguageMap = null;
     private List mLanguages = null;
@@ -46,7 +46,7 @@ public class NSISLanguageManager implements INSISHomeListener, IEclipseNSISServi
     {
         if (cInstance == null) {
             mLanguageMap = new CaseInsensitiveMap();
-            mLanguages = new ArrayList();;
+            mLanguages = new ArrayList();
             mPropertyChangeSupport = new PropertyChangeSupport(this);
             mDefineMUILanguageText = NSISKeywords.getInstance()
                     .getKeyword("!DEFINE").toUpperCase() + " MUI_LANGNAME "; //$NON-NLS-1$ //$NON-NLS-2$
@@ -83,17 +83,17 @@ public class NSISLanguageManager implements INSISHomeListener, IEclipseNSISServi
             mPropertyChangeSupport = null;
         }
     }
-    
+
     public void nsisHomeChanged(IProgressMonitor monitor, String oldHome, String newHome)
     {
         loadLanguages(monitor);
     }
-    
+
     public void addPropertyChangedListener(PropertyChangeListener listener)
     {
         mPropertyChangeSupport.addPropertyChangeListener(listener);
     }
-    
+
     public void removePropertyChangedListener(PropertyChangeListener listener)
     {
         mPropertyChangeSupport.removePropertyChangeListener(listener);
@@ -141,9 +141,9 @@ public class NSISLanguageManager implements INSISHomeListener, IEclipseNSISServi
             String filename = langFile.getName();
             if(filename.endsWith(INSISConstants.LANGUAGE_FILES_EXTENSION)) {
                 String name = filename.substring(0,filename.length()-INSISConstants.LANGUAGE_FILES_EXTENSION.length());
-                String displayName = name; 
+                String displayName = name;
                 int langId = 0;
-    
+
                 BufferedReader br = new BufferedReader(new FileReader(langFile));
                 //The second non-comment line is the codepage
                 int n = 0;
@@ -217,7 +217,7 @@ public class NSISLanguageManager implements INSISHomeListener, IEclipseNSISServi
     {
         return new ArrayList(mLanguages);
     }
-    
+
     public NSISLanguage getDefaultLanguage()
     {
         NSISLanguage lang = null;
@@ -229,7 +229,7 @@ public class NSISLanguageManager implements INSISHomeListener, IEclipseNSISServi
             lang = (NSISLanguage)mLanguageMap.get(locale.getDisplayLanguage(Locale.US));
             if(lang == null) {
                 //See if this is one of the specially mapped locales
-                lang = (NSISLanguage)mLanguageMap.get(((String)mLocaleLanguageMap.get(locale.toString())));
+                lang = (NSISLanguage)mLanguageMap.get(mLocaleLanguageMap.get(locale.toString()));
                 if(lang == null) {
                     //Try the default lang id
                     lang = (NSISLanguage)mLanguageMap.get(mDefaultLanguageId);
@@ -240,28 +240,28 @@ public class NSISLanguageManager implements INSISHomeListener, IEclipseNSISServi
                 }
             }
         }
-        
+
         return lang;
     }
-    
+
     public Locale getDefaultLocale()
     {
         return getLocaleForLangId(mDefaultLanguageId.intValue());
     }
-    
+
     public NSISLanguage getLanguage(String name)
     {
         return (NSISLanguage)mLanguageMap.get(name);
     }
-    
+
     public NSISLanguage getLanguage(int langId)
     {
         return (NSISLanguage)mLanguageMap.get(new Integer(langId));
     }
-    
+
     public NSISLanguage getLanguage(File langFile)
     {
-        if(langFile.exists()) {
+        if(langFile != null && langFile.exists()) {
             if(langFile.getParent().equals(mLangDir)) {
                 String name = langFile.getName();
                 if(name.endsWith(INSISConstants.LANGUAGE_FILES_EXTENSION)) {
@@ -298,7 +298,7 @@ public class NSISLanguageManager implements INSISHomeListener, IEclipseNSISServi
         }
         return locale;
     }
-    
+
     private Locale parseLocale(String localeText)
     {
         Locale locale = null;

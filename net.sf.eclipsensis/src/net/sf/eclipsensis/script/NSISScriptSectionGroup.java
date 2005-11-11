@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -12,13 +12,13 @@ package net.sf.eclipsensis.script;
 import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.util.Common;
 
-public class NSISScriptSectionGroup extends AbstractNSISScriptElementContainer 
+public class NSISScriptSectionGroup extends AbstractNSISScriptElementContainer
 {
     private String mCaption = null;
     private boolean mExpanded = false;
     private boolean mBold = false;
     private String mIndex = null;
-    
+
     public NSISScriptSectionGroup(String caption, boolean expanded, boolean bold)
     {
         this(caption, expanded, bold, null);
@@ -40,7 +40,7 @@ public class NSISScriptSectionGroup extends AbstractNSISScriptElementContainer
     {
         return mBold;
     }
-    
+
     /**
      * @param bold The bold to set.
      */
@@ -57,7 +57,7 @@ public class NSISScriptSectionGroup extends AbstractNSISScriptElementContainer
     {
         return mCaption;
     }
-    
+
     /**
      * @param caption The caption to set.
      */
@@ -66,7 +66,7 @@ public class NSISScriptSectionGroup extends AbstractNSISScriptElementContainer
         mCaption = caption;
         updateArgs();
     }
-    
+
     /**
      * @return Returns the expanded.
      */
@@ -105,7 +105,7 @@ public class NSISScriptSectionGroup extends AbstractNSISScriptElementContainer
     {
         updateArgs(makeArray(mCaption, mExpanded, mBold, mIndex));
     }
-    
+
     private static String[] makeArray(String caption, boolean expanded, boolean bold, String index)
     {
         String[] args = new String[(expanded?2:1) + (Common.isEmpty(index)?0:1)];
@@ -139,7 +139,7 @@ public class NSISScriptSectionGroup extends AbstractNSISScriptElementContainer
             throws InvalidNSISScriptElementException
     {
         if(element != null) {
-            if(element instanceof NSISScriptSectionGroup || (element instanceof NSISScriptSection && !((NSISScriptSection)element).getName().equalsIgnoreCase(INSISConstants.UNINSTALL_SECTION_NAME))) { //$NON-NLS-1$
+            if(element instanceof NSISScriptSectionGroup || (element instanceof NSISScriptSection && !((NSISScriptSection)element).getName().equalsIgnoreCase(INSISConstants.UNINSTALL_SECTION_NAME))) {
                 return;
             }
         }

@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -22,7 +22,7 @@ public class NSISTextHover implements ITextHover, ITextHoverExtension, INSISCons
         mInformationProvider = new NSISInformationProvider();
         mInformationProvider.setInformationPresenterControlCreator(new NSISInformationControlCreator(new String[]{STICKY_HELP_COMMAND_ID, GOTO_HELP_COMMAND_ID}));
     }
-    
+
     /*
      * (non-Javadoc) Method declared on ITextHover
      */

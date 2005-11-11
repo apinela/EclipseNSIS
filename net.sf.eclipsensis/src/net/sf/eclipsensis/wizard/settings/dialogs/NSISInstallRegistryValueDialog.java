@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -31,7 +31,7 @@ public class NSISInstallRegistryValueDialog extends AbstractNSISInstallItemDialo
 {
     private static ArrayList cProperties = new ArrayList();
     private String[] mHKEYNames;
-    
+
     static {
         cProperties.add("rootKey"); //$NON-NLS-1$
         cProperties.add("subKey"); //$NON-NLS-1$
@@ -64,7 +64,7 @@ public class NSISInstallRegistryValueDialog extends AbstractNSISInstallItemDialo
         layout.marginHeight = 0;
         layout.marginWidth = 0;
         composite.setLayout(layout);
-        
+
         if(mStore.getInt("rootKey") >= mHKEYNames.length) {
             mStore.setValue("rootKey","-1");
         }
@@ -103,7 +103,7 @@ public class NSISInstallRegistryValueDialog extends AbstractNSISInstallItemDialo
                 validate();
             }
         });
-        
+
         final Text t3 = NSISWizardDialogUtil.createText(composite,mStore.getString("data"),"wizard.data.label",true, //$NON-NLS-1$ //$NON-NLS-2$
                 null,false);
         t3.addModifyListener(new ModifyListener() {
@@ -114,7 +114,7 @@ public class NSISInstallRegistryValueDialog extends AbstractNSISInstallItemDialo
             }
         });
         t3.addVerifyListener(new VerifyListener() {
-            public void verifyText(VerifyEvent e) 
+            public void verifyText(VerifyEvent e)
             {
                 int index = c2.getSelectionIndex();
                 if(index == INSISWizardConstants.REG_DWORD) {
@@ -172,12 +172,12 @@ public class NSISInstallRegistryValueDialog extends AbstractNSISInstallItemDialo
         });
         return composite;
     }
-    
+
     protected String getHelpContextId()
     {
         return INSISConstants.PLUGIN_CONTEXT_PREFIX+"nsis_regval_context"; //$NON-NLS-1$
     }
-    
+
     protected String checkForErrors()
     {
         int rootKey = mStore.getInt("rootKey"); //$NON-NLS-1$

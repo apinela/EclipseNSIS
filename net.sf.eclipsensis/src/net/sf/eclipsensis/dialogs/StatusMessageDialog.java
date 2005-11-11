@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -30,18 +30,18 @@ public abstract class StatusMessageDialog extends IconAndMessageDialog implement
     private Image mWarningImage = null;
     private Image mInfoImage = null;
     private Image mOKImage = null;
-        
+
     /**
      * Creates a new dialog.
-     * 
+     *
      * @param parent the shell parent of the dialog
      */
-    public StatusMessageDialog(Shell parent) 
+    public StatusMessageDialog(Shell parent)
     {
         super(parent);
         setShellStyle(getShellStyle() | SWT.MAX | SWT.RESIZE);
     }
-    
+
     protected void configureShell(Shell newShell)
     {
         super.configureShell(newShell);
@@ -55,13 +55,13 @@ public abstract class StatusMessageDialog extends IconAndMessageDialog implement
     {
         return mStatus;
     }
-    
+
     /**
      * Updates the status of the ok button to reflect the given status.
      * Subclasses may override this method to update additional buttons.
      * @param status the status.
      */
-    protected final void updateButtonsEnableState(IStatus status) 
+    protected final void updateButtonsEnableState(IStatus status)
     {
         Button b = getButton(IDialogConstants.OK_ID);
         if (b != null && !b.isDisposed()) {
@@ -72,7 +72,7 @@ public abstract class StatusMessageDialog extends IconAndMessageDialog implement
     /*
      * @see Dialog#createDialogArea(Composite)
      */
-    protected final Control createDialogArea(Composite ancestor) 
+    protected final Control createDialogArea(Composite ancestor)
     {
         Composite parent = new Composite(ancestor, SWT.NONE);
         GridLayout layout= new GridLayout();
@@ -94,11 +94,11 @@ public abstract class StatusMessageDialog extends IconAndMessageDialog implement
 
         Control control = createControl(parent);
         control.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-        
+
         Label label = new Label(parent, SWT.SEPARATOR | SWT.HORIZONTAL);
         GridData data = new GridData(SWT.FILL, SWT.CENTER, true, false);
         label.setLayoutData(data);
-        
+
         Composite composite= new Composite(parent, SWT.NONE);
         layout= new GridLayout();
         layout.numColumns= 2;
@@ -108,7 +108,7 @@ public abstract class StatusMessageDialog extends IconAndMessageDialog implement
         composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         message = getMessage();
         createMessageArea(composite);
-        applyDialogFont(parent);        
+        applyDialogFont(parent);
         return parent;
     }
 
@@ -170,25 +170,25 @@ public abstract class StatusMessageDialog extends IconAndMessageDialog implement
         {
             super(severity,INSISConstants.PLUGIN_ID,0,message,null);
         }
-        
+
         public void setError(String message)
         {
             setSeverity(ERROR);
             setMessage(message);
         }
-        
+
         public void setWarning(String message)
         {
             setSeverity(WARNING);
             setMessage(message);
         }
-        
+
         public void setInformation(String message)
         {
             setSeverity(INFO);
             setMessage(message);
         }
-        
+
         public void setOK()
         {
             setSeverity(OK);

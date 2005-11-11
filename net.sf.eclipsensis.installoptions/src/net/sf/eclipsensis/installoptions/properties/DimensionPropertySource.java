@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -25,10 +25,10 @@ public class DimensionPropertySource implements IPropertySource
 
     static {
         PropertyDescriptor widthProp = new TextPropertyDescriptor(ID_WIDTH,
-                InstallOptionsPlugin.getResourceString("width.property.name")); //$NON-NLS-1$ //$NON-NLS-2$
+                InstallOptionsPlugin.getResourceString("width.property.name")); //$NON-NLS-1$
         widthProp.setValidator(NumberCellEditorValidator.INSTANCE);
         PropertyDescriptor heightProp = new TextPropertyDescriptor(ID_HEIGHT,
-                InstallOptionsPlugin.getResourceString("height.property.name")); //$NON-NLS-1$ //$NON-NLS-2$
+                InstallOptionsPlugin.getResourceString("height.property.name")); //$NON-NLS-1$
         heightProp.setValidator(NumberCellEditorValidator.INSTANCE);
         mDescriptors = new IPropertyDescriptor[]{widthProp,heightProp};
     }

@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -35,18 +35,18 @@ public class NSISPluginManager implements INSISConstants
             }
             return false;
         }
-        
+
     };
 
     private Map mDefaultPluginsMap = null;
     private Map mCustomPluginsMap = new HashMap();
     private File mCacheFile = new File(EclipseNSISPlugin.getPluginStateLocation(),NSISPluginManager.class.getName()+".Plugins.ser");
     public static final Pattern PLUGIN_CALL_PATTERN=Pattern.compile("([a-z0-9\\$%\\'`\\-@\\{\\}~\\!#\\(\\)\\&_\\^\\+\\,\\=\\[\\]]+)::([a-z_][a-z0-9_]*)", Pattern.CASE_INSENSITIVE);
-    
+
     private NSISPluginManager()
     {
     }
-    
+
     void loadDefaultPlugins()
     {
         String nsisHome = NSISPreferences.INSTANCE.getNSISHome();
@@ -84,7 +84,7 @@ public class NSISPluginManager implements INSISConstants
             }
         }
     }
-    
+
     public void loadPlugins(File dir)
     {
         Map pluginsMap = (Map)mCustomPluginsMap.get(dir);
@@ -94,7 +94,7 @@ public class NSISPluginManager implements INSISConstants
         }
         loadPlugins(dir,pluginsMap);
     }
-    
+
     private boolean loadPlugins(File dir, Map pluginsMap)
     {
         boolean changed = false;
@@ -120,7 +120,7 @@ public class NSISPluginManager implements INSISConstants
                 }
             }
         }
-        
+
         return changed;
     }
 
@@ -131,7 +131,7 @@ public class NSISPluginManager implements INSISConstants
         return new PluginInfo(name, exports,
                               pluginFile.lastModified());
     }
-    
+
     public String[] getDefaultPluginNames()
     {
         return (String[])mDefaultPluginsMap.keySet().toArray(Common.EMPTY_STRING_ARRAY);
@@ -164,7 +164,7 @@ public class NSISPluginManager implements INSISConstants
                                                 else {
                                                     return Status.CANCEL_STATUS;
                                                 }
-                                            } 
+                                            }
                                     });
             }
         }
@@ -173,8 +173,8 @@ public class NSISPluginManager implements INSISConstants
         }
         return null;
     }
-    
-    
+
+
     public String[] getPluginNames(File dir)
     {
         Map map = (Map)mCustomPluginsMap.get(dir);
@@ -202,7 +202,7 @@ public class NSISPluginManager implements INSISConstants
                 if(pluginFile.exists() && pluginFile.isFile()) {
                     pi = loadPluginInfo(name, pluginFile);
                     map.put(name,pi);
-                }                
+                }
             }
             if(pi != null) {
                 return pi.getExports();
@@ -218,7 +218,7 @@ public class NSISPluginManager implements INSISConstants
         private long mTimeStamp;
         private String mName;
         private String[] mExports;
-        
+
         /**
          * @param name
          * @param exports
@@ -230,7 +230,7 @@ public class NSISPluginManager implements INSISConstants
             mExports = exports;
             mTimeStamp = timeStamp;
         }
-        
+
         /**
          * @return Returns the exports.
          */
@@ -238,7 +238,7 @@ public class NSISPluginManager implements INSISConstants
         {
             return mExports;
         }
-        
+
         /**
          * @return Returns the name.
          */
@@ -246,7 +246,7 @@ public class NSISPluginManager implements INSISConstants
         {
             return mName;
         }
-        
+
         /**
          * @return Returns the timeStamp.
          */
