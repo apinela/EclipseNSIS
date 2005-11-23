@@ -11,7 +11,7 @@ package net.sf.eclipsensis.launch;
 
 import org.eclipse.debug.ui.*;
 
-public abstract class NSISLaunchConfigTabGroup extends AbstractLaunchConfigurationTabGroup
+public class NSISLaunchConfigTabGroup extends AbstractLaunchConfigurationTabGroup
 {
     public NSISLaunchConfigTabGroup()
     {
@@ -20,8 +20,6 @@ public abstract class NSISLaunchConfigTabGroup extends AbstractLaunchConfigurati
 
     public void createTabs(ILaunchConfigurationDialog dialog, String mode)
     {
-        setTabs(new ILaunchConfigurationTab[]{createNSISTab(), new CommonTab()});
+        setTabs(new ILaunchConfigurationTab[]{new NSISTab(), new CommonTab()});
     }
-    
-    protected abstract NSISTab createNSISTab();
 }

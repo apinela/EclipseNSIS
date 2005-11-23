@@ -177,9 +177,9 @@ public class CommonTab extends AbstractLaunchConfigurationTab
         gd = new GridData(SWT.FILL, SWT.NORMAL, true, false);
         gd.horizontalSpan=2;
         spacer.setLayoutData(gd);
-        mWorkspaceBrowse = createPushButton(group, EclipseNSISPlugin.getResourceString("launchconfig.stdout.browse.workspace.label"), null); //$NON-NLS-1$
-        mFileBrowse = createPushButton(group, EclipseNSISPlugin.getResourceString("launchconfig.stdout.browse.filesystem.label"), null); //$NON-NLS-1$
-        mVariables = createPushButton(group, EclipseNSISPlugin.getResourceString("launchconfig.stdout.variables.label"), null); //$NON-NLS-1$
+        mWorkspaceBrowse = createPushButton(group, EclipseNSISPlugin.getResourceString("launchconfig.browse.workspace.label"), null); //$NON-NLS-1$
+        mFileBrowse = createPushButton(group, EclipseNSISPlugin.getResourceString("launchconfig.browse.filesystem.label"), null); //$NON-NLS-1$
+        mVariables = createPushButton(group, EclipseNSISPlugin.getResourceString("launchconfig.variables.label"), null); //$NON-NLS-1$
 
         spacer = new Label(group,SWT.NONE);
         spacer.setLayoutData(new GridData(SWT.FILL, SWT.NORMAL, false, false));
