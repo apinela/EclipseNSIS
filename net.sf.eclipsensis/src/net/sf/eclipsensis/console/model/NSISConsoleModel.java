@@ -13,6 +13,9 @@ import java.util.*;
 
 import net.sf.eclipsensis.console.NSISConsoleLine;
 
+/**
+ * @deprecated
+ */
 public class NSISConsoleModel
 {
     private Set mListeners = new HashSet();
@@ -44,7 +47,7 @@ public class NSISConsoleModel
         }
     }
 
-    public void add(NSISConsoleLine line)
+    public void append(NSISConsoleLine line)
     {
         mContents.add(line);
         if(line.getType() == NSISConsoleLine.TYPE_ERROR) {
@@ -53,19 +56,7 @@ public class NSISConsoleModel
         else if(line.getType() == NSISConsoleLine.TYPE_WARNING) {
             mWarnings.add(line);
         }
-        notifyListeners(NSISConsoleModelEvent.ADD, line);
-    }
-
-    public void remove(NSISConsoleLine line)
-    {
-        mContents.remove(line);
-        if(line.getType() == NSISConsoleLine.TYPE_ERROR) {
-            mErrors.remove(line);
-        }
-        else if(line.getType() == NSISConsoleLine.TYPE_WARNING) {
-            mWarnings.remove(line);
-        }
-        notifyListeners(NSISConsoleModelEvent.REMOVE, line);
+        notifyListeners(NSISConsoleModelEvent.APPEND, line);
     }
 
     public void clear()

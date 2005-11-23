@@ -11,6 +11,9 @@ package net.sf.eclipsensis.console.model;
 
 import java.util.EventListener;
 
+/**
+ * @deprecated
+ */
 public interface INSISConsoleModelListener extends EventListener
 {
     public void modelChanged(NSISConsoleModelEvent event);

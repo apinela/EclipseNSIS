@@ -13,11 +13,13 @@ import net.sf.eclipsensis.console.NSISConsoleLine;
 
 import org.eclipse.swt.widgets.Event;
 
+/**
+ * @deprecated
+ */
 public class NSISConsoleModelEvent extends Event
 {
-    public static final int ADD=0;
-    public static final int REMOVE=1;
-    public static final int CLEAR=2;
+    public static final int APPEND=0;
+    public static final int CLEAR=1;
 
     private int mType;
     private NSISConsoleLine mLine;
