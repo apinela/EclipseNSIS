@@ -23,7 +23,7 @@ public class NSISScript extends AbstractNSISScriptElementContainer
      */
     public NSISScript()
     {
-        this("");
+        this(""); //$NON-NLS-1$
     }
 
     /**

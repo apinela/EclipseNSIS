@@ -16,10 +16,10 @@ import java.util.LinkedHashMap;
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.makensis.MakeNSISRunner;
 
-public abstract class NSISSettings implements INSISPreferenceConstants
+public abstract class NSISSettings implements INSISSettingsConstants
 {
     protected static File cPluginStateLocation = EclipseNSISPlugin.getPluginStateLocation();
-
+    
     private boolean mHdrInfo = false;
     private boolean mLicense = false;
     private boolean mNoConfig = false;
@@ -30,17 +30,17 @@ public abstract class NSISSettings implements INSISPreferenceConstants
     private ArrayList mInstructions = null;
     private LinkedHashMap mSymbols = null;
 
-    protected abstract String getString(String name);
-    protected abstract boolean getBoolean(String name);
-    protected abstract int getInt(String name);
-    protected abstract void setValue(String name, String value);
-    protected abstract void setValue(String name, boolean value);
-    protected abstract void setValue(String name, int value);
-    protected abstract void removeString(String name);
-    protected abstract void removeBoolean(String name);
-    protected abstract void removeInt(String name);
+    public abstract String getString(String name);
+    public abstract boolean getBoolean(String name);
+    public abstract int getInt(String name);
+    public abstract void setValue(String name, String value);
+    public abstract void setValue(String name, boolean value);
+    public abstract void setValue(String name, int value);
+    public abstract void removeString(String name);
+    public abstract void removeBoolean(String name);
+    public abstract void removeInt(String name);
 
-    protected void load()
+    public void load()
     {
         setHdrInfo(getBoolean(HDRINFO));
         setLicense(getBoolean(LICENSE));
@@ -64,6 +64,11 @@ public abstract class NSISSettings implements INSISPreferenceConstants
         setValue(SOLID_COMPRESSION, mSolidCompression);
         storeObject(SYMBOLS, mSymbols);
         storeObject(INSTRUCTIONS, mInstructions);
+    }
+    
+    public boolean showStatistics()
+    {
+        return true;
     }
 
     public boolean getSolidCompression()
@@ -271,6 +276,6 @@ public abstract class NSISSettings implements INSISPreferenceConstants
         mSymbols = (symbols==null?new LinkedHashMap():symbols);
     }
 
-    protected abstract void storeObject(String name, Object object);
-    protected abstract Object loadObject(String name);
+    public abstract void storeObject(String name, Object object);
+    public abstract Object loadObject(String name);
 }

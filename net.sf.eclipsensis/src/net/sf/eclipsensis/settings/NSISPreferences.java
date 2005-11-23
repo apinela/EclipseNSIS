@@ -35,7 +35,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 
-public class NSISPreferences extends NSISSettings implements IFileChangeListener
+public class NSISPreferences extends NSISSettings implements IFileChangeListener, INSISPreferenceConstants
 {
     public static final RGB SYNTAX_COMMENTS = new RGB(0x7f,0x9f,0xbf);
     public static final RGB SYNTAX_ATTRIBUTES = new RGB(0x80,0,0);
@@ -51,9 +51,12 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
     public static final RGB SYNTAX_LANGSTRINGS = new RGB(0x61,0x31,0x1e);
     public static final RGB SYNTAX_TASK_TAGS = new RGB(0x0,0x50,0x50);
     public static final RGB SYNTAX_PLUGINS   = new RGB(0x54,0x4a,0x3d);
-
+    
     public static final NSISPreferences INSTANCE;
 
+    public static final Version VERSION_2_07 = new Version("2.07"); //$NON-NLS-1$
+    public static final String NSIS_CONFIG_COMPRESSION_SUPPORT="NSIS_CONFIG_COMPRESSION_SUPPORT"; //$NON-NLS-1$
+    
     private IPreferenceStore mPreferenceStore = null;
     private File mNSISExe = null;
     private String mNSISHome = null;
@@ -65,6 +68,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
     private Collection mDefaultTaskTags = null;
     private boolean mCaseSensitiveTaskTags = true;
     private List mListeners = new ArrayList();
+    private boolean mSolidCompressionSupported = false;
 
     static
     {
@@ -186,7 +190,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
         initializeSyntaxPreference(PLUGINS_STYLE,SYNTAX_PLUGINS, null, false, false, false, false);
     }
 
-    protected void load()
+    public void load()
     {
         initializeNSISPreferences();
         initializeEditorPreferences();
@@ -309,6 +313,11 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
         return mNSISHome;
     }
 
+    public boolean isSolidCompressionSupported()
+    {
+        return mSolidCompressionSupported;
+    }
+
     /**
      * @param nsisHome The NSISHome to set.
      */
@@ -356,11 +365,13 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
             mNSISVersion = NSISValidator.getNSISVersion(mNSISExe);
             mNSISDefaultSymbols = NSISValidator.loadNSISDefaultSymbols(mNSISExe);
             FileMonitor.INSTANCE.register(mNSISExe,this);
+            mSolidCompressionSupported = (mNSISVersion.compareTo(VERSION_2_07) >=0 && mNSISDefaultSymbols.containsKey(NSIS_CONFIG_COMPRESSION_SUPPORT));
         }
         else {
             mNSISHome = ""; //$NON-NLS-1$
             mNSISVersion = Version.EMPTY_VERSION;
             mNSISDefaultSymbols = null;
+            mSolidCompressionSupported = false;
         }
     }
 
@@ -516,7 +527,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.settings.NSISSettings#getBoolean(java.lang.String)
      */
-    protected boolean getBoolean(String name)
+    public boolean getBoolean(String name)
     {
         return mPreferenceStore.getBoolean(name);
     }
@@ -524,7 +535,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.settings.NSISSettings#getInt(java.lang.String)
      */
-    protected int getInt(String name)
+    public int getInt(String name)
     {
         return mPreferenceStore.getInt(name);
     }
@@ -532,7 +543,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.settings.NSISSettings#getString(java.lang.String)
      */
-    protected String getString(String name)
+    public String getString(String name)
     {
         return mPreferenceStore.getString(name);
     }
@@ -540,7 +551,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.settings.NSISSettings#setValue(java.lang.String, boolean)
      */
-    protected void setValue(String name, boolean value)
+    public void setValue(String name, boolean value)
     {
         mPreferenceStore.setValue(name, value);
     }
@@ -548,7 +559,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.settings.NSISSettings#setValue(java.lang.String, int)
      */
-    protected void setValue(String name, int value)
+    public void setValue(String name, int value)
     {
         mPreferenceStore.setValue(name, value);
     }
@@ -556,7 +567,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.settings.NSISSettings#setValue(java.lang.String, java.lang.String)
      */
-    protected void setValue(String name, String value)
+    public void setValue(String name, String value)
     {
         mPreferenceStore.setValue(name, value);
     }
@@ -564,7 +575,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.settings.NSISSettings#removeBoolean(java.lang.String)
      */
-    protected void removeBoolean(String name)
+    public void removeBoolean(String name)
     {
         mPreferenceStore.setValue(name, IPreferenceStore.BOOLEAN_DEFAULT_DEFAULT);
     }
@@ -572,7 +583,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.settings.NSISSettings#removeInt(java.lang.String)
      */
-    protected void removeInt(String name)
+    public void removeInt(String name)
     {
         mPreferenceStore.setValue(name, IPreferenceStore.INT_DEFAULT_DEFAULT);
     }
@@ -580,7 +591,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.settings.NSISSettings#removeString(java.lang.String)
      */
-    protected void removeString(String name)
+    public void removeString(String name)
     {
         mPreferenceStore.setValue(name, IPreferenceStore.STRING_DEFAULT_DEFAULT);
     }
@@ -590,7 +601,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
         return mNSISDefaultSymbols.getProperty(symbol);
     }
 
-    protected void storeObject(String name, Object object)
+    public void storeObject(String name, Object object)
     {
         String fileName = getString(name);
         if(Common.isEmpty(fileName)) {
@@ -615,7 +626,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
         }
     }
 
-    protected Object loadObject(String name)
+    public Object loadObject(String name)
     {
         String fileName = getString(name);
         File objectFile = new File(cPluginStateLocation,fileName);

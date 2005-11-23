@@ -18,11 +18,11 @@ import org.eclipse.jface.text.rules.*;
 
 public class NSISPluginRule implements IRule
 {
-    public static final String PLUGIN_CALL_VALID_CHARS="$%'`-@{}~!#()&^:";
+    public static final String PLUGIN_CALL_VALID_CHARS="$%'`-@{}~!#()&^:"; //$NON-NLS-1$
 
     private IWordDetector mDetector;
     private IToken mToken;
-    private StringBuffer mBuffer = new StringBuffer("");
+    private StringBuffer mBuffer = new StringBuffer(""); //$NON-NLS-1$
 
     public NSISPluginRule(IWordDetector detector, IToken token)
     {

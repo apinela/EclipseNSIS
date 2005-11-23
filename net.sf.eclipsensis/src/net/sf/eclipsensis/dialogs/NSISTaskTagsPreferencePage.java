@@ -332,7 +332,7 @@ public class NSISTaskTagsPreferencePage extends PreferencePage implements IWorkb
             }
         }
         NSISPreferences.INSTANCE.store();
-        NSISEditor.updatePresentations();
+        NSISEditorUtilities.updatePresentations();
         if(updateTaskTags) {
             new NSISTaskTagUpdater().updateTaskTags();
         }

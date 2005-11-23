@@ -9,37 +9,15 @@
  *******************************************************************************/
 package net.sf.eclipsensis.settings;
 
-import net.sf.eclipsensis.EclipseNSISPlugin;
 
-public interface INSISPreferenceConstants
+public interface INSISPreferenceConstants extends INSISSettingsConstants
 {
     public static final String CUSTOM_TEMPLATES = "customTemplates"; //$NON-NLS-1$
     public static final String NSIS_HOME = "nsisHome"; //$NON-NLS-1$
     public static final String NOTIFY_MAKENSIS_CHANGED = "notifyMakeNSISChanged"; //$NON-NLS-1$
     public static final String USE_ECLIPSE_HELP = "useEclipseHelp"; //$NON-NLS-1$
-    public static final String USE_GLOBALS = "useGlobals"; //$NON-NLS-1$
-    public static final String USE_PARENT = "useParent"; //$NON-NLS-1$
-    public static final String HDRINFO = "hdrInfo"; //$NON-NLS-1$
-    public static final String VERBOSITY = "verbosity"; //$NON-NLS-1$
-    public static final String LICENSE = "license"; //$NON-NLS-1$
-    public static final String NOCONFIG = "noConfig"; //$NON-NLS-1$
-    public static final String NOCD = "noCD"; //$NON-NLS-1$
-    public static final String COMPRESSOR = "compressor"; //$NON-NLS-1$
-    public static final String SOLID_COMPRESSION = "solidCompression"; //$NON-NLS-1$
-    public static final String INSTRUCTIONS = "instructions"; //$NON-NLS-1$
-    public static final String SYMBOLS = "symbols"; //$NON-NLS-1$
     public static final String TASK_TAGS = "taskTags"; //$NON-NLS-1$
     public static final String CASE_SENSITIVE_TASK_TAGS = "caseSensitiveTaskTags"; //$NON-NLS-1$
-    public static final int VERBOSITY_NONE = 0;
-    public static final int VERBOSITY_ERRORS = 1;
-    public static final int VERBOSITY_WARNINGS = 2;
-    public static final int VERBOSITY_INFO = 3;
-    public static final int VERBOSITY_ALL = 4;
-    public static final String[] VERBOSITY_ARRAY = new String[]{EclipseNSISPlugin.getResourceString("verbosity.none.text"), //$NON-NLS-1$
-                                                                EclipseNSISPlugin.getResourceString("verbosity.errors.text"), //$NON-NLS-1$
-                                                                EclipseNSISPlugin.getResourceString("verbosity.warnings.text"), //$NON-NLS-1$
-                                                                EclipseNSISPlugin.getResourceString("verbosity.info.text"), //$NON-NLS-1$
-                                                                EclipseNSISPlugin.getResourceString("verbosity.all.text")}; //$NON-NLS-1$
 
     public static final String USE_SPACES_FOR_TABS = "useSpacesForTabs"; //$NON-NLS-1$
 

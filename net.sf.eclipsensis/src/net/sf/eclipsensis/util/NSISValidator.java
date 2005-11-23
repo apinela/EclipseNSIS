@@ -31,14 +31,14 @@ public class NSISValidator implements INSISConstants
     private static Map cVersionDateMap;
 
     static {
-        TimeZone tz = TimeZone.getTimeZone("GMT");
+        TimeZone tz = TimeZone.getTimeZone("GMT"); //$NON-NLS-1$
         cCVSDateFormat = new SimpleDateFormat("dd-MMM-yyyy"); //$NON-NLS-1$
         cCVSDateFormat.setTimeZone(tz);
         if(Locale.getDefault().getLanguage().equals(Locale.ENGLISH.getLanguage())) {
             cCVSEnglishDateFormat = null;
         }
         else {
-            cCVSEnglishDateFormat = new SimpleDateFormat("dd-MMM-yyyy",Locale.ENGLISH);
+            cCVSEnglishDateFormat = new SimpleDateFormat("dd-MMM-yyyy",Locale.ENGLISH); //$NON-NLS-1$
             cCVSEnglishDateFormat.setTimeZone(tz);
         }
 

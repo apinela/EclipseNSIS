@@ -175,7 +175,7 @@ public class NSISCompileTestUtility
     {
         String exeName = getExeName(script);
         if(exeName != null) {
-            MakeNSISRunner.testInstaller(exeName, NSISConsole.MODEL);
+            MakeNSISRunner.testInstaller(exeName, EclipseNSISPlugin.getDefault().getConsole());
         }
     }
 
@@ -209,11 +209,11 @@ public class NSISCompileTestUtility
                 mErrorMode = false;
                 MakeNSISResults results;
                 if(mScript.getDevice() == null) {
-                    results = MakeNSISRunner.compile(getFile(mScript), NSISConsole.MODEL, this);
+                    results = MakeNSISRunner.compile(getFile(mScript), EclipseNSISPlugin.getDefault().getConsole(), this);
                 }
                 else {
                     results = MakeNSISRunner.compile(new File(mScript.toOSString()), NSISPreferences.INSTANCE,
-                                                     NSISConsole.MODEL,this, true);
+                                                     EclipseNSISPlugin.getDefault().getConsole(),this, true);
                 }
                 mOutputExeName = results.getOutputFileName();
                 if(mTest && mOutputExeName != null) {

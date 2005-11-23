@@ -19,34 +19,6 @@ public class NSISWizardTemplate extends AbstractTemplate
 
     private NSISWizardSettings mSettings = null;
 
-    //The following four are dummy declarations for handling serialization issues.
-    //XXX Remove in 0.9.4
-    private String mName = null;
-    private String mDescription = null;
-    private boolean mEnabled = true;
-    private boolean mDeleted = false;
-    private int mType = TYPE_DEFAULT;
-
-    //The following method is a hack for handling serialization issues.
-    //XXX Remove in 0.9.4
-    boolean syncUp()
-    {
-        if(mName != null) {
-            super.setName(mName);
-            mName = null;
-            super.setDescription(mDescription);
-            mDescription = null;
-            super.setEnabled(mEnabled);
-            mEnabled = true;
-            super.setDeleted(mDeleted);
-            mDeleted = false;
-            super.setType(mType);
-            mType = 0;
-            return true;
-        }
-        return false;
-    }
-
     NSISWizardTemplate()
     {
     }

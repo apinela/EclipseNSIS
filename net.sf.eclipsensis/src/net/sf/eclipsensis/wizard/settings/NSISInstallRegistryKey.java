@@ -29,7 +29,7 @@ public class NSISInstallRegistryKey extends AbstractNSISInstallItem
     private String mSubKey = null;
 
     static {
-        NSISInstallElementFactory.register(TYPE, EclipseNSISPlugin.getResourceString("wizard.regkey.type.name"), IMAGE, NSISInstallRegistryKey.class);
+        NSISInstallElementFactory.register(TYPE, EclipseNSISPlugin.getResourceString("wizard.regkey.type.name"), IMAGE, NSISInstallRegistryKey.class); //$NON-NLS-1$
     }
 
     /* (non-Javadoc)
@@ -46,7 +46,7 @@ public class NSISInstallRegistryKey extends AbstractNSISInstallItem
     public String getDisplayName()
     {
         String[] hkeyNames = NSISWizardDisplayValues.getHKEYNames();
-        StringBuffer buf = new StringBuffer("");
+        StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
         if(mRootKey >= 0 && mRootKey < hkeyNames.length) {
             buf.append(hkeyNames[mRootKey]);
         }

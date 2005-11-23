@@ -40,14 +40,6 @@ public class NSISTextUtility implements INSISConstants
     private static final String[] cValidPartitionTypes = {IDocument.DEFAULT_CONTENT_TYPE,
                                                           NSISPartitionScanner.NSIS_STRING};
 
-    public static final int INVALID_REGIONS = -1;
-    public static final int REGION1_BEFORE_REGION2 = 0;
-    public static final int REGION1_OVERLAPS_LEFT_REGION2 = 1;
-    public static final int REGION1_CONTAINS_REGION2 = 2;
-    public static final int REGION1_OVERLAPS_RIGHT_REGION2 = 3;
-    public static final int REGION1_CONTAINED_BY_REGION2= 4;
-    public static final int REGION1_AFTER_REGION2 = 5;
-
     private NSISTextUtility()
     {
     }
@@ -112,35 +104,6 @@ public class NSISTextUtility implements INSISConstants
         catch (IllegalArgumentException e) {
             return -1;
         }
-    }
-
-    public static int getOverlapType(IRegion region1, IRegion region2)
-    {
-        int start1 = region1.getOffset();
-        int end1 = start1 + region1.getLength() - 1;
-        int start2 = region2.getOffset();
-        int end2 = start2 + region2.getLength() - 1;
-        if(start1 >= 0 && end1 >= start1 && start2 >= 0 && end2 >= start2) {
-            if(start1 < start2)
-            {
-                if(end1 >= start2) {
-                    return (end2 <= end1 ? REGION1_CONTAINS_REGION2 : REGION1_OVERLAPS_LEFT_REGION2);
-                }
-                else {
-                    return REGION1_BEFORE_REGION2;
-                }
-            }
-            else {
-                if(start1 <= end2) {
-                    return (end2 < end1 ? REGION1_OVERLAPS_RIGHT_REGION2 : REGION1_CONTAINED_BY_REGION2);
-                }
-                else {
-                    return REGION1_AFTER_REGION2;
-                }
-            }
-
-        }
-        return INVALID_REGIONS;
     }
 
     public static IRegion intersection(IRegion region1, IRegion region2)

@@ -17,6 +17,7 @@ import java.text.MessageFormat;
 import java.util.*;
 import java.util.List;
 
+import net.sf.eclipsensis.console.NSISConsole;
 import net.sf.eclipsensis.dialogs.MinimalProgressMonitorDialog;
 import net.sf.eclipsensis.editor.template.NSISTemplateContextType;
 import net.sf.eclipsensis.filemon.FileMonitor;
@@ -68,6 +69,8 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
     private Stack mServices = new Stack();
     private JobScheduler mJobScheduler = new JobScheduler();
 
+    private NSISConsole mConsole = null;
+    
 	/**
 	 * The constructor.
 	 */
@@ -176,6 +179,7 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
         FileMonitor.INSTANCE.start();
         startServices();
         mJobScheduler.start();
+        mConsole = new NSISConsole();
 //        mJobScheduler.scheduleJob("parse", new IJobStatusRunnable() {
 //
 //            public IStatus run(IProgressMonitor monitor)
@@ -184,7 +188,6 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
 //                    NSISParser.getInstance().processScript(new File("c:\\temp\\dummy.nsi"));
 //                }
 //                catch (Exception e) {
-//                    // TODO Auto-generated catch block
 //                    e.printStackTrace();
 //                }
 //                return Status.OK_STATUS;
@@ -360,10 +363,17 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
             service.stop(null);
         }
         FileMonitor.INSTANCE.stop();
+        mConsole.destroy();
+        mConsole = null;
 		super.stop(context);
 	}
 
-	public JobScheduler getJobScheduler()
+	public NSISConsole getConsole()
+    {
+        return mConsole;
+    }
+
+    public JobScheduler getJobScheduler()
     {
         return mJobScheduler;
     }

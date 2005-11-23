@@ -65,8 +65,8 @@ public class NSISInstallRegistryValueDialog extends AbstractNSISInstallItemDialo
         layout.marginWidth = 0;
         composite.setLayout(layout);
 
-        if(mStore.getInt("rootKey") >= mHKEYNames.length) {
-            mStore.setValue("rootKey","-1");
+        if(mStore.getInt("rootKey") >= mHKEYNames.length) { //$NON-NLS-1$
+            mStore.setValue("rootKey","-1"); //$NON-NLS-1$ //$NON-NLS-2$
         }
         final Combo c1 = NSISWizardDialogUtil.createCombo(composite,mHKEYNames,mStore.getInt("rootKey"), //$NON-NLS-1$
                             true,"wizard.root.key.label",true,null,false); //$NON-NLS-1$

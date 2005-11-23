@@ -30,6 +30,19 @@ Page custom dummy1 "" ""
 Page custom Preview "" ""
 Page custom dummy2 "" ""
 
+!ifndef PREVIEW_MUI
+!ifdef PREVIEW_BRANDING
+BrandingText "${PREVIEW_BRANDING}"
+!else
+BrandingText "Click any button to close"
+!endif  
+ 
+Function .onGUIInit
+  GetDlgItem $0 $HWNDPARENT 1028
+  EnableWindow $0 1
+FunctionEnd
+!endif
+
 Section
 SectionEnd
 

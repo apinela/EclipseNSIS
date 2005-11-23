@@ -30,7 +30,7 @@ public class FileMonitor
     static {
         long interval;
         try {
-            interval = Long.parseLong(EclipseNSISPlugin.getResourceString("file.change.monitor.poll.interval","500"));
+            interval = Long.parseLong(EclipseNSISPlugin.getResourceString("file.change.monitor.poll.interval","500")); //$NON-NLS-1$ //$NON-NLS-2$
         }
         catch(Throwable t) {
             interval = 500;

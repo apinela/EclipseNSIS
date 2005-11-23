@@ -16,9 +16,7 @@ import java.util.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
-import net.sf.eclipsensis.console.INSISConsoleLineProcessor;
-import net.sf.eclipsensis.console.NSISConsoleLine;
-import net.sf.eclipsensis.console.model.NSISConsoleModel;
+import net.sf.eclipsensis.console.*;
 import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.editor.IInstallOptionsEditor;
@@ -42,15 +40,19 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.*;
+import org.osgi.framework.Bundle;
 
 public class PreviewAction extends Action implements Disposable, IMakeNSISRunListener
 {
     public static final String PREVIEW_CLASSIC_ID = "net.sf.eclipsensis.installoptions.preview_classic"; //$NON-NLS-1$
     public static final String PREVIEW_MUI_ID = "net.sf.eclipsensis.installoptions.preview_mui"; //$NON-NLS-1$
-    private static NSISConsoleModel cConsoleModel = new NSISConsoleModel() {
-        public boolean supportsStatistics()
+    private static INSISConsole cDummyConsole = new INSISConsole() {
+        public void appendLine(NSISConsoleLine line)
         {
-            return false;
+        }
+
+        public void clearConsole()
+        {
         }
     };
 
@@ -175,6 +177,9 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
                 symbols.put("PREVIEW_TITLE",InstallOptionsPlugin.getResourceString(locale,"preview.setup.title")); //$NON-NLS-1$ //$NON-NLS-2$
                 symbols.put("PREVIEW_SUBTITLE",InstallOptionsPlugin.getResourceString(locale,"preview.setup.subtitle")); //$NON-NLS-1$ //$NON-NLS-2$
             }
+            else {
+                symbols.put("PREVIEW_BRANDING",InstallOptionsPlugin.getResourceString(locale,"preview.setup.branding")); //$NON-NLS-1$ //$NON-NLS-2$
+            }
             symbols.put("PREVIEW_NAME",InstallOptionsPlugin.getResourceString(locale,"preview.setup.name")); //$NON-NLS-1$ //$NON-NLS-2$
 
             mSettings.setSymbols(symbols);
@@ -203,7 +208,7 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
                                 try {
                                     long timestamp = System.currentTimeMillis();
                                     MakeNSISResults results = null;
-                                    results = MakeNSISRunner.compile(previewScript, mSettings, cConsoleModel, new INSISConsoleLineProcessor() {
+                                    results = MakeNSISRunner.compile(previewScript, mSettings, cDummyConsole, new INSISConsoleLineProcessor() {
                                         public NSISConsoleLine processText(String text)
                                         {
                                             return NSISConsoleLine.info(text);
@@ -216,9 +221,6 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
                                     if(results != null) {
                                         if (results.getReturnCode() != 0) {
                                             List errors = results.getProblems();
-                                            if (Common.isEmptyCollection(errors)) {
-                                                errors = cConsoleModel.getErrors();
-                                            }
                                             final String error;
                                             if (!Common.isEmptyCollection(errors)) {
                                                 Iterator iter = errors.iterator();
@@ -281,73 +283,87 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
             previewFolder.mkdirs();
         }
 
+        Bundle bundle = InstallOptionsPlugin.getDefault().getBundle();
         File previewScript = new File(previewFolder,"preview.nsi"); //$NON-NLS-1$
-        if(previewScript.exists() && previewScript.isDirectory()) {
-            previewScript.delete();
-        }
-        if(!previewScript.exists()) {
-            URL url = InstallOptionsPlugin.getDefault().getBundle().getEntry("/preview/preview.nsi"); //$NON-NLS-1$
-            InputStream is = null;
-            byte[] data;
-            try {
-                is = new BufferedInputStream(url.openStream());
-                data = Common.loadContentFromStream(is);
+        if(previewScript.exists()) {
+            if(previewScript.isDirectory()) {
+                previewScript.delete();
             }
-            finally {
-                Common.closeIO(is);
+            else {
+                if(previewScript.lastModified() < bundle.getLastModified()) {
+                    previewScript.delete();
+                }
+                else {
+                    return previewScript;
+                }
             }
-            Common.writeContentToFile(previewScript,data);
         }
+        URL url = bundle.getEntry("/preview/preview.nsi"); //$NON-NLS-1$
+        InputStream is = null;
+        byte[] data;
+        try {
+            is = new BufferedInputStream(url.openStream());
+            data = Common.loadContentFromStream(is);
+        }
+        finally {
+            Common.closeIO(is);
+        }
+        Common.writeContentToFile(previewScript,data);
         return previewScript;
     }
 
     private class PreviewSettings extends NSISSettings
     {
-        protected boolean getBoolean(String name)
+        public boolean showStatistics()
         {
             return false;
         }
 
-        protected int getInt(String name)
+        public boolean getBoolean(String name)
+        {
+            return false;
+        }
+
+        public int getInt(String name)
         {
             return 0;
         }
 
-        protected String getString(String name)
+        public String getString(String name)
         {
             return ""; //$NON-NLS-1$
         }
 
-        protected Object loadObject(String name)
+        public Object loadObject(String name)
         {
             return null;
         }
 
-        protected void removeBoolean(String name)
+        public void removeBoolean(String name)
         {
         }
 
-        protected void removeInt(String name)
+        public void removeInt(String name)
         {
         }
 
-        protected void removeString(String name)
+        public void removeString(String name)
         {
         }
 
-        protected void setValue(String name, boolean value)
+        public void setValue(String name, boolean value)
         {
         }
 
-        protected void setValue(String name, int value)
+        public void setValue(String name, int value)
         {
         }
 
-        protected void setValue(String name, String value)
+        public void setValue(String name, String value)
         {
         }
 
-        protected void storeObject(String name, Object object)
+        public void storeObject(String name, Object object)
         {
         }
 

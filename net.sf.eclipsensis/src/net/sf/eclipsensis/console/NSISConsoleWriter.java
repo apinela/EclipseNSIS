@@ -10,23 +10,26 @@
 package net.sf.eclipsensis.console;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.console.model.NSISConsoleModel;
 import net.sf.eclipsensis.makensis.MakeNSISProcess;
 import net.sf.eclipsensis.util.Common;
 
 public class NSISConsoleWriter implements Runnable
 {
     private MakeNSISProcess mProcess = null;
-    private NSISConsoleModel mModel = null;
+    private INSISConsole mConsole = null;
     private InputStream mInputStream = null;
     private INSISConsoleLineProcessor mLineProcessor = null;
+    private List mErrors = new ArrayList();
+    private List mWarnings = new ArrayList();
 
-    public NSISConsoleWriter(MakeNSISProcess process, NSISConsoleModel model, InputStream inputStream, INSISConsoleLineProcessor lineProcessor)
+    public NSISConsoleWriter(MakeNSISProcess process, INSISConsole console, InputStream inputStream, INSISConsoleLineProcessor lineProcessor)
     {
         mProcess = process;
-        mModel = model;
+        mConsole = console;
         mInputStream = inputStream;
         mLineProcessor = lineProcessor;
     }
@@ -49,7 +52,7 @@ public class NSISConsoleWriter implements Runnable
                     else {
                         line = NSISConsoleLine.info(text);
                     }
-                    mModel.add(line);
+                    appendLine(line);
                     try {
                         text = br.readLine();
                     }
@@ -64,10 +67,35 @@ public class NSISConsoleWriter implements Runnable
         }
         catch(Exception ex) {
             EclipseNSISPlugin.getDefault().log(ex);
-            mModel.add(NSISConsoleLine.error(ex.getLocalizedMessage()));
+            appendLine(NSISConsoleLine.error(ex.getLocalizedMessage()));
         }
         finally {
             Common.closeIO(br);
         }
+    }
+
+    private void appendLine(NSISConsoleLine line)
+    {
+        mConsole.appendLine(line);
+        switch(line.getType()) {
+            case NSISConsoleLine.TYPE_ERROR:
+                mErrors.add(line);
+                break;
+            case NSISConsoleLine.TYPE_WARNING:
+                mWarnings.add(line);
+                break;
+            default:
+                break;
+        }
+    }
+
+    public List getErrors()
+    {
+        return mErrors;
+    }
+
+    public List getWarnings()
+    {
+        return mWarnings;
     }
 }

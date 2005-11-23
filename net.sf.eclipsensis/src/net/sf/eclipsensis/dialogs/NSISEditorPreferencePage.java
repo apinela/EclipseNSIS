@@ -374,7 +374,7 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
      */
     public boolean performOk() {
         mPreferenceStore.update();
-        NSISEditor.updatePresentations();
+        NSISEditorUtilities.updatePresentations();
         return super.performOk();
     }
 

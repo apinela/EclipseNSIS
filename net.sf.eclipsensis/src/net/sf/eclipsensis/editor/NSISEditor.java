@@ -10,14 +10,12 @@
 package net.sf.eclipsensis.editor;
 
 import java.io.File;
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.actions.NSISAction;
 import net.sf.eclipsensis.actions.NSISScriptAction;
-import net.sf.eclipsensis.dialogs.MinimalProgressMonitorDialog;
 import net.sf.eclipsensis.editor.codeassist.NSISInformationControlCreator;
 import net.sf.eclipsensis.editor.codeassist.NSISInformationProvider;
 import net.sf.eclipsensis.editor.outline.*;
@@ -25,15 +23,12 @@ import net.sf.eclipsensis.editor.text.NSISPartitionScanner;
 import net.sf.eclipsensis.editor.text.NSISTextUtility;
 import net.sf.eclipsensis.makensis.MakeNSISResults;
 import net.sf.eclipsensis.makensis.MakeNSISRunner;
-import net.sf.eclipsensis.script.NSISScriptProblem;
 import net.sf.eclipsensis.settings.*;
 import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.*;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.information.InformationPresenter;
@@ -44,7 +39,6 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.editors.text.*;
@@ -405,6 +399,22 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
         updateActionsState();
     }
 
+    void updatePresentation()
+    {
+        try {
+            ISourceViewer sourceViewer = getSourceViewer();
+            if(sourceViewer instanceof NSISSourceViewer) {
+                NSISSourceViewer viewer = (NSISSourceViewer)sourceViewer;
+                if(viewer.mustProcessPropertyQueue()) {
+                    viewer.processPropertyQueue();
+                }
+            }
+        }
+        catch(Exception ex) {
+            EclipseNSISPlugin.getDefault().log(ex);
+        }
+    }
+
     public void updateActionsState()
     {
         if(equals(getEditorSite().getPage().getActiveEditor())) {
@@ -453,6 +463,15 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
         }
     }
 
+    IAnnotationModel getAnnotationModel()
+    {
+        ISourceViewer viewer = getSourceViewer();
+        if(viewer != null) {
+            return viewer.getAnnotationModel();
+        }
+        return null;
+    }
+
     /**
      * @param file
      */
@@ -483,120 +502,7 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
             if(file != null && file.exists() && file.isFile()) {
                 MakeNSISResults results = MakeNSISRunner.getResults(file);
                 if(results != null) {
-                    updateAnnotations(this, results);
-                }
-            }
-        }
-    }
-
-    private static void updateAnnotations(NSISEditor editor, MakeNSISResults results)
-    {
-        ISourceViewer viewer = editor.getSourceViewer();
-        if(viewer != null) {
-            AnnotationModel annotationModel = (AnnotationModel)viewer.getAnnotationModel();
-            if(annotationModel != null) {
-                annotationModel.removeAllAnnotations();
-                List problems = results.getProblems();
-                if(!Common.isEmptyCollection(problems)) {
-                    IDocument doc = editor.getDocumentProvider().getDocument(editor.getEditorInput());
-                    for(Iterator iter=problems.iterator(); iter.hasNext(); ) {
-                        NSISScriptProblem problem = (NSISScriptProblem)iter.next();
-                        if(problem.getLine() > 0) {
-                            try {
-                                String name;
-                                if(problem.getType() == NSISScriptProblem.TYPE_ERROR) {
-                                    name = INSISConstants.ERROR_ANNOTATION_NAME;
-                                }
-                                else if(problem.getType() == NSISScriptProblem.TYPE_WARNING) {
-                                    name = INSISConstants.WARNING_ANNOTATION_NAME;
-                                }
-                                else {
-                                    continue;
-                                }
-                                IRegion region = doc.getLineInformation(problem.getLine()-1);
-                                annotationModel.addAnnotation(new Annotation(name,false,problem.getText()),
-                                        new Position(region.getOffset(),region.getLength()));
-                            }
-                            catch (BadLocationException e) {
-                                EclipseNSISPlugin.getDefault().log(e);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    public static void updatePresentations()
-    {
-        final Collection editors = new ArrayList();
-        IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
-        for (int i = 0; i < windows.length; i++) {
-            IWorkbenchPage[] pages = windows[i].getPages();
-            for (int j = 0; j < pages.length; j++) {
-                IEditorReference[] editorRefs = pages[i].getEditorReferences();
-                for (int k = 0; k < editorRefs.length; k++) {
-                    if(INSISConstants.EDITOR_ID.equals(editorRefs[k].getId())) {
-                        NSISEditor editor = (NSISEditor)editorRefs[k].getEditor(false);
-                        if(editor != null) {
-                            editors.add(editor);
-                        }
-                    }
-                }
-            }
-        }
-        if(editors.size() > 0) {
-            final IRunnableWithProgress op = new IRunnableWithProgress(){
-                public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException
-                {
-                    monitor.beginTask(EclipseNSISPlugin.getResourceString("updating.presentation.message"),editors.size()); //$NON-NLS-1$
-                    for(Iterator iter=editors.iterator(); iter.hasNext(); ) {
-                        try {
-                            NSISEditor editor = (NSISEditor)iter.next();
-                            ISourceViewer sourceViewer = editor.getSourceViewer();
-                            if(sourceViewer instanceof NSISSourceViewer) {
-                                NSISSourceViewer viewer = (NSISSourceViewer)sourceViewer;
-                                if(viewer.mustProcessPropertyQueue()) {
-                                    viewer.processPropertyQueue();
-                                }
-                            }
-                        }
-                        catch(Exception ex) {
-                            EclipseNSISPlugin.getDefault().log(ex);
-                        }
-                        monitor.worked(1);
-                    }
-                }
-            };
-            ProgressMonitorDialog dialog = new MinimalProgressMonitorDialog(Display.getDefault().getActiveShell());
-            try {
-                dialog.run(false,false,op);
-            }
-            catch (Exception e) {
-                EclipseNSISPlugin.getDefault().log(e);
-            }
-        }
-    }
-
-    public static void updateAnnotations(MakeNSISResults results)
-    {
-        IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
-        for (int i = 0; i < windows.length; i++) {
-            IWorkbenchPage[] pages = windows[i].getPages();
-            for (int j = 0; j < pages.length; j++) {
-                IEditorReference[] editorRefs = pages[j].getEditorReferences();
-                for (int k = 0; k < editorRefs.length; k++) {
-                    if(INSISConstants.EDITOR_ID.equals(editorRefs[k].getId())) {
-                        NSISEditor editor = (NSISEditor)editorRefs[k].getEditor(false);
-                        if(editor != null) {
-                            IEditorInput input = editor.getEditorInput();
-                            if(!(input instanceof IFileEditorInput) && input instanceof IPathEditorInput) {
-                                if(results.getScriptFile().getAbsolutePath().equals(((IPathEditorInput)input).getPath().toOSString())) {
-                                    updateAnnotations(editor, results);
-                                }
-                            }
-                        }
-                    }
+                    NSISEditorUtilities.updateAnnotations(this, results);
                 }
             }
         }

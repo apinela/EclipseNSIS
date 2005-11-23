@@ -299,9 +299,9 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
         set = new CaseInsensitiveSet();
         if(!Common.isEmpty(NSISPreferences.INSTANCE.getNSISHome())) {
             Set keySet = NSISPreferences.INSTANCE.getNSISDefaultSymbols().keySet();
-            StringBuffer buf = new StringBuffer("${");
+            StringBuffer buf = new StringBuffer("${"); //$NON-NLS-1$
             for (Iterator iter = keySet.iterator(); iter.hasNext();) {
-                set.add(buf.append((String)iter.next()).append("}").toString());
+                set.add(buf.append((String)iter.next()).append("}").toString()); //$NON-NLS-1$
                 buf.setLength(2);
             }
         }

@@ -23,11 +23,11 @@ import org.eclipse.ui.PlatformUI;
 
 public class HelpBrowserLocalFileHandler implements IExtensionChangeHandler, IHelpBrowserLocalFileHandler
 {
-    private static final String EXTENSION_POINT = "helpBrowserLocalFileHandler";
-    private static final String HANDLER_ID = "id";
-    private static final String HANDLER_NAME = "name";
-    private static final String HANDLER_EXTENSIONS = "extensions";
-    private static final String HANDLER_CLASS = "class";
+    private static final String EXTENSION_POINT = "helpBrowserLocalFileHandler"; //$NON-NLS-1$
+    private static final String HANDLER_ID = "id"; //$NON-NLS-1$
+    private static final String HANDLER_NAME = "name"; //$NON-NLS-1$
+    private static final String HANDLER_EXTENSIONS = "extensions"; //$NON-NLS-1$
+    private static final String HANDLER_CLASS = "class"; //$NON-NLS-1$
 
     public static final HelpBrowserLocalFileHandler INSTANCE = new HelpBrowserLocalFileHandler();
 
@@ -103,7 +103,7 @@ public class HelpBrowserLocalFileHandler implements IExtensionChangeHandler, IHe
                     if(name != null) {
                         descriptor.name = name;
                     }
-                    descriptor.extensions.addAll(Common.tokenizeList(elements[i].getAttribute(HANDLER_EXTENSIONS),','));
+                    descriptor.extensions.addAll(Common.tokenizeToList(elements[i].getAttribute(HANDLER_EXTENSIONS),','));
                     descriptor.handler = (IHelpBrowserLocalFileHandler)elements[i].createExecutableExtension(HANDLER_CLASS);
 
                     tracker.registerObject(extension, descriptor,IExtensionTracker.REF_WEAK);
@@ -126,8 +126,8 @@ public class HelpBrowserLocalFileHandler implements IExtensionChangeHandler, IHe
 
     private class HandlerDescriptor
     {
-        String id = "";
-        String name = "";
+        String id = ""; //$NON-NLS-1$
+        String name = ""; //$NON-NLS-1$
         Set extensions = new CaseInsensitiveSet();
         IHelpBrowserLocalFileHandler handler = null;
     }

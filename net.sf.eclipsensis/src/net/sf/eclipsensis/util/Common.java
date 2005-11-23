@@ -527,12 +527,17 @@ public class Common
         return buf.toString();
     }
 
-    public static String[] tokenize(String text, char separator)
+    public static String flatten(Collection collection, char separator)
     {
-        return (String[])tokenizeList(text,separator).toArray(EMPTY_STRING_ARRAY);
+        return flatten(collection.toArray(),separator);
     }
 
-    public static List tokenizeList(String text, char separator)
+    public static String[] tokenize(String text, char separator)
+    {
+        return (String[])tokenizeToList(text,separator).toArray(EMPTY_STRING_ARRAY);
+    }
+
+    public static List tokenizeToList(String text, char separator)
     {
         ArrayList list = new ArrayList();
         if(text != null && text.length() > 0) {
@@ -578,7 +583,7 @@ public class Common
                 property = null;
             }
         }
-        return tokenizeList(property, separator);
+        return tokenizeToList(property, separator);
     }
 
     public static Map loadMapProperty(ResourceBundle bundle, String propertyName)

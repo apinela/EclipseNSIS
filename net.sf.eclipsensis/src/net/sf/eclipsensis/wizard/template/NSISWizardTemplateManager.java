@@ -81,16 +81,6 @@ public class NSISWizardTemplateManager extends AbstractTemplateManager
             patchUserTemplateStore(getUserTemplatesStore());
             map = super.loadUserTemplateStore();
         }
-        if(map != null) {
-            //XXX Remove in 0.9.4
-            boolean needsSave = false;
-            for(Iterator iter=map.values().iterator(); iter.hasNext(); ) {
-                needsSave |= ((NSISWizardTemplate)iter.next()).syncUp();
-            }
-            if(needsSave) {
-                Common.writeObject(getUserTemplatesStore(), map);
-            }
-        }
         return map;
     }
 

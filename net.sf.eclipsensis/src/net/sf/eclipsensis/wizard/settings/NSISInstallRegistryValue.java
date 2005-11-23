@@ -32,7 +32,7 @@ public class NSISInstallRegistryValue extends AbstractNSISInstallItem
     private int mValueType = REG_SZ;
 
     static {
-        NSISInstallElementFactory.register(TYPE, EclipseNSISPlugin.getResourceString("wizard.regvalue.type.name"), STR_IMAGE, NSISInstallRegistryValue.class);
+        NSISInstallElementFactory.register(TYPE, EclipseNSISPlugin.getResourceString("wizard.regvalue.type.name"), STR_IMAGE, NSISInstallRegistryValue.class); //$NON-NLS-1$
     }
 
     /* (non-Javadoc)
@@ -49,7 +49,7 @@ public class NSISInstallRegistryValue extends AbstractNSISInstallItem
     public String getDisplayName()
     {
         String[] hkeyNames = NSISWizardDisplayValues.getHKEYNames();
-        StringBuffer buf = new StringBuffer("");
+        StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
         if(mRootKey >= 0 && mRootKey < hkeyNames.length) {
             buf.append(hkeyNames[mRootKey]);
         }

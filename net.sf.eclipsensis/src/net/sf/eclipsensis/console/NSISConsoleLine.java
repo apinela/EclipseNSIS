@@ -11,7 +11,6 @@ package net.sf.eclipsensis.console;
 
 import org.eclipse.core.runtime.IPath;
 
-
 public class NSISConsoleLine
 {
     public static final int TYPE_INFO = 0;

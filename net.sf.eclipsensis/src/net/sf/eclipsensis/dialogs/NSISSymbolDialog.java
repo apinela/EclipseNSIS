@@ -82,7 +82,7 @@ public class NSISSymbolDialog extends StatusMessageDialog
             {
                 char[] chars = e.text.toCharArray();
                 for(int i=0; i< chars.length; i++) {
-                    if(Character.isWhitespace(chars[i])) {
+                    if(Character.isWhitespace(chars[i]) || chars[i] == '=') {
                         e.doit = false;
                         return;
                     }

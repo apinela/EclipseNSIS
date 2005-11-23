@@ -40,8 +40,8 @@ public class NSISPluginManager implements INSISConstants
 
     private Map mDefaultPluginsMap = null;
     private Map mCustomPluginsMap = new HashMap();
-    private File mCacheFile = new File(EclipseNSISPlugin.getPluginStateLocation(),NSISPluginManager.class.getName()+".Plugins.ser");
-    public static final Pattern PLUGIN_CALL_PATTERN=Pattern.compile("([a-z0-9\\$%\\'`\\-@\\{\\}~\\!#\\(\\)\\&_\\^\\+\\,\\=\\[\\]]+)::([a-z_][a-z0-9_]*)", Pattern.CASE_INSENSITIVE);
+    private File mCacheFile = new File(EclipseNSISPlugin.getPluginStateLocation(),NSISPluginManager.class.getName()+".Plugins.ser"); //$NON-NLS-1$
+    public static final Pattern PLUGIN_CALL_PATTERN=Pattern.compile("([a-z0-9\\$%\\'`\\-@\\{\\}~\\!#\\(\\)\\&_\\^\\+\\,\\=\\[\\]]+)::([a-z_][a-z0-9_]*)", Pattern.CASE_INSENSITIVE); //$NON-NLS-1$
 
     private NSISPluginManager()
     {
@@ -148,7 +148,7 @@ public class NSISPluginManager implements INSISConstants
                 JobScheduler jobScheduler = EclipseNSISPlugin.getDefault().getJobScheduler();
                 jobScheduler.cancelJobs(NSISPluginManager.class);
                 jobScheduler.scheduleJob(NSISPluginManager.class,
-                                        "Saving plugin cache",
+                                        EclipseNSISPlugin.getResourceString("saving.plugin.cache.job.name"), //$NON-NLS-1$
                                         new IJobStatusRunnable() {
                                             public IStatus run(IProgressMonitor monitor)
                                             {

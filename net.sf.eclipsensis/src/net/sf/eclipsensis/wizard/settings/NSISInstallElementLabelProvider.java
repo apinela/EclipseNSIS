@@ -62,7 +62,7 @@ public class NSISInstallElementLabelProvider extends LabelProvider
 
     private Image decorateImage(final Image image, INSISInstallElement element)
     {
-        String name = Integer.toString(image.hashCode())+"$error";
+        String name = Integer.toString(image.hashCode())+"$error"; //$NON-NLS-1$
         Image image2 = EclipseNSISPlugin.getImageManager().getImage(name);
         if(image2 == null) {
             EclipseNSISPlugin.getImageManager().putImageDescriptor(name,

@@ -22,6 +22,9 @@ import org.eclipse.core.runtime.QualifiedName;
 
 public class NSISProperties extends NSISSettings implements INSISConstants
 {
+    public static final String USE_PARENT = "useParent"; //$NON-NLS-1$
+    public static final String USE_GLOBALS = "useGlobals"; //$NON-NLS-1$
+
     private static Map cPropertiesCache = new HashMap();
     private static Map cQualifiedNames = new HashMap();
 
@@ -68,7 +71,7 @@ public class NSISProperties extends NSISSettings implements INSISConstants
         }
     }
 
-    protected void load()
+    public void load()
     {
         String temp = getPersistentProperty(getQualifiedName(USE_PARENT));
         if(temp == null) {
@@ -234,7 +237,7 @@ public class NSISProperties extends NSISSettings implements INSISConstants
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.settings.NSISSettings#getBoolean(java.lang.String)
      */
-    protected boolean getBoolean(String name)
+    public boolean getBoolean(String name)
     {
         String value = getPersistentProperty(getQualifiedName(name));
         return (value !=null && Boolean.valueOf(value).booleanValue());
@@ -243,7 +246,7 @@ public class NSISProperties extends NSISSettings implements INSISConstants
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.settings.NSISSettings#getInt(java.lang.String)
      */
-    protected int getInt(String name)
+    public int getInt(String name)
     {
         String value = getPersistentProperty(getQualifiedName(name));
         if(value != null) {
@@ -262,7 +265,7 @@ public class NSISProperties extends NSISSettings implements INSISConstants
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.settings.NSISSettings#getString(java.lang.String)
      */
-    protected String getString(String name)
+    public String getString(String name)
     {
         return getPersistentProperty(getQualifiedName(name));
     }
@@ -270,7 +273,7 @@ public class NSISProperties extends NSISSettings implements INSISConstants
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.settings.NSISSettings#setValue(java.lang.String, boolean)
      */
-    protected void setValue(String name, boolean value)
+    public void setValue(String name, boolean value)
     {
         setPersistentProperty(getQualifiedName(name), Boolean.toString(value));
     }
@@ -278,7 +281,7 @@ public class NSISProperties extends NSISSettings implements INSISConstants
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.settings.NSISSettings#setValue(java.lang.String, int)
      */
-    protected void setValue(String name, int value)
+    public void setValue(String name, int value)
     {
         setPersistentProperty(getQualifiedName(name), Integer.toString(value));
     }
@@ -286,7 +289,7 @@ public class NSISProperties extends NSISSettings implements INSISConstants
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.settings.NSISSettings#setValue(java.lang.String, java.lang.String)
      */
-    protected void setValue(String name, String value)
+    public void setValue(String name, String value)
     {
         setPersistentProperty(getQualifiedName(name), value);
     }
@@ -294,7 +297,7 @@ public class NSISProperties extends NSISSettings implements INSISConstants
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.settings.NSISSettings#removeBoolean(java.lang.String)
      */
-    protected void removeBoolean(String name)
+    public void removeBoolean(String name)
     {
         setPersistentProperty(getQualifiedName(name), null);
     }
@@ -302,7 +305,7 @@ public class NSISProperties extends NSISSettings implements INSISConstants
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.settings.NSISSettings#removeInt(java.lang.String)
      */
-    protected void removeInt(String name)
+    public void removeInt(String name)
     {
         setPersistentProperty(getQualifiedName(name), null);
     }
@@ -310,7 +313,7 @@ public class NSISProperties extends NSISSettings implements INSISConstants
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.settings.NSISSettings#removeString(java.lang.String)
      */
-    protected void removeString(String name)
+    public void removeString(String name)
     {
         setPersistentProperty(getQualifiedName(name), null);
     }
@@ -318,7 +321,7 @@ public class NSISProperties extends NSISSettings implements INSISConstants
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.settings.NSISSettings#loadObject(java.lang.String)
      */
-    protected Object loadObject(String name)
+    public Object loadObject(String name)
     {
         QualifiedName qname = getQualifiedName(name);
         ISynchronizer synchronizer = ResourcesPlugin.getWorkspace().getSynchronizer();
@@ -345,7 +348,7 @@ public class NSISProperties extends NSISSettings implements INSISConstants
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.settings.NSISSettings#storeObject(java.lang.String, java.lang.Object)
      */
-    protected void storeObject(String name, Object object)
+    public void storeObject(String name, Object object)
     {
         try {
             QualifiedName qname = getQualifiedName(name);

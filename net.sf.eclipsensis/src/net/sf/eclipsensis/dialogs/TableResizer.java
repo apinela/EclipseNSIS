@@ -44,7 +44,8 @@ public class TableResizer extends ControlAdapter
         int lineWidth = table.getGridLineWidth();
         TableColumn[] columns = table.getColumns();
         if(!Common.isEmptyArray(columns)) {
-            width -= (columns.length-1)*lineWidth;
+            int n = columns.length-1;
+            width -= n*lineWidth;
 
             if(mCachedWeights == null || columns.length != mCachedWeights.length) {
                 if(Common.isEmptyArray(mWeights)) {
@@ -68,12 +69,12 @@ public class TableResizer extends ControlAdapter
                 }
             }
             int sumWidth = 0;
-            for(int i=0; i<(columns.length-1); i++) {
-                int width2 = (int)((mCachedWeights[i]/mTotalWeight)*width);
+            for(int i=0; i<n; i++) {
+                int width2 =  (int)((mCachedWeights[i]/mTotalWeight)*width);
                 sumWidth += width2;
                 columns[i].setWidth(width2);
             }
-            columns[columns.length-1].setWidth(width-sumWidth);
+            columns[n].setWidth(width-sumWidth);
             table.redraw();
         }
     }

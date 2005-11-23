@@ -24,7 +24,7 @@ import org.eclipse.swt.program.Program;
 
 public class NSISHelpProducer implements IExecutableExtension, IHelpContentProducer, INSISConstants
 {
-    private static final byte[] GO_BACK = "<html><head><script language=\"javascript\">\n<!--\nhistory.go(-1);\n//-->\n</script></head></html>".getBytes();
+    private static final byte[] GO_BACK = "<html><head><script language=\"javascript\">\n<!--\nhistory.go(-1);\n//-->\n</script></head></html>".getBytes(); //$NON-NLS-1$
     private static final File cHelpCacheLocation = new File(EclipseNSISPlugin.getPluginStateLocation(),PLUGIN_HELP_LOCATION_PREFIX);
     private String mPluginId = PLUGIN_ID;
     private boolean mJavascriptOnly = false;

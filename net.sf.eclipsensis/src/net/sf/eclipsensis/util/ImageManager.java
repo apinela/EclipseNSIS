@@ -76,7 +76,7 @@ public class ImageManager
      * @param location
      * @return
      */
-    private  ImageDescriptor createImageDescriptor(URL url)
+    private ImageDescriptor createImageDescriptor(URL url)
     {
         ImageDescriptor imageDescriptor;
         if(url != null) {

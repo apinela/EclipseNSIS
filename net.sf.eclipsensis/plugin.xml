@@ -47,13 +47,11 @@
         <type
             name="%nsis.error.annotation.name"
             super="org.eclipse.ui.workbench.texteditor.error"
-            markerType="%compile.problem.marker.id"
             markerSeverity="2">
         </type>
         <type
             name="%nsis.warning.annotation.name"
             super="org.eclipse.ui.workbench.texteditor.warning"
-            markerType="%compile.problem.marker.id"
             markerSeverity="1">
         </type>
         <type
@@ -146,7 +144,7 @@
       </category>
       <view
             allowMultiple="false"
-            class="net.sf.eclipsensis.console.NSISConsole"
+            class="net.sf.eclipsensis.console.OldNSISConsole"
             icon="%console.icon"
             category="%view.category.id"
             name="%console.name"
@@ -358,6 +356,7 @@
          name="%compile.problem.marker.name"
          point="org.eclipse.core.resources.markers">
       <super type="org.eclipse.core.resources.problemmarker"/>
+      <super type="org.eclipse.core.resources.textmarker"/>
       <persistent value="true" />
    </extension>
    <extension
@@ -744,5 +743,58 @@
       <handler
             class="net.sf.eclipsensis.help.NSISLocalFileHandler"
             extensions="%nsis.extensions"/>
+   </extension>
+   <extension
+         id="nsisLaunchConfigTypes"
+         point="org.eclipse.debug.core.launchConfigurationTypes">
+      <launchConfigurationType
+            delegate="net.sf.eclipsensis.launch.NSISLaunchConfigDelegate"
+            id="net.sf.eclipsensis.launch.nsisWorkspaceLaunchConfigType"
+            modes="run"
+            name="EclipseNSIS Workspace Script"
+            public="true">
+         <fileExtension
+               default="true"
+               extension="nsi"/>
+      </launchConfigurationType>
+      <launchConfigurationType
+            delegate="net.sf.eclipsensis.launch.NSISLaunchConfigDelegate"
+            id="net.sf.eclipsensis.launch.nsisExternalLaunchConfigType"
+            modes="run"
+            name="EclipseNSIS External Script"
+            public="true">
+         <fileExtension
+               default="true"
+               extension="nsi"/>
+      </launchConfigurationType>
+   </extension>
+   <extension point="org.eclipse.debug.ui.launchConfigurationTypeImages">
+      <launchConfigurationTypeImage
+            icon="icons/nsis.gif"
+            configTypeID="net.sf.eclipsensis.launch.nsisWorkspaceLaunchConfigType"
+            id="net.sf.eclipsensis.launch.nsisWorkspaceLaunchConfigTypeImage"/>
+      <launchConfigurationTypeImage
+            icon="icons/nsis_external.gif"
+            configTypeID="net.sf.eclipsensis.launch.nsisExternalLaunchConfigType"
+            id="net.sf.eclipsensis.launch.nsisExternalLaunchConfigTypeImage"/>
+   </extension>
+   <extension point="org.eclipse.debug.ui.launchConfigurationTabGroups">
+      <launchConfigurationTabGroup
+            type="net.sf.eclipsensis.launch.nsisWorkspaceLaunchConfigType"
+            class="net.sf.eclipsensis.launch.NSISWorkspaceLaunchConfigTabGroup"
+            id="net.sf.eclipsensis.launch.nsisWorkspaceLaunchConfigTabGroup"/>
+      <launchConfigurationTabGroup
+            type="net.sf.eclipsensis.launch.nsisExternalLaunchConfigType"
+            class="net.sf.eclipsensis.launch.NSISExternalLaunchConfigTabGroup"
+            id="net.sf.eclipsensis.launch.nsisExternalLaunchConfigTabGroup"/>
+   </extension>
+   <extension
+         id="net.sf.eclipsensis.console.nsisConsoleFactory"
+         name="EclipseNSIS Console Factories"
+         point="org.eclipse.ui.console.consoleFactories">
+      <consoleFactory
+            class="net.sf.eclipsensis.console.NSISConsoleFactory"
+            icon="icons/nsis.gif"
+            label="EclipseNSIS Console"/>
    </extension>
 </plugin>
