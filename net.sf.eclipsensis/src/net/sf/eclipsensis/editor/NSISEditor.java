@@ -22,9 +22,8 @@ import net.sf.eclipsensis.editor.outline.*;
 import net.sf.eclipsensis.editor.text.NSISPartitionScanner;
 import net.sf.eclipsensis.editor.text.NSISTextUtility;
 import net.sf.eclipsensis.makensis.MakeNSISResults;
-import net.sf.eclipsensis.makensis.MakeNSISRunner;
 import net.sf.eclipsensis.settings.*;
-import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.*;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -52,7 +51,7 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
     private NSISContentOutlinePage mOutlinePage;
     private NSISOutlineContentProvider mOutlineContentProvider;
     private Position mCurrentPosition = null;
-    private MutEx mMutEx = new MutEx();
+    private Mutex mMutex = new Mutex();
 
     /**
      *
@@ -68,7 +67,7 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
         Object source = event.getSource();
         ISelection selection = event.getSelection();
         ISourceViewer sourceViewer = getSourceViewer();
-        boolean acquiredMutex = mMutEx.acquireWithoutBlocking(source);
+        boolean acquiredMutex = mMutex.acquireWithoutBlocking(source);
         try {
             if(source.equals(sourceViewer) && selection instanceof ITextSelection) {
                 IAction action = getAction("NSISAddBlockComment"); //$NON-NLS-1$
@@ -151,7 +150,7 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
         }
         finally {
             if(acquiredMutex) {
-                mMutEx.release(source);
+                mMutex.release(source);
             }
         }
     }
@@ -500,7 +499,7 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
         if(input instanceof IPathEditorInput && !(input instanceof IFileEditorInput)){
             File file = new File(((IPathEditorInput)input).getPath().toOSString());
             if(file != null && file.exists() && file.isFile()) {
-                MakeNSISResults results = MakeNSISRunner.getResults(file);
+                MakeNSISResults results = NSISCompileTestUtility.INSTANCE.getCachedResults(file);
                 if(results != null) {
                     NSISEditorUtilities.updateAnnotations(this, results);
                 }
@@ -552,84 +551,5 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
                 mInformationPresenter.showInformation();
             }
         }
-    }
-
-    private static class MutEx
-    {
-        private static int cCounter = 0;
-        private Object mOwner = null;
-        private int mLockCount = 0;
-        private final int mId = newId();
-
-        public int getId()
-        {
-            return mId;
-        }
-
-        private static int newId()
-        {
-            synchronized(NSISEditor.MutEx.class) {
-                cCounter++;
-                return cCounter;
-            }
-        }
-
-        /**
-         * Acquire the mutex. The mutex can be acquired multiple times
-         * by the same thread, provided that it is released as many
-         * times as it is acquired. The calling thread blocks until
-         * it has acquired the mutex. (There is no timeout).
-         *
-         * @see release
-         * @see acquireWithoutBlocking
-         */
-        public synchronized void acquire(Object owner, long timeout) throws InterruptedException
-        {
-            while( !acquireWithoutBlocking(owner)) {
-                this.wait(timeout);
-            }
-        }
-
-        /**
-         * Attempts to acquire the mutex. Returns false (and does not
-         * block) if it can't get it.
-         *
-         * @see release
-         * @see acquire
-         */
-        public synchronized boolean acquireWithoutBlocking(Object owner)
-        {
-            // Try to get the mutex. Return true if you got it.
-            if( mOwner == null ) {
-                mOwner = owner;
-                mLockCount = 1;
-                return true;
-            }
-
-            if( mOwner == owner ) {
-                ++mLockCount;
-                return true;
-            }
-
-            return false;
-        }
-
-        /**
-         * Release the mutex. The mutex has to be released as many times
-         * as it was acquired to actually unlock the resource. The mutex
-         * must be released by the thread that acquired it
-         *
-         * @throws MutEx.OwnershipException (a RuntimeException) if a thread
-         *      other than the current owner tries to release the mutex.
-         */
-         public synchronized void release(Object owner)
-         {
-             if( mOwner == owner ) {
-                 if( --mLockCount <= 0 ) {
-                     mOwner = null;
-                     notifyAll();
-                 }
-             }
-         }
     }
 }

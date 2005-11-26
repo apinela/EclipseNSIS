@@ -31,7 +31,7 @@ public class MakeNSISResults
         mScriptFile = file;
     }
 
-    protected long getCompileTimestamp()
+    public long getCompileTimestamp()
     {
         return mCompileTimestamp;
     }

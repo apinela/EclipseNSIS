@@ -39,7 +39,7 @@ public abstract class NSISWizard extends Wizard implements IAdaptable, INewWizar
     private static final int SIZING_WIZARD_HEIGHT = 450;
 
     private NSISWizardSettings mSettings = null;
-    private ArrayList mSettingsListeners = new ArrayList();
+    private List mSettingsListeners = new ArrayList();
     private IPageChangeProvider mPageChangeProvider;
     private AbstractNSISWizardPage mCurrentPage = null;
 
@@ -85,9 +85,11 @@ public abstract class NSISWizard extends Wizard implements IAdaptable, INewWizar
         if(getContainer() instanceof IPageChangeProvider) {
             IPageChangeProvider pageChangeProvider = (IPageChangeProvider)getContainer();
             if(mPageChangeProvider instanceof PageChangeProvider) {
-                for(Iterator iter=((PageChangeProvider)mPageChangeProvider).getListeners().iterator(); iter.hasNext(); ) {
-                    pageChangeProvider.addPageChangedListener((IPageChangedListener)iter.next());
-                    iter.remove();
+                List list = ((PageChangeProvider)mPageChangeProvider).getListeners();
+                IPageChangedListener[] listeners = (IPageChangedListener[])list.toArray(new IPageChangedListener[list.size()]);
+                for (int i = 0; i < listeners.length; i++) {
+                    pageChangeProvider.addPageChangedListener(listeners[i]);
+                    list.remove(listeners[i]);
                 }
                 mPageChangeProvider = null;
             }
@@ -132,8 +134,9 @@ public abstract class NSISWizard extends Wizard implements IAdaptable, INewWizar
         AbstractNSISInstallGroup installer = (AbstractNSISInstallGroup)mSettings.getInstaller();
         installer.setExpanded(true,true);
         installer.resetChildTypes(true);
-        for(Iterator iter=mSettingsListeners.iterator(); iter.hasNext(); ) {
-            ((INSISWizardSettingsListener)iter.next()).settingsChanged();
+        INSISWizardSettingsListener[] listeners = (INSISWizardSettingsListener[])mSettingsListeners.toArray(new INSISWizardSettingsListener[mSettingsListeners.size()]);
+        for (int i = 0; i < listeners.length; i++) {
+            listeners[i].settingsChanged();
         }
         IWizardPage[] pages = getPages();
         if(!Common.isEmptyArray(pages)) {
@@ -250,8 +253,9 @@ public abstract class NSISWizard extends Wizard implements IAdaptable, INewWizar
         public void firePageChanged()
         {
             PageChangedEvent pageChangedEvent = new PageChangedEvent(this, mCurrentPage);
-            for (Iterator iter = mListeners.iterator(); iter.hasNext();) {
-                ((IPageChangedListener)iter.next()).pageChanged(pageChangedEvent);
+            IPageChangedListener[] listeners = (IPageChangedListener[])mListeners.toArray(new IPageChangedListener[mListeners.size()]);
+            for (int i = 0; i < listeners.length; i++) {
+                listeners[i].pageChanged(pageChangedEvent);
             }
         }
     }

@@ -55,8 +55,9 @@ public class INIFile implements IDocumentListener, IINIContainer
 
     private void notifyListeners(int event)
     {
-        for (Iterator iter = mListeners.iterator(); iter.hasNext();) {
-            ((IINIFileListener)iter.next()).iniFileChanged(this, event);
+        IINIFileListener[] listeners = (IINIFileListener[])mListeners.toArray(new IINIFileListener[mListeners.size()]);
+        for (int i = 0; i < listeners.length; i++) {
+            listeners[i].iniFileChanged(this, event);
         }
     }
 

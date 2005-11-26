@@ -10,7 +10,8 @@
 package net.sf.eclipsensis.util;
 
 import java.io.File;
-import java.util.regex.Matcher;
+import java.util.HashMap;
+import java.util.Map;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
@@ -20,7 +21,8 @@ import net.sf.eclipsensis.makensis.MakeNSISRunner;
 import net.sf.eclipsensis.settings.NSISPreferences;
 
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.*;
@@ -29,11 +31,28 @@ public class NSISCompileTestUtility
 {
     public static final NSISCompileTestUtility INSTANCE = new NSISCompileTestUtility();
 
-    private NSISCompileRunnable mRunnable = new NSISCompileRunnable();
+    private Map mResultsMap = new HashMap();
 
     private NSISCompileTestUtility()
     {
         super();
+    }
+
+    public MakeNSISResults getCachedResults(File script)
+    {
+        if(script != null && script.exists() && script.isFile()) {
+            if (!MakeNSISRunner.isCompiling()) {
+                MakeNSISResults results = (MakeNSISResults)mResultsMap.get(script);
+                if(results != null) {
+                    if(script.lastModified() > results.getCompileTimestamp()) {
+                        results = null;
+                        mResultsMap.remove(script);
+                    }
+                }
+                return results;
+            }
+        }
+        return null;
     }
 
     public synchronized void compile(IPath script)
@@ -72,9 +91,7 @@ public class NSISCompileTestUtility
                     }
                 }
             }
-            mRunnable.setScript(script);
-            mRunnable.setTest(test);
-            new Thread(mRunnable).start();
+            new Thread(new NSISCompileRunnable(script,test)).start();
         }
     }
 
@@ -122,7 +139,7 @@ public class NSISCompileTestUtility
 
     private String getExeName(File file)
     {
-        MakeNSISResults results = MakeNSISRunner.getResults(file);
+        MakeNSISResults results = getCachedResults(file);
         if(results != null) {
             String outputFileName = results.getOutputFileName();
             if(outputFileName != null) {
@@ -184,36 +201,33 @@ public class NSISCompileTestUtility
         return ResourcesPlugin.getWorkspace().getRoot().getFile(path);
     }
 
-    protected class NSISCompileRunnable implements Runnable, INSISConsoleLineProcessor
+    private class NSISCompileRunnable implements Runnable, INSISConsoleLineProcessor
     {
-        protected String mOutputExeName = null;
-        protected int mWarningCount = 0;
-        protected boolean mErrorMode = false;
-        protected IPath mScript = null;
-        protected boolean mTest = false;
+        private String mOutputExeName = null;
+        private IPath mScript = null;
+        private boolean mTest = false;
+        private INSISConsoleLineProcessor mDelegate;
 
-        protected void setScript(IPath script)
+        public NSISCompileRunnable(IPath script, boolean test)
         {
             mScript = script;
-        }
-
-        protected void setTest(boolean test)
-        {
             mTest = test;
+            mDelegate = new NSISConsoleLineProcessor(mScript);
         }
 
         public void run()
         {
             if(mScript != null) {
-                mWarningCount = 0;
-                mErrorMode = false;
+                reset();
                 MakeNSISResults results;
                 if(mScript.getDevice() == null) {
                     results = MakeNSISRunner.compile(getFile(mScript), EclipseNSISPlugin.getDefault().getConsole(), this);
                 }
                 else {
-                    results = MakeNSISRunner.compile(new File(mScript.toOSString()), NSISPreferences.INSTANCE,
-                                                     EclipseNSISPlugin.getDefault().getConsole(),this, true);
+                    File file = new File(mScript.toOSString());
+                    results = MakeNSISRunner.compile(file, NSISPreferences.INSTANCE,
+                                                     EclipseNSISPlugin.getDefault().getConsole(),this);
+                    mResultsMap.put(file, results);
                 }
                 mOutputExeName = results.getOutputFileName();
                 if(mTest && mOutputExeName != null) {
@@ -222,104 +236,15 @@ public class NSISCompileTestUtility
             }
         }
 
-        /* (non-Javadoc)
-         * @see net.sf.eclipsensis.console.INSISConsoleListener#addedLine(net.sf.eclipsensis.console.NSISConsoleLine)
-         */
         public NSISConsoleLine processText(String text)
         {
-            NSISConsoleLine line;
-            text = text.trim();
-
-            String lText = text.toLowerCase();
-            if(lText.startsWith("error")) { //$NON-NLS-1$
-                Matcher matcher = MakeNSISRunner.MAKENSIS_ERROR_PATTERN.matcher(text);
-                if(matcher.matches()) {
-                    line = NSISConsoleLine.error(text);
-                    setLineInfo(line, new Path(matcher.group(1)), Integer.parseInt(matcher.group(2)));
-                    return line;
-                }
-            }
-            if(lText.startsWith("error ") || lText.startsWith("error:") || //$NON-NLS-1$ //$NON-NLS-2$
-               lText.startsWith("!include: error ") || lText.startsWith("!include: error:")) { //$NON-NLS-1$ //$NON-NLS-2$
-                line = NSISConsoleLine.error(text);
-            }
-            else if(lText.startsWith("warning ") || lText.startsWith("warning:") || lText.startsWith("invalid ")) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                line = NSISConsoleLine.warning(text);
-            }
-            else if(lText.endsWith(" warning:") || lText.endsWith(" warnings:")) { //$NON-NLS-1$ //$NON-NLS-2$
-                Matcher matcher = MakeNSISRunner.MAKENSIS_WARNINGS_PATTERN.matcher(text);
-                if(matcher.matches()) {
-                    mWarningCount = Integer.parseInt(matcher.group(1));
-                }
-                line = NSISConsoleLine.warning(text);
-            }
-            else if(MakeNSISRunner.MAKENSIS_SYNTAX_ERROR_PATTERN.matcher(lText).matches()) {
-                mErrorMode = true;
-                line = NSISConsoleLine.error(text);
-            }
-            else if(mErrorMode) {
-                line = NSISConsoleLine.error(text);
-            }
-            else if(mWarningCount > 0) {
-                mWarningCount--;
-                line = NSISConsoleLine.warning(text);
-            }
-            else {
-                line = NSISConsoleLine.info(text);
-            }
-            if(line.getType() == NSISConsoleLine.TYPE_WARNING) {
-                Matcher matcher = MakeNSISRunner.MAKENSIS_WARNING_PATTERN.matcher(text);
-                if(matcher.matches()) {
-                    setLineInfo(line, new Path(matcher.group(1)), Integer.parseInt(matcher.group(2)));
-                }
-                else if(!text.endsWith("warnings:") && !text.endsWith("warning:")) { //$NON-NLS-1$ //$NON-NLS-2$
-                    setLineInfo(line, (mScript.getDevice() != null?mScript:null), 1);
-                }
-            }
-
-            return line;
+            return mDelegate.processText(text);
         }
 
-        private void setLineInfo(NSISConsoleLine line, IPath path, int lineNum)
-        {
-            if(mScript.getDevice() == null) {
-                if(path == null) {
-                    path = mScript;
-                }
-                else {
-                    if(!path.isAbsolute()) {
-                        path = ResourcesPlugin.getWorkspace().getRoot().getFile(mScript).getParent().getLocation().append(path);
-                    }
-                    else {
-                        IFile file = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(path);
-                        if(file != null) {
-                            path = file.getFullPath();
-                        }
-                    }
-                }
-            }
-            else {
-                if(path != null) {
-                    if(!path.isAbsolute()) {
-                        path = mScript.removeLastSegments(1).append(path);
-                    }
-                }
-                else {
-                    path = mScript;
-                }
-            }
-            line.setSource(path);
-            line.setLineNum(lineNum);
-        }
-
-        /* (non-Javadoc)
-         * @see net.sf.eclipsensis.console.INSISConsoleLineProcessor#reset()
-         */
         public void reset()
         {
             mOutputExeName = null;
-            mWarningCount = 0;
-            mErrorMode = false;
+            mDelegate.reset();
         }
     }
 }

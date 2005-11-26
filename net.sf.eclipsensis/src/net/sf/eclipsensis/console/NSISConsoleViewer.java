@@ -293,7 +293,7 @@ public class NSISConsoleViewer extends TextConsoleViewer
                         {
                             if(end1 >= offset2) {
                                 existingRange.length = offset2-offset1;
-                                if(end2 <= end1) {
+                                if(end1 >= end2) {
                                     iter2.remove();
                                     if(end1 > end2) {
                                         StyleRange range2 = (StyleRange)existingRange.clone();
@@ -307,9 +307,9 @@ public class NSISConsoleViewer extends TextConsoleViewer
                                     range2.start=end1+1;
                                     range2.length=end2-end1;
                                     iter2.set(range2);
+                                    newRange.length = end1-offset2+1;
                                 }
                                 newRange.foreground = existingRange.foreground;
-                                newRange.length = end1-offset2+1;
                                 iter.add(newRange);
                             }
                         }
@@ -324,12 +324,12 @@ public class NSISConsoleViewer extends TextConsoleViewer
                                 iter2.set(range2);
                             }
                             else {
+                                iter2.remove();
                                 newRange.foreground = existingRange.foreground;
                                 iter.set(newRange);
-                                StyleRange range2 = (StyleRange)existingRange.clone();
-                                range2.start = end2+1;
-                                range2.length = end1-end2;
-                                iter.add(range2);
+                                existingRange.start = end2+1;
+                                existingRange.length = end1-end2;
+                                iter.add(existingRange);
                             }
                         }
                         else {
@@ -341,7 +341,6 @@ public class NSISConsoleViewer extends TextConsoleViewer
                                     range2.length=end2-offset1+1; 
                                     range2.foreground = existingRange.foreground;
                                     iter.add(range2);
-                                    iter.next();
                                     existingRange.start=end2+1;
                                     existingRange.length=end1-end2;
                                 }

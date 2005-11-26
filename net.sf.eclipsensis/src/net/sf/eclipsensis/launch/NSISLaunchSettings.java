@@ -12,7 +12,6 @@ package net.sf.eclipsensis.launch;
 import java.util.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.settings.NSISPreferences;
 import net.sf.eclipsensis.settings.NSISSettings;
 import net.sf.eclipsensis.util.Common;
 
@@ -25,17 +24,19 @@ public class NSISLaunchSettings extends NSISSettings
     public static final String SCRIPT = "script"; //$NON-NLS-1$
     public static final String RUN_INSTALLER = "runInstaller"; //$NON-NLS-1$
 
+    private NSISSettings mParent;
     private String mScript = ""; //$NON-NLS-1$
     private boolean mRunInstaller = false;
     private ILaunchConfiguration mLaunchConfig;
 
-    NSISLaunchSettings()
+    NSISLaunchSettings(NSISSettings parent)
     {
-        this(null);
+        this(parent, null);
     }
 
-    NSISLaunchSettings(ILaunchConfiguration launchConfig)
+    NSISLaunchSettings(NSISSettings parent, ILaunchConfiguration launchConfig)
     {
+        mParent = parent;
         setLaunchConfig(launchConfig);
         load();
     }
@@ -89,7 +90,7 @@ public class NSISLaunchSettings extends NSISSettings
      */
     public boolean getBoolean(String name)
     {
-        boolean defaultValue = ((NSISSettings)NSISPreferences.INSTANCE).getBoolean(name);
+        boolean defaultValue = mParent.getBoolean(name);
         if(mLaunchConfig != null) {
             try {
                 return mLaunchConfig.getAttribute(name, defaultValue);
@@ -106,7 +107,7 @@ public class NSISLaunchSettings extends NSISSettings
      */
     public int getInt(String name)
     {
-        int defaultValue = ((NSISSettings)NSISPreferences.INSTANCE).getInt(name);
+        int defaultValue = mParent.getInt(name);
         if(mLaunchConfig != null) {
             try {
                 return mLaunchConfig.getAttribute(name, defaultValue);
@@ -123,7 +124,7 @@ public class NSISLaunchSettings extends NSISSettings
      */
     public String getString(String name)
     {
-        String defaultValue = ((NSISSettings)NSISPreferences.INSTANCE).getString(name);
+        String defaultValue = mParent.getString(name);
         if(mLaunchConfig != null) {
             try {
                 return mLaunchConfig.getAttribute(name, defaultValue);
@@ -285,6 +286,6 @@ public class NSISLaunchSettings extends NSISSettings
                 e.printStackTrace();
             }
         }
-        return NSISPreferences.INSTANCE.loadObject(name);
+        return mParent.loadObject(name);
     }
 }

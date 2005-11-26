@@ -31,6 +31,8 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 public class FileSelectionDialog extends TitleAreaDialog
 {
     private static final Object[] EMPTY_ARRAY = new Object[0];
+    private static final int VIEWER_WIDTH = 200;
+    private static final int VIEWER_HEIGHT = 300;
     
     private IFilter mFilter = null;
     private IFile mFile = null;
@@ -90,26 +92,27 @@ public class FileSelectionDialog extends TitleAreaDialog
         GridLayout layout = new GridLayout(1,true);
         composite.setLayout(layout);
 
-        SashForm form = new SashForm(composite,SWT.VERTICAL);
+        SashForm form = new SashForm(composite,SWT.HORIZONTAL);
         form.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true));
         
         layout = new GridLayout(1,true);
         form.setLayout(layout);
         
         composite = new Composite(form,SWT.NONE);
-        composite.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false));
+        composite.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true));
         layout = new GridLayout(1,true);
         layout.marginHeight = 0;
         layout.marginWidth = 0;
-        layout.verticalSpacing = 0;
-        layout.horizontalSpacing = 0;
         composite.setLayout(layout);
         
         Label l = new Label(composite,SWT.NONE);
         l.setText(EclipseNSISPlugin.getResourceString("fileselection.parent.folder.label")); //$NON-NLS-1$
         l.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false));
         Tree tree = new Tree(composite,SWT.SINGLE|SWT.H_SCROLL|SWT.V_SCROLL|SWT.BORDER);
-        tree.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true));
+        GridData gridData = new GridData(SWT.FILL,SWT.FILL,true,true);
+        gridData.widthHint = VIEWER_WIDTH;
+        gridData.heightHint = VIEWER_HEIGHT;
+        tree.setLayoutData(gridData);
         final TreeViewer tv = new TreeViewer(tree);
         tv.setContentProvider(new ContainerContentProvider());
         tv.setLabelProvider(WorkbenchLabelProvider.getDecoratingWorkbenchLabelProvider());
@@ -121,15 +124,16 @@ public class FileSelectionDialog extends TitleAreaDialog
         layout = new GridLayout(1,true);
         layout.marginHeight = 0;
         layout.marginWidth = 0;
-        layout.verticalSpacing = 0;
-        layout.horizontalSpacing = 0;
         composite.setLayout(layout);
         
         l = new Label(composite,SWT.NONE);
         l.setText(EclipseNSISPlugin.getResourceString("fileselection.file.label")); //$NON-NLS-1$
         l.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false));
         Table table = new Table(composite,SWT.SINGLE|SWT.H_SCROLL|SWT.V_SCROLL|SWT.BORDER|SWT.FULL_SELECTION);
-        table.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true));
+        gridData = new GridData(SWT.FILL,SWT.FILL,true,true);
+        gridData.widthHint = VIEWER_WIDTH;
+        gridData.heightHint = VIEWER_HEIGHT;
+        table.setLayoutData(gridData);
         table.setLinesVisible(false);
         final TableViewer tv2 = new TableViewer(table);
         tv2.setContentProvider(new FilesContentProvider());

@@ -10,6 +10,7 @@
 package net.sf.eclipsensis.actions;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.makensis.*;
 import net.sf.eclipsensis.makensis.IMakeNSISRunListener;
 import net.sf.eclipsensis.makensis.MakeNSISRunner;
 
@@ -99,11 +100,7 @@ public abstract class NSISScriptAction extends NSISAction implements IMakeNSISRu
                 mInput.getFileExtension().equalsIgnoreCase(NSI_EXTENSION));
     }
 
-    public void started()
-    {
-    }
-
-    public void stopped()
+    public void eventOccurred(MakeNSISRunEvent event)
     {
     }
 }

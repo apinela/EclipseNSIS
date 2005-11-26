@@ -485,9 +485,20 @@
          id="%popup.test.command.id"
          defaultHandler="net.sf.eclipsensis.handlers.NSISTestHandler"
          categoryId="%category.id"/>
+      <command
+            name="NSIS Script Launch"
+            description="NSIS Script"
+            categoryId="org.eclipse.debug.ui.category.run"
+            id="net.sf.eclipsensis.launch.nsisLaunchShortcut.run">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.bindings">
+      <key
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            commandId="net.sf.eclipsensis.launch.nsisLaunchShortcut.run"
+            contextId="org.eclipse.ui.globalScope"
+            sequence="Alt+Shift+X N"/>
       <key
           schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
           commandId="%insert.template.command.id"
@@ -745,23 +756,12 @@
             extensions="%nsis.extensions"/>
    </extension>
    <extension
-         id="nsisLaunchConfigTypes"
          point="org.eclipse.debug.core.launchConfigurationTypes">
       <launchConfigurationType
             delegate="net.sf.eclipsensis.launch.NSISLaunchConfigDelegate"
-            id="net.sf.eclipsensis.launch.nsisWorkspaceLaunchConfigType"
+            id="net.sf.eclipsensis.launch.nsisLaunchConfigType"
             modes="run"
-            name="EclipseNSIS Workspace Script"
-            public="true">
-         <fileExtension
-               default="true"
-               extension="nsi"/>
-      </launchConfigurationType>
-      <launchConfigurationType
-            delegate="net.sf.eclipsensis.launch.NSISLaunchConfigDelegate"
-            id="net.sf.eclipsensis.launch.nsisExternalLaunchConfigType"
-            modes="run"
-            name="EclipseNSIS External Script"
+            name="NSIS Script"
             public="true">
          <fileExtension
                default="true"
@@ -771,30 +771,52 @@
    <extension point="org.eclipse.debug.ui.launchConfigurationTypeImages">
       <launchConfigurationTypeImage
             icon="icons/nsis.gif"
-            configTypeID="net.sf.eclipsensis.launch.nsisWorkspaceLaunchConfigType"
-            id="net.sf.eclipsensis.launch.nsisWorkspaceLaunchConfigTypeImage"/>
-      <launchConfigurationTypeImage
-            icon="icons/nsis_external.gif"
-            configTypeID="net.sf.eclipsensis.launch.nsisExternalLaunchConfigType"
-            id="net.sf.eclipsensis.launch.nsisExternalLaunchConfigTypeImage"/>
+            configTypeID="net.sf.eclipsensis.launch.nsisLaunchConfigType"
+            id="net.sf.eclipsensis.launch.nsisLaunchConfigTypeImage"/>
    </extension>
    <extension point="org.eclipse.debug.ui.launchConfigurationTabGroups">
       <launchConfigurationTabGroup
-            type="net.sf.eclipsensis.launch.nsisWorkspaceLaunchConfigType"
-            class="net.sf.eclipsensis.launch.NSISWorkspaceLaunchConfigTabGroup"
-            id="net.sf.eclipsensis.launch.nsisWorkspaceLaunchConfigTabGroup"/>
-      <launchConfigurationTabGroup
-            type="net.sf.eclipsensis.launch.nsisExternalLaunchConfigType"
-            class="net.sf.eclipsensis.launch.NSISExternalLaunchConfigTabGroup"
-            id="net.sf.eclipsensis.launch.nsisExternalLaunchConfigTabGroup"/>
+            type="net.sf.eclipsensis.launch.nsisLaunchConfigType"
+            class="net.sf.eclipsensis.launch.NSISLaunchConfigTabGroup"
+            id="net.sf.eclipsensis.launch.nsisLaunchConfigTabGroup"/>
    </extension>
    <extension
-         id="net.sf.eclipsensis.console.nsisConsoleFactory"
-         name="EclipseNSIS Console Factories"
          point="org.eclipse.ui.console.consoleFactories">
       <consoleFactory
             class="net.sf.eclipsensis.console.NSISConsoleFactory"
             icon="icons/nsis.gif"
             label="EclipseNSIS Console"/>
+   </extension>
+   <extension point="org.eclipse.core.expressions.propertyTesters">
+      <propertyTester
+            id="net.sf.eclipsensis.IPathEditorInputTester"
+            type="org.eclipse.ui.IPathEditorInput"
+            namespace="net.sf.eclipsensis"
+            properties="pathExtensionEquals"
+ 	        class="net.sf.eclipsensis.util.PathEditorInputTester">
+      </propertyTester>
+   </extension>
+   <extension
+         point="org.eclipse.debug.ui.launchShortcuts">
+      <shortcut
+            class="net.sf.eclipsensis.launch.NSISLaunchShortcut"
+            icon="icons/nsis.gif"
+            id="net.sf.eclipsensis.launch.nsisLaunchShortcut"
+            label="NSIS Script"
+            modes="run">
+         <contextualLaunch>
+            <enablement>
+               <with variable="selection">
+                  <count value="1"/>
+                  <iterate>
+                     <or>
+                        <test property="org.eclipse.debug.ui.matchesPattern" value="*.nsi"/>
+                        <test property="net.sf.eclipsensis.pathExtensionEquals" value="nsi"/>
+                     </or>
+                  </iterate>
+               </with>
+            </enablement>
+  		 </contextualLaunch>
+      </shortcut>
    </extension>
 </plugin>

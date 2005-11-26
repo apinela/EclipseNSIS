@@ -132,9 +132,9 @@ public abstract class InstallOptionsElement implements IPropertySource, Cloneabl
     protected void fireModelCommand(Command cmd)
     {
         ModelCommandEvent e = new ModelCommandEvent(this,cmd);
-        for (Iterator iter = mModelCommandListeners.iterator(); iter.hasNext();) {
-            IModelCommandListener element = (IModelCommandListener)iter.next();
-            element.executeModelCommand(e);
+        IModelCommandListener[] listeners = (IModelCommandListener[])mModelCommandListeners.toArray(new IModelCommandListener[mModelCommandListeners.size()]);
+        for (int i = 0; i < listeners.length; i++) {
+            listeners[i].executeModelCommand(e);
         }
     }
 

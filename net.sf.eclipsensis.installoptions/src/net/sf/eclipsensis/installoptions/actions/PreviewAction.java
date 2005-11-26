@@ -11,8 +11,11 @@ package net.sf.eclipsensis.installoptions.actions;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
+import java.net.JarURLConnection;
 import java.net.URL;
 import java.util.*;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
@@ -31,6 +34,7 @@ import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.gef.Disposable;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
@@ -46,15 +50,7 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
 {
     public static final String PREVIEW_CLASSIC_ID = "net.sf.eclipsensis.installoptions.preview_classic"; //$NON-NLS-1$
     public static final String PREVIEW_MUI_ID = "net.sf.eclipsensis.installoptions.preview_mui"; //$NON-NLS-1$
-    private static INSISConsole cDummyConsole = new INSISConsole() {
-        public void appendLine(NSISConsoleLine line)
-        {
-        }
-
-        public void clearConsole()
-        {
-        }
-    };
+    private static INSISConsole cDummyConsole = new NullNSISConsole();
 
     private IInstallOptionsEditor mEditor;
     private PreviewSettings mSettings = new PreviewSettings();
@@ -89,14 +85,16 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
         setEnabled((mEditor != null && EclipseNSISPlugin.getDefault().isConfigured() && !MakeNSISRunner.isCompiling()));
     }
 
-    public void started()
+    public void eventOccurred(MakeNSISRunEvent event)
     {
-        setEnabled(false);
-    }
-
-    public void stopped()
-    {
-        updateEnabled();
+        switch(event.getType()) {
+            case MakeNSISRunEvent.STARTED:
+                setEnabled(false);
+                break;
+            case MakeNSISRunEvent.STOPPED:
+                updateEnabled();
+                break;
+        }
     }
 
     public void scriptUpdated()
@@ -290,12 +288,33 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
                 previewScript.delete();
             }
             else {
-                if(previewScript.lastModified() < bundle.getLastModified()) {
-                    previewScript.delete();
+                try {
+                    //Make sure the latest version of preview.nsi is used.
+                    URL url = Platform.resolve(bundle.getEntry("/"));
+                    if (url.getProtocol().equalsIgnoreCase("file")) {
+                        File original = new File(url.getFile(), "preview/preview.nsi");
+                        if (original.exists() && original.isFile() && original.lastModified() <= previewScript.lastModified()) {
+                            return previewScript;
+                        }
+                    }
+                    else if (url.getProtocol().equals("jar")) {
+                        JarURLConnection conn = (JarURLConnection)url.openConnection();
+                        JarFile jarFile = conn.getJarFile();
+                        JarEntry entry = jarFile.getJarEntry("preview/preview.nsi");
+                        if (entry != null && !entry.isDirectory() && entry.getTime() <= previewScript.lastModified()) {
+                            return previewScript;
+                        }
+                    }
+                    else {
+                        if (previewScript.lastModified() >= bundle.getLastModified()) {
+                            return previewScript;
+                        }
+                    }
                 }
-                else {
-                    return previewScript;
+                catch (Exception e) {
+                    EclipseNSISPlugin.getDefault().log(e);
                 }
+                previewScript.delete();
             }
         }
         URL url = bundle.getEntry("/preview/preview.nsi"); //$NON-NLS-1$

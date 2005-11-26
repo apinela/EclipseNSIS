@@ -67,8 +67,9 @@ public abstract class NSISSettingsEditor
     
     protected void fireChanged()
     {
-        for (Iterator iter = mListeners.iterator(); iter.hasNext();) {
-            ((INSISSettingsEditorListener)iter.next()).settingsChanged();
+        INSISSettingsEditorListener[] listeners = (INSISSettingsEditorListener[])mListeners.toArray(new INSISSettingsEditorListener[mListeners.size()]);
+        for (int i = 0; i < listeners.length; i++) {
+            listeners[i].settingsChanged();
         }
     }
 

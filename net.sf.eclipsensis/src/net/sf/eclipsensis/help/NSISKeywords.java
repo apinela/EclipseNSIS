@@ -459,9 +459,9 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
                 monitor = new SubProgressMonitor(monitor, 10);
                 monitor.beginTask(EclipseNSISPlugin.getResourceString("updating.keywords.message"), mListeners.size()); //$NON-NLS-1$
             }
-            for (Iterator iter = mListeners.iterator(); iter.hasNext();) {
-                INSISKeywordsListener listener = (INSISKeywordsListener)iter.next();
-                listener.keywordsChanged();
+            INSISKeywordsListener[] listeners = (INSISKeywordsListener[])mListeners.toArray(new INSISKeywordsListener[mListeners.size()]);
+            for (int i = 0; i < listeners.length; i++) {
+                listeners[i].keywordsChanged();
                 if(monitor != null) {
                     monitor.worked(1);
                 }

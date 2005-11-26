@@ -18,7 +18,6 @@ import net.sf.eclipsensis.settings.*;
 import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.core.resources.*;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -388,7 +387,7 @@ class NSISTab extends AbstractLaunchConfigurationTab implements INSISSettingsEdi
 
         protected NSISSettings loadSettings()
         {
-            return new NSISLaunchSettings();
+            return new NSISLaunchSettings(NSISPreferences.INSTANCE);
         }
     }
 }

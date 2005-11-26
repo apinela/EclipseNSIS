@@ -132,8 +132,9 @@ public class InstallOptionsModel implements IPropertyChangeListener
 
     private void notifyListeners()
     {
-        for (Iterator iter = mListeners.iterator(); iter.hasNext();) {
-            ((IModelListener)iter.next()).modelChanged();
+        IModelListener[] listeners = (IModelListener[])mListeners.toArray(new IModelListener[mListeners.size()]);
+        for (int i = 0; i < listeners.length; i++) {
+            listeners[i].modelChanged();
         }
     }
 

@@ -133,8 +133,9 @@ public class InstallOptionsTemplateManager extends AbstractTemplateManager
     private void notifyListeners(int type, InstallOptionsTemplate oldTemplate, InstallOptionsTemplate newTemplate)
     {
         InstallOptionsTemplateEvent event = new InstallOptionsTemplateEvent(type, oldTemplate, newTemplate);
-        for (Iterator iter = mListeners.iterator(); iter.hasNext();) {
-            ((IInstallOptionsTemplateListener)iter.next()).templateChanged(event);
+        IInstallOptionsTemplateListener[] listeners = (IInstallOptionsTemplateListener[])mListeners.toArray(new IInstallOptionsTemplateListener[mListeners.size()]);
+        for (int i = 0; i < listeners.length; i++) {
+            listeners[i].templateChanged(event);
         }
     }
 

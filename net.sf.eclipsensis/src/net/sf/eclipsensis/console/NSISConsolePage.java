@@ -14,6 +14,7 @@ package net.sf.eclipsensis.console;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.actions.NSISCancelAction;
+import net.sf.eclipsensis.makensis.*;
 import net.sf.eclipsensis.makensis.IMakeNSISRunListener;
 import net.sf.eclipsensis.makensis.MakeNSISRunner;
 import net.sf.eclipsensis.util.Common;
@@ -54,14 +55,16 @@ public class NSISConsolePage extends TextConsolePage implements IMakeNSISRunList
         updateActions();
     }
 
-    public void started()
+    public void eventOccurred(MakeNSISRunEvent event)
     {
-        setIsCompiling(true);
-    }
-
-    public void stopped()
-    {
-        setIsCompiling(false);
+        switch(event.getType()) {
+            case MakeNSISRunEvent.STARTED:
+                setIsCompiling(true);
+                break;
+            case MakeNSISRunEvent.STOPPED:
+                setIsCompiling(false);
+                break;
+        }
     }
 
     private synchronized void setIsCompiling(boolean isCompiling)
