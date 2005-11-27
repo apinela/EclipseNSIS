@@ -18,11 +18,13 @@ import net.sf.eclipsensis.settings.*;
 import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.variables.IStringVariableManager;
+import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
+import org.eclipse.debug.ui.StringVariableSelectionDialog;
 import org.eclipse.jface.viewers.IFilter;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
@@ -37,7 +39,9 @@ class NSISTab extends AbstractLaunchConfigurationTab implements INSISSettingsEdi
 {
     private static final String[] FILTER_EXTENSIONS = new String[] {"*."+INSISConstants.NSI_EXTENSION}; //$NON-NLS-1$
     private static final String[] FILTER_NAMES = new String[] {EclipseNSISPlugin.getResourceString("launchconfig.nsis.script.filtername")}; //$NON-NLS-1$
+ 
     private LaunchSettingsEditor mSettingsEditor;
+    private IStringVariableManager mStringVariableManager = VariablesPlugin.getDefault().getStringVariableManager();
     
     public NSISTab()
     {
@@ -134,29 +138,32 @@ class NSISTab extends AbstractLaunchConfigurationTab implements INSISSettingsEdi
     
     private boolean validateScript(String script)
     {
-        return checkWorkspaceFile(script) != null || checkExternalFile(script) != null;
+        try {
+            return checkExternalFile(mStringVariableManager.performStringSubstitution(script)) != null;
+        }
+        catch (Exception e) {
+            EclipseNSISPlugin.getDefault().log(e);
+            return false;
+        }
     }
     
     private IFile checkWorkspaceFile(String script)
     {
-        IFile file = null;
-        if(!Common.isEmpty(script) && script.indexOf('\\') == -1) {
+        if(!Common.isEmpty(script)) {
             IPath path = new Path(script);
-            if(path.getDevice() == null) {
-                if(INSISConstants.NSI_EXTENSION.equalsIgnoreCase(path.getFileExtension())) {
-                    IResource resource = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
-                    if(resource != null && resource instanceof IFile) {
-                        file = (IFile)resource;
-                    }
+            if(INSISConstants.NSI_EXTENSION.equalsIgnoreCase(path.getFileExtension())) {
+                IFile file = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(path);
+                if(file != null && file.exists()) {
+                    return file;
                 }
             }
         }
-        return file;
+        return null;
     }
 
     private File checkExternalFile(String script)
     {
-        if(!Common.isEmpty(script) && script.indexOf('/') == -1) {
+        if(!Common.isEmpty(script)) {
             File file = new File(script);
             if(INSISConstants.NSI_EXTENSION.equalsIgnoreCase(Common.getFileExtension(file)) &&
                file.exists() && file.isAbsolute() && file.isFile()) {
@@ -168,9 +175,9 @@ class NSISTab extends AbstractLaunchConfigurationTab implements INSISSettingsEdi
 
     private class LaunchSettingsEditor extends NSISSettingsEditor
     {
-        Text mScript = null;
-        Button mRunInstaller = null;
-        boolean mHandlingScriptChange = false;
+        private Text mScript = null;
+        private Button mRunInstaller = null;
+        private boolean mHandlingScriptChange = false;
         private IFilter mFilter = new IFilter() {
             public boolean select(Object toTest)
             {
@@ -313,9 +320,9 @@ class NSISTab extends AbstractLaunchConfigurationTab implements INSISSettingsEdi
 
             Composite buttons = new Composite(composite,SWT.NONE);
             GridData gridData = new GridData(SWT.RIGHT, SWT.CENTER, false, false);
-            gridData.horizontalSpan = 2;
+            gridData.horizontalSpan = 3;
             buttons.setLayoutData(gridData);
-            layout = new GridLayout(2,true);
+            layout = new GridLayout(3,true);
             layout.marginHeight=0;
             layout.marginWidth=0;
             buttons.setLayout(layout);
@@ -323,18 +330,26 @@ class NSISTab extends AbstractLaunchConfigurationTab implements INSISSettingsEdi
             workspaceButton.addSelectionListener(new SelectionAdapter() {
                 public void widgetSelected(SelectionEvent e)
                 {
-                    handleBrowseSelected(workspaceButton.getShell(), true);
+                    handleBrowseWorkspace(workspaceButton.getShell());
                 }
             });
-            workspaceButton.setLayoutData(new GridData(SWT.CENTER,SWT.CENTER,false,false));
+            workspaceButton.setLayoutData(new GridData(SWT.FILL,SWT.CENTER,false,false));
             final Button filesystemButton = createButton(buttons, EclipseNSISPlugin.getResourceString("launchconfig.browse.filesystem.label"), ""); //$NON-NLS-1$ //$NON-NLS-2$
             filesystemButton.addSelectionListener(new SelectionAdapter() {
                 public void widgetSelected(SelectionEvent e)
                 {
-                    handleBrowseSelected(workspaceButton.getShell(), false);
+                    handleBrowseFilesystem(filesystemButton.getShell());
                 }
             });
-            filesystemButton.setLayoutData(new GridData(SWT.CENTER,SWT.CENTER,false,false));
+            filesystemButton.setLayoutData(new GridData(SWT.FILL,SWT.CENTER,false,false));
+            final Button variablesButton = createButton(buttons, EclipseNSISPlugin.getResourceString("launchconfig.browse.variables.label"), ""); //$NON-NLS-1$  //$NON-NLS-2$
+            variablesButton.addSelectionListener(new SelectionAdapter() {
+                public void widgetSelected(SelectionEvent e)
+                {
+                    handleBrowseVariables(variablesButton.getShell());
+                }
+            });
+            variablesButton.setLayoutData(new GridData(SWT.FILL,SWT.CENTER,false,false));
             
             mRunInstaller = createCheckBox(composite, EclipseNSISPlugin.getResourceString("launchconfig.run.installer.label"), "", ((NSISLaunchSettings)getSettings()).getRunInstaller()); //$NON-NLS-1$ //$NON-NLS-2$
             gridData = new GridData(SWT.FILL, SWT.CENTER, false, false);
@@ -343,48 +358,57 @@ class NSISTab extends AbstractLaunchConfigurationTab implements INSISSettingsEdi
             return composite;
         }
 
-        private void handleBrowseSelected(Shell shell, boolean isWorkspace)
+        private void handleBrowseWorkspace(Shell shell)
         {
-            String script = mScript.getText(); 
-            script = browseForScript(shell, script, isWorkspace);
-            if (!Common.isEmpty(script)) {
-                if(validateScript(script)) {
-                    mScript.setText(script);
-                    enableControls(true);
-                }
-                else {
-                    Common.openError(shell,
-                            EclipseNSISPlugin.getResourceString("launchconfig.nsis.script.prompt"),  //$NON-NLS-1$
-                            EclipseNSISPlugin.getShellImage());
-                }
+            IFile ifile;
+            try {
+                ifile = checkWorkspaceFile(mStringVariableManager.performStringSubstitution(mScript.getText()));
+            }
+            catch (CoreException e) {
+                ifile = null;
+                EclipseNSISPlugin.getDefault().log(e);
+            }
+            FileSelectionDialog dialog = new FileSelectionDialog(shell,ifile,mFilter);
+            if(dialog.open() == Window.OK) {
+                mScript.setText(mStringVariableManager.generateVariableExpression("workspace_loc",dialog.getFile().getFullPath().toString()));
             }
         }
 
-        private String browseForScript(Shell shell, String script, boolean isWorkspace)
+        private void handleBrowseFilesystem(Shell shell)
         {
-            if(isWorkspace) {
-                FileSelectionDialog dialog = new FileSelectionDialog(shell,checkWorkspaceFile(script),
-                                                                     mFilter);
-                if(dialog.open() == Window.OK) {
-                    return dialog.getFile().getFullPath().toString();
-                }
-            }
-            else {
-                FileDialog dialog = new FileDialog(shell,SWT.OPEN);
-                dialog.setFilterExtensions(FILTER_EXTENSIONS);
-                dialog.setFilterNames(FILTER_NAMES);
+            FileDialog dialog = new FileDialog(shell,SWT.OPEN);
+            dialog.setFilterExtensions(FILTER_EXTENSIONS);
+            dialog.setFilterNames(FILTER_NAMES);
 
-                File file = checkExternalFile(script);
-                if(file != null) {
-                    dialog.setFileName(file.getName());
-                    dialog.setFilterPath(file.getParentFile().getAbsolutePath());
-                }
-                
-                return dialog.open();
+            File file;
+            try {
+                file = checkExternalFile(mStringVariableManager.performStringSubstitution(mScript.getText()));
             }
-            return null;
+            catch (Exception e) {
+                file = null;
+                EclipseNSISPlugin.getDefault().log(e);
+            }
+            if(file != null) {
+                dialog.setFileName(file.getName());
+                dialog.setFilterPath(file.getParentFile().getAbsolutePath());
+            }
+            
+            String filename = dialog.open();
+            if(filename != null) {
+                mScript.setText(filename);
+            }
         }
 
+        private void handleBrowseVariables(Shell shell)
+        {
+            StringVariableSelectionDialog dialog = new StringVariableSelectionDialog(shell);
+            dialog.open();
+            String variable = dialog.getVariableExpression();
+            if (variable != null) {
+                mScript.insert(variable);
+            }
+        }
+        
         protected NSISSettings loadSettings()
         {
             return new NSISLaunchSettings(NSISPreferences.INSTANCE);

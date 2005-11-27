@@ -302,7 +302,7 @@ public class MakeNSISRunner implements INSISConstants
         return compile(script, settings, console, outputProcessor);
     }
 
-    public static synchronized MakeNSISResults compile(IPath script, NSISSettings settings, INSISConsole console, INSISConsoleLineProcessor outputProcessor)
+    public static synchronized MakeNSISResults compile(final IPath script, NSISSettings settings, INSISConsole console, INSISConsoleLineProcessor outputProcessor)
     {
         MakeNSISResults results = null;
         if (script != null) {

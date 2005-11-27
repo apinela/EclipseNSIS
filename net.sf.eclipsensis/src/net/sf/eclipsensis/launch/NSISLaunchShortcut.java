@@ -21,6 +21,8 @@ import net.sf.eclipsensis.util.Common;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.variables.IStringVariableManager;
+import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.*;
 import org.eclipse.debug.ui.*;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -36,11 +38,13 @@ public class NSISLaunchShortcut implements ILaunchShortcut
 {
     private ILaunchManager mLaunchManager;
     private ILaunchConfigurationType mConfigType;
+    private IStringVariableManager mStringVariableManager;
 
     public NSISLaunchShortcut()
     {
         mLaunchManager = DebugPlugin.getDefault().getLaunchManager();
         mConfigType = mLaunchManager.getLaunchConfigurationType("net.sf.eclipsensis.launch.nsisLaunchConfigType");
+        mStringVariableManager = VariablesPlugin.getDefault().getStringVariableManager();
     }
 
     public void launch(final ISelection selection, String mode)
@@ -57,7 +61,10 @@ public class NSISLaunchShortcut implements ILaunchShortcut
     {
         if(mode.equals(ILaunchManager.RUN_MODE) && editor != null) {
             IEditorInput input = editor.getEditorInput();
-            if(input instanceof IPathEditorInput) {
+            if(input instanceof IFileEditorInput) {
+                launch(((IFileEditorInput)input).getFile().getFullPath(), mode);
+            }
+            else if(input instanceof IPathEditorInput) {
                 launch(((IPathEditorInput)input).getPath(), mode);
             }
         }
@@ -83,12 +90,17 @@ public class NSISLaunchShortcut implements ILaunchShortcut
                 if (!Common.isEmptyArray(configs)) {
                     for (int i = 0; i < configs.length; i++) {
                         ILaunchConfiguration config = configs[i];
-                        String script = config.getAttribute(NSISLaunchSettings.SCRIPT, "");
-                        if(!Common.isEmpty(script)) {
-                            String fullname2 = getLocation(new Path(script));
-                            if(Common.stringsAreEqual(fullname, fullname2, true)) {
-                                candidateConfigs.add(config);
+                        try {
+                            String script = config.getAttribute(NSISLaunchSettings.SCRIPT, "");
+                            if (!Common.isEmpty(script)) {
+                                String fullname2 = getLocation(new Path(mStringVariableManager.performStringSubstitution(script)));
+                                if (Common.stringsAreEqual(fullname, fullname2, true)) {
+                                    candidateConfigs.add(config);
+                                }
                             }
+                        }
+                        catch (CoreException e) {
+                            EclipseNSISPlugin.getDefault().log(e);
                         }
                     }
                 }
@@ -116,7 +128,7 @@ public class NSISLaunchShortcut implements ILaunchShortcut
         NSISLaunchSettings settings;
         String script;
         if(path.getDevice() == null) {
-            script = path.toString();
+            script = mStringVariableManager.generateVariableExpression("workspace_loc",path.toString());
             IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
             settings = new NSISLaunchSettings(NSISProperties.getProperties(file));
         }

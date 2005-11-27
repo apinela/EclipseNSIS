@@ -61,13 +61,18 @@ public class NSISLaunchConfigDelegate implements ILaunchConfigurationDelegate
         if (Common.isEmpty(script)) {
             throw new CoreException(new Status(IStatus.ERROR,INSISConstants.PLUGIN_ID,IStatus.ERROR,"No script specified",null));
         }
-        final IPath path = new Path(script);
+        IStringVariableManager stringVariableManager = VariablesPlugin.getDefault().getStringVariableManager();
+        IPath path = new Path(stringVariableManager.performStringSubstitution(script));
+        IFile ifile = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(path);
+        if(ifile != null) {
+            path = ifile.getFullPath(); 
+        }
+
         if (output != null) {
-            IStringVariableManager stringVariableManager = VariablesPlugin.getDefault().getStringVariableManager();
             output = stringVariableManager.performStringSubstitution(output);
         }
 
-        IFile ifile = null;
+        ifile = null;
         if (output != null) {
             ifile = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(new Path(output));
 

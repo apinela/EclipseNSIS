@@ -536,9 +536,15 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
     {
         ILog log = getLog();
         if(log != null) {
-            String message = t.getMessage();
-            log.log(new Status(IStatus.ERROR,PLUGIN_ID,IStatus.ERROR,
-                         message==null?t.getClass().getName():message,t));
+            IStatus status;
+            if(t instanceof CoreException) {
+                status = ((CoreException)t).getStatus();
+            }
+            else {
+                String message = t.getMessage();
+                status = new Status(IStatus.ERROR,PLUGIN_ID,IStatus.ERROR, message==null?t.getClass().getName():message,t);
+            }
+            log.log(status);
         }
         else {
             t.printStackTrace();
