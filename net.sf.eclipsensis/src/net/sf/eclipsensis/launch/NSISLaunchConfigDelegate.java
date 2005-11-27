@@ -49,12 +49,14 @@ public class NSISLaunchConfigDelegate implements ILaunchConfigurationDelegate
         String output = null;
         boolean append = false;
         boolean runInstaller = false;
+        String encoding;
 
         script = configuration.getAttribute(NSISLaunchSettings.SCRIPT, "");
         runInstaller = configuration.getAttribute(NSISLaunchSettings.RUN_INSTALLER, false);
         useConsole = configuration.getAttribute(IDebugUIConstants.ATTR_CAPTURE_IN_CONSOLE, true);
         output = configuration.getAttribute(IDebugUIConstants.ATTR_CAPTURE_IN_FILE, (String)null);
         append = configuration.getAttribute(IDebugUIConstants.ATTR_APPEND_TO_FILE, false);
+        encoding = configuration.getAttribute(IDebugUIConstants.ATTR_CONSOLE_ENCODING, (String)null);
 
         if (Common.isEmpty(script)) {
             throw new CoreException(new Status(IStatus.ERROR,INSISConstants.PLUGIN_ID,IStatus.ERROR,"No script specified",null));
@@ -107,6 +109,10 @@ public class NSISLaunchConfigDelegate implements ILaunchConfigurationDelegate
             }
         }
 
+        String defaultEncoding = WorkbenchEncoding.getWorkbenchDefaultEncoding();
+        if(encoding != null && !encoding.equals(defaultEncoding)) {
+            console = new EncodingNSISConsole(console, encoding);
+        }
         NSISSettings settings = new NSISLaunchSettings(NSISPreferences.INSTANCE, configuration);
         final NSISLaunchProcess process = new NSISLaunchProcess(path, launch);
         launch.addProcess(process);
@@ -158,7 +164,7 @@ public class NSISLaunchConfigDelegate implements ILaunchConfigurationDelegate
                 }
             }
             if(useConsole && outputFile != null) {
-                final String filename;
+                String filename;
                 final IEditorInput editorInput;
                 IEditorDescriptor descriptor;
                 final IEditorRegistry registry = PlatformUI.getWorkbench().getEditorRegistry();
@@ -174,6 +180,9 @@ public class NSISLaunchConfigDelegate implements ILaunchConfigurationDelegate
                 }
                 if(descriptor == null) {
                     descriptor = registry.findEditor("org.eclipse.ui.DefaultTextEditor");
+                }
+                if(descriptor == null) {
+                    descriptor = registry.findEditor(IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
                 }
                 if (descriptor != null) {
                     final String editorId = descriptor.getId();
@@ -197,11 +206,26 @@ public class NSISLaunchConfigDelegate implements ILaunchConfigurationDelegate
                             }
                         }
                     };
-                    final String message = MessageFormat.format("[Console output redirected to file: {0}]", new String[]{filename});
+                    String message = MessageFormat.format("[Console output redirected to file: {0}]", new String[]{filename});
                     final NSISConsole nsisConsole = EclipseNSISPlugin.getDefault().getConsole();
+                    final String ffilename;
+                    if(encoding != null && !encoding.equals(defaultEncoding)) {
+                        String temp;
+                        try {
+                            message = new String(message.getBytes(), encoding);
+                            temp = new String(filename.getBytes(), encoding);
+                        }
+                        catch (Exception e) {
+                            temp = filename;
+                        }
+                        ffilename = temp;
+                    }
+                    else {
+                        ffilename = filename;
+                    }
+                    System.out.println(ffilename);
                     nsisConsole.addPatternMatchListener(new IPatternMatchListener() {
-                        String mPattern = escape(filename);
-                        String mQualifier = message.substring(0, Math.max(10,message.length()));
+                        String mPattern = escape(ffilename);
                         
                         private String escape(String path) 
                         {
@@ -248,7 +272,7 @@ public class NSISLaunchConfigDelegate implements ILaunchConfigurationDelegate
 
                         public String getLineQualifier() 
                         {
-                            return mQualifier;
+                            return null;
                         }
 
                         public void connect(TextConsole console) 

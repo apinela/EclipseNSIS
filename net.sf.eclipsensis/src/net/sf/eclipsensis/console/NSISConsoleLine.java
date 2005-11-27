@@ -46,6 +46,13 @@ public class NSISConsoleLine
         mType = type;
     }
 
+    public NSISConsoleLine(String text, int type, IPath source, int lineNum)
+    {
+        this(text, type);
+        setSource(source);
+        setLineNum(lineNum);
+    }
+
     public String toString()
     {
         return mText;

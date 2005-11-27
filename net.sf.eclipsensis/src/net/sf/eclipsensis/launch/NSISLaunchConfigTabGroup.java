@@ -10,6 +10,7 @@
 package net.sf.eclipsensis.launch;
 
 import org.eclipse.debug.ui.*;
+import org.eclipse.debug.ui.CommonTab;
 
 public class NSISLaunchConfigTabGroup extends AbstractLaunchConfigurationTabGroup
 {
