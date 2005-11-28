@@ -17,9 +17,10 @@
   <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 
   <meta http-equiv="Content-Style-Type" content="text/css">
+  <script language="javascript" type="text/javascript" src="help.js"></script>
   <script language="javascript" type="text/javascript" src="nsiscontrib.js"></script>
-  <script type="text/javascript" language="javascript" src="redirect.js">
-  </script></head>
+  <script language="javascript" type="text/javascript" src="redirect.js"></script>
+</head>
 <body>
 <div id="main">
 <a href="editing.html">Previous</a> | <a href="overview.html#contents">Contents</a> | <a href="console.html">Next</a>
@@ -30,13 +31,20 @@ EclipseNSIS includes integrated support for compiling NSIS scripts as well as fo
 created after compilation. Errors and warnings encountered during compilation are logged in the EclipseNSIS <a href="console.html">console</a> and markers
 are added to the NSIS script file indicating the nature and location of these errors and warnings. These markers can be
 viewed either as annotations in the EclipseNSIS editor <a href="editing.html#rulers">vertical and overview rulers</a> or as line items in the Eclipse Workbench <a href="javascript:redirectEclipse('/org.eclipse.platform.doc.user/reference/ref-31a.htm');">Problems view</a>.
-</p>
-<p>There are two ways to compile an NSIS script in EclipseNSIS:</p>
+EclipseNSIS persistently remembers script compilation and installer status, i.e., the status is remembered even
+  between Eclipse Workbench sessions.</p>
+<p>EclipseNSIS provides two options for compiling and testing NSIS scripts:</p>
+<ol>
+  <li><a href="#direct_compile">Direct compile and test</a></li>
+  <li><a href="#run_config">Run configurations</a></li>
+  </ol>
+<h2><a name="direct_compile"></a>Direct Compile and Test </h2>
+<p>There are two ways to directly compile/or and test an NSIS script in EclipseNSIS:</p>
 <ol>
 <li>Using the <a href="editing.html#a_compile">Compile Script</a> or <a href="editing.html#a_compile_test">Compile Script and Test</a> menu items or buttons in the <a href="editing.html#menu">EclipseNSIS editor menu or toolbar</a>, respectively.</li><li>
 Right clicking on an NSIS script in any view that shows a list of Workspace resources (e.g., <a href="javascript:redirectEclipse('/org.eclipse.platform.doc.user/concepts/cnav.htm');">resource navigator</a>,
 <a href="javascript:redirectEclipse('/org.eclipse.jdt.doc.user/reference/ref-view-package-explorer.htm');">JDT package explorer</a>, etc.) and selecting the <span style="font-style: italic;">EclipseNSIS</span> menu.</li></ol>
-<p style="text-align: center;"><img style="border: 0px solid ; width: 377px; height: 531px;" alt="EclipseNSIS Popup Menu" src="images/popupmenu.gif"></p>
+<p style="text-align: center;"><img src="images/popupmenu.gif" alt="EclipseNSIS Popup Menu" style="border: 0px solid ; width: 594px; height: 524px;"></p>
 <p>If an NSIS script is successfully compiled in EclipseNSIS, i.e., there are no errors encountered during compilation,
 the installer file generated can be tested using the <a href="editing.html#a_test">Test Installer</a> menu item or toolbar button. This menu item will stay enabled as long as:</p>
 <ol style="list-style-type: lower-alpha;">
@@ -44,13 +52,71 @@ the installer file generated can be tested using the <a href="editing.html#a_tes
 <li>The installer still exists on the filesystem.</li>
 <li>The installer is not altered manually after successful script compilation.</li>
 </ol>
-<p>EclipseNSIS persistently remembers script compilation and installer status, i.e., the status is remembered even
-between Eclipse Workbench sessions.</p>
-<br>
+<h2><a name="run_config"></a>Run Configurations </h2>
+<p>In addition to direct compiling and testing, EclipseNSIS allows creation of run configurations. A run configuration is used to store a set of NSIS  options for compiling a specific NSIS script. These options override any options set in the EclipseNSIS <a href="nsisprefs.html">preferences</a> or <a href="properties.html">properties</a> dialogs. Thus, multiple NSIS option sets can be stored for a script in the form of run configurations. Launching a run configuration compiles the associated NSIS script and optionally runs the generated installer executable. Run configurations can be launched at any time using the Eclipse Run menu or toolbar button.</p>
+<h3>Creating a Run Configuration</h3>
+<p>The quick way to create a run configuration is to right-click either in the <a href="editing.html">EclipseNSIS editor</a> or on an NSIS script file in in any view that shows a list of Workspace resources (e.g., <a href="javascript:redirectEclipse('/org.eclipse.platform.doc.user/concepts/cnav.htm');">resource navigator</a>, <a href="javascript:redirectEclipse('/org.eclipse.jdt.doc.user/reference/ref-view-package-explorer.htm');">JDT package explorer</a>, etc.) and choosing the <span style="font-style: italic;">Run As&rarr;NSIS Script</span> menu item. This automatically creates a run configuration for the selected NSIS script with default options and executes the run configuration.</p>
+<p>A run configuration can also be created or updated using the Eclipse Launch Configuration dialog. The launch configuration dialog can be accessed by using the Eclipse <span style="font-style: italic;">Run&rarr;Run...</span> menu item. A new NSIS Script run configuration can then be created by selecting the <span style="font-weight: bold;">NSIS Script</span> configuration type and clicking the <span style="font-style: italic;">New...</span> button. This will create a new configuration with default options.</p>
+<p>An NSIS Script run configuration provides two main tabs for customization:</p>
+<ol>
+  <li><a href="#config_nsis">NSIS</a></li>
+  <li><a href="#config_common">Common</a></li>
+  </ol>
+<h4><a name="config_nsis"></a>NSIS</h4>
+<p> The NSIS tab is used to specify NSIS options for compiling the associated NSIS script. The major portion of the
+NSIS tab is identical in behavior to the <a href="nsisprefs.html">EclipseNSIS Preferences Page</a>.</p>
+<p style="text-align: center;"><img src="images/runconfignsis.gif" alt="NSIS Tab" style="border: 0px solid ; width: 438px; height: 548px;" usemap="#nsistab" ismap="ismap"></p>
+<a name="a_script"></a><dl id="id_script">
+  <dt>NSIS Script</dt>
+  <dd>Specify the NSIS script associated with this run configuration. The NSIS script may be specified by browsing the workspace or
+  the filesystem or by specifying a combination of Eclipse variables.</dd>
+  </dl>
+<a name="a_run_installer"></a><dl id="id_run_installer">
+  <dt>Run Installer after Compilation</dt>
+  <dd>Selecting this option will run the generated installer executable if the NSIS script compiles without any errors.</dd>
+</dl>
+<h4><a name="config_common"></a>Common</h4>
+<p> The common tab manages the saving of the run configuration as well as collecting common preferences.</p>
+<p style="text-align: center;"><img src="images/runconfigcommon.gif" alt="Common Tab" style="border: 0px solid ; width: 438px; height: 548px;" usemap="#commontab" ismap="ismap"></p>
+<a name="a_save"></a><dl id="id_save">
+  <dt>Save As</dt>
+  <dd>Specify save location of run configuration. By default it is stored internally by Eclipse in the Debug plugin metadata area. However,
+  an alternate location can be chosen where the run configuration will be stored as a .launch file.</dd>
+  </dl>
+<a name="a_favorites"></a><dl id="id_favorites">
+  <dt>Display in Favorites Menu</dt>
+  <dd>Selecting this option will display the current configuration in the <span style="font-style: italic;">Run</span> favorites menu.</dd>
+</dl>
+<a name="a_encoding"></a><dl id="id_encoding">
+  <dt>Console Encoding</dt>
+  <dd>By default console output is shown using the default encoding (charset) for the platform. This setting can be used to
+  specify an alternate encoding for the output of this run configuration.</dd>
+</dl>
+<a name="a_stdio"></a><dl id="id_stdio">
+  <dt>Standard Input and Output</dt>
+  <dd>Specify how any output is captured, when generated by launching the run configuration. The output can be captured by the
+  EclipseNSIS console or by an output file. <span style="font-weight: bold; color:#FF0000">Please note that the EclipseNSIS console does NOT accept input.</span></dd>
+</dl>
+<a name="a_background"></a><dl id="id_background">
+  <dt>Launch in Background</dt>
+  <dd>Specify whether the run configuration will be launched in the foreground or background (default).</dd>
+</dl>
+
 <hr><a href="editing.html">Previous</a> | <a href="overview.html#contents">Contents</a> | <a href="console.html">Next</a>
 <br>
 <br>
 <p><strong><small>Copyright &copy; 2004, 2005 Sunil Kamath (IcemanK).</small></strong></p>
+<map name="nsistab">
+  <area id="nsispref" shape="RECT" href="nsisprefs.html#general" coords="21,200,417,494">
+  <area id="script" shape="RECT" href="#a_script" alt="NSIS Script" onclick="highlightDef('id_script');" coords="21,118,416,168">
+  <area id="run_installer" shape="RECT" href="#a_run_installer" alt="Run Installer" onclick="highlightDef('id_run_installer');" coords="21,171,182,188">
+</map>
+<map name="commontab">
+  <area id="encoding" shape="RECT" href="#a_encoding" alt="Console Encoding" onclick="highlightDef('id_encoding');" coords="224,146,426,360">
+  <area id="stdio" shape="rect" coords="14,366,424,481" href="#a_stdio" alt="Standard Input and Output" onclick="highlightDef('id_stdio');">
+  <area id="save" shape="RECT" href="#a_save" alt="Save As" onclick="highlightDef('id_save');" coords="14,72,423,141">
+  <area id="favorites" shape="RECT" href="#a_favorites" alt="Display in Favorites Menu" onclick="highlightDef('id_favorites');" coords="13,147,214,359">
+  <area id="background" shape="rect" coords="14,485,134,501" href="#a_background" alt="Launch in Background" onclick="highlightDef('id_background');">
+</map>
 </div>
-
 </body></html>

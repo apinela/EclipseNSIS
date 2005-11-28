@@ -44,27 +44,21 @@ preferences page</a>.<br>
 By default, the console is opened automatically, if it is not already
 open, and made visible whenever a script is compiled. This behavior can
 also be modified on the <a href="nsisprefs.html">EclipseNSIS
-preferences page</a>. If errors or
-warnings are detected, problem markers are created in the NSIS script
-file with information about these problems. These problem markers can
-be viewed either in the EclipseNSIS editor or in the standard Eclipse
-<a href="javascript:redirectEclipse('/org.eclipse.platform.doc.user/reference/ref-31a.htm');">Problems view</a>.
-Errors and warning are also marked as hyperlinks in the
-console. Clicking on a hyperlink will take you to the line associated
-with the error or warning. If the MakeNSIS compiler does not provide a
-line number for the error or warning, the problem marker is assigned to
-the first line of the script file.<br>
-The console output is implemented using a Table
-widget. This means that output text can only be selected (and copied)
-in complete lines only- partial line selections are not possible. To
-select a line of output, simply click on it. For multiple line
-selections, either use the standard Windows Ctrl+Left Mouse
-Button&nbsp; (for multiple individual lines) or Shift+Left Mouse
-Button (for a range of lines) or click on the first line to select and
-drag the cursor onto the other lines to select.<br>
-For detailed help about the console, click on the appropriate part of
-the console screenshot.
-</p>
+preferences page</a>. </p>
+<p>Alternately, the EclipseNSIS console can be opened manually from within the standard Eclipse console view by selecting it from the dropdown menu, as shown below.</p>
+<p style="text-align: center;"><img src="images/console_menu.gif" width="250" height="117"
+style="border: medium none ; width: 250px; height: 117px;"></p>
+<p>If errors or
+  warnings are detected, problem markers are created in the NSIS script
+  file with information about these problems. These problem markers can
+  be viewed either in the EclipseNSIS editor or in the standard Eclipse <a href="javascript:redirectEclipse('/org.eclipse.platform.doc.user/reference/ref-31a.htm');">Problems view</a>.
+  Errors and warning are also marked as hyperlinks in the
+  console. Clicking on a hyperlink will take you to the line associated
+  with the error or warning. If the MakeNSIS compiler does not provide a
+  line number for the error or warning, the problem marker is assigned to
+  the first line of the script file.<br>
+  For detailed help about the console, click on the appropriate part of
+  the console screenshot. </p>
 <p style="text-align: center;">
 <img alt="EclipseNSIS Console" src="images/console.gif" ismap="ismap"
  usemap="#console"
@@ -82,6 +76,9 @@ editor.</dd></dl>
   <dd>An example warning message.
 Clicking on it will highlight the relevant line in the EclipseNSIS
 editor.</dd></dl>
+  <a name="a_close"></a><dl id="id_close"><dt>Close
+Console</dt>
+  <dd>Closes the EclipseNSIS console.</dd></dl>
   <a name="a_cancel"></a><dl id="id_cancel"><dt>Cancel
 Compilation</dt>
   <dd>Cancels NSIS script
@@ -96,6 +93,12 @@ All</dt>
   <dd>Clear
 the console of all output. This button is enabled only when the console
 contains some output and is disabled during compilation.</dd></dl>
+  <a name="a_scroll_lock"></a><dl id="id_scroll_lock"><dt>Scroll Lock</dt>
+  <dd>Toggles the Scroll Lock.</dd></dl>
+  <a name="a_pin"></a><dl id="id_pin"><dt>Pin Console</dt>
+  <dd>Forces the Console view to remain on top of other views in the window area.</dd></dl>
+  <a name="a_display_selected"></a><dl id="id_display_selected"><dt>Display Selected Console</dt>
+  <dd>Select a conole to display from a list, if multiple consoles are open.</dd></dl>
 <br>
 <br>
 <hr><a href="compiling.html">Previous</a>
@@ -107,19 +110,27 @@ contains some output and is disabled during compilation.</dd></dl>
 &copy; 2004, 2005 Sunil Kamath (IcemanK).</small></strong></p>
 <map name="console">
 <area id="error" shape="RECT" href="#a_error" alt="Error"
- coords="6,250, 685,266" onclick="highlightDef('id_error');">
+ coords="3,208,682,224" onclick="highlightDef('id_error');">
 <area id="warning" shape="RECT" href="#a_warning" alt="Warning"
- coords="6,233, 178,249" onclick="highlightDef('id_warning');">
+ coords="3,191,219,205" onclick="highlightDef('id_warning');">
 <area id="output" shape="RECT" href="#a_output" alt="Console output"
- coords="3,25, 684,274" onclick="highlightDef('id_output');">
+ coords="3,50,685,274" onclick="highlightDef('id_output');">
 <area id="clear" shape="RECT" href="#a_clear" alt="Clear"
- coords="623,1, 644,21" onclick="highlightDef('id_clear');">
+ coords="553,27,574,47" onclick="highlightDef('id_clear');">
+<area id="scroll_lock" shape="RECT" href="#a_scroll_lock" alt="Scroll lock"
+ coords="576,27,597,47" onclick="highlightDef('id_scroll_lock');">
 <area id="selectall" shape="RECT" href="#a_selectall" alt="Select all"
- coords="600,1, 620,21" onclick="highlightDef('id_selectall');">
+ coords="531,27,551,47" onclick="highlightDef('id_selectall');">
 <area id="copy" shape="RECT" href="#a_copy" alt="Copy"
- coords="577,1, 597,21" onclick="highlightDef('id_copy');">
+ coords="507,27,527,47" onclick="highlightDef('id_copy');">
 <area id="cancel" shape="RECT" href="#a_cancel" alt="Cancel compilation"
- coords="554,1, 574,21" onclick="highlightDef('id_cancel');">
+ coords="477,27,497,47" onclick="highlightDef('id_cancel');">
+<area id="close" shape="RECT" href="#a_close" alt="Close console"
+ coords="454,27,474,47" onclick="highlightDef('id_close');">
+<area id="pin" shape="RECT" href="#a_scroll_lock" alt="Pin console"
+ coords="608,27,629,47" onclick="highlightDef('id_pin');">
+<area id="display_selected" shape="RECT" href="#a_display_selected" alt="Display selected console"
+ coords="631,27,652,47" onclick="highlightDef('id_display_selected');">
 </map>
 </div>
 </body>
