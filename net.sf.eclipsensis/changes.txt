@@ -2,11 +2,14 @@ Revision History
 ================
 
 0.9.4
+    * Refactored EclipseNSIS console to use standard Eclipse console 
+      functionality.
+    * Added support for NSIS Script run configurations.
     * Scroll tip now moves with scroll bar.
     * SubSection/SubSectionEnd supported even when deprecated (NSIS 2.05 and 
       above).
     * Clicking on a NSIS file link in EclipseNSIS help or NSIS Users Manual 
-      view now opens the file in Eclipse.
+      view now opens the file in Eclipse instead of an external editor.
     * Added support for nightly CVS builds.
     * Added support for SHCTX registry root key in EclipseNSIS Script Wizard.
     * Added error markers and tooltips in EclipseNSIS Script Wizard Contents
