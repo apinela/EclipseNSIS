@@ -120,15 +120,15 @@ public class NSISActionContributor extends TextEditorActionContributor implement
 			editor= (ITextEditor) part;
 		}
 
-		mContentAssistProposal.setAction(getAction(editor, "ContentAssistProposal")); //$NON-NLS-1$
-        mInsertTemplate.setAction(getAction(editor, "NSISInsertTemplate")); //$NON-NLS-1$
-        mTabsToSpaces.setAction(getAction(editor, "NSISTabsToSpaces")); //$NON-NLS-1$
-        mToggleComment.setAction(getAction(editor, "NSISToggleComment")); //$NON-NLS-1$
-        mAddBlockComment.setAction(getAction(editor, "NSISAddBlockComment")); //$NON-NLS-1$
-        mRemoveBlockComment.setAction(getAction(editor, "NSISRemoveBlockComment")); //$NON-NLS-1$
-        mInsertFile.setAction(getAction(editor, "NSISInsertFile")); //$NON-NLS-1$
-        mInsertDirectory.setAction(getAction(editor, "NSISInsertDirectory")); //$NON-NLS-1$
-        mInsertColor.setAction(getAction(editor, "NSISInsertColor")); //$NON-NLS-1$
+		mContentAssistProposal.setAction(getAction(editor, INSISEditorConstants.CONTENT_ASSIST_PROPOSAL)); //$NON-NLS-1$
+        mInsertTemplate.setAction(getAction(editor, INSISEditorConstants.INSERT_TEMPLATE)); //$NON-NLS-1$
+        mTabsToSpaces.setAction(getAction(editor, INSISEditorConstants.TABS_TO_SPACES)); //$NON-NLS-1$
+        mToggleComment.setAction(getAction(editor, INSISEditorConstants.TOGGLE_COMMENT)); //$NON-NLS-1$
+        mAddBlockComment.setAction(getAction(editor, INSISEditorConstants.ADD_BLOCK_COMMENT)); //$NON-NLS-1$
+        mRemoveBlockComment.setAction(getAction(editor, INSISEditorConstants.REMOVE_BLOCK_COMMENT)); //$NON-NLS-1$
+        mInsertFile.setAction(getAction(editor, INSISEditorConstants.INSERT_FILE)); //$NON-NLS-1$
+        mInsertDirectory.setAction(getAction(editor, INSISEditorConstants.INSERT_DIRECTORY)); //$NON-NLS-1$
+        mInsertColor.setAction(getAction(editor, INSISEditorConstants.INSERT_COLOR)); //$NON-NLS-1$
 	}
 	
 	/*

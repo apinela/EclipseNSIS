@@ -556,6 +556,16 @@ public class NSISOutlineContentProvider implements ITreeContentProvider, INSISCo
         }
         return null;
     }
+    
+    public void refresh()
+    {
+        if(mEditor != null) {
+            if(mAnnotationModel == null) {
+                mAnnotationModel = (IAnnotationModel) mEditor.getAdapter(ProjectionAnnotationModel.class);
+            }
+            parse(mEditor.getDocumentProvider().getDocument(mEditor.getEditorInput()));
+        }
+    }
 
     private class NSISOutlineRule implements IRule, INSISConstants
     {
