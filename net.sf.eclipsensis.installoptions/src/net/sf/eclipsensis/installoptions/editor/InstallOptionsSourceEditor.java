@@ -49,7 +49,7 @@ import org.eclipse.ui.texteditor.*;
 import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
-public class InstallOptionsSourceEditor extends TextEditor implements IInstallOptionsEditor, IINIFileListener
+public class InstallOptionsSourceEditor extends TextEditor implements IInstallOptionsEditor, IINIFileListener, IProjectionListener
 {
     private static final String[] KEY_BINDING_SCOPES = new String[] { IInstallOptionsConstants.EDITING_INSTALLOPTIONS_SOURCE_CONTEXT_ID };
 
@@ -134,20 +134,35 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
         setAction(action.getId(),action);
 
         ResourceBundle resourceBundle = InstallOptionsPlugin.getDefault().getResourceBundle();
+        action = new TextOperationAction(resourceBundle, "projection.toggle.", this, ProjectionViewer.TOGGLE, true); //$NON-NLS-1$
+        action.setActionDefinitionId(IFoldingCommandIds.FOLDING_TOGGLE);
+        action.setEnabled(true);
+        setAction("net.sf.eclipsensis.installoptions.folding_toggle", action); //$NON-NLS-1$
+
         action = new TextOperationAction(resourceBundle, "projection.expand.all.", this, ProjectionViewer.EXPAND_ALL, true); //$NON-NLS-1$
         action.setActionDefinitionId(IFoldingCommandIds.FOLDING_EXPAND_ALL);
         action.setEnabled(true);
-        setAction("net.sf.eclipsensis.installoptions.expand_all", action); //$NON-NLS-1$
+        setAction("net.sf.eclipsensis.installoptions.folding_expand_all", action); //$NON-NLS-1$
 
         action= new TextOperationAction(resourceBundle, "projection.expand.", this, ProjectionViewer.EXPAND, true); //$NON-NLS-1$
         action.setActionDefinitionId(IFoldingCommandIds.FOLDING_EXPAND);
         action.setEnabled(true);
-        setAction("net.sf.eclipsensis.installoptions.expand", action); //$NON-NLS-1$
+        setAction("net.sf.eclipsensis.installoptions.folding_expand", action); //$NON-NLS-1$
 
         action= new TextOperationAction(resourceBundle, "projection.collapse.", this, ProjectionViewer.COLLAPSE, true); //$NON-NLS-1$
         action.setActionDefinitionId(IFoldingCommandIds.FOLDING_COLLAPSE);
         action.setEnabled(true);
-        setAction("net.sf.eclipsensis.installoptions.collapse", action); //$NON-NLS-1$
+        setAction("net.sf.eclipsensis.installoptions.folding_collapse", action); //$NON-NLS-1$
+
+//        a= new TextOperationAction(resourceBundle, "projection.collapse.all.", this, ProjectionViewer.COLLAPSE_ALL, true); //$NON-NLS-1$
+//        a.setActionDefinitionId(IFoldingCommandIds.FOLDING_COLLAPSE_ALL);
+//        a.setEnabled(true);
+//        setAction("CollapseAll", a); //$NON-NLS-1$
+//
+//        a= new TextOperationAction(resourceBundle, "projection.restore.", this, ProjectionViewer.RESTORE, true); //$NON-NLS-1$
+//        a.setActionDefinitionId(IFoldingCommandIds.FOLDING_RESTORE);
+//        a.setEnabled(true);
+//        setAction("CollapseAll", a); //$NON-NLS-1$
 
         action = getAction(ITextEditorActionConstants.CONTEXT_PREFERENCES);
         if(action != null) {
@@ -207,6 +222,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
         }
         mINIFile.disconnect(document);
         mINIFile.removeListener(this);
+        ((ProjectionViewer)getSourceViewer()).removeProjectionListener(this);
         ((TextViewer)getSourceViewer()).removePostSelectionChangedListener(mSelectionSynchronizer);
         getSourceViewer().getSelectionProvider().removeSelectionChangedListener(mSelectionSynchronizer);
         IAction action = super.getAction(PreviewAction.PREVIEW_CLASSIC_ID);
@@ -374,10 +390,38 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
         }
         sourceViewer.getSelectionProvider().addSelectionChangedListener(mSelectionSynchronizer);
         ((TextViewer)sourceViewer).addPostSelectionChangedListener(mSelectionSynchronizer);
+        sourceViewer.addProjectionListener(this);
         mINIFile.addListener(this);
         mAnnotationModel = sourceViewer.getProjectionAnnotationModel();
         updateAnnotations();
         InstallOptionsModel.INSTANCE.addModelListener(mModelListener);
+    }
+
+    public void projectionDisabled()
+    {
+    }
+
+    public void projectionEnabled()
+    {
+        updateProjectionAnnotations(new NullProgressMonitor());
+    }
+
+    private IStatus updateProjectionAnnotations(IProgressMonitor monitor)
+    {
+        if (((ProjectionViewer)getSourceViewer()).isProjectionMode()) {
+            HashMap annotations = new HashMap();
+            INISection[] sections = mINIFile.getSections();
+            for (int i = 0; i < sections.length; i++) {
+                if(monitor.isCanceled()) {
+                    return Status.CANCEL_STATUS;
+                }
+                Position position = sections[i].getPosition();
+                annotations.put(new ProjectionAnnotation(),new Position(position.offset,position.length));
+            }
+            mAnnotationModel.modifyAnnotations(mAnnotations,annotations,null);
+            mAnnotations = (Annotation[])annotations.keySet().toArray(new Annotation[annotations.size()]);
+        }
+        return Status.OK_STATUS;
     }
 
     private void updateAnnotations()
@@ -387,17 +431,10 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
                 new IJobStatusRunnable(){
                     public IStatus run(IProgressMonitor monitor)
                     {
-                        HashMap annotations = new HashMap();
-                        INISection[] sections = mINIFile.getSections();
-                        for (int i = 0; i < sections.length; i++) {
-                            if(monitor.isCanceled()) {
-                                return Status.CANCEL_STATUS;
-                            }
-                            Position position = sections[i].getPosition();
-                            annotations.put(new ProjectionAnnotation(),new Position(position.offset,position.length));
+                        IStatus status = updateProjectionAnnotations(monitor);
+                        if(!status.isOK()) {
+                            return status;
                         }
-                        mAnnotationModel.modifyAnnotations(mAnnotations,annotations,null);
-                        mAnnotations = (Annotation[])annotations.keySet().toArray(new Annotation[annotations.size()]);
 
                         ISourceViewer viewer = getSourceViewer();
                         if(viewer != null) {
