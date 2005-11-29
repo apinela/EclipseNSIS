@@ -34,6 +34,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.PlatformUI;
 
 class NSISTab extends AbstractLaunchConfigurationTab implements INSISSettingsEditorListener
 {
@@ -67,6 +68,7 @@ class NSISTab extends AbstractLaunchConfigurationTab implements INSISSettingsEdi
         control.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true));
         
         setControl(composite);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),INSISConstants.PLUGIN_CONTEXT_PREFIX + "nsis_launchconfig_nsis_context");
         mSettingsEditor.addListener(this);
     }
 
