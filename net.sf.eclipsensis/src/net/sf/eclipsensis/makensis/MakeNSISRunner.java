@@ -560,8 +560,7 @@ public class MakeNSISRunner implements INSISConstants
     {
         long n = System.currentTimeMillis();
         MakeNSISResults results = new MakeNSISResults(new File(cmdArray[cmdArray.length-1]));
-        String commandLine = new StringBuffer("Command Line:").append(LINE_SEPARATOR).append( //$NON-NLS-1$
-                NSISPreferences.INSTANCE.getNSISExe()).append(" ").append( //$NON-NLS-1$
+        String commandLine = new StringBuffer(NSISPreferences.INSTANCE.getNSISExe()).append(" ").append( //$NON-NLS-1$
                 Common.flatten(cmdArray,' ')).toString();
         if(EclipseNSISPlugin.getDefault().isDebugging()) {
             EclipseNSISPlugin.getDefault().log(new StringBuffer("Command Line:").append(LINE_SEPARATOR).append(commandLine).toString());

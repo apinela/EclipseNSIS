@@ -15,20 +15,14 @@ import org.eclipse.jface.action.IAction;
 
 public class NSISTestAction extends NSISScriptAction
 {
-    /* (non-Javadoc)
-     * @see net.sf.eclipsensis.makensis.IMakeNSISRunListener#started()
-     */
-    public void started()
+    protected void started()
     {
         if(mAction != null) {
             mAction.setEnabled(false);
         }
     }
 
-    /* (non-Javadoc)
-     * @see net.sf.eclipsensis.makensis.IMakeNSISRunListener#stopped()
-     */
-    public void stopped()
+    protected void stopped()
     {
         if(mAction != null) {
             mAction.setEnabled(isEnabled());

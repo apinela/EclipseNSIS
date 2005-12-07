@@ -29,14 +29,14 @@ public class NSISCancelAction extends NSISScriptAction
         }
 	}
 
-    public void started()
+    protected void started()
     {
         if(mAction != null && !mAction.isEnabled()) {
             mAction.setEnabled(true);
         }
     }
 
-    public void stopped()
+    protected void stopped()
     {
         if(mAction != null && mAction.isEnabled()) {
             mAction.setEnabled(false);

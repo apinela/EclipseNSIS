@@ -102,5 +102,16 @@ public abstract class NSISScriptAction extends NSISAction implements IMakeNSISRu
 
     public void eventOccurred(MakeNSISRunEvent event)
     {
+        switch(event.getType()) {
+            case MakeNSISRunEvent.STARTED:
+                started();
+                break;
+            case MakeNSISRunEvent.STOPPED:
+                stopped();
+                break;
+        }
     }
+
+    protected abstract void started();
+    protected abstract void stopped();
 }

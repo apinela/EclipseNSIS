@@ -50,7 +50,6 @@ Function LeavePreview
   Push $R0
   ReadINIStr $R0 "$PLUGINSDIR\preview.ini" "Settings" "State"
   StrCmp $R0 0 done
-  MessageBox MB_OK "NOTIFY: $R0"
   Pop $R0
   Abort
   
