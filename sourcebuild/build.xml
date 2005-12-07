@@ -1,4 +1,133 @@
+<!--
+###############################################################################
+# Copyright (c) 2004, 2005 Sunil Kamath (IcemanK).
+# All rights reserved.
+# This program is made available under the terms of the Common Public License
+# v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
+# 
+# Contributors:
+#     Sunil Kamath (IcemanK) - initial API and implementation
+###############################################################################
+-->
 <project name="EclipseNSIS Sources" default="all">
+<target name="feature">
+	<tempfile property="build.root" prefix="eclipsensis" suffix=".tmp" destDir="${java.io.tmpdir}"/>
+	<property name="build.src.root" value="${build.root}/src"/>
+	<mkdir dir="${build.src.root}"/>
+	<antcall target="eclipsensis.src"/>
+	<antcall target="installoptions.src"/>
+	<antcall target="utilities.src"/>
+	<antcall target="jarsigner.src"/>
+	<antcall target="jnigen.src"/>
+	<copy todir="${build.root}">
+	    <fileset dir="../net.sf.eclipsensis.source">
+	       <exclude name="**/CVS/*"/>
+	       <exclude name="**/.cvsignore"/>
+	       <exclude name=".project"/>
+	       <exclude name="build.properties"/>
+	    </fileset>
+	</copy>
+	<property file="../net.sf.eclipsensis.source/META-INF/MANIFEST.MF"/>
+	<zip destfile="../net.sf.eclipsensis.site/plugins/net.sf.eclipsensis.source_${Bundle-Version}.jar">
+		<fileset dir="${build.root}"/>
+	</zip>
+	<antcall target="sign.jar">
+		<param name="jar" value="../net.sf.eclipsensis.site/plugins/net.sf.eclipsensis.source_${Bundle-Version}.jar"/>
+	</antcall>
+	<zip destfile="../net.sf.eclipsensis.site/features/net.sf.eclipsensis.source_${Bundle-Version}.jar">
+	    <fileset dir="../net.sf.eclipsensis.source.feature">
+	       <exclude name="**/CVS/*"/>
+	       <exclude name="**/.cvsignore"/>
+	       <exclude name=".project"/>
+	       <exclude name="build.properties"/>
+	    </fileset>
+	</zip>
+	<antcall target="sign.jar">
+		<param name="jar" value="../net.sf.eclipsensis.site/features/net.sf.eclipsensis.source_${Bundle-Version}.jar"/>
+	</antcall>
+	<delete dir="${build.root}"/>
+	<zip destfile="../net.sf.eclipsensis.source_${Bundle-Version}.zip">
+	    <fileset dir="../net.sf.eclipsensis.site">
+            <include name="**/net.sf.eclipsensis.source_${Bundle-Version}.jar"/>
+	    </fileset>
+	</zip>
+</target>
+<target name="clean.feature">
+	<property file="../net.sf.eclipsensis.source/META-INF/MANIFEST.MF"/>
+	<delete>
+		<fileset dir="../net.sf.eclipsensis.site">
+			<include name="**/net.sf.eclipsensis.source_${Bundle-Version}.jar"/>
+		</fileset>
+	    <fileset dir="..">
+			<include name="net.sf.eclipsensis.source_${Bundle-Version}.zip"/>
+		</fileset>
+	</delete>
+</target>
+<target name="sign.jar" depends="sign.jar.precheck">
+	<antcall target="sign.jar.run"/>
+</target>
+<target name="sign.jar.run" if="sign.jar.ok">
+	<signjar jar="${jar}" keystore="${keystore}" storepass="${storepass}" alias="${alias}"/>
+</target>
+<target name="sign.jar.precheck">
+	<condition property="sign.jar.ok">
+		<and>
+			<isset property="jar"/>
+			<isset property="keystore"/>
+			<isset property="storepass"/>
+			<isset property="alias"/>
+		</and>
+	</condition>
+</target>
+<target name="test.plugin.dir" unless="plugin.dir">
+	<fail message="Property plugin.dir not set"/>
+</target>
+<target name="test.plugin.name" unless="plugin.name">
+	<fail message="Property plugin.name not set"/>
+</target>
+<target name="generic.src" if="build.src.root" depends="test.plugin.dir,test.plugin.name">
+	<property file="${plugin.dir}/META-INF/MANIFEST.MF"/>
+	<property name="dest.dir" value="${build.src.root}/${plugin.name}_${Bundle-Version}"/>
+	<mkdir dir="${dest.dir}"/>
+	<copy file="${plugin.dir}/about.html" todir="${dest.dir}"/>
+	<zip destfile="${dest.dir}/src.zip">
+	    <fileset dir="${plugin.dir}/src">
+	       <exclude name="**/CVS/*"/>
+	       <include name="**/*.java"/>
+	    </fileset>
+	</zip>
+	<copy todir="${dest.dir}/schema" failonerror="false">
+	    <fileset dir="${plugin.dir}/schema">
+	       <exclude name="**/CVS/*"/>
+	       <include name="**/*.exsd"/>
+	    </fileset>
+	</copy>
+</target>
+<target name="eclipsensis.src">
+	<property name="plugin.name" value="net.sf.eclipsensis"/>
+	<property name="plugin.dir" value="../net.sf.eclipsensis"/>
+	<antcall target="generic.src"/>
+</target>
+<target name="installoptions.src">
+	<property name="plugin.name" value="net.sf.eclipsensis.installoptions"/>
+	<property name="plugin.dir" value="../net.sf.eclipsensis.installoptions"/>
+	<antcall target="generic.src"/>
+</target>
+<target name="utilities.src">
+	<property name="plugin.name" value="net.sf.eclipsensis.utilities"/>
+	<property name="plugin.dir" value="../net.sf.eclipsensis.utilities"/>
+	<antcall target="generic.src"/>
+</target>
+<target name="jarsigner.src">
+	<property name="plugin.name" value="net.sf.jarsigner"/>
+	<property name="plugin.dir" value="../JARSigner"/>
+	<antcall target="generic.src"/>
+</target>
+<target name="jnigen.src">
+	<property name="plugin.name" value="net.sf.jnigen"/>
+	<property name="plugin.dir" value="../JNIGen"/>
+	<antcall target="generic.src"/>
+</target>
 <target name="eclipsensis">
 	<antcall target="eclipsensis.internal"/>
 </target>
@@ -89,6 +218,6 @@
 	<property file="../net.sf.eclipsensis.utilities/META-INF/MANIFEST.MF"/>
     <delete file="net.sf.eclipsensis.utilities_${Bundle-Version}-source.zip"/>
 </target>
-<target name="all" depends="eclipsensis,installoptions,utilities"/>
-<target name="clean" depends="clean.eclipsensis,clean.installoptions,clean.utilities"/>
+<target name="all" depends="feature,eclipsensis,installoptions,utilities"/>
+<target name="clean" depends="clean.feature,clean.eclipsensis,clean.installoptions,clean.utilities"/>
 </project>

@@ -15,6 +15,7 @@ import java.util.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.IOUtility;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Plugin;
@@ -87,7 +88,7 @@ public abstract class AbstractTemplateManager
         Map map = null;
         if(mDefaultTemplatesStore != null) {
             InputStream stream = mDefaultTemplatesStore.openStream();
-            map = (Map)Common.readObject(stream, getClass().getClassLoader());
+            map = (Map)IOUtility.readObject(stream, getClass().getClassLoader());
         }
 
         return  map;
@@ -98,7 +99,7 @@ public abstract class AbstractTemplateManager
         Map map = null;
         if(mUserTemplatesStore != null) {
             if(mUserTemplatesStore.exists() && mUserTemplatesStore.isFile()) {
-                map = (Map)Common.readObject(mUserTemplatesStore, getClass().getClassLoader());
+                map = (Map)IOUtility.readObject(mUserTemplatesStore, getClass().getClassLoader());
             }
         }
         return map;
@@ -301,7 +302,7 @@ public abstract class AbstractTemplateManager
                 map.put(template.getName(),template);
             }
         }
-        Common.writeObject(mUserTemplatesStore, map);
+        IOUtility.writeObject(mUserTemplatesStore, map);
     }
 
     private void checkClass(AbstractTemplate template)

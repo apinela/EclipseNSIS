@@ -162,8 +162,8 @@ public class InstallOptionsModel implements IPropertyChangeListener
         if(bundle != null) {
             Version nsisVersion = getNSISVersion();
             HashMap versionMap = new HashMap();
-            for(Enumeration enum=bundle.getKeys(); enum.hasMoreElements();) {
-                String key = (String)enum.nextElement();
+            for(Enumeration e=bundle.getKeys(); e.hasMoreElements();) {
+                String key = (String)e.nextElement();
                 int n = key.indexOf('#');
                 if(n > 1) {
                     String name = key.substring(0,n);

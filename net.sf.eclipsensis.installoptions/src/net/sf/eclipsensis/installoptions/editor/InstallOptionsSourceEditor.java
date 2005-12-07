@@ -408,7 +408,8 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
 
     private IStatus updateProjectionAnnotations(IProgressMonitor monitor)
     {
-        if (((ProjectionViewer)getSourceViewer()).isProjectionMode()) {
+        ProjectionViewer viewer = (ProjectionViewer)getSourceViewer();
+        if (viewer != null && viewer.isProjectionMode()) {
             HashMap annotations = new HashMap();
             INISection[] sections = mINIFile.getSections();
             for (int i = 0; i < sections.length; i++) {

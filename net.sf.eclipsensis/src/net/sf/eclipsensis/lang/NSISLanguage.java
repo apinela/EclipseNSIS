@@ -15,8 +15,7 @@ import java.util.Map;
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.settings.NSISPreferences;
-import net.sf.eclipsensis.util.CaseInsensitiveMap;
-import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.*;
 
 public class NSISLanguage implements Serializable
 {
@@ -123,7 +122,7 @@ public class NSISLanguage implements Serializable
                         EclipseNSISPlugin.getDefault().log(e);
                     }
                     finally {
-                        Common.closeIO(br);
+                        IOUtility.closeIO(br);
                     }
                 }
             }

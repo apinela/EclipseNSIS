@@ -18,8 +18,7 @@ import net.sf.eclipsensis.IEclipseNSISService;
 import net.sf.eclipsensis.makensis.MakeNSISRunner;
 import net.sf.eclipsensis.settings.INSISHomeListener;
 import net.sf.eclipsensis.settings.NSISPreferences;
-import net.sf.eclipsensis.util.CaseInsensitiveMap;
-import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.*;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 
@@ -124,7 +123,7 @@ public class NSISUsageProvider implements IEclipseNSISService
                     }
                 }
                 try {
-                    Common.writeObject(cacheFile,mUsages);
+                    IOUtility.writeObject(cacheFile,mUsages);
                     cacheFile.setLastModified(exeTimeStamp);
                 }
                 catch (IOException e) {
@@ -133,7 +132,7 @@ public class NSISUsageProvider implements IEclipseNSISService
             }
             else {
                 try {
-                    mUsages = (Map)Common.readObject(cacheFile);
+                    mUsages = (Map)IOUtility.readObject(cacheFile);
                 }
                 catch (Exception e) {
                     EclipseNSISPlugin.getDefault().log(e);

@@ -45,33 +45,24 @@ public class CustomComboBoxPropertyDescriptor extends ComboBoxPropertyDescriptor
 
     public CellEditor createPropertyEditor(Composite parent)
     {
-        return new InternalComboBoxCellEditor(parent);
-    }
-
-    private class InternalComboBoxCellEditor extends ComboBoxCellEditor
-    {
-
-        public InternalComboBoxCellEditor(Composite parent)
-        {
-            super(parent,mDisplay,SWT.READ_ONLY);
-        }
-
-        protected Object doGetValue()
-        {
-            Integer i = (Integer)super.doGetValue();
-            return mData[i.intValue()];
-        }
-
-        protected void doSetValue(Object value)
-        {
-            int val = mDefault;
-            for(int i=0; i<mData.length; i++) {
-                if(mData[i].equals(value)) {
-                    val = i;
-                    break;
-                }
+        return new ComboBoxCellEditor(parent,mDisplay,SWT.READ_ONLY) {
+            protected Object doGetValue()
+            {
+                Integer i = (Integer)super.doGetValue();
+                return mData[i.intValue()];
             }
-            super.doSetValue(new Integer(val));
-        }
+    
+            protected void doSetValue(Object value)
+            {
+                int val = mDefault;
+                for(int i=0; i<mData.length; i++) {
+                    if(mData[i].equals(value)) {
+                        val = i;
+                        break;
+                    }
+                }
+                super.doSetValue(new Integer(val));
+            }
+        };
     }
 }

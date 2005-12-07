@@ -616,7 +616,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
         }
         else {
             try {
-                Common.writeObject(objectFile, object);
+                IOUtility.writeObject(objectFile, object);
                 setValue(name,fileName);
             }
             catch(IOException ioe) {
@@ -633,7 +633,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
         Object object = null;
         if(objectFile.exists()) {
             try {
-                object = Common.readObject(objectFile);
+                object = IOUtility.readObject(objectFile);
             }
             catch (Exception e) {
                 object = null;

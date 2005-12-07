@@ -12,6 +12,7 @@ package net.sf.eclipsensis.wizard;
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.IOUtility;
 import net.sf.eclipsensis.wizard.settings.NSISWizardSettings;
 import net.sf.eclipsensis.wizard.util.MasterSlaveController;
 import net.sf.eclipsensis.wizard.util.NSISWizardDialogUtil;
@@ -95,7 +96,7 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
      */
     private boolean validateNSISPath(String pathname)
     {
-        boolean b = Common.isEmpty(pathname) || Common.isValidNSISPathName(pathname);
+        boolean b = Common.isEmpty(pathname) || IOUtility.isValidNSISPathName(pathname);
         if(!b) {
             setErrorMessage(EclipseNSISPlugin.getFormattedString("invalid.nsis.pathname.error",new String[]{pathname})); //$NON-NLS-1$
         }

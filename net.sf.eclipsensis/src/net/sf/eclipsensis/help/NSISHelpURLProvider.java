@@ -92,8 +92,8 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
     {
         Map temp = new HashMap();
         List list = new ArrayList();
-        for(Enumeration enum = mBundle.getKeys(); enum.hasMoreElements(); ) {
-            String key = (String)enum.nextElement();
+        for(Enumeration e = mBundle.getKeys(); e.hasMoreElements(); ) {
+            String key = (String)e.nextElement();
             if(key.startsWith("nsis.contrib.path")) { //$NON-NLS-1$
                 String[] tokens = Common.tokenize(key,'#');
                 Version v;
@@ -204,7 +204,7 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
                                     }
                                 }
 
-                                Common.writeObject(cacheFile,new Object[]{mHelpURLs,mCHMHelpURLs});
+                                IOUtility.writeObject(cacheFile,new Object[]{mHelpURLs,mCHMHelpURLs});
                                 cacheFile.setLastModified(htmlHelpTimeStamp);
                             }
                             catch (Exception e) {
@@ -247,7 +247,7 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
                 else {
                     Object obj = null;
                     try {
-                        obj = Common.readObject(cacheFile);
+                        obj = IOUtility.readObject(cacheFile);
                     }
                     catch (Exception e) {
                         obj = null;

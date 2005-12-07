@@ -16,6 +16,7 @@ import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.dialogs.ColorEditor;
 import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.IOUtility;
 import net.sf.eclipsensis.wizard.NSISWizard;
 import net.sf.eclipsensis.wizard.settings.*;
 import net.sf.eclipsensis.wizard.settings.dialogs.NSISContentBrowserDialog;
@@ -141,7 +142,7 @@ public class NSISWizardDialogUtil
                 DirectoryDialog dialog = new DirectoryDialog(shell, SWT.NONE);
                 String directory = dialog.open();
                 if (!Common.isEmpty(directory)) {
-                    t.setText(Common.encodePath(directory));
+                    t.setText(IOUtility.encodePath(directory));
                 }
             }
         });
@@ -183,12 +184,12 @@ public class NSISWizardDialogUtil
             {
                 Shell shell = button.getShell();
                 FileDialog dialog = new FileDialog(shell, (isSave?SWT.SAVE:SWT.OPEN));
-                dialog.setFileName(Common.decodePath(t.getText()));
+                dialog.setFileName(IOUtility.decodePath(t.getText()));
                 dialog.setFilterNames(filterNames);
                 dialog.setFilterExtensions(filterExtensions);
                 String file = dialog.open();
                 if (!Common.isEmpty(file)) {
-                    t.setText(Common.encodePath(file));
+                    t.setText(IOUtility.encodePath(file));
                 }
             }
         });
@@ -245,11 +246,11 @@ public class NSISWizardDialogUtil
 
     public static void loadImage(Text t)
     {
-        String fileName = Common.decodePath(t.getText());
+        String fileName = IOUtility.decodePath(t.getText());
         Label l = (Label)t.getData(IMAGE);
         if(l != null) {
             Image image = null;
-            if(!Common.isEmpty(fileName) && Common.isValidFile(fileName)) {
+            if(!Common.isEmpty(fileName) && IOUtility.isValidFile(fileName)) {
                 try {
                     URL url = new File(fileName).toURL();
                     if(EclipseNSISPlugin.getImageManager().containsImage(url)) {

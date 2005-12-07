@@ -122,8 +122,8 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
 
                 if(control == mBGPreviewButton) {
                     return (settings.isShowBackground() &&
-                            validateEmptyOrValidFile(Common.decodePath(settings.getBackgroundBMP()),null) &&
-                            validateEmptyOrValidFile(Common.decodePath(settings.getBackgroundWAV()),null));
+                            validateEmptyOrValidFile(IOUtility.decodePath(settings.getBackgroundBMP()),null) &&
+                            validateEmptyOrValidFile(IOUtility.decodePath(settings.getBackgroundWAV()),null));
                 }
                 else {
                     return true;
@@ -378,8 +378,8 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
 
                 if(control == mSplashPreviewButton) {
                     return (settings.isShowSplash() &&
-                            Common.isValidFile(Common.decodePath(settings.getSplashBMP())) &&
-                            validateEmptyOrValidFile(Common.decodePath(settings.getSplashWAV()),null) &&
+                            IOUtility.isValidFile(IOUtility.decodePath(settings.getSplashBMP())) &&
+                            validateEmptyOrValidFile(IOUtility.decodePath(settings.getSplashWAV()),null) &&
                             settings.getSplashDelay() > 0);
                 }
                 else {
@@ -536,7 +536,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
 
     private void previewSplash()
     {
-        if(Common.isValidFile(Common.decodePath(mWizard.getSettings().getSplashBMP()))) {
+        if(IOUtility.isValidFile(IOUtility.decodePath(mWizard.getSettings().getSplashBMP()))) {
             SplashPreviewTask task = new SplashPreviewTask();
             new Timer().scheduleAtFixedRate(task,0,task.getResolution());
         }
@@ -559,7 +559,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
 
         final Font previewFont = new Font(display,mBGPreviewFontData);
         final Font messageFont = new Font(display,mBGPreviewEscapeFontData);
-        final Clip clip = loadAudioClip(Common.decodePath(settings.getBackgroundWAV()));
+        final Clip clip = loadAudioClip(IOUtility.decodePath(settings.getBackgroundWAV()));
 
         shell.addKeyListener(new KeyAdapter(){
             public void keyReleased(KeyEvent e) {
@@ -611,8 +611,8 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
                     b += db;
                 }
 
-                String backgroundBMP = Common.decodePath(settings.getBackgroundBMP());
-                if(Common.isValidFile(backgroundBMP)) {
+                String backgroundBMP = IOUtility.decodePath(settings.getBackgroundBMP());
+                if(IOUtility.isValidFile(backgroundBMP)) {
                     ImageData imageData = new ImageData(backgroundBMP);
                     Image image = new Image(display, imageData);
                     int x = rect.x + (rect.width - imageData.width)/2;
@@ -670,12 +670,12 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
         else {
             NSISWizardSettings settings = mWizard.getSettings();
 
-            boolean b = (!settings.isShowLicense() || ((flag & LICDATA_CHECK) == 0 || validateFile(Common.decodePath(settings.getLicenseData()),cLicFileErrors))) &&
-                        (!settings.isShowSplash() || (((flag & SPLIMG_CHECK) == 0 || validateFile(Common.decodePath(settings.getSplashBMP()), cSplashImageErrors)) &&
-                                                    ((flag & SPLWAV_CHECK) == 0 || validateEmptyOrValidFile(Common.decodePath(settings.getSplashWAV()),null)) &&
+            boolean b = (!settings.isShowLicense() || ((flag & LICDATA_CHECK) == 0 || validateFile(IOUtility.decodePath(settings.getLicenseData()),cLicFileErrors))) &&
+                        (!settings.isShowSplash() || (((flag & SPLIMG_CHECK) == 0 || validateFile(IOUtility.decodePath(settings.getSplashBMP()), cSplashImageErrors)) &&
+                                                    ((flag & SPLWAV_CHECK) == 0 || validateEmptyOrValidFile(IOUtility.decodePath(settings.getSplashWAV()),null)) &&
                                                     ((flag & SPLDLY_CHECK) == 0 || validateDelay(settings.getSplashDelay(),cSplashDelayErrors)))) &&
-                        (!settings.isShowBackground() || (((flag & BGIMG_CHECK) == 0 || validateEmptyOrValidFile(Common.decodePath(settings.getBackgroundBMP()),null)) &&
-                                                       ((flag & BGWAV_CHECK) == 0 || validateEmptyOrValidFile(Common.decodePath(settings.getBackgroundWAV()),null))));
+                        (!settings.isShowBackground() || (((flag & BGIMG_CHECK) == 0 || validateEmptyOrValidFile(IOUtility.decodePath(settings.getBackgroundBMP()),null)) &&
+                                                       ((flag & BGWAV_CHECK) == 0 || validateEmptyOrValidFile(IOUtility.decodePath(settings.getBackgroundWAV()),null))));
             setPageComplete(b);
             if(b) {
                 setErrorMessage(null);
@@ -690,7 +690,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
     private Clip loadAudioClip(String fileName)
     {
         Clip clip = null;
-        if(Common.isValidFile(fileName)) {
+        if(IOUtility.isValidFile(fileName)) {
             AudioInputStream ais = null;
             try {
                 ais = AudioSystem.getAudioInputStream(new File(fileName));
@@ -799,7 +799,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
             fillLayout.marginWidth=0;
             mShell.setLayout(fillLayout);
 
-            ImageData imageData = new ImageData(Common.decodePath(settings.getSplashBMP()));
+            ImageData imageData = new ImageData(IOUtility.decodePath(settings.getSplashBMP()));
             mShell.setSize(imageData.width, imageData.height);
             Rectangle rect = mDisplay.getClientArea();
             int x = (rect.width-imageData.width)/2;
@@ -817,7 +817,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
 
             mAlpha = -1;
             mShell.open();
-            mClip = loadAudioClip(Common.decodePath(settings.getSplashWAV()));
+            mClip = loadAudioClip(IOUtility.decodePath(settings.getSplashWAV()));
             if(mClip != null) {
                 mClip.start();
             }

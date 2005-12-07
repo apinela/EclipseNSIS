@@ -11,7 +11,7 @@ package net.sf.eclipsensis.wizard.settings;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.help.NSISKeywords;
-import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.IOUtility;
 import net.sf.eclipsensis.wizard.NSISWizard;
 import net.sf.eclipsensis.wizard.settings.dialogs.NSISInstallFileDialog;
 
@@ -120,10 +120,10 @@ public class NSISInstallFile extends AbstractNSISInstallItem implements INSISIns
 
     public String validate(boolean recursive)
     {
-        if(!Common.isValidFile(Common.decodePath(getName()))) {
+        if(!IOUtility.isValidFile(IOUtility.decodePath(getName()))) {
             return EclipseNSISPlugin.getResourceString("wizard.invalid.file.name.error"); //$NON-NLS-1$
         }
-        else if(!Common.isValidNSISPathName(getDestination())) {
+        else if(!IOUtility.isValidNSISPathName(getDestination())) {
             return EclipseNSISPlugin.getResourceString("wizard.invalid.file.destination.error"); //$NON-NLS-1$
         }
         else {

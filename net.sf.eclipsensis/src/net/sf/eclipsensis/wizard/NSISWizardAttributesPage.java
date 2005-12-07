@@ -18,6 +18,7 @@ import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.lang.NSISLanguage;
 import net.sf.eclipsensis.lang.NSISLanguageManager;
 import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.IOUtility;
 import net.sf.eclipsensis.viewer.CollectionContentProvider;
 import net.sf.eclipsensis.viewer.ListViewerUpDownMover;
 import net.sf.eclipsensis.wizard.settings.NSISWizardSettings;
@@ -70,7 +71,7 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
         NSISWizardSettings settings = mWizard.getSettings();
 
         String startMenuGroup = settings.getStartMenuGroup();
-        if(settings.isCreateStartMenuGroup() && !Common.isValidFileName(startMenuGroup)) {
+        if(settings.isCreateStartMenuGroup() && !IOUtility.isValidFileName(startMenuGroup)) {
             setErrorMessage(EclipseNSISPlugin.getFormattedString("invalid.start.menu.group.error",new String[]{startMenuGroup})); //$NON-NLS-1$
             return false;
         }

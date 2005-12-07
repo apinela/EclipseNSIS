@@ -9,13 +9,10 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.actions;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.net.JarURLConnection;
-import java.net.URL;
 import java.util.*;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
@@ -31,10 +28,11 @@ import net.sf.eclipsensis.makensis.*;
 import net.sf.eclipsensis.settings.INSISPreferenceConstants;
 import net.sf.eclipsensis.settings.NSISSettings;
 import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.IOUtility;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.gef.Disposable;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
@@ -44,7 +42,6 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.*;
-import org.osgi.framework.Bundle;
 
 public class PreviewAction extends Action implements Disposable, IMakeNSISRunListener
 {
@@ -273,64 +270,67 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
 
     private File getPreviewScript() throws IOException
     {
-        File previewFolder = new File(InstallOptionsPlugin.getPluginStateLocation(),"preview"); //$NON-NLS-1$
-        if(previewFolder.exists() && previewFolder.isFile()) {
-            previewFolder.delete();
-        }
-        if(!previewFolder.exists()) {
-            previewFolder.mkdirs();
-        }
-
-        Bundle bundle = InstallOptionsPlugin.getDefault().getBundle();
-        File previewScript = new File(previewFolder,"preview.nsi"); //$NON-NLS-1$
-        if(previewScript.exists()) {
-            if(previewScript.isDirectory()) {
-                previewScript.delete();
-            }
-            else {
-                try {
-                    //Make sure the latest version of preview.nsi is used.
-                    URL url = Platform.resolve(bundle.getEntry("/"));
-                    if (url.getProtocol().equalsIgnoreCase("file")) {
-                        File original = new File(url.getFile(), "preview/preview.nsi");
-                        if (original.exists() && original.isFile() && original.lastModified() <= previewScript.lastModified()) {
-                            return previewScript;
-                        }
-                    }
-                    else if (url.getProtocol().equals("jar")) {
-                        JarURLConnection conn = (JarURLConnection)url.openConnection();
-                        JarFile jarFile = conn.getJarFile();
-                        JarEntry entry = jarFile.getJarEntry("preview/preview.nsi");
-                        if (entry != null && !entry.isDirectory() && entry.getTime() <= previewScript.lastModified()) {
-                            return previewScript;
-                        }
-                    }
-                    else {
-                        if (previewScript.lastModified() >= bundle.getLastModified()) {
-                            return previewScript;
-                        }
-                    }
-                }
-                catch (Exception e) {
-                    EclipseNSISPlugin.getDefault().log(e);
-                }
-                previewScript.delete();
-            }
-        }
-        URL url = bundle.getEntry("/preview/preview.nsi"); //$NON-NLS-1$
-        InputStream is = null;
-        byte[] data;
-        try {
-            is = new BufferedInputStream(url.openStream());
-            data = Common.loadContentFromStream(is);
-        }
-        finally {
-            Common.closeIO(is);
-        }
-        Common.writeContentToFile(previewScript,data);
-        return previewScript;
+        return IOUtility.ensureLatest(InstallOptionsPlugin.getDefault().getBundle(), 
+                new Path("/preview/preview.nsi"),  //$NON-NLS-1$
+                new File(InstallOptionsPlugin.getPluginStateLocation(),"preview")); //$NON-NLS-1$
+//        File previewFolder = new File(InstallOptionsPlugin.getPluginStateLocation(),"preview"); //$NON-NLS-1$
+//        if(previewFolder.exists() && previewFolder.isFile()) {
+//            previewFolder.delete();
+//        }
+//        if(!previewFolder.exists()) {
+//            previewFolder.mkdirs();
+//        }
+//
+//        Bundle bundle = InstallOptionsPlugin.getDefault().getBundle();
+//        long lastModified = bundle.getLastModified();
+//        try {
+//            URL url = Platform.resolve(bundle.getEntry("/"));
+//            if (url.getProtocol().equalsIgnoreCase("file")) {
+//                File original = new File(url.getFile(), "preview/preview.nsi");
+//                if (original.exists() && original.isFile()) {
+//                    lastModified = original.lastModified();
+//                }
+//            }
+//            else if (url.getProtocol().equals("jar")) {
+//                JarURLConnection conn = (JarURLConnection)url.openConnection();
+//                JarFile jarFile = conn.getJarFile();
+//                JarEntry entry = jarFile.getJarEntry("preview/preview.nsi");
+//                if (entry != null && !entry.isDirectory()) {
+//                    lastModified = entry.getTime();
+//                }
+//            }
+//        }
+//        catch (Exception e) {
+//            EclipseNSISPlugin.getDefault().log(e);
+//        }
+//        
+//        File previewScript = new File(previewFolder,"preview.nsi"); //$NON-NLS-1$
+//        if(previewScript.exists()) {
+//            if(previewScript.isDirectory()) {
+//                previewScript.delete();
+//            }
+//            else {
+//                if (previewScript.lastModified() >= lastModified) {
+//                    return previewScript;
+//                }
+//                previewScript.delete();
+//            }
+//        }
+//        URL url = bundle.getEntry("/preview/preview.nsi"); //$NON-NLS-1$
+//        InputStream is = null;
+//        byte[] data;
+//        try {
+//            is = new BufferedInputStream(url.openStream());
+//            data = IOUtility.loadContentFromStream(is);
+//        }
+//        finally {
+//            IOUtility.closeIO(is);
+//        }
+//        IOUtility.writeContentToFile(previewScript,data);
+//        previewScript.setLastModified(lastModified);
+//        return previewScript;
     }
-
+    
     private class PreviewSettings extends NSISSettings
     {
         public boolean showStatistics()

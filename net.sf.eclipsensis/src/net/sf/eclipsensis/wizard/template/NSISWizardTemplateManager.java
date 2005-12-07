@@ -17,7 +17,7 @@ import net.sf.eclipsensis.lang.NSISLanguage;
 import net.sf.eclipsensis.lang.NSISLanguageManager;
 import net.sf.eclipsensis.template.AbstractTemplateManager;
 import net.sf.eclipsensis.template.AbstractTemplateReaderWriter;
-import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.IOUtility;
 import net.sf.eclipsensis.wizard.settings.NSISWizardSettings;
 
 import org.eclipse.core.runtime.*;
@@ -86,7 +86,7 @@ public class NSISWizardTemplateManager extends AbstractTemplateManager
 
     private static void patchUserTemplateStore(File store)
     {
-        byte[] contents = Common.loadContentFromFile(store);
+        byte[] contents = IOUtility.loadContentFromFile(store);
         boolean changed = false;
         for(int i=0; i<cPatches.length; i++) {
             for(int j=0; j<contents.length; j++) {
@@ -124,7 +124,7 @@ public class NSISWizardTemplateManager extends AbstractTemplateManager
         }
         if(changed) {
             //save it back
-            Common.writeContentToFile(store, contents);
+            IOUtility.writeContentToFile(store, contents);
         }
     }
 

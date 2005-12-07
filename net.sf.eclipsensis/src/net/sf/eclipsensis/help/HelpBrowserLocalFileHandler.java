@@ -14,8 +14,7 @@ import java.util.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
-import net.sf.eclipsensis.util.CaseInsensitiveSet;
-import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.dynamichelpers.*;
@@ -43,7 +42,7 @@ public class HelpBrowserLocalFileHandler implements IExtensionChangeHandler, IHe
 
     public boolean handle(File file)
     {
-        String ext = Common.getFileExtension(file);
+        String ext = IOUtility.getFileExtension(file);
         if(!Common.isEmpty(ext)) {
             for(Iterator iter=mExtensions.keySet().iterator(); iter.hasNext(); ) {
                 String extensionId = (String)iter.next();

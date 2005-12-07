@@ -21,8 +21,7 @@ import net.sf.eclipsensis.editor.text.NSISTextUtility;
 import net.sf.eclipsensis.help.*;
 import net.sf.eclipsensis.settings.INSISPreferenceConstants;
 import net.sf.eclipsensis.settings.IPropertyAdaptable;
-import net.sf.eclipsensis.util.ColorManager;
-import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.*;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -419,7 +418,7 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
                 }
                 if(!Common.isEmpty(text)) {
                     text = Common.escapeQuotes(text);
-                    String newText = Common.makeNSISRelativeLocation(text);
+                    String newText = IOUtility.makeNSISRelativeLocation(text);
                     if(newText.equalsIgnoreCase(text)) {
                         IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
                         if(page != null) {
@@ -429,12 +428,12 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
                                 if(editorInput instanceof IFileEditorInput) {
                                     IFile file = ((IFileEditorInput)editorInput).getFile();
                                     if(file != null) {
-                                        text = Common.makeRelativeLocation(file, text);
+                                        text = IOUtility.makeRelativeLocation(file, text);
                                     }
                                 }
                                 else if(editorInput instanceof ILocationProvider) {
                                     File f = new File(((ILocationProvider)editorInput).getPath(editorInput).toOSString());
-                                    text = Common.makeRelativeLocation(f, text);
+                                    text = IOUtility.makeRelativeLocation(f, text);
                                 }
                             }
                         }

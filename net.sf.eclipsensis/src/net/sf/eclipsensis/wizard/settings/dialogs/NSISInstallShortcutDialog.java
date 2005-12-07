@@ -17,6 +17,7 @@ import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.IOUtility;
 import net.sf.eclipsensis.viewer.CollectionContentProvider;
 import net.sf.eclipsensis.viewer.CollectionLabelProvider;
 import net.sf.eclipsensis.wizard.*;
@@ -163,18 +164,18 @@ public class NSISInstallShortcutDialog extends AbstractNSISInstallItemDialog imp
 
     protected String checkForErrors()
     {
-        if(!Common.isValidNSISPathName(mStore.getString("location"))) { //$NON-NLS-1$
+        if(!IOUtility.isValidNSISPathName(mStore.getString("location"))) { //$NON-NLS-1$
             return EclipseNSISPlugin.getResourceString("wizard.invalid.shortcut.location"); //$NON-NLS-1$
         }
-        else if(!Common.isValidFileName(mStore.getString("name"))) { //$NON-NLS-1$
+        else if(!IOUtility.isValidFileName(mStore.getString("name"))) { //$NON-NLS-1$
             return EclipseNSISPlugin.getResourceString("wizard.invalid.shortcut.name"); //$NON-NLS-1$
         }
         else {
             int n = mStore.getInt("shortcutType"); //$NON-NLS-1$
-            if((n == SHORTCUT_INSTALLELEMENT && !Common.isValidNSISPathName(mStore.getString("path")))) { //$NON-NLS-1$
+            if((n == SHORTCUT_INSTALLELEMENT && !IOUtility.isValidNSISPathName(mStore.getString("path")))) { //$NON-NLS-1$
                 return EclipseNSISPlugin.getResourceString("wizard.invalid.shortcut.file"); //$NON-NLS-1$
             }
-            else if((n == SHORTCUT_URL && !Common.isValidURL(mStore.getString("url")))) { //$NON-NLS-1$
+            else if((n == SHORTCUT_URL && !IOUtility.isValidURL(mStore.getString("url")))) { //$NON-NLS-1$
                 return EclipseNSISPlugin.getResourceString("wizard.invalid.shortcut.url"); //$NON-NLS-1$
             }
             else {

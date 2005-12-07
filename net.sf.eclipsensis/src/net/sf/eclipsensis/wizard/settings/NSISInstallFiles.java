@@ -13,8 +13,7 @@ import java.util.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.help.NSISKeywords;
-import net.sf.eclipsensis.util.CaseInsensitiveSet;
-import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.*;
 import net.sf.eclipsensis.wizard.NSISWizard;
 import net.sf.eclipsensis.wizard.settings.dialogs.NSISInstallFilesDialog;
 
@@ -182,7 +181,7 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
 
     public String validate(boolean recursive)
     {
-        if(!Common.isValidNSISPathName(getDestination())) {
+        if(!IOUtility.isValidNSISPathName(getDestination())) {
             return EclipseNSISPlugin.getResourceString("wizard.invalid.fileset.destination.error"); //$NON-NLS-1$
         }
         else {
@@ -279,7 +278,7 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
 
         public String validate(boolean recursive)
         {
-            if(!Common.isValidFile(Common.decodePath(getName()))) {
+            if(!IOUtility.isValidFile(IOUtility.decodePath(getName()))) {
                 return EclipseNSISPlugin.getResourceString("wizard.invalid.file.name.error"); //$NON-NLS-1$
             }
             else {

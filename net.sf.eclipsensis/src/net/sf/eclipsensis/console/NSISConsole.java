@@ -19,7 +19,7 @@ import net.sf.eclipsensis.editor.NSISEditorUtilities;
 import net.sf.eclipsensis.job.IJobStatusRunnable;
 import net.sf.eclipsensis.settings.INSISPreferenceConstants;
 import net.sf.eclipsensis.settings.NSISPreferences;
-import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.IOUtility;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -244,9 +244,9 @@ public class NSISConsole extends TextConsole implements INSISConsole, IPropertyC
         super.dispose();
         getDocument().removeDocumentListener(this);
         mPreferenceStore.removePropertyChangeListener(this);
-        Common.closeIO(mInfoStream);
-        Common.closeIO(mWarningStream);
-        Common.closeIO(mErrorStream);
+        IOUtility.closeIO(mInfoStream);
+        IOUtility.closeIO(mWarningStream);
+        IOUtility.closeIO(mErrorStream);
         mPartitioner.streamsClosed();
         mPartitioner.disconnect();
         if (mInfoColor != null) {

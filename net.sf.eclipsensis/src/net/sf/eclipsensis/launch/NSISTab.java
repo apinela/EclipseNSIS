@@ -16,6 +16,7 @@ import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.dialogs.FileSelectionDialog;
 import net.sf.eclipsensis.settings.*;
 import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.IOUtility;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -167,7 +168,7 @@ class NSISTab extends AbstractLaunchConfigurationTab implements INSISSettingsEdi
     {
         if(!Common.isEmpty(script)) {
             File file = new File(script);
-            if(INSISConstants.NSI_EXTENSION.equalsIgnoreCase(Common.getFileExtension(file)) &&
+            if(INSISConstants.NSI_EXTENSION.equalsIgnoreCase(IOUtility.getFileExtension(file)) &&
                file.exists() && file.isAbsolute() && file.isFile()) {
                 return file;
             }

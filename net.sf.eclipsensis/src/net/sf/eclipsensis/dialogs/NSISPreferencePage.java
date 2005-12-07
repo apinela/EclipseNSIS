@@ -43,7 +43,7 @@ public class NSISPreferencePage	extends NSISSettingsPage
         public IStatus run(IProgressMonitor monitor)
         {
             try {
-                Common.writeObject(cNSISHomesListFile,cInternalNSISHomes);
+                IOUtility.writeObject(cNSISHomesListFile,cInternalNSISHomes);
                 return Status.OK_STATUS;
             }
             catch (IOException e) {
@@ -58,7 +58,7 @@ public class NSISPreferencePage	extends NSISSettingsPage
         Collection nsisHomes;
         if(cNSISHomesListFile.exists()) {
             try {
-                nsisHomes = (Collection)Common.readObject(cNSISHomesListFile);
+                nsisHomes = (Collection)IOUtility.readObject(cNSISHomesListFile);
                 if(!(nsisHomes instanceof List)) {
                     nsisHomes = new ArrayList(nsisHomes);
                 }

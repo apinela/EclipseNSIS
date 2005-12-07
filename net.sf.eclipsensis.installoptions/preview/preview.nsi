@@ -27,7 +27,7 @@ LoadLanguageFile "${NSISDIR}\Contrib\Language files\English.nlf"
 
 ;Order of pages
 Page custom dummy1 "" ""
-Page custom Preview "" ""
+Page custom Preview LeavePreview ""
 Page custom dummy2 "" ""
 
 !ifndef PREVIEW_MUI
@@ -45,6 +45,18 @@ FunctionEnd
 
 Section
 SectionEnd
+
+Function LeavePreview
+  Push $R0
+  ReadINIStr $R0 "$PLUGINSDIR\preview.ini" "Settings" "State"
+  StrCmp $R0 0 done
+  MessageBox MB_OK "NOTIFY: $R0"
+  Pop $R0
+  Abort
+  
+done:
+  Pop $R0  
+FunctionEnd
 
 Function Preview
   InitPluginsDir

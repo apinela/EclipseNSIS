@@ -185,7 +185,7 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
         }
         else {
             if(!Common.isEmpty(pathname) && mSettings.isMakePathsRelative()) {
-                pathname = Common.makeRelativeLocation(reference,pathname);
+                pathname = IOUtility.makeRelativeLocation(reference,pathname);
             }
         }
         return pathname;

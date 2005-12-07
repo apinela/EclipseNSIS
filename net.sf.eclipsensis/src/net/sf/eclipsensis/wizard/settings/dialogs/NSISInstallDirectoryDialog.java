@@ -15,7 +15,7 @@ import java.util.List;
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.help.NSISKeywords;
-import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.IOUtility;
 import net.sf.eclipsensis.wizard.NSISWizard;
 import net.sf.eclipsensis.wizard.NSISWizardDisplayValues;
 import net.sf.eclipsensis.wizard.settings.NSISInstallDirectory;
@@ -110,10 +110,10 @@ public class NSISInstallDirectoryDialog extends AbstractNSISInstallItemDialog
 
     protected String checkForErrors()
     {
-        if(!Common.isValidPath(Common.decodePath(mStore.getString("name")))) { //$NON-NLS-1$
+        if(!IOUtility.isValidPath(IOUtility.decodePath(mStore.getString("name")))) { //$NON-NLS-1$
             return EclipseNSISPlugin.getResourceString("wizard.invalid.directory.name"); //$NON-NLS-1$
         }
-        else if(!Common.isValidNSISPathName(mStore.getString("destination"))) { //$NON-NLS-1$
+        else if(!IOUtility.isValidNSISPathName(mStore.getString("destination"))) { //$NON-NLS-1$
             return EclipseNSISPlugin.getResourceString("wizard.invalid.directory.destination"); //$NON-NLS-1$
         }
         else {

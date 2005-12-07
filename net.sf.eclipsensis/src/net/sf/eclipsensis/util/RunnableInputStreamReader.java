@@ -59,7 +59,7 @@ public class RunnableInputStreamReader implements Runnable
                 EclipseNSISPlugin.getDefault().log(ioe);
             }
             finally {
-                Common.closeIO(br);
+                IOUtility.closeIO(br);
             }
             mOutput = (String[])output.toArray(Common.EMPTY_STRING_ARRAY);
         }

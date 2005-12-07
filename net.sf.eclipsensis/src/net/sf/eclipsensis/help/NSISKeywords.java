@@ -130,8 +130,8 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
 
         if(bundle != null && nsisVersion != null) {
             HashMap versionMap = new HashMap();
-            for(Enumeration enum=bundle.getKeys(); enum.hasMoreElements();) {
-                String key = (String)enum.nextElement();
+            for(Enumeration e=bundle.getKeys(); e.hasMoreElements();) {
+                String key = (String)e.nextElement();
                 int n = key.indexOf('#');
                 String name = key.substring(0,n);
                 Version version = new Version(key.substring(n+1));

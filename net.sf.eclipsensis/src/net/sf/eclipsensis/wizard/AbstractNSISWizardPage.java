@@ -14,6 +14,7 @@ import java.util.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.IOUtility;
 
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -66,7 +67,7 @@ public abstract class AbstractNSISWizardPage extends WizardPage implements INSIS
 
     protected boolean validateEmptyOrValidURL(String url, String messageResource)
     {
-        if(!Common.isEmpty(url) && !Common.isValidURL(url)) {
+        if(!Common.isEmpty(url) && !IOUtility.isValidURL(url)) {
             setErrorMessage(getFormattedArrayStringResource(new String[]{messageResource},0,"invalid.url.error",new String[]{url})); //$NON-NLS-1$
             return false;
         }
@@ -89,7 +90,7 @@ public abstract class AbstractNSISWizardPage extends WizardPage implements INSIS
             setErrorMessage(getArrayStringResource(messageResources,0,"empty.pathname.error")); //$NON-NLS-1$
             return false;
         }
-        else if(!Common.isValidNSISPathName(pathname)) {
+        else if(!IOUtility.isValidNSISPathName(pathname)) {
             setErrorMessage(getFormattedArrayStringResource(messageResources,1,"invalid.nsis.pathname.error",new String[]{pathname})); //$NON-NLS-1$
             return false;
         }
@@ -104,7 +105,7 @@ public abstract class AbstractNSISWizardPage extends WizardPage implements INSIS
                 return false;
             }
         }
-        else if(!Common.isValidPathName(pathname)) {
+        else if(!IOUtility.isValidPathName(pathname)) {
             setErrorMessage(getFormattedArrayStringResource(messageResources,1,"invalid.pathname.error",new String[]{pathname})); //$NON-NLS-1$
             return false;
         }
@@ -117,7 +118,7 @@ public abstract class AbstractNSISWizardPage extends WizardPage implements INSIS
             setErrorMessage(getArrayStringResource(messageResources,0,"empty.filename.error")); //$NON-NLS-1$
             return false;
         }
-        else if(!Common.isValidFileName(filename)) {
+        else if(!IOUtility.isValidFileName(filename)) {
             setErrorMessage(getFormattedArrayStringResource(messageResources,1,"invalid.filename.error",new String[]{filename})); //$NON-NLS-1$
             return false;
         }
@@ -143,7 +144,7 @@ public abstract class AbstractNSISWizardPage extends WizardPage implements INSIS
                 return false;
             }
         }
-        else if(!Common.isValidFile(filename)) {
+        else if(!IOUtility.isValidFile(filename)) {
             setErrorMessage(getFormattedArrayStringResource(messageResources,1,"invalid.file.error",new String[]{filename})); //$NON-NLS-1$
             return false;
         }

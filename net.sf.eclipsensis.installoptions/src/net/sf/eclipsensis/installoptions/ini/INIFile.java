@@ -17,6 +17,7 @@ import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
 import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.IOUtility;
 
 import org.eclipse.jface.text.*;
 
@@ -210,7 +211,7 @@ public class INIFile implements IDocumentListener, IINIContainer
             InstallOptionsPlugin.getDefault().log(e);
         }
         finally {
-            Common.closeIO(writer);
+            IOUtility.closeIO(writer);
         }
     }
 
@@ -257,7 +258,7 @@ public class INIFile implements IDocumentListener, IINIContainer
             InstallOptionsPlugin.getDefault().log(e);
         }
         finally {
-            Common.closeIO(br);
+            IOUtility.closeIO(br);
         }
 
         return iniFile;

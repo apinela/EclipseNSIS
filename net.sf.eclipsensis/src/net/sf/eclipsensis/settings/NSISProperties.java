@@ -15,6 +15,7 @@ import java.util.*;
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.IOUtility;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
@@ -332,7 +333,7 @@ public class NSISProperties extends NSISSettings implements INSISConstants
             if(!Common.isEmptyArray(bytes)) {
                 ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
                 is = new BufferedInputStream(bais);
-                Object object = Common.readObject(is);
+                Object object = IOUtility.readObject(is);
                 return object;
             }
         }
@@ -340,7 +341,7 @@ public class NSISProperties extends NSISSettings implements INSISConstants
             EclipseNSISPlugin.getDefault().log(e);
         }
         finally {
-            Common.closeIO(is);
+            IOUtility.closeIO(is);
         }
         return null;
     }
@@ -359,7 +360,7 @@ public class NSISProperties extends NSISSettings implements INSISConstants
                 try {
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
                     os = new BufferedOutputStream(baos);
-                    Common.writeObject(os,object);
+                    IOUtility.writeObject(os,object);
                     os.close();
                     os = null;
                     synchronizer.setSyncInfo(qname,mResource,baos.toByteArray());
@@ -369,7 +370,7 @@ public class NSISProperties extends NSISSettings implements INSISConstants
                     EclipseNSISPlugin.getDefault().log(ioe);
                 }
                 finally {
-                    Common.closeIO(os);
+                    IOUtility.closeIO(os);
                 }
             }
             synchronizer.setSyncInfo(qname,mResource,null);

@@ -17,7 +17,7 @@ import net.sf.eclipsensis.editor.*;
 import net.sf.eclipsensis.editor.text.NSISSyntaxStyle;
 import net.sf.eclipsensis.editor.text.NSISTextUtility;
 import net.sf.eclipsensis.settings.*;
-import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.IOUtility;
 import net.sf.eclipsensis.wizard.util.MasterSlaveController;
 
 import org.eclipse.jface.dialogs.Dialog;
@@ -294,7 +294,7 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
         SourceViewerConfiguration configuration= new NSISSourceViewerConfiguration(new ChainedPreferenceStore(new IPreferenceStore[]{mPreferenceStore,getPreferenceStore(), EditorsUI.getPreferenceStore()}));
         mPreviewer.configure(configuration);
 
-        String content= new String(Common.loadContentFromStream(getClass().getResourceAsStream("NSISPreview.txt"))); //$NON-NLS-1$
+        String content= new String(IOUtility.loadContentFromStream(getClass().getResourceAsStream("NSISPreview.txt"))); //$NON-NLS-1$
         IDocument document= new Document(content);
         new NSISDocumentSetupParticipant().setup(document);
         mPreviewer.setDocument(document);

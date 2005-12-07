@@ -13,9 +13,7 @@ import java.io.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.makensis.*;
-import net.sf.eclipsensis.makensis.IMakeNSISRunListener;
-import net.sf.eclipsensis.makensis.MakeNSISRunner;
-import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.IOUtility;
 
 public class FileNSISConsole implements INSISConsole, IMakeNSISRunListener
 {
@@ -58,7 +56,7 @@ public class FileNSISConsole implements INSISConsole, IMakeNSISRunListener
     {
         switch(event.getType()) {
             case MakeNSISRunEvent.STOPPED:
-                Common.closeIO(mWriter);
+                IOUtility.closeIO(mWriter);
                 mWriter = null;
                 MakeNSISRunner.removeListener(this);
                 break;

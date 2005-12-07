@@ -57,7 +57,7 @@ public class NSISPluginManager implements INSISConstants
                 if(nsisPluginsDir.exists() && nsisPluginsDir.isDirectory()) {
                     if(mCacheFile.exists()) {
                         try {
-                            mDefaultPluginsMap = (Map)Common.readObject(mCacheFile);
+                            mDefaultPluginsMap = (Map)IOUtility.readObject(mCacheFile);
                         }
                         catch (Exception e) {
                             mDefaultPluginsMap = null;
@@ -74,7 +74,7 @@ public class NSISPluginManager implements INSISConstants
 
                     if(changed) {
                         try {
-                            Common.writeObject(mCacheFile, mDefaultPluginsMap);
+                            IOUtility.writeObject(mCacheFile, mDefaultPluginsMap);
                         }
                         catch (IOException e) {
                             e.printStackTrace();
@@ -154,7 +154,7 @@ public class NSISPluginManager implements INSISConstants
                                             {
                                                 if(!monitor.isCanceled()) {
                                                     try {
-                                                        Common.writeObject(mCacheFile, mDefaultPluginsMap);
+                                                        IOUtility.writeObject(mCacheFile, mDefaultPluginsMap);
                                                         return Status.OK_STATUS;
                                                     }
                                                     catch (Throwable t) {

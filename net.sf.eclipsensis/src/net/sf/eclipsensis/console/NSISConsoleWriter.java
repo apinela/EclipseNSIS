@@ -15,7 +15,7 @@ import java.util.List;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.makensis.MakeNSISProcess;
-import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.IOUtility;
 
 public class NSISConsoleWriter implements Runnable
 {
@@ -70,7 +70,7 @@ public class NSISConsoleWriter implements Runnable
             appendLine(NSISConsoleLine.error(ex.getLocalizedMessage()));
         }
         finally {
-            Common.closeIO(br);
+            IOUtility.closeIO(br);
         }
     }
 

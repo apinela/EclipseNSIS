@@ -19,7 +19,7 @@ public class FileDocument extends Document
 
     public FileDocument(File file)
     {
-        super(new String(Common.loadContentFromFile(file)));
+        super(new String(IOUtility.loadContentFromFile(file)));
         mFile = file;
     }
 

@@ -16,6 +16,7 @@ import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.makensis.MakeNSISRunner;
 import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.IOUtility;
 import net.sf.eclipsensis.wizard.settings.NSISWizardSettings;
 import net.sf.eclipsensis.wizard.util.MasterSlaveController;
 import net.sf.eclipsensis.wizard.util.NSISWizardDialogUtil;
@@ -73,10 +74,10 @@ public class NSISWizardGeneralPage extends AbstractNSISWizardPage
 
             boolean b = ((flag & APPNAME_CHECK) == 0 || validateAppName()) &&
                    ((flag & PUBURL_CHECK) == 0 || validateEmptyOrValidURL(settings.getUrl(),null)) &&
-                   ((flag & INSTFILE_CHECK) == 0 || validatePathName(Common.decodePath(settings.getOutFile()),cInstallFileErrors)) &&
-                   ((flag & INSTICON_CHECK) == 0 || validateEmptyOrValidFile(Common.decodePath(settings.getIcon()),null)) &&
-                   ((flag & UNINSTFILE_CHECK) == 0 || !settings.isCreateUninstaller() || validateFileName(Common.decodePath(settings.getUninstallFile()),cUninstallFileErrors)) &&
-                   ((flag & UNINSTICON_CHECK) == 0 || !settings.isCreateUninstaller() || validateEmptyOrValidFile(Common.decodePath(settings.getUninstallIcon()),null));
+                   ((flag & INSTFILE_CHECK) == 0 || validatePathName(IOUtility.decodePath(settings.getOutFile()),cInstallFileErrors)) &&
+                   ((flag & INSTICON_CHECK) == 0 || validateEmptyOrValidFile(IOUtility.decodePath(settings.getIcon()),null)) &&
+                   ((flag & UNINSTFILE_CHECK) == 0 || !settings.isCreateUninstaller() || validateFileName(IOUtility.decodePath(settings.getUninstallFile()),cUninstallFileErrors)) &&
+                   ((flag & UNINSTICON_CHECK) == 0 || !settings.isCreateUninstaller() || validateEmptyOrValidFile(IOUtility.decodePath(settings.getUninstallIcon()),null));
             setPageComplete(b);
             if(b) {
                 setErrorMessage(null);

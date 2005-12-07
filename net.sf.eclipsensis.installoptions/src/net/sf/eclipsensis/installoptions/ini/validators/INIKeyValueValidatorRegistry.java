@@ -29,11 +29,11 @@ public class INIKeyValueValidatorRegistry
 
         if(bundle != null) {
             HashMap map = new HashMap();
-            for(Enumeration enum=bundle.getKeys(); enum.hasMoreElements();) {
+            for(Enumeration e=bundle.getKeys(); e.hasMoreElements();) {
                 try {
                     IINIKeyValueValidator validator;
 
-                    String key = (String)enum.nextElement();
+                    String key = (String)e.nextElement();
                     String className = bundle.getString(key);
                     Class clasz = Class.forName(className);
                     if(map.containsKey(clasz)) {
@@ -46,8 +46,8 @@ public class INIKeyValueValidatorRegistry
                     }
                     mRegistry.put(key,validator);
                 }
-                catch(Exception e) {
-                    InstallOptionsPlugin.getDefault().log(e);
+                catch(Exception ex) {
+                    InstallOptionsPlugin.getDefault().log(ex);
                 }
             }
         }

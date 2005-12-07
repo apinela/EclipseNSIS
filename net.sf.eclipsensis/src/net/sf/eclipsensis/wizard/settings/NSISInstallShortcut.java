@@ -12,6 +12,7 @@ package net.sf.eclipsensis.wizard.settings;
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.IOUtility;
 import net.sf.eclipsensis.wizard.NSISWizard;
 import net.sf.eclipsensis.wizard.settings.dialogs.NSISInstallShortcutDialog;
 
@@ -159,18 +160,18 @@ public class NSISInstallShortcut extends AbstractNSISInstallItem
     }
     public String validate(boolean recursive)
     {
-        if(!Common.isValidNSISPathName(getLocation())) {
+        if(!IOUtility.isValidNSISPathName(getLocation())) {
             return EclipseNSISPlugin.getResourceString("wizard.invalid.shortcut.location.error"); //$NON-NLS-1$
         }
-        else if(!Common.isValidFileName(getName())) {
+        else if(!IOUtility.isValidFileName(getName())) {
             return EclipseNSISPlugin.getResourceString("wizard.invalid.shortcut.name.error"); //$NON-NLS-1$
         }
         else {
             int n = getShortcutType();
-            if((n == SHORTCUT_INSTALLELEMENT && !Common.isValidNSISPathName(getPath()))) {
+            if((n == SHORTCUT_INSTALLELEMENT && !IOUtility.isValidNSISPathName(getPath()))) {
                 return EclipseNSISPlugin.getResourceString("wizard.invalid.shortcut.file.error"); //$NON-NLS-1$
             }
-            else if((n == SHORTCUT_URL && !Common.isValidURL(getUrl()))) {
+            else if((n == SHORTCUT_URL && !IOUtility.isValidURL(getUrl()))) {
                 return EclipseNSISPlugin.getResourceString("wizard.invalid.shortcut.url.error"); //$NON-NLS-1$
             }
             else {

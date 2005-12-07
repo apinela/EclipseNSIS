@@ -299,7 +299,7 @@ public class MakeNSISRunner implements INSISConstants
 
     public static synchronized MakeNSISResults compile(File script, NSISSettings settings, INSISConsole console, INSISConsoleLineProcessor outputProcessor)
     {
-        return compile(script, settings, console, outputProcessor);
+        return compile(new Path(script.getAbsolutePath()), settings, console, outputProcessor);
     }
 
     public static synchronized MakeNSISResults compile(final IPath script, NSISSettings settings, INSISConsole console, INSISConsoleLineProcessor outputProcessor)
@@ -611,6 +611,7 @@ public class MakeNSISRunner implements INSISConstants
                         catch (Exception e) {
                         }
                         outputFileName = getOutputFileName();
+                        i++;
                     }
                     if(outputFileName == null) {
                         outputFileName = outFileProcessor.getOutputFileName();
@@ -724,7 +725,7 @@ public class MakeNSISRunner implements INSISConstants
             new Thread(new RunnableInputStreamReader(process.getErrorStream(),false)).start();
             output = new RunnableInputStreamReader(process.getInputStream()).getOutput();
             int rv = process.waitFor();
-            Common.closeIO(process.getOutputStream());
+            IOUtility.closeIO(process.getOutputStream());
             if(rv != validReturnCode) {
                 output = null;
             }

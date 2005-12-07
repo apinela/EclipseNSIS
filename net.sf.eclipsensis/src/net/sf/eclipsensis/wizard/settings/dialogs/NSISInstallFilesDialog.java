@@ -17,6 +17,7 @@ import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.dialogs.TableResizer;
 import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.IOUtility;
 import net.sf.eclipsensis.viewer.*;
 import net.sf.eclipsensis.wizard.NSISWizard;
 import net.sf.eclipsensis.wizard.NSISWizardDisplayValues;
@@ -185,7 +186,7 @@ public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
                     filterPath = dialog.getFilterPath();
                     String[] fileNames = dialog.getFileNames();
                     for (int i = 0; i < fileNames.length; i++) {
-                        mFiles.add(Common.encodePath(new StringBuffer(filterPath).append("\\").append(fileNames[i]).toString())); //$NON-NLS-1$
+                        mFiles.add(IOUtility.encodePath(new StringBuffer(filterPath).append("\\").append(fileNames[i]).toString())); //$NON-NLS-1$
                     }
                     viewer.refresh();
                     validate();
@@ -274,7 +275,7 @@ public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
         if(mFiles.size() == 0) {
             return EclipseNSISPlugin.getResourceString("wizard.invalid.fileset"); //$NON-NLS-1$
         }
-        else if(!Common.isValidNSISPathName(mStore.getString("destination"))) { //$NON-NLS-1$
+        else if(!IOUtility.isValidNSISPathName(mStore.getString("destination"))) { //$NON-NLS-1$
             return EclipseNSISPlugin.getResourceString("wizard.invalid.fileset.destination"); //$NON-NLS-1$
         }
         else {

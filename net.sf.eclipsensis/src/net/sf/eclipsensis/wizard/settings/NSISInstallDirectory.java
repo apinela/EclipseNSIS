@@ -11,7 +11,7 @@ package net.sf.eclipsensis.wizard.settings;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.help.NSISKeywords;
-import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.IOUtility;
 import net.sf.eclipsensis.wizard.NSISWizard;
 import net.sf.eclipsensis.wizard.settings.dialogs.NSISInstallDirectoryDialog;
 
@@ -138,10 +138,10 @@ public class NSISInstallDirectory extends AbstractNSISInstallItem implements INS
 
     public String validate(boolean recursive)
     {
-        if(!Common.isValidPath(Common.decodePath(getName()))) {
+        if(!IOUtility.isValidPath(IOUtility.decodePath(getName()))) {
             return EclipseNSISPlugin.getResourceString("wizard.invalid.directory.name.error"); //$NON-NLS-1$
         }
-        else if(!Common.isValidNSISPathName(getDestination())) {
+        else if(!IOUtility.isValidNSISPathName(getDestination())) {
             return EclipseNSISPlugin.getResourceString("wizard.invalid.directory.destination.error"); //$NON-NLS-1$
         }
         else {
