@@ -11,6 +11,7 @@ package net.sf.eclipsensis.installoptions.ini.validators;
 
 import java.util.Collection;
 
+import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.ini.*;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
@@ -35,7 +36,7 @@ public class FlagsKeyValueValidator implements IINIKeyValueValidator
                         Collection availableFlags;
                         availableFlags = typeDef.getFlags();
                         StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
-                        String[] flags = Common.tokenize(value,'|');
+                        String[] flags = Common.tokenize(value,IInstallOptionsConstants.LIST_SEPARATOR,false);
                         int n = 0;
                         for (int i = 0; i < flags.length; i++) {
                             if(!Common.isEmpty(flags[i]) && !availableFlags.contains(flags[i])) {

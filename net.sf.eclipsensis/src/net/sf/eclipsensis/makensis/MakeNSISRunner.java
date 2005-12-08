@@ -168,13 +168,16 @@ public class MakeNSISRunner implements INSISConstants
                                         break;
                                 }
                                 marker.setAttribute(IMarker.MESSAGE, problem.getText());
-                                marker.setAttribute(IMarker.LINE_NUMBER, problem.getLine());
-                                try {
-                                    IRegion region = doc.getLineInformation(problem.getLine()-1);
-                                    marker.setAttribute(IMarker.CHAR_START, region.getOffset());
-                                    marker.setAttribute(IMarker.CHAR_END, region.getOffset()+region.getLength());
-                                }
-                                catch (BadLocationException e) {
+                                int line = problem.getLine();
+                                marker.setAttribute(IMarker.LINE_NUMBER, line>0?line:1);
+                                if(line > 0) {
+                                    try {
+                                        IRegion region = doc.getLineInformation(line-1);
+                                        marker.setAttribute(IMarker.CHAR_START, region.getOffset());
+                                        marker.setAttribute(IMarker.CHAR_END, region.getOffset()+region.getLength());
+                                    }
+                                    catch (BadLocationException e) {
+                                    }
                                 }
                             }
                         }
@@ -231,7 +234,7 @@ public class MakeNSISRunner implements INSISConstants
             while (error.getLineNum() <= 0 && iter.hasNext()) {
                 error = (NSISConsoleLine) iter.next();
             }
-            int lineNum = (error.getLineNum() > 0?error.getLineNum():1);
+            int lineNum = (error.getLineNum() > 0?error.getLineNum():0);
             //reset the linenum for errors which don't have a linenum
             for(iter=errors.iterator(); iter.hasNext(); ) {
                 error = (NSISConsoleLine) iter.next();

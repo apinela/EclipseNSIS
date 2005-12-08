@@ -26,7 +26,7 @@ public class TextStateKeyValueValidator implements IINIKeyValueValidator
         if(!Common.isEmpty(value)) {
             INIKeyValue[] keyValues = ((INISection)keyValue.getParent()).findKeyValues(InstallOptionsModel.PROPERTY_FLAGS);
             if(!Common.isEmptyArray(keyValues)) {
-                String[] flags = Common.tokenize(keyValues[0].getValue(),IInstallOptionsConstants.LIST_SEPARATOR);
+                String[] flags = Common.tokenize(keyValues[0].getValue(),IInstallOptionsConstants.LIST_SEPARATOR,false);
                 if(!Common.isEmptyArray(flags)) {
                     for (int i = 0; i < flags.length; i++) {
                         if(flags[i].equalsIgnoreCase(InstallOptionsModel.FLAGS_ONLY_NUMBERS)) {

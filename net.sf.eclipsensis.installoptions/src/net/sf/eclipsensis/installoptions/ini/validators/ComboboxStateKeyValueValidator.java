@@ -32,7 +32,7 @@ public class ComboboxStateKeyValueValidator implements IINIKeyValueValidator
     {
         String value = keyValue.getValue();
         if(!Common.isEmpty(value)) {
-            String[] array = Common.tokenize(value,IInstallOptionsConstants.LIST_SEPARATOR);
+            String[] array = Common.tokenize(value,IInstallOptionsConstants.LIST_SEPARATOR,false);
             if(!Common.isEmptyArray(array) && array.length > 1) {
                 keyValue.addProblem(INIProblem.TYPE_ERROR, error);
                 return false;

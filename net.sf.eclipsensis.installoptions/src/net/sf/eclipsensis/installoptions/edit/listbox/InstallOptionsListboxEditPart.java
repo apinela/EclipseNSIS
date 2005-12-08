@@ -12,6 +12,7 @@ package net.sf.eclipsensis.installoptions.edit.listbox;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.edit.InstallOptionsWidgetEditPart;
 import net.sf.eclipsensis.installoptions.edit.combobox.InstallOptionsComboboxEditPart;
+import net.sf.eclipsensis.installoptions.figures.*;
 import net.sf.eclipsensis.installoptions.figures.IInstallOptionsFigure;
 import net.sf.eclipsensis.installoptions.figures.ListFigure;
 import net.sf.eclipsensis.installoptions.properties.editors.ListCellEditor;
@@ -32,7 +33,7 @@ public class InstallOptionsListboxEditPart extends InstallOptionsComboboxEditPar
         return "listbox.extended.edit.label"; //$NON-NLS-1$
     }
 
-    protected IInstallOptionsFigure createInstallOptionsFigure()
+    protected IListItemsFigure createListItemsFigure()
     {
         return new ListFigure((Composite)getViewer().getControl(), getInstallOptionsWidget());
     }

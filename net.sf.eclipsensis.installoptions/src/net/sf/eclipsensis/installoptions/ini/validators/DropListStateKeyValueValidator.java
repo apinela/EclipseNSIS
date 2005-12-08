@@ -39,7 +39,7 @@ public class DropListStateKeyValueValidator extends ComboboxStateKeyValueValidat
         if(!Common.isEmptyArray(values)) {
             INIKeyValue[] keyValues = ((INISection)keyValue.getParent()).findKeyValues(InstallOptionsModel.PROPERTY_LISTITEMS);
             if(!Common.isEmptyArray(keyValues)) {
-                String[] array = Common.tokenize(keyValues[0].getValue(),IInstallOptionsConstants.LIST_SEPARATOR);
+                String[] array = Common.tokenize(keyValues[0].getValue(),IInstallOptionsConstants.LIST_SEPARATOR,false);
                 if(!Common.isEmptyArray(array)) {
                     ArrayList valuesList = new ArrayList(Arrays.asList(values));
                     valuesList.removeAll(Arrays.asList(array));

@@ -334,10 +334,20 @@ public class Common
 
     public static String[] tokenize(String text, char separator)
     {
-        return (String[])tokenizeToList(text,separator).toArray(EMPTY_STRING_ARRAY);
+        return tokenize(text, separator, true);
+    }
+
+    public static String[] tokenize(String text, char separator, boolean trim)
+    {
+        return (String[])tokenizeToList(text,separator,trim).toArray(EMPTY_STRING_ARRAY);
     }
 
     public static List tokenizeToList(String text, char separator)
+    {
+        return tokenizeToList(text, separator, true);
+    }
+
+    public static List tokenizeToList(String text, char separator, boolean trim)
     {
         ArrayList list = new ArrayList();
         if(text != null && text.length() > 0) {
@@ -352,7 +362,7 @@ public class Common
                     buf.setLength(0);
                 }
             }
-            list.add(buf.toString().trim());
+            list.add(trim?buf.toString().trim():buf.toString());
         }
         return list;
     }

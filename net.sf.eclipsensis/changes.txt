@@ -2,6 +2,8 @@ Revision History
 ================
 
 0.9.4
+    * Java 6.0 (Mustang) can be used as the runtime environment- however it will
+      not be officially supported until it is released.
     * Refactored EclipseNSIS console to use standard Eclipse console 
       functionality.
     * Added support for NSIS Script run configurations.
@@ -14,6 +16,10 @@ Revision History
     * Added support for SHCTX registry root key in EclipseNSIS Script Wizard.
     * Added error markers and tooltips in EclipseNSIS Script Wizard Contents
       page.
+    * Feature Requests:
+        o 1358177
+        o 1358185
+        o 1374835
 
 0.9.3 (09/29/2005)
     * External files are now supported- including compiling, testing, code 

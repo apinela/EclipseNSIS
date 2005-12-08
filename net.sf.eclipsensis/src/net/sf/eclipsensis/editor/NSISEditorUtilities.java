@@ -296,7 +296,8 @@ public class NSISEditorUtilities
                 IDocument doc = editor.getDocumentProvider().getDocument(editor.getEditorInput());
                 for(Iterator iter=problems.iterator(); iter.hasNext(); ) {
                     NSISScriptProblem problem = (NSISScriptProblem)iter.next();
-                    if(problem.getLine() > 0) {
+                    int line = problem.getLine();
+                    if(line >= 0) {
                         try {
                             String name;
                             if(problem.getType() == NSISScriptProblem.TYPE_ERROR) {
@@ -308,9 +309,9 @@ public class NSISEditorUtilities
                             else {
                                 continue;
                             }
-                            IRegion region = doc.getLineInformation(problem.getLine()-1);
+                            IRegion region = doc.getLineInformation(line >0?line-1:1);
                             annotationModel.addAnnotation(new Annotation(name,false,problem.getText()),
-                                    new Position(region.getOffset(),region.getLength()));
+                                    new Position(region.getOffset(),(line>0?region.getLength():0)));
                         }
                         catch (BadLocationException e) {
                             EclipseNSISPlugin.getDefault().log(e);

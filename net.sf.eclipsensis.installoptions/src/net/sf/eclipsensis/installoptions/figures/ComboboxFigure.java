@@ -17,8 +17,7 @@ import net.sf.eclipsensis.installoptions.model.InstallOptionsWidget;
 import net.sf.eclipsensis.installoptions.properties.PropertySourceWrapper;
 import net.sf.eclipsensis.util.ColorManager;
 
-import org.eclipse.draw2d.LineBorder;
-import org.eclipse.draw2d.XYLayout;
+import org.eclipse.draw2d.*;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
@@ -31,6 +30,7 @@ public class ComboboxFigure extends AbstractInstallOptionsFigure implements ILis
     private ListFigure mListFigure;
     private ComboFigure mComboFigure;
     private int mComboHeight;
+    private boolean mPrimarySelection;
 
     /**
      *
@@ -50,8 +50,31 @@ public class ComboboxFigure extends AbstractInstallOptionsFigure implements ILis
         mComboFigure = new ComboFigure(parent, new CustomPropertySourceWrapper(propertySource, bounds[0]));
         mListFigure = new ListFigure(parent,  new CustomPropertySourceWrapper(propertySource, bounds[1]), SWT.SINGLE);
         mListFigure.setBorder(new LineBorder(ColorManager.getColor(ColorManager.BLACK)));
+        mListFigure.setVisible(mPrimarySelection);
         add(mComboFigure);
         add(mListFigure);
+    }
+
+    public void setPrimarySelection(boolean flag)
+    {
+        if(mPrimarySelection != flag) {
+            mPrimarySelection = flag;
+            mListFigure.setVisible(mPrimarySelection);
+        }
+    }
+
+    public boolean isClickThrough()
+    {
+        return true;
+    }
+
+    protected boolean isTransparentAt(int x, int y)
+    {
+        if(!mPrimarySelection) {
+            Rectangle r = mComboFigure.getBounds();
+            return !r.contains(x, y);
+        }
+        return false;
     }
 
     public ListFigure getListFigure()

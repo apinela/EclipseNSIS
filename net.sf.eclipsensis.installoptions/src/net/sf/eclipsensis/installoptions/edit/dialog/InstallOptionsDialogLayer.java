@@ -107,7 +107,7 @@ public class InstallOptionsDialogLayer extends FreeformLayer implements IInstall
         IFigure figure = super.findFigureAt(x, y, search);
         if(figure instanceof IInstallOptionsFigure) {
             IInstallOptionsFigure ioFigure = ((IInstallOptionsFigure)figure);
-            if(ioFigure.isTransparent()) {
+            if(ioFigure.isClickThrough()) {
                 Point p = new Point(x,y);
                 translateToAbsolute(p);
                 Point p2 = new Point();

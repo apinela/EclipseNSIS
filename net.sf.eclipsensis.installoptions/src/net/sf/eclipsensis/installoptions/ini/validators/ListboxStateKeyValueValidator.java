@@ -36,7 +36,7 @@ public class ListboxStateKeyValueValidator extends DropListStateKeyValueValidato
                     new String[]{InstallOptionsModel.PROPERTY_STATE,arg}));
         }
         return b && super.validateSelection(keyValue,Common.tokenize(keyValue.getValue(),
-                                            IInstallOptionsConstants.LIST_SEPARATOR));
+                                            IInstallOptionsConstants.LIST_SEPARATOR,false));
 
     }
 

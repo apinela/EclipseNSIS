@@ -44,6 +44,10 @@ public class ListFigure extends EditableElementFigure implements IListItemsFigur
         super.init(propertySource);
    }
 
+    public void setPrimarySelection(boolean flag)
+    {
+    }
+
     public java.util.List getSelected()
     {
         return mSelected==null?Collections.EMPTY_LIST:mSelected;
@@ -66,7 +70,7 @@ public class ListFigure extends EditableElementFigure implements IListItemsFigur
             mSelected = new ArrayList();
         }
         mSelected.clear();
-        mSelected.addAll(Arrays.asList(Common.tokenize(state,IInstallOptionsConstants.LIST_SEPARATOR)));
+        mSelected.addAll(Arrays.asList(Common.tokenize(state,IInstallOptionsConstants.LIST_SEPARATOR,false)));
     }
 
     /**

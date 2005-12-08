@@ -38,10 +38,10 @@ public class InstallOptionsFileRequest extends InstallOptionsPathRequest
         public Object asType(String s)
         {
             List list = new ArrayList();
-            String[] tokens = Common.tokenize(s,IInstallOptionsConstants.LIST_SEPARATOR);
+            String[] tokens = Common.tokenize(s,IInstallOptionsConstants.LIST_SEPARATOR,false);
             for (int i = 0; i < (tokens.length-1); i+= 2) {
                 String description = tokens[i];
-                String[] temp = Common.tokenize(tokens[i+1],FILTER_SEPARATOR);
+                String[] temp = Common.tokenize(tokens[i+1],FILTER_SEPARATOR,false);
                 FilePattern[] patterns = new FilePattern[temp.length];
                 for (int j = 0; j < patterns.length; j++) {
                     patterns[j] = new FilePattern(temp[j]);

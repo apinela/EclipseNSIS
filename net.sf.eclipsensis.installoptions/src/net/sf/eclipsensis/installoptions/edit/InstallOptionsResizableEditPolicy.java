@@ -33,6 +33,11 @@ public class InstallOptionsResizableEditPolicy extends ResizableEditPolicy imple
 {
     private EditPart mEditPart;
 
+    public InstallOptionsResizableEditPolicy(EditPart editPart)
+    {
+        super();
+        mEditPart = editPart;
+    }
 
     public Command getCommand(Request request)
     {
@@ -46,12 +51,6 @@ public class InstallOptionsResizableEditPolicy extends ResizableEditPolicy imple
         else {
             return super.getCommand(request);
         }
-    }
-
-    public InstallOptionsResizableEditPolicy(EditPart editPart)
-    {
-        super();
-        mEditPart = editPart;
     }
 
     public void showSourceFeedback(Request request)

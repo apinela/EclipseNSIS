@@ -9,6 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.ini.validators;
 
+import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.ini.INIKeyValue;
 import net.sf.eclipsensis.installoptions.ini.INIProblem;
@@ -23,7 +24,7 @@ public class FilterKeyValueValidator implements IINIKeyValueValidator
     {
         String value = keyValue.getValue();
         if(!Common.isEmpty(value)) {
-            int n = Common.tokenize(value,'|').length;
+            int n = Common.tokenize(value,IInstallOptionsConstants.LIST_SEPARATOR,false).length;
             if(n%2 != 0) {
                 keyValue.addProblem(INIProblem.TYPE_ERROR,
                                     InstallOptionsPlugin.getFormattedString("filter.value.error", //$NON-NLS-1$

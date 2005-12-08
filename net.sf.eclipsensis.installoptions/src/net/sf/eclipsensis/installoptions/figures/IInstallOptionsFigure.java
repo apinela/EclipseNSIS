@@ -30,6 +30,6 @@ public interface IInstallOptionsFigure extends IFigure
     public boolean isVScroll();
     public void refresh();
     public Rectangle getDirectEditArea();
-    public boolean isTransparent();
+    public boolean isClickThrough();
     public boolean hitTest(int x, int y);
 }

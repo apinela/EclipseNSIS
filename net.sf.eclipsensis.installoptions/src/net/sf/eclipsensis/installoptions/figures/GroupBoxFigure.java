@@ -27,7 +27,7 @@ public class GroupBoxFigure extends UneditableElementFigure
         setOpaque(false);
     }
 
-    public boolean isTransparent()
+    public boolean isClickThrough()
     {
         return true;
     }

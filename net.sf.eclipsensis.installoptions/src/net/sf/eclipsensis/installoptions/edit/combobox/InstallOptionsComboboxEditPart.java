@@ -22,6 +22,7 @@ import net.sf.eclipsensis.installoptions.properties.dialogs.ListItemsDialog;
 import net.sf.eclipsensis.installoptions.properties.editors.EditableComboBoxCellEditor;
 import net.sf.eclipsensis.installoptions.properties.validators.NSISStringLengthValidator;
 
+import org.eclipse.gef.editpolicies.SelectionEditPolicy;
 import org.eclipse.gef.tools.CellEditorLocator;
 import org.eclipse.gef.tools.DirectEditManager;
 import org.eclipse.jface.window.Window;
@@ -56,6 +57,30 @@ public class InstallOptionsComboboxEditPart extends InstallOptionsEditableElemen
     protected void createEditPolicies()
     {
         super.createEditPolicies();
+        installEditPolicy("Test", new SelectionEditPolicy() {
+            protected void hideSelection()
+            {
+                setPrimarySelection(false);
+            }
+
+            protected void showSelection()
+            {
+                setPrimarySelection(false);
+            }
+
+            protected void showPrimarySelection()
+            {
+                setPrimarySelection(true);
+            }
+            
+            private void setPrimarySelection(boolean flag)
+            {
+                IListItemsFigure figure = (IListItemsFigure)getFigure();
+                if(figure != null) {
+                    figure.setPrimarySelection(flag);
+                }
+            }
+        });
         installEditPolicy(InstallOptionsExtendedEditPolicy.ROLE, new InstallOptionsComboboxExtendedEditPolicy(this));
     }
 
@@ -77,9 +102,16 @@ public class InstallOptionsComboboxEditPart extends InstallOptionsEditableElemen
         return "combobox.extended.edit.label"; //$NON-NLS-1$
     }
 
-    protected IInstallOptionsFigure createInstallOptionsFigure()
+    protected final IInstallOptionsFigure createInstallOptionsFigure()
     {
-        return new ComboboxFigure((Composite)getViewer().getControl(), getInstallOptionsWidget());
+        return createListItemsFigure();
+    }
+
+    protected IListItemsFigure createListItemsFigure()
+    {
+        ComboboxFigure comboboxFigure = new ComboboxFigure((Composite)getViewer().getControl(), getInstallOptionsWidget());
+        comboboxFigure.setPrimarySelection(getSelected()==SELECTED_PRIMARY);
+        return comboboxFigure;
     }
 
     public void doPropertyChange(PropertyChangeEvent evt)

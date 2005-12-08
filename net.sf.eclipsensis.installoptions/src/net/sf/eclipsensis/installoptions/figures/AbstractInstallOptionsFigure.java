@@ -13,7 +13,7 @@ import org.eclipse.draw2d.Figure;
 
 public abstract class AbstractInstallOptionsFigure extends Figure implements IInstallOptionsFigure
 {
-    public boolean isTransparent()
+    public boolean isClickThrough()
     {
         return false;
     }
@@ -21,7 +21,7 @@ public abstract class AbstractInstallOptionsFigure extends Figure implements IIn
     public boolean hitTest(int x, int y)
     {
         boolean b = getBounds().contains(x,y);
-        if(b && isTransparent()) {
+        if(b && isClickThrough()) {
             return !isTransparentAt(x,y);
         }
         return b;

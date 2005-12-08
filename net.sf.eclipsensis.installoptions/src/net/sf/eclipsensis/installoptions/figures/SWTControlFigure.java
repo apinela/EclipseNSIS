@@ -274,7 +274,7 @@ public abstract class SWTControlFigure extends ScrollBarsFigure
         mVScroll = scroll;
     }
 
-    public boolean isTransparent()
+    public boolean isClickThrough()
     {
         return false;
     }
@@ -323,7 +323,7 @@ public abstract class SWTControlFigure extends ScrollBarsFigure
             GC gc = new GC (mImage);
             WinAPI.SendMessage (control.handle, WinAPI.WM_PRINT, gc.handle, PRINT_BITS);
             gc.dispose ();
-            if(isTransparent()) {
+            if(isClickThrough()) {
                 ImageData id = mImage.getImageData();
                 mImage.dispose();
                 id.transparentPixel=id.getPixel(0,0);
@@ -331,7 +331,7 @@ public abstract class SWTControlFigure extends ScrollBarsFigure
             }
         }
         mImageData = mImage.getImageData();
-        if(isTransparent()) {
+        if(isClickThrough()) {
             mImage.dispose();
             mImageData.transparentPixel=mImageData.getPixel(0,0);
             mImage = new Image(control.getDisplay(), mImageData);
