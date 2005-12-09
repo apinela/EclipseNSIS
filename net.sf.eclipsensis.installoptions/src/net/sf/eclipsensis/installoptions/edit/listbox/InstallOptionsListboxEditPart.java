@@ -11,17 +11,15 @@ package net.sf.eclipsensis.installoptions.edit.listbox;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.edit.InstallOptionsWidgetEditPart;
-import net.sf.eclipsensis.installoptions.edit.combobox.InstallOptionsComboboxEditPart;
+import net.sf.eclipsensis.installoptions.edit.listitems.InstallOptionsListItemsEditPart;
 import net.sf.eclipsensis.installoptions.figures.*;
-import net.sf.eclipsensis.installoptions.figures.IInstallOptionsFigure;
-import net.sf.eclipsensis.installoptions.figures.ListFigure;
 import net.sf.eclipsensis.installoptions.properties.editors.ListCellEditor;
 
 import org.eclipse.gef.tools.CellEditorLocator;
 import org.eclipse.gef.tools.DirectEditManager;
 import org.eclipse.swt.widgets.Composite;
 
-public class InstallOptionsListboxEditPart extends InstallOptionsComboboxEditPart
+public class InstallOptionsListboxEditPart extends InstallOptionsListItemsEditPart
 {
     protected String getDirectEditLabelProperty()
     {

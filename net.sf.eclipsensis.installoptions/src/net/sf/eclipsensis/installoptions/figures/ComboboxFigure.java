@@ -30,7 +30,7 @@ public class ComboboxFigure extends AbstractInstallOptionsFigure implements ILis
     private ListFigure mListFigure;
     private ComboFigure mComboFigure;
     private int mComboHeight;
-    private boolean mPrimarySelection;
+    private boolean mShowDropdown;
 
     /**
      *
@@ -50,16 +50,16 @@ public class ComboboxFigure extends AbstractInstallOptionsFigure implements ILis
         mComboFigure = new ComboFigure(parent, new CustomPropertySourceWrapper(propertySource, bounds[0]));
         mListFigure = new ListFigure(parent,  new CustomPropertySourceWrapper(propertySource, bounds[1]), SWT.SINGLE);
         mListFigure.setBorder(new LineBorder(ColorManager.getColor(ColorManager.BLACK)));
-        mListFigure.setVisible(mPrimarySelection);
+        mListFigure.setVisible(mShowDropdown);
         add(mComboFigure);
         add(mListFigure);
     }
 
-    public void setPrimarySelection(boolean flag)
+    public void setShowDropdown(boolean flag)
     {
-        if(mPrimarySelection != flag) {
-            mPrimarySelection = flag;
-            mListFigure.setVisible(mPrimarySelection);
+        if(mShowDropdown != flag) {
+            mShowDropdown = flag;
+            mListFigure.setVisible(mShowDropdown);
         }
     }
 
@@ -68,9 +68,14 @@ public class ComboboxFigure extends AbstractInstallOptionsFigure implements ILis
         return true;
     }
 
+    public boolean isDefaultClickThroughFigure()
+    {
+        return false;
+    }
+
     protected boolean isTransparentAt(int x, int y)
     {
-        if(!mPrimarySelection) {
+        if(!mShowDropdown) {
             Rectangle r = mComboFigure.getBounds();
             return !r.contains(x, y);
         }

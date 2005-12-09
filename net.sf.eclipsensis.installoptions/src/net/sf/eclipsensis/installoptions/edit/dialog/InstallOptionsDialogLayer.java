@@ -117,7 +117,12 @@ public class InstallOptionsDialogLayer extends FreeformLayer implements IInstall
                 if(!ioFigure.hitTest(p2.x,p2.y)) {
                     figure = findFigureAt(x, y, new WrappedExclusionSearch(search, Collections.singleton(ioFigure)));
                     if(figure == null || figure == this) {
-                        figure = ioFigure;
+                        if(ioFigure.isDefaultClickThroughFigure()) {
+                            figure = ioFigure;
+                        }
+                        else {
+                            figure = null;
+                        }
                     }
                 }
             }

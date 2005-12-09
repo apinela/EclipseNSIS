@@ -34,7 +34,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
 
-public class InstallOptionsListbox extends InstallOptionsCombobox
+public class InstallOptionsListbox extends InstallOptionsListItems
 {
     protected InstallOptionsListbox(INISection section)
     {

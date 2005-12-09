@@ -9,87 +9,47 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.edit.combobox;
 
-import java.beans.PropertyChangeEvent;
-import java.util.List;
-
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
-import net.sf.eclipsensis.installoptions.edit.*;
-import net.sf.eclipsensis.installoptions.edit.editable.InstallOptionsEditableElementEditPart;
+import net.sf.eclipsensis.installoptions.edit.InstallOptionsWidgetEditPart;
+import net.sf.eclipsensis.installoptions.edit.listitems.InstallOptionsListItemsEditPart;
 import net.sf.eclipsensis.installoptions.figures.*;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsCombobox;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
-import net.sf.eclipsensis.installoptions.properties.dialogs.ListItemsDialog;
 import net.sf.eclipsensis.installoptions.properties.editors.EditableComboBoxCellEditor;
-import net.sf.eclipsensis.installoptions.properties.validators.NSISStringLengthValidator;
 
+import org.eclipse.draw2d.IFigure;
 import org.eclipse.gef.editpolicies.SelectionEditPolicy;
 import org.eclipse.gef.tools.CellEditorLocator;
 import org.eclipse.gef.tools.DirectEditManager;
-import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Composite;
 
-public class InstallOptionsComboboxEditPart extends InstallOptionsEditableElementEditPart
+public class InstallOptionsComboboxEditPart extends InstallOptionsListItemsEditPart
 {
-    private IExtendedEditSupport mExtendedEditSupport = new IExtendedEditSupport() {
-        private Object mNewValue;
-        public boolean performExtendedEdit()
-        {
-            InstallOptionsCombobox model = (InstallOptionsCombobox)getModel();
-            ListItemsDialog dialog = new ListItemsDialog(getViewer().getControl().getShell(),
-                                                         model.getListItems(), model.getType());
-            dialog.setValidator(new NSISStringLengthValidator(InstallOptionsModel.PROPERTY_LISTITEMS));
-            if (dialog.open() == Window.OK) {
-                mNewValue = dialog.getValues();
-                return true;
-            }
-            else {
-                return false;
-            }
-        }
-
-        public Object getNewValue()
-        {
-            return mNewValue;
-        }
-
-    };
-
     protected void createEditPolicies()
     {
         super.createEditPolicies();
-        installEditPolicy("Test", new SelectionEditPolicy() {
+        installEditPolicy("ShowDropdown", new SelectionEditPolicy() {
             protected void hideSelection()
             {
-                setPrimarySelection(false);
+                setShowDropdown(false);
             }
 
             protected void showSelection()
             {
-                setPrimarySelection(false);
+                setShowDropdown(false);
             }
 
             protected void showPrimarySelection()
             {
-                setPrimarySelection(true);
+                setShowDropdown(true);
             }
             
-            private void setPrimarySelection(boolean flag)
+            private void setShowDropdown(boolean flag)
             {
-                IListItemsFigure figure = (IListItemsFigure)getFigure();
-                if(figure != null) {
-                    figure.setPrimarySelection(flag);
+                IFigure figure = getFigure();
+                if(figure instanceof ComboboxFigure) {
+                    ((ComboboxFigure)figure).setShowDropdown(flag);
                 }
             }
         });
-        installEditPolicy(InstallOptionsExtendedEditPolicy.ROLE, new InstallOptionsComboboxExtendedEditPolicy(this));
-    }
-
-    public Object getAdapter(Class key)
-    {
-        if(IExtendedEditSupport.class.equals(key)) {
-            return mExtendedEditSupport;
-        }
-        return super.getAdapter(key);
     }
 
     protected String getDirectEditLabelProperty()
@@ -102,28 +62,11 @@ public class InstallOptionsComboboxEditPart extends InstallOptionsEditableElemen
         return "combobox.extended.edit.label"; //$NON-NLS-1$
     }
 
-    protected final IInstallOptionsFigure createInstallOptionsFigure()
-    {
-        return createListItemsFigure();
-    }
-
     protected IListItemsFigure createListItemsFigure()
     {
         ComboboxFigure comboboxFigure = new ComboboxFigure((Composite)getViewer().getControl(), getInstallOptionsWidget());
-        comboboxFigure.setPrimarySelection(getSelected()==SELECTED_PRIMARY);
+        comboboxFigure.setShowDropdown(getSelected()==SELECTED_PRIMARY);
         return comboboxFigure;
-    }
-
-    public void doPropertyChange(PropertyChangeEvent evt)
-    {
-        if (evt.getPropertyName().equalsIgnoreCase(InstallOptionsModel.PROPERTY_LISTITEMS)) {
-            IListItemsFigure figure2 = (IListItemsFigure)getFigure();
-            figure2.setListItems((List)evt.getNewValue());
-            setNeedsRefresh(true);
-        }
-        else {
-            super.doPropertyChange(evt);
-        }
     }
 
     protected boolean supportsScrolling()

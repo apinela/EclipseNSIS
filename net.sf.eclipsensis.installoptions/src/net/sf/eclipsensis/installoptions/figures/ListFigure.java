@@ -44,10 +44,6 @@ public class ListFigure extends EditableElementFigure implements IListItemsFigur
         super.init(propertySource);
    }
 
-    public void setPrimarySelection(boolean flag)
-    {
-    }
-
     public java.util.List getSelected()
     {
         return mSelected==null?Collections.EMPTY_LIST:mSelected;

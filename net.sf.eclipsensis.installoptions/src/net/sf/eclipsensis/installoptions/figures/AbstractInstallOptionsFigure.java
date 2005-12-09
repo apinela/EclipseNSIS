@@ -18,6 +18,11 @@ public abstract class AbstractInstallOptionsFigure extends Figure implements IIn
         return false;
     }
 
+    public boolean isDefaultClickThroughFigure()
+    {
+        return true;
+    }
+
     public boolean hitTest(int x, int y)
     {
         boolean b = getBounds().contains(x,y);

@@ -15,5 +15,4 @@ public interface IListItemsFigure extends IEditableElementFigure
 {
     public void setListItems(List listItems);
     public void setState(String state);
-    public void setPrimarySelection(boolean flag);
 }

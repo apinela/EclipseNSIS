@@ -7,12 +7,12 @@
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
-package net.sf.eclipsensis.installoptions.edit.combobox;
+package net.sf.eclipsensis.installoptions.edit.listitems;
 
 import java.util.List;
 
 import net.sf.eclipsensis.installoptions.edit.InstallOptionsExtendedEditPolicy;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsCombobox;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsListItems;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
 import net.sf.eclipsensis.installoptions.model.commands.ModifyListItemsCommand;
 import net.sf.eclipsensis.installoptions.requests.ExtendedEditRequest;
@@ -20,9 +20,9 @@ import net.sf.eclipsensis.installoptions.requests.ExtendedEditRequest;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.commands.Command;
 
-public class InstallOptionsComboboxExtendedEditPolicy extends InstallOptionsExtendedEditPolicy
+public class InstallOptionsListItemsExtendedEditPolicy extends InstallOptionsExtendedEditPolicy
 {
-    public InstallOptionsComboboxExtendedEditPolicy(EditPart editPart)
+    public InstallOptionsListItemsExtendedEditPolicy(EditPart editPart)
     {
         super(editPart);
     }
@@ -32,7 +32,7 @@ public class InstallOptionsComboboxExtendedEditPolicy extends InstallOptionsExte
      */
     protected Command getExtendedEditCommand(ExtendedEditRequest request)
     {
-        ModifyListItemsCommand command = new ModifyListItemsCommand((InstallOptionsCombobox)request.getEditPart().getModel(),
+        ModifyListItemsCommand command = new ModifyListItemsCommand((InstallOptionsListItems)request.getEditPart().getModel(),
                                                                               (List)request.getNewValue());
         return command;
     }

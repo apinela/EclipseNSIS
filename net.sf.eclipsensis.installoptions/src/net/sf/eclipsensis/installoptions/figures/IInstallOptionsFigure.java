@@ -31,5 +31,6 @@ public interface IInstallOptionsFigure extends IFigure
     public void refresh();
     public Rectangle getDirectEditArea();
     public boolean isClickThrough();
+    public boolean isDefaultClickThroughFigure();
     public boolean hitTest(int x, int y);
 }
