@@ -20,6 +20,7 @@ Revision History
         o 1358177
         o 1358185
         o 1374835
+    * Other minor bug fixes.
 
 0.9.3 (09/29/2005)
     * External files are now supported- including compiling, testing, code 

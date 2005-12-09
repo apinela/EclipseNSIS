@@ -5,9 +5,11 @@ Revision History
     * Fixed GroupBox transparency.
     * Preview can now also handle external files.
     * Improved clipboard handling.
-    * ComboBox/Droplist now hide dropdown unless it is the primary selection.
+    * ComboBox/Droplist now shows the dropdown only when it is the primary 
+      selection.
     * Fixed improper handling of spaces in lists separated by '|', e.g. in
-      Flags and ListItems fields. 
+      Flags and ListItems fields.
+    * Other minor bug fixes.
 
 0.9.3 (09/29/2005)
     * Added support for Unknown control in design editor.
