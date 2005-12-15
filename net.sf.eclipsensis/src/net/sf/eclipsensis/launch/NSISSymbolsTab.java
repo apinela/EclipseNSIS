@@ -24,6 +24,14 @@ class NSISSymbolsTab extends NSISTab implements INSISSettingsEditorPageListener
     static final String[] FILTER_EXTENSIONS = new String[] {"*."+INSISConstants.NSI_EXTENSION}; //$NON-NLS-1$
     static final String[] FILTER_NAMES = new String[] {EclipseNSISPlugin.getResourceString("launchconfig.nsis.script.filtername")}; //$NON-NLS-1$
  
+    private boolean mBuilder = false;
+    
+    public NSISSymbolsTab(boolean builder)
+    {
+        super();
+        mBuilder = builder;
+    }
+
     protected NSISSettingsEditorPage createPage()
     {
         return new NSISSettingsEditorSymbolsPage(mSettings) {
@@ -46,20 +54,22 @@ class NSISSymbolsTab extends NSISTab implements INSISSettingsEditorPageListener
     
     public Image getImage() 
     {
-        //FIXME change image
         return EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("nsis.symbols.tab.icon")); //$NON-NLS-1$
     }
 
     public void createControl(Composite parent)
     {
         super.createControl(parent);
-        //FIXME change help
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),INSISConstants.PLUGIN_CONTEXT_PREFIX + "nsis_launchconfig_nsis_context"); //$NON-NLS-1$
+        if (mBuilder) {
+            PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), INSISConstants.PLUGIN_CONTEXT_PREFIX + "nsis_buildconfig_symbols_context"); //$NON-NLS-1$
+        }
+        else {
+            PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),INSISConstants.PLUGIN_CONTEXT_PREFIX + "nsis_launchconfig_symbols_context"); //$NON-NLS-1$
+        }
     }
 
     public String getName()
     {
-        //FIXME change name
         return EclipseNSISPlugin.getResourceString("launchconfig.symbols.tab.name"); //$NON-NLS-1$
     }
 }

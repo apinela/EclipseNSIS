@@ -31,6 +31,6 @@ public class NSISLaunchConfigTabGroup extends AbstractLaunchConfigurationTabGrou
                 PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),INSISConstants.PLUGIN_CONTEXT_PREFIX + "nsis_launchconfig_common_context"); //$NON-NLS-1$
             }
         };
-        setTabs(new ILaunchConfigurationTab[]{new NSISGeneralTab(), new NSISSymbolsTab(), commonTab});
+        setTabs(new ILaunchConfigurationTab[]{new NSISGeneralTab(), new NSISSymbolsTab(false), commonTab});
     }
 }

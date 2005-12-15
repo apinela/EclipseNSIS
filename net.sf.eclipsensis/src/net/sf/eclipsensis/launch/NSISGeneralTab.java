@@ -79,7 +79,12 @@ class NSISGeneralTab extends NSISTab implements INSISSettingsEditorPageListener
     public void createControl(Composite parent)
     {
         super.createControl(parent);
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),INSISConstants.PLUGIN_CONTEXT_PREFIX + "nsis_launchconfig_nsis_context"); //$NON-NLS-1$
+        if (mBuilder) {
+            PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), INSISConstants.PLUGIN_CONTEXT_PREFIX + "nsis_buildconfig_general_context"); //$NON-NLS-1$
+        }
+        else {
+            PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),INSISConstants.PLUGIN_CONTEXT_PREFIX + "nsis_launchconfig_general_context"); //$NON-NLS-1$
+        }
     }
 
     public String getName()

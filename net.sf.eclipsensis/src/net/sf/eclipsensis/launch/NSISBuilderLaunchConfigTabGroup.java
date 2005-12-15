@@ -9,7 +9,11 @@
  *******************************************************************************/
 package net.sf.eclipsensis.launch;
 
+import net.sf.eclipsensis.INSISConstants;
+
 import org.eclipse.debug.ui.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsBuilderTab;
 
 public class NSISBuilderLaunchConfigTabGroup extends AbstractLaunchConfigurationTabGroup
@@ -21,6 +25,13 @@ public class NSISBuilderLaunchConfigTabGroup extends AbstractLaunchConfiguration
 
     public void createTabs(ILaunchConfigurationDialog dialog, String mode)
     {
-        setTabs(new ILaunchConfigurationTab[]{new NSISGeneralTab(true), new NSISSymbolsTab(), new ExternalToolsBuilderTab()});
+        ExternalToolsBuilderTab buildTab = new ExternalToolsBuilderTab() {
+            public void createControl(Composite parent)
+            {
+                super.createControl(parent);
+                PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),INSISConstants.PLUGIN_CONTEXT_PREFIX + "nsis_buildconfig_build_context"); //$NON-NLS-1$
+            }
+        };
+        setTabs(new ILaunchConfigurationTab[]{new NSISGeneralTab(true), new NSISSymbolsTab(true), buildTab});
     }
 }

@@ -110,12 +110,34 @@
         <description>This dialog is used to add or edit information about a SectionGroup to be included in the installer.</description>
         <topic label="Add/Edit SectionGroup Dialog" href="help/wizcontents.html#rsectiongrpdlg"/>
     </context>
-    <context id="nsis_launchconfig_nsis_context">
-        <description>This tab is used to edit NSIS options for the current NSIS Script run configuration.</description>
-        <topic label="NSIS Tab" href="help/compiling.html#config_nsis"/>
+    <context id="nsis_launchconfig_general_context">
+        <description>This tab is used to edit NSIS options for the current NSIS Script launch configuration.</description>
+        <topic label="General Tab" href="help/compiling.html#config_general"/>
+        <topic label="Launch Configurations" href="help/compiling.html#launch_config"/>
+    </context>
+    <context id="nsis_launchconfig_symbols_context">
+        <description>This tab is used to define NSIS symbols for the current NSIS Script launch configuration.</description>
+        <topic label="Defined Symbols Tab" href="help/compiling.html#config_symbols"/>
+        <topic label="Launch Configurations" href="help/compiling.html#launch_config"/>
     </context>
     <context id="nsis_launchconfig_common_context">
-        <description>This tab is used to edit common options for the current NSIS Script run configuration.</description>
+        <description>This tab is used to edit common options for the current NSIS Script launch configuration.</description>
         <topic label="Common Tab" href="help/compiling.html#config_common"/>
+        <topic label="Launch Configurations" href="help/compiling.html#launch_config"/>
+    </context>
+    <context id="nsis_buildconfig_general_context">
+        <description>This tab is used to edit NSIS options for the current NSIS Script project builder configuration.</description>
+        <topic label="General Tab" href="help/compiling.html#config_general2"/>
+        <topic label="Project Builders" href="help/compiling.html#project_builder"/>
+    </context>
+    <context id="nsis_buildconfig_symbols_context">
+        <description>This tab is used to define NSIS symbols for the current NSIS Script project builder configuration.</description>
+        <topic label="Defined Symbols Tab" href="help/compiling.html#config_symbols2"/>
+        <topic label="Project Builders" href="help/compiling.html#project_builder"/>
+    </context>
+    <context id="nsis_launchconfig_build_context">
+        <description>This tab is used specify build options for the current NSIS Script project builder configuration.</description>
+        <topic label="Build Options Tab" href="help/compiling.html#config_build"/>
+        <topic label="Project Builders" href="help/compiling.html#project_builder"/>
     </context>
 </contexts>
