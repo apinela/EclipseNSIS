@@ -6,8 +6,9 @@ Revision History
       not be officially supported until it is released.
     * Refactored EclipseNSIS console to use standard Eclipse console 
       functionality.
-    * Added support for NSIS Script run configurations.
-    * Scroll tip now moves with scroll bar.
+    * Added support for NSIS scripts as External Tool launch configurations.
+    * Added support for NSIS scripts as external builders.
+    * EclipseNSIS editor scroll tip now moves with scroll bar.
     * SubSection/SubSectionEnd supported even when deprecated (NSIS 2.05 and 
       above).
     * Clicking on a NSIS file link in EclipseNSIS help or NSIS Users Manual 
@@ -16,10 +17,12 @@ Revision History
     * Added support for SHCTX registry root key in EclipseNSIS Script Wizard.
     * Added error markers and tooltips in EclipseNSIS Script Wizard Contents
       page.
+    * Added new command to clear problem markers.
     * Feature Requests:
         o 1358177
         o 1358185
         o 1374835
+        o 1380236
     * Other minor bug fixes.
 
 0.9.3 (09/29/2005)

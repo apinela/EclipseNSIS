@@ -224,6 +224,14 @@
                id="%preferences.action.id">
          </action>
          <action
+               label="%clear.markers.action.name"
+               tooltip="%clear.markers.action.tooltip"
+               class="net.sf.eclipsensis.actions.NSISClearMarkersAction"
+               menubarPath="net.sf.eclipsensis.Menu/net.sf.eclipsensis.Group"
+               definitionId="net.sf.eclipsensis.commands.NSISClearMarkers"
+               id="%clear.markers.action.id">
+         </action>
+         <action
                disabledIcon="%cancel.action.disabledicon"
                toolbarPath="net.sf.eclipsensis.Group"
                label="%cancel.action.name"
@@ -319,6 +327,15 @@
                id="net.sf.eclipsensis.PopupMenu">
             <separator name="net.sf.eclipsensis.PopupGroup"/>
          </menu>
+         <action
+               enablesFor="1"
+               label="%clear.markers.action.name"
+               class="net.sf.eclipsensis.actions.NSISClearMarkersAction"
+               tooltip="%clear.markers.action.tooltip"
+               menubarPath="net.sf.eclipsensis.PopupMenu/net.sf.eclipsensis.PopupGroup"
+               definitionId="%popup.clear.markers.command.id"
+               id="%clear.markers.popup.menu.id">
+         </action>
          <action
                enablesFor="1"
                label="%compile.test.action.name"
@@ -453,6 +470,11 @@
          id="%compile.command.id"
          categoryId="%category.id"/>
       <command
+         name="%clear.markers.name"
+         description="%clear.markers.description"
+         id="%clear.markers.command.id"
+         categoryId="%category.id"/>
+      <command
          name="%compile.test.name"
          description="%compile.test.description"
          id="%compile.test.command.id"
@@ -466,6 +488,12 @@
          name="%cancel.name"
          description="%cancel.description"
          id="%cancel.command.id"
+         categoryId="%category.id"/>
+      <command
+         name="%clear.markers.name"
+         description="%clear.markers.description"
+         id="%popup.clear.markers.command.id"
+         defaultHandler="net.sf.eclipsensis.handlers.NSISClearMarkersHandler"
          categoryId="%category.id"/>
       <command
          name="%compile.name"
@@ -486,8 +514,8 @@
          defaultHandler="net.sf.eclipsensis.handlers.NSISTestHandler"
          categoryId="%category.id"/>
       <command
-            name="NSIS Script Launch"
-            description="NSIS Script"
+            name="%launch.shortcut.command.name"
+            description="%launch.shortcut.command.description"
             categoryId="org.eclipse.debug.ui.category.run"
             id="net.sf.eclipsensis.launch.nsisLaunchShortcut.run">
       </command>
@@ -561,6 +589,11 @@
           sequence="%test.keysequence"/>
       <key
           schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+          commandId="%clear.markers.command.id"
+          contextId="%context.editingNSISSource.id"
+          sequence="%clear.markers.keysequence"/>
+      <key
+          schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
           commandId="%popup.compile.command.id"
           sequence="%compile.keysequence"/>
       <key
@@ -571,6 +604,10 @@
           schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
           commandId="%popup.test.command.id"
           sequence="%test.keysequence"/>
+      <key
+          schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+          commandId="%popup.clear.markers.command.id"
+          sequence="%clear.markers.keysequence"/>
       <key
           schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
           commandId="%cancel.command.id"
@@ -760,32 +797,46 @@
       <launchConfigurationType
             delegate="net.sf.eclipsensis.launch.NSISLaunchConfigDelegate"
             id="net.sf.eclipsensis.launch.nsisLaunchConfigType"
+            category="org.eclipse.ui.externaltools"
             modes="run"
-            name="NSIS Script"
-            public="true">
+            name="%launch.config.type.name">
          <fileExtension
                default="true"
                extension="nsi"/>
       </launchConfigurationType>
+      <launchConfigurationType
+            delegate="net.sf.eclipsensis.launch.NSISLaunchConfigDelegate"
+            id="net.sf.eclipsensis.launch.nsisBuilderLaunchConfigType"
+            category="org.eclipse.ui.externaltools.builder"
+            modes="run"
+            name="%builder.launch.config.type.name"/>
    </extension>
    <extension point="org.eclipse.debug.ui.launchConfigurationTypeImages">
       <launchConfigurationTypeImage
-            icon="icons/nsis.gif"
+            icon="%launch.config.icon"
             configTypeID="net.sf.eclipsensis.launch.nsisLaunchConfigType"
             id="net.sf.eclipsensis.launch.nsisLaunchConfigTypeImage"/>
+      <launchConfigurationTypeImage
+            icon="%launch.config.icon"
+            configTypeID="net.sf.eclipsensis.launch.nsisBuilderLaunchConfigType"
+            id="net.sf.eclipsensis.launch.nsisBuilderLaunchConfigTypeImage"/>
    </extension>
    <extension point="org.eclipse.debug.ui.launchConfigurationTabGroups">
       <launchConfigurationTabGroup
             type="net.sf.eclipsensis.launch.nsisLaunchConfigType"
             class="net.sf.eclipsensis.launch.NSISLaunchConfigTabGroup"
             id="net.sf.eclipsensis.launch.nsisLaunchConfigTabGroup"/>
+      <launchConfigurationTabGroup
+            type="net.sf.eclipsensis.launch.nsisBuilderLaunchConfigType"
+            class="net.sf.eclipsensis.launch.NSISBuilderLaunchConfigTabGroup"
+            id="net.sf.eclipsensis.launch.nsisBuilderLaunchConfigTabGroup"/>
    </extension>
    <extension
          point="org.eclipse.ui.console.consoleFactories">
       <consoleFactory
             class="net.sf.eclipsensis.console.NSISConsoleFactory"
-            icon="icons/nsis.gif"
-            label="EclipseNSIS Console"/>
+            icon="%console.icon"
+            label="%console.name"/>
    </extension>
    <extension point="org.eclipse.core.expressions.propertyTesters">
       <propertyTester
@@ -800,9 +851,9 @@
          point="org.eclipse.debug.ui.launchShortcuts">
       <shortcut
             class="net.sf.eclipsensis.launch.NSISLaunchShortcut"
-            icon="icons/nsis.gif"
+            icon="%launch.shortcut.icon"
             id="net.sf.eclipsensis.launch.nsisLaunchShortcut"
-            label="NSIS Script"
+            label="%launch.shortcut.label"
             modes="run">
          <contextualLaunch>
             <enablement>
