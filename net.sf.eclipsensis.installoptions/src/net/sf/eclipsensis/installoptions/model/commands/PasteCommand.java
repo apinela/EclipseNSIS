@@ -89,7 +89,7 @@ public class PasteCommand extends Command
 
     public void redo()
     {
-        calculatePasteBounds(mParent.getDialogSize());
+        calculatePasteBounds(mParent.getDialogSize().getSize());
         for (Iterator iter = mPasteList.iterator(); iter.hasNext();) {
             mParent.addChild((InstallOptionsWidget)iter.next());
         }

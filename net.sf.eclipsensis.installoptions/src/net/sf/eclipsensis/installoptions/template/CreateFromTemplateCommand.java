@@ -44,7 +44,7 @@ public class CreateFromTemplateCommand extends org.eclipse.gef.commands.Command
             int maxY = Integer.MIN_VALUE;
             int width, height;
 
-            Dimension size = getParent().getDialogSize();
+            Dimension size = getParent().getDialogSize().getSize();
             for (int i = 0; i < mChildren.length; i++) {
                 Position p = mChildren[i].toGraphical(mChildren[i].getPosition(),size,false);
                 if(p.left < minX) {

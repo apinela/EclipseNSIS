@@ -1287,8 +1287,23 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
                                 SHOW_GUIDES_DEFAULT));
             }
 
-            dialog.setDialogSize((Dimension)loadFileProperty(file, FILEPROPERTY_DIALOG_SIZE,TypeConverter.DIMENSION_CONVERTER,
-                            DialogSizeManager.getDefaultDialogSizeDimension()));
+            DialogSize dialogSize = null;
+            String dialogSizeName = (String)loadFileProperty(file, FILEPROPERTY_DIALOG_SIZE_NAME, TypeConverter.STRING_CONVERTER, null);
+            if(dialogSizeName == null) {
+                Dimension dim = (Dimension)loadFileProperty(file, FILEPROPERTY_DIALOG_SIZE,TypeConverter.DIMENSION_CONVERTER,null);
+                if(dim != null) {
+                    dialogSize = DialogSizeManager.getDialogSize(dim);
+                }
+            }
+            if(dialogSize == null) {
+                if(dialogSizeName != null) {
+                    dialogSize = DialogSizeManager.getDialogSize(dialogSizeName);
+                }
+                if(dialogSize == null) {
+                    dialogSize = DialogSizeManager.getDefaultDialogSize();
+                }
+            }
+            dialog.setDialogSize(dialogSize);
             dialog.setShowDialogSize(((Boolean)loadFileProperty(file, FILEPROPERTY_SHOW_DIALOG_SIZE,TypeConverter.BOOLEAN_CONVERTER,
                             SHOW_DIALOG_SIZE_DEFAULT)).booleanValue());
         }
@@ -1446,9 +1461,8 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
                     viewer.getProperty(ToggleGuideVisibilityAction.PROPERTY_GUIDE_VISIBILITY),
                     SHOW_GUIDES_DEFAULT);
 
-            saveFileProperty(file, FILEPROPERTY_DIALOG_SIZE,TypeConverter.DIMENSION_CONVERTER,
-                    dialog.getDialogSize(),
-                    DialogSizeManager.getDefaultDialogSizeDimension());
+            saveFileProperty(file, FILEPROPERTY_DIALOG_SIZE_NAME,TypeConverter.STRING_CONVERTER,
+                    dialog.getDialogSize().getName(),DEFAULT_DIALOG_SIZE.getName());
             saveFileProperty(file, FILEPROPERTY_SHOW_DIALOG_SIZE,TypeConverter.BOOLEAN_CONVERTER,
                     Boolean.valueOf(dialog.isShowDialogSize()),
                     SHOW_DIALOG_SIZE_DEFAULT);

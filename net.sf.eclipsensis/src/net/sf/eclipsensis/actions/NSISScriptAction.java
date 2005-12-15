@@ -11,8 +11,6 @@ package net.sf.eclipsensis.actions;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.makensis.*;
-import net.sf.eclipsensis.makensis.IMakeNSISRunListener;
-import net.sf.eclipsensis.makensis.MakeNSISRunner;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
@@ -104,14 +102,14 @@ public abstract class NSISScriptAction extends NSISAction implements IMakeNSISRu
     {
         switch(event.getType()) {
             case MakeNSISRunEvent.STARTED:
-                started();
+                started(event.getScript());
                 break;
             case MakeNSISRunEvent.STOPPED:
-                stopped();
+                stopped(event.getScript(), (MakeNSISResults)event.getData());
                 break;
         }
     }
 
-    protected abstract void started();
-    protected abstract void stopped();
+    protected abstract void started(IPath script);
+    protected abstract void stopped(IPath script, MakeNSISResults results);
 }

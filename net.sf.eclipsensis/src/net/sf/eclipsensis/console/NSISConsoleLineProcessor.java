@@ -44,7 +44,7 @@ public class NSISConsoleLineProcessor implements INSISConsoleLineProcessor
             }
         }
         if(lText.startsWith("error ") || lText.startsWith("error:") || //$NON-NLS-1$ //$NON-NLS-2$
-           lText.startsWith("!include: error ") || lText.startsWith("!include: error:")) { //$NON-NLS-1$ //$NON-NLS-2$
+           lText.startsWith("!include: error ") || lText.startsWith("!include: error:") || lText.startsWith("invalid command")) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             line = NSISConsoleLine.error(text);
         }
         else if(lText.startsWith("warning ") || lText.startsWith("warning:") || lText.startsWith("invalid ")) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$

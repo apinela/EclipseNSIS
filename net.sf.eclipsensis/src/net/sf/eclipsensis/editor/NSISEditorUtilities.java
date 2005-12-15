@@ -17,8 +17,10 @@ import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.dialogs.MinimalProgressMonitorDialog;
 import net.sf.eclipsensis.makensis.MakeNSISResults;
+import net.sf.eclipsensis.makensis.MakeNSISRunner;
 import net.sf.eclipsensis.script.NSISScriptProblem;
 import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.NSISCompileTestUtility;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -29,6 +31,7 @@ import org.eclipse.jface.text.source.*;
 import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.*;
+import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.ide.IGotoMarker;
@@ -37,6 +40,75 @@ public class NSISEditorUtilities
 {
     private NSISEditorUtilities()
     {
+    }
+    
+    public static void clearMarkers(final IPath path)
+    {
+        if(path != null && (!MakeNSISRunner.isCompiling() || !path.equals(MakeNSISRunner.getScript()))) {
+            if(path.getDevice() == null) {
+                final IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
+                if(file.exists()) {
+                    WorkspaceModifyOperation op = new WorkspaceModifyOperation(file)
+                    {
+                        protected void execute(IProgressMonitor monitor)throws CoreException
+                        {
+                            try {
+                                file.deleteMarkers(INSISConstants.PROBLEM_MARKER_ID, false, IResource.DEPTH_ZERO);
+                            }
+                            catch (CoreException ex) {
+                                EclipseNSISPlugin.getDefault().log(ex);
+                            }
+                            finally {
+                                monitor.done();
+                            }
+                        }
+                    };
+                    try {
+                        op.run(null);
+                    }
+                    catch (Exception ex) {
+                        EclipseNSISPlugin.getDefault().log(ex);
+                    }
+                }
+            }
+            else {
+                final File file = new File(path.toOSString());
+                if(file.exists() && file.isFile()) {
+                    NSISCompileTestUtility.INSTANCE.removeCachedResults(file);
+                    Display.getDefault().asyncExec(new Runnable() {
+                        public void run()
+                        {
+                            updateAnnotations(file, null);
+                        }
+                    });
+                }
+            }
+        }
+    }
+
+    public static boolean hasMarkers(IPath path)
+    {
+        if(path != null && (!MakeNSISRunner.isCompiling() || !path.equals(MakeNSISRunner.getScript()))) {
+            if(path.getDevice() == null) {
+                IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
+                if(file.exists()) {
+                    try {
+                        IMarker[] markers = file.findMarkers(INSISConstants.PROBLEM_MARKER_ID, false, IResource.DEPTH_ZERO);
+                        return !Common.isEmptyArray(markers);
+                    }
+                    catch (CoreException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            else {
+                MakeNSISResults results = NSISCompileTestUtility.INSTANCE.getCachedResults(new File(path.toOSString()));
+                if(results != null) {
+                    return results.getProblems().size() > 0;
+                }
+            }
+        }
+        return false;
     }
 
     public static void gotoLine(IPath path, int lineNum)
@@ -291,30 +363,31 @@ public class NSISEditorUtilities
         if(model instanceof AnnotationModel) {
             AnnotationModel annotationModel = (AnnotationModel)model;
             annotationModel.removeAllAnnotations();
-            List problems = results.getProblems();
-            if(!Common.isEmptyCollection(problems)) {
-                IDocument doc = editor.getDocumentProvider().getDocument(editor.getEditorInput());
-                for(Iterator iter=problems.iterator(); iter.hasNext(); ) {
-                    NSISScriptProblem problem = (NSISScriptProblem)iter.next();
-                    int line = problem.getLine();
-                    if(line >= 0) {
-                        try {
-                            String name;
-                            if(problem.getType() == NSISScriptProblem.TYPE_ERROR) {
-                                name = INSISConstants.ERROR_ANNOTATION_NAME;
+            if (results != null) {
+                List problems = results.getProblems();
+                if (!Common.isEmptyCollection(problems)) {
+                    IDocument doc = editor.getDocumentProvider().getDocument(editor.getEditorInput());
+                    for (Iterator iter = problems.iterator(); iter.hasNext();) {
+                        NSISScriptProblem problem = (NSISScriptProblem)iter.next();
+                        int line = problem.getLine();
+                        if (line >= 0) {
+                            try {
+                                String name;
+                                if (problem.getType() == NSISScriptProblem.TYPE_ERROR) {
+                                    name = INSISConstants.ERROR_ANNOTATION_NAME;
+                                }
+                                else if (problem.getType() == NSISScriptProblem.TYPE_WARNING) {
+                                    name = INSISConstants.WARNING_ANNOTATION_NAME;
+                                }
+                                else {
+                                    continue;
+                                }
+                                IRegion region = doc.getLineInformation(line > 0?line - 1:1);
+                                annotationModel.addAnnotation(new Annotation(name, false, problem.getText()), new Position(region.getOffset(), (line > 0?region.getLength():0)));
                             }
-                            else if(problem.getType() == NSISScriptProblem.TYPE_WARNING) {
-                                name = INSISConstants.WARNING_ANNOTATION_NAME;
+                            catch (BadLocationException e) {
+                                EclipseNSISPlugin.getDefault().log(e);
                             }
-                            else {
-                                continue;
-                            }
-                            IRegion region = doc.getLineInformation(line >0?line-1:1);
-                            annotationModel.addAnnotation(new Annotation(name,false,problem.getText()),
-                                    new Position(region.getOffset(),(line>0?region.getLength():0)));
-                        }
-                        catch (BadLocationException e) {
-                            EclipseNSISPlugin.getDefault().log(e);
                         }
                     }
                 }
@@ -363,6 +436,11 @@ public class NSISEditorUtilities
 
     public static void updateAnnotations(MakeNSISResults results)
     {
+        updateAnnotations(results.getScriptFile(), results);
+    }
+
+    private static void updateAnnotations(File script, MakeNSISResults results)
+    {
         IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
         for (int i = 0; i < windows.length; i++) {
             IWorkbenchPage[] pages = windows[i].getPages();
@@ -374,8 +452,9 @@ public class NSISEditorUtilities
                         if(editor != null) {
                             IEditorInput input = editor.getEditorInput();
                             if(!(input instanceof IFileEditorInput) && input instanceof IPathEditorInput) {
-                                if(results.getScriptFile().getAbsolutePath().equals(((IPathEditorInput)input).getPath().toOSString())) {
+                                if(script.getAbsolutePath().equalsIgnoreCase(((IPathEditorInput)input).getPath().toOSString())) {
                                     updateAnnotations(editor, results);
+                                    editor.updateActionsState();
                                 }
                             }
                         }

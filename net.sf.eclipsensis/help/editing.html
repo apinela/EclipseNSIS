@@ -81,7 +81,7 @@ Completions include both NSIS keywords as well as code templates. <a href="javas
 <dd>Provides a scrollable list of available code templates when activated
 from a valid line of code in the EclipseNSIS editor. When a template is
 inserted, the user is prompted to complete any unresolved template
-variables. See <a href="templateprefs.html">Template Preferences</a>
+parameters. See <a href="templateprefs.html">Template Preferences</a>
 for more information about code templates. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a><br>
 <strong>Shortcut:</strong> Ctrl+T
 <p style="text-align: center;"><img src="images/inserttemplate.gif" style="border: medium none ; width: 361px; height: 202px;" alt="Insert Template"></p>
@@ -157,7 +157,7 @@ the vertical ruler when that portion of the script is visible.</p>
 <p>The EclipseNSIS editor includes a menu on the main menubar as well as a
 toolbar which provide quick access to some EclipseNSIS-related commands.
 Click on the image below for help on a particular command.</p>
-<p style="text-align: center;"><img style="border: 0px solid ; width: 450px; height: 263px;" usemap="#editormenu" ismap="ismap" alt="Editor Menu" src="images/editormenu.gif"></p>
+<p style="text-align: center;"><img style="border: 0px solid ; width: 406px; height: 262px;" usemap="#editormenu" ismap="ismap" alt="Editor Menu" src="images/editormenu.gif"></p>
 <a name="a_compile"></a>
 <dl id="id_compile">
 <dt>Compile Script</dt>
@@ -191,7 +191,13 @@ when a script is being compiled, even if it is not the current script.
 script is being compiled, even if it is not the current script. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a><br>
 <strong>Shortcut:</strong> Alt+N</dd>
 </dl>
-<a name="a_preferences"></a>
+<a name="a_clearmarkers"></a>
+<dl id="id_clearmarkers">
+  <dt>Clear Problem Markers</dt>
+  <dd>Clears any problem markers generated the previous time this NSIS script was compiled. This command is enabled only when the script is not being compiled, and if it has existing problem markers. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a><br>
+    <strong>Shortcut:</strong> Alt+R</dd>
+</dl>
+<p><a name="a_preferences"></a></p>
 <dl id="id_preferences">
 <dt>Preferences</dt>
 <dd>Opens the Eclipse Workbench Preference Dialog, with the EclipseNSIS
@@ -233,6 +239,7 @@ outline view are:</p>
 <li>!ifndef</li>
 <li>!ifmacrodef</li>
 <li>!ifnmacrodef</li>
+<li>!include</li>
 <li>!macro</li>
 <li>Function</li>
 <li>Section</li>
@@ -240,7 +247,7 @@ outline view are:</p>
 <li>Page</li>
 <li>PageEx</li>
 </ul>
-<p style="text-align: center;"><img alt="Code Outline" style="border: medium none ; width: 300px; height: 406px;" src="images/outline.gif"></p>
+<p style="text-align: center;"><img alt="Code Outline" style="border: medium none ; width: 305px; height: 334px;" src="images/outline.gif"></p>
 <a name="code_folding"></a><h2>Code Folding</h2>
 <p>The EclipseNSIS editor supports folding of certain types of code regions. The code regions supported
 are any NSIS keywords which are multi-line in nature, e.g., Function, Section, !macro, etc. Multi-line
@@ -313,7 +320,26 @@ Eclipse Workbench help or the EclipseNSIS integrated browser.</p>
 <p><strong><small>Copyright &copy; 2004, 2005 Sunil Kamath
 (IcemanK).</small></strong></p>
 <map name="editorpopupmenu"><area id="insert_color" shape="rect" href="#a_insert_color" alt="Insert Color" onclick="highlightDef('id_insert_color');" coords="54,371, 277,388"><area id="insert_folder_name" shape="rect" href="#a_insert_folder_name" alt="Insert Folder Name" onclick="highlightDef('id_insert_folder_name');" coords="54,351, 277,368"><area id="insert_file_name" shape="rect" href="#a_insert_file_name" alt="Insert File Name" onclick="highlightDef('id_insert_file_name');" coords="54,329, 277,346"><area id="block_comment" shape="rect" href="#a_block_comment" alt="Block Comment" onclick="highlightDef('id_block_comment');" coords="54,282, 277,317"><area id="toggle_comment" shape="rect" href="#a_toggle_comment" alt="Toggle Comment" onclick="highlightDef('id_toggle_comment');" coords="54,263, 277,281"><area id="tabs_to_spaces" shape="rect" href="#a_tabs_to_spaces" alt="Convert Tabs to Spaces" onclick="highlightDef('id_tabs_to_spaces');" coords="54,245, 277,262"><area id="insert_template" shape="rect" href="#a_insert_template" alt="Insert Template" onclick="highlightDef('id_insert_template');" coords="54,218, 277,235"><area id="code_assist" shape="rect" href="#a_code_assist" alt="Code Assist" onclick="highlightDef('id_code_assist');" coords="54,200, 277,217"></map>
-<map name="editormenu"><area id="htmlhelp" shape="rect" href="#a_htmlhelp" alt="NSIS Help" onclick="highlightDef('id_htmlhelp');" coords="420,36, 442,60"><area id="help" shape="rect" href="#a_help" alt="EclipseNSIS Help" onclick="highlightDef('id_help');" coords="397,36, 419,60"><area id="wizard" shape="rect" href="#a_wizard" alt="NSIS Script Wizard" onclick="highlightDef('id_wizard');" coords="374,36, 396,60"><area id="preferences" shape="rect" href="#a_preferences" alt="EclipseNSIS Preferences" onclick="highlightDef('id_preferences');" coords="351,36, 373,60"><area id="cancel" shape="rect" href="#a_cancel" alt="Cancel Script Compilation" onclick="highlightDef('id_cancel');" coords="328,36, 350,60"><area id="compile_test" shape="rect" href="#a_compile_test" alt="Compile Script and Test" onclick="highlightDef('id_compile_test');" coords="305,36, 327,60"><area id="test" shape="rect" href="#a_test" alt="Test Installer" onclick="highlightDef('id_test');" coords="282,36, 304,60"><area id="compile" shape="rect" href="#a_compile" alt="Compile Script" onclick="highlightDef('id_compile');" coords="259,36, 281,60"><area id="about" shape="rect" href="#a_about" alt="About EclipseNSIS" onclick="highlightDef('id_about');" coords="9,230, 226,251"><area id="htmlhelp2" shape="rect" href="#a_htmlhelp" alt="NSIS Help" onclick="highlightDef('id_htmlhelp');" coords="9,208, 226,229"><area id="help2" shape="rect" href="#a_help" alt="EclipseNSIS Help" onclick="highlightDef('id_help');" coords="9,186, 226,207"><area id="wizard2" shape="rect" href="#a_wizard" alt="NSIS Script Wizard" onclick="highlightDef('id_wizard');" coords="8,155, 227,176"><area id="preferences2" shape="rect" href="#a_preferences" alt="EclipseNSIS Preferences" onclick="highlightDef('id_preferences');" coords="8,133, 227,154"><area id="cancel2" shape="rect" href="#a_cancel" alt="Cancel Script Compilation" onclick="highlightDef('id_cancel');" coords="9,102, 226,123"><area id="compile_test2" shape="rect" href="#a_compile_test" alt="Compile Script and Test" onclick="highlightDef('id_compile_test');" coords="10,80, 227,101"><area id="test2" shape="rect" href="#a_test" alt="Test Installer" onclick="highlightDef('id_test');" coords="9,57, 226,79"><area id="compile2" shape="rect" href="#a_compile" alt="Compile Script" onclick="highlightDef('id_compile');" coords="9,35, 226,56"></map>
+<map name="editormenu">
+  <area id="htmlhelp" shape="rect" href="#a_htmlhelp" alt="NSIS Help" onclick="highlightDef('id_htmlhelp');" coords="383,33,405,57">
+  <area id="help" shape="rect" href="#a_help" alt="EclipseNSIS Help" onclick="highlightDef('id_help');" coords="361,33,383,57">
+  <area id="wizard" shape="rect" href="#a_wizard" alt="NSIS Script Wizard" onclick="highlightDef('id_wizard');" coords="339,33,361,57">
+  <area id="preferences" shape="rect" href="#a_preferences" alt="EclipseNSIS Preferences" onclick="highlightDef('id_preferences');" coords="316,33,338,57">
+  <area id="cancel" shape="rect" href="#a_cancel" alt="Cancel Script Compilation" onclick="highlightDef('id_cancel');" coords="293,33,315,57">
+  <area id="compile_test" shape="rect" href="#a_compile_test" alt="Compile Script and Test" onclick="highlightDef('id_compile_test');" coords="270,33,292,57">
+  <area id="test" shape="rect" href="#a_test" alt="Test Installer" onclick="highlightDef('id_test');" coords="248,33,270,57">
+  <area id="compile" shape="rect" href="#a_compile" alt="Compile Script" onclick="highlightDef('id_compile');" coords="225,33,247,57">
+  <area id="about" shape="rect" href="#a_about" alt="About EclipseNSIS" onclick="highlightDef('id_about');" coords="3,238,220,259">
+  <area id="htmlhelp2" shape="rect" href="#a_htmlhelp" alt="NSIS Help" onclick="highlightDef('id_htmlhelp');" coords="3,217,220,238">
+  <area id="help2" shape="rect" href="#a_help" alt="EclipseNSIS Help" onclick="highlightDef('id_help');" coords="3,196,220,217">
+  <area id="wizard2" shape="rect" href="#a_wizard" alt="NSIS Script Wizard" onclick="highlightDef('id_wizard');" coords="2,165,221,186">
+  <area id="preferences2" shape="rect" href="#a_preferences" alt="EclipseNSIS Preferences" onclick="highlightDef('id_preferences');" coords="2,144,221,165">
+  <area id="clearmarkers" shape="rect" href="#a_clearmarkers" alt="Clear Problem Markers" onclick="highlightDef('id_clearmarkers');" coords="3,113,220,134">
+  <area id="cancel2" shape="rect" href="#a_cancel" alt="Cancel Script Compilation" onclick="highlightDef('id_cancel');" coords="3,91,220,112">
+  <area id="compile_test2" shape="rect" href="#a_compile_test" alt="Compile Script and Test" onclick="highlightDef('id_compile_test');" coords="3,71,220,92">
+  <area id="test2" shape="rect" href="#a_test" alt="Test Installer" onclick="highlightDef('id_test');" coords="3,49,220,71">
+  <area id="compile2" shape="rect" href="#a_compile" alt="Compile Script" onclick="highlightDef('id_compile');" coords="3,28,220,49">
+</map>
 </div>
 
 </body></html>

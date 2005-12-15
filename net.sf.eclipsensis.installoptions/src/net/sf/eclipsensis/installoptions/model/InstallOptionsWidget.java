@@ -382,7 +382,7 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
     public Position toGraphical(Position p, boolean toPixels)
     {
         InstallOptionsDialog dialog = getParent();
-        return toGraphical(p, (dialog==null?null:dialog.getDialogSize()), toPixels);
+        return toGraphical(p, (dialog==null?null:dialog.getDialogSize().getSize()), toPixels);
     }
 
     public Position toGraphical(Position p, Dimension size)
@@ -424,7 +424,7 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
     public Position toModel(Position p, boolean fromPixels)
     {
         InstallOptionsDialog dialog = getParent();
-        return toModel(p, (dialog==null?null:dialog.getDialogSize()), fromPixels);
+        return toModel(p, (dialog==null?null:dialog.getDialogSize().getSize()), fromPixels);
     }
 
     public Position toModel(Position p, Dimension size)

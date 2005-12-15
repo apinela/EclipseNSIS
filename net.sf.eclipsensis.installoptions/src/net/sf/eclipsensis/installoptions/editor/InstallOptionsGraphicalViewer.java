@@ -12,9 +12,9 @@ package net.sf.eclipsensis.installoptions.editor;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
+import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
 import net.sf.eclipsensis.installoptions.dnd.InstallOptionsTemplateTransfer;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsDialog;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
+import net.sf.eclipsensis.installoptions.model.*;
 import net.sf.eclipsensis.util.WinAPI;
 
 import org.eclipse.draw2d.*;
@@ -72,7 +72,8 @@ public class InstallOptionsGraphicalViewer extends GraphicalViewerImpl
             final PropertyChangeListener listener = new PropertyChangeListener() {
                 public void propertyChange(PropertyChangeEvent evt)
                 {
-                    if(evt.getPropertyName().equals(InstallOptionsModel.PROPERTY_RTL)) {
+                    String property = evt.getPropertyName();
+                    if(property.equals(InstallOptionsModel.PROPERTY_RTL)) {
                         String rtl = (String)evt.getNewValue();
                         int windowsStyle = WinAPI.GetWindowLong(canvas.handle,WinAPI.GWL_EXSTYLE);
                         int style = canvas.getStyle();
@@ -90,12 +91,24 @@ public class InstallOptionsGraphicalViewer extends GraphicalViewerImpl
                         WinAPI.SetObjectFieldValue(canvas,"style",style); //$NON-NLS-1$
                         getRootFigure().repaint();
                     }
+                    else if(property.equals(DialogSizeManager.PROPERTY_DIALOGSIZES)) {
+                        DialogSize oldDialogSize = mDialog.getDialogSize();
+                        DialogSize newDialogSize = DialogSizeManager.getDialogSize(oldDialogSize.getName());
+                        if(newDialogSize == null) {
+                            setProperty(IInstallOptionsConstants.PROPERTY_DIALOG_SIZE,DialogSizeManager.getDefaultDialogSize().getCopy());
+                        }
+                        else if(!oldDialogSize.equals(newDialogSize)) {
+                            setProperty(IInstallOptionsConstants.PROPERTY_DIALOG_SIZE,newDialogSize.getCopy());
+                        }
+                    }
                 }
             };
             mDialog.addPropertyChangeListener(listener);
+            DialogSizeManager.addPropertyChangeListener(listener);
             canvas.addDisposeListener(new DisposeListener() {
                 public void widgetDisposed(DisposeEvent e)
                 {
+                    DialogSizeManager.removePropertyChangeListener(listener);
                     mDialog.removePropertyChangeListener(listener);
                 }
             });

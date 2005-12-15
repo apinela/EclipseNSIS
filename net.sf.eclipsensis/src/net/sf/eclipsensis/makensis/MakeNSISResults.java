@@ -97,7 +97,7 @@ public class MakeNSISResults
     /**
      * @return Returns the canceled.
      */
-    public boolean getCanceled()
+    public boolean isCanceled()
     {
         return mCanceled;
     }

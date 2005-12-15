@@ -194,7 +194,8 @@ public class NSISConsolePage extends TextConsolePage implements IMakeNSISRunList
             {
                 cancelActionDelegate.dispose();
             }
-        });
+        });        setIsCompiling(MakeNSISRunner.isCompiling());
+
         setAutoScroll(!mScrollLockAction.isChecked());
     }
 

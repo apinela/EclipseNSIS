@@ -11,6 +11,7 @@ package net.sf.eclipsensis.dialogs;
 
 import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.settings.NSISSettingsEditor;
+import net.sf.eclipsensis.settings.NSISSettingsEditorPage;
 
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -42,7 +43,6 @@ public abstract class NSISSettingsPage extends PropertyPage implements IWorkbenc
         setDescription(getPageDescription());
         super.createControl(parent);
         PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),getContextId());
-        mSettingsEditor.updateControlsState();
     }
 
     /* (non-Javadoc)
@@ -58,7 +58,10 @@ public abstract class NSISSettingsPage extends PropertyPage implements IWorkbenc
 
     protected void performDefaults()
     {
-        mSettingsEditor.setDefaults();
+        NSISSettingsEditorPage[] pages = mSettingsEditor.getPages();
+        for (int i = 0; i < pages.length; i++) {
+            pages[i].setDefaults();
+        }
         super.performDefaults();
     }
 

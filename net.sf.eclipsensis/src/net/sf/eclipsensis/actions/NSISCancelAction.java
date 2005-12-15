@@ -10,8 +10,10 @@
 package net.sf.eclipsensis.actions;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.makensis.MakeNSISResults;
 import net.sf.eclipsensis.makensis.MakeNSISRunner;
 
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.action.IAction;
 
 public class NSISCancelAction extends NSISScriptAction
@@ -29,14 +31,14 @@ public class NSISCancelAction extends NSISScriptAction
         }
 	}
 
-    protected void started()
+    protected void started(IPath script)
     {
         if(mAction != null && !mAction.isEnabled()) {
             mAction.setEnabled(true);
         }
     }
 
-    protected void stopped()
+    protected void stopped(IPath script, MakeNSISResults results)
     {
         if(mAction != null && mAction.isEnabled()) {
             mAction.setEnabled(false);

@@ -9,6 +9,8 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.model;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.*;
 
 import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
@@ -20,56 +22,135 @@ import org.eclipse.jface.preference.IPreferenceStore;
 
 public class DialogSizeManager
 {
-    public static final String PROPERTY_DIALOGSIZES_PREFIX = "dialogsizes."; //$NON-NLS-1$
+    public static final String PROPERTY_DIALOGSIZES = "dialogsizes"; //$NON-NLS-1$
+    public static final String PROPERTY_DIALOGSIZES_PREFIX = PROPERTY_DIALOGSIZES+"."; //$NON-NLS-1$
     public static final String PROPERTY_DIALOGSIZES_COUNT = PROPERTY_DIALOGSIZES_PREFIX + "count"; //$NON-NLS-1$
     private static final String SEPARATOR = new String(new char[]{'\u00FF'});
-    private static List cDefaultDialogSizes = null;
-    private static List cDialogSizes = null;
+    private static List cPresetDialogSizes = null;
+    private static Map cDialogSizes = null;
+    private static PropertyChangeSupport mListeners = new PropertyChangeSupport(DialogSizeManager.class);
 
     private DialogSizeManager()
     {
     }
 
-    public static Dimension getDefaultDialogSizeDimension()
+    public static void addPropertyChangeListener(PropertyChangeListener listener)
     {
-        List list = getDialogSizes();
-        if(!Common.isEmptyCollection(list)) {
-            for (Iterator iter = list.iterator(); iter.hasNext();) {
-                DialogSize element = (DialogSize)iter.next();
-                if(element.isDefault()) {
-                    return element.getSize();
-                }
-            }
-        }
-        return IInstallOptionsConstants.DIALOG_SIZE_DEFAULT;
+        mListeners.addPropertyChangeListener(listener);
     }
 
-    public static synchronized List getDialogSizes()
+    public static void removePropertyChangeListener(PropertyChangeListener listener)
     {
-        if(cDialogSizes == null) {
-            IPreferenceStore store = InstallOptionsPlugin.getDefault().getPreferenceStore();
-            String temp = store.getString(PROPERTY_DIALOGSIZES_COUNT);
-            if(Common.isEmpty(temp)) {
-                cDialogSizes = new ArrayList();
-                for(Iterator iter=getPresetDialogSizes().iterator(); iter.hasNext(); ) {
-                    try {
-                        cDialogSizes.add(((DialogSize)iter.next()).clone());
+        mListeners.removePropertyChangeListener(listener);
+    }
+
+    public static DialogSize getDefaultDialogSize()
+    {
+        synchronized(DialogSizeManager.class) {
+            loadDialogSizes();
+            for (Iterator iter = cDialogSizes.values().iterator(); iter.hasNext();) {
+                DialogSize element = (DialogSize)iter.next();
+                if(element.isDefault()) {
+                    return element;
+                }
+            }
+            return IInstallOptionsConstants.DEFAULT_DIALOG_SIZE;
+        }
+    }
+
+    public static DialogSize getDialogSize(String name)
+    {
+        synchronized(DialogSizeManager.class) {
+            loadDialogSizes();
+            return (DialogSize)cDialogSizes.get(name);
+        }
+    }
+
+    public static DialogSize getDialogSize(Dimension dim)
+    {
+        DialogSize dialogSize = getDefaultDialogSize();
+        if(dialogSize.getSize().equals(dim)) {
+            return dialogSize;
+        }
+        else {
+            for (Iterator iter = cDialogSizes.values().iterator(); iter.hasNext();) {
+                DialogSize element = (DialogSize)iter.next();
+                if(element.getSize().equals(dim)) {
+                    return element;
+                }
+            }
+        }
+        return null;
+    }
+
+    public static List getDialogSizes()
+    {
+        synchronized(DialogSizeManager.class) {
+            loadDialogSizes();
+    
+            return new ArrayList(cDialogSizes.values());
+        }
+    }
+
+    private static void loadDialogSizes()
+    {
+        synchronized(DialogSizeManager.class) {
+            if(cDialogSizes == null) {
+                IPreferenceStore store = InstallOptionsPlugin.getDefault().getPreferenceStore();
+                setDialogSizes(loadDialogSizes(store));
+            }
+        }
+    }
+
+    public static synchronized void setDialogSizes(List dialogSizes)
+    {
+        synchronized (DialogSizeManager.class) {
+            if(cDialogSizes == null) {
+                cDialogSizes = new LinkedHashMap();
+            }
+            else {
+                cDialogSizes.clear();
+            }
+            List oldList = new ArrayList(cDialogSizes.values());
+            boolean makeCopy = false;
+            if(Common.isEmptyCollection(dialogSizes)) {
+                dialogSizes=getPresetDialogSizes();
+                makeCopy = true;
+            }
+            boolean foundDefault = false;
+            for(Iterator iter=dialogSizes.iterator(); iter.hasNext(); ) {
+                DialogSize dialogSize = (DialogSize)iter.next();
+                if(makeCopy) {
+                    dialogSize = dialogSize.getCopy();
+                }
+                if(cDialogSizes.containsKey(dialogSize.getName())) {
+                    iter.remove();
+                    continue;
+                }
+                cDialogSizes.put(dialogSize.getName(), dialogSize);
+                if(dialogSize.isDefault()) {
+                    if(foundDefault) {
+                        dialogSize.setDefault(false);
                     }
-                    catch (CloneNotSupportedException e) {
+                    else {
+                        foundDefault = true;
                     }
                 }
             }
-            else {
-                cDialogSizes = loadDialogSizes(store);
+            if(!foundDefault) {
+                DialogSize dialogSize = (DialogSize)cDialogSizes.get(((DialogSize)dialogSizes.get(0)).getName());
+                dialogSize.setDefault(true);
+            }
+            
+            if(oldList.size() != dialogSizes.size() || !oldList.containsAll(dialogSizes)) {
+                mListeners.firePropertyChange(PROPERTY_DIALOGSIZES, oldList, dialogSizes);
             }
         }
-
-        return cDialogSizes;
     }
 
     public static synchronized List getPresetDialogSizes()
     {
-        if(cDefaultDialogSizes == null) {
+        if(cPresetDialogSizes == null) {
             Object source;
             try {
                 source = ResourceBundle.getBundle(DialogSize.class.getPackage().getName()+".DialogSizes"); //$NON-NLS-1$
@@ -77,9 +158,12 @@ public class DialogSizeManager
             catch(MissingResourceException mre) {
                 source = null;
             }
-            cDefaultDialogSizes = loadDialogSizes(source);
+            cPresetDialogSizes = loadDialogSizes(source);
+            if(cPresetDialogSizes.size() == 0) {
+                cPresetDialogSizes.add(IInstallOptionsConstants.DEFAULT_DIALOG_SIZE);
+            }
         }
-        return cDefaultDialogSizes;
+        return cPresetDialogSizes;
     }
 
     private static String getString(Object source, String name)

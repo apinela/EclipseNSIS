@@ -9,9 +9,11 @@
  *******************************************************************************/
 package net.sf.eclipsensis.actions;
 
+import net.sf.eclipsensis.makensis.MakeNSISResults;
 import net.sf.eclipsensis.makensis.MakeNSISRunner;
 import net.sf.eclipsensis.util.NSISCompileTestUtility;
 
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.action.IAction;
 
 public class NSISCompileAction extends NSISScriptAction
@@ -26,14 +28,14 @@ public class NSISCompileAction extends NSISScriptAction
         }
 	}
 
-    protected void started()
+    protected void started(IPath script)
     {
         if(mAction != null && mAction.isEnabled()) {
             mAction.setEnabled(false);
         }
     }
 
-    protected void stopped()
+    protected void stopped(IPath script, MakeNSISResults results)
     {
         if(mAction != null && !mAction.isEnabled()) {
             mAction.setEnabled(true);

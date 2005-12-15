@@ -43,7 +43,7 @@ public class NSISLaunchShortcut implements ILaunchShortcut
     public NSISLaunchShortcut()
     {
         mLaunchManager = DebugPlugin.getDefault().getLaunchManager();
-        mConfigType = mLaunchManager.getLaunchConfigurationType("net.sf.eclipsensis.launch.nsisLaunchConfigType");
+        mConfigType = mLaunchManager.getLaunchConfigurationType("net.sf.eclipsensis.launch.nsisLaunchConfigType"); //$NON-NLS-1$
         mStringVariableManager = VariablesPlugin.getDefault().getStringVariableManager();
     }
 
@@ -91,7 +91,7 @@ public class NSISLaunchShortcut implements ILaunchShortcut
                     for (int i = 0; i < configs.length; i++) {
                         ILaunchConfiguration config = configs[i];
                         try {
-                            String script = config.getAttribute(NSISLaunchSettings.SCRIPT, "");
+                            String script = config.getAttribute(NSISLaunchSettings.SCRIPT, ""); //$NON-NLS-1$
                             if (!Common.isEmpty(script)) {
                                 String fullname2 = getLocation(new Path(mStringVariableManager.performStringSubstitution(script)));
                                 if (Common.stringsAreEqual(fullname, fullname2, true)) {
@@ -128,7 +128,7 @@ public class NSISLaunchShortcut implements ILaunchShortcut
         NSISLaunchSettings settings;
         String script;
         if(path.getDevice() == null) {
-            script = mStringVariableManager.generateVariableExpression("workspace_loc",path.toString());
+            script = mStringVariableManager.generateVariableExpression("workspace_loc",path.toString()); //$NON-NLS-1$
             IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
             settings = new NSISLaunchSettings(NSISProperties.getProperties(file));
         }
@@ -163,7 +163,7 @@ public class NSISLaunchShortcut implements ILaunchShortcut
         Display.getDefault().asyncExec(new Runnable() {
             public void run() {
                 int mask = IStatus.OK | IStatus.INFO | IStatus.WARNING | IStatus.ERROR;
-                ErrorDialog dialog = new ErrorDialog(getShell(), "Error Launching", "Exception", exception.getStatus(), mask);
+                ErrorDialog dialog = new ErrorDialog(getShell(), EclipseNSISPlugin.getResourceString("launch.error.dialog.title"), EclipseNSISPlugin.getResourceString("launch.error.dialog.message"), exception.getStatus(), mask); //$NON-NLS-1$ //$NON-NLS-2$
                 dialog.create();
                 dialog.getShell().setImage(EclipseNSISPlugin.getShellImage());
                 dialog.open();
@@ -176,8 +176,8 @@ public class NSISLaunchShortcut implements ILaunchShortcut
         IDebugModelPresentation labelProvider = DebugUITools.newDebugModelPresentation();
         ElementListSelectionDialog dialog= new ElementListSelectionDialog(getShell(), labelProvider);
         dialog.setElements(configList.toArray());
-        dialog.setTitle("Launch Configuration Selection");
-        dialog.setMessage("Choose a launch configuration to run");
+        dialog.setTitle(EclipseNSISPlugin.getResourceString("launch.dialog.title")); //$NON-NLS-1$
+        dialog.setMessage(EclipseNSISPlugin.getResourceString("launch.dialog.message")); //$NON-NLS-1$
         dialog.setMultipleSelection(false);
         int result = dialog.open();
         labelProvider.dispose();

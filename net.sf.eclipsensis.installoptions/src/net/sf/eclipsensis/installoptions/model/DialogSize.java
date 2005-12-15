@@ -11,7 +11,7 @@ package net.sf.eclipsensis.installoptions.model;
 
 import org.eclipse.draw2d.geometry.Dimension;
 
-public class DialogSize implements Cloneable
+public class DialogSize
 {
     private String mName;
     private boolean mDefault;
@@ -25,7 +25,7 @@ public class DialogSize implements Cloneable
         mDefault = isDefault;
     }
 
-    public Object clone() throws CloneNotSupportedException
+    public DialogSize getCopy()
     {
         return new DialogSize(mName, mDefault, mSize.getCopy());
     }

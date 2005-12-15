@@ -12,7 +12,6 @@ package net.sf.eclipsensis.launch;
 import net.sf.eclipsensis.INSISConstants;
 
 import org.eclipse.debug.ui.*;
-import org.eclipse.debug.ui.CommonTab;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
 
@@ -29,9 +28,9 @@ public class NSISLaunchConfigTabGroup extends AbstractLaunchConfigurationTabGrou
             public void createControl(Composite parent)
             {
                 super.createControl(parent);
-                PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),INSISConstants.PLUGIN_CONTEXT_PREFIX + "nsis_launchconfig_common_context");
+                PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),INSISConstants.PLUGIN_CONTEXT_PREFIX + "nsis_launchconfig_common_context"); //$NON-NLS-1$
             }
         };
-        setTabs(new ILaunchConfigurationTab[]{new NSISTab(), commonTab});
+        setTabs(new ILaunchConfigurationTab[]{new NSISGeneralTab(), new NSISSymbolsTab(), commonTab});
     }
 }

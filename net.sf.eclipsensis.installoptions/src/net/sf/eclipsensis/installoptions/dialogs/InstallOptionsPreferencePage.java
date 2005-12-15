@@ -173,9 +173,7 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
         savePreference(mDisplaySettingsMap, PREFERENCE_SHOW_DIALOG_SIZE,TypeConverter.BOOLEAN_CONVERTER,
                 SHOW_DIALOG_SIZE_DEFAULT);
 
-        List list = DialogSizeManager.getDialogSizes();
-        list.clear();
-        list.addAll(mDialogSizesMap.values());
+        DialogSizeManager.setDialogSizes(new ArrayList(mDialogSizesMap.values()));
         DialogSizeManager.storeDialogSizes();
 
         int hashCode = mSyntaxStylesMap.hashCode();
@@ -446,15 +444,10 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
 
     private void loadDialogSizes()
     {
-        Collection coll = DialogSizeManager.getDialogSizes();
-        for (Iterator iter = coll.iterator(); iter.hasNext();) {
-            DialogSize element;
-            try {
-                element = (DialogSize)((DialogSize)iter.next()).clone();
-                mDialogSizesMap.put(element.getName().toLowerCase(),element);
-            }
-            catch (CloneNotSupportedException e) {
-            }
+        List list = DialogSizeManager.getDialogSizes();
+        for (Iterator iter = list.iterator(); iter.hasNext();) {
+            DialogSize element = ((DialogSize)iter.next()).getCopy();
+            mDialogSizesMap.put(element.getName().toLowerCase(),element);
         }
     }
 
@@ -649,7 +642,7 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
         int selectionCount= selection.size();
         int itemCount= mDialogSizeViewer.getTable().getItemCount();
         mEditDialogSize.setEnabled(selectionCount == 1);
-        mRemoveDialogSize.setEnabled(selectionCount > 0 && selectionCount <= itemCount);
+        mRemoveDialogSize.setEnabled(selectionCount > 0 && selectionCount < itemCount);
     }
 
     /**
@@ -742,12 +735,7 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
         List list = DialogSizeManager.getPresetDialogSizes();
         for (Iterator iter = list.iterator(); iter.hasNext();) {
             DialogSize element = (DialogSize)iter.next();
-            try {
-                mDialogSizesMap.put(element.getName().toLowerCase(),element.clone());
-            }
-            catch (CloneNotSupportedException e) {
-                InstallOptionsPlugin.getDefault().log(e);
-            }
+            mDialogSizesMap.put(element.getName().toLowerCase(),element.getCopy());
         }
         updateDialogSizeViewerInput();
 
@@ -854,12 +842,8 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
         {
             super(parentShell);
             mOriginal = dialogSize;
-            try {
-                mCurrent = (dialogSize==null?new DialogSize("",false,new Dimension()): //$NON-NLS-1$
-                                                (DialogSize)dialogSize.clone());
-            }
-            catch (CloneNotSupportedException e) {
-            }
+            mCurrent = (dialogSize==null?new DialogSize("",false,new Dimension()): //$NON-NLS-1$
+                                         dialogSize.getCopy());
         }
 
         protected void configureShell(Shell newShell)

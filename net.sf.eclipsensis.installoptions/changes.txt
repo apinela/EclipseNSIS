@@ -9,6 +9,7 @@ Revision History
       selection.
     * Fixed improper handling of spaces in lists separated by '|', e.g. in
       Flags and ListItems fields.
+    * Better management of Dialog sizes.
     * Other minor bug fixes.
 
 0.9.3 (09/29/2005)

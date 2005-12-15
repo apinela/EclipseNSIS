@@ -121,24 +121,6 @@ public class IOUtility
         }
     }
 
-    /*
-     *     protected Class resolveClass(ObjectStreamClass desc)
-    throws IOException, ClassNotFoundException
-    {
-    String name = desc.getName();
-    try {
-        return Class.forName(name, false, latestUserDefinedLoader());
-    } catch (ClassNotFoundException ex) {
-        Class cl = (Class) primClasses.get(name);
-        if (cl != null) {
-        return cl;
-        } else {
-        throw ex;
-        }
-    }
-    }
-    
-     */
     public static void closeIO(Object object)
     {
         if(object != null) {
@@ -472,14 +454,14 @@ public class IOUtility
             lastModified = bundle.getLastModified();
             try {
                 IPath relative = source.makeRelative();
-                URL url = Platform.resolve(bundle.getEntry("/"));
-                if (url.getProtocol().equalsIgnoreCase("file")) {
+                URL url = Platform.resolve(bundle.getEntry("/")); //$NON-NLS-1$
+                if (url.getProtocol().equalsIgnoreCase("file")) { //$NON-NLS-1$
                     File original = new File(url.getFile(), relative.toString());
                     if (original.exists() && original.isFile()) {
                         lastModified = original.lastModified();
                     }
                 }
-                else if (url.getProtocol().equals("jar")) {
+                else if (url.getProtocol().equals("jar")) { //$NON-NLS-1$
                     JarURLConnection conn = (JarURLConnection)url.openConnection();
                     JarFile jarFile = conn.getJarFile();
                     JarEntry entry = jarFile.getJarEntry(relative.toString());

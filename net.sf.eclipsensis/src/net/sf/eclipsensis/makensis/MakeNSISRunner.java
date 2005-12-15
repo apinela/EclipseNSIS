@@ -57,6 +57,7 @@ public class MakeNSISRunner implements INSISConstants
     private static String cHwndLock = "lock"; //$NON-NLS-1$
     private static long cHwnd = 0;
     private static Set cListeners = new HashSet();
+    private static IPath cScript = null;
     
     public static final int COMPRESSOR_DEFAULT = 0;
     public static final int COMPRESSOR_BEST;
@@ -95,6 +96,11 @@ public class MakeNSISRunner implements INSISConstants
 
     private MakeNSISRunner()
     {
+    }
+
+    public static IPath getScript()
+    {
+        return cScript;
     }
     
     public static void addListener(IMakeNSISRunListener listener)
@@ -137,16 +143,17 @@ public class MakeNSISRunner implements INSISConstants
     /**
      * @param process The process to set.
      */
-    private static void setCompileProcess(MakeNSISProcess process)
+    private static void setCompileProcess(IPath script, MakeNSISProcess process)
     {
         synchronized(cCompileLock) {
+            cScript = script;
             cCompileProcess = process;
         }
     }
 
     private static void updateMarkers(final IFile file, final INSISConsole console, final MakeNSISResults results)
     {
-        if (!results.getCanceled()) {
+        if (!results.isCanceled()) {
             WorkspaceModifyOperation op = new WorkspaceModifyOperation(file)
             {
                 protected void execute(IProgressMonitor monitor)throws CoreException
@@ -566,12 +573,12 @@ public class MakeNSISRunner implements INSISConstants
         String commandLine = new StringBuffer(NSISPreferences.INSTANCE.getNSISExe()).append(" ").append( //$NON-NLS-1$
                 Common.flatten(cmdArray,' ')).toString();
         if(EclipseNSISPlugin.getDefault().isDebugging()) {
-            EclipseNSISPlugin.getDefault().log(new StringBuffer("Command Line:").append(LINE_SEPARATOR).append(commandLine).toString());
+            EclipseNSISPlugin.getDefault().log(new StringBuffer("Command Line:").append(LINE_SEPARATOR).append(commandLine).toString()); //$NON-NLS-1$
         }
         try {
             notifyListeners(MakeNSISRunEvent.CREATED_PROCESS, script, commandLine);
             MakeNSISProcess proc = createProcess(NSISPreferences.INSTANCE.getNSISExe(), cmdArray, env, workDir);
-            setCompileProcess(proc);
+            setCompileProcess(script, proc);
             Process process = proc.getProcess();
             InputStream inputStream = process.getInputStream();
             OutputFileConsoleLineProcessor outFileProcessor = new OutputFileConsoleLineProcessor(outputProcessor);
@@ -635,7 +642,7 @@ public class MakeNSISRunner implements INSISConstants
             console.appendLine(NSISConsoleLine.error(ie.getLocalizedMessage()));
         }
         finally {
-            setCompileProcess(null);
+            setCompileProcess(null, null);
             notifyListeners(MakeNSISRunEvent.COMPLETED_PROCESS, script, commandLine);
             if(showStatistics && results.getReturnCode() != MakeNSISResults.RETURN_CANCEL) {
                 console.appendLine(NSISConsoleLine.info(cCompilationTimeFormat.format(splitCompilationTime(System.currentTimeMillis()-n))));

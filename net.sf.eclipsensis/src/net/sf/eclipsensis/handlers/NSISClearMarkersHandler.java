@@ -7,9 +7,16 @@
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
-package net.sf.eclipsensis.settings;
+package net.sf.eclipsensis.handlers;
 
-public interface INSISSettingsEditorListener
+import net.sf.eclipsensis.editor.NSISEditorUtilities;
+
+import org.eclipse.core.runtime.IPath;
+
+public class NSISClearMarkersHandler extends NSISHandler
 {
-    public void settingsChanged();
+    protected void handleScript(IPath path)
+    {
+        NSISEditorUtilities.clearMarkers(path);
+    }
 }

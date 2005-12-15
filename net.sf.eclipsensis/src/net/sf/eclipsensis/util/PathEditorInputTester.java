@@ -13,12 +13,11 @@ import org.eclipse.core.expressions.PropertyTester;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.ui.IPathEditorInput;
 
-
 public class PathEditorInputTester extends PropertyTester
 {
     public boolean test(Object receiver, String property, Object[] args, Object expectedValue)
     {
-        if(receiver instanceof IPathEditorInput && "pathExtensionEquals".equals(property)) {
+        if(receiver instanceof IPathEditorInput && "pathExtensionEquals".equals(property)) { //$NON-NLS-1$
             IPath path = ((IPathEditorInput)receiver).getPath();
             if(path != null) {
                 String extension = path.getFileExtension();

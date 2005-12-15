@@ -9,6 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions;
 
+import net.sf.eclipsensis.installoptions.model.DialogSize;
 import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.core.runtime.QualifiedName;
@@ -54,7 +55,6 @@ public interface IInstallOptionsConstants
     public static Dimension GRID_SPACING_DEFAULT = new Dimension(10,10);
     public static Point GRID_ORIGIN_DEFAULT = new Point(0, 0);
     public static String GRID_STYLE_DEFAULT = GRID_STYLE_LINES;
-    public static Dimension DIALOG_SIZE_DEFAULT = new Dimension(300,140);
     public static Boolean CHECK_EDITOR_ASSOCIATION_DEFAULT = Boolean.TRUE;
 
     public static final String PREFERENCE_SHOW_GRID = "ShowGrid"; //$NON-NLS-1$
@@ -94,6 +94,7 @@ public interface IInstallOptionsConstants
     public static final QualifiedName FILEPROPERTY_GRID_ORIGIN = new QualifiedName(QUALIFIED_NAME_PREFIX,PREFERENCE_GRID_ORIGIN);
     public static final QualifiedName FILEPROPERTY_GRID_STYLE = new QualifiedName(QUALIFIED_NAME_PREFIX,PREFERENCE_GRID_STYLE);
     public static final QualifiedName FILEPROPERTY_DIALOG_SIZE = new QualifiedName(QUALIFIED_NAME_PREFIX,"DialogSize"); //$NON-NLS-1$
+    public static final QualifiedName FILEPROPERTY_DIALOG_SIZE_NAME = new QualifiedName(QUALIFIED_NAME_PREFIX,"DialogSizeName"); //$NON-NLS-1$
     public static final QualifiedName RESOURCEPROPERTY_BUILD_TIMESTAMP = new QualifiedName(QUALIFIED_NAME_PREFIX,"BuildTimestamp"); //$NON-NLS-1$
     public static final QualifiedName PROJECTPROPERTY_BUILDER_VERSION = new QualifiedName(QUALIFIED_NAME_PREFIX,"BuilderVersion"); //$NON-NLS-1$
     public static final QualifiedName PROJECTPROPERTY_NSIS_VERSION = new QualifiedName(QUALIFIED_NAME_PREFIX,"NSISVersion"); //$NON-NLS-1$
@@ -134,4 +135,6 @@ public interface IInstallOptionsConstants
     public static final String ALIGN_GROUP = "net.sf.eclipsensis.installoptions.align"; //$NON-NLS-1$
     public static final String ARRANGE_GROUP = "net.sf.eclipsensis.installoptions.arrange"; //$NON-NLS-1$
     public static final String PREVIEW_GROUP = "net.sf.eclipsensis.installoptions.preview"; //$NON-NLS-1$
+    
+    public static final DialogSize DEFAULT_DIALOG_SIZE = new DialogSize(InstallOptionsPlugin.getResourceString("default.dialog.size.name"),true,new Dimension(300,140)); //$NON-NLS-1$
 }

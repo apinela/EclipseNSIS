@@ -12,8 +12,14 @@
 ###############################################################################
  --><title>EclipseNSIS InstallOptions Editor - Preferences</title>
 
-<link rel="stylesheet" href="book.css" charset="ISO-8859-1" type="text/css"> <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"> <meta http-equiv="Content-Style-Type" content="text/css"> <script type="text/javascript" language="javascript" src="help.js">
-</script></head>
+<link rel="stylesheet" href="book.css" charset="ISO-8859-1" type="text/css"> 
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"> 
+<meta http-equiv="Content-Style-Type" content="text/css"> 
+<script type="text/javascript" language="javascript" src="help.js">
+</script>
+<script type="text/javascript" language="javascript" src="redirect.js">
+</script>
+</head>
 <body><div id="main">
 <a href="wizard.html">Previous</a>
 | <a href="overview.html#contents">Contents</a>
@@ -45,8 +51,12 @@ size outline</a></li></ul>
 </dd></dl><a name="a_dialogsize"></a><dl id="id_dialogsize"><dt>Dialog Sizes</dt>
 <dd>This is used to customize the InstallOptions <a href="designeditor.html#a_dialogsize">dialog sizes</a>.
 By default, the EclipseNSIS InstallOptions Editor comes configured with
-the sizes of the dialogs for standard and MUI installers. The checked
-entry is the default and will be applied to an InstallOptions script
+the sizes of the dialogs for standard and MUI installers. 
+It is recommended that the dialog sizes for these defaults not be modified unless they have been changed in the
+associated UI executables using a resource editing tool, e.g., <a href="http://www.angusj.com/resourcehacker/">Resource Hacker</a>.<br>
+However, this preferences area allows creation and editing of new dialog sizes to support any additional 
+custom UI executables which may be used for NSIS installer creation.<br>
+The checked entry is the default and will be applied to an InstallOptions script
 the first time it is opened using the design editor. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
 <a name="a_snapglue"></a><dl id="id_snapglue"><dt>Snap
 &amp; Glue</dt>
@@ -83,7 +93,7 @@ only the equals sign ("=") is supported.</dd><dt>Numbers</dt>
 and hex format.</dd>
 </dl></dl><a name="a_syntaxpreview"></a><dl id="id_syntaxpreview"><dt>Preview</dt>
 <dd>Displays the preview of InstallOptions
-source code respecting the current
+source code using the current
 colors and styles. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
 <br><hr><a href="wizard.html">Previous</a>
 | <a href="overview.html#contents">Contents</a>

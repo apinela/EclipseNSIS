@@ -344,10 +344,12 @@ public class NSISConsole extends TextConsole implements INSISConsole, IPropertyC
 
     public void clearConsole()
     {
-        if (mPartitioner != null) {
-            mPartitioner.clearBuffer();
-            mOffset = 0;
-            mPendingAnnotations.clear();
+        synchronized (mPending) {
+            if (mPartitioner != null) {
+                mPartitioner.clearBuffer();
+                mOffset = 0;
+                mPendingAnnotations.clear();
+            }
         }
     }
 

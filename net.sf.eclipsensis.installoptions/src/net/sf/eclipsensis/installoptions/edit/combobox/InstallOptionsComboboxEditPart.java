@@ -26,7 +26,7 @@ public class InstallOptionsComboboxEditPart extends InstallOptionsListItemsEditP
     protected void createEditPolicies()
     {
         super.createEditPolicies();
-        installEditPolicy("ShowDropdown", new SelectionEditPolicy() {
+        installEditPolicy("ShowDropdown", new SelectionEditPolicy() { //$NON-NLS-1$
             protected void hideSelection()
             {
                 setShowDropdown(false);

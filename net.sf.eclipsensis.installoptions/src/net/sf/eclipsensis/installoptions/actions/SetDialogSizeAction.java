@@ -30,7 +30,7 @@ public class SetDialogSizeAction extends Action implements IUpdate
         super((dialogSize==null?InstallOptionsPlugin.getResourceString("empty.dialog.size.name"):InstallOptionsPlugin.getFormattedString("set.dialog.size.action.name.format",  //$NON-NLS-1$ //$NON-NLS-2$
                                                     new Object[]{dialogSize.getName(),
                                                                  new Integer(dialogSize.getSize().width),
-                                                                 new Integer(dialogSize.getSize().height)})));
+                                                                 new Integer(dialogSize.getSize().height)})),AS_CHECK_BOX);
         mDialogSize = dialogSize;
     }
 
@@ -42,7 +42,7 @@ public class SetDialogSizeAction extends Action implements IUpdate
     public void run()
     {
         if(isEnabled()) {
-            ((InstallOptionsDesignEditor)mEditor).getGraphicalViewer().setProperty(IInstallOptionsConstants.PROPERTY_DIALOG_SIZE,mDialogSize.getSize());
+            ((InstallOptionsDesignEditor)mEditor).getGraphicalViewer().setProperty(IInstallOptionsConstants.PROPERTY_DIALOG_SIZE,mDialogSize.getCopy());
         }
     }
 
@@ -61,5 +61,10 @@ public class SetDialogSizeAction extends Action implements IUpdate
     public void update()
     {
         super.setEnabled(isEnabled());
+        if (mDialogSize != null && mEditor instanceof InstallOptionsDesignEditor &&
+                !((InstallOptionsDesignEditor)mEditor).isDisposed() && ((InstallOptionsDesignEditor)mEditor).getGraphicalViewer() != null) {
+            DialogSize d = (DialogSize)((InstallOptionsDesignEditor)mEditor).getGraphicalViewer().getProperty(IInstallOptionsConstants.PROPERTY_DIALOG_SIZE);
+            setChecked(mDialogSize.equals(d));
+        }
     }
 }

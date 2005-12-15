@@ -55,6 +55,15 @@ public class NSISCompileTestUtility
         return null;
     }
 
+    public void removeCachedResults(File script)
+    {
+        if(script != null && script.exists() && script.isFile()) {
+            if (!MakeNSISRunner.isCompiling()) {
+                mResultsMap.remove(script);
+            }
+        }
+    }
+
     public synchronized void compile(IPath script)
     {
         compile(script, false);

@@ -20,7 +20,6 @@ import net.sf.eclipsensis.installoptions.figures.IInstallOptionsFigure;
 import net.sf.eclipsensis.installoptions.model.*;
 
 import org.eclipse.draw2d.*;
-import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.*;
 import org.eclipse.gef.editpolicies.RootComponentEditPolicy;
@@ -40,11 +39,11 @@ public class InstallOptionsDialogEditPart extends InstallOptionsEditPart impleme
         {
             String property = event.getPropertyName();
             if(property.equals(IInstallOptionsConstants.PROPERTY_DIALOG_SIZE)) {
-                Dimension d = (Dimension)event.getNewValue();
+                DialogSize d = (DialogSize)event.getNewValue();
                 getInstallOptionsDialog().setDialogSize(d);
                 InstallOptionsDialogLayer fig = (InstallOptionsDialogLayer)getFigure();
                 if(fig != null) {
-                    fig.setDialogSize(d);
+                    fig.setDialogSize(d.getSize());
                 }
                 List children = getChildren();
                 for (Iterator iter = children.iterator(); iter.hasNext();) {
@@ -52,12 +51,12 @@ public class InstallOptionsDialogEditPart extends InstallOptionsEditPart impleme
                     IFigure figure = element.getFigure();
                     if(figure != null) {
                         InstallOptionsWidget widget = element.getInstallOptionsWidget();
-                        Rectangle bounds = widget.toGraphical(widget.getPosition(),d).getBounds();
+                        Rectangle bounds = widget.toGraphical(widget.getPosition(),d.getSize()).getBounds();
                         setLayoutConstraint(element, figure, bounds);
                     }
                 }
             }
-            if(property.equals(IInstallOptionsConstants.PROPERTY_SHOW_DIALOG_SIZE)) {
+            else if(property.equals(IInstallOptionsConstants.PROPERTY_SHOW_DIALOG_SIZE)) {
                 Boolean d = (Boolean)event.getNewValue();
                 getInstallOptionsDialog().setShowDialogSize(d.booleanValue());
                 InstallOptionsDialogLayer fig = (InstallOptionsDialogLayer)getFigure();
@@ -176,7 +175,7 @@ public class InstallOptionsDialogEditPart extends InstallOptionsEditPart impleme
     protected IFigure createFigure()
     {
         InstallOptionsDialogLayer f = new InstallOptionsDialogLayer();
-        f.setDialogSize(getInstallOptionsDialog().getDialogSize());
+        f.setDialogSize(getInstallOptionsDialog().getDialogSize().getSize());
         f.setShowDialogSize(getInstallOptionsDialog().isShowDialogSize());
         f.setLayoutManager(mLayout);
         f.setBorder(new MarginBorder(5));

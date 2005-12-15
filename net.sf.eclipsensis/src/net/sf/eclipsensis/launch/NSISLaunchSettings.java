@@ -18,6 +18,7 @@ import net.sf.eclipsensis.util.Common;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.jface.viewers.IFilter;
 
 public class NSISLaunchSettings extends NSISSettings
 {
@@ -28,6 +29,7 @@ public class NSISLaunchSettings extends NSISSettings
     private String mScript = ""; //$NON-NLS-1$
     private boolean mRunInstaller = false;
     private ILaunchConfiguration mLaunchConfig;
+    private IFilter mFilter = null;
 
     NSISLaunchSettings(NSISSettings parent)
     {
@@ -36,8 +38,14 @@ public class NSISLaunchSettings extends NSISSettings
 
     NSISLaunchSettings(NSISSettings parent, ILaunchConfiguration launchConfig)
     {
+        this(parent, launchConfig, null);
+    }
+
+    NSISLaunchSettings(NSISSettings parent, ILaunchConfiguration launchConfig, IFilter filter)
+    {
         mParent = parent;
         setLaunchConfig(launchConfig);
+        mFilter = filter;
         load();
     }
 
@@ -90,16 +98,19 @@ public class NSISLaunchSettings extends NSISSettings
      */
     public boolean getBoolean(String name)
     {
-        boolean defaultValue = mParent.getBoolean(name);
-        if(mLaunchConfig != null) {
-            try {
-                return mLaunchConfig.getAttribute(name, defaultValue);
+        if(mFilter == null || mFilter.select(name)) {
+            boolean defaultValue = mParent.getBoolean(name);
+            if(mLaunchConfig != null) {
+                try {
+                    return mLaunchConfig.getAttribute(name, defaultValue);
+                }
+                catch (CoreException e) {
+                    EclipseNSISPlugin.getDefault().log(e);
+                }
             }
-            catch (CoreException e) {
-                EclipseNSISPlugin.getDefault().log(e);
-            }
+            return defaultValue;
         }
-        return defaultValue;
+        return false;
     }
 
     /* (non-Javadoc)
@@ -107,16 +118,19 @@ public class NSISLaunchSettings extends NSISSettings
      */
     public int getInt(String name)
     {
-        int defaultValue = mParent.getInt(name);
-        if(mLaunchConfig != null) {
-            try {
-                return mLaunchConfig.getAttribute(name, defaultValue);
+        if (mFilter == null || mFilter.select(name)) {
+            int defaultValue = mParent.getInt(name);
+            if (mLaunchConfig != null) {
+                try {
+                    return mLaunchConfig.getAttribute(name, defaultValue);
+                }
+                catch (CoreException e) {
+                    EclipseNSISPlugin.getDefault().log(e);
+                }
             }
-            catch (CoreException e) {
-                EclipseNSISPlugin.getDefault().log(e);
-            }
+            return defaultValue;
         }
-        return defaultValue;
+        return 0;
     }
 
     /* (non-Javadoc)
@@ -124,16 +138,19 @@ public class NSISLaunchSettings extends NSISSettings
      */
     public String getString(String name)
     {
-        String defaultValue = mParent.getString(name);
-        if(mLaunchConfig != null) {
-            try {
-                return mLaunchConfig.getAttribute(name, defaultValue);
+        if (mFilter == null || mFilter.select(name)) {
+            String defaultValue = mParent.getString(name);
+            if (mLaunchConfig != null) {
+                try {
+                    return mLaunchConfig.getAttribute(name, defaultValue);
+                }
+                catch (CoreException e) {
+                    EclipseNSISPlugin.getDefault().log(e);
+                }
             }
-            catch (CoreException e) {
-                EclipseNSISPlugin.getDefault().log(e);
-            }
+            return defaultValue;
         }
-        return defaultValue;
+        return ""; //$NON-NLS-1$
     }
 
     /* (non-Javadoc)
@@ -141,8 +158,10 @@ public class NSISLaunchSettings extends NSISSettings
      */
     public void setValue(String name, boolean value)
     {
-        if(mLaunchConfig != null && mLaunchConfig.isWorkingCopy()) {
-            ((ILaunchConfigurationWorkingCopy)mLaunchConfig).setAttribute(name, value);
+        if (mFilter == null || mFilter.select(name)) {
+            if (mLaunchConfig != null && mLaunchConfig.isWorkingCopy()) {
+                ((ILaunchConfigurationWorkingCopy)mLaunchConfig).setAttribute(name, value);
+            }
         }
     }
 
@@ -151,8 +170,10 @@ public class NSISLaunchSettings extends NSISSettings
      */
     public void setValue(String name, int value)
     {
-        if(mLaunchConfig != null && mLaunchConfig.isWorkingCopy()) {
-            ((ILaunchConfigurationWorkingCopy)mLaunchConfig).setAttribute(name, value);
+        if (mFilter == null || mFilter.select(name)) {
+            if (mLaunchConfig != null && mLaunchConfig.isWorkingCopy()) {
+                ((ILaunchConfigurationWorkingCopy)mLaunchConfig).setAttribute(name, value);
+            }
         }
     }
 
@@ -161,8 +182,10 @@ public class NSISLaunchSettings extends NSISSettings
      */
     public void setValue(String name, String value)
     {
-        if(mLaunchConfig != null && mLaunchConfig.isWorkingCopy()) {
-            ((ILaunchConfigurationWorkingCopy)mLaunchConfig).setAttribute(name, value);
+        if (mFilter == null || mFilter.select(name)) {
+            if (mLaunchConfig != null && mLaunchConfig.isWorkingCopy()) {
+                ((ILaunchConfigurationWorkingCopy)mLaunchConfig).setAttribute(name, value);
+            }
         }
     }
 
@@ -176,8 +199,10 @@ public class NSISLaunchSettings extends NSISSettings
 
     private void remove(String name)
     {
-        if(mLaunchConfig != null && mLaunchConfig.isWorkingCopy()) {
-            ((ILaunchConfigurationWorkingCopy)mLaunchConfig).setAttribute(name, (String)null);
+        if (mFilter == null || mFilter.select(name)) {
+            if (mLaunchConfig != null && mLaunchConfig.isWorkingCopy()) {
+                ((ILaunchConfigurationWorkingCopy)mLaunchConfig).setAttribute(name, (String)null);
+            }
         }
     }
 
@@ -200,19 +225,19 @@ public class NSISLaunchSettings extends NSISSettings
     private List storeSymbols(Map map)
     {
         List list = new ArrayList();
-        if(!Common.isEmptyMap(map)) {
+        if (!Common.isEmptyMap(map)) {
             StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
             for (Iterator iter = map.entrySet().iterator(); iter.hasNext();) {
                 Map.Entry entry = (Map.Entry)iter.next();
                 String key = (String)entry.getKey();
-                if(key != null) {
+                if (key != null) {
                     buf.append(key);
                 }
                 String value = (String)entry.getValue();
-                if(value != null) {
+                if (value != null) {
                     buf.append('\255').append(value);
                 }
-                if(buf.length() > 0) {
+                if (buf.length() > 0) {
                     list.add(buf.toString());
                     buf.setLength(0);
                 }
@@ -224,20 +249,20 @@ public class NSISLaunchSettings extends NSISSettings
     private LinkedHashMap loadSymbols(List list)
     {
         LinkedHashMap map = new LinkedHashMap();
-        if(!Common.isEmptyCollection(list)) {
+        if (!Common.isEmptyCollection(list)) {
             for (Iterator iter = list.iterator(); iter.hasNext();) {
                 String item = (String)iter.next();
-                if(item != null && item.length() > 0) {
+                if (item != null && item.length() > 0) {
                     String key;
                     String value;
                     int n = item.indexOf('\255');
-                    if(n >= 0) {
-                        key = item.substring(0,n);
-                        value = item.substring(n+1);
+                    if (n >= 0) {
+                        key = item.substring(0, n);
+                        value = item.substring(n + 1);
                     }
                     else {
                         key = item;
-                        value=""; //$NON-NLS-1$
+                        value = ""; //$NON-NLS-1$
                     }
                     map.put(key, value);
                 }
@@ -248,44 +273,49 @@ public class NSISLaunchSettings extends NSISSettings
 
     public void storeObject(String name, Object object)
     {
-        if(mLaunchConfig != null && mLaunchConfig.isWorkingCopy()) {
-            if(object instanceof String) {
-                ((ILaunchConfigurationWorkingCopy)mLaunchConfig).setAttribute(name, (String)object);
-            }
-            else if(object instanceof List) {
-                ((ILaunchConfigurationWorkingCopy)mLaunchConfig).setAttribute(name, (List)object);
-            }
-            else if (object instanceof Map) {
-                if(name.equals(SYMBOLS)) {
-                    List list = storeSymbols((Map)object);
-                    ((ILaunchConfigurationWorkingCopy)mLaunchConfig).setAttribute(name, list);
+        if (mFilter == null || mFilter.select(name)) {
+            if (mLaunchConfig != null && mLaunchConfig.isWorkingCopy()) {
+                if (object instanceof String) {
+                    ((ILaunchConfigurationWorkingCopy)mLaunchConfig).setAttribute(name, (String)object);
                 }
-                else {
-                    ((ILaunchConfigurationWorkingCopy)mLaunchConfig).setAttribute(name, (Map)object);
+                else if (object instanceof List) {
+                    ((ILaunchConfigurationWorkingCopy)mLaunchConfig).setAttribute(name, (List)object);
                 }
-            }
-            else if(object == null) {
-                remove(name);
+                else if (object instanceof Map) {
+                    if (name.equals(SYMBOLS)) {
+                        List list = storeSymbols((Map)object);
+                        ((ILaunchConfigurationWorkingCopy)mLaunchConfig).setAttribute(name, list);
+                    }
+                    else {
+                        ((ILaunchConfigurationWorkingCopy)mLaunchConfig).setAttribute(name, (Map)object);
+                    }
+                }
+                else if (object == null) {
+                    remove(name);
+                }
             }
         }
     }
 
     public Object loadObject(String name)
     {
-        if(mLaunchConfig != null) {
-            try {
-                Map map = mLaunchConfig.getAttributes();
-                Object object = map.get(name);
-                if(name.equals(SYMBOLS) && object instanceof List) {
-                    object = loadSymbols((List)object);
+        if (mFilter == null || mFilter.select(name)) {
+            if (mLaunchConfig != null) {
+                try {
+                    Map map = mLaunchConfig.getAttributes();
+                    Object object = map.get(name);
+                    if (name.equals(SYMBOLS) && object instanceof List) {
+                        object = loadSymbols((List)object);
+                    }
+                    return object;
                 }
-                return object;
+                catch (CoreException e) {
+                    EclipseNSISPlugin.getDefault().log(e);
+                    e.printStackTrace();
+                }
             }
-            catch (CoreException e) {
-                EclipseNSISPlugin.getDefault().log(e);
-                e.printStackTrace();
-            }
+            return mParent.loadObject(name);
         }
-        return mParent.loadObject(name);
+        return null;
     }
 }

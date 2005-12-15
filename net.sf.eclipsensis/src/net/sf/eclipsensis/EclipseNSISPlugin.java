@@ -46,7 +46,6 @@ import org.osgi.framework.BundleContext;
  */
 public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstants
 {
-    //The shared instance.
     public static final int NSIS_REG_ROOTKEY = WinAPI.HKEY_LOCAL_MACHINE;
 	public static final String NSIS_REG_SUBKEY = "SOFTWARE\\NSIS"; //$NON-NLS-1$
     public static final String NSIS_REG_VALUE = ""; //$NON-NLS-1$
@@ -218,13 +217,25 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
                         monitor.worked(1);
                     }
                     monitor.subTask(EclipseNSISPlugin.getResourceString("starting.makensis.message")); //$NON-NLS-1$
-                    MakeNSISRunner.startup();
+                    Runnable runnable = new Runnable() {
+                        public void run()
+                        {
+                            MakeNSISRunner.startup();
+                        }
+                    };
+                    if(Display.getCurrent() == null) {
+                        Display.getDefault().syncExec(runnable);
+                    }
+                    else {
+                        runnable.run();
+                    }
                     monitor.worked(1);
+                    monitor.done();
                 }
             };
 
             try {
-                if (Display.getCurrent() == null) {
+                if(Display.getCurrent() == null) {
                     op.run(new NullProgressMonitor());
                 }
                 else {

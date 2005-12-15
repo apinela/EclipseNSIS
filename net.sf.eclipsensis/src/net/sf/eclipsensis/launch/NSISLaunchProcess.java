@@ -13,6 +13,7 @@ import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.util.Date;
 
+import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.makensis.*;
 import net.sf.eclipsensis.settings.NSISPreferences;
@@ -42,7 +43,7 @@ class NSISLaunchProcess implements IProcess, IMakeNSISRunListener, IWorkbenchAda
         mLaunch = launch;
         MakeNSISRunner.addListener(this);
         fireCreationEvent();
-        mLabel = MessageFormat.format("{0} ({1})",new Object[]{NSISPreferences.INSTANCE.getNSISExe(),
+        mLabel = MessageFormat.format("{0} ({1})",new Object[]{NSISPreferences.INSTANCE.getNSISExe(), //$NON-NLS-1$
                                             cDateFormat.format(new Date(System.currentTimeMillis()))}).trim();
     }
     
@@ -97,7 +98,7 @@ class NSISLaunchProcess implements IProcess, IMakeNSISRunListener, IWorkbenchAda
             return getLabel();
         }
         else if(key.equals(ATTR_PROCESS_TYPE)) {
-            return "nsis";
+            return "nsis"; //$NON-NLS-1$
         }
         return null;
     }
@@ -107,7 +108,7 @@ class NSISLaunchProcess implements IProcess, IMakeNSISRunListener, IWorkbenchAda
         if(mResult != null) {
             return mResult.getReturnCode();
         }
-        throw new DebugException(new Status(IStatus.ERROR,INSISConstants.PLUGIN_ID,IStatus.ERROR,"Process still running",null));
+        throw new DebugException(new Status(IStatus.ERROR,INSISConstants.PLUGIN_ID,IStatus.ERROR,EclipseNSISPlugin.getResourceString("launch.process.exitvalue.error"),null)); //$NON-NLS-1$
     }
 
     public Object getAdapter(Class adapter)

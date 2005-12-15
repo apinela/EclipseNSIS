@@ -27,7 +27,6 @@ import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.util.UpDownMover;
 
 import org.eclipse.draw2d.PositionConstants;
-import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
@@ -82,7 +81,7 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
     private UpDownMover mUpDownMover;
     private INIFile mINIFile;
     private Map mINISectionMap;
-    private Dimension mDialogSize;
+    private DialogSize mDialogSize;
     private boolean mShowDialogSize;
 
     public InstallOptionsDialog(INISection section)
@@ -109,7 +108,7 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
         mSelectedIndices = null;
         mINIFile = null;
         mINISectionMap = new HashMap();
-        mDialogSize = new Dimension(100,100);
+        mDialogSize = IInstallOptionsConstants.DEFAULT_DIALOG_SIZE;
         mShowDialogSize = true;
         reset();
     }
@@ -167,12 +166,12 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
         return InstallOptionsModel.TYPE_DIALOG;
     }
 
-    public Dimension getDialogSize()
+    public DialogSize getDialogSize()
     {
         return mDialogSize;
     }
 
-    public void setDialogSize(Dimension dialogSize)
+    public void setDialogSize(DialogSize dialogSize)
     {
         mDialogSize = dialogSize;
     }
