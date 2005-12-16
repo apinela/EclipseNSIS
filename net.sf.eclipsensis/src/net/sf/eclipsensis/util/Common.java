@@ -17,6 +17,7 @@ import java.lang.reflect.Method;
 import java.rmi.dgc.VMID;
 import java.text.BreakIterator;
 import java.util.*;
+import java.util.List;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 
@@ -25,8 +26,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.*;
 import org.osgi.framework.Bundle;
 
 /**
@@ -728,5 +728,12 @@ public class Common
             text = buf.toString();
         }
         return text;
+    }
+    
+    public static void updateDisplay()
+    {
+        if(Display.getCurrent() != null) {
+            Display.getCurrent().update();
+        }
     }
 }

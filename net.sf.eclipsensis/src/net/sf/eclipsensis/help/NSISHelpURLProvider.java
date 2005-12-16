@@ -107,11 +107,18 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
                 list.add(v);
             }
         }
+        
+        //Update the display so it paints
+        Common.updateDisplay();
+
         Collections.sort(list);
         for(Iterator iter=list.iterator(); iter.hasNext(); ) {
             Version v = (Version)iter.next();
             mNSISContribPaths.put(v, mBundle.getString((String)temp.get(v)));
         }
+        
+        //Update the display so it paints
+        Common.updateDisplay();
     }
 
     private void loadHelpURLs()
@@ -164,6 +171,10 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
                             }
                         }
                     }
+                    
+                    //Update the display so it paints
+                    Common.updateDisplay();
+
                     File helpLocation = new File(stateLocation,CACHED_HELP_LOCATION);
                     if(helpLocation.exists() && helpLocation.isFile()) {
                         helpLocation.delete();
@@ -172,6 +183,10 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
                         helpLocation.mkdirs();
                     }
                     String temp = WinAPI.ExtractHtmlHelpAndTOC(htmlHelpFile.getAbsolutePath(),helpLocation.getAbsolutePath());
+                    
+                    //Update the display so it paints
+                    Common.updateDisplay();
+
                     if(!Common.isEmpty(temp)) {
                         File tocFile = new File(temp);
                         if(tocFile.exists()) {
@@ -179,6 +194,10 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
                                 NSISHelpTOCParserCallback parserCallback = new NSISHelpTOCParserCallback();
                                 parserCallback.setTopicMap(topicMap);
                                 mParserDelegator.parse(new FileReader(tocFile), parserCallback, false);
+                                
+                                //Update the display so it paints
+                                Common.updateDisplay();
+
                                 Map keywordHelpMap = parserCallback.getKeywordHelpMap();
                                 mHelpURLs = new CaseInsensitiveMap();
                                 mCHMHelpURLs = new CaseInsensitiveMap();
@@ -206,6 +225,9 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
 
                                 IOUtility.writeObject(cacheFile,new Object[]{mHelpURLs,mCHMHelpURLs});
                                 cacheFile.setLastModified(htmlHelpTimeStamp);
+                                
+                                //Update the display so it paints
+                                Common.updateDisplay();
                             }
                             catch (Exception e) {
                                 EclipseNSISPlugin.getDefault().log(e);

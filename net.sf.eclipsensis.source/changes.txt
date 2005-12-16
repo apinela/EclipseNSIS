@@ -1,6 +1,6 @@
 Revision History
 ================
 
-0.9.4
+0.9.4 (12/16/2005)
     * First public release of EclipseNSIS Sources feature. This bundles source
       code for all EclipseNSIS plugins into a single plugin.

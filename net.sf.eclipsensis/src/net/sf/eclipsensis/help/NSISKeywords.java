@@ -144,6 +144,9 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
                     list.add(new String[]{name,key});
                 }
             }
+            
+            //Update the display so it paints
+            Common.updateDisplay();
 
             ArrayList versionList = new ArrayList(versionMap.keySet());
             Collections.sort(versionList);
@@ -261,6 +264,9 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
                     }
                 }
             }
+            
+            //Update the display so it paints
+            Common.updateDisplay();
         }
 
         String[] temp = Common.EMPTY_STRING_ARRAY;

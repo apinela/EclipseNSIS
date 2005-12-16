@@ -1,7 +1,7 @@
 Revision History
 ================
 
-0.9.4
+0.9.4 (12/16/2005)
     * Java 6.0 (Mustang) can be used as the runtime environment- however it will
       not be officially supported until it is released.
     * Refactored EclipseNSIS console to use standard Eclipse console 

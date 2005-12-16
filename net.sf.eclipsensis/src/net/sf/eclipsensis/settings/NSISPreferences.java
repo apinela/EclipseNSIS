@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.util.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.dialogs.MinimalProgressMonitorDialog;
 import net.sf.eclipsensis.dialogs.NSISPreferencePage;
 import net.sf.eclipsensis.editor.NSISTaskTag;
 import net.sf.eclipsensis.editor.text.NSISSyntaxStyle;
@@ -341,13 +340,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
     private void fireNSISHomeChanged(final String oldHome, final String newHome)
     {
         if(!Common.stringsAreEqual(oldHome, newHome) && mListeners.size() > 0) {
-           ProgressMonitorDialog dialog = new MinimalProgressMonitorDialog(Display.getDefault().getActiveShell());
-           try {
-               dialog.run(false,false,new NSISHomeChangedRunnable(oldHome, newHome));
-           }
-           catch (Exception e) {
-               EclipseNSISPlugin.getDefault().log(e);
-           }
+            EclipseNSISPlugin.getDefault().run(false,false,new NSISHomeChangedRunnable(oldHome, newHome));
         }
     }
 
@@ -671,6 +664,9 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
                     EclipseNSISPlugin.getDefault().log(e);
                 }
                 monitor.worked(10);
+                
+                //Update the display so it paints
+                Common.updateDisplay();
             }
         }
     }

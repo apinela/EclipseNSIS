@@ -34,8 +34,7 @@ import org.eclipse.jface.text.templates.ContextTypeRegistry;
 import org.eclipse.jface.text.templates.persistence.TemplateStore;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.IWindowListener;
-import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.*;
 import org.eclipse.ui.editors.text.templates.ContributionContextTypeRegistry;
 import org.eclipse.ui.editors.text.templates.ContributionTemplateStore;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -210,6 +209,9 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
                             IEclipseNSISService service = (IEclipseNSISService)constructor.newInstance(null);
                             service.start(monitor);
                             mServices.push(service);
+                            
+                            //Update the display so it paints
+                            Common.updateDisplay();
                         }
                         catch (Exception e) {
                             log(e);
@@ -221,6 +223,9 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
                         public void run()
                         {
                             MakeNSISRunner.startup();
+                            
+                            //Update the display so it paints
+                            Common.updateDisplay();
                         }
                     };
                     if(Display.getCurrent() == null) {
@@ -231,20 +236,41 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
                     }
                     monitor.worked(1);
                     monitor.done();
+                    
+                    //Update the display so it paints
+                    Common.updateDisplay();
                 }
             };
 
-            try {
-                if(Display.getCurrent() == null) {
-                    op.run(new NullProgressMonitor());
+            run(false, false, op);
+        }
+    }
+
+    public void run(final boolean fork, final boolean cancelable, final IRunnableWithProgress runnable)
+    {
+        try {
+            if(Display.getCurrent() == null) {
+                //fork and cancelable are meaningless here
+                runnable.run(new NullProgressMonitor());
+            }
+            else {
+                boolean useWorkbenchWindow = false;
+                try {
+                    useWorkbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell().isVisible();
+                }
+                catch (Exception e) {
+                    useWorkbenchWindow = false;
+                }
+                if(!useWorkbenchWindow) {
+                    new MinimalProgressMonitorDialog(Display.getDefault().getActiveShell()).run(fork, cancelable, runnable);
                 }
                 else {
-                    new MinimalProgressMonitorDialog(Display.getDefault().getActiveShell()).run(false, false, op);
+                    PlatformUI.getWorkbench().getActiveWorkbenchWindow().run(fork, cancelable, runnable);
                 }
             }
-            catch (Exception e) {
-                log(e);
-            }
+        }
+        catch (Exception e) {
+            log(e);
         }
     }
 

@@ -128,6 +128,9 @@ public class NSISLanguageManager implements INSISHomeListener, IEclipseNSISServi
                             mLanguages.add(language);
                         }
                     }
+                    
+                    //Update the display so it paints
+                    Common.updateDisplay();
                 }
             }
         }

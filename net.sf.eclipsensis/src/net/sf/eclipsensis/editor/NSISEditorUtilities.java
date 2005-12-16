@@ -15,7 +15,6 @@ import java.util.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
-import net.sf.eclipsensis.dialogs.MinimalProgressMonitorDialog;
 import net.sf.eclipsensis.makensis.MakeNSISResults;
 import net.sf.eclipsensis.makensis.MakeNSISRunner;
 import net.sf.eclipsensis.script.NSISScriptProblem;
@@ -24,7 +23,6 @@ import net.sf.eclipsensis.util.NSISCompileTestUtility;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.source.*;
@@ -421,16 +419,13 @@ public class NSISEditorUtilities
                     for(Iterator iter=editors.iterator(); iter.hasNext(); ) {
                         ((NSISEditor)iter.next()).updatePresentation();
                         monitor.worked(1);
+                        
+                        //Update the display so it paints
+                        Common.updateDisplay();
                     }
                 }
             };
-            ProgressMonitorDialog dialog = new MinimalProgressMonitorDialog(Display.getDefault().getActiveShell());
-            try {
-                dialog.run(false,false,op);
-            }
-            catch (Exception e) {
-                EclipseNSISPlugin.getDefault().log(e);
-            }
+            EclipseNSISPlugin.getDefault().run(false,false, op);
         }
     }
 

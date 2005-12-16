@@ -95,6 +95,10 @@ public class NSISUsageProvider implements IEclipseNSISService
                                                                       MakeNSISRunner.MAKENSIS_VERBOSITY_OPTION+"1", //$NON-NLS-1$
                                                                       MakeNSISRunner.MAKENSIS_CMDHELP_OPTION},
                                                                       null,1);
+                
+                //Update the display so it paints
+                Common.updateDisplay();
+
                 if(!Common.isEmptyArray(output)) {
                     StringBuffer buf = null;
                     for (int i = 0; i < output.length; i++) {

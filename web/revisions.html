@@ -35,11 +35,36 @@ Guides</a> | <a href="revisions.html">Revision History</a> | <a
 <h1 style="text-align: center;">EclipseNSIS Projects</h1>
 <h2>Revision History</h2>
 <ul>
-<li><a href="#eclipsensis">EclipseNSIS<a></li>
-<li><a href="#installoptions">EclipseNSIS InstallOptions Editor<a></li>
-<li><a href="#utilities">EclipseNSIS Utilities<a></li>
+<li><a href="#eclipsensis">EclipseNSIS</a></li>
+<li><a href="#installoptions">EclipseNSIS InstallOptions Editor</a></li>
+<li><a href="#utilities">EclipseNSIS Utilities</a></li>
+<li><a href="#sources">EclipseNSIS Sources</a></li>
 </ul>
 <a name="eclipsensis"></a><h3>EclipseNSIS</h3>
+<a
+ href="http://prdownloads.sourceforge.net/eclipsensis/net.sf.eclipsensis_0.9.4.zip?download">0.9.4</a>
+(12/16/2005)
+<ul>
+  <li>Java 6.0 (Mustang) can be used as the runtime environment- however it will not be officially supported until it is released.</li>
+  <li>Refactored EclipseNSIS console to use standard Eclipse console functionality.</li>
+  <li>Added support for NSIS scripts as External Tool launch configurations.</li>
+  <li>Added support for NSIS scripts as external builders.</li>
+  <li>EclipseNSIS editor scroll tip now moves with scroll bar.</li>
+  <li>SubSection/SubSectionEnd supported even when deprecated (NSIS 2.05 and above).</li>
+  <li>Clicking on a NSIS file link in EclipseNSIS help or NSIS Users Manual view now opens the file in Eclipse instead of an external editor.</li>
+  <li>Added support for nightly CVS builds.</li>
+  <li>Added support for SHCTX registry root key in EclipseNSIS Script Wizard.</li>
+  <li>Added error markers and tooltips in EclipseNSIS Script Wizard Contents page.</li>
+  <li>Added new command to clear problem markers.</li>
+  <li>Feature Requests:</li>
+  <ul>
+    <li><a href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=1358177&amp;group_id=116143&amp;atid=673852">1358177</a></li>
+    <li><a href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=1358185&amp;group_id=116143&amp;atid=673852">1358185</a></li>
+    <li><a href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=1374835&amp;group_id=116143&amp;atid=673852">1374835</a></li>
+    <li><a href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=1380236&amp;group_id=116143&amp;atid=673852">1380236</a></li>
+  </ul>
+  <li>Other minor bug fixes.</li>
+</ul>
 <a
  href="http://prdownloads.sourceforge.net/eclipsensis/net.sf.eclipsensis_0.9.3.zip?download">0.9.3</a>
 (09/29/2005)
@@ -141,8 +166,19 @@ scripts.</li>
 </ul>
 <a name="installoptions"></a><h3>EclipseNSIS InstallOptions Editor</h3>
 <a
- href="http://prdownloads.sourceforge.net/eclipsensis/net.sf.eclipsensis.installoptions_0.9.3.zip?download">0.9.3</a>
-(09/29/2005)
+ href="http://prdownloads.sourceforge.net/eclipsensis/net.sf.eclipsensis.installoptions_0.9.4.zip?download">0.9.4</a>
+(12/16/2005)
+<ul>
+  <li>Fixed GroupBox transparency.</li>
+  <li>Preview can now also handle external files.</li>
+  <li>Improved clipboard handling.</li>
+  <li>ComboBox/Droplist now shows the dropdown only when it is the primary selection.</li>
+  <li>Fixed improper handling of spaces in lists separated by '|', e.g. in Flags and ListItems fields.</li>
+  <li>Better management of Dialog sizes.</li>
+  <li>Other minor bug fixes.</li>
+</ul>
+<p><a
+ href="http://prdownloads.sourceforge.net/eclipsensis/net.sf.eclipsensis.installoptions_0.9.3.zip?download">0.9.3</a> (09/29/2005) </p>
 <ul>
   <li>Added support for Unknown control in design editor.</li>
   <li>Added distribution, locking actions to design editor.</li>
@@ -157,9 +193,10 @@ scripts.</li>
   </ul>
   <li>Other minor bug fixes.</li>
 </ul>
-<a
+<p><a
  href="http://prdownloads.sourceforge.net/eclipsensis/net.sf.eclipsensis.installoptions_0.9.2.zip?download">0.9.2</a>
-(08/23/2005)
+    (08/23/2005)
+</p>
 <ul>
   <li>Upgraded to Eclipse GEF 3.1 - no longer compatible with GEF 3.0.</li>
   <li>Added template support.</li>
@@ -202,6 +239,16 @@ help.</li>
 </ul>
 <a name="utilities"></a><h3>EclipseNSIS Utilities</h3>
 <a
+ href="http://prdownloads.sourceforge.net/eclipsensis/net.sf.eclipsensis.utilities_0.9.0.zip?download">0.9.0</a>
+(12/16/2005)
+<ul>
+  <li>net.sf.jnigen 0.9.0.</li>
+  <ul>
+    <li>Fixed handling of output directories with spaces in the name.</li>
+  </ul>
+  <li>Other minor bug fixes.</li>
+</ul>
+<a
  href="http://prdownloads.sourceforge.net/eclipsensis/net.sf.eclipsensis.utilities_0.5.0.zip?download">0.5.0</a>
 (08/23/2005)
 <ul>
@@ -231,6 +278,14 @@ Eclipse 3.0</li>
     <li>net.sf.jnigen 0.3.0 - JNI header file generation.</li>
     <li>net.sf.jarsigner 0.1.0 - Digitally sign JAR files.</li>
   </ul>
+</ul>
+<a name="sources"></a><h3>EclipseNSIS Sources</h3>
+<a
+ href="http://prdownloads.sourceforge.net/eclipsensis/net.sf.eclipsensis.source_0.9.4.zip?download">0.9.4</a>
+(12/16/2005)
+<ul>
+  <li>First public release of EclipseNSIS Sources feature. This bundles source
+      code for all EclipseNSIS plugins into a single plugin.</li>
 </ul>
 <hr>
 <table style="width: 100%;" border="0">
