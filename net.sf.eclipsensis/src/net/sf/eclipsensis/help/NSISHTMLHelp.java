@@ -346,6 +346,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
                 mStartPage = "about:blank"; //$NON-NLS-1$
             }
             mBrowser.setUrl(cFirstPage == null?mStartPage:cFirstPage);
+            cFirstPage = null;
         }
     }
 

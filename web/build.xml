@@ -82,16 +82,16 @@
     	</delete>
     </target>
     <target name="help">
-        <copy todir="help/eclipsensis" includeEmptyDirs="false" preservelastmodified="true">
+        <sync todir="help/eclipsensis" includeEmptyDirs="false">
             <fileset dir="../net.sf.eclipsensis/help" excludes="**/CVS/*,redirect.js,nsiscontrib.js"/>
-        </copy>
+        </sync>
         <copy todir="help/eclipsensis" preservelastmodified="true">
             <fileset file="help/redirect.js"/>
         	<fileset file="help/nsiscontrib.js"/>
         </copy>
-        <copy todir="help/installoptions" includeEmptyDirs="false">
+        <sync todir="help/installoptions" includeEmptyDirs="false">
             <fileset dir="../net.sf.eclipsensis.installoptions/help" excludes="**/CVS/*,redirect.js,nsiscontrib.js"/>
-        </copy>
+        </sync>
         <copy todir="help/installoptions" preservelastmodified="true">
             <fileset file="help/redirect.js"/>
         	<fileset file="help/nsiscontrib.js"/>
