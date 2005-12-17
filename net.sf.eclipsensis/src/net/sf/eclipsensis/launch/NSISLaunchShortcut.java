@@ -14,8 +14,7 @@ import java.util.List;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
-import net.sf.eclipsensis.settings.NSISPreferences;
-import net.sf.eclipsensis.settings.NSISProperties;
+import net.sf.eclipsensis.settings.*;
 import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.core.resources.IFile;
@@ -130,7 +129,11 @@ public class NSISLaunchShortcut implements ILaunchShortcut
         if(path.getDevice() == null) {
             script = mStringVariableManager.generateVariableExpression("workspace_loc",path.toString()); //$NON-NLS-1$
             IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
-            settings = new NSISLaunchSettings(NSISProperties.getProperties(file));
+            NSISSettings properties = NSISProperties.getProperties(file);
+            while(properties instanceof NSISProperties && ((NSISProperties)properties).getUseParent()) {
+                properties = ((NSISProperties)properties).getParentSettings();
+            }
+            settings = new NSISLaunchSettings(properties);
         }
         else {
             script = path.toOSString();

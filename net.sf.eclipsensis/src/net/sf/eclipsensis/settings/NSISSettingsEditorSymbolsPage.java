@@ -41,7 +41,7 @@ public class NSISSettingsEditorSymbolsPage extends NSISSettingsEditorPage
         }
     }
 
-    public Control createControl(final Composite parent)
+    protected Control createControl(final Composite parent)
     {
         Composite composite = new Composite(parent,SWT.NONE);
         SelectionAdapter addAdapter = new SelectionAdapter() {
@@ -112,7 +112,9 @@ public class NSISSettingsEditorSymbolsPage extends NSISSettingsEditorPage
 
     protected boolean performApply(NSISSettings settings)
     {
-        mSettings.setSymbols((LinkedHashMap)mSymbols.getInput());
+        if (getControl() != null) {
+            mSettings.setSymbols((LinkedHashMap)mSymbols.getInput());
+        }
         return true;
     }
     

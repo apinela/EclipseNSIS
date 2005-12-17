@@ -49,33 +49,6 @@ public class NSISPropertyPage extends NSISSettingsPage
         return EclipseNSISPlugin.getResourceString(label);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
-     */
-    protected void performDefaults()
-    {
-        if(!((PropertiesEditor)mSettingsEditor).isUseParent()) {
-            super.performDefaults();
-        }
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.preference.IPreferencePage#performOk()
-     */
-    public boolean performOk()
-    {
-        boolean useParent = ((PropertiesEditor)mSettingsEditor).isUseParent();
-        NSISProperties properties = (NSISProperties)mSettingsEditor.getSettings();
-        properties.setUseParent(useParent);
-        if(useParent) {
-            properties.store();
-            return true;
-        }
-        else {
-            return super.performOk();
-        }
-    }
-
     protected NSISSettingsEditor createSettingsEditor()
     {
         return new PropertiesEditor();
@@ -83,25 +56,53 @@ public class NSISPropertyPage extends NSISSettingsPage
     
     private class PropertiesEditor extends NSISSettingsEditor
     {
-        private Button mUseParent = null;
-
-        public boolean isUseParent()
-        {
-            return (mUseParent==null?false:mUseParent.getSelection());
-        }
-
         protected NSISSettingsEditorGeneralPage createGeneralPage()
         {
             return new PropertiesEditorGeneralPage(getSettings());
         }
         
+        protected NSISSettingsEditorSymbolsPage createSymbolsPage()
+        {
+            return new PropertiesEditorSymbolsPage(getSettings());
+        }
+
         protected NSISSettings loadSettings()
         {
             return NSISProperties.getProperties((IResource)getElement());
         }
 
+        private class PropertiesEditorSymbolsPage extends NSISSettingsEditorSymbolsPage
+        {
+            public PropertiesEditorSymbolsPage(NSISSettings settings)
+            {
+                super(settings);
+            }
+
+            protected boolean performApply(NSISSettings settings)
+            {
+                if (getControl() != null) {
+                    if(!((NSISProperties)settings).getUseParent()) {
+                        return super.performApply(settings);
+                    }
+                    return true;
+                }
+                return false;
+            }
+
+            public void setDefaults()
+            {
+                if (getControl() != null) {
+                    if(!((NSISProperties)getSettings()).getUseParent()) {
+                        super.setDefaults();
+                    }
+                }
+            }
+        }
+        
         private class PropertiesEditorGeneralPage extends NSISSettingsEditorGeneralPage
         {
+            private Button mUseParent = null;
+
             public PropertiesEditorGeneralPage(NSISSettings settings)
             {
                 super(settings);
@@ -112,6 +113,27 @@ public class NSISPropertyPage extends NSISSettingsPage
                 NSISProperties props = (NSISProperties)getSettings();
                 mUseParent.setSelection(props.getUseParent());
                 super.reset();
+            }
+
+            protected boolean performApply(NSISSettings settings)
+            {
+                if (getControl() != null) {
+                    boolean useParent = mUseParent.getSelection();
+                    if(useParent || super.performApply(settings)) {
+                        ((NSISProperties)settings).setUseParent(useParent);
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            public void setDefaults()
+            {
+                if (getControl() != null) {
+                    if(mUseParent.getSelection()) {
+                        super.setDefaults();
+                    }
+                }
             }
 
             public boolean canEnableControls()

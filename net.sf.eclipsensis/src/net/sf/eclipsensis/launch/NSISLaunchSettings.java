@@ -88,8 +88,8 @@ public class NSISLaunchSettings extends NSISSettings
 
     public void store()
     {
-        setValue(SCRIPT, mScript);
-        setValue(RUN_INSTALLER, mRunInstaller);
+        setValue(SCRIPT, mScript, "");
+        setValue(RUN_INSTALLER, mRunInstaller, false);
         super.store();
     }
 
@@ -295,6 +295,11 @@ public class NSISLaunchSettings extends NSISSettings
                 }
             }
         }
+    }
+
+    public void removeObject(String name)
+    {
+        storeObject(name, null);
     }
 
     public Object loadObject(String name)

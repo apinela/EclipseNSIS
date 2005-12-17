@@ -244,10 +244,12 @@ class NSISGeneralTab extends NSISTab implements INSISSettingsEditorPageListener
         protected boolean performApply(NSISSettings settings)
         {
             if(super.performApply(settings)) {
-                NSISLaunchSettings settings2 = (NSISLaunchSettings)settings;
-                settings2.setScript(mScript.getText());
-                if (!mBuilder) {
-                    settings2.setRunInstaller(mRunInstaller.getSelection());
+                if (getControl() != null) {
+                    NSISLaunchSettings settings2 = (NSISLaunchSettings)settings;
+                    settings2.setScript(mScript.getText());
+                    if (!mBuilder) {
+                        settings2.setRunInstaller(mRunInstaller.getSelection());
+                    }
                 }
                 return true;
             }

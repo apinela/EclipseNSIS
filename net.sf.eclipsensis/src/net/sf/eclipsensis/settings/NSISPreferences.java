@@ -60,7 +60,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
     private File mNSISExe = null;
     private String mNSISHome = null;
     private Version mNSISVersion = null;
-    private boolean mUseEclipseHelp = true;
+    private boolean mUseEclipseHelp = false;
     private boolean mAutoShowConsole = true;
     private Properties mNSISDefaultSymbols = null;
     private Collection mTaskTags = null;
@@ -234,11 +234,11 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
 
     public void store()
     {
-        setValue(NSIS_HOME,mNSISHome);
-        setValue(USE_ECLIPSE_HELP,mUseEclipseHelp);
-        setValue(AUTO_SHOW_CONSOLE,mAutoShowConsole);
-        setValue(CASE_SENSITIVE_TASK_TAGS,mCaseSensitiveTaskTags);
-        storeObject(TASK_TAGS,mTaskTags);
+        setValue(NSIS_HOME,mNSISHome,null);
+        setValue(USE_ECLIPSE_HELP,mUseEclipseHelp,false);
+        setValue(AUTO_SHOW_CONSOLE,mAutoShowConsole,true);
+        setValue(CASE_SENSITIVE_TASK_TAGS,mCaseSensitiveTaskTags,true);
+        storeObject(TASK_TAGS,mTaskTags,mDefaultTaskTags);
         super.store();
     }
 
@@ -634,6 +634,11 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
         }
 
         return object;
+    }
+
+    public void removeObject(String name)
+    {
+        storeObject(name, null);
     }
 
     private String makeSettingFileName(String name)

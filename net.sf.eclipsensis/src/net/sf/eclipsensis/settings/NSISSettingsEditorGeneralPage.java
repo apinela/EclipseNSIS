@@ -45,7 +45,7 @@ public abstract class NSISSettingsEditorGeneralPage extends NSISSettingsEditorPa
         super(settings);
     }
 
-    public Control createControl(Composite parent)
+    protected Control createControl(Composite parent)
     {
         Composite composite = new Composite(parent,SWT.NONE);
         GridLayout layout = new GridLayout(1,false);
@@ -208,14 +208,16 @@ public abstract class NSISSettingsEditorGeneralPage extends NSISSettingsEditorPa
 
     protected boolean performApply(NSISSettings settings)
     {
-        settings.setHdrInfo(mHdrInfo.getSelection());
-        settings.setLicense(mLicense.getSelection());
-        settings.setNoConfig(mNoConfig.getSelection());
-        settings.setNoCD(mNoCD.getSelection());
-        settings.setVerbosity(mVerbosity.getSelectionIndex());
-        settings.setCompressor(mCompressor.getSelectionIndex());
-        settings.setSolidCompression(mSolidCompression.getSelection());
-        settings.setInstructions((ArrayList)mInstructions.getInput());
+        if(getControl() != null) {
+            settings.setHdrInfo(mHdrInfo.getSelection());
+            settings.setLicense(mLicense.getSelection());
+            settings.setNoConfig(mNoConfig.getSelection());
+            settings.setNoCD(mNoCD.getSelection());
+            settings.setVerbosity(mVerbosity.getSelectionIndex());
+            settings.setCompressor(mCompressor.getSelectionIndex());
+            settings.setSolidCompression(mSolidCompression.getSelection());
+            settings.setInstructions((ArrayList)mInstructions.getInput());
+        }
         return true;
     }
     

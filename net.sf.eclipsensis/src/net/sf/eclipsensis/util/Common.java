@@ -515,6 +515,12 @@ public class Common
         }
     }
 
+    public static boolean objectsAreEqual(Object obj1, Object obj2)
+    {
+        return ((obj1 == null && obj2 == null) ||
+                (obj1 !=null && obj2 != null && obj1.equals(obj2)));
+    }
+
     public static boolean stringsAreEqual(String str1, String str2)
     {
         return stringsAreEqual(str1, str2, false);

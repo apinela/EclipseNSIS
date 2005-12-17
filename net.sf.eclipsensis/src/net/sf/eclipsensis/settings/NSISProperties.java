@@ -77,28 +77,55 @@ public class NSISProperties extends NSISSettings implements INSISConstants
         String temp = getPersistentProperty(getQualifiedName(USE_PARENT));
         if(temp == null) {
             temp = getPersistentProperty(getQualifiedName(USE_GLOBALS));
+            if(temp != null) {
+                setPersistentProperty(getQualifiedName(USE_GLOBALS), null);
+                setPersistentProperty(getQualifiedName(USE_PARENT), temp);
+            }
         }
         setUseParent((temp == null || Boolean.valueOf(temp).booleanValue()));
-        if(!getUseParent()) {
-            super.load();
-        }
+        super.load();
     }
 
     public void store()
     {
-        setValue(USE_PARENT,getUseParent());
-        if(getUseParent()) {
-            setHdrInfo(getDefaultHdrInfo());
-            setLicense(getDefaultLicense());
-            setNoConfig(getDefaultNoConfig());
-            setNoCD(getDefaultNoCD());
-            setVerbosity(getDefaultVerbosity());
-            setCompressor(getDefaultCompressor());
-            setSolidCompression(getDefaultSolidCompression());
-            setSymbols(getDefaultSymbols());
-            setInstructions(getDefaultInstructions());
+        setValue(USE_PARENT,getUseParent(),true);
+        boolean defaultHdrInfo = getDefaultHdrInfo();
+        boolean defaultLicense = getDefaultLicense();
+        boolean defaultNoConfig = getDefaultNoConfig();
+        boolean defaultNoCD = getDefaultNoCD();
+        int defaultVerbosity = getDefaultVerbosity();
+        int defaultCompressor = getDefaultCompressor();
+        boolean defaultSolidCompression = getDefaultSolidCompression();
+        LinkedHashMap defaultSymbols = getDefaultSymbols();
+        ArrayList defaultInstructions = getDefaultInstructions();
+        
+        try {
+            if (getUseParent()) {
+                setDefaultHdrInfo(getHdrInfo());
+                setDefaultLicense(getLicense());
+                setDefaultNoConfig(getNoConfig());
+                setDefaultNoCD(getNoCD());
+                setDefaultVerbosity(getVerbosity());
+                setDefaultCompressor(getCompressor());
+                setDefaultSolidCompression(getSolidCompression());
+                setDefaultSymbols(getSymbols());
+                setDefaultInstructions(getInstructions());
+            }
+            super.store();
         }
-        super.store();
+        finally {
+            if (getUseParent()) {
+                setDefaultHdrInfo(defaultHdrInfo);
+                setDefaultLicense(defaultLicense);
+                setDefaultNoConfig(defaultNoConfig);
+                setDefaultNoCD(defaultNoCD);
+                setDefaultVerbosity(defaultVerbosity);
+                setDefaultCompressor(defaultCompressor);
+                setDefaultSolidCompression(defaultSolidCompression);
+                setDefaultSymbols(defaultSymbols);
+                setDefaultInstructions(defaultInstructions);
+            }
+        }
     }
 
     public int getCompressor()
@@ -207,11 +234,11 @@ public class NSISProperties extends NSISSettings implements INSISConstants
     }
 
     /**
-     * @param useGlobals The useGlobals to set.
+     * @param useParent The useParent to set.
      */
-    public void setUseParent(boolean useGlobals)
+    public void setUseParent(boolean useParent)
     {
-        mUseParent = useGlobals;
+        mUseParent = useParent;
     }
 
     private String getPersistentProperty(QualifiedName qname)
@@ -361,8 +388,7 @@ public class NSISProperties extends NSISSettings implements INSISConstants
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
                     os = new BufferedOutputStream(baos);
                     IOUtility.writeObject(os,object);
-                    os.close();
-                    os = null;
+                    IOUtility.closeIO(os);
                     synchronizer.setSyncInfo(qname,mResource,baos.toByteArray());
                     return;
                 }
@@ -378,6 +404,11 @@ public class NSISProperties extends NSISSettings implements INSISConstants
         catch (CoreException e) {
             EclipseNSISPlugin.getDefault().log(e);
         }
+    }
+
+    public void removeObject(String name)
+    {
+        storeObject(name, null);
     }
 
     public NSISSettings getParentSettings()

@@ -42,7 +42,7 @@ abstract class NSISTab extends AbstractLaunchConfigurationTab implements INSISSe
         GridLayout layout = new GridLayout(1,false);
         composite.setLayout(layout);
 
-        Control control = mPage.createControl(composite);
+        Control control = mPage.create(composite);
         control.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true));
         
         setControl(composite);
@@ -58,6 +58,7 @@ abstract class NSISTab extends AbstractLaunchConfigurationTab implements INSISSe
             mSettings.load();
             mSettings.setLaunchConfig(configuration);
             mPage.performApply();
+            mSettings.store();
         }
         finally {
             mSettings.setLaunchConfig(config);
@@ -78,6 +79,7 @@ abstract class NSISTab extends AbstractLaunchConfigurationTab implements INSISSe
         try {
             mSettings.setLaunchConfig(configuration);
             mPage.performApply();
+            mSettings.store();
         }
         finally {
             mSettings.setLaunchConfig(config);

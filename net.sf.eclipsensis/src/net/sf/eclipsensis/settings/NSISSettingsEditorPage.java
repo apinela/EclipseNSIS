@@ -27,10 +27,11 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
-public abstract class NSISSettingsEditorPage
+public abstract class NSISSettingsEditorPage implements DisposeListener
 {
     protected NSISSettings mSettings = null;
     private List mListeners = new ArrayList();
+    private Control mControl = null;
 
     public NSISSettingsEditorPage(NSISSettings settings)
     {
@@ -234,7 +235,6 @@ public abstract class NSISSettingsEditorPage
         if(!performApply(mSettings)) {
             return false;
         }
-        mSettings.store();
         return true;
     }
 
@@ -243,7 +243,28 @@ public abstract class NSISSettingsEditorPage
         return new TableResizer();
     }
 
-    public abstract Control createControl(Composite parent);
+    public Control getControl()
+    {
+        return mControl;
+    }
+
+    public void widgetDisposed(DisposeEvent e)
+    {
+        mControl = null;
+    }
+
+    public Control create(Composite parent)
+    {
+        if(mControl != null) {
+            mControl.removeDisposeListener(this);
+            mControl.dispose();
+        }
+        mControl = createControl(parent);
+        mControl.addDisposeListener(this);
+        return mControl;
+    }
+
+    protected abstract Control createControl(Composite parent);
     public abstract void enableControls(boolean state);
     protected abstract boolean performApply(NSISSettings settings);
     public abstract void reset();

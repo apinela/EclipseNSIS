@@ -15,6 +15,7 @@ import java.util.LinkedHashMap;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.makensis.MakeNSISRunner;
+import net.sf.eclipsensis.util.Common;
 
 public abstract class NSISSettings implements INSISSettingsConstants
 {
@@ -30,15 +31,38 @@ public abstract class NSISSettings implements INSISSettingsConstants
     private ArrayList mInstructions = null;
     private LinkedHashMap mSymbols = null;
 
-    public abstract String getString(String name);
-    public abstract boolean getBoolean(String name);
-    public abstract int getInt(String name);
-    public abstract void setValue(String name, String value);
-    public abstract void setValue(String name, boolean value);
-    public abstract void setValue(String name, int value);
-    public abstract void removeString(String name);
-    public abstract void removeBoolean(String name);
-    public abstract void removeInt(String name);
+    private int mDefaultDefaultCompressor = MakeNSISRunner.COMPRESSOR_DEFAULT;
+    private boolean mDefaultDefaultHdrInfo = false;
+    private ArrayList mDefaultDefaultInstructions = new ArrayList();
+    private boolean mDefaultDefaultLicense = false;
+    private boolean mDefaultDefaultNoCD = false;
+    private boolean mDefaultDefaultNoConfig = false;
+    private boolean mDefaultDefaultSolidCompression = false;
+    private LinkedHashMap mDefaultDefaultSymbols = new LinkedHashMap();
+    private int mDefaultDefaultVerbosity = VERBOSITY_ALL;
+
+    private int mDefaultCompressor;
+    private boolean mDefaultHdrInfo;
+    private ArrayList mDefaultInstructions;
+    private boolean mDefaultLicense;
+    private boolean mDefaultNoCD;
+    private boolean mDefaultNoConfig;
+    private boolean mDefaultSolidCompression;
+    private LinkedHashMap mDefaultSymbols;
+    private int mDefaultVerbosity;
+
+    public NSISSettings()
+    {
+        setDefaultHdrInfo(getDefaultDefaultHdrInfo());
+        setDefaultLicense(getDefaultDefaultLicense());
+        setDefaultNoConfig(getDefaultDefaultNoConfig());
+        setDefaultNoCD(getDefaultDefaultNoCD());
+        setDefaultVerbosity(getDefaultDefaultVerbosity());
+        setDefaultCompressor(getDefaultDefaultCompressor());
+        setDefaultSolidCompression(getDefaultDefaultSolidCompression());
+        setDefaultSymbols(getDefaultDefaultSymbols());
+        setDefaultInstructions(getDefaultDefaultInstructions());
+    }
 
     public void load()
     {
@@ -55,17 +79,102 @@ public abstract class NSISSettings implements INSISSettingsConstants
 
     public void store()
     {
-        setValue(HDRINFO,mHdrInfo);
-        setValue(LICENSE, mLicense);
-        setValue(NOCONFIG, mNoConfig);
-        setValue(NOCD, mNoCD);
-        setValue(VERBOSITY,mVerbosity);
-        setValue(COMPRESSOR, mCompressor);
-        setValue(SOLID_COMPRESSION, mSolidCompression);
-        storeObject(SYMBOLS, mSymbols);
-        storeObject(INSTRUCTIONS, mInstructions);
+        setValue(HDRINFO, getHdrInfo(), getDefaultHdrInfo());
+        setValue(LICENSE, getLicense(), getDefaultLicense());
+        setValue(NOCONFIG, getNoConfig(), getDefaultNoConfig());
+        setValue(NOCD, getNoCD(), getDefaultNoCD());
+        setValue(VERBOSITY, getVerbosity(), getDefaultVerbosity());
+        setValue(COMPRESSOR, getCompressor(), getDefaultCompressor());
+        setValue(SOLID_COMPRESSION, getSolidCompression(), getDefaultSolidCompression());
+        storeObject(SYMBOLS, getSymbols(), getDefaultSymbols());
+        storeObject(INSTRUCTIONS, getInstructions(), getDefaultInstructions());
     }
     
+    public int getDefaultDefaultCompressor()
+    {
+        return mDefaultDefaultCompressor;
+    }
+
+    public boolean getDefaultDefaultHdrInfo()
+    {
+        return mDefaultDefaultHdrInfo;
+    }
+
+    public ArrayList getDefaultDefaultInstructions()
+    {
+        return mDefaultDefaultInstructions;
+    }
+
+    public boolean getDefaultDefaultLicense()
+    {
+        return mDefaultDefaultLicense;
+    }
+
+    public boolean getDefaultDefaultNoCD()
+    {
+        return mDefaultDefaultNoCD;
+    }
+
+    public boolean getDefaultDefaultNoConfig()
+    {
+        return mDefaultDefaultNoConfig;
+    }
+
+    public boolean getDefaultDefaultSolidCompression()
+    {
+        return mDefaultDefaultSolidCompression;
+    }
+
+    public LinkedHashMap getDefaultDefaultSymbols()
+    {
+        return mDefaultDefaultSymbols;
+    }
+
+    public int getDefaultDefaultVerbosity()
+    {
+        return mDefaultDefaultVerbosity;
+    }
+
+    protected void setValue(String name, String value, String defaultValue)
+    {
+        if(Common.stringsAreEqual(value, defaultValue)) {
+            removeString(name);
+        }
+        else {
+            setValue(name, value);
+        }
+    }
+    
+    protected void setValue(String name, boolean value, boolean defaultValue)
+    {
+        if(value == defaultValue) {
+            removeBoolean(name);
+        }
+        else {
+            setValue(name, value);
+        }
+    }
+    
+    protected void setValue(String name, int value, int defaultValue)
+    {
+        if(value == defaultValue) {
+            removeInt(name);
+        }
+        else {
+            setValue(name, value);
+        }
+    }
+
+    protected void storeObject(String name, Object value, Object defaultValue)
+    {
+        if(Common.objectsAreEqual(value, defaultValue)) {
+            removeObject(name);
+        }
+        else {
+            storeObject(name, value);
+        }
+    }
+
     public boolean showStatistics()
     {
         return true;
@@ -78,7 +187,7 @@ public abstract class NSISSettings implements INSISSettingsConstants
 
     public boolean getDefaultSolidCompression()
     {
-        return false;
+        return mDefaultSolidCompression;
     }
 
     public void setSolidCompression(boolean solidCompression)
@@ -99,7 +208,7 @@ public abstract class NSISSettings implements INSISSettingsConstants
      */
     public int getDefaultCompressor()
     {
-        return MakeNSISRunner.COMPRESSOR_DEFAULT;
+        return mDefaultCompressor;
     }
 
     /**
@@ -123,7 +232,7 @@ public abstract class NSISSettings implements INSISSettingsConstants
      */
     public boolean getDefaultHdrInfo()
     {
-        return false;
+        return mDefaultHdrInfo;
     }
 
     /**
@@ -146,7 +255,7 @@ public abstract class NSISSettings implements INSISSettingsConstants
      */
     public boolean getDefaultLicense()
     {
-        return false;
+        return mDefaultLicense;
     }
 
     /**
@@ -170,7 +279,7 @@ public abstract class NSISSettings implements INSISSettingsConstants
      */
     public boolean getDefaultNoCD()
     {
-        return false;
+        return mDefaultNoCD;
     }
 
     /**
@@ -193,7 +302,7 @@ public abstract class NSISSettings implements INSISSettingsConstants
      */
     public boolean getDefaultNoConfig()
     {
-        return false;
+        return mDefaultNoConfig;
     }
 
     /**
@@ -217,7 +326,7 @@ public abstract class NSISSettings implements INSISSettingsConstants
      */
     public int getDefaultVerbosity()
     {
-        return VERBOSITY_ALL;
+        return mDefaultVerbosity;
     }
 
     /**
@@ -233,7 +342,7 @@ public abstract class NSISSettings implements INSISSettingsConstants
      */
     public ArrayList getDefaultInstructions()
     {
-        return new ArrayList();
+        return mDefaultInstructions;
     }
 
     /**
@@ -257,7 +366,7 @@ public abstract class NSISSettings implements INSISSettingsConstants
      */
     public LinkedHashMap getDefaultSymbols()
     {
-        return new LinkedHashMap();
+        return mDefaultSymbols;
     }
 
     /**
@@ -276,6 +385,61 @@ public abstract class NSISSettings implements INSISSettingsConstants
         mSymbols = (symbols==null?new LinkedHashMap():symbols);
     }
 
+    public void setDefaultCompressor(int defaultCompressor)
+    {
+        mDefaultCompressor = defaultCompressor;
+    }
+
+    public void setDefaultHdrInfo(boolean defaultHdrInfo)
+    {
+        mDefaultHdrInfo = defaultHdrInfo;
+    }
+
+    public void setDefaultInstructions(ArrayList defaultInstructions)
+    {
+        mDefaultInstructions = defaultInstructions;
+    }
+
+    public void setDefaultLicense(boolean defaultLicense)
+    {
+        mDefaultLicense = defaultLicense;
+    }
+
+    public void setDefaultNoCD(boolean defaultNoCD)
+    {
+        mDefaultNoCD = defaultNoCD;
+    }
+
+    public void setDefaultNoConfig(boolean defaultNoConfig)
+    {
+        mDefaultNoConfig = defaultNoConfig;
+    }
+
+    public void setDefaultSolidCompression(boolean defaultSolidCompression)
+    {
+        mDefaultSolidCompression = defaultSolidCompression;
+    }
+
+    public void setDefaultSymbols(LinkedHashMap defaultSymbols)
+    {
+        mDefaultSymbols = defaultSymbols;
+    }
+
+    public void setDefaultVerbosity(int defaultVerbosity)
+    {
+        mDefaultVerbosity = defaultVerbosity;
+    }
+
+    public abstract String getString(String name);
+    public abstract boolean getBoolean(String name);
+    public abstract int getInt(String name);
+    public abstract void setValue(String name, String value);
+    public abstract void setValue(String name, boolean value);
+    public abstract void setValue(String name, int value);
+    public abstract void removeString(String name);
+    public abstract void removeBoolean(String name);
+    public abstract void removeInt(String name);
+    public abstract void removeObject(String name);
     public abstract void storeObject(String name, Object object);
     public abstract Object loadObject(String name);
 }

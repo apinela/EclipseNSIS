@@ -312,6 +312,10 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
         {
         }
 
+        public void removeObject(String name)
+        {
+        }
+
         public void setValue(String name, boolean value)
         {
         }

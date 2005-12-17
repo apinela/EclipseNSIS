@@ -57,14 +57,14 @@ public abstract class NSISSettingsEditor implements INSISSettingsEditorPageListe
         TabItem item = new TabItem(folder, SWT.NONE);
         item.setText(EclipseNSISPlugin.getResourceString("general.tab.text")); //$NON-NLS-1$
         item.setToolTipText(EclipseNSISPlugin.getResourceString("general.tab.tooltip")); //$NON-NLS-1$
-        item.setControl(mPages[0].createControl(folder));
+        item.setControl(mPages[0].create(folder));
 
-        mPages[1] = new NSISSettingsEditorSymbolsPage(getSettings());
+        mPages[1] = createSymbolsPage();
         mPages[1].addListener(this);
         item = new TabItem(folder, SWT.NONE);
         item.setText(EclipseNSISPlugin.getResourceString("symbols.tab.text")); //$NON-NLS-1$
         item.setToolTipText(EclipseNSISPlugin.getResourceString("symbols.tab.tooltip")); //$NON-NLS-1$
-        item.setControl(mPages[1].createControl(folder));
+        item.setControl(mPages[1].create(folder));
 
         mEnabledState = mPages[0].canEnableControls() && mPages[1].canEnableControls();
         
@@ -88,6 +88,11 @@ public abstract class NSISSettingsEditor implements INSISSettingsEditorPageListe
         mFolder = folder;
         enableControls();
         return mFolder;
+    }
+
+    protected NSISSettingsEditorSymbolsPage createSymbolsPage()
+    {
+        return new NSISSettingsEditorSymbolsPage(getSettings());
     }
 
     protected abstract NSISSettingsEditorGeneralPage createGeneralPage();

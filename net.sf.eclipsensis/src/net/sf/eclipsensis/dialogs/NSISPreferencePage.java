@@ -266,47 +266,49 @@ public class NSISPreferencePage	extends NSISSettingsPage
 
             protected boolean performApply(NSISSettings settings)
             {
-                if(!handleNSISHomeChange(true)) {
-                    return false;
-                }
-                if(super.performApply(settings)) {
-                    Combo combo = mNSISHome.getCombo();
-                    String home = combo.getText();
-        
-                    List nsisHomes = (List)mNSISHome.getInput();
-                    if(addNSISHome(nsisHomes, home)) {
-                        mNSISHome.refresh();
-                        combo.setText(home);
+                if (getControl() != null) {
+                    if(!handleNSISHomeChange(true)) {
+                        return false;
                     }
-        
-                    boolean dirty = false;
-                    if(cInternalNSISHomes.size()==nsisHomes.size()) {
-                        ListIterator e1 = cInternalNSISHomes.listIterator();
-                        ListIterator e2 = nsisHomes.listIterator();
-                        while(e1.hasNext() && e2.hasNext()) {
-                            String s1 = (String)e1.next();
-                            String s2 = (String)e2.next();
-                            if (!Common.stringsAreEqual(s1, s2, true)) {
-                                dirty = true;
-                                break;
+                    if(super.performApply(settings)) {
+                        Combo combo = mNSISHome.getCombo();
+                        String home = combo.getText();
+
+                        List nsisHomes = (List)mNSISHome.getInput();
+                        if (addNSISHome(nsisHomes, home)) {
+                            mNSISHome.refresh();
+                            combo.setText(home);
+                        }
+
+                        boolean dirty = false;
+                        if (cInternalNSISHomes.size() == nsisHomes.size()) {
+                            ListIterator e1 = cInternalNSISHomes.listIterator();
+                            ListIterator e2 = nsisHomes.listIterator();
+                            while (e1.hasNext() && e2.hasNext()) {
+                                String s1 = (String)e1.next();
+                                String s2 = (String)e2.next();
+                                if (!Common.stringsAreEqual(s1, s2, true)) {
+                                    dirty = true;
+                                    break;
+                                }
                             }
                         }
+                        else {
+                            dirty = true;
+                        }
+                        if (dirty) {
+                            cInternalNSISHomes.clear();
+                            cInternalNSISHomes.addAll(nsisHomes);
+                            saveNSISHomes();
+                        }
+
+                        NSISPreferences preferences = (NSISPreferences)settings;
+                        preferences.setNSISHome(home);
+                        preferences.setAutoShowConsole(mAutoShowConsole.getSelection());
+                        preferences.setUseEclipseHelp(mUseEclipseHelp.getSelection());
+                        preferences.getPreferenceStore().setValue(INSISPreferenceConstants.NOTIFY_MAKENSIS_CHANGED, mNotifyMakeNSISChanged.getSelection());
+                        return true;
                     }
-                    else {
-                        dirty = true;
-                    }
-                    if(dirty) {
-                        cInternalNSISHomes.clear();
-                        cInternalNSISHomes.addAll(nsisHomes);
-                        saveNSISHomes();
-                    }
-        
-                    NSISPreferences preferences = (NSISPreferences)settings;
-                    preferences.setNSISHome(home);
-                    preferences.setAutoShowConsole(mAutoShowConsole.getSelection());
-                    preferences.setUseEclipseHelp(mUseEclipseHelp.getSelection());
-                    preferences.getPreferenceStore().setValue(INSISPreferenceConstants.NOTIFY_MAKENSIS_CHANGED,mNotifyMakeNSISChanged.getSelection());
-                    return true;
                 }
                 return false;
             }
