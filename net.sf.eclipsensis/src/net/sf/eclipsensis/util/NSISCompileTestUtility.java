@@ -236,11 +236,15 @@ public class NSISCompileTestUtility
                     File file = new File(mScript.toOSString());
                     results = MakeNSISRunner.compile(file, NSISPreferences.INSTANCE,
                                                      EclipseNSISPlugin.getDefault().getConsole(),this);
-                    mResultsMap.put(file, results);
+                    if(results != null) {
+                        mResultsMap.put(file, results);
+                    }
                 }
-                mOutputExeName = results.getOutputFileName();
-                if(mTest && mOutputExeName != null) {
-                    MakeNSISRunner.testInstaller(mOutputExeName, null);
+                if(results != null) {
+                    mOutputExeName = results.getOutputFileName();
+                    if(mTest && mOutputExeName != null) {
+                        MakeNSISRunner.testInstaller(mOutputExeName, null);
+                    }
                 }
             }
         }

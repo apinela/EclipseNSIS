@@ -11,6 +11,7 @@ package net.sf.eclipsensis.actions;
 
 import net.sf.eclipsensis.makensis.MakeNSISResults;
 import net.sf.eclipsensis.makensis.MakeNSISRunner;
+import net.sf.eclipsensis.settings.NSISPreferences;
 import net.sf.eclipsensis.util.NSISCompileTestUtility;
 
 import org.eclipse.core.runtime.IPath;
@@ -22,7 +23,7 @@ public class NSISCompileAction extends NSISScriptAction
      * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
      */
 	final public void run(IAction action) {
-        if(mPlugin != null) {
+        if(mPlugin != null && NSISPreferences.INSTANCE.getNSISExe() != null) {
             action.setEnabled(false);
             NSISCompileTestUtility.INSTANCE.compile(mInput, shouldTest());
         }

@@ -90,45 +90,20 @@ public class NSISProperties extends NSISSettings implements INSISConstants
 
     public void store()
     {
-        setValue(USE_PARENT,getUseParent(),true);
-        boolean defaultHdrInfo = getDefaultHdrInfo();
-        boolean defaultLicense = getDefaultLicense();
-        boolean defaultNoConfig = getDefaultNoConfig();
-        boolean defaultNoCD = getDefaultNoCD();
-        int defaultVerbosity = getDefaultVerbosity();
-        int defaultCompressor = getDefaultCompressor();
-        boolean defaultSolidCompression = getDefaultSolidCompression();
-        LinkedHashMap defaultSymbols = getDefaultSymbols();
-        ArrayList defaultInstructions = getDefaultInstructions();
-        
-        try {
-            if (getUseParent()) {
-                setDefaultHdrInfo(getHdrInfo());
-                setDefaultLicense(getLicense());
-                setDefaultNoConfig(getNoConfig());
-                setDefaultNoCD(getNoCD());
-                setDefaultVerbosity(getVerbosity());
-                setDefaultCompressor(getCompressor());
-                setDefaultSolidCompression(getSolidCompression());
-                setDefaultSymbols(getSymbols());
-                setDefaultInstructions(getInstructions());
+        setValue(USE_PARENT,getUseParent());
+        if(getUseParent()) {
+            setHdrInfo(getDefaultHdrInfo());
+            setLicense(getDefaultLicense());
+            setNoConfig(getDefaultNoConfig());
+            setNoCD(getDefaultNoCD());
+            setVerbosity(getDefaultVerbosity());
+            setCompressor(getDefaultCompressor());
+            setSolidCompression(getDefaultSolidCompression());
+            setSymbols(getDefaultSymbols());
+            setInstructions(getDefaultInstructions());
             }
             super.store();
         }
-        finally {
-            if (getUseParent()) {
-                setDefaultHdrInfo(defaultHdrInfo);
-                setDefaultLicense(defaultLicense);
-                setDefaultNoConfig(defaultNoConfig);
-                setDefaultNoCD(defaultNoCD);
-                setDefaultVerbosity(defaultVerbosity);
-                setDefaultCompressor(defaultCompressor);
-                setDefaultSolidCompression(defaultSolidCompression);
-                setDefaultSymbols(defaultSymbols);
-                setDefaultInstructions(defaultInstructions);
-            }
-        }
-    }
 
     public int getCompressor()
     {

@@ -179,130 +179,132 @@ public class NSISLaunchConfigDelegate implements ILaunchConfigurationDelegate
                     EclipseNSISPlugin.getDefault().log(e);
                 }
             }
-            if(useConsole && outputFile != null) {
-                String filename;
-                final IEditorInput editorInput;
-                IEditorDescriptor descriptor;
-                final IEditorRegistry registry = PlatformUI.getWorkbench().getEditorRegistry();
-                if(ifile != null) {
-                    filename = ifile.getFullPath().toString();
-                    editorInput = new FileEditorInput(ifile);
-                    descriptor = registry.getDefaultEditor(ifile.getName());
-                }
-                else {
-                    filename = outputFile.getAbsolutePath();
-                    editorInput = new NSISExternalFileEditorInput(outputFile);
-                    descriptor = registry.getDefaultEditor(outputFile.getName());
-                }
-                if(descriptor == null) {
-                    descriptor = registry.findEditor("org.eclipse.ui.DefaultTextEditor"); //$NON-NLS-1$
-                }
-                if(descriptor == null) {
-                    descriptor = registry.findEditor(IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
-                }
-                if (descriptor != null) {
-                    final String editorId = descriptor.getId();
-                    final IHyperlink hyperlink = new IHyperlink() {
-                        public void linkEntered()
-                        {
-                        }
-
-                        public void linkExited()
-                        {
-                        }
-
-                        public void linkActivated()
-                        {
-                            IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-                            try {
-                                IDE.openEditor(page, editorInput, editorId);
-                            }
-                            catch (PartInitException e) {
-                                EclipseNSISPlugin.getDefault().log(e);
-                            }
-                        }
-                    };
-                    String message = MessageFormat.format(EclipseNSISPlugin.getResourceString("launch.console.redirect.message"), new String[]{filename}); //$NON-NLS-1$
-                    final NSISConsole nsisConsole = EclipseNSISPlugin.getDefault().getConsole();
-                    final String ffilename;
-                    if(encoding != null && !encoding.equals(defaultEncoding)) {
-                        String temp;
-                        try {
-                            message = new String(message.getBytes(), encoding);
-                            temp = new String(filename.getBytes(), encoding);
-                        }
-                        catch (Exception e) {
-                            temp = filename;
-                        }
-                        ffilename = temp;
+            if(results != null) {
+                if(useConsole && outputFile != null) {
+                    String filename;
+                    final IEditorInput editorInput;
+                    IEditorDescriptor descriptor;
+                    final IEditorRegistry registry = PlatformUI.getWorkbench().getEditorRegistry();
+                    if(ifile != null) {
+                        filename = ifile.getFullPath().toString();
+                        editorInput = new FileEditorInput(ifile);
+                        descriptor = registry.getDefaultEditor(ifile.getName());
                     }
                     else {
-                        ffilename = filename;
+                        filename = outputFile.getAbsolutePath();
+                        editorInput = new NSISExternalFileEditorInput(outputFile);
+                        descriptor = registry.getDefaultEditor(outputFile.getName());
                     }
-                    System.out.println(ffilename);
-                    nsisConsole.addPatternMatchListener(new IPatternMatchListener() {
-                        String mPattern = escape(ffilename);
-                        
-                        private String escape(String path) 
-                        {
-                            StringBuffer buffer = new StringBuffer(""); //$NON-NLS-1$
-                            if(path != null) {
-                                char[] chars = path.toCharArray();
-                                for (int i = 0; i < chars.length; i++) {
-                                    switch(chars[i]) {
-                                        case ' ':
-                                            buffer.append("\\x20"); //$NON-NLS-1$
-                                            break;
-                                        case '\t':
-                                            buffer.append("\\t"); //$NON-NLS-1$
-                                            break;
-                                        default:
-                                            if(VALID_FILENAME_CHARS.indexOf(chars[i]) >= 0) {
-                                                buffer.append('\\');
-                                            }
-                                            buffer.append(chars[i]);
-                                    }
+                    if(descriptor == null) {
+                        descriptor = registry.findEditor("org.eclipse.ui.DefaultTextEditor"); //$NON-NLS-1$
+                    }
+                    if(descriptor == null) {
+                        descriptor = registry.findEditor(IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
+                    }
+                    if (descriptor != null) {
+                        final String editorId = descriptor.getId();
+                        final IHyperlink hyperlink = new IHyperlink() {
+                            public void linkEntered()
+                            {
+                            }
+    
+                            public void linkExited()
+                            {
+                            }
+    
+                            public void linkActivated()
+                            {
+                                IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+                                try {
+                                    IDE.openEditor(page, editorInput, editorId);
+                                }
+                                catch (PartInitException e) {
+                                    EclipseNSISPlugin.getDefault().log(e);
                                 }
                             }
-                            return buffer.toString();
-                        }
-                        
-                        public String getPattern() 
-                        {
-                            return mPattern;
-                        }
-
-                        public void matchFound(PatternMatchEvent event) 
-                        {
+                        };
+                        String message = MessageFormat.format(EclipseNSISPlugin.getResourceString("launch.console.redirect.message"), new String[]{filename}); //$NON-NLS-1$
+                        final NSISConsole nsisConsole = EclipseNSISPlugin.getDefault().getConsole();
+                        final String ffilename;
+                        if(encoding != null && !encoding.equals(defaultEncoding)) {
+                            String temp;
                             try {
-                                nsisConsole.addHyperlink(hyperlink, event.getOffset(), event.getLength());
-                                nsisConsole.removePatternMatchListener(this);
-                            } catch (BadLocationException e) {
+                                message = new String(message.getBytes(), encoding);
+                                temp = new String(filename.getBytes(), encoding);
                             }
+                            catch (Exception e) {
+                                temp = filename;
+                            }
+                            ffilename = temp;
                         }
-
-                        public int getCompilerFlags() 
-                        {
-                            return 0;
+                        else {
+                            ffilename = filename;
                         }
-
-                        public String getLineQualifier() 
-                        {
-                            return null;
-                        }
-
-                        public void connect(TextConsole console) 
-                        {
-                        }
-
-                        public void disconnect() {
-                        }
-                    });
-                    nsisConsole.appendLine(NSISConsoleLine.info(message));
+                        System.out.println(ffilename);
+                        nsisConsole.addPatternMatchListener(new IPatternMatchListener() {
+                            String mPattern = escape(ffilename);
+                            
+                            private String escape(String path) 
+                            {
+                                StringBuffer buffer = new StringBuffer(""); //$NON-NLS-1$
+                                if(path != null) {
+                                    char[] chars = path.toCharArray();
+                                    for (int i = 0; i < chars.length; i++) {
+                                        switch(chars[i]) {
+                                            case ' ':
+                                                buffer.append("\\x20"); //$NON-NLS-1$
+                                                break;
+                                            case '\t':
+                                                buffer.append("\\t"); //$NON-NLS-1$
+                                                break;
+                                            default:
+                                                if(VALID_FILENAME_CHARS.indexOf(chars[i]) >= 0) {
+                                                    buffer.append('\\');
+                                                }
+                                                buffer.append(chars[i]);
+                                        }
+                                    }
+                                }
+                                return buffer.toString();
+                            }
+                            
+                            public String getPattern() 
+                            {
+                                return mPattern;
+                            }
+    
+                            public void matchFound(PatternMatchEvent event) 
+                            {
+                                try {
+                                    nsisConsole.addHyperlink(hyperlink, event.getOffset(), event.getLength());
+                                    nsisConsole.removePatternMatchListener(this);
+                                } catch (BadLocationException e) {
+                                }
+                            }
+    
+                            public int getCompilerFlags() 
+                            {
+                                return 0;
+                            }
+    
+                            public String getLineQualifier() 
+                            {
+                                return null;
+                            }
+    
+                            public void connect(TextConsole console) 
+                            {
+                            }
+    
+                            public void disconnect() {
+                            }
+                        });
+                        nsisConsole.appendLine(NSISConsoleLine.info(message));
+                    }
                 }
-            }
-            if(results != null && results.getReturnCode() == MakeNSISResults.RETURN_SUCCESS && runInstaller) {
-                MakeNSISRunner.testInstaller(results.getOutputFileName(), console);
+                if(results.getReturnCode() == MakeNSISResults.RETURN_SUCCESS && runInstaller) {
+                    MakeNSISRunner.testInstaller(results.getOutputFileName(), console);
+                }
             }
         }
         finally {

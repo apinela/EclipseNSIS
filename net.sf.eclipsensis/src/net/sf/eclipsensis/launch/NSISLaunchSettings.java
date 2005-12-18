@@ -88,8 +88,8 @@ public class NSISLaunchSettings extends NSISSettings
 
     public void store()
     {
-        setValue(SCRIPT, mScript, "");
-        setValue(RUN_INSTALLER, mRunInstaller, false);
+        setValue(SCRIPT, mScript);
+        setValue(RUN_INSTALLER, mRunInstaller);
         super.store();
     }
 

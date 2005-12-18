@@ -234,11 +234,11 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
 
     public void store()
     {
-        setValue(NSIS_HOME,mNSISHome,null);
-        setValue(USE_ECLIPSE_HELP,mUseEclipseHelp,false);
-        setValue(AUTO_SHOW_CONSOLE,mAutoShowConsole,true);
-        setValue(CASE_SENSITIVE_TASK_TAGS,mCaseSensitiveTaskTags,true);
-        storeObject(TASK_TAGS,mTaskTags,mDefaultTaskTags);
+        setValue(NSIS_HOME,mNSISHome);
+        setValue(USE_ECLIPSE_HELP,mUseEclipseHelp);
+        setValue(AUTO_SHOW_CONSOLE,mAutoShowConsole);
+        setValue(CASE_SENSITIVE_TASK_TAGS,mCaseSensitiveTaskTags);
+        storeObject(TASK_TAGS,mTaskTags);
         super.store();
     }
 

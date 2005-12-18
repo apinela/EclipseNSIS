@@ -315,7 +315,7 @@ public class MakeNSISRunner implements INSISConstants
     public static synchronized MakeNSISResults compile(final IPath script, NSISSettings settings, INSISConsole console, INSISConsoleLineProcessor outputProcessor)
     {
         MakeNSISResults results = null;
-        if (script != null) {
+        if (NSISPreferences.INSTANCE.getNSISExe() != null && script != null) {
             IFile ifile = null;
             try {
                 try {
@@ -440,9 +440,11 @@ public class MakeNSISRunner implements INSISConstants
                                             buf.append(" ").append(solidOption); //$NON-NLS-1$
                                         }
                                         String compressorName = buf.toString();
-                                        String summaryCompressorName = Common.padString(EclipseNSISPlugin.getFormattedString("summary.compressor.name.format", new String[]{compressorName}), padding); //$NON-NLS-1$
-                                        MakeNSISResults tempresults = runCompileProcess(script, cmdArray, null, workDir, console, outputProcessor, consoleErrors, consoleWarnings, settings
-                                                .showStatistics());
+                                        String summaryCompressorName = Common.padString(EclipseNSISPlugin.getFormattedString("summary.compressor.name.format", 
+                                                                                        new String[]{compressorName}), padding); //$NON-NLS-1$
+                                        MakeNSISResults tempresults = runCompileProcess(script, cmdArray, null, workDir, console, 
+                                                                            outputProcessor, consoleErrors, consoleWarnings, 
+                                                                            settings.showStatistics());
                                         if (tempresults.getReturnCode() != MakeNSISResults.RETURN_SUCCESS) {
                                             results = tempresults;
                                             if (tempFile != null && tempFile.exists()) {
@@ -642,11 +644,11 @@ public class MakeNSISRunner implements INSISConstants
             console.appendLine(NSISConsoleLine.error(ie.getLocalizedMessage()));
         }
         finally {
-            setCompileProcess(null, null);
-            notifyListeners(MakeNSISRunEvent.COMPLETED_PROCESS, script, commandLine);
             if(showStatistics && results.getReturnCode() != MakeNSISResults.RETURN_CANCEL) {
                 console.appendLine(NSISConsoleLine.info(cCompilationTimeFormat.format(splitCompilationTime(System.currentTimeMillis()-n))));
             }
+            setCompileProcess(null, null);
+            notifyListeners(MakeNSISRunEvent.COMPLETED_PROCESS, script, commandLine);
         }
         return results;
     }
