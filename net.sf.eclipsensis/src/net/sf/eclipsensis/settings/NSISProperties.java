@@ -83,7 +83,9 @@ public class NSISProperties extends NSISSettings implements INSISConstants
             }
         }
         setUseParent((temp == null || Boolean.valueOf(temp).booleanValue()));
-        super.load();
+        if(!getUseParent()) {
+            super.load();
+        }
     }
 
     public void store()

@@ -340,7 +340,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
     private void fireNSISHomeChanged(final String oldHome, final String newHome)
     {
         if(!Common.stringsAreEqual(oldHome, newHome) && mListeners.size() > 0) {
-            EclipseNSISPlugin.getDefault().run(false,false,new NSISHomeChangedRunnable(oldHome, newHome));
+            EclipseNSISPlugin.getDefault().run(true,false,new NSISHomeChangedRunnable(oldHome, newHome));
         }
     }
 
