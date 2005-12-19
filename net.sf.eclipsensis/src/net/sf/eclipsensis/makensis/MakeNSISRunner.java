@@ -440,8 +440,8 @@ public class MakeNSISRunner implements INSISConstants
                                             buf.append(" ").append(solidOption); //$NON-NLS-1$
                                         }
                                         String compressorName = buf.toString();
-                                        String summaryCompressorName = Common.padString(EclipseNSISPlugin.getFormattedString("summary.compressor.name.format", 
-                                                                                        new String[]{compressorName}), padding); //$NON-NLS-1$
+                                        String summaryCompressorName = Common.padString(EclipseNSISPlugin.getFormattedString("summary.compressor.name.format",  //$NON-NLS-1$
+                                                                                        new String[]{compressorName}), padding); 
                                         MakeNSISResults tempresults = runCompileProcess(script, cmdArray, null, workDir, console, 
                                                                             outputProcessor, consoleErrors, consoleWarnings, 
                                                                             settings.showStatistics());

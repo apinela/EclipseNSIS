@@ -419,9 +419,6 @@ public class NSISEditorUtilities
                     for(Iterator iter=editors.iterator(); iter.hasNext(); ) {
                         ((NSISEditor)iter.next()).updatePresentation();
                         monitor.worked(1);
-                        
-                        //Update the display so it paints
-                        Common.updateDisplay();
                     }
                 }
             };

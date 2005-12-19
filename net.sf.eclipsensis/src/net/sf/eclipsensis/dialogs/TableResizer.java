@@ -13,6 +13,7 @@ import java.util.Arrays;
 
 import net.sf.eclipsensis.util.Common;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.widgets.Table;
@@ -41,6 +42,9 @@ public class TableResizer extends ControlAdapter
     {
         Table table = (Table)e.widget;
         int width = table.getClientArea().width;
+        if(((table.getStyle() & SWT.V_SCROLL) > 0)) {
+            width -= table.getVerticalBar().getSize().x;
+        }
         int lineWidth = table.getGridLineWidth();
         TableColumn[] columns = table.getColumns();
         if(!Common.isEmptyArray(columns)) {

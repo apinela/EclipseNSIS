@@ -16,7 +16,6 @@ import net.sf.eclipsensis.IEclipseNSISService;
 import net.sf.eclipsensis.help.INSISKeywordsListener;
 import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.util.CaseInsensitiveMap;
-import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.graphics.Image;
@@ -57,9 +56,6 @@ public class NSISOutlineContentResources implements IEclipseNSISService,  INSISK
                                                                                 cTypes[i].toLowerCase().replaceAll("!","")).append(".icon").toString(),null))); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             }
         }
-        
-        //Update the display so it paints
-        Common.updateDisplay();
     }
 
     public void start(IProgressMonitor monitor)

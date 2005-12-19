@@ -126,7 +126,8 @@ class NSISGeneralTab extends NSISTab implements INSISSettingsEditorPageListener
             public boolean select(Object toTest)
             {
                 if(toTest instanceof IFile) {
-                    return ((IFile)toTest).getFileExtension().equalsIgnoreCase(INSISConstants.NSI_EXTENSION);
+                    String ext = ((IFile)toTest).getFileExtension();
+                    return (ext != null && ext.equalsIgnoreCase(INSISConstants.NSI_EXTENSION));
                 }
                 return false;
             }
@@ -137,11 +138,6 @@ class NSISGeneralTab extends NSISTab implements INSISSettingsEditorPageListener
             super(settings);
         }
         
-        protected ControlAdapter createTableControlListener()
-        {
-            return NSISGeneralTab.this.createTableControlListener(super.createTableControlListener());
-        }
-
         boolean validateScript(String script)
         {
             try {

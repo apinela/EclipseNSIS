@@ -735,11 +735,4 @@ public class Common
         }
         return text;
     }
-    
-    public static void updateDisplay()
-    {
-        if(Display.getCurrent() != null) {
-            Display.getCurrent().update();
-        }
-    }
 }

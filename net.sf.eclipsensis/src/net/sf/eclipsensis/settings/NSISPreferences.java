@@ -669,9 +669,6 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
                     EclipseNSISPlugin.getDefault().log(e);
                 }
                 monitor.worked(10);
-                
-                //Update the display so it paints
-                Common.updateDisplay();
             }
         }
     }

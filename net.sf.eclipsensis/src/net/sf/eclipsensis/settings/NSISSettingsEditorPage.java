@@ -152,7 +152,7 @@ public abstract class NSISSettingsEditorPage implements DisposeListener
                 columns[i] = new TableColumn(table,SWT.LEFT,i);
                 columns[i].setText(columnNames[i]);
             }
-            table.addControlListener(createTableControlListener());
+            table.addControlListener(new TableResizer());
         }
         TableViewer viewer = new TableViewer(table);
         viewer.setContentProvider((contentProvider==null?new WorkbenchContentProvider():contentProvider));
@@ -236,11 +236,6 @@ public abstract class NSISSettingsEditorPage implements DisposeListener
             return false;
         }
         return true;
-    }
-
-    protected ControlAdapter createTableControlListener()
-    {
-        return new TableResizer();
     }
 
     public Control getControl()

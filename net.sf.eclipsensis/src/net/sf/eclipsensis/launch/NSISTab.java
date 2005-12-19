@@ -94,7 +94,6 @@ abstract class NSISTab extends AbstractLaunchConfigurationTab implements INSISSe
     protected ControlAdapter createTableControlListener(final ControlAdapter controlAdapter)
     {
         return new ControlAdapter() {
-            boolean init=false;
             boolean ok=false;
             public void controlResized(ControlEvent e)
             {
@@ -102,25 +101,22 @@ abstract class NSISTab extends AbstractLaunchConfigurationTab implements INSISSe
                 if(table.getShell().isVisible()) {
                     //Really dumb hack because LaunchConfigurationDialog
                     //keeps resizing the dialog with normal use of TableResizer
-                    if(init && !ok) {
+                    if(!ok) {
                         table.removeControlListener(this);
-                        table.addControlListener(controlAdapter);
                         final Point p = table.getSize();
-                        p.x -= 19;
-                        table.setSize(p);
-                        p.x += 19;
                         table.getShell().getDisplay().asyncExec(new Runnable() {
                             public void run() 
                             {
                                 if(!table.isDisposed()) {
+                                    p.x -= 19;
                                     table.setSize(p);
+                                    p.x += 19;
+                                    table.setSize(p);
+                                    table.addControlListener(controlAdapter);
                                 }
                             }
                         });
                         ok = true;
-                    }
-                    else {
-                        init = true;
                     }
                 }
             }  

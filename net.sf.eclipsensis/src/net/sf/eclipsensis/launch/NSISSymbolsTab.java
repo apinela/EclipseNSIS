@@ -14,7 +14,6 @@ import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.settings.*;
 
 import org.eclipse.jface.viewers.IFilter;
-import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
@@ -34,12 +33,7 @@ class NSISSymbolsTab extends NSISTab implements INSISSettingsEditorPageListener
 
     protected NSISSettingsEditorPage createPage()
     {
-        return new NSISSettingsEditorSymbolsPage(mSettings) {
-            protected ControlAdapter createTableControlListener()
-            {
-                return NSISSymbolsTab.this.createTableControlListener(super.createTableControlListener());
-            }
-        };
+        return new NSISSettingsEditorSymbolsPage(mSettings);
     }
 
     protected IFilter createSettingsFilter()

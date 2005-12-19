@@ -395,7 +395,7 @@ public class NSISTemplateEditorDialog extends StatusMessageDialog
 
         action= new TextViewerAction(mPatternEditor, ISourceViewer.CONTENTASSIST_PROPOSALS);
         action.setText(EclipseNSISPlugin.getResourceString("content.assist.proposal.label")); //$NON-NLS-1$
-        mGlobalActions.put(INSISEditorConstants.CONTENT_ASSIST_PROPOSAL, action); //$NON-NLS-1$
+        mGlobalActions.put(INSISEditorConstants.CONTENT_ASSIST_PROPOSAL, action); 
 
         action= new TextViewerAction(mPatternEditor, NSISTemplateSourceViewer.INSERT_TEMPLATE_VARIABLE);
         action.setText(EclipseNSISPlugin.getResourceString("insert.template.variable.proposal.label")); //$NON-NLS-1$
@@ -429,7 +429,7 @@ public class NSISTemplateEditorDialog extends StatusMessageDialog
         menu.appendToGroup(ITextEditorActionConstants.GROUP_EDIT, (IAction) mGlobalActions.get(ITextEditorActionConstants.COPY));
         menu.appendToGroup(ITextEditorActionConstants.GROUP_EDIT, (IAction) mGlobalActions.get(ITextEditorActionConstants.PASTE));
         menu.appendToGroup(ITextEditorActionConstants.GROUP_EDIT, (IAction) mGlobalActions.get(ITextEditorActionConstants.SELECT_ALL));
-        menu.appendToGroup(ITextEditorActionConstants.GROUP_EDIT, (IAction) mGlobalActions.get(INSISEditorConstants.CONTENT_ASSIST_PROPOSAL)); //$NON-NLS-1$
+        menu.appendToGroup(ITextEditorActionConstants.GROUP_EDIT, (IAction) mGlobalActions.get(INSISEditorConstants.CONTENT_ASSIST_PROPOSAL)); 
 
         menu.add(new Separator("templates")); //$NON-NLS-1$
         menu.appendToGroup("templates", (IAction) mGlobalActions.get("InsertTemplateVariableProposal")); //$NON-NLS-1$ //$NON-NLS-2$

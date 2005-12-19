@@ -201,6 +201,7 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
             final IRunnableWithProgress op = new IRunnableWithProgress(){
                 public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException
                 {
+                    monitor = new DisplayUpdateProgressMonitor(monitor);
                     monitor.beginTask(EclipseNSISPlugin.getResourceString("starting.eclipsensis.message"),services.length+1); //$NON-NLS-1$
                     for (int i = 0; i < services.length; i++) {
                         try {
@@ -210,8 +211,6 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
                             service.start(monitor);
                             mServices.push(service);
                             
-                            //Update the display so it paints
-                            Common.updateDisplay();
                         }
                         catch (Exception e) {
                             log(e);
@@ -223,9 +222,6 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
                         public void run()
                         {
                             MakeNSISRunner.startup();
-                            
-                            //Update the display so it paints
-                            Common.updateDisplay();
                         }
                     };
                     if(Display.getCurrent() == null) {
@@ -236,9 +232,6 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
                     }
                     monitor.worked(1);
                     monitor.done();
-                    
-                    //Update the display so it paints
-                    Common.updateDisplay();
                 }
             };
 

@@ -475,7 +475,7 @@ public class IOUtility
             }
         }
         
-        File destFile = new File(destFolder,source.lastSegment()); //$NON-NLS-1$
+        File destFile = new File(destFolder,source.lastSegment()); 
         if(destFile.exists()) {
             if(destFile.isDirectory()) {
                 destFile.delete();
@@ -487,7 +487,7 @@ public class IOUtility
                 destFile.delete();
             }
         }
-        URL url = bundle.getEntry(source.toString()); //$NON-NLS-1$
+        URL url = bundle.getEntry(source.toString()); 
         InputStream is = null;
         byte[] data;
         try {
