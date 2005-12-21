@@ -519,6 +519,11 @@
             categoryId="org.eclipse.debug.ui.category.run"
             id="net.sf.eclipsensis.launch.nsisLaunchShortcut.run">
       </command>
+      <command
+            categoryId="%category.id"
+            description="%import.regfile.description"
+            id="%import.regfile.command.id"
+            name="%import.regfile.name"/>
    </extension>
    <extension
          point="org.eclipse.ui.bindings">
@@ -613,6 +618,11 @@
           commandId="%cancel.command.id"
           contextId="%context.editingNSISSource.id"
           sequence="%cancel.keysequence"/>
+      <key
+            commandId="%import.regfile.command.id"
+            contextId="%context.editingNSISSource.id"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="%import.regfile.keysequence"/>
    </extension>
    <extension
          point="org.eclipse.help.contexts">
