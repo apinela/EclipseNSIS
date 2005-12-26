@@ -35,6 +35,8 @@ public class NSISActionContributor extends TextEditorActionContributor implement
     protected RetargetTextEditorAction mInsertFile;
     protected RetargetTextEditorAction mInsertDirectory;
     protected RetargetTextEditorAction mInsertColor;
+    protected RetargetTextEditorAction mImportRegFile;
+    protected RetargetTextEditorAction mImportRegKey;
 
 	/**
 	 * Default constructor.
@@ -72,6 +74,14 @@ public class NSISActionContributor extends TextEditorActionContributor implement
         mInsertColor= new RetargetTextEditorAction(bundle, "insert.color."); //$NON-NLS-1$
         mInsertColor.setImageDescriptor(EclipseNSISPlugin.getImageManager().getImageDescriptor(bundle.getString("insert.color.image"))); //$NON-NLS-1$
         mInsertColor.setActionDefinitionId(INSERT_COLOR_COMMAND_ID);
+
+        mImportRegFile= new RetargetTextEditorAction(bundle, "import.regfile."); //$NON-NLS-1$
+        mImportRegFile.setImageDescriptor(EclipseNSISPlugin.getImageManager().getImageDescriptor(bundle.getString("import.regfile.image"))); //$NON-NLS-1$
+        mImportRegFile.setActionDefinitionId(IMPORT_REGFILE_COMMAND_ID);
+
+        mImportRegKey= new RetargetTextEditorAction(bundle, "import.regkey."); //$NON-NLS-1$
+        mImportRegKey.setImageDescriptor(EclipseNSISPlugin.getImageManager().getImageDescriptor(bundle.getString("import.regkey.image"))); //$NON-NLS-1$
+        mImportRegKey.setActionDefinitionId(IMPORT_REGKEY_COMMAND_ID);
     }
 	
 	/*
@@ -96,6 +106,8 @@ public class NSISActionContributor extends TextEditorActionContributor implement
             editMenu.add(mInsertFile);
             editMenu.add(mInsertDirectory);
             editMenu.add(mInsertColor);
+            editMenu.add(mImportRegFile);
+            editMenu.add(mImportRegKey);
 		}
         editMenu.addMenuListener(new IMenuListener() {
             public void menuAboutToShow(IMenuManager manager)
@@ -129,6 +141,8 @@ public class NSISActionContributor extends TextEditorActionContributor implement
         mInsertFile.setAction(getAction(editor, INSISEditorConstants.INSERT_FILE)); 
         mInsertDirectory.setAction(getAction(editor, INSISEditorConstants.INSERT_DIRECTORY)); 
         mInsertColor.setAction(getAction(editor, INSISEditorConstants.INSERT_COLOR)); 
+        mImportRegFile.setAction(getAction(editor, INSISEditorConstants.IMPORT_REGFILE)); 
+        mImportRegKey.setAction(getAction(editor, INSISEditorConstants.IMPORT_REGKEY)); 
 	}
 	
 	/*

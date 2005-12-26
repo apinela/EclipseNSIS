@@ -53,11 +53,13 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
     public static final int INSERT_FILE = GOTO_HELP + 1;
     public static final int INSERT_DIRECTORY = INSERT_FILE + 1;
     public static final int INSERT_COLOR = INSERT_DIRECTORY + 1;
-    public static final int TABS_TO_SPACES = INSERT_COLOR + 1;
+    public static final int IMPORT_REGFILE = INSERT_COLOR + 1;
+    public static final int IMPORT_REGKEY = IMPORT_REGFILE + 1;
+    public static final int TABS_TO_SPACES = IMPORT_REGKEY + 1;
     public static final int TOGGLE_COMMENT = TABS_TO_SPACES + 1;
     public static final int ADD_BLOCK_COMMENT = TOGGLE_COMMENT + 1;
     public static final int REMOVE_BLOCK_COMMENT = ADD_BLOCK_COMMENT + 1;
-
+    
     private IPreferenceStore mPreferenceStore = null;
     private NSISAutoIndentStrategy mAutoIndentStrategy = null;
     private NSISTabConversionStrategy mTabConversionStrategy = null;
@@ -376,6 +378,8 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
             case INSERT_FILE:
             case INSERT_DIRECTORY:
             case INSERT_COLOR:
+            case IMPORT_REGFILE:
+            case IMPORT_REGKEY:
             case TABS_TO_SPACES:
             case TOGGLE_COMMENT:
             case REMOVE_BLOCK_COMMENT:
@@ -405,7 +409,6 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
             }
             case INSERT_FILE:
             case INSERT_DIRECTORY:
-
                 if(operation == INSERT_FILE) {
                     FileDialog dialog = new FileDialog(getControl().getShell(),SWT.OPEN);
                     dialog.setText(EclipseNSISPlugin.getResourceString("insert.file.description")); //$NON-NLS-1$
@@ -454,6 +457,16 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
                 }
                 break;
             }
+            case IMPORT_REGFILE:
+            {
+                text = RegistryImporter.importRegFile(getControl().getShell());
+                break;
+            }
+            case IMPORT_REGKEY:
+            {
+                text = RegistryImporter.importRegKey(getControl().getShell());
+                break;
+            }
             case TABS_TO_SPACES:
             {
                 doConvertTabsToSpaces();
@@ -485,6 +498,8 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
             Point p = getSelectedRange();
             try {
                 doc.replace(p.x,p.y,text);
+                setSelectedRange(p.x+text.length(), 0);
+                revealRange(p.x+text.length(), 0);
             }
             catch (BadLocationException e) {
             }

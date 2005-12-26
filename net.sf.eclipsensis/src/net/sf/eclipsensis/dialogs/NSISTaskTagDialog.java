@@ -138,6 +138,5 @@ public class NSISTaskTagDialog extends StatusMessageDialog
         else {
             status.setOK();
         }
-        refreshStatus();
     }
 }

@@ -9,6 +9,8 @@
  *******************************************************************************/
 package net.sf.eclipsensis.actions;
 
+import java.util.regex.Pattern;
+
 import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.editor.NSISEditorUtilities;
 import net.sf.eclipsensis.makensis.MakeNSISResults;
@@ -40,6 +42,11 @@ public class NSISClearMarkersAction extends NSISScriptAction
     {
         super();
         ResourcesPlugin.getWorkspace().addResourceChangeListener(mResourceChangeListener);
+    }
+
+    protected Pattern createExtensionPattern()
+    {
+        return Pattern.compile(NSI_WILDCARD_EXTENSION,Pattern.CASE_INSENSITIVE);
     }
 
     public void dispose()

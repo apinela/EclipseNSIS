@@ -124,7 +124,6 @@ public class NSISInstructionDialog extends StatusMessageDialog
         else {
             status.setOK();
         }
-        refreshStatus();
     }
 
     protected Combo createCombo(Composite composite, String text, String tooltipText,

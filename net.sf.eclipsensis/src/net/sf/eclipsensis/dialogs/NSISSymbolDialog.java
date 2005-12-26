@@ -166,7 +166,6 @@ public class NSISSymbolDialog extends StatusMessageDialog
         else {
             status.setOK();
         }
-        refreshStatus();
     }
 
     /* (non-Javadoc)

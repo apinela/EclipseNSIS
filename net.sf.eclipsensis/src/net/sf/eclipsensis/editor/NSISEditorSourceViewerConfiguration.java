@@ -21,7 +21,6 @@ import org.eclipse.jface.text.information.IInformationPresenter;
 import org.eclipse.jface.text.information.InformationPresenter;
 import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.ISourceViewer;
-import org.eclipse.swt.SWT;
 
 public class NSISEditorSourceViewerConfiguration extends NSISSourceViewerConfiguration
 {
@@ -34,15 +33,8 @@ public class NSISEditorSourceViewerConfiguration extends NSISSourceViewerConfigu
     {
         super(preferenceStore);
         mTextHover = new NSISTextHover();
-
-        NSISInformationProvider informationProvider = new NSISInformationProvider();
         mInformationControlCreator = new NSISInformationControlCreator(null);
-        IInformationControlCreator informationControlCreator = new NSISInformationControlCreator(null,SWT.V_SCROLL|SWT.H_SCROLL);
-        informationProvider.setInformationPresenterControlCreator(informationControlCreator);
-        mInformationPresenter = new InformationPresenter(informationControlCreator);
-        mInformationPresenter.setInformationProvider(informationProvider,NSISPartitionScanner.NSIS_STRING);
-        mInformationPresenter.setInformationProvider(informationProvider,IDocument.DEFAULT_CONTENT_TYPE);
-        mInformationPresenter.setSizeConstraints(60, 5, true, true);
+        mInformationPresenter = NSISEditorUtilities.createStickyHelpInformationPresenter();
         mAnnotationHover = new NSISAnnotationHover(new String[]{PROBLEM_MARKER_ID,TASK_MARKER_ID,ERROR_ANNOTATION_NAME,WARNING_ANNOTATION_NAME});
     }
 

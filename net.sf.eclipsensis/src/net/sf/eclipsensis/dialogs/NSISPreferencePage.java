@@ -175,7 +175,7 @@ public class NSISPreferencePage	extends NSISSettingsPage
             protected boolean isSolidCompressionSupported()
             {
                 if(mNSISVersion.compareTo(NSISPreferences.VERSION_2_07) >= 0) {
-                    if(mNSISExe.exists() && mNSISExe.isFile()) {
+                    if(IOUtility.isValidFile(mNSISExe)) {
                         long[] data = (long[])cSolidCompressionMap.get(mNSISExe);
                         if(data != null) {
                             if(data[0] == mNSISExe.lastModified() && data[1] == mNSISExe.length()) {

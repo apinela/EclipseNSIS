@@ -18,6 +18,7 @@ public interface INSISConstants
     public static final String MAKENSIS_EXE = "makensis.exe"; //$NON-NLS-1$
     public static final String NSISCONF_NSH = "nsisconf.nsh"; //$NON-NLS-1$
     public static final String NSI_EXTENSION = "nsi"; //$NON-NLS-1$
+    public static final String NSI_WILDCARD_EXTENSION = "ns[hi]"; //$NON-NLS-1$
 
     public static final String PLUGIN_CONTEXT_PREFIX = PLUGIN_ID + "."; //$NON-NLS-1$
 
@@ -41,6 +42,8 @@ public interface INSISConstants
     public static final String INSERT_FILE_COMMAND_ID = EclipseNSISPlugin.getBundleResourceString("%insert.file.command.id"); //$NON-NLS-1$
     public static final String INSERT_DIRECTORY_COMMAND_ID = EclipseNSISPlugin.getBundleResourceString("%insert.directory.command.id"); //$NON-NLS-1$
     public static final String INSERT_COLOR_COMMAND_ID = EclipseNSISPlugin.getBundleResourceString("%insert.color.command.id"); //$NON-NLS-1$
+    public static final String IMPORT_REGFILE_COMMAND_ID = EclipseNSISPlugin.getBundleResourceString("%import.regfile.command.id"); //$NON-NLS-1$
+    public static final String IMPORT_REGKEY_COMMAND_ID = EclipseNSISPlugin.getBundleResourceString("%import.regkey.command.id"); //$NON-NLS-1$
     public static final String TABS_TO_SPACES_COMMAND_ID = EclipseNSISPlugin.getBundleResourceString("%tabs.to.spaces.command.id"); //$NON-NLS-1$
     public static final String TOGGLE_COMMENT_COMMAND_ID = EclipseNSISPlugin.getBundleResourceString("%toggle.comment.command.id"); //$NON-NLS-1$
     public static final String ADD_BLOCK_COMMENT_COMMAND_ID = EclipseNSISPlugin.getBundleResourceString("%add.block.comment.command.id"); //$NON-NLS-1$

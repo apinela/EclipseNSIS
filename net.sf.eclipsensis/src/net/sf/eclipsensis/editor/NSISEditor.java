@@ -16,10 +16,7 @@ import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.actions.NSISAction;
 import net.sf.eclipsensis.actions.NSISScriptAction;
-import net.sf.eclipsensis.editor.codeassist.NSISInformationControlCreator;
-import net.sf.eclipsensis.editor.codeassist.NSISInformationProvider;
 import net.sf.eclipsensis.editor.outline.*;
-import net.sf.eclipsensis.editor.text.NSISPartitionScanner;
 import net.sf.eclipsensis.editor.text.NSISTextUtility;
 import net.sf.eclipsensis.makensis.MakeNSISResults;
 import net.sf.eclipsensis.settings.*;
@@ -34,7 +31,6 @@ import org.eclipse.jface.text.information.InformationPresenter;
 import org.eclipse.jface.text.source.*;
 import org.eclipse.jface.text.source.projection.*;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.*;
@@ -221,6 +217,16 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
         a.setImageDescriptor(EclipseNSISPlugin.getImageManager().getImageDescriptor(resourceBundle.getString("insert.color.image"))); //$NON-NLS-1$
         setAction(INSISEditorConstants.INSERT_COLOR, a); 
 
+        a = new TextOperationAction(resourceBundle,"import.regfile.",this,NSISSourceViewer.IMPORT_REGFILE,false); //$NON-NLS-1$
+        a.setActionDefinitionId(IMPORT_REGFILE_COMMAND_ID);
+        a.setImageDescriptor(EclipseNSISPlugin.getImageManager().getImageDescriptor(resourceBundle.getString("import.regfile.image"))); //$NON-NLS-1$
+        setAction(INSISEditorConstants.IMPORT_REGFILE, a); 
+
+        a = new TextOperationAction(resourceBundle,"import.regkey.",this,NSISSourceViewer.IMPORT_REGKEY,false); //$NON-NLS-1$
+        a.setActionDefinitionId(IMPORT_REGKEY_COMMAND_ID);
+        a.setImageDescriptor(EclipseNSISPlugin.getImageManager().getImageDescriptor(resourceBundle.getString("import.regkey.image"))); //$NON-NLS-1$
+        setAction(INSISEditorConstants.IMPORT_REGKEY, a); 
+
         a = new TextOperationAction(resourceBundle,"tabs.to.spaces.",this,NSISSourceViewer.TABS_TO_SPACES,false); //$NON-NLS-1$
         a.setActionDefinitionId(TABS_TO_SPACES_COMMAND_ID);
         setAction(INSISEditorConstants.TABS_TO_SPACES, a); 
@@ -323,6 +329,8 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
         addAction(menu, INSISEditorConstants.INSERT_FILE); 
         addAction(menu, INSISEditorConstants.INSERT_DIRECTORY); 
         addAction(menu, INSISEditorConstants.INSERT_COLOR); 
+        addAction(menu, INSISEditorConstants.IMPORT_REGFILE); 
+        addAction(menu, INSISEditorConstants.IMPORT_REGKEY); 
     }
 
     /*
@@ -526,7 +534,7 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
         IEditorInput input = getEditorInput();
         if(input instanceof IPathEditorInput && !(input instanceof IFileEditorInput)){
             File file = new File(((IPathEditorInput)input).getPath().toOSString());
-            if(file != null && file.exists() && file.isFile()) {
+            if(IOUtility.isValidFile(file)) {
                 MakeNSISResults results = NSISCompileTestUtility.INSTANCE.getCachedResults(file);
                 if(results != null) {
                     NSISEditorUtilities.updateAnnotations(this, results);
@@ -554,13 +562,7 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
                 throw new IllegalArgumentException();
             }
             mTextOperationAction= textOperationAction;
-            NSISInformationProvider informationProvider = new NSISInformationProvider();
-            IInformationControlCreator informationControlCreator = new NSISInformationControlCreator(null,SWT.V_SCROLL|SWT.H_SCROLL);
-            informationProvider.setInformationPresenterControlCreator(informationControlCreator);
-            mInformationPresenter = new InformationPresenter(informationControlCreator);
-            mInformationPresenter.setInformationProvider(informationProvider,NSISPartitionScanner.NSIS_STRING);
-            mInformationPresenter.setInformationProvider(informationProvider,IDocument.DEFAULT_CONTENT_TYPE);
-            mInformationPresenter.setSizeConstraints(60, 5, true, true);
+            mInformationPresenter = NSISEditorUtilities.createStickyHelpInformationPresenter();
         }
 
         /*

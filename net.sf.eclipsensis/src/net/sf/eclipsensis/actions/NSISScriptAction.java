@@ -9,6 +9,8 @@
  *******************************************************************************/
 package net.sf.eclipsensis.actions;
 
+import java.util.regex.Pattern;
+
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.makensis.*;
 
@@ -22,6 +24,8 @@ import org.eclipse.ui.*;
 public abstract class NSISScriptAction extends NSISAction implements IMakeNSISRunListener
 {
     protected IPath mInput = null;
+    private boolean mValidExtension = false;
+    private Pattern mExtensionPattern = null;
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
@@ -59,7 +63,13 @@ public abstract class NSISScriptAction extends NSISAction implements IMakeNSISRu
                 }
             }
         }
+        updateInput();
         updateActionState();
+    }
+
+    private void updateInput()
+    {
+        mValidExtension = (mInput != null && mInput.getFileExtension() != null && getExtensionPattern().matcher(mInput.getFileExtension()).matches());
     }
 
     public void updateActionState()
@@ -89,13 +99,13 @@ public abstract class NSISScriptAction extends NSISAction implements IMakeNSISRu
                 mInput = null;
             }
         }
+        updateInput();
         updateActionState();
     }
 
     public boolean isEnabled()
     {
-        return (mPlugin != null && mPlugin.isConfigured() && mInput != null &&
-                mInput.getFileExtension().equalsIgnoreCase(NSI_EXTENSION));
+        return (mPlugin != null && mPlugin.isConfigured() && mValidExtension);
     }
 
     public void eventOccurred(MakeNSISRunEvent event)
@@ -108,6 +118,19 @@ public abstract class NSISScriptAction extends NSISAction implements IMakeNSISRu
                 stopped(event.getScript(), (MakeNSISResults)event.getData());
                 break;
         }
+    }
+
+    public Pattern getExtensionPattern()
+    {
+        if(mExtensionPattern == null) {
+            mExtensionPattern = createExtensionPattern();
+        }
+        return mExtensionPattern;
+    }
+
+    protected Pattern createExtensionPattern()
+    {
+        return Pattern.compile(NSI_EXTENSION,Pattern.CASE_INSENSITIVE);
     }
 
     protected abstract void started(IPath script);

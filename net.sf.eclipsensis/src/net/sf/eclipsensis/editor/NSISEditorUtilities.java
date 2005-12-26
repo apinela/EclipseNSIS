@@ -15,9 +15,12 @@ import java.util.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
+import net.sf.eclipsensis.editor.codeassist.*;
+import net.sf.eclipsensis.editor.text.NSISPartitionScanner;
 import net.sf.eclipsensis.makensis.MakeNSISResults;
 import net.sf.eclipsensis.makensis.MakeNSISRunner;
 import net.sf.eclipsensis.script.NSISScriptProblem;
+import net.sf.eclipsensis.util.*;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.util.NSISCompileTestUtility;
 
@@ -25,8 +28,10 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.text.*;
+import org.eclipse.jface.text.information.InformationPresenter;
 import org.eclipse.jface.text.source.*;
 import org.eclipse.jface.util.OpenStrategy;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
@@ -38,6 +43,33 @@ public class NSISEditorUtilities
 {
     private NSISEditorUtilities()
     {
+    }
+    
+    static InformationPresenter createStickyHelpInformationPresenter()
+    {
+        boolean browserAvailable = false;
+        if(Display.getCurrent() != null) {
+            browserAvailable = NSISBrowserInformationControl.isAvailable(Display.getCurrent().getActiveShell());
+        }
+
+        IInformationControlCreator informationControlCreator;
+        NSISInformationProvider informationProvider;
+        InformationPresenter informationPresenter;
+        if(browserAvailable) {
+            informationControlCreator = new NSISBrowserInformationControlCreator(SWT.V_SCROLL|SWT.H_SCROLL);
+            informationProvider = new NSISBrowserInformationProvider();
+            informationPresenter = new InformationPresenter(informationControlCreator);
+        }
+        else {
+            informationControlCreator= new NSISInformationControlCreator(null,SWT.V_SCROLL|SWT.H_SCROLL);
+            informationProvider = new NSISInformationProvider();
+            informationPresenter = new InformationPresenter(informationControlCreator);
+        }
+        informationProvider.setInformationPresenterControlCreator(informationControlCreator);
+        informationPresenter.setInformationProvider(informationProvider,NSISPartitionScanner.NSIS_STRING);
+        informationPresenter.setInformationProvider(informationProvider,IDocument.DEFAULT_CONTENT_TYPE);
+        informationPresenter.setSizeConstraints(60, (browserAvailable?10:5), true, true);
+        return informationPresenter;
     }
     
     public static void clearMarkers(final IPath path)
@@ -71,7 +103,7 @@ public class NSISEditorUtilities
             }
             else {
                 final File file = new File(path.toOSString());
-                if(file.exists() && file.isFile()) {
+                if(IOUtility.isValidFile(file)) {
                     NSISCompileTestUtility.INSTANCE.removeCachedResults(file);
                     Display.getDefault().asyncExec(new Runnable() {
                         public void run()

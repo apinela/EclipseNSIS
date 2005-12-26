@@ -112,11 +112,6 @@ public abstract class StatusMessageDialog extends IconAndMessageDialog implement
         return parent;
     }
 
-    protected final void refreshStatus()
-    {
-        updateStatus(mStatus);
-    }
-
     protected final void updateStatus(DialogStatus status)
     {
         mStatus = status;
@@ -169,30 +164,42 @@ public abstract class StatusMessageDialog extends IconAndMessageDialog implement
         public DialogStatus(int severity, String message)
         {
             super(severity,INSISConstants.PLUGIN_ID,0,message,null);
+            refreshStatus();
         }
 
         public void setError(String message)
         {
             setSeverity(ERROR);
             setMessage(message);
+            refreshStatus();
         }
 
         public void setWarning(String message)
         {
             setSeverity(WARNING);
             setMessage(message);
+            refreshStatus();
         }
 
         public void setInformation(String message)
         {
             setSeverity(INFO);
             setMessage(message);
+            refreshStatus();
         }
 
         public void setOK()
         {
             setSeverity(OK);
             setMessage(""); //$NON-NLS-1$
+            refreshStatus();
+        }
+
+        protected final void refreshStatus()
+        {
+            if(mStatus == this) {
+                updateStatus(this);
+            }
         }
     }
 }
