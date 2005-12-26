@@ -15,6 +15,8 @@ import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import net.sf.eclipsensis.utilities.util.Common;
+
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -95,7 +97,7 @@ public class JARSignerPlugin extends AbstractUIPlugin {
         InputStream is = null;
         try {
             File file = new File(keyStoreLocation);
-            if(file.exists() && file.isFile()) {
+            if(Common.isValidFile(file)) {
                 is = new BufferedInputStream(new FileInputStream(file));
                 KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
                 ks.load(is,storePassword.toCharArray());

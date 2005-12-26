@@ -9,6 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.utilities.util;
 
+import java.io.File;
 import java.lang.reflect.Array;
 import java.util.*;
 
@@ -45,6 +46,16 @@ public class Common
             }
         }
         return true;
+    }
+    
+    public static boolean isValidFile(File file)
+    {
+        return (file != null && file.exists() && file.isFile());
+    }
+
+    public static boolean isValidDirectory(File file)
+    {
+        return (file != null && file.exists() && file.isDirectory());
     }
 
     public static boolean stringsAreEqual(String str1, String str2)

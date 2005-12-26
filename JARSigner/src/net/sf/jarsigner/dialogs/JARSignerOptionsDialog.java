@@ -207,7 +207,7 @@ public class JARSignerOptionsDialog extends AbstractJAROptionsDialog
                 String signedJar = getSignedJar();
                 if(!Common.isEmpty(signedJar)) {
                     File file = new File(signedJar);
-                    state = !file.exists() || !file.isDirectory();
+                    state = !Common.isValidDirectory(file);
                 }
             }
             return state;

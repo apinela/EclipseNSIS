@@ -237,7 +237,7 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
                                         }
                                         else {
                                             final File outfile = new File(results.getOutputFileName());
-                                            if (outfile.exists() && outfile.isFile() && outfile.lastModified() > timestamp) {
+                                            if (IOUtility.isValidFile(outfile) && outfile.lastModified() > timestamp) {
                                                 MakeNSISRunner.testInstaller(outfile.getAbsolutePath(), null, true);
                                             }
                                         }

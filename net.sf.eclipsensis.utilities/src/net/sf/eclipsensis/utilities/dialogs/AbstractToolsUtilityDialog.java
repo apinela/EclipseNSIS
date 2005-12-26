@@ -83,7 +83,7 @@ public abstract class AbstractToolsUtilityDialog extends Dialog
             else {
                 File jdkHome = vm.getInstallLocation();
                 File toolPath = new File(jdkHome,"lib/tools.jar"); //$NON-NLS-1$
-                if(toolPath.exists() && toolPath.isFile()) {
+                if(Common.isValidFile(toolPath)) {
                     toolsJar = toolPath.getAbsolutePath();
                 }
             }
@@ -306,7 +306,7 @@ public abstract class AbstractToolsUtilityDialog extends Dialog
             if(!Common.isEmpty(newToolsJar)) {
                 File f = new File(newToolsJar);
                 JarFile jarfile = null;
-                if(f.exists() && f.isFile()) {
+                if(Common.isValidFile(f)) {
                     Version toolsJarVersion = null;
                     try {
                         jarfile = new JarFile(f);
@@ -427,7 +427,7 @@ public abstract class AbstractToolsUtilityDialog extends Dialog
         if( mVMInstall != null) {
             String toolsJar = getToolsJar();
             File f= new File(toolsJar);
-            if(f.exists() && f.isFile()) {
+            if(Common.isValidFile(f)) {
                 return true;
             }
         }

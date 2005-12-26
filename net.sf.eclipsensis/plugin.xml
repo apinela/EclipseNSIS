@@ -319,23 +319,20 @@
          point="org.eclipse.ui.popupMenus">
       <objectContribution
             objectClass="org.eclipse.core.resources.IFile"
-            nameFilter="%nsi.extension"
+            nameFilter="%nsis.wildcard.extension"
             id="%popup.menu.contribution.id">
          <menu
                label="%nsis.menu.name"
                path="additions"
                id="net.sf.eclipsensis.PopupMenu">
             <separator name="net.sf.eclipsensis.PopupGroup"/>
+            <separator name="net.sf.eclipsensis.PopupGroup2"/>
          </menu>
-         <action
-               enablesFor="1"
-               label="%clear.markers.action.name"
-               class="net.sf.eclipsensis.actions.NSISClearMarkersAction"
-               tooltip="%clear.markers.action.tooltip"
-               menubarPath="net.sf.eclipsensis.PopupMenu/net.sf.eclipsensis.PopupGroup"
-               definitionId="%popup.clear.markers.command.id"
-               id="%clear.markers.popup.menu.id">
-         </action>
+      </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IFile"
+            nameFilter="%nsi.extension"
+            id="%compile.actions.contribution.id">
          <action
                enablesFor="1"
                label="%compile.test.action.name"
@@ -365,6 +362,20 @@
                menubarPath="net.sf.eclipsensis.PopupMenu/net.sf.eclipsensis.PopupGroup"
                definitionId="%popup.compile.command.id"
                id="%compile.popup.menu.id">
+         </action>
+      </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IFile"
+            nameFilter="%nsis.wildcard.extension"
+            id="%common.actions.contribution.id">
+         <action
+               enablesFor="1"
+               label="%clear.markers.action.name"
+               class="net.sf.eclipsensis.actions.NSISClearMarkersAction"
+               tooltip="%clear.markers.action.tooltip"
+               menubarPath="net.sf.eclipsensis.PopupMenu/net.sf.eclipsensis.PopupGroup2"
+               definitionId="%popup.clear.markers.command.id"
+               id="%clear.markers.popup.menu.id">
          </action>
       </objectContribution>
    </extension>
@@ -524,6 +535,11 @@
             description="%import.regfile.description"
             id="%import.regfile.command.id"
             name="%import.regfile.name"/>
+      <command
+            categoryId="%category.id"
+            description="%import.regkey.description"
+            id="%import.regkey.command.id"
+            name="%import.regkey.name"/>
    </extension>
    <extension
          point="org.eclipse.ui.bindings">
@@ -623,6 +639,11 @@
             contextId="%context.editingNSISSource.id"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="%import.regfile.keysequence"/>
+      <key
+            commandId="%import.regkey.command.id"
+            contextId="%context.editingNSISSource.id"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="%import.regkey.keysequence"/>
    </extension>
    <extension
          point="org.eclipse.help.contexts">

@@ -52,7 +52,7 @@ public abstract class AbstractJAROptionsDialog extends AbstractToolsUtilityDialo
     {
         String userHome = System.getProperty("user.home"); //$NON-NLS-1$
         File storePath = new File(userHome,".keystore"); //$NON-NLS-1$
-        if(storePath.exists() && storePath.isFile()) {
+        if(Common.isValidFile(storePath)) {
             return storePath.getAbsolutePath();
         }
         return ""; //$NON-NLS-1$
@@ -91,7 +91,7 @@ public abstract class AbstractJAROptionsDialog extends AbstractToolsUtilityDialo
 
             if(!Common.isEmpty(getKeyStore())) {
                 File f = new File(getKeyStore());
-                state = (f.exists() && f.isFile());
+                state = Common.isValidFile(f);
             }
 
             return state;
