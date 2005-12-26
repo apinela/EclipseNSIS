@@ -117,7 +117,7 @@ public class NSISLanguageManager implements INSISHomeListener, IEclipseNSISServi
                     File[] langFiles = mLangDir.listFiles(new FileFilter() {
                        public boolean accept(File pathName)
                        {
-                           return (pathName != null && pathName.isFile() && pathName.getName().toLowerCase().endsWith(INSISConstants.LANGUAGE_FILES_EXTENSION));
+                           return (IOUtility.isValidFile(pathName) && pathName.getName().toLowerCase().endsWith(INSISConstants.LANGUAGE_FILES_EXTENSION));
                        }
                     });
                     for (int i = 0; i < langFiles.length; i++) {
@@ -164,9 +164,9 @@ public class NSISLanguageManager implements INSISHomeListener, IEclipseNSISServi
                     }
                 }
                 br.close();
-                if(mMuiLangDir.exists() && mMuiLangDir.isDirectory()) {
+                if(IOUtility.isValidDirectory(mMuiLangDir)) {
                     File muiLangFile = new File(mMuiLangDir,name+INSISConstants.MUI_LANGUAGE_FILES_EXTENSION);
-                    if(muiLangFile.exists() && muiLangFile.isFile()) {
+                    if(IOUtility.isValidFile(muiLangFile)) {
                         br = new BufferedReader(new FileReader(muiLangFile));
                         while(true) {
                             String line = br.readLine();

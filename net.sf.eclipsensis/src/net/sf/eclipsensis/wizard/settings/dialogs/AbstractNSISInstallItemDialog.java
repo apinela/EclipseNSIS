@@ -108,7 +108,6 @@ public abstract class AbstractNSISInstallItemDialog extends StatusMessageDialog
         else {
             status.setError(error);
         }
-        refreshStatus();
         return status.getSeverity() == IStatus.OK;
     }
 

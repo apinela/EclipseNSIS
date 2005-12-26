@@ -9,7 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.help;
 
-import java.io.*;
+import java.io.File;
 import java.util.*;
 
 import net.sf.eclipsensis.*;
@@ -44,6 +44,7 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
     public static final String PATH_VARIABLES="PATH_VARIABLES"; //$NON-NLS-1$
     public static final String VARIABLES="VARIABLES"; //$NON-NLS-1$
     public static final String ALL_VARIABLES="ALL_VARIABLES"; //$NON-NLS-1$
+    public static final String SHELL_CONSTANTS="SHELL_CONSTANTS"; //$NON-NLS-1$
     public static final String PATH_CONSTANTS="PATH_CONSTANTS"; //$NON-NLS-1$
     public static final String STRING_CONSTANTS="STRING_CONSTANTS"; //$NON-NLS-1$
     public static final String ALL_CONSTANTS="ALL_CONSTANTS"; //$NON-NLS-1$
@@ -51,6 +52,7 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
     public static final String PREDEFINES="PREDEFINES"; //$NON-NLS-1$
     public static final String PLUGINS="PLUGINS"; //$NON-NLS-1$
 
+    private Map mShellConstantsMap = null;
     private Map mKeywordGroupsMap = null;
     private Map mNewerKeywordsMap = null;
     private Set mAllKeywordsSet = null;
@@ -112,6 +114,7 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
         Set registers = new CaseInsensitiveSet();
         Set pathVariables = new CaseInsensitiveSet();
         Set variables = new CaseInsensitiveSet();
+        Set shellConstants = new CaseInsensitiveSet();
         Set pathConstants = new CaseInsensitiveSet();
         Set stringConstants = new CaseInsensitiveSet();
         Set predefines = new CaseInsensitiveSet();
@@ -127,21 +130,28 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
         Set instructionParameters = new CaseInsensitiveSet();
         Set instructionOptions = new CaseInsensitiveSet();
         Set callbacks = new CaseInsensitiveSet();
+        
+        Map shellConstantsMap = null;
 
         if(bundle != null && nsisVersion != null) {
             HashMap versionMap = new HashMap();
             for(Enumeration e=bundle.getKeys(); e.hasMoreElements();) {
                 String key = (String)e.nextElement();
-                int n = key.indexOf('#');
-                String name = key.substring(0,n);
-                Version version = new Version(key.substring(n+1));
-                if(nsisVersion.compareTo(version) >= 0) {
-                    ArrayList list = (ArrayList)versionMap.get(version);
-                    if(list == null) {
-                        list = new ArrayList();
-                        versionMap.put(version, list);
+                if(key.equals("shell.constants.map")) { //$NON-NLS-1$
+                    shellConstantsMap = Common.loadMapProperty(bundle, key);
+                }
+                else {
+                    int n = key.indexOf('#');
+                    String name = (n >= 0?key.substring(0,n):key);
+                    Version version = (n >= 0?new Version(key.substring(n+1)):NSISValidator.MINIMUM_NSIS_VERSION);
+                    if(nsisVersion.compareTo(version) >= 0) {
+                        ArrayList list = (ArrayList)versionMap.get(version);
+                        if(list == null) {
+                            list = new ArrayList();
+                            versionMap.put(version, list);
+                        }
+                        list.add(new String[]{name,key});
                     }
-                    list.add(new String[]{name,key});
                 }
             }
 
@@ -166,6 +176,9 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
                         }
                         else if(name.equals("variables")) { //$NON-NLS-1$
                             set = variables;
+                        }
+                        else if(name.equals("shell.constants")) { //$NON-NLS-1$
+                            set = shellConstants;
                         }
                         else if(name.equals("path.constants")) { //$NON-NLS-1$
                             set = pathConstants;
@@ -279,14 +292,22 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
         mKeywordGroupsMap.put(PATH_VARIABLES,temp2);
 
         set = getValidKeywords(variables);
-        mAllKeywordsSet.addAll(set);
         temp = (String[])Common.appendArray(temp, (temp2 = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
         Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
         mKeywordGroupsMap.put(VARIABLES,temp2);
 
+        set = getValidKeywords(shellConstants);
+        mAllKeywordsSet.addAll(set);
+        temp2 = (String[])set.toArray(Common.EMPTY_STRING_ARRAY);
+        Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
+        mKeywordGroupsMap.put(SHELL_CONSTANTS,temp2);
+
         set = getValidKeywords(pathConstants);
         mAllKeywordsSet.addAll(set);
-        temp = (String[])Common.appendArray(temp, (temp2 = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
+        temp = (String[])Common.appendArray(temp, 
+                (temp2 = (String[])Common.joinArrays(
+                                    new Object[] {(String[])mKeywordGroupsMap.get(SHELL_CONSTANTS),
+                                                  (String[])set.toArray(Common.EMPTY_STRING_ARRAY)})));
         Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
         mKeywordGroupsMap.put(PATH_CONSTANTS,temp2);
 
@@ -394,12 +415,13 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
 
         set = getValidKeywords(instructionParameters);
         mAllKeywordsSet.addAll(set);
-        temp = (String[])Common.appendArray(temp, (temp2 = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
+        temp2 = (String[])set.toArray(Common.EMPTY_STRING_ARRAY);
         temp2 = (String[])Common.appendArray(temp2, getKeywordsGroup(HKEY_PARAMETERS));
         temp2 = (String[])Common.appendArray(temp2, getKeywordsGroup(MESSAGEBOX_OPTION_PARAMETERS));
         temp2 = (String[])Common.appendArray(temp2, getKeywordsGroup(MESSAGEBOX_RETURN_PARAMETERS));
         temp2 = (String[])Common.appendArray(temp2, getKeywordsGroup(INSTALLER_PAGES));
         Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
+        temp = (String[])Common.appendArray(temp, temp2);
         mKeywordGroupsMap.put(INSTRUCTION_PARAMETERS,temp2);
 
         set = getValidKeywords(instructionOptions);
@@ -418,7 +440,7 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
         mKeywordGroupsMap.put(ALL_KEYWORDS,temp);
 
         File cacheFile = new File(EclipseNSISPlugin.getPluginStateLocation(),NSISKeywords.class.getName()+".Plugins.ser"); //$NON-NLS-1$
-        if(cacheFile.exists() && cacheFile.isFile()) {
+        if(IOUtility.isValidFile(cacheFile)) {
             cacheFile.delete();
         }
         NSISPluginManager.INSTANCE.loadDefaultPlugins();
@@ -426,7 +448,76 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
         Arrays.sort(plugins, String.CASE_INSENSITIVE_ORDER);
         mKeywordGroupsMap.put(PLUGINS,plugins);
 
+        mShellConstantsMap = loadShellConstants(shellConstantsMap);
         notifyListeners(monitor);
+    }
+
+    private Map loadShellConstants(Map shellConstantsMap)
+    {
+        Map result = new LinkedHashMap();
+        if(shellConstantsMap != null) {
+            List list = new ArrayList();
+            for(Iterator iter=shellConstantsMap.entrySet().iterator(); iter.hasNext(); ) {
+                Map.Entry entry = (Map.Entry)iter.next();
+                if(isValidKeyword((String)entry.getKey())) {
+                    String shellFolder = WinAPI.GetShellFolder(Integer.parseInt((String)entry.getValue()));
+                    if(!Common.isEmpty(shellFolder)) {
+                        if(entry.getKey().equals(getKeyword("$QUICKLAUNCH"))) { //$NON-NLS-1$
+                            shellFolder = shellFolder + "\\Microsoft\\Internet Explorer\\Quick Launch"; //$NON-NLS-1$
+                        }
+                        entry.setValue(shellFolder);
+                        list.add(new String[] {shellFolder,(String)entry.getKey()});
+
+                        String shortPath = WinAPI.GetShortPathName(shellFolder);
+                        if(shortPath != null && !shortPath.equalsIgnoreCase(shellFolder)) {
+                            list.add(new String[] {shortPath,(String)entry.getKey()});
+                        }
+                    }
+                }
+            }
+            if(list.size() > 0) {
+                Collections.sort(list, new Comparator() {
+                    public int compare(Object o1, Object o2)
+                    {
+                        String[] s1 = (String[])o1;
+                        String[] s2 = (String[])o2;
+                        return s2[0].length()-s1[0].length();
+                    }
+                });
+                
+                for (Iterator iter = list.iterator(); iter.hasNext();) {
+                    String[] element = (String[])iter.next();
+                    result.put(element[0].toLowerCase(), element[1]);
+                }
+            }
+        }
+        
+        return result;
+    }
+
+    public String replaceShellConstants(String input)
+    {
+        if (!Common.isEmpty(input)) {
+            String temp = null;
+            if(isValidKeyword("$TEMP")) { //$NON-NLS-1$
+                temp = WinAPI.GetEnvironmentVariable("TEMP"); //$NON-NLS-1$
+            }
+            for (Iterator iter = mShellConstantsMap.keySet().iterator(); iter.hasNext();) {
+                String folder = (String)iter.next();
+                if(folder.length() <= input.length()) {
+                    if(temp != null && temp.length() >= folder.length()) {
+                        if(temp.length() <= input.length()) {
+                            input = Common.replaceAll(input, temp, getKeyword("$TEMP"), true); //$NON-NLS-1$
+                        }
+                        temp = null;
+                    }
+                    
+                    String constant = (String)mShellConstantsMap.get(folder);
+                    input = Common.replaceAll(input, folder, constant, true);
+                }
+            }
+        }
+        return input;
     }
 
     private Set getValidKeywords(Set keywordSet)

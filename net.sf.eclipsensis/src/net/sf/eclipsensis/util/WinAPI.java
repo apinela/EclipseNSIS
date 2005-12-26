@@ -40,6 +40,9 @@ public class WinAPI
     public static final int HKEY_CURRENT_USER = 0x80000001;
     public static final int HKEY_LOCAL_MACHINE = 0x80000002;
     public static final int HKEY_USERS = 0x80000003;
+    public static final int HKEY_PERFORMANCE_DATA = 0x80000004;
+    public static final int HKEY_CURRENT_CONFIG = 0x80000005;
+    public static final int HKEY_DYN_DATA = 0x80000006;
 
     public static final int BS_LEFTTEXT = 0x20;
     public static final int CB_SHOWDROPDOWN = 0x14f;
@@ -79,15 +82,23 @@ public class WinAPI
                                                             int bAlpha, int dwFlags);
 
     public static native String RegQueryStrValue(int hRootKey, String pszSubKey, String pszValue);
+
     public static native int GetDesktopWindow();
+    
     public static native int HtmlHelp(int hwndCaller, String  pszFile, int uCommand, int dwData);
+    
     public static native int GetUserDefaultLangID();
+    
     public static native String ExtractHtmlHelpAndTOC(String pszFile, String pszFolder);
+    
     public static native String[] GetPluginExports(String pszPluginFile);
+    
     public static final native int SendMessage(int hWnd, int msg, int wParam, int lParam);
+    
     public static final native int CallWindowProc(int lpWndProc, int hWnd, int Msg, int wParam, int lParam);
 
     public static final native boolean AreVisualStylesEnabled();
+    
     public static final native void DrawWidgetThemeBackGround(int hWnd, int hDC, String theme, int partId, int stateId);
 
     public static final native int GetSysColor(int index);
@@ -100,6 +111,14 @@ public class WinAPI
 
     public static final native String strftime(String format);
 
+    public static final native String GetShellFolder(int id);
+    
+    public static final native String GetShortPathName(String longPathName);
+
+    public static final native String[] RegGetSubKeys(int hRootKey, String pszSubKey);
+
+    public static final native boolean RegKeyExists(int hRootKey, String pszSubKey);
+    
     private WinAPI()
     {
     }

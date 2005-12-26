@@ -419,6 +419,50 @@ public class Common
         }
         return map;
     }
+    
+    public static String replaceAll(String input, String search, String replace, boolean ignoreCase)
+    {
+        if(!Common.isEmpty(input) && !Common.isEmpty(search) && 
+                search.length() <= input.length()) {
+            replace = (replace == null?"":replace); //$NON-NLS-1$
+            String tmp;
+            if(ignoreCase) {
+                search = search.toLowerCase();
+                tmp = input.toLowerCase();
+            }
+            else {
+                tmp = input;
+            }
+            int n = tmp.indexOf(search);
+            if (n >= 0) {
+                int start = 0;
+                StringBuffer buf = new StringBuffer();
+                while(n >= 0) {
+                    buf.append(input.substring(start,n));
+                    buf.append(replace);
+                    start = n+search.length();
+                    if(start <= (tmp.length()-search.length())) {
+                        n = tmp.indexOf(search,start);
+                    }
+                    else {
+                        break;
+                    }
+                }
+                if(start < tmp.length()) {
+                    buf.append(input.substring(start));
+                }
+                input = buf.toString();
+                if(ignoreCase) {
+                    tmp = input.toLowerCase();
+                }
+                else {
+                    tmp = input;
+                }
+            }
+        }
+        
+        return input;
+    }
 
     public static void beanToStore(Object bean, IPreferenceStore store, java.util.List properties)
     {
@@ -534,7 +578,7 @@ public class Common
 
     public static String maybeQuote(String text)
     {
-        if(shouldQuote(text)) {
+        if(text.length()==0 || shouldQuote(text)) {
             text = quote(text);
         }
         return text;
@@ -549,6 +593,22 @@ public class Common
             }
         }
         return shouldQuote;
+    }
+
+    public static boolean isQuoted(String text)
+    {
+        if(text != null && text.length() >= 2) {
+            return text.charAt(0)=='"' && text.charAt(text.length()-1) == '"';
+        }
+        return false;
+    }
+    
+    public static String maybeUnquote(String text)
+    {
+        if(isQuoted(text)) {
+            text = text.substring(1,text.length()-1);
+        }
+        return text;
     }
 
     public static String quote(String text)

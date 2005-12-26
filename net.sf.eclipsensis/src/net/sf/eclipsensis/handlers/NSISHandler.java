@@ -9,6 +9,8 @@
  *******************************************************************************/
 package net.sf.eclipsensis.handlers;
 
+import java.util.regex.Pattern;
+
 import net.sf.eclipsensis.INSISConstants;
 
 import org.eclipse.core.commands.*;
@@ -18,6 +20,8 @@ import org.eclipse.swt.widgets.*;
 
 public abstract class NSISHandler extends AbstractHandler
 {
+    private Pattern mExtensionPattern = null;
+    
     public Object execute(ExecutionEvent event) throws ExecutionException
     {
         Widget w = ((Event)event.getTrigger()).widget;
@@ -25,12 +29,26 @@ public abstract class NSISHandler extends AbstractHandler
             TreeItem[] items = ((Tree)w).getSelection();
             for (int i = 0; i < items.length; i++) {
                 Object object = items[i].getData();
-                if(object instanceof IFile && ((IFile)object).getFileExtension().equalsIgnoreCase(INSISConstants.NSI_EXTENSION)) {
+                if(object instanceof IFile && ((IFile)object).getFileExtension() != null &&
+                        getExtensionPattern().matcher(((IFile)object).getFileExtension()).matches()) {
                     handleScript(((IFile)object).getFullPath());
                 }
             }
         }
         return null;
+    }
+
+    public Pattern getExtensionPattern()
+    {
+        if(mExtensionPattern == null) {
+            mExtensionPattern = createExtensionPattern();
+        }
+        return mExtensionPattern;
+    }
+
+    protected Pattern createExtensionPattern()
+    {
+        return Pattern.compile(INSISConstants.NSI_EXTENSION,Pattern.CASE_INSENSITIVE);
     }
 
     protected abstract void handleScript(IPath path);

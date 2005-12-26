@@ -14,6 +14,7 @@ import java.lang.ref.WeakReference;
 import java.util.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.util.IOUtility;
 
 public class FileMonitor
 {
@@ -57,7 +58,7 @@ public class FileMonitor
 
     public void register(File file, IFileChangeListener listener)
     {
-        if(file.exists() && file.isFile()) {
+        if(IOUtility.isValidFile(file)) {
             FileChangeRegistryEntry entry = (FileChangeRegistryEntry)mRegistry.get(file);
             if(entry == null) {
                 entry = new FileChangeRegistryEntry();
@@ -105,7 +106,7 @@ public class FileMonitor
             for(int i=0; i<files.length; i++) {
                 File file = files[i];
                 FileChangeRegistryEntry entry = (FileChangeRegistryEntry)mRegistry.get(file);
-                if(!file.exists() || !file.isFile()) {
+                if(!IOUtility.isValidFile(file)) {
                     /* Sleep 50 ms & see if the file shows up again- i.e.,
                      * we caught the event in the middle of a move operation. */
                     try {
@@ -114,7 +115,7 @@ public class FileMonitor
                     catch (InterruptedException e) {
                         EclipseNSISPlugin.getDefault().log(e);
                     }
-                    if(!file.exists() || !file.isFile()) {
+                    if(!IOUtility.isValidFile(file)) {
                         /* Yup, it's really gone. Bummer. */
                         mRegistry.remove(file);
                         fireChanged(FILE_DELETED, file, entry);

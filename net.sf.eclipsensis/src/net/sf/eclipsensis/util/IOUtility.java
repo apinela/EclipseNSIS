@@ -271,14 +271,23 @@ public class IOUtility
 
     public static boolean isValidFile(String fileName)
     {
-        File file = new File(fileName);
-        return (file.exists() && file.isFile());
+        return isValidFile(new File(fileName));
+    }
+
+    public static boolean isValidFile(File file)
+    {
+        return (file != null && file.exists() && file.isFile());
+    }
+
+    public static boolean isValidDirectory(File file)
+    {
+        return (file != null && file.exists() && file.isDirectory());
     }
 
     public static boolean isValidPath(String pathName)
     {
         File file = new File(pathName);
-        return (file.exists() && file.isDirectory());
+        return isValidDirectory(file);
     }
 
     public static boolean isValidURL(String url)
@@ -438,7 +447,7 @@ public class IOUtility
 
     public static File ensureLatest(Bundle bundle, IPath source, File destFolder) throws IOException
     {
-        if(destFolder.exists() && destFolder.isFile()) {
+        if(IOUtility.isValidFile(destFolder)) {
             destFolder.delete();
         }
         if(!destFolder.exists()) {
@@ -457,7 +466,7 @@ public class IOUtility
                 URL url = Platform.resolve(bundle.getEntry("/")); //$NON-NLS-1$
                 if (url.getProtocol().equalsIgnoreCase("file")) { //$NON-NLS-1$
                     File original = new File(url.getFile(), relative.toString());
-                    if (original.exists() && original.isFile()) {
+                    if (isValidFile(original)) {
                         lastModified = original.lastModified();
                     }
                 }
@@ -476,16 +485,14 @@ public class IOUtility
         }
         
         File destFile = new File(destFolder,source.lastSegment()); 
-        if(destFile.exists()) {
-            if(destFile.isDirectory()) {
-                destFile.delete();
+        if(IOUtility.isValidDirectory(destFile)) {
+            destFile.delete();
+        }
+        else if(IOUtility.isValidFile(destFile)) {
+            if (destFile.lastModified() >= lastModified) {
+                return destFile;
             }
-            else {
-                if (destFile.lastModified() >= lastModified) {
-                    return destFile;
-                }
-                destFile.delete();
-            }
+            destFile.delete();
         }
         URL url = bundle.getEntry(source.toString()); 
         InputStream is = null;

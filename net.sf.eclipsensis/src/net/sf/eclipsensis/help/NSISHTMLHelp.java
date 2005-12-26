@@ -19,6 +19,7 @@ import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.settings.INSISHomeListener;
 import net.sf.eclipsensis.settings.NSISPreferences;
 import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.IOUtility;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.SWT;
@@ -152,7 +153,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
                     else {
                         f = new File(event.location);
                     }
-                    if(f != null && f.isFile()) {
+                    if(IOUtility.isValidFile(f)) {
                         event.doit = !HelpBrowserLocalFileHandler.INSTANCE.handle(f);
                     }
                 }

@@ -52,9 +52,9 @@ public class NSISPluginManager implements INSISConstants
         String nsisHome = NSISPreferences.INSTANCE.getNSISHome();
         if(!Common.isEmpty(nsisHome)) {
             File nsisHomeDir = new File(nsisHome);
-            if(nsisHomeDir.exists() && nsisHomeDir.isDirectory()) {
+            if(IOUtility.isValidDirectory(nsisHomeDir)) {
                 File nsisPluginsDir = new File(nsisHomeDir, NSIS_PLUGINS_LOCATION);
-                if(nsisPluginsDir.exists() && nsisPluginsDir.isDirectory()) {
+                if(IOUtility.isValidDirectory(nsisPluginsDir)) {
                     if(mCacheFile.exists()) {
                         try {
                             mDefaultPluginsMap = (Map)IOUtility.readObject(mCacheFile);
@@ -142,7 +142,7 @@ public class NSISPluginManager implements INSISConstants
         PluginInfo pi = (PluginInfo)mDefaultPluginsMap.get(name);
         if(pi == null) {
             File pluginFile = new File(new File(NSISPreferences.INSTANCE.getNSISHome(), NSIS_PLUGINS_LOCATION),name+NSIS_PLUGINS_EXTENSION);
-            if(pluginFile.exists() && pluginFile.isFile()) {
+            if(IOUtility.isValidFile(pluginFile)) {
                 pi = loadPluginInfo(name, pluginFile);
                 mDefaultPluginsMap.put(name,pi);
                 JobScheduler jobScheduler = EclipseNSISPlugin.getDefault().getJobScheduler();
@@ -199,7 +199,7 @@ public class NSISPluginManager implements INSISConstants
             PluginInfo pi = (PluginInfo)map.get(name);
             if(pi == null) {
                 File pluginFile = new File(dir,name+NSIS_PLUGINS_EXTENSION);
-                if(pluginFile.exists() && pluginFile.isFile()) {
+                if(IOUtility.isValidFile(pluginFile)) {
                     pi = loadPluginInfo(name, pluginFile);
                     map.put(name,pi);
                 }

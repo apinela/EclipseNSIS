@@ -455,7 +455,7 @@ public class MakeNSISRunner implements INSISConstants
                                         }
                                         else {
                                             File outputFile = new File(tempresults.getOutputFileName());
-                                            if (outputFile.isFile() && outputFile.exists()) {
+                                            if (IOUtility.isValidFile(outputFile)) {
                                                 if (settings.showStatistics()) {
                                                     summaryCompressorName = EclipseNSISPlugin.getFormattedString(
                                                             "summary.line.format", new Object[]{summaryCompressorName, new Long(outputFile.length())}); //$NON-NLS-1$
@@ -681,7 +681,7 @@ public class MakeNSISRunner implements INSISConstants
     {
         if(exeName != null) {
             File exeFile = new File(exeName);
-            if (exeFile.exists() && exeFile.isFile()) {
+            if (IOUtility.isValidFile(exeFile)) {
                 File workDir = exeFile.getParentFile();
                 try {
                     Process proc = Runtime.getRuntime().exec(new String[]{exeName},null,workDir);

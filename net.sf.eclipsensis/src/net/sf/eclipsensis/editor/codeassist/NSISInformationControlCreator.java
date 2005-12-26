@@ -13,43 +13,23 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.bindings.keys.KeySequence;
-import org.eclipse.jface.text.*;
+import org.eclipse.jface.text.DefaultInformationControl;
+import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.StyleRange;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.keys.IBindingService;
 
-public class NSISInformationControlCreator implements IInformationControlCreator,INSISConstants //,ICommandListener
+public class NSISInformationControlCreator extends AbstractNSISInformationControlCreator
 {
     private ParameterizedCommand[] mCommands = null;
-    private int mStyle = SWT.NONE;
-    private DefaultInformationControl.IInformationPresenter mInformationPresenter =
-        new DefaultInformationControl.IInformationPresenter()
-        {
-            public String updatePresentation(Display display, String hoverInfo, TextPresentation presentation, int maxWidth, int maxHeight)
-            {
-                hoverInfo = hoverInfo.trim();
-                int n = hoverInfo.indexOf(' ');
-                if(n <= 0) {
-                    n = hoverInfo.length();
-                }
-                presentation.addStyleRange(new StyleRange(0,n,
-                                                display.getSystemColor(SWT.COLOR_INFO_FOREGROUND),
-                                                display.getSystemColor(SWT.COLOR_INFO_BACKGROUND),
-                                                SWT.BOLD));
-                return hoverInfo;
-            }
-        };
 
     public NSISInformationControlCreator(String[] commandIds)
     {
@@ -58,6 +38,7 @@ public class NSISInformationControlCreator implements IInformationControlCreator
 
     public NSISInformationControlCreator(String[] commandIds, int style)
     {
+        super(style);
         ArrayList list = new ArrayList();
         if(!Common.isEmptyArray(commandIds)) {
             ICommandService commandService= (ICommandService)PlatformUI.getWorkbench().getAdapter(ICommandService.class);
@@ -72,7 +53,6 @@ public class NSISInformationControlCreator implements IInformationControlCreator
             }
         }
         mCommands = (ParameterizedCommand[])list.toArray(new ParameterizedCommand[list.size()]);
-        mStyle = style;
     }
 
     private String buildStatusText()
@@ -112,7 +92,6 @@ public class NSISInformationControlCreator implements IInformationControlCreator
 
     public IInformationControl createInformationControl(Shell parent)
     {
-        DefaultInformationControl informationControl = new DefaultInformationControl(parent,mStyle,mInformationPresenter,buildStatusText());
-        return informationControl;
+        return new DefaultInformationControl(parent,mStyle,mInformationPresenter,buildStatusText());
     }
 }

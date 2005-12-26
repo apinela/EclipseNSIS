@@ -17,6 +17,7 @@ import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.settings.NSISPreferences;
 import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.IOUtility;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.IHelpContentProducer;
@@ -53,44 +54,42 @@ public class NSISHelpProducer implements IExecutableExtension, IHelpContentProdu
                 String nsisHome = NSISPreferences.INSTANCE.getNSISHome();
                 if(!Common.isEmpty(nsisHome)) {
                     File nsisDir = new File(nsisHome);
-                    if(nsisDir.exists() && nsisDir.isDirectory()) {
+                    if(IOUtility.isValidDirectory(nsisDir)) {
                         File helpFile = null;
                         String href2=href.substring(NSIS_HELP_PREFIX.length());
                         boolean isDocs = false;
                         if(href2.startsWith(DOCS_LOCATION_PREFIX) || href2.startsWith(CONTRIB_LOCATION_PREFIX)) {
                             isDocs = true;
-                            if(cHelpCacheLocation.exists() && cHelpCacheLocation.isDirectory()) {
+                            if(IOUtility.isValidDirectory(cHelpCacheLocation)) {
                                 helpFile = new File(cHelpCacheLocation,href2);
                             }
-                            if(!helpFile.exists() || !helpFile.isFile()) {
+                            if(!IOUtility.isValidFile(helpFile)) {
                                 helpFile = new File(nsisDir,href2);
                             }
                         }
                         else {
                             helpFile = new File(nsisDir,href2);
                         }
-                        if(helpFile != null && helpFile.exists()) {
-                            if(helpFile.isFile()) {
-                                if(HelpBrowserLocalFileHandler.INSTANCE.handle(helpFile)) {
-                                    return new ByteArrayInputStream(GO_BACK);
-                                }
-                                else {
-                                    try {
-                                        return new BufferedInputStream(new FileInputStream(helpFile));
-                                    }
-                                    catch (FileNotFoundException e) {
-                                        EclipseNSISPlugin.getDefault().log(e);
-                                    }
-                                }
+                        if(IOUtility.isValidFile(helpFile)) {
+                            if(HelpBrowserLocalFileHandler.INSTANCE.handle(helpFile)) {
+                                return new ByteArrayInputStream(GO_BACK);
                             }
                             else {
                                 try {
-                                    Program.launch(helpFile.getCanonicalPath());
-                                    return new ByteArrayInputStream(GO_BACK);
-                               }
-                                catch (IOException e) {
+                                    return new BufferedInputStream(new FileInputStream(helpFile));
+                                }
+                                catch (FileNotFoundException e) {
                                     EclipseNSISPlugin.getDefault().log(e);
                                 }
+                            }
+                        }
+                        else if(IOUtility.isValidDirectory(helpFile)) {
+                            try {
+                                Program.launch(helpFile.getCanonicalPath());
+                                return new ByteArrayInputStream(GO_BACK);
+                            }
+                            catch (IOException e) {
+                                EclipseNSISPlugin.getDefault().log(e);
                             }
                         }
                         if(isDocs) {

@@ -9,6 +9,9 @@
  *******************************************************************************/
 package net.sf.eclipsensis.handlers;
 
+import java.util.regex.Pattern;
+
+import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.editor.NSISEditorUtilities;
 
 import org.eclipse.core.runtime.IPath;
@@ -18,5 +21,10 @@ public class NSISClearMarkersHandler extends NSISHandler
     protected void handleScript(IPath path)
     {
         NSISEditorUtilities.clearMarkers(path);
+    }
+
+    protected Pattern createExtensionPattern()
+    {
+        return Pattern.compile(INSISConstants.NSI_WILDCARD_EXTENSION,Pattern.CASE_INSENSITIVE);
     }
 }

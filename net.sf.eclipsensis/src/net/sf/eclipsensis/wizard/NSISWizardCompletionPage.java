@@ -17,8 +17,7 @@ import net.sf.eclipsensis.wizard.settings.NSISWizardSettings;
 import net.sf.eclipsensis.wizard.util.MasterSlaveController;
 import net.sf.eclipsensis.wizard.util.NSISWizardDialogUtil;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.window.Window;
@@ -65,11 +64,16 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
             setErrorMessage(EclipseNSISPlugin.getResourceString("empty.save.location.error")); //$NON-NLS-1$
             return false;
         }
-        else if(!Path.EMPTY.isValidPath(pathname)) {
-            setErrorMessage(EclipseNSISPlugin.getFormattedString("invalid.save.location.error",new String[]{pathname})); //$NON-NLS-1$
-            return false;
+        else if(Path.EMPTY.isValidPath(pathname)) {
+            IPath path = new Path(pathname);
+            path = path.removeLastSegments(1);
+            IResource resource = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
+            if(resource != null && (resource instanceof IFolder || resource instanceof IProject)) {
+                return true;
+            }
         }
-        return true;
+        setErrorMessage(EclipseNSISPlugin.getFormattedString("invalid.save.location.error",new String[]{pathname})); //$NON-NLS-1$
+        return false;
     }
 
     public boolean validatePage(int flag)
@@ -80,9 +84,9 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
         else {
             NSISWizardSettings settings = mWizard.getSettings();
 
-            boolean b = (((flag & PROGRAM_FILE_CHECK) == 0) || validateNSISPath(settings.getRunProgramAfterInstall())&&
-                         ((flag & README_FILE_CHECK) == 0) || validateNSISPath(settings.getOpenReadmeAfterInstall())&&
-                         ((flag & SAVE_PATH_CHECK) == 0) || validateSavePath());
+            boolean b = ((flag & PROGRAM_FILE_CHECK) == 0 || validateNSISPath(settings.getRunProgramAfterInstall()))&&
+                        ((flag & README_FILE_CHECK) == 0 || validateNSISPath(settings.getOpenReadmeAfterInstall()))&&
+                        ((flag & SAVE_PATH_CHECK) == 0 || validateSavePath());
             setPageComplete(b);
             if(b) {
                 setErrorMessage(null);
@@ -216,6 +220,7 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
             public void modifyText(ModifyEvent e)
             {
                 mWizard.getSettings().setRunProgramAfterInstallParams(((Text)e.widget).getText());
+                validateField(PROGRAM_FILE_CHECK);
             }
         });
 
@@ -261,10 +266,15 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
      */
     private void createScriptSaveSettingsGroup(Composite parent)
     {
-        final Group group = NSISWizardDialogUtil.createGroup(parent, 3, "script.save.settings.group.label",null,true); //$NON-NLS-1$
+        final Group group = NSISWizardDialogUtil.createGroup(parent, 1, "script.save.settings.group.label",null,true); //$NON-NLS-1$
         NSISWizardSettings settings = mWizard.getSettings();
 
-        final Text t = NSISWizardDialogUtil.createText(group, settings.getSavePath().toString(),"workbench.save.location.label",true,null,true); //$NON-NLS-1$
+        Composite c = new Composite(group,SWT.None);
+        c.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false));
+        GridLayout layout = new GridLayout(3,false);
+        layout.marginHeight = layout.marginWidth = 0;
+        c.setLayout(layout);
+        final Text t = NSISWizardDialogUtil.createText(c, settings.getSavePath().toString(),"workbench.save.location.label",true,null,true); //$NON-NLS-1$
         ((GridData)t.getLayoutData()).horizontalSpan = 1;
         t.addModifyListener(new ModifyListener(){
             public void modifyText(ModifyEvent e)
@@ -274,7 +284,7 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
             }
         });
 
-        Button b = new Button(group,SWT.PUSH);
+        Button b = new Button(c,SWT.PUSH);
         b.setText(EclipseNSISPlugin.getResourceString("browse.text")); //$NON-NLS-1$
         b.setToolTipText(EclipseNSISPlugin.getResourceString("browse.tooltip")); //$NON-NLS-1$
         b.addSelectionListener(new SelectionAdapter() {
@@ -286,8 +296,12 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
                 }
                 IPath path = new Path(savePath);
                 if(path.isAbsolute()) {
-                    IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
-                    dialog.setOriginalFile(file);
+                    try {
+                        IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
+                        dialog.setOriginalFile(file);
+                    }
+                    catch (Exception e1) {
+                    }
                 }
                 else {
                     dialog.setOriginalName(path.toString());
@@ -311,7 +325,12 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
             }
         });
 
-        final Button b3 = NSISWizardDialogUtil.createCheckBox(group, "compile.label", //$NON-NLS-1$
+        c = new Composite(group,SWT.None);
+        c.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false));
+        layout = new GridLayout(2,false);
+        layout.marginHeight = layout.marginWidth = 0;
+        c.setLayout(layout);
+        final Button b3 = NSISWizardDialogUtil.createCheckBox(c, "compile.label", //$NON-NLS-1$
                                         settings.isCompileScript(),
                                         true, null, false);
         ((GridData)b3.getLayoutData()).horizontalSpan = 1;
@@ -323,10 +342,10 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
         });
 
         MasterSlaveController m = new MasterSlaveController(b3);
-        final Button b4 = NSISWizardDialogUtil.createCheckBox(group, "test.label", //$NON-NLS-1$
+        final Button b4 = NSISWizardDialogUtil.createCheckBox(c, "test.label", //$NON-NLS-1$
                 settings.isTestScript(),
                 b3.getSelection(), m, false);
-        ((GridData)b4.getLayoutData()).horizontalSpan = 2;
+        ((GridData)b4.getLayoutData()).horizontalSpan = 1;
         b4.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e)
             {

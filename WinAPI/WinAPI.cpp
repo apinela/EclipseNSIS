@@ -11,12 +11,16 @@
 #include <windowsx.h>
 #include <tchar.h>
 #include <time.h>
+#include <shellapi.h>
+#include <shlobj.h>
+#include <objidl.h>
 #include "htmlhelp.h"
 #include "ITStorage.h"
 #include "VisualStylesXP.h"
 #include "net_sf_eclipsensis_util_WinAPI.h"
 
 #define PACKVERSION(major,minor) MAKELONG(minor,major)
+#define MAX_KEY_LENGTH 255
 
 #ifndef DLLVERSIONINFO
 typedef struct _DllVersionInfo
@@ -401,12 +405,122 @@ JNIEXPORT jstring JNICALL Java_net_sf_eclipsensis_util_WinAPI_strftime(JNIEnv *p
     size_t s=strftime(datebuf,sizeof(datebuf),szFormat,localtime(&rawtime));
 
     if (s < 0) {
-      datebuf[0]=0;
+        datebuf[0]=0;
     }
     else {
-      datebuf[max(s,sizeof(datebuf)-1)]=0;
+        datebuf[max(s,sizeof(datebuf)-1)]=0;
     }
     pEnv->ReleaseStringUTFChars(format, szFormat);
     
     return pEnv->NewStringUTF(datebuf);
+}
+
+JNIEXPORT jstring JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetShellFolder(JNIEnv *pEnv, jclass jClass, jint id)
+{
+    LPITEMIDLIST idl;
+    TCHAR buf[2*MAX_PATH+2*+sizeof(TCHAR)];
+    if (!SHGetSpecialFolderLocation(NULL, id, &idl))
+    {
+        BOOL res = SHGetPathFromIDList(idl, buf);
+        IMalloc *m;
+        SHGetMalloc(&m);
+        if (m)
+        {
+            m->Free(idl);
+            m->Release();
+        }
+        if (res)
+        {
+            return pEnv->NewStringUTF(buf);
+        }
+    }
+    
+    return NULL;
+}
+
+JNIEXPORT jstring JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetShortPathName(JNIEnv *pEnv, jclass jClass, jstring longPathName)
+{
+    LPCTSTR lpName = (LPCTSTR)pEnv->GetStringUTFChars(longPathName, 0);
+    TCHAR buf[2*MAX_PATH+2];
+    DWORD rv = GetShortPathName(lpName,buf,sizeof(buf));
+    pEnv->ReleaseStringUTFChars(longPathName, lpName);
+    if(rv) {
+        return pEnv->NewStringUTF(buf);
+    }
+    
+    return NULL;
+}
+
+JNIEXPORT jobjectArray JNICALL Java_net_sf_eclipsensis_util_WinAPI_RegGetSubKeys(JNIEnv *pEnv, jclass jClass, jint hRootKey, jstring sSubKey)
+{
+    HKEY hKey;
+    TCHAR achKey[MAX_KEY_LENGTH+sizeof(TCHAR)];   // buffer for subkey name
+    DWORD cSubKeys=0;               // number of subkeys 
+    DWORD cbMaxSubKey;              // longest subkey size 
+    DWORD cbName;                   // size of name string 
+    DWORD i; 
+    BOOL openedKey = FALSE;
+    jobjectArray result = NULL;
+    
+    if(sSubKey == NULL) {
+        hKey = (HKEY)hRootKey;
+    }
+    else {
+        LPCSTR str1 = (LPCSTR)pEnv->GetStringUTFChars(sSubKey, 0);
+        DWORD rv = RegOpenKeyEx((HKEY)hRootKey, str1,0, KEY_READ, &hKey);
+        pEnv->ReleaseStringUTFChars(sSubKey,str1);
+        if(ERROR_SUCCESS != rv) {
+            return NULL;
+        }
+        openedKey = TRUE;
+    }
+
+    if(ERROR_SUCCESS == RegQueryInfoKey(
+        hKey,                    // key handle 
+        NULL, NULL, NULL,
+        &cSubKeys,               // number of subkeys 
+        &cbMaxSubKey,            // longest subkey size 
+        NULL, NULL, NULL, NULL, NULL, NULL)) {
+     
+        jclass stringClass = pEnv->FindClass("java/lang/String");
+        result = pEnv->NewObjectArray(cSubKeys, stringClass, NULL);
+        
+        // Enumerate the subkeys, until RegEnumKeyEx fails.
+        if(cSubKeys) {
+            for(i=0; i<cSubKeys; i++) { 
+                cbName = MAX_KEY_LENGTH;
+                ZeroMemory(achKey,sizeof(achKey));
+                if(ERROR_SUCCESS == RegEnumKeyEx(hKey, i,
+                   achKey, &cbName, NULL, NULL, NULL, NULL)) {
+                    pEnv->SetObjectArrayElement(result, i, pEnv->NewStringUTF(achKey));
+                }
+            }
+        }
+    }
+
+    if(openedKey) {
+        RegCloseKey(hKey);
+    }
+    
+    return result;
+}
+
+JNIEXPORT jboolean JNICALL Java_net_sf_eclipsensis_util_WinAPI_RegKeyExists(JNIEnv *pEnv, jclass jClass, jint hRootKey, jstring sSubKey)
+{
+    HKEY hKey;
+    DWORD rv;
+        
+    if(sSubKey == NULL) {
+        rv = RegOpenKeyEx((HKEY)hRootKey, NULL,0, KEY_READ, &hKey);
+    }
+    else {
+        LPCSTR str1 = (LPCSTR)pEnv->GetStringUTFChars(sSubKey, 0);
+        rv = RegOpenKeyEx((HKEY)hRootKey, str1,0, KEY_READ, &hKey);
+        pEnv->ReleaseStringUTFChars(sSubKey,str1);
+    }
+    if(ERROR_SUCCESS != rv) {
+        return JNI_FALSE;
+    }
+    RegCloseKey(hKey);
+    return JNI_TRUE;
 }

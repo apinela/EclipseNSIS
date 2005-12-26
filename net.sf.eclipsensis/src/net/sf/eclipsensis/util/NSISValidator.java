@@ -75,14 +75,12 @@ public class NSISValidator implements INSISConstants
 
     public static File findNSISExe(File nsisHome)
     {
-        if(nsisHome != null) {
-            if(nsisHome.exists() && nsisHome.isDirectory()) {
-                File file = new File(nsisHome,MAKENSIS_EXE);
-                if(file.exists() && file.isFile()) {
-                    Version version = getNSISVersion(file);
-                    if(version.compareTo(MINIMUM_NSIS_VERSION) >= 0) {
-                        return file;
-                    }
+        if(IOUtility.isValidDirectory(nsisHome)) {
+            File file = new File(nsisHome,MAKENSIS_EXE);
+            if(IOUtility.isValidFile(file)) {
+                Version version = getNSISVersion(file);
+                if(version.compareTo(MINIMUM_NSIS_VERSION) >= 0) {
+                    return file;
                 }
             }
         }

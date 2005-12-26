@@ -168,7 +168,7 @@ class NSISGeneralTab extends NSISTab implements INSISSettingsEditorPageListener
             if(!Common.isEmpty(script)) {
                 File file = new File(script);
                 if(INSISConstants.NSI_EXTENSION.equalsIgnoreCase(IOUtility.getFileExtension(file)) &&
-                   file.exists() && file.isAbsolute() && file.isFile()) {
+                   IOUtility.isValidFile(file) && file.isAbsolute()) {
                     return file;
                 }
             }

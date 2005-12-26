@@ -90,7 +90,7 @@ public class NSISHelpTOCParserCallback extends HTMLEditorKit.ParserCallback
     }
 
     /**
-     * @param topicMap The tOCKeywordsMap to set.
+     * @param topicMap The topicMap to set.
      */
     public void setTopicMap(Map topicMap)
     {

@@ -41,7 +41,7 @@ public abstract class AbstractTemplateManager
         File location = null;
         if(parentFolder != null) {
             location = new File(parentFolder,getTemplatesPath().toString());
-            if(location.exists() && location.isFile()) {
+            if(IOUtility.isValidFile(location)) {
                 location.delete();
             }
             if(!location.exists()) {
@@ -97,10 +97,8 @@ public abstract class AbstractTemplateManager
     protected Map loadUserTemplateStore() throws IOException, ClassNotFoundException
     {
         Map map = null;
-        if(mUserTemplatesStore != null) {
-            if(mUserTemplatesStore.exists() && mUserTemplatesStore.isFile()) {
-                map = (Map)IOUtility.readObject(mUserTemplatesStore, getClass().getClassLoader());
-            }
+        if(IOUtility.isValidFile(mUserTemplatesStore)) {
+            map = (Map)IOUtility.readObject(mUserTemplatesStore, getClass().getClassLoader());
         }
         return map;
     }

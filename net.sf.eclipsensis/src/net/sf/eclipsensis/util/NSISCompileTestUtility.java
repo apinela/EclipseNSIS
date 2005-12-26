@@ -24,6 +24,8 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.*;
 
@@ -40,7 +42,7 @@ public class NSISCompileTestUtility
 
     public MakeNSISResults getCachedResults(File script)
     {
-        if(script != null && script.exists() && script.isFile()) {
+        if(IOUtility.isValidFile(script)) {
             if (!MakeNSISRunner.isCompiling()) {
                 MakeNSISResults results = (MakeNSISResults)mResultsMap.get(script);
                 if(results != null) {
@@ -57,7 +59,7 @@ public class NSISCompileTestUtility
 
     public void removeCachedResults(File script)
     {
-        if(script != null && script.exists() && script.isFile()) {
+        if(IOUtility.isValidFile(script)) {
             if (!MakeNSISRunner.isCompiling()) {
                 mResultsMap.remove(script);
             }
@@ -153,7 +155,7 @@ public class NSISCompileTestUtility
             String outputFileName = results.getOutputFileName();
             if(outputFileName != null) {
                 File exeFile = new File(outputFileName);
-                if(exeFile != null && exeFile.exists() && exeFile.isFile()) {
+                if(IOUtility.isValidFile(exeFile)) {
                     long exeTimestamp = exeFile.lastModified();
                     long fileTimestamp = file.lastModified();
                     if(exeTimestamp >= fileTimestamp) {
@@ -197,11 +199,25 @@ public class NSISCompileTestUtility
         return null;
     }
 
-    public void test(IPath script)
+    public void test(final IPath script)
     {
-        String exeName = getExeName(script);
+        test(getExeName(script), EclipseNSISPlugin.getDefault().getConsole());
+    }
+
+    private void test(final String exeName, final INSISConsole console)
+    {
         if(exeName != null) {
-            MakeNSISRunner.testInstaller(exeName, EclipseNSISPlugin.getDefault().getConsole());
+            Display.getDefault().asyncExec(new Runnable() {
+                public void run()
+                {
+                    BusyIndicator.showWhile(Display.getDefault(),new Runnable() {
+                        public void run()
+                        {
+                            MakeNSISRunner.testInstaller(exeName, console);
+                        }
+                    });
+                }
+            });
         }
     }
 
@@ -243,7 +259,7 @@ public class NSISCompileTestUtility
                 if(results != null) {
                     mOutputExeName = results.getOutputFileName();
                     if(mTest && mOutputExeName != null) {
-                        MakeNSISRunner.testInstaller(mOutputExeName, null);
+                        test(mOutputExeName, null);
                     }
                 }
             }
