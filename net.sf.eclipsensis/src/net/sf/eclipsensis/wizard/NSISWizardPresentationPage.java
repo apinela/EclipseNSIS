@@ -546,7 +546,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
     {
         final NSISWizardSettings settings = mWizard.getSettings();
 
-        final Shell shell = new Shell((Display)null, SWT.APPLICATION_MODAL | SWT.NO_TRIM);
+        final Shell shell = new Shell(getShell().getDisplay(), SWT.APPLICATION_MODAL | SWT.NO_TRIM);
         shell.setText(EclipseNSISPlugin.getResourceString("background.preview.title")); //$NON-NLS-1$
         final String previewText = EclipseNSISPlugin.getFormattedString("background.preview.text", new Object[]{settings.getName()});  //$NON-NLS-1$
         final Display display = shell.getDisplay();
@@ -556,7 +556,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
         shell.setLayout(fillLayout);
         final Rectangle rect = display.getBounds();
         shell.setBounds(rect.x,rect.y,rect.width,rect.height);
-
+        shell.setParent(getShell());
         final Font previewFont = new Font(display,mBGPreviewFontData);
         final Font messageFont = new Font(display,mBGPreviewEscapeFontData);
         final Clip clip = loadAudioClip(IOUtility.decodePath(settings.getBackgroundWAV()));

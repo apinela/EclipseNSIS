@@ -153,6 +153,7 @@ public class NSISInstructionDialog extends StatusMessageDialog
         data = new GridData(SWT.FILL, SWT.CENTER, false, false);
         data.horizontalSpan = 1;
         combo.setLayoutData(data);
+        combo.setText(value);
         return combo;
     }
 
