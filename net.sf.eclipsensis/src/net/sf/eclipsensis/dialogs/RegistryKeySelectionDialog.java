@@ -24,8 +24,8 @@ import org.eclipse.swt.widgets.*;
 
 public class RegistryKeySelectionDialog extends StatusMessageDialog
 {
-    private static final String ROOT_KEY = "rootKey";
-    private static final String SUB_KEY = "subKey";
+    private static final String ROOT_KEY = "rootKey"; //$NON-NLS-1$
+    private static final String SUB_KEY = "subKey"; //$NON-NLS-1$
     
     private static Integer[] cRootKeys = { new Integer(WinAPI.HKEY_CLASSES_ROOT), 
                                            new Integer(WinAPI.HKEY_CURRENT_USER),
@@ -47,7 +47,7 @@ public class RegistryKeySelectionDialog extends StatusMessageDialog
     };
 
     private int mRootKey = 0;
-    private String mSubKey = "";
+    private String mSubKey = ""; //$NON-NLS-1$
     IDialogSettings mDialogSettings;
 
     public RegistryKeySelectionDialog(Shell parent)
@@ -65,19 +65,19 @@ public class RegistryKeySelectionDialog extends StatusMessageDialog
     {
         switch(rootKey) {
             case WinAPI.HKEY_CLASSES_ROOT:
-                return "HKEY_CLASSES_ROOT";
+                return "HKEY_CLASSES_ROOT"; //$NON-NLS-1$
             case WinAPI.HKEY_CURRENT_CONFIG:
-                return "HKEY_CURRENT_CONFIG";
+                return "HKEY_CURRENT_CONFIG"; //$NON-NLS-1$
             case WinAPI.HKEY_CURRENT_USER:
-                return "HKEY_CURRENT_USER";
+                return "HKEY_CURRENT_USER"; //$NON-NLS-1$
             case WinAPI.HKEY_DYN_DATA:
-                return "HKEY_DYN_DATA";
+                return "HKEY_DYN_DATA"; //$NON-NLS-1$
             case WinAPI.HKEY_LOCAL_MACHINE:
-                return "HKEY_LOCAL_MACHINE";
+                return "HKEY_LOCAL_MACHINE"; //$NON-NLS-1$
             case WinAPI.HKEY_PERFORMANCE_DATA:
-                return "HKEY_PERFORMANCE_DATA";
+                return "HKEY_PERFORMANCE_DATA"; //$NON-NLS-1$
             case WinAPI.HKEY_USERS:
-                return "HKEY_USERS";
+                return "HKEY_USERS"; //$NON-NLS-1$
             default:
                 return null;
         }
@@ -86,7 +86,7 @@ public class RegistryKeySelectionDialog extends StatusMessageDialog
     protected void configureShell(Shell newShell)
     {
         super.configureShell(newShell);
-        newShell.setText(EclipseNSISPlugin.getResourceString("regkey.dialog.title"));
+        newShell.setText(EclipseNSISPlugin.getResourceString("regkey.dialog.title")); //$NON-NLS-1$
     }
 
     protected Control createControl(Composite parent)
@@ -107,7 +107,7 @@ public class RegistryKeySelectionDialog extends StatusMessageDialog
         composite1.setLayoutData(gd);
 
         Label l = new Label(composite1,SWT.NULL);
-        l.setText(EclipseNSISPlugin.getResourceString("root.key.label"));
+        l.setText(EclipseNSISPlugin.getResourceString("root.key.label")); //$NON-NLS-1$
         l.setLayoutData(new GridData(SWT.FILL,SWT.FILL,false,false));
         
         Combo c1 = new Combo(composite1,SWT.DROP_DOWN|SWT.READ_ONLY); 
@@ -125,7 +125,7 @@ public class RegistryKeySelectionDialog extends StatusMessageDialog
         });
         
         l = new Label(composite1,SWT.NULL);
-        l.setText(EclipseNSISPlugin.getResourceString("sub.key.label"));
+        l.setText(EclipseNSISPlugin.getResourceString("sub.key.label")); //$NON-NLS-1$
         l.setLayoutData(new GridData(SWT.FILL,SWT.FILL,false,false));
         Text t = new Text(composite1, SWT.SINGLE|SWT.BORDER);
         t.addModifyListener(new ModifyListener() {
@@ -169,18 +169,18 @@ public class RegistryKeySelectionDialog extends StatusMessageDialog
  
     public String getRegKey()
     {
-        return new StringBuffer(getRootKeyName(mRootKey)).append("\\").append(mSubKey).toString();
+        return new StringBuffer(getRootKeyName(mRootKey)).append("\\").append(mSubKey).toString(); //$NON-NLS-1$
     }
 
     protected void validate()
     {
         if(mRootKey == 0) {
-            getStatus().setError(EclipseNSISPlugin.getResourceString("missing.rootkey.error"));
+            getStatus().setError(EclipseNSISPlugin.getResourceString("missing.rootkey.error")); //$NON-NLS-1$
             return;
         }
         else {
             if(!WinAPI.RegKeyExists(mRootKey, mSubKey)) {
-                getStatus().setError(EclipseNSISPlugin.getFormattedString("invalid.key.error", 
+                getStatus().setError(EclipseNSISPlugin.getFormattedString("invalid.key.error",  //$NON-NLS-1$
                                      new String[] {getRootKeyName(mRootKey),mSubKey}));
                 return;
             }

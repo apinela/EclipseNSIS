@@ -26,7 +26,7 @@ import org.eclipse.swt.widgets.Shell;
 
 public class RegistryImporter
 {
-    private static final String REGEDIT_EXE = "regedit.exe";
+    private static final String REGEDIT_EXE = "regedit.exe"; //$NON-NLS-1$
     
     private static MessageFormat cDeleteRegKeyFormat=new MessageFormat("{0} {1} {2}"); //$NON-NLS-1$
     private static MessageFormat cDeleteRegValueFormat=new MessageFormat("{0} {1} {2} {3}"); //$NON-NLS-1$
@@ -51,9 +51,9 @@ public class RegistryImporter
             }
             regEdit = null;
         }
-        String winDir = WinAPI.GetEnvironmentVariable("SystemRoot");
+        String winDir = WinAPI.GetEnvironmentVariable("SystemRoot"); //$NON-NLS-1$
         if(winDir == null) {
-            winDir = WinAPI.GetEnvironmentVariable("windir");
+            winDir = WinAPI.GetEnvironmentVariable("windir"); //$NON-NLS-1$
         }
         if(winDir != null) {
             regEdit = new File(winDir,REGEDIT_EXE);
@@ -62,9 +62,9 @@ public class RegistryImporter
             return regEdit;
         }
         regEdit = null;
-        String path = WinAPI.GetEnvironmentVariable("PATH");
+        String path = WinAPI.GetEnvironmentVariable("PATH"); //$NON-NLS-1$
         if(!Common.isEmpty(path)) {
-            String[] paths = Common.tokenize(path, System.getProperty("path.separator").charAt(0));
+            String[] paths = Common.tokenize(path, System.getProperty("path.separator").charAt(0)); //$NON-NLS-1$
             if(!Common.isEmptyArray(paths)) {
                 for (int i = 0; i < paths.length; i++) {
                     if(!paths[i].equalsIgnoreCase(winDir)) {
@@ -78,10 +78,10 @@ public class RegistryImporter
             }
         }
         
-        Common.openWarning(shell, "Import Registry Key", "Please select the location of regedit.exe", EclipseNSISPlugin.getShellImage());
+        Common.openWarning(shell, EclipseNSISPlugin.getResourceString("import.regkey.messagebox.title"), EclipseNSISPlugin.getResourceString("select.regkey.dialog.title"), EclipseNSISPlugin.getShellImage()); //$NON-NLS-1$ //$NON-NLS-2$
         FileDialog dialog = new FileDialog(shell, SWT.OPEN);
         dialog.setFileName(REGEDIT_EXE);
-        dialog.setText(EclipseNSISPlugin.getResourceString("Select the location of regedit.exe"));
+        dialog.setText(EclipseNSISPlugin.getResourceString(EclipseNSISPlugin.getResourceString("select.regkey.dialog.message"))); //$NON-NLS-1$
         String file = dialog.open();
         if(file != null) {
             regEdit = new File(file);
@@ -96,7 +96,7 @@ public class RegistryImporter
     {
         if(!IOUtility.isValidFile(cRegEdit)) {
             cRegEdit = findRegEdit(shell);
-            NSISPreferences.INSTANCE.getPreferenceStore().setValue(INSISPreferenceConstants.REGEDIT_LOCATION, (cRegEdit==null?"":cRegEdit.getAbsolutePath()));
+            NSISPreferences.INSTANCE.getPreferenceStore().setValue(INSISPreferenceConstants.REGEDIT_LOCATION, (cRegEdit==null?"":cRegEdit.getAbsolutePath())); //$NON-NLS-1$
         }
         return cRegEdit;
     }
@@ -105,17 +105,17 @@ public class RegistryImporter
     {
         File regEdit = getRegEdit(shell);
         if(regEdit == null) {
-            Common.openError(shell, "Import Registry Key", "Cannot find "+REGEDIT_EXE, EclipseNSISPlugin.getShellImage());
+            Common.openError(shell, EclipseNSISPlugin.getResourceString("import.regkey.messagebox.title"), EclipseNSISPlugin.getResourceString("missing.regedit.error"), EclipseNSISPlugin.getShellImage()); //$NON-NLS-1$ //$NON-NLS-2$
         }
         else {
             RegistryKeySelectionDialog dialog = new RegistryKeySelectionDialog(shell);
             if(dialog.open() == Window.OK) {
                 try {
-                    File regFile = File.createTempFile("exp", ".reg");
+                    File regFile = File.createTempFile("exp", ".reg"); //$NON-NLS-1$ //$NON-NLS-2$
                     if (IOUtility.isValidFile(regFile)) {
                         regFile.delete();
                     }
-                    String[] cmdArray = {regEdit.getAbsolutePath(),"/e",
+                    String[] cmdArray = {regEdit.getAbsolutePath(),"/e", //$NON-NLS-1$
                                          regFile.getAbsolutePath(),
                                          dialog.getRegKey()};
                     Process p = Runtime.getRuntime().exec(cmdArray);
@@ -124,7 +124,8 @@ public class RegistryImporter
                         return importRegFile(shell, regFile.getAbsolutePath());
                     }
                     else {
-                        throw new RuntimeException("Error executing "+regEdit.getName());
+                        throw new RuntimeException(EclipseNSISPlugin.getFormattedString("exec.regedit.error", //$NON-NLS-1$ 
+                                new String[]{regEdit.getName()}));
                     }
                 }
                 catch (Exception e) {

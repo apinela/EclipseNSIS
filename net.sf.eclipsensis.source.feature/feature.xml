@@ -36,7 +36,7 @@
 
    <plugin
          id="net.sf.eclipsensis.source"
-         download-size="856"
-         install-size="972"
+         download-size="831"
+         install-size="938"
          version="0.9.4"/>
 </feature>

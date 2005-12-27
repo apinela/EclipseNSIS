@@ -1,7 +1,7 @@
 Revision History
 ================
 
-0.9.4 (12/20/2005)
+0.9.4 (12/30/2005)
     * Fixed GroupBox transparency.
     * Preview can now also handle external files.
     * Improved clipboard handling.

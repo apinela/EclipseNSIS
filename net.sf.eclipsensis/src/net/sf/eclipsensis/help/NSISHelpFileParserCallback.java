@@ -23,7 +23,7 @@ public class NSISHelpFileParserCallback extends ParserCallback
     private Collection mURLs;
     private Map mURLContentsMap;
     private String mPrefix;
-    private StringBuffer mBuffer = new StringBuffer("");
+    private StringBuffer mBuffer = new StringBuffer(""); //$NON-NLS-1$
     private boolean mCollecting = false;
     private boolean mHeading = false;
     private String mAnchor;
@@ -52,14 +52,14 @@ public class NSISHelpFileParserCallback extends ParserCallback
                 return;
             }
             if(HEADINGS.contains(t)) {
-                mBuffer.append("</p>");
+                mBuffer.append("</p>"); //$NON-NLS-1$
                 mHeading = false;
             }
             else if(t.equals(Tag.A)) {
-                mBuffer.append("</span>");
+                mBuffer.append("</span>"); //$NON-NLS-1$
             }
             else {
-                mBuffer.append("</").append(t).append(">");
+                mBuffer.append("</").append(t).append(">"); //$NON-NLS-1$ //$NON-NLS-2$
             }
         }
     }
@@ -68,22 +68,22 @@ public class NSISHelpFileParserCallback extends ParserCallback
     {
         if(mCollecting) {
             if(HEADINGS.contains(t)) {
-                mBuffer.append("<p class=\"heading\">");
+                mBuffer.append("<p class=\"heading\">"); //$NON-NLS-1$
                 mHeading = true;
             }
             else if(t.equals(Tag.A)) {
-                mBuffer.append("<span class=\"link\">");
+                mBuffer.append("<span class=\"link\">"); //$NON-NLS-1$
             }
             else {
-                mBuffer.append("<").append(t);
+                mBuffer.append("<").append(t); //$NON-NLS-1$
                 if(a != null && a.getAttributeCount() > 0) {
                     for(Enumeration e = a.getAttributeNames(); e.hasMoreElements(); ) {
                         Object name = e.nextElement();
                         Object value = a.getAttribute(name);
-                        mBuffer.append(" ").append(name).append("=\"").append(value).append("\"");
+                        mBuffer.append(" ").append(name).append("=\"").append(value).append("\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                     }
                 }
-                mBuffer.append(">");
+                mBuffer.append(">"); //$NON-NLS-1$
             }
         }
     }

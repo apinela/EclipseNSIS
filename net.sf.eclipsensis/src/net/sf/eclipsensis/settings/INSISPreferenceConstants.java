@@ -48,5 +48,5 @@ public interface INSISPreferenceConstants extends INSISSettingsConstants
     public static final String CONSOLE_ERROR_COLOR = "net.sf.eclipsensis.console.ErrorColor"; //$NON-NLS-1$
     public static final String TEMPLATE_VARIABLE_COLOR = "net.sf.eclipsensis.template.TemplateVariableColor"; //$NON-NLS-1$
 
-    public static final String REGEDIT_LOCATION = "regeditLocation";
+    public static final String REGEDIT_LOCATION = "regeditLocation"; //$NON-NLS-1$
 }

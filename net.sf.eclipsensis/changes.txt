@@ -1,7 +1,7 @@
 Revision History
 ================
 
-0.9.4 (12/20/2005)
+0.9.4 (12/30/2005)
     * Java 6.0 (Mustang) can be used as the runtime environment- however it will
       not be officially supported until it is released.
     * Refactored EclipseNSIS console to use standard Eclipse console 
@@ -18,6 +18,10 @@ Revision History
     * Added error markers and tooltips in EclipseNSIS Script Wizard Contents
       page.
     * Added new command to clear problem markers.
+    * Enhanced F3 hover help- now provides more detail.
+    * Added functions to import registry keys/files into NSIS script.
+    * Bug Fixes
+        o 1387272
     * Feature Requests:
         o 1358177
         o 1358185

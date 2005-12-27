@@ -30,7 +30,7 @@ public class NSISBrowserInformationProvider extends NSISInformationProvider
     static {
         File f = null;
         try {
-            f = new File(new File(EclipseNSISPlugin.getPluginStateLocation(),"hoverhelp"),"colors.css");
+            f = new File(new File(EclipseNSISPlugin.getPluginStateLocation(),"hoverhelp"),"colors.css"); //$NON-NLS-1$ //$NON-NLS-2$
         } catch (Exception e) {
             EclipseNSISPlugin.getDefault().log(e);
             f = null;
@@ -47,13 +47,13 @@ public class NSISBrowserInformationProvider extends NSISInformationProvider
                 RGB fg = d.getSystemColor(SWT.COLOR_INFO_FOREGROUND).getRGB();
                 RGB bg = d.getSystemColor(SWT.COLOR_INFO_BACKGROUND).getRGB();
                 if(!fg.equals(cBrowserHelpForeground) || !bg.equals(cBrowserHelpBackground)) {
-                    StringBuffer buf = new StringBuffer("body { text: #");
-                    buf.append(ColorManager.rgbToHex(fg)).append("; background-color: #").append(
-                    ColorManager.rgbToHex(bg)).append("}\n");
+                    StringBuffer buf = new StringBuffer("body { text: #"); //$NON-NLS-1$
+                    buf.append(ColorManager.rgbToHex(fg)).append("; background-color: #").append( //$NON-NLS-1$
+                    ColorManager.rgbToHex(bg)).append("}\n"); //$NON-NLS-1$
 
                     RGB bg2 = new RGB(Math.max(0,bg.red-8),Math.max(0,bg.green-8),Math.max(0,bg.blue-8));
-                    buf.append("pre { background-color: #").append(
-                            ColorManager.rgbToHex(bg2)).append("}\n");
+                    buf.append("pre { background-color: #").append( //$NON-NLS-1$
+                            ColorManager.rgbToHex(bg2)).append("}\n"); //$NON-NLS-1$
                     IOUtility.writeContentToFile(COLORS_CSS_FILE, buf.toString().getBytes());
                     
                     cBrowserHelpBackground = bg;

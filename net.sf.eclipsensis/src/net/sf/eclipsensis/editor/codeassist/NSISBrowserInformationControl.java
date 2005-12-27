@@ -141,9 +141,9 @@ public class NSISBrowserInformationControl implements IInformationControl, IInfo
             return;
         }
 
-        StringBuffer styleBuf= new StringBuffer(" style=\"").append(styles[0]);
+        StringBuffer styleBuf= new StringBuffer(" style=\"").append(styles[0]); //$NON-NLS-1$
         for (int i= 1; i < styles.length; i++) {
-            styleBuf.append("; ").append(styles[i]);
+            styleBuf.append("; ").append(styles[i]); //$NON-NLS-1$
         }
         styleBuf.append('"');
 

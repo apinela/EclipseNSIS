@@ -30,7 +30,7 @@ import org.eclipse.ui.PlatformUI;
 public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListener, IEclipseNSISService
 {
     public static final String KEYWORD_HELP_HTML_PREFIX;
-    public static final String KEYWORD_HELP_HTML_SUFFIX="\n</body></html>";
+    public static final String KEYWORD_HELP_HTML_SUFFIX="\n</body></html>"; //$NON-NLS-1$
 
     private static NSISHelpURLProvider cInstance = null;
 
@@ -58,28 +58,28 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
         File styleSheet = null;
         try {
             styleSheet = IOUtility.ensureLatest(EclipseNSISPlugin.getDefault().getBundle(), 
-                                        new Path("/hoverhelp/hoverstyle.css"),
-                                        new File(EclipseNSISPlugin.getPluginStateLocation(),"hoverhelp"));
+                                        new Path("/hoverhelp/hoverstyle.css"), //$NON-NLS-1$
+                                        new File(EclipseNSISPlugin.getPluginStateLocation(),"hoverhelp")); //$NON-NLS-1$
         }
         catch (IOException e1) {
             styleSheet = null;
         }
-        final StringBuffer htmlPrefix = new StringBuffer("<html>\n<head>\n");
+        final StringBuffer htmlPrefix = new StringBuffer("<html>\n<head>\n"); //$NON-NLS-1$
         if(styleSheet != null) {
-            htmlPrefix.append("<link rel=\"stylesheet\" href=\"").append(styleSheet.toURI()).append(
-                    "\" charset=\"ISO-8859-1\" type=\"text/css\">\n");
+            htmlPrefix.append("<link rel=\"stylesheet\" href=\"").append(styleSheet.toURI()).append( //$NON-NLS-1$
+                    "\" charset=\"ISO-8859-1\" type=\"text/css\">\n"); //$NON-NLS-1$
         }
         else {
-            htmlPrefix.append("<style type=\"text/css\">\n").append(
-                    ".heading { font-weight: bold; font-size: 120%; }\n").append( 
-                    ".link { font-weight: bold; }\n</style>\n");
+            htmlPrefix.append("<style type=\"text/css\">\n").append( //$NON-NLS-1$
+                    ".heading { font-weight: bold; font-size: 120%; }\n").append(  //$NON-NLS-1$
+                    ".link { font-weight: bold; }\n</style>\n"); //$NON-NLS-1$
         }
         if(NSISBrowserInformationProvider.COLORS_CSS_FILE != null) {
-            htmlPrefix.append("<link rel=\"stylesheet\" href=\"").append(
+            htmlPrefix.append("<link rel=\"stylesheet\" href=\"").append( //$NON-NLS-1$
             NSISBrowserInformationProvider.COLORS_CSS_FILE.toURI()).append(
-            "\" charset=\"ISO-8859-1\" type=\"text/css\">\n");
+            "\" charset=\"ISO-8859-1\" type=\"text/css\">\n"); //$NON-NLS-1$
         }
-        htmlPrefix.append("</head>\n<body>\n");
+        htmlPrefix.append("</head>\n<body>\n"); //$NON-NLS-1$
         KEYWORD_HELP_HTML_PREFIX = htmlPrefix.toString();
     }
 
@@ -269,7 +269,7 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
                                         String htmlFile = url.substring(0,n).toLowerCase();
                                         if(!processedFiles.contains(htmlFile)) {
                                             processedFiles.add(htmlFile);
-                                            NSISHelpFileParserCallback callback = new NSISHelpFileParserCallback(htmlFile+"#",urls,urlContentsMap);
+                                            NSISHelpFileParserCallback callback = new NSISHelpFileParserCallback(htmlFile+"#",urls,urlContentsMap); //$NON-NLS-1$
                                             mParserDelegator.parse(new FileReader(new File(tocFile.getParentFile(),htmlFile)), callback, false);
                                         }
                                     }
