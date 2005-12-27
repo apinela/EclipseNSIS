@@ -54,8 +54,8 @@
 
    <plugin
          id="net.sf.eclipsensis"
-         download-size="2122"
-         install-size="2122"
+         download-size="2163"
+         install-size="2163"
          version="0.9.4"
          unpack="false"/>
 </feature>

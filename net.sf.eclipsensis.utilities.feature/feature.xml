@@ -62,8 +62,8 @@
 
    <plugin
          id="net.sf.eclipsensis.utilities"
-         download-size="66"
-         install-size="66"
+         download-size="37"
+         install-size="37"
          version="0.9.0"
          unpack="false"/>
 
