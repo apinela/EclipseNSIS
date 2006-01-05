@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<!--
+###############################################################################
+# Copyright (c) 2004, 2005 Sunil Kamath (IcemanK).
+# All rights reserved.
+# This program is made available under the terms of the Common Public License
+# v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
+# 
+# Contributors:
+#     Sunil Kamath (IcemanK) - initial API and implementation
+###############################################################################
+-->
+<plugin>
+   <extension
+         point="org.eclipse.ui.editorActions">
+      <editorContribution
+            targetID="%editor.id"
+            id="%editor.contribution.id">
+         <action
+               disabledIcon="%update.action.disabledicon"
+               toolbarPath="net.sf.eclipsensis.Group2"
+               label="%update.action.name"
+               tooltip="%update.action.tooltip"
+               class="net.sf.eclipsensis.update.actions.NSISUpdateAction"
+               icon="%update.action.icon"
+               menubarPath="net.sf.eclipsensis.Menu/net.sf.eclipsensis.Group4"
+               id="%update.action.id">
+         </action>
+      </editorContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="%preference.page.category"
+            class="net.sf.eclipsensis.update.preferences.UpdatePreferencePage"
+            id="%preference.page.id"
+            name="%preference.page.name"/>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer class="net.sf.eclipsensis.update.preferences.UpdatePreferenceInitializer"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.startup">
+      <startup class="net.sf.eclipsensis.update.scheduler.Scheduler"/>
+   </extension>
+</plugin>

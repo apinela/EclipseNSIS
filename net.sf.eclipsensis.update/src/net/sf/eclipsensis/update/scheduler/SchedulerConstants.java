@@ -1,0 +1,53 @@
+/*******************************************************************************
+ * Copyright (c) 2004, 2005 Sunil Kamath (IcemanK).
+ * All rights reserved.
+ * This program is made available under the terms of the Common Public License
+ * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     Sunil Kamath (IcemanK) - initial API and implementation
+ *******************************************************************************/
+package net.sf.eclipsensis.update.scheduler;
+
+import java.util.Calendar;
+
+public class SchedulerConstants
+{
+    public static final int SCHEDULE_ON_STARTUP = 0;
+    public static final int SCHEDULE_DAILY = 1;
+    public static final int SCHEDULE_WEEKLY = 2;
+    public static final int SCHEDULE_MONTHLY = 3;
+    
+    public static final int UPDATE_NOTIFY = 0;
+    public static final int UPDATE_DOWNLOAD = 1;
+    public static final int UPDATE_INSTALL = 2;
+
+    public static final int[] TIMES_OF_DAY;
+    public static final int[] DAYS_OF_WEEK;
+    public static final int[] DAYS_OF_MONTH;
+    
+    static {
+        Calendar cal = Calendar.getInstance();
+        
+        TIMES_OF_DAY = new int[cal.getMaximum(Calendar.HOUR_OF_DAY)-cal.getMinimum(Calendar.HOUR_OF_DAY)+1];
+        int time = cal.getMinimum(Calendar.HOUR_OF_DAY);
+        for (int i = 0; i < TIMES_OF_DAY.length; i++) {
+            TIMES_OF_DAY[i] = time++;
+        }
+
+        DAYS_OF_WEEK = new int[cal.getMaximum(Calendar.DAY_OF_WEEK)-cal.getMinimum(Calendar.DAY_OF_WEEK)+1];
+        int firstDay = cal.getFirstDayOfWeek();
+        for(int i=0; i<DAYS_OF_WEEK.length; i++) {
+            DAYS_OF_WEEK[i]= firstDay++;
+            if(firstDay > cal.getMaximum(Calendar.DAY_OF_WEEK)) {
+                firstDay = cal.getMinimum(Calendar.DAY_OF_WEEK);
+            }
+        }
+
+        DAYS_OF_MONTH = new int[cal.getMaximum(Calendar.DAY_OF_MONTH)-cal.getMinimum(Calendar.DAY_OF_MONTH)+1];
+        int day = cal.getMinimum(Calendar.DAY_OF_MONTH);
+        for (int i = 0; i < DAYS_OF_MONTH.length; i++) {
+            DAYS_OF_MONTH[i] = day++;
+        }
+    }
+}

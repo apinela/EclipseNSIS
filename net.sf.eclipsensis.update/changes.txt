@@ -1,0 +1,5 @@
+Revision History
+================
+
+0.9.4 (12/30/2005)
+    * First public release of EclipseNSIS Update plugin.
