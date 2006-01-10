@@ -27,6 +27,11 @@ public class NSISHelpProducer implements IExecutableExtension, IHelpContentProdu
 {
     public static final String STYLE = EclipseNSISPlugin.getResourceString("help.style",""); //$NON-NLS-1$ //$NON-NLS-2$
     public static final String CONFIGURE = "configure"; //$NON-NLS-1$
+    
+    private static final String NSIS_CONTRIB_PATH="help/NSIS/$CONTRIB$";
+    private static final byte[] NSIS_CONTRIB_JS=new StringBuffer("<!--").append(LINE_SEPARATOR).append( //$NON-NLS-1$
+        "var nsisContribPath=\"/").append(PLUGIN_ID).append("/").append(NSIS_CONTRIB_PATH).append( //$NON-NLS-1$
+        "\";").append(LINE_SEPARATOR).append("//-->").append(LINE_SEPARATOR).toString().getBytes(); //$NON-NLS-1$ //$NON-NLS-2$
 
     private static final byte[] GO_BACK = "<html><head><script language=\"javascript\">\n<!--\nhistory.go(-1);\n//-->\n</script></head></html>".getBytes(); //$NON-NLS-1$
     private static final File cHelpCacheLocation = new File(EclipseNSISPlugin.getPluginStateLocation(),PLUGIN_HELP_LOCATION_PREFIX);
@@ -40,20 +45,16 @@ public class NSISHelpProducer implements IExecutableExtension, IHelpContentProdu
     {
         if(pluginID.equals(mPluginId)) {
             if(href.equals(NSISCONTRIB_JS_LOCATION)) {
-                String nsisContribPath = NSISHelpURLProvider.getInstance().getNSISContribPath();
-                StringBuffer buf = new StringBuffer("<!--").append(LINE_SEPARATOR); //$NON-NLS-1$
-                buf.append("var nsisContribPath="); //$NON-NLS-1$
-                if(nsisContribPath == null) {
-                    buf.append("null"); //$NON-NLS-1$
-                }
-                else {
-                    buf.append("\"").append(nsisContribPath).append("\""); //$NON-NLS-1$ //$NON-NLS-2$
-                }
-                buf.append(";").append(LINE_SEPARATOR); //$NON-NLS-1$
-                buf.append("//-->").append(LINE_SEPARATOR); //$NON-NLS-1$
-                return new ByteArrayInputStream(buf.toString().getBytes());
+                return new ByteArrayInputStream(NSIS_CONTRIB_JS);
             }
             else if(href.startsWith(NSIS_HELP_PREFIX) && !mJavascriptOnly) {
+                if(href.startsWith(NSIS_CONTRIB_PATH)) {
+                    String nsisContribPath = NSISHelpURLProvider.getInstance().getNSISContribPath();
+                    if(nsisContribPath == null) {
+                        nsisContribPath = NSIS_HELP_PREFIX+"Contrib"; //$NON-NLS-1$
+                    }
+                    href = Common.replaceAll(href, NSIS_CONTRIB_PATH, nsisContribPath, true);
+                }
                 String nsisHome = NSISPreferences.INSTANCE.getNSISHome();
                 if(!Common.isEmpty(nsisHome)) {
                     File nsisDir = new File(nsisHome);
