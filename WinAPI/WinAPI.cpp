@@ -524,3 +524,18 @@ JNIEXPORT jboolean JNICALL Java_net_sf_eclipsensis_util_WinAPI_RegKeyExists(JNIE
     RegCloseKey(hKey);
     return JNI_TRUE;
 }
+
+JNIEXPORT jobject JNICALL Java_net_sf_eclipsensis_util_WinAPI_getDefaultAuthenticator(JNIEnv *pEnv, jclass jClass)
+{
+    jobject result = NULL;
+
+    jclass clasz = pEnv->FindClass("java/net/Authenticator");
+    if(clasz != NULL) {
+        jfieldID field = pEnv->GetStaticFieldID(clasz,"theAuthenticator","Ljava/net/Authenticator;");
+        if(field != NULL) {
+            result = pEnv->GetStaticObjectField(clasz, field);
+        }
+    }
+    
+    return result;
+}

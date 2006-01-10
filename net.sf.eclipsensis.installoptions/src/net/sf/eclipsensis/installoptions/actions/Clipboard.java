@@ -53,6 +53,7 @@ public class Clipboard
             Runnable runnable = new Runnable() {
                 public void run()
                 {
+                    Thread.currentThread().setName("EclipseNSIS InstallOptions Editor Clipboard Monitor");
                     fireContentsAvailable();
                 }
             };

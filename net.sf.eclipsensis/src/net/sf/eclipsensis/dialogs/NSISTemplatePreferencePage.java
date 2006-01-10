@@ -21,6 +21,8 @@ import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
+import org.eclipse.jface.text.templates.Template;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
@@ -98,6 +100,7 @@ public class NSISTemplatePreferencePage extends TemplatePreferencePage
 
         return ok;
     }
+    
     /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.IDialogPage#setVisible(boolean)
      */
@@ -109,5 +112,14 @@ public class NSISTemplatePreferencePage extends TemplatePreferencePage
             }
         }
         super.setVisible(visible);
+    }
+
+    protected Template editTemplate(Template template, boolean edit, boolean isNameModifiable)
+    {
+        NSISTemplateEditorDialog dialog= new NSISTemplateEditorDialog(getShell(), template, edit, isNameModifiable, getContextTypeRegistry());
+        if (dialog.open() == Window.OK) {
+            return dialog.getTemplate();
+        }
+        return null;
     }
 }

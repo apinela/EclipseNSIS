@@ -126,7 +126,7 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
                 {
                     writeScript();
                 }
-            }).start();
+            },EclipseNSISPlugin.getResourceString("wizard.script.generator.thread.name")).start(); //$NON-NLS-1$
 
             mSaveFile.create(is,true,null);
             new NSISTaskTagUpdater().updateTaskTags(mSaveFile);

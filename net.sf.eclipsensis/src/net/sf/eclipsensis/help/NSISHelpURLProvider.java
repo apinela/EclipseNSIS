@@ -395,13 +395,16 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
         }
         if(Common.isEmpty(url)) {
             url = getCHMHelpStartPage();
-            if(!Common.isEmpty(url)) {
-                openCHMHelpURL(url);
-            }
+            openCHMHelpURL(url);
         }
         else {
-            PlatformUI.getWorkbench().getHelpSystem().displayHelpResource(url);
+            showPlatformHelp(url);
         }
+    }
+
+    public void showPlatformHelp(String url)
+    {
+        PlatformUI.getWorkbench().getHelpSystem().displayHelpResource(url);
     }
 
     public void showHelpURL(String keyword)
@@ -417,7 +420,7 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
             }
         }
         else {
-            PlatformUI.getWorkbench().getHelpSystem().displayHelpResource(url);
+            showPlatformHelp(url);
         }
     }
 

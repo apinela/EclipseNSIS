@@ -25,6 +25,9 @@ import org.eclipse.swt.program.Program;
 
 public class NSISHelpProducer implements IExecutableExtension, IHelpContentProducer, INSISConstants
 {
+    public static final String STYLE = EclipseNSISPlugin.getResourceString("help.style",""); //$NON-NLS-1$ //$NON-NLS-2$
+    public static final String CONFIGURE = "configure"; //$NON-NLS-1$
+
     private static final byte[] GO_BACK = "<html><head><script language=\"javascript\">\n<!--\nhistory.go(-1);\n//-->\n</script></head></html>".getBytes(); //$NON-NLS-1$
     private static final File cHelpCacheLocation = new File(EclipseNSISPlugin.getPluginStateLocation(),PLUGIN_HELP_LOCATION_PREFIX);
     private String mPluginId = PLUGIN_ID;
@@ -94,17 +97,17 @@ public class NSISHelpProducer implements IExecutableExtension, IHelpContentProdu
                         }
                         if(isDocs) {
                             return new ByteArrayInputStream(EclipseNSISPlugin.getFormattedString("missing.help.format", //$NON-NLS-1$
-                                                                    new Object[]{href,PLUGIN_ID,
+                                                                    new Object[]{STYLE, href,PLUGIN_ID,
                                                                                  NSISLiveHelpAction.class.getName()}).getBytes());
                         }
                         else {
                             return new ByteArrayInputStream(EclipseNSISPlugin.getFormattedString("missing.file.format", //$NON-NLS-1$
-                                                                                new Object[]{href}).getBytes());
+                                                                                new Object[]{STYLE,href}).getBytes());
                         }
                     }
                 }
                 return new ByteArrayInputStream(EclipseNSISPlugin.getFormattedString("unconfigured.help.format", //$NON-NLS-1$
-                                                                    new Object[]{PLUGIN_ID,NSISLiveHelpAction.class.getName()}).getBytes());
+                                                                    new Object[]{STYLE,PLUGIN_ID,NSISLiveHelpAction.class.getName(),CONFIGURE}).getBytes());
             }
         }
         return null;

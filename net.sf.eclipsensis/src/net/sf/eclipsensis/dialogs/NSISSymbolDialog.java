@@ -38,6 +38,8 @@ public class NSISSymbolDialog extends StatusMessageDialog
         super(parentShell);
         mName = name;
         mValue = value;
+        setTitle(EclipseNSISPlugin.getResourceString((Common.isEmpty(mName)?"add.symbol.dialog.title": //$NON-NLS-1$
+                                                                            "edit.symbol.dialog.title"))); //$NON-NLS-1$
     }
 
     public NSISSymbolDialog(Shell parentShell)
@@ -51,16 +53,6 @@ public class NSISSymbolDialog extends StatusMessageDialog
     public void setExistingSymbols(Collection existingSymbols)
     {
         mExistingSymbols = existingSymbols;
-    }
-
-    /**
-     * @see org.eclipse.jface.window.Window#configureShell(Shell)
-     */
-    protected void configureShell(Shell newShell)
-    {
-        super.configureShell(newShell);
-        newShell.setText(EclipseNSISPlugin.getResourceString((Common.isEmpty(mName)?"add.symbol.dialog.title": //$NON-NLS-1$
-                                                                                    "edit.symbol.dialog.title"))); //$NON-NLS-1$
     }
 
     /* (non-Javadoc)

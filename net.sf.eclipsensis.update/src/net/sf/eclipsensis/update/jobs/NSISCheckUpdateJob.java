@@ -30,8 +30,6 @@ public class NSISCheckUpdateJob extends NSISHttpUpdateJob
     protected static final MessageFormat RELEASE_UPDATE_MESSAGEFORMAT = new MessageFormat(EclipseNSISUpdatePlugin.getResourceString("release.update.message")); //$NON-NLS-1$
     protected static final MessageFormat PREVIEW_UPDATE_MESSAGEFORMAT = new MessageFormat(EclipseNSISUpdatePlugin.getResourceString("preview.update.message")); //$NON-NLS-1$
     
-    protected static final String NSIS_UPDATE_URL = EclipseNSISUpdatePlugin.getResourceString("update.url.prefix"); //$NON-NLS-1$
-    
     public NSISCheckUpdateJob()
     {
         this(new NSISUpdateJobSettings());
@@ -39,7 +37,12 @@ public class NSISCheckUpdateJob extends NSISHttpUpdateJob
 
     public NSISCheckUpdateJob(NSISUpdateJobSettings settings)
     {
-        super(EclipseNSISUpdatePlugin.getResourceString("check.update.message"), settings); //$NON-NLS-1$
+        this(settings, null); //$NON-NLS-1$
+    }
+
+    public NSISCheckUpdateJob(NSISUpdateJobSettings settings, INSISUpdateJobRunner jobRunner)
+    {
+        super(EclipseNSISUpdatePlugin.getResourceString("check.update.message"), settings, jobRunner); //$NON-NLS-1$
     }
 
     protected boolean shouldReschedule()
@@ -50,8 +53,19 @@ public class NSISCheckUpdateJob extends NSISHttpUpdateJob
     protected URL getURL() throws IOException
     {
         Version version = NSISPreferences.INSTANCE.getNSISVersion();
-        if(version != null && !NSISValidator.isCVSVersion(version)) {
-            return new URL(NSIS_UPDATE_URL+version.toString());
+        if(version != null) {
+            if(!NSISValidator.isCVSVersion(version)) {
+                return NSISUpdateURLs.getUpdateURL(version.toString());
+            }
+            else if(!getSettings().isAutomated()) {
+                displayExec(new Runnable() {
+                    public void run()
+                    {
+                        Common.openInformation(Display.getCurrent().getActiveShell(), EclipseNSISUpdatePlugin.getResourceString("update.title"),  //$NON-NLS-1$
+                                EclipseNSISUpdatePlugin.getResourceString("update.cvs.version.message"), EclipseNSISUpdatePlugin.getShellImage()); //$NON-NLS-1$
+                    }
+                });
+            }
         }
         return null;
     }
@@ -129,8 +143,14 @@ public class NSISCheckUpdateJob extends NSISHttpUpdateJob
                     }
                     if(download) {
                         settings = new NSISUpdateJobSettings(automated,download,install);
-                        NSISUpdateJob job = new NSISDownloadUpdateJob(version, settings);
-                        job.schedule();
+                        INSISUpdateJobRunner jobRunner = getJobRunner();
+                        NSISUpdateJob job = new NSISDownloadUpdateJob(version, settings, jobRunner);
+                        if(jobRunner == null) {
+                            job.schedule();
+                        }
+                        else {
+                            jobRunner.run(job);
+                        }
                     }
                 }
             });

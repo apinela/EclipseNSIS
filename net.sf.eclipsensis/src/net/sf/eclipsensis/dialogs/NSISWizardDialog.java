@@ -9,38 +9,19 @@
  *******************************************************************************/
 package net.sf.eclipsensis.dialogs;
 
-import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.wizard.NSISWizard;
-
 import org.eclipse.jface.wizard.IWizard;
-import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.PlatformUI;
 
-public class NSISWizardDialog extends WizardDialog
+public class NSISWizardDialog extends AbstractNSISWizardDialog
 {
-    /**
-     * @param parentShell
-     * @param newWizard
-     */
-    public NSISWizardDialog(Shell parentShell, IWizard newWizard)
+    public NSISWizardDialog(Shell parentShell, IWizard wizard)
     {
-        super(parentShell, newWizard);
+        super(parentShell, wizard);
     }
 
-    protected void configureShell(Shell newShell)
+    protected String getHelpContextId()
     {
-        super.configureShell(newShell);
-        newShell.setImage(EclipseNSISPlugin.getShellImage());
-    }
-
-    public void create()
-    {
-        super.create();
-        NSISWizard wiz = (NSISWizard)getWizard();
-        String helpContextId = wiz.getHelpContextId();
-        if(helpContextId != null) {
-            PlatformUI.getWorkbench().getHelpSystem().setHelp(getContents(),helpContextId);
-        }
+        return ((NSISWizard)getWizard()).getHelpContextId();
     }
 }

@@ -9,17 +9,17 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.wizard;
 
-import java.util.Arrays;
-
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.template.InstallOptionsTemplate;
+import net.sf.eclipsensis.util.ColorManager;
+import net.sf.eclipsensis.wizard.WizardShellImageChanger;
 
-import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.dialogs.IPageChangeProvider;
+import org.eclipse.jface.dialogs.IPageChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizardContainer;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 
@@ -30,29 +30,14 @@ public class InstallOptionsWizard extends Wizard implements INewWizard
     private InstallOptionsTemplate mTemplate = null;
 	private IStructuredSelection mSelection;
 	private IWorkbench mWorkbench;
-    private IPageChangedListener mPageChangedListener = new IPageChangedListener() {
-        private Image mOldImage;
-        private Image[] mOldImages;
+    private IPageChangedListener mPageChangedListener;
 
-        public void pageChanged(PageChangedEvent event)
-        {
-            Shell shell = getContainer().getShell();
-            Image image = shell.getImage();
-            if(Arrays.asList(getPages()).contains(event.getSelectedPage())) {
-                if(image != cShellImage) {
-                    mOldImage = image;
-                    mOldImages = shell.getImages();
-                    shell.setImage(cShellImage);
-                }
-            }
-            else {
-                if(image == cShellImage) {
-                    shell.setImage(mOldImage);
-                    shell.setImages(mOldImages);
-                }
-            }
-        }
-    };
+    public InstallOptionsWizard()
+    {
+        super();
+        setTitleBarColor(ColorManager.WHITE);
+        mPageChangedListener = new WizardShellImageChanger(this, cShellImage);
+    }
 
     /** (non-Javadoc)
      * Method declared on Wizard.

@@ -27,7 +27,7 @@
             default="true"
             name="%installoptions.design.editor.name"
             extensions="%ini.extensions"
-            icon="%installoptions.design.editor.icon"
+            icon="icons/installoptions.gif"
             class="net.sf.eclipsensis.installoptions.editor.InstallOptionsDesignEditor"
             contributorClass="net.sf.eclipsensis.installoptions.actions.InstallOptionsDesignActionContributor"
             id="%installoptions.design.editor.id">
@@ -36,7 +36,7 @@
             default="false"
             name="%installoptions.source.editor.name"
             extensions="%ini.extensions"
-            icon="%installoptions.source.editor.icon"
+            icon="icons/installoptionssrc.gif"
             class="net.sf.eclipsensis.installoptions.editor.InstallOptionsSourceEditor"
             contributorClass="net.sf.eclipsensis.installoptions.actions.InstallOptionsSourceActionContributor"
             id="%installoptions.source.editor.id">
@@ -46,7 +46,7 @@
          point="org.eclipse.ui.newWizards">
       <wizard
             name="%installoptions.wizard.name"
-            icon="%installoptions.wizard.icon"
+            icon="icons/installoptionswizard.gif"
             category="net.sf.eclipsensis"
             class="net.sf.eclipsensis.installoptions.wizard.InstallOptionsWizard"
             id="%installoptions.wizard.id">
@@ -102,7 +102,7 @@
          point="org.eclipse.ui.preferencePages">
       <page
             name="%installoptions.preference.page.name"
-            category="net.sf.eclipsensis.dialogs.NSISPreferencePage"
+            category="%installoptions.preference.page.category"
             class="net.sf.eclipsensis.installoptions.dialogs.InstallOptionsPreferencePage"
             id="%installoptions.preference.page.id">
       </page>

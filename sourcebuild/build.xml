@@ -18,6 +18,7 @@
 		<property name="build.src.root" value="${build.root}/src"/>
 		<mkdir dir="${build.src.root}"/>
 		<antcall target="eclipsensis.src"/>
+		<antcall target="update.src"/>
 		<antcall target="installoptions.src"/>
 		<antcall target="utilities.src"/>
 		<antcall target="jarsigner.src"/>
@@ -113,6 +114,11 @@
 		<property name="plugin.dir" value="../net.sf.eclipsensis"/>
 		<antcall target="generic.src"/>
 	</target>
+	<target name="update.src">
+		<property name="plugin.name" value="net.sf.eclipsensis.update"/>
+		<property name="plugin.dir" value="../net.sf.eclipsensis.update"/>
+		<antcall target="generic.src"/>
+	</target>
 	<target name="installoptions.src">
 		<property name="plugin.name" value="net.sf.eclipsensis.installoptions"/>
 		<property name="plugin.dir" value="../net.sf.eclipsensis.installoptions"/>
@@ -153,6 +159,9 @@
 				<exclude name="net.sf.eclipsensis/bin/**/*"/>
 				<exclude name="net.sf.eclipsensis/discards/**/*"/>
 				<exclude name="net.sf.eclipsensis/.settings/**/*"/>
+				<include name="net.sf.eclipsensis.update/**/*"/>
+				<exclude name="net.sf.eclipsensis.update/bin/**/*"/>
+				<exclude name="net.sf.eclipsensis.update/.settings/**/*"/>
 				<include name="net.sf.eclipsensis.feature/**/*"/>
 				<include name="WinAPI/*.cpp"/>
 				<include name="WinAPI/*.h"/>

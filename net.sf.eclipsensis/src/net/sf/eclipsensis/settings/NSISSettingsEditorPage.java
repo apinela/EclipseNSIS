@@ -120,7 +120,7 @@ public abstract class NSISSettingsEditorPage implements DisposeListener
                 fireChanged();
             }
         });
-        data = new GridData(SWT.FILL, SWT.CENTER, false, false);
+        data = new GridData(SWT.FILL, SWT.CENTER, true, false);
         combo.setLayoutData(data);
         return combo;
     }

@@ -99,7 +99,12 @@ public class ImageManager
 
     public synchronized boolean containsImage(URL url)
     {
-        return (mImageRegistry.get(url==null?null:url.toString().toLowerCase()) != null);
+        return containsImage(url==null?null:url.toString());
+    }
+
+    public synchronized boolean containsImage(String name)
+    {
+        return (mImageRegistry.get(name==null?null:name.toLowerCase()) != null);
     }
 
     public synchronized void putImage(URL url, Image image)

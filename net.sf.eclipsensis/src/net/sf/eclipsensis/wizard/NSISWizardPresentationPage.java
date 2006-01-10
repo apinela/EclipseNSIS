@@ -824,6 +824,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
         }
 
         public void run(){
+            Thread.currentThread().setName(EclipseNSISPlugin.getResourceString("splash.preview.thread.name")); //$NON-NLS-1$
             final int newAlpha;
             switch(mState) {
                 case STATE_FADE_IN:

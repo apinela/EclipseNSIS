@@ -31,6 +31,9 @@ import org.eclipse.ui.dialogs.PreferencesUtil;
 
 public class UpdatePreferencePage extends PreferencePage implements IWorkbenchPreferencePage, IUpdatePreferenceConstants
 {
+    public static final String UPDATE_UI_PREFERENCE_PAGE_ID;
+    public static final String UPDATE_SCHEDULER_PREFERENCE_PAGE_ID;
+    
     private static final String LINK_TEXT;
     
     private static String[] cTimesOfDay;
@@ -73,6 +76,8 @@ public class UpdatePreferencePage extends PreferencePage implements IWorkbenchPr
                 }
             }
         }
+        UPDATE_UI_PREFERENCE_PAGE_ID = id1;
+        UPDATE_SCHEDULER_PREFERENCE_PAGE_ID = id2;
         LINK_TEXT = new MessageFormat(EclipseNSISUpdatePlugin.getResourceString("preference.page.header")).format(new String[] {id1,id2}); //$NON-NLS-1$
         
         Calendar cal = Calendar.getInstance();
@@ -273,7 +278,7 @@ public class UpdatePreferencePage extends PreferencePage implements IWorkbenchPr
         mDayOfWeek = new Combo(group, SWT.DROP_DOWN|SWT.READ_ONLY);
         mDayOfWeek.setLayoutData(new GridData(SWT.LEFT,SWT.FILL,false,false));
         mDayOfWeek.setItems(cDaysOfWeek);
-        mDayOfWeek.select(0);
+        mDayOfWeek.select(SchedulerConstants.DEFAULT_DAY_OF_WEEK);
         
         l2 = new Label(group,SWT.NONE);
         l2.setText(EclipseNSISUpdatePlugin.getResourceString("update.schedule.weekly.time.label")); //$NON-NLS-1$
@@ -295,7 +300,7 @@ public class UpdatePreferencePage extends PreferencePage implements IWorkbenchPr
         for(int i=0; i<SchedulerConstants.DAYS_OF_MONTH.length; i++) {
             mDayOfMonth.add(Integer.toString(SchedulerConstants.DAYS_OF_MONTH[i]));
         }
-        mDayOfMonth.select(0);
+        mDayOfMonth.select(SchedulerConstants.DEFAULT_DAY_OF_MONTH);
         
         l2 = new Label(group,SWT.NONE);
         l2.setText(EclipseNSISUpdatePlugin.getResourceString("update.schedule.monthly.time.label")); //$NON-NLS-1$
@@ -342,13 +347,12 @@ public class UpdatePreferencePage extends PreferencePage implements IWorkbenchPr
     {
         Combo c = new Combo(parent,SWT.DROP_DOWN|SWT.READ_ONLY);
         c.setItems(cTimesOfDay);
-        c.select(0);
+        c.select(SchedulerConstants.DEFAULT_TIME_OF_DAY);
         return c;
     }
 
     public boolean performOk()
     {
-        // TODO Auto-generated method stub
         boolean ok = super.performOk();
         if(ok) {
             savePreferences();

@@ -24,9 +24,18 @@ public abstract class NSISHttpUpdateJob extends NSISUpdateJob
     protected static final String HTTP_PROXY_PORT = "http.proxyPort"; //$NON-NLS-1$
     protected static final String HTTP_PROXY_HOST = "http.proxyHost"; //$NON-NLS-1$
     protected static final String HTTP_PROXY_SET = "http.proxySet"; //$NON-NLS-1$
-    protected NSISHttpUpdateJob(String name, NSISUpdateJobSettings settings)
+
+    private INSISUpdateJobRunner mJobRunner = null;
+    
+    protected NSISHttpUpdateJob(String name, NSISUpdateJobSettings settings, INSISUpdateJobRunner jobRunner)
     {
         super(name, settings);
+        mJobRunner = jobRunner;
+    }
+
+    public INSISUpdateJobRunner getJobRunner()
+    {
+        return mJobRunner;
     }
 
     protected final IStatus doRun(IProgressMonitor monitor)

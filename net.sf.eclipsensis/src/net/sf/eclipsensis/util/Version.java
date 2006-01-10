@@ -22,7 +22,7 @@ public class Version implements Comparable
     private int[] mNumbers = null;
     private String[] mQualifiers = null;
     private String mDisplayText = null;
-    public static final Version EMPTY_VERSION = new Version("0"); //$NON-NLS-1$
+    public static final Version EMPTY_VERSION = new Version("0.0"); //$NON-NLS-1$
 
     public Version(String version)
     {

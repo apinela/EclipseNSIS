@@ -15,8 +15,7 @@ import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.jobs.IJobManager;
-import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.ui.progress.UIJob;
 
 public class JobScheduler

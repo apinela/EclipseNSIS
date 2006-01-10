@@ -55,16 +55,16 @@ public class Scheduler implements IStartup, IUpdatePreferenceConstants
 
     public synchronized void scheduleUpdateJob() 
     {
-        if(INSTANCE == this) {
+        if (INSTANCE == this) {
             long delay = -1;
-            if(mPreferences.getBoolean(IUpdatePreferenceConstants.AUTO_UPDATE)) {
+            if (mPreferences.getBoolean(IUpdatePreferenceConstants.AUTO_UPDATE)) {
                 int schedule = mPreferences.getInt(IUpdatePreferenceConstants.UPDATE_SCHEDULE);
-                switch(schedule) {
+                switch (schedule)
+                {
                     case SchedulerConstants.SCHEDULE_ON_STARTUP:
                     {
-                        if(!mStartedUp) {
+                        if (!mStartedUp) {
                             delay = 0;
-                            mStartedUp = true;
                         }
                         break;
                     }
@@ -88,6 +88,9 @@ public class Scheduler implements IStartup, IUpdatePreferenceConstants
                 }
             }
             schedule(delay);
+            if(delay >=0 && !mStartedUp) {
+                mStartedUp = true;
+            }
         }
     }
     

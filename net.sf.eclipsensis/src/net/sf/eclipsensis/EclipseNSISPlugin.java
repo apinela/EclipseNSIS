@@ -15,10 +15,10 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 import java.util.*;
-import java.util.List;
 
 import net.sf.eclipsensis.console.NSISConsole;
 import net.sf.eclipsensis.dialogs.MinimalProgressMonitorDialog;
+import net.sf.eclipsensis.dialogs.NSISConfigWizardDialog;
 import net.sf.eclipsensis.editor.template.NSISTemplateContextType;
 import net.sf.eclipsensis.filemon.FileMonitor;
 import net.sf.eclipsensis.job.IJobStatusRunnable;
@@ -33,7 +33,8 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.text.templates.ContextTypeRegistry;
 import org.eclipse.jface.text.templates.persistence.TemplateStore;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.*;
 import org.eclipse.ui.editors.text.templates.ContributionContextTypeRegistry;
 import org.eclipse.ui.editors.text.templates.ContributionTemplateStore;
@@ -45,14 +46,12 @@ import org.osgi.framework.BundleContext;
  */
 public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstants
 {
-    public static final int NSIS_REG_ROOTKEY = WinAPI.HKEY_LOCAL_MACHINE;
-	public static final String NSIS_REG_SUBKEY = "SOFTWARE\\NSIS"; //$NON-NLS-1$
-    public static final String NSIS_REG_VALUE = ""; //$NON-NLS-1$
     private static EclipseNSISPlugin cPlugin;
     private static File cStateLocation = null;
     private static String cInvalidException = null;
     private static Image cShellImage;
 
+    private BundleContext mBundleContext = null;
     private String mName = null;
     private String mVersion = null;
     private TemplateStore mTemplateStore;
@@ -92,6 +91,7 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
 	public void start(BundleContext context) throws Exception
     {
         super.start(context);
+        mBundleContext = context;
         if(!isDebugging()) {
             if(Boolean.getBoolean("net.sf.eclipsensis/debug")) { //$NON-NLS-1$
                 setDebugging(true);
@@ -108,7 +108,7 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
         validateVM();
         if(!isConfigured()) {
             // First try autoconfigure
-            NSISPreferences.INSTANCE.setNSISHome(WinAPI.RegQueryStrValue(NSIS_REG_ROOTKEY,NSIS_REG_SUBKEY,NSIS_REG_VALUE));
+            NSISPreferences.INSTANCE.setNSISHome(WinAPI.RegQueryStrValue(INSISConstants.NSIS_REG_ROOTKEY,INSISConstants.NSIS_REG_SUBKEY,INSISConstants.NSIS_REG_VALUE));
             if(!isConfigured()) {
                 final IWorkbenchWindow wwindow = getWorkbench().getActiveWorkbenchWindow();
                 final Runnable configOp = new Runnable() {
@@ -273,20 +273,7 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
             public void run()
             {
                 Shell shell = Display.getDefault().getActiveShell();
-                DirectoryDialog dialog = new DirectoryDialog(shell);
-                dialog.setMessage(getResourceString("nsis.home.message")); //$NON-NLS-1$
-                String nsisHome = dialog.open();
-                while(!Common.isEmpty(nsisHome)) {
-                    NSISPreferences.INSTANCE.setNSISHome(nsisHome);
-                    if(!isConfigured()) {
-                        Common.openError(shell,EclipseNSISPlugin.getResourceString("invalid.nsis.home.message"), getShellImage()); //$NON-NLS-1$
-                        nsisHome = dialog.open();
-                    }
-                    else {
-                        NSISPreferences.INSTANCE.store();
-                        break;
-                    }
-                }
+                new NSISConfigWizardDialog(shell).open();
             }
         });
     }
@@ -395,10 +382,16 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
         FileMonitor.INSTANCE.stop();
         mConsole.destroy();
         mConsole = null;
+        mBundleContext = null;
 		super.stop(context);
 	}
 
-	public NSISConsole getConsole()
+	public BundleContext getBundleContext()
+    {
+        return mBundleContext;
+    }
+
+    public NSISConsole getConsole()
     {
         return mConsole;
     }

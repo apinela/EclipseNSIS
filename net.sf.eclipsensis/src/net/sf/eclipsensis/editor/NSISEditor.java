@@ -562,9 +562,15 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
                 throw new IllegalArgumentException();
             }
             mTextOperationAction= textOperationAction;
-            mInformationPresenter = NSISEditorUtilities.createStickyHelpInformationPresenter();
         }
 
+        private InformationPresenter getInformationPresenter()
+        {
+            if(mInformationPresenter == null) {
+                mInformationPresenter = NSISEditorUtilities.createStickyHelpInformationPresenter();
+            }
+            return mInformationPresenter;
+        }
         /*
          *  @see org.eclipse.jface.action.IAction#run()
          */
@@ -576,9 +582,10 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
                 mTextOperationAction.run();
             }
             else {
-                mInformationPresenter.install(sourceViewer);
-                mInformationPresenter.setOffset(offset); //wordRegion.getOffset());
-                mInformationPresenter.showInformation();
+                InformationPresenter informationPresenter = getInformationPresenter();
+                informationPresenter.install(sourceViewer);
+                informationPresenter.setOffset(offset); //wordRegion.getOffset());
+                informationPresenter.showInformation();
             }
         }
     }

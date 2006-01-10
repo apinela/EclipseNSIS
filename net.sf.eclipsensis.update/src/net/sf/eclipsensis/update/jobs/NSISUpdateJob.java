@@ -73,7 +73,7 @@ public abstract class NSISUpdateJob extends Job
         return e.getMessage();
     }
 
-    protected final IStatus run(IProgressMonitor monitor)
+    public final IStatus run(IProgressMonitor monitor)
     {
         IStatus status = doRun(monitor);
         if(shouldReschedule()) {

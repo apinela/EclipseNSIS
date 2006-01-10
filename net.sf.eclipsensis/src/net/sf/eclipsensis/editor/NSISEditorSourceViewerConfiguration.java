@@ -34,7 +34,6 @@ public class NSISEditorSourceViewerConfiguration extends NSISSourceViewerConfigu
         super(preferenceStore);
         mTextHover = new NSISTextHover();
         mInformationControlCreator = new NSISInformationControlCreator(null);
-        mInformationPresenter = NSISEditorUtilities.createStickyHelpInformationPresenter();
         mAnnotationHover = new NSISAnnotationHover(new String[]{PROBLEM_MARKER_ID,TASK_MARKER_ID,ERROR_ANNOTATION_NAME,WARNING_ANNOTATION_NAME});
     }
 
@@ -74,6 +73,9 @@ public class NSISEditorSourceViewerConfiguration extends NSISSourceViewerConfigu
      */
     public IInformationPresenter getInformationPresenter(ISourceViewer sourceViewer)
     {
+        if(mInformationPresenter == null) {
+            mInformationPresenter = NSISEditorUtilities.createStickyHelpInformationPresenter();
+        }
         return mInformationPresenter;
     }
 

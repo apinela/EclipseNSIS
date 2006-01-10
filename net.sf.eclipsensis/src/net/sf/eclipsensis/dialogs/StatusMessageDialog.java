@@ -30,6 +30,8 @@ public abstract class StatusMessageDialog extends IconAndMessageDialog implement
     private Image mWarningImage = null;
     private Image mInfoImage = null;
     private Image mOKImage = null;
+    private String mTitle = ""; //$NON-NLS-1$
+    private Image mShellImage = EclipseNSISPlugin.getShellImage();
 
     /**
      * Creates a new dialog.
@@ -45,7 +47,34 @@ public abstract class StatusMessageDialog extends IconAndMessageDialog implement
     protected void configureShell(Shell newShell)
     {
         super.configureShell(newShell);
-        newShell.setImage(EclipseNSISPlugin.getShellImage());
+        newShell.setImage(mShellImage);
+        newShell.setText(mTitle);
+    }
+
+    public String getTitle()
+    {
+        return mTitle;
+    }
+
+    public void setTitle(String title)
+    {
+        mTitle = title;
+        if(getShell() != null) {
+            getShell().setText(mTitle);
+        }
+    }
+
+    public Image getShellImage()
+    {
+        return mShellImage;
+    }
+
+    public void setShellImage(Image shellImage)
+    {
+        mShellImage = shellImage;
+        if(getShell() != null) {
+            getShell().setImage(mShellImage);
+        }
     }
 
     /**

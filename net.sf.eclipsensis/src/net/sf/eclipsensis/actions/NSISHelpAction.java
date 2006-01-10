@@ -10,6 +10,7 @@
 package net.sf.eclipsensis.actions;
 
 import net.sf.eclipsensis.INSISConstants;
+import net.sf.eclipsensis.help.NSISHelpURLProvider;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.ui.*;
@@ -32,6 +33,6 @@ public class NSISHelpAction extends ActionDelegate implements IEditorActionDeleg
      */
     public void run(IAction action)
     {
-        PlatformUI.getWorkbench().getHelpSystem().displayHelpResource(PLUGIN_HELP_URL);
+        NSISHelpURLProvider.getInstance().showPlatformHelp(PLUGIN_HELP_URL);
     }
 }

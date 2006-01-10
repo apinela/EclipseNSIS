@@ -35,21 +35,13 @@ public class NSISInstructionDialog extends StatusMessageDialog
     {
         super(parentShell);
         mInstruction = instruction;
+        setTitle(EclipseNSISPlugin.getResourceString((Common.isEmpty(mInstruction)?"add.instruction.dialog.title": //$NON-NLS-1$
+                                                                                   "edit.instruction.dialog.title"))); //$NON-NLS-1$
     }
 
     public NSISInstructionDialog(Shell parentShell)
     {
         this(parentShell,""); //$NON-NLS-1$
-    }
-
-    /**
-     * @see org.eclipse.jface.window.Window#configureShell(Shell)
-     */
-    protected void configureShell(Shell newShell)
-    {
-        super.configureShell(newShell);
-        newShell.setText(EclipseNSISPlugin.getResourceString((Common.isEmpty(mInstruction)?"add.instruction.dialog.title": //$NON-NLS-1$
-                                                                                           "edit.instruction.dialog.title"))); //$NON-NLS-1$
     }
 
     /* (non-Javadoc)

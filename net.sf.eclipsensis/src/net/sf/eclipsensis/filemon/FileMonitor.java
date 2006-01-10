@@ -21,12 +21,15 @@ public class FileMonitor
     public static final long POLL_INTERVAL;
     public static final int FILE_MODIFIED = 0;
     public static final int FILE_DELETED = 1;
+    
+    private Object mLock = new Object();
 
     public static final FileMonitor INSTANCE = new FileMonitor();
 
     private static final WeakReference[] EMPTY_ARRAY = new WeakReference[0];
     private Timer mTimer;
     private Map mRegistry = new LinkedHashMap();
+    private FileChangeTimerTask mTask;
 
     static {
         long interval;
@@ -44,16 +47,31 @@ public class FileMonitor
         super();
     }
 
-    public void start()
+    public boolean start()
     {
-        mTimer = new Timer(true);
-        mTimer.schedule(new FileChangeTimerTask(), 0, POLL_INTERVAL);
+        synchronized (mLock) {
+            if (mTimer == null && mTask == null) {
+                mTimer = new Timer(true);
+                mTask = new FileChangeTimerTask();
+                mTimer.schedule(mTask, 0, POLL_INTERVAL);
+                return true;
+            }
+        }
+        return false;    
     }
 
-    public void stop()
+    public boolean stop()
     {
-        mTimer.cancel();
-        mTimer = null;
+        synchronized (mLock) {
+            if (mTimer != null && mTask != null) {
+                mTimer.cancel();
+                mTimer = null;
+                mTask.cancel();
+                mTask = null;
+                return true;
+            }
+        }        
+        return false;    
     }
 
     public void register(File file, IFileChangeListener listener)
@@ -100,10 +118,25 @@ public class FileMonitor
 
     private class FileChangeTimerTask extends TimerTask
     {
+        private boolean mCanceled = false;
+
+        public boolean cancel()
+        {
+            if(super.cancel()) {
+                mCanceled = true;
+                return true;
+            }
+            return false;
+        }
+
         public void run()
         {
+            Thread.currentThread().setName(EclipseNSISPlugin.getResourceString("file.monitor.thread.name")); //$NON-NLS-1$
             File[] files = (File[])mRegistry.keySet().toArray(new File[mRegistry.size()]);
             for(int i=0; i<files.length; i++) {
+                if(mCanceled) {
+                    return;
+                }
                 File file = files[i];
                 FileChangeRegistryEntry entry = (FileChangeRegistryEntry)mRegistry.get(file);
                 if(!IOUtility.isValidFile(file)) {

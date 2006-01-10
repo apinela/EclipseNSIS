@@ -41,6 +41,10 @@
         	<param name="plugin.name" value="net.sf.eclipsensis"/>
         </antcall>
         <antcall target="update.plugin">
+        	<param name="plugin.dir" value="../net.sf.eclipsensis.update"/>
+        	<param name="plugin.name" value="net.sf.eclipsensis.update"/>
+        </antcall>
+        <antcall target="update.plugin">
         	<param name="plugin.dir" value="../net.sf.eclipsensis.installoptions"/>
         	<param name="plugin.name" value="net.sf.eclipsensis.installoptions"/>
         </antcall>

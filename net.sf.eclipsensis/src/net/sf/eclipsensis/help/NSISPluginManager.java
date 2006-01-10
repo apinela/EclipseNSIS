@@ -134,44 +134,45 @@ public class NSISPluginManager implements INSISConstants
 
     public String[] getDefaultPluginNames()
     {
-        return (String[])mDefaultPluginsMap.keySet().toArray(Common.EMPTY_STRING_ARRAY);
+        return (mDefaultPluginsMap == null?Common.EMPTY_STRING_ARRAY:(String[])mDefaultPluginsMap.keySet().toArray(Common.EMPTY_STRING_ARRAY));
     }
 
     public String[] getDefaultPluginExports(String name)
     {
-        PluginInfo pi = (PluginInfo)mDefaultPluginsMap.get(name);
-        if(pi == null) {
-            File pluginFile = new File(new File(NSISPreferences.INSTANCE.getNSISHome(), NSIS_PLUGINS_LOCATION),name+NSIS_PLUGINS_EXTENSION);
-            if(IOUtility.isValidFile(pluginFile)) {
-                pi = loadPluginInfo(name, pluginFile);
-                mDefaultPluginsMap.put(name,pi);
-                JobScheduler jobScheduler = EclipseNSISPlugin.getDefault().getJobScheduler();
-                jobScheduler.cancelJobs(NSISPluginManager.class);
-                jobScheduler.scheduleJob(NSISPluginManager.class,
-                                        EclipseNSISPlugin.getResourceString("saving.plugin.cache.job.name"), //$NON-NLS-1$
-                                        new IJobStatusRunnable() {
-                                            public IStatus run(IProgressMonitor monitor)
-                                            {
-                                                if(!monitor.isCanceled()) {
-                                                    try {
-                                                        IOUtility.writeObject(mCacheFile, mDefaultPluginsMap);
-                                                        return Status.OK_STATUS;
-                                                    }
-                                                    catch (Throwable t) {
-                                                        return new Status(IStatus.ERROR,PLUGIN_ID,IStatus.ERROR,t.getMessage(),t);
-                                                    }
-                                                }
-                                                else {
-                                                    return Status.CANCEL_STATUS;
-                                                }
-                                            }
-                                    });
+        if (mDefaultPluginsMap != null) {
+            PluginInfo pi = (PluginInfo)mDefaultPluginsMap.get(name);
+            if (pi == null) {
+                File pluginFile = new File(new File(NSISPreferences.INSTANCE.getNSISHome(), NSIS_PLUGINS_LOCATION), name + NSIS_PLUGINS_EXTENSION);
+                if (IOUtility.isValidFile(pluginFile)) {
+                    pi = loadPluginInfo(name, pluginFile);
+                    mDefaultPluginsMap.put(name, pi);
+                    JobScheduler jobScheduler = EclipseNSISPlugin.getDefault().getJobScheduler();
+                    jobScheduler.cancelJobs(NSISPluginManager.class);
+                    jobScheduler.scheduleJob(NSISPluginManager.class, EclipseNSISPlugin.getResourceString("saving.plugin.cache.job.name"), //$NON-NLS-1$
+                            new IJobStatusRunnable() {
+                                public IStatus run(IProgressMonitor monitor)
+                                {
+                                    if (!monitor.isCanceled()) {
+                                        try {
+                                            IOUtility.writeObject(mCacheFile, mDefaultPluginsMap);
+                                            return Status.OK_STATUS;
+                                        }
+                                        catch (Throwable t) {
+                                            return new Status(IStatus.ERROR, PLUGIN_ID, IStatus.ERROR, t.getMessage(), t);
+                                        }
+                                    }
+                                    else {
+                                        return Status.CANCEL_STATUS;
+                                    }
+                                }
+                            });
+                }
             }
-        }
-        if(pi != null) {
-            return pi.getExports();
-        }
-        return null;
+            if (pi != null) {
+                return pi.getExports();
+            }
+        }        
+        return Common.EMPTY_STRING_ARRAY;
     }
 
 

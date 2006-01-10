@@ -13,18 +13,28 @@ import java.util.Calendar;
 
 public class SchedulerConstants
 {
+    public static final boolean DEFAULT_AUTO_UPDATE = false;
+    public static final boolean DEFAULT_IGNORE_PREVIEW = false;
+    
     public static final int SCHEDULE_ON_STARTUP = 0;
     public static final int SCHEDULE_DAILY = 1;
     public static final int SCHEDULE_WEEKLY = 2;
     public static final int SCHEDULE_MONTHLY = 3;
+    public static final int DEFAULT_SCHEDULE = SCHEDULE_ON_STARTUP;
     
     public static final int UPDATE_NOTIFY = 0;
     public static final int UPDATE_DOWNLOAD = 1;
     public static final int UPDATE_INSTALL = 2;
+    public static final int DEFAULT_ACTION = UPDATE_NOTIFY;
 
     public static final int[] TIMES_OF_DAY;
+    public static final int DEFAULT_TIME_OF_DAY = 0;
+
     public static final int[] DAYS_OF_WEEK;
+    public static final int DEFAULT_DAY_OF_WEEK = 0;
+
     public static final int[] DAYS_OF_MONTH;
+    public static final int DEFAULT_DAY_OF_MONTH = 0;
     
     static {
         Calendar cal = Calendar.getInstance();

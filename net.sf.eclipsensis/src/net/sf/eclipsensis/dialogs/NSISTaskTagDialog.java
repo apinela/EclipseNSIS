@@ -33,6 +33,8 @@ public class NSISTaskTagDialog extends StatusMessageDialog
     {
         super(parentShell);
         mTaskTag = taskTag;
+        setTitle(EclipseNSISPlugin.getResourceString((Common.isEmpty(mTaskTag.getTag())?"new.task.tag.dialog.title": //$NON-NLS-1$
+                                                                                        "edit.task.tag.dialog.title"))); //$NON-NLS-1$
     }
 
     /**
@@ -49,16 +51,6 @@ public class NSISTaskTagDialog extends StatusMessageDialog
     public NSISTaskTag getTaskTag()
     {
         return mTaskTag;
-    }
-
-    /**
-     * @see org.eclipse.jface.window.Window#configureShell(Shell)
-     */
-    protected void configureShell(Shell newShell)
-    {
-        super.configureShell(newShell);
-        newShell.setText(EclipseNSISPlugin.getResourceString((Common.isEmpty(mTaskTag.getTag())?"new.task.tag.dialog.title": //$NON-NLS-1$
-                                                                                    "edit.task.tag.dialog.title"))); //$NON-NLS-1$
     }
 
     /* (non-Javadoc)

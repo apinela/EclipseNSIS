@@ -40,6 +40,8 @@ public abstract class AbstractNSISInstallItemDialog extends StatusMessageDialog
         mWizard = wizard;
         mItem = item;
         mStore = new PreferenceStore();
+        setTitle(EclipseNSISPlugin.getFormattedString("wizard.installitem.dialog.title.format", //$NON-NLS-1$
+                new String[]{NSISInstallElementFactory.getTypeName(mItem.getType())}));
         Common.beanToStore(mItem, mStore, getProperties());
     }
 
@@ -75,16 +77,6 @@ public abstract class AbstractNSISInstallItemDialog extends StatusMessageDialog
     {
         super.create();
         validate();
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
-     */
-    protected void configureShell(Shell newShell)
-    {
-        super.configureShell(newShell);
-        newShell.setText(EclipseNSISPlugin.getFormattedString("wizard.installitem.dialog.title.format", //$NON-NLS-1$
-                new String[]{NSISInstallElementFactory.getTypeName(mItem.getType())}));
     }
 
     /* (non-Javadoc)

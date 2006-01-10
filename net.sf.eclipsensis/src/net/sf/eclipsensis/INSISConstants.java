@@ -9,6 +9,8 @@
  *******************************************************************************/
 package net.sf.eclipsensis;
 
+import net.sf.eclipsensis.util.WinAPI;
+
 import org.eclipse.core.runtime.QualifiedName;
 
 public interface INSISConstants
@@ -79,4 +81,10 @@ public interface INSISConstants
 
     public static final String NSIS_PLUGINS_LOCATION = "Plugins"; //$NON-NLS-1$
     public static final String NSIS_PLUGINS_EXTENSION = ".dll"; //$NON-NLS-1$
+
+    public static final int NSIS_REG_ROOTKEY = WinAPI.HKEY_LOCAL_MACHINE;
+
+    public static final String NSIS_REG_SUBKEY = "SOFTWARE\\NSIS"; //$NON-NLS-1$
+
+    public static final String NSIS_REG_VALUE = ""; //$NON-NLS-1$
 }

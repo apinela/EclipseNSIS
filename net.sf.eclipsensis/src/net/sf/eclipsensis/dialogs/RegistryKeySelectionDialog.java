@@ -59,6 +59,7 @@ public class RegistryKeySelectionDialog extends StatusMessageDialog
         if(mDialogSettings == null) {
             mDialogSettings = dialogSettings.addNewSection(name);
         }
+        setTitle(EclipseNSISPlugin.getResourceString("regkey.dialog.title")); //$NON-NLS-1$
     }
 
     private static String getRootKeyName(int rootKey)
@@ -81,12 +82,6 @@ public class RegistryKeySelectionDialog extends StatusMessageDialog
             default:
                 return null;
         }
-    }
-
-    protected void configureShell(Shell newShell)
-    {
-        super.configureShell(newShell);
-        newShell.setText(EclipseNSISPlugin.getResourceString("regkey.dialog.title")); //$NON-NLS-1$
     }
 
     protected Control createControl(Composite parent)

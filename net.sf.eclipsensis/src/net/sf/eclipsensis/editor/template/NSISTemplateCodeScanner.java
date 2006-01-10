@@ -63,6 +63,10 @@ public class NSISTemplateCodeScanner extends NSISCodeScanner
                 public boolean isWordStart(char character)
                 {
                     mFoundEndSequence = false;
+                    if(character == '%') {
+                        mFoundEndSequence = true;
+                        return true;
+                    }
                     return Character.isLetter(character);
                 }
 

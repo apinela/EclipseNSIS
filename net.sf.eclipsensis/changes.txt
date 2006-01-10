@@ -8,6 +8,7 @@ Revision History
       functionality.
     * Added support for NSIS scripts as External Tool launch configurations.
     * Added support for NSIS scripts as external builders.
+    * Added NSIS update functionality - manual as well as automated.
     * EclipseNSIS editor scroll tip now moves with scroll bar.
     * SubSection/SubSectionEnd supported even when deprecated (NSIS 2.05 and 
       above).
@@ -19,6 +20,7 @@ Revision History
       page.
     * Added new command to clear problem markers.
     * Enhanced F3 hover help- now provides more detail.
+    * Fixed usage of template editor dialog.
     * Added functions to import registry keys/files into NSIS script.
     * Bug Fixes
         o 1387272

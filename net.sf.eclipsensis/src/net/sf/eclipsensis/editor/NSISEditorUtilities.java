@@ -21,8 +21,6 @@ import net.sf.eclipsensis.makensis.MakeNSISResults;
 import net.sf.eclipsensis.makensis.MakeNSISRunner;
 import net.sf.eclipsensis.script.NSISScriptProblem;
 import net.sf.eclipsensis.util.*;
-import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.NSISCompileTestUtility;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -33,6 +31,7 @@ import org.eclipse.jface.text.source.*;
 import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.editors.text.TextEditor;
@@ -49,7 +48,16 @@ public class NSISEditorUtilities
     {
         boolean browserAvailable = false;
         if(Display.getCurrent() != null) {
-            browserAvailable = NSISBrowserInformationControl.isAvailable(Display.getCurrent().getActiveShell());
+            boolean newShell = false;
+            Shell shell = Display.getCurrent().getActiveShell();
+            if(shell == null) {
+                newShell = true;
+                shell = new Shell(Display.getCurrent());
+            }
+            browserAvailable = NSISBrowserInformationControl.isAvailable(shell);
+            if(newShell) {
+                shell.dispose();
+            }
         }
 
         IInformationControlCreator informationControlCreator;

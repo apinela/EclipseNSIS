@@ -31,9 +31,10 @@ import org.eclipse.ui.dialogs.ListDialog;
 
 class NSISInstallUpdateJob extends NSISUpdateJob
 {
+    public static final int INSTALL_ERROR = -1;
     public static final int INSTALL_SUCCESS = 0;
     public static final int INSTALL_CANCEL = 1;
-    public static final int INSTALL_ERROR = 2;
+    public static final int INSTALL_ABORTED = 2;
     
     private static MessageFormat cNotifyFormat = new MessageFormat(EclipseNSISUpdatePlugin.getResourceString("install.complete.message")); //$NON-NLS-1$
     
@@ -87,14 +88,14 @@ class NSISInstallUpdateJob extends NSISUpdateJob
         return false;
     }
 
-    protected IStatus doRun(IProgressMonitor monitor)
+    protected IStatus doRun(final IProgressMonitor monitor)
     {
         if(IOUtility.isValidFile(mSetupExe)) {
             monitor.beginTask(getName(), IProgressMonitor.UNKNOWN);
             boolean fileMonStopped = false;
             try {
-                String nsisHome = NSISPreferences.INSTANCE.getNSISHome();
-                NSISUpdateJobSettings settings = getSettings();
+                final String nsisHome = NSISPreferences.INSTANCE.getNSISHome();
+                final NSISUpdateJobSettings settings = getSettings();
                 boolean automated = settings.isAutomated();
                 if(!Common.isEmpty(NSISPreferences.INSTANCE.getNSISHome())) {
                     fileMonStopped = FileMonitor.INSTANCE.stop();
@@ -129,7 +130,7 @@ class NSISInstallUpdateJob extends NSISUpdateJob
                         }
                     }
                 }
-                List cmd = new ArrayList();
+                final List cmd = new ArrayList();
                 cmd.add(mSetupExe.getAbsolutePath());
                 if(automated) {
                     cmd.add("/S"); //Silent //$NON-NLS-1$
@@ -140,32 +141,70 @@ class NSISInstallUpdateJob extends NSISUpdateJob
                 if (monitor.isCanceled()) {
                     return Status.CANCEL_STATUS;
                 }
-                Process p = Runtime.getRuntime().exec((String[])cmd.toArray(Common.EMPTY_STRING_ARRAY));
-                int rv = p.waitFor();
-                if(rv != INSTALL_SUCCESS) {
-                    if(rv >= INSTALL_ERROR) {
-                        throw new RuntimeException(new MessageFormat(EclipseNSISUpdatePlugin.getResourceString("install.aborted.error")).format(new String[] {mVersion})); //$NON-NLS-1$
-                    }
-                    return Status.CANCEL_STATUS;
-                }
-                mSetupExe.delete();
-                String newNSISHome = WinAPI.RegQueryStrValue(INSISConstants.NSIS_REG_ROOTKEY,
-                        INSISConstants.NSIS_REG_SUBKEY,INSISConstants.NSIS_REG_VALUE);
-                if(!Common.isEmpty(newNSISHome)) {
-                    if(nsisHome == null || !newNSISHome.equalsIgnoreCase(nsisHome)) {
-                        NSISPreferences.INSTANCE.setNSISHome(newNSISHome);
-                    }
-                }
-                if(automated && settings.isInstall()) {
-                    displayExec(new Runnable() {
+                int rv = INSTALL_SUCCESS;
+                final boolean[] terminated = { false };
+                try {
+                    final Process p = Runtime.getRuntime().exec((String[])cmd.toArray(Common.EMPTY_STRING_ARRAY));
+                    new Thread(new Runnable() {
                         public void run()
                         {
-                            Common.openInformation(Display.getCurrent().getActiveShell(), 
-                                    EclipseNSISUpdatePlugin.getResourceString("update.title"),  //$NON-NLS-1$
-                                    cNotifyFormat.format(new String[] {mVersion}), 
-                                    EclipseNSISUpdatePlugin.getShellImage());
+                            while(!terminated[0]) {
+                                if(monitor.isCanceled()) {
+                                    displayExec(new Runnable() {
+                                        public void run()
+                                        {
+                                            Common.openWarning(Display.getCurrent().getActiveShell(), 
+                                                    EclipseNSISUpdatePlugin.getResourceString("cancel.not.supported.message"),  //$NON-NLS-1$
+                                                    EclipseNSISUpdatePlugin.getShellImage());
+                                        }
+                                    });
+                                    return;
+                                }
+                                try {
+                                    Thread.sleep(10);
+                                }
+                                catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                            }
                         }
-                    });
+                    },EclipseNSISUpdatePlugin.getResourceString("install.thread.name")).start(); //$NON-NLS-1$
+                    rv = p.waitFor();
+                }
+                catch (Exception e) {
+                    EclipseNSISUpdatePlugin.getDefault().log(e);
+                    rv = INSTALL_ERROR;
+                }
+                finally {
+                    terminated[0] = true;
+                }
+                switch(rv) {
+                    case INSTALL_SUCCESS:
+                        mSetupExe.delete();
+                        String newNSISHome = WinAPI.RegQueryStrValue(INSISConstants.NSIS_REG_ROOTKEY, INSISConstants.NSIS_REG_SUBKEY, INSISConstants.NSIS_REG_VALUE);
+                        if (!Common.isEmpty(newNSISHome)) {
+                            if (nsisHome == null || !newNSISHome.equalsIgnoreCase(nsisHome)) {
+                                NSISPreferences.INSTANCE.setNSISHome(newNSISHome);
+                                NSISPreferences.INSTANCE.store();
+                            }
+                        }
+                        if (automated && settings.isInstall()) {
+                            displayExec(new Runnable() {
+                                public void run()
+                                {
+                                    Common.openInformation(Display.getCurrent().getActiveShell(), EclipseNSISUpdatePlugin.getResourceString("update.title"), //$NON-NLS-1$
+                                            cNotifyFormat.format(new String[]{mVersion}), EclipseNSISUpdatePlugin.getShellImage());
+                                }
+                            });
+                        }
+                        break;
+                    case INSTALL_CANCEL:
+                        return Status.CANCEL_STATUS;
+                    case INSTALL_ABORTED:
+                        throw new RuntimeException(new MessageFormat(EclipseNSISUpdatePlugin.getResourceString("install.aborted.error")).format(new String[]{mVersion})); //$NON-NLS-1$
+                    case INSTALL_ERROR:
+                    default:
+                        throw new RuntimeException(new MessageFormat(EclipseNSISUpdatePlugin.getResourceString("install.exec.error")).format(new String[]{mVersion})); //$NON-NLS-1$
                 }
             }
             catch (Exception e) {

@@ -9,6 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.actions;
 
+import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.dialogs.NSISWizardDialog;
 import net.sf.eclipsensis.wizard.NSISScriptWizard;
 
@@ -31,11 +32,19 @@ public class NSISWizardAction extends NSISAction
         BusyIndicator.showWhile(shell.getDisplay(),new Runnable() {
             public void run()
             {
-                wizardDialog[0] = new NSISWizardDialog(shell,new NSISScriptWizard());
-                wizardDialog[0].create();
+                try {
+                    wizardDialog[0] = new NSISWizardDialog(shell, new NSISScriptWizard());
+                    wizardDialog[0].create();
+                }
+                catch (Exception e) {
+                    wizardDialog[0] = null;
+                    EclipseNSISPlugin.getDefault().log(e);
+                }                
             }
         });
-        wizardDialog[0].open();
+        if(wizardDialog[0] != null) {
+            wizardDialog[0].open();
+        }
     }
 
     public boolean isEnabled()

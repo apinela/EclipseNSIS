@@ -13,6 +13,7 @@ import java.util.ResourceBundle;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
+import net.sf.eclipsensis.actions.NSISConfigWizardAction;
 
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.text.ITextSelection;
@@ -24,19 +25,21 @@ import org.eclipse.ui.texteditor.*;
 /**
  * Contributes interesting NSIS actions to the desktop's Edit menu and the toolbar.
  */
-public class NSISActionContributor extends TextEditorActionContributor implements INSISConstants
+public class NSISActionContributor extends TextEditorActionContributor implements INSISConstants, IMenuListener
 {
-    protected RetargetTextEditorAction mInsertTemplate;
-	protected RetargetTextEditorAction mContentAssistProposal;
-    protected RetargetTextEditorAction mTabsToSpaces;
-    protected RetargetTextEditorAction mToggleComment;
-    protected RetargetTextEditorAction mAddBlockComment;
-    protected RetargetTextEditorAction mRemoveBlockComment;
-    protected RetargetTextEditorAction mInsertFile;
-    protected RetargetTextEditorAction mInsertDirectory;
-    protected RetargetTextEditorAction mInsertColor;
-    protected RetargetTextEditorAction mImportRegFile;
-    protected RetargetTextEditorAction mImportRegKey;
+    private RetargetTextEditorAction mInsertTemplate;
+    private RetargetTextEditorAction mContentAssistProposal;
+    private RetargetTextEditorAction mTabsToSpaces;
+    private RetargetTextEditorAction mToggleComment;
+    private RetargetTextEditorAction mAddBlockComment;
+    private RetargetTextEditorAction mRemoveBlockComment;
+    private RetargetTextEditorAction mInsertFile;
+    private RetargetTextEditorAction mInsertDirectory;
+    private RetargetTextEditorAction mInsertColor;
+    private RetargetTextEditorAction mImportRegFile;
+    private RetargetTextEditorAction mImportRegKey;
+    private IContributionItem mConfigWizardAction;
+    private IMenuManager mMenuManager = null;
 
 	/**
 	 * Default constructor.
@@ -82,6 +85,8 @@ public class NSISActionContributor extends TextEditorActionContributor implement
         mImportRegKey= new RetargetTextEditorAction(bundle, "import.regkey."); //$NON-NLS-1$
         mImportRegKey.setImageDescriptor(EclipseNSISPlugin.getImageManager().getImageDescriptor(bundle.getString("import.regkey.image"))); //$NON-NLS-1$
         mImportRegKey.setActionDefinitionId(IMPORT_REGKEY_COMMAND_ID);
+        
+        mConfigWizardAction = new ActionContributionItem(new NSISConfigWizardAction());
     }
 	
 	/*
@@ -125,12 +130,28 @@ public class NSISActionContributor extends TextEditorActionContributor implement
 	
 	private void doSetActiveEditor(IEditorPart part)
     {
-		super.setActiveEditor(part);
-
+        if(mMenuManager != null) {
+            mMenuManager.removeMenuListener(this);
+            mMenuManager = null;
+        }
 		ITextEditor editor= null;
 		if (part instanceof ITextEditor) {
 			editor= (ITextEditor) part;
 		}
+        
+        if(editor != null) {
+            try {
+                IMenuManager manager = editor.getEditorSite().getActionBars().getMenuManager();
+                manager = manager.findMenuUsingPath("net.sf.eclipsensis.Menu"); //$NON-NLS-1$
+                if (manager != null) {
+                    mMenuManager = manager;
+                    mMenuManager.addMenuListener(this);
+                }
+            }
+            catch (NullPointerException e) {
+                EclipseNSISPlugin.getDefault().log(e);
+            }            
+        }
 
 		mContentAssistProposal.setAction(getAction(editor, INSISEditorConstants.CONTENT_ASSIST_PROPOSAL)); 
         mInsertTemplate.setAction(getAction(editor, INSISEditorConstants.INSERT_TEMPLATE)); 
@@ -162,4 +183,20 @@ public class NSISActionContributor extends TextEditorActionContributor implement
 		doSetActiveEditor(null);
 		super.dispose();
 	}
+
+    public void menuAboutToShow(IMenuManager manager)
+    {
+        if(manager != null) {
+            if(!EclipseNSISPlugin.getDefault().isConfigured()) {
+                if(manager.find(NSISConfigWizardAction.ID)==null) {
+                    manager.appendToGroup("net.sf.eclipsensis.Group4", mConfigWizardAction); //$NON-NLS-1$
+                }
+            }
+            else {
+                if(manager.find(NSISConfigWizardAction.ID)!=null) {
+                    manager.remove(mConfigWizardAction);
+                }
+            }
+        }
+    }
 }

@@ -102,7 +102,7 @@ public class NSISCompileTestUtility
                     }
                 }
             }
-            new Thread(new NSISCompileRunnable(script,test)).start();
+            new Thread(new NSISCompileRunnable(script,test),EclipseNSISPlugin.getResourceString("makensis.thread.name")).start(); //$NON-NLS-1$
         }
     }
 

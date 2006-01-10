@@ -683,7 +683,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
                     }
                  });
             }
-        }).start();
+        },EclipseNSISPlugin.getResourceString("wizard.contents.validator.thread.name")).start(); //$NON-NLS-1$
     }
 
     private void enableItem(Item item, boolean state)

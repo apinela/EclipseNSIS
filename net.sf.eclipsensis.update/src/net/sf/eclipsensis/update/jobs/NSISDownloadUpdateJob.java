@@ -25,19 +25,15 @@ import org.eclipse.swt.widgets.Display;
 
 class NSISDownloadUpdateJob extends NSISHttpUpdateJob
 {
-    protected static final MessageFormat NSIS_SETUP_EXE = new MessageFormat(EclipseNSISUpdatePlugin.getResourceString("nsis.setup.format")); //$NON-NLS-1$
-    protected static final String NSIS_DOWNLOAD_URL = EclipseNSISUpdatePlugin.getResourceString("download.url.prefix"); //$NON-NLS-1$
     protected static final File DOWNLOAD_FOLDER = EclipseNSISUpdatePlugin.getPluginStateLocation();
     protected static final MessageFormat INSTALL_UPDATE_MESSAGEFORMAT = new MessageFormat(EclipseNSISUpdatePlugin.getResourceString("install.update.prompt")); //$NON-NLS-1$
 
     private String mVersion;
-    private String mFileName;
     
-    NSISDownloadUpdateJob(String version, NSISUpdateJobSettings settings)
+    NSISDownloadUpdateJob(String version, NSISUpdateJobSettings settings, INSISUpdateJobRunner jobRunner)
     {
-        super(new MessageFormat(EclipseNSISUpdatePlugin.getResourceString("download.update.message")).format(new String[]{version}), settings); //$NON-NLS-1$
+        super(new MessageFormat(EclipseNSISUpdatePlugin.getResourceString("download.update.message")).format(new String[]{version}), settings, jobRunner); //$NON-NLS-1$
         mVersion = version;
-        mFileName = NSIS_SETUP_EXE.format(new String[] {version});
     }
     
     protected boolean shouldReschedule()
@@ -47,12 +43,19 @@ class NSISDownloadUpdateJob extends NSISHttpUpdateJob
 
     protected URL getURL() throws IOException
     {
-        return new URL(NSIS_DOWNLOAD_URL+mFileName);
+        return  NSISUpdateURLs.getDownloadURL(mVersion);
     }
 
     protected IStatus handleConnection(HttpURLConnection conn, IProgressMonitor monitor) throws IOException
     {
-        File setupExe = new File(DOWNLOAD_FOLDER,mFileName);
+        URL url = conn.getURL();
+        String fileName = url.getPath();
+        int index = fileName.lastIndexOf('/');
+        if(index >= 0) {
+            fileName = fileName.substring(index+1);
+        }
+
+        File setupExe = new File(DOWNLOAD_FOLDER,fileName);
         if(!setupExe.exists()) {
             if(IOUtility.isValidFile(DOWNLOAD_FOLDER)) {
                 DOWNLOAD_FOLDER.delete();
@@ -137,6 +140,17 @@ class NSISDownloadUpdateJob extends NSISHttpUpdateJob
                 monitor.done();
             }
         }
+        else {
+            monitor.beginTask(getName(), 1);
+            try {
+                //This is a hack, otherwise the messagedialog sometimes closes immediately
+                Thread.sleep(1000);
+            }
+            catch (InterruptedException e) {
+            }
+            monitor.worked(1);
+            monitor.done();
+        }
         
         if(setupExe.exists()) {
             if (monitor.isCanceled()) {
@@ -170,8 +184,14 @@ class NSISDownloadUpdateJob extends NSISHttpUpdateJob
                     }
                     if(install) {
                         settings = new NSISUpdateJobSettings(automated, install);
+                        INSISUpdateJobRunner jobRunner = getJobRunner();
                         NSISUpdateJob job = new NSISInstallUpdateJob(mVersion, setupExe, settings);
-                        job.schedule();
+                        if(jobRunner == null) {
+                            job.schedule();
+                        }
+                        else {
+                            jobRunner.run(job);
+                        }
                     }
                 }
             });

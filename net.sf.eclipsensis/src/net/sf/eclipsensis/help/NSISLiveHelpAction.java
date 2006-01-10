@@ -9,7 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.help;
 
-import net.sf.eclipsensis.dialogs.NSISPreferencePage;
+import net.sf.eclipsensis.dialogs.NSISConfigWizardDialog;
 import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.help.ILiveHelpAction;
@@ -18,7 +18,7 @@ import org.eclipse.swt.widgets.Display;
 public class NSISLiveHelpAction implements ILiveHelpAction
 {
     private String mData = null;
-
+    
     /* (non-Javadoc)
      * @see org.eclipse.help.ILiveHelpAction#setInitializationString(java.lang.String)
      */
@@ -34,8 +34,8 @@ public class NSISLiveHelpAction implements ILiveHelpAction
     {
         Display.getDefault().syncExec(new Runnable() {
             public void run() {
-                if(mData == null) {
-                    NSISPreferencePage.show();
+                if(NSISHelpProducer.CONFIGURE.equals(mData)) {
+                    new NSISConfigWizardDialog(Display.getDefault().getActiveShell()).open();
                 }
                 else {
                     String chmURL = NSISHelpURLProvider.getInstance().convertHelpURLToCHMHelpURL(mData);

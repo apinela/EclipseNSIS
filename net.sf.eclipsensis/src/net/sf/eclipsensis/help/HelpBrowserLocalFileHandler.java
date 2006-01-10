@@ -19,10 +19,12 @@ import net.sf.eclipsensis.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.dynamichelpers.*;
 import org.eclipse.ui.PlatformUI;
+import org.osgi.framework.*;
 
 public class HelpBrowserLocalFileHandler implements IExtensionChangeHandler, IHelpBrowserLocalFileHandler
 {
     private static final String EXTENSION_POINT = "helpBrowserLocalFileHandler"; //$NON-NLS-1$
+    private static final String HANDLER = "handler"; //$NON-NLS-1$
     private static final String HANDLER_ID = "id"; //$NON-NLS-1$
     private static final String HANDLER_NAME = "name"; //$NON-NLS-1$
     private static final String HANDLER_EXTENSIONS = "extensions"; //$NON-NLS-1$
@@ -31,43 +33,57 @@ public class HelpBrowserLocalFileHandler implements IExtensionChangeHandler, IHe
     public static final HelpBrowserLocalFileHandler INSTANCE = new HelpBrowserLocalFileHandler();
 
     private Map mExtensions = new LinkedHashMap();
+    
+    private Object mLock = new Object();
 
     private HelpBrowserLocalFileHandler()
     {
         super();
-        IExtensionTracker tracker = PlatformUI.getWorkbench().getExtensionTracker();
+        final IExtensionTracker tracker = PlatformUI.getWorkbench().getExtensionTracker();
         loadExtensions(tracker);
         tracker.registerHandler(this, ExtensionTracker.createExtensionPointFilter(getExtensionPointFilter()));
+        final BundleContext bundleContext = EclipseNSISPlugin.getDefault().getBundleContext();
+        bundleContext.addBundleListener(new BundleListener() {
+            public void bundleChanged(BundleEvent event)
+            {
+                if(event.getType() == BundleEvent.STOPPED ) {
+                    bundleContext.removeBundleListener(this);
+                }
+                tracker.unregisterHandler(HelpBrowserLocalFileHandler.this);
+            }
+        });
     }
 
     public boolean handle(File file)
     {
-        String ext = IOUtility.getFileExtension(file);
-        if(!Common.isEmpty(ext)) {
-            for(Iterator iter=mExtensions.keySet().iterator(); iter.hasNext(); ) {
-                String extensionId = (String)iter.next();
-                IExtension extension = getExtensionPointFilter().getExtension(extensionId);
-                if(extension == null) {
-                    iter.remove();
-                }
-                else {
-                    List handlers = (List)mExtensions.get(extensionId);
-                    for (Iterator iterator = handlers.iterator(); iterator.hasNext();) {
-                        HandlerDescriptor desc = (HandlerDescriptor)iterator.next();
-                        if(desc.extensions.contains(ext)) {
-                            try {
-                                return desc.handler.handle(file);
-                            }
-                            catch (Throwable e) {
-                                EclipseNSISPlugin.getDefault().log(e);
-                                return false;
+        synchronized (mLock) {
+            String ext = IOUtility.getFileExtension(file);
+            if (!Common.isEmpty(ext)) {
+                for (Iterator iter = mExtensions.keySet().iterator(); iter.hasNext();) {
+                    String extensionId = (String)iter.next();
+                    IExtension extension = getExtensionPointFilter().getExtension(extensionId);
+                    if (extension == null) {
+                        iter.remove();
+                    }
+                    else {
+                        List handlers = (List)mExtensions.get(extensionId);
+                        for (Iterator iterator = handlers.iterator(); iterator.hasNext();) {
+                            HandlerDescriptor desc = (HandlerDescriptor)iterator.next();
+                            if (desc.extensions.contains(ext)) {
+                                try {
+                                    return desc.handler.handle(file);
+                                }
+                                catch (Throwable e) {
+                                    EclipseNSISPlugin.getDefault().log(e);
+                                    return false;
+                                }
                             }
                         }
                     }
                 }
             }
-        }
-        return false;
+            return false;
+        }        
     }
 
     private IExtensionPoint getExtensionPointFilter()
@@ -88,39 +104,45 @@ public class HelpBrowserLocalFileHandler implements IExtensionChangeHandler, IHe
 
     public void addExtension(IExtensionTracker tracker, IExtension extension)
     {
-        if(!mExtensions.containsKey(extension.getUniqueIdentifier())) {
-            IConfigurationElement[] elements = extension.getConfigurationElements();
-            List handlers = new ArrayList();
-            for (int i = 0; i < elements.length; i++) {
-                try {
-                    HandlerDescriptor descriptor = new HandlerDescriptor();
-                    String id = elements[i].getAttribute(HANDLER_ID);
-                    if(id != null) {
-                        descriptor.id = id;
-                    }
-                    String name = elements[i].getAttribute(HANDLER_NAME);
-                    if(name != null) {
-                        descriptor.name = name;
-                    }
-                    descriptor.extensions.addAll(Common.tokenizeToList(elements[i].getAttribute(HANDLER_EXTENSIONS),','));
-                    descriptor.handler = (IHelpBrowserLocalFileHandler)elements[i].createExecutableExtension(HANDLER_CLASS);
+        synchronized (mLock) {
+            if (!mExtensions.containsKey(extension.getUniqueIdentifier())) {
+                IConfigurationElement[] elements = extension.getConfigurationElements();
+                List handlers = new ArrayList();
+                for (int i = 0; i < elements.length; i++) {
+                    if (HANDLER.equals(elements[i].getName())) {
+                        try {
+                            HandlerDescriptor descriptor = new HandlerDescriptor();
+                            String id = elements[i].getAttribute(HANDLER_ID);
+                            if (id != null) {
+                                descriptor.id = id;
+                            }
+                            String name = elements[i].getAttribute(HANDLER_NAME);
+                            if (name != null) {
+                                descriptor.name = name;
+                            }
+                            descriptor.extensions.addAll(Common.tokenizeToList(elements[i].getAttribute(HANDLER_EXTENSIONS), ','));
+                            descriptor.handler = (IHelpBrowserLocalFileHandler)elements[i].createExecutableExtension(HANDLER_CLASS);
 
-                    tracker.registerObject(extension, descriptor,IExtensionTracker.REF_WEAK);
-                    handlers.add(descriptor);
+                            tracker.registerObject(extension, descriptor, IExtensionTracker.REF_WEAK);
+                            handlers.add(descriptor);
+                        }
+                        catch (Exception e) {
+                            EclipseNSISPlugin.getDefault().log(e);
+                        }
+                    }
                 }
-                catch(Exception e) {
-                    EclipseNSISPlugin.getDefault().log(e);
-                }
+                mExtensions.put(extension.getUniqueIdentifier(), handlers);
             }
-            mExtensions.put(extension.getUniqueIdentifier(), handlers);
-        }
+        }        
     }
 
     public void removeExtension(IExtension extension, Object[] objects)
     {
-        if(mExtensions.containsKey(extension.getUniqueIdentifier())) {
-            mExtensions.remove(extension.getUniqueIdentifier());
-        }
+        synchronized (mLock) {
+            if (mExtensions.containsKey(extension.getUniqueIdentifier())) {
+                mExtensions.remove(extension.getUniqueIdentifier());
+            }
+        }        
     }
 
     private class HandlerDescriptor

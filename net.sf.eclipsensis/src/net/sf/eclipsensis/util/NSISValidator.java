@@ -72,6 +72,18 @@ public class NSISValidator implements INSISConstants
     private NSISValidator()
     {
     }
+    
+    public static boolean isCVSVersion(Version v)
+    {
+        try {
+            String version = "v" + v.toString(); //$NON-NLS-1$
+            return cCVSVersionPattern.matcher(version).matches();
+        }
+        catch (Exception e) {
+            EclipseNSISPlugin.getDefault().log(e);
+            return false;
+        }
+    }
 
     public static File findNSISExe(File nsisHome)
     {

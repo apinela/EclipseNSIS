@@ -69,11 +69,10 @@ public class NSISTemplateEditorDialog extends StatusMessageDialog
      *
      * @param parent the shell parent of the dialog
      * @param template the template to edit
-     * @param edit whether this is a new template or an existing being edited
      * @param isNameModifiable whether the name of the template may be modified
      * @param registry the context type registry to use
      */
-    public NSISTemplateEditorDialog(Shell parent, Template template, boolean isNameModifiable, ContextTypeRegistry contextTypeRegistry)
+    public NSISTemplateEditorDialog(Shell parent, Template template, boolean edit, boolean isNameModifiable, ContextTypeRegistry contextTypeRegistry)
     {
         super(parent);
 
@@ -97,16 +96,8 @@ public class NSISTemplateEditorDialog extends StatusMessageDialog
         mContextTypes= (String[][]) contexts.toArray(new String[contexts.size()][]);
 
         mTemplateContextType = mContextTypeRegistry.getContextType(template.getContextTypeId());
-    }
-
-    /**
-     * @see org.eclipse.jface.window.Window#configureShell(Shell)
-     */
-    protected void configureShell(Shell newShell)
-    {
-        super.configureShell(newShell);
-        newShell.setText(EclipseNSISPlugin.getResourceString((Common.isEmpty(mName)?"new.template.dialog.title": //$NON-NLS-1$
-                                                                                           "edit.template.dialog.title"))); //$NON-NLS-1$
+        setTitle(EclipseNSISPlugin.getResourceString((edit?"edit.template.dialog.title": //$NON-NLS-1$
+                                                           "new.template.dialog.title"))); //$NON-NLS-1$
     }
 
     public void create()

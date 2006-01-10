@@ -16,12 +16,14 @@ import java.text.MessageFormat;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
+import net.sf.eclipsensis.dialogs.NSISConfigWizardDialog;
+import net.sf.eclipsensis.job.IJobStatusRunnable;
 import net.sf.eclipsensis.settings.INSISHomeListener;
 import net.sf.eclipsensis.settings.NSISPreferences;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.util.IOUtility;
 
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.browser.*;
@@ -33,6 +35,7 @@ import org.eclipse.ui.part.ViewPart;
 
 public class NSISHTMLHelp extends ViewPart implements INSISConstants
 {
+    private static final String ECLIPSENSIS_URI_SCHEME = "eclipsensis:"; //$NON-NLS-1$
     private static final String FILE_URI_SCHEME = "file:///"; //$NON-NLS-1$
     private static String cFirstPage = null;
     private static final String IMAGE_LOCATION_FORMAT = EclipseNSISPlugin.getResourceString("help.browser.throbber.icon.format"); //$NON-NLS-1$
@@ -60,7 +63,17 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
             if(monitor != null) {
                 monitor.subTask(EclipseNSISPlugin.getResourceString("refreshing.browser.message")); //$NON-NLS-1$
             }
-            openHelp();
+            if(Display.getCurrent() != null) {
+                openHelp();
+            }
+            else {
+                Display.getDefault().syncExec(new Runnable() {
+                    public void run()
+                    {
+                        openHelp();
+                    }
+                });
+            }
         }
     };
 
@@ -82,7 +95,8 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
                         activePage.activate(htmlHelp);
                         result[0] = htmlHelp.isActivated();
                         if(result[0]) {
-                            htmlHelp.getBrowser().setUrl(url);
+                            cFirstPage = url;
+                            htmlHelp.openHelp();
                         }
                     }
                 }
@@ -144,10 +158,32 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
                     if(event.location.regionMatches(true,0,FILE_URI_SCHEME,0,FILE_URI_SCHEME.length())) {
                         try {
                             URI url = new URI(event.location);
-                            f = new File(url);
+                            if(url.getFragment() != null) {
+                                int n = event.location.lastIndexOf('#');
+                                if(n >= 0) {
+                                    url = new URI(event.location.substring(0,n));
+                                }
+                            }
+                            if(url != null) {
+                                f = new File(url);
+                            }
                         }
                         catch (URISyntaxException e) {
                             EclipseNSISPlugin.getDefault().log(e);
+                        }
+                    }
+                    else if(event.location.regionMatches(true,0,ECLIPSENSIS_URI_SCHEME,0,ECLIPSENSIS_URI_SCHEME.length())) {
+                        String action = event.location.substring(ECLIPSENSIS_URI_SCHEME.length());
+                        if(action.equals(NSISHelpProducer.CONFIGURE)) {
+                            IJobStatusRunnable runnable = new IJobStatusRunnable() {
+                                public IStatus run(IProgressMonitor monitor)
+                                {
+                                    new NSISConfigWizardDialog(getSite().getShell()).open();
+                                    return Status.OK_STATUS;
+                                }
+                            };
+                            EclipseNSISPlugin.getDefault().getJobScheduler().scheduleUIJob(NSISHTMLHelp.class, EclipseNSISPlugin.getResourceString("configure.nsis.job.name"), runnable); //$NON-NLS-1$
+                            event.doit = false;
                         }
                     }
                     else {
@@ -238,7 +274,8 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
                     mBrowser.refresh();
                 }
                 else if (item == mHome) {
-                    mBrowser.setUrl(mStartPage);
+                    cFirstPage = null;
+                    openHelp();
                 }
             }
         };
@@ -265,7 +302,8 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
         });
         mThrobber.addListener(SWT.MouseDown, new Listener() {
             public void handleEvent(Event e) {
-                mBrowser.setUrl(mStartPage);
+                cFirstPage = null;
+                openHelp();
             }
         });
 
@@ -342,12 +380,19 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
     private void openHelp()
     {
         if (isActivated()) {
-            mStartPage = NSISHelpURLProvider.getInstance().getCHMHelpStartPage();
-            if(mStartPage == null) {
-                mStartPage = "about:blank"; //$NON-NLS-1$
+            if (!EclipseNSISPlugin.getDefault().isConfigured()) {
+                mBrowser.setText(EclipseNSISPlugin.getFormattedString("unconfigured.browser.help.format", //$NON-NLS-1$
+                        new String[] {NSISHelpProducer.STYLE,ECLIPSENSIS_URI_SCHEME,
+                                      NSISHelpProducer.CONFIGURE}));
             }
-            mBrowser.setUrl(cFirstPage == null?mStartPage:cFirstPage);
-            cFirstPage = null;
+            else {
+                mStartPage = NSISHelpURLProvider.getInstance().getCHMHelpStartPage();
+                if (mStartPage == null) {
+                    mStartPage = "about:blank"; //$NON-NLS-1$
+                }
+                mBrowser.setUrl(cFirstPage == null?mStartPage:cFirstPage);
+                cFirstPage = null;
+            }
         }
     }
 

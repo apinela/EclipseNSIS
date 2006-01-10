@@ -148,24 +148,20 @@ public class NSISLaunchConfigDelegate implements ILaunchConfigurationDelegate
             new Thread(new Runnable() {
                 public void run()
                 {
-                    while(true) {
-                        if(!process.isTerminated()) {
-                            if(monitor.isCanceled()) {
-                                process.terminate();
-                                break;
-                            }
-                            try {
-                                Thread.sleep(10);
-                            }
-                            catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                            continue;
+                    while(!process.isTerminated()) {
+                        if(monitor.isCanceled()) {
+                            process.terminate();
+                            break;
                         }
-                        break;
+                        try {
+                            Thread.sleep(10);
+                        }
+                        catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
-            }).start();
+            },EclipseNSISPlugin.getResourceString("launch.monitor.thread.name")).start(); //$NON-NLS-1$
             MakeNSISResults results = MakeNSISRunner.compile(path, settings, console, new NSISConsoleLineProcessor(path));
             if (monitor.isCanceled()) {
                 process.terminate();

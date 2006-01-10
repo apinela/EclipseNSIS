@@ -13,6 +13,7 @@
 -->
 <plugin>
    <extension-point id="helpBrowserLocalFileHandler" name="%help.browser.file.handler.extension.name" schema="schema/helpBrowserLocalFileHandler.exsd"/>
+   <extension-point id="nsisConfigWizard" name="%nsis.config.wizard.extension.namesion.name" schema="schema/nsisConfigWizard.exsd"/>
    <extension
          point="org.eclipse.core.runtime.products">
       <product name="%product.name" application="org.eclipse.ui.ide.workbench" description="%product.description"> 
@@ -27,7 +28,7 @@
       <editor
             name="%editor.name"
             extensions="%nsis.extensions"
-            icon="%editor.icon"
+            icon="icons/nsis.gif"
             contributorClass="net.sf.eclipsensis.editor.NSISActionContributor"
             class="net.sf.eclipsensis.editor.NSISEditor"
             id="%editor.id">
@@ -113,7 +114,7 @@
       <page
             objectClass="org.eclipse.core.resources.IFile"
             adaptable="true"
-            icon="%property.page.icon"
+            icon="icons/nsis.gif"
             class="net.sf.eclipsensis.dialogs.NSISPropertyPage"
             nameFilter="%nsi.extension"
             name="%property.page.name"
@@ -122,7 +123,7 @@
       <page
             objectClass="org.eclipse.core.resources.IFolder"
             adaptable="true"
-            icon="%property.page.icon"
+            icon="icons/nsis.gif"
             class="net.sf.eclipsensis.dialogs.NSISPropertyPage"
             name="%property.page.name"
             id="%folder.property.page.id">
@@ -130,7 +131,7 @@
       <page
             objectClass="org.eclipse.core.resources.IProject"
             adaptable="true"
-            icon="%property.page.icon"
+            icon="icons/nsis.gif"
             class="net.sf.eclipsensis.dialogs.NSISPropertyPage"
             name="%property.page.name"
             id="%project.property.page.id">
@@ -145,7 +146,7 @@
       <view
             allowMultiple="false"
             class="net.sf.eclipsensis.console.OldNSISConsole"
-            icon="%console.icon"
+            icon="icons/nsis.gif"
             category="%view.category.id"
             name="%console.name"
             id="%console.id">
@@ -153,7 +154,7 @@
       <view
             allowMultiple="false"
             class="net.sf.eclipsensis.help.NSISHTMLHelp"
-            icon="%htmlhelp.icon"
+            icon="icons/htmlhelp.gif"
             category="%view.category.id"
             name="%htmlhelp.name"
             id="%htmlhelp.id">
@@ -176,6 +177,9 @@
             <separator
                   name="net.sf.eclipsensis.Group3">
             </separator>
+            <separator
+                  name="net.sf.eclipsensis.Group4">
+            </separator>
          </menu>
          <action
                label="%about.action.name"
@@ -186,7 +190,7 @@
          </action>
          <action
                label="%htmlhelp.action.name"
-               icon="%htmlhelp.action.icon"
+               icon="icons/htmlhelp.gif"
                class="net.sf.eclipsensis.actions.NSISHTMLHelpAction"
                tooltip="%htmlhelp.action.tooltip"
                menubarPath="net.sf.eclipsensis.Menu/net.sf.eclipsensis.Group3"
@@ -195,8 +199,8 @@
          </action>
          <action
                label="%help.action.name"
-               disabledIcon="%help.action.disabledicon"
-               icon="%help.action.icon"
+               disabledIcon="icons/help_d.gif"
+               icon="icons/help.gif"
                class="net.sf.eclipsensis.actions.NSISHelpAction"
                tooltip="%help.action.tooltip"
                menubarPath="net.sf.eclipsensis.Menu/net.sf.eclipsensis.Group3"
@@ -204,19 +208,19 @@
                id="%help.action.id">
          </action>
          <action
-               disabledIcon="%wizard.action.disabledicon"
                toolbarPath="net.sf.eclipsensis.Group"
                label="%wizard.action.name"
                tooltip="%wizard.action.tooltip"
                class="net.sf.eclipsensis.actions.NSISWizardAction"
-               icon="%wizard.action.icon"
+               icon="icons/wizard.gif"
+               disabledIcon="icons/wizard_d.gif"
                menubarPath="net.sf.eclipsensis.Menu/net.sf.eclipsensis.Group2"
                id="%wizard.action.id">
          </action>
          <action
                label="%preferences.action.name"
-               disabledIcon="%preferences.action.disabledicon"
-               icon="%preferences.action.icon"
+               disabledIcon="icons/preferences_d.gif"
+               icon="icons/preferences.gif"
                class="net.sf.eclipsensis.actions.NSISPreferencesAction"
                tooltip="%preferences.action.tooltip"
                menubarPath="net.sf.eclipsensis.Menu/net.sf.eclipsensis.Group2"
@@ -232,46 +236,46 @@
                id="%clear.markers.action.id">
          </action>
          <action
-               disabledIcon="%cancel.action.disabledicon"
                toolbarPath="net.sf.eclipsensis.Group"
                label="%cancel.action.name"
                definitionId="net.sf.eclipsensis.commands.NSISCancel"
                tooltip="%cancel.action.tooltip"
                class="net.sf.eclipsensis.actions.NSISCancelAction"
-               icon="%cancel.action.icon"
+               icon="icons/cancel.gif"
+               disabledIcon="icons/cancel_d.gif"
                menubarPath="net.sf.eclipsensis.Menu/net.sf.eclipsensis.Group"
                id="%cancel.action.id">
          </action>
          <action
-               disabledIcon="%compile.test.action.disabledicon"
                toolbarPath="net.sf.eclipsensis.Group"
                label="%compile.test.action.name"
                definitionId="%compile.test.command.id"
                tooltip="%compile.test.action.tooltip"
                class="net.sf.eclipsensis.actions.NSISCompileTestAction"
-               icon="%compile.test.action.icon"
+               icon="icons/compiletest.gif"
+               disabledIcon="icons/compiletest_d.gif"
                menubarPath="net.sf.eclipsensis.Menu/net.sf.eclipsensis.Group"
                id="%compile.test.action.id">
          </action>
          <action
-               disabledIcon="%test.action.disabledicon"
                toolbarPath="net.sf.eclipsensis.Group"
                label="%test.action.name"
                definitionId="%test.command.id"
                tooltip="%test.action.tooltip"
                class="net.sf.eclipsensis.actions.NSISTestAction"
-               icon="%test.action.icon"
+               icon="icons/test.gif"
+               disabledIcon="icons/test_d.gif"
                menubarPath="net.sf.eclipsensis.Menu/net.sf.eclipsensis.Group"
                id="%test.action.id">
          </action>
          <action
-               disabledIcon="%compile.action.disabledicon"
                toolbarPath="net.sf.eclipsensis.Group"
                label="%compile.action.name"
                definitionId="%compile.command.id"
                tooltip="%compile.action.tooltip"
                class="net.sf.eclipsensis.actions.NSISCompileAction"
-               icon="%compile.action.icon"
+               icon="icons/compile.gif"
+               disabledIcon="icons/compile_d.gif"
                menubarPath="net.sf.eclipsensis.Menu/net.sf.eclipsensis.Group"
                id="%compile.action.id">
          </action>
@@ -336,7 +340,7 @@
          <action
                enablesFor="1"
                label="%compile.test.action.name"
-               icon="%compile.test.action.icon"
+               icon="icons/compiletest.gif"
                class="net.sf.eclipsensis.actions.NSISCompileTestAction"
                tooltip="%compile.test.action.tooltip"
                menubarPath="net.sf.eclipsensis.PopupMenu/net.sf.eclipsensis.PopupGroup"
@@ -346,7 +350,7 @@
          <action
                enablesFor="1"
                label="%test.action.name"
-               icon="%test.action.icon"
+               icon="icons/test.gif"
                class="net.sf.eclipsensis.actions.NSISTestAction"
                tooltip="%test.action.tooltip"
                menubarPath="net.sf.eclipsensis.PopupMenu/net.sf.eclipsensis.PopupGroup"
@@ -356,7 +360,7 @@
          <action
                enablesFor="1"
                label="%compile.action.name"
-               icon="%compile.action.icon"
+               icon="icons/compile.gif"
                class="net.sf.eclipsensis.actions.NSISCompileAction"
                tooltip="%compile.action.tooltip"
                menubarPath="net.sf.eclipsensis.PopupMenu/net.sf.eclipsensis.PopupGroup"
@@ -656,7 +660,7 @@
             id="%wizard.category.id"/>
       <wizard
             class="net.sf.eclipsensis.wizard.NSISScriptWizard"
-            icon="%wizard.icon"
+            icon="icons/wizard.gif"
             category="%wizard.category.id"
             name="%wizard.name"
             id="%wizard.id"/>
@@ -675,7 +679,7 @@
             contextTypeId="%nsis.contextType.id"
             autoinsert="false"
             id="%function.id">
-         <pattern>Function %name%&#13;&#10;FunctionEnd&#13;&#10;</pattern>
+         <pattern>Function %name%&#13;&#10;%cursor%&#13;&#10;FunctionEnd&#13;&#10;</pattern>
       </template>
       <template
             name="%section.name"
@@ -684,7 +688,7 @@
             contextTypeId="%nsis.contextType.id"
             autoinsert="false"
             id="%section.id">
-         <pattern>Section %name%&#13;&#10;SectionEnd&#13;&#10;</pattern>
+         <pattern>Section %name%&#13;&#10;%cursor%&#13;&#10;SectionEnd&#13;&#10;</pattern>
       </template>
       <template
             name="%page.name"
@@ -702,7 +706,7 @@
             contextTypeId="%nsis.contextType.id"
             autoinsert="false"
             id="%pageex.id">
-         <pattern>PageEx %pagetype%&#13;&#10;PageExEnd&#13;&#10;</pattern>
+         <pattern>PageEx %pagetype%&#13;&#10;%cursor%&#13;&#10;PageExEnd&#13;&#10;</pattern>
       </template>
       <resolver
             name="%nsis.resolvers.register.name"
@@ -844,11 +848,11 @@
    </extension>
    <extension point="org.eclipse.debug.ui.launchConfigurationTypeImages">
       <launchConfigurationTypeImage
-            icon="%launch.config.icon"
+            icon="icons/nsis.gif"
             configTypeID="net.sf.eclipsensis.launch.nsisLaunchConfigType"
             id="net.sf.eclipsensis.launch.nsisLaunchConfigTypeImage"/>
       <launchConfigurationTypeImage
-            icon="%launch.config.icon"
+            icon="icons/nsis.gif"
             configTypeID="net.sf.eclipsensis.launch.nsisBuilderLaunchConfigType"
             id="net.sf.eclipsensis.launch.nsisBuilderLaunchConfigTypeImage"/>
    </extension>
@@ -882,7 +886,7 @@
          point="org.eclipse.debug.ui.launchShortcuts">
       <shortcut
             class="net.sf.eclipsensis.launch.NSISLaunchShortcut"
-            icon="%launch.shortcut.icon"
+            icon="icons/nsis.gif"
             id="net.sf.eclipsensis.launch.nsisLaunchShortcut"
             label="%launch.shortcut.label"
             modes="run">
@@ -900,5 +904,17 @@
             </enablement>
   		 </contextualLaunch>
       </shortcut>
+   </extension>
+   <extension point="net.sf.eclipsensis.nsisConfigWizard"
+       id="net.sf.eclipsensis.config.nsisConfigWizards"> 
+      <wizard 
+         id="net.sf.eclipsensis.config.manual.NSISManualConfigWizard" 
+         name="Manual Configuration" 
+         icon="icons/manualcfg.gif" 
+         class="net.sf.eclipsensis.config.manual.NSISManualConfigWizard"> 
+         <description>
+             Configure NSIS by manually specifying location of MakeNSIS.exe
+         </description> 
+     </wizard> 
    </extension>
 </plugin>

@@ -9,6 +9,8 @@
  *******************************************************************************/
 package net.sf.eclipsensis.util;
 
+import java.net.Authenticator;
+
 public class WinAPI
 {
     static {
@@ -118,6 +120,8 @@ public class WinAPI
     public static final native String[] RegGetSubKeys(int hRootKey, String pszSubKey);
 
     public static final native boolean RegKeyExists(int hRootKey, String pszSubKey);
+    
+    public static final native Authenticator getDefaultAuthenticator();
     
     private WinAPI()
     {

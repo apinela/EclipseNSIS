@@ -585,7 +585,7 @@ public class MakeNSISRunner implements INSISConstants
             InputStream inputStream = process.getInputStream();
             OutputFileConsoleLineProcessor outFileProcessor = new OutputFileConsoleLineProcessor(outputProcessor);
             NSISConsoleWriter mainWriter = new NSISConsoleWriter(proc, console, inputStream, outFileProcessor);
-            new Thread(mainWriter).start();
+            new Thread(mainWriter,EclipseNSISPlugin.getResourceString("makensis.stdout.thread.name")).start(); //$NON-NLS-1$
             InputStream errorStream = process.getErrorStream();
             NSISConsoleWriter errorWriter = new NSISConsoleWriter(proc, console, errorStream, new INSISConsoleLineProcessor() {
                 public NSISConsoleLine processText(String text)
@@ -597,7 +597,7 @@ public class MakeNSISRunner implements INSISConstants
                 {
                 }
             });
-            new Thread(errorWriter).start();
+            new Thread(errorWriter,EclipseNSISPlugin.getResourceString("makensis.stderr.thread.name")).start(); //$NON-NLS-1$
 
             int rv = process.waitFor();
             consoleErrors.addAll(mainWriter.getErrors());
@@ -733,7 +733,7 @@ public class MakeNSISRunner implements INSISConstants
         try {
             MakeNSISProcess proc = createProcess(makensisExe, cmdArray, null, workDir);
             Process process = proc.getProcess();
-            new Thread(new RunnableInputStreamReader(process.getErrorStream(),false)).start();
+            new Thread(new RunnableInputStreamReader(process.getErrorStream(),false),EclipseNSISPlugin.getResourceString("makensis.stderr.thread.name")).start(); //$NON-NLS-1$
             output = new RunnableInputStreamReader(process.getInputStream()).getOutput();
             int rv = process.waitFor();
             IOUtility.closeIO(process.getOutputStream());
