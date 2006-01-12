@@ -60,15 +60,15 @@
 
    <plugin
          id="net.sf.eclipsensis"
-         download-size="2164"
-         install-size="2164"
+         download-size="2349"
+         install-size="2349"
          version="0.9.4"
          unpack="false"/>
 
    <plugin
          id="net.sf.eclipsensis.update"
-         download-size="0"
-         install-size="0"
+         download-size="94"
+         install-size="94"
          version="0.9.4"
          unpack="false"/>
 
