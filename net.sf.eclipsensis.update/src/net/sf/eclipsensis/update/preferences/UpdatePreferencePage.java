@@ -20,8 +20,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -140,7 +139,6 @@ public class UpdatePreferencePage extends PreferencePage implements IWorkbenchPr
 
         Label l = new Label(parent,SWT.SEPARATOR|SWT.HORIZONTAL);
         l.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false));
-        
         mAutoUpdate = new Button(parent,SWT.CHECK);
         mAutoUpdate.setText(EclipseNSISUpdatePlugin.getResourceString("auto.update.label")); //$NON-NLS-1$
         mAutoUpdate.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false));
@@ -260,7 +258,7 @@ public class UpdatePreferencePage extends PreferencePage implements IWorkbenchPr
         l = new Label(group,SWT.NONE);
         l.setText(EclipseNSISUpdatePlugin.getResourceString("update.schedule.daily.time.label")); //$NON-NLS-1$
         l.setLayoutData(new GridData(SWT.LEFT,SWT.CENTER,false,false));
-        mDailyTime = createTimeCombo(group);
+        mDailyTime = createTimePicker(group);
         mDailyTime.setLayoutData(new GridData(SWT.LEFT,SWT.FILL,false,false));
         Label l2 = new Label(group,SWT.NONE);
         l2.setLayoutData(new GridData(SWT.FILL,SWT.FILL,false,false));
@@ -283,7 +281,7 @@ public class UpdatePreferencePage extends PreferencePage implements IWorkbenchPr
         l2 = new Label(group,SWT.NONE);
         l2.setText(EclipseNSISUpdatePlugin.getResourceString("update.schedule.weekly.time.label")); //$NON-NLS-1$
         l2.setLayoutData(new GridData(SWT.LEFT,SWT.CENTER,false,false));
-        mWeeklyTime = createTimeCombo(group);
+        mWeeklyTime = createTimePicker(group);
         mWeeklyTime.setLayoutData(new GridData(SWT.LEFT,SWT.FILL,false,false));
         
         new Enabler(mWeekly, new Control[] {l, mDayOfWeek, l2, mWeeklyTime});
@@ -305,7 +303,7 @@ public class UpdatePreferencePage extends PreferencePage implements IWorkbenchPr
         l2 = new Label(group,SWT.NONE);
         l2.setText(EclipseNSISUpdatePlugin.getResourceString("update.schedule.monthly.time.label")); //$NON-NLS-1$
         l2.setLayoutData(new GridData(SWT.LEFT,SWT.CENTER,false,false));
-        mMonthlyTime = createTimeCombo(group);
+        mMonthlyTime = createTimePicker(group);
         mMonthlyTime.setLayoutData(new GridData(SWT.LEFT,SWT.FILL,false,false));
 
         new Enabler(mMonthly, new Control[] {l, mDayOfMonth, l2, mMonthlyTime});
@@ -343,7 +341,7 @@ public class UpdatePreferencePage extends PreferencePage implements IWorkbenchPr
         mIgnorePreview.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false));
     }
 
-    private Combo createTimeCombo(Composite parent)
+    private Combo createTimePicker(Composite parent)
     {
         Combo c = new Combo(parent,SWT.DROP_DOWN|SWT.READ_ONLY);
         c.setItems(cTimesOfDay);
@@ -375,6 +373,66 @@ public class UpdatePreferencePage extends PreferencePage implements IWorkbenchPr
     {
     }
     
+/*
+    private class TimePicker extends Composite
+    {
+        private Calendar mCalendar = Calendar.getInstance();
+        
+        public TimePicker(Composite parent, int style)
+        {
+            super(parent, style);
+            create();
+        }
+        
+        private void create()
+        {
+            GridLayout layout = new GridLayout(4,false);
+            layout.marginHeight = layout.marginWidth = 0;
+            setLayout(layout);
+            
+            final Spinner hourSpinner = new Spinner(this,SWT.WRAP|SWT.BORDER);
+            hourSpinner.setLayoutData(new GridData(SWT.FILL,SWT.FILL,false,false));
+            hourSpinner.setMaximum(mCalendar.getMaximum(Calendar.HOUR)+1);
+            hourSpinner.setMinimum(mCalendar.getMinimum(Calendar.HOUR)+1);
+            hourSpinner.setIncrement(1);
+            hourSpinner.setLayoutData(new GridData(SWT.FILL,SWT.FILL,false,false));
+            hourSpinner.addSelectionListener(new SelectionAdapter() {
+                public void widgetSelected(SelectionEvent e)
+                {
+                    mCalendar.set(Calendar.HOUR, hourSpinner.getSelection() % 12);
+                }
+            });
+            
+            Label l = new Label(this, SWT.NONE);
+            l.setText(EclipseNSISUpdatePlugin.getResourceString("time.separator",":"));
+            l.setLayoutData(new GridData(SWT.FILL,SWT.FILL,false,false));
+            
+            final Spinner minuteSpinner = new Spinner(this,SWT.WRAP|SWT.BORDER);
+            minuteSpinner.setLayoutData(new GridData(SWT.FILL,SWT.FILL,false,false));
+            minuteSpinner.setMaximum(mCalendar.getMaximum(Calendar.MINUTE));
+            minuteSpinner.setMinimum(mCalendar.getMinimum(Calendar.MINUTE));
+            minuteSpinner.setIncrement(1);
+            minuteSpinner.setLayoutData(new GridData(SWT.FILL,SWT.FILL,false,false));
+            minuteSpinner.addSelectionListener(new SelectionAdapter() {
+                public void widgetSelected(SelectionEvent e)
+                {
+                    mCalendar.set(Calendar.MINUTE, minuteSpinner.getSelection());
+                }
+            });
+            
+            final Combo ampmCombo = new Combo(this,SWT.DROP_DOWN|SWT.READ_ONLY);
+            ampmCombo.setLayoutData(new GridData(SWT.FILL,SWT.FILL,false,false));
+            DateFormatSymbols dfs = new DateFormatSymbols();
+            ampmCombo.setItems(dfs.getAmPmStrings());
+            ampmCombo.addSelectionListener(new SelectionAdapter() {
+                public void widgetSelected(SelectionEvent e)
+                {
+                    mCalendar.set(Calendar.AM_PM, ampmCombo.getSelectionIndex());
+                }
+            });
+        }
+    }
+*/    
     private class Enabler
     {
         private Button mButton;

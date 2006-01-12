@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+<!--
+###############################################################################
+# Copyright (c) 2004, 2005 Sunil Kamath (IcemanK).
+# All rights reserved.
+# This program is made available under the terms of the Common Public License
+# v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
+#
+# Contributors:
+# Sunil Kamath (IcemanK) - initial API and implementation
+###############################################################################
+-->
+  <title>EclipseNSIS - Script Wizard Completion</title>
+
+
+  <link rel="stylesheet" href="book.css" charset="ISO-8859-1" type="text/css">
+
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+
+  <meta http-equiv="Content-Style-Type" content="text/css">
+
+  <script language="javascript" type="text/javascript" src="help.js"></script>
+</head>
+<body>
+<div id="main">
+<a href="wizcomplete.html">Previous</a> | <a href="overview.html#contents">Contents</a> | <a href="preferences.html">Next</a>
+<hr>
+<h1>NSIS Update </h1>
+<p>NSIS Update is a feature of EclipseNSIS that can be used to find, 
+download and install the latest NSIS software. It can be invoked in several ways:</p>
+<ul>
+<li><a href="#menuitem">Menuitem/Toolbar button</a></li>
+<li><a href="#wizard">Wizard</a></li>
+<li><a href="#scheduler">Scheduler</a></li>
+</ul>
+<a name="notes"></a><span style="font-weight: bold"><p>Please note the following items:</p>
+<ol>
+<li>NSIS Update uses the same HTTP proxy settings as the Eclipse platform <a href="javascript:redirectEclipse('org.eclipse.platform.doc.user/reference/ref-21.htm');">Install/Update</a> feature.</li>
+<li>NSIS Update scheduler <span style="text-decoration:underline;  border-bottom: 1px solid">does 
+not</span> update EclipseNSIS itself. To schedule automatic updates of EclipseNSIS (and other installed features 
+in Eclipse) use the Eclipse platform  <a href="javascript:redirectEclipse('/org.eclipse.platform.doc.user/tasks/tasks-37a.htm');">Automatic Update Scheduler</a>.</li>
+<li>NSIS Update does not update CVS or nightly builds of NSIS. If the configured NSIS home points to a CVS or nightly build, then it must be manually updated by recompiling it or downloading a new nightly build.</li>
+</ol></span>
+<a name="menuitem"></a><h2>Menuitem/Toolbar Button</h2>
+<p>NSIS Update is available as <a href="editing.html#a_update">menuitem</a> in the EclipseNSIS menu and a <a href="editing.html#a_update">button</a> on the EclipseNSIS toolbar,
+displayed whenever the EclipseNSIS editor is open. This provides convenient, single-click access to NSIS Update. 
+The action performed is equivalent to the <a href="updateprefs.html#defaultaction">default update action</a> in the NSIS Update preferences page.</p>
+<a name="wizard"></a><h2>Wizard</h2>
+<p>The NSIS Update Wizard is available from the <span style="font-style:italic">Help&rarr;NSIS Update Wizard </span> menuitem. The user can specify the NSIS Update action and other update options before it runs. The NSIS Update action and options are identical to those described in the NSIS Update <a href="updateprefs.html">preference page</a>. </p>
+<p style="text-align: center;"><a href="updateprefs.html#a_action"><img src="images/updatewizard.gif" alt="NSIS Update Wizard" border="0" style="border: 0px solid ; width: 438px; height: 376px;"></a>
+</p>
+<a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="scheduler"></a><h2>Scheduler</h2>
+<p>NSIS Update is able to search for updates to NSIS on a periodic basis without user assistance. 
+The way this search is performed is configurable by the user on the <a href="updateprefs.html">Automatic NSIS Updates preference page</a>. Users can configure update schedule, actions and other options.</p>
+<br>
+<hr><a href="wizcomplete.html">Previous</a> | <a href="overview.html#contents">Contents</a> | <a href="preferences.html">Next</a>
+<p><strong><small>Copyright &copy; 2004, 2005 Sunil Kamath (IcemanK).</small></strong></p>
+</div>
+
+</body></html>

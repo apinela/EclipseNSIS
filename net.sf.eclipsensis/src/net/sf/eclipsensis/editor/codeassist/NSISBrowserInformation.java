@@ -7,20 +7,25 @@
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
-package net.sf.eclipsensis.update.actions;
+package net.sf.eclipsensis.editor.codeassist;
 
-import net.sf.eclipsensis.actions.NSISAction;
-import net.sf.eclipsensis.update.jobs.NSISCheckUpdateJob;
-
-import org.eclipse.jface.action.IAction;
-
-public class NSISUpdateAction extends NSISAction
+public class NSISBrowserInformation
 {
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
-     */
-    public void run(IAction action)
+    private String mKeyword;
+    private String mInformation;
+    
+    public NSISBrowserInformation(String keyword, String information)
     {
-        new NSISCheckUpdateJob().schedule();
+        mKeyword = keyword;
+        mInformation = information;
+    }
+
+    public String getInformation()
+    {
+        return mInformation;
+    }
+    public String getKeyword()
+    {
+        return mKeyword;
     }
 }

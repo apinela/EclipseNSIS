@@ -76,11 +76,11 @@ public class NSISBrowserInformationProvider extends NSISInformationProvider
                 buf.append(obj);
             }
             buf.append(NSISHelpURLProvider.KEYWORD_HELP_HTML_SUFFIX);
-            info = buf.toString();
+            return buf.toString();
         }
         else {
             updateColorStyles();
+            return new NSISBrowserInformation(word, info);
         }
-        return info;
     }
 }

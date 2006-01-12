@@ -28,9 +28,9 @@ public class NSISHelpProducer implements IExecutableExtension, IHelpContentProdu
     public static final String STYLE = EclipseNSISPlugin.getResourceString("help.style",""); //$NON-NLS-1$ //$NON-NLS-2$
     public static final String CONFIGURE = "configure"; //$NON-NLS-1$
     
-    private static final String NSIS_CONTRIB_PATH="help/NSIS/$CONTRIB$";
+    private static final String NSIS_CONTRIB_PATH="help/NSIS/$CONTRIB$"; //$NON-NLS-1$
     private static final byte[] NSIS_CONTRIB_JS=new StringBuffer("<!--").append(LINE_SEPARATOR).append( //$NON-NLS-1$
-        "var nsisContribPath=\"/").append(PLUGIN_ID).append("/").append(NSIS_CONTRIB_PATH).append( //$NON-NLS-1$
+        "var nsisContribPath=\"/").append(PLUGIN_ID).append("/").append(NSIS_CONTRIB_PATH).append( //$NON-NLS-1$ //$NON-NLS-2$
         "\";").append(LINE_SEPARATOR).append("//-->").append(LINE_SEPARATOR).toString().getBytes(); //$NON-NLS-1$ //$NON-NLS-2$
 
     private static final byte[] GO_BACK = "<html><head><script language=\"javascript\">\n<!--\nhistory.go(-1);\n//-->\n</script></head></html>".getBytes(); //$NON-NLS-1$

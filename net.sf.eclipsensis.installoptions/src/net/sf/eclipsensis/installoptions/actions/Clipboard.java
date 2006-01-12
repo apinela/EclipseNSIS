@@ -13,6 +13,7 @@ import java.beans.*;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.dnd.InstallOptionsObjectTransfer;
 
 import org.eclipse.swt.dnd.Transfer;
@@ -53,7 +54,7 @@ public class Clipboard
             Runnable runnable = new Runnable() {
                 public void run()
                 {
-                    Thread.currentThread().setName("EclipseNSIS InstallOptions Editor Clipboard Monitor");
+                    Thread.currentThread().setName(InstallOptionsPlugin.getResourceString("clipboard.monitor.thread.name")); //$NON-NLS-1$
                     fireContentsAvailable();
                 }
             };

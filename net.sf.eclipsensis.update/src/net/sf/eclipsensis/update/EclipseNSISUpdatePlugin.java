@@ -83,11 +83,16 @@ public class EclipseNSISUpdatePlugin extends AbstractUIPlugin
 
     public static String getResourceString(String key) 
     {
+        return getResourceString(key, key);
+    }
+
+    public static String getResourceString(String key, String defaultValue) 
+    {
         ResourceBundle bundle = getDefault().getResourceBundle();
         try {
             return (bundle != null) ? bundle.getString(key) : key;
         } catch (MissingResourceException e) {
-            return key;
+            return defaultValue;
         }
     }
 

@@ -146,9 +146,9 @@ script. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a><br>
 <dt>Import Registration File</dt>
 <dd>This command imports the contents of a Windows registration (.REG) file into the
 current NSIS script in the form of WriteRegXXXX commands. A .REG file can be
-created by using the Export command in <a href="http://www.microsoft.com/technet/prodtechnol/windowsserver2003/library/DepKit/f7daf28e-e0ef-42e5-91e3-d4b152798c70.mspx">Regedit.exe</a>. Imported
-entries have Windows shell folder names (e.g., $WINDIR, $SYSDIR, etc) automatically 
-substituted.<br>
+created by using the Export command in <a href="http://www.microsoft.com/technet/prodtechnol/windowsserver2003/library/DepKit/f7daf28e-e0ef-42e5-91e3-d4b152798c70.mspx">Regedit.exe</a>. Windows shell folder names (e.g., $WINDIR, $SYSDIR, etc) are automatically 
+substituted in imported
+entries.<br>
 <span style="font-weight: bold">Note: REG_MULTI_SZ values will not be imported since they are not supported by NSIS.</span> <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a><br>
 <strong>Shortcut:</strong> Shift+F7</dd>
 </dl>
@@ -156,9 +156,9 @@ substituted.<br>
 <dl id="id_import_regkey">
 <dt>Import Registry Key</dt>
 <dd>This command imports the contents of a Windows registry key into the
-current NSIS script in the form of WriteRegXXXX commands. Imported
-entries have Windows shell folder names (e.g., $WINDIR, $SYSDIR, etc) automatically 
-substituted.<br>
+current NSIS script in the form of WriteRegXXXX commands. Windows shell folder names (e.g., $WINDIR, $SYSDIR, etc) are automatically 
+substituted in imported
+entries.<br>
 <span style="font-weight: bold">Note: REG_MULTI_SZ values will not be imported since they are not supported by NSIS.</span> <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a><br>
 <strong>Shortcut:</strong> Shift+F8</dd>
 </dl>
@@ -178,7 +178,7 @@ the vertical ruler when that portion of the script is visible.</p>
 <p>The EclipseNSIS editor includes a menu on the main menubar as well as a
 toolbar which provide quick access to some EclipseNSIS-related commands.
 Click on the image below for help on a particular command.</p>
-<p style="text-align: center;"><img style="border: 0px solid ; width: 406px; height: 262px;" usemap="#editormenu" ismap="ismap" alt="Editor Menu" src="images/editormenu.gif"></p>
+<p style="text-align: center;"><img style="border: 0px solid ; width: 456px; height: 291px;" usemap="#editormenu" ismap="ismap" alt="Editor Menu" src="images/editormenu.gif"></p>
 <a name="a_compile"></a>
 <dl id="id_compile">
 <dt>Compile Script</dt>
@@ -249,6 +249,11 @@ preference setting. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd
 <dt>About EclipseNSIS</dt>
 <dd>Opens the EclipseNSIS About dialog. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd>
 </dl>
+<a name="a_update"></a>
+<dl id="id_update">
+<dt>NSIS Update</dt>
+<dd>Runs <a href="update.html#menuitem">NSIS Update</a>. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd>
+</dl>
 <a name="outline"></a><h2>Code Outline</h2>
 <p>EclipseNSIS includes a code outline view for the currently-active NSIS
 script in the EclipseNSIS editor. The outline view lists structural elements
@@ -310,13 +315,22 @@ an Eclipse Workbench task. These tasks are shown in the editor
 using markers in the <a href="#rulers">vertical and overview rulers</a>, and can also be viewed in the Eclipse Workbench <a href="javascript:redirectEclipse('/org.eclipse.platform.doc.user/concepts/ctskview.htm');">Tasks view</a>.
 The task tags can be configured using the <a href="tasktagprefs.html">Task Tags preference page</a>.</p>
 <a name="integhelp"></a><h2>Integrated Help</h2>
-<p>EclipseNSIS also provides integrated help while working with NSIS scripts. This is available in two forms:</p><br>
+<p>EclipseNSIS also provides integrated, context sensitive help while working with NSIS scripts. This is available in two forms:</p>
+<br>
 <dl>
-<a name="quickhelp"></a><dt>Quick Help</dt>
-<dd><p>When the mouse hovers over an NSIS keyword, help for that keyword is displayed for in an information popup.</p>
-<p style="text-align: center;"><img style="border: 0px solid ; width: 546px; height: 170px;" alt="Hover Help" src="images/hoverhelp.gif"></p>
-<p>Pressing the <strong>F2</strong> key displays the keyword help in the <a href="#helpbrowser">help browser</a>, and pressing the <strong>F3</strong> key provides detailed hover help:</p>
-<p style="text-align: center;"><img style="border: 0px solid ; width: 536px; height: 211px;" alt="Hover Help" src="images/stickyhelp.gif"></p>
+<a name="hoverhelp"></a>
+<dt>Hover Help</dt>
+<dd><p>Hover help is context-sensitive help which is provided in-place in the editor using small pop-up windows. It is available in two flavors:</p>
+  <dl>
+  <a name="quickhelp"></a><dt>Quick Hover Help</dt>
+  <dd>
+    <p>When the mouse hovers over an NSIS keyword, quick hover help for that keyword is displayed. Pressing the <strong>F2</strong> key displays the keyword help in the <a href="#helpbrowser">help browser</a>, and pressing the <strong>F3</strong> key provides <a href="#detailedhelp">detailed hover help</a>.</p>
+    <p style="text-align: center;"><img style="border: 0px solid ; width: 546px; height: 170px;" alt="Hover Help" src="images/hoverhelp.gif"></p></dd>
+<a name="detailedhelp"></a><dt>Detailed Hover Help</dt>
+<dd>
+  <p>Pressing the <strong>F3</strong> key either in the <a href="#quickhelp">quick hover help</a> or when the EclipseNSIS editor caret is in a keyword, displays detailed hover help for the keyword.  Pressing the <strong>F2</strong> key displays the keyword help in the <a href="#helpbrowser">help browser</a>.</p>
+<p style="text-align: center;"><img style="border: 0px solid ; width: 536px; height: 219px;" alt="Hover Help" src="images/stickyhelp.gif"></p></dd>
+</dl>
 </dd>
 <a name="helpbrowser"></a><dt>Help Browser</dt>
 <dd><p>EclipseNSIS provides access to detailed NSIS help documentation. This may be accessed in two ways:</p>
@@ -326,13 +340,14 @@ The task tags can be configured using the <a href="tasktagprefs.html">Task Tags 
 <strong style="font-weight: normal; font-style: italic;">EclipseNSIS&rarr;NSIS Users Manual</strong>.</li>
 </ol>
 <p style="text-align: center;"><img style="border: 0px solid ; width: 622px; height: 394px;" alt="Integrated Help Browser" src="images/nsishelp.gif"></p>
-<p> Detailed help on NSIS keywords can be directly accessed by clicking
-on a keyword and pressing the <strong>F2</strong> key or by pressing the <strong>F2</strong> key in either
-the hover help or sticky help popups.
-The preferred method for directly accessing detailed help can be configured in the <a href="nsisprefs.htmll#a_help">EclipseNSIS preferences page</a>. Once this has been done,
-pressing the <strong>F2</strong> key or selecting the <a href="#a_htmlhelp">NSIS Help menu or toolbar item</a>
-will display detailed help in the chosen browser- i.e., either the
-Eclipse Workbench help or the EclipseNSIS integrated browser.</p>
+<p> Detailed help on NSIS keywords can be directly accessed by either:</p>
+<ol type="a">
+<li>Clicking on a keyword in the EclipseNSIS editor and pressing the <strong>F2</strong> key, or</li>
+<li>Pressing the <strong>F2</strong> key in either the <a href="#quickhelp">quick</a> or <a href="#detailedhelp">detailed</a> <a href="#hoverhelp">hover help</a> popups.</li>
+</ol>
+<p>The preferred browser for displaying detailed help can be configured in the <a href="nsisprefs.htmll#a_help">EclipseNSIS preferences page</a>. Once this has been done,
+    pressing the <strong>F2</strong> key or selecting the <a href="#a_htmlhelp">NSIS Help menu or toolbar item</a> will display detailed help in the chosen browser- i.e., either the
+    Eclipse Workbench help or the EclipseNSIS integrated browser.</p>
 </dd>
 </dl>
 <hr>
@@ -353,24 +368,26 @@ Eclipse Workbench help or the EclipseNSIS integrated browser.</p>
   <area id="code_assist" shape="rect" href="#a_code_assist" alt="Code Assist" onclick="highlightDef('id_code_assist');" coords="6,13,229,30">
 </map>
 <map name="editormenu">
-  <area id="htmlhelp" shape="rect" href="#a_htmlhelp" alt="NSIS Help" onclick="highlightDef('id_htmlhelp');" coords="383,33,405,57">
-  <area id="help" shape="rect" href="#a_help" alt="EclipseNSIS Help" onclick="highlightDef('id_help');" coords="361,33,383,57">
-  <area id="wizard" shape="rect" href="#a_wizard" alt="NSIS Script Wizard" onclick="highlightDef('id_wizard');" coords="339,33,361,57">
-  <area id="preferences" shape="rect" href="#a_preferences" alt="EclipseNSIS Preferences" onclick="highlightDef('id_preferences');" coords="316,33,338,57">
-  <area id="cancel" shape="rect" href="#a_cancel" alt="Cancel Script Compilation" onclick="highlightDef('id_cancel');" coords="293,33,315,57">
-  <area id="compile_test" shape="rect" href="#a_compile_test" alt="Compile Script and Test" onclick="highlightDef('id_compile_test');" coords="270,33,292,57">
-  <area id="test" shape="rect" href="#a_test" alt="Test Installer" onclick="highlightDef('id_test');" coords="248,33,270,57">
-  <area id="compile" shape="rect" href="#a_compile" alt="Compile Script" onclick="highlightDef('id_compile');" coords="225,33,247,57">
-  <area id="about" shape="rect" href="#a_about" alt="About EclipseNSIS" onclick="highlightDef('id_about');" coords="3,238,220,259">
-  <area id="htmlhelp2" shape="rect" href="#a_htmlhelp" alt="NSIS Help" onclick="highlightDef('id_htmlhelp');" coords="3,217,220,238">
-  <area id="help2" shape="rect" href="#a_help" alt="EclipseNSIS Help" onclick="highlightDef('id_help');" coords="3,196,220,217">
-  <area id="wizard2" shape="rect" href="#a_wizard" alt="NSIS Script Wizard" onclick="highlightDef('id_wizard');" coords="2,165,221,186">
-  <area id="preferences2" shape="rect" href="#a_preferences" alt="EclipseNSIS Preferences" onclick="highlightDef('id_preferences');" coords="2,144,221,165">
-  <area id="clearmarkers" shape="rect" href="#a_clearmarkers" alt="Clear Problem Markers" onclick="highlightDef('id_clearmarkers');" coords="3,113,220,134">
-  <area id="cancel2" shape="rect" href="#a_cancel" alt="Cancel Script Compilation" onclick="highlightDef('id_cancel');" coords="3,91,220,112">
-  <area id="compile_test2" shape="rect" href="#a_compile_test" alt="Compile Script and Test" onclick="highlightDef('id_compile_test');" coords="3,71,220,92">
-  <area id="test2" shape="rect" href="#a_test" alt="Test Installer" onclick="highlightDef('id_test');" coords="3,49,220,71">
-  <area id="compile2" shape="rect" href="#a_compile" alt="Compile Script" onclick="highlightDef('id_compile');" coords="3,28,220,49">
+  <area id="update" shape="rect" href="#a_update" alt="NSIS Update" onclick="highlightDef('id_update');" coords="424,28,446,52">
+  <area id="htmlhelp" shape="rect" href="#a_htmlhelp" alt="NSIS Help" onclick="highlightDef('id_htmlhelp');" coords="393,28,415,52">
+  <area id="help" shape="rect" href="#a_help" alt="EclipseNSIS Help" onclick="highlightDef('id_help');" coords="370,28,392,52">
+  <area id="wizard" shape="rect" href="#a_wizard" alt="NSIS Script Wizard" onclick="highlightDef('id_wizard');" coords="347,28,369,52">
+  <area id="preferences" shape="rect" href="#a_preferences" alt="EclipseNSIS Preferences" onclick="highlightDef('id_preferences');" coords="324,28,346,52">
+  <area id="cancel" shape="rect" href="#a_cancel" alt="Cancel Script Compilation" onclick="highlightDef('id_cancel');" coords="301,28,323,52">
+  <area id="compile_test" shape="rect" href="#a_compile_test" alt="Compile Script and Test" onclick="highlightDef('id_compile_test');" coords="278,28,300,52">
+  <area id="test" shape="rect" href="#a_test" alt="Test Installer" onclick="highlightDef('id_test');" coords="255,28,277,52">
+  <area id="compile" shape="rect" href="#a_compile" alt="Compile Script" onclick="highlightDef('id_compile');" coords="232,28,254,52">
+  <area id="update2" shape="rect" href="#a_update" alt="NSIS Update" onclick="highlightDef('id_update');" coords="4,262,221,283">
+  <area id="about" shape="rect" href="#a_about" alt="About EclipseNSIS" onclick="highlightDef('id_about');" coords="4,234,221,255">
+  <area id="htmlhelp2" shape="rect" href="#a_htmlhelp" alt="NSIS Help" onclick="highlightDef('id_htmlhelp');" coords="4,213,221,234">
+  <area id="help2" shape="rect" href="#a_help" alt="EclipseNSIS Help" onclick="highlightDef('id_help');" coords="4,191,221,212">
+  <area id="wizard2" shape="rect" href="#a_wizard" alt="NSIS Script Wizard" onclick="highlightDef('id_wizard');" coords="4,159,223,180">
+  <area id="preferences2" shape="rect" href="#a_preferences" alt="EclipseNSIS Preferences" onclick="highlightDef('id_preferences');" coords="4,138,223,159">
+  <area id="clearmarkers" shape="rect" href="#a_clearmarkers" alt="Clear Problem Markers" onclick="highlightDef('id_clearmarkers');" coords="4,109,221,130">
+  <area id="cancel2" shape="rect" href="#a_cancel" alt="Cancel Script Compilation" onclick="highlightDef('id_cancel');" coords="4,88,221,109">
+  <area id="compile_test2" shape="rect" href="#a_compile_test" alt="Compile Script and Test" onclick="highlightDef('id_compile_test');" coords="4,66,221,87">
+  <area id="test2" shape="rect" href="#a_test" alt="Test Installer" onclick="highlightDef('id_test');" coords="4,44,221,66">
+  <area id="compile2" shape="rect" href="#a_compile" alt="Compile Script" onclick="highlightDef('id_compile');" coords="4,22,221,43">
 </map>
 </div>
 

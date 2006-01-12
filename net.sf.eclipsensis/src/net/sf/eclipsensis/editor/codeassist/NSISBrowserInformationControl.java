@@ -13,8 +13,15 @@
  *******************************************************************************/
 package net.sf.eclipsensis.editor.codeassist;
 
+import java.util.ArrayList;
+
+import net.sf.eclipsensis.INSISConstants;
+import net.sf.eclipsensis.help.NSISHelpURLProvider;
 import net.sf.eclipsensis.util.Common;
 
+import org.eclipse.core.commands.ParameterizedCommand;
+import org.eclipse.jface.bindings.keys.KeySequence;
+import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.swt.SWT;
@@ -26,9 +33,8 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 
-public class NSISBrowserInformationControl implements IInformationControl, IInformationControlExtension, IInformationControlExtension3,  DisposeListener 
+public class NSISBrowserInformationControl implements IInformationControl, IInformationControlExtension, IInformationControlExtension2, IInformationControlExtension3,  DisposeListener 
 {
-    private static final int RIGHT_MARGIN= 3;
     private static final int BORDER= 1;
 
     private static boolean cIsAvailable= false;
@@ -42,39 +48,38 @@ public class NSISBrowserInformationControl implements IInformationControl, IInfo
     private boolean mHideScrollBars;
     private Listener mDeactivateListener;
     private ListenerList mFocusListeners= new ListenerList();
+    private String mKeyword = null;
 
-    public NSISBrowserInformationControl(Shell parent, int shellStyle, int style) 
+    public NSISBrowserInformationControl(final Shell parent, int shellStyle, int style) 
     {
         GridLayout layout;
-        GridData gd;
 
         mShell= new Shell(parent, SWT.NO_FOCUS | SWT.ON_TOP | shellStyle);
         Display display= mShell.getDisplay();
         mShell.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
-
-        int border= ((shellStyle & SWT.NO_TRIM) == 0) ? 0 : BORDER;
-        mShell.setLayout(new BorderFillLayout(border));
-
-        Composite composite= mShell;
         layout= new GridLayout(1, false);
-        layout.marginHeight= border;
-        layout.marginWidth= border;
+        layout.marginHeight=  layout.marginWidth= (((shellStyle & SWT.NO_TRIM) == 0) ? 0 : BORDER);
+        mShell.setLayout(layout);
+        mShell.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true));
+
+        Composite composite= new Composite(mShell,SWT.NONE);
+        layout= new GridLayout(1, false);
+        layout.marginHeight=  layout.marginWidth= layout.verticalSpacing = 0;
+        composite.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
         composite.setLayout(layout);
-        gd= new GridData(GridData.FILL_BOTH);
-        composite.setLayoutData(gd);
+        composite.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true));
 
         // Browser field
-        mBrowser= new Browser(mShell, SWT.NONE);
+        mBrowser= new Browser(composite, SWT.NONE);
         mHideScrollBars= (style & SWT.V_SCROLL) == 0 && (style & SWT.H_SCROLL) == 0;
-        gd= new GridData(GridData.BEGINNING | GridData.FILL_BOTH);
-        mBrowser.setLayoutData(gd);
+        mBrowser.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true));
         mBrowser.setForeground(display.getSystemColor(SWT.COLOR_INFO_FOREGROUND));
         mBrowser.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
         mBrowser.addKeyListener(new KeyListener() {
-
             public void keyPressed(KeyEvent e)  {
-                if (e.character == 0x1B) // ESC
+                if (e.character == 0x1B) {// ESC
                     mShell.dispose();
+                }
             }
 
             public void keyReleased(KeyEvent e) {}
@@ -82,8 +87,87 @@ public class NSISBrowserInformationControl implements IInformationControl, IInfo
 
         // Replace browser's built-in context menu with none
         mBrowser.setMenu(new Menu(mShell, SWT.NONE));
+        
+        ParameterizedCommand command = NSISInformationUtility.getCommand(INSISConstants.GOTO_HELP_COMMAND_ID);
+        ArrayList list = new ArrayList();
+        ArrayList list2 = new ArrayList();
+        if(command != null) {
+            KeySequence[] sequences = NSISInformationUtility.getKeySequences(command);
+            if(!Common.isEmptyArray(sequences)) {
+                for (int i = 0; i < sequences.length; i++) {
+                    KeyStroke[] strokes = sequences[i].getKeyStrokes();
+                    if(!Common.isEmptyArray(strokes) && strokes.length == 1) {
+                        list.add(sequences[i]);
+                        list2.add(new int[] {strokes[0].getNaturalKey(),
+                                             strokes[0].getModifierKeys()});
+                    }
+                }
+            }
+        
+            String statusText;
+            try {
+                statusText = NSISInformationUtility.buildStatusText(command.getCommand().getDescription(), (KeySequence[])list.toArray(new KeySequence[list.size()]));
+            }
+            catch (Exception e) {
+                statusText = null;
+            }            
+            if(!Common.isEmpty(statusText)) {
+                final int[][] keys = (int[][])list2.toArray(new int[list2.size()][]);
+                
+                mBrowser.addKeyListener(new KeyListener() {
+                    public void keyPressed(KeyEvent e)  {
+                        if(!Common.isEmpty(mKeyword)) {
+                            for (int i = 0; i < keys.length; i++) {
+                                if(e.keyCode == keys[i][0] && (e.stateMask & keys[i][1])==e.stateMask) {
+                                    mShell.dispose();
+                                    NSISHelpURLProvider.getInstance().showHelpURL(mKeyword);
+                                }
+                            }
+                        }
+                    }
 
+                    public void keyReleased(KeyEvent e) {}
+                });
+                
+                Label separator= new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL | SWT.LINE_DOT);
+                separator.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+                separator.setLayoutData(new GridData(SWT.FILL,SWT.CENTER,true,false));
+        
+                Label l = new Label(composite,SWT.NONE);
+                Font font= l.getFont();
+                FontData[] fontDatas= font.getFontData();
+                for (int i= 0; i < fontDatas.length; i++) {
+                    fontDatas[i].setHeight(fontDatas[i].getHeight() * 9 / 10);
+                }
+                final Font font2 = new Font(l.getDisplay(), fontDatas);
+                l.setFont(font2);
+                l.addDisposeListener(new DisposeListener() {
+                    public void widgetDisposed(DisposeEvent e)
+                    {
+                        font2.dispose();
+                    }
+                });
+                l.setText(statusText);
+                l.setForeground(display.getSystemColor(SWT.COLOR_WIDGET_DARK_SHADOW));
+                l.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+                l.setLayoutData(new GridData(SWT.RIGHT,SWT.TOP,true,false));
+            }
+        }
         addDisposeListener(this);
+    }
+    
+    public void addKeyListener(KeyListener listener)
+    {
+        if(mBrowser != null) {
+            mBrowser.addKeyListener(listener);
+        }
+    }
+    
+    public void removeKeyListener(KeyListener listener)
+    {
+        if(mBrowser != null) {
+            mBrowser.removeKeyListener(listener);
+        }
     }
 
     public static boolean isAvailable(Composite parent) 
@@ -105,8 +189,21 @@ public class NSISBrowserInformationControl implements IInformationControl, IInfo
         return cIsAvailable;
     }
 
+    public void setInput(Object input)
+    {
+        if (input instanceof String) {
+            setInformation((String)input);
+        }
+        else if(input instanceof NSISBrowserInformation) {
+            NSISBrowserInformation info = (NSISBrowserInformation)input;
+            setInformation(info.getInformation());
+            mKeyword = info.getKeyword();
+        }
+    }
+
     public void setInformation(String content) 
     {
+        mKeyword = null;
         mBrowserHasContent= content != null && content.length() > 0;
 
         if (mBrowserHasContent) {
@@ -287,57 +384,6 @@ public class NSISBrowserInformationControl implements IInformationControl, IInfo
     public boolean hasContents() 
     {
         return mBrowserHasContent;
-    }
-
-    private static class BorderFillLayout extends Layout 
-    {
-        final int mBorderSize;
-
-        public BorderFillLayout(int borderSize) 
-        {
-            if (borderSize < 0) {
-                throw new IllegalArgumentException();
-            }
-            mBorderSize= borderSize;
-        }
-
-        public int getBorderSize() 
-        {
-            return mBorderSize;
-        }
-
-        protected Point computeSize(Composite composite, int wHint, int hHint, boolean flushCache) 
-        {
-            Control[] children= composite.getChildren();
-            Point minSize= new Point(0, 0);
-
-            if (children != null) {
-                for (int i= 0; i < children.length; i++) {
-                    Point size= children[i].computeSize(wHint, hHint, flushCache);
-                    minSize.x= Math.max(minSize.x, size.x);
-                    minSize.y= Math.max(minSize.y, size.y);
-                }
-            }
-
-            minSize.x += mBorderSize * 2 + RIGHT_MARGIN;
-            minSize.y += mBorderSize * 2;
-
-            return minSize;
-        }
-
-        protected void layout(Composite composite, boolean flushCache) 
-        {
-            Control[] children= composite.getChildren();
-            Point minSize= new Point(composite.getClientArea().width, composite.getClientArea().height);
-
-            if (children != null) {
-                for (int i= 0; i < children.length; i++) {
-                    Control child= children[i];
-                    child.setSize(minSize.x - mBorderSize * 2, minSize.y - mBorderSize * 2);
-                    child.setLocation(mBorderSize, mBorderSize);
-                }
-            }
-        }
     }
 }
 

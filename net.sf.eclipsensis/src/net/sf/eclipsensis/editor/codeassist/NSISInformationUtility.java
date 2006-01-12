@@ -9,6 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.editor.codeassist;
 
+import java.text.MessageFormat;
 import java.util.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
@@ -18,11 +19,18 @@ import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.help.NSISPluginManager;
 import net.sf.eclipsensis.util.Common;
 
+import org.eclipse.core.commands.Command;
+import org.eclipse.core.commands.ParameterizedCommand;
+import org.eclipse.jface.bindings.TriggerSequence;
+import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.contentassist.CompletionProposal;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.rules.*;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.commands.ICommandService;
+import org.eclipse.ui.keys.IBindingService;
 
 public class NSISInformationUtility implements INSISConstants
 {
@@ -38,6 +46,9 @@ public class NSISInformationUtility implements INSISConstants
         }
     };
 
+    private static IBindingService cBindingService = (IBindingService)PlatformUI.getWorkbench().getAdapter(IBindingService.class);
+    private static ICommandService cCommandService = (ICommandService)PlatformUI.getWorkbench().getAdapter(ICommandService.class);
+
     public static IRegion getInformationRegionAtOffset(ITextViewer textViewer, int offset, boolean forUsage)
     {
         IDocument doc = textViewer.getDocument();
@@ -45,7 +56,87 @@ public class NSISInformationUtility implements INSISConstants
         return getInformationRegionAtOffset(doc, offset, nsisLine, forUsage);
     }
 
-/**
+    public static ParameterizedCommand getCommand(String commandId)
+    {
+        Command command = cCommandService.getCommand(commandId);
+        if(command != null) {
+            ParameterizedCommand pc = new ParameterizedCommand(command, null);
+            return pc;
+        }
+        return null;
+    }
+
+    public static KeySequence[] getKeySequences(ParameterizedCommand command)
+    {
+        ArrayList list = new ArrayList();
+        TriggerSequence[] sequences = cBindingService.getActiveBindingsFor(command);
+        if (!Common.isEmptyArray(sequences)) {
+            for (int j = 0; j < sequences.length; j++) {
+                if(sequences[j] instanceof KeySequence) {
+                    list.add(sequences[j]);
+                }
+            }
+        }
+        return (KeySequence[])list.toArray(new KeySequence[list.size()]);
+    }
+
+    public static String buildStatusText(String description, KeySequence[] sequences)
+    {
+        String statusText = null;
+        if (!Common.isEmptyArray(sequences)) {
+            ArrayList params = new ArrayList();
+            for (int j = 0; j < sequences.length; j++) {
+                try {
+                    String keyText = sequences[j].format();
+                    params.add(keyText);
+                    params.add(description);
+                }
+                catch(Exception e) {
+                }
+            }
+            if(params.size() > 0) {
+                String format = EclipseNSISPlugin.getResourceString("information.status.format."+params.size()/2); //$NON-NLS-1$
+                if(!Common.isEmpty(format)) {
+                    statusText = MessageFormat.format(format, params.toArray());
+                }
+            }
+        }
+
+        return statusText;
+    }
+
+    public static String buildStatusText(ParameterizedCommand[] commands)
+    {
+        String statusText = null;
+        if(!Common.isEmptyArray(commands)) {
+            ArrayList params = new ArrayList();
+            for (int i = 0; i < commands.length; i++) {
+                KeySequence[] sequences = getKeySequences(commands[i]);
+                if (!Common.isEmptyArray(sequences)) {
+                    for (int j = 0; j < sequences.length; j++) {
+                        try {
+                            String keyText = sequences[j].format();
+                            String description = commands[i].getCommand().getDescription();
+                            params.add(keyText);
+                            params.add(description);
+                        }
+                        catch(Exception e) {
+                        }
+                    }
+                }
+            }
+            if(params.size() > 0) {
+                String format = EclipseNSISPlugin.getResourceString("information.status.format."+params.size()/2); //$NON-NLS-1$
+                if(!Common.isEmpty(format)) {
+                    statusText = MessageFormat.format(format, params.toArray());
+                }
+            }
+        }
+
+        return statusText;
+    }
+
+    /**
      * @param doc
      * @param offset
      * @param nsisLine

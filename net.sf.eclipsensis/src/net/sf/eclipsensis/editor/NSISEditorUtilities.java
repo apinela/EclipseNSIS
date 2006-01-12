@@ -69,14 +69,14 @@ public class NSISEditorUtilities
             informationPresenter = new InformationPresenter(informationControlCreator);
         }
         else {
-            informationControlCreator= new NSISInformationControlCreator(null,SWT.V_SCROLL|SWT.H_SCROLL);
+            informationControlCreator= new NSISInformationControlCreator(new String[]{INSISConstants.GOTO_HELP_COMMAND_ID},SWT.V_SCROLL|SWT.H_SCROLL);
             informationProvider = new NSISInformationProvider();
             informationPresenter = new InformationPresenter(informationControlCreator);
         }
         informationProvider.setInformationPresenterControlCreator(informationControlCreator);
         informationPresenter.setInformationProvider(informationProvider,NSISPartitionScanner.NSIS_STRING);
         informationPresenter.setInformationProvider(informationProvider,IDocument.DEFAULT_CONTENT_TYPE);
-        informationPresenter.setSizeConstraints(60, (browserAvailable?10:5), true, true);
+        informationPresenter.setSizeConstraints(60, (browserAvailable?12:6), true, true);
         return informationPresenter;
     }
     

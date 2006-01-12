@@ -56,7 +56,8 @@
                icon="icons/update.gif"
                id="net.sf.eclipsensis.update.actions.NSISUpdateWizardAction"
                label="%nsis.update.wizard.action.label"
-               menubarPath="help/group.updates"/>
+               menubarPath="help/group.updates">
+         </action>
       </actionSet>
    </extension>
    <extension point="net.sf.eclipsensis.nsisConfigWizard"
