@@ -11,12 +11,12 @@
 ###############################################################################
 -->
 <toc label="EclipseNSIS InstallOptions Editor User Guide" topic="help/overview.html">
-<topic label="Installation" href="help/installation.html"/>
-<topic label="Editing InstallOptions Scripts" href="help/editing.html">
-<topic label="Design Editor" href="help/designeditor.html"/>
-<topic label="Source Editor" href="help/sourceeditor.html"/>
-</topic>
-<topic label="InstallOptions Script Wizard" href="help/wizard.html"/>
-<topic label="Preferences" href="help/preferences.html"/>
-<topic label="License &amp; Copyright" href="help/license.html"/>
+    <topic label="Installation" href="help/installation.html"/>
+    <topic label="Editing InstallOptions Scripts" href="help/editing.html">
+        <topic label="Design Editor" href="help/designeditor.html"/>
+        <topic label="Source Editor" href="help/sourceeditor.html"/>
+    </topic>
+    <topic label="InstallOptions Script Wizard" href="help/wizard.html"/>
+    <topic label="Preferences" href="help/preferences.html"/>
+    <topic label="License &amp; Copyright" href="help/license.html"/>
 </toc>
