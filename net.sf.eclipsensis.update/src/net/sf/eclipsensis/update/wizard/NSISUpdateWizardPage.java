@@ -34,7 +34,7 @@ public class NSISUpdateWizardPage extends WizardPage
     private boolean mIgnorePreview = SchedulerConstants.DEFAULT_IGNORE_PREVIEW;
 
     static {
-        LINK_TEXT = new MessageFormat(EclipseNSISUpdatePlugin.getResourceString("wizard.proxy.link.text")).format(new String[] {UpdatePreferencePage.UPDATE_UI_PREFERENCE_PAGE_ID}); //$NON-NLS-1$
+        LINK_TEXT = new MessageFormat(EclipseNSISUpdatePlugin.getResourceString("wizard.proxy.link.text")).format(new String[] {UpdatePreferencePage.class.getName()}); //$NON-NLS-1$
     }
     
     public NSISUpdateWizardPage(int action, boolean ignorePreview)
@@ -126,6 +126,7 @@ public class NSISUpdateWizardPage extends WizardPage
                 }
             }
         });
+
         return group;
     }
 

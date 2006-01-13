@@ -24,7 +24,7 @@ public class SchedulerConstants
     
     public static final int UPDATE_NOTIFY = 0;
     public static final int UPDATE_DOWNLOAD = 1;
-    public static final int UPDATE_INSTALL = 2;
+    public static final int UPDATE_INSTALL = 3;
     public static final int DEFAULT_ACTION = UPDATE_NOTIFY;
 
     public static final int[] TIMES_OF_DAY;
@@ -58,6 +58,31 @@ public class SchedulerConstants
         int day = cal.getMinimum(Calendar.DAY_OF_MONTH);
         for (int i = 0; i < DAYS_OF_MONTH.length; i++) {
             DAYS_OF_MONTH[i] = day++;
+        }
+    }
+    
+    public static int validateSchedule(int schedule)
+    {
+        switch(schedule) {
+            case SCHEDULE_ON_STARTUP:
+            case SCHEDULE_DAILY:
+            case SCHEDULE_WEEKLY:
+            case SCHEDULE_MONTHLY:
+                return schedule;
+            default:
+                return DEFAULT_SCHEDULE;
+        }
+    }
+    
+    public static int validateAction(int action)
+    {
+        switch(action) {
+            case UPDATE_NOTIFY:
+            case UPDATE_DOWNLOAD:
+            case UPDATE_INSTALL:
+                return action;
+            default:
+                return DEFAULT_ACTION;
         }
     }
 }

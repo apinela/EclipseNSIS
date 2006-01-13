@@ -9,35 +9,30 @@
  *******************************************************************************/
 package net.sf.eclipsensis.update.jobs;
 
+import net.sf.eclipsensis.update.scheduler.SchedulerConstants;
+
 public class NSISUpdateJobSettings
 {
     private boolean mAutomated = false;
-    private boolean mDownload = false;
-    private boolean mInstall = false;
+    private int mAction = SchedulerConstants.UPDATE_NOTIFY;
     private boolean mIgnorePreview = false;
     public static final Object JOB_FAMILY = new Object();
 
     public NSISUpdateJobSettings()
     {
-        this(false,false,false,false);
+        this(false,SchedulerConstants.UPDATE_NOTIFY,false);
     }
 
-    public NSISUpdateJobSettings(boolean automated, boolean download, boolean install, boolean ignorePreview)
+    public NSISUpdateJobSettings(boolean automated, int action, boolean ignorePreview)
     {
-        this(automated, download, install);
+        this(automated, action);
         mIgnorePreview = ignorePreview;
     }
 
-    public NSISUpdateJobSettings(boolean automated, boolean download, boolean install)
-    {
-        this(automated, install);
-        mDownload = download;
-    }
-
-    public NSISUpdateJobSettings(boolean automated, boolean install)
+    public NSISUpdateJobSettings(boolean automated, int action)
     {
         mAutomated = automated;
-        mInstall = install;
+        mAction = action;
     }
 
     public boolean isAutomated()
@@ -45,14 +40,9 @@ public class NSISUpdateJobSettings
         return mAutomated;
     }
 
-    public boolean isDownload()
+    public int getAction()
     {
-        return mDownload;
-    }
-    
-    public boolean isInstall()
-    {
-        return mInstall;
+        return mAction;
     }
 
     public boolean isIgnorePreview()

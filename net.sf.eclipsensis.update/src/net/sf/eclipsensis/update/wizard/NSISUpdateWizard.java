@@ -64,7 +64,7 @@ public class NSISUpdateWizard extends NSISConfigWizard
             dialogSettings = pluginDialogSettings.addNewSection(name);
         }
         try {
-            mAction = dialogSettings.getInt(IUpdatePreferenceConstants.UPDATE_ACTION);
+            mAction = SchedulerConstants.validateAction(dialogSettings.getInt(IUpdatePreferenceConstants.UPDATE_ACTION));
         }
         catch (Exception e) {
             mAction = SchedulerConstants.DEFAULT_ACTION;
@@ -148,9 +148,7 @@ public class NSISUpdateWizard extends NSISConfigWizard
             settings.put(IUpdatePreferenceConstants.IGNORE_PREVIEW,mIgnorePreview);
         }
         
-        NSISUpdateJobSettings settings = new NSISUpdateJobSettings(false, 
-                (mAction == SchedulerConstants.UPDATE_DOWNLOAD||mAction == SchedulerConstants.UPDATE_INSTALL), 
-                mAction == SchedulerConstants.UPDATE_INSTALL, mIgnorePreview);
+        NSISUpdateJobSettings settings = new NSISUpdateJobSettings(false,mAction, mIgnorePreview);
         NextUpdateJobRunner jobRunner = new NextUpdateJobRunner();
         NSISCheckUpdateJob job = new NSISCheckUpdateJob(settings, jobRunner);
         jobRunner.run(job);

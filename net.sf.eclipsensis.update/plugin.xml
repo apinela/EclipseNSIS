@@ -36,6 +36,11 @@
             class="net.sf.eclipsensis.update.preferences.UpdatePreferencePage"
             id="%preference.page.id"
             name="%preference.page.name"/>
+      <page
+            category="%preference.page.id"
+            class="net.sf.eclipsensis.update.preferences.SchedulerPreferencePage"
+            id="%scheduler.preference.page.id"
+            name="%scheduler.preference.page.name"/>
    </extension>
    <extension
          point="org.eclipse.core.runtime.preferences">

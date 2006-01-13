@@ -11,10 +11,18 @@ package net.sf.eclipsensis.update.preferences;
 
 public interface IUpdatePreferenceConstants
 {
+    public static final String USE_HTTP_PROXY = "useHttpProxy"; //$NON-NLS-1$
+    public static final String HTTP_PROXY_HOST = "httpProxyHost"; //$NON-NLS-1$
+    public static final String HTTP_PROXY_PORT = "httpProxyPort"; //$NON-NLS-1$
+    
+    public static final String NSIS_UPDATE_SITE = "nsisUpdateSite"; //$NON-NLS-1$
+    public static final String SOURCEFORGE_MIRROR = "sourceforgeMirror"; //$NON-NLS-1$
+    
+    public static final String IGNORE_PREVIEW = "ignorePreview"; //$NON-NLS-1$
+
     public static final String AUTO_UPDATE = "autoUpdate"; //$NON-NLS-1$
     public static final String UPDATE_SCHEDULE = "updateSchedule"; //$NON-NLS-1$
     public static final String UPDATE_ACTION = "updateAction"; //$NON-NLS-1$
-    public static final String IGNORE_PREVIEW = "ignorePreview"; //$NON-NLS-1$
     public static final String DAILY_TIME = "dailyTime"; //$NON-NLS-1$
     public static final String DAY_OF_WEEK = "dayOfWeek"; //$NON-NLS-1$
     public static final String WEEKLY_TIME = "weeklyTime"; //$NON-NLS-1$

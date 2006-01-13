@@ -11,13 +11,15 @@ package net.sf.eclipsensis.update.jobs;
 
 import java.io.IOException;
 import java.net.*;
+import java.text.MessageFormat;
 
 import net.sf.eclipsensis.update.EclipseNSISUpdatePlugin;
+import net.sf.eclipsensis.update.preferences.IUpdatePreferenceConstants;
 import net.sf.eclipsensis.update.proxy.ProxyAuthenticator;
 import net.sf.eclipsensis.util.WinAPI;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.update.core.SiteManager;
+import org.eclipse.jface.preference.IPreferenceStore;
 
 public abstract class NSISHttpUpdateJob extends NSISUpdateJob
 {
@@ -25,6 +27,8 @@ public abstract class NSISHttpUpdateJob extends NSISUpdateJob
     protected static final String HTTP_PROXY_HOST = "http.proxyHost"; //$NON-NLS-1$
     protected static final String HTTP_PROXY_SET = "http.proxySet"; //$NON-NLS-1$
 
+    protected static final IPreferenceStore cPreferenceStore = EclipseNSISUpdatePlugin.getDefault().getPreferenceStore();
+    
     private INSISUpdateJobRunner mJobRunner = null;
     
     protected NSISHttpUpdateJob(String name, NSISUpdateJobSettings settings, INSISUpdateJobRunner jobRunner)
@@ -40,9 +44,10 @@ public abstract class NSISHttpUpdateJob extends NSISUpdateJob
 
     protected final IStatus doRun(IProgressMonitor monitor)
     {
-        monitor.beginTask(getName(), 103);
+        monitor.beginTask(getName(), 120);
         try {
             URL url = null;
+            URL alternateURL = null;
             try {
                 url = getURL();
             }
@@ -50,17 +55,29 @@ public abstract class NSISHttpUpdateJob extends NSISUpdateJob
                 handleException(e);
                 return new Status(IStatus.ERROR, EclipseNSISUpdatePlugin.getDefault().getPluginId(), IStatus.ERROR, e.getMessage(), e);
             }
-            if (url != null) {
+            try {
+                alternateURL = getAlternateURL();
+            }
+            catch (IOException e) {
+                handleException(e);
+                return new Status(IStatus.ERROR, EclipseNSISUpdatePlugin.getDefault().getPluginId(), IStatus.ERROR, e.getMessage(), e);
+            }
+            if(url == null) {
+                url = alternateURL;
+                alternateURL = null;
+            }
+            else if(alternateURL != null && url.toString().equals(alternateURL.toString())) {
+                alternateURL = null;
+            }
+            
+            if (url != null || alternateURL != null) {
                 String oldProxySet = System.getProperty(HTTP_PROXY_SET);
                 String oldProxyHost = System.getProperty(HTTP_PROXY_HOST);
                 String oldProxyPort = System.getProperty(HTTP_PROXY_PORT);
-                boolean isUsingProxy = SiteManager.isHttpProxyEnable();
-                String proxyHost = SiteManager.getHttpProxyServer();
-                int proxyPort;
-                try {
-                    proxyPort = Integer.parseInt(SiteManager.getHttpProxyPort());
-                }
-                catch (Exception e) {
+                boolean isUsingProxy = cPreferenceStore.getBoolean(IUpdatePreferenceConstants.USE_HTTP_PROXY);
+                String proxyHost = cPreferenceStore.getString(IUpdatePreferenceConstants.HTTP_PROXY_HOST);
+                int proxyPort = cPreferenceStore.getInt(IUpdatePreferenceConstants.HTTP_PROXY_PORT);
+                if (proxyPort < 1 || proxyPort > 0xFFFF) {
                     proxyPort = 80; //Default HTTP port
                 }
                 if (monitor.isCanceled()) {
@@ -89,18 +106,43 @@ public abstract class NSISHttpUpdateJob extends NSISUpdateJob
                         }
                         HttpURLConnection conn = null;
                         try {
-                            conn = (HttpURLConnection)url.openConnection();
-                            SubProgressMonitor subMonitor = new SubProgressMonitor(monitor,100);
-                            IStatus status = handleConnection(conn, subMonitor);
-                            if(!status.isOK()) {
-                                return status;
+                            int responseCode;
+                            try {
+                                conn = (HttpURLConnection)url.openConnection();
+                                responseCode = conn.getResponseCode();
+                            }
+                            catch (IOException e) {
+                                if(alternateURL != null) {
+                                    responseCode = HttpURLConnection.HTTP_BAD_REQUEST;
+                                }
+                                else {
+                                    throw e;
+                                }
+                            }
+                            monitor.worked(5);
+                            if(responseCode >= 400) {
+                                if(alternateURL != null) {
+                                    url = alternateURL;
+                                    conn = (HttpURLConnection)url.openConnection();
+                                    responseCode = conn.getResponseCode();
+                                }
+                                if(responseCode >= 400) {
+                                    throw new IOException(new MessageFormat(EclipseNSISUpdatePlugin.getResourceString("http.error")).format(new Object[] {new Integer(responseCode)})); //$NON-NLS-1$
+                                }
+                            }
+                            else {
+                                SubProgressMonitor subMonitor = new SubProgressMonitor(monitor,100);
+                                IStatus status = handleConnection(conn, subMonitor);
+                                if(!status.isOK()) {
+                                    return status;
+                                }
                             }
                         }
                         finally {
                             if (conn != null) {
                                 conn.disconnect();
                             }
-                            monitor.worked(1);
+                            monitor.worked(5);
                         }
                         if (isUsingProxy) {
                             auth.success(); // This means success. So save the authentication.
@@ -113,11 +155,12 @@ public abstract class NSISHttpUpdateJob extends NSISUpdateJob
                         if (isUsingProxy) {
                             Authenticator.setDefault(defaultAuthenticator);
                         }
-                        monitor.worked(1);
+                        monitor.worked(5);
                     }
                 }
                 catch (Exception e) {
                     handleException(e);
+                    return new Status(IStatus.ERROR, EclipseNSISUpdatePlugin.getDefault().getPluginId(), IStatus.ERROR, e.getMessage(), e);
                 }
                 finally {
                     if (isUsingProxy) {
@@ -125,7 +168,7 @@ public abstract class NSISHttpUpdateJob extends NSISUpdateJob
                         setSystemProperty(HTTP_PROXY_HOST, oldProxyHost);
                         setSystemProperty(HTTP_PROXY_PORT, oldProxyPort);
                     }
-                    monitor.worked(1);
+                    monitor.worked(5);
                 }
             }
             return Status.OK_STATUS;
@@ -148,6 +191,14 @@ public abstract class NSISHttpUpdateJob extends NSISUpdateJob
         else {
             System.setProperty(name, value);
         }
+    }
+
+    protected URL getAlternateURL() throws IOException
+    {
+        if(false) {
+            throw new IOException();
+        }
+        return null;
     }
 
     protected abstract URL getURL() throws IOException;

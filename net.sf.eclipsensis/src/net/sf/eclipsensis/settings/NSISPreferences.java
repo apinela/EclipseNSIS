@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.util.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.dialogs.NSISConfigWizardDialog;
 import net.sf.eclipsensis.dialogs.NSISPreferencePage;
 import net.sf.eclipsensis.editor.NSISTaskTag;
 import net.sf.eclipsensis.editor.text.NSISSyntaxStyle;
@@ -451,11 +452,17 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
     private void maybeConfigure()
     {
         if(Common.isEmpty(mNSISHome)) {
-           Common.openWarning(Display.getDefault().getActiveShell(),
+            Shell shell = Display.getDefault().getActiveShell();
+            if (Common.openConfirm(shell,
                    EclipseNSISPlugin.getDefault().getName(),
-                   EclipseNSISPlugin.getResourceString("unconfigured.warning"), //$NON-NLS-1$
-                   EclipseNSISPlugin.getShellImage());
-           NSISPreferencePage.show();
+                   EclipseNSISPlugin.getResourceString("unconfigured.confirm"), //$NON-NLS-1$
+                   EclipseNSISPlugin.getShellImage())) {
+                new NSISConfigWizardDialog(shell).open();
+            }            
+            if (Common.isEmpty(mNSISHome)) {
+                Common.openWarning(shell, EclipseNSISPlugin.getDefault().getName(), EclipseNSISPlugin.getResourceString("unconfigured.warning"), //$NON-NLS-1$
+                        EclipseNSISPlugin.getShellImage());
+            }
         }
     }
 

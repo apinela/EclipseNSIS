@@ -102,9 +102,11 @@ public class Scheduler implements IStartup, IUpdatePreferenceConstants
         }
         if (delay >= 0) {
             int updateAction = mPreferences.getInt(IUpdatePreferenceConstants.UPDATE_ACTION);
+            if(updateAction < SchedulerConstants.UPDATE_NOTIFY || updateAction > SchedulerConstants.UPDATE_INSTALL) {
+                updateAction = SchedulerConstants.DEFAULT_ACTION;
+            }
             boolean ignorePreview = mPreferences.getBoolean(IUpdatePreferenceConstants.IGNORE_PREVIEW);
-            NSISUpdateJobSettings settings = new NSISUpdateJobSettings(true, (updateAction == SchedulerConstants.UPDATE_DOWNLOAD || updateAction == SchedulerConstants.UPDATE_INSTALL),
-                    updateAction == SchedulerConstants.UPDATE_INSTALL, ignorePreview);
+            NSISUpdateJobSettings settings = new NSISUpdateJobSettings(true, updateAction, ignorePreview);
             mScheduledJob = createUpdateJob(settings);
             if (mScheduledJob != null) {
                 mScheduledJob.schedule(delay);

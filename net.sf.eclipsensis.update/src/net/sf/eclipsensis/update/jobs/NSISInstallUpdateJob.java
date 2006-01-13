@@ -19,6 +19,7 @@ import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.filemon.FileMonitor;
 import net.sf.eclipsensis.settings.NSISPreferences;
 import net.sf.eclipsensis.update.EclipseNSISUpdatePlugin;
+import net.sf.eclipsensis.update.scheduler.SchedulerConstants;
 import net.sf.eclipsensis.util.*;
 import net.sf.eclipsensis.viewer.CollectionContentProvider;
 
@@ -37,6 +38,7 @@ class NSISInstallUpdateJob extends NSISUpdateJob
     public static final int INSTALL_ABORTED = 2;
     
     private static MessageFormat cNotifyFormat = new MessageFormat(EclipseNSISUpdatePlugin.getResourceString("install.complete.message")); //$NON-NLS-1$
+    private static MessageFormat cAutoNotifyFormat = new MessageFormat(EclipseNSISUpdatePlugin.getResourceString("auto.install.complete.message")); //$NON-NLS-1$
     
     private String mVersion;
     private File mSetupExe;
@@ -94,9 +96,8 @@ class NSISInstallUpdateJob extends NSISUpdateJob
             monitor.beginTask(getName(), IProgressMonitor.UNKNOWN);
             boolean fileMonStopped = false;
             try {
-                final String nsisHome = NSISPreferences.INSTANCE.getNSISHome();
-                final NSISUpdateJobSettings settings = getSettings();
-                boolean automated = settings.isAutomated();
+                String nsisHome = NSISPreferences.INSTANCE.getNSISHome();
+                NSISUpdateJobSettings settings = getSettings();
                 if(!Common.isEmpty(NSISPreferences.INSTANCE.getNSISHome())) {
                     fileMonStopped = FileMonitor.INSTANCE.stop();
                     if(!Common.isEmpty(nsisHome)) {
@@ -126,13 +127,13 @@ class NSISInstallUpdateJob extends NSISUpdateJob
                             if(!retry[0]) {
                                 return Status.CANCEL_STATUS;
                             }
-                            automated = false;
                         }
                     }
                 }
                 final List cmd = new ArrayList();
                 cmd.add(mSetupExe.getAbsolutePath());
-                if(automated) {
+                boolean install = ((settings.getAction() & SchedulerConstants.UPDATE_INSTALL) == SchedulerConstants.UPDATE_INSTALL);
+                if(install) {
                     cmd.add("/S"); //Silent //$NON-NLS-1$
                     if(!Common.isEmpty(nsisHome)) {
                         cmd.add("/D="+nsisHome); //$NON-NLS-1$
@@ -181,19 +182,25 @@ class NSISInstallUpdateJob extends NSISUpdateJob
                 switch(rv) {
                     case INSTALL_SUCCESS:
                         mSetupExe.delete();
-                        String newNSISHome = WinAPI.RegQueryStrValue(INSISConstants.NSIS_REG_ROOTKEY, INSISConstants.NSIS_REG_SUBKEY, INSISConstants.NSIS_REG_VALUE);
+                        final String newNSISHome = WinAPI.RegQueryStrValue(INSISConstants.NSIS_REG_ROOTKEY, INSISConstants.NSIS_REG_SUBKEY, INSISConstants.NSIS_REG_VALUE);
                         if (!Common.isEmpty(newNSISHome)) {
                             if (nsisHome == null || !newNSISHome.equalsIgnoreCase(nsisHome)) {
-                                NSISPreferences.INSTANCE.setNSISHome(newNSISHome);
-                                NSISPreferences.INSTANCE.store();
+                                Display.getDefault().syncExec(new Runnable() {
+                                    public void run()
+                                    {
+                                        NSISPreferences.INSTANCE.setNSISHome(newNSISHome);
+                                        NSISPreferences.INSTANCE.store();
+                                    }
+                                });                            
                             }
                         }
-                        if (automated && settings.isInstall()) {
+                        if (install) {
+                            final MessageFormat format = (settings.isAutomated()?cAutoNotifyFormat:cNotifyFormat);
                             displayExec(new Runnable() {
                                 public void run()
                                 {
                                     Common.openInformation(Display.getCurrent().getActiveShell(), EclipseNSISUpdatePlugin.getResourceString("update.title"), //$NON-NLS-1$
-                                            cNotifyFormat.format(new String[]{mVersion}), EclipseNSISUpdatePlugin.getShellImage());
+                                            format.format(new String[]{mVersion}), EclipseNSISUpdatePlugin.getShellImage());
                                 }
                             });
                         }

@@ -17,6 +17,8 @@ import java.nio.channels.*;
 import java.text.MessageFormat;
 
 import net.sf.eclipsensis.update.EclipseNSISUpdatePlugin;
+import net.sf.eclipsensis.update.preferences.IUpdatePreferenceConstants;
+import net.sf.eclipsensis.update.scheduler.SchedulerConstants;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.util.IOUtility;
 
@@ -38,12 +40,21 @@ class NSISDownloadUpdateJob extends NSISHttpUpdateJob
     
     protected boolean shouldReschedule()
     {
-        return getSettings().isAutomated() && !getSettings().isInstall();
+        return getSettings().isAutomated() && ((getSettings().getAction() & SchedulerConstants.UPDATE_INSTALL) == 0);
     }
 
     protected URL getURL() throws IOException
     {
-        return  NSISUpdateURLs.getDownloadURL(mVersion);
+        String site = cPreferenceStore.getString(IUpdatePreferenceConstants.SOURCEFORGE_MIRROR);
+        if(!Common.isEmpty(site)) {
+            return NSISUpdateURLs.getDownloadURL(site, mVersion);
+        }
+        return null;
+    }
+
+    protected URL getAlternateURL() throws IOException
+    {
+        return NSISUpdateURLs.getDownloadURL(mVersion);
     }
 
     protected IStatus handleConnection(HttpURLConnection conn, IProgressMonitor monitor) throws IOException
@@ -175,7 +186,7 @@ class NSISDownloadUpdateJob extends NSISHttpUpdateJob
                 {
                     NSISUpdateJobSettings settings = getSettings();
                     boolean automated = settings.isAutomated();
-                    boolean install = settings.isInstall();
+                    boolean install = ((settings.getAction() & SchedulerConstants.UPDATE_INSTALL) == SchedulerConstants.UPDATE_INSTALL);
                     if(!install) {
                         automated = false;
                         install = Common.openQuestion(Display.getCurrent().getActiveShell(), 
@@ -183,7 +194,7 @@ class NSISDownloadUpdateJob extends NSISHttpUpdateJob
                                     EclipseNSISUpdatePlugin.getShellImage());
                     }
                     if(install) {
-                        settings = new NSISUpdateJobSettings(automated, install);
+                        settings = new NSISUpdateJobSettings(automated, settings.getAction());
                         INSISUpdateJobRunner jobRunner = getJobRunner();
                         NSISUpdateJob job = new NSISInstallUpdateJob(mVersion, setupExe, settings);
                         if(jobRunner == null) {

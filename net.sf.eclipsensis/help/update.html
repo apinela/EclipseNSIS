@@ -35,26 +35,25 @@ download and install the latest NSIS software. It can be invoked in several ways
 <li><a href="#wizard">Wizard</a></li>
 <li><a href="#scheduler">Scheduler</a></li>
 </ul>
-<a name="notes"></a><span style="font-weight: bold"><p>Please note the following items:</p>
+<p>If an update is successfully installed, EclipseNSIS will detect the new NSIS installation and update the <a href="nsisprefs.html#a_nsishome">NSIS home</a> to point to it. NSIS Update behavior can be customized on its <a href="updateprefs.html">preference page</a>.</p>
+<a name="notes"></a>Please note the following items:
 <ol>
-<li>NSIS Update uses the same HTTP proxy settings as the Eclipse platform <a href="javascript:redirectEclipse('org.eclipse.platform.doc.user/reference/ref-21.htm');">Install/Update</a> feature.</li>
-<li>NSIS Update scheduler <span style="text-decoration:underline;  border-bottom: 1px solid">does 
-not</span> update EclipseNSIS itself. To schedule automatic updates of EclipseNSIS (and other installed features 
-in Eclipse) use the Eclipse platform  <a href="javascript:redirectEclipse('/org.eclipse.platform.doc.user/tasks/tasks-37a.htm');">Automatic Update Scheduler</a>.</li>
-<li>NSIS Update does not update CVS or nightly builds of NSIS. If the configured NSIS home points to a CVS or nightly build, then it must be manually updated by recompiling it or downloading a new nightly build.</li>
-</ol></span>
-<a name="menuitem"></a><h2>Menuitem/Toolbar Button</h2>
+  <li><span style="font-weight: bold">NSIS Update does not update EclipseNSIS itself. To update EclipseNSIS (and other installed features in Eclipse) use the Eclipse <a href="javascript:redirectEclipse('/org.eclipse.platform.doc.user/tasks/tasks-36.htm');">Update Manager</a>.</span></li>
+  <li><span style="font-weight: bold">NSIS Update does not update CVS or nightly builds of NSIS. If the configured NSIS home points to a CVS or nightly build, then it must be manually updated by recompiling it or downloading a new nightly build.</span></li>
+</ol>
+<a name="menuitem"></a>
+<h2>Menuitem/Toolbar Button</h2>
 <p>NSIS Update is available as <a href="editing.html#a_update">menuitem</a> in the EclipseNSIS menu and a <a href="editing.html#a_update">button</a> on the EclipseNSIS toolbar,
 displayed whenever the EclipseNSIS editor is open. This provides convenient, single-click access to NSIS Update. 
-The action performed is equivalent to the <a href="updateprefs.html#defaultaction">default update action</a> in the NSIS Update preferences page.</p>
+The action performed is equivalent to the <a href="schedulerprefs.html#defaultaction">default update action</a> in the NSIS Update preferences page.</p>
 <a name="wizard"></a><h2>Wizard</h2>
-<p>The NSIS Update Wizard is available from the <span style="font-style:italic">Help&rarr;NSIS Update Wizard </span> menuitem. The user can specify the NSIS Update action and other update options before it runs. The NSIS Update action and options are identical to those described in the NSIS Update <a href="updateprefs.html">preference page</a>. </p>
+<p>The NSIS Update Wizard is available from the <span style="font-style:italic">Help&rarr;NSIS Update Wizard </span> menuitem. The user can specify the NSIS Update action and other update options before it runs. The NSIS Update action and options are identical to those described in the <a href="updateprefs.html">NSIS Update</a> and <a href="schedulerprefs.html">Automatic NSIS Updates </a> preference pages. </p>
 <p style="text-align: center;"><a href="updateprefs.html#a_action"><img src="images/updatewizard.gif" alt="NSIS Update Wizard" border="0" style="border: 0px solid ; width: 438px; height: 376px;"></a>
 </p>
 <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
 <a name="scheduler"></a><h2>Scheduler</h2>
 <p>NSIS Update is able to search for updates to NSIS on a periodic basis without user assistance. 
-The way this search is performed is configurable by the user on the <a href="updateprefs.html">Automatic NSIS Updates preference page</a>. Users can configure update schedule, actions and other options.</p>
+The way this search is performed is configurable by the user on the <a href="schedulerprefs.html">Automatic NSIS Updates</a> preference page. Users can configure the update schedule and the action to be performed.</p>
 <br>
 <hr><a href="wizcomplete.html">Previous</a> | <a href="overview.html#contents">Contents</a> | <a href="preferences.html">Next</a>
 <p><strong><small>Copyright &copy; 2004-2006 Sunil Kamath (IcemanK).</small></strong></p>
