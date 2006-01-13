@@ -26,11 +26,4 @@ public class NSISUpdateWizardDialog extends WizardDialog
         super.configureShell(newShell);
         newShell.setImage(EclipseNSISUpdatePlugin.getShellImage());
     }
-
-    public void create()
-    {
-        super.create();
-        //TODO Add help context id
-//                        PlatformUI.getWorkbench().getHelpSystem().setHelp(getContents(),helpContextId);
-    }
 }

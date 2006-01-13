@@ -19,7 +19,9 @@ import org.osgi.framework.BundleContext;
 public class EclipseNSISUpdatePlugin extends AbstractUIPlugin 
 {
     public static final String RESOURCE_BUNDLE = "net.sf.eclipsensis.update.EclipseNSISUpdatePluginResources"; //$NON-NLS-1$
-	//The shared instance.
+    public static final String PLUGIN_CONTEXT_PREFIX = "net.sf.eclipsensis."; //$NON-NLS-1$
+
+    //The shared instance.
 	private static EclipseNSISUpdatePlugin cPlugin;
     private static File cStateLocation = null;
     private static Image cShellImage;

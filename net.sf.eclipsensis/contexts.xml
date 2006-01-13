@@ -140,4 +140,29 @@
         <topic label="Build Options Tab" href="help/compiling.html#config_build"/>
         <topic label="Project Builders" href="help/compiling.html#project_builder"/>
     </context>
+    <context id="nsis_config_wizard_context">
+        <description>The NSIS Configuration Wizard is used to configure EclipseNSIS with an NSIS installation.</description>
+        <topic label="NSIS Configuration Wizard" href="help/configuration.html"/>
+    </context>
+    <context id="nsis_manualconfig_wizard_context">
+        <description>The NSIS Manual Configuration Wizard is used to configure EclipseNSIS by manually specifying the location of the NSIS installation.</description>
+        <topic label="NSIS Manual Configuration Wizard" href="help/configuration.html#manualcfgwiz"/>
+        <topic label="NSIS Configuration Wizard" href="help/configuration.html"/>
+    </context>
+    <context id="nsis_update_wizard_context">
+        <description>The NSIS Update Wizard is used to configure EclipseNSIS by using NSIS Update to download and install NSIS software.</description>
+        <topic label="NSIS Update Wizard" href="help/update.html#wizard"/>
+        <topic label="NSIS Update" href="help/update.html"/>
+        <topic label="NSIS Configuration Wizard" href="help/configuration.html"/>
+    </context>
+    <context id="nsis_update_prefs_context">
+        <description>The NSIS Update Preference page is used to configure NSIS Update behavior.</description>
+        <topic label="NSIS Update Preference page" href="help/updateprefs.html"/>
+        <topic label="NSIS Update" href="help/update.html"/>
+    </context>
+    <context id="nsis_scheduler_prefs_context">
+        <description>The Automatic NSIS Updates Preference page is used to configure NSIS Update to automatically search for updates to NSIS on a scheduled basis.</description>
+        <topic label="Automatic NSIS Updates Preference page" href="help/schedulerprefs.html"/>
+        <topic label="NSIS Update" href="help/update.html"/>
+    </context>
 </contexts>

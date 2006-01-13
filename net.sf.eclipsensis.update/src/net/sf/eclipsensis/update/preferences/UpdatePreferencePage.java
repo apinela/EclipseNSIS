@@ -20,6 +20,7 @@ import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
@@ -61,6 +62,7 @@ public class UpdatePreferencePage extends PreferencePage implements IWorkbenchPr
 
         loadPreferences();
         updateState();
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,EclipseNSISUpdatePlugin.PLUGIN_CONTEXT_PREFIX+"nsis_update_prefs_context"); //$NON-NLS-1$
         return parent;
     }
 

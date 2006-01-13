@@ -23,6 +23,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 
 public class NSISUpdateWizardPage extends WizardPage
@@ -78,6 +79,7 @@ public class NSISUpdateWizardPage extends WizardPage
         GridData gridData = new GridData(SWT.FILL,SWT.FILL,false,false);
         gridData.widthHint = Math.max(size1.x,size2.x);
         link.setLayoutData(gridData);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,EclipseNSISUpdatePlugin.PLUGIN_CONTEXT_PREFIX+"nsis_update_wizard_context"); //$NON-NLS-1$
         setControl(parent);
     }
     

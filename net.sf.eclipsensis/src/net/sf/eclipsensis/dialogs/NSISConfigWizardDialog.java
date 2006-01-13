@@ -9,6 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.dialogs;
 
+import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.config.NSISConfigSelectionWizard;
 
 import org.eclipse.swt.widgets.Shell;
@@ -22,7 +23,6 @@ public class NSISConfigWizardDialog extends AbstractNSISWizardDialog
 
     protected String getHelpContextId()
     {
-        // TODO Set help context id
-        return null;
+        return INSISConstants.PLUGIN_CONTEXT_PREFIX+"nsis_config_wizard_context"; //$NON-NLS-1$
     }
 }

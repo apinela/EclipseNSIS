@@ -23,6 +23,7 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.PlatformUI;
 
 public class NSISManualConfigWizardPage extends WizardPage
 {
@@ -74,6 +75,7 @@ public class NSISManualConfigWizardPage extends WizardPage
                 }
             }
         });
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(composite,INSISConstants.PLUGIN_CONTEXT_PREFIX+"nsis_manualconfig_wizard_context"); //$NON-NLS-1$
         setControl(composite);
         validate();
     }
