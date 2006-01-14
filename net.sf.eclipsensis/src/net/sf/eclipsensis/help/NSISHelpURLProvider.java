@@ -132,6 +132,7 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
 
     public boolean isNSISHelpAvailable()
     {
+        checkHelpFile();
         return mNSISHelpAvailable;
     }
 
@@ -375,16 +376,19 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
 
     public String getKeywordHelp(String keyword)
     {
+        checkHelpFile();
         return (String)(mKeywordHelp==null?null:mKeywordHelp.get(keyword));
     }
 
     public String getHelpStartPage()
     {
+        checkHelpFile();
         return mStartPage;
     }
 
     public String getCHMHelpStartPage()
     {
+        checkHelpFile();
         return mCHMStartPage;
     }
 
@@ -393,6 +397,18 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
         loadHelpURLs();
     }
 
+    private void checkHelpFile()
+    {
+        if(!mNSISHelpAvailable) {
+            String home = NSISPreferences.INSTANCE.getNSISHome();
+            if (!Common.isEmpty(home)) {
+                File htmlHelpFile = new File(home, NSIS_CHM_HELP_FILE);
+                if (htmlHelpFile.exists()) {
+                    loadHelpURLs();
+                }
+            }
+        }
+    }
     public String convertHelpURLToCHMHelpURL(String helpURL)
     {
         String chmHelpURL = null;
@@ -417,6 +433,7 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
     private String getHelpURL(String keyWord, boolean useEclipseHelp)
     {
         if(!Common.isEmpty(keyWord)) {
+            checkHelpFile();
             if(useEclipseHelp) {
                 if(!mNSISHelpAvailable) {
                     return mStartPage;
@@ -439,6 +456,7 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
 
     public void showHelp()
     {
+        checkHelpFile();
         String url = null;
         if(NSISPreferences.INSTANCE.isUseEclipseHelp()) {
             url = getHelpStartPage();
@@ -459,6 +477,7 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
 
     public void showHelpURL(String keyword)
     {
+        checkHelpFile();
         String url = null;
         if(NSISPreferences.INSTANCE.isUseEclipseHelp()) {
             url = getHelpURL(keyword, true);
@@ -479,6 +498,7 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
      */
     public void openCHMHelpURL(String url)
     {
+        checkHelpFile();
         if(!NSISHTMLHelp.showHelp(url)) {
             if(mNSISHelpAvailable) {
                 WinAPI.HtmlHelp(WinAPI.GetDesktopWindow(),url,WinAPI.HH_DISPLAY_TOPIC,0);
