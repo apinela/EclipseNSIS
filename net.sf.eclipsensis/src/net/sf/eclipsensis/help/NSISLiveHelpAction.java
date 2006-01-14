@@ -37,7 +37,7 @@ public class NSISLiveHelpAction implements ILiveHelpAction
                 if(NSISHelpProducer.CONFIGURE.equals(mData)) {
                     new NSISConfigWizardDialog(Display.getDefault().getActiveShell()).open();
                 }
-                else {
+                else if(!Common.isEmpty(mData)) {
                     String chmURL = NSISHelpURLProvider.getInstance().convertHelpURLToCHMHelpURL(mData);
                     if(!Common.isEmpty(chmURL)) {
                         NSISHelpURLProvider.getInstance().openCHMHelpURL(chmURL);

@@ -88,71 +88,75 @@ public class NSISBrowserInformationControl implements IInformationControl, IInfo
         // Replace browser's built-in context menu with none
         mBrowser.setMenu(new Menu(mShell, SWT.NONE));
         
-        ParameterizedCommand command = NSISInformationUtility.getCommand(INSISConstants.GOTO_HELP_COMMAND_ID);
-        ArrayList list = new ArrayList();
-        ArrayList list2 = new ArrayList();
-        if(command != null) {
-            KeySequence[] sequences = NSISInformationUtility.getKeySequences(command);
-            if(!Common.isEmptyArray(sequences)) {
-                for (int i = 0; i < sequences.length; i++) {
-                    KeyStroke[] strokes = sequences[i].getKeyStrokes();
-                    if(!Common.isEmptyArray(strokes) && strokes.length == 1) {
-                        list.add(sequences[i]);
-                        list2.add(new int[] {strokes[0].getNaturalKey(),
-                                             strokes[0].getModifierKeys()});
+        if (NSISHelpURLProvider.getInstance().isNSISHelpAvailable()) {
+            ParameterizedCommand command = NSISInformationUtility.getCommand(INSISConstants.GOTO_HELP_COMMAND_ID);
+            ArrayList list = new ArrayList();
+            ArrayList list2 = new ArrayList();
+            if (command != null) {
+                KeySequence[] sequences = NSISInformationUtility.getKeySequences(command);
+                if (!Common.isEmptyArray(sequences)) {
+                    for (int i = 0; i < sequences.length; i++) {
+                        KeyStroke[] strokes = sequences[i].getKeyStrokes();
+                        if (!Common.isEmptyArray(strokes) && strokes.length == 1) {
+                            list.add(sequences[i]);
+                            list2.add(new int[]{strokes[0].getNaturalKey(), strokes[0].getModifierKeys()});
+                        }
                     }
                 }
-            }
-        
-            String statusText;
-            try {
-                statusText = NSISInformationUtility.buildStatusText(command.getCommand().getDescription(), (KeySequence[])list.toArray(new KeySequence[list.size()]));
-            }
-            catch (Exception e) {
-                statusText = null;
-            }            
-            if(!Common.isEmpty(statusText)) {
-                final int[][] keys = (int[][])list2.toArray(new int[list2.size()][]);
-                
-                mBrowser.addKeyListener(new KeyListener() {
-                    public void keyPressed(KeyEvent e)  {
-                        if(!Common.isEmpty(mKeyword)) {
-                            for (int i = 0; i < keys.length; i++) {
-                                if(e.keyCode == keys[i][0] && (e.stateMask & keys[i][1])==e.stateMask) {
-                                    mShell.dispose();
-                                    NSISHelpURLProvider.getInstance().showHelpURL(mKeyword);
+
+                String statusText;
+                try {
+                    statusText = NSISInformationUtility.buildStatusText(command.getCommand().getDescription(), (KeySequence[])list.toArray(new KeySequence[list.size()]));
+                }
+                catch (Exception e) {
+                    statusText = null;
+                }
+                if (!Common.isEmpty(statusText)) {
+                    final int[][] keys = (int[][])list2.toArray(new int[list2.size()][]);
+
+                    mBrowser.addKeyListener(new KeyListener() {
+                        public void keyPressed(KeyEvent e)
+                        {
+                            if (!Common.isEmpty(mKeyword)) {
+                                for (int i = 0; i < keys.length; i++) {
+                                    if (e.keyCode == keys[i][0] && (e.stateMask & keys[i][1]) == e.stateMask) {
+                                        mShell.dispose();
+                                        NSISHelpURLProvider.getInstance().showHelpURL(mKeyword);
+                                    }
                                 }
                             }
                         }
-                    }
 
-                    public void keyReleased(KeyEvent e) {}
-                });
-                
-                Label separator= new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL | SWT.LINE_DOT);
-                separator.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
-                separator.setLayoutData(new GridData(SWT.FILL,SWT.CENTER,true,false));
-        
-                Label l = new Label(composite,SWT.NONE);
-                Font font= l.getFont();
-                FontData[] fontDatas= font.getFontData();
-                for (int i= 0; i < fontDatas.length; i++) {
-                    fontDatas[i].setHeight(fontDatas[i].getHeight() * 9 / 10);
-                }
-                final Font font2 = new Font(l.getDisplay(), fontDatas);
-                l.setFont(font2);
-                l.addDisposeListener(new DisposeListener() {
-                    public void widgetDisposed(DisposeEvent e)
-                    {
-                        font2.dispose();
+                        public void keyReleased(KeyEvent e)
+                        {
+                        }
+                    });
+
+                    Label separator = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL | SWT.LINE_DOT);
+                    separator.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+                    separator.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+
+                    Label l = new Label(composite, SWT.NONE);
+                    Font font = l.getFont();
+                    FontData[] fontDatas = font.getFontData();
+                    for (int i = 0; i < fontDatas.length; i++) {
+                        fontDatas[i].setHeight(fontDatas[i].getHeight() * 9 / 10);
                     }
-                });
-                l.setText(statusText);
-                l.setForeground(display.getSystemColor(SWT.COLOR_WIDGET_DARK_SHADOW));
-                l.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
-                l.setLayoutData(new GridData(SWT.RIGHT,SWT.TOP,true,false));
+                    final Font font2 = new Font(l.getDisplay(), fontDatas);
+                    l.setFont(font2);
+                    l.addDisposeListener(new DisposeListener() {
+                        public void widgetDisposed(DisposeEvent e)
+                        {
+                            font2.dispose();
+                        }
+                    });
+                    l.setText(statusText);
+                    l.setForeground(display.getSystemColor(SWT.COLOR_WIDGET_DARK_SHADOW));
+                    l.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+                    l.setLayoutData(new GridData(SWT.RIGHT, SWT.TOP, true, false));
+                }
             }
-        }
+        }        
         addDisposeListener(this);
     }
     
@@ -275,6 +279,7 @@ public class NSISBrowserInformationControl implements IInformationControl, IInfo
     {
         mShell= null;
         mBrowser= null;
+        mKeyword = null;
     }
 
     public void setSize(int width, int height) 

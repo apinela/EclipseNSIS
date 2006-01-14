@@ -108,19 +108,13 @@ public class NSISUsageProvider implements IEclipseNSISService
                                 buf.append(mLineSeparator).append(line);
                             }
                             else {
-                                String usage = buf.toString();
-                                int n = usage.indexOf(" "); //$NON-NLS-1$
-                                String keyword = (n > 0?usage.substring(0,n):usage);
-                                mUsages.put(keyword,usage);
+                                setUsage(buf.toString());
                                 buf = new StringBuffer(line);
                             }
                         }
                     }
                     if(buf != null && buf.length() > 0) {
-                        String usage = buf.toString();
-                        int n = usage.indexOf(" "); //$NON-NLS-1$
-                        String keyword = (n > 0?usage.substring(0,n):usage);
-                        mUsages.put(keyword,usage);
+                        setUsage(buf.toString());
                     }
                 }
                 try {
@@ -140,5 +134,12 @@ public class NSISUsageProvider implements IEclipseNSISService
                 }
             }
         }
+    }
+
+    private void setUsage(String usage)
+    {
+        int n = usage.indexOf(" "); //$NON-NLS-1$
+        String keyword = (n > 0?usage.substring(0,n):usage);
+        mUsages.put(keyword,usage);
     }
 }

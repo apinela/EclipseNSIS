@@ -20,7 +20,7 @@ public class NSISTextHover implements ITextHover, ITextHoverExtension, INSISCons
     public NSISTextHover()
     {
         mInformationProvider = new NSISInformationProvider();
-        mInformationProvider.setInformationPresenterControlCreator(new NSISInformationControlCreator(new String[]{STICKY_HELP_COMMAND_ID, GOTO_HELP_COMMAND_ID}));
+        mInformationProvider.setInformationPresenterControlCreator(new NSISHelpInformationControlCreator(new String[]{STICKY_HELP_COMMAND_ID, GOTO_HELP_COMMAND_ID}));
     }
 
     /*

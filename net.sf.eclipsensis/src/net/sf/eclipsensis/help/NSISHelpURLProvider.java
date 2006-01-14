@@ -11,6 +11,7 @@ package net.sf.eclipsensis.help;
 
 import java.io.*;
 import java.lang.reflect.Array;
+import java.net.MalformedURLException;
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -25,6 +26,7 @@ import net.sf.eclipsensis.util.*;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 
 public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListener, IEclipseNSISService
@@ -53,6 +55,8 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
     private Map mNSISContribPaths;
 
     private ResourceBundle mBundle;
+    
+    private boolean mNSISHelpAvailable;
     
     static {
         File styleSheet = null;
@@ -117,11 +121,18 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
             mCHMStartPage = null;
             mHelpURLs = null;
             mCHMHelpURLs = null;
+            mKeywordHelp = null;
+            mNSISHelpAvailable = false;
             mParserDelegator = null;
             mNSISContribPaths = null;
             mBundle = null;
             NSISKeywords.getInstance().removeKeywordsListener(this);
         }
+    }
+
+    public boolean isNSISHelpAvailable()
+    {
+        return mNSISHelpAvailable;
     }
 
     private void loadNSISContribPaths()
@@ -157,176 +168,209 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
         mCHMHelpURLs = null;
         mStartPage = null;
         mCHMStartPage = null;
+        mKeywordHelp = null;
+        mNSISHelpAvailable = false;
 
-        String home = NSISPreferences.INSTANCE.getNSISHome();
-        if(!Common.isEmpty(home)) {
-            File htmlHelpFile = new File(home,NSIS_CHM_HELP_FILE);
-            if(htmlHelpFile.exists()) {
-                try {
-                    String startPage = mBundle.getString("help.start.page"); //$NON-NLS-1$
-                    mStartPage = MessageFormat.format(NSIS_HELP_FORMAT,new Object[]{startPage});
-                    mCHMStartPage = MessageFormat.format(NSIS_CHM_HELP_FORMAT,new Object[]{htmlHelpFile.getAbsolutePath(),startPage});
-                }
-                catch(MissingResourceException mre) {
-                }
-
-                File stateLocation = EclipseNSISPlugin.getPluginStateLocation();
-                File cacheFile = new File(stateLocation,getClass().getName()+".HelpURLs.ser"); //$NON-NLS-1$
-                long cacheTimeStamp = 0;
-                if(cacheFile.exists()) {
-                    cacheTimeStamp = cacheFile.lastModified();
-                }
-
-                long htmlHelpTimeStamp = htmlHelpFile.lastModified();
-                if(htmlHelpTimeStamp == cacheTimeStamp) {
-                    Object obj = null;
+        try {
+            String home = NSISPreferences.INSTANCE.getNSISHome();
+            if (!Common.isEmpty(home)) {
+                File htmlHelpFile = new File(home, NSIS_CHM_HELP_FILE);
+                if (htmlHelpFile.exists()) {
                     try {
-                        obj = IOUtility.readObject(cacheFile);
+                        String startPage = mBundle.getString("help.start.page"); //$NON-NLS-1$
+                        mStartPage = MessageFormat.format(NSIS_HELP_FORMAT, new Object[]{startPage});
+                        mCHMStartPage = MessageFormat.format(NSIS_CHM_HELP_FORMAT, new Object[]{htmlHelpFile.getAbsolutePath(), startPage});
                     }
-                    catch (Exception e) {
-                        obj = null;
-                        EclipseNSISPlugin.getDefault().log(e);
+                    catch (MissingResourceException mre) {
                     }
-                    if(obj != null && obj.getClass().isArray() && Array.getLength(obj) == 3) {
-                        mHelpURLs = (Map)((Object[])obj)[0];
-                        mCHMHelpURLs = (Map)((Object[])obj)[1];
-                        mKeywordHelp = (Map)((Object[])obj)[2];
-                        return;
+
+                    File stateLocation = EclipseNSISPlugin.getPluginStateLocation();
+                    File cacheFile = new File(stateLocation, getClass().getName() + ".HelpURLs.ser"); //$NON-NLS-1$
+                    long cacheTimeStamp = 0;
+                    if (cacheFile.exists()) {
+                        cacheTimeStamp = cacheFile.lastModified();
                     }
-                }
 
-                if(cacheFile.exists()) {
-                    cacheFile.delete();
-                }
-
-                Map topicMap = new CaseInsensitiveMap();
-
-                String[] mappedHelpTopics = Common.loadArrayProperty(mBundle, "mapped.help.topics"); //$NON-NLS-1$
-                if(!Common.isEmptyArray(mappedHelpTopics)) {
-                    for (int i = 0; i < mappedHelpTopics.length; i++) {
-                        String[] keywords = Common.loadArrayProperty(mBundle,mappedHelpTopics[i]);
-                        if(!Common.isEmptyArray(keywords)) {
-                            ArrayList list = new ArrayList();
-                            for (int j = 0; j < keywords.length; j++) {
-                                keywords[j] = NSISKeywords.getInstance().getKeyword(keywords[j]);
-                                if(NSISKeywords.getInstance().isValidKeyword(keywords[j])) {
-                                    list.add(keywords[j]);
-                                }
-                            }
-                            topicMap.put(mappedHelpTopics[i],list);
+                    long htmlHelpTimeStamp = htmlHelpFile.lastModified();
+                    if (htmlHelpTimeStamp == cacheTimeStamp) {
+                        Object obj = null;
+                        try {
+                            obj = IOUtility.readObject(cacheFile);
+                        }
+                        catch (Exception e) {
+                            obj = null;
+                            EclipseNSISPlugin.getDefault().log(e);
+                        }
+                        if (obj != null && obj.getClass().isArray() && Array.getLength(obj) == 3) {
+                            mHelpURLs = (Map)((Object[])obj)[0];
+                            mCHMHelpURLs = (Map)((Object[])obj)[1];
+                            mKeywordHelp = (Map)((Object[])obj)[2];
+                            mNSISHelpAvailable = true;
+                            return;
                         }
                     }
-                }
-                
-                File helpLocation = new File(stateLocation,CACHED_HELP_LOCATION);
-                if(IOUtility.isValidFile(helpLocation)) {
-                    helpLocation.delete();
-                }
-                if(!IOUtility.isValidDirectory(helpLocation)) {
-                    helpLocation.mkdirs();
-                }
-                String temp = WinAPI.ExtractHtmlHelpAndTOC(htmlHelpFile.getAbsolutePath(),helpLocation.getAbsolutePath());
 
-                if(!Common.isEmpty(temp)) {
-                    File tocFile = new File(temp);
-                    if(tocFile.exists()) {
-                        try {
-                            NSISHelpTOCParserCallback parserCallback = new NSISHelpTOCParserCallback();
-                            parserCallback.setTopicMap(topicMap);
-                            mParserDelegator.parse(new FileReader(tocFile), parserCallback, false);
+                    if (cacheFile.exists()) {
+                        cacheFile.delete();
+                    }
 
-                            Map keywordHelpMap = parserCallback.getKeywordHelpMap();
-                            mHelpURLs = new CaseInsensitiveMap();
-                            mCHMHelpURLs = new CaseInsensitiveMap();
-                            if(!Common.isEmptyMap(keywordHelpMap)) {
-                                MessageFormat mf = new MessageFormat(NSIS_HELP_FORMAT);
-                                StringBuffer buf = new StringBuffer();
-                                String[] args = new String[]{null};
-                                MessageFormat chmFormat = new MessageFormat(NSIS_CHM_HELP_FORMAT);
-                                StringBuffer chmBuf = new StringBuffer();
-                                String[] chmArgs = new String[]{htmlHelpFile.getAbsolutePath(),null};
-                                for (Iterator iter = keywordHelpMap.keySet().iterator(); iter.hasNext();) {
-                                    buf.setLength(0);
-                                    chmBuf.setLength(0);
+                    Map topicMap = new CaseInsensitiveMap();
 
-                                    String keyword = (String)iter.next();
-                                    String location = (String)keywordHelpMap.get(keyword);
-
-                                    args[0] = location;
-                                    mHelpURLs.put(keyword,mf.format(args,buf,null).toString());
-
-                                    chmArgs[1] = location;
-                                    mCHMHelpURLs.put(keyword,chmFormat.format(chmArgs,chmBuf,null).toString());
+                    String[] mappedHelpTopics = Common.loadArrayProperty(mBundle, "mapped.help.topics"); //$NON-NLS-1$
+                    if (!Common.isEmptyArray(mappedHelpTopics)) {
+                        for (int i = 0; i < mappedHelpTopics.length; i++) {
+                            String[] keywords = Common.loadArrayProperty(mBundle, mappedHelpTopics[i]);
+                            if (!Common.isEmptyArray(keywords)) {
+                                ArrayList list = new ArrayList();
+                                for (int j = 0; j < keywords.length; j++) {
+                                    keywords[j] = NSISKeywords.getInstance().getKeyword(keywords[j]);
+                                    if (NSISKeywords.getInstance().isValidKeyword(keywords[j])) {
+                                        list.add(keywords[j]);
+                                    }
                                 }
-                                
-                                Set urls = new CaseInsensitiveSet(keywordHelpMap.values());
-                                Map urlContentsMap = new CaseInsensitiveMap();
-                                List processedFiles = new ArrayList();
-                                for (Iterator iter = urls.iterator(); iter.hasNext();) {
-                                    String url = (String)iter.next();
-                                    int n = url.indexOf('#');
-                                    if(n > 1) {
-                                        String htmlFile = url.substring(0,n).toLowerCase();
-                                        if(!processedFiles.contains(htmlFile)) {
-                                            processedFiles.add(htmlFile);
-                                            NSISHelpFileParserCallback callback = new NSISHelpFileParserCallback(htmlFile+"#",urls,urlContentsMap); //$NON-NLS-1$
-                                            mParserDelegator.parse(new FileReader(new File(tocFile.getParentFile(),htmlFile)), callback, false);
+                                topicMap.put(mappedHelpTopics[i], list);
+                            }
+                        }
+                    }
+
+                    File helpLocation = new File(stateLocation, CACHED_HELP_LOCATION);
+                    if (IOUtility.isValidFile(helpLocation)) {
+                        helpLocation.delete();
+                    }
+                    if (!IOUtility.isValidDirectory(helpLocation)) {
+                        helpLocation.mkdirs();
+                    }
+                    String temp = WinAPI.ExtractHtmlHelpAndTOC(htmlHelpFile.getAbsolutePath(), helpLocation.getAbsolutePath());
+
+                    if (!Common.isEmpty(temp)) {
+                        File tocFile = new File(temp);
+                        if (tocFile.exists()) {
+                            try {
+                                NSISHelpTOCParserCallback parserCallback = new NSISHelpTOCParserCallback();
+                                parserCallback.setTopicMap(topicMap);
+                                mParserDelegator.parse(new FileReader(tocFile), parserCallback, false);
+
+                                Map keywordHelpMap = parserCallback.getKeywordHelpMap();
+                                mHelpURLs = new CaseInsensitiveMap();
+                                mCHMHelpURLs = new CaseInsensitiveMap();
+                                if (!Common.isEmptyMap(keywordHelpMap)) {
+                                    MessageFormat mf = new MessageFormat(NSIS_HELP_FORMAT);
+                                    StringBuffer buf = new StringBuffer();
+                                    String[] args = new String[]{null};
+                                    MessageFormat chmFormat = new MessageFormat(NSIS_CHM_HELP_FORMAT);
+                                    StringBuffer chmBuf = new StringBuffer();
+                                    String[] chmArgs = new String[]{htmlHelpFile.getAbsolutePath(), null};
+                                    for (Iterator iter = keywordHelpMap.keySet().iterator(); iter.hasNext();) {
+                                        buf.setLength(0);
+                                        chmBuf.setLength(0);
+
+                                        String keyword = (String)iter.next();
+                                        String location = (String)keywordHelpMap.get(keyword);
+
+                                        args[0] = location;
+                                        mHelpURLs.put(keyword, mf.format(args, buf, null).toString());
+
+                                        chmArgs[1] = location;
+                                        mCHMHelpURLs.put(keyword, chmFormat.format(chmArgs, chmBuf, null).toString());
+                                    }
+
+                                    Set urls = new CaseInsensitiveSet(keywordHelpMap.values());
+                                    Map urlContentsMap = new CaseInsensitiveMap();
+                                    List processedFiles = new ArrayList();
+                                    for (Iterator iter = urls.iterator(); iter.hasNext();) {
+                                        String url = (String)iter.next();
+                                        int n = url.indexOf('#');
+                                        if (n > 1) {
+                                            String htmlFile = url.substring(0, n).toLowerCase();
+                                            if (!processedFiles.contains(htmlFile)) {
+                                                processedFiles.add(htmlFile);
+                                                NSISHelpFileParserCallback callback = new NSISHelpFileParserCallback(htmlFile + "#", urls, urlContentsMap); //$NON-NLS-1$
+                                                mParserDelegator.parse(new FileReader(new File(tocFile.getParentFile(), htmlFile)), callback, false);
+                                            }
+                                        }
+                                    }
+
+                                    mKeywordHelp = new CaseInsensitiveMap();
+                                    for (Iterator iter = keywordHelpMap.keySet().iterator(); iter.hasNext();) {
+                                        String keyword = (String)iter.next();
+                                        String url = (String)keywordHelpMap.get(keyword);
+                                        String help = (String)urlContentsMap.get(url);
+                                        if (help != null) {
+                                            mKeywordHelp.put(keyword, help);
                                         }
                                     }
                                 }
-                                
-                                mKeywordHelp = new CaseInsensitiveMap();
-                                for(Iterator iter=keywordHelpMap.keySet().iterator(); iter.hasNext(); ) {
-                                    String keyword = (String)iter.next();
-                                    String url = (String)keywordHelpMap.get(keyword);
-                                    String help = (String)urlContentsMap.get(url);
-                                    if(help != null) {
-                                        mKeywordHelp.put(keyword, help);
-                                    }
+
+                                IOUtility.writeObject(cacheFile, new Object[]{mHelpURLs, mCHMHelpURLs, mKeywordHelp});
+                                cacheFile.setLastModified(htmlHelpTimeStamp);
+                            }
+                            catch (Exception e) {
+                                EclipseNSISPlugin.getDefault().log(e);
+                            }
+                            tocFile.delete();
+                        }
+
+                        //Fix the chmlink.js
+                        File chmlinkJs = new File(helpLocation, CHMLINK_JS);
+                        if (chmlinkJs.exists()) {
+                            chmlinkJs.delete();
+                        }
+                        PrintWriter writer = null;
+                        BufferedReader reader = null;
+                        try {
+                            reader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(CHMLINK_JS)));
+                            writer = new PrintWriter(new BufferedWriter(new FileWriter(chmlinkJs)));
+                            String line;
+                            while ((line = reader.readLine()) != null) {
+                                writer.println(line);
+                            }
+                        }
+                        catch (IOException io) {
+                            EclipseNSISPlugin.getDefault().log(io);
+                        }
+                        finally {
+                            if (reader != null) {
+                                try {
+                                    reader.close();
+                                }
+                                catch (IOException e) {
                                 }
                             }
-
-                            IOUtility.writeObject(cacheFile,new Object[]{mHelpURLs,mCHMHelpURLs,mKeywordHelp});
-                            cacheFile.setLastModified(htmlHelpTimeStamp);
-                        }
-                        catch (Exception e) {
-                            EclipseNSISPlugin.getDefault().log(e);
-                        }
-                        tocFile.delete();
-                    }
-
-                    //Fix the chmlink.js
-                    File chmlinkJs = new File(helpLocation,CHMLINK_JS);
-                    if(chmlinkJs.exists()) {
-                        chmlinkJs.delete();
-                    }
-                    PrintWriter writer = null;
-                    BufferedReader reader= null;
-                    try {
-                        reader= new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(CHMLINK_JS)));
-                        writer = new PrintWriter(new BufferedWriter(new FileWriter(chmlinkJs)));
-                        String line;
-                        while ((line=reader.readLine()) != null) {
-                            writer.println(line);
-                        }
-                    }
-                    catch (IOException io) {
-                        EclipseNSISPlugin.getDefault().log(io);
-                    }
-                    finally {
-                        if (reader != null) {
-                            try {
-                                reader.close();
+                            if (writer != null) {
+                                writer.close();
                             }
-                            catch (IOException e) {}
-                        }
-                        if (writer != null) {
-                            writer.close();
                         }
                     }
+
+                    mNSISHelpAvailable = true;
                 }
             }
         }
+        finally {
+            if(!mNSISHelpAvailable) {
+                File cacheLocation = new File(CACHED_HELP_LOCATION);
+                if(!IOUtility.isValidDirectory(cacheLocation)) {
+                    if(IOUtility.isValidFile(cacheLocation)) {
+                        cacheLocation.delete();
+                    }
+                    cacheLocation.mkdirs();
+                }
+                
+                File nohelp = new File(cacheLocation,"nohelp.html");
+                if(!IOUtility.isValidFile(nohelp)) {
+                    String text = EclipseNSISPlugin.getFormattedString("missing.chm.format", 
+                            new String[] {EclipseNSISPlugin.getResourceString("help.style")});
+                    IOUtility.writeContentToFile(nohelp, text.getBytes());
+                }
+                mStartPage = MessageFormat.format(NSIS_HELP_FORMAT, new Object[]{nohelp.getName()});
+                try {
+                    mCHMStartPage = nohelp.toURI().toURL().toString();
+                }
+                catch (MalformedURLException e) {
+                    mCHMStartPage = null;
+                }
+            }
+        }        
     }
 
     public String getKeywordHelp(String keyword)
@@ -374,11 +418,17 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
     {
         if(!Common.isEmpty(keyWord)) {
             if(useEclipseHelp) {
+                if(!mNSISHelpAvailable) {
+                    return mStartPage;
+                }
                 if(mHelpURLs != null) {
                     return (String)mHelpURLs.get(keyWord);
                 }
             }
             else {
+                if(!mNSISHelpAvailable) {
+                    return mCHMStartPage;
+                }
                 if(mCHMHelpURLs != null) {
                     return (String)mCHMHelpURLs.get(keyWord);
                 }
@@ -430,7 +480,18 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
     public void openCHMHelpURL(String url)
     {
         if(!NSISHTMLHelp.showHelp(url)) {
-            WinAPI.HtmlHelp(WinAPI.GetDesktopWindow(),url,WinAPI.HH_DISPLAY_TOPIC,0);
+            if(mNSISHelpAvailable) {
+                WinAPI.HtmlHelp(WinAPI.GetDesktopWindow(),url,WinAPI.HH_DISPLAY_TOPIC,0);
+            }
+            else {
+                Display.getDefault().asyncExec(new Runnable() {
+                    public void run()
+                    {
+                        Common.openError(Display.getCurrent().getActiveShell(), 
+                                "The NSIS Users Manual is not available for the currently configured NSIS location.", EclipseNSISPlugin.getShellImage());
+                    }
+                });
+            }
         }
     }
 

@@ -69,7 +69,7 @@ public class NSISEditorUtilities
             informationPresenter = new InformationPresenter(informationControlCreator);
         }
         else {
-            informationControlCreator= new NSISInformationControlCreator(new String[]{INSISConstants.GOTO_HELP_COMMAND_ID},SWT.V_SCROLL|SWT.H_SCROLL);
+            informationControlCreator= new NSISHelpInformationControlCreator(new String[]{INSISConstants.GOTO_HELP_COMMAND_ID},SWT.V_SCROLL|SWT.H_SCROLL);
             informationProvider = new NSISInformationProvider();
             informationPresenter = new InformationPresenter(informationControlCreator);
         }

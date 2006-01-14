@@ -487,6 +487,13 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
                 doRemoveBlockComment();
                 return;
             }
+            case ISourceViewer.INFORMATION:
+            {
+                if(!NSISHelpURLProvider.getInstance().isNSISHelpAvailable()) {
+                    return;
+                }
+                //Fall through
+            }
             default:
             {
                 super.doOperation(operation);
@@ -687,12 +694,14 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
 
     private void doGotoHelp()
     {
-        int offset = NSISTextUtility.computeOffset(this,false);
-        if(offset >= 0) {
-            String keyword;
-            IRegion region = NSISInformationUtility.getInformationRegionAtOffset(this,offset,false);
-            keyword = NSISTextUtility.getRegionText(getDocument(),region);
-            NSISHelpURLProvider.getInstance().showHelpURL(keyword);
+        if(NSISHelpURLProvider.getInstance().isNSISHelpAvailable()) {
+            int offset = NSISTextUtility.computeOffset(this,false);
+            if(offset >= 0) {
+                String keyword;
+                IRegion region = NSISInformationUtility.getInformationRegionAtOffset(this,offset,false);
+                keyword = NSISTextUtility.getRegionText(getDocument(),region);
+                NSISHelpURLProvider.getInstance().showHelpURL(keyword);
+            }
         }
     }
 

@@ -47,6 +47,15 @@ public class NSISInformationControlCreator extends AbstractNSISInformationContro
 
     public IInformationControl createInformationControl(Shell parent)
     {
-        return new DefaultInformationControl(parent,mStyle,mInformationPresenter,NSISInformationUtility.buildStatusText(mCommands));
+        String statusText = null;
+        if(shouldBuildStatusText()) {
+            statusText = NSISInformationUtility.buildStatusText(mCommands);
+        }
+        return new DefaultInformationControl(parent,mStyle,mInformationPresenter,statusText);
+    }
+    
+    protected boolean shouldBuildStatusText()
+    {
+        return mCommands != null;
     }
 }

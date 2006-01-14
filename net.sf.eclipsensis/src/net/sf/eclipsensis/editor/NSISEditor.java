@@ -18,6 +18,7 @@ import net.sf.eclipsensis.actions.NSISAction;
 import net.sf.eclipsensis.actions.NSISScriptAction;
 import net.sf.eclipsensis.editor.outline.*;
 import net.sf.eclipsensis.editor.text.NSISTextUtility;
+import net.sf.eclipsensis.help.NSISHelpURLProvider;
 import net.sf.eclipsensis.makensis.MakeNSISResults;
 import net.sf.eclipsensis.settings.*;
 import net.sf.eclipsensis.util.*;
@@ -576,16 +577,18 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
          */
         public void run()
         {
-            ISourceViewer sourceViewer = getSourceViewer();
-            int offset = NSISTextUtility.computeOffset(sourceViewer,true);
-            if(offset == -1) {
-                mTextOperationAction.run();
-            }
-            else {
-                InformationPresenter informationPresenter = getInformationPresenter();
-                informationPresenter.install(sourceViewer);
-                informationPresenter.setOffset(offset); //wordRegion.getOffset());
-                informationPresenter.showInformation();
+            if(NSISHelpURLProvider.getInstance().isNSISHelpAvailable()) {
+                ISourceViewer sourceViewer = getSourceViewer();
+                int offset = NSISTextUtility.computeOffset(sourceViewer,true);
+                if(offset == -1) {
+                    mTextOperationAction.run();
+                }
+                else {
+                    InformationPresenter informationPresenter = getInformationPresenter();
+                    informationPresenter.install(sourceViewer);
+                    informationPresenter.setOffset(offset); //wordRegion.getOffset());
+                    informationPresenter.showInformation();
+                }
             }
         }
     }
