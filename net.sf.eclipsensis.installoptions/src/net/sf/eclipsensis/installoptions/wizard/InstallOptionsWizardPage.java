@@ -23,6 +23,7 @@ import net.sf.eclipsensis.wizard.util.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
@@ -184,6 +185,17 @@ public class InstallOptionsWizardPage extends WizardPage
                     wizard.setTemplate(null);
                 }
                 setPageComplete(validatePage());
+            }
+        });
+        viewer.getList().addSelectionListener(new SelectionAdapter() {
+            public void widgetDefaultSelected(SelectionEvent e)
+            {
+                if(canFlipToNextPage()) {
+                    IWizardPage nextPage = getNextPage();
+                    if(nextPage != null) {
+                        getContainer().showPage(nextPage);
+                    }
+                }
             }
         });
 

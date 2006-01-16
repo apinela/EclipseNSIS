@@ -18,8 +18,11 @@ import net.sf.eclipsensis.viewer.CollectionContentProvider;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardSelectionPage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -103,6 +106,17 @@ public class NSISConfigSelectionPage extends WizardSelectionPage
                     NSISConfigWizardNode node = (NSISConfigWizardNode)sel.getFirstElement();
                     setDescription(node.getDescriptor().getDescription());
                     setSelectedNode(node);
+                }
+            }
+        });
+        viewer.getTable().addSelectionListener(new SelectionAdapter() {
+            public void widgetDefaultSelected(SelectionEvent e)
+            {
+                if(canFlipToNextPage()) {
+                    IWizardPage nextPage = getNextPage();
+                    if(nextPage != null) {
+                        getContainer().showPage(nextPage);
+                    }
                 }
             }
         });

@@ -61,9 +61,9 @@ public class NSISHelpProducer implements IExecutableExtension, IHelpContentProdu
                     if(IOUtility.isValidDirectory(nsisDir)) {
                         File helpFile = null;
                         String href2=href.substring(NSIS_HELP_PREFIX.length());
-                        boolean isDocs = false;
-                        if(href2.startsWith(DOCS_LOCATION_PREFIX) || href2.startsWith(CONTRIB_LOCATION_PREFIX)) {
-                            isDocs = true;
+                        boolean isDocs = href2.startsWith(DOCS_LOCATION_PREFIX);
+                        boolean isContrib = href2.startsWith(CONTRIB_LOCATION_PREFIX);
+                        if(isDocs || isContrib) {
                             if(IOUtility.isValidDirectory(cHelpCacheLocation)) {
                                 helpFile = new File(cHelpCacheLocation,href2);
                             }
@@ -96,7 +96,15 @@ public class NSISHelpProducer implements IExecutableExtension, IHelpContentProdu
                                 EclipseNSISPlugin.getDefault().log(e);
                             }
                         }
-                        if(isDocs) {
+                        if(isDocs || isContrib) {
+                            if(isDocs && !NSISHelpURLProvider.getInstance().isNSISHelpAvailable()) {
+                                try {
+                                    return new BufferedInputStream(new FileInputStream(NSISHelpURLProvider.getInstance().getNoHelpFile()));
+                                }
+                                catch (FileNotFoundException e) {
+                                    EclipseNSISPlugin.getDefault().log(e);
+                                }
+                            }
                             return new ByteArrayInputStream(EclipseNSISPlugin.getFormattedString("missing.help.format", //$NON-NLS-1$
                                                                     new Object[]{STYLE, href,PLUGIN_ID,
                                                                                  NSISLiveHelpAction.class.getName()}).getBytes());

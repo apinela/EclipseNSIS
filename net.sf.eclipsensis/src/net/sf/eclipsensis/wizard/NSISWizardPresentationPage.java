@@ -28,6 +28,7 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.PlatformUI;
 
 public class NSISWizardPresentationPage extends AbstractNSISWizardPage
 {
@@ -576,10 +577,52 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
         });
 
         Canvas canvas = new Canvas(shell, SWT.NO_BACKGROUND);
+        
+        final Shell parentShell = getShell();
+        final Shell windowShell;
+        Shell temp;
+        try {
+            temp = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+        }
+        catch (NullPointerException e) {
+            temp = null;
+        }
+        windowShell = temp;
+        final boolean parentMinimized;
+        if(parentShell != null) {
+            parentMinimized = parentShell.getMinimized();
+            if(!parentMinimized) {
+                parentShell.setMinimized(true);
+            }
+        }
+        else {
+            parentMinimized = false;
+        }
+        final boolean windowMinimized;
+        if(windowShell != null) {
+            windowMinimized = windowShell.getMinimized();
+            if(!windowMinimized) {
+                windowShell.setMinimized(true);
+            }
+        }
+        else {
+            windowMinimized = false;
+        }
+        shell.addDisposeListener(new DisposeListener() {
+            public void widgetDisposed(DisposeEvent e)
+            {
+                if(windowShell != null && !windowMinimized && windowShell.getMinimized()) {
+                    windowShell.setMinimized(false);
+                }
+                if(parentShell != null && !parentMinimized && parentShell.getMinimized()) {
+                    parentShell.setMinimized(false);
+                }
+            }
+        });
         final GC gc = new GC(canvas);
         shell.open();
         shell.forceActive();
-        if(clip != null) {
+        if (clip != null) {
             clip.loop(Clip.LOOP_CONTINUOUSLY);
         }
         canvas.addPaintListener(new PaintListener() {
@@ -590,8 +633,8 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
                 long r = topRGB.red << 10;
                 long g = topRGB.green << 10;
                 long b = topRGB.blue << 10;
-                long dr = (((botRGB.red << 10) - r)*4) / rect.height;
-                long dg = (((botRGB.green << 10) - g)*4) / rect.height;
+                long dr = (((botRGB.red << 10) - r) * 4) / rect.height;
+                long dg = (((botRGB.green << 10) - g) * 4) / rect.height;
                 long db = (((botRGB.blue << 10) - b) * 4) / rect.height;
                 int ry = rect.y;
 
@@ -600,10 +643,10 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
                 Color bgColor = gc.getBackground();
                 Font font = gc.getFont();
 
-                while(ry < (rect.y+rect.height)) {
-                    Color color = new Color(display,(int)(r >> 10), (int)(g >> 10), (int)(b >> 10));
+                while (ry < (rect.y + rect.height)) {
+                    Color color = new Color(display, (int)(r >> 10), (int)(g >> 10), (int)(b >> 10));
                     gc.setBackground(color);
-                    gc.fillRectangle(rect.x,ry,rect.width,mBGPreviewGradientHeight);
+                    gc.fillRectangle(rect.x, ry, rect.width, mBGPreviewGradientHeight);
                     color.dispose();
                     ry += mBGPreviewGradientHeight;
                     r += dr;
@@ -612,12 +655,12 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
                 }
 
                 String backgroundBMP = IOUtility.decodePath(settings.getBackgroundBMP());
-                if(IOUtility.isValidFile(backgroundBMP)) {
+                if (IOUtility.isValidFile(backgroundBMP)) {
                     ImageData imageData = new ImageData(backgroundBMP);
                     Image image = new Image(display, imageData);
-                    int x = rect.x + (rect.width - imageData.width)/2;
-                    int y = rect.y + (rect.height - imageData.height)/2;
-                    gc.drawImage(image,x,y);
+                    int x = rect.x + (rect.width - imageData.width) / 2;
+                    int y = rect.y + (rect.height - imageData.height) / 2;
+                    gc.drawImage(image, x, y);
                     image.dispose();
                 }
 
@@ -627,7 +670,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
 
                 gc.setForeground(ColorManager.getNegativeColor(botRGB));
                 gc.setFont(messageFont);
-                gc.drawString(EclipseNSISPlugin.getResourceString("background.preview.escape.message"),10,rect.y+rect.height-20,true); //$NON-NLS-1$
+                gc.drawString(EclipseNSISPlugin.getResourceString("background.preview.escape.message"), 10, rect.y + rect.height - 20, true); //$NON-NLS-1$
 
                 //Restore GC settings
                 gc.setForeground(fgColor);

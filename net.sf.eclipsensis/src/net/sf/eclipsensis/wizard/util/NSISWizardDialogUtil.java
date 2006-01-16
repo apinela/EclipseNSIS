@@ -252,7 +252,7 @@ public class NSISWizardDialogUtil
             Image image = null;
             if(!Common.isEmpty(fileName) && IOUtility.isValidFile(fileName)) {
                 try {
-                    URL url = new File(fileName).toURL();
+                    URL url = new File(fileName).toURI().toURL();
                     if(EclipseNSISPlugin.getImageManager().containsImage(url)) {
                         image = EclipseNSISPlugin.getImageManager().getImage(url);
                     }

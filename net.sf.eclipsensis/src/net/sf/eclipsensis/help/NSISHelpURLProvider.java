@@ -36,6 +36,7 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
 
     private static NSISHelpURLProvider cInstance = null;
 
+    private static final String NO_HELP_FILE=PLUGIN_HELP_LOCATION_PREFIX+"nohelp.html";
     private static final String CHMLINK_JS = "chmlink.js"; //$NON-NLS-1$
     private static final String NSIS_HELP_FORMAT = new StringBuffer("/").append( //$NON-NLS-1$
                                     INSISConstants.PLUGIN_ID).append("/").append( //$NON-NLS-1$
@@ -44,7 +45,6 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
     private static final Pattern NSIS_HELP_PATTERN = Pattern.compile(new StringBuffer(".*/").append( //$NON-NLS-1$
                                     INSISConstants.NSIS_HELP_PREFIX).append("Docs/(.*)").toString()); //$NON-NLS-1$
     private static final String NSIS_CHM_HELP_FORMAT = "mk:@MSITStore:{0}::/{1}"; //$NON-NLS-1$
-
 
     private String mStartPage = null;
     private String mCHMStartPage = null;
@@ -57,6 +57,9 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
     private ResourceBundle mBundle;
     
     private boolean mNSISHelpAvailable;
+    private File mCacheFile;
+    private File mHelpLocation;
+    private File mNoHelpFile;
     
     static {
         File styleSheet = null;
@@ -90,6 +93,20 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
     public static NSISHelpURLProvider getInstance()
     {
         return cInstance;
+    }
+
+    public NSISHelpURLProvider()
+    {
+        super();
+        File stateLocation = EclipseNSISPlugin.getPluginStateLocation();
+        mCacheFile = new File(stateLocation, getClass().getName() + ".HelpURLs.ser");
+        mHelpLocation = new File(stateLocation, CACHED_HELP_LOCATION);
+        mNoHelpFile = new File(stateLocation.getAbsolutePath()+NO_HELP_FILE);
+    }
+
+    public File getNoHelpFile()
+    {
+        return mNoHelpFile;
     }
 
     public void start(IProgressMonitor monitor)
@@ -185,18 +202,16 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
                     catch (MissingResourceException mre) {
                     }
 
-                    File stateLocation = EclipseNSISPlugin.getPluginStateLocation();
-                    File cacheFile = new File(stateLocation, getClass().getName() + ".HelpURLs.ser"); //$NON-NLS-1$
                     long cacheTimeStamp = 0;
-                    if (cacheFile.exists()) {
-                        cacheTimeStamp = cacheFile.lastModified();
+                    if (mCacheFile.exists()) {
+                        cacheTimeStamp = mCacheFile.lastModified();
                     }
 
                     long htmlHelpTimeStamp = htmlHelpFile.lastModified();
                     if (htmlHelpTimeStamp == cacheTimeStamp) {
                         Object obj = null;
                         try {
-                            obj = IOUtility.readObject(cacheFile);
+                            obj = IOUtility.readObject(mCacheFile);
                         }
                         catch (Exception e) {
                             obj = null;
@@ -211,8 +226,8 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
                         }
                     }
 
-                    if (cacheFile.exists()) {
-                        cacheFile.delete();
+                    if (mCacheFile.exists()) {
+                        mCacheFile.delete();
                     }
 
                     Map topicMap = new CaseInsensitiveMap();
@@ -234,14 +249,13 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
                         }
                     }
 
-                    File helpLocation = new File(stateLocation, CACHED_HELP_LOCATION);
-                    if (IOUtility.isValidFile(helpLocation)) {
-                        helpLocation.delete();
+                    if (IOUtility.isValidFile(mHelpLocation)) {
+                        mHelpLocation.delete();
                     }
-                    if (!IOUtility.isValidDirectory(helpLocation)) {
-                        helpLocation.mkdirs();
+                    if (!IOUtility.isValidDirectory(mHelpLocation)) {
+                        mHelpLocation.mkdirs();
                     }
-                    String temp = WinAPI.ExtractHtmlHelpAndTOC(htmlHelpFile.getAbsolutePath(), helpLocation.getAbsolutePath());
+                    String temp = WinAPI.ExtractHtmlHelpAndTOC(htmlHelpFile.getAbsolutePath(), mHelpLocation.getAbsolutePath());
 
                     if (!Common.isEmpty(temp)) {
                         File tocFile = new File(temp);
@@ -302,8 +316,8 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
                                     }
                                 }
 
-                                IOUtility.writeObject(cacheFile, new Object[]{mHelpURLs, mCHMHelpURLs, mKeywordHelp});
-                                cacheFile.setLastModified(htmlHelpTimeStamp);
+                                IOUtility.writeObject(mCacheFile, new Object[]{mHelpURLs, mCHMHelpURLs, mKeywordHelp});
+                                mCacheFile.setLastModified(htmlHelpTimeStamp);
                             }
                             catch (Exception e) {
                                 EclipseNSISPlugin.getDefault().log(e);
@@ -312,7 +326,7 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
                         }
 
                         //Fix the chmlink.js
-                        File chmlinkJs = new File(helpLocation, CHMLINK_JS);
+                        File chmlinkJs = new File(mHelpLocation, CHMLINK_JS);
                         if (chmlinkJs.exists()) {
                             chmlinkJs.delete();
                         }
@@ -349,25 +363,32 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
         }
         finally {
             if(!mNSISHelpAvailable) {
-                File cacheLocation = new File(CACHED_HELP_LOCATION);
-                if(!IOUtility.isValidDirectory(cacheLocation)) {
-                    if(IOUtility.isValidFile(cacheLocation)) {
-                        cacheLocation.delete();
-                    }
-                    cacheLocation.mkdirs();
+                if(IOUtility.isValidFile(mCacheFile)) {
+                    mCacheFile.delete();
                 }
-                
-                File nohelp = new File(cacheLocation,"nohelp.html");
-                if(!IOUtility.isValidFile(nohelp)) {
+                if(IOUtility.isValidDirectory(mHelpLocation)) {
+                    mHelpLocation.delete();
+                }
+                if(!IOUtility.isValidFile(mNoHelpFile)) {
+                    if(IOUtility.isValidDirectory(mNoHelpFile)) {
+                        mNoHelpFile.delete();
+                    }
+                    File parent = mNoHelpFile.getParentFile();
+                    if(!IOUtility.isValidDirectory(parent)) {
+                        if(IOUtility.isValidFile(parent)) {
+                            parent.delete();
+                        }
+                        parent.mkdirs();
+                    }
                     String text = EclipseNSISPlugin.getFormattedString("missing.chm.format", 
                             new String[] {EclipseNSISPlugin.getResourceString("help.style")});
-                    IOUtility.writeContentToFile(nohelp, text.getBytes());
+                    IOUtility.writeContentToFile(mNoHelpFile, text.getBytes());
                 }
-                mStartPage = MessageFormat.format(NSIS_HELP_FORMAT, new Object[]{nohelp.getName()});
                 try {
-                    mCHMStartPage = nohelp.toURI().toURL().toString();
+                    mStartPage = mCHMStartPage = mNoHelpFile.toURI().toURL().toString();
                 }
                 catch (MalformedURLException e) {
+                    mStartPage = null;
                     mCHMStartPage = null;
                 }
             }
@@ -399,16 +420,19 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
 
     private void checkHelpFile()
     {
-        if(!mNSISHelpAvailable) {
-            String home = NSISPreferences.INSTANCE.getNSISHome();
-            if (!Common.isEmpty(home)) {
-                File htmlHelpFile = new File(home, NSIS_CHM_HELP_FILE);
-                if (htmlHelpFile.exists()) {
-                    loadHelpURLs();
-                }
+        boolean helpFileExists = false;
+        String home = NSISPreferences.INSTANCE.getNSISHome();
+        if (!Common.isEmpty(home)) {
+            File htmlHelpFile = new File(home, NSIS_CHM_HELP_FILE);
+            if (htmlHelpFile.exists()) {
+                helpFileExists = true;
             }
         }
+        if(mNSISHelpAvailable ^ helpFileExists) {
+            loadHelpURLs();
+        }
     }
+    
     public String convertHelpURLToCHMHelpURL(String helpURL)
     {
         String chmHelpURL = null;

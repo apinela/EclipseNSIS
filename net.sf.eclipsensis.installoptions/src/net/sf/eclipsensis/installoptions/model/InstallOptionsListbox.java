@@ -250,6 +250,12 @@ public class InstallOptionsListbox extends InstallOptionsListItems
                     mSelection.addAll(sel.toList());
                 }
             });
+            mViewer.getTable().addSelectionListener(new SelectionAdapter() {
+                public void widgetDefaultSelected(SelectionEvent e)
+                {
+                    okPressed();
+                }
+            });
 
             Composite buttons = new Composite(composite,SWT.NONE);
             buttons.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false));

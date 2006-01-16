@@ -9,16 +9,18 @@
  *******************************************************************************/
 package net.sf.eclipsensis.wizard;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.job.IJobStatusRunnable;
 import net.sf.eclipsensis.util.ColorManager;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.wizard.settings.AbstractNSISInstallGroup;
 import net.sf.eclipsensis.wizard.settings.NSISWizardSettings;
 import net.sf.eclipsensis.wizard.template.NSISWizardTemplate;
 
-import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.*;
@@ -115,7 +117,13 @@ public abstract class NSISWizard extends Wizard implements IAdaptable, INewWizar
         else {
             String error = EclipseNSISPlugin.getFormattedString("wizard.unconfigured.error", new Object[]{getWindowTitle()}); //$NON-NLS-1$
             Common.openError(getShell(), error, EclipseNSISPlugin.getShellImage());
-            throw new UnsupportedOperationException(error);
+            EclipseNSISPlugin.getDefault().getJobScheduler().scheduleUIJob("", new IJobStatusRunnable() {
+                public IStatus run(IProgressMonitor monitor)
+                {
+                    getContainer().getShell().close();
+                    return Status.OK_STATUS;
+                }
+            });
         }
 	}
 

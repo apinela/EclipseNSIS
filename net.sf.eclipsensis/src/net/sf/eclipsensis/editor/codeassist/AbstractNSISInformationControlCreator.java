@@ -30,73 +30,77 @@ public class AbstractNSISInformationControlCreator implements IInformationContro
         {
             hoverInfo = hoverInfo.trim();
             GC gc = new GC(display);
-            maxWidth -= gc.getFontMetrics().getAverageCharWidth();
-            Point p = gc.stringExtent(hoverInfo);
-            if(p.x > maxWidth) {
-                StringBuffer buf = new StringBuffer("");
-                StringTokenizer st = new StringTokenizer(hoverInfo,"\r\n");
-                while(st.hasMoreTokens()) {
-                    String token = st.nextToken();
-                    p = gc.stringExtent(token);
-                    if(p.x <= maxWidth) {
-                        buf.append(token);
-                    }
-                    else {
-                        //Wrap
-                        char[] chars = token.toCharArray();
-                        int start = 0;
-                        int last = -1;
-                        boolean previousWasWhitespace = false;
-                        boolean init = false;
-                        int index;
-                        for (int i = 0; i < chars.length; i++) {
-                            if(Character.isWhitespace(chars[i])) {
-                                previousWasWhitespace = true;
-                                continue;
-                            }
-                            else if(((index = BREAK_CHARS.indexOf(chars[i])) >= 0) ||
-                                     previousWasWhitespace) {
-                                p = gc.stringExtent(new String(chars,start,i-start+1));
-                                if(p.x <= maxWidth) {
-                                    last = (index >=0?i:i-1);
+            try {
+                maxWidth -= gc.getFontMetrics().getAverageCharWidth();
+                Point p = gc.stringExtent(hoverInfo);
+                if (p.x > maxWidth) {
+                    StringBuffer buf = new StringBuffer("");
+                    StringTokenizer st = new StringTokenizer(hoverInfo, "\r\n");
+                    while (st.hasMoreTokens()) {
+                        String token = st.nextToken();
+                        p = gc.stringExtent(token);
+                        if (p.x <= maxWidth) {
+                            buf.append(token);
+                        }
+                        else {
+                            //Wrap
+                            char[] chars = token.toCharArray();
+                            int start = 0;
+                            int last = -1;
+                            boolean previousWasWhitespace = false;
+                            boolean init = false;
+                            int index;
+                            for (int i = 0; i < chars.length; i++) {
+                                if (Character.isWhitespace(chars[i])) {
+                                    previousWasWhitespace = true;
+                                    continue;
                                 }
-                                else {
-                                    if(init) {
-                                        buf.append("\n");
-                                    }
-                                    if(last >= start) {
-                                        buf.append(new String(chars,start,last-start+1));
-                                        start = last+1;
-                                        i=start;
+                                else if (((index = BREAK_CHARS.indexOf(chars[i])) >= 0) || previousWasWhitespace) {
+                                    p = gc.stringExtent(new String(chars, start, i - start + 1));
+                                    if (p.x <= maxWidth) {
+                                        last = (index >= 0?i:i - 1);
                                     }
                                     else {
-                                        buf.append(new String(chars,start,i-start+1));
-                                        start = i;
-                                        i--;
+                                        if (init) {
+                                            buf.append("\n");
+                                        }
+                                        if (last >= start) {
+                                            buf.append(new String(chars, start, last - start + 1));
+                                            start = last + 1;
+                                            i = start;
+                                        }
+                                        else {
+                                            buf.append(new String(chars, start, i - start + 1));
+                                            start = i;
+                                            i--;
+                                        }
+                                        init = true;
+                                        last = -1;
                                     }
-                                    init = true;
-                                    last = -1;
+                                    previousWasWhitespace = false;
                                 }
-                                previousWasWhitespace = false;
                             }
+                            if (init) {
+                                buf.append("\n");
+                            }
+                            String s = new String(chars, start, chars.length - start);
+                            if (gc.stringExtent(s).x > maxWidth && last >= start) {
+                                buf.append(new String(chars, start, last - start + 1)).append("\n");
+                                start = last + 1;
+                                s = new String(chars, start, chars.length - start);
+                            }
+                            buf.append(s);
                         }
-                        if(init) {
+                        if (st.hasMoreTokens()) {
                             buf.append("\n");
                         }
-                        String s = new String(chars,start,chars.length-start);
-                        if(gc.stringExtent(s).x > maxWidth && last >= start) {
-                            buf.append(new String(chars,start,last-start+1)).append("\n");
-                            start = last+1;
-                            s = new String(chars,start,chars.length-start);
-                        }
-                        buf.append(s);
                     }
-                    if(st.hasMoreTokens()) {
-                        buf.append("\n");
-                    }
+                    hoverInfo = buf.toString();
                 }
-                hoverInfo = buf.toString();
             }
+            finally {
+                gc.dispose();
+            }            
             int n = hoverInfo.indexOf(' ');
             if(n <= 0) {
                 n = hoverInfo.length();
