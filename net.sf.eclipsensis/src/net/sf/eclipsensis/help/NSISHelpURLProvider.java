@@ -36,7 +36,7 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
 
     private static NSISHelpURLProvider cInstance = null;
 
-    private static final String NO_HELP_FILE=PLUGIN_HELP_LOCATION_PREFIX+"nohelp.html";
+    private static final String NO_HELP_FILE=PLUGIN_HELP_LOCATION_PREFIX+"nohelp.html"; //$NON-NLS-1$
     private static final String CHMLINK_JS = "chmlink.js"; //$NON-NLS-1$
     private static final String NSIS_HELP_FORMAT = new StringBuffer("/").append( //$NON-NLS-1$
                                     INSISConstants.PLUGIN_ID).append("/").append( //$NON-NLS-1$
@@ -99,7 +99,7 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
     {
         super();
         File stateLocation = EclipseNSISPlugin.getPluginStateLocation();
-        mCacheFile = new File(stateLocation, getClass().getName() + ".HelpURLs.ser");
+        mCacheFile = new File(stateLocation, getClass().getName() + ".HelpURLs.ser"); //$NON-NLS-1$
         mHelpLocation = new File(stateLocation, CACHED_HELP_LOCATION);
         mNoHelpFile = new File(stateLocation.getAbsolutePath()+NO_HELP_FILE);
     }
@@ -367,7 +367,7 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
                     mCacheFile.delete();
                 }
                 if(IOUtility.isValidDirectory(mHelpLocation)) {
-                    mHelpLocation.delete();
+                    IOUtility.deleteDirectory(mHelpLocation);
                 }
                 if(!IOUtility.isValidFile(mNoHelpFile)) {
                     if(IOUtility.isValidDirectory(mNoHelpFile)) {
@@ -380,8 +380,8 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
                         }
                         parent.mkdirs();
                     }
-                    String text = EclipseNSISPlugin.getFormattedString("missing.chm.format", 
-                            new String[] {EclipseNSISPlugin.getResourceString("help.style")});
+                    String text = EclipseNSISPlugin.getFormattedString("missing.chm.format",  //$NON-NLS-1$
+                            new String[] {EclipseNSISPlugin.getResourceString("help.style")}); //$NON-NLS-1$
                     IOUtility.writeContentToFile(mNoHelpFile, text.getBytes());
                 }
                 try {
@@ -532,7 +532,7 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
                     public void run()
                     {
                         Common.openError(Display.getCurrent().getActiveShell(), 
-                                "The NSIS Users Manual is not available for the currently configured NSIS location.", EclipseNSISPlugin.getShellImage());
+                                EclipseNSISPlugin.getResourceString("missing.help.file.message"), EclipseNSISPlugin.getShellImage()); //$NON-NLS-1$
                     }
                 });
             }

@@ -78,7 +78,9 @@ public class NSISBrowserInformationControl implements IInformationControl, IInfo
         mBrowser.addKeyListener(new KeyListener() {
             public void keyPressed(KeyEvent e)  {
                 if (e.character == 0x1B) {// ESC
-                    mShell.dispose();
+                    if(mShell != null && !mShell.isDisposed()) {
+                        mShell.dispose();
+                    }
                 }
             }
 
@@ -120,8 +122,11 @@ public class NSISBrowserInformationControl implements IInformationControl, IInfo
                             if (!Common.isEmpty(mKeyword)) {
                                 for (int i = 0; i < keys.length; i++) {
                                     if (e.keyCode == keys[i][0] && (e.stateMask & keys[i][1]) == e.stateMask) {
-                                        mShell.dispose();
-                                        NSISHelpURLProvider.getInstance().showHelpURL(mKeyword);
+                                        String keyword = mKeyword;
+                                        if(mShell != null && !mShell.isDisposed()) {
+                                            mShell.dispose();
+                                        }
+                                        NSISHelpURLProvider.getInstance().showHelpURL(keyword);
                                     }
                                 }
                             }

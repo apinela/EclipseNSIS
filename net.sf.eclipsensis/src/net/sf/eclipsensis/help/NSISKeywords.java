@@ -52,7 +52,7 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
     public static final String PREDEFINES="PREDEFINES"; //$NON-NLS-1$
     public static final String PLUGINS="PLUGINS"; //$NON-NLS-1$
 
-    private Map mShellConstantsMap = null;
+    private List mShellConstants = null;
     private Map mKeywordGroupsMap = null;
     private Map mNewerKeywordsMap = null;
     private Set mAllKeywordsSet = null;
@@ -131,14 +131,22 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
         Set instructionOptions = new CaseInsensitiveSet();
         Set callbacks = new CaseInsensitiveSet();
         
-        Map shellConstantsMap = null;
+        Map generalShellConstants = null;
+        Map userShellConstants = null;
+        Map commonShellConstants = null;
 
         if(bundle != null && nsisVersion != null) {
             HashMap versionMap = new HashMap();
             for(Enumeration e=bundle.getKeys(); e.hasMoreElements();) {
                 String key = (String)e.nextElement();
-                if(key.equals("shell.constants.map")) { //$NON-NLS-1$
-                    shellConstantsMap = Common.loadMapProperty(bundle, key);
+                if(key.equals("general.shell.constants")) { //$NON-NLS-1$
+                    generalShellConstants = Common.loadMapProperty(bundle, key);
+                }
+                else if(key.equals("user.shell.constants")) { //$NON-NLS-1$
+                    userShellConstants = Common.loadMapProperty(bundle, key);
+                }
+                else if(key.equals("common.shell.constants")) { //$NON-NLS-1$
+                    commonShellConstants = Common.loadMapProperty(bundle, key);
                 }
                 else {
                     int n = key.indexOf('#');
@@ -448,76 +456,74 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
         Arrays.sort(plugins, String.CASE_INSENSITIVE_ORDER);
         mKeywordGroupsMap.put(PLUGINS,plugins);
 
-        mShellConstantsMap = loadShellConstants(shellConstantsMap);
+        mShellConstants = loadShellConstants(generalShellConstants, userShellConstants, commonShellConstants);
         notifyListeners(monitor);
     }
 
-    private Map loadShellConstants(Map shellConstantsMap)
+    private List loadShellConstants(Map generalShellConstants, Map userShellConstants, Map commonShellConstants)
     {
-        Map result = new LinkedHashMap();
-        if(shellConstantsMap != null) {
-            List list = new ArrayList();
-            for(Iterator iter=shellConstantsMap.entrySet().iterator(); iter.hasNext(); ) {
+        List list = new ArrayList();
+        loadShellConstants(generalShellConstants, list, ShellConstant.CONTEXT_GENERAL);
+        loadShellConstants(userShellConstants, list, ShellConstant.CONTEXT_USER);
+        loadShellConstants(commonShellConstants, list, ShellConstant.CONTEXT_COMMON);
+        if(list.size() > 0) {
+            Collections.sort(list, new Comparator() {
+                public int compare(Object o1, Object o2)
+                {
+                    return ((ShellConstant)o2).value.length()-((ShellConstant)o1).value.length();
+                }
+            });
+        }
+        
+        return list;
+    }
+
+    private void loadShellConstants(Map shellConstants, List list, String context)
+    {
+        if (!Common.isEmptyMap(shellConstants)) {
+            for (Iterator iter = shellConstants.entrySet().iterator(); iter.hasNext();) {
                 Map.Entry entry = (Map.Entry)iter.next();
-                if(isValidKeyword((String)entry.getKey())) {
+                String name = (String)entry.getKey();
+                if (isValidKeyword(name)) {
                     String shellFolder = WinAPI.GetShellFolder(Integer.parseInt((String)entry.getValue()));
-                    if(!Common.isEmpty(shellFolder)) {
-                        if(entry.getKey().equals(getKeyword("$QUICKLAUNCH"))) { //$NON-NLS-1$
+                    if (!Common.isEmpty(shellFolder)) {
+                        if (entry.getKey().equals(getKeyword("$QUICKLAUNCH"))) { //$NON-NLS-1$
                             shellFolder = shellFolder + "\\Microsoft\\Internet Explorer\\Quick Launch"; //$NON-NLS-1$
                         }
                         entry.setValue(shellFolder);
-                        list.add(new String[] {shellFolder,(String)entry.getKey()});
+                        list.add(new ShellConstant(name, shellFolder, context));
 
                         String shortPath = WinAPI.GetShortPathName(shellFolder);
-                        if(shortPath != null && !shortPath.equalsIgnoreCase(shellFolder)) {
-                            list.add(new String[] {shortPath,(String)entry.getKey()});
+                        if (shortPath != null && !shortPath.equalsIgnoreCase(shellFolder)) {
+                            list.add(new ShellConstant(name, shortPath, context));
                         }
                     }
                 }
             }
-            if(list.size() > 0) {
-                Collections.sort(list, new Comparator() {
-                    public int compare(Object o1, Object o2)
-                    {
-                        String[] s1 = (String[])o1;
-                        String[] s2 = (String[])o2;
-                        return s2[0].length()-s1[0].length();
-                    }
-                });
-                
-                for (Iterator iter = list.iterator(); iter.hasNext();) {
-                    String[] element = (String[])iter.next();
-                    result.put(element[0].toLowerCase(), element[1]);
-                }
-            }
-        }
-        
-        return result;
+        }        
     }
 
-    public String replaceShellConstants(String input)
+    public List getShellConstants()
     {
-        if (!Common.isEmpty(input)) {
-            String temp = null;
-            if(isValidKeyword("$TEMP")) { //$NON-NLS-1$
-                temp = WinAPI.GetEnvironmentVariable("TEMP"); //$NON-NLS-1$
-            }
-            for (Iterator iter = mShellConstantsMap.keySet().iterator(); iter.hasNext();) {
-                String folder = (String)iter.next();
-                if(folder.length() <= input.length()) {
-                    if(temp != null && temp.length() >= folder.length()) {
-                        if(temp.length() <= input.length()) {
-                            input = Common.replaceAll(input, temp, getKeyword("$TEMP"), true); //$NON-NLS-1$
-                        }
-                        temp = null;
-                    }
-                    
-                    String constant = (String)mShellConstantsMap.get(folder);
-                    input = Common.replaceAll(input, folder, constant, true);
+        List list = new ArrayList();
+        ShellConstant temp = null;
+        if(isValidKeyword("$TEMP")) { //$NON-NLS-1$
+            temp = new ShellConstant(getKeyword("$TEMP"),WinAPI.GetEnvironmentVariable("TEMP"),ShellConstant.CONTEXT_GENERAL); //$NON-NLS-1$ //$NON-NLS-2$
+        }
+        if (!Common.isEmptyCollection(mShellConstants)) {
+            for (Iterator iter = mShellConstants.iterator(); iter.hasNext();) {
+                ShellConstant constant = (ShellConstant)iter.next();
+                if (temp != null && temp.value.length() >= constant.value.length()) {
+                    list.add(temp);
+                    temp = null;
                 }
+                list.add(constant);
             }
         }
-        return input;
+        else if (temp != null) {
+            list.add(temp);
+        }
+        return list;
     }
 
     private Set getValidKeywords(Set keywordSet)
@@ -600,6 +606,24 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
         return new VariableMatcher();
     }
 
+    public static class ShellConstant
+    {
+        public static final String CONTEXT_GENERAL = ""; //$NON-NLS-1$
+        public static final String CONTEXT_USER = "current"; //$NON-NLS-1$
+        public static final String CONTEXT_COMMON = "all"; //$NON-NLS-1$
+        
+        public final String name;
+        public final String value;
+        public final String context;
+
+        public ShellConstant(String name, String value, String context)
+        {
+            this.name = name;
+            this.value = value;
+            this.context = context;
+        }
+    }
+    
     public class VariableMatcher
     {
         private int mPotentialMatchIndex = -1;

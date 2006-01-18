@@ -14,6 +14,7 @@
 #include <shellapi.h>
 #include <shlobj.h>
 #include <objidl.h>
+#include <mmsystem.h>
 #include "htmlhelp.h"
 #include "ITStorage.h"
 #include "VisualStylesXP.h"
@@ -454,7 +455,7 @@ JNIEXPORT jstring JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetShortPathName(J
 JNIEXPORT jobjectArray JNICALL Java_net_sf_eclipsensis_util_WinAPI_RegGetSubKeys(JNIEnv *pEnv, jclass jClass, jint hRootKey, jstring sSubKey)
 {
     HKEY hKey;
-    TCHAR achKey[MAX_KEY_LENGTH+sizeof(TCHAR)];   // buffer for subkey name
+    TCHAR achKey[MAX_KEY_LENGTH+1];   // buffer for subkey name
     DWORD cSubKeys=0;               // number of subkeys 
     DWORD cbMaxSubKey;              // longest subkey size 
     DWORD cbName;                   // size of name string 
@@ -539,3 +540,18 @@ JNIEXPORT jobject JNICALL Java_net_sf_eclipsensis_util_WinAPI_getDefaultAuthenti
     
     return result;
 }
+
+JNIEXPORT jboolean JNICALL Java_net_sf_eclipsensis_util_WinAPI_PlaySound(JNIEnv *pEnv, jclass jClass, jstring pszFilename, jint hModule, jint dwFlags)
+{
+    if(pszFilename) {
+        TCHAR filename[MAX_PATH+1];
+        TCHAR* szFilename = (TCHAR*)pEnv->GetStringUTFChars(pszFilename, 0);
+        _tcscpy(filename, szFilename);
+        pEnv->ReleaseStringUTFChars(pszFilename,szFilename);
+        return PlaySound(filename, (HINSTANCE)hModule, dwFlags);
+    }
+    else {
+        return PlaySound(NULL, (HINSTANCE)hModule, dwFlags);
+    }
+}
+

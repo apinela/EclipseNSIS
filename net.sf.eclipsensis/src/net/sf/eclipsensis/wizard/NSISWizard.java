@@ -117,7 +117,7 @@ public abstract class NSISWizard extends Wizard implements IAdaptable, INewWizar
         else {
             String error = EclipseNSISPlugin.getFormattedString("wizard.unconfigured.error", new Object[]{getWindowTitle()}); //$NON-NLS-1$
             Common.openError(getShell(), error, EclipseNSISPlugin.getShellImage());
-            EclipseNSISPlugin.getDefault().getJobScheduler().scheduleUIJob("", new IJobStatusRunnable() {
+            EclipseNSISPlugin.getDefault().getJobScheduler().scheduleUIJob("", new IJobStatusRunnable() { //$NON-NLS-1$
                 public IStatus run(IProgressMonitor monitor)
                 {
                     getContainer().getShell().close();

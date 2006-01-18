@@ -77,6 +77,12 @@ public class WinAPI
     public static final int SM_CYVSCROLL = 0x14;
     public static final int SM_CYHSCROLL = 0x3;
 
+    public static final int SND_ASYNC = 0x1;
+    public static final int SND_FILENAME = 0x20000;
+    public static final int SND_LOOP = 0x8;
+    public static final int SND_NODEFAULT = 0x2;
+    public static final int SND_SYNC = 0x0;
+
     private static native void init();
     public static native int SetWindowLong(int hWnd, int nIndex, int dwNewLong);
     public static native int GetWindowLong(int hWnd, int nIndex);
@@ -122,6 +128,8 @@ public class WinAPI
     public static final native boolean RegKeyExists(int hRootKey, String pszSubKey);
     
     public static final native Authenticator getDefaultAuthenticator();
+    
+    public static final native boolean PlaySound(String pszFilename, int hModule, int dwFlags);
     
     private WinAPI()
     {

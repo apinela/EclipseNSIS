@@ -23,7 +23,7 @@ import org.eclipse.swt.widgets.Shell;
 
 public class AbstractNSISInformationControlCreator implements IInformationControlCreator,INSISConstants
 {
-    private static final String BREAK_CHARS = ",;|-.?!:";
+    private static final String BREAK_CHARS = ",;|-.?!:"; //$NON-NLS-1$
     protected int mStyle = SWT.NONE;
     protected DefaultInformationControl.IInformationPresenter mInformationPresenter = new DefaultInformationControl.IInformationPresenter() {
         public String updatePresentation(Display display, String hoverInfo, TextPresentation presentation, int maxWidth, int maxHeight)
@@ -34,8 +34,8 @@ public class AbstractNSISInformationControlCreator implements IInformationContro
                 maxWidth -= gc.getFontMetrics().getAverageCharWidth();
                 Point p = gc.stringExtent(hoverInfo);
                 if (p.x > maxWidth) {
-                    StringBuffer buf = new StringBuffer("");
-                    StringTokenizer st = new StringTokenizer(hoverInfo, "\r\n");
+                    StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
+                    StringTokenizer st = new StringTokenizer(hoverInfo, "\r\n"); //$NON-NLS-1$
                     while (st.hasMoreTokens()) {
                         String token = st.nextToken();
                         p = gc.stringExtent(token);
@@ -62,7 +62,7 @@ public class AbstractNSISInformationControlCreator implements IInformationContro
                                     }
                                     else {
                                         if (init) {
-                                            buf.append("\n");
+                                            buf.append("\n"); //$NON-NLS-1$
                                         }
                                         if (last >= start) {
                                             buf.append(new String(chars, start, last - start + 1));
@@ -81,18 +81,18 @@ public class AbstractNSISInformationControlCreator implements IInformationContro
                                 }
                             }
                             if (init) {
-                                buf.append("\n");
+                                buf.append("\n"); //$NON-NLS-1$
                             }
                             String s = new String(chars, start, chars.length - start);
                             if (gc.stringExtent(s).x > maxWidth && last >= start) {
-                                buf.append(new String(chars, start, last - start + 1)).append("\n");
+                                buf.append(new String(chars, start, last - start + 1)).append("\n"); //$NON-NLS-1$
                                 start = last + 1;
                                 s = new String(chars, start, chars.length - start);
                             }
                             buf.append(s);
                         }
                         if (st.hasMoreTokens()) {
-                            buf.append("\n");
+                            buf.append("\n"); //$NON-NLS-1$
                         }
                     }
                     hoverInfo = buf.toString();

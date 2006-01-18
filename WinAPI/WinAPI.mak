@@ -89,7 +89,7 @@ BSC32_FLAGS=/nologo /o"$(OUTDIR)\WinAPI.bsc"
 BSC32_SBRS= \
 	
 LINK32=link.exe
-LINK32_FLAGS=user32.lib advapi32.lib ole32.lib htmlhelp.lib shell32.lib /nologo /dll /incremental:no /pdb:"$(OUTDIR)\WinAPI.pdb" /machine:I386 /out:"$(OUTDIR)\WinAPI.dll" /implib:"$(OUTDIR)\WinAPI.lib" 
+LINK32_FLAGS=user32.lib advapi32.lib ole32.lib htmlhelp.lib shell32.lib winmm.lib /nologo /dll /incremental:no /pdb:"$(OUTDIR)\WinAPI.pdb" /machine:I386 /out:"$(OUTDIR)\WinAPI.dll" /implib:"$(OUTDIR)\WinAPI.lib" 
 LINK32_OBJS= \
 	"$(INTDIR)\ITStorage.obj" \
 	"$(INTDIR)\VisualStylesXP.obj" \
@@ -167,7 +167,7 @@ BSC32_FLAGS=/nologo /o"$(OUTDIR)\WinAPI.bsc"
 BSC32_SBRS= \
 	
 LINK32=link.exe
-LINK32_FLAGS=user32.lib advapi32.lib ole32.lib htmlhelp.lib shell32.lib /nologo /dll /incremental:yes /pdb:"$(OUTDIR)\WinAPI.pdb" /debug /machine:I386 /out:"$(OUTDIR)\WinAPI.dll" /implib:"$(OUTDIR)\WinAPI.lib" 
+LINK32_FLAGS=user32.lib advapi32.lib ole32.lib htmlhelp.lib shell32.lib winmm.lib /nologo /dll /incremental:yes /pdb:"$(OUTDIR)\WinAPI.pdb" /debug /machine:I386 /out:"$(OUTDIR)\WinAPI.dll" /implib:"$(OUTDIR)\WinAPI.lib" 
 LINK32_OBJS= \
 	"$(INTDIR)\ITStorage.obj" \
 	"$(INTDIR)\VisualStylesXP.obj" \

@@ -27,6 +27,8 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.console.*;
 
@@ -175,6 +177,11 @@ public class NSISConsolePage extends TextConsolePage implements IMakeNSISRunList
             action.setEnabled(enabled);
             action.setImageDescriptor(imageManager.getImageDescriptor(EclipseNSISPlugin.getResourceString("selectall.action.icon"))); //$NON-NLS-1$
             action.setHoverImageDescriptor(action.getImageDescriptor());
+        }
+        action = (IAction)fGlobalActions.get(ActionFactory.COPY.getId());
+        if(action != null) {
+            action.setHoverImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
+            action.setDisabledImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_COPY_DISABLED));
         }
 
         final NSISCancelAction cancelActionDelegate = new NSISCancelAction();

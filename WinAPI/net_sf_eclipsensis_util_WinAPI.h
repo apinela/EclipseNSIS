@@ -104,6 +104,16 @@ extern "C" {
 #define net_sf_eclipsensis_util_WinAPI_SM_CYVSCROLL 20L
 #undef net_sf_eclipsensis_util_WinAPI_SM_CYHSCROLL
 #define net_sf_eclipsensis_util_WinAPI_SM_CYHSCROLL 3L
+#undef net_sf_eclipsensis_util_WinAPI_SND_ASYNC
+#define net_sf_eclipsensis_util_WinAPI_SND_ASYNC 1L
+#undef net_sf_eclipsensis_util_WinAPI_SND_FILENAME
+#define net_sf_eclipsensis_util_WinAPI_SND_FILENAME 131072L
+#undef net_sf_eclipsensis_util_WinAPI_SND_LOOP
+#define net_sf_eclipsensis_util_WinAPI_SND_LOOP 8L
+#undef net_sf_eclipsensis_util_WinAPI_SND_NODEFAULT
+#define net_sf_eclipsensis_util_WinAPI_SND_NODEFAULT 2L
+#undef net_sf_eclipsensis_util_WinAPI_SND_SYNC
+#define net_sf_eclipsensis_util_WinAPI_SND_SYNC 0L
 /*
  * Class:     net_sf_eclipsensis_util_WinAPI
  * Method:    init
@@ -295,6 +305,14 @@ JNIEXPORT jboolean JNICALL Java_net_sf_eclipsensis_util_WinAPI_RegKeyExists
  */
 JNIEXPORT jobject JNICALL Java_net_sf_eclipsensis_util_WinAPI_getDefaultAuthenticator
   (JNIEnv *, jclass);
+
+/*
+ * Class:     net_sf_eclipsensis_util_WinAPI
+ * Method:    PlaySound
+ * Signature: (Ljava/lang/String;II)Z
+ */
+JNIEXPORT jboolean JNICALL Java_net_sf_eclipsensis_util_WinAPI_PlaySound
+  (JNIEnv *, jclass, jstring, jint, jint);
 
 #ifdef __cplusplus
 }

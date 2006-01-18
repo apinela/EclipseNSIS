@@ -10,10 +10,7 @@
 package net.sf.eclipsensis.wizard;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.*;
-
-import javax.sound.sampled.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
@@ -27,7 +24,6 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.PlatformUI;
 
 public class NSISWizardPresentationPage extends AbstractNSISWizardPage
@@ -560,7 +556,14 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
         shell.setParent(getShell());
         final Font previewFont = new Font(display,mBGPreviewFontData);
         final Font messageFont = new Font(display,mBGPreviewEscapeFontData);
-        final Clip clip = loadAudioClip(IOUtility.decodePath(settings.getBackgroundWAV()));
+        final File wavFile;
+        File file = new File(IOUtility.decodePath(settings.getBackgroundWAV()));
+        if(IOUtility.isValidFile(file)) {
+            wavFile = file;
+        }
+        else {
+            wavFile = null;
+        }
 
         shell.addKeyListener(new KeyAdapter(){
             public void keyReleased(KeyEvent e) {
@@ -569,8 +572,8 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
                     shell.dispose();
                     previewFont.dispose();
                     messageFont.dispose();
-                    if(clip != null) {
-                        clip.stop();
+                    if(wavFile != null) {
+                        WinAPI.PlaySound(null, 0, 0);
                     }
                 }
             }
@@ -622,8 +625,8 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
         final GC gc = new GC(canvas);
         shell.open();
         shell.forceActive();
-        if (clip != null) {
-            clip.loop(Clip.LOOP_CONTINUOUSLY);
+        if (wavFile != null) {
+            WinAPI.PlaySound(wavFile.getAbsolutePath(), 0, WinAPI.SND_ASYNC | WinAPI.SND_FILENAME | WinAPI.SND_NODEFAULT | WinAPI.SND_LOOP);
         }
         canvas.addPaintListener(new PaintListener() {
             public void paintControl(PaintEvent e)
@@ -727,56 +730,6 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
         }
     }
 
-    /**
-     *
-     */
-    private Clip loadAudioClip(String fileName)
-    {
-        Clip clip = null;
-        if(IOUtility.isValidFile(fileName)) {
-            AudioInputStream ais = null;
-            try {
-                ais = AudioSystem.getAudioInputStream(new File(fileName));
-                AudioFormat format = ais.getFormat();
-                if (format.getEncoding() != AudioFormat.Encoding.PCM_SIGNED && format.getEncoding() != AudioFormat.Encoding.PCM_UNSIGNED) {
-                    if(AudioSystem.isConversionSupported(AudioFormat.Encoding.PCM_SIGNED, format)) {
-                        format = new AudioFormat(
-                                AudioFormat.Encoding.PCM_SIGNED,
-                                format.getSampleRate(),
-                                format.getSampleSizeInBits(),
-                                format.getChannels(),
-                                format.getFrameSize(),
-                                format.getFrameRate(),
-                                true);        // big endian
-                        ais = AudioSystem.getAudioInputStream(format, ais);
-                    }
-                }
-
-                DataLine.Info info = new DataLine.Info(Clip.class, format);
-                if(AudioSystem.isLineSupported(info)) {
-                    clip = (Clip)AudioSystem.getLine(info);
-                    clip.open(ais);
-                }
-            }
-            catch (Exception e1) {
-                clip = null;
-                EclipseNSISPlugin.getDefault().log(e1);
-            }
-            finally {
-                if(ais != null) {
-                    try {
-                        ais.close();
-                    }
-                    catch (IOException e) {
-                        EclipseNSISPlugin.getDefault().log(e);
-                    }
-                    ais = null;
-                }
-            }
-        }
-        return clip;
-    }
-
     private class SplashPreviewTask extends TimerTask
     {
         public static final int STATE_FADE_IN = 0;
@@ -793,7 +746,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
         private Shell mShell = null;
         private int mAlpha;
         private long mResolution;
-        private Clip mClip = null;
+        private File mWavFile = null;
         private boolean mAdvSplash = true;
 
         public SplashPreviewTask()
@@ -860,9 +813,17 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
 
             mAlpha = -1;
             mShell.open();
-            mClip = loadAudioClip(IOUtility.decodePath(settings.getSplashWAV()));
-            if(mClip != null) {
-                mClip.start();
+            mWavFile = new File(IOUtility.decodePath(settings.getSplashWAV()));
+            if(!IOUtility.isValidFile(mWavFile)) {
+                mWavFile = null;
+            }
+            if(mWavFile != null) {
+                new Thread(new Runnable() {
+                    public void run() {
+                        WinAPI.PlaySound(mWavFile.getAbsolutePath(), 0, WinAPI.SND_ASYNC | WinAPI.SND_FILENAME | WinAPI.SND_NODEFAULT);
+                        mWavFile = null;
+                    }
+                },EclipseNSISPlugin.getResourceString("splash.preview.audio.thread.name")).start(); //$NON-NLS-1$
             }
         }
 
@@ -892,9 +853,9 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
                     if(mTimeLeft == 0) {
                       mDisplay.asyncExec(new Runnable(){
                           public void run(){
-                              if(mClip != null && mClip.isRunning()) {
-                                  mClip.stop();
-                                  mClip = null;
+                              if(mWavFile != null) {
+                                  WinAPI.PlaySound(null, 0, 0);
+                                  mWavFile = null;
                               }
                               if(mImage != null) {
                                   mImage.dispose();

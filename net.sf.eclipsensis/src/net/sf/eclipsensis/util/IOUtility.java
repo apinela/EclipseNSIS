@@ -48,6 +48,29 @@ public class IOUtility
     {
     }
 
+    public static boolean deleteDirectory(File directory)
+    {
+        if(isValidDirectory(directory)) {
+            File[] files = directory.listFiles();
+            if(!Common.isEmptyArray(files)) {
+                for (int i = 0; i < files.length; i++) {
+                    if(files[i].isDirectory()) {
+                        if(!deleteDirectory(files[i])) {
+                            return false;
+                        }
+                    }
+                    else {
+                        if(!files[i].delete()) {
+                            return false;
+                        }
+                    }
+                }
+            }
+            return directory.delete();
+        }
+        return true;
+    }
+
     public static String getFileExtension(File file)
     {
         String name = file.getName();
@@ -486,7 +509,7 @@ public class IOUtility
         
         File destFile = new File(destFolder,source.lastSegment()); 
         if(IOUtility.isValidDirectory(destFile)) {
-            destFile.delete();
+            deleteDirectory(destFile);
         }
         else if(IOUtility.isValidFile(destFile)) {
             if (destFile.lastModified() >= lastModified) {
