@@ -573,7 +573,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
                     previewFont.dispose();
                     messageFont.dispose();
                     if(wavFile != null) {
-                        WinAPI.PlaySound(null, 0, 0);
+                        WinAPI.PlaySound(null, 0, WinAPI.SND_PURGE);
                     }
                 }
             }
@@ -854,7 +854,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
                       mDisplay.asyncExec(new Runnable(){
                           public void run(){
                               if(mWavFile != null) {
-                                  WinAPI.PlaySound(null, 0, 0);
+                                  WinAPI.PlaySound(null, 0, WinAPI.SND_PURGE);
                                   mWavFile = null;
                               }
                               if(mImage != null) {
