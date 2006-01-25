@@ -46,9 +46,13 @@ typedef BOOL (_stdcall *_tSetLayeredWindowAttributesProc)(HWND hwnd, // handle t
     DWORD dwFlags        // action
 );
 _tSetLayeredWindowAttributesProc SetLayeredWindowAttributesProc;
-BOOL isUnicode;
-BOOL isXP;
-BOOL isCommCtrl6;
+BOOL isUnicode = FALSE;
+BOOL isXP = FALSE;
+BOOL isNT = FALSE;
+BOOL is2K = FALSE;
+BOOL isME = FALSE;
+BOOL is9x = FALSE;
+BOOL isCommCtrl6 = FALSE;
 
 
 DWORD GetDllVersion(LPCTSTR lpszDllName)
@@ -100,11 +104,26 @@ JNIEXPORT void JNICALL Java_net_sf_eclipsensis_util_WinAPI_init(JNIEnv *pEnv, jc
     GetVersionEx (&osvi);
 	
 	isUnicode = (osvi.dwPlatformId == VER_PLATFORM_WIN32_NT);
-    isXP = FALSE;
     if(osvi.dwMajorVersion >= 5) {
         if((osvi.dwMajorVersion > 5) || (osvi.dwMajorVersion == 5 && osvi.dwMinorVersion >= 1)) {
             isXP = TRUE;
         }
+        else {
+            is2K = TRUE;
+        }
+    }
+    else if(osvi.dwMajorVersion == 4) {
+        if(osvi.dwMinorVersion == 0 && isUnicode) {
+            isNT = TRUE;
+        }
+        else if(osvi.dwMinorVersion == 90) {
+            isME = TRUE;
+        }
+        else {
+            is9x = TRUE;
+        }
+    }
+    if(isXP) {
         HANDLE user32 = GetModuleHandle(_T("user32"));
         SetLayeredWindowAttributesProc = (_tSetLayeredWindowAttributesProc) GetProcAddress((HINSTANCE)user32, "SetLayeredWindowAttributes");
     }
@@ -140,27 +159,42 @@ JNIEXPORT jboolean JNICALL Java_net_sf_eclipsensis_util_WinAPI_SetLayeredWindowA
     }
 }
 
-JNIEXPORT jstring JNICALL Java_net_sf_eclipsensis_util_WinAPI_RegQueryStrValue(JNIEnv *pEnv, jclass jClass, jint hRootKey, jstring sSubKey, jstring sValue)
+TCHAR* RegQueryStrValue(HKEY hRootKey, LPCSTR subKey, LPCSTR valueName)
 {
-    jstring result = NULL;
-    TCHAR *value = NULL;
     HKEY hKey;
     DWORD type;
     DWORD cbData;
 	LONG rv;
+	TCHAR *result = NULL;
+
+    if(ERROR_SUCCESS == (rv = RegOpenKeyEx((HKEY)hRootKey,
+                                      subKey,0, KEY_QUERY_VALUE, &hKey))) {
+        rv = RegQueryValueEx(hKey, valueName, 0, &type, NULL, &cbData);
+        if(ERROR_SUCCESS == rv && (type == REG_SZ || type == REG_EXPAND_SZ)) {
+            TCHAR *value = (TCHAR *)GlobalAlloc(GPTR, cbData*sizeof(TCHAR));
+            if(ERROR_SUCCESS == (rv = RegQueryValueEx(hKey, valueName, 0, &type, (LPBYTE)value, &cbData))) {
+                result = value;
+            }
+            else {
+                GlobalFree(value);
+            }
+        }
+        rv = RegCloseKey(hKey);
+    }
+
+    return result;
+}
+
+JNIEXPORT jstring JNICALL Java_net_sf_eclipsensis_util_WinAPI_RegQueryStrValue(JNIEnv *pEnv, jclass jClass, jint hRootKey, jstring sSubKey, jstring sValue)
+{
+    jstring result = NULL;
 
     LPCSTR str1 = (LPCSTR)pEnv->GetStringUTFChars(sSubKey, 0);
     LPCSTR str2 = (LPCSTR)pEnv->GetStringUTFChars(sValue, 0);
-    if(ERROR_SUCCESS == (rv = RegOpenKeyEx((HKEY)hRootKey,
-                                      str1,0, KEY_QUERY_VALUE, &hKey))) {
-        if(ERROR_SUCCESS == (rv = RegQueryValueEx(hKey, str2, 0, &type, NULL, &cbData))) {
-            value = (TCHAR *)GlobalAlloc(GPTR, cbData*sizeof(TCHAR));
-            if(ERROR_SUCCESS == (rv = RegQueryValueEx(hKey, str2, 0, &type, (LPBYTE)value, &cbData))) {
-                result = pEnv->NewStringUTF(value);
-            }
-            GlobalFree(value);
-        }
-        rv = RegCloseKey(hKey);
+    TCHAR *value = RegQueryStrValue((HKEY)hRootKey, str1, str2);
+    if(value) {
+        result = pEnv->NewStringUTF(value);
+        GlobalFree(value);
     }
     pEnv->ReleaseStringUTFChars(sSubKey, str1);
     pEnv->ReleaseStringUTFChars(sValue, str2);
@@ -187,6 +221,64 @@ JNIEXPORT jint JNICALL Java_net_sf_eclipsensis_util_WinAPI_HtmlHelp(JNIEnv *pEnv
 JNIEXPORT jint JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetUserDefaultLangID(JNIEnv *pEnv, jclass jClass)
 {
     return GetUserDefaultLangID();
+}
+
+LANGID GetRegistryLangId(HKEY rootKey, LPCSTR subKey, LPCSTR valueName)
+{
+    LANGID langId = NULL;
+    TCHAR *value = RegQueryStrValue(rootKey, subKey, valueName);
+    if(value) {
+        DWORD dwLangID;
+        int nFields = _stscanf( value, _T("%x"), &dwLangID );
+        if( nFields == 1 ) {
+            langId = LANGID( dwLangID );
+        }
+    
+        GlobalFree(value);
+    }
+    return langId;
+}
+
+JNIEXPORT jint JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetUserDefaultUILanguage(JNIEnv *pEnv, jclass jClass)
+{
+    LANGID (WINAPI *GUDUIL)();
+    static const TCHAR* guduil = _T("GetUserDefaultUILanguage");
+    static const TCHAR* dll = _T("KERNEL32.dll");
+
+    HMODULE hModule = GetModuleHandle(dll);
+    if (!hModule) {
+        hModule = LoadLibrary(dll);
+    }
+    if (!hModule) {
+        GUDUIL = NULL;
+    }
+    else {
+        GUDUIL = (LANGID (WINAPI *)())GetProcAddress(hModule, guduil);
+    }
+    
+    if (GUDUIL)
+    {
+        // Windows ME/2000+
+        return GUDUIL();
+    }
+    else
+    {
+        LANGID langId = NULL;
+        if(is9x) {
+            // Windows 9x
+            static const TCHAR* reg9xLocaleKey = _T("Control Panel\\Desktop\\ResourceLocale");
+            langId = GetRegistryLangId(HKEY_CURRENT_USER, (LPCSTR)reg9xLocaleKey, NULL);
+        }
+        
+        if (!langId) {
+            // Windows NT
+            // This key exists on 9x as well, so it's only read if ResourceLocale wasn't found
+            static const TCHAR* regNtLocaleKey = _T(".DEFAULT\\Control Panel\\International");
+            static const TCHAR* regNtLocaleVal = _T("Locale");
+            langId = GetRegistryLangId(HKEY_USERS, (LPCSTR)regNtLocaleKey, (LPCSTR)regNtLocaleVal);
+        }
+        return langId;
+    }
 }
 
 JNIEXPORT jstring JNICALL Java_net_sf_eclipsensis_util_WinAPI_ExtractHtmlHelpAndTOC(JNIEnv *pEnv, jclass jClass, jstring pszFile, jstring pszFolder)

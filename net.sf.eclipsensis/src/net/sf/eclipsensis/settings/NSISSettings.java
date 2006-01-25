@@ -24,7 +24,7 @@ public abstract class NSISSettings implements INSISSettingsConstants
     private boolean mLicense = false;
     private boolean mNoConfig = false;
     private boolean mNoCD = false;
-    private int mVerbosity = INSISPreferenceConstants.VERBOSITY_ALL;
+    private int mVerbosity = INSISSettingsConstants.VERBOSITY_ALL;
     private int mCompressor = MakeNSISRunner.COMPRESSOR_DEFAULT;
     private boolean mSolidCompression = false;
     private ArrayList mInstructions = null;

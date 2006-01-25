@@ -372,8 +372,9 @@ public class NSISConsoleViewer extends TextConsoleViewer
 
     private Position[] findPosition(int offset, int length, Position[] positions) 
     {
-        if (positions.length == 0)
+        if (positions.length == 0) {
             return null;
+        }
             
         int rangeEnd = offset + length;
         int left= 0;
@@ -387,15 +388,19 @@ public class NSISConsoleViewer extends TextConsoleViewer
                 
             position= positions[mid];
             if (rangeEnd < position.getOffset()) {
-                if (left == mid)
+                if (left == mid) {
                     right= left;
-                else
+                }
+                else {
                     right= mid -1;
+                }
             } else if (offset > (position.getOffset() + position.getLength() - 1)) {
-                if (right == mid)
+                if (right == mid) {
                     left= right;
-                else
+                }
+                else {
                     left= mid  +1;
+                }
             } else {
                 left= right= mid;
             }

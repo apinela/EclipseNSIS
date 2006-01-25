@@ -14,6 +14,7 @@ package net.sf.eclipsensis.util;
 import java.beans.*;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
+import java.net.URL;
 import java.rmi.dgc.VMID;
 import java.text.BreakIterator;
 import java.util.*;
@@ -27,6 +28,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.PlatformUI;
 import org.osgi.framework.Bundle;
 
 /**
@@ -794,5 +796,15 @@ public class Common
             text = buf.toString();
         }
         return text;
+    }
+
+    public static void openExternalBrowser(String url)
+    {
+        try {
+            PlatformUI.getWorkbench().getBrowserSupport().getExternalBrowser().openURL(new URL(url));
+        }
+        catch (Throwable t) {
+            EclipseNSISPlugin.getDefault().log(t);
+        }
     }
 }

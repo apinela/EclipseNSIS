@@ -121,7 +121,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
         final TreeViewer tv = new TreeViewer(tree);
         tv.setLabelProvider(new NSISInstallElementLabelProvider());
         tv.setContentProvider(new NSISInstallElementTreeContentProvider(settings));
-        tv.setAutoExpandLevel(TreeViewer.ALL_LEVELS);
+        tv.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);
         tv.setInput(settings);
 
         final Listener labelListener = new Listener () {
@@ -394,7 +394,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
             {
                 NSISWizardSettings settings2 = mWizard.getSettings();
                 tv.setInput(settings2);
-                tv.expandToLevel(settings2.getInstaller(), TreeViewer.ALL_LEVELS);
+                tv.expandToLevel(settings2.getInstaller(), AbstractTreeViewer.ALL_LEVELS);
             }});
 
         SelectionAdapter editSelectionAdapter = new SelectionAdapter() {
@@ -442,7 +442,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
                                             tv.refresh(parent,true);
                                             tv.reveal(element);
                                             if(element.hasChildren()) {
-                                                tv.expandToLevel(element,TreeViewer.ALL_LEVELS);
+                                                tv.expandToLevel(element,AbstractTreeViewer.ALL_LEVELS);
                                             }
                                             updateSelectComponents();
                                             setPageComplete(validatePage(ALL_CHECK));
@@ -599,7 +599,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
             if(element.edit(mWizard)) {
                 tv.refresh(element, true);
                 if(element.hasChildren()) {
-                    tv.expandToLevel(element,TreeViewer.ALL_LEVELS);
+                    tv.expandToLevel(element,AbstractTreeViewer.ALL_LEVELS);
                 }
                 setPageComplete(validatePage(ALL_CHECK));
             }

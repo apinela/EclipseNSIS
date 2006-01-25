@@ -15,8 +15,7 @@ import java.util.*;
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.lang.NSISLanguage;
 import net.sf.eclipsensis.lang.NSISLanguageManager;
-import net.sf.eclipsensis.template.AbstractTemplateManager;
-import net.sf.eclipsensis.template.AbstractTemplateReaderWriter;
+import net.sf.eclipsensis.template.*;
 import net.sf.eclipsensis.util.IOUtility;
 import net.sf.eclipsensis.wizard.settings.NSISWizardSettings;
 
@@ -46,7 +45,7 @@ public class NSISWizardTemplateManager extends AbstractTemplateManager
         templates = getTemplates();
         for (Iterator iter = templates.iterator(); iter.hasNext();) {
             NSISWizardTemplate template = (NSISWizardTemplate)iter.next();
-            if(template.getType() != NSISWizardTemplate.TYPE_DEFAULT) {
+            if(template.getType() != AbstractTemplate.TYPE_DEFAULT) {
                 updateTemplateLanguages(template);
             }
         }

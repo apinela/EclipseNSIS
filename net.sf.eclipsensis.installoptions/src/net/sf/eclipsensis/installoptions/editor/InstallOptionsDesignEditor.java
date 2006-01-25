@@ -1992,8 +1992,8 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
             if (model instanceof CombinedTemplateCreationEntry) {
                 final Object template = ((CombinedTemplateCreationEntry)model).getTemplate();
                 if(template instanceof InstallOptionsTemplate) {
-                    menu.appendToGroup(GEFActionConstants.MB_ADDITIONS, new EditTemplateAction((InstallOptionsTemplate)template));
-                    menu.appendToGroup(GEFActionConstants.MB_ADDITIONS, new DeleteTemplateAction((InstallOptionsTemplate)template));
+                    menu.appendToGroup(IWorkbenchActionConstants.MB_ADDITIONS, new EditTemplateAction((InstallOptionsTemplate)template));
+                    menu.appendToGroup(IWorkbenchActionConstants.MB_ADDITIONS, new DeleteTemplateAction((InstallOptionsTemplate)template));
                 }
             }
         }

@@ -28,8 +28,9 @@ public class NSISConsoleFactory implements IConsoleFactory
             IConsole[] existing = manager.getConsoles();
             boolean exists = false;
             for (int i = 0; i < existing.length; i++) {
-                if(console == existing[i])
+                if(console == existing[i]) {
                     exists = true;
+                }
             }
             if(! exists) {
                 manager.addConsoles(new IConsole[] {console});

@@ -91,8 +91,9 @@ public class NSISConfigSelectionWizard extends Wizard
     public boolean canFinish() 
     {
         if (getContainer().getCurrentPage() == mMainPage) {
-            if (mMainPage.canFinishEarly()) 
+            if (mMainPage.canFinishEarly()) {
                 return true;
+            }
         }
         return super.canFinish();
     }

@@ -26,7 +26,7 @@ public class NSISBrowserInformationControlCreator extends AbstractNSISInformatio
             return super.createInformationControl(parent);
         }
         else {
-            return new NSISBrowserInformationControl(parent, SWT.TOOL|SWT.NO_TRIM,mStyle);
+            return new NSISBrowserInformationControl(parent, SWT.RESIZE,mStyle);
         }
     }
 }

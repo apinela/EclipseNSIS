@@ -9,11 +9,10 @@
  *******************************************************************************/
 package net.sf.eclipsensis.dialogs;
 
-import java.net.URL;
-
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.settings.NSISPreferences;
+import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -27,7 +26,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.PlatformUI;
 
 public class NSISAboutDialog extends Dialog implements INSISConstants
 {
@@ -147,16 +145,6 @@ public class NSISAboutDialog extends Dialog implements INSISConstants
 
     public synchronized void openLink(String link)
     {
-        try {
-            try {
-                PlatformUI.getWorkbench().getBrowserSupport().getExternalBrowser().openURL(new URL(link));
-            }
-            catch (Throwable t) {
-                EclipseNSISPlugin.getDefault().log(t);
-            }
-        }
-        catch (Exception ex) {
-            EclipseNSISPlugin.getDefault().log(ex);
-        }
+        Common.openExternalBrowser(link);
     }
 }

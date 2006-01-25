@@ -292,7 +292,7 @@ public class RegistryImporter
                                                     count++;
                                                     continue;
                                                 }
-                                                else { //$NON-NLS-1$
+                                                else { 
                                                     if (value.equals("-")) { //$NON-NLS-1$
                                                         context = addLineToBuf(buf, makeRegCommand(cDeleteRegValueFormat, new String[]{deleteRegValue, rootKey, subKey, valueName}), textLimit, context, shellConstants);
                                                         continue;

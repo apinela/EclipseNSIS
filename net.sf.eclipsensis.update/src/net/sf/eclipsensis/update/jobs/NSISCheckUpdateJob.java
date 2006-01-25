@@ -39,7 +39,7 @@ public class NSISCheckUpdateJob extends NSISHttpUpdateJob
 
     public NSISCheckUpdateJob(NSISUpdateJobSettings settings)
     {
-        this(settings, null); //$NON-NLS-1$
+        this(settings, null); 
     }
 
     public NSISCheckUpdateJob(NSISUpdateJobSettings settings, INSISUpdateJobRunner jobRunner)

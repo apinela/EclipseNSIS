@@ -134,7 +134,7 @@ public class InstallOptionsHandleKit
     static Handle createNonResizableHandle(GraphicalEditPart owner, int direction)
     {
         ResizeHandle handle = new InstallOptionsResizeHandle(owner, direction);
-        handle.setCursor(SharedCursors.SIZEALL);
+        handle.setCursor(Cursors.SIZEALL);
         handle.setDragTracker(new DragEditPartsTracker(owner));
         return handle;
     }

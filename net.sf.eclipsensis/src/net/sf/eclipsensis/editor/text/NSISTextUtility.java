@@ -32,7 +32,7 @@ import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.editors.text.EditorsUI;
-import org.eclipse.ui.texteditor.AbstractDecoratedTextEditor;
+import org.eclipse.ui.texteditor.AbstractTextEditor;
 
 public class NSISTextUtility implements INSISConstants
 {
@@ -593,23 +593,23 @@ public class NSISTextUtility implements INSISConstants
         final HashMap map = new HashMap();
         final IPreferenceStore store = EditorsUI.getPreferenceStore();
 
-        textWidget.setBackground(createColor(map, store, AbstractDecoratedTextEditor.PREFERENCE_COLOR_BACKGROUND,
-                AbstractDecoratedTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT, display));
-        textWidget.setForeground(createColor(map, store, AbstractDecoratedTextEditor.PREFERENCE_COLOR_FOREGROUND,
-                AbstractDecoratedTextEditor.PREFERENCE_COLOR_FOREGROUND_SYSTEM_DEFAULT, display));
+        textWidget.setBackground(createColor(map, store, AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND,
+                AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT, display));
+        textWidget.setForeground(createColor(map, store, AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND,
+                AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND_SYSTEM_DEFAULT, display));
 
         final IPropertyChangeListener colorListener = new IPropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent event)
             {
-                if(event.getProperty().equals(AbstractDecoratedTextEditor.PREFERENCE_COLOR_BACKGROUND)||
-                   event.getProperty().equals(AbstractDecoratedTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT)) {
-                    textWidget.setBackground(createColor(map, store, AbstractDecoratedTextEditor.PREFERENCE_COLOR_BACKGROUND,
-                            AbstractDecoratedTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT, display));
+                if(event.getProperty().equals(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND)||
+                   event.getProperty().equals(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT)) {
+                    textWidget.setBackground(createColor(map, store, AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND,
+                            AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT, display));
                 }
-                else if(event.getProperty().equals(AbstractDecoratedTextEditor.PREFERENCE_COLOR_FOREGROUND)||
-                        event.getProperty().equals(AbstractDecoratedTextEditor.PREFERENCE_COLOR_FOREGROUND_SYSTEM_DEFAULT)) {
-                    textWidget.setForeground(createColor(map, store, AbstractDecoratedTextEditor.PREFERENCE_COLOR_FOREGROUND,
-                            AbstractDecoratedTextEditor.PREFERENCE_COLOR_FOREGROUND_SYSTEM_DEFAULT, display));
+                else if(event.getProperty().equals(AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND)||
+                        event.getProperty().equals(AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND_SYSTEM_DEFAULT)) {
+                    textWidget.setForeground(createColor(map, store, AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND,
+                            AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND_SYSTEM_DEFAULT, display));
                 }
             }
         };

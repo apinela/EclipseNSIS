@@ -182,6 +182,14 @@ JNIEXPORT jint JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetUserDefaultLangID
 
 /*
  * Class:     net_sf_eclipsensis_util_WinAPI
+ * Method:    GetUserDefaultUILanguage
+ * Signature: ()I
+ */
+JNIEXPORT jint JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetUserDefaultUILanguage
+  (JNIEnv *, jclass);
+
+/*
+ * Class:     net_sf_eclipsensis_util_WinAPI
  * Method:    ExtractHtmlHelpAndTOC
  * Signature: (Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
  */

@@ -25,8 +25,7 @@ import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
 import net.sf.eclipsensis.lang.NSISLanguage;
 import net.sf.eclipsensis.lang.NSISLanguageManager;
 import net.sf.eclipsensis.makensis.*;
-import net.sf.eclipsensis.settings.INSISPreferenceConstants;
-import net.sf.eclipsensis.settings.NSISSettings;
+import net.sf.eclipsensis.settings.*;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.util.IOUtility;
 
@@ -68,7 +67,7 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
                 resource = "preview.action.mui.label"; //$NON-NLS-1$
                 symbols.put("PREVIEW_MUI",null); //$NON-NLS-1$
         }
-        mSettings.setVerbosity(INSISPreferenceConstants.VERBOSITY_ALL);
+        mSettings.setVerbosity(INSISSettingsConstants.VERBOSITY_ALL);
         mSettings.setSymbols(symbols);
         String label = InstallOptionsPlugin.getResourceString(resource);
         setText(label);

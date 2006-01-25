@@ -9,11 +9,14 @@
  *******************************************************************************/
 package net.sf.eclipsensis.util;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.StringTokenizer;
 
-public class Version implements Comparable
+public class Version implements Comparable, Serializable
 {
+    private static final long serialVersionUID = -6848535742969237853L;
+
     public static final int MAJOR = 0;
     public static final int MINOR = 1;
     public static final int MICRO = 2;

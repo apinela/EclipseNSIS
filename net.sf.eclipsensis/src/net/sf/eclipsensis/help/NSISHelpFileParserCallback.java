@@ -9,7 +9,11 @@
  *******************************************************************************/
 package net.sf.eclipsensis.help;
 
+import java.io.File;
+import java.net.MalformedURLException;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.text.MutableAttributeSet;
 import javax.swing.text.html.HTML.Attribute;
@@ -18,15 +22,23 @@ import javax.swing.text.html.HTMLEditorKit.ParserCallback;
 
 public class NSISHelpFileParserCallback extends ParserCallback
 {
+    private static final String ATTR_ONCLICK = "onclick"; //$NON-NLS-1$
+    private static final String JAVASCRIPT_URI_SCHEME = "javascript:"; //$NON-NLS-1$
+    private static final String NAV_MENU_MARKER = ">Previous</a>"; //$NON-NLS-1$
+
     private static final Set HEADINGS = new HashSet();
+    private static final Pattern cOnClickPattern = Pattern.compile("parser\\(['\"]\\.\\./([\\.\\\\/a-z0-9_\\-\\s]+)['\"]\\)",Pattern.CASE_INSENSITIVE); //$NON-NLS-1$
     
-    private Collection mURLs;
+    private Set mKeywords;
+    private Set mURLs;
     private Map mURLContentsMap;
     private String mPrefix;
     private StringBuffer mBuffer = new StringBuffer(""); //$NON-NLS-1$
     private boolean mCollecting = false;
     private boolean mHeading = false;
+    private String mHref = null;
     private String mAnchor;
+    private File mHelpFile;
     
     static {
         HEADINGS.add(Tag.H1);
@@ -37,12 +49,14 @@ public class NSISHelpFileParserCallback extends ParserCallback
         HEADINGS.add(Tag.H6);
     }
     
-    public NSISHelpFileParserCallback(String prefix, Collection coll, Map map)
+    public NSISHelpFileParserCallback(File helpFile, String prefix, Set keywords, Set urls, Map urlContentsMap)
     {
         super();
+        mHelpFile = helpFile;
         mPrefix = prefix;
-        mURLs = coll;
-        mURLContentsMap = map;
+        mKeywords = keywords;
+        mURLs = urls;
+        mURLContentsMap = urlContentsMap;
     }
 
     public void handleEndTag(Tag t, int pos)
@@ -56,12 +70,34 @@ public class NSISHelpFileParserCallback extends ParserCallback
                 mHeading = false;
             }
             else if(t.equals(Tag.A)) {
-                mBuffer.append("</span>"); //$NON-NLS-1$
+                if(mHref != null) {
+                    mBuffer.append("</a>"); //$NON-NLS-1$
+                    if(mBuffer.length()>NAV_MENU_MARKER.length() && mBuffer.substring(mBuffer.length()-NAV_MENU_MARKER.length()).equals(NAV_MENU_MARKER)) {
+                        int n = mBuffer.lastIndexOf("<p>"); //$NON-NLS-1$
+                        if(n >= 0) {
+                            mBuffer.setLength(n);
+                        }
+                        saveBuffer();
+                    }
+                }
+                else {
+                    mBuffer.append("</span>"); //$NON-NLS-1$
+                }
+                mHref = null;
             }
             else {
                 mBuffer.append("</").append(t).append(">"); //$NON-NLS-1$ //$NON-NLS-2$
             }
         }
+    }
+
+    private void saveBuffer()
+    {
+        mBuffer.append(NSISHelpURLProvider.KEYWORD_HELP_HTML_SUFFIX);
+        mURLContentsMap.put(mAnchor,mBuffer.toString());
+        mBuffer.setLength(0);
+        mAnchor = null;
+        mCollecting = false;
     }
 
     public void handleSimpleTag(Tag t, MutableAttributeSet a, int pos)
@@ -72,7 +108,33 @@ public class NSISHelpFileParserCallback extends ParserCallback
                 mHeading = true;
             }
             else if(t.equals(Tag.A)) {
-                mBuffer.append("<span class=\"link\">"); //$NON-NLS-1$
+                mHref = null;
+                if(a.isDefined(Attribute.HREF)) {
+                    String href = a.getAttribute(Attribute.HREF).toString();
+                    if(href.equals("#")) { //$NON-NLS-1$
+                        if(a.isDefined(ATTR_ONCLICK)) {
+                            String onClick = a.getAttribute(ATTR_ONCLICK).toString();
+                            Matcher m = cOnClickPattern.matcher(onClick);
+                            if(m.matches()) {
+                                String file = m.group(1);
+                                File f = new File(mHelpFile.getParent(),file);
+                                if(f.exists()) {
+                                    try {
+                                        mHref = f.toURI().toURL().toString();
+                                    }
+                                    catch (MalformedURLException e) {
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    else {
+                        mHref = href;
+                    }
+                }
+                if(mHref == null) {
+                    mBuffer.append("<span class=\"link\">"); //$NON-NLS-1$
+                }
             }
             else {
                 mBuffer.append("<").append(t); //$NON-NLS-1$
@@ -93,14 +155,11 @@ public class NSISHelpFileParserCallback extends ParserCallback
         if(t.equals(Tag.A)) {
             if(a != null && a.isDefined(Attribute.NAME)) {
                 if(mCollecting) {
-                    mBuffer.append(NSISHelpURLProvider.KEYWORD_HELP_HTML_SUFFIX);
-                    mURLContentsMap.put(mAnchor,mBuffer.toString());
-                    mBuffer.setLength(0);
-                    mAnchor = null;
-                    mCollecting = false;
+                    saveBuffer();
                 }
                 mAnchor = mPrefix+a.getAttribute(Attribute.NAME);
                 if(mURLs.contains(mAnchor)) {
+                    mHref = null;
                     mCollecting = true;
                     mBuffer.append(NSISHelpURLProvider.KEYWORD_HELP_HTML_PREFIX);
                     return;
@@ -119,6 +178,7 @@ public class NSISHelpFileParserCallback extends ParserCallback
             boolean isNewLine = false; //For some reason CR is being converted to NL by the parser. 
                                        //So one needs to be dropped.
             boolean found = false;
+            StringBuffer buf = new StringBuffer();
             for (int i = 0; i < data.length; i++) {
                 if(isNewLine) {
                     isNewLine = false;
@@ -131,8 +191,33 @@ public class NSISHelpFileParserCallback extends ParserCallback
                     found = (data[i]==' ');
                     continue;
                 }
-                mBuffer.append(data[i]);
+                buf.append(data[i]);
             }
+            String text = buf.toString();
+            if(mHref != null) {
+                if(mKeywords.contains(text)) {
+                    mHref=NSISHelpURLProvider.KEYWORD_URI_SCHEME+text;
+                }
+                else {
+                    if(mHref.regionMatches(true,0, JAVASCRIPT_URI_SCHEME, 0, JAVASCRIPT_URI_SCHEME.length())) {
+                        mHref = null;
+                        mBuffer.append("<span class=\"link\">"); //$NON-NLS-1$
+                    }
+                    else if(mHref.indexOf(":") <= 0 && "./\\".indexOf(mHref.charAt(0)) < 0) { //$NON-NLS-1$ //$NON-NLS-2$
+                        //This is a local URL
+                        if(mHref.charAt(0) == '#') {
+                            //It is on this page
+                            mHref = mPrefix+mHref.substring(1);
+                        }
+                       mHref = NSISHelpURLProvider.HELP_URI_SCHEME+mHref;
+                    }
+                }
+                
+                if(mHref != null) {
+                    mBuffer.append("<a href=\"").append(mHref).append("\">"); //$NON-NLS-1$ //$NON-NLS-2$
+                }
+            }
+            mBuffer.append(text);
         }
     }
 }

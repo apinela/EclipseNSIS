@@ -115,7 +115,7 @@ public abstract class NSISSettingsEditorGeneralPage extends NSISSettingsEditorPa
         composite.setLayout(layout);
 
         mVerbosity = createCombo(composite,EclipseNSISPlugin.getResourceString("verbosity.text"),EclipseNSISPlugin.getResourceString("verbosity.tooltip"), //$NON-NLS-1$ //$NON-NLS-2$
-                                 INSISPreferenceConstants.VERBOSITY_ARRAY, mSettings.getVerbosity());
+                                 INSISSettingsConstants.VERBOSITY_ARRAY, mSettings.getVerbosity());
         Label l = new Label(composite,SWT.None);
         l.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
 

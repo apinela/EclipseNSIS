@@ -66,7 +66,7 @@ class NSISGeneralTab extends NSISTab implements INSISSettingsEditorPageListener
         return new IFilter() {
             public boolean select(Object toTest)
             {
-                return !INSISPreferenceConstants.SYMBOLS.equals(toTest);
+                return !INSISSettingsConstants.SYMBOLS.equals(toTest);
             }
         };
     }

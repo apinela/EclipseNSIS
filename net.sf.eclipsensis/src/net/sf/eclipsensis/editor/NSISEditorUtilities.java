@@ -60,7 +60,7 @@ public class NSISEditorUtilities
             }
         }
 
-        IInformationControlCreator informationControlCreator;
+        final IInformationControlCreator informationControlCreator;
         NSISInformationProvider informationProvider;
         InformationPresenter informationPresenter;
         if(browserAvailable) {
@@ -76,7 +76,7 @@ public class NSISEditorUtilities
         informationProvider.setInformationPresenterControlCreator(informationControlCreator);
         informationPresenter.setInformationProvider(informationProvider,NSISPartitionScanner.NSIS_STRING);
         informationPresenter.setInformationProvider(informationProvider,IDocument.DEFAULT_CONTENT_TYPE);
-        informationPresenter.setSizeConstraints(60, (browserAvailable?12:6), true, true);
+        informationPresenter.setSizeConstraints(60, (browserAvailable?14:6), true, true);
         return informationPresenter;
     }
     

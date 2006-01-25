@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 public class NSISLanguageManager implements INSISHomeListener, IEclipseNSISService
 {
+    private static Version cVersion213 = new Version("2.13"); //$NON-NLS-1$
     private static NSISLanguageManager cInstance = null;
     public static final String PROPERTY_LANGUAGES="net.sf.eclipsensis.languages"; //$NON-NLS-1$
 
@@ -222,7 +223,13 @@ public class NSISLanguageManager implements INSISHomeListener, IEclipseNSISServi
     {
         NSISLanguage lang = null;
         //Try the user's lang id
-        lang = (NSISLanguage)mLanguageMap.get(new Integer(WinAPI.GetUserDefaultLangID()));
+        Version version = NSISPreferences.INSTANCE.getNSISVersion();
+        if(version.compareTo(cVersion213) >= 0) {
+            lang = (NSISLanguage)mLanguageMap.get(new Integer(WinAPI.GetUserDefaultUILanguage()));
+        }
+        if(lang == null) {
+            lang = (NSISLanguage)mLanguageMap.get(new Integer(WinAPI.GetUserDefaultLangID()));
+        }
         if(lang == null) {
             Locale locale = Locale.getDefault();
             //Try the user's language

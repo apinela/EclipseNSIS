@@ -11,7 +11,7 @@ package net.sf.eclipsensis.installoptions.actions;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 
-import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.actions.LabelRetargetAction;
 
@@ -32,7 +32,7 @@ public class ToggleLockRetargetAction extends LabelRetargetAction
 
     protected void propagateChange(PropertyChangeEvent event)
     {
-        if(!event.getProperty().equals(Action.TEXT)) {
+        if(!event.getProperty().equals(IAction.TEXT)) {
             //Weird stuff happens when TEXT propagates
             super.propagateChange(event);
         }
