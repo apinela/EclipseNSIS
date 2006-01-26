@@ -76,7 +76,7 @@ class NSISDownloadUpdateJob extends NSISHttpUpdateJob
             }
             
             int length = conn.getContentLength();
-            int bufsize = 8192;
+            int bufsize = 32768;
             if(length <= 0) {
                 monitor.beginTask(getName(), IProgressMonitor.UNKNOWN);
             }
@@ -97,28 +97,31 @@ class NSISDownloadUpdateJob extends NSISHttpUpdateJob
                 ByteBuffer buf = ByteBuffer.allocateDirect(bufsize);
                 ReadableByteChannel channel = Channels.newChannel(is);
                 FileChannel fileChannel = os.getChannel();
-
                 int worked = 0;
                 int totalread = 0;
                 int numread = channel.read(buf);
-                int n = 0;
-                while(numread > 0) {
+                while(numread >= 0) {
                     if (monitor.isCanceled()) {
                         return Status.CANCEL_STATUS;
                     }
-                    n++;
+                    totalread += numread;
+                    if(buf.position() >= buf.limit()) {
+                        buf.flip();
+                        fileChannel.write(buf);
+                        
+                        if(length > 0) {
+                            int newWorked = Math.round(totalread*100/length);
+                            monitor.worked(newWorked-worked);
+                            worked = newWorked;
+                        }
+    
+                        buf.rewind();
+                    }
+                    numread = channel.read(buf);
+                }
+                if(buf.position() > 0) {
                     buf.flip();
                     fileChannel.write(buf);
-                    
-                    if(length > 0) {
-                        totalread += numread;
-                        int newWorked = Math.round(totalread*100/length);
-                        monitor.worked(newWorked-worked);
-                        worked = newWorked;
-                    }
-
-                    buf.rewind();
-                    numread = channel.read(buf);
                 }
                 if(length > 0) {
                     monitor.worked(100-worked);

@@ -15,5 +15,5 @@ p, li {	font-size: 100%; }
 .link {	font-weight: bold; }
 pre { font-family: Courier New, Courier, mono; padding: 1px; }
 pre b {	text-decoration: underline; }
-a { color: #567599; text-decoration: none; }
+a { text-decoration: none; }
 a:hover { color: #303030; text-decoration: underline}

@@ -216,13 +216,13 @@ public class NSISBrowserInformationControl implements IInformationControl, IInfo
             mBack = new ToolItem(mToolBar, SWT.NONE);
             mBack.setImage(cBackImage);
             mBack.setDisabledImage(cDisabledBackImage);
-            mBack.setEnabled(false);
+            mBack.setToolTipText(EclipseNSISPlugin.getResourceString("help.browser.back.text")); //$NON-NLS-1$
     
             // Add a button to navigate forward through previously visited pages
             mForward = new ToolItem(mToolBar, SWT.NONE);
             mForward.setImage(cForwardImage);
             mForward.setDisabledImage(cDisabledForwardImage);
-            mForward.setEnabled(false);
+            mForward.setToolTipText(EclipseNSISPlugin.getResourceString("help.browser.forward.text")); //$NON-NLS-1$
 
             Listener listener = new Listener() {
                 public void handleEvent(Event event) {

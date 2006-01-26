@@ -54,7 +54,10 @@ public class NSISBrowserInformationProvider extends NSISInformationProvider
                     RGB bg2 = new RGB(Math.max(0,bg.red-8),Math.max(0,bg.green-8),Math.max(0,bg.blue-8));
                     buf.append("pre { background-color: #").append( //$NON-NLS-1$
                             ColorManager.rgbToHex(bg2)).append("}\n"); //$NON-NLS-1$
-                    bg2 = new RGB(Math.max(0,bg2.red-3),Math.max(0,bg2.green-3),Math.max(0,bg2.blue-3));
+                    bg2 = new RGB(Math.max(0,bg.red-169),Math.max(0,bg.green-138),Math.max(0,bg.blue-102));
+                    buf.append("a { color: #").append( //$NON-NLS-1$
+                            ColorManager.rgbToHex(bg2)).append("}\n"); //$NON-NLS-1$
+                    bg2 = new RGB(Math.max(0,bg.red-11),Math.max(0,bg.green-11),Math.max(0,bg.blue-11));
                     buf.append("a:hover { background-color: #").append( //$NON-NLS-1$
                             ColorManager.rgbToHex(bg2)).append("}\n"); //$NON-NLS-1$
                     IOUtility.writeContentToFile(COLORS_CSS_FILE, buf.toString().getBytes());
