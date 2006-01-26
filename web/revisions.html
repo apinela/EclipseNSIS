@@ -34,7 +34,11 @@
   var image_closed_over = new Image();
   image_closed_over.src = "images/closed_over.gif";
   
-  var latest = new Array("eclipsensis094","installoptions094","utilities090","sources094");
+  var latest = new Array();
+  latest["eclipsensis"] = "eclipsensis094";
+  latest["installoptions"] = "installoptions094";
+  latest["utilities"] = "utilities090";
+  latest["sources"] = "sources094";
    
   function rollover(image) 
   {
@@ -94,17 +98,16 @@
     }
   }
   
-  function toggleLatest()
+  function toggleLatest(name)
   {
-    for(i=0; i<latest.length; i++) {
-      toggle("trigger_"+latest[i], "toggle_"+latest[i]);
+    if(latest[name]) {
+      toggle("trigger_"+latest[name], "toggle_"+latest[name]);
     }
   }
   
   function onLoad()
   {
     breakout();
-    toggleLatest();
   }
 //-->
 </script>
@@ -307,6 +310,11 @@ scripts.</li>
 </ul>
 </div>
 </div>
+<script language="javascript">
+<!--
+    toggleLatest("eclipsensis");
+//-->
+</script>    
 <a name="installoptions"></a><h3>EclipseNSIS InstallOptions Editor</h3>
 <div><img class="trigger" alt="Expand/Collapse" id="trigger_installoptions094"
 src="images/closed.gif" onclick="toggle('trigger_installoptions094', 'toggle_installoptions094'); rollover(this);"
@@ -403,6 +411,11 @@ help.</li>
 </ul>
 </div>
 </div>
+<script language="javascript">
+<!--
+    toggleLatest("installoptions");
+//-->
+</script>    
 <a name="utilities"></a><h3>EclipseNSIS Utilities</h3>
 <div><img class="trigger" alt="Expand/Collapse" id="trigger_utilities090"
 src="images/closed.gif" onclick="toggle('trigger_utilities090', 'toggle_utilities090'); rollover(this);"
@@ -463,6 +476,11 @@ Eclipse 3.0</li>
 </ul>
 </div>
 </div>
+<script language="javascript">
+<!--
+    toggleLatest("utilities");
+//-->
+</script>    
 <a name="sources"></a><h3>EclipseNSIS Sources</h3>
 <div><img class="trigger" alt="Expand/Collapse" id="trigger_sources094"
 src="images/closed.gif" onclick="toggle('trigger_sources094', 'toggle_sources094'); rollover(this);"
@@ -477,6 +495,11 @@ onmouseover="rollover(this);" onmouseout="rollover(this);">
 </ul>
 </div>
 </div>
+<script language="javascript">
+<!--
+    toggleLatest("sources");
+//-->
+</script>    
 <hr>
 <table style="width: 100%;" border="0">
   <tbody>
