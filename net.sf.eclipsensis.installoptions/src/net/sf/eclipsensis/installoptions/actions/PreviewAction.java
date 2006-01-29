@@ -11,7 +11,6 @@ package net.sf.eclipsensis.installoptions.actions;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
@@ -25,7 +24,8 @@ import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
 import net.sf.eclipsensis.lang.NSISLanguage;
 import net.sf.eclipsensis.lang.NSISLanguageManager;
 import net.sf.eclipsensis.makensis.*;
-import net.sf.eclipsensis.settings.*;
+import net.sf.eclipsensis.settings.INSISSettingsConstants;
+import net.sf.eclipsensis.settings.NSISSettings;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.util.IOUtility;
 
@@ -170,7 +170,7 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
                 public void run() {
                     try {
                         ModalContext.run(new IRunnableWithProgress() {
-                            public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException
+                            public void run(IProgressMonitor monitor)
                             {
                                 try {
                                     LinkedHashMap symbols = mSettings.getSymbols();

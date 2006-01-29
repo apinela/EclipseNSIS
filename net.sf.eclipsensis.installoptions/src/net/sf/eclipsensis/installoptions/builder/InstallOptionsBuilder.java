@@ -237,7 +237,7 @@ public class InstallOptionsBuilder extends IncrementalProjectBuilder implements 
 	protected void incrementalBuild(IResourceDelta delta, final IProgressMonitor monitor) throws CoreException
     {
 		delta.accept(new IResourceDeltaVisitor() {
-            public boolean visit(IResourceDelta delta) throws CoreException
+            public boolean visit(IResourceDelta delta)
             {
                 if(monitor.isCanceled()) {
                     return false;

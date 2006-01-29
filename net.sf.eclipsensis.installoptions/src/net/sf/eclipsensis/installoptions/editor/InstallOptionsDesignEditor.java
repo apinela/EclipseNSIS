@@ -363,7 +363,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
      * Sets the site and input for this editor then creates and initializes the actions.
      * @see org.eclipse.ui.IEditorPart#init(IEditorSite, IEditorInput)
      */
-    public void init(IEditorSite site, IEditorInput input) throws PartInitException
+    public void init(IEditorSite site, IEditorInput input)
     {
         setSite(site);
         setInput(input);
