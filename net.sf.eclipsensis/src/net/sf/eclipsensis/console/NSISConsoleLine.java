@@ -13,9 +13,9 @@ import org.eclipse.core.runtime.IPath;
 
 public class NSISConsoleLine
 {
-    public static final int TYPE_INFO = 0;
-    public static final int TYPE_WARNING = 1;
-    public static final int TYPE_ERROR = 2;
+    public static final int TYPE_INFO = 0x1;
+    public static final int TYPE_WARNING = 0x2;
+    public static final int TYPE_ERROR = 0x4;
 
     private String mText = null;
     private int mType = TYPE_INFO;

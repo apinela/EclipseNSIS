@@ -9,6 +9,8 @@
  *******************************************************************************/
 package net.sf.eclipsensis.settings;
 
+import net.sf.eclipsensis.console.NSISConsoleLine;
+
 
 public interface INSISPreferenceConstants extends INSISSettingsConstants
 {
@@ -42,6 +44,12 @@ public interface INSISPreferenceConstants extends INSISSettingsConstants
     public static final String PLUGINS_STYLE = "pluginsStyle"; //$NON-NLS-1$
 
     public static final String AUTO_SHOW_CONSOLE = "autoShowConsole"; //$NON-NLS-1$
+    public static final int AUTO_SHOW_CONSOLE_NEVER = 0;
+    public static final int AUTO_SHOW_CONSOLE_ERROR = NSISConsoleLine.TYPE_ERROR;
+    public static final int AUTO_SHOW_CONSOLE_WARNING = AUTO_SHOW_CONSOLE_ERROR|NSISConsoleLine.TYPE_WARNING;
+    public static final int AUTO_SHOW_CONSOLE_ALWAYS = AUTO_SHOW_CONSOLE_WARNING|NSISConsoleLine.TYPE_INFO;
+    public static final int[] AUTO_SHOW_CONSOLE_ARRAY = {AUTO_SHOW_CONSOLE_ALWAYS, AUTO_SHOW_CONSOLE_WARNING,
+                                                         AUTO_SHOW_CONSOLE_ERROR,AUTO_SHOW_CONSOLE_NEVER};
     public static final String CONSOLE_FONT = "net.sf.eclipsensis.console.Font"; //$NON-NLS-1$
     public static final String CONSOLE_INFO_COLOR = "net.sf.eclipsensis.console.InfoColor"; //$NON-NLS-1$
     public static final String CONSOLE_WARNING_COLOR = "net.sf.eclipsensis.console.WarningColor"; //$NON-NLS-1$

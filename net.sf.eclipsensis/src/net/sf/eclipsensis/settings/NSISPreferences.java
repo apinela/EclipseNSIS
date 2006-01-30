@@ -62,7 +62,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
     private String mNSISHome = null;
     private Version mNSISVersion = null;
     private boolean mUseEclipseHelp = false;
-    private boolean mAutoShowConsole = true;
+    private int mAutoShowConsole = AUTO_SHOW_CONSOLE_ALWAYS;
     private Properties mNSISDefaultSymbols = null;
     private Collection mTaskTags = null;
     private Collection mDefaultTaskTags = null;
@@ -143,10 +143,20 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
         initializePreference(VERBOSITY,new Integer(getDefaultVerbosity()));
         initializePreference(COMPRESSOR,new Integer(getDefaultCompressor()));
         initializePreference(SOLID_COMPRESSION,(getDefaultSolidCompression()?Boolean.TRUE:Boolean.FALSE));
-        initializePreference(AUTO_SHOW_CONSOLE,Boolean.TRUE);
+        initializePreference(AUTO_SHOW_CONSOLE,new Integer(AUTO_SHOW_CONSOLE_ALWAYS));
         initializePreference(INSTRUCTIONS,""); //$NON-NLS-1$
         initializePreference(SYMBOLS,""); //$NON-NLS-1$
 
+        String pref = mPreferenceStore.getString(AUTO_SHOW_CONSOLE);
+        int autoShowConsole;
+        try {
+            autoShowConsole = Integer.parseInt(pref);
+        }
+        catch (NumberFormatException e) {
+            autoShowConsole = (Boolean.valueOf(pref).booleanValue()?AUTO_SHOW_CONSOLE_ALWAYS:AUTO_SHOW_CONSOLE_NEVER);
+            mPreferenceStore.setValue(AUTO_SHOW_CONSOLE, autoShowConsole);
+        }
+        setAutoShowConsole(autoShowConsole);
         setNSISHome(mPreferenceStore.getString(NSIS_HOME));
         setUseEclipseHelp(mPreferenceStore.getBoolean(USE_ECLIPSE_HELP));
     }
@@ -511,7 +521,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
     /**
      * @return Returns the autoShowConsole.
      */
-    public boolean isAutoShowConsole()
+    public int getAutoShowConsole()
     {
         return mAutoShowConsole;
     }
@@ -519,7 +529,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
     /**
      * @param autoShowConsole The autoShowConsole to set.
      */
-    public void setAutoShowConsole(boolean autoShowConsole)
+    public void setAutoShowConsole(int autoShowConsole)
     {
         mAutoShowConsole = autoShowConsole;
     }

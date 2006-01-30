@@ -46,7 +46,7 @@ public class NSISConsole extends TextConsole implements INSISConsole, IPropertyC
     private Image mErrorImage;
     private Image mWarningImage;
     
-    private boolean mAutoShow;
+    private int mAutoShowLevel;
 
     private IConsoleManager mConsoleManager;
     
@@ -94,7 +94,7 @@ public class NSISConsole extends TextConsole implements INSISConsole, IPropertyC
         mOffset = getDocument().getLength();
         mPreferenceStore = EclipseNSISPlugin.getDefault().getPreferenceStore();
         mConsoleManager = ConsolePlugin.getDefault().getConsoleManager();
-        mAutoShow = NSISPreferences.INSTANCE.isAutoShowConsole();
+        mAutoShowLevel = NSISPreferences.INSTANCE.getAutoShowConsole();
         mPartitioner = new NSISConsolePartitioner(this);
         mPartitioner.connect(getDocument());
         mPreferenceStore.addPropertyChangeListener(this);
@@ -189,7 +189,9 @@ public class NSISConsole extends TextConsole implements INSISConsole, IPropertyC
     
     public void appendLine(NSISConsoleLine line) 
     {
-        showConsole();
+        if((mAutoShowLevel & line.getType()) > 0) {
+            show();
+        }
         synchronized(mPending) {
             if(mVisible) {
                 Image image = null;
@@ -220,11 +222,6 @@ public class NSISConsole extends TextConsole implements INSISConsole, IPropertyC
         }
     }
 
-    private void showConsole() 
-    {
-        show(false);
-    }
-    
     protected void dispose() 
     {
         // Here we can't call super.dispose() because we actually want the partitioner to remain
@@ -289,7 +286,7 @@ public class NSISConsole extends TextConsole implements INSISConsole, IPropertyC
             }
         }
         if (property.equals(AUTO_SHOW_CONSOLE)) {
-            mAutoShow = NSISPreferences.INSTANCE.isAutoShowConsole();
+            mAutoShowLevel = NSISPreferences.INSTANCE.getAutoShowConsole();
         }
     }
 
@@ -299,17 +296,14 @@ public class NSISConsole extends TextConsole implements INSISConsole, IPropertyC
         return new Color(Display.getDefault(), rgb);
     }
 
-    public void show(boolean force) 
+    public void show() 
     {
-        if(force || mAutoShow) {
-            if(!mVisible) {
-                NSISConsoleFactory.showConsole();
-            }
-            else {
-                mConsoleManager.showConsoleView(this);
-            }
+        if(!mVisible) {
+            NSISConsoleFactory.showConsole();
         }
-        
+        else {
+            mConsoleManager.showConsoleView(this);
+        }
     }
 
     public IPageBookViewPage createPage(IConsoleView view)

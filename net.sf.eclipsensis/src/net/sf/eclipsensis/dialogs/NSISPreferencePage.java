@@ -32,7 +32,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 
-public class NSISPreferencePage	extends NSISSettingsPage
+public class NSISPreferencePage	extends NSISSettingsPage implements INSISPreferenceConstants
 {
     public static final List NSIS_HOMES;
 
@@ -53,6 +53,7 @@ public class NSISPreferencePage	extends NSISSettingsPage
         }
     };
     private static Map cSolidCompressionMap = new HashMap();
+    private static final String[] cAutoShowConsoleText;
 
     static {
         Collection nsisHomes;
@@ -72,6 +73,11 @@ public class NSISPreferencePage	extends NSISSettingsPage
         }
         cInternalNSISHomes = (List)nsisHomes;
         NSIS_HOMES = Collections.unmodifiableList(cInternalNSISHomes);
+        
+        cAutoShowConsoleText = new String[AUTO_SHOW_CONSOLE_ARRAY.length];
+        for (int i = 0; i < AUTO_SHOW_CONSOLE_ARRAY.length; i++) {
+            cAutoShowConsoleText[i] = EclipseNSISPlugin.getResourceString("auto.show.console."+AUTO_SHOW_CONSOLE_ARRAY[i]);
+        }
     }
 
     public static boolean addNSISHome(String nsisHome)
@@ -162,7 +168,7 @@ public class NSISPreferencePage	extends NSISSettingsPage
         {
             private ComboViewer mNSISHome = null;
             private Button mUseEclipseHelp = null;
-            private Button mAutoShowConsole = null;
+            private Combo mAutoShowConsole = null;
             private Button mNotifyMakeNSISChanged = null;
             private boolean mNSISHomeDirty = false;
             private boolean mHandlingNSISHomeChange = false;
@@ -250,17 +256,27 @@ public class NSISPreferencePage	extends NSISSettingsPage
             {
                 super.setDefaults();
                 mUseEclipseHelp.setSelection(true);
-                mAutoShowConsole.setSelection(true);
+                mAutoShowConsole.select(0);
                 mNotifyMakeNSISChanged.setSelection(false);
             }
             
+            private int getAutoShowConsoleIndex(int autoShowConsole)
+            {
+                for (int i = 0; i < AUTO_SHOW_CONSOLE_ARRAY.length; i++) {
+                    if(AUTO_SHOW_CONSOLE_ARRAY[i]==autoShowConsole) {
+                        return i;
+                    }
+                }
+                return 0;
+            }
+
             public void reset()
             {
                 NSISPreferences prefs = (NSISPreferences)getSettings();
                 mNSISHome.getCombo().setText(prefs.getNSISHome());
                 mUseEclipseHelp.setSelection(prefs.isUseEclipseHelp());
-                mAutoShowConsole.setSelection(prefs.isAutoShowConsole());
-                mNotifyMakeNSISChanged.setSelection(prefs.getPreferenceStore().getBoolean(INSISPreferenceConstants.NOTIFY_MAKENSIS_CHANGED));
+                mAutoShowConsole.select(getAutoShowConsoleIndex(prefs.getAutoShowConsole()));
+                mNotifyMakeNSISChanged.setSelection(prefs.getPreferenceStore().getBoolean(NOTIFY_MAKENSIS_CHANGED));
                 super.reset();
             }
 
@@ -304,9 +320,9 @@ public class NSISPreferencePage	extends NSISSettingsPage
 
                         NSISPreferences preferences = (NSISPreferences)settings;
                         preferences.setNSISHome(home);
-                        preferences.setAutoShowConsole(mAutoShowConsole.getSelection());
+                        preferences.setAutoShowConsole(AUTO_SHOW_CONSOLE_ARRAY[mAutoShowConsole.getSelectionIndex()]);
                         preferences.setUseEclipseHelp(mUseEclipseHelp.getSelection());
-                        preferences.getPreferenceStore().setValue(INSISPreferenceConstants.NOTIFY_MAKENSIS_CHANGED, mNotifyMakeNSISChanged.getSelection());
+                        preferences.getPreferenceStore().setValue(NOTIFY_MAKENSIS_CHANGED, mNotifyMakeNSISChanged.getSelection());
                         return true;
                     }
                 }
@@ -399,20 +415,27 @@ public class NSISPreferencePage	extends NSISSettingsPage
                     }
                 });
 
-                mAutoShowConsole = createCheckBox(composite, EclipseNSISPlugin.getResourceString("auto.show.console.text"), //$NON-NLS-1$
+                Composite composite2 = new Composite(composite,SWT.None);
+                data = new GridData(SWT.FILL,SWT.FILL,false,false);
+                data.horizontalSpan = 3;
+                composite2.setLayoutData(data);
+                layout = new GridLayout(2,false);
+                layout.marginWidth = 0;
+                layout.marginHeight = 0;
+                composite2.setLayout(layout);
+                mAutoShowConsole = createCombo(composite2, EclipseNSISPlugin.getResourceString("auto.show.console.text"), //$NON-NLS-1$
                                               EclipseNSISPlugin.getResourceString("auto.show.console.tooltip"), //$NON-NLS-1$
-                                              ((NSISPreferences)getSettings()).isAutoShowConsole());
-                ((GridData)mAutoShowConsole.getLayoutData()).horizontalSpan = 2;
+                                              cAutoShowConsoleText,getAutoShowConsoleIndex(((NSISPreferences)getSettings()).getAutoShowConsole()));
 
                 mUseEclipseHelp = createCheckBox(composite, EclipseNSISPlugin.getResourceString("use.eclipse.help.text"), //$NON-NLS-1$
                                               EclipseNSISPlugin.getResourceString("use.eclipse.help.tooltip"), //$NON-NLS-1$
                                               ((NSISPreferences)getSettings()).isUseEclipseHelp());
-                ((GridData)mUseEclipseHelp.getLayoutData()).horizontalSpan = 2;
+                ((GridData)mUseEclipseHelp.getLayoutData()).horizontalSpan = 3;
 
                 mNotifyMakeNSISChanged = createCheckBox(composite, EclipseNSISPlugin.getResourceString("notify.makensis.changed.text"), //$NON-NLS-1$
                                               EclipseNSISPlugin.getResourceString("notify.makensis.changed.tooltip"), //$NON-NLS-1$
-                                              NSISPreferences.INSTANCE.getPreferenceStore().getBoolean(INSISPreferenceConstants.NOTIFY_MAKENSIS_CHANGED));
-                ((GridData)mNotifyMakeNSISChanged.getLayoutData()).horizontalSpan = 2;
+                                              NSISPreferences.INSTANCE.getPreferenceStore().getBoolean(NOTIFY_MAKENSIS_CHANGED));
+                ((GridData)mNotifyMakeNSISChanged.getLayoutData()).horizontalSpan = 3;
                 return composite;
             }
         }
