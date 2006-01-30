@@ -21,7 +21,6 @@ import net.sf.eclipsensis.installoptions.requests.ReorderPartRequest;
 import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.draw2d.*;
-import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.*;
@@ -243,7 +242,7 @@ public abstract class InstallOptionsWidgetEditPart extends InstallOptionsEditPar
     protected void createEditPolicies()
     {
         super.createEditPolicies();
-        installEditPolicy(EditPolicy.SELECTION_FEEDBACK_ROLE, new InstallOptionsSelectionEditPolicy(this));
+        installEditPolicy(EditPolicy.SELECTION_FEEDBACK_ROLE, new InstallOptionsSelectionEditPolicy());
     }
 
 

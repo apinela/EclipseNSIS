@@ -51,9 +51,9 @@ public class InstallOptionsTreeEditPart extends AbstractTreeEditPart implements 
      */
     protected void createEditPolicies()
     {
-        EditPolicy component = new InstallOptionsEditPolicy(this);
+        EditPolicy component = new InstallOptionsEditPolicy();
         installEditPolicy(EditPolicy.COMPONENT_ROLE, component);
-        installEditPolicy(EditPolicy.PRIMARY_DRAG_ROLE, new InstallOptionsTreeEditPolicy(this));
+        installEditPolicy(EditPolicy.PRIMARY_DRAG_ROLE, new InstallOptionsTreeEditPolicy());
     }
 
     public void deactivate()

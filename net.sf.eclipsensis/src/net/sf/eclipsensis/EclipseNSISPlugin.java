@@ -12,7 +12,6 @@ package net.sf.eclipsensis;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 import java.util.*;
 
@@ -199,7 +198,7 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
         final String[] services = Common.loadArrayProperty(getResourceBundle(),"services"); //$NON-NLS-1$
         if(!Common.isEmptyArray(services)) {
             final IRunnableWithProgress op = new IRunnableWithProgress(){
-                public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException
+                public void run(IProgressMonitor monitor)
                 {
                     monitor = new DisplayUpdateProgressMonitor(monitor);
                     monitor.beginTask(EclipseNSISPlugin.getResourceString("starting.eclipsensis.message"),services.length+1); //$NON-NLS-1$

@@ -9,8 +9,6 @@
  *******************************************************************************/
 package net.sf.eclipsensis.update.wizard;
 
-import java.lang.reflect.InvocationTargetException;
-
 import net.sf.eclipsensis.config.NSISConfigWizard;
 import net.sf.eclipsensis.update.EclipseNSISUpdatePlugin;
 import net.sf.eclipsensis.update.jobs.*;
@@ -188,7 +186,7 @@ public class NSISUpdateWizard extends NSISConfigWizard
             try {
                 mError = false;
                 getContainer().run(true, true, new IRunnableWithProgress() {
-                    public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException
+                    public void run(IProgressMonitor monitor)
                     {
                         IStatus status = job.run(monitor);
                         mError = (status.getSeverity() == IStatus.ERROR);

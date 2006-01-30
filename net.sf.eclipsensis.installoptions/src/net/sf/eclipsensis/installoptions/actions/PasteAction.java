@@ -14,12 +14,12 @@ import java.beans.PropertyChangeListener;
 import java.util.*;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
-import net.sf.eclipsensis.installoptions.edit.InstallOptionsEditDomain;
 import net.sf.eclipsensis.installoptions.editor.InstallOptionsDesignEditor;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsDialog;
 import net.sf.eclipsensis.installoptions.model.commands.PasteCommand;
 
-import org.eclipse.gef.*;
+import org.eclipse.gef.EditPart;
+import org.eclipse.gef.GraphicalViewer;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.ui.actions.WorkbenchPartAction;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -59,10 +59,6 @@ public class PasteAction extends WorkbenchPartAction implements PropertyChangeLi
         PasteCommand pasteCommand = null;
         IWorkbenchPart part = getWorkbenchPart();
         if(part instanceof InstallOptionsDesignEditor) {
-            EditDomain domain = (EditDomain)getWorkbenchPart().getAdapter(EditDomain.class);
-            if(domain instanceof InstallOptionsEditDomain && ((InstallOptionsEditDomain)domain).isReadOnly()) {
-                return null;
-            }
             pasteCommand = new PasteCommand();
         }
 

@@ -31,19 +31,14 @@ public abstract class InstallOptionsExtendedEditPolicy extends GraphicalEditPoli
 
     public Command getCommand(Request request)
     {
-        if(((InstallOptionsEditDomain)mEditPart.getViewer().getEditDomain()).isReadOnly()) {
-            return null;
+        if (IInstallOptionsConstants.REQ_EXTENDED_EDIT.equals(request.getType())) {
+            return getExtendedEditCommand((ExtendedEditRequest)request);
+        }
+        else if (RequestConstants.REQ_OPEN.equals(request.getType())) {
+            return getExtendedEditCommand(new ExtendedEditRequest(mEditPart));
         }
         else {
-            if (IInstallOptionsConstants.REQ_EXTENDED_EDIT.equals(request.getType())) {
-                return getExtendedEditCommand((ExtendedEditRequest)request);
-            }
-            else if (RequestConstants.REQ_OPEN.equals(request.getType())) {
-                return getExtendedEditCommand(new ExtendedEditRequest(mEditPart));
-            }
-            else {
-                return super.getCommand(request);
-            }
+            return super.getCommand(request);
         }
     }
 
@@ -52,8 +47,7 @@ public abstract class InstallOptionsExtendedEditPolicy extends GraphicalEditPoli
         if (IInstallOptionsConstants.REQ_EXTENDED_EDIT.equals(request.getType())||
             RequestConstants.REQ_OPEN.equals(request.getType())) {
             InstallOptionsModelTypeDef typeDef = InstallOptionsModel.INSTANCE.getControlTypeDef(((InstallOptionsWidget)mEditPart.getModel()).getType());
-            return (typeDef != null && typeDef.getSettings().contains(getExtendedEditProperty()) &&
-               !((InstallOptionsEditDomain)mEditPart.getViewer().getEditDomain()).isReadOnly());
+            return (typeDef != null && typeDef.getSettings().contains(getExtendedEditProperty()));
         }
         return super.understandsRequest(request);
     }

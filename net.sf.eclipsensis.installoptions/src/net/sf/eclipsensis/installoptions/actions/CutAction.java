@@ -13,13 +13,11 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
-import net.sf.eclipsensis.installoptions.edit.InstallOptionsEditDomain;
 import net.sf.eclipsensis.installoptions.edit.InstallOptionsWidgetEditPart;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsDialog;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsWidget;
 import net.sf.eclipsensis.installoptions.model.commands.CutCommand;
 
-import org.eclipse.gef.EditDomain;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.ui.actions.SelectionAction;
 import org.eclipse.ui.*;
@@ -54,10 +52,6 @@ public class CutAction extends SelectionAction
 
     public Command createCutCommand(List objects) {
         if (objects.isEmpty()) {
-            return null;
-        }
-        EditDomain domain = (EditDomain)getWorkbenchPart().getAdapter(EditDomain.class);
-        if(domain instanceof InstallOptionsEditDomain && ((InstallOptionsEditDomain)domain).isReadOnly()) {
             return null;
         }
 

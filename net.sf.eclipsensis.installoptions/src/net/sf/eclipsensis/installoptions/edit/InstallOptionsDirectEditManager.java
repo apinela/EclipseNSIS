@@ -33,8 +33,7 @@ public abstract class InstallOptionsDirectEditManager extends DirectEditManager
     protected final CellEditor createCellEditorOn(Composite composite)
     {
         InstallOptionsModelTypeDef typeDef = InstallOptionsModel.INSTANCE.getControlTypeDef(((InstallOptionsWidget)getEditPart().getModel()).getType());
-        if(typeDef == null || !typeDef.getSettings().contains(getDirectEditProperty()) ||
-           ((InstallOptionsEditDomain)getEditPart().getViewer().getEditDomain()).isReadOnly()) {
+        if(typeDef == null || !typeDef.getSettings().contains(getDirectEditProperty())) {
             return null;
         }
         else {

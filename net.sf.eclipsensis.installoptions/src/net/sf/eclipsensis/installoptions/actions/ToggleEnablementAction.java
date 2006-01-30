@@ -12,12 +12,10 @@ package net.sf.eclipsensis.installoptions.actions;
 import java.util.*;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
-import net.sf.eclipsensis.installoptions.edit.InstallOptionsEditDomain;
 import net.sf.eclipsensis.installoptions.edit.InstallOptionsWidgetEditPart;
 import net.sf.eclipsensis.installoptions.model.*;
 import net.sf.eclipsensis.installoptions.model.commands.ToggleEnablementCommand;
 
-import org.eclipse.gef.EditDomain;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.ui.actions.SelectionAction;
 import org.eclipse.ui.IWorkbenchPart;
@@ -48,10 +46,6 @@ public class ToggleEnablementAction extends SelectionAction
     public Command createToggleEnablementCommand(List objects)
     {
         if (objects.isEmpty()) {
-            return null;
-        }
-        EditDomain domain = (EditDomain)getWorkbenchPart().getAdapter(EditDomain.class);
-        if(domain instanceof InstallOptionsEditDomain && ((InstallOptionsEditDomain)domain).isReadOnly()) {
             return null;
         }
 

@@ -19,7 +19,8 @@ import net.sf.eclipsensis.settings.NSISPreferences;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.util.IOUtility;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.help.IHelpContentProducer;
 import org.eclipse.swt.program.Program;
 
@@ -122,7 +123,7 @@ public class NSISHelpProducer implements IExecutableExtension, IHelpContentProdu
         return null;
     }
 
-    public void setInitializationData(IConfigurationElement config, String propertyName, Object data) throws CoreException
+    public void setInitializationData(IConfigurationElement config, String propertyName, Object data)
     {
         if(data instanceof Map) {
             Map map = (Map)data;

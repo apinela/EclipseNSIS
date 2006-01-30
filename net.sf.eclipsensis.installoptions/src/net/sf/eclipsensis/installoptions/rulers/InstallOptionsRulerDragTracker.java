@@ -9,8 +9,6 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.rulers;
 
-import net.sf.eclipsensis.installoptions.edit.InstallOptionsEditDomain;
-
 import org.eclipse.gef.GraphicalViewer;
 import org.eclipse.gef.internal.ui.rulers.RulerDragTracker;
 import org.eclipse.gef.internal.ui.rulers.RulerEditPart;
@@ -28,7 +26,7 @@ public class InstallOptionsRulerDragTracker extends RulerDragTracker
             return false;
         }
         GraphicalViewer viewer = (GraphicalViewer)source.getViewer().getProperty(GraphicalViewer.class.toString());
-        if(viewer != null && ((InstallOptionsEditDomain)viewer.getEditDomain()).isReadOnly()) {
+        if(viewer == null) {
             return false;
         }
         return super.isCreationValid();

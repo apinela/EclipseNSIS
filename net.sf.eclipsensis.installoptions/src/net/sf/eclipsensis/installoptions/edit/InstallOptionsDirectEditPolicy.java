@@ -10,7 +10,6 @@
 package net.sf.eclipsensis.installoptions.edit;
 
 import org.eclipse.gef.EditPart;
-import org.eclipse.gef.Request;
 import org.eclipse.gef.editpolicies.DirectEditPolicy;
 
 public abstract class InstallOptionsDirectEditPolicy extends DirectEditPolicy
@@ -24,13 +23,5 @@ public abstract class InstallOptionsDirectEditPolicy extends DirectEditPolicy
     {
         super();
         mEditPart = editPart;
-    }
-
-    public boolean understandsRequest(Request request)
-    {
-        if(((InstallOptionsEditDomain)mEditPart.getViewer().getEditDomain()).isReadOnly()) {
-            return false;
-        }
-        return super.understandsRequest(request);
     }
 }

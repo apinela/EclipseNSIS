@@ -79,14 +79,14 @@ public class InstallOptionsHandleKit
 
     static Handle createResizableHandle(GraphicalEditPart owner, int direction)
     {
-        ResizeHandle handle = new InstallOptionsResizeHandle(owner, direction);
+        ResizeHandle handle = new ResizeHandle(owner, direction);
         return handle;
     }
 
     static Handle createResizableHandle(GraphicalEditPart owner, int direction, DragTracker tracker,
                                Cursor cursor)
     {
-        ResizeHandle handle = new InstallOptionsResizeHandle(owner, direction);
+        ResizeHandle handle = new ResizeHandle(owner, direction);
         handle.setDragTracker(tracker);
         handle.setCursor(cursor);
         return handle;
@@ -133,7 +133,7 @@ public class InstallOptionsHandleKit
 
     static Handle createNonResizableHandle(GraphicalEditPart owner, int direction)
     {
-        ResizeHandle handle = new InstallOptionsResizeHandle(owner, direction);
+        ResizeHandle handle = new ResizeHandle(owner, direction);
         handle.setCursor(Cursors.SIZEALL);
         handle.setDragTracker(new DragEditPartsTracker(owner));
         return handle;
@@ -141,7 +141,7 @@ public class InstallOptionsHandleKit
 
     static Handle createNonResizableHandle(GraphicalEditPart owner, int direction, DragTracker tracker, Cursor cursor)
     {
-        ResizeHandle handle = new InstallOptionsResizeHandle(owner, direction);
+        ResizeHandle handle = new ResizeHandle(owner, direction);
         handle.setCursor(cursor);
         handle.setDragTracker(tracker);
         return handle;
@@ -160,63 +160,16 @@ public class InstallOptionsHandleKit
 
     public static Handle moveHandle(GraphicalEditPart owner)
     {
-        return new InstallOptionsMoveHandle(owner);
+        return new MoveHandle(owner);
     }
 
     public static Handle moveHandle(GraphicalEditPart owner, DragTracker tracker,
                                     Cursor cursor)
     {
-        MoveHandle moveHandle = new InstallOptionsMoveHandle(owner);
+        MoveHandle moveHandle = new MoveHandle(owner);
         moveHandle.setDragTracker(tracker);
         moveHandle.setCursor(cursor);
         return moveHandle;
-    }
-
-    private static class InstallOptionsMoveHandle extends MoveHandle
-    {
-        public InstallOptionsMoveHandle(GraphicalEditPart owner)
-        {
-            super(owner);
-        }
-
-        public InstallOptionsMoveHandle(GraphicalEditPart owner, Locator loc)
-        {
-            super(owner, loc);
-        }
-
-        public Cursor getCursor()
-        {
-            if(((InstallOptionsEditDomain)getOwner().getViewer().getEditDomain()).isReadOnly()) {
-                return null;
-            }
-            else {
-                return super.getCursor();
-            }
-        }
-    }
-
-    private static class InstallOptionsResizeHandle extends ResizeHandle
-    {
-
-        public InstallOptionsResizeHandle(GraphicalEditPart owner, int direction)
-        {
-            super(owner, direction);
-        }
-
-        public InstallOptionsResizeHandle(GraphicalEditPart owner, Locator loc, Cursor c)
-        {
-            super(owner, loc, c);
-        }
-
-        public Cursor getCursor()
-        {
-            if(((InstallOptionsEditDomain)getOwner().getViewer().getEditDomain()).isReadOnly()) {
-                return null;
-            }
-            else {
-                return super.getCursor();
-            }
-        }
     }
 
     private static class InstallOptionsLockHandle extends AbstractHandle

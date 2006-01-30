@@ -12,13 +12,11 @@ package net.sf.eclipsensis.installoptions.actions;
 import java.util.*;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
-import net.sf.eclipsensis.installoptions.edit.InstallOptionsEditDomain;
 import net.sf.eclipsensis.installoptions.edit.InstallOptionsWidgetEditPart;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsWidget;
 import net.sf.eclipsensis.installoptions.model.commands.ToggleLockCommand;
 import net.sf.eclipsensis.util.Common;
 
-import org.eclipse.gef.EditDomain;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.ui.actions.SelectionAction;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -57,10 +55,6 @@ public class ToggleLockAction extends SelectionAction
     public Command createToggleLockCommand(List objects)
     {
         if (Common.isEmptyCollection(objects)) {
-            return null;
-        }
-        EditDomain domain = (EditDomain)getWorkbenchPart().getAdapter(EditDomain.class);
-        if(domain instanceof InstallOptionsEditDomain && ((InstallOptionsEditDomain)domain).isReadOnly()) {
             return null;
         }
 

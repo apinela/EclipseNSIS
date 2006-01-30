@@ -11,7 +11,6 @@ package net.sf.eclipsensis.installoptions.rulers;
 
 import java.util.Iterator;
 
-import net.sf.eclipsensis.installoptions.edit.InstallOptionsEditDomain;
 import net.sf.eclipsensis.installoptions.edit.InstallOptionsWidgetEditPart;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsWidget;
 
@@ -28,7 +27,7 @@ public class InstallOptionsDragGuidePolicy extends DragGuidePolicy
             return false;
         }
         GraphicalViewer viewer = (GraphicalViewer)getGuideEditPart().getViewer().getProperty(GraphicalViewer.class.toString());
-        if(viewer != null && ((InstallOptionsEditDomain)viewer.getEditDomain()).isReadOnly()) {
+        if(viewer == null) {
             return false;
         }
         if(super.isMoveValid(zoomedPosition)) {

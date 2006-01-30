@@ -12,7 +12,6 @@ package net.sf.eclipsensis.installoptions.edit.dialog;
 import java.util.List;
 
 import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
-import net.sf.eclipsensis.installoptions.edit.InstallOptionsEditDomain;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsDialog;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsWidget;
 import net.sf.eclipsensis.installoptions.model.commands.ReorderPartCommand;
@@ -27,14 +26,6 @@ import org.eclipse.gef.requests.CreateRequest;
 
 public class InstallOptionsDialogEditPolicy extends ContainerEditPolicy implements IInstallOptionsConstants
 {
-    private EditPart mEditPart;
-
-    public InstallOptionsDialogEditPolicy(EditPart editPart)
-    {
-        super();
-        mEditPart = editPart;
-    }
-
     protected Command getCreateCommand(CreateRequest request)
     {
         return null;
@@ -42,16 +33,11 @@ public class InstallOptionsDialogEditPolicy extends ContainerEditPolicy implemen
 
     public Command getCommand(Request request)
     {
-        if(((InstallOptionsEditDomain)mEditPart.getViewer().getEditDomain()).isReadOnly()) {
-            return null;
+        if(REQ_REORDER_PART.equals(request.getType())) {
+            return getReorderPartCommand((ReorderPartRequest)request);
         }
         else {
-            if(REQ_REORDER_PART.equals(request.getType())) {
-                return getReorderPartCommand((ReorderPartRequest)request);
-            }
-            else {
-                return super.getCommand(request);
-            }
+            return super.getCommand(request);
         }
     }
 

@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
-import net.sf.eclipsensis.installoptions.edit.InstallOptionsEditDomain;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsElementFactory;
 import net.sf.eclipsensis.installoptions.template.*;
 
@@ -22,7 +21,6 @@ import org.eclipse.gef.dnd.TemplateTransferDropTargetListener;
 import org.eclipse.gef.requests.CreateRequest;
 import org.eclipse.gef.requests.CreationFactory;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.swt.dnd.DropTargetEvent;
 
 public class InstallOptionsTemplateTransferDropTargetListener extends TemplateTransferDropTargetListener
 {
@@ -85,13 +83,5 @@ public class InstallOptionsTemplateTransferDropTargetListener extends TemplateTr
             getViewer().flush();
             viewer.setSelection(new StructuredSelection(selection));
         }
-    }
-
-    public boolean isEnabled(DropTargetEvent event)
-    {
-        if(((InstallOptionsEditDomain)getViewer().getEditDomain()).isReadOnly()) {
-            return false;
-        }
-        return super.isEnabled(event);
     }
 }

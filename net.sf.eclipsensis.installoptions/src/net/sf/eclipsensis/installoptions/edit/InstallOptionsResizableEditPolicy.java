@@ -41,10 +41,7 @@ public class InstallOptionsResizableEditPolicy extends ResizableEditPolicy imple
 
     public Command getCommand(Request request)
     {
-        if(((InstallOptionsEditDomain)mEditPart.getViewer().getEditDomain()).isReadOnly()) {
-            return null;
-        }
-        else if((REQ_RESIZE.equals(request.getType()) || REQ_MOVE.equals(request.getType())) &&
+        if((REQ_RESIZE.equals(request.getType()) || REQ_MOVE.equals(request.getType())) &&
                 ((InstallOptionsWidget)mEditPart.getModel()).isLocked()) {
             return UnexecutableCommand.INSTANCE;
         }
@@ -55,8 +52,7 @@ public class InstallOptionsResizableEditPolicy extends ResizableEditPolicy imple
 
     public void showSourceFeedback(Request request)
     {
-        if(!((InstallOptionsEditDomain)mEditPart.getViewer().getEditDomain()).isReadOnly() &&
-           !((InstallOptionsWidget)mEditPart.getModel()).isLocked()) {
+        if(!((InstallOptionsWidget)mEditPart.getModel()).isLocked()) {
             super.showSourceFeedback(request);
         }
     }

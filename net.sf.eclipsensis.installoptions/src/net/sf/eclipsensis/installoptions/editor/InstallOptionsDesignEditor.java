@@ -608,7 +608,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
         getCommandStack().removeCommandStackListener(this);
         getSite().getWorkbenchWindow().getSelectionService().removeSelectionListener(this);
         getEditDomain().setActiveTool(null);
-        ((InstallOptionsEditDomain)getEditDomain()).setFile(null);
+        ((InstallOptionsEditDomain)getEditDomain()).setFile((IFile)null);
         getActionRegistry().dispose();
         super.dispose();
         mDisposed = true;
@@ -1521,7 +1521,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
     {
         IEditorInput oldInput = getEditorInput();
         if (oldInput != null) {
-            ((InstallOptionsEditDomain)getEditDomain()).setFile(null);
+            ((InstallOptionsEditDomain)getEditDomain()).setFile((IFile)null);
             Object source = ((IInstallOptionsEditorInput)oldInput).getSource();
             if(source instanceof IFile) {
                 IFile file = (IFile)source;
@@ -1557,17 +1557,17 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
 
         input = getEditorInput();
         if (input != null) {
-            File file = null;
             Object source = ((IInstallOptionsEditorInput)input).getSource();
             if(source instanceof IFile) {
                 ((IFile)source).getWorkspace().addResourceChangeListener(mResourceListener);
-                file = new File(((IFile)source).getLocation().toOSString());
+                ((InstallOptionsEditDomain)getEditDomain()).setFile((IFile)source);
+                setPartName(((IFile)source).getName());
             }
             else if(source instanceof IPath) {
-                file = new File(((IPath)source).toOSString());
+                File file = new File(((IPath)source).toOSString());
+                ((InstallOptionsEditDomain)getEditDomain()).setFile(file);
+                setPartName(file.getName());
             }
-            ((InstallOptionsEditDomain)getEditDomain()).setFile(file);
-            setPartName(file.getName());
         }
     }
 

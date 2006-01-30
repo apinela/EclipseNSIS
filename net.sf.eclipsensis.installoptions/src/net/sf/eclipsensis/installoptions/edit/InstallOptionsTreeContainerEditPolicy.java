@@ -19,7 +19,6 @@ import net.sf.eclipsensis.installoptions.model.commands.ReorderPartCommand;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.EditPart;
-import org.eclipse.gef.Request;
 import org.eclipse.gef.commands.*;
 import org.eclipse.gef.editpolicies.TreeContainerEditPolicy;
 import org.eclipse.gef.requests.ChangeBoundsRequest;
@@ -27,25 +26,6 @@ import org.eclipse.gef.requests.CreateRequest;
 
 public class InstallOptionsTreeContainerEditPolicy extends TreeContainerEditPolicy
 {
-    private EditPart mEditPart;
-
-    public InstallOptionsTreeContainerEditPolicy(EditPart editPart)
-    {
-        super();
-        mEditPart = editPart;
-    }
-
-    public Command getCommand(Request request)
-    {
-        if(((InstallOptionsEditDomain)mEditPart.getViewer().getEditDomain()).isReadOnly()) {
-            return null;
-        }
-        else {
-            return super.getCommand(request);
-        }
-    }
-
-
     /*
      * (non-Javadoc)
      *

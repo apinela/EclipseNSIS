@@ -161,7 +161,7 @@ public class NSISTaskTagUpdater implements INSISConstants
                         }
                         ResourcesPlugin.getWorkspace().getRoot().accept(new IResourceVisitor() {
 
-                            public boolean visit(IResource resource) throws CoreException
+                            public boolean visit(IResource resource)
                             {
                                 if(!monitor.isCanceled()) {
                                     if(resource instanceof IFile && !filesMap.containsKey(resource)) {

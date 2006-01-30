@@ -22,7 +22,7 @@ public abstract class NSISHandler extends AbstractHandler
 {
     private Pattern mExtensionPattern = null;
     
-    public Object execute(ExecutionEvent event) throws ExecutionException
+    public Object execute(ExecutionEvent event)
     {
         Widget w = ((Event)event.getTrigger()).widget;
         if(w instanceof Tree) {

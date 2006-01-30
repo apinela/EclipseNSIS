@@ -84,6 +84,13 @@ public class WinAPI
     public static final int SND_PURGE = 0x40;
     public static final int SND_FILENAME = 0x20000;
 
+    public static final int FILE_ATTRIBUTE_ARCHIVE = 0x20;
+    public static final int FILE_ATTRIBUTE_DIRECTORY = 0x10;
+    public static final int FILE_ATTRIBUTE_HIDDEN = 0x2;
+    public static final int FILE_ATTRIBUTE_NORMAL = 0x80;
+    public static final int FILE_ATTRIBUTE_READONLY = 0x1;
+    public static final int FILE_ATTRIBUTE_SYSTEM = 0x4;
+    
     private static native void init();
     public static native int SetWindowLong(int hWnd, int nIndex, int dwNewLong);
     public static native int GetWindowLong(int hWnd, int nIndex);
@@ -134,6 +141,10 @@ public class WinAPI
     
     public static final native boolean PlaySound(String pszFilename, int hModule, int dwFlags);
     
+    public static final native int GetFileAttributes(String pszFilename);
+    
+    public static final native boolean SetFileAttributes(String pszFilename, int dwAttributes);
+
     private WinAPI()
     {
     }

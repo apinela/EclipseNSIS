@@ -17,7 +17,8 @@ import net.sf.eclipsensis.installoptions.model.InstallOptionsWidget;
 import net.sf.eclipsensis.installoptions.properties.PropertySourceWrapper;
 import net.sf.eclipsensis.util.ColorManager;
 
-import org.eclipse.draw2d.*;
+import org.eclipse.draw2d.LineBorder;
+import org.eclipse.draw2d.XYLayout;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;

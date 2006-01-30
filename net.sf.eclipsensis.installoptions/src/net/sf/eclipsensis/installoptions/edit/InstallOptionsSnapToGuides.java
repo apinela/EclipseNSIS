@@ -9,9 +9,10 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.edit;
 
-import org.eclipse.draw2d.geometry.PrecisionRectangle;
-import org.eclipse.gef.*;
+import org.eclipse.gef.GraphicalEditPart;
+import org.eclipse.gef.SnapToGuides;
 
+//TODO Remove this
 public class InstallOptionsSnapToGuides extends SnapToGuides
 {
     /**
@@ -20,15 +21,5 @@ public class InstallOptionsSnapToGuides extends SnapToGuides
     public InstallOptionsSnapToGuides(GraphicalEditPart container)
     {
         super(container);
-    }
-
-    public int snapRectangle(Request request, int snapLocations, PrecisionRectangle rect, PrecisionRectangle result)
-    {
-        if(!((InstallOptionsEditDomain)container.getViewer().getEditDomain()).isReadOnly()) {
-            return super.snapRectangle(request, snapLocations, rect, result);
-        }
-        else {
-            return snapLocations;
-        }
     }
 }

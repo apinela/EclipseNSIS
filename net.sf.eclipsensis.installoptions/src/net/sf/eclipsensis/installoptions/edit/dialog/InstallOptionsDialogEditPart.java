@@ -150,9 +150,8 @@ public class InstallOptionsDialogEditPart extends InstallOptionsEditPart impleme
         installEditPolicy(EditPolicy.SELECTION_FEEDBACK_ROLE, null);
         installEditPolicy(EditPolicy.COMPONENT_ROLE,
                 new RootComponentEditPolicy());
-        installEditPolicy(EditPolicy.CONTAINER_ROLE, new InstallOptionsDialogEditPolicy(this));
-        installEditPolicy(EditPolicy.LAYOUT_ROLE, new InstallOptionsXYLayoutEditPolicy(this,
-                (XYLayout)getContentPane().getLayoutManager()));
+        installEditPolicy(EditPolicy.CONTAINER_ROLE, new InstallOptionsDialogEditPolicy());
+        installEditPolicy(EditPolicy.LAYOUT_ROLE, new InstallOptionsXYLayoutEditPolicy((XYLayout)getContentPane().getLayoutManager()));
 
         installEditPolicy("Snap Feedback", new SnapFeedbackPolicy()); //$NON-NLS-1$
     }
@@ -194,13 +193,13 @@ public class InstallOptionsDialogEditPart extends InstallOptionsEditPart impleme
             if (val != null && val.booleanValue()) {
                 val = (Boolean)getViewer().getProperty(PROPERTY_SNAP_TO_GUIDES);
                 if (val != null && val.booleanValue()) {
-                    snapStrategies.add(new InstallOptionsSnapToGuides(this));
+                    snapStrategies.add(new SnapToGuides(this));
                 }
             }
 
             val = (Boolean)getViewer().getProperty(SnapToGeometry.PROPERTY_SNAP_ENABLED);
             if (val != null && val.booleanValue()) {
-                snapStrategies.add(new InstallOptionsSnapToGeometry(this));
+                snapStrategies.add(new SnapToGeometry(this));
             }
 
             val = (Boolean)getViewer().getProperty(SnapToGrid.PROPERTY_GRID_VISIBLE);

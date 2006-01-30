@@ -485,7 +485,7 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
         updateActionsState();
         WorkspaceModifyOperation op = new WorkspaceModifyOperation()
         {
-            protected void execute(IProgressMonitor monitor)throws CoreException
+            protected void execute(IProgressMonitor monitor)
             {
                 NSISTaskTagUpdater taskTagUpdater = new NSISTaskTagUpdater();
                 updateTaskTagMarkers(taskTagUpdater);

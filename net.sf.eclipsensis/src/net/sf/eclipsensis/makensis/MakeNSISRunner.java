@@ -156,7 +156,7 @@ public class MakeNSISRunner implements INSISConstants
         if (!results.isCanceled()) {
             WorkspaceModifyOperation op = new WorkspaceModifyOperation(file)
             {
-                protected void execute(IProgressMonitor monitor)throws CoreException
+                protected void execute(IProgressMonitor monitor)
                 {
                     try {
                         IDocument doc = new FileDocument(file.getLocation().toFile());

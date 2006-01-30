@@ -13,22 +13,12 @@ import net.sf.eclipsensis.installoptions.model.InstallOptionsDialog;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsWidget;
 import net.sf.eclipsensis.installoptions.model.commands.DeleteCommand;
 
-import org.eclipse.gef.EditPart;
-import org.eclipse.gef.Request;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.editpolicies.ComponentEditPolicy;
 import org.eclipse.gef.requests.GroupRequest;
 
 public class InstallOptionsEditPolicy extends ComponentEditPolicy
 {
-    private EditPart mEditPart;
-
-    public InstallOptionsEditPolicy(EditPart editPart)
-    {
-        super();
-        mEditPart = editPart;
-    }
-
     protected Command createDeleteCommand(GroupRequest request)
     {
         Object parent = getHost().getParent().getModel();
@@ -36,15 +26,5 @@ public class InstallOptionsEditPolicy extends ComponentEditPolicy
         deleteCmd.setParent((InstallOptionsDialog)parent);
         deleteCmd.setChild((InstallOptionsWidget)getHost().getModel());
         return deleteCmd;
-    }
-
-    public Command getCommand(Request request)
-    {
-        if(((InstallOptionsEditDomain)mEditPart.getViewer().getEditDomain()).isReadOnly()) {
-            return null;
-        }
-        else {
-            return super.getCommand(request);
-        }
     }
 }

@@ -10,12 +10,10 @@
 package net.sf.eclipsensis.installoptions.edit.uneditable;
 
 import net.sf.eclipsensis.installoptions.edit.InstallOptionsDirectEditPolicy;
-import net.sf.eclipsensis.installoptions.edit.InstallOptionsEditDomain;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsUneditableElement;
 import net.sf.eclipsensis.installoptions.model.commands.InstallOptionsUneditableElementCommand;
 
 import org.eclipse.gef.EditPart;
-import org.eclipse.gef.Request;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.requests.DirectEditRequest;
 
@@ -24,16 +22,6 @@ public class UneditableElementDirectEditPolicy extends InstallOptionsDirectEditP
     public UneditableElementDirectEditPolicy(EditPart editPart)
     {
         super(editPart);
-    }
-
-    public Command getCommand(Request request)
-    {
-        if(((InstallOptionsEditDomain)mEditPart.getViewer().getEditDomain()).isReadOnly()) {
-            return null;
-        }
-        else {
-            return super.getCommand(request);
-        }
     }
 
     protected Command getDirectEditCommand(DirectEditRequest edit)

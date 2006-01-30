@@ -33,27 +33,19 @@ public class InstallOptionsXYLayoutEditPolicy extends XYLayoutEditPolicy impleme
     private static final Command DUMMY_COMMAND = new Command() {
     };
 
-    private EditPart mEditPart;
-
-    public InstallOptionsXYLayoutEditPolicy(EditPart editPart, XYLayout layout)
+    public InstallOptionsXYLayoutEditPolicy(XYLayout layout)
     {
         super();
-        mEditPart = editPart;
         setXyLayout(layout);
     }
 
     public Command getCommand(Request request)
     {
-        if(((InstallOptionsEditDomain)mEditPart.getViewer().getEditDomain()).isReadOnly()) {
-            return null;
+        if(request.getType().equals(IInstallOptionsConstants.REQ_CREATE_FROM_TEMPLATE)) {
+            return getCreateFromTemplateCommand((CreateRequest)request);
         }
         else {
-            if(request.getType().equals(IInstallOptionsConstants.REQ_CREATE_FROM_TEMPLATE)) {
-                return getCreateFromTemplateCommand((CreateRequest)request);
-            }
-            else {
-                return super.getCommand(request);
-            }
+            return super.getCommand(request);
         }
     }
 

@@ -33,7 +33,7 @@ public abstract class InstallOptionsEditPart extends AbstractGraphicalEditPart i
 
     protected void createEditPolicies()
     {
-        installEditPolicy(EditPolicy.COMPONENT_ROLE, new InstallOptionsEditPolicy(this));
+        installEditPolicy(EditPolicy.COMPONENT_ROLE, new InstallOptionsEditPolicy());
     }
 
     abstract protected AccessibleEditPart createAccessible();

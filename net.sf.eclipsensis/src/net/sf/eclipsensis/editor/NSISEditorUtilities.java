@@ -10,7 +10,6 @@
 package net.sf.eclipsensis.editor;
 
 import java.io.File;
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
@@ -88,7 +87,7 @@ public class NSISEditorUtilities
                 if(file.exists()) {
                     WorkspaceModifyOperation op = new WorkspaceModifyOperation(file)
                     {
-                        protected void execute(IProgressMonitor monitor)throws CoreException
+                        protected void execute(IProgressMonitor monitor)
                         {
                             try {
                                 file.deleteMarkers(INSISConstants.PROBLEM_MARKER_ID, false, IResource.DEPTH_ZERO);
@@ -232,7 +231,7 @@ public class NSISEditorUtilities
         /* (non-Javadoc)
          * @see org.eclipse.core.resources.IMarker#delete()
          */
-        public void delete() throws CoreException
+        public void delete()
         {
         }
     
@@ -276,7 +275,7 @@ public class NSISEditorUtilities
         /* (non-Javadoc)
          * @see org.eclipse.core.resources.IMarker#getAttribute(java.lang.String)
          */
-        public Object getAttribute(String attributeName) throws CoreException
+        public Object getAttribute(String attributeName)
         {
             if(attributeName.equals(IMarker.LINE_NUMBER)) {
                 return new Integer(mLine);
@@ -289,7 +288,7 @@ public class NSISEditorUtilities
         /* (non-Javadoc)
          * @see org.eclipse.core.resources.IMarker#getAttributes()
          */
-        public Map getAttributes() throws CoreException
+        public Map getAttributes()
         {
             return null;
         }
@@ -298,7 +297,6 @@ public class NSISEditorUtilities
          * @see org.eclipse.core.resources.IMarker#getAttributes(java.lang.String[])
          */
         public Object[] getAttributes(String[] attributeNames)
-                throws CoreException
         {
             Object[] values = new Object[attributeNames.length];
             for (int i = 0; i < values.length; i++) {
@@ -310,7 +308,7 @@ public class NSISEditorUtilities
         /* (non-Javadoc)
          * @see org.eclipse.core.resources.IMarker#getCreationTime()
          */
-        public long getCreationTime() throws CoreException
+        public long getCreationTime()
         {
             return System.currentTimeMillis();
         }
@@ -334,7 +332,7 @@ public class NSISEditorUtilities
         /* (non-Javadoc)
          * @see org.eclipse.core.resources.IMarker#getType()
          */
-        public String getType() throws CoreException
+        public String getType()
         {
             return INSISConstants.PROBLEM_MARKER_ID;
         }
@@ -342,7 +340,7 @@ public class NSISEditorUtilities
         /* (non-Javadoc)
          * @see org.eclipse.core.resources.IMarker#isSubtypeOf(java.lang.String)
          */
-        public boolean isSubtypeOf(String superType) throws CoreException
+        public boolean isSubtypeOf(String superType)
         {
             return false;
         }
@@ -351,7 +349,6 @@ public class NSISEditorUtilities
          * @see org.eclipse.core.resources.IMarker#setAttribute(java.lang.String, boolean)
          */
         public void setAttribute(String attributeName, boolean value)
-                throws CoreException
         {
         }
     
@@ -359,7 +356,6 @@ public class NSISEditorUtilities
          * @see org.eclipse.core.resources.IMarker#setAttribute(java.lang.String, int)
          */
         public void setAttribute(String attributeName, int value)
-                throws CoreException
         {
         }
     
@@ -367,14 +363,13 @@ public class NSISEditorUtilities
          * @see org.eclipse.core.resources.IMarker#setAttribute(java.lang.String, java.lang.Object)
          */
         public void setAttribute(String attributeName, Object value)
-                throws CoreException
         {
         }
     
         /* (non-Javadoc)
          * @see org.eclipse.core.resources.IMarker#setAttributes(java.util.Map)
          */
-        public void setAttributes(Map attributes) throws CoreException
+        public void setAttributes(Map attributes)
         {
         }
     
@@ -382,7 +377,6 @@ public class NSISEditorUtilities
          * @see org.eclipse.core.resources.IMarker#setAttributes(java.lang.String[], java.lang.Object[])
          */
         public void setAttributes(String[] attributeNames, Object[] values)
-                throws CoreException
         {
         }
     
@@ -453,7 +447,7 @@ public class NSISEditorUtilities
         }
         if(editors.size() > 0) {
             final IRunnableWithProgress op = new IRunnableWithProgress(){
-                public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException
+                public void run(IProgressMonitor monitor)
                 {
                     monitor.beginTask(EclipseNSISPlugin.getResourceString("updating.presentation.message"),editors.size()); //$NON-NLS-1$
                     for(Iterator iter=editors.iterator(); iter.hasNext(); ) {

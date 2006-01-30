@@ -15,20 +15,26 @@ import java.util.Stack;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.model.commands.IModelCommandListener;
 import net.sf.eclipsensis.installoptions.model.commands.ModelCommandEvent;
+import net.sf.eclipsensis.util.*;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.gef.DefaultEditDomain;
 import org.eclipse.gef.Tool;
 import org.eclipse.gef.commands.*;
 import org.eclipse.gef.tools.SelectionTool;
 import org.eclipse.jface.action.IStatusLineManager;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.*;
 import org.eclipse.ui.part.EditorActionBarContributor;
 
 public class InstallOptionsEditDomain extends DefaultEditDomain implements IAdaptable
 {
+    private IFile[] mFiles = new IFile[1];
     private File mFile;
     private Tool mDefaultTool = new SelectionTool();
+    private Shell mShell;
 
     /**
      * @param editorPart
@@ -47,19 +53,67 @@ public class InstallOptionsEditDomain extends DefaultEditDomain implements IAdap
         }
     }
 
-    public boolean isReadOnly()
+    private Shell getShell()
     {
-        return mFile != null && mFile.exists() && !mFile.canWrite();
+        if(mShell == null) {
+            IEditorPart editorPart = getEditorPart();
+            if(editorPart != null) {
+                IEditorSite site = editorPart.getEditorSite();
+                if (site != null) {
+                    IWorkbenchPage page = site.getPage();
+                    if (page != null) {
+                        IWorkbenchWindow window = page.getWorkbenchWindow();
+                        if (window != null) {
+                            mShell = window.getShell();
+                        }                        
+                    }                    
+                }                
+            }
+        }
+        return mShell;
+    }
+
+    public boolean validateEdit()
+    {
+        if(mFiles[0] != null) {
+            return ResourcesPlugin.getWorkspace().validateEdit(mFiles, getShell()).isOK();
+        }
+        else if (IOUtility.isValidFile(mFile)){
+            if(!mFile.canWrite()) {
+                if(Common.openQuestion(getShell(), InstallOptionsPlugin.getResourceString("read.only.question.title"),
+                        InstallOptionsPlugin.getFormattedString("read.only.question", new String[] {mFile.getAbsolutePath()}), 
+                        InstallOptionsPlugin.getShellImage())) {
+                    int attributes = WinAPI.GetFileAttributes(mFile.getAbsolutePath());
+                    if( (attributes & WinAPI.FILE_ATTRIBUTE_READONLY) > 0) {
+                        WinAPI.SetFileAttributes(mFile.getAbsolutePath(), attributes & ~WinAPI.FILE_ATTRIBUTE_READONLY);
+                    }
+                }
+                return mFile.canWrite();
+            }
+            else {
+                return true;
+            }
+        }
+        else {
+            return false;
+        }
     }
 
     public void setFile(File file)
     {
         mFile = file;
+        mFiles[0] = null;
+    }
+
+    public void setFile(IFile file)
+    {
+        mFiles[0] = file;
+        mFile = null;
     }
 
     public void setActiveTool(Tool tool)
     {
-        if(!isReadOnly() || tool instanceof SelectionTool) {
+        if(tool instanceof SelectionTool) {
             super.setActiveTool(tool);
         }
         else {
@@ -69,7 +123,7 @@ public class InstallOptionsEditDomain extends DefaultEditDomain implements IAdap
 
     public void setDefaultTool(Tool tool)
     {
-        if(!isReadOnly() || tool instanceof SelectionTool) {
+        if(tool instanceof SelectionTool) {
             super.setDefaultTool(tool);
         }
         else {
@@ -83,7 +137,7 @@ public class InstallOptionsEditDomain extends DefaultEditDomain implements IAdap
 
         public synchronized void execute(Command command)
         {
-            if(!isReadOnly()) {
+            if(validateEdit()) {
                 CompoundCommand cmd = new CompoundCommand(command.getLabel());
                 cmd.add(command);
                 command = cmd;
@@ -98,7 +152,12 @@ public class InstallOptionsEditDomain extends DefaultEditDomain implements IAdap
                     if (actionBars != null) {
                         IStatusLineManager manager = actionBars.getStatusLineManager();
                         if(manager != null) {
-                            manager.setMessage(InstallOptionsPlugin.getFormattedString("read.only.error",new Object[]{mFile.getName()})); //$NON-NLS-1$
+                            if(mFile != null) {
+                                manager.setMessage(InstallOptionsPlugin.getFormattedString("read.only.error",new Object[]{mFile.getName()})); //$NON-NLS-1$
+                            }
+                            else if(mFiles[0] != null) {
+                                manager.setMessage(InstallOptionsPlugin.getFormattedString("read.only.error",new Object[]{mFiles[0].getName()})); //$NON-NLS-1$
+                            }
                         }
                     }
                 }

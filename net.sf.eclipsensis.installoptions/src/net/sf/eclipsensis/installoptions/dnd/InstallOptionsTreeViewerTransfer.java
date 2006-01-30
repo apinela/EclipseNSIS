@@ -9,11 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.dnd;
 
-import net.sf.eclipsensis.installoptions.edit.InstallOptionsEditDomain;
-
-import org.eclipse.gef.EditDomain;
 import org.eclipse.gef.EditPartViewer;
-import org.eclipse.swt.dnd.TransferData;
 
 public class InstallOptionsTreeViewerTransfer extends InstallOptionsObjectTransfer
 {
@@ -47,14 +43,5 @@ public class InstallOptionsTreeViewerTransfer extends InstallOptionsObjectTransf
     public void setViewer(EditPartViewer epv)
     {
         viewer = epv;
-    }
-
-    public boolean isSupportedType(TransferData transferData)
-    {
-        EditDomain domain = getViewer().getEditDomain();
-        if(domain instanceof InstallOptionsEditDomain && ((InstallOptionsEditDomain)domain).isReadOnly()) {
-            return false;
-        }
-        return super.isSupportedType(transferData);
     }
 }
