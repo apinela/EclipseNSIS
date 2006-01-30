@@ -116,6 +116,18 @@ extern "C" {
 #define net_sf_eclipsensis_util_WinAPI_SND_PURGE 64L
 #undef net_sf_eclipsensis_util_WinAPI_SND_FILENAME
 #define net_sf_eclipsensis_util_WinAPI_SND_FILENAME 131072L
+#undef net_sf_eclipsensis_util_WinAPI_FILE_ATTRIBUTE_ARCHIVE
+#define net_sf_eclipsensis_util_WinAPI_FILE_ATTRIBUTE_ARCHIVE 32L
+#undef net_sf_eclipsensis_util_WinAPI_FILE_ATTRIBUTE_DIRECTORY
+#define net_sf_eclipsensis_util_WinAPI_FILE_ATTRIBUTE_DIRECTORY 16L
+#undef net_sf_eclipsensis_util_WinAPI_FILE_ATTRIBUTE_HIDDEN
+#define net_sf_eclipsensis_util_WinAPI_FILE_ATTRIBUTE_HIDDEN 2L
+#undef net_sf_eclipsensis_util_WinAPI_FILE_ATTRIBUTE_NORMAL
+#define net_sf_eclipsensis_util_WinAPI_FILE_ATTRIBUTE_NORMAL 128L
+#undef net_sf_eclipsensis_util_WinAPI_FILE_ATTRIBUTE_READONLY
+#define net_sf_eclipsensis_util_WinAPI_FILE_ATTRIBUTE_READONLY 1L
+#undef net_sf_eclipsensis_util_WinAPI_FILE_ATTRIBUTE_SYSTEM
+#define net_sf_eclipsensis_util_WinAPI_FILE_ATTRIBUTE_SYSTEM 4L
 /*
  * Class:     net_sf_eclipsensis_util_WinAPI
  * Method:    init
@@ -323,6 +335,22 @@ JNIEXPORT jobject JNICALL Java_net_sf_eclipsensis_util_WinAPI_getDefaultAuthenti
  */
 JNIEXPORT jboolean JNICALL Java_net_sf_eclipsensis_util_WinAPI_PlaySound
   (JNIEnv *, jclass, jstring, jint, jint);
+
+/*
+ * Class:     net_sf_eclipsensis_util_WinAPI
+ * Method:    GetFileAttributes
+ * Signature: (Ljava/lang/String;)I
+ */
+JNIEXPORT jint JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetFileAttributes
+  (JNIEnv *, jclass, jstring);
+
+/*
+ * Class:     net_sf_eclipsensis_util_WinAPI
+ * Method:    SetFileAttributes
+ * Signature: (Ljava/lang/String;I)Z
+ */
+JNIEXPORT jboolean JNICALL Java_net_sf_eclipsensis_util_WinAPI_SetFileAttributes
+  (JNIEnv *, jclass, jstring, jint);
 
 #ifdef __cplusplus
 }

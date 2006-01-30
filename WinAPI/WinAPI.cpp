@@ -647,3 +647,26 @@ JNIEXPORT jboolean JNICALL Java_net_sf_eclipsensis_util_WinAPI_PlaySound(JNIEnv 
     }
 }
 
+JNIEXPORT jint JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetFileAttributes(JNIEnv *pEnv, jclass jClass, jstring pszFilename)
+{
+    DWORD result = 0;
+    if(pszFilename) {
+        LPCSTR filename = (LPCSTR)pEnv->GetStringUTFChars(pszFilename, 0);
+        result = GetFileAttributes(filename);
+        pEnv->ReleaseStringUTFChars(pszFilename,filename);
+    }
+    return result;
+}
+
+JNIEXPORT jboolean JNICALL Java_net_sf_eclipsensis_util_WinAPI_SetFileAttributes(JNIEnv *pEnv, jclass jClass, jstring pszFilename, jint dwAttributes)
+{
+    jboolean result = JNI_FALSE;
+    if(pszFilename) {
+        LPCSTR filename = (LPCSTR)pEnv->GetStringUTFChars(pszFilename, 0);
+        if(SetFileAttributes(filename, dwAttributes)) {
+            result = JNI_TRUE;
+        }
+        pEnv->ReleaseStringUTFChars(pszFilename,filename);
+    }
+    return result;
+}
