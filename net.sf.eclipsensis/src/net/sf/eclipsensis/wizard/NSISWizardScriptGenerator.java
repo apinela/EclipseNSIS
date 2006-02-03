@@ -754,6 +754,7 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
             }
 
             String uninstallFile = new StringBuffer(getKeyword("$INSTDIR")).append("\\").append(mSettings.getUninstallFile()).toString(); //$NON-NLS-1$ //$NON-NLS-2$
+            postSection.addElement(new NSISScriptInstruction("SetOutPath",getKeyword("$INSTDIR"))); //$NON-NLS-1$ //$NON-NLS-2$
             postSection.addElement(new NSISScriptInstruction("WriteUninstaller",uninstallFile)); //$NON-NLS-1$
             unPostSection.addElement(0,new NSISScriptInstruction("Delete",new String[]{getKeyword("/REBOOTOK"),uninstallFile})); //$NON-NLS-1$ //$NON-NLS-2$
 
