@@ -17,6 +17,7 @@ import net.sf.eclipsensis.dialogs.TableResizer;
 import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.CommonImages;
 import net.sf.eclipsensis.viewer.CollectionContentProvider;
 import net.sf.eclipsensis.viewer.TableViewerUpDownMover;
 
@@ -131,7 +132,7 @@ public class ListItemsDialog extends Dialog
         buttons.setLayout(layout);
 
         final Button add = new Button(buttons,SWT.PUSH);
-        add.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("add.icon"))); //$NON-NLS-1$
+        add.setImage(CommonImages.ADD_ICON);
         add.setToolTipText(EclipseNSISPlugin.getResourceString("new.tooltip")); //$NON-NLS-1$
         add.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         add.addListener(SWT.Selection, new Listener() {
@@ -155,7 +156,7 @@ public class ListItemsDialog extends Dialog
         });
 
         final Button del = new Button(buttons, SWT.PUSH);
-        del.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("delete.icon"))); //$NON-NLS-1$
+        del.setImage(CommonImages.DELETE_ICON);
         del.setToolTipText(EclipseNSISPlugin.getResourceString("remove.tooltip")); //$NON-NLS-1$
         del.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         del.addListener(SWT.Selection, new Listener() {
@@ -189,7 +190,7 @@ public class ListItemsDialog extends Dialog
         mover.setViewer(viewer);
 
         final Button up = new Button(buttons,SWT.PUSH);
-        up.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("up.icon"))); //$NON-NLS-1$
+        up.setImage(CommonImages.UP_ICON);
         up.setToolTipText(EclipseNSISPlugin.getResourceString("up.tooltip")); //$NON-NLS-1$
         up.setEnabled(mover.canMoveUp());
         up.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
@@ -201,7 +202,7 @@ public class ListItemsDialog extends Dialog
         });
 
         final Button down = new Button(buttons, SWT.PUSH);
-        down.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("down.icon"))); //$NON-NLS-1$
+        down.setImage(CommonImages.DOWN_ICON);
         down.setToolTipText(EclipseNSISPlugin.getResourceString("down.tooltip")); //$NON-NLS-1$
         down.setEnabled(mover.canMoveDown());
         down.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));

@@ -104,7 +104,7 @@ public class ColorManager
         RGB rgb = new RGB(0,0,0);
         rgb.red = Integer.parseInt(hexString.substring(0,2),16);
         rgb.green = Integer.parseInt(hexString.substring(2,4),16);
-        rgb.blue = Integer.parseInt(hexString.substring(4),16);
+        rgb.blue = Integer.parseInt(hexString.substring(4,6),16);
         return rgb;
     }
 

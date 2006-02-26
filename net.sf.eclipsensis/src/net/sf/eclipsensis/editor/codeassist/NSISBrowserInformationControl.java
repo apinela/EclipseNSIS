@@ -15,8 +15,6 @@ package net.sf.eclipsensis.editor.codeassist;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
@@ -35,7 +33,6 @@ import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.SWTError;
 import org.eclipse.swt.browser.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
@@ -49,19 +46,7 @@ import org.eclipse.ui.part.FileEditorInput;
 
 public class NSISBrowserInformationControl implements IInformationControl, IInformationControlExtension, IInformationControlExtension2, IInformationControlExtension3,  DisposeListener 
 {
-    private static final String ABOUT_BLANK = "about:blank"; //$NON-NLS-1$
-
     private static final int BORDER= 1;
-
-    private static boolean cIsAvailable= false;
-    private static boolean cAvailabilityChecked= false;
-    
-    private static Image cBackImage;
-    private static Image cDisabledBackImage;
-    private static Image cForwardImage;
-    private static Image cDisabledForwardImage;
-    
-    private static Set cHtmlExtensions;
 
     private Shell mShell;
     private ToolBar mToolBar;
@@ -77,6 +62,21 @@ public class NSISBrowserInformationControl implements IInformationControl, IInfo
     private ToolItem mForward = null;
     private Stack mBackKeywords = null;
     private Stack mForwardKeywords = null;
+    
+    private INSISBrowserFileURLHandler mFileURLHandler = new INSISBrowserFileURLHandler() {
+        public void handleFile(File file)
+        {
+            NSISBrowserInformationControl.this.handleFile(file);
+        }
+    };
+    
+    private INSISBrowserKeywordURLHandler mKeywordURLHandler = new INSISBrowserKeywordURLHandler() {
+        public void handleKeyword(String keyword)
+        {
+            NSISBrowserInformationControl.this.gotoKeyword(keyword);
+
+        }
+    };
 
     public NSISBrowserInformationControl(final Shell parent, int shellStyle, int style) 
     {
@@ -203,31 +203,51 @@ public class NSISBrowserInformationControl implements IInformationControl, IInfo
     {
         return image !=null && !image.isDisposed();
     }
+
     private void createToolBar(Composite displayArea)
     {
-        if(isValid(cBackImage) && isValid(cDisabledBackImage) && 
-           isValid(cForwardImage) && isValid(cDisabledForwardImage)) {
+        if(isValid(NSISBrowserUtility.BACK_IMAGE) && isValid(NSISBrowserUtility.DISABLED_BACK_IMAGE) && 
+           isValid(NSISBrowserUtility.FORWARD_IMAGE) && isValid(NSISBrowserUtility.DISABLED_FORWARD_IMAGE) && 
+           isValid(NSISBrowserUtility.HOME_IMAGE)) {
             mToolBar =  new ToolBar(displayArea, SWT.FLAT);
             GridData data = new GridData(SWT.RIGHT,SWT.FILL,true,false);
             mToolBar.setLayoutData(data);
             mToolBar.setBackground(mToolBar.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
 
+            // Add a button to go back to original page
+            final ToolItem home = new ToolItem(mToolBar, SWT.NONE);
+            home.setImage(NSISBrowserUtility.HOME_IMAGE);
+            home.setToolTipText(EclipseNSISPlugin.getResourceString("help.browser.home.text")); //$NON-NLS-1$
+    
             // Add a button to navigate backwards through previously visited pages
             mBack = new ToolItem(mToolBar, SWT.NONE);
-            mBack.setImage(cBackImage);
-            mBack.setDisabledImage(cDisabledBackImage);
+            mBack.setImage(NSISBrowserUtility.BACK_IMAGE);
+            mBack.setDisabledImage(NSISBrowserUtility.DISABLED_BACK_IMAGE);
             mBack.setToolTipText(EclipseNSISPlugin.getResourceString("help.browser.back.text")); //$NON-NLS-1$
     
             // Add a button to navigate forward through previously visited pages
             mForward = new ToolItem(mToolBar, SWT.NONE);
-            mForward.setImage(cForwardImage);
-            mForward.setDisabledImage(cDisabledForwardImage);
+            mForward.setImage(NSISBrowserUtility.FORWARD_IMAGE);
+            mForward.setDisabledImage(NSISBrowserUtility.DISABLED_FORWARD_IMAGE);
             mForward.setToolTipText(EclipseNSISPlugin.getResourceString("help.browser.forward.text")); //$NON-NLS-1$
 
             Listener listener = new Listener() {
                 public void handleEvent(Event event) {
                     ToolItem item = (ToolItem)event.widget;
-                    if (item == mBack) {
+                    if (item == home) {
+                        if(!Common.isEmptyCollection(mBackKeywords)) {
+                            String oldKeyword = mKeyword;
+                            String keyword = (String)mBackKeywords.firstElement();
+                            if(!Common.stringsAreEqual(oldKeyword, keyword)) {
+                                if(setKeyword(keyword) && oldKeyword != null) {
+                                    mForwardKeywords.clear();
+                                    mBackKeywords.push(oldKeyword);
+                                }
+                            }
+                        }
+                        updateToolbarButtons();
+                    }
+                    else if (item == mBack) {
                         if(!Common.isEmptyCollection(mBackKeywords)) {
                             String oldKeyword = mKeyword;
                             String keyword = (String)mBackKeywords.pop();
@@ -249,6 +269,7 @@ public class NSISBrowserInformationControl implements IInformationControl, IInfo
                     }
                 }
             };
+            home.addListener(SWT.Selection, listener);
             mBack.addListener(SWT.Selection, listener);
             mForward.addListener(SWT.Selection, listener);
             
@@ -305,49 +326,6 @@ public class NSISBrowserInformationControl implements IInformationControl, IInfo
         if(mBrowser != null) {
             mBrowser.removeKeyListener(listener);
         }
-    }
-
-    public static boolean isAvailable(Composite parent) 
-    {
-        if (!cAvailabilityChecked) {
-            try {
-                Browser browser= new Browser(parent, SWT.NONE);
-                browser.dispose();
-                cIsAvailable= true;
-                cBackImage = loadImage(EclipseNSISPlugin.getResourceString("hoverhelp.back.icon")); //$NON-NLS-1$
-                cDisabledBackImage = loadImage(EclipseNSISPlugin.getResourceString("hoverhelp.disabled.back.icon")); //$NON-NLS-1$
-                cForwardImage = loadImage(EclipseNSISPlugin.getResourceString("hoverhelp.forward.icon")); //$NON-NLS-1$
-                cDisabledForwardImage = loadImage(EclipseNSISPlugin.getResourceString("hoverhelp.disabled.forward.icon")); //$NON-NLS-1$
-                cHtmlExtensions = new CaseInsensitiveSet(Common.loadListProperty(EclipseNSISPlugin.getDefault().getResourceBundle(), 
-                                                        "hoverhelp.html.extensions")); //$NON-NLS-1$
-            } 
-            catch (SWTError er) {
-                cIsAvailable= false;
-            } 
-            finally {
-                cAvailabilityChecked= true;
-            }
-            
-        }
-
-        return cIsAvailable;
-    }
-
-    private static Image loadImage(String file)
-    {
-        Image image = null;
-        File f = null;
-        try {
-            f = IOUtility.ensureLatest(EclipseNSISPlugin.getDefault().getBundle(), 
-                                       new Path(file),
-                                       new File(EclipseNSISPlugin.getPluginStateLocation(),EclipseNSISPlugin.getResourceString("hoverhelp.state.location"))); //$NON-NLS-1$
-            image = new Image(Display.getCurrent(),f.getAbsolutePath());
-            EclipseNSISPlugin.getImageManager().putImage(f.toURI().toURL(), image);
-        }
-        catch (IOException e) {
-            EclipseNSISPlugin.getDefault().log(e);
-        }
-        return image;
     }
 
     public void setInput(Object input)
@@ -556,33 +534,9 @@ public class NSISBrowserInformationControl implements IInformationControl, IInfo
             mBrowser.addLocationListener(new LocationAdapter() {
                 public void changing(LocationEvent event)
                 {
-                    if(!ABOUT_BLANK.equalsIgnoreCase(event.location)) {
+                    if(!NSISBrowserUtility.ABOUT_BLANK.equalsIgnoreCase(event.location)) {
                         try {
-                            if (event.location.regionMatches(0, NSISHelpURLProvider.KEYWORD_URI_SCHEME, 0, NSISHelpURLProvider.KEYWORD_URI_SCHEME.length())) {
-                                String keyword = event.location.substring(NSISHelpURLProvider.KEYWORD_URI_SCHEME.length());
-                                gotoKeyword(keyword);
-                            }
-                            else if (event.location.regionMatches(0, NSISHelpURLProvider.HELP_URI_SCHEME, 0, NSISHelpURLProvider.HELP_URI_SCHEME.length())) {
-                                String url = event.location.substring(NSISHelpURLProvider.HELP_URI_SCHEME.length());
-                                NSISHelpURLProvider.getInstance().showHelp(url);
-                            }
-                            else if (event.location.regionMatches(0, NSISHTMLHelp.FILE_URI_SCHEME, 0, NSISHTMLHelp.FILE_URI_SCHEME.length())) {
-                                try {
-                                    handleFile(new File(new URI(event.location)));
-                                }
-                                catch (URISyntaxException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                            else {
-                                File f= new File(event.location);
-                                if(IOUtility.isValidFile(f)) {
-                                    handleFile(f);
-                                }
-                                else {
-                                    Common.openExternalBrowser(event.location);
-                                }
-                            }
+                            NSISBrowserUtility.handleURL(event.location, mKeywordURLHandler, mFileURLHandler);
                         }
                         finally {
                             event.doit = false;
@@ -610,7 +564,7 @@ public class NSISBrowserInformationControl implements IInformationControl, IInfo
                     try {
                         if (f.getCanonicalPath().regionMatches(true, 0, home, 0, home.length())) {
                             String ext = IOUtility.getFileExtension(f);
-                            if (cHtmlExtensions != null && cHtmlExtensions.contains(ext)) {
+                            if (NSISBrowserUtility.HTML_EXTENSIONS != null && NSISBrowserUtility.HTML_EXTENSIONS.contains(ext)) {
                                 NSISHTMLHelp.showHelp(f.toURI().toURL().toString());
                                 return;
                             }

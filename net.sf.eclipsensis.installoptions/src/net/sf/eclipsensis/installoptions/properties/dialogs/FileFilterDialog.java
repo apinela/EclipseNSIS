@@ -21,6 +21,7 @@ import net.sf.eclipsensis.installoptions.properties.labelproviders.FileFilterLab
 import net.sf.eclipsensis.installoptions.util.FileFilter;
 import net.sf.eclipsensis.installoptions.util.FilePattern;
 import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.CommonImages;
 import net.sf.eclipsensis.viewer.CollectionContentProvider;
 import net.sf.eclipsensis.viewer.TableViewerUpDownMover;
 
@@ -120,7 +121,7 @@ public class FileFilterDialog extends Dialog
         buttons.setLayout(layout);
 
         final Button add = new Button(buttons,SWT.PUSH);
-        add.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("add.icon"))); //$NON-NLS-1$
+        add.setImage(CommonImages.ADD_ICON);
         add.setToolTipText(EclipseNSISPlugin.getResourceString("new.tooltip")); //$NON-NLS-1$
         add.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         add.addListener(SWT.Selection, new Listener() {
@@ -148,7 +149,7 @@ public class FileFilterDialog extends Dialog
         });
 
         final Button del = new Button(buttons, SWT.PUSH);
-        del.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("delete.icon"))); //$NON-NLS-1$
+        del.setImage(CommonImages.DELETE_ICON);
         del.setToolTipText(EclipseNSISPlugin.getResourceString("remove.tooltip")); //$NON-NLS-1$
         del.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         del.addListener(SWT.Selection, new Listener() {
@@ -182,7 +183,7 @@ public class FileFilterDialog extends Dialog
         mover.setViewer(viewer1);
 
         final Button up = new Button(buttons,SWT.PUSH);
-        up.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("up.icon"))); //$NON-NLS-1$
+        up.setImage(CommonImages.UP_ICON);
         up.setToolTipText(EclipseNSISPlugin.getResourceString("up.tooltip")); //$NON-NLS-1$
         up.setEnabled(mover.canMoveUp());
         up.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
@@ -194,7 +195,7 @@ public class FileFilterDialog extends Dialog
         });
 
         final Button down = new Button(buttons, SWT.PUSH);
-        down.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("down.icon"))); //$NON-NLS-1$
+        down.setImage(CommonImages.DOWN_ICON);
         down.setToolTipText(EclipseNSISPlugin.getResourceString("down.tooltip")); //$NON-NLS-1$
         down.setEnabled(mover.canMoveDown());
         down.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
@@ -312,7 +313,7 @@ public class FileFilterDialog extends Dialog
         buttons2.setLayout(layout);
 
         final Button add2 = new Button(buttons2,SWT.PUSH);
-        add2.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("add.icon"))); //$NON-NLS-1$
+        add2.setImage(CommonImages.ADD_ICON);
         add2.setToolTipText(EclipseNSISPlugin.getResourceString("new.tooltip")); //$NON-NLS-1$
         add2.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         add2.addListener(SWT.Selection, new Listener() {
@@ -334,7 +335,7 @@ public class FileFilterDialog extends Dialog
         add2.setEnabled(!isNull);
 
         final Button del2 = new Button(buttons2, SWT.PUSH);
-        del2.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("delete.icon"))); //$NON-NLS-1$
+        del2.setImage(CommonImages.DELETE_ICON);
         del2.setToolTipText(EclipseNSISPlugin.getResourceString("remove.tooltip")); //$NON-NLS-1$
         del2.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         del2.addListener(SWT.Selection, new Listener() {
@@ -389,7 +390,7 @@ public class FileFilterDialog extends Dialog
         mover2.setViewer(viewer2);
 
         final Button up2 = new Button(buttons2,SWT.PUSH);
-        up2.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("up.icon"))); //$NON-NLS-1$
+        up2.setImage(CommonImages.UP_ICON);
         up2.setToolTipText(EclipseNSISPlugin.getResourceString("up.tooltip")); //$NON-NLS-1$
         up2.setEnabled(!isNull && mover2.canMoveUp());
         up2.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
@@ -401,7 +402,7 @@ public class FileFilterDialog extends Dialog
         });
 
         final Button down2 = new Button(buttons2, SWT.PUSH);
-        down2.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("down.icon"))); //$NON-NLS-1$
+        down2.setImage(CommonImages.DOWN_ICON);
         down2.setToolTipText(EclipseNSISPlugin.getResourceString("down.tooltip")); //$NON-NLS-1$
         down2.setEnabled(!isNull && mover2.canMoveDown());
         down2.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));

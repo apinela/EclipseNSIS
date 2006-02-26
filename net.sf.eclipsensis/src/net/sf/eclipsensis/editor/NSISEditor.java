@@ -17,8 +17,10 @@ import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.actions.NSISAction;
 import net.sf.eclipsensis.actions.NSISScriptAction;
 import net.sf.eclipsensis.editor.outline.*;
+import net.sf.eclipsensis.editor.text.NSISPartitionScanner;
 import net.sf.eclipsensis.editor.text.NSISTextUtility;
 import net.sf.eclipsensis.help.NSISHelpURLProvider;
+import net.sf.eclipsensis.help.commands.*;
 import net.sf.eclipsensis.makensis.MakeNSISResults;
 import net.sf.eclipsensis.settings.*;
 import net.sf.eclipsensis.util.*;
@@ -32,6 +34,9 @@ import org.eclipse.jface.text.information.InformationPresenter;
 import org.eclipse.jface.text.source.*;
 import org.eclipse.jface.text.source.projection.*;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.window.Window;
+import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.*;
@@ -349,7 +354,166 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
         decorationSupport.setMatchingCharacterPainterPreferenceKeys(INSISPreferenceConstants.MATCHING_DELIMITERS,
                                                                     INSISPreferenceConstants.MATCHING_DELIMITERS_COLOR);
         viewer.addProjectionListener(this);
+        ISelectionChangedListener listener = new ISelectionChangedListener(){
+            public void selectionChanged(SelectionChangedEvent event)
+            {
+                openCommandView();
+            }
+        };
+        viewer.addSelectionChangedListener(listener);
+        viewer.addPostSelectionChangedListener(listener);
+        
+        //Add support for NSISCommand transfer.
+        final StyledText text2 = viewer.getTextWidget();
+        DropTarget target = new DropTarget(text2, DND.DROP_DEFAULT | DND.DROP_COPY);
+        target.setTransfer(new Transfer[]{NSISCommandTransfer.getInstance()});
+        target.addDropListener(new DropTargetAdapter() {
+            public void dragEnter(DropTargetEvent e)
+            {
+                if (e.detail == DND.DROP_DEFAULT)
+                    e.detail = DND.DROP_COPY;
+            }
+
+            public void dragOperationChanged(DropTargetEvent e)
+            {
+                if (e.detail == DND.DROP_DEFAULT)
+                    e.detail = DND.DROP_COPY;
+            }
+
+            public void dragOver(DropTargetEvent e)
+            {
+                text2.setFocus();
+                Point location = text2.getDisplay().map(null, text2, e.x, e.y);
+                location.x = Math.max(0, location.x);
+                location.y = Math.max(0, location.y);
+                int offset;
+                try {
+                    offset = text2.getOffsetAtLocation(new Point(location.x, location.y));
+                }
+                catch (IllegalArgumentException ex) {
+                    try {
+                        offset = text2.getOffsetAtLocation(new Point(0, location.y));
+                    }
+                    catch (IllegalArgumentException ex2) {
+                        offset = text2.getCharCount();
+                        Point maxLocation = text2.getLocationAtOffset(offset);
+                        if (location.y >= maxLocation.y) {
+                            if (location.x < maxLocation.x) {
+                                offset = text2.getOffsetAtLocation(new Point(location.x, maxLocation.y));
+                            }
+                        }
+                    }
+                }
+                IDocument doc = getDocumentProvider().getDocument(getEditorInput());
+                offset = getCaretOffsetForInsertCommand(doc, offset);
+                
+                text2.setCaretOffset(offset);
+            }
+
+            public void drop(DropTargetEvent e)
+            {
+                insertCommand((String)e.data, false);
+            }
+        });
         return viewer;
+    }
+    
+    private int getCaretOffsetForInsertCommand(IDocument doc, int offset)
+    {
+        if(doc != null) {
+            ITypedRegion[][] regions = NSISTextUtility.getNSISLines(doc, offset);
+            if(Common.isEmptyArray(regions)) {
+                try {
+                    ITypedRegion partition = NSISTextUtility.getNSISPartitionAtOffset(doc, offset);
+                    if(partition.getType().equals(NSISPartitionScanner.NSIS_SINGLELINE_COMMENT) ||
+                       partition.getType().equals(NSISPartitionScanner.NSIS_MULTILINE_COMMENT)) {
+                        offset = partition.getOffset();
+                        if(offset > 0) {
+                            offset--;
+                            partition = NSISTextUtility.getNSISPartitionAtOffset(doc, offset);
+                            if(partition.getType().equals(NSISPartitionScanner.NSIS_SINGLELINE_COMMENT) ||
+                               partition.getType().equals(NSISPartitionScanner.NSIS_MULTILINE_COMMENT)) {
+                                offset = offset+1;
+                            }
+                            else {
+                                int line1 = doc.getLineOfOffset(offset);
+                                int line2 = doc.getLineOfOffset(offset+1);
+                                if(line1 == line2) {
+                                    offset = getCaretOffsetForInsertCommand(doc, offset);
+                                }
+                                else {
+                                    IRegion info  = doc.getLineInformation(line1);
+                                    String s = doc.get(info.getOffset()+info.getLength()-1,1);
+                                    if(s.charAt(0) == INSISConstants.LINE_CONTINUATION_CHAR) {
+                                        offset = getCaretOffsetForInsertCommand(doc,info.getOffset()+info.getLength()-1);
+                                    }
+                                    else {
+                                        offset++;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                catch (BadLocationException e) {
+                    EclipseNSISPlugin.getDefault().log(e);
+                }
+            }
+            else {
+                offset = regions[0][0].getOffset();
+            }
+        }
+        return offset;
+    }
+  
+    private void insertCommand(String command, boolean updateOffset)
+    {
+        ISourceViewer viewer = getSourceViewer();
+        if(viewer != null) {
+            StyledText styledText = viewer.getTextWidget();
+            if(styledText != null && !styledText.isDisposed()) {
+                NSISCommand cmd = NSISCommandManager.getCommand(command);
+                if(cmd != null) {
+                    String text = null;
+                    if (cmd.hasParameters()) {
+                        NSISCommandDialog dlg = new NSISCommandDialog(styledText.getShell(), cmd);
+                        int code = dlg.open();
+                        if (code == Window.OK) {
+                            text = dlg.getCommandText();
+                        }
+                    }
+                    else {
+                        text = cmd.getName();
+                    }
+                    if (!Common.isEmpty(text)) {
+                        Point sel = styledText.getSelection();
+                        try {
+                            IDocument doc = getDocumentProvider().getDocument(getEditorInput());
+                            if (updateOffset) {
+                                int offset = getCaretOffsetForInsertCommand(doc, sel.x);
+                                styledText.setCaretOffset(offset);
+                                styledText.setFocus();
+                            }
+                            int offset = styledText.getCaretOffset();
+                            text = text + doc.getLineDelimiter(styledText.getLineAtOffset(offset));
+                            doc.replace(offset, 0, text);
+                            styledText.setCaretOffset(offset + text.length());
+                        }
+                        catch (Exception e) {
+                            Common.openError(styledText.getShell(), e.getMessage(), EclipseNSISPlugin.getShellImage());
+                            if (updateOffset) {
+                                styledText.setSelection(sel);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public void insertCommand(String command)
+    {
+        insertCommand(command, true);
     }
 
     public void projectionDisabled()
@@ -497,6 +661,27 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
         catch (Exception e) {
             EclipseNSISPlugin.getDefault().log(e);
         }
+    }
+
+    private void openCommandView()
+    {
+        PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+            public void run()
+            {
+                try {
+                    IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+                    if(activePage != null) {
+                        IViewPart view = activePage.findView(COMMANDS_VIEW_ID);
+                        if(view == null) {
+                            activePage.showView(COMMANDS_VIEW_ID, null, IWorkbenchPage.VIEW_CREATE);
+                        }
+                    }
+                }
+                catch(PartInitException pie) {
+                    EclipseNSISPlugin.getDefault().log(pie);
+                }
+            }
+        });
     }
 
     IAnnotationModel getAnnotationModel()

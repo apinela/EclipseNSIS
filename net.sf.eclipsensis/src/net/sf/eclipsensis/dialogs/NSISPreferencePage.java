@@ -76,7 +76,7 @@ public class NSISPreferencePage	extends NSISSettingsPage implements INSISPrefere
         
         cAutoShowConsoleText = new String[AUTO_SHOW_CONSOLE_ARRAY.length];
         for (int i = 0; i < AUTO_SHOW_CONSOLE_ARRAY.length; i++) {
-            cAutoShowConsoleText[i] = EclipseNSISPlugin.getResourceString("auto.show.console."+AUTO_SHOW_CONSOLE_ARRAY[i]);
+            cAutoShowConsoleText[i] = EclipseNSISPlugin.getResourceString("auto.show.console."+AUTO_SHOW_CONSOLE_ARRAY[i]); //$NON-NLS-1$
         }
     }
 

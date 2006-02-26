@@ -421,7 +421,7 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
                 }
                 if(!Common.isEmpty(text)) {
                     text = Common.escapeQuotes(text);
-                    String newText = IOUtility.makeNSISRelativeLocation(text);
+                    String newText = Common.maybeQuote(IOUtility.encodePath(text));
                     if(newText.equalsIgnoreCase(text)) {
                         IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
                         if(page != null) {

@@ -32,6 +32,10 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
     public static final String INSTRUCTIONS="INSTRUCTIONS"; //$NON-NLS-1$
     public static final String INSTALLER_PAGES="INSTALLER_PAGES"; //$NON-NLS-1$
     public static final String HKEY_PARAMETERS="HKEY_PARAMETERS"; //$NON-NLS-1$
+    public static final String MESSAGEBOX_OPTION_BUTTON_PARAMETERS="MESSAGEBOX_OPTION_BUTTON_PARAMETERS"; //$NON-NLS-1$
+    public static final String MESSAGEBOX_OPTION_ICON_PARAMETERS="MESSAGEBOX_OPTION_ICON_PARAMETERS"; //$NON-NLS-1$
+    public static final String MESSAGEBOX_OPTION_DEFAULT_PARAMETERS="MESSAGEBOX_OPTION_DEFAULT_PARAMETERS"; //$NON-NLS-1$
+    public static final String MESSAGEBOX_OPTION_OTHER_PARAMETERS="MESSAGEBOX_OPTION_OTHER_PARAMETERS"; //$NON-NLS-1$
     public static final String MESSAGEBOX_OPTION_PARAMETERS="MESSAGEBOX_OPTION_PARAMETERS"; //$NON-NLS-1$
     public static final String MESSAGEBOX_RETURN_PARAMETERS="MESSAGEBOX_RETURN_PARAMETERS"; //$NON-NLS-1$
     public static final String INSTRUCTION_PARAMETERS="INSTRUCTION_PARAMETERS"; //$NON-NLS-1$
@@ -83,6 +87,11 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
         }
     }
 
+    public boolean isStarted()
+    {
+        return cInstance != null;
+    }
+
     public void stop(IProgressMonitor monitor)
     {
         if (cInstance == this) {
@@ -125,7 +134,10 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
         Set instructions = new CaseInsensitiveSet();
         Set installerPages = new CaseInsensitiveSet();
         Set hkeyParameters = new CaseInsensitiveSet();
-        Set messageboxOptionParameters = new CaseInsensitiveSet();
+        Set messageboxOptionButtonParameters = new CaseInsensitiveSet();
+        Set messageboxOptionIconParameters = new CaseInsensitiveSet();
+        Set messageboxOptionDefaultParameters = new CaseInsensitiveSet();
+        Set messageboxOptionOtherParameters = new CaseInsensitiveSet();
         Set messageboxReturnParameters = new CaseInsensitiveSet();
         Set instructionParameters = new CaseInsensitiveSet();
         Set instructionOptions = new CaseInsensitiveSet();
@@ -218,8 +230,17 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
                         else if(name.equals("hkey.parameters")) { //$NON-NLS-1$
                             set = hkeyParameters;
                         }
-                        else if(name.equals("messagebox.option.parameters")) { //$NON-NLS-1$
-                            set = messageboxOptionParameters;
+                        else if(name.equals("messagebox.option.button.parameters")) { //$NON-NLS-1$
+                            set = messageboxOptionButtonParameters;
+                        }
+                        else if(name.equals("messagebox.option.icon.parameters")) { //$NON-NLS-1$
+                            set = messageboxOptionIconParameters;
+                        }
+                        else if(name.equals("messagebox.option.default.parameters")) { //$NON-NLS-1$
+                            set = messageboxOptionDefaultParameters;
+                        }
+                        else if(name.equals("messagebox.option.other.parameters")) { //$NON-NLS-1$
+                            set = messageboxOptionOtherParameters;
                         }
                         else if(name.equals("messagebox.return.parameters")) { //$NON-NLS-1$
                             set = messageboxReturnParameters;
@@ -409,9 +430,33 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
         Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
         mKeywordGroupsMap.put(HKEY_PARAMETERS,temp2);
 
-        set = getValidKeywords(messageboxOptionParameters);
+        set = getValidKeywords(messageboxOptionButtonParameters);
         mAllKeywordsSet.addAll(set);
         temp2 = (String[])set.toArray(Common.EMPTY_STRING_ARRAY);
+        Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
+        mKeywordGroupsMap.put(MESSAGEBOX_OPTION_BUTTON_PARAMETERS,temp2);
+
+        set = getValidKeywords(messageboxOptionIconParameters);
+        mAllKeywordsSet.addAll(set);
+        temp2 = (String[])set.toArray(Common.EMPTY_STRING_ARRAY);
+        Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
+        mKeywordGroupsMap.put(MESSAGEBOX_OPTION_ICON_PARAMETERS,temp2);
+
+        set = getValidKeywords(messageboxOptionDefaultParameters);
+        mAllKeywordsSet.addAll(set);
+        temp2 = (String[])set.toArray(Common.EMPTY_STRING_ARRAY);
+        Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
+        mKeywordGroupsMap.put(MESSAGEBOX_OPTION_DEFAULT_PARAMETERS,temp2);
+
+        set = getValidKeywords(messageboxOptionOtherParameters);
+        mAllKeywordsSet.addAll(set);
+        temp2 = (String[])set.toArray(Common.EMPTY_STRING_ARRAY);
+        Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
+        mKeywordGroupsMap.put(MESSAGEBOX_OPTION_OTHER_PARAMETERS,temp2);
+
+        temp2 = (String[])Common.appendArray(temp2, getKeywordsGroup(MESSAGEBOX_OPTION_BUTTON_PARAMETERS));
+        temp2 = (String[])Common.appendArray(temp2, getKeywordsGroup(MESSAGEBOX_OPTION_ICON_PARAMETERS));
+        temp2 = (String[])Common.appendArray(temp2, getKeywordsGroup(MESSAGEBOX_OPTION_DEFAULT_PARAMETERS));
         Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
         mKeywordGroupsMap.put(MESSAGEBOX_OPTION_PARAMETERS,temp2);
 

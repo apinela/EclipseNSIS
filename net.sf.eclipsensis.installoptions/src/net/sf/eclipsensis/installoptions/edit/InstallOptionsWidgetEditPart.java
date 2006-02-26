@@ -239,13 +239,6 @@ public abstract class InstallOptionsWidgetEditPart extends InstallOptionsEditPar
         ((GraphicalEditPart)getParent()).setLayoutConstraint(this, getFigure(), r);
     }
 
-    protected void createEditPolicies()
-    {
-        super.createEditPolicies();
-        installEditPolicy(EditPolicy.SELECTION_FEEDBACK_ROLE, new InstallOptionsSelectionEditPolicy());
-    }
-
-
     public void performRequest(Request request)
     {
         if(request.getType().equals(IInstallOptionsConstants.REQ_EXTENDED_EDIT)) {

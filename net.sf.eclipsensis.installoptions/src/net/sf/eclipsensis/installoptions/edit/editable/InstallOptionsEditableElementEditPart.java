@@ -28,7 +28,7 @@ public abstract class InstallOptionsEditableElementEditPart extends InstallOptio
     protected void createEditPolicies()
     {
         super.createEditPolicies();
-        installEditPolicy(EditPolicy.DIRECT_EDIT_ROLE, new EditableElementDirectEditPolicy(this));
+        installEditPolicy(EditPolicy.DIRECT_EDIT_ROLE, new EditableElementDirectEditPolicy());
     }
 
     protected InstallOptionsEditableElement getInstallOptionsEditableElement()

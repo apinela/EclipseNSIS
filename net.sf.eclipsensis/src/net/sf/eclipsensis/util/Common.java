@@ -580,7 +580,7 @@ public class Common
 
     public static String maybeQuote(String text)
     {
-        if(text.length()==0 || shouldQuote(text)) {
+        if(shouldQuote(text)) {
             text = quote(text);
         }
         return text;
@@ -589,9 +589,12 @@ public class Common
     public static boolean shouldQuote(String text)
     {
         boolean shouldQuote = false;
-        for(int i=0; i<text.length(); i++) {
-            if(Character.isWhitespace(text.charAt(i))) {
-                shouldQuote = true;
+        if(text != null) {
+            shouldQuote = text.length()==0;
+            for(int i=0; i<text.length(); i++) {
+                if(Character.isWhitespace(text.charAt(i))) {
+                    shouldQuote = true;
+                }
             }
         }
         return shouldQuote;

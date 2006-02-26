@@ -15,4 +15,5 @@ public interface IEclipseNSISService
 {
     public void start(IProgressMonitor monitor);
     public void stop(IProgressMonitor monitor);
+    public boolean isStarted();
 }

@@ -16,8 +16,7 @@ import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.dialogs.TableResizer;
 import net.sf.eclipsensis.help.NSISKeywords;
-import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.IOUtility;
+import net.sf.eclipsensis.util.*;
 import net.sf.eclipsensis.viewer.*;
 import net.sf.eclipsensis.wizard.NSISWizard;
 import net.sf.eclipsensis.wizard.NSISWizardDisplayValues;
@@ -144,13 +143,13 @@ public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
 
         final Button addButton = new Button(composite2,SWT.PUSH);
         addButton.setToolTipText(EclipseNSISPlugin.getResourceString("wizard.add.files.tooltip")); //$NON-NLS-1$
-        addButton.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("add.icon"))); //$NON-NLS-1$
+        addButton.setImage(CommonImages.ADD_ICON);
         gd = new GridData(SWT.FILL, SWT.BEGINNING, false, false);
         addButton.setLayoutData(gd);
 
         final Button removeButton = new Button(composite2,SWT.PUSH);
         removeButton.setToolTipText(EclipseNSISPlugin.getResourceString("wizard.remove.files.tooltip")); //$NON-NLS-1$
-        removeButton.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("delete.icon"))); //$NON-NLS-1$
+        removeButton.setImage(CommonImages.DELETE_ICON);
         gd = new GridData(SWT.FILL, SWT.BEGINNING, false, false);
         removeButton.setLayoutData(gd);
         removeButton.setEnabled(false);
@@ -158,14 +157,14 @@ public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
         final Button upButton = new Button(composite2,SWT.PUSH);
         gd = new GridData(SWT.FILL, SWT.BEGINNING, false, false);
         upButton.setLayoutData(gd);
-        upButton.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("up.icon"))); //$NON-NLS-1$
+        upButton.setImage(CommonImages.UP_ICON);
         upButton.setToolTipText(EclipseNSISPlugin.getResourceString("up.tooltip")); //$NON-NLS-1$
         upButton.setEnabled(mover.canMoveUp());
 
         final Button downButton = new Button(composite2,SWT.PUSH);
         gd = new GridData(SWT.FILL, SWT.BEGINNING, false, false);
         downButton.setLayoutData(gd);
-        downButton.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("down.icon"))); //$NON-NLS-1$
+        downButton.setImage(CommonImages.DOWN_ICON);
         downButton.setToolTipText(EclipseNSISPlugin.getResourceString("down.tooltip")); //$NON-NLS-1$
         downButton.setEnabled(mover.canMoveDown());
 

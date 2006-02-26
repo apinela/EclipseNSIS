@@ -9,19 +9,17 @@
  *******************************************************************************/
 package net.sf.eclipsensis.template;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
-import javax.xml.parsers.*;
-import javax.xml.transform.*;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.util.XMLUtil;
 
 import org.w3c.dom.*;
-import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 public abstract class AbstractTemplateReaderWriter
@@ -34,23 +32,16 @@ public abstract class AbstractTemplateReaderWriter
     /**
      * Reads templates from a stream and adds them to the templates.
      *
-     * @param stream the byte stream to read templates from
+     * @param stream the file to read templates from
      * @return the read templates
      * @throws IOException if reading from the stream fails
      */
-    public Collection import$(InputStream stream) throws IOException
-    {
-        return import$(new InputSource(stream));
-    }
-
-    public Collection import$(InputSource source) throws IOException
+    public Collection import$(File file) throws IOException
     {
         try {
             Collection templates= new HashSet();
 
-            DocumentBuilderFactory factory= DocumentBuilderFactory.newInstance();
-            DocumentBuilder parser= factory.newDocumentBuilder();
-            Document document= parser.parse(source);
+            Document document= XMLUtil.loadDocument(file);
 
             NodeList elements= document.getElementsByTagName(TEMPLATE_ELEMENT);
 
@@ -110,27 +101,13 @@ public abstract class AbstractTemplateReaderWriter
      * Saves the templates as XML, encoded as UTF-8 onto the given byte stream.
      *
      * @param templates the templates to save
-     * @param stream the byte output to write the templates to in XML
+     * @param file the file to write the templates to in XML
      * @throws IOException if writing the templates fails
      */
-    public void export(Collection templates, OutputStream stream) throws IOException
-    {
-        export(templates, new StreamResult(stream));
-    }
-
-    /**
-     * Saves the templates as XML.
-     *
-     * @param templates the templates to save
-     * @param result the stream result to write to
-     * @throws IOException if writing the templates fails
-     */
-    public void export(Collection templates, StreamResult result) throws IOException
+    public void export(Collection templates, File file) throws IOException
     {
         try {
-            DocumentBuilderFactory factory= DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder= factory.newDocumentBuilder();
-            Document document= builder.newDocument();
+            Document document= XMLUtil.newDocument();
 
             Node root= document.createElement(TEMPLATE_ROOT);
             document.appendChild(root);
@@ -151,14 +128,7 @@ public abstract class AbstractTemplateReaderWriter
                 node.appendChild(exportContents(template, document));
             }
 
-
-            Transformer transformer=TransformerFactory.newInstance().newTransformer();
-            transformer.setOutputProperty(OutputKeys.METHOD, "xml"); //$NON-NLS-1$
-            transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8"); //$NON-NLS-1$
-            transformer.setOutputProperty(OutputKeys.INDENT, "yes"); //$NON-NLS-1$
-            DOMSource source = new DOMSource(document);
-
-            transformer.transform(source, result);
+            XMLUtil.saveDocument(document, file);
         }
         catch (ParserConfigurationException e) {
             throw new IOException(e.getMessage());

@@ -151,14 +151,14 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
 
         final MasterSlaveController m = new MasterSlaveController(b);
 
-        final Composite composite2 = new Composite(group, SWT.NONE);
+        final Composite listsComposite = new Composite(group, SWT.NONE);
         data = new GridData(SWT.FILL, SWT.FILL, true, true);
-        composite2.setLayoutData(data);
+        listsComposite.setLayoutData(data);
 
-        GridLayout layout = new GridLayout(4,false);
+        GridLayout layout = new GridLayout(2,true);
         layout.marginHeight = 0;
         layout.marginWidth = 0;
-        composite2.setLayout(layout);
+        listsComposite.setLayout(layout);
 
         java.util.List selectedLanguages = settings.getLanguages();
         if(selectedLanguages.isEmpty()) {
@@ -170,13 +170,18 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
         java.util.List availableLanguages = NSISLanguageManager.getInstance().getLanguages();
         availableLanguages.removeAll(selectedLanguages);
 
-        Label l = NSISWizardDialogUtil.createLabel(composite2, "available.languages.label", true, m, false); //$NON-NLS-1$
-        ((GridData)l.getLayoutData()).horizontalSpan = 2;
-        l = NSISWizardDialogUtil.createLabel(composite2, "selected.languages.label", true, m, true); //$NON-NLS-1$
+        Composite leftComposite = new Composite(listsComposite,SWT.NONE);
+        leftComposite.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true));
+        layout = new GridLayout(2,false);
+        layout.marginHeight = 0;
+        layout.marginWidth = 0;
+        leftComposite.setLayout(layout);
+        
+        Label l = NSISWizardDialogUtil.createLabel(leftComposite, "available.languages.label", true, m, false); //$NON-NLS-1$
         ((GridData)l.getLayoutData()).horizontalSpan = 2;
 
-        final List availableLangList = new List(composite2,SWT.BORDER|SWT.H_SCROLL|SWT.V_SCROLL|SWT.MULTI);
-        data = new GridData(SWT.FILL,SWT.FILL,false,true);
+        final List availableLangList = new List(leftComposite,SWT.BORDER|SWT.H_SCROLL|SWT.V_SCROLL|SWT.MULTI);
+        data = new GridData(SWT.FILL,SWT.FILL,true,true);
         Dialog.applyDialogFont(availableLangList);
         data.heightHint = Common.calculateControlSize(availableLangList,0,10).y;
         availableLangList.setLayoutData(data);
@@ -188,40 +193,50 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
         lv1.setInput(availableLanguages);
         lv1.setSorter(new ViewerSorter(cLanguageCollator));
 
-        final Composite composite3 = new Composite(composite2,SWT.NONE);
+        final Composite buttonsComposite1 = new Composite(leftComposite,SWT.NONE);
         layout = new GridLayout(1,false);
         layout.marginHeight = 0;
         layout.marginWidth = 0;
-        composite3.setLayout(layout);
+        buttonsComposite1.setLayout(layout);
         data = new GridData(SWT.FILL, SWT.CENTER, false, false);
-        composite3.setLayoutData(data);
+        buttonsComposite1.setLayoutData(data);
 
-        final Button allRightButton = new Button(composite3,SWT.PUSH);
+        final Button allRightButton = new Button(buttonsComposite1,SWT.PUSH);
         data = new GridData(SWT.FILL, SWT.CENTER, true, false);
         allRightButton.setLayoutData(data);
         allRightButton.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("all.right.icon"))); //$NON-NLS-1$
         allRightButton.setToolTipText(EclipseNSISPlugin.getResourceString("all.right.tooltip")); //$NON-NLS-1$
 
-        final Button rightButton = new Button(composite3,SWT.PUSH);
+        final Button rightButton = new Button(buttonsComposite1,SWT.PUSH);
         data = new GridData(SWT.FILL, SWT.CENTER, true, false);
         rightButton.setLayoutData(data);
         rightButton.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("right.icon"))); //$NON-NLS-1$
         rightButton.setToolTipText(EclipseNSISPlugin.getResourceString("right.tooltip")); //$NON-NLS-1$
 
-        final Button leftButton = new Button(composite3,SWT.PUSH);
+        final Button leftButton = new Button(buttonsComposite1,SWT.PUSH);
         data = new GridData(SWT.FILL, SWT.CENTER, true, false);
         leftButton.setLayoutData(data);
         leftButton.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("left.icon"))); //$NON-NLS-1$
         leftButton.setToolTipText(EclipseNSISPlugin.getResourceString("left.tooltip")); //$NON-NLS-1$
 
-        final Button allLeftButton = new Button(composite3,SWT.PUSH);
+        final Button allLeftButton = new Button(buttonsComposite1,SWT.PUSH);
         data = new GridData(SWT.FILL, SWT.CENTER, true, false);
         allLeftButton.setLayoutData(data);
         allLeftButton.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("all.left.icon"))); //$NON-NLS-1$
         allLeftButton.setToolTipText(EclipseNSISPlugin.getResourceString("all.left.tooltip")); //$NON-NLS-1$
 
-        final List selectedLangList = new List(composite2,SWT.BORDER|SWT.H_SCROLL|SWT.V_SCROLL|SWT.MULTI);
-        data = new GridData(SWT.FILL,SWT.FILL,false,true);
+        Composite rightComposite = new Composite(listsComposite,SWT.NONE);
+        rightComposite.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true));
+        layout = new GridLayout(2,false);
+        layout.marginHeight = 0;
+        layout.marginWidth = 0;
+        rightComposite.setLayout(layout);
+
+        l = NSISWizardDialogUtil.createLabel(rightComposite, "selected.languages.label", true, m, true); //$NON-NLS-1$
+        ((GridData)l.getLayoutData()).horizontalSpan = 2;
+
+        final List selectedLangList = new List(rightComposite,SWT.BORDER|SWT.H_SCROLL|SWT.V_SCROLL|SWT.MULTI);
+        data = new GridData(SWT.FILL,SWT.FILL,true,true);
         Dialog.applyDialogFont(selectedLangList);
         data.heightHint = Common.calculateControlSize(selectedLangList,0,10).y;
         selectedLangList.setLayoutData(data);
@@ -252,22 +267,22 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
 
         mover.setViewer(lv2);
 
-        final Composite composite4 = new Composite(composite2,SWT.NONE);
+        final Composite buttonsComposite2 = new Composite(rightComposite,SWT.NONE);
         layout = new GridLayout(1,false);
         layout.marginHeight = 0;
         layout.marginWidth = 0;
-        composite4.setLayout(layout);
+        buttonsComposite2.setLayout(layout);
         data = new GridData(SWT.FILL, SWT.CENTER, false, false);
-        composite4.setLayoutData(data);
+        buttonsComposite2.setLayoutData(data);
 
-        final Button upButton = new Button(composite4,SWT.PUSH);
+        final Button upButton = new Button(buttonsComposite2,SWT.PUSH);
         data = new GridData(SWT.FILL, SWT.CENTER, true, false);
         upButton.setLayoutData(data);
         upButton.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("up.icon"))); //$NON-NLS-1$
         upButton.setToolTipText(EclipseNSISPlugin.getResourceString("up.tooltip")); //$NON-NLS-1$
         m.addSlave(upButton);
 
-        final Button downButton = new Button(composite4,SWT.PUSH);
+        final Button downButton = new Button(buttonsComposite2,SWT.PUSH);
         data = new GridData(SWT.FILL, SWT.CENTER, true, false);
         downButton.setLayoutData(data);
         downButton.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("down.icon"))); //$NON-NLS-1$
@@ -429,7 +444,7 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
 
         m.updateSlaves();
 
-        composite2.addListener(SWT.Resize,new Listener() {
+        listsComposite.addListener(SWT.Resize,new Listener() {
             boolean init = false;
             public void handleEvent (Event e)
             {
@@ -439,8 +454,8 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
                     init = true;
                 }
                 else {
-                    Point size = composite2.getSize();
-                    GridLayout layout = (GridLayout)composite2.getLayout();
+                    Point size = listsComposite.getSize();
+                    GridLayout layout = (GridLayout)listsComposite.getLayout();
                     int heightHint = size.y - 2*layout.marginHeight;
                     ((GridData)availableLangList.getLayoutData()).heightHint = heightHint;
                     ((GridData)selectedLangList.getLayoutData()).heightHint = heightHint;
@@ -454,10 +469,10 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
                         listWidth = listWidth - delta;
                     }
                     ((GridData)availableLangList.getLayoutData()).widthHint =listWidth;
-                    ((GridData)composite3.getLayoutData()).widthHint = totalWidth - 2*(listWidth + delta) - buttonWidth;
+                    ((GridData)buttonsComposite1.getLayoutData()).widthHint = totalWidth - 2*(listWidth + delta) - buttonWidth;
                     ((GridData)selectedLangList.getLayoutData()).widthHint = listWidth;
-                    ((GridData)composite4.getLayoutData()).widthHint = buttonWidth;
-                    composite2.layout();
+                    ((GridData)buttonsComposite2.getLayoutData()).widthHint = buttonWidth;
+                    listsComposite.layout();
                 }
           }
         });

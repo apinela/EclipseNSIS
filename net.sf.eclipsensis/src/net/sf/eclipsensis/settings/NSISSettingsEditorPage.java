@@ -15,6 +15,7 @@ import java.util.List;
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.dialogs.TableResizer;
 import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.CommonImages;
 import net.sf.eclipsensis.viewer.TableViewerUpDownMover;
 
 import org.eclipse.jface.viewers.*;
@@ -163,22 +164,22 @@ public abstract class NSISSettingsEditorPage implements DisposeListener
         data = new GridData(SWT.FILL, SWT.FILL, true, true);
         data.verticalSpan = 5;
         table.setLayoutData(data);
-        Button addButton = createButton(composite,EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("add.icon")),addTooltip); //$NON-NLS-1$
+        Button addButton = createButton(composite,CommonImages.ADD_ICON,addTooltip);
         if(addAdapter != null) {
             addButton.addSelectionListener(addAdapter);
         }
-        final Button editButton = createButton(composite,EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("edit.icon")),editTooltip); //$NON-NLS-1$
+        final Button editButton = createButton(composite,CommonImages.EDIT_ICON,editTooltip);
         editButton.setEnabled(false);
         if(editAdapter != null) {
             editButton.addSelectionListener(editAdapter);
         }
-        final Button removeButton = createButton(composite,EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("delete.icon")),removeTooltip); //$NON-NLS-1$
+        final Button removeButton = createButton(composite,CommonImages.DELETE_ICON,removeTooltip);
         removeButton.setEnabled(false);
         if(removeAdapter != null) {
             removeButton.addSelectionListener(removeAdapter);
         }
-        final Button upButton = createButton(composite,EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("up.icon")), //$NON-NLS-1$
-                                                       EclipseNSISPlugin.getResourceString("up.tooltip")); //$NON-NLS-1$
+        final Button upButton = createButton(composite,CommonImages.UP_ICON,
+                                             EclipseNSISPlugin.getResourceString("up.tooltip")); //$NON-NLS-1$
         upButton.setEnabled(mover.canMoveUp());
         upButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e)
@@ -187,8 +188,8 @@ public abstract class NSISSettingsEditorPage implements DisposeListener
             }
         });
 
-        final Button downButton = createButton(composite,EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("down.icon")), //$NON-NLS-1$
-                                                         EclipseNSISPlugin.getResourceString("down.tooltip")); //$NON-NLS-1$
+        final Button downButton = createButton(composite,CommonImages.DOWN_ICON,
+                                               EclipseNSISPlugin.getResourceString("down.tooltip")); //$NON-NLS-1$
         downButton.setEnabled(mover.canMoveDown());
         downButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e)

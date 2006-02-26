@@ -22,7 +22,7 @@ public class NSISBrowserInformationControlCreator extends AbstractNSISInformatio
 
     public IInformationControl createInformationControl(Shell parent)
     {
-        if(!NSISBrowserInformationControl.isAvailable(parent)) {
+        if(!NSISBrowserUtility.isBrowserAvailable(parent)) {
             return super.createInformationControl(parent);
         }
         else {

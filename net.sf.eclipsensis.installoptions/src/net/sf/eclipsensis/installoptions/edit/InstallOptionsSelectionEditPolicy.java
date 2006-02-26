@@ -11,6 +11,7 @@ package net.sf.eclipsensis.installoptions.edit;
 
 import org.eclipse.gef.editpolicies.ComponentEditPolicy;
 
+//TODO Remove this
 public class InstallOptionsSelectionEditPolicy extends ComponentEditPolicy
 {
     public InstallOptionsSelectionEditPolicy()

@@ -17,6 +17,7 @@ import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.editor.*;
 import net.sf.eclipsensis.settings.NSISPreferences;
 import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.CommonImages;
 import net.sf.eclipsensis.viewer.CollectionContentProvider;
 
 import org.eclipse.jface.dialogs.*;
@@ -146,7 +147,7 @@ public class NSISTaskTagsPreferencePage extends PreferencePage implements IWorkb
         buttons.setLayout(layout);
 
         Button addButton = new Button(buttons, SWT.PUSH);
-        addButton.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("add.icon"))); //$NON-NLS-1$
+        addButton.setImage(CommonImages.ADD_ICON);
         addButton.setToolTipText(EclipseNSISPlugin.getResourceString("new.tooltip")); //$NON-NLS-1$
         addButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         addButton.addListener(SWT.Selection, new Listener() {
@@ -156,7 +157,7 @@ public class NSISTaskTagsPreferencePage extends PreferencePage implements IWorkb
         });
 
         mEditButton= new Button(buttons, SWT.PUSH);
-        mEditButton.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("edit.icon"))); //$NON-NLS-1$
+        mEditButton.setImage(CommonImages.EDIT_ICON);
         mEditButton.setToolTipText(EclipseNSISPlugin.getResourceString("edit.tooltip")); //$NON-NLS-1$
         mEditButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         mEditButton.addListener(SWT.Selection, new Listener() {
@@ -166,7 +167,7 @@ public class NSISTaskTagsPreferencePage extends PreferencePage implements IWorkb
         });
 
         mRemoveButton= new Button(buttons, SWT.PUSH);
-        mRemoveButton.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("delete.icon"))); //$NON-NLS-1$
+        mRemoveButton.setImage(CommonImages.DELETE_ICON);
         mRemoveButton.setToolTipText(EclipseNSISPlugin.getResourceString("remove.tooltip")); //$NON-NLS-1$
         mRemoveButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         mRemoveButton.addListener(SWT.Selection, new Listener() {
@@ -212,8 +213,12 @@ public class NSISTaskTagsPreferencePage extends PreferencePage implements IWorkb
         IStructuredSelection selection= (IStructuredSelection) mTableViewer.getSelection();
         int selectionCount= selection.size();
         int itemCount= mTableViewer.getTable().getItemCount();
-        mEditButton.setEnabled(selectionCount == 1);
-        mRemoveButton.setEnabled(selectionCount > 0 && selectionCount <= itemCount);
+        boolean enabled = selectionCount == 1;
+        mEditButton.setEnabled(enabled);
+//        mEditButton.setImage(enabled?CommonImages.EDIT_ICON:CommonImages.EDIT_DISABLED_ICON);
+        enabled = selectionCount > 0 && selectionCount <= itemCount;
+        mRemoveButton.setEnabled(enabled);
+//        mEditButton.setImage(enabled?CommonImages.DELETE_ICON:CommonImages.DELETE_DISABLED_ICON);
     }
 
     private void edit()

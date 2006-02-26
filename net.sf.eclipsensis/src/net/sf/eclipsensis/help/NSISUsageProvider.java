@@ -52,6 +52,11 @@ public class NSISUsageProvider implements IEclipseNSISService
         }
     }
 
+    public boolean isStarted()
+    {
+        return cInstance != null;
+    }
+
     public void stop(IProgressMonitor monitor)
     {
         if (cInstance == this) {

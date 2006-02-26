@@ -53,7 +53,7 @@ public class NSISEditorUtilities
                 newShell = true;
                 shell = new Shell(Display.getCurrent());
             }
-            browserAvailable = NSISBrowserInformationControl.isAvailable(shell);
+            browserAvailable = NSISBrowserUtility.isBrowserAvailable(shell);
             if(newShell) {
                 shell.dispose();
             }

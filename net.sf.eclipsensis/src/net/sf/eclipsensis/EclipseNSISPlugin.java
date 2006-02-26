@@ -238,6 +238,16 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
         }
     }
 
+    public void registerService(IEclipseNSISService service)
+    {
+        if(!mServices.contains(service)) {
+            if(!service.isStarted()) {
+                service.start(new NullProgressMonitor());
+            }
+            mServices.push(service);
+        }
+    }
+
     public void run(final boolean fork, final boolean cancelable, final IRunnableWithProgress runnable)
     {
         try {
@@ -458,7 +468,7 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
     public static String getResourceString(Locale locale, String key, String defaultValue)
     {
         EclipseNSISPlugin plugin = getDefault();
-        if(plugin != null) {
+        if(plugin != null && key != null) {
             ResourceBundle bundle = plugin.getResourceBundle(locale);
             try {
                 return (bundle != null) ? bundle.getString(key) : defaultValue;

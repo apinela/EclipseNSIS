@@ -80,8 +80,8 @@ public class InstallOptionsEditDomain extends DefaultEditDomain implements IAdap
         }
         else if (IOUtility.isValidFile(mFile)){
             if(!mFile.canWrite()) {
-                if(Common.openQuestion(getShell(), InstallOptionsPlugin.getResourceString("read.only.question.title"),
-                        InstallOptionsPlugin.getFormattedString("read.only.question", new String[] {mFile.getAbsolutePath()}), 
+                if(Common.openQuestion(getShell(), InstallOptionsPlugin.getResourceString("read.only.question.title"), //$NON-NLS-1$
+                        InstallOptionsPlugin.getFormattedString("read.only.question", new String[] {mFile.getAbsolutePath()}),  //$NON-NLS-1$
                         InstallOptionsPlugin.getShellImage())) {
                     int attributes = WinAPI.GetFileAttributes(mFile.getAbsolutePath());
                     if( (attributes & WinAPI.FILE_ATTRIBUTE_READONLY) > 0) {
@@ -109,26 +109,6 @@ public class InstallOptionsEditDomain extends DefaultEditDomain implements IAdap
     {
         mFiles[0] = file;
         mFile = null;
-    }
-
-    public void setActiveTool(Tool tool)
-    {
-        if(tool instanceof SelectionTool) {
-            super.setActiveTool(tool);
-        }
-        else {
-            super.setActiveTool(mDefaultTool);
-        }
-    }
-
-    public void setDefaultTool(Tool tool)
-    {
-        if(tool instanceof SelectionTool) {
-            super.setDefaultTool(tool);
-        }
-        else {
-            super.setDefaultTool(mDefaultTool);
-        }
     }
 
     private class InstallOptionsCommandStack extends CommandStack implements IModelCommandListener

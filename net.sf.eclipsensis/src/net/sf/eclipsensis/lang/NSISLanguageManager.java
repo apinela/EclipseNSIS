@@ -43,6 +43,11 @@ public class NSISLanguageManager implements INSISHomeListener, IEclipseNSISServi
         return cInstance;
     }
 
+    public boolean isStarted()
+    {
+        return cInstance != null;
+    }
+
     public void start(IProgressMonitor monitor)
     {
         if (cInstance == null) {

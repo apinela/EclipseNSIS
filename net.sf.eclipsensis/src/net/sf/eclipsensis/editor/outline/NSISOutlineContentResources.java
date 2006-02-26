@@ -58,6 +58,11 @@ public class NSISOutlineContentResources implements IEclipseNSISService,  INSISK
         }
     }
 
+    public boolean isStarted()
+    {
+        return cInstance != null;
+    }
+
     public void start(IProgressMonitor monitor)
     {
         if (cInstance == null) {

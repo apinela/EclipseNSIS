@@ -16,6 +16,7 @@ import java.util.List;
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.CommonImages;
 import net.sf.eclipsensis.viewer.StructuredViewerUpDownMover;
 import net.sf.eclipsensis.wizard.settings.*;
 import net.sf.eclipsensis.wizard.util.NSISWizardDialogUtil;
@@ -25,8 +26,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
@@ -809,14 +809,14 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
         ToolBar toolbar = new ToolBar(parent, SWT.FLAT);
 
         int[] styles = {SWT.DROP_DOWN,SWT.PUSH,SWT.PUSH,SWT.PUSH,SWT.PUSH};
-        String[] images = {"add.icon","edit.icon","delete.icon","installitem.expandall.icon","installitem.collapseall.icon"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-        String[] disabledImages = {"add.disabledicon","edit.disabledicon","delete.disabledicon","installitem.expandall.disabledicon","installitem.collapseall.disabledicon"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+        Image[] images = {CommonImages.ADD_ICON,CommonImages.EDIT_ICON,CommonImages.DELETE_ICON,CommonImages.EXPANDALL_ICON,CommonImages.COLLAPSEALL_ICON};
+        Image[] disabledImages = {CommonImages.ADD_DISABLED_ICON,CommonImages.EDIT_DISABLED_ICON,CommonImages.DELETE_DISABLED_ICON,CommonImages.EXPANDALL_DISABLED_ICON,CommonImages.COLLAPSEALL_DISABLED_ICON};
         String[] tooltips = {"add.tooltip","edit.tooltip","delete.tooltip","installitem.expandall.tooltip","installitem.collapseall.tooltip"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
         boolean[] state = {false,false,false,true,true};
         for (int i = 0; i < styles.length; i++) {
             ToolItem ti = new ToolItem(toolbar, styles[i]);
-            ti.setImage(EclipseNSISPlugin.getImageManager().getImage(bundle.getString(images[i])));
-            ti.setDisabledImage(EclipseNSISPlugin.getImageManager().getImage(bundle.getString(disabledImages[i])));
+            ti.setImage(images[i]);
+            ti.setDisabledImage(disabledImages[i]);
             ti.setToolTipText(bundle.getString(tooltips[i]));
             ti.setEnabled(state[i]);
         }
@@ -832,11 +832,11 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
         Menu menu = new Menu(getShell(), SWT.POP_UP);
 
         int[] styles = {SWT.CASCADE,SWT.PUSH,SWT.PUSH};
-        String[] images = {"add.icon","edit.icon","delete.icon"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        Image[] images = {CommonImages.ADD_ICON,CommonImages.EDIT_ICON,CommonImages.DELETE_ICON};
         String[] tooltips = {"add.tooltip","edit.tooltip","delete.tooltip"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         for (int i = 0; i < styles.length; i++) {
             MenuItem mi = new MenuItem(menu, styles[i]);
-            mi.setImage(EclipseNSISPlugin.getImageManager().getImage(bundle.getString(images[i])));
+            mi.setImage(images[i]);
             mi.setText(bundle.getString(tooltips[i]));
             mi.setEnabled(false);
         }

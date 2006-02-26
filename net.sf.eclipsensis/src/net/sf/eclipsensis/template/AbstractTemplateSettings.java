@@ -368,9 +368,7 @@ public abstract class AbstractTemplateSettings extends Composite
         try {
             File file= new File(path);
             if (file.exists()) {
-                InputStream input= new BufferedInputStream(new FileInputStream(file));
-                Collection coll = mTemplateManager.getReaderWriter().import$(input);
-                input.close();
+                Collection coll = mTemplateManager.getReaderWriter().import$(file);
                 if(!Common.isEmptyCollection(coll)) {
                     for (Iterator iter=coll.iterator(); iter.hasNext(); ) {
                         mTemplateManager.addTemplate((AbstractTemplate)iter.next());
@@ -404,23 +402,11 @@ public abstract class AbstractTemplateSettings extends Composite
         File file= new File(path);
 
         if (!file.exists() || Common.openConfirm(getShell(),EclipseNSISPlugin.getFormattedString("template.settings.export.save.confirm",new Object[]{file.getAbsolutePath()}), getShellImage())) { //$NON-NLS-1$
-            OutputStream os = null;
             try {
-                os = new BufferedOutputStream(new FileOutputStream(file));
-                mTemplateManager.getReaderWriter().export(templates, os);
+                mTemplateManager.getReaderWriter().export(templates, file);
             }
             catch (Exception e) {
                 Common.openError(getShell(),e.getLocalizedMessage(), getShellImage());
-            }
-            finally {
-                if(os != null) {
-                    try {
-                        os.close();
-                    }
-                    catch (IOException e1) {
-                        EclipseNSISPlugin.getDefault().log(e1);
-                    }
-                }
             }
         }
     }

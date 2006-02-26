@@ -173,10 +173,16 @@ public class NSISTextUtility implements INSISConstants
             IRegion line = doc.getLineInformation(linenum);
             ITypedRegion typedRegion = getNSISPartitionAtOffset(doc, line.getOffset());
             if(!isValidRegionType(typedRegion.getType(),cValidPartitionTypes)) {
-                if(contains(typedRegion,offset)) {
-                    return new ITypedRegion[0][];
-                }
                 int startOffset = typedRegion.getOffset()+typedRegion.getLength();
+                while(!isValidRegionType(typedRegion.getType(),cValidPartitionTypes)) {
+                    if(contains(typedRegion,offset)) {
+                        return new ITypedRegion[0][];
+                    }
+                    startOffset = typedRegion.getOffset()+typedRegion.getLength();
+                    linenum = doc.getLineOfOffset(offset);
+                    line = doc.getLineInformation(linenum);
+                    typedRegion = getNSISPartitionAtOffset(doc, startOffset);
+                }
                 line = new Region(startOffset, line.getOffset()+line.getLength()-startOffset);
             }
             else {

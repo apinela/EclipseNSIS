@@ -11,7 +11,7 @@ package net.sf.eclipsensis.installoptions.edit;
 
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.editpolicies.DirectEditPolicy;
-
+//TODO Remove this
 public abstract class InstallOptionsDirectEditPolicy extends DirectEditPolicy
 {
     protected EditPart mEditPart;

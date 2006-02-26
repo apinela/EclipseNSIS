@@ -69,12 +69,12 @@
        id="net.sf.eclipsensis.update.nsisUpdateConfigWizards"> 
       <wizard 
          id="net.sf.eclipsensis.update.wizard.NSISUpdateWizard" 
-         name="NSIS Update" 
+         name="%update.wizard.name" 
          icon="icons/update.gif" 
          canFinishEarly="true"
          class="net.sf.eclipsensis.update.wizard.NSISUpdateWizard"> 
          <description>
-             Configure NSIS by downloading and installing the latest NSIS software
+             %update.wizard.description
          </description> 
      </wizard> 
    </extension>

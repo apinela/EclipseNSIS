@@ -41,4 +41,12 @@ public class MapLabelProvider extends LabelProvider implements ITableLabelProvid
         }
         return null;
     }
+
+    public String getText(Object element)
+    {
+        if(element instanceof Map.Entry) {
+            return getColumnText(element, 1);
+        }
+        return super.getText(element);
+    }
 }

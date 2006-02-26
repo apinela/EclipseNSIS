@@ -9,21 +9,15 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.edit.editable;
 
-import net.sf.eclipsensis.installoptions.edit.InstallOptionsDirectEditPolicy;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsEditableElement;
 import net.sf.eclipsensis.installoptions.model.commands.InstallOptionsEditableElementCommand;
 
-import org.eclipse.gef.EditPart;
 import org.eclipse.gef.commands.Command;
+import org.eclipse.gef.editpolicies.DirectEditPolicy;
 import org.eclipse.gef.requests.DirectEditRequest;
 
-public class EditableElementDirectEditPolicy extends InstallOptionsDirectEditPolicy
+public class EditableElementDirectEditPolicy extends DirectEditPolicy
 {
-    public EditableElementDirectEditPolicy(EditPart editPart)
-    {
-        super(editPart);
-    }
-
     protected Command getDirectEditCommand(DirectEditRequest edit)
     {
         String text = (String)edit.getCellEditor().getValue();

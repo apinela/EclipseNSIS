@@ -101,9 +101,9 @@ public abstract class StatusMessageDialog extends IconAndMessageDialog implement
     /*
      * @see Dialog#createDialogArea(Composite)
      */
-    protected final Control createDialogArea(Composite ancestor)
+    protected final Control createDialogArea(Composite parent)
     {
-        Composite parent = new Composite(ancestor, SWT.NONE);
+        parent = new Composite(parent, SWT.NONE);
         GridLayout layout= new GridLayout();
         layout.marginHeight = 0;
         layout.marginWidth = 0;
@@ -134,7 +134,7 @@ public abstract class StatusMessageDialog extends IconAndMessageDialog implement
         layout.marginHeight = 0;
         layout.marginWidth = 0;
         composite.setLayout(layout);
-        composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+        composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
         message = getMessage();
         createMessageArea(composite);
         applyDialogFont(parent);

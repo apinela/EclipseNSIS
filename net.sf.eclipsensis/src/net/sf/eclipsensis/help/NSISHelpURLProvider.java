@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 import javax.swing.text.html.parser.ParserDelegator;
 
 import net.sf.eclipsensis.*;
-import net.sf.eclipsensis.editor.codeassist.NSISBrowserInformationProvider;
+import net.sf.eclipsensis.editor.codeassist.NSISBrowserUtility;
 import net.sf.eclipsensis.settings.NSISPreferences;
 import net.sf.eclipsensis.util.*;
 
@@ -91,9 +91,9 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
                     ".heading { font-weight: bold; font-size: 120%; }\n").append(  //$NON-NLS-1$
                     ".link { font-weight: bold; }\n</style>\n"); //$NON-NLS-1$
         }
-        if(NSISBrowserInformationProvider.COLORS_CSS_FILE != null) {
+        if(NSISBrowserUtility.COLORS_CSS_FILE != null) {
             htmlPrefix.append("<link rel=\"stylesheet\" href=\"").append( //$NON-NLS-1$
-            NSISBrowserInformationProvider.COLORS_CSS_FILE.toURI()).append(
+                    NSISBrowserUtility.COLORS_CSS_FILE.toURI()).append(
             "\" charset=\"ISO-8859-1\" type=\"text/css\">\n"); //$NON-NLS-1$
         }
         htmlPrefix.append("</head>\n<body>\n"); //$NON-NLS-1$
@@ -138,6 +138,11 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
             NSISKeywords.getInstance().addKeywordsListener(this);
             cInstance = this;
         }
+    }
+
+    public boolean isStarted()
+    {
+        return cInstance != null;
     }
 
     public void stop(IProgressMonitor monitor)

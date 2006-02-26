@@ -159,6 +159,13 @@
             name="%htmlhelp.name"
             id="%htmlhelp.id">
       </view>
+      <view
+            allowMultiple="false"
+            category="%view.category.id"
+            class="net.sf.eclipsensis.help.commands.NSISCommandView"
+            icon="icons/nsis.gif"
+            id="%commands.view.id"
+            name="%commands.view.name"/>
    </extension>
    <extension
          point="org.eclipse.ui.editorActions">
@@ -289,7 +296,13 @@
                ratio="0.5"
                id="%console.id"
                relative="org.eclipse.ui.views.TaskList"
-               relationship="right"/>
+               relationship="stack"/>
+         <view
+               visible="false"
+               ratio="0.5"
+               id="net.sf.eclipsensis.help.commands.NSISCommandView"
+               relative="org.eclipse.ui.views.ContentOutline"
+               relationship="stack"/>
          <newWizardShortcut
                id="%wizard.id">
          </newWizardShortcut>
@@ -301,7 +314,13 @@
                ratio="0.5"
                id="%console.id"
                relative="org.eclipse.ui.views.ProblemView"
-               relationship="right"/>
+               relationship="stack"/>
+         <view
+               visible="false"
+               ratio="0.5"
+               id="net.sf.eclipsensis.help.commands.NSISCommandView"
+               relative="org.eclipse.ui.views.ContentOutline"
+               relationship="stack"/>
          <newWizardShortcut
                id="%wizard.id">
          </newWizardShortcut>
@@ -313,7 +332,13 @@
                ratio="0.5"
                id="%console.id"
                relative="org.eclipse.ui.views.ProblemView"
-               relationship="right"/>
+               relationship="stack"/>
+         <view
+               visible="false"
+               ratio="0.5"
+               id="net.sf.eclipsensis.help.commands.NSISCommandView"
+               relative="org.eclipse.ui.views.ContentOutline"
+               relationship="stack"/>
          <newWizardShortcut
                id="%wizard.id">
          </newWizardShortcut>
@@ -909,11 +934,11 @@
        id="net.sf.eclipsensis.config.nsisConfigWizards"> 
       <wizard 
          id="net.sf.eclipsensis.config.manual.NSISManualConfigWizard" 
-         name="Manual Configuration" 
+         name="%manual.config.wizard.name" 
          icon="icons/manualcfg.gif" 
          class="net.sf.eclipsensis.config.manual.NSISManualConfigWizard"> 
          <description>
-             Configure NSIS by manually specifying location of MakeNSIS.exe
+             %manual.config.wizard.description
          </description> 
      </wizard> 
    </extension>

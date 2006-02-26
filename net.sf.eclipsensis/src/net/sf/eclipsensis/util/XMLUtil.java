@@ -9,12 +9,24 @@
  *******************************************************************************/
 package net.sf.eclipsensis.util;
 
+import java.io.*;
+
+import javax.xml.parsers.*;
+import javax.xml.transform.*;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
 import net.sf.eclipsensis.EclipseNSISPlugin;
 
 import org.w3c.dom.*;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 public class XMLUtil
 {
+    private static TransformerFactory cTransformerFactory = TransformerFactory.newInstance();
+    private static DocumentBuilderFactory cDocumentBuilderFactory = DocumentBuilderFactory.newInstance();
+
     private XMLUtil()
     {
     }
@@ -25,6 +37,13 @@ public class XMLUtil
             Attr attribute = document.createAttribute(name);
             attribute.setValue(value);
             node.getAttributes().setNamedItem(attribute);
+        }
+    }
+
+    public static void removeValue(NamedNodeMap values, String name)
+    {
+        if(values.getNamedItem(name) != null) {
+            values.removeNamedItem(name);
         }
     }
 
@@ -80,5 +99,58 @@ public class XMLUtil
             EclipseNSISPlugin.getDefault().log(e);
             return defaultValue;
         }
+    }
+    
+    public static void saveDocument(Document doc, File file) throws TransformerException, IOException
+    {
+        OutputStream os = null;
+        try {
+            os = new BufferedOutputStream(new FileOutputStream(file));
+            saveDocument(doc, os);
+        }
+        finally {
+            IOUtility.closeIO(os);
+        }
+    }
+
+    /**
+     * @param doc
+     * @param os
+     * @throws TransformerConfigurationException
+     * @throws TransformerException
+     */
+    public static void saveDocument(Document doc, OutputStream os) throws TransformerConfigurationException, TransformerException
+    {
+        StreamResult result = new StreamResult(os);
+        Transformer transformer=cTransformerFactory.newTransformer();
+        transformer.setOutputProperty(OutputKeys.METHOD, "xml"); //$NON-NLS-1$
+        transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8"); //$NON-NLS-1$
+        transformer.setOutputProperty(OutputKeys.INDENT, "yes"); //$NON-NLS-1$
+        DOMSource source = new DOMSource(doc);
+
+        transformer.transform(source, result);
+    }
+    
+    public static Document loadDocument(File file) throws IOException, SAXException, ParserConfigurationException
+    {
+        InputStream is = null;
+        try {
+            is = new BufferedInputStream(new FileInputStream(file));
+            return loadDocument(is);
+        }
+        finally {
+            IOUtility.closeIO(is);
+        }        
+    }
+
+    public static Document loadDocument(InputStream is) throws SAXException, IOException, ParserConfigurationException
+    {
+        DocumentBuilder builder= cDocumentBuilderFactory.newDocumentBuilder();
+        return builder.parse(new InputSource(is));
+    }
+    
+    public static Document newDocument() throws ParserConfigurationException
+    {
+        return cDocumentBuilderFactory.newDocumentBuilder().newDocument();
     }
 }

@@ -23,8 +23,7 @@ import net.sf.eclipsensis.installoptions.editor.*;
 import net.sf.eclipsensis.installoptions.model.DialogSize;
 import net.sf.eclipsensis.installoptions.model.DialogSizeManager;
 import net.sf.eclipsensis.installoptions.util.TypeConverter;
-import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.IOUtility;
+import net.sf.eclipsensis.util.*;
 import net.sf.eclipsensis.viewer.CollectionContentProvider;
 
 import org.eclipse.draw2d.geometry.Dimension;
@@ -451,10 +450,10 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
         }
     }
 
-    private Button createButton(Composite parent, String imageResource, String tooltipResource, Listener selectionListener)
+    private Button createButton(Composite parent, Image image, String tooltipResource, Listener selectionListener)
     {
         Button button = new Button(parent, SWT.PUSH);
-        button.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString(imageResource)));
+        button.setImage(image);
         button.setToolTipText(EclipseNSISPlugin.getResourceString(tooltipResource));
         button.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         button.addListener(SWT.Selection, selectionListener);
@@ -520,21 +519,21 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
         layout.marginWidth= 0;
         buttons.setLayout(layout);
 
-        createButton(buttons, "add.icon", "new.tooltip", //$NON-NLS-1$))); //$NON-NLS-2$
+        createButton(buttons, CommonImages.ADD_ICON, "new.tooltip", //$NON-NLS-1$
                      new Listener() {
                          public void handleEvent(Event e) {
                              new DialogSizeDialog(getShell(),null).open();
                          }
                      });
 
-        mEditDialogSize = createButton(buttons, "edit.icon", "edit.tooltip", //$NON-NLS-1$))); //$NON-NLS-2$
+        mEditDialogSize = createButton(buttons, CommonImages.EDIT_ICON, "edit.tooltip", //$NON-NLS-1$
                                        new Listener() {
                                            public void handleEvent(Event e) {
                                                editDialogSize();
                                            }
                                        });
 
-        mRemoveDialogSize = createButton(buttons, "delete.icon", "remove.tooltip", //$NON-NLS-1$))); //$NON-NLS-2$
+        mRemoveDialogSize = createButton(buttons, CommonImages.DELETE_ICON, "remove.tooltip", //$NON-NLS-1$
                                          new Listener() {
                                              public void handleEvent(Event e) {
                                                  IStructuredSelection selection= (IStructuredSelection) mDialogSizeViewer.getSelection();

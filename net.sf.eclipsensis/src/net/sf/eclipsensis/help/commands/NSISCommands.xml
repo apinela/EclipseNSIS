@@ -1,0 +1,1412 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+###############################################################################
+# Copyright (c) 2004, 2005 Sunil Kamath (IcemanK).
+# All rights reserved.
+# This program is made available under the terms of the Common Public License
+# v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
+# 
+# Contributors:
+#     Sunil Kamath (IcemanK) - initial API and implementation
+###############################################################################
+-->
+<commands>
+  <version name="2.13">
+    <command name="StrCmpS">
+      <param name="str1" type="string" allowBlank="true"/>
+      <param name="str2" type="string" allowBlank="true"/>
+      <param name="jump_if_equal" type="string"/>
+      <param name="jump_if_not_equal" type="string" optional="true"/>
+    </command>
+  </version>
+  <version name="2.12">
+    <command name="!include">
+      <param name="/NONFATAL" type="label" optional="true"/>
+      <param name="file" type="localfile" acceptVar="false">
+        <filter name="nsh.files.filter.name" value="*.nsh"/>
+        <filter name="all.files.filter.name" value="*.*"/>
+      </param>
+    </command>
+  </version>
+  <version name="2.11">
+    <command name="!appendfile">
+      <param name="file" type="localfile" acceptVar="false"/>
+      <param name="text" type="string" allowBlank="true"/>
+    </command>
+    <command name="!delfile">
+      <param name="file" type="localfile" acceptVar="false"/>
+    </command>
+    <command name="!tempfile">
+      <param name="symbol" type="string" acceptVar="false"/>
+    </command>
+  </version>
+  <version name="2.09">
+    <command name="Var">
+      <param name="/GLOBAL" type="label" optional="true"/>
+      <param name="var_name" type="var.string"/>
+    </command>
+  </version>
+  <version name="2.07">
+    <command name="SetCompressor">
+      <param name="/SOLID" type="label" optional="true"/>
+      <param name="/FINAL" type="label" optional="true"/>
+      <param type="choice">
+        <choice value="zlib"/>
+        <choice value="bzip2"/>
+        <choice value="lzma"/>
+      </param>
+    </command>
+  </version>
+  <version name="2.05">
+    <command name="SectionGroup">
+      <param name="/e" type="label" optional="true"/>
+      <param name="section_group_name" type="string"/>
+      <param name="index_output" type="string" optional="true"/>
+    </command>
+    <command name="SectionGroupEnd"/>
+  </version>
+  <version name="2.03">
+    <command name="!define">
+      <param name="/date" type="label" optional="true" depends="2"/>
+      <param name="gflag" type="string"/>
+      <param name="value" type="string" allowBlank="true" optional="true"/>              
+    </command>
+    <command name="File">
+      <param name="/nonfatal" type="label" optional="true"/>
+      <param name="/a" type="label" optional="true"/>
+      <param type="radio">
+        <param type="group">
+          <param name="/r" type="label" optional="true"/>
+          <param type="repeatable">
+            <param type="group">
+              <param name="/x" type="label" optional="true"/>
+              <param name="file|wildcard" acceptVar="false" type="localpath">
+                <filter name="all.files.filter.name" value="*.*"/>
+              </param>
+            </param>
+          </param>
+        </param>
+        <param type="group">
+          <param name="/oname=file.dat" prefix="/oname=" type="filename"/>
+          <param name="infile.dat" type="localfile" acceptVar="false"/>
+        </param>
+      </param>
+    </command>
+    <command name="ReserveFile">
+      <param name="/nonfatal" type="label" optional="true"/>
+      <param name="/r" type="label" optional="true"/>
+        <param type="repeatable">
+          <param type="group">
+            <param name="/x" type="label" optional="true"/>
+            <param name="file" type="localfile" acceptVar="false">
+              <filter name="all.files.filter.name" value="*.*"/>
+            </param>
+          </param>
+        </param>
+    </command>
+  </version>
+  <version name="2.02">
+    <command name="GetErrorLevel">
+      <param name="user_var(error_level_output)" type="var"/>
+    </command>
+    <command name="IntOp">
+      <param name="user_var(output)" type="var"/>
+      <param name="value1" type="number"/>
+      <param name="OP" type="choice">
+        <choice value="+"/>
+        <choice value="-"/>
+        <choice value="*"/>
+        <choice value="/"/>
+        <choice value="%"/>
+        <choice value="|"/>
+        <choice value="&amp;"/>
+        <choice value="^"/>
+        <choice value="&gt;&gt;"/>
+        <choice value="&lt;&lt;"/>
+        <choice value="~"/>
+        <choice value="!"/>
+        <choice value="||"/>
+        <choice value="&amp;&amp;"/>
+      </param>
+      <param name="value2" type="number"/>
+    </command>
+    <command name="SetErrorLevel">
+      <param name="error_level" type="number"/>
+    </command>
+  </version>
+  <version name="2.01">
+    <command name="!execute">
+      <param name="command" type="string"/>
+    </command>
+    <command name="BgFont">
+      <param name="font_face" type="string" optional="true"/>
+      <param name="height" type="number" domain="positive" optional="true" depends="0"/>
+      <param name="weight" type="number" domain="positive" optional="true" depends="1"/>
+      <param name="/ITALIC" type="label" optional="true" depends="0"/>
+      <param name="/UNDERLINE" type="label" optional="true" depends="0"/>
+      <param name="/STRIKE" type="label" optional="true" depends="0"/>
+    </command>
+    <command name="ExecShell">
+      <param name="action" type="string" allowBlank="true"/>
+      <param name="command" type="string"/>
+      <param name="parameters" type="string" allowBlank="true" optional="true"/>
+      <param type="choice" optional="true">
+        <choice value="SW_SHOWNORMAL"/>
+        <choice value="SW_SHOWMAXIMIZED"/>
+        <choice value="SW_SHOWMINIMIZED"/>
+        <choice value="SW_HIDE"/>
+      </param>
+    </command>
+    <command name="RMDir">
+      <param name="/r" type="label" optional="true"/>
+      <param name="/REBOOTOK" type="label" optional="true"/>
+      <param name="directory_name" type="pathname"/>
+    </command>
+    <command name="SetOutPath">
+      <param name="outpath" type="pathname"/>
+    </command>
+  </version>
+  <version name="2.0">
+    <command name="!AddIncludeDir">
+      <param name="directory" type="localdir" acceptVar="false"/>
+    </command>
+    <command name="!AddPluginDir">
+      <param name="new_plugin_directory" type="localdir" acceptVar="false"/>
+    </command>
+    <command name="!cd">
+      <param name="new_path" type="localdir" acceptVar="false"/>
+    </command>
+    <command name="!define">
+      <param name="gflag" type="string"/>
+      <param name="value" type="string" allowBlank="true" optional="true"/>              
+    </command>
+    <command name="!echo">
+      <param name="message" type="string" allowBlank="true"/>
+    </command>
+    <command name="!else">
+      <param optional="true" type="subcommand">
+        <subcommand name="ifdef" command="!ifdef"/>
+        <subcommand name="ifndef" command="!ifndef"/>
+        <subcommand name="ifmacrodef" command="!ifmacrodef"/>
+        <subcommand name="ifmacrondef" command="!ifmacrondef"/>
+      </param>
+    </command>
+    <command name="!endif"/>
+    <command name="!error">
+      <param name="message" type="string" allowBlank="true"/>              
+    </command>
+    <command name="!ifdef">
+      <param name="gflag" type="string"/>
+      <param type="repeatable" optional="true">
+        <param type="group">
+          <param name="bcheck" type="choice">
+            <choice display="ifdef.command.or.label" value="|"/>
+            <choice display="ifdef.command.and.label" value="&amp;"/>
+          </param>
+          <param name="gflag" type="string"/>
+        </param>
+      </param>
+    </command>
+    <command name="!ifndef">
+      <param name="gflag" type="string"/>
+      <param type="repeatable" optional="true">
+        <param type="group">
+          <param name="bcheck" type="choice">
+            <choice display="ifdef.command.or.label" value="|"/>
+            <choice display="ifdef.command.and.label" value="&amp;"/>
+          </param>
+          <param name="gflag" type="string"/>
+        </param>
+      </param>
+    </command>
+    <command name="!ifmacrodef">
+      <param name="gflag" type="string"/>
+      <param type="repeatable" optional="true">
+        <param type="group">
+          <param name="bcheck" type="choice">
+            <choice display="ifdef.command.or.label" value="|"/>
+            <choice display="ifdef.command.and.label" value="&amp;"/>
+          </param>
+          <param name="gflag" type="string"/>
+        </param>
+      </param>
+    </command>
+    <command name="!ifmacrondef">
+      <param name="gflag" type="string"/>
+      <param type="repeatable" optional="true">
+        <param type="group">
+          <param name="bcheck" type="choice">
+            <choice display="ifdef.command.or.label" value="|"/>
+            <choice display="ifdef.command.and.label" value="&amp;"/>
+          </param>
+          <param name="gflag" type="string"/>
+        </param>
+      </param>
+    </command>
+    <command name="!include">
+      <param name="file" type="localfile" acceptVar="false">
+        <filter name="nsh.files.filter.name" value="*.nsh"/>
+        <filter name="all.files.filter.name" value="*.*"/>
+      </param>
+    </command>
+    <command name="!insertmacro">
+      <param name="macro_name" type="string"/>
+      <param type="repeatable" optional="true">
+        <param name="parameter" type="string"/>
+      </param>
+    </command>
+    <command name="!macro">
+      <param name="macro_name" type="string"/>
+      <param type="repeatable" optional="true">
+        <param name="parameter" type="string" allowBlank="true"/>
+      </param>
+    </command>
+    <command name="!macroend"/>
+    <command name="!packhdr">
+      <param name="tempfile" type="localfile" acceptVar="false"/>
+      <param name="command" type="string"/>
+    </command>
+    <command name="!system">
+      <param name="command" type="string"/>
+      <param type="group" optional="true">
+        <param name="compare" type="choice">
+          <choice display="greater.than.label" value="&gt;"/>
+          <choice display="less.than.label" value="&lt;"/>
+          <choice display="not.equal.to.label" value="&lt;&gt;"/>
+          <choice display="equal.to.label" value="="/>
+        </param>
+        <param name="comparevalue" type="number" acceptVar="false"/>
+      </param>
+    </command>
+    <command name="!undef">
+      <param name="gflag" type="string"/>
+    </command>
+    <command name="!verbose">
+      <param type="radio">
+        <param name="level" type="choice">
+          <choice display="verbose.command.all.label" value="4"/>
+          <choice display="verbose.command.no.script.label" value="3"/>
+          <choice display="verbose.command.no.info.label" value="2"/>
+          <choice display="verbose.command.no.warnings.label" value="1"/>
+          <choice display="verbose.command.none.label" value="0"/>
+        </param>
+        <param name="push" type="label"/>
+        <param name="pop" type="label"/>
+      </param>
+    </command>
+    <command name="!warning">
+      <param name="message" type="string" allowBlank="true"/>
+    </command>
+    <command name="Abort">
+      <param name="user_message" type="string" allowBlank="true"/>
+    </command>
+    <command name="AddBrandingImage">
+      <param type="choice">
+        <choice value="top"/>
+        <choice value="left"/>
+        <choice value="bottom"/>
+        <choice value="right"/>
+      </param>
+      <param name="width/height" type="number" domain="positive" acceptVar="false"/>
+      <param name="padding" type="number" domain="natural" acceptVar="false" optional="true"/>
+    </command>
+    <command name="AddSize">
+      <param name="size_kb" type="number" acceptVar="false" domain="natural"/>
+    </command>
+    <command name="AllowRootDirInstall">
+      <param type="choice">
+        <choice value="true"/>
+        <choice value="false"/>
+      </param>
+    </command>
+    <command name="AllowSkipFiles">
+      <param type="choice">
+        <choice value="on"/>
+        <choice value="off"/>
+      </param>
+    </command>
+    <command name="AutoCloseWindow">
+      <param type="choice">
+        <choice value="true"/>
+        <choice value="false"/>
+      </param>
+    </command>
+    <command name="BGGradient">
+      <param type="radio">
+        <param name="off" type="label"/>
+        <param type="group">
+          <param name="topc" type="rgb" acceptVar="false"/>
+          <param name="botc" type="rgb" acceptVar="false"/>
+          <param type="radio" optional="true">
+            <param name="textcolor" type="rgb" acceptVar="false"/>
+            <param name="notext" type="label"/>
+          </param>
+        </param>
+      </param>
+    </command>
+    <command name="BrandingText">
+      <param name="/TRIM" prefix="/TRIM" type="choice">
+        <choice value="LEFT"/>
+        <choice value="RIGHT"/>
+        <choice value="CENTER"/>
+      </param>
+      <param name="text" type="string" allowBlank="true"/>
+    </command>
+    <command name="BringToFront"/>
+    <command name="CRCCheck">
+      <param type="choice">
+        <choice value="on"/>
+        <choice value="off"/>
+        <choice value="force"/>
+      </param>
+    </command>
+    <command name="Call">
+      <param name="function/label" type="string"/>
+    </command>
+    <command name="CallInstDLL">
+      <param name="dllfile" type="pathname"/>
+      <param name="/NOUNLOAD" type="label" optional="true"/>
+      <param name="function_name" type="string"/>
+    </command>
+    <command name="Caption">
+      <param name="caption" type="string" allowBlank="true"/>
+    </command>
+    <command name="ChangeUI">
+      <param name="dialog" type="choice">
+        <choice value="all"/>
+        <choice value="IDD_LICENSE"/>
+        <choice value="IDD_DIR"/>
+        <choice value="IDD_SELCOM"/>
+        <choice value="IDD_INST"/>
+        <choice value="IDD_INSTFILES"/>
+        <choice value="IDD_UNINST"/>
+        <choice value="IDD_VERIFY"/>
+        <choice value="IDD_LICENSE_FSRB"/>
+        <choice value="IDD_LICENSE_FSCB"/>
+      </param>
+      <param name="ui_file.exe" type="localfile" acceptVar="false">
+        <filter name="exe.files.filter.name" value="*.exe"/>
+        <filter name="all.files.filter.name" value="*.*"/>
+      </param>
+    </command>
+    <command name="CheckBitmap">
+      <param name="bitmap.bmp" type="localfile" acceptVar="false">
+        <filter name="bmp.files.filter.name" value="*.bmp"/>
+        <filter name="all.files.filter.name" value="*.*"/>
+      </param>
+    </command>
+    <command name="ClearErrors"/>
+    <command name="CompletedText">
+      <param name="text" type="string" allowBlank="true"/>
+    </command>
+    <command name="ComponentText">
+      <param name="text" type="string" allowBlank="true" optional="true"/>
+      <param name="subtext" type="string" allowBlank="true" optional="true" depends="0"/>
+      <param name="subtext2" type="string" allowBlank="true" optional="true" depends="1"/>
+    </command>
+    <command name="CopyFiles">
+      <param name="/SILENT" type="label" optional="true"/>
+      <param name="/FILESONLY" type="label" optional="true"/>
+      <param name="filespec_on_destsys " type="wildcard"/>
+      <param name="destination_path" type="pathname"/>
+      <param name="size_of_files_in_kb" type="number" domain="positive" optional="true" acceptVar="false"/>
+    </command>
+    <command name="CreateDirectory">
+      <param name="path_to_create" type="pathname"/>
+    </command>
+    <command name="CreateFont">
+      <param name="user_var(handle_output)" type="var"/>
+      <param name="face_name" type="string"/>
+      <param name="height" type="number" domain="positive" optional="true"/>
+      <param name="weight" type="number" domain="positive" optional="true" depends="2"/>
+      <param name="/ITALIC" type="label" optional="true"/>
+      <param name="/UNDERLINE" type="label" optional="true"/>
+      <param name="/STRIKE" type="label" optional="true"/>
+    </command>
+    <command name="CreateShortCut">
+      <param name="link.lnk" type="pathname"/>
+      <param name="target.file" type="pathname"/>
+      <param name="parameters" type="string" allowBlank="true" optional="true"/>
+      <param name="icon.file" type="pathname" allowBlank="true" optional="true" depends="2"/>
+      <param name="icon_index" type="number" domain="natural" allowBlank="true" optional="true" depends="3"/>
+      <param name="parameters" type="string" allowBlank="true" optional="true" depends="4"/>
+      <param name="start_options" type="choice" allowBlank="true" optional="true" depends="5">
+        <choice value="SW_SHOWNORMAL"/>
+        <choice value="SW_SHOWMAXIMIZED"/>
+        <choice value="SW_SHOWMINIMIZED"/>
+      </param>
+      <param name="keyboard_shortcut" type="keyboard.shortcut" allowBlank="true" optional="true" depends="6"/>
+      <param name="description" type="string" allowBlank="true" optional="true" depends="7"/>
+    </command>
+    <command name="Delete">
+      <param name="/REBOOTOK" type="label" optional="true"/>
+      <param name="file" type="wildcard"/>
+    </command>
+    <command name="DeleteINISec">
+      <param name="ini_filename" type="pathname"/>
+      <param name="section_name" type="string"/>
+    </command>
+    <command name="DeleteINIStr">
+      <param name="ini_filename" type="pathname"/>
+      <param name="section_name" type="string"/>
+      <param name="str_name" type="string"/>
+    </command>
+    <command name="DeleteRegKey">
+      <param name="/ifempty" type="label" optional="true"/>
+      <param name="root_key" type="hkey"/>
+      <param name="subkey" type="string"/>
+    </command>
+    <command name="DeleteRegValue">
+      <param name="root_key" type="hkey"/>
+      <param name="subkey" type="string"/>
+      <param name="value_name" type="string" allowBlank="true"/>
+    </command>
+    <command name="DetailPrint">
+      <param name="user_message" type="string" allowBlank="true"/>
+    </command>
+    <command name="DetailsButtonText">
+      <param name="show_details_text" type="string" allowBlank="true"/>
+    </command>
+    <command name="DirText">
+      <param name="text" type="string" allowBlank="true" optional="true"/>
+      <param name="subtext" type="string" allowBlank="true" optional="true" depends="0"/>
+      <param name="browse_button_text" type="string" allowBlank="true" optional="true" depends="1"/>
+      <param name="browse_detail_text" type="string" allowBlank="true" optional="true" depends="2"/>
+    </command>
+    <command name="DirVar">
+      <param name="user_var(dir input/output)" type="var"/>
+    </command>
+    <command name="DirVerify">
+      <param type="choice">
+        <choice value="auto"/>
+        <choice value="leave"/>
+      </param>
+    </command>
+    <command name="EnableWindow">
+      <param name="hwnd" type="number" domain="positive"/>
+      <param type="choice">
+        <choice display="enablewindow.enabled.label" value="1"/>
+        <choice display="enablewindow.disabled.label" value="0"/>
+      </param>
+    </command>
+    <command name="EnumRegKey">
+      <param name="user_var(output)" type="var"/>
+      <param name="root_key" type="hkey"/>
+      <param name="subkey" type="string"/>
+      <param name="index" type="number" domain="natural"/>
+    </command>
+    <command name="EnumRegValue">
+      <param name="user_var(output)" type="var"/>
+      <param name="root_key" type="hkey"/>
+      <param name="subkey" type="string"/>
+      <param name="index" type="number" domain="natural"/>
+    </command>
+    <command name="Exch">
+      <param type="radio" optional="true">
+        <param name="user_var" type="var"/>
+        <param name="stack_index" type="number" domain="positive"/>
+      </param>
+    </command>
+    <command name="Exec">
+      <param name="command" type="string"/>
+    </command>
+    <command name="ExecShell">
+      <param name="action" type="string" allowBlank="true"/>
+      <param name="command" type="string"/>
+      <param name="parameters" type="string" allowBlank="true" optional="true"/>
+      <param type="choice" optional="true">
+        <choice value="SW_SHOWNORMAL"/>
+        <choice value="SW_SHOWMAXIMIZED"/>
+        <choice value="SW_SHOWMINIMIZED"/>
+      </param>
+    </command>
+    <command name="ExecWait">
+      <param name="command" type="string"/>
+      <param name="user_var(exit code)" type="var"/>
+    </command>
+    <command name="ExpandEnvStrings">
+      <param name="user_var(output)" type="var"/>
+      <param name="string" type="string"/>
+    </command>
+    <command name="File">
+      <param name="/nonfatal" type="label" optional="true"/>
+      <param name="/a" type="label" optional="true"/>
+      <param type="radio">
+        <param type="group">
+          <param name="/r" type="label" optional="true"/>
+          <param type="repeatable">
+            <param name="file|wildcard" type="localpath" acceptVar="false">
+              <filter name="all.files.filter.name" value="*.*"/>
+            </param>
+          </param>
+        </param>
+        <param type="group">
+          <param name="/oname=file.dat" prefix="/oname=" type="string"/>
+          <param name="infile.dat" type="localfile" acceptVar="false"/>
+        </param>
+      </param>
+    </command>
+    <command name="FileBufSize">
+      <param name="buffer_size_in_mb" type="number" domain="positive" acceptVar="false"/>
+    </command>
+    <command name="FileClose">
+      <param name="handle" type="var"/>
+    </command>
+    <command name="FileErrorText">
+      <param name="text" type="string" optional="true"/>
+      <param name="text without ignore" type="string" optional="true" depends="0"/>
+    </command>
+    <command name="FileOpen">
+      <param name="user_var(handle output)" type="var"/>
+      <param name="filename" type="localfile"/>
+      <param name="openmode" type="choice">
+        <choice display="fileopen.mode.read.label" value="r"/>
+        <choice display="fileopen.mode.write.label" value="w"/>
+        <choice display="fileopen.mode.append.label" value="a"/>
+      </param>
+    </command>
+    <command name="FileRead">
+      <param name="handle" type="var"/>
+      <param name="user_var(output)" type="var"/>
+      <param name="maxlen" type="number" domain="positive" optional="true"/>
+    </command>
+    <command name="FileReadByte">
+      <param name="handle" type="var"/>
+      <param name="user_var(output)" type="var"/>
+    </command>
+    <command name="FileSeek">
+      <param name="handle" type="var"/>
+      <param name="offset" type="number" domain="natural"/>
+      <param name="mode" type="choice" optional="true">
+        <choice value="SET"/>
+        <choice value="CUR"/>
+        <choice value="END"/>
+        <choice value="EOF"/>
+      </param>
+      <param name="user_var(new position)" type="var" optional="true" depends="2"/>
+    </command>
+    <command name="FileWrite">
+      <param name="handle" type="var"/>
+      <param name="string" type="string"/>
+    </command>
+    <command name="FileWriteByte">
+      <param name="handle" type="var"/>
+      <param name="string" type="string"/>
+    </command>
+    <command name="FindClose">
+      <param name="handle" type="var"/>
+    </command>
+    <command name="FindFirst">
+      <param name="user_var(handle output)" type="var"/>
+      <param name="user_var(filename output)" type="var"/>
+      <param name="filespec" type="wildcard"/>
+    </command>
+    <command name="FindNext">
+      <param name="handle" type="var"/>
+      <param name="user_var(filename output)" type="var"/>
+    </command>
+    <command name="FindWindow">
+      <param name="user_var(hwnd output)" type="var"/>
+      <param name="windowclass" type="string" allowBlank="true"/>
+      <param name="windowtitle" type="string" allowBlank="true" optional="true"/>
+      <param name="windowparent" type="string" allowBlank="true" optional="true" depends="2"/>
+      <param name="childafter" type="string" allowBlank="true" optional="true" depends="3"/>
+    </command>
+    <command name="FlushINI">
+      <param name="ini_filename" type="pathname"/>
+    </command>
+    <command name="Function">
+      <param name="function_name" type="string"/>
+    </command>
+    <command name="FunctionEnd"/>
+    <command name="GetCurInstType">
+      <param name="user_var" type="var"/>
+    </command>
+    <command name="GetCurrentAddress">
+      <param name="user_var(output)" type="var"/>
+    </command>
+    <command name="GetDLLVersion">
+      <param name="filename" type="pathname"/>
+      <param name="user_var(high dword output)" type="var"/>
+      <param name="user_var(low dword output)" type="var"/>
+    </command>
+    <command name="GetDLLVersionLocal">
+      <param name="filename" type="localfile" acceptVar="false">
+        <filter name="dll.files.filter.name" value="*.dll"/>
+        <filter name="all.files.filter.name" value="*.*"/>
+      </param>
+      <param name="user_var(high dword output)" type="var"/>
+      <param name="user_var(low dword output)" type="var"/>
+    </command>
+    <command name="GetDlgItem">
+      <param name="user_var(output)" type="var"/>
+      <param name="dialog" type="string"/>
+      <param name="item_id" type="string"/>
+    </command>
+    <command name="GetFileTime">
+      <param name="filename" type="pathname"/>
+      <param name="user_var(high dword output)" type="var"/>
+      <param name="user_var(low dword output)" type="var"/>
+    </command>
+    <command name="GetFileTimeLocal">
+      <param name="filename" type="localfile" acceptVar="false">
+        <filter name="all.files.filter.name" value="*.*"/>
+      </param>
+      <param name="user_var(high dword output)" type="var"/>
+      <param name="user_var(low dword output)" type="var"/>
+    </command>
+    <command name="GetFullPathName">
+      <param name="/SHORT" type="label" optional="true"/>
+      <param name="user_var(output)" type="var"/>
+      <param name="path_or_file" type="pathname"/>
+    </command>
+    <command name="GetFunctionAddress">
+      <param name="user_var(output)" type="var"/>
+      <param name="function_name" type="string"/>
+    </command>
+    <command name="GetInstDirError">
+      <param name="user_var(error output)" type="var"/>
+    </command>
+    <command name="GetLabelAddress">
+      <param name="user_var(output)" type="var"/>
+      <param name="label" type="string"/>
+    </command>
+    <command name="GetTempFileName">
+      <param name="user_var(output)" type="var"/>
+      <param name="base_dir" type="pathname"/>
+    </command>
+    <command name="Goto">
+      <param type="radio">
+        <param name="label_to_jump_to" type="string"/>
+        <param name="offset" type="number"/>
+        <param name="user_var(target)" type="var"/>
+      </param>
+    </command>
+    <command name="HideWindow"/>
+    <command name="Icon">
+      <param name="[path\]icon.ico" type="localfile" acceptVar="false">
+        <filter name="ico.files.filter.name" value="*.ico"/>
+        <filter name="all.files.filter.name" value="*.*"/>
+      </param>
+    </command>
+    <command name="IfAbort">
+      <param name="label_to_goto_if_abort" type="string"/>
+      <param name="label_to_goto_if_no_abort" type="string" optional="true"/>
+    </command>
+    <command name="IfErrors">
+      <param name="jumpto_iferror" type="string"/>
+      <param name="jumpto_ifnoerror" type="string" optional="true"/>
+    </command>
+    <command name="IfFileExists">
+      <param name="file_to_check_for" type="pathname"/>
+      <param name="jump_if_present" type="string"/>
+      <param name="jump_otherwise" type="string" optional="true"/>
+    </command>
+    <command name="IfRebootFlag">
+      <param name="jump_if_set" type="string"/>
+      <param name="jump_if_not_set" type="string" optional="true"/>
+    </command>
+    <command name="IfSilent">
+      <param name="jump_if_silent" type="string"/>
+      <param name="jump_if_not" type="string" optional="true"/>
+    </command>
+    <command name="InitPluginsDir"/>
+    <command name="InstProgressFlags">
+      <param name="smooth" type="label" optional="true"/>
+      <param name="colored" type="label" optional="true"/>
+    </command>
+    <command name="InstType">
+      <param type="radio">
+        <param name="install_type_name" type="string"/>
+        <param name="/NOCUSTOM" type="label"/>
+        <param name="/CUSTOMSTRING=str" prefix="/CUSTOMSTRING=" type="string"/>
+        <param name="/COMPONENTSONLYONCUSTOM" type="label"/>
+      </param>
+    </command>
+    <command name="InstTypeGetText">
+      <param name="inst_type_idx" type="number" domain="positive"/>
+      <param name="user_var" type="var"/>
+    </command>
+    <command name="InstTypeSetText">
+      <param name="inst_type_idx" type="number" domain="positive"/>
+      <param name="text" type="string" allowBlank="true"/>
+    </command>
+    <command name="InstallButtonText">
+      <param name="install button text" type="string" allowBlank="true"/>
+    </command>
+    <command name="InstallColors">
+      <param type="radio">
+        <param name="/windows" type="label"/>
+        <param type="group">
+          <param name="foreground_color" type="rgb" acceptVar="false"/>
+          <param name="background_color" type="rgb" acceptVar="false"/>
+        </param>
+      </param>
+    </command>
+    <command name="InstallDir">
+      <param name="definstdir" type="pathname"/>
+    </command>
+    <command name="InstallDirRegKey">
+      <param name="root_key" type="hkey"/>
+      <param name="subkey" type="string"/>
+      <param name="key_name" type="string" allowBlank="true"/>
+    </command>
+    <command name="IntCmp">
+      <param name="val1" type="number"/>
+      <param name="val2" type="number"/>
+      <param name="jump_if_equal" type="string"/>
+      <param name="jump_if_val1_less" type="string" optional="true"/>
+      <param name="jump_if_val1_more" type="string" optional="true" depends="3"/>
+    </command>
+    <command name="IntCmpU">
+      <param name="val1" type="number"/>
+      <param name="val2" type="number"/>
+      <param name="jump_if_equal" type="string"/>
+      <param name="jump_if_val1_less" type="string" optional="true"/>
+      <param name="jump_if_val1_more" type="string" optional="true" depends="3"/>
+    </command>
+    <command name="IntFmt">
+      <param name="user_var(output)" type="var"/>
+      <param name="format" type="string"/>
+      <param name="numberstring" type="string"/>
+    </command>
+    <command name="IntOp">
+      <param name="user_var(output)" type="var"/>
+      <param name="value1" type="number"/>
+      <param name="OP" type="choice">
+        <choice value="+"/>
+        <choice value="-"/>
+        <choice value="*"/>
+        <choice value="/"/>
+        <choice value="%"/>
+        <choice value="|"/>
+        <choice value="&amp;"/>
+        <choice value="^"/>
+        <choice value="~"/>
+        <choice value="!"/>
+        <choice value="||"/>
+        <choice value="&amp;&amp;"/>
+      </param>
+      <param name="value2" type="number"/>
+    </command>
+    <command name="IsWindow">
+      <param name="hwnd" type="number" domain="positive"/>
+      <param name="jump_if_window" type="string"/>
+      <param name="jump_if_not_window" type="string" optional="true"/>
+    </command>
+    <command name="LangString">
+      <param name="name" type="string"/>
+      <param name="language_id" type="language" acceptVar="false"/>
+      <param name="string" type="string" allowBlank="true"/>
+    </command>
+    <command name="LicenseBkColor">
+      <param type="radio">
+        <param name="color" type="rgb" acceptVar="false"/>
+        <param name="/gray" type="label"/>
+        <param name="/windows" type="label"/>
+      </param>
+    </command>
+    <command name="LicenseData">
+      <param name="licdata.(txt|rtf)" type="localfile" acceptVar="false">
+        <filter name="license.files.filter.name" value="*.rtf;*.txt"/>
+        <filter name="all.files.filter.name" value="*.*"/>
+      </param>
+    </command>
+    <command name="LicenseForceSelection">
+      <param type="radio">
+        <param type="group">
+          <param name="checkbox" type="label"/>
+          <param name="accept_text" type="string" optional="true"/>
+        </param>
+        <param type="group">
+          <param name="radiobuttons" type="label"/>
+          <param name="accept_text" type="string" optional="true"/>
+          <param name="decline_text" type="string" optional="true" depends="1"/>
+        </param>
+        <param name="off" type="label"/>
+      </param>
+    </command>
+    <command name="LicenseLangString">
+      <param name="name" type="string"/>
+      <param name="language_id" type="language" acceptVar="false"/>
+      <param name="license_path" type="localfile" acceptVar="false">
+        <filter name="license.files.filter.name" value="*.rtf;*.txt"/>
+        <filter name="all.files.filter.name" value="*.*"/>
+      </param>
+    </command>
+    <command name="LicenseText">
+      <param name="text" type="string"/>
+      <param name="button_text" type="string" optional="true"/>
+    </command>
+    <command name="LoadLanguageFile">
+      <param name="language_file.nlf" type="languagefile" acceptVar="false"/>
+    </command>
+    <command name="LockWindow">
+      <param type="choice">
+        <choice value="on"/>
+        <choice value="off"/>
+      </param>
+    </command>
+    <command name="LogSet">
+      <param type="choice">
+        <choice value="on"/>
+        <choice value="off"/>
+      </param>
+    </command>
+    <command name="LogText">
+      <param name="text" type="string"/>
+    </command>
+    <command name="MessageBox">
+      <param name="mb_option_list" type="messagebox.options"/>
+      <param name="messagebox_text" type="string" allowBlank="true"/>
+      <param name="/SD return" prefix="/SD " type="choice" optional="true">
+        <choice value="IDABORT"/>
+        <choice value="IDCANCEL"/>
+        <choice value="IDIGNORE"/>
+        <choice value="IDNO"/>
+        <choice value="IDOK"/>
+        <choice value="IDRETRY"/>
+        <choice value="IDYES"/>
+      </param>
+      <param type="group" optional="true">
+        <param name="return_check" type="choice">
+          <choice value="0"/>
+          <choice value="IDABORT"/>
+          <choice value="IDCANCEL"/>
+          <choice value="IDIGNORE"/>
+          <choice value="IDNO"/>
+          <choice value="IDOK"/>
+          <choice value="IDRETRY"/>
+          <choice value="IDYES"/>
+        </param>
+        <param name="jumpto" type="string"/>
+      </param>
+      <param type="group" optional="true" depends="3">
+        <param name="return_check_2" type="choice">
+          <choice value="0"/>
+          <choice value="IDABORT"/>
+          <choice value="IDCANCEL"/>
+          <choice value="IDIGNORE"/>
+          <choice value="IDNO"/>
+          <choice value="IDOK"/>
+          <choice value="IDRETRY"/>
+          <choice value="IDYES"/>
+        </param>
+        <param name="jumpto_2" type="string"/>
+      </param>
+    </command>
+    <command name="MiscButtonText">
+      <param name="back button text" type="string" allowBlank="true" optional="true"/>
+      <param name="next button text" type="string" allowBlank="true" optional="true" depends="0"/>
+      <param name="cancel button text" type="string" allowBlank="true" optional="true" depends="1"/>
+      <param name="close button text" type="string" allowBlank="true" optional="true" depends="2"/>
+    </command>
+    <command name="Name">
+      <param name="name" type="string"/>
+      <param name="name_doubled_ampersands" type="string" optional="true"/>
+    </command>
+    <command name="Nop"/>
+    <command name="OutFile">
+      <param name="[path\]install.exe" type="localsavefile" acceptVar="false">
+        <filter name="exe.files.filter.name" value="*.exe"/>
+        <filter name="all.files.filter.name" value="*.*"/>
+      </param>
+    </command>
+    <command name="Page">
+      <param type="radio">
+        <param type="group">
+          <param name="custom" type="label"/>
+          <param name="creator_function" type="string" allowBlank="true" optional="true"/>
+          <param name="leave_function" type="string" allowBlank="true" optional="true" depends="1"/>
+          <param name="caption" type="string" allowBlank="true" optional="true" depends="2"/>
+        </param>
+        <param type="group">
+          <param type="choice">
+            <choice value="license"/>
+            <choice value="components"/>
+            <choice value="directory"/>
+            <choice value="instfiles"/>
+            <choice value="uninstConfirm"/>
+          </param>
+          <param name="pre_function" type="string" allowBlank="true" optional="true"/>
+          <param name="show_function" type="string" allowBlank="true" optional="true" depends="1"/>
+          <param name="leave_function" type="string" allowBlank="true" optional="true" depends="2"/>
+        </param>
+      </param>
+    </command>
+    <command name="PageCallbacks">
+      <param type="radio">
+        <param type="group">
+          <param name="creator_function" type="string" allowBlank="true" optional="true"/>
+          <param name="leave_function" type="string" allowBlank="true" optional="true" depends="0"/>
+        </param>
+        <param type="group">
+          <param name="pre_function" type="string" allowBlank="true" optional="true"/>
+          <param name="show_function" type="string" allowBlank="true" optional="true" depends="0"/>
+          <param name="leave_function" type="string" allowBlank="true" optional="true" depends="1"/>
+        </param>
+      </param>
+    </command>
+    <command name="PageEx">
+      <param type="choice">
+        <choice value="custom"/>
+        <choice value="license"/>
+        <choice value="components"/>
+        <choice value="directory"/>
+        <choice value="instfiles"/>
+        <choice value="uninstConfirm"/>
+        <choice value="un.custom"/>
+        <choice value="un.license"/>
+        <choice value="un.components"/>
+        <choice value="un.directory"/>
+        <choice value="un.instfiles"/>
+        <choice value="un.uninstConfirm"/>
+      </param>
+    </command>
+    <command name="PageExEnd"/>
+    <command name="Pop">
+      <param name="user_var(out)" type="var"/>
+    </command>
+    <command name="Push">
+      <param name="string" type="string" allowBlank="true"/>
+    </command>
+    <command name="Quit"/>
+    <command name="RMDir">
+      <param type="radio" optional="true">
+        <param name="/r" type="label"/>
+        <param name="/REBOOTOK" type="label"/>
+      </param>
+      <param name="directory_name" type="pathname"/>
+    </command>
+    <command name="ReadEnvStr">
+      <param name="user_var(output)" type="var"/>
+      <param name="name" type="string"/>
+    </command>
+    <command name="ReadINIStr">
+      <param name="user_var(output)" type="var"/>
+      <param name="ini_filename" type="pathname"/>
+      <param name="section_name" type="string"/>
+      <param name="entry_name" type="string"/>
+    </command>
+    <command name="ReadRegDWORD">
+      <param name="user_var(output)" type="var"/>
+      <param name="root_key" type="hkey"/>
+      <param name="subkey" type="string"/>
+      <param name="name" type="string" allowBlank="true"/>
+    </command>
+    <command name="ReadRegStr">
+      <param name="user_var(output)" type="var"/>
+      <param name="root_key" type="hkey"/>
+      <param name="subkey" type="string"/>
+      <param name="name" type="string" allowBlank="true"/>
+    </command>
+    <command name="Reboot"/>
+    <command name="RegDLL">
+      <param name="dllfile" type="pathname"/>
+      <param name="entrypoint_name" type="string" optional="true"/>
+    </command>
+    <command name="Rename">
+      <param name="/REBOOTOK" type="label" optional="true"/>
+      <param name="source_file" type="pathname"/>
+      <param name="dest_file" type="pathname"/>
+    </command>
+    <command name="ReserveFile">
+      <param name="/nonfatal" type="label" optional="true"/>
+      <param name="/r" type="label" optional="true"/>
+      <param type="repeatable" optional="true">
+        <param name="file" type="localfile" acceptVar="false">
+          <filter name="all.files.filter.name" value="*.*"/>
+        </param>
+      </param>
+    </command>
+    <command name="Return"/>
+    <command name="SearchPath">
+      <param name="user_var(output)" type="var"/>
+      <param name="filename" type="filename"/>
+    </command>
+    <command name="Section">
+      <param name="/o" type="label" optional="true"/>
+      <param name="section_name" type="string" allowBlank="true"/>
+      <param name="section index output" type="string" optional="true"/>
+    </command>
+    <command name="SectionEnd"/>
+    <command name="SectionGetFlags">
+      <param name="section_index" type="number" domain="natural"/>
+      <param name="user_var(output)" type="var"/>
+    </command>
+    <command name="SectionGetInstTypes">
+      <param name="section_index" type="number" domain="natural"/>
+      <param name="user_var(output)" type="var"/>
+    </command>
+    <command name="SectionGetSize">
+      <param name="section_index" type="number" domain="natural"/>
+      <param name="user_var" type="var"/>
+    </command>
+    <command name="SectionGetText">
+      <param name="section_index" type="number" domain="natural"/>
+      <param name="user_var(output)" type="var"/>
+    </command>
+    <command name="SectionIn">
+      <param type="repeatable" optional="true">
+        <param name="insttype_index" type="number" domain="natural" acceptVar="false"/>
+      </param>
+      <param name="RO" type="label" optional="true"/>
+    </command>
+    <command name="SectionSetFlags">
+      <param name="section_index" type="number" domain="natural"/>
+      <param name="section_flags" type="number" domain="natural"/>
+    </command>
+    <command name="SectionSetInstTypes">
+      <param name="section_index" type="number" domain="natural"/>
+      <param name="inst_types" type="number" domain="natural"/>
+    </command>
+    <command name="SectionSetSize">
+      <param name="section_index" type="number" domain="natural"/>
+      <param name="new_size" type="number" domain="natural"/>
+    </command>
+    <command name="SectionSetText">
+      <param name="section_index" type="number" domain="natural"/>
+      <param name="section_text" type="string" allowBlank="true"/>
+    </command>
+    <command name="SendMessage">
+      <param name="HWND" type="number" domain="positive"/>
+      <param name="wparam" type="number"/>
+      <param name="lparam" type="number"/>
+      <param type="radio">
+        <param name="user_var(return value)" type="var"/>
+        <param name="/TIMEOUT=time_in_ms" prefix="/TIMEOUT=" type="number" domain="natural"/>
+      </param>
+    </command>
+    <command name="SetAutoClose">
+      <param type="choice">
+        <choice value="true"/>
+        <choice value="false"/>
+      </param>
+    </command>
+    <command name="SetBrandingImage">
+      <param name="/IMGID=item_id_in_dialog" prefix="/IMGID=" type="number" domain="positive" optional="true" acceptVar="false"/>
+      <param name="/RESIZETOFIT" type="label" optional="true"/>
+      <param name="path_to_bitmap_file.bmp" type="localfile" acceptVar="false">
+        <filter name="bmp.files.filter.name" value="*.bmp"/>
+        <filter name="all.files.filter.name" value="*.*"/>
+      </param>
+    </command>
+    <command name="SetCompress">
+      <param type="choice">
+        <choice value="auto"/>
+        <choice value="force"/>
+        <choice value="off"/>
+      </param>
+    </command>
+    <command name="SetCompressionLevel">
+      <param name="level_0-9" type="choice">
+        <choice value="0"/>
+        <choice value="1"/>
+        <choice value="2"/>
+        <choice value="3"/>
+        <choice value="4"/>
+        <choice value="5"/>
+        <choice value="6"/>
+        <choice value="7"/>
+        <choice value="8"/>
+        <choice value="9"/>
+      </param>
+    </command>
+    <command name="SetCompressor">
+      <param name="/FINAL" type="label" optional="true"/>
+      <param type="choice">
+        <choice value="zlib"/>
+        <choice value="bzip2"/>
+        <choice value="lzma"/>
+      </param>
+    </command>
+    <command name="SetCompressorDictSize">
+      <param name="dict_size_mb" type="number" domain="positive" acceptVar="false"/>
+    </command>
+    <command name="SetCtlColors">
+      <param name="hwnd" type="number" domain="positive"/>
+      <param name="/BRANDING" type="label" optional="true"/>
+      <param name="text_color" type="rgb" optional="true"/>
+      <param type="radio" optional="true" depends="2">
+        <param name="transparent" type="label"/>
+        <param name="bg_color" type="rgb"/>
+      </param>
+    </command>
+    <command name="SetCurInstType">
+      <param name="inst_type_idx" type="number" domain="natural"/>
+    </command>
+    <command name="SetDatablockOptimize">
+      <param type="choice">
+        <choice value="on"/>
+        <choice value="off"/>
+      </param>
+    </command>
+    <command name="SetDateSave">
+      <param type="choice">
+        <choice value="on"/>
+        <choice value="off"/>
+      </param>
+    </command>
+    <command name="SetDetailsPrint">
+      <param type="choice">
+        <choice value="none"/>
+        <choice value="listonly"/>
+        <choice value="textonly"/>
+        <choice value="both"/>
+        <choice value="lastused"/>
+      </param>
+    </command>
+    <command name="SetDetailsView">
+      <param type="choice">
+        <choice value="show"/>
+        <choice value="hide"/>
+      </param>
+    </command>
+    <command name="SetErrors"/>
+    <command name="SetFileAttributes">
+      <param name="filename" type="pathname"/>
+      <param type="multi.choice">
+        <choice value="NORMAL"/>
+        <choice value="ARCHIVE"/>
+        <choice value="HIDDEN"/>
+        <choice value="OFFLINE"/>
+        <choice value="READONLY"/>
+        <choice value="SYSTEM"/>
+        <choice value="TEMPORARY"/>
+      </param>
+    </command>
+    <command name="SetFont">
+      <param name="/LANG=lang_id" prefix="/LANG=" type="language" optional="true"/>
+      <param name="font_face_name" type="string"/>
+      <param name="font_size" type="number" domain="positive"/>
+    </command>
+    <command name="SetOutPath">
+      <param name="outpath" type="pathname"/>
+    </command>
+    <command name="SetOverwrite">
+      <param type="choice">
+        <choice value="on"/>
+        <choice value="off"/>
+        <choice value="try"/>
+        <choice value="ifnewer"/>
+        <choice value="ifdiff"/>
+        <choice value="lastused"/>
+      </param>
+    </command>
+    <command name="SetPluginUnload">
+      <param type="choice">
+        <choice value="manual"/>
+        <choice value="alwaysoff"/>
+      </param>
+    </command>
+    <command name="SetRebootFlag">
+      <param type="choice">
+        <choice value="true"/>
+        <choice value="false"/>
+      </param>
+    </command>
+    <command name="SetShellVarContext">
+      <param type="choice">
+        <choice value="current"/>
+        <choice value="all"/>
+      </param>
+    </command>
+    <command name="SetSilent">
+      <param type="choice">
+        <choice value="silent"/>
+        <choice value="normal"/>
+      </param>
+    </command>
+    <command name="ShowInstDetails">
+      <param type="choice">
+        <choice value="show"/>
+        <choice value="hide"/>
+        <choice value="nevershow"/>
+      </param>
+    </command>
+    <command name="ShowUninstDetails">
+      <param type="choice">
+        <choice value="show"/>
+        <choice value="hide"/>
+        <choice value="nevershow"/>
+      </param>
+    </command>
+    <command name="ShowWindow">
+      <param name="hwnd" type="number" domain="positive"/>
+      <param type="choice">
+        <choice display="SW_HIDE" value="0"/>
+        <choice display="SW_SHOWNORMAL" value="1"/>
+        <choice display="SW_NORMAL" value="1"/>
+        <choice display="SW_SHOWMINIMIZED" value="2"/>
+        <choice display="SW_SHOWMAXIMIZED" value="3"/>
+        <choice display="SW_MAXIMIZE" value="3"/>
+        <choice display="SW_SHOWNOACTIVATE" value="4"/>
+        <choice display="SW_SHOW" value="5"/>
+        <choice display="SW_MINIMIZE" value="6"/>
+        <choice display="SW_SHOWMINNOACTIVE" value="7"/>
+        <choice display="SW_SHOWNA" value="8"/>
+        <choice display="SW_RESTORE" value="9"/>
+        <choice display="SW_SHOWDEFAULT" value="10"/>
+        <choice display="SW_FORCEMINIMIZE" value="11"/>
+        <choice display="SW_MAX" value="11"/>
+      </param>
+    </command>
+    <command name="SilentInstall">
+      <param type="choice">
+        <choice value="normal"/>
+        <choice value="silent"/>
+        <choice value="silentlog"/>
+      </param>
+    </command>
+    <command name="SilentUnInstall">
+      <param type="choice">
+        <choice value="normal"/>
+        <choice value="silent"/>
+      </param>
+    </command>
+    <command name="Sleep">
+      <param name="sleeptime_in_ms" type="number" domain="natural"/>
+    </command>
+    <command name="SpaceTexts">
+      <param name="req text" type="string" allowBlank="true" optional="true"/>
+      <param name="avail text" type="string" allowBlank="true" optional="true" depends="0"/>
+    </command>
+    <command name="StrCmp">
+      <param name="str1" type="string" allowBlank="true"/>
+      <param name="str2" type="string" allowBlank="true"/>
+      <param name="jump_if_equal" type="string"/>
+      <param name="jump_if_not_equal" type="string" optional="true"/>
+    </command>
+    <command name="StrCpy">
+      <param name="user_var(destination)" type="var"/>
+      <param name="str" type="string" allowBlank="true"/>
+      <param name="maxlen" type="number" optional="true"/>
+      <param name="start_offset" type="number" optional="true" depends="2"/>
+    </command>
+    <command name="StrLen">
+      <param name="user_var(length output)" type="var"/>
+      <param name="str" type="string" allowBlank="true"/>
+    </command>
+    <command name="SubCaption">
+      <param name="page_number" type="choice">
+        <choice display="subcaption.page.license.label" value="0"/>
+        <choice display="subcaption.page.options.label" value="1"/>
+        <choice display="subcaption.page.directory.label" value="2"/>
+        <choice display="subcaption.page.installing.label" value="3"/>
+        <choice display="subcaption.page.completed.label" value="4"/>
+      </param>
+      <param name="subcaption" type="string" allowBlank="true"/>
+    </command>
+    <command name="SubSection">
+      <param name="/e" type="label" optional="true"/>
+      <param name="sub_section_name" type="string"/>
+      <param name="index_output" type="string" optional="true"/>
+    </command>
+    <command name="SubSectionEnd"/>
+    <command name="UnRegDLL">
+      <param name="dllfile" type="pathname"/>
+    </command>
+    <command name="UninstPage">
+      <param type="radio">
+        <param type="group">
+          <param name="custom" type="label"/>
+          <param name="creator_function" type="string" allowBlank="true" optional="true"/>
+          <param name="leave_function" type="string" allowBlank="true" optional="true" depends="1"/>
+          <param name="caption" type="string" allowBlank="true" optional="true" depends="2"/>
+        </param>
+        <param type="group">
+          <param type="choice">
+            <choice value="license"/>
+            <choice value="components"/>
+            <choice value="directory"/>
+            <choice value="instfiles"/>
+            <choice value="uninstConfirm"/>
+          </param>
+          <param name="pre_function" type="string" allowBlank="true" optional="true"/>
+          <param name="show_function" type="string" allowBlank="true" optional="true" depends="1"/>
+          <param name="leave_function" type="string" allowBlank="true" optional="true" depends="2"/>
+        </param>
+      </param>
+    </command>
+    <command name="UninstallButtonText">
+      <param name="text" type="string" allowBlank="true"/>
+    </command>
+    <command name="UninstallCaption">
+      <param name="caption" type="string" allowBlank="true"/>
+    </command>
+    <command name="UninstallIcon">
+      <param name="[path\]icon.ico" type="localfile" acceptVar="false">
+        <filter name="ico.files.filter.name" value="*.ico"/>
+        <filter name="all.files.filter.name" value="*.*"/>
+      </param>
+    </command>
+    <command name="UninstallSubCaption">
+      <param name="page_number" type="choice">
+        <choice display="unsubcaption.page.confirmation.label" value="0"/>
+        <choice display="unsubcaption.page.uninstalling.label" value="1"/>
+        <choice display="unsubcaption.page.completed.label" value="2"/>
+      </param>
+      <param name="subcaption" type="string" allowBlank="true"/>
+    </command>
+    <command name="UninstallText">
+      <param name="text" type="string" allowBlank="true"/>
+      <param name="subtext" type="string" allowBlank="true" optional="true"/>
+    </command>
+    <command name="VIAddVersionKey">
+      <param name="/LANG=lang_id" prefix="/LANG=" type="language" optional="true"/>
+      <param name="keyname" type="string"/>
+      <param name="value" type="string" allowBlank="true"/>
+    </command>
+    <command name="VIProductVersion">
+      <param name="version_string_X.X.X.X" type="version.string"/>
+    </command>
+    <command name="Var">
+      <param name="var_name" type="var.string" acceptVar="false"/>
+    </command>
+    <command name="WindowIcon">
+      <param type="choice">
+        <choice value="on"/>
+        <choice value="off"/>
+      </param>
+    </command>
+    <command name="WriteINIStr">
+      <param name="ini_filename" type="pathname"/>
+      <param name="section_name" type="string"/>
+      <param name="entry_name" type="string"/>
+      <param name="value" type="string" allowBlank="true"/>
+    </command>
+    <command name="WriteRegBin">
+      <param name="root_key" type="hkey"/>
+      <param name="subkey" type="string"/>
+      <param name="key_name" type="string" allowBlank="true"/>
+      <param name="valuedata" type="hex.string" acceptVar="false" acceptSymbol="false"/>
+    </command>
+    <command name="WriteRegDWORD">
+      <param name="root_key" type="hkey"/>
+      <param name="subkey" type="string"/>
+      <param name="key_name" type="string" allowBlank="true"/>
+      <param name="value" type="number" domain="natural"/>
+    </command>
+    <command name="WriteRegExpandStr">
+      <param name="root_key" type="hkey"/>
+      <param name="subkey" type="string"/>
+      <param name="key_name" type="string" allowBlank="true"/>
+      <param name="value" type="string" allowBlank="true"/>
+    </command>
+    <command name="WriteRegStr">
+      <param name="root_key" type="hkey"/>
+      <param name="subkey" type="string"/>
+      <param name="key_name" type="string" allowBlank="true"/>
+      <param name="value" type="string" allowBlank="true"/>
+    </command>
+    <command name="WriteUninstaller">
+      <param name="[Path\]exename.exe" type="pathname"/>
+    </command>
+    <command name="XPStyle">
+      <param type="choice">
+        <choice value="on"/>
+        <choice value="off"/>
+      </param>
+    </command>
+  </version>
+</commands>

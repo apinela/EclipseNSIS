@@ -12,7 +12,6 @@ package net.sf.eclipsensis.installoptions.edit.unknown;
 import java.beans.PropertyChangeEvent;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
-import net.sf.eclipsensis.installoptions.edit.InstallOptionsDirectEditPolicy;
 import net.sf.eclipsensis.installoptions.edit.InstallOptionsWidgetEditPart;
 import net.sf.eclipsensis.installoptions.figures.*;
 import net.sf.eclipsensis.installoptions.figures.FigureUtility.NTFigure;
@@ -26,6 +25,7 @@ import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.EditPolicy;
 import org.eclipse.gef.commands.Command;
+import org.eclipse.gef.editpolicies.DirectEditPolicy;
 import org.eclipse.gef.requests.DirectEditRequest;
 import org.eclipse.gef.tools.CellEditorLocator;
 import org.eclipse.gef.tools.DirectEditManager;
@@ -51,7 +51,7 @@ public class InstallOptionsUnknownEditPart extends InstallOptionsWidgetEditPart
     protected void createEditPolicies()
     {
         super.createEditPolicies();
-        installEditPolicy(EditPolicy.DIRECT_EDIT_ROLE, new InstallOptionsDirectEditPolicy(this){
+        installEditPolicy(EditPolicy.DIRECT_EDIT_ROLE, new DirectEditPolicy(){
             protected Command getDirectEditCommand(DirectEditRequest request)
             {
                 String type = (String)request.getCellEditor().getValue();
