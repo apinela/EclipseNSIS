@@ -22,13 +22,12 @@ import net.sf.eclipsensis.installoptions.ini.*;
 import net.sf.eclipsensis.installoptions.model.*;
 import net.sf.eclipsensis.job.IJobStatusRunnable;
 import net.sf.eclipsensis.job.JobScheduler;
-import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.gef.Disposable;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IMenuCreator;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.CompositeImageDescriptor;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -51,6 +50,16 @@ import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
 public class InstallOptionsSourceEditor extends TextEditor implements IInstallOptionsEditor, IINIFileListener, IProjectionListener
 {
+    public static final String EXPORT_HTML_ACTION = "net.sf.eclipsensis.installoptions.export_html";
+
+    private static final String FOLDING_COLLAPSE = "net.sf.eclipsensis.installoptions.folding_collapse";
+
+    private static final String FOLDING_EXPAND = "net.sf.eclipsensis.installoptions.folding_expand";
+
+    private static final String FOLDING_EXPAND_ALL = "net.sf.eclipsensis.installoptions.folding_expand_all";
+
+    private static final String FOLDING_TOGGLE = "net.sf.eclipsensis.installoptions.folding_toggle";
+
     private static final String[] KEY_BINDING_SCOPES = new String[] { IInstallOptionsConstants.EDITING_INSTALLOPTIONS_SOURCE_CONTEXT_ID };
 
     private static final String MARKER_CATEGORY = "__installoptions_marker"; //$NON-NLS-1$
@@ -133,26 +142,41 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
         action = new PreviewAction(PREVIEW_MUI, this);
         setAction(action.getId(),action);
 
+        action = new Action() {
+            private HTMLExporter mHTMLExporter;
+            
+            public void run()
+            {
+                if(mHTMLExporter == null) {
+                    mHTMLExporter = new HTMLExporter(InstallOptionsSourceEditor.this,getSourceViewer());
+                }
+                mHTMLExporter.exportHTML();
+            }
+        };
+        action.setEnabled(true);
+        action.setId(EXPORT_HTML_ACTION);
+        setAction(action.getId(),action);
+        
         ResourceBundle resourceBundle = InstallOptionsPlugin.getDefault().getResourceBundle();
         action = new TextOperationAction(resourceBundle, "projection.toggle.", this, ProjectionViewer.TOGGLE, true); //$NON-NLS-1$
         action.setActionDefinitionId(IFoldingCommandIds.FOLDING_TOGGLE);
         action.setEnabled(true);
-        setAction("net.sf.eclipsensis.installoptions.folding_toggle", action); //$NON-NLS-1$
+        setAction(FOLDING_TOGGLE, action);
 
         action = new TextOperationAction(resourceBundle, "projection.expand.all.", this, ProjectionViewer.EXPAND_ALL, true); //$NON-NLS-1$
         action.setActionDefinitionId(IFoldingCommandIds.FOLDING_EXPAND_ALL);
         action.setEnabled(true);
-        setAction("net.sf.eclipsensis.installoptions.folding_expand_all", action); //$NON-NLS-1$
+        setAction(FOLDING_EXPAND_ALL, action);
 
         action= new TextOperationAction(resourceBundle, "projection.expand.", this, ProjectionViewer.EXPAND, true); //$NON-NLS-1$
         action.setActionDefinitionId(IFoldingCommandIds.FOLDING_EXPAND);
         action.setEnabled(true);
-        setAction("net.sf.eclipsensis.installoptions.folding_expand", action); //$NON-NLS-1$
+        setAction(FOLDING_EXPAND, action);
 
         action= new TextOperationAction(resourceBundle, "projection.collapse.", this, ProjectionViewer.COLLAPSE, true); //$NON-NLS-1$
         action.setActionDefinitionId(IFoldingCommandIds.FOLDING_COLLAPSE);
         action.setEnabled(true);
-        setAction("net.sf.eclipsensis.installoptions.folding_collapse", action); //$NON-NLS-1$
+        setAction(FOLDING_COLLAPSE, action);
 
 //        a= new TextOperationAction(resourceBundle, "projection.collapse.all.", this, ProjectionViewer.COLLAPSE_ALL, true); //$NON-NLS-1$
 //        a.setActionDefinitionId(IFoldingCommandIds.FOLDING_COLLAPSE_ALL);
@@ -183,6 +207,17 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
             });
             setAction(ITextEditorActionConstants.CONTEXT_PREFERENCES, action2);
         }
+    }
+
+    protected void rulerContextMenuAboutToShow(IMenuManager menu) {
+        super.rulerContextMenuAboutToShow(menu);
+        IMenuManager foldingMenu= new MenuManager("F&olding", "projection");
+        menu.appendToGroup(ITextEditorActionConstants.GROUP_RULERS, foldingMenu);
+
+        IAction action= getAction(FOLDING_TOGGLE);
+        foldingMenu.add(action);
+        action= getAction(FOLDING_EXPAND_ALL);
+        foldingMenu.add(action);
     }
 
     protected String[] collectContextMenuPreferencePages()

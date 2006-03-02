@@ -19,8 +19,8 @@ public interface INSISEditorConstants
     public static final String INSERT_FILE = PREFIX+"insert_file"; //$NON-NLS-1$
     public static final String INSERT_DIRECTORY = PREFIX+"insert_directory"; //$NON-NLS-1$
     public static final String INSERT_COLOR = PREFIX+"insert_color"; //$NON-NLS-1$
-    public static final String IMPORT_REGFILE = PREFIX+"import_reg_file"; //$NON-NLS-1$
-    public static final String IMPORT_REGKEY = PREFIX+"import_reg_key"; //$NON-NLS-1$
+    public static final String INSERT_REGFILE = PREFIX+"import_reg_file"; //$NON-NLS-1$
+    public static final String INSERT_REGKEY = PREFIX+"import_reg_key"; //$NON-NLS-1$
     public static final String TABS_TO_SPACES = PREFIX+"tabs_to_spaces"; //$NON-NLS-1$
     public static final String TOGGLE_COMMENT = PREFIX+"toggle_comment"; //$NON-NLS-1$
     public static final String ADD_BLOCK_COMMENT = PREFIX+"add_block_comment"; //$NON-NLS-1$

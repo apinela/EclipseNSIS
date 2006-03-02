@@ -235,6 +235,16 @@
                id="%preferences.action.id">
          </action>
          <action
+               label="%export.html.action.name"
+               disabledIcon="icons/html_d.gif"
+               icon="icons/html.gif"
+               class="net.sf.eclipsensis.actions.NSISExportHTMLAction"
+               tooltip="%export.html.action.tooltip"
+               menubarPath="net.sf.eclipsensis.Menu/net.sf.eclipsensis.Group2"
+               toolbarPath="net.sf.eclipsensis.Group"
+               id="%export.html.action.id">
+         </action>
+         <action
                label="%clear.markers.action.name"
                tooltip="%clear.markers.action.tooltip"
                class="net.sf.eclipsensis.actions.NSISClearMarkersAction"
@@ -561,14 +571,14 @@
       </command>
       <command
             categoryId="%category.id"
-            description="%import.regfile.description"
-            id="%import.regfile.command.id"
-            name="%import.regfile.name"/>
+            description="%insert.regfile.description"
+            id="%insert.regfile.command.id"
+            name="%insert.regfile.name"/>
       <command
             categoryId="%category.id"
-            description="%import.regkey.description"
-            id="%import.regkey.command.id"
-            name="%import.regkey.name"/>
+            description="%insert.regkey.description"
+            id="%insert.regkey.command.id"
+            name="%insert.regkey.name"/>
    </extension>
    <extension
          point="org.eclipse.ui.bindings">
@@ -664,15 +674,15 @@
           contextId="%context.editingNSISSource.id"
           sequence="%cancel.keysequence"/>
       <key
-            commandId="%import.regfile.command.id"
+            commandId="%insert.regfile.command.id"
             contextId="%context.editingNSISSource.id"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="%import.regfile.keysequence"/>
+            sequence="%insert.regfile.keysequence"/>
       <key
-            commandId="%import.regkey.command.id"
+            commandId="%insert.regkey.command.id"
             contextId="%context.editingNSISSource.id"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="%import.regkey.keysequence"/>
+            sequence="%insert.regkey.keysequence"/>
    </extension>
    <extension
          point="org.eclipse.help.contexts">

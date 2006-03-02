@@ -401,7 +401,7 @@ public abstract class AbstractTemplateSettings extends Composite
 
         File file= new File(path);
 
-        if (!file.exists() || Common.openConfirm(getShell(),EclipseNSISPlugin.getFormattedString("template.settings.export.save.confirm",new Object[]{file.getAbsolutePath()}), getShellImage())) { //$NON-NLS-1$
+        if (!file.exists() || Common.openConfirm(getShell(),EclipseNSISPlugin.getFormattedString("save.confirm",new Object[]{file.getAbsolutePath()}), getShellImage())) { //$NON-NLS-1$
             try {
                 mTemplateManager.getReaderWriter().export(templates, file);
             }

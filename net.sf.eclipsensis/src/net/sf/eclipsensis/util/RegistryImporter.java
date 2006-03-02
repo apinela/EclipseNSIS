@@ -81,7 +81,7 @@ public class RegistryImporter
             }
         }
         
-        Common.openWarning(shell, EclipseNSISPlugin.getResourceString("import.regkey.messagebox.title"), EclipseNSISPlugin.getResourceString("select.regkey.dialog.title"), EclipseNSISPlugin.getShellImage()); //$NON-NLS-1$ //$NON-NLS-2$
+        Common.openWarning(shell, EclipseNSISPlugin.getResourceString("insert.regkey.messagebox.title"), EclipseNSISPlugin.getResourceString("select.regkey.dialog.title"), EclipseNSISPlugin.getShellImage()); //$NON-NLS-1$ //$NON-NLS-2$
         FileDialog dialog = new FileDialog(shell, SWT.OPEN);
         dialog.setFileName(REGEDIT_EXE);
         dialog.setText(EclipseNSISPlugin.getResourceString(EclipseNSISPlugin.getResourceString("select.regkey.dialog.message"))); //$NON-NLS-1$
@@ -108,7 +108,7 @@ public class RegistryImporter
     {
         File regEdit = getRegEdit(shell);
         if(regEdit == null) {
-            Common.openError(shell, EclipseNSISPlugin.getResourceString("import.regkey.messagebox.title"), EclipseNSISPlugin.getResourceString("missing.regedit.error"), EclipseNSISPlugin.getShellImage()); //$NON-NLS-1$ //$NON-NLS-2$
+            Common.openError(shell, EclipseNSISPlugin.getResourceString("insert.regkey.messagebox.title"), EclipseNSISPlugin.getResourceString("missing.regedit.error"), EclipseNSISPlugin.getShellImage()); //$NON-NLS-1$ //$NON-NLS-2$
         }
         else {
             RegistryKeySelectionDialog dialog = new RegistryKeySelectionDialog(shell);
@@ -146,7 +146,7 @@ public class RegistryImporter
         FileDialog dialog = new FileDialog(shell, SWT.OPEN);
         dialog.setFilterExtensions(cRegFileFilters);
         dialog.setFilterNames(cRegFileFilterNames);
-        dialog.setText(EclipseNSISPlugin.getResourceString("import.regfile.description")); //$NON-NLS-1$
+        dialog.setText(EclipseNSISPlugin.getResourceString("insert.regfile.description")); //$NON-NLS-1$
         return importRegFile(shell, dialog.open());
     }
 
@@ -333,11 +333,11 @@ public class RegistryImporter
                                                                     bytes = new byte[values.length - delta]; //Last character is NULL
                                                                     for (int i = 0; i < bytes.length; i += delta) {
                                                                         if (isRegEdit4) {
-                                                                            bytes[i] = Byte.parseByte(values[i], 16);
+                                                                            bytes[i] = (byte)Integer.parseInt(values[i], 16);
                                                                         }
                                                                         else {
-                                                                            bytes[i] = Byte.parseByte(values[i + 1], 16);
-                                                                            bytes[i + 1] = Byte.parseByte(values[i], 16);
+                                                                            bytes[i] = (byte)Integer.parseInt(values[i + 1], 16);
+                                                                            bytes[i + 1] = (byte)Integer.parseInt(values[i], 16);
                                                                         }
                                                                     }
                                                                     context = addLineToBuf(buf, makeRegCommand(cWriteRegValueFormat, new String[]{writeRegExpandStr, rootKey, subKey, valueName,

@@ -36,8 +36,8 @@ public class NSISActionContributor extends TextEditorActionContributor implement
     private RetargetTextEditorAction mInsertFile;
     private RetargetTextEditorAction mInsertDirectory;
     private RetargetTextEditorAction mInsertColor;
-    private RetargetTextEditorAction mImportRegFile;
-    private RetargetTextEditorAction mImportRegKey;
+    private RetargetTextEditorAction mInsertRegFile;
+    private RetargetTextEditorAction mInsertRegKey;
     private IContributionItem mConfigWizardAction;
     private IMenuManager mMenuManager = null;
 
@@ -78,13 +78,13 @@ public class NSISActionContributor extends TextEditorActionContributor implement
         mInsertColor.setImageDescriptor(EclipseNSISPlugin.getImageManager().getImageDescriptor(bundle.getString("insert.color.image"))); //$NON-NLS-1$
         mInsertColor.setActionDefinitionId(INSERT_COLOR_COMMAND_ID);
 
-        mImportRegFile= new RetargetTextEditorAction(bundle, "import.regfile."); //$NON-NLS-1$
-        mImportRegFile.setImageDescriptor(EclipseNSISPlugin.getImageManager().getImageDescriptor(bundle.getString("import.regfile.image"))); //$NON-NLS-1$
-        mImportRegFile.setActionDefinitionId(IMPORT_REGFILE_COMMAND_ID);
+        mInsertRegFile= new RetargetTextEditorAction(bundle, "insert.regfile."); //$NON-NLS-1$
+        mInsertRegFile.setImageDescriptor(EclipseNSISPlugin.getImageManager().getImageDescriptor(bundle.getString("insert.regfile.image"))); //$NON-NLS-1$
+        mInsertRegFile.setActionDefinitionId(INSERT_REGFILE_COMMAND_ID);
 
-        mImportRegKey= new RetargetTextEditorAction(bundle, "import.regkey."); //$NON-NLS-1$
-        mImportRegKey.setImageDescriptor(EclipseNSISPlugin.getImageManager().getImageDescriptor(bundle.getString("import.regkey.image"))); //$NON-NLS-1$
-        mImportRegKey.setActionDefinitionId(IMPORT_REGKEY_COMMAND_ID);
+        mInsertRegKey= new RetargetTextEditorAction(bundle, "insert.regkey."); //$NON-NLS-1$
+        mInsertRegKey.setImageDescriptor(EclipseNSISPlugin.getImageManager().getImageDescriptor(bundle.getString("insert.regkey.image"))); //$NON-NLS-1$
+        mInsertRegKey.setActionDefinitionId(INSERT_REGKEY_COMMAND_ID);
         
         mConfigWizardAction = new ActionContributionItem(new NSISConfigWizardAction());
     }
@@ -111,8 +111,8 @@ public class NSISActionContributor extends TextEditorActionContributor implement
             editMenu.add(mInsertFile);
             editMenu.add(mInsertDirectory);
             editMenu.add(mInsertColor);
-            editMenu.add(mImportRegFile);
-            editMenu.add(mImportRegKey);
+            editMenu.add(mInsertRegFile);
+            editMenu.add(mInsertRegKey);
 		}
         editMenu.addMenuListener(new IMenuListener() {
             public void menuAboutToShow(IMenuManager manager)
@@ -162,8 +162,8 @@ public class NSISActionContributor extends TextEditorActionContributor implement
         mInsertFile.setAction(getAction(editor, INSISEditorConstants.INSERT_FILE)); 
         mInsertDirectory.setAction(getAction(editor, INSISEditorConstants.INSERT_DIRECTORY)); 
         mInsertColor.setAction(getAction(editor, INSISEditorConstants.INSERT_COLOR)); 
-        mImportRegFile.setAction(getAction(editor, INSISEditorConstants.IMPORT_REGFILE)); 
-        mImportRegKey.setAction(getAction(editor, INSISEditorConstants.IMPORT_REGKEY)); 
+        mInsertRegFile.setAction(getAction(editor, INSISEditorConstants.INSERT_REGFILE)); 
+        mInsertRegKey.setAction(getAction(editor, INSISEditorConstants.INSERT_REGKEY)); 
 	}
 	
 	/*

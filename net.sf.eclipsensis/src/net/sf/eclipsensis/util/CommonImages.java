@@ -29,6 +29,7 @@ public class CommonImages
     public static final Image COLLAPSEALL_DISABLED_ICON = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("collapseall.disabled.icon")); //$NON-NLS-1$
     public static final Image UP_ICON = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("up.icon")); //$NON-NLS-1$
     public static final Image DOWN_ICON = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("down.icon")); //$NON-NLS-1$
+    public static final Image EXPORT_HTML_ICON = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("export.html.icon")); //$NON-NLS-1$
 
     private CommonImages()
     {

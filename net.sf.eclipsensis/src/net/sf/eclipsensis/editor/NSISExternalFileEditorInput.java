@@ -9,19 +9,21 @@
  *******************************************************************************/
 package net.sf.eclipsensis.editor;
 
-import java.io.File;
+import java.io.*;
 
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
+import net.sf.eclipsensis.INSISConstants;
+
+import org.eclipse.core.resources.IStorage;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.ui.IPathEditorInput;
-import org.eclipse.ui.IPersistableElement;
+import org.eclipse.ui.*;
 import org.eclipse.ui.editors.text.ILocationProvider;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
-public class NSISExternalFileEditorInput implements IPathEditorInput, ILocationProvider, IWorkbenchAdapter
+public class NSISExternalFileEditorInput implements IPathEditorInput, ILocationProvider, IWorkbenchAdapter, IStorageEditorInput
 {
     private File mFile;
+    private IStorage mStorage;
 
     public NSISExternalFileEditorInput(File file)
     {
@@ -124,5 +126,45 @@ public class NSISExternalFileEditorInput implements IPathEditorInput, ILocationP
         }
 
         return false;
+    }
+
+    public IStorage getStorage()
+    {
+        if(mStorage == null) {
+            mStorage = new IStorage() {
+                public InputStream getContents() throws CoreException
+                {
+                    try {
+                        return new BufferedInputStream(new FileInputStream(mFile));
+                    }
+                    catch (FileNotFoundException e) {
+                        throw new CoreException(new Status(IStatus.ERROR,INSISConstants.PLUGIN_ID,
+                                                           1,e.getMessage(),e));
+                    }
+                }
+    
+                public IPath getFullPath()
+                {
+                    return getPath();
+                }
+    
+                public String getName()
+                {
+                    return NSISExternalFileEditorInput.this.getName();
+                }
+    
+                public boolean isReadOnly()
+                {
+                    return (mFile != null && mFile.exists() && !mFile.canWrite());
+                }
+    
+                public Object getAdapter(Class adapter)
+                {
+                    return NSISExternalFileEditorInput.this.getAdapter(adapter);
+                }
+            };
+            
+        }
+        return mStorage;
     }
 }

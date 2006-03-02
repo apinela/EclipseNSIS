@@ -37,7 +37,7 @@ public class NSISManualConfigWizard extends NSISConfigWizard
     {
         super();
         setNeedsProgressMonitor(false);
-        setWindowTitle(EclipseNSISPlugin.getResourceString(EclipseNSISPlugin.getResourceString("manua.config.wizard.title"))); //$NON-NLS-1$
+        setWindowTitle(EclipseNSISPlugin.getResourceString(EclipseNSISPlugin.getResourceString("manual.config.wizard.title"))); //$NON-NLS-1$
         mPageChangedListener = new WizardShellImageChanger(this, cShellImage);
     }
 

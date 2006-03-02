@@ -12,6 +12,8 @@ package net.sf.eclipsensis.installoptions.actions;
 
 import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
+import net.sf.eclipsensis.installoptions.editor.InstallOptionsSourceEditor;
+import net.sf.eclipsensis.util.CommonImages;
 
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -23,6 +25,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
 public class InstallOptionsSourceActionContributor extends TextEditorActionContributor
 {
     private MenuManager mInstallOptionsMenu;
+    private RetargetAction mExportHTMLAction;
     private RetargetAction mSwitchEditorAction;
     private DropDownAction mPreviewGroupAction;
     private PreviewRetargetAction mPreviewClassicAction;
@@ -43,6 +46,11 @@ public class InstallOptionsSourceActionContributor extends TextEditorActionContr
         mSwitchEditorAction.setActionDefinitionId(IInstallOptionsConstants.SWITCH_EDITOR_COMMAND_ID);
         getPage().addPartListener(mSwitchEditorAction);
 
+        mExportHTMLAction = new RetargetAction(InstallOptionsSourceEditor.EXPORT_HTML_ACTION,"E&xport as HTML");
+        mExportHTMLAction.setToolTipText("Export the InstallOptions script as an HTML file");
+        mExportHTMLAction.setImageDescriptor(ImageDescriptor.createFromImage(CommonImages.EXPORT_HTML_ICON));
+        getPage().addPartListener(mExportHTMLAction);
+        
         mPreviewClassicAction = new PreviewRetargetAction(IInstallOptionsConstants.PREVIEW_CLASSIC);
         getPage().addPartListener(mPreviewClassicAction);
         mPreviewMUIAction = new PreviewRetargetAction(IInstallOptionsConstants.PREVIEW_MUI);
@@ -65,6 +73,7 @@ public class InstallOptionsSourceActionContributor extends TextEditorActionContr
         mInstallOptionsMenu.add(new Separator());
         mInstallOptionsMenu.add(new PreviewSubMenuManager(previewRetargetActions));
         mInstallOptionsMenu.add(new Separator());
+        mInstallOptionsMenu.add(mExportHTMLAction);
         mInstallOptionsMenu.add(mSwitchEditorAction);
         mInstallOptionsMenu.add(new Separator());
         mInstallOptionsMenu.add(mHelpAction);
@@ -85,6 +94,7 @@ public class InstallOptionsSourceActionContributor extends TextEditorActionContr
         tbm.add(mPreviewGroupAction);
         tbm.add(mLanguageContributionItem);
         tbm.add(new Separator());
+        tbm.add(mExportHTMLAction);
         tbm.add(mSwitchEditorAction);
         tbm.add(new Separator());
         tbm.add(mHelpAction);
@@ -101,6 +111,7 @@ public class InstallOptionsSourceActionContributor extends TextEditorActionContr
         super.setActiveEditor(part);
         IActionBars bars = getActionBars();
         ITextEditor editor = (part instanceof ITextEditor?(ITextEditor)part:null);
+        setGlobalActionHandler(bars, editor, InstallOptionsSourceEditor.EXPORT_HTML_ACTION);
         setGlobalActionHandler(bars, editor, SwitchEditorAction.ID);
         setGlobalActionHandler(bars, editor, PreviewAction.PREVIEW_CLASSIC_ID);
         setGlobalActionHandler(bars, editor, PreviewAction.PREVIEW_MUI_ID);
@@ -114,10 +125,12 @@ public class InstallOptionsSourceActionContributor extends TextEditorActionContr
 
     public void dispose()
     {
+        getPage().removePartListener(mExportHTMLAction);
         getPage().removePartListener(mSwitchEditorAction);
         getPage().removePartListener(mPreviewClassicAction);
         getPage().removePartListener(mPreviewMUIAction);
         getPage().removePartListener(mPreviewGroupAction);
+        mExportHTMLAction.dispose();
         mSwitchEditorAction.dispose();
         mPreviewGroupAction.dispose();
         mLanguageContributionItem.dispose();

@@ -9,7 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.editor;
 
-import java.io.File;
+import java.io.*;
 import java.util.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
@@ -30,6 +30,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.*;
+import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.information.InformationPresenter;
 import org.eclipse.jface.text.source.*;
 import org.eclipse.jface.text.source.projection.*;
@@ -37,8 +38,8 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.dnd.*;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.editors.text.*;
@@ -53,6 +54,7 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
     private NSISOutlineContentProvider mOutlineContentProvider;
     private Position mCurrentPosition = null;
     private Mutex mMutex = new Mutex();
+    private HTMLExporter mHTMLExporter;
 
     /**
      *
@@ -223,15 +225,15 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
         a.setImageDescriptor(EclipseNSISPlugin.getImageManager().getImageDescriptor(resourceBundle.getString("insert.color.image"))); //$NON-NLS-1$
         setAction(INSISEditorConstants.INSERT_COLOR, a); 
 
-        a = new TextOperationAction(resourceBundle,"import.regfile.",this,NSISSourceViewer.IMPORT_REGFILE,false); //$NON-NLS-1$
-        a.setActionDefinitionId(IMPORT_REGFILE_COMMAND_ID);
-        a.setImageDescriptor(EclipseNSISPlugin.getImageManager().getImageDescriptor(resourceBundle.getString("import.regfile.image"))); //$NON-NLS-1$
-        setAction(INSISEditorConstants.IMPORT_REGFILE, a); 
+        a = new TextOperationAction(resourceBundle,"insert.regfile.",this,NSISSourceViewer.IMPORT_REGFILE,false); //$NON-NLS-1$
+        a.setActionDefinitionId(INSERT_REGFILE_COMMAND_ID);
+        a.setImageDescriptor(EclipseNSISPlugin.getImageManager().getImageDescriptor(resourceBundle.getString("insert.regfile.image"))); //$NON-NLS-1$
+        setAction(INSISEditorConstants.INSERT_REGFILE, a); 
 
-        a = new TextOperationAction(resourceBundle,"import.regkey.",this,NSISSourceViewer.IMPORT_REGKEY,false); //$NON-NLS-1$
-        a.setActionDefinitionId(IMPORT_REGKEY_COMMAND_ID);
-        a.setImageDescriptor(EclipseNSISPlugin.getImageManager().getImageDescriptor(resourceBundle.getString("import.regkey.image"))); //$NON-NLS-1$
-        setAction(INSISEditorConstants.IMPORT_REGKEY, a); 
+        a = new TextOperationAction(resourceBundle,"insert.regkey.",this,NSISSourceViewer.IMPORT_REGKEY,false); //$NON-NLS-1$
+        a.setActionDefinitionId(INSERT_REGKEY_COMMAND_ID);
+        a.setImageDescriptor(EclipseNSISPlugin.getImageManager().getImageDescriptor(resourceBundle.getString("insert.regkey.image"))); //$NON-NLS-1$
+        setAction(INSISEditorConstants.INSERT_REGKEY, a); 
 
         a = new TextOperationAction(resourceBundle,"tabs.to.spaces.",this,NSISSourceViewer.TABS_TO_SPACES,false); //$NON-NLS-1$
         a.setActionDefinitionId(TABS_TO_SPACES_COMMAND_ID);
@@ -278,6 +280,17 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
 //        a.setActionDefinitionId(IFoldingCommandIds.FOLDING_RESTORE);
 //        a.setEnabled(true);
 //        setAction("CollapseAll", a); //$NON-NLS-1$
+    }
+
+    protected void rulerContextMenuAboutToShow(IMenuManager menu) {
+        super.rulerContextMenuAboutToShow(menu);
+        IMenuManager foldingMenu= new MenuManager("F&olding", "projection");
+        menu.appendToGroup(ITextEditorActionConstants.GROUP_RULERS, foldingMenu);
+
+        IAction action= getAction(INSISEditorConstants.FOLDING_TOGGLE);
+        foldingMenu.add(action);
+        action= getAction(INSISEditorConstants.FOLDING_EXPAND_ALL);
+        foldingMenu.add(action);
     }
 
     public void dispose()
@@ -335,8 +348,8 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
         addAction(menu, INSISEditorConstants.INSERT_FILE); 
         addAction(menu, INSISEditorConstants.INSERT_DIRECTORY); 
         addAction(menu, INSISEditorConstants.INSERT_COLOR); 
-        addAction(menu, INSISEditorConstants.IMPORT_REGFILE); 
-        addAction(menu, INSISEditorConstants.IMPORT_REGKEY); 
+        addAction(menu, INSISEditorConstants.INSERT_REGFILE); 
+        addAction(menu, INSISEditorConstants.INSERT_REGKEY); 
     }
 
     /*
@@ -735,6 +748,14 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
     public NSISOutlineContentProvider getOutlineContentProvider()
     {
         return mOutlineContentProvider;
+    }
+
+    public void exportHTML()
+    {
+        if(mHTMLExporter == null) {
+            mHTMLExporter = new HTMLExporter(this, getSourceViewer());
+        }
+        mHTMLExporter.exportHTML();
     }
 
     private class NSISStickyHelpAction extends TextEditorAction
