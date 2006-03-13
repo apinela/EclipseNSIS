@@ -9,7 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.ini.validators;
 
-import java.util.Collection;
+import java.util.*;
 
 import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
@@ -20,10 +20,7 @@ import net.sf.eclipsensis.util.Common;
 
 public class FlagsKeyValueValidator implements IINIKeyValueValidator
 {
-    /* (non-Javadoc)
-     * @see net.sf.eclipsensis.installoptions.ini.validators.IINIKeyValueValidator#validate(net.sf.eclipsensis.installoptions.ini.INIKeyValue)
-     */
-    public boolean isValid(INIKeyValue keyValue)
+    public boolean validate(INIKeyValue keyValue, int fixFlag)
     {
         IINIContainer c = keyValue.getParent();
         if(c instanceof INISection) {
@@ -36,22 +33,33 @@ public class FlagsKeyValueValidator implements IINIKeyValueValidator
                         Collection availableFlags;
                         availableFlags = typeDef.getFlags();
                         StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
-                        String[] flags = Common.tokenize(value,IInstallOptionsConstants.LIST_SEPARATOR,false);
+                        List flags = Common.tokenizeToList(value,IInstallOptionsConstants.LIST_SEPARATOR,false);
                         int n = 0;
-                        for (int i = 0; i < flags.length; i++) {
-                            if(!Common.isEmpty(flags[i]) && !availableFlags.contains(flags[i])) {
-                                if(n > 0) {
-                                    buf.append(", "); //$NON-NLS-1$
+                        for (Iterator iter=flags.iterator(); iter.hasNext(); ) {
+                            String flag = (String)iter.next();
+                            if(!Common.isEmpty(flag) && !availableFlags.contains(flag)) {
+                                if((fixFlag & INILine.VALIDATE_FIX_WARNINGS)> 0) {
+                                    iter.remove();
                                 }
-                                buf.append("\"").append(flags[i]).append("\""); //$NON-NLS-1$ //$NON-NLS-2$
+                                else {
+                                    if(n > 0) {
+                                        buf.append(", "); //$NON-NLS-1$
+                                    }
+                                    buf.append("\"").append(flag).append("\""); //$NON-NLS-1$ //$NON-NLS-2$
+                                }
                                 n++;
                             }
                         }
                         if(n > 0) {
-                            keyValue.addProblem(INIProblem.TYPE_WARNING,
-                                                InstallOptionsPlugin.getFormattedString("flags.value.warning", //$NON-NLS-1$
-                                                        new Object[]{InstallOptionsModel.PROPERTY_TYPE,
-                                                                     types[0].getValue(),new Integer(n),buf.toString()}));
+                            if((fixFlag & INILine.VALIDATE_FIX_WARNINGS)> 0) {
+                                keyValue.setValue(Common.flatten(flags, IInstallOptionsConstants.LIST_SEPARATOR));
+                            }
+                            else {
+                                keyValue.addProblem(INIProblem.TYPE_WARNING,
+                                                    InstallOptionsPlugin.getFormattedString("flags.value.warning", //$NON-NLS-1$
+                                                            new Object[]{InstallOptionsModel.PROPERTY_TYPE,
+                                                                         types[0].getValue(),new Integer(n),buf.toString()}));
+                            }
                         }
                     }
                 }

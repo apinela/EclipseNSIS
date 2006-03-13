@@ -59,9 +59,9 @@ public class CreateCommand extends org.eclipse.gef.commands.Command
         mParent.addChild(mChild, mIndex);
     }
 
-    public void setChild(InstallOptionsWidget subpart)
+    public void setChild(InstallOptionsWidget child)
     {
-        mChild = subpart;
+        mChild = child;
     }
 
     public void setIndex(int index)

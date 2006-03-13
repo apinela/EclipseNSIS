@@ -13,5 +13,5 @@ import net.sf.eclipsensis.installoptions.ini.INIKeyValue;
 
 public interface IINIKeyValueValidator
 {
-    public boolean isValid(INIKeyValue keyValue);
+    public boolean validate(INIKeyValue keyValue, int fixFlag);
 }

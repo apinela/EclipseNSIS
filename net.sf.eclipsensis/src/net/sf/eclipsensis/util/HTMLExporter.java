@@ -107,22 +107,17 @@ public class HTMLExporter
             mWriter.println("\">");
 
             int lineNumberWidth = -1;
-            int projectionWidth = -1;
             IVerticalRuler ruler = (IVerticalRuler)mEditor.getAdapter(IVerticalRuler.class);
             if(ruler == null) {
                 ruler = (IVerticalRuler)mEditor.getAdapter(IVerticalRulerInfo.class);
             }
             int width1 = -1;
-            int width2 = -1;
             if(ruler instanceof CompositeRuler) {
                 CompositeRuler c = (CompositeRuler)ruler;
                 for(Iterator iter = c.getDecoratorIterator();iter.hasNext();) {
                     IVerticalRulerColumn col = (IVerticalRulerColumn)iter.next();
                     if(mLineNumbersVisible && col instanceof LineNumberRulerColumn) {
                         width1 = col.getWidth();
-                    }
-                    else if(mProjectionEnabled && col instanceof AnnotationRulerColumn && ((AnnotationRulerColumn)col).getModel() instanceof ProjectionAnnotationModel) {
-                        width2 = col.getWidth();
                     }
                 }
             }
@@ -136,14 +131,6 @@ public class HTMLExporter
                 }
                 else {
                     lineNumberWidth = (int)Math.ceil((double)width1/(double)p.x);
-                }
-            }
-            if(mProjectionEnabled) {
-                if(width2 < 0) {
-                    lineNumberWidth = p.x*3;
-                }
-                else {
-                    projectionWidth = Math.max(3,(int)Math.round((double)width2/(double)p.x));
                 }
             }
             
@@ -173,20 +160,16 @@ public class HTMLExporter
             if(mLineNumbersVisible) {
                 mWriter.print("<td><pre>");
                 for(int i=0;i<lineNumberWidth; i++) {
-                    mWriter.print(" ");
+                    mWriter.print("&nbsp;");
                 }
                 mWriter.print("</pre></td>");
             }
             
             if(mProjectionEnabled) {
-                mWriter.print("<td><pre>");
-                for(int i=0;i<projectionWidth; i++) {
-                    mWriter.print(" ");
-                }
-                mWriter.print("</pre></td>");
+                mWriter.print("<td><pre>&nbsp;&nbsp;</pre></td>");
             }
             else {
-                mWriter.print("<td><pre> </pre></td>");
+                mWriter.print("<td><pre>&nbsp;</pre></td>");
             }
             
             mWriter.println("<td></td></tr>");
@@ -228,18 +211,18 @@ public class HTMLExporter
 
         mWriter.print("<td class=\"ruler\">");
         if(mProjectionEnabled && mCurrentProjection < mProjections.length && 
-            mProjections[mCurrentProjection][0] == mCurrentLine) {
-            mWriter.print("<a class=\"trigger\" href=\"#\" onClick=\"toggle(this,");
+           mProjections[mCurrentProjection][0] == mCurrentLine) {
+            mWriter.print("<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"collapse\" onClick=\"toggle(this,");
             mWriter.print(mProjections[mCurrentProjection][0]+1);
             mWriter.print(",");
             mWriter.print(mProjections[mCurrentProjection][1]);
             mWriter.print(");\" onMouseOver=\"showLine(this,");
             mWriter.print(mProjections[mCurrentProjection][1]);
-            mWriter.print(");\" onMouseOut=\"hideLine();\">[&ndash;]</a>");
+            mWriter.print(");\" onMouseOut=\"hideLine();\"><tr><td class=\"top\">&nbsp;</td><td class=\"top right\">&nbsp;</td></tr><tr><td>&nbsp;</td><td class=\"right\">&nbsp;</td></tr></table>");
             mCurrentProjection++;
         }
         else {
-            mWriter.print("<pre> </pre>");
+            mWriter.print("<pre>&nbsp;</pre>");
         }
         mWriter.print("</td>");
         
@@ -327,13 +310,20 @@ public class HTMLExporter
         mWriter.println("\">"); 
         mWriter.println("<meta http-equiv=\"Content-Style-Type\" content=\"text/css\">");
         mWriter.println("<style type=\"text/css\">");
-        mWriter.println("body { background: #FFFFFF}");
+        mWriter.print("body { background-color: #");
+        mWriter.print(ColorManager.rgbToHex(mStyledText.getBackground().getRGB()));
+        mWriter.println("}");
         mWriter.println("pre { display: inline }");
         mWriter.println("a { color: #567599; text-decoration: none; }");
         mWriter.println("a:hover { background-color: #F4F4F4; color: #303030; text-decoration: underline}");
-        mWriter.println("a.trigger { font: Arial 10px normal; letter-spacing: -5px; color: #567599; text-decoration: none; cursor:pointer; cursor:hand; }");
-        mWriter.println("a.trigger:hover { background-color: #F4F4F4; color: #303030; text-decoration: none; }");
         if(mProjectionEnabled) {
+            mWriter.println("table.expand { float:right; border: 1px solid #567599; font-size: 1px; cursor: pointer; cursor: hand; }");
+            mWriter.println("table.expand td { height: 4px; width: 4px; }");
+            mWriter.println("table.expand td.top { border-bottom: 1px solid #567599; }");
+            mWriter.println("table.expand  td.right { width: 4px; border-left: 1px solid #567599; }");
+            mWriter.println("table.collapse { float:right; border: 1px solid #567599; font-size: 1px; cursor: pointer; cursor: hand; }");
+            mWriter.println("table.collapse td { height: 4px; width: 4px; }");
+            mWriter.println("table.collapse td.top { border-bottom: 1px solid #567599; }");
             mWriter.println(".hiddenRow { display:none; }");
             mWriter.println("#lineDiv { font-size: 1px; display: none; position: absolute; color: #567599; border-left: solid 1px; border-bottom: solid 1px; width: 1px; height: 1px; }");
         }
@@ -357,13 +347,21 @@ public class HTMLExporter
             mWriter.print(buf.toString());
             mWriter.println(" }");
         }
-        mWriter.print(".ruler { text-align: right; border-right: 2px solid #");
+        mWriter.print(".ruler { background-color: #FFFFFF; text-align: right; border-right: 2px solid #");
         mWriter.print(ColorManager.rgbToHex(mShell.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND).getRGB()));
         mWriter.println(" }");
         mWriter.println("</style>");
         if(mProjectionEnabled) {
             mWriter.println("<script type=\"text/javascript\" language=\"javascript\">");
             mWriter.println("<!--");
+            mWriter.println("document.write(\"<style type='text/css'>\");");
+            mWriter.println("if(navigator.userAgent.toLowerCase().indexOf(\"netscape6\") >= 0) {");
+            mWriter.println("  document.write(\"table.collapse td.right { width: 4px; }\")");
+            mWriter.println("}");
+            mWriter.println("else {");
+            mWriter.println("  document.write(\"table.collapse td.right { width: 5px; }\")");
+            mWriter.println("}");
+            mWriter.println("document.write(\"</style>\");");
             mWriter.println("if (!String.prototype.endsWith) {");
             mWriter.println("  String.prototype.endsWith = function(suffix) {");
             mWriter.println("    var startPos = this.length - suffix.length;");
@@ -382,19 +380,19 @@ public class HTMLExporter
             mWriter.println("    return document.getElementById(name);");
             mWriter.println("  }");
             mWriter.println("}");
-            mWriter.println("function showLine(link,end)");
+            mWriter.println("function showLine(trigger,end)");
             mWriter.println("{");
-            mWriter.println("  if(link.innerHTML != \"[+]\") {");
+            mWriter.println("  if(trigger.className != \"expand\") {");
             mWriter.println("    var lineDiv = getObject(\"lineDiv\");");
             mWriter.println("    var sec = getObject(\"line\"+end);");
             mWriter.println("    if(sec && lineDiv) {");
-            mWriter.println("      var linkPos = getElementPosition(link);");
+            mWriter.println("      var triggerPos = getElementPosition(trigger);");
             mWriter.println("      var secPos = getElementPosition(sec);");
-            mWriter.println("      if(secPos && linkPos) {");
-            mWriter.println("        lineDiv.style.left = linkPos.left+linkPos.width/2;");
-            mWriter.println("        lineDiv.style.top = linkPos.top+linkPos.height;");
-            mWriter.println("        lineDiv.style.width = linkPos.width/2;");
-            mWriter.println("        lineDiv.style.height = secPos.top+secPos.height/2-(linkPos.top+linkPos.height);");
+            mWriter.println("      if(secPos && triggerPos) {");
+            mWriter.println("        lineDiv.style.left = triggerPos.left+triggerPos.width/2;");
+            mWriter.println("        lineDiv.style.top = triggerPos.top+triggerPos.height;");
+            mWriter.println("        lineDiv.style.width = triggerPos.width/2;");
+            mWriter.println("        lineDiv.style.height = secPos.top+secPos.height/2-(triggerPos.top+triggerPos.height);");
             mWriter.println("        lineDiv.style.display = \"block\";");
             mWriter.println("      }");
             mWriter.println("    }");
@@ -407,23 +405,20 @@ public class HTMLExporter
             mWriter.println("    lineDiv.style.display = \"none\";");
             mWriter.println("  }");
             mWriter.println("}");
-            mWriter.println("function toggle(link,start,end) ");
+            mWriter.println("function toggle(trigger,start,end) ");
             mWriter.println("{");
-            mWriter.println("  if(link) {");
+            mWriter.println("  if(trigger) {");
             mWriter.println("    var i;");
             mWriter.println("    var sec;");
             mWriter.println("    var expand;");
             mWriter.println("    hideLine();");
-            mWriter.println("    if(link.blur) {");
-            mWriter.println("      link.blur();");
-            mWriter.println("    }");
-            mWriter.println("    if(link.innerHTML == \"[+]\") {");
-            mWriter.println("      link.innerHTML = \"[&ndash;]\";");
+            mWriter.println("    if(trigger.className == \"expand\") {");
             mWriter.println("      expand = true;");
+            mWriter.println("      trigger.className = \"collapse\";");
             mWriter.println("    }");
             mWriter.println("    else {");
-            mWriter.println("      link.innerHTML = \"[+]\";");
             mWriter.println("      expand = false;");
+            mWriter.println("      trigger.className = \"expand\";");
             mWriter.println("    }");
             mWriter.println("    for(i=start; i<= end; i++) {");
             mWriter.println("      sec = getObject(\"line\"+i);");
@@ -463,7 +458,8 @@ public class HTMLExporter
             mWriter.println("    offsetTop += document.body.topMargin;");
             mWriter.println("  }");
             mWriter.println("  return {left:offsetLeft,top:offsetTop, width:width, height: height};");
-            mWriter.println("}//-->");
+            mWriter.println("}");
+            mWriter.println("//-->");
             mWriter.println("</script>");
         }
         mWriter.println("</head>");

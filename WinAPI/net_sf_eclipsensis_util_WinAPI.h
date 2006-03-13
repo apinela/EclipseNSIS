@@ -128,6 +128,8 @@ extern "C" {
 #define net_sf_eclipsensis_util_WinAPI_FILE_ATTRIBUTE_READONLY 1L
 #undef net_sf_eclipsensis_util_WinAPI_FILE_ATTRIBUTE_SYSTEM
 #define net_sf_eclipsensis_util_WinAPI_FILE_ATTRIBUTE_SYSTEM 4L
+#undef net_sf_eclipsensis_util_WinAPI_VK_SHIFT
+#define net_sf_eclipsensis_util_WinAPI_VK_SHIFT 16L
 /*
  * Class:     net_sf_eclipsensis_util_WinAPI
  * Method:    init
@@ -351,6 +353,14 @@ JNIEXPORT jint JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetFileAttributes
  */
 JNIEXPORT jboolean JNICALL Java_net_sf_eclipsensis_util_WinAPI_SetFileAttributes
   (JNIEnv *, jclass, jstring, jint);
+
+/*
+ * Class:     net_sf_eclipsensis_util_WinAPI
+ * Method:    GetKeyState
+ * Signature: (I)S
+ */
+JNIEXPORT jshort JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetKeyState
+  (JNIEnv *, jclass, jint);
 
 #ifdef __cplusplus
 }

@@ -151,11 +151,9 @@ public class InstallOptionsWizardPage2 extends WizardNewFileCreationPage
         }
         INIFile iniFile = dialog.updateINIFile();
         int i=0;
-        INILine line = new INILine();
-        line.setText("; "+InstallOptionsPlugin.getResourceString("wizard.file.header.comment")); //$NON-NLS-1$  //$NON-NLS-2$
+        INILine line = new INILine("; "+InstallOptionsPlugin.getResourceString("wizard.file.header.comment")); //$NON-NLS-1$  //$NON-NLS-2$
         iniFile.addChild(i++,line);
-        line = new INILine();
-        line.setText("; "+DateFormat.getDateTimeInstance().format(new Date())); //$NON-NLS-1$
+        line = new INILine("; "+DateFormat.getDateTimeInstance().format(new Date())); //$NON-NLS-1$
         iniFile.addChild(i++,line);
         iniFile.update();
 

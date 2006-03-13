@@ -24,7 +24,9 @@ public class InstallOptionsWizardAction extends Action
 {
     public InstallOptionsWizardAction()
     {
-        super("",InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("wizard.icon"))); //$NON-NLS-1$ //$NON-NLS-2$
+        super("");//$NON-NLS-1$ 
+        setImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("wizard.icon"))); //$NON-NLS-1$
+        setDisabledImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("wizard.disabled.icon"))); //$NON-NLS-1$
         setText(InstallOptionsPlugin.getResourceString("wizard.action.label")); //$NON-NLS-1$
         setToolTipText(InstallOptionsPlugin.getResourceString("wizard.action.tooltip")); //$NON-NLS-1$
     }

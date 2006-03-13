@@ -10,6 +10,7 @@
 package net.sf.eclipsensis.installoptions.editor;
 
 import java.util.*;
+import java.util.List;
 import java.util.regex.Matcher;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
@@ -18,6 +19,7 @@ import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.actions.PreviewAction;
 import net.sf.eclipsensis.installoptions.actions.SwitchEditorAction;
 import net.sf.eclipsensis.installoptions.builder.InstallOptionsNature;
+import net.sf.eclipsensis.installoptions.dialogs.InstallOptionsWidgetEditorDialog;
 import net.sf.eclipsensis.installoptions.ini.*;
 import net.sf.eclipsensis.installoptions.model.*;
 import net.sf.eclipsensis.job.IJobStatusRunnable;
@@ -28,6 +30,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.gef.Disposable;
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.CompositeImageDescriptor;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -37,6 +40,7 @@ import org.eclipse.jface.text.source.*;
 import org.eclipse.jface.text.source.projection.*;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.events.HelpListener;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
@@ -51,19 +55,12 @@ import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 public class InstallOptionsSourceEditor extends TextEditor implements IInstallOptionsEditor, IINIFileListener, IProjectionListener
 {
     public static final String EXPORT_HTML_ACTION = "net.sf.eclipsensis.installoptions.export_html";
-
     private static final String FOLDING_COLLAPSE = "net.sf.eclipsensis.installoptions.folding_collapse";
-
     private static final String FOLDING_EXPAND = "net.sf.eclipsensis.installoptions.folding_expand";
-
     private static final String FOLDING_EXPAND_ALL = "net.sf.eclipsensis.installoptions.folding_expand_all";
-
     private static final String FOLDING_TOGGLE = "net.sf.eclipsensis.installoptions.folding_toggle";
-
     private static final String[] KEY_BINDING_SCOPES = new String[] { IInstallOptionsConstants.EDITING_INSTALLOPTIONS_SOURCE_CONTEXT_ID };
-
     private static final String MARKER_CATEGORY = "__installoptions_marker"; //$NON-NLS-1$
-
     private IPositionUpdater mMarkerPositionUpdater = new DefaultPositionUpdater(MARKER_CATEGORY);
     private ResourceTracker mResourceListener = new ResourceTracker();
     private Map mMarkerPositions = new HashMap();
@@ -129,13 +126,47 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
         if(mOutlinePage != null) {
             mOutlinePage.update();
         }
+        updateActions();
+    }
+    
+    private INISection getCurrentSection()
+    {
+        INISection section = null;
+        if(mINIFile != null) {
+            ISelection sel = getSourceViewer().getSelectionProvider().getSelection();
+            if(sel instanceof ITextSelection && !sel.isEmpty()) {
+                section = mINIFile.findSection(((ITextSelection)sel).getOffset(), ((ITextSelection)sel).getLength());
+            }
+        }
+        return section;
+    }
+
+    protected void updateActions()
+    {
+        boolean hasErrors = (mINIFile != null && mINIFile.hasErrors());
+        enableAction(SwitchEditorAction.ID,!hasErrors);
+        enableAction(PreviewAction.PREVIEW_CLASSIC_ID,!hasErrors);
+        enableAction(PreviewAction.PREVIEW_MUI_ID,!hasErrors);
+        enableAction("net.sf.eclipsensis.installoptions.create_control",!hasErrors);
+        
+        INISection section = getCurrentSection();
+        
+        enableAction("net.sf.eclipsensis.installoptions.edit_control",!hasErrors && section != null && section.isInstallOptionsField());
+        enableAction("net.sf.eclipsensis.installoptions.delete_control",!hasErrors && section != null && section.isInstallOptionsField());
+    }
+    
+    private void enableAction(String id, boolean enabled)
+    {
+        IAction action = getAction(id);
+        if(action != null) {
+            action.setEnabled(enabled);
+        }
     }
 
     protected void createActions()
     {
         super.createActions();
         IAction action = new SwitchEditorAction(this, INSTALLOPTIONS_DESIGN_EDITOR_ID);
-        action.setActionDefinitionId(SWITCH_EDITOR_COMMAND_ID);
         setAction(action.getId(),action);
         action = new PreviewAction(PREVIEW_CLASSIC, this);
         setAction(action.getId(),action);
@@ -155,6 +186,24 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
         };
         action.setEnabled(true);
         action.setId(EXPORT_HTML_ACTION);
+        setAction(action.getId(),action);
+        
+        action = new CreateControlAction();
+        action.setEnabled(true);
+        action.setId("net.sf.eclipsensis.installoptions.create_control");
+        action.setActionDefinitionId("net.sf.eclipsensis.installoptions.commands.CreateControl");
+        setAction(action.getId(),action);
+        
+        action = new EditControlAction();
+        action.setEnabled(true);
+        action.setId("net.sf.eclipsensis.installoptions.edit_control");
+        action.setActionDefinitionId("net.sf.eclipsensis.installoptions.commands.EditControl");
+        setAction(action.getId(),action);
+        
+        action = new DeleteControlAction();
+        action.setEnabled(true);
+        action.setId("net.sf.eclipsensis.installoptions.delete_control");
+        action.setActionDefinitionId("net.sf.eclipsensis.installoptions.commands.DeleteControl");
         setAction(action.getId(),action);
         
         ResourceBundle resourceBundle = InstallOptionsPlugin.getDefault().getResourceBundle();
@@ -207,6 +256,8 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
             });
             setAction(ITextEditorActionConstants.CONTEXT_PREFERENCES, action2);
         }
+        
+        updateActions();
     }
 
     protected void rulerContextMenuAboutToShow(IMenuManager menu) {
@@ -451,7 +502,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
                 if(monitor.isCanceled()) {
                     return Status.CANCEL_STATUS;
                 }
-                Position position = sections[i].getPosition();
+                Position position = sections[i].calculatePosition();
                 annotations.put(new ProjectionAnnotation(),new Position(position.offset,position.length));
             }
             mAnnotationModel.modifyAnnotations(mAnnotations,annotations,null);
@@ -535,6 +586,176 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
             return mGotoMarker;
         }
         return super.getAdapter(type);
+    }
+
+    private class CreateControlAction extends Action
+    {
+        public void run()
+        {
+            INIFile iniFile = mINIFile.copy();
+            doRun(iniFile, getSection(iniFile));
+        }
+
+        protected INISection getSection(INIFile iniFile)
+        {
+            return null;
+        }
+
+        /**
+         * @param iniFile
+         */
+        protected void doRun(INIFile iniFile, INISection section)
+        {
+            InstallOptionsWidgetEditorDialog dialog = new InstallOptionsWidgetEditorDialog(getSite().getShell(), iniFile, section);
+            if (dialog.open() == Window.OK) {
+                if(section == null) {
+                    section = dialog.getSection();
+                }
+                updateDocument(iniFile, section);
+            }
+        }
+
+        /**
+         * @param iniFile
+         * @param section
+         */
+        protected void updateDocument(INIFile iniFile, INISection section)
+        {
+            List dirtyList = new ArrayList();
+            for (Iterator iter = iniFile.getChildren().iterator(); iter.hasNext();) {
+                INILine line = (INILine)iter.next();
+                if (line instanceof INISection && ((INISection)line).isDirty()) {
+                    dirtyList.add(line);
+                }
+            }
+            boolean isDelete = false;
+            if(section != null && !dirtyList.contains(section)) {
+                isDelete = true;
+                dirtyList.add(section);
+            }
+            if (dirtyList.size() > 0) {
+                Collections.sort(dirtyList, new Comparator() {
+
+                    private Position getPosition(INISection section)
+                    {
+                        Position p = section.getPosition();
+                        return (p == null?IInstallOptionsConstants.MAX_POSITION:p);
+                    }
+
+                    public int compare(Object o1, Object o2)
+                    {
+                        Position p1 = getPosition((INISection)o1);
+                        Position p2 = getPosition((INISection)o2);
+                        int n = p2.getOffset() - p1.getOffset();
+                        if (n == 0) {
+                            n = p2.getLength() - p1.getLength();
+                        }
+                        return n;
+                    }
+                });
+                IDocument document = getDocumentProvider().getDocument(getEditorInput());
+                IUndoManager undoManager = ((InstallOptionsSourceViewer)getSourceViewer()).getUndoManager();
+                try {
+                    undoManager.beginCompoundChange();
+                    Iterator iter = dirtyList.iterator();
+                    while (iter.hasNext()) {
+                        INISection sec = (INISection)iter.next();
+                        Position p = sec.getPosition();
+                        if(p == null) {
+                            document.replace(document.getLength(), 0, sec.toString());
+                        }
+                        else {
+                            if(sec == section && isDelete) {
+                                document.replace(p.getOffset(), p.getLength(), "");
+                            }
+                            else {
+                                document.replace(p.getOffset(), p.getLength(), sec.toString());
+                            }
+                        }
+                    }
+                }
+                catch (BadLocationException e) {
+                    e.printStackTrace();
+                }
+                finally {
+                    undoManager.endCompoundChange();
+                }
+                if (!isDelete) {
+                    INISection[] sections = mINIFile.findSections(section.getName());
+                    if (sections != null && sections.length == 1) {
+                        Position p = sections[0].getPosition();
+                        getSelectionProvider().setSelection(new TextSelection(p.getOffset(), p.getLength()));
+//                        getSourceViewer().revealRange(p.getOffset(), p.getLength());
+                    }
+                }                
+            }
+        }
+    }
+
+    private class EditControlAction extends CreateControlAction
+    {
+        protected INISection getSection(INIFile iniFile)
+        {
+            INISection section = null;
+            INISection currSection = getCurrentSection();
+            if (currSection != null && !mINIFile.hasErrors()) {
+                for(Iterator iter = iniFile.getChildren().iterator(); iter.hasNext(); ) {
+                    INILine line = (INILine)iter.next();
+                    if (line instanceof INISection) {
+                        INISection sec2 = (INISection)line;
+                        if(Common.stringsAreEqual(sec2.getName(), currSection.getName())) {
+                            section = sec2;
+                            break;
+                        }
+                    }
+                }
+            }
+            return section;
+        }
+
+        protected void doRun(INIFile iniFile, INISection section)
+        {
+            if (section != null) {
+                doRun2(iniFile, section);
+            }                
+        }
+
+        /**
+         * @param iniFile
+         * @param section
+         */
+        protected void doRun2(INIFile iniFile, INISection section)
+        {
+            super.doRun(iniFile, section);
+        }
+    }
+
+    private class DeleteControlAction extends EditControlAction
+    {
+        protected void doRun2(INIFile iniFile, INISection section)
+        {
+            boolean show = InstallOptionsPlugin.getDefault().getPreferenceStore().getBoolean(PREFERENCE_DELETE_CONTROL_WARNING);
+            if(!show || WinAPI.GetKeyState(WinAPI.VK_SHIFT)<0) {
+                MessageDialogWithToggle dialog = new MessageDialogWithToggle(
+                        PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
+                        getPartName(),
+                        InstallOptionsPlugin.getShellImage(),
+                        section.getName()+" will be deleted.",
+                        MessageDialog.WARNING,
+                        new String[] { IDialogConstants.OK_LABEL, IDialogConstants.CANCEL_LABEL }, 0,
+                        "Display only if Shift key is down", show); //$NON-NLS-1$
+                dialog.open();
+                if(dialog.getReturnCode() != IDialogConstants.CANCEL_ID) {
+                    InstallOptionsPlugin.getDefault().getPreferenceStore().setValue(PREFERENCE_DELETE_CONTROL_WARNING,dialog.getToggleState());
+                }
+                else {
+                    return;
+                }
+            }
+            iniFile.removeChild(section);
+            iniFile.update(INILine.VALIDATE_FIX_ERRORS);
+            updateDocument(iniFile, section);
+        }
     }
 
     private class ActionWrapper implements IAction
@@ -937,6 +1158,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
             return image2;
         }
     }
+
     private class ResourceTracker implements IResourceChangeListener, IResourceDeltaVisitor
     {
         public void resourceChanged(IResourceChangeEvent event)
@@ -1009,7 +1231,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
                         IStructuredSelection ssel = (IStructuredSelection)sel;
                         if(ssel.size() == 1) {
                             INISection section = (INISection)ssel.getFirstElement();
-                            Position pos = section.getPosition();
+                            Position pos = section.calculatePosition();
                             getSourceViewer().getSelectionProvider().setSelection(new TextSelection(pos.getOffset(),pos.getLength()));
                             getSourceViewer().revealRange(pos.getOffset(),pos.getLength());
                         }
@@ -1024,6 +1246,8 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
                             else {
                                 mOutlinePage.setSelection(StructuredSelection.EMPTY);
                             }
+                            enableAction("net.sf.eclipsensis.installoptions.edit_control",(section != null && section.isInstallOptionsField())&&(mINIFile != null && !mINIFile.hasErrors()));
+                            enableAction("net.sf.eclipsensis.installoptions.delete_control",(section != null && section.isInstallOptionsField())&&(mINIFile != null && !mINIFile.hasErrors()));
                         }
                     }
                 }

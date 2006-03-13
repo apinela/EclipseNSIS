@@ -670,3 +670,8 @@ JNIEXPORT jboolean JNICALL Java_net_sf_eclipsensis_util_WinAPI_SetFileAttributes
     }
     return result;
 }
+
+JNIEXPORT jshort JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetKeyState(JNIEnv *pEnv, jclass jClass, jint nVirtKey)
+{
+    return GetKeyState(nVirtKey);
+}

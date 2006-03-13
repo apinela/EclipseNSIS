@@ -90,6 +90,8 @@ public class WinAPI
     public static final int FILE_ATTRIBUTE_NORMAL = 0x80;
     public static final int FILE_ATTRIBUTE_READONLY = 0x1;
     public static final int FILE_ATTRIBUTE_SYSTEM = 0x4;
+
+    public static final int VK_SHIFT = 0x10;
     
     private static native void init();
     public static native int SetWindowLong(int hWnd, int nIndex, int dwNewLong);
@@ -144,6 +146,8 @@ public class WinAPI
     public static final native int GetFileAttributes(String pszFilename);
     
     public static final native boolean SetFileAttributes(String pszFilename, int dwAttributes);
+    
+    public static final native short GetKeyState(int nVirtKey);
 
     private WinAPI()
     {

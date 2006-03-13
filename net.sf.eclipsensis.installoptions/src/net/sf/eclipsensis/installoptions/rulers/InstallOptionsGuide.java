@@ -65,61 +65,61 @@ public class InstallOptionsGuide
     }
 
     /**
-     * Attaches the given part along the given edge to this guide. The
+     * Attaches the given widget along the given edge to this guide. The
      * InstallOptionsElement is also updated to reflect this attachment.
      *
-     * @param part
-     *            The part that is to be attached to this guide; if the part is
+     * @param widget
+     *            The widget that is to be attached to this guide; if the widget is
      *            already attached, its alignment is updated
      * @param alignment
      *            -1 is left or top; 0, center; 1, right or bottom
      */
-    public void attachPart(InstallOptionsWidget part, int alignment)
+    public void attachWidget(InstallOptionsWidget widget, int alignment)
     {
-        if (getMap().containsKey(part) && getAlignment(part) == alignment) {
+        if (getMap().containsKey(widget) && getAlignment(widget) == alignment) {
             return;
         }
 
-        getMap().put(part, new Integer(alignment));
-        InstallOptionsGuide oldGuide = isHorizontal()?part.getHorizontalGuide():part
+        getMap().put(widget, new Integer(alignment));
+        InstallOptionsGuide oldGuide = isHorizontal()?widget.getHorizontalGuide():widget
                 .getVerticalGuide();
         if (oldGuide != null && oldGuide != this) {
-            oldGuide.detachPart(part);
+            oldGuide.detachWidget(widget);
         }
         if (isHorizontal()) {
-            part.setHorizontalGuide(this);
+            widget.setHorizontalGuide(this);
         }
         else {
-            part.setVerticalGuide(this);
+            widget.setVerticalGuide(this);
         }
-        mListeners.firePropertyChange(PROPERTY_CHILDREN, null, part);
+        mListeners.firePropertyChange(PROPERTY_CHILDREN, null, widget);
     }
 
     /**
-     * Detaches the given part from this guide. The InstallOptionsElement is also updated
+     * Detaches the given widget from this guide. The InstallOptionsElement is also updated
      * to reflect this change.
      *
-     * @param part
-     *            the part that is to be detached from this guide
+     * @param widget
+     *            the widget that is to be detached from this guide
      */
-    public void detachPart(InstallOptionsWidget part)
+    public void detachWidget(InstallOptionsWidget widget)
     {
-        if (getMap().containsKey(part)) {
-            getMap().remove(part);
+        if (getMap().containsKey(widget)) {
+            getMap().remove(widget);
             if (isHorizontal()) {
-                part.setHorizontalGuide(null);
+                widget.setHorizontalGuide(null);
             }
             else {
-                part.setVerticalGuide(null);
+                widget.setVerticalGuide(null);
             }
-            mListeners.firePropertyChange(PROPERTY_CHILDREN, null, part);
+            mListeners.firePropertyChange(PROPERTY_CHILDREN, null, widget);
         }
     }
 
-    public int getAlignment(InstallOptionsWidget part)
+    public int getAlignment(InstallOptionsWidget widget)
     {
-        if (getMap().get(part) != null) {
-            return ((Integer)getMap().get(part)).intValue();
+        if (getMap().get(widget) != null) {
+            return ((Integer)getMap().get(widget)).intValue();
         }
         return -2;
     }
@@ -138,10 +138,10 @@ public class InstallOptionsGuide
     }
 
     /**
-     * @return the set of all the parts attached to this guide; a set is used
-     *         because a part can only be attached to a guide along one edge.
+     * @return the set of all the widgets attached to this guide; a set is used
+     *         because a widget can only be attached to a guide along one edge.
      */
-    public Set getParts()
+    public Set getWidgets()
     {
         return getMap().keySet();
     }

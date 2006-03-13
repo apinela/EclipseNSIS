@@ -10,6 +10,8 @@
 package net.sf.eclipsensis.installoptions.actions;
 
 
+import java.util.*;
+
 import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.editor.InstallOptionsSourceEditor;
@@ -25,7 +27,11 @@ import org.eclipse.ui.texteditor.ITextEditor;
 public class InstallOptionsSourceActionContributor extends TextEditorActionContributor
 {
     private MenuManager mInstallOptionsMenu;
+    private List mRetargetActions = new ArrayList();
     private RetargetAction mExportHTMLAction;
+    private RetargetAction mCreateControlAction;
+    private RetargetAction mEditControlAction;
+    private RetargetAction mDeleteControlAction;
     private RetargetAction mSwitchEditorAction;
     private DropDownAction mPreviewGroupAction;
     private PreviewRetargetAction mPreviewClassicAction;
@@ -38,23 +44,44 @@ public class InstallOptionsSourceActionContributor extends TextEditorActionContr
     {
         mWizardAction = new InstallOptionsWizardAction();
         mHelpAction = new InstallOptionsHelpAction();
+        
         mInstallOptionsMenu = new MenuManager(InstallOptionsPlugin.getResourceString("installoptions.menu.name")); //$NON-NLS-1$
-        String label = InstallOptionsPlugin.getResourceString("switch.design.editor.action.name"); //$NON-NLS-1$
+        
+        String label = InstallOptionsPlugin.getResourceString("switch.design.editor.action.name"); //$NON-NLS-1$);
         mSwitchEditorAction = new RetargetAction(SwitchEditorAction.ID, label);
         mSwitchEditorAction.setToolTipText(label);
         mSwitchEditorAction.setImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("switch.editor.icon"))); //$NON-NLS-1$
-        mSwitchEditorAction.setActionDefinitionId(IInstallOptionsConstants.SWITCH_EDITOR_COMMAND_ID);
-        getPage().addPartListener(mSwitchEditorAction);
+        mSwitchEditorAction.setDisabledImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("switch.editor.disabled.icon"))); //$NON-NLS-1$
+        registerRetargetAction(mSwitchEditorAction);
 
         mExportHTMLAction = new RetargetAction(InstallOptionsSourceEditor.EXPORT_HTML_ACTION,"E&xport as HTML");
         mExportHTMLAction.setToolTipText("Export the InstallOptions script as an HTML file");
         mExportHTMLAction.setImageDescriptor(ImageDescriptor.createFromImage(CommonImages.EXPORT_HTML_ICON));
-        getPage().addPartListener(mExportHTMLAction);
+        mExportHTMLAction.setDisabledImageDescriptor(ImageDescriptor.createFromImage(CommonImages.EXPORT_HTML_DISABLED_ICON));        
+        registerRetargetAction(mExportHTMLAction);
+        
+        mCreateControlAction = new RetargetAction("net.sf.eclipsensis.installoptions.create_control","&Create Control");
+        mCreateControlAction.setToolTipText("Create an InstallOptions control in the source editor");
+        mCreateControlAction.setImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("create.control.icon"))); //$NON-NLS-1$
+        mCreateControlAction.setDisabledImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("create.control.disabled.icon"))); //$NON-NLS-1$
+        registerRetargetAction(mCreateControlAction);
+        
+        mEditControlAction = new RetargetAction("net.sf.eclipsensis.installoptions.edit_control","&Edit Control");
+        mEditControlAction.setToolTipText("Edit an InstallOptions control in the source editor");
+        mEditControlAction.setImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("edit.control.icon"))); //$NON-NLS-1$
+        mEditControlAction.setDisabledImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("edit.control.disabled.icon"))); //$NON-NLS-1$
+        registerRetargetAction(mEditControlAction);
+        
+        mDeleteControlAction = new RetargetAction("net.sf.eclipsensis.installoptions.delete_control","&Delete Control");
+        mDeleteControlAction.setToolTipText("Delete an InstallOptions control in the source editor");
+        mDeleteControlAction.setImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("delete.control.icon"))); //$NON-NLS-1$
+        mDeleteControlAction.setDisabledImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("delete.control.disabled.icon"))); //$NON-NLS-1$
+        registerRetargetAction(mDeleteControlAction);
         
         mPreviewClassicAction = new PreviewRetargetAction(IInstallOptionsConstants.PREVIEW_CLASSIC);
-        getPage().addPartListener(mPreviewClassicAction);
+        registerRetargetAction(mPreviewClassicAction);
         mPreviewMUIAction = new PreviewRetargetAction(IInstallOptionsConstants.PREVIEW_MUI);
-        getPage().addPartListener(mPreviewMUIAction);
+        registerRetargetAction(mPreviewMUIAction);
         PreviewRetargetAction[] previewRetargetActions = new PreviewRetargetAction[] {
                                                      mPreviewClassicAction,
                                                      mPreviewMUIAction
@@ -71,6 +98,10 @@ public class InstallOptionsSourceActionContributor extends TextEditorActionContr
 
         mInstallOptionsMenu.add(mWizardAction);
         mInstallOptionsMenu.add(new Separator());
+        mInstallOptionsMenu.add(mCreateControlAction);
+        mInstallOptionsMenu.add(mEditControlAction);
+        mInstallOptionsMenu.add(mDeleteControlAction);
+        mInstallOptionsMenu.add(new Separator());
         mInstallOptionsMenu.add(new PreviewSubMenuManager(previewRetargetActions));
         mInstallOptionsMenu.add(new Separator());
         mInstallOptionsMenu.add(mExportHTMLAction);
@@ -79,6 +110,15 @@ public class InstallOptionsSourceActionContributor extends TextEditorActionContr
         mInstallOptionsMenu.add(mHelpAction);
 
         mLanguageContributionItem = new LanguageComboContributionItem(getPage());
+    }
+
+    /**
+     * 
+     */
+    private void registerRetargetAction(RetargetAction action)
+    {
+        getPage().addPartListener(action);
+        mRetargetActions.add(action);
     }
 
     public void contributeToMenu(IMenuManager menu)
@@ -90,6 +130,10 @@ public class InstallOptionsSourceActionContributor extends TextEditorActionContr
     public void contributeToToolBar(IToolBarManager tbm)
     {
         tbm.add(mWizardAction);
+        tbm.add(new Separator());
+        tbm.add(mCreateControlAction);
+        tbm.add(mEditControlAction);
+        tbm.add(mDeleteControlAction);
         tbm.add(new Separator());
         tbm.add(mPreviewGroupAction);
         tbm.add(mLanguageContributionItem);
@@ -111,27 +155,20 @@ public class InstallOptionsSourceActionContributor extends TextEditorActionContr
         super.setActiveEditor(part);
         IActionBars bars = getActionBars();
         ITextEditor editor = (part instanceof ITextEditor?(ITextEditor)part:null);
-        setGlobalActionHandler(bars, editor, InstallOptionsSourceEditor.EXPORT_HTML_ACTION);
-        setGlobalActionHandler(bars, editor, SwitchEditorAction.ID);
-        setGlobalActionHandler(bars, editor, PreviewAction.PREVIEW_CLASSIC_ID);
-        setGlobalActionHandler(bars, editor, PreviewAction.PREVIEW_MUI_ID);
+        for (Iterator iter = mRetargetActions.iterator(); iter.hasNext();) {
+            String id = ((IAction)iter.next()).getId();
+			bars.setGlobalActionHandler(id,(editor == null?null:editor.getAction(id)));
+        }
         bars.updateActionBars();
-    }
-
-    private void setGlobalActionHandler(IActionBars bars, ITextEditor editor, String id)
-    {
-        bars.setGlobalActionHandler(id,(editor == null?null:editor.getAction(id)));
     }
 
     public void dispose()
     {
-        getPage().removePartListener(mExportHTMLAction);
-        getPage().removePartListener(mSwitchEditorAction);
-        getPage().removePartListener(mPreviewClassicAction);
-        getPage().removePartListener(mPreviewMUIAction);
-        getPage().removePartListener(mPreviewGroupAction);
-        mExportHTMLAction.dispose();
-        mSwitchEditorAction.dispose();
+        for (Iterator iter = mRetargetActions.iterator(); iter.hasNext();) {
+            RetargetAction action = (RetargetAction)iter.next();
+            getPage().removePartListener(action);
+            action.dispose();
+        }
         mPreviewGroupAction.dispose();
         mLanguageContributionItem.dispose();
         super.dispose();

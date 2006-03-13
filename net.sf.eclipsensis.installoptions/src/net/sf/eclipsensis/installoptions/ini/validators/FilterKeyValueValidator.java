@@ -11,25 +11,27 @@ package net.sf.eclipsensis.installoptions.ini.validators;
 
 import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
-import net.sf.eclipsensis.installoptions.ini.INIKeyValue;
-import net.sf.eclipsensis.installoptions.ini.INIProblem;
+import net.sf.eclipsensis.installoptions.ini.*;
 import net.sf.eclipsensis.util.Common;
 
 public class FilterKeyValueValidator implements IINIKeyValueValidator
 {
-    /* (non-Javadoc)
-     * @see net.sf.eclipsensis.installoptions.ini.validators.IINIKeyValueValidator#validate(net.sf.eclipsensis.installoptions.ini.INIKeyValue)
-     */
-    public boolean isValid(INIKeyValue keyValue)
+    public boolean validate(INIKeyValue keyValue, int fixFlag)
     {
         String value = keyValue.getValue();
         if(!Common.isEmpty(value)) {
-            int n = Common.tokenize(value,IInstallOptionsConstants.LIST_SEPARATOR,false).length;
+            String[] array = Common.tokenize(value,IInstallOptionsConstants.LIST_SEPARATOR,false);
+            int n = array.length;
             if(n%2 != 0) {
-                keyValue.addProblem(INIProblem.TYPE_ERROR,
-                                    InstallOptionsPlugin.getFormattedString("filter.value.error", //$NON-NLS-1$
-                                            new Object[]{keyValue.getKey()}));
-                return false;
+                if((fixFlag & INILine.VALIDATE_FIX_ERRORS) > 0) {
+                    keyValue.setValue(new StringBuffer(value).append(IInstallOptionsConstants.LIST_SEPARATOR).append(array[n-1]).toString());
+                }
+                else {
+                    keyValue.addProblem(INIProblem.TYPE_ERROR,
+                                        InstallOptionsPlugin.getFormattedString("filter.value.error", //$NON-NLS-1$
+                                                new Object[]{keyValue.getKey()}));
+                    return false;
+                }
             }
         }
         return true;

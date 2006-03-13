@@ -140,6 +140,21 @@
          description="%switch.editor.command.description"
          id="%switch.editor.command.id"
          categoryId="%commands.category.id"/>
+      <command
+         name="%create.control.command.name"
+         description="%create.control.command.description"
+         id="%create.control.command.id"
+         categoryId="%commands.category.id"/>
+      <command
+         name="%edit.control.command.name"
+         description="%edit.control.command.description"
+         id="%edit.control.command.id"
+         categoryId="%commands.category.id"/>
+      <command
+         name="%delete.control.command.name"
+         description="%delete.control.command.description"
+         id="%delete.control.command.id"
+         categoryId="%commands.category.id"/>
    </extension>
    <extension
          point="org.eclipse.ui.contexts">
@@ -163,6 +178,26 @@
           commandId="%switch.editor.command.id"
           contextId="%editing.installoptions.source.id"
           sequence="%switch.editor.command.keysequence"/>
+      <key
+          schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+          commandId="%create.control.command.id"
+          contextId="%editing.installoptions.source.id"
+          sequence="%create.control.command.keysequence"/>
+      <key
+          schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+          commandId="%edit.control.command.id"
+          contextId="%editing.installoptions.source.id"
+          sequence="%edit.control.command.keysequence"/>
+      <key
+          schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+          commandId="%delete.control.command.id"
+          contextId="%editing.installoptions.source.id"
+          sequence="%delete.control.command.keysequence1"/>
+      <key
+          schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+          commandId="%delete.control.command.id"
+          contextId="%editing.installoptions.source.id"
+          sequence="%delete.control.command.keysequence2"/>
       <key
           schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
           commandId="%switch.editor.command.id"

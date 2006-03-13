@@ -27,6 +27,7 @@ import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.util.IOUtility;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.*;
 import org.eclipse.swt.events.*;
@@ -35,9 +36,12 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.forms.events.*;
+import org.eclipse.ui.forms.widgets.ExpandableComposite;
 
 public class NSISCommandDialog extends StatusMessageDialog
 {
+    private static final String SETTING_COLLAPSE_HELP = "collapseHelp";
     private static Map cCommandStateMap;
     private static final Object JOB_FAMILY = new Object();
     
@@ -51,6 +55,8 @@ public class NSISCommandDialog extends StatusMessageDialog
     private Stack mBackCommands = null;
     private Stack mForwardCommands = null;
     private Map mSettings = null;
+    private boolean mCollapseHelp = true;
+    private IDialogSettings mDialogSettings = null;
     
     static {
         final File stateLocation = new File(EclipseNSISPlugin.getPluginStateLocation(),"net.sf.eclipsensis.help.commands.NSISCommandSettings.ser"); //$NON-NLS-1$
@@ -136,6 +142,7 @@ public class NSISCommandDialog extends StatusMessageDialog
     private INSISParamEditor mParamEditor;
     private String mCommandText = ""; //$NON-NLS-1$
     private boolean mRemember;
+    private ExpandableComposite mExpandableComposite;
     
     public NSISCommandDialog(Shell parent, NSISCommand command)
     {
@@ -150,6 +157,18 @@ public class NSISCommandDialog extends StatusMessageDialog
         }
         mParamEditor = mCommand.createEditor();
         setParamEditorState();
+        IDialogSettings dialogSettings = EclipseNSISPlugin.getDefault().getDialogSettings();
+        String name = getClass().getName();
+        mDialogSettings = dialogSettings.getSection(name);
+        if(mDialogSettings == null) {
+            mDialogSettings = dialogSettings.addNewSection(name);
+        }
+        try {
+            mCollapseHelp = mDialogSettings.getBoolean(SETTING_COLLAPSE_HELP);
+        }
+        catch(Exception ex) {
+            mCollapseHelp = false;
+        }
     }
     
 
@@ -189,8 +208,22 @@ public class NSISCommandDialog extends StatusMessageDialog
         }
     }
 
+    protected void cancelPressed()
+    {
+        saveDialogSettings();
+        super.cancelPressed();
+    }
+
+    private void saveDialogSettings()
+    {
+        if(mExpandableComposite != null) {
+            mDialogSettings.put(SETTING_COLLAPSE_HELP, !mExpandableComposite.isExpanded());
+        }
+    }
+
     protected void okPressed()
     {
+        saveDialogSettings();
         StringBuffer buf = new StringBuffer(mCommand.getName());
         mParamEditor.appendText(buf);
         mCommandText = buf.toString();
@@ -217,11 +250,6 @@ public class NSISCommandDialog extends StatusMessageDialog
         mControl = mParamEditor.createControl(parent);
         mControl.setLayoutData(new GridData(SWT.FILL,SWT.CENTER,true,false));
         
-        createHelpBrowser(parent);
-        if(mBrowser != null) {
-            setCurrentCommand(mCommand.getName());
-        }
-
         final Button button = new Button(parent,SWT.CHECK);
         button.setText(EclipseNSISPlugin.getResourceString("nsis.command.helper.remember.label")); //$NON-NLS-1$
         button.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false));
@@ -233,6 +261,11 @@ public class NSISCommandDialog extends StatusMessageDialog
                 setParamEditorState();
             }
         });
+
+        createHelpBrowser(parent);
+        if(mBrowser != null) {
+            setCurrentCommand(mCommand.getName());
+        }
         
         getShell().getDisplay().addFilter(SWT.Modify, mFilter);
         getShell().getDisplay().addFilter(SWT.Selection, mFilter);
@@ -258,20 +291,45 @@ public class NSISCommandDialog extends StatusMessageDialog
     private void createHelpBrowser(Composite parent)
     {
         if(NSISBrowserUtility.isBrowserAvailable(parent)) {
-            Group group = new Group(parent,SWT.SHADOW_ETCHED_IN);
+            Group group = new Group(parent,SWT.NONE);
             GridData gridData = new GridData(SWT.FILL,SWT.FILL,true,true);
             group.setLayoutData(gridData);
             GridLayout layout = new GridLayout(1,false);
             layout.marginHeight = layout.marginWidth = 2;
             group.setLayout(layout);
-            createToolBar(group);
-            mBrowser= new Browser(group, SWT.BORDER);
+
+            int style = ExpandableComposite.FOCUS_TITLE | ExpandableComposite.TWISTIE;
+            if(!mCollapseHelp) {
+                style |= ExpandableComposite.EXPANDED;
+            }
+            mExpandableComposite = new ExpandableComposite(group,SWT.NONE, style);
+            mExpandableComposite.setText(EclipseNSISPlugin.getResourceString("nsis.command.description.label")); //$NON-NLS-1$
+            makeBold(mExpandableComposite);
+            gridData = new GridData(SWT.FILL,SWT.FILL,true,true);
+            mExpandableComposite.setLayoutData(gridData);
+            Composite composite = new Composite(mExpandableComposite,SWT.NONE);
+            gridData = new GridData(SWT.FILL,SWT.FILL,true,true);
+            composite.setLayoutData(gridData);
+            layout = new GridLayout(1,false);
+            layout.marginHeight = layout.marginWidth = 0;
+            composite.setLayout(layout);
+            createToolBar(composite);
+            mBrowser= new Browser(composite, SWT.BORDER);
             gridData = new GridData(SWT.FILL,SWT.FILL,true,true);
             initializeDialogUnits(mBrowser);
             gridData.widthHint = convertWidthInCharsToPixels(50);
             gridData.heightHint = convertHeightInCharsToPixels(10);
             mBrowser.setLayoutData(gridData);
             mBrowser.setMenu(new Menu(getShell(), SWT.NONE));
+            mExpandableComposite.setClient(composite);
+            mExpandableComposite.addExpansionListener(new ExpansionAdapter() {
+                public void expansionStateChanged(ExpansionEvent e)
+                {
+                    Shell shell = mExpandableComposite.getShell();
+                    Point size = shell.getSize();
+                    shell.setSize(size.x, shell.computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
+                }
+            });
             hookLocationListener();
         }
     }
@@ -286,18 +344,9 @@ public class NSISCommandDialog extends StatusMessageDialog
         if(isValid(NSISBrowserUtility.BACK_IMAGE) && isValid(NSISBrowserUtility.DISABLED_BACK_IMAGE) && 
            isValid(NSISBrowserUtility.FORWARD_IMAGE) && isValid(NSISBrowserUtility.DISABLED_FORWARD_IMAGE) && 
            isValid(NSISBrowserUtility.HOME_IMAGE)) {
-            Composite c = new Composite(displayArea, SWT.NONE);
-            c.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false));
-            GridLayout layout = new GridLayout(2,false);
-            layout.marginHeight = layout.marginWidth = 0;
-            c.setLayout(layout);
-            Label l = new Label(c,SWT.NONE);
-            l.setText(EclipseNSISPlugin.getResourceString("nsis.command.description.label")); //$NON-NLS-1$
-            l.setLayoutData(new GridData(SWT.FILL,SWT.CENTER,true,false));
-            makeBold(l);
             
-            ToolBar toolBar =  new ToolBar(c, SWT.FLAT);
-            toolBar.setLayoutData(new GridData(SWT.FILL,SWT.FILL,false,false));
+            ToolBar toolBar =  new ToolBar(displayArea, SWT.FLAT);
+            toolBar.setLayoutData(new GridData(SWT.RIGHT,SWT.FILL,false,false));
 
             // Add a button to go back to original page
             final ToolItem home = new ToolItem(toolBar, SWT.NONE);

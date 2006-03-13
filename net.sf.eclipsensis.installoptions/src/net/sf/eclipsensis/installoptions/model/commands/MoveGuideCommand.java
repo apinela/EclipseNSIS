@@ -41,7 +41,7 @@ public class MoveGuideCommand extends Command
         Font f = Display.getDefault().getSystemFont();
         guidePos = (isHorizontal?FigureUtility.pixelsToDialogUnitsY(guidePos,f):FigureUtility.pixelsToDialogUnitsX(guidePos,f));
         mGuide.setPosition((isHorizontal?FigureUtility.dialogUnitsToPixelsY(guidePos,f):FigureUtility.dialogUnitsToPixelsX(guidePos,f)));
-        Iterator iter = mGuide.getParts().iterator();
+        Iterator iter = mGuide.getWidgets().iterator();
         while (iter.hasNext()) {
             InstallOptionsWidget widget = (InstallOptionsWidget)iter.next();
             Position pos = widget.getPosition();
@@ -67,7 +67,7 @@ public class MoveGuideCommand extends Command
         if(guidePos < 0) {
             return false;
         }
-        Iterator iter = mGuide.getParts().iterator();
+        Iterator iter = mGuide.getWidgets().iterator();
         while (iter.hasNext()) {
             InstallOptionsWidget widget = (InstallOptionsWidget)iter.next();
             Position pos = widget.getPosition();
@@ -83,10 +83,10 @@ public class MoveGuideCommand extends Command
     public void undo()
     {
         mGuide.setPosition(mGuide.getPosition() - mPositionDelta);
-        Iterator iter = mGuide.getParts().iterator();
+        Iterator iter = mGuide.getWidgets().iterator();
         while (iter.hasNext()) {
-            InstallOptionsWidget part = (InstallOptionsWidget)iter.next();
-            part.setPosition((Position)mOldPositions.get(part));
+            InstallOptionsWidget widget = (InstallOptionsWidget)iter.next();
+            widget.setPosition((Position)mOldPositions.get(widget));
         }
     }
 

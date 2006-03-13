@@ -10,43 +10,40 @@
 package net.sf.eclipsensis.installoptions.ini.validators;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
-import net.sf.eclipsensis.installoptions.ini.INIKeyValue;
-import net.sf.eclipsensis.installoptions.ini.INIProblem;
+import net.sf.eclipsensis.installoptions.ini.*;
 import net.sf.eclipsensis.util.Common;
 
 public class NumberKeyValueValidator implements IINIKeyValueValidator
 {
-    /* (non-Javadoc)
-     * @see net.sf.eclipsensis.installoptions.ini.validators.IINIKeyValueValidator#validate(net.sf.eclipsensis.installoptions.ini.INIKeyValue)
-     */
-    public boolean isValid(INIKeyValue keyValue)
+    public boolean validate(INIKeyValue keyValue, int fixFlag)
     {
         String value = keyValue.getValue();
+        String error = null;
         if(!Common.isEmpty(value)) {
             try {
                 int i = Integer.parseInt(value);
                 if(i < 0 && !isNegativeAllowed()) {
-                    addError(keyValue, "positive.numeric.value.error"); //$NON-NLS-1$
-                    return false;
+                    error = "positive.numeric.value.error"; //$NON-NLS-1$
                 }
             }
             catch(Exception e) {
-                addError(keyValue, "numeric.value.error"); //$NON-NLS-1$
-                return false;
+                error = "numeric.value.error"; //$NON-NLS-1$
             }
         }
         else if(!isEmptyAllowed()){
-            addError(keyValue, "numeric.value.error"); //$NON-NLS-1$
-            return false;
+            error = "numeric.value.error"; //$NON-NLS-1$
+        }
+        if(error != null) {
+            if((fixFlag & INILine.VALIDATE_FIX_ERRORS) > 0) {
+                keyValue.setValue("0");
+                return validate(keyValue, fixFlag);
+            }
+            else {
+                keyValue.addProblem(INIProblem.TYPE_ERROR,InstallOptionsPlugin.getFormattedString(error,new String[]{keyValue.getKey()}));
+                return false;
+            }
         }
         return true;
-    }
-
-    protected void addError(INIKeyValue keyValue, String resourceString)
-    {
-        keyValue.addProblem(INIProblem.TYPE_ERROR,
-                            InstallOptionsPlugin.getFormattedString(resourceString,
-                                    new String[]{keyValue.getKey()}));
     }
 
     protected boolean isEmptyAllowed()

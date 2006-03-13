@@ -151,7 +151,7 @@ public class ListCellEditor extends CellEditor
 
     protected void doSetValue(Object value)
     {
-        ArrayList list = new ArrayList(Arrays.asList(Common.tokenize((String)value,IInstallOptionsConstants.LIST_SEPARATOR,false)));
+        java.util.List list = Common.tokenizeToList((String)value,IInstallOptionsConstants.LIST_SEPARATOR,false);
         java.util.List items = getItems();
         for (Iterator iter = list.iterator(); iter.hasNext();) {
             if(!items.contains(iter.next())) {

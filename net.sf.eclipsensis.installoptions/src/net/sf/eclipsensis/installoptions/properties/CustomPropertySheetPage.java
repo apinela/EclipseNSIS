@@ -9,8 +9,6 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.properties;
 
-import net.sf.eclipsensis.installoptions.edit.InstallOptionsEditDomain;
-
 import org.eclipse.ui.views.properties.*;
 
 public class CustomPropertySheetPage extends PropertySheetPage
@@ -27,7 +25,7 @@ public class CustomPropertySheetPage extends PropertySheetPage
         }
     };
 
-    public CustomPropertySheetPage(InstallOptionsEditDomain editDomain)
+    public CustomPropertySheetPage()
     {
         super();
         super.setSorter(cNonSorter);

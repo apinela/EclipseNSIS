@@ -30,7 +30,6 @@ public interface INSISConstants
     public static final String TEMPLATES_PREFERENCE_PAGE_ID = EclipseNSISPlugin.getBundleResourceString("%template.preference.page.id"); //$NON-NLS-1$
     public static final String TASKTAGS_PREFERENCE_PAGE_ID = EclipseNSISPlugin.getBundleResourceString("%task.tags.preference.page.id"); //$NON-NLS-1$
     public static final String HTMLHELP_ID = EclipseNSISPlugin.getBundleResourceString("%htmlhelp.id"); //$NON-NLS-1$
-    public static final String CONSOLE_ID = EclipseNSISPlugin.getBundleResourceString("%console.id"); //$NON-NLS-1$
     public static final String COMMANDS_VIEW_ID = EclipseNSISPlugin.getBundleResourceString("%commands.view.id"); //$NON-NLS-1$
     public static final String PROBLEM_MARKER_ID = EclipseNSISPlugin.getBundleResourceString("%compile.problem.marker.id"); //$NON-NLS-1$
     public static final String ERROR_ANNOTATION_NAME = EclipseNSISPlugin.getBundleResourceString("%nsis.error.annotation.name"); //$NON-NLS-1$

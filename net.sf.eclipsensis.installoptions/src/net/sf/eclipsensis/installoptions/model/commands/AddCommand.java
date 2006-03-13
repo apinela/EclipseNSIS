@@ -51,9 +51,9 @@ public class AddCommand extends org.eclipse.gef.commands.Command
         }
     }
 
-    public void setChild(InstallOptionsWidget subpart)
+    public void setChild(InstallOptionsWidget widget)
     {
-        mChild = subpart;
+        mChild = widget;
     }
 
     public void setIndex(int i)

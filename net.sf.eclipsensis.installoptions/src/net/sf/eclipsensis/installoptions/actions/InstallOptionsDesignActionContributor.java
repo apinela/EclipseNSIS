@@ -136,7 +136,6 @@ public class InstallOptionsDesignActionContributor extends ActionBarContributor
         retargetAction = new RetargetAction(SwitchEditorAction.ID, label);
         retargetAction.setToolTipText(label);
         retargetAction.setImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("switch.editor.icon"))); //$NON-NLS-1$
-        retargetAction.setActionDefinitionId(IInstallOptionsConstants.SWITCH_EDITOR_COMMAND_ID);
         addRetargetAction(retargetAction);
 
         addRetargetAction(new RetargetAction(IInstallOptionsConstants.GRID_SNAP_GLUE_SETTINGS_ACTION_ID,InstallOptionsPlugin.getResourceString("grid.snap.glue.action.name"))); //$NON-NLS-1$

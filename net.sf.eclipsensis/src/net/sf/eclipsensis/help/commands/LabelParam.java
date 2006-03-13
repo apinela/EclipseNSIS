@@ -10,6 +10,7 @@
 package net.sf.eclipsensis.help.commands;
 
 import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.XMLUtil;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
@@ -17,9 +18,27 @@ import org.w3c.dom.Node;
 
 public class LabelParam extends NSISParam
 {
+    private String mValue;
+    
     public LabelParam(Node node)
     {
         super(node);
+    }
+    
+    protected void init(Node node)
+    {
+        super.init(node);
+        setValue(XMLUtil.getStringValue(node.getAttributes(), "value",getName()));
+    }
+
+    public String getValue()
+    {
+        return mValue;
+    }
+
+    public void setValue(String value)
+    {
+        mValue = value;
     }
 
     protected NSISParamEditor createParamEditor()
@@ -31,8 +50,8 @@ public class LabelParam extends NSISParam
     {
         protected void appendParamText(StringBuffer buf)
         {
-            if(!Common.isEmpty(getName())) {
-                buf.append(" ").append(Common.maybeQuote(getName())); //$NON-NLS-1$
+            if(!Common.isEmpty(getValue())) {
+                buf.append(" ").append(Common.maybeQuote(getValue())); //$NON-NLS-1$
             }
         }
 

@@ -10,11 +10,11 @@
 package net.sf.eclipsensis.installoptions.edit.droplist;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
+import net.sf.eclipsensis.installoptions.edit.InstallOptionsWidgetEditPart;
 import net.sf.eclipsensis.installoptions.edit.combobox.InstallOptionsComboboxEditPart;
-import net.sf.eclipsensis.installoptions.edit.editable.InstallOptionsEditableElementEditManager;
-import net.sf.eclipsensis.installoptions.edit.editable.InstallOptionsEditableElementEditPart;
 
 import org.eclipse.gef.tools.CellEditorLocator;
+import org.eclipse.gef.tools.DirectEditManager;
 
 public class InstallOptionsDropListEditPart extends InstallOptionsComboboxEditPart
 {
@@ -36,7 +36,7 @@ public class InstallOptionsDropListEditPart extends InstallOptionsComboboxEditPa
         return InstallOptionsPlugin.getResourceString("droplist.type.name"); //$NON-NLS-1$
     }
 
-    protected InstallOptionsEditableElementEditManager creatDirectEditManager(InstallOptionsEditableElementEditPart part, Class clasz, CellEditorLocator locator)
+    protected DirectEditManager creatDirectEditManager(InstallOptionsWidgetEditPart part, Class clasz, CellEditorLocator locator)
     {
         return new InstallOptionsDropListEditManager(part,clasz,locator);
     }

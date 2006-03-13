@@ -25,7 +25,7 @@ public class ListboxStateKeyValueValidator extends DropListStateKeyValueValidato
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.installoptions.ini.validators.IINIKeyValueValidator#validate(net.sf.eclipsensis.installoptions.ini.INIKeyValue)
      */
-    public boolean isValid(INIKeyValue keyValue)
+    public boolean validate(INIKeyValue keyValue, int fixFlag)
     {
         boolean b = true;
         if(!isMultiSelect(keyValue)) {
@@ -33,10 +33,10 @@ public class ListboxStateKeyValueValidator extends DropListStateKeyValueValidato
                                           "\",\"").append(InstallOptionsModel.FLAGS_MULTISELECT).append( //$NON-NLS-1$
                                           "\"").toString(); //$NON-NLS-1$
             b = super.validateSingleSelection(keyValue,InstallOptionsPlugin.getFormattedString("multi.selection.error", //$NON-NLS-1$
-                    new String[]{InstallOptionsModel.PROPERTY_STATE,arg}));
+                    new String[]{InstallOptionsModel.PROPERTY_STATE,arg}),fixFlag);
         }
         return b && super.validateSelection(keyValue,Common.tokenize(keyValue.getValue(),
-                                            IInstallOptionsConstants.LIST_SEPARATOR,false));
+                                            IInstallOptionsConstants.LIST_SEPARATOR,false), fixFlag);
 
     }
 

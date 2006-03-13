@@ -370,7 +370,7 @@ public class FileFilterDialog extends Dialog
             protected List getAllElements()
             {
                 if(mCurrent != null) {
-                    return new ArrayList(Arrays.asList((FilePattern[])((TableViewer)getViewer()).getInput()));
+                    return Common.makeList((FilePattern[])((TableViewer)getViewer()).getInput());
                 }
                 return Collections.EMPTY_LIST;
             }

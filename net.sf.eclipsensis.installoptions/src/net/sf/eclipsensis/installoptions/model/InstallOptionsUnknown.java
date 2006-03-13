@@ -14,9 +14,6 @@ import net.sf.eclipsensis.installoptions.ini.INIKeyValue;
 import net.sf.eclipsensis.installoptions.ini.INISection;
 import net.sf.eclipsensis.util.Common;
 
-import org.eclipse.ui.views.properties.IPropertyDescriptor;
-import org.eclipse.ui.views.properties.TextPropertyDescriptor;
-
 public class InstallOptionsUnknown extends InstallOptionsWidget
 {
     private String mType;
@@ -72,15 +69,5 @@ public class InstallOptionsUnknown extends InstallOptionsWidget
     protected Position getDefaultPosition()
     {
         return new Position(0,0,50,50);
-    }
-
-    protected IPropertyDescriptor createPropertyDescriptor(String name)
-    {
-        if(name.equals(InstallOptionsModel.PROPERTY_TYPE)) {
-            return new TextPropertyDescriptor(InstallOptionsModel.PROPERTY_TYPE, InstallOptionsPlugin.getResourceString("type.property.name")); //$NON-NLS-1$
-        }
-        else {
-            return super.createPropertyDescriptor(name);
-        }
     }
 }

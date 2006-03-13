@@ -20,15 +20,42 @@ public class INILine implements Cloneable, Serializable
 {
     private static final long serialVersionUID = -1038711652231662150L;
 
+    public static final int VALIDATE_FIX_NONE = 0;
+    public static final int VALIDATE_FIX_ERRORS = 1;
+    public static final int VALIDATE_FIX_WARNINGS = 2;
+    public static final int VALIDATE_FIX_ALL = VALIDATE_FIX_ERRORS|VALIDATE_FIX_WARNINGS;
+    
     private String mText = ""; //$NON-NLS-1$
     private String mDelimiter = INSISConstants.LINE_SEPARATOR;
     private IINIContainer mParent;
     private List mErrors = new ArrayList();
     private List mWarnings = new ArrayList();
 
+    public INILine(String text, String delimiter)
+    {
+        this(text);
+        mDelimiter = delimiter;
+    }
+
+    public INILine(String text)
+    {
+        super();
+        mText = text;
+    }
+
     public void setText(String text)
     {
-        mText = text;
+        if(!Common.stringsAreEqual(mText, text)) {
+            mText = text;
+            setDirty(true);
+        }
+    }
+    
+    protected void setDirty(boolean dirty)
+    {
+        if(getParent() != null) {
+            getParent().setDirty(dirty);
+        }
     }
 
     public String getText()
@@ -43,7 +70,10 @@ public class INILine implements Cloneable, Serializable
 
     public void setDelimiter(String delimiter)
     {
-        mDelimiter = delimiter;
+        if(!Common.stringsAreEqual(mDelimiter, delimiter)) {
+            mDelimiter = delimiter;
+            setDirty(true);
+        }
     }
 
     public int getLength()
@@ -81,17 +111,27 @@ public class INILine implements Cloneable, Serializable
         return mWarnings.size() > 0;
     }
 
-    final void validate()
+    public final void validate()
+    {
+        validate(VALIDATE_FIX_NONE);
+    }
+
+    public void validate(int fixFlag)
     {
         mErrors.clear();
         mWarnings.clear();
-        checkProblems();
+        checkProblems(fixFlag);
     }
 
-    protected void checkProblems()
+    protected void checkProblems(int fixFlag)
     {
         if(!Common.isEmpty(getText())) {
-            addProblem(INIProblem.TYPE_WARNING,InstallOptionsPlugin.getResourceString("line.ignored.warning")); //$NON-NLS-1$
+            if((fixFlag & INILine.VALIDATE_FIX_WARNINGS)> 0) {
+                getParent().removeChild(this);
+            }
+            else {
+                addProblem(INIProblem.TYPE_WARNING,InstallOptionsPlugin.getResourceString("line.ignored.warning")); //$NON-NLS-1$
+            }
         }
     }
 
@@ -118,6 +158,11 @@ public class INILine implements Cloneable, Serializable
                     mErrors.add(problem);
                 }
         }
+    }
+    
+    public INILine copy()
+    {
+        return (INILine)clone();
     }
 
     public Object clone()

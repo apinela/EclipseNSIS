@@ -17,10 +17,7 @@ import net.sf.eclipsensis.util.Common;
 
 public class TextStateKeyValueValidator implements IINIKeyValueValidator
 {
-    /* (non-Javadoc)
-     * @see net.sf.eclipsensis.installoptions.ini.validators.IINIKeyValueValidator#validate(net.sf.eclipsensis.installoptions.ini.INIKeyValue)
-     */
-    public boolean isValid(INIKeyValue keyValue)
+    public boolean validate(INIKeyValue keyValue, int fixFlag)
     {
         String value = keyValue.getValue();
         if(!Common.isEmpty(value)) {
@@ -34,11 +31,23 @@ public class TextStateKeyValueValidator implements IINIKeyValueValidator
                                 Integer.parseInt(value);
                             }
                             catch(Exception ex) {
-                                keyValue.addProblem(INIProblem.TYPE_ERROR,
-                                        InstallOptionsPlugin.getFormattedString("text.state.only.numbers.error", //$NON-NLS-1$
-                                                new String[]{InstallOptionsModel.PROPERTY_STATE,
-                                                InstallOptionsModel.FLAGS_ONLY_NUMBERS}));
-                                return false;
+                                if((fixFlag & INILine.VALIDATE_FIX_ERRORS) > 0) {
+                                    StringBuffer buf = new StringBuffer("");
+                                    char[] chars = value.toCharArray();
+                                    for (int j = 0; j < chars.length; j++) {
+                                        if(Character.isDigit(chars[i])) {
+                                            buf.append(chars[i]);
+                                        }
+                                    }
+                                    keyValue.setValue(buf.toString());
+                                }
+                                else {
+                                    keyValue.addProblem(INIProblem.TYPE_ERROR,
+                                            InstallOptionsPlugin.getFormattedString("text.state.only.numbers.error", //$NON-NLS-1$
+                                                    new String[]{InstallOptionsModel.PROPERTY_STATE,
+                                                    InstallOptionsModel.FLAGS_ONLY_NUMBERS}));
+                                    return false;
+                                }
                             }
                         }
                     }

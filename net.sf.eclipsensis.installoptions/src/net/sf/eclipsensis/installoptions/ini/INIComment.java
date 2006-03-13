@@ -13,7 +13,17 @@ public class INIComment extends INILine
 {
     private static final long serialVersionUID = 1300997609730805814L;
 
-    protected void checkProblems()
+    public INIComment(String text, String delimiter)
+    {
+        super(text, delimiter);
+    }
+
+    public INIComment(String text)
+    {
+        super(text);
+    }
+
+    protected void checkProblems(int fixFlag)
     {
     }
 }

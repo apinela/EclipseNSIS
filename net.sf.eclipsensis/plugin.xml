@@ -145,14 +145,6 @@
       </category>
       <view
             allowMultiple="false"
-            class="net.sf.eclipsensis.console.OldNSISConsole"
-            icon="icons/nsis.gif"
-            category="%view.category.id"
-            name="%console.name"
-            id="%console.id">
-      </view>
-      <view
-            allowMultiple="false"
             class="net.sf.eclipsensis.help.NSISHTMLHelp"
             icon="icons/htmlhelp.gif"
             category="%view.category.id"
@@ -196,13 +188,14 @@
                id="%about.action.id">
          </action>
          <action
-               label="%htmlhelp.action.name"
-               icon="icons/htmlhelp.gif"
                class="net.sf.eclipsensis.actions.NSISHTMLHelpAction"
-               tooltip="%htmlhelp.action.tooltip"
+               disabledIcon="icons/htmlhelp_d.gif"
+               icon="icons/htmlhelp.gif"
+               id="%htmlhelp.action.id"
+               label="%htmlhelp.action.name"
                menubarPath="net.sf.eclipsensis.Menu/net.sf.eclipsensis.Group3"
                toolbarPath="net.sf.eclipsensis.Group"
-               id="%htmlhelp.action.id">
+               tooltip="%htmlhelp.action.tooltip">
          </action>
          <action
                label="%help.action.name"
@@ -304,12 +297,6 @@
          <view
                visible="false"
                ratio="0.5"
-               id="%console.id"
-               relative="org.eclipse.ui.views.TaskList"
-               relationship="stack"/>
-         <view
-               visible="false"
-               ratio="0.5"
                id="net.sf.eclipsensis.help.commands.NSISCommandView"
                relative="org.eclipse.ui.views.ContentOutline"
                relationship="stack"/>
@@ -322,12 +309,6 @@
          <view
                visible="false"
                ratio="0.5"
-               id="%console.id"
-               relative="org.eclipse.ui.views.ProblemView"
-               relationship="stack"/>
-         <view
-               visible="false"
-               ratio="0.5"
                id="net.sf.eclipsensis.help.commands.NSISCommandView"
                relative="org.eclipse.ui.views.ContentOutline"
                relationship="stack"/>
@@ -337,12 +318,6 @@
       </perspectiveExtension>
       <perspectiveExtension
             targetID="org.eclipse.pde.ui.PDEPerspective">
-         <view
-               visible="false"
-               ratio="0.5"
-               id="%console.id"
-               relative="org.eclipse.ui.views.ProblemView"
-               relationship="stack"/>
          <view
                visible="false"
                ratio="0.5"

@@ -35,10 +35,10 @@ public class CutCommand extends CopyCommand
         super(InstallOptionsPlugin.getResourceString("cut.command.name")); //$NON-NLS-1$
     }
 
-    public void addPart(InstallOptionsWidget part)
+    public void addWidget(InstallOptionsWidget widget)
     {
-        mOriginals.add(part);
-        super.addPart(part);
+        mOriginals.add(widget);
+        super.addWidget(widget);
     }
 
     public void setParent(InstallOptionsDialog parent)
@@ -95,10 +95,10 @@ public class CutCommand extends CopyCommand
         public void cut()
         {
             if(mVerticalGuide != null) {
-                mVerticalGuide.detachPart(mElement);
+                mVerticalGuide.detachWidget(mElement);
             }
             if(mHorizontalGuide != null) {
-                mHorizontalGuide.detachPart(mElement);
+                mHorizontalGuide.detachWidget(mElement);
             }
             mParent.removeChild(mElement.getIndex());
         }
@@ -107,10 +107,10 @@ public class CutCommand extends CopyCommand
         {
             mParent.addChild(mElement,mElement.getIndex());
             if(mVerticalGuide != null) {
-                mVerticalGuide.attachPart(mElement, mVerticalAlign);
+                mVerticalGuide.attachWidget(mElement, mVerticalAlign);
             }
             if(mHorizontalGuide != null) {
-                mHorizontalGuide.attachPart(mElement, mHorizontalAlign);
+                mHorizontalGuide.attachWidget(mElement, mHorizontalAlign);
             }
         }
     }

@@ -36,7 +36,8 @@ public class NSISOutlineContentProvider implements ITreeContentProvider, INSISCo
     public static final String NSIS_OUTLINE_SELECT = "__nsis_outline_select"; //$NON-NLS-1$
 
     public static final int DEFINE = 0;
-    public static final int IFDEF = DEFINE+1;
+    public static final int IF = DEFINE+1;
+    public static final int IFDEF = IF+1;
     public static final int IFNDEF = IFDEF+1;
     public static final int IFMACRODEF = IFNDEF+1;
     public static final int IFNMACRODEF = IFMACRODEF+1;
@@ -201,6 +202,7 @@ public class NSISOutlineContentProvider implements ITreeContentProvider, INSISCo
                         int type = NSISOutlineContentResources.getInstance().getTypeIndex(nsisToken.getType());
                         switch(type) {
                             case DEFINE:
+                            case IF:
                             case IFDEF:
                             case IFNDEF:
                             case IFMACRODEF:
@@ -344,6 +346,7 @@ public class NSISOutlineContentProvider implements ITreeContentProvider, INSISCo
                             case DEFINE:
                                 addLine(document, current, element);
                                 break;
+                            case IF:
                             case IFDEF:
                             case IFNDEF:
                             case IFMACRODEF:
@@ -353,7 +356,7 @@ public class NSISOutlineContentProvider implements ITreeContentProvider, INSISCo
                                 break;
                             case ENDIF:
                                 current = closeElement(document, current, element,
-                                                     new int[]{IFDEF, IFNDEF, IFMACRODEF, IFNMACRODEF});
+                                                     new int[]{IF, IFDEF, IFNDEF, IFMACRODEF, IFNMACRODEF});
                                 break;
                             case MACROEND:
                                 current = closeElement(document, current, element,

@@ -10,8 +10,8 @@
 package net.sf.eclipsensis.installoptions.ini.validators;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
-import net.sf.eclipsensis.installoptions.ini.INIKeyValue;
-import net.sf.eclipsensis.installoptions.ini.INIProblem;
+import net.sf.eclipsensis.installoptions.ini.*;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsLink;
 import net.sf.eclipsensis.installoptions.util.TypeConverter;
 import net.sf.eclipsensis.util.Common;
 
@@ -19,10 +19,7 @@ import org.eclipse.swt.graphics.RGB;
 
 public class TxtColorKeyValueValidator implements IINIKeyValueValidator
 {
-    /* (non-Javadoc)
-     * @see net.sf.eclipsensis.installoptions.ini.validators.IINIKeyValueValidator#validate(net.sf.eclipsensis.installoptions.ini.INIKeyValue)
-     */
-    public boolean isValid(INIKeyValue keyValue)
+    public boolean validate(INIKeyValue keyValue, int fixFlag)
     {
         String value = keyValue.getValue();
         if(!Common.isEmpty(value)) {
@@ -30,10 +27,15 @@ public class TxtColorKeyValueValidator implements IINIKeyValueValidator
             if(rgb != null) {
                 return true;
             }
-            keyValue.addProblem(INIProblem.TYPE_ERROR,
-                                InstallOptionsPlugin.getFormattedString("txtcolor.value.error", //$NON-NLS-1$
-                                        new String[]{keyValue.getKey()}));
-            return false;
+            if((fixFlag & INILine.VALIDATE_FIX_ERRORS) > 0) {
+                keyValue.setValue(TypeConverter.RGB_CONVERTER.asString(InstallOptionsLink.DEFAULT_TXTCOLOR));
+            }
+            else {
+                keyValue.addProblem(INIProblem.TYPE_ERROR,
+                                    InstallOptionsPlugin.getFormattedString("txtcolor.value.error", //$NON-NLS-1$
+                                            new String[]{keyValue.getKey()}));
+                return false;
+            }
         }
         return true;
     }

@@ -10,17 +10,12 @@
 package net.sf.eclipsensis.installoptions.ini.validators;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
-import net.sf.eclipsensis.installoptions.ini.INIKeyValue;
-import net.sf.eclipsensis.installoptions.ini.INIProblem;
+import net.sf.eclipsensis.installoptions.ini.*;
 import net.sf.eclipsensis.util.Common;
 
 public class ToggleKeyValueValidator implements IINIKeyValueValidator
 {
-
-    /* (non-Javadoc)
-     * @see net.sf.eclipsensis.installoptions.ini.validators.IINIKeyValueValidator#validate(net.sf.eclipsensis.installoptions.ini.INIKeyValue)
-     */
-    public boolean isValid(INIKeyValue keyValue)
+    public boolean validate(INIKeyValue keyValue, int fixFlag)
     {
         String value = keyValue.getValue();
         if(!Common.isEmpty(value)) {
@@ -28,10 +23,15 @@ public class ToggleKeyValueValidator implements IINIKeyValueValidator
             if(chars.length == 1 && (chars[0] == '0' || chars[0] == '1')) {
                 return true;
             }
-            keyValue.addProblem(INIProblem.TYPE_ERROR,
-                                InstallOptionsPlugin.getFormattedString("toggle.value.error", //$NON-NLS-1$
-                                        new String[]{keyValue.getKey()}));
-            return false;
+            if((fixFlag & INILine.VALIDATE_FIX_ERRORS) > 0) {
+                keyValue.setValue("0"); //$NON-NLS-1$
+            }
+            else {
+                keyValue.addProblem(INIProblem.TYPE_ERROR,
+                                    InstallOptionsPlugin.getFormattedString("toggle.value.error", //$NON-NLS-1$
+                                            new String[]{keyValue.getKey()}));
+                return false;
+            }
         }
         return true;
     }

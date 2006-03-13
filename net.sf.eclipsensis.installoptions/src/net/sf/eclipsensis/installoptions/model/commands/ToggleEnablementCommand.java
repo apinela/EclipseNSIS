@@ -21,11 +21,11 @@ import org.eclipse.gef.commands.Command;
 public class ToggleEnablementCommand extends Command
 {
     private boolean mShouldEnable;
-    private InstallOptionsWidget[] mParts;
+    private InstallOptionsWidget[] mWidgets;
 
-    public ToggleEnablementCommand(InstallOptionsWidget[] parts, boolean shouldEnable)
+    public ToggleEnablementCommand(InstallOptionsWidget[] widgets, boolean shouldEnable)
     {
-        mParts = parts;
+        mWidgets = widgets;
         mShouldEnable = shouldEnable;
         setLabel(InstallOptionsPlugin.getResourceString((mShouldEnable?"enable.command.name":"disable.command.name"))); //$NON-NLS-1$ //$NON-NLS-2$
     }
@@ -37,8 +37,8 @@ public class ToggleEnablementCommand extends Command
 
     private void setEnablement(boolean shouldEnable)
     {
-        for (int i = 0; i < mParts.length; i++) {
-            List flags = new ArrayList(mParts[i].getFlags());
+        for (int i = 0; i < mWidgets.length; i++) {
+            List flags = new ArrayList(mWidgets[i].getFlags());
             if(shouldEnable) {
                 flags.remove(InstallOptionsModel.FLAGS_DISABLED);
             }
@@ -47,7 +47,7 @@ public class ToggleEnablementCommand extends Command
                     flags.add(InstallOptionsModel.FLAGS_DISABLED);
                 }
             }
-            mParts[i].setFlags(flags);
+            mWidgets[i].setFlags(flags);
         }
     }
 

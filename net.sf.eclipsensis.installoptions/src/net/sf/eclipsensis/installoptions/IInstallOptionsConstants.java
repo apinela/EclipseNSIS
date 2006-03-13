@@ -15,6 +15,7 @@ import net.sf.eclipsensis.util.Common;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
+import org.eclipse.jface.text.Position;
 import org.eclipse.swt.graphics.Color;
 
 public interface IInstallOptionsConstants
@@ -72,6 +73,7 @@ public interface IInstallOptionsConstants
     public static final String PREFERENCE_PALETTE_VIEWER_PREFS_INIT = "PaletteViewerPrefsInit"; //$NON-NLS-1$
     public static final String PREFERENCE_UNLOAD_CREATION_TOOL_WHEN_FINISHED = "UnloadCreationToolWhenFinished"; //$NON-NLS-1$
     public static final String PREFERENCE_PREVIEW_LANG = "PreviewLang"; //$NON-NLS-1$
+    public static final String PREFERENCE_DELETE_CONTROL_WARNING = "DeleteControlWarning"; //$NON-NLS-1$
 
     public static final String PREFERENCE_SYNTAX_STYLES = "SyntaxStyles"; //$NON-NLS-1$
     public static final String SECTION_STYLE = "SectionStyle"; //$NON-NLS-1$
@@ -137,4 +139,5 @@ public interface IInstallOptionsConstants
     public static final String PREVIEW_GROUP = "net.sf.eclipsensis.installoptions.preview"; //$NON-NLS-1$
     
     public static final DialogSize DEFAULT_DIALOG_SIZE = new DialogSize(InstallOptionsPlugin.getResourceString("default.dialog.size.name"),true,new Dimension(300,140)); //$NON-NLS-1$
+    public static final Position MAX_POSITION = new Position(Integer.MAX_VALUE,Integer.MAX_VALUE);
 }

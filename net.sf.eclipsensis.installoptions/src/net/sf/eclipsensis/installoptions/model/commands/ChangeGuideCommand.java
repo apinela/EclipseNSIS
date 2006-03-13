@@ -17,7 +17,7 @@ import org.eclipse.gef.commands.Command;
 public class ChangeGuideCommand extends Command
 {
 
-    private InstallOptionsWidget mPart;
+    private InstallOptionsWidget mWidget;
 
     private InstallOptionsGuide mOldGuide, mNewGuide;
 
@@ -25,10 +25,10 @@ public class ChangeGuideCommand extends Command
 
     private boolean mHorizontal;
 
-    public ChangeGuideCommand(InstallOptionsWidget part, boolean horizontalGuide)
+    public ChangeGuideCommand(InstallOptionsWidget widget, boolean horizontalGuide)
     {
         super();
-        this.mPart = part;
+        this.mWidget = widget;
         mHorizontal = horizontalGuide;
     }
 
@@ -36,22 +36,22 @@ public class ChangeGuideCommand extends Command
             int newAlignment)
     {
         if (oldGuide != null && oldGuide != newGuide) {
-            oldGuide.detachPart(mPart);
+            oldGuide.detachWidget(mWidget);
         }
-        // You need to re-attach the part even if the oldGuide and the newGuide
+        // You need to re-attach the widget even if the oldGuide and the newGuide
         // are the same
         // because the alignment could have changed
         if (newGuide != null) {
-            newGuide.attachPart(mPart, newAlignment);
+            newGuide.attachWidget(mWidget, newAlignment);
         }
     }
 
     public void execute()
     {
         // Cache the old values
-        mOldGuide = mHorizontal?mPart.getHorizontalGuide():mPart.getVerticalGuide();
+        mOldGuide = mHorizontal?mWidget.getHorizontalGuide():mWidget.getVerticalGuide();
         if (mOldGuide != null) {
-            mOldAlign = mOldGuide.getAlignment(mPart);
+            mOldAlign = mOldGuide.getAlignment(mWidget);
         }
 
         redo();

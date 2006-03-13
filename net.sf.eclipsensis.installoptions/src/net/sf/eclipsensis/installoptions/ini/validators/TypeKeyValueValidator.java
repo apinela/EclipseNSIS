@@ -10,29 +10,29 @@
 package net.sf.eclipsensis.installoptions.ini.validators;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
-import net.sf.eclipsensis.installoptions.ini.INIKeyValue;
-import net.sf.eclipsensis.installoptions.ini.INIProblem;
+import net.sf.eclipsensis.installoptions.ini.*;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsModelTypeDef;
 
 public class TypeKeyValueValidator implements IINIKeyValueValidator
 {
-    /* (non-Javadoc)
-     * @see net.sf.eclipsensis.installoptions.ini.validators.IINIKeyValueValidator#validate(net.sf.eclipsensis.installoptions.ini.INIKeyValue)
-     */
-    public boolean isValid(INIKeyValue keyValue)
+    public boolean validate(INIKeyValue keyValue, int fixFlag)
     {
         String value = keyValue.getValue();
-        if(value.length() > 0) {
+        if(value.length() > 0 && value.indexOf(' ') < 0 && value.indexOf('\t') < 0) {
             InstallOptionsModelTypeDef typeDef = InstallOptionsModel.INSTANCE.getControlTypeDef(value);
-            if(typeDef != null && !typeDef.getName().equals(InstallOptionsModel.TYPE_UNKNOWN)) {
+            if(typeDef != null) {
                 return true;
             }
         }
-        keyValue.addProblem(INIProblem.TYPE_WARNING,
-                            InstallOptionsPlugin.getFormattedString("type.value.warning", //$NON-NLS-1$
-                                    new Object[]{new Integer(value.length()),
-                                    InstallOptionsModel.PROPERTY_TYPE,value}));
+        if((fixFlag & INILine.VALIDATE_FIX_WARNINGS)> 0) {
+            keyValue.setValue(InstallOptionsModel.TYPE_UNKNOWN);
+        }
+        else {
+            keyValue.addProblem(INIProblem.TYPE_WARNING,
+                                InstallOptionsPlugin.getFormattedString("type.value.warning", //$NON-NLS-1$
+                                        new Object[]{InstallOptionsModel.PROPERTY_TYPE}));
+        }
         return false;
     }
 }

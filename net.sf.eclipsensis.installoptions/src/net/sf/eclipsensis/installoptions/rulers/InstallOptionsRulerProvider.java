@@ -82,7 +82,7 @@ public class InstallOptionsRulerProvider extends RulerProvider
 
     public List getAttachedModelObjects(Object guide)
     {
-        return new ArrayList(((InstallOptionsGuide)guide).getParts());
+        return new ArrayList(((InstallOptionsGuide)guide).getWidgets());
     }
 
     public Command getCreateGuideCommand(int position)

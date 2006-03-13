@@ -40,17 +40,17 @@ public class CopyCommand extends Command
         mCopies = new ArrayList();
     }
 
-    public void addPart(InstallOptionsWidget part)
+    public void addWidget(InstallOptionsWidget widget)
     {
-        if(!part.isLocked()) {
-            Rectangle bounds = part.getPosition().getBounds();
+        if(!widget.isLocked()) {
+            Rectangle bounds = widget.getPosition().getBounds();
             mMinX = Math.min(mMinX,bounds.x);
             mMaxX = Math.max(mMaxX,bounds.x+bounds.width-1);
             mMinY = Math.min(mMinY,bounds.y);
             mMaxY = Math.max(mMaxY,bounds.y+bounds.height-1);
         }
 
-        mCopies.add(part.clone());
+        mCopies.add(widget.clone());
     }
 
     public void execute()

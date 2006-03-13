@@ -73,7 +73,7 @@ public class InstallOptionsListbox extends InstallOptionsListItems
     private String validateState(String state)
     {
         List listItems = getListItems();
-        ArrayList selected = new ArrayList(Arrays.asList(Common.tokenize(state,IInstallOptionsConstants.LIST_SEPARATOR,false)));
+        List selected = Common.tokenizeToList(state,IInstallOptionsConstants.LIST_SEPARATOR,false);
         for (Iterator iter = selected.iterator(); iter.hasNext();) {
             if(!listItems.contains(iter.next())) {
                 iter.remove();
@@ -175,7 +175,7 @@ public class InstallOptionsListbox extends InstallOptionsListItems
         protected Object openDialogBox(Control cellEditorWindow)
         {
             Object oldValue = getValue();
-            List selected = new ArrayList(Arrays.asList(Common.tokenize((String)oldValue,IInstallOptionsConstants.LIST_SEPARATOR,false)));
+            List selected = Common.tokenizeToList((String)oldValue,IInstallOptionsConstants.LIST_SEPARATOR,false);
             SelectListItemsDialog dialog = new SelectListItemsDialog(cellEditorWindow.getShell(), mListItems, selected, mMultiSelect, getType());
             dialog.setValidator(getValidator());
             int result = dialog.open();

@@ -304,7 +304,7 @@ public class InstallOptionsXYLayoutEditPolicy extends XYLayoutEditPolicy impleme
 
         while (i.hasNext()) {
             currPart = (GraphicalEditPart)i.next();
-            clone.addPart((InstallOptionsWidget)currPart.getModel(),
+            clone.addWidget((InstallOptionsWidget)currPart.getModel(),
                     (Rectangle)getConstraintForClone(currPart, request));
         }
 

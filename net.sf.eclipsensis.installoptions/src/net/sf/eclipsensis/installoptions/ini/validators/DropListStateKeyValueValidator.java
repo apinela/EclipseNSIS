@@ -10,7 +10,7 @@
 package net.sf.eclipsensis.installoptions.ini.validators;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.List;
 
 import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
@@ -23,10 +23,12 @@ public class DropListStateKeyValueValidator extends ComboboxStateKeyValueValidat
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.installoptions.ini.validators.IINIKeyValueValidator#validate(net.sf.eclipsensis.installoptions.ini.INIKeyValue)
      */
-    public boolean isValid(INIKeyValue keyValue)
+    public boolean validate(INIKeyValue keyValue, int fixFlag)
     {
-        return super.isValid(keyValue) &&
-               validateSelection(keyValue, new String[]{keyValue.getValue()});
+        String value = keyValue.getValue();
+        return super.validate(keyValue, fixFlag) &&
+               validateSelection(keyValue, (value != null && value.length() > 0?new String[]{value}:Common.EMPTY_STRING_ARRAY), 
+                                 fixFlag);
     }
 
     protected String getType()
@@ -34,23 +36,34 @@ public class DropListStateKeyValueValidator extends ComboboxStateKeyValueValidat
         return InstallOptionsModel.TYPE_DROPLIST;
     }
 
-    protected boolean validateSelection(INIKeyValue keyValue, String[] values)
+    protected boolean validateSelection(INIKeyValue keyValue, String[] values, int fixFlag)
     {
         if(!Common.isEmptyArray(values)) {
             INIKeyValue[] keyValues = ((INISection)keyValue.getParent()).findKeyValues(InstallOptionsModel.PROPERTY_LISTITEMS);
             if(!Common.isEmptyArray(keyValues)) {
-                String[] array = Common.tokenize(keyValues[0].getValue(),IInstallOptionsConstants.LIST_SEPARATOR,false);
-                if(!Common.isEmptyArray(array)) {
-                    ArrayList valuesList = new ArrayList(Arrays.asList(values));
-                    valuesList.removeAll(Arrays.asList(array));
+                List allValues = Common.tokenizeToList(keyValues[0].getValue(),IInstallOptionsConstants.LIST_SEPARATOR,false);
+                if(!Common.isEmptyCollection(allValues)) {
+                    ArrayList valuesList = Common.makeList(values);
+                    valuesList.removeAll(allValues);
                     if(valuesList.size() == 0) {
+                        return true;
+                    }
+                    if((fixFlag & INILine.VALIDATE_FIX_ERRORS) > 0) {
+                        valuesList = Common.makeList(values);
+                        valuesList.retainAll(allValues);
+                        keyValue.setValue(Common.flatten(valuesList, IInstallOptionsConstants.LIST_SEPARATOR));
                         return true;
                     }
                 }
             }
-            keyValue.addProblem(INIProblem.TYPE_ERROR, InstallOptionsPlugin.getFormattedString("valid.selection.error", //$NON-NLS-1$
-                    new String[]{InstallOptionsModel.PROPERTY_STATE,InstallOptionsModel.PROPERTY_LISTITEMS}));
-            return false;
+            if((fixFlag & INILine.VALIDATE_FIX_ERRORS) > 0) {
+                keyValue.setValue("");
+            }
+            else {
+                keyValue.addProblem(INIProblem.TYPE_ERROR, InstallOptionsPlugin.getFormattedString("valid.selection.error", //$NON-NLS-1$
+                        new String[]{InstallOptionsModel.PROPERTY_STATE,InstallOptionsModel.PROPERTY_LISTITEMS}));
+                return false;
+            }
         }
         return true;
     }

@@ -160,7 +160,7 @@ public abstract class TypeConverter
 
         public Object asType(String s)
         {
-            return new ArrayList(Arrays.asList(Common.tokenize(s,IInstallOptionsConstants.LIST_SEPARATOR,false)));
+            return Common.tokenizeToList(s,IInstallOptionsConstants.LIST_SEPARATOR,false);
         }
 
         public Object makeCopy(Object o)

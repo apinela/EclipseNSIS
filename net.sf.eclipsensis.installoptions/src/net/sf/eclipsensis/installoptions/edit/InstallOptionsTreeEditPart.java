@@ -19,6 +19,7 @@ import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.EditPolicy;
 import org.eclipse.gef.editparts.AbstractTreeEditPart;
+import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Tree;
@@ -107,16 +108,47 @@ public class InstallOptionsTreeEditPart extends AbstractTreeEditPart implements 
                         // remove child
                         removeChild(editPart);
                     }
-                    else {
+                    else if (newValue instanceof Integer){
                         // reorder child
                         ISelection sel = getViewer().getSelection();
                         reorderChild(editPart, ((Integer)newValue).intValue());
                         getViewer().setSelection(sel);
                     }
+                    else {
+                        //replace child
+                        replaceChild(editPart,createChild(newValue));
+                    }
                 }
             }
         }
         refreshVisuals();
+    }
+
+    protected void replaceChild(EditPart oldChild, EditPart newChild)
+    {
+        Assert.isNotNull(oldChild);
+        Assert.isNotNull(newChild);
+
+        int index = getChildren().indexOf(oldChild);
+        if (index < 0) {
+            return;
+        }
+        fireRemovingChild(oldChild, index);
+        if (isActive())
+            oldChild.deactivate();
+        oldChild.removeNotify();
+        removeChildVisual(oldChild);
+        oldChild.setParent(null);
+        getChildren().remove(oldChild);
+
+        getChildren().add(index, newChild);
+        newChild.setParent(this);
+        addChildVisual(newChild, index);
+        newChild.addNotify();
+
+        if (isActive())
+            newChild.activate();
+        fireChildAdded(newChild, index);
     }
 
     /**

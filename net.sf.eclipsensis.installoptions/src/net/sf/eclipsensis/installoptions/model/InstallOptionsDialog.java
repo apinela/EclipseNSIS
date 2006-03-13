@@ -282,27 +282,35 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
         mUpDownMover.moveToTop();
     }
 
-    public void setSelection(List selection)
+    public void setSelection(Object selection)
     {
         mSelectedIndices = parseSelection(selection);
-        selection = new ArrayList();
+        List list = new ArrayList();
         if(!Common.isEmptyArray(mSelectedIndices)) {
             for (int i = 0; i < mSelectedIndices.length; i++) {
-                selection.add(mChildren.get(mSelectedIndices[i]));
+                list.add(mChildren.get(mSelectedIndices[i]));
             }
         }
-        firePropertyChange(PROPERTY_SELECTION,null,selection);
+        firePropertyChange(PROPERTY_SELECTION,null,list);
     }
 
-    private int[] parseSelection(List selection)
+    private int[] parseSelection(Object selection)
     {
-        selection.retainAll(mChildren);
-        if(Common.isEmptyCollection(selection)) {
+        List list = null;
+        if(selection instanceof List) {
+            list = (List)selection;
+        }
+        else if(selection != null) {
+            list = new ArrayList();
+            list.add(selection);
+        }
+        list.retainAll(mChildren);
+        if(Common.isEmptyCollection(list)) {
             return new int[0];
         }
-        int[] selectedIndices = new int[selection.size()];
+        int[] selectedIndices = new int[list.size()];
         for (int i = 0; i < selectedIndices.length; i++) {
-            selectedIndices[i] = mChildren.indexOf(selection.get(i));
+            selectedIndices[i] = mChildren.indexOf(list.get(i));
         }
         Arrays.sort(selectedIndices);
         return selectedIndices;
@@ -536,6 +544,12 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
         return super.getPropertyValue(id);
     }
 
+    protected void fireChildReplaced(String prop, Object oldChild, Object newChild)
+    {
+        mListeners.firePropertyChange(prop, oldChild, newChild);
+        setDirty(true);
+    }
+
     protected void fireChildAdded(String prop, Object child, Object index)
     {
         mListeners.firePropertyChange(prop, index, child);
@@ -576,6 +590,24 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
         }
         fireChildAdded(InstallOptionsModel.PROPERTY_CHILDREN, child, new Integer(index));
         setDirty(true);
+    }
+
+    public void replaceChild(InstallOptionsWidget oldChild, InstallOptionsWidget newChild)
+    {
+        int index = mChildren.indexOf(oldChild);
+        if(index >= 0 && newChild != null && !mChildren.contains(newChild)) {
+            mChildren.remove(oldChild);
+            oldChild.setParent(null);
+            mChildren.add(index,newChild);
+            updateChildIndices(index);
+            newChild.setParent(this);
+            INISection section = newChild.getSection();
+            if(section != null) {
+                mINISectionMap.put(section,newChild);
+            }
+            fireChildReplaced(InstallOptionsModel.PROPERTY_CHILDREN, oldChild, newChild);
+            setDirty(true);
+        }
     }
 
     public void setChild(InstallOptionsWidget child, int index)
@@ -633,7 +665,6 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
         }
     }
 
-
     public void moveChild(InstallOptionsWidget child, int newIndex){
         int oldIndex = mChildren.indexOf(child);
         if(oldIndex >= 0 && newIndex >= 0 && oldIndex != newIndex) {
@@ -667,6 +698,14 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
                 break;
         }
         return result;
+    }
+    
+    public InstallOptionsElement getElement(INISection section)
+    {
+        if(mINISectionMap != null) {
+            return (InstallOptionsElement)mINISectionMap.get(section);
+        }
+        return null;
     }
 
     public Object clone()
@@ -729,18 +768,22 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
                     if(m.matches()){
                         int index = Integer.parseInt(m.group(1))-1;
                         INIKeyValue[] types = sections[i].findKeyValues(InstallOptionsModel.PROPERTY_TYPE);
+                        InstallOptionsElementFactory factory = null;
                         if(!Common.isEmptyArray(types)) {
-                            InstallOptionsElementFactory factory =  InstallOptionsElementFactory.getFactory(types[0].getValue());
-                            if(factory != null) {
-                                InstallOptionsWidget widget = (InstallOptionsWidget)factory.getNewObject(sections[i]);
-                                if(index >= children.size()) {
-                                    int diff = index-children.size()+1;
-                                    for(int j=0; j<diff; j++) {
-                                        children.add(null);
-                                    }
+                            factory =  InstallOptionsElementFactory.getFactory(types[0].getValue());
+                        }
+                        else {
+                            factory =  InstallOptionsElementFactory.getFactory(InstallOptionsModel.TYPE_UNKNOWN);
+                        }
+                        if(factory != null) {
+                            InstallOptionsWidget widget = (InstallOptionsWidget)factory.getNewObject(sections[i]);
+                            if(index >= children.size()) {
+                                int diff = index-children.size()+1;
+                                for(int j=0; j<diff; j++) {
+                                    children.add(null);
                                 }
-                                children.set(index, widget);
                             }
+                            children.set(index, widget);
                         }
                     }
                 }
@@ -810,6 +853,7 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
                                     }
                                     else if(metadata[i].startsWith(LOCKED_PREFIX)) {
                                         child.setLocked(Boolean.valueOf(metadata[i].substring(LOCKED_PREFIX.length())).booleanValue());
+                                        child.setDirty(false);
                                     }
                                 }
                             }
@@ -929,7 +973,7 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
                                             offset2 = (orientation == PositionConstants.NORTH?p.right:p.bottom);
                                     }
                                     if(offset == offset2) {
-                                        guide.attachPart(child,alignment);
+                                        guide.attachWidget(child,alignment);
                                     }
                                 }
                             }
@@ -954,22 +998,49 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
         return true;
     }
 
+    public INISection getSection()
+    {
+        INISection section = super.getSection();
+        if(section.getPosition() == null) {
+            section.setPosition(new org.eclipse.jface.text.Position(0,0));
+        }
+        return section;
+    }
+
+
     public INIFile updateINIFile()
     {
         if(canUpdateINIFile()) {
             HashMap tempMap = new HashMap();
-            INISection section;
-            section = updateSection();
+            INISection previousSection = null;
+            List children = new ArrayList(mChildren);
+            children.add(this);
+            Collections.sort(children,new Comparator() {
+                private org.eclipse.jface.text.Position getPosition(InstallOptionsElement element)
+                {
+                    INISection sec = element.getSection();
+                    if(sec != null) {
+                        org.eclipse.jface.text.Position p = sec.getPosition();
+                        if(p != null) {
+                            return p;
+                        }
+                    }
+                    return MAX_POSITION;
+                }
 
-            if(!mINISectionMap.containsKey(section)) {
-                mINISectionMap.put(section,this);
-            }
-            if(!mINIFile.getChildren().contains(section)) {
-                mINIFile.addChild(section);
-            }
-            tempMap.put(section, this);
-            INISection previousSection = section;
-            for (Iterator iter = mChildren.iterator(); iter.hasNext();) {
+                public int compare(Object o1, Object o2)
+                {
+                    org.eclipse.jface.text.Position p1 = getPosition((InstallOptionsElement)o1);
+                    org.eclipse.jface.text.Position p2 = getPosition((InstallOptionsElement)o2);
+                    int n = p1.getOffset()-p2.getOffset();
+                    if(n == 0) {
+                        n = p1.getLength()-p2.getLength();
+                    }
+                    return n;
+                }
+            });
+            
+            for (Iterator iter = children.iterator(); iter.hasNext();) {
                 if(previousSection != null) {
                     int n = previousSection.getSize();
                     if(n > 0) {
@@ -978,12 +1049,12 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
                             lastChild.setDelimiter(INSISConstants.LINE_SEPARATOR);
                         }
                         if(!lastChild.getClass().equals(INILine.class) || !Common.isEmpty(lastChild.getText())) {
-                            previousSection.addChild(new INILine());
+                            previousSection.addChild(new INILine("",lastChild.getDelimiter()));
                         }
                     }
                 }
-                InstallOptionsWidget element = (InstallOptionsWidget)iter.next();
-                section = element.updateSection();
+                InstallOptionsElement element = (InstallOptionsElement)iter.next();
+                INISection section = element.updateSection();
                 if(!mINISectionMap.containsKey(section)) {
                     mINISectionMap.put(section,element);
                 }
@@ -1003,7 +1074,7 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
                 }
             }
             for (Iterator iter = mINISectionMap.keySet().iterator(); iter.hasNext();) {
-                section = (INISection)iter.next();
+                INISection section = (INISection)iter.next();
                 if(!tempMap.containsKey(section)) {
                     iter.remove();
                     mINIFile.removeChild(section);
@@ -1031,8 +1102,6 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
         if(verticalGuides.size() > 0 || horizontalGuides.size() > 0) {
             StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
             if(comment == null) {
-                comment = new INIComment();
-                section.addChild(0,comment);
                 buf.append(METADATA_PREFIX).append(" ").append(GUIDES_PREFIX); //$NON-NLS-1$
             }
             else {
@@ -1061,7 +1130,13 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
                 buf.append(PositionConstants.NORTH).append('|').append(FigureUtility.pixelsToDialogUnitsX(guide.getPosition(),f));
                 count++;
             }
-            comment.setText(buf.toString());
+            if(comment == null) {
+                comment = new INIComment(buf.toString());
+                section.addChild(0,comment);
+            }
+            else {
+                comment.setText(buf.toString());
+            }
             return true;
         }
         else {
@@ -1102,22 +1177,20 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
             }
         }
         if(buf.length() > 0) {
-            String text;
             INIComment comment = child.getMetadataComment();
             if(comment == null) {
-                comment = new INIComment();
+                comment = new INIComment(new StringBuffer(METADATA_PREFIX).append(" ").append(buf.toString()).toString()); //$NON-NLS-1$
                 child.getSection().addChild(0, comment);
-                text = new StringBuffer(METADATA_PREFIX).append(" ").append(buf.toString()).toString(); //$NON-NLS-1$
             }
             else {
-                text = comment.getText();
+                String text = comment.getText();
                 int n = text.indexOf(METADATA_PREFIX);
                 if(n < 0) {
                     n = text.indexOf(OLD_METADATA_PREFIX);
                 }
                 text = new StringBuffer(text.substring(0,n)).append(METADATA_PREFIX).append(" ").append(buf.toString()).toString(); //$NON-NLS-1$
+                comment.setText(text);
             }
-            comment.setText(text);
         }
         else {
             if(child.getMetadataComment() != null) {

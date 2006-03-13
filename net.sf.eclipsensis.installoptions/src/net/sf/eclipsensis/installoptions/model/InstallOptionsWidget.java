@@ -17,6 +17,7 @@ import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.figures.FigureUtility;
 import net.sf.eclipsensis.installoptions.ini.INISection;
 import net.sf.eclipsensis.installoptions.properties.PositionPropertySource;
+import net.sf.eclipsensis.installoptions.properties.editors.CustomComboBoxCellEditor;
 import net.sf.eclipsensis.installoptions.properties.labelproviders.ListLabelProvider;
 import net.sf.eclipsensis.installoptions.properties.validators.NSISStringLengthValidator;
 import net.sf.eclipsensis.installoptions.rulers.InstallOptionsGuide;
@@ -81,12 +82,12 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
     protected InstallOptionsWidget(INISection section)
     {
         super(section);
-        mTypeDef = InstallOptionsModel.INSTANCE.getControlTypeDef(getType());
     }
 
     protected void init()
     {
         super.init();
+        mTypeDef = InstallOptionsModel.INSTANCE.getControlTypeDef(getType());
         mIndex = -1;
         mPosition = new Position();
     }
@@ -148,7 +149,21 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
 
     protected IPropertyDescriptor createPropertyDescriptor(String name)
     {
-        if(name.equals(InstallOptionsModel.PROPERTY_INDEX)) {
+        if(name.equals(InstallOptionsModel.PROPERTY_TYPE)) {
+            return new PropertyDescriptor(InstallOptionsModel.PROPERTY_TYPE, InstallOptionsPlugin.getResourceString("type.property.name")) { //$NON-NLS-1$
+                public CellEditor createPropertyEditor(Composite parent)
+                {
+                    Collection coll = InstallOptionsModel.INSTANCE.getControlTypeDefs();
+                    List types = new ArrayList();
+                    for (Iterator iter = coll.iterator(); iter.hasNext();) {
+                        InstallOptionsModelTypeDef typeDef = (InstallOptionsModelTypeDef)iter.next();
+                        types.add(typeDef.getType());
+                    }
+                    return new CustomComboBoxCellEditor(parent,types);
+                }
+            };
+        }
+        else if(name.equals(InstallOptionsModel.PROPERTY_INDEX)) {
             return new IndexPropertyDescriptor();
         }
         else if(name.equals(InstallOptionsModel.PROPERTY_POSITION)) {
@@ -526,11 +541,15 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
 
         public CellEditor createPropertyEditor(Composite parent)
         {
-            String[] values = new String[getParent().getChildren().size()];
-            for (int i = 0; i < values.length; i++) {
-                values[i]=Integer.toString(i+1);
+            CellEditor editor = null;
+            InstallOptionsDialog dialog = getParent();
+            if(dialog != null) {
+                String[] values = new String[dialog.getChildren().size()];
+                for (int i = 0; i < values.length; i++) {
+                    values[i]=Integer.toString(i+1);
+                }
+                editor = new ComboBoxCellEditor(parent, values, SWT.READ_ONLY);
             }
-            CellEditor editor = new ComboBoxCellEditor(parent, values, SWT.READ_ONLY);
             return editor;
         }
     }

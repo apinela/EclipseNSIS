@@ -11,6 +11,56 @@
 ###############################################################################
 -->
 <commands>
+  <version name="2.15">
+    <command name="!define">
+      <param type="radio">
+        <param type="group">
+          <param name="/date" type="label" optional="true" depends="2"/>
+          <param name="gflag" type="string"/>
+          <param name="value" type="string" allowBlank="true" optional="true"/>              
+        </param>
+        <param type="group">
+          <param name="/math" type="label"/>
+          <param name="gflag" type="string"/>
+          <param name="val1" type="number" acceptVar="false"/>              
+          <param name="OP" type="choice">
+            <choice value="+"/>
+            <choice value="-"/>
+            <choice value="*"/>
+            <choice value="/"/>
+            <choice value="%"/>
+          </param>
+          <param name="val2" type="number" acceptVar="false"/>              
+        </param>
+      </param>
+    </command>
+    <command name="!else">
+      <param optional="true" type="subcommand">
+        <subcommand name="if" command="!if"/>
+        <subcommand name="ifdef" command="!ifdef"/>
+        <subcommand name="ifndef" command="!ifndef"/>
+        <subcommand name="ifmacrodef" command="!ifmacrodef"/>
+        <subcommand name="ifmacrondef" command="!ifmacrondef"/>
+      </param>
+    </command>
+    <command name="!if">
+      <param name="not" value="!" type="label" optional="true"/>
+      <param name="value" type="number" acceptVar="false"/>
+      <param type="group" optional="true">
+        <param name="op" type="choice">
+          <choice display="equal to" value="=="/>
+          <choice display="not equal to" value="!="/>
+          <choice display="less than or equal to" value="&lt;="/>
+          <choice display="less than" value="&lt;"/>
+          <choice display="greater than" value="&gt;"/>
+          <choice display="less than or equal to" value="&gt;="/>
+          <choice display="and" value="&amp;&amp;"/>
+          <choice display="or" value="||"/>
+        </param>
+        <param name="value2" type="number" acceptVar="false"/>              
+      </param>
+    </command>
+  </version>
   <version name="2.13">
     <command name="StrCmpS">
       <param name="str1" type="string" allowBlank="true"/>

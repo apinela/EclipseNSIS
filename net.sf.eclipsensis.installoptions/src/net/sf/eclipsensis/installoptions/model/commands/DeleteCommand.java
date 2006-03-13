@@ -18,61 +18,60 @@ import org.eclipse.gef.commands.Command;
 
 public class DeleteCommand extends Command
 {
-    private InstallOptionsWidget mChild;
+    protected InstallOptionsWidget mChild;
 
-    private InstallOptionsDialog mParent;
+    protected InstallOptionsDialog mParent;
 
     private InstallOptionsGuide mVerticalGuide, mHorizontalGuide;
 
     private int mVerticalAlign, mHorizontalAlign;
 
-    private int mIndex = -1;
+    protected int mIndex = -1;
 
     public DeleteCommand()
     {
-        super(InstallOptionsPlugin.getResourceString("delete.command.name")); //$NON-NLS-1$
+        setLabel(getName());
     }
 
-    private void detachFromGuides(InstallOptionsWidget part)
+    protected String getName()
     {
-        if (part.getVerticalGuide() != null) {
-            mVerticalGuide = part.getVerticalGuide();
-            mVerticalAlign = mVerticalGuide.getAlignment(part);
-            mVerticalGuide.detachPart(part);
-        }
-        if (part.getHorizontalGuide() != null) {
-            mHorizontalGuide = part.getHorizontalGuide();
-            mHorizontalAlign = mHorizontalGuide.getAlignment(part);
-            mHorizontalGuide.detachPart(part);
-        }
+        return InstallOptionsPlugin.getResourceString("delete.command.name"); //$NON-NLS-1$
+    }
 
+    protected void detachFromGuides(InstallOptionsWidget widget)
+    {
+        if (widget.getVerticalGuide() != null) {
+            mVerticalGuide = widget.getVerticalGuide();
+            mVerticalAlign = mVerticalGuide.getAlignment(widget);
+            mVerticalGuide.detachWidget(widget);
+        }
+        if (widget.getHorizontalGuide() != null) {
+            mHorizontalGuide = widget.getHorizontalGuide();
+            mHorizontalAlign = mHorizontalGuide.getAlignment(widget);
+            mHorizontalGuide.detachWidget(widget);
+        }
     }
 
     public void execute()
-    {
-        primExecute();
-    }
-
-    protected void primExecute()
     {
         detachFromGuides(mChild);
         mIndex = mChild.getIndex();
         mParent.removeChild(mChild);
     }
 
-    private void reattachToGuides(InstallOptionsWidget part)
+    protected void reattachToGuides(InstallOptionsWidget widget)
     {
         if (mVerticalGuide != null) {
-            mVerticalGuide.attachPart(part, mVerticalAlign);
+            mVerticalGuide.attachWidget(widget, mVerticalAlign);
         }
         if (mHorizontalGuide != null) {
-            mHorizontalGuide.attachPart(part, mHorizontalAlign);
+            mHorizontalGuide.attachWidget(widget, mHorizontalAlign);
         }
     }
 
     public void redo()
     {
-        primExecute();
+        execute();
     }
 
     public void setChild(InstallOptionsWidget c)

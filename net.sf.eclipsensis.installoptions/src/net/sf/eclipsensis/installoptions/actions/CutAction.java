@@ -64,7 +64,7 @@ public class CutAction extends SelectionAction
             for (Iterator iter = objects.iterator(); iter.hasNext();) {
                 Object object = iter.next();
                 if(object instanceof InstallOptionsWidgetEditPart) {
-                    cutCommand.addPart((InstallOptionsWidget)((InstallOptionsWidgetEditPart)object).getModel());
+                    cutCommand.addWidget((InstallOptionsWidget)((InstallOptionsWidgetEditPart)object).getModel());
                 }
                 else {
                     return null;

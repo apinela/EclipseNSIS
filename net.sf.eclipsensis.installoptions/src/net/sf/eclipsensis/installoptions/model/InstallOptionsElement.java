@@ -107,7 +107,7 @@ public abstract class InstallOptionsElement implements IPropertySource, Cloneabl
     {
     }
 
-    protected boolean isDirty()
+    public boolean isDirty()
     {
         return mDirty;
     }
@@ -271,19 +271,20 @@ public abstract class InstallOptionsElement implements IPropertySource, Cloneabl
         setDirty(false);
     }
 
-    INISection getSection()
+    public INISection getSection()
     {
+        if(mSection == null) {
+            mSection = new INISection("");
+        }
         return mSection;
     }
 
     public final INISection updateSection()
     {
-        if(mSection == null) {
-            mSection = new INISection();
-        }
-        int n = mSection.getSize();
+        INISection section = getSection();
+        int n = section.getSize();
         while(n > 0) {
-            INILine lastChild = mSection.getChild(n-1);
+            INILine lastChild = section.getChild(n-1);
             if(lastChild.getClass().equals(INILine.class) && Common.isEmpty(lastChild.getText())) {
                 n--;
             }
@@ -292,7 +293,7 @@ public abstract class InstallOptionsElement implements IPropertySource, Cloneabl
             }
         }
         if(isDirty()) {
-            mSection.setName(getSectionName());
+            section.setName(getSectionName());
             Collection properties = doGetPropertyNames();
             for (Iterator iter=properties.iterator(); iter.hasNext(); ) {
                 String property = (String)iter.next();
@@ -301,7 +302,7 @@ public abstract class InstallOptionsElement implements IPropertySource, Cloneabl
                 String value = (propertyValue != null?(converter != null?converter.asString(propertyValue):propertyValue.toString()):""); //$NON-NLS-1$
                 value = (value == null?"":value); //$NON-NLS-1$
 
-                INIKeyValue[] keyValues = mSection.findKeyValues(property);
+                INIKeyValue[] keyValues = section.findKeyValues(property);
                 if(!Common.isEmptyArray(keyValues)) {
                     keyValues[0].setValue(value);
                 }
@@ -309,12 +310,12 @@ public abstract class InstallOptionsElement implements IPropertySource, Cloneabl
                     if(value.length() > 0) {
                         INIKeyValue keyValue = new INIKeyValue(property);
                         keyValue.setValue(value);
-                        mSection.addChild(n++,keyValue);
+                        section.addChild(n++,keyValue);
                     }
                 }
             }
 
-            for(Iterator iter=mSection.getChildren().iterator(); iter.hasNext(); ) {
+            for(Iterator iter=section.getChildren().iterator(); iter.hasNext(); ) {
                 INILine line = (INILine)iter.next();
                 if(iter.hasNext() && line.getDelimiter() == null) {
                     line.setDelimiter(INSISConstants.LINE_SEPARATOR);
@@ -322,7 +323,7 @@ public abstract class InstallOptionsElement implements IPropertySource, Cloneabl
             }
             setDirty(false);
         }
-        return mSection;
+        return section;
     }
 
     protected TypeConverter getTypeConverter(String property)

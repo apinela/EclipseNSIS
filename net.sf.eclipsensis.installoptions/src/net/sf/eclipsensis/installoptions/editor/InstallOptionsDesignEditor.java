@@ -25,6 +25,7 @@ import net.sf.eclipsensis.installoptions.edit.*;
 import net.sf.eclipsensis.installoptions.ini.INIFile;
 import net.sf.eclipsensis.installoptions.model.*;
 import net.sf.eclipsensis.installoptions.properties.CustomPropertySheetPage;
+import net.sf.eclipsensis.installoptions.properties.InstallOptionsPropertySheetEntry;
 import net.sf.eclipsensis.installoptions.rulers.*;
 import net.sf.eclipsensis.installoptions.template.*;
 import net.sf.eclipsensis.installoptions.util.TypeConverter;
@@ -51,7 +52,6 @@ import org.eclipse.gef.ui.palette.FlyoutPaletteComposite.FlyoutPreferences;
 import org.eclipse.gef.ui.palette.customize.PaletteSettingsDialog;
 import org.eclipse.gef.ui.parts.*;
 import org.eclipse.gef.ui.parts.TreeViewer;
-import org.eclipse.gef.ui.properties.UndoablePropertySheetEntry;
 import org.eclipse.gef.ui.views.palette.PalettePage;
 import org.eclipse.gef.ui.views.palette.PaletteViewerPage;
 import org.eclipse.jface.action.*;
@@ -592,7 +592,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
                 IDocument doc = provider.getDocument(input);
                 if(doc != null) {
                     if(isSwitching()) {
-                        updateDocument(doc);
+                        updateDocument();
                     }
                     input.getDocumentProvider().disconnect(input);
                     mINIFile.disconnect(doc);
@@ -674,8 +674,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
             if(input != null) {
                 IDocumentProvider provider = input.getDocumentProvider();
                 if(provider != null) {
-                    IDocument doc = provider.getDocument(input);
-                    updateDocument(doc);
+                    updateDocument();
                     performSave(input, provider, true, progressMonitor);
                 }
             }
@@ -765,12 +764,12 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
         }
     }
 
-    private void updateDocument(IDocument doc)
+    private void updateDocument()
     {
         InstallOptionsDialog dialog = getInstallOptionsDialog();
-        if(doc != null && dialog != null && dialog.canUpdateINIFile()) {
+        if(dialog != null && dialog.canUpdateINIFile()) {
             dialog.updateINIFile();
-            mINIFile.updateDocument(doc);
+            mINIFile.updateDocument();
         }
     }
 
@@ -799,8 +798,8 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
             return createPalettePage();
         }
         if (type == org.eclipse.ui.views.properties.IPropertySheetPage.class) {
-            PropertySheetPage page = new CustomPropertySheetPage((InstallOptionsEditDomain)getEditDomain());
-            page.setRootEntry(new UndoablePropertySheetEntry(getEditDomain().getCommandStack()));//new CustomPropertySheetEntry((InstallOptionsEditDomain)getEditDomain()));
+            PropertySheetPage page = new CustomPropertySheetPage();
+            page.setRootEntry(new InstallOptionsPropertySheetEntry(getEditDomain().getCommandStack()));//new CustomPropertySheetEntry((InstallOptionsEditDomain)getEditDomain()));
             return page;
         }
         if (type == EditDomain.class) {
@@ -1080,8 +1079,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
         registry.registerAction(action);
         getSelectionActions().add(action.getId());
 
-        action = new SwitchEditorAction(this, INSTALLOPTIONS_SOURCE_EDITOR_ID);
-        action.setActionDefinitionId(IInstallOptionsConstants.SWITCH_EDITOR_COMMAND_ID);
+        action = new SwitchEditorAction(this, INSTALLOPTIONS_SOURCE_EDITOR_ID); //$NON-NLS-1$);
         registry.registerAction(action);
         getEditorSite().getKeyBindingService().registerAction(action);
 
@@ -1350,10 +1348,9 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
         boolean success= false;
         if(!file.exists()) {
             try {
-                IDocument doc = provider.getDocument(input);
-                updateDocument(doc);
+                updateDocument();
                 provider.aboutToChange(newInput);
-                provider.saveDocument(new NullProgressMonitor(), newInput, doc, true);
+                provider.saveDocument(new NullProgressMonitor(), newInput, provider.getDocument(input), true);
                 saveProperties(file);
                 success= true;
             }

@@ -25,7 +25,7 @@ public class DeleteGuideCommand extends Command
 
     private InstallOptionsGuide mGuide;
 
-    private Map mOldParts;
+    private Map mOldWidgets;
 
     public DeleteGuideCommand(InstallOptionsGuide guide, InstallOptionsRuler parent)
     {
@@ -41,10 +41,10 @@ public class DeleteGuideCommand extends Command
 
     public void execute()
     {
-        mOldParts = new HashMap(mGuide.getMap());
-        Iterator iter = mOldParts.keySet().iterator();
+        mOldWidgets = new HashMap(mGuide.getMap());
+        Iterator iter = mOldWidgets.keySet().iterator();
         while (iter.hasNext()) {
-            mGuide.detachPart((InstallOptionsWidget)iter.next());
+            mGuide.detachWidget((InstallOptionsWidget)iter.next());
         }
         mParent.removeGuide(mGuide);
     }
@@ -52,10 +52,10 @@ public class DeleteGuideCommand extends Command
     public void undo()
     {
         mParent.addGuide(mGuide);
-        Iterator iter = mOldParts.keySet().iterator();
+        Iterator iter = mOldWidgets.keySet().iterator();
         while (iter.hasNext()) {
-            InstallOptionsWidget part = (InstallOptionsWidget)iter.next();
-            mGuide.attachPart(part, ((Integer)mOldParts.get(part)).intValue());
+            InstallOptionsWidget widget = (InstallOptionsWidget)iter.next();
+            mGuide.attachWidget(widget, ((Integer)mOldWidgets.get(widget)).intValue());
         }
     }
 }

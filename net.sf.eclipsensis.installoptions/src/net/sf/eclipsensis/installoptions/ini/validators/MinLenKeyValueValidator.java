@@ -17,9 +17,9 @@ import net.sf.eclipsensis.util.Common;
 
 public class MinLenKeyValueValidator extends PositiveNumberKeyValueValidator
 {
-    public boolean isValid(INIKeyValue keyValue)
+    public boolean validate(INIKeyValue keyValue, int fixFlag)
     {
-        boolean b = super.isValid(keyValue);
+        boolean b = super.validate(keyValue, fixFlag);
         if(b) {
             int minValue = 0;
             String value = keyValue.getValue();
@@ -41,9 +41,14 @@ public class MinLenKeyValueValidator extends PositiveNumberKeyValueValidator
                 }
             }
             if(minValue > maxValue) {
-                keyValue.addProblem(INIProblem.TYPE_ERROR,InstallOptionsPlugin.getFormattedString("minmax.value.error",new Object[]{ //$NON-NLS-1$
-                        keyValue.getKey(),new Integer(0),new Integer(maxValue)}));
-                b = false;
+                if((fixFlag & INILine.VALIDATE_FIX_ERRORS) > 0) {
+                    keyValue.setValue(Integer.toString(maxValue));
+                }
+                else {
+                    keyValue.addProblem(INIProblem.TYPE_ERROR,InstallOptionsPlugin.getFormattedString("minmax.value.error",new Object[]{ //$NON-NLS-1$
+                            keyValue.getKey(),new Integer(0),new Integer(maxValue)}));
+                    b = false;
+                }
             }
         }
         return b;

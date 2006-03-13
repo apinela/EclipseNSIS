@@ -46,7 +46,8 @@ public class InstallOptionsDialogEditPolicy extends ContainerEditPolicy implemen
         EditPart editpart = request.getEditPart();
         List children = getHost().getChildren();
         int newIndex = request.getNewIndex();
-        int oldIndex = children.indexOf(editpart);
+        //Below is because children order is reversed in this edit part
+        int oldIndex = (children.size()-1)-children.indexOf(editpart);
         if (oldIndex == newIndex) {
             return UnexecutableCommand.INSTANCE;
         }

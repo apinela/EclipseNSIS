@@ -18,7 +18,6 @@ import java.net.URL;
 import java.rmi.dgc.VMID;
 import java.text.BreakIterator;
 import java.util.*;
-import java.util.List;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 
@@ -27,7 +26,8 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.osgi.framework.Bundle;
 
@@ -737,6 +737,17 @@ public class Common
                 printChildren(prefix,elements[j].getChildren());
             }
         }
+    }
+
+    public static ArrayList makeList(Object[] array)
+    {
+        ArrayList list = new ArrayList();
+        if(!isEmptyArray(array)) {
+            for (int i = 0; i < array.length; i++) {
+                list.add(array[i]);
+            }
+        }
+        return list;
     }
 
     public static boolean openConfirm(Shell parent, String title, String message, Image icon)

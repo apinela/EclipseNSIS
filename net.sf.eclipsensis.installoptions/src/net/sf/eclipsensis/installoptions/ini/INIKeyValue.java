@@ -27,13 +27,14 @@ public class INIKeyValue extends INILine
 
     public INIKeyValue(String key)
     {
-        super();
+        super("");
         mKey = key;
     }
 
-    INIKeyValue(String key, String value)
+    INIKeyValue(String text, String delimiter, String key, String value)
     {
-        this(key);
+        super(text, delimiter);
+        mKey = key;
         if(value != null && value.length() > 2 && value.startsWith("\"") && value.endsWith("\"")) { //$NON-NLS-1$ //$NON-NLS-2$
             value = value.substring(1,value.length()-1);
             mQuoted = true;
@@ -57,12 +58,21 @@ public class INIKeyValue extends INILine
         mValue = (value==null?"":TypeConverter.INI_STRING_CONVERTER.asString(value)); //$NON-NLS-1$
     }
 
-    protected void checkProblems()
+    protected void checkProblems(int fixFlag)
     {
         if(getParent() instanceof INISection) {
             INIKeyValue[] keyValues = ((INISection)getParent()).findKeyValues(getKey());
             if(keyValues.length > 1) {
-                addProblem(INIProblem.TYPE_ERROR, InstallOptionsPlugin.getFormattedString("duplicate.key.name.error",new String[]{getKey()})); //$NON-NLS-1$
+                if((fixFlag & VALIDATE_FIX_ERRORS) > 0) {
+                    for (int i = 0; i < keyValues.length; i++) {
+                        if(keyValues[i] != this) {
+                            getParent().removeChild(keyValues[i]);
+                        }
+                    }
+                }
+                else {
+                    addProblem(INIProblem.TYPE_ERROR, InstallOptionsPlugin.getFormattedString("duplicate.key.name.error",new String[]{getKey()})); //$NON-NLS-1$
+                }
             }
             INIKeyValue[] types = ((INISection)getParent()).findKeyValues(InstallOptionsModel.PROPERTY_TYPE);
             IINIKeyValueValidator validator = null;
@@ -76,16 +86,26 @@ public class INIKeyValue extends INILine
                 validator = INIKeyValueValidatorRegistry.getKeyValueValidator(getKey());
             }
             if(validator != null) {
-                validator.isValid(this);
+                validator.validate(this,fixFlag);
             }
             int maxLen = InstallOptionsModel.INSTANCE.getMaxLength();
             if(getValue().length() > maxLen) {
-                addProblem(INIProblem.TYPE_WARNING,InstallOptionsPlugin.getFormattedString("value.length.warning", //$NON-NLS-1$
-                        new Object[]{getKey(),new Integer(maxLen)}));
+                if((fixFlag & VALIDATE_FIX_WARNINGS)> 0) {
+                    setValue(getValue().substring(0,maxLen));
+                }
+                else {
+                    addProblem(INIProblem.TYPE_WARNING,InstallOptionsPlugin.getFormattedString("value.length.warning", //$NON-NLS-1$
+                            new Object[]{getKey(),new Integer(maxLen)}));
+                }
             }
         }
         else {
-            addProblem(INIProblem.TYPE_WARNING,InstallOptionsPlugin.getResourceString("line.ignored.warning")); //$NON-NLS-1$
+            if((fixFlag & VALIDATE_FIX_WARNINGS)> 0) {
+                getParent().removeChild(this);
+            }
+            else {
+                addProblem(INIProblem.TYPE_WARNING,InstallOptionsPlugin.getResourceString("line.ignored.warning")); //$NON-NLS-1$
+            }
         }
     }
 

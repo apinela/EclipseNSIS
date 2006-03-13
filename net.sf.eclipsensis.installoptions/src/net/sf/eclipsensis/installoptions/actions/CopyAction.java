@@ -58,7 +58,7 @@ public class CopyAction extends SelectionAction
         for (Iterator iter = objects.iterator(); iter.hasNext();) {
             Object object = iter.next();
             if(object instanceof InstallOptionsWidgetEditPart) {
-                copyCommand.addPart((InstallOptionsWidget)((InstallOptionsWidgetEditPart)object).getModel());
+                copyCommand.addWidget((InstallOptionsWidget)((InstallOptionsWidgetEditPart)object).getModel());
             }
             else {
                 return null;

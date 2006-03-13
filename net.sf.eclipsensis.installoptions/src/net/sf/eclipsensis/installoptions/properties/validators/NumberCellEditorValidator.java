@@ -34,11 +34,13 @@ public class NumberCellEditorValidator implements ICellEditorValidator
         try {
             if(!isBlankAllowed() || !Common.isEmpty((String)value)) {
                 int val = Integer.parseInt((String)value);
-                if(val < getMinValue()) {
-                    return InstallOptionsPlugin.getFormattedString("number.minvalue.error.message",new Object[]{new Integer(getMinValue())}); //$NON-NLS-1$
+                int minValue = getMinValue();
+                if(val < minValue) {
+                    return InstallOptionsPlugin.getFormattedString("number.minvalue.error.message",new Object[]{new Integer(minValue)}); //$NON-NLS-1$
                 }
-                if(val > getMaxValue()) {
-                    return InstallOptionsPlugin.getFormattedString("number.maxvalue.error.message",new Object[]{new Integer(getMinValue())}); //$NON-NLS-1$
+                int maxValue = getMaxValue();
+                if(val > maxValue) {
+                    return InstallOptionsPlugin.getFormattedString("number.maxvalue.error.message",new Object[]{new Integer(maxValue)}); //$NON-NLS-1$
                 }
             }
             return null;

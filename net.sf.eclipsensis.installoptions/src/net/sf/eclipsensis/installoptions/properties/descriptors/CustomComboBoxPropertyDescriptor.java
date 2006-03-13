@@ -20,6 +20,11 @@ public class CustomComboBoxPropertyDescriptor extends ComboBoxPropertyDescriptor
     private String[] mDisplay;
     private int mDefault;
 
+    public CustomComboBoxPropertyDescriptor(String id, String displayName, String[] data, int default1)
+    {
+        this(id, displayName, data, data, default1);
+    }
+    
     public CustomComboBoxPropertyDescriptor(String id, String displayName, String[] data, String[] display, int default1)
     {
         super(id, displayName, new String[0]);

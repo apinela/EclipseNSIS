@@ -9,6 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.actions;
 
+import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.editor.IInstallOptionsEditor;
 
@@ -31,6 +32,7 @@ public class SwitchEditorAction extends Action
         mEditor = editor;
         mSwitchToEditorId = switchToEditorId;
         setImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("switch.editor.icon"))); //$NON-NLS-1$
+        setActionDefinitionId(IInstallOptionsConstants.SWITCH_EDITOR_COMMAND_ID);
     }
 
     public String getId()

@@ -158,15 +158,21 @@ public abstract class StatusMessageDialog extends IconAndMessageDialog implement
      */
     protected final Image getImage()
     {
-        switch(mStatus.getSeverity()) {
-            case IStatus.ERROR:
-                return mErrorImage;
-            case IStatus.WARNING:
-                return mWarningImage;
-            case IStatus.INFO:
-                return mInfoImage;
-            default:
-                return mOKImage;
+        Image image = mStatus.getImage();
+        if(image == null) {
+            switch(mStatus.getSeverity()) {
+                case IStatus.ERROR:
+                    return mErrorImage;
+                case IStatus.WARNING:
+                    return mWarningImage;
+                case IStatus.INFO:
+                    return mInfoImage;
+                default:
+                    return mOKImage;
+            }
+        }
+        else {
+            return image;
         }
     }
 
@@ -190,9 +196,36 @@ public abstract class StatusMessageDialog extends IconAndMessageDialog implement
 
     protected class DialogStatus extends Status
     {
+        private Image mImage;
+        
         public DialogStatus(int severity, String message)
         {
+            this(severity,message,null);
+        }
+
+        public DialogStatus(int severity, String message, Image image)
+        {
             super(severity,INSISConstants.PLUGIN_ID,0,message,null);
+            mImage = image;
+            refreshStatus();
+        }
+
+        protected void setMessage(String message) 
+        {
+            if(message==null) {
+                message = "";
+            }
+            super.setMessage(message);
+        }
+
+        public Image getImage()
+        {
+            return mImage;
+        }
+
+        public void setImage(Image image)
+        {
+            mImage = image;
             refreshStatus();
         }
 
