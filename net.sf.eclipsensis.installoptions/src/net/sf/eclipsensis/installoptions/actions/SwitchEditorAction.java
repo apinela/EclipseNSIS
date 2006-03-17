@@ -26,18 +26,16 @@ public class SwitchEditorAction extends Action
     private IInstallOptionsEditor mEditor;
     private String mSwitchToEditorId;
 
-    public SwitchEditorAction(IInstallOptionsEditor editor, String switchToEditorId)
+    public SwitchEditorAction(IInstallOptionsEditor editor, String switchToEditorId, String text)
     {
-        super();
+        super(text);
         mEditor = editor;
         mSwitchToEditorId = switchToEditorId;
+        setId(ID);
+        setToolTipText(text);
         setImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("switch.editor.icon"))); //$NON-NLS-1$
         setActionDefinitionId(IInstallOptionsConstants.SWITCH_EDITOR_COMMAND_ID);
-    }
-
-    public String getId()
-    {
-        return ID;
+        setDisabledImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("switch.editor.disabled.icon"))); //$NON-NLS-1$
     }
 
     public void run()

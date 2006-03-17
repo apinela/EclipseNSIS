@@ -11,6 +11,8 @@ package net.sf.eclipsensis.installoptions.model.commands;
 
 import java.text.MessageFormat;
 
+import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
+
 import org.eclipse.gef.commands.Command;
 import org.eclipse.ui.views.properties.IPropertySource;
 import org.eclipse.ui.views.properties.IPropertySource2;
@@ -30,7 +32,7 @@ public class SetValueCommand extends Command
 
     public SetValueCommand(String propLabel) 
     {
-        super(MessageFormat.format("Set {0}", new Object[]{propLabel}).trim());
+        super(MessageFormat.format(InstallOptionsPlugin.getResourceString("set.value.command.name"), new Object[]{propLabel}).trim()); //$NON-NLS-1$
     }
 
     public boolean canExecute() 

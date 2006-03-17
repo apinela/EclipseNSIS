@@ -21,10 +21,7 @@ public class InstallOptionsEditPolicy extends ComponentEditPolicy
 {
     protected Command createDeleteCommand(GroupRequest request)
     {
-        Object parent = getHost().getParent().getModel();
-        DeleteCommand deleteCmd = new DeleteCommand();
-        deleteCmd.setParent((InstallOptionsDialog)parent);
-        deleteCmd.setChild((InstallOptionsWidget)getHost().getModel());
-        return deleteCmd;
+        return new DeleteCommand((InstallOptionsDialog)getHost().getParent().getModel(),
+                                 (InstallOptionsWidget)getHost().getModel());
     }
 }

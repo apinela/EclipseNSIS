@@ -41,7 +41,7 @@ import org.eclipse.ui.forms.widgets.ExpandableComposite;
 
 public class NSISCommandDialog extends StatusMessageDialog
 {
-    private static final String SETTING_COLLAPSE_HELP = "collapseHelp";
+    private static final String SETTING_COLLAPSE_HELP = "collapseHelp"; //$NON-NLS-1$
     private static Map cCommandStateMap;
     private static final Object JOB_FAMILY = new Object();
     

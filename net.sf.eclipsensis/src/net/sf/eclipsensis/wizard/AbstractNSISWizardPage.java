@@ -49,11 +49,16 @@ public abstract class AbstractNSISWizardPage extends WizardPage implements INSIS
 
     private static ImageDescriptor cImage = EclipseNSISPlugin.getImageManager().getImageDescriptor(EclipseNSISPlugin.getResourceString("wizard.title.image")); //$NON-NLS-1$
 
-	public AbstractNSISWizardPage(String pageName, String title, String description)
+    public AbstractNSISWizardPage(String pageName, String title, String description)
     {
 		super(pageName,title,cImage);
         setDescription(description);
 	}
+
+    public void setErrorMessage(String message)
+    {
+        super.setMessage(message,ERROR);
+    }
 
     protected String getArrayStringResource(String[] array, int index, String defaultString)
     {

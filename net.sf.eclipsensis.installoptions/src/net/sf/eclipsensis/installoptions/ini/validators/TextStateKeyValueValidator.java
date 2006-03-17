@@ -32,7 +32,7 @@ public class TextStateKeyValueValidator implements IINIKeyValueValidator
                             }
                             catch(Exception ex) {
                                 if((fixFlag & INILine.VALIDATE_FIX_ERRORS) > 0) {
-                                    StringBuffer buf = new StringBuffer("");
+                                    StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
                                     char[] chars = value.toCharArray();
                                     for (int j = 0; j < chars.length; j++) {
                                         if(Character.isDigit(chars[i])) {

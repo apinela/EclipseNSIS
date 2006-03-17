@@ -213,7 +213,7 @@ public abstract class StatusMessageDialog extends IconAndMessageDialog implement
         protected void setMessage(String message) 
         {
             if(message==null) {
-                message = "";
+                message = ""; //$NON-NLS-1$
             }
             super.setMessage(message);
         }

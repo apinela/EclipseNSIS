@@ -80,6 +80,11 @@ public class NSISManualConfigWizardPage extends WizardPage
         validate();
     }
     
+    public void setErrorMessage(String message)
+    {
+        super.setMessage(message,ERROR);
+    }
+
     private void validate()
     {
         String nsisHome = mNSISHomeText.getText();

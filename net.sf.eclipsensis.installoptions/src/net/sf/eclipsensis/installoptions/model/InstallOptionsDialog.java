@@ -1049,7 +1049,7 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
                             lastChild.setDelimiter(INSISConstants.LINE_SEPARATOR);
                         }
                         if(!lastChild.getClass().equals(INILine.class) || !Common.isEmpty(lastChild.getText())) {
-                            previousSection.addChild(new INILine("",lastChild.getDelimiter()));
+                            previousSection.addChild(new INILine("",lastChild.getDelimiter())); //$NON-NLS-1$
                         }
                     }
                 }
@@ -1068,7 +1068,7 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
                 int n = previousSection.getSize();
                 if(n > 0) {
                     INILine lastChild = previousSection.getChild(n-1);
-                    if(lastChild.getClass().equals(INILine.class) && Common.isEmpty(lastChild.getText())) {
+                    if(lastChild.getClass().equals(INILine.class) && Common.isEmpty(lastChild.getText()) && lastChild.getDelimiter() != null) {
                         previousSection.removeChild(lastChild);
                     }
                 }

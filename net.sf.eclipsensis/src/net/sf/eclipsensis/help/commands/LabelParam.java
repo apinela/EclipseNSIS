@@ -28,7 +28,7 @@ public class LabelParam extends NSISParam
     protected void init(Node node)
     {
         super.init(node);
-        setValue(XMLUtil.getStringValue(node.getAttributes(), "value",getName()));
+        setValue(XMLUtil.getStringValue(node.getAttributes(), ATTR_VALUE,getName()));
     }
 
     public String getValue()

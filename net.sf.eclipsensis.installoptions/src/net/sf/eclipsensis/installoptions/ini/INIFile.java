@@ -23,9 +23,9 @@ import org.eclipse.swt.SWT;
 
 public class INIFile implements IDocumentListener, IINIContainer
 {
-    private static String STRING_CR = new String("\r");
-    private static String STRING_LF = new String("\n");
-    private static String STRING_CRLF = new String("\r\n");
+    private static String STRING_CR = new String("\r"); //$NON-NLS-1$
+    private static String STRING_LF = new String("\n"); //$NON-NLS-1$
+    private static String STRING_CRLF = new String("\r\n"); //$NON-NLS-1$
     
     public static final int INIFILE_CONNECTED = 0;
     public static final int INIFILE_MODIFIED = 1;
@@ -211,6 +211,7 @@ public class INIFile implements IDocumentListener, IINIContainer
             child.update();
         }
         validate(fixFlag);
+        setDirty(false);
     }
 
     public void updateDocument()
@@ -231,7 +232,7 @@ public class INIFile implements IDocumentListener, IINIContainer
         if(mDocument != null) {
             disconnect(mDocument);
         }
-        mDirty = true;
+        setDirty(true);
         mDocument = doc;
         doc.addPositionCategory(INIFILE_CATEGORY);
         doc.addDocumentListener(this);
@@ -292,7 +293,7 @@ public class INIFile implements IDocumentListener, IINIContainer
                 br = new BufferedReader(r);
             }
             String delimiter;
-            StringBuffer buf = new StringBuffer("");
+            StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
             IINIContainer container = iniFile;
             int n = br.read();
             while(n != -1) {
@@ -407,7 +408,7 @@ public class INIFile implements IDocumentListener, IINIContainer
             mLines.clear();
             mErrors.clear();
             mWarnings.clear();
-            mDirty = false;
+            setDirty(false);
             notifyListeners(INIFILE_DISCONNECTED);
         }
     }
@@ -450,7 +451,7 @@ public class INIFile implements IDocumentListener, IINIContainer
     public void documentChanged(DocumentEvent event)
     {
         if(!mUpdatingDocument) {
-            mDirty = true;
+            setDirty(true);
             int start = mChangeStartLine;
             int end = mChangeEndLine;
             for(int i=start; i <= end; i++) {
@@ -488,7 +489,12 @@ public class INIFile implements IDocumentListener, IINIContainer
                     childIndex = 0;
                 }
                 else {
-                    container.addChild(childIndex++,line);
+                    if(container == this) {
+                        addChild(index++,line);
+                    }
+                    else {
+                        container.addChild(childIndex++,line);
+                    }
                 }
                 mLines.add(mChangeStartLine++,line);
             }
@@ -497,7 +503,7 @@ public class INIFile implements IDocumentListener, IINIContainer
                 if(line instanceof IINIContainer) {
                     break;
                 }
-                else {
+                else if(line.getParent() != container) {
                     line.getParent().removeChild(line);
                     container.addChild(line);
                 }
@@ -691,7 +697,6 @@ public class INIFile implements IDocumentListener, IINIContainer
                         new Object[]{InstallOptionsModel.SECTION_FIELD_PREFIX,
                         new Integer(missing),missingBuf.toString()}));
             }
-            mDirty = false;
             if(force) {
                 notifyListeners(INIFILE_MODIFIED);
             }

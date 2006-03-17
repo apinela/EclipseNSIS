@@ -18,28 +18,45 @@ public class NumberKeyValueValidator implements IINIKeyValueValidator
     public boolean validate(INIKeyValue keyValue, int fixFlag)
     {
         String value = keyValue.getValue();
-        String error = null;
         if(!Common.isEmpty(value)) {
             try {
                 int i = Integer.parseInt(value);
                 if(i < 0 && !isNegativeAllowed()) {
-                    error = "positive.numeric.value.error"; //$NON-NLS-1$
+                    if((fixFlag & INILine.VALIDATE_FIX_ERRORS) > 0) {
+                        keyValue.setValue(Integer.toString(-i)); //$NON-NLS-1$
+                        return validate(keyValue, fixFlag);
+                    }
+                    else {
+                        keyValue.addProblem(INIProblem.TYPE_ERROR,InstallOptionsPlugin.getFormattedString("positive.numeric.value.error",new String[]{keyValue.getKey()})); //$NON-NLS-1$
+                        return false;
+                    }
                 }
             }
             catch(Exception e) {
-                error = "numeric.value.error"; //$NON-NLS-1$
+                if((fixFlag & INILine.VALIDATE_FIX_ERRORS) > 0) {
+                    StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
+                    char[] chars = value.toCharArray();
+                    for (int i = 0; i < chars.length; i++) {
+                        if(Character.isDigit(chars[i])) {
+                            buf.append(chars[i]);
+                        }
+                    }
+                    keyValue.setValue(buf.toString());
+                    return validate(keyValue, fixFlag);
+                }
+                else {
+                    keyValue.addProblem(INIProblem.TYPE_ERROR,InstallOptionsPlugin.getFormattedString("numeric.value.error",new String[]{keyValue.getKey()})); //$NON-NLS-1$
+                    return false;
+                }
             }
         }
         else if(!isEmptyAllowed()){
-            error = "numeric.value.error"; //$NON-NLS-1$
-        }
-        if(error != null) {
             if((fixFlag & INILine.VALIDATE_FIX_ERRORS) > 0) {
-                keyValue.setValue("0");
+                keyValue.setValue("0"); //$NON-NLS-1$
                 return validate(keyValue, fixFlag);
             }
             else {
-                keyValue.addProblem(INIProblem.TYPE_ERROR,InstallOptionsPlugin.getFormattedString(error,new String[]{keyValue.getKey()}));
+                keyValue.addProblem(INIProblem.TYPE_ERROR,InstallOptionsPlugin.getFormattedString("numeric.value.error",new String[]{keyValue.getKey()})); //$NON-NLS-1$
                 return false;
             }
         }

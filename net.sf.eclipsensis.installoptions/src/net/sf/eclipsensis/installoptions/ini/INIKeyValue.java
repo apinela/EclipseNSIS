@@ -27,7 +27,7 @@ public class INIKeyValue extends INILine
 
     public INIKeyValue(String key)
     {
-        super("");
+        super(""); //$NON-NLS-1$
         mKey = key;
     }
 

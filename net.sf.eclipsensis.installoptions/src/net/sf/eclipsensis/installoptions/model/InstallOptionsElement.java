@@ -274,7 +274,7 @@ public abstract class InstallOptionsElement implements IPropertySource, Cloneabl
     public INISection getSection()
     {
         if(mSection == null) {
-            mSection = new INISection("");
+            mSection = new INISection(""); //$NON-NLS-1$
         }
         return mSection;
     }

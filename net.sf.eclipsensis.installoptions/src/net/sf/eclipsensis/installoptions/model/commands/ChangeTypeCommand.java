@@ -10,22 +10,22 @@
 package net.sf.eclipsensis.installoptions.model.commands;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsWidget;
-import net.sf.eclipsensis.installoptions.model.Position;
+import net.sf.eclipsensis.installoptions.model.*;
 
 public class ChangeTypeCommand extends DeleteCommand
 {
     private InstallOptionsWidget mNewChild;
-    private boolean mFirstTime = true;
     
-    public void setNewChild(InstallOptionsWidget newChild)
+    public ChangeTypeCommand(InstallOptionsDialog parent, InstallOptionsWidget oldChild, InstallOptionsWidget newChild)
     {
+        super(parent, oldChild);
         mNewChild = newChild;
+        setLabel(InstallOptionsPlugin.getFormattedString("change.type.command.format", new String[] {mNewChild.getType()})); //$NON-NLS-1$
     }
 
-    protected String getName()
+    public InstallOptionsWidget getNewChild()
     {
-        return InstallOptionsPlugin.getResourceString("change.type.command.name"); //$NON-NLS-1$
+        return mNewChild;
     }
 
     public void redo()
@@ -43,10 +43,6 @@ public class ChangeTypeCommand extends DeleteCommand
     public void execute()
     {
         redo();
-        if(mFirstTime) {
-            mParent.setSelection(mNewChild);
-            mFirstTime = false;
-        }
     }
 
     public void undo()

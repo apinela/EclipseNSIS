@@ -33,6 +33,7 @@ public interface IInstallOptionsConstants
 
     public static final String SWITCH_EDITOR_COMMAND_ID = InstallOptionsPlugin.getBundleResourceString("%switch.editor.command.id"); //$NON-NLS-1$
     public static final String EDITING_INSTALLOPTIONS_SOURCE_CONTEXT_ID = InstallOptionsPlugin.getBundleResourceString("%editing.installoptions.source.id"); //$NON-NLS-1$
+    public static final String INSTALLOPTIONS_SOURCE_OUTLINE_CONTEXT_ID = InstallOptionsPlugin.getBundleResourceString("%installoptions.source.outline.id"); //$NON-NLS-1$
     public static final String EDITING_INSTALLOPTIONS_DESIGN_CONTEXT_ID = InstallOptionsPlugin.getBundleResourceString("%editing.installoptions.design.id"); //$NON-NLS-1$
 
     public static final String INSTALLOPTIONS_PROBLEM_MARKER_ID = InstallOptionsPlugin.getBundleResourceString("%installoptions.problem.marker.id"); //$NON-NLS-1$
@@ -137,7 +138,13 @@ public interface IInstallOptionsConstants
     public static final String ALIGN_GROUP = "net.sf.eclipsensis.installoptions.align"; //$NON-NLS-1$
     public static final String ARRANGE_GROUP = "net.sf.eclipsensis.installoptions.arrange"; //$NON-NLS-1$
     public static final String PREVIEW_GROUP = "net.sf.eclipsensis.installoptions.preview"; //$NON-NLS-1$
+    public static final String FIX_PROBLEMS_GROUP = "net.sf.eclipsensis.installoptions.fix_problems"; //$NON-NLS-1$
     
     public static final DialogSize DEFAULT_DIALOG_SIZE = new DialogSize(InstallOptionsPlugin.getResourceString("default.dialog.size.name"),true,new Dimension(300,140)); //$NON-NLS-1$
     public static final Position MAX_POSITION = new Position(Integer.MAX_VALUE,Integer.MAX_VALUE);
+
+    public static final String CREATE_CONTROL_COMMAND_ID = InstallOptionsPlugin.getBundleResourceString("%create.control.command.id"); //$NON-NLS-1$
+    public static final String EDIT_CONTROL_COMMAND_ID = InstallOptionsPlugin.getBundleResourceString("%edit.control.command.id"); //$NON-NLS-1$
+    public static final String DELETE_CONTROL_COMMAND_ID = InstallOptionsPlugin.getBundleResourceString("%delete.control.command.id"); //$NON-NLS-1$
+    public static final String DELETE_CONTROL_COMMAND_ID2 = InstallOptionsPlugin.getBundleResourceString("%delete.control.command.id2"); //$NON-NLS-1$
 }

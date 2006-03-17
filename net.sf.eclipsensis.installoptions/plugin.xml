@@ -155,6 +155,11 @@
          description="%delete.control.command.description"
          id="%delete.control.command.id"
          categoryId="%commands.category.id"/>
+      <command
+         name="%delete.control.command.name"
+         description="%delete.control.command.description"
+         id="%delete.control.command.id2"
+         categoryId="%commands.category.id"/>
    </extension>
    <extension
          point="org.eclipse.ui.contexts">
@@ -163,6 +168,12 @@
             description="%editing.installoptions.source.description"
             parentId="org.eclipse.ui.textEditorScope"
             id="%editing.installoptions.source.id">
+      </context>
+      <context
+            name="%installoptions.source.outline.name"
+            description="%installoptions.source.outline.description"
+            parentId="org.eclipse.ui.contexts.window"
+            id="%installoptions.source.outline.id">
       </context>
       <context
             name="%editing.installoptions.design.name"
@@ -185,8 +196,18 @@
           sequence="%create.control.command.keysequence"/>
       <key
           schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+          commandId="%create.control.command.id"
+          contextId="%installoptions.source.outline.id"
+          sequence="%create.control.command.keysequence"/>
+      <key
+          schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
           commandId="%edit.control.command.id"
           contextId="%editing.installoptions.source.id"
+          sequence="%edit.control.command.keysequence"/>
+      <key
+          schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+          commandId="%edit.control.command.id"
+          contextId="%installoptions.source.outline.id"
           sequence="%edit.control.command.keysequence"/>
       <key
           schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
@@ -195,9 +216,29 @@
           sequence="%delete.control.command.keysequence1"/>
       <key
           schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-          commandId="%delete.control.command.id"
+          commandId="%delete.control.command.id2"
           contextId="%editing.installoptions.source.id"
           sequence="%delete.control.command.keysequence2"/>
+      <key
+          schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+          commandId="%delete.control.command.id"
+          contextId="%installoptions.source.outline.id"
+          sequence="%delete.control.command.keysequence1"/>
+      <key
+          schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+          commandId="%delete.control.command.id2"
+          contextId="%installoptions.source.outline.id"
+          sequence="%delete.control.command.keysequence2"/>
+      <key
+          schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+          commandId="%delete.control.command.id2"
+          contextId="%installoptions.source.outline.id"
+          sequence="%delete.control.command.keysequence3"/>
+      <key
+          schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+          commandId="%delete.control.command.id2"
+          contextId="%installoptions.source.outline.id"
+          sequence="%delete.control.command.keysequence4"/>
       <key
           schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
           commandId="%switch.editor.command.id"

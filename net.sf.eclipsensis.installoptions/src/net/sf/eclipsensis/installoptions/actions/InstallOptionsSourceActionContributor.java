@@ -29,13 +29,19 @@ public class InstallOptionsSourceActionContributor extends TextEditorActionContr
     private MenuManager mInstallOptionsMenu;
     private List mRetargetActions = new ArrayList();
     private RetargetAction mExportHTMLAction;
+    private RetargetAction mReorderAction;
     private RetargetAction mCreateControlAction;
     private RetargetAction mEditControlAction;
     private RetargetAction mDeleteControlAction;
+    private RetargetAction mDeleteControlAction2;
     private RetargetAction mSwitchEditorAction;
     private DropDownAction mPreviewGroupAction;
     private PreviewRetargetAction mPreviewClassicAction;
     private PreviewRetargetAction mPreviewMUIAction;
+    private DropDownAction mFixProblemsAction;
+    private RetargetAction mFixAllAction;
+    private RetargetAction mFixWarningsAction;
+    private RetargetAction mFixErrorsAction;
     private LanguageComboContributionItem mLanguageContributionItem;
     private InstallOptionsWizardAction mWizardAction;
     private InstallOptionsHelpAction mHelpAction;
@@ -47,36 +53,44 @@ public class InstallOptionsSourceActionContributor extends TextEditorActionContr
         
         mInstallOptionsMenu = new MenuManager(InstallOptionsPlugin.getResourceString("installoptions.menu.name")); //$NON-NLS-1$
         
-        String label = InstallOptionsPlugin.getResourceString("switch.design.editor.action.name"); //$NON-NLS-1$);
-        mSwitchEditorAction = new RetargetAction(SwitchEditorAction.ID, label);
-        mSwitchEditorAction.setToolTipText(label);
-        mSwitchEditorAction.setImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("switch.editor.icon"))); //$NON-NLS-1$
-        mSwitchEditorAction.setDisabledImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("switch.editor.disabled.icon"))); //$NON-NLS-1$
+        mSwitchEditorAction = new SwitchEditorRetargetAction(InstallOptionsPlugin.getResourceString("switch.design.editor.action.name")); //$NON-NLS-1$);
         registerRetargetAction(mSwitchEditorAction);
 
-        mExportHTMLAction = new RetargetAction(InstallOptionsSourceEditor.EXPORT_HTML_ACTION,"E&xport as HTML");
-        mExportHTMLAction.setToolTipText("Export the InstallOptions script as an HTML file");
+        mExportHTMLAction = new RetargetAction(InstallOptionsSourceEditor.EXPORT_HTML_ACTION,InstallOptionsPlugin.getResourceString("export.html.action.name")); //$NON-NLS-1$
+        mExportHTMLAction.setToolTipText(InstallOptionsPlugin.getResourceString("export.html.action.tooltip")); //$NON-NLS-1$
         mExportHTMLAction.setImageDescriptor(ImageDescriptor.createFromImage(CommonImages.EXPORT_HTML_ICON));
         mExportHTMLAction.setDisabledImageDescriptor(ImageDescriptor.createFromImage(CommonImages.EXPORT_HTML_DISABLED_ICON));        
         registerRetargetAction(mExportHTMLAction);
         
-        mCreateControlAction = new RetargetAction("net.sf.eclipsensis.installoptions.create_control","&Create Control");
-        mCreateControlAction.setToolTipText("Create an InstallOptions control in the source editor");
+        mReorderAction = new RetargetAction(InstallOptionsSourceEditor.REORDER_ACTION,InstallOptionsPlugin.getResourceString("reorder.action.name")); //$NON-NLS-1$
+        mReorderAction.setToolTipText(InstallOptionsPlugin.getResourceString("reorder.action.tooltip")); //$NON-NLS-1$
+        mReorderAction.setImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("reorder.action.icon"))); //$NON-NLS-1$
+        mReorderAction.setDisabledImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("reorder.action.disabled.icon"))); //$NON-NLS-1$        
+        registerRetargetAction(mReorderAction);
+        
+        mCreateControlAction = new RetargetAction(InstallOptionsSourceEditor.CREATE_CONTROL_ACTION,InstallOptionsPlugin.getResourceString("create.control.action.name")); //$NON-NLS-1$
+        mCreateControlAction.setToolTipText(InstallOptionsPlugin.getResourceString("create.control.action.tooltip")); //$NON-NLS-1$
         mCreateControlAction.setImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("create.control.icon"))); //$NON-NLS-1$
         mCreateControlAction.setDisabledImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("create.control.disabled.icon"))); //$NON-NLS-1$
         registerRetargetAction(mCreateControlAction);
         
-        mEditControlAction = new RetargetAction("net.sf.eclipsensis.installoptions.edit_control","&Edit Control");
-        mEditControlAction.setToolTipText("Edit an InstallOptions control in the source editor");
+        mEditControlAction = new RetargetAction(InstallOptionsSourceEditor.EDIT_CONTROL_ACTION,InstallOptionsPlugin.getResourceString("edit.control.action.name")); //$NON-NLS-1$
+        mEditControlAction.setToolTipText(InstallOptionsPlugin.getResourceString("edit.control.action.tooltip")); //$NON-NLS-1$
         mEditControlAction.setImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("edit.control.icon"))); //$NON-NLS-1$
         mEditControlAction.setDisabledImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("edit.control.disabled.icon"))); //$NON-NLS-1$
         registerRetargetAction(mEditControlAction);
         
-        mDeleteControlAction = new RetargetAction("net.sf.eclipsensis.installoptions.delete_control","&Delete Control");
-        mDeleteControlAction.setToolTipText("Delete an InstallOptions control in the source editor");
+        mDeleteControlAction = new RetargetAction(InstallOptionsSourceEditor.DELETE_CONTROL_ACTION,InstallOptionsPlugin.getResourceString("delete.control.action.name")); //$NON-NLS-1$
+        mDeleteControlAction.setToolTipText(InstallOptionsPlugin.getResourceString("delete.control.action.tooltip")); //$NON-NLS-1$
         mDeleteControlAction.setImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("delete.control.icon"))); //$NON-NLS-1$
         mDeleteControlAction.setDisabledImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("delete.control.disabled.icon"))); //$NON-NLS-1$
         registerRetargetAction(mDeleteControlAction);
+        
+        mDeleteControlAction2 = new RetargetAction(InstallOptionsSourceEditor.DELETE_CONTROL_ACTION2,InstallOptionsPlugin.getResourceString("delete.control.action.name")); //$NON-NLS-1$
+        mDeleteControlAction2.setToolTipText(InstallOptionsPlugin.getResourceString("delete.control.action.tooltip")); //$NON-NLS-1$
+        mDeleteControlAction2.setImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("delete.control.icon"))); //$NON-NLS-1$
+        mDeleteControlAction2.setDisabledImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("delete.control.disabled.icon"))); //$NON-NLS-1$
+        registerRetargetAction(mDeleteControlAction2);
         
         mPreviewClassicAction = new PreviewRetargetAction(IInstallOptionsConstants.PREVIEW_CLASSIC);
         registerRetargetAction(mPreviewClassicAction);
@@ -96,11 +110,34 @@ public class InstallOptionsSourceActionContributor extends TextEditorActionContr
         mPreviewGroupAction.setDetectCurrent(false);
         getPage().addPartListener(mPreviewGroupAction);
 
+        mFixAllAction = new INIFileFixProblemsRetargetAction(INIFileFixProblemsAction.FIX_ALL_ID);
+        registerRetargetAction(mFixAllAction);
+        mFixWarningsAction = new INIFileFixProblemsRetargetAction(INIFileFixProblemsAction.FIX_WARNINGS_ID);
+        registerRetargetAction(mFixWarningsAction);
+        mFixErrorsAction = new INIFileFixProblemsRetargetAction(INIFileFixProblemsAction.FIX_ERRORS_ID);
+        registerRetargetAction(mFixErrorsAction);
+        RetargetAction[] fixProblemsRetargetActions = new RetargetAction[] {
+                                                                            mFixAllAction,
+                                                                            mFixErrorsAction,
+                                                                            mFixWarningsAction
+                                                                           };
+        mFixProblemsAction = new DropDownAction(IInstallOptionsConstants.FIX_PROBLEMS_GROUP,
+                                                 InstallOptionsPlugin.getDefault().getPreferenceStore(),
+                                                 fixProblemsRetargetActions);
+        getPage().addPartListener(mFixProblemsAction);
+
         mInstallOptionsMenu.add(mWizardAction);
         mInstallOptionsMenu.add(new Separator());
         mInstallOptionsMenu.add(mCreateControlAction);
         mInstallOptionsMenu.add(mEditControlAction);
         mInstallOptionsMenu.add(mDeleteControlAction);
+        mInstallOptionsMenu.add(new Separator());
+        mInstallOptionsMenu.add(mReorderAction);
+        MenuManager submenu = new MenuManager(InstallOptionsPlugin.getResourceString("fix.problems.submenu.name")); //$NON-NLS-1$
+        submenu.add(mFixAllAction);
+        submenu.add(mFixErrorsAction);
+        submenu.add(mFixWarningsAction);
+        mInstallOptionsMenu.add(submenu);
         mInstallOptionsMenu.add(new Separator());
         mInstallOptionsMenu.add(new PreviewSubMenuManager(previewRetargetActions));
         mInstallOptionsMenu.add(new Separator());
@@ -134,6 +171,9 @@ public class InstallOptionsSourceActionContributor extends TextEditorActionContr
         tbm.add(mCreateControlAction);
         tbm.add(mEditControlAction);
         tbm.add(mDeleteControlAction);
+        tbm.add(new Separator());
+        tbm.add(mReorderAction);
+        tbm.add(mFixProblemsAction);
         tbm.add(new Separator());
         tbm.add(mPreviewGroupAction);
         tbm.add(mLanguageContributionItem);
@@ -169,6 +209,7 @@ public class InstallOptionsSourceActionContributor extends TextEditorActionContr
             getPage().removePartListener(action);
             action.dispose();
         }
+        mFixProblemsAction.dispose();
         mPreviewGroupAction.dispose();
         mLanguageContributionItem.dispose();
         super.dispose();

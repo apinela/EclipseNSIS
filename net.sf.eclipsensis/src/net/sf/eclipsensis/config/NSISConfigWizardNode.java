@@ -14,8 +14,7 @@ import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.util.SafeRunnable;
-import org.eclipse.jface.wizard.IWizard;
-import org.eclipse.jface.wizard.IWizardNode;
+import org.eclipse.jface.wizard.*;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Shell;
@@ -74,7 +73,7 @@ public class NSISConfigWizardNode implements IWizardNode, IPluginContribution
                 });
 
         if (statuses[0] != null) {
-            mParentPage.setErrorMessage(statuses[0].getMessage());
+            mParentPage.setMessage(statuses[0].getMessage(), WizardPage.ERROR);
             Common.openError(shell, statuses[0].getMessage(), EclipseNSISPlugin.getShellImage());
             return null;
         }

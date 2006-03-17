@@ -10,27 +10,24 @@
 package net.sf.eclipsensis.installoptions.editor;
 
 import java.util.*;
-import java.util.List;
 import java.util.regex.Matcher;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
-import net.sf.eclipsensis.installoptions.actions.PreviewAction;
-import net.sf.eclipsensis.installoptions.actions.SwitchEditorAction;
+import net.sf.eclipsensis.installoptions.actions.*;
 import net.sf.eclipsensis.installoptions.builder.InstallOptionsNature;
-import net.sf.eclipsensis.installoptions.dialogs.InstallOptionsWidgetEditorDialog;
 import net.sf.eclipsensis.installoptions.ini.*;
 import net.sf.eclipsensis.installoptions.model.*;
 import net.sf.eclipsensis.job.IJobStatusRunnable;
 import net.sf.eclipsensis.job.JobScheduler;
-import net.sf.eclipsensis.util.*;
+import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.HTMLExporter;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.gef.Disposable;
 import org.eclipse.jface.action.*;
-import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.CompositeImageDescriptor;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -40,25 +37,32 @@ import org.eclipse.jface.text.source.*;
 import org.eclipse.jface.text.source.projection.*;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.window.Window;
-import org.eclipse.swt.events.HelpListener;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.editors.text.*;
 import org.eclipse.ui.ide.IGotoMarker;
+import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.texteditor.*;
 import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
 public class InstallOptionsSourceEditor extends TextEditor implements IInstallOptionsEditor, IINIFileListener, IProjectionListener
 {
-    public static final String EXPORT_HTML_ACTION = "net.sf.eclipsensis.installoptions.export_html";
-    private static final String FOLDING_COLLAPSE = "net.sf.eclipsensis.installoptions.folding_collapse";
-    private static final String FOLDING_EXPAND = "net.sf.eclipsensis.installoptions.folding_expand";
-    private static final String FOLDING_EXPAND_ALL = "net.sf.eclipsensis.installoptions.folding_expand_all";
-    private static final String FOLDING_TOGGLE = "net.sf.eclipsensis.installoptions.folding_toggle";
+    private static final String INSTALLOPTIONS_MENU_GROUP = "installoptions"; //$NON-NLS-1$
+    public static final String DELETE_CONTROL_ACTION = "net.sf.eclipsensis.installoptions.delete_control"; //$NON-NLS-1$
+    public static final String DELETE_CONTROL_ACTION2 = "net.sf.eclipsensis.installoptions.delete_control2"; //$NON-NLS-1$
+    public static final String EDIT_CONTROL_ACTION = "net.sf.eclipsensis.installoptions.edit_control"; //$NON-NLS-1$
+    public static final String REORDER_ACTION = "net.sf.eclipsensis.installoptions.reorder"; //$NON-NLS-1$
+    public static final String CREATE_CONTROL_ACTION = "net.sf.eclipsensis.installoptions.create_control"; //$NON-NLS-1$
+    public static final String EXPORT_HTML_ACTION = "net.sf.eclipsensis.installoptions.export_html"; //$NON-NLS-1$
+    
+    private static final String FOLDING_COLLAPSE = "net.sf.eclipsensis.installoptions.folding_collapse"; //$NON-NLS-1$
+    private static final String FOLDING_EXPAND = "net.sf.eclipsensis.installoptions.folding_expand"; //$NON-NLS-1$
+    private static final String FOLDING_EXPAND_ALL = "net.sf.eclipsensis.installoptions.folding_expand_all"; //$NON-NLS-1$
+    private static final String FOLDING_TOGGLE = "net.sf.eclipsensis.installoptions.folding_toggle"; //$NON-NLS-1$
     private static final String[] KEY_BINDING_SCOPES = new String[] { IInstallOptionsConstants.EDITING_INSTALLOPTIONS_SOURCE_CONTEXT_ID };
     private static final String MARKER_CATEGORY = "__installoptions_marker"; //$NON-NLS-1$
     private IPositionUpdater mMarkerPositionUpdater = new DefaultPositionUpdater(MARKER_CATEGORY);
@@ -129,7 +133,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
         updateActions();
     }
     
-    private INISection getCurrentSection()
+    public INISection getCurrentSection()
     {
         INISection section = null;
         if(mINIFile != null) {
@@ -144,15 +148,21 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
     protected void updateActions()
     {
         boolean hasErrors = (mINIFile != null && mINIFile.hasErrors());
+        boolean hasWarnings = (mINIFile != null && mINIFile.hasWarnings());
         enableAction(SwitchEditorAction.ID,!hasErrors);
         enableAction(PreviewAction.PREVIEW_CLASSIC_ID,!hasErrors);
         enableAction(PreviewAction.PREVIEW_MUI_ID,!hasErrors);
-        enableAction("net.sf.eclipsensis.installoptions.create_control",!hasErrors);
+        enableAction(CREATE_CONTROL_ACTION,!hasErrors);
+        enableAction(REORDER_ACTION,!hasErrors);
+        enableAction(INIFileFixProblemsAction.FIX_ALL_ID,hasErrors || hasWarnings);
+        enableAction(INIFileFixProblemsAction.FIX_WARNINGS_ID,hasWarnings);
+        enableAction(INIFileFixProblemsAction.FIX_ERRORS_ID,hasErrors);
         
         INISection section = getCurrentSection();
         
-        enableAction("net.sf.eclipsensis.installoptions.edit_control",!hasErrors && section != null && section.isInstallOptionsField());
-        enableAction("net.sf.eclipsensis.installoptions.delete_control",!hasErrors && section != null && section.isInstallOptionsField());
+        enableAction(EDIT_CONTROL_ACTION,!hasErrors && section != null && section.isInstallOptionsField());
+        enableAction(DELETE_CONTROL_ACTION,!hasErrors && section != null && section.isInstallOptionsField());
+        enableAction(DELETE_CONTROL_ACTION2,!hasErrors && section != null && section.isInstallOptionsField());
     }
     
     private void enableAction(String id, boolean enabled)
@@ -166,8 +176,9 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
     protected void createActions()
     {
         super.createActions();
-        IAction action = new SwitchEditorAction(this, INSTALLOPTIONS_DESIGN_EDITOR_ID);
+        IAction action = new SwitchEditorAction(this, INSTALLOPTIONS_DESIGN_EDITOR_ID,InstallOptionsPlugin.getResourceString("switch.design.editor.action.name")); //$NON-NLS-1$);
         setAction(action.getId(),action);
+        
         action = new PreviewAction(PREVIEW_CLASSIC, this);
         setAction(action.getId(),action);
         action = new PreviewAction(PREVIEW_MUI, this);
@@ -188,22 +199,45 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
         action.setId(EXPORT_HTML_ACTION);
         setAction(action.getId(),action);
         
-        action = new CreateControlAction();
+        action = new INIFileCreateControlAction(this);
         action.setEnabled(true);
-        action.setId("net.sf.eclipsensis.installoptions.create_control");
-        action.setActionDefinitionId("net.sf.eclipsensis.installoptions.commands.CreateControl");
+        action.setId(CREATE_CONTROL_ACTION);
+        action.setActionDefinitionId(CREATE_CONTROL_COMMAND_ID);
         setAction(action.getId(),action);
         
-        action = new EditControlAction();
+        action = new INIFileEditControlAction(this);
         action.setEnabled(true);
-        action.setId("net.sf.eclipsensis.installoptions.edit_control");
-        action.setActionDefinitionId("net.sf.eclipsensis.installoptions.commands.EditControl");
+        action.setId(EDIT_CONTROL_ACTION);
+        action.setActionDefinitionId(EDIT_CONTROL_COMMAND_ID);
         setAction(action.getId(),action);
         
-        action = new DeleteControlAction();
+        action = new INIFileDeleteControlAction(this);
         action.setEnabled(true);
-        action.setId("net.sf.eclipsensis.installoptions.delete_control");
-        action.setActionDefinitionId("net.sf.eclipsensis.installoptions.commands.DeleteControl");
+        action.setId(DELETE_CONTROL_ACTION);
+        action.setActionDefinitionId(DELETE_CONTROL_COMMAND_ID);
+        setAction(action.getId(),action);
+        
+        action = new INIFileDeleteControlAction(this);
+        action.setEnabled(true);
+        action.setId(DELETE_CONTROL_ACTION2);
+        action.setActionDefinitionId(DELETE_CONTROL_COMMAND_ID2);
+        setAction(action.getId(),action);
+        
+        action = new INIFileReorderAction(this);
+        action.setEnabled(true);
+        action.setId(REORDER_ACTION);
+        setAction(action.getId(),action);
+        
+        action = new INIFileFixProblemsAction(this, INIFileFixProblemsAction.FIX_ALL_ID);
+        action.setEnabled(false);
+        setAction(action.getId(),action);
+        
+        action = new INIFileFixProblemsAction(this, INIFileFixProblemsAction.FIX_ERRORS_ID);
+        action.setEnabled(false);
+        setAction(action.getId(),action);
+        
+        action = new INIFileFixProblemsAction(this, INIFileFixProblemsAction.FIX_WARNINGS_ID);
+        action.setEnabled(false);
         setAction(action.getId(),action);
         
         ResourceBundle resourceBundle = InstallOptionsPlugin.getDefault().getResourceBundle();
@@ -259,10 +293,23 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
         
         updateActions();
     }
+    
+    protected void editorContextMenuAboutToShow(IMenuManager menu)
+    {
+        super.editorContextMenuAboutToShow(menu);
+        menu.appendToGroup(IWorkbenchActionConstants.MB_ADDITIONS, new Separator(INSTALLOPTIONS_MENU_GROUP));
+        addAction(menu, INSTALLOPTIONS_MENU_GROUP, CREATE_CONTROL_ACTION);
+        addAction(menu, INSTALLOPTIONS_MENU_GROUP, REORDER_ACTION);
+        MenuManager submenu = new MenuManager(InstallOptionsPlugin.getResourceString("fix.problems.submenu.name")); //$NON-NLS-1$
+        submenu.add(getAction(INIFileFixProblemsAction.FIX_ALL_ID));
+        submenu.add(getAction(INIFileFixProblemsAction.FIX_ERRORS_ID));
+        submenu.add(getAction(INIFileFixProblemsAction.FIX_WARNINGS_ID));
+        menu.appendToGroup(INSTALLOPTIONS_MENU_GROUP, submenu);
+    }
 
     protected void rulerContextMenuAboutToShow(IMenuManager menu) {
         super.rulerContextMenuAboutToShow(menu);
-        IMenuManager foldingMenu= new MenuManager("F&olding", "projection");
+        IMenuManager foldingMenu= new MenuManager(InstallOptionsPlugin.getResourceString("folding.menu.name"), "net.sf.eclipsensis.installoptions.projection"); //$NON-NLS-1$ //$NON-NLS-2$
         menu.appendToGroup(ITextEditorActionConstants.GROUP_RULERS, foldingMenu);
 
         IAction action= getAction(FOLDING_TOGGLE);
@@ -588,176 +635,6 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
         return super.getAdapter(type);
     }
 
-    private class CreateControlAction extends Action
-    {
-        public void run()
-        {
-            INIFile iniFile = mINIFile.copy();
-            doRun(iniFile, getSection(iniFile));
-        }
-
-        protected INISection getSection(INIFile iniFile)
-        {
-            return null;
-        }
-
-        /**
-         * @param iniFile
-         */
-        protected void doRun(INIFile iniFile, INISection section)
-        {
-            InstallOptionsWidgetEditorDialog dialog = new InstallOptionsWidgetEditorDialog(getSite().getShell(), iniFile, section);
-            if (dialog.open() == Window.OK) {
-                if(section == null) {
-                    section = dialog.getSection();
-                }
-                updateDocument(iniFile, section);
-            }
-        }
-
-        /**
-         * @param iniFile
-         * @param section
-         */
-        protected void updateDocument(INIFile iniFile, INISection section)
-        {
-            List dirtyList = new ArrayList();
-            for (Iterator iter = iniFile.getChildren().iterator(); iter.hasNext();) {
-                INILine line = (INILine)iter.next();
-                if (line instanceof INISection && ((INISection)line).isDirty()) {
-                    dirtyList.add(line);
-                }
-            }
-            boolean isDelete = false;
-            if(section != null && !dirtyList.contains(section)) {
-                isDelete = true;
-                dirtyList.add(section);
-            }
-            if (dirtyList.size() > 0) {
-                Collections.sort(dirtyList, new Comparator() {
-
-                    private Position getPosition(INISection section)
-                    {
-                        Position p = section.getPosition();
-                        return (p == null?IInstallOptionsConstants.MAX_POSITION:p);
-                    }
-
-                    public int compare(Object o1, Object o2)
-                    {
-                        Position p1 = getPosition((INISection)o1);
-                        Position p2 = getPosition((INISection)o2);
-                        int n = p2.getOffset() - p1.getOffset();
-                        if (n == 0) {
-                            n = p2.getLength() - p1.getLength();
-                        }
-                        return n;
-                    }
-                });
-                IDocument document = getDocumentProvider().getDocument(getEditorInput());
-                IUndoManager undoManager = ((InstallOptionsSourceViewer)getSourceViewer()).getUndoManager();
-                try {
-                    undoManager.beginCompoundChange();
-                    Iterator iter = dirtyList.iterator();
-                    while (iter.hasNext()) {
-                        INISection sec = (INISection)iter.next();
-                        Position p = sec.getPosition();
-                        if(p == null) {
-                            document.replace(document.getLength(), 0, sec.toString());
-                        }
-                        else {
-                            if(sec == section && isDelete) {
-                                document.replace(p.getOffset(), p.getLength(), "");
-                            }
-                            else {
-                                document.replace(p.getOffset(), p.getLength(), sec.toString());
-                            }
-                        }
-                    }
-                }
-                catch (BadLocationException e) {
-                    e.printStackTrace();
-                }
-                finally {
-                    undoManager.endCompoundChange();
-                }
-                if (!isDelete) {
-                    INISection[] sections = mINIFile.findSections(section.getName());
-                    if (sections != null && sections.length == 1) {
-                        Position p = sections[0].getPosition();
-                        getSelectionProvider().setSelection(new TextSelection(p.getOffset(), p.getLength()));
-//                        getSourceViewer().revealRange(p.getOffset(), p.getLength());
-                    }
-                }                
-            }
-        }
-    }
-
-    private class EditControlAction extends CreateControlAction
-    {
-        protected INISection getSection(INIFile iniFile)
-        {
-            INISection section = null;
-            INISection currSection = getCurrentSection();
-            if (currSection != null && !mINIFile.hasErrors()) {
-                for(Iterator iter = iniFile.getChildren().iterator(); iter.hasNext(); ) {
-                    INILine line = (INILine)iter.next();
-                    if (line instanceof INISection) {
-                        INISection sec2 = (INISection)line;
-                        if(Common.stringsAreEqual(sec2.getName(), currSection.getName())) {
-                            section = sec2;
-                            break;
-                        }
-                    }
-                }
-            }
-            return section;
-        }
-
-        protected void doRun(INIFile iniFile, INISection section)
-        {
-            if (section != null) {
-                doRun2(iniFile, section);
-            }                
-        }
-
-        /**
-         * @param iniFile
-         * @param section
-         */
-        protected void doRun2(INIFile iniFile, INISection section)
-        {
-            super.doRun(iniFile, section);
-        }
-    }
-
-    private class DeleteControlAction extends EditControlAction
-    {
-        protected void doRun2(INIFile iniFile, INISection section)
-        {
-            boolean show = InstallOptionsPlugin.getDefault().getPreferenceStore().getBoolean(PREFERENCE_DELETE_CONTROL_WARNING);
-            if(!show || WinAPI.GetKeyState(WinAPI.VK_SHIFT)<0) {
-                MessageDialogWithToggle dialog = new MessageDialogWithToggle(
-                        PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
-                        getPartName(),
-                        InstallOptionsPlugin.getShellImage(),
-                        section.getName()+" will be deleted.",
-                        MessageDialog.WARNING,
-                        new String[] { IDialogConstants.OK_LABEL, IDialogConstants.CANCEL_LABEL }, 0,
-                        "Display only if Shift key is down", show); //$NON-NLS-1$
-                dialog.open();
-                if(dialog.getReturnCode() != IDialogConstants.CANCEL_ID) {
-                    InstallOptionsPlugin.getDefault().getPreferenceStore().setValue(PREFERENCE_DELETE_CONTROL_WARNING,dialog.getToggleState());
-                }
-                else {
-                    return;
-                }
-            }
-            iniFile.removeChild(section);
-            iniFile.update(INILine.VALIDATE_FIX_ERRORS);
-            updateDocument(iniFile, section);
-        }
-    }
-
     private class ActionWrapper implements IAction
     {
         private IAction mDelegate;
@@ -979,6 +856,56 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
             Point sel = getSourceViewer().getSelectedRange();
             mSelectionSynchronizer.selectionChanged(new SelectionChangedEvent(getSourceViewer().getSelectionProvider(),
                                                     new TextSelection(sel.x,sel.y)));
+            MenuManager manager = new MenuManager("#SourceOutline", "#SourceOutline"); //$NON-NLS-1$ //$NON-NLS-2$
+            manager.add(getAction(CREATE_CONTROL_ACTION));
+            manager.add(getAction(EDIT_CONTROL_ACTION));
+            manager.add(getAction(DELETE_CONTROL_ACTION));
+            manager.add(new Separator(INSTALLOPTIONS_MENU_GROUP));
+            manager.appendToGroup(INSTALLOPTIONS_MENU_GROUP, getAction(REORDER_ACTION));
+            manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+
+            Menu menu = manager.createContextMenu(getControl());
+            getControl().setMenu(menu);
+            final IPageSite site = getSite();
+            site.registerContextMenu("net.sf.eclipsensis.installoptions.SourceOutline", manager, viewer); //$NON-NLS-1$
+            site.setSelectionProvider(viewer);
+
+            getControl().addFocusListener(new FocusListener() {
+                private String[] mScopes;
+                
+                public void focusGained(FocusEvent e)
+                {
+                    IViewPart part = site.getPage().findView("org.eclipse.ui.views.ContentOutline"); //$NON-NLS-1$
+                    if(part != null) {
+                        IKeyBindingService service = part.getSite().getKeyBindingService();
+                        if(service != null) {
+                            mScopes = service.getScopes();
+                            service.setScopes(new String[] {INSTALLOPTIONS_SOURCE_OUTLINE_CONTEXT_ID});
+                            service.registerAction(getAction(CREATE_CONTROL_ACTION));
+                            service.registerAction(getAction(EDIT_CONTROL_ACTION));
+                            service.registerAction(getAction(DELETE_CONTROL_ACTION));
+                            service.registerAction(getAction(DELETE_CONTROL_ACTION2));
+                        }
+                    }
+                }
+
+                public void focusLost(FocusEvent e)
+                {
+                    IViewPart part = site.getPage().findView("org.eclipse.ui.views.ContentOutline"); //$NON-NLS-1$
+                    if(part != null) {
+                        IKeyBindingService service = part.getSite().getKeyBindingService();
+                        if(service != null) {
+                            service.unregisterAction(getAction(CREATE_CONTROL_ACTION));
+                            service.unregisterAction(getAction(EDIT_CONTROL_ACTION));
+                            service.unregisterAction(getAction(DELETE_CONTROL_ACTION));
+                            service.unregisterAction(getAction(DELETE_CONTROL_ACTION2));
+                            service.setScopes(mScopes);
+                            mScopes = null;
+                        }
+                    }
+                }
+                
+            });
         }
 
         public void dispose()
@@ -1246,8 +1173,9 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
                             else {
                                 mOutlinePage.setSelection(StructuredSelection.EMPTY);
                             }
-                            enableAction("net.sf.eclipsensis.installoptions.edit_control",(section != null && section.isInstallOptionsField())&&(mINIFile != null && !mINIFile.hasErrors()));
-                            enableAction("net.sf.eclipsensis.installoptions.delete_control",(section != null && section.isInstallOptionsField())&&(mINIFile != null && !mINIFile.hasErrors()));
+                            enableAction(EDIT_CONTROL_ACTION,(section != null && section.isInstallOptionsField())&&(mINIFile != null && !mINIFile.hasErrors()));
+                            enableAction(DELETE_CONTROL_ACTION,(section != null && section.isInstallOptionsField())&&(mINIFile != null && !mINIFile.hasErrors()));
+                            enableAction(DELETE_CONTROL_ACTION2,(section != null && section.isInstallOptionsField())&&(mINIFile != null && !mINIFile.hasErrors()));
                         }
                     }
                 }

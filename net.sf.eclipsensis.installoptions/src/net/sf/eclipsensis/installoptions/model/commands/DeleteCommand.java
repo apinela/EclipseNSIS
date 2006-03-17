@@ -28,14 +28,11 @@ public class DeleteCommand extends Command
 
     protected int mIndex = -1;
 
-    public DeleteCommand()
+    public DeleteCommand(InstallOptionsDialog parent, InstallOptionsWidget child)
     {
-        setLabel(getName());
-    }
-
-    protected String getName()
-    {
-        return InstallOptionsPlugin.getResourceString("delete.command.name"); //$NON-NLS-1$
+        mParent = parent;
+        mChild = child;
+        setLabel(InstallOptionsPlugin.getResourceString("delete.command.name")); //$NON-NLS-1$
     }
 
     protected void detachFromGuides(InstallOptionsWidget widget)
@@ -72,16 +69,6 @@ public class DeleteCommand extends Command
     public void redo()
     {
         execute();
-    }
-
-    public void setChild(InstallOptionsWidget c)
-    {
-        mChild = c;
-    }
-
-    public void setParent(InstallOptionsDialog p)
-    {
-        mParent = p;
     }
 
     public void undo()

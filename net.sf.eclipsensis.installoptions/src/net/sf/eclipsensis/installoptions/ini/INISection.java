@@ -32,7 +32,7 @@ public class INISection extends INILine implements IINIContainer
 
     public INISection(String name)
     {
-        super("");
+        super(""); //$NON-NLS-1$
     }
 
     INISection(String text, String delimiter, String name)
@@ -50,6 +50,7 @@ public class INISection extends INILine implements IINIContainer
     public void setDirty(boolean dirty)
     {
         mDirty = dirty;
+        super.setDirty(dirty);
     }
 
     public String getName()
@@ -332,7 +333,9 @@ public class INISection extends INILine implements IINIContainer
     public INILine copy()
     {
         INISection sec = (INISection)clone();
-        sec.mPosition = new Position(mPosition.getOffset(),mPosition.getLength());
+        if(mPosition != null) {
+            sec.mPosition = new Position(mPosition.getOffset(),mPosition.getLength());
+        }
         return sec;
     }
 

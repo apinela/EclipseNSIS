@@ -284,7 +284,7 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
 
     protected void rulerContextMenuAboutToShow(IMenuManager menu) {
         super.rulerContextMenuAboutToShow(menu);
-        IMenuManager foldingMenu= new MenuManager("F&olding", "projection");
+        IMenuManager foldingMenu= new MenuManager(EclipseNSISPlugin.getResourceString("folding.menu.label"), "net.sf.eclipsensis.projection"); //$NON-NLS-1$ //$NON-NLS-2$
         menu.appendToGroup(ITextEditorActionConstants.GROUP_RULERS, foldingMenu);
 
         IAction action= getAction(INSISEditorConstants.FOLDING_TOGGLE);

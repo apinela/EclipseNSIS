@@ -56,6 +56,7 @@ public class NSISOutlineContentProvider implements ITreeContentProvider, INSISCo
     public static final int PAGEEX = PAGE+1;
     public static final int PAGEEXEND = PAGEEX+1;
     public static final int INCLUDE = PAGEEXEND+1;
+    public static final int VAR = INCLUDE+1;
 
     private static final String ROOT = "ROOT"; //$NON-NLS-1$
 
@@ -215,6 +216,7 @@ public class NSISOutlineContentProvider implements ITreeContentProvider, INSISCo
                             case PAGE:
                             case PAGEEX:
                             case INCLUDE:
+                            case VAR:
                                 if(j < typedRegions.length) {
                                     ITypedRegion region = null;
                                     int k= j;
@@ -387,6 +389,7 @@ public class NSISOutlineContentProvider implements ITreeContentProvider, INSISCo
                                 break;
                             case PAGE:
                             case INCLUDE:
+                            case VAR:
                                 if(current.getType() == ROOT) {
                                     addLine(document, current, element);
                                 }

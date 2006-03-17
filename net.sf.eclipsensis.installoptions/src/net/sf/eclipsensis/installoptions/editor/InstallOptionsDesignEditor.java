@@ -1079,7 +1079,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
         registry.registerAction(action);
         getSelectionActions().add(action.getId());
 
-        action = new SwitchEditorAction(this, INSTALLOPTIONS_SOURCE_EDITOR_ID); //$NON-NLS-1$);
+        action = new SwitchEditorAction(this, INSTALLOPTIONS_SOURCE_EDITOR_ID,InstallOptionsPlugin.getResourceString("switch.source.editor.action.name")); //$NON-NLS-1$
         registry.registerAction(action);
         getEditorSite().getKeyBindingService().registerAction(action);
 

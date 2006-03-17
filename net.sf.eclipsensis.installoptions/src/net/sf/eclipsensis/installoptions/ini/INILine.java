@@ -86,6 +86,11 @@ public class INILine implements Cloneable, Serializable
     {
         return mParent;
     }
+    
+    public boolean isBlank()
+    {
+        return Common.isEmpty(getText());
+    }
 
     public void setParent(IINIContainer parent)
     {

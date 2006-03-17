@@ -12,6 +12,7 @@ package net.sf.eclipsensis.installoptions.properties;
 import java.util.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.ini.*;
 import net.sf.eclipsensis.installoptions.model.*;
 import net.sf.eclipsensis.installoptions.model.commands.*;
@@ -171,7 +172,7 @@ public class InstallOptionsPropertySheetEntry extends PropertySheetEntry
                                     dialog.setContentProvider(new CollectionContentProvider());
                                     dialog.setLabelProvider(new LabelProvider());
                                     dialog.setTitle(EclipseNSISPlugin.getResourceString("error.title")); //$NON-NLS-1$
-                                    dialog.setMessage("Control type cannot be changed because of unrecoverable errors.");
+                                    dialog.setMessage(InstallOptionsPlugin.getResourceString("change.type.command.error")); //$NON-NLS-1$
                                     dialog.setInput(list);
                                     dialog.open();
                                 }
@@ -180,10 +181,7 @@ public class InstallOptionsPropertySheetEntry extends PropertySheetEntry
                         }
                         InstallOptionsWidget newChild = (InstallOptionsWidget)newFactory.getNewObject(section);
                         ChangeTypeCommand cmd = null;
-                        cmd = new ChangeTypeCommand();
-                        cmd.setParent(oldChild.getParent());
-                        cmd.setChild(oldChild);
-                        cmd.setNewChild(newChild);
+                        cmd = new ChangeTypeCommand(oldChild.getParent(), oldChild, newChild);
                         return cmd;
                     }
                 }
@@ -206,18 +204,28 @@ public class InstallOptionsPropertySheetEntry extends PropertySheetEntry
 
     void valueChanged(InstallOptionsPropertySheetEntry child, CompoundCommand command) 
     {
-        CompoundCommand cc = new CompoundCommand();
-        command.add(cc);
-
+        CompoundCommand cc;
         Object propertyId = child.getDescriptor().getId();
+        
+        if(InstallOptionsModel.PROPERTY_TYPE.equals(propertyId)) {
+            cc = new ChangeTypeCompoundCommand();
+        }
+        else {
+            cc = new CompoundCommand();
+        }
+        command.add(cc);
 
         for (int i = 0; i < getValues().length; i++) {
             IPropertySource target = getPropertySource(getValues()[i]);
-            if(InstallOptionsModel.PROPERTY_TYPE.equals(propertyId)) {
-                cc.add(createChangeTypeCommand(target, child.getDisplayName(), propertyId, child.getValues()[i]));
-            }
-            else {
-                cc.add(createSetValueCommand(target, child.getDisplayName(), propertyId, child.getValues()[i]));
+            Object oldValue = target.getPropertyValue(propertyId);
+            Object newValue = child.getValues()[i];
+            if(!Common.objectsAreEqual(oldValue, newValue)) {
+                if(InstallOptionsModel.PROPERTY_TYPE.equals(propertyId)) {
+                    cc.add(createChangeTypeCommand(target, child.getDisplayName(), propertyId, newValue));
+                }
+                else {
+                    cc.add(createSetValueCommand(target, child.getDisplayName(), propertyId, newValue));
+                }
             }
         }
 
@@ -228,6 +236,64 @@ public class InstallOptionsPropertySheetEntry extends PropertySheetEntry
         else {
             //I am the root entry
             mStack.execute(command);
+        }
+    }
+    
+    private class ChangeTypeCompoundCommand extends CompoundCommand
+    {
+        private boolean mFirstTime = true;
+
+        public void add(Command command)
+        {
+            if (command != null) {
+                if (command instanceof ChangeTypeCommand || command instanceof SetValueCommand) {
+                    super.add(command);
+                }
+                else {
+                    throw new UnsupportedOperationException();
+                }
+            }            
+        }
+
+        public void execute()
+        {
+            super.execute();
+            if(mFirstTime) {
+                mFirstTime = false;
+                Map parentMap = new HashMap();
+                for (Iterator iter = getCommands().iterator(); iter.hasNext();) {
+                    Command cmd = (Command)iter.next();
+                    InstallOptionsWidget child = null;
+                    if(cmd instanceof ChangeTypeCommand) {
+                        child = ((ChangeTypeCommand)cmd).getNewChild();
+                    }
+                    else {
+                        IPropertySource target = ((SetValueCommand)cmd).getTarget();
+                        if(target instanceof InstallOptionsWidget) {
+                            child = (InstallOptionsWidget)target;
+                        }
+                    }
+                    if(child != null) {
+                        InstallOptionsDialog parent = child.getParent();
+                        if(parent != null) {
+                            List children = (List)parentMap.get(parent);
+                            if(children == null) {
+                                children = new ArrayList();
+                                parentMap.put(parent,children);
+                            }
+                            children.add(child);
+                        }
+                    }
+                }
+                
+                for (Iterator iter = parentMap.keySet().iterator(); iter.hasNext();) {
+                    InstallOptionsDialog parent = (InstallOptionsDialog)iter.next();
+                    List children = (List)parentMap.get(parent);
+                    if(children != null) {
+                        parent.setSelection(children);
+                    }
+                }
+            }
         }
     }
 }

@@ -165,7 +165,7 @@ public class NSISUpdateWizard extends NSISConfigWizard
                 {
                     if(error != null) {
                         if(page instanceof WizardPage) {
-                            ((WizardPage)page).setErrorMessage(error);
+                            ((WizardPage)page).setMessage(error, WizardPage.ERROR);
                         }
                         else {
                             Common.openError(getShell(),error,EclipseNSISUpdatePlugin.getShellImage());
@@ -173,7 +173,7 @@ public class NSISUpdateWizard extends NSISConfigWizard
                     }
                     else {
                         if(page instanceof WizardPage) {
-                            ((WizardPage)page).setErrorMessage(null);
+                            ((WizardPage)page).setMessage(null, WizardPage.ERROR);
                         }
                     }
                 }

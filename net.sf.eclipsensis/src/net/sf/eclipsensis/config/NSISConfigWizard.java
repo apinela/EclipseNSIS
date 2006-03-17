@@ -40,7 +40,7 @@ public abstract class NSISConfigWizard extends Wizard
         if(doPerformFinish()) {
             if(isValidateNSISConfig()) {
                 if(!EclipseNSISPlugin.getDefault().isConfigured()) {
-                    ((WizardPage)getContainer().getCurrentPage()).setErrorMessage(EclipseNSISPlugin.getResourceString("config.failure.message")); //$NON-NLS-1$
+                    ((WizardPage)getContainer().getCurrentPage()).setMessage(EclipseNSISPlugin.getResourceString("config.failure.message"), WizardPage.ERROR); //$NON-NLS-1$
                     return false;
                 }
             }

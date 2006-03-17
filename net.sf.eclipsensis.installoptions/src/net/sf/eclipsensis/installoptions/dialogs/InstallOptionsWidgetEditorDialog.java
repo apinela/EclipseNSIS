@@ -14,6 +14,7 @@ import java.beans.PropertyChangeListener;
 import java.util.Collection;
 
 import net.sf.eclipsensis.dialogs.StatusMessageDialog;
+import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.ini.*;
 import net.sf.eclipsensis.installoptions.model.*;
 import net.sf.eclipsensis.installoptions.model.commands.IModelCommandListener;
@@ -57,7 +58,7 @@ public class InstallOptionsWidgetEditorDialog extends StatusMessageDialog implem
         mSection = section;
         mCurrentWidget = (InstallOptionsWidget)mDialog.getElement(mSection);
         mCreateMode = (mCurrentWidget==null);
-        setTitle(mCreateMode?"Create Control":"Edit Control");
+        setTitle(mCreateMode?InstallOptionsPlugin.getResourceString("create.control.dialog.title"):InstallOptionsPlugin.getResourceString("edit.control.dialog.title")); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     public IPropertySource getPropertySource(Object object)
@@ -184,7 +185,7 @@ public class InstallOptionsWidgetEditorDialog extends StatusMessageDialog implem
 
     protected void okPressed()
     {
-        if(mDialog.isDirty() ) {
+        if(mDialog.canUpdateINIFile()) {
             mDialog.updateINIFile();
             if(mSection == null) {
                 mSection = mCurrentWidget.getSection();

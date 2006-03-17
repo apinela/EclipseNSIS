@@ -9,6 +9,8 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.model.commands;
 
+import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
+
 import org.eclipse.gef.commands.Command;
 import org.eclipse.ui.views.properties.IPropertySource;
 import org.eclipse.ui.views.properties.IPropertySource2;
@@ -28,7 +30,7 @@ public class ResetValueCommand extends Command
      */
     public ResetValueCommand() 
     {
-        super("Reset to default");
+        super(InstallOptionsPlugin.getResourceString("reset.value.command.name")); //$NON-NLS-1$
     }
 
     /**

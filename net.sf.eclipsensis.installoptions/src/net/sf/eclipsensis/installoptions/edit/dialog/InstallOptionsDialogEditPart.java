@@ -83,7 +83,7 @@ public class InstallOptionsDialogEditPart extends InstallOptionsEditPart impleme
                 selection.add(getViewer().getEditPartRegistry().get(element));
             }
             getViewer().setSelection(new StructuredSelection(selection));
-            getViewer().getControl().setFocus();
+            getViewer().getControl().forceFocus();
         }
         else if (InstallOptionsModel.PROPERTY_RTL.equals(prop)) {
             refreshDiagram();

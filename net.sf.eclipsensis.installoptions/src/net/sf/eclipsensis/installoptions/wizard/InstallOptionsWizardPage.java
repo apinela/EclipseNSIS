@@ -211,6 +211,11 @@ public class InstallOptionsWizardPage extends WizardPage
         return group;
     }
 
+    public void setErrorMessage(String message)
+    {
+        super.setMessage(message,ERROR);
+    }
+
     public boolean validatePage()
     {
         boolean b = !mCreateFromTemplate || ((InstallOptionsWizard)getWizard()).getTemplate() != null;
