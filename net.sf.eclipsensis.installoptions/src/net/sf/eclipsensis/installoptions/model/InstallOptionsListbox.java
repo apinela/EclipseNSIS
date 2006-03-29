@@ -195,6 +195,7 @@ public class InstallOptionsListbox extends InstallOptionsListItems
         public SelectListItemsDialog(Shell parent, List values, List selection, boolean multiSelect, String type)
         {
             super(parent);
+            setShellStyle(getShellStyle()|SWT.RESIZE);
             mValues = new ArrayList(values);
             mSelection = new ArrayList(selection);
             mMultiSelect = multiSelect;

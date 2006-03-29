@@ -46,7 +46,7 @@ public class RegistryImporter
     private static File findRegEdit(Shell shell)
     {
         File regEdit = null;
-        String pref = NSISPreferences.INSTANCE.getPreferenceStore().getString(INSISPreferenceConstants.REGEDIT_LOCATION);
+        String pref = NSISPreferences.INSTANCE.getString(INSISPreferenceConstants.REGEDIT_LOCATION);
         if(!Common.isEmpty(pref)) {
             regEdit = new File(pref);
             if(IOUtility.isValidFile(regEdit)) {
@@ -99,7 +99,7 @@ public class RegistryImporter
     {
         if(!IOUtility.isValidFile(cRegEdit)) {
             cRegEdit = findRegEdit(shell);
-            NSISPreferences.INSTANCE.getPreferenceStore().setValue(INSISPreferenceConstants.REGEDIT_LOCATION, (cRegEdit==null?"":cRegEdit.getAbsolutePath())); //$NON-NLS-1$
+            NSISPreferences.INSTANCE.setValue(INSISPreferenceConstants.REGEDIT_LOCATION, (cRegEdit==null?"":cRegEdit.getAbsolutePath())); //$NON-NLS-1$
         }
         return cRegEdit;
     }

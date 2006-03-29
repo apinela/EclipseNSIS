@@ -33,4 +33,8 @@
         <description>The InstallOptions script wizard helps create a new InstallOptions script.</description>
         <topic label="InstallOptions Script Wizard Finish Page" href="help/wizard.html#finish"/>
     </context>
+    <context id="installoptions_widgeteditor_context">
+        <description>The InstallOptions Control Editor dialog is used to create or modify controls in the InstallOptions source editor.</description>
+        <topic label="InstallOptions Control Editor" href="help/sourceeditor.html#a_create_control"/>
+    </context>
 </contexts>

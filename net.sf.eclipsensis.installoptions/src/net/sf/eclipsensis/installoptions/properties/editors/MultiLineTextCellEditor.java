@@ -91,6 +91,7 @@ public class MultiLineTextCellEditor extends DialogCellEditor
         public MultiLineTextDialog(Shell parent, String value)
         {
             super(parent);
+            setShellStyle(getShellStyle()|SWT.RESIZE);
             mValue = value;
         }
 

@@ -134,8 +134,9 @@ public class InstallOptionsTreeEditPart extends AbstractTreeEditPart implements 
             return;
         }
         fireRemovingChild(oldChild, index);
-        if (isActive())
+        if (isActive()) {
             oldChild.deactivate();
+        }
         oldChild.removeNotify();
         removeChildVisual(oldChild);
         oldChild.setParent(null);
@@ -146,8 +147,9 @@ public class InstallOptionsTreeEditPart extends AbstractTreeEditPart implements 
         addChildVisual(newChild, index);
         newChild.addNotify();
 
-        if (isActive())
+        if (isActive()) {
             newChild.activate();
+        }
         fireChildAdded(newChild, index);
     }
 

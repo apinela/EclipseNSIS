@@ -16,6 +16,7 @@ public interface INSISEditorConstants
     public static final String INSERT_TEMPLATE = PREFIX+"insert_template"; //$NON-NLS-1$
     public static final String GOTO_HELP = PREFIX+"goto_help"; //$NON-NLS-1$
     public static final String STICKY_HELP = PREFIX+"sticky_help"; //$NON-NLS-1$
+    public static final String POPUP_STICKY_HELP = PREFIX+"popup_sticky_help"; //$NON-NLS-1$
     public static final String INSERT_FILE = PREFIX+"insert_file"; //$NON-NLS-1$
     public static final String INSERT_DIRECTORY = PREFIX+"insert_directory"; //$NON-NLS-1$
     public static final String INSERT_COLOR = PREFIX+"insert_color"; //$NON-NLS-1$

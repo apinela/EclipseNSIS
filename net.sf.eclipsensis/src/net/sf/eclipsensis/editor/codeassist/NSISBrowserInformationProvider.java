@@ -17,13 +17,14 @@ public class NSISBrowserInformationProvider extends NSISInformationProvider
     {
         String info = NSISHelpURLProvider.getInstance().getKeywordHelp(word);
         if(info == null) {
-            StringBuffer buf = new StringBuffer(NSISHelpURLProvider.KEYWORD_HELP_HTML_PREFIX);
             Object obj = super.getInformation(word);
             if(obj != null) {
+                StringBuffer buf = new StringBuffer(NSISHelpURLProvider.KEYWORD_HELP_HTML_PREFIX);
                 buf.append(obj);
+                buf.append(NSISHelpURLProvider.KEYWORD_HELP_HTML_SUFFIX);
+                return buf.toString();
             }
-            buf.append(NSISHelpURLProvider.KEYWORD_HELP_HTML_SUFFIX);
-            return buf.toString();
+            return null;
         }
         else {
             NSISBrowserUtility.updateColorStyles();

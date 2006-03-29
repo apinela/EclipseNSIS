@@ -9,9 +9,6 @@
  *******************************************************************************/
 package net.sf.eclipsensis.help.commands;
 
-import java.util.Iterator;
-import java.util.Map;
-
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.util.Common;
 
@@ -28,9 +25,9 @@ public class MultiChoiceParam extends ChoiceParam
         super(node);
     }
 
-    protected PrefixableParamEditor createPrefixableParamEditor()
+    protected PrefixableParamEditor createPrefixableParamEditor(INSISParamEditor parentEditor)
     {
-        return new MultiChoiceParamEditor();
+        return new MultiChoiceParamEditor(parentEditor);
     }
 
     protected class MultiChoiceParamEditor extends PrefixableParamEditor
@@ -38,6 +35,23 @@ public class MultiChoiceParam extends ChoiceParam
         public static final String DATA_CHOICE = "CHOICE"; //$NON-NLS-1$
         protected Button[] mChoiceButtons = null;
         
+        public MultiChoiceParamEditor(INSISParamEditor parentEditor)
+        {
+            super(parentEditor);
+        }
+
+        public void reset()
+        {
+            if(!Common.isEmptyArray(mChoiceButtons)) {
+                for (int i = 0; i < mChoiceButtons.length; i++) {
+                    if(isValid(mChoiceButtons[i])) {
+                        mChoiceButtons[i].setSelection(false);
+                    }
+                }
+            }
+            super.reset();
+        }
+
         protected String getParamText()
         {
             if(!Common.isEmptyArray(mChoiceButtons)) {
@@ -90,18 +104,15 @@ public class MultiChoiceParam extends ChoiceParam
             GridLayout layout = new GridLayout(1,true);
             layout.marginHeight = layout.marginWidth = 0;
             parent.setLayout(layout);
-            Map choices = getComboValues();
-            if(!Common.isEmptyMap(choices)) {
-                layout.numColumns = Math.min(4,choices.size());
-                mChoiceButtons = new Button[choices.size()];
-                int i=0;
-                for (Iterator iter = choices.keySet().iterator(); iter.hasNext();) {
-                    String value = (String)iter.next();
-                    String display = (String)choices.get(value);
+            ComboEntry[] choices = getComboEntries();
+            if(!Common.isEmptyArray(choices)) {
+                layout.numColumns = Math.min(4,choices.length);
+                mChoiceButtons = new Button[choices.length];
+                for (int i=0; i<choices.length; i++) {
                     Button b = new Button(parent,SWT.CHECK);
                     b.setLayoutData(new GridData(SWT.FILL,SWT.CENTER,false,false));
-                    b.setText(display);
-                    b.setData(DATA_CHOICE,value);
+                    b.setText(choices[i].getDisplay());
+                    b.setData(DATA_CHOICE,choices[i].getValue());
                     mChoiceButtons[i++] = b;
                 }
             }

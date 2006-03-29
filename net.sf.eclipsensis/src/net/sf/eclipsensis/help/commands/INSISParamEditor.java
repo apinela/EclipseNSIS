@@ -30,4 +30,8 @@ public interface INSISParamEditor
     public void setSettings(Map settings);
     public void saveSettings();
     public void initEditor();
+    public INSISParamEditor getParentEditor();
+    public List getChildEditors();
+    public void dispose();
+    public void reset();
 }

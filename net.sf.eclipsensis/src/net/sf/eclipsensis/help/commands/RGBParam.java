@@ -10,6 +10,7 @@
 package net.sf.eclipsensis.help.commands;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.dialogs.ColorEditor;
 import net.sf.eclipsensis.util.*;
 
 import org.eclipse.swt.SWT;
@@ -27,9 +28,9 @@ public class RGBParam extends HexStringParam
         super(node);
     }
 
-    protected PrefixableParamEditor createPrefixableParamEditor()
+    protected PrefixableParamEditor createPrefixableParamEditor(INSISParamEditor parentEditor)
     {
-        return new RGBParamEditor();
+        return new RGBParamEditor(parentEditor);
     }
 
     protected String getValidateErrorMessage()
@@ -52,37 +53,64 @@ public class RGBParam extends HexStringParam
 
     protected class RGBParamEditor extends StringParamEditor
     {
+        public RGBParamEditor(INSISParamEditor parentEditor)
+        {
+            super(parentEditor);
+        }
+
+        public void reset()
+        {
+            if(isValid(mText)) {
+                mText.setText(""); //$NON-NLS-1$
+            }
+            super.reset();
+        }
+
+        protected void updateState(boolean state)
+        {
+            if(isValid(mText)) {
+                mText.setEnabled(state);
+                Button b = (Button)mText.getData(DATA_BUTTON);
+                if(isValid(b)) {
+                    b.setEnabled(state);
+                }
+            }
+            super.updateState(state);
+        }
+
         protected Control createParamControl(Composite parent)
         {
             parent = new Composite(parent,SWT.NONE);
             GridLayout layout = new GridLayout(2,false);
             layout.marginHeight = layout.marginWidth = 0;
             parent.setLayout(layout);
-            Text text = (Text)super.createParamControl(parent);
-            if(isValid(text)) {
-                text.setLayoutData(new GridData(SWT.FILL,SWT.CENTER,true,false));
-                final Button b = new Button(parent,SWT.PUSH);
+            mText = (Text)super.createParamControl(parent);
+            if(isValid(mText)) {
+                mText.setLayoutData(new GridData(SWT.FILL,SWT.CENTER,true,false));
+                final ColorEditor editor = new ColorEditor(parent);
+                Button b = editor.getButton();
+                final RGB bgColor = b.getBackground().getRGB();
                 b.setLayoutData(new GridData(SWT.FILL,SWT.CENTER,false,false));
-                b.setText(EclipseNSISPlugin.getResourceString("browse.text")); //$NON-NLS-1$
-                b.addSelectionListener(new SelectionAdapter() {
-                    public void widgetSelected(SelectionEvent e)
+                mText.addModifyListener(new ModifyListener() {
+                    public void modifyText(ModifyEvent e)
                     {
-                        ColorDialog dialog = new ColorDialog(b.getShell());
-                        String text = IOUtility.decodePath(mText.getText());
-                        if(!Common.isEmpty(text)) {
-                            try {
-                                dialog.setRGB(ColorManager.hexToRGB(text));
-                            }
-                            catch(Exception ex) {
-                                EclipseNSISPlugin.getDefault().log(ex);
-                            }
+                        RGB rgb = bgColor;
+                        String text = mText.getText();
+                        if(text.length() == 6) {
+                            rgb = ColorManager.hexToRGB(text);
                         }
-                        RGB rgb = dialog.open();
-                        if(rgb != null) {
-                            mText.setText(ColorManager.rgbToHex(rgb));
+                        if(!rgb.equals(editor.getRGB())) {
+                            editor.setRGB(rgb);
                         }
                     }
                 });
+                b.addSelectionListener(new SelectionAdapter() {
+                    public void widgetSelected(SelectionEvent e)
+                    {
+                        mText.setText(ColorManager.rgbToHex(editor.getRGB()));
+                    }
+                });
+                mText.setData(DATA_BUTTON,b);
             }
             return parent;
         }

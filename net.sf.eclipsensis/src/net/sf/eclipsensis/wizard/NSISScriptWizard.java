@@ -16,7 +16,8 @@ import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.wizard.template.*;
 
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.window.Window;
 
@@ -61,6 +62,19 @@ public class NSISScriptWizard extends NSISWizard
 
     public boolean performFinish()
     {
+        IPath path = new Path(getSettings().getSavePath());
+        if(Common.isEmpty(path.getFileExtension())) {
+            path = path.addFileExtension(INSISConstants.NSI_EXTENSION);
+            IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
+            if(file != null && file.exists()) {
+                if(!Common.openQuestion(getShell(), EclipseNSISPlugin.getResourceString("question.title"), //$NON-NLS-1$
+                        EclipseNSISPlugin.getFormattedString("save.path.question",new String[] {path.toString()}),  //$NON-NLS-1$
+                        EclipseNSISPlugin.getShellImage())) {
+                    return false;
+                }
+            }
+            getSettings().setSavePath(path.toString());
+        }
         if(mSaveAsTemplate) {
             if(!saveTemplate()) {
                 return false;

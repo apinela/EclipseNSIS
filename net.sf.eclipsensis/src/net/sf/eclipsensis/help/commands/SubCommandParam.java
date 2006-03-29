@@ -63,9 +63,9 @@ public class SubCommandParam extends NSISParam
         }
     }
     
-    protected NSISParamEditor createParamEditor()
+    protected NSISParamEditor createParamEditor(INSISParamEditor parentEditor)
     {
-        return new SubCommandParamEditor();
+        return new SubCommandParamEditor(parentEditor);
     }
 
     protected class SubCommandParamEditor extends NSISParamEditor
@@ -73,6 +73,19 @@ public class SubCommandParam extends NSISParam
         private INSISParamEditor mCommandEditor = null;
         private ComboViewer mComboViewer;
         
+        public SubCommandParamEditor(INSISParamEditor parentEditor)
+        {
+            super(parentEditor);
+        }
+
+        public void reset()
+        {
+            if(mComboViewer != null && isValid(mComboViewer.getControl())) {
+                mComboViewer.setSelection(StructuredSelection.EMPTY);
+            }
+            super.reset();
+        }
+
         protected String validateParam()
         {
             if(isSelected()) {
@@ -173,8 +186,9 @@ public class SubCommandParam extends NSISParam
                 public void selectionChanged(SelectionChangedEvent event)
                 {
                     boolean changed = false;
-                    if (mCommandEditor != null) {
+                    if (mCommandEditor != null && isValid(mCommandEditor.getControl())) {
                         mCommandEditor.getControl().dispose();
+                        mCommandEditor = null;
                         changed = true;
                     }
                     IStructuredSelection sel = (IStructuredSelection)event.getSelection();

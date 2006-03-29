@@ -695,7 +695,7 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
     private void doGotoHelp()
     {
         if(NSISHelpURLProvider.getInstance().isNSISHelpAvailable()) {
-            int offset = NSISTextUtility.computeOffset(this,false);
+            int offset = NSISTextUtility.computeOffset(this,NSISTextUtility.COMPUTE_OFFSET_CARET_LOCATION);
             if(offset >= 0) {
                 String keyword;
                 IRegion region = NSISInformationUtility.getInformationRegionAtOffset(this,offset,false);

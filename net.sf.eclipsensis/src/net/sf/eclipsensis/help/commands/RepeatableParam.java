@@ -57,15 +57,55 @@ public class RepeatableParam extends NSISParam
         return null;
     }
 
-    protected NSISParamEditor createParamEditor()
+    protected NSISParamEditor createParamEditor(INSISParamEditor parentEditor)
     {
-        return new RepeatableParamEditor();
+        return new RepeatableParamEditor(parentEditor);
     }
 
     protected class RepeatableParamEditor extends NSISParamEditor
     {
         public static final String DATA_BUTTONS = "BUTTONS"; //$NON-NLS-1$
         private List mChildParamEditors = new ArrayList();
+        
+        public RepeatableParamEditor(INSISParamEditor parentEditor)
+        {
+            super(parentEditor);
+        }
+
+        public void reset()
+        {
+            if(getSettings() != null) {
+                List childSettingsList = getChildSettingsList();
+                int n = childSettingsList.size();
+                if(n > 1) {
+                    for(int i=1; i<n; i++) {
+                        childSettingsList.remove(1);
+                    }
+                }
+            }
+            int n = mChildParamEditors.size();
+            if(n > 1) {
+                for(int i=1; i<n; i++) {
+                    INSISParamEditor editor = (INSISParamEditor)mChildParamEditors.remove(1);
+                    if(editor != null) {
+                        Control ctrl = editor.getControl();
+                        if(isValid(ctrl)) {
+                            Composite composite = ctrl.getParent();
+                            composite.dispose();
+                            Button[] buttons = (Button[])ctrl.getData(DATA_BUTTONS);
+                            if(buttons != null && buttons.length == 2) {
+                                buttons[0].dispose();
+                                buttons[1].dispose();
+                            }
+                        }
+                        editor.dispose();
+                    }
+                }
+                updateControl((Composite)getControl());
+            }
+            ((INSISParamEditor)mChildParamEditors.get(0)).reset();
+            super.reset();
+        }
         
         protected String validateParam()
         {
@@ -143,13 +183,13 @@ public class RepeatableParam extends NSISParam
                 }
                 for (Iterator iter = childSettingsList.iterator(); iter.hasNext();) {
                     Map childSettings = (Map)iter.next();
-                    INSISParamEditor editor = mChildParam.createEditor();
+                    INSISParamEditor editor = mChildParam.createEditor(this);
                     editor.setSettings(childSettings);
                     mChildParamEditors.add(editor);
                 }
             }
             else {
-                mChildParamEditors.add(mChildParam.createEditor());
+                mChildParamEditors.add(mChildParam.createEditor(this));
             }
             Composite container = (Composite)getControl();
             for (Iterator iter = mChildParamEditors.iterator(); iter.hasNext();) {
@@ -208,6 +248,7 @@ public class RepeatableParam extends NSISParam
                         }
                     }
                     mChildParamEditors.remove(editor);
+                    editor.dispose();
                     composite.dispose();
                     addButton.dispose();
                     delButton.dispose();
@@ -217,7 +258,7 @@ public class RepeatableParam extends NSISParam
             addButton.addSelectionListener(new SelectionAdapter() {
                 public void widgetSelected(SelectionEvent e)
                 {
-                    INSISParamEditor ed = mChildParam.createEditor();
+                    INSISParamEditor ed = mChildParam.createEditor(RepeatableParamEditor.this);
                     if(getSettings() != null) {
                         Map childSettings = new HashMap();
                         ed.setSettings(childSettings);

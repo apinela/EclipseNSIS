@@ -35,6 +35,7 @@ import org.eclipse.ui.console.IConsoleDocumentPartitioner;
 import org.eclipse.ui.console.TextConsoleViewer;
 import org.eclipse.ui.internal.console.ConsoleHyperlinkPosition;
 import org.eclipse.ui.progress.WorkbenchJob;
+import org.eclipse.ui.texteditor.DefaultMarkerAnnotationAccess;
 
 public class NSISConsoleViewer extends TextConsoleViewer
 {
@@ -44,7 +45,7 @@ public class NSISConsoleViewer extends TextConsoleViewer
 
     private boolean mAutoScroll = true;
     private IDocumentListener mDocumentListener;
-    private IVerticalRuler mVerticalRuler;
+    private CompositeRuler mRuler;
     private Composite mComposite;
     private AnnotationModel mAnnotationModel;
     private Cursor mHitDetectionCursor;
@@ -70,8 +71,8 @@ public class NSISConsoleViewer extends TextConsoleViewer
                 }
             }
             else if(property.equals(INSISPreferenceConstants.CONSOLE_FONT)) {
-                if(mVerticalRuler != null) {
-                    mVerticalRuler.getControl().redraw();
+                if(mRuler != null) {
+                    mRuler.getControl().redraw();
                 }
             }
         }
@@ -81,7 +82,7 @@ public class NSISConsoleViewer extends TextConsoleViewer
     {
         super(parent, console);
         mAnnotationModel = console.getAnnotationModel();
-        mVerticalRuler.setModel(mAnnotationModel);
+        mRuler.setModel(mAnnotationModel);
         mAnnotationModel.connect(getDocument());
         StyledText text = getTextWidget();
         if (text != null) {
@@ -100,15 +101,39 @@ public class NSISConsoleViewer extends TextConsoleViewer
     protected void createControl(Composite parent, int styles)
     {
         mHitDetectionCursor= parent.getDisplay().getSystemCursor(SWT.CURSOR_HAND);
-        mVerticalRuler = new VerticalRuler(VERTICAL_RULER_WIDTH);
+        mRuler = new CompositeRuler(VERTICAL_RULER_WIDTH);
+        AnnotationRulerColumn rulerColumn = new AnnotationRulerColumn(VERTICAL_RULER_WIDTH, new DefaultMarkerAnnotationAccess()) {
+            protected void doPaint(GC gc)
+            {
+                try {
+                    super.doPaint(gc);
+                }
+                catch(Exception ex) {
+                }
+            }
+
+            protected void doPaint1(GC gc)
+            {
+                try {
+                    super.doPaint1(gc);
+                }
+                catch (Exception ex) {
+                }                
+            }
+            
+        };
+        rulerColumn.addAnnotationType(NSISConsoleAnnotation.TYPE);
+        //rulerColumn
+        mRuler.addDecorator(0, rulerColumn);
         styles= (styles & ~SWT.BORDER);
         mComposite= new Canvas(parent, SWT.NONE);
         mComposite.setLayout(new RulerLayout(VERTICAL_RULER_GAP));
         parent= mComposite;
         super.createControl(parent, styles);
-        mVerticalRuler.createControl(mComposite, this);
-        mVerticalRuler.getControl().setBackground(getTextWidget().getBackground());
-        mVerticalRuler.getControl().addMouseListener(new MouseAdapter() {
+        mRuler.createControl(mComposite, this);
+        mRuler.getControl().setBackground(getTextWidget().getBackground());
+        rulerColumn.getControl().setBackground(getTextWidget().getBackground());
+        mRuler.getControl().addMouseListener(new MouseAdapter() {
             public void mouseUp(MouseEvent e)
             {
                 NSISConsoleAnnotation a = getAnnotation(e.y);
@@ -117,14 +142,14 @@ public class NSISConsoleViewer extends TextConsoleViewer
                 }
             }
         });
-        mVerticalRuler.getControl().addMouseMoveListener(new MouseMoveListener() {
+        mRuler.getControl().addMouseMoveListener(new MouseMoveListener() {
             public void mouseMove(MouseEvent e)
             {
                 if(hasAnnotation(e.y)) {
-                    mVerticalRuler.getControl().setCursor(mHitDetectionCursor);
+                    mRuler.getControl().setCursor(mHitDetectionCursor);
                 }
                 else {
-                    mVerticalRuler.getControl().setCursor(null);
+                    mRuler.getControl().setCursor(null);
                 }
                 
             }
@@ -135,7 +160,7 @@ public class NSISConsoleViewer extends TextConsoleViewer
     {
         try {
             IDocument document= getDocument();
-            int lineNumber = mVerticalRuler.toDocumentLineNumber(y);
+            int lineNumber = mRuler.toDocumentLineNumber(y);
             IRegion info= document.getLineInformation(lineNumber);
 
             if (mAnnotationModel != null) {
@@ -205,7 +230,7 @@ public class NSISConsoleViewer extends TextConsoleViewer
             mAnnotationModel.disconnect(getDocument());
         }
         mAnnotationModel= null;
-        mVerticalRuler = null;
+        mRuler = null;
         mComposite = null;
         super.handleDispose();
     }
@@ -447,8 +472,8 @@ public class NSISConsoleViewer extends TextConsoleViewer
         {
             Control[] children= composite.getChildren();
             Point s= children[children.length - 1].computeSize(SWT.DEFAULT, SWT.DEFAULT, flushCache);
-            if (mVerticalRuler != null) {
-                s.x += mVerticalRuler.getWidth() + mGap;
+            if (mRuler != null) {
+                s.x += mRuler.getWidth() + mGap;
             }
             return s;
         }
@@ -463,9 +488,9 @@ public class NSISConsoleViewer extends TextConsoleViewer
             int x= clArea.x;
             int width= clArea.width;
 
-            if (mVerticalRuler != null) {
-                int verticalRulerWidth= mVerticalRuler.getWidth();
-                mVerticalRuler.getControl().setBounds(clArea.x, clArea.y + topTrim, verticalRulerWidth, clArea.height - scrollbarHeight - topTrim);
+            if (mRuler != null) {
+                int verticalRulerWidth= mRuler.getWidth();
+                mRuler.getControl().setBounds(clArea.x, clArea.y + topTrim, verticalRulerWidth, clArea.height - scrollbarHeight - topTrim);
 
                 x += verticalRulerWidth + mGap;
                 width -= verticalRulerWidth + mGap;

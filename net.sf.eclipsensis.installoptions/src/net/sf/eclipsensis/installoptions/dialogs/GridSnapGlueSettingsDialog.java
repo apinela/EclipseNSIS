@@ -20,6 +20,7 @@ import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.gef.*;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 
@@ -35,6 +36,7 @@ public class GridSnapGlueSettingsDialog extends Dialog implements IInstallOption
     public GridSnapGlueSettingsDialog(Shell parentShell, GraphicalViewer viewer)
     {
         super(parentShell);
+        setShellStyle(getShellStyle()|SWT.RESIZE);
         mViewer = viewer;
         loadViewerProperty(mGridSettingsMap, PREFERENCE_GRID_ORIGIN, SnapToGrid.PROPERTY_GRID_ORIGIN, GRID_ORIGIN_DEFAULT);
         loadViewerProperty(mGridSettingsMap, PREFERENCE_GRID_SPACING, SnapToGrid.PROPERTY_GRID_SPACING, GRID_SPACING_DEFAULT);

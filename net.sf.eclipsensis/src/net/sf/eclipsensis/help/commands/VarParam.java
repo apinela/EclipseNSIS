@@ -9,7 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.help.commands;
 
-import java.util.*;
+import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -34,18 +34,19 @@ public class VarParam extends ComboParam
         super.init(node);
     }
 
-    protected Map getComboValues()
+    protected ComboEntry[] getComboEntries()
     {
-        Map map = new LinkedHashMap();
+        ComboEntry[] entries = EMPTY_COMBO_ENTRIES;
         String[] vars = NSISKeywords.getInstance().getKeywordsGroup(NSISKeywords.REGISTERS);
         if(!Common.isEmptyArray(vars)) {
+            entries = new ComboEntry[vars.length];
             Arrays.sort(vars);
             for (int i = 0; i < vars.length; i++) {
-                map.put(vars[i], vars[i]);
+                entries[i] = new ComboEntry(vars[i], vars[i]);
             }
         }
         
-        return map;
+        return entries;
     }
 
     protected boolean isUserEditable()

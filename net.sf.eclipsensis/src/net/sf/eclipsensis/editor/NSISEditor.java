@@ -9,7 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.editor;
 
-import java.io.*;
+import java.io.File;
 import java.util.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
@@ -30,7 +30,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.*;
-import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.information.InformationPresenter;
 import org.eclipse.jface.text.source.*;
 import org.eclipse.jface.text.source.projection.*;
@@ -38,8 +37,8 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.dnd.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.editors.text.*;
@@ -205,10 +204,12 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
         a.setActionDefinitionId(GOTO_HELP_COMMAND_ID);
         setAction(INSISEditorConstants.GOTO_HELP, a); 
 
-        a = new TextOperationAction(resourceBundle,"sticky.help.",this,ISourceViewer.INFORMATION,true); //$NON-NLS-1$
-        a = new NSISStickyHelpAction(resourceBundle,"sticky.help.",(TextOperationAction)a); //$NON-NLS-1$
+        TextOperationAction textAction = new TextOperationAction(resourceBundle,"sticky.help.",this,ISourceViewer.INFORMATION,true); //$NON-NLS-1$
+        a = new NSISStickyHelpAction(resourceBundle,"sticky.help.",textAction); //$NON-NLS-1$
         a.setActionDefinitionId(STICKY_HELP_COMMAND_ID);
         setAction(INSISEditorConstants.STICKY_HELP, a); 
+        a = new NSISPopupStickyHelpAction(resourceBundle,"popup.sticky.help.",textAction); //$NON-NLS-1$
+        setAction(INSISEditorConstants.POPUP_STICKY_HELP, a); 
 
         a = new TextOperationAction(resourceBundle,"insert.file.",this,NSISSourceViewer.INSERT_FILE,false); //$NON-NLS-1$
         a.setActionDefinitionId(INSERT_FILE_COMMAND_ID);
@@ -334,12 +335,18 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
     {
         super.editorContextMenuAboutToShow(menu);
         menu.add(new Separator());
+        NSISPopupStickyHelpAction a = (NSISPopupStickyHelpAction)getAction(INSISEditorConstants.POPUP_STICKY_HELP);
+        if (a != null) {
+            a.setClickPoint(getSourceViewer().getTextWidget().getDisplay().getCursorLocation());
+        }        
+        addAction(menu, INSISEditorConstants.POPUP_STICKY_HELP); 
         addAction(menu, INSISEditorConstants.CONTENT_ASSIST_PROPOSAL); 
         addAction(menu, INSISEditorConstants.INSERT_TEMPLATE); 
         menu.add(new Separator());
         addAction(menu, INSISEditorConstants.TABS_TO_SPACES); 
         addAction(menu, INSISEditorConstants.TOGGLE_COMMENT); 
-        addAction(menu, INSISEditorConstants.ADD_BLOCK_COMMENT); 
+        addAction(menu, INSISEditorConstants.ADD_BLOCK_COMMENT);
+        
         IAction action = getAction(INSISEditorConstants.ADD_BLOCK_COMMENT); 
         action.setEnabled(getSourceViewer().getSelectedRange().y > 0);
 
@@ -383,14 +390,16 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
         target.addDropListener(new DropTargetAdapter() {
             public void dragEnter(DropTargetEvent e)
             {
-                if (e.detail == DND.DROP_DEFAULT)
+                if (e.detail == DND.DROP_DEFAULT) {
                     e.detail = DND.DROP_COPY;
+                }
             }
 
             public void dragOperationChanged(DropTargetEvent e)
             {
-                if (e.detail == DND.DROP_DEFAULT)
+                if (e.detail == DND.DROP_DEFAULT) {
                     e.detail = DND.DROP_COPY;
+                }
             }
 
             public void dragOver(DropTargetEvent e)
@@ -425,7 +434,7 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
 
             public void drop(DropTargetEvent e)
             {
-                insertCommand((String)e.data, false);
+                insertCommand((NSISCommand)e.data, false);
             }
         });
         return viewer;
@@ -479,24 +488,23 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
         return offset;
     }
   
-    private void insertCommand(String command, boolean updateOffset)
+    private void insertCommand(NSISCommand command, boolean updateOffset)
     {
         ISourceViewer viewer = getSourceViewer();
         if(viewer != null) {
             StyledText styledText = viewer.getTextWidget();
             if(styledText != null && !styledText.isDisposed()) {
-                NSISCommand cmd = NSISCommandManager.getCommand(command);
-                if(cmd != null) {
+                if(command != null) {
                     String text = null;
-                    if (cmd.hasParameters()) {
-                        NSISCommandDialog dlg = new NSISCommandDialog(styledText.getShell(), cmd);
+                    if (command.hasParameters()) {
+                        NSISCommandDialog dlg = new NSISCommandDialog(styledText.getShell(), command);
                         int code = dlg.open();
                         if (code == Window.OK) {
                             text = dlg.getCommandText();
                         }
                     }
                     else {
-                        text = cmd.getName();
+                        text = command.getName();
                     }
                     if (!Common.isEmpty(text)) {
                         Point sel = styledText.getSelection();
@@ -524,7 +532,7 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
         }
     }
 
-    public void insertCommand(String command)
+    public void insertCommand(NSISCommand command)
     {
         insertCommand(command, true);
     }
@@ -763,7 +771,8 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
         private final TextOperationAction mTextOperationAction;
         private InformationPresenter mInformationPresenter;
 
-        public NSISStickyHelpAction(ResourceBundle resourceBundle, String prefix, final TextOperationAction textOperationAction) {
+        public NSISStickyHelpAction(ResourceBundle resourceBundle, String prefix, final TextOperationAction textOperationAction) 
+        {
             super(resourceBundle, prefix, NSISEditor.this);
             if (textOperationAction == null) {
                 throw new IllegalArgumentException();
@@ -785,7 +794,7 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
         {
             if(NSISHelpURLProvider.getInstance().isNSISHelpAvailable()) {
                 ISourceViewer sourceViewer = getSourceViewer();
-                int offset = NSISTextUtility.computeOffset(sourceViewer,true);
+                int offset = computeOffset(sourceViewer);
                 if(offset == -1) {
                     mTextOperationAction.run();
                 }
@@ -795,6 +804,40 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
                     informationPresenter.setOffset(offset); //wordRegion.getOffset());
                     informationPresenter.showInformation();
                 }
+            }
+        }
+
+        /**
+         * @param sourceViewer
+         * @return
+         */
+        protected int computeOffset(ISourceViewer sourceViewer)
+        {
+            return NSISTextUtility.computeOffset(sourceViewer,NSISTextUtility.COMPUTE_OFFSET_HOVER_LOCATION);
+        }
+    }
+
+    private class NSISPopupStickyHelpAction extends NSISStickyHelpAction
+    {
+        private Point mClickPoint = null;
+        public NSISPopupStickyHelpAction(ResourceBundle resourceBundle, String prefix, TextOperationAction textOperationAction)
+        {
+            super(resourceBundle, prefix, textOperationAction);
+        }
+        
+        public void setClickPoint(Point p)
+        {
+            mClickPoint = p;
+        }
+
+        protected int computeOffset(ISourceViewer sourceViewer)
+        {
+            if(mClickPoint != null && sourceViewer != null && sourceViewer.getTextWidget() != null) {
+                Point p = sourceViewer.getTextWidget().toControl(mClickPoint);
+                return NSISTextUtility.computeOffsetAtLocation(sourceViewer, p.x, p.y);
+            }
+            else {
+                return -1;
             }
         }
     }

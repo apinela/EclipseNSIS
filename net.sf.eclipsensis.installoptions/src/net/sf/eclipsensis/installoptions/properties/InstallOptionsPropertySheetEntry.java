@@ -150,6 +150,9 @@ public class InstallOptionsPropertySheetEntry extends PropertySheetEntry
                                 public void run()
                                 {
                                     ListDialog dialog = new ListDialog(Display.getCurrent().getActiveShell()) {
+                                        {
+                                            setShellStyle(getShellStyle()|SWT.RESIZE);
+                                        }
                                         protected int getTableStyle()
                                         {
                                             return super.getTableStyle() | SWT.READ_ONLY;

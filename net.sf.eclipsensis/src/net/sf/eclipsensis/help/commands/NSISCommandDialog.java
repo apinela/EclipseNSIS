@@ -36,7 +36,9 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.forms.events.*;
+import org.eclipse.ui.forms.FormColors;
+import org.eclipse.ui.forms.events.ExpansionAdapter;
+import org.eclipse.ui.forms.events.ExpansionEvent;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 
 public class NSISCommandDialog extends StatusMessageDialog
@@ -127,15 +129,17 @@ public class NSISCommandDialog extends StatusMessageDialog
 
         public void handleEvent(Event event)
         {
-            if(mControl != null && !mControl.isDisposed() && isChildOf(mControl,(Control)event.widget)) {
-                jobScheduler.cancelJobs(JOB_FAMILY);
-                jobScheduler.scheduleUIJob(JOB_FAMILY,"NSISCommandDialog", new IJobStatusRunnable() { //$NON-NLS-1$
-                    public IStatus run(IProgressMonitor monitor)
-                    {
-                        validate();
-                        return Status.OK_STATUS;
-                    }
-                });
+            if(event.widget instanceof Control) {
+                if(mControl != null && !mControl.isDisposed() && isChildOf(mControl,(Control)event.widget)) {
+                    jobScheduler.cancelJobs(JOB_FAMILY);
+                    jobScheduler.scheduleUIJob(JOB_FAMILY,"NSISCommandDialog", new IJobStatusRunnable() { //$NON-NLS-1$
+                        public IStatus run(IProgressMonitor monitor)
+                        {
+                            validate();
+                            return Status.OK_STATUS;
+                        }
+                    });
+                }
             }
         }
     };
@@ -150,7 +154,7 @@ public class NSISCommandDialog extends StatusMessageDialog
         mCommand = command;
         setTitle(EclipseNSISPlugin.getFormattedString("nsis.command.dialog.title.format",new String[] {mCommand.getName()})); //$NON-NLS-1$
         setShellImage(EclipseNSISPlugin.getShellImage());
-        mRemember = NSISPreferences.INSTANCE.getPreferenceStore().getBoolean(INSISPreferenceConstants.NSIS_COMMAND_HELPER_REMEMBER);
+        mRemember = NSISPreferences.INSTANCE.getBoolean(INSISPreferenceConstants.NSIS_COMMAND_HELPER_REMEMBER);
         if(mRemember) {
             Map map = (Map)cCommandStateMap.get(mCommand.getName());
             mSettings = (map==null?new HashMap():map);
@@ -227,7 +231,7 @@ public class NSISCommandDialog extends StatusMessageDialog
         StringBuffer buf = new StringBuffer(mCommand.getName());
         mParamEditor.appendText(buf);
         mCommandText = buf.toString();
-        NSISPreferences.INSTANCE.getPreferenceStore().setValue(INSISPreferenceConstants.NSIS_COMMAND_HELPER_REMEMBER, mRemember);
+        NSISPreferences.INSTANCE.setValue(INSISPreferenceConstants.NSIS_COMMAND_HELPER_REMEMBER, mRemember);
         if(mRemember) {
             cCommandStateMap.put(mCommand.getName(), mSettings);
         }
@@ -250,7 +254,12 @@ public class NSISCommandDialog extends StatusMessageDialog
         mControl = mParamEditor.createControl(parent);
         mControl.setLayoutData(new GridData(SWT.FILL,SWT.CENTER,true,false));
         
-        final Button button = new Button(parent,SWT.CHECK);
+        Composite c = new Composite(parent,SWT.NONE);
+        c.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false));
+        layout = new GridLayout(2,false);
+        layout.marginHeight = layout.marginWidth = 0;
+        c.setLayout(layout);
+        final Button button = new Button(c,SWT.CHECK);
         button.setText(EclipseNSISPlugin.getResourceString("nsis.command.helper.remember.label")); //$NON-NLS-1$
         button.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false));
         button.setSelection(mRemember);
@@ -262,6 +271,16 @@ public class NSISCommandDialog extends StatusMessageDialog
             }
         });
 
+        final Button button2 = new Button(c,SWT.PUSH);
+        button2.setText(EclipseNSISPlugin.getResourceString("reset.label")); //$NON-NLS-1$
+        button2.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e)
+            {
+                mParamEditor.reset();
+            }
+        });
+        setButtonLayoutData(button2);
+        
         createHelpBrowser(parent);
         if(mBrowser != null) {
             setCurrentCommand(mCommand.getName());
@@ -288,7 +307,7 @@ public class NSISCommandDialog extends StatusMessageDialog
         });
     }
 
-    private void createHelpBrowser(Composite parent)
+    private void createHelpBrowser(final Composite parent)
     {
         if(NSISBrowserUtility.isBrowserAvailable(parent)) {
             Group group = new Group(parent,SWT.NONE);
@@ -298,11 +317,119 @@ public class NSISCommandDialog extends StatusMessageDialog
             layout.marginHeight = layout.marginWidth = 2;
             group.setLayout(layout);
 
-            int style = ExpandableComposite.FOCUS_TITLE | ExpandableComposite.TWISTIE;
+            int style = ExpandableComposite.FOCUS_TITLE | ExpandableComposite.TWISTIE | ExpandableComposite.TITLE_BAR;
             if(!mCollapseHelp) {
                 style |= ExpandableComposite.EXPANDED;
             }
-            mExpandableComposite = new ExpandableComposite(group,SWT.NONE, style);
+            mExpandableComposite = new ExpandableComposite(group,SWT.NONE, style) {
+                private FormColors mColors = new FormColors(parent.getDisplay());
+                
+                {
+                    mColors.initializeSectionToolBarColors();
+                }
+                
+                protected void onPaint(PaintEvent e) {
+                    Color bg = mColors.getColor(FormColors.TB_BG);
+                    Color gbg = mColors.getColor(FormColors.TB_GBG);
+//                    Color fg = mColors.getColor(FormColors.TB_FG);
+                    Color border = mColors.getColor(FormColors.TB_BORDER);
+                    Rectangle bounds = getClientArea();
+                    int theight = 0;
+                    int tvmargin = GAP;
+                    if ((getExpansionStyle() & TITLE_BAR) != 0) {
+                        Point tsize = null;
+                        Point tcsize = null;
+                        if (toggle != null) {
+                            tsize = toggle.getSize();
+                        }
+                        int twidth = bounds.width - marginWidth - marginWidth;
+                        if (tsize != null) {
+                            twidth -= tsize.x + GAP;
+                        }
+                        if (getTextClient() != null) {
+                            tcsize = getTextClient().getSize();
+                        }
+                        if (tcsize != null) {
+                            twidth -= tcsize.x + GAP;
+                        }
+                        Point size = textLabel.getSize();
+                        if (tsize != null) {
+                            theight += Math.max(theight, tsize.y);
+                        }
+                        if (tcsize != null) {
+                            theight = Math.max(theight, tcsize.y);
+                        }
+                        theight = Math.max(theight, size.y);
+                        theight += tvmargin + tvmargin;
+                    } else {
+                        theight = 5;
+                    }
+                    int midpoint = (theight * 66) / 100;
+                    int rem = theight - midpoint;
+                    GC gc = e.gc;
+                    if ((getExpansionStyle() & TITLE_BAR) != 0) {
+                        gc.setForeground(bg);
+                        gc.setBackground(gbg);
+                        gc.fillGradientRectangle(marginWidth, marginHeight, bounds.width
+                                - 1 - marginWidth - marginWidth, midpoint - 1, true);
+                        gc.setForeground(gbg);
+                        gc.setBackground(getBackground());
+                        gc
+                                .fillGradientRectangle(marginWidth, marginHeight + midpoint
+                                        - 1, bounds.width - 1 - marginWidth - marginWidth,
+                                        rem - 1, true);
+                    } else if (isExpanded()) {
+                        gc.setForeground(bg);
+                        gc.setBackground(getBackground());
+                        gc.fillGradientRectangle(marginWidth, marginHeight, bounds.width
+                                - marginWidth - marginWidth, theight, true);
+                    }
+                    gc.setBackground(getBackground());
+                    // repair the upper left corner
+                    gc.fillPolygon(new int[] { marginWidth, marginHeight, marginWidth,
+                            marginHeight + 2, marginWidth + 2, marginHeight });
+                    // repair the upper right corner
+                    gc.fillPolygon(new int[] { bounds.width - marginWidth - 3,
+                            marginHeight, bounds.width - marginWidth - 1, marginHeight,
+                            bounds.width - marginWidth - 1, marginHeight + 2 });
+                    gc.setForeground(border);
+                    if (isExpanded() || (getExpansionStyle() & TITLE_BAR) != 0) {
+                        // top left curve
+                        gc.drawLine(marginWidth, marginHeight + 2, marginWidth + 2,
+                                marginHeight);
+                        // top edge
+                        gc.drawLine(marginWidth + 2, marginHeight, bounds.width
+                                - marginWidth - 3, marginHeight);
+                        // top right curve
+                        gc.drawLine(bounds.width - marginWidth - 3, marginHeight,
+                                bounds.width - marginWidth - 1, marginHeight + 2);
+                    } else {
+                        // collapsed short title bar
+                        // top edge
+                        gc.drawLine(marginWidth, marginHeight, bounds.width - 1,
+                                marginHeight);
+                    }
+                    if ((getExpansionStyle() & TITLE_BAR) != 0 && toggle != null
+                            && !isExpanded()) {
+                        // left vertical edge
+                        gc.drawLine(marginWidth, marginHeight + 2, marginWidth,
+                                marginHeight + theight - 1);
+                        // right vertical edge
+                        gc.drawLine(bounds.width - marginWidth - 1, marginHeight + 2,
+                                bounds.width - marginWidth - 1, marginHeight + theight - 1);
+                        // bottom edge (if closed)
+                        gc.drawLine(marginWidth, marginHeight + theight - 1, bounds.width
+                                - marginWidth - 1, marginHeight + theight - 1);
+                    } else if (isExpanded()) {
+                        // left vertical edge gradient
+                        gc.fillGradientRectangle(marginWidth, marginHeight + 2, 1,
+                                theight - 2, true);
+                        // right vertical edge gradient
+                        gc.fillGradientRectangle(bounds.width - marginWidth - 1,
+                                marginHeight + 2, 1, theight - 2, true);
+                    }
+                }
+            };
             mExpandableComposite.setText(EclipseNSISPlugin.getResourceString("nsis.command.description.label")); //$NON-NLS-1$
             makeBold(mExpandableComposite);
             gridData = new GridData(SWT.FILL,SWT.FILL,true,true);

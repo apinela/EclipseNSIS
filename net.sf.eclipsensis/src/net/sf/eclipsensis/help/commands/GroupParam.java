@@ -44,9 +44,9 @@ public class GroupParam extends NSISParam
         return mChildParams;
     }
 
-    protected NSISParamEditor createParamEditor()
+    protected NSISParamEditor createParamEditor(INSISParamEditor parentEditor)
     {
-        return new GroupParamEditor();
+        return new GroupParamEditor(parentEditor);
     }
 
     private void addDependent(Object parent, NSISParam dependent)
@@ -100,16 +100,16 @@ public class GroupParam extends NSISParam
     
     protected class GroupParamEditor extends NSISParamEditor
     {
-        protected INSISParamEditor[] mParamEditors;
+        protected List mParamEditors;
 
-        public GroupParamEditor()
+        public GroupParamEditor(INSISParamEditor parentEditor)
         {
-            super();
+            super(parentEditor);
             Map map = new HashMap();
-            mParamEditors = new INSISParamEditor[mChildParams.length];
+            mParamEditors = new ArrayList(mChildParams.length);
             for (int i = 0; i < mChildParams.length; i++) {
-                mParamEditors[i] = mChildParams[i].createEditor();
-                map.put(mChildParams[i], mParamEditors[i]);
+                mParamEditors.add(mChildParams[i].createEditor(this));
+                map.put(mChildParams[i], mParamEditors.get(i));
             }
             for (Iterator iter= mDependencies.keySet().iterator(); iter.hasNext(); ) {
                 Object obj = iter.next();
@@ -117,7 +117,7 @@ public class GroupParam extends NSISParam
                     NSISParam param = (NSISParam)obj;
                     List dependents = (List)mDependencies.get(param);
                     if (!Common.isEmptyCollection(dependents)) {
-                        NSISParamEditor parentEditor = (NSISParamEditor)map.get(param);
+                        parentEditor = (INSISParamEditor)map.get(param);
                         List list = new ArrayList();
                         for (Iterator iterator = dependents.iterator(); iterator.hasNext();) {
                             list.add(map.get(iterator.next()));
@@ -128,16 +128,22 @@ public class GroupParam extends NSISParam
             }
         }
 
+        public List getChildEditors()
+        {
+            return mParamEditors;
+        }
+
         protected void updateState(boolean state)
         {
             super.updateState(state);
-            if(!Common.isEmptyArray(mParamEditors)) {
+            if(!Common.isEmptyCollection(mParamEditors)) {
                 List dependents = new ArrayList();
-                for (int i = 0; i < mParamEditors.length; i++) {
-                    if(!dependents.contains(mParamEditors[i])) {
-                        mParamEditors[i].setEnabled(state);
+                for (Iterator iter = mParamEditors.iterator(); iter.hasNext();) {
+                    INSISParamEditor editor = (INSISParamEditor)iter.next();
+                    if(!dependents.contains(editor)) {
+                        editor.setEnabled(state);
                     }
-                    List list = mParamEditors[i].getDependents();
+                    List list = editor.getDependents();
                     if(!Common.isEmptyCollection(list)) {
                         dependents.addAll(list);
                     }
@@ -145,12 +151,23 @@ public class GroupParam extends NSISParam
             }
         }
 
+        public void reset()
+        {
+            if(!Common.isEmptyCollection(mParamEditors)) {
+                for (Iterator iter = mParamEditors.iterator(); iter.hasNext();) {
+                    INSISParamEditor editor = (INSISParamEditor)iter.next();
+                    editor.reset();
+                }
+            }
+            super.reset();
+        }
+
         protected String validateParam()
         {
             String validText = null;
-            if(!Common.isEmptyArray(mParamEditors)) {
-                for (int i = 0; i < mParamEditors.length; i++) {
-                    validText = mParamEditors[i].validate();
+            if(!Common.isEmptyCollection(mParamEditors)) {
+                for (Iterator iter = mParamEditors.iterator(); iter.hasNext();) {
+                    validText = ((INSISParamEditor)iter.next()).validate();
                     if(validText != null) {
                         break;
                     }
@@ -161,9 +178,9 @@ public class GroupParam extends NSISParam
 
         protected void appendParamText(StringBuffer buf)
         {
-            if(!Common.isEmptyArray(mParamEditors)) {
-                for (int i = 0; i < mParamEditors.length; i++) {
-                    mParamEditors[i].appendText(buf);
+            if(!Common.isEmptyCollection(mParamEditors)) {
+                for (Iterator iter = mParamEditors.iterator(); iter.hasNext();) {
+                    ((INSISParamEditor)iter.next()).appendText(buf);
                 }
             }
         }
@@ -171,23 +188,24 @@ public class GroupParam extends NSISParam
         public void setSettings(Map settings)
         {
             super.setSettings(settings);
-            if(!Common.isEmptyArray(mParamEditors)) {
+            if(!Common.isEmptyCollection((mParamEditors))) {
+                int size = mParamEditors.size();
                 if(settings != null) {
                     Map[] childSettings = (Map[])settings.get(SETTING_CHILD_SETTINGS);
-                    if(childSettings == null || childSettings.length != mParamEditors.length) {
-                        childSettings = new Map[mParamEditors.length];
+                    if(childSettings == null || childSettings.length != size) {
+                        childSettings = new Map[size];
                         settings.put(SETTING_CHILD_SETTINGS, childSettings);
                     }
-                    for (int i = 0; i < mParamEditors.length; i++) {
+                    for (int i = 0; i < size; i++) {
                         if(childSettings[i] == null) {
                             childSettings[i] = new HashMap();
                         }
-                        mParamEditors[i].setSettings(childSettings[i]);
+                        ((INSISParamEditor)mParamEditors.get(i)).setSettings(childSettings[i]);
                     }
                 }
                 else {
-                    for (int i = 0; i < mParamEditors.length; i++) {
-                        mParamEditors[i].setSettings(null);
+                    for (int i = 0; i < size; i++) {
+                        ((INSISParamEditor)mParamEditors.get(i)).setSettings(null);
                     }
                 }
             }
@@ -196,9 +214,9 @@ public class GroupParam extends NSISParam
         public void saveSettings()
         {
             super.saveSettings();
-            if(!Common.isEmptyArray(mParamEditors) && getSettings() != null) {
-                for (int i = 0; i < mParamEditors.length; i++) {
-                    mParamEditors[i].saveSettings();
+            if(!Common.isEmptyCollection(mParamEditors) && getSettings() != null) {
+                for (Iterator iter = mParamEditors.iterator(); iter.hasNext();) {
+                    ((INSISParamEditor)iter.next()).saveSettings();
                 }
             }
         }
@@ -217,8 +235,9 @@ public class GroupParam extends NSISParam
             if(!Common.isEmptyArray(mChildParams)) {
                 layout.numColumns = getLayoutNumColumns();
                 
-                for (int i = 0; i < mParamEditors.length; i++) {
-                    createChildParamControl(parent, i);
+                for (Iterator iter = mParamEditors.iterator(); iter.hasNext();) {
+                    INSISParamEditor editor = (INSISParamEditor)iter.next();
+                    createChildParamControl(parent, editor);
                 }
             }
             return parent;
@@ -227,9 +246,9 @@ public class GroupParam extends NSISParam
         protected void initParamEditor()
         {
             super.initParamEditor();
-            if(!Common.isEmptyArray(mParamEditors)) {
-                for (int i = 0; i < mParamEditors.length; i++) {
-                    mParamEditors[i].initEditor();
+            if(!Common.isEmptyCollection(mParamEditors)) {
+                for (Iterator iter = mParamEditors.iterator(); iter.hasNext();) {
+                    ((INSISParamEditor)iter.next()).initEditor();
                 }
             }
         }
@@ -250,9 +269,9 @@ public class GroupParam extends NSISParam
             return 1+(isOptional?1:0)+(hasName?1:0);
         }
 
-        protected void createChildParamControl(Composite parent, int index)
+        protected void createChildParamControl(Composite parent, INSISParamEditor editor)
         {
-            mParamEditors[index].createControl(parent);
+            editor.createControl(parent);
         }
     }
 }

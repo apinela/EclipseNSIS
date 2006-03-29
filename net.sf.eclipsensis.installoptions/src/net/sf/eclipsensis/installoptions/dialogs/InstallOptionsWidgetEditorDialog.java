@@ -14,6 +14,7 @@ import java.beans.PropertyChangeListener;
 import java.util.Collection;
 
 import net.sf.eclipsensis.dialogs.StatusMessageDialog;
+import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.ini.*;
 import net.sf.eclipsensis.installoptions.model.*;
@@ -25,21 +26,22 @@ import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.*;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ControlAdapter;
-import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.*;
+import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.views.properties.*;
 
 public class InstallOptionsWidgetEditorDialog extends StatusMessageDialog implements PropertyChangeListener, IModelCommandListener, IPropertySourceProvider
 {
+    private static final String HELP_CONTEXT = IInstallOptionsConstants.PLUGIN_CONTEXT_PREFIX+"installoptions_widgeteditor_context"; //$NON-NLS-1$
+
     private PropertySheetPage mPage = new CustomPropertySheetPage();
     private InstallOptionsDialog mDialog;
     private InstallOptionsWidget mCurrentWidget;
@@ -64,21 +66,12 @@ public class InstallOptionsWidgetEditorDialog extends StatusMessageDialog implem
     public IPropertySource getPropertySource(Object object)
     {
         if(object instanceof IPropertySource) {
-            return new PropertySourceWrapper((IPropertySource)object) {
-
-                public void setPropertyValue(Object id, Object value)
-                {
-                    if(InstallOptionsModel.PROPERTY_TYPE.equals(id)) {
-                        propertyChange(new PropertyChangeEvent(getDelegate(),(String)id,getPropertyValue(id),value));
-                    }
-                    else {
-                        super.setPropertyValue(id, value);
-                    }
-                }
-
-            };
+            if(object instanceof CustomPropertySourceWrapper) {
+                return (IPropertySource)object;
+            }
+            return new CustomPropertySourceWrapper((IPropertySource)object);
         }
-        else if(object instanceof IPropertySourceProvider && !(this.getClass().equals(object.getClass()))) {
+        else if(object instanceof IPropertySourceProvider && !this.getClass().equals(object.getClass())) {
             return getPropertySource(((IPropertySourceProvider)object).getPropertySource(object));
         }
         return null;
@@ -179,6 +172,48 @@ public class InstallOptionsWidgetEditorDialog extends StatusMessageDialog implem
             selection = new StructuredSelection(mCurrentWidget);
         }
         mPage.selectionChanged(null, selection);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(mPage.getControl(),HELP_CONTEXT);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(propertyComposite,HELP_CONTEXT);
+        mPage.init(new IPageSite() {
+            public void registerContextMenu(String menuId, MenuManager menuManager, ISelectionProvider selectionProvider)
+            {
+            }
+
+            public IActionBars getActionBars()
+            {
+                return null;
+            }
+
+            public IWorkbenchPage getPage()
+            {
+                return getWorkbenchWindow().getActivePage();
+            }
+
+            public ISelectionProvider getSelectionProvider()
+            {
+                return null;
+            }
+
+            public Shell getShell()
+            {
+                return getWorkbenchWindow().getShell();
+            }
+
+            public IWorkbenchWindow getWorkbenchWindow()
+            {
+                return PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+            }
+
+            public void setSelectionProvider(ISelectionProvider provider)
+            {
+            }
+
+            public Object getAdapter(Class adapter)
+            {
+                return null;
+            }
+            
+        });
 
         return propertyComposite;
     }
@@ -202,6 +237,53 @@ public class InstallOptionsWidgetEditorDialog extends StatusMessageDialog implem
         return mSection;
     }
     
+    private final class CustomPropertySourceWrapper extends PropertySourceWrapper
+    {
+        private CustomPropertySourceWrapper(IPropertySource delegate)
+        {
+            super(delegate);
+        }
+
+        public Object getEditableValue()
+        {
+            Object object = super.getEditableValue();
+            if(!((object instanceof CustomPropertySourceWrapper))) {
+                if (object instanceof IPropertySource) {
+                    object = new CustomPropertySourceWrapper((IPropertySource)object);
+                }
+            }
+            return object;
+        }
+
+        public IPropertyDescriptor[] getPropertyDescriptors()
+        {
+            IPropertyDescriptor[] descriptors = super.getPropertyDescriptors();
+            if(!Common.isEmptyArray(descriptors)) {
+                IPropertyDescriptor[] wrappers = new IPropertyDescriptor[descriptors.length];
+                for (int i = 0; i < descriptors.length; i++) {
+                    if(descriptors[i] != null && !(descriptors[i] instanceof PropertyDescriptorWrapper)) {
+                        wrappers[i] = new PropertyDescriptorWrapper(descriptors[i]);
+                    }
+                    else {
+                        wrappers[i] = descriptors[i];
+                    }
+                }
+                return wrappers;
+            }
+            return descriptors;
+        }
+
+        public void setPropertyValue(Object id, Object value)
+        {
+            if(InstallOptionsModel.PROPERTY_TYPE.equals(id)) {
+                propertyChange(new PropertyChangeEvent(getDelegate(),(String)id,getPropertyValue(id),value));
+            }
+            else {
+                super.setPropertyValue(id, value);
+            }
+        }
+    }
+
     private class DummyActionBars implements IActionBars
     {
         private IMenuManager mMenuManager = null;
@@ -273,6 +355,61 @@ public class InstallOptionsWidgetEditorDialog extends StatusMessageDialog implem
 
         public void updateActionBars()
         {
+        }
+    }
+    
+    private class PropertyDescriptorWrapper extends PropertyDescriptor
+    {
+        private IPropertyDescriptor mDelegate;
+        public PropertyDescriptorWrapper(IPropertyDescriptor delegate)
+        {
+            super(delegate.getId(), delegate.getDisplayName());
+            mDelegate = delegate;
+        }
+
+        public CellEditor createPropertyEditor(Composite parent)
+        {
+            return mDelegate.createPropertyEditor(parent);
+        }
+        
+        public String getCategory()
+        {
+            return mDelegate.getCategory();
+        }
+        
+        public String getDescription()
+        {
+            return mDelegate.getDescription();
+        }
+        
+        public String getDisplayName()
+        {
+            return mDelegate.getDisplayName();
+        }
+        
+        public String[] getFilterFlags()
+        {
+            return mDelegate.getFilterFlags();
+        }
+        
+        public Object getHelpContextIds()
+        {
+            return HELP_CONTEXT;
+        }
+        
+        public Object getId()
+        {
+            return mDelegate.getId();
+        }
+        
+        public ILabelProvider getLabelProvider()
+        {
+            return mDelegate.getLabelProvider();
+        }
+        
+        public boolean isCompatibleWith(IPropertyDescriptor anotherProperty)
+        {
+            return mDelegate.isCompatibleWith(anotherProperty);
         }
     }
 }

@@ -67,14 +67,27 @@ public class LocalFileParam extends LocalFilesystemObjectParam
         mFilters = (String[])filters.toArray(new String[filters.size()]);
     }
 
-    protected LocalFilesystemObjectParamEditor createLocalFilesystemObjectParamEditor()
+    protected LocalFilesystemObjectParamEditor createLocalFilesystemObjectParamEditor(INSISParamEditor parentEditor)
     {
-        return new LocalFileParamEditor();
+        return new LocalFileParamEditor(parentEditor);
     }
 
     protected class LocalFileParamEditor extends LocalFilesystemObjectParamEditor
     {
         protected Text mFileText = null;
+
+        public LocalFileParamEditor(INSISParamEditor parentEditor)
+        {
+            super(parentEditor);
+        }
+
+        public void reset()
+        {
+            if(isValid(mFileText)) {
+                mFileText.setText(""); //$NON-NLS-1$
+            }
+            super.reset();
+        }
 
         protected String validateLocalFilesystemObjectParam()
         {

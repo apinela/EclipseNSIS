@@ -108,25 +108,23 @@ public class NSISCommandManager
         return null;
     }
     
-    public static String[] getCommands()
+    public static NSISCommand[] getCommands()
     {
         Version version = NSISPreferences.INSTANCE.getNSISVersion();
-        Set set = new HashSet();
+        Map map = new HashMap();
         for (Iterator iter = cVersionList.iterator(); iter.hasNext();) {
             Version v = (Version)iter.next();
             if(version.compareTo(v) >= 0) {
                 Map commandsMap = (Map)cCommandsMap.get(v);
                 if(commandsMap != null) {
-                    set.addAll(commandsMap.keySet());
+                    map.putAll(commandsMap);
                 }
             }
             else {
                 break;
             }
         }
-        String[] commands = (String[])set.toArray(new String[set.size()]);
-        Arrays.sort(commands);
-        return commands;
+        return (NSISCommand[])map.values().toArray(new NSISCommand[map.size()]);
     }
 
     static NSISParam createParam(Node paramNode)

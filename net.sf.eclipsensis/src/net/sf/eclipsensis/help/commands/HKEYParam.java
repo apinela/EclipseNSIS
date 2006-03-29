@@ -9,9 +9,6 @@
  *******************************************************************************/
 package net.sf.eclipsensis.help.commands;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.wizard.NSISWizardDisplayValues;
 
@@ -24,15 +21,16 @@ public class HKEYParam extends ComboParam
         super(node);
     }
 
-    protected Map getComboValues()
+    protected ComboEntry[] getComboEntries()
     {
-        Map map = new LinkedHashMap();
+        ComboEntry[] entries = EMPTY_COMBO_ENTRIES;
         String[] hkeys = NSISWizardDisplayValues.getHKEYNames();
         if(!Common.isEmptyArray(hkeys)) {
+            entries = new ComboEntry[hkeys.length];
             for (int i = 0; i < hkeys.length; i++) {
-                map.put(hkeys[i], hkeys[i]);
+                entries[i] = new ComboEntry(hkeys[i], hkeys[i]);
             }
         }
-        return map;
+        return entries;
     }
 }

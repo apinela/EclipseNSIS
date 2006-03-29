@@ -33,6 +33,15 @@ foldingImages[0] = new Image();
 foldingImages[0].src = "images/folding1.gif";
 foldingImages[1] = new Image();
 foldingImages[1].src = "images/folding2.gif";
+
+var popupWin;
+
+function openPopup()
+{
+	var width = screen.width - 200;
+	var height = screen.height - 200;
+	popupWin = window.open('test.html','exporthtml','resizable=yes,height='+height+',width='+width+',scrollbars=yes,menubar=no,toolbar=no,status=no,dependent=yes,screenX=100,screenY=100,left=100,top=100');
+}
 //-->
   </script></head>
 <body>
@@ -47,7 +56,7 @@ and indicates errors and warning in the <a href="javascript:redirectEclipse('/or
 as well as the <a href="#rulers">vertical and outline rulers</a>. Additionally, the editor offers the following features:</p>
 <ol><li><a href="#rulers">Vertical and Overview Rulers</a></li><li><a href="#outline">Code Outline</a></li>
 <li><a href="#code_folding">Code Folding</a></li>
-<li><a href="#preview">Preview</a></li>
+<li><a href="#commands">Source Editing Commands</a></li>
 </ol>
 <a name="rulers"></a><h2>Vertical and Overview Rulers</h2>
 <p>The vertical ruler is to the left of the editing area in the source
@@ -69,17 +78,26 @@ in the InstallOptions INI script. Click on the image below for a preview of how 
 in the source editor.</p>
 <div id="div_folding">
 <p style="text-align: center;"><img name="img_folding" alt="Code Folding" src="images/folding1.gif" ismap="ismap" style="border: medium none ; width: 540px; height: 352px;" usemap="#folding1"></p>
-<p>Code folding functions are also available as keyboard shortcuts.</p>
-<dl>
+<p>Code folding functions are also available on the <a href="#rulers">vertical ruler</a> context menu and as keyboard shortcuts.</p>
+<p style="text-align: center;"><img src="images/foldingmenu.gif" alt="Folding Context Menu" usemap="#foldingmenu" ismap="ismap" style="border: 0px solid ; width: 456px; height: 46px;"></p>
+<a name="a_toggle_folding"></a>
+<dl id="id_toggle_folding">
 <dt>Toggle Folding</dt>
 <dd>Turn folding on or off in the current InstallOptions source editor.<br>
 <strong>Shortcut:</strong> Ctrl+NumPad /</dd>
+</dl>
+<a name="a_expand_all"></a>
+<dl id="id_expand_all">
 <dt>Expand All</dt>
 <dd>Expand all folded code regions in the current InstallOptions source editor.<br>
 <strong>Shortcut:</strong> Ctrl+NumPad *</dd>
+</dl>
+<dl>
 <dt>Expand</dt>
 <dd>Expand the folded code region at the caret position in the current InstallOptions source editor.<br>
 <strong>Shortcut:</strong> Ctrl+NumPad +</dd>
+</dl>
+<dl>
 <dt>Collapse</dt>
 <dd>Collapse the folded code region at the caret position in the current InstallOptions source editor.<br>
 <strong>Shortcut:</strong> Ctrl+NumPad -</dd>
@@ -95,17 +113,72 @@ document.write("<map name='folding1'><area id='folding' href='javascript: curren
 //-->
 </script>
 </div>
-<a name="preview"></a>
-<h2>Preview</h2>
-  <p>This command (<img style="width: 16px; height: 16px;"
- alt="Preview" src="images/preview.gif">) is used to
-preview the current InstallOptions script using either the Standard (Classic) UI or the Modern UI. 
-The preview language may also be selected.</p> 
+<a name="commands"></a>
+<h2>Source Editing Commands</h2>
+  <p>The source editor includes a number of commands for simplify and improve the experience of creating and editing InstallOptions scripts.</p>
+  <p>These can be accessed either from the <span style="font-style: italic;">InstallOptions</span> menuitem in the main menu bar, by right-clicking in the editor to display the editor popup menu or by using the editor toolbar. Some commands are also available in the source editor <a href="#outline">outline</a> view. Most commands also provide keyboard shortcuts.</p>
+<a name="a_create_control"></a><dl>
+  <dt>Create Control</dt>
+<dd><img style="width: 16px; height: 16px;"
+ alt="Create Control" src="images/create_control.gif"> Create an InstallOptions control in the source editor. When selected, a dialog is presented to the user where the control type and the various attributes associated with the control
+may be specified. The command is not available if the InstallOptions script has any errors.</dd>
+</dl>
+<p style="text-align: center;"><img src="images/controleditor.gif" alt="Control Editor" style="border: medium none ; width: 432px; height: 380px;"></p>
+<a name="a_edit_control"></a><dl>
+  <dt>Edit Control</dt>
+<dd><img style="width: 16px; height: 16px;"
+ alt="Edit Control" src="images/edit_control.gif"> Edit the current InstallOptions control in the source editor. The command is only available if the caret position in the editor falls
+within an INI section which represents an InstallOptions control. When selected, a dialog is presented to the user where the control type and the various attributes associated with the control
+may be specified. The command is not available if the InstallOptions script has any errors.</dd>
+</dl>
+<dl>
+  <dt>Delete Control</dt>
+<dd><img style="width: 16px; height: 16px;"
+ alt="Delete Control" src="images/delete_control.gif"> Delete the current InstallOptions control in the source editor. The command is only available if the caret position in the editor falls
+within an INI section which represents an InstallOptions control. The command is not available if the InstallOptions script has any errors.</dd>
+</dl>
+<dl>
+  <dt>Reorder INI Sections</dt>
+<dd><img style="width: 16px; height: 16px;"
+ alt="Reorder INI Sections" src="images/reorder.gif"> Reformat the current InstallOptions script in the source editor, so that the Settings section is first, followed by the Field sections in sequential order.
+The command is not available if the InstallOptions script has any errors.</dd>
+</dl>
+<dl>
+  <dt>Fix Problems</dt>
+  <dd>Fix any problems in the current InstallOptions script.
+The following options are supported:<br>
+    <br>
+    <ul>
+      <li><img style="width: 16px; height: 16px;" alt="Align Left"
+ title="Fix All" src="images/fix_all.gif">&nbsp;Fix all problems- errors as well as warnings.</li>
+      <li><img style="width: 16px; height: 16px;" alt="Fix Errors"
+ title="Fix Errors" src="images/fix_error.gif">&nbsp;Fix errors only.</li>
+      <li><img style="width: 16px; height: 16px;" alt="Fix Warnings"
+ title="Fix Warnings" src="images/fix_warning.gif">&nbsp;Fix warnings only.</li>
+    </ul>
+</dd>
+</dl>
+<dl>
+<dt>Export as HTML</dt>
+<dd><img style="width: 16px; height: 16px;"
+ alt="Export as HTML" src="images/html.gif"> Export the InstallOptions script as an HTML file. The exported HTML file includes the same syntax coloring as the script
+as well as line numbering and folding (if they have been enabled). The exported HTML file is compatible with Internet
+Explorer 5.x and above, Netscape 6.x and above as well as Mozilla Firefox 1.x and above. Click <a href="javascript: void(null);" onClick="openPopup();">here</a> for an example. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd>
+</dl>
+<dl>
+  <dt>Preview</dt>
+<dd><img style="width: 16px; height: 16px;"
+ alt="Preview" src="images/preview.gif"> Preview the current InstallOptions script using either the Standard (Classic) UI or the Modern UI. 
+The preview language may also be selected.</dd>
+</dl>
 <hr>
 <a href="designeditor2.html">Previous</a> | <a href="overview.html#contents">Contents</a> | <a href="wizard.html">Next</a> <br>
 <br>
 <p><strong><small>Copyright &copy; 2004-2006 Sunil Kamath
 (IcemanK).</small></strong></p>
+<map name="foldingmenu">
+  <area id="expand_all" shape="rect" href="#a_expand_all" alt="Expand All" onClick="highlightDef('id_expand_all');" coords="242,22,432,38">
+  <area id="toggle_folding" shape="rect" href="#a_toggle_folding" alt="Toggle Folding" onClick="highlightDef('id_toggle_folding');" coords="242,5,432,21">
+</map>
 </div>
-
 </body></html>

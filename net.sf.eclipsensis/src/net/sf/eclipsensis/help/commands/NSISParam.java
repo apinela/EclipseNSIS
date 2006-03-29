@@ -28,11 +28,11 @@ import org.w3c.dom.Node;
 public abstract class NSISParam
 {
     public static final String ATTR_OPTIONAL = "optional"; //$NON-NLS-1$
-    public static final String SETTING_OPTIONAL = ATTR_OPTIONAL; //$NON-NLS-1$
+    public static final String SETTING_OPTIONAL = ATTR_OPTIONAL; 
     public static final String ATTR_NAME = "name"; //$NON-NLS-1$
     public static final String TAG_PARAM = "param"; //$NON-NLS-1$
     public static final String ATTR_VALUE = "value"; //$NON-NLS-1$
-    
+
     private String mName;
     private boolean mOptional;
     private MessageFormat mErrorFormat;
@@ -76,12 +76,12 @@ public abstract class NSISParam
         mOptional = optional;
     }
 
-    public INSISParamEditor createEditor()
+    public INSISParamEditor createEditor(INSISParamEditor parentEditor)
     {
-        return createParamEditor();
+        return createParamEditor(parentEditor);
     }
     
-    protected abstract NSISParamEditor createParamEditor();
+    protected abstract NSISParamEditor createParamEditor(INSISParamEditor parentEditor);
 
     protected abstract class NSISParamEditor implements INSISParamEditor
     {
@@ -92,9 +92,46 @@ public abstract class NSISParam
         private boolean mEnabled = true;
         private Map mSettings = null;
         private boolean mInit = false;
+        private INSISParamEditor mParentEditor;
 
-        public NSISParamEditor()
+        public NSISParamEditor(INSISParamEditor parentEditor)
         {
+            mParentEditor = parentEditor;
+        }
+
+        public void reset()
+        {
+            if(isValid(mOptionalButton)) {
+                mOptionalButton.setSelection(false);
+            }
+            updateState(isSelected());
+        }
+
+        public void dispose()
+        {
+            if(isValid(mControl)) {
+                mControl.dispose();
+            }
+            if(isValid(mOptionalButton)) {
+                mOptionalButton.dispose();
+            }
+            mParentEditor = null;
+            List children = getChildEditors();
+            if(!Common.isEmptyCollection(children)) {
+                for (Iterator iter = children.iterator(); iter.hasNext();) {
+                    ((INSISParamEditor)iter.next()).dispose();
+                }
+            }
+        }
+
+        public INSISParamEditor getParentEditor()
+        {
+            return mParentEditor;
+        }
+        
+        public List getChildEditors()
+        {
+            return Collections.EMPTY_LIST;
         }
 
         public boolean isEnabled()
@@ -331,13 +368,22 @@ public abstract class NSISParam
         public final String validate()
         {
             if(isSelected()) {
-                String error = validateParam();
-                if(error != null) {
-                    if(!Common.isEmpty(getName())) {
-                        error = mErrorFormat.format(new String[] {getName(),error});
-                    }
-                    return error;
+                return internalValidate();
+            }
+            return null;
+        }
+
+        /**
+         * @return
+         */
+        protected String internalValidate()
+        {
+            String error = validateParam();
+            if(error != null) {
+                if(!Common.isEmpty(getName())) {
+                    error = mErrorFormat.format(new String[] {getName(),error});
                 }
+                return error;
             }
             return null;
         }

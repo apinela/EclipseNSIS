@@ -34,14 +34,27 @@ public class LocalPathParam extends LocalFileParam
         super(node);
     }
 
-    protected LocalFilesystemObjectParamEditor createLocalFilesystemObjectParamEditor()
+    protected LocalFilesystemObjectParamEditor createLocalFilesystemObjectParamEditor(INSISParamEditor parentEditor)
     {
-        return new LocalPathParamEditor();
+        return new LocalPathParamEditor(parentEditor);
     }
     
     protected class LocalPathParamEditor extends LocalFilesystemObjectParamEditor
     {
         protected Text mPathText = null;
+
+        public LocalPathParamEditor(INSISParamEditor parentEditor)
+        {
+            super(parentEditor);
+        }
+
+        public void reset()
+        {
+            if(isValid(mPathText)) {
+                mPathText.setText(""); //$NON-NLS-1$
+            }
+            super.reset();
+        }
 
         protected String getParamText()
         {

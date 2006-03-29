@@ -1164,19 +1164,19 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
                         }
                     }
                     else if(sel instanceof ITextSelection) {
+                        ITextSelection tsel = (ITextSelection)sel;
+                        INISection section = mINIFile.findSection(tsel.getOffset(),tsel.getLength());
                         if(mOutlinePage != null && mOutlinePage.getControl() != null && !mOutlinePage.getControl().isDisposed()) {
-                            ITextSelection tsel = (ITextSelection)sel;
-                            INISection section = mINIFile.findSection(tsel.getOffset(),tsel.getLength());
                             if(section != null) {
                                 mOutlinePage.setSelection(new StructuredSelection(section));
                             }
                             else {
                                 mOutlinePage.setSelection(StructuredSelection.EMPTY);
                             }
-                            enableAction(EDIT_CONTROL_ACTION,(section != null && section.isInstallOptionsField())&&(mINIFile != null && !mINIFile.hasErrors()));
-                            enableAction(DELETE_CONTROL_ACTION,(section != null && section.isInstallOptionsField())&&(mINIFile != null && !mINIFile.hasErrors()));
-                            enableAction(DELETE_CONTROL_ACTION2,(section != null && section.isInstallOptionsField())&&(mINIFile != null && !mINIFile.hasErrors()));
                         }
+                        enableAction(EDIT_CONTROL_ACTION,(section != null && section.isInstallOptionsField())&&(mINIFile != null && !mINIFile.hasErrors()));
+                        enableAction(DELETE_CONTROL_ACTION,(section != null && section.isInstallOptionsField())&&(mINIFile != null && !mINIFile.hasErrors()));
+                        enableAction(DELETE_CONTROL_ACTION2,(section != null && section.isInstallOptionsField())&&(mINIFile != null && !mINIFile.hasErrors()));
                     }
                 }
                 finally {

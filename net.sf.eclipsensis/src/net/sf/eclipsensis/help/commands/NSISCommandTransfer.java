@@ -40,15 +40,16 @@ public class NSISCommandTransfer extends ByteArrayTransfer
 
     protected void javaToNative(Object data, TransferData transferData) 
     {
-        if (data instanceof String) {
-            super.javaToNative(((String) data).getBytes(), transferData);
+        if (data instanceof NSISCommand) {
+            super.javaToNative(((NSISCommand) data).getName().getBytes(), transferData);
         }
     }
 
     protected Object nativeToJava(TransferData transferData) {
         byte[] bytes = (byte[]) super.nativeToJava(transferData);
         if (bytes != null) {
-            return new String(bytes);
+            String name = new String(bytes);
+            return NSISCommandManager.getCommand(name);
         }
         return null;
     }

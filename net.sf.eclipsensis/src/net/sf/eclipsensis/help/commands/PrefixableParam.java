@@ -15,7 +15,7 @@ import net.sf.eclipsensis.util.XMLUtil;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
-public abstract class PrefixableParam extends NSISParam
+public abstract class PrefixableParam extends SimpleParam
 {
     public static final String ATTR_ALLOW_BLANK = "allowBlank"; //$NON-NLS-1$
     public static final String ATTR_PREFIX = "prefix"; //$NON-NLS-1$
@@ -53,16 +53,36 @@ public abstract class PrefixableParam extends NSISParam
         mPrefix = prefix;
     }
     
-    protected final NSISParamEditor createParamEditor()
+    protected final SimpleParamEditor createSimpleParamEditor(INSISParamEditor parentEditor)
     {
-        return createPrefixableParamEditor();
+        return createPrefixableParamEditor(parentEditor);
     }
 
-    protected abstract PrefixableParamEditor createPrefixableParamEditor();
-
-    protected abstract class PrefixableParamEditor extends NSISParamEditor
+    protected final String getDefaultValue()
     {
-        protected final void appendParamText(StringBuffer buf)
+        if(mAllowBlank) {
+            return ""; //$NON-NLS-1$
+        }
+        return getDefaultValue2();
+    }
+
+    protected String getDefaultValue2()
+    {
+        return ""; //$NON-NLS-1$
+    }
+
+    protected abstract PrefixableParamEditor createPrefixableParamEditor(INSISParamEditor parentEditor);
+
+    protected abstract class PrefixableParamEditor extends SimpleParamEditor
+    {
+        public static final String DATA_BUTTON = "BUTTON"; //$NON-NLS-1$
+
+        public PrefixableParamEditor(INSISParamEditor parentEditor)
+        {
+            super(parentEditor);
+        }
+
+        protected final void appendSimpleParamText(StringBuffer buf)
         {
             String text = getParamText();
             if(text != null) {

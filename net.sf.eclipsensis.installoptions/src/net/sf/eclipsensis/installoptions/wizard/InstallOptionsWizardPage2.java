@@ -25,7 +25,7 @@ import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.wizard.util.MasterSlaveController;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -105,7 +105,16 @@ public class InstallOptionsWizardPage2 extends WizardNewFileCreationPage
      */
     public boolean finish()
     {
-    	// create the new file resource
+        IPath path = new Path(getFileName());
+        if(Common.isEmpty(path.getFileExtension())) {
+            path = path.addFileExtension(IInstallOptionsConstants.INI_EXTENSIONS[0]);
+            setFileName(path.toString());
+            if(getErrorMessage() != null) {
+                return false;
+            }
+        }
+
+        // create the new file resource
     	IFile newFile = createNewFile();
     	if (newFile == null) {
     		return false;	// ie.- creation was unsuccessful

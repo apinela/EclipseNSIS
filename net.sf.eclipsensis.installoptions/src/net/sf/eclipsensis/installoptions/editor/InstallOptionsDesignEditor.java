@@ -767,7 +767,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
     private void updateDocument()
     {
         InstallOptionsDialog dialog = getInstallOptionsDialog();
-        if(dialog != null && dialog.canUpdateINIFile()) {
+        if(dialog != null && dialog.canUpdateINIFile() && getCommandStack().isDirty()) {
             dialog.updateINIFile();
             mINIFile.updateDocument();
         }

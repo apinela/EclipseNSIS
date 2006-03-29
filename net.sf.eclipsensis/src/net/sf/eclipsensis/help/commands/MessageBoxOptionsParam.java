@@ -30,9 +30,9 @@ public class MessageBoxOptionsParam extends NSISParam
         super(node);
     }
 
-    protected NSISParamEditor createParamEditor()
+    protected NSISParamEditor createParamEditor(INSISParamEditor parentEditor)
     {
-        return new MessageBoxOptionsParamEditor();
+        return new MessageBoxOptionsParamEditor(parentEditor);
     }
 
     protected class MessageBoxOptionsParamEditor extends NSISParamEditor
@@ -41,6 +41,33 @@ public class MessageBoxOptionsParam extends NSISParam
         private Combo mIconCombo = null;
         private Combo mDefaultCombo = null;
         private Button[] mOthersButtons = null;
+
+        public MessageBoxOptionsParamEditor(INSISParamEditor parentEditor)
+        {
+            super(parentEditor);
+        }
+
+        public void reset()
+        {
+            resetCombo(mButtonsCombo);
+            resetCombo(mIconCombo);
+            resetCombo(mDefaultCombo);
+            if(!Common.isEmptyArray(mOthersButtons)) {
+                for (int i = 0; i < mOthersButtons.length; i++) {
+                    if(isValid(mOthersButtons[i])) {
+                        mOthersButtons[i].setSelection(false);
+                    }
+                }
+            }
+            super.reset();
+        }
+        
+        private void resetCombo(Combo combo)
+        {
+            if(isValid(combo)) {
+                combo.clearSelection();
+            }
+        }
 
         protected String validateParam()
         {

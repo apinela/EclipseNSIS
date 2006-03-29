@@ -9,8 +9,8 @@
  *******************************************************************************/
 package net.sf.eclipsensis.help.commands;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.util.XMLUtil;
@@ -21,7 +21,7 @@ public class ChoiceParam extends ComboParam
 {
     public static final String ATTR_DISPLAY = "display"; //$NON-NLS-1$
     public static final String TAG_CHOICE = "choice"; //$NON-NLS-1$
-    protected Map mChoices;
+    protected ComboEntry[] mChoices;
     
     public ChoiceParam(Node node)
     {
@@ -36,7 +36,7 @@ public class ChoiceParam extends ComboParam
 
     private void loadChoices(Node node)
     {
-        mChoices = new LinkedHashMap();
+        List list = new ArrayList();
         NodeList childNodes = node.getChildNodes();
         int count = childNodes.getLength();
         for(int i=0; i<count; i++) {
@@ -44,13 +44,14 @@ public class ChoiceParam extends ComboParam
             if(child.getNodeName().equals(TAG_CHOICE)) {
                 NamedNodeMap attr = child.getAttributes();
                 String value = XMLUtil.getStringValue(attr, ATTR_VALUE);
-                String display = EclipseNSISPlugin.getResourceString(XMLUtil.getStringValue(attr, ATTR_DISPLAY));
-                mChoices.put(value, (display==null?value:display));
+                String display = XMLUtil.getStringValue(attr, ATTR_DISPLAY);
+                list.add(new ComboEntry(value, EclipseNSISPlugin.getResourceString(display==null?value:display)));
             }
         }
+        mChoices = (ComboEntry[])list.toArray(new ComboEntry[list.size()]);
     }
 
-    protected Map getComboValues()
+    protected ComboEntry[] getComboEntries()
     {
         return mChoices;
     }

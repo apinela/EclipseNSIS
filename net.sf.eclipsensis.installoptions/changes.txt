@@ -1,6 +1,13 @@
 Revision History
 ================
 
+0.9.5 (01/26/2006)
+    * Added Export as HTML command.
+    * Added new control editing commands in source editor.
+    * Control type can now be changed in the design editor.
+    * Added support for automatic Team checkout in design editor.
+    * Other minor bug fixes.
+
 0.9.4 (01/26/2006)
     * Fixed GroupBox transparency.
     * Preview can now also handle external files.

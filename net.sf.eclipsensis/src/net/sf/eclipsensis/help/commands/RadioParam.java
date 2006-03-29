@@ -9,42 +9,62 @@
  *******************************************************************************/
 package net.sf.eclipsensis.help.commands;
 
+import java.util.*;
+
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.XMLUtil;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
 import org.w3c.dom.Node;
 
 public class RadioParam extends GroupParam
 {
+    public static final String ATTR_DEFAULT = "default"; //$NON-NLS-1$
     public static final String SETTING_RADIO_SELECTED = "radioSelected"; //$NON-NLS-1$
-    private static final Integer DEFAULT_RADIO_SELECTED = new Integer(0);
+    
+    private int mDefaultIndex;
     
     public RadioParam(Node node)
     {
         super(node);
     }
 
-    protected NSISParamEditor createParamEditor()
+    protected void init(Node node)
     {
-        return new RadioParamEditor();
+        super.init(node);
+        mDefaultIndex = XMLUtil.getIntValue(node.getAttributes(), ATTR_DEFAULT);
+    }
+
+    protected NSISParamEditor createParamEditor(INSISParamEditor parentEditor)
+    {
+        return new RadioParamEditor(parentEditor);
     }
 
     protected class RadioParamEditor extends GroupParamEditor
     {
-        private Button[] mRadioButtons;
+        private Map mRadioButtonMap = new HashMap();
+        
+        public RadioParamEditor(INSISParamEditor parentEditor)
+        {
+            super(parentEditor);
+        }
 
         protected void appendParamText(StringBuffer buf)
         {
-            if(!Common.isEmptyArray(mRadioButtons)) {
-                for (int i = 0; i < mRadioButtons.length; i++) {
-                    if(isValid(mRadioButtons[i])) {
-                        if(mRadioButtons[i].getSelection()) {
-                            mParamEditors[i].appendText(buf);
+            if(!Common.isEmptyCollection(mParamEditors)) {
+                for (Iterator iter = mParamEditors.iterator(); iter.hasNext();) {
+                    INSISParamEditor editor = (INSISParamEditor)iter.next();
+                    Button radioButton = (Button)mRadioButtonMap.get(editor);
+                    if(isValid(radioButton)) {
+                        if(radioButton.getSelection()) {
+                            editor.appendText(buf);
                             return;
                         }
                     }
@@ -55,29 +75,37 @@ public class RadioParam extends GroupParam
             }
         }
 
-        protected Control createParamControl(Composite parent)
+        public void reset()
         {
-            if(!Common.isEmptyArray(mChildParams)) {
-                mRadioButtons = new Button[mChildParams.length];
-            }
-            return super.createParamControl(parent);
+            selectDefault();
+            super.reset();
         }
 
         protected void initParamEditor()
         {
             super.initParamEditor();
-            if(!Common.isEmptyArray(mRadioButtons)) {
-                int i = ((Integer)getSettingValue(SETTING_RADIO_SELECTED, Integer.class, DEFAULT_RADIO_SELECTED)).intValue();
-                if(i < mRadioButtons.length) {
-                    if(isValid(mRadioButtons[i])) {
-                        mRadioButtons[i].setSelection(true);
+            if(!Common.isEmptyCollection(mParamEditors)) {
+                int i = ((Integer)getSettingValue(SETTING_RADIO_SELECTED, Integer.class, new Integer(-1))).intValue();
+                if(i >= 0 && i < mParamEditors.size()) {
+                    Button radioButton = (Button)mRadioButtonMap.get(mParamEditors.get(i));
+                    if(isValid(radioButton)) {
+                        radioButton.setSelection(true);
                         return;
                     }
                 }
+                selectDefault();
+            }
+        }
 
-                if(isValid(mRadioButtons[0])) {
-                    mRadioButtons[0].setSelection(true);
-                }
+        /**
+         * 
+         */
+        private void selectDefault()
+        {
+            int defaultIndex = (mDefaultIndex < mParamEditors.size()?mDefaultIndex:0);
+            Button radioButton = (Button)mRadioButtonMap.get(mParamEditors.get(defaultIndex));
+            if(isValid(radioButton)) {
+                radioButton.setSelection(true);
             }
         }
         
@@ -86,32 +114,54 @@ public class RadioParam extends GroupParam
             return 1+super.getLayoutNumColumns();
         }
 
-        protected void createChildParamControl(Composite parent, final int index)
+        protected void createChildParamControl(Composite parent, final INSISParamEditor editor)
         {
-            mRadioButtons[index] = new Button(parent,SWT.RADIO);
-            mRadioButtons[index].setLayoutData(new GridData(SWT.FILL,SWT.CENTER,false,false));
-            super.createChildParamControl(parent, index);
-            mRadioButtons[index].addSelectionListener(new SelectionAdapter() {
+            final Button radioButton = new Button(parent,SWT.RADIO);
+            radioButton.setLayoutData(new GridData(SWT.FILL,SWT.CENTER,false,false));
+            mRadioButtonMap.put(editor, radioButton);
+            super.createChildParamControl(parent, editor);
+            if(editor instanceof NSISParamEditor) {
+                if(isValid(((NSISParamEditor)editor).mNameLabel)) {
+                    //Steal the name
+                    radioButton.setText(((NSISParamEditor)editor).mNameLabel.getText());
+                    Composite parent2 = ((NSISParamEditor)editor).mNameLabel.getParent();
+                    GridLayout layout = (GridLayout)parent2.getLayout();
+                    GridData data = (GridData)((NSISParamEditor)editor).mNameLabel.getLayoutData();
+                    if(layout.numColumns > data.horizontalSpan) {
+                        if(isValid(((NSISParamEditor)editor).mControl)) {
+                            GridData data2 = (GridData)((NSISParamEditor)editor).mControl.getLayoutData();
+                            data2.horizontalSpan += data.horizontalSpan;
+                            data2.grabExcessHorizontalSpace |= data.grabExcessHorizontalSpace;
+                            data2.grabExcessVerticalSpace |= data.grabExcessVerticalSpace;
+                        }
+                    }
+                    ((NSISParamEditor)editor).mNameLabel.dispose();
+                    parent2.layout(true);
+                }
+            }
+            radioButton.addSelectionListener(new SelectionAdapter() {
                 public void widgetSelected(SelectionEvent e)
                 {
-                    mParamEditors[index].setEnabled(mRadioButtons[index].getSelection());
+                    editor.setEnabled(radioButton.getSelection());
                 }
             });
-            mParamEditors[index].setEnabled(mRadioButtons[index].getSelection());
+            editor.setEnabled(radioButton.getSelection());
         }
 
         protected void updateState(boolean state)
         {
             super.updateState(state);
-            if(!Common.isEmptyArray(mRadioButtons)) {
-                for (int i = 0; i < mRadioButtons.length; i++) {
-                    if(isValid(mRadioButtons[i])) {
-                        mRadioButtons[i].setEnabled(state);
+            if(!Common.isEmptyCollection(mParamEditors)) {
+                for (Iterator iter = mParamEditors.iterator(); iter.hasNext();) {
+                    INSISParamEditor editor = (INSISParamEditor)iter.next();
+                    Button radioButton = (Button)mRadioButtonMap.get(editor);
+                    if(isValid(radioButton)) {
+                        radioButton.setEnabled(state);
                         if(state) {
-                            mParamEditors[i].setEnabled(mRadioButtons[i].getSelection());
+                            editor.setEnabled(radioButton.getSelection());
                         }
                         else {
-                            mParamEditors[i].setEnabled(state);
+                            editor.setEnabled(state);
                         }
                     }
                 }
@@ -121,25 +171,31 @@ public class RadioParam extends GroupParam
         public void saveSettings()
         {
             super.saveSettings();
-            if(!Common.isEmptyArray(mRadioButtons) && getSettings() != null) {
-                for (int i = 0; i < mRadioButtons.length; i++) {
-                    if(isValid(mRadioButtons[i])) {
-                        if(mRadioButtons[i].getSelection()) {
+            if(!Common.isEmptyCollection(mParamEditors)) {
+                int i=0;
+                for (Iterator iter = mParamEditors.iterator(); iter.hasNext();) {
+                    INSISParamEditor editor = (INSISParamEditor)iter.next();
+                    Button radioButton = (Button)mRadioButtonMap.get(editor);
+                    if(isValid(radioButton)) {
+                        if(radioButton.getSelection()) {
                             getSettings().put(SETTING_RADIO_SELECTED, new Integer(i));
                             return;
                         }
                     }
+                    i++;
                 }
             }
         }
 
         protected String validateParam()
         {
-            if(!Common.isEmptyArray(mRadioButtons)) {
-                for (int i = 0; i < mRadioButtons.length; i++) {
-                    if(isValid(mRadioButtons[i])) {
-                        if(mRadioButtons[i].getSelection()) {
-                            return mParamEditors[i].validate();
+            if(!Common.isEmptyCollection(mParamEditors)) {
+                for (Iterator iter = mParamEditors.iterator(); iter.hasNext();) {
+                    INSISParamEditor editor = (INSISParamEditor)iter.next();
+                    Button radioButton = (Button)mRadioButtonMap.get(editor);
+                    if(isValid(radioButton)) {
+                        if(radioButton.getSelection()) {
+                            return editor.validate();
                         }
                     }
                 }

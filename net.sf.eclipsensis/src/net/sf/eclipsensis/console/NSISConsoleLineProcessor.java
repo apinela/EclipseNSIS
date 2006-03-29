@@ -86,6 +86,13 @@ public class NSISConsoleLineProcessor implements INSISConsoleLineProcessor
 
     private void setLineInfo(NSISConsoleLine line, IPath path, int lineNum)
     {
+        if(path != null) {
+            if(path.toString().startsWith("macro:")) { //$NON-NLS-1$
+                //TODO Add macro discovery here.
+                path = null;
+                lineNum = 1;
+            }
+        }
         if(mScript.getDevice() == null) {
             if(path == null) {
                 path = mScript;

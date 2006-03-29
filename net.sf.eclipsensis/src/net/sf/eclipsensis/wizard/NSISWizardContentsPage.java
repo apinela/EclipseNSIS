@@ -811,7 +811,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
         int[] styles = {SWT.DROP_DOWN,SWT.PUSH,SWT.PUSH,SWT.PUSH,SWT.PUSH};
         Image[] images = {CommonImages.ADD_ICON,CommonImages.EDIT_ICON,CommonImages.DELETE_ICON,CommonImages.EXPANDALL_ICON,CommonImages.COLLAPSEALL_ICON};
         Image[] disabledImages = {CommonImages.ADD_DISABLED_ICON,CommonImages.EDIT_DISABLED_ICON,CommonImages.DELETE_DISABLED_ICON,CommonImages.EXPANDALL_DISABLED_ICON,CommonImages.COLLAPSEALL_DISABLED_ICON};
-        String[] tooltips = {"add.tooltip","edit.tooltip","delete.tooltip","installitem.expandall.tooltip","installitem.collapseall.tooltip"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+        String[] tooltips = {"add.tooltip","edit.tooltip","delete.tooltip","expandall.tooltip","collapseall.tooltip"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
         boolean[] state = {false,false,false,true,true};
         for (int i = 0; i < styles.length; i++) {
             ToolItem ti = new ToolItem(toolbar, styles[i]);

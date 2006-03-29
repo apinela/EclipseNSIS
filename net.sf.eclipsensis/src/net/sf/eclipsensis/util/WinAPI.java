@@ -65,6 +65,9 @@ public class WinAPI
     public static final int LIS_NORMAL = 1;
     public static final int LIS_DISABLED = 4;
 
+    public static final int TVS_HASBUTTONS = 0x1;
+    public static final int TVS_HASLINES = 0x2;
+    
     public static final int COLOR_GRAYTEXT = 0x11;
     public static final int COLOR_3DHILIGHT = 0x14;
 

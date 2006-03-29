@@ -38,6 +38,7 @@ public class ListItemsDialog extends Dialog
     public ListItemsDialog(Shell parent, List values, String type)
     {
         super(parent);
+        setShellStyle(getShellStyle()|SWT.RESIZE);
         mValues = new ArrayList(values);
         mType = type;
     }

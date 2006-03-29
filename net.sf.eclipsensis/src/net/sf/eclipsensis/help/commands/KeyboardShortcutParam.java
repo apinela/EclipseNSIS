@@ -46,15 +46,35 @@ public class KeyboardShortcutParam extends PrefixableParam
         super(node);
     }
 
-    protected PrefixableParamEditor createPrefixableParamEditor()
+    protected PrefixableParamEditor createPrefixableParamEditor(INSISParamEditor parentEditor)
     {
-        return new KeyboardShortcutParamEditor();
+        return new KeyboardShortcutParamEditor(parentEditor);
     }
 
     protected class KeyboardShortcutParamEditor extends PrefixableParamEditor
     {
         private Button[] mModifierButtons;
         private Combo mKeyCombo;
+
+        public KeyboardShortcutParamEditor(INSISParamEditor parentEditor)
+        {
+            super(parentEditor);
+        }
+
+        public void reset()
+        {
+            if(isValid(mKeyCombo)) {
+                mKeyCombo.clearSelection();
+            }
+            if(!Common.isEmptyArray(mModifierButtons)) {
+                for (int i = 0; i < mModifierButtons.length; i++) {
+                    if(isValid(mModifierButtons[i])) {
+                        mModifierButtons[i].setSelection(false);
+                    }
+                }
+            }
+            super.reset();
+        }
 
         protected void updateState(boolean state)
         {

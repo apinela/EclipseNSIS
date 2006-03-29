@@ -32,15 +32,28 @@ public class LocalDirParam extends LocalFilesystemObjectParam
         super(node);
     }
 
-    protected LocalFilesystemObjectParamEditor createLocalFilesystemObjectParamEditor()
+    protected LocalFilesystemObjectParamEditor createLocalFilesystemObjectParamEditor(INSISParamEditor parentEditor)
     {
-        return new LocalDirParamEditor();
+        return new LocalDirParamEditor(parentEditor);
     }
 
     protected class LocalDirParamEditor extends LocalFilesystemObjectParamEditor
     {
         protected Text mDirText = null;
         
+        public LocalDirParamEditor(INSISParamEditor parentEditor)
+        {
+            super(parentEditor);
+        }
+
+        public void reset()
+        {
+            if(isValid(mDirText)) {
+                mDirText.setText(""); //$NON-NLS-1$
+            }
+            super.reset();
+        }
+
         protected String validateLocalFilesystemObjectParam()
         {
             if(isValid(mDirText)) {

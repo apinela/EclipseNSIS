@@ -276,7 +276,7 @@ public class NSISPreferencePage	extends NSISSettingsPage implements INSISPrefere
                 mNSISHome.getCombo().setText(prefs.getNSISHome());
                 mUseEclipseHelp.setSelection(prefs.isUseEclipseHelp());
                 mAutoShowConsole.select(getAutoShowConsoleIndex(prefs.getAutoShowConsole()));
-                mNotifyMakeNSISChanged.setSelection(prefs.getPreferenceStore().getBoolean(NOTIFY_MAKENSIS_CHANGED));
+                mNotifyMakeNSISChanged.setSelection(prefs.getBoolean(NOTIFY_MAKENSIS_CHANGED));
                 super.reset();
             }
 
@@ -322,7 +322,7 @@ public class NSISPreferencePage	extends NSISSettingsPage implements INSISPrefere
                         preferences.setNSISHome(home);
                         preferences.setAutoShowConsole(AUTO_SHOW_CONSOLE_ARRAY[mAutoShowConsole.getSelectionIndex()]);
                         preferences.setUseEclipseHelp(mUseEclipseHelp.getSelection());
-                        preferences.getPreferenceStore().setValue(NOTIFY_MAKENSIS_CHANGED, mNotifyMakeNSISChanged.getSelection());
+                        preferences.setValue(NOTIFY_MAKENSIS_CHANGED, mNotifyMakeNSISChanged.getSelection());
                         return true;
                     }
                 }

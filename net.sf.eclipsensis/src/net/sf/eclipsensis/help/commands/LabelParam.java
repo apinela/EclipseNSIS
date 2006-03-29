@@ -16,7 +16,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
 import org.w3c.dom.Node;
 
-public class LabelParam extends NSISParam
+public class LabelParam extends SimpleParam
 {
     private String mValue;
     
@@ -41,14 +41,24 @@ public class LabelParam extends NSISParam
         mValue = value;
     }
 
-    protected NSISParamEditor createParamEditor()
+    protected String getDefaultValue()
     {
-        return new LabelParamEditor();
+        return getValue();
     }
 
-    protected class LabelParamEditor extends NSISParamEditor
+    protected SimpleParamEditor createSimpleParamEditor(INSISParamEditor parentEditor)
     {
-        protected void appendParamText(StringBuffer buf)
+        return new LabelParamEditor(parentEditor);
+    }
+
+    protected class LabelParamEditor extends SimpleParamEditor
+    {
+        public LabelParamEditor(INSISParamEditor parentEditor)
+        {
+            super(parentEditor);
+        }
+
+        protected void appendSimpleParamText(StringBuffer buf)
         {
             if(!Common.isEmpty(getValue())) {
                 buf.append(" ").append(Common.maybeQuote(getValue())); //$NON-NLS-1$

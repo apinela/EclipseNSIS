@@ -27,9 +27,9 @@ public class StringParam extends SubstitutableParam
         super(node);
     }
 
-    protected PrefixableParamEditor createPrefixableParamEditor()
+    protected PrefixableParamEditor createPrefixableParamEditor(INSISParamEditor parentEditor)
     {
-        return new StringParamEditor();
+        return new StringParamEditor(parentEditor);
     }
     
     protected String validateText(String text)
@@ -49,6 +49,19 @@ public class StringParam extends SubstitutableParam
     {
         protected Text mText = null;
         
+        public StringParamEditor(INSISParamEditor parentEditor)
+        {
+            super(parentEditor);
+        }
+
+        public void reset()
+        {
+            if(isValid(mText)) {
+                mText.setText(""); //$NON-NLS-1$
+            }
+            super.reset();
+        }
+
         protected String getParamText()
         {
             if(isValid(mText)) {

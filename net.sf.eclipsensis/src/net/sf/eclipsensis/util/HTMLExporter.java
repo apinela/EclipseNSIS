@@ -334,10 +334,12 @@ public class HTMLExporter
             IPreferenceStore store = EditorsUI.getPreferenceStore();
             String pref = AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER_COLOR;
             if (store.contains(pref)) {
-                if (store.isDefault(pref))
+                if (store.isDefault(pref)) {
                     rgb= PreferenceConverter.getDefaultColor(store, pref);
-                else
+                }
+                else {
                     rgb= PreferenceConverter.getColor(store, pref);
+                }
             }
             if (rgb == null) {
                 rgb= new RGB(0, 0, 0);

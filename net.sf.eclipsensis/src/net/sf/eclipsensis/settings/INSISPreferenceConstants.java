@@ -58,4 +58,5 @@ public interface INSISPreferenceConstants extends INSISSettingsConstants
 
     public static final String REGEDIT_LOCATION = "regeditLocation"; //$NON-NLS-1$
     public static final String NSIS_COMMAND_HELPER_REMEMBER = "nsisCommandHelpeRemember"; //$NON-NLS-1$
+    public static final String NSIS_COMMAND_VIEW_FLAT_MODE = "nsisCommandViewFlatMode"; //$NON-NLS-1$
 }

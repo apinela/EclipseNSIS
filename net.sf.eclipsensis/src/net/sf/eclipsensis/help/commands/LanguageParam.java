@@ -24,11 +24,12 @@ public class LanguageParam extends ComboParam
         super(node);
     }
 
-    protected Map getComboValues()
+    protected ComboEntry[] getComboEntries()
     {
-        Map map = new LinkedHashMap();
+        ComboEntry[] entries = EMPTY_COMBO_ENTRIES;
         List languages = NSISLanguageManager.getInstance().getLanguages();
         if(!Common.isEmptyCollection(languages)) {
+            entries = new ComboEntry[languages.size()];
             Collections.sort(languages, new Comparator() {
                 public int compare(Object o1, Object o2)
                 {
@@ -37,12 +38,13 @@ public class LanguageParam extends ComboParam
                     return lang1.getLangDef().compareTo(lang2.getLangDef());
                 }
             });
+            int i=0;
             for (Iterator iter = languages.iterator(); iter.hasNext();) {
                 NSISLanguage lang = (NSISLanguage)iter.next();
                 String def = lang.getLangDef();
-                map.put(def, def);
+                entries[i++] = new ComboEntry(def, def);
             }
         }
-        return map;
+        return entries;
     }
 }

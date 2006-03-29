@@ -45,6 +45,7 @@ public class FileFilterDialog extends Dialog
     public FileFilterDialog(Shell parentShell, List filter)
     {
         super(parentShell);
+        setShellStyle(getShellStyle()|SWT.RESIZE);
         mFilter = new ArrayList();
         for(Iterator iter = filter.iterator(); iter.hasNext(); ) {
             FileFilter f = (FileFilter)iter.next();
@@ -94,7 +95,7 @@ public class FileFilterDialog extends Dialog
         Composite composite = (Composite)super.createDialogArea(parent);
 
         final Group group1 = new Group(composite,SWT.SHADOW_ETCHED_IN);
-        group1.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+        group1.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true));
         group1.setLayout(new GridLayout(2, false));
         group1.setText(InstallOptionsPlugin.getResourceString("filter.summary.group.name")); //$NON-NLS-1$
         Table table = new Table(group1,SWT.BORDER|SWT.MULTI|SWT.FULL_SELECTION);
@@ -207,7 +208,7 @@ public class FileFilterDialog extends Dialog
         });
 
         final Group group2 = new Group(composite,SWT.SHADOW_ETCHED_IN);
-        group2.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+        group2.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true));
         group2.setLayout(new GridLayout(1, false));
         group2.setText(InstallOptionsPlugin.getResourceString("filter.detail.group.name")); //$NON-NLS-1$
 

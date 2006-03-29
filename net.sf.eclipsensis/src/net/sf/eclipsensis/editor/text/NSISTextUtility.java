@@ -39,12 +39,16 @@ public class NSISTextUtility implements INSISConstants
     public static final IRegion EMPTY_REGION = new Region(0,0);
     private static final String[] cValidPartitionTypes = {IDocument.DEFAULT_CONTENT_TYPE,
                                                           NSISPartitionScanner.NSIS_STRING};
+    public static final int COMPUTE_OFFSET_HOVER_LOCATION = 1;
+    public static final int COMPUTE_OFFSET_CURSOR_LOCATION = 2;
+    public static final int COMPUTE_OFFSET_CARET_LOCATION = 4;
+    public static final int COMPUTE_OFFSET_ANY = COMPUTE_OFFSET_HOVER_LOCATION|COMPUTE_OFFSET_CURSOR_LOCATION|COMPUTE_OFFSET_CARET_LOCATION;
 
     private NSISTextUtility()
     {
     }
 
-    public static int computeOffset(ISourceViewer sourceViewer, boolean hoverOnly)
+    public static int computeOffset(ISourceViewer sourceViewer, int type)
     {
         if (sourceViewer == null) {
             return -1;
@@ -63,25 +67,39 @@ public class NSISTextUtility implements INSISConstants
 
         ITextViewerExtension2 textViewerExtension2= (ITextViewerExtension2) sourceViewer;
 
-        // does a text hover exist?
-        ITextHover textHover= textViewerExtension2.getCurrentTextHover();
-        int offset;
-        if (textHover == null) {
-            if(hoverOnly) {
-                return -1;
+        StyledText widget = sourceViewer.getTextWidget();
+        int offset = -1;
+        if((type & COMPUTE_OFFSET_HOVER_LOCATION) > 0) { 
+           // does a text hover exist?
+            ITextHover textHover= textViewerExtension2.getCurrentTextHover();
+            if (textHover == null) {
+                offset = -1;
             }
             else {
-                offset = sourceViewer.getTextWidget().getCaretOffset();
+                Point hoverEventLocation= textViewerExtension2.getHoverEventLocation();
+                offset= computeOffsetAtLocation(sourceViewer, hoverEventLocation.x, hoverEventLocation.y);
             }
         }
-        else {
-            Point hoverEventLocation= textViewerExtension2.getHoverEventLocation();
-            offset= computeOffsetAtLocation(sourceViewer, hoverEventLocation.x, hoverEventLocation.y);
+        if(offset < 0 && (type & COMPUTE_OFFSET_CARET_LOCATION) > 0) {
+            offset = widget.getCaretOffset();
+            if(offset >= 0) {
+                return offset;
+            }
+        }
+        if(offset < 0 && (type & COMPUTE_OFFSET_CURSOR_LOCATION) > 0) {
+            Point p = null;
+            p = widget.toControl(widget.getDisplay().getCursorLocation());
+            try {
+                offset = computeOffsetAtLocation(sourceViewer, p.x, p.y);
+            }
+            catch (Exception e) {
+                offset = -1;
+            }            
         }
         return offset;
     }
 
-    private static int computeOffsetAtLocation(ISourceViewer sourceViewer, int x, int y)
+    public static int computeOffsetAtLocation(ISourceViewer sourceViewer, int x, int y)
     {
         StyledText styledText= sourceViewer.getTextWidget();
         IDocument document= sourceViewer.getDocument();

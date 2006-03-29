@@ -840,6 +840,7 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
         public DialogSizeDialog(Shell parentShell, DialogSize dialogSize)
         {
             super(parentShell);
+            setShellStyle(getShellStyle()|SWT.RESIZE);
             mOriginal = dialogSize;
             mCurrent = (dialogSize==null?new DialogSize("",false,new Dimension()): //$NON-NLS-1$
                                          dialogSize.getCopy());

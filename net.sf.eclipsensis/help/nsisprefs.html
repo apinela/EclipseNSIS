@@ -62,13 +62,18 @@ Back</a> </dd>
 open NSIS
 console</dt>
   <dd>Automatically open the
-EclipseNSIS console when compiling a script.
+<a href="console.html">EclipseNSIS console</a> when compiling a script.
 If the console is already open, it is brought to the front. There are four settings available:
   <ul>
-    <li>Always</li>
-    <li>Errors and warnings</li>
-    <li>Errors only</li>
-    <li>Never</li>
+    <li><strong>Always</strong> - the console is automatically opened and brought to the front whenever a script is compiled. This means that
+    even if the console view tab is moved to the back in the view site, it will be brought to the front whenever
+    any compilation output is generated.</li>
+    <li><strong>Errors and warnings</strong> - the console is automatically opened and brought to the front if any errors or warnings are encountered
+    while compiling a script.</li>
+    <li><strong>Errors only</strong> - the console is automatically opened and brought to the front only if any errors are encountered
+    while compiling a script.</li>
+    <li><strong>Never</strong> - the console is never automatically opened and/or brought to the front. It will have to be manually opened
+    if compilation output is to be viewed.</li>
   </ul>
     <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a>
   </dd></dl>
@@ -76,7 +81,7 @@ If the console is already open, it is brought to the front. There are four setti
 Eclipse Platform help browser</dt>
   <dd>Use the Eclipse Platform
 help browser to display NSIS help. If
-this option is unchecked, then the <a href="editing.html#detailedhelp">EclipseNSIS integrated help browser</a> is used. <a href="javascript:history.go(-1)">&larr;
+this option is unchecked, then the <a href="editing.html#helpbrowser">EclipseNSIS integrated help browser</a> is used. <a href="javascript:history.go(-1)">&larr;
 Back</a></dd></dl>
   <a name="a_notify"></a><dl id="id_notify"><dt>Notify when MakeNSIS.exe has been modified or deleted</dt>
   <dd>EclipseNSIS monitors the status of the MakeNSIS.exe executable in the chosen NSIS home. If this executable

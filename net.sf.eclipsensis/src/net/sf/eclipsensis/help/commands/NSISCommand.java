@@ -9,6 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.help.commands;
 
+import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.util.XMLUtil;
 
@@ -18,8 +19,11 @@ import org.w3c.dom.Node;
 public class NSISCommand
 {
     public static final String ATTR_NAME = "name"; //$NON-NLS-1$
+    public static final String ATTR_CATEGORY = "category"; //$NON-NLS-1$
+
     private String mName;
     private GroupParam mParam;
+    private String mCategory;
 
     public NSISCommand(Node node)
     {
@@ -27,6 +31,18 @@ public class NSISCommand
         mName = XMLUtil.getStringValue(attributes,ATTR_NAME);
         XMLUtil.removeValue(attributes, ATTR_NAME);
         mParam = loadParam(node);
+        mCategory = EclipseNSISPlugin.getResourceString(XMLUtil.getStringValue(attributes, ATTR_CATEGORY));
+    }
+
+    public int hashCode()
+    {
+        // TODO Auto-generated method stub
+        return super.hashCode();
+    }
+
+    public String getCategory()
+    {
+        return mCategory;
     }
 
     /**
@@ -53,7 +69,7 @@ public class NSISCommand
 
     public INSISParamEditor createEditor()
     {
-        return mParam.createEditor();
+        return mParam.createEditor(null);
     }
     
     public boolean hasParameters()

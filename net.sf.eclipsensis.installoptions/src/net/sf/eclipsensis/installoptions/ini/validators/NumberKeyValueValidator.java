@@ -23,7 +23,7 @@ public class NumberKeyValueValidator implements IINIKeyValueValidator
                 int i = Integer.parseInt(value);
                 if(i < 0 && !isNegativeAllowed()) {
                     if((fixFlag & INILine.VALIDATE_FIX_ERRORS) > 0) {
-                        keyValue.setValue(Integer.toString(-i)); //$NON-NLS-1$
+                        keyValue.setValue(Integer.toString(-i)); 
                         return validate(keyValue, fixFlag);
                     }
                     else {

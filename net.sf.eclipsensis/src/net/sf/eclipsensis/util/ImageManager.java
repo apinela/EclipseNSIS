@@ -25,17 +25,34 @@ public class ImageManager
     public ImageManager(AbstractUIPlugin plugin)
     {
         mPlugin = plugin;
-        if(mPlugin != null) {
-            mImageRegistry = mPlugin.getImageRegistry();
-        }
-        else {
-            Display.getDefault().syncExec(new Runnable() {
-                public void run()
-                {
-                    mImageRegistry = new ImageRegistry(Display.getDefault());
+    }
+
+    private ImageRegistry getImageRegistry()
+    {
+        if(mImageRegistry == null) {
+            if(mPlugin != null) {
+                if(Display.getCurrent() != null) {
+                    mImageRegistry = mPlugin.getImageRegistry();
                 }
-            });
+                else {
+                    Display.getDefault().syncExec(new Runnable() {
+                        public void run()
+                        {
+                            mImageRegistry = mPlugin.getImageRegistry();
+                        }
+                    });
+                }
+            }
+            else {
+                Display.getDefault().syncExec(new Runnable() {
+                    public void run()
+                    {
+                        mImageRegistry = new ImageRegistry(Display.getDefault());
+                    }
+                });
+            }
         }
+        return mImageRegistry;
     }
 
     public synchronized ImageDescriptor getImageDescriptor(String location)
@@ -61,11 +78,11 @@ public class ImageManager
     {
         String urlString = (url != null?url.toString():""); //$NON-NLS-1$
         ImageDescriptor imageDescriptor = null;
-        if(mImageRegistry != null) {
-            imageDescriptor = mImageRegistry.getDescriptor(urlString);
+        if(getImageRegistry() != null) {
+            imageDescriptor = getImageRegistry().getDescriptor(urlString);
             if(imageDescriptor == null) {
                 imageDescriptor = createImageDescriptor(url);
-                mImageRegistry.put(urlString.toLowerCase(), imageDescriptor);
+                getImageRegistry().put(urlString.toLowerCase(), imageDescriptor);
             }
         }
 
@@ -90,7 +107,7 @@ public class ImageManager
 
     public synchronized Image getImage(String location)
     {
-        Image image = mImageRegistry.get(location==null?null:location.toLowerCase());
+        Image image = getImageRegistry().get(location==null?null:location.toLowerCase());
         if(image == null) {
             return getImage(makeLocationURL(location));
         }
@@ -104,7 +121,7 @@ public class ImageManager
 
     public synchronized boolean containsImage(String name)
     {
-        return (mImageRegistry.get(name==null?null:name.toLowerCase()) != null);
+        return (getImageRegistry().get(name==null?null:name.toLowerCase()) != null);
     }
 
     public synchronized void putImage(URL url, Image image)
@@ -114,12 +131,12 @@ public class ImageManager
 
     public synchronized void putImage(String s, Image image)
     {
-        mImageRegistry.put(s==null?null:s.toLowerCase(),image);
+        getImageRegistry().put(s==null?null:s.toLowerCase(),image);
     }
 
     public synchronized void putImageDescriptor(String s, ImageDescriptor image)
     {
-        mImageRegistry.put(s==null?null:s.toLowerCase(),image);
+        getImageRegistry().put(s==null?null:s.toLowerCase(),image);
     }
 
     public synchronized Image getImage(URL url)
@@ -132,7 +149,7 @@ public class ImageManager
                 putImageDescriptor(urlString,createImageDescriptor(url));
                 image = getImage(urlString);
                 if(image == null) {
-                    mImageRegistry.remove(urlString);
+                    getImageRegistry().remove(urlString);
                     putImageDescriptor(urlString, ImageDescriptor.getMissingImageDescriptor());
                     image = getImage(urlString);
                 }

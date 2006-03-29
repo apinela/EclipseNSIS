@@ -9,13 +9,9 @@
  *******************************************************************************/
 package net.sf.eclipsensis.help.commands;
 
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.viewer.MapContentProvider;
-import net.sf.eclipsensis.viewer.MapLabelProvider;
+import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.XMLUtil;
 
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
@@ -27,15 +23,25 @@ import org.w3c.dom.Node;
 public abstract class ComboParam extends PrefixableParam
 {
     public static final String SETTING_SELECTED = "selected"; //$NON-NLS-1$
+    public static final String ATTR_DEFAULT = "default"; //$NON-NLS-1$
+    protected static final ComboEntry[] EMPTY_COMBO_ENTRIES = new ComboEntry[0];
 
+    private int mDefaultIndex;
+    
     public ComboParam(Node node)
     {
         super(node);
     }
 
-    protected PrefixableParamEditor createPrefixableParamEditor()
+    protected void init(Node node)
     {
-        return new ComboParamEditor();
+        super.init(node);
+        mDefaultIndex = XMLUtil.getIntValue(node.getAttributes(), ATTR_DEFAULT);
+    }
+
+    protected PrefixableParamEditor createPrefixableParamEditor(INSISParamEditor parentEditor)
+    {
+        return new ComboParamEditor(parentEditor);
     }
     
     protected boolean isUserEditable()
@@ -47,19 +53,79 @@ public abstract class ComboParam extends PrefixableParam
     {
         return null;
     }
+
+    protected String getDefaultValue2()
+    {
+        if(!isAllowBlank()) {
+            ComboEntry[] entries = getComboEntries();
+            if(!Common.isEmptyArray(entries)) {
+                int defaultIndex = (mDefaultIndex < entries.length?mDefaultIndex:0);
+                return entries[defaultIndex].getValue();
+            }
+        }
+        return ""; //$NON-NLS-1$
+    }
     
-    protected abstract Map getComboValues();
+    protected abstract ComboEntry[] getComboEntries();
     
+    protected class ComboEntry
+    {
+        private String mValue=""; //$NON-NLS-1$
+        private String mDisplay=""; //$NON-NLS-1$
+
+        public ComboEntry(String value, String display)
+        {
+            mValue = value;
+            mDisplay = display;
+        }
+
+        protected String getDisplay()
+        {
+            return mDisplay;
+        }
+
+        protected String getValue()
+        {
+            return mValue;
+        }
+
+        public int hashCode()
+        {
+            int result = 31 + ((mValue == null)?0:mValue.hashCode());
+            result = 31 * result + ((mDisplay == null)?0:mDisplay.hashCode());
+            return result;
+        }
+
+        public boolean equals(Object obj)
+        {
+            if(obj instanceof ComboEntry) {
+                if(obj == this) {
+                    return true;
+                }
+                else {
+                    return Common.stringsAreEqual(((ComboEntry)obj).getDisplay(), getDisplay()) &&
+                           Common.stringsAreEqual(((ComboEntry)obj).getValue(), getValue());
+                }
+            }
+            return false;
+        }
+    }
+
     protected class ComboParamEditor extends PrefixableParamEditor
     {
         protected ComboViewer mChoicesViewer = null;
+
+        public ComboParamEditor(INSISParamEditor parentEditor)
+        {
+            super(parentEditor);
+        }
 
         protected String getParamText()
         {
             if(mChoicesViewer != null && isValid(mChoicesViewer.getCombo())) {
                 IStructuredSelection sel = (IStructuredSelection)mChoicesViewer.getSelection();
                 if(!sel.isEmpty()) {
-                    return ((Map.Entry)sel.getFirstElement()).getKey().toString();
+                    return ((ComboEntry)sel.getFirstElement()).getValue();
                 }
                 else if(isAllowBlank()) {
                     return ""; //$NON-NLS-1$
@@ -74,7 +140,7 @@ public abstract class ComboParam extends PrefixableParam
             if(mChoicesViewer != null && isValid(mChoicesViewer.getCombo()) && getSettings() != null) {
                 IStructuredSelection sel = (IStructuredSelection)mChoicesViewer.getSelection();
                 if(!sel.isEmpty()) {
-                    getSettings().put(SETTING_SELECTED, ((Map.Entry)sel.getFirstElement()).getKey().toString());
+                    getSettings().put(SETTING_SELECTED, ((ComboEntry)sel.getFirstElement()).getValue());
                 }
                 else if(isUserEditable()) {
                     getSettings().put(SETTING_SELECTED, mChoicesViewer.getCombo().getText());
@@ -85,18 +151,23 @@ public abstract class ComboParam extends PrefixableParam
             }
         }
 
+        public void reset()
+        {
+            selectDefault((ComboEntry[])mChoicesViewer.getInput());
+            super.reset();
+        }
+
         protected void initParamEditor()
         {
             super.initParamEditor();
             Combo combo;
             if(mChoicesViewer != null && isValid(combo = mChoicesViewer.getCombo())) {
                 String selected = (String)getSettingValue(SETTING_SELECTED, String.class, null);
-                Map.Entry entry = null;
-                Map comboValues = (Map)mChoicesViewer.getInput();
-                for(Iterator iter=comboValues.entrySet().iterator(); iter.hasNext(); ) {
-                    Map.Entry e = (Entry)iter.next();
-                    if(e.getKey().equals(selected)) {
-                        entry = e;
+                ComboEntry entry = null;
+                ComboEntry[] entries = (ComboEntry[])mChoicesViewer.getInput();
+                for (int i = 0; i < entries.length; i++) {
+                    if(Common.stringsAreEqual(entries[i].getValue(),selected)) {
+                        entry = entries[i];
                         break;
                     }
                 }
@@ -106,6 +177,23 @@ public abstract class ComboParam extends PrefixableParam
                 else if(selected != null && isUserEditable()) {
                     combo.setText(selected);
                 }
+                else {
+                    selectDefault(entries);
+                }
+            }
+        }
+
+        /**
+         * @param entries
+         */
+        private void selectDefault(ComboEntry[] entries)
+        {
+            int defaultIndex = (entries != null && mDefaultIndex < entries.length?mDefaultIndex:-1);
+            if(defaultIndex >= 0) {
+                mChoicesViewer.setSelection(new StructuredSelection(entries[defaultIndex]));
+            }
+            else {
+                mChoicesViewer.setSelection(StructuredSelection.EMPTY);
             }
         }
 
@@ -123,10 +211,18 @@ public abstract class ComboParam extends PrefixableParam
             Combo combo = new Combo(container,style);
             combo.setLayoutData(new GridData(isUserEditable()?SWT.FILL:SWT.LEFT,SWT.CENTER,isUserEditable(),false));
             mChoicesViewer = new ComboViewer(combo);
-            mChoicesViewer.setContentProvider(new MapContentProvider());
-            mChoicesViewer.setLabelProvider(new MapLabelProvider());
-            Map comboValues = getComboValues();
-            mChoicesViewer.setInput(comboValues);
+            mChoicesViewer.setContentProvider(new ArrayContentProvider());
+            mChoicesViewer.setLabelProvider(new LabelProvider() {
+                public String getText(Object element)
+                {
+                    if(element instanceof ComboEntry) {
+                        return ((ComboEntry)element).getDisplay();
+                    }
+                    return super.getText(element);
+                }
+            });
+            ComboEntry[] entries = getComboEntries();
+            mChoicesViewer.setInput(entries);
             return container;
         }
 

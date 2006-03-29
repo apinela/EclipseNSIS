@@ -20,16 +20,19 @@ public abstract class LocalFilesystemObjectParam extends SubstitutableParam
         super(node);
     }
 
-    protected final PrefixableParamEditor createPrefixableParamEditor()
+    protected final PrefixableParamEditor createPrefixableParamEditor(INSISParamEditor parentEditor)
     {
-        return createLocalFilesystemObjectParamEditor();
+        return createLocalFilesystemObjectParamEditor(parentEditor);
     }
     
-    protected abstract LocalFilesystemObjectParamEditor createLocalFilesystemObjectParamEditor();
+    protected abstract LocalFilesystemObjectParamEditor createLocalFilesystemObjectParamEditor(INSISParamEditor parentEditor);
 
     protected abstract class LocalFilesystemObjectParamEditor extends PrefixableParamEditor
     {
-        public static final String DATA_BUTTON = "BUTTON"; //$NON-NLS-1$
+        public LocalFilesystemObjectParamEditor(INSISParamEditor parentEditor)
+        {
+            super(parentEditor);
+        }
 
         protected boolean testSymbol(String text)
         {

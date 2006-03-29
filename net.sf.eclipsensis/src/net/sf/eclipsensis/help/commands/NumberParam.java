@@ -63,6 +63,19 @@ public class NumberParam extends RegexpParam
         return buf.toString();
     }
 
+    protected String getDefaultValue2()
+    {
+        if(mDomain == DOMAIN_NATURAL) {
+            return "0"; //$NON-NLS-1$
+        }
+        else if(mDomain == DOMAIN_POSITIVE) {
+            return "1"; //$NON-NLS-1$
+        }
+        else {
+            return super.getDefaultValue2();
+        }
+    }
+
     protected String getValidateErrorMessage()
     {
         return EclipseNSISPlugin.getResourceString("number.param.error"); //$NON-NLS-1$
