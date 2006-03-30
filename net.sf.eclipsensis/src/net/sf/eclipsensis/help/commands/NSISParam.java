@@ -255,23 +255,25 @@ public abstract class NSISParam
                 }
             }
             mControl = createParamControl(parent);
-            GridData gridData = new GridData(SWT.FILL,(mControl instanceof Composite?SWT.FILL:SWT.CENTER),true,false);
-            gridData.horizontalSpan = horizontalSpan;
-            mControl.setLayoutData(gridData);
-            if(mOptionalButton != null) {
-                mOptionalButton.addSelectionListener(new SelectionAdapter() {
-                    public void widgetSelected(SelectionEvent e)
+            if(mControl != null) {
+                GridData gridData = new GridData(SWT.FILL,(mControl instanceof Composite?SWT.FILL:SWT.CENTER),true,false);
+                gridData.horizontalSpan = horizontalSpan;
+                mControl.setLayoutData(gridData);
+                if(mOptionalButton != null) {
+                    mOptionalButton.addSelectionListener(new SelectionAdapter() {
+                        public void widgetSelected(SelectionEvent e)
+                        {
+                            updateState(mOptionalButton.getSelection());
+                        }
+                    });
+                }
+                mControl.addDisposeListener(new DisposeListener() {
+                    public void widgetDisposed(DisposeEvent e)
                     {
-                        updateState(mOptionalButton.getSelection());
+                        mControl = null;
                     }
                 });
             }
-            mControl.addDisposeListener(new DisposeListener() {
-                public void widgetDisposed(DisposeEvent e)
-                {
-                    mControl = null;
-                }
-            });
             return mControl;
         }
         

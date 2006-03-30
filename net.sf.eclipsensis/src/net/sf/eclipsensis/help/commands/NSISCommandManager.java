@@ -24,8 +24,11 @@ public class NSISCommandManager
     public static final String ATTR_TYPE = "type"; //$NON-NLS-1$
     public static final String ATTR_NAME = "name"; //$NON-NLS-1$
     public static final String TAG_COMMAND = "command"; //$NON-NLS-1$
+    public static final String TAG_ADD = "add"; //$NON-NLS-1$
+    public static final String TAG_REMOVE = "remove"; //$NON-NLS-1$
     public static final String TAG_VERSION = "version"; //$NON-NLS-1$
-    private static Map cCommandsMap =  new HashMap();
+    private static Map cAddCommandsMap =  new HashMap();
+    private static Map cRemoveCommandsMap =  new HashMap();
     private static Map cParamConstructorsMap = new HashMap();
     private static List cVersionList;
 
@@ -63,19 +66,45 @@ public class NSISCommandManager
             for(int i=0; i<count; i++) {
                 Node versionNode = versionNodes.item(i);
                 Version version = new Version(XMLUtil.getStringValue(versionNode.getAttributes(),ATTR_NAME));
-                Map commandsMap = new HashMap();
-                cCommandsMap.put(version, commandsMap);
-                NodeList commandNodes = versionNode.getChildNodes();
-                int count2 = commandNodes.getLength();
-                for(int j=0; j<count2; j++) {
-                    Node commandNode = commandNodes.item(j);
-                    if(commandNode.getNodeName().equals(TAG_COMMAND)) {
-                        NSISCommand command = new NSISCommand(commandNode);
-                        commandsMap.put(command.getName(), command);
+                NodeList childNodes = versionNode.getChildNodes();
+                int childCount = childNodes.getLength();
+                for (int j = 0; j < childCount; j++) {
+                    Node childNode = childNodes.item(j);
+                    if(childNode.getNodeName().equals(TAG_ADD)) {
+                        Map commandsMap = (Map)cAddCommandsMap.get(version);
+                        if(commandsMap == null) {
+                            commandsMap = new HashMap();
+                            cAddCommandsMap.put(version, commandsMap);
+                        }
+                        NodeList commandNodes = childNode.getChildNodes();
+                        int cmdCount = commandNodes.getLength();
+                        for(int k=0; k<cmdCount; k++) {
+                            Node commandNode = commandNodes.item(k);
+                            if(commandNode.getNodeName().equals(TAG_COMMAND)) {
+                                NSISCommand command = new NSISCommand(commandNode);
+                                commandsMap.put(command.getName(), command);
+                            }
+                        }
+                    }
+                    else if(childNode.getNodeName().equals(TAG_REMOVE)) {
+                        Set commandsSet = (Set)cRemoveCommandsMap.get(version);
+                        if(commandsSet == null) {
+                            commandsSet = new HashSet();
+                            cRemoveCommandsMap.put(version, commandsSet);
+                        }
+                        NodeList commandNodes = childNode.getChildNodes();
+                        int cmdCount = commandNodes.getLength();
+                        for(int k=0; k<cmdCount; k++) {
+                            Node commandNode = commandNodes.item(k);
+                            if(commandNode.getNodeName().equals(TAG_COMMAND)) {
+                                commandsSet.add(XMLUtil.getStringValue(commandNode.getAttributes(), ATTR_NAME));
+                            }
+                        }
                     }
                 }
+
             }
-            cVersionList = new ArrayList(cCommandsMap.keySet());
+            cVersionList = new ArrayList(cAddCommandsMap.keySet());
             Collections.sort(cVersionList);
         }
         catch (Throwable t) {
@@ -89,13 +118,19 @@ public class NSISCommandManager
     public static NSISCommand getCommand(String name)
     {
         Version version = NSISPreferences.INSTANCE.getNSISVersion();
+        Set removeSet = new HashSet();
         for (ListIterator iter = cVersionList.listIterator(cVersionList.size()); iter.hasPrevious();) {
             Version v = (Version)iter.previous();
             if(version.compareTo(v) >= 0) {
-                Map commandsMap = (Map)cCommandsMap.get(v);
-                if(commandsMap != null) {
-                    NSISCommand command = (NSISCommand)commandsMap.get(name);
-                    if(command != null) {
+                Set removeCommandSet = (Set)cRemoveCommandsMap.get(v);
+                if(removeCommandSet != null) {
+                    removeSet.addAll(removeCommandSet);
+                }
+
+                Map addCommandsMap = (Map)cAddCommandsMap.get(v);
+                if(addCommandsMap != null) {
+                    NSISCommand command = (NSISCommand)addCommandsMap.get(name);
+                    if(command != null && !removeSet.contains(command.getName())) {
                         return command;
                     }
                 }
@@ -115,9 +150,13 @@ public class NSISCommandManager
         for (Iterator iter = cVersionList.iterator(); iter.hasNext();) {
             Version v = (Version)iter.next();
             if(version.compareTo(v) >= 0) {
-                Map commandsMap = (Map)cCommandsMap.get(v);
+                Map commandsMap = (Map)cAddCommandsMap.get(v);
                 if(commandsMap != null) {
                     map.putAll(commandsMap);
+                }
+                Set commandsSet = (Set)cRemoveCommandsMap.get(v);
+                if(commandsSet != null) {
+                    map.keySet().removeAll(commandsSet);
                 }
             }
             else {

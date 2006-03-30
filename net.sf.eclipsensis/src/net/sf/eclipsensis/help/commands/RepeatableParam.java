@@ -192,11 +192,13 @@ public class RepeatableParam extends NSISParam
                 mChildParamEditors.add(mChildParam.createEditor(this));
             }
             Composite container = (Composite)getControl();
-            for (Iterator iter = mChildParamEditors.iterator(); iter.hasNext();) {
-                INSISParamEditor editor = (INSISParamEditor)iter.next();
-                addEditor(container, editor);
+            if(isValid(container)) {
+                for (Iterator iter = mChildParamEditors.iterator(); iter.hasNext();) {
+                    INSISParamEditor editor = (INSISParamEditor)iter.next();
+                    addEditor(container, editor);
+                }
+                updateControl(container);
             }
-            updateControl(container);
         }
         
         protected Control createParamControl(Composite parent)
@@ -228,49 +230,51 @@ public class RepeatableParam extends NSISParam
             composite.setLayout(layout);
             composite.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false));
             Control c = editor.createControl(composite);
-            c.setLayoutData(new GridData(SWT.FILL,(c instanceof Composite?SWT.FILL:SWT.CENTER),true,true));
-            final Button delButton = new Button(container,SWT.PUSH);
-            delButton.setLayoutData(new GridData(SWT.CENTER,SWT.CENTER,false,false));
-            final Button addButton = new Button(container,SWT.PUSH);
-            addButton.setLayoutData(new GridData(SWT.CENTER,SWT.CENTER,false,false));
-
-            delButton.setImage(CommonImages.DELETE_SMALL_ICON);
-            addButton.setImage(CommonImages.ADD_SMALL_ICON);
-
-            delButton.addSelectionListener(new SelectionAdapter() {
-                public void widgetSelected(SelectionEvent e)
-                {
-                    if(getSettings() != null) {
-                        List childSettingsList = getChildSettingsList();
-                        int i = mChildParamEditors.indexOf(editor);
-                        if(i >= 0 && i < childSettingsList.size()) {
-                            childSettingsList.remove(i);
+            if(c != null) {
+                c.setLayoutData(new GridData(SWT.FILL,(c instanceof Composite?SWT.FILL:SWT.CENTER),true,true));
+                final Button delButton = new Button(container,SWT.PUSH);
+                delButton.setLayoutData(new GridData(SWT.CENTER,SWT.CENTER,false,false));
+                final Button addButton = new Button(container,SWT.PUSH);
+                addButton.setLayoutData(new GridData(SWT.CENTER,SWT.CENTER,false,false));
+    
+                delButton.setImage(CommonImages.DELETE_SMALL_ICON);
+                addButton.setImage(CommonImages.ADD_SMALL_ICON);
+    
+                delButton.addSelectionListener(new SelectionAdapter() {
+                    public void widgetSelected(SelectionEvent e)
+                    {
+                        if(getSettings() != null) {
+                            List childSettingsList = getChildSettingsList();
+                            int i = mChildParamEditors.indexOf(editor);
+                            if(i >= 0 && i < childSettingsList.size()) {
+                                childSettingsList.remove(i);
+                            }
                         }
+                        mChildParamEditors.remove(editor);
+                        editor.dispose();
+                        composite.dispose();
+                        addButton.dispose();
+                        delButton.dispose();
+                        updateControl(container);
                     }
-                    mChildParamEditors.remove(editor);
-                    editor.dispose();
-                    composite.dispose();
-                    addButton.dispose();
-                    delButton.dispose();
-                    updateControl(container);
-                }
-            });
-            addButton.addSelectionListener(new SelectionAdapter() {
-                public void widgetSelected(SelectionEvent e)
-                {
-                    INSISParamEditor ed = mChildParam.createEditor(RepeatableParamEditor.this);
-                    if(getSettings() != null) {
-                        Map childSettings = new HashMap();
-                        ed.setSettings(childSettings);
-                        List childSettingsList = getChildSettingsList();
-                        childSettingsList.add(childSettings);
+                });
+                addButton.addSelectionListener(new SelectionAdapter() {
+                    public void widgetSelected(SelectionEvent e)
+                    {
+                        INSISParamEditor ed = mChildParam.createEditor(RepeatableParamEditor.this);
+                        if(getSettings() != null) {
+                            Map childSettings = new HashMap();
+                            ed.setSettings(childSettings);
+                            List childSettingsList = getChildSettingsList();
+                            childSettingsList.add(childSettings);
+                        }
+                        mChildParamEditors.add(ed);
+                        addEditor(container, ed);
+                        updateControl(container);
                     }
-                    mChildParamEditors.add(ed);
-                    addEditor(container, ed);
-                    updateControl(container);
-                }
-            });
-            c.setData(DATA_BUTTONS,new Button[] {delButton,addButton});
+                });
+                c.setData(DATA_BUTTONS,new Button[] {delButton,addButton});
+            }
             editor.initEditor();
         }
         
@@ -314,14 +318,15 @@ public class RepeatableParam extends NSISParam
         /**
          * @param container
          */
-        private void updateControl(final Composite container)
+        private void updateControl(Composite container)
         {
-            container.layout(true);
-            Shell shell = container.getShell();
-            Point size = shell.getSize();
-            shell.setSize(size.x, shell.computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
+            if(isValid(container)) {
+                container.layout(true);
+                Shell shell = container.getShell();
+                Point size = shell.getSize();
+                shell.setSize(size.x, shell.computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
+            }
             updateEditors(isSelected());
         }
-
     }
 }

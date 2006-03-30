@@ -93,23 +93,38 @@ public class SubCommandParam extends NSISParam
                     if(mComboViewer.getSelection().isEmpty()) {
                         return EclipseNSISPlugin.getResourceString("sub.command.param.error");  //$NON-NLS-1$
                     }
-                    if(mCommandEditor != null) {
-                        return mCommandEditor.validate();
-                    }
+                }
+                if(mCommandEditor != null) {
+                    return mCommandEditor.validate();
                 }
             }
             return null;
         }
+        
+        protected Map.Entry getCurrentCommand()
+        {
+            Map.Entry command = null;
+            if(mComboViewer != null && isValid(mComboViewer.getControl())) {
+                IStructuredSelection ssel = (IStructuredSelection)mComboViewer.getSelection();
+                if(!ssel.isEmpty()) {
+                    command = (Map.Entry)ssel.getFirstElement();
+                }
+            }
+            else if(mSubCommands.size() == 1) {
+                command = (Map.Entry)mSubCommands.entrySet().iterator().next();
+            }
+            return command;
+        }
 
         protected void appendParamText(StringBuffer buf)
         {
-            if(mCommandEditor != null && mComboViewer != null) {
-                IStructuredSelection ssel = (IStructuredSelection)mComboViewer.getSelection();
-                if(!ssel.isEmpty()) {
+            if(mCommandEditor != null) {
+                Map.Entry command = getCurrentCommand();
+                if(command != null) {
                     if(buf.length() > 0) {
                         buf.append(" "); //$NON-NLS-1$
                     }
-                    buf.append(((Map.Entry)ssel.getFirstElement()).getValue());
+                    buf.append(command.getValue());
                     mCommandEditor.appendText(buf);
                 }
             }
@@ -133,16 +148,15 @@ public class SubCommandParam extends NSISParam
             super.setSettings(settings);
             if(mCommandEditor != null) {
                 if(settings != null) {
-                    IStructuredSelection ssel = (IStructuredSelection)mComboViewer.getSelection();
-                    if(!ssel.isEmpty()) {
-                        String command = (String)((Map.Entry)ssel.getFirstElement()).getKey();
-                        Map childSettings = (Map)settings.get(command);
+                    Map.Entry command = getCurrentCommand();
+                    if(command != null) {
+                        Map childSettings = (Map)settings.get(command.getKey());
                         if(childSettings == null) {
                             childSettings = new HashMap();
-                            settings.put(command, childSettings);
+                            settings.put(command.getKey(), childSettings);
                         }
                         mCommandEditor.setSettings(childSettings);
-                    }                    
+                    }
                 }
                 else {
                     mCommandEditor.setSettings(null);
@@ -154,13 +168,9 @@ public class SubCommandParam extends NSISParam
         {
             super.saveSettings();
             if(getSettings() != null) {
-                if(mComboViewer != null) {
-                    if(isValid(mComboViewer.getControl())) {
-                        IStructuredSelection ssel = (IStructuredSelection)mComboViewer.getSelection();
-                        if(!ssel.isEmpty()) {
-                            getSettings().put(SETTING_SUBCOMMAND, ((Map.Entry)ssel.getFirstElement()).getKey());
-                        }
-                    }
+                Map.Entry command = getCurrentCommand();
+                if(command != null) {
+                    getSettings().put(SETTING_SUBCOMMAND, command.getKey());
                 }
                 if(mCommandEditor != null) {
                     mCommandEditor.saveSettings();
@@ -170,56 +180,56 @@ public class SubCommandParam extends NSISParam
 
         protected Control createParamControl(Composite parent)
         {
-            final Composite container = new Composite(parent,SWT.NONE);
-            GridLayout layout = new GridLayout(1,false);
-            layout.marginHeight = layout.marginWidth = 0;
-            container.setLayout(layout);
-            
-            Combo combo = new Combo(container,SWT.READ_ONLY|SWT.DROP_DOWN);
-            combo.setLayoutData(new GridData(SWT.LEFT,SWT.CENTER,false,false));
-            
-            mComboViewer = new ComboViewer(combo);
-            mComboViewer.setContentProvider(new MapContentProvider());
-            mComboViewer.setLabelProvider(new MapLabelProvider());
-            
-            mComboViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-                public void selectionChanged(SelectionChangedEvent event)
-                {
-                    boolean changed = false;
-                    if (mCommandEditor != null && isValid(mCommandEditor.getControl())) {
-                        mCommandEditor.getControl().dispose();
-                        mCommandEditor = null;
-                        changed = true;
-                    }
-                    IStructuredSelection sel = (IStructuredSelection)event.getSelection();
-                    if(!sel.isEmpty()) {
-                        String commandName = (String)((Map.Entry)sel.getFirstElement()).getKey();
-                        NSISCommand cmd = NSISCommandManager.getCommand(commandName);
-                        if (cmd != null) {
-                            mCommandEditor = cmd.createEditor();
-                            Map commandSettings = (Map)getSettings().get(commandName);
-                            if(commandSettings == null) {
-                                commandSettings = new HashMap();
-                                getSettings().put(commandName,commandSettings);
-                            }
-                            mCommandEditor.setSettings(commandSettings);
-                            Control c = mCommandEditor.createControl(container);
-                            c.setLayoutData(new GridData(SWT.FILL, (c instanceof Composite?SWT.FILL:SWT.CENTER), true, true));
-                            mCommandEditor.initEditor();
+            if(mSubCommands.size() > 1) {
+                final Composite container = new Composite(parent,SWT.NONE);
+                GridLayout layout = new GridLayout(1,false);
+                layout.marginHeight = layout.marginWidth = 0;
+                container.setLayout(layout);
+                
+                Combo combo = new Combo(container,SWT.READ_ONLY|SWT.DROP_DOWN);
+                combo.setLayoutData(new GridData(SWT.LEFT,SWT.CENTER,false,false));
+                
+                mComboViewer = new ComboViewer(combo);
+                mComboViewer.setContentProvider(new MapContentProvider());
+                mComboViewer.setLabelProvider(new MapLabelProvider());
+                
+                mComboViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+                    public void selectionChanged(SelectionChangedEvent event)
+                    {
+                        boolean changed = false;
+                        if (mCommandEditor != null && isValid(mCommandEditor.getControl())) {
+                            mCommandEditor.getControl().dispose();
+                            mCommandEditor = null;
                             changed = true;
                         }
+                        IStructuredSelection sel = (IStructuredSelection)event.getSelection();
+                        if(!sel.isEmpty()) {
+                            String commandName = (String)((Map.Entry)sel.getFirstElement()).getKey();
+                            NSISCommand cmd = NSISCommandManager.getCommand(commandName);
+                            if (cmd != null) {
+                                createCommandEditor(container, cmd);
+                                changed = true;
+                            }
+                        }
+                        if (changed) {
+                            container.layout(true);
+                            Shell shell = container.getShell();
+                            Point size = shell.getSize();
+                            shell.setSize(size.x, shell.computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
+                        }                    
                     }
-                    if (changed) {
-                        container.layout(true);
-                        Shell shell = container.getShell();
-                        Point size = shell.getSize();
-                        shell.setSize(size.x, shell.computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
-                    }                    
-                }
-            });
-            
-            mComboViewer.setInput(mSubCommands);
-            return container;
+                });
+                
+                mComboViewer.setInput(mSubCommands);
+                return container;
+            }
+            else if(mSubCommands.size() == 1) {
+                createCommandEditor(parent, NSISCommandManager.getCommand((String)getCurrentCommand().getKey()));
+                return mCommandEditor.getControl();
+            }
+            else {
+                return null;
+            }
         }
 
         protected void initParamEditor()
@@ -238,6 +248,29 @@ public class SubCommandParam extends NSISParam
             if(mCommandEditor != null) {
                 mCommandEditor.initEditor();
             }
+        }
+
+        /**
+         * @param container
+         * @param commandName
+         * @param cmd
+         */
+        private void createCommandEditor(Composite container, NSISCommand cmd)
+        {
+            mCommandEditor = cmd.createEditor();
+            if(getSettings() != null) {
+                Map commandSettings = (Map)getSettings().get(cmd.getName());
+                if(commandSettings == null) {
+                    commandSettings = new HashMap();
+                    getSettings().put(cmd.getName(),commandSettings);
+                }
+                mCommandEditor.setSettings(commandSettings);
+            }
+            Control c = mCommandEditor.createControl(container);
+            if(isValid(c)) {
+                c.setLayoutData(new GridData(SWT.FILL, (c instanceof Composite?SWT.FILL:SWT.CENTER), true, true));
+            }
+            mCommandEditor.initEditor();
         }
     }
 }

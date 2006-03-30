@@ -282,8 +282,15 @@ public class NSISCommandView extends ViewPart implements INSISHomeListener
             WinAPI.SetWindowLong(tree.handle, WinAPI.GWL_STYLE, WinAPI.GetWindowLong(tree.handle, WinAPI.GWL_STYLE) | WinAPI.TVS_HASLINES  | WinAPI.TVS_HASBUTTONS);
         }
         mViewer.setInput(rootNode);
-        if(!sel.isEmpty()) {
+        if(sel != null && !sel.isEmpty()) {
             mViewer.setSelection(sel);
+            sel = mViewer.getSelection();
+            if(!sel.isEmpty()) {
+                return;
+            }
+        }
+        if(mViewer.getTree().getItemCount() > 0) {
+            mViewer.getTree().showItem(mViewer.getTree().getItem(0));
         }
     }
     

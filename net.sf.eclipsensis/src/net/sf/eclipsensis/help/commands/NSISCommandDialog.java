@@ -252,7 +252,9 @@ public class NSISCommandDialog extends StatusMessageDialog
         l.setText(mCommand.getName());
         makeBold(l);
         mControl = mParamEditor.createControl(parent);
-        mControl.setLayoutData(new GridData(SWT.FILL,SWT.CENTER,true,false));
+        if(mControl != null) {
+            mControl.setLayoutData(new GridData(SWT.FILL,SWT.CENTER,true,false));
+        }
         
         Composite c = new Composite(parent,SWT.NONE);
         c.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false));

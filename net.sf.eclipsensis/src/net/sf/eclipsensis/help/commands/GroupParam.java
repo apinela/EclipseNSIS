@@ -228,19 +228,20 @@ public class GroupParam extends NSISParam
 
         protected Control createParamControl(Composite parent)
         {
-            parent = new Group(parent,SWT.NONE);
-            GridLayout layout = new GridLayout(1,false);
-            layout.marginHeight = layout.marginWidth = 2;
-            parent.setLayout(layout);
+            Composite composite = null;
             if(!Common.isEmptyArray(mChildParams)) {
+                composite = new Group(parent,SWT.NONE);
+                GridLayout layout = new GridLayout(1,false);
+                layout.marginHeight = layout.marginWidth = 2;
+                composite.setLayout(layout);
                 layout.numColumns = getLayoutNumColumns();
                 
                 for (Iterator iter = mParamEditors.iterator(); iter.hasNext();) {
                     INSISParamEditor editor = (INSISParamEditor)iter.next();
-                    createChildParamControl(parent, editor);
+                    createChildParamControl(composite, editor);
                 }
             }
-            return parent;
+            return composite;
         }
 
         protected void initParamEditor()
