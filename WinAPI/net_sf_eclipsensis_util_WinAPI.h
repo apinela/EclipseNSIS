@@ -88,6 +88,10 @@ extern "C" {
 #define net_sf_eclipsensis_util_WinAPI_LIS_NORMAL 1L
 #undef net_sf_eclipsensis_util_WinAPI_LIS_DISABLED
 #define net_sf_eclipsensis_util_WinAPI_LIS_DISABLED 4L
+#undef net_sf_eclipsensis_util_WinAPI_TVS_HASBUTTONS
+#define net_sf_eclipsensis_util_WinAPI_TVS_HASBUTTONS 1L
+#undef net_sf_eclipsensis_util_WinAPI_TVS_HASLINES
+#define net_sf_eclipsensis_util_WinAPI_TVS_HASLINES 2L
 #undef net_sf_eclipsensis_util_WinAPI_COLOR_GRAYTEXT
 #define net_sf_eclipsensis_util_WinAPI_COLOR_GRAYTEXT 17L
 #undef net_sf_eclipsensis_util_WinAPI_COLOR_3DHILIGHT
@@ -361,6 +365,14 @@ JNIEXPORT jboolean JNICALL Java_net_sf_eclipsensis_util_WinAPI_SetFileAttributes
  */
 JNIEXPORT jshort JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetKeyState
   (JNIEnv *, jclass, jint);
+
+/*
+ * Class:     net_sf_eclipsensis_util_WinAPI
+ * Method:    ValidateWildcard
+ * Signature: (Ljava/lang/String;)Z
+ */
+JNIEXPORT jboolean JNICALL Java_net_sf_eclipsensis_util_WinAPI_ValidateWildcard
+  (JNIEnv *, jclass, jstring);
 
 #ifdef __cplusplus
 }

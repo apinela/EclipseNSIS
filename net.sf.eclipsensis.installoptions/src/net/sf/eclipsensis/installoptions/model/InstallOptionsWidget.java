@@ -560,7 +560,7 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
         {
             super(InstallOptionsModel.PROPERTY_FLAGS, InstallOptionsPlugin.getResourceString("flags.property.name")); //$NON-NLS-1$
             setLabelProvider(cFlagsLabelProvider);
-            setValidator(new NSISStringLengthValidator(InstallOptionsModel.PROPERTY_FLAGS));
+            setValidator(new NSISStringLengthValidator(getDisplayName()));
         }
 
         public CellEditor createPropertyEditor(Composite parent)

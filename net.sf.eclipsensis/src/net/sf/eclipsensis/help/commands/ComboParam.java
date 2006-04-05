@@ -151,10 +151,10 @@ public abstract class ComboParam extends PrefixableParam
             }
         }
 
-        public void reset()
+        public void clear()
         {
             selectDefault((ComboEntry[])mChoicesViewer.getInput());
-            super.reset();
+            super.clear();
         }
 
         protected void initParamEditor()
@@ -209,6 +209,7 @@ public abstract class ComboParam extends PrefixableParam
                 style |= SWT.READ_ONLY;
             }
             Combo combo = new Combo(container,style);
+            setToolTip(combo);
             combo.setLayoutData(new GridData(isUserEditable()?SWT.FILL:SWT.LEFT,SWT.CENTER,isUserEditable(),false));
             mChoicesViewer = new ComboViewer(combo);
             mChoicesViewer.setContentProvider(new ArrayContentProvider());

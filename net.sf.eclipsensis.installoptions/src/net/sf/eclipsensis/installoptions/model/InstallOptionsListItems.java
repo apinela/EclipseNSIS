@@ -120,7 +120,7 @@ public abstract class InstallOptionsListItems extends InstallOptionsEditableElem
         {
             super(InstallOptionsModel.PROPERTY_LISTITEMS, InstallOptionsPlugin.getResourceString("listitems.property.name")); //$NON-NLS-1$
             setLabelProvider(cListItemsLabelProvider);
-            setValidator(new NSISStringLengthValidator(InstallOptionsModel.PROPERTY_LISTITEMS));
+            setValidator(new NSISStringLengthValidator(getDisplayName()));
         }
 
         public CellEditor createPropertyEditor(Composite parent)

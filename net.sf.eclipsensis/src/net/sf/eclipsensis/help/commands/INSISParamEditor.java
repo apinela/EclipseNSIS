@@ -33,5 +33,6 @@ public interface INSISParamEditor
     public INSISParamEditor getParentEditor();
     public List getChildEditors();
     public void dispose();
+    public void clear();
     public void reset();
 }

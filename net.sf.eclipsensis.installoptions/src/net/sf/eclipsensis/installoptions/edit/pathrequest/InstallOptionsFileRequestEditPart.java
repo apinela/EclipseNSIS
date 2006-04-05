@@ -32,7 +32,7 @@ public class InstallOptionsFileRequestEditPart extends InstallOptionsPathRequest
         {
             InstallOptionsFileRequest model = (InstallOptionsFileRequest)getModel();
             FileFilterDialog dialog = new FileFilterDialog(getViewer().getControl().getShell(), model.getFilter());
-            dialog.setValidator(new NSISStringLengthValidator(InstallOptionsModel.PROPERTY_FILTER));
+            dialog.setValidator(new NSISStringLengthValidator(InstallOptionsPlugin.getResourceString("filter.property.name"))); //$NON-NLS-1$
             if (dialog.open() != Window.OK) {
                 mNewValue = dialog.getFilter();
                 return true;

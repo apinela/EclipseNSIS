@@ -78,12 +78,21 @@ public class SubCommandParam extends NSISParam
             super(parentEditor);
         }
 
-        public void reset()
+        public void clear()
         {
             if(mComboViewer != null && isValid(mComboViewer.getControl())) {
                 mComboViewer.setSelection(StructuredSelection.EMPTY);
             }
+            super.clear();
+        }
+
+        public void reset()
+        {
             super.reset();
+            if(mCommandEditor != null) {
+                mCommandEditor.dispose();
+                mCommandEditor = null;
+            }
         }
 
         protected String validateParam()
@@ -198,7 +207,7 @@ public class SubCommandParam extends NSISParam
                     {
                         boolean changed = false;
                         if (mCommandEditor != null && isValid(mCommandEditor.getControl())) {
-                            mCommandEditor.getControl().dispose();
+                            mCommandEditor.dispose();
                             mCommandEditor = null;
                             changed = true;
                         }
@@ -268,7 +277,7 @@ public class SubCommandParam extends NSISParam
             }
             Control c = mCommandEditor.createControl(container);
             if(isValid(c)) {
-                c.setLayoutData(new GridData(SWT.FILL, (c instanceof Composite?SWT.FILL:SWT.CENTER), true, true));
+                c.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true));
             }
             mCommandEditor.initEditor();
         }

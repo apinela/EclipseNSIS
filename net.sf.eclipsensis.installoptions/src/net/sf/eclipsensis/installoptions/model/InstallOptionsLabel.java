@@ -49,9 +49,10 @@ public class InstallOptionsLabel extends InstallOptionsUneditableElement
     protected IPropertyDescriptor createPropertyDescriptor(String name)
     {
         if(name.equals(InstallOptionsModel.PROPERTY_TEXT)) {
-            TextPropertyDescriptor descriptor = new MultiLineTextPropertyDescriptor(InstallOptionsModel.PROPERTY_TEXT, InstallOptionsPlugin.getResourceString("text.property.name")); //$NON-NLS-1$;
+            String propertyName = InstallOptionsPlugin.getResourceString("text.property.name"); //$NON-NLS-1$;
+            TextPropertyDescriptor descriptor = new MultiLineTextPropertyDescriptor(InstallOptionsModel.PROPERTY_TEXT, propertyName);
             descriptor.setLabelProvider(MultiLineLabelProvider.INSTANCE);
-            descriptor.setValidator(new NSISStringLengthValidator(InstallOptionsModel.PROPERTY_TEXT));
+            descriptor.setValidator(new NSISStringLengthValidator(propertyName));
             return descriptor;
         }
         else {

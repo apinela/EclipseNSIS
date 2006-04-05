@@ -89,18 +89,21 @@ public abstract class InstallOptionsEditableElement extends InstallOptionsWidget
     protected IPropertyDescriptor createPropertyDescriptor(String name)
     {
         if(name.equals(InstallOptionsModel.PROPERTY_TEXT)) {
-            TextPropertyDescriptor descriptor = new TextPropertyDescriptor(InstallOptionsModel.PROPERTY_TEXT, InstallOptionsPlugin.getResourceString("text.property.name")); //$NON-NLS-1$;
-            descriptor.setValidator(new NSISStringLengthValidator(InstallOptionsModel.PROPERTY_TEXT));
+            String propertyName = InstallOptionsPlugin.getResourceString("text.property.name"); //$NON-NLS-1$;
+            TextPropertyDescriptor descriptor = new TextPropertyDescriptor(InstallOptionsModel.PROPERTY_TEXT, propertyName);
+            descriptor.setValidator(new NSISStringLengthValidator(propertyName));
             return descriptor;
         }
         else if(name.equals(InstallOptionsModel.PROPERTY_STATE)) {
-            TextPropertyDescriptor descriptor = new TextPropertyDescriptor(InstallOptionsModel.PROPERTY_STATE, InstallOptionsPlugin.getResourceString("state.property.name")); //$NON-NLS-1$;
-            descriptor.setValidator(new NSISStringLengthValidator(InstallOptionsModel.PROPERTY_STATE));
+            String propertyName = InstallOptionsPlugin.getResourceString("state.property.name"); //$NON-NLS-1$;
+            TextPropertyDescriptor descriptor = new TextPropertyDescriptor(InstallOptionsModel.PROPERTY_STATE, propertyName);
+            descriptor.setValidator(new NSISStringLengthValidator(propertyName));
             return descriptor;
         }
         else if(name.equals(InstallOptionsModel.PROPERTY_MAXLEN)) {
-            TextPropertyDescriptor descriptor = new TextPropertyDescriptor(InstallOptionsModel.PROPERTY_MAXLEN, InstallOptionsPlugin.getResourceString("maxlen.property.name")); //$NON-NLS-1$;
-            NumberCellEditorValidator validator = new NumberCellEditorValidator(getDefaultMinLen(),getDefaultMaxLen(),true) {
+            String propertyName = InstallOptionsPlugin.getResourceString("maxlen.property.name"); //$NON-NLS-1$;
+            TextPropertyDescriptor descriptor = new TextPropertyDescriptor(InstallOptionsModel.PROPERTY_MAXLEN, propertyName);
+            NumberCellEditorValidator validator = new NumberCellEditorValidator(propertyName,getDefaultMinLen(),getDefaultMaxLen(),true) {
                 public int getMinValue()
                 {
                     String minLen = getMinLen();
@@ -116,8 +119,9 @@ public abstract class InstallOptionsEditableElement extends InstallOptionsWidget
             return descriptor;
         }
         else if(name.equals(InstallOptionsModel.PROPERTY_MINLEN)) {
-            TextPropertyDescriptor descriptor = new TextPropertyDescriptor(InstallOptionsModel.PROPERTY_MINLEN, InstallOptionsPlugin.getResourceString("minlen.property.name")); //$NON-NLS-1$;
-            NumberCellEditorValidator validator = new NumberCellEditorValidator(getDefaultMinLen(),getDefaultMaxLen(),true) {
+            String propertyName = InstallOptionsPlugin.getResourceString("minlen.property.name"); //$NON-NLS-1$;
+            TextPropertyDescriptor descriptor = new TextPropertyDescriptor(InstallOptionsModel.PROPERTY_MINLEN, propertyName);
+            NumberCellEditorValidator validator = new NumberCellEditorValidator(propertyName,getDefaultMinLen(),getDefaultMaxLen(),true) {
                 public int getMaxValue()
                 {
                     String maxLen = getMaxLen();
@@ -133,8 +137,9 @@ public abstract class InstallOptionsEditableElement extends InstallOptionsWidget
             return descriptor;
         }
         else if(name.equals(InstallOptionsModel.PROPERTY_VALIDATETEXT)) {
-            TextPropertyDescriptor descriptor = new TextPropertyDescriptor(InstallOptionsModel.PROPERTY_VALIDATETEXT, InstallOptionsPlugin.getResourceString("validatetext.property.name")); //$NON-NLS-1$;
-            descriptor.setValidator(new NSISStringLengthValidator(InstallOptionsModel.PROPERTY_VALIDATETEXT));
+            String propertyName = InstallOptionsPlugin.getResourceString("validatetext.property.name"); //$NON-NLS-1$;
+            TextPropertyDescriptor descriptor = new TextPropertyDescriptor(InstallOptionsModel.PROPERTY_VALIDATETEXT, propertyName);
+            descriptor.setValidator(new NSISStringLengthValidator(propertyName));
             return descriptor;
         }
         else {

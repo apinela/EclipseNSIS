@@ -86,7 +86,7 @@ public abstract class PrefixableParam extends SimpleParam
         {
             String text = getParamText();
             if(text != null) {
-                boolean shouldQuote = Common.shouldQuote(text);
+                boolean shouldQuote = shouldQuote(text);
                 if(!Common.isEmpty(getPrefix())) {
                     text = getPrefix()+text;
                 }

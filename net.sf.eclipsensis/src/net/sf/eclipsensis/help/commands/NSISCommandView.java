@@ -312,7 +312,7 @@ public class NSISCommandView extends ViewPart implements INSISHomeListener
                     i--;
                 }
                 if (isNew) {
-                    Collections.sort(mHierarchicalRootNode.getChildren(), cComparator);
+                    mHierarchicalRootNode.sort();
                 }            
                 rootNode = mHierarchicalRootNode;
             }
@@ -321,7 +321,7 @@ public class NSISCommandView extends ViewPart implements INSISHomeListener
                     mFlatRootNode = new TreeNode(""); //$NON-NLS-1$
                 }
                 moveCommandChild(mFlatRootNode,mHierarchicalRootNode);
-                Collections.sort(mFlatRootNode.getChildren(),cComparator);
+                mFlatRootNode.sort();
                 rootNode = mFlatRootNode;
             }
             mFlatMode = !mFlatMode;

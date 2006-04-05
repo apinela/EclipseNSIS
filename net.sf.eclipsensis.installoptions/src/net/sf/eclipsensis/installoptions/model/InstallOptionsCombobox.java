@@ -62,7 +62,7 @@ public class InstallOptionsCombobox extends InstallOptionsListItems
         public ComboStatePropertyDescriptor()
         {
             super(InstallOptionsModel.PROPERTY_STATE, InstallOptionsPlugin.getResourceString("state.property.name")); //$NON-NLS-1$
-            setValidator(new NSISStringLengthValidator(InstallOptionsModel.PROPERTY_STATE));
+            setValidator(new NSISStringLengthValidator(getDisplayName()));
         }
 
         public int getStyle()

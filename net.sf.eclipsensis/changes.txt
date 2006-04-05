@@ -4,11 +4,12 @@ Revision History
 0.9.5 (01/26/2006)
     * Added Export as HTML command.
     * Var elements now shown in Outline view.
-    * Added NSIS Command Assitant for adding NSIS commands to script.
+    * Added NSIS Command Wizard for adding NSIS commands to script.
     * Other minor bug fixes.
     * Bug Fixes
         o 1416349
         o 1443239
+        o 1464413
     * Feature Requests:
         o 1452422
 

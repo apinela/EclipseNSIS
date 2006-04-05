@@ -9,9 +9,11 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.properties;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsWidget;
-import net.sf.eclipsensis.installoptions.model.Position;
+import net.sf.eclipsensis.installoptions.model.*;
 
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ICellEditorValidator;
@@ -20,40 +22,40 @@ import org.eclipse.ui.views.properties.*;
 
 public class PositionPropertySource implements IPropertySource
 {
-    public static final String ID_LEFT = "left"; //$NON-NLS-1$
-    public static final String ID_TOP = "top";//$NON-NLS-1$
-    public static final String ID_RIGHT = "right"; //$NON-NLS-1$
-    public static final String ID_BOTTOM = "bottom";//$NON-NLS-1$
+    public static final String ID_LEFT = InstallOptionsModel.PROPERTY_LEFT;
+    public static final String ID_TOP = InstallOptionsModel.PROPERTY_TOP;
+    public static final String ID_RIGHT = InstallOptionsModel.PROPERTY_RIGHT;
+    public static final String ID_BOTTOM = InstallOptionsModel.PROPERTY_BOTTOM;
 
-    private static ICellEditorValidator cValidator = new ICellEditorValidator(){
-        public String isValid(Object value)
-        {
-            try {
-                Integer.parseInt((String)value);
-                return null;
-            }
-            catch (NumberFormatException nfe){
-                return InstallOptionsPlugin.getResourceString("number.error.message"); //$NON-NLS-1$
-            }
-        }
-    };
+    private static Map cValidators = new HashMap();
+    
+    static {
+        cValidators.put(ID_LEFT, new IntegerCellEditorValidator(InstallOptionsPlugin.getResourceString("left.property.name"))); //$NON-NLS-1$
+        cValidators.put(ID_TOP, new IntegerCellEditorValidator(InstallOptionsPlugin.getResourceString("top.property.name"))); //$NON-NLS-1$
+        cValidators.put(ID_RIGHT, new IntegerCellEditorValidator(InstallOptionsPlugin.getResourceString("right.property.name"))); //$NON-NLS-1$
+        cValidators.put(ID_BOTTOM, new IntegerCellEditorValidator(InstallOptionsPlugin.getResourceString("bottom.property.name"))); //$NON-NLS-1$
+    }
 
     private IPropertyDescriptor[] mDescriptors;
 
     private void createDescriptors()
     {
-        PropertyDescriptor leftProp = new CustomTextPropertyDescriptor(ID_LEFT,
-                InstallOptionsPlugin.getResourceString("left.property.name")); //$NON-NLS-1$
-        leftProp.setValidator(cValidator);
-        PropertyDescriptor topProp = new CustomTextPropertyDescriptor(ID_TOP,
-                InstallOptionsPlugin.getResourceString("top.property.name")); //$NON-NLS-1$
-        topProp.setValidator(cValidator);
-        PropertyDescriptor rightProp = new CustomTextPropertyDescriptor(ID_RIGHT,
-                InstallOptionsPlugin.getResourceString("right.property.name")); //$NON-NLS-1$
-        rightProp.setValidator(cValidator);
-        PropertyDescriptor bottomProp = new CustomTextPropertyDescriptor(ID_BOTTOM,
-                InstallOptionsPlugin.getResourceString("bottom.property.name")); //$NON-NLS-1$
-        bottomProp.setValidator(cValidator);
+        IntegerCellEditorValidator validator = (IntegerCellEditorValidator)cValidators.get(ID_LEFT);
+        PropertyDescriptor leftProp = new CustomTextPropertyDescriptor(ID_LEFT, validator.getPropertyName());
+        leftProp.setValidator(validator);
+
+        validator = (IntegerCellEditorValidator)cValidators.get(ID_TOP);
+        PropertyDescriptor topProp = new CustomTextPropertyDescriptor(ID_TOP, validator.getPropertyName());
+        topProp.setValidator(validator);
+        
+        validator = (IntegerCellEditorValidator)cValidators.get(ID_RIGHT);
+        PropertyDescriptor rightProp = new CustomTextPropertyDescriptor(ID_RIGHT, validator.getPropertyName());
+        rightProp.setValidator(validator);
+        
+        validator = (IntegerCellEditorValidator)cValidators.get(ID_BOTTOM);
+        PropertyDescriptor bottomProp = new CustomTextPropertyDescriptor(ID_BOTTOM, validator.getPropertyName());
+        bottomProp.setValidator(validator);
+
         mDescriptors = new IPropertyDescriptor[]{leftProp, topProp, rightProp, bottomProp};
     }
 
@@ -144,6 +146,33 @@ public class PositionPropertySource implements IPropertySource
         return new StringBuffer("(").append(mPosition.left).append(",").append( //$NON-NLS-1$ //$NON-NLS-2$
             mPosition.top).append(",").append(mPosition.right).append(",").append( //$NON-NLS-1$ //$NON-NLS-2$
             mPosition.bottom).append(")").toString(); //$NON-NLS-1$
+    }
+
+    private static class IntegerCellEditorValidator implements ICellEditorValidator
+    {
+        private String mPropertyName;
+        
+        public IntegerCellEditorValidator(String propertyName)
+        {
+            super();
+            mPropertyName = propertyName;
+        }
+
+        public String getPropertyName()
+        {
+            return mPropertyName;
+        }
+
+        public String isValid(Object value)
+        {
+            try {
+                Integer.parseInt((String)value);
+                return null;
+            }
+            catch (NumberFormatException nfe){
+                return InstallOptionsPlugin.getFormattedString("number.error.message",new String[] {mPropertyName}); //$NON-NLS-1$
+            }
+        }
     }
 
     private class CustomTextPropertyDescriptor extends TextPropertyDescriptor

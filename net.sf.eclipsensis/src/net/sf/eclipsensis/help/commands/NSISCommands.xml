@@ -156,7 +156,7 @@
             </param>
           </param>
           <param type="group">
-            <param name="/oname=file.dat" prefix="/oname=" type="filename"/>
+            <param name="/oname" tooltip="file.dat" prefix="/oname=" type="filename"/>
             <param name="infile.dat" type="localfile" acceptVar="false"/>
           </param>
         </param>
@@ -616,7 +616,7 @@
             </param>
           </param>
           <param type="group">
-            <param name="/oname=file.dat" prefix="/oname=" type="string"/>
+            <param name="/oname" tooltip="file.dat" prefix="/oname=" type="string"/>
             <param name="infile.dat" type="localfile" acceptVar="false"/>
           </param>
         </param>
@@ -794,7 +794,7 @@
         <param type="radio">
           <param name="install_type_name" type="string"/>
           <param name="/NOCUSTOM" type="label"/>
-          <param name="/CUSTOMSTRING=str" prefix="/CUSTOMSTRING=" type="string"/>
+          <param name="/CUSTOMSTRING" tooltip="str" prefix="/CUSTOMSTRING=" type="string"/>
           <param name="/COMPONENTSONLYONCUSTOM" type="label"/>
         </param>
       </command>
@@ -1150,7 +1150,7 @@
         <param name="lparam" type="number"/>
         <param type="radio">
           <param name="user_var(return value)" type="var"/>
-          <param name="/TIMEOUT=time_in_ms" prefix="/TIMEOUT=" type="number" domain="natural"/>
+          <param name="/TIMEOUT" tooltip="time_in_ms" prefix="/TIMEOUT=" type="number" domain="natural"/>
         </param>
       </command>
       <command name="SetAutoClose" category="user.interface.instructions.category">
@@ -1160,7 +1160,7 @@
         </param>
       </command>
       <command name="SetBrandingImage" category="user.interface.instructions.category">
-        <param name="/IMGID=item_id_in_dialog" prefix="/IMGID=" type="number" domain="positive" optional="true" acceptVar="false"/>
+        <param name="/IMGID" tooltip="item_id_in_dialog" prefix="/IMGID=" type="number" domain="positive" optional="true" acceptVar="false"/>
         <param name="/RESIZETOFIT" type="label" optional="true"/>
         <param name="path_to_bitmap_file.bmp" type="localfile" acceptVar="false">
           <filter name="bmp.files.filter.name" value="*.bmp"/>
@@ -1252,7 +1252,7 @@
         </param>
       </command>
       <command name="SetFont" category="general.attributes.category">
-        <param name="/LANG=lang_id" prefix="/LANG=" type="language" optional="true"/>
+        <param name="/LANG" tooltip="lang_id" prefix="/LANG=" type="language" optional="true"/>
         <param name="font_face_name" type="string"/>
         <param name="font_size" type="number" domain="positive"/>
       </command>
@@ -1430,7 +1430,7 @@
         <param name="subtext" type="string" allowBlank="true" optional="true"/>
       </command>
       <command name="VIAddVersionKey" category="version.information.category">
-        <param name="/LANG=lang_id" prefix="/LANG=" type="language" optional="true"/>
+        <param name="/LANG" tooltip="lang_id" prefix="/LANG=" type="language" optional="true"/>
         <param name="keyname" type="string"/>
         <param name="value" type="string" allowBlank="true"/>
       </command>

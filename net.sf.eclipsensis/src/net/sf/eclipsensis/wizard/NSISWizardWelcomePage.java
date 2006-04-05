@@ -143,7 +143,7 @@ public class NSISWizardWelcomePage extends AbstractNSISWizardStartPage
         layout.marginHeight = 0;
         layout.marginWidth = 0;
         composite.setLayout(layout);
-        l = NSISWizardDialogUtil.createLabel(composite,"wizard.template.description.label",true,m,false); //$NON-NLS-1$
+        l = NSISWizardDialogUtil.createLabel(composite,"template.description.label",true,m,false); //$NON-NLS-1$
         l.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         final StyledText t = new StyledText(composite,SWT.BORDER|SWT.MULTI|SWT.READ_ONLY|SWT.WRAP);
         t.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));

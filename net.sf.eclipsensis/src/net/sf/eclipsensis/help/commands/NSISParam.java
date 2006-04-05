@@ -32,10 +32,12 @@ public abstract class NSISParam
     public static final String ATTR_NAME = "name"; //$NON-NLS-1$
     public static final String TAG_PARAM = "param"; //$NON-NLS-1$
     public static final String ATTR_VALUE = "value"; //$NON-NLS-1$
+    public static final String ATTR_TOOLTIP = "tooltip"; //$NON-NLS-1$
 
     private String mName;
     private boolean mOptional;
     private MessageFormat mErrorFormat;
+    private String mToolTip;
     
     public NSISParam(Node node)
     {
@@ -54,6 +56,7 @@ public abstract class NSISParam
             setName(name);
         }
         setOptional(XMLUtil.getBooleanValue(attributes, ATTR_OPTIONAL));
+        mToolTip = XMLUtil.getStringValue(attributes, ATTR_TOOLTIP);
     }
 
     public String getName()
@@ -76,6 +79,23 @@ public abstract class NSISParam
         mOptional = optional;
     }
 
+    protected String maybeQuote(String text)
+    {
+        if(shouldQuote(text)) {
+            text = Common.quote(text);
+        }
+        return text;
+    }
+
+    protected boolean shouldQuote(String text)
+    {
+        boolean shouldQuote = false;
+        if(!Common.isQuoted(text) && !Common.isQuoted(text,'\'') && !Common.isQuoted(text,'`')) {
+            shouldQuote = Common.shouldQuote(text);
+        }
+        return shouldQuote;
+    }
+
     public INSISParamEditor createEditor(INSISParamEditor parentEditor)
     {
         return createParamEditor(parentEditor);
@@ -91,7 +111,6 @@ public abstract class NSISParam
         protected List mDependents = null;
         private boolean mEnabled = true;
         private Map mSettings = null;
-        private boolean mInit = false;
         private INSISParamEditor mParentEditor;
 
         public NSISParamEditor(INSISParamEditor parentEditor)
@@ -99,12 +118,16 @@ public abstract class NSISParam
             mParentEditor = parentEditor;
         }
 
-        public void reset()
+        public void clear()
         {
             if(isValid(mOptionalButton)) {
                 mOptionalButton.setSelection(false);
             }
             updateState(isSelected());
+        }
+        
+        public void reset()
+        {
         }
 
         public void dispose()
@@ -146,10 +169,6 @@ public abstract class NSISParam
 
         public void initEditor()
         {
-            if(mInit) {
-                return;
-            }
-            mInit = true;
             initParamEditor();
             updateEnabled();
         }
@@ -205,7 +224,7 @@ public abstract class NSISParam
             int neededGridCells = (isOptional()?1:0)+(!emptyName?1:0)+1;
             if(neededGridCells > availableGridCells) {
                 parent = new Composite(parent, SWT.None);
-                GridData data = new GridData(SWT.FILL,SWT.FILL,true,false);
+                GridData data = new GridData(SWT.FILL,SWT.FILL,true,true);
                 data.horizontalSpan = availableGridCells;
                 GridLayout layout = new GridLayout(neededGridCells,false);
                 layout.marginHeight = layout.marginWidth = 0;
@@ -256,7 +275,7 @@ public abstract class NSISParam
             }
             mControl = createParamControl(parent);
             if(mControl != null) {
-                GridData gridData = new GridData(SWT.FILL,(mControl instanceof Composite?SWT.FILL:SWT.CENTER),true,false);
+                GridData gridData = new GridData(SWT.FILL,(mControl instanceof Composite?SWT.FILL:SWT.CENTER),true,true);
                 gridData.horizontalSpan = horizontalSpan;
                 mControl.setLayoutData(gridData);
                 if(mOptionalButton != null) {
@@ -274,26 +293,44 @@ public abstract class NSISParam
                     }
                 });
             }
+            else {
+                if(mNameLabel != null) {
+                    ((GridData)mNameLabel.getLayoutData()).horizontalSpan++;
+                }
+                else if(mOptionalButton != null) {
+                    ((GridData)mOptionalButton.getLayoutData()).horizontalSpan++;
+                }
+            }
             return mControl;
+        }
+
+        /**
+         * 
+         */
+        protected void setToolTip(Control ctrl)
+        {
+            if(isValid(ctrl)) {
+                if(!Common.isEmpty(mToolTip)) {
+                    ctrl.setToolTipText(mToolTip);
+                }
+                else if(!Common.isEmpty(mName)) {
+                    ctrl.setToolTipText(mName);
+                }
+            }
         }
         
         public final boolean isSelected()
         {
-            if(isValid(mControl) && mControl.isEnabled()) {
-                if(isOptional()) {
-                    if(isValid(mOptionalButton)) {
-                        return mOptionalButton.getSelection();
-                    }
-                    else {
-                        return false;
-                    }
+            if(isOptional()) {
+                if(isValid(mOptionalButton)) {
+                    return mOptionalButton.getSelection();
                 }
                 else {
-                    return true;
+                    return false;
                 }
             }
             else {
-                return false;
+                return true;
             }
         }
 

@@ -69,9 +69,10 @@ public class InstallOptionsText extends InstallOptionsEditableElement
     protected IPropertyDescriptor createPropertyDescriptor(String name)
     {
         if(name.equals(InstallOptionsModel.PROPERTY_STATE)) {
-            MultiLineTextPropertyDescriptor descriptor = new MultiLineTextPropertyDescriptor(InstallOptionsModel.PROPERTY_STATE, InstallOptionsPlugin.getResourceString("state.property.name")); //$NON-NLS-1$
+            String propertyName = InstallOptionsPlugin.getResourceString("state.property.name"); //$NON-NLS-1$
+            MultiLineTextPropertyDescriptor descriptor = new MultiLineTextPropertyDescriptor(InstallOptionsModel.PROPERTY_STATE, propertyName);
             descriptor.setLabelProvider(MultiLineLabelProvider.INSTANCE);
-            descriptor.setValidator(new NSISStringLengthValidator(InstallOptionsModel.PROPERTY_STATE));
+            descriptor.setValidator(new NSISStringLengthValidator(propertyName));
             descriptor.setMultiLine(getFlags().contains(InstallOptionsModel.FLAGS_MULTILINE));
             descriptor.setOnlyNumbers(getFlags().contains(InstallOptionsModel.FLAGS_ONLY_NUMBERS));
             addPropertyChangeListener(descriptor);

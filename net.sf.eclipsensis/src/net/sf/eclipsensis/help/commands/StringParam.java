@@ -54,12 +54,12 @@ public class StringParam extends SubstitutableParam
             super(parentEditor);
         }
 
-        public void reset()
+        public void clear()
         {
             if(isValid(mText)) {
                 mText.setText(""); //$NON-NLS-1$
             }
-            super.reset();
+            super.clear();
         }
 
         protected String getParamText()
@@ -89,6 +89,7 @@ public class StringParam extends SubstitutableParam
         protected Control createParamControl(Composite parent)
         {
             mText = new Text(parent,SWT.BORDER);
+            setToolTip(mText);
             mText.setLayoutData(new GridData(SWT.FILL,SWT.CENTER,true,false));
             mText.addVerifyListener(new VerifyListener() {
                 public void verifyText(VerifyEvent e)

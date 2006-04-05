@@ -24,12 +24,12 @@ public class DimensionPropertySource implements IPropertySource
     protected static IPropertyDescriptor[] mDescriptors;
 
     static {
-        PropertyDescriptor widthProp = new TextPropertyDescriptor(ID_WIDTH,
-                InstallOptionsPlugin.getResourceString("width.property.name")); //$NON-NLS-1$
-        widthProp.setValidator(NumberCellEditorValidator.INSTANCE);
-        PropertyDescriptor heightProp = new TextPropertyDescriptor(ID_HEIGHT,
-                InstallOptionsPlugin.getResourceString("height.property.name")); //$NON-NLS-1$
-        heightProp.setValidator(NumberCellEditorValidator.INSTANCE);
+        String propertyName = InstallOptionsPlugin.getResourceString("width.property.name"); //$NON-NLS-1$
+        PropertyDescriptor widthProp = new TextPropertyDescriptor(ID_WIDTH, propertyName);
+        widthProp.setValidator(new NumberCellEditorValidator(propertyName));
+        propertyName = InstallOptionsPlugin.getResourceString("height.property.name"); //$NON-NLS-1$
+        PropertyDescriptor heightProp = new TextPropertyDescriptor(ID_HEIGHT, propertyName);
+        heightProp.setValidator(new NumberCellEditorValidator(propertyName));
         mDescriptors = new IPropertyDescriptor[]{widthProp,heightProp};
     }
 

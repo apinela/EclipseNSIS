@@ -268,9 +268,7 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
 
         mScript.insertElement(attributesPlaceHolder,new NSISScriptAttribute("OutFile",maybeMakeRelative(mSaveFile.getParent(),mSettings.getOutFile()))); //$NON-NLS-1$
 
-        if(mSettings.isCreateUninstaller()) {
-            mScript.insertElement(definesPlaceHolder,new NSISScriptDefine("REGKEY",Common.quote("SOFTWARE\\$(^Name)"))); //$NON-NLS-1$ //$NON-NLS-2$
-        }
+        mScript.insertElement(definesPlaceHolder,new NSISScriptDefine("REGKEY",Common.quote("SOFTWARE\\$(^Name)"))); //$NON-NLS-1$ //$NON-NLS-2$
 
         mScript.insertElement(attributesPlaceHolder,new NSISScriptAttribute("InstallDir",mSettings.getInstallDir())); //$NON-NLS-1$
         mScript.insertElement(attributesPlaceHolder,new NSISScriptAttribute("CRCCheck",getKeyword("on"))); //$NON-NLS-1$ //$NON-NLS-2$
@@ -329,7 +327,7 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
                 if(mSettings.isChangeStartMenuGroup()) {
                     mScript.insertElement(muiDefsPlaceHolder,new NSISScriptDefine("MUI_STARTMENUPAGE_REGISTRY_ROOT",getKeyword("HKLM")));  //$NON-NLS-1$ //$NON-NLS-2$
                     mScript.insertElement(muiDefsPlaceHolder,new NSISScriptDefine("MUI_STARTMENUPAGE_NODISABLE")); //$NON-NLS-1$
-                    mScript.insertElement(muiDefsPlaceHolder,new NSISScriptDefine("MUI_STARTMENUPAGE_REGISTRY_KEY","Software\\"+mSettings.getName()));  //$NON-NLS-1$ //$NON-NLS-2$
+                    mScript.insertElement(muiDefsPlaceHolder,new NSISScriptDefine("MUI_STARTMENUPAGE_REGISTRY_KEY","${REGKEY}"));  //$NON-NLS-1$ //$NON-NLS-2$
                     mScript.insertElement(muiDefsPlaceHolder,new NSISScriptDefine("MUI_STARTMENUPAGE_REGISTRY_VALUENAME","StartMenuGroup")); //$NON-NLS-1$ //$NON-NLS-2$
                     mScript.insertElement(muiDefsPlaceHolder,new NSISScriptDefine("MUI_STARTMENUPAGE_DEFAULT_FOLDER",mSettings.getStartMenuGroup()));  //$NON-NLS-1$
                     mScript.insertElement(pagesPlaceHolder,new NSISScriptInsertMacro("MUI_PAGE_STARTMENU",new String[]{"Application","$StartMenuGroup"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -661,7 +659,7 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
                 postSection.addElement(new NSISScriptInstruction("WriteRegStr",new String[]{ //$NON-NLS-1$
                         getKeyword("HKLM"),Common.quote("${REGKEY}"),"InstallerLanguage",getKeyword("$LANGUAGE")})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
             }
-            if(mSettings.isCreateStartMenuGroup()) {
+            if(mSettings.isCreateStartMenuGroup() && !isSilent && mSettings.isChangeStartMenuGroup()) {
                 postSection.addElement(new NSISScriptInstruction("WriteRegStr",new String[]{ //$NON-NLS-1$
                         getKeyword("HKLM"),Common.quote("${REGKEY}"),"StartMenuGroup","$StartMenuGroup"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
             }
@@ -702,7 +700,7 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
                             getKeyword("HKLM"),Common.quote("${REGKEY}"),"InstallerLanguage"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                 }
             }
-            if(mSettings.isCreateStartMenuGroup()) {
+            if(mSettings.isCreateStartMenuGroup() && !isSilent && mSettings.isChangeStartMenuGroup()) {
                 unPostSection.addElement(0,new NSISScriptInstruction("DeleteRegValue",new String[]{ //$NON-NLS-1$
                         getKeyword("HKLM"),Common.quote("${REGKEY}"),"StartMenuGroup"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             }
@@ -740,7 +738,17 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
             }
             mUnOnInitFunction.addElement(new NSISScriptInstruction("ReadRegStr", new String[]{getKeyword("$INSTDIR"),getKeyword("HKLM"),Common.quote("${REGKEY}"),"Path"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
             if(mSettings.isCreateStartMenuGroup()) {
-                mUnOnInitFunction.addElement(new NSISScriptInstruction("ReadRegStr", new String[]{"$StartMenuGroup",getKeyword("HKLM"),Common.quote("${REGKEY}"),"StartMenuGroup"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+                if(isSilent || !mSettings.isChangeStartMenuGroup()) {
+                    mUnOnInitFunction.addElement(new NSISScriptInstruction("StrCpy",new String[]{"$StartMenuGroup", mSettings.getStartMenuGroup()})); //$NON-NLS-1$ //$NON-NLS-2$
+                }
+                else {
+                    if(isMUI) {
+                        mUnOnInitFunction.addElement(new NSISScriptInsertMacro("MUI_STARTMENU_GETFOLDER",new String[] {"Application","$StartMenuGroup"})); //$NON-NLS-1$ //$NON-NLS-2$
+                    }
+                    else {
+                        mUnOnInitFunction.addElement(new NSISScriptInstruction("ReadRegStr", new String[]{"$StartMenuGroup",getKeyword("HKLM"),Common.quote("${REGKEY}"),"StartMenuGroup"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+                    }
+                }
             }
             if(mSettings.isEnableLanguageSupport()) {
                 if(!isSilent && mSettings.isSelectLanguage() && languages.size() > 1) {
@@ -759,7 +767,7 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
             unPostSection.addElement(0,new NSISScriptInstruction("Delete",new String[]{getKeyword("/REBOOTOK"),uninstallFile})); //$NON-NLS-1$ //$NON-NLS-2$
 
             if(mSettings.isCreateStartMenuGroup()) {
-                if(isMUI) {
+                if(isMUI && mSettings.isChangeStartMenuGroup()) {
                     postSection.addElement(new NSISScriptInsertMacro("MUI_STARTMENU_WRITE_BEGIN","Application")); //$NON-NLS-1$ //$NON-NLS-2$
                 }
                 if(mSettings.isCreateUninstallerStartMenuShortcut()) {
@@ -771,7 +779,7 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
 
                     unPostSection.addElement(0,new NSISScriptInstruction("Delete",new String[]{getKeyword("/REBOOTOK"),startMenuLink})); //$NON-NLS-1$ //$NON-NLS-2$
                 }
-                if(isMUI) {
+                if(isMUI && mSettings.isChangeStartMenuGroup()) {
                     postSection.addElement(new NSISScriptInsertMacro("MUI_STARTMENU_WRITE_END")); //$NON-NLS-1$
                 }
             }

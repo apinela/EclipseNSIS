@@ -46,20 +46,25 @@ public class LocalDirParam extends LocalFilesystemObjectParam
             super(parentEditor);
         }
 
-        public void reset()
+        public void clear()
         {
             if(isValid(mDirText)) {
                 mDirText.setText(""); //$NON-NLS-1$
             }
-            super.reset();
+            super.clear();
         }
 
         protected String validateLocalFilesystemObjectParam()
         {
             if(isValid(mDirText)) {
                 String dir = IOUtility.decodePath(mDirText.getText());
-                if(dir.length() == 0 && isAllowBlank()) {
-                    return null;
+                if(dir.length() == 0 ) { 
+                    if(isAllowBlank()) {
+                        return null;
+                    }
+                    else {
+                        return EclipseNSISPlugin.getResourceString("string.param.error"); //$NON-NLS-1$
+                    }
                 }
                 if(IOUtility.isValidPathName(dir)) {
                     if(IOUtility.isValidDirectory(new File(dir))) {
@@ -103,6 +108,7 @@ public class LocalDirParam extends LocalFilesystemObjectParam
             layout.marginHeight = layout.marginWidth = 0;
             parent.setLayout(layout);
             mDirText = new Text(parent,SWT.BORDER);
+            setToolTip(mDirText);
             mDirText.setLayoutData(new GridData(SWT.FILL,SWT.CENTER,true,false));
             final Button b = new Button(parent,SWT.PUSH);
             b.setLayoutData(new GridData(SWT.FILL,SWT.CENTER,false,false));

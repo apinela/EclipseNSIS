@@ -602,8 +602,13 @@ public class Common
 
     public static boolean isQuoted(String text)
     {
+        return isQuoted(text, '"');
+    }
+    
+    public static boolean isQuoted(String text, char quote)
+    {
         if(text != null && text.length() >= 2) {
-            return text.charAt(0)=='"' && text.charAt(text.length()-1) == '"';
+            return text.charAt(0)==quote && text.charAt(text.length()-1) == quote;
         }
         return false;
     }

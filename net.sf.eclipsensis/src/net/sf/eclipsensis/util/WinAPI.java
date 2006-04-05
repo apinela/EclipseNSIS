@@ -151,6 +151,8 @@ public class WinAPI
     public static final native boolean SetFileAttributes(String pszFilename, int dwAttributes);
     
     public static final native short GetKeyState(int nVirtKey);
+    
+    public static final native boolean ValidateWildcard(String wildcard);
 
     private WinAPI()
     {

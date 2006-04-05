@@ -151,15 +151,25 @@ public class GroupParam extends NSISParam
             }
         }
 
-        public void reset()
+        public void clear()
         {
             if(!Common.isEmptyCollection(mParamEditors)) {
                 for (Iterator iter = mParamEditors.iterator(); iter.hasNext();) {
                     INSISParamEditor editor = (INSISParamEditor)iter.next();
-                    editor.reset();
+                    editor.clear();
                 }
             }
+            super.clear();
+        }
+
+        public void reset()
+        {
             super.reset();
+            if(mParamEditors.size() > 0) {
+                for (Iterator iter = mParamEditors.iterator(); iter.hasNext();) {
+                    ((INSISParamEditor)iter.next()).reset();
+                }
+            }
         }
 
         protected String validateParam()

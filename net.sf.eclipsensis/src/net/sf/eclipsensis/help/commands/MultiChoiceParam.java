@@ -40,7 +40,7 @@ public class MultiChoiceParam extends ChoiceParam
             super(parentEditor);
         }
 
-        public void reset()
+        public void clear()
         {
             if(!Common.isEmptyArray(mChoiceButtons)) {
                 for (int i = 0; i < mChoiceButtons.length; i++) {
@@ -49,7 +49,7 @@ public class MultiChoiceParam extends ChoiceParam
                     }
                 }
             }
-            super.reset();
+            super.clear();
         }
 
         protected String getParamText()

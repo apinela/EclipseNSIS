@@ -12,8 +12,7 @@ package net.sf.eclipsensis.help.commands;
 import java.io.File;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.IOUtility;
+import net.sf.eclipsensis.util.*;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -48,12 +47,12 @@ public class LocalPathParam extends LocalFileParam
             super(parentEditor);
         }
 
-        public void reset()
+        public void clear()
         {
             if(isValid(mPathText)) {
                 mPathText.setText(""); //$NON-NLS-1$
             }
-            super.reset();
+            super.clear();
         }
 
         protected String getParamText()
@@ -81,12 +80,22 @@ public class LocalPathParam extends LocalFileParam
         {
             if(isValid(mPathText)) {
                 String path = IOUtility.decodePath(mPathText.getText());
-                if(path.length() == 0 && isAllowBlank()) {
-                    return null;
+                if(path.length() == 0 ) { 
+                    if(isAllowBlank()) {
+                        return null;
+                    }
+                    else {
+                        return EclipseNSISPlugin.getResourceString("string.param.error"); //$NON-NLS-1$
+                    }
                 }
                 if(IOUtility.isValidPathName(path)) {
                     File file = new File(path);
                     if(IOUtility.isValidDirectory(file)||IOUtility.isValidFile(file)) {
+                        return null;
+                    }
+                }
+                else if(IOUtility.isValidPathSpec(path)) {
+                    if(WinAPI.ValidateWildcard(path)) {
                         return null;
                     }
                 }
@@ -118,6 +127,7 @@ public class LocalPathParam extends LocalFileParam
             layout.marginHeight = layout.marginWidth = 0;
             parent.setLayout(layout);
             mPathText = new Text(parent,SWT.BORDER);
+            setToolTip(mPathText);
             mPathText.setLayoutData(new GridData(SWT.FILL,SWT.CENTER,true,false));
             
             final Button b = new Button(parent,SWT.ARROW|SWT.DOWN);

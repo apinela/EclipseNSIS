@@ -320,9 +320,10 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
     {
         PropertyDescriptor descriptor = null;
         if(name.equals(InstallOptionsModel.PROPERTY_TITLE)) {
-            descriptor = new TextPropertyDescriptor(InstallOptionsModel.PROPERTY_TITLE, InstallOptionsPlugin.getResourceString("title.property.name")); //$NON-NLS-1$
+            String propertyName = InstallOptionsPlugin.getResourceString("title.property.name"); //$NON-NLS-1$
+            descriptor = new TextPropertyDescriptor(InstallOptionsModel.PROPERTY_TITLE, propertyName);
             descriptor.setLabelProvider(cDefaultLabelProvider);
-            descriptor.setValidator(new NSISStringLengthValidator(InstallOptionsModel.PROPERTY_TITLE));
+            descriptor.setValidator(new NSISStringLengthValidator(propertyName));
         }
         else if(name.equals(InstallOptionsModel.PROPERTY_CANCEL_ENABLED)) {
             descriptor = new CustomComboBoxPropertyDescriptor(InstallOptionsModel.PROPERTY_CANCEL_ENABLED, InstallOptionsPlugin.getResourceString("cancel.enabled.property.name"), OPTION_DATA, OPTION_DISPLAY, DEFAULT_OPTION); //$NON-NLS-1$
@@ -334,23 +335,27 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
             descriptor = new CustomComboBoxPropertyDescriptor(InstallOptionsModel.PROPERTY_BACK_ENABLED, InstallOptionsPlugin.getResourceString("back.enabled.property.name"), OPTION_DATA, OPTION_DISPLAY, DEFAULT_OPTION); //$NON-NLS-1$
         }
         else if(name.equals(InstallOptionsModel.PROPERTY_CANCEL_BUTTON_TEXT)) {
-            descriptor = new TextPropertyDescriptor(InstallOptionsModel.PROPERTY_CANCEL_BUTTON_TEXT, InstallOptionsPlugin.getResourceString("cancel.button.text.property.name")); //$NON-NLS-1$
+            String propertyName = InstallOptionsPlugin.getResourceString("cancel.button.text.property.name"); //$NON-NLS-1$
+            descriptor = new TextPropertyDescriptor(InstallOptionsModel.PROPERTY_CANCEL_BUTTON_TEXT, propertyName);
             descriptor.setLabelProvider(cDefaultLabelProvider);
-            descriptor.setValidator(new NSISStringLengthValidator(InstallOptionsModel.PROPERTY_CANCEL_BUTTON_TEXT));
+            descriptor.setValidator(new NSISStringLengthValidator(propertyName));
         }
         else if(name.equals(InstallOptionsModel.PROPERTY_BACK_BUTTON_TEXT)) {
-            descriptor = new TextPropertyDescriptor(InstallOptionsModel.PROPERTY_BACK_BUTTON_TEXT, InstallOptionsPlugin.getResourceString("back.button.text.property.name")); //$NON-NLS-1$
+            String propertyName = InstallOptionsPlugin.getResourceString("back.button.text.property.name"); //$NON-NLS-1$
+            descriptor = new TextPropertyDescriptor(InstallOptionsModel.PROPERTY_BACK_BUTTON_TEXT, propertyName);
             descriptor.setLabelProvider(cDefaultLabelProvider);
-            descriptor.setValidator(new NSISStringLengthValidator(InstallOptionsModel.PROPERTY_BACK_BUTTON_TEXT));
+            descriptor.setValidator(new NSISStringLengthValidator(propertyName));
         }
         else if(name.equals(InstallOptionsModel.PROPERTY_NEXT_BUTTON_TEXT)) {
-            descriptor = new TextPropertyDescriptor(InstallOptionsModel.PROPERTY_NEXT_BUTTON_TEXT, InstallOptionsPlugin.getResourceString("next.button.text.property.name")); //$NON-NLS-1$
+            String propertyName = InstallOptionsPlugin.getResourceString("next.button.text.property.name"); //$NON-NLS-1$
+            descriptor = new TextPropertyDescriptor(InstallOptionsModel.PROPERTY_NEXT_BUTTON_TEXT, propertyName);
             descriptor.setLabelProvider(cDefaultLabelProvider);
-            descriptor.setValidator(new NSISStringLengthValidator(InstallOptionsModel.PROPERTY_NEXT_BUTTON_TEXT));
+            descriptor.setValidator(new NSISStringLengthValidator(propertyName));
         }
         else if(name.equals(InstallOptionsModel.PROPERTY_RECT)) {
-            descriptor = new TextPropertyDescriptor(InstallOptionsModel.PROPERTY_RECT, InstallOptionsPlugin.getResourceString("rect.property.name")); //$NON-NLS-1$
-            descriptor.setValidator(new NumberCellEditorValidator(1,Integer.MAX_VALUE,true));
+            String propertyName = InstallOptionsPlugin.getResourceString("rect.property.name"); //$NON-NLS-1$
+            descriptor = new TextPropertyDescriptor(InstallOptionsModel.PROPERTY_RECT, propertyName);
+            descriptor.setValidator(new NumberCellEditorValidator(propertyName, 1,Integer.MAX_VALUE,true));
             descriptor.setLabelProvider(cDefaultLabelProvider);
         }
         else if(name.equals(InstallOptionsModel.PROPERTY_RTL)) {

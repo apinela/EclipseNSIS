@@ -12,8 +12,8 @@ package net.sf.eclipsensis.help.commands;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.util.XMLUtil;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.w3c.dom.Node;
 
 public class LabelParam extends SimpleParam
@@ -61,13 +61,13 @@ public class LabelParam extends SimpleParam
         protected void appendSimpleParamText(StringBuffer buf)
         {
             if(!Common.isEmpty(getValue())) {
-                buf.append(" ").append(Common.maybeQuote(getValue())); //$NON-NLS-1$
+                buf.append(" ").append(maybeQuote(getValue())); //$NON-NLS-1$
             }
         }
 
         protected Control createParamControl(Composite parent)
         {
-            return new Label(parent,SWT.NONE);
+            return null;
         }
 
         public String validateParam()

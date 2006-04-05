@@ -125,7 +125,8 @@ public class InstallOptionsFileRequest extends InstallOptionsPathRequest
     protected IPropertyDescriptor createPropertyDescriptor(String name)
     {
         if(name.equals(InstallOptionsModel.PROPERTY_FILTER)) {
-            PropertyDescriptor descriptor = new PropertyDescriptor(InstallOptionsModel.PROPERTY_FILTER, InstallOptionsPlugin.getResourceString("filter.property.name")){ //$NON-NLS-1$
+            String propertyName = InstallOptionsPlugin.getResourceString("filter.property.name"); //$NON-NLS-1$
+            PropertyDescriptor descriptor = new PropertyDescriptor(InstallOptionsModel.PROPERTY_FILTER, propertyName){
                 public CellEditor createPropertyEditor(Composite parent)
                 {
                     FileFilterCellEditor editor = new FileFilterCellEditor(InstallOptionsFileRequest.this, parent);
@@ -134,7 +135,7 @@ public class InstallOptionsFileRequest extends InstallOptionsPathRequest
                 }
             };
             descriptor.setLabelProvider(FILTER_LABEL_PROVIDER);
-            descriptor.setValidator(new NSISStringLengthValidator(InstallOptionsModel.PROPERTY_FILTER));
+            descriptor.setValidator(new NSISStringLengthValidator(propertyName));
             return descriptor;
         }
         else {

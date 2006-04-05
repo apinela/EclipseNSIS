@@ -111,7 +111,7 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
         File stateLocation = EclipseNSISPlugin.getPluginStateLocation();
         mCacheFile = new File(stateLocation, getClass().getName() + ".HelpURLs.ser"); //$NON-NLS-1$
         mHelpLocation = new File(stateLocation, CACHED_HELP_LOCATION);
-        mNoHelpFile = new File(stateLocation.getAbsolutePath()+NO_HELP_FILE);
+        mNoHelpFile = new File(stateLocation.getAbsolutePath(),NO_HELP_FILE);
     }
 
     public File getNoHelpFile()

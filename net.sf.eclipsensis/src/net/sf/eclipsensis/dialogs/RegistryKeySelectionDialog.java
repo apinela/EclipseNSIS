@@ -106,7 +106,7 @@ public class RegistryKeySelectionDialog extends StatusMessageDialog
         l.setLayoutData(new GridData(SWT.FILL,SWT.FILL,false,false));
         
         Combo c1 = new Combo(composite1,SWT.DROP_DOWN|SWT.READ_ONLY); 
-        c1.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false));
+        c1.setLayoutData(new GridData(SWT.LEFT,SWT.FILL,false,false));
         ComboViewer cv = new ComboViewer(c1);
         cv.setContentProvider(new ArrayContentProvider());
         cv.setLabelProvider(cRootKeyLabelProvider);

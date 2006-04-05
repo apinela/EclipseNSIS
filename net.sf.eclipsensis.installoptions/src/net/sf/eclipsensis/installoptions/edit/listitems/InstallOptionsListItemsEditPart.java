@@ -12,6 +12,7 @@ package net.sf.eclipsensis.installoptions.edit.listitems;
 import java.beans.PropertyChangeEvent;
 import java.util.List;
 
+import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.edit.IExtendedEditSupport;
 import net.sf.eclipsensis.installoptions.edit.InstallOptionsExtendedEditPolicy;
 import net.sf.eclipsensis.installoptions.edit.editable.InstallOptionsEditableElementEditPart;
@@ -33,7 +34,7 @@ public abstract class InstallOptionsListItemsEditPart extends InstallOptionsEdit
             InstallOptionsListItems model = (InstallOptionsListItems)getModel();
             ListItemsDialog dialog = new ListItemsDialog(getViewer().getControl().getShell(),
                                                          model.getListItems(), model.getType());
-            dialog.setValidator(new NSISStringLengthValidator(InstallOptionsModel.PROPERTY_LISTITEMS));
+            dialog.setValidator(new NSISStringLengthValidator(InstallOptionsPlugin.getResourceString("listitems.property.name"))); //$NON-NLS-1$
             if (dialog.open() == Window.OK) {
                 mNewValue = dialog.getValues();
                 return true;

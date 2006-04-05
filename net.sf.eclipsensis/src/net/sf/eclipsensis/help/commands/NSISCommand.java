@@ -34,12 +34,6 @@ public class NSISCommand
         mCategory = EclipseNSISPlugin.getResourceString(XMLUtil.getStringValue(attributes, ATTR_CATEGORY));
     }
 
-    public int hashCode()
-    {
-        // TODO Auto-generated method stub
-        return super.hashCode();
-    }
-
     public String getCategory()
     {
         return mCategory;

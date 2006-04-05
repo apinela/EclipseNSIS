@@ -42,8 +42,13 @@ public class LocalSaveFileParam extends LocalFileParam
         {
             if(isValid(mFileText)) {
                 String file = IOUtility.decodePath(mFileText.getText());
-                if(file.length() == 0 && isAllowBlank()) {
-                    return null;
+                if(file.length() == 0 ) { 
+                    if(isAllowBlank()) {
+                        return null;
+                    }
+                    else {
+                        return EclipseNSISPlugin.getResourceString("string.param.error"); //$NON-NLS-1$
+                    }
                 }
                 if(IOUtility.isValidPathName(file)) {
                     return null;

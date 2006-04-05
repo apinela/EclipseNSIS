@@ -58,8 +58,9 @@ public class InstallOptionsDirRequest extends InstallOptionsPathRequest
     protected IPropertyDescriptor createPropertyDescriptor(String name)
     {
         if(name.equals(InstallOptionsModel.PROPERTY_ROOT)) {
-            TextPropertyDescriptor descriptor = new TextPropertyDescriptor(InstallOptionsModel.PROPERTY_ROOT, InstallOptionsPlugin.getResourceString("root.property.name")); //$NON-NLS-1$
-            descriptor.setValidator(new NSISStringLengthValidator(InstallOptionsModel.PROPERTY_ROOT));
+            String propertyName = InstallOptionsPlugin.getResourceString("root.property.name"); //$NON-NLS-1$
+            TextPropertyDescriptor descriptor = new TextPropertyDescriptor(InstallOptionsModel.PROPERTY_ROOT, propertyName);
+            descriptor.setValidator(new NSISStringLengthValidator(propertyName));
             return descriptor;
         }
         else {

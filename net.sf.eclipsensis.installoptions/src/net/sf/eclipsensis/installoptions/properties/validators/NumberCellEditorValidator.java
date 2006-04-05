@@ -16,14 +16,19 @@ import org.eclipse.jface.viewers.ICellEditorValidator;
 
 public class NumberCellEditorValidator implements ICellEditorValidator
 {
-    public static final NumberCellEditorValidator INSTANCE = new NumberCellEditorValidator(0,Integer.MAX_VALUE,false);
+    private String mPropertyName;
     private int mMinValue;
     private int mMaxValue;
     private boolean mBlankAllowed;
 
-    public NumberCellEditorValidator(int minValue, int maxValue, boolean blankAllowed)
+    public NumberCellEditorValidator(String propertyName)
     {
-        super();
+        this(propertyName,0,Integer.MAX_VALUE,false);
+    }
+
+    public NumberCellEditorValidator(String propertyName, int minValue, int maxValue, boolean blankAllowed)
+    {
+        mPropertyName = propertyName;
         mMinValue = minValue;
         mMaxValue = maxValue;
         mBlankAllowed = blankAllowed;
@@ -36,17 +41,17 @@ public class NumberCellEditorValidator implements ICellEditorValidator
                 int val = Integer.parseInt((String)value);
                 int minValue = getMinValue();
                 if(val < minValue) {
-                    return InstallOptionsPlugin.getFormattedString("number.minvalue.error.message",new Object[]{new Integer(minValue)}); //$NON-NLS-1$
+                    return InstallOptionsPlugin.getFormattedString("number.minvalue.error.message",new Object[]{mPropertyName,new Integer(minValue)}); //$NON-NLS-1$
                 }
                 int maxValue = getMaxValue();
                 if(val > maxValue) {
-                    return InstallOptionsPlugin.getFormattedString("number.maxvalue.error.message",new Object[]{new Integer(maxValue)}); //$NON-NLS-1$
+                    return InstallOptionsPlugin.getFormattedString("number.maxvalue.error.message",new Object[]{mPropertyName,new Integer(maxValue)}); //$NON-NLS-1$
                 }
             }
             return null;
         }
         catch (NumberFormatException exc) {
-            return InstallOptionsPlugin.getResourceString("number.error.message"); //$NON-NLS-1$
+            return InstallOptionsPlugin.getFormattedString("number.error.message",new String[] {mPropertyName}); //$NON-NLS-1$
         }
     }
 

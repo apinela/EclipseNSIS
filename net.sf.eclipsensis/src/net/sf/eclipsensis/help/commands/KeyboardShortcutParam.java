@@ -61,7 +61,7 @@ public class KeyboardShortcutParam extends PrefixableParam
             super(parentEditor);
         }
 
-        public void reset()
+        public void clear()
         {
             if(isValid(mKeyCombo)) {
                 mKeyCombo.clearSelection();
@@ -73,7 +73,7 @@ public class KeyboardShortcutParam extends PrefixableParam
                     }
                 }
             }
-            super.reset();
+            super.clear();
         }
 
         protected void updateState(boolean state)

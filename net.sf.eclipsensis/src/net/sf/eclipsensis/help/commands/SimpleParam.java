@@ -76,7 +76,7 @@ public abstract class SimpleParam extends NSISParam
                 }
             }
             if(!isSelected()) {
-                buf.append(" ").append(Common.maybeQuote(getDefaultValue())); //$NON-NLS-1$
+                buf.append(" ").append(maybeQuote(getDefaultValue())); //$NON-NLS-1$
             }
             else {
                 appendSimpleParamText(buf);

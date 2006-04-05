@@ -11,7 +11,7 @@ package net.sf.eclipsensis.help.commands;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.dialogs.ColorEditor;
-import net.sf.eclipsensis.util.*;
+import net.sf.eclipsensis.util.ColorManager;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -58,12 +58,12 @@ public class RGBParam extends HexStringParam
             super(parentEditor);
         }
 
-        public void reset()
+        public void clear()
         {
             if(isValid(mText)) {
                 mText.setText(""); //$NON-NLS-1$
             }
-            super.reset();
+            super.clear();
         }
 
         protected void updateState(boolean state)

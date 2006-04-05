@@ -675,3 +675,21 @@ JNIEXPORT jshort JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetKeyState(JNIEnv 
 {
     return GetKeyState(nVirtKey);
 }
+
+JNIEXPORT jboolean JNICALL Java_net_sf_eclipsensis_util_WinAPI_ValidateWildcard(JNIEnv *pEnv, jclass jClass, jstring wildcard)
+{
+    jboolean result = JNI_FALSE;
+    if(wildcard) {
+        LPCSTR lpWildcard = (LPCSTR)pEnv->GetStringUTFChars(wildcard, 0);
+        WIN32_FIND_DATA FindFileData;
+        HANDLE hFind;
+    
+        hFind = FindFirstFile(lpWildcard, &FindFileData);
+        if (hFind != INVALID_HANDLE_VALUE) {
+            result = JNI_TRUE;
+            FindClose(hFind);
+        }
+        pEnv->ReleaseStringUTFChars(wildcard,lpWildcard);
+    }
+    return result;
+}

@@ -47,7 +47,7 @@ public class MessageBoxOptionsParam extends NSISParam
             super(parentEditor);
         }
 
-        public void reset()
+        public void clear()
         {
             resetCombo(mButtonsCombo);
             resetCombo(mIconCombo);
@@ -59,7 +59,7 @@ public class MessageBoxOptionsParam extends NSISParam
                     }
                 }
             }
-            super.reset();
+            super.clear();
         }
         
         private void resetCombo(Combo combo)
@@ -94,7 +94,7 @@ public class MessageBoxOptionsParam extends NSISParam
                     }
                 }
             }
-            buf.append(Common.maybeQuote(buf2.toString()));
+            buf.append(maybeQuote(buf2.toString()));
         }
 
         private void appendOptionText(StringBuffer buf, String text)
@@ -141,13 +141,12 @@ public class MessageBoxOptionsParam extends NSISParam
             mDefaultCombo = createCombo(parent,EclipseNSISPlugin.getResourceString("messagebox.param.default.label"),NSISKeywords.getInstance().getKeywordsGroup(NSISKeywords.MESSAGEBOX_OPTION_DEFAULT_PARAMETERS)); //$NON-NLS-1$
             String[] others = NSISKeywords.getInstance().getKeywordsGroup(NSISKeywords.MESSAGEBOX_OPTION_OTHER_PARAMETERS);
             if(!Common.isEmptyArray(others)) {
-                Composite buttons = new Composite(parent,SWT.None);
+                Group buttons = new Group(parent,SWT.None);
+                buttons.setText(EclipseNSISPlugin.getResourceString("messagebox.param.other.options.label")); //$NON-NLS-1$
                 GridData data = new GridData(SWT.FILL,SWT.FILL,true,false);
                 data.horizontalSpan = 2;
                 buttons.setLayoutData(data);
-                GridLayout layout = new GridLayout(2,true);
-                layout.marginWidth = layout.marginHeight = 0;
-                buttons.setLayout(layout);
+                buttons.setLayout(new GridLayout(2,true));
                 mOthersButtons = new Button[others.length];
                 for (int i = 0; i < others.length; i++) {
                     mOthersButtons[i] = createCheckbox(buttons, others[i]);

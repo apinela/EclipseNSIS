@@ -98,6 +98,31 @@ public abstract class StatusMessageDialog extends IconAndMessageDialog implement
         }
     }
 
+    protected Control createContents(Composite parent) {
+        // create the top level composite for the dialog
+        Composite composite = new Composite(parent, SWT.NONE);
+        GridLayout layout = new GridLayout();
+        layout.marginHeight = 0;
+        layout.marginWidth = 0;
+        layout.verticalSpacing = 0;
+        composite.setLayout(layout);
+        composite.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true));
+        applyDialogFont(composite);
+        // initialize the dialog units
+        initializeDialogUnits(composite);
+        // create the dialog area and button bar
+        dialogArea = createDialogArea(composite);
+        
+        Composite composite2 = new Composite(composite, SWT.NONE);
+        composite2.setLayoutData(new GridData(SWT.RIGHT, SWT.FILL, true, false));
+        layout = new GridLayout(1,false);
+        layout.marginHeight = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
+        layout.marginWidth = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
+        composite2.setLayout(layout);
+        buttonBar = createButtonBar(composite2);
+        return composite;
+    }
+
     /*
      * @see Dialog#createDialogArea(Composite)
      */
@@ -121,24 +146,38 @@ public abstract class StatusMessageDialog extends IconAndMessageDialog implement
         imageData = imageData.scaledTo(width, height);
         mOKImage = new Image(getShell().getDisplay(),imageData);
 
-        Control control = createControl(parent);
+        createControlAndMessageArea(parent);
+        applyDialogFont(parent);
+        return parent;
+    }
+
+    /**
+     * @param parent
+     */
+    protected void createControlAndMessageArea(Composite parent)
+    {
+        Composite composite= new Composite(parent, SWT.NONE);
+        GridLayout layout = new GridLayout(1,false);
+        layout.marginHeight = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
+        layout.marginWidth = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
+        composite.setLayout(layout);
+        composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+        Control control = createControl(composite);
         control.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
         Label label = new Label(parent, SWT.SEPARATOR | SWT.HORIZONTAL);
-        GridData data = new GridData(SWT.FILL, SWT.CENTER, true, false);
+        GridData data = new GridData(SWT.FILL, SWT.FILL, true, false);
         label.setLayoutData(data);
 
-        Composite composite= new Composite(parent, SWT.NONE);
-        layout= new GridLayout();
+        composite= new Composite(parent, SWT.NONE);
+        layout = new GridLayout();
         layout.numColumns= 2;
         layout.marginHeight = 0;
-        layout.marginWidth = 0;
+        layout.marginWidth = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
         composite.setLayout(layout);
         composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
         message = getMessage();
         createMessageArea(composite);
-        applyDialogFont(parent);
-        return parent;
     }
 
     protected final void updateStatus(DialogStatus status)

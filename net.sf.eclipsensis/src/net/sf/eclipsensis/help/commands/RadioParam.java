@@ -75,10 +75,10 @@ public class RadioParam extends GroupParam
             }
         }
 
-        public void reset()
+        public void clear()
         {
             selectDefault();
-            super.reset();
+            super.clear();
         }
 
         protected void initParamEditor()
@@ -124,6 +124,7 @@ public class RadioParam extends GroupParam
                 if(isValid(((NSISParamEditor)editor).mNameLabel)) {
                     //Steal the name
                     radioButton.setText(((NSISParamEditor)editor).mNameLabel.getText());
+                    ((NSISParamEditor)editor).mNameLabel.setText("");
                     Composite parent2 = ((NSISParamEditor)editor).mNameLabel.getParent();
                     GridLayout layout = (GridLayout)parent2.getLayout();
                     GridData data = (GridData)((NSISParamEditor)editor).mNameLabel.getLayoutData();
@@ -133,10 +134,10 @@ public class RadioParam extends GroupParam
                             data2.horizontalSpan += data.horizontalSpan;
                             data2.grabExcessHorizontalSpace |= data.grabExcessHorizontalSpace;
                             data2.grabExcessVerticalSpace |= data.grabExcessVerticalSpace;
+                            mNameLabel.dispose();
+                            parent2.layout(true);
                         }
                     }
-                    ((NSISParamEditor)editor).mNameLabel.dispose();
-                    parent2.layout(true);
                 }
             }
             radioButton.addSelectionListener(new SelectionAdapter() {

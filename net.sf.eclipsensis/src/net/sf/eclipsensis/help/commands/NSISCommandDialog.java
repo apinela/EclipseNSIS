@@ -27,6 +27,7 @@ import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.util.IOUtility;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.*;
@@ -36,13 +37,11 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.forms.FormColors;
-import org.eclipse.ui.forms.events.ExpansionAdapter;
-import org.eclipse.ui.forms.events.ExpansionEvent;
-import org.eclipse.ui.forms.widgets.ExpandableComposite;
 
 public class NSISCommandDialog extends StatusMessageDialog
 {
+    private static final int MIN_WINDOW_HEIGHT = 400;
+    private static final int MIN_WINDOW_WIDTH = 350;
     private static final String SETTING_COLLAPSE_HELP = "collapseHelp"; //$NON-NLS-1$
     private static Map cCommandStateMap;
     private static final Object JOB_FAMILY = new Object();
@@ -50,7 +49,7 @@ public class NSISCommandDialog extends StatusMessageDialog
     private NSISCommand mCommand;
 
     private Browser mBrowser;
-    private Control mControl;
+    private Control mParamEditorControl;
     private String mCurrentCommand = null;
     private ToolItem mBack = null;
     private ToolItem mForward = null;
@@ -130,7 +129,7 @@ public class NSISCommandDialog extends StatusMessageDialog
         public void handleEvent(Event event)
         {
             if(event.widget instanceof Control) {
-                if(mControl != null && !mControl.isDisposed() && isChildOf(mControl,(Control)event.widget)) {
+                if(mParamEditorControl != null && !mParamEditorControl.isDisposed() && isChildOf(mParamEditorControl,(Control)event.widget)) {
                     jobScheduler.cancelJobs(JOB_FAMILY);
                     jobScheduler.scheduleUIJob(JOB_FAMILY,"NSISCommandDialog", new IJobStatusRunnable() { //$NON-NLS-1$
                         public IStatus run(IProgressMonitor monitor)
@@ -146,13 +145,13 @@ public class NSISCommandDialog extends StatusMessageDialog
     private INSISParamEditor mParamEditor;
     private String mCommandText = ""; //$NON-NLS-1$
     private boolean mRemember;
-    private ExpandableComposite mExpandableComposite;
+    private Composite mControl;
     
     public NSISCommandDialog(Shell parent, NSISCommand command)
     {
         super(parent);
         mCommand = command;
-        setTitle(EclipseNSISPlugin.getFormattedString("nsis.command.dialog.title.format",new String[] {mCommand.getName()})); //$NON-NLS-1$
+        setTitle(EclipseNSISPlugin.getResourceString("nsis.command.dialog.title")); //$NON-NLS-1$
         setShellImage(EclipseNSISPlugin.getShellImage());
         mRemember = NSISPreferences.INSTANCE.getBoolean(INSISPreferenceConstants.NSIS_COMMAND_HELPER_REMEMBER);
         if(mRemember) {
@@ -175,10 +174,25 @@ public class NSISCommandDialog extends StatusMessageDialog
         }
     }
     
+    protected Point getInitialSize()
+    {
+        Point p = super.getInitialSize();
+        if(p.y < MIN_WINDOW_HEIGHT) {
+            p.y = MIN_WINDOW_HEIGHT;
+        }
+        if(mCollapseHelp) {
+            p.x = Math.max(p.x,MIN_WINDOW_WIDTH);
+        }
+        else {
+            p.x = Math.max(p.x,2*MIN_WINDOW_WIDTH + ((GridLayout)mControl.getLayout()).horizontalSpacing);                        
+        }
+        return p;
+    }
 
     public void create()
     {
         super.create();
+        getButton(IDialogConstants.OK_ID).setText(IDialogConstants.FINISH_LABEL);
         if(mParamEditor != null) {
             mParamEditor.initEditor();
         }
@@ -220,9 +234,7 @@ public class NSISCommandDialog extends StatusMessageDialog
 
     private void saveDialogSettings()
     {
-        if(mExpandableComposite != null) {
-            mDialogSettings.put(SETTING_COLLAPSE_HELP, !mExpandableComposite.isExpanded());
-        }
+        mDialogSettings.put(SETTING_COLLAPSE_HELP, mCollapseHelp);
     }
 
     protected void okPressed()
@@ -241,56 +253,180 @@ public class NSISCommandDialog extends StatusMessageDialog
         super.okPressed();
     }
 
+    protected void createControlAndMessageArea(Composite parent)
+    {
+        Composite composite = new Composite(parent, SWT.NONE);
+        GridLayout layout = new GridLayout(2, false);
+        layout.marginHeight = layout.marginWidth = layout.verticalSpacing = layout.horizontalSpacing = 0;
+        composite.setLayout(layout);
+        composite.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false));
+
+        Composite composite2 = new Composite(composite, SWT.NONE);
+        composite2.setLayout(new GridLayout(1, false));
+        composite2.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true));
+        Color white = composite2.getDisplay().getSystemColor(SWT.COLOR_WHITE);
+        composite2.setBackground(white);
+        
+        Label titleHeader = new Label(composite2,SWT.NONE);
+        titleHeader.setBackground(white);
+        makeBold(titleHeader);
+        titleHeader.setText(EclipseNSISPlugin.getResourceString("nsis.command.dialog.title")); //$NON-NLS-1$
+        titleHeader.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false));
+
+        Label titleSubHeader = new Label(composite2,SWT.WRAP);
+        titleSubHeader.setBackground(white);
+        titleSubHeader.setText(EclipseNSISPlugin.getResourceString("nsis.command.dialog.subtitle")); //$NON-NLS-1$
+        GridData data = new GridData(SWT.FILL,SWT.FILL,true,true);
+        data.horizontalIndent = convertHorizontalDLUsToPixels(IDialogConstants.INDENT);
+        titleSubHeader.setLayoutData(data);
+        
+        Label titleImage = new Label(composite,SWT.NONE);
+        titleImage.setBackground(white);
+        titleImage.setLayoutData(new GridData(SWT.FILL,SWT.FILL,false,true));
+        titleImage.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("command.wizard.title.image"))); //$NON-NLS-1$
+        
+        Label titleSeparator = new Label(composite, SWT.HORIZONTAL | SWT.SEPARATOR);
+        data = new GridData(SWT.FILL,SWT.FILL,true,false);
+        data.horizontalSpan = 2;
+        titleSeparator.setLayoutData(data);
+
+        super.createControlAndMessageArea(parent);
+    }
+    
     protected Control createControl(Composite parent)
     {
-        parent = new Composite(parent, SWT.NONE);
-        GridLayout layout = new GridLayout(1,false);
+        Composite composite = new Composite(parent,SWT.NONE);
+        composite.setLayout(new GridLayout(1,false));
+        composite.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true));
+        
+        mControl = new Composite(composite, SWT.NONE);
+        GridLayout layout = new GridLayout(2,true);
         layout.marginHeight = layout.marginWidth = 0;
-        parent.setLayout(layout);
-        Label l = new Label(parent,SWT.None);
+        mControl.setLayout(layout);
+        mControl.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true));
+        
+        final Composite child = new Composite(mControl, SWT.NONE);
+        layout = new GridLayout(2,false);
+        layout.marginHeight = layout.marginWidth = 0;
+        child.setLayout(layout);
+        Label l = new Label(child,SWT.None);
         l.setLayoutData(new GridData(SWT.FILL,SWT.CENTER,true,false));
         l.setText(mCommand.getName());
         makeBold(l);
-        mControl = mParamEditor.createControl(parent);
-        if(mControl != null) {
-            mControl.setLayoutData(new GridData(SWT.FILL,SWT.CENTER,true,false));
+        
+        final String showText = EclipseNSISPlugin.getResourceString("show.description.label"); //$NON-NLS-1$
+        final String hideText = EclipseNSISPlugin.getResourceString("hide.description.label"); //$NON-NLS-1$
+        final Button toggleHelp = new Button(child,SWT.PUSH);
+        GridData gridData = new GridData(SWT.FILL,SWT.CENTER,false,false);
+        GC gc = new GC(toggleHelp);
+        gridData.widthHint = Math.max(gc.stringExtent(showText).x, gc.stringExtent(hideText).x)+10;
+        gc.dispose();
+        toggleHelp.setLayoutData(gridData);
+        toggleHelp.setText(mCollapseHelp?showText:hideText);
+        
+        Composite c = new Composite(child,SWT.None);
+        GridData data = new GridData(SWT.FILL,SWT.FILL,true,true);
+        data.horizontalSpan = 2;
+        c.setLayoutData(data);
+        layout = new GridLayout(1,false);
+        layout.marginHeight = layout.marginWidth = 0;
+        c.setLayout(layout);
+        mParamEditorControl = mParamEditor.createControl(c);
+        if(mParamEditorControl != null) {
+            mParamEditorControl.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false));
         }
         
-        Composite c = new Composite(parent,SWT.NONE);
-        c.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false));
-        layout = new GridLayout(2,false);
+        c = new Composite(child,SWT.NONE);
+        data = new GridData(SWT.FILL,SWT.FILL,true,false);
+        data.horizontalSpan = 2;
+        c.setLayoutData(data);
+        layout = new GridLayout(3,false);
         layout.marginHeight = layout.marginWidth = 0;
         c.setLayout(layout);
         final Button button = new Button(c,SWT.CHECK);
         button.setText(EclipseNSISPlugin.getResourceString("nsis.command.helper.remember.label")); //$NON-NLS-1$
         button.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false));
         button.setSelection(mRemember);
+
+        final Button button2 = new Button(c,SWT.PUSH);
+        button2.setText(EclipseNSISPlugin.getResourceString("revert.label")); //$NON-NLS-1$
+        button2.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e)
+            {
+                mParamEditor.reset();
+                mParamEditor.initEditor();
+            }
+        });
+        setButtonLayoutData(button2);
+        button2.setEnabled(mRemember && !Common.isEmptyMap(mSettings));
+
         button.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e)
             {
                 mRemember = button.getSelection();
                 setParamEditorState();
+                button2.setEnabled(mRemember && !Common.isEmptyMap(mSettings));
             }
         });
 
-        final Button button2 = new Button(c,SWT.PUSH);
-        button2.setText(EclipseNSISPlugin.getResourceString("reset.label")); //$NON-NLS-1$
-        button2.addSelectionListener(new SelectionAdapter() {
+        Button button3 = new Button(c,SWT.PUSH);
+        button3.setText(EclipseNSISPlugin.getResourceString("clear.label")); //$NON-NLS-1$
+        button3.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e)
             {
-                mParamEditor.reset();
+                mParamEditor.clear();
             }
         });
-        setButtonLayoutData(button2);
+        setButtonLayoutData(button3); 
         
-        createHelpBrowser(parent);
+        data = new GridData(SWT.FILL,SWT.FILL,true,true);
+        child.setLayoutData(data);
+        
+        final Composite child2 = new Composite(mControl, SWT.NONE);
+        child2.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true));
+        layout = new GridLayout(1,false);
+        layout.marginHeight = layout.marginWidth = 0;
+        child2.setLayout(layout);
+        createHelpBrowser(child2);
         if(mBrowser != null) {
             setCurrentCommand(mCommand.getName());
+            toggleHelp.addSelectionListener(new SelectionAdapter() {
+                public void widgetSelected(SelectionEvent e)
+                {
+                    mCollapseHelp = !mCollapseHelp;
+                    toggleHelp.setText(mCollapseHelp?showText:hideText);
+                    ((GridLayout)mControl.getLayout()).numColumns = (mCollapseHelp?1:2);
+                    child2.setVisible(!mCollapseHelp);
+                    
+                    ((GridData)child2.getLayoutData()).exclude = mCollapseHelp;
+                    int width1 = getShell().getSize().x;
+                    int width2 = mControl.getSize().x;
+                    int margin = width1-width2;
+                    if(mCollapseHelp) {
+                        width2 = (width2 - ((GridLayout)mControl.getLayout()).horizontalSpacing)/2;
+                    }
+                    else {
+                        width2 = 2*width2 + ((GridLayout)mControl.getLayout()).horizontalSpacing;                        
+                    }
+                    width1 = width2+margin;
+                    getShell().setSize(width1,getShell().getSize().y);
+                    mControl.layout(true);
+                }
+            });
+            ((GridLayout)mControl.getLayout()).numColumns = (mCollapseHelp?1:2);
+            child2.setVisible(!mCollapseHelp);
+            ((GridData)child2.getLayoutData()).exclude = mCollapseHelp;
+        }
+        else {
+            mCollapseHelp = true;
+            ((GridLayout)mControl.getLayout()).numColumns = 1;
+            child2.dispose();
+            toggleHelp.setVisible(false);
         }
         
         getShell().getDisplay().addFilter(SWT.Modify, mFilter);
         getShell().getDisplay().addFilter(SWT.Selection, mFilter);
-        return parent;
+        return composite;
     }
 
     private void makeBold(Control control)
@@ -313,130 +449,14 @@ public class NSISCommandDialog extends StatusMessageDialog
     {
         if(NSISBrowserUtility.isBrowserAvailable(parent)) {
             Group group = new Group(parent,SWT.NONE);
+            group.setText(EclipseNSISPlugin.getResourceString("nsis.command.description.label")); //$NON-NLS-1$
             GridData gridData = new GridData(SWT.FILL,SWT.FILL,true,true);
             group.setLayoutData(gridData);
             GridLayout layout = new GridLayout(1,false);
             layout.marginHeight = layout.marginWidth = 2;
             group.setLayout(layout);
 
-            int style = ExpandableComposite.FOCUS_TITLE | ExpandableComposite.TWISTIE | ExpandableComposite.TITLE_BAR;
-            if(!mCollapseHelp) {
-                style |= ExpandableComposite.EXPANDED;
-            }
-            mExpandableComposite = new ExpandableComposite(group,SWT.NONE, style) {
-                private FormColors mColors = new FormColors(parent.getDisplay());
-                
-                {
-                    mColors.initializeSectionToolBarColors();
-                }
-                
-                protected void onPaint(PaintEvent e) {
-                    Color bg = mColors.getColor(FormColors.TB_BG);
-                    Color gbg = mColors.getColor(FormColors.TB_GBG);
-//                    Color fg = mColors.getColor(FormColors.TB_FG);
-                    Color border = mColors.getColor(FormColors.TB_BORDER);
-                    Rectangle bounds = getClientArea();
-                    int theight = 0;
-                    int tvmargin = GAP;
-                    if ((getExpansionStyle() & TITLE_BAR) != 0) {
-                        Point tsize = null;
-                        Point tcsize = null;
-                        if (toggle != null) {
-                            tsize = toggle.getSize();
-                        }
-                        int twidth = bounds.width - marginWidth - marginWidth;
-                        if (tsize != null) {
-                            twidth -= tsize.x + GAP;
-                        }
-                        if (getTextClient() != null) {
-                            tcsize = getTextClient().getSize();
-                        }
-                        if (tcsize != null) {
-                            twidth -= tcsize.x + GAP;
-                        }
-                        Point size = textLabel.getSize();
-                        if (tsize != null) {
-                            theight += Math.max(theight, tsize.y);
-                        }
-                        if (tcsize != null) {
-                            theight = Math.max(theight, tcsize.y);
-                        }
-                        theight = Math.max(theight, size.y);
-                        theight += tvmargin + tvmargin;
-                    } else {
-                        theight = 5;
-                    }
-                    int midpoint = (theight * 66) / 100;
-                    int rem = theight - midpoint;
-                    GC gc = e.gc;
-                    if ((getExpansionStyle() & TITLE_BAR) != 0) {
-                        gc.setForeground(bg);
-                        gc.setBackground(gbg);
-                        gc.fillGradientRectangle(marginWidth, marginHeight, bounds.width
-                                - 1 - marginWidth - marginWidth, midpoint - 1, true);
-                        gc.setForeground(gbg);
-                        gc.setBackground(getBackground());
-                        gc
-                                .fillGradientRectangle(marginWidth, marginHeight + midpoint
-                                        - 1, bounds.width - 1 - marginWidth - marginWidth,
-                                        rem - 1, true);
-                    } else if (isExpanded()) {
-                        gc.setForeground(bg);
-                        gc.setBackground(getBackground());
-                        gc.fillGradientRectangle(marginWidth, marginHeight, bounds.width
-                                - marginWidth - marginWidth, theight, true);
-                    }
-                    gc.setBackground(getBackground());
-                    // repair the upper left corner
-                    gc.fillPolygon(new int[] { marginWidth, marginHeight, marginWidth,
-                            marginHeight + 2, marginWidth + 2, marginHeight });
-                    // repair the upper right corner
-                    gc.fillPolygon(new int[] { bounds.width - marginWidth - 3,
-                            marginHeight, bounds.width - marginWidth - 1, marginHeight,
-                            bounds.width - marginWidth - 1, marginHeight + 2 });
-                    gc.setForeground(border);
-                    if (isExpanded() || (getExpansionStyle() & TITLE_BAR) != 0) {
-                        // top left curve
-                        gc.drawLine(marginWidth, marginHeight + 2, marginWidth + 2,
-                                marginHeight);
-                        // top edge
-                        gc.drawLine(marginWidth + 2, marginHeight, bounds.width
-                                - marginWidth - 3, marginHeight);
-                        // top right curve
-                        gc.drawLine(bounds.width - marginWidth - 3, marginHeight,
-                                bounds.width - marginWidth - 1, marginHeight + 2);
-                    } else {
-                        // collapsed short title bar
-                        // top edge
-                        gc.drawLine(marginWidth, marginHeight, bounds.width - 1,
-                                marginHeight);
-                    }
-                    if ((getExpansionStyle() & TITLE_BAR) != 0 && toggle != null
-                            && !isExpanded()) {
-                        // left vertical edge
-                        gc.drawLine(marginWidth, marginHeight + 2, marginWidth,
-                                marginHeight + theight - 1);
-                        // right vertical edge
-                        gc.drawLine(bounds.width - marginWidth - 1, marginHeight + 2,
-                                bounds.width - marginWidth - 1, marginHeight + theight - 1);
-                        // bottom edge (if closed)
-                        gc.drawLine(marginWidth, marginHeight + theight - 1, bounds.width
-                                - marginWidth - 1, marginHeight + theight - 1);
-                    } else if (isExpanded()) {
-                        // left vertical edge gradient
-                        gc.fillGradientRectangle(marginWidth, marginHeight + 2, 1,
-                                theight - 2, true);
-                        // right vertical edge gradient
-                        gc.fillGradientRectangle(bounds.width - marginWidth - 1,
-                                marginHeight + 2, 1, theight - 2, true);
-                    }
-                }
-            };
-            mExpandableComposite.setText(EclipseNSISPlugin.getResourceString("nsis.command.description.label")); //$NON-NLS-1$
-            makeBold(mExpandableComposite);
-            gridData = new GridData(SWT.FILL,SWT.FILL,true,true);
-            mExpandableComposite.setLayoutData(gridData);
-            Composite composite = new Composite(mExpandableComposite,SWT.NONE);
+            Composite composite = new Composite(group,SWT.NONE);
             gridData = new GridData(SWT.FILL,SWT.FILL,true,true);
             composite.setLayoutData(gridData);
             layout = new GridLayout(1,false);
@@ -446,19 +466,9 @@ public class NSISCommandDialog extends StatusMessageDialog
             mBrowser= new Browser(composite, SWT.BORDER);
             gridData = new GridData(SWT.FILL,SWT.FILL,true,true);
             initializeDialogUnits(mBrowser);
-            gridData.widthHint = convertWidthInCharsToPixels(50);
             gridData.heightHint = convertHeightInCharsToPixels(10);
             mBrowser.setLayoutData(gridData);
             mBrowser.setMenu(new Menu(getShell(), SWT.NONE));
-            mExpandableComposite.setClient(composite);
-            mExpandableComposite.addExpansionListener(new ExpansionAdapter() {
-                public void expansionStateChanged(ExpansionEvent e)
-                {
-                    Shell shell = mExpandableComposite.getShell();
-                    Point size = shell.getSize();
-                    shell.setSize(size.x, shell.computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
-                }
-            });
             hookLocationListener();
         }
     }

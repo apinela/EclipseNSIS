@@ -48,10 +48,10 @@ public class InstallOptionsCheckBox extends InstallOptionsButton
     protected IPropertyDescriptor createPropertyDescriptor(String name)
     {
         if(name.equals(InstallOptionsModel.PROPERTY_STATE)) {
+            String propertyName = InstallOptionsPlugin.getResourceString("state.property.name"); //$NON-NLS-1$
             CustomComboBoxPropertyDescriptor descriptor = new CustomComboBoxPropertyDescriptor(InstallOptionsModel.PROPERTY_STATE,
-                    InstallOptionsPlugin.getResourceString("state.property.name"), //$NON-NLS-1$
-                    getStateData(), getStateDisplay(), getStateDefault());
-            descriptor.setValidator(new NSISStringLengthValidator(InstallOptionsModel.PROPERTY_STATE));
+                    propertyName, getStateData(), getStateDisplay(), getStateDefault());
+            descriptor.setValidator(new NSISStringLengthValidator(propertyName));
             return descriptor;
         }
         else {
