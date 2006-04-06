@@ -15,12 +15,12 @@ import net.sf.eclipsensis.util.XMLUtil;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
-public abstract class PrefixableParam extends SimpleParam
+public abstract class PrefixableParam extends NSISParam
 {
     public static final String ATTR_ALLOW_BLANK = "allowBlank"; //$NON-NLS-1$
     public static final String ATTR_PREFIX = "prefix"; //$NON-NLS-1$
     private String mPrefix;
-    private boolean mAllowBlank;
+    protected boolean mAllowBlank;
 
     public PrefixableParam(Node node)
     {
@@ -53,7 +53,7 @@ public abstract class PrefixableParam extends SimpleParam
         mPrefix = prefix;
     }
     
-    protected final SimpleParamEditor createSimpleParamEditor(INSISParamEditor parentEditor)
+    protected final NSISParamEditor createParamEditor(INSISParamEditor parentEditor)
     {
         return createPrefixableParamEditor(parentEditor);
     }
@@ -73,7 +73,7 @@ public abstract class PrefixableParam extends SimpleParam
 
     protected abstract PrefixableParamEditor createPrefixableParamEditor(INSISParamEditor parentEditor);
 
-    protected abstract class PrefixableParamEditor extends SimpleParamEditor
+    protected abstract class PrefixableParamEditor extends NSISParamEditor
     {
         public static final String DATA_BUTTON = "BUTTON"; //$NON-NLS-1$
 
@@ -82,9 +82,9 @@ public abstract class PrefixableParam extends SimpleParam
             super(parentEditor);
         }
 
-        protected final void appendSimpleParamText(StringBuffer buf)
+        protected final void appendParamText(StringBuffer buf)
         {
-            String text = getParamText();
+            String text = getPrefixableParamText();
             if(text != null) {
                 boolean shouldQuote = shouldQuote(text);
                 if(!Common.isEmpty(getPrefix())) {
@@ -94,6 +94,6 @@ public abstract class PrefixableParam extends SimpleParam
             }
         }
         
-        protected abstract String getParamText();
+        protected abstract String getPrefixableParamText();
     }
 }

@@ -16,12 +16,12 @@
       <command name="!define" category="conditional.compilation.category">
         <param type="radio">
           <param type="group">
-            <param name="/date" type="label" optional="true" depends="2"/>
+            <param name="/date" type="static" optional="true" depends="2"/>
             <param name="gflag" type="string"/>
             <param name="value" type="string" allowBlank="true" optional="true"/>              
           </param>
           <param type="group">
-            <param name="/math" type="label"/>
+            <param name="/math" type="static"/>
             <param name="gflag" type="string"/>
             <param name="val1" type="number" acceptVar="false"/>              
             <param name="OP" type="choice">
@@ -45,7 +45,7 @@
         </param>
       </command>
       <command name="!if" category="conditional.compilation.category">
-        <param name="not" value="!" type="label" optional="true"/>
+        <param name="not" value="!" type="static" optional="true"/>
         <param name="value" type="number" acceptVar="false"/>
         <param type="group" optional="true">
           <param name="op" type="choice">
@@ -68,15 +68,15 @@
       <command name="StrCmpS" category="flow.control.instructions.category">
         <param name="str1" type="string" allowBlank="true"/>
         <param name="str2" type="string" allowBlank="true"/>
-        <param name="jump_if_equal" type="string" allowBlank="true"/>
-        <param name="jump_if_not_equal" type="string" optional="true" allowBlank="true"/>
+        <param name="jump_if_equal" type="label"/>
+        <param name="jump_if_not_equal" type="label" optional="true"/>
       </command>
     </add>
   </version>
   <version name="2.12">
     <add>
       <command name="!include" category="compiler.utility.commands.category">
-        <param name="/NONFATAL" type="label" optional="true"/>
+        <param name="/NONFATAL" type="static" optional="true"/>
         <param name="file" type="localfile" acceptVar="false">
           <filter name="nsh.files.filter.name" value="*.nsh"/>
           <filter name="all.files.filter.name" value="*.*"/>
@@ -101,7 +101,7 @@
   <version name="2.09">
     <add>
       <command name="Var" category="user.variables.category">
-        <param name="/GLOBAL" type="label" optional="true"/>
+        <param name="/GLOBAL" type="static" optional="true"/>
         <param name="var_name" type="var.string"/>
       </command>
     </add>
@@ -109,8 +109,8 @@
   <version name="2.07">
     <add>
       <command name="SetCompressor" category="compiler.flags.category">
-        <param name="/SOLID" type="label" optional="true"/>
-        <param name="/FINAL" type="label" optional="true"/>
+        <param name="/SOLID" type="static" optional="true"/>
+        <param name="/FINAL" type="static" optional="true"/>
         <param type="choice" default="0">
           <choice value="zlib"/>
           <choice value="bzip2"/>
@@ -122,7 +122,7 @@
   <version name="2.05">
     <add>
       <command name="SectionGroup" category="section.commands.category">
-        <param name="/e" type="label" optional="true"/>
+        <param name="/e" type="static" optional="true"/>
         <param name="section_group_name" type="string"/>
         <param name="index_output" type="string" optional="true"/>
       </command>
@@ -136,19 +136,19 @@
   <version name="2.03">
     <add>
       <command name="!define" category="conditional.compilation.category">
-        <param name="/date" type="label" optional="true" depends="2"/>
+        <param name="/date" type="static" optional="true" depends="2"/>
         <param name="gflag" type="string"/>
         <param name="value" type="string" allowBlank="true" optional="true"/>              
       </command>
       <command name="File" category="basic.instructions.category">
-        <param name="/nonfatal" type="label" optional="true"/>
-        <param name="/a" type="label" optional="true"/>
+        <param name="/nonfatal" type="static" optional="true"/>
+        <param name="/a" type="static" optional="true"/>
         <param type="radio">
           <param type="group">
-            <param name="/r" type="label" optional="true"/>
+            <param name="/r" type="static" optional="true"/>
             <param type="repeatable">
               <param type="group">
-                <param name="/x" type="label" optional="true"/>
+                <param name="/x" type="static" optional="true"/>
                 <param name="file|wildcard" acceptVar="false" type="localpath">
                   <filter name="all.files.filter.name" value="*.*"/>
                 </param>
@@ -162,11 +162,11 @@
         </param>
       </command>
       <command name="ReserveFile" category="basic.instructions.category">
-        <param name="/nonfatal" type="label" optional="true"/>
-        <param name="/r" type="label" optional="true"/>
+        <param name="/nonfatal" type="static" optional="true"/>
+        <param name="/r" type="static" optional="true"/>
           <param type="repeatable">
             <param type="group">
-              <param name="/x" type="label" optional="true"/>
+              <param name="/x" type="static" optional="true"/>
               <param name="file" type="localfile" acceptVar="false">
                 <filter name="all.files.filter.name" value="*.*"/>
               </param>
@@ -215,15 +215,15 @@
         <param name="font_face" type="string" optional="true"/>
         <param name="height" type="number" domain="positive" optional="true" depends="0"/>
         <param name="weight" type="number" domain="positive" optional="true" depends="1"/>
-        <param name="/ITALIC" type="label" optional="true" depends="1"/>
-        <param name="/UNDERLINE" type="label" optional="true" depends="1"/>
-        <param name="/STRIKE" type="label" optional="true" depends="1"/>
+        <param name="/ITALIC" type="static" optional="true" depends="1"/>
+        <param name="/UNDERLINE" type="static" optional="true" depends="1"/>
+        <param name="/STRIKE" type="static" optional="true" depends="1"/>
       </command>
       <command name="ExecShell" category="basic.instructions.category">
         <param name="action" type="string" allowBlank="true"/>
         <param name="command" type="string"/>
         <param name="parameters" type="string" allowBlank="true" optional="true"/>
-        <param type="choice" optional="true">
+        <param type="choice" optional="true" includePrevious="true">
           <choice value="SW_SHOWNORMAL"/>
           <choice value="SW_SHOWMAXIMIZED"/>
           <choice value="SW_SHOWMINIMIZED"/>
@@ -231,8 +231,8 @@
         </param>
       </command>
       <command name="RMDir" category="basic.instructions.category">
-        <param name="/r" type="label" optional="true"/>
-        <param name="/REBOOTOK" type="label" optional="true"/>
+        <param name="/r" type="static" optional="true"/>
+        <param name="/REBOOTOK" type="static" optional="true"/>
         <param name="directory_name" type="pathname"/>
       </command>
       <command name="SetOutPath" category="basic.instructions.category">
@@ -365,8 +365,8 @@
             <choice display="no.warnings.label" value="1"/>
             <choice display="none.label" value="0"/>
           </param>
-          <param name="push" type="label"/>
-          <param name="pop" type="label"/>
+          <param name="push" type="static"/>
+          <param name="pop" type="static"/>
         </param>
       </command>
       <command name="!warning" category="compiler.utility.commands.category">
@@ -408,13 +408,13 @@
       </command>
       <command name="BGGradient" category="general.attributes.category">
         <param type="radio" default="0">
-          <param name="off" type="label"/>
+          <param name="off" type="static"/>
           <param type="group">
-            <param name="topc" type="rgb" acceptVar="false"/>
-            <param name="botc" type="rgb" acceptVar="false"/>
+            <param name="topc" type="rgb" acceptVar="false" allowBlank="true"/>
+            <param name="botc" type="rgb" acceptVar="false" allowBlank="true"/>
             <param type="radio" optional="true">
-              <param name="textcolor" type="rgb" acceptVar="false"/>
-              <param name="notext" type="label"/>
+              <param name="textcolor" type="rgb" acceptVar="false" allowBlank="true"/>
+              <param name="notext" type="static"/>
             </param>
           </param>
         </param>
@@ -440,7 +440,7 @@
       </command>
       <command name="CallInstDLL" category="general.purpose.instructions.category">
         <param name="dllfile" type="pathname"/>
-        <param name="/NOUNLOAD" type="label" optional="true"/>
+        <param name="/NOUNLOAD" type="static" optional="true"/>
         <param name="function_name" type="string"/>
       </command>
       <command name="Caption" category="general.attributes.category">
@@ -480,8 +480,8 @@
         <param name="subtext2" type="string" allowBlank="true" optional="true" depends="0" includePrevious="true"/>
       </command>
       <command name="CopyFiles" category="general.purpose.instructions.category">
-        <param name="/SILENT" type="label" optional="true"/>
-        <param name="/FILESONLY" type="label" optional="true"/>
+        <param name="/SILENT" type="static" optional="true"/>
+        <param name="/FILESONLY" type="static" optional="true"/>
         <param name="filespec_on_destsys " type="wildcard"/>
         <param name="destination_path" type="pathname"/>
         <param name="size_of_files_in_kb" type="number" domain="positive" optional="true" acceptVar="false"/>
@@ -494,9 +494,9 @@
         <param name="face_name" type="string"/>
         <param name="height" type="number" domain="positive" optional="true"/>
         <param name="weight" type="number" domain="positive" optional="true" includePrevious="true"/>
-        <param name="/ITALIC" type="label" optional="true"/>
-        <param name="/UNDERLINE" type="label" optional="true"/>
-        <param name="/STRIKE" type="label" optional="true"/>
+        <param name="/ITALIC" type="static" optional="true"/>
+        <param name="/UNDERLINE" type="static" optional="true"/>
+        <param name="/STRIKE" type="static" optional="true"/>
       </command>
       <command name="CreateShortCut" category="general.purpose.instructions.category">
         <param name="link.lnk" type="pathname"/>
@@ -514,7 +514,7 @@
         <param name="description" type="string" allowBlank="true" optional="true" depends="7"/>
       </command>
       <command name="Delete" category="basic.instructions.category">
-        <param name="/REBOOTOK" type="label" optional="true"/>
+        <param name="/REBOOTOK" type="static" optional="true"/>
         <param name="file" type="wildcard"/>
       </command>
       <command name="DeleteINISec" category="reg.ini.file.instructions.category">
@@ -527,7 +527,7 @@
         <param name="str_name" type="string"/>
       </command>
       <command name="DeleteRegKey" category="reg.ini.file.instructions.category">
-        <param name="/ifempty" type="label" optional="true"/>
+        <param name="/ifempty" type="static" optional="true"/>
         <param name="root_key" type="hkey"/>
         <param name="subkey" type="string"/>
       </command>
@@ -604,11 +604,11 @@
         <param name="string" type="string"/>
       </command>
       <command name="File" category="basic.instructions.category">
-        <param name="/nonfatal" type="label" optional="true"/>
-        <param name="/a" type="label" optional="true"/>
+        <param name="/nonfatal" type="static" optional="true"/>
+        <param name="/a" type="static" optional="true"/>
         <param type="radio">
           <param type="group">
-            <param name="/r" type="label" optional="true"/>
+            <param name="/r" type="static" optional="true"/>
             <param type="repeatable">
               <param name="file|wildcard" type="localpath" acceptVar="false">
                 <filter name="all.files.filter.name" value="*.*"/>
@@ -731,7 +731,7 @@
         <param name="user_var(low dword output)" type="var"/>
       </command>
       <command name="GetFullPathName" category="general.purpose.instructions.category">
-        <param name="/SHORT" type="label" optional="true"/>
+        <param name="/SHORT" type="static" optional="true"/>
         <param name="user_var(output)" type="var"/>
         <param name="path_or_file" type="pathname"/>
       </command>
@@ -752,8 +752,9 @@
       </command>
       <command name="Goto" category="flow.control.instructions.category">
         <param type="radio">
-          <param name="label_to_jump_to" type="string" allowBlank="true"/>
-          <param name="offset" type="number"/>
+          <param name="label_to_jump_to" type="label"/>
+          <param name="+offset" prefix="+" type="number" domain="positive"/>
+          <param name="-offset" prefix="-" type="number" domain="positive"/>
           <param name="user_var(target)" type="var"/>
         </param>
       </command>
@@ -765,37 +766,37 @@
         </param>
       </command>
       <command name="IfAbort" category="flow.control.instructions.category">
-        <param name="label_to_goto_if_abort" type="string"/>
-        <param name="label_to_goto_if_no_abort" type="string" optional="true"/>
+        <param name="label_to_goto_if_abort" type="label"/>
+        <param name="label_to_goto_if_no_abort" type="label" optional="true"/>
       </command>
       <command name="IfErrors" category="flow.control.instructions.category">
-        <param name="jumpto_iferror" type="string" allowBlank="true"/>
-        <param name="jumpto_ifnoerror" type="string" optional="true" allowBlank="true"/>
+        <param name="jumpto_iferror" type="label"/>
+        <param name="jumpto_ifnoerror" type="label" optional="true"/>
       </command>
       <command name="IfFileExists" category="flow.control.instructions.category">
         <param name="file_to_check_for" type="pathname"/>
-        <param name="jump_if_present" type="string" allowBlank="true"/>
-        <param name="jump_otherwise" type="string" optional="true" allowBlank="true"/>
+        <param name="jump_if_present" type="label"/>
+        <param name="jump_otherwise" type="label" optional="true"/>
       </command>
       <command name="IfRebootFlag" category="flow.control.instructions.category">
-        <param name="jump_if_set" type="string" allowBlank="true"/>
-        <param name="jump_if_not_set" type="string" optional="true" allowBlank="true"/>
+        <param name="jump_if_set" type="label"/>
+        <param name="jump_if_not_set" type="label" optional="true"/>
       </command>
       <command name="IfSilent" category="flow.control.instructions.category">
-        <param name="jump_if_silent" type="string" allowBlank="true"/>
-        <param name="jump_if_not" type="string" optional="true" allowBlank="true"/>
+        <param name="jump_if_silent" type="label"/>
+        <param name="jump_if_not" type="label" optional="true"/>
       </command>
       <command name="InitPluginsDir" category="misc.instructions.category"/>
       <command name="InstProgressFlags" category="general.attributes.category">
-        <param name="smooth" type="label" optional="true"/>
-        <param name="colored" type="label" optional="true"/>
+        <param name="smooth" type="static" optional="true"/>
+        <param name="colored" type="static" optional="true"/>
       </command>
       <command name="InstType" category="general.attributes.category">
         <param type="radio">
           <param name="install_type_name" type="string"/>
-          <param name="/NOCUSTOM" type="label"/>
+          <param name="/NOCUSTOM" type="static"/>
           <param name="/CUSTOMSTRING" tooltip="str" prefix="/CUSTOMSTRING=" type="string"/>
-          <param name="/COMPONENTSONLYONCUSTOM" type="label"/>
+          <param name="/COMPONENTSONLYONCUSTOM" type="static"/>
         </param>
       </command>
       <command name="InstTypeGetText" category="section.management.category">
@@ -811,10 +812,10 @@
       </command>
       <command name="InstallColors" category="general.attributes.category">
         <param type="radio">
-          <param name="/windows" type="label"/>
+          <param name="/windows" type="static"/>
           <param type="group">
-            <param name="foreground_color" type="rgb" acceptVar="false"/>
-            <param name="background_color" type="rgb" acceptVar="false"/>
+            <param name="foreground_color" type="rgb" acceptVar="false" allowBlank="true"/>
+            <param name="background_color" type="rgb" acceptVar="false" allowBlank="true"/>
           </param>
         </param>
       </command>
@@ -829,16 +830,16 @@
       <command name="IntCmp" category="flow.control.instructions.category">
         <param name="val1" type="number"/>
         <param name="val2" type="number"/>
-        <param name="jump_if_equal" type="string" allowBlank="true"/>
-        <param name="jump_if_val1_less" type="string" optional="true" allowBlank="true"/>
-        <param name="jump_if_val1_more" type="string" optional="true" includePrevious="true" allowBlank="true"/>
+        <param name="jump_if_equal" type="label"/>
+        <param name="jump_if_val1_less" type="label" optional="true"/>
+        <param name="jump_if_val1_more" type="label" optional="true" includePrevious="true"/>
       </command>
       <command name="IntCmpU" category="flow.control.instructions.category">
         <param name="val1" type="number"/>
         <param name="val2" type="number"/>
-        <param name="jump_if_equal" type="string" allowBlank="true"/>
-        <param name="jump_if_val1_less" type="string" optional="true" allowBlank="true"/>
-        <param name="jump_if_val1_more" type="string" optional="true" includePrevious="true" allowBlank="true"/>
+        <param name="jump_if_equal" type="label"/>
+        <param name="jump_if_val1_less" type="label" optional="true"/>
+        <param name="jump_if_val1_more" type="label" optional="true" includePrevious="true"/>
       </command>
       <command name="IntFmt" category="integer.support.category">
         <param name="user_var(output)" type="var"/>
@@ -866,8 +867,8 @@
       </command>
       <command name="IsWindow" category="user.interface.instructions.category">
         <param name="hwnd" type="number" domain="positive"/>
-        <param name="jump_if_window" type="string" allowBlank="true"/>
-        <param name="jump_if_not_window" type="string" optional="true" allowBlank="true"/>
+        <param name="jump_if_window" type="label"/>
+        <param name="jump_if_not_window" type="label" optional="true"/>
       </command>
       <command name="LangString" category="multiple.language.instructions.category">
         <param name="name" type="string"/>
@@ -876,9 +877,9 @@
       </command>
       <command name="LicenseBkColor" category="general.attributes.category">
         <param type="radio" default="1">
-          <param name="color" type="rgb" acceptVar="false"/>
-          <param name="/gray" type="label"/>
-          <param name="/windows" type="label"/>
+          <param name="color" type="rgb" acceptVar="false" allowBlank="true"/>
+          <param name="/gray" type="static"/>
+          <param name="/windows" type="static"/>
         </param>
       </command>
       <command name="LicenseData" category="general.attributes.category">
@@ -890,15 +891,15 @@
       <command name="LicenseForceSelection" category="general.attributes.category">
         <param type="radio" default="2">
           <param type="group">
-            <param name="checkbox" type="label"/>
+            <param name="checkbox" type="static"/>
             <param name="accept_text" type="string" optional="true"/>
           </param>
           <param type="group">
-            <param name="radiobuttons" type="label"/>
+            <param name="radiobuttons" type="static"/>
             <param name="accept_text" type="string" optional="true" allowBlank="true"/>
             <param name="decline_text" type="string" optional="true" allowBlank="true" includePrevious="true"/>
           </param>
-          <param name="off" type="label"/>
+          <param name="off" type="static"/>
         </param>
       </command>
       <command name="LicenseLangString" category="multiple.language.instructions.category">
@@ -954,7 +955,7 @@
             <choice value="IDRETRY"/>
             <choice value="IDYES"/>
           </param>
-          <param name="jumpto" type="string" allowBlank="true"/>
+          <param name="jumpto" type="label"/>
         </param>
         <param type="group" optional="true" depends="3">
           <param name="return_check_2" type="choice">
@@ -967,7 +968,7 @@
             <choice value="IDRETRY"/>
             <choice value="IDYES"/>
           </param>
-          <param name="jumpto_2" type="string" allowBlank="true"/>
+          <param name="jumpto_2" type="label"/>
         </param>
       </command>
       <command name="MiscButtonText" category="general.attributes.category">
@@ -990,7 +991,7 @@
       <command name="Page" category="pages.category">
         <param type="radio">
           <param type="group">
-            <param name="custom" type="label"/>
+            <param name="custom" type="static"/>
             <param name="creator_function" type="string" allowBlank="true" optional="true"/>
             <param name="leave_function" type="string" allowBlank="true" optional="true" includePrevious="true"/>
             <param name="caption" type="string" allowBlank="true" optional="true" includePrevious="true"/>
@@ -1008,7 +1009,7 @@
             <param name="leave_function" type="string" allowBlank="true" optional="true" includePrevious="true"/>
           </param>
         </param>
-        <param name="/ENABLECANCEL" type="label" optional="true"/>
+        <param name="/ENABLECANCEL" type="static" optional="true"/>
       </command>
       <command name="PageCallbacks" category="pages.category">
         <param type="radio">
@@ -1049,8 +1050,8 @@
       <command name="Quit" category="flow.control.instructions.category"/>
       <command name="RMDir" category="basic.instructions.category">
         <param type="radio" optional="true">
-          <param name="/r" type="label"/>
-          <param name="/REBOOTOK" type="label"/>
+          <param name="/r" type="static"/>
+          <param name="/REBOOTOK" type="static"/>
         </param>
         <param name="directory_name" type="pathname"/>
       </command>
@@ -1082,13 +1083,13 @@
         <param name="entrypoint_name" type="string" optional="true"/>
       </command>
       <command name="Rename" category="basic.instructions.category">
-        <param name="/REBOOTOK" type="label" optional="true"/>
+        <param name="/REBOOTOK" type="static" optional="true"/>
         <param name="source_file" type="pathname"/>
         <param name="dest_file" type="pathname"/>
       </command>
       <command name="ReserveFile" category="basic.instructions.category">
-        <param name="/nonfatal" type="label" optional="true"/>
-        <param name="/r" type="label" optional="true"/>
+        <param name="/nonfatal" type="static" optional="true"/>
+        <param name="/r" type="static" optional="true"/>
         <param type="repeatable" optional="true">
           <param name="file" type="localfile" acceptVar="false">
             <filter name="all.files.filter.name" value="*.*"/>
@@ -1101,7 +1102,7 @@
         <param name="filename" type="filename"/>
       </command>
       <command name="Section" category="section.commands.category">
-        <param name="/o" type="label" optional="true"/>
+        <param name="/o" type="static" optional="true"/>
         <param name="section_name" type="string" allowBlank="true" optional="true"/>
         <param name="section index output" type="string" optional="true"/>
       </command>
@@ -1123,10 +1124,10 @@
         <param name="user_var(output)" type="var"/>
       </command>
       <command name="SectionIn" category="section.commands.category">
-        <param type="repeatable" optional="true">
-          <param name="insttype_index" type="number" domain="natural" acceptVar="false"/>
+        <param type="repeatable">
+          <param name="insttype_index" type="number" domain="positive" acceptVar="false"/>
         </param>
-        <param name="RO" type="label" optional="true"/>
+        <param name="RO" type="static" optional="true"/>
       </command>
       <command name="SectionSetFlags" category="section.management.category">
         <param name="section_index" type="number" domain="natural"/>
@@ -1161,7 +1162,7 @@
       </command>
       <command name="SetBrandingImage" category="user.interface.instructions.category">
         <param name="/IMGID" tooltip="item_id_in_dialog" prefix="/IMGID=" type="number" domain="positive" optional="true" acceptVar="false"/>
-        <param name="/RESIZETOFIT" type="label" optional="true"/>
+        <param name="/RESIZETOFIT" type="static" optional="true"/>
         <param name="path_to_bitmap_file.bmp" type="localfile" acceptVar="false">
           <filter name="bmp.files.filter.name" value="*.bmp"/>
           <filter name="all.files.filter.name" value="*.*"/>
@@ -1189,7 +1190,7 @@
         </param>
       </command>
       <command name="SetCompressor" category="compiler.flags.category">
-        <param name="/FINAL" type="label" optional="true"/>
+        <param name="/FINAL" type="static" optional="true"/>
         <param type="choice" default="0">
           <choice value="zlib"/>
           <choice value="bzip2"/>
@@ -1201,11 +1202,11 @@
       </command>
       <command name="SetCtlColors" category="user.interface.instructions.category">
         <param name="hwnd" type="number" domain="positive"/>
-        <param name="/BRANDING" type="label" optional="true"/>
-        <param name="text_color" type="rgb" optional="true"/>
+        <param name="/BRANDING" type="static" optional="true"/>
+        <param name="text_color" type="rgb" acceptVar="false" allowBlank="true" optional="true"/>
         <param type="radio" optional="true" includePrevious="true">
-          <param name="transparent" type="label"/>
-          <param name="bg_color" type="rgb"/>
+          <param name="transparent" type="static"/>
+          <param name="bg_color" type="rgb" acceptVar="false" allowBlank="true"/>
         </param>
       </command>
       <command name="SetCurInstType" category="section.management.category">
@@ -1350,8 +1351,8 @@
       <command name="StrCmp" category="flow.control.instructions.category">
         <param name="str1" type="string" allowBlank="true"/>
         <param name="str2" type="string" allowBlank="true"/>
-        <param name="jump_if_equal" type="string" allowBlank="true"/>
-        <param name="jump_if_not_equal" type="string" optional="true" allowBlank="true"/>
+        <param name="jump_if_equal" type="label"/>
+        <param name="jump_if_not_equal" type="label" optional="true"/>
       </command>
       <command name="StrCpy" category="string.manipulation.instructions.category">
         <param name="user_var(destination)" type="var"/>
@@ -1374,7 +1375,7 @@
         <param name="subcaption" type="string" allowBlank="true"/>
       </command>
       <command name="SubSection" category="section.commands.category">
-        <param name="/e" type="label" optional="true"/>
+        <param name="/e" type="static" optional="true"/>
         <param name="sub_section_name" type="string"/>
         <param name="index_output" type="string" optional="true"/>
       </command>
@@ -1385,7 +1386,7 @@
       <command name="UninstPage" category="pages.category">
         <param type="radio">
           <param type="group">
-            <param name="custom" type="label"/>
+            <param name="custom" type="static"/>
             <param name="creator_function" type="string" allowBlank="true" optional="true"/>
             <param name="leave_function" type="string" allowBlank="true" optional="true" includePrevious="true"/>
             <param name="caption" type="string" allowBlank="true" optional="true" includePrevious="true"/>
@@ -1403,7 +1404,7 @@
             <param name="leave_function" type="string" allowBlank="true" optional="true" includePrevious="true"/>
           </param>
         </param>
-        <param name="/ENABLECANCEL" type="label" optional="true"/>
+        <param name="/ENABLECANCEL" type="static" optional="true"/>
       </command>
       <command name="UninstallButtonText" category="general.attributes.category">
         <param name="text" type="string" allowBlank="true"/>

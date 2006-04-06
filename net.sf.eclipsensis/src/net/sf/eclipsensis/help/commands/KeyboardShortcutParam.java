@@ -91,7 +91,7 @@ public class KeyboardShortcutParam extends PrefixableParam
             super.updateState(state);
         }
 
-        protected String getParamText()
+        protected String getPrefixableParamText()
         {
             if(!Common.isEmptyArray(mModifierButtons) && isValid(mKeyCombo)) {
                 StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$

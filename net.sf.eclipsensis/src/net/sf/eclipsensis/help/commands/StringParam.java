@@ -62,7 +62,7 @@ public class StringParam extends SubstitutableParam
             super.clear();
         }
 
-        protected String getParamText()
+        protected String getPrefixableParamText()
         {
             if(isValid(mText)) {
                 return mText.getText();

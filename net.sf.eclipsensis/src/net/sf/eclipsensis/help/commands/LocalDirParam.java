@@ -76,7 +76,7 @@ public class LocalDirParam extends LocalFilesystemObjectParam
             return null;
         }
 
-        protected String getParamText()
+        protected String getPrefixableParamText()
         {
             if(isValid(mDirText)) {
                 String dir = IOUtility.decodePath(mDirText.getText());

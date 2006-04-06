@@ -146,7 +146,7 @@ public class MessageBoxOptionsParam extends NSISParam
                 GridData data = new GridData(SWT.FILL,SWT.FILL,true,false);
                 data.horizontalSpan = 2;
                 buttons.setLayoutData(data);
-                buttons.setLayout(new GridLayout(2,true));
+                buttons.setLayout(new GridLayout(2,false));
                 mOthersButtons = new Button[others.length];
                 for (int i = 0; i < others.length; i++) {
                     mOthersButtons[i] = createCheckbox(buttons, others[i]);

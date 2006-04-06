@@ -21,7 +21,6 @@ import net.sf.eclipsensis.help.NSISHTMLHelp;
 import net.sf.eclipsensis.help.NSISHelpURLProvider;
 import net.sf.eclipsensis.job.IJobStatusRunnable;
 import net.sf.eclipsensis.job.JobScheduler;
-import net.sf.eclipsensis.settings.INSISPreferenceConstants;
 import net.sf.eclipsensis.settings.NSISPreferences;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.util.IOUtility;
@@ -151,13 +150,10 @@ public class NSISCommandDialog extends StatusMessageDialog
     {
         super(parent);
         mCommand = command;
-        setTitle(EclipseNSISPlugin.getResourceString("nsis.command.dialog.title")); //$NON-NLS-1$
+        setTitle(EclipseNSISPlugin.getResourceString("nsis.command.wizard.title")); //$NON-NLS-1$
         setShellImage(EclipseNSISPlugin.getShellImage());
-        mRemember = NSISPreferences.INSTANCE.getBoolean(INSISPreferenceConstants.NSIS_COMMAND_HELPER_REMEMBER);
-        if(mRemember) {
-            Map map = (Map)cCommandStateMap.get(mCommand.getName());
-            mSettings = (map==null?new HashMap():map);
-        }
+        mSettings = (Map)cCommandStateMap.get(mCommand.getName());
+        mRemember = (mSettings != null);
         mParamEditor = mCommand.createEditor();
         setParamEditorState();
         IDialogSettings dialogSettings = EclipseNSISPlugin.getDefault().getDialogSettings();
@@ -180,11 +176,22 @@ public class NSISCommandDialog extends StatusMessageDialog
         if(p.y < MIN_WINDOW_HEIGHT) {
             p.y = MIN_WINDOW_HEIGHT;
         }
+        int width = mParamEditorControl.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
+        Composite parent = mParamEditorControl.getParent();
+        while(parent != null) {
+            Layout layout = parent.getLayout();
+            if (layout instanceof GridLayout) {
+                GridLayout gridLayout = (GridLayout)layout;
+                width += 2*gridLayout.marginWidth;
+            }
+            parent = parent.getParent();
+        }
+        width = Math.max(width, MIN_WINDOW_WIDTH);
         if(mCollapseHelp) {
-            p.x = Math.max(p.x,MIN_WINDOW_WIDTH);
+            p.x = width;
         }
         else {
-            p.x = Math.max(p.x,2*MIN_WINDOW_WIDTH + ((GridLayout)mControl.getLayout()).horizontalSpacing);                        
+            p.x = 2*width + ((GridLayout)mControl.getLayout()).horizontalSpacing;                        
         }
         return p;
     }
@@ -243,12 +250,11 @@ public class NSISCommandDialog extends StatusMessageDialog
         StringBuffer buf = new StringBuffer(mCommand.getName());
         mParamEditor.appendText(buf);
         mCommandText = buf.toString();
-        NSISPreferences.INSTANCE.setValue(INSISPreferenceConstants.NSIS_COMMAND_HELPER_REMEMBER, mRemember);
         if(mRemember) {
             cCommandStateMap.put(mCommand.getName(), mSettings);
         }
         else {
-            cCommandStateMap.clear();
+            cCommandStateMap.remove(mCommand.getName());
         }
         super.okPressed();
     }
@@ -270,12 +276,12 @@ public class NSISCommandDialog extends StatusMessageDialog
         Label titleHeader = new Label(composite2,SWT.NONE);
         titleHeader.setBackground(white);
         makeBold(titleHeader);
-        titleHeader.setText(EclipseNSISPlugin.getResourceString("nsis.command.dialog.title")); //$NON-NLS-1$
+        titleHeader.setText(EclipseNSISPlugin.getResourceString("nsis.command.wizard.title")); //$NON-NLS-1$
         titleHeader.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false));
 
         Label titleSubHeader = new Label(composite2,SWT.WRAP);
         titleSubHeader.setBackground(white);
-        titleSubHeader.setText(EclipseNSISPlugin.getResourceString("nsis.command.dialog.subtitle")); //$NON-NLS-1$
+        titleSubHeader.setText(EclipseNSISPlugin.getResourceString("nsis.command.wizard.subtitle")); //$NON-NLS-1$
         GridData data = new GridData(SWT.FILL,SWT.FILL,true,true);
         data.horizontalIndent = convertHorizontalDLUsToPixels(IDialogConstants.INDENT);
         titleSubHeader.setLayoutData(data);
@@ -291,6 +297,19 @@ public class NSISCommandDialog extends StatusMessageDialog
         titleSeparator.setLayoutData(data);
 
         super.createControlAndMessageArea(parent);
+    }
+    
+    private Group wrapParamEditorControl(Composite parent)
+    {
+        Group g = new Group(parent,SWT.NONE);
+        g.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false));
+        GridLayout layout = new GridLayout(1,false);
+        layout.marginHeight = layout.marginWidth = 0;
+        layout.marginTop = 5;
+        g.setLayout(layout);
+        mParamEditorControl.setParent(g);
+        mParamEditorControl.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true));
+        return g;
     }
     
     protected Control createControl(Composite parent)
@@ -333,7 +352,21 @@ public class NSISCommandDialog extends StatusMessageDialog
         c.setLayout(layout);
         mParamEditorControl = mParamEditor.createControl(c);
         if(mParamEditorControl != null) {
-            mParamEditorControl.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false));
+            Group g;
+            if(mParamEditorControl instanceof Group) {
+                g = (Group)mParamEditorControl;
+                if(!Common.isEmpty(g.getText())) {
+                    g = wrapParamEditorControl(c);
+                }
+                else {
+                    mParamEditorControl.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false));
+                    ((GridLayout)g.getLayout()).marginTop = 5;
+                }
+            }
+            else {
+                g = wrapParamEditorControl(c);
+            }
+            g.setText(EclipseNSISPlugin.getResourceString("nsis.command.parameters.label")); //$NON-NLS-1$
         }
         
         c = new Composite(child,SWT.NONE);
@@ -344,7 +377,7 @@ public class NSISCommandDialog extends StatusMessageDialog
         layout.marginHeight = layout.marginWidth = 0;
         c.setLayout(layout);
         final Button button = new Button(c,SWT.CHECK);
-        button.setText(EclipseNSISPlugin.getResourceString("nsis.command.helper.remember.label")); //$NON-NLS-1$
+        button.setText(EclipseNSISPlugin.getResourceString("nsis.command.wizard.remember.label")); //$NON-NLS-1$
         button.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false));
         button.setSelection(mRemember);
 

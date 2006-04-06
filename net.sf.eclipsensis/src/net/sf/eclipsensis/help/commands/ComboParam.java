@@ -120,7 +120,7 @@ public abstract class ComboParam extends PrefixableParam
             super(parentEditor);
         }
 
-        protected String getParamText()
+        protected String getPrefixableParamText()
         {
             if(mChoicesViewer != null && isValid(mChoicesViewer.getCombo())) {
                 IStructuredSelection sel = (IStructuredSelection)mChoicesViewer.getSelection();

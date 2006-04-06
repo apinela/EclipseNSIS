@@ -469,7 +469,7 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
         return chmHelpURL;
     }
 
-    private String getHelpURL(String keyWord, boolean useEclipseHelp)
+    public String getHelpURL(String keyWord, boolean useEclipseHelp)
     {
         if(!Common.isEmpty(keyWord)) {
             checkHelpFile();

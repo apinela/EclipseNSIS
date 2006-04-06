@@ -95,7 +95,7 @@ public abstract class LocalFilesystemObjectParam extends SubstitutableParam
         {
             String error = validateLocalFilesystemObjectParam();
             if(error != null) {
-                String name = IOUtility.decodePath(getParamText());
+                String name = IOUtility.decodePath(getPrefixableParamText());
                 if(isAcceptSymbol() && testSymbol(name)) {
                     return null;
                 }

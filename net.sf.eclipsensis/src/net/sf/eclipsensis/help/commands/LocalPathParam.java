@@ -55,7 +55,7 @@ public class LocalPathParam extends LocalFileParam
             super.clear();
         }
 
-        protected String getParamText()
+        protected String getPrefixableParamText()
         {
             if(isValid(mPathText)) {
                 String path = IOUtility.decodePath(mPathText.getText());
@@ -90,12 +90,23 @@ public class LocalPathParam extends LocalFileParam
                 }
                 if(IOUtility.isValidPathName(path)) {
                     File file = new File(path);
-                    if(IOUtility.isValidDirectory(file)||IOUtility.isValidFile(file)) {
+                    if(file.isAbsolute()) {
+                        if(IOUtility.isValidDirectory(file)||IOUtility.isValidFile(file)) {
+                            return null;
+                        }
+                    }
+                    else {
                         return null;
                     }
                 }
                 else if(IOUtility.isValidPathSpec(path)) {
-                    if(WinAPI.ValidateWildcard(path)) {
+                    File file = new File(path);
+                    if(file.isAbsolute()) {
+                        if(WinAPI.ValidateWildcard(path)) {
+                            return null;
+                        }
+                    }
+                    else {
                         return null;
                     }
                 }

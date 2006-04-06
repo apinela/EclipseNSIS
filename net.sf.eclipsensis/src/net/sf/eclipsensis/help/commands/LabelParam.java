@@ -9,70 +9,30 @@
  *******************************************************************************/
 package net.sf.eclipsensis.help.commands;
 
-import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.XMLUtil;
+import net.sf.eclipsensis.EclipseNSISPlugin;
 
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.w3c.dom.Node;
 
-public class LabelParam extends SimpleParam
+public class LabelParam extends RegexpParam
 {
-    private String mValue;
-    
     public LabelParam(Node node)
     {
         super(node);
     }
-    
+
     protected void init(Node node)
     {
         super.init(node);
-        setValue(XMLUtil.getStringValue(node.getAttributes(), ATTR_VALUE,getName()));
+        mAllowBlank = true;
     }
 
-    public String getValue()
+    protected String getRegexp()
     {
-        return mValue;
+        return "0|\\+[1-9][0-9]*|\\-[1-9][0-9]*|[^\\+\\-0-9\\$\\!\"'`\\s].*"; //$NON-NLS-1$
     }
 
-    public void setValue(String value)
+    protected String getValidateErrorMessage()
     {
-        mValue = value;
-    }
-
-    protected String getDefaultValue()
-    {
-        return getValue();
-    }
-
-    protected SimpleParamEditor createSimpleParamEditor(INSISParamEditor parentEditor)
-    {
-        return new LabelParamEditor(parentEditor);
-    }
-
-    protected class LabelParamEditor extends SimpleParamEditor
-    {
-        public LabelParamEditor(INSISParamEditor parentEditor)
-        {
-            super(parentEditor);
-        }
-
-        protected void appendSimpleParamText(StringBuffer buf)
-        {
-            if(!Common.isEmpty(getValue())) {
-                buf.append(" ").append(maybeQuote(getValue())); //$NON-NLS-1$
-            }
-        }
-
-        protected Control createParamControl(Composite parent)
-        {
-            return null;
-        }
-
-        public String validateParam()
-        {
-            return null;
-        }
+        return EclipseNSISPlugin.getResourceString("label.param.error"); //$NON-NLS-1$
     }
 }

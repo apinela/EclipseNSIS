@@ -52,7 +52,7 @@ public class MultiChoiceParam extends ChoiceParam
             super.clear();
         }
 
-        protected String getParamText()
+        protected String getPrefixableParamText()
         {
             if(!Common.isEmptyArray(mChoiceButtons)) {
                 boolean first = true;
@@ -101,7 +101,7 @@ public class MultiChoiceParam extends ChoiceParam
         protected Control createParamControl(Composite parent)
         {
             parent = new Composite(parent,SWT.NONE);
-            GridLayout layout = new GridLayout(1,true);
+            GridLayout layout = new GridLayout(1,false);
             layout.marginHeight = layout.marginWidth = 0;
             parent.setLayout(layout);
             ComboEntry[] choices = getComboEntries();

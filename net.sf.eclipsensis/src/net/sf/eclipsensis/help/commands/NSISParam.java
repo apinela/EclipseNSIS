@@ -27,6 +27,7 @@ import org.w3c.dom.Node;
 
 public abstract class NSISParam
 {
+    public static final String ATTR_INCLUDE_PREVIOUS = "includePrevious"; //$NON-NLS-1$
     public static final String ATTR_OPTIONAL = "optional"; //$NON-NLS-1$
     public static final String SETTING_OPTIONAL = ATTR_OPTIONAL; 
     public static final String ATTR_NAME = "name"; //$NON-NLS-1$
@@ -38,6 +39,7 @@ public abstract class NSISParam
     private boolean mOptional;
     private MessageFormat mErrorFormat;
     private String mToolTip;
+    private boolean mIncludePrevious;
     
     public NSISParam(Node node)
     {
@@ -57,6 +59,17 @@ public abstract class NSISParam
         }
         setOptional(XMLUtil.getBooleanValue(attributes, ATTR_OPTIONAL));
         mToolTip = XMLUtil.getStringValue(attributes, ATTR_TOOLTIP);
+        setIncludePrevious(XMLUtil.getBooleanValue(node.getAttributes(), ATTR_INCLUDE_PREVIOUS));
+    }
+
+    protected boolean isIncludePrevious()
+    {
+        return mIncludePrevious;
+    }
+
+    protected void setIncludePrevious(boolean includePrevious)
+    {
+        mIncludePrevious = includePrevious;
     }
 
     public String getName()
@@ -101,6 +114,11 @@ public abstract class NSISParam
         return createParamEditor(parentEditor);
     }
     
+    protected String getDefaultValue()
+    {
+        return null;
+    }
+
     protected abstract NSISParamEditor createParamEditor(INSISParamEditor parentEditor);
 
     protected abstract class NSISParamEditor implements INSISParamEditor
@@ -400,6 +418,34 @@ public abstract class NSISParam
                 saveSettings();
             }
             if(isSelected()) {
+                internalAppendText(buf);
+            }
+        }
+
+        protected void internalAppendText(StringBuffer buf)
+        {
+            if(isOptional() && isIncludePrevious()) {
+                INSISParamEditor parentEditor = getParentEditor();
+                if(parentEditor != null) {
+                    List children = parentEditor.getChildEditors();
+                    if(!Common.isEmptyCollection(children)) {
+                        int n = children.indexOf(this);
+                        if(n > 0) {
+                            INSISParamEditor child = (INSISParamEditor)children.get(n-1);
+                            if(child instanceof NSISParamEditor && !child.isSelected()) {
+                                ((NSISParamEditor)child).internalAppendText(buf);
+                            }
+                        }
+                    }
+                }
+            }
+            if(!isSelected()) {
+                String defaultValue = getDefaultValue();
+                if(defaultValue != null) {
+                    buf.append(" ").append(maybeQuote(defaultValue)); //$NON-NLS-1$
+                }
+            }
+            else {
                 appendParamText(buf);
             }
         }
@@ -423,6 +469,23 @@ public abstract class NSISParam
                     error = mErrorFormat.format(new String[] {getName(),error});
                 }
                 return error;
+            }
+            else {
+                if(isOptional() && isIncludePrevious()) {
+                    INSISParamEditor parentEditor = getParentEditor();
+                    if(parentEditor != null) {
+                        List children = parentEditor.getChildEditors();
+                        if(!Common.isEmptyCollection(children)) {
+                            int n = children.indexOf(this);
+                            if(n > 1) {
+                                INSISParamEditor child = (INSISParamEditor)children.get(n-1);
+                                if(child instanceof NSISParamEditor && !child.isSelected()) {
+                                    return ((NSISParamEditor)child).internalValidate();
+                                }
+                            }
+                        }
+                    }
+                }
             }
             return null;
         }
@@ -449,8 +512,8 @@ public abstract class NSISParam
             }
         }
 
-        protected abstract String validateParam();
         protected abstract void appendParamText(StringBuffer buf);
         protected abstract Control createParamControl(Composite parent); 
+        protected abstract String validateParam();
     }
 }

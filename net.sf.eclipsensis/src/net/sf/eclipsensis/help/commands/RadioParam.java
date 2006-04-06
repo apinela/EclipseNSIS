@@ -20,8 +20,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.*;
 import org.w3c.dom.Node;
 
 public class RadioParam extends GroupParam
@@ -121,22 +120,27 @@ public class RadioParam extends GroupParam
             mRadioButtonMap.put(editor, radioButton);
             super.createChildParamControl(parent, editor);
             if(editor instanceof NSISParamEditor) {
-                if(isValid(((NSISParamEditor)editor).mNameLabel)) {
+                Label nameLabel = ((NSISParamEditor)editor).mNameLabel;
+                if(isValid(nameLabel)) {
                     //Steal the name
-                    radioButton.setText(((NSISParamEditor)editor).mNameLabel.getText());
-                    ((NSISParamEditor)editor).mNameLabel.setText("");
-                    Composite parent2 = ((NSISParamEditor)editor).mNameLabel.getParent();
+                    radioButton.setText(nameLabel.getText());
+                    nameLabel.setText(""); //$NON-NLS-1$
+                    Composite parent2 = nameLabel.getParent();
                     GridLayout layout = (GridLayout)parent2.getLayout();
-                    GridData data = (GridData)((NSISParamEditor)editor).mNameLabel.getLayoutData();
+                    GridData data = (GridData)nameLabel.getLayoutData();
                     if(layout.numColumns > data.horizontalSpan) {
+                        GridData data2;
                         if(isValid(((NSISParamEditor)editor).mControl)) {
-                            GridData data2 = (GridData)((NSISParamEditor)editor).mControl.getLayoutData();
-                            data2.horizontalSpan += data.horizontalSpan;
-                            data2.grabExcessHorizontalSpace |= data.grabExcessHorizontalSpace;
-                            data2.grabExcessVerticalSpace |= data.grabExcessVerticalSpace;
-                            mNameLabel.dispose();
-                            parent2.layout(true);
+                            data2 = (GridData)((NSISParamEditor)editor).mControl.getLayoutData();
                         }
+                        else {
+                            data2 = (GridData)radioButton.getLayoutData();
+                        }
+                        data2.horizontalSpan += data.horizontalSpan;
+                        data2.grabExcessHorizontalSpace |= data.grabExcessHorizontalSpace;
+                        data2.grabExcessVerticalSpace |= data.grabExcessVerticalSpace;
+                        nameLabel.dispose();
+                        parent2.layout(true);
                     }
                 }
             }

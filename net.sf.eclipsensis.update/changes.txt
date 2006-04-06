@@ -1,5 +1,8 @@
 Revision History
 ================
 
+0.9.5 (01/26/2006)
+    * Minor bug fixes.
+
 0.9.4 (01/26/2006)
     * First public release of EclipseNSIS Update plugin.

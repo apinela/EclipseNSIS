@@ -52,13 +52,13 @@ public class NumberParam extends RegexpParam
             buf.append(getSymbolRegexp()).append("|"); //$NON-NLS-1$
         }
         if(mDomain == DOMAIN_NATURAL) {
-            buf.append("0x[0-9a-f]+|0[0-7]+|\\+?[0-9]+"); //$NON-NLS-1$
+            buf.append("0x[0-9a-f]+|0[0-7]+|[0-9]+"); //$NON-NLS-1$
         }
         else if(mDomain == DOMAIN_POSITIVE) {
-            buf.append("0x[0-9a-f]*[1-9a-f][0-9a-f]*|0[0-7]*[1-7][0-7]*|\\+?[0-9]*[1-9][0-9]*"); //$NON-NLS-1$
+            buf.append("0x[0-9a-f]*[1-9a-f][0-9a-f]*|0[0-7]*[1-7][0-7]*|[0-9]*[1-9][0-9]*"); //$NON-NLS-1$
         }
         else {
-            buf.append("0x[0-9a-f]+|0[0-7]+|[\\+\\-]?[0-9]+"); //$NON-NLS-1$
+            buf.append("0x[0-9a-f]+|0[0-7]+|\\-?[0-9]+"); //$NON-NLS-1$
         }
         return buf.toString();
     }
@@ -84,7 +84,7 @@ public class NumberParam extends RegexpParam
     public boolean verifyText(String text)
     {
         if(text != null && text.length() > 0) {
-            return ((isAcceptSymbol() || isAcceptVar()) && text.charAt(0)=='$') || mPattern.matcher(text).matches() || "+".equals(text) || (mDomain == null && "-".equals(text)); //$NON-NLS-1$ //$NON-NLS-2$
+            return ((isAcceptSymbol() || isAcceptVar()) && text.charAt(0)=='$') || mPattern.matcher(text).matches() || (mDomain == null && "-".equals(text)); //$NON-NLS-1$ 
         }
         return super.verifyText(text);
     }

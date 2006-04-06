@@ -61,4 +61,9 @@ function redirectNSISContrib(url)
     }
     _redirectNSIS("/net.sf.eclipsensis/help/NSIS/Contrib", url);
 }
+
+function redirectNSISKeyword(keyword)
+{
+    _redirectNSIS("/net.sf.eclipsensis/help/NSIS/keyword/", url);
+}
 //-->

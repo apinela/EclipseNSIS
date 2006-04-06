@@ -16,6 +16,7 @@
     <topic label="Editing NSIS Scripts" href="help/editing.html"/>
     <topic label="Compiling and Testing" href="help/compiling.html"/>
     <topic label="Console" href="help/console.html"/>
+    <topic label="Command Wizard" href="help/cmdwizard.html"/>
     <topic label="Script Wizard" href="help/wizard.html">
         <topic label="Welcome" href="help/wizwelcome.html"/>
         <topic label="General Information" href="help/wizgeneral.html"/>

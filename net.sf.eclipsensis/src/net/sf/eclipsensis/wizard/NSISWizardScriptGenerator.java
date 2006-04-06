@@ -743,7 +743,7 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
                 }
                 else {
                     if(isMUI) {
-                        mUnOnInitFunction.addElement(new NSISScriptInsertMacro("MUI_STARTMENU_GETFOLDER",new String[] {"Application","$StartMenuGroup"})); //$NON-NLS-1$ //$NON-NLS-2$
+                        mUnOnInitFunction.addElement(new NSISScriptInsertMacro("MUI_STARTMENU_GETFOLDER",new String[] {"Application","$StartMenuGroup"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                     }
                     else {
                         mUnOnInitFunction.addElement(new NSISScriptInstruction("ReadRegStr", new String[]{"$StartMenuGroup",getKeyword("HKLM"),Common.quote("${REGKEY}"),"StartMenuGroup"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$

@@ -111,7 +111,7 @@ public class LocalFileParam extends LocalFilesystemObjectParam
             return null;
         }
 
-        protected String getParamText()
+        protected String getPrefixableParamText()
         {
             if(isValid(mFileText)) {
                 String file = IOUtility.decodePath(mFileText.getText());
