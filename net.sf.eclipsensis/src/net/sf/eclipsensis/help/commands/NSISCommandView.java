@@ -13,6 +13,7 @@ import java.util.*;
 import java.util.List;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.editor.NSISEditor;
 import net.sf.eclipsensis.settings.*;
 import net.sf.eclipsensis.util.*;
@@ -28,6 +29,7 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
 public class NSISCommandView extends ViewPart implements INSISHomeListener
@@ -221,6 +223,7 @@ public class NSISCommandView extends ViewPart implements INSISHomeListener
         });
         makeActions();
         updateInput();
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(mViewer.getControl(),INSISConstants.PLUGIN_CONTEXT_PREFIX + "nsis_cmdview_context");
     }
 
     public void setFocus()

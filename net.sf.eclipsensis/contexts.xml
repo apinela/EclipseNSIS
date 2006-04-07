@@ -165,4 +165,17 @@
         <topic label="Automatic NSIS Updates Preference page" href="help/schedulerprefs.html"/>
         <topic label="NSIS Update" href="help/update.html"/>
     </context>
+    <context id="nsis_outline_context">
+        <description>The NSIS Code Outline view lists structural elements in the NSIS script being currently edited.</description>
+        <topic label="NSIS Code Outline" href="help/editing.html#outline"/>
+        <topic label="EclipseNSIS Editor" href="help/editing.html"/>
+    </context>
+    <context id="nsis_cmdview_context">
+        <description>The NSIS Commands view lists of all available NSIS commands currently supported by the NSIS Command Wizard.</description>
+        <topic label="NSIS Commands View" href="help/cmdwizard.html#commandsview"/>
+    </context>
+    <context id="nsis_cmdwizard_context">
+        <description>The Command Wizard provides a graphical interface for generating syntactically correct NSIS command text in the EclipseNSIS editor.</description>
+        <topic label="NSIS Command Wizard" href="help/cmdwizard.html#commandwizard"/>
+    </context>
 </contexts>

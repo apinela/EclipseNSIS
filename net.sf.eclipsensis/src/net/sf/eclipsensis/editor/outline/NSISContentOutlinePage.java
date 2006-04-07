@@ -9,6 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.editor.outline;
 
+import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.editor.NSISEditor;
 
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -16,6 +17,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 
@@ -55,7 +57,6 @@ public class NSISContentOutlinePage extends ContentOutlinePage
      */
     public void createControl(Composite parent)
     {
-
         super.createControl(parent);
         if(mEditor != null) {
             NSISOutlineContentResources.getInstance().connect(this);
@@ -76,6 +77,7 @@ public class NSISContentOutlinePage extends ContentOutlinePage
                 }
             }
         }
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),INSISConstants.PLUGIN_CONTEXT_PREFIX + "nsis_outline_context");
     }
 
     /* (non-Javadoc)

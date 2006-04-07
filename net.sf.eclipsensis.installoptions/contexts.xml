@@ -16,9 +16,24 @@
         <topic label="Editing InstallOptions Scripts" href="help/editing.html"/>
         <topic label="Design Editor" href="help/designeditor.html"/>
     </context>
+    <context id="installoptions_designoutline_context">
+        <description>The EclipseNSIS InstallOptions Design Outline and Overview view shows either a list of the controls or a thumbnail image of the InstallOptions dialog.</description>
+        <topic label="Design Outline and Overview" href="help/designeditor2.html#outline"/>
+        <topic label="Design Editor" href="help/designeditor.html"/>
+    </context>
+    <context id="installoptions_designproperties_context">
+        <description>The Properties view is used to modify the settings of the controls in the EclipseNSIS InstallOptions Design editor.</description>
+        <topic label="Properties View" href="help/designeditor2.html#properties"/>
+        <topic label="Properties View (Eclipse)" href="../org.eclipse.platform.doc.user/concepts/cpropview.htm"/>
+    </context>
     <context id="installoptions_sourceeditor_context">
         <description>The EclipseNSIS InstallOptions Source Editor provides a text-based interface for editing InstallOptions dialog scripts.</description>
         <topic label="Editing InstallOptions Scripts" href="help/editing.html"/>
+        <topic label="Source Editor" href="help/sourceeditor.html"/>
+    </context>
+    <context id="installoptions_sourceoutline_context">
+        <description>The EclipseNSIS InstallOptions Source Code Outline view shows a list of the controls in the InstallOptions dialog script.</description>
+        <topic label="Source Code Outline" href="help/sourceeditor.html#outline"/>
         <topic label="Source Editor" href="help/sourceeditor.html"/>
     </context>
     <context id="installoptions_preferences_context">

@@ -12,6 +12,7 @@ package net.sf.eclipsensis.installoptions.properties;
 import java.util.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.ini.*;
 import net.sf.eclipsensis.installoptions.model.*;
@@ -29,6 +30,7 @@ import org.eclipse.ui.views.properties.PropertySheetEntry;
 
 public class InstallOptionsPropertySheetEntry extends PropertySheetEntry
 {
+    private static final String HELP_CONTEXT = IInstallOptionsConstants.PLUGIN_CONTEXT_PREFIX+"installoptions_designproperties_context"; //$NON-NLS-1$
     private CommandStackListener mCommandStackListener;
 
     private CommandStack mStack;
@@ -59,6 +61,15 @@ public class InstallOptionsPropertySheetEntry extends PropertySheetEntry
             mStack.removeCommandStackListener(mCommandStackListener);
         }
         super.dispose();
+    }
+
+    public Object getHelpContextIds()
+    {
+        Object helpContextIds = super.getHelpContextIds();
+        if(helpContextIds == null) {
+            helpContextIds = HELP_CONTEXT;
+        }
+        return helpContextIds;
     }
 
     CommandStack getCommandStack() 

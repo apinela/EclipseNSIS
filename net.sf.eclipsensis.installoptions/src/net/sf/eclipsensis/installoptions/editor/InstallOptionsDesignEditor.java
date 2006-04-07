@@ -1772,6 +1772,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
             configureOutlineViewer();
             hookOutlineViewer();
             initializeOutlineViewer();
+            PlatformUI.getWorkbench().getHelpSystem().setHelp(mPageBook,IInstallOptionsConstants.PLUGIN_CONTEXT_PREFIX + "installoptions_designoutline_context");
         }
 
         public void dispose()

@@ -906,6 +906,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
                 }
                 
             });
+            PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),IInstallOptionsConstants.PLUGIN_CONTEXT_PREFIX + "installoptions_sourceoutline_context");
         }
 
         public void dispose()

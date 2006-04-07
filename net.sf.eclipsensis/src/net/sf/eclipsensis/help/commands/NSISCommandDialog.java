@@ -13,8 +13,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.IEclipseNSISService;
+import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.dialogs.StatusMessageDialog;
 import net.sf.eclipsensis.editor.codeassist.*;
 import net.sf.eclipsensis.help.NSISHTMLHelp;
@@ -36,6 +35,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.PlatformUI;
 
 public class NSISCommandDialog extends StatusMessageDialog
 {
@@ -459,6 +459,7 @@ public class NSISCommandDialog extends StatusMessageDialog
         
         getShell().getDisplay().addFilter(SWT.Modify, mFilter);
         getShell().getDisplay().addFilter(SWT.Selection, mFilter);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(composite,INSISConstants.PLUGIN_CONTEXT_PREFIX + "nsis_cmdwizard_context");
         return composite;
     }
 
