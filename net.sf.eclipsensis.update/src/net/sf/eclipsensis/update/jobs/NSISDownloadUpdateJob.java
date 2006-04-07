@@ -77,11 +77,15 @@ class NSISDownloadUpdateJob extends NSISHttpUpdateJob
             
             int length = conn.getContentLength();
             int bufsize = 32768;
+            MessageFormat mf = null;
+            String[] args = null;
             if(length <= 0) {
                 monitor.beginTask(getName(), IProgressMonitor.UNKNOWN);
             }
             else {
-                monitor.beginTask(getName(), 101);
+                mf = new MessageFormat(EclipseNSISUpdatePlugin.getResourceString("download.update.progress.format")); //$NON-NLS-1$
+                args = new String[] {getName(),"0"};
+                monitor.beginTask(mf.format(args), 101);
             }
             monitor.worked(1);
             if (monitor.isCanceled()) {
@@ -111,6 +115,8 @@ class NSISDownloadUpdateJob extends NSISHttpUpdateJob
                         
                         if(length > 0) {
                             int newWorked = Math.round(totalread*100/length);
+                            args[1]=Integer.toString(newWorked);
+                            monitor.setTaskName(mf.format(args));
                             monitor.worked(newWorked-worked);
                             worked = newWorked;
                         }
@@ -124,6 +130,8 @@ class NSISDownloadUpdateJob extends NSISHttpUpdateJob
                     fileChannel.write(buf);
                 }
                 if(length > 0) {
+                    args[1]="100";
+                    monitor.setTaskName(mf.format(args));
                     monitor.worked(100-worked);
                 }
                 fileChannel.close();
