@@ -393,13 +393,17 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
     {
         List oldFlags = retainSupportedFlags(getFlags());
         List newFlags = retainSupportedFlags(flags);
-        mFlags = flags;
+        boolean dirty = false;
+        if (!getFlags().equals(flags)) {
+        	dirty = true;
+            mFlags = flags;
+        }        
         if(!oldFlags.equals(newFlags)) {
             firePropertyChange(InstallOptionsModel.PROPERTY_FLAGS,oldFlags,newFlags);
         }
-        if (!mFlags.equals(flags)) {
+        if(dirty) {
             setDirty(true);
-        }        
+        }
     }
 
     private int toGraphical(int value, int refValue)

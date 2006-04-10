@@ -2,27 +2,21 @@
 !include "MUI.nsh"
 !endif
 XPStyle on
-!ifdef PREVIEW_NAME
-Name "${PREVIEW_NAME}"
-!else
-Name "InstallOptions Preview"
+!ifndef PREVIEW_NAME
+!define PREVIEW_NAME "InstallOptions Preview"
 !endif
+Name "${PREVIEW_NAME}"
 OutFile "preview.exe"
 
 ReserveFile "${NSISDIR}\Plugins\InstallOptions.dll"
 ReserveFile "${PREVIEW_INI}"
+!ifndef PREVIEW_LANG
+!define PREVIEW_LANG "English"
+!endif
 !ifdef PREVIEW_MUI
-!ifdef PREVIEW_LANG
 !insertmacro MUI_LANGUAGE "${PREVIEW_LANG}"
 !else
-!insertmacro MUI_LANGUAGE "English"
-!endif
-!else
-!ifdef PREVIEW_LANG
 LoadLanguageFile "${NSISDIR}\Contrib\Language files\${PREVIEW_LANG}.nlf"
-!else
-LoadLanguageFile "${NSISDIR}\Contrib\Language files\English.nlf"
-!endif
 !endif
 
 ;Order of pages
@@ -31,11 +25,10 @@ Page custom Preview LeavePreview ""
 Page custom dummy2 "" ""
 
 !ifndef PREVIEW_MUI
-!ifdef PREVIEW_BRANDING
-BrandingText "${PREVIEW_BRANDING}"
-!else
-BrandingText "Click any button to close"
+!ifndef PREVIEW_BRANDING
+!define PREVIEW_BRANDING "Click any button to close"
 !endif  
+BrandingText "${PREVIEW_BRANDING}"
  
 Function .onGUIInit
   GetDlgItem $0 $HWNDPARENT 1028
@@ -50,6 +43,7 @@ Function LeavePreview
   Push $R0
   ReadINIStr $R0 "$PLUGINSDIR\preview.ini" "Settings" "State"
   StrCmp $R0 0 done
+  MessageBox MB_OK "Field $R0: NOTIFY"
   Pop $R0
   Abort
   
@@ -62,17 +56,13 @@ Function Preview
   Push $R0
   File /oname=$PLUGINSDIR\preview.ini "${PREVIEW_INI}"
 !ifdef PREVIEW_MUI
-!ifdef PREVIEW_TITLE
-  !define IO_TITLE "${PREVIEW_TITLE}"
-!else
-  !define IO_TITLE "InstallOptions Preview"
+!ifndef PREVIEW_TITLE
+  !define PREVIEW_TITLE "InstallOptions Preview"
 !endif  
-!ifdef PREVIEW_SUBTITLE
-  !define IO_SUBTITLE "${PREVIEW_SUBTITLE}"
-!else
-  !define IO_SUBTITLE "Click any button to close"
+!ifndef PREVIEW_SUBTITLE
+  !define PREVIEW_SUBTITLE "Click any button to close"
 !endif  
-  !insertmacro MUI_HEADER_TEXT "${IO_TITLE}" "${IO_SUBTITLE}"
+  !insertmacro MUI_HEADER_TEXT "${PREVIEW_TITLE}" "${PREVIEW_SUBTITLE}"
   !insertmacro MUI_INSTALLOPTIONS_DISPLAY_RETURN "preview.ini"
 !else
   InstallOptions::dialog "$PLUGINSDIR\preview.ini"

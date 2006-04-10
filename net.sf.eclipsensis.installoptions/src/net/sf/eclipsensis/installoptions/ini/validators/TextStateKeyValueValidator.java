@@ -15,18 +15,24 @@ import net.sf.eclipsensis.installoptions.ini.*;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
 import net.sf.eclipsensis.util.Common;
 
-public class TextStateKeyValueValidator implements IINIKeyValueValidator
+public class TextStateKeyValueValidator extends MultiLineKeyValueValidator
 {
     public boolean validate(INIKeyValue keyValue, int fixFlag)
     {
         String value = keyValue.getValue();
+        boolean hasProblems = false;
         if(!Common.isEmpty(value)) {
             INIKeyValue[] keyValues = ((INISection)keyValue.getParent()).findKeyValues(InstallOptionsModel.PROPERTY_FLAGS);
             if(!Common.isEmptyArray(keyValues)) {
                 String[] flags = Common.tokenize(keyValues[0].getValue(),IInstallOptionsConstants.LIST_SEPARATOR,false);
                 if(!Common.isEmptyArray(flags)) {
                     for (int i = 0; i < flags.length; i++) {
-                        if(flags[i].equalsIgnoreCase(InstallOptionsModel.FLAGS_ONLY_NUMBERS)) {
+                        if(flags[i].equalsIgnoreCase(InstallOptionsModel.FLAGS_MULTILINE)) {
+                            if(!super.validate(keyValue, fixFlag)) {
+                                hasProblems = true;
+                            }
+                        }
+                        else if(flags[i].equalsIgnoreCase(InstallOptionsModel.FLAGS_ONLY_NUMBERS)) {
                             try {
                                 Integer.parseInt(value);
                             }
@@ -46,7 +52,7 @@ public class TextStateKeyValueValidator implements IINIKeyValueValidator
                                             InstallOptionsPlugin.getFormattedString("text.state.only.numbers.error", //$NON-NLS-1$
                                                     new String[]{InstallOptionsModel.PROPERTY_STATE,
                                                     InstallOptionsModel.FLAGS_ONLY_NUMBERS}));
-                                    return false;
+                                    hasProblems = true;
                                 }
                             }
                         }
@@ -54,6 +60,6 @@ public class TextStateKeyValueValidator implements IINIKeyValueValidator
                 }
             }
         }
-        return true;
+        return !hasProblems;
     }
 }
