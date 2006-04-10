@@ -454,13 +454,24 @@ JNIEXPORT jint JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetSystemMetrics(JNIE
     return GetSystemMetrics(index);
 }
 
-JNIEXPORT void JNICALL Java_net_sf_eclipsensis_util_WinAPI_SetObjectFieldValue(JNIEnv *pEnv, jclass jClass, jobject object, jstring field, jint value)
+JNIEXPORT void JNICALL Java_net_sf_eclipsensis_util_WinAPI_SetIntFieldValue(JNIEnv *pEnv, jclass jClass, jobject object, jstring field, jint value)
 {
     jclass clasz = pEnv->GetObjectClass(object);
     LPCSTR fieldName = (LPCSTR)pEnv->GetStringUTFChars(field, 0);
     jfieldID fieldId = pEnv->GetFieldID(clasz,fieldName,_T("I"));
     pEnv->ReleaseStringUTFChars(field, fieldName);
     pEnv->SetIntField(object, fieldId, value);
+}
+
+JNIEXPORT jobject JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetObjectFieldValue(JNIEnv *pEnv, jclass jClass, jobject object, jstring field, jstring signature)
+{
+    jclass clasz = pEnv->GetObjectClass(object);
+    LPCSTR fieldName = (LPCSTR)pEnv->GetStringUTFChars(field, 0);
+    LPCSTR sign = (LPCSTR)pEnv->GetStringUTFChars(signature, 0);
+    jfieldID fieldId = pEnv->GetFieldID(clasz,fieldName,sign);
+    pEnv->ReleaseStringUTFChars(field, fieldName);
+    pEnv->ReleaseStringUTFChars(signature, sign);
+    return pEnv->GetObjectField(object, fieldId);
 }
 
 JNIEXPORT jstring JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetEnvironmentVariable(JNIEnv *pEnv, jclass jClass, jstring name)

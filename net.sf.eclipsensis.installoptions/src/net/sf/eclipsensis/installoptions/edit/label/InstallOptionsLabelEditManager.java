@@ -10,6 +10,9 @@
 package net.sf.eclipsensis.installoptions.edit.label;
 
 import net.sf.eclipsensis.installoptions.edit.uneditable.InstallOptionsUneditableElementEditManager;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsUneditableElement;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsWidget;
+import net.sf.eclipsensis.installoptions.util.TypeConverter;
 
 import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.gef.tools.CellEditorLocator;
@@ -20,6 +23,15 @@ public class InstallOptionsLabelEditManager extends InstallOptionsUneditableElem
     public InstallOptionsLabelEditManager(GraphicalEditPart source, Class editorType, CellEditorLocator locator)
     {
         super(source, editorType, locator);
+    }
+
+    /**
+     * @param control
+     * @return
+     */
+    protected String getInitialText(InstallOptionsWidget control)
+    {
+        return TypeConverter.ESCAPED_STRING_CONVERTER.asString(((InstallOptionsUneditableElement)control).getText());
     }
 
     protected int getCellEditorStyle()

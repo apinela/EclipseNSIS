@@ -13,6 +13,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
+import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.dnd.InstallOptionsTemplateTransfer;
 import net.sf.eclipsensis.installoptions.model.*;
 import net.sf.eclipsensis.util.WinAPI;
@@ -88,7 +89,12 @@ public class InstallOptionsGraphicalViewer extends GraphicalViewerImpl
                             style &= ~SWT.RIGHT_TO_LEFT;
                         }
                         WinAPI.SetWindowLong(canvas.handle,WinAPI.GWL_EXSTYLE,windowsStyle);
-                        WinAPI.SetObjectFieldValue(canvas,"style",style); //$NON-NLS-1$
+                        try {
+                            WinAPI.SetIntFieldValue(canvas, "style", style); //$NON-NLS-1$
+                        }
+                        catch (Throwable t) {
+                            InstallOptionsPlugin.getDefault().log(t);
+                        }                        
                         getRootFigure().repaint();
                     }
                     else if(property.equals(DialogSizeManager.PROPERTY_DIALOGSIZES)) {

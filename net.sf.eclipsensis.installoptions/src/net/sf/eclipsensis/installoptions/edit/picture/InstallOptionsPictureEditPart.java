@@ -11,6 +11,7 @@ package net.sf.eclipsensis.installoptions.edit.picture;
 
 import net.sf.eclipsensis.installoptions.edit.InstallOptionsWidgetEditPart;
 import net.sf.eclipsensis.installoptions.edit.label.InstallOptionsLabelEditPart;
+import net.sf.eclipsensis.installoptions.edit.uneditable.UneditableElementDirectEditPolicy;
 import net.sf.eclipsensis.installoptions.figures.*;
 import net.sf.eclipsensis.installoptions.figures.FigureUtility.NTFigure;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsPicture;
@@ -38,7 +39,12 @@ public abstract class InstallOptionsPictureEditPart extends InstallOptionsLabelE
         }
     }
 
-    protected DirectEditManager creatDirectEditManager(InstallOptionsWidgetEditPart part, Class clasz, CellEditorLocator locator)
+    protected UneditableElementDirectEditPolicy createDirectEditPolicy()
+    {
+        return null;
+    }
+
+   protected DirectEditManager creatDirectEditManager(InstallOptionsWidgetEditPart part, Class clasz, CellEditorLocator locator)
     {
         return null;
     }

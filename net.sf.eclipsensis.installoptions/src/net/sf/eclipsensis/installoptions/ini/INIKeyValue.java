@@ -13,7 +13,6 @@ import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.ini.validators.IINIKeyValueValidator;
 import net.sf.eclipsensis.installoptions.ini.validators.INIKeyValueValidatorRegistry;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
-import net.sf.eclipsensis.installoptions.util.TypeConverter;
 import net.sf.eclipsensis.util.Common;
 
 public class INIKeyValue extends INILine
@@ -55,7 +54,7 @@ public class INIKeyValue extends INILine
 
     public void setValue(String value)
     {
-        mValue = (value==null?"":TypeConverter.INI_STRING_CONVERTER.asString(value)); //$NON-NLS-1$
+        mValue = (value==null?"":value); //$NON-NLS-1$
     }
 
     protected void checkProblems(int fixFlag)
@@ -116,7 +115,7 @@ public class INIKeyValue extends INILine
             String text = getText();
             StringBuffer buf = new StringBuffer();
             boolean oldQuoted = mQuoted;
-            String current = (String)TypeConverter.INI_STRING_CONVERTER.asType(maybeQuote(mValue));
+            String current = maybeQuote(mValue);
 
             if(Common.isEmpty(text)) {
                 text = buf.append(mKey).append("=").append(current).toString(); //$NON-NLS-1$
@@ -131,7 +130,7 @@ public class INIKeyValue extends INILine
                     }
                 }
                 else {
-                    String original = (String)TypeConverter.INI_STRING_CONVERTER.asType(oldQuoted?quote(mOriginalValue):mOriginalValue);
+                    String original = (oldQuoted?quote(mOriginalValue):mOriginalValue);
                     n = text.indexOf(original,n);
                     buf.append(text.substring(0,n));
                     buf.append(current);

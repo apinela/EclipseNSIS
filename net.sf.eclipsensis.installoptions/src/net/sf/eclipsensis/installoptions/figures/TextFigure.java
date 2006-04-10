@@ -12,6 +12,7 @@ package net.sf.eclipsensis.installoptions.figures;
 import java.util.List;
 
 import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
+import net.sf.eclipsensis.installoptions.util.TypeConverter;
 import net.sf.eclipsensis.util.WinAPI;
 
 import org.eclipse.swt.SWT;
@@ -99,10 +100,14 @@ public class TextFigure extends EditableElementFigure
             }
         }
         Text text = new Text(parent, style);
+        String state = getState();
         if(!isMultiLine()) {
             createScrollBars(text);
         }
-        text.setText(getState());
+        else {
+            state = TypeConverter.ESCAPED_STRING_CONVERTER.asString(state);
+        }
+        text.setText(state);
         return text;
     }
 

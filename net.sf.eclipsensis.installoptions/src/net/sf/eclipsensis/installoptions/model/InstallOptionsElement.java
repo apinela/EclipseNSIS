@@ -137,23 +137,28 @@ public abstract class InstallOptionsElement implements IPropertySource, Cloneabl
             listeners[i].executeModelCommand(e);
         }
     }
+    
+    public final IPropertyDescriptor getPropertyDescriptor(String name)
+    {
+        IPropertyDescriptor descriptor = (IPropertyDescriptor)mDescriptors.get(name);
+        if(descriptor == null) {
+            descriptor = createPropertyDescriptor(name);
+            if(descriptor != null) {
+                mDescriptors.put(name,descriptor);
+            }
+            else {
+                mDescriptors.put(name, (descriptor = cNullPropertyDescriptor));
+            }
+        }
+        return descriptor;
+    }
 
     public final IPropertyDescriptor[] getPropertyDescriptors()
     {
         Collection names = getPropertyNames();
         ArrayList list = new ArrayList();
         for (Iterator iter = names.iterator(); iter.hasNext();) {
-            String name = (String)iter.next();
-            IPropertyDescriptor descriptor = (IPropertyDescriptor)mDescriptors.get(name);
-            if(descriptor == null) {
-                descriptor = createPropertyDescriptor(name);
-                if(descriptor != null) {
-                    mDescriptors.put(name,descriptor);
-                }
-                else {
-                    mDescriptors.put(name, (descriptor = cNullPropertyDescriptor));
-                }
-            }
+            IPropertyDescriptor descriptor = getPropertyDescriptor((String)iter.next());
             if(descriptor != cNullPropertyDescriptor) {
                 list.add(descriptor);
             }

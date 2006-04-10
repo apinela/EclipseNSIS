@@ -11,6 +11,9 @@ package net.sf.eclipsensis.installoptions.edit.text;
 
 import net.sf.eclipsensis.installoptions.edit.editable.InstallOptionsEditableElementEditManager;
 import net.sf.eclipsensis.installoptions.figures.TextFigure;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsWidget;
+import net.sf.eclipsensis.installoptions.util.TypeConverter;
 
 import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.gef.tools.CellEditorLocator;
@@ -27,6 +30,16 @@ public class InstallOptionsTextEditManager extends InstallOptionsEditableElement
     public InstallOptionsTextEditManager(GraphicalEditPart source, Class editorType, CellEditorLocator locator)
     {
         super(source, editorType, locator);
+    }
+
+    protected String getInitialText(InstallOptionsWidget control)
+    {
+        String text = super.getInitialText(control);
+        if(control.getTypeDef().getFlags().contains(InstallOptionsModel.FLAGS_MULTILINE) &&
+           control.getFlags().contains(InstallOptionsModel.FLAGS_MULTILINE)) {
+            text = TypeConverter.ESCAPED_STRING_CONVERTER.asString(text);
+        }
+        return text;
     }
 
     protected CellEditor createCellEditor(Composite composite)

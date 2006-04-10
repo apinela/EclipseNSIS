@@ -13,8 +13,8 @@ import java.util.List;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.ini.INISection;
-import net.sf.eclipsensis.installoptions.properties.validators.NSISStringLengthValidator;
-import net.sf.eclipsensis.installoptions.properties.validators.NumberCellEditorValidator;
+import net.sf.eclipsensis.installoptions.properties.descriptors.MultiLineTextPropertyDescriptor;
+import net.sf.eclipsensis.installoptions.properties.validators.*;
 
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.TextPropertyDescriptor;
@@ -138,8 +138,8 @@ public abstract class InstallOptionsEditableElement extends InstallOptionsWidget
         }
         else if(name.equals(InstallOptionsModel.PROPERTY_VALIDATETEXT)) {
             String propertyName = InstallOptionsPlugin.getResourceString("validatetext.property.name"); //$NON-NLS-1$;
-            TextPropertyDescriptor descriptor = new TextPropertyDescriptor(InstallOptionsModel.PROPERTY_VALIDATETEXT, propertyName);
-            descriptor.setValidator(new NSISStringLengthValidator(propertyName));
+            TextPropertyDescriptor descriptor = new MultiLineTextPropertyDescriptor(InstallOptionsModel.PROPERTY_VALIDATETEXT, propertyName);
+            descriptor.setValidator(new NSISEscapedStringLengthValidator(propertyName));
             return descriptor;
         }
         else {

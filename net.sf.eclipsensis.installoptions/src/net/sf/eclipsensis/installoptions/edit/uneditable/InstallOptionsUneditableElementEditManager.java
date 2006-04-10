@@ -10,8 +10,7 @@
 package net.sf.eclipsensis.installoptions.edit.uneditable;
 
 import net.sf.eclipsensis.installoptions.edit.InstallOptionsDirectEditManager;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsUneditableElement;
+import net.sf.eclipsensis.installoptions.model.*;
 
 import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.gef.tools.CellEditorLocator;
@@ -27,11 +26,13 @@ public abstract class InstallOptionsUneditableElementEditManager extends Install
         super(source, editorType, locator);
     }
 
-    protected void initCellEditor()
+    protected String getInitialText(InstallOptionsWidget control)
     {
-        InstallOptionsUneditableElement control = (InstallOptionsUneditableElement)getEditPart().getModel();
-        String initialText = control.getText();
-        getCellEditor().setValue(initialText);
+        return ((InstallOptionsUneditableElement)control).getText();
+    }
+
+    protected void selectCellEditorText()
+    {
         Text text = (Text)getCellEditor().getControl();
         text.selectAll();
     }

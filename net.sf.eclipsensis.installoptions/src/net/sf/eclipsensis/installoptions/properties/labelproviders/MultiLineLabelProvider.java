@@ -25,7 +25,7 @@ public class MultiLineLabelProvider extends LabelProvider
     public String getText(Object element)
     {
         if(element instanceof String) {
-            return (String)TypeConverter.INI_STRING_CONVERTER.asType((String)element);
+            return TypeConverter.ESCAPED_STRING_CONVERTER.asString(element);
         }
         else {
             return super.getText(element);

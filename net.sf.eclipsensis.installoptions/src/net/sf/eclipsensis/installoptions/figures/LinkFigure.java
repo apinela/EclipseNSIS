@@ -40,7 +40,12 @@ public class LinkFigure extends LabelFigure implements ILinkFigure
     {
         setTxtColor((RGB)propertySource.getPropertyValue(InstallOptionsModel.PROPERTY_TXTCOLOR));
         super.init(propertySource);
-   }
+    }
+
+    public boolean isMultiLine()
+    {
+        return false;
+    }
 
     public RGB getTxtColor()
     {

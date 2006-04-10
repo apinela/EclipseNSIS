@@ -9,6 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.editor;
 
+import java.lang.reflect.Constructor;
 import java.util.*;
 import java.util.regex.Matcher;
 
@@ -21,8 +22,7 @@ import net.sf.eclipsensis.installoptions.ini.*;
 import net.sf.eclipsensis.installoptions.model.*;
 import net.sf.eclipsensis.job.IJobStatusRunnable;
 import net.sf.eclipsensis.job.JobScheduler;
-import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.HTMLExporter;
+import net.sf.eclipsensis.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -65,6 +65,10 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
     private static final String FOLDING_TOGGLE = "net.sf.eclipsensis.installoptions.folding_toggle"; //$NON-NLS-1$
     private static final String[] KEY_BINDING_SCOPES = new String[] { IInstallOptionsConstants.EDITING_INSTALLOPTIONS_SOURCE_CONTEXT_ID };
     private static final String MARKER_CATEGORY = "__installoptions_marker"; //$NON-NLS-1$
+    
+    private static final IINISectionDisplayTextProvider cDefaultSectionDisplayTextProvider = new DefaultSectionDisplayTextProvider();
+    private static final Map cINISectionDisplayTextProviders = new CaseInsensitiveMap();
+    
     private IPositionUpdater mMarkerPositionUpdater = new DefaultPositionUpdater(MARKER_CATEGORY);
     private ResourceTracker mResourceListener = new ResourceTracker();
     private Map mMarkerPositions = new HashMap();
@@ -86,6 +90,33 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
     };
     private GotoMarker mGotoMarker = null;
     private JobScheduler mJobScheduler = InstallOptionsPlugin.getDefault().getJobScheduler();
+    
+    static {
+        ResourceBundle bundle;
+        try {
+            bundle = ResourceBundle.getBundle(InstallOptionsSourceEditor.class.getPackage().getName()+".InstallOptionsSourceOutline");
+        } catch (MissingResourceException x) {
+            bundle = null;
+        }
+
+        if(bundle != null) {
+            for(Enumeration e=bundle.getKeys(); e.hasMoreElements();) {
+                String type = (String)e.nextElement();
+                String className = bundle.getString(type);
+                if(className != null) {
+                    try {
+                        Class clasz = Class.forName(className);
+                        Constructor c = clasz.getConstructor(null);
+                        IINISectionDisplayTextProvider provider = (IINISectionDisplayTextProvider)c.newInstance(null);
+                        cINISectionDisplayTextProviders.put(type,provider);
+                    }
+                    catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                }
+            }
+        }
+    }
 
     public InstallOptionsSourceEditor()
     {
@@ -982,8 +1013,6 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
 
     private static class OutlineLabelProvider extends LabelProvider
     {
-        private static final String MISSING_DISPLAY_NAME = InstallOptionsPlugin.getResourceString("missing.outline.display.name"); //$NON-NLS-1$
-
         private static ImageData cErrorImageData = InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("error.decoration.icon")).getImageData(); //$NON-NLS-1$
         private static ImageData cWarningImageData = InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("warning.decoration.icon")).getImageData(); //$NON-NLS-1$
         private static Image cUnknownImage = InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("unknown.icon")); //$NON-NLS-1$
@@ -998,18 +1027,13 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
                     INIKeyValue[] values = ((INISection)element).findKeyValues(InstallOptionsModel.PROPERTY_TYPE);
                     if(!Common.isEmptyArray(values)) {
                         String type = values[0].getValue();
-                        InstallOptionsModelTypeDef typeDef = InstallOptionsModel.INSTANCE.getControlTypeDef(type);
-                        if(typeDef != null) {
-                            if(!typeDef.getName().equals(InstallOptionsModel.TYPE_UNKNOWN)) {
-                                type = typeDef.getName();
-                            }
-                            String displayName = ""; //$NON-NLS-1$
-                            values = ((INISection)element).findKeyValues(typeDef.getDisplayProperty());
-                            if(!Common.isEmptyArray(values)) {
-                                displayName = values[0].getValue();
-                            }
-                            return InstallOptionsPlugin.getFormattedString("source.outline.display.name.format",  //$NON-NLS-1$
-                                    new String[]{name, type, (Common.isEmpty(displayName)?MISSING_DISPLAY_NAME:displayName)});
+                        IINISectionDisplayTextProvider formatter = (IINISectionDisplayTextProvider)cINISectionDisplayTextProviders.get(type);
+                        if(formatter == null) {
+                            formatter = cDefaultSectionDisplayTextProvider;
+                        }
+                        String text = formatter.formatDisplayText(type, (INISection)element);
+                        if(text != null) {
+                            return text;
                         }
                     }
                 }

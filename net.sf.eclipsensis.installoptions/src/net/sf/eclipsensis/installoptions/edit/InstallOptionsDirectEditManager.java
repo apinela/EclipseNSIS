@@ -9,13 +9,18 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.edit;
 
+import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.model.*;
+import net.sf.eclipsensis.util.WinAPI;
 
 import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.gef.tools.CellEditorLocator;
 import org.eclipse.gef.tools.DirectEditManager;
 import org.eclipse.jface.viewers.CellEditor;
+import org.eclipse.jface.viewers.ICellEditorValidator;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.views.properties.IPropertyDescriptor;
+import org.eclipse.ui.views.properties.PropertyDescriptor;
 
 public abstract class InstallOptionsDirectEditManager extends DirectEditManager
 {
@@ -32,7 +37,7 @@ public abstract class InstallOptionsDirectEditManager extends DirectEditManager
 
     protected final CellEditor createCellEditorOn(Composite composite)
     {
-        InstallOptionsModelTypeDef typeDef = InstallOptionsModel.INSTANCE.getControlTypeDef(((InstallOptionsWidget)getEditPart().getModel()).getType());
+        InstallOptionsModelTypeDef typeDef = ((InstallOptionsWidget)getEditPart().getModel()).getTypeDef();
         if(typeDef == null || !typeDef.getSettings().contains(getDirectEditProperty())) {
             return null;
         }
@@ -46,5 +51,27 @@ public abstract class InstallOptionsDirectEditManager extends DirectEditManager
         return super.createCellEditorOn(composite);
     }
 
+    protected final void initCellEditor()
+    {
+        InstallOptionsWidget control = (InstallOptionsWidget)getEditPart().getModel();
+        IPropertyDescriptor descriptor = control.getPropertyDescriptor(getDirectEditProperty());
+        if(descriptor instanceof PropertyDescriptor) {
+            try {
+                ICellEditorValidator validator = (ICellEditorValidator)WinAPI.GetObjectFieldValue(descriptor, "validator", "Lorg/eclipse/jface/viewers/ICellEditorValidator;");
+                if (validator != null) {
+                    getCellEditor().setValidator(validator);
+                }
+            }
+            catch (Throwable t) {
+                InstallOptionsPlugin.getDefault().log(t);
+            }            
+        }
+        String initialText = getInitialText(control);
+        getCellEditor().setValue(initialText);
+        selectCellEditorText();
+    }
+
+    protected abstract String getInitialText(InstallOptionsWidget control);
+    protected abstract void selectCellEditorText();
     protected abstract String getDirectEditProperty();
 }

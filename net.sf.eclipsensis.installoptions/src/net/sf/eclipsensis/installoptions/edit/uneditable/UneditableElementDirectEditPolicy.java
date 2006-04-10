@@ -20,10 +20,19 @@ public class UneditableElementDirectEditPolicy extends DirectEditPolicy
 {
     protected Command getDirectEditCommand(DirectEditRequest edit)
     {
-        String text = (String)edit.getCellEditor().getValue();
+        String text = getDirectEditValue(edit);
         InstallOptionsUneditableElementEditPart control = (InstallOptionsUneditableElementEditPart)getHost();
         InstallOptionsUneditableElementCommand command = new InstallOptionsUneditableElementCommand((InstallOptionsUneditableElement)control.getModel(),text);
         return command;
+    }
+
+    /**
+     * @param edit
+     * @return
+     */
+    protected String getDirectEditValue(DirectEditRequest edit)
+    {
+        return (String)edit.getCellEditor().getValue();
     }
 
     /* (non-Javadoc)

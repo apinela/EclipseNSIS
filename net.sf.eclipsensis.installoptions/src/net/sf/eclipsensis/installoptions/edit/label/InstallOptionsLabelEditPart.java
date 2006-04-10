@@ -12,14 +12,17 @@ package net.sf.eclipsensis.installoptions.edit.label;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.edit.InstallOptionsWidgetEditPart;
 import net.sf.eclipsensis.installoptions.edit.uneditable.InstallOptionsUneditableElementEditPart;
+import net.sf.eclipsensis.installoptions.edit.uneditable.UneditableElementDirectEditPolicy;
 import net.sf.eclipsensis.installoptions.figures.*;
 import net.sf.eclipsensis.installoptions.figures.FigureUtility.NTFigure;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
+import net.sf.eclipsensis.installoptions.util.TypeConverter;
 import net.sf.eclipsensis.util.*;
 
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.draw2d.text.FlowPage;
 import org.eclipse.draw2d.text.TextFlow;
+import org.eclipse.gef.requests.DirectEditRequest;
 import org.eclipse.gef.tools.CellEditorLocator;
 import org.eclipse.gef.tools.DirectEditManager;
 import org.eclipse.swt.SWT;
@@ -50,6 +53,16 @@ public class InstallOptionsLabelEditPart extends InstallOptionsUneditableElement
         }
     }
 
+    protected UneditableElementDirectEditPolicy createDirectEditPolicy()
+    {
+        return new UneditableElementDirectEditPolicy() {
+            protected String getDirectEditValue(DirectEditRequest edit)
+            {
+                return (String)TypeConverter.ESCAPED_STRING_CONVERTER.asType(super.getDirectEditValue(edit));
+            }
+        };
+    }
+
     /**
      * @return
      */
@@ -76,7 +89,7 @@ public class InstallOptionsLabelEditPart extends InstallOptionsUneditableElement
 
     public static interface ILabelFigure extends IUneditableElementFigure
     {
-//    Marker interface
+        public boolean isMultiLine();
     }
 
     //This is a hack because Windows NT Labels don't seem to respond to the
@@ -93,6 +106,11 @@ public class InstallOptionsLabelEditPart extends InstallOptionsUneditableElement
         public NTLabelFigure(IPropertySource propertySource)
         {
             super(propertySource);
+        }
+
+        public boolean isMultiLine()
+        {
+            return true;
         }
 
         protected void createChildFigures()
@@ -144,8 +162,9 @@ public class InstallOptionsLabelEditPart extends InstallOptionsUneditableElement
         public void refresh()
         {
             super.refresh();
-            mTextFlow.setText(getText());
-            mShadowTextFlow.setText(getText());
+            String text = isMultiLine()?TypeConverter.ESCAPED_STRING_CONVERTER.asString(getText()):getText();
+            mTextFlow.setText(text);
+            mShadowTextFlow.setText(text);
             mTextFlow.setForegroundColor((isDisabled()?ColorManager.getSystemColor(WinAPI.COLOR_GRAYTEXT):ColorManager.getColor(getTxtColor())));
             mShadowFlowPage.setVisible(isDisabled());
         }

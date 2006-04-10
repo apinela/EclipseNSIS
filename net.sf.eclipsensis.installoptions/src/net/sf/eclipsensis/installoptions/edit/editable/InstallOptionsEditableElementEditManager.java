@@ -10,8 +10,7 @@
 package net.sf.eclipsensis.installoptions.edit.editable;
 
 import net.sf.eclipsensis.installoptions.edit.InstallOptionsDirectEditManager;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsEditableElement;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
+import net.sf.eclipsensis.installoptions.model.*;
 
 import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.gef.tools.CellEditorLocator;
@@ -27,12 +26,9 @@ public abstract class InstallOptionsEditableElementEditManager extends InstallOp
         super(source, editorType, locator);
     }
 
-    protected void initCellEditor()
+    protected String getInitialText(InstallOptionsWidget control)
     {
-        InstallOptionsEditableElement control = (InstallOptionsEditableElement)getEditPart().getModel();
-        String initialText = control.getState();
-        getCellEditor().setValue(initialText);
-        selectCellEditorText();
+        return ((InstallOptionsEditableElement)control).getState();
     }
 
     protected void selectCellEditorText()

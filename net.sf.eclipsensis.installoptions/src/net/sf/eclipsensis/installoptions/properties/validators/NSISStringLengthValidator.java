@@ -14,7 +14,6 @@ import java.util.Collection;
 import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
-import net.sf.eclipsensis.installoptions.properties.labelproviders.MultiLineLabelProvider;
 import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.jface.viewers.ICellEditorValidator;
@@ -34,7 +33,6 @@ public class NSISStringLengthValidator implements ICellEditorValidator
 
     public String isValid(String value)
     {
-        value = MultiLineLabelProvider.INSTANCE.getText(value);
         int maxLen = InstallOptionsModel.INSTANCE.getMaxLength();
         if(value.length() > maxLen)  {
             return InstallOptionsPlugin.getFormattedString("property.maxlength.error",new Object[]{mPropertyName,new Integer(maxLen)}); //$NON-NLS-1$

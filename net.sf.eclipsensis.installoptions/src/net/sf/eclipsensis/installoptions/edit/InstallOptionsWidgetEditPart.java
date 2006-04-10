@@ -172,12 +172,18 @@ public abstract class InstallOptionsWidgetEditPart extends InstallOptionsEditPar
             List oldFlags = new ArrayList((List)evt.getOldValue());
             oldFlags.removeAll((List)evt.getNewValue());
             for (Iterator iter = oldFlags.iterator(); iter.hasNext();) {
-                handleFlagRemoved((String)iter.next());
+                String flag = (String)iter.next();
+                if(getInstallOptionsWidget().getTypeDef().getFlags().contains(flag)) {
+                    handleFlagRemoved(flag);
+                }
             }
             List newFlags = new ArrayList((List)evt.getNewValue());
             newFlags.removeAll((List)evt.getOldValue());
             for (Iterator iter = newFlags.iterator(); iter.hasNext();) {
-                handleFlagAdded((String)iter.next());
+                String flag = (String)iter.next();
+                if(getInstallOptionsWidget().getTypeDef().getFlags().contains(flag)) {
+                    handleFlagAdded(flag);
+                }
             }
         }
     }

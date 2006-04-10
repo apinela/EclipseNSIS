@@ -10,8 +10,7 @@
 package net.sf.eclipsensis.installoptions.edit.unknown;
 
 import net.sf.eclipsensis.installoptions.edit.InstallOptionsDirectEditManager;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsUnknown;
+import net.sf.eclipsensis.installoptions.model.*;
 
 import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.gef.tools.CellEditorLocator;
@@ -28,11 +27,13 @@ public class InstallOptionsUnknownEditManager extends InstallOptionsDirectEditMa
         super(source, editorType, locator);
     }
 
-    protected void initCellEditor()
+    protected String getInitialText(InstallOptionsWidget control)
     {
-        InstallOptionsUnknown control = (InstallOptionsUnknown)getEditPart().getModel();
-        String initialText = control.getType();
-        getCellEditor().setValue(initialText);
+        return ((InstallOptionsUnknown)control).getType();
+    }
+
+    protected void selectCellEditorText()
+    {
         Text text = (Text)getCellEditor().getControl();
         text.selectAll();
     }

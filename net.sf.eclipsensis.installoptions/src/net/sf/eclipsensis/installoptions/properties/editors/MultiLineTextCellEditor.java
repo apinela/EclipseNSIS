@@ -11,6 +11,7 @@ package net.sf.eclipsensis.installoptions.properties.editors;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
+import net.sf.eclipsensis.installoptions.util.TypeConverter;
 import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.jface.dialogs.Dialog;
@@ -92,7 +93,7 @@ public class MultiLineTextCellEditor extends DialogCellEditor
         {
             super(parent);
             setShellStyle(getShellStyle()|SWT.RESIZE);
-            mValue = value;
+            mValue = TypeConverter.ESCAPED_STRING_CONVERTER.asString(value);
         }
 
         public ICellEditorValidator getValidator()
@@ -114,7 +115,7 @@ public class MultiLineTextCellEditor extends DialogCellEditor
 
         public String getValue()
         {
-            return mValue;
+            return (String)TypeConverter.ESCAPED_STRING_CONVERTER.asType(mValue);
         }
 
         protected Control createDialogArea(Composite parent)

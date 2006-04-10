@@ -14,6 +14,7 @@ import java.beans.PropertyChangeEvent;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.edit.*;
 import net.sf.eclipsensis.installoptions.edit.label.InstallOptionsLabelEditPart;
+import net.sf.eclipsensis.installoptions.edit.uneditable.UneditableElementDirectEditPolicy;
 import net.sf.eclipsensis.installoptions.figures.IInstallOptionsFigure;
 import net.sf.eclipsensis.installoptions.figures.LinkFigure;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsLink;
@@ -63,6 +64,11 @@ public class InstallOptionsLinkEditPart extends InstallOptionsLabelEditPart
             return mExtendedEditSupport;
         }
         return super.getAdapter(key);
+    }
+
+    protected UneditableElementDirectEditPolicy createDirectEditPolicy()
+    {
+        return new UneditableElementDirectEditPolicy();
     }
 
     protected void createEditPolicies()
@@ -140,7 +146,12 @@ public class InstallOptionsLinkEditPart extends InstallOptionsLabelEditPart
         {
             super.init(propertySource);
             setTxtColor((RGB)propertySource.getPropertyValue(InstallOptionsModel.PROPERTY_TXTCOLOR));
-       }
+        }
+
+        public boolean isMultiLine()
+        {
+            return false;
+        }
 
         public RGB getTxtColor()
         {

@@ -10,6 +10,7 @@
 package net.sf.eclipsensis.installoptions.figures;
 
 import net.sf.eclipsensis.installoptions.edit.label.InstallOptionsLabelEditPart.ILabelFigure;
+import net.sf.eclipsensis.installoptions.util.TypeConverter;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
@@ -27,13 +28,18 @@ public class LabelFigure extends UneditableElementFigure implements ILabelFigure
         super(parent, propertySource);
     }
 
+    public boolean isMultiLine()
+    {
+        return true;
+    }
+
     /**
      * @return
      */
     protected Control createUneditableSWTControl(Composite parent, int style)
     {
         Label label = new Label(parent, style);
-        label.setText(mText);
+        label.setText(isMultiLine()?TypeConverter.ESCAPED_STRING_CONVERTER.asString(mText):mText);
         return label;
     }
 

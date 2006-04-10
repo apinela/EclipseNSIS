@@ -195,7 +195,7 @@ public abstract class TypeConverter
         }
     };
 
-    public static final TypeConverter INI_STRING_CONVERTER = new TypeConverter() {
+    public static final TypeConverter ESCAPED_STRING_CONVERTER = new TypeConverter() {
         public String asString(Object o)
         {
             StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$

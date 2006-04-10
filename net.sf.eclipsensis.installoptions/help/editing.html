@@ -73,12 +73,12 @@ characters are included in the key value.</li>
 Comments must begin at the beginning of a line or after a spacing character. Comments
 terminate at the end of the line.</li>
 </ol>
-<p>Additionally, the following InstallOptions-specific INI file variations are supported:</p>
+<p>Additionally, CR, LF, Tab and backslash (ASCII code 92) characters can be specified in key values by escaping then with a 
+backslash character, i.e., "\r", "\n", "\t" and "\\", respectively for the following cases:</p>
 <ol>
-<li>CR, LF and Tab characters can be specified in key values by "\r", "\n" and "\t", respectively.&nbsp;</li>
-<li>A backslash character in a key value must be escaped with another
-backslash ("\\"), unless the key value is specifying a path (e.g.,
-c:\temp\test.txt).</li>
+<li>Label control type - Text key value</li>
+<li>Text control type - State key value (when MULTILINE flag is set</li>
+<li>All control types - ValidateText key value</li>
 </ol>
 <hr>
 <a href="installation.html">Previous</a> | <a href="overview.html#contents">Contents</a> | <a href="designeditor.html">Next</a> <br>

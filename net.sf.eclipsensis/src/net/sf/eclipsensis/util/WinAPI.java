@@ -128,7 +128,9 @@ public class WinAPI
 
     public static final native int GetSystemMetrics (int nIndex);
 
-    public static final native void SetObjectFieldValue(Object object, String field, int value);
+    public static final native Object GetObjectFieldValue(Object object, String field, String signature);
+
+    public static final native void SetIntFieldValue(Object object, String field, int value);
 
     public static final native String GetEnvironmentVariable(String name);
 

@@ -13,8 +13,9 @@ import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.ini.INISection;
 import net.sf.eclipsensis.installoptions.properties.descriptors.MultiLineTextPropertyDescriptor;
 import net.sf.eclipsensis.installoptions.properties.labelproviders.MultiLineLabelProvider;
-import net.sf.eclipsensis.installoptions.properties.validators.NSISStringLengthValidator;
+import net.sf.eclipsensis.installoptions.properties.validators.NSISEscapedStringLengthValidator;
 
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 
@@ -28,6 +29,11 @@ public class InstallOptionsLabel extends InstallOptionsUneditableElement
     public String getType()
     {
         return InstallOptionsModel.TYPE_LABEL;
+    }
+
+    protected ILabelProvider getDisplayLabelProvider()
+    {
+        return MultiLineLabelProvider.INSTANCE;
     }
 
     /**
@@ -51,8 +57,7 @@ public class InstallOptionsLabel extends InstallOptionsUneditableElement
         if(name.equals(InstallOptionsModel.PROPERTY_TEXT)) {
             String propertyName = InstallOptionsPlugin.getResourceString("text.property.name"); //$NON-NLS-1$;
             TextPropertyDescriptor descriptor = new MultiLineTextPropertyDescriptor(InstallOptionsModel.PROPERTY_TEXT, propertyName);
-            descriptor.setLabelProvider(MultiLineLabelProvider.INSTANCE);
-            descriptor.setValidator(new NSISStringLengthValidator(propertyName));
+            descriptor.setValidator(new NSISEscapedStringLengthValidator(propertyName));
             return descriptor;
         }
         else {

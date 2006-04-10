@@ -11,11 +11,14 @@ package net.sf.eclipsensis.installoptions.edit.text;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.edit.InstallOptionsWidgetEditPart;
+import net.sf.eclipsensis.installoptions.edit.editable.EditableElementDirectEditPolicy;
 import net.sf.eclipsensis.installoptions.edit.editable.InstallOptionsEditableElementEditPart;
 import net.sf.eclipsensis.installoptions.figures.IInstallOptionsFigure;
 import net.sf.eclipsensis.installoptions.figures.TextFigure;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
+import net.sf.eclipsensis.installoptions.util.TypeConverter;
 
+import org.eclipse.gef.requests.DirectEditRequest;
 import org.eclipse.gef.tools.CellEditorLocator;
 import org.eclipse.gef.tools.DirectEditManager;
 import org.eclipse.swt.widgets.Composite;
@@ -30,6 +33,21 @@ public class InstallOptionsTextEditPart extends InstallOptionsEditableElementEdi
     protected IInstallOptionsFigure createInstallOptionsFigure()
     {
         return new TextFigure((Composite)getViewer().getControl(), getInstallOptionsWidget());
+    }
+
+    protected EditableElementDirectEditPolicy createDirectEditPolicy()
+    {
+        return new EditableElementDirectEditPolicy() {
+            protected String getDirectEditValue(DirectEditRequest edit)
+            {
+                String text = super.getDirectEditValue(edit);
+                if(getInstallOptionsEditableElement().getTypeDef().getFlags().contains(InstallOptionsModel.FLAGS_MULTILINE) &&
+                   getInstallOptionsEditableElement().getFlags().contains(InstallOptionsModel.FLAGS_MULTILINE)) {
+                    text = (String)TypeConverter.ESCAPED_STRING_CONVERTER.asType(text);
+                }
+                return text;
+            }
+        };
     }
 
     protected void handleFlagAdded(String flag)

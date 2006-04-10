@@ -15,9 +15,12 @@ import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.ini.INISection;
 import net.sf.eclipsensis.installoptions.properties.descriptors.MultiLineTextPropertyDescriptor;
 import net.sf.eclipsensis.installoptions.properties.labelproviders.MultiLineLabelProvider;
+import net.sf.eclipsensis.installoptions.properties.validators.NSISEscapedStringLengthValidator;
 import net.sf.eclipsensis.installoptions.properties.validators.NSISStringLengthValidator;
 import net.sf.eclipsensis.util.Common;
 
+import org.eclipse.jface.viewers.ICellEditorValidator;
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
 public class InstallOptionsText extends InstallOptionsEditableElement
@@ -30,6 +33,15 @@ public class InstallOptionsText extends InstallOptionsEditableElement
     public String getType()
     {
         return InstallOptionsModel.TYPE_TEXT;
+    }
+
+    protected ILabelProvider getDisplayLabelProvider()
+    {
+        if(getTypeDef().getFlags().contains(InstallOptionsModel.FLAGS_MULTILINE) && 
+           getFlags().contains(InstallOptionsModel.FLAGS_MULTILINE)) {
+            return MultiLineLabelProvider.INSTANCE;
+        }
+        return super.getDisplayLabelProvider();
     }
 
     /**
@@ -71,10 +83,33 @@ public class InstallOptionsText extends InstallOptionsEditableElement
         if(name.equals(InstallOptionsModel.PROPERTY_STATE)) {
             String propertyName = InstallOptionsPlugin.getResourceString("state.property.name"); //$NON-NLS-1$
             MultiLineTextPropertyDescriptor descriptor = new MultiLineTextPropertyDescriptor(InstallOptionsModel.PROPERTY_STATE, propertyName);
-            descriptor.setLabelProvider(MultiLineLabelProvider.INSTANCE);
-            descriptor.setValidator(new NSISStringLengthValidator(propertyName));
-            descriptor.setMultiLine(getFlags().contains(InstallOptionsModel.FLAGS_MULTILINE));
-            descriptor.setOnlyNumbers(getFlags().contains(InstallOptionsModel.FLAGS_ONLY_NUMBERS));
+            descriptor.setValidator(new ICellEditorValidator() {
+                ICellEditorValidator mSingleLineValidator = new NSISStringLengthValidator(InstallOptionsModel.PROPERTY_STATE);
+                ICellEditorValidator mMultiLineValidator = new NSISEscapedStringLengthValidator(InstallOptionsModel.PROPERTY_STATE);
+                public String isValid(Object value)
+                {
+                    if(getTypeDef().getFlags().contains(InstallOptionsModel.FLAGS_MULTILINE) && 
+                       getFlags().contains(InstallOptionsModel.FLAGS_MULTILINE)) {
+                        return mMultiLineValidator.isValid(value);
+                    }
+                    else {
+                        return mSingleLineValidator.isValid(value);
+                    }
+                }
+                
+            });
+            if(getTypeDef().getFlags().contains(InstallOptionsModel.FLAGS_MULTILINE)) {
+                descriptor.setMultiLine(getFlags().contains(InstallOptionsModel.FLAGS_MULTILINE));
+            }
+            else {
+                descriptor.setMultiLine(false);
+            }
+            if(getTypeDef().getFlags().contains(InstallOptionsModel.FLAGS_ONLY_NUMBERS)) {
+                descriptor.setOnlyNumbers(getFlags().contains(InstallOptionsModel.FLAGS_ONLY_NUMBERS));
+            }
+            else {
+                descriptor.setOnlyNumbers(false);
+            }
             addPropertyChangeListener(descriptor);
             return descriptor;
         }

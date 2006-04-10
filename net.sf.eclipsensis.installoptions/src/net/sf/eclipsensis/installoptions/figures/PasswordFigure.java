@@ -25,6 +25,15 @@ public class PasswordFigure extends TextFigure
         super(parent, propertySource);
     }
 
+    protected void init(IPropertySource propertySource)
+    {
+        super.init(propertySource);
+        setOnlyNumbers(false);
+        setMultiLine(false);
+        setNoWordWrap(true);
+        setReadOnly(false);
+   }
+
     public int getDefaultStyle()
     {
         int style = super.getDefaultStyle();

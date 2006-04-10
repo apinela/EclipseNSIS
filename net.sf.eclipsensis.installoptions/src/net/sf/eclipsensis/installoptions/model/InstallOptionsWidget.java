@@ -92,6 +92,11 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
         mPosition = new Position();
     }
 
+    public InstallOptionsModelTypeDef getTypeDef()
+    {
+        return mTypeDef;
+    }
+
     protected void setDefaults()
     {
         super.setDefaults();
@@ -370,15 +375,31 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
         }
         return mFlags;
     }
+    
+    private List retainSupportedFlags(List flags)
+    {
+        flags = new ArrayList(flags);
+        Collection supportedFlags = getTypeDef().getFlags();
+        for (Iterator iter = flags.iterator(); iter.hasNext();) {
+            String flag = (String)iter.next();
+            if(!supportedFlags.contains(flag)) {
+                iter.remove();
+            }
+        }
+        return flags;
+    }
 
     public void setFlags(List flags)
     {
-        List oldFlags = getFlags();
-        if(!oldFlags.equals(flags)) {
-            mFlags = flags;
-            firePropertyChange(InstallOptionsModel.PROPERTY_FLAGS,oldFlags,mFlags);
-            setDirty(true);
+        List oldFlags = retainSupportedFlags(getFlags());
+        List newFlags = retainSupportedFlags(flags);
+        mFlags = flags;
+        if(!oldFlags.equals(newFlags)) {
+            firePropertyChange(InstallOptionsModel.PROPERTY_FLAGS,oldFlags,newFlags);
         }
+        if (!mFlags.equals(flags)) {
+            setDirty(true);
+        }        
     }
 
     private int toGraphical(int value, int refValue)
@@ -513,7 +534,12 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
 
     protected final String getDisplayName()
     {
-        return (String)getPropertyValue(mTypeDef.getDisplayProperty());
+        String displayName = (String)getPropertyValue(mTypeDef.getDisplayProperty());
+        ILabelProvider labelProvider = getDisplayLabelProvider();
+        if(labelProvider != null) {
+            displayName = labelProvider.getText(displayName);
+        }
+        return displayName;
     }
 
     protected String getSectionName()
@@ -524,6 +550,11 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
     public final Image getIconImage()
     {
         return InstallOptionsPlugin.getImageManager().getImage(mTypeDef.getSmallIcon());
+    }
+
+    protected ILabelProvider getDisplayLabelProvider()
+    {
+        return null;
     }
 
     private class IndexPropertyDescriptor extends ComboBoxPropertyDescriptor

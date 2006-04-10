@@ -28,7 +28,15 @@ public abstract class InstallOptionsUneditableElementEditPart extends InstallOpt
     protected void createEditPolicies()
     {
         super.createEditPolicies();
-        installEditPolicy(EditPolicy.DIRECT_EDIT_ROLE, new UneditableElementDirectEditPolicy());
+        installEditPolicy(EditPolicy.DIRECT_EDIT_ROLE, createDirectEditPolicy());
+    }
+
+    /**
+     * @return
+     */
+    protected UneditableElementDirectEditPolicy createDirectEditPolicy()
+    {
+        return new UneditableElementDirectEditPolicy();
     }
 
     protected InstallOptionsUneditableElement getInstallOptionsUneditableElement()
