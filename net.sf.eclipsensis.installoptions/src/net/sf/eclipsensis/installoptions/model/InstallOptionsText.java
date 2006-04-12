@@ -17,10 +17,12 @@ import net.sf.eclipsensis.installoptions.properties.descriptors.MultiLineTextPro
 import net.sf.eclipsensis.installoptions.properties.labelproviders.MultiLineLabelProvider;
 import net.sf.eclipsensis.installoptions.properties.validators.NSISEscapedStringLengthValidator;
 import net.sf.eclipsensis.installoptions.properties.validators.NSISStringLengthValidator;
+import net.sf.eclipsensis.installoptions.util.TypeConverter;
 import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.jface.viewers.ICellEditorValidator;
 import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.swt.SWT;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
 public class InstallOptionsText extends InstallOptionsEditableElement
@@ -54,21 +56,46 @@ public class InstallOptionsText extends InstallOptionsEditableElement
 
     public void setFlags(List flags)
     {
+        String oldState = getState();
+        String newState = oldState;
         if(flags.contains(InstallOptionsModel.FLAGS_ONLY_NUMBERS)) {
-            String oldState = getState();
-            if(!Common.isEmpty(oldState)) {
+            if(!Common.isEmpty(newState)) {
                 StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
-                char[] chars = oldState.toCharArray();
+                char[] chars = newState.toCharArray();
                 for (int i = 0; i < chars.length; i++) {
                     if(Character.isDigit(chars[i])) {
                         buf.append(chars[i]);
                     }
                 }
-                String newState = buf.toString();
-                if(!Common.stringsAreEqual(newState,oldState)) {
-                    fireModelCommand(createSetPropertyCommand(InstallOptionsModel.PROPERTY_STATE, newState));
-                }
+                newState = buf.toString();
             }
+        }
+        if(flags.contains(InstallOptionsModel.FLAGS_MULTILINE)) {
+            if(!Common.isEmpty(newState)) {
+                StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
+                char[] chars = TypeConverter.ESCAPED_STRING_CONVERTER.asString(newState).toCharArray();
+                for (int i = 0; i < chars.length; i++) {
+                    switch(chars[i])
+                    {
+                        case SWT.CR:
+                            if(i < chars.length - 1) {
+                                if(chars[i+1] == SWT.LF) {
+                                    i++;
+                                }
+                            }
+                        case SWT.LF:
+                            buf.append(SWT.CR).append(SWT.LF);
+                            break;
+                        default:
+                            buf.append(chars[i]);
+                            break;
+                    }
+                }
+                newState = (String)TypeConverter.ESCAPED_STRING_CONVERTER.asType(buf.toString());
+            }
+        }
+        if(!Common.stringsAreEqual(newState,oldState)) {
+            fireModelCommand(createSetPropertyCommand(InstallOptionsModel.PROPERTY_STATE, newState));
         }
         super.setFlags(flags);
     }
