@@ -457,10 +457,10 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
                     IDocument doc = getDocumentProvider().getDocument(getEditorInput());
                     int offset = getCaretOffsetForInsertCommand(doc, sel.x);
                     styledText.setCaretOffset(offset);
-                    StringBuffer buf = new StringBuffer("");
+                    StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
                     String delim = doc.getLineDelimiter(styledText.getLineAtOffset(offset));
-                    String fileKeyword = NSISKeywords.getInstance().getKeyword("File");
-                    String recursiveKeyword = NSISKeywords.getInstance().getKeyword("/r");
+                    String fileKeyword = NSISKeywords.getInstance().getKeyword("File"); //$NON-NLS-1$
+                    String recursiveKeyword = NSISKeywords.getInstance().getKeyword("/r"); //$NON-NLS-1$
                     RegistryImporter importer = null;
                     NSISEditorRegistryImportStrategy strategy = null;
 
@@ -483,13 +483,13 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
                                     EclipseNSISPlugin.getDefault().log(e);
                                 }                                
                             }
-                            buf.append(fileKeyword).append(" ").append(
-                                        " ").append(IOUtility.resolveFileName(files[i], this)).append(
+                            buf.append(fileKeyword).append(" ").append( //$NON-NLS-1$
+                                        IOUtility.resolveFileName(files[i], this)).append(
                                         delim);
                         }
                         else {
-                            buf.append(fileKeyword).append(" ").append(recursiveKeyword).append(
-                                    " ").append(IOUtility.resolveFileName(files[i], this)).append(delim);
+                            buf.append(fileKeyword).append(" ").append(recursiveKeyword).append( //$NON-NLS-1$
+                                    " ").append(IOUtility.resolveFileName(files[i], this)).append(delim); //$NON-NLS-1$
                         }
                     }
                     String text = buf.toString();
@@ -829,7 +829,7 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
     {
         if(isDirty()) {
             if(!Common.openConfirm(getSourceViewer().getTextWidget().getShell(), 
-                    EclipseNSISPlugin.getFormattedString("export.html.save.confirmation",
+                    EclipseNSISPlugin.getFormattedString("export.html.save.confirmation", //$NON-NLS-1$
                     new Object[] {((IPathEditorInput)getEditorInput()).getPath().lastSegment()}), 
                     EclipseNSISPlugin.getShellImage())) {
                 return;

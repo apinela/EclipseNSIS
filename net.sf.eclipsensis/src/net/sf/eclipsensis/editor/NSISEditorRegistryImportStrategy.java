@@ -40,13 +40,13 @@ class NSISEditorRegistryImportStrategy implements RegistryImporter.IRegistryImpo
 
     public NSISEditorRegistryImportStrategy()
     {
-        mDeleteRegKey = NSISKeywords.getInstance().getKeyword("DeleteRegKey");
-        mWriteRegStr = NSISKeywords.getInstance().getKeyword("WriteRegStr");
-        mDeleteRegValue = NSISKeywords.getInstance().getKeyword("DeleteRegValue");
-        mWriteRegDWORD = NSISKeywords.getInstance().getKeyword("WriteRegDWORD");
-        mWriteRegExpandStr = NSISKeywords.getInstance().getKeyword("WriteRegExpandStr");
-        mWriteRegBin = NSISKeywords.getInstance().getKeyword("WriteRegBin");
-        mBuffer = new StringBuffer("");
+        mDeleteRegKey = NSISKeywords.getInstance().getKeyword("DeleteRegKey"); //$NON-NLS-1$
+        mWriteRegStr = NSISKeywords.getInstance().getKeyword("WriteRegStr"); //$NON-NLS-1$
+        mDeleteRegValue = NSISKeywords.getInstance().getKeyword("DeleteRegValue"); //$NON-NLS-1$
+        mWriteRegDWORD = NSISKeywords.getInstance().getKeyword("WriteRegDWORD"); //$NON-NLS-1$
+        mWriteRegExpandStr = NSISKeywords.getInstance().getKeyword("WriteRegExpandStr"); //$NON-NLS-1$
+        mWriteRegBin = NSISKeywords.getInstance().getKeyword("WriteRegBin"); //$NON-NLS-1$
+        mBuffer = new StringBuffer(""); //$NON-NLS-1$
         mShellConstants = NSISKeywords.getInstance().getShellConstants();
         try {
             mTextLimit = Integer.parseInt(NSISPreferences.INSTANCE.getNSISDefaultSymbol("NSIS_MAX_STRLEN")); //$NON-NLS-1$
@@ -78,7 +78,7 @@ class NSISEditorRegistryImportStrategy implements RegistryImporter.IRegistryImpo
 
     public void addRegistryKey(String rootKey, String subKey)
     {
-        addLineToBuf(cCreateRegKeyFormat.format(new String[]{rootKey.toUpperCase(), RegistryImporter.rootKeyNameToHandle(rootKey), subKey})); //$NON-NLS-1$ //$NON-NLS-2$
+        addLineToBuf(cCreateRegKeyFormat.format(new String[]{rootKey.toUpperCase(), RegistryImporter.rootKeyNameToHandle(rootKey), subKey})); 
     }
 
     public void addRegistryValue(String rootKey, String subKey, String value, int type, String data)
@@ -95,7 +95,7 @@ class NSISEditorRegistryImportStrategy implements RegistryImporter.IRegistryImpo
                 }
                 break;
             case WinAPI.REG_EXPAND_SZ:
-                command = mWriteRegExpandStr; //$NON-NLS-1$ //$NON-NLS-2$
+                command = mWriteRegExpandStr; 
                 break;
             case WinAPI.REG_SZ:
                 command = mWriteRegStr;

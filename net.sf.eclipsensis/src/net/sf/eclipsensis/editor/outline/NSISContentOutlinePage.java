@@ -77,7 +77,7 @@ public class NSISContentOutlinePage extends ContentOutlinePage
                 }
             }
         }
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),INSISConstants.PLUGIN_CONTEXT_PREFIX + "nsis_outline_context");
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),INSISConstants.PLUGIN_CONTEXT_PREFIX + "nsis_outline_context"); //$NON-NLS-1$
     }
 
     /* (non-Javadoc)

@@ -57,7 +57,7 @@ public abstract class InstallOptionsDirectEditManager extends DirectEditManager
         IPropertyDescriptor descriptor = control.getPropertyDescriptor(getDirectEditProperty());
         if(descriptor instanceof PropertyDescriptor) {
             try {
-                ICellEditorValidator validator = (ICellEditorValidator)WinAPI.GetObjectFieldValue(descriptor, "validator", "Lorg/eclipse/jface/viewers/ICellEditorValidator;");
+                ICellEditorValidator validator = (ICellEditorValidator)WinAPI.GetObjectFieldValue(descriptor, "validator", "Lorg/eclipse/jface/viewers/ICellEditorValidator;"); //$NON-NLS-1$ //$NON-NLS-2$
                 if (validator != null) {
                     getCellEditor().setValidator(validator);
                 }

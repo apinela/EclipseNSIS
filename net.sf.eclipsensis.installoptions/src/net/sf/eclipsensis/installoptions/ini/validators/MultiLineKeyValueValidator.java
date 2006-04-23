@@ -29,7 +29,7 @@ public class MultiLineKeyValueValidator implements IINIKeyValueValidator
         char[] chars = value.toCharArray();
         StringBuffer buf = null;
         if(fixWarnings || fixErrors) {
-            buf = new StringBuffer("");
+            buf = new StringBuffer(""); //$NON-NLS-1$
         }
         for (int i = 0; i < chars.length; i++) {
             if(fixWarnings || fixErrors) {

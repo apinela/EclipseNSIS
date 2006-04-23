@@ -219,7 +219,7 @@ public class NSISCommandView extends ViewPart implements INSISHomeListener
         });
         makeActions();
         updateInput();
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(mViewer.getControl(),INSISConstants.PLUGIN_CONTEXT_PREFIX + "nsis_cmdview_context");
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(mViewer.getControl(),INSISConstants.PLUGIN_CONTEXT_PREFIX + "nsis_cmdview_context"); //$NON-NLS-1$
     }
 
     public void setFocus()

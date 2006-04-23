@@ -94,7 +94,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
     static {
         ResourceBundle bundle;
         try {
-            bundle = ResourceBundle.getBundle(InstallOptionsSourceEditor.class.getPackage().getName()+".InstallOptionsSourceOutline");
+            bundle = ResourceBundle.getBundle(InstallOptionsSourceEditor.class.getPackage().getName()+".InstallOptionsSourceOutline"); //$NON-NLS-1$
         } catch (MissingResourceException x) {
             bundle = null;
         }
@@ -937,7 +937,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
                 }
                 
             });
-            PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),IInstallOptionsConstants.PLUGIN_CONTEXT_PREFIX + "installoptions_sourceoutline_context");
+            PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),IInstallOptionsConstants.PLUGIN_CONTEXT_PREFIX + "installoptions_sourceoutline_context"); //$NON-NLS-1$
         }
 
         public void dispose()

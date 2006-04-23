@@ -41,7 +41,7 @@ public class NSISHelpProducer implements IExecutableExtension, IHelpContentProdu
     private String mPluginId = PLUGIN_ID;
     private boolean mJavascriptOnly = false;
     private String[] mHelpURLPrefixes = {PLUGIN_ID, NSIS_HELP_PREFIX};
-    private MessageFormat mLocationReplaceFormat = new MessageFormat("<html><head><script language=\"javascript\">\n<!--\nif(window.location.replace) '{'window.location.replace(\"{0}\");'}' else '{'window.location.href=\"{0}\";'}'\n//-->\n</script></head><body></body></html>");
+    private MessageFormat mLocationReplaceFormat = new MessageFormat("<html><head><script language=\"javascript\">\n<!--\nif(window.location.replace) '{'window.location.replace(\"{0}\");'}' else '{'window.location.href=\"{0}\";'}'\n//-->\n</script></head><body></body></html>"); //$NON-NLS-1$
     
     private String stripPrefixes(String href)
     {

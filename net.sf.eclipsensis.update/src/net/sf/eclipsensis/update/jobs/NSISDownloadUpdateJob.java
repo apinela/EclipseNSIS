@@ -84,7 +84,7 @@ class NSISDownloadUpdateJob extends NSISHttpUpdateJob
             }
             else {
                 mf = new MessageFormat(EclipseNSISUpdatePlugin.getResourceString("download.update.progress.format")); //$NON-NLS-1$
-                args = new String[] {getName(),"0"};
+                args = new String[] {getName(),"0"}; //$NON-NLS-1$
                 monitor.beginTask(mf.format(args), 101);
             }
             monitor.worked(1);
@@ -130,7 +130,7 @@ class NSISDownloadUpdateJob extends NSISHttpUpdateJob
                     fileChannel.write(buf);
                 }
                 if(length > 0) {
-                    args[1]="100";
+                    args[1]="100"; //$NON-NLS-1$
                     monitor.setTaskName(mf.format(args));
                     monitor.worked(100-worked);
                 }
