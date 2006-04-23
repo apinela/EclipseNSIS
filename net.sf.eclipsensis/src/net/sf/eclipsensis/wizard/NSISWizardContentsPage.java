@@ -15,8 +15,7 @@ import java.util.List;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
-import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.CommonImages;
+import net.sf.eclipsensis.util.*;
 import net.sf.eclipsensis.viewer.StructuredViewerUpDownMover;
 import net.sf.eclipsensis.wizard.settings.*;
 import net.sf.eclipsensis.wizard.util.NSISWizardDialogUtil;
@@ -25,12 +24,13 @@ import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
-public class NSISWizardContentsPage extends AbstractNSISWizardPage
+public class NSISWizardContentsPage extends AbstractNSISWizardPage implements INSISConstants
 {
     public static final String NAME = "nsisWizardContents"; //$NON-NLS-1$
 
@@ -220,47 +220,9 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
                 return mTreeViewer;
             }
 
-            private List getSelectionList()
-            {
-                List list = null;
-                ISelection sel = mTreeViewer.getSelection();
-                if(!sel.isEmpty() && sel instanceof IStructuredSelection) {
-                    list = ((IStructuredSelection)sel).toList();
-                }
-                return list;
-            }
-
-            private INSISInstallElement getSelectionParent(List list)
-            {
-                INSISInstallElement parent = null;
-                if(!Common.isEmptyCollection(list)) {
-                    for(Iterator iter=list.iterator(); iter.hasNext(); ) {
-                        Object obj = iter.next();
-                        if(obj instanceof INSISInstallElement) {
-                            INSISInstallElement element = (INSISInstallElement)obj;
-                            if(parent != null) {
-                                if(!parent.equals(element.getParent())) {
-                                    return null;
-                                }
-                            }
-                            else {
-                                parent = element.getParent();
-                                if(parent == null) {
-                                    return null;
-                                }
-                            }
-                        }
-                        else {
-                            return null;
-                        }
-                    }
-                }
-                return parent;
-            }
-
             protected int[] getSelectedIndices()
             {
-                List list = getSelectionList();
+                List list = getSelectionList(mTreeViewer);
                 INSISInstallElement parent = getSelectionParent(list);
                 if(parent != null) {
                     List allElements = getAllElements(parent);
@@ -288,7 +250,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
 
             protected List getAllElements()
             {
-                return getAllElements(getSelectionParent(getSelectionList()));
+                return getAllElements(getSelectionParent(getSelectionList(mTreeViewer)));
             }
 
             protected void updateStructuredViewerInput(Object input, List elements, List move, boolean isDown)
@@ -301,7 +263,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
                         parent.addChild(element);
                     }
                     mTreeViewer.refresh(parent,true);
-                    expandGroup((AbstractNSISInstallGroup)parent);
+                    expandGroup(mTreeViewer, (AbstractNSISInstallGroup)parent);
                 }
             }
 
@@ -310,21 +272,6 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
              */
             protected void refreshViewer(StructuredViewer viewer, List elements, List move, boolean isDown)
             {
-            }
-
-            private void expandGroup(AbstractNSISInstallGroup group)
-            {
-                if(mTreeViewer.getExpandedState(group) != group.isExpanded()) {
-                    mTreeViewer.setExpandedState(group,group.isExpanded());
-                }
-                INSISInstallElement[] children = group.getChildren();
-                if(!Common.isEmptyArray(children)) {
-                    for (int i = 0; i < children.length; i++) {
-                        if(children[i] instanceof AbstractNSISInstallGroup) {
-                            expandGroup((AbstractNSISInstallGroup)children[i]);
-                        }
-                    }
-                }
             }
         };
         mover.setViewer(tv);
@@ -389,6 +336,8 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
             }
         });
 
+        configureDND(tv);
+        
         mWizard.addSettingsListener(new INSISWizardSettingsListener() {
             public void settingsChanged()
             {
@@ -427,8 +376,8 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
             public void widgetSelected(SelectionEvent e)
             {
                     MenuItem mi = (MenuItem)e.widget;
-                    String text = mi.getText();
-                    INSISInstallElement element = NSISInstallElementFactory.create(text);
+                    String type = (String)mi.getData();
+                    INSISInstallElement element = NSISInstallElementFactory.create(type);
                     if(element != null) {
                         try {
                             if(element.isEditable()) {
@@ -438,14 +387,15 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
                                     if(obj instanceof INSISInstallElement) {
                                         INSISInstallElement parent = (INSISInstallElement)obj;
                                         if(element.edit(mWizard)) {
-                                            parent.addChild(element);
-                                            tv.refresh(parent,true);
-                                            tv.reveal(element);
-                                            if(element.hasChildren()) {
-                                                tv.expandToLevel(element,AbstractTreeViewer.ALL_LEVELS);
+                                            if(parent.addChild(element)) {
+                                                tv.refresh(parent,true);
+                                                tv.reveal(element);
+                                                if(element.hasChildren()) {
+                                                    tv.expandToLevel(element,AbstractTreeViewer.ALL_LEVELS);
+                                                }
+                                                updateSelectComponents();
+                                                setPageComplete(validatePage(ALL_CHECK));
                                             }
-                                            updateSelectComponents();
-                                            setPageComplete(validatePage(ALL_CHECK));
                                         }
                                     }
                                 }
@@ -527,7 +477,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
             }
         });
 
-        tree.addKeyListener(new KeyAdapter() {
+         tree.addKeyListener(new KeyAdapter() {
             public void keyReleased(KeyEvent e) {
                 if(e.character == SWT.DEL) {
                     if(e.stateMask == 0) {
@@ -554,6 +504,388 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
         setPageComplete(validatePage(ALL_CHECK));
 
         return composite;
+    }
+
+    private void expandGroup(TreeViewer tv, AbstractNSISInstallGroup group)
+    {
+        if(tv.getExpandedState(group) != group.isExpanded()) {
+            tv.setExpandedState(group,group.isExpanded());
+        }
+        INSISInstallElement[] children = group.getChildren();
+        if(!Common.isEmptyArray(children)) {
+            for (int i = 0; i < children.length; i++) {
+                if(children[i] instanceof AbstractNSISInstallGroup) {
+                    expandGroup(tv, (AbstractNSISInstallGroup)children[i]);
+                }
+            }
+        }
+    }
+
+    private void configureDND(final TreeViewer tv)
+    {
+        Transfer[] types = new Transfer[] {ContentsTransfer.INSTANCE};
+        int operations = DND.DROP_MOVE | DND.DROP_COPY;
+        tv.addDragSupport(operations, types, new DragSourceListener() {
+            public void dragFinished(DragSourceEvent event)
+            {
+            }
+
+            public void dragSetData(DragSourceEvent event)
+            {
+                List selection = getSelectionList(tv);
+                INSISInstallElement parent = getSelectionParent(selection);
+                if(parent == null) {
+                    event.data = null;
+                }
+                else {
+                    event.data = new ContentsTransferData(parent,selection);
+                }
+            }
+
+            public void dragStart(DragSourceEvent event)
+            {
+                List selection = getSelectionList(tv);
+                INSISInstallElement parent = getSelectionParent(selection);
+                if(parent == null) {
+                    event.doit = false;
+                }
+            }
+        });
+        tv.addDropSupport(operations, new Transfer[] {ContentsTransfer.INSTANCE,FileTransfer.getInstance()}, new DropTargetAdapter() {
+            private int determineOperation(String[] files, String[] types, INSISInstallElement target, DropTargetEvent event, int defaultFeedback)
+            {
+                if(target == null) {
+                    return DND.DROP_NONE;
+                }
+                int operation = DND.DROP_COPY;
+                boolean filesOnly = true;
+                for (int i = 0; i < files.length; i++) {
+                    if(IOUtility.isValidFile(files[i])) {
+                        if(files[i].regionMatches(true, files[i].length()-REG_FILE_EXTENSION.length(), REG_FILE_EXTENSION, 0, REG_FILE_EXTENSION.length())) {
+                            types[i] = NSISInstallRegistryValue.TYPE;
+                        }
+                        else {
+                            types[i] = NSISInstallFile.TYPE;
+                        }
+                    }
+                    else {
+                        //Directory
+                        filesOnly = false;
+                        types[i] = NSISInstallDirectory.TYPE;
+                    }
+                }
+                NSISInstallFiles.FileItem fileItem = null;
+                if(filesOnly) {
+                    fileItem = new NSISInstallFiles.FileItem();
+                }
+                for (int i = 0; i < types.length; i++) {
+                    if(!target.acceptsChildType(types[i])) {
+                        if(types[i].equals(NSISInstallRegistryValue.TYPE)) {
+                            types[i] = NSISInstallFile.TYPE;
+                            if(target.acceptsChildType(types[i])) {
+                                continue;
+                            }
+                        }
+                        if(types[i].equals(NSISInstallFile.TYPE) && filesOnly) {
+                            fileItem.setName(files[i]);
+                            if(target.canAddChild(fileItem)) {
+                                types[i] = NSISInstallFiles.FileItem.TYPE;
+                                continue;
+                            }
+                        }
+                        operation = DND.DROP_NONE;
+                        break;
+                    }
+                }
+                return operation;
+            }
+
+            private int determineOperation(List selection, INSISInstallElement oldParent, INSISInstallElement newParent, DropTargetEvent event, int defaultFeedback)
+            {
+                int operation = DND.DROP_NONE;
+                if(newParent != null) {
+                    boolean shift = (WinAPI.GetKeyState(WinAPI.VK_SHIFT) < 0);
+                    boolean ctrl = (WinAPI.GetKeyState(WinAPI.VK_CTRL) < 0);
+                    if(ctrl && shift) {
+                        operation = DND.DROP_NONE;
+                    }
+                    else {
+                        if(ctrl) {
+                            operation = DND.DROP_COPY;
+                        }
+                        else if(shift) {
+                            operation = DND.DROP_MOVE;
+                        }
+                        else {
+                            operation = DND.DROP_DEFAULT;
+                        }
+                    }
+                    if(newParent != oldParent || operation == DND.DROP_COPY) {
+                        for (Iterator iter = selection.iterator(); iter.hasNext();) {
+                            if(!newParent.canAddChild((INSISInstallElement)iter.next())) {
+                                operation = DND.DROP_NONE;
+                                break;
+                            }
+                        }
+                    }
+                    if(operation != DND.DROP_NONE && event != null) {
+                        event.feedback |= defaultFeedback;
+                    }
+                }
+                return operation;
+            }
+
+            public void dragOver(DropTargetEvent event)
+            {
+                event.feedback = DND.FEEDBACK_EXPAND | DND.FEEDBACK_SCROLL;
+                int detail = DND.DROP_NONE;
+                if (event.item instanceof TreeItem) {
+                    Tree tree = tv.getTree();
+                    TreeItem item = (TreeItem)event.item;
+                    Object data = item.getData();
+                    if(data instanceof INSISInstallElement) {
+                        INSISInstallElement element = (INSISInstallElement)data;
+                        if(ContentsTransfer.INSTANCE.isSupportedType(event.currentDataType)) {
+                            ContentsTransferData transferData = (ContentsTransferData)ContentsTransfer.INSTANCE.nativeToJava(event.currentDataType);
+                            if(transferData.parent != null) {
+                                Point pt = tree.getDisplay().map(null, tree, event.x, event.y);
+                                Rectangle bounds = item.getBounds();
+                                if (pt.y < bounds.y + bounds.height/3) {
+                                    detail = determineOperation(transferData.selection, transferData.parent, element.getParent(), event, DND.FEEDBACK_INSERT_BEFORE);
+                                }
+                                else if (pt.y > bounds.y + 2*bounds.height/3) {
+                                    detail = determineOperation(transferData.selection, transferData.parent, element.getParent(), event, DND.FEEDBACK_INSERT_AFTER);
+                                }
+                                else {
+                                    detail = determineOperation(transferData.selection, transferData.parent, element, event, DND.FEEDBACK_SELECT);
+                                }
+                            }
+                        }
+                        else if(FileTransfer.getInstance().isSupportedType(event.currentDataType)) {
+                            Object transferData = FileTransfer.getInstance().nativeToJava(event.currentDataType);
+                            if(transferData instanceof String[]) {
+                                String[] files = (String[])transferData;
+                                String[] types = new String[files.length];
+                                Point pt = tree.getDisplay().map(null, tree, event.x, event.y);
+                                Rectangle bounds = item.getBounds();
+                                if (pt.y < bounds.y + bounds.height/3) {
+                                    detail = determineOperation(files, types, element.getParent(), event, DND.FEEDBACK_INSERT_BEFORE);
+                                }
+                                else if (pt.y > bounds.y + 2*bounds.height/3) {
+                                    detail = determineOperation(files, types, element.getParent(), event, DND.FEEDBACK_INSERT_AFTER);
+                                }
+                                else {
+                                    detail = determineOperation(files, types, element, event, DND.FEEDBACK_SELECT);
+                                }
+                            }
+                        }
+                    }
+                }
+                event.detail = detail;
+            }
+
+            private void doDrop(List selection, int detail, INSISInstallElement oldParent, INSISInstallElement newParent, int index)
+            {
+                try {
+                    for (Iterator iter = selection.iterator(); iter.hasNext();) {
+                        INSISInstallElement el = (INSISInstallElement)iter.next();
+                        switch(detail) {
+                            case DND.DROP_COPY:
+                                el = (INSISInstallElement)el.clone();
+                            case DND.DROP_DEFAULT:
+                            case DND.DROP_MOVE:
+                                if(oldParent == newParent) {
+                                    int n = oldParent.indexOf(el);
+                                    if(n < index) {
+                                        index--;
+                                    }
+                                    oldParent.removeChild(el);
+                                }
+                                newParent.addChild(index++,el);
+                        }
+                    }
+                    setPageComplete(validatePage(ALL_CHECK));
+                }
+                catch(Exception ex) {
+                    delayedValidateAfterError(ex.getLocalizedMessage(),2000);
+                }
+                finally {
+                    tv.refresh(true);
+                    if(newParent instanceof AbstractNSISInstallGroup) {
+                        ((AbstractNSISInstallGroup)newParent).setExpanded(true);
+                        expandGroup(tv, (AbstractNSISInstallGroup)newParent);
+                    }
+                }
+            }
+
+            private void doDrop(String[] files, String[] types, INSISInstallElement target, int index)
+            {
+                try {
+                    RegistryImporter importer = null;
+                    RegistryImportStrategy strategy = null;
+                    
+                    for (int i=0; i<files.length; i++) {
+                        INSISInstallElement el = null;
+                        if(types[i].equals(NSISInstallFile.TYPE)) {
+                            el = new NSISInstallFile();
+                            ((NSISInstallFile)el).setName(files[i]);
+                        }
+                        else if(types[i].equals(NSISInstallDirectory.TYPE)) {
+                            el = new NSISInstallDirectory();
+                            ((NSISInstallDirectory)el).setName(files[i]);
+                        }
+                        else if(types[i].equals(NSISInstallFiles.FileItem.TYPE)) {
+                            el = new NSISInstallFiles.FileItem();
+                            ((NSISInstallFiles.FileItem)el).setName(files[i]);
+                        }
+                        else if(types[i].equals(NSISInstallRegistryValue.TYPE)) {
+                            try {
+                                if(importer == null || strategy == null) {
+                                    importer = new RegistryImporter();
+                                    strategy = new RegistryImportStrategy();
+                                }
+                                else {
+                                    strategy.reset();
+                                }
+                                importer.importRegFile(getShell(), files[i], strategy);
+                                List list = strategy.getRegistryItems();
+                                if(!Common.isEmptyCollection(list)) {
+                                    for (Iterator iter = list.iterator(); iter.hasNext();) {
+                                        INSISInstallElement element = (INSISInstallElement)iter.next();
+                                        target.addChild(index++, element);
+                                    }
+                                }
+                                continue;
+                            }
+                            catch(Exception ex) {
+                            }   
+                            el = new NSISInstallFile();
+                            ((NSISInstallFile)el).setName(files[i]);
+                        }
+                        if(el != null) {
+                            target.addChild(index++,el);
+                        }
+                    }
+                    setPageComplete(validatePage(ALL_CHECK));
+                }
+                catch(Exception ex) {
+                    delayedValidateAfterError(ex.getLocalizedMessage(),2000);
+                }
+                finally {
+                    tv.refresh(true);
+                    if(target instanceof AbstractNSISInstallGroup) {
+                        ((AbstractNSISInstallGroup)target).setExpanded(true);
+                        expandGroup(tv, (AbstractNSISInstallGroup)target);
+                    }
+                }
+            }
+
+            public void drop(DropTargetEvent event) 
+            {
+                int detail = DND.DROP_NONE;
+                
+                if (event.item instanceof TreeItem) {
+                    Tree tree = tv.getTree();
+                    TreeItem item = (TreeItem)event.item;
+                    Object data = item.getData();
+                    if(data instanceof INSISInstallElement) {
+                        INSISInstallElement element = (INSISInstallElement)data;
+                        if (ContentsTransfer.INSTANCE.isSupportedType(event.currentDataType)) {
+                            if (event.data instanceof ContentsTransferData) {
+                                ContentsTransferData transferData = (ContentsTransferData)event.data;
+                                if (transferData.parent != null) {
+                                    Point pt = tree.getDisplay().map(null, tree, event.x, event.y);
+                                    Rectangle bounds = item.getBounds();
+                                    if (pt.y < bounds.y + bounds.height / 3) {
+                                        detail = determineOperation(transferData.selection, transferData.parent, element.getParent(), null, 0);
+                                        if (detail != DND.DROP_NONE) {
+                                            doDrop(transferData.selection, detail, transferData.parent, element.getParent(), element.getParent().indexOf(element));
+                                        }
+                                    }
+                                    else if (pt.y > bounds.y + 2 * bounds.height / 3) {
+                                        detail = determineOperation(transferData.selection, transferData.parent, element.getParent(), null, 0);
+                                        if (detail != DND.DROP_NONE) {
+                                            doDrop(transferData.selection, detail, transferData.parent, element.getParent(), element.getParent().indexOf(element) + 1);
+                                        }
+                                    }
+                                    else {
+                                        detail = determineOperation(transferData.selection, transferData.parent, element, null, 0);
+                                        if (detail != DND.DROP_NONE) {
+                                            doDrop(transferData.selection, detail, transferData.parent, element, element.getChildCount());
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        else if(FileTransfer.getInstance().isSupportedType(event.currentDataType)) {
+                            if(event.data instanceof String[]) {
+                                String[] files = (String[])event.data;
+                                String[] types = new String[files.length];
+                                Point pt = tree.getDisplay().map(null, tree, event.x, event.y);
+                                Rectangle bounds = item.getBounds();
+                                if (pt.y < bounds.y + bounds.height/3) {
+                                    detail = determineOperation(files, types, element.getParent(), event, DND.FEEDBACK_INSERT_BEFORE);
+                                    if(detail != DND.DROP_NONE) {
+                                        doDrop(files, types, element.getParent(), element.getParent().indexOf(element));
+                                    }
+                                }
+                                else if (pt.y > bounds.y + 2*bounds.height/3) {
+                                    detail = determineOperation(files, types, element.getParent(), event, DND.FEEDBACK_INSERT_AFTER);
+                                    if(detail != DND.DROP_NONE) {
+                                        doDrop(files, types, element.getParent(), element.getParent().indexOf(element)+1);
+                                    }
+                                }
+                                else {
+                                    detail = determineOperation(files, types, element, event, DND.FEEDBACK_SELECT);
+                                    if(detail != DND.DROP_NONE) {
+                                        doDrop(files, types, element, element.getChildCount());
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                event.detail = detail;
+            }
+        });
+    }
+
+    private List getSelectionList(TreeViewer tv)
+    {
+        List list = null;
+        ISelection sel = tv.getSelection();
+        if(!sel.isEmpty() && sel instanceof IStructuredSelection) {
+            list = ((IStructuredSelection)sel).toList();
+        }
+        return list;
+    }
+
+    private INSISInstallElement getSelectionParent(List list)
+    {
+        INSISInstallElement parent = null;
+        if(!Common.isEmptyCollection(list)) {
+            for(Iterator iter=list.iterator(); iter.hasNext(); ) {
+                Object obj = iter.next();
+                if(obj instanceof INSISInstallElement) {
+                    INSISInstallElement element = (INSISInstallElement)obj;
+                    if(parent != null) {
+                        if(!parent.equals(element.getParent())) {
+                            return null;
+                        }
+                    }
+                    else {
+                        parent = element.getParent();
+                        if(parent == null) {
+                            return null;
+                        }
+                    }
+                }
+                else {
+                    return null;
+                }
+            }
+        }
+        return parent;
     }
 
     private boolean shouldSelectComponents(INSISInstallElement item)
@@ -789,6 +1121,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
                             for (int i = 0; i < childTypes.length; i++) {
                                 MenuItem mi = new MenuItem(addPopupMenu,SWT.PUSH);
                                 mi.addSelectionListener(adapter);
+                                mi.setData(childTypes[i]);
                                 mi.setText(NSISInstallElementFactory.getTypeName(childTypes[i]));
                                 mi.setImage(NSISInstallElementFactory.getImage(childTypes[i]));
                             }
@@ -847,24 +1180,26 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
     {
         NSISWizardSettings settings = mWizard.getSettings();
 
-        if(Common.isEmpty(getErrorMessage()) && settings.getInstallerType() == INSISWizardConstants.INSTALLER_TYPE_SILENT) {
-            INSISInstallElement[] items = settings.getInstaller().getChildren();
-            if(!Common.isEmptyArray(items)) {
-                for (int i = 0; i < items.length; i++) {
-                    if(items[i] instanceof NSISSection) {
-                        if(((NSISSection)items[i]).isDefaultUnselected()) {
-                            setMessage(EclipseNSISPlugin.getResourceString("silent.unselected.sections.warning"),WARNING); //$NON-NLS-1$
-                            return;
+        if(Common.isEmpty(getMessage()) || getMessageType() != ERROR) {
+            if (settings.getInstallerType() == INSISWizardConstants.INSTALLER_TYPE_SILENT) {
+                INSISInstallElement[] items = settings.getInstaller().getChildren();
+                if (!Common.isEmptyArray(items)) {
+                    for (int i = 0; i < items.length; i++) {
+                        if (items[i] instanceof NSISSection) {
+                            if (((NSISSection)items[i]).isDefaultUnselected()) {
+                                setMessage(EclipseNSISPlugin.getResourceString("silent.unselected.sections.warning"), WARNING); //$NON-NLS-1$
+                                return;
+                            }
                         }
-                    }
-                    else if(items[i] instanceof NSISSectionGroup) {
-                        INSISInstallElement[] items2 = items[i].getChildren();
-                        if(!Common.isEmptyArray(items2)) {
-                            for (int j = 0; j < items2.length; j++) {
-                                if(items2[j] instanceof NSISSection) {
-                                    if(((NSISSection)items2[j]).isDefaultUnselected()) {
-                                        setMessage(EclipseNSISPlugin.getResourceString("silent.unselected.sections.warning"),WARNING); //$NON-NLS-1$
-                                        return;
+                        else if (items[i] instanceof NSISSectionGroup) {
+                            INSISInstallElement[] items2 = items[i].getChildren();
+                            if (!Common.isEmptyArray(items2)) {
+                                for (int j = 0; j < items2.length; j++) {
+                                    if (items2[j] instanceof NSISSection) {
+                                        if (((NSISSection)items2[j]).isDefaultUnselected()) {
+                                            setMessage(EclipseNSISPlugin.getResourceString("silent.unselected.sections.warning"), WARNING); //$NON-NLS-1$
+                                            return;
+                                        }
                                     }
                                 }
                             }
@@ -872,9 +1207,9 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
                     }
                 }
             }
-        }
-        else {
-            setMessage(EclipseNSISPlugin.getResourceString("wizard.contents.description")); //$NON-NLS-1$
+            else {
+                setMessage(EclipseNSISPlugin.getResourceString("wizard.contents.description")); //$NON-NLS-1$
+            }
         }
     }
 
@@ -892,6 +1227,113 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage
             setPageComplete(b);
             checkUnselectedSections();
             return b;
+        }
+    }
+    
+    private static class RegistryImportStrategy implements RegistryImporter.IRegistryImportStrategy
+    {
+        private List mRegistryItems = new ArrayList();
+        
+        public void reset()
+        {
+            mRegistryItems.clear();
+        }
+
+        public List getRegistryItems()
+        {
+            return mRegistryItems;
+        }
+
+        private int getHKey(String rootKey)
+        {
+            for (int i = 0; i < NSISWizardDisplayValues.HKEY_NAMES.length; i++) {
+                if(NSISWizardDisplayValues.HKEY_NAMES[i].equalsIgnoreCase(rootKey)) {
+                    return i;
+                }
+            }
+            return -1;
+        }
+
+        public void addRegistryKey(String rootKey, String subKey)
+        {
+            NSISInstallRegistryKey regKey = new NSISInstallRegistryKey();
+            regKey.setRootKey(getHKey(rootKey));
+            regKey.setSubKey(subKey);
+            mRegistryItems.add(regKey);
+        }
+
+        public void addRegistryValue(String rootKey, String subKey, String value, int type, String data)
+        {
+            switch(type) {
+                case WinAPI.REG_BINARY:
+                    type = REG_BIN;
+                    break;
+                case WinAPI.REG_DWORD:
+                    type = REG_DWORD;
+                    break;
+                case WinAPI.REG_EXPAND_SZ:
+                    type = REG_EXPAND_SZ;
+                    break;
+                case WinAPI.REG_SZ:
+                    type = REG_SZ;
+                    break;
+                default:
+                    return;
+            }
+            NSISInstallRegistryValue regVal = new NSISInstallRegistryValue();
+            regVal.setRootKey(getHKey(rootKey));
+            regVal.setSubKey(subKey);
+            regVal.setValue(value);
+            regVal.setData(data);
+            regVal.setValueType(type);
+            mRegistryItems.add(regVal);
+        }
+
+        public void beginRegistryKeySection(String rootKey, String subKey)
+        {
+        }
+
+        public void deleteRegistryKey(String rootKey, String subKey)
+        {
+        }
+
+        public void deleteRegistryValue(String rootKey, String subKey, String value)
+        {
+        }
+    }
+    
+    private class ContentsTransferData
+    {
+        INSISInstallElement parent;
+        List selection;
+
+        public ContentsTransferData(INSISInstallElement parent, List selection)
+        {
+            this.parent = parent;
+            this.selection = selection;
+        }
+    }
+
+    private static class ContentsTransfer extends ObjectTransfer
+    {
+        public static final ContentsTransfer INSTANCE = new ContentsTransfer();
+        private static final String[] TYPE_NAMES = {new StringBuffer("NSIS Wizard contents transfer").append( //$NON-NLS-1$
+                                                                 System.currentTimeMillis()).append(
+                                                                 ":").append(INSTANCE.hashCode()).toString()};//$NON-NLS-1$
+        private static final int[] TYPEIDS = {registerType(TYPE_NAMES[0])};
+
+        private ContentsTransfer()
+        {
+        }
+
+        protected int[] getTypeIds()
+        {
+            return TYPEIDS;
+        }
+
+        protected String[] getTypeNames()
+        {
+            return TYPE_NAMES;
         }
     }
 }

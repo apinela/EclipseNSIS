@@ -31,6 +31,8 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
     public static final String COMMANDS="COMMANDS"; //$NON-NLS-1$
     public static final String INSTRUCTIONS="INSTRUCTIONS"; //$NON-NLS-1$
     public static final String INSTALLER_PAGES="INSTALLER_PAGES"; //$NON-NLS-1$
+    public static final String HKEY_LONG_PARAMETERS="HKEY_LONG_PARAMETERS"; //$NON-NLS-1$
+    public static final String HKEY_SHORT_PARAMETERS="HKEY_SHORT_PARAMETERS"; //$NON-NLS-1$
     public static final String HKEY_PARAMETERS="HKEY_PARAMETERS"; //$NON-NLS-1$
     public static final String MESSAGEBOX_OPTION_BUTTON_PARAMETERS="MESSAGEBOX_OPTION_BUTTON_PARAMETERS"; //$NON-NLS-1$
     public static final String MESSAGEBOX_OPTION_ICON_PARAMETERS="MESSAGEBOX_OPTION_ICON_PARAMETERS"; //$NON-NLS-1$
@@ -133,7 +135,8 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
         Set commands = new CaseInsensitiveSet();
         Set instructions = new CaseInsensitiveSet();
         Set installerPages = new CaseInsensitiveSet();
-        Set hkeyParameters = new CaseInsensitiveSet();
+        Set hkeyLongParameters = new CaseInsensitiveSet();
+        Set hkeyShortParameters = new CaseInsensitiveSet();
         Set messageboxOptionButtonParameters = new CaseInsensitiveSet();
         Set messageboxOptionIconParameters = new CaseInsensitiveSet();
         Set messageboxOptionDefaultParameters = new CaseInsensitiveSet();
@@ -227,8 +230,11 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
                         else if(name.equals("installer.pages")) { //$NON-NLS-1$
                             set = installerPages;
                         }
-                        else if(name.equals("hkey.parameters")) { //$NON-NLS-1$
-                            set = hkeyParameters;
+                        else if(name.equals("hkey.long.parameters")) { //$NON-NLS-1$
+                            set = hkeyLongParameters;
+                        }
+                        else if(name.equals("hkey.short.parameters")) { //$NON-NLS-1$
+                            set = hkeyShortParameters;
                         }
                         else if(name.equals("messagebox.option.button.parameters")) { //$NON-NLS-1$
                             set = messageboxOptionButtonParameters;
@@ -424,9 +430,19 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
         Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
         mKeywordGroupsMap.put(INSTALLER_PAGES,temp2);
 
-        set = getValidKeywords(hkeyParameters);
+        set = getValidKeywords(hkeyLongParameters);
         mAllKeywordsSet.addAll(set);
         temp2 = (String[])set.toArray(Common.EMPTY_STRING_ARRAY);
+        Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
+        mKeywordGroupsMap.put(HKEY_LONG_PARAMETERS,temp2);
+
+        set = getValidKeywords(hkeyShortParameters);
+        mAllKeywordsSet.addAll(set);
+        temp2 = (String[])set.toArray(Common.EMPTY_STRING_ARRAY);
+        Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
+        mKeywordGroupsMap.put(HKEY_SHORT_PARAMETERS,temp2);
+
+        temp2 = (String[])Common.appendArray(temp2, getKeywordsGroup(HKEY_LONG_PARAMETERS));
         Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
         mKeywordGroupsMap.put(HKEY_PARAMETERS,temp2);
 

@@ -88,6 +88,7 @@ public class NSISCommandDialog extends StatusMessageDialog
                 catch (Exception e) {
                     EclipseNSISPlugin.getDefault().log(e);
                 }
+                mStarted = false;
             }
 
             public boolean isStarted()

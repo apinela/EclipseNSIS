@@ -88,4 +88,6 @@ public interface INSISConstants
     public static final String NSIS_REG_SUBKEY = "SOFTWARE\\NSIS"; //$NON-NLS-1$
 
     public static final String NSIS_REG_VALUE = ""; //$NON-NLS-1$
+
+    public static final String REG_FILE_EXTENSION = ".reg";
 }

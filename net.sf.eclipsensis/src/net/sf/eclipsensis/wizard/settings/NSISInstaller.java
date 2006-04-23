@@ -19,7 +19,7 @@ import org.eclipse.swt.graphics.Image;
 public class NSISInstaller extends AbstractNSISInstallGroup
 {
     private static final Image IMAGE = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("wizard.installer.icon")); //$NON-NLS-1$
-    public static final String TYPE = EclipseNSISPlugin.getResourceString("wizard.installer.type"); //$NON-NLS-1$
+    public static final String TYPE = "Installer"; //$NON-NLS-1$
     private String mFormat;
 
     private static final long serialVersionUID = 3601773736043608518L;

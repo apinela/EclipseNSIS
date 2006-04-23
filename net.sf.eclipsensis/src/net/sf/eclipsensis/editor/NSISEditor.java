@@ -20,6 +20,7 @@ import net.sf.eclipsensis.editor.outline.*;
 import net.sf.eclipsensis.editor.text.NSISPartitionScanner;
 import net.sf.eclipsensis.editor.text.NSISTextUtility;
 import net.sf.eclipsensis.help.NSISHelpURLProvider;
+import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.help.commands.*;
 import net.sf.eclipsensis.makensis.MakeNSISResults;
 import net.sf.eclipsensis.settings.*;
@@ -386,7 +387,7 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
         //Add support for NSISCommand transfer.
         final StyledText text2 = viewer.getTextWidget();
         DropTarget target = new DropTarget(text2, DND.DROP_DEFAULT | DND.DROP_COPY);
-        target.setTransfer(new Transfer[]{NSISCommandTransfer.getInstance()});
+        target.setTransfer(new Transfer[]{NSISCommandTransfer.INSTANCE, FileTransfer.getInstance()});
         target.addDropListener(new DropTargetAdapter() {
             public void dragEnter(DropTargetEvent e)
             {
@@ -434,12 +435,75 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
 
             public void drop(DropTargetEvent e)
             {
-                insertCommand((NSISCommand)e.data, false);
+                if(NSISCommandTransfer.INSTANCE.isSupportedType(e.currentDataType)) {
+                    insertCommand((NSISCommand)e.data, false);
+                }
+                else if(FileTransfer.getInstance().isSupportedType(e.currentDataType)) {
+                    insertFiles((String[])e.data);
+                }
             }
         });
         return viewer;
     }
     
+    private void insertFiles(String[] files)
+    {
+        ISourceViewer viewer = getSourceViewer();
+        if(!Common.isEmptyArray(files) && viewer != null) {
+            StyledText styledText = viewer.getTextWidget();
+            if(styledText != null && !styledText.isDisposed()) {
+                Point sel = styledText.getSelection();
+                try {
+                    IDocument doc = getDocumentProvider().getDocument(getEditorInput());
+                    int offset = getCaretOffsetForInsertCommand(doc, sel.x);
+                    styledText.setCaretOffset(offset);
+                    StringBuffer buf = new StringBuffer("");
+                    String delim = doc.getLineDelimiter(styledText.getLineAtOffset(offset));
+                    String fileKeyword = NSISKeywords.getInstance().getKeyword("File");
+                    String recursiveKeyword = NSISKeywords.getInstance().getKeyword("/r");
+                    RegistryImporter importer = null;
+                    NSISEditorRegistryImportStrategy strategy = null;
+
+                    for (int i = 0; i < files.length; i++) {
+                        if(IOUtility.isValidFile(files[i])) {
+                            if(files[i].regionMatches(true, files[i].length()-REG_FILE_EXTENSION.length(), REG_FILE_EXTENSION, 0, REG_FILE_EXTENSION.length())) {
+                                if(importer == null || strategy == null) {
+                                    importer = new RegistryImporter();
+                                    strategy = new NSISEditorRegistryImportStrategy();
+                                }
+                                else {
+                                    strategy.reset();
+                                }
+                                try {
+                                    importer.importRegFile(styledText.getShell(), files[i], strategy);
+                                    buf.append(strategy.getText()).append(delim);
+                                    continue;
+                                }
+                                catch (Exception e) {
+                                    EclipseNSISPlugin.getDefault().log(e);
+                                }                                
+                            }
+                            buf.append(fileKeyword).append(" ").append(
+                                        " ").append(IOUtility.resolveFileName(files[i], this)).append(
+                                        delim);
+                        }
+                        else {
+                            buf.append(fileKeyword).append(" ").append(recursiveKeyword).append(
+                                    " ").append(IOUtility.resolveFileName(files[i], this)).append(delim);
+                        }
+                    }
+                    String text = buf.toString();
+                    doc.replace(offset, 0, text);
+                    styledText.setCaretOffset(offset + text.length());
+                }
+                catch (Exception e) {
+                    Common.openError(styledText.getShell(), e.getMessage(), EclipseNSISPlugin.getShellImage());
+                    styledText.setSelection(sel);
+                }
+            }
+        }
+    }
+
     private int getCaretOffsetForInsertCommand(IDocument doc, int offset)
     {
         if(doc != null) {
@@ -734,6 +798,9 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
             mCurrentPosition = null;
             mOutlinePage.update();
         }
+        else if(mOutlineContentProvider != null) {
+            mOutlineContentProvider.refresh();
+        }
     }
 
     private void updateAnnotations()
@@ -760,6 +827,19 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
 
     public void exportHTML()
     {
+        if(isDirty()) {
+            if(!Common.openConfirm(getSourceViewer().getTextWidget().getShell(), 
+                    EclipseNSISPlugin.getFormattedString("export.html.save.confirmation",
+                    new Object[] {((IPathEditorInput)getEditorInput()).getPath().lastSegment()}), 
+                    EclipseNSISPlugin.getShellImage())) {
+                return;
+            }
+            IProgressMonitor monitor = getProgressMonitor();
+            doSave(monitor);
+            if(monitor.isCanceled()) {
+                return;
+            }
+        }
         if(mHTMLExporter == null) {
             mHTMLExporter = new HTMLExporter(this, getSourceViewer());
         }

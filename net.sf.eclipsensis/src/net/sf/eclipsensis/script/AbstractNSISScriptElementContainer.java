@@ -82,11 +82,26 @@ public abstract class AbstractNSISScriptElementContainer extends AbstractNSISScr
     {
         return mElements.size();
     }
+    
+    public INSISScriptElement get(int n)
+    {
+        return (INSISScriptElement)mElements.get(n);
+    }
+
+    public INSISScriptElement remove(int n)
+    {
+        return (INSISScriptElement)mElements.remove(n);
+    }
+
+    public boolean remove(INSISScriptElement element)
+    {
+        return mElements.remove(element);
+    }
 
     protected void validateElement(INSISScriptElement element) throws InvalidNSISScriptElementException
     {
         if(element instanceof NSISScriptMultiLineComment || element instanceof NSISScriptBlankLine ||
-           element instanceof NSISScriptDefine || element instanceof NSISScriptInsertMacro) {
+           element instanceof NSISScriptDefine || element instanceof NSISScriptUndef || element instanceof NSISScriptInsertMacro) {
             return;
         }
         throw new InvalidNSISScriptElementException(element);

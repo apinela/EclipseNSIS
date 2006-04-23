@@ -18,13 +18,15 @@ import net.sf.eclipsensis.wizard.NSISWizard;
 import net.sf.eclipsensis.wizard.settings.dialogs.NSISInstallFilesDialog;
 
 import org.eclipse.jface.window.Window;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.FileDialog;
 
 public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISInstallFileSystemObject
 {
 	private static final long serialVersionUID = 1293912008528238512L;
 
-    public static final String TYPE = EclipseNSISPlugin.getResourceString("wizard.files.type"); //$NON-NLS-1$
+    public static final String TYPE = "File Set"; //$NON-NLS-1$
     private static final Image IMAGE = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("wizard.files.icon")); //$NON-NLS-1$
     public static final char SEPARATOR = '\0';
 
@@ -48,27 +50,6 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
     {
         clearChildTypes();
         addChildType(FileItem.TYPE);
-    }
-
-    /* (non-Javadoc)
-     * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#getChildTypes()
-     */
-    public String[] getChildTypes()
-    {
-        return null;
-    }
-
-    /* (non-Javadoc)
-     * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#removeChild(net.sf.eclipsensis.wizard.settings.INSISInstallElement)
-     */
-    public void removeChild(INSISInstallElement child)
-    {
-        if(getChildren().length > 1) {
-            super.removeChild(child);
-        }
-        else {
-            throw new UnsupportedOperationException(EclipseNSISPlugin.getResourceString("wizard.fileset.delete.exception")); //$NON-NLS-1$
-        }
     }
 
     /* (non-Javadoc)
@@ -192,7 +173,7 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
     public static class FileItem extends AbstractNSISInstallItem
     {
         private static final long serialVersionUID = 3744853352840436396L;
-        public static final String TYPE = EclipseNSISPlugin.getResourceString("wizard.fileitem.type"); //$NON-NLS-1$
+        public static final String TYPE = "File Item"; //$NON-NLS-1$
         private static final Image IMAGE = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("wizard.file.icon")); //$NON-NLS-1$
 
         private String mName = null;
@@ -207,7 +188,7 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
         public boolean equals(Object obj)
         {
             if(obj instanceof FileItem) {
-                return ((FileItem)obj).mName.equals(mName);
+                return ((FileItem)obj).mName.equalsIgnoreCase(mName);
             }
             return false;
         }
@@ -241,6 +222,29 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
          */
         public boolean edit(NSISWizard wizard)
         {
+            FileDialog dialog = new FileDialog(wizard.getShell(),SWT.OPEN|SWT.PRIMARY_MODAL);
+            ResourceBundle bundle = EclipseNSISPlugin.getDefault().getResourceBundle();
+            dialog.setText(EclipseNSISPlugin.getResourceString("wizard.fileitem.dialog.title")); //$NON-NLS-1$
+            dialog.setFilterNames(Common.loadArrayProperty(bundle,"wizard.source.file.filternames")); //$NON-NLS-1$
+            dialog.setFilterExtensions(Common.loadArrayProperty(bundle,"wizard.source.file.filters")); //$NON-NLS-1$
+            if(!Common.isEmpty(mName)) {
+                dialog.setFileName(mName);
+            }
+            String newFilename = dialog.open();
+            if(newFilename != null && !newFilename.equalsIgnoreCase(mName)) {
+                if(getParent() != null) {
+                    FileItem fi = new FileItem();
+                    fi.setName(newFilename);
+                    if(!getParent().canAddChild(fi)) {
+                        Common.openError(wizard.getShell(), 
+                                EclipseNSISPlugin.getFormattedString("duplicate.child.error", new Object[] {getParent().getDisplayName(),fi.getDisplayName()}), 
+                                EclipseNSISPlugin.getShellImage());
+                        return false;
+                    }
+                }
+                mName = newFilename;
+                return true;
+            }
             return false;
         }
 
@@ -273,7 +277,7 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
          */
         public boolean isEditable()
         {
-            return false;
+            return true;
         }
 
         public String validate(boolean recursive)

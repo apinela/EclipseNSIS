@@ -14,6 +14,7 @@ import java.util.*;
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.util.Common;
 
+import org.eclipse.swt.widgets.Display;
 import org.w3c.dom.*;
 
 public abstract class AbstractNSISInstallGroup extends AbstractNSISInstallElement
@@ -60,6 +61,11 @@ public abstract class AbstractNSISInstallGroup extends AbstractNSISInstallElemen
         return mChildren.size() > 0;
     }
 
+    public final int getChildCount()
+    {
+        return mChildren.size();
+    }
+
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#getChildren()
      */
@@ -91,7 +97,9 @@ public abstract class AbstractNSISInstallGroup extends AbstractNSISInstallElemen
 
     protected final void addChildType(String childType)
     {
-        mChildTypes.add(childType);
+        if(NSISInstallElementFactory.isValidType(childType)) {
+            mChildTypes.add(childType);
+        }
     }
 
     protected final Iterator getChildrenIterator()
@@ -99,45 +107,90 @@ public abstract class AbstractNSISInstallGroup extends AbstractNSISInstallElemen
         return mChildren.iterator();
     }
 
+    public final boolean acceptsChildType(String type)
+    {
+        return NSISInstallElementFactory.isValidType(type) && mChildTypes.contains(type);
+    }
+
+    public final boolean canAddChild(INSISInstallElement child)
+    {
+        if(child != null && acceptsChildType(child.getType()) && !mChildren.contains(child)) {
+            return true;
+        }
+        return false;
+    }
+
+    public final boolean addChild(int index, INSISInstallElement child)
+    {
+        if(child != null && acceptsChildType(child.getType())) {
+            if(!mChildren.contains(child)) {
+                INSISInstallElement oldParent = child.getParent();
+                if(oldParent != null) {
+                    oldParent.removeChild(child);
+                }
+                mChildren.add(index, child);
+                child.setParent(this);
+                child.setSettings(getSettings());
+                return true;
+            }
+            else {
+                if(Display.getCurrent() != null) {
+                    Common.openError(Display.getCurrent().getActiveShell(), 
+                            EclipseNSISPlugin.getFormattedString("duplicate.child.error", new Object[] {getDisplayName(),child.getDisplayName()}), 
+                            EclipseNSISPlugin.getShellImage());
+                }
+            }
+        }
+        return false;
+    }
+
+    public final int indexOf(INSISInstallElement child)
+    {
+        return mChildren.indexOf(child);
+    }
+
+    public final boolean removeChild(int index)
+    {
+        return removeChild((INSISInstallElement)mChildren.get(index));
+    }
+
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#addChild(net.sf.eclipsensis.wizard.settings.INSISInstallElement)
      */
-    public final void addChild(INSISInstallElement child)
+    public final boolean addChild(INSISInstallElement child)
     {
-        if(child != null && mChildTypes.contains(child.getType()) && !mChildren.contains(child)) {
-            INSISInstallElement oldParent = child.getParent();
-            if(oldParent != null) {
-                oldParent.removeChild(child);
-            }
-            mChildren.add(child);
-            child.setParent(this);
-            child.setSettings(getSettings());
-        }
+        return addChild(mChildren.size(),child);
     }
 
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#removeChild(net.sf.eclipsensis.wizard.settings.INSISInstallElement)
      */
-    public void removeChild(INSISInstallElement child)
+    public final boolean removeChild(INSISInstallElement child)
     {
         if(child != null && mChildTypes.contains(child.getType()) && mChildren.contains(child)) {
             mChildren.remove(child);
             child.setParent(null);
             child.setSettings(null);
+            return true;
         }
+        return false;
     }
 
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#removeAllChildren()
      */
-    public final void removeAllChildren()
+    public final boolean removeAllChildren()
     {
-        for(Iterator iter=mChildren.iterator(); iter.hasNext(); ) {
-            INSISInstallElement child = (INSISInstallElement)iter.next();
-            iter.remove();
-            child.setParent(null);
-            child.setSettings(null);
+        if(mChildren.size() > 0) {
+            for(Iterator iter=mChildren.iterator(); iter.hasNext(); ) {
+                INSISInstallElement child = (INSISInstallElement)iter.next();
+                iter.remove();
+                child.setParent(null);
+                child.setSettings(null);
+            }
+            return true;
         }
+        return false;
     }
 
     /**
@@ -194,6 +247,27 @@ public abstract class AbstractNSISInstallGroup extends AbstractNSISInstallElemen
                     INSISInstallElement child = (INSISInstallElement)iter.next();
                     if(child instanceof AbstractNSISInstallGroup) {
                         ((AbstractNSISInstallGroup)child).resetChildTypes(recursive);
+                    }
+                }
+            }
+        }
+    }
+
+    public final void resetChildren(boolean recursive)
+    {
+        INSISInstallElement[] children = getChildren();
+        if(!Common.isEmptyArray(children)) {
+            removeAllChildren();
+            for (int i = 0; i < children.length; i++) {
+                addChild(children[i]);
+            }
+            if(recursive) {
+                if(!Common.isEmptyCollection(mChildren)) {
+                    for (Iterator iter = mChildren.iterator(); iter.hasNext();) {
+                        INSISInstallElement child = (INSISInstallElement)iter.next();
+                        if(child instanceof AbstractNSISInstallGroup) {
+                            ((AbstractNSISInstallGroup)child).resetChildren(recursive);
+                        }
                     }
                 }
             }

@@ -142,6 +142,7 @@ public abstract class NSISWizard extends Wizard implements IAdaptable, INewWizar
         AbstractNSISInstallGroup installer = (AbstractNSISInstallGroup)mSettings.getInstaller();
         installer.setExpanded(true,true);
         installer.resetChildTypes(true);
+        installer.resetChildren(true);
         INSISWizardSettingsListener[] listeners = (INSISWizardSettingsListener[])mSettingsListeners.toArray(new INSISWizardSettingsListener[mSettingsListeners.size()]);
         for (int i = 0; i < listeners.length; i++) {
             listeners[i].settingsChanged();

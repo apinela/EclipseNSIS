@@ -9,24 +9,19 @@
  *******************************************************************************/
 package net.sf.eclipsensis.wizard;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.makensis.MakeNSISRunner;
-import net.sf.eclipsensis.util.Common;
 
 public class NSISWizardDisplayValues implements INSISWizardConstants
 {
     public static final String[] INSTALLER_TYPE_NAMES = new String[INSTALLER_TYPE_MUI+1];
     public static final String[] LICENSE_BUTTON_TYPE_NAMES = new String[LICENSE_BUTTON_RADIO+1];
     public static final String[] COMPRESSOR_TYPE_NAMES = new String[MakeNSISRunner.COMPRESSOR_DISPLAY_ARRAY.length-1];
-    private static final String[] HKEY_NAMES = {"HKEY_CLASSES_ROOT","HKEY_LOCAL_MACHINE","HKEY_CURRENT_USER","HKEY_USERS", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-                                               "HKEY_CURRENT_CONFIG","HKEY_DYN_DATA","HKEY_PERFORMANCE_DATA","SHELL_CONTEXT"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+    public static final String[] HKEY_NAMES = new String[HKPD+1];
     public static final String[] SHORTCUT_TYPE_NAMES = new String[SHORTCUT_INSTALLELEMENT+1];
     public static final String[] OVERWRITE_MODE_NAMES = new String[OVERWRITE_IFDIFF+1];
-    public static final String[] REG_VALUE_TYPES = new String[REG_DWORD+1];
+    public static final String[] REG_VALUE_TYPES = new String[REG_BIN+1];
+    public static final String[] LIBTYPES = new String[LIBTYPE_REGDLLTLB+1];
 
     static {
         INSTALLER_TYPE_NAMES[INSTALLER_TYPE_SILENT] = EclipseNSISPlugin.getResourceString("installer.type.silent"); //$NON-NLS-1$
@@ -51,16 +46,20 @@ public class NSISWizardDisplayValues implements INSISWizardConstants
 
         REG_VALUE_TYPES[REG_SZ] = EclipseNSISPlugin.getResourceString("reg.value.string"); //$NON-NLS-1$;
         REG_VALUE_TYPES[REG_DWORD] = EclipseNSISPlugin.getResourceString("reg.value.dword"); //$NON-NLS-1$;
-    }
+        REG_VALUE_TYPES[REG_EXPAND_SZ] = EclipseNSISPlugin.getResourceString("reg.value.expandstring"); //$NON-NLS-1$;
+        REG_VALUE_TYPES[REG_BIN] = EclipseNSISPlugin.getResourceString("reg.value.bin"); //$NON-NLS-1$;
 
-    public static String[] getHKEYNames()
-    {
-        List list = new ArrayList();
-        for (int i = 0; i < HKEY_NAMES.length; i++) {
-            if(NSISKeywords.getInstance().isValidKeyword(HKEY_NAMES[i])) {
-                list.add(HKEY_NAMES[i]);
-            }
-        }
-        return (String[])list.toArray(Common.EMPTY_STRING_ARRAY);
+        LIBTYPES[LIBTYPE_DLL] = EclipseNSISPlugin.getResourceString("lib.type.dll"); //$NON-NLS-1$;
+        LIBTYPES[LIBTYPE_REGDLL] = EclipseNSISPlugin.getResourceString("lib.type.regdll"); //$NON-NLS-1$;
+        LIBTYPES[LIBTYPE_TLB] = EclipseNSISPlugin.getResourceString("lib.type.tlb"); //$NON-NLS-1$;
+        LIBTYPES[LIBTYPE_REGDLLTLB] = EclipseNSISPlugin.getResourceString("lib.type.regdlltlb"); //$NON-NLS-1$;
+
+        HKEY_NAMES[HKCR] = "HKEY_CLASSES_ROOT"; //$NON-NLS-1$
+        HKEY_NAMES[HKLM] = "HKEY_LOCAL_MACHINE"; //$NON-NLS-1$
+        HKEY_NAMES[HKCU] = "HKEY_CURRENT_USER"; //$NON-NLS-1$
+        HKEY_NAMES[HKU] = "HKEY_USERS"; //$NON-NLS-1$
+        HKEY_NAMES[HKCC] = "HKEY_CURRENT_CONFIG"; //$NON-NLS-1$
+        HKEY_NAMES[HKDD] = "HKEY_DYN_DATA"; //$NON-NLS-1$
+        HKEY_NAMES[HKPD] = "HKEY_PERFORMANCE_DATA"; //$NON-NLS-1$
     }
 }

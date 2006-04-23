@@ -9,20 +9,14 @@
  *******************************************************************************/
 package net.sf.eclipsensis.help.commands;
 
-import org.eclipse.swt.dnd.ByteArrayTransfer;
-import org.eclipse.swt.dnd.TransferData;
+import net.sf.eclipsensis.util.ObjectTransfer;
 
-public class NSISCommandTransfer extends ByteArrayTransfer
+public class NSISCommandTransfer extends ObjectTransfer
 {
     private static final String[] TYPE_NAMES = {"nsis-command" + System.currentTimeMillis()}; //$NON-NLS-1$
     private static final int[] TYPEIDS = {registerType(TYPE_NAMES[0])};
 
-    private static final NSISCommandTransfer cInstance = new NSISCommandTransfer();
-    
-    public static NSISCommandTransfer getInstance()
-    {
-        return cInstance;
-    }
+    public static final NSISCommandTransfer INSTANCE = new NSISCommandTransfer();
 
     private NSISCommandTransfer()
     {
@@ -36,21 +30,5 @@ public class NSISCommandTransfer extends ByteArrayTransfer
     protected String[] getTypeNames()
     {
         return TYPE_NAMES;
-    }
-
-    protected void javaToNative(Object data, TransferData transferData) 
-    {
-        if (data instanceof NSISCommand) {
-            super.javaToNative(((NSISCommand) data).getName().getBytes(), transferData);
-        }
-    }
-
-    protected Object nativeToJava(TransferData transferData) {
-        byte[] bytes = (byte[]) super.nativeToJava(transferData);
-        if (bytes != null) {
-            String name = new String(bytes);
-            return NSISCommandManager.getCommand(name);
-        }
-        return null;
     }
 }

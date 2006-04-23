@@ -22,7 +22,7 @@ public class NSISInstallDirectory extends AbstractNSISInstallItem implements INS
 {
 	private static final long serialVersionUID = 3960745695250401464L;
 
-    public static final String TYPE = EclipseNSISPlugin.getResourceString("wizard.directory.type"); //$NON-NLS-1$
+    public static final String TYPE = "Folder"; //$NON-NLS-1$
     private static final Image IMAGE = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("wizard.directory.icon")); //$NON-NLS-1$
     private static final Image RECURSIVE_IMAGE = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("wizard.recursive.directory.icon")); //$NON-NLS-1$
 

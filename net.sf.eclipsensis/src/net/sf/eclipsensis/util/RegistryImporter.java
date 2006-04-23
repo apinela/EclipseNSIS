@@ -10,15 +10,11 @@
 package net.sf.eclipsensis.util;
 
 import java.io.*;
-import java.text.MessageFormat;
-import java.util.Iterator;
-import java.util.List;
+import java.util.Map;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.dialogs.RegistryKeySelectionDialog;
-import net.sf.eclipsensis.help.NSISKeywords;
-import net.sf.eclipsensis.help.NSISKeywords.ShellConstant;
 import net.sf.eclipsensis.settings.INSISPreferenceConstants;
 import net.sf.eclipsensis.settings.NSISPreferences;
 
@@ -29,21 +25,40 @@ import org.eclipse.swt.widgets.Shell;
 
 public class RegistryImporter
 {
+    public static final RegistryImporter INSTANCE = new RegistryImporter();
+    
     private static final String REGEDIT_EXE = "regedit.exe"; //$NON-NLS-1$
     
-    private static MessageFormat cDeleteRegKeyFormat=new MessageFormat("{0} {1} {2}"); //$NON-NLS-1$
-    private static MessageFormat cDeleteRegValueFormat=new MessageFormat("{0} {1} {2} {3}"); //$NON-NLS-1$
-    private static MessageFormat cWriteRegValueFormat=new MessageFormat("{0} {1} {2} {3} {4}"); //$NON-NLS-1$
-    private static MessageFormat cCommentFormat=new MessageFormat(EclipseNSISPlugin.getResourceString("regfile.comment.format")); //$NON-NLS-1$
     private static String[] cRegFileFilters = Common.tokenize(EclipseNSISPlugin.getResourceString("regfile.filters"),','); //$NON-NLS-1$
     private static String[] cRegFileFilterNames = Common.tokenize(EclipseNSISPlugin.getResourceString("regfile.filter.names"),','); //$NON-NLS-1$
     private static File cRegEdit = null;
+    
+    private static Map cRootKeyHandleMap = new CaseInsensitiveMap();
 
-    private RegistryImporter()
+    private boolean mShowMultiSZWarning = true;
+
+    private static void putRootKeyHandle(String longName, String shortName, int handle)
+    {
+        String hexHandle = "0x"+Integer.toHexString(handle);
+        cRootKeyHandleMap.put(longName, hexHandle);
+        cRootKeyHandleMap.put(shortName, hexHandle);
+    }
+
+    static {
+        putRootKeyHandle("HKEY_CLASSES_ROOT","HKCR",WinAPI.HKEY_CLASSES_ROOT);
+        putRootKeyHandle("HKEY_CURRENT_USER","HKCU",WinAPI.HKEY_CURRENT_USER);
+        putRootKeyHandle("HKEY_LOCAL_MACHINE","HKLM",WinAPI.HKEY_LOCAL_MACHINE);
+        putRootKeyHandle("HKEY_USERS","HKU",WinAPI.HKEY_USERS);
+        putRootKeyHandle("HKEY_PERFORMANCE_DATA","HKPD",WinAPI.HKEY_PERFORMANCE_DATA);
+        putRootKeyHandle("HKEY_CURRENT_CONFIG","HKCC",WinAPI.HKEY_CURRENT_CONFIG);
+        putRootKeyHandle("HKEY_DYN_DATA","HKDD",WinAPI.HKEY_DYN_DATA);
+    }
+
+    public RegistryImporter()
     {
     }
 
-    private static File findRegEdit(Shell shell)
+    private File findRegEdit(Shell shell)
     {
         File regEdit = null;
         String pref = NSISPreferences.INSTANCE.getString(INSISPreferenceConstants.REGEDIT_LOCATION);
@@ -95,7 +110,7 @@ public class RegistryImporter
         return null;
     }
 
-    private static File getRegEdit(Shell shell)
+    private File getRegEdit(Shell shell)
     {
         if(!IOUtility.isValidFile(cRegEdit)) {
             cRegEdit = findRegEdit(shell);
@@ -104,7 +119,7 @@ public class RegistryImporter
         return cRegEdit;
     }
 
-    public static final String importRegKey(Shell shell)
+    public void importRegKey(Shell shell, IRegistryImportStrategy callback)
     {
         File regEdit = getRegEdit(shell);
         if(regEdit == null) {
@@ -114,7 +129,7 @@ public class RegistryImporter
             RegistryKeySelectionDialog dialog = new RegistryKeySelectionDialog(shell);
             if(dialog.open() == Window.OK) {
                 try {
-                    File regFile = File.createTempFile("exp", ".reg"); //$NON-NLS-1$ //$NON-NLS-2$
+                    File regFile = File.createTempFile("exp", INSISConstants.REG_FILE_EXTENSION); //$NON-NLS-1$ //$NON-NLS-2$
                     if (IOUtility.isValidFile(regFile)) {
                         regFile.delete();
                     }
@@ -124,7 +139,7 @@ public class RegistryImporter
                     Process p = Runtime.getRuntime().exec(cmdArray);
                     p.waitFor();
                     if (IOUtility.isValidFile(regFile)) {
-                        return importRegFile(shell, regFile.getAbsolutePath());
+                        importRegFile(shell, regFile.getAbsolutePath(), callback);
                     }
                     else {
                         throw new RuntimeException(EclipseNSISPlugin.getFormattedString("exec.regedit.error", //$NON-NLS-1$ 
@@ -138,24 +153,22 @@ public class RegistryImporter
                 }
             }
         }
-        return null;
     }
 
-    public static final String importRegFile(Shell shell)
+    public void importRegFile(Shell shell, IRegistryImportStrategy callback)
     {
         FileDialog dialog = new FileDialog(shell, SWT.OPEN);
         dialog.setFilterExtensions(cRegFileFilters);
         dialog.setFilterNames(cRegFileFilterNames);
         dialog.setText(EclipseNSISPlugin.getResourceString("insert.regfile.description")); //$NON-NLS-1$
-        return importRegFile(shell, dialog.open());
+        importRegFile(shell, dialog.open(), callback);
     }
 
-    private static String importRegFile(Shell shell, String filename)
+    public void importRegFile(Shell shell, String filename, IRegistryImportStrategy callback)
     {
         if(!Common.isEmpty(filename)) {
             File regFile = new File(filename);
             if(IOUtility.isValidFile(regFile)) {
-                List shellConstants = NSISKeywords.getInstance().getShellConstants();
                 FileInputStream fis = null;
                 BufferedReader br = null;
                 try {
@@ -186,41 +199,21 @@ public class RegistryImporter
                         throw ex;
                     }
 
-                    String deleteRegKey = NSISKeywords.getInstance().getKeyword("DeleteRegKey"); //$NON-NLS-1$
-                    String writeRegStr = NSISKeywords.getInstance().getKeyword("WriteRegStr"); //$NON-NLS-1$
-                    String deleteRegValue = NSISKeywords.getInstance().getKeyword("DeleteRegValue"); //$NON-NLS-1$
-                    String writeRegDWORD = NSISKeywords.getInstance().getKeyword("WriteRegDWORD"); //$NON-NLS-1$
-                    String writeRegExpandStr = NSISKeywords.getInstance().getKeyword("WriteRegExpandStr"); //$NON-NLS-1$
-                    String writeRegBin = NSISKeywords.getInstance().getKeyword("WriteRegBin"); //$NON-NLS-1$
-
                     String line = br.readLine();
                     if(line != null) {
                         if ( !(isRegEdit4 && line.equals("REGEDIT4")) && //$NON-NLS-1$
                              !(isRegEdit5 && line.equals("Windows Registry Editor Version 5.00"))) { //$NON-NLS-1$
                             throw ex;
                         }
-                        int textLimit;
-                        try {
-                            textLimit = Integer.parseInt(NSISPreferences.INSTANCE.getNSISDefaultSymbol("NSIS_MAX_STRLEN")); //$NON-NLS-1$
-                        }
-                        catch(Exception e){
-                            textLimit = INSISConstants.DEFAULT_NSIS_TEXT_LIMIT;
-                        }
-                        StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
                         String rootKey = null;
                         String subKey = null;
-                        boolean showMultiSZWarning = true;
                         int count = 0;
-                        String context = ShellConstant.CONTEXT_GENERAL;
 
                         while((line = br.readLine()) != null) {
                             line = line.trim();
                             if(line.length() == 0) {
                                 if(rootKey != null && subKey != null && count == 0) {
-                                    context = addLineToBuf(buf, makeRegCommand(cWriteRegValueFormat, 
-                                            new String[]{writeRegStr, rootKey, subKey, "", ""}), textLimit, context, shellConstants); //$NON-NLS-1$ //$NON-NLS-2$
-                                    context = addLineToBuf(buf, makeRegCommand(cDeleteRegValueFormat, 
-                                            new String[]{deleteRegValue, rootKey, subKey, ""}), textLimit, context, shellConstants); //$NON-NLS-1$
+                                    callback.addRegistryKey(rootKey, subKey);
                                 }
                                 rootKey = null;
                                 subKey = null;
@@ -234,17 +227,10 @@ public class RegistryImporter
                                             rootKey = line.substring(1,n).toUpperCase();
                                             subKey = line.substring(n+1,line.length()-1);
                                             
-                                            if(buf.length() > 0) {
-                                                buf.append(INSISConstants.LINE_SEPARATOR);
-                                            }
-                                            buf.append(cCommentFormat.format(new String[] {line})).append(
-                                                    INSISConstants.LINE_SEPARATOR);
+                                            callback.beginRegistryKeySection(rootKey, subKey);
                                             if(rootKey.charAt(0) == '-') {
                                                 rootKey = rootKey.substring(1);
-                                                context = addLineToBuf(buf,
-                                                             makeRegCommand(cDeleteRegKeyFormat, 
-                                                                            new String[] {deleteRegKey,rootKey,subKey}),
-                                                             textLimit, context, shellConstants);
+                                                callback.deleteRegistryKey(rootKey, subKey);
                                                 rootKey = null;
                                                 subKey = null;
                                             }
@@ -288,13 +274,13 @@ public class RegistryImporter
                                             if (valueName != null) {
                                                 if (Common.isQuoted(value)) {
                                                     value = value.substring(1, value.length() - 1);
-                                                    context = addLineToBuf(buf, makeRegCommand(cWriteRegValueFormat, new String[]{writeRegStr, rootKey, subKey, valueName, value}), textLimit, context, shellConstants);
+                                                    callback.addRegistryValue(rootKey, subKey, valueName, WinAPI.REG_SZ, value);
                                                     count++;
                                                     continue;
                                                 }
                                                 else { 
                                                     if (value.equals("-")) { //$NON-NLS-1$
-                                                        context = addLineToBuf(buf, makeRegCommand(cDeleteRegValueFormat, new String[]{deleteRegValue, rootKey, subKey, valueName}), textLimit, context, shellConstants);
+                                                        callback.deleteRegistryValue(rootKey, subKey, valueName);
                                                         continue;
                                                     }
                                                     else {
@@ -305,8 +291,7 @@ public class RegistryImporter
                                                             if (valueType.equals("dword")) { //$NON-NLS-1$
                                                                 //Validate that it is really a hex value
                                                                 Integer.parseInt(value, 16);
-                                                                context = addLineToBuf(buf, makeRegCommand(cWriteRegValueFormat, new String[]{writeRegDWORD, rootKey, subKey, valueName, "0x" + value}), //$NON-NLS-1$
-                                                                        textLimit, context, shellConstants);
+                                                                callback.addRegistryValue(rootKey, subKey, valueName, WinAPI.REG_DWORD, value);
                                                                 count++;
                                                                 continue;
                                                             }
@@ -320,8 +305,7 @@ public class RegistryImporter
                                                                         buf2.append(values[i]);
                                                                     }
                                                                 }
-                                                                context = addLineToBuf(buf, makeRegCommand(cWriteRegValueFormat, new String[]{writeRegBin, rootKey, subKey, valueName, buf2.toString()}),
-                                                                        textLimit, context, shellConstants);
+                                                                callback.addRegistryValue(rootKey, subKey, valueName, WinAPI.REG_BINARY, buf2.toString());
                                                                 count++;
                                                                 continue;
                                                             }
@@ -340,17 +324,16 @@ public class RegistryImporter
                                                                             bytes[i + 1] = (byte)Integer.parseInt(values[i], 16);
                                                                         }
                                                                     }
-                                                                    context = addLineToBuf(buf, makeRegCommand(cWriteRegValueFormat, new String[]{writeRegExpandStr, rootKey, subKey, valueName,
-                                                                            new String(bytes, (isRegEdit4?"8859_1":"UTF-16"))}), textLimit, context, shellConstants); //$NON-NLS-1$ //$NON-NLS-2$
+                                                                    callback.addRegistryValue(rootKey, subKey, valueName, WinAPI.REG_EXPAND_SZ, new String(bytes, (isRegEdit4?"8859_1":"UTF-16"))); //$NON-NLS-1$ //$NON-NLS-2$
                                                                     count++;
                                                                     continue;
                                                                 }
                                                             }
                                                             else if (valueType.equals("hex(7)")) { //$NON-NLS-1$
-                                                                if (showMultiSZWarning) {
+                                                                if (mShowMultiSZWarning) {
                                                                     Common.openWarning(shell, EclipseNSISPlugin.getResourceString("warning.title"), //$NON-NLS-1$
                                                                             EclipseNSISPlugin.getResourceString("reg.multistring.warning"), EclipseNSISPlugin.getShellImage()); //$NON-NLS-1$
-                                                                    showMultiSZWarning = false;
+                                                                    mShowMultiSZWarning = false;
                                                                 }
                                                                 continue;
                                                             }
@@ -364,7 +347,6 @@ public class RegistryImporter
                                 throw ex;
                             }
                         }
-                        return buf.toString();
                     }
                     else {
                         throw ex;
@@ -381,50 +363,21 @@ public class RegistryImporter
                 }
             }
         }
-        return null;
     }
 
-    private static String makeRegCommand(MessageFormat format, String[] args)
+    public static final String rootKeyNameToHandle(String rootKey)
     {
-        for(int i=0; i<args.length; i++) {
-            args[i] = Common.maybeQuote(args[i]==null?"":args[i]); //$NON-NLS-1$
-        }
-        if(args[args.length-1].endsWith("\\")) { //$NON-NLS-1$
-            args[args.length-1] = Common.quote(args[args.length-1]);
-        }
-        return format.format(args);
+        String handle = (String)cRootKeyHandleMap.get(rootKey);
+        return (handle==null?"":handle);
     }
-
-    private static String addLineToBuf(StringBuffer buf, String line, int maxLen, String context, List shellConstants)
+    
+    public static interface IRegistryImportStrategy
     {
-        String newContext = ShellConstant.CONTEXT_GENERAL;
-        for (Iterator iter = shellConstants.iterator(); iter.hasNext();) {
-            ShellConstant constant = (ShellConstant)iter.next();
-            if(constant.value.length() <= line.length()) {
-                if(!ShellConstant.CONTEXT_GENERAL.equals(constant.context) &&
-                   !newContext.equals(constant.context) &&
-                   !ShellConstant.CONTEXT_GENERAL.equals(newContext)){
-                    continue;
-                }
-                String newLine = Common.replaceAll(line, constant.value, constant.name, true);
-                if(!newLine.equals(line) && !ShellConstant.CONTEXT_GENERAL.equals(constant.context)) {
-                    newContext = constant.context;    
-                }
-                line = newLine;
-            }
-        }
-        if(!newContext.equals(ShellConstant.CONTEXT_GENERAL) && !newContext.equals(context)) {
-            buf.append(NSISKeywords.getInstance().getKeyword("SetShellVarContext")).append( //$NON-NLS-1$
-                    " ").append(newContext).append(INSISConstants.LINE_SEPARATOR); //$NON-NLS-1$
-            context = newContext;
-        }
-        while(line.length() > maxLen) {
-            buf.append(line.substring(0, maxLen-1)).append(
-                    INSISConstants.LINE_CONTINUATION_CHAR).append(
-                    INSISConstants.LINE_SEPARATOR);
-            line = line.substring(maxLen-1);
-        }
-        buf.append(line).append(INSISConstants.LINE_SEPARATOR);
-        return context;
+        public void reset();
+        public void beginRegistryKeySection(String rootKey, String subKey);
+        public void addRegistryKey(String rootKey, String subKey);
+        public void deleteRegistryKey(String rootKey, String subKey);
+        public void addRegistryValue(String rootKey, String subKey, String value, int type, String data);
+        public void deleteRegistryValue(String rootKey, String subKey, String value);
     }
 }

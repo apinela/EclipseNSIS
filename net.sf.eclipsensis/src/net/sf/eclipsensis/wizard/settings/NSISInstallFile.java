@@ -22,7 +22,7 @@ public class NSISInstallFile extends AbstractNSISInstallItem implements INSISIns
 {
 	private static final long serialVersionUID = 7628955872836262241L;
 
-    public static final String TYPE = EclipseNSISPlugin.getResourceString("wizard.file.type"); //$NON-NLS-1$
+    public static final String TYPE = "File"; //$NON-NLS-1$
     private static final Image IMAGE = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("wizard.file.icon")); //$NON-NLS-1$
 
     private String mName = null;

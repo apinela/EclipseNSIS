@@ -9,8 +9,10 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.dnd;
 
+import net.sf.eclipsensis.util.ObjectTransfer;
 
-public class InstallOptionsTemplateTransfer extends InstallOptionsObjectTransfer
+
+public class InstallOptionsTemplateTransfer extends ObjectTransfer
 {
     public static final InstallOptionsTemplateTransfer INSTANCE = new InstallOptionsTemplateTransfer();
     private static final String[] TYPE_NAMES = {new StringBuffer("InstallOptions Template transfer").append( //$NON-NLS-1$

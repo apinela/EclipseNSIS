@@ -46,6 +46,11 @@ public class WinAPI
     public static final int HKEY_CURRENT_CONFIG = 0x80000005;
     public static final int HKEY_DYN_DATA = 0x80000006;
 
+    public static final int REG_SZ = 1;
+    public static final int REG_EXPAND_SZ = 2;
+    public static final int REG_BINARY = 3;
+    public static final int REG_DWORD = 4;
+
     public static final int BS_LEFTTEXT = 0x20;
     public static final int CB_SHOWDROPDOWN = 0x14f;
     public static final int CB_GETDROPPEDSTATE = 0x157;
@@ -95,6 +100,8 @@ public class WinAPI
     public static final int FILE_ATTRIBUTE_SYSTEM = 0x4;
 
     public static final int VK_SHIFT = 0x10;
+    public static final int VK_CTRL = 0x11;
+    public static final int VK_ALT = 0x12;
     
     private static native void init();
     public static native int SetWindowLong(int hWnd, int nIndex, int dwNewLong);

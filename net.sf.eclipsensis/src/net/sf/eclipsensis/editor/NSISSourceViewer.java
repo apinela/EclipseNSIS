@@ -9,7 +9,6 @@
  *******************************************************************************/
 package net.sf.eclipsensis.editor;
 
-import java.io.File;
 import java.util.*;
 import java.util.List;
 
@@ -23,7 +22,6 @@ import net.sf.eclipsensis.settings.INSISPreferenceConstants;
 import net.sf.eclipsensis.settings.IPropertyAdaptable;
 import net.sf.eclipsensis.util.*;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.*;
@@ -40,7 +38,6 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.editors.text.ILocationProvider;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.MarkerAnnotation;
 import org.eclipse.ui.views.markers.MarkerViewUtil;
@@ -420,31 +417,15 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
                     text = dialog.open();
                 }
                 if(!Common.isEmpty(text)) {
-                    text = Common.escapeQuotes(text);
-                    String newText = Common.maybeQuote(IOUtility.encodePath(text));
-                    if(newText.equalsIgnoreCase(text)) {
-                        IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-                        if(page != null) {
-                            IEditorPart editor = page.getActiveEditor();
-                            if(editor instanceof NSISEditor) {
-                                IEditorInput editorInput = editor.getEditorInput();
-                                if(editorInput instanceof IFileEditorInput) {
-                                    IFile file = ((IFileEditorInput)editorInput).getFile();
-                                    if(file != null) {
-                                        text = IOUtility.makeRelativeLocation(file, text);
-                                    }
-                                }
-                                else if(editorInput instanceof ILocationProvider) {
-                                    File f = new File(((ILocationProvider)editorInput).getPath(editorInput).toOSString());
-                                    text = IOUtility.makeRelativeLocation(f, text);
-                                }
-                            }
+                    NSISEditor editor = null;
+                    IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+                    if(page != null) {
+                        IEditorPart ed = page.getActiveEditor();
+                        if(ed instanceof NSISEditor) {
+                            editor = (NSISEditor)ed;
                         }
-                        text = Common.maybeQuote(text);
                     }
-                    else {
-                        text = newText;
-                    }
+                    text = IOUtility.resolveFileName(text, editor);
                 }
                 break;
             case INSERT_COLOR:
@@ -459,12 +440,16 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
             }
             case IMPORT_REGFILE:
             {
-                text = RegistryImporter.importRegFile(getControl().getShell());
+                NSISEditorRegistryImportStrategy strategy = new NSISEditorRegistryImportStrategy();
+                RegistryImporter.INSTANCE.importRegFile(getControl().getShell(), strategy);
+                text = strategy.getText();
                 break;
             }
             case IMPORT_REGKEY:
             {
-                text = RegistryImporter.importRegKey(getControl().getShell());
+                NSISEditorRegistryImportStrategy strategy = new NSISEditorRegistryImportStrategy();
+                RegistryImporter.INSTANCE.importRegKey(getControl().getShell(), strategy);
+                text = strategy.getText();
                 break;
             }
             case TABS_TO_SPACES:
@@ -500,7 +485,7 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
                 return;
             }
         }
-        if(text != null) {
+        if(!Common.isEmpty(text)) {
             IDocument doc = getDocument();
             Point p = getSelectedRange();
             try {
@@ -760,7 +745,7 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
         }
         return text;
     }
-
+    
     protected class NSISTabConversionStrategy extends NSISAutoIndentStrategy
     {
         /**

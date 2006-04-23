@@ -22,11 +22,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.editor.NSISEditor;
 import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.settings.NSISPreferences;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.ui.*;
+import org.eclipse.ui.editors.text.ILocationProvider;
 import org.osgi.framework.Bundle;
 
 public class IOUtility
@@ -46,6 +49,28 @@ public class IOUtility
     
     private IOUtility()
     {
+    }
+
+    public static String resolveFileName(String fileName, NSISEditor editor)
+    {
+        String newFileName = IOUtility.encodePath(fileName);
+        if(editor != null && newFileName.equalsIgnoreCase(fileName)) {
+            IEditorInput editorInput = editor.getEditorInput();
+            if(editorInput instanceof IFileEditorInput) {
+                IFile file = ((IFileEditorInput)editorInput).getFile();
+                if(file != null) {
+                    fileName = makeRelativeLocation(file, fileName);
+                }
+            }
+            else if(editorInput instanceof ILocationProvider) {
+                File f = new File(((ILocationProvider)editorInput).getPath(editorInput).toOSString());
+                fileName = makeRelativeLocation(f, fileName);
+            }
+        }
+        else {
+            fileName = newFileName;
+        }
+        return Common.maybeQuote(Common.escapeQuotes(fileName));
     }
 
     public static boolean deleteDirectory(File directory)
@@ -358,14 +383,16 @@ public class IOUtility
                       }
                   }
     
-                  for(int j=i; j<l1; j++) {
-                      buf.append(cOnePathLevelUp);
+                  if(i > 0) {
+                      for(int j=i; j<l1; j++) {
+                          buf.append(cOnePathLevelUp);
+                      }
+                      for(int j=i; j<l2-1; j++) {
+                          buf.append(childPath.segment(j)).append(cPathSeparator);
+                      }
+                      buf.append(childPath.lastSegment());
+                      childPath = new Path(buf.toString());
                   }
-                  for(int j=i; j<l2-1; j++) {
-                      buf.append(childPath.segment(j)).append(cPathSeparator);
-                  }
-                  buf.append(childPath.lastSegment());
-                  childPath = new Path(buf.toString());
               }
             }
             return childPath.toOSString();

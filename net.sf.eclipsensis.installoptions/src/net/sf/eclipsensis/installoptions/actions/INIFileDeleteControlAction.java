@@ -31,8 +31,8 @@ public class INIFileDeleteControlAction extends INIFileEditControlAction
 
     protected boolean doRun2(INIFile iniFile, INISection section)
     {
-        boolean show = InstallOptionsPlugin.getDefault().getPreferenceStore().getBoolean(IInstallOptionsConstants.PREFERENCE_DELETE_CONTROL_WARNING);
-        if(!show || WinAPI.GetKeyState(WinAPI.VK_SHIFT)<0) {
+        boolean showOnShift = InstallOptionsPlugin.getDefault().getPreferenceStore().getBoolean(IInstallOptionsConstants.PREFERENCE_DELETE_CONTROL_WARNING);
+        if(!showOnShift || WinAPI.GetKeyState(WinAPI.VK_SHIFT)<0) {
             MessageDialogWithToggle dialog = new MessageDialogWithToggle(
                     PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
                     mEditor.getPartName(),
@@ -40,7 +40,7 @@ public class INIFileDeleteControlAction extends INIFileEditControlAction
                     InstallOptionsPlugin.getFormattedString("delete.control.action.warning", new String[] {section.getName()}), //$NON-NLS-1$
                     MessageDialog.WARNING,
                     new String[] { IDialogConstants.OK_LABEL, IDialogConstants.CANCEL_LABEL }, 0,
-                    InstallOptionsPlugin.getResourceString("delete.control.warning.toggle.label"), show); //$NON-NLS-1$
+                    InstallOptionsPlugin.getResourceString("delete.control.warning.toggle.label"), showOnShift); //$NON-NLS-1$
             dialog.open();
             if(dialog.getReturnCode() == IDialogConstants.OK_ID) {
                 InstallOptionsPlugin.getDefault().getPreferenceStore().setValue(IInstallOptionsConstants.PREFERENCE_DELETE_CONTROL_WARNING,dialog.getToggleState());

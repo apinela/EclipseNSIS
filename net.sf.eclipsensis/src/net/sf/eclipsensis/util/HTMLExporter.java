@@ -15,6 +15,9 @@ import java.util.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.text.Position;
@@ -58,37 +61,68 @@ public class HTMLExporter
     
     public synchronized void exportHTML()
     {
-        FileDialog fd = new FileDialog(mShell,SWT.SAVE);
-        fd.setText(EclipseNSISPlugin.getResourceString("export.html.dialog.title")); //$NON-NLS-1$
-        fd.setFilterExtensions(new String[] {EclipseNSISPlugin.getResourceString("export.html.html.file.filter"),EclipseNSISPlugin.getResourceString("export.html.all.file.filter")}); //$NON-NLS-1$ //$NON-NLS-2$
-        fd.setFilterNames(new String[] {EclipseNSISPlugin.getResourceString("export.html.html.file.description"),EclipseNSISPlugin.getResourceString("export.html.all.file.description")}); //$NON-NLS-1$ //$NON-NLS-2$
-        if(mPreviousFile != null) {
-            fd.setFileName(mPreviousFile.getAbsolutePath());
-        }
-        String filename = fd.open();
-        if(filename != null) {
-            File file = new File(filename);
-            if (!file.exists() || Common.openConfirm(mShell,EclipseNSISPlugin.getFormattedString("save.confirm",new Object[]{file.getAbsolutePath()}), EclipseNSISPlugin.getShellImage())) { //$NON-NLS-1$
-                mPreviousFile = file;
-                writeHTML(file);
-                if(file.exists()) {
-                    try {
-                        Common.openExternalBrowser(file.toURI().toURL().toString());
+        EclipseNSISPlugin.getDefault().run(false, true, new IRunnableWithProgress() {
+            public void run(IProgressMonitor monitor)
+            {
+                monitor.beginTask(EclipseNSISPlugin.getFormattedString("export.html.task.name",
+                        new Object[] {((IPathEditorInput)mEditor.getEditorInput()).getPath().toOSString()}),100);
+                monitor.subTask("Preparing for export");
+                while(mShell.getDisplay().readAndDispatch()) { }
+            
+                FileDialog fd = new FileDialog(mShell,SWT.SAVE);
+                fd.setText(EclipseNSISPlugin.getResourceString("export.html.dialog.title")); //$NON-NLS-1$
+                fd.setFilterExtensions(new String[] {EclipseNSISPlugin.getResourceString("export.html.html.file.filter"),EclipseNSISPlugin.getResourceString("export.html.all.file.filter")}); //$NON-NLS-1$ //$NON-NLS-2$
+                fd.setFilterNames(new String[] {EclipseNSISPlugin.getResourceString("export.html.html.file.description"),EclipseNSISPlugin.getResourceString("export.html.all.file.description")}); //$NON-NLS-1$ //$NON-NLS-2$
+                if(mPreviousFile != null) {
+                    fd.setFileName(mPreviousFile.getAbsolutePath());
+                }
+                String filename = fd.open();
+                if(filename != null) {
+                    File file = new File(filename);
+                    if(file.exists()) {
+                        if(!Common.openConfirm(mShell,EclipseNSISPlugin.getFormattedString("save.confirm",new Object[]{file.getAbsolutePath()}), EclipseNSISPlugin.getShellImage())) { //$NON-NLS-1$
+                            monitor.setCanceled(true);
+                            return;
+                        }
                     }
-                    catch (MalformedURLException e) {
-                        EclipseNSISPlugin.getDefault().log(e);
-                        Common.openError(mShell, e.getMessage(), EclipseNSISPlugin.getShellImage());
+                    monitor.worked(10);
+                    mPreviousFile = file;
+                    monitor.subTask("Exporting file");
+                    while(mShell.getDisplay().readAndDispatch()) { }
+                    writeHTML(file, monitor);
+                    if(file.exists()) {
+                        try {
+                            monitor.subTask("Opening exported file in browser");
+                            while(mShell.getDisplay().readAndDispatch()) { }
+                            Common.openExternalBrowser(file.toURI().toURL().toString());
+                        }
+                        catch (MalformedURLException e) {
+                            EclipseNSISPlugin.getDefault().log(e);
+                            Common.openError(mShell, e.getMessage(), EclipseNSISPlugin.getShellImage());
+                        }
                     }
+                    monitor.done();
+                }
+                else {
+                    monitor.setCanceled(true);
                 }
             }
-        }
+        });
     }
 
-    private void writeHTML(File file)
+    private void writeHTML(File file, IProgressMonitor monitor)
     {
         try {
             reset();
+            monitor.subTask("Writing HTML header");
+            while(mShell.getDisplay().readAndDispatch()) { }
             writeHead(file);
+            monitor.worked(10);
+            if(monitor.isCanceled()) {
+                return;
+            }
+            monitor.subTask("Writing HTML body");
+            while(mShell.getDisplay().readAndDispatch()) { }
             mWriter.print("<body>"); //$NON-NLS-1$
             mWriter.print("<div style=\""); //$NON-NLS-1$
             FontData fontData = mStyledText.getFont().getFontData()[0];
@@ -133,6 +167,14 @@ public class HTMLExporter
                     lineNumberWidth = (int)Math.ceil((double)width1/(double)p.x);
                 }
             }
+            monitor.worked(10);
+            if(monitor.isCanceled()) {
+                return;
+            }
+            
+            IProgressMonitor subMonitor = new SubProgressMonitor(monitor,60);
+            subMonitor.beginTask("Exporting file contents", mRanges.length+2);
+            while(mShell.getDisplay().readAndDispatch()) { }
             
             mCurrentLine = 1;
             int total = mStyledText.getCharCount();
@@ -141,6 +183,10 @@ public class HTMLExporter
             mCurrentProjection = 0;
             mWriter.println("<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\">"); //$NON-NLS-1$
             startLine();
+            subMonitor.worked(1);
+            if(subMonitor.isCanceled()) {
+                return;
+            }
             while(mCurrentRange < mRanges.length) {
                 StyleRange range = mRanges[mCurrentRange];
                 if(mCurrentOffset < range.start) {
@@ -151,11 +197,21 @@ public class HTMLExporter
                 writeText(mStyledText.getText(range.start,range.start+range.length-1), styleText);
                 mCurrentOffset = range.start+range.length;
                 mCurrentRange++;
+                subMonitor.worked(1);
+                if(subMonitor.isCanceled()) {
+                    return;
+                }
             }
             if(mCurrentOffset < total) {
                 writeText(mStyledText.getText(mCurrentOffset,total-1),null);
             }
             endLine();
+            if(subMonitor.isCanceled()) {
+                return;
+            }
+            subMonitor.done();
+            monitor.subTask("Completing export");
+            while(mShell.getDisplay().readAndDispatch()) { }
             mWriter.print("<tr>"); //$NON-NLS-1$
             if(mLineNumbersVisible) {
                 mWriter.print("<td><pre>"); //$NON-NLS-1$
@@ -182,6 +238,7 @@ public class HTMLExporter
             mWriter.println("</div>"); //$NON-NLS-1$
             mWriter.println("</body>"); //$NON-NLS-1$
             mWriter.println("</html>"); //$NON-NLS-1$
+            monitor.worked(10);
         }
         catch (IOException e) {
             EclipseNSISPlugin.getDefault().log(e);
@@ -192,6 +249,11 @@ public class HTMLExporter
         }
         finally {
             IOUtility.closeIO(mWriter);
+            if(monitor.isCanceled()) {
+                if(file.exists()) {
+                    file.delete();
+                }
+            }
         }
     }
     

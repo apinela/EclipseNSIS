@@ -17,11 +17,11 @@ import net.sf.eclipsensis.wizard.settings.dialogs.NSISInstallRegistryValueDialog
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.graphics.Image;
 
-public class NSISInstallRegistryValue extends AbstractNSISInstallItem
+public class NSISInstallRegistryValue extends NSISInstallRegistryItem
 {
 	private static final long serialVersionUID = 4012648943855296196L;
 
-    public static final String TYPE = EclipseNSISPlugin.getResourceString("wizard.regvalue.type"); //$NON-NLS-1$
+    public static final String TYPE = "Registry Value"; //$NON-NLS-1$
     private static final Image STR_IMAGE = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("wizard.regstr.icon")); //$NON-NLS-1$
     private static final Image DWORD_IMAGE = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("wizard.regdword.icon")); //$NON-NLS-1$
 
@@ -35,6 +35,26 @@ public class NSISInstallRegistryValue extends AbstractNSISInstallItem
         NSISInstallElementFactory.register(TYPE, EclipseNSISPlugin.getResourceString("wizard.regvalue.type.name"), STR_IMAGE, NSISInstallRegistryValue.class); //$NON-NLS-1$
     }
 
+    protected int getRootKeyInternal()
+    {
+        return mRootKey;
+    }
+
+    protected String getSubKeyInternal()
+    {
+        return mSubKey;
+    }
+
+    protected void setRootKeyInternal(int rootKey)
+    {
+        mRootKey = rootKey;
+    }
+
+    protected void setSubKeyInternal(String subKey)
+    {
+        mSubKey = subKey;
+    }
+
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#getType()
      */
@@ -43,17 +63,10 @@ public class NSISInstallRegistryValue extends AbstractNSISInstallItem
         return TYPE;
     }
 
-    /* (non-Javadoc)
-     * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#getDisplayName()
-     */
-    public String getDisplayName()
+    protected void makeDisplayName(StringBuffer buf)
     {
-        String[] hkeyNames = NSISWizardDisplayValues.getHKEYNames();
-        StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
-        if(mRootKey >= 0 && mRootKey < hkeyNames.length) {
-            buf.append(hkeyNames[mRootKey]);
-        }
-        return buf.append("\\").append(mSubKey).append("\\").append(mValue).toString(); //$NON-NLS-1$ //$NON-NLS-2$
+        super.makeDisplayName(buf);
+        buf.append("\\").append(mValue).toString(); //$NON-NLS-1$
     }
 
     /* (non-Javadoc)
@@ -76,27 +89,12 @@ public class NSISInstallRegistryValue extends AbstractNSISInstallItem
     {
         switch(mValueType)
         {
+            case REG_BIN:
             case REG_DWORD:
                 return DWORD_IMAGE;
             default:
                 return STR_IMAGE;
         }
-    }
-
-    /**
-     * @return Returns the rootKey.
-     */
-    public int getRootKey()
-    {
-        return mRootKey;
-    }
-
-    /**
-     * @param rootKey The rootKey to set.
-     */
-    public void setRootKey(int rootKey)
-    {
-        mRootKey = rootKey;
     }
 
     /**
@@ -113,22 +111,6 @@ public class NSISInstallRegistryValue extends AbstractNSISInstallItem
     public void setData(String data)
     {
         mData = data;
-    }
-
-    /**
-     * @return Returns the subKey.
-     */
-    public String getSubKey()
-    {
-        return mSubKey;
-    }
-
-    /**
-     * @param subKey The subKey to set.
-     */
-    public void setSubKey(String subKey)
-    {
-        mSubKey = subKey;
     }
 
     /**
@@ -165,21 +147,21 @@ public class NSISInstallRegistryValue extends AbstractNSISInstallItem
 
     public String validate(boolean recursive)
     {
-        String[] hkeyNames = NSISWizardDisplayValues.getHKEYNames();
-        if(mRootKey < 0 || mRootKey >= hkeyNames.length) {
-            return EclipseNSISPlugin.getResourceString("wizard.invalid.root.key.error"); //$NON-NLS-1$
+        String error = super.validate(recursive);
+        if(Common.isEmpty(error)) {
+            switch(getValueType()) {
+                case INSISWizardConstants.REG_BIN:
+                    if(Common.isEmpty(getData()) || (getData().length() % 2) != 0) {
+                        error = EclipseNSISPlugin.getResourceString("wizard.invalid.reg.value.error"); //$NON-NLS-1$
+                    }
+                    break;
+                case INSISWizardConstants.REG_DWORD:
+                case INSISWizardConstants.REG_EXPAND_SZ:
+                    if(Common.isEmpty(getData())) {
+                        error = EclipseNSISPlugin.getResourceString("wizard.invalid.reg.value.error"); //$NON-NLS-1$
+                    }
+            }
         }
-        else {
-            String subKey = Common.trim(getSubKey());
-            if(Common.isEmpty(subKey) || subKey.endsWith("\\") || subKey.startsWith("\\")) { //$NON-NLS-1$ //$NON-NLS-2$
-                return EclipseNSISPlugin.getResourceString("wizard.invalid.sub.key.error"); //$NON-NLS-1$
-            }
-            else if(getValueType() != INSISWizardConstants.REG_SZ && Common.isEmpty(getData())) {
-                return EclipseNSISPlugin.getResourceString("wizard.invalid.reg.value.error"); //$NON-NLS-1$
-            }
-            else {
-                return super.validate(recursive);
-            }
-        }
+        return error;
     }
 }

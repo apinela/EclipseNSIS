@@ -14,7 +14,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
-import net.sf.eclipsensis.installoptions.dnd.InstallOptionsObjectTransfer;
+import net.sf.eclipsensis.util.ObjectTransfer;
 
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Display;
@@ -28,7 +28,7 @@ public class Clipboard
 
     protected static Clipboard cInstance = new Clipboard();
 
-    private static InstallOptionsObjectTransfer mTransfer;
+    private static Transfer mTransfer;
     private PropertyChangeSupport mListeners = new PropertyChangeSupport(this);
     private boolean mContentsAvailable = false;
 
@@ -38,7 +38,7 @@ public class Clipboard
     private Clipboard()
     {
         super();
-        mTransfer = new InstallOptionsObjectTransfer() {
+        mTransfer = new ObjectTransfer() {
             private final String TYPE_NAME = "net.sf.eclipsensis.clipboard.transfer"; //$NON-NLS-1$
             private final int TYPE_ID = registerType(TYPE_NAME);
             protected int[] getTypeIds() {

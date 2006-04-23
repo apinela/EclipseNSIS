@@ -110,6 +110,10 @@
         <description>This dialog is used to add or edit information about a SectionGroup to be included in the installer.</description>
         <topic label="Add/Edit SectionGroup Dialog" href="help/wizcontents.html#rsectiongrpdlg"/>
     </context>
+    <context id="nsis_librarydlg_context">
+        <description>This dialog is used to add or edit information about a library to be included in the installer.</description>
+        <topic label="Add/Edit Library Dialog" href="help/wizcontents.html#librarydlg"/>
+    </context>
     <context id="nsis_launchconfig_general_context">
         <description>This tab is used to edit NSIS options for the current NSIS Script launch configuration.</description>
         <topic label="General Tab" href="help/compiling.html#config_general"/>

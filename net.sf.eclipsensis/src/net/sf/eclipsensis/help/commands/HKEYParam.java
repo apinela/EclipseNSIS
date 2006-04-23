@@ -9,8 +9,8 @@
  *******************************************************************************/
 package net.sf.eclipsensis.help.commands;
 
+import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.wizard.NSISWizardDisplayValues;
 
 import org.w3c.dom.Node;
 
@@ -24,7 +24,7 @@ public class HKEYParam extends ComboParam
     protected ComboEntry[] getComboEntries()
     {
         ComboEntry[] entries = EMPTY_COMBO_ENTRIES;
-        String[] hkeys = NSISWizardDisplayValues.getHKEYNames();
+        String[] hkeys = NSISKeywords.getInstance().getKeywordsGroup(NSISKeywords.HKEY_LONG_PARAMETERS);
         if(!Common.isEmptyArray(hkeys)) {
             entries = new ComboEntry[hkeys.length];
             for (int i = 0; i < hkeys.length; i++) {

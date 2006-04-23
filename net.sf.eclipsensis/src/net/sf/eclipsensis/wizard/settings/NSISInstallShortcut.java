@@ -23,7 +23,7 @@ public class NSISInstallShortcut extends AbstractNSISInstallItem
 {
 	private static final long serialVersionUID = 7567273788917909918L;
 
-    public static final String TYPE = EclipseNSISPlugin.getResourceString("wizard.shortcut.type"); //$NON-NLS-1$
+    public static final String TYPE = "Shortcut"; //$NON-NLS-1$
     private static final Image IMAGE = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("wizard.shortcut.icon")); //$NON-NLS-1$
 
     private String mName = null;

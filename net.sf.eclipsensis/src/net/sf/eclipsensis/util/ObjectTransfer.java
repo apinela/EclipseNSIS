@@ -7,14 +7,14 @@
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
-package net.sf.eclipsensis.installoptions.dnd;
+package net.sf.eclipsensis.util;
 
 import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.swt.dnd.ByteArrayTransfer;
 import org.eclipse.swt.dnd.TransferData;
-//TODO Delete this class
-public abstract class InstallOptionsObjectTransfer extends ByteArrayTransfer
+
+public abstract class ObjectTransfer extends ByteArrayTransfer
 {
     private Object mObject;
     private long mStartTime;

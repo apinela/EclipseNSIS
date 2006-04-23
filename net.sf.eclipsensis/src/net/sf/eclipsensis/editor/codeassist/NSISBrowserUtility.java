@@ -138,15 +138,15 @@ public class NSISBrowserUtility
     
     public static void handleURL(String url, INSISBrowserKeywordURLHandler keywordURLHandler, INSISBrowserFileURLHandler fileURLHandler)
     {
-        if (url.regionMatches(0, NSISHelpURLProvider.KEYWORD_URI_SCHEME, 0, NSISHelpURLProvider.KEYWORD_URI_SCHEME.length())) {
+        if (url.regionMatches(true, 0, NSISHelpURLProvider.KEYWORD_URI_SCHEME, 0, NSISHelpURLProvider.KEYWORD_URI_SCHEME.length())) {
             String keyword = url.substring(NSISHelpURLProvider.KEYWORD_URI_SCHEME.length());
             keywordURLHandler.handleKeyword(keyword);
         }
-        else if (url.regionMatches(0, NSISHelpURLProvider.HELP_URI_SCHEME, 0, NSISHelpURLProvider.HELP_URI_SCHEME.length())) {
+        else if (url.regionMatches(true, 0, NSISHelpURLProvider.HELP_URI_SCHEME, 0, NSISHelpURLProvider.HELP_URI_SCHEME.length())) {
             url = url.substring(NSISHelpURLProvider.HELP_URI_SCHEME.length());
             NSISHelpURLProvider.getInstance().showHelp(url);
         }
-        else if (url.regionMatches(0, NSISHTMLHelp.FILE_URI_SCHEME, 0, NSISHTMLHelp.FILE_URI_SCHEME.length())) {
+        else if (url.regionMatches(true, 0, NSISHTMLHelp.FILE_URI_SCHEME, 0, NSISHTMLHelp.FILE_URI_SCHEME.length())) {
             try {
                 fileURLHandler.handleFile(new File(new URI(url)));
             }

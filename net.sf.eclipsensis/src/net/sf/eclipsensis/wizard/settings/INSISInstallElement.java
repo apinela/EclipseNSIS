@@ -17,7 +17,7 @@ import net.sf.eclipsensis.wizard.NSISWizard;
 
 import org.eclipse.swt.graphics.Image;
 
-public interface INSISInstallElement extends INSISWizardConstants, Serializable, INodeConvertible
+public interface INSISInstallElement extends INSISWizardConstants, Serializable, INodeConvertible, Cloneable
 {
     public static final String NODE = "element"; //$NON-NLS-1$
     public static final String CHILD_NODE = "attribute"; //$NON-NLS-1$
@@ -30,13 +30,19 @@ public interface INSISInstallElement extends INSISWizardConstants, Serializable,
     public boolean edit(NSISWizard wizard);
     public boolean hasChildren();
     public INSISInstallElement[] getChildren();
+    public int getChildCount();
     public void setChildren(INSISInstallElement[] children);
     public INSISInstallElement getParent();
     void setParent(INSISInstallElement parent);
     public String[] getChildTypes();
-    public void addChild(INSISInstallElement child);
-    public void removeChild(INSISInstallElement child);
-    public void removeAllChildren();
+    public boolean acceptsChildType(String type);
+    public boolean canAddChild(INSISInstallElement child);
+    public boolean addChild(INSISInstallElement child);
+    public boolean addChild(int index, INSISInstallElement child);
+    public boolean removeChild(INSISInstallElement child);
+    public boolean removeChild(int index);
+    public int indexOf(INSISInstallElement child);
+    public boolean removeAllChildren();
     public Image getImage();
     public void setSettings(NSISWizardSettings settings);
     public NSISWizardSettings getSettings();

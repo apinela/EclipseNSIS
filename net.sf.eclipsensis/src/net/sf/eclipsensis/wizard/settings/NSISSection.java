@@ -25,7 +25,7 @@ public class NSISSection extends AbstractNSISInstallGroup
 {
 	private static final long serialVersionUID = -971949137266423189L;
 
-    public static final String TYPE = NSISKeywords.getInstance().getKeyword(EclipseNSISPlugin.getResourceString("wizard.section.type")); //$NON-NLS-1$
+    public static final String TYPE = "Section"; //$NON-NLS-1$
 
     private static final Image IMAGE = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("wizard.section.icon")); //$NON-NLS-1$
     private static final String FORMAT = EclipseNSISPlugin.getResourceString("wizard.section.format"); //$NON-NLS-1$
@@ -58,6 +58,7 @@ public class NSISSection extends AbstractNSISInstallGroup
         addChildType(NSISInstallShortcut.TYPE);
         addChildType(NSISInstallRegistryKey.TYPE);
         addChildType(NSISInstallRegistryValue.TYPE);
+        addChildType(NSISInstallLibrary.TYPE);
     }
 
     /* (non-Javadoc)

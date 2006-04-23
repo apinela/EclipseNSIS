@@ -10,32 +10,136 @@
 package net.sf.eclipsensis.wizard.settings;
 
 import java.lang.reflect.Constructor;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.IEclipseNSISService;
+import net.sf.eclipsensis.settings.INSISHomeListener;
+import net.sf.eclipsensis.settings.NSISPreferences;
+import net.sf.eclipsensis.util.*;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.graphics.Image;
 import org.w3c.dom.Node;
 
 public class NSISInstallElementFactory
 {
-    private static Map cElementMap = new HashMap();
+    private static final String TYPE_ALIASES = "type.aliases";
+    private static final String PRELOAD_INSTALLELEMENTS = "preload.installelements";
+    private static final String VALID_TYPES = "valid.types";
+    
+    private static final ResourceBundle cBundle;
+    private static final Map cTypeAliases = new HashMap();
+    private static final Set cValidTypes = new HashSet();
+    private static final Map cElementMap = new HashMap();
     private static final Class[] EMPTY_CLASS_ARRAY = new Class[0];
     private static final Object[] EMPTY_OBJECT_ARRAY = new Object[0];
+    private static INSISHomeListener cNSISHomeListener  = new INSISHomeListener() {
+        public void nsisHomeChanged(IProgressMonitor monitor, String oldHome, String newHome)
+        {
+            loadTypes(monitor);
+        }
+    };
 
     static {
-        EclipseNSISPlugin plugin = EclipseNSISPlugin.getDefault();
-        if(plugin != null) {
-            String[] classList = Common.loadArrayProperty(plugin.getResourceBundle(),"preload.nsisinstallelements"); //$NON-NLS-1$
-            for (int i = 0; i < classList.length; i++) {
-                try {
-                    Class.forName(classList[i]);
+        ResourceBundle bundle;
+        try {
+            bundle = ResourceBundle.getBundle(NSISInstallElementFactory.class.getName());
+        } 
+        catch (MissingResourceException x) {
+            bundle = null;
+        }
+        cBundle = bundle;
+        if(cBundle != null) {
+            String typeAliasesList;
+            try {
+                typeAliasesList = cBundle.getString(TYPE_ALIASES);
+            }
+            catch(MissingResourceException mre) {
+                typeAliasesList = null;
+            }
+            String[] typeAliases = Common.tokenize(typeAliasesList, ',');
+            for (int i = 0; i < typeAliases.length; i++) {
+                int n = typeAliases[i].indexOf('=');
+                if(n > 0 && n < typeAliases[i].length()-1) {
+                    String type = typeAliases[i].substring(0,n);
+                    String alias = typeAliases[i].substring(n+1);
+                    cTypeAliases.put(type, alias);
+                    cTypeAliases.put(alias, type);
                 }
-                catch(Exception e)
-                {
+            }
+        }
+        EclipseNSISPlugin.getDefault().registerService(new IEclipseNSISService() {
+            private boolean mStarted = false;
+            
+            public void start(IProgressMonitor monitor)
+            {
+                loadTypes(monitor);
+                NSISPreferences.INSTANCE.addListener(cNSISHomeListener);
+                mStarted = true;
+            }
+
+            public void stop(IProgressMonitor monitor)
+            {
+                mStarted = false;
+                NSISPreferences.INSTANCE.removeListener(cNSISHomeListener);
+            }
+
+            public boolean isStarted()
+            {
+                return mStarted;
+            }
+        });
+        if(cBundle != null) {
+            String classList;
+            try {
+                classList = cBundle.getString(PRELOAD_INSTALLELEMENTS);
+            }
+            catch(MissingResourceException mre) {
+                classList = null;
+            }
+            String[] classes = Common.tokenize(classList, ',');
+            if(!Common.isEmptyArray(classes)) {
+                for (int i = 0; i < classes.length; i++) {
+                    try {
+                        Class.forName(classes[i]);
+                    }
+                    catch(Exception e)
+                    {
+                        e.printStackTrace();
+                    }
                 }
+            }
+        }
+    }
+    
+    public static String getAlias(String type)
+    {
+        return (String)cTypeAliases.get(type);
+    }
+    
+    private static void loadTypes(IProgressMonitor monitor)
+    {
+        Version nsisVersion = NSISPreferences.INSTANCE.getNSISVersion();
+        cValidTypes.clear();
+        if(cBundle != null) {
+            Version maxVersion = null;
+            String validTypes = null;
+            for(Enumeration e=cBundle.getKeys(); e.hasMoreElements();) {
+                String key = (String)e.nextElement();
+                if(key.startsWith(VALID_TYPES)) {
+                    int n = key.indexOf('#');
+                    Version version = (n >= 0?new Version(key.substring(n+1)):NSISValidator.MINIMUM_NSIS_VERSION);
+                    if(nsisVersion.compareTo(version) >= 0) {
+                        if(maxVersion == null || version.compareTo(maxVersion) > 0) {
+                            maxVersion = version;
+                            validTypes = cBundle.getString(key);
+                        }
+                    }
+                }
+            }
+            if(validTypes != null) {
+                cValidTypes.addAll(Common.tokenizeToList(validTypes, ','));
             }
         }
     }
@@ -58,14 +162,25 @@ public class NSISInstallElementFactory
 
     public static void unregister(String type, Class clasz)
     {
-        if(!cElementMap.containsKey(type) && ((NSISInstallElementDescriptor)cElementMap.get(type)).getElementClass().equals(clasz)) {
+        if(cElementMap.containsKey(type) && ((NSISInstallElementDescriptor)cElementMap.get(type)).getElementClass().equals(clasz)) {
             cElementMap.remove(type);
         }
     }
 
+    private static NSISInstallElementDescriptor getDescriptor(String type)
+    {
+        if(!cValidTypes.contains(type)) {
+            type = (String)cTypeAliases.get(type);
+            if(type == null || !cValidTypes.contains(type)) {
+                return null;
+            }
+        }
+        return (NSISInstallElementDescriptor)cElementMap.get(type);
+    }
+
     public static INSISInstallElement create(String type)
     {
-        NSISInstallElementDescriptor descriptor = (NSISInstallElementDescriptor)cElementMap.get(type);
+        NSISInstallElementDescriptor descriptor = getDescriptor(type);
         if(descriptor != null) {
             try {
                 return (INSISInstallElement)descriptor.getConstructor().newInstance(EMPTY_OBJECT_ARRAY);
@@ -98,7 +213,7 @@ public class NSISInstallElementFactory
 
     public static Image getImage(String type)
     {
-        NSISInstallElementDescriptor descriptor = (NSISInstallElementDescriptor)cElementMap.get(type);
+        NSISInstallElementDescriptor descriptor = getDescriptor(type);
         if(descriptor != null) {
             return descriptor.getImage();
         }
@@ -107,16 +222,21 @@ public class NSISInstallElementFactory
 
     public static String getTypeName(String type)
     {
-        NSISInstallElementDescriptor descriptor = (NSISInstallElementDescriptor)cElementMap.get(type);
+        NSISInstallElementDescriptor descriptor = getDescriptor(type);
         if(descriptor != null) {
             return descriptor.getTypeName();
         }
         return null;
     }
 
+    public static boolean isValidType(String type)
+    {
+        return cValidTypes.contains(type) || (!cValidTypes.contains(null) && cValidTypes.contains(cTypeAliases.get(type)));
+    }
+
     static void setImage(String type, Image image)
     {
-        NSISInstallElementDescriptor descriptor = (NSISInstallElementDescriptor)cElementMap.get(type);
+        NSISInstallElementDescriptor descriptor = getDescriptor(type);
         if(descriptor != null) {
             descriptor.setImage(image);
         }
@@ -124,7 +244,7 @@ public class NSISInstallElementFactory
 
     static void setTypeName(String type, String typeName)
     {
-        NSISInstallElementDescriptor descriptor = (NSISInstallElementDescriptor)cElementMap.get(type);
+        NSISInstallElementDescriptor descriptor = getDescriptor(type);
         if(descriptor != null) {
             descriptor.setTypeName(typeName);
         }

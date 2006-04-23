@@ -167,7 +167,7 @@ public class NSISCommandView extends ViewPart implements INSISHomeListener
         });
         NSISPreferences.INSTANCE.addListener(this);
         mViewer.addDragSupport(DND.DROP_COPY, 
-            new Transfer[]{NSISCommandTransfer.getInstance()},
+            new Transfer[]{NSISCommandTransfer.INSTANCE},
             new DragSourceAdapter() {
                 public void dragStart(DragSourceEvent e)
                 {
@@ -192,10 +192,6 @@ public class NSISCommandView extends ViewPart implements INSISHomeListener
                     else {
                         e.data = null;
                     }
-                }
-    
-                public void dragFinished(DragSourceEvent e)
-                {
                 }
             }
         );

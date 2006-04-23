@@ -58,6 +58,7 @@ public class NSISScript extends AbstractNSISScriptElementContainer
     public void write(NSISScriptWriter writer)
     {
         super.write(writer);
+        writer.println();
         writeElements(writer);
     }
 

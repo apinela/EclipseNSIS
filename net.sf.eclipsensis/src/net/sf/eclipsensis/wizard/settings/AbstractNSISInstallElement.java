@@ -26,7 +26,7 @@ public abstract class AbstractNSISInstallElement extends AbstractNodeConvertible
 
     public Object clone() throws CloneNotSupportedException
     {
-        AbstractNSISInstallElement element = (AbstractNSISInstallElement) super.clone();
+        AbstractNSISInstallElement element = (AbstractNSISInstallElement)super.clone();
         element.mSettings = null;
         element.mParent = null;
         return element;
@@ -72,7 +72,8 @@ public abstract class AbstractNSISInstallElement extends AbstractNodeConvertible
 
     public void fromNode(Node node)
     {
-        if(node.getAttributes().getNamedItem(TYPE_ATTRIBUTE).getNodeValue().equals(getType())) {
+        String nodeType = node.getAttributes().getNamedItem(TYPE_ATTRIBUTE).getNodeValue();
+        if(nodeType.equals(getType()) || nodeType.equals(NSISInstallElementFactory.getAlias(getType()))) {
             super.fromNode(node);
         }
     }

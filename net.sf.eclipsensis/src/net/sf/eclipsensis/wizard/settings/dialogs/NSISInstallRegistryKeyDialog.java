@@ -15,8 +15,8 @@ import java.util.List;
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.wizard.NSISWizard;
-import net.sf.eclipsensis.wizard.NSISWizardDisplayValues;
+import net.sf.eclipsensis.wizard.*;
+import net.sf.eclipsensis.wizard.settings.NSISInstallRegistryItem;
 import net.sf.eclipsensis.wizard.settings.NSISInstallRegistryKey;
 import net.sf.eclipsensis.wizard.util.NSISWizardDialogUtil;
 
@@ -27,13 +27,16 @@ import org.eclipse.swt.widgets.*;
 
 public class NSISInstallRegistryKeyDialog extends AbstractNSISInstallItemDialog
 {
-    private static ArrayList cProperties = new ArrayList();
-    private String[] mHKEYNames;
+    protected static ArrayList cProperties = new ArrayList();
 
     public NSISInstallRegistryKeyDialog(NSISWizard wizard, NSISInstallRegistryKey item)
     {
+        this(wizard, (NSISInstallRegistryItem)item);
+    }
+
+    protected NSISInstallRegistryKeyDialog(NSISWizard wizard, NSISInstallRegistryItem item)
+    {
         super(wizard, item);
-        mHKEYNames = NSISWizardDisplayValues.getHKEYNames();
     }
 
     static {
@@ -60,10 +63,10 @@ public class NSISInstallRegistryKeyDialog extends AbstractNSISInstallItemDialog
         layout.marginWidth = 0;
         composite.setLayout(layout);
 
-        if(mStore.getInt("rootKey") >= mHKEYNames.length) { //$NON-NLS-1$
-            mStore.setValue("rootKey","-1"); //$NON-NLS-1$ //$NON-NLS-2$
+        if(mStore.getInt("rootKey") >= NSISWizardDisplayValues.HKEY_NAMES.length) { //$NON-NLS-1$
+            mStore.setValue("rootKey", -1); //$NON-NLS-1$
         }
-        final Combo c1 = NSISWizardDialogUtil.createCombo(composite,mHKEYNames,mStore.getInt("rootKey"), //$NON-NLS-1$
+        final Combo c1 = NSISWizardDialogUtil.createCombo(composite,NSISWizardDisplayValues.HKEY_NAMES,mStore.getInt("rootKey"), //$NON-NLS-1$
                             true,"wizard.root.key.label",true,null,false); //$NON-NLS-1$
         c1.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
@@ -91,7 +94,7 @@ public class NSISInstallRegistryKeyDialog extends AbstractNSISInstallItemDialog
     protected String checkForErrors()
     {
         int rootKey = mStore.getInt("rootKey"); //$NON-NLS-1$
-        if(rootKey < 0 || rootKey >= 7) {
+        if(rootKey < 0 || rootKey >= NSISWizardDisplayValues.HKEY_NAMES.length) {
             return EclipseNSISPlugin.getResourceString("wizard.invalid.root.key"); //$NON-NLS-1$
         }
         else {

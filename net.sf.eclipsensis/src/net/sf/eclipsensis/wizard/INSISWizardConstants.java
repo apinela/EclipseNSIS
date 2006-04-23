@@ -32,13 +32,19 @@ public interface INSISWizardConstants
     public static final int HKCC = 4;
     public static final int HKDD = 5;
     public static final int HKPD = 6;
-    public static final int SHCTX = 7;
 
     public static final int REG_SZ = 0;
     public static final int REG_DWORD = 1;
+    public static final int REG_EXPAND_SZ = 2;
+    public static final int REG_BIN = 3;
 
     public static final int SHORTCUT_URL = 0;
     public static final int SHORTCUT_INSTALLELEMENT = 1;
+    
+    public static final int LIBTYPE_DLL=0;
+    public static final int LIBTYPE_REGDLL=1;
+    public static final int LIBTYPE_TLB=2;
+    public static final int LIBTYPE_REGDLLTLB=3;
 
     public static final String WIZARD_TEMPLATE_EXTENSION=".xml"; //$NON-NLS-1$
 }
