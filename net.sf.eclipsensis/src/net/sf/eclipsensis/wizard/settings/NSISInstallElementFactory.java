@@ -24,9 +24,9 @@ import org.w3c.dom.Node;
 
 public class NSISInstallElementFactory
 {
-    private static final String TYPE_ALIASES = "type.aliases";
-    private static final String PRELOAD_INSTALLELEMENTS = "preload.installelements";
-    private static final String VALID_TYPES = "valid.types";
+    private static final String TYPE_ALIASES = "type.aliases"; //$NON-NLS-1$
+    private static final String PRELOAD_INSTALLELEMENTS = "preload.installelements"; //$NON-NLS-1$
+    private static final String VALID_TYPES = "valid.types"; //$NON-NLS-1$
     
     private static final ResourceBundle cBundle;
     private static final Map cTypeAliases = new HashMap();

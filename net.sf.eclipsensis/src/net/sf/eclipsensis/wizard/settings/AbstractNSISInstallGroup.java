@@ -136,7 +136,7 @@ public abstract class AbstractNSISInstallGroup extends AbstractNSISInstallElemen
             else {
                 if(Display.getCurrent() != null) {
                     Common.openError(Display.getCurrent().getActiveShell(), 
-                            EclipseNSISPlugin.getFormattedString("duplicate.child.error", new Object[] {getDisplayName(),child.getDisplayName()}), 
+                            EclipseNSISPlugin.getFormattedString("duplicate.child.error", new Object[] {getDisplayName(),child.getDisplayName()}),  //$NON-NLS-1$
                             EclipseNSISPlugin.getShellImage());
                 }
             }

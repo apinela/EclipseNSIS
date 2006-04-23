@@ -55,7 +55,7 @@ public class NSISScriptWizard extends NSISWizard
             template = (NSISWizardTemplate)getTemplate().clone();
         }
         else {
-            template = new NSISWizardTemplate("");
+            template = new NSISWizardTemplate(""); //$NON-NLS-1$
             setTemplate(template);
         }
         NSISWizardTemplateDialog dialog = new NSISWizardTemplateDialog(getShell(),getTemplateManager(), template, getSettings());

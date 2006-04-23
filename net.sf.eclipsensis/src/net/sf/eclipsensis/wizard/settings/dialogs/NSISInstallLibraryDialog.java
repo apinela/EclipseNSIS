@@ -29,7 +29,7 @@ import org.eclipse.swt.widgets.*;
 
 public class NSISInstallLibraryDialog extends AbstractNSISInstallItemDialog
 {
-    private static final String TLB_EXTENSION = ".tlb";
+    private static final String TLB_EXTENSION = ".tlb"; //$NON-NLS-1$
     private static ArrayList cProperties = new ArrayList();
 
     static {
@@ -121,7 +121,7 @@ public class NSISInstallLibraryDialog extends AbstractNSISInstallItemDialog
             }
         });
         
-        final Button cb1 = NSISWizardDialogUtil.createCheckBox(composite, "wizard.shared.library.label", mStore.getBoolean("shared"), true, null, false);
+        final Button cb1 = NSISWizardDialogUtil.createCheckBox(composite, "wizard.shared.library.label", mStore.getBoolean("shared"), true, null, false); //$NON-NLS-1$ //$NON-NLS-2$
         cb1.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e)
             {
@@ -130,7 +130,7 @@ public class NSISInstallLibraryDialog extends AbstractNSISInstallItemDialog
             }
         });
 
-        final Button cb2 = NSISWizardDialogUtil.createCheckBox(composite, "wizard.upgrade.reboot.label", mStore.getBoolean("reboot"), true, null, false);
+        final Button cb2 = NSISWizardDialogUtil.createCheckBox(composite, "wizard.upgrade.reboot.label", mStore.getBoolean("reboot"), true, null, false); //$NON-NLS-1$ //$NON-NLS-2$
         cb2.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e)
             {
@@ -139,7 +139,7 @@ public class NSISInstallLibraryDialog extends AbstractNSISInstallItemDialog
             }
         });
 
-        final Button cb3 = NSISWizardDialogUtil.createCheckBox(composite, "wizard.protected.library.label", mStore.getBoolean("protected"), true, null, false);
+        final Button cb3 = NSISWizardDialogUtil.createCheckBox(composite, "wizard.protected.library.label", mStore.getBoolean("protected"), true, null, false); //$NON-NLS-1$ //$NON-NLS-2$
         cb3.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e)
             {
@@ -148,7 +148,7 @@ public class NSISInstallLibraryDialog extends AbstractNSISInstallItemDialog
             }
         });
 
-        final Button cb4 = NSISWizardDialogUtil.createCheckBox(composite, "wizard.refresh.shell.label", mStore.getBoolean("refreshShell"), true, null, false);
+        final Button cb4 = NSISWizardDialogUtil.createCheckBox(composite, "wizard.refresh.shell.label", mStore.getBoolean("refreshShell"), true, null, false); //$NON-NLS-1$ //$NON-NLS-2$
         cb4.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e)
             {
@@ -157,7 +157,7 @@ public class NSISInstallLibraryDialog extends AbstractNSISInstallItemDialog
             }
         });
 
-        final Button cb5 = NSISWizardDialogUtil.createCheckBox(composite, "wizard.unload.libraries.label", mStore.getBoolean("unloadLibraries"), true, null, false);
+        final Button cb5 = NSISWizardDialogUtil.createCheckBox(composite, "wizard.unload.libraries.label", mStore.getBoolean("unloadLibraries"), true, null, false); //$NON-NLS-1$ //$NON-NLS-2$
         cb5.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e)
             {
@@ -167,7 +167,7 @@ public class NSISInstallLibraryDialog extends AbstractNSISInstallItemDialog
         });
 
         if(mWizard.getSettings().isCreateUninstaller()) {
-            final Button cb6 = NSISWizardDialogUtil.createCheckBox(composite, "wizard.remove.on.uninstall.label", mStore.getBoolean("removeOnUninstall"), true, null, false);
+            final Button cb6 = NSISWizardDialogUtil.createCheckBox(composite, "wizard.remove.on.uninstall.label", mStore.getBoolean("removeOnUninstall"), true, null, false); //$NON-NLS-1$ //$NON-NLS-2$
             cb6.addSelectionListener(new SelectionAdapter() {
                 public void widgetSelected(SelectionEvent e)
                 {

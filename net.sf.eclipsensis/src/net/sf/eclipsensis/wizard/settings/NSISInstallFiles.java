@@ -237,7 +237,7 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
                     fi.setName(newFilename);
                     if(!getParent().canAddChild(fi)) {
                         Common.openError(wizard.getShell(), 
-                                EclipseNSISPlugin.getFormattedString("duplicate.child.error", new Object[] {getParent().getDisplayName(),fi.getDisplayName()}), 
+                                EclipseNSISPlugin.getFormattedString("duplicate.child.error", new Object[] {getParent().getDisplayName(),fi.getDisplayName()}),  //$NON-NLS-1$
                                 EclipseNSISPlugin.getShellImage());
                         return false;
                     }

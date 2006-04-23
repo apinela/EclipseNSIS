@@ -147,8 +147,8 @@ public class NSISInstallRegistryValueDialog extends NSISInstallRegistryKeyDialog
     {
         String error = super.checkForErrors();
         if(Common.isEmpty(error)) {
-            String data = mStore.getString("data");
-            switch(mStore.getInt("valueType")) {
+            String data = mStore.getString("data"); //$NON-NLS-1$
+            switch(mStore.getInt("valueType")) { //$NON-NLS-1$
                 case INSISWizardConstants.REG_BIN:
                     if(Common.isEmpty(data) || (data.length() % 2) != 0) {
                         return EclipseNSISPlugin.getResourceString("wizard.invalid.reg.value"); //$NON-NLS-1$

@@ -39,19 +39,19 @@ public class RegistryImporter
 
     private static void putRootKeyHandle(String longName, String shortName, int handle)
     {
-        String hexHandle = "0x"+Integer.toHexString(handle);
+        String hexHandle = "0x"+Integer.toHexString(handle); //$NON-NLS-1$
         cRootKeyHandleMap.put(longName, hexHandle);
         cRootKeyHandleMap.put(shortName, hexHandle);
     }
 
     static {
-        putRootKeyHandle("HKEY_CLASSES_ROOT","HKCR",WinAPI.HKEY_CLASSES_ROOT);
-        putRootKeyHandle("HKEY_CURRENT_USER","HKCU",WinAPI.HKEY_CURRENT_USER);
-        putRootKeyHandle("HKEY_LOCAL_MACHINE","HKLM",WinAPI.HKEY_LOCAL_MACHINE);
-        putRootKeyHandle("HKEY_USERS","HKU",WinAPI.HKEY_USERS);
-        putRootKeyHandle("HKEY_PERFORMANCE_DATA","HKPD",WinAPI.HKEY_PERFORMANCE_DATA);
-        putRootKeyHandle("HKEY_CURRENT_CONFIG","HKCC",WinAPI.HKEY_CURRENT_CONFIG);
-        putRootKeyHandle("HKEY_DYN_DATA","HKDD",WinAPI.HKEY_DYN_DATA);
+        putRootKeyHandle("HKEY_CLASSES_ROOT","HKCR",WinAPI.HKEY_CLASSES_ROOT); //$NON-NLS-1$ //$NON-NLS-2$
+        putRootKeyHandle("HKEY_CURRENT_USER","HKCU",WinAPI.HKEY_CURRENT_USER); //$NON-NLS-1$ //$NON-NLS-2$
+        putRootKeyHandle("HKEY_LOCAL_MACHINE","HKLM",WinAPI.HKEY_LOCAL_MACHINE); //$NON-NLS-1$ //$NON-NLS-2$
+        putRootKeyHandle("HKEY_USERS","HKU",WinAPI.HKEY_USERS); //$NON-NLS-1$ //$NON-NLS-2$
+        putRootKeyHandle("HKEY_PERFORMANCE_DATA","HKPD",WinAPI.HKEY_PERFORMANCE_DATA); //$NON-NLS-1$ //$NON-NLS-2$
+        putRootKeyHandle("HKEY_CURRENT_CONFIG","HKCC",WinAPI.HKEY_CURRENT_CONFIG); //$NON-NLS-1$ //$NON-NLS-2$
+        putRootKeyHandle("HKEY_DYN_DATA","HKDD",WinAPI.HKEY_DYN_DATA); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     public RegistryImporter()
@@ -129,7 +129,7 @@ public class RegistryImporter
             RegistryKeySelectionDialog dialog = new RegistryKeySelectionDialog(shell);
             if(dialog.open() == Window.OK) {
                 try {
-                    File regFile = File.createTempFile("exp", INSISConstants.REG_FILE_EXTENSION); //$NON-NLS-1$ //$NON-NLS-2$
+                    File regFile = File.createTempFile("exp", INSISConstants.REG_FILE_EXTENSION); //$NON-NLS-1$ 
                     if (IOUtility.isValidFile(regFile)) {
                         regFile.delete();
                     }
@@ -368,7 +368,7 @@ public class RegistryImporter
     public static final String rootKeyNameToHandle(String rootKey)
     {
         String handle = (String)cRootKeyHandleMap.get(rootKey);
-        return (handle==null?"":handle);
+        return (handle==null?"":handle); //$NON-NLS-1$
     }
     
     public static interface IRegistryImportStrategy

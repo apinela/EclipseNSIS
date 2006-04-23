@@ -27,6 +27,7 @@
          id="net.sf.eclipsensis.source"
          download-size="895"
          install-size="1014"
-         version="0.9.5"/>
+         version="0.9.5"
+         unpack="false"/>
 
 </feature>

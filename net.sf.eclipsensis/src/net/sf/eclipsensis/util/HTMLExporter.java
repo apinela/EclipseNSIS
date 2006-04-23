@@ -64,9 +64,9 @@ public class HTMLExporter
         EclipseNSISPlugin.getDefault().run(false, true, new IRunnableWithProgress() {
             public void run(IProgressMonitor monitor)
             {
-                monitor.beginTask(EclipseNSISPlugin.getFormattedString("export.html.task.name",
+                monitor.beginTask(EclipseNSISPlugin.getFormattedString("export.html.task.name", //$NON-NLS-1$
                         new Object[] {((IPathEditorInput)mEditor.getEditorInput()).getPath().toOSString()}),100);
-                monitor.subTask("Preparing for export");
+                monitor.subTask(EclipseNSISPlugin.getResourceString("preparing.export.message")); //$NON-NLS-1$
                 while(mShell.getDisplay().readAndDispatch()) { }
             
                 FileDialog fd = new FileDialog(mShell,SWT.SAVE);
@@ -87,12 +87,12 @@ public class HTMLExporter
                     }
                     monitor.worked(10);
                     mPreviousFile = file;
-                    monitor.subTask("Exporting file");
+                    monitor.subTask(EclipseNSISPlugin.getResourceString("exporting.html.message")); //$NON-NLS-1$
                     while(mShell.getDisplay().readAndDispatch()) { }
                     writeHTML(file, monitor);
                     if(file.exists()) {
                         try {
-                            monitor.subTask("Opening exported file in browser");
+                            monitor.subTask(EclipseNSISPlugin.getResourceString("opening.file.message")); //$NON-NLS-1$
                             while(mShell.getDisplay().readAndDispatch()) { }
                             Common.openExternalBrowser(file.toURI().toURL().toString());
                         }
@@ -114,14 +114,14 @@ public class HTMLExporter
     {
         try {
             reset();
-            monitor.subTask("Writing HTML header");
+            monitor.subTask(EclipseNSISPlugin.getResourceString("html.header.message")); //$NON-NLS-1$
             while(mShell.getDisplay().readAndDispatch()) { }
             writeHead(file);
             monitor.worked(10);
             if(monitor.isCanceled()) {
                 return;
             }
-            monitor.subTask("Writing HTML body");
+            monitor.subTask(EclipseNSISPlugin.getResourceString("html.body.message")); //$NON-NLS-1$
             while(mShell.getDisplay().readAndDispatch()) { }
             mWriter.print("<body>"); //$NON-NLS-1$
             mWriter.print("<div style=\""); //$NON-NLS-1$
@@ -173,7 +173,7 @@ public class HTMLExporter
             }
             
             IProgressMonitor subMonitor = new SubProgressMonitor(monitor,60);
-            subMonitor.beginTask("Exporting file contents", mRanges.length+2);
+            subMonitor.beginTask(EclipseNSISPlugin.getResourceString("exporting.contents.message"), mRanges.length+2); //$NON-NLS-1$
             while(mShell.getDisplay().readAndDispatch()) { }
             
             mCurrentLine = 1;
@@ -210,7 +210,7 @@ public class HTMLExporter
                 return;
             }
             subMonitor.done();
-            monitor.subTask("Completing export");
+            monitor.subTask(EclipseNSISPlugin.getResourceString("completing.export.message")); //$NON-NLS-1$
             while(mShell.getDisplay().readAndDispatch()) { }
             mWriter.print("<tr>"); //$NON-NLS-1$
             if(mLineNumbersVisible) {
