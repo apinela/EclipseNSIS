@@ -8,7 +8,7 @@
 //# Contributors:
 //# Sunil Kamath (IcemanK) - initial API and implementation
 //###############################################################################
-
+var numberRegExp = /^[1-9][0-9]*$/
 function getPrefix()
 {
     var prefix;
@@ -65,5 +65,25 @@ function redirectNSISContrib(url)
 function redirectNSISKeyword(keyword)
 {
     _redirectNSIS("/net.sf.eclipsensis/help/NSIS/keyword", keyword);
+}
+
+function redirectNSISSection(section)
+{
+    var parts;
+    var url;
+    
+    parts = section.split(".");
+    if(parts.length > 1) {
+        url = "Section"+parts[0]+"."+parts[1]+".html#"+section;
+    }
+    else {
+        if(numberRegExp.test(parts[0])) {
+            url = "Chapter"+parts[0]+".html";
+        }
+        else {
+            url = "Appendix"+parts[0]+".html";
+        }
+    }
+    redirectNSIS(url);
 }
 //-->

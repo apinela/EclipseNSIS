@@ -5,13 +5,18 @@ Revision History
     * Added Export as HTML command.
     * Var elements now shown in Outline view.
     * Added NSIS Command Wizard for adding NSIS commands to script.
+    * Added drag & drop support to NSIS Script Wizard and EclipseNSIS Editor.
+    * Added support for REG_BIN and REG_EXPAND_SZ in NSIS Script Wizard.
+    * Added support for Library installs in NSIS Script Wizard.
     * Other minor bug fixes.
     * Bug Fixes
         o 1416349
         o 1443239
         o 1464413
         o 1466390
+        o 1474161
     * Feature Requests:
+        o 1441231
         o 1452422
 
 0.9.4 (01/26/2006)

@@ -6,6 +6,7 @@ Revision History
     * Added new control editing commands in source editor.
     * Control type can now be changed in the design editor.
     * Added support for automatic Team checkout in design editor.
+    * Fixed handling of escaped characters in INI file.
     * Other minor bug fixes.
 
 0.9.4 (01/26/2006)

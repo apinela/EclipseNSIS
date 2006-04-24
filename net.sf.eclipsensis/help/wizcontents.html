@@ -20,6 +20,7 @@
 
   <meta http-equiv="Content-Style-Type" content="text/css">
 
+  <script language="javascript" type="text/javascript" src="redirect.js"></script></head>
   <script language="javascript" type="text/javascript" src="help.js"></script></head>
 <body>
 <div id="main">
@@ -32,6 +33,7 @@ page is used to manage installer contents. This consists of one or more of the f
 <li><a href="#file">File</a></li>
 <li><a href="#fileset">File Set</a></li>
 <li><a href="#folder">Folder</a></li>
+<li><a href="#library">Library</a></li>
 <li><a href="#shortcut">Shortcut</a></li>
 <li><a href="#regkey">Registry Key</a></li>
 <li><a href="#regval">Registry Value</a></li>
@@ -44,9 +46,8 @@ currently
 selected. The toolbar functions can
 also be accessed as a context menu by
 right-clicking on an item in the tree. The installer contents are installed in the
-sequence in which they are shown in the tree. </p>
-<p style="text-align: center;"><img style="border: 0px solid ; width: 508px; height: 629px;" usemap="#wizardcontents" ismap="ismap" alt="Script Wizard Installer Contents" src="images/wizardcontents.gif">
-</p>
+sequence in which they are shown in the tree. Additionally, the installer contents can be manipulated using <a href="#dragdrop">drag &amp; drop</a>. </p>
+<p style="text-align: center;"><img style="border: 0px solid ; width: 508px; height: 629px;" usemap="#wizardcontents" ismap="ismap" alt="Script Wizard Installer Contents" src="images/wizardcontents.gif"></p>
 <a name="a_contents"></a><dl id="id_contents"><dt>Installer Contents</dt><dd>A visual representation of the installer contents in a tree format. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
 <a name="a_add"></a><dl id="id_add"><dt>Add</dt><dd>Add an installation item, Section or SectionGroup/SubSection. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
 <a name="a_edit"></a><dl id="id_edit"><dt>Edit</dt><dd>Edit the currently selected item. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
@@ -56,7 +57,7 @@ sequence in which they are shown in the tree. </p>
 <a name="a_up"></a><dl id="id_up"><dt>Move Up</dt><dd>Move the selected items higher up in the installation sequence. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
 <a name="a_down"></a><dl id="id_down"><dt>Move Down</dt><dd>Move the selected items lower down in the installation sequence. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
 <a href="wizard.html">Back
-to Script Wizard</a><br>
+to Script Wizard</a>
 <h2>Installer Items</h2>
 <p>The various installer items and the dialogs used to add and edit them are described in this section.</p>
 <a name="file"></a><h3 style="text-decoration: underline;">File</h3>
@@ -85,6 +86,56 @@ be installed as well.</p>
 <a name="a_destination3"></a><dl id="id_destination3"><dt>Destination</dt><dd>The installation destination folder. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
 <a name="a_overwrite3"></a><dl id="id_overwrite3"><dt>Overwrite</dt><dd>The overwrite action to take if the folder, or any of its children, already exist on the installation filesystem. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
 <a name="a_includesub"></a><dl id="id_includesub"><dt>Include All Sub-Folders and Files</dt><dd>Option to recursively install the folder. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="library"></a><h3 style="text-decoration: underline;">Library</h3>
+<p>This consists of a library file on the filesystem which is to be installed on the installation
+system. This option is only available in NSIS 2.01 or better, which include the <a href="javascript:redirectNSIS('AppendixB.html');">DLL/TLB Library Setup</a> system.</p>
+<p style="text-align: center;"><img style="border: 0px solid ; width: 422px; height: 325px;" usemap="#librarydlg" ismap="ismap" alt="Add/Edit Library" src="images/librarydlg.gif"></p>
+<a name="a_lib"></a><dl id="id_lib">
+  <dt>Library</dt>
+  <dd>The library that is to be installed. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd>
+</dl>
+<a name="a_destination4"></a><dl id="id_destination4"><dt>Destination</dt><dd>The installation destination folder.<a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="a_libtype"></a>
+<dl id="id_libtype">
+  <dt>Type</dt>
+  <dd>The type of library to be installed. Valid types are described in the <a href="javascript:redirectNSISSection('B.2.2');">NSIS documentation</a>. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd>
+</dl>
+<a name="a_shared"></a>
+<dl id="id_shared">
+  <dt>Library is Shared with other Applications</dt>
+  <dd>Indicates that this is a shared library, i.e., a shared library count is to be created or updated in the registry. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd>
+</dl>
+<a name="a_reboot"></a>
+<dl id="id_reboot">
+  <dt>Upgrade the Library on Reboot when in Use</dt>
+  <dd>If this option is selected, the library will be installed/upgraded after reboot if it is in use. Otherwise a warning will be shown
+  and the user will have to close all applications using the library before continuing. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd>
+</dl>
+<a name="a_protected"></a>
+<dl id="id_protected">
+  <dt>Check if Library is Protected by Windows File Protection</dt>
+  <dd>If this option is selected, the installer will check if the library is protected by Windows File Protection. If the library is protected, then
+  it will not be installed. If the option is not selected, the installer will install the library- however if it is protected, then Windows File Protection
+  will replace it with a cached copy. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd>
+</dl>
+<a name="a_refresh"></a>
+<dl id="id_refresh">
+  <dt>Refresh the Shell</dt>
+  <dd>If this option is selected, the installer calls <a href="http://msdn.microsoft.com/library/en-us/shellcc/platform/shell/reference/functions/shchangenotify.asp">SHChangeNotify</a> with SHCNE_ASSOCCHANGED flag after library registration. This option should be used to refresh 
+  the shell when installing a shell extension or when changing file associations. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd>
+</dl>
+<a name="a_unload"></a>
+<dl id="id_unload">
+  <dt>Unload all Unnecessary Libraries from Memory</dt>
+  <dd>If this option is selected, the installer calls <a href="http://msdn.microsoft.com/library/en-us/com/html/188e9a3b-39cc-454e-af65-4ac797e275d4.asp">CoFreeUnusedLibraries</a> after library registration. This option should be used to unloading all unnecessary 
+  libraries from memory when installing COM libraries. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd>
+</dl>
+<a name="a_remove"></a>
+<dl id="id_remove">
+  <dt>Remove on Uninstall</dt>
+  <dd>If this option is not selected, the library will not be removed upon uninstallation. This option should be unselected for common or important
+  system libraries. It is selected by default. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd>
+</dl>
 <a name="shortcut"></a><h3 style="text-decoration: underline;">Shortcut</h3>
 <p>This represents a shortcut to
 be created on the installation system. The shortcut can either to be a
@@ -115,7 +166,7 @@ multi-level subkey, with its parts separated by a '\' character. If it does not 
 <a name="a_value"></a><dl id="id_value"><dt>Value</dt><dd>The
 name of the registry value which will be created.
 <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
-<a name="a_type"></a><dl id="id_type"><dt>Type</dt><dd>The registry value type. Currently string (REG_SZ) and numeric (REG_DWORD) value types are supported. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="a_type"></a><dl id="id_type"><dt>Type</dt><dd>The registry value type. String (REG_SZ), expanded string (REG_EXPAND_SZ), binary (REG_BINARY) and numeric (REG_DWORD) value types are supported. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
 <a name="a_data"></a><dl id="id_data"><dt>Data</dt><dd>The actual data to be written to the registry value. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
 <a name="section"></a><h3 style="text-decoration: underline;">Section</h3>
 <p>This represents a logical grouping of one or more files, folders, file sets, shortcuts, registry keys or registry values.</p>
@@ -139,14 +190,36 @@ indicating whether the SectionGroup should be displayed in bold type. This
 is a useful way to attract the user's attention to a particular SectionGroup.
 <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
 <a name="a_expanded"></a><dl id="id_expanded"><dt>Expanded by Default</dt><dd>Flag indicating whether the SectionGroup is expanded by default, i.e., its component Sections/SectionGroups are visible to the user. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="dragdrop"></a><h2>Drag &amp; Drop Support</h2>
+  <p>Items can be moved from one location to another within the <a href="#a_contents">contents</a> by using drag and drop. The drop icon will change depending upon whether the drop target is valid for the type of items being dragged. Copies of the dragged items are created, instead of being moved, if the Ctrl key is pressed. Items can even be added to the installer contents by dragging and dropping from Windows Explorer or the Desktop. EclipseNSIS deduces the item type as follows:</p>
+  <ul>
+    <li> If the target item is a <a href="#fileset">File Set</a> and all dragged items are files, then all dragged items are added as files within the <a href="#fileset">File Set</a>.</li>
+    <li>If the target item is a <a href="#section">Section</a>, then files are added as <a href="#file">File</a> items and folders are added as <a href="#folder">Folder</a> items. </li>
+    <li>If the target item is a <a href="#section">Section</a>, and a dragged item is a valid registration file (.REG extension), then its contents are added as <a href="#regkey">Registry Key</a> and <a href="#regval">Registry Value</a> items. If a dragged file has the .REG extension, but does not follow the valid format for a registration file, it is added as a <a href="#file">File</a> item. </li>
+  </ul>
 <hr><a href="wizpresentation.html">Previous</a> | <a href="overview.html#contents">Contents</a> | <a href="wizcomplete.html">Next</a>
 <p><strong><small>Copyright &copy; 2004-2006 Sunil Kamath (IcemanK).</small></strong></p>
-<map name="wizardcontents"><area id="down" shape="RECT" href="#a_down" alt="Move Down" onclick="highlightDef('id_down');" coords="454,357, 479,382"><area id="up" shape="RECT" href="#a_up" alt="Move Up" onclick="highlightDef('id_up');" coords="454,326, 479,351"><area id="collapseall" shape="RECT" href="#a_collapseall" alt="Collapse All" onclick="highlightDef('id_collapseall');" coords="124,158, 147,180"><area id="expandall" shape="RECT" href="#a_expandall" alt="Expand All" onclick="highlightDef('id_expandall');" coords="100,158, 123,180"><area id="delete" shape="RECT" href="#a_delete" alt="Delete" onclick="highlightDef('id_delete');" coords="76,158, 99,180"><area id="edit" shape="RECT" href="#a_edit" alt="Edit" onclick="highlightDef('id_edit');" coords="52,158, 75,180"><area id="add" shape="RECT" href="#a_add" alt="Add" onclick="highlightDef('id_add');" coords="19,158, 51,180"><area id="contents" shape="RECT" href="#a_contents" alt="Installer Contents" onclick="highlightDef('id_contents');" coords="22,190, 442,520"></map>
+<map name="wizardcontents">
+  <area id="down" shape="RECT" href="#a_down" alt="Move Down" onclick="highlightDef('id_down');" coords="454,357,482,383"><area id="up" shape="RECT" href="#a_up" alt="Move Up" onclick="highlightDef('id_up');" coords="454,326,481,353">
+  <area id="collapseall" shape="RECT" href="#a_collapseall" alt="Collapse All" onclick="highlightDef('id_collapseall');" coords="124,158, 147,180"><area id="expandall" shape="RECT" href="#a_expandall" alt="Expand All" onclick="highlightDef('id_expandall');" coords="100,158, 123,180"><area id="delete" shape="RECT" href="#a_delete" alt="Delete" onclick="highlightDef('id_delete');" coords="76,158, 99,180"><area id="edit" shape="RECT" href="#a_edit" alt="Edit" onclick="highlightDef('id_edit');" coords="52,158, 75,180"><area id="add" shape="RECT" href="#a_add" alt="Add" onclick="highlightDef('id_add');" coords="19,158, 51,180"><area id="contents" shape="RECT" href="#a_contents" alt="Installer Contents" onclick="highlightDef('id_contents');" coords="22,190, 442,520"></map>
 <map name="sectiondlg"><area id="name" shape="RECT" href="#a_name" alt="Name" onclick="highlightDef('id_name');" coords="13,40, 409,63"><area id="description" shape="RECT" href="#a_description" alt="Description" onclick="highlightDef('id_description');" coords="12,68, 410,158"><area id="hidden" shape="RECT" href="#a_hidden" alt="Hidden" onclick="highlightDef('id_hidden');" coords="12,161, 63,175"><area id="bold" shape="RECT" href="#a_bold" alt="Display in Bold Text" onclick="highlightDef('id_bold');" coords="71,161, 182,175"><area id="unselected" shape="RECT" href="#a_unselected" alt="Unselected by Default" onclick="highlightDef('id_unselected');" coords="190,162, 314,175"></map>
-<map name="sectiongrpdlg"><area id="caption" shape="RECT" href="#a_caption" alt="Caption" onclick="highlightDef('id_caption');" coords="13,40, 408,61"><area id="description2" shape="RECT" href="#a_description2" alt="Description" onclick="highlightDef('id_description2');" coords="13,68, 411,157"><area id="bold2" shape="RECT" href="#a_bold2" alt="Display in Bold Text" onclick="highlightDef('id_bold2');" coords="13,161, 123,175"><area id="expanded" shape="RECT" href="#a_expanded" alt="Expanded by Default" onclick="highlightDef('id_expanded');" coords="131,161, 251,176"></map>
+<map name="sectiongrpdlg">
+  <area id="caption" shape="RECT" href="#a_caption" alt="Caption" onclick="highlightDef('id_caption');" coords="13,40, 408,61"><area id="description2" shape="RECT" href="#a_description2" alt="Description" onclick="highlightDef('id_description2');" coords="13,68, 411,157"><area id="bold2" shape="RECT" href="#a_bold2" alt="Display in Bold Text" onclick="highlightDef('id_bold2');" coords="12,161,127,178"><area id="expanded" shape="RECT" href="#a_expanded" alt="Expanded by Default" onclick="highlightDef('id_expanded');" coords="130,161,251,178">
+</map>
 <map name="filedlg"><area id="source" shape="RECT" href="#a_source" alt="Source File" onclick="highlightDef('id_source');" coords="13,41, 379,63"><area id="destination" shape="RECT" href="#a_destination" alt="Destination" onclick="highlightDef('id_destination');" coords="12,68, 407,90"><area id="overwrite" shape="RECT" href="#a_overwrite" alt="Overwrite" onclick="highlightDef('id_overwrite');" coords="13,94, 158,116"></map>
 <map name="filesetdlg"><area id="source2" shape="RECT" href="#a_source2" alt="Source Files" onclick="highlightDef('id_source2');" coords="13,42, 377,190"><area id="add2" shape="RECT" href="#a_add2" alt="Add" onclick="highlightDef('id_add2');" coords="380,58, 409,84"><area id="delete2" shape="RECT" href="#a_delete2" alt="Delete" onclick="highlightDef('id_delete2');" coords="380,90, 409,116"><area id="up2" shape="RECT" href="#a_up2" alt="Up" onclick="highlightDef('id_up2');" coords="380,120, 409,146"><area id="down2" shape="RECT" href="#a_down2" alt="Down" onclick="highlightDef('id_down2');" coords="380,151, 409,177"><area id="destination2" shape="RECT" href="#a_destination2" alt="Destination" onclick="highlightDef('id_destination2');" coords="12,193, 407,215"><area id="overwrite2" shape="RECT" href="#a_overwrite2" alt="Overwrite" onclick="highlightDef('id_overwrite2');" coords="12,219, 154,240"></map>
 <map name="folderdlg"><area id="source3" shape="RECT" href="#a_source3" alt="Source Folder" onclick="highlightDef('id_source3');" coords="13,42, 378,62"><area id="destination3" shape="RECT" href="#a_destination3" alt="Destination" onclick="highlightDef('id_destination3');" coords="12,69, 407,90"><area id="overwrite3" shape="RECT" href="#a_overwrite3" alt="Overwrite" onclick="highlightDef('id_overwrite3');" coords="12,94, 176,116"><area id="includesub" shape="RECT" href="#a_includesub" alt="Include All Sub-Folders and Files" onclick="highlightDef('id_includesub');" coords="12,121, 184,135"></map>
+<map name="librarydlg">
+<area id="lib" shape="RECT" href="#a_lib" alt="Library" onclick="highlightDef('id_lib');" coords="13,37,380,58">
+<area id="destination4" shape="RECT" href="#a_destination4" alt="Destination" onclick="highlightDef('id_destination4');" coords="13,64,408,85">
+<area id-"libtype" shape="rect" href="#a_libtype" alt="Type" coords="13,90,408,111" onclick="highlightDef('id_libtype');">
+<area id-"shared" shape="rect" href="#a_shared" alt="Shared Library" coords="13,117,223,130" onclick="highlightDef('id_shared');">
+<area id="reboot" shape="rect" href="#a_reboot" alt="Upgrade on Reboot" coords="13,138,233,151" onclick="highlightDef('id_reboot');">
+<area id="protected" shape="rect" coords="13,159,294,172" href="#a_protected" alt="Check for Windows File Protection" onclick="highlightDef('id_protected');">
+<area id="refresh" shape="rect" coords="13,180,112,193" href="#a_refresh" alt="Refresh the Shell" onclick="highlightDef('id_refresh');">
+<area id="unload" shape="rect" coords="13,201,245,214" href="#a_unload" alt="Unload Unnecessary Libraries" onclick="highlightDef('id_unload');">
+<area id="remove" shape="rect" coords="13,222,126,235" href="#a_remove" alt="Remove on Uninstall" onclick="highlightDef('id_remove');">
+</map>
 <map name="shortcutdlg"><area id="location" shape="RECT" href="#a_location" alt="Location" onclick="highlightDef('id_location');" coords="13,40, 408,62"><area id="name2" shape="RECT" href="#a_name2" alt="Name" onclick="highlightDef('id_name2');" coords="13,67, 409,88"><area id="shortcut_type" shape="RECT" href="#a_shortcut_type" alt="Shortcut Type" onclick="highlightDef('id_shortcut_type');" coords="12,90, 262,107"><area id="url" shape="RECT" href="#a_url" alt="URL" onclick="highlightDef('id_url');" coords="13,113, 409,134"><area id="path" shape="RECT" href="#a_path" alt="Path" onclick="highlightDef('id_path');" coords="12,138, 379,160"></map>
 <map name="regkeydlg"><area id="rootkey" shape="RECT" href="#a_rootkey" alt="Root Key" onclick="highlightDef('id_rootkey');" coords="13,41, 228,60"><area id="subkey" shape="RECT" href="#a_subkey" alt="Sub Key" onclick="highlightDef('id_subkey');" coords="13,66, 408,87"></map>
 <map name="regvaldlg"><area id="rootkey2" shape="RECT" href="#a_rootkey2" alt="Root Key" onclick="highlightDef('id_rootkey2');" coords="12,41, 228,61"><area id="subkey2" shape="RECT" href="#a_subkey2" alt="Sub Key" onclick="highlightDef('id_subkey2');" coords="13,67, 409,87"><area id="value" shape="RECT" href="#a_value" alt="Value" onclick="highlightDef('id_value');" coords="13,91, 410,113"><area id="type" shape="RECT" href="#a_type" alt="Type" onclick="highlightDef('id_type');" coords="12,117, 127,137"><area id="data" shape="RECT" href="#a_data" alt="Data" onclick="highlightDef('id_data');" coords="13,143, 409,163"></map>

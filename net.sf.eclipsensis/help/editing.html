@@ -49,6 +49,7 @@ default, the editor is registered to work with files having the .nsi and .nsh
 extensions. The editor offers the following features:</p>
 <ol>
 <li><a href="#editing_commands">Editing Commands</a></li>
+<li><a href="#dragdrop">Drag &amp; Drop</a> </li>
 <li><a href="#rulers">Vertical and Overview Rulers</a></li>
 <li><a href="#menu">Menu and Toolbar</a></li>
 <li><a href="#outline">Code Outline</a></li>
@@ -171,6 +172,13 @@ entries.<br>
 <span style="font-weight: bold">Note: REG_MULTI_SZ values will not be imported since they are not supported by NSIS.</span> <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a><br>
 <strong>Shortcut:</strong> Shift+F8</dd>
 </dl>
+<a name="dragdrop"></a>
+<h2>Drag and Drop</h2>
+<p>The EclipseNSIS Editor makes it easy to add files and folders to the NSIS script. Files and folders can be simply dragged from 
+Windows Explorer or the Desktop and dropped to the desired location in the script. They will then be added to script using 
+NSIS <a href="javascript:redirectNSISKeyword('File');">File</a> instructions. Registration files (.REG extension) are processed
+to extract the Registry keys and values, which are then added to the script using the appropriate 
+<a href="javascript:redirectNSISSection('4.9.2');">NSIS registry instructions</a>.</p>
 <a name="rulers"></a>
 <h2>Vertical and Overview Rulers</h2>
 <p>The vertical ruler is to the left of the editing area in the EclipseNSIS
