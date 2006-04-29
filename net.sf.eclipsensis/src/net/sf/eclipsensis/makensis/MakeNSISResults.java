@@ -10,11 +10,14 @@
 package net.sf.eclipsensis.makensis;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 
-public class MakeNSISResults
+public class MakeNSISResults implements Serializable
 {
+    private static final long serialVersionUID = -5087200320522747802L;
+
     public static final int RETURN_SUCCESS = 0;
     public static final int RETURN_CANCEL = -1;
 

@@ -25,6 +25,7 @@ public class NSISConsoleWriter implements Runnable
     private INSISConsoleLineProcessor mLineProcessor = null;
     private List mErrors = new ArrayList();
     private List mWarnings = new ArrayList();
+    private boolean mRunning = false;
 
     public NSISConsoleWriter(MakeNSISProcess process, INSISConsole console, InputStream inputStream, INSISConsoleLineProcessor lineProcessor)
     {
@@ -40,6 +41,7 @@ public class NSISConsoleWriter implements Runnable
     public void run()
     {
         BufferedReader br = null;
+        mRunning = true;
         try {
             br = new BufferedReader(new InputStreamReader(mInputStream));
             NSISConsoleLine line;
@@ -71,7 +73,13 @@ public class NSISConsoleWriter implements Runnable
         }
         finally {
             IOUtility.closeIO(br);
+            mRunning = false;
         }
+    }
+
+    public boolean isRunning()
+    {
+        return mRunning;
     }
 
     private void appendLine(NSISConsoleLine line)

@@ -9,6 +9,8 @@
  *******************************************************************************/
 package net.sf.eclipsensis.console;
 
+import net.sf.eclipsensis.script.NSISScriptProblem;
+
 import org.eclipse.core.runtime.IPath;
 
 public class NSISConsoleLine
@@ -21,6 +23,7 @@ public class NSISConsoleLine
     private int mType = TYPE_INFO;
     private IPath mSource = null;
     private int mLineNum = 0;
+    private NSISScriptProblem mProblem = null;
 
     public static NSISConsoleLine info(String text)
     {
@@ -92,5 +95,15 @@ public class NSISConsoleLine
     public void setLineNum(int lineNum)
     {
         mLineNum = lineNum;
+    }
+
+    public NSISScriptProblem getProblem()
+    {
+        return mProblem;
+    }
+
+    public void setProblem(NSISScriptProblem problem)
+    {
+        mProblem = problem;
     }
 }

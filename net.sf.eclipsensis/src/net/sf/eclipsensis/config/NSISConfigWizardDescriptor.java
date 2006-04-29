@@ -51,7 +51,7 @@ public class NSISConfigWizardDescriptor implements IAdaptable, IPluginContributi
 
     public String getPluginId()
     {
-        return (mConfigurationElement != null?mConfigurationElement.getNamespace():null);
+        return (mConfigurationElement != null?mConfigurationElement.getContributor().getName():null);
     }
 
     public String getId()
@@ -95,7 +95,7 @@ public class NSISConfigWizardDescriptor implements IAdaptable, IPluginContributi
             if (iconName == null) {
                 return null;
             }
-            mIcon = AbstractUIPlugin.imageDescriptorFromPlugin(mConfigurationElement.getNamespace(), iconName);    
+            mIcon = AbstractUIPlugin.imageDescriptorFromPlugin(mConfigurationElement.getContributor().getName(), iconName);    
         }
         return mIcon;
     }

@@ -11,6 +11,7 @@ package net.sf.eclipsensis.installoptions.editor;
 
 import java.lang.reflect.Constructor;
 import java.util.*;
+import java.util.List;
 import java.util.regex.Matcher;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
@@ -24,10 +25,12 @@ import net.sf.eclipsensis.job.IJobStatusRunnable;
 import net.sf.eclipsensis.job.JobScheduler;
 import net.sf.eclipsensis.util.*;
 
+import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.gef.Disposable;
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.commands.ActionHandler;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.CompositeImageDescriptor;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -41,8 +44,12 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.contexts.IContextActivation;
+import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.editors.text.*;
+import org.eclipse.ui.handlers.IHandlerActivation;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.ide.IGotoMarker;
 import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.texteditor.*;
@@ -60,6 +67,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
     public static final String EXPORT_HTML_ACTION = "net.sf.eclipsensis.installoptions.export_html"; //$NON-NLS-1$
     
     private static final String FOLDING_COLLAPSE = "net.sf.eclipsensis.installoptions.folding_collapse"; //$NON-NLS-1$
+    private static final String FOLDING_COLLAPSE_ALL = "net.sf.eclipsensis.installoptions.folding_collapse_all"; //$NON-NLS-1$
     private static final String FOLDING_EXPAND = "net.sf.eclipsensis.installoptions.folding_expand"; //$NON-NLS-1$
     private static final String FOLDING_EXPAND_ALL = "net.sf.eclipsensis.installoptions.folding_expand_all"; //$NON-NLS-1$
     private static final String FOLDING_TOGGLE = "net.sf.eclipsensis.installoptions.folding_toggle"; //$NON-NLS-1$
@@ -292,15 +300,10 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
         action.setEnabled(true);
         setAction(FOLDING_COLLAPSE, action);
 
-//        a= new TextOperationAction(resourceBundle, "projection.collapse.all.", this, ProjectionViewer.COLLAPSE_ALL, true); //$NON-NLS-1$
-//        a.setActionDefinitionId(IFoldingCommandIds.FOLDING_COLLAPSE_ALL);
-//        a.setEnabled(true);
-//        setAction("CollapseAll", a); //$NON-NLS-1$
-//
-//        a= new TextOperationAction(resourceBundle, "projection.restore.", this, ProjectionViewer.RESTORE, true); //$NON-NLS-1$
-//        a.setActionDefinitionId(IFoldingCommandIds.FOLDING_RESTORE);
-//        a.setEnabled(true);
-//        setAction("CollapseAll", a); //$NON-NLS-1$
+        action= new TextOperationAction(resourceBundle, "projection.collapse.all.", this, ProjectionViewer.COLLAPSE_ALL, true); //$NON-NLS-1$
+        action.setActionDefinitionId(IFoldingCommandIds.FOLDING_COLLAPSE_ALL);
+        action.setEnabled(true);
+        setAction(FOLDING_COLLAPSE_ALL, action); //$NON-NLS-1$
 
         action = getAction(ITextEditorActionConstants.CONTEXT_PREFERENCES);
         if(action != null) {
@@ -346,6 +349,8 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
         IAction action= getAction(FOLDING_TOGGLE);
         foldingMenu.add(action);
         action= getAction(FOLDING_EXPAND_ALL);
+        foldingMenu.add(action);
+        action= getAction(FOLDING_COLLAPSE_ALL);
         foldingMenu.add(action);
     }
 
@@ -902,20 +907,35 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
             site.setSelectionProvider(viewer);
 
             getControl().addFocusListener(new FocusListener() {
-                private String[] mScopes;
+                Map mActionHandlers = new HashMap();
+                List mHandlerActivations = new ArrayList();
+                IContextActivation mContextActivation;
                 
+                {
+                    addActionHandler(CREATE_CONTROL_ACTION);
+                    addActionHandler(EDIT_CONTROL_ACTION);
+                    addActionHandler(DELETE_CONTROL_ACTION);
+                    addActionHandler(DELETE_CONTROL_ACTION2);
+                }
+
+                private void addActionHandler(String actionId)
+                {
+                    IAction action = getAction(actionId);
+                    mActionHandlers.put(action.getActionDefinitionId(),new ActionHandler(action));
+                }
+
                 public void focusGained(FocusEvent e)
                 {
                     IViewPart part = site.getPage().findView("org.eclipse.ui.views.ContentOutline"); //$NON-NLS-1$
                     if(part != null) {
-                        IKeyBindingService service = part.getSite().getKeyBindingService();
-                        if(service != null) {
-                            mScopes = service.getScopes();
-                            service.setScopes(new String[] {INSTALLOPTIONS_SOURCE_OUTLINE_CONTEXT_ID});
-                            service.registerAction(getAction(CREATE_CONTROL_ACTION));
-                            service.registerAction(getAction(EDIT_CONTROL_ACTION));
-                            service.registerAction(getAction(DELETE_CONTROL_ACTION));
-                            service.registerAction(getAction(DELETE_CONTROL_ACTION2));
+                        IContextService contextService = (IContextService)part.getSite().getService(IContextService.class);
+                        IHandlerService handlerService = (IHandlerService)part.getSite().getService(IHandlerService.class);
+                        if(contextService != null && handlerService != null) {
+                            mContextActivation = contextService.activateContext(INSTALLOPTIONS_SOURCE_OUTLINE_CONTEXT_ID);
+                            for (Iterator iter = mActionHandlers.keySet().iterator(); iter.hasNext();) {
+                                String commandId = (String)iter.next();
+                                mHandlerActivations.add(handlerService.activateHandler(commandId,(IHandler)mActionHandlers.get(commandId)));
+                            }
                         }
                     }
                 }
@@ -924,14 +944,15 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
                 {
                     IViewPart part = site.getPage().findView("org.eclipse.ui.views.ContentOutline"); //$NON-NLS-1$
                     if(part != null) {
-                        IKeyBindingService service = part.getSite().getKeyBindingService();
-                        if(service != null) {
-                            service.unregisterAction(getAction(CREATE_CONTROL_ACTION));
-                            service.unregisterAction(getAction(EDIT_CONTROL_ACTION));
-                            service.unregisterAction(getAction(DELETE_CONTROL_ACTION));
-                            service.unregisterAction(getAction(DELETE_CONTROL_ACTION2));
-                            service.setScopes(mScopes);
-                            mScopes = null;
+                        IContextService contextService = (IContextService)part.getSite().getService(IContextService.class);
+                        IHandlerService handlerService = (IHandlerService)part.getSite().getService(IHandlerService.class);
+                        if(contextService != null && handlerService != null) {
+                            contextService.deactivateContext(mContextActivation);
+                            mContextActivation = null;
+                            for (Iterator iter = mHandlerActivations.iterator(); iter.hasNext();) {
+                                handlerService.deactivateHandler((IHandlerActivation)iter.next());
+                                iter.remove();
+                            }
                         }
                     }
                 }

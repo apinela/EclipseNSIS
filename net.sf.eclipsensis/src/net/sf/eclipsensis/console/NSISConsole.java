@@ -137,7 +137,7 @@ public class NSISConsole extends TextConsole implements INSISConsole, IPropertyC
                     if(pos.overlapsWith(0, offset) && !pos.includes(offset)) {
                         mAnnotationModel.addAnnotation(annotation, pos);
                         try {
-                            addHyperlink(new ConsoleHyperlink(annotation.getSource(),annotation.getLine()), pos.getOffset(), pos.getLength());
+                            addHyperlink(new ConsoleHyperlink(annotation.getLine()), pos.getOffset(), pos.getLength());
                         }
                         catch (BadLocationException e) {
                             EclipseNSISPlugin.getDefault().log(e);
@@ -211,8 +211,9 @@ public class NSISConsole extends TextConsole implements INSISConsole, IPropertyC
                         break;
                 }
                 if(line.getSource() != null && line.getLineNum() > 0) {
-                    mPendingAnnotations.add(new NSISConsoleAnnotation(image,new Position(mOffset, length),
-                                                                  line.getSource(),line.getLineNum()));
+                    NSISConsoleAnnotation annotation = new NSISConsoleAnnotation(image,new Position(mOffset, length),
+                                                                                 line);
+                    mPendingAnnotations.add(annotation);
                 }
                 mOffset += (length + 1); // + 1 for the LF
             } 
@@ -354,12 +355,10 @@ public class NSISConsole extends TextConsole implements INSISConsole, IPropertyC
 
     private class ConsoleHyperlink implements IHyperlink
     {
-        private IPath mPath;
-        private int mLine;
+        private NSISConsoleLine mLine;
         
-        public ConsoleHyperlink(IPath path, int line)
+        public ConsoleHyperlink(NSISConsoleLine line)
         {
-            mPath = path;
             mLine = line;
         }
 
@@ -373,7 +372,7 @@ public class NSISConsole extends TextConsole implements INSISConsole, IPropertyC
 
         public void linkActivated()
         {
-            NSISEditorUtilities.gotoLine(mPath, mLine);
+            NSISEditorUtilities.gotoConsoleLineProblem(mLine);
         }
     }
 }

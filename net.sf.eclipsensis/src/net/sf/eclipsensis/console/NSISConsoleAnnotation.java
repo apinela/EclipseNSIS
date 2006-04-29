@@ -9,7 +9,6 @@
  *******************************************************************************/
 package net.sf.eclipsensis.console;
 
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.*;
 import org.eclipse.swt.SWT;
@@ -22,15 +21,13 @@ class NSISConsoleAnnotation extends Annotation implements IAnnotationPresentatio
     
     private Image mImage;
     private Position mPosition;
-    private IPath mSource;
-    private int mLine;
+    private NSISConsoleLine mLine;
     
-    public NSISConsoleAnnotation(Image image, Position pos, IPath source, int line)
+    public NSISConsoleAnnotation(Image image, Position pos, NSISConsoleLine line)
     {
         super();
         mImage = image;
         mPosition = pos;
-        mSource = source;
         mLine = line;
         setType(TYPE);
     }
@@ -40,7 +37,7 @@ class NSISConsoleAnnotation extends Annotation implements IAnnotationPresentatio
         return DEFAULT_LAYER;
     }
 
-    protected int getLine()
+    protected NSISConsoleLine getLine()
     {
         return mLine;
     }
@@ -48,11 +45,6 @@ class NSISConsoleAnnotation extends Annotation implements IAnnotationPresentatio
     protected Position getPosition()
     {
         return mPosition;
-    }
-
-    protected IPath getSource()
-    {
-        return mSource;
     }
 
     public void paint(GC gc, Canvas canvas, Rectangle bounds)

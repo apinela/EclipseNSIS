@@ -273,15 +273,10 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
         a.setEnabled(true);
         setAction(INSISEditorConstants.FOLDING_COLLAPSE, a); 
 
-//        a= new TextOperationAction(resourceBundle, "projection.collapse.all.", this, ProjectionViewer.COLLAPSE_ALL, true); //$NON-NLS-1$
-//        a.setActionDefinitionId(IFoldingCommandIds.FOLDING_COLLAPSE_ALL);
-//        a.setEnabled(true);
-//        setAction("CollapseAll", a); //$NON-NLS-1$
-//
-//        a= new TextOperationAction(resourceBundle, "projection.restore.", this, ProjectionViewer.RESTORE, true); //$NON-NLS-1$
-//        a.setActionDefinitionId(IFoldingCommandIds.FOLDING_RESTORE);
-//        a.setEnabled(true);
-//        setAction("CollapseAll", a); //$NON-NLS-1$
+        a= new TextOperationAction(resourceBundle, "projection.collapse.all.", this, ProjectionViewer.COLLAPSE_ALL, true); //$NON-NLS-1$
+        a.setActionDefinitionId(IFoldingCommandIds.FOLDING_COLLAPSE_ALL);
+        a.setEnabled(true);
+        setAction(INSISEditorConstants.FOLDING_COLLAPSE_ALL, a); //$NON-NLS-1$
     }
 
     protected void rulerContextMenuAboutToShow(IMenuManager menu) {
@@ -292,6 +287,8 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
         IAction action= getAction(INSISEditorConstants.FOLDING_TOGGLE);
         foldingMenu.add(action);
         action= getAction(INSISEditorConstants.FOLDING_EXPAND_ALL);
+        foldingMenu.add(action);
+        action= getAction(INSISEditorConstants.FOLDING_COLLAPSE_ALL);
         foldingMenu.add(action);
     }
 
@@ -384,53 +381,68 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
         viewer.addSelectionChangedListener(listener);
         viewer.addPostSelectionChangedListener(listener);
         
-        //Add support for NSISCommand transfer.
+        //Add support for Drag & Drop
         final StyledText text2 = viewer.getTextWidget();
         DropTarget target = new DropTarget(text2, DND.DROP_DEFAULT | DND.DROP_COPY);
         target.setTransfer(new Transfer[]{NSISCommandTransfer.INSTANCE, FileTransfer.getInstance()});
         target.addDropListener(new DropTargetAdapter() {
             public void dragEnter(DropTargetEvent e)
             {
-                if (e.detail == DND.DROP_DEFAULT) {
-                    e.detail = DND.DROP_COPY;
-                }
+                if(NSISCommandTransfer.INSTANCE.isSupportedType(e.currentDataType) || 
+                   FileTransfer.getInstance().isSupportedType(e.currentDataType)) {
+                    //Don't want default feedback- we will do it ourselves
+                    e.feedback = DND.FEEDBACK_NONE;
+                    if (e.detail == DND.DROP_DEFAULT) {
+                        e.detail = DND.DROP_COPY;
+                    }
+                }                
             }
 
             public void dragOperationChanged(DropTargetEvent e)
             {
-                if (e.detail == DND.DROP_DEFAULT) {
-                    e.detail = DND.DROP_COPY;
-                }
+                if(NSISCommandTransfer.INSTANCE.isSupportedType(e.currentDataType) || 
+                   FileTransfer.getInstance().isSupportedType(e.currentDataType)) {
+                    //Don't want default feedback- we will do it ourselves
+                    e.feedback = DND.FEEDBACK_NONE;
+                    if (e.detail == DND.DROP_DEFAULT) {
+                        e.detail = DND.DROP_COPY;
+                    }
+                }                
             }
 
             public void dragOver(DropTargetEvent e)
             {
-                text2.setFocus();
-                Point location = text2.getDisplay().map(null, text2, e.x, e.y);
-                location.x = Math.max(0, location.x);
-                location.y = Math.max(0, location.y);
-                int offset;
-                try {
-                    offset = text2.getOffsetAtLocation(new Point(location.x, location.y));
-                }
-                catch (IllegalArgumentException ex) {
+                if(NSISCommandTransfer.INSTANCE.isSupportedType(e.currentDataType) || 
+                   FileTransfer.getInstance().isSupportedType(e.currentDataType)) {
+                    //Don't want default feedback- we will do it ourselves
+                    e.feedback = DND.FEEDBACK_NONE;
+                    text2.setFocus();
+                    Point location = text2.getDisplay().map(null, text2, e.x, e.y);
+                    location.x = Math.max(0, location.x);
+                    location.y = Math.max(0, location.y);
+                    int offset;
                     try {
-                        offset = text2.getOffsetAtLocation(new Point(0, location.y));
+                        offset = text2.getOffsetAtLocation(new Point(location.x, location.y));
                     }
-                    catch (IllegalArgumentException ex2) {
-                        offset = text2.getCharCount();
-                        Point maxLocation = text2.getLocationAtOffset(offset);
-                        if (location.y >= maxLocation.y) {
-                            if (location.x < maxLocation.x) {
-                                offset = text2.getOffsetAtLocation(new Point(location.x, maxLocation.y));
+                    catch (IllegalArgumentException ex) {
+                        try {
+                            offset = text2.getOffsetAtLocation(new Point(0, location.y));
+                        }
+                        catch (IllegalArgumentException ex2) {
+                            offset = text2.getCharCount();
+                            Point maxLocation = text2.getLocationAtOffset(offset);
+                            if (location.y >= maxLocation.y) {
+                                if (location.x < maxLocation.x) {
+                                    offset = text2.getOffsetAtLocation(new Point(location.x, maxLocation.y));
+                                }
                             }
                         }
                     }
+                    IDocument doc = getDocumentProvider().getDocument(getEditorInput());
+                    offset = getCaretOffsetForInsertCommand(doc, offset);
+                    
+                    text2.setCaretOffset(offset);
                 }
-                IDocument doc = getDocumentProvider().getDocument(getEditorInput());
-                offset = getCaretOffsetForInsertCommand(doc, offset);
-                
-                text2.setCaretOffset(offset);
             }
 
             public void drop(DropTargetEvent e)

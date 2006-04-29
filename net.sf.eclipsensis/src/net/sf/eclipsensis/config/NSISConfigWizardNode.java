@@ -55,7 +55,7 @@ public class NSISConfigWizardNode implements IWizardNode, IPluginContribution
         BusyIndicator.showWhile(shell.getDisplay(),
                 new Runnable() {
                     public void run() {
-                        Platform.run(new SafeRunnable() {
+                        SafeRunner.run(new SafeRunnable() {
                             public void handleException(Throwable e) {
                                 statuses[0] = new Status(IStatus.ERROR, getPluginId(), IStatus.OK,
                                         e.getMessage() == null ? "" : e.getMessage(), e); //$NON-NLS-1$,

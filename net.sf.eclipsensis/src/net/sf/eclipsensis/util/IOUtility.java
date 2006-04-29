@@ -28,7 +28,8 @@ import net.sf.eclipsensis.settings.NSISPreferences;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.editors.text.ILocationProvider;
 import org.osgi.framework.Bundle;
 
@@ -282,41 +283,49 @@ public class IOUtility
 
     private static boolean isValidNSISPathNameOrSpec(String pathName, Pattern nsisPath, Pattern path)
     {
-        int n = pathName.indexOf('\\');
-        String suffix = null;
-        String prefix = null;
-        if(n >= 1) {
-            suffix = pathName.substring(n);
-            prefix = pathName.substring(0,n);
-        }
-        else {
-            prefix = pathName;
-        }
-        if(!Common.isEmpty(prefix)) {
-            String[] array = NSISKeywords.getInstance().getKeywordsGroup(NSISKeywords.PATH_CONSTANTS_AND_VARIABLES);
-            for(int i=0; i<array.length; i++) {
-                if(array[i].equalsIgnoreCase(prefix)) {
-                    if(!Common.isEmpty(suffix)) {
-                        Matcher matcher = nsisPath.matcher(suffix);
-                        return matcher.matches();
+        if(pathName != null && pathName.length() > 0) {
+            int n = pathName.indexOf('\\');
+            String suffix = null;
+            String prefix = null;
+            if(n >= 1) {
+                suffix = pathName.substring(n);
+                prefix = pathName.substring(0,n);
+            }
+            else {
+                prefix = pathName;
+            }
+            if(!Common.isEmpty(prefix)) {
+                String[] array = NSISKeywords.getInstance().getKeywordsGroup(NSISKeywords.PATH_CONSTANTS_AND_VARIABLES);
+                for(int i=0; i<array.length; i++) {
+                    if(array[i].equalsIgnoreCase(prefix)) {
+                        if(!Common.isEmpty(suffix)) {
+                            Matcher matcher = nsisPath.matcher(suffix);
+                            return matcher.matches();
+                        }
+                        return true;
                     }
-                    return true;
                 }
             }
         }
         return isValidPathNameOrSpec(pathName, path);
     }
 
-    static boolean isValidPathNameOrSpec(String pathName, Pattern path)
+    private static boolean isValidPathNameOrSpec(String pathName, Pattern path)
     {
-        Matcher matcher = path.matcher(pathName);
-        return matcher.matches();
+        if(pathName != null && pathName.length() > 0) {
+            Matcher matcher = path.matcher(pathName);
+            return matcher.matches();
+        }
+        return false;
     }
 
     public static boolean isValidFileName(String fileName)
     {
-        Matcher matcher = cValidFileName.matcher(fileName);
-        return matcher.matches();
+        if(fileName != null && fileName.length() > 0) {
+            Matcher matcher = cValidFileName.matcher(fileName);
+            return matcher.matches();
+        }
+        return false;
     }
 
     public static boolean isValidFile(String fileName)
@@ -342,8 +351,11 @@ public class IOUtility
 
     public static boolean isValidURL(String url)
     {
-        Matcher matcher = cValidURL.matcher(url);
-        return matcher.matches();
+        if(url != null && url.length() > 0) {
+            Matcher matcher = cValidURL.matcher(url);
+            return matcher.matches();
+        }
+        return false;
     }
 
     public static String makeRelativeLocation(IResource resource, String pathname)
@@ -500,7 +512,7 @@ public class IOUtility
             lastModified = bundle.getLastModified();
             try {
                 IPath relative = source.makeRelative();
-                URL url = Platform.resolve(bundle.getEntry("/")); //$NON-NLS-1$
+                URL url = FileLocator.resolve(bundle.getEntry("/")); //$NON-NLS-1$
                 if (url.getProtocol().equalsIgnoreCase("file")) { //$NON-NLS-1$
                     File original = new File(url.getFile(), relative.toString());
                     if (isValidFile(original)) {

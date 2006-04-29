@@ -138,7 +138,7 @@ public class NSISConsoleViewer extends TextConsoleViewer
             {
                 NSISConsoleAnnotation a = getAnnotation(e.y);
                 if(a != null) {
-                    NSISEditorUtilities.gotoLine(a.getSource(), a.getLine());
+                    NSISEditorUtilities.gotoConsoleLineProblem(a.getLine());
                 }
             }
         });

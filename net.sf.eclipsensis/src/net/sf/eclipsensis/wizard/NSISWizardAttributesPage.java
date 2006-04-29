@@ -576,6 +576,12 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
                 boolean selection = b.getSelection();
                 mWizard.getSettings().setCreateStartMenuGroup(selection);
                 validateField(SMGRP_CHECK);
+                NSISWizardContentsPage page = (NSISWizardContentsPage)mWizard.getPage(NSISWizardContentsPage.NAME);
+                if(page != null) {
+                    page.setPageComplete(page.validatePage(0xFFFF));
+                    page.refresh();
+                    mWizard.getContainer().updateButtons();
+                }
             }
         });
 
@@ -599,8 +605,12 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
                 mWizard.getSettings().setChangeStartMenuGroup(((Button)e.widget).getSelection());
             }
         });
+        final MasterSlaveController m2 = new MasterSlaveController(b2);
         final MasterSlaveEnabler mse = new MasterSlaveEnabler() {
-            public void enabled(Control control, boolean flag) { }
+            public void enabled(Control control, boolean flag) 
+            { 
+                m2.updateSlaves(flag);
+            }
 
             public boolean canEnable(Control control)
             {
@@ -614,6 +624,16 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
                 }
             }
         };
+        
+        final Button b3 = NSISWizardDialogUtil.createCheckBox(group, "disable.startmenu.shortcuts.label", //$NON-NLS-1$
+                settings.isDisableStartMenuShortcuts(), b2.isEnabled(), m2, false);
+        b3.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e)
+            {
+                mWizard.getSettings().setDisableStartMenuShortcuts(((Button)e.widget).getSelection());
+            }
+        });
+        
         m.setEnabler(b2,mse);
         m.updateSlaves();
         addPageChangedRunnable(new Runnable() {
@@ -621,6 +641,7 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
             {
                 t.setText(mWizard.getSettings().getStartMenuGroup());
                 b2.setEnabled(mse.canEnable(b2));
+                b3.setEnabled(b2.isEnabled());
             }
         });
 
@@ -632,8 +653,11 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
                 t.setText(settings.getStartMenuGroup());
                 b2.setSelection(settings.isChangeStartMenuGroup());
                 b2.setEnabled(settings.getInstallerType() != INSTALLER_TYPE_SILENT);
+                b3.setSelection(settings.isDisableStartMenuShortcuts());
+                b3.setEnabled(b2.isEnabled());
 
                 m.updateSlaves();
-            }});
+            }
+        });
     }
 }

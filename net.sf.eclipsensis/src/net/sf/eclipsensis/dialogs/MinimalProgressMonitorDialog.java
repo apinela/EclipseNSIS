@@ -23,10 +23,15 @@ import org.eclipse.ui.*;
 
 public class MinimalProgressMonitorDialog extends ProgressMonitorDialog
 {
-    private static final int MINIMUM_WIDTH = 500;
-    private static final int BAR_DLUS = 9;
-    private static final int VERTICAL_OFFSET = 85;
+    public static final int MINIMUM_WIDTH = 500;
+    public static final int MAXIMUM_WIDTH = 800;
+    public static final int VERTICAL_OFFSET = 85;
 
+    private static final int BAR_DLUS = 9;
+
+    private int mMinimumWidth;
+    private int mMaximumWidth;
+    
     private String mCaption = EclipseNSISPlugin.getDefault().getName();
 
     /**
@@ -36,7 +41,14 @@ public class MinimalProgressMonitorDialog extends ProgressMonitorDialog
      */
     public MinimalProgressMonitorDialog(Shell parent)
     {
+        this(parent, MINIMUM_WIDTH, MAXIMUM_WIDTH);
+    }
+
+    public MinimalProgressMonitorDialog(Shell parent, int minimumWidth, int maximumWidth)
+    {
         super(parent);
+        mMaximumWidth = maximumWidth;
+        mMinimumWidth = minimumWidth;
         setShellStyle(SWT.NONE);
     }
 
@@ -92,7 +104,7 @@ public class MinimalProgressMonitorDialog extends ProgressMonitorDialog
         // label showing current task
         subTaskLabel = new Label(parent, SWT.LEFT);
         gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
-        gd.minimumWidth = MINIMUM_WIDTH / 2;
+        gd.minimumWidth = mMinimumWidth / 2;
         subTaskLabel.setLayoutData(gd);
         subTaskLabel.setFont(parent.getFont());
 
@@ -136,8 +148,11 @@ public class MinimalProgressMonitorDialog extends ProgressMonitorDialog
     protected Point getInitialSize()
     {
         Point calculatedSize = getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT,true);
-        if (calculatedSize.x < MINIMUM_WIDTH) {
-            calculatedSize.x = MINIMUM_WIDTH;
+        if (calculatedSize.x < mMinimumWidth) {
+            calculatedSize.x = mMinimumWidth;
+        }
+        if (calculatedSize.x > mMaximumWidth) {
+            calculatedSize.x = mMaximumWidth;
         }
         return calculatedSize;
     }

@@ -14,6 +14,7 @@ import java.util.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
+import net.sf.eclipsensis.console.NSISConsoleLine;
 import net.sf.eclipsensis.editor.codeassist.*;
 import net.sf.eclipsensis.editor.text.NSISPartitionScanner;
 import net.sf.eclipsensis.makensis.MakeNSISResults;
@@ -148,13 +149,20 @@ public class NSISEditorUtilities
         return false;
     }
 
-    public static void gotoLine(IPath path, int lineNum)
+    public static void gotoConsoleLineProblem(NSISConsoleLine line)
     {
+        IPath path = line.getSource();
+        int lineNum = line.getLineNum();
         if(path != null && lineNum > 0) {
             IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
             if(window != null) {
                 IWorkbenchPage page = window.getActivePage();
                 if(page != null) {
+                    IMarker marker = null;
+                    NSISScriptProblem problem = line.getProblem();
+                    if(problem != null) {
+                        marker = problem.getMarker();
+                    }
                     IEditorReference[] editorRefs = page.getEditorReferences();
                     if (!Common.isEmptyArray(editorRefs)) {
                         for (int i = 0; i < editorRefs.length; i++) {
@@ -164,27 +172,39 @@ public class NSISEditorUtilities
                                 if (path.getDevice() == null && input instanceof IFileEditorInput) {
                                     if (path.equals(((IFileEditorInput) input).getFile().getFullPath())) {
                                         page.activate(editor);
-                                        IGotoMarker igm = (IGotoMarker)editor.getAdapter(IGotoMarker.class);
-                                        if(igm != null) {
-                                            igm.gotoMarker(new DummyMarker(ResourcesPlugin.getWorkspace().getRoot().getFile(path),lineNum));
+                                        if(marker != null) {
+                                            IGotoMarker igm = (IGotoMarker)editor.getAdapter(IGotoMarker.class);
+                                            if(igm != null) {
+                                                igm.gotoMarker(marker);
+                                            }
                                         }
                                         return;
                                     }
                                 }
                                 else if(path.getDevice() != null) {
-                                    gotoEditorLine(editor, lineNum);
+                                    Position pos = null;
+                                    if(marker instanceof PositionMarker) {
+                                        pos = ((PositionMarker)marker).getPosition();
+                                    }
+                                    setEditorSelection(editor, pos, lineNum);
                                 }
                             }
                         }
                     }
                     try {
                         if (path.getDevice() == null) {
-                            IDE.openEditor(page, new DummyMarker(ResourcesPlugin.getWorkspace().getRoot().getFile(path),lineNum), OpenStrategy.activateOnOpen());
+                            if(marker != null) {
+                                IDE.openEditor(page, marker, OpenStrategy.activateOnOpen());
+                            }
                         }
                         else if(path.getDevice() != null) {
                             File file = new File(path.toOSString());
                             IEditorPart editor = IDE.openEditor(page,new NSISExternalFileEditorInput(file), INSISConstants.EDITOR_ID);
-                            gotoEditorLine(editor, lineNum);
+                            Position pos = null;
+                            if(marker instanceof PositionMarker) {
+                                pos = ((PositionMarker)marker).getPosition();
+                            }
+                            setEditorSelection(editor, pos, lineNum);
                         }
                     }
                     catch (PartInitException e) {
@@ -195,197 +215,32 @@ public class NSISEditorUtilities
         }
     }
 
-    public static void gotoEditorLine(IEditorPart editor, int lineNum)
+    private static void setEditorSelection(IEditorPart editor, Position pos, int lineNum)
     {
         if(editor instanceof TextEditor) {
+            int offset = -1;
+            int length = 0;
             IDocument doc = ((TextEditor)editor).getDocumentProvider().getDocument(editor.getEditorInput());
-            if(doc.getNumberOfLines() >= lineNum) {
-                IRegion region;
-                try {
-                    region = doc.getLineInformation(lineNum-1);
-                    String delim = doc.getLineDelimiter(lineNum-1);
-                    ((TextEditor)editor).getSelectionProvider().setSelection(new TextSelection(doc,region.getOffset(),region.getLength()+(delim==null?0:delim.length())));
-                }
-                catch (BadLocationException e) {
-                    EclipseNSISPlugin.getDefault().log(e);
+            if(pos != null) {
+                if(pos.getOffset() >= 0 && doc.getLength() >= pos.getOffset()+pos.getLength()) {
+                    offset = pos.getOffset();
+                    length = pos.getLength();
                 }
             }
-        }
-    }
-
-    public static class DummyMarker implements IMarker
-    {
-        private IResource mResource = null;
-        int mLine = -1;
-    
-        /**
-         * @param resource
-         * @param line
-         */
-        public DummyMarker(IResource resource, int line)
-        {
-            mResource = resource;
-            mLine = line;
-        }
-    
-        /* (non-Javadoc)
-         * @see org.eclipse.core.resources.IMarker#delete()
-         */
-        public void delete()
-        {
-        }
-    
-        /* (non-Javadoc)
-         * @see org.eclipse.core.resources.IMarker#exists()
-         */
-        public boolean exists()
-        {
-            return true;
-        }
-    
-        /* (non-Javadoc)
-         * @see org.eclipse.core.resources.IMarker#getAttribute(java.lang.String, boolean)
-         */
-        public boolean getAttribute(String attributeName, boolean defaultValue)
-        {
-            return defaultValue;
-        }
-    
-        /* (non-Javadoc)
-         * @see org.eclipse.core.resources.IMarker#getAttribute(java.lang.String, int)
-         */
-        public int getAttribute(String attributeName, int defaultValue)
-        {
-            if(attributeName.equals(IMarker.LINE_NUMBER)) {
-                return mLine;
-            }
             else {
-                return defaultValue;
+                if(doc.getNumberOfLines() >= lineNum) {
+                    try {
+                        IRegion region = doc.getLineInformation(lineNum-1);
+                        String delim = doc.getLineDelimiter(lineNum-1);
+                        offset = region.getOffset();
+                        length = region.getLength()+(delim==null?0:delim.length());
+                    }
+                    catch (BadLocationException e) {
+                        EclipseNSISPlugin.getDefault().log(e);
+                    }
+                }
             }
-        }
-    
-        /* (non-Javadoc)
-         * @see org.eclipse.core.resources.IMarker#getAttribute(java.lang.String, java.lang.String)
-         */
-        public String getAttribute(String attributeName, String defaultValue)
-        {
-            return defaultValue;
-        }
-    
-        /* (non-Javadoc)
-         * @see org.eclipse.core.resources.IMarker#getAttribute(java.lang.String)
-         */
-        public Object getAttribute(String attributeName)
-        {
-            if(attributeName.equals(IMarker.LINE_NUMBER)) {
-                return new Integer(mLine);
-            }
-            else {
-                return null;
-            }
-        }
-    
-        /* (non-Javadoc)
-         * @see org.eclipse.core.resources.IMarker#getAttributes()
-         */
-        public Map getAttributes()
-        {
-            return null;
-        }
-    
-        /* (non-Javadoc)
-         * @see org.eclipse.core.resources.IMarker#getAttributes(java.lang.String[])
-         */
-        public Object[] getAttributes(String[] attributeNames)
-        {
-            Object[] values = new Object[attributeNames.length];
-            for (int i = 0; i < values.length; i++) {
-                values[i] = getAttribute(attributeNames[i]);
-            }
-            return values;
-        }
-    
-        /* (non-Javadoc)
-         * @see org.eclipse.core.resources.IMarker#getCreationTime()
-         */
-        public long getCreationTime()
-        {
-            return System.currentTimeMillis();
-        }
-    
-        /* (non-Javadoc)
-         * @see org.eclipse.core.resources.IMarker#getId()
-         */
-        public long getId()
-        {
-            return 0;
-        }
-    
-        /* (non-Javadoc)
-         * @see org.eclipse.core.resources.IMarker#getResource()
-         */
-        public IResource getResource()
-        {
-            return mResource;
-        }
-    
-        /* (non-Javadoc)
-         * @see org.eclipse.core.resources.IMarker#getType()
-         */
-        public String getType()
-        {
-            return INSISConstants.PROBLEM_MARKER_ID;
-        }
-    
-        /* (non-Javadoc)
-         * @see org.eclipse.core.resources.IMarker#isSubtypeOf(java.lang.String)
-         */
-        public boolean isSubtypeOf(String superType)
-        {
-            return false;
-        }
-    
-        /* (non-Javadoc)
-         * @see org.eclipse.core.resources.IMarker#setAttribute(java.lang.String, boolean)
-         */
-        public void setAttribute(String attributeName, boolean value)
-        {
-        }
-    
-        /* (non-Javadoc)
-         * @see org.eclipse.core.resources.IMarker#setAttribute(java.lang.String, int)
-         */
-        public void setAttribute(String attributeName, int value)
-        {
-        }
-    
-        /* (non-Javadoc)
-         * @see org.eclipse.core.resources.IMarker#setAttribute(java.lang.String, java.lang.Object)
-         */
-        public void setAttribute(String attributeName, Object value)
-        {
-        }
-    
-        /* (non-Javadoc)
-         * @see org.eclipse.core.resources.IMarker#setAttributes(java.util.Map)
-         */
-        public void setAttributes(Map attributes)
-        {
-        }
-    
-        /* (non-Javadoc)
-         * @see org.eclipse.core.resources.IMarker#setAttributes(java.lang.String[], java.lang.Object[])
-         */
-        public void setAttributes(String[] attributeNames, Object[] values)
-        {
-        }
-    
-        /* (non-Javadoc)
-         * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
-         */
-        public Object getAdapter(Class adapter)
-        {
-            return null;
+            ((TextEditor)editor).getSelectionProvider().setSelection(new TextSelection(doc,offset,length));
         }
     }
 
@@ -398,7 +253,12 @@ public class NSISEditorUtilities
             if (results != null) {
                 List problems = results.getProblems();
                 if (!Common.isEmptyCollection(problems)) {
-                    IDocument doc = editor.getDocumentProvider().getDocument(editor.getEditorInput());
+                    IEditorInput editorInput = editor.getEditorInput();
+                    IFile file = null;
+                    if(editorInput instanceof IFileEditorInput) {
+                        file = ((IFileEditorInput)editorInput).getFile();
+                    }
+                    IDocument doc = editor.getDocumentProvider().getDocument(editorInput);
                     for (Iterator iter = problems.iterator(); iter.hasNext();) {
                         NSISScriptProblem problem = (NSISScriptProblem)iter.next();
                         int line = problem.getLine();
@@ -415,7 +275,10 @@ public class NSISEditorUtilities
                                     continue;
                                 }
                                 IRegion region = doc.getLineInformation(line > 0?line - 1:1);
-                                annotationModel.addAnnotation(new Annotation(name, false, problem.getText()), new Position(region.getOffset(), (line > 0?region.getLength():0)));
+                                
+                                Position position = new Position(region.getOffset(), (line > 0?region.getLength():0));
+                                problem.setMarker(new PositionMarker(file,position));
+                                annotationModel.addAnnotation(new Annotation(name, false, problem.getText()), position);
                             }
                             catch (BadLocationException e) {
                                 EclipseNSISPlugin.getDefault().log(e);
@@ -487,6 +350,189 @@ public class NSISEditorUtilities
                     }
                 }
             }
+        }
+    }
+
+    public static class PositionMarker implements IMarker
+    {
+        private IResource mResource = null;
+        private Position mPosition = null; 
+
+        public PositionMarker(IResource resource, Position position)
+        {
+            mResource = resource;
+            mPosition = position;
+        }
+
+        public Position getPosition()
+        {
+            return mPosition;
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.core.resources.IMarker#delete()
+         */
+        public void delete()
+        {
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.core.resources.IMarker#exists()
+         */
+        public boolean exists()
+        {
+            return true;
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.core.resources.IMarker#getAttribute(java.lang.String, boolean)
+         */
+        public boolean getAttribute(String attributeName, boolean defaultValue)
+        {
+            return defaultValue;
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.core.resources.IMarker#getAttribute(java.lang.String, int)
+         */
+        public int getAttribute(String attributeName, int defaultValue)
+        {
+            if(attributeName.equals(IMarker.CHAR_START)) {
+                return (mPosition==null?defaultValue:mPosition.getOffset());
+            }
+            else if(attributeName.equals(IMarker.CHAR_END)) {
+                return (mPosition==null?defaultValue:mPosition.getOffset()+mPosition.getLength());
+            }
+            else {
+                return defaultValue;
+            }
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.core.resources.IMarker#getAttribute(java.lang.String, java.lang.String)
+         */
+        public String getAttribute(String attributeName, String defaultValue)
+        {
+            return defaultValue;
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.core.resources.IMarker#getAttribute(java.lang.String)
+         */
+        public Object getAttribute(String attributeName)
+        {
+            if(attributeName.equals(IMarker.CHAR_START)) {
+                return (mPosition==null?null:new Integer(mPosition.getOffset()));
+            }
+            else if(attributeName.equals(IMarker.CHAR_END)) {
+                return (mPosition==null?null:new Integer(mPosition.getOffset()+mPosition.getLength()));
+            }
+            else {
+                return null;
+            }
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.core.resources.IMarker#getAttributes()
+         */
+        public Map getAttributes()
+        {
+            return null;
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.core.resources.IMarker#getAttributes(java.lang.String[])
+         */
+        public Object[] getAttributes(String[] attributeNames)
+        {
+            Object[] values = new Object[attributeNames.length];
+            for (int i = 0; i < values.length; i++) {
+                values[i] = getAttribute(attributeNames[i]);
+            }
+            return values;
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.core.resources.IMarker#getCreationTime()
+         */
+        public long getCreationTime()
+        {
+            return System.currentTimeMillis();
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.core.resources.IMarker#getId()
+         */
+        public long getId()
+        {
+            return 0;
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.core.resources.IMarker#getResource()
+         */
+        public IResource getResource()
+        {
+            return mResource;
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.core.resources.IMarker#getType()
+         */
+        public String getType()
+        {
+            return INSISConstants.PROBLEM_MARKER_ID;
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.core.resources.IMarker#isSubtypeOf(java.lang.String)
+         */
+        public boolean isSubtypeOf(String superType)
+        {
+            return false;
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.core.resources.IMarker#setAttribute(java.lang.String, boolean)
+         */
+        public void setAttribute(String attributeName, boolean value)
+        {
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.core.resources.IMarker#setAttribute(java.lang.String, int)
+         */
+        public void setAttribute(String attributeName, int value)
+        {
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.core.resources.IMarker#setAttribute(java.lang.String, java.lang.Object)
+         */
+        public void setAttribute(String attributeName, Object value)
+        {
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.core.resources.IMarker#setAttributes(java.util.Map)
+         */
+        public void setAttributes(Map attributes)
+        {
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.core.resources.IMarker#setAttributes(java.lang.String[], java.lang.Object[])
+         */
+        public void setAttributes(String[] attributeNames, Object[] values)
+        {
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
+         */
+        public Object getAdapter(Class adapter)
+        {
+            return null;
         }
     }
 }

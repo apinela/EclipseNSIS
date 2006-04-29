@@ -36,6 +36,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.part.IPageSite;
+import org.eclipse.ui.services.IServiceLocator;
 import org.eclipse.ui.views.properties.*;
 
 public class InstallOptionsWidgetEditorDialog extends StatusMessageDialog implements PropertyChangeListener, IModelCommandListener, IPropertySourceProvider
@@ -212,7 +213,16 @@ public class InstallOptionsWidgetEditorDialog extends StatusMessageDialog implem
             {
                 return null;
             }
-            
+
+            public Object getService(Class api)
+            {
+                return null;
+            }
+
+            public boolean hasService(Class api)
+            {
+                return false;
+            }
         });
 
         return propertyComposite;
@@ -355,6 +365,11 @@ public class InstallOptionsWidgetEditorDialog extends StatusMessageDialog implem
 
         public void updateActionBars()
         {
+        }
+
+        public IServiceLocator getServiceLocator()
+        {
+            return null;
         }
     }
     

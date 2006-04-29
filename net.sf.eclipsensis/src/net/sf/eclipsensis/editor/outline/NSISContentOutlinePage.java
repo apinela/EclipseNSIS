@@ -9,11 +9,14 @@
  *******************************************************************************/
 package net.sf.eclipsensis.editor.outline;
 
+import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.editor.NSISEditor;
+import net.sf.eclipsensis.util.CommonImages;
 
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.action.*;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -30,6 +33,8 @@ public class NSISContentOutlinePage extends ContentOutlinePage
     private Object mInput;
     private NSISEditor mEditor;
     private boolean mDisposed = false;
+    private IAction mCollapseAllAction;
+    private IAction mExpandAllAction;
 
     /**
      * Creates a content outline page using the given provider and the given
@@ -52,12 +57,54 @@ public class NSISContentOutlinePage extends ContentOutlinePage
         }
     }
 
+    private void revealSelection()
+    {
+        IStructuredSelection sel = (IStructuredSelection)getTreeViewer().getSelection();
+        if(!sel.isEmpty()) {
+            getTreeViewer().reveal(sel.getFirstElement());
+        }
+    }
+
+    private void makeActions()
+    {
+        IToolBarManager tbm = getSite().getActionBars().getToolBarManager();
+        
+        mExpandAllAction = new Action() {
+            public void run()
+            {
+                getTreeViewer().expandAll();
+                revealSelection();
+            }
+        };
+        mExpandAllAction.setText(EclipseNSISPlugin.getResourceString("expandall.text")); //$NON-NLS-1$
+        mExpandAllAction.setToolTipText(EclipseNSISPlugin.getResourceString("expandall.tooltip")); //$NON-NLS-1$
+        mExpandAllAction.setImageDescriptor(ImageDescriptor.createFromImage(CommonImages.EXPANDALL_ICON));
+        mExpandAllAction.setDisabledImageDescriptor(ImageDescriptor.createFromImage(CommonImages.EXPANDALL_DISABLED_ICON));
+        mExpandAllAction.setEnabled(true);
+        tbm.add(mExpandAllAction);
+        
+        mCollapseAllAction = new Action() {
+            public void run()
+            {
+                getTreeViewer().collapseAll();
+                revealSelection();
+            }
+        };
+        mCollapseAllAction.setText(EclipseNSISPlugin.getResourceString("collapseall.text")); //$NON-NLS-1$
+        mCollapseAllAction.setToolTipText(EclipseNSISPlugin.getResourceString("collapseall.tooltip")); //$NON-NLS-1$
+        mCollapseAllAction.setImageDescriptor(ImageDescriptor.createFromImage(CommonImages.COLLAPSEALL_ICON));
+        mCollapseAllAction.setDisabledImageDescriptor(ImageDescriptor.createFromImage(CommonImages.COLLAPSEALL_DISABLED_ICON));
+        mCollapseAllAction.setEnabled(true);
+        tbm.add(mCollapseAllAction);
+    }
+
     /*
      * (non-Javadoc) Method declared on ContentOutlinePage
      */
     public void createControl(Composite parent)
     {
         super.createControl(parent);
+        makeActions();
         if(mEditor != null) {
             NSISOutlineContentResources.getInstance().connect(this);
             NSISOutlineContentProvider contentProvider = mEditor.getOutlineContentProvider();
@@ -127,7 +174,7 @@ public class NSISContentOutlinePage extends ContentOutlinePage
                 control.setRedraw(false);
                 viewer.setInput(null);
                 viewer.setInput(mInput);
-                viewer.expandAll();
+//                viewer.expandAll();
                 control.setRedraw(true);
             }
         }

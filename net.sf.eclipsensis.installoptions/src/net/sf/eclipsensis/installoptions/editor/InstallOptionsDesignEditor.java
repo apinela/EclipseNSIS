@@ -55,6 +55,7 @@ import org.eclipse.gef.ui.parts.TreeViewer;
 import org.eclipse.gef.ui.views.palette.PalettePage;
 import org.eclipse.gef.ui.views.palette.PaletteViewerPage;
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.commands.ActionHandler;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -73,8 +74,10 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.dialogs.SaveAsDialog;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.part.*;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.IDocumentProviderExtension3;
@@ -368,7 +371,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
         setSite(site);
         setInput(input);
         getCommandStack().addCommandStackListener(this);
-        site.getKeyBindingService().setScopes(new String[]{EDITING_INSTALLOPTIONS_DESIGN_CONTEXT_ID});
+        ((IContextService)site.getService(IContextService.class)).activateContext(EDITING_INSTALLOPTIONS_DESIGN_CONTEXT_ID);
         initializeActionRegistry();
     }
 
@@ -1081,7 +1084,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
 
         action = new SwitchEditorAction(this, INSTALLOPTIONS_SOURCE_EDITOR_ID,InstallOptionsPlugin.getResourceString("switch.source.editor.action.name")); //$NON-NLS-1$
         registry.registerAction(action);
-        getEditorSite().getKeyBindingService().registerAction(action);
+        ((IHandlerService)getEditorSite().getService(IHandlerService.class)).activateHandler(action.getActionDefinitionId(),new ActionHandler(action));
 
         final Shell shell;
         if (getGraphicalViewer() != null) {

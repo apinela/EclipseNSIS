@@ -42,6 +42,8 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage implements IN
 
     private static final String cDeleteConfirmMessageFormat = EclipseNSISPlugin.getResourceString("delete.confirmation.message"); //$NON-NLS-1$
 
+    private TreeViewer mTreeViewer;
+
     /**
      * @param pageName
      * @param title
@@ -55,6 +57,13 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage implements IN
     protected String getHelpContextId()
     {
         return INSISConstants.PLUGIN_CONTEXT_PREFIX+"nsis_wizcontents_context"; //$NON-NLS-1$
+    }
+
+    public void refresh()
+    {
+        if(mTreeViewer != null) {
+            mTreeViewer.refresh();
+        }
     }
 
     protected Control createPageControl(Composite parent)
@@ -118,11 +127,11 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage implements IN
         tree.setLayoutData(gd);
 
         updateSelectComponents();
-        final TreeViewer tv = new TreeViewer(tree);
-        tv.setLabelProvider(new NSISInstallElementLabelProvider());
-        tv.setContentProvider(new NSISInstallElementTreeContentProvider(settings));
-        tv.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);
-        tv.setInput(settings);
+        mTreeViewer = new TreeViewer(tree);
+        mTreeViewer.setLabelProvider(new NSISInstallElementLabelProvider());
+        mTreeViewer.setContentProvider(new NSISInstallElementTreeContentProvider(settings));
+        mTreeViewer.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);
+        mTreeViewer.setInput(settings);
 
         final Listener labelListener = new Listener () {
             public void handleEvent (Event event) {
@@ -130,7 +139,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage implements IN
                 Shell shell = label.getShell ();
                 switch (event.type) {
                     case SWT.MouseDown:
-                        tv.setSelection (new StructuredSelection(label.getData ("_INSTALLITEM"))); //$NON-NLS-1$
+                        mTreeViewer.setSelection (new StructuredSelection(label.getData ("_INSTALLITEM"))); //$NON-NLS-1$
                         // fall through
                     case SWT.MouseExit:
                         shell.dispose ();
@@ -274,7 +283,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage implements IN
             {
             }
         };
-        mover.setViewer(tv);
+        mover.setViewer(mTreeViewer);
 
         Composite composite3 = new Composite(composite2,SWT.NONE);
         gd = new GridData();
@@ -307,7 +316,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage implements IN
             }
         });
 
-        tv.addSelectionChangedListener(new ISelectionChangedListener(){
+        mTreeViewer.addSelectionChangedListener(new ISelectionChangedListener(){
             public void selectionChanged(SelectionChangedEvent event)
             {
                 enableItems(event.getSelection(),addToolItem,editToolItem,deleteToolItem);
@@ -316,7 +325,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage implements IN
             }
         });
 
-        tv.addTreeListener(new ITreeViewerListener() {
+        mTreeViewer.addTreeListener(new ITreeViewerListener() {
             public void setState(TreeExpansionEvent event, boolean state)
             {
                 Object element = event.getElement();
@@ -336,24 +345,24 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage implements IN
             }
         });
 
-        configureDND(tv);
+        configureDND(mTreeViewer);
         
         mWizard.addSettingsListener(new INSISWizardSettingsListener() {
             public void settingsChanged()
             {
                 NSISWizardSettings settings2 = mWizard.getSettings();
-                tv.setInput(settings2);
-                tv.expandToLevel(settings2.getInstaller(), AbstractTreeViewer.ALL_LEVELS);
+                mTreeViewer.setInput(settings2);
+                mTreeViewer.expandToLevel(settings2.getInstaller(), AbstractTreeViewer.ALL_LEVELS);
             }});
 
         SelectionAdapter editSelectionAdapter = new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e)
             {
-                ISelection sel = tv.getSelection();
+                ISelection sel = mTreeViewer.getSelection();
                 if(!sel.isEmpty() && sel instanceof IStructuredSelection) {
                     Object obj = ((IStructuredSelection)sel).getFirstElement();
                     if(obj instanceof INSISInstallElement) {
-                        editElement(composite, tv, (INSISInstallElement)obj);
+                        editElement(composite, mTreeViewer, (INSISInstallElement)obj);
                         updateSelectComponents();
                         checkUnselectedSections();
                     }
@@ -364,9 +373,9 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage implements IN
         SelectionAdapter deleteSelectionAdapter = new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e)
             {
-                ISelection sel = tv.getSelection();
+                ISelection sel = mTreeViewer.getSelection();
                 if(!sel.isEmpty() && sel instanceof IStructuredSelection) {
-                    deleteElements(tv, sel);
+                    deleteElements(mTreeViewer, sel);
                     updateSelectComponents();
                 }
             }
@@ -381,17 +390,17 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage implements IN
                     if(element != null) {
                         try {
                             if(element.isEditable()) {
-                                ISelection se = tv.getSelection();
+                                ISelection se = mTreeViewer.getSelection();
                                 if(!se.isEmpty() && se instanceof IStructuredSelection) {
                                     Object obj = ((IStructuredSelection)se).getFirstElement();
                                     if(obj instanceof INSISInstallElement) {
                                         INSISInstallElement parent = (INSISInstallElement)obj;
                                         if(element.edit(mWizard)) {
                                             if(parent.addChild(element)) {
-                                                tv.refresh(parent,true);
-                                                tv.reveal(element);
+                                                mTreeViewer.refresh(parent,true);
+                                                mTreeViewer.reveal(element);
                                                 if(element.hasChildren()) {
-                                                    tv.expandToLevel(element,AbstractTreeViewer.ALL_LEVELS);
+                                                    mTreeViewer.expandToLevel(element,AbstractTreeViewer.ALL_LEVELS);
                                                 }
                                                 updateSelectComponents();
                                                 setPageComplete(validatePage(ALL_CHECK));
@@ -415,7 +424,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage implements IN
                 Rectangle rect = addToolItem.getBounds();
                 Point pt = new Point (rect.x, rect.y + rect.height);
                 pt = toolbar.toDisplay (pt);
-                updateAddMenu(addPopupMenu, tv.getSelection(),addSelectionAdapter);
+                updateAddMenu(addPopupMenu, mTreeViewer.getSelection(),addSelectionAdapter);
                 addPopupMenu.setLocation(pt.x, pt.y);
                 addPopupMenu.setVisible(true);
             }
@@ -425,13 +434,13 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage implements IN
         toolbar.getItem(3).addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e)
             {
-                tv.expandAll();
+                mTreeViewer.expandAll();
             }
         });
         toolbar.getItem(4).addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e)
             {
-                tv.collapseAll();
+                mTreeViewer.collapseAll();
             }
         });
 
@@ -448,12 +457,12 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage implements IN
 
         tree.addSelectionListener(new SelectionAdapter() {
             public void widgetDefaultSelected(SelectionEvent e) {
-                ISelection sel = tv.getSelection();
+                ISelection sel = mTreeViewer.getSelection();
                 if(!sel.isEmpty() && sel instanceof IStructuredSelection) {
                     IStructuredSelection ssel = (IStructuredSelection)sel;
                     Object obj = ssel.getFirstElement();
                     if(obj instanceof INSISInstallElement) {
-                        editElement(composite, tv, (INSISInstallElement)obj);
+                        editElement(composite, mTreeViewer, (INSISInstallElement)obj);
                         updateSelectComponents();
                         checkUnselectedSections();
                     }
@@ -466,7 +475,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage implements IN
                 if(e.button == 3) {
                     TreeItem ti = tree.getItem(new Point(e.x,e.y));
                     if(ti != null) {
-                        ISelection sel = tv.getSelection();
+                        ISelection sel = mTreeViewer.getSelection();
                         enableItems(sel,addMenuItem,editMenuItem,deleteMenuItem);
                         updateAddMenu(addDropdownMenu, sel,addSelectionAdapter);
                         Point pt = tree.toDisplay(e.x,e.y);
@@ -477,14 +486,14 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage implements IN
             }
         });
 
-         tree.addKeyListener(new KeyAdapter() {
+        tree.addKeyListener(new KeyAdapter() {
             public void keyReleased(KeyEvent e) {
                 if(e.character == SWT.DEL) {
                     if(e.stateMask == 0) {
-                        ISelection sel = tv.getSelection();
+                        ISelection sel = mTreeViewer.getSelection();
                         if(!sel.isEmpty() && sel instanceof IStructuredSelection) {
                             if(canDeleteElements((IStructuredSelection)sel)) {
-                                deleteElements(tv, sel);
+                                deleteElements(mTreeViewer, sel);
                                 updateSelectComponents();
                             }
                         }

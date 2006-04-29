@@ -186,6 +186,7 @@ public class MakeNSISRunner implements INSISConstants
                                     catch (BadLocationException e) {
                                     }
                                 }
+                                problem.setMarker(marker);
                             }
                         }
                     }
@@ -209,7 +210,7 @@ public class MakeNSISRunner implements INSISConstants
         }
     }
 
-    private static List processProblems(IPath path, List errors, List warnings)
+    private static List processProblems(INSISConsole console, IPath path, List errors, List warnings)
     {
         List problems = new ArrayList();
         if (Common.isEmptyCollection(errors)) {
@@ -249,7 +250,9 @@ public class MakeNSISRunner implements INSISConstants
                     error.setLineNum(lineNum);
                 }
             }
-            problems.add(new NSISScriptProblem(path,NSISScriptProblem.TYPE_ERROR,error.toString(),lineNum));
+            NSISScriptProblem problem = new NSISScriptProblem(path,NSISScriptProblem.TYPE_ERROR,error.toString(),lineNum);
+            error.setProblem(problem);
+            problems.add(problem);
         }
 
         if(Common.isEmptyCollection(warnings)) {
@@ -292,8 +295,10 @@ public class MakeNSISRunner implements INSISConstants
                         text = text.substring(8).trim();
                     }
                     if(!map.containsKey(text)) {
-                        problems.add(new NSISScriptProblem(path, NSISScriptProblem.TYPE_WARNING, text,
-                                                                (warning.getLineNum() > 0?warning.getLineNum():1)));
+                        NSISScriptProblem problem = new NSISScriptProblem(path, NSISScriptProblem.TYPE_WARNING, text,
+                                                                (warning.getLineNum() > 0?warning.getLineNum():1));
+                        warning.setProblem(problem);
+                        problems.add(problem);
                         map.put(text,text);
                     }
                 }
@@ -512,7 +517,7 @@ public class MakeNSISRunner implements INSISConstants
                         EclipseNSISPlugin.getDefault().log(t);
                     }
                     finally {
-                        results.setProblems(processProblems(script, consoleErrors, consoleWarnings));
+                        results.setProblems(processProblems(console, script, consoleErrors, consoleWarnings));
                         rv = results.getReturnCode();
                         if (rv == MakeNSISResults.RETURN_CANCEL) {
                             console.appendLine(NSISConsoleLine.error(EclipseNSISPlugin.getResourceString("cancel.message"))); //$NON-NLS-1$
@@ -600,6 +605,14 @@ public class MakeNSISRunner implements INSISConstants
             new Thread(errorWriter,EclipseNSISPlugin.getResourceString("makensis.stderr.thread.name")).start(); //$NON-NLS-1$
 
             int rv = process.waitFor();
+            while(mainWriter.isRunning()) {
+                try {
+                    Thread.sleep(10);
+                }
+                catch (InterruptedException e) {
+                    console.appendLine(NSISConsoleLine.error(e.getLocalizedMessage()));
+                }                
+            }
             consoleErrors.addAll(mainWriter.getErrors());
             consoleErrors.addAll(errorWriter.getErrors());
             consoleWarnings.addAll(mainWriter.getWarnings());

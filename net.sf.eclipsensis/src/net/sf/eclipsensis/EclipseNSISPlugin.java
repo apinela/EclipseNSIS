@@ -9,11 +9,11 @@
  *******************************************************************************/
 package net.sf.eclipsensis;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.Constructor;
 import java.text.MessageFormat;
 import java.util.*;
+import java.util.List;
 
 import net.sf.eclipsensis.console.NSISConsole;
 import net.sf.eclipsensis.dialogs.MinimalProgressMonitorDialog;
@@ -26,19 +26,21 @@ import net.sf.eclipsensis.makensis.MakeNSISRunner;
 import net.sf.eclipsensis.settings.INSISPreferenceConstants;
 import net.sf.eclipsensis.settings.NSISPreferences;
 import net.sf.eclipsensis.util.*;
+import net.sf.eclipsensis.util.Version;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.text.templates.ContextTypeRegistry;
 import org.eclipse.jface.text.templates.persistence.TemplateStore;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.jface.util.Geometry;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.editors.text.templates.ContributionContextTypeRegistry;
 import org.eclipse.ui.editors.text.templates.ContributionTemplateStore;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.osgi.framework.BundleContext;
+import org.osgi.framework.*;
 
 /**
  * The main plugin class to be used in the desktop.
@@ -264,6 +266,45 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
                     useWorkbenchWindow = false;
                 }
                 if(!useWorkbenchWindow) {
+                    OutputStream os = null;
+                    if(mBundleContext != null && mBundleContext.getBundle().getState() == Bundle.STARTING) {
+                        try {
+                            ServiceReference[] ref = mBundleContext.getServiceReferences(OutputStream.class.getName(), null);
+                            for (int i = 0; i < ref.length; i++) {
+                                String name = (String) ref[i].getProperty("name"); //$NON-NLS-1$
+                                if (name != null && name.equals("splashstream")) {  //$NON-NLS-1$
+                                    Object result = mBundleContext.getService(ref[i]);
+                                    mBundleContext.ungetService(ref[i]);
+                                    os = (OutputStream) result;
+                                    break;
+                                }
+                            }
+                        } 
+                        catch (InvalidSyntaxException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    if(os != null) {
+                        //Startup in progress- overlay the splash screen
+                        String splashFile = System.getProperty("osgi.splashLocation");
+                        if(!Common.isEmpty(splashFile)) {
+                            File file = new File(splashFile);
+                            if(IOUtility.isValidFile(file)) {
+                                ImageDescriptor desc = ImageDescriptor.createFromURL(file.toURI().toURL());
+                                Image image = desc.createImage();
+                                Rectangle rect = image.getBounds();
+                                image.dispose();
+                                Monitor monitor = Display.getCurrent().getPrimaryMonitor();
+                                Point pt = Geometry.centerPoint(monitor.getBounds());
+                                MinimalProgressMonitorDialog dialog = new MinimalProgressMonitorDialog(Display.getCurrent().getActiveShell(),rect.width,rect.width);
+                                dialog.create();
+                                Shell shell = dialog.getShell();
+                                shell.setLocation(shell.getLocation().x,pt.y+rect.height/2);
+                                dialog.run(fork, cancelable, runnable);
+                                return;
+                            }
+                        }
+                    }
                     new MinimalProgressMonitorDialog(Display.getDefault().getActiveShell()).run(fork, cancelable, runnable);
                 }
                 else {

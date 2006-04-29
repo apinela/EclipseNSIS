@@ -65,6 +65,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     private boolean mCreateStartMenuGroup = false;
     private String mStartMenuGroup = mName;
     private boolean mChangeStartMenuGroup = false;
+    private boolean mDisableStartMenuShortcuts = false;
     private boolean mShowInstDetails = false;
     private String mRunProgramAfterInstall = ""; //$NON-NLS-1$
     private String mRunProgramAfterInstallParams = ""; //$NON-NLS-1$
@@ -266,6 +267,16 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     public void setChangeStartMenuGroup(boolean changeStartMenuGroup)
     {
         mChangeStartMenuGroup = changeStartMenuGroup;
+    }
+
+    public boolean isDisableStartMenuShortcuts()
+    {
+        return mDisableStartMenuShortcuts;
+    }
+
+    public void setDisableStartMenuShortcuts(boolean disableStartMenuShortcuts)
+    {
+        mDisableStartMenuShortcuts = disableStartMenuShortcuts;
     }
 
     /**

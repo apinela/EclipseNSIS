@@ -64,8 +64,20 @@ public class MasterSlaveController extends SelectionAdapter
 
     public void updateSlaves()
     {
+        updateSlaves(mMaster.getSelection());
+    }
+
+    public void updateSlaves(boolean hint)
+    {
+        updateSlavesInternal(mMaster.getSelection() && hint);
+    }
+
+    /**
+     * @param selection
+     */
+    private void updateSlavesInternal(boolean selection)
+    {
         for(Iterator iter=mSlaves.keySet().iterator(); iter.hasNext(); ) {
-            boolean selection = mMaster.getSelection();
             Control slave = (Control)iter.next();
             MasterSlaveEnabler enabler = (MasterSlaveEnabler)mSlaves.get(slave);
             recursiveSetEnabled(slave, (mIsReverse?!selection:selection), enabler);

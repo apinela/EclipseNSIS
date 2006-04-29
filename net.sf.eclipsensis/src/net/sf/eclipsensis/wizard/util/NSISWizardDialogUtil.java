@@ -303,10 +303,15 @@ public class NSISWizardDialogUtil
     public static Combo createCombo(Composite parent, String[] items, String selectedItem, boolean isReadOnly, String labelResource, boolean enabled, MasterSlaveController masterSlaveController, boolean isRequired)
     {
         parent = checkParentLayoutColumns(parent, 2);
-        Label l = createLabel(parent, labelResource, enabled, masterSlaveController, isRequired);
+        Label l = null;
+        if(labelResource != null) {
+            l = createLabel(parent, labelResource, enabled, masterSlaveController, isRequired);
+        }
 
-        Combo c = createCombo(parent, ((GridLayout)parent.getLayout()).numColumns - 1, items, selectedItem, isReadOnly, enabled, masterSlaveController);
-        c.setData(LABEL,l);
+        Combo c = createCombo(parent, ((GridLayout)parent.getLayout()).numColumns - (l==null?0:1), items, selectedItem, isReadOnly, enabled, masterSlaveController);
+        if(l != null) {
+            c.setData(LABEL,l);
+        }
 
         return c;
     }
@@ -410,7 +415,17 @@ public class NSISWizardDialogUtil
 
     public static Button createCheckBox(Composite parent, String labelResource, boolean state, boolean enabled, MasterSlaveController masterSlaveController, boolean isRequired)
     {
-        Button button = new Button(parent, SWT.CHECK | SWT.LEFT);
+        return createToggleButton(parent, labelResource, SWT.CHECK, state, enabled, masterSlaveController, isRequired);
+    }
+
+    public static Button createRadioButton(Composite parent, String labelResource, boolean state, boolean enabled, MasterSlaveController masterSlaveController, boolean isRequired)
+    {
+        return createToggleButton(parent, labelResource, SWT.RADIO, state, enabled, masterSlaveController, isRequired);
+    }
+
+    private static Button createToggleButton(Composite parent, String labelResource, int style, boolean state, boolean enabled, MasterSlaveController masterSlaveController, boolean isRequired)
+    {
+        Button button = new Button(parent, style | SWT.LEFT);
         if(labelResource != null) {
             button.setText(EclipseNSISPlugin.getResourceString(labelResource));
         }

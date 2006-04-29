@@ -9,17 +9,24 @@
  *******************************************************************************/
 package net.sf.eclipsensis.script;
 
-import org.eclipse.core.runtime.IPath;
+import java.io.*;
 
-public class NSISScriptProblem
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
+
+public class NSISScriptProblem implements Serializable
 {
+    private static final long serialVersionUID = -3563285678392628757L;
+
     public static final int TYPE_WARNING=0;
     public static final int TYPE_ERROR=1;
 
-    private IPath mPath;
+    private transient IPath mPath;
     private int mType;
     private String mText;
     private int mLine;
+    private transient IMarker mMarker;
 
     public NSISScriptProblem(IPath path, int type, String text)
     {
@@ -32,6 +39,16 @@ public class NSISScriptProblem
         mType = type;
         mText = text;
         mLine = line;
+    }
+
+    public IMarker getMarker()
+    {
+        return mMarker;
+    }
+
+    public void setMarker(IMarker marker)
+    {
+        mMarker = marker;
     }
 
     public int getLine()
@@ -52,5 +69,23 @@ public class NSISScriptProblem
     public int getType()
     {
         return mType;
+    }
+
+    private void writeObject(ObjectOutputStream out) throws IOException
+    {
+        out.defaultWriteObject();
+        out.writeObject(mPath==null?null:mPath.toString());
+    }
+
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException
+    {
+        in.defaultReadObject();
+        String s = (String)in.readObject();
+        if(s != null) {
+            mPath = new Path(s);
+        }
+        else {
+            mPath = null;
+        }
     }
 }

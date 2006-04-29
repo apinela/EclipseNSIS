@@ -39,17 +39,18 @@
    </url>
 
    <requires>
-      <import plugin="org.eclipse.core.runtime" version="3.1.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.gef" version="3.1.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.jface" version="3.1.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.ui" version="3.1.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.ui.views" version="3.1.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.core.resources" version="3.1.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.ui.ide" version="3.1.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.ui.editors" version="3.1.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.ui.workbench.texteditor" version="3.1.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.jface.text" version="3.1.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.runtime" version="3.2.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.gef" version="3.2.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.jface" version="3.2.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui" version="3.2.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.views" version="3.2.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.resources" version="3.2.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.ide" version="3.2.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.editors" version="3.2.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.workbench.texteditor" version="3.2.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.jface.text" version="3.2.0" match="greaterOrEqual"/>
       <import plugin="net.sf.eclipsensis" version="0.9.5" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.views.properties.tabbed"/>
    </requires>
 
    <plugin

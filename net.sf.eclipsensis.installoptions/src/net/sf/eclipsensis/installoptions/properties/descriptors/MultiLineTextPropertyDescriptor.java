@@ -16,7 +16,7 @@ import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
 import net.sf.eclipsensis.installoptions.properties.editors.MultiLineTextCellEditor;
 
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.ListenerList;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.widgets.*;
@@ -131,8 +131,8 @@ public class MultiLineTextPropertyDescriptor extends TextPropertyDescriptor impl
         private Composite mParent;
         private CellEditor mDelegate;
         private Object mValue;
-        private ListenerList mListeners = new ListenerList();
-        private ListenerList mPropertyChangeListeners = new ListenerList();
+        private ListenerList mListeners = new ListenerList(ListenerList.IDENTITY);
+        private ListenerList mPropertyChangeListeners = new ListenerList(ListenerList.IDENTITY);
         private ICellEditorValidator mValidator;
         private boolean mOnlyNumbers = false;
         private VerifyListener mNumberVerifyListener;

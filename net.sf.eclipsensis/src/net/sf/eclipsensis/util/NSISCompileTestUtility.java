@@ -10,11 +10,11 @@
 package net.sf.eclipsensis.util;
 
 import java.io.File;
-import java.util.HashMap;
+import java.io.IOException;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
-import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.INSISConstants;
+import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.console.*;
 import net.sf.eclipsensis.makensis.MakeNSISResults;
 import net.sf.eclipsensis.makensis.MakeNSISRunner;
@@ -33,11 +33,62 @@ public class NSISCompileTestUtility
 {
     public static final NSISCompileTestUtility INSTANCE = new NSISCompileTestUtility();
 
-    private Map mResultsMap = new HashMap();
+    private Map mResultsMap;
 
     private NSISCompileTestUtility()
     {
         super();
+        File stateLocation = EclipseNSISPlugin.getPluginStateLocation();
+        final File cacheFile = new File(stateLocation, getClass().getName() + ".ResultsCache.ser"); //$NON-NLS-1$
+        EclipseNSISPlugin.getDefault().registerService(new IEclipseNSISService() {
+            private boolean mStarted = false;
+
+            public boolean isStarted()
+            {
+                return mStarted;
+            }
+
+            public void start(IProgressMonitor monitor)
+            {
+                Map map = null;
+                if(IOUtility.isValidFile(cacheFile)) {
+                    Object obj = null;
+                    try {
+                        obj = IOUtility.readObject(cacheFile);
+                    }
+                    catch (Exception e) {
+                        obj = null;
+                        EclipseNSISPlugin.getDefault().log(e);
+                    }
+                    if (obj != null && Map.class.isAssignableFrom(obj.getClass())) {
+                        map = (Map)obj;
+                    }
+                }
+                if(map == null) {
+                    mResultsMap = new MRUMap(20);
+                }
+                else {
+                    if(map instanceof MRUMap) {
+                        mResultsMap = map;
+                    }
+                    else {
+                        mResultsMap = new MRUMap(20, map);
+                    }
+                }
+                mStarted = true;
+            }
+
+            public void stop(IProgressMonitor monitor)
+            {
+                mStarted = false;
+                try {
+                    IOUtility.writeObject(cacheFile, mResultsMap);
+                }
+                catch (IOException e) {
+                    EclipseNSISPlugin.getDefault().log(e);
+                }
+            }
+        });
     }
 
     public MakeNSISResults getCachedResults(File script)
@@ -224,6 +275,37 @@ public class NSISCompileTestUtility
     private IFile getFile(IPath path)
     {
         return ResourcesPlugin.getWorkspace().getRoot().getFile(path);
+    }
+
+    private static final class MRUMap extends LinkedHashMap 
+    {
+        private static final long serialVersionUID = -4303663274693162132L;
+
+        private final int mMaxSize;
+        
+        public MRUMap(int maxSize) 
+        {
+            super(15,0.75f,true);
+            mMaxSize= maxSize;
+        }
+        
+        public MRUMap(int maxSize, Map map) 
+        {
+            this(maxSize);
+            putAll(map);
+        }
+        
+        public Object put(Object key, Object value) 
+        {
+            Object object= remove(key);
+            super.put(key, value);
+            return object;
+        }
+        
+        protected boolean removeEldestEntry(Map.Entry eldest) 
+        {
+            return (mMaxSize > 0 && size() > mMaxSize);
+        }
     }
 
     private class NSISCompileRunnable implements Runnable, INSISConsoleLineProcessor
