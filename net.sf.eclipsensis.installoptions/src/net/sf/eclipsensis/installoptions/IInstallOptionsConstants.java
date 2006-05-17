@@ -147,4 +147,6 @@ public interface IInstallOptionsConstants
     public static final String EDIT_CONTROL_COMMAND_ID = InstallOptionsPlugin.getBundleResourceString("%edit.control.command.id"); //$NON-NLS-1$
     public static final String DELETE_CONTROL_COMMAND_ID = InstallOptionsPlugin.getBundleResourceString("%delete.control.command.id"); //$NON-NLS-1$
     public static final String DELETE_CONTROL_COMMAND_ID2 = InstallOptionsPlugin.getBundleResourceString("%delete.control.command.id2"); //$NON-NLS-1$
+
+    public static final String TABBED_PROPERTIES_CONTRIBUTOR_ID = InstallOptionsPlugin.getBundleResourceString("%tabbed.properties.contributor.id"); //$NON-NLS-1$
 }

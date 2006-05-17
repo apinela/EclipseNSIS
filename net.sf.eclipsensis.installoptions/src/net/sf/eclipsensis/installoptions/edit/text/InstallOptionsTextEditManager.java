@@ -14,14 +14,13 @@ import net.sf.eclipsensis.installoptions.figures.TextFigure;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsWidget;
 import net.sf.eclipsensis.installoptions.util.TypeConverter;
+import net.sf.eclipsensis.util.NumberVerifyListener;
 
 import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.gef.tools.CellEditorLocator;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.VerifyEvent;
-import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 
@@ -47,18 +46,7 @@ public class InstallOptionsTextEditManager extends InstallOptionsEditableElement
         TextCellEditor cellEditor = (TextCellEditor)super.createCellEditor(composite);
         TextFigure figure = (TextFigure)getEditPart().getFigure();
         if(figure.isOnlyNumbers()) {
-            ((Text)cellEditor.getControl()).addVerifyListener(new VerifyListener(){
-                public void verifyText(VerifyEvent e)
-                {
-                    char[] chars = e.text.toCharArray();
-                    for (int i = 0; i < chars.length; i++) {
-                        if(!Character.isDigit(chars[i])) {
-                            e.doit = false;
-                            return;
-                        }
-                    }
-                }
-            });
+            ((Text)cellEditor.getControl()).addVerifyListener(new NumberVerifyListener());
         }
         return cellEditor;
     }

@@ -16,7 +16,6 @@ import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.job.IJobStatusRunnable;
 import net.sf.eclipsensis.util.ColorManager;
 import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.wizard.settings.AbstractNSISInstallGroup;
 import net.sf.eclipsensis.wizard.settings.NSISWizardSettings;
 import net.sf.eclipsensis.wizard.template.NSISWizardTemplate;
 
@@ -139,10 +138,6 @@ public abstract class NSISWizard extends Wizard implements IAdaptable, INewWizar
     {
         mSettings = settings;
         mSettings.setWizard(this);
-        AbstractNSISInstallGroup installer = (AbstractNSISInstallGroup)mSettings.getInstaller();
-        installer.setExpanded(true,true);
-        installer.resetChildTypes(true);
-        installer.resetChildren(true);
         INSISWizardSettingsListener[] listeners = (INSISWizardSettingsListener[])mSettingsListeners.toArray(new INSISWizardSettingsListener[mSettingsListeners.size()]);
         for (int i = 0; i < listeners.length; i++) {
             listeners[i].settingsChanged();

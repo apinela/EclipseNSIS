@@ -14,6 +14,7 @@ import java.util.Map;
 import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.NumberVerifyListener;
 
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
@@ -35,34 +36,8 @@ public class GridSettings extends Composite implements IInstallOptionsConstants
     private Text mGridOriginY;
     private ComboViewer mGridStyleViewer;
 
-    private VerifyListener mNumberVerifyListener = new VerifyListener() {
-        public void verifyText(VerifyEvent e)
-        {
-            char[] chars = e.text.toCharArray();
-            for(int i=0; i< chars.length; i++) {
-                if(i == 0 && e.start == 0 && chars[i] == '-') {
-                    continue;
-                }
-                if(!Character.isDigit(chars[i])) {
-                    e.doit = false;
-                    return;
-                }
-            }
-        }
-    };
-
-    private VerifyListener mPositiveNumberVerifyListener = new VerifyListener() {
-        public void verifyText(VerifyEvent e)
-        {
-            char[] chars = e.text.toCharArray();
-            for(int i=0; i< chars.length; i++) {
-                if(!Character.isDigit(chars[i])) {
-                    e.doit = false;
-                    return;
-                }
-            }
-        }
-    };
+    private VerifyListener mNumberVerifyListener = new NumberVerifyListener(true);
+    private VerifyListener mPositiveNumberVerifyListener = new NumberVerifyListener();
 
     /**
      * @param parent

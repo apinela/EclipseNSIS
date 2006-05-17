@@ -43,9 +43,9 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
     private static final String GUIDES_PREFIX = "guides="; //$NON-NLS-1$
     private static final String LOCKED_PREFIX = "locked="; //$NON-NLS-1$
 
-    private static final int DEFAULT_OPTION = 0;
-    private static final String[] OPTION_DATA = {OPTION_DEFAULT,OPTION_NO,OPTION_YES};
-    private static final String[] OPTION_DISPLAY = {InstallOptionsPlugin.getResourceString("option.default"), //$NON-NLS-1$
+    public static final int DEFAULT_OPTION = 0;
+    public static final String[] OPTION_DATA = {OPTION_DEFAULT,OPTION_NO,OPTION_YES};
+    public static final String[] OPTION_DISPLAY = {InstallOptionsPlugin.getResourceString("option.default"), //$NON-NLS-1$
                                  InstallOptionsPlugin.getResourceString("option.no"), //$NON-NLS-1$
                                  InstallOptionsPlugin.getResourceString("option.yes")}; //$NON-NLS-1$
     public static final Image INSTALLOPTIONS_ICON = InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("installoptions.dialog.icon")); //$NON-NLS-1$
@@ -213,7 +213,6 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
 
         return flag;
     }
-
 
     public void move(int type)
     {

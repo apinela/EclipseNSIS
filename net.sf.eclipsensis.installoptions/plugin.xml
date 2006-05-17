@@ -284,4 +284,65 @@
             class="net.sf.eclipsensis.installoptions.help.InstallOptionsLocalFileHandler"
             extensions="%ini.extensions"/>
    </extension>
+   <extension
+         point="org.eclipse.ui.views.properties.tabbed.propertyContributor">
+      <propertyContributor
+            contributorId="%tabbed.properties.contributor.id"
+            labelProvider="net.sf.eclipsensis.installoptions.properties.labelproviders.InstallOptionsElementLabelProvider"
+            typeMapper="net.sf.eclipsensis.installoptions.properties.tabbed.InstallOptionsElementTypeMapper">
+         <propertyCategory category="net.sf.eclipsensis.installoptions.properties.tabbed.DefaultPropertyCategory"/>
+      </propertyContributor>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views.properties.tabbed.propertyTabs">
+      <propertyTabs contributorId="%tabbed.properties.contributor.id">
+         <propertyTab
+               category="net.sf.eclipsensis.installoptions.properties.tabbed.DefaultPropertyCategory"
+               id="net.sf.eclipsensis.installoptions.properties.tabbed.DialogPropertyTab"
+               label="%general.tab.label"/>
+         <propertyTab
+               category="net.sf.eclipsensis.installoptions.properties.tabbed.DefaultPropertyCategory"
+               id="net.sf.eclipsensis.installoptions.properties.tabbed.GeneralPropertyTab"
+               label="%general.tab.label"/>
+         <propertyTab
+               afterTab="net.sf.eclipsensis.installoptions.properties.tabbed.GeneralPropertyTab"
+               category="net.sf.eclipsensis.installoptions.properties.tabbed.DefaultPropertyCategory"
+               id="net.sf.eclipsensis.installoptions.properties.tabbed.FilterPropertyTab"
+               label="%filter.tab.label"/>
+         <propertyTab
+               afterTab="net.sf.eclipsensis.installoptions.properties.tabbed.FilterPropertyTab"
+               category="net.sf.eclipsensis.installoptions.properties.tabbed.DefaultPropertyCategory"
+               id="net.sf.eclipsensis.installoptions.properties.tabbed.AdvancedPropertyTab"
+               label="%advanced.tab.label"/>
+      </propertyTabs>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views.properties.tabbed.propertySections">
+      <propertySections contributorId="%tabbed.properties.contributor.id">
+         <propertySection
+               class="net.sf.eclipsensis.installoptions.properties.tabbed.section.DialogPropertySection"
+               id="net.sf.eclipsensis.installoptions.properties.tabbed.DialogPropertySection"
+               tab="net.sf.eclipsensis.installoptions.properties.tabbed.DialogPropertyTab">
+            <input type="net.sf.eclipsensis.installoptions.model.InstallOptionsDialog"/>
+         </propertySection>
+         <propertySection
+               class="net.sf.eclipsensis.installoptions.properties.tabbed.section.GeneralPropertySection"
+               id="net.sf.eclipsensis.installoptions.properties.tabbed.GeneralPropertySection"
+               tab="net.sf.eclipsensis.installoptions.properties.tabbed.GeneralPropertyTab">
+            <input type="net.sf.eclipsensis.installoptions.model.InstallOptionsWidget"/>
+         </propertySection>
+         <propertySection
+               class="net.sf.eclipsensis.installoptions.properties.tabbed.section.FilterPropertySection"
+               id="net.sf.eclipsensis.installoptions.properties.tabbed.FilterPropertySection"
+               tab="net.sf.eclipsensis.installoptions.properties.tabbed.FilterPropertyTab">
+            <input type="net.sf.eclipsensis.installoptions.model.InstallOptionsFileRequest"/>
+         </propertySection>
+         <propertySection
+               class="net.sf.eclipsensis.installoptions.properties.tabbed.section.AdvancedPropertySection"
+               id="net.sf.eclipsensis.installoptions.properties.tabbed.AdvancedPropertySection"
+               tab="net.sf.eclipsensis.installoptions.properties.tabbed.AdvancedPropertyTab">
+            <input type="net.sf.eclipsensis.installoptions.model.InstallOptionsElement"/>
+         </propertySection>
+      </propertySections>
+   </extension>
 </plugin>

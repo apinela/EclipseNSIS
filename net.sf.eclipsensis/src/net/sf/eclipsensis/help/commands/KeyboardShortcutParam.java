@@ -63,12 +63,12 @@ public class KeyboardShortcutParam extends PrefixableParam
 
         public void clear()
         {
-            if(isValid(mKeyCombo)) {
+            if(Common.isValid(mKeyCombo)) {
                 mKeyCombo.clearSelection();
             }
             if(!Common.isEmptyArray(mModifierButtons)) {
                 for (int i = 0; i < mModifierButtons.length; i++) {
-                    if(isValid(mModifierButtons[i])) {
+                    if(Common.isValid(mModifierButtons[i])) {
                         mModifierButtons[i].setSelection(false);
                     }
                 }
@@ -78,12 +78,12 @@ public class KeyboardShortcutParam extends PrefixableParam
 
         protected void updateState(boolean state)
         {
-            if(isValid(mKeyCombo)) {
+            if(Common.isValid(mKeyCombo)) {
                 mKeyCombo.setEnabled(state);
             }
             if(!Common.isEmptyArray(mModifierButtons)) {
                 for (int i = 0; i < mModifierButtons.length; i++) {
-                    if(isValid(mModifierButtons[i])) {
+                    if(Common.isValid(mModifierButtons[i])) {
                         mModifierButtons[i].setEnabled(state);
                     }
                 }
@@ -93,10 +93,10 @@ public class KeyboardShortcutParam extends PrefixableParam
 
         protected String getPrefixableParamText()
         {
-            if(!Common.isEmptyArray(mModifierButtons) && isValid(mKeyCombo)) {
+            if(!Common.isEmptyArray(mModifierButtons) && Common.isValid(mKeyCombo)) {
                 StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
                 for (int i = 0; i < mModifierButtons.length; i++) {
-                    if(isValid(mModifierButtons[i]) && mModifierButtons[i].getSelection()) {
+                    if(Common.isValid(mModifierButtons[i]) && mModifierButtons[i].getSelection()) {
                         buf.append(mModifierButtons[i].getText()).append("|"); //$NON-NLS-1$
                     }
                 }
@@ -112,13 +112,13 @@ public class KeyboardShortcutParam extends PrefixableParam
             if(!Common.isEmptyArray(mModifierButtons)) {
                 int i = 0;
                 for (; i < mModifierButtons.length; i++) {
-                    if(isValid(mModifierButtons[i]) && mModifierButtons[i].getSelection()) {
+                    if(Common.isValid(mModifierButtons[i]) && mModifierButtons[i].getSelection()) {
                         found = true;
                         break;
                     }
                 }
             }
-            if(isValid(mKeyCombo)) {
+            if(Common.isValid(mKeyCombo)) {
                 if(!found) {
                     if(mKeyCombo.getText().length() > 0 || isAllowBlank()) {
                         return null;
@@ -138,12 +138,12 @@ public class KeyboardShortcutParam extends PrefixableParam
         {
             super.saveSettings();
             if(getSettings() != null) {
-                if(isValid(mKeyCombo)) {
+                if(Common.isValid(mKeyCombo)) {
                     getSettings().put(SETTING_KEY, mKeyCombo.getText());
                 }
                 if(!Common.isEmptyArray(mModifierButtons)) {
                     for (int i = 0; i < mModifierButtons.length; i++) {
-                        if(isValid(mModifierButtons[i])) {
+                        if(Common.isValid(mModifierButtons[i])) {
                             getSettings().put(mModifierButtons[i].getText(), Boolean.valueOf(mModifierButtons[i].getSelection()));
                         }
                     }
@@ -156,12 +156,12 @@ public class KeyboardShortcutParam extends PrefixableParam
             super.initParamEditor();
             if(!Common.isEmptyArray(mModifierButtons)) {
                 for (int i = 0; i < mModifierButtons.length; i++) {
-                    if(isValid(mModifierButtons[i])) {
+                    if(Common.isValid(mModifierButtons[i])) {
                         mModifierButtons[i].setSelection(((Boolean)getSettingValue(cModifiers[i], Boolean.class, Boolean.FALSE)).booleanValue());
                     }
                 }
             }
-            if(isValid(mKeyCombo)) {
+            if(Common.isValid(mKeyCombo)) {
                 String key = (String)getSettingValue(SETTING_KEY, String.class, null);
                 int count = mKeyCombo.getItemCount();
                 for (int i = 0; i < count; i++) {

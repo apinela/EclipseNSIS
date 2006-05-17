@@ -48,7 +48,7 @@ public class LocalDirParam extends LocalFilesystemObjectParam
 
         public void clear()
         {
-            if(isValid(mDirText)) {
+            if(Common.isValid(mDirText)) {
                 mDirText.setText(""); //$NON-NLS-1$
             }
             super.clear();
@@ -56,7 +56,7 @@ public class LocalDirParam extends LocalFilesystemObjectParam
 
         protected String validateLocalFilesystemObjectParam()
         {
-            if(isValid(mDirText)) {
+            if(Common.isValid(mDirText)) {
                 String dir = IOUtility.decodePath(mDirText.getText());
                 if(dir.length() == 0 ) { 
                     if(isAllowBlank()) {
@@ -78,7 +78,7 @@ public class LocalDirParam extends LocalFilesystemObjectParam
 
         protected String getPrefixableParamText()
         {
-            if(isValid(mDirText)) {
+            if(Common.isValid(mDirText)) {
                 String dir = IOUtility.decodePath(mDirText.getText());
                 return IOUtility.encodePath(dir);
             }
@@ -88,7 +88,7 @@ public class LocalDirParam extends LocalFilesystemObjectParam
         public void saveSettings()
         {
             super.saveSettings();
-            if(isValid(mDirText) && getSettings() != null) {
+            if(Common.isValid(mDirText) && getSettings() != null) {
                 getSettings().put(SETTING_DIR, mDirText.getText());
             }
         }
@@ -96,7 +96,7 @@ public class LocalDirParam extends LocalFilesystemObjectParam
         protected void initParamEditor()
         {
             super.initParamEditor();
-            if(isValid(mDirText)) {
+            if(Common.isValid(mDirText)) {
                 mDirText.setText((String)getSettingValue(SETTING_DIR, String.class, "")); //$NON-NLS-1$
             }
         }

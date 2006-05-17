@@ -16,20 +16,28 @@ import org.eclipse.ui.views.properties.ComboBoxPropertyDescriptor;
 
 public class CustomComboBoxPropertyDescriptor extends ComboBoxPropertyDescriptor
 {
-    private String[] mData;
+    private Object[] mData;
     private String[] mDisplay;
     private int mDefault;
 
-    public CustomComboBoxPropertyDescriptor(String id, String displayName, String[] data, int default1)
+    public CustomComboBoxPropertyDescriptor(String id, String displayName, Object[] data, int default1)
     {
         this(id, displayName, data, data, default1);
     }
     
-    public CustomComboBoxPropertyDescriptor(String id, String displayName, String[] data, String[] display, int default1)
+    public CustomComboBoxPropertyDescriptor(String id, String displayName, Object[] data, Object[] display, int default1)
     {
         super(id, displayName, new String[0]);
         mData = data;
-        mDisplay = display;
+        if(display.getClass().getComponentType().equals(String.class)) {
+            mDisplay = (String[])display;
+        }
+        else {
+            mDisplay = new String[display.length];
+            for (int i = 0; i < display.length; i++) {
+                mDisplay[i] = String.valueOf(display[i]);
+            }
+        }
         mDefault = default1;
 
         setLabelProvider(new LabelProvider(){

@@ -192,7 +192,7 @@ public class UpdatePreferencePage extends PreferencePage implements IWorkbenchPr
         Font f = l.getFont();
         FontData[] fd = f.getFontData();
         for (int i = 0; i < fd.length; i++) {
-            fd[i].setStyle(SWT.BOLD);
+            fd[i].setStyle(fd[i].getStyle()|SWT.BOLD);
         }
         final Font f2 = new Font(getShell().getDisplay(),fd);
         l.setFont(f2);

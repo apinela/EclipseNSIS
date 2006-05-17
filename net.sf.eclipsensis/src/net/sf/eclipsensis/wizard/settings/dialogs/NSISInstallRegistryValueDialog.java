@@ -12,6 +12,7 @@ package net.sf.eclipsensis.wizard.settings.dialogs;
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.NumberVerifyListener;
 import net.sf.eclipsensis.wizard.*;
 import net.sf.eclipsensis.wizard.settings.NSISInstallRegistryValue;
 import net.sf.eclipsensis.wizard.util.NSISWizardDialogUtil;
@@ -69,18 +70,12 @@ public class NSISInstallRegistryValueDialog extends NSISInstallRegistryKeyDialog
                 validate();
             }
         });
-        t2.addVerifyListener(new VerifyListener() {
+        t2.addVerifyListener(new NumberVerifyListener() {
             public void verifyText(VerifyEvent e)
             {
                 int index = c2.getSelectionIndex();
                 if(index == INSISWizardConstants.REG_DWORD) {
-                    char[] chars = e.text.toCharArray();
-                    for(int i=0; i< chars.length; i++) {
-                        if(!Character.isDigit(chars[i])) {
-                            e.doit = false;
-                            return;
-                        }
-                    }
+                    super.verifyText(e);
                 }
                 else if(index == INSISWizardConstants.REG_BIN) {
                     char[] chars = e.text.toCharArray();
@@ -101,7 +96,9 @@ public class NSISInstallRegistryValueDialog extends NSISInstallRegistryKeyDialog
             ((GridData)l.getLayoutData()).horizontalAlignment = GridData.FILL;
             regularFont = l.getFont();
             FontData[] fd = regularFont.getFontData();
-            fd[0].setStyle(SWT.BOLD);
+            for (int i = 0; i < fd.length; i++) {
+                fd[i].setStyle(fd[i].getStyle()|SWT.BOLD);
+            }
             requiredFont = new Font(l.getDisplay(),fd);
             if(c2.getSelectionIndex() == INSISWizardConstants.REG_DWORD) {
                 l.setFont(requiredFont);

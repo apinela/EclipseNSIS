@@ -83,7 +83,7 @@ public class LocalFileParam extends LocalFilesystemObjectParam
 
         public void clear()
         {
-            if(isValid(mFileText)) {
+            if(Common.isValid(mFileText)) {
                 mFileText.setText(""); //$NON-NLS-1$
             }
             super.clear();
@@ -91,7 +91,7 @@ public class LocalFileParam extends LocalFilesystemObjectParam
 
         protected String validateLocalFilesystemObjectParam()
         {
-            if(isValid(mFileText)) {
+            if(Common.isValid(mFileText)) {
                 String file = IOUtility.decodePath(mFileText.getText());
                 if(file.length() == 0 ) { 
                     if(isAllowBlank()) {
@@ -113,7 +113,7 @@ public class LocalFileParam extends LocalFilesystemObjectParam
 
         protected String getPrefixableParamText()
         {
-            if(isValid(mFileText)) {
+            if(Common.isValid(mFileText)) {
                 String file = IOUtility.decodePath(mFileText.getText());
                 return IOUtility.encodePath(file);
             }
@@ -122,10 +122,10 @@ public class LocalFileParam extends LocalFilesystemObjectParam
 
         protected void updateState(boolean state)
         {
-            if(isValid(mFileText)) {
+            if(Common.isValid(mFileText)) {
                 mFileText.setEnabled(state);
                 Button b = (Button)mFileText.getData(DATA_BUTTON);
-                if(isValid(b)) {
+                if(Common.isValid(b)) {
                     b.setEnabled(state);
                 }
             }
@@ -135,7 +135,7 @@ public class LocalFileParam extends LocalFilesystemObjectParam
         public void saveSettings()
         {
             super.saveSettings();
-            if(isValid(mFileText) && getSettings() != null) {
+            if(Common.isValid(mFileText) && getSettings() != null) {
                 getSettings().put(SETTING_FILE, mFileText.getText());
             }
         }
@@ -143,7 +143,7 @@ public class LocalFileParam extends LocalFilesystemObjectParam
         protected void initParamEditor()
         {
             super.initParamEditor();
-            if(isValid(mFileText)) {
+            if(Common.isValid(mFileText)) {
                 mFileText.setText((String)getSettingValue(SETTING_FILE, String.class, "")); //$NON-NLS-1$
             }
         }

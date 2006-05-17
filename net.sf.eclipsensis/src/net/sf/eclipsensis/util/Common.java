@@ -304,6 +304,19 @@ public class Common
         return true;
     }
 
+    public static boolean collectionContainsIgnoreCase(Collection collection, String item)
+    {
+        for (Iterator iter = collection.iterator(); iter.hasNext();) {
+            Object element = iter.next();
+            if(element instanceof String) {
+                if(((String)element).equalsIgnoreCase(item)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     public static String leftPad(String text, int length, char padChar)
     {
         if(text.length() < length) {
@@ -560,11 +573,67 @@ public class Common
             EclipseNSISPlugin.getDefault().log(e);
         }
     }
+    
+    public static String getClassSignature(Class clasz)
+    {
+        if(clasz.isArray()) {
+            return "["+getClassSignature(clasz.getComponentType()); //$NON-NLS-1$
+        }
+        else if(clasz.isPrimitive()) {
+            if(Integer.TYPE.equals(clasz)) {
+                return "I"; //$NON-NLS-1$
+            }
+            else if(Long.TYPE.equals(clasz)) {
+                return "J"; //$NON-NLS-1$
+            }
+            else if(Void.TYPE.equals(clasz)) {
+                return "V"; //$NON-NLS-1$
+            }
+            else if(Boolean.TYPE.equals(clasz)) {
+                return "Z"; //$NON-NLS-1$
+            }
+            else if(Byte.TYPE.equals(clasz)) {
+                return "B"; //$NON-NLS-1$
+            }
+            else if(Double.TYPE.equals(clasz)) {
+                return "D"; //$NON-NLS-1$
+            }
+            else if(Float.TYPE.equals(clasz)) {
+                return "F"; //$NON-NLS-1$
+            }
+            else if(Character.TYPE.equals(clasz)) {
+                return "C"; //$NON-NLS-1$
+            }
+            else if(Short.TYPE.equals(clasz)) {
+                return "S"; //$NON-NLS-1$
+            }
+            else {
+                throw new IllegalArgumentException(clasz.getName());
+            }
+        }
+        else {
+            return new StringBuffer("L").append(clasz.getName().replace('.', '/')).append(";").toString(); //$NON-NLS-1$ //$NON-NLS-2$
+        }
+    }
+    
+    public static Object getObjectFieldValue(Object object, String fieldName, Class fieldType)
+    {
+        Object value;
+        try {
+            value = WinAPI.GetObjectFieldValue(object, fieldName, getClassSignature(fieldType));
+        }
+        catch (Throwable t) {
+            value = null;
+        }
+        return value;
+    }
 
     public static boolean objectsAreEqual(Object obj1, Object obj2)
     {
-        return ((obj1 == null && obj2 == null) ||
-                (obj1 !=null && obj2 != null && obj1.equals(obj2)));
+        if(obj1 != obj2) {
+            return (obj1 == null?false:obj1.equals(obj2));
+        }
+        return true;
     }
 
     public static boolean stringsAreEqual(String str1, String str2)
@@ -574,8 +643,7 @@ public class Common
 
     public static boolean stringsAreEqual(String str1, String str2, boolean ignoreCase)
     {
-        return ((str1 == null && str2 == null) ||
-                (str1 !=null && str2 != null && (ignoreCase?str1.equalsIgnoreCase(str2):str1.equals(str2))));
+        return (str1 == null?str2 == null:(ignoreCase?str1.equalsIgnoreCase(str2):str1.equals(str2)));
     }
 
     public static String maybeQuote(String text)
@@ -825,5 +893,10 @@ public class Common
         catch (Throwable t) {
             EclipseNSISPlugin.getDefault().log(t);
         }
+    }
+
+    public static boolean isValid(Control ctl)
+    {
+        return ctl != null && !ctl.isDisposed();
     }
 }

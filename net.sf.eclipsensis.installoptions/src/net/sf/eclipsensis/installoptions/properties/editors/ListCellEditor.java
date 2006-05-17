@@ -32,6 +32,7 @@ public class ListCellEditor extends CellEditor
     private java.util.List mItems;
     private String mSelection;
     private List mList;
+    private boolean mCaseInsensitive = false;
 
     public ListCellEditor()
     {
@@ -47,6 +48,16 @@ public class ListCellEditor extends CellEditor
     {
         super(parent, style);
         setItems(items);
+    }
+
+    public boolean isCaseInsensitive()
+    {
+        return mCaseInsensitive;
+    }
+
+    public void setCaseInsensitive(boolean caseInsensitive)
+    {
+        mCaseInsensitive = caseInsensitive;
     }
 
     public java.util.List getItems()
@@ -153,10 +164,17 @@ public class ListCellEditor extends CellEditor
     {
         java.util.List list = Common.tokenizeToList((String)value,IInstallOptionsConstants.LIST_SEPARATOR,false);
         java.util.List items = getItems();
-        for (Iterator iter = list.iterator(); iter.hasNext();) {
-            if(!items.contains(iter.next())) {
-                iter.remove();
+        outer:
+        for (ListIterator iter = list.listIterator(); iter.hasNext();) {
+            String item = (String)iter.next();
+            for (Iterator iterator = items.iterator(); iterator.hasNext();) {
+                String item2 = (String)iterator.next();
+                if(Common.stringsAreEqual(item,item2,mCaseInsensitive)) {
+                    iter.set(item2);
+                    continue outer;
+                }
             }
+            iter.remove();
         }
         String[] selection = (String[])list.toArray(Common.EMPTY_STRING_ARRAY);
         mSelection = Common.flatten(selection,IInstallOptionsConstants.LIST_SEPARATOR);

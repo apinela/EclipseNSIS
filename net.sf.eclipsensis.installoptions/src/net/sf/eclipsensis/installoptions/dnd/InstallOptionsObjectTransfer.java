@@ -13,7 +13,7 @@ import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.swt.dnd.ByteArrayTransfer;
 import org.eclipse.swt.dnd.TransferData;
-//TODO Delete this class
+//FIXME Delete this class
 public abstract class InstallOptionsObjectTransfer extends ByteArrayTransfer
 {
     private Object mObject;

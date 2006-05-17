@@ -28,8 +28,10 @@ import org.eclipse.gef.requests.SelectionRequest;
 import org.eclipse.gef.rulers.RulerProvider;
 import org.eclipse.gef.tools.DeselectAllTracker;
 import org.eclipse.gef.tools.MarqueeDragTracker;
-import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.accessibility.AccessibleEvent;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 
 public class InstallOptionsDialogEditPart extends InstallOptionsEditPart implements LayerConstants, IInstallOptionsConstants
 {
@@ -89,6 +91,29 @@ public class InstallOptionsDialogEditPart extends InstallOptionsEditPart impleme
             refreshDiagram();
         }
         else if (InstallOptionsModel.PROPERTY_CHILDREN.equals(prop)) {
+            Object oldValue = evt.getOldValue();
+            Object newValue = evt.getNewValue();
+            List selection = null;
+            int index = -1;
+            if(oldValue instanceof InstallOptionsWidget && newValue instanceof InstallOptionsWidget) {
+                //Replaced child
+                if(getViewer() != null) {
+                    ISelection sel = getViewer().getSelection();
+                    if(sel instanceof IStructuredSelection) {
+                        selection = new ArrayList(((IStructuredSelection)sel).toList());
+                        for (Iterator iter = selection.iterator(); iter.hasNext();) {
+                            EditPart part = (EditPart)iter.next();
+                            if(oldValue.equals(part.getModel())) {
+                                index = selection.indexOf(part);
+                                break;
+                            }
+                        }
+                        if(index < 0) {
+                            selection = null;
+                        }
+                    }
+                }
+            }
             //This bit is in here to correct z-ordering of children.
             List modelChildren = getModelChildren();
             List children = getChildren();
@@ -114,6 +139,28 @@ public class InstallOptionsDialogEditPart extends InstallOptionsEditPart impleme
                     getContentPane().remove(fig);
                     getContentPane().add(fig);
                     setLayoutConstraint(part, fig, constraint);
+                }
+            }
+            if(selection != null && index >= 0) {
+                selection.remove(index);
+                EditPart part = (EditPart)getViewer().getEditPartRegistry().get(newValue);
+                if(part != null) {
+                    selection.add(index,part);
+                    final IStructuredSelection sel = new StructuredSelection(selection);
+                    final Display display = getViewer().getControl().getDisplay();
+                    display.asyncExec(new Runnable() {
+                        public void run()
+                        {
+                            Control c = display.getFocusControl();
+                            try {
+                                getViewer().setSelection(sel);
+                                getViewer().getControl().forceFocus();
+                            }
+                            finally {
+                                c.forceFocus();
+                            }
+                        }
+                    });
                 }
             }
         }

@@ -14,6 +14,8 @@ import java.util.List;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.ini.INISection;
 import net.sf.eclipsensis.installoptions.properties.descriptors.CustomColorPropertyDescriptor;
+import net.sf.eclipsensis.installoptions.properties.tabbed.section.IPropertySectionCreator;
+import net.sf.eclipsensis.installoptions.properties.tabbed.section.LinkPropertySectionCreator;
 import net.sf.eclipsensis.installoptions.properties.validators.NSISStringLengthValidator;
 import net.sf.eclipsensis.installoptions.util.TypeConverter;
 
@@ -29,16 +31,21 @@ public class InstallOptionsLink extends InstallOptionsUneditableElement
     private static ILabelProvider cLabelProvider = new LabelProvider(){
         public String getText(Object element)
         {
+            RGB rgb = null;
             if(element instanceof RGB) {
-                String s = TypeConverter.RGB_CONVERTER.asString(element);
-                if(((RGB)element).equals(DEFAULT_TXTCOLOR)) {
-                    s = new StringBuffer(s).append(" ").append(InstallOptionsPlugin.getResourceString("value.default")).toString(); //$NON-NLS-1$ //$NON-NLS-2$
-                }
-                return s;
+                rgb = (RGB)element;
+            }
+            else if(element == null) {
+                rgb = DEFAULT_TXTCOLOR;
             }
             else {
                 return super.getText(element);
             }
+            String s = TypeConverter.RGB_CONVERTER.asString(rgb);
+            if(rgb.equals(DEFAULT_TXTCOLOR)) {
+                s = InstallOptionsPlugin.getFormattedString("link.default.value.format", new String[] {s}); //$NON-NLS-1$
+            }
+            return s;
         }
     };
 
@@ -181,5 +188,10 @@ public class InstallOptionsLink extends InstallOptionsUneditableElement
         else {
             super.setPropertyValue(id, value);
         }
+    }
+
+    protected IPropertySectionCreator createPropertySectionCreator()
+    {
+        return new LinkPropertySectionCreator(this);
     }
 }

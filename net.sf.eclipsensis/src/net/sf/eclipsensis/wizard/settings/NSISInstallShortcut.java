@@ -34,7 +34,7 @@ public class NSISInstallShortcut extends AbstractNSISInstallItem
     private int mShortcutType = SHORTCUT_URL;
 
     static {
-        STARTMENUGROUP_SHORTCUT_LOCATION = EclipseNSISPlugin.getResourceString("wizard.smgroup.shortcut.location","$SMPROGRAMS\\$StartMenuGroup");
+        STARTMENUGROUP_SHORTCUT_LOCATION = EclipseNSISPlugin.getResourceString("wizard.smgroup.shortcut.location","$SMPROGRAMS\\$StartMenuGroup"); //$NON-NLS-1$ //$NON-NLS-2$
         NSISInstallElementFactory.register(TYPE, EclipseNSISPlugin.getResourceString("wizard.shortcut.type.name"), IMAGE, NSISInstallShortcut.class); //$NON-NLS-1$
     }
 
@@ -47,7 +47,7 @@ public class NSISInstallShortcut extends AbstractNSISInstallItem
     {
         mCreateInStartMenuGroup = createInStartMenuGroup;
         if(mCreateInStartMenuGroup) {
-            mLocation = "";
+            mLocation = ""; //$NON-NLS-1$
         }
     }
     /**
@@ -71,7 +71,7 @@ public class NSISInstallShortcut extends AbstractNSISInstallItem
     {
         if(mLocation.startsWith(STARTMENUGROUP_SHORTCUT_LOCATION)) {
             mCreateInStartMenuGroup = true;
-            mLocation = "";
+            mLocation = ""; //$NON-NLS-1$
         }
         return mLocation;
     }
@@ -82,7 +82,7 @@ public class NSISInstallShortcut extends AbstractNSISInstallItem
     {
         if(location.startsWith(STARTMENUGROUP_SHORTCUT_LOCATION)) {
             mCreateInStartMenuGroup = true;
-            mLocation = "";
+            mLocation = ""; //$NON-NLS-1$
         }
         else {
             mCreateInStartMenuGroup = false;

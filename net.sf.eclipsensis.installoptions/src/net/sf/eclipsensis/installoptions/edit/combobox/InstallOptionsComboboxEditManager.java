@@ -36,6 +36,7 @@ public class InstallOptionsComboboxEditManager extends InstallOptionsEditableEle
         InstallOptionsCombobox combobox = (InstallOptionsCombobox)getEditPart().getModel();
         List items = combobox.getListItems();
         EditableComboBoxCellEditor cellEditor = new EditableComboBoxCellEditor(composite,items,getCellEditorStyle());
+        cellEditor.setCaseInsensitive(true);
         cellEditor.setAutoApplyEditorValue(true);
         cellEditor.setAutoDropDown(true);
         return cellEditor;

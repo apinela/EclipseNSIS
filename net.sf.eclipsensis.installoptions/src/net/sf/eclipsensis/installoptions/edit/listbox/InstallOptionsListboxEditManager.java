@@ -34,6 +34,7 @@ public class InstallOptionsListboxEditManager extends InstallOptionsEditableElem
         InstallOptionsListbox listbox = (InstallOptionsListbox)getEditPart().getModel();
         List items = listbox.getListItems();
         ListCellEditor cellEditor = new ListCellEditor(composite,items,getCellEditorStyle());
+        cellEditor.setCaseInsensitive(true);
         return cellEditor;
     }
 

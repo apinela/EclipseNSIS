@@ -13,6 +13,8 @@ package net.sf.eclipsensis.installoptions.properties.editors;
 import java.text.MessageFormat;
 import java.util.*;
 
+import net.sf.eclipsensis.util.Common;
+
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
@@ -23,10 +25,11 @@ import org.eclipse.swt.widgets.Control;
 
 public class CustomComboBoxCellEditor extends CellEditor
 {
+    private static final int DEFAULT_STYLE = SWT.NONE;
     private List mItems = new ArrayList();
     private String mSelection;
     private CCombo mCombo;
-    private static final int DEFAULT_STYLE = SWT.NONE;
+    private boolean mCaseInsensitive = false; 
 
     public CustomComboBoxCellEditor(Composite parent, List items) {
         this(parent, items, DEFAULT_STYLE);
@@ -35,6 +38,16 @@ public class CustomComboBoxCellEditor extends CellEditor
     public CustomComboBoxCellEditor(Composite parent, List items, int style) {
         super(parent, style);
         setItems(items);
+    }
+
+    public boolean isCaseInsensitive()
+    {
+        return mCaseInsensitive;
+    }
+
+    public void setCaseInsensitive(boolean caseInsensitive)
+    {
+        mCaseInsensitive = caseInsensitive;
     }
 
     public List getItems() {
@@ -129,7 +142,16 @@ public class CustomComboBoxCellEditor extends CellEditor
     protected void doSetValue(Object value)
     {
         mSelection = (String)value;
-        int n = mItems.indexOf(mSelection);
+        int n = -1;
+        int m = 0;
+        for (Iterator iter = mItems.iterator(); iter.hasNext();) {
+            String item = (String)iter.next();
+            if(Common.stringsAreEqual(mSelection, item, mCaseInsensitive)) {
+                n = m;
+                break;
+            }
+            m++;
+        }
         if(n >= 0) {
             mCombo.select(n);
         }

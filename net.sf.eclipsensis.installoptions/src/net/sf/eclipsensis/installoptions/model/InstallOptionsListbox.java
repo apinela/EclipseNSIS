@@ -19,7 +19,10 @@ import net.sf.eclipsensis.dialogs.TableResizer;
 import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.ini.INISection;
+import net.sf.eclipsensis.installoptions.properties.tabbed.section.IPropertySectionCreator;
+import net.sf.eclipsensis.installoptions.properties.tabbed.section.ListboxPropertySectionCreator;
 import net.sf.eclipsensis.installoptions.properties.validators.NSISStringLengthValidator;
+import net.sf.eclipsensis.util.CaseInsensitiveSet;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.viewer.CollectionContentProvider;
 
@@ -56,6 +59,11 @@ public class InstallOptionsListbox extends InstallOptionsListItems
         return super.createPropertyDescriptor(name);
     }
 
+    protected IPropertySectionCreator createPropertySectionCreator()
+    {
+        return new ListboxPropertySectionCreator(this);
+    }
+
     public void setFlags(List flags)
     {
         if(!flags.contains(InstallOptionsModel.FLAGS_MULTISELECT)&&
@@ -72,13 +80,9 @@ public class InstallOptionsListbox extends InstallOptionsListItems
 
     private String validateState(String state)
     {
-        List listItems = getListItems();
+        Collection listItems = new CaseInsensitiveSet(getListItems());
         List selected = Common.tokenizeToList(state,IInstallOptionsConstants.LIST_SEPARATOR,false);
-        for (Iterator iter = selected.iterator(); iter.hasNext();) {
-            if(!listItems.contains(iter.next())) {
-                iter.remove();
-            }
-        }
+        selected.retainAll(listItems);
         return Common.flatten(selected.toArray(),IInstallOptionsConstants.LIST_SEPARATOR);
     }
 
@@ -90,6 +94,12 @@ public class InstallOptionsListbox extends InstallOptionsListItems
         if(!Common.stringsAreEqual(newState,oldState)) {
             fireModelCommand(createSetPropertyCommand(InstallOptionsModel.PROPERTY_STATE, newState));
         }
+    }
+    
+    public boolean isMultiSelect()
+    {
+        return hasFlag(InstallOptionsModel.FLAGS_MULTISELECT) || 
+               hasFlag(InstallOptionsModel.FLAGS_EXTENDEDSELECT);
     }
 
     protected class SelectListItemsPropertyDescriptor extends PropertyDescriptor implements PropertyChangeListener
@@ -150,7 +160,7 @@ public class InstallOptionsListbox extends InstallOptionsListItems
         }
     }
 
-    protected class SelectListItemsCellEditor extends DialogCellEditor
+    protected class SelectListItemsCellEditor extends DialogCellEditor implements PropertyChangeListener
     {
         private boolean mMultiSelect = false;
         private List mListItems;
@@ -158,8 +168,22 @@ public class InstallOptionsListbox extends InstallOptionsListItems
         protected SelectListItemsCellEditor(Composite parent, List listItems, boolean multiSelect)
         {
             super(parent);
+            InstallOptionsListbox.this.addPropertyChangeListener(this);
             setListItems(listItems);
             setMultiSelect(multiSelect);
+        }
+
+        public void dispose()
+        {
+            InstallOptionsListbox.this.removePropertyChangeListener(this);
+            super.dispose();
+        }
+
+        public void propertyChange(PropertyChangeEvent evt)
+        {
+            if(evt.getPropertyName().equals(InstallOptionsModel.PROPERTY_STATE)) {
+                setValue(evt.getNewValue());
+            }
         }
 
         public void setListItems(List listItems)
@@ -249,6 +273,20 @@ public class InstallOptionsListbox extends InstallOptionsListItems
                     IStructuredSelection sel = (IStructuredSelection)event.getSelection();
                     mSelection.clear();
                     mSelection.addAll(sel.toList());
+                }
+            });
+            mViewer.setComparer(new IElementComparer() {
+                public boolean equals(Object a, Object b)
+                {
+                    if(a instanceof String && b instanceof String) {
+                        return Common.stringsAreEqual((String)a, (String)b, true);
+                    }
+                    return Common.objectsAreEqual(a, b);
+                }
+
+                public int hashCode(Object element)
+                {
+                    return (element==null?0:(element instanceof String?((String)element).toLowerCase().hashCode():element.hashCode()));
                 }
             });
             mViewer.getTable().addSelectionListener(new SelectionAdapter() {

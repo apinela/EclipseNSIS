@@ -183,9 +183,11 @@ public class NSISTaskTagsPreferencePage extends PreferencePage implements IWorkb
         data.horizontalSpan = 2;
 
         Dialog.applyDialogFont(composite);
-        FontData fontData = table.getFont().getFontData()[0];
-        fontData.setStyle(SWT.BOLD);
-        mBoldFont = new Font(getShell().getDisplay(),fontData);
+        FontData[] fd = table.getFont().getFontData();
+        for (int i = 0; i < fd.length; i++) {
+            fd[i].setStyle(fd[i].getStyle()|SWT.BOLD);
+        }
+        mBoldFont = new Font(getShell().getDisplay(),fd);
 
         mOriginalTags = NSISPreferences.INSTANCE.getTaskTags();
         Collection taskTags = NSISPreferences.INSTANCE.getTaskTags();

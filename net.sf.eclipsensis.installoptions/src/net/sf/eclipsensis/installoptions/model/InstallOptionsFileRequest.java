@@ -9,6 +9,8 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.model;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.*;
 
 import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
@@ -21,6 +23,8 @@ import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
@@ -29,7 +33,7 @@ public class InstallOptionsFileRequest extends InstallOptionsPathRequest
 {
     public  static final char FILTER_SEPARATOR = ';';
 
-    private static final TypeConverter FILTER_LIST_CONVERTER = new TypeConverter(){
+    public static final TypeConverter FILEFILTER_LIST_CONVERTER = new TypeConverter(){
         public String asString(Object o)
         {
             return Common.flatten(((List)o).toArray(),IInstallOptionsConstants.LIST_SEPARATOR);
@@ -57,7 +61,7 @@ public class InstallOptionsFileRequest extends InstallOptionsPathRequest
             for(Iterator iter=((List)o).iterator(); iter.hasNext(); ) {
                 list.add(((FileFilter)iter.next()).clone());
             }
-            return null;
+            return list;
         }
     };
 
@@ -65,7 +69,7 @@ public class InstallOptionsFileRequest extends InstallOptionsPathRequest
         public String getText(Object element)
         {
             if(element instanceof List) {
-                return FILTER_LIST_CONVERTER.asString(element);
+                return FILEFILTER_LIST_CONVERTER.asString(element);
             }
             else {
                 return super.getText(element);
@@ -74,6 +78,11 @@ public class InstallOptionsFileRequest extends InstallOptionsPathRequest
     };
 
     private List mFilter;
+
+    public boolean usesOtherTab()
+    {
+        return true;
+    }
 
     protected InstallOptionsFileRequest(INISection section)
     {
@@ -94,11 +103,8 @@ public class InstallOptionsFileRequest extends InstallOptionsPathRequest
     public Object clone()
     {
         InstallOptionsFileRequest clone = (InstallOptionsFileRequest)super.clone();
-        List list = new ArrayList();
-        for (Iterator iter = mFilter.iterator(); iter.hasNext();) {
-            list.add(((FileFilter)iter.next()).clone());
-        }
-        clone.setFilter(list);
+        clone.mFilter = new ArrayList();
+        clone.setFilter(mFilter);
         return clone;
     }
 
@@ -115,7 +121,7 @@ public class InstallOptionsFileRequest extends InstallOptionsPathRequest
     protected TypeConverter getTypeConverter(String property)
     {
         if(property.equals(InstallOptionsModel.PROPERTY_FILTER)) {
-            return FILTER_LIST_CONVERTER;
+            return FILEFILTER_LIST_CONVERTER;
         }
         else {
             return super.getTypeConverter(property);
@@ -129,8 +135,23 @@ public class InstallOptionsFileRequest extends InstallOptionsPathRequest
             PropertyDescriptor descriptor = new PropertyDescriptor(InstallOptionsModel.PROPERTY_FILTER, propertyName){
                 public CellEditor createPropertyEditor(Composite parent)
                 {
-                    FileFilterCellEditor editor = new FileFilterCellEditor(InstallOptionsFileRequest.this, parent);
+                    final FileFilterCellEditor editor = new FileFilterCellEditor(InstallOptionsFileRequest.this, parent);
                     editor.setValidator(getValidator());
+                    final PropertyChangeListener listener = new PropertyChangeListener() {
+                        public void propertyChange(PropertyChangeEvent evt)
+                        {
+                            if(evt.getPropertyName().equals(getId())) {
+                                editor.setValue(evt.getNewValue());
+                            }
+                        }
+                    };
+                    InstallOptionsFileRequest.this.addPropertyChangeListener(listener);
+                    editor.getControl().addDisposeListener(new DisposeListener() {
+                        public void widgetDisposed(DisposeEvent e)
+                        {
+                            InstallOptionsFileRequest.this.removePropertyChangeListener(listener);
+                        }
+                    });
                     return editor;
                 }
             };
@@ -170,7 +191,7 @@ public class InstallOptionsFileRequest extends InstallOptionsPathRequest
     {
         if(!mFilter.equals(filter)) {
             List oldFilter = mFilter;
-            mFilter = filter;
+            mFilter = (List)FILEFILTER_LIST_CONVERTER.makeCopy(filter);
             firePropertyChange(InstallOptionsModel.PROPERTY_FILTER, oldFilter, mFilter);
             setDirty(true);
         }

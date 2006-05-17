@@ -77,26 +77,26 @@ public class NSISInstallShortcutDialog extends AbstractNSISInstallItemDialog imp
         
         final Combo c1;
         if(mWizard.getSettings().isCreateStartMenuGroup()) {
-            boolean createInSMGroup = mStore.getBoolean("createInStartMenuGroup");
-            Group group = NSISWizardDialogUtil.createGroup(composite, 2, "wizard.location.group.label", null, true);
-            final Button b1 = NSISWizardDialogUtil.createRadioButton(group, "wizard.smgroup.location.label", 
+            boolean createInSMGroup = mStore.getBoolean("createInStartMenuGroup"); //$NON-NLS-1$
+            Group group = NSISWizardDialogUtil.createGroup(composite, 2, "wizard.location.group.label", null, true); //$NON-NLS-1$
+            final Button b1 = NSISWizardDialogUtil.createRadioButton(group, "wizard.smgroup.location.label",  //$NON-NLS-1$
                                                                createInSMGroup, true, null, false);
             b1.addSelectionListener(new SelectionAdapter() {
                 public void widgetSelected(SelectionEvent e)
                 {
                     if(b1.getSelection()) {
-                        mStore.setValue("createInStartMenuGroup", true);
+                        mStore.setValue("createInStartMenuGroup", true); //$NON-NLS-1$
                         validate();
                     }
                 }
             });
-            final Button b2 = NSISWizardDialogUtil.createRadioButton(group, "wizard.other.location.label", 
+            final Button b2 = NSISWizardDialogUtil.createRadioButton(group, "wizard.other.location.label",  //$NON-NLS-1$
                     !createInSMGroup, true, null, false);
             b2.addSelectionListener(new SelectionAdapter() {
                 public void widgetSelected(SelectionEvent e)
                 {
                     if(b2.getSelection()) {
-                        mStore.setValue("createInStartMenuGroup", false);
+                        mStore.setValue("createInStartMenuGroup", false); //$NON-NLS-1$
                         validate();
                     }
                 }
@@ -104,12 +104,12 @@ public class NSISInstallShortcutDialog extends AbstractNSISInstallItemDialog imp
             ((GridData)b2.getLayoutData()).horizontalSpan = 1;
             MasterSlaveController mse = new MasterSlaveController(b2);
             c1 = NSISWizardDialogUtil.createCombo(group,null,"", //$NON-NLS-1$
-                    false,null,true,mse,true); //$NON-NLS-1$
+                    false,null,true,mse,true); 
             ((GridData)c1.getLayoutData()).horizontalSpan = 1;
             mse.updateSlaves();
         }
         else {
-            mStore.setValue("createInStartMenuGroup", false);
+            mStore.setValue("createInStartMenuGroup", false); //$NON-NLS-1$
             c1 = NSISWizardDialogUtil.createCombo(composite,null,"", //$NON-NLS-1$
                     false,"wizard.location.label",true,null,true); //$NON-NLS-1$
         }
@@ -191,7 +191,7 @@ public class NSISInstallShortcutDialog extends AbstractNSISInstallItemDialog imp
 
     protected String checkForErrors()
     {
-        if(mStore.getBoolean("createInStartMenuGroup")) {
+        if(mStore.getBoolean("createInStartMenuGroup")) { //$NON-NLS-1$
             if(!mWizard.getSettings().isCreateStartMenuGroup()) {
                 return EclipseNSISPlugin.getResourceString("wizard.invalid.shortcut.no.smgroup.error"); //$NON-NLS-1$
             }

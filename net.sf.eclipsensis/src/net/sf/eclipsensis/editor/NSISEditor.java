@@ -276,7 +276,7 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
         a= new TextOperationAction(resourceBundle, "projection.collapse.all.", this, ProjectionViewer.COLLAPSE_ALL, true); //$NON-NLS-1$
         a.setActionDefinitionId(IFoldingCommandIds.FOLDING_COLLAPSE_ALL);
         a.setEnabled(true);
-        setAction(INSISEditorConstants.FOLDING_COLLAPSE_ALL, a); //$NON-NLS-1$
+        setAction(INSISEditorConstants.FOLDING_COLLAPSE_ALL, a); 
     }
 
     protected void rulerContextMenuAboutToShow(IMenuManager menu) {

@@ -13,6 +13,8 @@ import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.ini.INISection;
 import net.sf.eclipsensis.installoptions.properties.descriptors.MultiLineTextPropertyDescriptor;
 import net.sf.eclipsensis.installoptions.properties.labelproviders.MultiLineLabelProvider;
+import net.sf.eclipsensis.installoptions.properties.tabbed.section.IPropertySectionCreator;
+import net.sf.eclipsensis.installoptions.properties.tabbed.section.LabelPropertySectionCreator;
 import net.sf.eclipsensis.installoptions.properties.validators.NSISEscapedStringLengthValidator;
 
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -56,12 +58,17 @@ public class InstallOptionsLabel extends InstallOptionsUneditableElement
     {
         if(name.equals(InstallOptionsModel.PROPERTY_TEXT)) {
             String propertyName = InstallOptionsPlugin.getResourceString("text.property.name"); //$NON-NLS-1$;
-            TextPropertyDescriptor descriptor = new MultiLineTextPropertyDescriptor(InstallOptionsModel.PROPERTY_TEXT, propertyName);
+            TextPropertyDescriptor descriptor = new MultiLineTextPropertyDescriptor(this, InstallOptionsModel.PROPERTY_TEXT, propertyName);
             descriptor.setValidator(new NSISEscapedStringLengthValidator(propertyName));
             return descriptor;
         }
         else {
             return super.createPropertyDescriptor(name);
         }
+    }
+
+    protected IPropertySectionCreator createPropertySectionCreator()
+    {
+        return new LabelPropertySectionCreator(this);
     }
 }

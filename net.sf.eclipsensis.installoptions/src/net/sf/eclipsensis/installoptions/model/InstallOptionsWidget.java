@@ -9,6 +9,8 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.model;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.*;
 import java.util.List;
 
@@ -17,11 +19,14 @@ import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.figures.FigureUtility;
 import net.sf.eclipsensis.installoptions.ini.INISection;
 import net.sf.eclipsensis.installoptions.properties.PositionPropertySource;
+import net.sf.eclipsensis.installoptions.properties.descriptors.CustomComboBoxPropertyDescriptor;
 import net.sf.eclipsensis.installoptions.properties.editors.CustomComboBoxCellEditor;
 import net.sf.eclipsensis.installoptions.properties.labelproviders.ListLabelProvider;
+import net.sf.eclipsensis.installoptions.properties.tabbed.section.IPropertySectionCreator;
 import net.sf.eclipsensis.installoptions.properties.validators.NSISStringLengthValidator;
 import net.sf.eclipsensis.installoptions.rulers.InstallOptionsGuide;
 import net.sf.eclipsensis.installoptions.util.TypeConverter;
+import net.sf.eclipsensis.util.CaseInsensitiveSet;
 import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.draw2d.geometry.Dimension;
@@ -78,6 +83,8 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
     protected InstallOptionsGuide mHorizontalGuide;
     private List mFlags;
     protected boolean mLocked;
+    private IPropertySectionCreator mPropertySectionCreator = null;
+    private transient Collection mPropertyNames;
 
     protected InstallOptionsWidget(INISection section)
     {
@@ -108,12 +115,14 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
      */
     protected final Collection getPropertyNames()
     {
-        List list = new ArrayList();
-        list.add(InstallOptionsModel.PROPERTY_INDEX);
-        list.add(InstallOptionsModel.PROPERTY_POSITION);
-        list.addAll(super.getPropertyNames());
-        list.add(PROPERTY_LOCKED);
-        return list;
+        if(mPropertyNames == null) {
+            mPropertyNames = new CaseInsensitiveSet();
+            mPropertyNames.add(InstallOptionsModel.PROPERTY_INDEX);
+            mPropertyNames.add(InstallOptionsModel.PROPERTY_POSITION);
+            mPropertyNames.addAll(super.getPropertyNames());
+            mPropertyNames.add(PROPERTY_LOCKED);
+        }
+        return mPropertyNames;
     }
 
     /**
@@ -176,56 +185,16 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
             positionPropertyDescriptor.setLabelProvider(cPositionLabelProvider);
             return positionPropertyDescriptor;
         }
-        else if(name.equals(InstallOptionsModel.PROPERTY_TYPE)) {
-            return new PropertyDescriptor(InstallOptionsModel.PROPERTY_TYPE, InstallOptionsPlugin.getResourceString("type.property.name")); //$NON-NLS-1$
-        }
         else if(name.equals(InstallOptionsModel.PROPERTY_FLAGS)) {
             return new FlagsPropertyDescriptor();
         }
         else if(name.equals(PROPERTY_LOCKED)) {
-            PropertyDescriptor descriptor = new PropertyDescriptor(PROPERTY_LOCKED, InstallOptionsPlugin.getResourceString("locked.property.name")) { //$NON-NLS-1$
-                public CellEditor createPropertyEditor(Composite parent)
-                {
-                    return new CellEditor(parent) {
-                        private boolean mValue;
-
-                        protected Control createControl(Composite parent)
-                        {
-                            final Button button = new Button(parent,SWT.CHECK);
-                            button.setSelection(mValue);
-                            button.addSelectionListener(new SelectionAdapter() {
-                                public void widgetSelected(SelectionEvent e)
-                                {
-                                    mValue = button.getSelection();
-                                    fireApplyEditorValue();
-                                }
-                            });
-                            return button;
-                        }
-
-                        protected Object doGetValue()
-                        {
-                            return Boolean.valueOf(mValue);
-                        }
-
-                        protected void doSetFocus()
-                        {
-                            getControl().setFocus();
-                        }
-
-                        protected void doSetValue(Object value)
-                        {
-                            if(value instanceof Boolean) {
-                                mValue = ((Boolean)value).booleanValue();
-                                Button control = (Button)getControl();
-                                if(control != null && !control.isDisposed() && control.getSelection() != mValue) {
-                                    control.setSelection(mValue);
-                                }
-                            }
-                        }
-                    };
-                }
-            };
+            String propertyName = InstallOptionsPlugin.getResourceString("locked.property.name"); //$NON-NLS-1$
+            CustomComboBoxPropertyDescriptor descriptor = new CustomComboBoxPropertyDescriptor(PROPERTY_LOCKED,
+                    propertyName, new Object[] {Boolean.TRUE,Boolean.FALSE}, 
+                    new String[] {cLockedLabelProvider.getText(Boolean.TRUE),
+                    cLockedLabelProvider.getText(Boolean.FALSE)}, 1);
+            descriptor.setValidator(new NSISStringLengthValidator(propertyName));
             descriptor.setLabelProvider(cLockedLabelProvider);
             return descriptor;
         }
@@ -389,6 +358,17 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
         return flags;
     }
 
+    public boolean hasFlag(String flag)
+    {
+        if(flag != null && mFlags != null) {
+            for (Iterator iter = mFlags.iterator(); iter.hasNext();) {
+                if(Common.stringsAreEqual((String)iter.next(), flag)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
     public void setFlags(List flags)
     {
         List oldFlags = retainSupportedFlags(getFlags());
@@ -396,7 +376,7 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
         boolean dirty = false;
         if (!getFlags().equals(flags)) {
         	dirty = true;
-            mFlags = flags;
+            mFlags = new ArrayList(flags);
         }        
         if(!oldFlags.equals(newFlags)) {
             firePropertyChange(InstallOptionsModel.PROPERTY_FLAGS,oldFlags,newFlags);
@@ -497,7 +477,7 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
     public void setPosition(Position position)
     {
         Position mOldPosition = mPosition;
-        mPosition = position;
+        mPosition = position.getCopy();
         if(!mPosition.equals(mOldPosition)) {
             firePropertyChange(InstallOptionsModel.PROPERTY_POSITION,mOldPosition,mPosition);
             setDirty(true);
@@ -522,12 +502,14 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
     public Object clone()
     {
         InstallOptionsWidget element = (InstallOptionsWidget)super.clone();
+        element.setPropertySectionCreator(null);
         element.setParent(null);
         element.setHorizontalGuide(null);
         element.setVerticalGuide(null);
         element.setPosition(mPosition.getCopy());
         element.setFlags(new ArrayList(getFlags()));
         element.setIndex(-1);
+        element.mPropertyNames = null;
         return element;
     }
 
@@ -557,6 +539,24 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
     }
 
     protected ILabelProvider getDisplayLabelProvider()
+    {
+        return null;
+    }
+    
+    public void setPropertySectionCreator(IPropertySectionCreator propertySectionCreator)
+    {
+        mPropertySectionCreator = propertySectionCreator;
+    }
+
+    public final IPropertySectionCreator getPropertySectionCreator()
+    {
+        if(mPropertySectionCreator == null) {
+            mPropertySectionCreator = createPropertySectionCreator();
+        }
+        return mPropertySectionCreator;
+    }
+
+    protected IPropertySectionCreator createPropertySectionCreator()
     {
         return null;
     }
@@ -609,12 +609,14 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
         }
     }
 
-    private final class FlagsCellEditor extends DialogCellEditor
+    private final class FlagsCellEditor extends DialogCellEditor implements PropertyChangeListener
     {
         private FlagsCellEditor(Composite parent)
         {
             super(parent);
+            InstallOptionsWidget.this.addPropertyChangeListener(this);
         }
+
         protected void updateContents(Object value)
         {
             Label label = getDefaultLabel();
@@ -629,6 +631,19 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
             dialog.setValidator(getValidator());
             dialog.open();
             return dialog.getValues();
+        }
+        
+        public void dispose()
+        {
+            InstallOptionsWidget.this.removePropertyChangeListener(this);
+            super.dispose();
+        }
+
+        public void propertyChange(PropertyChangeEvent evt)
+        {
+            if(evt.getPropertyName().equals(InstallOptionsModel.PROPERTY_FLAGS)) {
+                setValue(evt.getNewValue());
+            }
         }
     }
 
@@ -760,6 +775,4 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
             super.okPressed();
         }
     }
-
-
 }

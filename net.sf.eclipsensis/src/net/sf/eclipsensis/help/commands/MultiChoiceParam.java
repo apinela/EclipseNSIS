@@ -44,7 +44,7 @@ public class MultiChoiceParam extends ChoiceParam
         {
             if(!Common.isEmptyArray(mChoiceButtons)) {
                 for (int i = 0; i < mChoiceButtons.length; i++) {
-                    if(isValid(mChoiceButtons[i])) {
+                    if(Common.isValid(mChoiceButtons[i])) {
                         mChoiceButtons[i].setSelection(false);
                     }
                 }
@@ -58,7 +58,7 @@ public class MultiChoiceParam extends ChoiceParam
                 boolean first = true;
                 StringBuffer buf = null;
                 for (int i = 0; i < mChoiceButtons.length; i++) {
-                    if(isValid(mChoiceButtons[i]) && mChoiceButtons[i].getSelection()) {
+                    if(Common.isValid(mChoiceButtons[i]) && mChoiceButtons[i].getSelection()) {
                         if(!first) {
                             buf.append("|"); //$NON-NLS-1$
                         }
@@ -79,7 +79,7 @@ public class MultiChoiceParam extends ChoiceParam
             super.updateState(state);
             if(!Common.isEmptyArray(mChoiceButtons)) {
                 for (int i = 0; i < mChoiceButtons.length; i++) {
-                    if(isValid(mChoiceButtons[i])) {
+                    if(Common.isValid(mChoiceButtons[i])) {
                         mChoiceButtons[i].setEnabled(state);
                     }
                 }
@@ -91,7 +91,7 @@ public class MultiChoiceParam extends ChoiceParam
             super.saveSettings();
             if(!Common.isEmptyArray(mChoiceButtons) && getSettings() != null) {
                 for (int i = 0; i < mChoiceButtons.length; i++) {
-                    if(isValid(mChoiceButtons[i])) {
+                    if(Common.isValid(mChoiceButtons[i])) {
                         getSettings().put(mChoiceButtons[i].getData(DATA_CHOICE), Boolean.valueOf(mChoiceButtons[i].getSelection()));
                     }
                 }
@@ -123,7 +123,7 @@ public class MultiChoiceParam extends ChoiceParam
             super.initParamEditor();
             if(!Common.isEmptyArray(mChoiceButtons)) {
                 for (int i = 0; i < mChoiceButtons.length; i++) {
-                    if(isValid(mChoiceButtons[i])) {
+                    if(Common.isValid(mChoiceButtons[i])) {
                         mChoiceButtons[i].setSelection(((Boolean)getSettingValue((String)mChoiceButtons[i].getData(DATA_CHOICE), Boolean.class, Boolean.FALSE)).booleanValue());
                     }
                 }
@@ -134,7 +134,7 @@ public class MultiChoiceParam extends ChoiceParam
         {
             if(!Common.isEmptyArray(mChoiceButtons)) {
                 for (int i = 0; i < mChoiceButtons.length; i++) {
-                    if(!isValid(mChoiceButtons[i])) {
+                    if(!Common.isValid(mChoiceButtons[i])) {
                         break;
                     }
                     if(mChoiceButtons[i].getSelection()) {

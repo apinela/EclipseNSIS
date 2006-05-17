@@ -174,7 +174,7 @@ public class NSISBrowserInformationControl implements IInformationControl, IInfo
                     Font font = l.getFont();
                     FontData[] fontDatas = font.getFontData();
                     for (int i = 0; i < fontDatas.length; i++) {
-                        fontDatas[i].setHeight(fontDatas[i].getHeight() * 9 / 10);
+                        fontDatas[i].setHeight((int)(fontDatas[i].getHeight() * 0.9));
                     }
                     final Font font2 = new Font(l.getDisplay(), fontDatas);
                     l.setFont(font2);

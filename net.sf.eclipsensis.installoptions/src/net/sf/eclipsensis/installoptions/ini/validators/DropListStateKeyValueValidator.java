@@ -10,12 +10,13 @@
 package net.sf.eclipsensis.installoptions.ini.validators;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 
 import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.ini.*;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
+import net.sf.eclipsensis.util.CaseInsensitiveSet;
 import net.sf.eclipsensis.util.Common;
 
 public class DropListStateKeyValueValidator extends ComboboxStateKeyValueValidator
@@ -41,7 +42,7 @@ public class DropListStateKeyValueValidator extends ComboboxStateKeyValueValidat
         if(!Common.isEmptyArray(values)) {
             INIKeyValue[] keyValues = ((INISection)keyValue.getParent()).findKeyValues(InstallOptionsModel.PROPERTY_LISTITEMS);
             if(!Common.isEmptyArray(keyValues)) {
-                List allValues = Common.tokenizeToList(keyValues[0].getValue(),IInstallOptionsConstants.LIST_SEPARATOR,false);
+                Collection allValues = new CaseInsensitiveSet(Common.tokenizeToList(keyValues[0].getValue(),IInstallOptionsConstants.LIST_SEPARATOR,false));
                 if(!Common.isEmptyCollection(allValues)) {
                     ArrayList valuesList = Common.makeList(values);
                     valuesList.removeAll(allValues);

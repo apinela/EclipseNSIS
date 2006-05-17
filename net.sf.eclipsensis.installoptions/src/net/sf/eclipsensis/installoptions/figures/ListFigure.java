@@ -77,7 +77,6 @@ public class ListFigure extends EditableElementFigure implements IListItemsFigur
         List list = new List(parent, style);
         java.util.List selected = getSelected();
         java.util.List listItems = getListItems();
-        selected.retainAll(listItems);
         GC gc = new GC(list);
         int maxHeight = list.getItemHeight()*listItems.size();
         int maxWidth = 0;
@@ -88,7 +87,16 @@ public class ListFigure extends EditableElementFigure implements IListItemsFigur
         }
         gc.dispose();
         for (Iterator iter = selected.iterator(); iter.hasNext();) {
-            int n = listItems.indexOf(iter.next());
+            String item = (String)iter.next();
+            int n = -1;
+            int m = 0;
+            for (Iterator iterator = listItems.iterator(); iterator.hasNext();) {
+                if(Common.stringsAreEqual((String)iterator.next(), item, true)) {
+                    n = m;
+                    break;
+                }
+                m++;
+            }
             if(n >= 0) {
                 list.select(n);
             }

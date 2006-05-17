@@ -49,7 +49,7 @@ public class LocalPathParam extends LocalFileParam
 
         public void clear()
         {
-            if(isValid(mPathText)) {
+            if(Common.isValid(mPathText)) {
                 mPathText.setText(""); //$NON-NLS-1$
             }
             super.clear();
@@ -57,7 +57,7 @@ public class LocalPathParam extends LocalFileParam
 
         protected String getPrefixableParamText()
         {
-            if(isValid(mPathText)) {
+            if(Common.isValid(mPathText)) {
                 String path = IOUtility.decodePath(mPathText.getText());
                 return IOUtility.encodePath(path);
             }
@@ -66,10 +66,10 @@ public class LocalPathParam extends LocalFileParam
 
         protected void updateState(boolean state)
         {
-            if(isValid(mPathText)) {
+            if(Common.isValid(mPathText)) {
                 mPathText.setEnabled(state);
                 Button b = (Button)mPathText.getData(DATA_BUTTON);
-                if(isValid(b)) {
+                if(Common.isValid(b)) {
                     b.setEnabled(state);
                 }
             }
@@ -78,7 +78,7 @@ public class LocalPathParam extends LocalFileParam
 
         protected String validateLocalFilesystemObjectParam()
         {
-            if(isValid(mPathText)) {
+            if(Common.isValid(mPathText)) {
                 String path = IOUtility.decodePath(mPathText.getText());
                 if(path.length() == 0 ) { 
                     if(isAllowBlank()) {
@@ -118,7 +118,7 @@ public class LocalPathParam extends LocalFileParam
         public void saveSettings()
         {
             super.saveSettings();
-            if(isValid(mPathText) && getSettings() != null) {
+            if(Common.isValid(mPathText) && getSettings() != null) {
                 getSettings().put(SETTING_PATH, mPathText.getText());
             }
         }
@@ -126,7 +126,7 @@ public class LocalPathParam extends LocalFileParam
         protected void initParamEditor()
         {
             super.initParamEditor();
-            if(isValid(mPathText)) {
+            if(Common.isValid(mPathText)) {
                 mPathText.setText((String)getSettingValue(SETTING_PATH, String.class, "")); //$NON-NLS-1$
             }
         }

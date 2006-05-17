@@ -10,6 +10,8 @@
 package net.sf.eclipsensis.installoptions.model;
 
 import net.sf.eclipsensis.installoptions.ini.INISection;
+import net.sf.eclipsensis.installoptions.properties.tabbed.section.IPropertySectionCreator;
+import net.sf.eclipsensis.installoptions.properties.tabbed.section.PicturePropertySectionCreator;
 
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
@@ -47,6 +49,11 @@ public abstract class InstallOptionsPicture extends InstallOptionsUneditableElem
         else {
             return super.getPropertyValue(propName);
         }
+    }
+
+    protected IPropertySectionCreator createPropertySectionCreator()
+    {
+        return new PicturePropertySectionCreator(this);
     }
 
     public abstract Image getImage();

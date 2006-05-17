@@ -140,6 +140,18 @@ public abstract class InstallOptionsElement implements IPropertySource, Cloneabl
     
     public final IPropertyDescriptor getPropertyDescriptor(String name)
     {
+        if(getPropertyNames().contains(name)) {
+            return doGetPropertyDescriptor(name);
+        }
+        return null;
+    }
+
+    /**
+     * @param name
+     * @return
+     */
+    private IPropertyDescriptor doGetPropertyDescriptor(String name)
+    {
         IPropertyDescriptor descriptor = (IPropertyDescriptor)mDescriptors.get(name);
         if(descriptor == null) {
             descriptor = createPropertyDescriptor(name);
@@ -158,7 +170,7 @@ public abstract class InstallOptionsElement implements IPropertySource, Cloneabl
         Collection names = getPropertyNames();
         ArrayList list = new ArrayList();
         for (Iterator iter = names.iterator(); iter.hasNext();) {
-            IPropertyDescriptor descriptor = getPropertyDescriptor((String)iter.next());
+            IPropertyDescriptor descriptor = doGetPropertyDescriptor((String)iter.next());
             if(descriptor != cNullPropertyDescriptor) {
                 list.add(descriptor);
             }
@@ -202,6 +214,15 @@ public abstract class InstallOptionsElement implements IPropertySource, Cloneabl
 
     public void setPropertyValue(Object id, Object value)
     {
+    }
+    
+    public String getStringPropertyValue(Object id)
+    {
+        Object value = getPropertyValue(id);
+        if(value != null) {
+            return value.toString();
+        }
+        return null;
     }
 
     public Object getPropertyValue(Object id)

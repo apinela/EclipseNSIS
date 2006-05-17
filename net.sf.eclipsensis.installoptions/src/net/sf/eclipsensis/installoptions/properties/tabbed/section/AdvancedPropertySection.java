@@ -1,0 +1,94 @@
+/*******************************************************************************
+ * Copyright (c) 2004-2006 Sunil Kamath (IcemanK).
+ * All rights reserved.
+ * This program is made available under the terms of the Common Public License
+ * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     Sunil Kamath (IcemanK) - initial API and implementation
+ *******************************************************************************/
+package net.sf.eclipsensis.installoptions.properties.tabbed.section;
+
+import net.sf.eclipsensis.installoptions.properties.CustomPropertySheetPage;
+import net.sf.eclipsensis.installoptions.properties.InstallOptionsPropertySheetEntry;
+import net.sf.eclipsensis.installoptions.properties.tabbed.CustomTabbedPropertySheetPage;
+
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.swt.layout.FormAttachment;
+import org.eclipse.swt.layout.FormData;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.views.properties.PropertySheetPage;
+import org.eclipse.ui.views.properties.tabbed.AbstractPropertySection;
+import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
+
+public class AdvancedPropertySection extends AbstractPropertySection
+{
+    protected PropertySheetPage mPage;
+
+    /**
+     * @see org.eclipse.ui.views.properties.tabbed.ISection#createControls(org.eclipse.swt.widgets.Composite,
+     *      org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage)
+     */
+    public void createControls(Composite parent, TabbedPropertySheetPage page) 
+    {
+        super.createControls(parent, page);
+        Composite composite = getWidgetFactory().createFlatFormComposite(parent);
+        if(page instanceof CustomTabbedPropertySheetPage && ((CustomTabbedPropertySheetPage)page).getEditor() != null) {
+            mPage = new CustomPropertySheetPage();
+            mPage.setRootEntry(new InstallOptionsPropertySheetEntry(((CustomTabbedPropertySheetPage)page).getEditor().getEditDomain().getCommandStack()));
+       }
+        else {
+            mPage = new PropertySheetPage();
+        }
+ 
+        mPage.createControl(composite);
+        FormData data = new FormData();
+        data.left = new FormAttachment(0, 0);
+        data.right = new FormAttachment(100, 0);
+        data.top = new FormAttachment(0, 0);
+        data.bottom = new FormAttachment(100, 0);
+        data.height = 100;
+        data.width = 100;
+        mPage.getControl().setLayoutData(data);
+    }
+
+    /**
+     * @see org.eclipse.ui.views.properties.tabbed.ISection#setInput(org.eclipse.ui.IWorkbenchPart,
+     *      org.eclipse.jface.viewers.ISelection)
+     */
+    public void setInput(IWorkbenchPart part, ISelection selection) 
+    {
+        super.setInput(part, selection);
+        mPage.selectionChanged(part, selection);
+    }
+
+    /**
+     * @see org.eclipse.ui.views.properties.tabbed.ISection#dispose()
+     */
+    public void dispose() 
+    {
+        super.dispose();
+
+        if (mPage != null) {
+            mPage.dispose();
+            mPage = null;
+        }
+    }
+
+    /**
+     * @see org.eclipse.ui.views.properties.tabbed.ISection#refresh()
+     */
+    public void refresh() 
+    {
+        mPage.refresh();
+    }
+
+    /**
+     * @see org.eclipse.ui.views.properties.tabbed.ISection#shouldUseExtraSpace()
+     */
+    public boolean shouldUseExtraSpace() 
+    {
+        return true;
+    }
+}

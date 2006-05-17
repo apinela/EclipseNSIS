@@ -164,4 +164,12 @@ public abstract class AbstractTemplate implements Serializable, Cloneable
             return null;
         }
     }
+    
+    protected void beforeExport()
+    {
+    }
+    
+    protected void afterImport() throws InvalidTemplateException
+    {
+    }
 }

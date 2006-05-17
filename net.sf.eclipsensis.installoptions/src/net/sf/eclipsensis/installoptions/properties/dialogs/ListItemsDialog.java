@@ -142,7 +142,7 @@ public class ListItemsDialog extends Dialog
                 if(list != null) {
                     int counter = 1;
                     String item = InstallOptionsPlugin.getFormattedString("default.listitem.label", new Object[]{new Integer(counter++)}); //$NON-NLS-1$
-                    while(list.contains(item)) {
+                    while(Common.collectionContainsIgnoreCase(list, item)) {
                         item = InstallOptionsPlugin.getFormattedString("default.listitem.label", new Object[]{new Integer(counter++)}); //$NON-NLS-1$
                     }
                     list.add(item);

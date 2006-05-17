@@ -69,7 +69,9 @@ public class NSISWizardDialogUtil
     {
         Font f = control.getFont();
         FontData[] fd = f.getFontData();
-        fd[0].setStyle(SWT.BOLD);
+        for (int i = 0; i < fd.length; i++) {
+            fd[i].setStyle(fd[i].getStyle()|SWT.BOLD);
+        }
         final Font f2 = new Font(control.getDisplay(),fd);
         control.setFont(f2);
         control.addDisposeListener(new DisposeListener() {

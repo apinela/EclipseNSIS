@@ -12,11 +12,13 @@ package net.sf.eclipsensis.installoptions.properties.descriptors;
 import java.beans.*;
 import java.util.List;
 
+import net.sf.eclipsensis.installoptions.model.InstallOptionsElement;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
 import net.sf.eclipsensis.installoptions.properties.editors.MultiLineTextCellEditor;
+import net.sf.eclipsensis.util.NumberVerifyListener;
 
-import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.widgets.*;
@@ -26,6 +28,7 @@ public class MultiLineTextPropertyDescriptor extends TextPropertyDescriptor impl
 {
     private static final String PROPERTY_LABEL_PROVIDER="LabelProvider"; //$NON-NLS-1$
 
+    private InstallOptionsElement mSource;
     private boolean mMultiLine = true;
     private boolean mOnlyNumbers = false;
     private PropertyChangeSupport mPropertyChangeSupport = new PropertyChangeSupport(this);
@@ -34,9 +37,10 @@ public class MultiLineTextPropertyDescriptor extends TextPropertyDescriptor impl
      * @param id
      * @param displayName
      */
-    public MultiLineTextPropertyDescriptor(Object id, String displayName)
+    public MultiLineTextPropertyDescriptor(InstallOptionsElement source, Object id, String displayName)
     {
         super(id, displayName);
+        mSource = source;
     }
 
     /* (non-Javadoc)
@@ -115,11 +119,22 @@ public class MultiLineTextPropertyDescriptor extends TextPropertyDescriptor impl
             }
         };
         addPropertyChangeListener(listener);
+
+        final PropertyChangeListener listener2 = new PropertyChangeListener(){
+            public void propertyChange(PropertyChangeEvent evt)
+            {
+                if(evt.getPropertyName().equals(getId())) {
+                    editor.setValue(evt.getNewValue());
+                }
+            }
+        };
+        mSource.addPropertyChangeListener(listener2);
         editor.setOnlyNumbers(isOnlyNumbers());
         editor.getParent().addDisposeListener(new DisposeListener(){
             public void widgetDisposed(DisposeEvent e)
             {
                 removePropertyChangeListener(listener);
+                mSource.removePropertyChangeListener(listener2);
             }
         });
         editor.setValidator(getValidator());
@@ -157,18 +172,7 @@ public class MultiLineTextPropertyDescriptor extends TextPropertyDescriptor impl
         private VerifyListener getNumberVerifyListener()
         {
             if(mNumberVerifyListener == null) {
-                mNumberVerifyListener = new VerifyListener(){
-                    public void verifyText(VerifyEvent e)
-                    {
-                        char[] chars = e.text.toCharArray();
-                        for (int i = 0; i < chars.length; i++) {
-                            if(!Character.isDigit(chars[i])) {
-                                e.doit = false;
-                                return;
-                            }
-                        }
-                    }
-                };
+                mNumberVerifyListener = new NumberVerifyListener();
             }
             return mNumberVerifyListener;
         }

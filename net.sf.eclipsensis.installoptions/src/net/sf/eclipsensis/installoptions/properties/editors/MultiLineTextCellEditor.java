@@ -13,12 +13,14 @@ import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.util.TypeConverter;
 import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.NumberVerifyListener;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 
@@ -123,18 +125,7 @@ public class MultiLineTextCellEditor extends DialogCellEditor
             Composite composite = (Composite)super.createDialogArea(parent);
             final Text text = new Text(composite,SWT.LEFT|SWT.BORDER|SWT.MULTI|SWT.WRAP|SWT.V_SCROLL);
             if(isOnlyNumbers()) {
-                text.addVerifyListener(new VerifyListener(){
-                    public void verifyText(VerifyEvent e)
-                    {
-                        char[] chars = e.text.toCharArray();
-                        for (int i = 0; i < chars.length; i++) {
-                            if(!Character.isDigit(chars[i])) {
-                                e.doit = false;
-                                return;
-                            }
-                        }
-                    }
-                });
+                text.addVerifyListener(new NumberVerifyListener());
             }
             text.setText(mValue);
             initializeDialogUnits(text);

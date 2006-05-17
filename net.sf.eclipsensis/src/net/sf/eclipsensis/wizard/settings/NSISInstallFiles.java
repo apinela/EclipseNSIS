@@ -35,6 +35,8 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
 
     static {
         NSISInstallElementFactory.register(TYPE, EclipseNSISPlugin.getResourceString("wizard.files.type.name"), IMAGE, NSISInstallFiles.class); //$NON-NLS-1$
+        //Let's register File Item as well
+        FileItem.class.getName(); 
     }
 
     protected void addSkippedProperties(Collection skippedProperties)

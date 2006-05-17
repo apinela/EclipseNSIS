@@ -478,9 +478,11 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
         Table table= new Table(group, SWT.CHECK | SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION);
         gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
         table.setLayoutData(gridData);
-        FontData fontData = table.getFont().getFontData()[0];
-        fontData.setStyle(SWT.BOLD);
-        final Font boldFont = new Font(table.getShell().getDisplay(),fontData);
+        FontData[] fd = table.getFont().getFontData();
+        for (int i = 0; i < fd.length; i++) {
+            fd[i].setStyle(fd[i].getStyle()|SWT.BOLD);
+        }
+        final Font boldFont = new Font(table.getShell().getDisplay(),fd);
         table.addDisposeListener(new DisposeListener(){
             public void widgetDisposed(DisposeEvent e)
             {
@@ -821,18 +823,7 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
         private DialogSize mOriginal;
         private DialogSize mCurrent;
 
-        private VerifyListener mNumberVerifyListener = new VerifyListener() {
-            public void verifyText(VerifyEvent e)
-            {
-                char[] chars = e.text.toCharArray();
-                for(int i=0; i< chars.length; i++) {
-                    if(!Character.isDigit(chars[i])) {
-                        e.doit = false;
-                        return;
-                    }
-                }
-            }
-        };
+        private VerifyListener mNumberVerifyListener = new NumberVerifyListener();
 
         /**
          * @param parentShell

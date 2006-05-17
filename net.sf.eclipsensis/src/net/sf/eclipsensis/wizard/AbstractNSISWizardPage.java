@@ -13,14 +13,12 @@ import java.text.MessageFormat;
 import java.util.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.IOUtility;
+import net.sf.eclipsensis.util.*;
 
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -34,18 +32,7 @@ public abstract class AbstractNSISWizardPage extends WizardPage implements INSIS
     private boolean mPreviousPage = false;
     private List mPageChangeRunnables = new ArrayList();
 
-    protected VerifyListener mNumberVerifyListener = new VerifyListener() {
-        public void verifyText(VerifyEvent e)
-        {
-            char[] chars = e.text.toCharArray();
-            for(int i=0; i< chars.length; i++) {
-                if(!Character.isDigit(chars[i])) {
-                    e.doit = false;
-                    return;
-                }
-            }
-        }
-    };
+    protected VerifyListener mNumberVerifyListener = new NumberVerifyListener();
 
     private static ImageDescriptor cImage = EclipseNSISPlugin.getImageManager().getImageDescriptor(EclipseNSISPlugin.getResourceString("wizard.title.image")); //$NON-NLS-1$
 

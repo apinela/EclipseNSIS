@@ -10,6 +10,7 @@
 package net.sf.eclipsensis.help.commands;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.util.IOUtility;
 
 import org.w3c.dom.Node;
@@ -40,7 +41,7 @@ public class LocalSaveFileParam extends LocalFileParam
 
         protected String validateLocalFilesystemObjectParam()
         {
-            if(isValid(mFileText)) {
+            if(Common.isValid(mFileText)) {
                 String file = IOUtility.decodePath(mFileText.getText());
                 if(file.length() == 0 ) { 
                     if(isAllowBlank()) {

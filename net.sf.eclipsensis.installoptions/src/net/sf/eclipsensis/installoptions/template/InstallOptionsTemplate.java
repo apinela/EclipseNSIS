@@ -15,6 +15,7 @@ import java.util.*;
 import net.sf.eclipsensis.installoptions.ini.*;
 import net.sf.eclipsensis.installoptions.model.*;
 import net.sf.eclipsensis.template.AbstractTemplate;
+import net.sf.eclipsensis.template.InvalidTemplateException;
 import net.sf.eclipsensis.util.Common;
 
 public class InstallOptionsTemplate extends AbstractTemplate
@@ -51,6 +52,13 @@ public class InstallOptionsTemplate extends AbstractTemplate
     {
         this(name);
         setWidgets(widgets);
+    }
+
+    protected void afterImport() throws InvalidTemplateException
+    {
+        if(mSections == null) {
+            throw new InvalidTemplateException();
+        }
     }
 
     public void setWidgets(InstallOptionsWidget[] widgets)

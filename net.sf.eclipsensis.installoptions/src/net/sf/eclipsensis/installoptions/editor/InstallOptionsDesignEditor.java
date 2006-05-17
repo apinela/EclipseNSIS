@@ -24,8 +24,7 @@ import net.sf.eclipsensis.installoptions.dnd.*;
 import net.sf.eclipsensis.installoptions.edit.*;
 import net.sf.eclipsensis.installoptions.ini.INIFile;
 import net.sf.eclipsensis.installoptions.model.*;
-import net.sf.eclipsensis.installoptions.properties.CustomPropertySheetPage;
-import net.sf.eclipsensis.installoptions.properties.InstallOptionsPropertySheetEntry;
+import net.sf.eclipsensis.installoptions.properties.tabbed.CustomTabbedPropertySheetPage;
 import net.sf.eclipsensis.installoptions.rulers.*;
 import net.sf.eclipsensis.installoptions.template.*;
 import net.sf.eclipsensis.installoptions.util.TypeConverter;
@@ -82,9 +81,9 @@ import org.eclipse.ui.part.*;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.IDocumentProviderExtension3;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
-import org.eclipse.ui.views.properties.PropertySheetPage;
+import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor;
 
-public class InstallOptionsDesignEditor extends EditorPart implements IInstallOptionsEditor, CommandStackListener, ISelectionListener
+public class InstallOptionsDesignEditor extends EditorPart implements IInstallOptionsEditor, CommandStackListener, ISelectionListener, ITabbedPropertySheetPageContributor
 {
     private boolean mDisposed = false;
     private DefaultEditDomain mEditDomain;
@@ -127,7 +126,6 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
     };
 
     private int mErrorCorrectionOnSave;
-
     private PaletteRoot mRoot;
 
     private OutlinePage mOutlinePage;
@@ -248,6 +246,11 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
         setEditDomain(new InstallOptionsEditDomain(this));
     }
 
+    public String getContributorId()
+    {
+        return TABBED_PROPERTIES_CONTRIBUTOR_ID;
+    }
+
     /**
      * @see org.eclipse.ui.part.WorkbenchPart#firePropertyChange(int)
      */
@@ -282,7 +285,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
      * Returns the edit domain.
      * @return the edit domain
      */
-    protected DefaultEditDomain getEditDomain()
+    public DefaultEditDomain getEditDomain()
     {
         return mEditDomain;
     }
@@ -801,9 +804,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
             return createPalettePage();
         }
         if (type == org.eclipse.ui.views.properties.IPropertySheetPage.class) {
-            PropertySheetPage page = new CustomPropertySheetPage();
-            page.setRootEntry(new InstallOptionsPropertySheetEntry(getEditDomain().getCommandStack()));//new CustomPropertySheetEntry((InstallOptionsEditDomain)getEditDomain()));
-            return page;
+            return new CustomTabbedPropertySheetPage(this);
         }
         if (type == EditDomain.class) {
             return getEditDomain();
@@ -1115,56 +1116,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
     protected void createGraphicalViewer(Composite parent)
     {
         mRulerComposite = new InstallOptionsRulerComposite(parent, SWT.NONE);
-        GraphicalViewer viewer = new InstallOptionsGraphicalViewer(mInstallOptionsDialog)/*new ScrollingGraphicalViewer() {
-
-            public void addDropTargetListener(final TransferDropTargetListener listener)
-            {
-                if(listener.getTransfer() instanceof TemplateTransfer) {
-                    super.addDropTargetListener(new TransferDropTargetListener() {
-                        public void dragEnter(DropTargetEvent event)
-                        {
-                            listener.dragEnter(event);
-                        }
-
-                        public void dragLeave(DropTargetEvent event) {
-                            listener.dragLeave(event);
-                        }
-
-                        public void dragOperationChanged(DropTargetEvent event)
-                        {
-                            listener.dragOperationChanged(event);
-                        }
-
-                        public void dragOver(DropTargetEvent event)
-                        {
-                            listener.dragOver(event);
-                        }
-
-                        public void drop(DropTargetEvent event)
-                        {
-                            listener.drop(event);
-                        }
-
-                        public void dropAccept(DropTargetEvent event)
-                        {
-                            listener.dropAccept(event);
-                        }
-
-                        public Transfer getTransfer() {
-                            return InstallOptionsTemplateTransfer.INSTANCE;
-                        }
-
-                        public boolean isEnabled(DropTargetEvent event)
-                        {
-                            return listener.isEnabled(event);
-                        }
-                    });
-                }
-                else {
-                    super.addDropTargetListener(listener);
-                }
-            }
-        }*/;
+        GraphicalViewer viewer = new InstallOptionsGraphicalViewer(mInstallOptionsDialog);
         viewer.createControl(mRulerComposite);
         setGraphicalViewer(viewer);
         configureGraphicalViewer();
@@ -1507,9 +1459,9 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
         }
     }
 
-    private void setInstallOptionsDialog(InstallOptionsDialog diagram)
+    private void setInstallOptionsDialog(InstallOptionsDialog dialog)
     {
-        mInstallOptionsDialog = diagram;
+        mInstallOptionsDialog = dialog;
     }
 
     private void setSavePreviouslyNeeded(boolean value)
@@ -2227,4 +2179,5 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
             }
         }
     }
+
 }

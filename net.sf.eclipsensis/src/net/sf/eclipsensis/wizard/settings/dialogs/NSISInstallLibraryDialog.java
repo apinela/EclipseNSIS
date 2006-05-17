@@ -51,7 +51,6 @@ public class NSISInstallLibraryDialog extends AbstractNSISInstallItemDialog
 
     protected String getHelpContextId()
     {
-        //TODO Fix the help context
         return INSISConstants.PLUGIN_CONTEXT_PREFIX+"nsis_librarydlg_context"; //$NON-NLS-1$
     }
 

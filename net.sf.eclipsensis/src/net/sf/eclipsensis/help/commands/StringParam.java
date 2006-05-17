@@ -10,6 +10,7 @@
 package net.sf.eclipsensis.help.commands;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.VerifyEvent;
@@ -56,7 +57,7 @@ public class StringParam extends SubstitutableParam
 
         public void clear()
         {
-            if(isValid(mText)) {
+            if(Common.isValid(mText)) {
                 mText.setText(""); //$NON-NLS-1$
             }
             super.clear();
@@ -64,7 +65,7 @@ public class StringParam extends SubstitutableParam
 
         protected String getPrefixableParamText()
         {
-            if(isValid(mText)) {
+            if(Common.isValid(mText)) {
                 return mText.getText();
             }
             return null;
@@ -72,7 +73,7 @@ public class StringParam extends SubstitutableParam
 
         protected String validateParam()
         {
-            if(isValid(mText)) {
+            if(Common.isValid(mText)) {
                 return StringParam.this.validateText(mText.getText());
             }
             return null;
@@ -81,7 +82,7 @@ public class StringParam extends SubstitutableParam
         public void saveSettings()
         {
             super.saveSettings();
-            if(isValid(mText) && getSettings() != null) {
+            if(Common.isValid(mText) && getSettings() != null) {
                 getSettings().put(SETTING_TEXT, mText.getText());
             }
         }
@@ -109,7 +110,7 @@ public class StringParam extends SubstitutableParam
         protected void initParamEditor()
         {
             super.initParamEditor();
-            if(isValid(mText)) {
+            if(Common.isValid(mText)) {
                 mText.setText((String)getSettingValue(SETTING_TEXT, String.class, "")); //$NON-NLS-1$
             }
         }

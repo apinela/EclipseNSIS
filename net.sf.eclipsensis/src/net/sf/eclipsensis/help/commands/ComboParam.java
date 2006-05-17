@@ -122,7 +122,7 @@ public abstract class ComboParam extends PrefixableParam
 
         protected String getPrefixableParamText()
         {
-            if(mChoicesViewer != null && isValid(mChoicesViewer.getCombo())) {
+            if(mChoicesViewer != null && Common.isValid(mChoicesViewer.getCombo())) {
                 IStructuredSelection sel = (IStructuredSelection)mChoicesViewer.getSelection();
                 if(!sel.isEmpty()) {
                     return ((ComboEntry)sel.getFirstElement()).getValue();
@@ -137,7 +137,7 @@ public abstract class ComboParam extends PrefixableParam
         public void saveSettings()
         {
             super.saveSettings();
-            if(mChoicesViewer != null && isValid(mChoicesViewer.getCombo()) && getSettings() != null) {
+            if(mChoicesViewer != null && Common.isValid(mChoicesViewer.getCombo()) && getSettings() != null) {
                 IStructuredSelection sel = (IStructuredSelection)mChoicesViewer.getSelection();
                 if(!sel.isEmpty()) {
                     getSettings().put(SETTING_SELECTED, ((ComboEntry)sel.getFirstElement()).getValue());
@@ -161,7 +161,7 @@ public abstract class ComboParam extends PrefixableParam
         {
             super.initParamEditor();
             Combo combo;
-            if(mChoicesViewer != null && isValid(combo = mChoicesViewer.getCombo())) {
+            if(mChoicesViewer != null && Common.isValid(combo = mChoicesViewer.getCombo())) {
                 String selected = (String)getSettingValue(SETTING_SELECTED, String.class, null);
                 ComboEntry entry = null;
                 ComboEntry[] entries = (ComboEntry[])mChoicesViewer.getInput();
@@ -230,14 +230,14 @@ public abstract class ComboParam extends PrefixableParam
         protected void updateState(boolean state)
         {
             super.updateState(state);
-            if(mChoicesViewer != null && isValid(mChoicesViewer.getCombo())) {
+            if(mChoicesViewer != null && Common.isValid(mChoicesViewer.getCombo())) {
                 mChoicesViewer.getCombo().setEnabled(state);
             }
         }
 
         public String validateParam()
         {
-            if(mChoicesViewer != null && isValid(mChoicesViewer.getCombo())) {
+            if(mChoicesViewer != null && Common.isValid(mChoicesViewer.getCombo())) {
                 IStructuredSelection sel = (IStructuredSelection)mChoicesViewer.getSelection();
                 if(!sel.isEmpty()) {
                     return null;

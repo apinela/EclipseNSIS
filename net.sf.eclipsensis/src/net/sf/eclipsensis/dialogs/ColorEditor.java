@@ -22,9 +22,14 @@ public class ColorEditor {
     private Color mColor;
     private Button mButton;
 
-    public ColorEditor(Composite parent) {
+    public ColorEditor(Composite parent) 
+    {
+        this(parent,SWT.NONE);
+    }
 
-        mButton= new Button(parent, SWT.PUSH);
+    public ColorEditor(Composite parent, int style) 
+    {
+        mButton= new Button(parent, style|SWT.PUSH);
         mRect= calculateSize(parent);
         mImage= new Image(parent.getDisplay(), mRect.x, mRect.y);
 

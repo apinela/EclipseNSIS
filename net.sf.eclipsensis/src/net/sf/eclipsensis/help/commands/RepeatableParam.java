@@ -93,9 +93,9 @@ public class RepeatableParam extends NSISParam
         {
             if(editor != null) {
                 Control ctrl = editor.getControl();
-                if(isValid(ctrl)) {
+                if(Common.isValid(ctrl)) {
                     Composite composite = (Composite)ctrl.getData(DATA_PARENT);
-                    if(isValid(composite)) {
+                    if(Common.isValid(composite)) {
                         composite.dispose();
                     }
                 }
@@ -214,7 +214,7 @@ public class RepeatableParam extends NSISParam
                 createChildParamEditor(0,null);
             }
             Composite container = (Composite)getControl();
-            if(isValid(container)) {
+            if(Common.isValid(container)) {
                 for (Iterator iter = mChildParamEditors.iterator(); iter.hasNext();) {
                     INSISParamEditor editor = (INSISParamEditor)iter.next();
                     addEditor(container, editor);
@@ -321,10 +321,10 @@ public class RepeatableParam extends NSISParam
                 INSISParamEditor editor = (INSISParamEditor)mChildParamEditors.get(i);
                 if(editor != null) {
                     Control ctrl = editor.getControl();
-                    if(isValid(ctrl)) {
+                    if(Common.isValid(ctrl)) {
                         Button[] buttons = (Button[])ctrl.getData(DATA_BUTTONS);
                         if(buttons != null && buttons.length == 2) {
-                            if(isValid(buttons[0]) && isValid(buttons[1])) {
+                            if(Common.isValid(buttons[0]) && Common.isValid(buttons[1])) {
                                 if(state) {
                                     buttons[0].setEnabled(i != 0 || (mChildParamEditors.size() > 1));
                                     buttons[1].setEnabled(true);
@@ -346,7 +346,7 @@ public class RepeatableParam extends NSISParam
          */
         private void updateControl(Composite container)
         {
-            if(isValid(container)) {
+            if(Common.isValid(container)) {
 //                container.pack(true);
                 container.layout(true,true);
                 Shell shell = container.getShell();

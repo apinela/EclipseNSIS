@@ -286,7 +286,7 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
                     }
                     if(os != null) {
                         //Startup in progress- overlay the splash screen
-                        String splashFile = System.getProperty("osgi.splashLocation");
+                        String splashFile = System.getProperty("osgi.splashLocation"); //$NON-NLS-1$
                         if(!Common.isEmpty(splashFile)) {
                             File file = new File(splashFile);
                             if(IOUtility.isValidFile(file)) {

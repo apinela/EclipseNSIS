@@ -56,6 +56,11 @@ public class JobScheduler
 
     public void scheduleUIJob(Object family, String name, final IJobStatusRunnable runnable)
     {
+        scheduleUIJob(family, name, runnable, 0L);
+    }
+
+    public void scheduleUIJob(Object family, String name, final IJobStatusRunnable runnable, long delay)
+    {
         final Object jobFamily = (family == null?this:family);
 
         new UIJob(name) {
@@ -69,7 +74,7 @@ public class JobScheduler
                 return jobFamily.equals(family);
             }
 
-        }.schedule();
+        }.schedule(delay);
     }
 
     public void scheduleJob(String name, IJobStatusRunnable runnable)
@@ -78,6 +83,17 @@ public class JobScheduler
     }
 
     public void scheduleJob(Object family, String name, final IJobStatusRunnable runnable)
+    {
+        scheduleJob(family, name, runnable, 0L);
+    }
+
+    /**
+     * @param family
+     * @param name
+     * @param runnable
+     * @param delay
+     */
+    public void scheduleJob(Object family, String name, final IJobStatusRunnable runnable, long delay)
     {
         final Object jobFamily = (family == null?this:family);
 
@@ -92,7 +108,7 @@ public class JobScheduler
                 return jobFamily.equals(family);
             }
 
-        }.schedule();
+        }.schedule(delay);
     }
 
     public void cancelJobs(Object family)

@@ -9,10 +9,15 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.edit.listbox;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.edit.InstallOptionsWidgetEditPart;
 import net.sf.eclipsensis.installoptions.edit.listitems.InstallOptionsListItemsEditPart;
 import net.sf.eclipsensis.installoptions.figures.*;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
+import net.sf.eclipsensis.installoptions.properties.PropertySourceWrapper;
 import net.sf.eclipsensis.installoptions.properties.editors.ListCellEditor;
 
 import org.eclipse.gef.tools.CellEditorLocator;
@@ -33,7 +38,20 @@ public class InstallOptionsListboxEditPart extends InstallOptionsListItemsEditPa
 
     protected IListItemsFigure createListItemsFigure()
     {
-        return new ListFigure((Composite)getViewer().getControl(), getInstallOptionsWidget());
+        return new ListFigure((Composite)getViewer().getControl(), new PropertySourceWrapper(getInstallOptionsWidget()) {
+            public Object getPropertyValue(Object id)
+            {
+                if(InstallOptionsModel.PROPERTY_FLAGS.equals(id)) {
+                    List list = (List)getDelegate().getPropertyValue(id);
+                    if(!list.contains(InstallOptionsModel.FLAGS_VSCROLL)) {
+                        list = new ArrayList(list);
+                        list.add(InstallOptionsModel.FLAGS_VSCROLL);
+                    }
+                    return list;
+                }
+                return super.getPropertyValue(id);
+            }
+        });
     }
 
     protected boolean supportsScrolling()

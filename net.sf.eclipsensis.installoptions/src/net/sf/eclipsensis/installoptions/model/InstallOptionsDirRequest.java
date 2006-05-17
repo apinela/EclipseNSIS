@@ -13,6 +13,8 @@ import java.util.List;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.ini.INISection;
+import net.sf.eclipsensis.installoptions.properties.tabbed.section.DirRequestPropertySectionCreator;
+import net.sf.eclipsensis.installoptions.properties.tabbed.section.IPropertySectionCreator;
 import net.sf.eclipsensis.installoptions.properties.validators.NSISStringLengthValidator;
 
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
@@ -21,6 +23,11 @@ import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 public class InstallOptionsDirRequest extends InstallOptionsPathRequest
 {
     private String mRoot;
+
+    public boolean usesOtherTab()
+    {
+        return false;
+    }
 
     protected InstallOptionsDirRequest(INISection section)
     {
@@ -99,5 +106,10 @@ public class InstallOptionsDirRequest extends InstallOptionsPathRequest
             firePropertyChange(InstallOptionsModel.PROPERTY_ROOT, oldRoot, mRoot);
             setDirty(true);
         }
+    }
+
+    protected IPropertySectionCreator createPropertySectionCreator()
+    {
+        return new DirRequestPropertySectionCreator(this);
     }
 }

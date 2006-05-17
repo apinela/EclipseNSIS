@@ -9,6 +9,8 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.model;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.*;
 import java.util.List;
 
@@ -16,6 +18,8 @@ import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.ini.INISection;
 import net.sf.eclipsensis.installoptions.properties.dialogs.ListItemsDialog;
 import net.sf.eclipsensis.installoptions.properties.labelproviders.ListLabelProvider;
+import net.sf.eclipsensis.installoptions.properties.tabbed.section.IPropertySectionCreator;
+import net.sf.eclipsensis.installoptions.properties.tabbed.section.ListItemsPropertySectionCreator;
 import net.sf.eclipsensis.installoptions.properties.validators.NSISStringLengthValidator;
 import net.sf.eclipsensis.installoptions.util.TypeConverter;
 
@@ -101,10 +105,15 @@ public abstract class InstallOptionsListItems extends InstallOptionsEditableElem
     {
         if(!mListItems.equals(listItems)) {
             List oldListItems = mListItems;
-            mListItems = listItems;
+            mListItems = new ArrayList(listItems);
             firePropertyChange(InstallOptionsModel.PROPERTY_LISTITEMS, oldListItems, mListItems);
             setDirty(true);
         }
+    }
+
+    protected IPropertySectionCreator createPropertySectionCreator()
+    {
+        return new ListItemsPropertySectionCreator(this);
     }
 
     public Object clone()
@@ -112,6 +121,11 @@ public abstract class InstallOptionsListItems extends InstallOptionsEditableElem
         InstallOptionsListItems clone = (InstallOptionsListItems)super.clone();
         clone.setListItems(new ArrayList(mListItems));
         return clone;
+    }
+
+    public boolean isMultiSelect()
+    {
+        return false;
     }
 
     protected class ListItemsPropertyDescriptor extends PropertyDescriptor
@@ -134,11 +148,25 @@ public abstract class InstallOptionsListItems extends InstallOptionsEditableElem
         }
     }
 
-    protected class ListItemsCellEditor extends DialogCellEditor
+    protected class ListItemsCellEditor extends DialogCellEditor implements PropertyChangeListener
     {
         protected ListItemsCellEditor(Composite parent)
         {
             super(parent);
+            InstallOptionsListItems.this.addPropertyChangeListener(this);
+        }
+
+        public void dispose()
+        {
+            InstallOptionsListItems.this.removePropertyChangeListener(this);
+            super.dispose();
+        }
+
+        public void propertyChange(PropertyChangeEvent evt)
+        {
+            if(evt.getPropertyName().equals(InstallOptionsModel.PROPERTY_LISTITEMS)) {
+                setValue(evt.getNewValue());
+            }
         }
 
         protected void updateContents(Object value)

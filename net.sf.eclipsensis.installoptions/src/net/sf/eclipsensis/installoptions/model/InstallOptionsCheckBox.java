@@ -12,11 +12,13 @@ package net.sf.eclipsensis.installoptions.model;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.ini.INISection;
 import net.sf.eclipsensis.installoptions.properties.descriptors.CustomComboBoxPropertyDescriptor;
+import net.sf.eclipsensis.installoptions.properties.tabbed.section.CheckBoxPropertySectionCreator;
+import net.sf.eclipsensis.installoptions.properties.tabbed.section.IPropertySectionCreator;
 import net.sf.eclipsensis.installoptions.properties.validators.NSISStringLengthValidator;
 
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
-public class InstallOptionsCheckBox extends InstallOptionsButton
+public class InstallOptionsCheckBox extends InstallOptionsGenericButton
 {
     private static final int DEFAULT_STATE = 0;
     private static final String[] STATE_DATA = {"",InstallOptionsModel.STATE_UNCHECKED, //$NON-NLS-1$
@@ -62,7 +64,7 @@ public class InstallOptionsCheckBox extends InstallOptionsButton
     /**
      * @return
      */
-    protected int getStateDefault()
+    public int getStateDefault()
     {
         return DEFAULT_STATE;
     }
@@ -70,7 +72,7 @@ public class InstallOptionsCheckBox extends InstallOptionsButton
     /**
      * @return
      */
-    protected String[] getStateDisplay()
+    public String[] getStateDisplay()
     {
         return STATE_DISPLAY;
     }
@@ -78,8 +80,13 @@ public class InstallOptionsCheckBox extends InstallOptionsButton
     /**
      * @return
      */
-    protected String[] getStateData()
+    public String[] getStateData()
     {
         return STATE_DATA;
+    }
+
+    protected IPropertySectionCreator createPropertySectionCreator()
+    {
+        return new CheckBoxPropertySectionCreator(this);
     }
 }

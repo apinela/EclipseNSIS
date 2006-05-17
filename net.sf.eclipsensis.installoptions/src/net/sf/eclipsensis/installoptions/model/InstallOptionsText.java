@@ -15,6 +15,8 @@ import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.ini.INISection;
 import net.sf.eclipsensis.installoptions.properties.descriptors.MultiLineTextPropertyDescriptor;
 import net.sf.eclipsensis.installoptions.properties.labelproviders.MultiLineLabelProvider;
+import net.sf.eclipsensis.installoptions.properties.tabbed.section.IPropertySectionCreator;
+import net.sf.eclipsensis.installoptions.properties.tabbed.section.TextPropertySectionCreator;
 import net.sf.eclipsensis.installoptions.properties.validators.NSISEscapedStringLengthValidator;
 import net.sf.eclipsensis.installoptions.properties.validators.NSISStringLengthValidator;
 import net.sf.eclipsensis.installoptions.util.TypeConverter;
@@ -109,7 +111,7 @@ public class InstallOptionsText extends InstallOptionsEditableElement
     {
         if(name.equals(InstallOptionsModel.PROPERTY_STATE)) {
             String propertyName = InstallOptionsPlugin.getResourceString("state.property.name"); //$NON-NLS-1$
-            MultiLineTextPropertyDescriptor descriptor = new MultiLineTextPropertyDescriptor(InstallOptionsModel.PROPERTY_STATE, propertyName);
+            MultiLineTextPropertyDescriptor descriptor = new MultiLineTextPropertyDescriptor(this, InstallOptionsModel.PROPERTY_STATE, propertyName);
             descriptor.setValidator(new ICellEditorValidator() {
                 ICellEditorValidator mSingleLineValidator = new NSISStringLengthValidator(InstallOptionsModel.PROPERTY_STATE);
                 ICellEditorValidator mMultiLineValidator = new NSISEscapedStringLengthValidator(InstallOptionsModel.PROPERTY_STATE);
@@ -143,5 +145,10 @@ public class InstallOptionsText extends InstallOptionsEditableElement
         else {
             return super.createPropertyDescriptor(name);
         }
+    }
+
+    protected IPropertySectionCreator createPropertySectionCreator()
+    {
+        return new TextPropertySectionCreator(this);
     }
 }

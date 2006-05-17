@@ -10,6 +10,8 @@
 package net.sf.eclipsensis.installoptions.model;
 
 import net.sf.eclipsensis.installoptions.ini.INISection;
+import net.sf.eclipsensis.installoptions.properties.tabbed.section.IPropertySectionCreator;
+import net.sf.eclipsensis.installoptions.properties.tabbed.section.PathRequestPropertySectionCreator;
 
 public abstract class InstallOptionsPathRequest extends InstallOptionsEditableElement
 {
@@ -26,5 +28,10 @@ public abstract class InstallOptionsPathRequest extends InstallOptionsEditableEl
     protected Position getDefaultPosition()
     {
         return new Position(0,0,122,13);
+    }
+
+    protected IPropertySectionCreator createPropertySectionCreator()
+    {
+        return new PathRequestPropertySectionCreator(this);
     }
 }

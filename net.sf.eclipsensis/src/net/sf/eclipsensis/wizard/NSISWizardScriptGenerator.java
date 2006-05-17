@@ -401,7 +401,7 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
                     NSISScriptFunction fn = (NSISScriptFunction)mScript.insertElement(mFunctionsPlaceHolder,new NSISScriptFunction("StartMenuGroupSelect")); //$NON-NLS-1$
                     fn.addElement(new NSISScriptInstruction("Push",getKeyword("$R1"))); //$NON-NLS-1$ //$NON-NLS-2$
                     
-                    String[] args = new String[]{"/autoadd","/text", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                    String[] args = new String[]{"/autoadd","/text", //$NON-NLS-1$ //$NON-NLS-2$ 
                                                 Common.quote(mSettings.isEnableLanguageSupport()?"$(StartMenuPageText)": //$NON-NLS-1$
                                                  EclipseNSISPlugin.getResourceString("scriptgen.start.menu.page.text")), //$NON-NLS-1$
                                                  "/lastused","$StartMenuGroup",mSettings.getStartMenuGroup()}; //$NON-NLS-1$ //$NON-NLS-2$
@@ -410,7 +410,7 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
                                         Common.quote(mSettings.isEnableLanguageSupport()?"$(DisableStartMenuShortcutsText)": //$NON-NLS-1$
                                                     EclipseNSISPlugin.getResourceString("scriptgen.disable.start.menu.shortcuts.text"))}, args}); //$NON-NLS-1$
                     }
-                    fn.addElement(new NSISScriptInstruction("StartMenu::Select",args));
+                    fn.addElement(new NSISScriptInstruction("StartMenu::Select",args)); //$NON-NLS-1$
                     fn.addElement(new NSISScriptInstruction("Pop",getKeyword("$R1"))); //$NON-NLS-1$ //$NON-NLS-2$
                     fn.addElement(new NSISScriptInstruction("StrCmp",new String[]{getKeyword("$R1"),"success","success"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
                     fn.addElement(new NSISScriptInstruction("StrCmp",new String[]{getKeyword("$R1"),"cancel","done"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
@@ -712,15 +712,15 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
             if(mSettings.isCreateStartMenuGroup()) {
                 boolean checkSMGroup = !mIsSilent && mSettings.isChangeStartMenuGroup() && mSettings.isDisableStartMenuShortcuts();
                 if(checkSMGroup) {
-                    unPostSection.addElement(new NSISScriptInstruction("Push",getKeyword("$R0")));
-                    unPostSection.addElement(new NSISScriptInstruction("StrCpy",new String[] {getKeyword("$R0"),"$StartMenuGroup","1"}));
-                    unPostSection.addElement(new NSISScriptInstruction("StrCmp",new String[] {getKeyword("$R0"),Common.quote(">"),"no_smgroup"}));
+                    unPostSection.addElement(new NSISScriptInstruction("Push",getKeyword("$R0"))); //$NON-NLS-1$ //$NON-NLS-2$
+                    unPostSection.addElement(new NSISScriptInstruction("StrCpy",new String[] {getKeyword("$R0"),"$StartMenuGroup","1"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                    unPostSection.addElement(new NSISScriptInstruction("StrCmp",new String[] {getKeyword("$R0"),Common.quote(">"),"no_smgroup"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
                 }
                 unPostSection.addElement(0,new NSISScriptInstruction("RmDir",new String[]{ //$NON-NLS-1$
                         getKeyword("/REBOOTOK"),getKeyword("$SMPROGRAMS")+"\\$StartMenuGroup"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                 if(checkSMGroup) {
-                    unPostSection.addElement(new NSISScriptLabel("no_smgroup"));
-                    unPostSection.addElement(new NSISScriptInstruction("Pop",getKeyword("$R0")));
+                    unPostSection.addElement(new NSISScriptLabel("no_smgroup")); //$NON-NLS-1$
+                    unPostSection.addElement(new NSISScriptInstruction("Pop",getKeyword("$R0"))); //$NON-NLS-1$ //$NON-NLS-2$
                 }
             }
             unPostSection.addElement(0,new NSISScriptInstruction("DeleteRegKey",new String[]{getKeyword("/IfEmpty"), //$NON-NLS-1$ //$NON-NLS-2$
@@ -811,13 +811,13 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
                         EclipseNSISPlugin.getResourceString("scriptgen.uninstall.link"); //$NON-NLS-1$
                     if (!mIsSilent && !mIsMUI && mSettings.isChangeStartMenuGroup() && mSettings.isDisableStartMenuShortcuts()) {
                         addSMGroupShortcutFunctions();
-                        postSection.addElement(new NSISScriptInsertMacro("CREATE_SMGROUP_SHORTCUT", new String[]{name, uninstallFile}));
-                        unPostSection.addElement(0, new NSISScriptInsertMacro("DELETE_SMGROUP_SHORTCUT", name));
+                        postSection.addElement(new NSISScriptInsertMacro("CREATE_SMGROUP_SHORTCUT", new String[]{name, uninstallFile})); //$NON-NLS-1$
+                        unPostSection.addElement(0, new NSISScriptInsertMacro("DELETE_SMGROUP_SHORTCUT", name)); //$NON-NLS-1$
                     }
                     else {
                         postSection.addElement(new NSISScriptInstruction("SetOutPath",getKeyword("$SMPROGRAMS")+"\\$StartMenuGroup")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                         String startMenuLink = Common.quote(new StringBuffer(getKeyword("$SMPROGRAMS")).append("\\$StartMenuGroup\\").append( //$NON-NLS-1$ //$NON-NLS-2$
-                                name).append(".lnk").toString()); //$NON-NLS-1$ //$NON-NLS-2$
+                                name).append(".lnk").toString()); //$NON-NLS-1$ 
                         postSection.addElement(new NSISScriptInstruction("CreateShortcut",new String[]{startMenuLink,uninstallFile})); //$NON-NLS-1$
     
                         unPostSection.addElement(0,new NSISScriptInstruction("Delete",new String[]{getKeyword("/REBOOTOK"),startMenuLink})); //$NON-NLS-1$ //$NON-NLS-2$
@@ -1185,15 +1185,15 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
                     if(shortcut.isCreateInStartMenuGroup()) {
                         if(!mIsSilent && mSettings.isChangeStartMenuGroup() && mSettings.isDisableStartMenuShortcuts()) {
                             addSMGroupShortcutFunctions();
-                            section.addElement(new NSISScriptInsertMacro("CREATE_SMGROUP_SHORTCUT", 
+                            section.addElement(new NSISScriptInsertMacro("CREATE_SMGROUP_SHORTCUT",  //$NON-NLS-1$
                                                                         new String[] {name, path}));
                             if(unSection != null) {
-                                unSection.addElement(0, new NSISScriptInsertMacro("DELETE_SMGROUP_SHORTCUT", 
+                                unSection.addElement(0, new NSISScriptInsertMacro("DELETE_SMGROUP_SHORTCUT",  //$NON-NLS-1$
                                                                                name));
                             }
                             continue;
                         }
-                        location = getKeyword("$SMPROGRAMS")+"\\$StartMenuGroup";
+                        location = getKeyword("$SMPROGRAMS")+"\\$StartMenuGroup"; //$NON-NLS-1$ //$NON-NLS-2$
                     }
                     if(!outdir.equalsIgnoreCase(location)) {
                         outdir = location;
@@ -1381,42 +1381,42 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
     private void addSMGroupShortcutFunctions()
     {
         if(!mCreatedSMGroupShortcutFunctions) {
-            NSISScriptMacro macro = (NSISScriptMacro)mScript.insertElement(mSectionsPlaceHolder, new NSISScriptMacro("CREATE_SMGROUP_SHORTCUT",new String[] {"NAME","PATH"}));
-            macro.addElement(new NSISScriptInstruction("Push","\"${NAME}\""));
-            macro.addElement(new NSISScriptInstruction("Push","\"${PATH}\""));
-            macro.addElement(new NSISScriptInstruction("Call","CreateSMGroupShortcut"));
+            NSISScriptMacro macro = (NSISScriptMacro)mScript.insertElement(mSectionsPlaceHolder, new NSISScriptMacro("CREATE_SMGROUP_SHORTCUT",new String[] {"NAME","PATH"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            macro.addElement(new NSISScriptInstruction("Push","\"${NAME}\"")); //$NON-NLS-1$ //$NON-NLS-2$
+            macro.addElement(new NSISScriptInstruction("Push","\"${PATH}\"")); //$NON-NLS-1$ //$NON-NLS-2$
+            macro.addElement(new NSISScriptInstruction("Call","CreateSMGroupShortcut")); //$NON-NLS-1$ //$NON-NLS-2$
             mScript.insertElement(mSectionsPlaceHolder,new NSISScriptBlankLine());
-            NSISScriptFunction function = (NSISScriptFunction)mScript.insertElement(mFunctionsPlaceHolder, new NSISScriptFunction("CreateSMGroupShortcut"));
-            function.addElement(new NSISScriptInstruction("Exch",new String[] {getKeyword("$R0"),";PATH"}));
-            function.addElement(new NSISScriptInstruction("Exch"));
-            function.addElement(new NSISScriptInstruction("Exch",new String[] {getKeyword("$R1"),";NAME"}));
-            function.addElement(new NSISScriptInstruction("Push",getKeyword("$R2")));
-            function.addElement(new NSISScriptInstruction("StrCpy",new String[] {getKeyword("$R2"),"$StartMenuGroup","1"}));
-            function.addElement(new NSISScriptInstruction("StrCmp",new String[] {getKeyword("$R2"),Common.quote(">"),"no_smgroup"}));
+            NSISScriptFunction function = (NSISScriptFunction)mScript.insertElement(mFunctionsPlaceHolder, new NSISScriptFunction("CreateSMGroupShortcut")); //$NON-NLS-1$
+            function.addElement(new NSISScriptInstruction("Exch",new String[] {getKeyword("$R0"),";PATH"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            function.addElement(new NSISScriptInstruction("Exch")); //$NON-NLS-1$
+            function.addElement(new NSISScriptInstruction("Exch",new String[] {getKeyword("$R1"),";NAME"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            function.addElement(new NSISScriptInstruction("Push",getKeyword("$R2"))); //$NON-NLS-1$ //$NON-NLS-2$
+            function.addElement(new NSISScriptInstruction("StrCpy",new String[] {getKeyword("$R2"),"$StartMenuGroup","1"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+            function.addElement(new NSISScriptInstruction("StrCmp",new String[] {getKeyword("$R2"),Common.quote(">"),"no_smgroup"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
             function.addElement(new NSISScriptInstruction("SetOutPath",getKeyword("$SMPROGRAMS")+"\\$StartMenuGroup")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             String startMenuLink = Common.quote(new StringBuffer(getKeyword("$SMPROGRAMS")).append("\\$StartMenuGroup\\").append( //$NON-NLS-1$ //$NON-NLS-2$
                     getKeyword("$R1")).append(".lnk").toString()); //$NON-NLS-1$ //$NON-NLS-2$
             function.addElement(new NSISScriptInstruction("CreateShortcut",new String[]{startMenuLink,getKeyword("$R0")})); //$NON-NLS-1$ //$NON-NLS-2$
-            function.addElement(new NSISScriptLabel("no_smgroup"));
-            function.addElement(new NSISScriptInstruction("Pop",getKeyword("$R2")));
-            function.addElement(new NSISScriptInstruction("Pop",getKeyword("$R1")));
-            function.addElement(new NSISScriptInstruction("Pop",getKeyword("$R0")));
+            function.addElement(new NSISScriptLabel("no_smgroup")); //$NON-NLS-1$
+            function.addElement(new NSISScriptInstruction("Pop",getKeyword("$R2"))); //$NON-NLS-1$ //$NON-NLS-2$
+            function.addElement(new NSISScriptInstruction("Pop",getKeyword("$R1"))); //$NON-NLS-1$ //$NON-NLS-2$
+            function.addElement(new NSISScriptInstruction("Pop",getKeyword("$R0"))); //$NON-NLS-1$ //$NON-NLS-2$
             mScript.insertElement(mFunctionsPlaceHolder,new NSISScriptBlankLine());
             
             if(mUnfunctionsPlaceHolder != null) {
-                macro = (NSISScriptMacro)mScript.insertElement(mUnsectionsPlaceHolder, new NSISScriptMacro("DELETE_SMGROUP_SHORTCUT",new String[] {"NAME"}));
-                macro.addElement(new NSISScriptInstruction("Push","\"${NAME}\""));
-                macro.addElement(new NSISScriptInstruction("Call","un.DeleteSMGroupShortcut"));
+                macro = (NSISScriptMacro)mScript.insertElement(mUnsectionsPlaceHolder, new NSISScriptMacro("DELETE_SMGROUP_SHORTCUT",new String[] {"NAME"})); //$NON-NLS-1$ //$NON-NLS-2$
+                macro.addElement(new NSISScriptInstruction("Push","\"${NAME}\"")); //$NON-NLS-1$ //$NON-NLS-2$
+                macro.addElement(new NSISScriptInstruction("Call","un.DeleteSMGroupShortcut")); //$NON-NLS-1$ //$NON-NLS-2$
                 mScript.insertElement(mUnsectionsPlaceHolder,new NSISScriptBlankLine());
-                function = (NSISScriptFunction)mScript.insertElement(mUnfunctionsPlaceHolder, new NSISScriptFunction("un.DeleteSMGroupShortcut"));
-                function.addElement(new NSISScriptInstruction("Exch",new String[] {getKeyword("$R1"),";NAME"}));
-                function.addElement(new NSISScriptInstruction("Push",getKeyword("$R2")));
-                function.addElement(new NSISScriptInstruction("StrCpy",new String[] {getKeyword("$R2"),"$StartMenuGroup","1"}));
-                function.addElement(new NSISScriptInstruction("StrCmp",new String[] {getKeyword("$R2"),Common.quote(">"),"no_smgroup"}));
+                function = (NSISScriptFunction)mScript.insertElement(mUnfunctionsPlaceHolder, new NSISScriptFunction("un.DeleteSMGroupShortcut")); //$NON-NLS-1$
+                function.addElement(new NSISScriptInstruction("Exch",new String[] {getKeyword("$R1"),";NAME"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                function.addElement(new NSISScriptInstruction("Push",getKeyword("$R2"))); //$NON-NLS-1$ //$NON-NLS-2$
+                function.addElement(new NSISScriptInstruction("StrCpy",new String[] {getKeyword("$R2"),"$StartMenuGroup","1"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                function.addElement(new NSISScriptInstruction("StrCmp",new String[] {getKeyword("$R2"),Common.quote(">"),"no_smgroup"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
                 function.addElement(new NSISScriptInstruction("Delete",new String[]{getKeyword("/REBOOTOK"),startMenuLink})); //$NON-NLS-1$ //$NON-NLS-2$
-                function.addElement(new NSISScriptLabel("no_smgroup"));
-                function.addElement(new NSISScriptInstruction("Pop",getKeyword("$R2")));
-                function.addElement(new NSISScriptInstruction("Pop",getKeyword("$R1")));
+                function.addElement(new NSISScriptLabel("no_smgroup")); //$NON-NLS-1$
+                function.addElement(new NSISScriptInstruction("Pop",getKeyword("$R2"))); //$NON-NLS-1$ //$NON-NLS-2$
+                function.addElement(new NSISScriptInstruction("Pop",getKeyword("$R1"))); //$NON-NLS-1$ //$NON-NLS-2$
                 mScript.insertElement(mUnfunctionsPlaceHolder,new NSISScriptBlankLine());
             }
             mCreatedSMGroupShortcutFunctions = true;

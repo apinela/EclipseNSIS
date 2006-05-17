@@ -54,7 +54,7 @@ public class MessageBoxOptionsParam extends NSISParam
             resetCombo(mDefaultCombo);
             if(!Common.isEmptyArray(mOthersButtons)) {
                 for (int i = 0; i < mOthersButtons.length; i++) {
-                    if(isValid(mOthersButtons[i])) {
+                    if(Common.isValid(mOthersButtons[i])) {
                         mOthersButtons[i].setSelection(false);
                     }
                 }
@@ -64,7 +64,7 @@ public class MessageBoxOptionsParam extends NSISParam
         
         private void resetCombo(Combo combo)
         {
-            if(isValid(combo)) {
+            if(Common.isValid(combo)) {
                 combo.clearSelection();
             }
         }
@@ -78,18 +78,18 @@ public class MessageBoxOptionsParam extends NSISParam
         {
             StringBuffer buf2 = new StringBuffer(""); //$NON-NLS-1$
             buf.append(" "); //$NON-NLS-1$
-            if(isValid(mButtonsCombo)) {
+            if(Common.isValid(mButtonsCombo)) {
                 appendOptionText(buf2,mButtonsCombo.getText());
             }
-            if(isValid(mIconCombo)) {
+            if(Common.isValid(mIconCombo)) {
                 appendOptionText(buf2,mIconCombo.getText());
             }
-            if(isValid(mDefaultCombo)) {
+            if(Common.isValid(mDefaultCombo)) {
                 appendOptionText(buf2,mDefaultCombo.getText());
             }
             if(!Common.isEmptyArray(mOthersButtons)) {
                 for (int i = 0; i < mOthersButtons.length; i++) {
-                    if(isValid(mOthersButtons[i]) && mOthersButtons[i].getSelection()) {
+                    if(Common.isValid(mOthersButtons[i]) && mOthersButtons[i].getSelection()) {
                         appendOptionText(buf2, mOthersButtons[i].getText());
                     }
                 }
@@ -111,18 +111,18 @@ public class MessageBoxOptionsParam extends NSISParam
         {
             super.saveSettings();
             if(getSettings() != null) {
-                if(isValid(mButtonsCombo)) {
+                if(Common.isValid(mButtonsCombo)) {
                     getSettings().put(SETTING_BUTTONS, mButtonsCombo.getText());
                 }
-                if(isValid(mIconCombo)) {
+                if(Common.isValid(mIconCombo)) {
                     getSettings().put(SETTING_ICON, mIconCombo.getText());
                 }
-                if(isValid(mDefaultCombo)) {
+                if(Common.isValid(mDefaultCombo)) {
                     getSettings().put(SETTING_DEFAULT, mDefaultCombo.getText());
                 }
                 if(!Common.isEmptyArray(mOthersButtons)) {
                     for (int i = 0; i < mOthersButtons.length; i++) {
-                        if(isValid(mOthersButtons[i])) {
+                        if(Common.isValid(mOthersButtons[i])) {
                             getSettings().put(mOthersButtons[i].getText(), Boolean.valueOf(mOthersButtons[i].getSelection()));
                         }
                     }
@@ -163,7 +163,7 @@ public class MessageBoxOptionsParam extends NSISParam
             initCombo(mDefaultCombo, SETTING_DEFAULT);
             if(!Common.isEmptyArray(mOthersButtons)) {
                 for (int i = 0; i < mOthersButtons.length; i++) {
-                    if(isValid(mOthersButtons[i])) {
+                    if(Common.isValid(mOthersButtons[i])) {
                         mOthersButtons[i].setSelection(((Boolean)getSettingValue(mOthersButtons[i].getText(), Boolean.class, Boolean.FALSE)).booleanValue());
                     }
                 }
@@ -175,7 +175,7 @@ public class MessageBoxOptionsParam extends NSISParam
          */
         private void initCombo(Combo combo, String setting)
         {
-            if(isValid(combo)) {
+            if(Common.isValid(combo)) {
                 String selected = (String)getSettingValue(setting, String.class, null);
                 int count = combo.getItemCount();
                 for(int i=0; i<count; i++) {

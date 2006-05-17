@@ -10,8 +10,9 @@
 package net.sf.eclipsensis.installoptions.edit;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
-import net.sf.eclipsensis.installoptions.model.*;
-import net.sf.eclipsensis.util.WinAPI;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsModelTypeDef;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsWidget;
+import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.gef.tools.CellEditorLocator;
@@ -57,7 +58,7 @@ public abstract class InstallOptionsDirectEditManager extends DirectEditManager
         IPropertyDescriptor descriptor = control.getPropertyDescriptor(getDirectEditProperty());
         if(descriptor instanceof PropertyDescriptor) {
             try {
-                ICellEditorValidator validator = (ICellEditorValidator)WinAPI.GetObjectFieldValue(descriptor, "validator", "Lorg/eclipse/jface/viewers/ICellEditorValidator;"); //$NON-NLS-1$ //$NON-NLS-2$
+                ICellEditorValidator validator = (ICellEditorValidator)Common.getObjectFieldValue(descriptor, "validator", ICellEditorValidator.class); //$NON-NLS-1$
                 if (validator != null) {
                     getCellEditor().setValidator(validator);
                 }

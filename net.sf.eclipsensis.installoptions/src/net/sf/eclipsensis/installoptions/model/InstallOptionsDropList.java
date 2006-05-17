@@ -12,10 +12,8 @@ package net.sf.eclipsensis.installoptions.model;
 import java.util.List;
 
 import net.sf.eclipsensis.installoptions.ini.INISection;
+import net.sf.eclipsensis.util.CaseInsensitiveSet;
 import net.sf.eclipsensis.util.Common;
-
-import org.eclipse.swt.SWT;
-import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
 public class InstallOptionsDropList extends InstallOptionsCombobox
 {
@@ -29,21 +27,16 @@ public class InstallOptionsDropList extends InstallOptionsCombobox
         return InstallOptionsModel.TYPE_DROPLIST;
     }
 
-    protected IPropertyDescriptor createPropertyDescriptor(String name)
+    protected boolean isStateReadOnly()
     {
-        if(name.equals(InstallOptionsModel.PROPERTY_STATE)) {
-            ComboStatePropertyDescriptor descriptor = (ComboStatePropertyDescriptor)super.createPropertyDescriptor(name);
-            descriptor.setStyle(SWT.READ_ONLY);
-            return descriptor;
-        }
-        return super.createPropertyDescriptor(name);
+        return true;
     }
 
     public void setListItems(List listItems)
     {
         super.setListItems(listItems);
         String oldState = getState();
-        String newState = (!getListItems().contains(oldState)?"":oldState); //$NON-NLS-1$
+        String newState = (!new CaseInsensitiveSet(getListItems()).contains(oldState)?"":oldState); //$NON-NLS-1$
         if(!Common.stringsAreEqual(oldState,newState)) {
             fireModelCommand(createSetPropertyCommand(InstallOptionsModel.PROPERTY_STATE,newState));
         }

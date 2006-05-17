@@ -13,6 +13,8 @@ import java.util.List;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.ini.INISection;
+import net.sf.eclipsensis.installoptions.properties.tabbed.section.IPropertySectionCreator;
+import net.sf.eclipsensis.installoptions.properties.tabbed.section.UneditableElementPropertySectionCreator;
 import net.sf.eclipsensis.installoptions.properties.validators.NSISStringLengthValidator;
 
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
@@ -108,5 +110,10 @@ public abstract class InstallOptionsUneditableElement extends InstallOptionsWidg
     protected String getDefaultText()
     {
         return ""; //$NON-NLS-1$
+    }
+
+    protected IPropertySectionCreator createPropertySectionCreator()
+    {
+        return new UneditableElementPropertySectionCreator(this);
     }
 }

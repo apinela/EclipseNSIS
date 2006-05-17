@@ -82,4 +82,20 @@ public class FileFilter implements Cloneable
     {
         return Common.flatten(mPatterns,InstallOptionsFileRequest.FILTER_SEPARATOR);
     }
+
+    public int hashCode()
+    {
+        return toString().hashCode();
+    }
+
+    public boolean equals(Object obj)
+    {
+        if (this != obj) {
+            if (obj instanceof FileFilter) {
+                return toString().equals(obj.toString());
+            }
+            return false;
+        }
+        return true;
+    }
 }

@@ -46,11 +46,7 @@ public class FileFilterDialog extends Dialog
     {
         super(parentShell);
         setShellStyle(getShellStyle()|SWT.RESIZE);
-        mFilter = new ArrayList();
-        for(Iterator iter = filter.iterator(); iter.hasNext(); ) {
-            FileFilter f = (FileFilter)iter.next();
-            mFilter.add(new FileFilter(f));
-        }
+        mFilter = (List)InstallOptionsFileRequest.FILEFILTER_LIST_CONVERTER.makeCopy(filter);
     }
 
     public ICellEditorValidator getValidator()
@@ -94,40 +90,40 @@ public class FileFilterDialog extends Dialog
         GridLayout layout;
         Composite composite = (Composite)super.createDialogArea(parent);
 
-        final Group group1 = new Group(composite,SWT.SHADOW_ETCHED_IN);
-        group1.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true));
-        group1.setLayout(new GridLayout(2, false));
-        group1.setText(InstallOptionsPlugin.getResourceString("filter.summary.group.name")); //$NON-NLS-1$
-        Table table = new Table(group1,SWT.BORDER|SWT.MULTI|SWT.FULL_SELECTION);
-        table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-        table.setLinesVisible(true);
-        table.setHeaderVisible(true);
+        final Group summaryGroup = new Group(composite,SWT.SHADOW_ETCHED_IN);
+        summaryGroup.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true));
+        summaryGroup.setLayout(new GridLayout(2, false));
+        summaryGroup.setText(InstallOptionsPlugin.getResourceString("filter.summary.group.name")); //$NON-NLS-1$
+        Table summaryTable = new Table(summaryGroup,SWT.BORDER|SWT.MULTI|SWT.FULL_SELECTION);
+        summaryTable.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+        summaryTable.setLinesVisible(true);
+        summaryTable.setHeaderVisible(true);
 
         TableColumn[] columns = new TableColumn[2];
-        columns[0] = new TableColumn(table,SWT.LEFT);
+        columns[0] = new TableColumn(summaryTable,SWT.LEFT);
         columns[0].setText(InstallOptionsPlugin.getResourceString("filter.description")); //$NON-NLS-1$
-        columns[1] = new TableColumn(table,SWT.LEFT);
+        columns[1] = new TableColumn(summaryTable,SWT.LEFT);
         columns[1].setText(InstallOptionsPlugin.getResourceString("filter.patterns")); //$NON-NLS-1$
-        table.addControlListener(new TableResizer());
+        summaryTable.addControlListener(new TableResizer());
 
-        final TableViewer viewer1 = new TableViewer(table);
-        viewer1.setContentProvider(new CollectionContentProvider());
-        viewer1.setLabelProvider(new FileFilterLabelProvider());
+        final TableViewer summaryViewer = new TableViewer(summaryTable);
+        summaryViewer.setContentProvider(new CollectionContentProvider());
+        summaryViewer.setLabelProvider(new FileFilterLabelProvider());
 
-        final Composite buttons = new Composite(group1,SWT.NONE);
-        buttons.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false));
+        final Composite summaryButtons = new Composite(summaryGroup,SWT.NONE);
+        summaryButtons.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false));
         layout= new GridLayout();
         layout.marginHeight= 0;
         layout.marginWidth= 0;
-        buttons.setLayout(layout);
+        summaryButtons.setLayout(layout);
 
-        final Button add = new Button(buttons,SWT.PUSH);
-        add.setImage(CommonImages.ADD_ICON);
-        add.setToolTipText(EclipseNSISPlugin.getResourceString("new.tooltip")); //$NON-NLS-1$
-        add.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-        add.addListener(SWT.Selection, new Listener() {
+        final Button summaryAdd = new Button(summaryButtons,SWT.PUSH);
+        summaryAdd.setImage(CommonImages.ADD_ICON);
+        summaryAdd.setToolTipText(EclipseNSISPlugin.getResourceString("new.tooltip")); //$NON-NLS-1$
+        summaryAdd.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+        summaryAdd.addListener(SWT.Selection, new Listener() {
             public void handleEvent(Event e) {
-                List list = (List)viewer1.getInput();
+                List list = (List)summaryViewer.getInput();
                 if(list != null) {
                     String desc = InstallOptionsPlugin.getFormattedString("default.filter.description",new Object[]{""}).trim(); //$NON-NLS-1$ //$NON-NLS-2$
                     int counter = 1;
@@ -142,34 +138,34 @@ public class FileFilterDialog extends Dialog
                     }
                     FileFilter f = new FileFilter(desc, new FilePattern[]{new FilePattern(InstallOptionsPlugin.getResourceString("default.filter.pattern"))}); //$NON-NLS-1$
                     list.add(f);
-                    viewer1.refresh(false);
-                    viewer1.setSelection(new StructuredSelection(f));
+                    summaryViewer.refresh(false);
+                    summaryViewer.setSelection(new StructuredSelection(f));
 
                 }
             }
         });
 
-        final Button del = new Button(buttons, SWT.PUSH);
-        del.setImage(CommonImages.DELETE_ICON);
-        del.setToolTipText(EclipseNSISPlugin.getResourceString("remove.tooltip")); //$NON-NLS-1$
-        del.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-        del.addListener(SWT.Selection, new Listener() {
+        final Button summaryDel = new Button(summaryButtons, SWT.PUSH);
+        summaryDel.setImage(CommonImages.DELETE_ICON);
+        summaryDel.setToolTipText(EclipseNSISPlugin.getResourceString("remove.tooltip")); //$NON-NLS-1$
+        summaryDel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+        summaryDel.addListener(SWT.Selection, new Listener() {
             public void handleEvent(Event e) {
-                List list = (List)viewer1.getInput();
+                List list = (List)summaryViewer.getInput();
                 if(list != null) {
-                    IStructuredSelection selection= (IStructuredSelection) viewer1.getSelection();
+                    IStructuredSelection selection= (IStructuredSelection) summaryViewer.getSelection();
                     if(!selection.isEmpty()) {
                         for(Iterator iter=selection.toList().iterator(); iter.hasNext(); ) {
                             list.remove(iter.next());
                         }
-                        viewer1.refresh(false);
+                        summaryViewer.refresh(false);
                     }
                 }
             }
         });
-        del.setEnabled(!viewer1.getSelection().isEmpty());
+        summaryDel.setEnabled(!summaryViewer.getSelection().isEmpty());
 
-        final TableViewerUpDownMover mover = new TableViewerUpDownMover() {
+        final TableViewerUpDownMover summaryMover = new TableViewerUpDownMover() {
             protected List getAllElements()
             {
                 return (List)((TableViewer)getViewer()).getInput();
@@ -181,88 +177,88 @@ public class FileFilterDialog extends Dialog
                 ((List)input).addAll(elements);
             }
         };
-        mover.setViewer(viewer1);
+        summaryMover.setViewer(summaryViewer);
 
-        final Button up = new Button(buttons,SWT.PUSH);
-        up.setImage(CommonImages.UP_ICON);
-        up.setToolTipText(EclipseNSISPlugin.getResourceString("up.tooltip")); //$NON-NLS-1$
-        up.setEnabled(mover.canMoveUp());
-        up.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-        up.addSelectionListener(new SelectionAdapter() {
+        final Button summaryUp = new Button(summaryButtons,SWT.PUSH);
+        summaryUp.setImage(CommonImages.UP_ICON);
+        summaryUp.setToolTipText(EclipseNSISPlugin.getResourceString("up.tooltip")); //$NON-NLS-1$
+        summaryUp.setEnabled(summaryMover.canMoveUp());
+        summaryUp.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+        summaryUp.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e)
             {
-                mover.moveUp();
+                summaryMover.moveUp();
             }
         });
 
-        final Button down = new Button(buttons, SWT.PUSH);
-        down.setImage(CommonImages.DOWN_ICON);
-        down.setToolTipText(EclipseNSISPlugin.getResourceString("down.tooltip")); //$NON-NLS-1$
-        down.setEnabled(mover.canMoveDown());
-        down.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-        down.addSelectionListener(new SelectionAdapter() {
+        final Button summaryDown = new Button(summaryButtons, SWT.PUSH);
+        summaryDown.setImage(CommonImages.DOWN_ICON);
+        summaryDown.setToolTipText(EclipseNSISPlugin.getResourceString("down.tooltip")); //$NON-NLS-1$
+        summaryDown.setEnabled(summaryMover.canMoveDown());
+        summaryDown.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+        summaryDown.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e)
             {
-                mover.moveDown();
+                summaryMover.moveDown();
             }
         });
 
-        final Group group2 = new Group(composite,SWT.SHADOW_ETCHED_IN);
-        group2.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true));
-        group2.setLayout(new GridLayout(1, false));
-        group2.setText(InstallOptionsPlugin.getResourceString("filter.detail.group.name")); //$NON-NLS-1$
+        final Group detailsGroup = new Group(composite,SWT.SHADOW_ETCHED_IN);
+        detailsGroup.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true));
+        detailsGroup.setLayout(new GridLayout(1, false));
+        detailsGroup.setText(InstallOptionsPlugin.getResourceString("filter.detail.group.name")); //$NON-NLS-1$
 
         boolean isNull = (mCurrent==null);
-        Composite composite2 = new Composite(group2,SWT.NONE);
-        composite2.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+        Composite detailsComposite = new Composite(detailsGroup,SWT.NONE);
+        detailsComposite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         layout = new GridLayout(2,false);
         layout.marginHeight = 0;
         layout.marginWidth = 0;
-        composite2.setLayout(layout);
+        detailsComposite.setLayout(layout);
 
-        final Label label = new Label(composite2,SWT.NONE);
-        label.setText(InstallOptionsPlugin.getResourceString("filter.description")); //$NON-NLS-1$
-        label.setLayoutData(new GridData());
-        label.setEnabled(!isNull);
+        final Label descriptionLabel = new Label(detailsComposite,SWT.NONE);
+        descriptionLabel.setText(InstallOptionsPlugin.getResourceString("filter.description")); //$NON-NLS-1$
+        descriptionLabel.setLayoutData(new GridData());
+        descriptionLabel.setEnabled(!isNull);
 
-        final Text text = new Text(composite2,SWT.BORDER);
-        text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-        text.addModifyListener(new ModifyListener() {
+        final Text descriptionText = new Text(detailsComposite,SWT.BORDER);
+        descriptionText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+        descriptionText.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e)
             {
                 if(mCurrent != null) {
-                    mCurrent.setDescription(text.getText());
-                    viewer1.update(mCurrent,null);
+                    mCurrent.setDescription(descriptionText.getText());
+                    summaryViewer.update(mCurrent,null);
                 }
             }
         });
-        text.setEnabled(!isNull);
+        descriptionText.setEnabled(!isNull);
 
-        final Label label2 = new Label(group2,SWT.NONE);
-        label2.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-        label2.setText(InstallOptionsPlugin.getResourceString("filter.patterns")); //$NON-NLS-1$
-        label2.setEnabled(!isNull);
+        final Label patternsLabel = new Label(detailsGroup,SWT.NONE);
+        patternsLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+        patternsLabel.setText(InstallOptionsPlugin.getResourceString("filter.patterns")); //$NON-NLS-1$
+        patternsLabel.setEnabled(!isNull);
 
-        composite2 = new Composite(group2,SWT.NONE);
-        composite2.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+        detailsComposite = new Composite(detailsGroup,SWT.NONE);
+        detailsComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         layout = new GridLayout(2,false);
         layout.marginHeight = 0;
         layout.marginWidth = 0;
-        composite2.setLayout(layout);
+        detailsComposite.setLayout(layout);
 
-        final Table table2 = new Table(composite2,SWT.BORDER|SWT.MULTI|SWT.FULL_SELECTION);
-        table2.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-        table2.setLinesVisible(true);
-        table2.setEnabled(!isNull);
-        new TableColumn(table2,SWT.LEFT);
-        final TextCellEditor textEditor = new TextCellEditor(table2);
+        final Table patternsTable = new Table(detailsComposite,SWT.BORDER|SWT.MULTI|SWT.FULL_SELECTION);
+        patternsTable.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+        patternsTable.setLinesVisible(true);
+        patternsTable.setEnabled(!isNull);
+        new TableColumn(patternsTable,SWT.LEFT);
+        final TextCellEditor textEditor = new TextCellEditor(patternsTable);
         ((Text) textEditor.getControl()).addVerifyListener(new VerifyListener() {
             public void verifyText(VerifyEvent e) {
                 e.doit = e.text.indexOf(IInstallOptionsConstants.LIST_SEPARATOR) < 0 && e.text.indexOf(InstallOptionsFileRequest.FILTER_SEPARATOR) < 0;
 
             }
         });
-        table2.addControlListener(new TableResizer());
+        patternsTable.addControlListener(new TableResizer());
 
         textEditor.setValidator(new ICellEditorValidator(){
             public String isValid(Object value)
@@ -276,12 +272,12 @@ public class FileFilterDialog extends Dialog
             }
         });
 
-        final TableViewer viewer2 = new TableViewer(table2);
-        viewer2.setColumnProperties(new String[]{"pattern"}); //$NON-NLS-1$
-        viewer2.setContentProvider(new ArrayContentProvider());
-        viewer2.setLabelProvider(new LabelProvider());
-        viewer2.setCellEditors(new CellEditor[]{textEditor});
-        viewer2.setCellModifier(new ICellModifier(){
+        final TableViewer patternsViewer = new TableViewer(patternsTable);
+        patternsViewer.setColumnProperties(new String[]{"pattern"}); //$NON-NLS-1$
+        patternsViewer.setContentProvider(new ArrayContentProvider());
+        patternsViewer.setLabelProvider(new LabelProvider());
+        patternsViewer.setCellEditors(new CellEditor[]{textEditor});
+        patternsViewer.setCellModifier(new ICellModifier(){
             public boolean canModify(Object element, String property)
             {
                 return true;
@@ -300,51 +296,51 @@ public class FileFilterDialog extends Dialog
                 else {
                     FilePattern pattern = (FilePattern)((TableItem)element).getData();
                     pattern.setPattern((String)value);
-                    viewer2.update(pattern,null);
-                    viewer1.update(mCurrent,null);
+                    patternsViewer.update(pattern,null);
+                    summaryViewer.update(mCurrent,null);
                 }
             }
         });
 
-        final Composite buttons2 = new Composite(composite2,SWT.NONE);
-        buttons2.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false));
+        final Composite patternsButtons = new Composite(detailsComposite,SWT.NONE);
+        patternsButtons.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false));
         layout= new GridLayout();
         layout.marginHeight= 0;
         layout.marginWidth= 0;
-        buttons2.setLayout(layout);
+        patternsButtons.setLayout(layout);
 
-        final Button add2 = new Button(buttons2,SWT.PUSH);
-        add2.setImage(CommonImages.ADD_ICON);
-        add2.setToolTipText(EclipseNSISPlugin.getResourceString("new.tooltip")); //$NON-NLS-1$
-        add2.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-        add2.addListener(SWT.Selection, new Listener() {
+        final Button patternsAdd = new Button(patternsButtons,SWT.PUSH);
+        patternsAdd.setImage(CommonImages.ADD_ICON);
+        patternsAdd.setToolTipText(EclipseNSISPlugin.getResourceString("new.tooltip")); //$NON-NLS-1$
+        patternsAdd.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+        patternsAdd.addListener(SWT.Selection, new Listener() {
             public void handleEvent(Event e) {
                 if(mCurrent != null) {
-                    FilePattern[] patterns = (FilePattern[])viewer2.getInput();
+                    FilePattern[] patterns = (FilePattern[])patternsViewer.getInput();
                     patterns = (FilePattern[])Common.resizeArray(patterns,patterns.length+1);
                     String filter = InstallOptionsPlugin.getResourceString("default.filter.pattern"); //$NON-NLS-1$
                     patterns[patterns.length-1] = new FilePattern(filter);
                     mCurrent.setPatterns(patterns);
-                    viewer2.setInput(patterns);
-                    viewer2.setSelection(new StructuredSelection(patterns[patterns.length-1]));
-                    viewer1.update(mCurrent,null);
-                    viewer2.editElement(patterns[patterns.length-1],0);
+                    patternsViewer.setInput(patterns);
+                    patternsViewer.setSelection(new StructuredSelection(patterns[patterns.length-1]));
+                    summaryViewer.update(mCurrent,null);
+                    patternsViewer.editElement(patterns[patterns.length-1],0);
                     ((Text)textEditor.getControl()).setSelection(filter.length());
                 }
             }
         });
-        add2.setEnabled(!isNull);
+        patternsAdd.setEnabled(!isNull);
 
-        final Button del2 = new Button(buttons2, SWT.PUSH);
-        del2.setImage(CommonImages.DELETE_ICON);
-        del2.setToolTipText(EclipseNSISPlugin.getResourceString("remove.tooltip")); //$NON-NLS-1$
-        del2.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-        del2.addListener(SWT.Selection, new Listener() {
+        final Button patternsDel = new Button(patternsButtons, SWT.PUSH);
+        patternsDel.setImage(CommonImages.DELETE_ICON);
+        patternsDel.setToolTipText(EclipseNSISPlugin.getResourceString("remove.tooltip")); //$NON-NLS-1$
+        patternsDel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+        patternsDel.addListener(SWT.Selection, new Listener() {
             public void handleEvent(Event e)
             {
                 if(mCurrent != null) {
-                    FilePattern[] patterns = (FilePattern[])viewer2.getInput();
-                    int[] indices = table2.getSelectionIndices();
+                    FilePattern[] patterns = (FilePattern[])patternsViewer.getInput();
+                    int[] indices = patternsTable.getSelectionIndices();
                     FilePattern[] patterns2 = (FilePattern[])Common.resizeArray(patterns, patterns.length-indices.length);
                     int j=0;
                     int k=0;
@@ -357,17 +353,17 @@ public class FileFilterDialog extends Dialog
                         }
                     }
                     mCurrent.setPatterns(patterns2);
-                    viewer2.setInput(patterns2);
-                    viewer1.update(mCurrent,null);
+                    patternsViewer.setInput(patterns2);
+                    summaryViewer.update(mCurrent,null);
                 }
             }
         });
-        IStructuredSelection sel = (IStructuredSelection)viewer2.getSelection();
-        FilePattern[] patterns = (FilePattern[])viewer2.getInput();
+        IStructuredSelection sel = (IStructuredSelection)patternsViewer.getSelection();
+        FilePattern[] patterns = (FilePattern[])patternsViewer.getInput();
         int len = (Common.isEmptyArray(patterns)?0:patterns.length);
-        del2.setEnabled(!isNull && !sel.isEmpty() && sel.size() != len && len > 1);
+        patternsDel.setEnabled(!isNull && !sel.isEmpty() && sel.size() != len && len > 1);
 
-        final TableViewerUpDownMover mover2 = new TableViewerUpDownMover() {
+        final TableViewerUpDownMover patternsMover = new TableViewerUpDownMover() {
             protected List getAllElements()
             {
                 if(mCurrent != null) {
@@ -383,56 +379,56 @@ public class FileFilterDialog extends Dialog
                     for (int i = 0; i < patterns.length; i++) {
                         patterns[i] = (FilePattern)elements.get(i);
                     }
-                    viewer2.refresh();
-                    viewer1.update(mCurrent,null);
+                    patternsViewer.refresh();
+                    summaryViewer.update(mCurrent,null);
                 }
             }
         };
-        mover2.setViewer(viewer2);
+        patternsMover.setViewer(patternsViewer);
 
-        final Button up2 = new Button(buttons2,SWT.PUSH);
-        up2.setImage(CommonImages.UP_ICON);
-        up2.setToolTipText(EclipseNSISPlugin.getResourceString("up.tooltip")); //$NON-NLS-1$
-        up2.setEnabled(!isNull && mover2.canMoveUp());
-        up2.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-        up2.addSelectionListener(new SelectionAdapter() {
+        final Button patternsUp = new Button(patternsButtons,SWT.PUSH);
+        patternsUp.setImage(CommonImages.UP_ICON);
+        patternsUp.setToolTipText(EclipseNSISPlugin.getResourceString("up.tooltip")); //$NON-NLS-1$
+        patternsUp.setEnabled(!isNull && patternsMover.canMoveUp());
+        patternsUp.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+        patternsUp.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e)
             {
-                mover2.moveUp();
+                patternsMover.moveUp();
             }
         });
 
-        final Button down2 = new Button(buttons2, SWT.PUSH);
-        down2.setImage(CommonImages.DOWN_ICON);
-        down2.setToolTipText(EclipseNSISPlugin.getResourceString("down.tooltip")); //$NON-NLS-1$
-        down2.setEnabled(!isNull && mover2.canMoveDown());
-        down2.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-        down2.addSelectionListener(new SelectionAdapter() {
+        final Button patternsDown = new Button(patternsButtons, SWT.PUSH);
+        patternsDown.setImage(CommonImages.DOWN_ICON);
+        patternsDown.setToolTipText(EclipseNSISPlugin.getResourceString("down.tooltip")); //$NON-NLS-1$
+        patternsDown.setEnabled(!isNull && patternsMover.canMoveDown());
+        patternsDown.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+        patternsDown.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e)
             {
-                mover2.moveDown();
+                patternsMover.moveDown();
             }
         });
 
-        viewer2.addSelectionChangedListener(new ISelectionChangedListener() {
+        patternsViewer.addSelectionChangedListener(new ISelectionChangedListener() {
             public void selectionChanged(SelectionChangedEvent event)
             {
                 IStructuredSelection sel = (IStructuredSelection)event.getSelection();
-                FilePattern[] patterns = (FilePattern[])viewer2.getInput();
+                FilePattern[] patterns = (FilePattern[])patternsViewer.getInput();
                 int len = (patterns==null?0:patterns.length);
-                del2.setEnabled(!sel.isEmpty() && sel.size() != len && len > 1);
-                up2.setEnabled(mover2.canMoveUp());
-                down2.setEnabled(mover2.canMoveDown());
+                patternsDel.setEnabled(!sel.isEmpty() && sel.size() != len && len > 1);
+                patternsUp.setEnabled(patternsMover.canMoveUp());
+                patternsDown.setEnabled(patternsMover.canMoveDown());
             }
         });
 
-        viewer1.addSelectionChangedListener(new ISelectionChangedListener() {
+        summaryViewer.addSelectionChangedListener(new ISelectionChangedListener() {
             public void selectionChanged(SelectionChangedEvent event)
             {
                 IStructuredSelection sel = (IStructuredSelection)event.getSelection();
-                del.setEnabled(!sel.isEmpty());
-                up.setEnabled(mover.canMoveUp());
-                down.setEnabled(mover.canMoveDown());
+                summaryDel.setEnabled(!sel.isEmpty());
+                summaryUp.setEnabled(summaryMover.canMoveUp());
+                summaryDown.setEnabled(summaryMover.canMoveDown());
                 mCurrent = null;
                 if(!sel.isEmpty()) {
                     if(sel.size() == 1) {
@@ -440,25 +436,25 @@ public class FileFilterDialog extends Dialog
                     }
                 }
                 boolean isNull = (mCurrent==null);
-                text.setText((isNull?"":mCurrent.getDescription())); //$NON-NLS-1$
-                text.setSelection(text.getText().length());
-                viewer2.setInput((isNull?null:mCurrent.getPatterns()));
-                label.setEnabled(!isNull);
-                text.setEnabled(!isNull);
-                label2.setEnabled(!isNull);
-                table2.setEnabled(!isNull);
-                add2.setEnabled(!isNull);
-                FilePattern[] patterns = (FilePattern[])viewer2.getInput();
+                descriptionText.setText((isNull?"":mCurrent.getDescription())); //$NON-NLS-1$
+                descriptionText.setSelection(descriptionText.getText().length());
+                patternsViewer.setInput((isNull?null:mCurrent.getPatterns()));
+                descriptionLabel.setEnabled(!isNull);
+                descriptionText.setEnabled(!isNull);
+                patternsLabel.setEnabled(!isNull);
+                patternsTable.setEnabled(!isNull);
+                patternsAdd.setEnabled(!isNull);
+                FilePattern[] patterns = (FilePattern[])patternsViewer.getInput();
                 int len = (Common.isEmptyArray(patterns)?0:patterns.length);
-                del2.setEnabled(!isNull && !sel.isEmpty() && sel.size() != len && len > 1);
-                up2.setEnabled(!isNull && mover2.canMoveUp());
-                down2.setEnabled(!isNull && mover2.canMoveDown());
+                patternsDel.setEnabled(!isNull && !sel.isEmpty() && sel.size() != len && len > 1);
+                patternsUp.setEnabled(!isNull && patternsMover.canMoveUp());
+                patternsDown.setEnabled(!isNull && patternsMover.canMoveDown());
             }
         });
 
         applyDialogFont(composite);
         ((GridData)composite.getLayoutData()).widthHint = convertWidthInCharsToPixels(80);
-        viewer1.setInput(mFilter);
+        summaryViewer.setInput(mFilter);
         return composite;
     }
 }

@@ -36,7 +36,7 @@ public class InstallOptionsRadioButton extends InstallOptionsCheckBox
     /**
      * @return
      */
-    protected String[] getStateDisplay()
+    public String[] getStateDisplay()
     {
         return STATE_DISPLAY;
     }

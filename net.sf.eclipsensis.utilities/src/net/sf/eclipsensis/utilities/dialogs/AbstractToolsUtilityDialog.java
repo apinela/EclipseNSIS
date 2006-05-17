@@ -137,7 +137,7 @@ public abstract class AbstractToolsUtilityDialog extends Dialog
     {
         FontData[] fd = c.getFont().getFontData();
         for (int i = 0; i < fd.length; i++) {
-            fd[i].setStyle(SWT.BOLD);
+            fd[i].setStyle(fd[i].getStyle()|SWT.BOLD);
         }
         final Font f = new Font(c.getDisplay(),fd);
         c.setFont(f);

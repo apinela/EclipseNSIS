@@ -138,7 +138,7 @@ public abstract class NSISParam
 
         public void clear()
         {
-            if(isValid(mOptionalButton)) {
+            if(Common.isValid(mOptionalButton)) {
                 mOptionalButton.setSelection(false);
             }
             updateState(isSelected());
@@ -150,10 +150,10 @@ public abstract class NSISParam
 
         public void dispose()
         {
-            if(isValid(mControl)) {
+            if(Common.isValid(mControl)) {
                 mControl.dispose();
             }
-            if(isValid(mOptionalButton)) {
+            if(Common.isValid(mOptionalButton)) {
                 mOptionalButton.dispose();
             }
             mParentEditor = null;
@@ -193,7 +193,7 @@ public abstract class NSISParam
 
         protected void initParamEditor()
         {
-            if(isValid(mOptionalButton)) {
+            if(Common.isValid(mOptionalButton)) {
                 mOptionalButton.setSelection(((Boolean)getSettingValue(SETTING_OPTIONAL, Boolean.class, Boolean.FALSE)).booleanValue());
             }
         }
@@ -225,7 +225,7 @@ public abstract class NSISParam
 
         public Control createControl(Composite parent)
         {
-            if(isValid(mControl)) {
+            if(Common.isValid(mControl)) {
                 throw new RuntimeException(EclipseNSISPlugin.getResourceString("create.editor.error")); //$NON-NLS-1$
             }
             int availableGridCells = ((GridLayout)parent.getLayout()).numColumns;
@@ -327,7 +327,7 @@ public abstract class NSISParam
          */
         protected void setToolTip(Control ctrl)
         {
-            if(isValid(ctrl)) {
+            if(Common.isValid(ctrl)) {
                 if(!Common.isEmpty(mToolTip)) {
                     ctrl.setToolTipText(mToolTip);
                 }
@@ -340,7 +340,7 @@ public abstract class NSISParam
         public final boolean isSelected()
         {
             if(isOptional()) {
-                if(isValid(mOptionalButton)) {
+                if(Common.isValid(mOptionalButton)) {
                     return mOptionalButton.getSelection();
                 }
                 else {
@@ -363,17 +363,12 @@ public abstract class NSISParam
             updateDependents(mEnabled && isSelected());
         }
 
-        protected boolean isValid(Control ctl)
-        {
-            return ctl != null && !ctl.isDisposed();
-        }
-
         protected void updateState(boolean state)
         {
-            if(isValid(mNameLabel)) {
+            if(Common.isValid(mNameLabel)) {
                 mNameLabel.setEnabled(state);
             }
-            if(isValid(mControl)) {
+            if(Common.isValid(mControl)) {
                 mControl.setEnabled(state);
             }
             updateDependents(state);
@@ -403,7 +398,7 @@ public abstract class NSISParam
         private void updateEnabled()
         {
             boolean enabled = mEnabled;
-            if(isValid(mOptionalButton)) {
+            if(Common.isValid(mOptionalButton)) {
                 mOptionalButton.setEnabled(enabled);
                 if(enabled) {
                     enabled = mOptionalButton.getSelection();
@@ -507,7 +502,7 @@ public abstract class NSISParam
         
         public void saveSettings()
         {
-            if(isValid(mOptionalButton) && getSettings() != null) {
+            if(Common.isValid(mOptionalButton) && getSettings() != null) {
                 getSettings().put(SETTING_OPTIONAL, Boolean.valueOf(mOptionalButton.getSelection()));
             }
         }

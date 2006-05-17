@@ -10,9 +10,10 @@
 package net.sf.eclipsensis.installoptions.properties.editors;
 
 import java.text.MessageFormat;
-import java.util.Collections;
+import java.util.*;
 import java.util.List;
 
+import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.util.WinAPI;
 
 import org.eclipse.jface.viewers.CellEditor;
@@ -30,6 +31,7 @@ public class EditableComboBoxCellEditor extends CellEditor
     private boolean mDownArrowPressed = false;
     private boolean mAutoDropDown = false;
     private boolean mAutoApplyEditorValue = false;
+    private boolean mCaseInsensitive = false;
     private FocusAdapter mAutoDropDownFocusAdapter = new FocusAdapter(){
         public void focusGained(FocusEvent e) {
             WinAPI.SendMessage(mCombo.handle, WinAPI.CB_SHOWDROPDOWN,1,0);
@@ -40,6 +42,16 @@ public class EditableComboBoxCellEditor extends CellEditor
     {
         super(parent, style);
         setItems(items);
+    }
+
+    public boolean isCaseInsensitive()
+    {
+        return mCaseInsensitive;
+    }
+
+    public void setCaseInsensitive(boolean caseInsensitive)
+    {
+        mCaseInsensitive = caseInsensitive;
     }
 
     public void deactivate()
@@ -165,7 +177,7 @@ public class EditableComboBoxCellEditor extends CellEditor
         boolean oldIsValid = isValueValid();
         mSelection = mNewSelection;
         boolean newIsValid = isCorrect(mSelection);
-        if(!mSelection.equals(oldSelection)) {
+        if(!Common.stringsAreEqual(mSelection,oldSelection,mCaseInsensitive)) {
             valueChanged(oldIsValid,newIsValid);
         }
     }
@@ -198,14 +210,35 @@ public class EditableComboBoxCellEditor extends CellEditor
         return layoutData;
     }
 
-    protected void doSetValue(Object value)
+    private String checkValue(String value)
     {
-        mSelection = (String)value;
-        if( (getStyle()&SWT.READ_ONLY) > 0) {
-            if(!getItems().contains(value)) {
-                mSelection = ""; //$NON-NLS-1$
+        for (Iterator iter = getItems().iterator(); iter.hasNext();) {
+            String item = (String)iter.next();
+            if(Common.stringsAreEqual(item, value, mCaseInsensitive)) {
+                return item;
             }
         }
+        return null;
+    }
+
+    protected void doSetValue(Object value)
+    {
+        String val = (String)value;
+        String selection = checkValue(val);
+        if(selection == null) {
+            if(val != null) {
+                if( (getStyle()&SWT.READ_ONLY) > 0) {
+                    selection = ""; //$NON-NLS-1$
+                }
+                else {
+                    selection = val;
+                }
+            }
+            else {
+                selection = ""; //$NON-NLS-1$
+            }
+        }
+        mSelection = selection;
         mCombo.setText(mSelection);
     }
 

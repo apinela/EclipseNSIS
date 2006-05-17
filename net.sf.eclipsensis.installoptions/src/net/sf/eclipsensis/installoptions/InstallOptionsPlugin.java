@@ -36,7 +36,7 @@ import org.osgi.framework.BundleContext;
 
 public class InstallOptionsPlugin extends AbstractUIPlugin implements IInstallOptionsConstants
 {
-    public static final String GEF_BUNDLE_ID = "org.eclipse.gef";
+    public static final String GEF_BUNDLE_ID = "org.eclipse.gef"; //$NON-NLS-1$
     public static final RGB SYNTAX_COMMENTS = new RGB(0x7f,0x9f,0xbf);
     public static final RGB SYNTAX_NUMBERS = new RGB(0x61,0x31,0x1e);
     public static final RGB SYNTAX_SECTIONS = new RGB(0x0,0x50,0x50);
@@ -193,7 +193,7 @@ public class InstallOptionsPlugin extends AbstractUIPlugin implements IInstallOp
                 IScopeContext[] contexts = {new InstanceScope()}; 
                 for (int i = 0; i < properties.length; i++) {
                     if(!store.contains(properties[i])) {
-                        String val = preferencesService.getString(GEF_BUNDLE_ID, properties[i], "", contexts);
+                        String val = preferencesService.getString(GEF_BUNDLE_ID, properties[i], "", contexts); //$NON-NLS-1$
                         if(!Common.isEmpty(val)) {
                             store.setValue(properties[i], val);
                         }

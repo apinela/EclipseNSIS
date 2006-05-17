@@ -303,7 +303,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
         action= new TextOperationAction(resourceBundle, "projection.collapse.all.", this, ProjectionViewer.COLLAPSE_ALL, true); //$NON-NLS-1$
         action.setActionDefinitionId(IFoldingCommandIds.FOLDING_COLLAPSE_ALL);
         action.setEnabled(true);
-        setAction(FOLDING_COLLAPSE_ALL, action); //$NON-NLS-1$
+        setAction(FOLDING_COLLAPSE_ALL, action); 
 
         action = getAction(ITextEditorActionConstants.CONTEXT_PREFERENCES);
         if(action != null) {

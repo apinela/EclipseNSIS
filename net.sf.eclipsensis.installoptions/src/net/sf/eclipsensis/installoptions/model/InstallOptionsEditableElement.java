@@ -14,6 +14,8 @@ import java.util.List;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.ini.INISection;
 import net.sf.eclipsensis.installoptions.properties.descriptors.MultiLineTextPropertyDescriptor;
+import net.sf.eclipsensis.installoptions.properties.tabbed.section.EditableElementPropertySectionCreator;
+import net.sf.eclipsensis.installoptions.properties.tabbed.section.IPropertySectionCreator;
 import net.sf.eclipsensis.installoptions.properties.validators.*;
 
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
@@ -138,7 +140,7 @@ public abstract class InstallOptionsEditableElement extends InstallOptionsWidget
         }
         else if(name.equals(InstallOptionsModel.PROPERTY_VALIDATETEXT)) {
             String propertyName = InstallOptionsPlugin.getResourceString("validatetext.property.name"); //$NON-NLS-1$;
-            TextPropertyDescriptor descriptor = new MultiLineTextPropertyDescriptor(InstallOptionsModel.PROPERTY_VALIDATETEXT, propertyName);
+            TextPropertyDescriptor descriptor = new MultiLineTextPropertyDescriptor(this, InstallOptionsModel.PROPERTY_VALIDATETEXT, propertyName);
             descriptor.setValidator(new NSISEscapedStringLengthValidator(propertyName));
             return descriptor;
         }
@@ -277,5 +279,10 @@ public abstract class InstallOptionsEditableElement extends InstallOptionsWidget
             firePropertyChange(InstallOptionsModel.PROPERTY_VALIDATETEXT, oldValidateText, mValidateText);
             setDirty(true);
         }
+    }
+
+    protected IPropertySectionCreator createPropertySectionCreator()
+    {
+        return new EditableElementPropertySectionCreator(this);
     }
 }

@@ -12,6 +12,7 @@ package net.sf.eclipsensis.help.commands;
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.dialogs.ColorEditor;
 import net.sf.eclipsensis.util.ColorManager;
+import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -60,7 +61,7 @@ public class RGBParam extends HexStringParam
 
         public void clear()
         {
-            if(isValid(mText)) {
+            if(Common.isValid(mText)) {
                 mText.setText(""); //$NON-NLS-1$
             }
             super.clear();
@@ -68,10 +69,10 @@ public class RGBParam extends HexStringParam
 
         protected void updateState(boolean state)
         {
-            if(isValid(mText)) {
+            if(Common.isValid(mText)) {
                 mText.setEnabled(state);
                 Button b = (Button)mText.getData(DATA_BUTTON);
-                if(isValid(b)) {
+                if(Common.isValid(b)) {
                     b.setEnabled(state);
                 }
             }
@@ -85,7 +86,7 @@ public class RGBParam extends HexStringParam
             layout.marginHeight = layout.marginWidth = 0;
             parent.setLayout(layout);
             mText = (Text)super.createParamControl(parent);
-            if(isValid(mText)) {
+            if(Common.isValid(mText)) {
                 mText.setLayoutData(new GridData(SWT.FILL,SWT.CENTER,true,false));
                 final ColorEditor editor = new ColorEditor(parent);
                 Button b = editor.getButton();

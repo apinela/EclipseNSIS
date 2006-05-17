@@ -44,6 +44,13 @@ public class Position implements Cloneable
         this.bottom = bottom;
     }
 
+    public void set(Position pos)
+    {
+        if(pos != null) {
+            set(pos.left,pos.top,pos.right,pos.bottom);
+        }
+    }
+
     public Position getCopy()
     {
         return new Position(left,top,right,bottom);

@@ -16,6 +16,8 @@ import java.util.List;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.ini.INISection;
 import net.sf.eclipsensis.installoptions.properties.editors.CustomComboBoxCellEditor;
+import net.sf.eclipsensis.installoptions.properties.tabbed.section.ComboboxPropertySectionCreator;
+import net.sf.eclipsensis.installoptions.properties.tabbed.section.IPropertySectionCreator;
 import net.sf.eclipsensis.installoptions.properties.validators.NSISStringLengthValidator;
 
 import org.eclipse.jface.viewers.CellEditor;
@@ -42,10 +44,30 @@ public class InstallOptionsCombobox extends InstallOptionsListItems
     {
         if(name.equals(InstallOptionsModel.PROPERTY_STATE)) {
             ComboStatePropertyDescriptor descriptor = new ComboStatePropertyDescriptor();
-            addPropertyChangeListener(descriptor);
+            if(isStateReadOnly()) {
+                descriptor.setStyle(SWT.READ_ONLY);
+            }
+            else {
+                addPropertyChangeListener(descriptor);
+            }
             return descriptor;
         }
         return super.createPropertyDescriptor(name);
+    }
+
+    protected IPropertySectionCreator createPropertySectionCreator()
+    {
+        if(isStateReadOnly()) {
+            return super.createPropertySectionCreator();
+        }
+        else {
+            return new ComboboxPropertySectionCreator(this);
+        }
+    }
+    
+    protected boolean isStateReadOnly()
+    {
+        return false;
     }
 
     protected class ComboStatePropertyDescriptor extends PropertyDescriptor implements PropertyChangeListener
@@ -87,6 +109,7 @@ public class InstallOptionsCombobox extends InstallOptionsListItems
         {
             if(mEditor == null) {
                 mEditor = new CustomComboBoxCellEditor(parent, getListItems(), mStyle);
+                mEditor.setCaseInsensitive(true);
                 mEditor.getControl().addDisposeListener(mListener);
             }
             return mEditor;

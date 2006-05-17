@@ -9,8 +9,17 @@
  *******************************************************************************/
 package net.sf.eclipsensis.wizard.template;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.ListIterator;
+
 import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.lang.NSISLanguage;
+import net.sf.eclipsensis.lang.NSISLanguageManager;
 import net.sf.eclipsensis.template.AbstractTemplate;
+import net.sf.eclipsensis.template.InvalidTemplateException;
+import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.wizard.settings.AbstractNSISInstallGroup;
 import net.sf.eclipsensis.wizard.settings.NSISWizardSettings;
 
 public class NSISWizardTemplate extends AbstractTemplate
@@ -51,6 +60,43 @@ public class NSISWizardTemplate extends AbstractTemplate
             template.mSettings = new NSISWizardSettings();
         }
         return template;
+    }
+    
+    private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException
+    {
+        in.defaultReadObject();
+        afterImport();
+    }
+
+    /**
+     * 
+     */
+    protected void afterImport() throws InvalidTemplateException
+    {
+        if(mSettings != null) {
+            ArrayList languages = mSettings.getLanguages();
+            if (!Common.isEmptyCollection(languages)) {
+                for (ListIterator iter = languages.listIterator(); iter.hasNext();) {
+                    NSISLanguage lang = (NSISLanguage)iter.next();
+                    NSISLanguage lang2 = NSISLanguageManager.getInstance().getLanguage(lang.getName());
+                    if (lang2 != null) {
+                        iter.set(lang2);
+                    }
+                    else {
+                        iter.remove();
+                    }
+                }
+            }
+            AbstractNSISInstallGroup installer = (AbstractNSISInstallGroup)mSettings.getInstaller();
+            if (installer != null) {
+                installer.setExpanded(true, true);
+                installer.resetChildTypes(true);
+                installer.resetChildren(true);
+            }            
+        }
+        else {
+            throw new InvalidTemplateException();
+        }
     }
 
     /**

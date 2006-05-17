@@ -61,7 +61,7 @@ public class RadioParam extends GroupParam
                 for (Iterator iter = mParamEditors.iterator(); iter.hasNext();) {
                     INSISParamEditor editor = (INSISParamEditor)iter.next();
                     Button radioButton = (Button)mRadioButtonMap.get(editor);
-                    if(isValid(radioButton)) {
+                    if(Common.isValid(radioButton)) {
                         if(radioButton.getSelection()) {
                             editor.appendText(buf);
                             return;
@@ -87,7 +87,7 @@ public class RadioParam extends GroupParam
                 int i = ((Integer)getSettingValue(SETTING_RADIO_SELECTED, Integer.class, new Integer(-1))).intValue();
                 if(i >= 0 && i < mParamEditors.size()) {
                     Button radioButton = (Button)mRadioButtonMap.get(mParamEditors.get(i));
-                    if(isValid(radioButton)) {
+                    if(Common.isValid(radioButton)) {
                         radioButton.setSelection(true);
                         return;
                     }
@@ -103,7 +103,7 @@ public class RadioParam extends GroupParam
         {
             int defaultIndex = (mDefaultIndex < mParamEditors.size()?mDefaultIndex:0);
             Button radioButton = (Button)mRadioButtonMap.get(mParamEditors.get(defaultIndex));
-            if(isValid(radioButton)) {
+            if(Common.isValid(radioButton)) {
                 radioButton.setSelection(true);
             }
         }
@@ -121,7 +121,7 @@ public class RadioParam extends GroupParam
             super.createChildParamControl(parent, editor);
             if(editor instanceof NSISParamEditor) {
                 Label nameLabel = ((NSISParamEditor)editor).mNameLabel;
-                if(isValid(nameLabel)) {
+                if(Common.isValid(nameLabel)) {
                     //Steal the name
                     radioButton.setText(nameLabel.getText());
                     nameLabel.setText(""); //$NON-NLS-1$
@@ -130,7 +130,7 @@ public class RadioParam extends GroupParam
                     GridData data = (GridData)nameLabel.getLayoutData();
                     if(layout.numColumns > data.horizontalSpan) {
                         GridData data2;
-                        if(isValid(((NSISParamEditor)editor).mControl)) {
+                        if(Common.isValid(((NSISParamEditor)editor).mControl)) {
                             data2 = (GridData)((NSISParamEditor)editor).mControl.getLayoutData();
                         }
                         else {
@@ -160,7 +160,7 @@ public class RadioParam extends GroupParam
                 for (Iterator iter = mParamEditors.iterator(); iter.hasNext();) {
                     INSISParamEditor editor = (INSISParamEditor)iter.next();
                     Button radioButton = (Button)mRadioButtonMap.get(editor);
-                    if(isValid(radioButton)) {
+                    if(Common.isValid(radioButton)) {
                         radioButton.setEnabled(state);
                         if(state) {
                             editor.setEnabled(radioButton.getSelection());
@@ -181,7 +181,7 @@ public class RadioParam extends GroupParam
                 for (Iterator iter = mParamEditors.iterator(); iter.hasNext();) {
                     INSISParamEditor editor = (INSISParamEditor)iter.next();
                     Button radioButton = (Button)mRadioButtonMap.get(editor);
-                    if(isValid(radioButton)) {
+                    if(Common.isValid(radioButton)) {
                         if(radioButton.getSelection()) {
                             getSettings().put(SETTING_RADIO_SELECTED, new Integer(i));
                             return;
@@ -198,7 +198,7 @@ public class RadioParam extends GroupParam
                 for (Iterator iter = mParamEditors.iterator(); iter.hasNext();) {
                     INSISParamEditor editor = (INSISParamEditor)iter.next();
                     Button radioButton = (Button)mRadioButtonMap.get(editor);
-                    if(isValid(radioButton)) {
+                    if(Common.isValid(radioButton)) {
                         if(radioButton.getSelection()) {
                             return editor.validate();
                         }

@@ -77,7 +77,7 @@ public abstract class AbstractTemplateReaderWriter
                         }
                     }
                 }
-
+                template.afterImport();
                 templates.add(template);
             }
 
@@ -114,7 +114,7 @@ public abstract class AbstractTemplateReaderWriter
 
             for (Iterator iter=templates.iterator(); iter.hasNext(); ) {
                 AbstractTemplate template= (AbstractTemplate)iter.next();
-
+                template.beforeExport();
                 Node node= document.createElement(TEMPLATE_ELEMENT);
                 root.appendChild(node);
 
