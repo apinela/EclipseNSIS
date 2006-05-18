@@ -88,6 +88,9 @@ public class ListItemsDialog extends Dialog
         ((Text) textEditor.getControl()).addVerifyListener(new VerifyListener() {
             public void verifyText(VerifyEvent e) {
                 e.doit = e.text.indexOf(IInstallOptionsConstants.LIST_SEPARATOR) < 0;
+                if(!e.doit) {
+                    e.display.beep();
+                }
             }
         });
         viewer.setColumnProperties(new String[]{"item"}); //$NON-NLS-1$

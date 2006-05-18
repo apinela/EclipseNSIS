@@ -34,6 +34,7 @@ public class NumberVerifyListener implements VerifyListener
                 continue;
             }
             if(!Character.isDigit(chars[i])) {
+                e.display.beep();
                 e.doit = false;
                 return;
             }

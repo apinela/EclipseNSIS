@@ -221,6 +221,9 @@ public class ListItemsPropertySectionCreator extends EditableElementPropertySect
         ((Text) textEditor.getControl()).addVerifyListener(new VerifyListener() {
             public void verifyText(VerifyEvent e) {
                 e.doit = e.text.indexOf(IInstallOptionsConstants.LIST_SEPARATOR) < 0;
+                if(!e.doit) {
+                    e.display.beep();
+                }
             }
         });
         viewer.setColumnProperties(new String[]{"item"}); //$NON-NLS-1$
@@ -284,7 +287,7 @@ public class ListItemsPropertySectionCreator extends EditableElementPropertySect
                         }
                         if(command != null && command.size() > 0) {
                             viewer.refresh(true);
-                            commandHelper.getCommandStack().execute(command);
+                            commandHelper.execute(command);
                             viewer.refresh(true);
                             viewer.setSelection(new StructuredSelection(value));
                             return;

@@ -20,30 +20,36 @@ import net.sf.eclipsensis.installoptions.ini.*;
 import net.sf.eclipsensis.installoptions.model.*;
 import net.sf.eclipsensis.installoptions.model.commands.IModelCommandListener;
 import net.sf.eclipsensis.installoptions.model.commands.ModelCommandEvent;
-import net.sf.eclipsensis.installoptions.properties.CustomPropertySheetPage;
 import net.sf.eclipsensis.installoptions.properties.PropertySourceWrapper;
+import net.sf.eclipsensis.installoptions.properties.tabbed.CustomTabbedPropertySheetPage;
 import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.events.ControlAdapter;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.part.IPageSite;
+import org.eclipse.ui.part.Page;
 import org.eclipse.ui.services.IServiceLocator;
 import org.eclipse.ui.views.properties.*;
+import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor;
 
-public class InstallOptionsWidgetEditorDialog extends StatusMessageDialog implements PropertyChangeListener, IModelCommandListener, IPropertySourceProvider
+public class InstallOptionsWidgetEditorDialog extends StatusMessageDialog implements PropertyChangeListener, IModelCommandListener, IPropertySourceProvider, ITabbedPropertySheetPageContributor
 {
+    private static final int MIN_WIDTH = 800;
+
     private static final String HELP_CONTEXT = IInstallOptionsConstants.PLUGIN_CONTEXT_PREFIX+"installoptions_widgeteditor_context"; //$NON-NLS-1$
 
-    private PropertySheetPage mPage = new CustomPropertySheetPage();
+    private IPropertySheetPage mPage = new CustomTabbedPropertySheetPage(this);
+    private int mOldValidateFixMode;
+//    private IPropertySheetPage mPage = new CustomPropertySheetPage();
     private InstallOptionsDialog mDialog;
     private InstallOptionsWidget mCurrentWidget;
     private INISection mSection;
@@ -61,7 +67,27 @@ public class InstallOptionsWidgetEditorDialog extends StatusMessageDialog implem
         mSection = section;
         mCurrentWidget = (InstallOptionsWidget)mDialog.getElement(mSection);
         mCreateMode = (mCurrentWidget==null);
+        mOldValidateFixMode = iniFile.getValidateFixMode();
+        iniFile.setValidateFixMode(mCreateMode?INILine.VALIDATE_FIX_ALL:INILine.VALIDATE_FIX_ERRORS);
         setTitle(mCreateMode?InstallOptionsPlugin.getResourceString("create.control.dialog.title"):InstallOptionsPlugin.getResourceString("edit.control.dialog.title")); //$NON-NLS-1$ //$NON-NLS-2$
+    }
+
+    public boolean close()
+    {
+        if(mSection != null) {
+            INIFile iniFile = (INIFile)mSection.getParent();
+            if(iniFile != null) {
+                iniFile.setValidateFixMode(mOldValidateFixMode);
+            }
+        }
+        if(mCurrentWidget != null) {
+            mCurrentWidget.removeModelCommandListener(InstallOptionsWidgetEditorDialog.this);
+            mCurrentWidget.removePropertyChangeListener(InstallOptionsWidgetEditorDialog.this);
+            if(mCurrentWidget.getParent() != null) {
+                mCurrentWidget.getParent().removePropertyChangeListener(InstallOptionsWidgetEditorDialog.this);
+            }
+        }
+        return super.close();
     }
 
     public IPropertySource getPropertySource(Object object)
@@ -78,6 +104,11 @@ public class InstallOptionsWidgetEditorDialog extends StatusMessageDialog implem
         return null;
     }
 
+    public String getContributorId()
+    {
+        return IInstallOptionsConstants.TABBED_PROPERTIES_CONTRIBUTOR_ID;
+    }
+
     public void executeModelCommand(ModelCommandEvent event)
     {
         Object obj = event.getModel();
@@ -91,28 +122,13 @@ public class InstallOptionsWidgetEditorDialog extends StatusMessageDialog implem
         if(evt.getPropertyName().equals(InstallOptionsModel.PROPERTY_INDEX)) {
             mDialog.moveChild(mCurrentWidget, ((Integer)evt.getNewValue()).intValue());
         }
-        else if(evt.getPropertyName().equals(InstallOptionsModel.PROPERTY_TYPE)) {
-            INISection section = mCurrentWidget.updateSection();
-            INIKeyValue[] keyValues = section.findKeyValues(InstallOptionsModel.PROPERTY_TYPE);
-            String oldType = (String)evt.getOldValue();
-            String newType = (String)evt.getNewValue();
-            if(Common.isEmptyArray(keyValues)) {
-                INIKeyValue keyValue = new INIKeyValue(InstallOptionsModel.PROPERTY_TYPE);
-                keyValue.setValue(newType);
-                section.addChild(keyValue);
-            }
-            else {
-                keyValues[0].setValue(newType);
-            }
-            InstallOptionsElementFactory oldFactory = InstallOptionsElementFactory.getFactory(oldType);
-            InstallOptionsElementFactory newFactory = InstallOptionsElementFactory.getFactory(newType);
-            if(oldFactory != newFactory) {
-                section.validate(mCreateMode?INILine.VALIDATE_FIX_ALL:INILine.VALIDATE_FIX_ERRORS);
-                InstallOptionsWidget widget = (InstallOptionsWidget)newFactory.getNewObject(section);
+        else if(evt.getPropertyName().equals(InstallOptionsModel.PROPERTY_CHILDREN)) {
+            if(Common.objectsAreEqual(mCurrentWidget,evt.getOldValue()) && evt.getNewValue() instanceof InstallOptionsWidget) {
+                InstallOptionsWidget widget = (InstallOptionsWidget)evt.getNewValue();
                 mCurrentWidget.removeModelCommandListener(InstallOptionsWidgetEditorDialog.this);
                 mCurrentWidget.removePropertyChangeListener(InstallOptionsWidgetEditorDialog.this);
-                mDialog.replaceChild(mCurrentWidget, widget);
                 mCurrentWidget = widget;
+                mSection = mCurrentWidget.getSection();
                 mCurrentWidget.addModelCommandListener(InstallOptionsWidgetEditorDialog.this);
                 mCurrentWidget.addPropertyChangeListener(InstallOptionsWidgetEditorDialog.this);
                 Display.getDefault().asyncExec(new Runnable() {
@@ -125,13 +141,80 @@ public class InstallOptionsWidgetEditorDialog extends StatusMessageDialog implem
         }
     }
 
+    protected Point getInitialSize()
+    {
+        Point size = super.getInitialSize();
+        if(size.x < MIN_WIDTH) {
+            size.x = MIN_WIDTH;
+        }
+        return size;
+    }
+
+    protected Button createButton(Composite parent, int id, String label, boolean defaultButton) 
+    {
+        return super.createButton(parent, id, label, false);
+    }
+
     protected Control createControl(Composite parent)
     {
         Composite propertyComposite = new Composite(parent,SWT.BORDER);
         GridLayout layout = new GridLayout(1,false);
         layout.marginWidth = layout.marginHeight = 0;
         propertyComposite.setLayout(layout);
-        mPage.setPropertySourceProvider(this);
+        if(mPage instanceof Page) {
+            ((Page)mPage).init(new IPageSite() {
+                public void registerContextMenu(String menuId, MenuManager menuManager, ISelectionProvider selectionProvider)
+                {
+                }
+    
+                public IActionBars getActionBars()
+                {
+                    return null;
+                }
+    
+                public IWorkbenchPage getPage()
+                {
+                    return getWorkbenchWindow().getActivePage();
+                }
+    
+                public ISelectionProvider getSelectionProvider()
+                {
+                    return null;
+                }
+    
+                public Shell getShell()
+                {
+                    return getWorkbenchWindow().getShell();
+                }
+    
+                public IWorkbenchWindow getWorkbenchWindow()
+                {
+                    return PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+                }
+    
+                public void setSelectionProvider(ISelectionProvider provider)
+                {
+                }
+    
+                public Object getAdapter(Class adapter)
+                {
+                    return null;
+                }
+    
+                public Object getService(Class api)
+                {
+                    return null;
+                }
+    
+                public boolean hasService(Class api)
+                {
+                    return false;
+                }
+            });
+        }
+        if(mPage instanceof PropertySheetPage) {
+            ((PropertySheetPage)mPage).setPropertySourceProvider(this);
+        }
         mPage.createControl(propertyComposite);
         mPage.setActionBars(new DummyActionBars());
         Control control = mPage.getControl();
@@ -161,69 +244,24 @@ public class InstallOptionsWidgetEditorDialog extends StatusMessageDialog implem
                 InstallOptionsElementFactory factory = InstallOptionsElementFactory.getFactory(typeDef.getType());
                 mCurrentWidget = (InstallOptionsWidget)factory.getNewObject();
                 mDialog.addChild(mCurrentWidget);
-                mCurrentWidget.addModelCommandListener(InstallOptionsWidgetEditorDialog.this);
-                mCurrentWidget.addPropertyChangeListener(InstallOptionsWidgetEditorDialog.this);
-                selection = new StructuredSelection(mCurrentWidget);
-            }
-            else {
-                selection = StructuredSelection.EMPTY;
             }
         }
-        else {
+        
+        if(mCurrentWidget != null) {
+            mCurrentWidget.addModelCommandListener(InstallOptionsWidgetEditorDialog.this);
+            mCurrentWidget.addPropertyChangeListener(InstallOptionsWidgetEditorDialog.this);
+            if(mCurrentWidget.getParent() != null) {
+                mCurrentWidget.getParent().addPropertyChangeListener(InstallOptionsWidgetEditorDialog.this);
+            }
             selection = new StructuredSelection(mCurrentWidget);
         }
+        else {
+            selection = StructuredSelection.EMPTY;
+        }
+
         mPage.selectionChanged(null, selection);
         PlatformUI.getWorkbench().getHelpSystem().setHelp(mPage.getControl(),HELP_CONTEXT);
         PlatformUI.getWorkbench().getHelpSystem().setHelp(propertyComposite,HELP_CONTEXT);
-        mPage.init(new IPageSite() {
-            public void registerContextMenu(String menuId, MenuManager menuManager, ISelectionProvider selectionProvider)
-            {
-            }
-
-            public IActionBars getActionBars()
-            {
-                return null;
-            }
-
-            public IWorkbenchPage getPage()
-            {
-                return getWorkbenchWindow().getActivePage();
-            }
-
-            public ISelectionProvider getSelectionProvider()
-            {
-                return null;
-            }
-
-            public Shell getShell()
-            {
-                return getWorkbenchWindow().getShell();
-            }
-
-            public IWorkbenchWindow getWorkbenchWindow()
-            {
-                return PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-            }
-
-            public void setSelectionProvider(ISelectionProvider provider)
-            {
-            }
-
-            public Object getAdapter(Class adapter)
-            {
-                return null;
-            }
-
-            public Object getService(Class api)
-            {
-                return null;
-            }
-
-            public boolean hasService(Class api)
-            {
-                return false;
-            }
-        });
 
         return propertyComposite;
     }
@@ -247,6 +285,7 @@ public class InstallOptionsWidgetEditorDialog extends StatusMessageDialog implem
         return mSection;
     }
     
+
     private final class CustomPropertySourceWrapper extends PropertySourceWrapper
     {
         private CustomPropertySourceWrapper(IPropertySource delegate)

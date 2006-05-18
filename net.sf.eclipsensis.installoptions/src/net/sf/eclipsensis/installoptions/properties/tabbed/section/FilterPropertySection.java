@@ -275,6 +275,9 @@ public class FilterPropertySection extends InstallOptionsElementPropertySection
             ((Text) textEditor.getControl()).addVerifyListener(new VerifyListener() {
                 public void verifyText(VerifyEvent e) {
                     e.doit = e.text.indexOf(IInstallOptionsConstants.LIST_SEPARATOR) < 0 && e.text.indexOf(InstallOptionsFileRequest.FILTER_SEPARATOR) < 0;
+                    if(!e.doit) {
+                        e.display.beep();
+                    }
                 }
             });
             patternsTable.addControlListener(new TableResizer());

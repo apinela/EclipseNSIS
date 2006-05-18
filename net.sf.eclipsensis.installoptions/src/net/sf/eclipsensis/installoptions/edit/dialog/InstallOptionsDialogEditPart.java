@@ -157,7 +157,9 @@ public class InstallOptionsDialogEditPart extends InstallOptionsEditPart impleme
                                 getViewer().getControl().forceFocus();
                             }
                             finally {
-                                c.forceFocus();
+                                if(c != null && !c.isDisposed()) {
+                                    c.forceFocus();
+                                }
                             }
                         }
                     });

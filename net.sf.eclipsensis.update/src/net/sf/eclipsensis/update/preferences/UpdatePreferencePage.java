@@ -10,6 +10,7 @@
 package net.sf.eclipsensis.update.preferences;
 
 import net.sf.eclipsensis.update.EclipseNSISUpdatePlugin;
+import net.sf.eclipsensis.util.NumberVerifyListener;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
@@ -21,8 +22,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPreferencePage;
 
 public class UpdatePreferencePage extends PreferencePage implements IWorkbenchPreferencePage, IUpdatePreferenceConstants
 {
@@ -164,18 +163,7 @@ public class UpdatePreferencePage extends PreferencePage implements IWorkbenchPr
         l2.setLayoutData(new GridData(SWT.FILL,SWT.CENTER,false,false));
         mHttpProxyPort = new Text(group,SWT.BORDER|SWT.SINGLE);
         mHttpProxyPort.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false));
-        mHttpProxyPort.addVerifyListener(new VerifyListener() {
-            public void verifyText(VerifyEvent e)
-            {
-                char[] chars = e.text.toCharArray();
-                for(int i=0; i< chars.length; i++) {
-                    if(!Character.isDigit(chars[i])) {
-                        e.doit = false;
-                        return;
-                    }
-                }
-            }
-        });
+        mHttpProxyPort.addVerifyListener(new NumberVerifyListener());
         mHttpProxyPort.addModifyListener(mModifyListener);
         
         new Enabler(mUseHttpProxy, new Control[] {l1, mHttpProxyHost, l2, mHttpProxyPort});

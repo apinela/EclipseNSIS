@@ -82,6 +82,7 @@ public class NSISSectionDialog extends AbstractNSISInstallItemDialog
                     if(text.equalsIgnoreCase(INSISConstants.UNINSTALL_SECTION_NAME) ||
                        (text.length()>=3 && text.substring(0,3).equalsIgnoreCase("un.")) || //$NON-NLS-1$
                        Character.isWhitespace(c) || c == '!' || c == '-') {
+                        e.display.beep();
                         e.doit = false;
                         return;
                     }

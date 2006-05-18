@@ -13,6 +13,7 @@ import net.sf.eclipsensis.installoptions.properties.CustomPropertySheetPage;
 import net.sf.eclipsensis.installoptions.properties.InstallOptionsPropertySheetEntry;
 import net.sf.eclipsensis.installoptions.properties.tabbed.CustomTabbedPropertySheetPage;
 
+import org.eclipse.gef.commands.CommandStack;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
@@ -34,9 +35,13 @@ public class AdvancedPropertySection extends AbstractPropertySection
     {
         super.createControls(parent, page);
         Composite composite = getWidgetFactory().createFlatFormComposite(parent);
-        if(page instanceof CustomTabbedPropertySheetPage && ((CustomTabbedPropertySheetPage)page).getEditor() != null) {
+        if(page instanceof CustomTabbedPropertySheetPage) {
+            CommandStack stack = null;
+            if(((CustomTabbedPropertySheetPage)page).getEditor() != null) {
+                stack = ((CustomTabbedPropertySheetPage)page).getEditor().getEditDomain().getCommandStack();
+            }
             mPage = new CustomPropertySheetPage();
-            mPage.setRootEntry(new InstallOptionsPropertySheetEntry(((CustomTabbedPropertySheetPage)page).getEditor().getEditDomain().getCommandStack()));
+            mPage.setRootEntry(new InstallOptionsPropertySheetEntry(stack));
        }
         else {
             mPage = new PropertySheetPage();

@@ -81,6 +81,7 @@ public class NSISInstallRegistryValueDialog extends NSISInstallRegistryKeyDialog
                     char[] chars = e.text.toCharArray();
                     for(int i=0; i< chars.length; i++) {
                         if(!Character.isDigit(chars[i]) && (chars[i]<'a' || chars[i]>'f') && (chars[i]<'A' || chars[i]>'F')) {
+                            e.display.beep();
                             e.doit = false;
                             return;
                         }

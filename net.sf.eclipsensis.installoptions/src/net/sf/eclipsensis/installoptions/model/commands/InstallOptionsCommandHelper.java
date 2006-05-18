@@ -34,12 +34,14 @@ public abstract class InstallOptionsCommandHelper
     {
         super();
         mStack = stack;
-        mCommandStackListener = new CommandStackListener() {
-            public void commandStackChanged(EventObject e) {
-                refresh();
-            }
-        };
-        stack.addCommandStackListener(mCommandStackListener);
+        if(stack != null) {
+            mCommandStackListener = new CommandStackListener() {
+                public void commandStackChanged(EventObject e) {
+                    refresh();
+                }
+            };
+            stack.addCommandStackListener(mCommandStackListener);
+        }
     }
     
     public CommandStack getCommandStack()
@@ -59,7 +61,7 @@ public abstract class InstallOptionsCommandHelper
         if(target instanceof InstallOptionsWidget) {
             InstallOptionsWidget oldChild = (InstallOptionsWidget)target;
             if(oldChild.getParent() != null) {
-                oldChild.getParent().updateINIFile();
+                INIFile iniFile = oldChild.getParent().updateINIFile();
                 String oldType = oldChild.getType();
                 String newType = (String)value;
                 if(!Common.stringsAreEqual(oldType, newType)) {
@@ -77,7 +79,7 @@ public abstract class InstallOptionsCommandHelper
                             keyValue.setValue(newType);
                             section.addChild(keyValue);
                         }
-                        section.validate(INILine.VALIDATE_FIX_ERRORS);
+                        section.validate(iniFile.getValidateFixMode());
                         if(section.hasErrors()) {
                             Display.getDefault().syncExec(new Runnable() {
                                 public void run()
@@ -163,7 +165,21 @@ public abstract class InstallOptionsCommandHelper
     {
         CompoundCommand command = createPropertyChangedCommand(propertyId, name, target, newValue);
         if(command.size() > 0) {
-            getCommandStack().execute(command);
+            execute(command);
+        }
+    }
+
+    /**
+     * @param command
+     */
+    public void execute(Command command)
+    {
+        CommandStack stack = getCommandStack();
+        if(stack != null) {
+            stack.execute(command);
+        }
+        else {
+            command.execute();
         }
     }
 

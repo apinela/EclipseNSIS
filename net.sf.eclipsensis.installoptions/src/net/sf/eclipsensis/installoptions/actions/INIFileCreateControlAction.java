@@ -48,10 +48,7 @@ public class INIFileCreateControlAction extends INIFileAction
     {
         InstallOptionsWidgetEditorDialog dialog = new InstallOptionsWidgetEditorDialog(mEditor.getSite().getShell(), iniFile, section);
         if (dialog.open() == Window.OK) {
-            if(section == null) {
-                section = dialog.getSection();
-            }
-            updateDocument(iniFile, section);
+            updateDocument(iniFile, dialog.getSection());
             return true;
         }
         return false;

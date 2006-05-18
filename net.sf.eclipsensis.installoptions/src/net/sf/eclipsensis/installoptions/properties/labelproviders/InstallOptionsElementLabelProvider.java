@@ -47,11 +47,13 @@ public class InstallOptionsElementLabelProvider extends LabelProvider
             return InstallOptionsDialog.INSTALLOPTIONS_ICON;
         } 
         else {
-            if (!(object instanceof EditPart)) {
-                return null;
+            InstallOptionsElement element = getInstallOptionsElement(object);
+            if(element != null) {
+                return element.getIcon();
             }
-            InstallOptionsElement element = (InstallOptionsElement)((EditPart) object).getModel();
-            return element.getIcon();
+            else {
+                return super.getImage(object);
+            }
         }
     }
 
@@ -69,9 +71,25 @@ public class InstallOptionsElementLabelProvider extends LabelProvider
             return InstallOptionsPlugin.getFormattedString("multiple.items.selected.message", new Object[] {new Integer(((IStructuredSelection) objects).size())}); //$NON-NLS-1$
         } 
         else {
-            InstallOptionsElement element = (InstallOptionsElement)((EditPart) object).getModel();
-            return element.getType();
+            InstallOptionsElement element = getInstallOptionsElement(object);
+            if(element != null) {
+                return element.getType();
+            }
+            else {
+                return super.getText(object);
+            }
         }
+    }
+
+    private InstallOptionsElement getInstallOptionsElement(Object object)
+    {
+        if(object instanceof InstallOptionsElement) {
+            return (InstallOptionsElement)object;
+        }
+        else if(object instanceof EditPart) {
+            return getInstallOptionsElement(((EditPart)object).getModel());
+        }
+        return null;
     }
 
     private Object getObject(Object objects, boolean multiple[]) 

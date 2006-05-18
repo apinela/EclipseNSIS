@@ -18,6 +18,7 @@ import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.model.*;
 import net.sf.eclipsensis.installoptions.model.commands.InstallOptionsCommandHelper;
 import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.NumberVerifyListener;
 import net.sf.eclipsensis.viewer.CollectionContentProvider;
 
 import org.eclipse.jface.resource.JFaceResources;
@@ -338,28 +339,7 @@ public class GeneralPropertySection extends InstallOptionsElementPropertySection
         String[] names = {"left.property.name","top.property.name", //$NON-NLS-1$ //$NON-NLS-2$
                 "right.property.name","bottom.property.name"}; //$NON-NLS-1$ //$NON-NLS-2$
         int[] values = {position.left,position.top,position.right,position.bottom};
-        VerifyListener verifyListener = new VerifyListener() {
-            public void verifyText(VerifyEvent e)
-            {
-                String t = e.text;
-                if(!Common.isEmpty(t)) {
-                    if(e.start == 0) {
-                        if(t.charAt(0)=='-') {
-                            t = t.substring(1);
-                        }
-                    }
-                    if(!Common.isEmpty(t)) {
-                        try {
-                            Integer.parseInt(t);
-                        }
-                        catch(NumberFormatException nfe) {
-                            e.doit = false;
-                            e.widget.getDisplay().beep();
-                        }
-                    }
-                }
-            }
-        };
+        VerifyListener verifyListener = new NumberVerifyListener(true);
         TraverseListener traverseListener = new TraverseListener() {
             public void keyTraversed(TraverseEvent e)
             {

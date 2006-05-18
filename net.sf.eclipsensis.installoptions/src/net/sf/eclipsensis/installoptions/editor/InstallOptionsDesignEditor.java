@@ -23,6 +23,7 @@ import net.sf.eclipsensis.installoptions.dialogs.GridSnapGlueSettingsDialog;
 import net.sf.eclipsensis.installoptions.dnd.*;
 import net.sf.eclipsensis.installoptions.edit.*;
 import net.sf.eclipsensis.installoptions.ini.INIFile;
+import net.sf.eclipsensis.installoptions.ini.INILine;
 import net.sf.eclipsensis.installoptions.model.*;
 import net.sf.eclipsensis.installoptions.properties.tabbed.CustomTabbedPropertySheetPage;
 import net.sf.eclipsensis.installoptions.rulers.*;
@@ -97,7 +98,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
     private FlyoutPaletteComposite mPalette;
     private CustomPalettePage mPalettePage;
     private boolean mSwitching = false;
-    private INIFile mINIFile = new INIFile();
+    private INIFile mINIFile;
     private KeyHandler mSharedKeyHandler;
     private boolean mCreatedEmptyPart = true;
     private IModelListener mModelListener = new IModelListener()
@@ -242,6 +243,8 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
 
     public InstallOptionsDesignEditor()
     {
+        mINIFile = new INIFile();
+        mINIFile.setValidateFixMode(INILine.VALIDATE_FIX_ERRORS);
         InstallOptionsPlugin.checkEditorAssociation();
         setEditDomain(new InstallOptionsEditDomain(this));
     }

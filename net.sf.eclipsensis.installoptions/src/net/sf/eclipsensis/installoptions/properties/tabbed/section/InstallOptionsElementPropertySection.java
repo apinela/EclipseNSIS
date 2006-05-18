@@ -56,29 +56,39 @@ public abstract class InstallOptionsElementPropertySection extends AbstractPrope
 	 */
 	public final void setInput(IWorkbenchPart part, ISelection selection) {
 		super.setInput(part, selection);
-		if(selection instanceof IStructuredSelection) {
-    		Object input = ((IStructuredSelection)selection).getFirstElement();
-    		if(input instanceof EditPart) {
-        		Object model = ((EditPart) input).getModel();
-        		if(model instanceof InstallOptionsElement) {
-                    if(!Common.objectsAreEqual(mElement, model)) {
-                        mElement = (InstallOptionsElement) model;
-                        CommandStack stack = ((EditPart)input).getViewer().getEditDomain().getCommandStack();
-                        if(mCommandHelper != null) {
-                            if(!stack.equals(mCommandHelper.getCommandStack())) {
-                                mCommandHelper.dispose();
-                                createCommandHelper(stack);
-                            }
-                        }
-                        else {
-                            createCommandHelper(stack);
-                        }
-                        inputChanged(mElement);
+		if(selection instanceof IStructuredSelection && !selection.isEmpty()) {
+            Object input = ((IStructuredSelection)selection).getFirstElement();
+            InstallOptionsElement element = getElement(input);
+            if(element != null && !Common.objectsAreEqual(mElement, element)) {
+                mElement = element;
+                CommandStack stack = null;
+                if(input instanceof EditPart) {
+                    stack = ((EditPart)input).getViewer().getEditDomain().getCommandStack();
+                }
+                if(mCommandHelper != null) {
+                    if(!Common.objectsAreEqual(stack, mCommandHelper.getCommandStack())) {
+                        mCommandHelper.dispose();
+                        createCommandHelper(stack);
                     }
                 }
+                else {
+                    createCommandHelper(stack);
+                }
+                inputChanged(mElement);
             }
         }
 	}
+    
+    private InstallOptionsElement getElement(Object input)
+    {
+        if(input instanceof InstallOptionsElement) {
+            return (InstallOptionsElement)input;
+        }
+        else if(input instanceof EditPart) {
+            return getElement(((EditPart)input).getModel());
+        }
+        return null;
+    }
 
     /**
      * @param stack

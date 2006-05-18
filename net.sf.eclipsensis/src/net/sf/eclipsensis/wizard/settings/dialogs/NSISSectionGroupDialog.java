@@ -92,6 +92,7 @@ public class NSISSectionGroupDialog extends AbstractNSISInstallItemDialog
                     char c = text.charAt(0);
                     if((text.length()>=3 && text.substring(0,3).equalsIgnoreCase("un.")) || //$NON-NLS-1$
                         Character.isWhitespace(c) || c == '!') {
+                        e.display.beep();
                         e.doit = false;
                         return;
                     }

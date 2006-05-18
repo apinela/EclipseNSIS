@@ -78,7 +78,7 @@ public class InstallOptionsPropertySheetEntry extends PropertySheetEntry
         return helpContextIds;
     }
 
-    CommandStack getCommandStack() 
+    private CommandStack getCommandStack() 
     {
         //only the root has, and is listening too, the command stack
         if (getParent() != null) {
@@ -113,7 +113,7 @@ public class InstallOptionsPropertySheetEntry extends PropertySheetEntry
         }
     }
 
-    void setCommandStack(CommandStack stack) 
+    private void setCommandStack(CommandStack stack) 
     {
         mStack = stack;
     }
@@ -151,8 +151,14 @@ public class InstallOptionsPropertySheetEntry extends PropertySheetEntry
             ((InstallOptionsPropertySheetEntry)getParent()).valueChanged(this, command);
         }
         else {
+            CommandStack stack = getCommandStack();
             //I am the root entry
-            getCommandStack().execute(command);
+            if(stack != null) {
+                stack.execute(command);
+            }
+            else {
+                command.execute();
+            }
         }
     }
 }

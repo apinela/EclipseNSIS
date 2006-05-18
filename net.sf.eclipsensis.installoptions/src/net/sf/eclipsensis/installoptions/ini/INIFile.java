@@ -45,6 +45,8 @@ public class INIFile implements IDocumentListener, IINIContainer
     private List mErrors = new ArrayList();
     private List mWarnings = new ArrayList();
     private boolean mUpdatingDocument = false;
+    
+    private int mValidateFixMode = INILine.VALIDATE_FIX_NONE;
 
     public boolean isDirty()
     {
@@ -552,14 +554,24 @@ public class INIFile implements IDocumentListener, IINIContainer
         return null;
     }
 
+    public int getValidateFixMode()
+    {
+        return mValidateFixMode;
+    }
+
+    public void setValidateFixMode(int validateFixMode)
+    {
+        mValidateFixMode = validateFixMode;
+    }
+
     public void validate()
     {
-        validate(INILine.VALIDATE_FIX_NONE);
+        validate(false);
     }
 
     public void validate(boolean force)
     {
-        validate(INILine.VALIDATE_FIX_NONE,force);
+        validate(mValidateFixMode,force);
     }
 
     public void validate(int fixFlag)
