@@ -38,6 +38,7 @@ public class NSISSymbolDialog extends StatusMessageDialog
         super(parentShell);
         mName = name;
         mValue = value;
+        setHelpAvailable(false);
         setTitle(EclipseNSISPlugin.getResourceString((Common.isEmpty(mName)?"add.symbol.dialog.title": //$NON-NLS-1$
                                                                             "edit.symbol.dialog.title"))); //$NON-NLS-1$
     }

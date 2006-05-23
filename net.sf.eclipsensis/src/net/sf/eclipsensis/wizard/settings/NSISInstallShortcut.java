@@ -69,12 +69,13 @@ public class NSISInstallShortcut extends AbstractNSISInstallItem
      */
     public String getLocation()
     {
-        if(mLocation.startsWith(STARTMENUGROUP_SHORTCUT_LOCATION)) {
+        if(mLocation != null && mLocation.startsWith(STARTMENUGROUP_SHORTCUT_LOCATION)) {
             mCreateInStartMenuGroup = true;
             mLocation = ""; //$NON-NLS-1$
         }
         return mLocation;
     }
+
     /**
      * @param location The location to set.
      */

@@ -15,7 +15,7 @@ import net.sf.eclipsensis.INSISConstants;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.IconAndMessageDialog;
+import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
@@ -23,8 +23,11 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 
-public abstract class StatusMessageDialog extends IconAndMessageDialog implements IDialogConstants
+public abstract class StatusMessageDialog extends TrayDialog implements IDialogConstants
 {
+    protected String mMessage;
+    protected Label mMessageLabel;
+    protected Label mImageLabel;
     private DialogStatus mStatus = new DialogStatus(IStatus.OK,""); //$NON-NLS-1$
     private Image mErrorImage = null;
     private Image mWarningImage = null;
@@ -42,6 +45,30 @@ public abstract class StatusMessageDialog extends IconAndMessageDialog implement
     {
         super(parent);
         setShellStyle(getShellStyle() | SWT.MAX | SWT.RESIZE);
+    }
+
+    protected Control createMessageArea(Composite composite) 
+    {
+        Image image = getImage();
+        if (image != null) {
+            mImageLabel = new Label(composite, SWT.NULL);
+            image.setBackground(mImageLabel.getBackground());
+            mImageLabel.setImage(image);
+            mImageLabel.setLayoutData(new GridData(
+                    GridData.HORIZONTAL_ALIGN_CENTER
+                            | GridData.VERTICAL_ALIGN_BEGINNING));
+        }
+        // create message
+        if (mMessage != null) {
+            mMessageLabel = new Label(composite, SWT.WRAP);
+            mMessageLabel.setText(mMessage);
+            GridData data = new GridData(GridData.GRAB_HORIZONTAL
+                    | GridData.HORIZONTAL_ALIGN_FILL
+                    | GridData.VERTICAL_ALIGN_BEGINNING);
+            data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH);
+            mMessageLabel.setLayoutData(data);
+        }
+        return composite;
     }
 
     protected void configureShell(Shell newShell)
@@ -98,9 +125,10 @@ public abstract class StatusMessageDialog extends IconAndMessageDialog implement
         }
     }
 
-    protected Control createContents(Composite parent) {
+    protected Control createContents(Composite parent)
+    {
         // create the top level composite for the dialog
-        Composite composite = new Composite(parent, SWT.NONE);
+        Composite composite = new Composite(parent, SWT.BORDER);
         GridLayout layout = new GridLayout();
         layout.marginHeight = 0;
         layout.marginWidth = 0;
@@ -114,10 +142,10 @@ public abstract class StatusMessageDialog extends IconAndMessageDialog implement
         dialogArea = createDialogArea(composite);
         
         Composite composite2 = new Composite(composite, SWT.NONE);
-        composite2.setLayoutData(new GridData(SWT.RIGHT, SWT.FILL, true, false));
+        composite2.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
         layout = new GridLayout(1,false);
-        layout.marginHeight = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
-        layout.marginWidth = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
+        layout.marginHeight = 0;
+        layout.marginWidth = 0;
         composite2.setLayout(layout);
         buttonBar = createButtonBar(composite2);
         return composite;
@@ -172,11 +200,9 @@ public abstract class StatusMessageDialog extends IconAndMessageDialog implement
         composite= new Composite(parent, SWT.NONE);
         layout = new GridLayout();
         layout.numColumns= 2;
-        layout.marginHeight = 0;
-        layout.marginWidth = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
         composite.setLayout(layout);
         composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
-        message = getMessage();
+        mMessage = getMessage();
         createMessageArea(composite);
     }
 
@@ -184,17 +210,14 @@ public abstract class StatusMessageDialog extends IconAndMessageDialog implement
     {
         mStatus = status;
         updateButtonsEnableState(status);
-        if(imageLabel != null && !imageLabel.isDisposed()) {
-            imageLabel.setImage(getImage());
+        if(mImageLabel != null && !mImageLabel.isDisposed()) {
+            mImageLabel.setImage(getImage());
         }
-        if(messageLabel != null && !messageLabel.isDisposed()) {
-            messageLabel.setText(getMessage());
+        if(mMessageLabel != null && !mMessageLabel.isDisposed()) {
+            mMessageLabel.setText(getMessage());
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.dialogs.IconAndMessageDialog#getImage()
-     */
     protected final Image getImage()
     {
         Image image = mStatus.getImage();

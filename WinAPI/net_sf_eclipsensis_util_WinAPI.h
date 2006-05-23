@@ -58,6 +58,14 @@ extern "C" {
 #define net_sf_eclipsensis_util_WinAPI_HKEY_CURRENT_CONFIG -2147483643L
 #undef net_sf_eclipsensis_util_WinAPI_HKEY_DYN_DATA
 #define net_sf_eclipsensis_util_WinAPI_HKEY_DYN_DATA -2147483642L
+#undef net_sf_eclipsensis_util_WinAPI_REG_SZ
+#define net_sf_eclipsensis_util_WinAPI_REG_SZ 1L
+#undef net_sf_eclipsensis_util_WinAPI_REG_EXPAND_SZ
+#define net_sf_eclipsensis_util_WinAPI_REG_EXPAND_SZ 2L
+#undef net_sf_eclipsensis_util_WinAPI_REG_BINARY
+#define net_sf_eclipsensis_util_WinAPI_REG_BINARY 3L
+#undef net_sf_eclipsensis_util_WinAPI_REG_DWORD
+#define net_sf_eclipsensis_util_WinAPI_REG_DWORD 4L
 #undef net_sf_eclipsensis_util_WinAPI_BS_LEFTTEXT
 #define net_sf_eclipsensis_util_WinAPI_BS_LEFTTEXT 32L
 #undef net_sf_eclipsensis_util_WinAPI_CB_SHOWDROPDOWN
@@ -88,6 +96,16 @@ extern "C" {
 #define net_sf_eclipsensis_util_WinAPI_LIS_NORMAL 1L
 #undef net_sf_eclipsensis_util_WinAPI_LIS_DISABLED
 #define net_sf_eclipsensis_util_WinAPI_LIS_DISABLED 4L
+#undef net_sf_eclipsensis_util_WinAPI_BP_RADIOBUTTON
+#define net_sf_eclipsensis_util_WinAPI_BP_RADIOBUTTON 2L
+#undef net_sf_eclipsensis_util_WinAPI_RBS_UNCHECKEDNORMAL
+#define net_sf_eclipsensis_util_WinAPI_RBS_UNCHECKEDNORMAL 1L
+#undef net_sf_eclipsensis_util_WinAPI_RBS_UNCHECKEDHOT
+#define net_sf_eclipsensis_util_WinAPI_RBS_UNCHECKEDHOT 2L
+#undef net_sf_eclipsensis_util_WinAPI_RBS_CHECKEDNORMAL
+#define net_sf_eclipsensis_util_WinAPI_RBS_CHECKEDNORMAL 5L
+#undef net_sf_eclipsensis_util_WinAPI_RBS_CHECKEDHOT
+#define net_sf_eclipsensis_util_WinAPI_RBS_CHECKEDHOT 6L
 #undef net_sf_eclipsensis_util_WinAPI_TVS_HASBUTTONS
 #define net_sf_eclipsensis_util_WinAPI_TVS_HASBUTTONS 1L
 #undef net_sf_eclipsensis_util_WinAPI_TVS_HASLINES
@@ -134,6 +152,10 @@ extern "C" {
 #define net_sf_eclipsensis_util_WinAPI_FILE_ATTRIBUTE_SYSTEM 4L
 #undef net_sf_eclipsensis_util_WinAPI_VK_SHIFT
 #define net_sf_eclipsensis_util_WinAPI_VK_SHIFT 16L
+#undef net_sf_eclipsensis_util_WinAPI_VK_CTRL
+#define net_sf_eclipsensis_util_WinAPI_VK_CTRL 17L
+#undef net_sf_eclipsensis_util_WinAPI_VK_ALT
+#define net_sf_eclipsensis_util_WinAPI_VK_ALT 18L
 /*
  * Class:     net_sf_eclipsensis_util_WinAPI
  * Method:    init
@@ -252,6 +274,14 @@ JNIEXPORT jboolean JNICALL Java_net_sf_eclipsensis_util_WinAPI_AreVisualStylesEn
  * Signature: (IILjava/lang/String;II)V
  */
 JNIEXPORT void JNICALL Java_net_sf_eclipsensis_util_WinAPI_DrawWidgetThemeBackGround
+  (JNIEnv *, jclass, jint, jint, jstring, jint, jint);
+
+/*
+ * Class:     net_sf_eclipsensis_util_WinAPI
+ * Method:    DrawWidgetThemeBorder
+ * Signature: (IILjava/lang/String;II)V
+ */
+JNIEXPORT void JNICALL Java_net_sf_eclipsensis_util_WinAPI_DrawWidgetThemeBorder
   (JNIEnv *, jclass, jint, jint, jstring, jint, jint);
 
 /*

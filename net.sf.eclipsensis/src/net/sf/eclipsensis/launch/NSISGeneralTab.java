@@ -334,6 +334,7 @@ class NSISGeneralTab extends NSISTab implements INSISSettingsEditorPageListener
                 EclipseNSISPlugin.getDefault().log(e);
             }
             FileSelectionDialog dialog = new FileSelectionDialog(shell,ifile,mFilter);
+            dialog.setHelpAvailable(false);
             if(dialog.open() == Window.OK) {
                 mScript.setText(mStringVariableManager.generateVariableExpression("workspace_loc",dialog.getFile().getFullPath().toString())); //$NON-NLS-1$
             }

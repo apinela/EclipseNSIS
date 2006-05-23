@@ -10,8 +10,7 @@
 package net.sf.eclipsensis.util;
 
 import java.io.*;
-import java.net.JarURLConnection;
-import java.net.URL;
+import java.net.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
@@ -47,6 +46,8 @@ public class IOUtility
     private static Pattern cValidURL = Pattern.compile("(?:(?:ftp|https?):\\/\\/)?(?:[a-z0-9](?:[-a-z0-9]*[a-z0-9])?\\.)+(?:com|edu|biz|org|gov|int|info|mil|net|name|museum|coop|aero|[a-z][a-z])\\b(?:\\d+)?(?:\\/[^;\"'<>()\\[\\]{}\\s\\x7f-\\xff]*(?:[.,?]+[^;\"'<>()\\[\\]{}\\s\\x7f-\\xff]+)*)?"); //$NON-NLS-1$
 
     private static HashMap cBundleResources = new HashMap();
+
+    private static final String FILE_URL_PREFIX = "file:///";
     
     private IOUtility()
     {
@@ -583,5 +584,17 @@ public class IOUtility
         {
             return mBundle.hashCode() << 16 + mResource.hashCode();
         }
+    }
+
+    public static final String getFileURLString(File file) throws MalformedURLException
+    {
+        String url = file.toURI().toURL().toString();
+        for(int i=0; i<FILE_URL_PREFIX.length(); i++) {
+            if(url.charAt(i) != FILE_URL_PREFIX.charAt(i) && Character.toLowerCase(url.charAt(i)) != FILE_URL_PREFIX.charAt(i)) {
+                url = new StringBuffer(url.substring(0,i)).append(FILE_URL_PREFIX.substring(i)).append(url.substring(i)).toString();
+                break;
+            }
+        }
+        return url;
     }
 }

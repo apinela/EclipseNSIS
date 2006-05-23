@@ -20,6 +20,8 @@ import javax.swing.text.html.HTML.Attribute;
 import javax.swing.text.html.HTML.Tag;
 import javax.swing.text.html.HTMLEditorKit.ParserCallback;
 
+import net.sf.eclipsensis.util.IOUtility;
+
 public class NSISHelpFileParserCallback extends ParserCallback
 {
     private static final String ATTR_ONCLICK = "onclick"; //$NON-NLS-1$
@@ -120,7 +122,7 @@ public class NSISHelpFileParserCallback extends ParserCallback
                                 File f = new File(mHelpFile.getParent(),file);
                                 if(f.exists()) {
                                     try {
-                                        mHref = f.toURI().toURL().toString();
+                                        mHref = IOUtility.getFileURLString(f);
                                     }
                                     catch (MalformedURLException e) {
                                     }

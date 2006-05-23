@@ -109,7 +109,7 @@ public class NSISHelpProducer implements IExecutableExtension, IHelpContentProdu
                         if(IOUtility.isValidFile(helpFile)) {
                             if(isKeyword) {
                                 try {
-                                    href2 = helpFile.toURI().toURL().toString();
+                                    href2 = IOUtility.getFileURLString(helpFile);
                                     if(target != null) {
                                         href2 += target;
                                     }

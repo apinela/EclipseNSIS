@@ -403,6 +403,26 @@ JNIEXPORT void JNICALL Java_net_sf_eclipsensis_util_WinAPI_DrawWidgetThemeBackGr
         LPCWSTR pszTheme =  (LPCWSTR)pEnv->GetStringChars(theme, 0);
         HTHEME hTheme = g_xpStyle.OpenThemeData((HWND)hWnd, pszTheme);
 
+		RECT rect;
+
+        GetWindowRect((HWND)hWnd, &rect);
+        OffsetRect(&rect, -rect.left, -rect.top);
+
+		g_xpStyle.DrawThemeParentBackground((HWND)hWnd, (HDC)hDC, &rect);
+		g_xpStyle.DrawThemeBackground(hTheme, (HDC)hDC, partId, stateId, &rect, NULL);
+
+        g_xpStyle.CloseThemeData(hTheme);
+        pEnv->ReleaseStringChars(theme, pszTheme);
+    }
+}
+
+JNIEXPORT void JNICALL Java_net_sf_eclipsensis_util_WinAPI_DrawWidgetThemeBorder(JNIEnv *pEnv, jclass jClass, jint hWnd, jint hDC, 
+                                                                                     jstring theme, jint partId, jint stateId)
+{
+    if(Java_net_sf_eclipsensis_util_WinAPI_AreVisualStylesEnabled(pEnv,jClass)) {
+        LPCWSTR pszTheme =  (LPCWSTR)pEnv->GetStringChars(theme, 0);
+        HTHEME hTheme = g_xpStyle.OpenThemeData((HWND)hWnd, pszTheme);
+
 		RECT rect, clipRect;
 
         GetWindowRect((HWND)hWnd, &rect);

@@ -53,6 +53,7 @@ public class RegistryKeySelectionDialog extends StatusMessageDialog
     public RegistryKeySelectionDialog(Shell parent)
     {
         super(parent);
+        setHelpAvailable(false);
         IDialogSettings dialogSettings = EclipseNSISPlugin.getDefault().getDialogSettings();
         String name = getClass().getName();
         mDialogSettings = dialogSettings.getSection(name);

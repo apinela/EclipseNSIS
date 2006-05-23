@@ -100,7 +100,7 @@ public abstract class AbstractTemplateSettings extends Composite
         table.setLinesVisible(true);
 
         TableColumn[] columns= {new TableColumn(table, SWT.NONE)};
-        columns[0].setText(EclipseNSISPlugin.getResourceString("template.name.label")); //$NON-NLS-1$
+        columns[0].setText(EclipseNSISPlugin.getResourceString("template.settings.name.label")); //$NON-NLS-1$
 
         mTableViewer= new CheckboxTableViewer(table);
         mTableViewer.setLabelProvider(new CollectionLabelProvider());
@@ -169,7 +169,7 @@ public abstract class AbstractTemplateSettings extends Composite
         createButtons(buttons);
 
         Label label= new Label(this, SWT.NONE);
-        label.setText(EclipseNSISPlugin.getResourceString("template.description.label")); //$NON-NLS-1$
+        label.setText(EclipseNSISPlugin.getResourceString("template.settings.description.label")); //$NON-NLS-1$
         data= new GridData();
         data.horizontalSpan= 2;
         label.setLayoutData(data);

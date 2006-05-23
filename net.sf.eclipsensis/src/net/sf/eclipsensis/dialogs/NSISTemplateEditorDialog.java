@@ -119,7 +119,7 @@ public class NSISTemplateEditorDialog extends StatusMessageDialog
         GridLayout layout= new GridLayout();
         layout.numColumns= 2;
         layout.marginHeight = 0;
-        layout.marginHeight = 0;
+        layout.marginWidth = 0;
         composite.setLayout(layout);
 
         ModifyListener listener= new ModifyListener() {
@@ -132,7 +132,7 @@ public class NSISTemplateEditorDialog extends StatusMessageDialog
             createLabel(composite, EclipseNSISPlugin.getResourceString("template.name.label")); //$NON-NLS-1$
 
             Composite composite3= new Composite(composite, SWT.NONE);
-            composite3.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+            composite3.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
             layout= new GridLayout();
             layout.numColumns= 3;
             layout.marginWidth= 0;
@@ -165,7 +165,7 @@ public class NSISTemplateEditorDialog extends StatusMessageDialog
 
         int descFlags= mIsNameModifiable ? SWT.BORDER : SWT.BORDER | SWT.READ_ONLY;
         mDescriptionText= new Text(composite, descFlags );
-        mDescriptionText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+        mDescriptionText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 
         mDescriptionText.addModifyListener(listener);
 
@@ -174,17 +174,17 @@ public class NSISTemplateEditorDialog extends StatusMessageDialog
         mPatternEditor= createEditor(composite);
 
         Label filler= new Label(composite, SWT.NONE);
-        filler.setLayoutData(new GridData());
+        filler.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false));
 
         Composite composite3= new Composite(composite, SWT.NONE);
         layout= new GridLayout();
         layout.marginWidth= 0;
         layout.marginHeight= 0;
         composite3.setLayout(layout);
-        composite3.setLayoutData(new GridData());
+        composite3.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true));
 
         mInsertVariableButton= new Button(composite3, SWT.NONE);
-        mInsertVariableButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+        mInsertVariableButton.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
         mInsertVariableButton.setText(EclipseNSISPlugin.getResourceString("template.insert.variable.label")); //$NON-NLS-1$
         mInsertVariableButton.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent e) {
@@ -265,7 +265,7 @@ public class NSISTemplateEditorDialog extends StatusMessageDialog
     {
         Label label= new Label(parent, SWT.NULL);
         label.setText(name);
-        label.setLayoutData(new GridData());
+        label.setLayoutData(new GridData(SWT.FILL,SWT.FILL,false,false));
 
         return label;
     }

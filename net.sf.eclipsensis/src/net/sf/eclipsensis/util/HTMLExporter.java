@@ -94,7 +94,7 @@ public class HTMLExporter
                         try {
                             monitor.subTask(EclipseNSISPlugin.getResourceString("opening.file.message")); //$NON-NLS-1$
                             while(mShell.getDisplay().readAndDispatch()) { }
-                            Common.openExternalBrowser(file.toURI().toURL().toString());
+                            Common.openExternalBrowser(IOUtility.getFileURLString(file));
                         }
                         catch (MalformedURLException e) {
                             EclipseNSISPlugin.getDefault().log(e);

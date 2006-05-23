@@ -23,6 +23,8 @@ public class NSISUpdateURLs
     private static final String cDefaultUpdateSite;
     private static final MessageFormat cUpdateURLFormat;
     private static final MessageFormat cDownloadURLFormat;
+    private static final MessageFormat cGenericDownloadURLFormat;
+    private static final MessageFormat cSelectDownloadURLFormat;
 
     static {
         String className = NSISUpdateURLs.class.getName();
@@ -37,6 +39,8 @@ public class NSISUpdateURLs
         cDefaultDownloadSite = readBundle(bundle, "default.download.site"); //$NON-NLS-1$
         cUpdateURLFormat = readBundleFormat(bundle, "update.url.format"); //$NON-NLS-1$
         cDownloadURLFormat = readBundleFormat(bundle, "download.url.format"); //$NON-NLS-1$
+        cGenericDownloadURLFormat = readBundleFormat(bundle, "generic.download.url.format"); //$NON-NLS-1$
+        cSelectDownloadURLFormat = readBundleFormat(bundle, "select.download.url.format"); //$NON-NLS-1$
     }
     
     private NSISUpdateURLs()
@@ -91,6 +95,16 @@ public class NSISUpdateURLs
     public static synchronized URL getDownloadURL(String site, String version) throws IOException
     {
         return new URL(cDownloadURLFormat.format(new String[] {site, version}));
+    }
+    
+    public static synchronized URL getGenericDownloadURL(String site, String version) throws IOException
+    {
+        return new URL(cGenericDownloadURLFormat.format(new String[] {site, version}));
+    }
+    
+    public static synchronized URL getSelectDownloadURL(String version) throws IOException
+    {
+        return new URL(cSelectDownloadURLFormat.format(new String[] {version}));
     }
 
     public static synchronized URL getUpdateURL(String version) throws IOException

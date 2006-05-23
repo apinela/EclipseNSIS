@@ -70,6 +70,12 @@ public class WinAPI
     public static final int LIS_NORMAL = 1;
     public static final int LIS_DISABLED = 4;
 
+    public static final int BP_RADIOBUTTON = 2;
+    public static final int RBS_UNCHECKEDNORMAL = 1;
+    public static final int RBS_UNCHECKEDHOT = 2;
+    public static final int RBS_CHECKEDNORMAL = 5;
+    public static final int RBS_CHECKEDHOT = 6;
+
     public static final int TVS_HASBUTTONS = 0x1;
     public static final int TVS_HASLINES = 0x2;
     
@@ -130,6 +136,8 @@ public class WinAPI
     public static final native boolean AreVisualStylesEnabled();
     
     public static final native void DrawWidgetThemeBackGround(int hWnd, int hDC, String theme, int partId, int stateId);
+
+    public static final native void DrawWidgetThemeBorder(int hWnd, int hDC, String theme, int partId, int stateId);
 
     public static final native int GetSysColor(int index);
 

@@ -33,6 +33,7 @@ public class NSISTaskTagDialog extends StatusMessageDialog
     {
         super(parentShell);
         mTaskTag = taskTag;
+        setHelpAvailable(false);
         setTitle(EclipseNSISPlugin.getResourceString((Common.isEmpty(mTaskTag.getTag())?"new.task.tag.dialog.title": //$NON-NLS-1$
                                                                                         "edit.task.tag.dialog.title"))); //$NON-NLS-1$
     }

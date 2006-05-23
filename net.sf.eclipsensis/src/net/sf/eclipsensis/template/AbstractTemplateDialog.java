@@ -14,8 +14,8 @@ import java.io.IOException;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.wizard.util.NSISWizardDialogUtil;
 
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -24,7 +24,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 
-public abstract class AbstractTemplateDialog extends Dialog
+public abstract class AbstractTemplateDialog extends TrayDialog
 {
     private AbstractTemplate mOldTemplate = null;
     private AbstractTemplate mTemplate = null;

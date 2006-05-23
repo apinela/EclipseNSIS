@@ -35,6 +35,7 @@ public class NSISInstructionDialog extends StatusMessageDialog
     {
         super(parentShell);
         mInstruction = instruction;
+        setHelpAvailable(false);
         setTitle(EclipseNSISPlugin.getResourceString((Common.isEmpty(mInstruction)?"add.instruction.dialog.title": //$NON-NLS-1$
                                                                                    "edit.instruction.dialog.title"))); //$NON-NLS-1$
     }
@@ -50,7 +51,9 @@ public class NSISInstructionDialog extends StatusMessageDialog
     protected Control createControl(Composite parent)
     {
         Composite composite = new Composite(parent,SWT.NONE);
-        composite.setLayout(new GridLayout(2,false));
+        GridLayout layout = new GridLayout(2,false);
+        layout.marginWidth = layout.marginHeight = 0;
+        composite.setLayout(layout);
 
         String instruction;
         String parameters;

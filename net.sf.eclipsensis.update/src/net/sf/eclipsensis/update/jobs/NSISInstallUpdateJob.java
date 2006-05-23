@@ -59,17 +59,34 @@ class NSISInstallUpdateJob extends NSISUpdateJob
     {
         if(IOUtility.isValidFile(file)) {
             FileOutputStream fos = null;
+            boolean readOnly = false;
+            int attributes = 0;
             try {
+                attributes = WinAPI.GetFileAttributes(file.getAbsolutePath());
+                if( (attributes & WinAPI.FILE_ATTRIBUTE_READONLY) > 0) {
+                    readOnly = true;
+                    WinAPI.SetFileAttributes(file.getAbsolutePath(), attributes & ~WinAPI.FILE_ATTRIBUTE_READONLY);
+                }
                 fos = new FileOutputStream(file,true);
                 FileLock lock = null;
                 try {
-                    lock = fos.getChannel().tryLock();
+                    if(fos != null) {
+                        lock = fos.getChannel().tryLock();
+                    }
                     return lock == null;
                 }
                 catch (IOException e) {
                     return true;
                 }
                 finally {
+                    try {
+                        if(readOnly) {
+                            WinAPI.SetFileAttributes(file.getAbsolutePath(), attributes);
+                        }
+                    }
+                    catch(Exception e) {
+                        e.printStackTrace();
+                    }
                     if(lock != null) {
                         try {
                             lock.release();
@@ -118,6 +135,7 @@ class NSISInstallUpdateJob extends NSISUpdateJob
                                         }
                                         
                                     };
+                                    dialog.setHelpAvailable(false);
                                     dialog.setContentProvider(new CollectionContentProvider());
                                     dialog.setLabelProvider(new LabelProvider());
                                     dialog.setTitle(EclipseNSISUpdatePlugin.getResourceString("warning.title")); //$NON-NLS-1$

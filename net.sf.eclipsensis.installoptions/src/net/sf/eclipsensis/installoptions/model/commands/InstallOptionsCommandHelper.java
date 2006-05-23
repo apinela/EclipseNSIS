@@ -93,6 +93,7 @@ public abstract class InstallOptionsCommandHelper
                                             return super.getTableStyle() | SWT.READ_ONLY;
                                         }
                                     };
+                                    dialog.setHelpAvailable(false);
                                     dialog.setAddCancelButton(false);
                                     ArrayList list = new ArrayList();
                                     list.addAll(section.getErrors());

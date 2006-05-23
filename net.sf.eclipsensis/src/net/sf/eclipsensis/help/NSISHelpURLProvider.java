@@ -30,7 +30,7 @@ import org.eclipse.ui.PlatformUI;
 
 public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListener, IEclipseNSISService
 {
-    private static final Version HELP_URL_PROVIDER_VERSION = new Version("1.0"); //$NON-NLS-1$
+    private static final Version HELP_URL_PROVIDER_VERSION = new Version("1.0.1"); //$NON-NLS-1$
     
     private static final String VERSION = "version"; //$NON-NLS-1$
     private static final String HELP_URLS = "helpUrls"; //$NON-NLS-1$
@@ -83,8 +83,14 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
         }
         final StringBuffer htmlPrefix = new StringBuffer("<html>\n<head>\n"); //$NON-NLS-1$
         if(styleSheet != null) {
-            htmlPrefix.append("<link rel=\"stylesheet\" href=\"").append(styleSheet.toURI()).append( //$NON-NLS-1$
-                    "\" charset=\"ISO-8859-1\" type=\"text/css\">\n"); //$NON-NLS-1$
+            try {
+                htmlPrefix.append("<link rel=\"stylesheet\" href=\"").append(IOUtility.getFileURLString(styleSheet)).append( //$NON-NLS-1$
+                        "\" charset=\"ISO-8859-1\" type=\"text/css\">\n"); //$NON-NLS-1$
+            }
+            catch (MalformedURLException e) {
+                // This should not happen
+                e.printStackTrace();
+            }
         }
         else {
             htmlPrefix.append("<style type=\"text/css\">\n").append( //$NON-NLS-1$
@@ -92,9 +98,15 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
                     ".link { font-weight: bold; }\n</style>\n"); //$NON-NLS-1$
         }
         if(NSISBrowserUtility.COLORS_CSS_FILE != null) {
-            htmlPrefix.append("<link rel=\"stylesheet\" href=\"").append( //$NON-NLS-1$
-                    NSISBrowserUtility.COLORS_CSS_FILE.toURI()).append(
-            "\" charset=\"ISO-8859-1\" type=\"text/css\">\n"); //$NON-NLS-1$
+            try {
+                htmlPrefix.append("<link rel=\"stylesheet\" href=\"").append( //$NON-NLS-1$
+                        IOUtility.getFileURLString(NSISBrowserUtility.COLORS_CSS_FILE)).append(
+                        "\" charset=\"ISO-8859-1\" type=\"text/css\">\n"); //$NON-NLS-1$
+            }
+            catch (MalformedURLException e) {
+                // This should not happen
+                e.printStackTrace();
+            } 
         }
         htmlPrefix.append("</head>\n<body>\n"); //$NON-NLS-1$
         KEYWORD_HELP_HTML_PREFIX = htmlPrefix.toString();
@@ -411,7 +423,7 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
                     IOUtility.writeContentToFile(mNoHelpFile, text.getBytes());
                 }
                 try {
-                    mStartPage = mCHMStartPage = mNoHelpFile.toURI().toURL().toString();
+                    mStartPage = mCHMStartPage = IOUtility.getFileURLString(mNoHelpFile);
                 }
                 catch (MalformedURLException e) {
                     mStartPage = null;

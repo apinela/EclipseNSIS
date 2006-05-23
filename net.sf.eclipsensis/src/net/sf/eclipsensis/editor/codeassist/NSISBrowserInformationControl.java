@@ -565,7 +565,7 @@ public class NSISBrowserInformationControl implements IInformationControl, IInfo
                         if (f.getCanonicalPath().regionMatches(true, 0, home, 0, home.length())) {
                             String ext = IOUtility.getFileExtension(f);
                             if (NSISBrowserUtility.HTML_EXTENSIONS != null && NSISBrowserUtility.HTML_EXTENSIONS.contains(ext)) {
-                                NSISHTMLHelp.showHelp(f.toURI().toURL().toString());
+                                NSISHTMLHelp.showHelp(IOUtility.getFileURLString(f));
                                 return;
                             }
                             else {
@@ -580,7 +580,7 @@ public class NSISBrowserInformationControl implements IInformationControl, IInfo
                     }                                                
                 }
                 try {
-                    Common.openExternalBrowser(f.toURI().toURL().toString());
+                    Common.openExternalBrowser(IOUtility.getFileURLString(f));
                 }
                 catch (Exception e) {
                     EclipseNSISPlugin.getDefault().log(e);

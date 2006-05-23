@@ -47,7 +47,7 @@ public abstract class NSISHttpUpdateJob extends NSISUpdateJob
         monitor.beginTask(getName(), 120);
         try {
             URL url = null;
-            URL alternateURL = null;
+            URL defaultUrl = null;
             try {
                 url = getURL();
             }
@@ -56,21 +56,21 @@ public abstract class NSISHttpUpdateJob extends NSISUpdateJob
                 return new Status(IStatus.ERROR, EclipseNSISUpdatePlugin.getDefault().getPluginId(), IStatus.ERROR, e.getMessage(), e);
             }
             try {
-                alternateURL = getAlternateURL();
+                defaultUrl = getDefaultURL();
             }
             catch (IOException e) {
                 handleException(e);
                 return new Status(IStatus.ERROR, EclipseNSISUpdatePlugin.getDefault().getPluginId(), IStatus.ERROR, e.getMessage(), e);
             }
             if(url == null) {
-                url = alternateURL;
-                alternateURL = null;
+                url = defaultUrl;
+                defaultUrl = null;
             }
-            else if(alternateURL != null && url.toString().equals(alternateURL.toString())) {
-                alternateURL = null;
+            else if(defaultUrl != null && url.toString().equals(defaultUrl.toString())) {
+                defaultUrl = null;
             }
             
-            if (url != null || alternateURL != null) {
+            if (url != null || defaultUrl != null) {
                 String oldProxySet = System.getProperty(HTTP_PROXY_SET);
                 String oldProxyHost = System.getProperty(HTTP_PROXY_HOST);
                 String oldProxyPort = System.getProperty(HTTP_PROXY_PORT);
@@ -106,36 +106,15 @@ public abstract class NSISHttpUpdateJob extends NSISUpdateJob
                         }
                         HttpURLConnection conn = null;
                         try {
-                            int responseCode;
-                            try {
-                                conn = (HttpURLConnection)url.openConnection();
-                                responseCode = conn.getResponseCode();
-                            }
-                            catch (IOException e) {
-                                if(alternateURL != null) {
-                                    responseCode = HttpURLConnection.HTTP_BAD_REQUEST;
-                                }
-                                else {
-                                    throw e;
-                                }
+                            conn = makeConnection(monitor, url, defaultUrl);
+                            if(monitor.isCanceled()) {
+                                return Status.CANCEL_STATUS;
                             }
                             monitor.worked(5);
-                            if(responseCode >= 400) {
-                                if(alternateURL != null) {
-                                    url = alternateURL;
-                                    conn = (HttpURLConnection)url.openConnection();
-                                    responseCode = conn.getResponseCode();
-                                }
-                                if(responseCode >= 400) {
-                                    throw new IOException(new MessageFormat(EclipseNSISUpdatePlugin.getResourceString("http.error")).format(new Object[] {new Integer(responseCode)})); //$NON-NLS-1$
-                                }
-                            }
-                            else {
-                                SubProgressMonitor subMonitor = new SubProgressMonitor(monitor,100);
-                                IStatus status = handleConnection(conn, subMonitor);
-                                if(!status.isOK()) {
-                                    return status;
-                                }
+                            SubProgressMonitor subMonitor = new SubProgressMonitor(monitor,100);
+                            IStatus status = handleConnection(conn, subMonitor);
+                            if(!status.isOK()) {
+                                return status;
                             }
                         }
                         finally {
@@ -178,6 +157,43 @@ public abstract class NSISHttpUpdateJob extends NSISUpdateJob
         }        
     }
 
+    /**
+     * @param monitor TODO
+     * @param url
+     * @param defaultURL
+     * @param conn
+     * @return
+     * @throws IOException
+     */
+    protected HttpURLConnection makeConnection(IProgressMonitor monitor, URL url, URL defaultURL) throws IOException
+    {
+        HttpURLConnection conn = null;
+        int responseCode;
+        try {
+            conn = (HttpURLConnection)url.openConnection();
+            responseCode = conn.getResponseCode();
+        }
+        catch (IOException e) {
+            if(defaultURL != null) {
+                responseCode = HttpURLConnection.HTTP_BAD_REQUEST;
+            }
+            else {
+                throw e;
+            }
+        }
+        if(responseCode >= 400) {
+            if(defaultURL != null) {
+                url = defaultURL;
+                conn = (HttpURLConnection)url.openConnection();
+                responseCode = conn.getResponseCode();
+            }
+            if(responseCode >= 400) {
+                throw new IOException(new MessageFormat(EclipseNSISUpdatePlugin.getResourceString("http.error")).format(new Object[] {new Integer(responseCode)})); //$NON-NLS-1$
+            }
+        }
+        return conn;
+    }
+
     protected final void setSystemProperty(String name, String value)
     {
         if (value == null) {
@@ -193,7 +209,7 @@ public abstract class NSISHttpUpdateJob extends NSISUpdateJob
         }
     }
 
-    protected URL getAlternateURL() throws IOException
+    protected URL getDefaultURL() throws IOException
     {
         if(false) {
             throw new IOException();

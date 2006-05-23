@@ -90,7 +90,7 @@ public class ControlSubclasser
                         if(info.figure.isNeedsTheme() && (info.figure.getStyle() & SWT.BORDER) == SWT.BORDER) {
                             res=WinAPI.CallWindowProc(((ControlInfo)cProcMap.get(new Integer(hWnd))).oldProc,
                                     hWnd, msg, wParam, lParam);
-                            WinAPI.DrawWidgetThemeBackGround(hWnd,wParam,info.figure.getTheme(),info.figure.getThemePartId(),
+                            WinAPI.DrawWidgetThemeBorder(hWnd,wParam,info.figure.getTheme(),info.figure.getThemePartId(),
                                                              info.figure.getThemeStateId());
                             return res;
                         }

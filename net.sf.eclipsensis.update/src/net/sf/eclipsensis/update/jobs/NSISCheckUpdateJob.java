@@ -75,7 +75,7 @@ public class NSISCheckUpdateJob extends NSISHttpUpdateJob
         return null;
     }
 
-    protected URL getAlternateURL() throws IOException
+    protected URL getDefaultURL() throws IOException
     {
         Version version = NSISPreferences.INSTANCE.getNSISVersion();
         if(version != null) {

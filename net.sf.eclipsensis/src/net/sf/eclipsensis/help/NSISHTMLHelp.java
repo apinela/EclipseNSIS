@@ -20,8 +20,7 @@ import net.sf.eclipsensis.dialogs.NSISConfigWizardDialog;
 import net.sf.eclipsensis.job.IJobStatusRunnable;
 import net.sf.eclipsensis.settings.INSISHomeListener;
 import net.sf.eclipsensis.settings.NSISPreferences;
-import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.IOUtility;
+import net.sf.eclipsensis.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.swt.SWT;
@@ -220,11 +219,11 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
         }
     }
 
-    private ToolItem createToolItem(ToolBar bar, String tooltip, String icon)
+    private ToolItem createToolItem(ToolBar bar, String tooltip, Image icon)
     {
         ToolItem item = new ToolItem(bar, SWT.NONE);
         item.setToolTipText(EclipseNSISPlugin.getResourceString(tooltip));
-        item.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString(icon)));
+        item.setImage(icon);
         return item;
     }
 
@@ -237,26 +236,26 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
 
         // Add a button to navigate backwards through previously visited pages
         mBack = createToolItem(mToolBar,"help.browser.back.tooltip", //$NON-NLS-1$
-                               "help.browser.back.icon"); //$NON-NLS-1$
+                               CommonImages.BROWSER_BACK_ICON);
 
         // Add a button to navigate forward through previously visited pages
         mForward = createToolItem(mToolBar,"help.browser.forward.tooltip", //$NON-NLS-1$
-                "help.browser.forward.icon"); //$NON-NLS-1$
+                               CommonImages.BROWSER_FORWARD_ICON);
 
         // Add a separator
         new ToolItem(mToolBar, SWT.SEPARATOR);
 
         // Add a button to refresh the current web page
         mRefresh = createToolItem(mToolBar,"help.browser.refresh.tooltip", //$NON-NLS-1$
-                "help.browser.refresh.icon"); //$NON-NLS-1$
+                               CommonImages.BROWSER_REFRESH_ICON);
 
         // Add a button to abort web page loading
         mStop = createToolItem(mToolBar,"help.browser.stop.tooltip", //$NON-NLS-1$
-                "help.browser.stop.icon"); //$NON-NLS-1$
+                               CommonImages.BROWSER_STOP_ICON);
 
         // Add a button to navigate to the Home page
         mHome = createToolItem(mToolBar,"help.browser.home.tooltip", //$NON-NLS-1$
-                "help.browser.home.icon"); //$NON-NLS-1$
+                               CommonImages.BROWSER_HOME_ICON);
 
         Listener listener = new Listener() {
             public void handleEvent(Event event) {

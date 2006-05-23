@@ -25,8 +25,7 @@ import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.util.IOUtility;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.*;
 import org.eclipse.swt.events.*;
@@ -47,17 +46,11 @@ public class NSISCommandDialog extends StatusMessageDialog
     
     private NSISCommand mCommand;
 
-    private Browser mBrowser;
     private Control mParamEditorControl;
-    private String mCurrentCommand = null;
-    private ToolItem mBack = null;
-    private ToolItem mForward = null;
-    private Stack mBackCommands = null;
-    private Stack mForwardCommands = null;
     private Map mSettings = null;
     private boolean mCollapseHelp = true;
     private IDialogSettings mDialogSettings = null;
-    
+
     static {
         final File stateLocation = new File(EclipseNSISPlugin.getPluginStateLocation(),"net.sf.eclipsensis.help.commands.NSISCommandSettings.ser"); //$NON-NLS-1$
         EclipseNSISPlugin.getDefault().registerService(new IEclipseNSISService() {
@@ -98,20 +91,6 @@ public class NSISCommandDialog extends StatusMessageDialog
         });
     }
     
-    private INSISBrowserFileURLHandler mFileURLHandler = new INSISBrowserFileURLHandler() {
-        public void handleFile(File file)
-        {
-            NSISCommandDialog.this.handleFile(file);
-        }
-    };
-    private INSISBrowserKeywordURLHandler mKeywordURLHandler = new INSISBrowserKeywordURLHandler() {
-        public void handleKeyword(String keyword)
-        {
-            gotoCommand(keyword);
-
-        }
-    };
-
     private Listener mFilter = new Listener() {
         final JobScheduler jobScheduler = EclipseNSISPlugin.getDefault().getJobScheduler();
         
@@ -145,7 +124,7 @@ public class NSISCommandDialog extends StatusMessageDialog
     private INSISParamEditor mParamEditor;
     private String mCommandText = ""; //$NON-NLS-1$
     private boolean mRemember;
-    private Composite mControl;
+    private BrowserDialogTray mTray = null;
     
     public NSISCommandDialog(Shell parent, NSISCommand command)
     {
@@ -188,23 +167,23 @@ public class NSISCommandDialog extends StatusMessageDialog
             parent = parent.getParent();
         }
         width = Math.max(width, MIN_WINDOW_WIDTH);
-        if(mCollapseHelp) {
-            p.x = width;
-        }
-        else {
-            p.x = 2*width + ((GridLayout)mControl.getLayout()).horizontalSpacing;                        
-        }
         return p;
     }
 
     public void create()
     {
         super.create();
+        
         getButton(IDialogConstants.OK_ID).setText(IDialogConstants.FINISH_LABEL);
         if(mParamEditor != null) {
             mParamEditor.initEditor();
         }
         validate();
+
+        if(!mCollapseHelp && mTray != null) {
+            openTray(mTray);
+        }
+        mParamEditorControl.setFocus();
     }
 
 
@@ -242,7 +221,7 @@ public class NSISCommandDialog extends StatusMessageDialog
 
     private void saveDialogSettings()
     {
-        mDialogSettings.put(SETTING_COLLAPSE_HELP, mCollapseHelp);
+        mDialogSettings.put(SETTING_COLLAPSE_HELP, !(getTray() instanceof BrowserDialogTray));
     }
 
     protected void okPressed()
@@ -258,6 +237,40 @@ public class NSISCommandDialog extends StatusMessageDialog
             cCommandStateMap.remove(mCommand.getName());
         }
         super.okPressed();
+    }
+
+    protected Control createHelpControl(Composite parent)
+    {
+        Control helpControl = super.createHelpControl(parent);
+        Listener listener = new Listener() {
+            public void handleEvent(Event event)
+            {
+                DialogTray tray = getTray();
+                if(tray instanceof BrowserDialogTray) {
+                    closeTray();
+                    if (getShell() != null) {
+                        Control c = getShell().getDisplay().getFocusControl();
+                        while (c != null) {
+                            if (c.isListening(SWT.Help)) {
+                                c.notifyListeners(SWT.Help, new Event());
+                                break;
+                            }
+                            c = c.getParent();
+                        }
+                    }
+                }
+            }
+        };
+        if(helpControl instanceof ToolBar) {
+            ToolItem[] children = ((ToolBar)helpControl).getItems();
+            if(children.length > 0) {
+                children[0].addListener(SWT.Selection,listener);
+            }
+        }
+        else {
+            helpControl.addListener(SWT.Selection,listener);
+        }
+        return helpControl;
     }
 
     protected void createControlAndMessageArea(Composite parent)
@@ -315,34 +328,23 @@ public class NSISCommandDialog extends StatusMessageDialog
     
     protected Control createControl(Composite parent)
     {
-        Composite composite = new Composite(parent,SWT.NONE);
-        composite.setLayout(new GridLayout(1,false));
-        composite.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true));
-        
-        mControl = new Composite(composite, SWT.NONE);
-        GridLayout layout = new GridLayout(2,true);
-        layout.marginHeight = layout.marginWidth = 0;
-        mControl.setLayout(layout);
-        mControl.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true));
-        
-        final Composite child = new Composite(mControl, SWT.NONE);
-        layout = new GridLayout(2,false);
+        final Composite child = new Composite(parent, SWT.NONE);
+        GridLayout layout = new GridLayout(2,false);
         layout.marginHeight = layout.marginWidth = 0;
         child.setLayout(layout);
+        child.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true));
+
         Label l = new Label(child,SWT.None);
         l.setLayoutData(new GridData(SWT.FILL,SWT.CENTER,true,false));
         l.setText(mCommand.getName());
         makeBold(l);
         
-        final String showText = EclipseNSISPlugin.getResourceString("show.description.label"); //$NON-NLS-1$
-        final String hideText = EclipseNSISPlugin.getResourceString("hide.description.label"); //$NON-NLS-1$
-        final Button toggleHelp = new Button(child,SWT.PUSH);
+        ToolBar toolbar = new ToolBar(child,SWT.FLAT);
+        ToolItem toolItem = new ToolItem(toolbar, SWT.PUSH);
+        toolItem.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("command.help.icon")));
+        toolItem.setToolTipText(EclipseNSISPlugin.getResourceString("command.description.tooltip"));
         GridData gridData = new GridData(SWT.FILL,SWT.CENTER,false,false);
-        GC gc = new GC(toggleHelp);
-        gridData.widthHint = Math.max(gc.stringExtent(showText).x, gc.stringExtent(hideText).x)+10;
-        gc.dispose();
-        toggleHelp.setLayoutData(gridData);
-        toggleHelp.setText(mCollapseHelp?showText:hideText);
+        toolbar.setLayoutData(gridData);
         
         Composite c = new Composite(child,SWT.None);
         GridData data = new GridData(SWT.FILL,SWT.FILL,true,true);
@@ -413,55 +415,40 @@ public class NSISCommandDialog extends StatusMessageDialog
         });
         setButtonLayoutData(button3); 
         
-        data = new GridData(SWT.FILL,SWT.FILL,true,true);
-        child.setLayoutData(data);
         
-        final Composite child2 = new Composite(mControl, SWT.NONE);
-        child2.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true));
-        layout = new GridLayout(1,false);
-        layout.marginHeight = layout.marginWidth = 0;
-        child2.setLayout(layout);
-        createHelpBrowser(child2);
-        if(mBrowser != null) {
-            setCurrentCommand(mCommand.getName());
-            toggleHelp.addSelectionListener(new SelectionAdapter() {
+        if(NSISBrowserUtility.isBrowserAvailable(parent)) {
+            mTray = new BrowserDialogTray();
+            mTray.setCurrentCommand(mCommand.getName());
+            toolItem.addSelectionListener(new SelectionAdapter() {
                 public void widgetSelected(SelectionEvent e)
                 {
-                    mCollapseHelp = !mCollapseHelp;
-                    toggleHelp.setText(mCollapseHelp?showText:hideText);
-                    ((GridLayout)mControl.getLayout()).numColumns = (mCollapseHelp?1:2);
-                    child2.setVisible(!mCollapseHelp);
-                    
-                    ((GridData)child2.getLayoutData()).exclude = mCollapseHelp;
-                    int width1 = getShell().getSize().x;
-                    int width2 = mControl.getSize().x;
-                    int margin = width1-width2;
-                    if(mCollapseHelp) {
-                        width2 = (width2 - ((GridLayout)mControl.getLayout()).horizontalSpacing)/2;
-                    }
-                    else {
-                        width2 = 2*width2 + ((GridLayout)mControl.getLayout()).horizontalSpacing;                        
-                    }
-                    width1 = width2+margin;
-                    getShell().setSize(width1,getShell().getSize().y);
-                    mControl.layout(true);
+                    openTray(mTray);
                 }
             });
-            ((GridLayout)mControl.getLayout()).numColumns = (mCollapseHelp?1:2);
-            child2.setVisible(!mCollapseHelp);
-            ((GridData)child2.getLayoutData()).exclude = mCollapseHelp;
         }
         else {
             mCollapseHelp = true;
-            ((GridLayout)mControl.getLayout()).numColumns = 1;
-            child2.dispose();
-            toggleHelp.setVisible(false);
+            toolbar.setVisible(false);
         }
         
         getShell().getDisplay().addFilter(SWT.Modify, mFilter);
         getShell().getDisplay().addFilter(SWT.Selection, mFilter);
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(composite,INSISConstants.PLUGIN_CONTEXT_PREFIX + "nsis_cmdwizard_context"); //$NON-NLS-1$
-        return composite;
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(child,INSISConstants.PLUGIN_CONTEXT_PREFIX + "nsis_cmdwizard_context"); //$NON-NLS-1$
+        return child;
+    }
+
+    public void openTray(DialogTray tray) throws IllegalStateException, UnsupportedOperationException
+    {
+        DialogTray oldTray = getTray();
+        if(oldTray != null) {
+            if(!Common.objectsAreEqual(oldTray, tray)) {
+                closeTray();
+            }
+            else {
+                return;
+            }
+        }
+        super.openTray(tray);
     }
 
     private void makeBold(Control control)
@@ -480,202 +467,6 @@ public class NSISCommandDialog extends StatusMessageDialog
         });
     }
 
-    private void createHelpBrowser(final Composite parent)
-    {
-        if(NSISBrowserUtility.isBrowserAvailable(parent)) {
-            Group group = new Group(parent,SWT.NONE);
-            group.setText(EclipseNSISPlugin.getResourceString("nsis.command.description.label")); //$NON-NLS-1$
-            GridData gridData = new GridData(SWT.FILL,SWT.FILL,true,true);
-            group.setLayoutData(gridData);
-            GridLayout layout = new GridLayout(1,false);
-            layout.marginHeight = layout.marginWidth = 2;
-            group.setLayout(layout);
-
-            Composite composite = new Composite(group,SWT.NONE);
-            gridData = new GridData(SWT.FILL,SWT.FILL,true,true);
-            composite.setLayoutData(gridData);
-            layout = new GridLayout(1,false);
-            layout.marginHeight = layout.marginWidth = 0;
-            composite.setLayout(layout);
-            createToolBar(composite);
-            mBrowser= new Browser(composite, SWT.BORDER);
-            gridData = new GridData(SWT.FILL,SWT.FILL,true,true);
-            initializeDialogUnits(mBrowser);
-            gridData.heightHint = convertHeightInCharsToPixels(10);
-            mBrowser.setLayoutData(gridData);
-            mBrowser.setMenu(new Menu(getShell(), SWT.NONE));
-            hookLocationListener();
-        }
-    }
-
-    private boolean isValid(Image image)
-    {
-        return image !=null && !image.isDisposed();
-    }
-
-    private void createToolBar(Composite displayArea)
-    {
-        if(isValid(NSISBrowserUtility.BACK_IMAGE) && isValid(NSISBrowserUtility.DISABLED_BACK_IMAGE) && 
-           isValid(NSISBrowserUtility.FORWARD_IMAGE) && isValid(NSISBrowserUtility.DISABLED_FORWARD_IMAGE) && 
-           isValid(NSISBrowserUtility.HOME_IMAGE)) {
-            
-            ToolBar toolBar =  new ToolBar(displayArea, SWT.FLAT);
-            toolBar.setLayoutData(new GridData(SWT.RIGHT,SWT.FILL,false,false));
-
-            // Add a button to go back to original page
-            final ToolItem home = new ToolItem(toolBar, SWT.NONE);
-            home.setImage(NSISBrowserUtility.HOME_IMAGE);
-            home.setToolTipText(EclipseNSISPlugin.getResourceString("help.browser.home.text")); //$NON-NLS-1$
-    
-            // Add a button to navigate backwards through previously visited pages
-            mBack = new ToolItem(toolBar, SWT.NONE);
-            mBack.setImage(NSISBrowserUtility.BACK_IMAGE);
-            mBack.setDisabledImage(NSISBrowserUtility.DISABLED_BACK_IMAGE);
-            mBack.setToolTipText(EclipseNSISPlugin.getResourceString("help.browser.back.text")); //$NON-NLS-1$
-    
-            // Add a button to navigate forward through previously visited pages
-            mForward = new ToolItem(toolBar, SWT.NONE);
-            mForward.setImage(NSISBrowserUtility.FORWARD_IMAGE);
-            mForward.setDisabledImage(NSISBrowserUtility.DISABLED_FORWARD_IMAGE);
-            mForward.setToolTipText(EclipseNSISPlugin.getResourceString("help.browser.forward.text")); //$NON-NLS-1$
-
-            Listener listener = new Listener() {
-                public void handleEvent(Event event) {
-                    ToolItem item = (ToolItem)event.widget;
-                    if (item == home) {
-                        if(!Common.isEmptyCollection(mBackCommands)) {
-                            String oldKeyword = mCurrentCommand;
-                            String keyword = (String)mBackCommands.firstElement();
-                            if(!Common.stringsAreEqual(oldKeyword, keyword)) {
-                                if(setCurrentCommand(keyword) && oldKeyword != null) {
-                                    mForwardCommands.clear();
-                                    mBackCommands.push(oldKeyword);
-                                }
-                            }
-                        }
-                        updateToolbarButtons();
-                    }
-                    else if (item == mBack) {
-                        if(!Common.isEmptyCollection(mBackCommands)) {
-                            String oldKeyword = mCurrentCommand;
-                            String keyword = (String)mBackCommands.pop();
-                            if(setCurrentCommand(keyword) && oldKeyword != null) {
-                                mForwardCommands.push(oldKeyword);
-                            }
-                        }
-                        updateToolbarButtons();
-                    }
-                    else if (item == mForward) {
-                        if(!Common.isEmptyCollection(mForwardCommands)) {
-                            String oldKeyword = mCurrentCommand;
-                            String keyword = (String)mForwardCommands.pop();
-                            if(setCurrentCommand(keyword) && oldKeyword != null) {
-                                mBackCommands.push(oldKeyword);
-                            }
-                        }
-                        updateToolbarButtons();
-                    }
-                }
-            };
-            home.addListener(SWT.Selection, listener);
-            mBack.addListener(SWT.Selection, listener);
-            mForward.addListener(SWT.Selection, listener);
-            
-            mBackCommands = new Stack();
-            mForwardCommands = new Stack();
-            updateToolbarButtons();
-        }
-    }
-    
-    private void gotoCommand(String command)
-    {
-        String oldCommand = mCurrentCommand;
-        if(setCurrentCommand(command)) {
-            if(oldCommand != null && mBackCommands != null) {
-                mBackCommands.push(oldCommand);
-            }
-            if(mForwardCommands != null) {
-                mForwardCommands.clear();
-            }
-            updateToolbarButtons();
-        }
-    }
-
-    private boolean setCurrentCommand(String command)
-    {
-        String help = NSISHelpURLProvider.getInstance().getKeywordHelp(command);
-        if (!Common.isEmpty(help)) {
-            mCurrentCommand = command;
-            mBrowser.setText(help);
-            return true;
-        }
-        return false;
-    }
-
-    private void updateToolbarButtons()
-    {
-        if(mBack != null) {
-            mBack.setEnabled(!Common.isEmptyCollection(mBackCommands));
-        }
-        if(mForward != null) {
-            mForward.setEnabled(!Common.isEmptyCollection(mForwardCommands));
-        }
-    }
-
-    private void hookLocationListener()
-    {
-        if(mBrowser != null && !mBrowser.isDisposed()) {
-            mBrowser.addLocationListener(new LocationAdapter() {
-                public void changing(LocationEvent event)
-                {
-                    if(!NSISBrowserUtility.ABOUT_BLANK.equalsIgnoreCase(event.location)) {
-                        try {
-                            NSISBrowserUtility.handleURL(event.location, mKeywordURLHandler, mFileURLHandler);
-                        }
-                        finally {
-                            event.doit = false;
-                        }
-                    }
-                }
-            });
-        }
-    }
-    
-    private void handleFile(File f)
-    {
-        if (IOUtility.isValidDirectory(f)) {
-            try {
-                Program.launch(f.getCanonicalPath());
-            }
-            catch (IOException e) {
-                EclipseNSISPlugin.getDefault().log(e);
-            }
-        }
-        else {
-            String home = NSISPreferences.INSTANCE.getNSISHome();
-            if(home != null) {
-                try {
-                    if (f.getCanonicalPath().regionMatches(true, 0, home, 0, home.length())) {
-                        String ext = IOUtility.getFileExtension(f);
-                        if (NSISBrowserUtility.HTML_EXTENSIONS != null && NSISBrowserUtility.HTML_EXTENSIONS.contains(ext)) {
-                            NSISHTMLHelp.showHelp(f.toURI().toURL().toString());
-                            return;
-                        }
-                    }
-                }
-                catch (Exception e) {
-                    EclipseNSISPlugin.getDefault().log(e);
-                }                                                
-            }
-            try {
-                Common.openExternalBrowser(f.toURI().toURL().toString());
-            }
-            catch (Exception e) {
-                EclipseNSISPlugin.getDefault().log(e);
-            }                
-        }
-    }
-
     /**
      * 
      */
@@ -689,6 +480,312 @@ public class NSISCommandDialog extends StatusMessageDialog
         }
         else {
             mParamEditor.setSettings(null);
+        }
+    }
+
+    private class BrowserDialogTray extends DialogTray
+    {
+        private Browser mBrowser;
+        private String mCurrentCommand = null;
+        private ToolItem mBack = null;
+        private ToolItem mForward = null;
+        private Stack mBackCommands = null;
+        private Stack mForwardCommands = null;
+        private Image mCloseImage = null;
+        private Image mCloseHotImage = null;
+        
+        private INSISBrowserFileURLHandler mFileURLHandler = new INSISBrowserFileURLHandler() {
+            public void handleFile(File file)
+            {
+                BrowserDialogTray.this.handleFile(file);
+            }
+        };
+
+        private INSISBrowserKeywordURLHandler mKeywordURLHandler = new INSISBrowserKeywordURLHandler() {
+            public void handleKeyword(String keyword)
+            {
+                gotoCommand(keyword);
+
+            }
+        };
+        
+        protected Control createContents(final Composite parent)
+        {
+            Composite contents = new Composite(parent,SWT.NONE) {
+                public Point computeSize(int wHint, int hHint, boolean changed)
+                {
+                    Point size = super.computeSize(wHint, hHint, changed);
+                    if(wHint == SWT.DEFAULT && size.x < MIN_WINDOW_WIDTH) {
+                        size.x = MIN_WINDOW_WIDTH;
+                    }
+                    if(hHint == SWT.DEFAULT && size.y < MIN_WINDOW_HEIGHT) {
+                        size.y = MIN_WINDOW_HEIGHT;
+                    }
+                    return size;
+                }
+            };
+            GridData gridData = new GridData(SWT.FILL,SWT.FILL,true,true);
+            contents.setLayoutData(gridData);
+            GridLayout layout = new GridLayout(2,false);
+            layout.marginHeight = layout.marginWidth = 2;
+            contents.setLayout(layout);
+
+            Composite composite = new Composite(contents,SWT.NONE);
+            gridData = new GridData(SWT.FILL,SWT.FILL,true,true);
+            composite.setLayoutData(gridData);
+            layout = new GridLayout(2,false);
+            layout.marginHeight = layout.marginWidth = 0;
+            composite.setLayout(layout);
+            Label l = new Label(composite,SWT.NONE);
+            makeBold(l);
+            l.setText(EclipseNSISPlugin.getResourceString("nsis.command.description.label")); //$NON-NLS-1$
+            gridData = new GridData(SWT.FILL,SWT.CENTER,true,false);
+            gridData.horizontalIndent = 2;
+            l.setLayoutData(gridData);
+            createToolBar(composite);
+            mBrowser= new Browser(composite, SWT.BORDER);
+            gridData = new GridData(SWT.FILL,SWT.FILL,true,true);
+            gridData.horizontalSpan = 2;
+            initializeDialogUnits(mBrowser);
+            gridData.heightHint = convertHeightInCharsToPixels(10);
+            mBrowser.setLayoutData(gridData);
+            mBrowser.setMenu(new Menu(getShell(), SWT.NONE));
+            if (mCurrentCommand != null) {
+                String help = NSISHelpURLProvider.getInstance().getKeywordHelp(mCurrentCommand);
+                mBrowser.setText(help);
+            }
+            hookLocationListener();
+            return contents;
+        }
+
+        private boolean isValid(Image image)
+        {
+            return image !=null && !image.isDisposed();
+        }
+
+        private void createCloseImages() 
+        {
+            Display display = Display.getCurrent();
+            int[] shape = new int[] { 
+                    1,  2, 3,  1, 5,  3, 6,  3, 8, 1, 10, 1, 
+                    10, 3, 8, 5, 8, 6, 10, 8, 10,10,
+                    8, 10, 6, 8, 5, 8, 3, 10, 1, 10,
+                    1, 8, 3,  6, 3,  5, 1,  3
+            };
+            
+            /*
+             * Use magenta as transparency color since it is used infrequently.
+             */
+            Color border = display.getSystemColor(SWT.COLOR_WIDGET_DARK_SHADOW);
+            Color background = display.getSystemColor(SWT.COLOR_LIST_BACKGROUND);
+            Color backgroundHot = new Color(display, new RGB(252, 160, 160));
+            Color transparent = display.getSystemColor(SWT.COLOR_MAGENTA);
+
+            PaletteData palette = new PaletteData(new RGB[] { transparent.getRGB(), border.getRGB(), background.getRGB(), backgroundHot.getRGB() });
+            ImageData data = new ImageData(12, 12, 8, palette);
+            data.transparentPixel = 0;
+
+            mCloseImage = new Image(display, data);
+            mCloseImage.setBackground(transparent);
+            GC gc = new GC(mCloseImage);
+            gc.setBackground(background);
+            gc.fillPolygon(shape);
+            gc.setForeground(border);
+            gc.drawPolygon(shape);
+            gc.dispose();
+
+            mCloseHotImage = new Image(display, data);
+            mCloseHotImage.setBackground(transparent);
+            gc = new GC(mCloseHotImage);
+            gc.setBackground(backgroundHot);
+            gc.fillPolygon(shape);
+            gc.setForeground(border);
+            gc.drawPolygon(shape);
+            gc.dispose();
+            
+            backgroundHot.dispose();
+        }
+
+        private void createToolBar(Composite displayArea)
+        {
+            if(isValid(NSISBrowserUtility.BACK_IMAGE) && isValid(NSISBrowserUtility.DISABLED_BACK_IMAGE) && 
+               isValid(NSISBrowserUtility.FORWARD_IMAGE) && isValid(NSISBrowserUtility.DISABLED_FORWARD_IMAGE) && 
+               isValid(NSISBrowserUtility.HOME_IMAGE)) {
+                
+                ToolBar toolBar =  new ToolBar(displayArea, SWT.FLAT);
+                toolBar.setLayoutData(new GridData(SWT.RIGHT,SWT.FILL,false,false));
+
+                // Add a button to go back to original page
+                final ToolItem home = new ToolItem(toolBar, SWT.PUSH);
+                home.setImage(NSISBrowserUtility.HOME_IMAGE);
+                home.setToolTipText(EclipseNSISPlugin.getResourceString("help.browser.home.text")); //$NON-NLS-1$
+        
+                // Add a button to navigate backwards through previously visited pages
+                mBack = new ToolItem(toolBar, SWT.PUSH);
+                mBack.setImage(NSISBrowserUtility.BACK_IMAGE);
+                mBack.setDisabledImage(NSISBrowserUtility.DISABLED_BACK_IMAGE);
+                mBack.setToolTipText(EclipseNSISPlugin.getResourceString("help.browser.back.text")); //$NON-NLS-1$
+        
+                // Add a button to navigate forward through previously visited pages
+                mForward = new ToolItem(toolBar, SWT.PUSH);
+                mForward.setImage(NSISBrowserUtility.FORWARD_IMAGE);
+                mForward.setDisabledImage(NSISBrowserUtility.DISABLED_FORWARD_IMAGE);
+                mForward.setToolTipText(EclipseNSISPlugin.getResourceString("help.browser.forward.text")); //$NON-NLS-1$
+
+                Listener listener = new Listener() {
+                    public void handleEvent(Event event) {
+                        ToolItem item = (ToolItem)event.widget;
+                        if (item == home) {
+                            if(!Common.isEmptyCollection(mBackCommands)) {
+                                String oldKeyword = mCurrentCommand;
+                                String keyword = (String)mBackCommands.firstElement();
+                                if(!Common.stringsAreEqual(oldKeyword, keyword)) {
+                                    if(setCurrentCommand(keyword) && oldKeyword != null) {
+                                        mForwardCommands.clear();
+                                        mBackCommands.push(oldKeyword);
+                                    }
+                                }
+                            }
+                            updateToolbarButtons();
+                        }
+                        else if (item == mBack) {
+                            if(!Common.isEmptyCollection(mBackCommands)) {
+                                String oldKeyword = mCurrentCommand;
+                                String keyword = (String)mBackCommands.pop();
+                                if(setCurrentCommand(keyword) && oldKeyword != null) {
+                                    mForwardCommands.push(oldKeyword);
+                                }
+                            }
+                            updateToolbarButtons();
+                        }
+                        else if (item == mForward) {
+                            if(!Common.isEmptyCollection(mForwardCommands)) {
+                                String oldKeyword = mCurrentCommand;
+                                String keyword = (String)mForwardCommands.pop();
+                                if(setCurrentCommand(keyword) && oldKeyword != null) {
+                                    mBackCommands.push(oldKeyword);
+                                }
+                            }
+                            updateToolbarButtons();
+                        }
+                    }
+                };
+                home.addListener(SWT.Selection, listener);
+                mBack.addListener(SWT.Selection, listener);
+                mForward.addListener(SWT.Selection, listener);
+                
+                createCloseImages();
+                toolBar.addDisposeListener(new DisposeListener() {
+                    public void widgetDisposed(DisposeEvent e)
+                    {
+                        mCloseImage.dispose();
+                        mCloseHotImage.dispose();
+                    }
+                });
+                ToolItem close = new ToolItem(toolBar, SWT.PUSH);
+                close.setImage(mCloseImage);
+                close.setHotImage(mCloseHotImage);
+                close.addListener(SWT.Selection, new Listener() {
+                    public void handleEvent(Event event)
+                    {
+                        closeTray();
+                    }
+                });
+                mBackCommands = new Stack();
+                mForwardCommands = new Stack();
+                updateToolbarButtons();
+            }
+        }
+        
+        private void gotoCommand(String command)
+        {
+            String oldCommand = mCurrentCommand;
+            if(setCurrentCommand(command)) {
+                if(oldCommand != null && mBackCommands != null) {
+                    mBackCommands.push(oldCommand);
+                }
+                if(mForwardCommands != null) {
+                    mForwardCommands.clear();
+                }
+                updateToolbarButtons();
+            }
+        }
+
+        private boolean setCurrentCommand(String command)
+        {
+            String help = NSISHelpURLProvider.getInstance().getKeywordHelp(command);
+            if (!Common.isEmpty(help)) {
+                mCurrentCommand = command;
+                if(mBrowser != null) {
+                    mBrowser.setText(help);
+                }
+                return true;
+            }
+            return false;
+        }
+
+        private void updateToolbarButtons()
+        {
+            if(mBack != null) {
+                mBack.setEnabled(!Common.isEmptyCollection(mBackCommands));
+            }
+            if(mForward != null) {
+                mForward.setEnabled(!Common.isEmptyCollection(mForwardCommands));
+            }
+        }
+
+        private void hookLocationListener()
+        {
+            if(mBrowser != null && !mBrowser.isDisposed()) {
+                mBrowser.addLocationListener(new LocationAdapter() {
+                    public void changing(LocationEvent event)
+                    {
+                        if(!NSISBrowserUtility.ABOUT_BLANK.equalsIgnoreCase(event.location)) {
+                            try {
+                                NSISBrowserUtility.handleURL(event.location, mKeywordURLHandler, mFileURLHandler);
+                            }
+                            finally {
+                                event.doit = false;
+                            }
+                        }
+                    }
+                });
+            }
+        }
+        
+        private void handleFile(File f)
+        {
+            if (IOUtility.isValidDirectory(f)) {
+                try {
+                    Program.launch(f.getCanonicalPath());
+                }
+                catch (IOException e) {
+                    EclipseNSISPlugin.getDefault().log(e);
+                }
+            }
+            else {
+                String home = NSISPreferences.INSTANCE.getNSISHome();
+                if(home != null) {
+                    try {
+                        if (f.getCanonicalPath().regionMatches(true, 0, home, 0, home.length())) {
+                            String ext = IOUtility.getFileExtension(f);
+                            if (NSISBrowserUtility.HTML_EXTENSIONS != null && NSISBrowserUtility.HTML_EXTENSIONS.contains(ext)) {
+                                NSISHTMLHelp.showHelp(IOUtility.getFileURLString(f));
+                                return;
+                            }
+                        }
+                    }
+                    catch (Exception e) {
+                        EclipseNSISPlugin.getDefault().log(e);
+                    }                                                
+                }
+                try {
+                    Common.openExternalBrowser(IOUtility.getFileURLString(f));
+                }
+                catch (Exception e) {
+                    EclipseNSISPlugin.getDefault().log(e);
+                }                
+            }
         }
     }
 }
