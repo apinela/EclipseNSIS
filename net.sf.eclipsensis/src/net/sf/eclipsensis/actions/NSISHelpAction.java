@@ -13,7 +13,8 @@ import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.help.NSISHelpURLProvider;
 
 import org.eclipse.jface.action.IAction;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IEditorActionDelegate;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.actions.ActionDelegate;
 
 public class NSISHelpAction extends ActionDelegate implements IEditorActionDelegate, INSISConstants

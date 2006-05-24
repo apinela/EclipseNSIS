@@ -586,15 +586,21 @@ public class IOUtility
         }
     }
 
-    public static final String getFileURLString(File file) throws MalformedURLException
+    public static final String getFileURLString(File file)
     {
-        String url = file.toURI().toURL().toString();
-        for(int i=0; i<FILE_URL_PREFIX.length(); i++) {
-            if(url.charAt(i) != FILE_URL_PREFIX.charAt(i) && Character.toLowerCase(url.charAt(i)) != FILE_URL_PREFIX.charAt(i)) {
-                url = new StringBuffer(url.substring(0,i)).append(FILE_URL_PREFIX.substring(i)).append(url.substring(i)).toString();
-                break;
+        try {
+            String url = file.toURI().toURL().toString();
+            for(int i=0; i<FILE_URL_PREFIX.length(); i++) {
+                if(url.charAt(i) != FILE_URL_PREFIX.charAt(i) && Character.toLowerCase(url.charAt(i)) != FILE_URL_PREFIX.charAt(i)) {
+                    url = new StringBuffer(url.substring(0,i)).append(FILE_URL_PREFIX.substring(i)).append(url.substring(i)).toString();
+                    break;
+                }
             }
+            return url;
         }
-        return url;
+        catch (MalformedURLException e) {
+            EclipseNSISPlugin.getDefault().log(e);
+            return null;
+        }
     }
 }

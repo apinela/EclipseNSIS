@@ -680,14 +680,30 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
     private void doGotoHelp()
     {
         if(NSISHelpURLProvider.getInstance().isNSISHelpAvailable()) {
-            int offset = NSISTextUtility.computeOffset(this,NSISTextUtility.COMPUTE_OFFSET_CARET_LOCATION);
+            int offset = NSISTextUtility.computeOffset(this,NSISTextUtility.COMPUTE_OFFSET_HOVER_LOCATION);
             if(offset >= 0) {
-                String keyword;
-                IRegion region = NSISInformationUtility.getInformationRegionAtOffset(this,offset,false);
-                keyword = NSISTextUtility.getRegionText(getDocument(),region);
-                NSISHelpURLProvider.getInstance().showHelpURL(keyword);
+                if(showHelp(offset)) {
+                    return;
+                }
+            }
+            offset = NSISTextUtility.computeOffset(this,NSISTextUtility.COMPUTE_OFFSET_CARET_LOCATION);
+            if(offset >= 0) {
+                showHelp(offset);
             }
         }
+    }
+    
+    private boolean showHelp(int offset)
+    {
+        IRegion region = NSISInformationUtility.getInformationRegionAtOffset(this,offset,false);
+        String keyword = NSISTextUtility.getRegionText(getDocument(),region);
+        if(keyword != null) {
+            if(NSISHelpURLProvider.getInstance().showHelpURL(keyword)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     protected void ensureOverviewHoverManagerInstalled()

@@ -13,7 +13,8 @@ import java.util.regex.Pattern;
 
 import net.sf.eclipsensis.INSISConstants;
 
-import org.eclipse.core.commands.*;
+import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.swt.widgets.*;

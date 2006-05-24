@@ -10,7 +10,6 @@
 package net.sf.eclipsensis.util;
 
 import java.io.*;
-import java.net.MalformedURLException;
 import java.util.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
@@ -91,15 +90,9 @@ public class HTMLExporter
                     while(mShell.getDisplay().readAndDispatch()) { }
                     writeHTML(file, monitor);
                     if(file.exists()) {
-                        try {
-                            monitor.subTask(EclipseNSISPlugin.getResourceString("opening.file.message")); //$NON-NLS-1$
-                            while(mShell.getDisplay().readAndDispatch()) { }
-                            Common.openExternalBrowser(IOUtility.getFileURLString(file));
-                        }
-                        catch (MalformedURLException e) {
-                            EclipseNSISPlugin.getDefault().log(e);
-                            Common.openError(mShell, e.getMessage(), EclipseNSISPlugin.getShellImage());
-                        }
+                        monitor.subTask(EclipseNSISPlugin.getResourceString("opening.file.message")); //$NON-NLS-1$
+                        while(mShell.getDisplay().readAndDispatch()) { }
+                        Common.openExternalBrowser(IOUtility.getFileURLString(file));
                     }
                     monitor.done();
                 }

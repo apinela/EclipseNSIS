@@ -158,7 +158,7 @@ public abstract class NSISHttpUpdateJob extends NSISUpdateJob
     }
 
     /**
-     * @param monitor TODO
+     * @param monitor
      * @param url
      * @param defaultURL
      * @param conn

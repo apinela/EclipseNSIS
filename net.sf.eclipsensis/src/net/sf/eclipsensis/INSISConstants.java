@@ -56,8 +56,9 @@ public interface INSISConstants
     public static final String DOCS_LOCATION_PREFIX = "Docs/"; //$NON-NLS-1$
     public static final String KEYWORD_PREFIX = "keyword/"; //$NON-NLS-1$
     public static final String CONTRIB_LOCATION_PREFIX = "Contrib/"; //$NON-NLS-1$
-    public static final String CACHED_HELP_LOCATION = PLUGIN_HELP_LOCATION_PREFIX+DOCS_LOCATION_PREFIX;
-    public static final String NSIS_HELP_PREFIX = PLUGIN_HELP_LOCATION_PREFIX+"NSIS/"; //$NON-NLS-1$
+    public static final String PLUGIN_HELP_DOCS_LOCATION_PREFIX = PLUGIN_HELP_LOCATION_PREFIX+DOCS_LOCATION_PREFIX;
+    public static final String NSIS_PLATFORM_HELP_PREFIX = PLUGIN_HELP_LOCATION_PREFIX+"NSIS/"; //$NON-NLS-1$
+    public static final String NSIS_PLATFORM_HELP_DOCS_PREFIX = NSIS_PLATFORM_HELP_PREFIX+DOCS_LOCATION_PREFIX;
     public static final String NSIS_CHM_HELP_FILE = "NSIS.chm"; //$NON-NLS-1$
     public static final String LANGUAGE_FILES_LOCATION = "Contrib\\Language files"; //$NON-NLS-1$
     public static final String MUI_LANGUAGE_FILES_LOCATION = "Contrib\\Modern UI\\Language files"; //$NON-NLS-1$

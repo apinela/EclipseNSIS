@@ -15,8 +15,6 @@ package net.sf.eclipsensis.console;
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.actions.NSISCancelAction;
 import net.sf.eclipsensis.makensis.*;
-import net.sf.eclipsensis.makensis.IMakeNSISRunListener;
-import net.sf.eclipsensis.makensis.MakeNSISRunner;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.util.ImageManager;
 

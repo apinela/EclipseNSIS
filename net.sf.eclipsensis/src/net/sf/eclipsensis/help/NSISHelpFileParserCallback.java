@@ -10,7 +10,6 @@
 package net.sf.eclipsensis.help;
 
 import java.io.File;
-import java.net.MalformedURLException;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -121,11 +120,7 @@ public class NSISHelpFileParserCallback extends ParserCallback
                                 String file = m.group(1);
                                 File f = new File(mHelpFile.getParent(),file);
                                 if(f.exists()) {
-                                    try {
-                                        mHref = IOUtility.getFileURLString(f);
-                                    }
-                                    catch (MalformedURLException e) {
-                                    }
+                                    mHref = IOUtility.getFileURLString(f);
                                 }
                             }
                         }
@@ -211,7 +206,7 @@ public class NSISHelpFileParserCallback extends ParserCallback
                             //It is on this page
                             mHref = mPrefix+mHref.substring(1);
                         }
-                       mHref = NSISHelpURLProvider.HELP_URI_SCHEME+mHref;
+                        mHref = NSISHelpURLProvider.HELP_URI_SCHEME+mHref;
                     }
                 }
                 

@@ -9,8 +9,6 @@
  *******************************************************************************/
 package net.sf.eclipsensis.util;
 
-import net.sf.eclipsensis.util.Common;
-
 import org.eclipse.swt.dnd.ByteArrayTransfer;
 import org.eclipse.swt.dnd.TransferData;
 

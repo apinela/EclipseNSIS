@@ -10,7 +10,7 @@
 package net.sf.eclipsensis.wizard.settings.dialogs;
 
 import java.text.Collator;
-import java.util.*;
+import java.util.ArrayList;
 import java.util.List;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;

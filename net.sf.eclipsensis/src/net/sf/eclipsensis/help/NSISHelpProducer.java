@@ -10,7 +10,6 @@
 package net.sf.eclipsensis.help;
 
 import java.io.*;
-import java.net.MalformedURLException;
 import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.Map;
@@ -40,7 +39,7 @@ public class NSISHelpProducer implements IExecutableExtension, IHelpContentProdu
     private static final File cHelpCacheLocation = new File(EclipseNSISPlugin.getPluginStateLocation(),PLUGIN_HELP_LOCATION_PREFIX);
     private String mPluginId = PLUGIN_ID;
     private boolean mJavascriptOnly = false;
-    private String[] mHelpURLPrefixes = {PLUGIN_ID, NSIS_HELP_PREFIX};
+    private String[] mHelpURLPrefixes = {PLUGIN_ID, NSIS_PLATFORM_HELP_PREFIX};
     private MessageFormat mLocationReplaceFormat = new MessageFormat("<html><head><script language=\"javascript\">\n<!--\nif(window.location.replace) '{'window.location.replace(\"{0}\");'}' else '{'window.location.href=\"{0}\";'}'\n//-->\n</script></head><body></body></html>"); //$NON-NLS-1$
     
     private String stripPrefixes(String href)
@@ -65,11 +64,11 @@ public class NSISHelpProducer implements IExecutableExtension, IHelpContentProdu
             if(href.equals(NSISCONTRIB_JS_LOCATION)) {
                 return new ByteArrayInputStream(NSIS_CONTRIB_JS);
             }
-            else if(href.startsWith(NSIS_HELP_PREFIX) && !mJavascriptOnly) {
+            else if(href.startsWith(NSIS_PLATFORM_HELP_PREFIX) && !mJavascriptOnly) {
                 if(href.startsWith(NSIS_CONTRIB_PATH)) {
                     String nsisContribPath = NSISHelpURLProvider.getInstance().getNSISContribPath();
                     if(nsisContribPath == null) {
-                        nsisContribPath = NSIS_HELP_PREFIX+"Contrib"; //$NON-NLS-1$
+                        nsisContribPath = NSIS_PLATFORM_HELP_PREFIX+"Contrib"; //$NON-NLS-1$
                     }
                     href = Common.replaceAll(href, NSIS_CONTRIB_PATH, nsisContribPath, true);
                 }
@@ -78,7 +77,7 @@ public class NSISHelpProducer implements IExecutableExtension, IHelpContentProdu
                     File nsisDir = new File(nsisHome);
                     if(IOUtility.isValidDirectory(nsisDir)) {
                         File helpFile = null;
-                        String href2=href.substring(NSIS_HELP_PREFIX.length());
+                        String href2=href.substring(NSIS_PLATFORM_HELP_PREFIX.length());
                         boolean isKeyword = href2.startsWith(KEYWORD_PREFIX);
                         if(isKeyword) {
                             String keyword = href2.substring(KEYWORD_PREFIX.length());
@@ -108,17 +107,12 @@ public class NSISHelpProducer implements IExecutableExtension, IHelpContentProdu
                         }
                         if(IOUtility.isValidFile(helpFile)) {
                             if(isKeyword) {
-                                try {
-                                    href2 = IOUtility.getFileURLString(helpFile);
-                                    if(target != null) {
-                                        href2 += target;
-                                    }
-                                    String content = mLocationReplaceFormat.format(new String[] {href2});
-                                    return new ByteArrayInputStream(content.getBytes());
+                                href2 = IOUtility.getFileURLString(helpFile);
+                                if(target != null) {
+                                    href2 += target;
                                 }
-                                catch (MalformedURLException e) {
-                                    EclipseNSISPlugin.getDefault().log(e);
-                                }
+                                String content = mLocationReplaceFormat.format(new String[] {href2});
+                                return new ByteArrayInputStream(content.getBytes());
                             }
                             if(HelpBrowserLocalFileHandler.INSTANCE.handle(helpFile)) {
                                 return new ByteArrayInputStream(GO_BACK);

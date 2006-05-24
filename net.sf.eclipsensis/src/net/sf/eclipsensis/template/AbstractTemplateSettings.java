@@ -9,7 +9,8 @@
  *******************************************************************************/
 package net.sf.eclipsensis.template;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.text.Collator;
 import java.util.*;
 import java.util.List;

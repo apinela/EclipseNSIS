@@ -188,8 +188,15 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
                     else {
                         f = new File(event.location);
                     }
-                    if(IOUtility.isValidFile(f)) {
-                        event.doit = !HelpBrowserLocalFileHandler.INSTANCE.handle(f);
+                    File f2 = NSISHelpURLProvider.getInstance().translateCachedFile(f);
+                    if(IOUtility.isValidFile(f2)) {
+                        event.doit = !HelpBrowserLocalFileHandler.INSTANCE.handle(f2);
+                    }
+                    if(event.doit && !Common.objectsAreEqual(f,f2)) {
+                        //File has been translated and not handled.
+                        //Handle it manually
+                        event.doit = false;
+                        mBrowser.setUrl(IOUtility.getFileURLString(f2));
                     }
                 }
             }
@@ -385,7 +392,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
                                       NSISHelpProducer.CONFIGURE}));
             }
             else {
-                mStartPage = NSISHelpURLProvider.getInstance().getCHMHelpStartPage();
+                mStartPage = NSISHelpURLProvider.getInstance().getCachedHelpStartPage();
                 if (mStartPage == null) {
                     mStartPage = "about:blank"; //$NON-NLS-1$
                 }
