@@ -47,7 +47,7 @@ public class IOUtility
 
     private static HashMap cBundleResources = new HashMap();
 
-    private static final String FILE_URL_PREFIX = "file:///";
+    private static final String FILE_URL_PREFIX = "file:///"; //$NON-NLS-1$
     
     private IOUtility()
     {

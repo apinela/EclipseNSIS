@@ -48,7 +48,7 @@ public class NSISCommandDialog extends StatusMessageDialog
 
     private Control mParamEditorControl;
     private Map mSettings = null;
-    private boolean mCollapseHelp = true;
+    private boolean mCollapseHelp = false;
     private IDialogSettings mDialogSettings = null;
 
     static {
@@ -142,10 +142,10 @@ public class NSISCommandDialog extends StatusMessageDialog
         if(mDialogSettings == null) {
             mDialogSettings = dialogSettings.addNewSection(name);
         }
-        try {
+        if(mDialogSettings.get(SETTING_COLLAPSE_HELP) != null) {
             mCollapseHelp = mDialogSettings.getBoolean(SETTING_COLLAPSE_HELP);
         }
-        catch(Exception ex) {
+        else {
             mCollapseHelp = false;
         }
     }
@@ -183,7 +183,7 @@ public class NSISCommandDialog extends StatusMessageDialog
         if(!mCollapseHelp && mTray != null) {
             openTray(mTray);
         }
-        mParamEditorControl.setFocus();
+        mParamEditorControl.forceFocus();
     }
 
 
@@ -341,10 +341,11 @@ public class NSISCommandDialog extends StatusMessageDialog
         
         ToolBar toolbar = new ToolBar(child,SWT.FLAT);
         ToolItem toolItem = new ToolItem(toolbar, SWT.PUSH);
-        toolItem.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("command.help.icon")));
-        toolItem.setToolTipText(EclipseNSISPlugin.getResourceString("command.description.tooltip"));
+        toolItem.setImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("command.icon"))); //$NON-NLS-1$
+        toolItem.setToolTipText(EclipseNSISPlugin.getResourceString("command.description.tooltip")); //$NON-NLS-1$
         GridData gridData = new GridData(SWT.FILL,SWT.CENTER,false,false);
         toolbar.setLayoutData(gridData);
+        toolbar.setCursor(toolbar.getDisplay().getSystemCursor(SWT.CURSOR_HAND));
         
         Composite c = new Composite(child,SWT.None);
         GridData data = new GridData(SWT.FILL,SWT.FILL,true,true);
@@ -685,6 +686,7 @@ public class NSISCommandDialog extends StatusMessageDialog
                 ToolItem close = new ToolItem(toolBar, SWT.PUSH);
                 close.setImage(mCloseImage);
                 close.setHotImage(mCloseHotImage);
+                close.setToolTipText(EclipseNSISPlugin.getResourceString("close.tooltip")); //$NON-NLS-1$
                 close.addListener(SWT.Selection, new Listener() {
                     public void handleEvent(Event event)
                     {

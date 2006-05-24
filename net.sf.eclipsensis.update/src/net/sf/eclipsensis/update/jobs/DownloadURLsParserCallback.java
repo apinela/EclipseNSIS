@@ -23,7 +23,7 @@ import net.sf.eclipsensis.util.Common;
 
 class DownloadURLsParserCallback extends ParserCallback
 {
-    private static final String ID_MIRRORS = "mirrors";
+    private static final String ID_MIRRORS = "mirrors"; //$NON-NLS-1$
     
     private static final int TD_NONE = -1;
     private static int COUNT=0;
@@ -41,9 +41,9 @@ class DownloadURLsParserCallback extends ParserCallback
     
     public DownloadURLsParserCallback(String version)
     {
-        mPattern = Pattern.compile(new StringBuffer("/nsis/nsis\\-").append(
-                        version.replaceAll("\\.","\\.")).append(
-                        "\\-setup\\.exe\\?use\\_mirror=(\\w+)").toString(),Pattern.CASE_INSENSITIVE);
+        mPattern = Pattern.compile(new StringBuffer("/nsis/nsis\\-").append( //$NON-NLS-1$
+                        version.replaceAll("\\.","\\.")).append( //$NON-NLS-1$ //$NON-NLS-2$
+                        "\\-setup\\.exe\\?use\\_mirror=(\\w+)").toString(),Pattern.CASE_INSENSITIVE); //$NON-NLS-1$
     }
 
     public void handleEndTag(Tag t, int pos)

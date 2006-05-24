@@ -1,6 +1,7 @@
 package net.sf.eclipsensis.update;
 
 import java.io.File;
+import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
@@ -82,6 +83,11 @@ public class EclipseNSISUpdatePlugin extends AbstractUIPlugin
     {
 		return cPlugin;
 	}
+
+    public static String getFormattedString(String key, Object[] args)
+    {
+        return MessageFormat.format(getResourceString(key),args);
+    }
 
     public static String getResourceString(String key) 
     {

@@ -42,17 +42,15 @@ class NSISDownloadUpdateJob extends NSISHttpUpdateJob
     private static Map cImageCache = new HashMap();
     private static final int DOWNLOAD_BUFFER_SIZE = 32768;
     protected static final File DOWNLOAD_FOLDER = EclipseNSISUpdatePlugin.getPluginStateLocation();
-    protected static final File IMAGE_CACHE_FOLDER = new File(EclipseNSISUpdatePlugin.getPluginStateLocation(),"imageCache");
+    protected static final File IMAGE_CACHE_FOLDER = new File(EclipseNSISUpdatePlugin.getPluginStateLocation(),"imageCache"); //$NON-NLS-1$
     protected static final MessageFormat INSTALL_UPDATE_MESSAGEFORMAT = new MessageFormat(EclipseNSISUpdatePlugin.getResourceString("install.update.prompt")); //$NON-NLS-1$
 
     private String mVersion;
-    private MessageFormat mDownloadMessageFormat;
     
     NSISDownloadUpdateJob(String version, NSISUpdateJobSettings settings, INSISUpdateJobRunner jobRunner)
     {
         super(new MessageFormat(EclipseNSISUpdatePlugin.getResourceString("download.update.message")).format(new String[]{version}), settings, jobRunner); //$NON-NLS-1$
         mVersion = version;
-        mDownloadMessageFormat = new MessageFormat(EclipseNSISUpdatePlugin.getResourceString("download.update.progress.format")); //$NON-NLS-1$
     }
     
     protected boolean shouldReschedule()
@@ -76,15 +74,14 @@ class NSISDownloadUpdateJob extends NSISHttpUpdateJob
 
     protected HttpURLConnection makeConnection(IProgressMonitor monitor, URL url, URL defaultURL) throws IOException
     {
-        String[] args = {getName(),null};
+        String[] args = {getName()};
+        final String connectMessage = EclipseNSISUpdatePlugin.getFormattedString("download.update.connect.message.format",args); //$NON-NLS-1$
         try {
-            args[1] = "connecting to download site";
-            monitor.setTaskName(mDownloadMessageFormat.format(args));
+            monitor.setTaskName(connectMessage);
             return superMakeConnection(monitor, url, defaultURL);
         }
         catch (IOException ex) {
-            args[1] = "retrieving alternate download sites";
-            monitor.setTaskName(mDownloadMessageFormat.format(args));
+            monitor.setTaskName(EclipseNSISUpdatePlugin.getFormattedString("download.update.retrieve.alternate.message.format",args)); //$NON-NLS-1$
 
             final List downloadSites = getDownloadSites(monitor, url, defaultURL);
             while(!Common.isEmptyCollection(downloadSites)) {
@@ -113,6 +110,7 @@ class NSISDownloadUpdateJob extends NSISHttpUpdateJob
                     downloadSites.remove(site);
                 }
                 try {
+                    monitor.setTaskName(connectMessage);
                     return superMakeConnection(monitor, site.getURL(), null);
                 }
                 catch(Exception e) {
@@ -160,7 +158,7 @@ class NSISDownloadUpdateJob extends NSISHttpUpdateJob
                         }
                         URL imageURL = new URL(element[0]);
                         String path = imageURL.getPath();
-                        int n = path.lastIndexOf("/");
+                        int n = path.lastIndexOf("/"); //$NON-NLS-1$
                         if(n >= 0) {
                             path = path.substring(n+1);
                         }
@@ -347,14 +345,15 @@ class NSISDownloadUpdateJob extends NSISHttpUpdateJob
         int length = 0;
         String[] args = null;
 
+        MessageFormat mf = new MessageFormat(EclipseNSISUpdatePlugin.getResourceString("download.update.progress.format")); //$NON-NLS-1$
         if(monitor != null) {
             length = conn.getContentLength();
             if(length <= 0) {
                 monitor.beginTask(name, IProgressMonitor.UNKNOWN);
             }
             else {
-                args = new String[] {name,"0%"}; //$NON-NLS-1$
-                monitor.beginTask(mDownloadMessageFormat.format(args), 101);
+                args = new String[] {name,"0"}; //$NON-NLS-1$
+                monitor.beginTask(mf.format(args), 101);
             }
             monitor.worked(1);
             if (monitor.isCanceled()) {
@@ -382,8 +381,8 @@ class NSISDownloadUpdateJob extends NSISHttpUpdateJob
                     
                     if(monitor != null && length > 0) {
                         int newWorked = Math.round(totalread*100/length);
-                        args[1]=Integer.toString(newWorked)+"%";
-                        monitor.setTaskName(mDownloadMessageFormat.format(args));
+                        args[1]=Integer.toString(newWorked);
+                        monitor.setTaskName(mf.format(args));
                         monitor.worked(newWorked-worked);
                         worked = newWorked;
                     }
@@ -397,8 +396,8 @@ class NSISDownloadUpdateJob extends NSISHttpUpdateJob
                 fileChannel.write(buf);
             }
             if(monitor != null && length > 0) {
-                args[1]="100%"; //$NON-NLS-1$
-                monitor.setTaskName(mDownloadMessageFormat.format(args));
+                args[1]="100"; //$NON-NLS-1$
+                monitor.setTaskName(mf.format(args));
                 monitor.worked(100-worked);
             }
             fileChannel.close();
@@ -494,7 +493,7 @@ class NSISDownloadUpdateJob extends NSISHttpUpdateJob
         }
     }
     
-    private static final String SAVE_PREFERRED = "savePreferred";
+    private static final String SAVE_PREFERRED = "savePreferred"; //$NON-NLS-1$
 
     private class DownloadSiteSelectionDialog extends Dialog
     {
@@ -524,7 +523,7 @@ class NSISDownloadUpdateJob extends NSISHttpUpdateJob
         protected void configureShell(Shell shell)
         {
             super.configureShell(shell);
-            shell.setText("Choose Download Site");
+            shell.setText(EclipseNSISUpdatePlugin.getResourceString("download.sites.dialog.title")); //$NON-NLS-1$
             shell.setImage(EclipseNSISUpdatePlugin.getShellImage());
         }
         
@@ -569,7 +568,7 @@ class NSISDownloadUpdateJob extends NSISHttpUpdateJob
         {
             Composite composite = (Composite)super.createDialogArea(parent);
             Label l = new Label(composite, SWT.NONE);
-            l.setText("Please choose an alternate download site:");
+            l.setText(EclipseNSISUpdatePlugin.getResourceString("download.sites.dialog.header")); //$NON-NLS-1$
             l.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 
             ScrolledComposite scrolledComposite = new ScrolledComposite(composite,SWT.BORDER|SWT.V_SCROLL);
@@ -625,10 +624,10 @@ class NSISDownloadUpdateJob extends NSISHttpUpdateJob
                         {
                             GC gc = new GC(button);
                             if(button.getSelection()) {
-                                WinAPI.DrawWidgetThemeBackGround(button.handle,gc.handle,"BUTTON",WinAPI.BP_RADIOBUTTON,selectedStateId);
+                                WinAPI.DrawWidgetThemeBackGround(button.handle,gc.handle,"BUTTON",WinAPI.BP_RADIOBUTTON,selectedStateId); //$NON-NLS-1$
                             }
                             else {
-                                WinAPI.DrawWidgetThemeBackGround(button.handle,gc.handle,"BUTTON",WinAPI.BP_RADIOBUTTON,unselectedStateId);
+                                WinAPI.DrawWidgetThemeBackGround(button.handle,gc.handle,"BUTTON",WinAPI.BP_RADIOBUTTON,unselectedStateId); //$NON-NLS-1$
                             }
                             gc.dispose();
                         }
@@ -665,7 +664,7 @@ class NSISDownloadUpdateJob extends NSISHttpUpdateJob
             scrolledComposite.setLayoutData(data);
             
             mSavePreferred = new Button(composite,SWT.CHECK);
-            mSavePreferred.setText("Save as preferred download site");
+            mSavePreferred.setText(EclipseNSISUpdatePlugin.getResourceString("download.sites.dialog.save.label")); //$NON-NLS-1$
             boolean b = true;
             if(mDialogSettings.get(SAVE_PREFERRED) != null) {
                 b = mDialogSettings.getBoolean(SAVE_PREFERRED);
