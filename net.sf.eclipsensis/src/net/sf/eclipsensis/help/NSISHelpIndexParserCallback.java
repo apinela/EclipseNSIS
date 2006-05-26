@@ -22,26 +22,21 @@ import javax.swing.text.html.HTML.Tag;
 import net.sf.eclipsensis.util.CaseInsensitiveMap;
 import net.sf.eclipsensis.util.IOUtility;
 
-public class NSISHelpTOCParserCallback extends HTMLEditorKit.ParserCallback
+public class NSISHelpIndexParserCallback extends HTMLEditorKit.ParserCallback
 {
     private static final String ATTR_VALUE_TEXT_SITEMAP="text/sitemap"; //$NON-NLS-1$
     private static final String ATTR_VALUE_LOCAL="Local"; //$NON-NLS-1$
     private static final String ATTR_VALUE_NAME="Name"; //$NON-NLS-1$
 
     private File mLocation;
-    private Map mTopicMap = null;
-    private Map mKeywordHelpMap = new CaseInsensitiveMap();
+    private Map mIndexMap = new CaseInsensitiveMap();
     private boolean mCanProcess = false;
     private String mLocal = null;
     private String mName = null;
-    private NSISHelpTOC mTOC = new NSISHelpTOC();
-    private NSISHelpTOC.NSISHelpTOCNode mParentNode = null;
-    private NSISHelpTOC.NSISHelpTOCNode mCurrentNode = null;
 
-    public NSISHelpTOCParserCallback(File location, Map topicMap)
+    public NSISHelpIndexParserCallback(File location)
     {
         mLocation = location;
-        mTopicMap = topicMap;
     }
 
     /* (non-Javadoc)
@@ -51,19 +46,6 @@ public class NSISHelpTOCParserCallback extends HTMLEditorKit.ParserCallback
     {
         if(t.equals(Tag.OBJECT) && mCanProcess) {
             if(mLocal != null && mName != null) {
-                if(mTopicMap.containsKey(mName)) {
-                    List keywords = (List)mTopicMap.get(mName);
-                    for (Iterator iter = keywords.iterator(); iter.hasNext();) {
-                        String keyword = (String)iter.next();
-                        if(NSISKeywords.getInstance().isValidKeyword(keyword)) {
-                            mKeywordHelpMap.put(keyword, mLocal);
-                        }
-                    }
-                }
-                else if(NSISKeywords.getInstance().isValidKeyword(mName)) {
-                    mKeywordHelpMap.put(mName,mLocal);
-                }
-                
                 String url;
                 try {
                     url = new URL(mLocal).toString();
@@ -81,29 +63,12 @@ public class NSISHelpTOCParserCallback extends HTMLEditorKit.ParserCallback
                         url += suffix;
                     }
                 }
-                mCurrentNode = mTOC.createNode(mName, url);
-                if(mParentNode != null) {
-                    mParentNode.addNode(mCurrentNode);
-                }
-                else {
-                    mTOC.addNode(mCurrentNode);
-                }
+                mIndexMap.put(mName, url);
             }
             mCanProcess = false;
             mLocal = null;
             mName = null;
         }
-        else if(t.equals(Tag.UL)) {
-            mCurrentNode = mParentNode;
-            if(mParentNode != null) {
-                mParentNode = mCurrentNode.getParent();
-            }
-        }
-    }
-
-    public NSISHelpTOC getTOC()
-    {
-        return mTOC;
     }
 
     /* (non-Javadoc)
@@ -137,17 +102,13 @@ public class NSISHelpTOCParserCallback extends HTMLEditorKit.ParserCallback
                 }
             }
         }
-        else if(t.equals(Tag.UL)) {
-            mParentNode = mCurrentNode;
-            mCurrentNode = null;
-        }
     }
 
     /**
-     * @return Returns the keywordMap.
+     * @return Returns the index Map.
      */
-    public Map getKeywordHelpMap()
+    public Map getIndexMap()
     {
-        return mKeywordHelpMap;
+        return mIndexMap;
     }
 }

@@ -230,11 +230,11 @@ JNIEXPORT jint JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetUserDefaultUILangu
 
 /*
  * Class:     net_sf_eclipsensis_util_WinAPI
- * Method:    ExtractHtmlHelpAndTOC
- * Signature: (Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+ * Method:    ExtractHtmlHelp
+ * Signature: (Ljava/lang/String;Ljava/lang/String;[Ljava/lang/String;)V
  */
-JNIEXPORT jstring JNICALL Java_net_sf_eclipsensis_util_WinAPI_ExtractHtmlHelpAndTOC
-  (JNIEnv *, jclass, jstring, jstring);
+JNIEXPORT void JNICALL Java_net_sf_eclipsensis_util_WinAPI_ExtractHtmlHelp
+  (JNIEnv *, jclass, jstring, jstring, jobjectArray);
 
 /*
  * Class:     net_sf_eclipsensis_util_WinAPI

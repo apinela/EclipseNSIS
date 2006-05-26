@@ -29,9 +29,11 @@ import org.eclipse.ui.PlatformUI;
 
 public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListener, IEclipseNSISService
 {
-    private static final Version HELP_URL_PROVIDER_VERSION = new Version("1.0.1"); //$NON-NLS-1$
+    private static final Version HELP_URL_PROVIDER_VERSION = new Version("1.1"); //$NON-NLS-1$
     
     private static final String VERSION = "version"; //$NON-NLS-1$
+    private static final String INDEX = "index"; //$NON-NLS-1$
+    private static final String TOC = "toc"; //$NON-NLS-1$
     private static final String HELP_URLS = "helpUrls"; //$NON-NLS-1$
     private static final String CHM_HELP_URLS = "chmHelpUrls"; //$NON-NLS-1$
     private static final String KEYWORD_HELP = "keywordHelp"; //$NON-NLS-1$
@@ -58,12 +60,15 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
     private String mStartPage = null;
     private String mCachedStartPage = null;
     private String mCHMStartPage = null;
+    private NSISHelpTOC mTOC = null;
+    private Map mIndex = null;
     private Map mHelpURLs = null;
     private Map mCHMHelpURLs = null;
     private Map mKeywordHelp = null;
     private ParserDelegator mParserDelegator;
     private Map mNSISContribPaths;
     private File mNSISHtmlHelpFile = null;
+    private Collection mListeners = new LinkedHashSet();
 
     private ResourceBundle mBundle;
     
@@ -119,6 +124,16 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
         mNoHelpFile = new File(mStateLocation.getAbsolutePath(),NO_HELP_FILE);
     }
 
+    public void addListener(INSISHelpURLListener listener)
+    {
+        mListeners.add(listener);
+    }
+
+    public void removeListener(INSISHelpURLListener listener)
+    {
+        mListeners.remove(listener);
+    }
+
     public File getNoHelpFile()
     {
         return mNoHelpFile;
@@ -136,12 +151,12 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
             catch (MissingResourceException x) {
                 mBundle = null;
             }
+            cInstance = this;
             mParserDelegator = new ParserDelegator();
             mNSISContribPaths = new LinkedHashMap();
             loadNSISContribPaths();
             loadHelpURLs();
             NSISKeywords.getInstance().addKeywordsListener(this);
-            cInstance = this;
         }
     }
 
@@ -157,6 +172,8 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
             mStartPage = null;
             mCachedStartPage = null;
             mCHMStartPage = null;
+            mTOC = null;
+            mIndex = null;
             mHelpURLs = null;
             mCHMHelpURLs = null;
             mKeywordHelp = null;
@@ -203,6 +220,8 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
 
     private void loadHelpURLs()
     {
+        mTOC = null;
+        mIndex = null;
         mHelpURLs = null;
         mCHMHelpURLs = null;
         mStartPage = null;
@@ -245,6 +264,8 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
                             Map map = (Map)obj;
                             Version version = (Version)map.get(VERSION);
                             if(version != null && HELP_URL_PROVIDER_VERSION.equals(version)) {
+                                mTOC = (NSISHelpTOC)map.get(TOC);
+                                mIndex = (Map)map.get(INDEX);
                                 mHelpURLs = (Map)map.get(HELP_URLS);
                                 mCHMHelpURLs = (Map)map.get(CHM_HELP_URLS);
                                 mKeywordHelp = (Map)map.get(KEYWORD_HELP);
@@ -283,16 +304,17 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
                     if (!IOUtility.isValidDirectory(mCachedHelpDocsLocation)) {
                         mCachedHelpDocsLocation.mkdirs();
                     }
-                    String temp = WinAPI.ExtractHtmlHelpAndTOC(mNSISHtmlHelpFile.getAbsolutePath(), mCachedHelpDocsLocation.getAbsolutePath());
+                    String[] tocAndIndex = new String[2];
+                    WinAPI.ExtractHtmlHelp(mNSISHtmlHelpFile.getAbsolutePath(), mCachedHelpDocsLocation.getAbsolutePath(), tocAndIndex);
 
-                    if (!Common.isEmpty(temp)) {
-                        File tocFile = new File(temp);
+                    if (!Common.isEmpty(tocAndIndex[0])) {
+                        File tocFile = new File(tocAndIndex[0]);
                         if (tocFile.exists()) {
                             try {
-                                NSISHelpTOCParserCallback parserCallback = new NSISHelpTOCParserCallback();
-                                parserCallback.setTopicMap(topicMap);
+                                NSISHelpTOCParserCallback parserCallback = new NSISHelpTOCParserCallback(mCachedHelpDocsLocation, topicMap);
                                 mParserDelegator.parse(new FileReader(tocFile), parserCallback, false);
 
+                                mTOC = parserCallback.getTOC();
                                 Map keywordHelpMap = parserCallback.getKeywordHelpMap();
                                 mHelpURLs = new CaseInsensitiveMap();
                                 mCHMHelpURLs = new CaseInsensitiveMap();
@@ -343,8 +365,26 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
                                     }
                                 }
 
+                                if (!Common.isEmpty(tocAndIndex[1])) {
+                                    File indexFile = new File(tocAndIndex[1]);
+                                    if (indexFile.exists()) {
+                                        try {
+                                            NSISHelpIndexParserCallback parserCallback2 = new NSISHelpIndexParserCallback(mCachedHelpDocsLocation);
+                                            mParserDelegator.parse(new FileReader(indexFile), parserCallback2, false);
+
+                                            mIndex = parserCallback2.getIndexMap();
+                                        }
+                                        catch (Exception e) {
+                                            EclipseNSISPlugin.getDefault().log(e);
+                                        }
+                                        indexFile.delete();
+                                    }
+                                }
+
                                 Map map = new HashMap();
                                 map.put(VERSION, HELP_URL_PROVIDER_VERSION);
+                                map.put(TOC, mTOC);
+                                map.put(INDEX, mIndex);
                                 map.put(HELP_URLS, mHelpURLs);
                                 map.put(CHM_HELP_URLS, mCHMHelpURLs);
                                 map.put(KEYWORD_HELP, mKeywordHelp);
@@ -388,6 +428,12 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
                             }
                         }
                     }
+                    else if (!Common.isEmpty(tocAndIndex[1])) {
+                        File indexFile = new File(tocAndIndex[1]);
+                        if (indexFile.exists()) {
+                            indexFile.delete();
+                        }
+                    }
 
                     mNSISHelpAvailable = true;
                 }
@@ -418,6 +464,11 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
                 }
                 mStartPage = mCachedStartPage = mCHMStartPage = IOUtility.getFileURLString(mNoHelpFile);
             }
+            
+            INSISHelpURLListener[] listeners = (INSISHelpURLListener[])mListeners.toArray(new INSISHelpURLListener[mListeners.size()]);
+            for (int i = 0; i < listeners.length; i++) {
+                listeners[i].helpURLsChanged();
+            }
         }        
     }
 
@@ -437,6 +488,18 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
     {
         checkHelpFile();
         return mCachedStartPage;
+    }
+    
+    public NSISHelpTOC getCachedHelpTOC()
+    {
+        checkHelpFile();
+        return mTOC;
+    }
+    
+    public Map getCachedHelpIndex()
+    {
+        checkHelpFile();
+        return mIndex;
     }
 
     public String getCHMHelpStartPage()
@@ -510,11 +573,11 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
     
     public File translateCachedFile(File file)
     {
-        if(!IOUtility.isValidFile(file)) {
+        if(file != null && !file.exists()) {
             String path = file.getAbsolutePath();
             if(mCachedHelpLocation.regionMatches(true,0,path,0,mCachedHelpLocation.length())) {
                 File file2 = new File(NSISPreferences.INSTANCE.getNSISHome(),path.substring(mCachedHelpLocation.length()));
-                if(IOUtility.isValidFile(file2)) {
+                if(file2.exists()) {
                     return file2;
                 }
             }

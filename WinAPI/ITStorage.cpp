@@ -139,7 +139,7 @@ HRESULT SaveSub(IStorage* p, WCHAR* pwzSubstream, LPCSTR pszFilename)
 }
 
 
-HRESULT ExtractHtmlHelpAndTOCFromStorage(IStorage *ps, LPCSTR folder, LPSTR tocFile)
+HRESULT ExtractHtmlHelpFromStorage(IStorage *ps, LPCSTR folder, LPSTR tocFile, LPSTR indexFile)
 {
     IStorage*    psub = NULL;
     IEnumSTATSTG* pEnum = NULL;
@@ -176,12 +176,17 @@ HRESULT ExtractHtmlHelpAndTOCFromStorage(IStorage *ps, LPCSTR folder, LPSTR tocF
                     sprintf(tocFile,"%s\\%S",folder,entry.pwcsName);
                     hr = SaveSub(ps, entry.pwcsName, tocFile);
                 }
+                else if(indexFile && !wcsicmp(pExt,L".hhk")) {
+                    sprintf(indexFile,"%s\\%S",folder,entry.pwcsName);
+                    hr = SaveSub(ps, entry.pwcsName, indexFile);
+                }
                 else {
                     int i =0;
                     while(supported_extensions[i]) {
                         if(!wcsicmp(pExt,supported_extensions[i])) {
                             sprintf(newFile,"%s\\%S",folder,entry.pwcsName);
                             hr = SaveSub(ps, entry.pwcsName, newFile);
+                            break;
                         }
 
                         i++;
@@ -196,7 +201,7 @@ HRESULT ExtractHtmlHelpAndTOCFromStorage(IStorage *ps, LPCSTR folder, LPSTR tocF
             }
 
             sprintf(newFile,"%s\\%S",folder,entry.pwcsName);
-            hr = ExtractHtmlHelpAndTOCFromStorage(psub, newFile, NULL);            
+            hr = ExtractHtmlHelpFromStorage(psub, newFile, NULL, NULL);
             psub->Release();
             if (FAILED(hr)) {
                 break;
@@ -208,7 +213,7 @@ HRESULT ExtractHtmlHelpAndTOCFromStorage(IStorage *ps, LPCSTR folder, LPSTR tocF
     return hr;    
 }
 
-HRESULT ExtractHtmlHelpAndTOC(LPCWSTR pszFile, LPCSTR pszFolder, LPSTR tocFile)
+HRESULT ExtractHtmlHelp(LPCWSTR pszFile, LPCSTR pszFolder, LPSTR tocFile, LPSTR indexFile)
 {
     CItsFile itf;
     HRESULT hr;
@@ -218,7 +223,7 @@ HRESULT ExtractHtmlHelpAndTOC(LPCWSTR pszFile, LPCSTR pszFolder, LPSTR tocFile)
         return hr;
     }
 
-    hr = ExtractHtmlHelpAndTOCFromStorage(itf.pStorage(), pszFolder, tocFile);
+    hr = ExtractHtmlHelpFromStorage(itf.pStorage(), pszFolder, tocFile, indexFile);
     if (FAILED(hr)) {
         return hr;
     }

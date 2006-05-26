@@ -10,24 +10,30 @@
 package net.sf.eclipsensis.help;
 
 import java.io.File;
-import java.net.URI;
-import java.net.URISyntaxException;
+import java.io.IOException;
+import java.net.*;
 import java.text.MessageFormat;
+import java.util.Map;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.dialogs.NSISConfigWizardDialog;
+import net.sf.eclipsensis.help.NSISHelpTOC.NSISHelpTOCNode;
 import net.sf.eclipsensis.job.IJobStatusRunnable;
-import net.sf.eclipsensis.settings.INSISHomeListener;
+import net.sf.eclipsensis.settings.INSISPreferenceConstants;
 import net.sf.eclipsensis.settings.NSISPreferences;
 import net.sf.eclipsensis.util.*;
+import net.sf.eclipsensis.viewer.MapContentProvider;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.browser.*;
+import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
+import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.part.ViewPart;
@@ -40,41 +46,48 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
     private static final String IMAGE_LOCATION_FORMAT = EclipseNSISPlugin.getResourceString("help.browser.throbber.icon.format"); //$NON-NLS-1$
     private static final int IMAGE_COUNT = Integer.parseInt(EclipseNSISPlugin.getResourceString("help.browser.throbber.icon.count")); //$NON-NLS-1$
 
+    private boolean mShowNav;
+    private boolean mSynched;
+    
     private Browser mBrowser;
-    private ToolBar mToolBar;
     private ProgressBar mProgressBar;
     private Label mStatusText;
     private Canvas mThrobber;
 
-    private Image[] mImages;
-    private ToolItem mBack;
-    private ToolItem mForward;
-    private ToolItem mHome;
-    private ToolItem mStop;
-    private ToolItem mRefresh;
+    private Image[] mThrobberImages;
+    private ToolItem mBackButton;
+    private ToolItem mForwardButton;
+    private ToolItem mHomeButton;
+    private ToolItem mStopButton;
+    private ToolItem mRefreshButton;
+    private ToolItem mShowHideNavButton;
+    private ToolItem mSynchedButton;
 
     private String mStartPage;
-    private int mIndex;
+    private int mThrobberImageIndex;
     private boolean mBusy;
-    private INSISHomeListener mNSISHomeListener = new INSISHomeListener(){
-        public void nsisHomeChanged(IProgressMonitor monitor, String oldHome, String newHome)
+    private INSISHelpURLListener mHelpURLListener = new INSISHelpURLListener(){
+        public void helpURLsChanged()
         {
-            if(monitor != null) {
-                monitor.subTask(EclipseNSISPlugin.getResourceString("refreshing.browser.message")); //$NON-NLS-1$
-            }
             if(Display.getCurrent() != null) {
-                openHelp();
+                init();
             }
             else {
                 Display.getDefault().syncExec(new Runnable() {
                     public void run()
                     {
-                        openHelp();
+                        init();
                     }
                 });
             }
         }
     };
+    private TreeViewer mContentsViewer;
+    private SashForm mSashForm;
+    private ToolItem mSeparator;
+    private ListViewer mIndexViewer;
+    private TabFolder mNavigationPane;
+    private ToolBar mToolBar;
 
     public static boolean showHelp(final String url)
     {
@@ -123,31 +136,55 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
      */
     public void createPartControl(Composite parent)
     {
+        mShowNav = NSISPreferences.INSTANCE.getBoolean(INSISPreferenceConstants.NSIS_HELP_VIEW_SHOW_NAV);
+        mSynched = NSISPreferences.INSTANCE.getBoolean(INSISPreferenceConstants.NSIS_HELP_VIEW_SYNCHED);
+        
         initResources();
+        
+        mSashForm = new SashForm(parent, SWT.HORIZONTAL|SWT.SMOOTH);
+        createNavigationPane(mSashForm);
+        Composite composite = new Composite(mSashForm,SWT.NONE);
+        composite.setLayout(new FillLayout());
+        mSashForm.setWeights(new int[] {1,4});
         try {
-            mBrowser = new Browser(parent, SWT.BORDER);
+            mBrowser = new Browser(composite, SWT.BORDER);
         }
         catch (SWTError e) {
             mBrowser = null;
+            if(mSashForm != null) {
+                mSashForm.dispose();
+            }
             parent.setLayout(new FillLayout());
             Label label = new Label(parent, SWT.CENTER | SWT.WRAP);
             label.setText(EclipseNSISPlugin.getResourceString("help.browser.create.error")); //$NON-NLS-1$
             parent.layout(true);
             return;
         }
+
         parent.setLayout(new FormLayout());
         createToolBar(parent);
+        createThrobber(parent);
         createStatusArea(parent);
+        Label l = new Label(parent,SWT.SEPARATOR|SWT.HORIZONTAL);
         FormData data = new FormData();
-        data.left = new FormAttachment(0, 0);
+        data.left = new FormAttachment(0,0);
+        data.right = new FormAttachment(100,0);
         data.top = new FormAttachment(mThrobber, 5, SWT.DEFAULT);
+        l.setLayoutData(data);
+
+        data = new FormData();
+        data.left = new FormAttachment(0, 0);
+        data.top = new FormAttachment(l, 0, SWT.DEFAULT);
         data.right = new FormAttachment(100, 0);
         data.bottom = new FormAttachment(mStatusText, -5, SWT.DEFAULT);
-        mBrowser.setLayoutData(data);
+        mSashForm.setLayoutData(data);
+        
         mBrowser.addLocationListener(new LocationListener() {
             public void changed(LocationEvent event)
             {
                 mBusy = true;
+                String location = event.location;
+                synch(location);
             }
 
             public void changing(LocationEvent event)
@@ -189,26 +226,146 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
                         f = new File(event.location);
                     }
                     File f2 = NSISHelpURLProvider.getInstance().translateCachedFile(f);
-                    if(IOUtility.isValidFile(f2)) {
+                    if(f2 != null && f2.exists()) {
                         event.doit = !HelpBrowserLocalFileHandler.INSTANCE.handle(f2);
                     }
-                    if(event.doit && !Common.objectsAreEqual(f,f2)) {
+                    if(event.doit) {
                         //File has been translated and not handled.
                         //Handle it manually
-                        event.doit = false;
-                        mBrowser.setUrl(IOUtility.getFileURLString(f2));
+                        if(f2.isDirectory()) {
+                            event.doit = false;
+                            try {
+                                Program.launch(f2.getCanonicalPath());
+                            }
+                            catch (IOException e) {
+                                EclipseNSISPlugin.getDefault().log(e);
+                                mBrowser.setUrl(IOUtility.getFileURLString(f2));
+                            }
+                        }
+                        else if(!Common.objectsAreEqual(f,f2)) {
+                            event.doit = false;
+                            mBrowser.setUrl(IOUtility.getFileURLString(f2));
+                        }
                     }
                 }
             }
         });
+        
+        init();
+        NSISHelpURLProvider.getInstance().addListener(mHelpURLListener);
+    }
 
+    private void init()
+    {
+        Composite parent = mBrowser.getParent();
+        NSISHelpTOC toc = NSISHelpURLProvider.getInstance().getCachedHelpTOC();
+        if(toc == null) {
+            mShowHideNavButton.dispose();
+            mShowHideNavButton = null;
+            mSynchedButton.dispose();
+            mSynchedButton = null;
+            mSeparator.dispose();
+            mSeparator = null;
+            if(mSashForm.getMaximizedControl() != parent) {
+                mSashForm.setMaximizedControl(parent);
+            }
+            mContentsViewer.setInput(null);
+            mIndexViewer.setInput(null);
+        }
+        else {
+            if(mShowHideNavButton == null) {
+                createNavToolItems();
+            }
+            if(mShowNav) {
+                if(mSashForm.getMaximizedControl() != null) {
+                    mSashForm.setMaximizedControl(null);
+                }
+            }
+            else {
+                if(mSashForm.getMaximizedControl() != parent) {
+                    mSashForm.setMaximizedControl(parent);
+                }
+            }
+            mContentsViewer.setInput(toc);
+            Map index = NSISHelpURLProvider.getInstance().getCachedHelpIndex();
+            TabItem indexTabItem = null;
+            TabItem[] tabItems = mNavigationPane.getItems();
+            for (int i = 0; i < tabItems.length; i++) {
+                if(Common.objectsAreEqual(tabItems[i].getControl(),mIndexViewer.getControl())) {
+                    indexTabItem = tabItems[i];
+                    break;
+                }
+            }
+            if(index == null) {
+                if(indexTabItem != null) {
+                    indexTabItem.dispose();
+                }
+                mIndexViewer.setInput(null);
+            }
+            else {
+                if(indexTabItem == null) {
+                    TabItem tabItem = new TabItem(mNavigationPane,SWT.NONE,1);
+                    tabItem.setControl(mIndexViewer.getControl());
+                }
+                mIndexViewer.setInput(index);
+            }
+        }
+        
         openHelp();
-        NSISPreferences.INSTANCE.addListener(mNSISHomeListener);
+    }
+
+    /**
+     * @param toc
+     * @param location
+     */
+    private void synch(String location)
+    {
+        if(mSynched && mContentsViewer != null) {
+            try {
+                new URL(location);
+            }
+            catch(MalformedURLException mue) {
+                String suffix = "";
+                int n = location.lastIndexOf('#');
+                if(n > 0) {
+                    suffix = location.substring(n);
+                    location = location.substring(0,n);
+                }
+                File f = new File(location);
+                location = IOUtility.getFileURLString(f)+suffix;
+
+            }
+            NSISHelpTOC toc = NSISHelpURLProvider.getInstance().getCachedHelpTOC();
+            NSISHelpTOCNode node = toc.getNode(location);
+            if(node == null) {
+                int n = location.lastIndexOf('#');
+                if(n >= 0) {
+                    location = location.substring(0,n+1);
+                    node = toc.getNode(location);
+                    if(node == null) {
+                        location = location.substring(0,n);
+                        node = toc.getNode(location);
+                    }
+                }
+                else {
+                    node = toc.getNode(location+"#");
+                }
+            }
+            if(node != null) {
+                ISelection sel = mContentsViewer.getSelection();
+                if(sel.isEmpty() || !Common.objectsAreEqual(node,((StructuredSelection)sel).getFirstElement())) {
+                    mContentsViewer.setSelection(new StructuredSelection(node));
+                }
+            }
+            else {
+                mContentsViewer.setSelection(StructuredSelection.EMPTY);
+            }
+        }
     }
 
     public void dispose()
     {
-        NSISPreferences.INSTANCE.removeListener(mNSISHomeListener);
+        NSISHelpURLProvider.getInstance().removeListener(mHelpURLListener);
         super.dispose();
     }
 
@@ -217,81 +374,309 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
      */
     private void initResources()
     {
-        if (mImages == null) {
+        if (mThrobberImages == null) {
             MessageFormat mf = new MessageFormat(IMAGE_LOCATION_FORMAT);
-            mImages = new Image[IMAGE_COUNT];
+            mThrobberImages = new Image[IMAGE_COUNT];
             for (int i = 0; i < IMAGE_COUNT; ++i) {
-                mImages[i] = EclipseNSISPlugin.getImageManager().getImage(mf.format(new Object[]{new Integer(i)}));
+                mThrobberImages[i] = EclipseNSISPlugin.getImageManager().getImage(mf.format(new Object[]{new Integer(i)}));
             }
         }
     }
 
+    private void createNavigationPane(Composite parent)
+    {
+        mNavigationPane = new TabFolder(parent, SWT.NONE);
+        TabItem item = new TabItem(mNavigationPane, SWT.NONE);
+        item.setText("&Contents");
+        Tree tree = new Tree(mNavigationPane,SWT.BORDER|SWT.SINGLE|SWT.V_SCROLL);
+        mContentsViewer = new TreeViewer(tree);
+        final ITreeContentProvider contentProvider = new ITreeContentProvider() {
+            public Object[] getChildren(Object parentElement)
+            {
+                if(parentElement instanceof NSISHelpTOC) {
+                    return ((NSISHelpTOC)parentElement).getChildren().toArray();
+                }
+                else if(parentElement instanceof NSISHelpTOCNode) {
+                    return ((NSISHelpTOCNode)parentElement).getChildren().toArray();
+                }
+                return null;
+            }
+
+            public Object getParent(Object element)
+            {
+                if(element instanceof NSISHelpTOCNode) {
+                    return ((NSISHelpTOCNode)element).getParent();
+                }
+                return null;
+            }
+
+            public boolean hasChildren(Object element)
+            {
+                if(element instanceof NSISHelpTOC) {
+                    return !Common.isEmptyCollection(((NSISHelpTOC)element).getChildren());
+                }
+                else if(element instanceof NSISHelpTOCNode) {
+                    return !Common.isEmptyCollection(((NSISHelpTOCNode)element).getChildren());
+                }
+                return false;
+            }
+
+            public Object[] getElements(Object inputElement)
+            {
+                if(inputElement instanceof NSISHelpTOC) {
+                    return getChildren(inputElement);
+                }
+                return null;
+            }
+
+            public void dispose()
+            {
+            }
+
+            public void inputChanged(Viewer viewer, Object oldInput, Object newInput)
+            {
+            }
+
+        };
+        mContentsViewer.setContentProvider(contentProvider);
+        ImageManager imageManager = EclipseNSISPlugin.getImageManager();
+        final Image helpClosed = imageManager.getImage(EclipseNSISPlugin.getResourceString("help.closed.icon"));
+        final Image helpOpen = imageManager.getImage(EclipseNSISPlugin.getResourceString("help.open.icon"));
+        final Image helpPage = imageManager.getImage(EclipseNSISPlugin.getResourceString("help.page.icon"));
+        mContentsViewer.setLabelProvider(new LabelProvider() {
+            public Image getImage(Object element)
+            {
+                if(element instanceof NSISHelpTOCNode) {
+                    NSISHelpTOCNode node = (NSISHelpTOCNode)element;
+                    if(Common.isEmptyCollection(node.getChildren())) {
+                        return helpPage;
+                    }
+                    else {
+                        if(mContentsViewer.getExpandedState(element)) {
+                            return helpOpen;
+                        }
+                        else {
+                            return helpClosed;
+                        }
+                    }
+                }
+                return super.getImage(element);
+            }
+
+            public String getText(Object element)
+            {
+                if(element instanceof NSISHelpTOCNode) {
+                    return ((NSISHelpTOCNode)element).getName();
+                }
+                return super.getText(element);
+            }
+        });
+        mContentsViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+            public void selectionChanged(SelectionChangedEvent event)
+            {
+                if(!event.getSelection().isEmpty()) {
+                    Object element = ((IStructuredSelection)event.getSelection()).getFirstElement();
+                    if(element instanceof NSISHelpTOCNode) {
+                        mBrowser.setUrl(((NSISHelpTOCNode)element).getURL());
+                    }
+                }
+            }
+        });
+        mContentsViewer.addTreeListener(new ITreeViewerListener() {
+            public void treeCollapsed(TreeExpansionEvent event)
+            {
+                updateLabels(mContentsViewer, event);
+            }
+
+            /**
+             * @param treeViewer
+             * @param event
+             */
+            private void updateLabels(final TreeViewer treeViewer, TreeExpansionEvent event)
+            {
+                final Object element = event.getElement();
+                if(element instanceof NSISHelpTOCNode) {
+                    treeViewer.getTree().getDisplay().asyncExec(new Runnable() {
+                        public void run()
+                        {
+                            treeViewer.update(element,null);
+                        }
+                    });
+                }
+            }
+
+            public void treeExpanded(TreeExpansionEvent event)
+            {
+                updateLabels(mContentsViewer, event);
+            }
+        });
+        
+        item.setControl(tree);
+
+        item = new TabItem(mNavigationPane, SWT.NONE);
+        item.setText("I&ndex");
+        List list = new List(mNavigationPane, SWT.BORDER|SWT.SINGLE|SWT.V_SCROLL);
+        mIndexViewer = new ListViewer(list);
+        mIndexViewer.setContentProvider(new MapContentProvider());
+        mIndexViewer.setLabelProvider(new LabelProvider() {
+            public String getText(Object element)
+            {
+                if(element instanceof Map.Entry) {
+                    return String.valueOf(((Map.Entry)element).getKey());
+                }
+                return super.getText(element);
+            }
+        });
+        mIndexViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+            public void selectionChanged(SelectionChangedEvent event)
+            {
+                IStructuredSelection sel = (IStructuredSelection)event.getSelection();
+                if(!sel.isEmpty()) {
+                    Object element = sel.getFirstElement();
+                    if(element instanceof Map.Entry) {
+                        mBrowser.setUrl((String)((Map.Entry)element).getValue());
+                    }
+                }
+            }
+        });
+        mIndexViewer.setComparator(new ViewerComparator());
+        item.setControl(list);
+    }
+
     private ToolItem createToolItem(ToolBar bar, String tooltip, Image icon)
     {
-        ToolItem item = new ToolItem(bar, SWT.NONE);
+        return createToolItem(bar, tooltip, icon, bar.getItemCount());
+    }
+
+    private ToolItem createToolItem(ToolBar bar, String tooltip, Image icon, int index)
+    {
+        return createToolItem(bar, tooltip, icon, index, SWT.PUSH);
+    }
+
+    private ToolItem createToolItem(ToolBar bar, String tooltip, Image icon, int index, int style)
+    {
+        ToolItem item = new ToolItem(bar, style);
         item.setToolTipText(EclipseNSISPlugin.getResourceString(tooltip));
         item.setImage(icon);
         return item;
     }
 
-    private void createToolBar(Composite displayArea)
+    private void createToolBar(Composite parent)
     {
-        mToolBar = new ToolBar(displayArea, SWT.FLAT);
+        mToolBar = new ToolBar(parent, SWT.FLAT);
         FormData data = new FormData();
         data.top = new FormAttachment(0, 5);
         mToolBar.setLayoutData(data);
 
+        createNavToolItems();
+        
         // Add a button to navigate backwards through previously visited pages
-        mBack = createToolItem(mToolBar,"help.browser.back.tooltip", //$NON-NLS-1$
+        mBackButton = createToolItem(mToolBar,"help.browser.back.tooltip", //$NON-NLS-1$
                                CommonImages.BROWSER_BACK_ICON);
 
         // Add a button to navigate forward through previously visited pages
-        mForward = createToolItem(mToolBar,"help.browser.forward.tooltip", //$NON-NLS-1$
+        mForwardButton = createToolItem(mToolBar,"help.browser.forward.tooltip", //$NON-NLS-1$
                                CommonImages.BROWSER_FORWARD_ICON);
 
         // Add a separator
         new ToolItem(mToolBar, SWT.SEPARATOR);
 
-        // Add a button to refresh the current web page
-        mRefresh = createToolItem(mToolBar,"help.browser.refresh.tooltip", //$NON-NLS-1$
-                               CommonImages.BROWSER_REFRESH_ICON);
-
         // Add a button to abort web page loading
-        mStop = createToolItem(mToolBar,"help.browser.stop.tooltip", //$NON-NLS-1$
+        mStopButton = createToolItem(mToolBar,"help.browser.stop.tooltip", //$NON-NLS-1$
                                CommonImages.BROWSER_STOP_ICON);
 
+        // Add a button to refresh the current web page
+        mRefreshButton = createToolItem(mToolBar,"help.browser.refresh.tooltip", //$NON-NLS-1$
+                               CommonImages.BROWSER_REFRESH_ICON);
+
         // Add a button to navigate to the Home page
-        mHome = createToolItem(mToolBar,"help.browser.home.tooltip", //$NON-NLS-1$
+        mHomeButton = createToolItem(mToolBar,"help.browser.home.tooltip", //$NON-NLS-1$
                                CommonImages.BROWSER_HOME_ICON);
 
         Listener listener = new Listener() {
             public void handleEvent(Event event) {
                 ToolItem item = (ToolItem)event.widget;
-                if (item == mBack) {
+                if (item == mBackButton) {
                     mBrowser.back();
                 }
-                else if (item == mForward) {
+                else if (item == mForwardButton) {
                     mBrowser.forward();
                 }
-                else if (item == mStop) {
+                else if (item == mStopButton) {
                     mBrowser.stop();
                 }
-                else if (item == mRefresh) {
+                else if (item == mRefreshButton) {
                     mBrowser.refresh();
                 }
-                else if (item == mHome) {
+                else if (item == mHomeButton) {
                     cFirstPage = null;
                     openHelp();
                 }
             }
         };
-        mBack.addListener(SWT.Selection, listener);
-        mForward.addListener(SWT.Selection, listener);
-        mStop.addListener(SWT.Selection, listener);
-        mRefresh.addListener(SWT.Selection, listener);
-        mHome.addListener(SWT.Selection, listener);
+        mBackButton.addListener(SWT.Selection, listener);
+        mForwardButton.addListener(SWT.Selection, listener);
+        mStopButton.addListener(SWT.Selection, listener);
+        mRefreshButton.addListener(SWT.Selection, listener);
+        mHomeButton.addListener(SWT.Selection, listener);
+    }
 
-        final Rectangle rect = mImages[0].getBounds();
+    /**
+     * 
+     */
+    private void createNavToolItems()
+    {
+        // Add a button to show/hide navigation pane
+        final String showNavToolTip = EclipseNSISPlugin.getResourceString("help.browser.shownav.tooltip");
+        final String hideNavToolTip = EclipseNSISPlugin.getResourceString("help.browser.hidenav.tooltip");
+        mShowHideNavButton = createToolItem(mToolBar,(mShowNav?hideNavToolTip:showNavToolTip),
+                                       (mShowNav?CommonImages.BROWSER_HIDENAV_ICON:CommonImages.BROWSER_SHOWNAV_ICON), 0);
+
+        // Add a button to sync browser with contents
+        mSynchedButton = createToolItem(mToolBar,"help.browser.synced.tooltip", //$NON-NLS-1$
+                                 CommonImages.BROWSER_SYNCED_ICON, 1, SWT.CHECK);
+        mSynchedButton.setSelection(mSynched);
+        mSynchedButton.setEnabled(mShowNav);
+
+        // Add a separator
+        mSeparator = new ToolItem(mToolBar, SWT.SEPARATOR, 2);
+        Listener listener = new Listener() {
+            public void handleEvent(Event event) {
+                ToolItem item = (ToolItem)event.widget;
+                if (item == mShowHideNavButton) {
+                    if(mSashForm.getMaximizedControl() == null) {
+                        mShowNav = false;
+                        mSashForm.setMaximizedControl(mBrowser.getParent());
+                        item.setImage(CommonImages.BROWSER_SHOWNAV_ICON);
+                        item.setToolTipText(showNavToolTip);
+                    }
+                    else {
+                        mShowNav = true;
+                        mSashForm.setMaximizedControl(null);
+                        item.setImage(CommonImages.BROWSER_HIDENAV_ICON);
+                        item.setToolTipText(hideNavToolTip);
+                    }
+                    mSynchedButton.setEnabled(mShowNav);
+                    NSISPreferences.INSTANCE.setValue(INSISPreferenceConstants.NSIS_HELP_VIEW_SHOW_NAV,mShowNav);
+                }
+                else if (item == mSynchedButton) {
+                    mSynched = mSynchedButton.getSelection();
+                    NSISPreferences.INSTANCE.setValue(INSISPreferenceConstants.NSIS_HELP_VIEW_SYNCHED,mSynched);
+                    synch(mBrowser.getUrl());
+                }
+            }
+        };
+        mShowHideNavButton.addListener(SWT.Selection, listener);
+        mSynchedButton.addListener(SWT.Selection, listener);
+    }
+
+    /**
+     * @param displayArea
+     */
+    private void createThrobber(Composite displayArea)
+    {
+        FormData data;
+        final Rectangle rect = mThrobberImages[0].getBounds();
         mThrobber = new Canvas(displayArea, SWT.NONE);
         data = new FormData();
         data.width = rect.width;
@@ -303,7 +688,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
         mThrobber.addListener(SWT.Paint, new Listener() {
             public void handleEvent(Event e) {
                 Point pt = ((Canvas)e.widget).getSize();
-                e.gc.drawImage(mImages[mIndex], 0, 0, rect.width, rect.height, 0, 0, pt.x, pt.y);
+                e.gc.drawImage(mThrobberImages[mThrobberImageIndex], 0, 0, rect.width, rect.height, 0, 0, pt.x, pt.y);
             }
         });
         mThrobber.addListener(SWT.MouseDown, new Listener() {
@@ -321,9 +706,9 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
                     return;
                 }
                 if (mBusy) {
-                    mIndex ++;
-                    if(mIndex == mImages.length) {
-                        mIndex = 1;
+                    mThrobberImageIndex ++;
+                    if(mThrobberImageIndex == mThrobberImages.length) {
+                        mThrobberImageIndex = 1;
                     }
                     mThrobber.redraw();
                 }
@@ -360,13 +745,15 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
             public void changed(ProgressEvent event)
             {
                 if (event.total == 0) {
-                    return;
+                    mBusy = false;
                 }
-                int ratio = event.current * 100 / event.total;
-                mProgressBar.setSelection(ratio);
-                mBusy = event.current != event.total;
+                else {
+                    int ratio = event.current * 100 / event.total;
+                    mProgressBar.setSelection(ratio);
+                    mBusy = event.current != event.total;
+                }
                 if (!mBusy) {
-                    mIndex = 0;
+                    mThrobberImageIndex = 0;
                     mThrobber.redraw();
                 }
             }
@@ -375,9 +762,9 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
             {
                 mProgressBar.setSelection(0);
                 mBusy = false;
-                mIndex = 0;
-                mBack.setEnabled(mBrowser.isBackEnabled());
-                mForward.setEnabled(mBrowser.isForwardEnabled());
+                mThrobberImageIndex = 0;
+                mBackButton.setEnabled(mBrowser.isBackEnabled());
+                mForwardButton.setEnabled(mBrowser.isForwardEnabled());
                 mThrobber.redraw();
             }
         });

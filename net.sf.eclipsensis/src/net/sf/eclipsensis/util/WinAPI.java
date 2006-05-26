@@ -125,7 +125,7 @@ public class WinAPI
     
     public static native int GetUserDefaultUILanguage();
     
-    public static native String ExtractHtmlHelpAndTOC(String pszFile, String pszFolder);
+    public static native void ExtractHtmlHelp(String pszFile, String pszFolder, String[] tocAndIndex);
     
     public static native String[] GetPluginExports(String pszPluginFile);
     

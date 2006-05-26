@@ -32,6 +32,9 @@ public class CommonImages
     public static final Image EXPORT_HTML_ICON = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("export.html.icon")); //$NON-NLS-1$
     public static final Image EXPORT_HTML_DISABLED_ICON = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("export.html.disabled.icon")); //$NON-NLS-1$
     
+    public static final Image BROWSER_SYNCED_ICON = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("help.browser.synced.icon")); //$NON-NLS-1$
+    public static final Image BROWSER_SHOWNAV_ICON = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("help.browser.shownav.icon")); //$NON-NLS-1$
+    public static final Image BROWSER_HIDENAV_ICON = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("help.browser.hidenav.icon")); //$NON-NLS-1$
     public static final Image BROWSER_BACK_ICON = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("help.browser.back.icon")); //$NON-NLS-1$
     public static final Image BROWSER_FORWARD_ICON = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("help.browser.forward.icon")); //$NON-NLS-1$
     public static final Image BROWSER_STOP_ICON = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("help.browser.stop.icon")); //$NON-NLS-1$

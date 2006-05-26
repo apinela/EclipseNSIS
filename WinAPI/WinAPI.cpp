@@ -281,23 +281,32 @@ JNIEXPORT jint JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetUserDefaultUILangu
     }
 }
 
-JNIEXPORT jstring JNICALL Java_net_sf_eclipsensis_util_WinAPI_ExtractHtmlHelpAndTOC(JNIEnv *pEnv, jclass jClass, jstring pszFile, jstring pszFolder)
+JNIEXPORT void JNICALL Java_net_sf_eclipsensis_util_WinAPI_ExtractHtmlHelp(JNIEnv *pEnv, jclass jClass, jstring pszFile, jstring pszFolder, jobjectArray tocAndIndex)
 {
-    jstring result = NULL;
     HRESULT hr = CoInitialize(NULL);
 
     if(hr == S_OK || hr == S_FALSE) {
         TCHAR *tocFile = NULL;
+        TCHAR *indexFile = NULL;
 		int length = MAX_PATH*sizeof(TCHAR);
         tocFile = (TCHAR *)GlobalAlloc(GPTR, (length+1)*sizeof(TCHAR));
+        _tcscpy(tocFile,_T(""));
+        indexFile = (TCHAR *)GlobalAlloc(GPTR, (length+1)*sizeof(TCHAR));
+        _tcscpy(indexFile,_T(""));
 
         LPCWSTR str1 = (LPCWSTR)pEnv->GetStringChars(pszFile, 0);
         LPCSTR str2 = (LPCSTR)pEnv->GetStringUTFChars(pszFolder, 0);
-        if(ExtractHtmlHelpAndTOC(str1, str2, tocFile) == S_OK) {
-            result = pEnv->NewStringUTF(tocFile);
+        if(ExtractHtmlHelp(str1, str2, tocFile, indexFile) == S_OK) {
+            pEnv->SetObjectArrayElement(tocAndIndex, 0, pEnv->NewStringUTF(tocFile));
+            pEnv->SetObjectArrayElement(tocAndIndex, 1, pEnv->NewStringUTF(indexFile));
+        }
+        else {
+            pEnv->SetObjectArrayElement(tocAndIndex, 0, NULL);
+            pEnv->SetObjectArrayElement(tocAndIndex, 1, NULL);
         }
 
         GlobalFree(tocFile);
+        GlobalFree(indexFile);
         pEnv->ReleaseStringChars(pszFile, str1);
         pEnv->ReleaseStringUTFChars(pszFolder, str2);
 
@@ -305,8 +314,6 @@ JNIEXPORT jstring JNICALL Java_net_sf_eclipsensis_util_WinAPI_ExtractHtmlHelpAnd
             CoUninitialize();
         }
     }
-
-    return result;
 }
 
 JNIEXPORT jobjectArray JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetPluginExports(JNIEnv *pEnv, jclass jClass, jstring pszPluginFile)

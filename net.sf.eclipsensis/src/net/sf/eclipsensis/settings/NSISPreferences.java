@@ -210,6 +210,10 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
         mTaskTags = (Collection)loadObject(TASK_TAGS);
         initializePreference(CASE_SENSITIVE_TASK_TAGS,Boolean.TRUE);
         mCaseSensitiveTaskTags = getBoolean(CASE_SENSITIVE_TASK_TAGS);
+        
+        initializePreference(NSIS_COMMAND_VIEW_FLAT_MODE, Boolean.FALSE);
+        initializePreference(NSIS_HELP_VIEW_SHOW_NAV, Boolean.TRUE);
+        initializePreference(NSIS_HELP_VIEW_SYNCHED, Boolean.TRUE);
         super.load();
     }
 
