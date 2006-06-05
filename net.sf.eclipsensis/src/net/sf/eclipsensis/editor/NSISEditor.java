@@ -690,10 +690,17 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
 
     public void nsisHomeChanged(IProgressMonitor monitor, String oldHome, String newHome)
     {
-        if(monitor != null) {
-            monitor.subTask(EclipseNSISPlugin.getResourceString("updating.actions.message")); //$NON-NLS-1$
+        try {
+            if(monitor != null) {
+                monitor.beginTask(EclipseNSISPlugin.getResourceString("updating.actions.message"), IProgressMonitor.UNKNOWN); //$NON-NLS-1$
+            }
+            updateActionsState();
         }
-        updateActionsState();
+        finally {
+            if(monitor != null) {
+                monitor.done();
+            }
+        }
     }
 
     void updatePresentation()

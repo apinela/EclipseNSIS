@@ -45,8 +45,16 @@ public class InstallOptionsBuilder extends IncrementalProjectBuilder implements 
 
     protected void clean(IProgressMonitor monitor) throws CoreException
     {
-        super.clean(monitor);
-        resetBuildTimestamp();
+        try {
+            String taskName = "Cleaning all InstallOptions projects";
+            monitor.beginTask(taskName,100);
+            super.clean(new NestedProgressMonitor(monitor,taskName,50));
+            resetBuildTimestamp();
+            monitor.worked(50);
+        }
+        finally {
+            monitor.done();
+        }
     }
 
     protected void startupOnInitialize()
@@ -217,7 +225,9 @@ public class InstallOptionsBuilder extends IncrementalProjectBuilder implements 
 	protected void fullBuild(final IProgressMonitor monitor)
     {
 		try {
+            monitor.beginTask("Full build of all InstallOptions projects",100);
             resetBuildTimestamp();
+            monitor.worked(50);
 			getProject().accept(new IResourceVisitor() {
                 public boolean visit(IResource resource)
                 {
@@ -228,34 +238,46 @@ public class InstallOptionsBuilder extends IncrementalProjectBuilder implements 
                     return true;
                 }
             });
+            monitor.worked(45);
             getProject().setPersistentProperty(PROJECTPROPERTY_BUILDER_VERSION, cBuilderVersion.toString());
+            monitor.worked(5);
 		}
         catch (CoreException e) {
 		}
+        finally {
+            monitor.done();
+        }
 	}
 
 	protected void incrementalBuild(IResourceDelta delta, final IProgressMonitor monitor) throws CoreException
     {
-		delta.accept(new IResourceDeltaVisitor() {
-            public boolean visit(IResourceDelta delta)
-            {
-                if(monitor.isCanceled()) {
-                    return false;
+        try {
+            monitor.beginTask("Full build of all InstallOptions projects",100);
+    		delta.accept(new IResourceDeltaVisitor() {
+                public boolean visit(IResourceDelta delta)
+                {
+                    if(monitor.isCanceled()) {
+                        return false;
+                    }
+                    IResource resource = delta.getResource();
+                    switch (delta.getKind()) {
+                        case IResourceDelta.ADDED:
+                            checkINI(resource);
+                            break;
+                        case IResourceDelta.REMOVED:
+                            break;
+                        case IResourceDelta.CHANGED:
+                            checkINI(resource);
+                            break;
+                    }
+                    return true;
                 }
-                IResource resource = delta.getResource();
-                switch (delta.getKind()) {
-                    case IResourceDelta.ADDED:
-                        checkINI(resource);
-                        break;
-                    case IResourceDelta.REMOVED:
-                        break;
-                    case IResourceDelta.CHANGED:
-                        checkINI(resource);
-                        break;
-                }
-                return true;
-            }
-        });
+            });
+            monitor.worked(100);
+        }
+        finally {
+            monitor.done();
+        }
 	}
 
     private void updateMarkers(final IFile file, final INIFile iniFile)
@@ -266,7 +288,9 @@ public class InstallOptionsBuilder extends IncrementalProjectBuilder implements 
                 protected void execute(IProgressMonitor monitor)throws CoreException
                 {
                     try {
+                        monitor.beginTask("Updating InstallOptions problem markers", 2+(iniFile==null?0:iniFile.getProblems().length));
                         deleteMarkers(file);
+                        monitor.worked(1);
                         if(iniFile != null) {
                             INIProblem[] problems = iniFile.getProblems();
                             for (int i = 0; i < problems.length; i++) {
@@ -280,10 +304,12 @@ public class InstallOptionsBuilder extends IncrementalProjectBuilder implements 
                                     marker.setAttribute(IMarker.LINE_NUMBER, problems[i].getLine());
                                 }
                                 marker.setAttribute(IDE.EDITOR_ID_ATTR,IInstallOptionsConstants.INSTALLOPTIONS_SOURCE_EDITOR_ID);
+                                monitor.worked(1);
                             }
                         }
                         try {
                             file.setPersistentProperty(IInstallOptionsConstants.RESOURCEPROPERTY_BUILD_TIMESTAMP, Long.toString(System.currentTimeMillis()));
+                            monitor.worked(1);
                         }
                         catch (CoreException e) {
                             e.printStackTrace();
@@ -374,11 +400,13 @@ public class InstallOptionsBuilder extends IncrementalProjectBuilder implements 
                         public IStatus run(final IProgressMonitor monitor)
                         {
                             try {
+                                String taskName = "Building InstallOptions project";
+                                monitor.beginTask(taskName,1);
                                 String nsisVersion = InstallOptionsModel.INSTANCE.getNSISVersion().toString();
                                 if(project.hasNature(INSTALLOPTIONS_NATURE_ID)) {
                                     String buildNSISVersion = project.getPersistentProperty(PROJECTPROPERTY_NSIS_VERSION);
                                     String buildTimestamp = project.getPersistentProperty(RESOURCEPROPERTY_BUILD_TIMESTAMP);
-                                    IProgressMonitor subMonitor = new SubProgressMonitor(monitor,1);
+                                    IProgressMonitor subMonitor = new NestedProgressMonitor(monitor,taskName,1);
                                     if(!checkBuilderVersion(project) || !nsisVersion.equals(buildNSISVersion) || Common.isEmpty(buildTimestamp)) {
                                         internalBuildProject(project, FULL_BUILD, null, subMonitor);
                                     }
@@ -411,6 +439,7 @@ public class InstallOptionsBuilder extends IncrementalProjectBuilder implements 
                                         }
 
                                     }, IContainer.EXCLUDE_DERIVED);
+                                    monitor.worked(1);
                                 }
                                 if(monitor.isCanceled()) {
                                     return Status.CANCEL_STATUS;
@@ -420,6 +449,9 @@ public class InstallOptionsBuilder extends IncrementalProjectBuilder implements 
                             catch (CoreException e) {
                                 e.printStackTrace();
                                 return new Status(IStatus.ERROR,PLUGIN_ID,IStatus.OK,e.getMessage(),e);
+                            }
+                            finally {
+                                monitor.done();
                             }
                         }
                     });

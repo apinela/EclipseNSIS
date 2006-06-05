@@ -16,6 +16,7 @@ import net.sf.eclipsensis.util.Common;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 
@@ -50,6 +51,20 @@ public class TableResizer extends ControlAdapter
         if(!Common.isEmptyArray(columns)) {
             int n = columns.length-1;
             width -= n*lineWidth;
+            
+            int[] minWidths = null;
+            final boolean headerVisible = table.getHeaderVisible();
+            if(headerVisible) {
+                GC gc = new GC(table);
+                minWidths = new int[columns.length];
+                for (int i = 0; i < columns.length; i++) {
+                    minWidths[i] = gc.stringExtent(columns[i].getText()).x+16;
+                    if(table.getSortColumn() == columns[i] && table.getSortDirection() != SWT.NONE) {
+                        minWidths[i] += 26;
+                    }
+                }
+                gc.dispose();
+            }
 
             if(mCachedWeights == null || columns.length != mCachedWeights.length) {
                 if(Common.isEmptyArray(mWeights)) {
@@ -75,10 +90,17 @@ public class TableResizer extends ControlAdapter
             int sumWidth = 0;
             for(int i=0; i<n; i++) {
                 int width2 =  (int)((mCachedWeights[i]/mTotalWeight)*width);
+                if(headerVisible) {
+                    width2 = Math.max(minWidths[i], width2);
+                }
                 sumWidth += width2;
                 columns[i].setWidth(width2);
             }
-            columns[n].setWidth(width-sumWidth);
+            width = width-sumWidth;
+            if(headerVisible) {
+                width = Math.max(width, minWidths[n]);
+            }
+            columns[n].setWidth(width);
             table.redraw();
         }
     }

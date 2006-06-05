@@ -9,6 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.dialogs;
 
+import java.io.InputStream;
 import java.util.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
@@ -294,7 +295,18 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
         SourceViewerConfiguration configuration= new NSISSourceViewerConfiguration(new ChainedPreferenceStore(new IPreferenceStore[]{mPreferenceStore,getPreferenceStore(), EditorsUI.getPreferenceStore()}));
         mPreviewer.configure(configuration);
 
-        String content= new String(IOUtility.loadContentFromStream(getClass().getResourceAsStream("NSISPreview.txt"))); //$NON-NLS-1$
+        InputStream is = null;
+        String content= "";
+        try {
+            is = getClass().getResourceAsStream("NSISPreview.txt"); //$NON-NLS-1$
+            content= new String(IOUtility.loadContentFromStream(is));
+        }
+        catch(Exception e) {
+            EclipseNSISPlugin.getDefault().log(e);
+        }
+        finally {
+            IOUtility.closeIO(is);
+        }
         IDocument document= new Document(content);
         new NSISDocumentSetupParticipant().setup(document);
         mPreviewer.setDocument(document);

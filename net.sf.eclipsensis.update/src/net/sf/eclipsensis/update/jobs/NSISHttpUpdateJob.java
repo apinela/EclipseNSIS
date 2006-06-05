@@ -16,6 +16,7 @@ import java.text.MessageFormat;
 import net.sf.eclipsensis.update.EclipseNSISUpdatePlugin;
 import net.sf.eclipsensis.update.preferences.IUpdatePreferenceConstants;
 import net.sf.eclipsensis.update.proxy.ProxyAuthenticator;
+import net.sf.eclipsensis.util.NestedProgressMonitor;
 import net.sf.eclipsensis.util.WinAPI;
 
 import org.eclipse.core.runtime.*;
@@ -29,6 +30,7 @@ public abstract class NSISHttpUpdateJob extends NSISUpdateJob
 
     protected static final IPreferenceStore cPreferenceStore = EclipseNSISUpdatePlugin.getDefault().getPreferenceStore();
     
+    private MessageFormat mConnectionFormat = new MessageFormat(EclipseNSISUpdatePlugin.getResourceString("http.connect.message"));
     private INSISUpdateJobRunner mJobRunner = null;
     
     protected NSISHttpUpdateJob(String name, NSISUpdateJobSettings settings, INSISUpdateJobRunner jobRunner)
@@ -106,12 +108,12 @@ public abstract class NSISHttpUpdateJob extends NSISUpdateJob
                         }
                         HttpURLConnection conn = null;
                         try {
-                            conn = makeConnection(monitor, url, defaultUrl);
+                            IProgressMonitor subMonitor = new NestedProgressMonitor(monitor,getName(),5);
+                            conn = makeConnection(subMonitor, url, defaultUrl);
                             if(monitor.isCanceled()) {
                                 return Status.CANCEL_STATUS;
                             }
-                            monitor.worked(5);
-                            SubProgressMonitor subMonitor = new SubProgressMonitor(monitor,100);
+                            subMonitor = new NestedProgressMonitor(monitor,getName(),100);
                             IStatus status = handleConnection(conn, subMonitor);
                             if(!status.isOK()) {
                                 return status;
@@ -167,31 +169,39 @@ public abstract class NSISHttpUpdateJob extends NSISUpdateJob
      */
     protected HttpURLConnection makeConnection(IProgressMonitor monitor, URL url, URL defaultURL) throws IOException
     {
-        HttpURLConnection conn = null;
-        int responseCode;
         try {
-            conn = (HttpURLConnection)url.openConnection();
-            responseCode = conn.getResponseCode();
-        }
-        catch (IOException e) {
-            if(defaultURL != null) {
-                responseCode = HttpURLConnection.HTTP_BAD_REQUEST;
-            }
-            else {
-                throw e;
-            }
-        }
-        if(responseCode >= 400) {
-            if(defaultURL != null) {
-                url = defaultURL;
+            monitor.beginTask(mConnectionFormat.format(new String[] {getName(),url.getHost()}),100);
+            HttpURLConnection conn = null;
+            int responseCode;
+            try {
                 conn = (HttpURLConnection)url.openConnection();
                 responseCode = conn.getResponseCode();
             }
-            if(responseCode >= 400) {
-                throw new IOException(new MessageFormat(EclipseNSISUpdatePlugin.getResourceString("http.error")).format(new Object[] {new Integer(responseCode)})); //$NON-NLS-1$
+            catch (IOException e) {
+                if(defaultURL != null) {
+                    responseCode = HttpURLConnection.HTTP_BAD_REQUEST;
+                }
+                else {
+                    throw e;
+                }
             }
+            if(responseCode >= 400) {
+                if(defaultURL != null) {
+                    monitor.worked(50);
+                    url = defaultURL;
+                    monitor.setTaskName(mConnectionFormat.format(new String[] {url.getHost()}));
+                    conn = (HttpURLConnection)url.openConnection();
+                    responseCode = conn.getResponseCode();
+                }
+                if(responseCode >= 400) {
+                    throw new IOException(new MessageFormat(EclipseNSISUpdatePlugin.getResourceString("http.error")).format(new Object[] {new Integer(responseCode)})); //$NON-NLS-1$
+                }
+            }
+            return conn;
         }
-        return conn;
+        finally {
+            monitor.done();
+        }
     }
 
     protected final void setSystemProperty(String name, String value)

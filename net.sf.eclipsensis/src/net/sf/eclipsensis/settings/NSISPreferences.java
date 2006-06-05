@@ -23,8 +23,7 @@ import net.sf.eclipsensis.filemon.IFileChangeListener;
 import net.sf.eclipsensis.util.*;
 
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -680,16 +679,25 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
 
         public void run(IProgressMonitor monitor)
         {
-            monitor.beginTask(EclipseNSISPlugin.getResourceString("propagating.home.message"),10*mListeners.size()); //$NON-NLS-1$
-            INSISHomeListener[] listeners = (INSISHomeListener[])mListeners.toArray(new INSISHomeListener[mListeners.size()]);
-            for (int i = 0; i < listeners.length; i++) {
-                try {
-                    listeners[i].nsisHomeChanged(monitor, mOldHome, mNewHome);
+            try {
+                String taskName = EclipseNSISPlugin.getResourceString("propagating.home.message");
+                monitor.beginTask(taskName,10*mListeners.size());
+                INSISHomeListener[] listeners = (INSISHomeListener[])mListeners.toArray(new INSISHomeListener[mListeners.size()]);
+                for (int i = 0; i < listeners.length; i++) {
+                    NestedProgressMonitor subMonitor = new NestedProgressMonitor(monitor, taskName, 10);
+                    try {
+                        listeners[i].nsisHomeChanged(subMonitor, mOldHome, mNewHome);
+                    }
+                    catch (Exception e) {
+                        EclipseNSISPlugin.getDefault().log(e);
+                    }
+                    finally {
+                        subMonitor.done();
+                    }
                 }
-                catch (Exception e) {
-                    EclipseNSISPlugin.getDefault().log(e);
-                }
-                monitor.worked(10);
+            }
+            finally {
+                monitor.done();
             }
         }
     }

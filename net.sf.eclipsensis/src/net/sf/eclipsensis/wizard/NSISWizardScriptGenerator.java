@@ -190,9 +190,9 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
                 });
                 incrementMonitor(1);
             }
-            mMonitor.done();
         }
         finally {
+            mMonitor.done();
             mMonitor = null;
             if(mWriter != null) {
                 mWriter.close();

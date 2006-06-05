@@ -15,7 +15,6 @@ import java.util.*;
 import net.sf.eclipsensis.EclipseNSISPlugin;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
@@ -50,6 +49,7 @@ public class HTMLExporter
     private boolean mProjectionEnabled;
     private ITextEditor mEditor;
     private ISourceViewer mViewer;
+    private String mTaskName;
     
     public HTMLExporter(ITextEditor editor, ISourceViewer viewer)
     {
@@ -63,41 +63,46 @@ public class HTMLExporter
         EclipseNSISPlugin.getDefault().run(false, true, new IRunnableWithProgress() {
             public void run(IProgressMonitor monitor)
             {
-                monitor.beginTask(EclipseNSISPlugin.getFormattedString("export.html.task.name", //$NON-NLS-1$
-                        new Object[] {((IPathEditorInput)mEditor.getEditorInput()).getPath().toOSString()}),100);
-                monitor.subTask(EclipseNSISPlugin.getResourceString("preparing.export.message")); //$NON-NLS-1$
-                while(mShell.getDisplay().readAndDispatch()) { }
-            
-                FileDialog fd = new FileDialog(mShell,SWT.SAVE);
-                fd.setText(EclipseNSISPlugin.getResourceString("export.html.dialog.title")); //$NON-NLS-1$
-                fd.setFilterExtensions(new String[] {EclipseNSISPlugin.getResourceString("export.html.html.file.filter"),EclipseNSISPlugin.getResourceString("export.html.all.file.filter")}); //$NON-NLS-1$ //$NON-NLS-2$
-                fd.setFilterNames(new String[] {EclipseNSISPlugin.getResourceString("export.html.html.file.description"),EclipseNSISPlugin.getResourceString("export.html.all.file.description")}); //$NON-NLS-1$ //$NON-NLS-2$
-                if(mPreviousFile != null) {
-                    fd.setFileName(mPreviousFile.getAbsolutePath());
-                }
-                String filename = fd.open();
-                if(filename != null) {
-                    File file = new File(filename);
-                    if(file.exists()) {
-                        if(!Common.openConfirm(mShell,EclipseNSISPlugin.getFormattedString("save.confirm",new Object[]{file.getAbsolutePath()}), EclipseNSISPlugin.getShellImage())) { //$NON-NLS-1$
-                            monitor.setCanceled(true);
-                            return;
+                try {
+                    mTaskName = EclipseNSISPlugin.getFormattedString("export.html.task.name", //$NON-NLS-1$
+                                                new Object[] {((IPathEditorInput)mEditor.getEditorInput()).getPath().toOSString()});
+                    monitor.beginTask(mTaskName,100);
+                    monitor.subTask(EclipseNSISPlugin.getResourceString("preparing.export.message")); //$NON-NLS-1$
+                    while(mShell.getDisplay().readAndDispatch()) { }
+                
+                    FileDialog fd = new FileDialog(mShell,SWT.SAVE);
+                    fd.setText(EclipseNSISPlugin.getResourceString("export.html.dialog.title")); //$NON-NLS-1$
+                    fd.setFilterExtensions(new String[] {EclipseNSISPlugin.getResourceString("export.html.html.file.filter"),EclipseNSISPlugin.getResourceString("export.html.all.file.filter")}); //$NON-NLS-1$ //$NON-NLS-2$
+                    fd.setFilterNames(new String[] {EclipseNSISPlugin.getResourceString("export.html.html.file.description"),EclipseNSISPlugin.getResourceString("export.html.all.file.description")}); //$NON-NLS-1$ //$NON-NLS-2$
+                    if(mPreviousFile != null) {
+                        fd.setFileName(mPreviousFile.getAbsolutePath());
+                    }
+                    String filename = fd.open();
+                    if(filename != null) {
+                        File file = new File(filename);
+                        if(file.exists()) {
+                            if(!Common.openConfirm(mShell,EclipseNSISPlugin.getFormattedString("save.confirm",new Object[]{file.getAbsolutePath()}), EclipseNSISPlugin.getShellImage())) { //$NON-NLS-1$
+                                monitor.setCanceled(true);
+                                return;
+                            }
+                        }
+                        monitor.worked(10);
+                        mPreviousFile = file;
+                        monitor.subTask(EclipseNSISPlugin.getResourceString("exporting.html.message")); //$NON-NLS-1$
+                        while(mShell.getDisplay().readAndDispatch()) { }
+                        writeHTML(file, monitor);
+                        if(file.exists()) {
+                            monitor.subTask(EclipseNSISPlugin.getResourceString("opening.file.message")); //$NON-NLS-1$
+                            while(mShell.getDisplay().readAndDispatch()) { }
+                            Common.openExternalBrowser(IOUtility.getFileURLString(file));
                         }
                     }
-                    monitor.worked(10);
-                    mPreviousFile = file;
-                    monitor.subTask(EclipseNSISPlugin.getResourceString("exporting.html.message")); //$NON-NLS-1$
-                    while(mShell.getDisplay().readAndDispatch()) { }
-                    writeHTML(file, monitor);
-                    if(file.exists()) {
-                        monitor.subTask(EclipseNSISPlugin.getResourceString("opening.file.message")); //$NON-NLS-1$
-                        while(mShell.getDisplay().readAndDispatch()) { }
-                        Common.openExternalBrowser(IOUtility.getFileURLString(file));
+                    else {
+                        monitor.setCanceled(true);
                     }
-                    monitor.done();
                 }
-                else {
-                    monitor.setCanceled(true);
+                finally {
+                    monitor.done();
                 }
             }
         });
@@ -165,44 +170,48 @@ public class HTMLExporter
                 return;
             }
             
-            IProgressMonitor subMonitor = new SubProgressMonitor(monitor,60);
-            subMonitor.beginTask(EclipseNSISPlugin.getResourceString("exporting.contents.message"), mRanges.length+2); //$NON-NLS-1$
-            while(mShell.getDisplay().readAndDispatch()) { }
-            
-            mCurrentLine = 1;
-            int total = mStyledText.getCharCount();
-            mCurrentOffset = 0;
-            mCurrentRange = 0;
-            mCurrentProjection = 0;
-            mWriter.println("<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\">"); //$NON-NLS-1$
-            startLine();
-            subMonitor.worked(1);
-            if(subMonitor.isCanceled()) {
-                return;
-            }
-            while(mCurrentRange < mRanges.length) {
-                StyleRange range = mRanges[mCurrentRange];
-                if(mCurrentOffset < range.start) {
-                    writeText(mStyledText.getText(mCurrentOffset,range.start-1),null);
-                }
-                styleText = makeStyle((range.fontStyle&SWT.BOLD) > 0,(range.fontStyle&SWT.ITALIC) > 0,
-                                      range.underline,range.strikeout,range.foreground,range.background);
-                writeText(mStyledText.getText(range.start,range.start+range.length-1), styleText);
-                mCurrentOffset = range.start+range.length;
-                mCurrentRange++;
+            IProgressMonitor subMonitor = new NestedProgressMonitor(monitor,mTaskName,60);
+            try {
+                subMonitor.beginTask(EclipseNSISPlugin.getResourceString("exporting.contents.message"), mRanges.length+2); //$NON-NLS-1$
+                while(mShell.getDisplay().readAndDispatch()) { }
+                
+                mCurrentLine = 1;
+                int total = mStyledText.getCharCount();
+                mCurrentOffset = 0;
+                mCurrentRange = 0;
+                mCurrentProjection = 0;
+                mWriter.println("<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\">"); //$NON-NLS-1$
+                startLine();
                 subMonitor.worked(1);
                 if(subMonitor.isCanceled()) {
                     return;
                 }
+                while(mCurrentRange < mRanges.length) {
+                    StyleRange range = mRanges[mCurrentRange];
+                    if(mCurrentOffset < range.start) {
+                        writeText(mStyledText.getText(mCurrentOffset,range.start-1),null);
+                    }
+                    styleText = makeStyle((range.fontStyle&SWT.BOLD) > 0,(range.fontStyle&SWT.ITALIC) > 0,
+                                          range.underline,range.strikeout,range.foreground,range.background);
+                    writeText(mStyledText.getText(range.start,range.start+range.length-1), styleText);
+                    mCurrentOffset = range.start+range.length;
+                    mCurrentRange++;
+                    subMonitor.worked(1);
+                    if(subMonitor.isCanceled()) {
+                        return;
+                    }
+                }
+                if(mCurrentOffset < total) {
+                    writeText(mStyledText.getText(mCurrentOffset,total-1),null);
+                }
+                endLine();
+                if(subMonitor.isCanceled()) {
+                    return;
+                }
             }
-            if(mCurrentOffset < total) {
-                writeText(mStyledText.getText(mCurrentOffset,total-1),null);
+            finally {
+                subMonitor.done();
             }
-            endLine();
-            if(subMonitor.isCanceled()) {
-                return;
-            }
-            subMonitor.done();
             monitor.subTask(EclipseNSISPlugin.getResourceString("completing.export.message")); //$NON-NLS-1$
             while(mShell.getDisplay().readAndDispatch()) { }
             mWriter.print("<tr>"); //$NON-NLS-1$

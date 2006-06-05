@@ -15,8 +15,7 @@ import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.jobs.IJobManager;
-import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.ui.progress.UIJob;
 
 public class JobScheduler
@@ -52,19 +51,34 @@ public class JobScheduler
 
     public void scheduleUIJob(String name, IJobStatusRunnable runnable)
     {
-        scheduleUIJob(null, name, runnable);
+        scheduleUIJob(name, (ISchedulingRule)null, runnable);
+    }
+
+    public void scheduleUIJob(String name, ISchedulingRule rule, IJobStatusRunnable runnable)
+    {
+        scheduleUIJob(null, name, rule, runnable);
     }
 
     public void scheduleUIJob(Object family, String name, final IJobStatusRunnable runnable)
     {
-        scheduleUIJob(family, name, runnable, 0L);
+        scheduleUIJob(family, name, null, runnable);
+    }
+
+    public void scheduleUIJob(Object family, String name, ISchedulingRule rule, final IJobStatusRunnable runnable)
+    {
+        scheduleUIJob(family, name, null, runnable, 0L);
     }
 
     public void scheduleUIJob(Object family, String name, final IJobStatusRunnable runnable, long delay)
     {
+        scheduleUIJob(family, name, null, runnable, delay);
+    }
+
+    public void scheduleUIJob(Object family, String name, ISchedulingRule rule, final IJobStatusRunnable runnable, long delay)
+    {
         final Object jobFamily = (family == null?this:family);
 
-        new UIJob(name) {
+        UIJob job = new UIJob(name) {
             public IStatus runInUIThread(IProgressMonitor monitor)
             {
                 return runnable.run(monitor);
@@ -74,18 +88,31 @@ public class JobScheduler
             {
                 return jobFamily.equals(family);
             }
-
-        }.schedule(delay);
+        };
+        if(rule != null) {
+            job.setRule(rule);
+        }
+        job.schedule(delay);
     }
 
     public void scheduleJob(String name, IJobStatusRunnable runnable)
     {
-        scheduleJob(null, name, runnable);
+        scheduleJob(name, (ISchedulingRule)null, runnable);
+    }
+
+    public void scheduleJob(String name, ISchedulingRule rule, IJobStatusRunnable runnable)
+    {
+        scheduleJob(null, name, rule, runnable);
     }
 
     public void scheduleJob(Object family, String name, final IJobStatusRunnable runnable)
     {
         scheduleJob(family, name, runnable, 0L);
+    }
+
+    public void scheduleJob(Object family, String name, ISchedulingRule rule, final IJobStatusRunnable runnable)
+    {
+        scheduleJob(family, name, rule, runnable, 0L);
     }
 
     /**
@@ -96,9 +123,20 @@ public class JobScheduler
      */
     public void scheduleJob(Object family, String name, final IJobStatusRunnable runnable, long delay)
     {
+        scheduleJob(family, name, null, runnable, delay);
+    }
+
+    /**
+     * @param family
+     * @param name
+     * @param runnable
+     * @param delay
+     */
+    public void scheduleJob(Object family, String name, ISchedulingRule rule, final IJobStatusRunnable runnable, long delay)
+    {
         final Object jobFamily = (family == null?this:family);
 
-        new Job(name) {
+        Job job = new Job(name) {
             public IStatus run(IProgressMonitor monitor)
             {
                 return runnable.run(monitor);
@@ -108,8 +146,11 @@ public class JobScheduler
             {
                 return jobFamily.equals(family);
             }
-
-        }.schedule(delay);
+        };
+        if(rule != null) {
+            job.setRule(rule);
+        }
+        job.schedule(delay);
     }
 
     public void cancelJobs(Object family)

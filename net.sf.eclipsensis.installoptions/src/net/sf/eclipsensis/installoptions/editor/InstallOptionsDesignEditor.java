@@ -632,7 +632,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
                                          CoreException exception, IProgressMonitor progressMonitor)
     {
         try {
-            ++ mErrorCorrectionOnSave;
+            ++mErrorCorrectionOnSave;
 
             Shell shell= getSite().getShell();
 
@@ -672,7 +672,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
             }
         }
         finally {
-            -- mErrorCorrectionOnSave;
+            --mErrorCorrectionOnSave;
         }
     }
 

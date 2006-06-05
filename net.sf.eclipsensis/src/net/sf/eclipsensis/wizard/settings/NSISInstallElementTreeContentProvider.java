@@ -10,21 +10,17 @@
 package net.sf.eclipsensis.wizard.settings;
 
 import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.viewer.EmptyContentProvider;
 
-import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
-public class NSISInstallElementTreeContentProvider implements ITreeContentProvider
+public class NSISInstallElementTreeContentProvider extends EmptyContentProvider
 {
     private NSISWizardSettings mSettings = null;
 
     public NSISInstallElementTreeContentProvider(NSISWizardSettings settings)
     {
         mSettings = settings;
-    }
-
-    public void dispose()
-    {
     }
 
     public void inputChanged(Viewer viewer, Object oldInput, Object newInput)

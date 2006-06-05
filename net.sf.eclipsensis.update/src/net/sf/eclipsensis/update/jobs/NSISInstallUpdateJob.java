@@ -239,6 +239,7 @@ class NSISInstallUpdateJob extends NSISUpdateJob
                 return new Status(IStatus.ERROR,EclipseNSISUpdatePlugin.getDefault().getPluginId(),IStatus.ERROR,e.getMessage(),e);
             }
             finally {
+                monitor.done();
                 if(fileMonStopped) {
                     FileMonitor.INSTANCE.start();
                 }

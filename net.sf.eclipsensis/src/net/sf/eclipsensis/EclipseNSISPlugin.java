@@ -203,36 +203,43 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
                 public void run(IProgressMonitor monitor)
                 {
                     monitor = new DisplayUpdateProgressMonitor(monitor);
-                    monitor.beginTask(EclipseNSISPlugin.getResourceString("starting.eclipsensis.message"),services.length+1); //$NON-NLS-1$
-                    for (int i = 0; i < services.length; i++) {
-                        try {
-                            Class clasz = Class.forName(services[i]);
-                            Constructor constructor = clasz.getConstructor(null);
-                            IEclipseNSISService service = (IEclipseNSISService)constructor.newInstance(null);
-                            service.start(monitor);
-                            mServices.push(service);
-                            
+                    try {
+                        String taskName = EclipseNSISPlugin.getResourceString("starting.eclipsensis.message");
+                        monitor.beginTask(taskName,services.length+1); //$NON-NLS-1$
+                        for (int i = 0; i < services.length; i++) {
+                            NestedProgressMonitor subMonitor = new NestedProgressMonitor(monitor,taskName,1);
+                            try {
+                                Class clasz = Class.forName(services[i]);
+                                Constructor constructor = clasz.getConstructor(null);
+                                IEclipseNSISService service = (IEclipseNSISService)constructor.newInstance(null);
+                                service.start(subMonitor);
+                                mServices.push(service);
+                            }
+                            catch (Exception e) {
+                                log(e);
+                            }
+                            finally {
+                                subMonitor.done();
+                            }
                         }
-                        catch (Exception e) {
-                            log(e);
+                        monitor.subTask(EclipseNSISPlugin.getResourceString("starting.makensis.message")); //$NON-NLS-1$
+                        Runnable runnable = new Runnable() {
+                            public void run()
+                            {
+                                MakeNSISRunner.startup();
+                            }
+                        };
+                        if(Display.getCurrent() == null) {
+                            Display.getDefault().syncExec(runnable);
+                        }
+                        else {
+                            runnable.run();
                         }
                         monitor.worked(1);
                     }
-                    monitor.subTask(EclipseNSISPlugin.getResourceString("starting.makensis.message")); //$NON-NLS-1$
-                    Runnable runnable = new Runnable() {
-                        public void run()
-                        {
-                            MakeNSISRunner.startup();
-                        }
-                    };
-                    if(Display.getCurrent() == null) {
-                        Display.getDefault().syncExec(runnable);
+                    finally {
+                        monitor.done();
                     }
-                    else {
-                        runnable.run();
-                    }
-                    monitor.worked(1);
-                    monitor.done();
                 }
             };
 
@@ -425,9 +432,10 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
     {
         mJobScheduler.stop();
         MakeNSISRunner.shutdown();
+        NullProgressMonitor monitor = new NullProgressMonitor();
         while(mServices.size() > 0) {
             IEclipseNSISService service = (IEclipseNSISService)mServices.pop();
-            service.stop(null);
+            service.stop(monitor);
         }
         FileMonitor.INSTANCE.stop();
         mConsole.destroy();

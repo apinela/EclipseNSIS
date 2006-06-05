@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.viewer.EmptyContentProvider;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
@@ -207,12 +208,8 @@ public class FileSelectionDialog extends TitleAreaDialog
         return parent;
     }
 
-    private class ContainerContentProvider implements ITreeContentProvider
+    private class ContainerContentProvider extends EmptyContentProvider
     {
-        public void dispose() 
-        {
-        }
-
         public Object[] getChildren(Object element) 
         {
             if (element instanceof IWorkspace) {
@@ -256,10 +253,6 @@ public class FileSelectionDialog extends TitleAreaDialog
         {
             return getChildren(element).length > 0;
         }
-
-        public void inputChanged(Viewer viewer, Object oldInput, Object newInput) 
-        {
-        }
     }
     
     private class FilesLabelProvider extends LabelProvider implements ITableLabelProvider
@@ -277,12 +270,8 @@ public class FileSelectionDialog extends TitleAreaDialog
         }
     }
 
-    private class FilesContentProvider implements IStructuredContentProvider
+    private class FilesContentProvider extends EmptyContentProvider
     {
-        public void dispose() 
-        {
-        }
-
         public Object[] getElements(Object element) 
         {
             if (element instanceof IContainer) {
@@ -304,10 +293,6 @@ public class FileSelectionDialog extends TitleAreaDialog
                 }
             }
             return EMPTY_ARRAY;
-        }
-
-        public void inputChanged(Viewer viewer, Object oldInput, Object newInput) 
-        {
         }
     }
 }

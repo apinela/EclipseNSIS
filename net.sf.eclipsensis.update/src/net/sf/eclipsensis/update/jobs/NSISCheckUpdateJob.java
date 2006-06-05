@@ -88,50 +88,51 @@ public class NSISCheckUpdateJob extends NSISHttpUpdateJob
 
     protected IStatus handleConnection(HttpURLConnection conn, IProgressMonitor monitor) throws IOException
     {
-        monitor.beginTask(getName(), 2);
-        InputStream is = null;
-        String type = null;
-        String version = ""; //$NON-NLS-1$
         try {
-            is = conn.getInputStream();
-            if (monitor.isCanceled()) {
-                return Status.CANCEL_STATUS;
-            }
-            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-            String line = reader.readLine();
-            if(line != null) {
-                String[] tokens = Common.tokenize(line, '|');
-                if(tokens.length > 0) {
-                    type = tokens[0];
-                    if(tokens.length > 1) {
-                        version = tokens[1];
+            monitor.beginTask(getName(), 100);
+            InputStream is = null;
+            String type = null;
+            String version = ""; //$NON-NLS-1$
+            try {
+                is = conn.getInputStream();
+                if (monitor.isCanceled()) {
+                    return Status.CANCEL_STATUS;
+                }
+                BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+                String line = reader.readLine();
+                if(line != null) {
+                    String[] tokens = Common.tokenize(line, '|');
+                    if(tokens.length > 0) {
+                        type = tokens[0];
+                        if(tokens.length > 1) {
+                            version = tokens[1];
+                        }
                     }
                 }
             }
+            finally {
+                IOUtility.closeIO(is);
+            }
+            if (monitor.isCanceled()) {
+                return Status.CANCEL_STATUS;
+            }
+            monitor.worked(50);
+            IStatus status = handleDownload(type, version);
+            monitor.worked(50);
+            if(status.isOK()) {
+                return Status.OK_STATUS;
+            }
+            else {
+                return status;
+            }
         }
         finally {
-            IOUtility.closeIO(is);
-        }
-        if (monitor.isCanceled()) {
-            return Status.CANCEL_STATUS;
-        }
-        monitor.worked(1);
-        IStatus status = handleDownload(monitor, type, version);
-        if(status.isOK()) {
-            monitor.worked(1);
             monitor.done();
-            return Status.OK_STATUS;
-        }
-        else {
-            return status;
         }
     }
     
-    protected IStatus handleDownload(IProgressMonitor monitor, final String type, final String version)
+    protected IStatus handleDownload(final String type, final String version)
     {
-        if (monitor.isCanceled()) {
-            return Status.CANCEL_STATUS;
-        }
         if((RELEASE_UPDATE.equals(type) || (PREVIEW_UPDATE.equals(type) && !getSettings().isIgnorePreview()))) {
             displayExec(new Runnable() {
                 public void run()

@@ -66,16 +66,21 @@ public class NSISOutlineContentResources implements IEclipseNSISService,  INSISK
     public void start(IProgressMonitor monitor)
     {
         if (cInstance == null) {
-            mTypeList = Arrays.asList(cTypes);
-            mTypes = new CaseInsensitiveMap();
-            mTypeNames = new HashMap();
-            mImages = new HashMap();
-            mPages = new ArrayList();
-            monitor.subTask(EclipseNSISPlugin
-                    .getResourceString("loading.outline.message")); //$NON-NLS-1$
-            load();
-            NSISKeywords.getInstance().addKeywordsListener(this);
-            cInstance = this;
+            try {
+                monitor.beginTask(EclipseNSISPlugin
+                        .getResourceString("loading.outline.message"), 1); //$NON-NLS-1$
+                mTypeList = Arrays.asList(cTypes);
+                mTypes = new CaseInsensitiveMap();
+                mTypeNames = new HashMap();
+                mImages = new HashMap();
+                mPages = new ArrayList();
+                load();
+                NSISKeywords.getInstance().addKeywordsListener(this);
+                cInstance = this;
+            }
+            finally {
+                monitor.done();
+            }
         }
     }
 

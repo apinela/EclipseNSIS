@@ -47,7 +47,7 @@ public class IOUtility
 
     private static HashMap cBundleResources = new HashMap();
 
-    private static final String FILE_URL_PREFIX = "file:///"; //$NON-NLS-1$
+    public static final String FILE_URL_PREFIX = "file:///"; //$NON-NLS-1$
     
     private IOUtility()
     {
@@ -77,6 +77,14 @@ public class IOUtility
 
     public static boolean deleteDirectory(File directory)
     {
+        if(deleteDirectoryContents(directory)) {
+            return directory.delete();
+        }
+        return true;
+    }
+
+    public static boolean deleteDirectoryContents(File directory)
+    {
         if(isValidDirectory(directory)) {
             File[] files = directory.listFiles();
             if(!Common.isEmptyArray(files)) {
@@ -93,9 +101,9 @@ public class IOUtility
                     }
                 }
             }
-            return directory.delete();
+            return true;
         }
-        return true;
+        return false;
     }
 
     public static String getFileExtension(File file)

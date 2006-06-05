@@ -12,14 +12,12 @@ package net.sf.eclipsensis.help;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.*;
 
 import javax.swing.text.MutableAttributeSet;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.HTML.Attribute;
 import javax.swing.text.html.HTML.Tag;
 
-import net.sf.eclipsensis.util.CaseInsensitiveMap;
 import net.sf.eclipsensis.util.IOUtility;
 
 public class NSISHelpIndexParserCallback extends HTMLEditorKit.ParserCallback
@@ -29,14 +27,15 @@ public class NSISHelpIndexParserCallback extends HTMLEditorKit.ParserCallback
     private static final String ATTR_VALUE_NAME="Name"; //$NON-NLS-1$
 
     private File mLocation;
-    private Map mIndexMap = new CaseInsensitiveMap();
     private boolean mCanProcess = false;
     private String mLocal = null;
     private String mName = null;
+    private NSISHelpIndex mIndex;
 
     public NSISHelpIndexParserCallback(File location)
     {
         mLocation = location;
+        mIndex = new NSISHelpIndex();
     }
 
     /* (non-Javadoc)
@@ -63,11 +62,14 @@ public class NSISHelpIndexParserCallback extends HTMLEditorKit.ParserCallback
                         url += suffix;
                     }
                 }
-                mIndexMap.put(mName, url);
+                mIndex.addEntry(mName, url);
             }
             mCanProcess = false;
             mLocal = null;
             mName = null;
+        }
+        else if(t.equals(Tag.HTML)) {
+            mIndex.doneLoading();
         }
     }
 
@@ -104,11 +106,8 @@ public class NSISHelpIndexParserCallback extends HTMLEditorKit.ParserCallback
         }
     }
 
-    /**
-     * @return Returns the index Map.
-     */
-    public Map getIndexMap()
+    public NSISHelpIndex getIndex()
     {
-        return mIndexMap;
+        return mIndex;
     }
 }

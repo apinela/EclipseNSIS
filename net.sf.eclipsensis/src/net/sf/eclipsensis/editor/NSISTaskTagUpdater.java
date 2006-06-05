@@ -16,6 +16,7 @@ import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.editor.text.*;
 import net.sf.eclipsensis.job.IJobStatusRunnable;
 import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.NestedProgressMonitor;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -120,8 +121,8 @@ public class NSISTaskTagUpdater implements INSISConstants
                 public IStatus run(final IProgressMonitor monitor)
                 {
                     try {
-                        monitor.beginTask(taskName,2);
-                        monitor.setTaskName(EclipseNSISPlugin.getResourceString("task.tags.scan.task.name")); //$NON-NLS-1$
+                        String mainTaskName = EclipseNSISPlugin.getResourceString("task.tags.scan.task.name"); //$NON-NLS-1$
+                        monitor.beginTask(mainTaskName,2);
                         final String[] extensions = Common.loadArrayProperty(EclipseNSISPlugin.getDefault().getResourceBundle(),"nsis.extensions"); //$NON-NLS-1$
                         for (int i = 0; i < extensions.length; i++) {
                             extensions[i]=extensions[i].toLowerCase();
@@ -187,9 +188,8 @@ public class NSISTaskTagUpdater implements INSISConstants
                             return Status.CANCEL_STATUS;
                         }
 
-                        monitor.setTaskName(taskName);
                         String taskName2 = EclipseNSISPlugin.getResourceString("task.tags.update.task.name"); //$NON-NLS-1$
-                        SubProgressMonitor subMonitor = new SubProgressMonitor(monitor,1);
+                        NestedProgressMonitor subMonitor = new NestedProgressMonitor(monitor,mainTaskName,1);
                         try {
                             subMonitor.beginTask(taskName2,filesMap.size());
                             for (Iterator iter = filesMap.keySet().iterator(); iter.hasNext();) {
@@ -198,7 +198,7 @@ public class NSISTaskTagUpdater implements INSISConstants
                                 }
                                 IFile file = (IFile)iter.next();
                                 IDocument document = (IDocument)filesMap.get(file);
-                                subMonitor.setTaskName(EclipseNSISPlugin.getFormattedString("task.tags.update.file.task.name",new String[]{file.getFullPath().toString()})); //$NON-NLS-1$
+                                subMonitor.subTask(EclipseNSISPlugin.getFormattedString("task.tags.update.file.task.name",new String[]{file.getFullPath().toString()})); //$NON-NLS-1$
                                 if(document == null) {
                                     updateTaskTags(file);
                                 }

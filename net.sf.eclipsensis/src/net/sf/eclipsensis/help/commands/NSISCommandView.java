@@ -17,6 +17,7 @@ import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.editor.NSISEditor;
 import net.sf.eclipsensis.settings.*;
 import net.sf.eclipsensis.util.*;
+import net.sf.eclipsensis.viewer.EmptyContentProvider;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.*;
@@ -488,7 +489,7 @@ public class NSISCommandView extends ViewPart implements INSISHomeListener
         }
     }
 
-    private class TreeContentProvider implements ITreeContentProvider
+    private class TreeContentProvider extends EmptyContentProvider
     {
         public Object[] getChildren(Object parentElement)
         {
@@ -518,14 +519,6 @@ public class NSISCommandView extends ViewPart implements INSISHomeListener
                return getChildren(inputElement);
             }
             return null;
-        }
-
-        public void dispose()
-        {
-        }
-
-        public void inputChanged(Viewer viewer, Object oldInput, Object newInput)
-        {
         }
     }
 }

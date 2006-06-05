@@ -14,6 +14,7 @@ import java.util.Iterator;
 import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.editor.text.*;
 import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.viewer.EmptyContentProvider;
 
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.rules.*;
@@ -21,7 +22,6 @@ import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.projection.ProjectionAnnotation;
 import org.eclipse.jface.text.source.projection.ProjectionAnnotationModel;
-import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.texteditor.ITextEditor;
 
@@ -30,7 +30,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * Divides the editor's document into ten segments and provides elements for
  * them.
  */
-public class NSISOutlineContentProvider implements ITreeContentProvider, INSISConstants
+public class NSISOutlineContentProvider extends EmptyContentProvider implements INSISConstants
 {
     public static final String NSIS_OUTLINE = "__nsis_outline"; //$NON-NLS-1$
     public static final String NSIS_OUTLINE_SELECT = "__nsis_outline_select"; //$NON-NLS-1$

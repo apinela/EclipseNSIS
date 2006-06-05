@@ -11,8 +11,7 @@ package net.sf.eclipsensis.dialogs;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 
-import org.eclipse.jface.dialogs.ProgressIndicator;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;
@@ -75,14 +74,15 @@ public class MinimalProgressMonitorDialog extends ProgressMonitorDialog
         container.setLayout(gridLayout);
 
         Composite progressArea = new Composite(container, SWT.NONE);
-        super.createContents(progressArea);
-
-        // making the margins the same in each direction
-        gridLayout = (GridLayout) progressArea.getLayout();
-        gridLayout.marginHeight = gridLayout.marginWidth;
-
-        gridData = (GridData) progressArea.getLayoutData();
-        gridData.verticalAlignment = SWT.CENTER;
+        initializeDialogUnits(progressArea);
+        GridLayout layout = new GridLayout(2, false);
+        layout.marginWidth = 5;//convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
+        layout.marginHeight = gridLayout.marginWidth;
+        layout.verticalSpacing = 2;//convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
+        layout.horizontalSpacing = 2;//convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING) * 2;
+        progressArea.setLayout(layout);
+        progressArea.setLayoutData(new GridData(SWT.FILL,SWT.CENTER,true,true));
+        createDialogAndButtonArea(progressArea);
 
         return container;
     }
@@ -92,8 +92,27 @@ public class MinimalProgressMonitorDialog extends ProgressMonitorDialog
         return null;
     }
 
+    protected Control createMessageArea(Composite composite) 
+    {
+        // create message
+        if (message != null) {
+            messageLabel = new Label(composite, SWT.NONE);
+            messageLabel.setText(message);
+            GridData data = new GridData(SWT.FILL,SWT.FILL,true,true);
+            data.horizontalSpan = 2;
+            data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH);
+            messageLabel.setLayoutData(data);
+            taskLabel = messageLabel;
+        }
+        return composite;
+    }
+
     protected Control createDialogArea(Composite parent)
     {
+        // task label
+        message = "";
+        createMessageArea(parent);
+        
         // progress indicator
         progressIndicator = new ProgressIndicator(parent);
         GridData gd = new GridData(SWT.FILL,SWT.CENTER,true,false);
@@ -101,7 +120,7 @@ public class MinimalProgressMonitorDialog extends ProgressMonitorDialog
         gd.horizontalSpan = 2;
         progressIndicator.setLayoutData(gd);
 
-        // label showing current task
+        // label showing sub task
         subTaskLabel = new Label(parent, SWT.LEFT);
         gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
         gd.minimumWidth = mMinimumWidth / 2;

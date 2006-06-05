@@ -80,63 +80,70 @@ public class NSISUsageProvider implements IEclipseNSISService
 
     private synchronized void loadUsages(IProgressMonitor monitor)
     {
-        if(monitor != null) {
-            monitor.subTask(EclipseNSISPlugin.getResourceString("loading.cmdhelp.message")); //$NON-NLS-1$
-        }
-        mUsages.clear();
-        File exeFile = NSISPreferences.INSTANCE.getNSISExeFile();
-        if(exeFile != null && exeFile.exists()) {
-            long exeTimeStamp = exeFile.lastModified();
-
-            File stateLocation = EclipseNSISPlugin.getPluginStateLocation();
-            File cacheFile = new File(stateLocation,NSISUsageProvider.class.getName()+".Usages.ser"); //$NON-NLS-1$
-            long cacheTimeStamp = 0;
-            if(cacheFile.exists()) {
-                cacheTimeStamp = cacheFile.lastModified();
+        try {
+            if(monitor != null) {
+                monitor.beginTask(EclipseNSISPlugin.getResourceString("loading.cmdhelp.message"), 1); //$NON-NLS-1$
             }
-
-            if(exeTimeStamp != cacheTimeStamp) {
-                String[] output = MakeNSISRunner.runProcessWithOutput(exeFile.getAbsolutePath(),new String[]{
-                                                                      MakeNSISRunner.MAKENSIS_VERBOSITY_OPTION+"1", //$NON-NLS-1$
-                                                                      MakeNSISRunner.MAKENSIS_CMDHELP_OPTION},
-                                                                      null,1);
-
-                if(!Common.isEmptyArray(output)) {
-                    StringBuffer buf = null;
-                    for (int i = 0; i < output.length; i++) {
-                        String line = output[i];
-                        if(buf == null) {
-                            buf = new StringBuffer(line);
-                        }
-                        else {
-                            if(Character.isWhitespace(line.charAt(0))) {
-                                buf.append(mLineSeparator).append(line);
-                            }
-                            else {
-                                setUsage(buf.toString());
+            mUsages.clear();
+            File exeFile = NSISPreferences.INSTANCE.getNSISExeFile();
+            if(exeFile != null && exeFile.exists()) {
+                long exeTimeStamp = exeFile.lastModified();
+    
+                File stateLocation = EclipseNSISPlugin.getPluginStateLocation();
+                File cacheFile = new File(stateLocation,NSISUsageProvider.class.getName()+".Usages.ser"); //$NON-NLS-1$
+                long cacheTimeStamp = 0;
+                if(cacheFile.exists()) {
+                    cacheTimeStamp = cacheFile.lastModified();
+                }
+    
+                if(exeTimeStamp != cacheTimeStamp) {
+                    String[] output = MakeNSISRunner.runProcessWithOutput(exeFile.getAbsolutePath(),new String[]{
+                                                                          MakeNSISRunner.MAKENSIS_VERBOSITY_OPTION+"1", //$NON-NLS-1$
+                                                                          MakeNSISRunner.MAKENSIS_CMDHELP_OPTION},
+                                                                          null,1);
+    
+                    if(!Common.isEmptyArray(output)) {
+                        StringBuffer buf = null;
+                        for (int i = 0; i < output.length; i++) {
+                            String line = output[i];
+                            if(buf == null) {
                                 buf = new StringBuffer(line);
                             }
+                            else {
+                                if(Character.isWhitespace(line.charAt(0))) {
+                                    buf.append(mLineSeparator).append(line);
+                                }
+                                else {
+                                    setUsage(buf.toString());
+                                    buf = new StringBuffer(line);
+                                }
+                            }
+                        }
+                        if(buf != null && buf.length() > 0) {
+                            setUsage(buf.toString());
                         }
                     }
-                    if(buf != null && buf.length() > 0) {
-                        setUsage(buf.toString());
+                    try {
+                        IOUtility.writeObject(cacheFile,mUsages);
+                        cacheFile.setLastModified(exeTimeStamp);
+                    }
+                    catch (IOException e) {
+                        EclipseNSISPlugin.getDefault().log(e);
                     }
                 }
-                try {
-                    IOUtility.writeObject(cacheFile,mUsages);
-                    cacheFile.setLastModified(exeTimeStamp);
-                }
-                catch (IOException e) {
-                    EclipseNSISPlugin.getDefault().log(e);
+                else {
+                    try {
+                        mUsages = (Map)IOUtility.readObject(cacheFile);
+                    }
+                    catch (Exception e) {
+                        EclipseNSISPlugin.getDefault().log(e);
+                    }
                 }
             }
-            else {
-                try {
-                    mUsages = (Map)IOUtility.readObject(cacheFile);
-                }
-                catch (Exception e) {
-                    EclipseNSISPlugin.getDefault().log(e);
-                }
+        }
+        finally {
+            if(monitor != null) {
+                monitor.done();
             }
         }
     }

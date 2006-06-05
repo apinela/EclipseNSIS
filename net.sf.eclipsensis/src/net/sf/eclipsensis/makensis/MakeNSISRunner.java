@@ -159,9 +159,11 @@ public class MakeNSISRunner implements INSISConstants
                 protected void execute(IProgressMonitor monitor)
                 {
                     try {
+                        List problems = results.getProblems();
+                        monitor.beginTask("Updating NSIS problem markers",1+(problems==null?0:problems.size()));
                         IDocument doc = new FileDocument(file.getLocation().toFile());
                         file.deleteMarkers(PROBLEM_MARKER_ID, false, IResource.DEPTH_ZERO);
-                        List problems = results.getProblems();
+                        monitor.worked(1);
                         if (!Common.isEmptyCollection(problems)) {
                             for(Iterator iter = problems.iterator(); iter.hasNext(); ) {
                                 NSISScriptProblem problem = (NSISScriptProblem)iter.next();
@@ -187,6 +189,7 @@ public class MakeNSISRunner implements INSISConstants
                                     }
                                 }
                                 problem.setMarker(marker);
+                                monitor.worked(1);
                             }
                         }
                     }
@@ -199,7 +202,7 @@ public class MakeNSISRunner implements INSISConstants
                 }
             };
             try {
-                op.run(null);
+                op.run(new NullProgressMonitor());
             }
             catch (InvocationTargetException e) {
                 console.appendLine(NSISConsoleLine.error(e.getLocalizedMessage()));

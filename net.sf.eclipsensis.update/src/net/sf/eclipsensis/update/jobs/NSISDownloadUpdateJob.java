@@ -74,16 +74,12 @@ class NSISDownloadUpdateJob extends NSISHttpUpdateJob
 
     protected HttpURLConnection makeConnection(IProgressMonitor monitor, URL url, URL defaultURL) throws IOException
     {
-        String[] args = {getName()};
-        final String connectMessage = EclipseNSISUpdatePlugin.getFormattedString("download.update.connect.message.format",args); //$NON-NLS-1$
         try {
-            monitor.setTaskName(connectMessage);
-            return superMakeConnection(monitor, url, defaultURL);
+            monitor.beginTask(getName(),100);
+            return superMakeConnection(new NestedProgressMonitor(monitor,getName(),25), url, defaultURL);
         }
         catch (IOException ex) {
-            monitor.setTaskName(EclipseNSISUpdatePlugin.getFormattedString("download.update.retrieve.alternate.message.format",args)); //$NON-NLS-1$
-
-            final List downloadSites = getDownloadSites(monitor, url, defaultURL);
+            final List downloadSites = getDownloadSites(new NestedProgressMonitor(monitor,getName(),25), url, defaultURL);
             while(!Common.isEmptyCollection(downloadSites)) {
                 DownloadSite site;
                 if(getSettings().isAutomated()) {
@@ -109,9 +105,9 @@ class NSISDownloadUpdateJob extends NSISHttpUpdateJob
                     site = selectedSite[0];
                     downloadSites.remove(site);
                 }
+                monitor.worked(25);
                 try {
-                    monitor.setTaskName(connectMessage);
-                    return superMakeConnection(monitor, site.getURL(), null);
+                    return superMakeConnection(new NestedProgressMonitor(monitor,getName(),25), site.getURL(), null);
                 }
                 catch(Exception e) {
                     e.printStackTrace();
@@ -119,104 +115,117 @@ class NSISDownloadUpdateJob extends NSISHttpUpdateJob
             }
             throw ex;
         }
+        finally {
+            monitor.done();
+        }
     }
 
     private List getDownloadSites(IProgressMonitor monitor, URL url, URL defaultURL)
     {
-        List downloadSites = new ArrayList();
-        HttpURLConnection conn2 = null;
-        String content = null;
         try {
-            conn2 = superMakeConnection(monitor, NSISUpdateURLs.getSelectDownloadURL(mVersion), null);
-            content = getContent(conn2);
-        }
-        catch(IOException ioe) {
-            return null;
-        }
-        finally {
-            if (conn2 != null) {
-                conn2.disconnect();
-            }
-        }
-        if(content != null) {
-            ParserDelegator parserDelegator = new ParserDelegator();
-            DownloadURLsParserCallback callback = new DownloadURLsParserCallback(mVersion);
+            String taskName = EclipseNSISUpdatePlugin.getFormattedString("download.update.retrieve.alternate.message.format",new String[] {getName()});
+            monitor.beginTask(taskName, 100); //$NON-NLS-1$
+            List downloadSites = new ArrayList();
+            HttpURLConnection conn2 = null;
+            String content = null;
             try {
-                parserDelegator.parse(new StringReader(content), callback, true);
+                conn2 = superMakeConnection(new NestedProgressMonitor(monitor,taskName,25), NSISUpdateURLs.getSelectDownloadURL(mVersion), null);
+                content = getContent(conn2);
+                monitor.worked(25);
             }
-            catch (IOException e1) {
+            catch(IOException ioe) {
                 return null;
             }
-            List sites = callback.getSites();
-            for (Iterator iter = sites.iterator(); iter.hasNext();) {
-                String[] element = (String[])iter.next();
-                if(element != null && element.length == 4) {
-                    try {
-                        URL url2 = NSISUpdateURLs.getGenericDownloadURL(element[3], mVersion);
-                        if(url2.equals(url) || url2.equals(defaultURL)) {
-                            continue;
-                        }
-                        URL imageURL = new URL(element[0]);
-                        String path = imageURL.getPath();
-                        int n = path.lastIndexOf("/"); //$NON-NLS-1$
-                        if(n >= 0) {
-                            path = path.substring(n+1);
-                        }
-                        if(!Common.isEmpty(path)) {
-                            File imageFile = new File(IMAGE_CACHE_FOLDER,path);
-                            Image image = (Image)cImageCache.get(imageFile);
-                            if(image == null) {
-                                if(!IOUtility.isValidFile(imageFile)) {
-                                    if(!IOUtility.isValidDirectory(IMAGE_CACHE_FOLDER)) {
-                                        IMAGE_CACHE_FOLDER.mkdirs();
-                                    }
-                                    FileOutputStream fos = null;
-                                    conn2 = null;
-                                    try {
-                                        conn2 = superMakeConnection(null, imageURL, null);
-                                        fos = new FileOutputStream(imageFile);
-                                        download(conn2, null, null, fos);
-                                    }
-                                    finally {
-                                        IOUtility.closeIO(fos);
-                                        if(conn2 != null) {
-                                            conn2.disconnect();
-                                        }
-                                    }
-                                }
-                                if(IOUtility.isValidFile(imageFile)) {
-                                    final ImageData imageData = new ImageData(imageFile.getAbsolutePath());
-                                    final Image[] imageArray = new Image[1];
-                                    Display.getDefault().syncExec(new Runnable() {
-                                        public void run()
-                                        {
-                                            try {
-                                                imageArray[0] = new Image(Display.getDefault(), imageData);
-                                            }
-                                            catch(Exception ex) {
-                                                imageArray[0] = null;
-                                            }
-                                        }
-                                    });
-                                    image = imageArray[0];
-                                    if(image != null) {
-                                        cImageCache.put(imageFile, image);
-                                    }
-                                }
-                            }
-                            if(image != null) {
-                                downloadSites.add(new DownloadSite(image,element[1],element[2],url2));
-                            }
-                        }
-                    }
-                    catch (Exception e) {
-                        e.printStackTrace();
-                    }
+            finally {
+                if (conn2 != null) {
+                    conn2.disconnect();
                 }
             }
+            if(content != null) {
+                ParserDelegator parserDelegator = new ParserDelegator();
+                DownloadURLsParserCallback callback = new DownloadURLsParserCallback(mVersion);
+                try {
+                    parserDelegator.parse(new StringReader(content), callback, true);
+                }
+                catch (IOException e1) {
+                    return null;
+                }
+                List sites = callback.getSites();
+                int count=0;
+                for (Iterator iter = sites.iterator(); iter.hasNext();) {
+                    String[] element = (String[])iter.next();
+                    if(element != null && element.length == 4) {
+                        try {
+                            URL url2 = NSISUpdateURLs.getGenericDownloadURL(element[3], mVersion);
+                            if(url2.equals(url) || url2.equals(defaultURL)) {
+                                continue;
+                            }
+                            URL imageURL = new URL(element[0]);
+                            String path = imageURL.getPath();
+                            int n = path.lastIndexOf("/"); //$NON-NLS-1$
+                            if(n >= 0) {
+                                path = path.substring(n+1);
+                            }
+                            if(!Common.isEmpty(path)) {
+                                File imageFile = new File(IMAGE_CACHE_FOLDER,path);
+                                Image image = (Image)cImageCache.get(imageFile);
+                                if(image == null) {
+                                    if(!IOUtility.isValidFile(imageFile)) {
+                                        if(!IOUtility.isValidDirectory(IMAGE_CACHE_FOLDER)) {
+                                            IMAGE_CACHE_FOLDER.mkdirs();
+                                        }
+                                        FileOutputStream fos = null;
+                                        conn2 = null;
+                                        try {
+                                            conn2 = superMakeConnection(null, imageURL, null);
+                                            fos = new FileOutputStream(imageFile);
+                                            download(conn2, null, null, fos);
+                                        }
+                                        finally {
+                                            IOUtility.closeIO(fos);
+                                            if(conn2 != null) {
+                                                conn2.disconnect();
+                                            }
+                                        }
+                                    }
+                                    if(IOUtility.isValidFile(imageFile)) {
+                                        final ImageData imageData = new ImageData(imageFile.getAbsolutePath());
+                                        final Image[] imageArray = new Image[1];
+                                        Display.getDefault().syncExec(new Runnable() {
+                                            public void run()
+                                            {
+                                                try {
+                                                    imageArray[0] = new Image(Display.getDefault(), imageData);
+                                                }
+                                                catch(Exception ex) {
+                                                    imageArray[0] = null;
+                                                }
+                                            }
+                                        });
+                                        image = imageArray[0];
+                                        if(image != null) {
+                                            cImageCache.put(imageFile, image);
+                                        }
+                                    }
+                                }
+                                if(image != null) {
+                                    downloadSites.add(new DownloadSite(image,element[1],element[2],url2));
+                                }
+                            }
+                        }
+                        catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    monitor.worked(50*(++count/sites.size()));
+                }
+            }
+
+            return downloadSites;
         }
-        
-        return downloadSites;
+        finally {
+            monitor.done();
+        }
     }
     /**
      * @param conn
@@ -266,78 +275,84 @@ class NSISDownloadUpdateJob extends NSISHttpUpdateJob
 
     protected IStatus handleConnection(HttpURLConnection conn, IProgressMonitor monitor) throws IOException
     {
-        URL url = conn.getURL();
-        String fileName = url.getPath();
-        int index = fileName.lastIndexOf('/');
-        if(index >= 0) {
-            fileName = fileName.substring(index+1);
-        }
-
-        File setupExe = new File(DOWNLOAD_FOLDER,fileName);
-        if(!setupExe.exists()) {
-            if(IOUtility.isValidFile(DOWNLOAD_FOLDER)) {
-                DOWNLOAD_FOLDER.delete();
+        try {
+            monitor.beginTask(getName(),100);
+            URL url = conn.getURL();
+            String fileName = url.getPath();
+            int index = fileName.lastIndexOf('/');
+            if(index >= 0) {
+                fileName = fileName.substring(index+1);
             }
-            if(!IOUtility.isValidDirectory(DOWNLOAD_FOLDER)) {
-                DOWNLOAD_FOLDER.mkdirs();
+    
+            File setupExe = new File(DOWNLOAD_FOLDER,fileName);
+            if(!setupExe.exists()) {
+                if(IOUtility.isValidFile(DOWNLOAD_FOLDER)) {
+                    DOWNLOAD_FOLDER.delete();
+                }
+                if(!IOUtility.isValidDirectory(DOWNLOAD_FOLDER)) {
+                    DOWNLOAD_FOLDER.mkdirs();
+                }
+                
+                FileOutputStream os = null;
+                try {
+                    os = new FileOutputStream(setupExe);
+                    IStatus status = download(conn, new NestedProgressMonitor(monitor, getName(), 50), getName(), os);
+                    if(!status.isOK()) {
+                        return status;
+                    }
+                }
+                catch(Exception e) {
+                    if(setupExe.exists()) {
+                        IOUtility.closeIO(os);
+                        os = null;
+                        setupExe.delete();
+                        IOException ioe;
+                        if(e instanceof IOException) {
+                            ioe = (IOException)e;
+                        }
+                        else {
+                            ioe = (IOException)new IOException(e.getMessage()).initCause(e);
+                        }
+                        throw ioe;
+                    }
+                }
+                finally {
+                    IOUtility.closeIO(os);
+                    if (monitor.isCanceled()) {
+                        if(setupExe.exists()) {
+                            setupExe.delete();
+                        }
+                        return Status.CANCEL_STATUS;
+                    }
+                }
+            }
+            else {
+                try {
+                    //This is a hack, otherwise the messagedialog sometimes closes immediately
+                    Thread.sleep(1000);
+                }
+                catch (InterruptedException e) {
+                }
+                finally {
+                    monitor.worked(50);
+                }
             }
             
-            FileOutputStream os = null;
-            try {
-                os = new FileOutputStream(setupExe);
-                IStatus status = download(conn, monitor, getName(), os);
+            if(setupExe.exists()) {
+                if (monitor.isCanceled()) {
+                    return Status.CANCEL_STATUS;
+                }
+                IStatus status = handleInstall(setupExe);
                 if(!status.isOK()) {
                     return status;
                 }
             }
-            catch(Exception e) {
-                if(setupExe.exists()) {
-                    IOUtility.closeIO(os);
-                    os = null;
-                    setupExe.delete();
-                    IOException ioe;
-                    if(e instanceof IOException) {
-                        ioe = (IOException)e;
-                    }
-                    else {
-                        ioe = (IOException)new IOException(e.getMessage()).initCause(e);
-                    }
-                    throw ioe;
-                }
-            }
-            finally {
-                IOUtility.closeIO(os);
-                if (monitor.isCanceled()) {
-                    if(setupExe.exists()) {
-                        setupExe.delete();
-                    }
-                    return Status.CANCEL_STATUS;
-                }
-                monitor.done();
-            }
+            monitor.worked(50);
+            return Status.OK_STATUS;
         }
-        else {
-            monitor.beginTask(getName(), 1);
-            try {
-                //This is a hack, otherwise the messagedialog sometimes closes immediately
-                Thread.sleep(1000);
-            }
-            catch (InterruptedException e) {
-            }
-            monitor.worked(1);
+        finally {
             monitor.done();
         }
-        
-        if(setupExe.exists()) {
-            if (monitor.isCanceled()) {
-                return Status.CANCEL_STATUS;
-            }
-            IStatus status = handleInstall(monitor, setupExe);
-            if(!status.isOK()) {
-                return status;
-            }
-        }
-        return Status.OK_STATUS;
     }
 
     protected IStatus download(HttpURLConnection conn, IProgressMonitor monitor, String name, OutputStream os) throws IOException
@@ -417,12 +432,9 @@ class NSISDownloadUpdateJob extends NSISHttpUpdateJob
         return Status.OK_STATUS;
     }
 
-    protected IStatus handleInstall(IProgressMonitor monitor, final File setupExe)
+    protected IStatus handleInstall(final File setupExe)
     {
         if(setupExe.exists()) {
-            if (monitor.isCanceled()) {
-                return Status.CANCEL_STATUS;
-            }
             displayExec(new Runnable() {
                 public void run()
                 {

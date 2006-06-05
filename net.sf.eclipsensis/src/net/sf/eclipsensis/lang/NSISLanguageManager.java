@@ -107,37 +107,47 @@ public class NSISLanguageManager implements INSISHomeListener, IEclipseNSISServi
 
     private void loadLanguages(IProgressMonitor monitor)
     {
-        if(monitor != null) {
-            monitor.subTask(EclipseNSISPlugin.getResourceString("loading.languages.message")); //$NON-NLS-1$
-        }
-        mLanguageMap.clear();
-        mLanguages.clear();
-        mLangDir = null;
-        mMuiLangDir = null;
-        if(EclipseNSISPlugin.getDefault().isConfigured()) {
-            File nsisHome = new File(NSISPreferences.INSTANCE.getNSISHome());
-            if(nsisHome.exists()) {
-                mLangDir = new File(nsisHome,INSISConstants.LANGUAGE_FILES_LOCATION);
-                mMuiLangDir = new File(nsisHome,INSISConstants.MUI_LANGUAGE_FILES_LOCATION);
-                if(mLangDir.exists()) {
-                    File[] langFiles = mLangDir.listFiles(new FileFilter() {
-                       public boolean accept(File pathName)
-                       {
-                           return (IOUtility.isValidFile(pathName) && pathName.getName().toLowerCase().endsWith(INSISConstants.LANGUAGE_FILES_EXTENSION));
-                       }
-                    });
-                    for (int i = 0; i < langFiles.length; i++) {
-                        NSISLanguage language = loadLanguage(langFiles[i]);
-                        if (language != null) {
-                            mLanguageMap.put(language.getName(), language);
-                            mLanguageMap.put(new Integer(language.getLangId()), language);
-                            mLanguages.add(language);
+        try {
+            if(monitor != null) {
+                monitor.beginTask(EclipseNSISPlugin.getResourceString("loading.languages.message"), 100); //$NON-NLS-1$
+            }
+            mLanguageMap.clear();
+            mLanguages.clear();
+            mLangDir = null;
+            mMuiLangDir = null;
+            if(EclipseNSISPlugin.getDefault().isConfigured()) {
+                File nsisHome = new File(NSISPreferences.INSTANCE.getNSISHome());
+                if(nsisHome.exists()) {
+                    mLangDir = new File(nsisHome,INSISConstants.LANGUAGE_FILES_LOCATION);
+                    mMuiLangDir = new File(nsisHome,INSISConstants.MUI_LANGUAGE_FILES_LOCATION);
+                    if(mLangDir.exists()) {
+                        File[] langFiles = mLangDir.listFiles(new FileFilter() {
+                           public boolean accept(File pathName)
+                           {
+                               return (IOUtility.isValidFile(pathName) && pathName.getName().toLowerCase().endsWith(INSISConstants.LANGUAGE_FILES_EXTENSION));
+                           }
+                        });
+                        for (int i = 0; i < langFiles.length; i++) {
+                            NSISLanguage language = loadLanguage(langFiles[i]);
+                            if (language != null) {
+                                mLanguageMap.put(language.getName(), language);
+                                mLanguageMap.put(new Integer(language.getLangId()), language);
+                                mLanguages.add(language);
+                            }
+                            if(monitor != null) {
+                                monitor.worked(2);
+                            }
                         }
                     }
                 }
             }
+            mPropertyChangeSupport.firePropertyChange(PROPERTY_LANGUAGES,null,mLanguages);
         }
-        mPropertyChangeSupport.firePropertyChange(PROPERTY_LANGUAGES,null,mLanguages);
+        finally {
+            if(monitor != null) {
+                monitor.done();
+            }
+        }
     }
 
     private NSISLanguage loadLanguage(File langFile)

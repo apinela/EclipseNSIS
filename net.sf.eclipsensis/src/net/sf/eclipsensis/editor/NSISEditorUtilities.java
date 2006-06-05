@@ -96,9 +96,6 @@ public class NSISEditorUtilities
                             catch (CoreException ex) {
                                 EclipseNSISPlugin.getDefault().log(ex);
                             }
-                            finally {
-                                monitor.done();
-                            }
                         }
                     };
                     try {
@@ -312,10 +309,15 @@ public class NSISEditorUtilities
             final IRunnableWithProgress op = new IRunnableWithProgress(){
                 public void run(IProgressMonitor monitor)
                 {
-                    monitor.beginTask(EclipseNSISPlugin.getResourceString("updating.presentation.message"),editors.size()); //$NON-NLS-1$
-                    for(Iterator iter=editors.iterator(); iter.hasNext(); ) {
-                        ((NSISEditor)iter.next()).updatePresentation();
-                        monitor.worked(1);
+                    try {
+                        monitor.beginTask(EclipseNSISPlugin.getResourceString("updating.presentation.message"),editors.size()); //$NON-NLS-1$
+                        for(Iterator iter=editors.iterator(); iter.hasNext(); ) {
+                            ((NSISEditor)iter.next()).updatePresentation();
+                            monitor.worked(1);
+                        }
+                    }
+                    finally {
+                        monitor.done();
                     }
                 }
             };

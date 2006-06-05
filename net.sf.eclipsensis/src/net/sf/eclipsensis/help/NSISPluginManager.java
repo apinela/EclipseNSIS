@@ -152,17 +152,24 @@ public class NSISPluginManager implements INSISConstants
                             new IJobStatusRunnable() {
                                 public IStatus run(IProgressMonitor monitor)
                                 {
-                                    if (!monitor.isCanceled()) {
-                                        try {
-                                            IOUtility.writeObject(mCacheFile, mDefaultPluginsMap);
-                                            return Status.OK_STATUS;
+                                    monitor.beginTask("Caching NSIS plugin information", 1);
+                                    try {
+                                        if (!monitor.isCanceled()) {
+                                            try {
+                                                IOUtility.writeObject(mCacheFile, mDefaultPluginsMap);
+                                                monitor.worked(1);
+                                                return Status.OK_STATUS;
+                                            }
+                                            catch (Throwable t) {
+                                                return new Status(IStatus.ERROR, PLUGIN_ID, IStatus.ERROR, t.getMessage(), t);
+                                            }
                                         }
-                                        catch (Throwable t) {
-                                            return new Status(IStatus.ERROR, PLUGIN_ID, IStatus.ERROR, t.getMessage(), t);
+                                        else {
+                                            return Status.CANCEL_STATUS;
                                         }
                                     }
-                                    else {
-                                        return Status.CANCEL_STATUS;
+                                    finally {
+                                        monitor.done();
                                     }
                                 }
                             });

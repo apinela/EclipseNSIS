@@ -18,9 +18,9 @@ public class NSISHelpTOC implements Serializable
 {
     private static final long serialVersionUID = -7260019864838868104L;
 
-    private Map mURLMap = null;
+    private Map mNodeMap = null;
     private List mChildren = null;
-
+    
     NSISHelpTOC()
     {
     }
@@ -37,11 +37,12 @@ public class NSISHelpTOC implements Serializable
 
     private void mapNode(NSISHelpTOCNode node)
     {
-        if(mURLMap == null) {
-            mURLMap = new CaseInsensitiveMap();
+        if(mNodeMap == null) {
+            mNodeMap = new CaseInsensitiveMap();
         }
         String url = node.getURL();
-        mURLMap.put(url,node);
+        mNodeMap.put(url,node);
+        mNodeMap.put(node.getName(),node);
 
         int n = url.lastIndexOf('#');
         if(n > 0) {
@@ -49,23 +50,23 @@ public class NSISHelpTOC implements Serializable
             url = url.substring(0,n);
             n = url.lastIndexOf('.');
             int m = url.lastIndexOf('/');
-            String ext = "";
+            String ext = ""; //$NON-NLS-1$
             if(n > m) {
                 ext = url.substring(n);
                 url = url.substring(0,n);
             }
             if(url.length() > suffix.length() && url.regionMatches(true,url.length()-suffix.length(),suffix,0,suffix.length())) {
                 url = url+ext;
-                if(!mURLMap.containsKey(url)) {
-                    mURLMap.put(url, node);
+                if(!mNodeMap.containsKey(url)) {
+                    mNodeMap.put(url, node);
                 }
             }
         }
     }
     
-    public NSISHelpTOCNode getNode(String url)
+    public NSISHelpTOCNode getNode(String urlOrName)
     {
-        return (NSISHelpTOCNode)mURLMap.get(url);
+        return (NSISHelpTOCNode)mNodeMap.get(urlOrName);
     }
 
     void addNode(NSISHelpTOCNode node)
@@ -141,8 +142,7 @@ public class NSISHelpTOC implements Serializable
 
         public String toString()
         {
-            // TODO Auto-generated method stub
-            return mName+" - "+mURL;
+            return new StringBuffer(mName).append(" - ").append(mURL).toString(); //$NON-NLS-1$
         }
     }
 }

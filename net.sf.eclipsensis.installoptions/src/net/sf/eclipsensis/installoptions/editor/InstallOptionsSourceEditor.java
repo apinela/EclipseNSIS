@@ -24,6 +24,7 @@ import net.sf.eclipsensis.installoptions.model.*;
 import net.sf.eclipsensis.job.IJobStatusRunnable;
 import net.sf.eclipsensis.job.JobScheduler;
 import net.sf.eclipsensis.util.*;
+import net.sf.eclipsensis.viewer.EmptyContentProvider;
 
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.resources.*;
@@ -853,18 +854,12 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
             super.createControl(parent);
 
             TreeViewer viewer = getTreeViewer();
-            viewer.setContentProvider(new ITreeContentProvider(){
-
+            viewer.setContentProvider(new EmptyContentProvider(){
                 public Object[] getChildren(Object parentElement)
                 {
                     if(parentElement instanceof INIFile) {
                         return ((INIFile)parentElement).getSections();
                     }
-                    return null;
-                }
-
-                public Object getParent(Object element)
-                {
                     return null;
                 }
 
@@ -876,14 +871,6 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
                 public Object[] getElements(Object inputElement)
                 {
                     return getChildren(inputElement);
-                }
-
-                public void dispose()
-                {
-                }
-
-                public void inputChanged(Viewer viewer, Object oldInput, Object newInput)
-                {
                 }
             });
             viewer.setLabelProvider(new OutlineLabelProvider());
