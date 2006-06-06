@@ -50,7 +50,6 @@ public class MakeNSISRunner implements INSISConstants
     public static final String MAKENSIS_VERBOSITY_OPTION = EclipseNSISPlugin.getResourceString("makensis.verbosity.option"); //$NON-NLS-1$
     public static final String MAKENSIS_CMDHELP_OPTION = EclipseNSISPlugin.getResourceString("makensis.cmdhelp.option"); //$NON-NLS-1$
 
-    private static final Long ZERO = new Long(0);
     private static MakeNSISProcess cCompileProcess = null;
     private static String cBestCompressorFormat = null;
     private static String cCompileLock = "lock"; //$NON-NLS-1$
@@ -160,7 +159,7 @@ public class MakeNSISRunner implements INSISConstants
                 {
                     try {
                         List problems = results.getProblems();
-                        monitor.beginTask("Updating NSIS problem markers",1+(problems==null?0:problems.size()));
+                        monitor.beginTask(EclipseNSISPlugin.getResourceString("updating.problem.markers.task.name"),1+(problems==null?0:problems.size())); //$NON-NLS-1$
                         IDocument doc = new FileDocument(file.getLocation().toFile());
                         file.deleteMarkers(PROBLEM_MARKER_ID, false, IResource.DEPTH_ZERO);
                         monitor.worked(1);
@@ -672,7 +671,7 @@ public class MakeNSISRunner implements INSISConstants
     private static Long[] splitCompilationTime(long time)
     {
         Long[] result = new Long[3];
-        Arrays.fill(result,ZERO);
+        Arrays.fill(result,Common.ZERO);
         result[2] = new Long(time % 1000);
         time /= 1000;
         for(int i=1; i>=0; i--) {

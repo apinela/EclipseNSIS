@@ -39,39 +39,39 @@ public interface NSISHelpSearchQueryParserConstants {
   int DEFAULT = 3;
 
   String[] tokenImage = {
-    "<EOF>",
-    "<_NUM_CHAR>",
-    "<_ESCAPED_CHAR>",
-    "<_TERM_START_CHAR>",
-    "<_TERM_CHAR>",
-    "\" \"",
-    "\"\\t\"",
-    "\"\\r\"",
-    "\"\\n\"",
-    "<AND>",
-    "<OR>",
-    "<NOT>",
-    "\"+\"",
-    "\"-\"",
-    "\"(\"",
-    "\")\"",
-    "\":\"",
-    "\"^\"",
-    "<QUOTED>",
-    "<TERM>",
-    "<FUZZY_SLOP>",
-    "<WILDTERM>",
-    "\"[\"",
-    "\"{\"",
-    "<NUMBER>",
-    "\"TO\"",
-    "\"]\"",
-    "<RANGEIN_QUOTED>",
-    "<RANGEIN_GOOP>",
-    "\"TO\"",
-    "\"}\"",
-    "<RANGEEX_QUOTED>",
-    "<RANGEEX_GOOP>",
+    "<EOF>", //$NON-NLS-1$
+    "<_NUM_CHAR>", //$NON-NLS-1$
+    "<_ESCAPED_CHAR>", //$NON-NLS-1$
+    "<_TERM_START_CHAR>", //$NON-NLS-1$
+    "<_TERM_CHAR>", //$NON-NLS-1$
+    "\" \"", //$NON-NLS-1$
+    "\"\\t\"", //$NON-NLS-1$
+    "\"\\r\"", //$NON-NLS-1$
+    "\"\\n\"", //$NON-NLS-1$
+    "<AND>", //$NON-NLS-1$
+    "<OR>", //$NON-NLS-1$
+    "<NOT>", //$NON-NLS-1$
+    "\"+\"", //$NON-NLS-1$
+    "\"-\"", //$NON-NLS-1$
+    "\"(\"", //$NON-NLS-1$
+    "\")\"", //$NON-NLS-1$
+    "\":\"", //$NON-NLS-1$
+    "\"^\"", //$NON-NLS-1$
+    "<QUOTED>", //$NON-NLS-1$
+    "<TERM>", //$NON-NLS-1$
+    "<FUZZY_SLOP>", //$NON-NLS-1$
+    "<WILDTERM>", //$NON-NLS-1$
+    "\"[\"", //$NON-NLS-1$
+    "\"{\"", //$NON-NLS-1$
+    "<NUMBER>", //$NON-NLS-1$
+    "\"TO\"", //$NON-NLS-1$
+    "\"]\"", //$NON-NLS-1$
+    "<RANGEIN_QUOTED>", //$NON-NLS-1$
+    "<RANGEIN_GOOP>", //$NON-NLS-1$
+    "\"TO\"", //$NON-NLS-1$
+    "\"}\"", //$NON-NLS-1$
+    "<RANGEEX_QUOTED>", //$NON-NLS-1$
+    "<RANGEEX_GOOP>", //$NON-NLS-1$
   };
 
 }

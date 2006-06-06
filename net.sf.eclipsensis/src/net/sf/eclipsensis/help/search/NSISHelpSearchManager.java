@@ -10,22 +10,51 @@
 package net.sf.eclipsensis.help.search;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URL;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
+import net.sf.eclipsensis.util.IOUtility;
 
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.eclipse.core.runtime.FileLocator;
 
 public class NSISHelpSearchManager implements INSISHelpSearchConstants
 {
     private NSISHelpIndexer mStandardIndexer = null;
     private NSISHelpIndexer mStemmedIndexer = null;
+    private String mSearchSyntaxURL;
     
     public NSISHelpSearchManager(File documentRoot)
     {
         File helpLocation = new File(EclipseNSISPlugin.getPluginStateLocation(),INSISConstants.PLUGIN_HELP_LOCATION_PREFIX);
         mStandardIndexer = new NSISHelpIndexer(new File(helpLocation, STANDARD_INDEX_LOCATION),documentRoot, new StandardAnalyzer());
         mStemmedIndexer = new NSISHelpIndexer(new File(helpLocation, STEMMED_INDEX_LOCATION),documentRoot, new StemmingAnalyzer());
+        try {
+            URL url = FileLocator.toFileURL(getClass().getResource("search_syntax.htm")); //$NON-NLS-1$
+            try {
+                File f = new File(new URI(url.toString()));
+                if(f.exists()) {
+                    mSearchSyntaxURL = IOUtility.getFileURLString(f);
+                }
+                else {
+                    mSearchSyntaxURL = url.toString();
+                }
+            }
+            catch(Exception ex) {
+                mSearchSyntaxURL = url.toString();
+            }
+        }
+        catch (IOException e) {
+            mSearchSyntaxURL = null;
+        }
+    }
+
+    public String getSearchSyntaxURL()
+    {
+        return mSearchSyntaxURL;
     }
 
     public void stop()

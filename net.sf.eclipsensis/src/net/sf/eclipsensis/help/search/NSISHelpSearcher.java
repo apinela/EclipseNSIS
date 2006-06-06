@@ -63,7 +63,7 @@ public class NSISHelpSearcher implements INSISHelpSearchConstants
             List results = Collections.EMPTY_LIST;
             Collection highlightTerms = Collections.EMPTY_SET;
             try {
-                monitor.beginTask("Searching NSIS Users Manual...",IProgressMonitor.UNKNOWN);
+                monitor.beginTask(EclipseNSISPlugin.getResourceString("searching.help.task.name"),IProgressMonitor.UNKNOWN); //$NON-NLS-1$
                 if(!IOUtility.isValidDirectory(mIndexer.getIndexLocation())) {
                     mIndexer.indexHelp();
                 }
@@ -76,7 +76,7 @@ public class NSISHelpSearcher implements INSISHelpSearchConstants
                 catch (InterruptedException e) {
                 }
                 if(!IOUtility.isValidDirectory(mIndexer.getIndexLocation())) {
-                    return new Status(IStatus.ERROR,INSISConstants.PLUGIN_ID,IStatus.ERROR,"NSIS Users Manual search index could not be created",null);
+                    return new Status(IStatus.ERROR,INSISConstants.PLUGIN_ID,IStatus.ERROR,EclipseNSISPlugin.getResourceString("search.index.not.created"),null); //$NON-NLS-1$
                 }
                 if(checkCanceled(monitor)) {
                     return Status.CANCEL_STATUS;

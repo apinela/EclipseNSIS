@@ -173,7 +173,7 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
                             public void run(IProgressMonitor monitor)
                             {
                                 try {
-                                    monitor.beginTask("Previewing InstallOptions script",IProgressMonitor.UNKNOWN);
+                                    monitor.beginTask(InstallOptionsPlugin.getResourceString("previewing.script.task.name"),IProgressMonitor.UNKNOWN); //$NON-NLS-1$
                                     LinkedHashMap symbols = mSettings.getSymbols();
                                     symbols.put("PREVIEW_INI",file.getAbsolutePath()); //$NON-NLS-1$
                                     String pref = InstallOptionsPlugin.getDefault().getPreferenceStore().getString(IInstallOptionsConstants.PREFERENCE_PREVIEW_LANG);

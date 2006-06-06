@@ -680,7 +680,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
         public void run(IProgressMonitor monitor)
         {
             try {
-                String taskName = EclipseNSISPlugin.getResourceString("propagating.home.message");
+                String taskName = EclipseNSISPlugin.getResourceString("propagating.home.message"); //$NON-NLS-1$
                 monitor.beginTask(taskName,10*mListeners.size());
                 INSISHomeListener[] listeners = (INSISHomeListener[])mListeners.toArray(new INSISHomeListener[mListeners.size()]);
                 for (int i = 0; i < listeners.length; i++) {

@@ -18,7 +18,6 @@ import net.sf.eclipsensis.settings.NSISPreferences;
 import net.sf.eclipsensis.util.*;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 
 public class NSISKeywords implements INSISConstants, IEclipseNSISService
 {
@@ -112,7 +111,7 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
         try {
             String taskName = EclipseNSISPlugin.getResourceString("loading.keywords.message"); //$NON-NLS-1$
             if(monitor != null) {
-                monitor.beginTask(taskName, 100);
+                monitor.beginTask(taskName, 100+(mListeners==null?0:mListeners.size()));
             }
             mNewerKeywordsMap.clear();
             mAllKeywordsSet.clear();
@@ -532,9 +531,7 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
                 monitor.worked(20);
             }
             
-            IProgressMonitor subMonitor = (monitor==null?(IProgressMonitor)new NullProgressMonitor():(IProgressMonitor)new NestedProgressMonitor(monitor, taskName, 10));
-            
-            notifyListeners(subMonitor);
+            notifyListeners(monitor);
         }
         finally {
             if(monitor != null) {
@@ -635,21 +632,14 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
     private void notifyListeners(IProgressMonitor monitor)
     {
         if(mListeners.size() > 0) {
-            try {
-                if(monitor != null) {
-                    monitor.beginTask(EclipseNSISPlugin.getResourceString("updating.keywords.message"), mListeners.size()); //$NON-NLS-1$
-                }
-                INSISKeywordsListener[] listeners = (INSISKeywordsListener[])mListeners.toArray(new INSISKeywordsListener[mListeners.size()]);
-                for (int i = 0; i < listeners.length; i++) {
-                    listeners[i].keywordsChanged();
-                    if(monitor != null) {
-                        monitor.worked(1);
-                    }
-                }
+            if(monitor != null) {
+                monitor.subTask(EclipseNSISPlugin.getResourceString("updating.keywords.message")); //$NON-NLS-1$
             }
-            finally {
+            INSISKeywordsListener[] listeners = (INSISKeywordsListener[])mListeners.toArray(new INSISKeywordsListener[mListeners.size()]);
+            for (int i = 0; i < listeners.length; i++) {
+                listeners[i].keywordsChanged();
                 if(monitor != null) {
-                    monitor.done();
+                    monitor.worked(1);
                 }
             }
         }

@@ -161,7 +161,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
         String highlighJSContent = null;
         InputStream is = null;
         try {
-            is = NSISHTMLHelp.class.getResourceAsStream("highlight.js");
+            is = NSISHTMLHelp.class.getResourceAsStream("highlight.js"); //$NON-NLS-1$
             highlighJSContent = new String(IOUtility.loadContentFromStream(is));
         }
         catch(Exception ex) {
@@ -209,7 +209,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
     public NSISHTMLHelp()
     {
         if(HIGHLIGHT_JS_CONTENT != null) {
-            mHighlightJSPrefix = new MessageFormat("var keywords = new Array({0});\r\nvar regex = new Array({1});\r\n");
+            mHighlightJSPrefix = new MessageFormat("var keywords = new Array({0});\r\nvar regex = new Array({1});\r\n"); //$NON-NLS-1$
         }
     }
 
@@ -532,18 +532,18 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
         composite.setLayout(layout);
         
         Label l = new Label(composite,SWT.WRAP);
-        l.setText("Type in the &word(s) to search for:");
+        l.setText(EclipseNSISPlugin.getResourceString("help.browser.search.box.label")); //$NON-NLS-1$
         GridData data = new GridData(SWT.FILL,SWT.CENTER,true,false);
         l.setLayoutData(data);
 
-        final String searchSyntaxURL = NSISHelpURLProvider.getInstance().getSearchSyntaxURL();
+        final String searchSyntaxURL = NSISHelpURLProvider.getInstance().getSearchManager().getSearchSyntaxURL();
         if(searchSyntaxURL != null) {
             ToolBar toolbar = new ToolBar(composite,SWT.FLAT);
             toolbar.setCursor(toolbar.getDisplay().getSystemCursor(SWT.CURSOR_HAND));
             ToolItem toolItem = new ToolItem(toolbar, SWT.PUSH);
-            Image image = EclipseNSISPlugin.getImageManager().getImage("icons/help_small.gif");
+            Image image = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("help.small.icon")); //$NON-NLS-1$
             toolItem.setImage(image);
-            toolItem.setToolTipText("Search syntax");
+            toolItem.setToolTipText(EclipseNSISPlugin.getResourceString("help.browser.search.syntax.tooltip")); //$NON-NLS-1$
             toolItem.addSelectionListener(new SelectionAdapter() {
                 public void widgetSelected(SelectionEvent e)
                 {
@@ -575,7 +575,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
                 searchText.insert(mi.getText());
             }            
         };
-        String[] labels = {" AND "," OR "," NOT "};
+        String[] labels = {" AND "," OR "," NOT "}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         for (int i = 0; i < labels.length; i++) {
             MenuItem mi = new MenuItem(menu,SWT.PUSH);
             mi.setText(labels[i]);
@@ -606,7 +606,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
         composite.setLayout(layout);
         
         final Button listTopics = new Button(composite,SWT.PUSH);
-        listTopics.setText("&List Topics");
+        listTopics.setText(EclipseNSISPlugin.getResourceString("help.browser.list.topics.label")); //$NON-NLS-1$
         listTopics.setLayoutData(new GridData(SWT.FILL,SWT.FILL,false,false));
         listTopics.setEnabled(false);
 
@@ -618,7 +618,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
         });
         
         Button display = new Button(composite,SWT.PUSH);
-        display.setText("&Display");
+        display.setText(EclipseNSISPlugin.getResourceString("help.browser.display.label")); //$NON-NLS-1$
         display.setLayoutData(new GridData(SWT.FILL,SWT.FILL,false,false));
 
         composite = new Composite(searchComposite, SWT.NONE);
@@ -627,7 +627,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
         layout.marginWidth = layout.marginHeight = 0;
         composite.setLayout(layout);
         l = new Label(composite,SWT.NONE);
-        l.setText("Select &topic:");
+        l.setText(EclipseNSISPlugin.getResourceString("help.browser.search.results.label")); //$NON-NLS-1$
         data = new GridData(SWT.FILL,SWT.FILL,false,false);
         data.widthHint = 70;
         l.setLayoutData(data);
@@ -635,8 +635,10 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
         l = new Label(composite,SWT.NONE);
         l.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false));
         
+        final MessageFormat foundFormat = new MessageFormat(EclipseNSISPlugin.getResourceString("help.browser.search.results.count.format")); //$NON-NLS-1$
+        final Long[] foundArgs = { Common.ZERO };
         final Label found = new Label(composite,SWT.NONE);
-        found.setText("Found: 0");
+        found.setText(foundFormat.format(foundArgs));
         data = new GridData(SWT.FILL,SWT.FILL,false,false);
         data.widthHint = 120;
         found.setLayoutData(data);
@@ -716,16 +718,16 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
         });
 
         final Button searchPrevious = new Button(searchComposite,SWT.CHECK);
-        searchPrevious.setText("Search previous res&ults");
+        searchPrevious.setText(EclipseNSISPlugin.getResourceString("help.browser.search.previous.results.label")); //$NON-NLS-1$
         searchPrevious.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false));
         
         final Button useStemming = new Button(searchComposite,SWT.CHECK);
         useStemming.setSelection(true);
-        useStemming.setText("&Match similar words");
+        useStemming.setText(EclipseNSISPlugin.getResourceString("help.browser.search.stemmed.label")); //$NON-NLS-1$
         useStemming.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false));
         
         final Button searchTitles = new Button(searchComposite,SWT.CHECK);
-        searchTitles.setText("Sea&rch titles only");
+        searchTitles.setText(EclipseNSISPlugin.getResourceString("help.browser.search.titles.label")); //$NON-NLS-1$
         searchTitles.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false));
 
         mSearchingDialog = new SearchingDialog(getSite().getShell()) {
@@ -736,7 +738,8 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
                     public void run()
                     {
                         int size = (results==null?0:results.length);
-                        found.setText("Found: "+size);
+                        foundArgs[0] = (size==0?Common.ZERO:new Long(size));
+                        found.setText(foundFormat.format(foundArgs));
                         Table table = mSearchViewer.getTable();
                         table.setSortColumn(Common.isEmptyArray(results)?null:rankColumn);
                         table.setSortDirection(Common.isEmptyArray(results)?SWT.NONE:SWT.UP);
@@ -762,24 +765,24 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
                         if(mHighlightJS == null) {
                             Collection terms = mSearchingDialog.getTerms();
                             if(!Common.isEmptyCollection(terms)) {
-                                StringBuffer keywords = new StringBuffer("");
-                                StringBuffer regex = new StringBuffer("");
+                                StringBuffer keywords = new StringBuffer(""); //$NON-NLS-1$
+                                StringBuffer regex = new StringBuffer(""); //$NON-NLS-1$
                                 for (Iterator iter = terms.iterator(); iter.hasNext();) {
                                     String term = (String)iter.next();
                                     boolean isRegex = false;
                                     if(term.startsWith(NSISHelpSearchQueryParser.REGEX_PREFIX)) {
                                         isRegex = true;
-                                        term = term.substring(NSISHelpSearchQueryParser.REGEX_PREFIX.length()).replaceAll("\\\\","\\\\\\\\");
+                                        term = term.substring(NSISHelpSearchQueryParser.REGEX_PREFIX.length()).replaceAll("\\\\","\\\\\\\\"); //$NON-NLS-1$ //$NON-NLS-2$
                                     }
                                     if(keywords.length() > 0) {
-                                        keywords.append(",");
-                                        regex.append(",");
+                                        keywords.append(","); //$NON-NLS-1$
+                                        regex.append(","); //$NON-NLS-1$
                                     }
-                                    keywords.append("\"").append(term.replaceAll("\\\"","\\\\\"")).append("\"");
+                                    keywords.append("\"").append(term.replaceAll("\\\"","\\\\\"")).append("\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
                                     regex.append(isRegex);
                                 }
                                 
-                                final StringBuffer js = new StringBuffer("");
+                                final StringBuffer js = new StringBuffer(""); //$NON-NLS-1$
                                 mHighlightJSPrefix.format(new String[] {keywords.toString(),regex.toString()},js,null);
                                 js.append(HIGHLIGHT_JS_CONTENT);
                                 mHighlightJS = js.toString();
@@ -1489,12 +1492,12 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
         }
     }
     
+    private static final String SEARCHING_DIALOG_TITLE = EclipseNSISPlugin.getResourceString("searching.dialog.title"); //$NON-NLS-1$
+    private static final String SEARCHING_DIALOG_MESSAGE = EclipseNSISPlugin.getResourceString("searching.dialog.message"); //$NON-NLS-1$
+    
     private class SearchingDialog extends Dialog implements INSISHelpSearchRequester
     {
-        private static final String TITLE = "Searching...";
-        private static final String MESSAGE = "Click cancel to stop.";
-        
-        private String mSearchText = "";
+        private String mSearchText = ""; //$NON-NLS-1$
         private boolean mCanceled = false;
         private Query mQuery = null;
         private boolean mSearchPrevious = false;
@@ -1511,7 +1514,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
         {
             Point size = super.getInitialSize();
             GC gc = new GC(getShell());
-            int width = gc.stringExtent(TITLE).x+75;
+            int width = gc.stringExtent(SEARCHING_DIALOG_TITLE).x+75;
             gc.dispose();
             if(size.x < width) {
                 size.x = width;
@@ -1574,7 +1577,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
             mUseStemming = false;
             mSearchPrevious = false;
             mQuery = null;
-            mSearchText = "";
+            mSearchText = ""; //$NON-NLS-1$
             mCanceled = false;
             mTerms.clear();
         }
@@ -1613,7 +1616,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
         protected void configureShell(Shell newShell)
         {
             super.configureShell(newShell);
-            newShell.setText(TITLE);
+            newShell.setText(SEARCHING_DIALOG_TITLE);
             newShell.setImage(EclipseNSISPlugin.getShellImage());
         }
 
@@ -1638,7 +1641,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
         {
             Composite composite = (Composite)super.createDialogArea(parent);
             Label l = new Label(composite,SWT.NONE);
-            l.setText(MESSAGE);
+            l.setText(SEARCHING_DIALOG_MESSAGE);
             l.setLayoutData(new GridData(SWT.CENTER,SWT.FILL,true,true));
             return composite;
         }

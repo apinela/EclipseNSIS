@@ -45,7 +45,7 @@ public class NSISLaunchConfigDelegate implements ILaunchConfigurationDelegate
     public void launch(ILaunchConfiguration configuration, String mode, final ILaunch launch, final IProgressMonitor monitor) throws CoreException
     {
         try {
-            String taskName = "Launching NSIS Script";
+            String taskName = EclipseNSISPlugin.getResourceString("launching.nsis.script.task.name"); //$NON-NLS-1$
             monitor.beginTask(taskName, 200);
             String script = null;
             boolean useConsole = true;

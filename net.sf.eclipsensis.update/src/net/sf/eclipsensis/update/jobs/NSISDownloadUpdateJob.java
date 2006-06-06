@@ -20,6 +20,7 @@ import java.util.List;
 
 import javax.swing.text.html.parser.ParserDelegator;
 
+import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.update.EclipseNSISUpdatePlugin;
 import net.sf.eclipsensis.update.preferences.IUpdatePreferenceConstants;
 import net.sf.eclipsensis.update.scheduler.SchedulerConstants;
@@ -105,9 +106,9 @@ class NSISDownloadUpdateJob extends NSISHttpUpdateJob
                     site = selectedSite[0];
                     downloadSites.remove(site);
                 }
-                monitor.worked(25);
+                monitor.worked(1);
                 try {
-                    return superMakeConnection(new NestedProgressMonitor(monitor,getName(),25), site.getURL(), null);
+                    return superMakeConnection(new NestedProgressMonitor(monitor,getName(),1), site.getURL(), null);
                 }
                 catch(Exception e) {
                     e.printStackTrace();
@@ -123,13 +124,13 @@ class NSISDownloadUpdateJob extends NSISHttpUpdateJob
     private List getDownloadSites(IProgressMonitor monitor, URL url, URL defaultURL)
     {
         try {
-            String taskName = EclipseNSISUpdatePlugin.getFormattedString("download.update.retrieve.alternate.message.format",new String[] {getName()});
-            monitor.beginTask(taskName, 100); //$NON-NLS-1$
+            String taskName = EclipseNSISUpdatePlugin.getResourceString("download.update.retrieve.alternate.message"); //$NON-NLS-1$
+            monitor.beginTask(taskName, 100);
             List downloadSites = new ArrayList();
             HttpURLConnection conn2 = null;
             String content = null;
             try {
-                conn2 = superMakeConnection(new NestedProgressMonitor(monitor,taskName,25), NSISUpdateURLs.getSelectDownloadURL(mVersion), null);
+                conn2 = superMakeConnection(new NestedProgressMonitor(monitor,taskName,getName(),25), NSISUpdateURLs.getSelectDownloadURL(mVersion), null);
                 content = getContent(conn2);
                 monitor.worked(25);
             }
@@ -167,28 +168,43 @@ class NSISDownloadUpdateJob extends NSISHttpUpdateJob
                                 path = path.substring(n+1);
                             }
                             if(!Common.isEmpty(path)) {
+                                if(!IOUtility.isValidDirectory(IMAGE_CACHE_FOLDER)) {
+                                    IMAGE_CACHE_FOLDER.mkdirs();
+                                }
                                 File imageFile = new File(IMAGE_CACHE_FOLDER,path);
+                                FileOutputStream fos = null;
+                                conn2 = null;
+                                long timestamp = 0;
+                                try {
+                                    conn2 = superMakeConnection(new NullProgressMonitor(), imageURL, null);
+                                    timestamp = conn2.getLastModified();
+                                    if(imageFile.exists() && (timestamp > imageFile.lastModified())) {
+                                        imageFile.delete();
+                                    }
+                                    if(!imageFile.exists()) {
+                                        cImageCache.remove(imageFile);
+                                        fos = new FileOutputStream(imageFile);
+                                        download(conn2, null, null, fos);
+                                    }
+                                }
+                                catch(Exception e) {
+                                    EclipseNSISPlugin.getDefault().log(e);
+                                    if(imageFile.exists()) {
+                                        imageFile.delete();
+                                    }
+                                }
+                                finally {
+                                    IOUtility.closeIO(fos);
+                                    if(conn2 != null) {
+                                        conn2.disconnect();
+                                    }
+                                    if(timestamp > 0 && imageFile.exists()) {
+                                        imageFile.setLastModified(timestamp);
+                                    }
+                                }
                                 Image image = (Image)cImageCache.get(imageFile);
                                 if(image == null) {
-                                    if(!IOUtility.isValidFile(imageFile)) {
-                                        if(!IOUtility.isValidDirectory(IMAGE_CACHE_FOLDER)) {
-                                            IMAGE_CACHE_FOLDER.mkdirs();
-                                        }
-                                        FileOutputStream fos = null;
-                                        conn2 = null;
-                                        try {
-                                            conn2 = superMakeConnection(null, imageURL, null);
-                                            fos = new FileOutputStream(imageFile);
-                                            download(conn2, null, null, fos);
-                                        }
-                                        finally {
-                                            IOUtility.closeIO(fos);
-                                            if(conn2 != null) {
-                                                conn2.disconnect();
-                                            }
-                                        }
-                                    }
-                                    if(IOUtility.isValidFile(imageFile)) {
+                                    if(imageFile.exists()) {
                                         final ImageData imageData = new ImageData(imageFile.getAbsolutePath());
                                         final Image[] imageArray = new Image[1];
                                         Display.getDefault().syncExec(new Runnable() {
@@ -284,19 +300,22 @@ class NSISDownloadUpdateJob extends NSISHttpUpdateJob
                 fileName = fileName.substring(index+1);
             }
     
+            if(IOUtility.isValidFile(DOWNLOAD_FOLDER)) {
+                DOWNLOAD_FOLDER.delete();
+            }
+            if(!IOUtility.isValidDirectory(DOWNLOAD_FOLDER)) {
+                DOWNLOAD_FOLDER.mkdirs();
+            }
             File setupExe = new File(DOWNLOAD_FOLDER,fileName);
+            long timestamp = conn.getLastModified();
+            if(setupExe.exists() && timestamp > setupExe.lastModified()) {
+                setupExe.delete();
+            }
             if(!setupExe.exists()) {
-                if(IOUtility.isValidFile(DOWNLOAD_FOLDER)) {
-                    DOWNLOAD_FOLDER.delete();
-                }
-                if(!IOUtility.isValidDirectory(DOWNLOAD_FOLDER)) {
-                    DOWNLOAD_FOLDER.mkdirs();
-                }
-                
                 FileOutputStream os = null;
                 try {
                     os = new FileOutputStream(setupExe);
-                    IStatus status = download(conn, new NestedProgressMonitor(monitor, getName(), 50), getName(), os);
+                    IStatus status = download(conn, new NestedProgressMonitor(monitor, getName(), 99), getName(), os);
                     if(!status.isOK()) {
                         return status;
                     }
@@ -324,6 +343,10 @@ class NSISDownloadUpdateJob extends NSISHttpUpdateJob
                         }
                         return Status.CANCEL_STATUS;
                     }
+                    else if(setupExe.exists()) {
+                        setupExe.setLastModified(timestamp);
+                    }
+
                 }
             }
             else {
@@ -334,7 +357,7 @@ class NSISDownloadUpdateJob extends NSISHttpUpdateJob
                 catch (InterruptedException e) {
                 }
                 finally {
-                    monitor.worked(50);
+                    monitor.worked(99);
                 }
             }
             
@@ -347,7 +370,6 @@ class NSISDownloadUpdateJob extends NSISHttpUpdateJob
                     return status;
                 }
             }
-            monitor.worked(50);
             return Status.OK_STATUS;
         }
         finally {
@@ -364,10 +386,10 @@ class NSISDownloadUpdateJob extends NSISHttpUpdateJob
         if(monitor != null) {
             length = conn.getContentLength();
             if(length <= 0) {
-                monitor.beginTask(name, IProgressMonitor.UNKNOWN);
+                monitor.beginTask("", IProgressMonitor.UNKNOWN); //$NON-NLS-1$
             }
             else {
-                args = new String[] {name,"0"}; //$NON-NLS-1$
+                args = new String[] {"0"}; //$NON-NLS-1$
                 monitor.beginTask(mf.format(args), 101);
             }
             monitor.worked(1);
@@ -396,7 +418,7 @@ class NSISDownloadUpdateJob extends NSISHttpUpdateJob
                     
                     if(monitor != null && length > 0) {
                         int newWorked = Math.round(totalread*100/length);
-                        args[1]=Integer.toString(newWorked);
+                        args[0]=Integer.toString(newWorked);
                         monitor.setTaskName(mf.format(args));
                         monitor.worked(newWorked-worked);
                         worked = newWorked;
@@ -411,7 +433,7 @@ class NSISDownloadUpdateJob extends NSISHttpUpdateJob
                 fileChannel.write(buf);
             }
             if(monitor != null && length > 0) {
-                args[1]="100"; //$NON-NLS-1$
+                args[0]="100"; //$NON-NLS-1$
                 monitor.setTaskName(mf.format(args));
                 monitor.worked(100-worked);
             }

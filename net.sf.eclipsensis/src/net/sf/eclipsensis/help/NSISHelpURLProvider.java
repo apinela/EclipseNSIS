@@ -10,8 +10,6 @@
 package net.sf.eclipsensis.help;
 
 import java.io.*;
-import java.net.URI;
-import java.net.URL;
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -21,11 +19,13 @@ import javax.swing.text.html.parser.ParserDelegator;
 
 import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.editor.codeassist.NSISBrowserUtility;
-import net.sf.eclipsensis.help.search.*;
+import net.sf.eclipsensis.help.search.INSISHelpSearchConstants;
+import net.sf.eclipsensis.help.search.NSISHelpSearchManager;
 import net.sf.eclipsensis.settings.NSISPreferences;
 import net.sf.eclipsensis.util.*;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 
@@ -81,7 +81,6 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
     private String mCachedHelpLocation;
     private File mCachedHelpDocsLocation;
     private File mNoHelpFile;
-    private String mSearchSyntaxURL;
 
     private File mStateLocation;
     
@@ -121,30 +120,11 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
 
     public NSISHelpURLProvider()
     {
-        super();
         mStateLocation = EclipseNSISPlugin.getPluginStateLocation();
         mCacheFile = new File(mStateLocation, getClass().getName() + ".HelpURLs.ser"); //$NON-NLS-1$
         mCachedHelpLocation = new File(mStateLocation, PLUGIN_HELP_LOCATION_PREFIX).getAbsolutePath();
         mCachedHelpDocsLocation = new File(mStateLocation, PLUGIN_HELP_DOCS_LOCATION_PREFIX);
         mNoHelpFile = new File(mStateLocation.getAbsolutePath(),NO_HELP_FILE);
-        try {
-            URL url = FileLocator.toFileURL(getClass().getResource("search/search_syntax.htm"));
-            try {
-                File f = new File(new URI(url.toString()));
-                if(f.exists()) {
-                    mSearchSyntaxURL = IOUtility.getFileURLString(f);
-                }
-                else {
-                    mSearchSyntaxURL = url.toString();
-                }
-            }
-            catch(Exception ex) {
-                mSearchSyntaxURL = url.toString();
-            }
-        }
-        catch (IOException e) {
-            mSearchSyntaxURL = null;
-        }
     }
 
     public void addListener(INSISHelpURLListener listener)
@@ -160,11 +140,6 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
     public File getNoHelpFile()
     {
         return mNoHelpFile;
-    }
-
-    public String getSearchSyntaxURL()
-    {
-        return mSearchSyntaxURL;
     }
 
     public void start(IProgressMonitor monitor)

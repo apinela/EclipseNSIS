@@ -91,7 +91,7 @@ public class NSISHelpIndexer implements INSISHelpSearchConstants
             IndexWriter writer = null;
             IStatus status = Status.OK_STATUS;
             try {
-                monitor.beginTask(EclipseNSISPlugin.getResourceString("nsis.help.indexer.task.title"),IProgressMonitor.UNKNOWN);
+                monitor.beginTask(EclipseNSISPlugin.getResourceString("nsis.help.indexer.task.title"),IProgressMonitor.UNKNOWN); //$NON-NLS-1$
                 if(mIndexLocation.exists()) {
                     mIndexLocation.mkdirs();
                 }

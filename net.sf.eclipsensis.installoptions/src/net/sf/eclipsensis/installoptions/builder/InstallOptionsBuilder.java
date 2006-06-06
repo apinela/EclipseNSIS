@@ -43,14 +43,12 @@ public class InstallOptionsBuilder extends IncrementalProjectBuilder implements 
         }
     }
 
-    protected void clean(IProgressMonitor monitor) throws CoreException
+    protected void clean(IProgressMonitor monitor)
     {
         try {
-            String taskName = "Cleaning all InstallOptions projects";
-            monitor.beginTask(taskName,100);
-            super.clean(new NestedProgressMonitor(monitor,taskName,50));
+            String taskName = InstallOptionsPlugin.getResourceString("clean.task.name"); //$NON-NLS-1$
+            monitor.beginTask(taskName,1);
             resetBuildTimestamp();
-            monitor.worked(50);
         }
         finally {
             monitor.done();
@@ -225,7 +223,7 @@ public class InstallOptionsBuilder extends IncrementalProjectBuilder implements 
 	protected void fullBuild(final IProgressMonitor monitor)
     {
 		try {
-            monitor.beginTask("Full build of all InstallOptions projects",100);
+            monitor.beginTask(InstallOptionsPlugin.getResourceString("full.build.task.name"),100); //$NON-NLS-1$
             resetBuildTimestamp();
             monitor.worked(50);
 			getProject().accept(new IResourceVisitor() {
@@ -252,7 +250,7 @@ public class InstallOptionsBuilder extends IncrementalProjectBuilder implements 
 	protected void incrementalBuild(IResourceDelta delta, final IProgressMonitor monitor) throws CoreException
     {
         try {
-            monitor.beginTask("Full build of all InstallOptions projects",100);
+            monitor.beginTask(InstallOptionsPlugin.getResourceString("full.build.task.name"),100); //$NON-NLS-1$
     		delta.accept(new IResourceDeltaVisitor() {
                 public boolean visit(IResourceDelta delta)
                 {
@@ -288,7 +286,7 @@ public class InstallOptionsBuilder extends IncrementalProjectBuilder implements 
                 protected void execute(IProgressMonitor monitor)throws CoreException
                 {
                     try {
-                        monitor.beginTask("Updating InstallOptions problem markers", 2+(iniFile==null?0:iniFile.getProblems().length));
+                        monitor.beginTask(InstallOptionsPlugin.getResourceString("updating.markers.task.name"), 2+(iniFile==null?0:iniFile.getProblems().length)); //$NON-NLS-1$
                         deleteMarkers(file);
                         monitor.worked(1);
                         if(iniFile != null) {
@@ -400,7 +398,7 @@ public class InstallOptionsBuilder extends IncrementalProjectBuilder implements 
                         public IStatus run(final IProgressMonitor monitor)
                         {
                             try {
-                                String taskName = "Building InstallOptions project";
+                                String taskName = InstallOptionsPlugin.getResourceString("build.project.task.name"); //$NON-NLS-1$
                                 monitor.beginTask(taskName,1);
                                 String nsisVersion = InstallOptionsModel.INSTANCE.getNSISVersion().toString();
                                 if(project.hasNature(INSTALLOPTIONS_NATURE_ID)) {

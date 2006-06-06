@@ -110,7 +110,7 @@ public class MinimalProgressMonitorDialog extends ProgressMonitorDialog
     protected Control createDialogArea(Composite parent)
     {
         // task label
-        message = "";
+        message = ""; //$NON-NLS-1$
         createMessageArea(parent);
         
         // progress indicator

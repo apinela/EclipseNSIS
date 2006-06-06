@@ -152,7 +152,7 @@ public class NSISPluginManager implements INSISConstants
                             new IJobStatusRunnable() {
                                 public IStatus run(IProgressMonitor monitor)
                                 {
-                                    monitor.beginTask("Caching NSIS plugin information", 1);
+                                    monitor.beginTask(EclipseNSISPlugin.getResourceString("caching.plugins.task.name"), 1); //$NON-NLS-1$
                                     try {
                                         if (!monitor.isCanceled()) {
                                             try {

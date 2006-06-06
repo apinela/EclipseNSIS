@@ -30,7 +30,7 @@ public abstract class NSISHttpUpdateJob extends NSISUpdateJob
 
     protected static final IPreferenceStore cPreferenceStore = EclipseNSISUpdatePlugin.getDefault().getPreferenceStore();
     
-    private MessageFormat mConnectionFormat = new MessageFormat(EclipseNSISUpdatePlugin.getResourceString("http.connect.message"));
+    private MessageFormat mConnectionFormat = new MessageFormat(EclipseNSISUpdatePlugin.getResourceString("http.connect.message")); //$NON-NLS-1$
     private INSISUpdateJobRunner mJobRunner = null;
     
     protected NSISHttpUpdateJob(String name, NSISUpdateJobSettings settings, INSISUpdateJobRunner jobRunner)
@@ -46,7 +46,7 @@ public abstract class NSISHttpUpdateJob extends NSISUpdateJob
 
     protected final IStatus doRun(IProgressMonitor monitor)
     {
-        monitor.beginTask(getName(), 120);
+        monitor.beginTask(getName(), 110);
         try {
             URL url = null;
             URL defaultUrl = null;
@@ -106,6 +106,7 @@ public abstract class NSISHttpUpdateJob extends NSISUpdateJob
                         if (monitor.isCanceled()) {
                             return Status.CANCEL_STATUS;
                         }
+                        monitor.worked(5);
                         HttpURLConnection conn = null;
                         try {
                             IProgressMonitor subMonitor = new NestedProgressMonitor(monitor,getName(),5);
@@ -123,7 +124,6 @@ public abstract class NSISHttpUpdateJob extends NSISUpdateJob
                             if (conn != null) {
                                 conn.disconnect();
                             }
-                            monitor.worked(5);
                         }
                         if (isUsingProxy) {
                             auth.success(); // This means success. So save the authentication.
@@ -136,7 +136,6 @@ public abstract class NSISHttpUpdateJob extends NSISUpdateJob
                         if (isUsingProxy) {
                             Authenticator.setDefault(defaultAuthenticator);
                         }
-                        monitor.worked(5);
                     }
                 }
                 catch (Exception e) {
@@ -149,7 +148,6 @@ public abstract class NSISHttpUpdateJob extends NSISUpdateJob
                         setSystemProperty(HTTP_PROXY_HOST, oldProxyHost);
                         setSystemProperty(HTTP_PROXY_PORT, oldProxyPort);
                     }
-                    monitor.worked(5);
                 }
             }
             return Status.OK_STATUS;
@@ -170,7 +168,7 @@ public abstract class NSISHttpUpdateJob extends NSISUpdateJob
     protected HttpURLConnection makeConnection(IProgressMonitor monitor, URL url, URL defaultURL) throws IOException
     {
         try {
-            monitor.beginTask(mConnectionFormat.format(new String[] {getName(),url.getHost()}),100);
+            monitor.beginTask(mConnectionFormat.format(new String[] {url.getHost()}),100);
             HttpURLConnection conn = null;
             int responseCode;
             try {

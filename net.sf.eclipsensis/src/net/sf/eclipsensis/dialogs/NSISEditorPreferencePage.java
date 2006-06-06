@@ -296,7 +296,7 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
         mPreviewer.configure(configuration);
 
         InputStream is = null;
-        String content= "";
+        String content= ""; //$NON-NLS-1$
         try {
             is = getClass().getResourceAsStream("NSISPreview.txt"); //$NON-NLS-1$
             content= new String(IOUtility.loadContentFromStream(is));

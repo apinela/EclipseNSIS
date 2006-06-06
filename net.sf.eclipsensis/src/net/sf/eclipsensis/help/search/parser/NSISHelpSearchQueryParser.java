@@ -9,7 +9,7 @@ import org.apache.lucene.analysis.Analyzer;
 import net.sf.eclipsensis.util.CaseInsensitiveSet;
 
 public class NSISHelpSearchQueryParser implements NSISHelpSearchQueryParserConstants {
-    public static final String REGEX_PREFIX = "re:";
+    public static final String REGEX_PREFIX = "re:"; //$NON-NLS-1$
 
     private String mField;
     private Analyzer mAnalyzer;
@@ -26,7 +26,7 @@ public class NSISHelpSearchQueryParser implements NSISHelpSearchQueryParserConst
 
     public NSISHelpSearchQueryParser(String field, Analyzer analyzer)
     {
-        this(new StringReader(""));
+        this(new StringReader("")); //$NON-NLS-1$
         mField = field;
         mAnalyzer = analyzer;
     }
@@ -69,16 +69,16 @@ public class NSISHelpSearchQueryParser implements NSISHelpSearchQueryParserConst
             char c = wildcard.charAt(i);
             switch(c) {
                 case '*':
-                    s.append("\\w*");
+                    s.append("\\w*"); //$NON-NLS-1$
                     break;
                 case '?':
-                    s.append("\\w");
+                    s.append("\\w"); //$NON-NLS-1$
                     break;
                     // escape special regexp-characters
                 case '(': case ')': case '[': case ']': case '$':
                 case '^': case '.': case '{': case '}': case '|':
                 case '\\':
-                    s.append("\\");
+                    s.append("\\"); //$NON-NLS-1$
                     s.append(c);
                     break;
                 default:

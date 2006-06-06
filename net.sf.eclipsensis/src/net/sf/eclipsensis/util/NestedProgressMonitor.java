@@ -20,18 +20,53 @@ public class NestedProgressMonitor extends ProgressMonitorWrapper
     private boolean mCompleted = false;
     private boolean mHasSubTask = false;
     private String mParentTaskName;
+    private String mPrefix;
     
     public NestedProgressMonitor(IProgressMonitor monitor, String parentTaskName, int ticks)
+    {
+        this(monitor, parentTaskName, parentTaskName, ticks);
+    }
+    
+    public NestedProgressMonitor(IProgressMonitor monitor, String parentTaskName, String prefix, int ticks)
     {
         super(monitor);
         mParentTaskName = parentTaskName;
         mTicks = ticks;
+        StringBuffer buf = new StringBuffer("");
+        if(!Common.isEmpty(prefix)) {
+            //Add an ellipse
+            int n = 3;
+            if(prefix.length() > n) {
+                for(;n>0;n--) {
+                    if(prefix.charAt(prefix.length()-(4-n)) != '.') {
+                        break;
+                    }
+                }
+            }
+            buf.append(prefix);
+            for(int i=0; i<n; i++) {
+                buf.append('.');
+            }
+        }
+        mPrefix = buf.toString();
     }
 
     public void beginTask(String name, int totalWork) 
     {
         mScale = totalWork <= 0 ? 0 : (double) mTicks / (double) totalWork;
         setTaskName(name);
+    }
+
+    public void setTaskName(String name)
+    {
+        if(!Common.isEmpty(name)) {
+            if(!Common.isEmpty(mPrefix)) {
+                if(!mPrefix.substring(0,mPrefix.length()-3).equalsIgnoreCase(name) && !mPrefix.regionMatches(true,0,name,0,mPrefix.length())) {
+                    name = mPrefix+name;
+                }
+            }
+            super.setTaskName(name);
+        }
     }
 
     public void done() 
