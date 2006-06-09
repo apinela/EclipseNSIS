@@ -36,6 +36,7 @@ import org.eclipse.ui.part.ViewPart;
 public class NSISCommandView extends ViewPart implements INSISHomeListener
 {
     private static final Image CATEGORY_IMAGE;
+    private static final Image OPEN_CATEGORY_IMAGE;
     private static final Image COMMAND_IMAGE;
     private static final String DEFAULT_CATEGORY = EclipseNSISPlugin.getResourceString("other.category"); //$NON-NLS-1$
     private static Comparator cComparator = new Comparator() {
@@ -58,16 +59,18 @@ public class NSISCommandView extends ViewPart implements INSISHomeListener
     private boolean mFlatMode = false;
 
     static {
-        final Image[] images = new Image[2];
+        final Image[] images = new Image[3];
         Display.getDefault().syncExec(new Runnable() {
             public void run()
             {
                 images[0] = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("category.icon")); //$NON-NLS-1$
-                images[1] = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("command.icon")); //$NON-NLS-1$
+                images[1] = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("open.category.icon")); //$NON-NLS-1$
+                images[2] = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("command.icon")); //$NON-NLS-1$
             }
         });
         CATEGORY_IMAGE = images[0];
-        COMMAND_IMAGE = images[1];
+        OPEN_CATEGORY_IMAGE = images[1];
+        COMMAND_IMAGE = images[2];
     }
 
     public void dispose()
@@ -109,8 +112,7 @@ public class NSISCommandView extends ViewPart implements INSISHomeListener
         mExpandAllAction = new Action() {
             public void run()
             {
-                mViewer.expandAll();
-                revealSelection();
+                expandAll(true);
             }
         };
         mExpandAllAction.setText(EclipseNSISPlugin.getResourceString("expandall.text")); //$NON-NLS-1$
@@ -123,8 +125,7 @@ public class NSISCommandView extends ViewPart implements INSISHomeListener
         mCollapseAllAction = new Action() {
             public void run()
             {
-                mViewer.collapseAll();
-                revealSelection();
+                expandAll(false);
             }
         };
         mCollapseAllAction.setText(EclipseNSISPlugin.getResourceString("collapseall.text")); //$NON-NLS-1$
@@ -160,12 +161,41 @@ public class NSISCommandView extends ViewPart implements INSISHomeListener
                         return COMMAND_IMAGE;
                     }
                     else {
-                        return CATEGORY_IMAGE;
+                        return mViewer.getExpandedState(element)?OPEN_CATEGORY_IMAGE:CATEGORY_IMAGE;
                     }
                 }
                 return super.getImage(element);
             }
         });
+        mViewer.addTreeListener(new ITreeViewerListener() {
+            public void treeCollapsed(TreeExpansionEvent event)
+            {
+                updateLabels(event);
+            }
+
+            /**
+             * @param treeViewer
+             * @param event
+             */
+            private void updateLabels(TreeExpansionEvent event)
+            {
+                final Object element = event.getElement();
+                if(element instanceof TreeNode && ((TreeNode)element).getCommand() == null) {
+                    mViewer.getTree().getDisplay().asyncExec(new Runnable() {
+                        public void run()
+                        {
+                            mViewer.update(element,null);
+                        }
+                    });
+                }
+            }
+
+            public void treeExpanded(TreeExpansionEvent event)
+            {
+                updateLabels(event);
+            }
+        });
+
         NSISPreferences.INSTANCE.addListener(this);
         mViewer.addDragSupport(DND.DROP_COPY, 
             new Transfer[]{NSISCommandTransfer.INSTANCE},
@@ -221,6 +251,17 @@ public class NSISCommandView extends ViewPart implements INSISHomeListener
         makeActions();
         updateInput();
         PlatformUI.getWorkbench().getHelpSystem().setHelp(mViewer.getControl(),INSISConstants.PLUGIN_CONTEXT_PREFIX + "nsis_cmdview_context"); //$NON-NLS-1$
+    }
+
+    private void updateIcon(TreeNode node)
+    {
+        mViewer.update(node,null);
+        for(Iterator iter = node.getChildren().iterator(); iter.hasNext(); ) {
+            node = (TreeNode)iter.next();
+            if(node.getCommand() == null) {
+                updateIcon(node);
+            }
+        }
     }
 
     public void setFocus()
@@ -282,6 +323,9 @@ public class NSISCommandView extends ViewPart implements INSISHomeListener
             WinAPI.SetWindowLong(tree.handle, WinAPI.GWL_STYLE, WinAPI.GetWindowLong(tree.handle, WinAPI.GWL_STYLE) | WinAPI.TVS_HASLINES  | WinAPI.TVS_HASBUTTONS);
         }
         mViewer.setInput(rootNode);
+        if(!mFlatMode && rootNode.getCommand() == null) {
+            updateIcon(rootNode);
+        }
         if(sel != null && !sel.isEmpty()) {
             mViewer.setSelection(sel);
             sel = mViewer.getSelection();
@@ -401,11 +445,27 @@ public class NSISCommandView extends ViewPart implements INSISHomeListener
     /**
      * 
      */
-    private void revealSelection()
+    private void expandAll(boolean flag)
     {
-        IStructuredSelection sel = (IStructuredSelection)mViewer.getSelection();
-        if(!sel.isEmpty()) {
-            mViewer.reveal(sel.getFirstElement());
+        try {
+            mViewer.getTree().setRedraw(false);
+            if(flag) {
+                mViewer.expandAll();
+            }
+            else {
+                mViewer.collapseAll();
+            }
+            TreeNode rootNode = (TreeNode)mViewer.getInput();
+            if(!mFlatMode && rootNode != null && rootNode.getCommand() == null) {
+                updateIcon(rootNode);
+            }
+            IStructuredSelection sel = (IStructuredSelection)mViewer.getSelection();
+            if(!sel.isEmpty()) {
+                mViewer.reveal(sel.getFirstElement());
+            }
+        }
+        finally {
+            mViewer.getTree().setRedraw(true);
         }
     }
 
