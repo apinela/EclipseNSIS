@@ -32,7 +32,7 @@ public class NestedProgressMonitor extends ProgressMonitorWrapper
         super(monitor);
         mParentTaskName = parentTaskName;
         mTicks = ticks;
-        StringBuffer buf = new StringBuffer("");
+        StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
         if(!Common.isEmpty(prefix)) {
             //Add an ellipse
             int n = 3;

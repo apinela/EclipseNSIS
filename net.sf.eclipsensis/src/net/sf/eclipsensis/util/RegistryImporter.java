@@ -96,10 +96,10 @@ public class RegistryImporter
             }
         }
         
-        Common.openWarning(shell, EclipseNSISPlugin.getResourceString("insert.regkey.messagebox.title"), EclipseNSISPlugin.getResourceString("select.regkey.dialog.title"), EclipseNSISPlugin.getShellImage()); //$NON-NLS-1$ //$NON-NLS-2$
+        Common.openWarning(shell, EclipseNSISPlugin.getResourceString("insert.regkey.messagebox.title"), EclipseNSISPlugin.getResourceString("select.regedit.warning"), EclipseNSISPlugin.getShellImage()); //$NON-NLS-1$ //$NON-NLS-2$
         FileDialog dialog = new FileDialog(shell, SWT.OPEN);
         dialog.setFileName(REGEDIT_EXE);
-        dialog.setText(EclipseNSISPlugin.getResourceString(EclipseNSISPlugin.getResourceString("select.regkey.dialog.message"))); //$NON-NLS-1$
+        dialog.setText(EclipseNSISPlugin.getResourceString(EclipseNSISPlugin.getResourceString("select.regedit.message"))); //$NON-NLS-1$
         String file = dialog.open();
         if(file != null) {
             regEdit = new File(file);
@@ -127,6 +127,7 @@ public class RegistryImporter
         }
         else {
             RegistryKeySelectionDialog dialog = new RegistryKeySelectionDialog(shell);
+            dialog.setText(EclipseNSISPlugin.getResourceString("select.regkey.message")); //$NON-NLS-1$
             if(dialog.open() == Window.OK) {
                 try {
                     File regFile = File.createTempFile("exp", INSISConstants.REG_FILE_EXTENSION); //$NON-NLS-1$ 

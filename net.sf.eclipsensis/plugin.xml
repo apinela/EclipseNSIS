@@ -840,9 +840,10 @@
    <extension
          point="org.eclipse.debug.core.launchConfigurationTypes">
       <launchConfigurationType
+            category="org.eclipse.ui.externaltools"
             delegate="net.sf.eclipsensis.launch.NSISLaunchConfigDelegate"
             id="net.sf.eclipsensis.launch.nsisLaunchConfigType"
-            category="org.eclipse.ui.externaltools"
+            migrationDelegate="net.sf.eclipsensis.launch.NSISLaunchConfigMigrationDelegate"
             modes="run"
             name="%launch.config.type.name">
          <fileExtension
@@ -850,9 +851,10 @@
                extension="nsi"/>
       </launchConfigurationType>
       <launchConfigurationType
+            category="org.eclipse.ui.externaltools.builder"
             delegate="net.sf.eclipsensis.launch.NSISLaunchConfigDelegate"
             id="net.sf.eclipsensis.launch.nsisBuilderLaunchConfigType"
-            category="org.eclipse.ui.externaltools.builder"
+            migrationDelegate="net.sf.eclipsensis.launch.NSISLaunchConfigMigrationDelegate"
             modes="run"
             name="%builder.launch.config.type.name"/>
    </extension>

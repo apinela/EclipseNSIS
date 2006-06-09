@@ -731,3 +731,46 @@ JNIEXPORT jboolean JNICALL Java_net_sf_eclipsensis_util_WinAPI_ValidateWildcard(
     }
     return result;
 }
+
+JNIEXPORT jint JNICALL Java_net_sf_eclipsensis_util_WinAPI_RegOpenKeyEx(JNIEnv *pEnv, jclass jClass, jint hKey, jstring lpSubKey, jint ulOptions, jint regSam)
+{
+    HKEY hSubKey;
+
+    LPCSTR subKey = (LPCSTR)pEnv->GetStringUTFChars(lpSubKey, 0);
+
+    if(ERROR_SUCCESS != RegOpenKeyEx((HKEY)hKey,subKey,ulOptions,regSam,&hSubKey)) {
+    	hSubKey = 0;
+    }
+    pEnv->ReleaseStringUTFChars(lpSubKey, subKey);
+    return (jint)hSubKey;
+}
+
+JNIEXPORT void JNICALL Java_net_sf_eclipsensis_util_WinAPI_RegCloseKey(JNIEnv *pEnv, jclass jClass, jint hKey)
+{
+	RegCloseKey((HKEY)hKey);
+}
+
+JNIEXPORT void JNICALL Java_net_sf_eclipsensis_util_WinAPI_RegQueryInfoKey(JNIEnv *pEnv, jclass jClass, jint hKey, jintArray sizes)
+{
+	jint newSizes[] = {0, 0};
+	
+	if(ERROR_SUCCESS == RegQueryInfoKey((HKEY)hKey, NULL, NULL, NULL, (LPDWORD)&(newSizes[0]), (LPDWORD)&(newSizes[1]), NULL, NULL, NULL, NULL, NULL, NULL)) {
+		pEnv->SetIntArrayRegion(sizes, 0, 2, newSizes);		
+	}
+}
+
+JNIEXPORT jstring JNICALL Java_net_sf_eclipsensis_util_WinAPI_RegEnumKeyEx(JNIEnv *pEnv, jclass jClass, jint hKey, jint index, jint subKeySize)
+{
+	if(!isME && !is9x) {
+		subKeySize++;
+	}
+	TCHAR *subKey = (TCHAR *)GlobalAlloc(GPTR, subKeySize*sizeof(TCHAR));
+	
+	jstring result = NULL;
+	if(ERROR_SUCCESS == RegEnumKeyEx((HKEY)hKey, index, subKey, (LPDWORD)&subKeySize, NULL, NULL, NULL, NULL)) {
+		result = pEnv->NewStringUTF(subKey);
+	}
+	GlobalFree(subKey);
+	
+	return result;
+}

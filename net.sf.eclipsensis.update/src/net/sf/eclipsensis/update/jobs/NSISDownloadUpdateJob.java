@@ -40,7 +40,10 @@ import org.eclipse.swt.widgets.*;
 
 class NSISDownloadUpdateJob extends NSISHttpUpdateJob
 {
+    private static final String PREFERENCE_IMAGE_CACHE_REFRESH_TIMESTAMP = "imageCacheRefreshTimestamp"; //$NON-NLS-1$
     private static Map cImageCache = new HashMap();
+    private static long cImageCacheRefreshTimestamp = EclipseNSISUpdatePlugin.getDefault().getPreferenceStore().getLong(PREFERENCE_IMAGE_CACHE_REFRESH_TIMESTAMP);
+    
     private static final int DOWNLOAD_BUFFER_SIZE = 32768;
     protected static final File DOWNLOAD_FOLDER = EclipseNSISUpdatePlugin.getPluginStateLocation();
     protected static final File IMAGE_CACHE_FOLDER = new File(EclipseNSISUpdatePlugin.getPluginStateLocation(),"imageCache"); //$NON-NLS-1$
@@ -152,88 +155,100 @@ class NSISDownloadUpdateJob extends NSISHttpUpdateJob
                     return null;
                 }
                 List sites = callback.getSites();
-                int count=0;
-                for (Iterator iter = sites.iterator(); iter.hasNext();) {
-                    String[] element = (String[])iter.next();
-                    if(element != null && element.length == 4) {
-                        try {
-                            URL url2 = NSISUpdateURLs.getGenericDownloadURL(element[3], mVersion);
-                            if(url2.equals(url) || url2.equals(defaultURL)) {
-                                continue;
-                            }
-                            URL imageURL = new URL(element[0]);
-                            String path = imageURL.getPath();
-                            int n = path.lastIndexOf("/"); //$NON-NLS-1$
-                            if(n >= 0) {
-                                path = path.substring(n+1);
-                            }
-                            if(!Common.isEmpty(path)) {
-                                if(!IOUtility.isValidDirectory(IMAGE_CACHE_FOLDER)) {
-                                    IMAGE_CACHE_FOLDER.mkdirs();
+                if(sites.size() > 0) {
+                    long now = System.currentTimeMillis();
+                    boolean refreshImageCache = false;
+                    if(now - cImageCacheRefreshTimestamp > 86400000) {
+                        //Refresh once a day
+                        refreshImageCache = true;
+                        cImageCacheRefreshTimestamp = now;
+                        EclipseNSISUpdatePlugin.getDefault().getPreferenceStore().setValue(PREFERENCE_IMAGE_CACHE_REFRESH_TIMESTAMP, cImageCacheRefreshTimestamp);
+                    }
+                    if(!IOUtility.isValidDirectory(IMAGE_CACHE_FOLDER)) {
+                        IMAGE_CACHE_FOLDER.mkdirs();
+                    }
+                    int count=0;
+                    for (Iterator iter = sites.iterator(); iter.hasNext();) {
+                        String[] element = (String[])iter.next();
+                        if(element != null && element.length == 4) {
+                            try {
+                                URL url2 = NSISUpdateURLs.getGenericDownloadURL(element[3], mVersion);
+                                if(url2.equals(url) || url2.equals(defaultURL)) {
+                                    continue;
                                 }
-                                File imageFile = new File(IMAGE_CACHE_FOLDER,path);
-                                FileOutputStream fos = null;
-                                conn2 = null;
-                                long timestamp = 0;
-                                try {
-                                    conn2 = superMakeConnection(new NullProgressMonitor(), imageURL, null);
-                                    timestamp = conn2.getLastModified();
-                                    if(imageFile.exists() && (timestamp > imageFile.lastModified())) {
-                                        imageFile.delete();
-                                    }
-                                    if(!imageFile.exists()) {
-                                        cImageCache.remove(imageFile);
-                                        fos = new FileOutputStream(imageFile);
-                                        download(conn2, null, null, fos);
-                                    }
+                                URL imageURL = new URL(element[0]);
+                                String path = imageURL.getPath();
+                                int n = path.lastIndexOf("/"); //$NON-NLS-1$
+                                if(n >= 0) {
+                                    path = path.substring(n+1);
                                 }
-                                catch(Exception e) {
-                                    EclipseNSISPlugin.getDefault().log(e);
-                                    if(imageFile.exists()) {
-                                        imageFile.delete();
-                                    }
-                                }
-                                finally {
-                                    IOUtility.closeIO(fos);
-                                    if(conn2 != null) {
-                                        conn2.disconnect();
-                                    }
-                                    if(timestamp > 0 && imageFile.exists()) {
-                                        imageFile.setLastModified(timestamp);
-                                    }
-                                }
-                                Image image = (Image)cImageCache.get(imageFile);
-                                if(image == null) {
-                                    if(imageFile.exists()) {
-                                        final ImageData imageData = new ImageData(imageFile.getAbsolutePath());
-                                        final Image[] imageArray = new Image[1];
-                                        Display.getDefault().syncExec(new Runnable() {
-                                            public void run()
-                                            {
-                                                try {
-                                                    imageArray[0] = new Image(Display.getDefault(), imageData);
-                                                }
-                                                catch(Exception ex) {
-                                                    imageArray[0] = null;
-                                                }
+                                if(!Common.isEmpty(path)) {
+                                    File imageFile = new File(IMAGE_CACHE_FOLDER,path);
+                                    if(!imageFile.exists() || refreshImageCache) {
+                                        FileOutputStream fos = null;
+                                        conn2 = null;
+                                        long timestamp = 0;
+                                        try {
+                                            conn2 = superMakeConnection(new NullProgressMonitor(), imageURL, null);
+                                            timestamp = conn2.getLastModified();
+                                            if(imageFile.exists() && (timestamp > imageFile.lastModified())) {
+                                                imageFile.delete();
                                             }
-                                        });
-                                        image = imageArray[0];
-                                        if(image != null) {
-                                            cImageCache.put(imageFile, image);
+                                            if(!imageFile.exists()) {
+                                                cImageCache.remove(imageFile);
+                                                fos = new FileOutputStream(imageFile);
+                                                download(conn2, null, null, fos);
+                                            }
+                                        }
+                                        catch(Exception e) {
+                                            EclipseNSISPlugin.getDefault().log(e);
+                                            if(imageFile.exists()) {
+                                                imageFile.delete();
+                                            }
+                                        }
+                                        finally {
+                                            IOUtility.closeIO(fos);
+                                            if(conn2 != null) {
+                                                conn2.disconnect();
+                                            }
+                                            if(timestamp > 0 && imageFile.exists()) {
+                                                imageFile.setLastModified(timestamp);
+                                            }
                                         }
                                     }
-                                }
-                                if(image != null) {
-                                    downloadSites.add(new DownloadSite(image,element[1],element[2],url2));
+                                    Image image = (Image)cImageCache.get(imageFile);
+                                    if(image == null) {
+                                        if(imageFile.exists()) {
+                                            final ImageData imageData = new ImageData(imageFile.getAbsolutePath());
+                                            final Image[] imageArray = new Image[1];
+                                            Display.getDefault().syncExec(new Runnable() {
+                                                public void run()
+                                                {
+                                                    try {
+                                                        imageArray[0] = new Image(Display.getDefault(), imageData);
+                                                    }
+                                                    catch(Exception ex) {
+                                                        imageArray[0] = null;
+                                                    }
+                                                }
+                                            });
+                                            image = imageArray[0];
+                                            if(image != null) {
+                                                cImageCache.put(imageFile, image);
+                                            }
+                                        }
+                                    }
+                                    if(image != null) {
+                                        downloadSites.add(new DownloadSite(image,element[1],element[2],url2));
+                                    }
                                 }
                             }
+                            catch (Exception e) {
+                                e.printStackTrace();
+                            }
                         }
-                        catch (Exception e) {
-                            e.printStackTrace();
-                        }
+                        monitor.worked(50*(++count/sites.size()));
                     }
-                    monitor.worked(50*(++count/sites.size()));
                 }
             }
 

@@ -18,8 +18,7 @@ import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.util.IOUtility;
 
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.core.runtime.*;
 
 public class NSISProperties extends NSISSettings implements INSISConstants
 {
@@ -49,11 +48,18 @@ public class NSISProperties extends NSISSettings implements INSISConstants
 
     public static synchronized NSISProperties getProperties(IResource resource)
     {
-        String fileName = resource.getLocation().toString();
-        if(!cPropertiesCache.containsKey(fileName)) {
+        String fileName = null;
+        IPath location = resource.getLocation();
+        if(location != null) {
+            fileName = location.toString();
+        }
+        if(fileName == null || !cPropertiesCache.containsKey(fileName)) {
             NSISProperties props = new NSISProperties(resource);
             props.load();
-            cPropertiesCache.put(fileName,props);
+            if(fileName != null) {
+                cPropertiesCache.put(fileName,props);
+            }
+            return props;
         }
         return (NSISProperties)cPropertiesCache.get(fileName);
     }
@@ -68,7 +74,7 @@ public class NSISProperties extends NSISSettings implements INSISConstants
             mParentSettings = getProperties(resource.getParent());
         }
         else {
-            throw new IllegalArgumentException(resource.getLocation().toString());
+            throw new IllegalArgumentException(String.valueOf(resource.getFullPath()));
         }
     }
 

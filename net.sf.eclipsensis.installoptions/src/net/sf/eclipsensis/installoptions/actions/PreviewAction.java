@@ -30,8 +30,7 @@ import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.util.IOUtility;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.*;
 import org.eclipse.gef.Disposable;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
@@ -132,17 +131,25 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
             if(Integer.parseInt(numFields.getValue()) <= 0) {
                 Common.openError(shell,InstallOptionsPlugin.getResourceString("ini.numfields.preview.error"),  //$NON-NLS-1$
                         InstallOptionsPlugin.getShellImage());
-                return;
             }
-            IEditorInput editorInput = mEditor.getEditorInput();
-            if(editorInput instanceof IFileEditorInput) {
-                IFile file = ((IFileEditorInput)editorInput).getFile();
-                if(file.exists()) {
-                    doPreview(file.getLocation().toFile());
+            else {
+                IEditorInput editorInput = mEditor.getEditorInput();
+                if(editorInput instanceof IFileEditorInput) {
+                    IFile file = ((IFileEditorInput)editorInput).getFile();
+                    if(file.exists()) {
+                        IPath location = file.getLocation();
+                        if(location != null) {
+                            doPreview(location.toFile());
+                        }
+                        else {
+                            Common.openError(shell,EclipseNSISPlugin.getResourceString("local.filesystem.error"),  //$NON-NLS-1$
+                                    InstallOptionsPlugin.getShellImage());
+                        }
+                    }
                 }
-            }
-            else if(editorInput instanceof IPathEditorInput) {
-                doPreview(new File(((IPathEditorInput)editorInput).getPath().toOSString()));
+                else if(editorInput instanceof IPathEditorInput) {
+                    doPreview(new File(((IPathEditorInput)editorInput).getPath().toOSString()));
+                }
             }
         }
     }

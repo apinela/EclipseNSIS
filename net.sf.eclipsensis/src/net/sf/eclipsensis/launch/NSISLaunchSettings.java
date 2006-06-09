@@ -9,13 +9,17 @@
  *******************************************************************************/
 package net.sf.eclipsensis.launch;
 
+import java.io.File;
 import java.util.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.settings.NSISSettings;
 import net.sf.eclipsensis.util.Common;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jface.viewers.IFilter;
@@ -88,6 +92,22 @@ public class NSISLaunchSettings extends NSISSettings
 
     public void store()
     {
+        String file = null;
+        try {
+            file = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(mScript);
+        }
+        catch (CoreException e) {
+            EclipseNSISPlugin.getDefault().log(e);
+        }
+        if(file != null) {
+            File f = new File(file);
+            if(f.exists()) {
+                IFile[] files = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocationURI(f.toURI());
+                if(!Common.isEmptyArray(files) && mLaunchConfig instanceof ILaunchConfigurationWorkingCopy) {
+                    ((ILaunchConfigurationWorkingCopy)mLaunchConfig).setMappedResources(files);
+                }
+            }
+        }
         setValue(SCRIPT, mScript);
         setValue(RUN_INSTALLER, mRunInstaller);
         super.store();

@@ -93,13 +93,13 @@ public class NSISConsoleLineProcessor implements INSISConsoleLineProcessor
                 lineNum = 1;
             }
         }
-        if(mScript.getDevice() == null) {
-            if(path == null) {
-                path = mScript;
-            }
-            else {
+        if(path == null) {
+            path = mScript;
+        }
+        else {
+            if(mScript.getDevice() == null) {
                 if(!path.isAbsolute()) {
-                    path = ResourcesPlugin.getWorkspace().getRoot().getFile(mScript).getParent().getLocation().append(path);
+                    path = ResourcesPlugin.getWorkspace().getRoot().getFile(mScript).getParent().getFullPath().append(path);
                 }
                 else {
                     IFile file = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(path);
@@ -108,15 +108,10 @@ public class NSISConsoleLineProcessor implements INSISConsoleLineProcessor
                     }
                 }
             }
-        }
-        else {
-            if(path != null) {
+            else {
                 if(!path.isAbsolute()) {
                     path = mScript.removeLastSegments(1).append(path);
                 }
-            }
-            else {
-                path = mScript;
             }
         }
         line.setSource(path);

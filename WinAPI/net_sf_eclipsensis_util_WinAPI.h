@@ -412,6 +412,38 @@ JNIEXPORT jshort JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetKeyState
 JNIEXPORT jboolean JNICALL Java_net_sf_eclipsensis_util_WinAPI_ValidateWildcard
   (JNIEnv *, jclass, jstring);
 
+/*
+ * Class:     net_sf_eclipsensis_util_WinAPI
+ * Method:    RegOpenKeyEx
+ * Signature: (ILjava/lang/String;II)I
+ */
+JNIEXPORT jint JNICALL Java_net_sf_eclipsensis_util_WinAPI_RegOpenKeyEx
+  (JNIEnv *, jclass, jint, jstring, jint, jint);
+
+/*
+ * Class:     net_sf_eclipsensis_util_WinAPI
+ * Method:    RegCloseKey
+ * Signature: (I)V
+ */
+JNIEXPORT void JNICALL Java_net_sf_eclipsensis_util_WinAPI_RegCloseKey
+  (JNIEnv *, jclass, jint);
+
+/*
+ * Class:     net_sf_eclipsensis_util_WinAPI
+ * Method:    RegQueryInfoKey
+ * Signature: (I[I)V
+ */
+JNIEXPORT void JNICALL Java_net_sf_eclipsensis_util_WinAPI_RegQueryInfoKey
+  (JNIEnv *, jclass, jint, jintArray);
+
+/*
+ * Class:     net_sf_eclipsensis_util_WinAPI
+ * Method:    RegEnumKeyEx
+ * Signature: (III)Ljava/lang/String;
+ */
+JNIEXPORT jstring JNICALL Java_net_sf_eclipsensis_util_WinAPI_RegEnumKeyEx
+  (JNIEnv *, jclass, jint, jint, jint);
+
 #ifdef __cplusplus
 }
 #endif

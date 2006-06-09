@@ -28,6 +28,7 @@ import net.sf.eclipsensis.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.text.*;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 public class MakeNSISRunner implements INSISConstants
@@ -160,7 +161,11 @@ public class MakeNSISRunner implements INSISConstants
                     try {
                         List problems = results.getProblems();
                         monitor.beginTask(EclipseNSISPlugin.getResourceString("updating.problem.markers.task.name"),1+(problems==null?0:problems.size())); //$NON-NLS-1$
-                        IDocument doc = new FileDocument(file.getLocation().toFile());
+                        IPath f = file.getLocation();
+                        if(f == null) {
+                            throw new CoreException(new Status(IStatus.ERROR,INSISConstants.PLUGIN_ID,IStatus.ERROR,EclipseNSISPlugin.getResourceString("local.filesystem.error"),null)); //$NON-NLS-1$
+                        }
+                        IDocument doc = new FileDocument(f.toFile());
                         file.deleteMarkers(PROBLEM_MARKER_ID, false, IResource.DEPTH_ZERO);
                         monitor.worked(1);
                         if (!Common.isEmptyCollection(problems)) {
@@ -333,7 +338,13 @@ public class MakeNSISRunner implements INSISConstants
                     if (script.getDevice() == null) {
                         //Workspace file
                         ifile = ResourcesPlugin.getWorkspace().getRoot().getFile(script);
-                        file = ifile.getLocation().toFile();
+                        IPath location = ifile.getLocation();
+                        if(location != null) {
+                            file = location.toFile();
+                        }
+                        else {
+                            throw new IllegalArgumentException(EclipseNSISPlugin.getResourceString("local.filesystem.error")); //$NON-NLS-1$
+                        }
                     }
                     else {
                         file = new File(script.toOSString());
@@ -526,32 +537,42 @@ public class MakeNSISRunner implements INSISConstants
                         }
                     }
                 }
+                catch(Exception ex) {
+                    if(Display.getCurrent() != null) {
+                        Common.openError(Display.getCurrent().getActiveShell(),ex.getMessage(),EclipseNSISPlugin.getShellImage());
+                    }
+                    else {
+                        EclipseNSISPlugin.getDefault().log(ex);
+                    }
+                }
                 finally {
                     try {
-                        if (ifile != null) {
-                            String outputFileName = results.getOutputFileName();
-                            File exeFile = (outputFileName == null?null:new File(outputFileName));
-                            try {
-                                int rv = results.getReturnCode();
-                                if (rv == MakeNSISResults.RETURN_SUCCESS && exeFile != null && exeFile.exists()) {
-                                    ifile.setPersistentProperty(NSIS_COMPILE_TIMESTAMP, Long.toString(System.currentTimeMillis()));
-                                    ifile.setPersistentProperty(NSIS_EXE_NAME, outputFileName);
-                                    ifile.setPersistentProperty(NSIS_EXE_TIMESTAMP, Long.toString(exeFile.lastModified()));
+                        if(results != null) {
+                            if (ifile != null) {
+                                String outputFileName = results.getOutputFileName();
+                                File exeFile = (outputFileName == null?null:new File(outputFileName));
+                                try {
+                                    int rv = results.getReturnCode();
+                                    if (rv == MakeNSISResults.RETURN_SUCCESS && exeFile != null && exeFile.exists()) {
+                                        ifile.setPersistentProperty(NSIS_COMPILE_TIMESTAMP, Long.toString(System.currentTimeMillis()));
+                                        ifile.setPersistentProperty(NSIS_EXE_NAME, outputFileName);
+                                        ifile.setPersistentProperty(NSIS_EXE_TIMESTAMP, Long.toString(exeFile.lastModified()));
+                                    }
+                                    else {
+                                        ifile.setPersistentProperty(NSIS_COMPILE_TIMESTAMP, null);
+                                        ifile.setPersistentProperty(NSIS_EXE_NAME, null);
+                                        ifile.setPersistentProperty(NSIS_EXE_TIMESTAMP, null);
+    
+                                    }
+                                    updateMarkers(ifile, console, results);
                                 }
-                                else {
-                                    ifile.setPersistentProperty(NSIS_COMPILE_TIMESTAMP, null);
-                                    ifile.setPersistentProperty(NSIS_EXE_NAME, null);
-                                    ifile.setPersistentProperty(NSIS_EXE_TIMESTAMP, null);
-
+                                catch (CoreException cex) {
+                                    EclipseNSISPlugin.getDefault().log(cex);
                                 }
-                                updateMarkers(ifile, console, results);
                             }
-                            catch (CoreException cex) {
-                                EclipseNSISPlugin.getDefault().log(cex);
+                            else {
+                                NSISEditorUtilities.updateAnnotations(results);
                             }
-                        }
-                        else {
-                            NSISEditorUtilities.updateAnnotations(results);
                         }
                     }
                     finally {

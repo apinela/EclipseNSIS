@@ -17,8 +17,8 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -60,15 +60,28 @@ public abstract class StatusMessageDialog extends TrayDialog implements IDialogC
         }
         // create message
         if (mMessage != null) {
-            mMessageLabel = new Label(composite, SWT.WRAP);
+            mMessageLabel = new Label(composite, getMessageLabelStyle());
             mMessageLabel.setText(mMessage);
             GridData data = new GridData(GridData.GRAB_HORIZONTAL
                     | GridData.HORIZONTAL_ALIGN_FILL
                     | GridData.VERTICAL_ALIGN_BEGINNING);
             data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH);
             mMessageLabel.setLayoutData(data);
+            if((mMessageLabel.getStyle() & SWT.WRAP)==0) {
+                mMessageLabel.addControlListener(new ControlAdapter() {
+                    public void controlResized(ControlEvent e)
+                    {
+                        updateMessageLabelToolTip();
+                    }
+                });
+            }
         }
         return composite;
+    }
+
+    protected int getMessageLabelStyle()
+    {
+        return SWT.WRAP;
     }
 
     protected void configureShell(Shell newShell)
@@ -215,7 +228,20 @@ public abstract class StatusMessageDialog extends TrayDialog implements IDialogC
         }
         if(mMessageLabel != null && !mMessageLabel.isDisposed()) {
             mMessageLabel.setText(getMessage());
+            updateMessageLabelToolTip();
         }
+    }
+    
+    private void updateMessageLabelToolTip()
+    {
+        boolean ok = true;
+        if(mMessageLabel != null && !mMessageLabel.isDisposed()) {
+            GC gc = new GC(mMessageLabel);
+            Point extent = gc.stringExtent(mMessageLabel.getText());
+            gc.dispose();
+            ok = (mMessageLabel.getSize().x >= extent.x);
+        }
+        mMessageLabel.setToolTipText(ok?null:mMessageLabel.getText());
     }
 
     protected final Image getImage()

@@ -390,7 +390,7 @@ public class IOUtility
     {
         if(!Common.isEmpty(pathname)) {
             IPath childPath = new Path(pathname);
-            if(reference.isAbsolute() && childPath.isAbsolute()) {
+            if(reference != null && reference.isAbsolute() && childPath.isAbsolute()) {
               if(Common.stringsAreEqual(reference.getDevice(), childPath.getDevice(), true)) {
                   StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
                   int l1 = reference.segmentCount();

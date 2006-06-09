@@ -50,6 +50,9 @@ public class WinAPI
     public static final int REG_EXPAND_SZ = 2;
     public static final int REG_BINARY = 3;
     public static final int REG_DWORD = 4;
+    
+    public static final int KEY_QUERY_VALUE = 0x0001;
+    public static final int KEY_ENUMERATE_SUB_KEYS = 0x0008;
 
     public static final int BS_LEFTTEXT = 0x20;
     public static final int CB_SHOWDROPDOWN = 0x14f;
@@ -171,6 +174,14 @@ public class WinAPI
     
     public static final native boolean ValidateWildcard(String wildcard);
 
+    public static final native int RegOpenKeyEx(int hKey, String lpSubKey, int ulOptions, int regSam);
+    
+    public static final native void RegCloseKey(int hKey);
+    
+    public static final native void RegQueryInfoKey(int hKey, int[] sizes);
+    
+    public static final native String RegEnumKeyEx(int hKey, int index, int subKeySize);
+    
     private WinAPI()
     {
     }

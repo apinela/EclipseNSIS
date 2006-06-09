@@ -71,11 +71,21 @@ public class NSISLaunchShortcut implements ILaunchShortcut
     
     private void launch(IPath path, String mode)
     {
-        if (INSISConstants.NSI_EXTENSION.equalsIgnoreCase(path.getFileExtension())) {
-            ILaunchConfiguration config = findConfiguration(path);
-            if(config != null) {
-                DebugUITools.launch(config, mode);
+        try {
+            if (INSISConstants.NSI_EXTENSION.equalsIgnoreCase(path.getFileExtension())) {
+                ILaunchConfiguration config = findConfiguration(path);
+                if(config != null) {
+                    DebugUITools.launch(config, mode);
+                }
             }
+        }
+        catch(final Exception e) {
+            Display.getDefault().asyncExec(new Runnable() {
+                public void run()
+                {
+                    Common.openError(Display.getCurrent().getActiveShell(),e.getMessage(),EclipseNSISPlugin.getShellImage());
+                }
+            });
         }
     }
 
@@ -209,7 +219,11 @@ public class NSISLaunchShortcut implements ILaunchShortcut
         if(path.getDevice() == null) {
             IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
             if(file != null) {
-                fullname = file.getLocation().toOSString();
+                IPath location = file.getLocation();
+                if(location == null) {
+                    throw new IllegalArgumentException(EclipseNSISPlugin.getResourceString("local.filesystem.error")); //$NON-NLS-1$
+                }
+                fullname = (location != null?location.toOSString():null);
             }
         }
         else {
