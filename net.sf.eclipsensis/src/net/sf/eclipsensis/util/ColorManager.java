@@ -56,13 +56,22 @@ public class ColorManager
 
     public static Color getSystemColor(int colorId)
     {
-        int pixel = WinAPI.GetSysColor(colorId);
-        int red = pixel % 256;
+        RGB rgb = getRGB(WinAPI.GetSysColor(colorId));
+        //Need to flip
+        int temp = rgb.red;
+        rgb.red=rgb.blue;
+        rgb.blue=temp;
+        return getColor(rgb);
+    }
+
+    public static RGB getRGB(int pixel)
+    {
+        int blue = pixel % 256;
         pixel /= 256;
         int green = pixel % 256;
         pixel /= 256;
-        int blue = pixel % 256;
-        return getColor(new RGB(red,green,blue));
+        int red = pixel % 256;
+        return new RGB(red,green,blue);
     }
 
     /**

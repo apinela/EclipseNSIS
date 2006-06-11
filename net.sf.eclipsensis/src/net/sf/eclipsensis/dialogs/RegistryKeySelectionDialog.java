@@ -16,7 +16,6 @@ import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.util.*;
 
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.*;
@@ -27,22 +26,19 @@ import org.eclipse.swt.widgets.*;
 
 public class RegistryKeySelectionDialog extends StatusMessageDialog
 {
-    private static final int[] cRootKeys = {WinAPI.HKEY_CLASSES_ROOT,
+    private static final int[] ROOT_KEYS = {WinAPI.HKEY_CLASSES_ROOT,
                                            WinAPI.HKEY_CURRENT_USER,
                                            WinAPI.HKEY_LOCAL_MACHINE,
                                            WinAPI.HKEY_USERS,
                                            WinAPI.HKEY_CURRENT_CONFIG};
-    private static final String REG_KEY = "regKey"; //$NON-NLS-1$
     
-    //For backward compatability
-    private static final String ROOT_KEY = "rootKey"; //$NON-NLS-1$
-    private static final String SUB_KEY = "subKey"; //$NON-NLS-1$
+    private static int cRootKey = 0;
+    private static String cSubKey = null;
     
     private static final Image REGKEY_IMAGE;
     private static final Image OPEN_REGKEY_IMAGE;
     private static final Image REGROOT_IMAGE;
     
-    private IDialogSettings mDialogSettings;
     private RegistryRoot mRegistryRoot = new RegistryRoot();
     private RegistryKey mRegKey=null;
     private String mText = null;
@@ -58,12 +54,6 @@ public class RegistryKeySelectionDialog extends StatusMessageDialog
     {
         super(parent);
         setHelpAvailable(false);
-        IDialogSettings dialogSettings = EclipseNSISPlugin.getDefault().getDialogSettings();
-        String name = getClass().getName();
-        mDialogSettings = dialogSettings.getSection(name);
-        if(mDialogSettings == null) {
-            mDialogSettings = dialogSettings.addNewSection(name);
-        }
         setTitle(EclipseNSISPlugin.getResourceString("regkey.dialog.title")); //$NON-NLS-1$
     }
 
@@ -143,14 +133,10 @@ public class RegistryKeySelectionDialog extends StatusMessageDialog
                 final TreeItem item = (TreeItem)event.item;
                 TreeItem parentItem = item.getParentItem();
                 RegistryKey key;
+                boolean expanded = false;
                 if (parentItem == null) {
                     key = mRegistryRoot;
-                    item.getDisplay().asyncExec(new Runnable() {
-                        public void run()
-                        {
-                            item.setExpanded(true);
-                        }
-                    });
+                    expanded = true;
                 } 
                 else 
                 {
@@ -162,6 +148,12 @@ public class RegistryKeySelectionDialog extends StatusMessageDialog
                 item.setImage(key.getImage());
                 int childCount = key.getChildCount();
                 item.setItemCount(childCount<0?1:childCount);
+                if(expanded) {
+                    item.setExpanded(expanded);
+                }
+                if(key instanceof RegistryRoot) {
+                    restoreSelection(item.getParent());
+                }
             }
         });
         tree.addTreeListener(new TreeListener() {
@@ -201,83 +193,68 @@ public class RegistryKeySelectionDialog extends StatusMessageDialog
             }
         });
         tree.setItemCount(1); // The registry root "My Computer"
-        tree.update();
-        restoreSelection(tree);
         return composite;
     }
 
     /**
      * @param tree
      */
-    private void restoreSelection(Tree tree)
+    private void restoreSelection(final Tree tree)
     {
-        String regKey = mDialogSettings.get(REG_KEY);
-        if(regKey == null) {
-            try {
-                Integer rootKey = new Integer(mDialogSettings.getInt(ROOT_KEY));
-                String subKey = mDialogSettings.get(SUB_KEY);
-                if(!Common.isEmpty(subKey)) {
-                    StringBuffer buf = new StringBuffer(getRootKeyName(rootKey.intValue()));
-                    if(buf.length() > 0) {
-                        buf.append("\\").append(subKey); //$NON-NLS-1$
-                    }
-                    regKey = buf.toString();
-                }
-                else {
-                    regKey = getRootKeyName(rootKey.intValue());
-                }
+        if(cRootKey != 0) {
+            boolean exists = true;
+            if(cSubKey != null) {
+                exists = WinAPI.RegKeyExists(cRootKey, cSubKey);
             }
-            catch (NumberFormatException e) {
-                regKey = ""; //$NON-NLS-1$
-            }
-        }
-
-        if(!Common.isEmpty(regKey)) {
-            int n = regKey.indexOf('\\');
-            String rootKey;
-            String subKey;
-            if(n > 0) {
-                subKey = regKey.substring(n+1);
-                rootKey = regKey.substring(0,n);
-            }
-            else {
-                subKey = null;
-                rootKey = regKey;
-            }
-            int hRootKey = 0;
-            for (int i = 0; i < cRootKeys.length; i++) {
-                if(Common.stringsAreEqual(rootKey,getRootKeyName(cRootKeys[i]),true)) {
-                    hRootKey = cRootKeys[i];
-                    break;
-                }
-            }
-            if(hRootKey != 0) {
-                boolean exists = true;
-                if(subKey != null) {
-                    exists = WinAPI.RegKeyExists(hRootKey, subKey);
-                }
-                if(exists) {
-                    final TreeItem item = tree.getItem(0);
-                    final String finalRegKey = regKey;
-                    item.getDisplay().asyncExec(new Runnable() {
-                        public void run()
-                        {
-                            BusyIndicator.showWhile(item.getDisplay(),new Runnable() {
-                                public void run()
-                                {
-                                    select(item, finalRegKey);
+            if(exists) {
+                final TreeItem item = tree.getItem(0);
+                final String regKey = (cSubKey==null?getRootKeyName(cRootKey):new StringBuffer(getRootKeyName(cRootKey)).append("\\").append(cSubKey).toString());
+                item.getDisplay().asyncExec(new Runnable() {
+                    public void run()
+                    {
+                        BusyIndicator.showWhile(item.getDisplay(),new Runnable() {
+                            public void run()
+                            {
+                                try {
+                                    tree.setRedraw(false);
+                                    select(item, regKey);
                                 }
-                            });
-                        }
-                    });
-                }
+                                finally {
+                                    tree.setRedraw(true);
+                                    tree.update();
+                                }
+                            }
+                        });
+                    }
+                });
             }
         }
     }
  
     protected void okPressed()
     {
-        mDialogSettings.put(REG_KEY, getRegKey());
+        if(mRegKey == null) {
+            cRootKey = 0;
+            cSubKey = null;
+        }
+        else {
+            RegistryKey rootKey = mRegKey.getRootKey();
+            if(rootKey != null) {
+                cRootKey = rootKey.getHandle();
+                String fullName = mRegKey.toString();
+                int n = fullName.indexOf('\\');
+                if(n > 0) {
+                    cSubKey = fullName.substring(n+1);
+                }
+                else {
+                    cSubKey = null;
+                }
+            }
+            else {
+                cRootKey = 0;
+                cSubKey = null;
+            }
+        }
         super.okPressed();
     }
     
@@ -322,7 +299,6 @@ public class RegistryKeySelectionDialog extends StatusMessageDialog
                 Tree tree = childItem.getParent();
                 tree.showItem(childItem);
                 tree.setSelection(childItem);
-                tree.update();
                 saveSelection(childItem);
                 return true;
             }
@@ -369,6 +345,8 @@ public class RegistryKeySelectionDialog extends StatusMessageDialog
         }
     };
 
+    private static final RegistryKey[] EMPTY_ARRAY = new RegistryKey[0];
+    
     private class RegistryKey
     {
         
@@ -388,6 +366,11 @@ public class RegistryKeySelectionDialog extends StatusMessageDialog
         public RegistryKey(RegistryKey parent, String name)
         {
             mParent = parent;
+            setName(name);
+        }
+        
+        protected void setName(String name)
+        {
             mName = name;
         }
 
@@ -416,6 +399,11 @@ public class RegistryKeySelectionDialog extends StatusMessageDialog
             return mName;
         }
 
+        public int getHandle()
+        {
+            return mHandle;
+        }
+
         public RegistryKey getParent()
         {
             return mParent;
@@ -424,14 +412,13 @@ public class RegistryKeySelectionDialog extends StatusMessageDialog
         public int find(String name)
         {
             if(mChildCount < 0) {
-                return open(name);
+                open();
             }
             return Arrays.binarySearch(mChildren,name,cSearchComparator);
         }
 
-        private int open(String name)
+        public void open()
         {
-            int result = -1;
             if(mHandle == 0) {
                 mHandle = WinAPI.RegOpenKeyEx(getParent().mHandle,getName(),0,WinAPI.KEY_QUERY_VALUE|WinAPI.KEY_ENUMERATE_SUB_KEYS);
             }
@@ -445,23 +432,18 @@ public class RegistryKeySelectionDialog extends StatusMessageDialog
                         for (int i = 0; i < mChildren.length; i++) {
                             String subKey = WinAPI.RegEnumKeyEx(mHandle,i,sizes[1]);
                             mChildren[i] = new RegistryKey(this,subKey);
-                            if(result < 0 && name != null && Common.stringsAreEqual(name, subKey, true)) {
-                                result = i;
-                            }
                         }
                         Arrays.sort(mChildren,cSearchComparator);
+                    }
+                    else {
+                        mChildren = EMPTY_ARRAY;
                     }
                 }
                 else {
                     mChildCount = 0;
+                    mChildren = EMPTY_ARRAY;
                 }
             }
-            return result;
-        }
-        
-        public void open()
-        {
-            open(null);
         }
         
         public void close()
@@ -520,16 +502,74 @@ public class RegistryKeySelectionDialog extends StatusMessageDialog
             }
             buf.append(mName);
         }
+        
+        public RegistryKey getRootKey()
+        {
+            if(mParent instanceof RegistryRoot) {
+                return this;
+            }
+            else {
+                return (mParent==null?null:mParent.getRootKey());
+            }
+        }
     }
     
     private class RegistryRoot extends RegistryKey
     {
         public RegistryRoot()
         {
-            super(null, -1, EclipseNSISPlugin.getResourceString("regkey.dialog.regroot.label")); //$NON-NLS-1$
-            mChildren = new RegistryKey[cRootKeys.length];
+            super(null, -1,null);
+            String name = null;
+            try {
+                name = WinAPI.RegQueryStrValue(WinAPI.HKEY_CLASSES_ROOT,"CLSID\\{20D04FE0-3AEA-1069-A2D8-08002B30309D}","LocalizedString");
+                if(Common.isEmpty(name)) {
+                    name = WinAPI.RegQueryStrValue(WinAPI.HKEY_CLASSES_ROOT,"CLSID\\{20D04FE0-3AEA-1069-A2D8-08002B30309D}","");
+                }
+                if(!Common.isEmpty(name)) {
+                    if(name.charAt(0)=='@') {
+                        int n = name.lastIndexOf(',');
+                        String library;
+                        int id = -1;
+                        if(n > 0) {
+                            library = name.substring(1,n);
+                            try {
+                                id = Math.abs(Integer.parseInt(name.substring(n+1)));
+                            }
+                            catch(NumberFormatException nfe) {
+                                id = -1;
+                            }
+                        }
+                        else {
+                            library = name.substring(1);
+                            id = 0;
+                        }
+                        if(id >= 0) {
+                            String resourceString;
+                            try {
+                                resourceString = WinAPI.LoadResourceString(library, id);
+                            }
+                            catch(Exception ex) {
+                                resourceString = null;
+                            }
+                            if(!Common.isEmpty(resourceString)) {
+                                name = resourceString;
+                            }
+                        }
+                    }
+                }
+            }
+            catch(Exception ex) {
+                name = null;
+            }
+            finally {
+                if(Common.isEmpty(name)) {
+                    name = EclipseNSISPlugin.getResourceString("regkey.dialog.regroot.label"); //$NON-NLS-1$
+                }
+            }
+            setName(name);
+            mChildren = new RegistryKey[ROOT_KEYS.length];
             for (int i = 0; i < mChildren.length; i++) {
-                mChildren[i] = new RegistryKey(this, cRootKeys[i], getRootKeyName(cRootKeys[i]));
+                mChildren[i] = new RegistryKey(this, ROOT_KEYS[i], getRootKeyName(ROOT_KEYS[i]));
             }
             mChildCount = mChildren.length;
         }

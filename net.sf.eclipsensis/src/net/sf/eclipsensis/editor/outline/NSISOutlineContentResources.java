@@ -67,8 +67,8 @@ public class NSISOutlineContentResources implements IEclipseNSISService,  INSISK
     {
         if (cInstance == null) {
             try {
-                monitor.beginTask(EclipseNSISPlugin
-                        .getResourceString("loading.outline.message"), 1); //$NON-NLS-1$
+                monitor.beginTask("", 1); //$NON-NLS-1$
+                monitor.subTask(EclipseNSISPlugin.getResourceString("loading.outline.message")); //$NON-NLS-1$
                 mTypeList = Arrays.asList(cTypes);
                 mTypes = new CaseInsensitiveMap();
                 mTypeNames = new HashMap();

@@ -34,9 +34,12 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.text.templates.ContextTypeRegistry;
 import org.eclipse.jface.text.templates.persistence.TemplateStore;
 import org.eclipse.jface.util.Geometry;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.branding.IProductConstants;
 import org.eclipse.ui.editors.text.templates.ContributionContextTypeRegistry;
 import org.eclipse.ui.editors.text.templates.ContributionTemplateStore;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -298,15 +301,33 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
                             File file = new File(splashFile);
                             if(IOUtility.isValidFile(file)) {
                                 ImageDescriptor desc = ImageDescriptor.createFromURL(file.toURI().toURL());
-                                Image image = desc.createImage();
+                                final Image image = desc.createImage();
                                 Rectangle rect = image.getBounds();
-                                image.dispose();
+                                String foregroundColor = null;
+                                IProduct product = Platform.getProduct();
+                                if (product != null) {
+                                    foregroundColor = product.getProperty(IProductConstants.STARTUP_FOREGROUND_COLOR);
+                                }
+                                RGB fgRGB;
+                                try {
+                                    fgRGB = ColorManager.getRGB(Integer.parseInt(foregroundColor, 16));
+                                } catch (Exception ex) {
+                                    fgRGB = ColorManager.getRGB(13817855); // D2D7FF=white
+                                }
                                 Monitor monitor = Display.getCurrent().getPrimaryMonitor();
                                 Point pt = Geometry.centerPoint(monitor.getBounds());
                                 MinimalProgressMonitorDialog dialog = new MinimalProgressMonitorDialog(Display.getCurrent().getActiveShell(),rect.width,rect.width);
+                                dialog.setBGImage(image);
+                                dialog.setForegroundRGB(fgRGB);
                                 dialog.create();
                                 Shell shell = dialog.getShell();
                                 shell.setLocation(shell.getLocation().x,pt.y+rect.height/2);
+                                shell.addDisposeListener(new DisposeListener() {
+                                    public void widgetDisposed(DisposeEvent e)
+                                    {
+                                        image.dispose();
+                                    }
+                                });
                                 dialog.run(fork, cancelable, runnable);
                                 return;
                             }

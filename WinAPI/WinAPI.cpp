@@ -173,6 +173,15 @@ TCHAR* RegQueryStrValue(HKEY hRootKey, LPCSTR subKey, LPCSTR valueName)
         if(ERROR_SUCCESS == rv && (type == REG_SZ || type == REG_EXPAND_SZ)) {
             TCHAR *value = (TCHAR *)GlobalAlloc(GPTR, cbData*sizeof(TCHAR));
             if(ERROR_SUCCESS == (rv = RegQueryValueEx(hKey, valueName, 0, &type, (LPBYTE)value, &cbData))) {
+            	if(type == REG_EXPAND_SZ) {
+            		cbData = ExpandEnvironmentStrings(value, NULL, 0);
+            		if(cbData > 0) {
+            			TCHAR *value2 = (TCHAR *)GlobalAlloc(GPTR, cbData*sizeof(TCHAR));
+            			ExpandEnvironmentStrings(value, (LPTSTR)value2, cbData);
+            			GlobalFree(value);
+            			value = value2;
+            		}
+            	}
                 result = value;
             }
             else {
@@ -774,3 +783,32 @@ JNIEXPORT jstring JNICALL Java_net_sf_eclipsensis_util_WinAPI_RegEnumKeyEx(JNIEn
 	
 	return result;
 }
+
+JNIEXPORT jstring JNICALL Java_net_sf_eclipsensis_util_WinAPI_LoadResourceString(JNIEnv *pEnv, jclass jClass, jstring pszFilename, jint id)
+{
+	jstring result = NULL;
+    LPCSTR filename = (LPCSTR)pEnv->GetStringUTFChars(pszFilename, 0);
+	
+	BOOL shouldFree = FALSE;
+	HMODULE hModule = GetModuleHandle((LPCTSTR)filename);
+	if(!hModule) {
+		hModule = LoadLibraryEx(filename, NULL, LOAD_LIBRARY_AS_DATAFILE);
+		shouldFree = TRUE;
+	}
+	if(hModule) {
+		TCHAR* buf = (TCHAR *)GlobalAlloc(GPTR, 2000*sizeof(TCHAR));
+		int n = LoadString(hModule, (UINT)id, buf, 2000);
+		if(n) {
+			result = pEnv->NewStringUTF(buf);
+		}
+		GlobalFree(buf);
+		if(shouldFree) {
+			FreeLibrary(hModule);
+		}
+	}
+	
+    pEnv->ReleaseStringUTFChars(pszFilename, filename);
+    
+    return result;
+}
+

@@ -182,6 +182,8 @@ public class WinAPI
     
     public static final native String RegEnumKeyEx(int hKey, int index, int subKeySize);
     
+    public static final native String LoadResourceString(String pszFilename, int id);
+    
     private WinAPI()
     {
     }

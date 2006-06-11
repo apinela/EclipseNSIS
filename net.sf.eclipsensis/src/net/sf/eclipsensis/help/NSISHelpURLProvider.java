@@ -146,8 +146,8 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
     {
         if (cInstance == null) {
             try {
-                monitor.beginTask(EclipseNSISPlugin
-                        .getResourceString("loading.helpurls.message"),100); //$NON-NLS-1$
+                monitor.beginTask("",100); //$NON-NLS-1$
+                monitor.subTask(EclipseNSISPlugin.getResourceString("loading.helpurls.message")); //$NON-NLS-1$
                 try {
                     mBundle = ResourceBundle.getBundle(NSISHelpURLProvider.class
                             .getName());

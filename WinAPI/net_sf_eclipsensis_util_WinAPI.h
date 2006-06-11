@@ -66,6 +66,10 @@ extern "C" {
 #define net_sf_eclipsensis_util_WinAPI_REG_BINARY 3L
 #undef net_sf_eclipsensis_util_WinAPI_REG_DWORD
 #define net_sf_eclipsensis_util_WinAPI_REG_DWORD 4L
+#undef net_sf_eclipsensis_util_WinAPI_KEY_QUERY_VALUE
+#define net_sf_eclipsensis_util_WinAPI_KEY_QUERY_VALUE 1L
+#undef net_sf_eclipsensis_util_WinAPI_KEY_ENUMERATE_SUB_KEYS
+#define net_sf_eclipsensis_util_WinAPI_KEY_ENUMERATE_SUB_KEYS 8L
 #undef net_sf_eclipsensis_util_WinAPI_BS_LEFTTEXT
 #define net_sf_eclipsensis_util_WinAPI_BS_LEFTTEXT 32L
 #undef net_sf_eclipsensis_util_WinAPI_CB_SHOWDROPDOWN
@@ -443,6 +447,14 @@ JNIEXPORT void JNICALL Java_net_sf_eclipsensis_util_WinAPI_RegQueryInfoKey
  */
 JNIEXPORT jstring JNICALL Java_net_sf_eclipsensis_util_WinAPI_RegEnumKeyEx
   (JNIEnv *, jclass, jint, jint, jint);
+
+/*
+ * Class:     net_sf_eclipsensis_util_WinAPI
+ * Method:    LoadResourceString
+ * Signature: (Ljava/lang/String;I)Ljava/lang/String;
+ */
+JNIEXPORT jstring JNICALL Java_net_sf_eclipsensis_util_WinAPI_LoadResourceString
+  (JNIEnv *, jclass, jstring, jint);
 
 #ifdef __cplusplus
 }

@@ -78,6 +78,7 @@ public class NestedProgressMonitor extends ProgressMonitorWrapper
         if (mHasSubTask) {
             subTask(""); //$NON-NLS-1$
         }
+        mTicks = 0;
         mUsed = 0;
         setTaskName(mParentTaskName);
     }

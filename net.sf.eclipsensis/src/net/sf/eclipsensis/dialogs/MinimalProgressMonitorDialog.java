@@ -10,10 +10,12 @@
 package net.sf.eclipsensis.dialogs;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -31,7 +33,52 @@ public class MinimalProgressMonitorDialog extends ProgressMonitorDialog
     private int mMinimumWidth;
     private int mMaximumWidth;
     
+    private Image mBGImage = null;
+    
+    private RGB mForegroundRGB = null;
+    private Color mFGColor = null;
+    
     private String mCaption = EclipseNSISPlugin.getDefault().getName();
+    private PaintListener mPaintListener =  new PaintListener() {
+        public void paintControl(PaintEvent e)
+        {
+            if(mBGImage != null) {
+                Control control = (Control)e.widget;
+                Point location = control.toDisplay(0,0);
+                Point shellLocation = getShell().getLocation();
+                location.x -= shellLocation.x;
+                location.y -= shellLocation.y;
+                Point size = control.getSize();
+                e.gc.drawImage(mBGImage,location.x,location.y,size.x,size.y,0,0,size.x,size.y);
+            }
+        }
+    };
+    private PaintListener mLabelPaintListener =  new PaintListener() {
+        public void paintControl(PaintEvent e)
+        {
+            if(mBGImage != null) {
+                Label label = (Label)e.widget;
+                Point location = label.toDisplay(0,0);
+                Point shellLocation = getShell().getLocation();
+                location.x -= shellLocation.x;
+                location.y -= shellLocation.y;
+                Point size = label.getSize();
+                final Image newImage = new Image(label.getDisplay(),new Rectangle(0,0,size.x,size.y));
+                GC gc = new GC(newImage);
+                gc.drawImage(mBGImage,location.x,location.y,size.x,size.y,0,0,size.x,size.y);
+                gc.dispose();
+                label.removePaintListener(this);
+                label.setBackgroundImage(newImage);
+                label.addDisposeListener(new DisposeListener() {
+                    public void widgetDisposed(DisposeEvent e)
+                    {
+                        newImage.dispose();
+                    }
+                });
+            }
+        }
+    };
+
 
     /**
      * Construct an instance of this dialog.
@@ -51,6 +98,85 @@ public class MinimalProgressMonitorDialog extends ProgressMonitorDialog
         setShellStyle(SWT.NONE);
     }
 
+    public Image getBGImage()
+    {
+        return mBGImage;
+    }
+
+    public void setBGImage(Image image)
+    {
+        mBGImage = image;
+        if(getShell() != null && !getShell().isDisposed()) {
+            getShell().redraw();
+            getShell().update();
+        }
+    }
+
+    protected void configureShell(Shell shell)
+    {
+        shell.addDisposeListener(new DisposeListener() {
+            public void widgetDisposed(DisposeEvent e)
+            {
+                if(mFGColor != null && !mFGColor.isDisposed()) {
+                    mFGColor.dispose();
+                }
+            }
+        });
+        super.configureShell(shell);
+    }
+
+    public RGB getForegroundRGB()
+    {
+        return mForegroundRGB;
+    }
+
+    public void setForegroundRGB(RGB foregroundRGB)
+    {
+        mForegroundRGB = foregroundRGB;
+        updateForeground();
+    }
+    
+    private void updateForeground()
+    {
+        Shell shell = getShell();
+        if(shell != null && !shell.isDisposed()) {
+            if(mForegroundRGB == null) {
+                if(mFGColor != null) {
+                    Color fgColor = shell.getDisplay().getSystemColor(SWT.COLOR_WIDGET_FOREGROUND);
+                    setFGColor(shell,fgColor);
+                    mFGColor.dispose();
+                    mFGColor = null;
+                }
+            }
+            else {
+                Color fgColor = shell.getForeground();
+                if(!Common.objectsAreEqual(fgColor.getRGB(),mForegroundRGB)) {
+                    fgColor = new Color(shell.getDisplay(),mForegroundRGB);
+                    setFGColor(shell, fgColor);
+                    if(mFGColor != null) {
+                        mFGColor.dispose();
+                        mFGColor = null;
+                    }
+                    mFGColor = fgColor;
+                }
+            }
+        }
+    }
+    
+    private void setFGColor(Control control, Color fgColor)
+    {
+        control.setForeground(fgColor);
+        if(control instanceof Composite) {
+            Composite composite = (Composite)control;
+            Control[] controls = composite.getChildren();
+            if(!Common.isEmptyArray(controls)) {
+                for (int i = 0; i < controls.length; i++) {
+                    setFGColor(controls[i], fgColor);
+                }
+            }
+        }
+    }
+
     public String getCaption()
     {
         return mCaption;
@@ -63,7 +189,7 @@ public class MinimalProgressMonitorDialog extends ProgressMonitorDialog
 
     protected Control createContents(Composite parent)
     {
-        Composite container = new Composite(parent, SWT.NONE);
+        final Composite container = new Composite(parent, (mBGImage==null?SWT.NONE:SWT.NO_BACKGROUND));
         GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
         container.setLayoutData(gridData);
         GridLayout gridLayout = new GridLayout();
@@ -73,7 +199,7 @@ public class MinimalProgressMonitorDialog extends ProgressMonitorDialog
         gridLayout.verticalSpacing = 0;
         container.setLayout(gridLayout);
 
-        Composite progressArea = new Composite(container, SWT.NONE);
+        final Composite progressArea = new Composite(container, SWT.NONE);
         initializeDialogUnits(progressArea);
         GridLayout layout = new GridLayout(2, false);
         layout.marginWidth = 5;//convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
@@ -84,6 +210,12 @@ public class MinimalProgressMonitorDialog extends ProgressMonitorDialog
         progressArea.setLayoutData(new GridData(SWT.FILL,SWT.CENTER,true,true));
         createDialogAndButtonArea(progressArea);
 
+        updateForeground();
+        if(mBGImage != null) {
+            container.addPaintListener(mPaintListener);
+            progressArea.addPaintListener(mPaintListener);
+            getShell().addPaintListener(mPaintListener);
+        }
         return container;
     }
 
@@ -103,6 +235,9 @@ public class MinimalProgressMonitorDialog extends ProgressMonitorDialog
             data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH);
             messageLabel.setLayoutData(data);
             taskLabel = messageLabel;
+            if(mBGImage != null) {
+                messageLabel.addPaintListener(mLabelPaintListener);
+            }
         }
         return composite;
     }
@@ -133,6 +268,11 @@ public class MinimalProgressMonitorDialog extends ProgressMonitorDialog
         label.setLayoutData(gd);
         label.setFont(parent.getFont());
         label.setText(mCaption);
+
+        if(mBGImage != null) {
+            subTaskLabel.addPaintListener(mLabelPaintListener);
+            label.addPaintListener(mLabelPaintListener);
+        }
         return parent;
     }
 

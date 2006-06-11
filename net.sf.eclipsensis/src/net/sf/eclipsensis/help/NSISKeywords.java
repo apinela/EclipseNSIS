@@ -109,9 +109,9 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
     private void loadKeywords(IProgressMonitor monitor)
     {
         try {
-            String taskName = EclipseNSISPlugin.getResourceString("loading.keywords.message"); //$NON-NLS-1$
             if(monitor != null) {
-                monitor.beginTask(taskName, 100+(mListeners==null?0:mListeners.size()));
+                monitor.beginTask("", 100+(mListeners==null?0:mListeners.size())); //$NON-NLS-1$
+                monitor.subTask(EclipseNSISPlugin.getResourceString("loading.keywords.message")); //$NON-NLS-1$
             }
             mNewerKeywordsMap.clear();
             mAllKeywordsSet.clear();

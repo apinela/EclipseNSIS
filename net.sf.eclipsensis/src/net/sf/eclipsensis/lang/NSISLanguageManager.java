@@ -109,7 +109,8 @@ public class NSISLanguageManager implements INSISHomeListener, IEclipseNSISServi
     {
         try {
             if(monitor != null) {
-                monitor.beginTask(EclipseNSISPlugin.getResourceString("loading.languages.message"), 100); //$NON-NLS-1$
+                monitor.beginTask("", 100); //$NON-NLS-1$
+                monitor.subTask(EclipseNSISPlugin.getResourceString("loading.languages.message")); //$NON-NLS-1$
             }
             mLanguageMap.clear();
             mLanguages.clear();

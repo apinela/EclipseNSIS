@@ -82,7 +82,8 @@ public class NSISUsageProvider implements IEclipseNSISService
     {
         try {
             if(monitor != null) {
-                monitor.beginTask(EclipseNSISPlugin.getResourceString("loading.cmdhelp.message"), 1); //$NON-NLS-1$
+                monitor.beginTask("", 1); //$NON-NLS-1$
+                monitor.subTask(EclipseNSISPlugin.getResourceString("loading.cmdhelp.message")); //$NON-NLS-1$
             }
             mUsages.clear();
             File exeFile = NSISPreferences.INSTANCE.getNSISExeFile();
