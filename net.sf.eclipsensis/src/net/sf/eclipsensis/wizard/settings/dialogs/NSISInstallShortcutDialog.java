@@ -74,7 +74,7 @@ public class NSISInstallShortcutDialog extends AbstractNSISInstallItemDialog imp
         layout.marginHeight = 0;
         layout.marginWidth = 0;
         composite.setLayout(layout);
-        
+
         final Combo c1;
         if(mWizard.getSettings().isCreateStartMenuGroup()) {
             boolean createInSMGroup = mStore.getBoolean("createInStartMenuGroup"); //$NON-NLS-1$
@@ -104,7 +104,7 @@ public class NSISInstallShortcutDialog extends AbstractNSISInstallItemDialog imp
             ((GridData)b2.getLayoutData()).horizontalSpan = 1;
             MasterSlaveController mse = new MasterSlaveController(b2);
             c1 = NSISWizardDialogUtil.createCombo(group,null,"", //$NON-NLS-1$
-                    false,null,true,mse,true); 
+                    false,null,true,mse,true);
             ((GridData)c1.getLayoutData()).horizontalSpan = 1;
             mse.updateSlaves();
         }
@@ -187,6 +187,11 @@ public class NSISInstallShortcutDialog extends AbstractNSISInstallItemDialog imp
         m1.updateSlaves();
 
         return composite;
+    }
+
+    protected boolean hasRequiredFields()
+    {
+        return true;
     }
 
     protected String checkForErrors()

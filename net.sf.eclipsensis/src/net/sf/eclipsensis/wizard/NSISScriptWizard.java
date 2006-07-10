@@ -9,10 +9,14 @@
  *******************************************************************************/
 package net.sf.eclipsensis.wizard;
 
+import java.io.File;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
+import net.sf.eclipsensis.editor.NSISEditorUtilities;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.wizard.template.*;
 
@@ -21,10 +25,12 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.window.Window;
+import org.eclipse.ui.IEditorPart;
 
 public class NSISScriptWizard extends NSISWizard
 {
     private boolean mSaveAsTemplate = false;
+    private boolean mCheckOverwrite = false;
     private NSISWizardTemplateManager mTemplateManager = new NSISWizardTemplateManager();
     /**
      *
@@ -47,6 +53,16 @@ public class NSISScriptWizard extends NSISWizard
     public NSISWizardTemplateManager getTemplateManager()
     {
         return mTemplateManager;
+    }
+
+    public boolean isCheckOverwrite()
+    {
+        return mCheckOverwrite;
+    }
+
+    public void setCheckOverwrite(boolean checkOverwrite)
+    {
+        mCheckOverwrite = checkOverwrite;
     }
 
     private boolean saveTemplate()
@@ -74,25 +90,85 @@ public class NSISScriptWizard extends NSISWizard
         IPath path = new Path(getSettings().getSavePath());
         if(Common.isEmpty(path.getFileExtension())) {
             path = path.addFileExtension(INSISConstants.NSI_EXTENSION);
-            IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
-            if(file != null && file.exists()) {
-                if(!Common.openQuestion(getShell(), EclipseNSISPlugin.getResourceString("question.title"), //$NON-NLS-1$
-                        EclipseNSISPlugin.getFormattedString("save.path.question",new String[] {path.toString()}),  //$NON-NLS-1$
-                        EclipseNSISPlugin.getShellImage())) {
-                    return false;
-                }
-            }
-            getSettings().setSavePath(path.toString());
         }
+        if(!path.isAbsolute()) {
+            Common.openError(getShell(),"Please specify an absolute location for the output file.",EclipseNSISPlugin.getShellImage());
+            return false;
+        }
+        final boolean saveExternal = getSettings().isSaveExternal();
+        String pathString = saveExternal?path.toOSString():path.toString();
+        final boolean exists;
+        final File file;
+        final IFile ifile;
+        if(saveExternal) {
+            ifile = null;
+            file = new File(pathString);
+            exists = file.exists();
+        }
+        else {
+            file = null;
+            ifile = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
+            exists = ifile != null && ifile.exists();
+            path = ifile.getLocation();
+            if(path == null) {
+                Common.openError(getShell(),EclipseNSISPlugin.getResourceString("local.filesystem.error"),EclipseNSISPlugin.getShellImage()); //$NON-NLS-1$
+                return false;
+            }
+        }
+        if(exists && mCheckOverwrite) {
+            if(!Common.openQuestion(getShell(), EclipseNSISPlugin.getResourceString("question.title"), //$NON-NLS-1$
+                    EclipseNSISPlugin.getFormattedString("save.path.question",new String[] {pathString}),  //$NON-NLS-1$
+                    EclipseNSISPlugin.getShellImage())) {
+                return false;
+            }
+            mCheckOverwrite = false;
+        }
+        getSettings().setSavePath(pathString);
         if(mSaveAsTemplate) {
             if(!saveTemplate()) {
                 return false;
+            }
+        }
+        java.util.List editors = NSISEditorUtilities.findEditors(path);
+        if(!Common.isEmptyCollection(editors)) {
+            java.util.List dirtyEditors = new ArrayList();
+            for (Iterator iter = editors.iterator(); iter.hasNext();) {
+                IEditorPart editor = (IEditorPart)iter.next();
+                if(editor.isDirty()) {
+                    dirtyEditors.add(editor);
+                }
+            }
+            if(dirtyEditors.size() > 0) {
+                if(!Common.openConfirm(getShell(), EclipseNSISPlugin.getFormattedString("save.dirty.editor.confirm",new String[] {pathString}),  //$NON-NLS-1$
+                    EclipseNSISPlugin.getShellImage())) {
+                    return false;
+                }
+                for (Iterator iter = dirtyEditors.iterator(); iter.hasNext();) {
+                    IEditorPart editor = (IEditorPart)iter.next();
+                    editor.getSite().getPage().closeEditor(editor,false);
+                    editors.remove(editor);
+                }
+
+                if(saveExternal) {
+                    for (Iterator iter = editors.iterator(); iter.hasNext();) {
+                        IEditorPart editor = (IEditorPart)iter.next();
+                        editor.getSite().getPage().closeEditor(editor,false);
+                    }
+                }
             }
         }
     	IRunnableWithProgress op = new IRunnableWithProgress() {
     		public void run(IProgressMonitor monitor) throws InvocationTargetException
             {
     			try {
+                    if(exists) {
+                        if(saveExternal) {
+                            file.delete();
+                        }
+                        else {
+                            ifile.delete(true,true,null);
+                        }
+                    }
                     new NSISWizardScriptGenerator(getSettings()).generate(getShell(),monitor);
                 }
     			catch (Exception e) {

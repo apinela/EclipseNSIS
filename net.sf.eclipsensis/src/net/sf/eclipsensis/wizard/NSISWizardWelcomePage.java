@@ -52,6 +52,11 @@ public class NSISWizardWelcomePage extends AbstractNSISWizardStartPage
               EclipseNSISPlugin.getResourceString("wizard.welcome.description")); //$NON-NLS-1$
     }
 
+    protected boolean hasRequiredFields()
+    {
+        return true;
+    }
+
     protected String getHelpContextId()
     {
         return INSISConstants.PLUGIN_CONTEXT_PREFIX+"nsis_wizwelcome_context"; //$NON-NLS-1$
@@ -60,20 +65,18 @@ public class NSISWizardWelcomePage extends AbstractNSISWizardStartPage
     protected Control createPageControl(Composite parent)
     {
         final Composite composite = new Composite(parent, SWT.NONE);
-        setControl(composite);
 
         final GridLayout layout = new GridLayout(1,false);
         composite.setLayout(layout);
+
         final Label l = NSISWizardDialogUtil.createLabel(composite,"wizard.welcome.header", true, null, false); //$NON-NLS-1$
         l.setFont(JFaceResources.getBannerFont());
-        l.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+        NSISWizardDialogUtil.getLayoutControl(l).setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 
         final Label l2 = NSISWizardDialogUtil.createLabel(composite,"wizard.welcome.text", true, null, false); //$NON-NLS-1$
-        final GridData gridData = (GridData)l2.getLayoutData();
+        final GridData gridData = (GridData)NSISWizardDialogUtil.getLayoutControl(l2).getLayoutData();
         Dialog.applyDialogFont(l2);
         gridData.widthHint = Common.calculateControlSize(l2,80,0).x;
-
-        NSISWizardDialogUtil.createLabel(composite,"wizard.required.text", true, null, true); //$NON-NLS-1$
 
         createTemplatesGroup(composite);
 
@@ -131,7 +134,7 @@ public class NSISWizardWelcomePage extends AbstractNSISWizardStartPage
         layout.marginWidth = 0;
         composite.setLayout(layout);
         Label l = NSISWizardDialogUtil.createLabel(composite,"create.from.template.label",b.getSelection(),m,true); //$NON-NLS-1$
-        l.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+        NSISWizardDialogUtil.getLayoutControl(l).setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 
         final List list = new List(composite,SWT.BORDER|SWT.SINGLE|SWT.FULL_SELECTION);
         data = new GridData(SWT.FILL, SWT.FILL, true, true);
@@ -144,7 +147,7 @@ public class NSISWizardWelcomePage extends AbstractNSISWizardStartPage
         layout.marginWidth = 0;
         composite.setLayout(layout);
         l = NSISWizardDialogUtil.createLabel(composite,"template.description.label",true,m,false); //$NON-NLS-1$
-        l.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+        NSISWizardDialogUtil.getLayoutControl(l).setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         final StyledText t = new StyledText(composite,SWT.BORDER|SWT.MULTI|SWT.READ_ONLY|SWT.WRAP);
         t.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         t.setBackground(getShell().getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
@@ -190,7 +193,7 @@ public class NSISWizardWelcomePage extends AbstractNSISWizardStartPage
                 validatePage(0xffff);
             }
         });
-        
+
         viewer.getList().addSelectionListener(new SelectionAdapter() {
             public void widgetDefaultSelected(SelectionEvent e)
             {
@@ -218,21 +221,19 @@ public class NSISWizardWelcomePage extends AbstractNSISWizardStartPage
             {
                 if(isPreviousPage() && !isCurrentPage()) {
                     if(getSelectedPage() instanceof AbstractNSISWizardPage) {
-                        if(mWizard instanceof NSISScriptWizard) {
-                            NSISScriptWizard scriptWizard = (NSISScriptWizard)mWizard;
-                            if(!mCreateFromTemplate) {
-                                if(mUsingTemplate) {
-                                    scriptWizard.initSettings();
-                                    scriptWizard.setTemplate(null);
-                                    mUsingTemplate = false;
-                                }
+                        NSISScriptWizard scriptWizard = (NSISScriptWizard)mWizard;
+                        if(!mCreateFromTemplate) {
+                            if(mUsingTemplate) {
+                                scriptWizard.initSettings();
+                                scriptWizard.setTemplate(null);
+                                mUsingTemplate = false;
                             }
-                            else {
-                                if(mTemplate != null) {
-                                    scriptWizard.loadTemplate(mTemplate);
-                                    mTemplate = null;
-                                    mUsingTemplate = true;
-                                }
+                        }
+                        else {
+                            if(mTemplate != null) {
+                                scriptWizard.loadTemplate(mTemplate);
+                                mTemplate = null;
+                                mUsingTemplate = true;
                             }
                         }
                     }

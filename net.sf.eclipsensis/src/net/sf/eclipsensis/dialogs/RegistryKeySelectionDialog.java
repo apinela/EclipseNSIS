@@ -519,54 +519,7 @@ public class RegistryKeySelectionDialog extends StatusMessageDialog
         public RegistryRoot()
         {
             super(null, -1,null);
-            String name = null;
-            try {
-                name = WinAPI.RegQueryStrValue(WinAPI.HKEY_CLASSES_ROOT,"CLSID\\{20D04FE0-3AEA-1069-A2D8-08002B30309D}","LocalizedString");
-                if(Common.isEmpty(name)) {
-                    name = WinAPI.RegQueryStrValue(WinAPI.HKEY_CLASSES_ROOT,"CLSID\\{20D04FE0-3AEA-1069-A2D8-08002B30309D}","");
-                }
-                if(!Common.isEmpty(name)) {
-                    if(name.charAt(0)=='@') {
-                        int n = name.lastIndexOf(',');
-                        String library;
-                        int id = -1;
-                        if(n > 0) {
-                            library = name.substring(1,n);
-                            try {
-                                id = Math.abs(Integer.parseInt(name.substring(n+1)));
-                            }
-                            catch(NumberFormatException nfe) {
-                                id = -1;
-                            }
-                        }
-                        else {
-                            library = name.substring(1);
-                            id = 0;
-                        }
-                        if(id >= 0) {
-                            String resourceString;
-                            try {
-                                resourceString = WinAPI.LoadResourceString(library, id);
-                            }
-                            catch(Exception ex) {
-                                resourceString = null;
-                            }
-                            if(!Common.isEmpty(resourceString)) {
-                                name = resourceString;
-                            }
-                        }
-                    }
-                }
-            }
-            catch(Exception ex) {
-                name = null;
-            }
-            finally {
-                if(Common.isEmpty(name)) {
-                    name = EclipseNSISPlugin.getResourceString("regkey.dialog.regroot.label"); //$NON-NLS-1$
-                }
-            }
-            setName(name);
+            setName(IOUtility.getMyComputerLabel());
             mChildren = new RegistryKey[ROOT_KEYS.length];
             for (int i = 0; i < mChildren.length; i++) {
                 mChildren[i] = new RegistryKey(this, ROOT_KEYS[i], getRootKeyName(ROOT_KEYS[i]));

@@ -51,9 +51,9 @@ public class MultiLineKeyValueValidator implements IINIKeyValueValidator
                             buf.append(SWT.LF);
                         }
                         else {
-                            keyValue.addProblem(INIProblem.TYPE_WARNING,
+                            keyValue.addProblem(new INIProblem(INIProblem.TYPE_WARNING,
                                     InstallOptionsPlugin.getFormattedString("missing.lf.warning", //$NON-NLS-1$
-                                            new Object[]{keyValue.getKey()}));
+                                            new Object[]{keyValue.getKey()})));
                             hasProblems = true;
                             checkWarnings = false;
                         }
@@ -70,9 +70,9 @@ public class MultiLineKeyValueValidator implements IINIKeyValueValidator
                             buf.insert(buf.length()-1, SWT.CR);
                         }
                         else {
-                            keyValue.addProblem(INIProblem.TYPE_ERROR,
+                            keyValue.addProblem(new INIProblem(INIProblem.TYPE_ERROR,
                                     InstallOptionsPlugin.getFormattedString("missing.cr.error", //$NON-NLS-1$
-                                            new Object[]{keyValue.getKey()}));
+                                            new Object[]{keyValue.getKey()})));
                             hasProblems = true;
                             checkErrors = false;
                         }

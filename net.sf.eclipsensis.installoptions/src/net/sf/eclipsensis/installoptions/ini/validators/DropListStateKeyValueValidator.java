@@ -61,8 +61,8 @@ public class DropListStateKeyValueValidator extends ComboboxStateKeyValueValidat
                 keyValue.setValue(""); //$NON-NLS-1$
             }
             else {
-                keyValue.addProblem(INIProblem.TYPE_ERROR, InstallOptionsPlugin.getFormattedString("valid.selection.error", //$NON-NLS-1$
-                        new String[]{InstallOptionsModel.PROPERTY_STATE,InstallOptionsModel.PROPERTY_LISTITEMS}));
+                keyValue.addProblem(new INIProblem(INIProblem.TYPE_ERROR, InstallOptionsPlugin.getFormattedString("valid.selection.error", //$NON-NLS-1$
+                        new String[]{InstallOptionsModel.PROPERTY_STATE,InstallOptionsModel.PROPERTY_LISTITEMS})));
                 return false;
             }
         }

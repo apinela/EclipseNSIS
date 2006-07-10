@@ -78,11 +78,8 @@ public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
         layout.marginWidth = 0;
         composite.setLayout(layout);
 
-        Label label = new Label(composite, SWT.LEFT);
-        label.setText(EclipseNSISPlugin.getResourceString("wizard.source.files.label")); //$NON-NLS-1$
-        gd = new GridData(SWT.FILL, SWT.CENTER, false, false);
-        gd.horizontalSpan = 2;
-        label.setLayoutData(gd);
+        Label label = NSISWizardDialogUtil.createLabel(composite,SWT.LEFT,"wizard.source.files.label",true,null,true); //$NON-NLS-1$
+        ((GridData)NSISWizardDialogUtil.getLayoutControl(label).getLayoutData()).horizontalSpan = 2;
 
         Composite composite2 = new Composite(composite, SWT.NONE);
         gd = new GridData(SWT.FILL, SWT.FILL, true, true);
@@ -232,7 +229,7 @@ public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
         final Combo c1 = NSISWizardDialogUtil.createCombo(composite,
                                                          NSISKeywords.getInstance().getKeywordsGroup(NSISKeywords.PATH_CONSTANTS_AND_VARIABLES),
                                                          mStore.getString("destination"), //$NON-NLS-1$
-                                                         false,"wizard.destination.label",true,null,false); //$NON-NLS-1$
+                                                         false,"wizard.destination.label",true,null,true); //$NON-NLS-1$
         c1.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e)
             {
@@ -249,7 +246,13 @@ public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
                 mStore.setValue("overwrite",c2.getSelectionIndex()); //$NON-NLS-1$
             }
         });
+
         return composite;
+    }
+
+    protected boolean hasRequiredFields()
+    {
+        return true;
     }
 
     /* (non-Javadoc)

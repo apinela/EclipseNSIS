@@ -15,6 +15,7 @@ import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.util.Common;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.source.*;
 import org.eclipse.swt.widgets.Shell;
@@ -23,14 +24,14 @@ import org.eclipse.ui.texteditor.MarkerAnnotation;
 /**
  * The NSISAnnotationHover provides the hover support for NSIS editors.
  */
-public class NSISAnnotationHover implements IAnnotationHover, INSISConstants, IAnnotationHoverExtension
+public class NSISAnnotationHover implements IAnnotationHover, INSISConstants, IAnnotationHoverExtension, ITextHover, ITextHoverExtension
 {
     private Set mAnnotationTypes;
 
     private IInformationControlCreator mHoverControlCreator = new IInformationControlCreator(){
         public IInformationControl createInformationControl(Shell parent)
         {
-            return new DefaultInformationControl(parent);
+            return new DefaultInformationControl(parent, new WrappingInformationPresenter());
         }
     };
 
@@ -40,7 +41,13 @@ public class NSISAnnotationHover implements IAnnotationHover, INSISConstants, IA
         mAnnotationTypes = new HashSet(Arrays.asList(annotationTypes));
     }
 
-	/* (non-Javadoc)
+    protected boolean isSupported(Annotation a) throws CoreException
+    {
+        return mAnnotationTypes.contains(a.getType()) ||
+        (a instanceof MarkerAnnotation && mAnnotationTypes.contains((((MarkerAnnotation)a).getMarker()).getType()));
+    }
+
+    /* (non-Javadoc)
 	 * Method declared on IAnnotationHover
 	 */
 	public String getHoverInfo(ISourceViewer sourceViewer, int lineNumber)
@@ -54,15 +61,14 @@ public class NSISAnnotationHover implements IAnnotationHover, INSISConstants, IA
                 ArrayList messages = new ArrayList();
                 for(Iterator e= model.getAnnotationIterator(); e.hasNext(); ) {
                     Annotation a= (Annotation) e.next();
-                    Position p= model.getPosition(a);
-                    if (p != null && p.overlapsWith(info.getOffset(), info.getLength())) {
-                        String msg = null;
-                        if(mAnnotationTypes.contains(a.getType()) ||
-                          (a instanceof MarkerAnnotation && mAnnotationTypes.contains((((MarkerAnnotation)a).getMarker()).getType()))) {
+                    if(isSupported(a)) {
+                        Position p= model.getPosition(a);
+                        if (p != null && p.overlapsWith(info.getOffset(), info.getLength())) {
+                            String msg = null;
                             msg= a.getText();
-                        }
-                        if (!Common.isEmpty(msg)) {
-                            messages.add(msg);
+                            if (!Common.isEmpty(msg)) {
+                                messages.add(msg);
+                            }
                         }
                     }
                 }
@@ -114,5 +120,70 @@ public class NSISAnnotationHover implements IAnnotationHover, INSISConstants, IA
     public ILineRange getHoverLineRange(ISourceViewer viewer, int lineNumber)
     {
         return new LineRange(lineNumber,1);
+    }
+
+    public String getHoverInfo(ITextViewer textViewer, IRegion hoverRegion)
+    {
+        if(textViewer instanceof ISourceViewer) {
+            try {
+                ISourceViewer sourceViewer = (ISourceViewer)textViewer;
+                IAnnotationModel model = sourceViewer.getAnnotationModel();
+
+                if (model != null) {
+                    ArrayList messages = new ArrayList();
+                    for(Iterator e= model.getAnnotationIterator(); e.hasNext(); ) {
+                        Annotation a= (Annotation) e.next();
+                        if(isSupported(a)) {
+                            Position p= model.getPosition(a);
+                            if (p != null && p.overlapsWith(hoverRegion.getOffset(), hoverRegion.getLength())) {
+                                String msg = null;
+                                msg= a.getText();
+                                if (!Common.isEmpty(msg)) {
+                                    messages.add(msg);
+                                }
+                            }
+                        }
+                    }
+                    if(messages.size() == 1) {
+                        return (String)messages.get(0);
+                    }
+                    else if(messages.size() > 1) {
+                        StringBuffer buf = new StringBuffer(EclipseNSISPlugin.getResourceString("multiple.markers.message")); //$NON-NLS-1$
+                        for (Iterator iter = messages.iterator(); iter.hasNext();) {
+                            buf.append(LINE_SEPARATOR).append("\t- ").append(iter.next()); //$NON-NLS-1$
+                        }
+                        return buf.toString();
+                    }
+                }
+            }
+            catch (Exception ex) {
+            }
+        }
+        return null;
+    }
+
+    public IRegion getHoverRegion(ITextViewer textViewer, int offset)
+    {
+        if(textViewer instanceof ISourceViewer) {
+            try {
+                ISourceViewer sourceViewer = (ISourceViewer)textViewer;
+                IAnnotationModel model = sourceViewer.getAnnotationModel();
+    
+                if (model != null) {
+                    for(Iterator e= model.getAnnotationIterator(); e.hasNext(); ) {
+                        Annotation a= (Annotation) e.next();
+                        if(isSupported(a)) {
+                            Position p= model.getPosition(a);
+                            if (p != null && p.includes(offset)) {
+                                return new Region(p.getOffset(),p.getLength());
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex) {
+            }
+        }
+        return null;
     }
 }

@@ -17,6 +17,7 @@ import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.wizard.NSISWizard;
 import net.sf.eclipsensis.wizard.settings.INSISInstallElement;
 import net.sf.eclipsensis.wizard.settings.NSISInstallElementFactory;
+import net.sf.eclipsensis.wizard.util.NSISWizardDialogUtil;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.Dialog;
@@ -25,8 +26,7 @@ import org.eclipse.jface.preference.PreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
 
 public abstract class AbstractNSISInstallItemDialog extends StatusMessageDialog
@@ -58,10 +58,16 @@ public abstract class AbstractNSISInstallItemDialog extends StatusMessageDialog
         layout.marginWidth = 0;
         composite.setLayout(layout);
 
-        Control control = createControlContents(composite);
+        Group group = new Group(composite,SWT.NONE);
+        group.setLayout(new GridLayout(1,false));
+        group.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+
+        Control control = createControlContents(group);
         GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
         gd.widthHint = convertWidthInCharsToPixels(65);
         control.setLayoutData(gd);
+
+        NSISWizardDialogUtil.createRequiredFieldsLabel(composite);
 
         Dialog.applyDialogFont(composite);
         String helpContextId = getHelpContextId();
@@ -104,6 +110,7 @@ public abstract class AbstractNSISInstallItemDialog extends StatusMessageDialog
         return status.getSeverity() == IStatus.OK;
     }
 
+    protected abstract boolean hasRequiredFields();
     protected abstract String checkForErrors();
     protected abstract Control createControlContents(Composite parent);
     protected abstract List getProperties();

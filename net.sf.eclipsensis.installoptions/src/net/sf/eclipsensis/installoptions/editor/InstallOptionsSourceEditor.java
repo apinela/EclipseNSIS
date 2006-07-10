@@ -19,6 +19,7 @@ import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.actions.*;
 import net.sf.eclipsensis.installoptions.builder.InstallOptionsNature;
+import net.sf.eclipsensis.installoptions.editor.annotation.INIProblemAnnotation;
 import net.sf.eclipsensis.installoptions.ini.*;
 import net.sf.eclipsensis.installoptions.model.*;
 import net.sf.eclipsensis.job.IJobStatusRunnable;
@@ -625,18 +626,8 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
                                         INIProblem problem = problems[i];
                                         if(problems[i].getLine() > 0) {
                                             try {
-                                                String name;
-                                                if(problem.getType() == INIProblem.TYPE_ERROR) {
-                                                    name = IInstallOptionsConstants.INSTALLOPTIONS_ERROR_ANNOTATION_NAME;
-                                                }
-                                                else if(problem.getType() == INIProblem.TYPE_WARNING) {
-                                                    name = IInstallOptionsConstants.INSTALLOPTIONS_WARNING_ANNOTATION_NAME;
-                                                }
-                                                else {
-                                                    continue;
-                                                }
                                                 IRegion region = doc.getLineInformation(problem.getLine()-1);
-                                                model.addAnnotation(new Annotation(name,false,problem.getMessage()),
+                                                model.addAnnotation(new INIProblemAnnotation(problem),
                                                         new Position(region.getOffset(),region.getLength()));
                                             }
                                             catch (BadLocationException e) {

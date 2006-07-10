@@ -297,10 +297,9 @@ JNIEXPORT void JNICALL Java_net_sf_eclipsensis_util_WinAPI_ExtractHtmlHelp(JNIEn
     if(hr == S_OK || hr == S_FALSE) {
         TCHAR *tocFile = NULL;
         TCHAR *indexFile = NULL;
-		int length = MAX_PATH*sizeof(TCHAR);
-        tocFile = (TCHAR *)GlobalAlloc(GPTR, (length+1)*sizeof(TCHAR));
+        tocFile = (TCHAR *)GlobalAlloc(GPTR, (MAX_PATH+1)*sizeof(TCHAR));
         _tcscpy(tocFile,_T(""));
-        indexFile = (TCHAR *)GlobalAlloc(GPTR, (length+1)*sizeof(TCHAR));
+        indexFile = (TCHAR *)GlobalAlloc(GPTR, (MAX_PATH+1)*sizeof(TCHAR));
         _tcscpy(indexFile,_T(""));
 
         LPCWSTR str1 = (LPCWSTR)pEnv->GetStringChars(pszFile, 0);

@@ -9,6 +9,8 @@
  *******************************************************************************/
 package net.sf.eclipsensis.wizard;
 
+import java.io.File;
+
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.util.Common;
@@ -32,6 +34,8 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
 {
     public static final String NAME = "nsisWizardCompletion"; //$NON-NLS-1$
 
+    private static final String[] FILTER_EXTENSIONS = new String[] {"*."+INSISConstants.NSI_EXTENSION}; //$NON-NLS-1$
+    private static final String[] FILTER_NAMES = new String[] {EclipseNSISPlugin.getResourceString("launchconfig.nsis.script.filtername")}; //$NON-NLS-1$
     private static final int PROGRAM_FILE_CHECK=1;
     private static final int README_FILE_CHECK=2;
     private static final int SAVE_PATH_CHECK=4;
@@ -45,6 +49,11 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
     {
         super(NAME, EclipseNSISPlugin.getResourceString("wizard.completion.title"), //$NON-NLS-1$
               EclipseNSISPlugin.getResourceString("wizard.completion.description")); //$NON-NLS-1$
+    }
+
+    protected boolean hasRequiredFields()
+    {
+        return isScriptWizard();
     }
 
     private boolean validateField(int flag)
@@ -67,9 +76,17 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
         else if(Path.EMPTY.isValidPath(pathname)) {
             IPath path = new Path(pathname);
             path = path.removeLastSegments(1);
-            IResource resource = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
-            if(resource != null && (resource instanceof IFolder || resource instanceof IProject)) {
-                return true;
+            if(mWizard.getSettings().isSaveExternal()) {
+                File file = new File(path.toOSString());
+                if(IOUtility.isValidDirectory(file)) {
+                    return true;
+                }
+            }
+            else {
+                IResource resource = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
+                if(resource != null && (resource instanceof IFolder || resource instanceof IProject)) {
+                    return true;
+                }
             }
         }
         setErrorMessage(EclipseNSISPlugin.getFormattedString("invalid.save.location.error",new String[]{pathname})); //$NON-NLS-1$
@@ -115,7 +132,6 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
     protected Control createPageControl(Composite parent)
     {
         final Composite composite = new Composite(parent, SWT.NONE);
-        setControl(composite);
 
         GridLayout layout = new GridLayout(1,false);
         composite.setLayout(layout);
@@ -137,10 +153,14 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
     {
         NSISWizardSettings settings = mWizard.getSettings();
 
-        Group group = NSISWizardDialogUtil.createGroup(parent, 1, "miscellaneous.installer.settings.group.label",null,false); //$NON-NLS-1$
-
+        Group group = NSISWizardDialogUtil.createGroup(parent, 2, "miscellaneous.installer.settings.group.label",null,false); //$NON-NLS-1$
+        ((GridLayout)group.getLayout()).makeColumnsEqualWidth = true;
         final Button b1 = NSISWizardDialogUtil.createCheckBox(group, "show.installer.details.label", //$NON-NLS-1$
                               settings.isShowInstDetails(),(settings.getInstallerType() != INSTALLER_TYPE_SILENT), null, false);
+        GridData data = (GridData)b1.getLayoutData();
+        data.horizontalSpan = 1;
+        data.horizontalAlignment = SWT.FILL;
+        data.grabExcessHorizontalSpace = true;
         b1.addSelectionListener(new SelectionAdapter(){
             public void widgetSelected(SelectionEvent e)
             {
@@ -150,6 +170,10 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
 
         final Button b2 = NSISWizardDialogUtil.createCheckBox(group, "autoclose.installer.label", //$NON-NLS-1$
                 settings.isAutoCloseInstaller(),(settings.getInstallerType() != INSTALLER_TYPE_SILENT), null, false);
+        data = (GridData)b2.getLayoutData();
+        data.horizontalSpan = 1;
+        data.horizontalAlignment = SWT.FILL;
+        data.grabExcessHorizontalSpace = true;
         b2.addSelectionListener(new SelectionAdapter(){
             public void widgetSelected(SelectionEvent e)
             {
@@ -160,6 +184,7 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
         final Button b3 = NSISWizardDialogUtil.createCheckBox(group, "uninstaller.shortcut.startmenu.label", //$NON-NLS-1$
                                         settings.isCreateUninstallerStartMenuShortcut(),
                                         settings.isCreateUninstaller(), null, false);
+
         b3.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e)
             {
@@ -226,7 +251,7 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
 
         Label l = (Label)t.getData(NSISWizardDialogUtil.LABEL);
         if(l != null) {
-            ((GridData)l.getLayoutData()).horizontalIndent=8;
+            ((GridData)NSISWizardDialogUtil.getLayoutControl(l).getLayoutData()).horizontalIndent=8;
         }
 
         c1.addModifyListener(new ModifyListener() {
@@ -267,57 +292,93 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
     private void createScriptSaveSettingsGroup(Composite parent)
     {
         final Group group = NSISWizardDialogUtil.createGroup(parent, 1, "script.save.settings.group.label",null,true); //$NON-NLS-1$
-        NSISWizardSettings settings = mWizard.getSettings();
+        group.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false));
+        GridLayout layout = new GridLayout(1,false);
+        group.setLayout(layout);
 
         Composite c = new Composite(group,SWT.None);
         c.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false));
-        GridLayout layout = new GridLayout(3,false);
+        layout = new GridLayout(3,false);
         layout.marginHeight = layout.marginWidth = 0;
         c.setLayout(layout);
-        final Text t = NSISWizardDialogUtil.createText(c, settings.getSavePath().toString(),"workbench.save.location.label",true,null,true); //$NON-NLS-1$
+        final Button[] radioButtons = NSISWizardDialogUtil.createRadioGroup(c,new String[] {EclipseNSISPlugin.getResourceString("workspace.save.label"),
+                                                              EclipseNSISPlugin.getResourceString("filesystem.save.label")},
+                                              mWizard.getSettings().isSaveExternal()?1:0,"save.label",true,null,false);
+        final Text t = NSISWizardDialogUtil.createText(c, mWizard.getSettings().getSavePath().toString(),"save.location.label",true,null,isScriptWizard()); //$NON-NLS-1$
         ((GridData)t.getLayoutData()).horizontalSpan = 1;
         t.addModifyListener(new ModifyListener(){
             public void modifyText(ModifyEvent e)
             {
                 mWizard.getSettings().setSavePath(((Text)e.widget).getText());
                 validateField(SAVE_PATH_CHECK);
+                if(isScriptWizard()) {
+                    ((NSISScriptWizard)mWizard).setCheckOverwrite(mWizard.getSettings().getSavePath().length() > 0);
+                }
             }
         });
+        SelectionAdapter selectionAdapter = new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e)
+            {
+                boolean saveExternal = radioButtons[1].getSelection();
+                if(saveExternal != mWizard.getSettings().isSaveExternal()) {
+                    mWizard.getSettings().setSaveExternal(saveExternal);
+                    t.setText("");
+                }
+            }
+        };
+        radioButtons[0].addSelectionListener(selectionAdapter);
+        radioButtons[1].addSelectionListener(selectionAdapter);
 
         Button b = new Button(c,SWT.PUSH);
         b.setText(EclipseNSISPlugin.getResourceString("browse.text")); //$NON-NLS-1$
         b.setToolTipText(EclipseNSISPlugin.getResourceString("browse.tooltip")); //$NON-NLS-1$
         b.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
-                SaveAsDialog dialog = new SaveAsDialog(getShell());
                 String savePath = mWizard.getSettings().getSavePath();
                 if(Common.isEmpty(savePath)) {
                     savePath = EclipseNSISPlugin.getResourceString("default.save.name"); //$NON-NLS-1$
                 }
-                IPath path = new Path(savePath);
-                if(path.isAbsolute()) {
-                    try {
-                        IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
-                        dialog.setOriginalFile(file);
-                    }
-                    catch (Exception e1) {
+                if(mWizard.getSettings().isSaveExternal()) {
+                    FileDialog dialog = new FileDialog(getShell(),SWT.SAVE);
+                    dialog.setFileName(savePath);
+                    dialog.setFilterExtensions(FILTER_EXTENSIONS);
+                    dialog.setFilterNames(FILTER_NAMES);
+                    dialog.setText(EclipseNSISPlugin.getResourceString("save.location.title")); //$NON-NLS-1$
+                    savePath = dialog.open();
+                    if(savePath != null) {
+                        t.setText(savePath);
                     }
                 }
                 else {
-                    dialog.setOriginalName(path.toString());
-                }
-                dialog.setTitle(EclipseNSISPlugin.getResourceString("save.location.title")); //$NON-NLS-1$
-                dialog.create();
-                dialog.setMessage(EclipseNSISPlugin.getResourceString("save.location.message")); //$NON-NLS-1$
-                int returnCode = dialog.open();
-                if(returnCode == Window.OK) {
-                    t.setText(dialog.getResult().toString());
+                    SaveAsDialog dialog = new SaveAsDialog(getShell());
+                    IPath path = new Path(savePath);
+                    if(path.isAbsolute()) {
+                        try {
+                            IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
+                            dialog.setOriginalFile(file);
+                        }
+                        catch (Exception e1) {
+                        }
+                    }
+                    else {
+                        dialog.setOriginalName(path.toString());
+                    }
+                    dialog.setTitle(EclipseNSISPlugin.getResourceString("save.location.title")); //$NON-NLS-1$
+                    dialog.create();
+                    dialog.setMessage(EclipseNSISPlugin.getResourceString("save.location.message")); //$NON-NLS-1$
+                    int returnCode = dialog.open();
+                    if(returnCode == Window.OK) {
+                        t.setText(dialog.getResult().toString());
+                        if(isScriptWizard()) {
+                            ((NSISScriptWizard)mWizard).setCheckOverwrite(false);
+                        }
+                    }
                 }
             }
         });
 
         final Button b2 = NSISWizardDialogUtil.createCheckBox(group, "make.paths.relative.label", //$NON-NLS-1$
-                settings.isMakePathsRelative(),true, null, false);
+                mWizard.getSettings().isMakePathsRelative(),true, null, false);
         b2.addSelectionListener(new SelectionAdapter(){
             public void widgetSelected(SelectionEvent e)
             {
@@ -331,7 +392,7 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
         layout.marginHeight = layout.marginWidth = 0;
         c.setLayout(layout);
         final Button b3 = NSISWizardDialogUtil.createCheckBox(c, "compile.label", //$NON-NLS-1$
-                                        settings.isCompileScript(),
+                                        mWizard.getSettings().isCompileScript(),
                                         true, null, false);
         ((GridData)b3.getLayoutData()).horizontalSpan = 1;
         b3.addSelectionListener(new SelectionAdapter() {
@@ -343,7 +404,7 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
 
         MasterSlaveController m = new MasterSlaveController(b3);
         final Button b4 = NSISWizardDialogUtil.createCheckBox(c, "test.label", //$NON-NLS-1$
-                settings.isTestScript(),
+                mWizard.getSettings().isTestScript(),
                 b3.getSelection(), m, false);
         ((GridData)b4.getLayoutData()).horizontalSpan = 1;
         b4.addSelectionListener(new SelectionAdapter() {
@@ -353,7 +414,7 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
             }
         });
 
-        if(mWizard instanceof NSISScriptWizard) {
+        if(isScriptWizard()) {
             final NSISScriptWizard scriptWizard = (NSISScriptWizard)mWizard;
             final Button button = NSISWizardDialogUtil.createCheckBox(group,"save.wizard.template.label",scriptWizard.isSaveAsTemplate(),true,null,false); //$NON-NLS-1$
             button.addSelectionListener(new SelectionAdapter() {
@@ -375,7 +436,10 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
             public void settingsChanged()
             {
                 NSISWizardSettings settings = mWizard.getSettings();
+
                 t.setText(settings.getSavePath().toString());
+                radioButtons[0].setSelection(!settings.isSaveExternal());
+                radioButtons[1].setSelection(settings.isSaveExternal());
                 b2.setSelection(settings.isMakePathsRelative());
                 b3.setSelection(settings.isCompileScript());
                 b4.setSelection(settings.isTestScript());
@@ -390,7 +454,8 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
     {
         NSISWizardSettings settings = mWizard.getSettings();
 
-        final Group group = NSISWizardDialogUtil.createGroup(parent, 1, "miscellaneous.uninstaller.settings.group.label",null,false); //$NON-NLS-1$
+        final Group group = NSISWizardDialogUtil.createGroup(parent, 2, "miscellaneous.uninstaller.settings.group.label",null,false); //$NON-NLS-1$
+        ((GridLayout)group.getLayout()).makeColumnsEqualWidth = true;
         group.setEnabled(settings.isCreateUninstaller());
 
         final Button b = NSISWizardDialogUtil.createCheckBox(group, "silent.uninstaller", //$NON-NLS-1$
@@ -405,6 +470,10 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
 
         final Button b1 = NSISWizardDialogUtil.createCheckBox(group, "show.uninstaller.details.label", //$NON-NLS-1$
                               settings.isShowUninstDetails(),true, m, false);
+        GridData data = (GridData)b1.getLayoutData();
+        data.horizontalSpan = 1;
+        data.horizontalAlignment = SWT.FILL;
+        data.grabExcessHorizontalSpace = true;
         b1.addSelectionListener(new SelectionAdapter(){
             public void widgetSelected(SelectionEvent e)
             {
@@ -414,6 +483,10 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
 
         final Button b2 = NSISWizardDialogUtil.createCheckBox(group, "autoclose.uninstaller.label", //$NON-NLS-1$
                 settings.isAutoCloseUninstaller(),true, m, false);
+        data = (GridData)b2.getLayoutData();
+        data.horizontalSpan = 1;
+        data.horizontalAlignment = SWT.FILL;
+        data.grabExcessHorizontalSpace = true;
         b2.addSelectionListener(new SelectionAdapter(){
             public void widgetSelected(SelectionEvent e)
             {

@@ -13,7 +13,6 @@ import java.util.List;
 
 import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
 import net.sf.eclipsensis.installoptions.util.TypeConverter;
-import net.sf.eclipsensis.util.WinAPI;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
@@ -127,31 +126,5 @@ public class TextFigure extends EditableElementFigure
             style |= SWT.READ_ONLY;
         }
         return style;
-    }
-
-    protected String getTheme()
-    {
-        return "EDIT"; //$NON-NLS-1$
-    }
-
-    protected int getThemePartId()
-    {
-        return WinAPI.EP_EDITTEXT;
-    }
-
-    protected int getThemeStateId()
-    {
-        if(isDisabled()) {
-            return WinAPI.ETS_DISABLED;
-        }
-        if(mReadOnly) {
-            return WinAPI.ETS_READONLY;
-        }
-        return WinAPI.ETS_NORMAL;
-    }
-
-    protected boolean isNeedsTheme()
-    {
-        return true;
     }
 }

@@ -78,6 +78,11 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
         mBGPreviewGradientHeight = Integer.parseInt(EclipseNSISPlugin.getResourceString("background.preview.gradient.height","4")); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
+    protected boolean hasRequiredFields()
+    {
+        return isScriptWizard();
+    }
+
     protected String getHelpContextId()
     {
         return INSISConstants.PLUGIN_CONTEXT_PREFIX+"nsis_wizpresentation_context"; //$NON-NLS-1$
@@ -86,7 +91,6 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
     protected Control createPageControl(Composite parent)
     {
         final Composite composite = new Composite(parent, SWT.NONE);
-        setControl(composite);
 
         GridLayout layout = new GridLayout(1,false);
         composite.setLayout(layout);
@@ -286,7 +290,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
         final Text t = NSISWizardDialogUtil.createFileBrowser(group, settings.getLicenseData(), false,
                                    Common.loadArrayProperty(bundle,"license.file.filternames"),  //$NON-NLS-1$
                                    Common.loadArrayProperty(bundle,"license.file.filters"), "license.file.label", //$NON-NLS-1$ //$NON-NLS-2$
-                                   true, m, true);
+                                   true, m, isScriptWizard());
         t.addModifyListener(new ModifyListener(){
             public void modifyText(ModifyEvent e)
             {
@@ -413,7 +417,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
         final Text t = NSISWizardDialogUtil.createFileBrowser(composite, settings.getSplashBMP(), false,
                               Common.loadArrayProperty(bundle,"splash.image.filternames"),  //$NON-NLS-1$
                               Common.loadArrayProperty(bundle,"splash.image.filters"), "splash.image.label", //$NON-NLS-1$ //$NON-NLS-2$
-                              true,m, true);
+                              true,m, isScriptWizard());
         t.addModifyListener(new ModifyListener(){
             public void modifyText(ModifyEvent e)
             {
@@ -455,7 +459,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
         ((GridData)group2.getLayoutData()).horizontalSpan = 1;
         String[] labels = {"splash.display.label","splash.fadein.label","splash.fadeout.label"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         int[] values = {settings.getSplashDelay(),settings.getFadeInDelay(),settings.getFadeOutDelay()};
-        boolean[] required = {true, false, false};
+        boolean[] required = {isScriptWizard(), false, false};
 
         ModifyListener ml = new ModifyListener() {
             public void modifyText(ModifyEvent e)
@@ -580,7 +584,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
         });
 
         Canvas canvas = new Canvas(shell, SWT.NO_BACKGROUND);
-        
+
         final Shell parentShell = getShell();
         final Shell windowShell;
         Shell temp;

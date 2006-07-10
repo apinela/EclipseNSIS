@@ -54,6 +54,11 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage implements IN
               EclipseNSISPlugin.getResourceString("wizard.contents.description")); //$NON-NLS-1$
     }
 
+    protected boolean hasRequiredFields()
+    {
+        return false;
+    }
+
     protected String getHelpContextId()
     {
         return INSISConstants.PLUGIN_CONTEXT_PREFIX+"nsis_wizcontents_context"; //$NON-NLS-1$
@@ -71,7 +76,6 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage implements IN
         NSISWizardSettings settings = mWizard.getSettings();
 
         final Composite composite = new Composite(parent, SWT.NONE);
-        setControl(composite);
 
         final GridLayout layout = new GridLayout(1,false);
         composite.setLayout(layout);
@@ -80,7 +84,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage implements IN
 
         Label l = NSISWizardDialogUtil.createLabel(composite,"wizard.contents.text",true,null,false); //$NON-NLS-1$
         Dialog.applyDialogFont(l);
-        final GridData gridData = (GridData)l.getLayoutData();
+        final GridData gridData = (GridData)NSISWizardDialogUtil.getLayoutControl(l).getLayoutData();
         gridData.widthHint = Common.calculateControlSize(l,80,0).x;
         composite.addListener (SWT.Resize,  new Listener () {
             boolean init = false;
@@ -346,7 +350,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage implements IN
         });
 
         configureDND(mTreeViewer);
-        
+
         mWizard.addSettingsListener(new INSISWizardSettingsListener() {
             public void settingsChanged()
             {
@@ -732,7 +736,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage implements IN
                 try {
                     RegistryImporter importer = null;
                     RegistryImportStrategy strategy = null;
-                    
+
                     for (int i=0; i<files.length; i++) {
                         INSISInstallElement el = null;
                         if(types[i].equals(NSISInstallFile.TYPE)) {
@@ -767,7 +771,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage implements IN
                                 continue;
                             }
                             catch(Exception ex) {
-                            }   
+                            }
                             el = new NSISInstallFile();
                             ((NSISInstallFile)el).setName(files[i]);
                         }
@@ -789,10 +793,10 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage implements IN
                 }
             }
 
-            public void drop(DropTargetEvent event) 
+            public void drop(DropTargetEvent event)
             {
                 int detail = DND.DROP_NONE;
-                
+
                 if (event.item instanceof TreeItem) {
                     Tree tree = tv.getTree();
                     TreeItem item = (TreeItem)event.item;
@@ -1238,11 +1242,11 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage implements IN
             return b;
         }
     }
-    
+
     private static class RegistryImportStrategy implements RegistryImporter.IRegistryImportStrategy
     {
         private List mRegistryItems = new ArrayList();
-        
+
         public void reset()
         {
             mRegistryItems.clear();
@@ -1310,7 +1314,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage implements IN
         {
         }
     }
-    
+
     private class ContentsTransferData
     {
         INSISInstallElement parent;

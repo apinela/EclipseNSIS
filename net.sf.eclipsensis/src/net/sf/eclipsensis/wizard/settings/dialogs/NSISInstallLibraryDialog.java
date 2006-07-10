@@ -80,7 +80,7 @@ public class NSISInstallLibraryDialog extends AbstractNSISInstallItemDialog
         final Combo c1 = NSISWizardDialogUtil.createCombo(composite,
                                                          NSISKeywords.getInstance().getKeywordsGroup(NSISKeywords.PATH_CONSTANTS_AND_VARIABLES),
                                                          mStore.getString("destination"), //$NON-NLS-1$
-                                                         false,"wizard.destination.label",true,null,false); //$NON-NLS-1$
+                                                         false,"wizard.destination.label",true,null,true); //$NON-NLS-1$
         c1.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e)
             {
@@ -119,7 +119,7 @@ public class NSISInstallLibraryDialog extends AbstractNSISInstallItemDialog
                 validate();
             }
         });
-        
+
         final Button cb1 = NSISWizardDialogUtil.createCheckBox(composite, "wizard.shared.library.label", mStore.getBoolean("shared"), true, null, false); //$NON-NLS-1$ //$NON-NLS-2$
         cb1.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e)
@@ -175,7 +175,13 @@ public class NSISInstallLibraryDialog extends AbstractNSISInstallItemDialog
                 }
             });
         }
+
         return composite;
+    }
+
+    protected boolean hasRequiredFields()
+    {
+        return true;
     }
 
     protected String checkForErrors()

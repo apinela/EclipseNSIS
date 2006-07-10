@@ -94,7 +94,7 @@ public class NSISInstallRegistryValueDialog extends NSISInstallRegistryKeyDialog
         final Font requiredFont;
         final Label l = (Label)t2.getData(NSISWizardDialogUtil.LABEL);
         if(l != null) {
-            ((GridData)l.getLayoutData()).horizontalAlignment = GridData.FILL;
+            ((GridData)NSISWizardDialogUtil.getLayoutControl(l).getLayoutData()).horizontalAlignment = GridData.FILL;
             regularFont = l.getFont();
             FontData[] fd = regularFont.getFontData();
             for (int i = 0; i < fd.length; i++) {

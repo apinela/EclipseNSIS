@@ -51,7 +51,7 @@ public abstract class StatusMessageDialog extends TrayDialog implements IDialogC
     {
         Image image = getImage();
         if (image != null) {
-            mImageLabel = new Label(composite, SWT.NULL);
+            mImageLabel = new Label(composite, SWT.NONE);
             image.setBackground(mImageLabel.getBackground());
             mImageLabel.setImage(image);
             mImageLabel.setLayoutData(new GridData(

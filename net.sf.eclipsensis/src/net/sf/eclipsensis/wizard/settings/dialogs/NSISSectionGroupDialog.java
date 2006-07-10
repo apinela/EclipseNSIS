@@ -100,7 +100,7 @@ public class NSISSectionGroupDialog extends AbstractNSISInstallItemDialog
             }
         });
         Label l = NSISWizardDialogUtil.createLabel(composite,"wizard.description.label",true,null,false); //$NON-NLS-1$
-        ((GridData)l.getLayoutData()).horizontalSpan = 2;
+        ((GridData)NSISWizardDialogUtil.getLayoutControl(l).getLayoutData()).horizontalSpan = 2;
         final Text t2 = NSISWizardDialogUtil.createText(composite,mStore.getString("description"),SWT.MULTI|SWT.BORDER|SWT.WRAP|SWT.V_SCROLL,1,true,null); //$NON-NLS-1$
         Dialog.applyDialogFont(t2);
         gd = (GridData)t2.getLayoutData();
@@ -125,7 +125,7 @@ public class NSISSectionGroupDialog extends AbstractNSISInstallItemDialog
         }
         t2.setTextLimit(textLimit);
 
-        Composite composite2 = new Composite(parent, SWT.NONE);
+        Composite composite2 = new Composite(composite, SWT.NONE);
         gd = new GridData(SWT.FILL, SWT.CENTER, false, false);
         gd.horizontalSpan = 2;
         composite2.setLayoutData(gd);
@@ -149,7 +149,13 @@ public class NSISSectionGroupDialog extends AbstractNSISInstallItemDialog
             }
         });
         ((GridData)cb2.getLayoutData()).horizontalSpan = 1;
+
         return composite;
+    }
+
+    protected boolean hasRequiredFields()
+    {
+        return true;
     }
 
     protected String checkForErrors()

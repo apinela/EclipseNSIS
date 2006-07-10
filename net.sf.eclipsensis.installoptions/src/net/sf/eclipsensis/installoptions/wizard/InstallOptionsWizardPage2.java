@@ -34,14 +34,14 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.WizardNewFileCreationPage;
 import org.eclipse.ui.ide.IDE;
-
+//FIXME Delete this class
 public class InstallOptionsWizardPage2 extends WizardNewFileCreationPage
 {
     public static final String NAME = "installOptionsWizardPage2"; //$NON-NLS-1$
     private String[] mEditorIds = {IInstallOptionsConstants.INSTALLOPTIONS_DESIGN_EDITOR_ID,
                                    IInstallOptionsConstants.INSTALLOPTIONS_SOURCE_EDITOR_ID};
 	private IWorkbench	mWorkbench;
-	
+
 	// widgets
 	private Button  mOpenFileCheckbox;
     private Combo mEditorIdCombo;
@@ -74,7 +74,7 @@ public class InstallOptionsWizardPage2 extends WizardNewFileCreationPage
         layout.marginHeight = 0;
         layout.marginWidth = 0;
         composite.setLayout(layout);
-    	
+
     	this.setFileName(InstallOptionsPlugin.getResourceString("wizard.default.file.name")); //$NON-NLS-1$
 
     	// open file for editing checkbox
@@ -82,7 +82,7 @@ public class InstallOptionsWizardPage2 extends WizardNewFileCreationPage
     	mOpenFileCheckbox.setText(InstallOptionsPlugin.getResourceString("wizard.open.file.label")); //$NON-NLS-1$
     	mOpenFileCheckbox.setSelection(true);
         mOpenFileCheckbox.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-    	
+
         mEditorIdCombo = new Combo(composite,SWT.DROP_DOWN|SWT.READ_ONLY);
         mEditorIdCombo.add(InstallOptionsPlugin.getResourceString("wizard.design.editor.label")); //$NON-NLS-1$
         mEditorIdCombo.add(InstallOptionsPlugin.getResourceString("wizard.source.editor.label")); //$NON-NLS-1$
@@ -92,7 +92,7 @@ public class InstallOptionsWizardPage2 extends WizardNewFileCreationPage
         msc.addSlave(mEditorIdCombo);
 
     	setPageComplete(validatePage());
-    	
+
     }
 
     /**

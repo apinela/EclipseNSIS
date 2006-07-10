@@ -157,54 +157,53 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
     private void doPreview(final File file)
     {
         final Shell shell = mEditor.getSite().getShell();
-        final ProgressMonitorDialog pmd = new ProgressMonitorDialog(shell) {
-            protected void configureShell(Shell shell)
-            {
-                super.configureShell(shell);
-                Rectangle rect = shell.getDisplay().getBounds();
-                shell.setLocation(rect.x+rect.width+1,rect.y+rect.height+1);
-            }
+        BusyIndicator.showWhile(shell.getDisplay(), new Runnable() {
+            public void run() {
+                final ProgressMonitorDialog pmd = new ProgressMonitorDialog(shell) {
+                    protected void configureShell(Shell shell)
+                    {
+                        super.configureShell(shell);
+                        Rectangle rect = shell.getDisplay().getBounds();
+                        shell.setLocation(rect.x+rect.width+1,rect.y+rect.height+1);
+                    }
 
-            protected Rectangle getConstrainedShellBounds(Rectangle preferredSize)
-            {
-                Rectangle rect = shell.getDisplay().getBounds();
-                return new Rectangle(rect.x+rect.width+1,rect.y+rect.height+1,preferredSize.width,preferredSize.height);
-            }
-        };
-        pmd.open();
-        try {
-            BusyIndicator.showWhile(mEditor.getSite().getShell().getDisplay(), new Runnable() {
-                public void run() {
-                    try {
-                        ModalContext.run(new IRunnableWithProgress() {
-                            public void run(IProgressMonitor monitor)
-                            {
-                                try {
-                                    monitor.beginTask(InstallOptionsPlugin.getResourceString("previewing.script.task.name"),IProgressMonitor.UNKNOWN); //$NON-NLS-1$
-                                    LinkedHashMap symbols = mSettings.getSymbols();
-                                    symbols.put("PREVIEW_INI",file.getAbsolutePath()); //$NON-NLS-1$
-                                    String pref = InstallOptionsPlugin.getDefault().getPreferenceStore().getString(IInstallOptionsConstants.PREFERENCE_PREVIEW_LANG);
-                                    NSISLanguage lang;
-                                    if(pref.equals("")) { //$NON-NLS-1$
+                    protected Rectangle getConstrainedShellBounds(Rectangle preferredSize)
+                    {
+                        Rectangle rect = shell.getDisplay().getBounds();
+                        return new Rectangle(rect.x+rect.width+1,rect.y+rect.height+1,preferredSize.width,preferredSize.height);
+                    }
+                };
+                pmd.open();
+                try {
+                    ModalContext.run(new IRunnableWithProgress() {
+                        public void run(IProgressMonitor monitor)
+                        {
+                            try {
+                                monitor.beginTask(InstallOptionsPlugin.getResourceString("previewing.script.task.name"),IProgressMonitor.UNKNOWN); //$NON-NLS-1$
+                                LinkedHashMap symbols = mSettings.getSymbols();
+                                symbols.put("PREVIEW_INI",file.getAbsolutePath()); //$NON-NLS-1$
+                                String pref = InstallOptionsPlugin.getDefault().getPreferenceStore().getString(IInstallOptionsConstants.PREFERENCE_PREVIEW_LANG);
+                                NSISLanguage lang;
+                                if(pref.equals("")) { //$NON-NLS-1$
+                                    lang = NSISLanguageManager.getInstance().getDefaultLanguage();
+                                }
+                                else {
+                                    lang = NSISLanguageManager.getInstance().getLanguage(pref);
+                                    if(lang == null) {
                                         lang = NSISLanguageManager.getInstance().getDefaultLanguage();
+                                        InstallOptionsPlugin.getDefault().getPreferenceStore().setValue(IInstallOptionsConstants.PREFERENCE_PREVIEW_LANG, ""); //$NON-NLS-1$
                                     }
-                                    else {
-                                        lang = NSISLanguageManager.getInstance().getLanguage(pref);
-                                        if(lang == null) {
-                                            lang = NSISLanguageManager.getInstance().getDefaultLanguage();
-                                            InstallOptionsPlugin.getDefault().getPreferenceStore().setValue(IInstallOptionsConstants.PREFERENCE_PREVIEW_LANG, ""); //$NON-NLS-1$
-                                        }
-                                    }
-                                    symbols.put("PREVIEW_LANG",lang.getName()); //$NON-NLS-1$
-                                    Locale locale = NSISLanguageManager.getInstance().getLocaleForLangId(lang.getLangId());
-                                    if(getId().equals(PREVIEW_MUI_ID)) {
-                                        symbols.put("PREVIEW_TITLE",InstallOptionsPlugin.getResourceString(locale,"preview.setup.title")); //$NON-NLS-1$ //$NON-NLS-2$
-                                        symbols.put("PREVIEW_SUBTITLE",InstallOptionsPlugin.getResourceString(locale,"preview.setup.subtitle")); //$NON-NLS-1$ //$NON-NLS-2$
-                                    }
-                                    else {
-                                        symbols.put("PREVIEW_BRANDING",InstallOptionsPlugin.getResourceString(locale,"preview.setup.branding")); //$NON-NLS-1$ //$NON-NLS-2$
-                                    }
-                                    symbols.put("PREVIEW_NAME",InstallOptionsPlugin.getResourceString(locale,"preview.setup.name")); //$NON-NLS-1$ //$NON-NLS-2$
+                                }
+                                symbols.put("PREVIEW_LANG",lang.getName()); //$NON-NLS-1$
+                                Locale locale = NSISLanguageManager.getInstance().getLocaleForLangId(lang.getLangId());
+                                if(getId().equals(PREVIEW_MUI_ID)) {
+                                    symbols.put("PREVIEW_TITLE",InstallOptionsPlugin.getResourceString(locale,"preview.setup.title")); //$NON-NLS-1$ //$NON-NLS-2$
+                                    symbols.put("PREVIEW_SUBTITLE",InstallOptionsPlugin.getResourceString(locale,"preview.setup.subtitle")); //$NON-NLS-1$ //$NON-NLS-2$
+                                }
+                                else {
+                                    symbols.put("PREVIEW_BRANDING",InstallOptionsPlugin.getResourceString(locale,"preview.setup.branding")); //$NON-NLS-1$ //$NON-NLS-2$
+                                }
+                                symbols.put("PREVIEW_NAME",InstallOptionsPlugin.getResourceString(locale,"preview.setup.name")); //$NON-NLS-1$ //$NON-NLS-2$
 
                                     mSettings.setSymbols(symbols);
                                     final File previewScript = getPreviewScript();
@@ -234,46 +233,45 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
                                             }
                                             else {
                                                 error = InstallOptionsPlugin.getResourceString("preview.compile.error"); //$NON-NLS-1$
-                                            }
-                                            shell.getDisplay().asyncExec(new Runnable() {
-                                                public void run()
-                                                {
-                                                    Common.openError(shell, error, InstallOptionsPlugin.getShellImage());
-                                                }
-                                            });
                                         }
-                                        else {
-                                            final File outfile = new File(results.getOutputFileName());
-                                            if (IOUtility.isValidFile(outfile) && outfile.lastModified() > timestamp) {
-                                                MakeNSISRunner.testInstaller(outfile.getAbsolutePath(), null, true);
+                                        shell.getDisplay().asyncExec(new Runnable() {
+                                            public void run()
+                                            {
+                                                Common.openError(shell, error, InstallOptionsPlugin.getShellImage());
                                             }
+                                        });
+                                    }
+                                    else {
+                                        final File outfile = new File(results.getOutputFileName());
+                                        if (IOUtility.isValidFile(outfile) && outfile.lastModified() > timestamp) {
+                                            MakeNSISRunner.testInstaller(outfile.getAbsolutePath(), null, true);
                                         }
                                     }
                                 }
-                                catch (final Exception e) {
-                                    InstallOptionsPlugin.getDefault().log(e);
-                                    shell.getDisplay().asyncExec(new Runnable() {
-                                        public void run() {
-                                            Common.openError(shell, e.getMessage(), InstallOptionsPlugin.getShellImage());
-                                        }
-                                    });
-                                }
-                                finally {
-                                    monitor.done();
-                                }
                             }
-                        },true,pmd.getProgressMonitor(),shell.getDisplay());
-                    }
-                    catch (Exception e) {
-                        InstallOptionsPlugin.getDefault().log(e);
-                        Common.openError(shell, e.getMessage(), InstallOptionsPlugin.getShellImage());
-                    }
+                            catch (final Exception e) {
+                                InstallOptionsPlugin.getDefault().log(e);
+                                shell.getDisplay().asyncExec(new Runnable() {
+                                    public void run() {
+                                        Common.openError(shell, e.getMessage(), InstallOptionsPlugin.getShellImage());
+                                    }
+                                });
+                            }
+                            finally {
+                                monitor.done();
+                            }
+                        }
+                    },true,pmd.getProgressMonitor(),shell.getDisplay());
                 }
-            });
-        }
-        finally {
-            pmd.close();
-        }
+                catch (Exception e) {
+                    InstallOptionsPlugin.getDefault().log(e);
+                    Common.openError(shell, e.getMessage(), InstallOptionsPlugin.getShellImage());
+                }
+                finally {
+                    pmd.close();
+                }
+            }
+        });
     }
 
     private File getPreviewScript() throws IOException

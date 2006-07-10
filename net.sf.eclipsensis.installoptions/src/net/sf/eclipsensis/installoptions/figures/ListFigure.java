@@ -162,27 +162,4 @@ public class ListFigure extends EditableElementFigure implements IListItemsFigur
     {
         return SWT.BORDER|SWT.MULTI;
     }
-
-    protected String getTheme()
-    {
-        return "LISTVIEW"; //$NON-NLS-1$
-    }
-
-    protected int getThemePartId()
-    {
-        return WinAPI.LVP_LISTITEM;
-    }
-
-    protected int getThemeStateId()
-    {
-        if(isDisabled()) {
-            return WinAPI.LIS_DISABLED;
-        }
-        return WinAPI.LIS_NORMAL;
-    }
-
-    protected boolean isNeedsTheme()
-    {
-        return true;
-    }
 }

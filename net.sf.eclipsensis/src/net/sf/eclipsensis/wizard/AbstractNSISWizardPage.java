@@ -14,12 +14,16 @@ import java.util.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.util.*;
+import net.sf.eclipsensis.wizard.util.NSISWizardDialogUtil;
 
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.VerifyListener;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.PlatformUI;
@@ -217,14 +221,37 @@ public abstract class AbstractNSISWizardPage extends WizardPage implements INSIS
 
     public final void createControl(Composite parent)
     {
-        Control control = createPageControl(parent);
+        Control control;
+        if(hasRequiredFields()) {
+            Composite composite = new Composite(parent,SWT.NONE);
+            control = composite;
+            GridLayout layout = new GridLayout(1,false);
+            layout.marginHeight = layout.marginWidth = 0;
+            composite.setLayout(layout);
+            createPageControl(composite).setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true));
 
+            composite = new Composite(composite,SWT.NONE);
+            composite.setLayoutData(new GridData(SWT.FILL,SWT.FILL,false,false));
+            composite.setLayout(new GridLayout(1,false));
+            NSISWizardDialogUtil.createRequiredFieldsLabel(composite);
+        }
+        else {
+            control = createPageControl(parent);
+        }
+        setControl(control);
         String contextId = getHelpContextId();
         if(contextId != null) {
             PlatformUI.getWorkbench().getHelpSystem().setHelp(control,contextId);
         }
     }
 
+
+    protected boolean isScriptWizard()
+    {
+        return mWizard instanceof NSISScriptWizard;
+    }
+
+    protected abstract boolean hasRequiredFields();
     public abstract boolean validatePage(int flag);
     protected abstract Control createPageControl(Composite parent);
     protected abstract String getHelpContextId();

@@ -70,7 +70,15 @@ public class INIKeyValue extends INILine
                     }
                 }
                 else {
-                    addProblem(INIProblem.TYPE_ERROR, InstallOptionsPlugin.getFormattedString("duplicate.key.name.error",new String[]{getKey()})); //$NON-NLS-1$
+                    INIProblem problem = new INIProblem(INIProblem.TYPE_ERROR, InstallOptionsPlugin.getFormattedString("duplicate.key.name.error",new String[]{getKey()})); //$NON-NLS-1$
+                    addProblem(problem);
+                    INIProblemFix[] fixes = new INIProblemFix[keyValues.length-1];
+                    for (int i = 0, j = 0; i < keyValues.length; i++) {
+                        if(keyValues[i] != this) {
+                            fixes[j++] = new INIProblemFix(keyValues[i]);
+                        }
+                    }
+                    problem.setFix("Remove duplicate keys",fixes);
                 }
             }
             INIKeyValue[] types = ((INISection)getParent()).findKeyValues(InstallOptionsModel.PROPERTY_TYPE);
@@ -93,8 +101,8 @@ public class INIKeyValue extends INILine
                     setValue(getValue().substring(0,maxLen));
                 }
                 else {
-                    addProblem(INIProblem.TYPE_WARNING,InstallOptionsPlugin.getFormattedString("value.length.warning", //$NON-NLS-1$
-                            new Object[]{getKey(),new Integer(maxLen)}));
+                    addProblem(new INIProblem(INIProblem.TYPE_WARNING,InstallOptionsPlugin.getFormattedString("value.length.warning", //$NON-NLS-1$
+                            new Object[]{getKey(),new Integer(maxLen)})));
                 }
             }
         }
@@ -103,7 +111,7 @@ public class INIKeyValue extends INILine
                 getParent().removeChild(this);
             }
             else {
-                addProblem(INIProblem.TYPE_WARNING,InstallOptionsPlugin.getResourceString("line.ignored.warning")); //$NON-NLS-1$
+                addProblem(new INIProblem(INIProblem.TYPE_WARNING,InstallOptionsPlugin.getResourceString("line.ignored.warning"))); //$NON-NLS-1$
             }
         }
     }

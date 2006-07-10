@@ -9,38 +9,69 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.wizard;
 
+import java.io.*;
+import java.lang.reflect.InvocationTargetException;
 import java.text.Collator;
+import java.text.DateFormat;
+import java.util.*;
 
+import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.editor.NSISEditorUtilities;
+import net.sf.eclipsensis.editor.NSISExternalFileEditorInput;
 import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
+import net.sf.eclipsensis.installoptions.ini.INIFile;
+import net.sf.eclipsensis.installoptions.ini.INILine;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsDialog;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsWidget;
 import net.sf.eclipsensis.installoptions.template.InstallOptionsTemplate;
 import net.sf.eclipsensis.installoptions.template.InstallOptionsTemplateManager;
 import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.IOUtility;
 import net.sf.eclipsensis.viewer.CollectionContentProvider;
 import net.sf.eclipsensis.viewer.CollectionLabelProvider;
 import net.sf.eclipsensis.wizard.util.*;
 
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.swt.widgets.List;
+import org.eclipse.ui.*;
+import org.eclipse.ui.dialogs.SaveAsDialog;
+import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.part.FileEditorInput;
 
 public class InstallOptionsWizardPage extends WizardPage
 {
     public static final String NAME = "installOptionsWizardPage"; //$NON-NLS-1$
+
+    private static final String[] FILTER_EXTENSIONS = Common.loadArrayProperty(InstallOptionsPlugin.getDefault().getResourceBundle(),"ini.file.extensions");
+    private static final String[] FILTER_NAMES = Common.loadArrayProperty(InstallOptionsPlugin.getDefault().getResourceBundle(),"ini.file.names");
+
+    private String[] mEditorIds = {IInstallOptionsConstants.INSTALLOPTIONS_DESIGN_EDITOR_ID,
+            IInstallOptionsConstants.INSTALLOPTIONS_SOURCE_EDITOR_ID};
     private boolean mCreateFromTemplate = false;
-	
+    private Button  mOpenFileCheckbox;
+    private Combo mEditorIdCombo;
+
+    private Button[] mSaveLocationTypes;
+    private boolean mCheckOverwrite = false;
+    private Text mSaveLocation;
+
     /**
      * Creates the page for the readme creation wizard.
      *
@@ -67,14 +98,16 @@ public class InstallOptionsWizardPage extends WizardPage
         composite.setLayout(layout);
         final Label l = NSISWizardDialogUtil.createLabel(composite,InstallOptionsPlugin.getResourceString("wizard.page.header"), true, null, false); //$NON-NLS-1$
         l.setFont(JFaceResources.getBannerFont());
-        l.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+        NSISWizardDialogUtil.getLayoutControl(l).setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 
         final Label l2 = NSISWizardDialogUtil.createLabel(composite,InstallOptionsPlugin.getResourceString("wizard.page.text"), true, null, false); //$NON-NLS-1$
-        final GridData gridData = (GridData)l2.getLayoutData();
+        final GridData gridData = (GridData)NSISWizardDialogUtil.getLayoutControl(l2).getLayoutData();
         Dialog.applyDialogFont(l2);
         gridData.widthHint = Common.calculateControlSize(l2,80,0).x;
 
         createTemplatesGroup(composite);
+
+        createScriptSaveSettingsGroup(composite);
 
         composite.addListener (SWT.Resize,  new Listener () {
             boolean init = false;
@@ -91,7 +124,110 @@ public class InstallOptionsWizardPage extends WizardPage
             }
         });
 
+        NSISWizardDialogUtil.createRequiredFieldsLabel(composite);
         setPageComplete(validatePage());
+    }
+
+    private void createScriptSaveSettingsGroup(Composite parent)
+    {
+        Group g = new Group(parent,SWT.NONE);
+        g.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false));
+        GridLayout layout = new GridLayout(1,false);
+        g.setLayout(layout);
+
+        Composite c = new Composite(g,SWT.NONE);
+        c.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false));
+        layout = new GridLayout(3,false);
+        layout.marginHeight = layout.marginWidth = 0;
+        c.setLayout(layout);
+        mSaveLocationTypes = NSISWizardDialogUtil.createRadioGroup(c,new String[] {EclipseNSISPlugin.getResourceString("workspace.save.label"),
+                                                                      EclipseNSISPlugin.getResourceString("filesystem.save.label")},
+                                                                      0,"save.label",true,null,false);
+        mSaveLocation = NSISWizardDialogUtil.createText(c, "","save.location.label",true,null,true);
+        ((GridData)mSaveLocation.getLayoutData()).horizontalSpan = 1;
+        mSaveLocation.addModifyListener(new ModifyListener(){
+            public void modifyText(ModifyEvent e)
+            {
+                setPageComplete(validatePage());
+                mCheckOverwrite = mSaveLocation.getText().length() > 0;
+            }
+        });
+        SelectionAdapter selectionAdapter = new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e)
+            {
+                mSaveLocation.setText("");
+            }
+        };
+        mSaveLocationTypes[0].addSelectionListener(selectionAdapter);
+        mSaveLocationTypes[1].addSelectionListener(selectionAdapter);
+
+        Button b = new Button(c,SWT.PUSH);
+        b.setText(EclipseNSISPlugin.getResourceString("browse.text")); //$NON-NLS-1$
+        b.setToolTipText(EclipseNSISPlugin.getResourceString("browse.tooltip")); //$NON-NLS-1$
+        b.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                String savePath = mSaveLocation.getText();
+                if(Common.isEmpty(savePath)) {
+                    savePath = InstallOptionsPlugin.getResourceString("wizard.default.file.name"); //$NON-NLS-1$
+
+                }
+                if(mSaveLocationTypes[1].getSelection()) {
+                    FileDialog dialog = new FileDialog(getShell(),SWT.SAVE);
+                    dialog.setFileName(savePath);
+                    dialog.setFilterExtensions(FILTER_EXTENSIONS);
+                    dialog.setFilterNames(FILTER_NAMES);
+                    dialog.setText(EclipseNSISPlugin.getResourceString("save.location.title")); //$NON-NLS-1$
+                    savePath = dialog.open();
+                    if(savePath != null) {
+                        mSaveLocation.setText(savePath);
+                    }
+                }
+                else {
+                    SaveAsDialog dialog = new SaveAsDialog(getShell());
+                    IPath path = new Path(savePath);
+                    if(path.isAbsolute()) {
+                        try {
+                            IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
+                            dialog.setOriginalFile(file);
+                        }
+                        catch (Exception e1) {
+                        }
+                    }
+                    else {
+                        dialog.setOriginalName(path.toString());
+                    }
+                    dialog.setTitle(EclipseNSISPlugin.getResourceString("save.location.title")); //$NON-NLS-1$
+                    dialog.create();
+                    dialog.setMessage(EclipseNSISPlugin.getResourceString("save.location.message")); //$NON-NLS-1$
+                    int returnCode = dialog.open();
+                    if(returnCode == Window.OK) {
+                        mSaveLocation.setText(dialog.getResult().toString());
+                        mCheckOverwrite = false;
+                    }
+                }
+            }
+        });
+
+        c = new Composite(g,SWT.NONE);
+        c.setLayoutData(new GridData(SWT.FILL,SWT.FILL,false,false));
+        layout = new GridLayout(2,false);
+        layout.marginHeight = layout.marginWidth = 0;
+        c.setLayout(layout);
+
+        // open file for editing checkbox
+        mOpenFileCheckbox = new Button(c,SWT.CHECK);
+        mOpenFileCheckbox.setText(InstallOptionsPlugin.getResourceString("wizard.open.file.label")); //$NON-NLS-1$
+        mOpenFileCheckbox.setSelection(true);
+        mOpenFileCheckbox.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
+
+        mEditorIdCombo = new Combo(c,SWT.DROP_DOWN|SWT.READ_ONLY);
+        mEditorIdCombo.add(InstallOptionsPlugin.getResourceString("wizard.design.editor.label")); //$NON-NLS-1$
+        mEditorIdCombo.add(InstallOptionsPlugin.getResourceString("wizard.source.editor.label")); //$NON-NLS-1$
+        mEditorIdCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
+        mEditorIdCombo.select(0);
+
+        MasterSlaveController msc = new MasterSlaveController(mOpenFileCheckbox);
+        msc.addSlave(mEditorIdCombo);
     }
 
     private Group createTemplatesGroup(Composite parent)
@@ -127,11 +263,12 @@ public class InstallOptionsWizardPage extends WizardPage
         layout.marginHeight = 0;
         layout.marginWidth = 0;
         composite.setLayout(layout);
-        Label l = NSISWizardDialogUtil.createLabel(composite,InstallOptionsPlugin.getResourceString("create.from.template.label"),b.getSelection(),m,false); //$NON-NLS-1$
-        l.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+        Label l = NSISWizardDialogUtil.createLabel(composite,InstallOptionsPlugin.getResourceString("create.from.template.label"),b.getSelection(),m,true); //$NON-NLS-1$
+        NSISWizardDialogUtil.getLayoutControl(l).setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 
         final List list = new List(composite,SWT.BORDER|SWT.SINGLE|SWT.FULL_SELECTION);
         data = new GridData(SWT.FILL, SWT.FILL, true, true);
+        data.heightHint = Common.calculateControlSize(l,SWT.DEFAULT,6).y;
         list.setLayoutData(data);
         m.addSlave(list, mse);
 
@@ -141,9 +278,12 @@ public class InstallOptionsWizardPage extends WizardPage
         layout.marginWidth = 0;
         composite.setLayout(layout);
         l = NSISWizardDialogUtil.createLabel(composite,InstallOptionsPlugin.getResourceString("template.description.label"),true,m,false); //$NON-NLS-1$
-        l.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+        NSISWizardDialogUtil.getLayoutControl(l).setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+
         final StyledText t = new StyledText(composite,SWT.BORDER|SWT.MULTI|SWT.READ_ONLY|SWT.WRAP);
-        t.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+        data = new GridData(SWT.FILL, SWT.FILL, true, true);
+        data.heightHint = Common.calculateControlSize(t,SWT.DEFAULT,6).y;
+        t.setLayoutData(data);
         t.setBackground(getShell().getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
         t.setCursor(null);
         t.setCaret(null);
@@ -218,13 +358,201 @@ public class InstallOptionsWizardPage extends WizardPage
 
     public boolean validatePage()
     {
-        boolean b = !mCreateFromTemplate || ((InstallOptionsWizard)getWizard()).getTemplate() != null;
-        if(b) {
-            setErrorMessage(null);
+        if((!mCreateFromTemplate || ((InstallOptionsWizard)getWizard()).getTemplate() != null)) {
+            String pathname = mSaveLocation.getText();
+            if(Common.isEmpty(pathname)) {
+                setErrorMessage(EclipseNSISPlugin.getResourceString("empty.save.location.error")); //$NON-NLS-1$
+                return false;
+            }
+            else if(Path.EMPTY.isValidPath(pathname)) {
+                IPath path = new Path(pathname);
+                path = path.removeLastSegments(1);
+                if(mSaveLocationTypes[1].getSelection()) {
+                    File file = new File(path.toOSString());
+                    if(IOUtility.isValidDirectory(file)) {
+                        setErrorMessage(null);
+                        return true;
+                    }
+                }
+                else {
+                    IResource resource = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
+                    if(resource != null && (resource instanceof IFolder || resource instanceof IProject)) {
+                        setErrorMessage(null);
+                        return true;
+                    }
+                }
+            }
+            setErrorMessage(EclipseNSISPlugin.getFormattedString("invalid.save.location.error",new String[]{pathname})); //$NON-NLS-1$
+            return false;
         }
         else {
             setErrorMessage(InstallOptionsPlugin.getResourceString("select.template.error")); //$NON-NLS-1$
+            return false;
         }
-        return b;
+    }
+
+    public boolean finish()
+    {
+        IPath path = new Path(mSaveLocation.getText());
+        if(Common.isEmpty(path.getFileExtension())) {
+            path = path.addFileExtension(IInstallOptionsConstants.INI_EXTENSIONS[0]);
+        }
+        if(!path.isAbsolute()) {
+            Common.openError(getShell(),"Please specify an absolute location for the output file.",InstallOptionsPlugin.getShellImage());
+            return false;
+        }
+        final boolean saveExternal = mSaveLocationTypes[1].getSelection();
+        String pathString = saveExternal?path.toOSString():path.toString();
+        final boolean exists;
+        final File file;
+        final IFile ifile;
+        if(saveExternal) {
+            ifile = null;
+            file = new File(pathString);
+            exists = file.exists();
+        }
+        else {
+            file = null;
+            ifile = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
+            exists = ifile != null && ifile.exists();
+            path = ifile.getLocation();
+            if(path == null) {
+                Common.openError(getShell(),EclipseNSISPlugin.getResourceString("local.filesystem.error"),InstallOptionsPlugin.getShellImage()); //$NON-NLS-1$
+                return false;
+            }
+        }
+        if(exists && mCheckOverwrite) {
+            if(!Common.openQuestion(getShell(), EclipseNSISPlugin.getResourceString("question.title"), //$NON-NLS-1$
+                    EclipseNSISPlugin.getFormattedString("save.path.question",new String[] {pathString}),  //$NON-NLS-1$
+                    InstallOptionsPlugin.getShellImage())) {
+                return false;
+            }
+            mCheckOverwrite = false;
+        }
+        java.util.List editors = NSISEditorUtilities.findEditors(path);
+        if(!Common.isEmptyCollection(editors)) {
+            java.util.List dirtyEditors = new ArrayList();
+            for (Iterator iter = editors.iterator(); iter.hasNext();) {
+                IEditorPart editor = (IEditorPart)iter.next();
+                if(editor.isDirty()) {
+                    dirtyEditors.add(editor);
+                }
+            }
+            if(dirtyEditors.size() > 0) {
+                if(!Common.openConfirm(getShell(), EclipseNSISPlugin.getFormattedString("save.dirty.editor.confirm",new String[] {pathString}),  //$NON-NLS-1$
+                    InstallOptionsPlugin.getShellImage())) {
+                    return false;
+                }
+                for (Iterator iter = dirtyEditors.iterator(); iter.hasNext();) {
+                    IEditorPart editor = (IEditorPart)iter.next();
+                    editor.getSite().getPage().closeEditor(editor,false);
+                    editors.remove(editor);
+                }
+
+                if(saveExternal) {
+                    for (Iterator iter = editors.iterator(); iter.hasNext();) {
+                        IEditorPart editor = (IEditorPart)iter.next();
+                        editor.getSite().getPage().closeEditor(editor,false);
+                    }
+                }
+            }
+        }
+        IRunnableWithProgress op = new IRunnableWithProgress() {
+            public void run(IProgressMonitor monitor) throws InvocationTargetException
+            {
+                try {
+                    IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+
+                    if(exists) {
+                        if(saveExternal) {
+                            file.delete();
+                        }
+                        else {
+                            ifile.delete(true,true,null);
+                        }
+                    }
+                    if(saveExternal) {
+                        Writer writer = null;
+                        try {
+                            writer = new BufferedWriter(new FileWriter(file));
+                            writer.write(getContents());
+                        }
+                        finally {
+                            IOUtility.closeIO(writer);
+                        }
+
+                        IFile[] files = root.findFilesForLocationURI(file.toURI());
+                        if(!Common.isEmptyArray(files)) {
+                            for (int i = 0; i < files.length; i++) {
+                                files[i].refreshLocal(IResource.DEPTH_ZERO, null);
+                            }
+                        }
+                    }
+                    else {
+                        ifile.create(new ByteArrayInputStream(getContents().getBytes()),true,null);
+                    }
+                }
+                catch (Exception e) {
+                    throw new InvocationTargetException(e);
+                }
+            }
+        };
+        try {
+            getContainer().run(true, false, op);
+        }
+        catch (InterruptedException e) {
+            return false;
+        }
+        catch (InvocationTargetException e) {
+            Throwable realException = e.getTargetException();
+            Common.openError(getShell(), realException.getLocalizedMessage(), InstallOptionsPlugin.getShellImage());
+            return false;
+        }
+
+        if (mOpenFileCheckbox.getSelection()) {
+            final String editorId = mEditorIds[mEditorIdCombo.getSelectionIndex()];
+
+            getShell().getDisplay().syncExec(new Runnable() {
+                public void run() {
+                    IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+                    try {
+                        IEditorInput input;
+                        if(saveExternal) {
+                            input =new NSISExternalFileEditorInput(file);
+                        }
+                        else {
+                            input = new FileEditorInput(ifile);
+                        }
+                        IDE.openEditor(page, input, editorId, true);
+                    }
+                    catch (PartInitException e) {
+                    }
+                }
+            });
+        }
+        return true;
+    }
+
+    protected String getContents()
+    {
+        InstallOptionsDialog dialog = InstallOptionsDialog.loadINIFile(new INIFile());
+        InstallOptionsTemplate template = ((InstallOptionsWizard)getWizard()).getTemplate();
+        if(template != null) {
+            InstallOptionsWidget[] widgets = template.createWidgets();
+            if(!Common.isEmptyArray(widgets)) {
+                for (int i = 0; i < widgets.length; i++) {
+                    dialog.addChild(widgets[i]);
+                }
+            }
+        }
+        INIFile iniFile = dialog.updateINIFile();
+        int i=0;
+        INILine line = new INILine("; "+InstallOptionsPlugin.getResourceString("wizard.file.header.comment")); //$NON-NLS-1$  //$NON-NLS-2$
+        iniFile.addChild(i++,line);
+        line = new INILine("; "+DateFormat.getDateTimeInstance().format(new Date())); //$NON-NLS-1$
+        iniFile.addChild(i++,line);
+        iniFile.update();
+
+        return iniFile.toString();
     }
 }

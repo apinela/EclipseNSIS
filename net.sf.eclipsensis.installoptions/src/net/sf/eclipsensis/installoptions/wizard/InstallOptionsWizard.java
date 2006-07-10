@@ -28,13 +28,12 @@ public class InstallOptionsWizard extends Wizard implements INewWizard
     private static final Image cShellImage = InstallOptionsPlugin.getShellImage();
 
     private InstallOptionsTemplate mTemplate = null;
-	private IStructuredSelection mSelection;
-	private IWorkbench mWorkbench;
     private IPageChangedListener mPageChangedListener;
 
     public InstallOptionsWizard()
     {
         super();
+        setNeedsProgressMonitor(true);
         setTitleBarColor(ColorManager.WHITE);
         mPageChangedListener = new WizardShellImageChanger(this, cShellImage);
     }
@@ -45,7 +44,6 @@ public class InstallOptionsWizard extends Wizard implements INewWizard
     public void addPages()
     {
     	addPage(new InstallOptionsWizardPage());
-        addPage(new InstallOptionsWizardPage2(mWorkbench, mSelection));
     }
 
     /** (non-Javadoc)
@@ -53,8 +51,6 @@ public class InstallOptionsWizard extends Wizard implements INewWizard
      */
     public void init(IWorkbench workbench,IStructuredSelection selection)
     {
-    	mWorkbench = workbench;
-    	mSelection = selection;
     	setWindowTitle(InstallOptionsPlugin.getResourceString("wizard.window.title")); //$NON-NLS-1$
     	setDefaultPageImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("wizard.title.image"))); //$NON-NLS-1$
     }
@@ -85,6 +81,6 @@ public class InstallOptionsWizard extends Wizard implements INewWizard
      */
     public boolean performFinish()
     {
-    	return ((InstallOptionsWizardPage2)getPages()[getPageCount()-1]).finish();
+    	return ((InstallOptionsWizardPage)getPages()[0]).finish();
     }
 }

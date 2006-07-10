@@ -48,10 +48,10 @@ public class TextStateKeyValueValidator extends MultiLineKeyValueValidator
                                     keyValue.setValue(buf.toString());
                                 }
                                 else {
-                                    keyValue.addProblem(INIProblem.TYPE_ERROR,
+                                    keyValue.addProblem(new INIProblem(INIProblem.TYPE_ERROR,
                                             InstallOptionsPlugin.getFormattedString("text.state.only.numbers.error", //$NON-NLS-1$
                                                     new String[]{InstallOptionsModel.PROPERTY_STATE,
-                                                    InstallOptionsModel.FLAGS_ONLY_NUMBERS}));
+                                                    InstallOptionsModel.FLAGS_ONLY_NUMBERS})));
                                     hasProblems = true;
                                 }
                             }

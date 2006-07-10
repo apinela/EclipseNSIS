@@ -27,9 +27,9 @@ public class ToggleKeyValueValidator implements IINIKeyValueValidator
                 keyValue.setValue("0"); //$NON-NLS-1$
             }
             else {
-                keyValue.addProblem(INIProblem.TYPE_ERROR,
+                keyValue.addProblem(new INIProblem(INIProblem.TYPE_ERROR,
                                     InstallOptionsPlugin.getFormattedString("toggle.value.error", //$NON-NLS-1$
-                                            new String[]{keyValue.getKey()}));
+                                            new String[]{keyValue.getKey()})));
                 return false;
             }
         }

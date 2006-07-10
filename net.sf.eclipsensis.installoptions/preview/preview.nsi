@@ -51,6 +51,7 @@ done:
 FunctionEnd
 
 Function Preview
+  BringToFront
   InitPluginsDir
   Push $R0
   File /oname=$PLUGINSDIR\preview.ini "${PREVIEW_INI}"

@@ -229,26 +229,6 @@ public abstract class SWTControlFigure extends ScrollBarsFigure
         return false;
     }
 
-    protected boolean isNeedsTheme()
-    {
-        return false;
-    }
-
-    protected String getTheme()
-    {
-        return null;
-    }
-
-    protected int getThemePartId()
-    {
-        return 0;
-    }
-
-    protected int getThemeStateId()
-    {
-        return 0;
-    }
-
     int getStyle()
     {
         return mStyle;

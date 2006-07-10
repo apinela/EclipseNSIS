@@ -31,9 +31,9 @@ public class TxtColorKeyValueValidator implements IINIKeyValueValidator
                 keyValue.setValue(TypeConverter.RGB_CONVERTER.asString(InstallOptionsLink.DEFAULT_TXTCOLOR));
             }
             else {
-                keyValue.addProblem(INIProblem.TYPE_ERROR,
+                keyValue.addProblem(new INIProblem(INIProblem.TYPE_ERROR,
                                     InstallOptionsPlugin.getFormattedString("txtcolor.value.error", //$NON-NLS-1$
-                                            new String[]{keyValue.getKey()}));
+                                            new String[]{keyValue.getKey()})));
                 return false;
             }
         }

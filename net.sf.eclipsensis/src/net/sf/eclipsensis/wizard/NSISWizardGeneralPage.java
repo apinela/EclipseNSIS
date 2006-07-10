@@ -54,6 +54,11 @@ public class NSISWizardGeneralPage extends AbstractNSISWizardPage
               EclipseNSISPlugin.getResourceString("wizard.general.description")); //$NON-NLS-1$
     }
 
+    protected boolean hasRequiredFields()
+    {
+        return isScriptWizard();
+    }
+
     private boolean validateField(int flag)
     {
         if(validatePage(flag)) {
@@ -94,7 +99,6 @@ public class NSISWizardGeneralPage extends AbstractNSISWizardPage
     protected Control createPageControl(Composite parent)
     {
         final Composite composite = new Composite(parent, SWT.NONE);
-        setControl(composite);
 
         GridLayout layout = new GridLayout(1,false);
         composite.setLayout(layout);
@@ -114,7 +118,7 @@ public class NSISWizardGeneralPage extends AbstractNSISWizardPage
         NSISWizardSettings settings = mWizard.getSettings();
         final String programFiles =NSISKeywords.getInstance().getKeyword("$PROGRAMFILES"); //$NON-NLS-1$
 
-        final Text t = NSISWizardDialogUtil.createText(group, settings.getName(), "application.name.label", true, null, true); //$NON-NLS-1$
+        final Text t = NSISWizardDialogUtil.createText(group, settings.getName(), "application.name.label", true, null, isScriptWizard()); //$NON-NLS-1$
         t.addModifyListener(new ModifyListener(){
            public void modifyText(ModifyEvent e)
            {
@@ -179,7 +183,7 @@ public class NSISWizardGeneralPage extends AbstractNSISWizardPage
         final Text t = NSISWizardDialogUtil.createFileBrowser(group, settings.getOutFile(), true,
                                    Common.loadArrayProperty(bundle,"installer.file.filternames"),  //$NON-NLS-1$
                                    Common.loadArrayProperty(bundle,"installer.file.filters"), "installer.file.label", //$NON-NLS-1$ //$NON-NLS-2$
-                                   true, null,true);
+                                   true, null,isScriptWizard());
         t.addModifyListener(new ModifyListener(){
            public void modifyText(ModifyEvent e)
            {
@@ -311,7 +315,7 @@ public class NSISWizardGeneralPage extends AbstractNSISWizardPage
 
         ResourceBundle bundle = EclipseNSISPlugin.getDefault().getResourceBundle();
         final Text t = NSISWizardDialogUtil.createText(group, settings.getUninstallFile(), "uninstaller.file.label", true, //$NON-NLS-1$
-                            m,true);
+                            m,isScriptWizard());
         t.addModifyListener(new ModifyListener(){
            public void modifyText(ModifyEvent e)
            {

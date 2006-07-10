@@ -347,7 +347,6 @@ public class RepeatableParam extends NSISParam
         private void updateControl(Composite container)
         {
             if(Common.isValid(container)) {
-//                container.pack(true);
                 container.layout(true,true);
                 Shell shell = container.getShell();
                 shell.layout(new Control[] {container});

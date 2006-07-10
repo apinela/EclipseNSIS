@@ -9,22 +9,47 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.editor;
 
+import java.util.Iterator;
+import java.util.List;
+
 import net.sf.eclipsensis.editor.codeassist.NSISAnnotationHover;
 import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
+import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
+import net.sf.eclipsensis.installoptions.editor.annotation.INIProblemAnnotation;
 import net.sf.eclipsensis.installoptions.editor.text.*;
+import net.sf.eclipsensis.installoptions.ini.*;
+import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.ITextHover;
+import org.eclipse.jface.text.contentassist.ICompletionProposal;
+import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.presentation.PresentationReconciler;
+import org.eclipse.jface.text.quickassist.*;
 import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
 import org.eclipse.jface.text.source.*;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.ui.*;
 
 public class InstallOptionsSourceViewerConfiguration extends SourceViewerConfiguration
 {
+    private NSISAnnotationHover mAnnotationHover;
+
+    public InstallOptionsSourceViewerConfiguration()
+    {
+        mAnnotationHover = new NSISAnnotationHover(new String[]{IInstallOptionsConstants.INSTALLOPTIONS_ERROR_ANNOTATION_NAME, IInstallOptionsConstants.INSTALLOPTIONS_WARNING_ANNOTATION_NAME});
+    }
+
     public IAnnotationHover getAnnotationHover(ISourceViewer sourceViewer)
     {
-        return new NSISAnnotationHover(new String[]{IInstallOptionsConstants.INSTALLOPTIONS_ERROR_ANNOTATION_NAME,
-                                                    IInstallOptionsConstants.INSTALLOPTIONS_WARNING_ANNOTATION_NAME});
+        return mAnnotationHover;
+    }
+
+    public ITextHover getTextHover(ISourceViewer sourceViewer, String contentType)
+    {
+        return mAnnotationHover;
     }
 
     /*
@@ -43,5 +68,115 @@ public class InstallOptionsSourceViewerConfiguration extends SourceViewerConfigu
         reconciler.setRepairer(dr, IDocument.DEFAULT_CONTENT_TYPE);
 
         return reconciler;
+    }
+
+    public IQuickAssistAssistant getQuickAssistAssistant(ISourceViewer sourceViewer)
+    {
+        QuickAssistAssistant quickAssistAssistant = new QuickAssistAssistant();
+        quickAssistAssistant.setQuickAssistProcessor(new IQuickAssistProcessor() {
+            public boolean canAssist(IQuickAssistInvocationContext invocationContext)
+            {
+                return false;
+            }
+
+            public boolean canFix(Annotation annotation)
+            {
+                if(annotation instanceof INIProblemAnnotation) {
+                    return ((INIProblemAnnotation)annotation).isQuickFixable();
+                }
+                return false;
+            }
+
+            public ICompletionProposal[] computeQuickAssistProposals(IQuickAssistInvocationContext invocationContext)
+            {
+                if(invocationContext.getOffset() >= 0 && invocationContext.getLength() <= 0) {
+                    IWorkbench workbench = PlatformUI.getWorkbench();
+                    if(workbench != null) {
+                        IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
+                        if(window != null) {
+                            IWorkbenchPage page = window.getActivePage();
+                            if(page != null) {
+                                IEditorPart editor = page.getActiveEditor();
+                                if(editor instanceof InstallOptionsSourceEditor) {
+                                    INIFile inifile = ((InstallOptionsSourceEditor)editor).getINIFile();
+                                    if(inifile != null) {
+                                        INILine line = inifile.getLineAtOffset(invocationContext.getOffset());
+                                        if(line != null) {
+                                            List problems = line.getProblems();
+                                            if(!Common.isEmptyCollection(problems)) {
+                                                ICompletionProposal[] proposals = new ICompletionProposal[problems.size()];
+                                                int i=0;
+                                                for (Iterator iter = problems.iterator(); iter.hasNext();) {
+                                                    INIProblem problem = (INIProblem)iter.next();
+                                                    if(problem.canFix()) {
+                                                        proposals[i++] = new INIProblemQuickFixProposal(problem);
+                                                    }
+                                                }
+                                                return proposals;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                return null;
+            }
+
+            public String getErrorMessage()
+            {
+                return null;
+            }
+        });
+        return quickAssistAssistant;
+    }
+
+    private static Image FIX_ERROR_ICON = InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("fix.errors.action.icon"));
+    private static Image FIX_WARNING_ICON = InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("fix.warnings.action.icon"));
+    private class INIProblemQuickFixProposal implements ICompletionProposal
+    {
+        private INIProblem mProblem;
+
+        public INIProblemQuickFixProposal(INIProblem problem)
+        {
+            mProblem = problem;
+        }
+
+        public void apply(IDocument document)
+        {
+            mProblem.fix(document);
+        }
+
+        public String getAdditionalProposalInfo()
+        {
+            return null;
+        }
+
+        public IContextInformation getContextInformation()
+        {
+            return null;
+        }
+
+        public String getDisplayString()
+        {
+            return mProblem.getFixDescription();
+        }
+
+        public Image getImage()
+        {
+            if(INIProblem.TYPE_ERROR.equals(mProblem.getType())) {
+                return FIX_ERROR_ICON;
+            }
+            if(INIProblem.TYPE_WARNING.equals(mProblem.getType())) {
+                return FIX_WARNING_ICON;
+            }
+            return null;
+        }
+
+        public Point getSelection(IDocument document)
+        {
+            return null;
+        }
     }
 }

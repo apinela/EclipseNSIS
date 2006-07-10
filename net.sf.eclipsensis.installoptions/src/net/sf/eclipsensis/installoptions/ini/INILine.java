@@ -9,7 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.ini;
 
-import java.io.Serializable;
+import java.io.*;
 import java.util.*;
 
 import net.sf.eclipsensis.INSISConstants;
@@ -108,12 +108,12 @@ public class INILine implements Cloneable, Serializable
 
     public boolean hasErrors()
     {
-        return mErrors.size() > 0;
+        return !Common.isEmptyCollection(mErrors);
     }
 
     public boolean hasWarnings()
     {
-        return mWarnings.size() > 0;
+        return !Common.isEmptyCollection(mWarnings);
     }
 
     public final void validate()
@@ -135,33 +135,42 @@ public class INILine implements Cloneable, Serializable
                 getParent().removeChild(this);
             }
             else {
-                addProblem(INIProblem.TYPE_WARNING,InstallOptionsPlugin.getResourceString("line.ignored.warning")); //$NON-NLS-1$
+                INIProblem problem = new INIProblem(INIProblem.TYPE_WARNING,InstallOptionsPlugin.getResourceString("line.ignored.warning")); //$NON-NLS-1$
+                problem.setFix("Remove line",new INIProblemFix(this));
+                addProblem(problem);
             }
         }
     }
 
     public List getErrors()
     {
-        return (mErrors == null?Collections.EMPTY_LIST:mErrors);
+        return Collections.unmodifiableList(mErrors);
     }
 
     public List getWarnings()
     {
-        return (mWarnings == null?Collections.EMPTY_LIST:mWarnings);
+        return Collections.unmodifiableList(mWarnings);
     }
 
-    public void addProblem(int type, String problem)
+    public List getProblems()
     {
-        switch(type) {
-            case INIProblem.TYPE_WARNING:
-                if(!mWarnings.contains(problem)) {
-                    mWarnings.add(problem);
-                }
-                break;
-            case INIProblem.TYPE_ERROR:
-                if(!mErrors.contains(problem)) {
-                    mErrors.add(problem);
-                }
+        List list = new ArrayList();
+        list.addAll(mErrors);
+        list.addAll(mWarnings);
+        return list;
+    }
+
+    public void addProblem(INIProblem problem)
+    {
+        if(INIProblem.TYPE_ERROR.equals(problem.getType())) {
+            if(!mErrors.contains(problem)) {
+                mErrors.add(problem);
+            }
+        }
+        else if(INIProblem.TYPE_WARNING.equals(problem.getType())) {
+            if(!mWarnings.contains(problem)) {
+                mWarnings.add(problem);
+            }
         }
     }
     
@@ -174,9 +183,8 @@ public class INILine implements Cloneable, Serializable
     {
         try {
             INILine line = (INILine)super.clone();
-            line.mErrors = new ArrayList();
             line.mWarnings = new ArrayList();
-            line.mParent = null;
+            line.mErrors = new ArrayList();
             return line;
         }
         catch (CloneNotSupportedException e) {

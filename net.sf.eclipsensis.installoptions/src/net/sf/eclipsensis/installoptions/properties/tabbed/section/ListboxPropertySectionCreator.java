@@ -22,6 +22,8 @@ import net.sf.eclipsensis.util.Common;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ICellEditorValidator;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
@@ -92,5 +94,11 @@ public class ListboxPropertySectionCreator extends ListItemsPropertySectionCreat
             }
         };
         getWidget().addPropertyChangeListener(listener);
+        buttons.addDisposeListener(new DisposeListener() {
+            public void widgetDisposed(DisposeEvent e)
+            {
+                getWidget().removePropertyChangeListener(listener);
+            }
+        });
     }
 }

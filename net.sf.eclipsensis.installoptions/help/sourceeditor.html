@@ -79,7 +79,7 @@ in the source editor.</p>
 <div id="div_folding">
 <p style="text-align: center;"><img name="img_folding" alt="Code Folding" src="images/folding1.gif" ismap="ismap" style="border: medium none ; width: 540px; height: 352px;" usemap="#folding1"></p>
 <p>Code folding functions are also available on the <a href="#rulers">vertical ruler</a> context menu and as keyboard shortcuts.</p>
-<p style="text-align: center;"><img src="images/foldingmenu.gif" alt="Folding Context Menu" usemap="#foldingmenu" ismap="ismap" style="border: 0px solid ; width: 456px; height: 46px;"></p>
+<p style="text-align: center;"><img src="images/foldingmenu.gif" alt="Folding Context Menu" usemap="#foldingmenu" ismap="ismap" style="border: 0px solid ; width: 452px; height: 57px;"></p>
 <a name="a_toggle_folding"></a>
 <dl id="id_toggle_folding">
 <dt>Toggle Folding</dt>
@@ -101,6 +101,12 @@ in the source editor.</p>
 <dt>Collapse</dt>
 <dd>Collapse the folded code region at the caret position in the current InstallOptions source editor.<br>
 <strong>Shortcut:</strong> Ctrl+NumPad -</dd>
+</dl>
+<a name="a_collapse_all"></a>
+<dl id="id_collapse_all">
+<dt>Collapse All</dt>
+<dd>Collapse all expanded code regions in the current InstallOptions source editor.<br>
+<strong>Shortcut:</strong> Ctrl+Shift+NumPad /</dd>
 </dl>
 <script type="text/javascript" language="javascript">
 <!--
@@ -180,8 +186,9 @@ The preview language may also be selected.</dd>
 <p><strong><small>Copyright &copy; 2004-2006 Sunil Kamath
 (IcemanK).</small></strong></p>
 <map name="foldingmenu">
-  <area id="expand_all" shape="rect" href="#a_expand_all" alt="Expand All" onClick="highlightDef('id_expand_all');" coords="242,22,432,38">
-  <area id="toggle_folding" shape="rect" href="#a_toggle_folding" alt="Toggle Folding" onClick="highlightDef('id_toggle_folding');" coords="242,5,432,21">
+  <area id="collapse_all" shape="rect" href="#a_collapse_all" alt="Collapse All" onClick="highlightDef('id_collapse_all');" coords="222,38,434,54">
+  <area id="expand_all" shape="rect" href="#a_expand_all" alt="Expand All" onClick="highlightDef('id_expand_all');" coords="222,21,412,37">
+  <area id="toggle_folding" shape="rect" href="#a_toggle_folding" alt="Toggle Folding" onClick="highlightDef('id_toggle_folding');" coords="222,4,412,20">
 </map>
 </div>
 </body></html>

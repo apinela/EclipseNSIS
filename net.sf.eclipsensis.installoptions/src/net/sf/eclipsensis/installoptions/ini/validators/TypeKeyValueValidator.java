@@ -29,9 +29,9 @@ public class TypeKeyValueValidator implements IINIKeyValueValidator
             keyValue.setValue(InstallOptionsModel.TYPE_UNKNOWN);
         }
         else {
-            keyValue.addProblem(INIProblem.TYPE_WARNING,
+            keyValue.addProblem(new INIProblem(INIProblem.TYPE_WARNING,
                                 InstallOptionsPlugin.getFormattedString("type.value.warning", //$NON-NLS-1$
-                                        new Object[]{InstallOptionsModel.PROPERTY_TYPE}));
+                                        new Object[]{InstallOptionsModel.PROPERTY_TYPE})));
         }
         return false;
     }

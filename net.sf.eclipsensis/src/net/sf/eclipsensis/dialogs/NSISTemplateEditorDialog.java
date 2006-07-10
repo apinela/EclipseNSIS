@@ -263,7 +263,7 @@ public class NSISTemplateEditorDialog extends StatusMessageDialog
 
     private static Label createLabel(Composite parent, String name)
     {
-        Label label= new Label(parent, SWT.NULL);
+        Label label= new Label(parent, SWT.NONE);
         label.setText(name);
         label.setLayoutData(new GridData(SWT.FILL,SWT.FILL,false,false));
 

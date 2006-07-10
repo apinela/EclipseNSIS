@@ -79,7 +79,7 @@ public class NSISInstallDirectoryDialog extends AbstractNSISInstallItemDialog
         final Combo c1 = NSISWizardDialogUtil.createCombo(composite,
                                                          NSISKeywords.getInstance().getKeywordsGroup(NSISKeywords.PATH_CONSTANTS_AND_VARIABLES),
                                                          mStore.getString("destination"), //$NON-NLS-1$
-                                                         false,"wizard.destination.label",true,null,false); //$NON-NLS-1$
+                                                         false,"wizard.destination.label",true,null,true); //$NON-NLS-1$
         c1.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e)
             {
@@ -103,9 +103,13 @@ public class NSISInstallDirectoryDialog extends AbstractNSISInstallItemDialog
                 mStore.setValue("recursive",cb1.getSelection()); //$NON-NLS-1$
             }
         });
-        ((GridData)cb1.getLayoutData()).horizontalSpan = 2;
-
+        ((GridData)cb1.getLayoutData()).horizontalSpan = 3;
         return composite;
+    }
+
+    protected boolean hasRequiredFields()
+    {
+        return true;
     }
 
     protected String checkForErrors()

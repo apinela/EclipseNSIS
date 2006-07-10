@@ -11,12 +11,16 @@ package net.sf.eclipsensis.installoptions.ini;
 
 import java.util.List;
 
+import org.eclipse.jface.text.Position;
+
 public interface IINIContainer
 {
     public void addChild(INILine element);
     public void addChild(int index, INILine element);
     public void removeChild(INILine element);
     public List getChildren();
-    void setDirty(boolean dirty);
-    boolean isDirty();
+    public void setDirty(boolean dirty);
+    public boolean isDirty();
+    public Position getChildPosition(INILine child);
+    public INILine getLineAtOffset(int offset);
 }

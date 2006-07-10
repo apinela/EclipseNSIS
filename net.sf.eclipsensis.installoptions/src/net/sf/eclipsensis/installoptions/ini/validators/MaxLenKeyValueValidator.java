@@ -45,8 +45,8 @@ public class MaxLenKeyValueValidator extends PositiveNumberKeyValueValidator
                     keyValue.setValue(Integer.toString(minValue));
                 }
                 else {
-                    keyValue.addProblem(INIProblem.TYPE_ERROR,InstallOptionsPlugin.getFormattedString("minmax.value.error",new Object[]{ //$NON-NLS-1$
-                            keyValue.getKey(),new Integer(minValue),new Integer(maxValue)}));
+                    keyValue.addProblem(new INIProblem(INIProblem.TYPE_ERROR,InstallOptionsPlugin.getFormattedString("minmax.value.error",new Object[]{ //$NON-NLS-1$
+                            keyValue.getKey(),new Integer(minValue),new Integer(maxValue)})));
                     b = false;
                 }
             }

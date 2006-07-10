@@ -56,6 +56,11 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
               EclipseNSISPlugin.getResourceString("wizard.attributes.description")); //$NON-NLS-1$
     }
 
+    protected boolean hasRequiredFields()
+    {
+        return isScriptWizard();
+    }
+
     private boolean validateField(int flag)
     {
         if(validatePage(flag)) {
@@ -114,7 +119,6 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
     protected Control createPageControl(Composite parent)
     {
         final Composite composite = new Composite(parent, SWT.NONE);
-        setControl(composite);
 
         GridLayout layout = new GridLayout(1,false);
         composite.setLayout(layout);
@@ -176,9 +180,9 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
         layout.marginHeight = 0;
         layout.marginWidth = 0;
         leftComposite.setLayout(layout);
-        
+
         Label l = NSISWizardDialogUtil.createLabel(leftComposite, "available.languages.label", true, m, false); //$NON-NLS-1$
-        ((GridData)l.getLayoutData()).horizontalSpan = 2;
+        ((GridData)NSISWizardDialogUtil.getLayoutControl(l).getLayoutData()).horizontalSpan = 2;
 
         final List availableLangList = new List(leftComposite,SWT.BORDER|SWT.H_SCROLL|SWT.V_SCROLL|SWT.MULTI);
         data = new GridData(SWT.FILL,SWT.FILL,true,true);
@@ -232,8 +236,8 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
         layout.marginWidth = 0;
         rightComposite.setLayout(layout);
 
-        l = NSISWizardDialogUtil.createLabel(rightComposite, "selected.languages.label", true, m, true); //$NON-NLS-1$
-        ((GridData)l.getLayoutData()).horizontalSpan = 2;
+        l = NSISWizardDialogUtil.createLabel(rightComposite, "selected.languages.label", true, m, isScriptWizard()); //$NON-NLS-1$
+        ((GridData)NSISWizardDialogUtil.getLayoutControl(l).getLayoutData()).horizontalSpan = 2;
 
         final List selectedLangList = new List(rightComposite,SWT.BORDER|SWT.H_SCROLL|SWT.V_SCROLL|SWT.MULTI);
         data = new GridData(SWT.FILL,SWT.FILL,true,true);
@@ -515,7 +519,7 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
         final Combo c = NSISWizardDialogUtil.createCombo(group,
                                             NSISKeywords.getInstance().getKeywordsGroup(NSISKeywords.PATH_CONSTANTS_AND_VARIABLES),
                                             settings.getInstallDir(), false, "installation.directory.label", //$NON-NLS-1$
-                                            true, null, true);
+                                            true, null, isScriptWizard());
         GridData gd = (GridData)c.getLayoutData();
         gd.horizontalAlignment = GridData.FILL;
         gd.grabExcessHorizontalSpace = true;
@@ -587,7 +591,7 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
 
         final MasterSlaveController m = new MasterSlaveController(b);
         final Text t = NSISWizardDialogUtil.createText(group, settings.getStartMenuGroup(), "startmenu.group.label", //$NON-NLS-1$
-                            true, m, true);
+                            true, m, isScriptWizard());
         t.addModifyListener(new ModifyListener(){
             public void modifyText(ModifyEvent e)
             {
@@ -607,8 +611,8 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
         });
         final MasterSlaveController m2 = new MasterSlaveController(b2);
         final MasterSlaveEnabler mse = new MasterSlaveEnabler() {
-            public void enabled(Control control, boolean flag) 
-            { 
+            public void enabled(Control control, boolean flag)
+            {
                 m2.updateSlaves(flag);
             }
 
@@ -624,7 +628,7 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
                 }
             }
         };
-        
+
         final Button b3 = NSISWizardDialogUtil.createCheckBox(group, "disable.startmenu.shortcuts.label", //$NON-NLS-1$
                 settings.isDisableStartMenuShortcuts(), b2.isEnabled(), m2, false);
         b3.addSelectionListener(new SelectionAdapter() {
@@ -633,7 +637,7 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
                 mWizard.getSettings().setDisableStartMenuShortcuts(((Button)e.widget).getSelection());
             }
         });
-        
+
         m.setEnabler(b2,mse);
         m.updateSlaves();
         addPageChangedRunnable(new Runnable() {

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?eclipse version="3.0"?>
+<?eclipse version="3.2"?>
 <!--
 ###############################################################################
 # Copyright (c) 2004-2006 Sunil Kamath (IcemanK).
@@ -66,7 +66,7 @@
       </actionSet>
    </extension>
    <extension point="net.sf.eclipsensis.nsisConfigWizard"
-       id="net.sf.eclipsensis.update.nsisUpdateConfigWizards"> 
+       id="nsisUpdateConfigWizards"> 
       <wizard 
          id="net.sf.eclipsensis.update.wizard.NSISUpdateWizard" 
          name="%update.wizard.name" 

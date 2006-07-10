@@ -34,7 +34,7 @@ public class ComboboxStateKeyValueValidator implements IINIKeyValueValidator
                     keyValue.setValue(array[0]);
                 }
                 else {
-                    keyValue.addProblem(INIProblem.TYPE_ERROR, error);
+                    keyValue.addProblem(new INIProblem(INIProblem.TYPE_ERROR, error));
                     return false;
                 }
             }

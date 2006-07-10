@@ -55,10 +55,10 @@ public class FlagsKeyValueValidator implements IINIKeyValueValidator
                                 keyValue.setValue(Common.flatten(flags, IInstallOptionsConstants.LIST_SEPARATOR));
                             }
                             else {
-                                keyValue.addProblem(INIProblem.TYPE_WARNING,
+                                keyValue.addProblem(new INIProblem(INIProblem.TYPE_WARNING,
                                                     InstallOptionsPlugin.getFormattedString("flags.value.warning", //$NON-NLS-1$
                                                             new Object[]{InstallOptionsModel.PROPERTY_TYPE,
-                                                                         types[0].getValue(),new Integer(n),buf.toString()}));
+                                                                         types[0].getValue(),new Integer(n),buf.toString()})));
                             }
                         }
                     }

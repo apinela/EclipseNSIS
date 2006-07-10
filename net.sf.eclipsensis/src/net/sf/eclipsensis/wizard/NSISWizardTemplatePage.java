@@ -38,6 +38,11 @@ public class NSISWizardTemplatePage extends AbstractNSISWizardStartPage
               EclipseNSISPlugin.getResourceString("wizard.template.description")); //$NON-NLS-1$
     }
 
+    protected boolean hasRequiredFields()
+    {
+        return true;
+    }
+
     protected String getHelpContextId()
     {
         return INSISConstants.PLUGIN_CONTEXT_PREFIX+"nsis_scrtmpltdlg_context"; //$NON-NLS-1$
@@ -47,7 +52,6 @@ public class NSISWizardTemplatePage extends AbstractNSISWizardStartPage
     {
         mTemplate = mWizard.getTemplate();
         final Composite composite = new Composite(parent, SWT.NONE);
-        setControl(composite);
 
         final GridLayout layout = new GridLayout(2,false);
         composite.setLayout(layout);
@@ -63,7 +67,7 @@ public class NSISWizardTemplatePage extends AbstractNSISWizardStartPage
         });
 
         Label l = NSISWizardDialogUtil.createLabel(composite,"template.dialog.description.label",true,null,false); //$NON-NLS-1$
-        GridData data = (GridData)l.getLayoutData();
+        GridData data = (GridData)NSISWizardDialogUtil.getLayoutControl(l).getLayoutData();
         data.horizontalSpan=2;
 
         t = NSISWizardDialogUtil.createText(composite,mTemplate.getDescription(),SWT.BORDER|SWT.MULTI|SWT.WRAP,2,true,null);

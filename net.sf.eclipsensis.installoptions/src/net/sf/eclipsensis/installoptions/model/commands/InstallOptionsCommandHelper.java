@@ -82,6 +82,22 @@ public abstract class InstallOptionsCommandHelper
                         section.validate(iniFile.getValidateFixMode());
                         if(section.hasErrors()) {
                             Display.getDefault().syncExec(new Runnable() {
+                                private int getErrorsAndMaxLength(List list, INILine line)
+                                {
+                                    int maxLength = 0;
+                                    for(Iterator iter=line.getErrors().iterator(); iter.hasNext(); ) {
+                                        INIProblem error = (INIProblem)iter.next();
+                                        maxLength = Math.max(maxLength, error.getMessage().length());
+                                        list.add(error);
+                                        if(line instanceof INISection) {
+                                            for(Iterator iter2=section.getChildren().iterator(); iter2.hasNext(); ) {
+                                                maxLength = Math.max(maxLength, getErrorsAndMaxLength(list,(INILine)iter2.next()));
+                                            }
+                                        }
+                                    }
+                                    return maxLength;
+                                }
+
                                 public void run()
                                 {
                                     ListDialog dialog = new ListDialog(Display.getCurrent().getActiveShell()) {
@@ -96,17 +112,8 @@ public abstract class InstallOptionsCommandHelper
                                     dialog.setHelpAvailable(false);
                                     dialog.setAddCancelButton(false);
                                     ArrayList list = new ArrayList();
-                                    list.addAll(section.getErrors());
-                                    int maxChars = 0;
-                                    for(Iterator iter=section.getChildren().iterator(); iter.hasNext(); ) {
-                                        List errors = ((INILine)iter.next()).getErrors();
-                                        for (Iterator iterator = errors.iterator(); iterator.hasNext();) {
-                                            String error = (String)iterator.next();
-                                            maxChars = Math.max(maxChars, (error==null?0:error.length()));
-                                            list.add(error);
-                                        }
-                                    }
-                                    dialog.setWidthInChars(maxChars);
+                                    int maxLength = getErrorsAndMaxLength(list, section);
+                                    dialog.setWidthInChars(maxLength);
                                     dialog.setHeightInChars(list.size());
                                     dialog.setContentProvider(new CollectionContentProvider());
                                     dialog.setLabelProvider(new LabelProvider());

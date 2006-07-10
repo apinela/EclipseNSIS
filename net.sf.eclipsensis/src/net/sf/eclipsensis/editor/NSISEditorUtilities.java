@@ -330,6 +330,28 @@ public class NSISEditorUtilities
         updateAnnotations(results.getScriptFile(), results);
     }
 
+    public static List findEditors(IPath path)
+    {
+        List editors = new ArrayList();
+        IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
+        for (int i = 0; i < windows.length; i++) {
+            IWorkbenchPage[] pages = windows[i].getPages();
+            for (int j = 0; j < pages.length; j++) {
+                IEditorReference[] editorRefs = pages[j].getEditorReferences();
+                for (int k = 0; k < editorRefs.length; k++) {
+                    IEditorPart editor = editorRefs[k].getEditor(false);
+                    if(editor != null) {
+                        IEditorInput input = editor.getEditorInput();
+                        if(input instanceof IPathEditorInput && path.equals(((IPathEditorInput)input).getPath())) {
+                            editors.add(editor);
+                        }
+                    }
+                }
+            }
+        }
+        return editors;
+    }
+
     private static void updateAnnotations(File script, MakeNSISResults results)
     {
         IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();

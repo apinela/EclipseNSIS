@@ -177,6 +177,42 @@ public class INISection extends INILine implements IINIContainer
         return true;
     }
 
+    public INILine getLineAtOffset(int offset)
+    {
+        Position pos = getPosition();
+        if(offset >= pos.offset && offset < pos.offset+pos.length) {
+            if(offset < pos.offset+getLength()) {
+                return this;
+            }
+            int start = pos.offset+getLength();
+            for (Iterator iter = mChildren.iterator(); iter.hasNext();) {
+                INILine line = (INILine)iter.next();
+                if(offset < start+line.getLength()) {
+                    return line;
+                }
+                start += line.getLength();
+            }
+        }
+        return null;
+    }
+
+    public Position getChildPosition(INILine child)
+    {
+        if(mChildren.contains(child)) {
+            int offset = getPosition().offset+getLength();
+            for (Iterator iter = mChildren.iterator(); iter.hasNext();) {
+                INILine line = (INILine)iter.next();
+                if(line == child) {
+                    return new Position(offset, line.getLength());
+                }
+                else {
+                    offset += line.getLength();
+                }
+            }
+        }
+        return null;
+    }
+
     protected void checkProblems(int fixFlag)
     {
         //Validate section
@@ -192,8 +228,8 @@ public class INISection extends INILine implements IINIContainer
                     }
                 }
                 else {
-                    addProblem(INIProblem.TYPE_ERROR, InstallOptionsPlugin.getFormattedString("duplicate.section.name.error", //$NON-NLS-1$
-                                    new String[]{getName()}));
+                    addProblem(new INIProblem(INIProblem.TYPE_ERROR, InstallOptionsPlugin.getFormattedString("duplicate.section.name.error", //$NON-NLS-1$
+                                    new String[]{getName()})));
                 }
             }
         }
@@ -212,9 +248,9 @@ public class INISection extends INILine implements IINIContainer
                         removeChild(keyValues[i]);
                     }
                     else {
-                        keyValues[i].addProblem(INIProblem.TYPE_WARNING, InstallOptionsPlugin.getFormattedString("unrecognized.key.warning", //$NON-NLS-1$
+                        keyValues[i].addProblem(new INIProblem(INIProblem.TYPE_WARNING, InstallOptionsPlugin.getFormattedString("unrecognized.key.warning", //$NON-NLS-1$
                                 new Object[]{InstallOptionsPlugin.getResourceString("section.label"), //$NON-NLS-1$
-                                             InstallOptionsModel.SECTION_SETTINGS,keyValues[i].getKey()}));
+                                             InstallOptionsModel.SECTION_SETTINGS,keyValues[i].getKey()})));
                     }
                 }
             }
@@ -243,8 +279,8 @@ public class INISection extends INILine implements IINIContainer
                     while(iter.hasNext()) {
                         buf.append(", \"").append(iter.next()).append("\""); //$NON-NLS-1$ //$NON-NLS-2$
                     }
-                    addProblem(INIProblem.TYPE_ERROR, InstallOptionsPlugin.getFormattedString("required.keys.missing", //$NON-NLS-1$
-                                    new Object[]{buf.toString(), n}));
+                    addProblem(new INIProblem(INIProblem.TYPE_ERROR, InstallOptionsPlugin.getFormattedString("required.keys.missing", //$NON-NLS-1$
+                                    new Object[]{buf.toString(), n})));
                 }
 
                 INIKeyValue[] keyValues = findKeyValues(InstallOptionsModel.PROPERTY_TYPE);
@@ -261,9 +297,9 @@ public class INISection extends INILine implements IINIContainer
                                     removeChild(keyValues[i]);
                                 }
                                 else {
-                                    keyValues[i].addProblem(INIProblem.TYPE_WARNING, InstallOptionsPlugin.getFormattedString("unrecognized.key.warning", //$NON-NLS-1$
+                                    keyValues[i].addProblem(new INIProblem(INIProblem.TYPE_WARNING, InstallOptionsPlugin.getFormattedString("unrecognized.key.warning", //$NON-NLS-1$
                                             new Object[]{InstallOptionsModel.PROPERTY_TYPE,
-                                                         type,keyValues[i].getKey()}));
+                                                         type,keyValues[i].getKey()})));
                                 }
                             }
                         }
@@ -276,8 +312,8 @@ public class INISection extends INILine implements IINIContainer
                         addChild(keyValue);
                     }
                     else {
-                        addProblem(INIProblem.TYPE_WARNING, InstallOptionsPlugin.getFormattedString("key.missing.warning", //$NON-NLS-1$
-                                new Object[]{InstallOptionsModel.PROPERTY_TYPE}));
+                        addProblem(new INIProblem(INIProblem.TYPE_WARNING, InstallOptionsPlugin.getFormattedString("key.missing.warning", //$NON-NLS-1$
+                                new Object[]{InstallOptionsModel.PROPERTY_TYPE})));
                     }
                 }
             }

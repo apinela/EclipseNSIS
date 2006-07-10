@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?eclipse version="3.0"?>
+<?eclipse version="3.2"?>
 <!--
 ###############################################################################
 # Copyright (c) 2004-2006 Sunil Kamath (IcemanK).
@@ -13,7 +13,7 @@
 -->
 <plugin>
    <extension-point id="helpBrowserLocalFileHandler" name="%help.browser.file.handler.extension.name" schema="schema/helpBrowserLocalFileHandler.exsd"/>
-   <extension-point id="nsisConfigWizard" name="%nsis.config.wizard.extension.namesion.name" schema="schema/nsisConfigWizard.exsd"/>
+   <extension-point id="nsisConfigWizard" name="%nsis.config.wizard.extension.name" schema="schema/nsisConfigWizard.exsd"/>
    <extension
          point="org.eclipse.core.runtime.products">
       <product name="%product.name" application="org.eclipse.ui.ide.workbench" description="%product.description"> 

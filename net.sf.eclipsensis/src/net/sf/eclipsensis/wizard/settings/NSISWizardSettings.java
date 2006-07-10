@@ -30,7 +30,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
 {
     public static final String NODE = "settings"; //$NON-NLS-1$
     public static final String CHILD_NODE = "attribute"; //$NON-NLS-1$
-
+    
     private static final long serialVersionUID = -3872062583870145866L;
 
     private String mName = EclipseNSISPlugin.getResourceString("wizard.default.name",""); //$NON-NLS-1$ //$NON-NLS-2$
@@ -81,6 +81,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     private boolean mCreateUninstaller = true;
     private String mUninstallIcon = ""; //$NON-NLS-1$
     private String mUninstallFile = EclipseNSISPlugin.getResourceString("wizard.default.uninstaller",""); //$NON-NLS-1$ //$NON-NLS-2$
+    private boolean mSaveExternal = false;
     private String mSavePath = ""; //$NON-NLS-1$
     private boolean mMakePathsRelative = true;
     private boolean mCompileScript = true;
@@ -760,6 +761,16 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     public void setMakePathsRelative(boolean makePathsRelative)
     {
         mMakePathsRelative = makePathsRelative;
+    }
+
+    public boolean isSaveExternal()
+    {
+        return mSaveExternal;
+    }
+
+    public void setSaveExternal(boolean saveExternal)
+    {
+        mSaveExternal = saveExternal;
     }
 
     /**

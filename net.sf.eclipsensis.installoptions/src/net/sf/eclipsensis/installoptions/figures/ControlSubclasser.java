@@ -15,7 +15,6 @@ import java.util.Map;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.util.WinAPI;
 
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.internal.Callback;
@@ -84,17 +83,6 @@ public class ControlSubclasser
                 case WinAPI.WM_SYSCHAR:
                     res = 0;
                     break;
-                case WinAPI.WM_PRINT:
-                    if(WinAPI.AreVisualStylesEnabled()) {
-                        ControlInfo info = (ControlInfo)cProcMap.get(new Integer(hWnd));
-                        if(info.figure.isNeedsTheme() && (info.figure.getStyle() & SWT.BORDER) == SWT.BORDER) {
-                            res=WinAPI.CallWindowProc(((ControlInfo)cProcMap.get(new Integer(hWnd))).oldProc,
-                                    hWnd, msg, wParam, lParam);
-                            WinAPI.DrawWidgetThemeBorder(hWnd,wParam,info.figure.getTheme(),info.figure.getThemePartId(),
-                                                             info.figure.getThemeStateId());
-                            return res;
-                        }
-                    }
                 default:
                     try {
                         res=WinAPI.CallWindowProc(((ControlInfo)cProcMap.get(new Integer(hWnd))).oldProc,

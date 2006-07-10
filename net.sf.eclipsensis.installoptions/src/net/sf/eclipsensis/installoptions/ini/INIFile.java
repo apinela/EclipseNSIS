@@ -42,8 +42,9 @@ public class INIFile implements IDocumentListener, IINIContainer
     private IDocument mDocument = null;
 
     private boolean mDirty = false;
-    private List mErrors = new ArrayList();
-    private List mWarnings = new ArrayList();
+    private List mProblems = new ArrayList();
+    private boolean mErrors = false;
+    private boolean mWarnings = false;
     private boolean mUpdatingDocument = false;
     
     private int mValidateFixMode = INILine.VALIDATE_FIX_NONE;
@@ -86,6 +87,55 @@ public class INIFile implements IDocumentListener, IINIContainer
         for (int i = 0; i < listeners.length; i++) {
             listeners[i].iniFileChanged(this, event);
         }
+    }
+
+    public INILine getLineAtOffset(int offset)
+    {
+        int start = 0;
+        for (Iterator iter = mChildren.iterator(); iter.hasNext();) {
+            INILine line = (INILine)iter.next();
+            if(line instanceof INISection) {
+                Position pos = ((INISection)line).getPosition();
+                line = ((INISection)line).getLineAtOffset(offset);
+                if(line != null) {
+                    return line;
+                }
+                start += pos.length;
+            }
+            else {
+                if(offset >= start && offset < start+line.getLength()) {
+                    return line;
+                }
+                start += line.getLength();
+            }
+        }
+        return null;
+    }
+
+    public Position getChildPosition(INILine child)
+    {
+        if(mChildren.contains(child)) {
+            if(child instanceof INISection) {
+                Position pos = ((INISection)child).getPosition();
+                return new Position(pos.offset,child.getLength());
+            }
+            else {
+                int offset = 0;
+                for (Iterator iter = mChildren.iterator(); iter.hasNext();) {
+                    INILine line = (INILine)iter.next();
+                    if(line instanceof INISection) {
+                        break;
+                    }
+                    else if(line == child) {
+                        return new Position(offset, line.getLength());
+                    }
+                    else {
+                        offset += line.getLength();
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     public void addChild(INILine line)
@@ -408,8 +458,9 @@ public class INIFile implements IDocumentListener, IINIContainer
             }
             mChildren.clear();
             mLines.clear();
-            mErrors.clear();
-            mWarnings.clear();
+            mProblems.clear();
+            mErrors = false;
+            mWarnings = false;
             setDirty(false);
             notifyListeners(INIFILE_DISCONNECTED);
         }
@@ -579,11 +630,21 @@ public class INIFile implements IDocumentListener, IINIContainer
         validate(fixFlag, false);
     }
 
+    private void addProblem(INIProblem problem)
+    {
+        if(!mProblems.contains(problem)) {
+            mProblems.add(problem);
+            mErrors = mErrors || INIProblem.TYPE_ERROR.equals(problem.getType());
+            mWarnings = mWarnings || INIProblem.TYPE_WARNING.equals(problem.getType());
+        }
+    }
+
     public void validate(int fixFlag, boolean force)
     {
         if(mDirty || force) {
-            mErrors.clear();
-            mWarnings.clear();
+            mProblems.clear();
+            mErrors = false;
+            mWarnings = false;
             for (int i=0; i < mChildren.size(); i++) {
                 ((INILine)mChildren.get(i)).validate(fixFlag);
             }
@@ -622,8 +683,8 @@ public class INIFile implements IDocumentListener, IINIContainer
                         mLines.add(keyValue);
                     }
                     else {
-                        mErrors.add(InstallOptionsPlugin.getFormattedString("settings.section.missing", //$NON-NLS-1$
-                                new String[]{InstallOptionsModel.SECTION_SETTINGS}));
+                        addProblem(new INIProblem(INIProblem.TYPE_ERROR,InstallOptionsPlugin.getFormattedString("settings.section.missing", //$NON-NLS-1$
+                                new String[]{InstallOptionsModel.SECTION_SETTINGS})));
                     }
                 }
             }
@@ -639,8 +700,8 @@ public class INIFile implements IDocumentListener, IINIContainer
                         mLines.add(index+1,keyValue);
                     }
                     else {
-                        section[0].addProblem(INIProblem.TYPE_ERROR, InstallOptionsPlugin.getFormattedString("numfields.section.missing", //$NON-NLS-1$
-                                                new String[]{InstallOptionsModel.PROPERTY_NUMFIELDS}));
+                        section[0].addProblem(new INIProblem(INIProblem.TYPE_ERROR, InstallOptionsPlugin.getFormattedString("numfields.section.missing", //$NON-NLS-1$
+                                                new String[]{InstallOptionsModel.PROPERTY_NUMFIELDS})));
                     }
                 }
                 
@@ -658,9 +719,9 @@ public class INIFile implements IDocumentListener, IINIContainer
                             numFields = n;
                         }
                         else {
-                            keyValue[0].addProblem(INIProblem.TYPE_ERROR, InstallOptionsPlugin.getFormattedString("numfields.value.incorrect", //$NON-NLS-1$
+                            keyValue[0].addProblem(new INIProblem(INIProblem.TYPE_ERROR, InstallOptionsPlugin.getFormattedString("numfields.value.incorrect", //$NON-NLS-1$
                                                         new String[]{InstallOptionsModel.PROPERTY_NUMFIELDS,
-                                                                     InstallOptionsModel.SECTION_FIELD_PREFIX}));
+                                                                     InstallOptionsModel.SECTION_FIELD_PREFIX})));
                         }
                     }
                 }
@@ -679,11 +740,11 @@ public class INIFile implements IDocumentListener, IINIContainer
                         sec.update();
                     }
                     else {
-                        sec.addProblem(INIProblem.TYPE_ERROR, InstallOptionsPlugin.getFormattedString("field.index.exceeding", //$NON-NLS-1$
+                        sec.addProblem(new INIProblem(INIProblem.TYPE_ERROR, InstallOptionsPlugin.getFormattedString("field.index.exceeding", //$NON-NLS-1$
                                             new Object[]{InstallOptionsModel.SECTION_FIELD_PREFIX,
                                                         (Integer)entry.getValue(),
                                                         InstallOptionsModel.PROPERTY_NUMFIELDS,
-                                                        numFields2}));
+                                                        numFields2})));
                     }
                 }
                 else if(index > nextIndex) {
@@ -705,9 +766,9 @@ public class INIFile implements IDocumentListener, IINIContainer
                 nextIndex++;
             }
             if(missing > 0) {
-                mErrors.add(InstallOptionsPlugin.getFormattedString("field.sections.missing", //$NON-NLS-1$
+                mProblems.add(new INIProblem(INIProblem.TYPE_ERROR,InstallOptionsPlugin.getFormattedString("field.sections.missing", //$NON-NLS-1$
                         new Object[]{InstallOptionsModel.SECTION_FIELD_PREFIX,
-                        new Integer(missing),missingBuf.toString()}));
+                        new Integer(missing),missingBuf.toString()})));
             }
             if(force) {
                 notifyListeners(INIFILE_MODIFIED);
@@ -718,21 +779,14 @@ public class INIFile implements IDocumentListener, IINIContainer
     public INIProblem[] getProblems()
     {
         validate();
-        List problems = new ArrayList();
-        for (Iterator iter = mErrors.iterator(); iter.hasNext();) {
-            problems.add(new INIProblem(0,(String)iter.next(), INIProblem.TYPE_ERROR));
-        }
-        for (Iterator iter = mWarnings.iterator(); iter.hasNext();) {
-            problems.add(new INIProblem(0,(String)iter.next(), INIProblem.TYPE_WARNING));
-        }
+        List problems = new ArrayList(mProblems);
         int n=1;
         for (Iterator iter = mLines.iterator(); iter.hasNext();) {
             INILine line = (INILine)iter.next();
-            for (Iterator iterator = line.getErrors().iterator(); iterator.hasNext();) {
-                problems.add(new INIProblem(n,(String)iterator.next(), INIProblem.TYPE_ERROR));
-            }
-            for (Iterator iterator = line.getWarnings().iterator(); iterator.hasNext();) {
-                problems.add(new INIProblem(n,(String)iterator.next(), INIProblem.TYPE_WARNING));
+            for (Iterator iterator = line.getProblems().iterator(); iterator.hasNext();) {
+                INIProblem problem = (INIProblem)iterator.next();
+                problem.setLine(n);
+                problems.add(problem);
             }
             n++;
         }
@@ -742,7 +796,7 @@ public class INIFile implements IDocumentListener, IINIContainer
     public boolean hasErrors()
     {
         validate();
-        if(mErrors.size() == 0) {
+        if(!mErrors) {
             for (Iterator iter = mChildren.iterator(); iter.hasNext();) {
                 if(((INILine)iter.next()).hasErrors()) {
                     return true;
@@ -756,7 +810,7 @@ public class INIFile implements IDocumentListener, IINIContainer
     public boolean hasWarnings()
     {
         validate();
-        if(mWarnings.size() == 0) {
+        if(!mWarnings) {
             for (Iterator iter = mChildren.iterator(); iter.hasNext();) {
                 if(((INILine)iter.next()).hasWarnings()) {
                     return true;

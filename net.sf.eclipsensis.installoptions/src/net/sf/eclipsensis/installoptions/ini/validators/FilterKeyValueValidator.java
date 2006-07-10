@@ -27,9 +27,9 @@ public class FilterKeyValueValidator implements IINIKeyValueValidator
                     keyValue.setValue(new StringBuffer(value).append(IInstallOptionsConstants.LIST_SEPARATOR).append(array[n-1]).toString());
                 }
                 else {
-                    keyValue.addProblem(INIProblem.TYPE_ERROR,
+                    keyValue.addProblem(new INIProblem(INIProblem.TYPE_ERROR,
                                         InstallOptionsPlugin.getFormattedString("filter.value.error", //$NON-NLS-1$
-                                                new Object[]{keyValue.getKey()}));
+                                                new Object[]{keyValue.getKey()})));
                     return false;
                 }
             }

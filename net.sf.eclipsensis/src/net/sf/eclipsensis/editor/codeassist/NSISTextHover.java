@@ -9,16 +9,16 @@
  *******************************************************************************/
 package net.sf.eclipsensis.editor.codeassist;
 
-import net.sf.eclipsensis.INSISConstants;
-
 import org.eclipse.jface.text.*;
 
-public class NSISTextHover implements ITextHover, ITextHoverExtension, INSISConstants
+public class NSISTextHover extends NSISAnnotationHover
 {
     private NSISInformationProvider mInformationProvider;
+    private boolean mUseSuper = false;
 
-    public NSISTextHover()
+    public NSISTextHover(String[] annotationTypes)
     {
+        super(annotationTypes);
         mInformationProvider = new NSISInformationProvider();
         mInformationProvider.setInformationPresenterControlCreator(new NSISHelpInformationControlCreator(new String[]{STICKY_HELP_COMMAND_ID, GOTO_HELP_COMMAND_ID}));
     }
@@ -28,7 +28,10 @@ public class NSISTextHover implements ITextHover, ITextHoverExtension, INSISCons
      */
     public String getHoverInfo(ITextViewer textViewer, IRegion hoverRegion)
     {
-        return (String)mInformationProvider.getInformation2(textViewer, hoverRegion);
+        String info1 = super.getHoverInfo(textViewer, hoverRegion);
+        String info2 = (String)mInformationProvider.getInformation2(textViewer, hoverRegion);
+        mUseSuper = (info2 == null && info1 != null);
+        return info2 != null?info2:info1;
     }
 
     /*
@@ -36,7 +39,9 @@ public class NSISTextHover implements ITextHover, ITextHoverExtension, INSISCons
      */
     public IRegion getHoverRegion(ITextViewer textViewer, int offset)
     {
-        return mInformationProvider.getSubject(textViewer, offset);
+        IRegion region1 = super.getHoverRegion(textViewer, offset);
+        IRegion region2 = mInformationProvider.getSubject(textViewer, offset);
+        return region2 != null && region2.getLength() > 0?region2:region1;
     }
 
     /* (non-Javadoc)
@@ -44,6 +49,10 @@ public class NSISTextHover implements ITextHover, ITextHoverExtension, INSISCons
      */
     public IInformationControlCreator getHoverControlCreator()
     {
+        if(mUseSuper) {
+            mUseSuper = false;
+            return super.getHoverControlCreator();
+        }
         return mInformationProvider.getInformationPresenterControlCreator();
     }
 }

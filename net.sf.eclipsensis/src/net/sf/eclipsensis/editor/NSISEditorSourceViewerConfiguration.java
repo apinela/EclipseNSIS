@@ -24,6 +24,8 @@ import org.eclipse.jface.text.source.ISourceViewer;
 
 public class NSISEditorSourceViewerConfiguration extends NSISSourceViewerConfiguration
 {
+    private static final String[] ANNOTATION_TYPES = new String[]{PROBLEM_MARKER_ID,TASK_MARKER_ID,ERROR_ANNOTATION_NAME,WARNING_ANNOTATION_NAME};
+    
     protected InformationPresenter mInformationPresenter = null;
     protected NSISTextHover mTextHover = null;
     protected NSISAnnotationHover mAnnotationHover = null;
@@ -32,9 +34,9 @@ public class NSISEditorSourceViewerConfiguration extends NSISSourceViewerConfigu
     public NSISEditorSourceViewerConfiguration(IPreferenceStore preferenceStore)
     {
         super(preferenceStore);
-        mTextHover = new NSISTextHover();
+        mTextHover = new NSISTextHover(ANNOTATION_TYPES);
         mInformationControlCreator = new NSISInformationControlCreator(null);
-        mAnnotationHover = new NSISAnnotationHover(new String[]{PROBLEM_MARKER_ID,TASK_MARKER_ID,ERROR_ANNOTATION_NAME,WARNING_ANNOTATION_NAME});
+        mAnnotationHover = new NSISAnnotationHover(ANNOTATION_TYPES);
     }
 
     /*
@@ -62,8 +64,7 @@ public class NSISEditorSourceViewerConfiguration extends NSISSourceViewerConfigu
     /* (non-Javadoc)
      * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getInformationControlCreator(org.eclipse.jface.text.source.ISourceViewer)
      */
-    public IInformationControlCreator getInformationControlCreator(
-            ISourceViewer sourceViewer)
+    public IInformationControlCreator getInformationControlCreator(ISourceViewer sourceViewer)
     {
         return mInformationControlCreator;
     }

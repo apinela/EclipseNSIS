@@ -84,7 +84,13 @@ public class NSISInstallRegistryKeyDialog extends AbstractNSISInstallItemDialog
                 validate();
             }
         });
+
         return composite;
+    }
+
+    protected boolean hasRequiredFields()
+    {
+        return true;
     }
 
     protected String getHelpContextId()

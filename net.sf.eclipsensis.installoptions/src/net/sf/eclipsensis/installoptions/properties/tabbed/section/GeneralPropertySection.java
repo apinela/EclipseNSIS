@@ -517,6 +517,10 @@ public class GeneralPropertySection extends InstallOptionsElementPropertySection
         composite.addDisposeListener(new DisposeListener() {
             public void widgetDisposed(DisposeEvent e)
             {
+                InstallOptionsDialog dialog = widget.getParent();
+                if(dialog != null) {
+                    dialog.removePropertyChangeListener(propertyListener);
+                }
                 widget.removePropertyChangeListener(propertyListener);
             }
         });

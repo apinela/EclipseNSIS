@@ -29,6 +29,13 @@ public class HelpBrowserLocalFileHandler implements IExtensionChangeHandler, IHe
     private static final String HANDLER_NAME = "name"; //$NON-NLS-1$
     private static final String HANDLER_EXTENSIONS = "extensions"; //$NON-NLS-1$
     private static final String HANDLER_CLASS = "class"; //$NON-NLS-1$
+    
+    private static final IHelpBrowserLocalFileHandler NULL_HANDLER = new IHelpBrowserLocalFileHandler() {
+        public boolean handle(File file)
+        {
+            return false;
+        }
+    };
 
     public static final HelpBrowserLocalFileHandler INSTANCE = new HelpBrowserLocalFileHandler();
 
@@ -69,9 +76,9 @@ public class HelpBrowserLocalFileHandler implements IExtensionChangeHandler, IHe
                         List handlers = (List)mExtensions.get(extensionId);
                         for (Iterator iterator = handlers.iterator(); iterator.hasNext();) {
                             HandlerDescriptor desc = (HandlerDescriptor)iterator.next();
-                            if (desc.extensions.contains(ext)) {
+                            if (desc.getExtensions().contains(ext)) {
                                 try {
-                                    return desc.handler.handle(file);
+                                    return desc.getHandler().handle(file);
                                 }
                                 catch (Throwable e) {
                                     EclipseNSISPlugin.getDefault().log(e);
@@ -111,18 +118,7 @@ public class HelpBrowserLocalFileHandler implements IExtensionChangeHandler, IHe
                 for (int i = 0; i < elements.length; i++) {
                     if (HANDLER.equals(elements[i].getName())) {
                         try {
-                            HandlerDescriptor descriptor = new HandlerDescriptor();
-                            String id = elements[i].getAttribute(HANDLER_ID);
-                            if (id != null) {
-                                descriptor.id = id;
-                            }
-                            String name = elements[i].getAttribute(HANDLER_NAME);
-                            if (name != null) {
-                                descriptor.name = name;
-                            }
-                            descriptor.extensions.addAll(Common.tokenizeToList(elements[i].getAttribute(HANDLER_EXTENSIONS), ','));
-                            descriptor.handler = (IHelpBrowserLocalFileHandler)elements[i].createExecutableExtension(HANDLER_CLASS);
-
+                            HandlerDescriptor descriptor = new HandlerDescriptor(elements[i]);
                             tracker.registerObject(extension, descriptor, IExtensionTracker.REF_WEAK);
                             handlers.add(descriptor);
                         }
@@ -147,9 +143,56 @@ public class HelpBrowserLocalFileHandler implements IExtensionChangeHandler, IHe
 
     private class HandlerDescriptor
     {
-        String id = ""; //$NON-NLS-1$
-        String name = ""; //$NON-NLS-1$
-        Set extensions = new CaseInsensitiveSet();
-        IHelpBrowserLocalFileHandler handler = null;
+        private IConfigurationElement mElement;
+        
+        private String mId = ""; //$NON-NLS-1$
+        private String mName = ""; //$NON-NLS-1$
+        private Set mExtensions = new CaseInsensitiveSet();
+        private IHelpBrowserLocalFileHandler mHandler = null;
+
+        private HandlerDescriptor(IConfigurationElement element)
+        {
+            super();
+            String id = element.getAttribute(HANDLER_ID);
+            if (id != null) {
+                mId = id;
+            }
+            String name = element.getAttribute(HANDLER_NAME);
+            if (name != null) {
+                mName = name;
+            }
+            mExtensions.addAll(Common.tokenizeToList(element.getAttribute(HANDLER_EXTENSIONS), ','));
+            mElement = element;
+        }
+
+        public Set getExtensions()
+        {
+            return mExtensions;
+        }
+
+        public IHelpBrowserLocalFileHandler getHandler()
+        {
+            if(mHandler == null) {
+                try {
+                    mHandler = (IHelpBrowserLocalFileHandler)mElement.createExecutableExtension(HANDLER_CLASS);
+                }
+                catch (CoreException e) {
+                    EclipseNSISPlugin.getDefault().log(e);
+                    mHandler = NULL_HANDLER;
+                    mExtensions.clear();
+                }
+            }
+            return mHandler;
+        }
+
+        public String getId()
+        {
+            return mId;
+        }
+
+        public String getName()
+        {
+            return mName;
+        }
     }
 }

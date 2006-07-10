@@ -27,7 +27,7 @@ public class NumberKeyValueValidator implements IINIKeyValueValidator
                         return validate(keyValue, fixFlag);
                     }
                     else {
-                        keyValue.addProblem(INIProblem.TYPE_ERROR,InstallOptionsPlugin.getFormattedString("positive.numeric.value.error",new String[]{keyValue.getKey()})); //$NON-NLS-1$
+                        keyValue.addProblem(new INIProblem(INIProblem.TYPE_ERROR,InstallOptionsPlugin.getFormattedString("positive.numeric.value.error",new String[]{keyValue.getKey()}))); //$NON-NLS-1$
                         return false;
                     }
                 }
@@ -45,7 +45,7 @@ public class NumberKeyValueValidator implements IINIKeyValueValidator
                     return validate(keyValue, fixFlag);
                 }
                 else {
-                    keyValue.addProblem(INIProblem.TYPE_ERROR,InstallOptionsPlugin.getFormattedString("numeric.value.error",new String[]{keyValue.getKey()})); //$NON-NLS-1$
+                    keyValue.addProblem(new INIProblem(INIProblem.TYPE_ERROR,InstallOptionsPlugin.getFormattedString("numeric.value.error",new String[]{keyValue.getKey()}))); //$NON-NLS-1$
                     return false;
                 }
             }
@@ -56,7 +56,7 @@ public class NumberKeyValueValidator implements IINIKeyValueValidator
                 return validate(keyValue, fixFlag);
             }
             else {
-                keyValue.addProblem(INIProblem.TYPE_ERROR,InstallOptionsPlugin.getFormattedString("numeric.value.error",new String[]{keyValue.getKey()})); //$NON-NLS-1$
+                keyValue.addProblem(new INIProblem(INIProblem.TYPE_ERROR,InstallOptionsPlugin.getFormattedString("numeric.value.error",new String[]{keyValue.getKey()}))); //$NON-NLS-1$
                 return false;
             }
         }
