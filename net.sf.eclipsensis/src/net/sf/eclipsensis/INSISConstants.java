@@ -46,6 +46,7 @@ public interface INSISConstants
     public static final String INSERT_COLOR_COMMAND_ID = EclipseNSISPlugin.getBundleResourceString("%insert.color.command.id"); //$NON-NLS-1$
     public static final String INSERT_REGFILE_COMMAND_ID = EclipseNSISPlugin.getBundleResourceString("%insert.regfile.command.id"); //$NON-NLS-1$
     public static final String INSERT_REGKEY_COMMAND_ID = EclipseNSISPlugin.getBundleResourceString("%insert.regkey.command.id"); //$NON-NLS-1$
+    public static final String INSERT_REGVAL_COMMAND_ID = EclipseNSISPlugin.getBundleResourceString("%insert.regval.command.id"); //$NON-NLS-1$
     public static final String TABS_TO_SPACES_COMMAND_ID = EclipseNSISPlugin.getBundleResourceString("%tabs.to.spaces.command.id"); //$NON-NLS-1$
     public static final String TOGGLE_COMMENT_COMMAND_ID = EclipseNSISPlugin.getBundleResourceString("%toggle.comment.command.id"); //$NON-NLS-1$
     public static final String ADD_BLOCK_COMMENT_COMMAND_ID = EclipseNSISPlugin.getBundleResourceString("%add.block.comment.command.id"); //$NON-NLS-1$

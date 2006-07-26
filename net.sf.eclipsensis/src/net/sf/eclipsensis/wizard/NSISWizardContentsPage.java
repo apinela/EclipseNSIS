@@ -1257,20 +1257,10 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage implements IN
             return mRegistryItems;
         }
 
-        private int getHKey(String rootKey)
-        {
-            for (int i = 0; i < NSISWizardDisplayValues.HKEY_NAMES.length; i++) {
-                if(NSISWizardDisplayValues.HKEY_NAMES[i].equalsIgnoreCase(rootKey)) {
-                    return i;
-                }
-            }
-            return -1;
-        }
-
         public void addRegistryKey(String rootKey, String subKey)
         {
             NSISInstallRegistryKey regKey = new NSISInstallRegistryKey();
-            regKey.setRootKey(getHKey(rootKey));
+            regKey.setRootKey(NSISWizardDisplayValues.getHKeyIndex(rootKey));
             regKey.setSubKey(subKey);
             mRegistryItems.add(regKey);
         }
@@ -1294,7 +1284,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage implements IN
                     return;
             }
             NSISInstallRegistryValue regVal = new NSISInstallRegistryValue();
-            regVal.setRootKey(getHKey(rootKey));
+            regVal.setRootKey(NSISWizardDisplayValues.getHKeyIndex(rootKey));
             regVal.setSubKey(subKey);
             regVal.setValue(value);
             regVal.setData(data);

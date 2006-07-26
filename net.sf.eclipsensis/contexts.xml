@@ -5,7 +5,7 @@
 # All rights reserved.
 # This program is made available under the terms of the Common Public License
 # v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
-# 
+#
 # Contributors:
 #     Sunil Kamath (IcemanK) - initial API and implementation
 ###############################################################################
@@ -80,39 +80,39 @@
     </context>
     <context id="nsis_filedlg_context">
         <description>This dialog is used to add or edit information about a file to be included in the installer.</description>
-        <topic label="Add/Edit File Dialog" href="help/wizcontents.html#filedlg"/>
+        <topic label="Add/Edit File Dialog" href="help/wizcontents.html#file"/>
     </context>
     <context id="nsis_filesetdlg_context">
         <description>This dialog is used to add or edit information about a group of files to be included in the installer.</description>
-        <topic label="Add/Edit FileSet Dialog" href="help/wizcontents.html#filesetdlg"/>
+        <topic label="Add/Edit FileSet Dialog" href="help/wizcontents.html#fileset"/>
     </context>
     <context id="nsis_folderdlg_context">
         <description>This dialog is used to add or edit information about a fiolder to be included in the installer.</description>
-        <topic label="Add/Edit Folder Dialog" href="help/wizcontents.html#folderdlg"/>
+        <topic label="Add/Edit Folder Dialog" href="help/wizcontents.html#folder"/>
     </context>
     <context id="nsis_shortcutdlg_context">
         <description>This dialog is used to add or edit information about a shortcut to be included in the installer.</description>
-        <topic label="Add/Edit Shortcut Dialog" href="help/wizcontents.html#shortcutdlg"/>
+        <topic label="Add/Edit Shortcut Dialog" href="help/wizcontents.html#shortcut"/>
     </context>
     <context id="nsis_regkeydlg_context">
         <description>This dialog is used to add or edit information about a registry key to be included in the installer.</description>
-        <topic label="Add/Edit Registry Key Dialog" href="help/wizcontents.html#regkeydlg"/>
+        <topic label="Add/Edit Registry Key Dialog" href="help/wizcontents.html#regkey"/>
     </context>
     <context id="nsis_regvaldlg_context">
         <description>This dialog is used to add or edit information about a registry value to be included in the installer.</description>
-        <topic label="Add/Edit Registry Value Dialog" href="help/wizcontents.html#regvaldlg"/>
+        <topic label="Add/Edit Registry Value Dialog" href="help/wizcontents.html#regval"/>
     </context>
     <context id="nsis_sectiondlg_context">
         <description>This dialog is used to add or edit information about a Section to be included in the installer.</description>
-        <topic label="Add/Edit Section Dialog" href="help/wizcontents.html#rsectiondlg"/>
+        <topic label="Add/Edit Section Dialog" href="help/wizcontents.html#rsection"/>
     </context>
     <context id="nsis_sectiongrpdlg_context">
         <description>This dialog is used to add or edit information about a SectionGroup to be included in the installer.</description>
-        <topic label="Add/Edit SectionGroup Dialog" href="help/wizcontents.html#rsectiongrpdlg"/>
+        <topic label="Add/Edit SectionGroup Dialog" href="help/wizcontents.html#rsectiongrp"/>
     </context>
     <context id="nsis_librarydlg_context">
         <description>This dialog is used to add or edit information about a library to be included in the installer.</description>
-        <topic label="Add/Edit Library Dialog" href="help/wizcontents.html#librarydlg"/>
+        <topic label="Add/Edit Library Dialog" href="help/wizcontents.html#library"/>
     </context>
     <context id="nsis_launchconfig_general_context">
         <description>This tab is used to edit NSIS options for the current NSIS Script launch configuration.</description>

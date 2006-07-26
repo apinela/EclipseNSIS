@@ -11,6 +11,7 @@ package net.sf.eclipsensis.wizard.settings;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.CommonImages;
 import net.sf.eclipsensis.wizard.INSISWizardConstants;
 import net.sf.eclipsensis.wizard.NSISWizard;
 import net.sf.eclipsensis.wizard.settings.dialogs.NSISInstallRegistryValueDialog;
@@ -23,9 +24,6 @@ public class NSISInstallRegistryValue extends NSISInstallRegistryItem
 	private static final long serialVersionUID = 4012648943855296196L;
 
     public static final String TYPE = "Registry Value"; //$NON-NLS-1$
-    private static final Image STR_IMAGE = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("wizard.regstr.icon")); //$NON-NLS-1$
-    private static final Image DWORD_IMAGE = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("wizard.regdword.icon")); //$NON-NLS-1$
-
     private int mRootKey = HKLM;
     private String mSubKey = null;
     private String mData = null;
@@ -33,7 +31,7 @@ public class NSISInstallRegistryValue extends NSISInstallRegistryItem
     private int mValueType = REG_SZ;
 
     static {
-        NSISInstallElementFactory.register(TYPE, EclipseNSISPlugin.getResourceString("wizard.regvalue.type.name"), STR_IMAGE, NSISInstallRegistryValue.class); //$NON-NLS-1$
+        NSISInstallElementFactory.register(TYPE, EclipseNSISPlugin.getResourceString("wizard.regvalue.type.name"), CommonImages.REG_SZ_IMAGE, NSISInstallRegistryValue.class); //$NON-NLS-1$
     }
 
     protected int getRootKeyInternal()
@@ -92,9 +90,9 @@ public class NSISInstallRegistryValue extends NSISInstallRegistryItem
         {
             case REG_BIN:
             case REG_DWORD:
-                return DWORD_IMAGE;
+                return CommonImages.REG_DWORD_IMAGE;
             default:
-                return STR_IMAGE;
+                return CommonImages.REG_SZ_IMAGE;
         }
     }
 

@@ -62,4 +62,14 @@ public class NSISWizardDisplayValues implements INSISWizardConstants
         HKEY_NAMES[HKDD] = "HKEY_DYN_DATA"; //$NON-NLS-1$
         HKEY_NAMES[HKPD] = "HKEY_PERFORMANCE_DATA"; //$NON-NLS-1$
     }
+
+    public static int getHKeyIndex(String rootKey)
+    {
+        for (int i = 0; i < NSISWizardDisplayValues.HKEY_NAMES.length; i++) {
+            if(NSISWizardDisplayValues.HKEY_NAMES[i].equalsIgnoreCase(rootKey)) {
+                return i;
+            }
+        }
+        return -1;
+    }
 }

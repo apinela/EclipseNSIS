@@ -66,6 +66,8 @@ extern "C" {
 #define net_sf_eclipsensis_util_WinAPI_REG_BINARY 3L
 #undef net_sf_eclipsensis_util_WinAPI_REG_DWORD
 #define net_sf_eclipsensis_util_WinAPI_REG_DWORD 4L
+#undef net_sf_eclipsensis_util_WinAPI_REG_MULTI_SZ
+#define net_sf_eclipsensis_util_WinAPI_REG_MULTI_SZ 7L
 #undef net_sf_eclipsensis_util_WinAPI_KEY_QUERY_VALUE
 #define net_sf_eclipsensis_util_WinAPI_KEY_QUERY_VALUE 1L
 #undef net_sf_eclipsensis_util_WinAPI_KEY_ENUMERATE_SUB_KEYS
@@ -455,6 +457,22 @@ JNIEXPORT jstring JNICALL Java_net_sf_eclipsensis_util_WinAPI_RegEnumKeyEx
  */
 JNIEXPORT jstring JNICALL Java_net_sf_eclipsensis_util_WinAPI_LoadResourceString
   (JNIEnv *, jclass, jstring, jint);
+
+/*
+ * Class:     net_sf_eclipsensis_util_WinAPI
+ * Method:    GetRegValuesCount
+ * Signature: (I)I
+ */
+JNIEXPORT jint JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetRegValuesCount
+  (JNIEnv *, jclass, jint);
+
+/*
+ * Class:     net_sf_eclipsensis_util_WinAPI
+ * Method:    RegEnumValue
+ * Signature: (IILnet/sf/eclipsensis/dialogs/RegistryValueSelectionDialog$RegistryValue;)Z
+ */
+JNIEXPORT jboolean JNICALL Java_net_sf_eclipsensis_util_WinAPI_RegEnumValue
+  (JNIEnv *, jclass, jint, jint, jobject);
 
 #ifdef __cplusplus
 }

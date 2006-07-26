@@ -40,6 +40,8 @@ public class CommonImages
     public static final Image BROWSER_STOP_ICON = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("help.browser.stop.icon")); //$NON-NLS-1$
     public static final Image BROWSER_HOME_ICON = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("help.browser.home.icon")); //$NON-NLS-1$
     public static final Image BROWSER_REFRESH_ICON = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("help.browser.refresh.icon")); //$NON-NLS-1$
+    public static final Image REG_SZ_IMAGE = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("wizard.regstr.icon")); //$NON-NLS-1$
+    public static final Image REG_DWORD_IMAGE = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("wizard.regdword.icon")); //$NON-NLS-1$
     
     private CommonImages()
     {

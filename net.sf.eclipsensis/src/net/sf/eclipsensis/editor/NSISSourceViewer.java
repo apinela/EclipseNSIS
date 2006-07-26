@@ -14,6 +14,8 @@ import java.util.List;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
+import net.sf.eclipsensis.dialogs.RegistryValueSelectionDialog;
+import net.sf.eclipsensis.dialogs.RegistryValueSelectionDialog.RegistryValue;
 import net.sf.eclipsensis.editor.codeassist.NSISInformationUtility;
 import net.sf.eclipsensis.editor.text.NSISPartitionScanner;
 import net.sf.eclipsensis.editor.text.NSISTextUtility;
@@ -31,6 +33,7 @@ import org.eclipse.jface.text.source.*;
 import org.eclipse.jface.text.source.projection.ProjectionViewer;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
@@ -52,11 +55,12 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
     public static final int INSERT_COLOR = INSERT_DIRECTORY + 1;
     public static final int IMPORT_REGFILE = INSERT_COLOR + 1;
     public static final int IMPORT_REGKEY = IMPORT_REGFILE + 1;
-    public static final int TABS_TO_SPACES = IMPORT_REGKEY + 1;
+    public static final int IMPORT_REGVAL = IMPORT_REGKEY + 1;
+    public static final int TABS_TO_SPACES = IMPORT_REGVAL + 1;
     public static final int TOGGLE_COMMENT = TABS_TO_SPACES + 1;
     public static final int ADD_BLOCK_COMMENT = TOGGLE_COMMENT + 1;
     public static final int REMOVE_BLOCK_COMMENT = ADD_BLOCK_COMMENT + 1;
-    
+
     private IPreferenceStore mPreferenceStore = null;
     private NSISAutoIndentStrategy mAutoIndentStrategy = null;
     private NSISTabConversionStrategy mTabConversionStrategy = null;
@@ -66,6 +70,7 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
     private NSISScrollTipHelper mScrollTipHelper = null;
     private IContentAssistant mInsertTemplateAssistant = null;
     private boolean mInsertTemplateAssistantInstalled = false;
+    private RegistryValue mRegValue = null;
 
    /**
      * @param parent
@@ -377,6 +382,7 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
             case INSERT_COLOR:
             case IMPORT_REGFILE:
             case IMPORT_REGKEY:
+            case IMPORT_REGVAL:
             case TABS_TO_SPACES:
             case TOGGLE_COMMENT:
             case REMOVE_BLOCK_COMMENT:
@@ -450,6 +456,33 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
                 NSISEditorRegistryImportStrategy strategy = new NSISEditorRegistryImportStrategy();
                 RegistryImporter.INSTANCE.importRegKey(getControl().getShell(), strategy);
                 text = strategy.getText();
+                break;
+            }
+            case IMPORT_REGVAL:
+            {
+                RegistryValueSelectionDialog dialog = new RegistryValueSelectionDialog(getControl().getShell());
+                dialog.setText(EclipseNSISPlugin.getResourceString("select.regval.message")); //$NON-NLS-1$
+                if(mRegValue != null) {
+                    dialog.setRegistryValue(mRegValue);
+                }
+                if(dialog.open() == Window.OK) {
+                    mRegValue = dialog.getRegistryValue();
+                    String regKey = mRegValue.getRegKey();
+                    int n = regKey.indexOf("\\");
+                    String rootKey;
+                    String subKey;
+                    if(n > 0) {
+                        rootKey = regKey.substring(0,n);
+                        subKey = regKey.substring(n+1);
+                    }
+                    else {
+                        rootKey = regKey;
+                        subKey = "";
+                    }
+                    NSISEditorRegistryImportStrategy strategy = new NSISEditorRegistryImportStrategy();
+                    strategy.addRegistryValue(rootKey, subKey, mRegValue.getValue(),mRegValue.getType(),mRegValue.getData());
+                    text = strategy.getText();
+                }
                 break;
             }
             case TABS_TO_SPACES:
@@ -692,7 +725,7 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
             }
         }
     }
-    
+
     private boolean showHelp(int offset)
     {
         IRegion region = NSISInformationUtility.getInformationRegionAtOffset(this,offset,false);
@@ -761,7 +794,7 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
         }
         return text;
     }
-    
+
     protected class NSISTabConversionStrategy extends NSISAutoIndentStrategy
     {
         /**

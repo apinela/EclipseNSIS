@@ -11,6 +11,8 @@ package net.sf.eclipsensis.util;
 
 import java.net.Authenticator;
 
+import net.sf.eclipsensis.dialogs.RegistryValueSelectionDialog.RegistryValue;
+
 public class WinAPI
 {
     static {
@@ -50,7 +52,8 @@ public class WinAPI
     public static final int REG_EXPAND_SZ = 2;
     public static final int REG_BINARY = 3;
     public static final int REG_DWORD = 4;
-    
+    public static final int REG_MULTI_SZ = 7;
+
     public static final int KEY_QUERY_VALUE = 0x0001;
     public static final int KEY_ENUMERATE_SUB_KEYS = 0x0008;
 
@@ -81,7 +84,7 @@ public class WinAPI
 
     public static final int TVS_HASBUTTONS = 0x1;
     public static final int TVS_HASLINES = 0x2;
-    
+
     public static final int COLOR_GRAYTEXT = 0x11;
     public static final int COLOR_3DHILIGHT = 0x14;
 
@@ -111,7 +114,7 @@ public class WinAPI
     public static final int VK_SHIFT = 0x10;
     public static final int VK_CTRL = 0x11;
     public static final int VK_ALT = 0x12;
-    
+
     private static native void init();
     public static native int SetWindowLong(int hWnd, int nIndex, int dwNewLong);
     public static native int GetWindowLong(int hWnd, int nIndex);
@@ -121,23 +124,23 @@ public class WinAPI
     public static native String RegQueryStrValue(int hRootKey, String pszSubKey, String pszValue);
 
     public static native int GetDesktopWindow();
-    
+
     public static native int HtmlHelp(int hwndCaller, String  pszFile, int uCommand, int dwData);
-    
+
     public static native int GetUserDefaultLangID();
-    
+
     public static native int GetUserDefaultUILanguage();
-    
+
     public static native void ExtractHtmlHelp(String pszFile, String pszFolder, String[] tocAndIndex);
-    
+
     public static native String[] GetPluginExports(String pszPluginFile);
-    
+
     public static final native int SendMessage(int hWnd, int msg, int wParam, int lParam);
-    
+
     public static final native int CallWindowProc(int lpWndProc, int hWnd, int Msg, int wParam, int lParam);
 
     public static final native boolean AreVisualStylesEnabled();
-    
+
     public static final native void DrawWidgetThemeBackGround(int hWnd, int hDC, String theme, int partId, int stateId);
 
     public static final native void DrawWidgetThemeBorder(int hWnd, int hDC, String theme, int partId, int stateId);
@@ -155,35 +158,39 @@ public class WinAPI
     public static final native String strftime(String format);
 
     public static final native String GetShellFolder(int id);
-    
+
     public static final native String GetShortPathName(String longPathName);
 
     public static final native String[] RegGetSubKeys(int hRootKey, String pszSubKey);
 
     public static final native boolean RegKeyExists(int hRootKey, String pszSubKey);
-    
+
     public static final native Authenticator getDefaultAuthenticator();
-    
+
     public static final native boolean PlaySound(String pszFilename, int hModule, int dwFlags);
-    
+
     public static final native int GetFileAttributes(String pszFilename);
-    
+
     public static final native boolean SetFileAttributes(String pszFilename, int dwAttributes);
-    
+
     public static final native short GetKeyState(int nVirtKey);
-    
+
     public static final native boolean ValidateWildcard(String wildcard);
 
     public static final native int RegOpenKeyEx(int hKey, String lpSubKey, int ulOptions, int regSam);
-    
+
     public static final native void RegCloseKey(int hKey);
-    
+
     public static final native void RegQueryInfoKey(int hKey, int[] sizes);
-    
+
     public static final native String RegEnumKeyEx(int hKey, int index, int subKeySize);
-    
+
     public static final native String LoadResourceString(String pszFilename, int id);
-    
+
+    public static final native int GetRegValuesCount(int hKey);
+
+    public static final native boolean RegEnumValue(int hKey, int index, RegistryValue objRegValue);
+
     private WinAPI()
     {
     }

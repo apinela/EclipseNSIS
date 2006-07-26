@@ -73,7 +73,7 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
         boolean acquiredMutex = mMutex.acquireWithoutBlocking(source);
         try {
             if(source.equals(sourceViewer) && selection instanceof ITextSelection) {
-                IAction action = getAction(INSISEditorConstants.ADD_BLOCK_COMMENT); 
+                IAction action = getAction(INSISEditorConstants.ADD_BLOCK_COMMENT);
                 if(action != null) {
                     action.setEnabled(sourceViewer.getSelectedRange().y > 0);
                 }
@@ -195,88 +195,93 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
         ResourceBundle resourceBundle = EclipseNSISPlugin.getDefault().getResourceBundle();
         IAction a= new TextOperationAction(resourceBundle, "content.assist.proposal.", this, ISourceViewer.CONTENTASSIST_PROPOSALS); //$NON-NLS-1$
         a.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
-        setAction(INSISEditorConstants.CONTENT_ASSIST_PROPOSAL, a); 
+        setAction(INSISEditorConstants.CONTENT_ASSIST_PROPOSAL, a);
 
         a = new TextOperationAction(resourceBundle,"insert.template.",this,NSISSourceViewer.INSERT_TEMPLATE,true); //$NON-NLS-1$
         a.setActionDefinitionId(INSERT_TEMPLATE_COMMAND_ID);
-        setAction(INSISEditorConstants.INSERT_TEMPLATE, a); 
+        setAction(INSISEditorConstants.INSERT_TEMPLATE, a);
 
         a = new TextOperationAction(resourceBundle,"goto.help.",this,NSISSourceViewer.GOTO_HELP,true); //$NON-NLS-1$
         a.setActionDefinitionId(GOTO_HELP_COMMAND_ID);
-        setAction(INSISEditorConstants.GOTO_HELP, a); 
+        setAction(INSISEditorConstants.GOTO_HELP, a);
 
         TextOperationAction textAction = new TextOperationAction(resourceBundle,"sticky.help.",this,ISourceViewer.INFORMATION,true); //$NON-NLS-1$
         a = new NSISStickyHelpAction(resourceBundle,"sticky.help.",textAction); //$NON-NLS-1$
         a.setActionDefinitionId(STICKY_HELP_COMMAND_ID);
-        setAction(INSISEditorConstants.STICKY_HELP, a); 
+        setAction(INSISEditorConstants.STICKY_HELP, a);
         a = new NSISPopupStickyHelpAction(resourceBundle,"popup.sticky.help.",textAction); //$NON-NLS-1$
-        setAction(INSISEditorConstants.POPUP_STICKY_HELP, a); 
+        setAction(INSISEditorConstants.POPUP_STICKY_HELP, a);
 
         a = new TextOperationAction(resourceBundle,"insert.file.",this,NSISSourceViewer.INSERT_FILE,false); //$NON-NLS-1$
         a.setActionDefinitionId(INSERT_FILE_COMMAND_ID);
         a.setImageDescriptor(EclipseNSISPlugin.getImageManager().getImageDescriptor(resourceBundle.getString("insert.file.image"))); //$NON-NLS-1$
-        setAction(INSISEditorConstants.INSERT_FILE, a); 
+        setAction(INSISEditorConstants.INSERT_FILE, a);
 
         a = new TextOperationAction(resourceBundle,"insert.directory.",this,NSISSourceViewer.INSERT_DIRECTORY,false); //$NON-NLS-1$
         a.setActionDefinitionId(INSERT_DIRECTORY_COMMAND_ID);
         a.setImageDescriptor(EclipseNSISPlugin.getImageManager().getImageDescriptor(resourceBundle.getString("insert.directory.image"))); //$NON-NLS-1$
-        setAction(INSISEditorConstants.INSERT_DIRECTORY, a); 
+        setAction(INSISEditorConstants.INSERT_DIRECTORY, a);
 
         a = new TextOperationAction(resourceBundle,"insert.color.",this,NSISSourceViewer.INSERT_COLOR,false); //$NON-NLS-1$
         a.setActionDefinitionId(INSERT_COLOR_COMMAND_ID);
         a.setImageDescriptor(EclipseNSISPlugin.getImageManager().getImageDescriptor(resourceBundle.getString("insert.color.image"))); //$NON-NLS-1$
-        setAction(INSISEditorConstants.INSERT_COLOR, a); 
+        setAction(INSISEditorConstants.INSERT_COLOR, a);
 
         a = new TextOperationAction(resourceBundle,"insert.regfile.",this,NSISSourceViewer.IMPORT_REGFILE,false); //$NON-NLS-1$
         a.setActionDefinitionId(INSERT_REGFILE_COMMAND_ID);
         a.setImageDescriptor(EclipseNSISPlugin.getImageManager().getImageDescriptor(resourceBundle.getString("insert.regfile.image"))); //$NON-NLS-1$
-        setAction(INSISEditorConstants.INSERT_REGFILE, a); 
+        setAction(INSISEditorConstants.INSERT_REGFILE, a);
 
         a = new TextOperationAction(resourceBundle,"insert.regkey.",this,NSISSourceViewer.IMPORT_REGKEY,false); //$NON-NLS-1$
         a.setActionDefinitionId(INSERT_REGKEY_COMMAND_ID);
         a.setImageDescriptor(EclipseNSISPlugin.getImageManager().getImageDescriptor(resourceBundle.getString("insert.regkey.image"))); //$NON-NLS-1$
-        setAction(INSISEditorConstants.INSERT_REGKEY, a); 
+        setAction(INSISEditorConstants.INSERT_REGKEY, a);
+
+        a = new TextOperationAction(resourceBundle,"insert.regval.",this,NSISSourceViewer.IMPORT_REGVAL,false); //$NON-NLS-1$
+        a.setActionDefinitionId(INSERT_REGVAL_COMMAND_ID);
+        a.setImageDescriptor(EclipseNSISPlugin.getImageManager().getImageDescriptor(resourceBundle.getString("insert.regval.image"))); //$NON-NLS-1$
+        setAction(INSISEditorConstants.INSERT_REGVAL, a);
 
         a = new TextOperationAction(resourceBundle,"tabs.to.spaces.",this,NSISSourceViewer.TABS_TO_SPACES,false); //$NON-NLS-1$
         a.setActionDefinitionId(TABS_TO_SPACES_COMMAND_ID);
-        setAction(INSISEditorConstants.TABS_TO_SPACES, a); 
+        setAction(INSISEditorConstants.TABS_TO_SPACES, a);
 
         a = new TextOperationAction(resourceBundle,"toggle.comment.",this,NSISSourceViewer.TOGGLE_COMMENT,false); //$NON-NLS-1$
         a.setActionDefinitionId(TOGGLE_COMMENT_COMMAND_ID);
-        setAction(INSISEditorConstants.TOGGLE_COMMENT, a); 
+        setAction(INSISEditorConstants.TOGGLE_COMMENT, a);
 
         a = new TextOperationAction(resourceBundle,"add.block.comment.",this,NSISSourceViewer.ADD_BLOCK_COMMENT,false); //$NON-NLS-1$
         a.setActionDefinitionId(ADD_BLOCK_COMMENT_COMMAND_ID);
-        setAction(INSISEditorConstants.ADD_BLOCK_COMMENT, a); 
+        setAction(INSISEditorConstants.ADD_BLOCK_COMMENT, a);
 
         a = new TextOperationAction(resourceBundle,"remove.block.comment.",this,NSISSourceViewer.REMOVE_BLOCK_COMMENT,false); //$NON-NLS-1$
         a.setActionDefinitionId(REMOVE_BLOCK_COMMENT_COMMAND_ID);
-        setAction(INSISEditorConstants.REMOVE_BLOCK_COMMENT, a); 
+        setAction(INSISEditorConstants.REMOVE_BLOCK_COMMENT, a);
 
         a= new TextOperationAction(resourceBundle, "projection.toggle.", this, ProjectionViewer.TOGGLE, true); //$NON-NLS-1$
         a.setActionDefinitionId(IFoldingCommandIds.FOLDING_TOGGLE);
         a.setEnabled(true);
-        setAction(INSISEditorConstants.FOLDING_TOGGLE, a); 
+        setAction(INSISEditorConstants.FOLDING_TOGGLE, a);
 
         a = new TextOperationAction(resourceBundle, "projection.expand.all.", this, ProjectionViewer.EXPAND_ALL, true); //$NON-NLS-1$
         a.setActionDefinitionId(IFoldingCommandIds.FOLDING_EXPAND_ALL);
         a.setEnabled(true);
-        setAction(INSISEditorConstants.FOLDING_EXPAND_ALL, a); 
+        setAction(INSISEditorConstants.FOLDING_EXPAND_ALL, a);
 
         a= new TextOperationAction(resourceBundle, "projection.expand.", this, ProjectionViewer.EXPAND, true); //$NON-NLS-1$
         a.setActionDefinitionId(IFoldingCommandIds.FOLDING_EXPAND);
         a.setEnabled(true);
-        setAction(INSISEditorConstants.FOLDING_EXPAND, a); 
+        setAction(INSISEditorConstants.FOLDING_EXPAND, a);
 
         a= new TextOperationAction(resourceBundle, "projection.collapse.", this, ProjectionViewer.COLLAPSE, true); //$NON-NLS-1$
         a.setActionDefinitionId(IFoldingCommandIds.FOLDING_COLLAPSE);
         a.setEnabled(true);
-        setAction(INSISEditorConstants.FOLDING_COLLAPSE, a); 
+        setAction(INSISEditorConstants.FOLDING_COLLAPSE, a);
 
         a= new TextOperationAction(resourceBundle, "projection.collapse.all.", this, ProjectionViewer.COLLAPSE_ALL, true); //$NON-NLS-1$
         a.setActionDefinitionId(IFoldingCommandIds.FOLDING_COLLAPSE_ALL);
         a.setEnabled(true);
-        setAction(INSISEditorConstants.FOLDING_COLLAPSE_ALL, a); 
+        setAction(INSISEditorConstants.FOLDING_COLLAPSE_ALL, a);
     }
 
     protected void rulerContextMenuAboutToShow(IMenuManager menu) {
@@ -336,25 +341,26 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
         NSISPopupStickyHelpAction a = (NSISPopupStickyHelpAction)getAction(INSISEditorConstants.POPUP_STICKY_HELP);
         if (a != null) {
             a.setClickPoint(getSourceViewer().getTextWidget().getDisplay().getCursorLocation());
-        }        
-        addAction(menu, INSISEditorConstants.POPUP_STICKY_HELP); 
-        addAction(menu, INSISEditorConstants.CONTENT_ASSIST_PROPOSAL); 
-        addAction(menu, INSISEditorConstants.INSERT_TEMPLATE); 
+        }
+        addAction(menu, INSISEditorConstants.POPUP_STICKY_HELP);
+        addAction(menu, INSISEditorConstants.CONTENT_ASSIST_PROPOSAL);
+        addAction(menu, INSISEditorConstants.INSERT_TEMPLATE);
         menu.add(new Separator());
-        addAction(menu, INSISEditorConstants.TABS_TO_SPACES); 
-        addAction(menu, INSISEditorConstants.TOGGLE_COMMENT); 
+        addAction(menu, INSISEditorConstants.TABS_TO_SPACES);
+        addAction(menu, INSISEditorConstants.TOGGLE_COMMENT);
         addAction(menu, INSISEditorConstants.ADD_BLOCK_COMMENT);
-        
-        IAction action = getAction(INSISEditorConstants.ADD_BLOCK_COMMENT); 
+
+        IAction action = getAction(INSISEditorConstants.ADD_BLOCK_COMMENT);
         action.setEnabled(getSourceViewer().getSelectedRange().y > 0);
 
-        addAction(menu, INSISEditorConstants.REMOVE_BLOCK_COMMENT); 
+        addAction(menu, INSISEditorConstants.REMOVE_BLOCK_COMMENT);
         menu.add(new Separator());
-        addAction(menu, INSISEditorConstants.INSERT_FILE); 
-        addAction(menu, INSISEditorConstants.INSERT_DIRECTORY); 
-        addAction(menu, INSISEditorConstants.INSERT_COLOR); 
-        addAction(menu, INSISEditorConstants.INSERT_REGFILE); 
-        addAction(menu, INSISEditorConstants.INSERT_REGKEY); 
+        addAction(menu, INSISEditorConstants.INSERT_FILE);
+        addAction(menu, INSISEditorConstants.INSERT_DIRECTORY);
+        addAction(menu, INSISEditorConstants.INSERT_COLOR);
+        addAction(menu, INSISEditorConstants.INSERT_REGFILE);
+        addAction(menu, INSISEditorConstants.INSERT_REGKEY);
+        addAction(menu, INSISEditorConstants.INSERT_REGVAL);
     }
 
     /*
@@ -380,7 +386,7 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
         };
         viewer.addSelectionChangedListener(listener);
         viewer.addPostSelectionChangedListener(listener);
-        
+
         //Add support for Drag & Drop
         final StyledText text2 = viewer.getTextWidget();
         DropTarget target = new DropTarget(text2, DND.DROP_DEFAULT | DND.DROP_COPY);
@@ -388,31 +394,31 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
         target.addDropListener(new DropTargetAdapter() {
             public void dragEnter(DropTargetEvent e)
             {
-                if(NSISCommandTransfer.INSTANCE.isSupportedType(e.currentDataType) || 
+                if(NSISCommandTransfer.INSTANCE.isSupportedType(e.currentDataType) ||
                    FileTransfer.getInstance().isSupportedType(e.currentDataType)) {
                     //Don't want default feedback- we will do it ourselves
                     e.feedback = DND.FEEDBACK_NONE;
                     if (e.detail == DND.DROP_DEFAULT) {
                         e.detail = DND.DROP_COPY;
                     }
-                }                
+                }
             }
 
             public void dragOperationChanged(DropTargetEvent e)
             {
-                if(NSISCommandTransfer.INSTANCE.isSupportedType(e.currentDataType) || 
+                if(NSISCommandTransfer.INSTANCE.isSupportedType(e.currentDataType) ||
                    FileTransfer.getInstance().isSupportedType(e.currentDataType)) {
                     //Don't want default feedback- we will do it ourselves
                     e.feedback = DND.FEEDBACK_NONE;
                     if (e.detail == DND.DROP_DEFAULT) {
                         e.detail = DND.DROP_COPY;
                     }
-                }                
+                }
             }
 
             public void dragOver(DropTargetEvent e)
             {
-                if(NSISCommandTransfer.INSTANCE.isSupportedType(e.currentDataType) || 
+                if(NSISCommandTransfer.INSTANCE.isSupportedType(e.currentDataType) ||
                    FileTransfer.getInstance().isSupportedType(e.currentDataType)) {
                     //Don't want default feedback- we will do it ourselves
                     e.feedback = DND.FEEDBACK_NONE;
@@ -440,7 +446,7 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
                     }
                     IDocument doc = getDocumentProvider().getDocument(getEditorInput());
                     offset = getCaretOffsetForInsertCommand(doc, offset);
-                    
+
                     text2.setCaretOffset(offset);
                 }
             }
@@ -457,7 +463,7 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
         });
         return viewer;
     }
-    
+
     private void insertFiles(String[] files)
     {
         ISourceViewer viewer = getSourceViewer();
@@ -493,7 +499,7 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
                                 }
                                 catch (Exception e) {
                                     EclipseNSISPlugin.getDefault().log(e);
-                                }                                
+                                }
                             }
                             buf.append(fileKeyword).append(" ").append( //$NON-NLS-1$
                                         IOUtility.resolveFileName(files[i], this)).append(
@@ -563,7 +569,7 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
         }
         return offset;
     }
-  
+
     private void insertCommand(NSISCommand command, boolean updateOffset)
     {
         ISourceViewer viewer = getSourceViewer();
@@ -847,9 +853,9 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
     public void exportHTML()
     {
         if(isDirty()) {
-            if(!Common.openConfirm(getSourceViewer().getTextWidget().getShell(), 
+            if(!Common.openConfirm(getSourceViewer().getTextWidget().getShell(),
                     EclipseNSISPlugin.getFormattedString("export.html.save.confirmation", //$NON-NLS-1$
-                    new Object[] {((IPathEditorInput)getEditorInput()).getPath().lastSegment()}), 
+                    new Object[] {((IPathEditorInput)getEditorInput()).getPath().lastSegment()}),
                     EclipseNSISPlugin.getShellImage())) {
                 return;
             }
@@ -870,7 +876,7 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
         private final TextOperationAction mTextOperationAction;
         private InformationPresenter mInformationPresenter;
 
-        public NSISStickyHelpAction(ResourceBundle resourceBundle, String prefix, final TextOperationAction textOperationAction) 
+        public NSISStickyHelpAction(ResourceBundle resourceBundle, String prefix, final TextOperationAction textOperationAction)
         {
             super(resourceBundle, prefix, NSISEditor.this);
             if (textOperationAction == null) {
@@ -923,7 +929,7 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
         {
             super(resourceBundle, prefix, textOperationAction);
         }
-        
+
         public void setClickPoint(Point p)
         {
             mClickPoint = p;

@@ -56,7 +56,7 @@ public class Common
      *
      * @param array       Array to be resized
      */
-    public static void flipArray(Object array)
+    public static Object flipArray(Object array)
     {
         if(array != null && array.getClass().isArray()) {
             int len = Array.getLength(array);
@@ -67,6 +67,7 @@ public class Common
                 Array.set(array,i,Array.get(array,j));
                 Array.set(array,j,temp);
             }
+            return array;
         }
         else {
             throw new IllegalArgumentException();
@@ -435,10 +436,10 @@ public class Common
         }
         return map;
     }
-    
+
     public static String replaceAll(String input, String search, String replace, boolean ignoreCase)
     {
-        if(!Common.isEmpty(input) && !Common.isEmpty(search) && 
+        if(!Common.isEmpty(input) && !Common.isEmpty(search) &&
                 search.length() <= input.length()) {
             replace = (replace == null?"":replace); //$NON-NLS-1$
             String tmp;
@@ -476,7 +477,7 @@ public class Common
                 }
             }
         }
-        
+
         return input;
     }
 
@@ -574,7 +575,7 @@ public class Common
             EclipseNSISPlugin.getDefault().log(e);
         }
     }
-    
+
     public static String getClassSignature(Class clasz)
     {
         if(clasz.isArray()) {
@@ -616,7 +617,7 @@ public class Common
             return new StringBuffer("L").append(clasz.getName().replace('.', '/')).append(";").toString(); //$NON-NLS-1$ //$NON-NLS-2$
         }
     }
-    
+
     public static Object getObjectFieldValue(Object object, String fieldName, Class fieldType)
     {
         Object value;
@@ -673,7 +674,7 @@ public class Common
     {
         return isQuoted(text, '"');
     }
-    
+
     public static boolean isQuoted(String text, char quote)
     {
         if(text != null && text.length() >= 2) {
@@ -681,7 +682,7 @@ public class Common
         }
         return false;
     }
-    
+
     public static String maybeUnquote(String text)
     {
         if(isQuoted(text)) {

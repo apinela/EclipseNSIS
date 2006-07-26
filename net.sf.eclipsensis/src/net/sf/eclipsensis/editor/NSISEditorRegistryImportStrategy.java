@@ -3,15 +3,13 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
 package net.sf.eclipsensis.editor;
 
 import java.text.MessageFormat;
-import java.util.Iterator;
-import java.util.List;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
@@ -35,8 +33,8 @@ class NSISEditorRegistryImportStrategy implements RegistryImporter.IRegistryImpo
     private String mWriteRegBin;
     private StringBuffer mBuffer;
     private String mContext;
-    private List mShellConstants;
     private int mTextLimit;
+    private ShellConstantConverter mShellConstantConverter;
 
     public NSISEditorRegistryImportStrategy()
     {
@@ -47,13 +45,13 @@ class NSISEditorRegistryImportStrategy implements RegistryImporter.IRegistryImpo
         mWriteRegExpandStr = NSISKeywords.getInstance().getKeyword("WriteRegExpandStr"); //$NON-NLS-1$
         mWriteRegBin = NSISKeywords.getInstance().getKeyword("WriteRegBin"); //$NON-NLS-1$
         mBuffer = new StringBuffer(""); //$NON-NLS-1$
-        mShellConstants = NSISKeywords.getInstance().getShellConstants();
         try {
             mTextLimit = Integer.parseInt(NSISPreferences.INSTANCE.getNSISDefaultSymbol("NSIS_MAX_STRLEN")); //$NON-NLS-1$
         }
         catch(Exception e){
             mTextLimit = INSISConstants.DEFAULT_NSIS_TEXT_LIMIT;
         }
+        mShellConstantConverter = new ShellConstantConverter();
     }
 
     public void reset()
@@ -78,7 +76,7 @@ class NSISEditorRegistryImportStrategy implements RegistryImporter.IRegistryImpo
 
     public void addRegistryKey(String rootKey, String subKey)
     {
-        addLineToBuf(cCreateRegKeyFormat.format(new String[]{rootKey.toUpperCase(), RegistryImporter.rootKeyNameToHandle(rootKey), subKey})); 
+        addLineToBuf(cCreateRegKeyFormat.format(new String[]{rootKey.toUpperCase(), RegistryImporter.rootKeyNameToHandle(rootKey), subKey}));
     }
 
     public void addRegistryValue(String rootKey, String subKey, String value, int type, String data)
@@ -95,7 +93,7 @@ class NSISEditorRegistryImportStrategy implements RegistryImporter.IRegistryImpo
                 }
                 break;
             case WinAPI.REG_EXPAND_SZ:
-                command = mWriteRegExpandStr; 
+                command = mWriteRegExpandStr;
                 break;
             case WinAPI.REG_SZ:
                 command = mWriteRegStr;
@@ -115,25 +113,12 @@ class NSISEditorRegistryImportStrategy implements RegistryImporter.IRegistryImpo
     {
         addLineToBuf(makeRegCommand(cDeleteRegValueFormat, new String[]{mDeleteRegValue, rootKey, subKey, value}));
     }
-    
+
     private void addLineToBuf(String line)
     {
-        String newContext = ShellConstant.CONTEXT_GENERAL;
-        for (Iterator iter = mShellConstants.iterator(); iter.hasNext();) {
-            ShellConstant constant = (ShellConstant)iter.next();
-            if(constant.value.length() <= line.length()) {
-                if(!ShellConstant.CONTEXT_GENERAL.equals(constant.context) &&
-                   !newContext.equals(constant.context) &&
-                   !ShellConstant.CONTEXT_GENERAL.equals(newContext)){
-                    continue;
-                }
-                String newLine = Common.replaceAll(line, constant.value, constant.name, true);
-                if(!newLine.equals(line) && !ShellConstant.CONTEXT_GENERAL.equals(constant.context)) {
-                    newContext = constant.context;    
-                }
-                line = newLine;
-            }
-        }
+        mShellConstantConverter.setShellContext(ShellConstant.CONTEXT_GENERAL);
+        line = mShellConstantConverter.encodeConstants(line);
+        String newContext = mShellConstantConverter.getShellContext();
         if(!newContext.equals(ShellConstant.CONTEXT_GENERAL) && !newContext.equals(mContext)) {
             mBuffer.append(NSISKeywords.getInstance().getKeyword("SetShellVarContext")).append( //$NON-NLS-1$
                     " ").append(newContext).append(INSISConstants.LINE_SEPARATOR); //$NON-NLS-1$

@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -22,6 +22,7 @@ public interface INSISEditorConstants
     public static final String INSERT_COLOR = PREFIX+"insert_color"; //$NON-NLS-1$
     public static final String INSERT_REGFILE = PREFIX+"import_reg_file"; //$NON-NLS-1$
     public static final String INSERT_REGKEY = PREFIX+"import_reg_key"; //$NON-NLS-1$
+    public static final String INSERT_REGVAL = PREFIX+"import_reg_val"; //$NON-NLS-1$
     public static final String TABS_TO_SPACES = PREFIX+"tabs_to_spaces"; //$NON-NLS-1$
     public static final String TOGGLE_COMMENT = PREFIX+"toggle_comment"; //$NON-NLS-1$
     public static final String ADD_BLOCK_COMMENT = PREFIX+"add_block_comment"; //$NON-NLS-1$

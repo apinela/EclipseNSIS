@@ -6,7 +6,7 @@
 # All rights reserved.
 # This program is made available under the terms of the Common Public License
 # v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
-# 
+#
 # Contributors:
 #     Sunil Kamath (IcemanK) - initial API and implementation
 ###############################################################################
@@ -16,12 +16,12 @@
    <extension-point id="nsisConfigWizard" name="%nsis.config.wizard.extension.name" schema="schema/nsisConfigWizard.exsd"/>
    <extension
          point="org.eclipse.core.runtime.products">
-      <product name="%product.name" application="org.eclipse.ui.ide.workbench" description="%product.description"> 
-          <property name="windowImage" value="%product.window.image"/> 
-          <property name="aboutImage" value="%product.about.image"/> 
-          <property name="aboutText" value="%about.text"/> 
-          <property name="appName" value="%product.name"/> 
-      </product> 
+      <product name="%product.name" application="org.eclipse.ui.ide.workbench" description="%product.description">
+          <property name="windowImage" value="%product.window.image"/>
+          <property name="aboutImage" value="%product.about.image"/>
+          <property name="aboutText" value="%about.text"/>
+          <property name="appName" value="%product.name"/>
+      </product>
    </extension>
    <extension
          point="org.eclipse.ui.editors">
@@ -34,9 +34,9 @@
             id="%editor.id">
       </editor>
    </extension>
-   <extension 
+   <extension
       point="org.eclipse.ui.editors.documentProviders">
-      <provider 
+      <provider
          inputTypes="net.sf.eclipsensis.editor.NSISExternalFileEditorInput"
          extensions="%nsis.extensions"
          class="org.eclipse.ui.editors.text.TextFileDocumentProvider"
@@ -289,7 +289,7 @@
                menubarPath="net.sf.eclipsensis.Menu/net.sf.eclipsensis.Group"
                id="%compile.action.id">
          </action>
-      </editorContribution>            
+      </editorContribution>
    </extension>
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
@@ -554,6 +554,11 @@
             description="%insert.regkey.description"
             id="%insert.regkey.command.id"
             name="%insert.regkey.name"/>
+      <command
+            categoryId="%category.id"
+            description="%insert.regval.description"
+            id="%insert.regval.command.id"
+            name="%insert.regval.name"/>
    </extension>
    <extension
          point="org.eclipse.ui.bindings">
@@ -658,10 +663,15 @@
             contextId="%context.editingNSISSource.id"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="%insert.regkey.keysequence"/>
+      <key
+            commandId="%insert.regval.command.id"
+            contextId="%context.editingNSISSource.id"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="%insert.regval.keysequence"/>
    </extension>
    <extension
          point="org.eclipse.help.contexts">
-       <contexts file="contexts.xml"/> 
+       <contexts file="contexts.xml"/>
    </extension>
    <extension
          point="org.eclipse.ui.newWizards">
@@ -761,14 +771,14 @@
    </extension>
    <extension
       point="org.eclipse.ui.themes">
-      <themeElementCategory 
+      <themeElementCategory
              label="%nsis.theme.category.name"
              id="%nsis.theme.category.id">
              <description>
                 %nsis.theme.category.description
              </description>
       </themeElementCategory>
-      <themeElementCategory 
+      <themeElementCategory
              label="%nsis.console.theme.category.name"
              id="%nsis.console.theme.category.id"
              parentId= "%nsis.theme.category.id">
@@ -823,7 +833,7 @@
       </colorDefinition>
    </extension>
    <extension point="org.eclipse.core.filebuffers.annotationModelCreation">
-       <factory 
+       <factory
          extensions="%nsis.extensions"
          class="net.sf.eclipsensis.editor.NSISAnnotationModelFactory"/>
    </extension>
@@ -918,15 +928,15 @@
       </shortcut>
    </extension>
    <extension point="net.sf.eclipsensis.nsisConfigWizard"
-       id="net.sf.eclipsensis.config.nsisConfigWizards"> 
-      <wizard 
-         id="net.sf.eclipsensis.config.manual.NSISManualConfigWizard" 
-         name="%manual.config.wizard.name" 
-         icon="icons/manualcfg.gif" 
-         class="net.sf.eclipsensis.config.manual.NSISManualConfigWizard"> 
+       id="net.sf.eclipsensis.config.nsisConfigWizards">
+      <wizard
+         id="net.sf.eclipsensis.config.manual.NSISManualConfigWizard"
+         name="%manual.config.wizard.name"
+         icon="icons/manualcfg.gif"
+         class="net.sf.eclipsensis.config.manual.NSISManualConfigWizard">
          <description>
              %manual.config.wizard.description
-         </description> 
-     </wizard> 
+         </description>
+     </wizard>
    </extension>
 </plugin>

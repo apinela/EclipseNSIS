@@ -14,21 +14,29 @@ import java.util.List;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
+import net.sf.eclipsensis.dialogs.RegistryKeySelectionDialog;
+import net.sf.eclipsensis.help.NSISKeywords.ShellConstant;
 import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.ShellConstantConverter;
 import net.sf.eclipsensis.wizard.NSISWizard;
 import net.sf.eclipsensis.wizard.NSISWizardDisplayValues;
 import net.sf.eclipsensis.wizard.settings.NSISInstallRegistryItem;
 import net.sf.eclipsensis.wizard.settings.NSISInstallRegistryKey;
 import net.sf.eclipsensis.wizard.util.NSISWizardDialogUtil;
 
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 
 public class NSISInstallRegistryKeyDialog extends AbstractNSISInstallItemDialog
 {
     protected static ArrayList cProperties = new ArrayList();
+    protected ShellConstantConverter mShellConstantConverter = new ShellConstantConverter();
 
     public NSISInstallRegistryKeyDialog(NSISWizard wizard, NSISInstallRegistryKey item)
     {
@@ -53,10 +61,102 @@ public class NSISInstallRegistryKeyDialog extends AbstractNSISInstallItemDialog
         return cProperties;
     }
 
+    protected ShellConstantConverter getShellConstantConverter()
+    {
+        return mShellConstantConverter;
+    }
+
     /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
      */
-    protected Control createControlContents(Composite parent)
+    protected final Control createControlContents(Composite parent)
+    {
+        Composite composite = new Composite(parent,SWT.NONE);
+        GridLayout layout = new GridLayout(1,false);
+        layout.marginHeight = layout.marginWidth = 0;
+        composite.setLayout(layout);
+        Control control = createControlContentsArea(composite);
+        control.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true));
+        Button b = new Button(composite,SWT.PUSH);
+        b.setText("Browse Registry...");
+        b.setLayoutData(new GridData(SWT.RIGHT,SWT.FILL,false,false));
+        b.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e)
+            {
+                browseRegistry();
+            }
+        });
+        return composite;
+    }
+
+    protected void browseRegistry()
+    {
+        String regKey = decodeRegKey();
+        RegistryKeySelectionDialog dialog = new RegistryKeySelectionDialog(getShell());
+        dialog.setText(EclipseNSISPlugin.getResourceString("wizard.select.regkey.message")); //$NON-NLS-1$
+        if(regKey != null) {
+            dialog.setRegKey(regKey);
+        }
+        if(dialog.open() == Window.OK) {
+            encodeRegKey(dialog.getRegKey());
+        }
+    }
+
+    protected void encodeRegKey(String regKey)
+    {
+        int rootKey = 0;
+        String subKey = "";
+        int n = regKey.indexOf("\\"); //$NON-NLS-1$
+        if(n < 0) {
+            rootKey = NSISWizardDisplayValues.getHKeyIndex(regKey);
+        }
+        else {
+            rootKey = NSISWizardDisplayValues.getHKeyIndex(regKey.substring(0,n));
+            subKey = regKey.substring(n+1);
+        }
+        if(subKey.startsWith("\\")) {
+            subKey = subKey.substring(1);
+        }
+        if(subKey.endsWith("\\")) {
+            subKey = subKey.substring(0,subKey.length()-1);
+        }
+        if(!Common.isEmpty(subKey)) {
+            mShellConstantConverter.setShellContext(ShellConstant.CONTEXT_GENERAL);
+            subKey = mShellConstantConverter.encodeConstants(subKey);
+        }
+        mStore.setValue("rootKey",rootKey);
+        mStore.setValue("subKey",subKey);
+    }
+
+    protected String decodeRegKey()
+    {
+        String regKey = null;
+        int n = mStore.getInt("rootKey"); //$NON-NLS-1$
+        if(n >= 0 && n < NSISWizardDisplayValues.HKEY_NAMES.length) {
+             StringBuffer buf = new StringBuffer(NSISWizardDisplayValues.HKEY_NAMES[n]);
+             String subKey = mStore.getString("subKey"); //$NON-NLS-1$
+             if(subKey != null) {
+                 if(subKey.startsWith("\\")) {
+                     subKey = subKey.substring(1);
+                 }
+                 if(subKey.endsWith("\\")) {
+                     subKey = subKey.substring(0,subKey.length()-1);
+                 }
+                 if(!Common.isEmpty(subKey)) {
+                     mShellConstantConverter.setShellContext(ShellConstant.CONTEXT_GENERAL);
+                     buf.append("\\").append(mShellConstantConverter.decodeConstants(subKey));
+                 }
+             }
+             regKey = buf.toString();
+        }
+        return regKey;
+    }
+
+    /**
+     * @param parent
+     * @return
+     */
+    protected Control createControlContentsArea(Composite parent)
     {
         Composite composite = new Composite(parent, SWT.NONE);
         GridLayout layout = new GridLayout(2,false);
@@ -85,6 +185,38 @@ public class NSISInstallRegistryKeyDialog extends AbstractNSISInstallItemDialog
             }
         });
 
+        final IPropertyChangeListener listener = new IPropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent event)
+            {
+                String property = event.getProperty();
+                if(property.equals("rootKey")) {
+                    int rootKey = ((Integer)event.getNewValue()).intValue();
+                    if(c1.getSelectionIndex() != rootKey) {
+                        if(rootKey >= 0 && rootKey < NSISWizardDisplayValues.HKEY_NAMES.length) {
+                            c1.select(rootKey);
+                        }
+                        else {
+                            c1.deselectAll();
+                        }
+                        validate();
+                    }
+                }
+                else if(property.equals("subKey")) {
+                    String subKey = (String)event.getNewValue();
+                    if(!Common.stringsAreEqual(subKey,t.getText())) {
+                        t.setText(subKey);
+                        validate();
+                    }
+                }
+            }
+        };
+        mStore.addPropertyChangeListener(listener);
+        composite.addDisposeListener(new DisposeListener() {
+            public void widgetDisposed(DisposeEvent e)
+            {
+                mStore.removePropertyChangeListener(listener);
+            }
+        });
         return composite;
     }
 

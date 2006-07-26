@@ -38,6 +38,7 @@ public class NSISActionContributor extends TextEditorActionContributor implement
     private RetargetTextEditorAction mInsertColor;
     private RetargetTextEditorAction mInsertRegFile;
     private RetargetTextEditorAction mInsertRegKey;
+    private RetargetTextEditorAction mInsertRegVal;
     private IContributionItem mConfigWizardAction;
     private IMenuManager mMenuManager = null;
 
@@ -85,10 +86,14 @@ public class NSISActionContributor extends TextEditorActionContributor implement
         mInsertRegKey= new RetargetTextEditorAction(bundle, "insert.regkey."); //$NON-NLS-1$
         mInsertRegKey.setImageDescriptor(EclipseNSISPlugin.getImageManager().getImageDescriptor(bundle.getString("insert.regkey.image"))); //$NON-NLS-1$
         mInsertRegKey.setActionDefinitionId(INSERT_REGKEY_COMMAND_ID);
-        
+
+        mInsertRegVal= new RetargetTextEditorAction(bundle, "insert.regval."); //$NON-NLS-1$
+        mInsertRegVal.setImageDescriptor(EclipseNSISPlugin.getImageManager().getImageDescriptor(bundle.getString("insert.regval.image"))); //$NON-NLS-1$
+        mInsertRegVal.setActionDefinitionId(INSERT_REGVAL_COMMAND_ID);
+
         mConfigWizardAction = new ActionContributionItem(new NSISConfigWizardAction());
     }
-	
+
 	/*
 	 * @see IEditorActionBarContributor#init(IActionBars)
 	 */
@@ -127,7 +132,7 @@ public class NSISActionContributor extends TextEditorActionContributor implement
             }
         });
 	}
-	
+
 	private void doSetActiveEditor(IEditorPart part)
     {
         if(mMenuManager != null) {
@@ -138,7 +143,7 @@ public class NSISActionContributor extends TextEditorActionContributor implement
 		if (part instanceof ITextEditor) {
 			editor= (ITextEditor) part;
 		}
-        
+
         if(editor != null) {
             try {
                 IMenuManager manager = editor.getEditorSite().getActionBars().getMenuManager();
@@ -150,22 +155,23 @@ public class NSISActionContributor extends TextEditorActionContributor implement
             }
             catch (NullPointerException e) {
                 EclipseNSISPlugin.getDefault().log(e);
-            }            
+            }
         }
 
-		mContentAssistProposal.setAction(getAction(editor, INSISEditorConstants.CONTENT_ASSIST_PROPOSAL)); 
-        mInsertTemplate.setAction(getAction(editor, INSISEditorConstants.INSERT_TEMPLATE)); 
-        mTabsToSpaces.setAction(getAction(editor, INSISEditorConstants.TABS_TO_SPACES)); 
-        mToggleComment.setAction(getAction(editor, INSISEditorConstants.TOGGLE_COMMENT)); 
-        mAddBlockComment.setAction(getAction(editor, INSISEditorConstants.ADD_BLOCK_COMMENT)); 
-        mRemoveBlockComment.setAction(getAction(editor, INSISEditorConstants.REMOVE_BLOCK_COMMENT)); 
-        mInsertFile.setAction(getAction(editor, INSISEditorConstants.INSERT_FILE)); 
-        mInsertDirectory.setAction(getAction(editor, INSISEditorConstants.INSERT_DIRECTORY)); 
-        mInsertColor.setAction(getAction(editor, INSISEditorConstants.INSERT_COLOR)); 
-        mInsertRegFile.setAction(getAction(editor, INSISEditorConstants.INSERT_REGFILE)); 
-        mInsertRegKey.setAction(getAction(editor, INSISEditorConstants.INSERT_REGKEY)); 
+		mContentAssistProposal.setAction(getAction(editor, INSISEditorConstants.CONTENT_ASSIST_PROPOSAL));
+        mInsertTemplate.setAction(getAction(editor, INSISEditorConstants.INSERT_TEMPLATE));
+        mTabsToSpaces.setAction(getAction(editor, INSISEditorConstants.TABS_TO_SPACES));
+        mToggleComment.setAction(getAction(editor, INSISEditorConstants.TOGGLE_COMMENT));
+        mAddBlockComment.setAction(getAction(editor, INSISEditorConstants.ADD_BLOCK_COMMENT));
+        mRemoveBlockComment.setAction(getAction(editor, INSISEditorConstants.REMOVE_BLOCK_COMMENT));
+        mInsertFile.setAction(getAction(editor, INSISEditorConstants.INSERT_FILE));
+        mInsertDirectory.setAction(getAction(editor, INSISEditorConstants.INSERT_DIRECTORY));
+        mInsertColor.setAction(getAction(editor, INSISEditorConstants.INSERT_COLOR));
+        mInsertRegFile.setAction(getAction(editor, INSISEditorConstants.INSERT_REGFILE));
+        mInsertRegKey.setAction(getAction(editor, INSISEditorConstants.INSERT_REGKEY));
+        mInsertRegVal.setAction(getAction(editor, INSISEditorConstants.INSERT_REGVAL));
 	}
-	
+
 	/*
 	 * @see IEditorActionBarContributor#setActiveEditor(IEditorPart)
 	 */
@@ -174,7 +180,7 @@ public class NSISActionContributor extends TextEditorActionContributor implement
 		super.setActiveEditor(part);
 		doSetActiveEditor(part);
 	}
-	
+
 	/*
 	 * @see IEditorActionBarContributor#dispose()
 	 */
