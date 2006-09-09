@@ -28,7 +28,7 @@ public class DropListStateKeyValueValidator extends ComboboxStateKeyValueValidat
     {
         String value = keyValue.getValue();
         return super.validate(keyValue, fixFlag) &&
-               validateSelection(keyValue, (value != null && value.length() > 0?new String[]{value}:Common.EMPTY_STRING_ARRAY), 
+               validateSelection(keyValue, (value != null && value.length() > 0?new String[]{value}:Common.EMPTY_STRING_ARRAY),
                                  fixFlag);
     }
 
@@ -37,10 +37,11 @@ public class DropListStateKeyValueValidator extends ComboboxStateKeyValueValidat
         return InstallOptionsModel.TYPE_DROPLIST;
     }
 
-    protected boolean validateSelection(INIKeyValue keyValue, String[] values, int fixFlag)
+    protected boolean validateSelection(final INIKeyValue keyValue, String[] values, int fixFlag)
     {
         if(!Common.isEmptyArray(values)) {
             INIKeyValue[] keyValues = ((INISection)keyValue.getParent()).findKeyValues(InstallOptionsModel.PROPERTY_LISTITEMS);
+            final String validValues;
             if(!Common.isEmptyArray(keyValues)) {
                 Collection allValues = new CaseInsensitiveSet(Common.tokenizeToList(keyValues[0].getValue(),IInstallOptionsConstants.LIST_SEPARATOR,false));
                 if(!Common.isEmptyCollection(allValues)) {
@@ -49,20 +50,30 @@ public class DropListStateKeyValueValidator extends ComboboxStateKeyValueValidat
                     if(valuesList.size() == 0) {
                         return true;
                     }
-                    if((fixFlag & INILine.VALIDATE_FIX_ERRORS) > 0) {
-                        valuesList = Common.makeList(values);
-                        valuesList.retainAll(allValues);
-                        keyValue.setValue(Common.flatten(valuesList, IInstallOptionsConstants.LIST_SEPARATOR));
-                        return true;
-                    }
+                    valuesList = Common.makeList(values);
+                    valuesList.retainAll(allValues);
+                    validValues = Common.flatten(valuesList, IInstallOptionsConstants.LIST_SEPARATOR);
+                }
+                else {
+                    validValues = "";
                 }
             }
+            else {
+                validValues = "";
+            }
             if((fixFlag & INILine.VALIDATE_FIX_ERRORS) > 0) {
-                keyValue.setValue(""); //$NON-NLS-1$
+                keyValue.setValue(validValues); //$NON-NLS-1$
             }
             else {
-                keyValue.addProblem(new INIProblem(INIProblem.TYPE_ERROR, InstallOptionsPlugin.getFormattedString("valid.selection.error", //$NON-NLS-1$
-                        new String[]{InstallOptionsModel.PROPERTY_STATE,InstallOptionsModel.PROPERTY_LISTITEMS})));
+                INIProblem problem = new INIProblem(INIProblem.TYPE_ERROR, InstallOptionsPlugin.getFormattedString("valid.selection.error", //$NON-NLS-1$
+                                        new String[]{InstallOptionsModel.PROPERTY_STATE,InstallOptionsModel.PROPERTY_LISTITEMS}));
+                problem.setFixer(new INIProblemFixer("Remove invalid selected values") {
+                    protected INIProblemFix[] createFixes()
+                    {
+                        return new INIProblemFix[] {new INIProblemFix(keyValue,keyValue.buildText(validValues)+(keyValue.getDelimiter()==null?"":keyValue.getDelimiter()))};
+                    }
+                });
+                keyValue.addProblem(problem);
                 return false;
             }
         }

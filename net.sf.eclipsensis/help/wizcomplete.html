@@ -40,8 +40,14 @@
 <a name="a_uninst"></a><dl id="id_uninst"><dt>Silent Uninstaller</dt><dd>Create a silent uninstaller, i.e., without a user interface. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
 <a name="a_uninst_detail"></a><dl id="id_uninst_detail"><dt>Show Uninstallation Details</dt><dd>Display a window in the uninstallation page which shows details about uninstallation actions. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
 <a name="a_uninst_autoclose"></a><dl id="id_uninst_autoclose"><dt>Autoclose Uninstaller</dt><dd>Automatically close the uninstaller upon successful completion. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
-<a name="a_saveloc"></a><dl id="id_saveloc"><dt>File Name</dt><dd>File name for saving the wizard-generated NSIS script.
-This must be a Eclipse workspace file name- not a filesystem file name. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="a_saveloc"></a><dl id="id_saveloc"><dt>Save Location</dt>
+<dd>Location for saving the wizard-generated NSIS script.
+This is either the Eclipse workspace or the filesystem. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd>
+</dl>
+<a name="a_filename"></a><dl id="id_filename"><dt>File Name</dt>
+<dd>File name for saving the wizard-generated NSIS script.
+This is either a Eclipse workspace file name or a filesystem file name. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd>
+</dl>
 <a name="a_relpath"></a><dl id="id_relpath"><dt>Convert Paths to Relative Paths</dt><dd>Convert
 absolute file paths to paths relative to the NSIS script file.
 This enhances portability of the script, e.g., if it is part of a
@@ -55,7 +61,22 @@ to Script Wizard</a><br>
 <hr><a href="wizcontents.html">Previous</a> | <a href="overview.html#contents">Contents</a> | <a href="update.html">Next</a>
 <p><strong><small>Copyright &copy; 2004-2006 Sunil Kamath (IcemanK).</small></strong></p>
 <map name="wizardcomplete">
-  <area id="tmplsave" shape="RECT" href="#a_tmplsave" alt="Save as a Template" onclick="highlightDef('id_tmplsave');" coords="21,486,136,503"><area id="test" shape="RECT" href="#a_test" alt="Test after Compilation" onclick="highlightDef('id_test');" coords="156,465,281,481"><area id="compile" shape="RECT" href="#a_compile" alt="Compile test script" onclick="highlightDef('id_compile');" coords="22,466,148,481"><area id="relpath" shape="RECT" href="#a_relpath" alt="Convert Paths to Relative Paths" onclick="highlightDef('id_relpath');" coords="22,444,194,461"><area id="saveloc" shape="RECT" href="#a_saveloc" alt="File Name" onclick="highlightDef('id_saveloc');" coords="22,419,458,438"><area id="uninst_autoclose" shape="RECT" href="#a_uninst_autoclose" alt="Autoclose Uninstaller" onclick="highlightDef('id_uninst_autoclose');" coords="22,371,219,385"><area id="uninst_detail" shape="RECT" href="#a_uninst_detail" alt="Show uninstaller details" onclick="highlightDef('id_uninst_detail');" coords="22,350,167,363"><area id="uninst" shape="RECT" href="#a_uninst" alt="Silent uninstaller" onclick="highlightDef('id_uninst');" coords="22,329,117,342"><area id="readme" shape="RECT" href="#a_readme" alt="Open readme" onclick="highlightDef('id_readme');" coords="21,275,457,297"><area id="run_params" shape="RECT" href="#a_run_params" alt="Run Paramteres" onclick="highlightDef('id_run_params');" coords="21,249,488,270"><area id="run_prog" shape="RECT" href="#a_run_prog" alt="Run program" onclick="highlightDef('id_run_prog');" coords="21,223,456,244"><area id="uninst_entry" shape="RECT" href="#a_uninst_entry" alt="Uninstaller entry" onclick="highlightDef('id_uninst_entry');" coords="22,176,332,189"><area id="uninst_shortcutt" shape="RECT" href="#a_uninst_shortcut" alt="Add uninstaller shortcut" onclick="highlightDef('id_uninst_shortcut');" coords="22,155,301,168"><area id="autoclose" shape="RECT" href="#a_autoclose" alt="Auto-close Installer" onclick="highlightDef('id_autoclose');" coords="21,134,208,149"><area id="instdetails" shape="RECT" href="#a_instdetails" alt="Show installation details" onclick="highlightDef('id_instdetails');" coords="22,113,156,126">
+  <area id="tmplsave" shape="RECT" href="#a_tmplsave" alt="Save as a Template" onclick="highlightDef('id_tmplsave');" coords="22,467,133,480">
+  <area id="test" shape="RECT" href="#a_test" alt="Test after Compilation" onclick="highlightDef('id_test');" coords="157,445,282,459">
+  <area id="compile" shape="RECT" href="#a_compile" alt="Compile test script" onclick="highlightDef('id_compile');" coords="22,445,148,460">
+  <area id="relpath" shape="RECT" href="#a_relpath" alt="Convert Paths to Relative Paths" onclick="highlightDef('id_relpath');" coords="22,424,195,438">
+  <area id="filename" shape="RECT" href="#a_filename" alt="File Name" onclick="highlightDef('id_filename');" coords="22,397,486,418">
+  <area id="saveloc" shape="RECT" href="#a_saveloc" alt="Save Location" onclick="highlightDef('id_saveloc');" coords="22,376,230,391">
+  <area id="uninst_autoclose" shape="RECT" href="#a_uninst_autoclose" alt="Autoclose Uninstaller" onclick="highlightDef('id_uninst_autoclose');" coords="256,329,453,343">
+  <area id="uninst_detail" shape="RECT" href="#a_uninst_detail" alt="Show uninstaller details" onclick="highlightDef('id_uninst_detail');" coords="22,329,167,342">
+  <area id="uninst" shape="RECT" href="#a_uninst" alt="Silent uninstaller" onclick="highlightDef('id_uninst');" coords="22,308,117,321">
+  <area id="readme" shape="RECT" href="#a_readme" alt="Open readme" onclick="highlightDef('id_readme');" coords="21,254,457,276">
+  <area id="run_params" shape="RECT" href="#a_run_params" alt="Run Paramteres" onclick="highlightDef('id_run_params');" coords="21,228,486,249">
+  <area id="run_prog" shape="RECT" href="#a_run_prog" alt="Run program" onclick="highlightDef('id_run_prog');" coords="21,202,486,223">
+  <area id="uninst_entry" shape="RECT" href="#a_uninst_entry" alt="Uninstaller entry" onclick="highlightDef('id_uninst_entry');" coords="22,155,332,168">
+  <area id="uninst_shortcutt" shape="RECT" href="#a_uninst_shortcut" alt="Add uninstaller shortcut" onclick="highlightDef('id_uninst_shortcut');" coords="22,134,301,147">
+  <area id="autoclose" shape="RECT" href="#a_autoclose" alt="Auto-close Installer" onclick="highlightDef('id_autoclose');" coords="255,112,442,127">
+  <area id="instdetails" shape="RECT" href="#a_instdetails" alt="Show installation details" onclick="highlightDef('id_instdetails');" coords="22,113,156,126">
 </map>
 </div>
 

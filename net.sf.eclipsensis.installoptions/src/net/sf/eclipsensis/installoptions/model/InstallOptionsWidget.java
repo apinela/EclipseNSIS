@@ -191,7 +191,7 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
         else if(name.equals(PROPERTY_LOCKED)) {
             String propertyName = InstallOptionsPlugin.getResourceString("locked.property.name"); //$NON-NLS-1$
             CustomComboBoxPropertyDescriptor descriptor = new CustomComboBoxPropertyDescriptor(PROPERTY_LOCKED,
-                    propertyName, new Object[] {Boolean.TRUE,Boolean.FALSE}, 
+                    propertyName, new Object[] {Boolean.TRUE,Boolean.FALSE},
                     new String[] {cLockedLabelProvider.getText(Boolean.TRUE),
                     cLockedLabelProvider.getText(Boolean.FALSE)}, 1);
             descriptor.setValidator(new NSISStringLengthValidator(propertyName));
@@ -257,19 +257,24 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
         }
     }
 
-    protected TypeConverter getTypeConverter(String property)
+    protected TypeConverter loadTypeConverter(String property, Object value)
     {
         if (InstallOptionsModel.PROPERTY_LEFT.equals(property) ||
             InstallOptionsModel.PROPERTY_TOP.equals(property) ||
             InstallOptionsModel.PROPERTY_RIGHT.equals(property) ||
             InstallOptionsModel.PROPERTY_BOTTOM.equals(property)) {
+            if(value instanceof String) {
+                if(((String)value).regionMatches(true,0,"0x",0,2)) {
+                    return TypeConverter.HEX_CONVERTER;
+                }
+            }
             return TypeConverter.INTEGER_CONVERTER;
         }
         else if(InstallOptionsModel.PROPERTY_FLAGS.equals(property)) {
             return TypeConverter.STRING_LIST_CONVERTER;
         }
         else {
-            return super.getTypeConverter(property);
+            return super.loadTypeConverter(property, value);
         }
     }
 
@@ -344,7 +349,7 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
         }
         return mFlags;
     }
-    
+
     private List retainSupportedFlags(List flags)
     {
         flags = new ArrayList(flags);
@@ -377,7 +382,7 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
         if (!getFlags().equals(flags)) {
         	dirty = true;
             mFlags = new ArrayList(flags);
-        }        
+        }
         if(!oldFlags.equals(newFlags)) {
             firePropertyChange(InstallOptionsModel.PROPERTY_FLAGS,oldFlags,newFlags);
         }
@@ -542,7 +547,7 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
     {
         return null;
     }
-    
+
     public void setPropertySectionCreator(IPropertySectionCreator propertySectionCreator)
     {
         mPropertySectionCreator = propertySectionCreator;
@@ -632,7 +637,7 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
             dialog.open();
             return dialog.getValues();
         }
-        
+
         public void dispose()
         {
             InstallOptionsWidget.this.removePropertyChangeListener(this);

@@ -131,8 +131,11 @@ public class NSISLanguageManager implements INSISHomeListener, IEclipseNSISServi
                         for (int i = 0; i < langFiles.length; i++) {
                             NSISLanguage language = loadLanguage(langFiles[i]);
                             if (language != null) {
+                                Integer langId = new Integer(language.getLangId());
+                                String locale = (String)mLanguageIdLocaleMap.get(langId.toString());
+                                mLanguageMap.put(locale,language);
                                 mLanguageMap.put(language.getName(), language);
-                                mLanguageMap.put(new Integer(language.getLangId()), language);
+                                mLanguageMap.put(langId, language);
                                 mLanguages.add(language);
                             }
                             if(monitor != null) {
@@ -248,17 +251,20 @@ public class NSISLanguageManager implements INSISHomeListener, IEclipseNSISServi
         }
         if(lang == null) {
             Locale locale = Locale.getDefault();
-            //Try the user's language
-            lang = (NSISLanguage)mLanguageMap.get(locale.getDisplayLanguage(Locale.US));
+            lang = (NSISLanguage)mLanguageMap.get(locale.toString());
             if(lang == null) {
-                //See if this is one of the specially mapped locales
-                lang = (NSISLanguage)mLanguageMap.get(mLocaleLanguageMap.get(locale.toString()));
+                //Try the user's language
+                lang = (NSISLanguage)mLanguageMap.get(locale.getDisplayLanguage(Locale.US));
                 if(lang == null) {
-                    //Try the default lang id
-                    lang = (NSISLanguage)mLanguageMap.get(mDefaultLanguageId);
-                    if(lang == null && mLanguages.size() > 0) {
-                        //When all else fails, return the first one
-                        lang = (NSISLanguage)mLanguages.get(0);
+                    //See if this is one of the specially mapped locales
+                    lang = (NSISLanguage)mLanguageMap.get(mLocaleLanguageMap.get(locale.toString()));
+                    if(lang == null) {
+                        //Try the default lang id
+                        lang = (NSISLanguage)mLanguageMap.get(mDefaultLanguageId);
+                        if(lang == null && mLanguages.size() > 0) {
+                            //When all else fails, return the first one
+                            lang = (NSISLanguage)mLanguages.get(0);
+                        }
                     }
                 }
             }

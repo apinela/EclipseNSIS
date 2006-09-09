@@ -74,7 +74,7 @@ be accessed either from the <span style="font-style: italic;">Edit</span> menuit
 bar or by right-clicking in the editor to display the editor popup menu. Most
 commands also provide keyboard shortcuts. Click on the image below for help
 on a particular command.</p>
-<p style="text-align: center;"><img style="border: 0px solid ; width: 241px; height: 256px;" usemap="#editorpopupmenu" ismap="ismap" alt="Editor Popup Menu" src="images/editorpopupmenu.gif"></p>
+<p style="text-align: center;"><img style="border: 0px solid ; width: 249px; height: 278px;" usemap="#editorpopupmenu" ismap="ismap" alt="Editor Popup Menu" src="images/editorpopupmenu.gif"></p>
 <a name="a_command_help"></a>
 <dl id="id_command_help">
 <dt>NSIS Command Help</dt>
@@ -158,25 +158,34 @@ accept a color value, e.g. <strong>BGGradient</strong>, to the NSIS
 script. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a><br>
 <strong>Shortcut:</strong> Shift+F6</dd>
 </dl>
-<a name="a_import_regfile"></a>
-<dl id="id_import_regfile">
+<a name="a_insert_regfile"></a>
+<dl id="id_insert_regfile">
 <dt>Insert Registration File</dt>
-<dd>Pops up a file selection dialog box to choose a Windows registration (.REG) file. If a registration file is selected, its contents are imported into the
+<dd>Pops up a file selection dialog box to choose a Windows registration (.REG) file. If a registration file is selected, its contents are inserted into the
 current NSIS script in the form of WriteRegXXXX commands. A .REG file can be
 created by using the Export command in <a href="http://www.microsoft.com/technet/prodtechnol/windowsserver2003/library/DepKit/f7daf28e-e0ef-42e5-91e3-d4b152798c70.mspx">Regedit.exe</a>. Windows shell folder names (e.g., $WINDIR, $SYSDIR, etc) are automatically 
-substituted in imported
+substituted in inserted
 entries.<br>
-<span style="font-weight: bold">Note: REG_MULTI_SZ values will not be imported since they are not supported by NSIS.</span> <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a><br>
+<span style="font-weight: bold">Note: REG_MULTI_SZ values will not be inserted since they are not supported by NSIS.</span> <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a><br>
 <strong>Shortcut:</strong> Shift+F7</dd>
 </dl>
-<a name="a_import_regkey"></a>
-<dl id="id_import_regkey">
+<a name="a_insert_regkey"></a>
+<dl id="id_insert_regkey">
 <dt>Insert Registry Key</dt>
-<dd>Pops up a dialog to select a Windows registry key. If a registry key is selected in this dialog, its contents are imported into the
+<dd>Pops up a dialog to select a Windows registry key. If a registry key is selected in this dialog, its contents are inserted into the
 current NSIS script in the form of WriteRegXXXX commands. Windows shell folder names (e.g., $WINDIR, $SYSDIR, etc) are automatically 
-substituted in imported
+substituted in inserted
 entries.<br>
-<span style="font-weight: bold">Note: REG_MULTI_SZ values will not be imported since they are not supported by NSIS.</span> <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a><br>
+<span style="font-weight: bold">Note: REG_MULTI_SZ values will not be inserted since they are not supported by NSIS.</span> <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a><br>
+<strong>Shortcut:</strong> Shift+F8</dd>
+</dl>
+<a name="a_insert_regval"></a>
+<dl id="id_insert_regval">
+<dt>Insert Registry Value</dt>
+<dd>Pops up a dialog to select a Windows registry value. If a registry value is selected in this dialog, its contents are inserted into the
+current NSIS script in the form of a WriteRegXXXX command. Windows shell folder names (e.g., $WINDIR, $SYSDIR, etc) are automatically 
+substituted in the inserted entry.<br>
+<span style="font-weight: bold">Note: REG_MULTI_SZ values will not be inserted since they are not supported by NSIS.</span> <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a><br>
 <strong>Shortcut:</strong> Shift+F8</dd>
 </dl>
 <a name="dragdrop"></a>
@@ -447,8 +456,9 @@ The task tags can be configured using the <a href="tasktagprefs.html">Task Tags 
 <p><strong><small>Copyright &copy; 2004-2006 Sunil Kamath
 (IcemanK).</small></strong></p>
 <map name="editorpopupmenu">
-  <area id="import_regkey" shape="rect" href="#a_import_regkey" alt="Import Registry Key" onclick="highlightDef('id_import_regkey');" coords="4,235,227,252">
-  <area id="import_regfile" shape="rect" href="#a_import_regfile" alt="Import Registration File" onclick="highlightDef('id_import_regfile');" coords="4,214,227,231">
+  <area id="insert_regval" shape="rect" href="#a_insert_regval" alt="Insert Registry Value" onclick="highlightDef('id_insert_regval');" coords="4,254,227,271">
+  <area id="insert_regkey" shape="rect" href="#a_insert_regkey" alt="Insert Registry Key" onclick="highlightDef('id_insert_regkey');" coords="4,234,227,251">
+  <area id="insert_regfile" shape="rect" href="#a_insert_regfile" alt="Insert Registration File" onclick="highlightDef('id_insert_regfile');" coords="4,214,227,231">
   <area id="insert_color" shape="rect" href="#a_insert_color" alt="Insert Color" onclick="highlightDef('id_insert_color');" coords="4,193,227,210">
   <area id="insert_folder_name" shape="rect" href="#a_insert_folder_name" alt="Insert Folder Name" onclick="highlightDef('id_insert_folder_name');" coords="4,173,227,190">
   <area id="insert_file_name" shape="rect" href="#a_insert_file_name" alt="Insert File Name" onclick="highlightDef('id_insert_file_name');" coords="4,153,227,170">

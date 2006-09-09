@@ -33,7 +33,6 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.gef.Disposable;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.commands.ActionHandler;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.CompositeImageDescriptor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.text.*;
@@ -49,7 +48,8 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.dialogs.PreferencesUtil;
-import org.eclipse.ui.editors.text.*;
+import org.eclipse.ui.editors.text.IFoldingCommandIds;
+import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.ide.IGotoMarker;
@@ -67,7 +67,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
     public static final String REORDER_ACTION = "net.sf.eclipsensis.installoptions.reorder"; //$NON-NLS-1$
     public static final String CREATE_CONTROL_ACTION = "net.sf.eclipsensis.installoptions.create_control"; //$NON-NLS-1$
     public static final String EXPORT_HTML_ACTION = "net.sf.eclipsensis.installoptions.export_html"; //$NON-NLS-1$
-    
+
     private static final String FOLDING_COLLAPSE = "net.sf.eclipsensis.installoptions.folding_collapse"; //$NON-NLS-1$
     private static final String FOLDING_COLLAPSE_ALL = "net.sf.eclipsensis.installoptions.folding_collapse_all"; //$NON-NLS-1$
     private static final String FOLDING_EXPAND = "net.sf.eclipsensis.installoptions.folding_expand"; //$NON-NLS-1$
@@ -75,10 +75,10 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
     private static final String FOLDING_TOGGLE = "net.sf.eclipsensis.installoptions.folding_toggle"; //$NON-NLS-1$
     private static final String[] KEY_BINDING_SCOPES = new String[] { IInstallOptionsConstants.EDITING_INSTALLOPTIONS_SOURCE_CONTEXT_ID };
     private static final String MARKER_CATEGORY = "__installoptions_marker"; //$NON-NLS-1$
-    
+
     private static final IINISectionDisplayTextProvider cDefaultSectionDisplayTextProvider = new DefaultSectionDisplayTextProvider();
     private static final Map cINISectionDisplayTextProviders = new CaseInsensitiveMap();
-    
+
     private IPositionUpdater mMarkerPositionUpdater = new DefaultPositionUpdater(MARKER_CATEGORY);
     private ResourceTracker mResourceListener = new ResourceTracker();
     private Map mMarkerPositions = new HashMap();
@@ -100,7 +100,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
     };
     private GotoMarker mGotoMarker = null;
     private JobScheduler mJobScheduler = InstallOptionsPlugin.getDefault().getJobScheduler();
-    
+
     static {
         ResourceBundle bundle;
         try {
@@ -132,10 +132,8 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
     {
         super();
         InstallOptionsPlugin.checkEditorAssociation();
-        setPreferenceStore(new ChainedPreferenceStore(new IPreferenceStore[]{
-                InstallOptionsPlugin.getDefault().getPreferenceStore(),
-                EditorsUI.getPreferenceStore()
-        }));
+        setRulerContextMenuId("#InstallOptionsSourceRulerContext");
+        setPreferenceStore(InstallOptionsPlugin.getDefault().getCombinedPreferenceStore());
         setHelpContextId(PLUGIN_CONTEXT_PREFIX + "installoptions_sourceeditor_context"); //$NON-NLS-1$;
     }
 
@@ -173,7 +171,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
         }
         updateActions();
     }
-    
+
     public INISection getCurrentSection()
     {
         INISection section = null;
@@ -198,14 +196,14 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
         enableAction(INIFileFixProblemsAction.FIX_ALL_ID,hasErrors || hasWarnings);
         enableAction(INIFileFixProblemsAction.FIX_WARNINGS_ID,hasWarnings);
         enableAction(INIFileFixProblemsAction.FIX_ERRORS_ID,hasErrors);
-        
+
         INISection section = getCurrentSection();
-        
+
         enableAction(EDIT_CONTROL_ACTION,!hasErrors && section != null && section.isInstallOptionsField());
         enableAction(DELETE_CONTROL_ACTION,!hasErrors && section != null && section.isInstallOptionsField());
         enableAction(DELETE_CONTROL_ACTION2,!hasErrors && section != null && section.isInstallOptionsField());
     }
-    
+
     private void enableAction(String id, boolean enabled)
     {
         IAction action = getAction(id);
@@ -219,7 +217,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
         super.createActions();
         IAction action = new SwitchEditorAction(this, INSTALLOPTIONS_DESIGN_EDITOR_ID,InstallOptionsPlugin.getResourceString("switch.design.editor.action.name")); //$NON-NLS-1$);
         setAction(action.getId(),action);
-        
+
         action = new PreviewAction(PREVIEW_CLASSIC, this);
         setAction(action.getId(),action);
         action = new PreviewAction(PREVIEW_MUI, this);
@@ -227,7 +225,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
 
         action = new Action() {
             private HTMLExporter mHTMLExporter;
-            
+
             public void run()
             {
                 if(mHTMLExporter == null) {
@@ -239,48 +237,48 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
         action.setEnabled(true);
         action.setId(EXPORT_HTML_ACTION);
         setAction(action.getId(),action);
-        
+
         action = new INIFileCreateControlAction(this);
         action.setEnabled(true);
         action.setId(CREATE_CONTROL_ACTION);
         action.setActionDefinitionId(CREATE_CONTROL_COMMAND_ID);
         setAction(action.getId(),action);
-        
+
         action = new INIFileEditControlAction(this);
         action.setEnabled(true);
         action.setId(EDIT_CONTROL_ACTION);
         action.setActionDefinitionId(EDIT_CONTROL_COMMAND_ID);
         setAction(action.getId(),action);
-        
+
         action = new INIFileDeleteControlAction(this);
         action.setEnabled(true);
         action.setId(DELETE_CONTROL_ACTION);
         action.setActionDefinitionId(DELETE_CONTROL_COMMAND_ID);
         setAction(action.getId(),action);
-        
+
         action = new INIFileDeleteControlAction(this);
         action.setEnabled(true);
         action.setId(DELETE_CONTROL_ACTION2);
         action.setActionDefinitionId(DELETE_CONTROL_COMMAND_ID2);
         setAction(action.getId(),action);
-        
+
         action = new INIFileReorderAction(this);
         action.setEnabled(true);
         action.setId(REORDER_ACTION);
         setAction(action.getId(),action);
-        
+
         action = new INIFileFixProblemsAction(this, INIFileFixProblemsAction.FIX_ALL_ID);
         action.setEnabled(false);
         setAction(action.getId(),action);
-        
+
         action = new INIFileFixProblemsAction(this, INIFileFixProblemsAction.FIX_ERRORS_ID);
         action.setEnabled(false);
         setAction(action.getId(),action);
-        
+
         action = new INIFileFixProblemsAction(this, INIFileFixProblemsAction.FIX_WARNINGS_ID);
         action.setEnabled(false);
         setAction(action.getId(),action);
-        
+
         ResourceBundle resourceBundle = InstallOptionsPlugin.getDefault().getResourceBundle();
         action = new TextOperationAction(resourceBundle, "projection.toggle.", this, ProjectionViewer.TOGGLE, true); //$NON-NLS-1$
         action.setActionDefinitionId(IFoldingCommandIds.FOLDING_TOGGLE);
@@ -305,7 +303,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
         action= new TextOperationAction(resourceBundle, "projection.collapse.all.", this, ProjectionViewer.COLLAPSE_ALL, true); //$NON-NLS-1$
         action.setActionDefinitionId(IFoldingCommandIds.FOLDING_COLLAPSE_ALL);
         action.setEnabled(true);
-        setAction(FOLDING_COLLAPSE_ALL, action); 
+        setAction(FOLDING_COLLAPSE_ALL, action);
 
         action = getAction(ITextEditorActionConstants.CONTEXT_PREFERENCES);
         if(action != null) {
@@ -326,10 +324,10 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
             });
             setAction(ITextEditorActionConstants.CONTEXT_PREFERENCES, action2);
         }
-        
+
         updateActions();
     }
-    
+
     protected void editorContextMenuAboutToShow(IMenuManager menu)
     {
         super.editorContextMenuAboutToShow(menu);
@@ -634,6 +632,10 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
                                                 InstallOptionsPlugin.getDefault().log(e);
                                             }
                                         }
+                                        else {
+                                            model.addAnnotation(new INIProblemAnnotation(problem),
+                                                    new Position(0,0));
+                                        }
                                     }
                                 }
                             }
@@ -888,7 +890,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
                 Map mActionHandlers = new HashMap();
                 List mHandlerActivations = new ArrayList();
                 IContextActivation mContextActivation;
-                
+
                 {
                     addActionHandler(CREATE_CONTROL_ACTION);
                     addActionHandler(EDIT_CONTROL_ACTION);
@@ -934,7 +936,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
                         }
                     }
                 }
-                
+
             });
             PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),IInstallOptionsConstants.PLUGIN_CONTEXT_PREFIX + "installoptions_sourceoutline_context"); //$NON-NLS-1$
         }
@@ -1061,37 +1063,36 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
                         }
                     }
                     else {
-                        name="section"; //$NON-NLS-1$
                         image = cSectionImage;
                     }
                 }
 
                 if(image == null) {
-                    name = "unknown"; //$NON-NLS-1$
                     image = cUnknownImage;
                 }
-                return decorateImage(name, image,(INISection)element);
+                return decorateImage(image,(INISection)element);
             }
             return super.getImage(element);
         }
 
-        private Image decorateImage(String name, final Image image, INISection element)
+        private Image decorateImage(final Image image, INISection element)
         {
             final ImageData data;
+            String hashCode;
             if(element.hasErrors()) {
-                name = name.toLowerCase() + "$error"; //$NON-NLS-1$
+                hashCode = image.hashCode() + "$error"; //$NON-NLS-1$
                 data = cErrorImageData;
             }
             else if(element.hasWarnings()) {
-                name = name.toLowerCase() + "$warning"; //$NON-NLS-1$
+                hashCode = image.hashCode() + "$warning"; //$NON-NLS-1$
                 data = cWarningImageData;
             }
             else {
                 return image;
             }
-            Image image2 = InstallOptionsPlugin.getImageManager().getImage(name);
+            Image image2 = InstallOptionsPlugin.getImageManager().getImage(hashCode);
             if(image2 == null) {
-                InstallOptionsPlugin.getImageManager().putImageDescriptor(name,
+                InstallOptionsPlugin.getImageManager().putImageDescriptor(hashCode,
                         new CompositeImageDescriptor(){
                             protected void drawCompositeImage(int width, int height)
                             {
@@ -1104,7 +1105,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
                                 return new Point(image.getBounds().width,image.getBounds().height);
                             }
                         });
-                image2 = InstallOptionsPlugin.getImageManager().getImage(name);
+                image2 = InstallOptionsPlugin.getImageManager().getImage(hashCode);
             }
             return image2;
         }

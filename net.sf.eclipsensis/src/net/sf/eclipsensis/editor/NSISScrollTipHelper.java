@@ -40,16 +40,14 @@ public class NSISScrollTipHelper
                 final ScrollBar sb = st.getVerticalBar();
                 if(sb != null) {
                     mSelAdapter = new SelectionAdapter() {
-                        private Shell mShell = null;
                         private Label mLabel = null;
 
                         public void widgetSelected(SelectionEvent e)
                         {
                             switch(e.detail) {
                                 case SWT.NONE:
-                                    if(mShell != null) {
-                                        mShell.dispose();
-                                        mShell = null;
+                                    if(mLabel != null) {
+                                        mLabel.getShell().dispose();
                                         mLabel = null;
                                     }
                                     break;
@@ -61,35 +59,39 @@ public class NSISScrollTipHelper
                                     int scrollTop = stLoc.y+arrowHeight;
                                     int scrollHeight = sbSize.y-2*arrowHeight;
 
-                                    if(mShell == null) {
-                                        makeShell();
+                                    Shell shell;
+                                    if(mLabel == null || mLabel.isDisposed()) {
+                                        shell = makeShell();
+                                    }
+                                    else {
+                                        shell = mLabel.getShell();
                                     }
 
                                     String text = new StringBuffer().append(mTextViewer.getTopIndex()+1).append(" - ").append(mTextViewer.getBottomIndex()+1).toString(); //$NON-NLS-1$
                                     mLabel.setText(text);
-                                    Point extent = mShell.computeSize(SWT.DEFAULT,SWT.DEFAULT);
+                                    Point extent = shell.computeSize(SWT.DEFAULT,SWT.DEFAULT);
                                     int x = stLoc.x+stSize.x-sbSize.x-extent.x-4;
-                                    mShell.setBounds(x,scrollTop + (sb.getSelection()-sb.getMinimum())*scrollHeight/(sb.getMaximum()-sb.getMinimum()),
+                                    shell.setBounds(x,scrollTop + (sb.getSelection()-sb.getMinimum())*scrollHeight/(sb.getMaximum()-sb.getMinimum()),
                                                      extent.x,extent.y);
-                                    if(!mShell.isVisible()) {
-                                        mShell.setVisible(true);
+                                    if(!shell.isVisible()) {
+                                        shell.setVisible(true);
                                     }
                                     break;
                             }
                         }
 
-                        private void makeShell()
+                        private Shell makeShell()
                         {
-                            mShell = new Shell(st.getShell(), SWT.TOOL | SWT.NO_TRIM | SWT.NO_FOCUS | SWT.ON_TOP);
-                            Display display = mShell.getDisplay();
-                            mShell.setBackground(display.getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW));
+                            Shell shell = new Shell(st.getShell(), SWT.TOOL | SWT.NO_TRIM | SWT.NO_FOCUS | SWT.ON_TOP);
+                            Display display = shell.getDisplay();
+                            shell.setBackground(display.getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW));
                             GridLayout layout = new GridLayout(1,true);
                             layout.marginHeight=1;
                             layout.marginWidth=1;
-                            mShell.setLayout(layout);
+                            shell.setLayout(layout);
                             GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
-                            mShell.setLayoutData(data);
-                            Composite composite = new Composite(mShell,SWT.NONE);
+                            shell.setLayoutData(data);
+                            Composite composite = new Composite(shell,SWT.NONE);
                             data = new GridData(SWT.FILL, SWT.FILL, true, true);
                             composite.setLayoutData(data);
                             composite.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
@@ -102,6 +104,8 @@ public class NSISScrollTipHelper
                             mLabel.setLayoutData(data);
                             mLabel.setForeground(display.getSystemColor(SWT.COLOR_INFO_FOREGROUND));
                             mLabel.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+
+                            return shell;
                         }
                     };
                     sb.addSelectionListener(mSelAdapter);

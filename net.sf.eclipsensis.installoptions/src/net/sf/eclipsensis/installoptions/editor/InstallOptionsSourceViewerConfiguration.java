@@ -9,8 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.editor;
 
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import net.sf.eclipsensis.editor.codeassist.NSISAnnotationHover;
 import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
@@ -102,17 +101,19 @@ public class InstallOptionsSourceViewerConfiguration extends SourceViewerConfigu
                                     if(inifile != null) {
                                         INILine line = inifile.getLineAtOffset(invocationContext.getOffset());
                                         if(line != null) {
-                                            List problems = line.getProblems();
+                                            List problems = new ArrayList(line.getProblems());
+                                            problems.addAll(inifile.getProblems(false));
                                             if(!Common.isEmptyCollection(problems)) {
-                                                ICompletionProposal[] proposals = new ICompletionProposal[problems.size()];
-                                                int i=0;
+                                                List proposals = new ArrayList();
                                                 for (Iterator iter = problems.iterator(); iter.hasNext();) {
                                                     INIProblem problem = (INIProblem)iter.next();
                                                     if(problem.canFix()) {
-                                                        proposals[i++] = new INIProblemQuickFixProposal(problem);
+                                                        proposals.add(new INIProblemQuickFixProposal(problem));
                                                     }
                                                 }
-                                                return proposals;
+                                                if(proposals.size() > 0) {
+                                                    return (ICompletionProposal[])proposals.toArray(new ICompletionProposal[proposals.size()]);
+                                                }
                                             }
                                         }
                                     }

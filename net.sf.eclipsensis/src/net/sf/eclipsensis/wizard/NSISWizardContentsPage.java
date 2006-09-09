@@ -193,8 +193,9 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage implements IN
                                     tip = new Shell(tree.getShell(), SWT.ON_TOP | SWT.TOOL);
                                     FillLayout fillLayout = new FillLayout ();
                                     fillLayout.marginHeight = 1;
-                                    fillLayout.marginWidth = 1;
+                                    fillLayout.marginWidth = 2;
                                     tip.setLayout (fillLayout);
+                                    tip.setBackground (tip.getDisplay().getSystemColor (SWT.COLOR_INFO_BACKGROUND));
                                     label = new Label (tip, SWT.NONE);
                                     label.setForeground (tip.getDisplay().getSystemColor (SWT.COLOR_INFO_FOREGROUND));
                                     label.setBackground (tip.getDisplay().getSystemColor (SWT.COLOR_INFO_BACKGROUND));
@@ -992,6 +993,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage implements IN
                             INSISInstallElement parent = element.getParent();
                             if(parent != null) {
                                 parent.removeChild(element);
+                                tv.refresh(parent,true);
                             }
                         }
                     }

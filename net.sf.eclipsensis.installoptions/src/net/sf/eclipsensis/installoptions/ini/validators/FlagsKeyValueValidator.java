@@ -20,7 +20,7 @@ import net.sf.eclipsensis.util.Common;
 
 public class FlagsKeyValueValidator implements IINIKeyValueValidator
 {
-    public boolean validate(INIKeyValue keyValue, int fixFlag)
+    public boolean validate(final INIKeyValue keyValue, int fixFlag)
     {
         IINIContainer c = keyValue.getParent();
         if(c instanceof INISection) {
@@ -33,15 +33,13 @@ public class FlagsKeyValueValidator implements IINIKeyValueValidator
                         Collection availableFlags;
                         availableFlags = typeDef.getFlags();
                         StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
-                        List flags = Common.tokenizeToList(value,IInstallOptionsConstants.LIST_SEPARATOR,false);
+                        final List flags = Common.tokenizeToList(value,IInstallOptionsConstants.LIST_SEPARATOR,false);
                         int n = 0;
                         for (Iterator iter=flags.iterator(); iter.hasNext(); ) {
                             String flag = (String)iter.next();
                             if(!Common.isEmpty(flag) && !availableFlags.contains(flag)) {
-                                if((fixFlag & INILine.VALIDATE_FIX_WARNINGS)> 0) {
-                                    iter.remove();
-                                }
-                                else {
+                                iter.remove();
+                                if((fixFlag & INILine.VALIDATE_FIX_WARNINGS)== 0) {
                                     if(n > 0) {
                                         buf.append(", "); //$NON-NLS-1$
                                     }
@@ -55,10 +53,17 @@ public class FlagsKeyValueValidator implements IINIKeyValueValidator
                                 keyValue.setValue(Common.flatten(flags, IInstallOptionsConstants.LIST_SEPARATOR));
                             }
                             else {
-                                keyValue.addProblem(new INIProblem(INIProblem.TYPE_WARNING,
-                                                    InstallOptionsPlugin.getFormattedString("flags.value.warning", //$NON-NLS-1$
-                                                            new Object[]{InstallOptionsModel.PROPERTY_TYPE,
-                                                                         types[0].getValue(),new Integer(n),buf.toString()})));
+                                INIProblem problem = new INIProblem(INIProblem.TYPE_WARNING,
+                                                                    InstallOptionsPlugin.getFormattedString("flags.value.warning", //$NON-NLS-1$
+                                                                            new Object[]{InstallOptionsModel.PROPERTY_TYPE,
+                                                                                         types[0].getValue(),new Integer(n),buf.toString()}));
+                                problem.setFixer(new INIProblemFixer("Remove unrecognized flag(s)") {
+                                    protected INIProblemFix[] createFixes()
+                                    {
+                                        return new INIProblemFix[] {new INIProblemFix(keyValue,keyValue.buildText(Common.flatten(flags, IInstallOptionsConstants.LIST_SEPARATOR))+(keyValue.getDelimiter()!=null?keyValue.getDelimiter():""))};
+                                    }
+                                });
+                                keyValue.addProblem(problem);
                             }
                         }
                     }

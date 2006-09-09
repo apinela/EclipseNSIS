@@ -118,13 +118,13 @@ public class InstallOptionsFileRequest extends InstallOptionsPathRequest
         }
     }
 
-    protected TypeConverter getTypeConverter(String property)
+    protected TypeConverter loadTypeConverter(String property, Object value)
     {
         if(property.equals(InstallOptionsModel.PROPERTY_FILTER)) {
             return FILEFILTER_LIST_CONVERTER;
         }
         else {
-            return super.getTypeConverter(property);
+            return super.loadTypeConverter(property, value);
         }
     }
 

@@ -7,13 +7,14 @@ Revision History
     * Control type can now be changed in the design editor.
     * Added support for automatic Team checkout in design editor.
     * Fixed handling of escaped characters in INI file.
+    * Added Quickfix support in Source editor.
     * Other minor bug fixes.
 
 0.9.4 (01/26/2006)
     * Fixed GroupBox transparency.
     * Preview can now also handle external files.
     * Improved clipboard handling.
-    * ComboBox/Droplist now shows the dropdown only when it is the primary 
+    * ComboBox/Droplist now shows the dropdown only when it is the primary
       selection.
     * Fixed improper handling of spaces in lists separated by '|', e.g. in
       Flags and ListItems fields.
@@ -34,17 +35,17 @@ Revision History
 0.9.2 (08/23/2005)
     * Upgraded to Eclipse GEF 3.1 - no longer compatible with GEF 3.0.
     * Added template support.
-    * Added dynamic support for change in MakeNSIS version in EclipseNSIS 
+    * Added dynamic support for change in MakeNSIS version in EclipseNSIS
       preferences.
-    * Added startup check for default INI file association with InstallOptions 
+    * Added startup check for default INI file association with InstallOptions
       Editor.
-    * Added project nature and project builder for handling automatic detection 
+    * Added project nature and project builder for handling automatic detection
       of errors and warnings upon resource changes.
     * Added underline and strikethrough syntax styles to source editor.
-    * Guides and controls glued to guides are now saved as INI file comments, 
+    * Guides and controls glued to guides are now saved as INI file comments,
       and can be restored when Design editor is opened.
     * Improved screen scraping mechanism for control image capture.
-    * Customized palette preference dialog.  
+    * Customized palette preference dialog.
     * Bug fixes:
         o 1257456
     * Other minor bug fixes.
@@ -54,7 +55,7 @@ Revision History
     * Requires Eclipse 3.1 - not compatible with Eclipse 3.0.
     * Requires Eclipse GEF 3.0.
     * Design editor with point & click editing and outline view.
-    * Source editor with syntax highlighting, code outlining & folding and 
+    * Source editor with syntax highlighting, code outlining & folding and
       dynamic error checking.
     * Integrated help.
     * Script wizard.

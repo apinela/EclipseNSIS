@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -14,6 +14,7 @@ import java.util.*;
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.util.XMLUtil;
+import net.sf.eclipsensis.wizard.util.NSISWizardDialogUtil;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -27,9 +28,9 @@ public class RadioParam extends GroupParam
 {
     public static final String ATTR_DEFAULT = "default"; //$NON-NLS-1$
     public static final String SETTING_RADIO_SELECTED = "radioSelected"; //$NON-NLS-1$
-    
+
     private int mDefaultIndex;
-    
+
     public RadioParam(Node node)
     {
         super(node);
@@ -49,7 +50,7 @@ public class RadioParam extends GroupParam
     protected class RadioParamEditor extends GroupParamEditor
     {
         private Map mRadioButtonMap = new HashMap();
-        
+
         public RadioParamEditor(INSISParamEditor parentEditor)
         {
             super(parentEditor);
@@ -97,7 +98,7 @@ public class RadioParam extends GroupParam
         }
 
         /**
-         * 
+         *
          */
         private void selectDefault()
         {
@@ -107,7 +108,7 @@ public class RadioParam extends GroupParam
                 radioButton.setSelection(true);
             }
         }
-        
+
         protected int getLayoutNumColumns()
         {
             return 1+super.getLayoutNumColumns();
@@ -125,9 +126,12 @@ public class RadioParam extends GroupParam
                     //Steal the name
                     radioButton.setText(nameLabel.getText());
                     nameLabel.setText(""); //$NON-NLS-1$
-                    Composite parent2 = nameLabel.getParent();
+
+                    Control control = NSISWizardDialogUtil.getLayoutControl(nameLabel);
+
+                    Composite parent2 = control.getParent();
                     GridLayout layout = (GridLayout)parent2.getLayout();
-                    GridData data = (GridData)nameLabel.getLayoutData();
+                    GridData data = (GridData)control.getLayoutData();
                     if(layout.numColumns > data.horizontalSpan) {
                         GridData data2;
                         if(Common.isValid(((NSISParamEditor)editor).mControl)) {
@@ -139,7 +143,7 @@ public class RadioParam extends GroupParam
                         data2.horizontalSpan += data.horizontalSpan;
                         data2.grabExcessHorizontalSpace |= data.grabExcessHorizontalSpace;
                         data2.grabExcessVerticalSpace |= data.grabExcessVerticalSpace;
-                        nameLabel.dispose();
+                        control.dispose();
                         parent2.layout(true);
                     }
                 }

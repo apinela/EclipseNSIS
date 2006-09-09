@@ -489,8 +489,19 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
                 m.updateSlaves();
                 b2.setSelection(settings.isSelectLanguage());
                 java.util.List selectedLanguages = settings.getLanguages();
-                lv2.setInput(selectedLanguages);
                 java.util.List availableLanguages = NSISLanguageManager.getInstance().getLanguages();
+                if(selectedLanguages.isEmpty()) {
+                    NSISWizardWelcomePage welcomePage = (NSISWizardWelcomePage)mWizard.getPage(NSISWizardWelcomePage.NAME);
+                    if(welcomePage != null) {
+                        if(!welcomePage.isCreateFromTemplate()) {
+                            NSISLanguage defaultLanguage = NSISLanguageManager.getInstance().getDefaultLanguage();
+                            if(defaultLanguage != null && availableLanguages.contains(defaultLanguage)) {
+                                selectedLanguages.add(defaultLanguage);
+                            }
+                        }
+                    }
+                }
+                lv2.setInput(selectedLanguages);
                 availableLanguages.removeAll(selectedLanguages);
                 lv1.setInput(availableLanguages);
             }

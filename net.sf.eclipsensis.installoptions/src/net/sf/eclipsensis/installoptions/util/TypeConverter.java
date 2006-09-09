@@ -135,6 +135,23 @@ public abstract class TypeConverter
         }
     };
 
+    public static final TypeConverter HEX_CONVERTER = new TypeConverter() {
+        public String asString(Object o)
+        {
+            return "0x"+Integer.toHexString(((Integer)o).intValue());
+        }
+
+        public Object asType(String s)
+        {
+            return (Common.isEmpty(s)?null:Integer.valueOf(s.substring(2), 16));
+        }
+
+        public Object makeCopy(Object o)
+        {
+            return o;
+        }
+    };
+
     public static final TypeConverter STRING_ARRAY_CONVERTER = new TypeConverter() {
         public String asString(Object o)
         {

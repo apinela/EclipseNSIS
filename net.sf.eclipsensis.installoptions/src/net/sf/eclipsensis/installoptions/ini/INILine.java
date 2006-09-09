@@ -24,7 +24,7 @@ public class INILine implements Cloneable, Serializable
     public static final int VALIDATE_FIX_ERRORS = 1;
     public static final int VALIDATE_FIX_WARNINGS = 2;
     public static final int VALIDATE_FIX_ALL = VALIDATE_FIX_ERRORS|VALIDATE_FIX_WARNINGS;
-    
+
     private String mText = ""; //$NON-NLS-1$
     private String mDelimiter = INSISConstants.LINE_SEPARATOR;
     private IINIContainer mParent;
@@ -50,7 +50,7 @@ public class INILine implements Cloneable, Serializable
             setDirty(true);
         }
     }
-    
+
     protected void setDirty(boolean dirty)
     {
         if(getParent() != null) {
@@ -86,7 +86,7 @@ public class INILine implements Cloneable, Serializable
     {
         return mParent;
     }
-    
+
     public boolean isBlank()
     {
         return Common.isEmpty(getText());
@@ -136,7 +136,12 @@ public class INILine implements Cloneable, Serializable
             }
             else {
                 INIProblem problem = new INIProblem(INIProblem.TYPE_WARNING,InstallOptionsPlugin.getResourceString("line.ignored.warning")); //$NON-NLS-1$
-                problem.setFix("Remove line",new INIProblemFix(this));
+                problem.setFixer(new INIProblemFixer("Remove line") {
+                    protected INIProblemFix[] createFixes()
+                    {
+                        return new INIProblemFix[] {new INIProblemFix(INILine.this)};
+                    }
+                });
                 addProblem(problem);
             }
         }
@@ -173,7 +178,7 @@ public class INILine implements Cloneable, Serializable
             }
         }
     }
-    
+
     public INILine copy()
     {
         return (INILine)clone();

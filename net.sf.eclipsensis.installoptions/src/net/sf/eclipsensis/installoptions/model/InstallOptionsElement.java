@@ -18,6 +18,7 @@ import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.ini.*;
 import net.sf.eclipsensis.installoptions.model.commands.*;
 import net.sf.eclipsensis.installoptions.util.TypeConverter;
+import net.sf.eclipsensis.util.CaseInsensitiveMap;
 import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.gef.commands.Command;
@@ -85,6 +86,7 @@ public abstract class InstallOptionsElement implements IPropertySource, Cloneabl
     protected ArrayList mModelCommandListeners = new ArrayList();
     private boolean mDirty = false;
     protected Map mDescriptors = new HashMap();
+    private Map mTypeConverters = null;
 
     private INIComment mMetadataComment;
 
@@ -137,7 +139,7 @@ public abstract class InstallOptionsElement implements IPropertySource, Cloneabl
             listeners[i].executeModelCommand(e);
         }
     }
-    
+
     public final IPropertyDescriptor getPropertyDescriptor(String name)
     {
         if(getPropertyNames().contains(name)) {
@@ -215,7 +217,7 @@ public abstract class InstallOptionsElement implements IPropertySource, Cloneabl
     public void setPropertyValue(Object id, Object value)
     {
     }
-    
+
     public String getStringPropertyValue(Object id)
     {
         Object value = getPropertyValue(id);
@@ -279,7 +281,7 @@ public abstract class InstallOptionsElement implements IPropertySource, Cloneabl
             INIKeyValue[] keyValues = section.findKeyValues(property);
             if(!Common.isEmptyArray(keyValues)) {
                 String value = keyValues[0].getValue();
-                TypeConverter converter = getTypeConverter(property);
+                TypeConverter converter = getTypeConverter(property, value);
                 setPropertyValue(property,(converter != null?converter.asType(value):value));
             }
         }
@@ -300,7 +302,7 @@ public abstract class InstallOptionsElement implements IPropertySource, Cloneabl
     public INISection getSection()
     {
         if(mSection == null) {
-            mSection = new INISection(""); //$NON-NLS-1$
+            mSection = new INISection(); //$NON-NLS-1$
         }
         return mSection;
     }
@@ -323,8 +325,8 @@ public abstract class InstallOptionsElement implements IPropertySource, Cloneabl
             Collection properties = doGetPropertyNames();
             for (Iterator iter=properties.iterator(); iter.hasNext(); ) {
                 String property = (String)iter.next();
-                TypeConverter converter = getTypeConverter(property);
                 Object propertyValue = getPropertyValue(property);
+                TypeConverter converter = getTypeConverter(property, propertyValue);
                 String value = (propertyValue != null?(converter != null?converter.asString(propertyValue):propertyValue.toString()):""); //$NON-NLS-1$
                 value = (value == null?"":value); //$NON-NLS-1$
 
@@ -352,9 +354,22 @@ public abstract class InstallOptionsElement implements IPropertySource, Cloneabl
         return section;
     }
 
-    protected TypeConverter getTypeConverter(String property)
+    protected final TypeConverter getTypeConverter(String property, Object value)
     {
-        return null;
+        if(mTypeConverters == null) {
+            mTypeConverters = new CaseInsensitiveMap();
+        }
+        TypeConverter typeConverter = (TypeConverter)mTypeConverters.get(property);
+        if(typeConverter == null) {
+            typeConverter = loadTypeConverter(property, value);
+            mTypeConverters.put(property, typeConverter);
+        }
+        return typeConverter;
+    }
+
+    protected TypeConverter loadTypeConverter(String property, Object value)
+    {
+        return TypeConverter.STRING_CONVERTER;
     }
 
     public Image getIconImage()

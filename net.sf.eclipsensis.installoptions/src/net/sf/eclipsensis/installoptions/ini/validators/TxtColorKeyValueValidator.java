@@ -19,7 +19,7 @@ import org.eclipse.swt.graphics.RGB;
 
 public class TxtColorKeyValueValidator implements IINIKeyValueValidator
 {
-    public boolean validate(INIKeyValue keyValue, int fixFlag)
+    public boolean validate(final INIKeyValue keyValue, int fixFlag)
     {
         String value = keyValue.getValue();
         if(!Common.isEmpty(value)) {
@@ -31,9 +31,16 @@ public class TxtColorKeyValueValidator implements IINIKeyValueValidator
                 keyValue.setValue(TypeConverter.RGB_CONVERTER.asString(InstallOptionsLink.DEFAULT_TXTCOLOR));
             }
             else {
-                keyValue.addProblem(new INIProblem(INIProblem.TYPE_ERROR,
-                                    InstallOptionsPlugin.getFormattedString("txtcolor.value.error", //$NON-NLS-1$
-                                            new String[]{keyValue.getKey()})));
+                INIProblem problem = new INIProblem(INIProblem.TYPE_ERROR,
+                                                    InstallOptionsPlugin.getFormattedString("txtcolor.value.error", //$NON-NLS-1$
+                                                            new String[]{keyValue.getKey()}));
+                problem.setFixer(new INIProblemFixer("Set valid RGB color value") {
+                    protected INIProblemFix[] createFixes()
+                    {
+                        return new INIProblemFix[] {new INIProblemFix(keyValue,keyValue.buildText(TypeConverter.RGB_CONVERTER.asString(InstallOptionsLink.DEFAULT_TXTCOLOR))+(keyValue.getDelimiter()==null?"":keyValue.getDelimiter()))};
+                    }
+                });
+                keyValue.addProblem(problem);
                 return false;
             }
         }

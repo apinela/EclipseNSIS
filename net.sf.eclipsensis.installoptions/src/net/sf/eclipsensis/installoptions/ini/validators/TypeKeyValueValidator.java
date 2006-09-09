@@ -16,7 +16,7 @@ import net.sf.eclipsensis.installoptions.model.InstallOptionsModelTypeDef;
 
 public class TypeKeyValueValidator implements IINIKeyValueValidator
 {
-    public boolean validate(INIKeyValue keyValue, int fixFlag)
+    public boolean validate(final INIKeyValue keyValue, int fixFlag)
     {
         String value = keyValue.getValue();
         if(value.length() > 0 && value.indexOf(' ') < 0 && value.indexOf('\t') < 0) {
@@ -29,9 +29,16 @@ public class TypeKeyValueValidator implements IINIKeyValueValidator
             keyValue.setValue(InstallOptionsModel.TYPE_UNKNOWN);
         }
         else {
-            keyValue.addProblem(new INIProblem(INIProblem.TYPE_WARNING,
-                                InstallOptionsPlugin.getFormattedString("type.value.warning", //$NON-NLS-1$
-                                        new Object[]{InstallOptionsModel.PROPERTY_TYPE})));
+            INIProblem problem = new INIProblem(INIProblem.TYPE_WARNING,
+                                            InstallOptionsPlugin.getFormattedString("type.value.warning", //$NON-NLS-1$
+                                                    new Object[]{InstallOptionsModel.PROPERTY_TYPE}));
+            problem.setFixer(new INIProblemFixer("Set valid Type value") {
+                protected INIProblemFix[] createFixes()
+                {
+                    return new INIProblemFix[] {new INIProblemFix(keyValue,keyValue.buildText(InstallOptionsModel.TYPE_UNKNOWN)+(keyValue.getDelimiter()==null?"":keyValue.getDelimiter()))};
+                }
+            });
+            keyValue.addProblem(problem);
         }
         return false;
     }

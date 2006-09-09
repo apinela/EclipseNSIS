@@ -44,6 +44,12 @@ selected, the user is prompted with an installer page to specify the
 Start Menu group name, otherwise the installer
 always creates the group name specified above.
 <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="a_disable_shortcut"></a><dl id="id_disable_shortcut"><dt>Allow User to Disable Start Menu Group Shortcut Creation</dt>
+<dd>Option
+to allow the user to disable the creation of a Start Menu group shortcut. If this option is
+selected, the user will be prompted with a checkbox labeled &quot;Do not create shortcuts&quot; when specifying the Start Menu group location.
+<a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd>
+</dl>
 <a name="a_langsupp"></a><dl id="id_langsupp"><dt>Enable Language Support</dt><dd>Option to create a multilingual installer. If this option is not selected, the installer
 is created using the default NSIS language (currently U.S. English). <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
 <a name="a_avail_langgrp"></a><dl id="id_avail_langgrp"><dt>Available Languages</dt><dd>List of languages currently supported by NSIS. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
@@ -66,7 +72,24 @@ selected languages list is used. <a href="javascript:history.go(-1)">&larr;&nbsp
 to Script Wizard</a><br>
 <hr><a href="wizgeneral.html">Previous</a> | <a href="overview.html#contents">Contents</a> | <a href="wizpresentation.html">Next</a>
 <p><strong><small>Copyright &copy; 2004-2006 Sunil Kamath (IcemanK).</small></strong></p>
-<map name="wizardattrib"><area id="langup" shape="RECT" href="#a_langup" alt="Move Up" onclick="highlightDef('id_langup');" coords="434,390, 477,419"><area id="langdown" shape="RECT" href="#a_langdown" alt="Move Down" onclick="highlightDef('id_langdown');" coords="434,421, 477,450"><area id="allang_left" shape="RECT" href="#a_alllang_left" alt="Remove All" onclick="highlightDef('id_alllang_left');" coords="204,452, 247,480"><area id="selllang_left" shape="RECT" href="#a_sellang_left" alt="Remove Highlighted" onclick="highlightDef('id_sellang_left');" coords="204,420, 247,448"><area id="selllang_right" shape="RECT" href="#a_sellang_right" alt="Add Highlighted" onclick="highlightDef('id_sellang_right');" coords="203,385, 247,417"><area id="alllang_right" shape="RECT" href="#a_allang_right" alt="Add All" onclick="highlightDef('id_alllang_right');" coords="204,359, 247,387"><area id="sellang" shape="RECT" href="#a_sellang" alt="Allow User to Select Language." onclick="highlightDef('id_sellang');" coords="21,503, 184,518"><area id="sel_langgrp" shape="RECT" href="#a_sel_langgrp" alt="Selected Languages" onclick="highlightDef('id_sel_langgrp');" coords="251,306, 433,501"><area id="avail_langgrp" shape="RECT" href="#a_avail_langgrp" alt="Available Languages" onclick="highlightDef('id_avail_langgrp');" coords="20,306, 198,501"><area id="langsupp" shape="RECT" href="#a_langsupp" alt="Enable Language Support" onclick="highlightDef('id_langsupp');" coords="22,283, 162,299"><area id="change_smrgrp" shape="RECT" href="#a_change_smgrp" alt="Allow User to Change Group" onclick="highlightDef('id_change_smgrp');" coords="19,238, 175,253"><area id="smgrp_name" shape="RECT" href="#a_smgrp_name" alt="Group Name" onclick="highlightDef('id_smgrp_name');" coords="19,212, 486,234"><area id="create_smgrp" shape="RECT" href="#a_create_smgrp" alt="Create Start Menu Group" onclick="highlightDef('id_create_smgrp');" coords="19,193, 161,207"><area id="changedir" shape="RECT" href="#a_changedir" alt="Allow User to Change Directory" onclick="highlightDef('id_changedir');" coords="19,145, 189,160"><area id="instdir" shape="RECT" href="#a_instdir" alt="Directory Name" onclick="highlightDef('id_instdir');" coords="19,119, 485,139"></map>
+<map name="wizardattrib">
+  <area id="langup" shape="RECT" href="#a_langup" alt="Move Up" onclick="highlightDef('id_langup');" coords="441,376,485,401">
+  <area id="langdown" shape="RECT" href="#a_langdown" alt="Move Down" onclick="highlightDef('id_langdown');" coords="441,408,484,432">
+  <area id="allang_left" shape="RECT" href="#a_alllang_left" alt="Remove All" onclick="highlightDef('id_alllang_left');" coords="206,439,250,464">
+  <area id="selllang_left" shape="RECT" href="#a_sellang_left" alt="Remove Highlighted" onclick="highlightDef('id_sellang_left');" coords="206,408,250,433">
+  <area id="selllang_right" shape="RECT" href="#a_sellang_right" alt="Add Highlighted" onclick="highlightDef('id_sellang_right');" coords="206,377,249,401">
+  <area id="alllang_right" shape="RECT" href="#a_allang_right" alt="Add All" onclick="highlightDef('id_alllang_right');" coords="206,346,251,371">
+  <area id="sellang" shape="RECT" href="#a_sellang" alt="Allow User to Select Language." onclick="highlightDef('id_sellang');" coords="21,477,184,492">
+  <area id="sel_langgrp" shape="RECT" href="#a_sel_langgrp" alt="Selected Languages" onclick="highlightDef('id_sel_langgrp');" coords="255,318,436,472">
+  <area id="avail_langgrp" shape="RECT" href="#a_avail_langgrp" alt="Available Languages" onclick="highlightDef('id_avail_langgrp');" coords="20,320,201,473">
+  <area id="langsupp" shape="RECT" href="#a_langsupp" alt="Enable Language Support" onclick="highlightDef('id_langsupp');" coords="22,298,162,314">
+  <area id="disable_shortcut" shape="RECT" href="#a_disable_shortcut" alt="Allow User to Disable Start Menu Group Shortcut Creation" onclick="highlightDef('id_disable_shortcut');" coords="22,251,282,266">
+  <area id="change_smrgrp" shape="RECT" href="#a_change_smgrp" alt="Allow User to Change Group" onclick="highlightDef('id_change_smgrp');" coords="22,230,178,245">
+  <area id="smgrp_name" shape="RECT" href="#a_smgrp_name" alt="Group Name" onclick="highlightDef('id_smgrp_name');" coords="21,205,488,227">
+  <area id="create_smgrp" shape="RECT" href="#a_create_smgrp" alt="Create Start Menu Group" onclick="highlightDef('id_create_smgrp');" coords="21,185,163,199">
+  <area id="changedir" shape="RECT" href="#a_changedir" alt="Allow User to Change Directory" onclick="highlightDef('id_changedir');" coords="21,138,191,153">
+  <area id="instdir" shape="RECT" href="#a_instdir" alt="Directory Name" onclick="highlightDef('id_instdir');" coords="20,112,485,134">
+</map>
 </div>
 
 </body></html>

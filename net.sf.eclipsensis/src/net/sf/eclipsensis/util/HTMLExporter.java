@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -14,6 +14,7 @@ import java.util.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -50,32 +51,36 @@ public class HTMLExporter
     private ITextEditor mEditor;
     private ISourceViewer mViewer;
     private String mTaskName;
-    
+
     public HTMLExporter(ITextEditor editor, ISourceViewer viewer)
     {
         mEditor = editor;
         mViewer = viewer;
         mShell = mEditor.getSite().getShell();
     }
-    
+
     public synchronized void exportHTML()
     {
         EclipseNSISPlugin.getDefault().run(false, true, new IRunnableWithProgress() {
             public void run(IProgressMonitor monitor)
             {
                 try {
+                    IPath path = ((IPathEditorInput)mEditor.getEditorInput()).getPath();
                     mTaskName = EclipseNSISPlugin.getFormattedString("export.html.task.name", //$NON-NLS-1$
-                                                new Object[] {((IPathEditorInput)mEditor.getEditorInput()).getPath().toOSString()});
+                                                new Object[] {path.toOSString()});
                     monitor.beginTask(mTaskName,100);
                     monitor.subTask(EclipseNSISPlugin.getResourceString("preparing.export.message")); //$NON-NLS-1$
                     while(mShell.getDisplay().readAndDispatch()) { }
-                
+
                     FileDialog fd = new FileDialog(mShell,SWT.SAVE);
                     fd.setText(EclipseNSISPlugin.getResourceString("export.html.dialog.title")); //$NON-NLS-1$
                     fd.setFilterExtensions(new String[] {EclipseNSISPlugin.getResourceString("export.html.html.file.filter"),EclipseNSISPlugin.getResourceString("export.html.all.file.filter")}); //$NON-NLS-1$ //$NON-NLS-2$
                     fd.setFilterNames(new String[] {EclipseNSISPlugin.getResourceString("export.html.html.file.description"),EclipseNSISPlugin.getResourceString("export.html.all.file.description")}); //$NON-NLS-1$ //$NON-NLS-2$
                     if(mPreviousFile != null) {
                         fd.setFileName(mPreviousFile.getAbsolutePath());
+                    }
+                    else {
+                        fd.setFileName(path.removeFileExtension().addFileExtension(EclipseNSISPlugin.getResourceString("html.extension")).lastSegment()); //$NON-NLS-1$
                     }
                     String filename = fd.open();
                     if(filename != null) {
@@ -169,12 +174,12 @@ public class HTMLExporter
             if(monitor.isCanceled()) {
                 return;
             }
-            
+
             IProgressMonitor subMonitor = new NestedProgressMonitor(monitor,mTaskName,60);
             try {
                 subMonitor.beginTask(EclipseNSISPlugin.getResourceString("exporting.contents.message"), mRanges.length+2); //$NON-NLS-1$
                 while(mShell.getDisplay().readAndDispatch()) { }
-                
+
                 mCurrentLine = 1;
                 int total = mStyledText.getCharCount();
                 mCurrentOffset = 0;
@@ -222,14 +227,14 @@ public class HTMLExporter
                 }
                 mWriter.print("</pre></td>"); //$NON-NLS-1$
             }
-            
+
             if(mProjectionEnabled) {
                 mWriter.print("<td><pre>&nbsp;&nbsp;</pre></td>"); //$NON-NLS-1$
             }
             else {
                 mWriter.print("<td><pre>&nbsp;</pre></td>"); //$NON-NLS-1$
             }
-            
+
             mWriter.println("<td></td></tr>"); //$NON-NLS-1$
             mWriter.println("</table>"); //$NON-NLS-1$
             mWriter.println("</div>"); //$NON-NLS-1$
@@ -258,7 +263,7 @@ public class HTMLExporter
             }
         }
     }
-    
+
     private void startLine()
     {
         mWriter.print("<tr"); //$NON-NLS-1$
@@ -274,7 +279,7 @@ public class HTMLExporter
         }
 
         mWriter.print("<td class=\"ruler\">"); //$NON-NLS-1$
-        if(mProjectionEnabled && mCurrentProjection < mProjections.length && 
+        if(mProjectionEnabled && mCurrentProjection < mProjections.length &&
            mProjections[mCurrentProjection][0] == mCurrentLine) {
             mWriter.print("<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"collapse\" onClick=\"toggle(this,"); //$NON-NLS-1$
             mWriter.print(mProjections[mCurrentProjection][0]+1);
@@ -289,7 +294,7 @@ public class HTMLExporter
             mWriter.print("<pre>&nbsp;</pre>"); //$NON-NLS-1$
         }
         mWriter.print("</td>"); //$NON-NLS-1$
-        
+
         mWriter.print("<td><pre>"); //$NON-NLS-1$
         mCurrentLine++;
     }
@@ -329,7 +334,7 @@ public class HTMLExporter
             mWriter.print("</span>"); //$NON-NLS-1$
         }
     }
-    
+
     private void endLine()
     {
         mWriter.println("</pre></td>"); //$NON-NLS-1$
@@ -359,7 +364,7 @@ public class HTMLExporter
         else {
             mWriter = new PrintWriter(new BufferedWriter(new FileWriter(file)));
         }
-        
+
         mWriter.println("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">"); //$NON-NLS-1$
         mWriter.println("<html>"); //$NON-NLS-1$
         mWriter.println("<head>"); //$NON-NLS-1$
@@ -532,7 +537,7 @@ public class HTMLExporter
     }
 
     /**
-     * 
+     *
      */
     private void reset()
     {
@@ -572,8 +577,8 @@ public class HTMLExporter
             mProjections = (int[][])projections.toArray(new int[projections.size()][]);
         }
     }
-    
-    private String makeStyle(boolean bold, boolean italic, boolean underline, 
+
+    private String makeStyle(boolean bold, boolean italic, boolean underline,
                              boolean strikeOut, Color fgColor, Color bgColor)
     {
         if(bold || italic || underline || strikeOut || fgColor != null || bgColor != null) {

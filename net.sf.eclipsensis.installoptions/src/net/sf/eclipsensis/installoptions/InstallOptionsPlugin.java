@@ -29,8 +29,10 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.*;
+import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.internal.registry.EditorRegistry;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.texteditor.ChainedPreferenceStore;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
@@ -50,6 +52,7 @@ public class InstallOptionsPlugin extends AbstractUIPlugin implements IInstallOp
     private String mName = null;
     private static boolean cCheckedEditorAssociation = false;
     private JobScheduler mJobScheduler = new JobScheduler();
+    private ChainedPreferenceStore mCombinedPreferenceStore;
 
     /**
      *
@@ -65,6 +68,17 @@ public class InstallOptionsPlugin extends AbstractUIPlugin implements IInstallOp
      */
     public static InstallOptionsPlugin getDefault() {
         return cPlugin;
+    }
+
+    public IPreferenceStore getCombinedPreferenceStore()
+    {
+        if(mCombinedPreferenceStore == null) {
+            mCombinedPreferenceStore = new ChainedPreferenceStore(new IPreferenceStore[]{
+                                    getPreferenceStore(),
+                                    EditorsUI.getPreferenceStore()
+                            });
+        }
+        return mCombinedPreferenceStore;
     }
 
     public static ImageManager getImageManager()
@@ -190,7 +204,7 @@ public class InstallOptionsPlugin extends AbstractUIPlugin implements IInstallOp
             Bundle bundle = Platform.getBundle(GEF_BUNDLE_ID);
             if(bundle != null) {
                 IPreferencesService preferencesService = Platform.getPreferencesService();
-                IScopeContext[] contexts = {new InstanceScope()}; 
+                IScopeContext[] contexts = {new InstanceScope()};
                 for (int i = 0; i < properties.length; i++) {
                     if(!store.contains(properties[i])) {
                         String val = preferencesService.getString(GEF_BUNDLE_ID, properties[i], "", contexts); //$NON-NLS-1$

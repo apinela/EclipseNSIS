@@ -24,17 +24,24 @@ public class ComboboxStateKeyValueValidator implements IINIKeyValueValidator
         return validateSingleSelection(keyValue, error, fixFlag);
     }
 
-    protected boolean validateSingleSelection(INIKeyValue keyValue, String error, int fixFlag)
+    protected boolean validateSingleSelection(final INIKeyValue keyValue, String error, int fixFlag)
     {
         String value = keyValue.getValue();
         if(!Common.isEmpty(value)) {
-            String[] array = Common.tokenize(value,IInstallOptionsConstants.LIST_SEPARATOR,false);
+            final String[] array = Common.tokenize(value,IInstallOptionsConstants.LIST_SEPARATOR,false);
             if(!Common.isEmptyArray(array) && array.length > 1) {
                 if((fixFlag & INILine.VALIDATE_FIX_ERRORS) > 0) {
                     keyValue.setValue(array[0]);
                 }
                 else {
-                    keyValue.addProblem(new INIProblem(INIProblem.TYPE_ERROR, error));
+                    INIProblem problem = new INIProblem(INIProblem.TYPE_ERROR, error);
+                    problem.setFixer(new INIProblemFixer("Correct selected value") {
+                        protected INIProblemFix[] createFixes()
+                        {
+                            return new INIProblemFix[] {new INIProblemFix(keyValue,keyValue.buildText(array[0])+(keyValue.getDelimiter()==null?"":keyValue.getDelimiter()))};
+                        }
+                    });
+                    keyValue.addProblem(problem);
                     return false;
                 }
             }

@@ -26,18 +26,14 @@ InstallOptions script wizard helps create a new InstallOptions script.
 The resulting script file is saved in the Eclipse Workspace and can be
 automatically opened using either the <a href="designeditor.html">Design
 Editor</a> or the <a href="sourceeditor.html">Source
-Editor</a> if desired. The Advanced button can be used to link
-the script to a pre-existing file in the filesystem (see the <a href="javascript:redirectEclipse('/org.eclipse.platform.doc.user/reference/ref-39.htm');">New
-File Wizard</a> documentation for more details). For
+Editor</a> if desired. For
 further information on InstallOptions scripts, please consult the <a href="javascript:redirectNSISContrib('InstallOptions/Readme.html');">InstallOptions
 Readme</a>.</p>
 <p>The script wizard can be
 accessed by using the Eclipse Workbench New button or menu&nbsp;and
 selecting the <span style="font-style: italic;">Other...</span>
-item. It consists of a <a href="#welcome">Welcome</a> page and a <a href="#finish">Finish</a> page.</p>
-<a name="welcome"></a></a><h2>Welcome</h2>
-<p>The Welcome page provides an introduction to the Script Wizard. It also affords an opportunity to select a template for creating the script. Templates are managed using the <a href="designeditor.html#palette_templates_settings">Palette &amp; Templates Settings</a> dialog.</p>
-<p style="text-align: center;"><img src="images/wizard.gif" alt="InstallOptions Script Wizard Welcome" border="0" usemap="#wizardwelcome" style="width: 446px; height: 590px;" title="InstallOptions Script Wizard Welcome">
+item.</p>
+<p style="text-align: center;"><img src="images/wizard.gif" alt="InstallOptions Script Wizard" border="0" usemap="#wizard" style="width: 446px; height: 590px;" title="InstallOptions Script Wizard">
 </p>
 <a name="a_create_from_template"></a>
 <dl id="id_create_from_template">
@@ -54,19 +50,13 @@ item. It consists of a <a href="#welcome">Welcome</a> page and a <a href="#finis
   <dt>Description</dt>
   <dd>Description of the selected  template. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd>
   </dl>
-<a name="finish"></a><h2>Finish</h2>
-<p>The Finish page completes the process of creating an InstallOptions script. It also provides an option to open the generated script in either of the InstallOptions editors.</p>
-<p style="text-align: center;"><img src="images/wizard2.gif" alt="InstallOptions Script Wizard Welcome" border="0" usemap="#wizardfinish" style="width: 446px; height: 590px;" title="InstallOptions Script Wizard Welcome">
-</p>
-<p><a name="a_file_location"></a> </p>
-<dl id="id_file_location">
-  <dt>Parent Folder and File Name </dt>
-  <dd>Select the parent folder and name for the generated file. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd>
+<a name="a_saveloc"></a><dl id="id_saveloc"><dt>Save Location</dt>
+<dd>Location for saving the wizard-generated InstallOptions script.
+This is either the Eclipse workspace or the filesystem. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd>
 </dl>
-<a name="a_advanced"></a>
-<dl id="id_advanced">
-  <dt>Advanced</dt>
-  <dd>Specify advanced options, e.g., linking to an external filesystem file. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd>
+<a name="a_filename"></a><dl id="id_filename"><dt>File Name</dt>
+<dd>File name for saving the wizard-generated InstallOptions script.
+This is either a Eclipse workspace file name or a filesystem file name. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd>
 </dl>
 <a name="a_open_editor"></a>
 <dl id="id_open_editor">
@@ -78,15 +68,13 @@ item. It consists of a <a href="#welcome">Welcome</a> page and a <a href="#finis
 <a href="overview.html#contents">Contents</a> | <a href="preferences.html">Next</a><br>
 <br><p><strong><small>Copyright &copy;
 2004-2006 Sunil Kamath (IcemanK).</small></strong></p>
-  <map name="wizardwelcome" id="wizardwelcome">
-    <area id="create_from_template" shape="rect" onclick="highlightDef('id_create_from_template');" coords="21,229,173,245" href="#a_create_from_template" alt="Create script from template">
-    <area id="available_templates" shape="rect" onclick="highlightDef('id_available_templates');" coords="21,251,222,481" href="#a_available_templates" alt="Available Templates">
-    <area id="description" shape="rect" onclick="highlightDef('id_description');" coords="223,251,425,481" href="#a_description" alt="Description">
-  </map>
-  <map name="wizardfinish" id="wizardfinish">
-    <area id="file_location" shape="rect" onclick="highlightDef('id_file_location');" coords="10,100,434,430" href="#a_file_location" alt="Select parent folder and file name">
-    <area id="advanced" shape="rect" onclick="highlightDef('id_advanced');" coords="14,438,93,462" href="#a_advanced" alt="Specify advanced options">
-    <area id="open_editor" shape="rect" onclick="highlightDef('id_open_editor');" coords="12,468,238,490" href="#a_open_editor" alt="Open generated file in editor">
+  <map name="wizard" id="wizard">
+    <area id="create_from_template" shape="rect" onclick="highlightDef('id_create_from_template');" coords="22,203,174,219" href="#a_create_from_template" alt="Create script from template">
+    <area id="available_templates" shape="rect" onclick="highlightDef('id_available_templates');" coords="22,224,220,363" href="#a_available_templates" alt="Available Templates">
+    <area id="description" shape="rect" onclick="highlightDef('id_description');" coords="223,224,425,362" href="#a_description" alt="Description">
+    <area id="saveloc" shape="rect" onclick="highlightDef('id_saveloc');" coords="22,393,229,410" href="#a_saveloc" alt="Save Location">
+    <area id="filename" shape="rect" onclick="highlightDef('id_filename');" coords="22,416,423,437" href="#a_filename" alt="File Name">
+    <area id="open_editor" shape="rect" onclick="highlightDef('id_open_editor');" coords="22,442,248,464" href="#a_open_editor" alt="Open Generated File in Editor">
   </map>
 </div>
 </body></html>

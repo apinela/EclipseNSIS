@@ -52,6 +52,16 @@ public class NSISWizardWelcomePage extends AbstractNSISWizardStartPage
               EclipseNSISPlugin.getResourceString("wizard.welcome.description")); //$NON-NLS-1$
     }
 
+    boolean isCreateFromTemplate()
+    {
+        return mCreateFromTemplate;
+    }
+
+    boolean isUsingTemplate()
+    {
+        return mUsingTemplate;
+    }
+
     protected boolean hasRequiredFields()
     {
         return true;

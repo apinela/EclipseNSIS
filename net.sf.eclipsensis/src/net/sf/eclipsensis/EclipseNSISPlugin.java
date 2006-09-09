@@ -71,7 +71,7 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
     private JobScheduler mJobScheduler = new JobScheduler();
 
     private NSISConsole mConsole = null;
-    
+
 	/**
 	 * The constructor.
 	 */
@@ -208,7 +208,7 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
                     monitor = new DisplayUpdateProgressMonitor(monitor);
                     try {
                         String taskName = EclipseNSISPlugin.getResourceString("starting.eclipsensis.message"); //$NON-NLS-1$
-                        monitor.beginTask(taskName,services.length+1); 
+                        monitor.beginTask(taskName,services.length+1);
                         for (int i = 0; i < services.length; i++) {
                             NestedProgressMonitor subMonitor = new NestedProgressMonitor(monitor,taskName,1);
                             try {
@@ -289,7 +289,7 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
                                     break;
                                 }
                             }
-                        } 
+                        }
                         catch (InvalidSyntaxException e) {
                             e.printStackTrace();
                         }

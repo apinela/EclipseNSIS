@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -52,7 +52,7 @@ public abstract class PrefixableParam extends NSISParam
     {
         mPrefix = prefix;
     }
-    
+
     protected final NSISParamEditor createParamEditor(INSISParamEditor parentEditor)
     {
         return createPrefixableParamEditor(parentEditor);
@@ -93,7 +93,17 @@ public abstract class PrefixableParam extends NSISParam
                 buf.append(" ").append(shouldQuote?Common.quote(text):text); //$NON-NLS-1$
             }
         }
-        
+
+        protected boolean shouldDecorate()
+        {
+            return true;
+        }
+
+        protected String validateParam()
+        {
+            return null;
+        }
+
         protected abstract String getPrefixableParamText();
     }
 }

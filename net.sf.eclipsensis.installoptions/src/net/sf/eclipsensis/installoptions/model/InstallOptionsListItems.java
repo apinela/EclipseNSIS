@@ -60,13 +60,13 @@ public abstract class InstallOptionsListItems extends InstallOptionsEditableElem
         }
     }
 
-    protected TypeConverter getTypeConverter(String property)
+    protected TypeConverter loadTypeConverter(String property, Object value)
     {
         if(InstallOptionsModel.PROPERTY_LISTITEMS.equals(property)) {
             return TypeConverter.STRING_LIST_CONVERTER;
         }
         else {
-            return super.getTypeConverter(property);
+            return super.loadTypeConverter(property, value);
         }
     }
 

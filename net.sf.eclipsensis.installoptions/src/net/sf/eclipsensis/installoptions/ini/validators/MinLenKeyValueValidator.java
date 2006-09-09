@@ -17,36 +17,51 @@ import net.sf.eclipsensis.util.Common;
 
 public class MinLenKeyValueValidator extends PositiveNumberKeyValueValidator
 {
-    public boolean validate(INIKeyValue keyValue, int fixFlag)
+    public boolean validate(final INIKeyValue keyValue, int fixFlag)
     {
         boolean b = super.validate(keyValue, fixFlag);
         if(b) {
             int minValue = 0;
-            String value = keyValue.getValue();
+            final String value = keyValue.getValue();
+            final int radix = getRadix(value);
+            final String prefix = getPrefix(value,radix);
             if(!Common.isEmpty(value)) {
-                minValue = Integer.parseInt(value);
+                minValue = parseInt(value, radix);
             }
 
-            int maxValue = InstallOptionsModel.INSTANCE.getMaxLength();
+            final int maxValue;
             INIKeyValue[] keyValues = ((INISection)keyValue.getParent()).findKeyValues(InstallOptionsModel.PROPERTY_MAXLEN);
             if(!Common.isEmptyArray(keyValues)) {
-                value = keyValues[0].getValue();
-                if(!Common.isEmpty(value)) {
+                String value2 = keyValues[0].getValue();
+                int val = InstallOptionsModel.INSTANCE.getMaxLength();
+                if(!Common.isEmpty(value2)) {
                     try {
-                        maxValue = Integer.parseInt(value);
+                        int radix2 = getRadix(value2);
+                        val = parseInt(value2, radix2);
                     }
                     catch(Exception e) {
-                        maxValue = InstallOptionsModel.INSTANCE.getMaxLength();
+                        val = InstallOptionsModel.INSTANCE.getMaxLength();
                     }
                 }
+                maxValue = val;
+            }
+            else {
+                maxValue = InstallOptionsModel.INSTANCE.getMaxLength();
             }
             if(minValue > maxValue) {
                 if((fixFlag & INILine.VALIDATE_FIX_ERRORS) > 0) {
-                    keyValue.setValue(Integer.toString(maxValue));
+                    keyValue.setValue(formatInt(maxValue, radix, prefix));
                 }
                 else {
-                    keyValue.addProblem(new INIProblem(INIProblem.TYPE_ERROR,InstallOptionsPlugin.getFormattedString("minmax.value.error",new Object[]{ //$NON-NLS-1$
-                            keyValue.getKey(),new Integer(0),new Integer(maxValue)})));
+                    INIProblem problem = new INIProblem(INIProblem.TYPE_ERROR,InstallOptionsPlugin.getFormattedString("minlen.value.error",new Object[]{ //$NON-NLS-1$
+                                                keyValue.getKey(),new Integer(maxValue)}));
+                    problem.setFixer(new INIProblemFixer("Correct MinLen value") {
+                        protected INIProblemFix[] createFixes()
+                        {
+                            return new INIProblemFix[] {new INIProblemFix(keyValue,keyValue.buildText(formatInt(maxValue, radix, prefix))+(keyValue.getDelimiter()==null?"":keyValue.getDelimiter()))};
+                        }
+                    });
+                    keyValue.addProblem(problem);
                     b = false;
                 }
             }

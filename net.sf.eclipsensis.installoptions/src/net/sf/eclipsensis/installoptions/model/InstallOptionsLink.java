@@ -114,13 +114,13 @@ public class InstallOptionsLink extends InstallOptionsUneditableElement
         }
     }
 
-    protected TypeConverter getTypeConverter(String property)
+    protected TypeConverter loadTypeConverter(String property, Object value)
     {
         if(property.equalsIgnoreCase(InstallOptionsModel.PROPERTY_TXTCOLOR)) {
             return TypeConverter.RGB_CONVERTER;
         }
         else {
-            return super.getTypeConverter(property);
+            return super.loadTypeConverter(property, value);
         }
     }
 

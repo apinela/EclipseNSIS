@@ -590,14 +590,11 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
             }
         }
         else {
+            defaultLanguage = NSISLanguageManager.getInstance().getDefaultLanguage();
             if(mIsMUI) {
-                defaultLanguage = NSISLanguageManager.getInstance().getLanguage("English"); //$NON-NLS-1$
                 mScript.insertAfterElement(pagesPlaceHolder,new NSISScriptBlankLine());
                 mScript.insertAfterElement(pagesPlaceHolder,new NSISScriptInsertMacro("MUI_LANGUAGE",defaultLanguage.getName())); //$NON-NLS-1$
                 mScript.insertAfterElement(pagesPlaceHolder,new NSISScriptSingleLineComment(EclipseNSISPlugin.getResourceString("scriptgen.languages.comment"))); //$NON-NLS-1$
-            }
-            else {
-                defaultLanguage = NSISLanguageManager.getInstance().getDefaultLanguage();
             }
         }
 

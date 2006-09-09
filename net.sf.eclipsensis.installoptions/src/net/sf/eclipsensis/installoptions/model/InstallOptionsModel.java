@@ -100,7 +100,7 @@ public class InstallOptionsModel implements IPropertyChangeListener
     private Set mDialogSettings = new CaseInsensitiveSet();
     private Map mCachedControlTypes = new CaseInsensitiveMap();
     private Map mControlTypes = new CaseInsensitiveMap();
-    private Set mControlRequiredSettings = new CaseInsensitiveSet();
+    private Map mControlRequiredSettings = new CaseInsensitiveMap();
     private int mMaxLength;
 
     /**
@@ -234,7 +234,16 @@ public class InstallOptionsModel implements IPropertyChangeListener
         mDialogSettings.addAll(dialogSettings);
 
         mControlRequiredSettings.clear();
-        mControlRequiredSettings.addAll(controlRequiredSettings);
+        for (Iterator iter = controlRequiredSettings.iterator(); iter.hasNext();) {
+            String element = (String)iter.next();
+            int n = element.indexOf("=");
+            if(n > 0) {
+                mControlRequiredSettings.put(element.substring(0,n),element.substring(n+1));
+            }
+            else {
+                mControlRequiredSettings.put(element,"");
+            }
+        }
 
         mCachedControlTypes.putAll(mControlTypes);
         mControlTypes.clear();
@@ -256,7 +265,7 @@ public class InstallOptionsModel implements IPropertyChangeListener
             if(list == null) {
                 list = new ArrayList();
             }
-            list.addAll(0,controlRequiredSettings);
+            list.addAll(0,mControlRequiredSettings.keySet());
             typeDef.setSettings(list);
             typeDef.setFlags((List)controlFlags.get(type));
         }
@@ -320,9 +329,9 @@ public class InstallOptionsModel implements IPropertyChangeListener
         return typeDef;
     }
 
-    public Collection getControlRequiredSettings()
+    public Map getControlRequiredSettings()
     {
-        return Collections.unmodifiableSet(mControlRequiredSettings);
+        return Collections.unmodifiableMap(mControlRequiredSettings);
     }
 
     public Collection getControlTypeDefs()

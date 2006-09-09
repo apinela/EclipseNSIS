@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -16,6 +16,7 @@ import java.util.List;
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.util.XMLUtil;
+import net.sf.eclipsensis.wizard.util.NSISWizardDialogUtil;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -29,7 +30,7 @@ public abstract class NSISParam
 {
     public static final String ATTR_INCLUDE_PREVIOUS = "includePrevious"; //$NON-NLS-1$
     public static final String ATTR_OPTIONAL = "optional"; //$NON-NLS-1$
-    public static final String SETTING_OPTIONAL = ATTR_OPTIONAL; 
+    public static final String SETTING_OPTIONAL = ATTR_OPTIONAL;
     public static final String ATTR_NAME = "name"; //$NON-NLS-1$
     public static final String TAG_PARAM = "param"; //$NON-NLS-1$
     public static final String ATTR_VALUE = "value"; //$NON-NLS-1$
@@ -40,7 +41,7 @@ public abstract class NSISParam
     private MessageFormat mErrorFormat;
     private String mToolTip;
     private boolean mIncludePrevious;
-    
+
     public NSISParam(Node node)
     {
         init(node);
@@ -113,7 +114,7 @@ public abstract class NSISParam
     {
         return createParamEditor(parentEditor);
     }
-    
+
     protected String getDefaultValue()
     {
         return null;
@@ -143,7 +144,7 @@ public abstract class NSISParam
             }
             updateState(isSelected());
         }
-        
+
         public void reset()
         {
         }
@@ -169,7 +170,7 @@ public abstract class NSISParam
         {
             return mParentEditor;
         }
-        
+
         public List getChildEditors()
         {
             return Collections.EMPTY_LIST;
@@ -248,9 +249,9 @@ public abstract class NSISParam
                 layout.marginHeight = layout.marginWidth = 0;
                 parent.setLayout(layout);
             }
-            
+
             int horizontalSpan = 1;
-            
+
             if(isOptional()) {
                 mOptionalButton = new Button(parent,SWT.CHECK);
                 GridData gridData = new GridData(SWT.FILL,SWT.CENTER,false,false);
@@ -275,9 +276,10 @@ public abstract class NSISParam
             }
             if(!emptyName) {
                 if(!isOptional()) {
-                    mNameLabel = new Label(parent,SWT.NONE);
+                    mNameLabel = NSISWizardDialogUtil.createLabel(parent, null, true, null, shouldDecorate());
                     mNameLabel.setText(getName());
-                    mNameLabel.setLayoutData(new GridData(SWT.FILL,SWT.CENTER,false,false));
+                    Control layoutControl = NSISWizardDialogUtil.getLayoutControl(mNameLabel);
+                    layoutControl.setLayoutData(new GridData(SWT.FILL,SWT.CENTER,false,false));
                 }
             }
             else {
@@ -313,7 +315,8 @@ public abstract class NSISParam
             }
             else {
                 if(mNameLabel != null) {
-                    ((GridData)mNameLabel.getLayoutData()).horizontalSpan++;
+                    Control c = NSISWizardDialogUtil.getLayoutControl(mNameLabel);
+                    ((GridData)c.getLayoutData()).horizontalSpan++;
                 }
                 else if(mOptionalButton != null) {
                     ((GridData)mOptionalButton.getLayoutData()).horizontalSpan++;
@@ -322,8 +325,13 @@ public abstract class NSISParam
             return mControl;
         }
 
+        protected boolean shouldDecorate()
+        {
+            return false;
+        }
+
         /**
-         * 
+         *
          */
         protected void setToolTip(Control ctrl)
         {
@@ -336,7 +344,7 @@ public abstract class NSISParam
                 }
             }
         }
-        
+
         public final boolean isSelected()
         {
             if(isOptional()) {
@@ -367,6 +375,10 @@ public abstract class NSISParam
         {
             if(Common.isValid(mNameLabel)) {
                 mNameLabel.setEnabled(state);
+                Control c = NSISWizardDialogUtil.getLayoutControl(mNameLabel);
+                if(c != mNameLabel) {
+                    c.setEnabled(state);
+                }
             }
             if(Common.isValid(mControl)) {
                 mControl.setEnabled(state);
@@ -406,7 +418,7 @@ public abstract class NSISParam
             }
             updateState(enabled);
         }
-        
+
         public final void appendText(StringBuffer buf)
         {
             if(getSettings() != null) {
@@ -484,7 +496,7 @@ public abstract class NSISParam
             }
             return null;
         }
-        
+
         public NSISParam getParam()
         {
             return NSISParam.this;
@@ -499,7 +511,7 @@ public abstract class NSISParam
         {
             mSettings = settings;
         }
-        
+
         public void saveSettings()
         {
             if(Common.isValid(mOptionalButton) && getSettings() != null) {
@@ -508,7 +520,7 @@ public abstract class NSISParam
         }
 
         protected abstract void appendParamText(StringBuffer buf);
-        protected abstract Control createParamControl(Composite parent); 
+        protected abstract Control createParamControl(Composite parent);
         protected abstract String validateParam();
     }
 }

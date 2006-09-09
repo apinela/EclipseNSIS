@@ -13,24 +13,37 @@ import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.ini.*;
 import net.sf.eclipsensis.util.Common;
 
-public class ToggleKeyValueValidator implements IINIKeyValueValidator
+public class ToggleKeyValueValidator extends PositiveNumberKeyValueValidator
 {
-    public boolean validate(INIKeyValue keyValue, int fixFlag)
+    public boolean validate(final INIKeyValue keyValue, int fixFlag)
     {
-        String value = keyValue.getValue();
-        if(!Common.isEmpty(value)) {
-            char[] chars = value.toCharArray();
-            if(chars.length == 1 && (chars[0] == '0' || chars[0] == '1')) {
-                return true;
-            }
-            if((fixFlag & INILine.VALIDATE_FIX_ERRORS) > 0) {
-                keyValue.setValue("0"); //$NON-NLS-1$
-            }
-            else {
-                keyValue.addProblem(new INIProblem(INIProblem.TYPE_ERROR,
-                                    InstallOptionsPlugin.getFormattedString("toggle.value.error", //$NON-NLS-1$
-                                            new String[]{keyValue.getKey()})));
-                return false;
+        boolean b = super.validate(keyValue, fixFlag);
+        if(b) {
+            final String value = keyValue.getValue();
+            if(!Common.isEmpty(value)) {
+                final int radix = getRadix(value);
+                final String prefix = getPrefix(value,radix);
+                int val = parseInt(value, radix);
+
+                if(val == 0 || val == 1) {
+                    return true;
+                }
+                if((fixFlag & INILine.VALIDATE_FIX_ERRORS) > 0) {
+                    keyValue.setValue(formatInt(0,radix,prefix)); //$NON-NLS-1$
+                }
+                else {
+                    INIProblem problem = new INIProblem(INIProblem.TYPE_ERROR,
+                                                        InstallOptionsPlugin.getFormattedString("toggle.value.error", //$NON-NLS-1$
+                                                                new String[]{keyValue.getKey()}));
+                    problem.setFixer(new INIProblemFixer("Set valid value") {
+                        protected INIProblemFix[] createFixes()
+                        {
+                            return new INIProblemFix[] {new INIProblemFix(keyValue,keyValue.buildText(formatInt(0,radix,prefix))+(keyValue.getDelimiter()==null?"":keyValue.getDelimiter()))};
+                        }
+                    });
+                    keyValue.addProblem(problem);
+                    return false;
+                }
             }
         }
         return true;

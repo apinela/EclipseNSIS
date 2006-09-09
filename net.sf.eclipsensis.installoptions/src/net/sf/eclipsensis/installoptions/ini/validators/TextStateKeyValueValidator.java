@@ -17,7 +17,7 @@ import net.sf.eclipsensis.util.Common;
 
 public class TextStateKeyValueValidator extends MultiLineKeyValueValidator
 {
-    public boolean validate(INIKeyValue keyValue, int fixFlag)
+    public boolean validate(final INIKeyValue keyValue, int fixFlag)
     {
         String value = keyValue.getValue();
         boolean hasProblems = false;
@@ -37,21 +37,28 @@ public class TextStateKeyValueValidator extends MultiLineKeyValueValidator
                                 Integer.parseInt(value);
                             }
                             catch(Exception ex) {
-                                if((fixFlag & INILine.VALIDATE_FIX_ERRORS) > 0) {
-                                    StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
-                                    char[] chars = value.toCharArray();
-                                    for (int j = 0; j < chars.length; j++) {
-                                        if(Character.isDigit(chars[i])) {
-                                            buf.append(chars[i]);
-                                        }
+                                final StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
+                                char[] chars = value.toCharArray();
+                                for (int j = 0; j < chars.length; j++) {
+                                    if(Character.isDigit(chars[j])) {
+                                        buf.append(chars[j]);
                                     }
+                                }
+                                if((fixFlag & INILine.VALIDATE_FIX_ERRORS) > 0) {
                                     keyValue.setValue(buf.toString());
                                 }
                                 else {
-                                    keyValue.addProblem(new INIProblem(INIProblem.TYPE_ERROR,
-                                            InstallOptionsPlugin.getFormattedString("text.state.only.numbers.error", //$NON-NLS-1$
-                                                    new String[]{InstallOptionsModel.PROPERTY_STATE,
-                                                    InstallOptionsModel.FLAGS_ONLY_NUMBERS})));
+                                    INIProblem problem = new INIProblem(INIProblem.TYPE_ERROR,
+                                                                                InstallOptionsPlugin.getFormattedString("text.state.only.numbers.error", //$NON-NLS-1$
+                                                                                        new String[]{InstallOptionsModel.PROPERTY_STATE,
+                                                                                        InstallOptionsModel.FLAGS_ONLY_NUMBERS}));
+                                    problem.setFixer(new INIProblemFixer("Remove non-numeric characters") {
+                                        protected INIProblemFix[] createFixes()
+                                        {
+                                            return new INIProblemFix[] {new INIProblemFix(keyValue,keyValue.buildText(buf.toString())+(keyValue.getDelimiter()==null?"":keyValue.getDelimiter()))};
+                                        }
+                                    });
+                                    keyValue.addProblem(problem);
                                     hasProblems = true;
                                 }
                             }

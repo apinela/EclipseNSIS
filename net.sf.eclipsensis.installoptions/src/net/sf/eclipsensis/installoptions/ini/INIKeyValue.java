@@ -60,7 +60,7 @@ public class INIKeyValue extends INILine
     protected void checkProblems(int fixFlag)
     {
         if(getParent() instanceof INISection) {
-            INIKeyValue[] keyValues = ((INISection)getParent()).findKeyValues(getKey());
+            final INIKeyValue[] keyValues = ((INISection)getParent()).findKeyValues(getKey());
             if(keyValues.length > 1) {
                 if((fixFlag & VALIDATE_FIX_ERRORS) > 0) {
                     for (int i = 0; i < keyValues.length; i++) {
@@ -72,13 +72,18 @@ public class INIKeyValue extends INILine
                 else {
                     INIProblem problem = new INIProblem(INIProblem.TYPE_ERROR, InstallOptionsPlugin.getFormattedString("duplicate.key.name.error",new String[]{getKey()})); //$NON-NLS-1$
                     addProblem(problem);
-                    INIProblemFix[] fixes = new INIProblemFix[keyValues.length-1];
-                    for (int i = 0, j = 0; i < keyValues.length; i++) {
-                        if(keyValues[i] != this) {
-                            fixes[j++] = new INIProblemFix(keyValues[i]);
+                    problem.setFixer(new INIProblemFixer("Remove duplicate keys") {
+                        protected INIProblemFix[] createFixes()
+                        {
+                            INIProblemFix[] fixes = new INIProblemFix[keyValues.length-1];
+                            for (int i = 0, j = 0; i < keyValues.length; i++) {
+                                if(keyValues[i] != INIKeyValue.this) {
+                                    fixes[j++] = new INIProblemFix(keyValues[i]);
+                                }
+                            }
+                            return fixes;
                         }
-                    }
-                    problem.setFix("Remove duplicate keys",fixes);
+                    });
                 }
             }
             INIKeyValue[] types = ((INISection)getParent()).findKeyValues(InstallOptionsModel.PROPERTY_TYPE);
@@ -95,14 +100,21 @@ public class INIKeyValue extends INILine
             if(validator != null) {
                 validator.validate(this,fixFlag);
             }
-            int maxLen = InstallOptionsModel.INSTANCE.getMaxLength();
+            final int maxLen = InstallOptionsModel.INSTANCE.getMaxLength();
             if(getValue().length() > maxLen) {
                 if((fixFlag & VALIDATE_FIX_WARNINGS)> 0) {
                     setValue(getValue().substring(0,maxLen));
                 }
                 else {
-                    addProblem(new INIProblem(INIProblem.TYPE_WARNING,InstallOptionsPlugin.getFormattedString("value.length.warning", //$NON-NLS-1$
-                            new Object[]{getKey(),new Integer(maxLen)})));
+                    INIProblem problem = new INIProblem(INIProblem.TYPE_WARNING,InstallOptionsPlugin.getFormattedString("value.length.warning", //$NON-NLS-1$
+                                                new Object[]{getKey(),new Integer(maxLen)}));
+                    addProblem(problem);
+                    problem.setFixer(new INIProblemFixer("Correct value length") {
+                        protected INIProblemFix[] createFixes()
+                        {
+                            return new INIProblemFix[] {new INIProblemFix(INIKeyValue.this,buildText(getValue().substring(0,maxLen))+(getDelimiter()==null?"":getDelimiter()))};
+                        }
+                    });
                 }
             }
         }
@@ -111,41 +123,53 @@ public class INIKeyValue extends INILine
                 getParent().removeChild(this);
             }
             else {
-                addProblem(new INIProblem(INIProblem.TYPE_WARNING,InstallOptionsPlugin.getResourceString("line.ignored.warning"))); //$NON-NLS-1$
+                INIProblem problem = new INIProblem(INIProblem.TYPE_WARNING,InstallOptionsPlugin.getResourceString("line.ignored.warning")); //$NON-NLS-1$
+                addProblem(problem);
+                problem.setFixer(new INIProblemFixer("Remove line") {
+                    protected INIProblemFix[] createFixes()
+                    {
+                        return new INIProblemFix[] {new INIProblemFix(INIKeyValue.this)};
+                    }
+                });
             }
         }
     }
 
-    public void update()
+    public String buildText(String value)
     {
-        if(!Common.stringsAreEqual(mValue,mOriginalValue))
-        {
-            String text = getText();
-            StringBuffer buf = new StringBuffer();
-            boolean oldQuoted = mQuoted;
-            String current = maybeQuote(mValue);
+        String text = getText();
+        StringBuffer buf = new StringBuffer();
+        boolean oldQuoted = mQuoted;
+        String current = maybeQuote(value);
 
-            if(Common.isEmpty(text)) {
-                text = buf.append(mKey).append("=").append(current).toString(); //$NON-NLS-1$
+        if(Common.isEmpty(text)) {
+            text = buf.append(mKey).append("=").append(current).toString(); //$NON-NLS-1$
+        }
+        else {
+            int n = text.indexOf('=');
+            if(mOriginalValue.length() == 0 && !oldQuoted) {
+                buf.append(text.substring(0,n+1));
+                buf.append(current);
+                if(text.length() >= n+1) {
+                    buf.append(text.substring(n+1));
+                }
             }
             else {
-                int n = text.indexOf('=');
-                if(mOriginalValue.length() == 0 && !oldQuoted) {
-                    buf.append(text.substring(0,n+1));
-                    buf.append(current);
-                    if(text.length() >= n+1) {
-                        buf.append(text.substring(n+1));
-                    }
-                }
-                else {
-                    String original = (oldQuoted?quote(mOriginalValue):mOriginalValue);
-                    n = text.indexOf(original,n);
-                    buf.append(text.substring(0,n));
-                    buf.append(current);
-                    buf.append(text.substring(n+original.length()));
-                }
+                String original = (oldQuoted?quote(mOriginalValue):mOriginalValue);
+                n = text.indexOf(original,n);
+                buf.append(text.substring(0,n));
+                buf.append(current);
+                buf.append(text.substring(n+original.length()));
             }
-            setText(buf.toString());
+        }
+        return buf.toString();
+    }
+
+    public void update()
+    {
+        if(Common.isEmpty(getText())|| !Common.stringsAreEqual(mValue,mOriginalValue))
+        {
+            setText(buildText(mValue));
             mOriginalValue = mValue;
         }
     }

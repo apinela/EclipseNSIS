@@ -8,6 +8,10 @@ Revision History
     * Added drag & drop support to NSIS Script Wizard and EclipseNSIS Editor.
     * Added support for REG_BIN and REG_EXPAND_SZ in NSIS Script Wizard.
     * Added support for Library installs in NSIS Script Wizard.
+    * NSIS Script Wizard can now save output to filesystem in addition to the
+      workspace.
+    * Added registry key and registry value browsers to NSIS Script Wizard.
+    * Added command to insert registry value into NSIS script.
     * Other minor bug fixes.
     * Bug Fixes
         o 1416349
@@ -22,15 +26,15 @@ Revision History
 0.9.4 (01/26/2006)
     * Java 6.0 (Mustang) can be used as the runtime environment- however it will
       not be officially supported until it is released.
-    * Refactored EclipseNSIS console to use standard Eclipse console 
+    * Refactored EclipseNSIS console to use standard Eclipse console
       functionality.
     * Added support for NSIS scripts as External Tool launch configurations.
     * Added support for NSIS scripts as external builders.
     * Added NSIS update functionality - manual as well as automated.
     * EclipseNSIS editor scroll tip now moves with scroll bar.
-    * SubSection/SubSectionEnd supported even when deprecated (NSIS 2.05 and 
+    * SubSection/SubSectionEnd supported even when deprecated (NSIS 2.05 and
       above).
-    * Clicking on a NSIS file link in EclipseNSIS help or NSIS Users Manual 
+    * Clicking on a NSIS file link in EclipseNSIS help or NSIS Users Manual
       view now opens the file in Eclipse instead of an external editor.
     * Added support for nightly CVS builds.
     * Added support for SHCTX registry root key in EclipseNSIS Script Wizard.
@@ -50,9 +54,9 @@ Revision History
     * Other minor bug fixes.
 
 0.9.3 (09/29/2005)
-    * External files are now supported- including compiling, testing, code 
+    * External files are now supported- including compiling, testing, code
       folding and annotations.
-    * Compilation properties can now also be set at the project or folder 
+    * Compilation properties can now also be set at the project or folder
       levels.
     * Bug fixes:
         o 1295438
@@ -61,7 +65,7 @@ Revision History
 0.9.2 (08/23/2005)
     * Support for Windows 98 and Windows ME reintroduced.
     * Modified startup check for NSIS home until after Workbench is activated.
-    * Added visual progress feedback during long-running startup or 
+    * Added visual progress feedback during long-running startup or
       reconfiguration operations.
     * Added more rigorous checks for OS and JVM.
     * Added underline and strikethrough syntax styles to editor.
@@ -84,7 +88,7 @@ Revision History
 0.9.0 (07/15/2005)
     * Upgraded to Eclipse 3.1 - no longer compatible with Eclipse 3.0.
     * Several minor bug fixes.
-    * Removed support for Windows 98 and Windows ME because of 
+    * Removed support for Windows 98 and Windows ME because of
       java.lang.Runtime.exec() issues. Support may be added back later.
 
 0.5.0 (04/11/2005)
@@ -95,7 +99,7 @@ Revision History
     * Editor enhancements.
     * Integrated help.
     * Several minor bug fixes.
-    * Support for IBM and BEA JRockit JREs. 
+    * Support for IBM and BEA JRockit JREs.
 
 0.2.0 (09/16/2004)
     * Added syntax highlighting editor, including hover help, code outlining and

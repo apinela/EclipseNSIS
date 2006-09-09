@@ -10,6 +10,7 @@
 package net.sf.eclipsensis.installoptions.ini;
 
 import java.util.*;
+import java.util.regex.Matcher;
 
 import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
@@ -30,7 +31,7 @@ public class INISection extends INILine implements IINIContainer
 
     private boolean mDirty = false;
 
-    public INISection(String name)
+    public INISection()
     {
         super(""); //$NON-NLS-1$
     }
@@ -216,9 +217,9 @@ public class INISection extends INILine implements IINIContainer
     protected void checkProblems(int fixFlag)
     {
         //Validate section
-        INIFile parent = (INIFile)getParent();
+        final INIFile parent = (INIFile)getParent();
         if(parent != null) {
-            INISection[] sections = parent.findSections(getName());
+            final INISection[] sections = parent.findSections(getName());
             if(sections.length > 1) {
                 if((fixFlag & VALIDATE_FIX_ERRORS) > 0) {
                     for (int i = 0; i < sections.length; i++) {
@@ -228,8 +229,57 @@ public class INISection extends INILine implements IINIContainer
                     }
                 }
                 else {
-                    addProblem(new INIProblem(INIProblem.TYPE_ERROR, InstallOptionsPlugin.getFormattedString("duplicate.section.name.error", //$NON-NLS-1$
-                                    new String[]{getName()})));
+                    INIProblem problem = new INIProblem(INIProblem.TYPE_ERROR, InstallOptionsPlugin.getFormattedString("duplicate.section.name.error", //$NON-NLS-1$
+                                                        new String[]{getName()}));
+                    addProblem(problem);
+                    problem.setFixer(new INIProblemFixer("Remove duplicate sections") {
+                        protected INIProblemFix[] createFixes()
+                        {
+                            List fixes = new ArrayList();
+                            int count = 0;
+                            for (int i = sections.length-1; i >= 0; i--) {
+                                if(sections[i] != INISection.this) {
+                                    count--;
+                                    List children = sections[i].getChildren();
+                                    if(!Common.isEmptyCollection(children)) {
+                                        ListIterator iter = children.listIterator(children.size());
+                                        while(iter.hasPrevious()) {
+                                            fixes.add(new INIProblemFix((INILine)iter.previous()));
+                                        }
+                                    }
+                                    fixes.add(new INIProblemFix(sections[i]));
+                                }
+                            }
+
+                            INISection[] sections = parent.getSections();
+                            if(!Common.isEmptyArray(sections)) {
+                                for (int i = 0; i < sections.length; i++) {
+                                    Matcher m = InstallOptionsModel.SECTION_FIELD_PATTERN.matcher(sections[i].getName());
+                                    if(m.matches()) {
+                                        count++;
+                                    }
+                                }
+                            }
+                            int numFields = -1;
+                            INISection[] section = parent.findSections(InstallOptionsModel.SECTION_SETTINGS);
+                            if(section.length > 0) {
+                                INIKeyValue[] keyValue = section[0].findKeyValues(InstallOptionsModel.PROPERTY_NUMFIELDS);
+                                if(keyValue.length > 0) {
+                                    try {
+                                        numFields = Integer.parseInt(keyValue[0].getValue());
+                                    }
+                                    catch(Exception e) {
+                                        numFields = -1;
+                                    }
+                                    if(numFields != count) {
+                                        fixes.add(new INIProblemFix(keyValue[0],keyValue[0].buildText(Integer.toString(count))+(keyValue[0].getDelimiter()==null?"":keyValue[0].getDelimiter())));
+                                    }
+                                }
+                            }
+
+                            return (INIProblemFix[])fixes.toArray(new INIProblemFix[fixes.size()]);
+                        }
+                    });
                 }
             }
         }
@@ -248,23 +298,33 @@ public class INISection extends INILine implements IINIContainer
                         removeChild(keyValues[i]);
                     }
                     else {
-                        keyValues[i].addProblem(new INIProblem(INIProblem.TYPE_WARNING, InstallOptionsPlugin.getFormattedString("unrecognized.key.warning", //$NON-NLS-1$
-                                new Object[]{InstallOptionsPlugin.getResourceString("section.label"), //$NON-NLS-1$
-                                             InstallOptionsModel.SECTION_SETTINGS,keyValues[i].getKey()})));
+                        INIProblem problem = new INIProblem(INIProblem.TYPE_WARNING, InstallOptionsPlugin.getFormattedString("unrecognized.key.warning", //$NON-NLS-1$
+                                                        new Object[]{InstallOptionsPlugin.getResourceString("section.label"), //$NON-NLS-1$
+                                                                     InstallOptionsModel.SECTION_SETTINGS,keyValues[i].getKey()}));
+                        keyValues[i].addProblem(problem);
+                        final INIKeyValue keyValue = keyValues[i];
+                        problem.setFixer(new INIProblemFixer("Remove unrecognized key") {
+                            protected INIProblemFix[] createFixes()
+                            {
+                                return new INIProblemFix[] {new INIProblemFix(keyValue)};
+                            }
+                        });
                     }
                 }
             }
         }
         else {
             if(isInstallOptionsField()) {
-                List missing = new ArrayList();
-                Collection requiredSettings = InstallOptionsModel.INSTANCE.getControlRequiredSettings();
-                for (Iterator iter = requiredSettings.iterator(); iter.hasNext(); ) {
+                final List missing = new ArrayList();
+                final Map requiredSettings = InstallOptionsModel.INSTANCE.getControlRequiredSettings();
+                for (Iterator iter = requiredSettings.keySet().iterator(); iter.hasNext(); ) {
                     String name = (String)iter.next();
                     INIKeyValue[] keyValues = findKeyValues(name);
                     if(Common.isEmptyArray(keyValues)) {
                         if((fixFlag & VALIDATE_FIX_ERRORS) > 0) {
-                            addChild(new INIKeyValue(name));
+                            INIKeyValue keyValue = new INIKeyValue(name);
+                            keyValue.setValue((String)requiredSettings.get(name));
+                            addChild(0,keyValue);
                         }
                         else {
                             missing.add(name);
@@ -272,15 +332,31 @@ public class INISection extends INILine implements IINIContainer
                     }
                 }
                 if(missing.size() > 0) {
-                    Integer n = new Integer(missing.size());
+                    Integer size = new Integer(missing.size());
                     StringBuffer buf = new StringBuffer();
                     Iterator iter = missing.iterator();
                     buf.append("\"").append(iter.next()).append("\""); //$NON-NLS-1$ //$NON-NLS-2$
                     while(iter.hasNext()) {
                         buf.append(", \"").append(iter.next()).append("\""); //$NON-NLS-1$ //$NON-NLS-2$
                     }
-                    addProblem(new INIProblem(INIProblem.TYPE_ERROR, InstallOptionsPlugin.getFormattedString("required.keys.missing", //$NON-NLS-1$
-                                    new Object[]{buf.toString(), n})));
+                    INIProblem problem = new INIProblem(INIProblem.TYPE_ERROR, InstallOptionsPlugin.getFormattedString("required.keys.missing", //$NON-NLS-1$
+                                                        new Object[]{buf.toString(), size}));
+                    addProblem(problem);
+                    problem.setFixer(new INIProblemFixer("Insert missing keys") {
+                        protected INIProblemFix[] createFixes()
+                        {
+                            StringBuffer buf = new StringBuffer(INISection.this.getText());
+                            INILine previous = INISection.this;
+                            for (Iterator iter = missing.iterator(); iter.hasNext(); ) {
+                                buf.append(previous.getDelimiter() == null?INSISConstants.LINE_SEPARATOR:previous.getDelimiter());
+                                String name = (String)iter.next();
+                                INIKeyValue keyValue = new INIKeyValue(name);
+                                buf.append(keyValue.buildText((String)requiredSettings.get(name)));
+                                previous = keyValue;
+                            }
+                            return new INIProblemFix[] {new INIProblemFix(INISection.this,buf.toString())};
+                        }
+                    });
                 }
 
                 INIKeyValue[] keyValues = findKeyValues(InstallOptionsModel.PROPERTY_TYPE);
@@ -297,9 +373,17 @@ public class INISection extends INILine implements IINIContainer
                                     removeChild(keyValues[i]);
                                 }
                                 else {
-                                    keyValues[i].addProblem(new INIProblem(INIProblem.TYPE_WARNING, InstallOptionsPlugin.getFormattedString("unrecognized.key.warning", //$NON-NLS-1$
-                                            new Object[]{InstallOptionsModel.PROPERTY_TYPE,
-                                                         type,keyValues[i].getKey()})));
+                                    INIProblem problem = new INIProblem(INIProblem.TYPE_WARNING, InstallOptionsPlugin.getFormattedString("unrecognized.key.warning", //$NON-NLS-1$
+                                                                                new Object[]{InstallOptionsModel.PROPERTY_TYPE,
+                                                                                             type,keyValues[i].getKey()}));
+                                    keyValues[i].addProblem(problem);
+                                    final INIKeyValue keyValue = keyValues[i];
+                                    problem.setFixer(new INIProblemFixer("Remove unrecognized key") {
+                                        protected INIProblemFix[] createFixes()
+                                        {
+                                            return new INIProblemFix[] {new INIProblemFix(keyValue)};
+                                        }
+                                    });
                                 }
                             }
                         }
@@ -309,11 +393,22 @@ public class INISection extends INILine implements IINIContainer
                     if((fixFlag & INILine.VALIDATE_FIX_WARNINGS)> 0) {
                         INIKeyValue keyValue = new INIKeyValue(InstallOptionsModel.PROPERTY_TYPE);
                         keyValue.setValue(InstallOptionsModel.TYPE_UNKNOWN);
-                        addChild(keyValue);
+                        addChild(0,keyValue);
                     }
                     else {
-                        addProblem(new INIProblem(INIProblem.TYPE_WARNING, InstallOptionsPlugin.getFormattedString("key.missing.warning", //$NON-NLS-1$
-                                new Object[]{InstallOptionsModel.PROPERTY_TYPE})));
+                        INIProblem problem = new INIProblem(INIProblem.TYPE_WARNING, InstallOptionsPlugin.getFormattedString("key.missing.warning", //$NON-NLS-1$
+                                                        new Object[]{InstallOptionsModel.PROPERTY_TYPE}));
+                        addProblem(problem);
+                        problem.setFixer(new INIProblemFixer("Insert missing key") {
+                            protected INIProblemFix[] createFixes()
+                            {
+                                StringBuffer buf = new StringBuffer(INISection.this.getText());
+                                buf.append(INISection.this.getDelimiter() == null?INSISConstants.LINE_SEPARATOR:INISection.this.getDelimiter());
+                                INIKeyValue keyValue = new INIKeyValue(InstallOptionsModel.PROPERTY_TYPE);
+                                buf.append(keyValue.buildText(InstallOptionsModel.TYPE_UNKNOWN));
+                                return new INIProblemFix[] {new INIProblemFix(INISection.this,buf.toString())};
+                            }
+                        });
                     }
                 }
             }
@@ -331,29 +426,35 @@ public class INISection extends INILine implements IINIContainer
     public void update()
     {
         if(!Common.stringsAreEqual(mName,mOriginalName)) {
-            String text = getText();
-            StringBuffer buf = new StringBuffer();
-            if(Common.isEmpty(text)) {
-                buf.append("[").append(mName).append("]"); //$NON-NLS-1$ //$NON-NLS-2$
-            }
-            else {
-                int n = text.indexOf("["); //$NON-NLS-1$
-                if(Common.isEmpty(mOriginalName)) {
-                    buf.append(text.substring(0,n+1)).append(mName).append(text.substring(n+1));
-                }
-                else {
-                    n = text.indexOf(mOriginalName,n);
-                    buf.append(text.substring(0,n));
-                    buf.append(mName);
-                    buf.append(text.substring(n+mOriginalName.length()));
-                }
-            }
+            String newText = buildText(mName);
             mOriginalName = mName;
-            setText(buf.toString());
+            setText(newText);
         }
         for (Iterator iter = mChildren.iterator(); iter.hasNext();) {
             ((INILine)iter.next()).update();
         }
+    }
+
+    public String buildText(String name)
+    {
+        String text = getText();
+        StringBuffer buf = new StringBuffer();
+        if(Common.isEmpty(text)) {
+            buf.append("[").append(name).append("]"); //$NON-NLS-1$ //$NON-NLS-2$
+        }
+        else {
+            int n = text.indexOf("["); //$NON-NLS-1$
+            if(Common.isEmpty(mOriginalName)) {
+                buf.append(text.substring(0,n+1)).append(name).append(text.substring(n+1));
+            }
+            else {
+                n = text.indexOf(mOriginalName,n);
+                buf.append(text.substring(0,n));
+                buf.append(name);
+                buf.append(text.substring(n+mOriginalName.length()));
+            }
+        }
+        return buf.toString();
     }
 
     public int getSize()
@@ -365,7 +466,7 @@ public class INISection extends INILine implements IINIContainer
     {
         return (INILine)mChildren.get(index);
     }
-    
+
     public INILine copy()
     {
         INISection sec = (INISection)clone();

@@ -6,7 +6,7 @@
 # All rights reserved.
 # This program is made available under the terms of the Common Public License
 # v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
-# 
+#
 # Contributors:
 #     Sunil Kamath (IcemanK) - initial API and implementation
 ###############################################################################
@@ -14,12 +14,12 @@
 <plugin>
    <extension
          point="org.eclipse.core.runtime.products">
-      <product name="%product.name" application="org.eclipse.ui.ide.workbench" description="%product.description"> 
-          <property name="windowImage" value="%product.window.image"/> 
-          <property name="aboutImage" value="%product.about.image"/> 
-          <property name="aboutText" value="%about.text"/> 
-          <property name="appName" value="%product.name"/> 
-      </product> 
+      <product name="%product.name" application="org.eclipse.ui.ide.workbench" description="%product.description">
+          <property name="windowImage" value="%product.window.image"/>
+          <property name="aboutImage" value="%product.about.image"/>
+          <property name="aboutText" value="%about.text"/>
+          <property name="appName" value="%product.name"/>
+      </product>
    </extension>
    <extension
          point="org.eclipse.ui.editors">
@@ -273,7 +273,7 @@
       <builder id="%installoptions.builder.id"/>
    </extension>
    <extension point="org.eclipse.core.filebuffers.annotationModelCreation">
-       <factory 
+       <factory
          extensions="%ini.extensions"
          class="net.sf.eclipsensis.installoptions.editor.annotation.InstallOptionsAnnotationModelFactory"/>
    </extension>
@@ -344,5 +344,38 @@
             <input type="net.sf.eclipsensis.installoptions.model.InstallOptionsElement"/>
          </propertySection>
       </propertySections>
+   </extension>
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <viewerContribution
+            targetID="#InstallOptionsSourceRulerContext"
+            id="net.sf.eclipsensis.installoptions.editor.QuickFixRulerMenuAction">
+         <action
+               label="%dummy.label"
+               helpContextId="net.sf.eclipsensis.installoptions.quick_fix_action"
+               class="net.sf.eclipsensis.installoptions.actions.QuickFixRulerAction"
+               menubarPath="additions"
+               definitionId="org.eclipse.jdt.ui.edit.text.java.correction.assist.proposals"
+               id="net.sf.eclipsensis.installoptions.editor.QuickFixRulerMenuAction">
+         </action>
+      </viewerContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editorActions">
+      <editorContribution
+            targetID="%installoptions.source.editor.id"
+            id="org.eclipse.ui.texteditor.ruler.actions">
+         <action
+               label="%quick.fix.ruler.action.label"
+               class="net.sf.eclipsensis.installoptions.actions.QuickFixRulerAction"
+               actionID="RulerClick"
+               id="net.sf.eclipsensis.installoptions.editor.QuickFixRulerMenuAction">
+         </action>
+      </editorContribution>
+   </extension>
+   <extension point="org.eclipse.ui.ide.markerResolution">
+      <markerResolutionGenerator
+            class="net.sf.eclipsensis.installoptions.editor.annotation.INIProblemResolutionGenerator"
+            markerType="net.sf.eclipsensis.installoptions.InstallOptionsProblem"/>
    </extension>
 </plugin>

@@ -16,20 +16,41 @@ import net.sf.eclipsensis.util.Common;
 
 public class FilterKeyValueValidator implements IINIKeyValueValidator
 {
-    public boolean validate(INIKeyValue keyValue, int fixFlag)
+    public boolean validate(final INIKeyValue keyValue, int fixFlag)
     {
         String value = keyValue.getValue();
         if(!Common.isEmpty(value)) {
-            String[] array = Common.tokenize(value,IInstallOptionsConstants.LIST_SEPARATOR,false);
-            int n = array.length;
+            final int n = Common.tokenize(value,IInstallOptionsConstants.LIST_SEPARATOR,false).length;
             if(n%2 != 0) {
                 if((fixFlag & INILine.VALIDATE_FIX_ERRORS) > 0) {
-                    keyValue.setValue(new StringBuffer(value).append(IInstallOptionsConstants.LIST_SEPARATOR).append(array[n-1]).toString());
+                    StringBuffer buf = new StringBuffer("");
+                    if(n == 0) {
+                        buf.append("All Files");
+                    }
+                    else {
+                        buf.append(value);
+                    }
+                    keyValue.setValue(buf.append(IInstallOptionsConstants.LIST_SEPARATOR).append("*.*").toString());
                 }
                 else {
-                    keyValue.addProblem(new INIProblem(INIProblem.TYPE_ERROR,
-                                        InstallOptionsPlugin.getFormattedString("filter.value.error", //$NON-NLS-1$
-                                                new Object[]{keyValue.getKey()})));
+                    INIProblem problem = new INIProblem(INIProblem.TYPE_ERROR,
+                                                            InstallOptionsPlugin.getFormattedString("filter.value.error", //$NON-NLS-1$
+                                                                    new Object[]{keyValue.getKey()}));
+                    problem.setFixer(new INIProblemFixer("Correct Filter key value") {
+                        protected INIProblemFix[] createFixes()
+                        {
+                            StringBuffer buf = new StringBuffer(keyValue.getText());
+                            if(n == 0) {
+                                buf.append("All Files");
+                            }
+                            buf.append(IInstallOptionsConstants.LIST_SEPARATOR).append("*.*");
+                            if(keyValue.getDelimiter()!=null) {
+                                buf.append(keyValue.getDelimiter());
+                            }
+                            return new INIProblemFix[] {new INIProblemFix(keyValue,buf.toString())};
+                        }
+                    });
+                    keyValue.addProblem(problem);
                     return false;
                 }
             }

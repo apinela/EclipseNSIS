@@ -5,8 +5,7 @@ import java.util.Set;
 
 import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
-import net.sf.eclipsensis.installoptions.ini.INIFile;
-import net.sf.eclipsensis.installoptions.ini.INIProblem;
+import net.sf.eclipsensis.installoptions.ini.*;
 import net.sf.eclipsensis.installoptions.model.IModelListener;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
 import net.sf.eclipsensis.job.IJobStatusRunnable;
@@ -298,8 +297,11 @@ public class InstallOptionsBuilder extends IncrementalProjectBuilder implements 
                                                 IMarker.SEVERITY_WARNING:
                                                 IMarker.SEVERITY_ERROR);
                                 marker.setAttribute(IMarker.MESSAGE, problems[i].getMessage());
-                                if(problems[i].getLine() > 0) {
+                                if(problems[i].getLine() >= 0) {
                                     marker.setAttribute(IMarker.LINE_NUMBER, problems[i].getLine());
+                                }
+                                if(problems[i].canFix()) {
+                                    marker.setAttribute(IINIProblemConstants.ATTR_RESOLUTION, problems[i].getFixDescription());
                                 }
                                 marker.setAttribute(IDE.EDITOR_ID_ATTR,IInstallOptionsConstants.INSTALLOPTIONS_SOURCE_EDITOR_ID);
                                 monitor.worked(1);

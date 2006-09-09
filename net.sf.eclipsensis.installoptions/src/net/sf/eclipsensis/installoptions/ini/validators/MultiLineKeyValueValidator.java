@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -17,74 +17,74 @@ import org.eclipse.swt.SWT;
 
 public class MultiLineKeyValueValidator implements IINIKeyValueValidator
 {
-    public boolean validate(INIKeyValue keyValue, int fixFlag)
+    public boolean validate(final INIKeyValue keyValue, int fixFlag)
     {
         String value = TypeConverter.ESCAPED_STRING_CONVERTER.asString(keyValue.getValue());
-        boolean hasProblems = false;
-        boolean checkErrors = true;
-        boolean checkWarnings = true;
+        boolean hasErrors = false;
+        boolean hasWarnings = false;
         boolean fixWarnings = (fixFlag & INILine.VALIDATE_FIX_WARNINGS) > 0;
         boolean fixErrors = (fixFlag & INILine.VALIDATE_FIX_ERRORS) > 0;
 
         char[] chars = value.toCharArray();
-        StringBuffer buf = null;
-        if(fixWarnings || fixErrors) {
-            buf = new StringBuffer(""); //$NON-NLS-1$
-        }
+        final StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
         for (int i = 0; i < chars.length; i++) {
-            if(fixWarnings || fixErrors) {
-                buf.append(chars[i]);
-            }
+            buf.append(chars[i]);
             switch(chars[i]) {
                 case SWT.CR:
-                    if(checkWarnings) {
-                        if(i < chars.length-1) {
-                            if(chars[i+1] == SWT.LF) {
-                                if(fixWarnings || fixErrors) {
-                                    buf.append(SWT.LF);
-                                }
-                                i++;
-                                continue;
-                            }
-                        }
-                        if(fixWarnings) {
+                    if(i < chars.length-1) {
+                        if(chars[i+1] == SWT.LF) {
                             buf.append(SWT.LF);
+                            i++;
+                            continue;
                         }
-                        else {
-                            keyValue.addProblem(new INIProblem(INIProblem.TYPE_WARNING,
-                                    InstallOptionsPlugin.getFormattedString("missing.lf.warning", //$NON-NLS-1$
-                                            new Object[]{keyValue.getKey()})));
-                            hasProblems = true;
-                            checkWarnings = false;
-                        }
+                    }
+                    buf.append(SWT.LF);
+                    if(!fixWarnings) {
+                        hasWarnings = true;
                     }
                     break;
                 case SWT.LF:
-                    if(checkErrors) {
-                        if(i > 0) {
-                            if(chars[i-1] == SWT.CR) {
-                                continue;
-                            }
+                    if(i > 0) {
+                        if(chars[i-1] == SWT.CR) {
+                            continue;
                         }
-                        if(fixErrors) {
-                            buf.insert(buf.length()-1, SWT.CR);
-                        }
-                        else {
-                            keyValue.addProblem(new INIProblem(INIProblem.TYPE_ERROR,
-                                    InstallOptionsPlugin.getFormattedString("missing.cr.error", //$NON-NLS-1$
-                                            new Object[]{keyValue.getKey()})));
-                            hasProblems = true;
-                            checkErrors = false;
-                        }
+                    }
+                    buf.insert(buf.length()-1, SWT.CR);
+                    if(!fixErrors) {
+                        hasErrors = true;
                     }
                     break;
                 default:
                     break;
             }
         }
+        if(hasErrors) {
+            INIProblem problem = new INIProblem(INIProblem.TYPE_ERROR,
+                                InstallOptionsPlugin.getFormattedString("missing.cr.error", //$NON-NLS-1$
+                                        new Object[]{keyValue.getKey()}));
+            problem.setFixer(new INIProblemFixer("Correct line delimiters") {
+                protected INIProblemFix[] createFixes()
+                {
+                    return new INIProblemFix[] {new INIProblemFix(keyValue,keyValue.buildText((String)TypeConverter.ESCAPED_STRING_CONVERTER.asType(buf.toString()))+(keyValue.getDelimiter()==null?"":keyValue.getDelimiter()))};
+                }
+            });
+            keyValue.addProblem(problem);
+        }
+        else if(hasWarnings) {
+            INIProblem problem = new INIProblem(INIProblem.TYPE_WARNING,
+                    InstallOptionsPlugin.getFormattedString("missing.lf.warning", //$NON-NLS-1$
+                            new Object[]{keyValue.getKey()}));
+            problem.setFixer(new INIProblemFixer("Insert missing LF characters") {
+                protected INIProblemFix[] createFixes()
+                {
+                    return new INIProblemFix[] {new INIProblemFix(keyValue,keyValue.buildText((String)TypeConverter.ESCAPED_STRING_CONVERTER.asType(buf.toString()))+(keyValue.getDelimiter()==null?"":keyValue.getDelimiter()))};
+                }
+            });
+            keyValue.addProblem(problem);
+        }
         if(fixWarnings || fixErrors) {
             keyValue.setValue((String)TypeConverter.ESCAPED_STRING_CONVERTER.asType(buf.toString()));
         }
-        return !hasProblems;
+        return !hasErrors && !hasWarnings;
     }
 }
