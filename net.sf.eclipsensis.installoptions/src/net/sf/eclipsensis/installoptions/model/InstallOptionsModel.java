@@ -87,12 +87,13 @@ public class InstallOptionsModel implements IPropertyChangeListener
     public static final String FLAGS_MULTISELECT = "MULTISELECT"; //$NON-NLS-1$
     public static final String FLAGS_EXTENDEDSELECT = "EXTENDEDSELCT"; //$NON-NLS-1$
 
-    public static final String STATE_UNCHECKED="0"; //$NON-NLS-1$
-    public static final String STATE_CHECKED="1"; //$NON-NLS-1$
+    public static final Integer STATE_DEFAULT = null;
+    public static final Integer STATE_UNCHECKED = Common.ZERO;
+    public static final Integer STATE_CHECKED = Common.ONE;
 
-    public static final String OPTION_DEFAULT=""; //$NON-NLS-1$
-    public static final String OPTION_NO="0"; //$NON-NLS-1$
-    public static final String OPTION_YES="1"; //$NON-NLS-1$
+    public static final Integer OPTION_DEFAULT = null;
+    public static final Integer OPTION_NO = Common.ZERO;
+    public static final Integer OPTION_YES = Common.ONE;
 
     public static final InstallOptionsModel INSTANCE = new InstallOptionsModel();
 

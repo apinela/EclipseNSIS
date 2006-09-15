@@ -29,38 +29,44 @@ public abstract class TypeConverter
 
     public String asString(Object o, Object defaultValue)
     {
+    	String string;
         try {
-            return asString(o);
+            string = asString(o);
         }
         catch(Exception ex) {
-            return asString(defaultValue);
+        	string = null;
         }
+		return (string != null?string:asString(defaultValue));
     }
 
     public Object asType(String s, Object defaultValue)
     {
+    	Object type;
         try {
-            return asType(s);
+            type = asType(s);
         }
         catch(Exception ex) {
-            return makeCopy(defaultValue);
+        	type = null;
         }
+		return (type != null?type:makeCopy(defaultValue));
     }
 
     public static final TypeConverter POINT_CONVERTER = new TypeConverter() {
         public String asString(Object o)
         {
-            return Common.flatten(new String[]{Integer.toString(((Point)o).x),Integer.toString(((Point)o).y)},',');
+            return (o==null?null:Common.flatten(new String[]{Integer.toString(((Point)o).x),Integer.toString(((Point)o).y)},','));
         }
 
         public Object asType(String s)
         {
             Point p = null;
-            int n = s.indexOf(","); //$NON-NLS-1$
-            if(n > 0) {
-                p = new Point();
-                p.x = Integer.parseInt(s.substring(0,n));
-                p.y = Integer.parseInt(s.substring(n+1));
+            if(s != null) {
+	            int n = s.indexOf(","); //$NON-NLS-1$
+	            if(n > 0) {
+	                p = new Point();
+	                p.x = Integer.parseInt(s.substring(0,n));
+	                p.y = Integer.parseInt(s.substring(n+1));
+	            }
             }
             return p;
         }
@@ -74,7 +80,7 @@ public abstract class TypeConverter
     public static final TypeConverter BOOLEAN_CONVERTER = new TypeConverter() {
         public String asString(Object o)
         {
-            return ((Boolean)o).toString();
+            return (o != null?((Boolean)o).toString():null);
         }
 
         public Object asType(String s)
@@ -91,10 +97,13 @@ public abstract class TypeConverter
     public static final TypeConverter RGB_CONVERTER = new TypeConverter() {
         public String asString(Object o)
         {
-            StringBuffer buf = new StringBuffer("0x"); //$NON-NLS-1$
-            RGB rgb = (RGB)o;
-            buf.append(ColorManager.rgbToHex(rgb));
-            return buf.toString();
+        	if(o != null) {
+	            StringBuffer buf = new StringBuffer("0x"); //$NON-NLS-1$
+	            RGB rgb = (RGB)o;
+	            buf.append(ColorManager.rgbToHex(rgb));
+	            return buf.toString();
+        	}
+        	return null;
         }
 
         public Object asType(String s)
@@ -105,8 +114,7 @@ public abstract class TypeConverter
                     (rgb.green >= 0 && rgb.green <= 255) &&
                     (rgb.blue >= 0 && rgb.blue <= 255)) {
                     return rgb;
-                 }
-
+                }
             }
             return null;
         }
@@ -121,7 +129,7 @@ public abstract class TypeConverter
     public static final TypeConverter INTEGER_CONVERTER = new TypeConverter() {
         public String asString(Object o)
         {
-            return ((Integer)o).toString();
+            return (o==null?null:((Integer)o).toString());
         }
 
         public Object asType(String s)
@@ -138,7 +146,7 @@ public abstract class TypeConverter
     public static final TypeConverter HEX_CONVERTER = new TypeConverter() {
         public String asString(Object o)
         {
-            return "0x"+Integer.toHexString(((Integer)o).intValue());
+            return (o == null?null:"0x"+Integer.toHexString(((Integer)o).intValue()));
         }
 
         public Object asType(String s)
@@ -155,12 +163,12 @@ public abstract class TypeConverter
     public static final TypeConverter STRING_ARRAY_CONVERTER = new TypeConverter() {
         public String asString(Object o)
         {
-            return Common.flatten((String[])o,IInstallOptionsConstants.LIST_SEPARATOR);
+            return (o==null?null:Common.flatten((String[])o,IInstallOptionsConstants.LIST_SEPARATOR));
         }
 
         public Object asType(String s)
         {
-            return Common.tokenize(s,IInstallOptionsConstants.LIST_SEPARATOR,false);
+            return (s==null?null:Common.tokenize(s,IInstallOptionsConstants.LIST_SEPARATOR,false));
         }
 
         public Object makeCopy(Object o)
@@ -172,12 +180,12 @@ public abstract class TypeConverter
     public static final TypeConverter STRING_LIST_CONVERTER = new TypeConverter() {
         public String asString(Object o)
         {
-            return Common.flatten(((List)o).toArray(Common.EMPTY_STRING_ARRAY),IInstallOptionsConstants.LIST_SEPARATOR);
+            return (o==null?null:Common.flatten(((List)o).toArray(Common.EMPTY_STRING_ARRAY),IInstallOptionsConstants.LIST_SEPARATOR));
         }
 
         public Object asType(String s)
         {
-            return Common.tokenizeToList(s,IInstallOptionsConstants.LIST_SEPARATOR,false);
+            return (s==null?null:Common.tokenizeToList(s,IInstallOptionsConstants.LIST_SEPARATOR,false));
         }
 
         public Object makeCopy(Object o)
@@ -215,8 +223,8 @@ public abstract class TypeConverter
     public static final TypeConverter ESCAPED_STRING_CONVERTER = new TypeConverter() {
         public String asString(Object o)
         {
-            StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
             if(o != null) {
+                StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
                 char[] chars = ((String)o).toCharArray();
                 boolean escaped = false;
                 for (int i = 0; i < chars.length; i++) {
@@ -251,15 +259,16 @@ public abstract class TypeConverter
                 if(escaped) {
                     buf.append("\\"); //$NON-NLS-1$
                 }
+                return buf.toString();
             }
 
-            return buf.toString();
+            return null;
         }
 
         public Object asType(String s)
         {
-            StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
             if(s != null) {
+                StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
                 char[] chars = s.toCharArray();
                 for (int i = 0; i < chars.length; i++) {
                     switch(chars[i]) {
@@ -279,9 +288,10 @@ public abstract class TypeConverter
                             buf.append(chars[i]);
                     }
                 }
+                return buf.toString();
             }
 
-            return buf.toString();
+            return null;
         }
 
         public Object makeCopy(Object o)
@@ -293,19 +303,21 @@ public abstract class TypeConverter
     public static final TypeConverter DIMENSION_CONVERTER = new TypeConverter() {
         public String asString(Object o)
         {
-            return Common.flatten(new String[]{Integer.toString(((Dimension)o).width),Integer.toString(((Dimension)o).height)},',');
+            return (o==null?null:Common.flatten(new String[]{Integer.toString(((Dimension)o).width),Integer.toString(((Dimension)o).height)},','));
         }
 
         public Object asType(String s)
         {
             Dimension d = null;
-            int n = s.indexOf(","); //$NON-NLS-1$
-            if(n > 0) {
-                d = new Dimension();
-                d.width = Integer.parseInt(s.substring(0,n));
-                d.height = Integer.parseInt(s.substring(n+1));
-            }
-            return d;
+			if (s != null) {
+				int n = s.indexOf(","); //$NON-NLS-1$
+				if (n > 0) {
+					d = new Dimension();
+					d.width = Integer.parseInt(s.substring(0, n));
+					d.height = Integer.parseInt(s.substring(n + 1));
+				}
+			}            
+			return d;
         }
 
         public Object makeCopy(Object o)

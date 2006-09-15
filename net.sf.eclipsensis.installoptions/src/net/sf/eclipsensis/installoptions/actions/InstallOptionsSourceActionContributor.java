@@ -24,7 +24,7 @@ import org.eclipse.ui.actions.RetargetAction;
 import org.eclipse.ui.editors.text.TextEditorActionContributor;
 import org.eclipse.ui.texteditor.ITextEditor;
 
-public class InstallOptionsSourceActionContributor extends TextEditorActionContributor
+public class InstallOptionsSourceActionContributor extends TextEditorActionContributor implements IInstallOptionsConstants
 {
     private MenuManager mInstallOptionsMenu;
     private List mRetargetActions = new ArrayList();
@@ -72,24 +72,28 @@ public class InstallOptionsSourceActionContributor extends TextEditorActionContr
         mCreateControlAction.setToolTipText(InstallOptionsPlugin.getResourceString("create.control.action.tooltip")); //$NON-NLS-1$
         mCreateControlAction.setImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("create.control.icon"))); //$NON-NLS-1$
         mCreateControlAction.setDisabledImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("create.control.disabled.icon"))); //$NON-NLS-1$
+        mCreateControlAction.setActionDefinitionId(CREATE_CONTROL_COMMAND_ID);
         registerRetargetAction(mCreateControlAction);
         
         mEditControlAction = new RetargetAction(InstallOptionsSourceEditor.EDIT_CONTROL_ACTION,InstallOptionsPlugin.getResourceString("edit.control.action.name")); //$NON-NLS-1$
         mEditControlAction.setToolTipText(InstallOptionsPlugin.getResourceString("edit.control.action.tooltip")); //$NON-NLS-1$
         mEditControlAction.setImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("edit.control.icon"))); //$NON-NLS-1$
         mEditControlAction.setDisabledImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("edit.control.disabled.icon"))); //$NON-NLS-1$
+        mEditControlAction.setActionDefinitionId(EDIT_CONTROL_COMMAND_ID);
         registerRetargetAction(mEditControlAction);
         
         mDeleteControlAction = new RetargetAction(InstallOptionsSourceEditor.DELETE_CONTROL_ACTION,InstallOptionsPlugin.getResourceString("delete.control.action.name")); //$NON-NLS-1$
         mDeleteControlAction.setToolTipText(InstallOptionsPlugin.getResourceString("delete.control.action.tooltip")); //$NON-NLS-1$
         mDeleteControlAction.setImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("delete.control.icon"))); //$NON-NLS-1$
         mDeleteControlAction.setDisabledImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("delete.control.disabled.icon"))); //$NON-NLS-1$
+        mDeleteControlAction.setActionDefinitionId(DELETE_CONTROL_COMMAND_ID);
         registerRetargetAction(mDeleteControlAction);
         
         mDeleteControlAction2 = new RetargetAction(InstallOptionsSourceEditor.DELETE_CONTROL_ACTION2,InstallOptionsPlugin.getResourceString("delete.control.action.name")); //$NON-NLS-1$
         mDeleteControlAction2.setToolTipText(InstallOptionsPlugin.getResourceString("delete.control.action.tooltip")); //$NON-NLS-1$
         mDeleteControlAction2.setImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("delete.control.icon"))); //$NON-NLS-1$
         mDeleteControlAction2.setDisabledImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("delete.control.disabled.icon"))); //$NON-NLS-1$
+        mDeleteControlAction2.setActionDefinitionId(DELETE_CONTROL_COMMAND_ID2);
         registerRetargetAction(mDeleteControlAction2);
         
         mPreviewClassicAction = new PreviewRetargetAction(IInstallOptionsConstants.PREVIEW_CLASSIC);

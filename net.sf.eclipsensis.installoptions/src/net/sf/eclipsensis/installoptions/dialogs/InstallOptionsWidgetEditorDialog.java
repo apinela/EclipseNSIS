@@ -44,6 +44,7 @@ import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributo
 public class InstallOptionsWidgetEditorDialog extends StatusMessageDialog implements PropertyChangeListener, IModelCommandListener, IPropertySourceProvider, ITabbedPropertySheetPageContributor
 {
     private static final int MIN_WIDTH = 800;
+    private static final int MIN_HEIGHT = 480;
 
     private static final String HELP_CONTEXT = IInstallOptionsConstants.PLUGIN_CONTEXT_PREFIX+"installoptions_widgeteditor_context"; //$NON-NLS-1$
 
@@ -147,6 +148,9 @@ public class InstallOptionsWidgetEditorDialog extends StatusMessageDialog implem
         if(size.x < MIN_WIDTH) {
             size.x = MIN_WIDTH;
         }
+        if(size.y < MIN_HEIGHT) {
+            size.y = MIN_HEIGHT;
+        }
         return size;
     }
 
@@ -217,7 +221,7 @@ public class InstallOptionsWidgetEditorDialog extends StatusMessageDialog implem
         }
         mPage.createControl(propertyComposite);
         mPage.setActionBars(new DummyActionBars());
-        Control control = mPage.getControl();
+        final Control control = mPage.getControl();
         GridData data = new GridData(SWT.FILL,SWT.FILL,true,true);
         if(control instanceof Tree) {
             final Tree tree = (Tree)control;
@@ -232,6 +236,14 @@ public class InstallOptionsWidgetEditorDialog extends StatusMessageDialog implem
                         columns[0].setWidth(area.width * 40 / 100);
                         columns[1].setWidth(area.width - columns[0].getWidth() - 4);
                     }
+                }
+            });
+        }
+        else if(control instanceof Composite){
+			//TODO Is this also needed for XP?
+        	control.addControlListener(new ControlAdapter() {
+                public void controlResized(ControlEvent e) {
+                    ((Composite)control).layout(true, true);
                 }
             });
         }

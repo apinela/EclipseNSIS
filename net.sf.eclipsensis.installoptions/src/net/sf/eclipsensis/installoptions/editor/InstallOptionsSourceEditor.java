@@ -333,6 +333,8 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
         super.editorContextMenuAboutToShow(menu);
         menu.appendToGroup(IWorkbenchActionConstants.MB_ADDITIONS, new Separator(INSTALLOPTIONS_MENU_GROUP));
         addAction(menu, INSTALLOPTIONS_MENU_GROUP, CREATE_CONTROL_ACTION);
+        addAction(menu, INSTALLOPTIONS_MENU_GROUP, EDIT_CONTROL_ACTION);
+        addAction(menu, INSTALLOPTIONS_MENU_GROUP, DELETE_CONTROL_ACTION);
         addAction(menu, INSTALLOPTIONS_MENU_GROUP, REORDER_ACTION);
         MenuManager submenu = new MenuManager(InstallOptionsPlugin.getResourceString("fix.problems.submenu.name")); //$NON-NLS-1$
         submenu.add(getAction(INIFileFixProblemsAction.FIX_ALL_ID));

@@ -30,13 +30,13 @@ public class CheckBoxPropertySectionCreator extends UneditableElementPropertySec
     {
         Composite composite = (Composite)super.createAppearancePropertySection(parent, widgetFactory, commandHelper);
         InstallOptionsCheckBox checkbox = (InstallOptionsCheckBox)getWidget();
-        String[] stateData = checkbox.getStateData();
+        Integer[] stateData = checkbox.getStateData();
         String[] stateDisplay = checkbox.getStateDisplay();
         CaseInsensitiveMap map = new CaseInsensitiveMap();
         for (int i = 0; i < Math.min(stateData.length,stateDisplay.length); i++) {
             map.put(stateData[i], stateDisplay[i]);
         }
-        String defaultValue = null;
+        Integer defaultValue = null;
         if(checkbox.getStateDefault() < map.size()) {
             defaultValue = stateData[checkbox.getStateDefault()];
         }

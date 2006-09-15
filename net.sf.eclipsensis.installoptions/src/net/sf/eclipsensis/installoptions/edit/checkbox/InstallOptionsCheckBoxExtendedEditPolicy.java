@@ -31,7 +31,7 @@ public class InstallOptionsCheckBoxExtendedEditPolicy extends InstallOptionsExte
     protected Command getExtendedEditCommand(ExtendedEditRequest request)
     {
         ToggleStateCommand command = new ToggleStateCommand((InstallOptionsCheckBox)request.getEditPart().getModel(),
-                                                                                    (String)request.getNewValue());
+                                                                                    (Integer)request.getNewValue());
         return command;
     }
 

@@ -16,20 +16,15 @@ import org.eclipse.gef.commands.Command;
 
 public class ToggleStateCommand extends Command
 {
-    private String mNewState;
-    private String mOldState;
+    private Integer mNewState;
+    private Integer mOldState;
     private InstallOptionsCheckBox mModel;
 
-    public ToggleStateCommand(InstallOptionsCheckBox model, String state)
+    public ToggleStateCommand(InstallOptionsCheckBox model, Integer state)
     {
         mModel = model;
         setLabel(InstallOptionsPlugin.getFormattedString("toggle.state.command.label", new Object[]{mModel.getType()})); //$NON-NLS-1$
-        if (state != null) {
-            mNewState = state;
-        }
-        else {
-            mNewState = "";  //$NON-NLS-1$
-        }
+        mNewState = state;
         mOldState = mModel.getState();
     }
 

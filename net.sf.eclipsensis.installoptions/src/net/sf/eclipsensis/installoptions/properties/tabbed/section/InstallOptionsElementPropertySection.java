@@ -9,15 +9,23 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.properties.tabbed.section;
 
+import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsElement;
 import net.sf.eclipsensis.installoptions.model.commands.InstallOptionsCommandHelper;
+import net.sf.eclipsensis.job.IJobStatusRunnable;
+import net.sf.eclipsensis.job.JobScheduler;
 import net.sf.eclipsensis.util.Common;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.commands.CommandStack;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ControlAdapter;
+import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -38,6 +46,12 @@ public abstract class InstallOptionsElementPropertySection extends AbstractPrope
     {
         super.createControls(parent, page);
         mPage = page;
+        if(EclipseNSISPlugin.getDefault().isXP()) {
+        	getWidgetFactory().setBorderStyle(SWT.NULL);
+        }
+        else {
+        	getWidgetFactory().setBorderStyle(SWT.BORDER);
+        }
         mParent = getWidgetFactory().createComposite(parent);
         mParent.setLayout(new GridLayout(1,false));
     }
@@ -115,10 +129,18 @@ public abstract class InstallOptionsElementPropertySection extends AbstractPrope
                 }
             }
             mParent.layout(true, true);
-            Control c = createSection(newElement, mParent, mPage, mCommandHelper);
+            final Control c = createSection(newElement, mParent, mPage, mCommandHelper);
             if(c != null) {
                 c.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true));
-                mParent.getShell().layout(new Control[] {c});
+                //TODO Is this needed on XP?
+                mParent.getDisplay().asyncExec(new Runnable() {
+					public void run() {
+						// TODO Auto-generated method stub
+						if(!mParent.isDisposed() && !c.isDisposed()) {
+							mParent.getShell().layout(new Control[] {c});
+						}
+					}
+                });
             }
         }
     }
@@ -126,6 +148,39 @@ public abstract class InstallOptionsElementPropertySection extends AbstractPrope
     public boolean shouldUseExtraSpace() 
     {
         return true;
+    }
+
+    protected Composite createSectionComposite(Composite parent)
+    {
+        final Composite section = getWidgetFactory().createComposite(parent);
+		if (!EclipseNSISPlugin.getDefault().isXP()) {
+			//TODO Is this also needed for XP?
+			section.setLayoutDeferred(true);
+			final JobScheduler scheduler = EclipseNSISPlugin.getDefault()
+					.getJobScheduler();
+			final Object jobFamily = new Object();
+			section.addControlListener(new ControlAdapter() {
+				private IJobStatusRunnable mRunnable = new IJobStatusRunnable() {
+					public IStatus run(IProgressMonitor monitor) 
+					{
+						if(!section.isDisposed()) {
+							section.setLayoutDeferred(false);
+							section.setLayoutDeferred(true);
+						}
+						return Status.OK_STATUS;
+					}
+				};
+
+				public void controlResized(ControlEvent e) 
+				{
+					if (!scheduler.isScheduled(jobFamily)) {
+						scheduler.scheduleUIJob(jobFamily, "Update layout",
+								mRunnable);
+					}
+				}
+			});
+		}
+		return section;
     }
 
     protected abstract Control createSection(InstallOptionsElement element, Composite parent, TabbedPropertySheetPage page, InstallOptionsCommandHelper commandHelper);

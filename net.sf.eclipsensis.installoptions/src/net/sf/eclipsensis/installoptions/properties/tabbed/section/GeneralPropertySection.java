@@ -11,27 +11,55 @@ package net.sf.eclipsensis.installoptions.properties.tabbed.section;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
-import net.sf.eclipsensis.installoptions.model.*;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsDialog;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsElement;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsModelTypeDef;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsWidget;
+import net.sf.eclipsensis.installoptions.model.Position;
 import net.sf.eclipsensis.installoptions.model.commands.InstallOptionsCommandHelper;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.util.NumberVerifyListener;
 import net.sf.eclipsensis.viewer.CollectionContentProvider;
 
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.CheckStateChangedEvent;
+import org.eclipse.jface.viewers.CheckboxTableViewer;
+import org.eclipse.jface.viewers.ICellEditorValidator;
+import org.eclipse.jface.viewers.ICheckStateListener;
+import org.eclipse.jface.viewers.IElementComparer;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.custom.CLabel;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.FocusAdapter;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.TraverseEvent;
+import org.eclipse.swt.events.TraverseListener;
+import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
 import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetWidgetFactory;
@@ -48,8 +76,8 @@ public class GeneralPropertySection extends InstallOptionsElementPropertySection
                 cols++;
             }
             
-            parent = getWidgetFactory().createComposite(parent, SWT.NONE);
-            GridLayout layout = new GridLayout(cols,false);
+            parent = createSectionComposite(parent);
+			GridLayout layout = new GridLayout(cols,false);
             layout.marginHeight = layout.marginWidth = 0;
             parent.setLayout(layout);
             
@@ -82,7 +110,7 @@ public class GeneralPropertySection extends InstallOptionsElementPropertySection
 
         TabbedPropertySheetWidgetFactory factory = getWidgetFactory();
         Composite group = factory.createGroup(parent,displayName);
-        GridLayout layout = new GridLayout(2,false);
+        GridLayout layout = new GridLayout(2,true);
         group.setLayout(layout);
         
         final boolean[] nonUserChange = {false};
@@ -330,9 +358,7 @@ public class GeneralPropertySection extends InstallOptionsElementPropertySection
         
         final String positionName = widget.getPropertyDescriptor(InstallOptionsModel.PROPERTY_POSITION).getDisplayName();
         Group group = factory.createGroup(parent, positionName);
-        GridData data = new GridData(SWT.FILL,SWT.FILL,true,false);
-        data.horizontalSpan = 2;
-        group.setLayoutData(data);
+        group.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false));
         group.setLayout(new GridLayout(2,false));
         final Position position = widget.getPosition().getCopy();
         final Text[] positionTexts = new Text[4];

@@ -61,7 +61,11 @@ public class Clipboard
 
             public void run()
             {
-                Display.getDefault().asyncExec(runnable);
+				try {
+					Display.getDefault().asyncExec(runnable);
+				} catch (Exception e) {
+					InstallOptionsPlugin.getDefault().log(e);
+				}                
             }
         },0,10);
         Display.getDefault().disposeExec(new Runnable() {

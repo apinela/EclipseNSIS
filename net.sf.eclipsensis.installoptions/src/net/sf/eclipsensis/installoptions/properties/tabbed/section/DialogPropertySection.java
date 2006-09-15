@@ -12,14 +12,19 @@ package net.sf.eclipsensis.installoptions.properties.tabbed.section;
 import java.util.Map;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
-import net.sf.eclipsensis.installoptions.model.*;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsDialog;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsElement;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
 import net.sf.eclipsensis.installoptions.model.commands.InstallOptionsCommandHelper;
 import net.sf.eclipsensis.util.CaseInsensitiveMap;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
 import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetWidgetFactory;
 
@@ -51,7 +56,7 @@ public class DialogPropertySection extends InstallOptionsElementPropertySection
             for (int i = 0; i < Math.min(InstallOptionsDialog.OPTION_DATA.length, InstallOptionsDialog.OPTION_DISPLAY.length); i++) {
                 map.put(InstallOptionsDialog.OPTION_DATA[i],InstallOptionsDialog.OPTION_DISPLAY[i]);
             }
-            String defaultValue = InstallOptionsDialog.OPTION_DATA[InstallOptionsDialog.DEFAULT_OPTION];
+            Integer defaultValue = InstallOptionsDialog.OPTION_DATA[InstallOptionsDialog.DEFAULT_OPTION];
             
             createComboSection(group, InstallOptionsModel.PROPERTY_CANCEL_ENABLED, map, defaultValue, widgetFactory, commandHelper);
             createComboSection(group, InstallOptionsModel.PROPERTY_CANCEL_SHOW, map, defaultValue, widgetFactory, commandHelper);

@@ -9,7 +9,11 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.properties.descriptors;
 
-import org.eclipse.jface.viewers.*;
+import net.sf.eclipsensis.util.Common;
+
+import org.eclipse.jface.viewers.CellEditor;
+import org.eclipse.jface.viewers.ComboBoxCellEditor;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.views.properties.ComboBoxPropertyDescriptor;
@@ -43,9 +47,9 @@ public class CustomComboBoxPropertyDescriptor extends ComboBoxPropertyDescriptor
         setLabelProvider(new LabelProvider(){
             public String getText(Object element)
             {
-                if(element instanceof String) {
+                if(element != null) {
                     for(int i=0; i<mData.length; i++) {
-                        if(mData[i].equals(element)) {
+                        if(Common.objectsAreEqual(mData[i],element)) {
                             return mDisplay[i];
                         }
                     }
@@ -69,7 +73,7 @@ public class CustomComboBoxPropertyDescriptor extends ComboBoxPropertyDescriptor
             {
                 int val = mDefault;
                 for(int i=0; i<mData.length; i++) {
-                    if(mData[i].equals(value)) {
+                    if(Common.objectsAreEqual(mData[i],value)) {
                         val = i;
                         break;
                     }

@@ -51,7 +51,7 @@ public class FilterPropertySection extends InstallOptionsElementPropertySection
             
             final TabbedPropertySheetWidgetFactory widgetFactory = getWidgetFactory();
 
-            parent = widgetFactory.createComposite(parent); 
+            parent = createSectionComposite(parent); 
             GridLayout layout = new GridLayout(2, false);
             layout.marginHeight = layout.marginWidth = 0;
             parent.setLayout(layout);

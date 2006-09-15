@@ -29,7 +29,7 @@ public class ComboboxPropertySectionCreator extends ListItemsPropertySectionCrea
 //        super.createListAndStateButtons(buttons, viewer, widgetFactory, commandHelper);
 //        final IPropertyDescriptor stateDescriptor = getWidget().getPropertyDescriptor(InstallOptionsModel.PROPERTY_STATE);
 //        final ICellEditorValidator stateValidator = (ICellEditorValidator)Common.getObjectFieldValue(listItemsDescriptor, "validator", ICellEditorValidator.class); //$NON-NLS-1$
-//        final Button add = widgetFactory.createButton(buttons,"",SWT.PUSH|SWT.FLAT);
+//        final Button add = widgetFactory.createButton(buttons,"",SWT.PUSH|FLAT_STYLE);
 //        add.setImage(InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("select.all.icon")));
 //        add.setToolTipText(EclipseNSISPlugin.getResourceString("select.all.tooltip")); //$NON-NLS-1$
 //        add.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));

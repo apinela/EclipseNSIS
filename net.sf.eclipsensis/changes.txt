@@ -19,6 +19,8 @@ Revision History
         o 1464413
         o 1466390
         o 1474161
+        o 1521533
+        o 1556289
     * Feature Requests:
         o 1441231
         o 1452422

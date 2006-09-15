@@ -23,6 +23,7 @@ import net.sf.eclipsensis.installoptions.properties.descriptors.CustomComboBoxPr
 import net.sf.eclipsensis.installoptions.properties.validators.NSISStringLengthValidator;
 import net.sf.eclipsensis.installoptions.properties.validators.NumberCellEditorValidator;
 import net.sf.eclipsensis.installoptions.rulers.*;
+import net.sf.eclipsensis.installoptions.util.TypeConverter;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.util.UpDownMover;
 
@@ -36,15 +37,14 @@ import org.eclipse.ui.views.properties.*;
 public class InstallOptionsDialog extends InstallOptionsElement implements IInstallOptionsConstants
 {
     public static final String PROPERTY_SELECTION = "net.sf.eclipsensis.installoptions.selection"; //$NON-NLS-1$
-    public static final String OPTION_DEFAULT = ""; //$NON-NLS-1$
-    public static final String OPTION_NO = "0"; //$NON-NLS-1$
-    public static final String OPTION_YES = "1"; //$NON-NLS-1$
 
     private static final String GUIDES_PREFIX = "guides="; //$NON-NLS-1$
     private static final String LOCKED_PREFIX = "locked="; //$NON-NLS-1$
 
     public static final int DEFAULT_OPTION = 0;
-    public static final String[] OPTION_DATA = {OPTION_DEFAULT,OPTION_NO,OPTION_YES};
+    public static final Integer[] OPTION_DATA = {InstallOptionsModel.OPTION_DEFAULT,
+    											 InstallOptionsModel.OPTION_NO,
+    											 InstallOptionsModel.OPTION_YES};
     public static final String[] OPTION_DISPLAY = {InstallOptionsPlugin.getResourceString("option.default"), //$NON-NLS-1$
                                  InstallOptionsPlugin.getResourceString("option.no"), //$NON-NLS-1$
                                  InstallOptionsPlugin.getResourceString("option.yes")}; //$NON-NLS-1$
@@ -69,14 +69,14 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
     protected InstallOptionsRuler mHorizontalRuler;
 
     private String mTitle;
-    private String mCancelEnabled;
-    private String mCancelShow;
-    private String mBackEnabled;
+    private Integer mCancelEnabled;
+    private Integer mCancelShow;
+    private Integer mBackEnabled;
     private String mCancelButtonText;
     private String mNextButtonText;
     private String mBackButtonText;
-    private String mRect;
-    private String mRTL;
+    private Integer mRect;
+    private Integer mRTL;
     private int[] mSelectedIndices;
     private UpDownMover mUpDownMover;
     private INIFile mINIFile;
@@ -97,14 +97,14 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
         super.init();
         mChildren = new ArrayList();
         mTitle=""; //$NON-NLS-1$
-        mCancelEnabled=""; //$NON-NLS-1$
-        mCancelShow=""; //$NON-NLS-1$
-        mBackEnabled=""; //$NON-NLS-1$
+        mCancelEnabled=null;
+        mCancelShow=null;
+        mBackEnabled=null;
         mCancelButtonText=""; //$NON-NLS-1$
         mNextButtonText=""; //$NON-NLS-1$
         mBackButtonText=""; //$NON-NLS-1$
-        mRect=""; //$NON-NLS-1$
-        mRTL=""; //$NON-NLS-1$
+        mRect=null;
+        mRTL=null;
         mSelectedIndices = null;
         mINIFile = null;
         mINISectionMap = new HashMap();
@@ -369,16 +369,16 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
             setTitle((String)value);
         }
         else if(InstallOptionsModel.PROPERTY_CANCEL_ENABLED.equals(id)) {
-            setCancelEnabled((String)value);
+            setCancelEnabled((Integer)value);
         }
         else if(InstallOptionsModel.PROPERTY_CANCEL_SHOW.equals(id)) {
-            setCancelShow((String)value);
+            setCancelShow((Integer)value);
         }
         else if(InstallOptionsModel.PROPERTY_CANCEL_BUTTON_TEXT.equals(id)) {
             setCancelButtonText((String)value);
         }
         else if(InstallOptionsModel.PROPERTY_BACK_ENABLED.equals(id)) {
-            setBackEnabled((String)value);
+            setBackEnabled((Integer)value);
         }
         else if(InstallOptionsModel.PROPERTY_BACK_BUTTON_TEXT.equals(id)) {
             setBackButtonText((String)value);
@@ -387,10 +387,10 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
             setNextButtonText((String)value);
         }
         else if(InstallOptionsModel.PROPERTY_RECT.equals(id)) {
-            setRect((String)value);
+            setRect((Integer)value);
         }
         else if(InstallOptionsModel.PROPERTY_RTL.equals(id)) {
-            setRTL((String)value);
+            setRTL((Integer)value);
         }
     }
 
@@ -407,14 +407,14 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
         }
     }
 
-    public String getBackEnabled()
+    public Integer getBackEnabled()
     {
         return mBackEnabled;
     }
 
-    public void setBackEnabled(String backEnabled)
+    public void setBackEnabled(Integer backEnabled)
     {
-        if(!Common.stringsAreEqual(mBackEnabled,backEnabled)) {
+        if(!Common.objectsAreEqual(mBackEnabled,backEnabled)) {
             mBackEnabled = backEnabled;
             setDirty(true);
         }
@@ -433,27 +433,27 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
         }
     }
 
-    public String getCancelEnabled()
+    public Integer getCancelEnabled()
     {
         return mCancelEnabled;
     }
 
-    public void setCancelEnabled(String cancelEnabled)
+    public void setCancelEnabled(Integer cancelEnabled)
     {
-        if(!Common.stringsAreEqual(mCancelEnabled,cancelEnabled)) {
+        if(!Common.objectsAreEqual(mCancelEnabled,cancelEnabled)) {
             mCancelEnabled = cancelEnabled;
             setDirty(true);
         }
     }
 
-    public String getCancelShow()
+    public Integer getCancelShow()
     {
         return mCancelShow;
     }
 
-    public void setCancelShow(String cancelShow)
+    public void setCancelShow(Integer cancelShow)
     {
-        if(!Common.stringsAreEqual(mCancelShow,cancelShow)) {
+        if(!Common.objectsAreEqual(mCancelShow,cancelShow)) {
             mCancelShow = cancelShow;
             setDirty(true);
         }
@@ -472,28 +472,28 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
         }
     }
 
-    public String getRect()
+    public Integer getRect()
     {
         return mRect;
     }
 
-    public void setRect(String rect)
+    public void setRect(Integer rect)
     {
-        if(!Common.stringsAreEqual(mRect,rect)) {
+        if(!Common.objectsAreEqual(mRect,rect)) {
             mRect = rect;
             setDirty(true);
         }
     }
 
-    public String getRTL()
+    public Integer getRTL()
     {
         return mRTL;
     }
 
-    public void setRTL(String rtl)
+    public void setRTL(Integer rtl)
     {
-        if(!Common.stringsAreEqual(mRTL,rtl)) {
-            String oldRTL = mRTL;
+        if(!Common.objectsAreEqual(mRTL,rtl)) {
+        	Integer oldRTL = mRTL;
             mRTL = rtl;
             setDirty(true);
             firePropertyChange(InstallOptionsModel.PROPERTY_RTL,oldRTL,mRTL);
@@ -1148,6 +1148,26 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
                 section.removeChild(comment);
             }
             return false;
+        }
+    }
+
+    protected TypeConverter loadTypeConverter(String property, Object value)
+    {
+        if (InstallOptionsModel.PROPERTY_NUMFIELDS.equals(property)||
+        	InstallOptionsModel.PROPERTY_CANCEL_ENABLED.equals(property)||
+        	InstallOptionsModel.PROPERTY_CANCEL_SHOW.equals(property)||
+        	InstallOptionsModel.PROPERTY_BACK_ENABLED.equals(property)||
+        	InstallOptionsModel.PROPERTY_RTL.equals(property)||
+        	InstallOptionsModel.PROPERTY_RECT.equals(property)) {
+            if(value instanceof String) {
+                if(((String)value).regionMatches(true,0,"0x",0,2)) {
+                    return TypeConverter.HEX_CONVERTER;
+                }
+            }
+            return TypeConverter.INTEGER_CONVERTER;
+        }
+        else {
+            return super.loadTypeConverter(property, value);
         }
     }
 

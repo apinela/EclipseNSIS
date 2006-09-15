@@ -58,8 +58,8 @@ public class InstallOptionsGraphicalViewer extends GraphicalViewerImpl
     public final Control createControl(Composite parent)
     {
         if(mDialog != null) {
-            String rtl = mDialog.getRTL();
-            if(InstallOptionsDialog.OPTION_YES.equals(rtl)) {
+            Integer rtl = mDialog.getRTL();
+            if(InstallOptionsModel.OPTION_YES.equals(rtl)) {
                 mStyle |= SWT.RIGHT_TO_LEFT;
                 mStyle &= ~SWT.LEFT_TO_RIGHT;
             }
@@ -75,10 +75,10 @@ public class InstallOptionsGraphicalViewer extends GraphicalViewerImpl
                 {
                     String property = evt.getPropertyName();
                     if(property.equals(InstallOptionsModel.PROPERTY_RTL)) {
-                        String rtl = (String)evt.getNewValue();
+                    	Integer rtl = (Integer)evt.getNewValue();
                         int windowsStyle = WinAPI.GetWindowLong(canvas.handle,WinAPI.GWL_EXSTYLE);
                         int style = canvas.getStyle();
-                        if(InstallOptionsDialog.OPTION_YES.equals(rtl)) {
+                        if(InstallOptionsModel.OPTION_YES.equals(rtl)) {
                             windowsStyle |= WinAPI.WS_EX_LAYOUTRTL;
                             style &= ~SWT.LEFT_TO_RIGHT;
                             style |= SWT.RIGHT_TO_LEFT;

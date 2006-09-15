@@ -18,6 +18,7 @@ import net.sf.eclipsensis.installoptions.figures.CheckBoxFigure;
 import net.sf.eclipsensis.installoptions.figures.IInstallOptionsFigure;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsCheckBox;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
+import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.gef.tools.CellEditorLocator;
 import org.eclipse.gef.tools.DirectEditManager;
@@ -30,8 +31,8 @@ public class InstallOptionsCheckBoxEditPart extends InstallOptionsButtonEditPart
         public boolean performExtendedEdit()
         {
             InstallOptionsCheckBox model = (InstallOptionsCheckBox)getModel();
-            String state = model.getState();
-            if(state.equals(InstallOptionsModel.STATE_CHECKED)) {
+            Integer state = model.getState();
+            if(Common.objectsAreEqual(state,InstallOptionsModel.STATE_CHECKED)) {
                 mNewValue = InstallOptionsModel.STATE_UNCHECKED;
             }
             else {

@@ -18,6 +18,7 @@ import net.sf.eclipsensis.installoptions.properties.validators.NSISStringLengthV
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 
+//TODO Delete this
 public abstract class InstallOptionsGenericButton extends InstallOptionsUneditableElement
 {
     private String mState;
