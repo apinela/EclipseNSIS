@@ -165,16 +165,19 @@ public class MinimalProgressMonitorDialog extends ProgressMonitorDialog
     
     private void setFGColor(Control control, Color fgColor)
     {
-        control.setForeground(fgColor);
-        if(control instanceof Composite) {
-            Composite composite = (Composite)control;
-            Control[] controls = composite.getChildren();
-            if(!Common.isEmptyArray(controls)) {
-                for (int i = 0; i < controls.length; i++) {
-                    setFGColor(controls[i], fgColor);
-                }
-            }
-        }
+    	if(EclipseNSISPlugin.getDefault().isXP() || !(control instanceof ProgressBar)) {
+			//TODO Is this also needed for XP?
+	        control.setForeground(fgColor);
+	        if(control instanceof Composite) {
+	            Composite composite = (Composite)control;
+	            Control[] controls = composite.getChildren();
+	            if(!Common.isEmptyArray(controls)) {
+	                for (int i = 0; i < controls.length; i++) {
+	                    setFGColor(controls[i], fgColor);
+	                }
+	            }
+	        }
+    	}
     }
 
     public String getCaption()

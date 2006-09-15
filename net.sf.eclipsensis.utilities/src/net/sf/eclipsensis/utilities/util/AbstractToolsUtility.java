@@ -90,8 +90,7 @@ public abstract class AbstractToolsUtility implements IJavaLaunchConfigurationCo
             ILaunchConfigurationWorkingCopy workingCopy = type.newInstance(null, getLaunchTitle());
 
             // specify a JRE
-            workingCopy.setAttribute(ATTR_VM_INSTALL_NAME, mVMInstall.getName());
-            workingCopy.setAttribute(ATTR_VM_INSTALL_TYPE, mVMInstall.getVMInstallType().getId());
+            workingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_JRE_CONTAINER_PATH, JavaRuntime.newJREContainerPath(mVMInstall).toPortableString());
 
             // specify main type and program arguments
             workingCopy.setAttribute(ATTR_MAIN_TYPE_NAME, mMainClassName);

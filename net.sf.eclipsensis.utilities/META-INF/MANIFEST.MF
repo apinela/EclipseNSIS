@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %plugin.name
 Bundle-SymbolicName: net.sf.eclipsensis.utilities; singleton := true
-Bundle-Version: 0.9.0
+Bundle-Version: 0.9.1
 Bundle-Vendor: %plugin.vendor
 Bundle-Activator: net.sf.eclipsensis.utilities.UtilitiesPlugin
 Bundle-Localization: plugin
@@ -13,7 +13,7 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui.console,
  org.eclipse.debug.core,
  org.eclipse.core.resources
-Eclipse-AutoStart: true
+Eclipse-LazyStart: true
 Export-Package: net.sf.eclipsensis.utilities,
  net.sf.eclipsensis.utilities.dialogs,
  net.sf.eclipsensis.utilities.job,

@@ -1,19 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-###############################################################################
-# Copyright (c) 2004-2006 Sunil Kamath (IcemanK).
-# All rights reserved.
-# This program is made available under the terms of the Common Public License
-# v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
-# 
-# Contributors:
-#     Sunil Kamath (IcemanK) - initial API and implementation
-###############################################################################
--->
 <feature
       id="net.sf.eclipsensis.utilities"
       label="%feature.name"
-      version="0.9.0"
+      version="0.9.1"
       provider-name="%provider.name"
       image="%splash.image">
    <install-handler/>
@@ -50,21 +39,21 @@
          id="net.sf.jarsigner"
          download-size="40"
          install-size="40"
-         version="0.9.0"
+         version="0.9.1"
          unpack="false"/>
 
    <plugin
          id="net.sf.jnigen"
          download-size="34"
          install-size="34"
-         version="0.9.0"
+         version="0.9.1"
          unpack="false"/>
 
    <plugin
          id="net.sf.eclipsensis.utilities"
          download-size="37"
          install-size="37"
-         version="0.9.0"
+         version="0.9.1"
          unpack="false"/>
 
 </feature>

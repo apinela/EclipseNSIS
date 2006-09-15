@@ -65,6 +65,7 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
     public static final String[] BUNDLE_NAMES = new String[]{RESOURCE_BUNDLE,MESSAGE_BUNDLE};
     private ImageManager mImageManager;
     private boolean mIsNT = false;
+    private boolean mIsXP = false;
     private String mJavaVendor;
     private Version mJavaVersion;
     private Stack mServices = new Stack();
@@ -361,14 +362,21 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
         return mIsNT;
     }
 
+    public boolean isXP()
+    {
+        return mIsXP;
+    }
+
     private void validateOS() throws CoreException
     {
         String[] supportedOS = Common.loadArrayProperty(getResourceBundle(),"supported.os"); //$NON-NLS-1$
         List ntOS = Common.loadListProperty(getResourceBundle(),"nt.os"); //$NON-NLS-1$
+        List xpOS = Common.loadListProperty(getResourceBundle(),"xp.os"); //$NON-NLS-1$
         if(!Common.isEmptyArray(supportedOS)) {
             String osName = System.getProperty("os.name"); //$NON-NLS-1$
             String osVersion = System.getProperty("os.version"); //$NON-NLS-1$
             mIsNT = ntOS.contains(osName);
+            mIsXP = xpOS.contains(osName);
             for(int i=0; i<supportedOS.length; i++) {
                 String[] tokens = Common.tokenize(supportedOS[i],'#');
                 String os = tokens[0];

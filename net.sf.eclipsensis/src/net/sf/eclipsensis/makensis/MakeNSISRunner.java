@@ -522,7 +522,7 @@ public class MakeNSISRunner implements INSISConstants
                                 }
                             }
                             if (settings.showStatistics() && results.getReturnCode() != MakeNSISResults.RETURN_CANCEL) {
-                                console.appendLine(NSISConsoleLine.info(cTotalCompilationTimeFormat.format(splitCompilationTime(System.currentTimeMillis() - n))));
+                                console.appendLine(NSISConsoleLine.info(cTotalCompilationTimeFormat.format(splitCompilationTime((int)(System.currentTimeMillis() - n)))));
                             }
                         }
                     }
@@ -681,7 +681,7 @@ public class MakeNSISRunner implements INSISConstants
         }
         finally {
             if(showStatistics && results.getReturnCode() != MakeNSISResults.RETURN_CANCEL) {
-                console.appendLine(NSISConsoleLine.info(cCompilationTimeFormat.format(splitCompilationTime(System.currentTimeMillis()-n))));
+                console.appendLine(NSISConsoleLine.info(cCompilationTimeFormat.format(splitCompilationTime((int)(System.currentTimeMillis()-n)))));
             }
             setCompileProcess(null, null);
             notifyListeners(MakeNSISRunEvent.COMPLETED_PROCESS, script, commandLine);
@@ -689,15 +689,15 @@ public class MakeNSISRunner implements INSISConstants
         return results;
     }
 
-    private static Long[] splitCompilationTime(long time)
+    private static Integer[] splitCompilationTime(int time)
     {
-        Long[] result = new Long[3];
+    	Integer[] result = new Integer[3];
         Arrays.fill(result,Common.ZERO);
-        result[2] = new Long(time % 1000);
+        result[2] = new Integer(time % 1000);
         time /= 1000;
         for(int i=1; i>=0; i--) {
             if(time > 0) {
-                result[i] = new Long(time % 60);
+                result[i] = new Integer(time % 60);
                 time /= 60;
             }
             else {

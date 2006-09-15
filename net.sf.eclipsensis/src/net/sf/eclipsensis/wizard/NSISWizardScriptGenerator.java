@@ -471,12 +471,15 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
         if(!mIsSilent && mSettings.isShowBackground()) {
             String backgroundBMP = mSettings.getBackgroundBMP();
             String backgroundWAV = mSettings.getBackgroundWAV();
-            if(Common.isEmpty(backgroundBMP)) {
+            RGB topColor = mSettings.getBGTopColor();
+			RGB bottomColor = mSettings.getBGBottomColor();
+			RGB textColor = mSettings.getBGTextColor();
+			if(Common.isEmpty(backgroundBMP)) {
                 mScript.insertElement(attributesPlaceHolder,new NSISScriptAttribute("BGGradient", //$NON-NLS-1$
                                  new String[] {
-                                      ColorManager.rgbToHex(mSettings.getBGTopColor()),
-                                      ColorManager.rgbToHex(mSettings.getBGBottomColor()),
-                                      ColorManager.rgbToHex(mSettings.getBGTextColor())}));
+                                      ColorManager.rgbToHex(topColor),
+                                      ColorManager.rgbToHex(bottomColor),
+                                      ColorManager.rgbToHex(textColor)}));
                 if(!Common.isEmpty(backgroundWAV)) {
                     mReservedFiles.add("BGImage.dll"); //$NON-NLS-1$
                     NSISScriptFunction fn;
@@ -514,8 +517,9 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
                 fn.addElement(new NSISScriptInstruction("Push",getKeyword("$R2"))); //$NON-NLS-1$ //$NON-NLS-2$
                 fn.addElement(new NSISScriptInstruction("BgImage::SetReturn",new String[]{getKeyword("/NOUNLOAD"),"on"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                 fn.addElement(new NSISScriptInstruction("BgImage::SetBg",new String[]{getKeyword("/NOUNLOAD"),"/GRADIENT", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                                new StringBuffer(flattenRGB(mSettings.getBGTopColor()," ")).append(" ").append( //$NON-NLS-1$ //$NON-NLS-2$
-                                                 flattenRGB(mSettings.getBGBottomColor()," ")).toString()})); //$NON-NLS-1$
+                										Integer.toString(topColor.red), Integer.toString(topColor.green), 
+                										Integer.toString(topColor.blue), Integer.toString(bottomColor.red), 
+                										Integer.toString(bottomColor.green), Integer.toString(bottomColor.blue)}));
                 fn.addElement(new NSISScriptInstruction("Pop","$R1")); //$NON-NLS-1$ //$NON-NLS-2$
                 fn.addElement(new NSISScriptInstruction("Strcmp",new String[]{getKeyword("$R1"),"success","0","error"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
                 if(!Common.isEmpty(backgroundBMP)) {
@@ -534,7 +538,8 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
                 }
                 fn.addElement(new NSISScriptInstruction("CreateFont",new String[]{getKeyword("$R1"),"Times New Roman","26","700",getKeyword("/ITALIC")})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
                 fn.addElement(new NSISScriptInstruction("BGImage::AddText",new String[]{getKeyword("/NOUNLOAD"),Common.quote("$(^SetupCaption)"),getKeyword("$R1"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-                                      flattenRGB(mSettings.getBGTextColor()," "),"16","8","500","100"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+								                		Integer.toString(textColor.red), Integer.toString(textColor.green), 
+														Integer.toString(textColor.blue),"16","8","500","100"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
                 fn.addElement(new NSISScriptInstruction("Pop",getKeyword("$R1"))); //$NON-NLS-1$ //$NON-NLS-2$
                 fn.addElement(new NSISScriptInstruction("Strcmp",new String[]{getKeyword("$R1"),"success","0","error"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
                 fn.addElement(new NSISScriptInstruction("BGImage::Redraw",getKeyword("/NOUNLOAD"))); //$NON-NLS-1$ //$NON-NLS-2$
@@ -1487,11 +1492,5 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
             mKeywordCache.put(keyword, object);
         }
         return (String)object;
-    }
-
-    private String flattenRGB(RGB rgb, String separator)
-    {
-        return new StringBuffer("").append(rgb.red).append(separator).append(rgb.green).append( //$NON-NLS-1$
-                                separator).append(rgb.blue).toString();
     }
 }

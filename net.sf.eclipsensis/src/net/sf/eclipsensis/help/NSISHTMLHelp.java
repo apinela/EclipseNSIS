@@ -636,7 +636,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
         l.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false));
         
         final MessageFormat foundFormat = new MessageFormat(EclipseNSISPlugin.getResourceString("help.browser.search.results.count.format")); //$NON-NLS-1$
-        final Long[] foundArgs = { Common.ZERO };
+        final Integer[] foundArgs = { Common.ZERO };
         final Label found = new Label(composite,SWT.NONE);
         found.setText(foundFormat.format(foundArgs));
         data = new GridData(SWT.FILL,SWT.FILL,false,false);
@@ -738,7 +738,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
                     public void run()
                     {
                         int size = (results==null?0:results.length);
-                        foundArgs[0] = (size==0?Common.ZERO:new Long(size));
+                        foundArgs[0] = (size==0?Common.ZERO:new Integer(size));
                         found.setText(foundFormat.format(foundArgs));
                         Table table = mSearchViewer.getTable();
                         table.setSortColumn(Common.isEmptyArray(results)?null:rankColumn);
