@@ -35,9 +35,9 @@
   image_closed_over.src = "images/closed_over.gif";
   
   var latest = new Array();
-  latest["eclipsensis"] = "eclipsensis094";
-  latest["installoptions"] = "installoptions094";
-  latest["utilities"] = "utilities090";
+  latest["eclipsensis"] = "eclipsensis095";
+  latest["installoptions"] = "installoptions095";
+  latest["utilities"] = "utilities091";
   latest["sources"] = "sources094";
    
   function rollover(image) 
@@ -112,7 +112,7 @@
 //-->
 </script>
 </head>
-<body onload="onLoad()">
+<body onLoad="onLoad()">
 <div id="main">
 <hr>
 <p style="text-align: center;"><a href="index.html">Home</a>
@@ -124,7 +124,7 @@ Guides</a> | <a href="revisions.html">Revision History</a> | <a
 &amp; License</a></p><hr>
 <h1 style="text-align: center;">EclipseNSIS</h1>
 <br>
-<p class="options"><a href="#" onclick="expandall()">[Expand all]</a>&nbsp;&nbsp;<a href="#" onclick="collapseall()">[Collapse all]</a></p>
+<p class="options"><a href="#" onClick="expandall()">[Expand all]</a>&nbsp;&nbsp;<a href="#" onClick="collapseall()">[Collapse all]</a></p>
 <h2>Revision History</h2>
 <ul>
 <li><a href="#eclipsensis">EclipseNSIS</a></li>
@@ -133,9 +133,45 @@ Guides</a> | <a href="revisions.html">Revision History</a> | <a
 <li><a href="#sources">EclipseNSIS Sources</a></li>
 </ul>
 <a name="eclipsensis"></a><h3>EclipseNSIS</h3>
+<div><img class="trigger" alt="Expand/Collapse" id="trigger_eclipsensis095"
+src="images/closed.gif" onClick="toggle('trigger_eclipsensis095', 'toggle_eclipsensis095'); rollover(this);"
+onmouseover="rollover(this);" onMouseOut="rollover(this);"> 
+<a href="http://prdownloads.sourceforge.net/eclipsensis/net.sf.eclipsensis_0.9.5.zip?download">0.9.5</a> (01/26/2006)
+<div id="toggle_eclipsensis095" class="toggle">
+<ul>
+  <li>Upgraded to Eclipse 3.2 - no longer compatible with Eclipse 3.1.</li>
+  <li>Added Export as HTML command.</li>
+  <li>Var elements now shown in Outline view.</li>
+  <li>Added NSIS Command Wizard for adding NSIS commands to script.</li>
+  <li>Added drag & drop support to NSIS Script Wizard and EclipseNSIS Editor.</li>
+  <li>Added support for REG_BIN and REG_EXPAND_SZ in NSIS Script Wizard</li>
+  <li>Added support for Library installs in NSIS Script Wizard.</li>
+  <li>NSIS Script Wizard can now save output to filesystem in addition to the workspace.</li>
+  <li>Added registry key and registry value browsers to NSIS Script Wizard.</li>
+  <li>Added command to insert registry value into NSIS script.</li>
+  <li>Added functions to import registry keys/files into NSIS script.</li>
+  <li>Bug fixes:</li>
+  <ul>
+    <li><a href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=1416349&amp;group_id=116143&amp;atid=673849">1416349</a></li>
+    <li><a href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=1443239&amp;group_id=116143&amp;atid=673849">1443239</a></li>
+    <li><a href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=1464413&amp;group_id=116143&amp;atid=673849">1464413</a></li>
+    <li><a href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=1466390&amp;group_id=116143&amp;atid=673849">1466390</a></li>
+    <li><a href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=1474161&amp;group_id=116143&amp;atid=673849">1474161</a></li>
+    <li><a href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=1521533&amp;group_id=116143&amp;atid=673849">1521533</a></li>
+    <li><a href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=1556289&amp;group_id=116143&amp;atid=673849">1556289</a></li>
+  </ul>
+  <li>Feature Requests:</li>
+  <ul>
+    <li><a href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=1441231&amp;group_id=116143&amp;atid=673852">1441231</a></li>
+    <li><a href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=1452422&amp;group_id=116143&amp;atid=673852">1452422</a></li>
+  </ul>
+  <li>Other minor bug fixes.</li>
+</ul>
+</div>
+</div>
 <div><img class="trigger" alt="Expand/Collapse" id="trigger_eclipsensis094"
-src="images/closed.gif" onclick="toggle('trigger_eclipsensis094', 'toggle_eclipsensis094'); rollover(this);"
-onmouseover="rollover(this);" onmouseout="rollover(this);"> 
+src="images/closed.gif" onClick="toggle('trigger_eclipsensis094', 'toggle_eclipsensis094'); rollover(this);"
+onmouseover="rollover(this);" onMouseOut="rollover(this);"> 
 <a href="http://prdownloads.sourceforge.net/eclipsensis/net.sf.eclipsensis_0.9.4.zip?download">0.9.4</a> (01/26/2006)
 <div id="toggle_eclipsensis094" class="toggle">
 <ul>
@@ -170,8 +206,8 @@ onmouseover="rollover(this);" onmouseout="rollover(this);">
 </div>
 </div>
 <div><img class="trigger" alt="Expand/Collapse" id="trigger_eclipsensis093"
-src="images/closed.gif" onclick="toggle('trigger_eclipsensis093', 'toggle_eclipsensis093'); rollover(this);"
-onmouseover="rollover(this);" onmouseout="rollover(this);"> 
+src="images/closed.gif" onClick="toggle('trigger_eclipsensis093', 'toggle_eclipsensis093'); rollover(this);"
+onmouseover="rollover(this);" onMouseOut="rollover(this);"> 
 <a
  href="http://prdownloads.sourceforge.net/eclipsensis/net.sf.eclipsensis_0.9.3.zip?download">0.9.3</a>
 (09/29/2005)
@@ -189,8 +225,8 @@ onmouseover="rollover(this);" onmouseout="rollover(this);">
 </div>
 </div>
 <div><img class="trigger" alt="Expand/Collapse" id="trigger_eclipsensis092"
-src="images/closed.gif" onclick="toggle('trigger_eclipsensis092', 'toggle_eclipsensis092'); rollover(this);"
-onmouseover="rollover(this);" onmouseout="rollover(this);"> 
+src="images/closed.gif" onClick="toggle('trigger_eclipsensis092', 'toggle_eclipsensis092'); rollover(this);"
+onmouseover="rollover(this);" onMouseOut="rollover(this);"> 
 <a
  href="http://prdownloads.sourceforge.net/eclipsensis/net.sf.eclipsensis_0.9.2.zip?download">0.9.2</a>
 (08/23/2005)
@@ -227,8 +263,8 @@ reconfiguration operations.</li>
 </div>
 </div>
 <div><img class="trigger" alt="Expand/Collapse" id="trigger_eclipsensis091"
-src="images/closed.gif" onclick="toggle('trigger_eclipsensis091', 'toggle_eclipsensis091'); rollover(this);"
-onmouseover="rollover(this);" onmouseout="rollover(this);"> 
+src="images/closed.gif" onClick="toggle('trigger_eclipsensis091', 'toggle_eclipsensis091'); rollover(this);"
+onmouseover="rollover(this);" onMouseOut="rollover(this);"> 
 <a
  href="http://prdownloads.sourceforge.net/eclipsensis/net.sf.eclipsensis_0.9.1.zip?download">0.9.1</a>
 (07/18/2005)
@@ -245,8 +281,8 @@ onmouseover="rollover(this);" onmouseout="rollover(this);">
 </div>
 </div>
 <div><img class="trigger" alt="Expand/Collapse" id="trigger_eclipsensis090"
-src="images/closed.gif" onclick="toggle('trigger_eclipsensis090', 'toggle_eclipsensis090'); rollover(this);"
-onmouseover="rollover(this);" onmouseout="rollover(this);"> 
+src="images/closed.gif" onClick="toggle('trigger_eclipsensis090', 'toggle_eclipsensis090'); rollover(this);"
+onmouseover="rollover(this);" onMouseOut="rollover(this);"> 
 <a
  href="http://prdownloads.sourceforge.net/eclipsensis/net.sf.eclipsensis_0.9.0.zip?download">0.9.0</a>
 (07/15/2005)
@@ -263,8 +299,8 @@ back later.</li>
 </div>
 </div>
 <div><img class="trigger" alt="Expand/Collapse" id="trigger_eclipsensis050"
-src="images/closed.gif" onclick="toggle('trigger_eclipsensis050', 'toggle_eclipsensis050'); rollover(this);"
-onmouseover="rollover(this);" onmouseout="rollover(this);"> 
+src="images/closed.gif" onClick="toggle('trigger_eclipsensis050', 'toggle_eclipsensis050'); rollover(this);"
+onmouseover="rollover(this);" onMouseOut="rollover(this);"> 
 <a
  href="http://prdownloads.sourceforge.net/eclipsensis/net.sf.eclipsensis_0.5.0.zip?download">0.5.0</a>
 (04/11/2005)
@@ -282,8 +318,8 @@ onmouseover="rollover(this);" onmouseout="rollover(this);">
 </div>
 </div>
 <div><img class="trigger" alt="Expand/Collapse" id="trigger_eclipsensis020"
-src="images/closed.gif" onclick="toggle('trigger_eclipsensis020', 'toggle_eclipsensis020'); rollover(this);"
-onmouseover="rollover(this);" onmouseout="rollover(this);"> 
+src="images/closed.gif" onClick="toggle('trigger_eclipsensis020', 'toggle_eclipsensis020'); rollover(this);"
+onmouseover="rollover(this);" onMouseOut="rollover(this);"> 
 <a
  href="http://prdownloads.sourceforge.net/eclipsensis/net.sf.eclipsensis_0.2.0.zip?download">0.2.0</a>
 (09/16/2004)
@@ -295,8 +331,8 @@ help, code outlining and folding and context-sensitive help.</li>
 </div>
 </div>
 <div><img class="trigger" alt="Expand/Collapse" id="trigger_eclipsensis010"
-src="images/closed.gif" onclick="toggle('trigger_eclipsensis010', 'toggle_eclipsensis010'); rollover(this);"
-onmouseover="rollover(this);" onmouseout="rollover(this);"> 
+src="images/closed.gif" onClick="toggle('trigger_eclipsensis010', 'toggle_eclipsensis010'); rollover(this);"
+onmouseover="rollover(this);" onMouseOut="rollover(this);"> 
 <a
  href="http://prdownloads.sourceforge.net/eclipsensis/net.sf.eclipsensis_0.0.1.zip?download">0.0.1</a>
 (09/03/2004)
@@ -316,9 +352,28 @@ scripts.</li>
 //-->
 </script>    
 <a name="installoptions"></a><h3>EclipseNSIS InstallOptions Editor</h3>
+<div><img class="trigger" alt="Expand/Collapse" id="trigger_installoptions095"
+src="images/closed.gif" onClick="toggle('trigger_installoptions095', 'toggle_installoptions095'); rollover(this);"
+onmouseover="rollover(this);" onMouseOut="rollover(this);"> 
+<a
+ href="http://prdownloads.sourceforge.net/eclipsensis/net.sf.eclipsensis.installoptions_0.9.5.zip?download">0.9.5</a>
+(01/26/2006)
+<div id="toggle_installoptions095" class="toggle">
+<ul>
+  <li>Upgraded to Eclipse 3.2 - no longer compatible with Eclipse 3.1.</li>
+  <li>Added Export as HTML command.</li>
+  <li>Added new control editing commands in source editor.</li>
+  <li>Control type can now be changed in the design editor.</li>
+  <li>Added support for automatic Team checkout in design editor..</li>
+  <li>Fixed handling of escaped characters in INI file.</li>
+  <li>Added Quickfix support in Source editor.</li>
+  <li>Other minor bug fixes.</li>
+</ul>
+</div>
+</div>
 <div><img class="trigger" alt="Expand/Collapse" id="trigger_installoptions094"
-src="images/closed.gif" onclick="toggle('trigger_installoptions094', 'toggle_installoptions094'); rollover(this);"
-onmouseover="rollover(this);" onmouseout="rollover(this);"> 
+src="images/closed.gif" onClick="toggle('trigger_installoptions094', 'toggle_installoptions094'); rollover(this);"
+onmouseover="rollover(this);" onMouseOut="rollover(this);"> 
 <a
  href="http://prdownloads.sourceforge.net/eclipsensis/net.sf.eclipsensis.installoptions_0.9.4.zip?download">0.9.4</a>
 (01/26/2006)
@@ -335,8 +390,8 @@ onmouseover="rollover(this);" onmouseout="rollover(this);">
 </div>
 </div>
 <div><img class="trigger" alt="Expand/Collapse" id="trigger_installoptions093"
-src="images/closed.gif" onclick="toggle('trigger_installoptions093', 'toggle_installoptions093'); rollover(this);"
-onmouseover="rollover(this);" onmouseout="rollover(this);"> 
+src="images/closed.gif" onClick="toggle('trigger_installoptions093', 'toggle_installoptions093'); rollover(this);"
+onmouseover="rollover(this);" onMouseOut="rollover(this);"> 
 <a
  href="http://prdownloads.sourceforge.net/eclipsensis/net.sf.eclipsensis.installoptions_0.9.3.zip?download">0.9.3</a> (09/29/2005)
 <div id="toggle_installoptions093" class="toggle">
@@ -357,8 +412,8 @@ onmouseover="rollover(this);" onmouseout="rollover(this);">
 </div>
 </div>
 <div><img class="trigger" alt="Expand/Collapse" id="trigger_installoptions092"
-src="images/closed.gif" onclick="toggle('trigger_installoptions092', 'toggle_installoptions092'); rollover(this);"
-onmouseover="rollover(this);" onmouseout="rollover(this);"> 
+src="images/closed.gif" onClick="toggle('trigger_installoptions092', 'toggle_installoptions092'); rollover(this);"
+onmouseover="rollover(this);" onMouseOut="rollover(this);"> 
 <a
  href="http://prdownloads.sourceforge.net/eclipsensis/net.sf.eclipsensis.installoptions_0.9.2.zip?download">0.9.2</a>
     (08/23/2005)
@@ -387,8 +442,8 @@ comments, and can be restored when Design editor is opened.</li>
 </div>
 </div>
 <div><img class="trigger" alt="Expand/Collapse" id="trigger_installoptions090"
-src="images/closed.gif" onclick="toggle('trigger_installoptions090', 'toggle_installoptions090'); rollover(this);"
-onmouseover="rollover(this);" onmouseout="rollover(this);"> 
+src="images/closed.gif" onClick="toggle('trigger_installoptions090', 'toggle_installoptions090'); rollover(this);"
+onmouseover="rollover(this);" onMouseOut="rollover(this);"> 
 <a
  href="http://prdownloads.sourceforge.net/eclipsensis/net.sf.eclipsensis.installoptions_0.9.0.zip?download">0.9.0</a>
 (07/15/2005)
@@ -417,9 +472,22 @@ help.</li>
 //-->
 </script>    
 <a name="utilities"></a><h3>EclipseNSIS Utilities</h3>
+<div><img class="trigger" alt="Expand/Collapse" id="trigger_utilities091"
+src="images/closed.gif" onClick="toggle('trigger_utilities091', 'toggle_utilities091'); rollover(this);"
+onmouseover="rollover(this);" onMouseOut="rollover(this);"> 
+<a
+ href="http://prdownloads.sourceforge.net/eclipsensis/net.sf.eclipsensis.utilities_0.9.1.zip?download">0.9.1</a>
+(01/26/2006)
+<div id="toggle_utilities091" class="toggle">
+<ul>
+  <li>Upgraded to Eclipse 3.2 - no longer compatible with Eclipse 3.1.</li>
+  <li>Other minor bug fixes.</li>
+</ul>
+</div>
+</div>
 <div><img class="trigger" alt="Expand/Collapse" id="trigger_utilities090"
-src="images/closed.gif" onclick="toggle('trigger_utilities090', 'toggle_utilities090'); rollover(this);"
-onmouseover="rollover(this);" onmouseout="rollover(this);"> 
+src="images/closed.gif" onClick="toggle('trigger_utilities090', 'toggle_utilities090'); rollover(this);"
+onmouseover="rollover(this);" onMouseOut="rollover(this);"> 
 <a
  href="http://prdownloads.sourceforge.net/eclipsensis/net.sf.eclipsensis.utilities_0.9.0.zip?download">0.9.0</a>
 (01/26/2006)
@@ -434,8 +502,8 @@ onmouseover="rollover(this);" onmouseout="rollover(this);">
 </div>
 </div>
 <div><img class="trigger" alt="Expand/Collapse" id="trigger_utilities050"
-src="images/closed.gif" onclick="toggle('trigger_utilities050', 'toggle_utilities050'); rollover(this);"
-onmouseover="rollover(this);" onmouseout="rollover(this);"> 
+src="images/closed.gif" onClick="toggle('trigger_utilities050', 'toggle_utilities050'); rollover(this);"
+onmouseover="rollover(this);" onMouseOut="rollover(this);"> 
 <a
  href="http://prdownloads.sourceforge.net/eclipsensis/net.sf.eclipsensis.utilities_0.5.0.zip?download">0.5.0</a>
 (08/23/2005)
@@ -457,8 +525,8 @@ current JRE.</li>
 </div>
 </div>
 <div><img class="trigger" alt="Expand/Collapse" id="trigger_utilities010"
-src="images/closed.gif" onclick="toggle('trigger_utilities010', 'toggle_utilities010'); rollover(this);"
-onmouseover="rollover(this);" onmouseout="rollover(this);"> 
+src="images/closed.gif" onClick="toggle('trigger_utilities010', 'toggle_utilities010'); rollover(this);"
+onmouseover="rollover(this);" onMouseOut="rollover(this);"> 
 <a
  href="http://prdownloads.sourceforge.net/eclipsensis/net.sf.eclipsensis.utilities_0.1.0.zip?download">0.1.0</a>
 (07/15/2005)
@@ -483,8 +551,8 @@ Eclipse 3.0</li>
 </script>    
 <a name="sources"></a><h3>EclipseNSIS Sources</h3>
 <div><img class="trigger" alt="Expand/Collapse" id="trigger_sources094"
-src="images/closed.gif" onclick="toggle('trigger_sources094', 'toggle_sources094'); rollover(this);"
-onmouseover="rollover(this);" onmouseout="rollover(this);"> 
+src="images/closed.gif" onClick="toggle('trigger_sources094', 'toggle_sources094'); rollover(this);"
+onmouseover="rollover(this);" onMouseOut="rollover(this);"> 
 <a
  href="http://prdownloads.sourceforge.net/eclipsensis/net.sf.eclipsensis.source_0.9.4.zip?download">0.9.4</a>
 (01/26/2006)
