@@ -79,25 +79,25 @@ public class RegistryKeyBrowser extends Composite
 
     private static int getRootKey(String rootKey)
     {
-        if (rootKey.equalsIgnoreCase("HKEY_CLASSES_ROOT") || rootKey.equalsIgnoreCase("HKCR")) {
+        if (rootKey.equalsIgnoreCase("HKEY_CLASSES_ROOT") || rootKey.equalsIgnoreCase("HKCR")) { //$NON-NLS-1$ //$NON-NLS-2$
             return WinAPI.HKEY_CLASSES_ROOT;
         }
-        else if (rootKey.equalsIgnoreCase("HKEY_CURRENT_CONFIG") || rootKey.equalsIgnoreCase("HKCC")) {
+        else if (rootKey.equalsIgnoreCase("HKEY_CURRENT_CONFIG") || rootKey.equalsIgnoreCase("HKCC")) { //$NON-NLS-1$ //$NON-NLS-2$
             return WinAPI.HKEY_CURRENT_CONFIG;
         }
-        else if (rootKey.equalsIgnoreCase("HKEY_CURRENT_USER") || rootKey.equalsIgnoreCase("HKCU")) {
+        else if (rootKey.equalsIgnoreCase("HKEY_CURRENT_USER") || rootKey.equalsIgnoreCase("HKCU")) { //$NON-NLS-1$ //$NON-NLS-2$
             return WinAPI.HKEY_CURRENT_USER;
         }
-        else if (rootKey.equalsIgnoreCase("HKEY_DYN_DATA") || rootKey.equalsIgnoreCase("HKDD")) {
+        else if (rootKey.equalsIgnoreCase("HKEY_DYN_DATA") || rootKey.equalsIgnoreCase("HKDD")) { //$NON-NLS-1$ //$NON-NLS-2$
             return WinAPI.HKEY_DYN_DATA;
         }
-        else if (rootKey.equalsIgnoreCase("HKEY_LOCAL_MACHINE") || rootKey.equalsIgnoreCase("HKLM")) {
+        else if (rootKey.equalsIgnoreCase("HKEY_LOCAL_MACHINE") || rootKey.equalsIgnoreCase("HKLM")) { //$NON-NLS-1$ //$NON-NLS-2$
             return WinAPI.HKEY_LOCAL_MACHINE;
         }
-        else if (rootKey.equalsIgnoreCase("HKEY_PERFORMANCE_DATA") || rootKey.equalsIgnoreCase("HKPD")) {
+        else if (rootKey.equalsIgnoreCase("HKEY_PERFORMANCE_DATA") || rootKey.equalsIgnoreCase("HKPD")) { //$NON-NLS-1$ //$NON-NLS-2$
             return WinAPI.HKEY_PERFORMANCE_DATA;
         }
-        else if (rootKey.equalsIgnoreCase("HKEY_USERS") || rootKey.equalsIgnoreCase("HKU")) {
+        else if (rootKey.equalsIgnoreCase("HKEY_USERS") || rootKey.equalsIgnoreCase("HKU")) { //$NON-NLS-1$ //$NON-NLS-2$
             return WinAPI.HKEY_USERS;
         }
         else {
@@ -131,10 +131,10 @@ public class RegistryKeyBrowser extends Composite
                         new Thread(new Runnable() {
                             public void run()
                             {
-                                mRegistryRoot.close();
+                                ((RegistryKey)mRegistryRoot).close();
                             }
 
-                        }).start();
+                        },EclipseNSISPlugin.getResourceString("registry.unloader.thread.name")).start(); //$NON-NLS-1$
                         break;
                     case SWT.Resize:
                         internalLayout (false);
@@ -292,7 +292,7 @@ public class RegistryKeyBrowser extends Composite
     public void updateSelection()
     {
         if(mTree != null && mSelection != null) {
-            int n = mSelection.indexOf("\\");
+            int n = mSelection.indexOf("\\"); //$NON-NLS-1$
             int rootKey;
             String subKey;
             if(n > 0) {
@@ -310,7 +310,7 @@ public class RegistryKeyBrowser extends Composite
                 }
                 if(exists) {
                     final TreeItem item = mTree.getItem(0);
-                    final String regKey = (subKey==null?getRootKeyName(rootKey):new StringBuffer(getRootKeyName(rootKey)).append("\\").append(subKey).toString());
+                    final String regKey = (subKey==null?getRootKeyName(rootKey):new StringBuffer(getRootKeyName(rootKey)).append("\\").append(subKey).toString()); //$NON-NLS-1$
                     item.getDisplay().asyncExec(new Runnable() {
                         public void run()
                         {
@@ -549,6 +549,9 @@ public class RegistryKeyBrowser extends Composite
 
         public int getHandle()
         {
+            if(mHandle == 0) {
+                mHandle = WinAPI.RegOpenKeyEx(getParent().mHandle,getName(),0,WinAPI.KEY_QUERY_VALUE|WinAPI.KEY_ENUMERATE_SUB_KEYS);
+            }
             return mHandle;
         }
 
@@ -565,18 +568,18 @@ public class RegistryKeyBrowser extends Composite
             return Arrays.binarySearch(mChildren,name,SEARCH_COMPARATOR);
         }
 
-        public void open()
+        private void open()
         {
-            openHandle();
             if(mChildCount < 0) {
-                if(mHandle != 0) {
+                int handle = getHandle();
+                if(handle != 0) {
                     int[] sizes = {0,0};
-                    WinAPI.RegQueryInfoKey(mHandle,sizes);
+                    WinAPI.RegQueryInfoKey(handle,sizes);
                     mChildCount = sizes[0];
                     if(mChildCount > 0) {
                         mChildren = new RegistryKey[mChildCount];
                         for (int i = 0; i < mChildren.length; i++) {
-                            String subKey = WinAPI.RegEnumKeyEx(mHandle,i,sizes[1]);
+                            String subKey = WinAPI.RegEnumKeyEx(handle,i,sizes[1]);
                             mChildren[i] = new RegistryKey(this,subKey);
                         }
                         Arrays.sort(mChildren,SEARCH_COMPARATOR);
@@ -592,17 +595,7 @@ public class RegistryKeyBrowser extends Composite
             }
         }
 
-        /**
-         *
-         */
-        protected void openHandle()
-        {
-            if(mHandle == 0) {
-                mHandle = WinAPI.RegOpenKeyEx(getParent().mHandle,getName(),0,WinAPI.KEY_QUERY_VALUE|WinAPI.KEY_ENUMERATE_SUB_KEYS);
-            }
-        }
-
-        public void close()
+        private void close()
         {
             if(mChildCount > 0) {
                 if(!Common.isEmptyArray(mChildren)) {

@@ -78,7 +78,7 @@ public class NSISInstallRegistryKeyDialog extends AbstractNSISInstallItemDialog
         Control control = createControlContentsArea(composite);
         control.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true));
         Button b = new Button(composite,SWT.PUSH);
-        b.setText("Browse Registry...");
+        b.setText(EclipseNSISPlugin.getResourceString("wizard.browse.registry.label")); //$NON-NLS-1$
         b.setLayoutData(new GridData(SWT.RIGHT,SWT.FILL,false,false));
         b.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e)
@@ -105,7 +105,7 @@ public class NSISInstallRegistryKeyDialog extends AbstractNSISInstallItemDialog
     protected void encodeRegKey(String regKey)
     {
         int rootKey = 0;
-        String subKey = "";
+        String subKey = ""; //$NON-NLS-1$
         int n = regKey.indexOf("\\"); //$NON-NLS-1$
         if(n < 0) {
             rootKey = NSISWizardDisplayValues.getHKeyIndex(regKey);
@@ -114,18 +114,18 @@ public class NSISInstallRegistryKeyDialog extends AbstractNSISInstallItemDialog
             rootKey = NSISWizardDisplayValues.getHKeyIndex(regKey.substring(0,n));
             subKey = regKey.substring(n+1);
         }
-        if(subKey.startsWith("\\")) {
+        if(subKey.startsWith("\\")) { //$NON-NLS-1$
             subKey = subKey.substring(1);
         }
-        if(subKey.endsWith("\\")) {
+        if(subKey.endsWith("\\")) { //$NON-NLS-1$
             subKey = subKey.substring(0,subKey.length()-1);
         }
         if(!Common.isEmpty(subKey)) {
             mShellConstantConverter.setShellContext(ShellConstant.CONTEXT_GENERAL);
             subKey = mShellConstantConverter.encodeConstants(subKey);
         }
-        mStore.setValue("rootKey",rootKey);
-        mStore.setValue("subKey",subKey);
+        mStore.setValue("rootKey",rootKey); //$NON-NLS-1$
+        mStore.setValue("subKey",subKey); //$NON-NLS-1$
     }
 
     protected String decodeRegKey()
@@ -136,15 +136,15 @@ public class NSISInstallRegistryKeyDialog extends AbstractNSISInstallItemDialog
              StringBuffer buf = new StringBuffer(NSISWizardDisplayValues.HKEY_NAMES[n]);
              String subKey = mStore.getString("subKey"); //$NON-NLS-1$
              if(subKey != null) {
-                 if(subKey.startsWith("\\")) {
+                 if(subKey.startsWith("\\")) { //$NON-NLS-1$
                      subKey = subKey.substring(1);
                  }
-                 if(subKey.endsWith("\\")) {
+                 if(subKey.endsWith("\\")) { //$NON-NLS-1$
                      subKey = subKey.substring(0,subKey.length()-1);
                  }
                  if(!Common.isEmpty(subKey)) {
                      mShellConstantConverter.setShellContext(ShellConstant.CONTEXT_GENERAL);
-                     buf.append("\\").append(mShellConstantConverter.decodeConstants(subKey));
+                     buf.append("\\").append(mShellConstantConverter.decodeConstants(subKey)); //$NON-NLS-1$
                  }
              }
              regKey = buf.toString();
@@ -189,7 +189,7 @@ public class NSISInstallRegistryKeyDialog extends AbstractNSISInstallItemDialog
             public void propertyChange(PropertyChangeEvent event)
             {
                 String property = event.getProperty();
-                if(property.equals("rootKey")) {
+                if(property.equals("rootKey")) { //$NON-NLS-1$
                     int rootKey = ((Integer)event.getNewValue()).intValue();
                     if(c1.getSelectionIndex() != rootKey) {
                         if(rootKey >= 0 && rootKey < NSISWizardDisplayValues.HKEY_NAMES.length) {
@@ -201,7 +201,7 @@ public class NSISInstallRegistryKeyDialog extends AbstractNSISInstallItemDialog
                         validate();
                     }
                 }
-                else if(property.equals("subKey")) {
+                else if(property.equals("subKey")) { //$NON-NLS-1$
                     String subKey = (String)event.getNewValue();
                     if(!Common.stringsAreEqual(subKey,t.getText())) {
                         t.setText(subKey);

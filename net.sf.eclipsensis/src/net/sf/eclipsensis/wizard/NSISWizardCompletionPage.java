@@ -301,9 +301,9 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
         layout = new GridLayout(3,false);
         layout.marginHeight = layout.marginWidth = 0;
         c.setLayout(layout);
-        final Button[] radioButtons = NSISWizardDialogUtil.createRadioGroup(c,new String[] {EclipseNSISPlugin.getResourceString("workspace.save.label"),
-                                                              EclipseNSISPlugin.getResourceString("filesystem.save.label")},
-                                              mWizard.getSettings().isSaveExternal()?1:0,"save.label",true,null,false);
+        final Button[] radioButtons = NSISWizardDialogUtil.createRadioGroup(c,new String[] {EclipseNSISPlugin.getResourceString("workspace.save.label"), //$NON-NLS-1$
+                                                              EclipseNSISPlugin.getResourceString("filesystem.save.label")}, //$NON-NLS-1$
+                                              mWizard.getSettings().isSaveExternal()?1:0,"save.label",true,null,false); //$NON-NLS-1$
         final Text t = NSISWizardDialogUtil.createText(c, mWizard.getSettings().getSavePath().toString(),"save.location.label",true,null,isScriptWizard()); //$NON-NLS-1$
         ((GridData)t.getLayoutData()).horizontalSpan = 1;
         t.addModifyListener(new ModifyListener(){
@@ -322,7 +322,7 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
                 boolean saveExternal = radioButtons[1].getSelection();
                 if(saveExternal != mWizard.getSettings().isSaveExternal()) {
                     mWizard.getSettings().setSaveExternal(saveExternal);
-                    t.setText("");
+                    t.setText(""); //$NON-NLS-1$
                 }
             }
         };

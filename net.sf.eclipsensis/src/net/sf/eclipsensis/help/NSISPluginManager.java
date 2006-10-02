@@ -106,9 +106,15 @@ public class NSISPluginManager implements INSISConstants
             set.add(name);
             PluginInfo pi = (PluginInfo)pluginsMap.get(name);
             if(pi == null || pi.getTimeStamp() != pluginFiles[i].lastModified()) {
-                pi = loadPluginInfo(name, pluginFiles[i]);
-                pluginsMap.put(name, pi);
-                changed = true;
+                PluginInfo newPi = loadPluginInfo(name, pluginFiles[i]);
+                if(newPi != null) {
+                    pluginsMap.put(name, pi);
+                    changed = true;
+                }
+                else if(pi != null) {
+                    pluginsMap.remove(name);
+                    changed = true;
+                }
             }
         }
         if(pluginsMap.size() != pluginFiles.length) {
@@ -126,10 +132,18 @@ public class NSISPluginManager implements INSISConstants
 
     private PluginInfo loadPluginInfo(String name, File pluginFile)
     {
-        String[] exports = WinAPI.GetPluginExports(pluginFile.getAbsolutePath());
-        Arrays.sort(exports, String.CASE_INSENSITIVE_ORDER);
-        return new PluginInfo(name, exports,
-                              pluginFile.lastModified());
+        try {
+            String[] exports = WinAPI.GetPluginExports(pluginFile.getAbsolutePath());
+            if(exports != null) {
+                Arrays.sort(exports, String.CASE_INSENSITIVE_ORDER);
+                return new PluginInfo(name, exports,
+                                      pluginFile.lastModified());
+            }
+        }
+        catch (Exception e) {
+            EclipseNSISPlugin.getDefault().log(e);
+        }
+        return null;
     }
 
     public String[] getDefaultPluginNames()
@@ -145,10 +159,11 @@ public class NSISPluginManager implements INSISConstants
                 File pluginFile = new File(new File(NSISPreferences.INSTANCE.getNSISHome(), NSIS_PLUGINS_LOCATION), name + NSIS_PLUGINS_EXTENSION);
                 if (IOUtility.isValidFile(pluginFile)) {
                     pi = loadPluginInfo(name, pluginFile);
-                    mDefaultPluginsMap.put(name, pi);
-                    JobScheduler jobScheduler = EclipseNSISPlugin.getDefault().getJobScheduler();
-                    jobScheduler.cancelJobs(NSISPluginManager.class);
-                    jobScheduler.scheduleJob(NSISPluginManager.class, EclipseNSISPlugin.getResourceString("saving.plugin.cache.job.name"), //$NON-NLS-1$
+                    if (pi != null) {
+                        mDefaultPluginsMap.put(name, pi);
+                        JobScheduler jobScheduler = EclipseNSISPlugin.getDefault().getJobScheduler();
+                        jobScheduler.cancelJobs(NSISPluginManager.class);
+                        jobScheduler.scheduleJob(NSISPluginManager.class, EclipseNSISPlugin.getResourceString("saving.plugin.cache.job.name"), //$NON-NLS-1$
                             new IJobStatusRunnable() {
                                 public IStatus run(IProgressMonitor monitor)
                                 {
@@ -172,13 +187,15 @@ public class NSISPluginManager implements INSISConstants
                                         monitor.done();
                                     }
                                 }
-                            });
+                            }
+                        );
+                    }
                 }
             }
             if (pi != null) {
                 return pi.getExports();
             }
-        }        
+        }
         return Common.EMPTY_STRING_ARRAY;
     }
 

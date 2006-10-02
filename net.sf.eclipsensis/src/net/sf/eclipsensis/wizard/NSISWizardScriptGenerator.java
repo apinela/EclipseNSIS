@@ -1238,7 +1238,7 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
                     }
                     if (type.equals(NSISInstallRegistryValue.TYPE)) {
                         NSISInstallRegistryValue regValue = (NSISInstallRegistryValue)installElement;
-                        if(regValue.getValueType() == REG_SZ && regValue.getValue().equals("") && regValue.getData().equals("")) {
+                        if(regValue.getValueType() == REG_SZ && regValue.getValue().equals("") && regValue.getData().equals("")) { //$NON-NLS-1$ //$NON-NLS-2$
                             type = NSISInstallRegistryKey.TYPE;
                             NSISInstallRegistryKey regKey = new NSISInstallRegistryKey();
                             regKey.setRootKey(regValue.getRootKey());

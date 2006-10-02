@@ -572,9 +572,9 @@ public class IOUtility
     {
         String name = null;
         try {
-            name = WinAPI.RegQueryStrValue(WinAPI.HKEY_CLASSES_ROOT,"CLSID\\{20D04FE0-3AEA-1069-A2D8-08002B30309D}","LocalizedString");
+            name = WinAPI.RegQueryStrValue(WinAPI.HKEY_CLASSES_ROOT,"CLSID\\{20D04FE0-3AEA-1069-A2D8-08002B30309D}","LocalizedString"); //$NON-NLS-1$ //$NON-NLS-2$
             if(Common.isEmpty(name)) {
-                name = WinAPI.RegQueryStrValue(WinAPI.HKEY_CLASSES_ROOT,"CLSID\\{20D04FE0-3AEA-1069-A2D8-08002B30309D}","");
+                name = WinAPI.RegQueryStrValue(WinAPI.HKEY_CLASSES_ROOT,"CLSID\\{20D04FE0-3AEA-1069-A2D8-08002B30309D}",""); //$NON-NLS-1$ //$NON-NLS-2$
             }
             if(!Common.isEmpty(name)) {
                 if(name.charAt(0)=='@') {

@@ -65,7 +65,7 @@ public class NSISWizardDialogUtil
 
     public static Label createRequiredFieldsLabel(Composite parent)
     {
-        Label l = NSISWizardDialogUtil.createLabel(parent,"wizard.required.text",true,null,true);
+        Label l = NSISWizardDialogUtil.createLabel(parent,"wizard.required.text",true,null,true); //$NON-NLS-1$
         FontData[] fd = l.getFont().getFontData();
         for (int i = 0; i < fd.length; i++) {
             fd[i].height *= 0.9;

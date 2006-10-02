@@ -46,12 +46,12 @@ public class NSISInstallRegistryValueDialog extends NSISInstallRegistryKeyDialog
         dialog.setText(EclipseNSISPlugin.getResourceString("wizard.select.regval.message")); //$NON-NLS-1$
         String regKey = decodeRegKey();
         if(regKey != null) {
-            dialog.setRegistryValue(new RegistryValueSelectionDialog.RegistryValue(regKey, mShellConstantConverter.decodeConstants(mStore.getString("value"))));
+            dialog.setRegistryValue(new RegistryValueSelectionDialog.RegistryValue(regKey, mShellConstantConverter.decodeConstants(mStore.getString("value")))); //$NON-NLS-1$
         }
         if(dialog.open() == Window.OK) {
             RegistryValue regValue = dialog.getRegistryValue();
             encodeRegKey(regValue.getRegKey());
-            mStore.setValue("value",mShellConstantConverter.encodeConstants(regValue.getValue()==null?"":regValue.getValue()));
+            mStore.setValue("value",mShellConstantConverter.encodeConstants(regValue.getValue()==null?"":regValue.getValue())); //$NON-NLS-1$ //$NON-NLS-2$
             int type;
             switch(regValue.getType()) {
                 case WinAPI.REG_DWORD:
@@ -66,8 +66,8 @@ public class NSISInstallRegistryValueDialog extends NSISInstallRegistryKeyDialog
                 default:
                     type = INSISWizardConstants.REG_SZ;
             }
-            mStore.setValue("valueType",type);
-            mStore.setValue("data",mShellConstantConverter.encodeConstants(regValue.getData()==null?"":regValue.getData()));
+            mStore.setValue("valueType",type); //$NON-NLS-1$
+            mStore.setValue("data",mShellConstantConverter.encodeConstants(regValue.getData()==null?"":regValue.getData())); //$NON-NLS-1$ //$NON-NLS-2$
         }
     }
 
@@ -81,9 +81,9 @@ public class NSISInstallRegistryValueDialog extends NSISInstallRegistryKeyDialog
         c1.setLayoutData(new GridData(SWT.FILL,SWT.FILL,false,false));
         final StackLayout stackLayout1 = new StackLayout();
         c1.setLayout(stackLayout1);
-        final Control l1 = NSISWizardDialogUtil.getLayoutControl(NSISWizardDialogUtil.createLabel(c1,"wizard.value.label",true,null,true));
-        final Control l2 = NSISWizardDialogUtil.getLayoutControl(NSISWizardDialogUtil.createLabel(c1,"wizard.value.label",true,null,false));
-        stackLayout1.topControl = (mStore.getInt("valueType")!=INSISWizardConstants.REG_SZ?l1:l2);
+        final Control l1 = NSISWizardDialogUtil.getLayoutControl(NSISWizardDialogUtil.createLabel(c1,"wizard.value.label",true,null,true)); //$NON-NLS-1$
+        final Control l2 = NSISWizardDialogUtil.getLayoutControl(NSISWizardDialogUtil.createLabel(c1,"wizard.value.label",true,null,false)); //$NON-NLS-1$
+        stackLayout1.topControl = (mStore.getInt("valueType")!=INSISWizardConstants.REG_SZ?l1:l2); //$NON-NLS-1$
         final Text text1 = NSISWizardDialogUtil.createText(composite,mStore.getString("value"),1,true, //$NON-NLS-1$ //$NON-NLS-2$
                 null);
         final Combo combo = NSISWizardDialogUtil.createCombo(composite,NSISWizardDisplayValues.REG_VALUE_TYPES,mStore.getInt("valueType"), //$NON-NLS-1$
@@ -93,19 +93,19 @@ public class NSISInstallRegistryValueDialog extends NSISInstallRegistryKeyDialog
         c2.setLayoutData(new GridData(SWT.FILL,SWT.FILL,false,false));
         final StackLayout stackLayout2 = new StackLayout();
         c2.setLayout(stackLayout2);
-        final Control l3 = NSISWizardDialogUtil.getLayoutControl(NSISWizardDialogUtil.createLabel(c2,"wizard.data.label",true,null,true));
-        final Control l4 = NSISWizardDialogUtil.getLayoutControl(NSISWizardDialogUtil.createLabel(c2,"wizard.data.label",true,null,false));
-        stackLayout2.topControl = (mStore.getInt("valueType")==INSISWizardConstants.REG_DWORD || mStore.getString("value").equals("")?l3:l4);
+        final Control l3 = NSISWizardDialogUtil.getLayoutControl(NSISWizardDialogUtil.createLabel(c2,"wizard.data.label",true,null,true)); //$NON-NLS-1$
+        final Control l4 = NSISWizardDialogUtil.getLayoutControl(NSISWizardDialogUtil.createLabel(c2,"wizard.data.label",true,null,false)); //$NON-NLS-1$
+        stackLayout2.topControl = (mStore.getInt("valueType")==INSISWizardConstants.REG_DWORD || mStore.getString("value").equals("")?l3:l4); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         final Text text2 = NSISWizardDialogUtil.createText(composite,mStore.getString("data"),1, true, //$NON-NLS-1$ //$NON-NLS-2$
                 null);
         text1.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e)
             {
-                String oldValue = mStore.getString("value");
+                String oldValue = mStore.getString("value"); //$NON-NLS-1$
                 String newValue = text1.getText().trim();
                 mStore.setValue("value",newValue); //$NON-NLS-1$
-                if(!oldValue.equals(newValue) && (oldValue.equals("") || newValue.equals(""))) {
-                    stackLayout2.topControl = (mStore.getInt("valueType")==INSISWizardConstants.REG_DWORD || newValue.equals("")?l3:l4);
+                if(!oldValue.equals(newValue) && (oldValue.equals("") || newValue.equals(""))) { //$NON-NLS-1$ //$NON-NLS-2$
+                    stackLayout2.topControl = (mStore.getInt("valueType")==INSISWizardConstants.REG_DWORD || newValue.equals("")?l3:l4); //$NON-NLS-1$ //$NON-NLS-2$
                     c2.layout();
                 }
 
@@ -141,7 +141,7 @@ public class NSISInstallRegistryValueDialog extends NSISInstallRegistryKeyDialog
 
         combo.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
-                int oldIndex = mStore.getInt("valueType");
+                int oldIndex = mStore.getInt("valueType"); //$NON-NLS-1$
                 int index = combo.getSelectionIndex();
                 mStore.setValue("valueType",index); //$NON-NLS-1$
                 if(index == INSISWizardConstants.REG_DWORD) {
@@ -159,7 +159,7 @@ public class NSISInstallRegistryValueDialog extends NSISInstallRegistryKeyDialog
                     }
 
                     if(oldIndex == INSISWizardConstants.REG_DWORD || index == INSISWizardConstants.REG_DWORD) {
-                        stackLayout2.topControl = (mStore.getString("valueType").equals("")||index  == INSISWizardConstants.REG_DWORD?l3:l4);
+                        stackLayout2.topControl = (mStore.getString("valueType").equals("")||index  == INSISWizardConstants.REG_DWORD?l3:l4); //$NON-NLS-1$ //$NON-NLS-2$
                         c2.layout();
                     }
                 }
@@ -171,21 +171,21 @@ public class NSISInstallRegistryValueDialog extends NSISInstallRegistryKeyDialog
             public void propertyChange(PropertyChangeEvent event)
             {
                 String property = event.getProperty();
-                if(property.equals("value")) {
+                if(property.equals("value")) { //$NON-NLS-1$
                     String value = (String)event.getNewValue();
                     if(!Common.stringsAreEqual(text1.getText(),value)) {
                         text1.setText(value);
                         validate();
                     }
                 }
-                else if(property.equals("valueType")) {
+                else if(property.equals("valueType")) { //$NON-NLS-1$
                     int type = ((Integer)event.getNewValue()).intValue();
                     if(combo.getSelectionIndex() != type) {
                         combo.select(type);
                         validate();
                     }
                 }
-                else if(property.equals("data")) {
+                else if(property.equals("data")) { //$NON-NLS-1$
                     String data = (String)event.getNewValue();
                     if(!Common.stringsAreEqual(text2.getText(),data)) {
                         text2.setText(data);
@@ -215,10 +215,10 @@ public class NSISInstallRegistryValueDialog extends NSISInstallRegistryKeyDialog
         if(Common.isEmpty(error)) {
             String value = mStore.getString("value"); //$NON-NLS-1$
             String data = mStore.getString("data"); //$NON-NLS-1$
-            int type = mStore.getInt("valueType");
+            int type = mStore.getInt("valueType"); //$NON-NLS-1$
 
-            if(type != INSISWizardConstants.REG_SZ && value.equals("")) {
-                return "Registry value name cannot be blank";
+            if(type != INSISWizardConstants.REG_SZ && value.equals("")) { //$NON-NLS-1$
+                return EclipseNSISPlugin.getResourceString("wizard.blank.reg.value.name"); //$NON-NLS-1$
             }
             switch(type) { //$NON-NLS-1$
                 case INSISWizardConstants.REG_DWORD:
@@ -227,7 +227,7 @@ public class NSISInstallRegistryValueDialog extends NSISInstallRegistryKeyDialog
                     }
                     break;
                 case INSISWizardConstants.REG_SZ:
-                    if(value.equals("") && data.equals("")) {
+                    if(value.equals("") && data.equals("")) { //$NON-NLS-1$ //$NON-NLS-2$
                         return EclipseNSISPlugin.getResourceString("wizard.invalid.reg.value"); //$NON-NLS-1$
                     }
             }

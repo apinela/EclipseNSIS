@@ -21,11 +21,11 @@ public class WrappingInformationPresenter implements DefaultInformationControl.I
 {
     static final String BREAK_CHARS = ",;|-.?!:"; //$NON-NLS-1$
 
-    private String mIndent="";
+    private String mIndent=""; //$NON-NLS-1$
     
     public WrappingInformationPresenter()
     {
-        this("  ");
+        this("  "); //$NON-NLS-1$
     }
 
     public WrappingInformationPresenter(String indent)

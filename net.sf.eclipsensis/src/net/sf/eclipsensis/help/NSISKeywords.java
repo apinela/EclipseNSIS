@@ -115,7 +115,7 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
             }
             mNewerKeywordsMap.clear();
             mAllKeywordsSet.clear();
-    
+
             ResourceBundle bundle;
             Version nsisVersion = NSISPreferences.INSTANCE.getNSISVersion();
             try {
@@ -146,11 +146,11 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
             Set instructionParameters = new CaseInsensitiveSet();
             Set instructionOptions = new CaseInsensitiveSet();
             Set callbacks = new CaseInsensitiveSet();
-            
+
             Map generalShellConstants = null;
             Map userShellConstants = null;
             Map commonShellConstants = null;
-    
+
             if(bundle != null && nsisVersion != null) {
                 HashMap versionMap = new HashMap();
                 for(Enumeration e=bundle.getKeys(); e.hasMoreElements();) {
@@ -178,14 +178,14 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
                         }
                     }
                 }
-    
+
                 if(monitor != null) {
                     monitor.worked(20);
                 }
-                
+
                 ArrayList versionList = new ArrayList(versionMap.keySet());
                 Collections.sort(versionList);
-    
+
                 for (Iterator iter = versionList.iterator(); iter.hasNext();) {
                     Version version = (Version)iter.next();
                     ArrayList list = (ArrayList)versionMap.get(version);
@@ -265,7 +265,7 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
                             else if(name.equals("callbacks")) { //$NON-NLS-1$
                                 set = callbacks;
                             }
-    
+
                             for (int i = 0; i < values.length; i++) {
                                 int m = values[i].indexOf('^');
                                 int n = values[i].indexOf('~');
@@ -318,48 +318,48 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
                     monitor.worked(50);
                 }
             }
-    
+
             String[] temp = Common.EMPTY_STRING_ARRAY;
             String[] temp2;
-    
+
             Set set = getValidKeywords(registers);
             mAllKeywordsSet.addAll(set);
             temp = (String[])Common.appendArray(temp, (temp2 = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
             Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
             mKeywordGroupsMap.put(REGISTERS,temp2);
-    
+
             set = getValidKeywords(pathVariables);
             mAllKeywordsSet.addAll(set);
             temp = (String[])Common.appendArray(temp, (temp2 = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
             Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
             mKeywordGroupsMap.put(PATH_VARIABLES,temp2);
-    
+
             set = getValidKeywords(variables);
             temp = (String[])Common.appendArray(temp, (temp2 = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
             Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
             mKeywordGroupsMap.put(VARIABLES,temp2);
-    
+
             set = getValidKeywords(shellConstants);
             mAllKeywordsSet.addAll(set);
             temp2 = (String[])set.toArray(Common.EMPTY_STRING_ARRAY);
             Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
             mKeywordGroupsMap.put(SHELL_CONSTANTS,temp2);
-    
+
             set = getValidKeywords(pathConstants);
             mAllKeywordsSet.addAll(set);
-            temp = (String[])Common.appendArray(temp, 
+            temp = (String[])Common.appendArray(temp,
                     (temp2 = (String[])Common.joinArrays(
                                         new Object[] {(String[])mKeywordGroupsMap.get(SHELL_CONSTANTS),
                                                       (String[])set.toArray(Common.EMPTY_STRING_ARRAY)})));
             Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
             mKeywordGroupsMap.put(PATH_CONSTANTS,temp2);
-    
+
             set = getValidKeywords(stringConstants);
             mAllKeywordsSet.addAll(set);
             temp = (String[])Common.appendArray(temp, (temp2 = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
             Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
             mKeywordGroupsMap.put(STRING_CONSTANTS,temp2);
-    
+
             set = new CaseInsensitiveSet();
             if(!Common.isEmpty(NSISPreferences.INSTANCE.getNSISHome())) {
                 Set keySet = NSISPreferences.INSTANCE.getNSISDefaultSymbols().keySet();
@@ -373,123 +373,123 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
             temp = (String[])Common.appendArray(temp, (temp2 = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
             Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
             mKeywordGroupsMap.put(SYMBOLS,temp2);
-    
+
             set = getValidKeywords(predefines);
             mAllKeywordsSet.addAll(set);
             temp = (String[])Common.appendArray(temp, (temp2 = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
             Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
             mKeywordGroupsMap.put(PREDEFINES,temp2);
-    
+
             temp2 = (String[])Common.joinArrays(new Object[]{getKeywordsGroup(PATH_CONSTANTS), getKeywordsGroup(PATH_VARIABLES)});
             Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
             mKeywordGroupsMap.put(PATH_CONSTANTS_AND_VARIABLES,temp2);
-    
+
             temp2 = (String[])Common.joinArrays(new Object[]{getKeywordsGroup(PATH_CONSTANTS), getKeywordsGroup(STRING_CONSTANTS)});
             Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
             mKeywordGroupsMap.put(ALL_CONSTANTS,temp2);
-    
+
             temp2 = (String[])Common.joinArrays(new Object[]{getKeywordsGroup(REGISTERS), getKeywordsGroup(PATH_CONSTANTS_AND_VARIABLES),
                                                                                       getKeywordsGroup(VARIABLES)});
             Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
             mKeywordGroupsMap.put(ALL_VARIABLES,temp2);
-    
+
             temp2 = (String[])Common.joinArrays(new Object[]{getKeywordsGroup(ALL_CONSTANTS), getKeywordsGroup(ALL_VARIABLES)});
             Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
             mKeywordGroupsMap.put(ALL_CONSTANTS_AND_VARIABLES,temp2);
-    
+
             temp2 = (String[])Common.joinArrays(new Object[]{getKeywordsGroup(ALL_CONSTANTS), getKeywordsGroup(ALL_VARIABLES),
                                                              getKeywordsGroup(SYMBOLS), getKeywordsGroup(PREDEFINES)});
             Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
             mKeywordGroupsMap.put(ALL_CONSTANTS_VARIABLES_AND_SYMBOLS,temp2);
-    
+
             set = getValidKeywords(singlelineCompiletimeCommands);
             mAllKeywordsSet.addAll(set);
             temp = (String[])Common.appendArray(temp, (temp2 = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
             Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
             mKeywordGroupsMap.put(SINGLELINE_COMPILETIME_COMMANDS,temp2);
-    
+
             set = getValidKeywords(multilineCompiletimeCommands);
             mAllKeywordsSet.addAll(set);
             temp = (String[])Common.appendArray(temp, (temp2 = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
             Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
             mKeywordGroupsMap.put(MULTILINE_COMPILETIME_COMMANDS, temp2);
-    
+
             set = getValidKeywords(installerAttributes);
             mAllKeywordsSet.addAll(set);
             temp = (String[])Common.appendArray(temp, (temp2 = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
             Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
             mKeywordGroupsMap.put(INSTALLER_ATTRIBUTES,temp2);
-    
+
             set = getValidKeywords(commands);
             mAllKeywordsSet.addAll(set);
             temp = (String[])Common.appendArray(temp, (temp2 = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
             Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
             mKeywordGroupsMap.put(COMMANDS,temp2);
-    
+
             set = getValidKeywords(instructions);
             mAllKeywordsSet.addAll(set);
             temp = (String[])Common.appendArray(temp, (temp2 = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
             Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
             mKeywordGroupsMap.put(INSTRUCTIONS,temp2);
-    
+
             set = getValidKeywords(installerPages);
             mAllKeywordsSet.addAll(set);
             temp = (String[])Common.appendArray(temp, (temp2 = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
             Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
             mKeywordGroupsMap.put(INSTALLER_PAGES,temp2);
-    
+
             set = getValidKeywords(hkeyLongParameters);
             mAllKeywordsSet.addAll(set);
             temp2 = (String[])set.toArray(Common.EMPTY_STRING_ARRAY);
             Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
             mKeywordGroupsMap.put(HKEY_LONG_PARAMETERS,temp2);
-    
+
             set = getValidKeywords(hkeyShortParameters);
             mAllKeywordsSet.addAll(set);
             temp2 = (String[])set.toArray(Common.EMPTY_STRING_ARRAY);
             Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
             mKeywordGroupsMap.put(HKEY_SHORT_PARAMETERS,temp2);
-    
+
             temp2 = (String[])Common.appendArray(temp2, getKeywordsGroup(HKEY_LONG_PARAMETERS));
             Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
             mKeywordGroupsMap.put(HKEY_PARAMETERS,temp2);
-    
+
             set = getValidKeywords(messageboxOptionButtonParameters);
             mAllKeywordsSet.addAll(set);
             temp2 = (String[])set.toArray(Common.EMPTY_STRING_ARRAY);
             Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
             mKeywordGroupsMap.put(MESSAGEBOX_OPTION_BUTTON_PARAMETERS,temp2);
-    
+
             set = getValidKeywords(messageboxOptionIconParameters);
             mAllKeywordsSet.addAll(set);
             temp2 = (String[])set.toArray(Common.EMPTY_STRING_ARRAY);
             Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
             mKeywordGroupsMap.put(MESSAGEBOX_OPTION_ICON_PARAMETERS,temp2);
-    
+
             set = getValidKeywords(messageboxOptionDefaultParameters);
             mAllKeywordsSet.addAll(set);
             temp2 = (String[])set.toArray(Common.EMPTY_STRING_ARRAY);
             Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
             mKeywordGroupsMap.put(MESSAGEBOX_OPTION_DEFAULT_PARAMETERS,temp2);
-    
+
             set = getValidKeywords(messageboxOptionOtherParameters);
             mAllKeywordsSet.addAll(set);
             temp2 = (String[])set.toArray(Common.EMPTY_STRING_ARRAY);
             Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
             mKeywordGroupsMap.put(MESSAGEBOX_OPTION_OTHER_PARAMETERS,temp2);
-    
+
             temp2 = (String[])Common.appendArray(temp2, getKeywordsGroup(MESSAGEBOX_OPTION_BUTTON_PARAMETERS));
             temp2 = (String[])Common.appendArray(temp2, getKeywordsGroup(MESSAGEBOX_OPTION_ICON_PARAMETERS));
             temp2 = (String[])Common.appendArray(temp2, getKeywordsGroup(MESSAGEBOX_OPTION_DEFAULT_PARAMETERS));
             Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
             mKeywordGroupsMap.put(MESSAGEBOX_OPTION_PARAMETERS,temp2);
-    
+
             set = getValidKeywords(messageboxReturnParameters);
             mAllKeywordsSet.addAll(set);
             temp2 = (String[])set.toArray(Common.EMPTY_STRING_ARRAY);
             Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
             mKeywordGroupsMap.put(MESSAGEBOX_RETURN_PARAMETERS,temp2);
-    
+
             set = getValidKeywords(instructionParameters);
             mAllKeywordsSet.addAll(set);
             temp2 = (String[])set.toArray(Common.EMPTY_STRING_ARRAY);
@@ -500,37 +500,50 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
             Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
             temp = (String[])Common.appendArray(temp, temp2);
             mKeywordGroupsMap.put(INSTRUCTION_PARAMETERS,temp2);
-    
+
             set = getValidKeywords(instructionOptions);
             mAllKeywordsSet.addAll(set);
             temp = (String[])Common.appendArray(temp, (temp2 = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
             Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
             mKeywordGroupsMap.put(INSTRUCTION_OPTIONS,temp2);
-    
+
             set = getValidKeywords(callbacks);
             mAllKeywordsSet.addAll(set);
             temp = (String[])Common.appendArray(temp, (temp2 = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
             Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
             mKeywordGroupsMap.put(CALLBACKS,temp2);
-    
+
             Arrays.sort(temp, String.CASE_INSENSITIVE_ORDER);
             mKeywordGroupsMap.put(ALL_KEYWORDS,temp);
-    
+
             File cacheFile = new File(EclipseNSISPlugin.getPluginStateLocation(),NSISKeywords.class.getName()+".Plugins.ser"); //$NON-NLS-1$
             if(IOUtility.isValidFile(cacheFile)) {
                 cacheFile.delete();
             }
-            NSISPluginManager.INSTANCE.loadDefaultPlugins();
-            String[] plugins = NSISPluginManager.INSTANCE.getDefaultPluginNames();
-            Arrays.sort(plugins, String.CASE_INSENSITIVE_ORDER);
+
+            String[] plugins = null;
+            try {
+                NSISPluginManager.INSTANCE.loadDefaultPlugins();
+                plugins = NSISPluginManager.INSTANCE.getDefaultPluginNames();
+            }
+            catch (Exception e) {
+                EclipseNSISPlugin.getDefault().log(e);
+                plugins = null;
+            }
+            if(plugins == null) {
+                plugins = Common.EMPTY_STRING_ARRAY;
+            }
+            else {
+                Arrays.sort(plugins, String.CASE_INSENSITIVE_ORDER);
+            }
             mKeywordGroupsMap.put(PLUGINS,plugins);
-    
+
             mShellConstants = loadShellConstants(generalShellConstants, userShellConstants, commonShellConstants);
-            
+
             if(monitor != null) {
                 monitor.worked(20);
             }
-            
+
             notifyListeners(monitor);
         }
         finally {
@@ -554,7 +567,7 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
                 }
             });
         }
-        
+
         return list;
     }
 
@@ -562,25 +575,30 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
     {
         if (!Common.isEmptyMap(shellConstants)) {
             for (Iterator iter = shellConstants.entrySet().iterator(); iter.hasNext();) {
-                Map.Entry entry = (Map.Entry)iter.next();
-                String name = (String)entry.getKey();
-                if (isValidKeyword(name)) {
-                    String shellFolder = WinAPI.GetShellFolder(Integer.parseInt((String)entry.getValue()));
-                    if (!Common.isEmpty(shellFolder)) {
-                        if (entry.getKey().equals(getKeyword("$QUICKLAUNCH"))) { //$NON-NLS-1$
-                            shellFolder = shellFolder + "\\Microsoft\\Internet Explorer\\Quick Launch"; //$NON-NLS-1$
-                        }
-                        entry.setValue(shellFolder);
-                        list.add(new ShellConstant(name, shellFolder, context));
+                try {
+                    Map.Entry entry = (Map.Entry)iter.next();
+                    String name = (String)entry.getKey();
+                    if (isValidKeyword(name)) {
+                        String shellFolder = WinAPI.GetShellFolder(Integer.parseInt((String)entry.getValue()));
+                        if (!Common.isEmpty(shellFolder)) {
+                            if (entry.getKey().equals(getKeyword("$QUICKLAUNCH"))) { //$NON-NLS-1$
+                                shellFolder = shellFolder + "\\Microsoft\\Internet Explorer\\Quick Launch"; //$NON-NLS-1$
+                            }
+                            entry.setValue(shellFolder);
+                            list.add(new ShellConstant(name, shellFolder, context));
 
-                        String shortPath = WinAPI.GetShortPathName(shellFolder);
-                        if (shortPath != null && !shortPath.equalsIgnoreCase(shellFolder)) {
-                            list.add(new ShellConstant(name, shortPath, context));
+                            String shortPath = WinAPI.GetShortPathName(shellFolder);
+                            if (shortPath != null && !shortPath.equalsIgnoreCase(shellFolder)) {
+                                list.add(new ShellConstant(name, shortPath, context));
+                            }
                         }
                     }
                 }
+                catch (Exception e) {
+                    EclipseNSISPlugin.getDefault().log(e);
+                }
             }
-        }        
+        }
     }
 
     public List getShellConstants()
@@ -690,7 +708,7 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
         public static final String CONTEXT_GENERAL = ""; //$NON-NLS-1$
         public static final String CONTEXT_USER = "current"; //$NON-NLS-1$
         public static final String CONTEXT_COMMON = "all"; //$NON-NLS-1$
-        
+
         public final String name;
         public final String value;
         public final String context;
@@ -702,7 +720,7 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
             this.context = context;
         }
     }
-    
+
     public class VariableMatcher
     {
         private int mPotentialMatchIndex = -1;

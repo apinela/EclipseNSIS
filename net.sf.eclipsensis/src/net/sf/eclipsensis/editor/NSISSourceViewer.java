@@ -468,7 +468,7 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
                 if(dialog.open() == Window.OK) {
                     mRegValue = dialog.getRegistryValue();
                     String regKey = mRegValue.getRegKey();
-                    int n = regKey.indexOf("\\");
+                    int n = regKey.indexOf("\\"); //$NON-NLS-1$
                     String rootKey;
                     String subKey;
                     if(n > 0) {
@@ -477,7 +477,7 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
                     }
                     else {
                         rootKey = regKey;
-                        subKey = "";
+                        subKey = ""; //$NON-NLS-1$
                     }
                     NSISEditorRegistryImportStrategy strategy = new NSISEditorRegistryImportStrategy();
                     strategy.addRegistryValue(rootKey, subKey, mRegValue.getValue(),mRegValue.getType(),mRegValue.getData());

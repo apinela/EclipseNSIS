@@ -92,7 +92,7 @@ public class NSISScriptWizard extends NSISWizard
             path = path.addFileExtension(INSISConstants.NSI_EXTENSION);
         }
         if(!path.isAbsolute()) {
-            Common.openError(getShell(),"Please specify an absolute location for the output file.",EclipseNSISPlugin.getShellImage());
+            Common.openError(getShell(),EclipseNSISPlugin.getResourceString("absolute.save.path.error"),EclipseNSISPlugin.getShellImage()); //$NON-NLS-1$
             return false;
         }
         final boolean saveExternal = getSettings().isSaveExternal();

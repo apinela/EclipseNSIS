@@ -40,7 +40,7 @@ public class NSISHelpInformationControlCreator extends NSISInformationControlCre
 
     protected IInformationPresenter createInformationPresenter()
     {
-        return new WrappingInformationPresenter("\t\t") {
+        return new WrappingInformationPresenter("\t\t") { //$NON-NLS-1$
             public String updatePresentation(Display display, String hoverInfo, TextPresentation presentation, int maxWidth, int maxHeight)
             {
                 hoverInfo = super.updatePresentation(display, hoverInfo, presentation, maxWidth, maxHeight);

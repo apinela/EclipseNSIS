@@ -120,13 +120,13 @@ public class RegistryValueSelectionDialog extends StatusMessageDialog
 
         final Table table = new Table(sashForm,SWT.BORDER);
         TableColumn col1 = new TableColumn(table,SWT.NONE);
-        col1.setText("Name");
+        col1.setText(EclipseNSISPlugin.getResourceString("reg.value.dialog.name.label")); //$NON-NLS-1$
         col1.setWidth(150);
         TableColumn col2 = new TableColumn(table,SWT.NONE);
-        col2.setText("Type");
+        col2.setText(EclipseNSISPlugin.getResourceString("reg.value.dialog.type.label")); //$NON-NLS-1$
         col2.setWidth(100);
         TableColumn col3 = new TableColumn(table,SWT.NONE);
-        col3.setText("Data");
+        col3.setText(EclipseNSISPlugin.getResourceString("reg.value.dialog.data.label")); //$NON-NLS-1$
         col3.setWidth(1000);
         table.setHeaderVisible(true);
         mValuesViewer = new TableViewer(table);
@@ -156,30 +156,30 @@ public class RegistryValueSelectionDialog extends StatusMessageDialog
                     boolean isDefault = (value==null || value.length() == 0);
                     switch(columnIndex) {
                         case 0:
-                            return isDefault?"(Default)":value;
+                            return isDefault?EclipseNSISPlugin.getResourceString("reg.value.dialog.default.value"):value; //$NON-NLS-1$
                         case 1:
                             switch(type) {
                                 case WinAPI.REG_SZ:
-                                    return "REG_SZ";
+                                    return "REG_SZ"; //$NON-NLS-1$
                                 case WinAPI.REG_BINARY:
-                                    return "REG_BINARY";
+                                    return "REG_BINARY"; //$NON-NLS-1$
                                 case WinAPI.REG_DWORD:
-                                    return "REG_DWORD";
+                                    return "REG_DWORD"; //$NON-NLS-1$
                                 case WinAPI.REG_EXPAND_SZ:
-                                    return "REG_EXPAND_SZ";
+                                    return "REG_EXPAND_SZ"; //$NON-NLS-1$
                             }
                         case 2:
                             switch(type) {
                                 case WinAPI.REG_BINARY:
                                     if(data == null) {
-                                        return "(zero-length binary value)";
+                                        return EclipseNSISPlugin.getResourceString("reg.value.dialog.zero.length.binary"); //$NON-NLS-1$
                                     }
                                     else {
                                         StringBuffer buf = new StringBuffer();
                                         int len = data.length()-1;
                                         for(int i=0; i<len; i++) {
                                             if(i > 0) {
-                                                buf.append(" ");
+                                                buf.append(" "); //$NON-NLS-1$
                                             }
                                             buf.append(data.charAt(i++)).append(data.charAt(i));
                                         }
@@ -193,12 +193,12 @@ public class RegistryValueSelectionDialog extends StatusMessageDialog
                                     catch(NumberFormatException e) {
                                         intData = 0;
                                     }
-                                    return new StringBuffer("0x").append(Common.leftPad(Integer.toHexString(intData).toLowerCase(),8,'0')).append(
-                                            " (").append(intData).append(")").toString();
+                                    return new StringBuffer("0x").append(Common.leftPad(Integer.toHexString(intData).toLowerCase(),8,'0')).append( //$NON-NLS-1$
+                                            " (").append(intData).append(")").toString(); //$NON-NLS-1$ //$NON-NLS-2$
                                 default:
                                     if(type == WinAPI.REG_SZ && isDefault) {
                                         if(data == null) {
-                                            return "(value not set)";
+                                            return EclipseNSISPlugin.getResourceString("reg.value.dialog.unset.value"); //$NON-NLS-1$
                                         }
                                     }
                                     return data;
@@ -256,11 +256,10 @@ public class RegistryValueSelectionDialog extends StatusMessageDialog
         RegistryKey regKey = mBrowser.getSelectedKey();
         List list;
         if(regKey != null) {
-            list = (List)regKey.getAttribute("REG_VALUES");
+            list = (List)regKey.getAttribute("REG_VALUES"); //$NON-NLS-1$
             if(list == null) {
                 String regkeyName = mBrowser.getSelection();
                 list = new ArrayList();
-                regKey.openHandle();
                 int hKey = regKey.getHandle();
                 if(hKey != 0) {
                     boolean gotDefault = false;
@@ -289,7 +288,7 @@ public class RegistryValueSelectionDialog extends StatusMessageDialog
                         list.add(0,new RegistryValue(regkeyName,null,WinAPI.REG_SZ,null));
                     }
                 }
-                regKey.setAttribute("REG_VALUES", list);
+                regKey.setAttribute("REG_VALUES", list); //$NON-NLS-1$
             }
         }
         else {
@@ -305,7 +304,7 @@ public class RegistryValueSelectionDialog extends StatusMessageDialog
         private String mRegKey;
         private String mValue;
         private int mType = WinAPI.REG_SZ;
-        private String mData = "";
+        private String mData = ""; //$NON-NLS-1$
 
         public RegistryValue(String regKey, String value)
         {
@@ -335,7 +334,7 @@ public class RegistryValueSelectionDialog extends StatusMessageDialog
                     break;
                 case WinAPI.REG_DWORD:
                     if(Common.isEmptyArray(data) || data.length > 8) {
-                        mData = "0";
+                        mData = "0"; //$NON-NLS-1$
                     }
                     else {
                         mData = String.valueOf(Integer.parseInt(bytesToHexString((byte[])Common.flipArray(data)),16));
@@ -344,7 +343,7 @@ public class RegistryValueSelectionDialog extends StatusMessageDialog
                 case WinAPI.REG_SZ:
                 case WinAPI.REG_EXPAND_SZ:
                 case WinAPI.REG_MULTI_SZ:
-                    mData = (Common.isEmptyArray(data)?"":new String(data));
+                    mData = (Common.isEmptyArray(data)?"":new String(data)); //$NON-NLS-1$
                     break;
             }
         }

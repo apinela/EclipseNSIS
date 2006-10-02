@@ -32,12 +32,12 @@ public class MinimalProgressMonitorDialog extends ProgressMonitorDialog
 
     private int mMinimumWidth;
     private int mMaximumWidth;
-    
+
     private Image mBGImage = null;
-    
+
     private RGB mForegroundRGB = null;
     private Color mFGColor = null;
-    
+
     private String mCaption = EclipseNSISPlugin.getDefault().getName();
     private PaintListener mPaintListener =  new PaintListener() {
         public void paintControl(PaintEvent e)
@@ -135,7 +135,7 @@ public class MinimalProgressMonitorDialog extends ProgressMonitorDialog
         mForegroundRGB = foregroundRGB;
         updateForeground();
     }
-    
+
     private void updateForeground()
     {
         Shell shell = getShell();
@@ -162,11 +162,10 @@ public class MinimalProgressMonitorDialog extends ProgressMonitorDialog
             }
         }
     }
-    
+
     private void setFGColor(Control control, Color fgColor)
     {
-    	if(EclipseNSISPlugin.getDefault().isXP() || !(control instanceof ProgressBar)) {
-			//TODO Is this also needed for XP?
+    	if(!(control instanceof ProgressBar)) {
 	        control.setForeground(fgColor);
 	        if(control instanceof Composite) {
 	            Composite composite = (Composite)control;
@@ -227,7 +226,7 @@ public class MinimalProgressMonitorDialog extends ProgressMonitorDialog
         return null;
     }
 
-    protected Control createMessageArea(Composite composite) 
+    protected Control createMessageArea(Composite composite)
     {
         // create message
         if (message != null) {
@@ -250,7 +249,7 @@ public class MinimalProgressMonitorDialog extends ProgressMonitorDialog
         // task label
         message = ""; //$NON-NLS-1$
         createMessageArea(parent);
-        
+
         // progress indicator
         progressIndicator = new ProgressIndicator(parent);
         GridData gd = new GridData(SWT.FILL,SWT.CENTER,true,false);
