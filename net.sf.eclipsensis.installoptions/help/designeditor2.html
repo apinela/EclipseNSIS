@@ -53,6 +53,27 @@ border-style: inset inset inset inset;
 text-align: left;
 }
   </style>
+  <script type="text/javascript" language="javascript">
+<!--
+var images1 = new Array();
+images1[0] = new Image();
+images1[0].src = "images/properties1.gif";
+images1[1] = new Image();
+images1[1].src = "images/properties1cl.gif";
+
+var images2 = new Array();
+images2[0] = new Image();
+images2[0].src = "images/properties2.gif";
+images2[1] = new Image();
+images2[1].src = "images/properties2cl.gif";
+
+function setImage(img, images, index, id)
+{
+    document.images[img].src = images[index].src; 
+	if(id.blur) id.blur();
+}
+//-->
+  </script>
 </head>
 <body>
 <div id="main">
@@ -85,25 +106,48 @@ editor canvas. If no control is selected, the settings for the
 InstallOptions dialog itself are displayed. If the Properties view is
 not open in the current perspective, it is opened and activated. If it
 is opened, but inactive, it is activated.</p>
-<div style="text-align: center;"><table style="text-align: left; margin-left: auto; margin-right: auto;" border="0" cellpadding="2" cellspacing="2">
-<tbody>
-<tr>
-<td style="text-align: center;"><img style="width: 351px; height: 302px;" alt="Dialog Settings" title="Dialog Settings" src="images/properties1.gif"><br>InstallOptions Dialog Settings
-</td><td style="text-align: left;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td style="text-align: center;">
-<img style="width: 351px; height: 302px;" alt="Control Settings" title="Control Settings" src="images/properties2.gif"><br>
-Sample Control Settings
-</td>
-</tr>
-</tbody>
-</table></div>
-<p>If a setting is user
+<div id="div_properties1">
+<p style="text-align: center;"><img src="images/properties1.gif" alt="Dialog Settings" name="img_properties1" usemap="#properties1" style="border: medium none ; width: 681px; height: 318px;" title="Dialog Settings"><br>
+InstallOptions Dialog Settings</p>
+<script type="text/javascript" language="javascript">
+<!--
+if(ie) {
+document.write("<map name='properties1'><area id='tab1' nohref='true' OnClick='setImage(\"img_properties1\", images1, 0, this);' onMouseOver='changeCursor(\"div_properties1\",\"hand\");' onMouseOut='changeCursor(\"div_properties1\",\"auto\");' shape='RECT' alt='InstallOptions Dialog General Settings' coords='5,36,72,56'><area id='tab1cl' nohref='true' OnClick='setImage(\"img_properties1\", images1, 1, this);' onMouseOver='changeCursor(\"div_properties1\",\"hand\");' onMouseOut='changeCursor(\"div_properties1\",\"auto\");' shape='RECT' alt='InstallOptions Dialog Settings Classic format' coords='5,57,72,77'></map>");
+}
+else {
+document.write("<map name='properties1'><area id='tab1' href='javascript: setImage(\"img_properties1\", images1, 0, this);' onMouseOver='window.status=\"\";return true;' shape='RECT' alt='InstallOptions Dialog General Settings' coords='5,36,72,56'><area id='tab1cl' href='javascript: setImage(\"img_properties1\", images1, 1, this);' onMouseOver='window.status=\"\";return true;' shape='RECT' alt='InstallOptions Dialog Settings Classic format' coords='5,57,72,77'></map>");
+}
+//-->
+</script>
+</div>
+<div id="div_properties2">
+<p style="text-align: center;"><img src="images/properties2.gif" alt="Control Settings" name="img_properties2" usemap="#properties2" style="border: medium none ; width: 681px; height: 318px;" title="Control Settings"><br>
+Sample Control Settings</p>
+<script type="text/javascript" language="javascript">
+<!--
+if(ie) {
+document.write("<map name='properties2'><area id='tab2' nohref='true' OnClick='setImage(\"img_properties2\", images2, 0, this);' onMouseOver='changeCursor(\"div_properties2\",\"hand\");' onMouseOut='changeCursor(\"div_properties2\",\"auto\");' shape='RECT' alt='InstallOptions Dialog General Settings' coords='5,36,72,56'><area id='tab2cl' nohref='true' OnClick='setImage(\"img_properties2\", images2, 1, this);' onMouseOver='changeCursor(\"div_properties2\",\"hand\");' onMouseOut='changeCursor(\"div_properties2\",\"auto\");' shape='RECT' alt='InstallOptions Dialog Settings Classic format' coords='5,57,72,77'></map>");
+}
+else {
+document.write("<map name='properties2'><area id='tab2' href='javascript: setImage(\"img_properties2\", images2, 0, this);' onMouseOver='window.status=\"\";return true;' shape='RECT' alt='InstallOptions Dialog General Settings' coords='5,36,72,56'><area id='tab2cl' href='javascript: setImage(\"img_properties2\", images2, 1, this);' onMouseOver='window.status=\"\";return true;' shape='RECT' alt='InstallOptions Dialog Settings Classic format' coords='5,57,72,77'></map>");
+}
+//-->
+</script>
+</div>
+
+<p>Beginning with InstallOptions 0.9.5, the settings are presented in an editable form format. The classic tabular format for editing settings can be accessed by clicking on the &quot;Classic&quot; tab in the Properties view (click on the images above to preview the classic tab).</p>
+<dl>
+<dt>Editable Form Format</dt>
+<dd>In the editable form format, the various settings are logically grouped and can be directly modified. Settings which are modified using checkboxes, radio buttons and combo boxes are immeditately applied, while settings which are modified using text boxes are applied either when focus is lost or when the Enter key is pressed (Ctrl+Enter for multiline text boxes).</dd>
+<dt>Classic Tabular Format</dt>
+<dd>In the classic tabular format, if a setting is user
 editable, then clicking on the setting value in the Properties view
 enables the user to edit the value. In most cases, the value is
-modifiable directly in the Properties view- either by editing it's text
+modifiable directly in the Properties view- either by editing its text
 or by selecting a value from a dropdown list. In some cases, however,
 the value can only be edited in a separate popup dialog. These cases are described
-below:</p></dd><dd>
-<div style="text-align: center;"><table class="dialogs" cellpadding="2" cellspacing="2">
+below:
+  <div style="text-align: center;"><table class="dialogs" cellpadding="2" cellspacing="2">
 <thead>
 <tr>
 <th style="width: 10%;">Control</th>
@@ -175,7 +219,8 @@ available if the MULTILINE flag has been specified.
 <td>The standard Windows color selection dialog is displayed.</td>
 </tr>
 </tbody>
-</table></div>
+</table></div></dd>
+</dl>
 <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd>
 <br>
 <dt><a name="direct_edit"></a>Direct and Extended Edit</dt>
@@ -285,7 +330,7 @@ Outline Overview</td>
 <br>
 <p><strong><small>Copyright &copy; 2004-2006 Sunil Kamath
 (IcemanK).</small></strong></p>
-<map name="designeditor"><area id="canvas" shape="RECT" href="#a_canvas" alt="Canvas" onclick="highlightDef('id_canvas');" coords="18,41, 482,472"><area id="palette" shape="RECT" href="#a_palette" alt="Palette" onclick="highlightDef('id_palette');" coords="485,23, 627,471"><area id="rulers" shape="POLY" href="#a_rulers" alt="Ruler" onclick="highlightDef('id_rulers');" coords="2,472, 16,472, 16,39, 481,39, 481,25, 18,25, 17,41, 2,41, 2,472"></map>
+<map name="designeditor"><area id="canvas" shape="RECT" href="#a_canvas" alt="Canvas" onClick="highlightDef('id_canvas');" coords="18,41, 482,472"><area id="palette" shape="RECT" href="#a_palette" alt="Palette" onClick="highlightDef('id_palette');" coords="485,23, 627,471"><area id="rulers" shape="POLY" href="#a_rulers" alt="Ruler" onClick="highlightDef('id_rulers');" coords="2,472, 16,472, 16,39, 481,39, 481,25, 18,25, 17,41, 2,41, 2,472"></map>
 </div>
 
 </body></html>

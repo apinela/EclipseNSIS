@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -55,7 +55,7 @@ public class InstallOptionsWidgetEditorDialog extends StatusMessageDialog implem
     private InstallOptionsWidget mCurrentWidget;
     private INISection mSection;
     private boolean mCreateMode = false;
-    
+
     public InstallOptionsWidgetEditorDialog(Shell parent, INIFile iniFile)
     {
         this(parent, iniFile, null);
@@ -137,7 +137,7 @@ public class InstallOptionsWidgetEditorDialog extends StatusMessageDialog implem
                     {
                         mPage.selectionChanged(null, new StructuredSelection(mCurrentWidget));
                     }
-                });                
+                });
             }
         }
     }
@@ -154,7 +154,7 @@ public class InstallOptionsWidgetEditorDialog extends StatusMessageDialog implem
         return size;
     }
 
-    protected Button createButton(Composite parent, int id, String label, boolean defaultButton) 
+    protected Button createButton(Composite parent, int id, String label, boolean defaultButton)
     {
         return super.createButton(parent, id, label, false);
     }
@@ -170,46 +170,46 @@ public class InstallOptionsWidgetEditorDialog extends StatusMessageDialog implem
                 public void registerContextMenu(String menuId, MenuManager menuManager, ISelectionProvider selectionProvider)
                 {
                 }
-    
+
                 public IActionBars getActionBars()
                 {
                     return null;
                 }
-    
+
                 public IWorkbenchPage getPage()
                 {
                     return getWorkbenchWindow().getActivePage();
                 }
-    
+
                 public ISelectionProvider getSelectionProvider()
                 {
                     return null;
                 }
-    
+
                 public Shell getShell()
                 {
                     return getWorkbenchWindow().getShell();
                 }
-    
+
                 public IWorkbenchWindow getWorkbenchWindow()
                 {
                     return PlatformUI.getWorkbench().getActiveWorkbenchWindow();
                 }
-    
+
                 public void setSelectionProvider(ISelectionProvider provider)
                 {
                 }
-    
+
                 public Object getAdapter(Class adapter)
                 {
                     return null;
                 }
-    
+
                 public Object getService(Class api)
                 {
                     return null;
                 }
-    
+
                 public boolean hasService(Class api)
                 {
                     return false;
@@ -240,7 +240,6 @@ public class InstallOptionsWidgetEditorDialog extends StatusMessageDialog implem
             });
         }
         else if(control instanceof Composite){
-			//TODO Is this also needed for XP?
         	control.addControlListener(new ControlAdapter() {
                 public void controlResized(ControlEvent e) {
                     ((Composite)control).layout(true, true);
@@ -258,7 +257,7 @@ public class InstallOptionsWidgetEditorDialog extends StatusMessageDialog implem
                 mDialog.addChild(mCurrentWidget);
             }
         }
-        
+
         if(mCurrentWidget != null) {
             mCurrentWidget.addModelCommandListener(InstallOptionsWidgetEditorDialog.this);
             mCurrentWidget.addPropertyChangeListener(InstallOptionsWidgetEditorDialog.this);
@@ -296,7 +295,7 @@ public class InstallOptionsWidgetEditorDialog extends StatusMessageDialog implem
     {
         return mSection;
     }
-    
+
 
     private final class CustomPropertySourceWrapper extends PropertySourceWrapper
     {
@@ -350,7 +349,7 @@ public class InstallOptionsWidgetEditorDialog extends StatusMessageDialog implem
         private IMenuManager mMenuManager = null;
         private IToolBarManager mToolBarManager = null;
         private IStatusLineManager mStatusLineManager = null;
-        
+
         public void clearGlobalActionHandlers()
         {
         }
@@ -423,7 +422,7 @@ public class InstallOptionsWidgetEditorDialog extends StatusMessageDialog implem
             return null;
         }
     }
-    
+
     private class PropertyDescriptorWrapper extends PropertyDescriptor
     {
         private IPropertyDescriptor mDelegate;
@@ -437,42 +436,42 @@ public class InstallOptionsWidgetEditorDialog extends StatusMessageDialog implem
         {
             return mDelegate.createPropertyEditor(parent);
         }
-        
+
         public String getCategory()
         {
             return mDelegate.getCategory();
         }
-        
+
         public String getDescription()
         {
             return mDelegate.getDescription();
         }
-        
+
         public String getDisplayName()
         {
             return mDelegate.getDisplayName();
         }
-        
+
         public String[] getFilterFlags()
         {
             return mDelegate.getFilterFlags();
         }
-        
+
         public Object getHelpContextIds()
         {
             return HELP_CONTEXT;
         }
-        
+
         public Object getId()
         {
             return mDelegate.getId();
         }
-        
+
         public ILabelProvider getLabelProvider()
         {
             return mDelegate.getLabelProvider();
         }
-        
+
         public boolean isCompatibleWith(IPropertyDescriptor anotherProperty)
         {
             return mDelegate.isCompatibleWith(anotherProperty);

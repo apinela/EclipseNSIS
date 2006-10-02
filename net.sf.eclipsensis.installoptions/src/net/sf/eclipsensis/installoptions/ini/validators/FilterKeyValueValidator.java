@@ -23,27 +23,27 @@ public class FilterKeyValueValidator implements IINIKeyValueValidator
             final int n = Common.tokenize(value,IInstallOptionsConstants.LIST_SEPARATOR,false).length;
             if(n%2 != 0) {
                 if((fixFlag & INILine.VALIDATE_FIX_ERRORS) > 0) {
-                    StringBuffer buf = new StringBuffer("");
+                    StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
                     if(n == 0) {
-                        buf.append("All Files");
+                        buf.append(InstallOptionsPlugin.getResourceString("filter.files.label")); //$NON-NLS-1$
                     }
                     else {
                         buf.append(value);
                     }
-                    keyValue.setValue(buf.append(IInstallOptionsConstants.LIST_SEPARATOR).append("*.*").toString());
+                    keyValue.setValue(buf.append(IInstallOptionsConstants.LIST_SEPARATOR).append(InstallOptionsPlugin.getResourceString("filter.files.wildcard")).toString()); //$NON-NLS-1$
                 }
                 else {
                     INIProblem problem = new INIProblem(INIProblem.TYPE_ERROR,
                                                             InstallOptionsPlugin.getFormattedString("filter.value.error", //$NON-NLS-1$
                                                                     new Object[]{keyValue.getKey()}));
-                    problem.setFixer(new INIProblemFixer("Correct Filter key value") {
+                    problem.setFixer(new INIProblemFixer(InstallOptionsPlugin.getResourceString("quick.fix.correct.filter.key.value")) { //$NON-NLS-1$
                         protected INIProblemFix[] createFixes()
                         {
                             StringBuffer buf = new StringBuffer(keyValue.getText());
                             if(n == 0) {
-                                buf.append("All Files");
+                                buf.append(InstallOptionsPlugin.getResourceString("filter.files.label")); //$NON-NLS-1$
                             }
-                            buf.append(IInstallOptionsConstants.LIST_SEPARATOR).append("*.*");
+                            buf.append(IInstallOptionsConstants.LIST_SEPARATOR).append(InstallOptionsPlugin.getResourceString("filter.files.wildcard")); //$NON-NLS-1$
                             if(keyValue.getDelimiter()!=null) {
                                 buf.append(keyValue.getDelimiter());
                             }

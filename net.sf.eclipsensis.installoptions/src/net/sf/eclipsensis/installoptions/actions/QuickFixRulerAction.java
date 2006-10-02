@@ -20,6 +20,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.source.*;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.texteditor.*;
 
@@ -28,7 +29,7 @@ public class QuickFixRulerAction extends AbstractRulerActionDelegate
     protected IAction createAction(ITextEditor editor, IVerticalRulerInfo rulerInfo)
     {
         return new SelectQuickFixRulerAction(InstallOptionsPlugin.getDefault().getResourceBundle(),
-                "quick.fix.ruler.action.",editor,rulerInfo);
+                "quick.fix.ruler.action.",editor,rulerInfo); //$NON-NLS-1$
     }
 
     public class SelectQuickFixRulerAction extends SelectMarkerRulerAction
@@ -47,8 +48,7 @@ public class QuickFixRulerAction extends AbstractRulerActionDelegate
             mAnnotationPreferenceLookup= EditorsUI.getAnnotationPreferenceLookup();
             mStore= InstallOptionsPlugin.getDefault().getCombinedPreferenceStore();
 
-            //FIXME Set the help info
-//            PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IJavaHelpContextIds.JAVA_SELECT_MARKER_RULER_ACTION);
+            PlatformUI.getWorkbench().getHelpSystem().setHelp(this, "installoptions_quickfix_context"); //$NON-NLS-1$
         }
 
         public void run()

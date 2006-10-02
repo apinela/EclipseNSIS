@@ -3,13 +3,14 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.properties.tabbed.section;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsElement;
 import net.sf.eclipsensis.installoptions.model.commands.InstallOptionsCommandHelper;
 import net.sf.eclipsensis.job.IJobStatusRunnable;
@@ -41,17 +42,12 @@ public abstract class InstallOptionsElementPropertySection extends AbstractPrope
 
     private TabbedPropertySheetPage mPage;
     private Composite mParent;
-    
+
     public void createControls(Composite parent, TabbedPropertySheetPage page)
     {
         super.createControls(parent, page);
         mPage = page;
-        if(EclipseNSISPlugin.getDefault().isXP()) {
-        	getWidgetFactory().setBorderStyle(SWT.NULL);
-        }
-        else {
-        	getWidgetFactory().setBorderStyle(SWT.BORDER);
-        }
+    	getWidgetFactory().setBorderStyle(SWT.BORDER);
         mParent = getWidgetFactory().createComposite(parent);
         mParent.setLayout(new GridLayout(1,false));
     }
@@ -92,7 +88,7 @@ public abstract class InstallOptionsElementPropertySection extends AbstractPrope
             }
         }
 	}
-    
+
     private InstallOptionsElement getElement(Object input)
     {
         if(input instanceof InstallOptionsElement) {
@@ -132,10 +128,8 @@ public abstract class InstallOptionsElementPropertySection extends AbstractPrope
             final Control c = createSection(newElement, mParent, mPage, mCommandHelper);
             if(c != null) {
                 c.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true));
-                //TODO Is this needed on XP?
                 mParent.getDisplay().asyncExec(new Runnable() {
 					public void run() {
-						// TODO Auto-generated method stub
 						if(!mParent.isDisposed() && !c.isDisposed()) {
 							mParent.getShell().layout(new Control[] {c});
 						}
@@ -145,7 +139,7 @@ public abstract class InstallOptionsElementPropertySection extends AbstractPrope
         }
     }
 
-    public boolean shouldUseExtraSpace() 
+    public boolean shouldUseExtraSpace()
     {
         return true;
     }
@@ -153,33 +147,30 @@ public abstract class InstallOptionsElementPropertySection extends AbstractPrope
     protected Composite createSectionComposite(Composite parent)
     {
         final Composite section = getWidgetFactory().createComposite(parent);
-		if (!EclipseNSISPlugin.getDefault().isXP()) {
-			//TODO Is this also needed for XP?
-			section.setLayoutDeferred(true);
-			final JobScheduler scheduler = EclipseNSISPlugin.getDefault()
-					.getJobScheduler();
-			final Object jobFamily = new Object();
-			section.addControlListener(new ControlAdapter() {
-				private IJobStatusRunnable mRunnable = new IJobStatusRunnable() {
-					public IStatus run(IProgressMonitor monitor) 
-					{
-						if(!section.isDisposed()) {
-							section.setLayoutDeferred(false);
-							section.setLayoutDeferred(true);
-						}
-						return Status.OK_STATUS;
-					}
-				};
-
-				public void controlResized(ControlEvent e) 
+		section.setLayoutDeferred(true);
+		final JobScheduler scheduler = EclipseNSISPlugin.getDefault()
+				.getJobScheduler();
+		final Object jobFamily = new Object();
+		section.addControlListener(new ControlAdapter() {
+			private IJobStatusRunnable mRunnable = new IJobStatusRunnable() {
+				public IStatus run(IProgressMonitor monitor)
 				{
-					if (!scheduler.isScheduled(jobFamily)) {
-						scheduler.scheduleUIJob(jobFamily, "Update layout",
-								mRunnable);
+					if(!section.isDisposed()) {
+						section.setLayoutDeferred(false);
+						section.setLayoutDeferred(true);
 					}
+					return Status.OK_STATUS;
 				}
-			});
-		}
+			};
+
+			public void controlResized(ControlEvent e)
+			{
+				if (!scheduler.isScheduled(jobFamily)) {
+					scheduler.scheduleUIJob(jobFamily, InstallOptionsPlugin.getResourceString("tabbed.property.update.layout.job.name"), //$NON-NLS-1$
+							mRunnable);
+				}
+			}
+		});
 		return section;
     }
 

@@ -232,7 +232,7 @@ public class INISection extends INILine implements IINIContainer
                     INIProblem problem = new INIProblem(INIProblem.TYPE_ERROR, InstallOptionsPlugin.getFormattedString("duplicate.section.name.error", //$NON-NLS-1$
                                                         new String[]{getName()}));
                     addProblem(problem);
-                    problem.setFixer(new INIProblemFixer("Remove duplicate sections") {
+                    problem.setFixer(new INIProblemFixer(InstallOptionsPlugin.getResourceString("quick.fix.remove.dup.sections")) { //$NON-NLS-1$
                         protected INIProblemFix[] createFixes()
                         {
                             List fixes = new ArrayList();
@@ -272,7 +272,7 @@ public class INISection extends INILine implements IINIContainer
                                         numFields = -1;
                                     }
                                     if(numFields != count) {
-                                        fixes.add(new INIProblemFix(keyValue[0],keyValue[0].buildText(Integer.toString(count))+(keyValue[0].getDelimiter()==null?"":keyValue[0].getDelimiter())));
+                                        fixes.add(new INIProblemFix(keyValue[0],keyValue[0].buildText(Integer.toString(count))+(keyValue[0].getDelimiter()==null?"":keyValue[0].getDelimiter()))); //$NON-NLS-1$
                                     }
                                 }
                             }
@@ -303,7 +303,7 @@ public class INISection extends INILine implements IINIContainer
                                                                      InstallOptionsModel.SECTION_SETTINGS,keyValues[i].getKey()}));
                         keyValues[i].addProblem(problem);
                         final INIKeyValue keyValue = keyValues[i];
-                        problem.setFixer(new INIProblemFixer("Remove unrecognized key") {
+                        problem.setFixer(new INIProblemFixer(InstallOptionsPlugin.getResourceString("quick.fix.remove.unrecognized.key")) { //$NON-NLS-1$
                             protected INIProblemFix[] createFixes()
                             {
                                 return new INIProblemFix[] {new INIProblemFix(keyValue)};
@@ -342,7 +342,7 @@ public class INISection extends INILine implements IINIContainer
                     INIProblem problem = new INIProblem(INIProblem.TYPE_ERROR, InstallOptionsPlugin.getFormattedString("required.keys.missing", //$NON-NLS-1$
                                                         new Object[]{buf.toString(), size}));
                     addProblem(problem);
-                    problem.setFixer(new INIProblemFixer("Insert missing keys") {
+                    problem.setFixer(new INIProblemFixer(InstallOptionsPlugin.getResourceString("quick.fix.insert.missing.keys")) { //$NON-NLS-1$
                         protected INIProblemFix[] createFixes()
                         {
                             StringBuffer buf = new StringBuffer(INISection.this.getText());
@@ -378,7 +378,7 @@ public class INISection extends INILine implements IINIContainer
                                                                                              type,keyValues[i].getKey()}));
                                     keyValues[i].addProblem(problem);
                                     final INIKeyValue keyValue = keyValues[i];
-                                    problem.setFixer(new INIProblemFixer("Remove unrecognized key") {
+                                    problem.setFixer(new INIProblemFixer(InstallOptionsPlugin.getResourceString("quick.fix.remove.unrecognized.key")) { //$NON-NLS-1$
                                         protected INIProblemFix[] createFixes()
                                         {
                                             return new INIProblemFix[] {new INIProblemFix(keyValue)};
@@ -399,7 +399,7 @@ public class INISection extends INILine implements IINIContainer
                         INIProblem problem = new INIProblem(INIProblem.TYPE_WARNING, InstallOptionsPlugin.getFormattedString("key.missing.warning", //$NON-NLS-1$
                                                         new Object[]{InstallOptionsModel.PROPERTY_TYPE}));
                         addProblem(problem);
-                        problem.setFixer(new INIProblemFixer("Insert missing key") {
+                        problem.setFixer(new INIProblemFixer(InstallOptionsPlugin.getResourceString("quick.fix.insert.missing.key")) { //$NON-NLS-1$
                             protected INIProblemFix[] createFixes()
                             {
                                 StringBuffer buf = new StringBuffer(INISection.this.getText());

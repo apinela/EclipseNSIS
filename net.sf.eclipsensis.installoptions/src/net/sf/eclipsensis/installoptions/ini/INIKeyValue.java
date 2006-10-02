@@ -72,7 +72,7 @@ public class INIKeyValue extends INILine
                 else {
                     INIProblem problem = new INIProblem(INIProblem.TYPE_ERROR, InstallOptionsPlugin.getFormattedString("duplicate.key.name.error",new String[]{getKey()})); //$NON-NLS-1$
                     addProblem(problem);
-                    problem.setFixer(new INIProblemFixer("Remove duplicate keys") {
+                    problem.setFixer(new INIProblemFixer(InstallOptionsPlugin.getResourceString("quick.fix.remove.dup.keys")) { //$NON-NLS-1$
                         protected INIProblemFix[] createFixes()
                         {
                             INIProblemFix[] fixes = new INIProblemFix[keyValues.length-1];
@@ -109,10 +109,10 @@ public class INIKeyValue extends INILine
                     INIProblem problem = new INIProblem(INIProblem.TYPE_WARNING,InstallOptionsPlugin.getFormattedString("value.length.warning", //$NON-NLS-1$
                                                 new Object[]{getKey(),new Integer(maxLen)}));
                     addProblem(problem);
-                    problem.setFixer(new INIProblemFixer("Correct value length") {
+                    problem.setFixer(new INIProblemFixer(InstallOptionsPlugin.getResourceString("quick.fix.correct.value.length")) { //$NON-NLS-1$
                         protected INIProblemFix[] createFixes()
                         {
-                            return new INIProblemFix[] {new INIProblemFix(INIKeyValue.this,buildText(getValue().substring(0,maxLen))+(getDelimiter()==null?"":getDelimiter()))};
+                            return new INIProblemFix[] {new INIProblemFix(INIKeyValue.this,buildText(getValue().substring(0,maxLen))+(getDelimiter()==null?"":getDelimiter()))}; //$NON-NLS-1$
                         }
                     });
                 }
@@ -125,7 +125,7 @@ public class INIKeyValue extends INILine
             else {
                 INIProblem problem = new INIProblem(INIProblem.TYPE_WARNING,InstallOptionsPlugin.getResourceString("line.ignored.warning")); //$NON-NLS-1$
                 addProblem(problem);
-                problem.setFixer(new INIProblemFixer("Remove line") {
+                problem.setFixer(new INIProblemFixer(InstallOptionsPlugin.getResourceString("quick.fix.remove.line")) { //$NON-NLS-1$
                     protected INIProblemFix[] createFixes()
                     {
                         return new INIProblemFix[] {new INIProblemFix(INIKeyValue.this)};

@@ -19,7 +19,7 @@ public class INIProblemFix
 
     public INIProblemFix(INILine line)
     {
-        this(line,"");
+        this(line,""); //$NON-NLS-1$
     }
 
     public INIProblemFix(String text)
@@ -30,7 +30,7 @@ public class INIProblemFix
     public INIProblemFix(INILine line, String text)
     {
         mLine = line;
-        mText = text==null?"":text;
+        mText = text==null?"":text; //$NON-NLS-1$
     }
 
     public INILine getLine()

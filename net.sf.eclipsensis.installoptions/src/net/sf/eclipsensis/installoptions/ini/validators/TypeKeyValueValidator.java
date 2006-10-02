@@ -32,10 +32,10 @@ public class TypeKeyValueValidator implements IINIKeyValueValidator
             INIProblem problem = new INIProblem(INIProblem.TYPE_WARNING,
                                             InstallOptionsPlugin.getFormattedString("type.value.warning", //$NON-NLS-1$
                                                     new Object[]{InstallOptionsModel.PROPERTY_TYPE}));
-            problem.setFixer(new INIProblemFixer("Set valid Type value") {
+            problem.setFixer(new INIProblemFixer(InstallOptionsPlugin.getResourceString("quick.fix.set.valid.type.value")) { //$NON-NLS-1$
                 protected INIProblemFix[] createFixes()
                 {
-                    return new INIProblemFix[] {new INIProblemFix(keyValue,keyValue.buildText(InstallOptionsModel.TYPE_UNKNOWN)+(keyValue.getDelimiter()==null?"":keyValue.getDelimiter()))};
+                    return new INIProblemFix[] {new INIProblemFix(keyValue,keyValue.buildText(InstallOptionsModel.TYPE_UNKNOWN)+(keyValue.getDelimiter()==null?"":keyValue.getDelimiter()))}; //$NON-NLS-1$
                 }
             });
             keyValue.addProblem(problem);

@@ -1160,7 +1160,7 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
         	InstallOptionsModel.PROPERTY_RTL.equals(property)||
         	InstallOptionsModel.PROPERTY_RECT.equals(property)) {
             if(value instanceof String) {
-                if(((String)value).regionMatches(true,0,"0x",0,2)) {
+                if(((String)value).regionMatches(true,0,"0x",0,2)) { //$NON-NLS-1$
                     return TypeConverter.HEX_CONVERTER;
                 }
             }

@@ -5,7 +5,7 @@
 # All rights reserved.
 # This program is made available under the terms of the Common Public License
 # v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
-# 
+#
 # Contributors:
 #     Sunil Kamath (IcemanK) - initial API and implementation
 ###############################################################################
@@ -51,5 +51,10 @@
     <context id="installoptions_widgeteditor_context">
         <description>The InstallOptions Control Editor dialog is used to create or modify controls in the InstallOptions source editor.</description>
         <topic label="InstallOptions Control Editor" href="help/sourceeditor.html#a_create_control"/>
+    </context>
+    <context id="installoptions_quickfix_context">
+        <description>The InstallOptions Source Editor offers corrections to problems found while typing.</description>
+        <topic label="InstallOptions Source Editor Quick Fix" href="help/sourceeditor.html#a_quickfix"/>
+        <topic label="Source Editor" href="help/sourceeditor.html"/>
     </context>
 </contexts>

@@ -237,12 +237,12 @@ public class InstallOptionsModel implements IPropertyChangeListener
         mControlRequiredSettings.clear();
         for (Iterator iter = controlRequiredSettings.iterator(); iter.hasNext();) {
             String element = (String)iter.next();
-            int n = element.indexOf("=");
+            int n = element.indexOf("="); //$NON-NLS-1$
             if(n > 0) {
                 mControlRequiredSettings.put(element.substring(0,n),element.substring(n+1));
             }
             else {
-                mControlRequiredSettings.put(element,"");
+                mControlRequiredSettings.put(element,""); //$NON-NLS-1$
             }
         }
 

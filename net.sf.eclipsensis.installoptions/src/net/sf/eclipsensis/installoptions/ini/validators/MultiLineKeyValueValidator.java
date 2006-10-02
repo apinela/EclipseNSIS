@@ -62,10 +62,10 @@ public class MultiLineKeyValueValidator implements IINIKeyValueValidator
             INIProblem problem = new INIProblem(INIProblem.TYPE_ERROR,
                                 InstallOptionsPlugin.getFormattedString("missing.cr.error", //$NON-NLS-1$
                                         new Object[]{keyValue.getKey()}));
-            problem.setFixer(new INIProblemFixer("Correct line delimiters") {
+            problem.setFixer(new INIProblemFixer(InstallOptionsPlugin.getResourceString("quick.fix.correct.line.delimis")) { //$NON-NLS-1$
                 protected INIProblemFix[] createFixes()
                 {
-                    return new INIProblemFix[] {new INIProblemFix(keyValue,keyValue.buildText((String)TypeConverter.ESCAPED_STRING_CONVERTER.asType(buf.toString()))+(keyValue.getDelimiter()==null?"":keyValue.getDelimiter()))};
+                    return new INIProblemFix[] {new INIProblemFix(keyValue,keyValue.buildText((String)TypeConverter.ESCAPED_STRING_CONVERTER.asType(buf.toString()))+(keyValue.getDelimiter()==null?"":keyValue.getDelimiter()))}; //$NON-NLS-1$
                 }
             });
             keyValue.addProblem(problem);
@@ -74,10 +74,10 @@ public class MultiLineKeyValueValidator implements IINIKeyValueValidator
             INIProblem problem = new INIProblem(INIProblem.TYPE_WARNING,
                     InstallOptionsPlugin.getFormattedString("missing.lf.warning", //$NON-NLS-1$
                             new Object[]{keyValue.getKey()}));
-            problem.setFixer(new INIProblemFixer("Insert missing LF characters") {
+            problem.setFixer(new INIProblemFixer(InstallOptionsPlugin.getResourceString("quick.fix.insert.missing.lf.chars")) { //$NON-NLS-1$
                 protected INIProblemFix[] createFixes()
                 {
-                    return new INIProblemFix[] {new INIProblemFix(keyValue,keyValue.buildText((String)TypeConverter.ESCAPED_STRING_CONVERTER.asType(buf.toString()))+(keyValue.getDelimiter()==null?"":keyValue.getDelimiter()))};
+                    return new INIProblemFix[] {new INIProblemFix(keyValue,keyValue.buildText((String)TypeConverter.ESCAPED_STRING_CONVERTER.asType(buf.toString()))+(keyValue.getDelimiter()==null?"":keyValue.getDelimiter()))}; //$NON-NLS-1$
                 }
             });
             keyValue.addProblem(problem);

@@ -55,11 +55,11 @@ public class DropListStateKeyValueValidator extends ComboboxStateKeyValueValidat
                     validValues = Common.flatten(valuesList, IInstallOptionsConstants.LIST_SEPARATOR);
                 }
                 else {
-                    validValues = "";
+                    validValues = ""; //$NON-NLS-1$
                 }
             }
             else {
-                validValues = "";
+                validValues = ""; //$NON-NLS-1$
             }
             if((fixFlag & INILine.VALIDATE_FIX_ERRORS) > 0) {
                 keyValue.setValue(validValues); //$NON-NLS-1$
@@ -67,10 +67,10 @@ public class DropListStateKeyValueValidator extends ComboboxStateKeyValueValidat
             else {
                 INIProblem problem = new INIProblem(INIProblem.TYPE_ERROR, InstallOptionsPlugin.getFormattedString("valid.selection.error", //$NON-NLS-1$
                                         new String[]{InstallOptionsModel.PROPERTY_STATE,InstallOptionsModel.PROPERTY_LISTITEMS}));
-                problem.setFixer(new INIProblemFixer("Remove invalid selected values") {
+                problem.setFixer(new INIProblemFixer(InstallOptionsPlugin.getResourceString("quick.fix.remove.invalid.selected.values")) { //$NON-NLS-1$
                     protected INIProblemFix[] createFixes()
                     {
-                        return new INIProblemFix[] {new INIProblemFix(keyValue,keyValue.buildText(validValues)+(keyValue.getDelimiter()==null?"":keyValue.getDelimiter()))};
+                        return new INIProblemFix[] {new INIProblemFix(keyValue,keyValue.buildText(validValues)+(keyValue.getDelimiter()==null?"":keyValue.getDelimiter()))}; //$NON-NLS-1$
                     }
                 });
                 keyValue.addProblem(problem);

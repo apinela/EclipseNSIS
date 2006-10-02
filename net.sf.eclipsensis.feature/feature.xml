@@ -5,7 +5,7 @@
 # All rights reserved.
 # This program is made available under the terms of the Common Public License
 # v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
-# 
+#
 # Contributors:
 #     Sunil Kamath (IcemanK) - initial API and implementation
 ###############################################################################
@@ -51,10 +51,10 @@
       <import plugin="org.eclipse.help.base" version="3.2.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.debug.core" version="3.2.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.debug.ui" version="3.2.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.ui.console" version="3.1.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.core.variables" version="3.1.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.console" version="3.1.100" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.variables" version="3.1.100" match="greaterOrEqual"/>
       <import plugin="org.eclipse.core.expressions" version="3.2.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.ui.externaltools" version="3.1.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.externaltools" version="3.1.100" match="greaterOrEqual"/>
       <import plugin="org.eclipse.update.core" version="3.2.0" match="greaterOrEqual"/>
    </requires>
 

@@ -696,7 +696,7 @@ public class INIFile implements IDocumentListener, IINIContainer, IINIProblemCon
                         addChild(index,sections[0]);
                         sections[0].addChild(keyValue);
                         if(line == null) {
-                            line = new INILine("");
+                            line = new INILine(""); //$NON-NLS-1$
                             sections[0].addChild(line);
                         }
                     }
@@ -705,14 +705,14 @@ public class INIFile implements IDocumentListener, IINIContainer, IINIProblemCon
                                                         new String[]{InstallOptionsModel.SECTION_SETTINGS}));
                         final INISection section = sections[0];
                         final INILine line2 = line;
-                        problem.setFixer(new INIProblemFixer("Add Settings section") {
+                        problem.setFixer(new INIProblemFixer(InstallOptionsPlugin.getResourceString("quick.fix.add.settings.section")) { //$NON-NLS-1$
                             protected INIProblemFix[] createFixes()
                             {
-                                StringBuffer buf = new StringBuffer("");
+                                StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
                                 buf.append(section.buildText(section.getName())).append(section.getDelimiter()==null?INSISConstants.LINE_SEPARATOR:section.getDelimiter());
                                 buf.append(keyValue.buildText(Integer.toString(n))).append(section.getDelimiter()==null?INSISConstants.LINE_SEPARATOR:section.getDelimiter());
                                 if(line2 != null) {
-                                    buf.append(line2.getText()).append(line2.getDelimiter()==null?"":line2.getDelimiter());
+                                    buf.append(line2.getText()).append(line2.getDelimiter()==null?"":line2.getDelimiter()); //$NON-NLS-1$
                                 }
                                 else {
                                     buf.append(INSISConstants.LINE_SEPARATOR);
@@ -740,11 +740,11 @@ public class INIFile implements IDocumentListener, IINIContainer, IINIProblemCon
                         final INISection section = sections[0];
                         INIProblem problem = new INIProblem(INIProblem.TYPE_ERROR, InstallOptionsPlugin.getFormattedString("numfields.section.missing", //$NON-NLS-1$
                                                                         new String[]{InstallOptionsModel.PROPERTY_NUMFIELDS}));
-                        problem.setFixer(new INIProblemFixer("Add NumFields value") {
+                        problem.setFixer(new INIProblemFixer(InstallOptionsPlugin.getResourceString("quick.fix.add.numfields.value")) { //$NON-NLS-1$
                             protected INIProblemFix[] createFixes()
                             {
                                 StringBuffer buf = new StringBuffer(section.getText()).append(section.getDelimiter()==null?INSISConstants.LINE_SEPARATOR:section.getDelimiter());
-                                buf.append(keyValue.buildText(Integer.toString(n))).append(section.getDelimiter()==null?"":section.getDelimiter());
+                                buf.append(keyValue.buildText(Integer.toString(n))).append(section.getDelimiter()==null?"":section.getDelimiter()); //$NON-NLS-1$
                                 return new INIProblemFix[] {new INIProblemFix(section, buf.toString())};
                             }
                         });
@@ -770,10 +770,10 @@ public class INIFile implements IDocumentListener, IINIContainer, IINIProblemCon
                                                                                     new String[]{InstallOptionsModel.PROPERTY_NUMFIELDS,
                                                                                                  InstallOptionsModel.SECTION_FIELD_PREFIX}));
                             final INIKeyValue keyValue = keyValues[0];
-                            problem.setFixer(new INIProblemFixer("Correct NumFields value") {
+                            problem.setFixer(new INIProblemFixer(InstallOptionsPlugin.getResourceString("quick.fix.correct.numfields.value")) { //$NON-NLS-1$
                                 protected INIProblemFix[] createFixes()
                                 {
-                                    return new INIProblemFix[] {new INIProblemFix(keyValue, keyValue.buildText(Integer.toString(n))+(keyValue.getDelimiter()==null?"":keyValue.getDelimiter()))};
+                                    return new INIProblemFix[] {new INIProblemFix(keyValue, keyValue.buildText(Integer.toString(n))+(keyValue.getDelimiter()==null?"":keyValue.getDelimiter()))}; //$NON-NLS-1$
                                 }
                             });
                             keyValues[0].addProblem(problem);
@@ -801,10 +801,10 @@ public class INIFile implements IDocumentListener, IINIContainer, IINIProblemCon
                                                                                 (Integer)entry.getValue(),
                                                                                 InstallOptionsModel.PROPERTY_NUMFIELDS,
                                                                                 numFields2}));
-                        problem.setFixer(new INIProblemFixer("Correct the Field index") {
+                        problem.setFixer(new INIProblemFixer(InstallOptionsPlugin.getResourceString("quick.fix.correct.field.index")) { //$NON-NLS-1$
                             protected INIProblemFix[] createFixes()
                             {
-                                return new INIProblemFix[] {new INIProblemFix(sec, sec.buildText(newName)+(sec.getDelimiter()==null?"":sec.getDelimiter()))};
+                                return new INIProblemFix[] {new INIProblemFix(sec, sec.buildText(newName)+(sec.getDelimiter()==null?"":sec.getDelimiter()))}; //$NON-NLS-1$
                             }
                         });
                         sec.addProblem(problem);
@@ -832,17 +832,17 @@ public class INIFile implements IDocumentListener, IINIContainer, IINIProblemCon
                 INIProblem problem = new INIProblem(INIProblem.TYPE_ERROR,InstallOptionsPlugin.getFormattedString("field.sections.missing", //$NON-NLS-1$
                                         new Object[]{InstallOptionsModel.SECTION_FIELD_PREFIX,
                                         new Integer(missing),missingBuf.toString()}));
-                problem.setFixer(new INIProblemFixer("Add missing Fields") {
+                problem.setFixer(new INIProblemFixer(InstallOptionsPlugin.getResourceString("quick.fix.add.missing.fields")) { //$NON-NLS-1$
                     protected INIProblemFix[] createFixes()
                     {
-                        StringBuffer buf = new StringBuffer("");
+                        StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
                         INILine lastLine = (INILine)(mLines.size()==0?null:mLines.get(mLines.size()-1));
                         INILine previous = lastLine;
                         if(previous != null) {
                             buf.append(previous.getText());
                             if(!Common.isEmpty(previous.getText())) {
                                 buf.append(previous.getDelimiter()==null?INSISConstants.LINE_SEPARATOR:previous.getDelimiter());
-                                previous = new INILine("");
+                                previous = new INILine(""); //$NON-NLS-1$
                                 buf.append(previous.getText());
                             }
                         }
@@ -867,7 +867,7 @@ public class INIFile implements IDocumentListener, IINIContainer, IINIProblemCon
                             }
                             if(i < indexes.length-1) {
                                 buf.append(previous.getDelimiter()==null?INSISConstants.LINE_SEPARATOR:previous.getDelimiter());
-                                previous = new INILine("");
+                                previous = new INILine(""); //$NON-NLS-1$
                                 buf.append(previous.getText());
                             }
                         }

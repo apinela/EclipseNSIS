@@ -57,10 +57,10 @@ public class FlagsKeyValueValidator implements IINIKeyValueValidator
                                                                     InstallOptionsPlugin.getFormattedString("flags.value.warning", //$NON-NLS-1$
                                                                             new Object[]{InstallOptionsModel.PROPERTY_TYPE,
                                                                                          types[0].getValue(),new Integer(n),buf.toString()}));
-                                problem.setFixer(new INIProblemFixer("Remove unrecognized flag(s)") {
+                                problem.setFixer(new INIProblemFixer(InstallOptionsPlugin.getResourceString("quick.fix.remove.unrecognized.flags")) { //$NON-NLS-1$
                                     protected INIProblemFix[] createFixes()
                                     {
-                                        return new INIProblemFix[] {new INIProblemFix(keyValue,keyValue.buildText(Common.flatten(flags, IInstallOptionsConstants.LIST_SEPARATOR))+(keyValue.getDelimiter()!=null?keyValue.getDelimiter():""))};
+                                        return new INIProblemFix[] {new INIProblemFix(keyValue,keyValue.buildText(Common.flatten(flags, IInstallOptionsConstants.LIST_SEPARATOR))+(keyValue.getDelimiter()!=null?keyValue.getDelimiter():""))}; //$NON-NLS-1$
                                     }
                                 });
                                 keyValue.addProblem(problem);

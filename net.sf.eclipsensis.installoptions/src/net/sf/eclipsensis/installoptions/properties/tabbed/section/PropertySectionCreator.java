@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -12,6 +12,7 @@ package net.sf.eclipsensis.installoptions.properties.tabbed.section;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Map;
+import java.util.Stack;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsElement;
@@ -24,10 +25,7 @@ import org.eclipse.jface.viewers.ICellEditorValidator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.custom.CLabel;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -95,7 +93,7 @@ public abstract class PropertySectionCreator implements IPropertySectionCreator
                     if(!isNonUserChange()) {
                         String t = (String)converter.asType(text.getText());
                         if(!Common.stringsAreEqual(getElement().getStringPropertyValue(propertyId), t)) {
-                            commandHelper.propertyChanged(propertyId, 
+                            commandHelper.propertyChanged(propertyId,
                                     descriptor.getDisplayName(), getElement(), t);
                         }
                     }
@@ -103,7 +101,7 @@ public abstract class PropertySectionCreator implements IPropertySectionCreator
             };
 
             helper.connect(text);
-            
+
             final PropertyChangeListener propertyListener = new PropertyChangeListener() {
                 public void propertyChange(PropertyChangeEvent evt)
                 {
@@ -118,11 +116,11 @@ public abstract class PropertySectionCreator implements IPropertySectionCreator
                     }
                     finally {
                         helper.setNonUserChange(false);
-                    }                    
+                    }
                 }
             };
             getElement().addPropertyChangeListener(propertyListener);
-            text.addDisposeListener(new DisposeListener() {               
+            text.addDisposeListener(new DisposeListener() {
                 public void widgetDisposed(DisposeEvent e)
                 {
                     getElement().removePropertyChangeListener(propertyListener);
@@ -187,7 +185,7 @@ public abstract class PropertySectionCreator implements IPropertySectionCreator
                         if(!equal) {
                             String error = (validator==null?null:validator.isValid(newValue));
                             if(Common.isEmpty(error)) {
-                                commandHelper.propertyChanged(propertyId, 
+                                commandHelper.propertyChanged(propertyId,
                                         descriptor.getDisplayName(), getElement(), newValue);
                             }
                             else {
@@ -220,7 +218,7 @@ public abstract class PropertySectionCreator implements IPropertySectionCreator
                     }
                     finally {
                         nonUserChange[0]=false;
-                    }                    
+                    }
                 }
             };
             getElement().addPropertyChangeListener(propertyListener);
@@ -244,5 +242,23 @@ public abstract class PropertySectionCreator implements IPropertySectionCreator
             mNumberVerifyListener = new NumberVerifyListener();
         }
         return mNumberVerifyListener;
+    }
+
+    protected void forceLayout(Composite composite)
+    {
+        Stack deferred = new Stack();
+        Composite parent = composite.getParent();
+        while(parent != null) {
+            if(parent.isLayoutDeferred()) {
+                parent.setLayoutDeferred(false);
+                deferred.push(parent);
+            }
+            parent = parent.getParent();
+        }
+        composite.layout(true,true);
+        while(deferred.size() > 0) {
+            parent = (Composite)deferred.pop();
+            parent.setLayoutDeferred(true);
+        }
     }
 }

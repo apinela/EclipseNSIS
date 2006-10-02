@@ -264,7 +264,7 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
             InstallOptionsModel.PROPERTY_RIGHT.equals(property) ||
             InstallOptionsModel.PROPERTY_BOTTOM.equals(property)) {
             if(value instanceof String) {
-                if(((String)value).regionMatches(true,0,"0x",0,2)) {
+                if(((String)value).regionMatches(true,0,"0x",0,2)) { //$NON-NLS-1$
                     return TypeConverter.HEX_CONVERTER;
                 }
             }

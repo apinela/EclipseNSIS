@@ -52,10 +52,10 @@ public class TextStateKeyValueValidator extends MultiLineKeyValueValidator
                                                                                 InstallOptionsPlugin.getFormattedString("text.state.only.numbers.error", //$NON-NLS-1$
                                                                                         new String[]{InstallOptionsModel.PROPERTY_STATE,
                                                                                         InstallOptionsModel.FLAGS_ONLY_NUMBERS}));
-                                    problem.setFixer(new INIProblemFixer("Remove non-numeric characters") {
+                                    problem.setFixer(new INIProblemFixer(InstallOptionsPlugin.getResourceString("quick.fix.remove.non.numeric.chars")) { //$NON-NLS-1$
                                         protected INIProblemFix[] createFixes()
                                         {
-                                            return new INIProblemFix[] {new INIProblemFix(keyValue,keyValue.buildText(buf.toString())+(keyValue.getDelimiter()==null?"":keyValue.getDelimiter()))};
+                                            return new INIProblemFix[] {new INIProblemFix(keyValue,keyValue.buildText(buf.toString())+(keyValue.getDelimiter()==null?"":keyValue.getDelimiter()))}; //$NON-NLS-1$
                                         }
                                     });
                                     keyValue.addProblem(problem);

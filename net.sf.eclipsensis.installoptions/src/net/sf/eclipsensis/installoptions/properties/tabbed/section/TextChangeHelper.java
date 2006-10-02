@@ -3,14 +3,13 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.properties.tabbed.section;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
-import net.sf.eclipsensis.job.JobScheduler;
 import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.jface.viewers.ICellEditorValidator;
@@ -22,7 +21,6 @@ import org.eclipse.swt.widgets.*;
 public abstract class TextChangeHelper
 {
     private boolean mNonUserChange = false;
-    private JobScheduler mJobScheduler = InstallOptionsPlugin.getDefault().getJobScheduler();
     private Listener mListener =  new Listener() {
         public void handleEvent(Event e)
         {
@@ -118,11 +116,10 @@ public abstract class TextChangeHelper
 
     public void disconnect(Text text)
     {
-        mJobScheduler.cancelJobs(text);
         text.removeListener(SWT.FocusOut,mListener);
         text.removeListener(SWT.KeyDown,mListener);
     }
-    
+
     protected abstract String getResetValue(Text text);
 
     protected abstract void handleTextChange(Text text);

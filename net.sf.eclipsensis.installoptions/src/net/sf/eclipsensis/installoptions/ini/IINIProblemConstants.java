@@ -15,5 +15,5 @@ public interface IINIProblemConstants
     public static final int MISSING_SETTINGS_SECTION = 1;
     public static final int MISSING_NUMFIELD_SECTION = 2;
 
-    public static final String ATTR_RESOLUTION = "RESOLUTION";
+    public static final String ATTR_RESOLUTION = "RESOLUTION"; //$NON-NLS-1$
 }

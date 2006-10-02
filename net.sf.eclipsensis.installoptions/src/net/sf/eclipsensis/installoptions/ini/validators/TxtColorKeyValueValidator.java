@@ -34,10 +34,10 @@ public class TxtColorKeyValueValidator implements IINIKeyValueValidator
                 INIProblem problem = new INIProblem(INIProblem.TYPE_ERROR,
                                                     InstallOptionsPlugin.getFormattedString("txtcolor.value.error", //$NON-NLS-1$
                                                             new String[]{keyValue.getKey()}));
-                problem.setFixer(new INIProblemFixer("Set valid RGB color value") {
+                problem.setFixer(new INIProblemFixer(InstallOptionsPlugin.getResourceString("quick.fix.set.valid.rgb.value")) { //$NON-NLS-1$
                     protected INIProblemFix[] createFixes()
                     {
-                        return new INIProblemFix[] {new INIProblemFix(keyValue,keyValue.buildText(TypeConverter.RGB_CONVERTER.asString(InstallOptionsLink.DEFAULT_TXTCOLOR))+(keyValue.getDelimiter()==null?"":keyValue.getDelimiter()))};
+                        return new INIProblemFix[] {new INIProblemFix(keyValue,keyValue.buildText(TypeConverter.RGB_CONVERTER.asString(InstallOptionsLink.DEFAULT_TXTCOLOR))+(keyValue.getDelimiter()==null?"":keyValue.getDelimiter()))}; //$NON-NLS-1$
                     }
                 });
                 keyValue.addProblem(problem);

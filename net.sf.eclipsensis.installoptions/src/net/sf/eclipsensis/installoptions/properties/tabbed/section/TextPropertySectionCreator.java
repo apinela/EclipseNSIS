@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -74,7 +74,7 @@ public class TextPropertySectionCreator extends EditableElementPropertySectionCr
                                     controls[i].dispose();
                                 }
                                 text[0] = createStatePropertySection(composite, widgetFactory, commandHelper);
-                                composite.layout(true, true);
+                                forceLayout(composite);
                             }
                             else if(supportOnlyNumbers && checkFlag(oldFlags,InstallOptionsModel.FLAGS_ONLY_NUMBERS) != (hasFlag = checkFlag(newFlags,InstallOptionsModel.FLAGS_ONLY_NUMBERS))) {
                                 if(Common.isValid(text[0])) {
@@ -103,7 +103,7 @@ public class TextPropertySectionCreator extends EditableElementPropertySectionCr
 
     protected Text createStatePropertySection(Composite parent, TabbedPropertySheetWidgetFactory widgetFactory, final InstallOptionsCommandHelper commandHelper)
     {
-        Text text = createTextSection(parent, InstallOptionsModel.PROPERTY_STATE, widgetFactory, commandHelper, 
+        Text text = createTextSection(parent, InstallOptionsModel.PROPERTY_STATE, widgetFactory, commandHelper,
                 getWidget().hasFlag(InstallOptionsModel.FLAGS_MULTILINE));
         if(text != null) {
             if(getWidget().hasFlag(InstallOptionsModel.FLAGS_ONLY_NUMBERS)) {

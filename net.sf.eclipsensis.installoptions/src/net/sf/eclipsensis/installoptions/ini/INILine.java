@@ -136,7 +136,7 @@ public class INILine implements Cloneable, Serializable
             }
             else {
                 INIProblem problem = new INIProblem(INIProblem.TYPE_WARNING,InstallOptionsPlugin.getResourceString("line.ignored.warning")); //$NON-NLS-1$
-                problem.setFixer(new INIProblemFixer("Remove line") {
+                problem.setFixer(new INIProblemFixer(InstallOptionsPlugin.getResourceString("quick.fix.remove.line")) { //$NON-NLS-1$
                     protected INIProblemFix[] createFixes()
                     {
                         return new INIProblemFix[] {new INIProblemFix(INILine.this)};

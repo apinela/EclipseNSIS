@@ -35,10 +35,10 @@ public class ToggleKeyValueValidator extends PositiveNumberKeyValueValidator
                     INIProblem problem = new INIProblem(INIProblem.TYPE_ERROR,
                                                         InstallOptionsPlugin.getFormattedString("toggle.value.error", //$NON-NLS-1$
                                                                 new String[]{keyValue.getKey()}));
-                    problem.setFixer(new INIProblemFixer("Set valid value") {
+                    problem.setFixer(new INIProblemFixer(InstallOptionsPlugin.getResourceString("quick.fix.set.valid.value")) { //$NON-NLS-1$
                         protected INIProblemFix[] createFixes()
                         {
-                            return new INIProblemFix[] {new INIProblemFix(keyValue,keyValue.buildText(formatInt(0,radix,prefix))+(keyValue.getDelimiter()==null?"":keyValue.getDelimiter()))};
+                            return new INIProblemFix[] {new INIProblemFix(keyValue,keyValue.buildText(formatInt(0,radix,prefix))+(keyValue.getDelimiter()==null?"":keyValue.getDelimiter()))}; //$NON-NLS-1$
                         }
                     });
                     keyValue.addProblem(problem);

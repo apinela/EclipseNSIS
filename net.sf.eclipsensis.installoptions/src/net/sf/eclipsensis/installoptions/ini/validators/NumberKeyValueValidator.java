@@ -32,11 +32,11 @@ public class NumberKeyValueValidator implements IINIKeyValueValidator
                     else {
                         keyValue.setValue(value);
                         if(b) {
-                            INIProblem problem = new INIProblem(INIProblem.TYPE_ERROR,InstallOptionsPlugin.getFormattedString("positive.numeric.value.error",new String[]{keyValue.getKey()}));
-                            problem.setFixer(new INIProblemFixer("Make numeric value positive") {
+                            INIProblem problem = new INIProblem(INIProblem.TYPE_ERROR,InstallOptionsPlugin.getFormattedString("positive.numeric.value.error",new String[]{keyValue.getKey()})); //$NON-NLS-1$
+                            problem.setFixer(new INIProblemFixer(InstallOptionsPlugin.getResourceString("quick.fix.make.numeric.value.positive")) { //$NON-NLS-1$
                                 protected INIProblemFix[] createFixes()
                                 {
-                                    return new INIProblemFix[] {new INIProblemFix(keyValue,keyValue.buildText(formatInt(-i,radix,prefix))+(keyValue.getDelimiter()==null?"":keyValue.getDelimiter()))};
+                                    return new INIProblemFix[] {new INIProblemFix(keyValue,keyValue.buildText(formatInt(-i,radix,prefix))+(keyValue.getDelimiter()==null?"":keyValue.getDelimiter()))}; //$NON-NLS-1$
                                 }
                             });
                             keyValue.addProblem(problem); //$NON-NLS-1$
@@ -70,10 +70,10 @@ public class NumberKeyValueValidator implements IINIKeyValueValidator
                     keyValue.setValue(value);
                     if(b) {
                         INIProblem problem = new INIProblem(INIProblem.TYPE_ERROR,InstallOptionsPlugin.getFormattedString("numeric.value.error",new String[]{keyValue.getKey()})); //$NON-NLS-1$
-                        problem.setFixer(new INIProblemFixer("Replace with valid numeric value") {
+                        problem.setFixer(new INIProblemFixer(InstallOptionsPlugin.getResourceString("quick.fix.replace.valid.numeric.value")) { //$NON-NLS-1$
                             protected INIProblemFix[] createFixes()
                             {
-                                return new INIProblemFix[] {new INIProblemFix(keyValue,keyValue.buildText(buf.toString())+(keyValue.getDelimiter()==null?"":keyValue.getDelimiter()))};
+                                return new INIProblemFix[] {new INIProblemFix(keyValue,keyValue.buildText(buf.toString())+(keyValue.getDelimiter()==null?"":keyValue.getDelimiter()))}; //$NON-NLS-1$
                             }
                         });
                         keyValue.addProblem(problem);
@@ -92,10 +92,10 @@ public class NumberKeyValueValidator implements IINIKeyValueValidator
                 keyValue.setValue(value);
                 if(b) {
                     INIProblem problem = new INIProblem(INIProblem.TYPE_ERROR,InstallOptionsPlugin.getFormattedString("numeric.value.error",new String[]{keyValue.getKey()})); //$NON-NLS-1$
-                    problem.setFixer(new INIProblemFixer("Set valid numeric value") {
+                    problem.setFixer(new INIProblemFixer(InstallOptionsPlugin.getResourceString("quick.fix.set.valid.numeric.value")) { //$NON-NLS-1$
                         protected INIProblemFix[] createFixes()
                         {
-                            return new INIProblemFix[] {new INIProblemFix(keyValue,keyValue.buildText("0")+(keyValue.getDelimiter()==null?"":keyValue.getDelimiter()))};
+                            return new INIProblemFix[] {new INIProblemFix(keyValue,keyValue.buildText("0")+(keyValue.getDelimiter()==null?"":keyValue.getDelimiter()))}; //$NON-NLS-1$ //$NON-NLS-2$
                         }
                     });
                     keyValue.addProblem(problem);
@@ -112,7 +112,7 @@ public class NumberKeyValueValidator implements IINIKeyValueValidator
      */
     protected int getRadix(final String value)
     {
-        return value.regionMatches(true,0,"0x",0,2)?16:10;
+        return value.regionMatches(true,0,"0x",0,2)?16:10; //$NON-NLS-1$
     }
 
     protected boolean isHexChar(char c)
@@ -137,7 +137,7 @@ public class NumberKeyValueValidator implements IINIKeyValueValidator
             case 16:
                 return value.substring(0,2);
         }
-        return "";
+        return ""; //$NON-NLS-1$
     }
 
     protected int parseInt(String value, int radix)

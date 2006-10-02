@@ -59,8 +59,8 @@ public class InstallOptionsWizardPage extends WizardPage
 {
     public static final String NAME = "installOptionsWizardPage"; //$NON-NLS-1$
 
-    private static final String[] FILTER_EXTENSIONS = Common.loadArrayProperty(InstallOptionsPlugin.getDefault().getResourceBundle(),"ini.file.extensions");
-    private static final String[] FILTER_NAMES = Common.loadArrayProperty(InstallOptionsPlugin.getDefault().getResourceBundle(),"ini.file.names");
+    private static final String[] FILTER_EXTENSIONS = Common.loadArrayProperty(InstallOptionsPlugin.getDefault().getResourceBundle(),"ini.file.extensions"); //$NON-NLS-1$
+    private static final String[] FILTER_NAMES = Common.loadArrayProperty(InstallOptionsPlugin.getDefault().getResourceBundle(),"ini.file.names"); //$NON-NLS-1$
 
     private String[] mEditorIds = {IInstallOptionsConstants.INSTALLOPTIONS_DESIGN_EDITOR_ID,
             IInstallOptionsConstants.INSTALLOPTIONS_SOURCE_EDITOR_ID};
@@ -140,10 +140,10 @@ public class InstallOptionsWizardPage extends WizardPage
         layout = new GridLayout(3,false);
         layout.marginHeight = layout.marginWidth = 0;
         c.setLayout(layout);
-        mSaveLocationTypes = NSISWizardDialogUtil.createRadioGroup(c,new String[] {EclipseNSISPlugin.getResourceString("workspace.save.label"),
-                                                                      EclipseNSISPlugin.getResourceString("filesystem.save.label")},
-                                                                      0,"save.label",true,null,false);
-        mSaveLocation = NSISWizardDialogUtil.createText(c, "","save.location.label",true,null,true);
+        mSaveLocationTypes = NSISWizardDialogUtil.createRadioGroup(c,new String[] {EclipseNSISPlugin.getResourceString("workspace.save.label"), //$NON-NLS-1$
+                                                                      EclipseNSISPlugin.getResourceString("filesystem.save.label")}, //$NON-NLS-1$
+                                                                      0,"save.label",true,null,false); //$NON-NLS-1$
+        mSaveLocation = NSISWizardDialogUtil.createText(c, "","save.location.label",true,null,true); //$NON-NLS-1$ //$NON-NLS-2$
         ((GridData)mSaveLocation.getLayoutData()).horizontalSpan = 1;
         mSaveLocation.addModifyListener(new ModifyListener(){
             public void modifyText(ModifyEvent e)
@@ -155,7 +155,7 @@ public class InstallOptionsWizardPage extends WizardPage
         SelectionAdapter selectionAdapter = new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e)
             {
-                mSaveLocation.setText("");
+                mSaveLocation.setText(""); //$NON-NLS-1$
             }
         };
         mSaveLocationTypes[0].addSelectionListener(selectionAdapter);
@@ -398,7 +398,7 @@ public class InstallOptionsWizardPage extends WizardPage
             path = path.addFileExtension(IInstallOptionsConstants.INI_EXTENSIONS[0]);
         }
         if(!path.isAbsolute()) {
-            Common.openError(getShell(),"Please specify an absolute location for the output file.",InstallOptionsPlugin.getShellImage());
+            Common.openError(getShell(),InstallOptionsPlugin.getResourceString("absolute.save.path.error"),InstallOptionsPlugin.getShellImage()); //$NON-NLS-1$
             return false;
         }
         final boolean saveExternal = mSaveLocationTypes[1].getSelection();

@@ -133,8 +133,8 @@ public class InstallOptionsSourceViewerConfiguration extends SourceViewerConfigu
         return quickAssistAssistant;
     }
 
-    private static Image FIX_ERROR_ICON = InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("fix.errors.action.icon"));
-    private static Image FIX_WARNING_ICON = InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("fix.warnings.action.icon"));
+    private static Image FIX_ERROR_ICON = InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("fix.errors.action.icon")); //$NON-NLS-1$
+    private static Image FIX_WARNING_ICON = InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("fix.warnings.action.icon")); //$NON-NLS-1$
     private class INIProblemQuickFixProposal implements ICompletionProposal
     {
         private INIProblem mProblem;

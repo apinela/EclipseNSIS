@@ -132,7 +132,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
     {
         super();
         InstallOptionsPlugin.checkEditorAssociation();
-        setRulerContextMenuId("#InstallOptionsSourceRulerContext");
+        setRulerContextMenuId("#InstallOptionsSourceRulerContext"); //$NON-NLS-1$
         setPreferenceStore(InstallOptionsPlugin.getDefault().getCombinedPreferenceStore());
         setHelpContextId(PLUGIN_CONTEXT_PREFIX + "installoptions_sourceeditor_context"); //$NON-NLS-1$;
     }

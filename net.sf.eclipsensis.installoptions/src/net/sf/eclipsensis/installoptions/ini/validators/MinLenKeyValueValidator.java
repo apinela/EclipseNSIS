@@ -55,10 +55,10 @@ public class MinLenKeyValueValidator extends PositiveNumberKeyValueValidator
                 else {
                     INIProblem problem = new INIProblem(INIProblem.TYPE_ERROR,InstallOptionsPlugin.getFormattedString("minlen.value.error",new Object[]{ //$NON-NLS-1$
                                                 keyValue.getKey(),new Integer(maxValue)}));
-                    problem.setFixer(new INIProblemFixer("Correct MinLen value") {
+                    problem.setFixer(new INIProblemFixer(InstallOptionsPlugin.getResourceString("quick.fix.correct.minlen.value")) { //$NON-NLS-1$
                         protected INIProblemFix[] createFixes()
                         {
-                            return new INIProblemFix[] {new INIProblemFix(keyValue,keyValue.buildText(formatInt(maxValue, radix, prefix))+(keyValue.getDelimiter()==null?"":keyValue.getDelimiter()))};
+                            return new INIProblemFix[] {new INIProblemFix(keyValue,keyValue.buildText(formatInt(maxValue, radix, prefix))+(keyValue.getDelimiter()==null?"":keyValue.getDelimiter()))}; //$NON-NLS-1$
                         }
                     });
                     keyValue.addProblem(problem);

@@ -146,7 +146,7 @@ public abstract class TypeConverter
     public static final TypeConverter HEX_CONVERTER = new TypeConverter() {
         public String asString(Object o)
         {
-            return (o == null?null:"0x"+Integer.toHexString(((Integer)o).intValue()));
+            return (o == null?null:"0x"+Integer.toHexString(((Integer)o).intValue())); //$NON-NLS-1$
         }
 
         public Object asType(String s)
