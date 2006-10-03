@@ -69,7 +69,7 @@ images2[1].src = "images/properties2cl.gif";
 
 function setImage(img, images, index, id)
 {
-    document.images[img].src = images[index].src; 
+    document.images[img].src = images[index].src;
 	if(id.blur) id.blur();
 }
 //-->
@@ -135,12 +135,15 @@ document.write("<map name='properties2'><area id='tab2' href='javascript: setIma
 </script>
 </div>
 
-<p>Beginning with InstallOptions 0.9.5, the settings are presented in an editable form format. The classic tabular format for editing settings can be accessed by clicking on the &quot;Classic&quot; tab in the Properties view (click on the images above to preview the classic tab).</p>
+<p>Beginning with InstallOptions 0.9.5, the settings editor is form based. The classic (or tabular) settings editor can still be accessed by clicking on the &quot;Classic&quot; tab in the Properties view (click on the images above to preview the classic tab).</p>
 <dl>
-<dt>Editable Form Format</dt>
-<dd>In the editable form format, the various settings are logically grouped and can be directly modified. Settings which are modified using checkboxes, radio buttons and combo boxes are immeditately applied, while settings which are modified using text boxes are applied either when focus is lost or when the Enter key is pressed (Ctrl+Enter for multiline text boxes).</dd>
-<dt>Classic Tabular Format</dt>
-<dd>In the classic tabular format, if a setting is user
+<dt>Form Based</dt>
+<dd>In the form based settings editor, the various settings are logically grouped and can be directly modified.
+Settings which are modified using checkboxes, radio buttons and combo boxes are immediately applied,
+while settings which are modified using text boxes are applied either when text box loses focus or
+when the Enter key is pressed (Ctrl+Enter for multiline text boxes).</dd>
+<dt>Classic (or Tabular)</dt>
+<dd>In the classic (or tabular) settings editor, if a setting is user
 editable, then clicking on the setting value in the Properties view
 enables the user to edit the value. In most cases, the value is
 modifiable directly in the Properties view- either by editing its text
