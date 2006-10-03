@@ -29,8 +29,8 @@
 
    <plugin
          id="net.sf.eclipsensis.source"
-         download-size="895"
-         install-size="1014"
+         download-size="1150"
+         install-size="1289"
          version="0.9.5"
          unpack="false"/>
 

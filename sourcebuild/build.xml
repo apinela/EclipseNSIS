@@ -4,7 +4,7 @@
 # All rights reserved.
 # This program is made available under the terms of the Common Public License
 # v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
-# 
+#
 # Contributors:
 #     Sunil Kamath (IcemanK) - initial API and implementation
 ###############################################################################
@@ -100,6 +100,7 @@
 		<zip destfile="${dest.dir}/src.zip">
 			<fileset dir="${plugin.dir}/src">
 				<exclude name="**/CVS/*"/>
+				<exclude name="**/net/sf/eclipsensis/parser/**/*"/>
 			</fileset>
 		</zip>
 		<copy todir="${dest.dir}/schema" failonerror="false">
@@ -156,6 +157,7 @@
 				<include name="MakeNSISRunner/MakeNSISRunner.ds*"/>
 				<include name="MakeNSISRunner/MakeNSISRunner.mak"/>
 				<include name="net.sf.eclipsensis/**/*"/>
+				<exclude name="net.sf.eclipsensis/src/net/sf/eclipsensis/parser/**/*"/>
 				<exclude name="net.sf.eclipsensis/bin/**/*"/>
 				<exclude name="net.sf.eclipsensis/discards/**/*"/>
 				<exclude name="net.sf.eclipsensis/.settings/**/*"/>
