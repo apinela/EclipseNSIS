@@ -55,6 +55,11 @@ public class NSISOutlineElement
         }
     }
 
+    public boolean hasChildren()
+    {
+        return !Common.isEmptyCollection(mChildren);
+    }
+
     /**
      * @return Returns the children.
      */

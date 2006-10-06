@@ -9,7 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.editor.outline;
 
-import java.util.Iterator;
+import java.util.*;
 
 import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.editor.text.*;
@@ -32,6 +32,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
  */
 public class NSISOutlineContentProvider extends EmptyContentProvider implements INSISConstants
 {
+    private static final NSISOutlineElement[] EMPTY_CHILDREN = new NSISOutlineElement[0];
     public static final String NSIS_OUTLINE = "__nsis_outline"; //$NON-NLS-1$
     public static final String NSIS_OUTLINE_SELECT = "__nsis_outline_select"; //$NON-NLS-1$
 
@@ -66,6 +67,9 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
     private IPositionUpdater mSelectPositionUpdater = new DefaultPositionUpdater(NSIS_OUTLINE_SELECT);
 
     private NSISOutlineElement[] mOutlineElements = null;
+    private NSISOutlineContentResources mResources;
+
+    private List mFilteredTypes;
 
     /**
      * @param page
@@ -73,7 +77,20 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
     public NSISOutlineContentProvider(ITextEditor editor)
     {
         mEditor = editor;
+        mResources = NSISOutlineContentResources.getInstance();
+        mFilteredTypes = new ArrayList(mResources.getFilteredTypes());
+        Collections.sort(mFilteredTypes);
         inputChanged(null, mEditor.getEditorInput());
+    }
+
+    public List getFilteredTypes()
+    {
+        return mFilteredTypes;
+    }
+
+    private boolean isFiltered(String type)
+    {
+        return mFilteredTypes.contains(type);
     }
 
     private NSISOutlineElement openElement(NSISOutlineElement current, NSISOutlineElement element,
@@ -82,7 +99,7 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
         boolean found = false;
         if(!Common.isEmptyArray(invalidParents)) {
             for(int i=0; i<invalidParents.length; i++) {
-                if(NSISOutlineContentResources.getInstance().getTypeIndex(current.getType()) == invalidParents[i]) {
+                if(mResources.getTypeIndex(current.getType()) == invalidParents[i]) {
                     found = true;
                     break;
                 }
@@ -102,7 +119,7 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
             while(current.getType() != ROOT) {
                 boolean found = false;
                 for (int i = 0; i < validTypes.length; i++) {
-                    if(NSISOutlineContentResources.getInstance().getTypeIndex(current.getType()) == validTypes[i]) {
+                    if(mResources.getTypeIndex(current.getType()) == validTypes[i]) {
                         found = true;
                         break;
                     }
@@ -200,7 +217,7 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
                         IRegion region2 = nsisToken.getRegion();
                         Position position = new Position(region2.getOffset(),region2.getLength());
                         StringBuffer name = new StringBuffer(""); //$NON-NLS-1$
-                        int type = NSISOutlineContentResources.getInstance().getTypeIndex(nsisToken.getType());
+                        int type = mResources.getTypeIndex(nsisToken.getType());
                         switch(type) {
                             case DEFINE:
                             case IF:
@@ -466,6 +483,7 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
     {
         if (mOutlineElements != null) {
             mOutlineElements = null;
+            mResources.setFilteredTypes(mFilteredTypes);
         }
     }
 
@@ -482,7 +500,20 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
      */
     public Object[] getElements(Object element)
     {
-        return (mOutlineElements != null?mOutlineElements:new Object[0]);
+        NSISOutlineElement[] elements = EMPTY_CHILDREN;
+        if(!Common.isEmptyArray(mOutlineElements)) {
+            List list = new ArrayList();
+            for (int i = 0; i < mOutlineElements.length; i++) {
+                if(isFiltered(mOutlineElements[i].getType())) {
+                    addChildren(mOutlineElements[i],list);
+                }
+                else {
+                    list.add(mOutlineElements[i]);
+                }
+            }
+            elements = (NSISOutlineElement[])list.toArray(elements);
+        }
+        return elements;
     }
 
     /*
@@ -490,8 +521,18 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
      */
     public boolean hasChildren(Object element)
     {
-        return (element instanceof NSISOutlineElement &&
-                ((NSISOutlineElement)element).getChildren().size() > 0);
+        if(element instanceof NSISOutlineElement) {
+            for (Iterator iter = ((NSISOutlineElement)element).getChildren().iterator(); iter.hasNext();) {
+                NSISOutlineElement child = (NSISOutlineElement)iter.next();
+                if(!isFiltered(child.getType())) {
+                    return true;
+                }
+                else if(hasChildren(child)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /*
@@ -500,7 +541,13 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
     public Object getParent(Object element)
     {
         if (element instanceof NSISOutlineElement) {
-            return ((NSISOutlineElement)element).getParent();
+            NSISOutlineElement parent = ((NSISOutlineElement)element).getParent();
+            if(parent != null) {
+                if(isFiltered(parent.getType())) {
+                    return getParent(parent);
+                }
+            }
+            return parent;
         }
         else {
             return null;
@@ -512,11 +559,26 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
      */
     public Object[] getChildren(Object element)
     {
-        NSISOutlineElement[] children = new NSISOutlineElement[0];
+        NSISOutlineElement[] children = EMPTY_CHILDREN;
         if (element instanceof NSISOutlineElement) {
-            children = (NSISOutlineElement[])((NSISOutlineElement)element).getChildren().toArray(children);
+            List list = new ArrayList();
+            addChildren((NSISOutlineElement)element, list);
+            children = (NSISOutlineElement[])list.toArray(children);
         }
         return children;
+    }
+
+    private void addChildren(NSISOutlineElement element, List list)
+    {
+        for (Iterator iter = element.getChildren().iterator(); iter.hasNext();) {
+            NSISOutlineElement child = (NSISOutlineElement)iter.next();
+            if(isFiltered(child.getType())) {
+                addChildren(child, list);
+            }
+            else {
+                list.add(child);
+            }
+        }
     }
 
     private boolean positionContains(Position position, int offset, int length)
@@ -529,7 +591,7 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
         return findElement(mOutlineElements, offset, length);
     }
 
-    public NSISOutlineElement findElement(Object[] elements, int offset, int length)
+    private NSISOutlineElement findElement(Object[] elements, int offset, int length)
     {
         if(!Common.isEmptyArray(elements)) {
             int low = 0;
@@ -562,7 +624,7 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
         }
         return null;
     }
-    
+
     public void refresh()
     {
         if(mEditor != null) {
@@ -680,7 +742,7 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
                             }
                         }
                     }
-                    String type = NSISOutlineContentResources.getInstance().getType(text);
+                    String type = mResources.getType(text);
 
                     return (type == null?Token.UNDEFINED:new Token(new NSISOutlineData(type, new Region(startOffset,length))));
                 }

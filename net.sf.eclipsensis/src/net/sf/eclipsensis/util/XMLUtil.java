@@ -100,7 +100,7 @@ public class XMLUtil
             return defaultValue;
         }
     }
-    
+
     public static void saveDocument(Document doc, File file) throws TransformerException, IOException
     {
         OutputStream os = null;
@@ -126,11 +126,12 @@ public class XMLUtil
         transformer.setOutputProperty(OutputKeys.METHOD, "xml"); //$NON-NLS-1$
         transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8"); //$NON-NLS-1$
         transformer.setOutputProperty(OutputKeys.INDENT, "yes"); //$NON-NLS-1$
+        transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2"); //$NON-NLS-1$ //$NON-NLS-2$
         DOMSource source = new DOMSource(doc);
 
         transformer.transform(source, result);
     }
-    
+
     public static Document loadDocument(File file) throws IOException, SAXException, ParserConfigurationException
     {
         InputStream is = null;
@@ -140,7 +141,7 @@ public class XMLUtil
         }
         finally {
             IOUtility.closeIO(is);
-        }        
+        }
     }
 
     public static Document loadDocument(InputStream is) throws SAXException, IOException, ParserConfigurationException
@@ -148,7 +149,7 @@ public class XMLUtil
         DocumentBuilder builder= cDocumentBuilderFactory.newDocumentBuilder();
         return builder.parse(new InputSource(is));
     }
-    
+
     public static Document newDocument() throws ParserConfigurationException
     {
         return cDocumentBuilderFactory.newDocumentBuilder().newDocument();
