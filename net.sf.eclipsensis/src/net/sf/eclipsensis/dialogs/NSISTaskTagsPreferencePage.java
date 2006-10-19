@@ -282,70 +282,73 @@ public class NSISTaskTagsPreferencePage extends PreferencePage implements IWorkb
      */
     public boolean performOk()
     {
-        Collection taskTags = (Collection)mTableViewer.getInput();
-        boolean caseSensitive = mCaseSensitiveButton.getSelection();
-        boolean different = (caseSensitive != NSISPreferences.INSTANCE.isCaseSensitiveTaskTags());
-        if(!different) {
-            if(taskTags.size() == mOriginalTags.size()) {
-                for (Iterator iter = taskTags.iterator(); iter.hasNext();) {
-                    if(!mOriginalTags.contains(iter.next())) {
-                        different = true;
-                        break;
+        if (super.performOk()) {
+            Collection taskTags = (Collection)mTableViewer.getInput();
+            boolean caseSensitive = mCaseSensitiveButton.getSelection();
+            boolean different = (caseSensitive != NSISPreferences.INSTANCE.isCaseSensitiveTaskTags());
+            if (!different) {
+                if (taskTags.size() == mOriginalTags.size()) {
+                    for (Iterator iter = taskTags.iterator(); iter.hasNext();) {
+                        if (!mOriginalTags.contains(iter.next())) {
+                            different = true;
+                            break;
+                        }
+                    }
+                }
+                else {
+                    different = true;
+                }
+            }
+            if (different) {
+                if (taskTags.size() > 0) {
+                    boolean defaultFound = false;
+                    for (Iterator iter = taskTags.iterator(); iter.hasNext();) {
+                        NSISTaskTag element = (NSISTaskTag)iter.next();
+                        if (element.isDefault()) {
+                            defaultFound = true;
+                            break;
+                        }
+                    }
+                    if (!defaultFound) {
+                        if (taskTags.size() == 1) {
+                            NSISTaskTag taskTag = (NSISTaskTag)taskTags.toArray()[0];
+                            taskTag.setDefault(true);
+                            mTableViewer.setChecked(taskTag, true);
+                        }
+                        else {
+                            Common.openError(getShell(), EclipseNSISPlugin.getResourceString("task.tag.dialog.missing.default"), EclipseNSISPlugin.getShellImage()); //$NON-NLS-1$
+                            return false;
+                        }
                     }
                 }
             }
-            else {
-                different = true;
-            }
-        }
-        if(different) {
-            if(taskTags.size() > 0) {
-                boolean defaultFound = false;
-                for (Iterator iter = taskTags.iterator(); iter.hasNext();) {
-                    NSISTaskTag element = (NSISTaskTag)iter.next();
-                    if(element.isDefault()) {
-                        defaultFound = true;
-                        break;
-                    }
+            NSISPreferences.INSTANCE.setTaskTags(taskTags);
+            NSISPreferences.INSTANCE.setCaseSensitiveTaskTags(caseSensitive);
+            boolean updateTaskTags = true;
+            if (different) {
+                MessageDialog dialog = new MessageDialog(getShell(), EclipseNSISPlugin.getResourceString("confirm.title"), //$NON-NLS-1$
+                        EclipseNSISPlugin.getShellImage(), EclipseNSISPlugin.getResourceString("task.tags.settings.changed"), MessageDialog.QUESTION, //$NON-NLS-1$
+                        new String[]{IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL}, 0);
+                dialog.setBlockOnOpen(true);
+                int rv = dialog.open();
+                if (rv == 2) {
+                    //Cancel
+                    return false;
                 }
-                if(!defaultFound) {
-                    if(taskTags.size() == 1) {
-                        NSISTaskTag taskTag = (NSISTaskTag)taskTags.toArray()[0];
-                        taskTag.setDefault(true);
-                        mTableViewer.setChecked(taskTag,true);
-                    }
-                    else {
-                        Common.openError(getShell(),EclipseNSISPlugin.getResourceString("task.tag.dialog.missing.default"), EclipseNSISPlugin.getShellImage()); //$NON-NLS-1$
-                        return false;
-                    }
+                else {
+                    updateTaskTags = (rv == 0);
                 }
             }
-        }
-        NSISPreferences.INSTANCE.setTaskTags(taskTags);
-        NSISPreferences.INSTANCE.setCaseSensitiveTaskTags(caseSensitive);
-        boolean updateTaskTags = true;
-        if(different) {
-            MessageDialog dialog = new MessageDialog(getShell(),EclipseNSISPlugin.getResourceString("confirm.title"), //$NON-NLS-1$
-                    EclipseNSISPlugin.getShellImage(),EclipseNSISPlugin.getResourceString("task.tags.settings.changed"),MessageDialog.QUESTION, //$NON-NLS-1$
-                    new String[] {IDialogConstants.YES_LABEL,IDialogConstants.NO_LABEL,IDialogConstants.CANCEL_LABEL},0);
-            dialog.setBlockOnOpen(true);
-            int rv = dialog.open();
-            if(rv == 2) {
-                //Cancel
-                return false;
+            NSISPreferences.INSTANCE.store();
+            NSISEditorUtilities.updatePresentations();
+            if (updateTaskTags) {
+                new NSISTaskTagUpdater().updateTaskTags();
+                mOriginalTags.clear();
+                mOriginalTags.add(taskTags);
             }
-            else {
-                updateTaskTags = (rv == 0);
-            }
+            return true;
         }
-        NSISPreferences.INSTANCE.store();
-        NSISEditorUtilities.updatePresentations();
-        if(updateTaskTags) {
-            new NSISTaskTagUpdater().updateTaskTags();
-        }
-        mOriginalTags.clear();
-        mOriginalTags.add(taskTags);
-        return super.performOk();
+        return false;
     }
 
     /* (non-Javadoc)
