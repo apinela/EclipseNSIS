@@ -21,7 +21,8 @@ public class FileMonitor
     public static final long POLL_INTERVAL;
     public static final int FILE_MODIFIED = 0;
     public static final int FILE_DELETED = 1;
-    
+    public static final int FILE_CREATED = 2;
+
     private Object mLock = new Object();
 
     public static final FileMonitor INSTANCE = new FileMonitor();
@@ -57,7 +58,7 @@ public class FileMonitor
                 return true;
             }
         }
-        return false;    
+        return false;
     }
 
     public boolean stop()
@@ -70,29 +71,29 @@ public class FileMonitor
                 mTask = null;
                 return true;
             }
-        }        
-        return false;    
+        }
+        return false;
     }
 
     public void register(File file, IFileChangeListener listener)
     {
-        if(IOUtility.isValidFile(file)) {
-            FileChangeRegistryEntry entry = (FileChangeRegistryEntry)mRegistry.get(file);
-            if(entry == null) {
-                entry = new FileChangeRegistryEntry();
+        FileChangeRegistryEntry entry = (FileChangeRegistryEntry)mRegistry.get(file);
+        if(entry == null) {
+            entry = new FileChangeRegistryEntry();
+            if(IOUtility.isValidFile(file)) {
                 entry.lastModified = file.lastModified();
-                mRegistry.put(file,entry);
             }
-            for(Iterator iter=entry.listeners.iterator(); iter.hasNext(); ) {
-                if(((WeakReference)iter.next()).get() == listener) {
-                    if(entry.listeners.isEmpty()) {
-                        mRegistry.remove(file);
-                        return;
-                    }
-                }
+            else {
+                entry.lastModified = -1;
             }
-            entry.listeners.add(new WeakReference(listener));
+            mRegistry.put(file,entry);
         }
+        for(Iterator iter=entry.listeners.iterator(); iter.hasNext(); ) {
+            if(((WeakReference)iter.next()).get() == listener) {
+                return;
+            }
+        }
+        entry.listeners.add(new WeakReference(listener));
     }
 
     public void unregister(File file, IFileChangeListener listener)
@@ -103,7 +104,10 @@ public class FileMonitor
                 if(((WeakReference)iter.next()).get() == listener) {
                     iter.remove();
                     if(entry.listeners.isEmpty()) {
-                        mRegistry.remove(file);
+                        if(!entry.removed) {
+                            mRegistry.remove(file);
+                            entry.removed = true;
+                        }
                         return;
                     }
                 }
@@ -113,7 +117,11 @@ public class FileMonitor
 
     public void unregister(File file)
     {
-        mRegistry.remove(file);
+        FileChangeRegistryEntry entry = (FileChangeRegistryEntry)mRegistry.get(file);
+        if(entry != null && !entry.removed) {
+            mRegistry.remove(file);
+            entry.removed = true;
+        }
     }
 
     private class FileChangeTimerTask extends TimerTask
@@ -150,18 +158,20 @@ public class FileMonitor
                     }
                     if(!IOUtility.isValidFile(file)) {
                         /* Yup, it's really gone. Bummer. */
-                        mRegistry.remove(file);
+                        entry.lastModified = -1;
                         fireChanged(FILE_DELETED, file, entry);
                         continue;
                     }
                 }
                 long lastModified = file.lastModified();
                 if(lastModified != entry.lastModified) {
+                    int event = (entry.lastModified == -1?FILE_CREATED:FILE_MODIFIED);
                     entry.lastModified = lastModified;
-                    fireChanged(FILE_MODIFIED, file, entry);
+                    fireChanged(event, file, entry);
                 }
-                if(entry.listeners.isEmpty()) {
+                if(!entry.removed && entry.listeners.isEmpty()) {
                     mRegistry.remove(file);
+                    entry.removed = true;
                 }
             }
         }
@@ -185,5 +195,6 @@ public class FileMonitor
     {
         long lastModified;
         List listeners = new ArrayList();
+        boolean removed = false;
     }
 }

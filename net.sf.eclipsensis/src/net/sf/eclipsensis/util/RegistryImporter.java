@@ -30,6 +30,8 @@ public class RegistryImporter
 
     private static final String REGEDIT_EXE = "regedit.exe"; //$NON-NLS-1$
 
+    private static final long DWORD_MAXVALUE = Long.parseLong("ffffffff", 16); //$NON-NLS-1$
+
     private static String[] cRegFileFilters = Common.tokenize(EclipseNSISPlugin.getResourceString("regfile.filters"),','); //$NON-NLS-1$
     private static String[] cRegFileFilterNames = Common.tokenize(EclipseNSISPlugin.getResourceString("regfile.filter.names"),','); //$NON-NLS-1$
     private static File cRegEdit = null;
@@ -203,8 +205,6 @@ public class RegistryImporter
                         FileInputStream fis = null;
                         BufferedReader br = null;
                         try {
-                            RuntimeException ex = new RuntimeException(EclipseNSISPlugin.getResourceString("invalid.regfile.error")); //$NON-NLS-1$
-
                             boolean isRegEdit4 = false;
                             boolean isRegEdit5 = false;
 
@@ -212,7 +212,7 @@ public class RegistryImporter
                             fis = new FileInputStream(regFile);
                             int n = fis.read(bytes);
                             if(n < bytes.length) {
-                                throw ex;
+                                throwException();
                             }
                             if(bytes[0] == (byte)0xFF && bytes[1] == (byte)0xFE) {
                                 isRegEdit5 = true;
@@ -227,14 +227,14 @@ public class RegistryImporter
                                 br = new BufferedReader(new InputStreamReader(fis,"8859_1")); //$NON-NLS-1$
                             }
                             else {
-                                throw ex;
+                                throwException();
                             }
 
                             String line = br.readLine();
                             if(line != null) {
                                 if ( !(isRegEdit4 && line.equals("REGEDIT4")) && //$NON-NLS-1$
                                      !(isRegEdit5 && line.equals("Windows Registry Editor Version 5.00"))) { //$NON-NLS-1$
-                                    throw ex;
+                                    throwException();
                                 }
                                 String rootKey = null;
                                 String subKey = null;
@@ -321,9 +321,11 @@ public class RegistryImporter
                                                                     value = value.substring(n + 1);
                                                                     if (valueType.equals("dword")) { //$NON-NLS-1$
                                                                         //Validate that it is really a hex value
-                                                                        Integer.parseInt(value, 16);
-                                                                        callback.addRegistryValue(rootKey, subKey, valueName, WinAPI.REG_DWORD, value);
-                                                                        count++;
+                                                                        long l = Long.parseLong(value, 16);
+                                                                        if(l <= DWORD_MAXVALUE) {
+                                                                            callback.addRegistryValue(rootKey, subKey, valueName, WinAPI.REG_DWORD, Long.toString(l));
+                                                                            count++;
+                                                                        }
                                                                         continue;
                                                                     }
                                                                     else if (valueType.equals("hex")) { //$NON-NLS-1$
@@ -375,12 +377,12 @@ public class RegistryImporter
                                                 }
                                             }
                                         }
-                                        throw ex;
+                                        throwException();
                                     }
                                 }
                             }
                             else {
-                                throw ex;
+                                throwException();
                             }
                         }
                         catch (Exception e) {
@@ -394,6 +396,14 @@ public class RegistryImporter
                         }
                     }
                 }
+            }
+
+            /**
+             *
+             */
+            private void throwException()
+            {
+                throw new RuntimeException(EclipseNSISPlugin.getResourceString("invalid.regfile.error")); //$NON-NLS-1$
             }
         });
     }

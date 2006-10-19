@@ -343,6 +343,8 @@ public class NSISTaskTagsPreferencePage extends PreferencePage implements IWorkb
         if(updateTaskTags) {
             new NSISTaskTagUpdater().updateTaskTags();
         }
+        mOriginalTags.clear();
+        mOriginalTags.add(taskTags);
         return super.performOk();
     }
 

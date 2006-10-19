@@ -14,6 +14,7 @@ import java.util.List;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.editor.outline.NSISOutlineContentResources;
+import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.viewer.CollectionContentProvider;
 import net.sf.eclipsensis.viewer.CollectionLabelProvider;
 
@@ -101,6 +102,11 @@ public class NSISOutlineFilterDialog extends StatusMessageDialog
         for (Iterator iter = types.iterator(); iter.hasNext();) {
             String type = (String)iter.next();
             if(mResources.isClosingType(type)) {
+                iter.remove();
+                continue;
+            }
+            String keyword = NSISKeywords.getInstance().getKeyword(type);
+            if(!NSISKeywords.getInstance().isValidKeyword(keyword)) {
                 iter.remove();
             }
         }

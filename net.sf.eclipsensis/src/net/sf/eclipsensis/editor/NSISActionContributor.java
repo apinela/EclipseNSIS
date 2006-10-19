@@ -118,6 +118,7 @@ public class NSISActionContributor extends TextEditorActionContributor implement
             editMenu.add(mInsertColor);
             editMenu.add(mInsertRegFile);
             editMenu.add(mInsertRegKey);
+            editMenu.add(mInsertRegVal);
 		}
         editMenu.addMenuListener(new IMenuListener() {
             public void menuAboutToShow(IMenuManager manager)

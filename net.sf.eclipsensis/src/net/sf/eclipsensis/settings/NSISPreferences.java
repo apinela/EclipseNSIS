@@ -50,12 +50,12 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
     public static final RGB SYNTAX_LANGSTRINGS = new RGB(0x61,0x31,0x1e);
     public static final RGB SYNTAX_TASK_TAGS = new RGB(0x0,0x50,0x50);
     public static final RGB SYNTAX_PLUGINS   = new RGB(0x54,0x4a,0x3d);
-    
+
     public static final NSISPreferences INSTANCE;
 
     public static final Version VERSION_2_07 = new Version("2.07"); //$NON-NLS-1$
     public static final String NSIS_CONFIG_COMPRESSION_SUPPORT="NSIS_CONFIG_COMPRESSION_SUPPORT"; //$NON-NLS-1$
-    
+
     private IPreferenceStore mPreferenceStore = null;
     private File mNSISExe = null;
     private String mNSISHome = null;
@@ -209,7 +209,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
         mTaskTags = (Collection)loadObject(TASK_TAGS);
         initializePreference(CASE_SENSITIVE_TASK_TAGS,Boolean.TRUE);
         mCaseSensitiveTaskTags = getBoolean(CASE_SENSITIVE_TASK_TAGS);
-        
+
         initializePreference(NSIS_COMMAND_VIEW_FLAT_MODE, Boolean.FALSE);
         initializePreference(NSIS_HELP_VIEW_SHOW_NAV, Boolean.TRUE);
         initializePreference(NSIS_HELP_VIEW_SYNCHED, Boolean.TRUE);
@@ -406,14 +406,16 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
     {
         if(file.equals(mNSISExe)) {
             final String message;
-            if(type == FileMonitor.FILE_MODIFIED) {
-                message = EclipseNSISPlugin.getResourceString("makensis.modified.message"); //$NON-NLS-1$
-            }
-            else if(type == FileMonitor.FILE_DELETED) {
-                message = EclipseNSISPlugin.getResourceString("makensis.deleted.message"); //$NON-NLS-1$
-            }
-            else {
-                return;
+            switch(type) {
+                case FileMonitor.FILE_MODIFIED:
+                case FileMonitor.FILE_CREATED:
+                    message = EclipseNSISPlugin.getResourceString("makensis.modified.message"); //$NON-NLS-1$
+                    break;
+                case FileMonitor.FILE_DELETED:
+                    message = EclipseNSISPlugin.getResourceString("makensis.deleted.message"); //$NON-NLS-1$
+                    break;
+                default:
+                    return;
             }
             final String nsisHome = mNSISHome;
             mNSISHome = null;
@@ -471,7 +473,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
                    EclipseNSISPlugin.getResourceString("unconfigured.confirm"), //$NON-NLS-1$
                    EclipseNSISPlugin.getShellImage())) {
                 new NSISConfigWizardDialog(shell).open();
-            }            
+            }
             if (Common.isEmpty(mNSISHome)) {
                 Common.openWarning(shell, EclipseNSISPlugin.getDefault().getName(), EclipseNSISPlugin.getResourceString("unconfigured.warning"), //$NON-NLS-1$
                         EclipseNSISPlugin.getShellImage());

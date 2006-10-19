@@ -36,7 +36,10 @@ public class NSISTaskTagUpdater implements INSISConstants
         try {
             FileEditorInput input = new FileEditorInput(file);
             mDocumentProvider.connect(input);
-            updateTaskTags(file, mDocumentProvider.getDocument(input));
+            IDocument document = mDocumentProvider.getDocument(input);
+            NSISTextUtility.setupPartitioning(document);
+            updateTaskTags(file, document);
+            TextUtilities.removeDocumentPartitioners(document);
             mDocumentProvider.disconnect(input);
         }
         catch (CoreException e) {
@@ -53,39 +56,43 @@ public class NSISTaskTagUpdater implements INSISConstants
                 NSISRegionScanner scanner = new NSISRegionScanner(document);
                 NSISTaskTagRule taskTagRule = new NSISTaskTagRule();
                 for (int i = 0; i < typedRegions.length; i++) {
-                    scanner.setRegion(typedRegions[i]);
-                    LinkedHashMap map = new LinkedHashMap();
-                    while(true) {
-                        int offset = scanner.getOffset();
-                        IToken token = taskTagRule.evaluate(scanner);
-                        if(token.isUndefined()) {
-                            int c = scanner.read();
-                            if(c == ICharacterScanner.EOF) {
-                                break;
+                    String type = typedRegions[i].getType();
+                    if(NSISPartitionScanner.NSIS_MULTILINE_COMMENT.equals(type) ||
+                       NSISPartitionScanner.NSIS_SINGLELINE_COMMENT.equals(type)) {
+                        scanner.setRegion(typedRegions[i]);
+                        LinkedHashMap map = new LinkedHashMap();
+                        while(true) {
+                            int offset = scanner.getOffset();
+                            IToken token = taskTagRule.evaluate(scanner);
+                            if(token.isUndefined()) {
+                                int c = scanner.read();
+                                if(c == ICharacterScanner.EOF) {
+                                    break;
+                                }
+                            }
+                            else {
+                                map.put(new Region(offset,(scanner.getOffset()-offset)),token);
                             }
                         }
-                        else {
-                            map.put(new Region(offset,(scanner.getOffset()-offset)),token);
-                        }
-                    }
-                    if(map.size() > 0) {
-                        Region[] regions = (Region[])map.keySet().toArray(new Region[map.size()]);
-                        for (int j = 0; j < regions.length; j++) {
-                            try {
-                                int line = document.getLineOfOffset(regions[j].getOffset());
-                                IRegion lineRegion = NSISTextUtility.intersection(typedRegions[i],document.getLineInformation(line));
-                                int start = regions[j].getOffset();
-                                int lineEnd = lineRegion.getOffset()+lineRegion.getLength();
+                        if(map.size() > 0) {
+                            Region[] regions = (Region[])map.keySet().toArray(new Region[map.size()]);
+                            for (int j = 0; j < regions.length; j++) {
+                                try {
+                                    int line = document.getLineOfOffset(regions[j].getOffset());
+                                    IRegion lineRegion = NSISTextUtility.intersection(typedRegions[i],document.getLineInformation(line));
+                                    int start = regions[j].getOffset();
+                                    int lineEnd = lineRegion.getOffset()+lineRegion.getLength();
 
-                                while(j < (regions.length-1) && (lineEnd > regions[j+1].getOffset())) {
-                                    createTaskMarker(map, regions[j], file, document, line, start,regions[j+1].getOffset()-start);
-                                    j++;
-                                    start = regions[j].getOffset();
+                                    while(j < (regions.length-1) && (lineEnd > regions[j+1].getOffset())) {
+                                        createTaskMarker(map, regions[j], file, document, line, start,regions[j+1].getOffset()-start);
+                                        j++;
+                                        start = regions[j].getOffset();
+                                    }
+                                    createTaskMarker(map, regions[j], file, document, line, start,lineEnd-start);
+                            }
+                                catch (BadLocationException e1) {
+                                    EclipseNSISPlugin.getDefault().log(e1);
                                 }
-                                createTaskMarker(map, regions[j], file, document, line, start,lineEnd-start);
-                        }
-                            catch (BadLocationException e1) {
-                                EclipseNSISPlugin.getDefault().log(e1);
                             }
                         }
                     }

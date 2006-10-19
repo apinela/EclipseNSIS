@@ -939,4 +939,11 @@
          </description>
      </wizard>
    </extension>
+   <extension
+         point="org.eclipse.ui.externaltools.configurationDuplicationMaps">
+			<configurationMap
+				sourceType="net.sf.eclipsensis.launch.nsisLaunchConfigType"
+				builderType="net.sf.eclipsensis.launch.nsisBuilderLaunchConfigType">
+			</configurationMap>
+   </extension>
 </plugin>

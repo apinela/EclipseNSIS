@@ -20,7 +20,7 @@ import net.sf.eclipsensis.util.*;
 
 class NSISEditorRegistryImportStrategy implements RegistryImporter.IRegistryImportStrategy
 {
-    private static MessageFormat cCreateRegKeyFormat=new MessageFormat("Push $0\r\nPush $1\r\n;{0} = {1}, REG_CREATE_SUBKEY = 0x0004\r\nSystem::Call \"Advapi32::RegCreateKeyExA(i, t, i, t, i, i, i, *i, i) i({1}, ''{2}'', 0, '''', 0, 0x0004, 0, .r0, 0) .r1\"\r\nStrCmp $1 0 +2\r\nSetErrors\r\nStrCmp $0 0 +2\r\nSystem::Call \"Advapi32::RegCloseKey(i) i(r0) .r1\"\r\nPop $1\r\nPop $0"); //$NON-NLS-1$
+    private static MessageFormat cCreateRegKeyFormat=new MessageFormat("Push $0\r\nPush $1\r\n;{0} = {1}, REG_CREATE_SUBKEY = 0x0004\r\nSystem::Call /NOUNLOAD \"Advapi32::RegCreateKeyExA(i, t, i, t, i, i, i, *i, i) i({1}, ''{2}'', 0, '''', 0, 0x0004, 0, .r0, 0) .r1\"\r\nStrCmp $1 0 +2\r\nSetErrors\r\nStrCmp $0 0 +2\r\nSystem::Call /NOUNLOAD \"Advapi32::RegCloseKey(i) i(r0) .r1\"\r\nSystem::Free 0\r\nPop $1\r\nPop $0"); //$NON-NLS-1$
     private static MessageFormat cDeleteRegKeyFormat=new MessageFormat("{0} {1} {2}"); //$NON-NLS-1$
     private static MessageFormat cDeleteRegValueFormat=new MessageFormat("{0} {1} {2} {3}"); //$NON-NLS-1$
     private static MessageFormat cWriteRegValueFormat=new MessageFormat("{0} {1} {2} {3} {4}"); //$NON-NLS-1$
@@ -88,9 +88,6 @@ class NSISEditorRegistryImportStrategy implements RegistryImporter.IRegistryImpo
                 break;
             case WinAPI.REG_DWORD:
                 command = mWriteRegDWORD;
-                if(!data.regionMatches(true, 0, "0x", 0, 2)) { //$NON-NLS-1$
-                    data = "0x" + data; //$NON-NLS-1$
-                }
                 break;
             case WinAPI.REG_EXPAND_SZ:
                 command = mWriteRegExpandStr;

@@ -21,8 +21,7 @@ import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.Region;
-import org.eclipse.jface.text.rules.ICharacterScanner;
-import org.eclipse.jface.text.rules.IToken;
+import org.eclipse.jface.text.rules.*;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -48,6 +47,16 @@ public class NSISTextUtility implements INSISConstants
     {
     }
 
+    public static void setupPartitioning(IDocument document)
+    {
+        if (document instanceof IDocumentExtension3) {
+            IDocumentExtension3 extension3= (IDocumentExtension3) document;
+            IDocumentPartitioner partitioner= new FastPartitioner(new NSISPartitionScanner(), NSISPartitionScanner.NSIS_PARTITION_TYPES);
+            extension3.setDocumentPartitioner(NSISPartitionScanner.NSIS_PARTITIONING, partitioner);
+            partitioner.connect(document);
+        }
+    }
+
     public static int computeOffset(ISourceViewer sourceViewer, int type)
     {
         if (sourceViewer == null) {
@@ -69,7 +78,7 @@ public class NSISTextUtility implements INSISConstants
 
         StyledText widget = sourceViewer.getTextWidget();
         int offset = -1;
-        if((type & COMPUTE_OFFSET_HOVER_LOCATION) > 0) { 
+        if((type & COMPUTE_OFFSET_HOVER_LOCATION) > 0) {
            // does a text hover exist?
             ITextHover textHover= textViewerExtension2.getCurrentTextHover();
             if (textHover == null) {
@@ -94,7 +103,7 @@ public class NSISTextUtility implements INSISConstants
             }
             catch (Exception e) {
                 offset = -1;
-            }            
+            }
         }
         return offset;
     }

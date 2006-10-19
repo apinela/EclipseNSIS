@@ -517,8 +517,8 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
                 fn.addElement(new NSISScriptInstruction("Push",getKeyword("$R2"))); //$NON-NLS-1$ //$NON-NLS-2$
                 fn.addElement(new NSISScriptInstruction("BgImage::SetReturn",new String[]{getKeyword("/NOUNLOAD"),"on"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                 fn.addElement(new NSISScriptInstruction("BgImage::SetBg",new String[]{getKeyword("/NOUNLOAD"),"/GRADIENT", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                										Integer.toString(topColor.red), Integer.toString(topColor.green), 
-                										Integer.toString(topColor.blue), Integer.toString(bottomColor.red), 
+                										Integer.toString(topColor.red), Integer.toString(topColor.green),
+                										Integer.toString(topColor.blue), Integer.toString(bottomColor.red),
                 										Integer.toString(bottomColor.green), Integer.toString(bottomColor.blue)}));
                 fn.addElement(new NSISScriptInstruction("Pop","$R1")); //$NON-NLS-1$ //$NON-NLS-2$
                 fn.addElement(new NSISScriptInstruction("Strcmp",new String[]{getKeyword("$R1"),"success","0","error"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
@@ -538,7 +538,7 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
                 }
                 fn.addElement(new NSISScriptInstruction("CreateFont",new String[]{getKeyword("$R1"),"Times New Roman","26","700",getKeyword("/ITALIC")})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
                 fn.addElement(new NSISScriptInstruction("BGImage::AddText",new String[]{getKeyword("/NOUNLOAD"),Common.quote("$(^SetupCaption)"),getKeyword("$R1"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-								                		Integer.toString(textColor.red), Integer.toString(textColor.green), 
+								                		Integer.toString(textColor.red), Integer.toString(textColor.green),
 														Integer.toString(textColor.blue),"16","8","500","100"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
                 fn.addElement(new NSISScriptInstruction("Pop",getKeyword("$R1"))); //$NON-NLS-1$ //$NON-NLS-2$
                 fn.addElement(new NSISScriptInstruction("Strcmp",new String[]{getKeyword("$R1"),"success","0","error"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
@@ -1087,12 +1087,13 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
             macro.addElement(new NSISScriptInstruction("Push",getKeyword("$0"))); //$NON-NLS-1$ //$NON-NLS-2$
             macro.addElement(new NSISScriptInstruction("Push",getKeyword("$1"))); //$NON-NLS-1$ //$NON-NLS-2$
 
-            macro.addElement(new NSISScriptInstruction("System::Call",getKeyword("Advapi32::RegCreateKeyExA(i, t, i, t, i, i, i, *i, i) i(${ROOT_KEY}, '${SUB_KEY}', 0, '', 0, ${KEY_CREATE_SUB_KEY}, 0, .r0, 0) .r1"))); //$NON-NLS-1$ //$NON-NLS-2$
+            macro.addElement(new NSISScriptInstruction("System::Call",new String[] {"/NOUNLOAD",getKeyword("Advapi32::RegCreateKeyExA(i, t, i, t, i, i, i, *i, i) i(${ROOT_KEY}, '${SUB_KEY}', 0, '', 0, ${KEY_CREATE_SUB_KEY}, 0, .r0, 0) .r1")})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             macro.addElement(new NSISScriptInstruction("StrCmp",new String[] {"$1", "0", "+2"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
             macro.addElement(new NSISScriptInstruction("SetErrors")); //$NON-NLS-1$
             macro.addElement(new NSISScriptInstruction("StrCmp",new String[] {"$0", "0", "+2"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-            macro.addElement(new NSISScriptInstruction("System::Call",getKeyword("Advapi32::RegCloseKey(i) i(r0) .r1"))); //$NON-NLS-1$ //$NON-NLS-2$
+            macro.addElement(new NSISScriptInstruction("System::Call",new String[] {"/NOUNLOAD",getKeyword("Advapi32::RegCloseKey(i) i(r0) .r1")})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
+            macro.addElement(new NSISScriptInstruction("System::Free","0")); //$NON-NLS-1$ //$NON-NLS-2$
             macro.addElement(new NSISScriptInstruction("Pop",getKeyword("$1"))); //$NON-NLS-1$ //$NON-NLS-2$
             macro.addElement(new NSISScriptInstruction("Pop",getKeyword("$0"))); //$NON-NLS-1$ //$NON-NLS-2$
             mScript.insertElement(mSectionsPlaceHolder,new NSISScriptBlankLine());

@@ -9,23 +9,18 @@
  *******************************************************************************/
 package net.sf.eclipsensis.editor;
 
-import net.sf.eclipsensis.editor.text.NSISPartitionScanner;
+import net.sf.eclipsensis.editor.text.NSISTextUtility;
 
 import org.eclipse.core.filebuffers.IDocumentSetupParticipant;
-import org.eclipse.jface.text.*;
-import org.eclipse.jface.text.rules.FastPartitioner;
+import org.eclipse.jface.text.IDocument;
 
 public class NSISDocumentSetupParticipant implements IDocumentSetupParticipant
 {
     /*
      * @see org.eclipse.core.filebuffers.IDocumentSetupParticipant#setup(org.eclipse.jface.text.IDocument)
      */
-    public void setup(IDocument document) {
-        if (document instanceof IDocumentExtension3) {
-            IDocumentExtension3 extension3= (IDocumentExtension3) document;
-            IDocumentPartitioner partitioner= new FastPartitioner(new NSISPartitionScanner(), NSISPartitionScanner.NSIS_PARTITION_TYPES);
-            extension3.setDocumentPartitioner(NSISPartitionScanner.NSIS_PARTITIONING, partitioner);
-            partitioner.connect(document);
-        }
+    public void setup(IDocument document)
+    {
+        NSISTextUtility.setupPartitioning(document);
     }
 }

@@ -480,7 +480,10 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
                         subKey = ""; //$NON-NLS-1$
                     }
                     NSISEditorRegistryImportStrategy strategy = new NSISEditorRegistryImportStrategy();
-                    strategy.addRegistryValue(rootKey, subKey, mRegValue.getValue(),mRegValue.getType(),mRegValue.getData());
+                    String value = mRegValue.getValue();
+                    int type = mRegValue.getType();
+                    String data = mRegValue.getData();
+                    strategy.addRegistryValue(rootKey, subKey, value,type,data);
                     text = strategy.getText();
                 }
                 break;
@@ -811,7 +814,7 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
         public void customizeDocumentCommand(IDocument doc, DocumentCommand cmd)
         {
             if(mUseSpacesForTabs) {
-                if (cmd.length == 0 && cmd.text != null) {
+                if (cmd.text != null) {
                     cmd.text = convertTabsToSpaces(doc, cmd.offset, cmd.text, mTabWidth);
                 }
             }
