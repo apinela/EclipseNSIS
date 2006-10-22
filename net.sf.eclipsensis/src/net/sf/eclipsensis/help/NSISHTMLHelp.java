@@ -57,10 +57,10 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
     private static final String IMAGE_LOCATION_FORMAT = EclipseNSISPlugin.getResourceString("help.browser.throbber.icon.format"); //$NON-NLS-1$
     private static final int IMAGE_COUNT = Integer.parseInt(EclipseNSISPlugin.getResourceString("help.browser.throbber.icon.count")); //$NON-NLS-1$
     private static final String HIGHLIGHT_JS_CONTENT;
-    
+
     private boolean mShowNav;
     private boolean mSynched;
-    
+
     private Browser mBrowser;
     private ProgressBar mProgressBar;
     private Label mStatusText;
@@ -121,7 +121,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
                                 location = null;
                             }
                         }
-                        if(location == null) {
+                        if(location != null) {
                             File f = new File(location);
                             if(f.exists()) {
                                 location = IOUtility.getFileURLString(f);
@@ -173,7 +173,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
         }
         HIGHLIGHT_JS_CONTENT = highlighJSContent;
     }
-    
+
     public static boolean showHelp(final String url)
     {
         final boolean[] result = {false};
@@ -230,9 +230,9 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
     {
         mShowNav = NSISPreferences.INSTANCE.getBoolean(INSISPreferenceConstants.NSIS_HELP_VIEW_SHOW_NAV);
         mSynched = NSISPreferences.INSTANCE.getBoolean(INSISPreferenceConstants.NSIS_HELP_VIEW_SYNCHED);
-        
+
         initResources();
-        
+
         mSashForm = new SashForm(parent, SWT.HORIZONTAL|SWT.SMOOTH);
         createNavigationPane(mSashForm);
         Composite composite = new Composite(mSashForm,SWT.NONE);
@@ -270,7 +270,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
         data.right = new FormAttachment(100, 0);
         data.bottom = new FormAttachment(mStatusText, -5, SWT.DEFAULT);
         mSashForm.setLayoutData(data);
-        
+
         mBrowser.addLocationListener(new LocationListener() {
             public void changed(LocationEvent event)
             {
@@ -341,7 +341,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
                 }
             }
         });
-        
+
         init();
         NSISHelpURLProvider.getInstance().addListener(mHelpURLListener);
     }
@@ -414,7 +414,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
         Table table = mSearchViewer.getTable();
         table.setSortColumn(null);
         table.setSortDirection(SWT.NONE);
-        
+
         openHelp();
     }
 
@@ -487,7 +487,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
             }
         }
     }
-    
+
     private void resizeColumn(TableColumn column)
     {
         Table table = column.getParent();
@@ -513,24 +513,24 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
         item = new TabItem(mNavigationPane, SWT.NONE);
         item.setText(EclipseNSISPlugin.getResourceString("help.browser.index.tab.label")); //$NON-NLS-1$
         item.setControl(createIndexTab(mNavigationPane));
-        
+
         item = new TabItem(mNavigationPane, SWT.NONE);
         item.setText(EclipseNSISPlugin.getResourceString("help.browser.search.tab.label")); //$NON-NLS-1$
         item.setControl(createSearchTab(mNavigationPane));
     }
-    
+
     private Composite createSearchTab(Composite parent)
     {
         Composite searchComposite = new Composite(parent, SWT.NONE);
         GridLayout layout = new GridLayout(1,false);
         searchComposite.setLayout(layout);
-        
+
         Composite composite = new Composite(searchComposite, SWT.NONE);
         composite.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false));
         layout = new GridLayout(2,false);
         layout.marginWidth = layout.marginHeight = 0;
         composite.setLayout(layout);
-        
+
         Label l = new Label(composite,SWT.WRAP);
         l.setText(EclipseNSISPlugin.getResourceString("help.browser.search.box.label")); //$NON-NLS-1$
         GridData data = new GridData(SWT.FILL,SWT.CENTER,true,false);
@@ -561,7 +561,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
         layout = new GridLayout(2,false);
         layout.marginWidth = layout.marginHeight = 0;
         composite.setLayout(layout);
-        
+
         final Text searchText = new Text(composite, SWT.BORDER);
         searchText.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false));
         final Button b = new Button(composite,SWT.ARROW|SWT.RIGHT);
@@ -573,7 +573,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
             {
                 MenuItem mi = (MenuItem)e.widget;
                 searchText.insert(mi.getText());
-            }            
+            }
         };
         String[] labels = {" AND "," OR "," NOT "}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         for (int i = 0; i < labels.length; i++) {
@@ -581,7 +581,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
             mi.setText(labels[i]);
             mi.addSelectionListener(menuAdapter);
         }
-        
+
         b.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e)
             {
@@ -597,14 +597,14 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
                 }
             }
         });
-        
+
         composite = new Composite(searchComposite, SWT.NONE);
         composite.setLayoutData(new GridData(SWT.RIGHT,SWT.FILL,true,false));
         layout = new GridLayout(2,true);
         layout.marginWidth = layout.marginHeight = 0;
         layout.horizontalSpacing=40;
         composite.setLayout(layout);
-        
+
         final Button listTopics = new Button(composite,SWT.PUSH);
         listTopics.setText(EclipseNSISPlugin.getResourceString("help.browser.list.topics.label")); //$NON-NLS-1$
         listTopics.setLayoutData(new GridData(SWT.FILL,SWT.FILL,false,false));
@@ -616,7 +616,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
                 listTopics.setEnabled(!Common.isEmpty(searchText.getText()));
             }
         });
-        
+
         Button display = new Button(composite,SWT.PUSH);
         display.setText(EclipseNSISPlugin.getResourceString("help.browser.display.label")); //$NON-NLS-1$
         display.setLayoutData(new GridData(SWT.FILL,SWT.FILL,false,false));
@@ -631,10 +631,10 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
         data = new GridData(SWT.FILL,SWT.FILL,false,false);
         data.widthHint = 70;
         l.setLayoutData(data);
-        
+
         l = new Label(composite,SWT.NONE);
         l.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false));
-        
+
         final MessageFormat foundFormat = new MessageFormat(EclipseNSISPlugin.getResourceString("help.browser.search.results.count.format")); //$NON-NLS-1$
         final Integer[] foundArgs = { Common.ZERO };
         final Label found = new Label(composite,SWT.NONE);
@@ -642,7 +642,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
         data = new GridData(SWT.FILL,SWT.FILL,false,false);
         data.widthHint = 120;
         found.setLayoutData(data);
-        
+
         final Table table = new Table(searchComposite, SWT.SINGLE|SWT.BORDER|SWT.FULL_SELECTION|SWT.V_SCROLL|SWT.H_SCROLL);
         final TableColumn titleColumn = new TableColumn(table,SWT.NONE);
         titleColumn.setText(EclipseNSISPlugin.getResourceString("help.browser.search.title.label")); //$NON-NLS-1$
@@ -653,7 +653,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
         table.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true));
         final TableResizer tableResizer = new TableResizer(new double[] {4,1});
         table.addControlListener(tableResizer);
-        
+
         final Comparator sortComparator = new Comparator()
         {
             public int compare(Object o1, Object o2)
@@ -672,7 +672,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
                 return (sortDir==SWT.DOWN?-cmp:cmp);
             }
         };
-        
+
         SelectionListener colummSortListener = new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e)
             {
@@ -689,14 +689,14 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
                         t.setSortColumn(col);
                         t.setSortDirection(SWT.UP);
                     }
-                    
+
                     Arrays.sort(results, sortComparator);
                     resizeColumn(col);
                     mSearchViewer.refresh();
                 }
             }
         };
-        
+
         titleColumn.addSelectionListener(colummSortListener);
         rankColumn.addSelectionListener(colummSortListener);
 
@@ -720,12 +720,12 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
         final Button searchPrevious = new Button(searchComposite,SWT.CHECK);
         searchPrevious.setText(EclipseNSISPlugin.getResourceString("help.browser.search.previous.results.label")); //$NON-NLS-1$
         searchPrevious.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false));
-        
+
         final Button useStemming = new Button(searchComposite,SWT.CHECK);
         useStemming.setSelection(true);
         useStemming.setText(EclipseNSISPlugin.getResourceString("help.browser.search.stemmed.label")); //$NON-NLS-1$
         useStemming.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false));
-        
+
         final Button searchTitles = new Button(searchComposite,SWT.CHECK);
         searchTitles.setText(EclipseNSISPlugin.getResourceString("help.browser.search.titles.label")); //$NON-NLS-1$
         searchTitles.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false));
@@ -781,7 +781,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
                                     keywords.append("\"").append(term.replaceAll("\\\"","\\\\\"")).append("\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
                                     regex.append(isRegex);
                                 }
-                                
+
                                 final StringBuffer js = new StringBuffer(""); //$NON-NLS-1$
                                 mHighlightJSPrefix.format(new String[] {keywords.toString(),regex.toString()},js,null);
                                 js.append(HIGHLIGHT_JS_CONTENT);
@@ -834,14 +834,14 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
                 }
             }
         });
-        
+
         listTopics.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e)
             {
                 searchRunnable.run();
             }
         });
-        
+
         return searchComposite;
     }
 
@@ -850,13 +850,13 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
         Composite indexComposite = new Composite(parent, SWT.NONE);
         GridLayout layout = new GridLayout(1,false);
         indexComposite.setLayout(layout);
-        
+
         Label l = new Label(indexComposite, SWT.NONE);
         l.setText(EclipseNSISPlugin.getResourceString("help.browser.index.keyword.label")); //$NON-NLS-1$
         l.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false));
         final Text indexText = new Text(indexComposite, SWT.BORDER);
         indexText.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false));
-        
+
         List list = new List(indexComposite, SWT.BORDER|SWT.SINGLE|SWT.V_SCROLL);
         list.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true));
         mIndexViewer = new ListViewer(list);
@@ -1117,7 +1117,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
         mToolBar.setLayoutData(data);
 
         createNavToolItems();
-        
+
         // Add a button to navigate backwards through previously visited pages
         mBackButton = createToolItem(mToolBar,"help.browser.back.tooltip", //$NON-NLS-1$
                                CommonImages.BROWSER_BACK_ICON);
@@ -1170,7 +1170,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
     }
 
     /**
-     * 
+     *
      */
     private void createNavToolItems()
     {
@@ -1388,14 +1388,14 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
     {
         private NSISHelpIndexEntry mEntry;
         private NSISHelpIndexURL mURL;
-        
+
         public NSISHelpIndexEntryDialog(Shell parent, NSISHelpIndexEntry entry)
         {
             super(parent);
             mEntry = entry;
             mURL = (NSISHelpIndexURL)mEntry.getURLs().get(0);
         }
-        
+
         public NSISHelpIndexURL getURL()
         {
             return mURL;
@@ -1420,24 +1420,24 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
             Label l = new Label(parent,SWT.NONE);
             l.setText(EclipseNSISPlugin.getResourceString("help.browser.index.entry.dialog.header")); //$NON-NLS-1$
             l.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false));
-            
+
             Table table = new Table(parent,SWT.BORDER|SWT.SINGLE|SWT.FULL_SELECTION|SWT.V_SCROLL|SWT.H_SCROLL);
             initializeDialogUnits(table);
             GridData data = new GridData(SWT.FILL,SWT.FILL,true,true);
             data.widthHint = convertWidthInCharsToPixels(80);
             data.heightHint = convertHeightInCharsToPixels(10);
             table.setLayoutData(data);
-            
+
             TableColumn col = new TableColumn(table,SWT.NONE);
             col.setText(EclipseNSISPlugin.getResourceString("help.browser.title.label")); //$NON-NLS-1$
             col = new TableColumn(table,SWT.NONE);
             col.setText(EclipseNSISPlugin.getResourceString("help.browser.location.label")); //$NON-NLS-1$
-            
+
             table.setLinesVisible(false);
             table.setHeaderVisible(true);
-            
+
             table.addControlListener(new TableResizer(new double[] {1,1}));
-            
+
             final TableViewer viewer = new TableViewer(table);
             viewer.setContentProvider(new EmptyContentProvider() {
                 public Object[] getElements(Object inputElement)
@@ -1480,7 +1480,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
             viewer.setSelection(new StructuredSelection(mURL));
             return parent;
         }
-        
+
         private boolean updateURL(ISelection sel)
         {
             if(!sel.isEmpty() && sel instanceof IStructuredSelection) {
@@ -1491,10 +1491,10 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
             return false;
         }
     }
-    
+
     private static final String SEARCHING_DIALOG_TITLE = EclipseNSISPlugin.getResourceString("searching.dialog.title"); //$NON-NLS-1$
     private static final String SEARCHING_DIALOG_MESSAGE = EclipseNSISPlugin.getResourceString("searching.dialog.message"); //$NON-NLS-1$
-    
+
     private class SearchingDialog extends Dialog implements INSISHelpSearchRequester
     {
         private String mSearchText = ""; //$NON-NLS-1$
@@ -1521,7 +1521,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
             }
             return size;
         }
-        
+
         public Filter getFilter()
         {
             if(mSearchPrevious && mQuery != null) {
@@ -1566,7 +1566,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
         {
             return mCanceled;
         }
-        
+
         public Collection getTerms()
         {
             return mTerms;
@@ -1631,9 +1631,9 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
             GridData data = new GridData(SWT.CENTER,SWT.CENTER,true,true);
             composite.setLayoutData(data);
             composite.setFont(parent.getFont());
-           
+
             createButton(composite, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
-            
+
             return composite;
         }
 
@@ -1645,6 +1645,6 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
             l.setLayoutData(new GridData(SWT.CENTER,SWT.FILL,true,true));
             return composite;
         }
-        
+
     }
 }

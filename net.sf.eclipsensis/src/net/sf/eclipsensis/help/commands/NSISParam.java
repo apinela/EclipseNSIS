@@ -131,10 +131,28 @@ public abstract class NSISParam
         private boolean mEnabled = true;
         private Map mSettings = null;
         private INSISParamEditor mParentEditor;
+        private boolean mRequiredFields;
 
         public NSISParamEditor(INSISParamEditor parentEditor)
         {
             mParentEditor = parentEditor;
+        }
+
+        public boolean hasRequiredFields()
+        {
+            if(!mRequiredFields) {
+                List childEditors = getChildEditors();
+                if(!Common.isEmptyCollection(childEditors)) {
+                    for (Iterator iter = childEditors.iterator(); iter.hasNext();) {
+                        INSISParamEditor child = (INSISParamEditor)iter.next();
+                        if(child.hasRequiredFields()) {
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            }
+            return true;
         }
 
         public void clear()
@@ -164,6 +182,7 @@ public abstract class NSISParam
                     ((INSISParamEditor)iter.next()).dispose();
                 }
             }
+            mRequiredFields = false;
         }
 
         public INSISParamEditor getParentEditor()
@@ -276,7 +295,8 @@ public abstract class NSISParam
             }
             if(!emptyName) {
                 if(!isOptional()) {
-                    mNameLabel = NSISWizardDialogUtil.createLabel(parent, null, true, null, shouldDecorate());
+                    mRequiredFields = shouldDecorate();
+                    mNameLabel = NSISWizardDialogUtil.createLabel(parent, null, true, null, mRequiredFields);
                     mNameLabel.setText(getName());
                     Control layoutControl = NSISWizardDialogUtil.getLayoutControl(mNameLabel);
                     layoutControl.setLayoutData(new GridData(SWT.FILL,SWT.CENTER,false,false));

@@ -5,12 +5,23 @@
 # All rights reserved.
 # This program is made available under the terms of the Common Public License
 # v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
-# 
+#
 # Contributors:
 #     Sunil Kamath (IcemanK) - initial API and implementation
 ###############################################################################
 -->
 <commands>
+  <version name="2.21">
+    <add>
+      <command name="RequestExecutionLevel" category="general.attributes.category">
+        <param type="choice" default="0">
+          <choice value="none"/>
+          <choice value="user"/>
+          <choice value="admin"/>
+        </param>
+      </command>
+    </add>
+  </version>
   <version name="2.16">
     <add>
       <command name="!define" category="conditional.compilation.category">
@@ -21,12 +32,12 @@
               <param name="/utcdate" type="static"/>
             </param>
             <param name="gflag" type="string"/>
-            <param name="value" type="string" allowBlank="true" optional="true"/>              
+            <param name="value" type="string" allowBlank="true" optional="true"/>
           </param>
           <param type="group">
             <param name="/math" type="static"/>
             <param name="gflag" type="string"/>
-            <param name="val1" type="number" acceptVar="false"/>              
+            <param name="val1" type="number" acceptVar="false"/>
             <param name="OP" type="choice">
               <choice value="+"/>
               <choice value="-"/>
@@ -34,7 +45,7 @@
               <choice value="/"/>
               <choice value="%"/>
             </param>
-            <param name="val2" type="number" acceptVar="false"/>              
+            <param name="val2" type="number" acceptVar="false"/>
           </param>
         </param>
       </command>
@@ -47,12 +58,12 @@
           <param type="group">
             <param name="/date" type="static" optional="true" depends="2"/>
             <param name="gflag" type="string"/>
-            <param name="value" type="string" allowBlank="true" optional="true"/>              
+            <param name="value" type="string" allowBlank="true" optional="true"/>
           </param>
           <param type="group">
             <param name="/math" type="static"/>
             <param name="gflag" type="string"/>
-            <param name="val1" type="number" acceptVar="false"/>              
+            <param name="val1" type="number" acceptVar="false"/>
             <param name="OP" type="choice">
               <choice value="+"/>
               <choice value="-"/>
@@ -60,7 +71,7 @@
               <choice value="/"/>
               <choice value="%"/>
             </param>
-            <param name="val2" type="number" acceptVar="false"/>              
+            <param name="val2" type="number" acceptVar="false"/>
           </param>
         </param>
       </command>
@@ -87,7 +98,7 @@
             <choice display="and.label" value="&amp;&amp;"/>
             <choice display="or.label" value="||"/>
           </param>
-          <param name="value2" type="number" acceptVar="false"/>              
+          <param name="value2" type="number" acceptVar="false"/>
         </param>
       </command>
     </add>
@@ -167,7 +178,7 @@
       <command name="!define" category="conditional.compilation.category">
         <param name="/date" type="static" optional="true" depends="2"/>
         <param name="gflag" type="string"/>
-        <param name="value" type="string" allowBlank="true" optional="true"/>              
+        <param name="value" type="string" allowBlank="true" optional="true"/>
       </command>
       <command name="File" category="basic.instructions.category">
         <param name="/nonfatal" type="static" optional="true"/>
@@ -282,7 +293,7 @@
       </command>
       <command name="!define" category="conditional.compilation.category">
         <param name="gflag" type="string"/>
-        <param name="value" type="string" allowBlank="true" optional="true"/>              
+        <param name="value" type="string" allowBlank="true" optional="true"/>
       </command>
       <command name="!echo" category="compiler.utility.commands.category">
         <param name="message" type="string" allowBlank="true"/>
@@ -297,7 +308,7 @@
       </command>
       <command name="!endif" category="conditional.compilation.category"/>
       <command name="!error" category="compiler.utility.commands.category">
-        <param name="message" type="string" allowBlank="true"/>              
+        <param name="message" type="string" allowBlank="true"/>
       </command>
       <command name="!ifdef" category="conditional.compilation.category">
         <param name="gflag" type="string"/>

@@ -374,14 +374,16 @@ public class NSISCommandDialog extends StatusMessageDialog
 
             g.setText(EclipseNSISPlugin.getResourceString("nsis.command.parameters.label")); //$NON-NLS-1$
 
-            c = new Composite(g,SWT.NONE);
-            data = new GridData(SWT.FILL,SWT.FILL,true,false);
-            data.horizontalSpan = ((GridLayout)g.getLayout()).numColumns;
-            c.setLayoutData(data);
-            layout = new GridLayout(1,false);
-            layout.marginHeight = layout.marginWidth = 0;
-            c.setLayout(layout);
-            NSISWizardDialogUtil.createRequiredFieldsLabel(c);
+            if(mParamEditor.hasRequiredFields()) {
+                c = new Composite(g,SWT.NONE);
+                data = new GridData(SWT.FILL,SWT.FILL,true,false);
+                data.horizontalSpan = ((GridLayout)g.getLayout()).numColumns;
+                c.setLayoutData(data);
+                layout = new GridLayout(1,false);
+                layout.marginHeight = layout.marginWidth = 0;
+                c.setLayout(layout);
+                NSISWizardDialogUtil.createRequiredFieldsLabel(c);
+            }
         }
 
         c = new Composite(child,SWT.NONE);
