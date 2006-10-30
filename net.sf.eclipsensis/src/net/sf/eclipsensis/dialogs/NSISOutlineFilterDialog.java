@@ -71,10 +71,9 @@ public class NSISOutlineFilterDialog extends StatusMessageDialog
 
         final Table table = new Table(composite,SWT.CHECK | SWT.BORDER | SWT.SINGLE | SWT.FULL_SELECTION | SWT.V_SCROLL);
         table.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true));
-        table.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e)
-            {
-                table.deselectAll();
+        table.addListener(SWT.EraseItem, new Listener() {
+            public void handleEvent(Event event) {
+                event.detail &= ~SWT.SELECTED;
             }
         });
 

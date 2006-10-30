@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -54,12 +54,7 @@ import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
 import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetWidgetFactory;
@@ -75,16 +70,16 @@ public class GeneralPropertySection extends InstallOptionsElementPropertySection
             if(customSectionCreator != null) {
                 cols++;
             }
-            
+
             parent = createSectionComposite(parent);
 			GridLayout layout = new GridLayout(cols,false);
             layout.marginHeight = layout.marginWidth = 0;
             parent.setLayout(layout);
-            
+
             Control c = createGeneralSection(widget, parent, commandHelper);
             GridData data = new GridData(SWT.FILL,SWT.FILL,false,true);
             c.setLayoutData(data);
-            
+
             if(customSectionCreator != null) {
                 Composite composite = getWidgetFactory().createComposite(parent);
                 layout = new GridLayout(1,false);
@@ -112,7 +107,7 @@ public class GeneralPropertySection extends InstallOptionsElementPropertySection
         Composite group = factory.createGroup(parent,displayName);
         GridLayout layout = new GridLayout(2,true);
         group.setLayout(layout);
-        
+
         final boolean[] nonUserChange = {false};
 
         final Table table = factory.createTable(group,SWT.FLAT|SWT.CHECK|SWT.HIDE_SELECTION);
@@ -143,10 +138,9 @@ public class GeneralPropertySection extends InstallOptionsElementPropertySection
                 return 0;
             }
         });
-        table.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e)
-            {
-                table.deselectAll();
+        table.addListener(SWT.EraseItem, new Listener() {
+            public void handleEvent(Event event) {
+                event.detail &= ~SWT.SELECTED;
             }
         });
         final List flags = new ArrayList(widget.getFlags());
@@ -164,8 +158,8 @@ public class GeneralPropertySection extends InstallOptionsElementPropertySection
                         return;
                     }
                 }
-                commandHelper.propertyChanged(InstallOptionsModel.PROPERTY_FLAGS, 
-                        descriptor.getDisplayName(), 
+                commandHelper.propertyChanged(InstallOptionsModel.PROPERTY_FLAGS,
+                        descriptor.getDisplayName(),
                         widget, flags);
             }
         };
@@ -185,7 +179,7 @@ public class GeneralPropertySection extends InstallOptionsElementPropertySection
                 }
             }
         });
-        
+
         Button b = factory.createButton(group, InstallOptionsPlugin.getResourceString("select.all.label"), SWT.PUSH|SWT.FLAT); //$NON-NLS-1$
         b.addSelectionListener(new SelectionAdapter(){
             public void widgetSelected(SelectionEvent e)
@@ -207,7 +201,7 @@ public class GeneralPropertySection extends InstallOptionsElementPropertySection
             }
         });
         b.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
-        
+
         viewer.setInput(availableFlags==null?Collections.EMPTY_LIST:availableFlags);
         viewer.setCheckedElements(flags.toArray());
         final PropertyChangeListener listener = new PropertyChangeListener() {
@@ -224,7 +218,7 @@ public class GeneralPropertySection extends InstallOptionsElementPropertySection
                     }
                     finally {
                         nonUserChange[0]=false;
-                    }                    
+                    }
                 }
             }
         };
@@ -244,14 +238,14 @@ public class GeneralPropertySection extends InstallOptionsElementPropertySection
 
         parent = factory.createGroup(parent, InstallOptionsPlugin.getResourceString("basic.section.label")); //$NON-NLS-1$
         parent.setLayout(new GridLayout(1,false));
-        
+
         final boolean[] nonUserChange = { false };
         Composite composite = factory.createComposite(parent);
         composite.setLayout(new GridLayout(2,false));
         final String indexName = widget.getPropertyDescriptor(InstallOptionsModel.PROPERTY_INDEX).getDisplayName();
         CLabel l = factory.createCLabel(composite, indexName);
         l.setLayoutData(new GridData(SWT.FILL,SWT.FILL,false,false));
-        
+
         final CCombo indexCombo = factory.createCCombo(composite, SWT.FLAT|SWT.READ_ONLY|SWT.DROP_DOWN|SWT.BORDER);
         indexCombo.setLayoutData(new GridData(SWT.FILL,SWT.FILL,false,false));
         for (int i = 0; i < widget.getParent().getChildren().size(); i++) {
@@ -265,7 +259,7 @@ public class GeneralPropertySection extends InstallOptionsElementPropertySection
             public void widgetSelected(SelectionEvent e)
             {
                 if(!nonUserChange[0]) {
-                    commandHelper.propertyChanged(InstallOptionsModel.PROPERTY_INDEX, indexName, 
+                    commandHelper.propertyChanged(InstallOptionsModel.PROPERTY_INDEX, indexName,
                             widget, new Integer(indexCombo.getSelectionIndex()));
                 }
             }
@@ -276,7 +270,7 @@ public class GeneralPropertySection extends InstallOptionsElementPropertySection
         l.setLayoutData(new GridData(SWT.FILL,SWT.FILL,false,false));
         final CCombo typeCombo = factory.createCCombo(composite, SWT.FLAT|SWT.DROP_DOWN|SWT.BORDER);
         typeCombo.setLayoutData(new GridData(SWT.FILL,SWT.FILL,false,false));
-        
+
         final Collection coll = InstallOptionsModel.INSTANCE.getControlTypeDefs();
         String type = widget.getType();
         int selected = -1;
@@ -296,7 +290,7 @@ public class GeneralPropertySection extends InstallOptionsElementPropertySection
         else {
             typeCombo.setText(type);
         }
-        
+
         final Runnable r = new Runnable() {
             public void run()
             {
@@ -311,13 +305,13 @@ public class GeneralPropertySection extends InstallOptionsElementPropertySection
                         }
                     }
                     if(!Common.stringsAreEqual(type, widget.getType())) {
-                        commandHelper.propertyChanged(InstallOptionsModel.PROPERTY_TYPE, indexName, 
+                        commandHelper.propertyChanged(InstallOptionsModel.PROPERTY_TYPE, indexName,
                                 widget, type);
                     }
                 }
             }
         };
-        
+
         typeCombo.addKeyListener(new KeyAdapter() {
             public void keyPressed(KeyEvent e)
             {
@@ -355,7 +349,7 @@ public class GeneralPropertySection extends InstallOptionsElementPropertySection
                 r.run();
             }
         });
-        
+
         final String positionName = widget.getPropertyDescriptor(InstallOptionsModel.PROPERTY_POSITION).getDisplayName();
         Group group = factory.createGroup(parent, positionName);
         group.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false));
@@ -434,9 +428,9 @@ public class GeneralPropertySection extends InstallOptionsElementPropertySection
                             oldValue = position.bottom;
                             position.bottom = value;
                     }
-                    
+
                     if(oldValue != value) {
-                        commandHelper.propertyChanged(InstallOptionsModel.PROPERTY_POSITION, 
+                        commandHelper.propertyChanged(InstallOptionsModel.PROPERTY_POSITION,
                                 positionName, widget, position);
                     }
                 }
@@ -454,7 +448,7 @@ public class GeneralPropertySection extends InstallOptionsElementPropertySection
             positionTexts[i].addTraverseListener(traverseListener);
             helper.connect(positionTexts[i]);
         }
-        
+
         final String lockedName = widget.getPropertyDescriptor(InstallOptionsWidget.PROPERTY_LOCKED).getDisplayName();
         final Button lockedButton = factory.createButton(parent, lockedName, SWT.FLAT|SWT.CHECK);
         lockedButton.setSelection(widget.isLocked());
@@ -462,12 +456,12 @@ public class GeneralPropertySection extends InstallOptionsElementPropertySection
             public void widgetSelected(SelectionEvent e)
             {
                 if(!nonUserChange[0]) {
-                    commandHelper.propertyChanged(InstallOptionsWidget.PROPERTY_LOCKED, 
+                    commandHelper.propertyChanged(InstallOptionsWidget.PROPERTY_LOCKED,
                             lockedName, widget, (lockedButton.getSelection()?Boolean.TRUE:Boolean.FALSE));
                 }
             }
         });
-        
+
         final PropertyChangeListener propertyListener = new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt)
             {
@@ -535,7 +529,7 @@ public class GeneralPropertySection extends InstallOptionsElementPropertySection
                 }
                 finally {
                     nonUserChange[0]=false;
-                }                    
+                }
             }
         };
         widget.addPropertyChangeListener(propertyListener);

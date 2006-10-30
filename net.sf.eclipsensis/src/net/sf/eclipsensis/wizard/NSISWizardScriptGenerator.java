@@ -701,24 +701,24 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
             }
         }
 
-        NSISScriptSection postSection = new NSISScriptSection("post",false,true,false); //$NON-NLS-1$
-        postSection.addElement(new NSISScriptInstruction("WriteRegStr",new String[]{ //$NON-NLS-1$
-                getKeyword("HKLM"),Common.quote("${REGKEY}"),"Path",getKeyword("$INSTDIR")})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-        if(!mIsMUI) {
-            if(mSettings.isSelectLanguage() && languages.size() > 1) {
-                postSection.addElement(new NSISScriptInstruction("WriteRegStr",new String[]{ //$NON-NLS-1$
-                        getKeyword("HKLM"),Common.quote("${REGKEY}"),"InstallerLanguage",getKeyword("$LANGUAGE")})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-            }
-            if(mSettings.isCreateStartMenuGroup() && !mIsSilent && mSettings.isChangeStartMenuGroup()) {
-                postSection.addElement(new NSISScriptInstruction("WriteRegStr",new String[]{ //$NON-NLS-1$
-                        getKeyword("HKLM"),Common.quote("${REGKEY}"),"StartMenuGroup","$StartMenuGroup"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-            }
-        }
-
+        NSISScriptSection postSection = null;
         NSISScriptSection unPostSection = null;
         mUnOnInitFunction = null;
 
         if(mSettings.isCreateUninstaller()) {
+            postSection.addElement(new NSISScriptInstruction("WriteRegStr",new String[]{ //$NON-NLS-1$
+                    getKeyword("HKLM"),Common.quote("${REGKEY}"),"Path",getKeyword("$INSTDIR")})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+            if(!mIsMUI) {
+                if(mSettings.isSelectLanguage() && languages.size() > 1) {
+                    postSection.addElement(new NSISScriptInstruction("WriteRegStr",new String[]{ //$NON-NLS-1$
+                            getKeyword("HKLM"),Common.quote("${REGKEY}"),"InstallerLanguage",getKeyword("$LANGUAGE")})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                }
+                if(mSettings.isCreateStartMenuGroup() && !mIsSilent && mSettings.isChangeStartMenuGroup()) {
+                    postSection.addElement(new NSISScriptInstruction("WriteRegStr",new String[]{ //$NON-NLS-1$
+                            getKeyword("HKLM"),Common.quote("${REGKEY}"),"StartMenuGroup","$StartMenuGroup"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                }
+            }
+
             unPostSection = new NSISScriptSection("un.post",false,false,false); //$NON-NLS-1$
             mScript.insertAfterElement(mSectionsPlaceHolder,new NSISScriptBlankLine());
             NSISScriptMacro macro = (NSISScriptMacro)mScript.insertAfterElement(mSectionsPlaceHolder,new NSISScriptMacro("SELECT_UNSECTION",new String[]{"SECTION_NAME","UNSECTION_ID"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -885,11 +885,11 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
             }
             mScript.insertElement(mSectionsPlaceHolder, new NSISScriptBlankLine());
         }
-        String sectionId = MessageFormat.format("SEC{0,number,0000}",new Object[]{new Integer(mSectionCounter++)}); //$NON-NLS-1$
-        postSection.setIndex(sectionId);
-        mScript.insertElement(mSectionsPlaceHolder, postSection);
+        if(mSettings.isCreateUninstaller()) {
+            String sectionId = MessageFormat.format("SEC{0,number,0000}",new Object[]{new Integer(mSectionCounter++)}); //$NON-NLS-1$
+            postSection.setIndex(sectionId);
+            mScript.insertElement(mSectionsPlaceHolder, postSection);
 
-        if(unPostSection != null) {
             if(!Common.isEmptyCollection(mUnSectionList)) {
                 Collections.reverse(mUnSectionList);
                 for(Iterator iter=mUnSectionList.iterator(); iter.hasNext(); ) {

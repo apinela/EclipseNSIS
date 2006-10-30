@@ -12,6 +12,7 @@ package net.sf.eclipsensis.template;
 import java.io.File;
 import java.io.IOException;
 import java.text.Collator;
+import java.text.MessageFormat;
 import java.util.*;
 import java.util.List;
 
@@ -37,6 +38,8 @@ public abstract class AbstractTemplateSettings extends Composite
     private AbstractTemplateManager mTemplateManager = null;
 
     private CheckboxTableViewer mTableViewer = null;
+    private Button mAddButton;
+    private Button mDuplicateButton;
     private Button mEditButton = null;
     private Button mImportButton = null;
     private Button mExportButton = null;
@@ -194,8 +197,36 @@ public abstract class AbstractTemplateSettings extends Composite
         Dialog.applyDialogFont(this);
     }
 
-    protected void createButtons(Composite parent)
+    private void createButtons(Composite parent)
     {
+        if(canAdd()) {
+            mAddButton= new Button(parent, SWT.PUSH);
+            mAddButton.setText(EclipseNSISPlugin.getResourceString("template.settings.new.label")); //$NON-NLS-1$
+            mAddButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+            mAddButton.addListener(SWT.Selection, new Listener() {
+                public void handleEvent(Event e) {
+                    add();
+                }
+            });
+        }
+        else {
+            mAddButton = null;
+        }
+
+        if(canDuplicate()) {
+            mDuplicateButton= new Button(parent, SWT.PUSH);
+            mDuplicateButton.setText(EclipseNSISPlugin.getResourceString("template.settings.duplicate.label")); //$NON-NLS-1$
+            mDuplicateButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+            mDuplicateButton.addListener(SWT.Selection, new Listener() {
+                public void handleEvent(Event e) {
+                    duplicate();
+                }
+            });
+        }
+        else {
+            mDuplicateButton = null;
+        }
+
         mEditButton= new Button(parent, SWT.PUSH);
         mEditButton.setText(EclipseNSISPlugin.getResourceString("template.settings.edit.label")); //$NON-NLS-1$
         mEditButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
@@ -305,6 +336,45 @@ public abstract class AbstractTemplateSettings extends Composite
         }
     }
 
+    private void duplicate()
+    {
+        AbstractTemplate template = (AbstractTemplate)((AbstractTemplate)((IStructuredSelection)getTableViewer().getSelection()).getFirstElement()).clone();
+        template.setType(AbstractTemplate.TYPE_USER);
+        MessageFormat mf = new MessageFormat(EclipseNSISPlugin.getResourceString("template.settings.duplicate.format")); //$NON-NLS-1$
+        int i=0;
+        while(true) {
+            String name = mf.format(new Object[] {template.getName(),new Integer(i)});
+            AbstractTemplate oldTemplate = getTemplateManager().getTemplate(name);
+            if(oldTemplate == null || oldTemplate.isDeleted()) {
+                template.setName(name);
+                add(template);
+                edit();
+                break;
+            }
+            i++;
+        }
+    }
+
+    private void add()
+    {
+        AbstractTemplate template = createTemplate(""); //$NON-NLS-1$
+        Dialog dialog= createDialog(template);
+        if (dialog.open() != Window.CANCEL) {
+            add(template);
+        }
+    }
+
+    /**
+     * @param template
+     */
+    private void add(AbstractTemplate template)
+    {
+        getTemplateManager().addTemplate(template);
+        getTableViewer().refresh(true);
+        getTableViewer().setChecked(template, template.isEnabled());
+        getTableViewer().setSelection(new StructuredSelection(template));
+    }
+
     /**
      * Updates the buttons.
      */
@@ -322,6 +392,9 @@ public abstract class AbstractTemplateSettings extends Composite
             }
         }
 
+        if(canDuplicate()) {
+            mDuplicateButton.setEnabled(selectionCount == 1);
+        }
         mEditButton.setEnabled(selectionCount == 1);
         mExportButton.setEnabled(selectionCount > 0);
         mRemoveButton.setEnabled(selectionCount > 0 && selectionCount <= itemCount);
@@ -338,8 +411,8 @@ public abstract class AbstractTemplateSettings extends Composite
             return;
         }
 
-        AbstractTemplate data= (AbstractTemplate)selection.getFirstElement();
-        edit(data);
+        AbstractTemplate oldTemplate= (AbstractTemplate)selection.getFirstElement();
+        edit(oldTemplate);
     }
 
     private void edit(AbstractTemplate oldTemplate)
@@ -474,6 +547,8 @@ public abstract class AbstractTemplateSettings extends Composite
         }
     }
 
+    protected abstract boolean canAdd();
+    protected abstract boolean canDuplicate();
     protected abstract AbstractTemplate createTemplate(String name);
     protected abstract Dialog createDialog(AbstractTemplate newTemplate);
     protected abstract Image getShellImage();

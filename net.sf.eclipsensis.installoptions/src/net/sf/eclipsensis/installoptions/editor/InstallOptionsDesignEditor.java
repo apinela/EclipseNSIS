@@ -2064,6 +2064,16 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
             composite.setLayout(new GridLayout(1,false));
 
             mTemplateSettings = new AbstractTemplateSettings(composite, SWT.NONE, InstallOptionsTemplateManager.INSTANCE) {
+                protected boolean canAdd()
+                {
+                    return false;
+                }
+
+                protected boolean canDuplicate()
+                {
+                    return false;
+                }
+
                 protected AbstractTemplate createTemplate(String name)
                 {
                     return new InstallOptionsTemplate(name);

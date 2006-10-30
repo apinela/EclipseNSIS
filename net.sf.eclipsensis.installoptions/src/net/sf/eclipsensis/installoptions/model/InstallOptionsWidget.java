@@ -702,10 +702,9 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
             composite2.setLayout(layout);
 
             mTable = new Table(composite2,SWT.CHECK| SWT.BORDER | SWT.MULTI | SWT.HIDE_SELECTION | SWT.V_SCROLL);
-            mTable.addSelectionListener(new SelectionAdapter(){
-                public void widgetSelected(SelectionEvent e)
-                {
-                    mTable.deselectAll();
+            mTable.addListener(SWT.EraseItem, new Listener() {
+                public void handleEvent(Event event) {
+                    event.detail &= ~SWT.SELECTED;
                 }
             });
             initializeDialogUnits(mTable);

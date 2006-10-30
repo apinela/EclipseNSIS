@@ -19,13 +19,11 @@ import net.sf.eclipsensis.wizard.template.NSISWizardTemplateManager;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.PreferencePage;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.*;
 
 public class NSISWizardTemplatePreferencePage extends PreferencePage implements IWorkbenchPreferencePage
@@ -55,31 +53,14 @@ public class NSISWizardTemplatePreferencePage extends PreferencePage implements 
     protected Control createContents(Composite ancestor)
     {
         mTemplateSettings =  new AbstractTemplateSettings(ancestor, SWT.NONE, new NSISWizardTemplateManager()) {
-            private Button mAddButton;
-
-            protected void createButtons(Composite parent)
+            protected boolean canAdd()
             {
-                mAddButton= new Button(parent, SWT.PUSH);
-                mAddButton.setText(EclipseNSISPlugin.getResourceString("wizard.template.preferences.new.label")); //$NON-NLS-1$
-                mAddButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-                mAddButton.addListener(SWT.Selection, new Listener() {
-                    public void handleEvent(Event e) {
-                        add();
-                    }
-                });
-                super.createButtons(parent);
+                return true;
             }
 
-            private void add()
+            protected boolean canDuplicate()
             {
-                NSISWizardTemplate template = new NSISWizardTemplate(""); //$NON-NLS-1$
-                Dialog dialog= createDialog(template);
-                if (dialog.open() != Window.CANCEL) {
-                    getTemplateManager().addTemplate(template);
-                    getTableViewer().refresh(true);
-                    getTableViewer().setChecked(template, template.isEnabled());
-                    getTableViewer().setSelection(new StructuredSelection(template));
-                }
+                return true;
             }
 
             protected AbstractTemplate createTemplate(String name)

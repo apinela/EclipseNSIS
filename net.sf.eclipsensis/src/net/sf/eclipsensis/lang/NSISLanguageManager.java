@@ -171,12 +171,14 @@ public class NSISLanguageManager implements INSISHomeListener, IEclipseNSISServi
                     String line = br.readLine();
                     if(line != null) {
                         line = line.trim();
-                        char c=line.charAt(0);
-                        if(c != '#' && c != ';') {
-                            if(n > 0) {
-                                langId = Integer.parseInt(line);
+                        if(line.length() > 0) {
+                            char c=line.charAt(0);
+                            if(c != '#' && c != ';') {
+                                if(n > 0) {
+                                    langId = Integer.parseInt(line);
+                                }
+                                n++;
                             }
-                            n++;
                         }
                     }
                     else {

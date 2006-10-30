@@ -57,8 +57,6 @@ public abstract class NSISAction extends ActionDelegate implements IEditorAction
     {
         if(targetEditor instanceof NSISEditor) {
             mEditor = (NSISEditor)targetEditor;
-            mEditor.setAction(mAction.getId(),mAction);
-            mEditor.addAction(this);
         }
         else {
             mEditor = null;
