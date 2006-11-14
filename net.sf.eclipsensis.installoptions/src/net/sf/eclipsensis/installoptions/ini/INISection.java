@@ -507,4 +507,37 @@ public class INISection extends INILine implements IINIContainer
         }
         return this;
     }
+
+    public int hashCode()
+    {
+        final int PRIME = 31;
+        int result = super.hashCode();
+        result = PRIME * result + ((mChildren == null)?0:mChildren.hashCode());
+        result = PRIME * result + ((mName == null)?0:mName.hashCode());
+        return result;
+    }
+
+    public boolean equals(Object obj)
+    {
+        if (this == obj)
+            return true;
+        if (!super.equals(obj))
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        final INISection other = (INISection)obj;
+        if (mChildren == null) {
+            if (other.mChildren != null)
+                return false;
+        }
+        else if (!mChildren.equals(other.mChildren))
+            return false;
+        if (mName == null) {
+            if (other.mName != null)
+                return false;
+        }
+        else if (!mName.equals(other.mName))
+            return false;
+        return true;
+    }
 }

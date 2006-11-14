@@ -110,10 +110,9 @@ public class InstallOptionsTemplateManager extends AbstractTemplateManager
 
     public AbstractTemplate revert(AbstractTemplate template)
     {
-        InstallOptionsTemplate oldTemplate = (InstallOptionsTemplate)getTemplate(template.getName());
         InstallOptionsTemplate newTemplate = (InstallOptionsTemplate)super.revert(template);
         if(newTemplate != null) {
-            notifyListeners(InstallOptionsTemplateEvent.TEMPLATE_UPDATED, oldTemplate, newTemplate);
+            notifyListeners(InstallOptionsTemplateEvent.TEMPLATE_UPDATED, (InstallOptionsTemplate)template, newTemplate);
         }
         return newTemplate;
     }

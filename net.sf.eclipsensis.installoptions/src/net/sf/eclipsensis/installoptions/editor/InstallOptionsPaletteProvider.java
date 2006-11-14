@@ -123,10 +123,12 @@ public class InstallOptionsPaletteProvider
         Boolean unload = Boolean.valueOf(InstallOptionsPlugin.getDefault().getPreferenceStore().getBoolean(IInstallOptionsConstants.PREFERENCE_UNLOAD_CREATION_TOOL_WHEN_FINISHED));
         for(Iterator iter = InstallOptionsTemplateManager.INSTANCE.getTemplates().iterator(); iter.hasNext(); ) {
             InstallOptionsTemplate template = (InstallOptionsTemplate)iter.next();
-            ToolEntry entry = createTemplateEntry(template);
-            entry.setToolProperty(AbstractTool.PROPERTY_UNLOAD_WHEN_FINISHED, unload);
-            entryMap.put(template, entry);
-            children.add(entry);
+            if(!template.isDeleted()) {
+                ToolEntry entry = createTemplateEntry(template);
+                entry.setToolProperty(AbstractTool.PROPERTY_UNLOAD_WHEN_FINISHED, unload);
+                entryMap.put(template, entry);
+                children.add(entry);
+            }
         }
         drawer.setChildren(children);
 

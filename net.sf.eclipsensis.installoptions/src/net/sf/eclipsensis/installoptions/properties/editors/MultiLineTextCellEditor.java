@@ -62,7 +62,7 @@ public class MultiLineTextCellEditor extends DialogCellEditor
     protected void updateContents(Object value)
     {
         Label label = getDefaultLabel();
-        if (label != null) {
+        if (label != null && !label.isDisposed()) {
             String text = "";//$NON-NLS-1$
             if (value != null) {
                 if(mLabelProvider != null) {

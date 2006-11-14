@@ -31,9 +31,9 @@ class InstallOptionsTemplateReaderWriter extends AbstractTemplateReaderWriter
         super();
     }
 
-    protected AbstractTemplate createTemplate(String name)
+    protected AbstractTemplate createTemplate(String id, String name)
     {
-        return new InstallOptionsTemplate(name);
+        return new InstallOptionsTemplate(id, name);
     }
 
     protected Node exportContents(AbstractTemplate template, Document document)

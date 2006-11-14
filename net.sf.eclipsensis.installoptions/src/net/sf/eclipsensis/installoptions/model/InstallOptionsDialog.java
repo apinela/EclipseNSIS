@@ -703,7 +703,7 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
         }
         return result;
     }
-    
+
     public InstallOptionsElement getElement(INISection section)
     {
         if(mINISectionMap != null) {
@@ -1043,7 +1043,7 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
                     return n;
                 }
             });
-            
+
             for (Iterator iter = children.iterator(); iter.hasNext();) {
                 if(previousSection != null) {
                     int n = previousSection.getSize();
@@ -1052,8 +1052,16 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
                         if(lastChild.getDelimiter() == null) {
                             lastChild.setDelimiter(INSISConstants.LINE_SEPARATOR);
                         }
-                        if(!lastChild.getClass().equals(INILine.class) || !Common.isEmpty(lastChild.getText())) {
-                            previousSection.addChild(new INILine("",lastChild.getDelimiter())); //$NON-NLS-1$
+                        while(n > 0) {
+                            if(lastChild instanceof INIComment) {
+                                n--;
+                                lastChild = previousSection.getChild(n-1);
+                                continue;
+                            }
+                            if(!lastChild.getClass().equals(INILine.class) || !Common.isEmpty(lastChild.getText())) {
+                                previousSection.addChild(new INILine("",lastChild.getDelimiter())); //$NON-NLS-1$
+                            }
+                            break;
                         }
                     }
                 }

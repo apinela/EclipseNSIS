@@ -20,6 +20,18 @@ import net.sf.eclipsensis.util.Common;
 
 public class InstallOptionsTemplate extends AbstractTemplate
 {
+    private static int hashCode(Object[] array)
+    {
+        final int PRIME = 31;
+        if (array == null)
+            return 0;
+        int result = 1;
+        for (int index = 0; index < array.length; index++) {
+            result = PRIME * result + (array[index] == null?0:array[index].hashCode());
+        }
+        return result;
+    }
+
     private static final long serialVersionUID = -2080053812185962758L;
     private static final Comparator cWidgetsComparator = new Comparator(){
         public int compare(Object o1, Object o2)
@@ -34,12 +46,17 @@ public class InstallOptionsTemplate extends AbstractTemplate
 
     public InstallOptionsTemplate(String name)
     {
-        super(name);
+        this(null, name);
     }
 
-    public InstallOptionsTemplate(String name, File file)
+    public InstallOptionsTemplate(String id, String name)
     {
-        this(name);
+        super(id, name);
+    }
+
+    public InstallOptionsTemplate(String id, String name, File file)
+    {
+        this(id, name);
         INIFile iniFile = INIFile.load(file);
         INISection[] sections = iniFile.getSections();
         for (int i = 0; i < sections.length; i++) {
@@ -48,9 +65,9 @@ public class InstallOptionsTemplate extends AbstractTemplate
         setSections(sections);
     }
 
-    public InstallOptionsTemplate(String name, InstallOptionsWidget[] widgets)
+    public InstallOptionsTemplate(String id, String name, InstallOptionsWidget[] widgets)
     {
-        this(name);
+        this(id, name);
         setWidgets(widgets);
     }
 
@@ -108,5 +125,27 @@ public class InstallOptionsTemplate extends AbstractTemplate
         }
         template.setSections(sections);
         return template;
+    }
+
+    public int hashCode()
+    {
+        final int PRIME = 31;
+        int result = super.hashCode();
+        result = PRIME * result + InstallOptionsTemplate.hashCode(mSections);
+        return result;
+    }
+
+    public boolean equals(Object obj)
+    {
+        if (this == obj)
+            return true;
+        if (!super.equals(obj))
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        final InstallOptionsTemplate other = (InstallOptionsTemplate)obj;
+        if (!Arrays.equals(mSections, other.mSections))
+            return false;
+        return true;
     }
 }

@@ -2069,11 +2069,6 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
                     return false;
                 }
 
-                protected boolean canDuplicate()
-                {
-                    return false;
-                }
-
                 protected AbstractTemplate createTemplate(String name)
                 {
                     return new InstallOptionsTemplate(name);

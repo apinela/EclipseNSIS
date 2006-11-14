@@ -211,7 +211,7 @@ public class INIFile implements IDocumentListener, IINIContainer, IINIProblemCon
 
     private static INIComment parseComment(String text, String delimiter)
     {
-        if(text.startsWith(";")) { //$NON-NLS-1$
+        if(text.trim().startsWith(";")) { //$NON-NLS-1$
             return new INIComment(text, delimiter);
         }
         return null;
@@ -219,7 +219,7 @@ public class INIFile implements IDocumentListener, IINIContainer, IINIProblemCon
 
     private static INISection parseSection(String text, String delimiter)
     {
-        if(text.startsWith("[")) { //$NON-NLS-1$
+        if(text.trim().startsWith("[")) { //$NON-NLS-1$
             int m = text.indexOf('[');
             int n = text.indexOf(']',m+1);
             if(n > 0) {
@@ -235,9 +235,10 @@ public class INIFile implements IDocumentListener, IINIContainer, IINIProblemCon
 
     private static INIKeyValue parseKeyValue(String text, String delimiter)
     {
-        if(text.length() > 0) {
+        String text2 = text.trim();
+        if(text2.length() > 0) {
             int n = text.indexOf('=');
-            if (Character.isLetter(text.charAt(0)) && n > 0) {
+            if (Character.isLetter(text2.charAt(0)) && n > 0) {
                 INIKeyValue keyValue = new INIKeyValue(text, delimiter,
                                                        text.substring(0,n).trim(),
                                                        text.substring(n+1).trim());
@@ -388,7 +389,7 @@ public class INIFile implements IDocumentListener, IINIContainer, IINIProblemCon
 
     private static IINIContainer loadLine(INIFile iniFile, IINIContainer container, String text, String delimiter)
     {
-        INILine line = parse(text.trim(), delimiter);
+        INILine line = parse(text, delimiter);
         iniFile.mLines.add(line);
         if(line instanceof IINIContainer) {
             iniFile.addChild(line);
@@ -407,7 +408,7 @@ public class INIFile implements IDocumentListener, IINIContainer, IINIProblemCon
             try {
                 IRegion region = doc.getLineInformation(i);
                 String text = doc.get(region.getOffset(),region.getLength());
-                INILine line = parse(text.trim(),doc.getLineDelimiter(i));
+                INILine line = parse(text,doc.getLineDelimiter(i));
                 if(line instanceof INISection) {
                     Position pos = new Position(region.getOffset(),line.getLength());
                     ((INISection)line).setPosition(pos);
