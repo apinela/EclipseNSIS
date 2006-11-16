@@ -30,11 +30,12 @@ import net.sf.eclipsensis.wizard.settings.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.*;
+import org.eclipse.ui.commands.ICommandService;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.FileEditorInput;
 
@@ -44,6 +45,8 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
     private static final int BEGIN_TASK = 1;
     private static final int SET_TASK_NAME = 2;
     private static final String cUninstallRegKey = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\$(^Name)"; //$NON-NLS-1$
+    protected static ICommandService cCommandService = (ICommandService)PlatformUI.getWorkbench().getAdapter(ICommandService.class);
+    protected static IHandlerService cHandlerService = (IHandlerService)PlatformUI.getWorkbench().getAdapter(IHandlerService.class);
 
     private static Map cReservedSubKeysMap = new CaseInsensitiveMap();
 
@@ -195,22 +198,7 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
                 updateMonitorTask("scriptgen.compile.message",savePath,SET_TASK_NAME); //$NON-NLS-1$
                 shell.getDisplay().syncExec(new Runnable() {
                     public void run() {
-                        IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-                        if(page != null) {
-                            IEditorPart editor = page.getActiveEditor();
-                            if(editor instanceof NSISEditor) {
-                                IAction action = null;
-                                if(mSettings.isTestScript()) {
-                                    action = ((NSISEditor)editor).getAction(INSISConstants.COMPILE_TEST_ACTION_ID);
-                                }
-                                else {
-                                    action = ((NSISEditor)editor).getAction(INSISConstants.COMPILE_ACTION_ID);
-                                }
-                                if(action != null) {
-                                    action.run();
-                                }
-                            }
-                        }
+                        NSISCompileTestUtility.INSTANCE.compile(new Path(mSaveFile.toString()),mSettings.isTestScript());
                     }
                 });
                 incrementMonitor(1);
@@ -706,6 +694,7 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
         mUnOnInitFunction = null;
 
         if(mSettings.isCreateUninstaller()) {
+            postSection = new NSISScriptSection("post",false,true,false); //$NON-NLS-1$
             postSection.addElement(new NSISScriptInstruction("WriteRegStr",new String[]{ //$NON-NLS-1$
                     getKeyword("HKLM"),Common.quote("${REGKEY}"),"Path",getKeyword("$INSTDIR")})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
             if(!mIsMUI) {

@@ -26,6 +26,7 @@ public abstract class AbstractTemplateReaderWriter
 {
     protected static final String TEMPLATE_ROOT = "templates"; //$NON-NLS-1$
     protected static final String TEMPLATE_ELEMENT = "template"; //$NON-NLS-1$
+    protected static final String ID_ATTRIBUTE= "id"; //$NON-NLS-1$
     protected static final String NAME_ATTRIBUTE= "name"; //$NON-NLS-1$
     protected static final String DESCRIPTION_NODE= "description"; //$NON-NLS-1$
 
@@ -54,13 +55,15 @@ public abstract class AbstractTemplateReaderWriter
                     continue;
                 }
 
+                String id= XMLUtil.getStringValue(attributes, ID_ATTRIBUTE);
+
                 String name= XMLUtil.getStringValue(attributes, NAME_ATTRIBUTE);
                 if (name == null) {
                     throw new IOException(EclipseNSISPlugin.getFormattedString("template.readerwriter.error.missing.attribute", new Object[]{NAME_ATTRIBUTE})); //$NON-NLS-1$
                 }
 
                 AbstractTemplate template;
-                template = createTemplate(name);
+                template = createTemplate(id, name);
 
                 template.setDeleted(false);
                 template.setEnabled(true);
@@ -118,6 +121,7 @@ public abstract class AbstractTemplateReaderWriter
                 Node node= document.createElement(TEMPLATE_ELEMENT);
                 root.appendChild(node);
 
+                XMLUtil.addAttribute(document, node, ID_ATTRIBUTE, template.getId());
                 XMLUtil.addAttribute(document, node, NAME_ATTRIBUTE, template.getName());
 
                 Element description = document.createElement(DESCRIPTION_NODE);
@@ -149,5 +153,5 @@ public abstract class AbstractTemplateReaderWriter
     protected abstract String getContentsNodeName();
     protected abstract Node exportContents(AbstractTemplate template, Document doc);
     protected abstract void importContents(AbstractTemplate template, Node item);
-    protected abstract AbstractTemplate createTemplate(String name);
+    protected abstract AbstractTemplate createTemplate(String id, String name);
 }

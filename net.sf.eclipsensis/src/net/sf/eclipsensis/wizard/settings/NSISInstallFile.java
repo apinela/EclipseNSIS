@@ -130,4 +130,40 @@ public class NSISInstallFile extends AbstractNSISInstallItem implements INSISIns
             return super.validate(recursive);
         }
     }
+
+    public int hashCode()
+    {
+        final int PRIME = 31;
+        int result = 1;
+        result = PRIME * result + ((mDestination == null)?0:mDestination.hashCode());
+        result = PRIME * result + ((mName == null)?0:mName.hashCode());
+        result = PRIME * result + mOverwriteMode;
+        return result;
+    }
+
+    public boolean equals(Object obj)
+    {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        final NSISInstallFile other = (NSISInstallFile)obj;
+        if (mDestination == null) {
+            if (other.mDestination != null)
+                return false;
+        }
+        else if (!mDestination.equals(other.mDestination))
+            return false;
+        if (mName == null) {
+            if (other.mName != null)
+                return false;
+        }
+        else if (!mName.equals(other.mName))
+            return false;
+        if (mOverwriteMode != other.mOverwriteMode)
+            return false;
+        return true;
+    }
 }

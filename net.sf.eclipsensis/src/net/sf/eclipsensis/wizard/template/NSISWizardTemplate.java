@@ -37,16 +37,24 @@ public class NSISWizardTemplate extends AbstractTemplate
      */
     public NSISWizardTemplate(String name)
     {
-        super(name);
+        this(null, name);
+    }
+
+    /**
+     * @param name
+     */
+    public NSISWizardTemplate(String id, String name)
+    {
+        super(id, name);
     }
 
     /**
      * @param name
      * @param description
      */
-    public NSISWizardTemplate(String name, String description)
+    public NSISWizardTemplate(String id, String name, String description)
     {
-        super(name, description);
+        super(id, name, description);
     }
 
     public Object clone()
@@ -61,7 +69,7 @@ public class NSISWizardTemplate extends AbstractTemplate
         }
         return template;
     }
-    
+
     private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException
     {
         in.defaultReadObject();
@@ -69,7 +77,7 @@ public class NSISWizardTemplate extends AbstractTemplate
     }
 
     /**
-     * 
+     *
      */
     protected void afterImport() throws InvalidTemplateException
     {
@@ -92,7 +100,7 @@ public class NSISWizardTemplate extends AbstractTemplate
                 installer.setExpanded(true, true);
                 installer.resetChildTypes(true);
                 installer.resetChildren(true);
-            }            
+            }
         }
         else {
             throw new InvalidTemplateException();

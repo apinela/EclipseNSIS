@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -43,7 +43,7 @@ public class NSISEditorUtilities
     private NSISEditorUtilities()
     {
     }
-    
+
     static InformationPresenter createStickyHelpInformationPresenter()
     {
         boolean browserAvailable = false;
@@ -79,7 +79,7 @@ public class NSISEditorUtilities
         informationPresenter.setSizeConstraints(60, (browserAvailable?14:6), true, true);
         return informationPresenter;
     }
-    
+
     public static void clearMarkers(final IPath path)
     {
         if(path != null && (!MakeNSISRunner.isCompiling() || !path.equals(MakeNSISRunner.getScript()))) {
@@ -175,7 +175,9 @@ public class NSISEditorUtilities
                                                 igm.gotoMarker(marker);
                                             }
                                         }
-                                        return;
+                                        else {
+                                            setEditorSelection(editor, null, lineNum);
+                                        }
                                     }
                                 }
                                 else if(path.getDevice() != null) {
@@ -192,6 +194,13 @@ public class NSISEditorUtilities
                         if (path.getDevice() == null) {
                             if(marker != null) {
                                 IDE.openEditor(page, marker, OpenStrategy.activateOnOpen());
+                            }
+                            else {
+                                IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
+                                if(file != null) {
+                                    IEditorPart editor = IDE.openEditor(page,file,true);
+                                    setEditorSelection(editor, null, lineNum);
+                                }
                             }
                         }
                         else if(path.getDevice() != null) {
@@ -228,9 +237,8 @@ public class NSISEditorUtilities
                 if(doc.getNumberOfLines() >= lineNum) {
                     try {
                         IRegion region = doc.getLineInformation(lineNum-1);
-                        String delim = doc.getLineDelimiter(lineNum-1);
                         offset = region.getOffset();
-                        length = region.getLength()+(delim==null?0:delim.length());
+                        length = region.getLength();
                     }
                     catch (BadLocationException e) {
                         EclipseNSISPlugin.getDefault().log(e);
@@ -272,7 +280,7 @@ public class NSISEditorUtilities
                                     continue;
                                 }
                                 IRegion region = doc.getLineInformation(line > 0?line - 1:1);
-                                
+
                                 Position position = new Position(region.getOffset(), (line > 0?region.getLength():0));
                                 problem.setMarker(new PositionMarker(file,position));
                                 annotationModel.addAnnotation(new Annotation(name, false, problem.getText()), position);
@@ -380,7 +388,7 @@ public class NSISEditorUtilities
     public static class PositionMarker implements IMarker
     {
         private IResource mResource = null;
-        private Position mPosition = null; 
+        private Position mPosition = null;
 
         public PositionMarker(IResource resource, Position position)
         {

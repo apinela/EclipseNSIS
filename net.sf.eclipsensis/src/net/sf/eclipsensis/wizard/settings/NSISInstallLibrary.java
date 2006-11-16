@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -34,7 +34,7 @@ public class NSISInstallLibrary extends AbstractNSISInstallItem
     private boolean mRemoveOnUninstall = true;
     private boolean mRefreshShell = false;
     private boolean mUnloadLibraries = false;
-    
+
     static {
         NSISInstallElementFactory.register(TYPE, EclipseNSISPlugin.getResourceString("wizard.library.type.name"), IMAGE, NSISInstallLibrary.class); //$NON-NLS-1$
     }
@@ -175,5 +175,59 @@ public class NSISInstallLibrary extends AbstractNSISInstallItem
         else {
             return super.validate(recursive);
         }
+    }
+
+    public int hashCode()
+    {
+        final int PRIME = 31;
+        int result = 1;
+        result = PRIME * result + ((mDestination == null)?0:mDestination.hashCode());
+        result = PRIME * result + mLibType;
+        result = PRIME * result + ((mName == null)?0:mName.hashCode());
+        result = PRIME * result + (mProtected?1231:1237);
+        result = PRIME * result + (mReboot?1231:1237);
+        result = PRIME * result + (mRefreshShell?1231:1237);
+        result = PRIME * result + (mRemoveOnUninstall?1231:1237);
+        result = PRIME * result + (mShared?1231:1237);
+        result = PRIME * result + (mUnloadLibraries?1231:1237);
+        return result;
+    }
+
+    public boolean equals(Object obj)
+    {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        final NSISInstallLibrary other = (NSISInstallLibrary)obj;
+        if (mDestination == null) {
+            if (other.mDestination != null)
+                return false;
+        }
+        else if (!mDestination.equals(other.mDestination))
+            return false;
+        if (mLibType != other.mLibType)
+            return false;
+        if (mName == null) {
+            if (other.mName != null)
+                return false;
+        }
+        else if (!mName.equals(other.mName))
+            return false;
+        if (mProtected != other.mProtected)
+            return false;
+        if (mReboot != other.mReboot)
+            return false;
+        if (mRefreshShell != other.mRefreshShell)
+            return false;
+        if (mRemoveOnUninstall != other.mRemoveOnUninstall)
+            return false;
+        if (mShared != other.mShared)
+            return false;
+        if (mUnloadLibraries != other.mUnloadLibraries)
+            return false;
+        return true;
     }
 }

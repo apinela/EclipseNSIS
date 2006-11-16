@@ -163,4 +163,50 @@ public class NSISInstallRegistryValue extends NSISInstallRegistryItem
         }
         return error;
     }
+
+    public int hashCode()
+    {
+        final int PRIME = 31;
+        int result = 1;
+        result = PRIME * result + ((mData == null)?0:mData.hashCode());
+        result = PRIME * result + mRootKey;
+        result = PRIME * result + ((mSubKey == null)?0:mSubKey.hashCode());
+        result = PRIME * result + ((mValue == null)?0:mValue.hashCode());
+        result = PRIME * result + mValueType;
+        return result;
+    }
+
+    public boolean equals(Object obj)
+    {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        final NSISInstallRegistryValue other = (NSISInstallRegistryValue)obj;
+        if (mData == null) {
+            if (other.mData != null)
+                return false;
+        }
+        else if (!mData.equals(other.mData))
+            return false;
+        if (mRootKey != other.mRootKey)
+            return false;
+        if (mSubKey == null) {
+            if (other.mSubKey != null)
+                return false;
+        }
+        else if (!mSubKey.equals(other.mSubKey))
+            return false;
+        if (mValue == null) {
+            if (other.mValue != null)
+                return false;
+        }
+        else if (!mValue.equals(other.mValue))
+            return false;
+        if (mValueType != other.mValueType)
+            return false;
+        return true;
+    }
 }

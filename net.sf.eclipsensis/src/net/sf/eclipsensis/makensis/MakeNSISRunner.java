@@ -34,6 +34,7 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 public class MakeNSISRunner implements INSISConstants
 {
     public static final Pattern MAKENSIS_SYNTAX_ERROR_PATTERN = Pattern.compile("[\\w]+ expects [0-9\\-\\+]+ parameters, got [0-9]\\."); //$NON-NLS-1$
+    public static final Pattern MAKENSIS_INCLUDE_ERROR_PATTERN = Pattern.compile("!include: error in script:? \"(.+)\" on line (\\d+).*",Pattern.CASE_INSENSITIVE); //$NON-NLS-1$
     public static final Pattern MAKENSIS_ERROR_PATTERN = Pattern.compile("error in script \"(.+)\" on line (\\d+).*",Pattern.CASE_INSENSITIVE); //$NON-NLS-1$
     public static final Pattern MAKENSIS_WARNING_PATTERN = Pattern.compile(".+\\((.+):(\\d+)\\).*"); //$NON-NLS-1$
     public static final Pattern MAKENSIS_WARNINGS_PATTERN = Pattern.compile("([1-9][0-9]*) warnings?:"); //$NON-NLS-1$
@@ -58,7 +59,7 @@ public class MakeNSISRunner implements INSISConstants
     private static long cHwnd = 0;
     private static Set cListeners = new HashSet();
     private static IPath cScript = null;
-    
+
     public static final int COMPRESSOR_DEFAULT = 0;
     public static final int COMPRESSOR_BEST;
     public static final String[] COMPRESSOR_DISPLAY_ARRAY;
@@ -102,7 +103,7 @@ public class MakeNSISRunner implements INSISConstants
     {
         return cScript;
     }
-    
+
     public static void addListener(IMakeNSISRunListener listener)
     {
         cListeners.add(listener);
@@ -161,38 +162,44 @@ public class MakeNSISRunner implements INSISConstants
                     try {
                         List problems = results.getProblems();
                         monitor.beginTask(EclipseNSISPlugin.getResourceString("updating.problem.markers.task.name"),1+(problems==null?0:problems.size())); //$NON-NLS-1$
-                        IPath f = file.getLocation();
-                        if(f == null) {
-                            throw new CoreException(new Status(IStatus.ERROR,INSISConstants.PLUGIN_ID,IStatus.ERROR,EclipseNSISPlugin.getResourceString("local.filesystem.error"),null)); //$NON-NLS-1$
+                        IPath path = file.getFullPath();
+                        IPath loc = file.getLocation();
+                        if (loc == null) {
+                            throw new CoreException(new Status(IStatus.ERROR, INSISConstants.PLUGIN_ID, IStatus.ERROR, EclipseNSISPlugin.getResourceString("local.filesystem.error"), null)); //$NON-NLS-1$
                         }
-                        IDocument doc = new FileDocument(f.toFile());
+                        IDocument document = new FileDocument(loc.toFile());
+
                         file.deleteMarkers(PROBLEM_MARKER_ID, false, IResource.DEPTH_ZERO);
                         monitor.worked(1);
                         if (!Common.isEmptyCollection(problems)) {
                             for(Iterator iter = problems.iterator(); iter.hasNext(); ) {
                                 NSISScriptProblem problem = (NSISScriptProblem)iter.next();
-                                IMarker marker = file.createMarker(PROBLEM_MARKER_ID);
-                                switch(problem.getType()) {
-                                    case NSISScriptProblem.TYPE_ERROR:
-                                        marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
-                                        break;
-                                    case NSISScriptProblem.TYPE_WARNING:
-                                        marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_WARNING);
-                                        break;
-                                }
-                                marker.setAttribute(IMarker.MESSAGE, problem.getText());
-                                int line = problem.getLine();
-                                marker.setAttribute(IMarker.LINE_NUMBER, line>0?line:1);
-                                if(line > 0) {
-                                    try {
-                                        IRegion region = doc.getLineInformation(line-1);
-                                        marker.setAttribute(IMarker.CHAR_START, region.getOffset());
-                                        marker.setAttribute(IMarker.CHAR_END, region.getOffset()+region.getLength());
+                                IPath p = (IPath)problem.getPath();
+                                if (p!= null && p.equals(path)) {
+                                    IMarker marker = file.createMarker(PROBLEM_MARKER_ID);
+                                    switch (problem.getType())
+                                    {
+                                        case NSISScriptProblem.TYPE_ERROR:
+                                            marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
+                                            break;
+                                        case NSISScriptProblem.TYPE_WARNING:
+                                            marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_WARNING);
+                                            break;
                                     }
-                                    catch (BadLocationException e) {
+                                    marker.setAttribute(IMarker.MESSAGE, problem.getText());
+                                    int line = problem.getLine();
+                                    marker.setAttribute(IMarker.LINE_NUMBER, line > 0?line:1);
+                                    if (line > 0) {
+                                        try {
+                                            IRegion region = document.getLineInformation(line - 1);
+                                            marker.setAttribute(IMarker.CHAR_START, region.getOffset());
+                                            marker.setAttribute(IMarker.CHAR_END, region.getOffset() + region.getLength());
+                                        }
+                                        catch (BadLocationException e) {
+                                        }
                                     }
+                                    problem.setMarker(marker);
                                 }
-                                problem.setMarker(marker);
                                 monitor.worked(1);
                             }
                         }
@@ -244,22 +251,34 @@ public class MakeNSISRunner implements INSISConstants
             }
         }
         else {
-            Iterator iter = errors.iterator();
-            NSISConsoleLine error = (NSISConsoleLine)iter.next();
-            while (error.getLineNum() <= 0 && iter.hasNext()) {
-                error = (NSISConsoleLine) iter.next();
-            }
-            int lineNum = (error.getLineNum() > 0?error.getLineNum():0);
-            //reset the linenum for errors which don't have a linenum
-            for(iter=errors.iterator(); iter.hasNext(); ) {
-                error = (NSISConsoleLine) iter.next();
-                if(error.getLineNum() <= 0) {
-                    error.setLineNum(lineNum);
+            int nextIndex = 0;
+            ListIterator iter = errors.listIterator();
+
+            while(iter.hasNext()) {
+                NSISConsoleLine error = (NSISConsoleLine)iter.next();
+                while (error.getLineNum() <= 0 && iter.hasNext()) {
+                    error = (NSISConsoleLine) iter.next();
                 }
+                nextIndex = iter.nextIndex();
+                int lineNum = (error.getLineNum() > 0?error.getLineNum():0);
+                String text = error.toString();
+                IPath p = (error.getSource() == null?path:error.getSource());
+                iter.previous();
+                //reset the linenum for errors which don't have a linenum
+                while(iter.hasPrevious()) {
+                    NSISConsoleLine err = (NSISConsoleLine)iter.previous();
+                    if(err.getLineNum() <= 0) {
+                        err.setLineNum(lineNum);
+                        continue;
+                    }
+                    break;
+                }
+
+                NSISScriptProblem problem = new NSISScriptProblem(p,NSISScriptProblem.TYPE_ERROR,text,lineNum);
+                error.setProblem(problem);
+                problems.add(problem);
+                iter = errors.listIterator(nextIndex);
             }
-            NSISScriptProblem problem = new NSISScriptProblem(path,NSISScriptProblem.TYPE_ERROR,error.toString(),lineNum);
-            error.setProblem(problem);
-            problems.add(problem);
         }
 
         if(Common.isEmptyCollection(warnings)) {
@@ -459,9 +478,9 @@ public class MakeNSISRunner implements INSISConstants
                                         }
                                         String compressorName = buf.toString();
                                         String summaryCompressorName = Common.padString(EclipseNSISPlugin.getFormattedString("summary.compressor.name.format",  //$NON-NLS-1$
-                                                                                        new String[]{compressorName}), padding); 
-                                        MakeNSISResults tempresults = runCompileProcess(script, cmdArray, null, workDir, console, 
-                                                                            outputProcessor, consoleErrors, consoleWarnings, 
+                                                                                        new String[]{compressorName}), padding);
+                                        MakeNSISResults tempresults = runCompileProcess(script, cmdArray, null, workDir, console,
+                                                                            outputProcessor, consoleErrors, consoleWarnings,
                                                                             settings.showStatistics());
                                         if (tempresults.getReturnCode() != MakeNSISResults.RETURN_SUCCESS) {
                                             results = tempresults;
@@ -562,7 +581,7 @@ public class MakeNSISRunner implements INSISConstants
                                         ifile.setPersistentProperty(NSIS_COMPILE_TIMESTAMP, null);
                                         ifile.setPersistentProperty(NSIS_EXE_NAME, null);
                                         ifile.setPersistentProperty(NSIS_EXE_TIMESTAMP, null);
-    
+
                                     }
                                     updateMarkers(ifile, console, results);
                                 }
@@ -634,7 +653,7 @@ public class MakeNSISRunner implements INSISConstants
                 }
                 catch (InterruptedException e) {
                     console.appendLine(NSISConsoleLine.error(e.getLocalizedMessage()));
-                }                
+                }
             }
             consoleErrors.addAll(mainWriter.getErrors());
             consoleErrors.addAll(errorWriter.getErrors());
@@ -810,7 +829,7 @@ public class MakeNSISRunner implements INSISConstants
     {
         private INSISConsoleLineProcessor mDelegate;
         private String mOutputFileName = null;
-        
+
         public OutputFileConsoleLineProcessor(INSISConsoleLineProcessor delegate)
         {
             mDelegate = delegate;

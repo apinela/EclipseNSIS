@@ -12,7 +12,6 @@ package net.sf.eclipsensis.template;
 import java.io.File;
 import java.io.IOException;
 import java.text.Collator;
-import java.text.MessageFormat;
 import java.util.*;
 import java.util.List;
 
@@ -152,10 +151,7 @@ public abstract class AbstractTemplateSettings extends Composite
             public void checkStateChanged(CheckStateChangedEvent event) {
                 AbstractTemplate oldTemplate= (AbstractTemplate)event.getElement();
                 AbstractTemplate newTemplate= (AbstractTemplate)oldTemplate.clone();
-                if(newTemplate.getType() == AbstractTemplate.TYPE_DEFAULT) {
-                    newTemplate.setType(AbstractTemplate.TYPE_CUSTOM);
-                }
-                newTemplate.setEnabled(event.getChecked());
+                newTemplate.setEnabled(!oldTemplate.isEnabled());
                 getTemplateManager().updateTemplate(oldTemplate, newTemplate);
                 mTableViewer.refresh(true);
                 mTableViewer.setSelection(new StructuredSelection(newTemplate));
@@ -213,19 +209,14 @@ public abstract class AbstractTemplateSettings extends Composite
             mAddButton = null;
         }
 
-        if(canDuplicate()) {
-            mDuplicateButton= new Button(parent, SWT.PUSH);
-            mDuplicateButton.setText(EclipseNSISPlugin.getResourceString("template.settings.duplicate.label")); //$NON-NLS-1$
-            mDuplicateButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-            mDuplicateButton.addListener(SWT.Selection, new Listener() {
-                public void handleEvent(Event e) {
-                    duplicate();
-                }
-            });
-        }
-        else {
-            mDuplicateButton = null;
-        }
+        mDuplicateButton= new Button(parent, SWT.PUSH);
+        mDuplicateButton.setText(EclipseNSISPlugin.getResourceString("template.settings.duplicate.label")); //$NON-NLS-1$
+        mDuplicateButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+        mDuplicateButton.addListener(SWT.Selection, new Listener() {
+            public void handleEvent(Event e) {
+                duplicate();
+            }
+        });
 
         mEditButton= new Button(parent, SWT.PUSH);
         mEditButton.setText(EclipseNSISPlugin.getResourceString("template.settings.edit.label")); //$NON-NLS-1$
@@ -339,20 +330,9 @@ public abstract class AbstractTemplateSettings extends Composite
     private void duplicate()
     {
         AbstractTemplate template = (AbstractTemplate)((AbstractTemplate)((IStructuredSelection)getTableViewer().getSelection()).getFirstElement()).clone();
-        template.setType(AbstractTemplate.TYPE_USER);
-        MessageFormat mf = new MessageFormat(EclipseNSISPlugin.getResourceString("template.settings.duplicate.format")); //$NON-NLS-1$
-        int i=0;
-        while(true) {
-            String name = mf.format(new Object[] {template.getName(),new Integer(i)});
-            AbstractTemplate oldTemplate = getTemplateManager().getTemplate(name);
-            if(oldTemplate == null || oldTemplate.isDeleted()) {
-                template.setName(name);
-                add(template);
-                edit();
-                break;
-            }
-            i++;
-        }
+        template.setName(EclipseNSISPlugin.getFormattedString("template.settings.duplicate.format",new Object[] {template.getName()})); //$NON-NLS-1$
+        add(template);
+        edit();
     }
 
     private void add()
@@ -392,9 +372,7 @@ public abstract class AbstractTemplateSettings extends Composite
             }
         }
 
-        if(canDuplicate()) {
-            mDuplicateButton.setEnabled(selectionCount == 1);
-        }
+        mDuplicateButton.setEnabled(selectionCount == 1);
         mEditButton.setEnabled(selectionCount == 1);
         mExportButton.setEnabled(selectionCount > 0);
         mRemoveButton.setEnabled(selectionCount > 0 && selectionCount <= itemCount);
@@ -420,12 +398,29 @@ public abstract class AbstractTemplateSettings extends Composite
         AbstractTemplate newTemplate = (AbstractTemplate)oldTemplate.clone();
         Dialog dialog= createDialog(newTemplate);
         if (dialog.open() == Window.OK) {
-            mTemplateManager.updateTemplate(oldTemplate, newTemplate);
-            mTableViewer.refresh(true);
-            doSelectionChanged();
-            mTableViewer.setChecked(newTemplate, newTemplate.isEnabled());
-            mTableViewer.setSelection(new StructuredSelection(newTemplate));
+            if(updateTemplate(oldTemplate, newTemplate)) {
+                mTableViewer.refresh(true);
+                doSelectionChanged();
+                mTableViewer.setChecked(newTemplate, newTemplate.isEnabled());
+                mTableViewer.setSelection(new StructuredSelection(newTemplate));
+            }
         }
+    }
+
+    private boolean updateTemplate(AbstractTemplate oldTemplate, AbstractTemplate template)
+    {
+        boolean createnew = false;
+        if((!oldTemplate.getName().equals(template.getName()))) {
+            createnew = Common.openQuestion(null,"The name of the template has been changed. Click 'Yes' to create an additional template with the new name or 'No' to rename the existing one.",getShellImage());
+        }
+
+        if(!createnew) {
+            mTemplateManager.updateTemplate(oldTemplate,template);
+        }
+        else {
+            mTemplateManager.addTemplate(template);
+        }
+        return true;
     }
 
     private void import$()
@@ -445,7 +440,17 @@ public abstract class AbstractTemplateSettings extends Composite
                 Collection coll = mTemplateManager.getReaderWriter().import$(file);
                 if(!Common.isEmptyCollection(coll)) {
                     for (Iterator iter=coll.iterator(); iter.hasNext(); ) {
-                        mTemplateManager.addTemplate((AbstractTemplate)iter.next());
+                        AbstractTemplate template = (AbstractTemplate)iter.next();
+                        AbstractTemplate oldTemplate = null;
+                        if(template.getId() != null) {
+                            oldTemplate = mTemplateManager.getTemplate(template.getId());
+                        }
+                        if(oldTemplate != null) {
+                            mTemplateManager.updateTemplate(oldTemplate, template);
+                        }
+                        else {
+                            mTemplateManager.addTemplate(template);
+                        }
                     }
 
                     mTableViewer.refresh();
@@ -548,7 +553,6 @@ public abstract class AbstractTemplateSettings extends Composite
     }
 
     protected abstract boolean canAdd();
-    protected abstract boolean canDuplicate();
     protected abstract AbstractTemplate createTemplate(String name);
     protected abstract Dialog createDialog(AbstractTemplate newTemplate);
     protected abstract Image getShellImage();

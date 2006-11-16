@@ -19,6 +19,7 @@ public abstract class AbstractTemplate implements Serializable, Cloneable
     public static final int TYPE_CUSTOM = 1;
     public static final int TYPE_USER = 2;
 
+    private String mId = null;
     private String mName = null;
     private String mDescription = null;
     private boolean mEnabled = true;
@@ -32,18 +33,19 @@ public abstract class AbstractTemplate implements Serializable, Cloneable
     /**
      * @param name
      */
-    public AbstractTemplate(String name)
+    public AbstractTemplate(String id, String name)
     {
-        this(name,""); //$NON-NLS-1$
+        this(id, name,""); //$NON-NLS-1$
     }
 
     /**
      * @param name
      * @param description
      */
-    public AbstractTemplate(String name, String description)
+    public AbstractTemplate(String id, String name, String description)
     {
         this();
+        mId = id;
         mName = name;
         mDescription = (description==null?"":description); //$NON-NLS-1$
         mType = TYPE_USER;
@@ -105,26 +107,6 @@ public abstract class AbstractTemplate implements Serializable, Cloneable
         return getName();
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
-    public boolean equals(Object obj)
-    {
-        if(obj instanceof AbstractTemplate && obj.getClass().equals(getClass())) {
-            AbstractTemplate template = (AbstractTemplate)obj;
-            return mName.equals(template.mName) && mType == template.mType;
-        }
-        return false;
-    }
-
-    /* (non-Javadoc)
-     * @see java.lang.Object#hashCode()
-     */
-    public int hashCode()
-    {
-        return mName.hashCode()+mType;
-    }
-
     /**
      * @return Returns the deleted.
      */
@@ -147,6 +129,16 @@ public abstract class AbstractTemplate implements Serializable, Cloneable
         return mType;
     }
 
+    public String getId()
+    {
+        return mId;
+    }
+
+    public void setId(String id)
+    {
+        mId = id;
+    }
+
     /**
      * @param type The type to set.
      */
@@ -164,12 +156,58 @@ public abstract class AbstractTemplate implements Serializable, Cloneable
             return null;
         }
     }
-    
+
     protected void beforeExport()
     {
     }
-    
+
     protected void afterImport() throws InvalidTemplateException
     {
+    }
+
+    public int hashCode()
+    {
+        final int PRIME = 31;
+        int result = 1;
+        result = PRIME * result + (mDeleted?1231:1237);
+        result = PRIME * result + ((mDescription == null)?0:mDescription.hashCode());
+        result = PRIME * result + (mEnabled?1231:1237);
+        result = PRIME * result + ((mId == null)?0:mId.hashCode());
+        result = PRIME * result + ((mName == null)?0:mName.hashCode());
+        return result;
+    }
+
+    public boolean equals(Object obj)
+    {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        final AbstractTemplate other = (AbstractTemplate)obj;
+        if (mDeleted != other.mDeleted)
+            return false;
+        if (mDescription == null) {
+            if (other.mDescription != null)
+                return false;
+        }
+        else if (!mDescription.equals(other.mDescription))
+            return false;
+        if (mEnabled != other.mEnabled)
+            return false;
+        if (mId == null) {
+            if (other.mId != null)
+                return false;
+        }
+        else if (!mId.equals(other.mId))
+            return false;
+        if (mName == null) {
+            if (other.mName != null)
+                return false;
+        }
+        else if (!mName.equals(other.mName))
+            return false;
+        return true;
     }
 }

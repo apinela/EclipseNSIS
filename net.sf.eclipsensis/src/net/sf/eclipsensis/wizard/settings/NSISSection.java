@@ -197,4 +197,46 @@ public class NSISSection extends AbstractNSISInstallGroup
         }
         return super.createChildNode(document, name, value);
     }
+
+    public int hashCode()
+    {
+        final int PRIME = 31;
+        int result = super.hashCode();
+        result = PRIME * result + (mBold?1231:1237);
+        result = PRIME * result + (mDefaultUnselected?1231:1237);
+        result = PRIME * result + ((mDescription == null)?0:mDescription.hashCode());
+        result = PRIME * result + (mHidden?1231:1237);
+        result = PRIME * result + ((mName == null)?0:mName.hashCode());
+        return result;
+    }
+
+    public boolean equals(Object obj)
+    {
+        if (this == obj)
+            return true;
+        if (!super.equals(obj))
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        final NSISSection other = (NSISSection)obj;
+        if (mBold != other.mBold)
+            return false;
+        if (mDefaultUnselected != other.mDefaultUnselected)
+            return false;
+        if (mDescription == null) {
+            if (other.mDescription != null)
+                return false;
+        }
+        else if (!mDescription.equals(other.mDescription))
+            return false;
+        if (mHidden != other.mHidden)
+            return false;
+        if (mName == null) {
+            if (other.mName != null)
+                return false;
+        }
+        else if (!mName.equals(other.mName))
+            return false;
+        return true;
+    }
 }

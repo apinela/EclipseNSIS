@@ -9,6 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.wizard;
 
+import java.io.File;
 import java.text.Collator;
 import java.util.*;
 
@@ -75,10 +76,19 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
     {
         NSISWizardSettings settings = mWizard.getSettings();
 
-        String startMenuGroup = settings.getStartMenuGroup();
-        if(settings.isCreateStartMenuGroup() && !IOUtility.isValidFileName(startMenuGroup)) {
-            setErrorMessage(EclipseNSISPlugin.getFormattedString("invalid.start.menu.group.error",new String[]{startMenuGroup})); //$NON-NLS-1$
-            return false;
+        if(settings.isCreateStartMenuGroup()) {
+            String startMenuGroup = settings.getStartMenuGroup();
+            String[] parts = Common.tokenize(startMenuGroup,File.separatorChar);
+            if(Common.isEmptyArray(parts)) {
+                setErrorMessage(EclipseNSISPlugin.getFormattedString("invalid.start.menu.group.error",new String[]{startMenuGroup})); //$NON-NLS-1$
+                return false;
+            }
+            for (int i = 0; i < parts.length; i++) {
+                if(!IOUtility.isValidFileName(parts[i])) {
+                    setErrorMessage(EclipseNSISPlugin.getFormattedString("invalid.start.menu.group.error",new String[]{startMenuGroup})); //$NON-NLS-1$
+                    return false;
+                }
+            }
         }
         return true;
     }

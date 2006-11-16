@@ -80,7 +80,9 @@ public class InstallOptionsTemplateManager extends AbstractTemplateManager
     public boolean removeTemplate(AbstractTemplate template)
     {
         if(super.removeTemplate(template)) {
-            notifyListeners(InstallOptionsTemplateEvent.TEMPLATE_REMOVED, (InstallOptionsTemplate)template, null);
+            if(!template.isDeleted()) {
+                notifyListeners(InstallOptionsTemplateEvent.TEMPLATE_REMOVED, (InstallOptionsTemplate)template, null);
+            }
             return true;
         }
         else {
@@ -91,7 +93,10 @@ public class InstallOptionsTemplateManager extends AbstractTemplateManager
     public void resetToDefaults()
     {
         for(Iterator iter=getTemplates().iterator(); iter.hasNext(); ) {
-            notifyListeners(InstallOptionsTemplateEvent.TEMPLATE_REMOVED, (InstallOptionsTemplate)iter.next(), null);
+            InstallOptionsTemplate template = (InstallOptionsTemplate)iter.next();
+            if(!template.isDeleted()) {
+                notifyListeners(InstallOptionsTemplateEvent.TEMPLATE_REMOVED, template, null);
+            }
         }
         super.resetToDefaults();
         for(Iterator iter=getTemplates().iterator(); iter.hasNext(); ) {

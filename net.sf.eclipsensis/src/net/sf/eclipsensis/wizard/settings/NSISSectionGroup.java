@@ -186,4 +186,43 @@ public class NSISSectionGroup extends AbstractNSISInstallGroup
             return super.validate(recursive);
         }
     }
+
+    public int hashCode()
+    {
+        final int PRIME = 31;
+        int result = super.hashCode();
+        result = PRIME * result + (mBold?1231:1237);
+        result = PRIME * result + ((mCaption == null)?0:mCaption.hashCode());
+        result = PRIME * result + (mDefaultExpanded?1231:1237);
+        result = PRIME * result + ((mDescription == null)?0:mDescription.hashCode());
+        return result;
+    }
+
+    public boolean equals(Object obj)
+    {
+        if (this == obj)
+            return true;
+        if (!super.equals(obj))
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        final NSISSectionGroup other = (NSISSectionGroup)obj;
+        if (mBold != other.mBold)
+            return false;
+        if (mCaption == null) {
+            if (other.mCaption != null)
+                return false;
+        }
+        else if (!mCaption.equals(other.mCaption))
+            return false;
+        if (mDefaultExpanded != other.mDefaultExpanded)
+            return false;
+        if (mDescription == null) {
+            if (other.mDescription != null)
+                return false;
+        }
+        else if (!mDescription.equals(other.mDescription))
+            return false;
+        return true;
+    }
 }

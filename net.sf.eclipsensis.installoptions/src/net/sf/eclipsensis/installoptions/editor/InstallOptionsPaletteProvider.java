@@ -15,6 +15,7 @@ import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.model.*;
 import net.sf.eclipsensis.installoptions.template.*;
+import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.gef.GraphicalViewer;
 import org.eclipse.gef.palette.*;
@@ -29,6 +30,32 @@ import org.eclipse.swt.events.DisposeListener;
 public class InstallOptionsPaletteProvider
 {
     private static final ImageDescriptor cImageDescriptor = InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("templates.icon")); //$NON-NLS-1$
+    public static final Comparator cTemplateEntryComparator = new Comparator() {
+        public int compare(Object o1, Object o2)
+        {
+            CombinedTemplateCreationEntry e1 = (CombinedTemplateCreationEntry)o1;
+            CombinedTemplateCreationEntry e2 = (CombinedTemplateCreationEntry)o2;
+            if(e1 == null && e2 != null) {
+                return -1;
+            }
+            else if(e1 != null && e2 == null) {
+                return 1;
+            }
+            else {
+                String l1 = e1.getLabel();
+                String l2 = e2.getLabel();
+                if(l1 == null && l2 != null) {
+                    return -1;
+                }
+                else if(l1 != null && l2 == null) {
+                    return 1;
+                }
+                else {
+                    return l1.compareTo(l2);
+                }
+            }
+        }
+    };
 
     private InstallOptionsPaletteProvider()
     {
@@ -118,22 +145,32 @@ public class InstallOptionsPaletteProvider
     {
         final PaletteDrawer drawer = new PaletteDrawer(InstallOptionsPlugin.getResourceString("palette.templates.drawer.name"),  //$NON-NLS-1$
                 cImageDescriptor);
-        final Map entryMap = new HashMap();
-        List children = new ArrayList();
+        final List entries = new ArrayList();
         Boolean unload = Boolean.valueOf(InstallOptionsPlugin.getDefault().getPreferenceStore().getBoolean(IInstallOptionsConstants.PREFERENCE_UNLOAD_CREATION_TOOL_WHEN_FINISHED));
         for(Iterator iter = InstallOptionsTemplateManager.INSTANCE.getTemplates().iterator(); iter.hasNext(); ) {
             InstallOptionsTemplate template = (InstallOptionsTemplate)iter.next();
             if(!template.isDeleted()) {
                 ToolEntry entry = createTemplateEntry(template);
                 entry.setToolProperty(AbstractTool.PROPERTY_UNLOAD_WHEN_FINISHED, unload);
-                entryMap.put(template, entry);
-                children.add(entry);
+                entries.add(entry);
             }
         }
-        drawer.setChildren(children);
+        Collections.sort(entries, cTemplateEntryComparator);
+        drawer.setChildren(new ArrayList(entries));
 
         final IInstallOptionsTemplateListener listener = new IInstallOptionsTemplateListener() {
-            public void templateChanged(InstallOptionsTemplateEvent event)
+            private ToolEntry findEntry(InstallOptionsTemplate template)
+            {
+                for (Iterator iter = entries.iterator(); iter.hasNext();) {
+                    CombinedTemplateCreationEntry entry = (CombinedTemplateCreationEntry)iter.next();
+                    if(Common.objectsAreEqual(template,entry.getTemplate())) {
+                        return entry;
+                    }
+                }
+                return null;
+            }
+
+            public void templateChanged(final InstallOptionsTemplateEvent event)
             {
                 InstallOptionsTemplate oldTemplate = event.getOldTemplate();
                 InstallOptionsTemplate newTemplate = event.getNewTemplate();
@@ -141,28 +178,27 @@ public class InstallOptionsPaletteProvider
                 switch(event.getType()) {
                     case InstallOptionsTemplateEvent.TEMPLATE_ADDED:
                         entry = createTemplateEntry(newTemplate);
-                        entryMap.put(newTemplate, entry);
-                        drawer.add(entry);
+                        entries.add(entry);
                         break;
                     case InstallOptionsTemplateEvent.TEMPLATE_REMOVED:
-                        entry = (ToolEntry)entryMap.remove(oldTemplate);
+                        entry = findEntry(oldTemplate);
                         if(entry != null) {
-                            drawer.remove(entry);
+                            entries.remove(entry);
                         }
                         break;
                     case InstallOptionsTemplateEvent.TEMPLATE_UPDATED:
-                        entry = (ToolEntry)entryMap.remove(oldTemplate);
+                        entry = findEntry(oldTemplate);
                         if(entry != null) {
                             ((CombinedTemplateCreationEntry)entry).setTemplate(newTemplate);
                             entry.setLabel(newTemplate.getName());
                             entry.setVisible(newTemplate.isEnabled());
                             entry.setDescription(newTemplate.getDescription());
-                            entry. setToolProperty(CreationTool.PROPERTY_CREATION_FACTORY, InstallOptionsTemplateManager.INSTANCE.getTemplateFactory(newTemplate));
-                            entryMap.put(newTemplate, entry);
+                            entry.setToolProperty(CreationTool.PROPERTY_CREATION_FACTORY, InstallOptionsTemplateManager.INSTANCE.getTemplateFactory(newTemplate));
                         }
                         break;
                 }
-
+                Collections.sort(entries, cTemplateEntryComparator);
+                drawer.setChildren(new ArrayList(entries));
             }
         };
         InstallOptionsTemplateManager.INSTANCE.addTemplateListener(listener);
@@ -172,7 +208,7 @@ public class InstallOptionsPaletteProvider
             {
                 if(event.getProperty().equals(IInstallOptionsConstants.PREFERENCE_UNLOAD_CREATION_TOOL_WHEN_FINISHED)) {
                     Boolean newValue = (Boolean)event.getNewValue();
-                    for(Iterator iter=entryMap.values().iterator(); iter.hasNext(); ) {
+                    for(Iterator iter=entries.iterator(); iter.hasNext(); ) {
                         ((ToolEntry)iter.next()).setToolProperty(AbstractTool.PROPERTY_UNLOAD_WHEN_FINISHED, newValue);
                     }
                 }

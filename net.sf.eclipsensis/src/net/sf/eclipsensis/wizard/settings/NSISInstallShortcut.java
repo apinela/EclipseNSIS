@@ -207,4 +207,57 @@ public class NSISInstallShortcut extends AbstractNSISInstallItem
             return super.validate(recursive);
         }
     }
+
+    public int hashCode()
+    {
+        final int PRIME = 31;
+        int result = 1;
+        result = PRIME * result + (mCreateInStartMenuGroup?1231:1237);
+        result = PRIME * result + ((mLocation == null)?0:mLocation.hashCode());
+        result = PRIME * result + ((mName == null)?0:mName.hashCode());
+        result = PRIME * result + ((mPath == null)?0:mPath.hashCode());
+        result = PRIME * result + mShortcutType;
+        result = PRIME * result + ((mUrl == null)?0:mUrl.hashCode());
+        return result;
+    }
+
+    public boolean equals(Object obj)
+    {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        final NSISInstallShortcut other = (NSISInstallShortcut)obj;
+        if (mCreateInStartMenuGroup != other.mCreateInStartMenuGroup)
+            return false;
+        if (mLocation == null) {
+            if (other.mLocation != null)
+                return false;
+        }
+        else if (!mLocation.equals(other.mLocation))
+            return false;
+        if (mName == null) {
+            if (other.mName != null)
+                return false;
+        }
+        else if (!mName.equals(other.mName))
+            return false;
+        if (mPath == null) {
+            if (other.mPath != null)
+                return false;
+        }
+        else if (!mPath.equals(other.mPath))
+            return false;
+        if (mShortcutType != other.mShortcutType)
+            return false;
+        if (mUrl == null) {
+            if (other.mUrl != null)
+                return false;
+        }
+        else if (!mUrl.equals(other.mUrl))
+            return false;
+        return true;
+    }
 }

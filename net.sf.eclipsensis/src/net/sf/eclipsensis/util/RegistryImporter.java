@@ -97,7 +97,7 @@ public class RegistryImporter
         regEdit = null;
         String path = WinAPI.GetEnvironmentVariable("PATH"); //$NON-NLS-1$
         if(!Common.isEmpty(path)) {
-            String[] paths = Common.tokenize(path, System.getProperty("path.separator").charAt(0)); //$NON-NLS-1$
+            String[] paths = Common.tokenize(path, File.pathSeparatorChar);
             if(!Common.isEmptyArray(paths)) {
                 for (int i = 0; i < paths.length; i++) {
                     if(!paths[i].equalsIgnoreCase(winDir)) {

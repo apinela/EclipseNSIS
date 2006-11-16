@@ -10,7 +10,7 @@
 package net.sf.eclipsensis.wizard.template;
 
 import java.io.*;
-import java.util.Map;
+import java.util.List;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.template.AbstractTemplateManager;
@@ -33,18 +33,18 @@ public class NSISWizardTemplateManager extends AbstractTemplateManager
         cPatches[0][2] = new byte[]{(byte)0x2D, (byte)0x38, (byte)0x37, (byte)0x33, (byte)0x34, (byte)0x34, (byte)0x30, (byte)0x32};
     }
 
-    protected Map loadUserTemplateStore() throws IOException, ClassNotFoundException
+    protected List loadUserTemplateStore() throws IOException, ClassNotFoundException
     {
-        Map map = null;
+        List list = null;
         try {
-            map = super.loadUserTemplateStore();
+            list = super.loadUserTemplateStore();
         }
         catch(InvalidClassException ice) {
             //This maybe because RGB serialVersionUID changed from Eclipse 3.0 to 3.1
             patchUserTemplateStore(getUserTemplatesStore());
-            map = super.loadUserTemplateStore();
+            list = super.loadUserTemplateStore();
         }
-        return map;
+        return list;
     }
 
     private static void patchUserTemplateStore(File store)

@@ -36,7 +36,7 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
     static {
         NSISInstallElementFactory.register(TYPE, EclipseNSISPlugin.getResourceString("wizard.files.type.name"), IMAGE, NSISInstallFiles.class); //$NON-NLS-1$
         //Let's register File Item as well
-        FileItem.class.getName(); 
+        FileItem.class.getName();
     }
 
     protected void addSkippedProperties(Collection skippedProperties)
@@ -172,6 +172,35 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
         }
     }
 
+    public int hashCode()
+    {
+        final int PRIME = 31;
+        int result = super.hashCode();
+        result = PRIME * result + ((mDestination == null)?0:mDestination.hashCode());
+        result = PRIME * result + mOverwriteMode;
+        return result;
+    }
+
+    public boolean equals(Object obj)
+    {
+        if (this == obj)
+            return true;
+        if (!super.equals(obj))
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        final NSISInstallFiles other = (NSISInstallFiles)obj;
+        if (mDestination == null) {
+            if (other.mDestination != null)
+                return false;
+        }
+        else if (!mDestination.equals(other.mDestination))
+            return false;
+        if (mOverwriteMode != other.mOverwriteMode)
+            return false;
+        return true;
+    }
+
     public static class FileItem extends AbstractNSISInstallItem
     {
         private static final long serialVersionUID = 3744853352840436396L;
@@ -238,7 +267,7 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
                     FileItem fi = new FileItem();
                     fi.setName(newFilename);
                     if(!getParent().canAddChild(fi)) {
-                        Common.openError(wizard.getShell(), 
+                        Common.openError(wizard.getShell(),
                                 EclipseNSISPlugin.getFormattedString("duplicate.child.error", new Object[] {getParent().getDisplayName(),fi.getDisplayName()}),  //$NON-NLS-1$
                                 EclipseNSISPlugin.getShellImage());
                         return false;
@@ -292,4 +321,5 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
             }
         }
     }
+
 }

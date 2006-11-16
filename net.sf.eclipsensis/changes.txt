@@ -22,9 +22,12 @@ Revision History
         o 1474161
         o 1521533
         o 1556289
+        o 1587717
+        o 1591254
     * Feature Requests:
         o 1441231
         o 1452422
+        o 1587982
     * Other minor bug fixes.
 
 0.9.4 (01/26/2006)

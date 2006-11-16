@@ -25,7 +25,7 @@ public class NSISInstallRegistryKey extends NSISInstallRegistryItem
 
     private int mRootKey = HKLM;
     private String mSubKey = null;
-    
+
     static {
         NSISInstallElementFactory.register(TYPE, EclipseNSISPlugin.getResourceString("wizard.regkey.type.name"), IMAGE, NSISInstallRegistryKey.class); //$NON-NLS-1$
     }
@@ -74,5 +74,34 @@ public class NSISInstallRegistryKey extends NSISInstallRegistryItem
     public boolean edit(NSISWizard wizard)
     {
         return new NSISInstallRegistryKeyDialog(wizard,this).open() == Window.OK;
+    }
+
+    public int hashCode()
+    {
+        final int PRIME = 31;
+        int result = 1;
+        result = PRIME * result + mRootKey;
+        result = PRIME * result + ((mSubKey == null)?0:mSubKey.hashCode());
+        return result;
+    }
+
+    public boolean equals(Object obj)
+    {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        final NSISInstallRegistryKey other = (NSISInstallRegistryKey)obj;
+        if (mRootKey != other.mRootKey)
+            return false;
+        if (mSubKey == null) {
+            if (other.mSubKey != null)
+                return false;
+        }
+        else if (!mSubKey.equals(other.mSubKey))
+            return false;
+        return true;
     }
 }

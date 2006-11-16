@@ -135,7 +135,7 @@ public abstract class AbstractNSISInstallGroup extends AbstractNSISInstallElemen
             }
             else {
                 if(Display.getCurrent() != null) {
-                    Common.openError(Display.getCurrent().getActiveShell(), 
+                    Common.openError(Display.getCurrent().getActiveShell(),
                             EclipseNSISPlugin.getFormattedString("duplicate.child.error", new Object[] {getDisplayName(),child.getDisplayName()}),  //$NON-NLS-1$
                             EclipseNSISPlugin.getShellImage());
                 }
@@ -345,6 +345,32 @@ public abstract class AbstractNSISInstallGroup extends AbstractNSISInstallElemen
             error = EclipseNSISPlugin.getFormattedString("empty.contents.error",new Object[]{getDisplayName()}); //$NON-NLS-1$
         }
         return (error==null?super.validate(recursive):error);
+    }
+
+    public int hashCode()
+    {
+        final int PRIME = 31;
+        int result = 1;
+        result = PRIME * result + ((mChildren == null)?0:mChildren.hashCode());
+        return result;
+    }
+
+    public boolean equals(Object obj)
+    {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        final AbstractNSISInstallGroup other = (AbstractNSISInstallGroup)obj;
+        if (mChildren == null) {
+            if (other.mChildren != null)
+                return false;
+        }
+        else if (!mChildren.equals(other.mChildren))
+            return false;
+        return true;
     }
 
     public abstract void setChildTypes();

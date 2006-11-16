@@ -27,9 +27,9 @@ public class NSISWizardTemplateReaderWriter extends AbstractTemplateReaderWriter
         super();
     }
 
-    protected AbstractTemplate createTemplate(String name)
+    protected AbstractTemplate createTemplate(String id, String name)
     {
-        return new NSISWizardTemplate(name);
+        return new NSISWizardTemplate(id, name);
     }
 
     protected Node exportContents(AbstractTemplate template, Document doc)

@@ -148,4 +148,43 @@ public class NSISInstallDirectory extends AbstractNSISInstallItem implements INS
             return super.validate(recursive);
         }
     }
+
+    public int hashCode()
+    {
+        final int PRIME = 31;
+        int result = 1;
+        result = PRIME * result + ((mDestination == null)?0:mDestination.hashCode());
+        result = PRIME * result + ((mName == null)?0:mName.hashCode());
+        result = PRIME * result + mOverwriteMode;
+        result = PRIME * result + (mRecursive?1231:1237);
+        return result;
+    }
+
+    public boolean equals(Object obj)
+    {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        final NSISInstallDirectory other = (NSISInstallDirectory)obj;
+        if (mDestination == null) {
+            if (other.mDestination != null)
+                return false;
+        }
+        else if (!mDestination.equals(other.mDestination))
+            return false;
+        if (mName == null) {
+            if (other.mName != null)
+                return false;
+        }
+        else if (!mName.equals(other.mName))
+            return false;
+        if (mOverwriteMode != other.mOverwriteMode)
+            return false;
+        if (mRecursive != other.mRecursive)
+            return false;
+        return true;
+    }
 }
