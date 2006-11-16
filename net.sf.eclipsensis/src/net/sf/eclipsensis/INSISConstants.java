@@ -38,6 +38,8 @@ public interface INSISConstants
     public static final String NSIS_EDITOR_CONTEXT_ID = EclipseNSISPlugin.getBundleResourceString("%context.editingNSISSource.id"); //$NON-NLS-1$
     public static final String COMPILE_ACTION_ID = EclipseNSISPlugin.getBundleResourceString("%compile.action.id"); //$NON-NLS-1$
     public static final String COMPILE_TEST_ACTION_ID = EclipseNSISPlugin.getBundleResourceString("%compile.test.action.id"); //$NON-NLS-1$
+    public static final String TEST_ACTION_ID = EclipseNSISPlugin.getBundleResourceString("%test.action.id"); //$NON-NLS-1$
+    public static final String CLEAR_MARKERS_ACTION_ID = EclipseNSISPlugin.getBundleResourceString("%clear.markers.action.id"); //$NON-NLS-1$
     public static final String INSERT_TEMPLATE_COMMAND_ID = EclipseNSISPlugin.getBundleResourceString("%insert.template.command.id"); //$NON-NLS-1$
     public static final String GOTO_HELP_COMMAND_ID = EclipseNSISPlugin.getBundleResourceString("%goto.help.command.id"); //$NON-NLS-1$
     public static final String STICKY_HELP_COMMAND_ID = EclipseNSISPlugin.getBundleResourceString("%sticky.help.command.id"); //$NON-NLS-1$

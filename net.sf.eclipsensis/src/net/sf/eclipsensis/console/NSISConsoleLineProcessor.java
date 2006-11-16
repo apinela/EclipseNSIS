@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -37,6 +37,14 @@ public class NSISConsoleLineProcessor implements INSISConsoleLineProcessor
         String lText = text.toLowerCase();
         if(lText.startsWith("error")) { //$NON-NLS-1$
             Matcher matcher = MakeNSISRunner.MAKENSIS_ERROR_PATTERN.matcher(text);
+            if(matcher.matches()) {
+                line = NSISConsoleLine.error(text);
+                setLineInfo(line, new Path(matcher.group(1)), Integer.parseInt(matcher.group(2)));
+                return line;
+            }
+        }
+        if(lText.startsWith("!include: error")) { //$NON-NLS-1$
+            Matcher matcher = MakeNSISRunner.MAKENSIS_INCLUDE_ERROR_PATTERN.matcher(text);
             if(matcher.matches()) {
                 line = NSISConsoleLine.error(text);
                 setLineInfo(line, new Path(matcher.group(1)), Integer.parseInt(matcher.group(2)));

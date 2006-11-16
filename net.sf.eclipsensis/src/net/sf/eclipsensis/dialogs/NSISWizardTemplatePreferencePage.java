@@ -58,11 +58,6 @@ public class NSISWizardTemplatePreferencePage extends PreferencePage implements 
                 return true;
             }
 
-            protected boolean canDuplicate()
-            {
-                return true;
-            }
-
             protected AbstractTemplate createTemplate(String name)
             {
                 return new NSISWizardTemplate(name);
