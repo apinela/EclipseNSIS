@@ -526,22 +526,37 @@ public abstract class AbstractTemplateSettings extends Composite
                 }
             }
 
-            mTableViewer.refresh(true);
+            resetViewer();
             mTableViewer.setSelection(new StructuredSelection(list));
             doSelectionChanged();
-            mTableViewer.setCheckedElements(getEnabledTemplates());
             mTableViewer.getTable().setFocus();
         }
     }
 
-    public void performDefaults() {
+    public boolean performCancel()
+    {
+        mTemplateManager.discard();
+        resetViewer();
+        return true;
+    }
+
+    public void performDefaults()
+    {
         mTemplateManager.resetToDefaults();
+        resetViewer();
+    }
+
+    /**
+     *
+     */
+    private void resetViewer()
+    {
         mTableViewer.refresh(true);
-        mTableViewer.setAllChecked(false);
         mTableViewer.setCheckedElements(getEnabledTemplates());
     }
 
-    public boolean performOk() {
+    public boolean performOk()
+    {
         try {
             mTemplateManager.save();
             return true;

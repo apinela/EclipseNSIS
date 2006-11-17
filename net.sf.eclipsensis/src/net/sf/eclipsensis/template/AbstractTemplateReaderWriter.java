@@ -17,6 +17,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.util.XMLUtil;
 
 import org.w3c.dom.*;
@@ -63,7 +64,7 @@ public abstract class AbstractTemplateReaderWriter
                 }
 
                 AbstractTemplate template;
-                template = createTemplate(id, name);
+                template = createTemplate((Common.isEmpty(id)?null:id), name);
 
                 template.setDeleted(false);
                 template.setEnabled(true);
@@ -121,7 +122,9 @@ public abstract class AbstractTemplateReaderWriter
                 Node node= document.createElement(TEMPLATE_ELEMENT);
                 root.appendChild(node);
 
-                XMLUtil.addAttribute(document, node, ID_ATTRIBUTE, template.getId());
+                if (!Common.isEmpty(template.getId())) {
+                    XMLUtil.addAttribute(document, node, ID_ATTRIBUTE, template.getId());
+                }
                 XMLUtil.addAttribute(document, node, NAME_ATTRIBUTE, template.getName());
 
                 Element description = document.createElement(DESCRIPTION_NODE);

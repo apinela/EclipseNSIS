@@ -13,5 +13,5 @@ import java.util.EventListener;
 
 public interface IInstallOptionsTemplateListener extends EventListener
 {
-    public void templateChanged(InstallOptionsTemplateEvent event);
+    public void templatesChanged(InstallOptionsTemplateEvent[] events);
 }

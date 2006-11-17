@@ -67,6 +67,7 @@ class InstallOptionsTemplateReaderWriter extends AbstractTemplateReaderWriter
             INISection[] iniSections = iniFile.getSections();
             for (int i = 0; i < iniSections.length; i++) {
                 iniSections[i] = (INISection)iniSections[i].trim().clone();
+                iniSections[i].setParent(null);
             }
             ((InstallOptionsTemplate)template).setSections(iniSections);
         }

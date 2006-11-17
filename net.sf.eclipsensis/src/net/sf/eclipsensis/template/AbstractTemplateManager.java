@@ -49,6 +49,8 @@ public abstract class AbstractTemplateManager
 
         mUserTemplatesStore = new File(location,fileName);
 
+        mReaderWriter = createReaderWriter();
+
         try {
             mDefaultTemplatesMap = loadDefaultTemplateStore();
         }
@@ -62,9 +64,18 @@ public abstract class AbstractTemplateManager
             }
         }
 
+        mTemplates = new ArrayList();
+        loadTemplates();
+    }
+
+    /**
+     *
+     */
+    protected final void loadTemplates()
+    {
+        mTemplates.clear();
         Map map = new HashMap(mDefaultTemplatesMap);
 
-        mTemplates = new ArrayList();
         try {
             List list = loadUserTemplateStore();
             if(list != null) {
@@ -81,8 +92,6 @@ public abstract class AbstractTemplateManager
             EclipseNSISPlugin.getDefault().log(e);
         }
         mTemplates.addAll(map.values());
-
-        mReaderWriter = createReaderWriter();
     }
 
     public AbstractTemplateReaderWriter getReaderWriter()
@@ -211,8 +220,11 @@ public abstract class AbstractTemplateManager
 
             if(oldTemplate.getType() != AbstractTemplate.TYPE_USER) {
                 AbstractTemplate defaultTemplate = getTemplate(oldTemplate.getId());
-                if(!template.equals(defaultTemplate)) {
-                    template.setType(AbstractTemplate.TYPE_CUSTOM);
+                if(defaultTemplate != null) {
+                    template.setType(template.equals(defaultTemplate)?AbstractTemplate.TYPE_DEFAULT:AbstractTemplate.TYPE_CUSTOM);
+                }
+                else {
+                    template.setType(AbstractTemplate.TYPE_USER);
                 }
             }
             template.setDeleted(false);
@@ -278,6 +290,11 @@ public abstract class AbstractTemplateManager
     {
         checkClass(template);
         return (mTemplates.contains(template) && (template.getType() == AbstractTemplate.TYPE_CUSTOM));
+    }
+
+    public void discard()
+    {
+        loadTemplates();
     }
 
     /**

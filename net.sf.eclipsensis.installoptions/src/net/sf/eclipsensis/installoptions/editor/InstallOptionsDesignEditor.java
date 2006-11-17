@@ -2162,6 +2162,13 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
             }
         }
 
+        protected void handleCancelPressed()
+        {
+            if(mTemplateSettings.performCancel()) {
+                super.handleCancelPressed();
+            }
+        }
+
         protected void okPressed()
         {
             if(mTemplateSettings.performOk()) {

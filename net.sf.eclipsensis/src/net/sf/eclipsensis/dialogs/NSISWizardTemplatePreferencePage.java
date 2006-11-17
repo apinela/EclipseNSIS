@@ -111,4 +111,9 @@ public class NSISWizardTemplatePreferencePage extends PreferencePage implements 
         }
         return false;
     }
+
+    public boolean performCancel()
+    {
+        return mTemplateSettings.performCancel();
+    }
 }

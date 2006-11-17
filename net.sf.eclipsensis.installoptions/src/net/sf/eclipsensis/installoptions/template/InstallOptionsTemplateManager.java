@@ -9,6 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.template;
 
+import java.io.IOException;
 import java.util.*;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
@@ -24,6 +25,7 @@ public class InstallOptionsTemplateManager extends AbstractTemplateManager
 
     private List mListeners = new ArrayList();
     private Map mTemplateFactories = new HashMap();
+    private List mEventQueue = new ArrayList();
 
     private InstallOptionsTemplateManager()
     {
@@ -60,7 +62,7 @@ public class InstallOptionsTemplateManager extends AbstractTemplateManager
     public boolean addTemplate(AbstractTemplate template)
     {
         if(super.addTemplate(template)) {
-            notifyListeners(InstallOptionsTemplateEvent.TEMPLATE_ADDED, null, (InstallOptionsTemplate)template);
+            queueEvent(InstallOptionsTemplateEvent.TEMPLATE_ADDED, null, (InstallOptionsTemplate)template);
             return true;
         }
         return false;
@@ -69,7 +71,7 @@ public class InstallOptionsTemplateManager extends AbstractTemplateManager
     public boolean updateTemplate(AbstractTemplate oldTemplate, AbstractTemplate newTemplate)
     {
         if(super.updateTemplate(oldTemplate, newTemplate)) {
-            notifyListeners(InstallOptionsTemplateEvent.TEMPLATE_UPDATED, (InstallOptionsTemplate)oldTemplate, (InstallOptionsTemplate)newTemplate);
+            queueEvent(InstallOptionsTemplateEvent.TEMPLATE_UPDATED, (InstallOptionsTemplate)oldTemplate, (InstallOptionsTemplate)newTemplate);
             return true;
         }
         else {
@@ -81,7 +83,7 @@ public class InstallOptionsTemplateManager extends AbstractTemplateManager
     {
         if(super.removeTemplate(template)) {
             if(!template.isDeleted()) {
-                notifyListeners(InstallOptionsTemplateEvent.TEMPLATE_REMOVED, (InstallOptionsTemplate)template, null);
+                queueEvent(InstallOptionsTemplateEvent.TEMPLATE_REMOVED, (InstallOptionsTemplate)template, null);
             }
             return true;
         }
@@ -95,19 +97,19 @@ public class InstallOptionsTemplateManager extends AbstractTemplateManager
         for(Iterator iter=getTemplates().iterator(); iter.hasNext(); ) {
             InstallOptionsTemplate template = (InstallOptionsTemplate)iter.next();
             if(!template.isDeleted()) {
-                notifyListeners(InstallOptionsTemplateEvent.TEMPLATE_REMOVED, template, null);
+                queueEvent(InstallOptionsTemplateEvent.TEMPLATE_REMOVED, template, null);
             }
         }
         super.resetToDefaults();
         for(Iterator iter=getTemplates().iterator(); iter.hasNext(); ) {
-            notifyListeners(InstallOptionsTemplateEvent.TEMPLATE_ADDED, null, (InstallOptionsTemplate)iter.next());
+            queueEvent(InstallOptionsTemplateEvent.TEMPLATE_ADDED, null, (InstallOptionsTemplate)iter.next());
         }
     }
 
     protected boolean restore(AbstractTemplate template)
     {
         if(super.restore(template)) {
-            notifyListeners(InstallOptionsTemplateEvent.TEMPLATE_ADDED, null, (InstallOptionsTemplate)template);
+            queueEvent(InstallOptionsTemplateEvent.TEMPLATE_ADDED, null, (InstallOptionsTemplate)template);
             return true;
         }
         return false;
@@ -117,7 +119,7 @@ public class InstallOptionsTemplateManager extends AbstractTemplateManager
     {
         InstallOptionsTemplate newTemplate = (InstallOptionsTemplate)super.revert(template);
         if(newTemplate != null) {
-            notifyListeners(InstallOptionsTemplateEvent.TEMPLATE_UPDATED, (InstallOptionsTemplate)template, newTemplate);
+            queueEvent(InstallOptionsTemplateEvent.TEMPLATE_UPDATED, (InstallOptionsTemplate)template, newTemplate);
         }
         return newTemplate;
     }
@@ -134,13 +136,46 @@ public class InstallOptionsTemplateManager extends AbstractTemplateManager
         mListeners.remove(listener);
     }
 
-    private void notifyListeners(int type, InstallOptionsTemplate oldTemplate, InstallOptionsTemplate newTemplate)
+    private void queueEvent(int type, InstallOptionsTemplate oldTemplate, InstallOptionsTemplate newTemplate)
     {
-        InstallOptionsTemplateEvent event = new InstallOptionsTemplateEvent(type, oldTemplate, newTemplate);
+        mEventQueue.add(new InstallOptionsTemplateEvent(type, oldTemplate, newTemplate));
+    }
+
+    private void notifyListeners()
+    {
+        InstallOptionsTemplateEvent[] events = (InstallOptionsTemplateEvent[])mEventQueue.toArray(new InstallOptionsTemplateEvent[mEventQueue.size()]);
+        mEventQueue.clear();
         IInstallOptionsTemplateListener[] listeners = (IInstallOptionsTemplateListener[])mListeners.toArray(new IInstallOptionsTemplateListener[mListeners.size()]);
         for (int i = 0; i < listeners.length; i++) {
-            listeners[i].templateChanged(event);
+            try {
+                listeners[i].templatesChanged(events);
+            }
+            catch (Exception e) {
+                InstallOptionsPlugin.getDefault().log(e);
+            }
         }
+    }
+
+    public void save() throws IOException
+    {
+        super.save();
+        notifyListeners();
+    }
+
+    public void discard()
+    {
+        for(Iterator iter=getTemplates().iterator(); iter.hasNext(); ) {
+            InstallOptionsTemplate template = (InstallOptionsTemplate)iter.next();
+            if(!template.isDeleted()) {
+                queueEvent(InstallOptionsTemplateEvent.TEMPLATE_REMOVED, template, null);
+            }
+        }
+        super.discard();
+        for(Iterator iter=getTemplates().iterator(); iter.hasNext(); ) {
+            queueEvent(InstallOptionsTemplateEvent.TEMPLATE_ADDED, null, (InstallOptionsTemplate)iter.next());
+        }
+
+        notifyListeners();
     }
 
     protected AbstractTemplateReaderWriter createReaderWriter()

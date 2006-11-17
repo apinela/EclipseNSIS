@@ -170,32 +170,35 @@ public class InstallOptionsPaletteProvider
                 return null;
             }
 
-            public void templateChanged(final InstallOptionsTemplateEvent event)
+            public void templatesChanged(final InstallOptionsTemplateEvent[] events)
             {
-                InstallOptionsTemplate oldTemplate = event.getOldTemplate();
-                InstallOptionsTemplate newTemplate = event.getNewTemplate();
-                ToolEntry entry;
-                switch(event.getType()) {
-                    case InstallOptionsTemplateEvent.TEMPLATE_ADDED:
-                        entry = createTemplateEntry(newTemplate);
-                        entries.add(entry);
-                        break;
-                    case InstallOptionsTemplateEvent.TEMPLATE_REMOVED:
-                        entry = findEntry(oldTemplate);
-                        if(entry != null) {
-                            entries.remove(entry);
-                        }
-                        break;
-                    case InstallOptionsTemplateEvent.TEMPLATE_UPDATED:
-                        entry = findEntry(oldTemplate);
-                        if(entry != null) {
-                            ((CombinedTemplateCreationEntry)entry).setTemplate(newTemplate);
-                            entry.setLabel(newTemplate.getName());
-                            entry.setVisible(newTemplate.isEnabled());
-                            entry.setDescription(newTemplate.getDescription());
-                            entry.setToolProperty(CreationTool.PROPERTY_CREATION_FACTORY, InstallOptionsTemplateManager.INSTANCE.getTemplateFactory(newTemplate));
-                        }
-                        break;
+                for (int i = 0; i < events.length; i++) {
+                    InstallOptionsTemplateEvent event = events[i];
+                    InstallOptionsTemplate oldTemplate = event.getOldTemplate();
+                    InstallOptionsTemplate newTemplate = event.getNewTemplate();
+                    ToolEntry entry;
+                    switch(event.getType()) {
+                        case InstallOptionsTemplateEvent.TEMPLATE_ADDED:
+                            entry = createTemplateEntry(newTemplate);
+                            entries.add(entry);
+                            break;
+                        case InstallOptionsTemplateEvent.TEMPLATE_REMOVED:
+                            entry = findEntry(oldTemplate);
+                            if(entry != null) {
+                                entries.remove(entry);
+                            }
+                            break;
+                        case InstallOptionsTemplateEvent.TEMPLATE_UPDATED:
+                            entry = findEntry(oldTemplate);
+                            if(entry != null) {
+                                ((CombinedTemplateCreationEntry)entry).setTemplate(newTemplate);
+                                entry.setLabel(newTemplate.getName());
+                                entry.setVisible(newTemplate.isEnabled());
+                                entry.setDescription(newTemplate.getDescription());
+                                entry.setToolProperty(CreationTool.PROPERTY_CREATION_FACTORY, InstallOptionsTemplateManager.INSTANCE.getTemplateFactory(newTemplate));
+                            }
+                            break;
+                    }
                 }
                 Collections.sort(entries, cTemplateEntryComparator);
                 drawer.setChildren(new ArrayList(entries));
