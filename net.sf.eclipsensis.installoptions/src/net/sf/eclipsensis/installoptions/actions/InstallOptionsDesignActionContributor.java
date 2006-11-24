@@ -113,9 +113,8 @@ public class InstallOptionsDesignActionContributor extends ActionBarContributor
         }
         addDropDownAction(new DropDownAction(IInstallOptionsConstants.DISTRIBUTE_GROUP,InstallOptionsPlugin.getDefault().getPreferenceStore(),distributeActions));
 
-        retargetAction = new LabelRetargetAction(ToggleLockAction.ID,""); //$NON-NLS-1$
-        addRetargetAction(retargetAction);
         mToggleLockAction = new ToggleLockRetargetAction();
+        addRetargetAction(mToggleLockAction);
         getPage().addPartListener(mToggleLockAction);
 
         retargetAction = new RetargetAction(RefreshDiagramAction.ID,

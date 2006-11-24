@@ -16,13 +16,9 @@ import org.eclipse.gef.commands.Command;
 
 public class ChangeGuideCommand extends Command
 {
-
     private InstallOptionsWidget mWidget;
-
     private InstallOptionsGuide mOldGuide, mNewGuide;
-
     private int mOldAlign, mNewAlign;
-
     private boolean mHorizontal;
 
     public ChangeGuideCommand(InstallOptionsWidget widget, boolean horizontalGuide)

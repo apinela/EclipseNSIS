@@ -150,33 +150,37 @@ public class GeneralPropertySection extends InstallOptionsElementPropertySection
         final Runnable runnable = new Runnable() {
             public void run()
             {
-                if(validator != null) {
-                    String error = validator.isValid(flags);
-                    if(error != null) {
-                        Common.openError(table.getShell(), error, InstallOptionsPlugin.getShellImage());
-                        viewer.setCheckedElements(widget.getFlags().toArray());
-                        return;
+                nonUserChange[0]=true;
+                try {
+                    if(validator != null) {
+                        String error = validator.isValid(flags);
+                        if(error != null) {
+                            Common.openError(table.getShell(), error, InstallOptionsPlugin.getShellImage());
+                            viewer.setCheckedElements(widget.getFlags().toArray());
+                            return;
+                        }
                     }
+                    commandHelper.propertyChanged(InstallOptionsModel.PROPERTY_FLAGS,
+                            descriptor.getDisplayName(),
+                            widget, flags);
                 }
-                commandHelper.propertyChanged(InstallOptionsModel.PROPERTY_FLAGS,
-                        descriptor.getDisplayName(),
-                        widget, flags);
+                finally {
+                    nonUserChange[0]=false;
+                }
             }
         };
         viewer.addCheckStateListener(new ICheckStateListener() {
             public void checkStateChanged(CheckStateChangedEvent event)
             {
-                if(!nonUserChange[0]) {
-                    String flag = (String)event.getElement();
-                    boolean checked = event.getChecked();
-                    if(checked) {
-                        flags.add(flag);
-                    }
-                    else {
-                        flags.remove(flag);
-                    }
-                    runnable.run();
+                String flag = (String)event.getElement();
+                boolean checked = event.getChecked();
+                if(checked) {
+                    flags.add(flag);
                 }
+                else {
+                    flags.remove(flag);
+                }
+                runnable.run();
             }
         });
 
@@ -208,16 +212,13 @@ public class GeneralPropertySection extends InstallOptionsElementPropertySection
             public void propertyChange(PropertyChangeEvent evt)
             {
                 if(evt.getPropertyName().equals(InstallOptionsModel.PROPERTY_FLAGS)) {
-                    List flags = (List)evt.getNewValue();
-                    nonUserChange[0]=true;
-                    try {
+                    if(!nonUserChange[0]) {
+                        List newFlags = widget.getFlags();
                         if (viewer != null && Common.isValid(viewer.getControl())) {
-                            viewer.setCheckedElements(flags==null?Common.EMPTY_STRING_ARRAY:flags.toArray());
-
+                            viewer.setCheckedElements(newFlags==null?Common.EMPTY_STRING_ARRAY:newFlags.toArray());
+                            flags.clear();
+                            flags.addAll(newFlags);
                         }
-                    }
-                    finally {
-                        nonUserChange[0]=false;
                     }
                 }
             }

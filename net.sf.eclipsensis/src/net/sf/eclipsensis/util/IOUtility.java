@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -35,9 +35,10 @@ import org.osgi.framework.Bundle;
 public class IOUtility
 {
     public static final IOUtility INSTANCE = new IOUtility();
-    
+
     private static final String cPathSeparator = System.getProperty("file.separator"); //$NON-NLS-1$
     private static final String cOnePathLevelUp = ".." + cPathSeparator; //$NON-NLS-1$
+    private static Pattern cValidUNCName = Pattern.compile("\\\\{0,2}((((\\.?[A-Za-z0-9\\$%\\'`\\-@\\{\\}~\\!#\\(\\)\\&_\\^\\x20\\+\\,\\=\\[\\]])+|\\.{1,2})\\\\)*(\\.?[A-Za-z0-9\\$%\\'`\\-@\\{\\}~\\!#\\(\\)\\&_\\^\\x20\\+\\,\\=\\[\\]]\\\\?)+)?"); //$NON-NLS-1$
     private static Pattern cValidPathName = Pattern.compile("([A-Za-z]:)?\\\\?((((\\.?[A-Za-z0-9\\$%\\'`\\-@\\{\\}~\\!#\\(\\)\\&_\\^\\x20\\+\\,\\=\\[\\]])+|\\.{1,2})\\\\)*(\\.?[A-Za-z0-9\\$%\\'`\\-@\\{\\}~\\!#\\(\\)\\&_\\^\\x20\\+\\,\\=\\[\\]]\\\\?)+)?"); //$NON-NLS-1$
     private static Pattern cValidNSISPrefixedPathNameSuffix = Pattern.compile("\\\\((((\\.?[A-Za-z0-9\\$%\\'`\\-@\\{\\}~\\!#\\(\\)\\&_\\^\\x20\\+\\,\\=\\[\\]])+|\\.{1,2})\\\\)*(\\.?[A-Za-z0-9\\$%\\'`\\-@\\{\\}~\\!#\\(\\)\\&_\\^\\x20\\+\\,\\=\\[\\]]\\\\?)+)?"); //$NON-NLS-1$
     private static Pattern cValidPathSpec = Pattern.compile("([A-Za-z]:)?\\\\?((((\\.?[A-Za-z0-9\\*\\?\\$%\\'`\\-@\\{\\}~\\!#\\(\\)\\&_\\^\\x20\\+\\,\\=\\[\\]])+|\\.{1,2})\\\\)*(\\.?[A-Za-z0-9\\*\\?\\$%\\'`\\-@\\{\\}~\\!#\\(\\)\\&_\\^\\x20\\+\\,\\=\\[\\]]\\\\?)+)?"); //$NON-NLS-1$
@@ -48,7 +49,7 @@ public class IOUtility
     private static HashMap cBundleResources = new HashMap();
 
     public static final String FILE_URL_PREFIX = "file:///"; //$NON-NLS-1$
-    
+
     private IOUtility()
     {
     }
@@ -161,7 +162,7 @@ public class IOUtility
                 inputStream = new BufferedInputStream(inputStream);
             }
             ois = new ObjectInputStream(inputStream){
-    
+
                 protected Class resolveClass(ObjectStreamClass desc) throws IOException, ClassNotFoundException
                 {
                     if(classLoader != null) {
@@ -255,7 +256,7 @@ public class IOUtility
     {
         if(object != null) {
             ObjectOutputStream oos = null;
-    
+
             try {
                 if(!(outputStream instanceof BufferedOutputStream)) {
                     outputStream = new BufferedOutputStream(outputStream);
@@ -337,6 +338,15 @@ public class IOUtility
         return false;
     }
 
+    public static boolean isValidUNCName(String name)
+    {
+        if(name != null && name.length() > 0) {
+            Matcher matcher = cValidUNCName.matcher(name);
+            return matcher.matches();
+        }
+        return false;
+    }
+
     public static boolean isValidFile(String fileName)
     {
         return isValidFile(new File(fileName));
@@ -396,14 +406,14 @@ public class IOUtility
                   int l1 = reference.segmentCount();
                   int l2 = childPath.segmentCount();
                   int n = Math.min(l1,l2);
-    
+
                   int i=0;
                   for(; i<n; i++) {
                       if(!reference.segment(i).equalsIgnoreCase(childPath.segment(i))) {
                           break;
                       }
                   }
-    
+
                   if(i > 0) {
                       for(int j=i; j<l1; j++) {
                           buf.append(cOnePathLevelUp);
@@ -541,8 +551,8 @@ public class IOUtility
                 EclipseNSISPlugin.getDefault().log(e);
             }
         }
-        
-        File destFile = new File(destFolder,source.lastSegment()); 
+
+        File destFile = new File(destFolder,source.lastSegment());
         if(IOUtility.isValidDirectory(destFile)) {
             deleteDirectory(destFile);
         }
@@ -552,7 +562,7 @@ public class IOUtility
             }
             destFile.delete();
         }
-        URL url = bundle.getEntry(source.toString()); 
+        URL url = bundle.getEntry(source.toString());
         InputStream is = null;
         byte[] data;
         try {
@@ -567,7 +577,7 @@ public class IOUtility
         cBundleResources.put(key, new Long(lastModified));
         return destFile;
     }
-    
+
     public static final String getMyComputerLabel()
     {
         String name = null;
@@ -637,7 +647,7 @@ public class IOUtility
             return null;
         }
     }
-    
+
     private static class BundleResource
     {
         private Bundle mBundle;

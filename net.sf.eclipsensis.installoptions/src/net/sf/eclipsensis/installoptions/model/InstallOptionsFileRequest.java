@@ -17,6 +17,8 @@ import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.ini.INISection;
 import net.sf.eclipsensis.installoptions.properties.editors.FileFilterCellEditor;
+import net.sf.eclipsensis.installoptions.properties.tabbed.section.IPropertySectionCreator;
+import net.sf.eclipsensis.installoptions.properties.tabbed.section.PathRequestPropertySectionCreator;
 import net.sf.eclipsensis.installoptions.properties.validators.NSISStringLengthValidator;
 import net.sf.eclipsensis.installoptions.util.*;
 import net.sf.eclipsensis.util.Common;
@@ -126,6 +128,11 @@ public class InstallOptionsFileRequest extends InstallOptionsPathRequest
         else {
             return super.loadTypeConverter(property, value);
         }
+    }
+
+    protected IPropertySectionCreator createPropertySectionCreator()
+    {
+        return new PathRequestPropertySectionCreator(this);
     }
 
     protected IPropertyDescriptor createPropertyDescriptor(String name)

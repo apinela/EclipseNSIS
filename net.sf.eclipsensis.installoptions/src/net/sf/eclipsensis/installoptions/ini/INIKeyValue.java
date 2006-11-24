@@ -191,39 +191,25 @@ public class INIKeyValue extends INILine
         return new StringBuffer("\"").append(text).append("\"").toString(); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
-    public int hashCode()
+    public boolean matches(INILine line)
     {
-        final int PRIME = 31;
-        int result = super.hashCode();
-        result = PRIME * result + ((mKey == null)?0:mKey.hashCode());
-        result = PRIME * result + (mQuoted?1231:1237);
-        result = PRIME * result + ((mValue == null)?0:mValue.hashCode());
-        return result;
-    }
-
-    public boolean equals(Object obj)
-    {
-        if (this == obj)
+        if (this == line) {
             return true;
-        if (!super.equals(obj))
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        final INIKeyValue other = (INIKeyValue)obj;
-        if (mKey == null) {
-            if (other.mKey != null)
-                return false;
         }
-        else if (!mKey.equals(other.mKey))
+        if (!super.matches(line)) {
             return false;
-        if (mQuoted != other.mQuoted)
-            return false;
-        if (mValue == null) {
-            if (other.mValue != null)
-                return false;
         }
-        else if (!mValue.equals(other.mValue))
+
+        final INIKeyValue keyValue = (INIKeyValue)line;
+        if(!Common.objectsAreEqual(mKey,keyValue.mKey)) {
             return false;
+        }
+        if (mQuoted != keyValue.mQuoted) {
+            return false;
+        }
+        if(!Common.objectsAreEqual(mValue,keyValue.mValue)) {
+            return false;
+        }
         return true;
     }
 }

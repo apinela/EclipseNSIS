@@ -14,6 +14,7 @@ import java.net.URL;
 import java.util.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.util.IOUtility;
 
 import org.eclipse.core.runtime.IPath;
@@ -137,7 +138,7 @@ public abstract class AbstractTemplateManager
                             }
                             else {
                                 template.setId(t.getId());
-                                if(t.equals(template)) {
+                                if(templatesAreEqual(t,template)) {
                                    continue;
                                 }
                             }
@@ -169,7 +170,13 @@ public abstract class AbstractTemplateManager
 
     public AbstractTemplate getTemplate(String id)
     {
-        return (AbstractTemplate)mDefaultTemplatesMap.get(id);
+        for (Iterator iter = mTemplates.iterator(); iter.hasNext();) {
+            AbstractTemplate template = (AbstractTemplate)iter.next();
+            if(Common.stringsAreEqual(template.getId(),id)) {
+                return template;
+            }
+        }
+        return null;
     }
 
     public Collection getTemplates()
@@ -192,15 +199,26 @@ public abstract class AbstractTemplateManager
         return true;
     }
 
+    protected boolean containsTemplate(AbstractTemplate template)
+    {
+        for (Iterator iter = mTemplates.iterator(); iter.hasNext();) {
+            AbstractTemplate t = (AbstractTemplate)iter.next();
+            if(templatesAreEqual(t,template)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public boolean removeTemplate(AbstractTemplate template)
     {
         checkClass(template);
-        if(mTemplates.contains(template)) {
+        if(containsTemplate(template)) {
             switch(template.getType()) {
                 case AbstractTemplate.TYPE_DEFAULT:
-                    template.setType(AbstractTemplate.TYPE_CUSTOM);
                 case AbstractTemplate.TYPE_CUSTOM:
                     AbstractTemplate t = (AbstractTemplate)template.clone();
+                    t.setType(AbstractTemplate.TYPE_CUSTOM);
                     t.setDeleted(true);
                     mTemplates.add(t);
                 case AbstractTemplate.TYPE_USER:
@@ -215,13 +233,13 @@ public abstract class AbstractTemplateManager
     {
         checkClass(oldTemplate);
         checkClass(template);
-        if(mTemplates.contains(oldTemplate)) {
+        if(containsTemplate(oldTemplate)) {
             mTemplates.remove(oldTemplate);
 
             if(oldTemplate.getType() != AbstractTemplate.TYPE_USER) {
-                AbstractTemplate defaultTemplate = getTemplate(oldTemplate.getId());
+                AbstractTemplate defaultTemplate = (AbstractTemplate)mDefaultTemplatesMap.get(oldTemplate.getId());
                 if(defaultTemplate != null) {
-                    template.setType(template.equals(defaultTemplate)?AbstractTemplate.TYPE_DEFAULT:AbstractTemplate.TYPE_CUSTOM);
+                    template.setType(templatesAreEqual(template,defaultTemplate)?AbstractTemplate.TYPE_DEFAULT:AbstractTemplate.TYPE_CUSTOM);
                 }
                 else {
                     template.setType(AbstractTemplate.TYPE_USER);
@@ -246,8 +264,8 @@ public abstract class AbstractTemplateManager
         checkClass(template);
         if(template.getType() == AbstractTemplate.TYPE_CUSTOM && template.isDeleted()) {
             template.setDeleted(false);
-            AbstractTemplate defaultTemplate = getTemplate(template.getId());
-            if(template.equals(defaultTemplate)) {
+            AbstractTemplate defaultTemplate = (AbstractTemplate)mDefaultTemplatesMap.get(template.getId());
+            if(templatesAreEqual(template,defaultTemplate)) {
                 template.setType(AbstractTemplate.TYPE_DEFAULT);
             }
             return true;
@@ -289,7 +307,7 @@ public abstract class AbstractTemplateManager
     public boolean canRevert(AbstractTemplate template)
     {
         checkClass(template);
-        return (mTemplates.contains(template) && (template.getType() == AbstractTemplate.TYPE_CUSTOM));
+        return (containsTemplate(template) && (template.getType() == AbstractTemplate.TYPE_CUSTOM));
     }
 
     public void discard()
@@ -319,6 +337,34 @@ public abstract class AbstractTemplateManager
         if(template != null && !template.getClass().equals(getTemplateClass())) {
             throw new IllegalArgumentException(template.getClass().getName());
         }
+    }
+
+    protected boolean templatesAreEqual(AbstractTemplate t1, AbstractTemplate t2)
+    {
+        checkClass(t1);
+        checkClass(t2);
+        if (t1 == t2) {
+            return true;
+        }
+        if (t1 == null || t2 == null) {
+            return false;
+        }
+        if (t1.isDeleted() != t2.isDeleted()) {
+            return false;
+        }
+        if (!Common.stringsAreEqual(t1.getDescription(),t2.getDescription())) {
+            return false;
+        }
+        if (t1.isEnabled() != t2.isEnabled()) {
+            return false;
+        }
+        if (!Common.stringsAreEqual(t1.getId(),t2.getId())) {
+            return false;
+        }
+        if (!Common.stringsAreEqual(t1.getName(),t2.getName())) {
+            return false;
+        }
+        return true;
     }
 
     protected abstract Plugin getPlugin();

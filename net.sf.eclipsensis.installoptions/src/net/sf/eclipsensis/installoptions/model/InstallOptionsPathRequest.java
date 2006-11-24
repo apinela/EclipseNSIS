@@ -9,9 +9,12 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.model;
 
+import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.ini.INISection;
-import net.sf.eclipsensis.installoptions.properties.tabbed.section.IPropertySectionCreator;
-import net.sf.eclipsensis.installoptions.properties.tabbed.section.PathRequestPropertySectionCreator;
+import net.sf.eclipsensis.installoptions.properties.validators.PathStateValidator;
+
+import org.eclipse.ui.views.properties.IPropertyDescriptor;
+import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 
 public abstract class InstallOptionsPathRequest extends InstallOptionsEditableElement
 {
@@ -30,8 +33,14 @@ public abstract class InstallOptionsPathRequest extends InstallOptionsEditableEl
         return new Position(0,0,122,13);
     }
 
-    protected IPropertySectionCreator createPropertySectionCreator()
+    protected IPropertyDescriptor createPropertyDescriptor(String name)
     {
-        return new PathRequestPropertySectionCreator(this);
+        if(name.equals(InstallOptionsModel.PROPERTY_STATE)) {
+            String propertyName = InstallOptionsPlugin.getResourceString("state.property.name"); //$NON-NLS-1$;
+            TextPropertyDescriptor descriptor = new TextPropertyDescriptor(InstallOptionsModel.PROPERTY_STATE, propertyName);
+            descriptor.setValidator(new PathStateValidator(propertyName));
+            return descriptor;
+        }
+        return super.createPropertyDescriptor(name);
     }
 }

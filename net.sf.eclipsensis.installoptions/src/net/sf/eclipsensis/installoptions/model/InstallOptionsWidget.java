@@ -647,7 +647,7 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
         public void propertyChange(PropertyChangeEvent evt)
         {
             if(evt.getPropertyName().equals(InstallOptionsModel.PROPERTY_FLAGS)) {
-                setValue(evt.getNewValue());
+                setValue(InstallOptionsWidget.this.getFlags());
             }
         }
     }

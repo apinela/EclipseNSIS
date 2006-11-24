@@ -39,6 +39,7 @@ import org.osgi.framework.Bundle;
  */
 public class Common
 {
+    public static final int[] EMPTY_INT_ARRAY = new int[0];
     public static final String[] EMPTY_STRING_ARRAY = new String[0];
     public static final Integer ZERO = new Integer(0);
     public static final Integer ONE = new Integer(1);
@@ -901,5 +902,10 @@ public class Common
     public static boolean isValid(Control ctl)
     {
         return ctl != null && !ctl.isDisposed();
+    }
+
+    public static boolean isTrue(Boolean b)
+    {
+        return b != null && b.booleanValue();
     }
 }

@@ -81,6 +81,7 @@ public abstract class PropertySectionCreator implements IPropertySectionCreator
             label.setLayoutData(new GridData(SWT.FILL,(multiline?SWT.TOP:SWT.FILL),false,false));
             ICellEditorValidator validator = (ICellEditorValidator)Common.getObjectFieldValue(descriptor, "validator", ICellEditorValidator.class); //$NON-NLS-1$
             final Text text = widgetFactory.createText(composite, converter.asString(getElement().getStringPropertyValue(propertyId)), (multiline?SWT.MULTI|SWT.V_SCROLL:SWT.SINGLE)|SWT.FLAT);
+            text.setData(LABEL,label);
             text.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,multiline));
             final TextChangeHelper helper = new TextChangeHelper(validator) {
                 protected String getResetValue(Text text)
@@ -156,6 +157,7 @@ public abstract class PropertySectionCreator implements IPropertySectionCreator
 
             final CCombo combo = widgetFactory.createCCombo(composite, SWT.DROP_DOWN|SWT.READ_ONLY|SWT.FLAT|SWT.BORDER);
             combo.setLayoutData(new GridData(SWT.LEFT,SWT.FILL,false,false));
+            combo.setData(LABEL,label);
 
             for (int i = 0; i < entries.length; i++) {
                 combo.add(String.valueOf(entries[i].getValue()));

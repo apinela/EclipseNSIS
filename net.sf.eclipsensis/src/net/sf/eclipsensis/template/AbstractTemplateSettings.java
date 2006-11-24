@@ -155,6 +155,7 @@ public abstract class AbstractTemplateSettings extends Composite
                 getTemplateManager().updateTemplate(oldTemplate, newTemplate);
                 mTableViewer.refresh(true);
                 mTableViewer.setSelection(new StructuredSelection(newTemplate));
+                mTableViewer.setChecked(newTemplate, newTemplate.isEnabled());
                 doSelectionChanged();
             }
         });
@@ -184,7 +185,6 @@ public abstract class AbstractTemplateSettings extends Composite
         mDescriptionText.setLayoutData(data);
 
         mTableViewer.setInput(mTemplateManager);
-        mTableViewer.setAllChecked(false);
         mTableViewer.setCheckedElements(getEnabledTemplates());
 
         updateButtons();
@@ -411,7 +411,7 @@ public abstract class AbstractTemplateSettings extends Composite
     {
         boolean createnew = false;
         if((!oldTemplate.getName().equals(template.getName()))) {
-            createnew = Common.openQuestion(null,"The name of the template has been changed. Click 'Yes' to create an additional template with the new name or 'No' to rename the existing one.",getShellImage());
+            createnew = Common.openQuestion(null,EclipseNSISPlugin.getResourceString("template.rename.confirm"),getShellImage()); //$NON-NLS-1$
         }
 
         if(!createnew) {
@@ -454,8 +454,9 @@ public abstract class AbstractTemplateSettings extends Composite
                     }
 
                     mTableViewer.refresh();
-                    mTableViewer.setAllChecked(false);
                     mTableViewer.setCheckedElements(getEnabledTemplates());
+                    mTableViewer.setSelection(new StructuredSelection(coll.toArray()));
+                    mTableViewer.getTable().setFocus();
                 }
             }
         }

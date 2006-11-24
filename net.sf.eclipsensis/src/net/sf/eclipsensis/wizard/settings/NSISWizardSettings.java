@@ -1113,215 +1113,174 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
 
     public boolean equals(Object obj)
     {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         final NSISWizardSettings other = (NSISWizardSettings)obj;
-        if (mAutoCloseInstaller != other.mAutoCloseInstaller)
+
+        if (mAutoCloseInstaller != other.mAutoCloseInstaller) {
             return false;
-        if (mAutoCloseUninstaller != other.mAutoCloseUninstaller)
+        }
+        if (mAutoCloseUninstaller != other.mAutoCloseUninstaller) {
             return false;
-        if (mBGBottomColor == null) {
-            if (other.mBGBottomColor != null)
+        }
+        if (!Common.objectsAreEqual(mBGBottomColor,other.mBGBottomColor)) {
                 return false;
         }
-        else if (!mBGBottomColor.equals(other.mBGBottomColor))
+        if (!Common.objectsAreEqual(mBGTextColor,other.mBGTextColor)) {
             return false;
-        if (mBGTextColor == null) {
-            if (other.mBGTextColor != null)
-                return false;
         }
-        else if (!mBGTextColor.equals(other.mBGTextColor))
+        if (!Common.objectsAreEqual(mBGTopColor,other.mBGTopColor)) {
             return false;
-        if (mBGTopColor == null) {
-            if (other.mBGTopColor != null)
-                return false;
         }
-        else if (!mBGTopColor.equals(other.mBGTopColor))
+        if (!Common.objectsAreEqual(mBackgroundBMP,other.mBackgroundBMP)) {
             return false;
-        if (mBackgroundBMP == null) {
-            if (other.mBackgroundBMP != null)
-                return false;
         }
-        else if (!mBackgroundBMP.equals(other.mBackgroundBMP))
+        if (!Common.objectsAreEqual(mBackgroundWAV,other.mBackgroundWAV)) {
             return false;
-        if (mBackgroundWAV == null) {
-            if (other.mBackgroundWAV != null)
-                return false;
         }
-        else if (!mBackgroundWAV.equals(other.mBackgroundWAV))
-            return false;
         if (mChangeInstallDir != other.mChangeInstallDir)
             return false;
         if (mChangeStartMenuGroup != other.mChangeStartMenuGroup)
             return false;
-        if (mCompany == null) {
-            if (other.mCompany != null)
-                return false;
+        if (!Common.objectsAreEqual(mCompany,other.mCompany)) {
+            return false;
         }
-        else if (!mCompany.equals(other.mCompany))
+        if (mCompileScript != other.mCompileScript) {
             return false;
-        if (mCompileScript != other.mCompileScript)
-            return false;
-        if (mCompressorType != other.mCompressorType)
-            return false;
-        if (mCreateStartMenuGroup != other.mCreateStartMenuGroup)
-            return false;
-        if (mCreateUninstaller != other.mCreateUninstaller)
-            return false;
-        if (mCreateUninstallerControlPanelEntry != other.mCreateUninstallerControlPanelEntry)
-            return false;
-        if (mCreateUninstallerStartMenuShortcut != other.mCreateUninstallerStartMenuShortcut)
-            return false;
-        if (mDisableStartMenuShortcuts != other.mDisableStartMenuShortcuts)
-            return false;
-        if (mEnableLanguageSupport != other.mEnableLanguageSupport)
-            return false;
-        if (mFadeInDelay != other.mFadeInDelay)
-            return false;
-        if (mFadeOutDelay != other.mFadeOutDelay)
-            return false;
-        if (mIcon == null) {
-            if (other.mIcon != null)
-                return false;
         }
-        else if (!mIcon.equals(other.mIcon))
+        if (mCompressorType != other.mCompressorType) {
             return false;
-        if (mInstallDir == null) {
-            if (other.mInstallDir != null)
-                return false;
         }
-        else if (!mInstallDir.equals(other.mInstallDir))
+        if (mCreateStartMenuGroup != other.mCreateStartMenuGroup) {
             return false;
-        if (mInstaller == null) {
-            if (other.mInstaller != null)
-                return false;
         }
-        else if (!mInstaller.equals(other.mInstaller))
+        if (mCreateUninstaller != other.mCreateUninstaller) {
             return false;
-        if (mInstallerType != other.mInstallerType)
-            return false;
-        if (mLanguages == null) {
-            if (other.mLanguages != null)
-                return false;
         }
-        else if (!mLanguages.equals(other.mLanguages))
+        if (mCreateUninstallerControlPanelEntry != other.mCreateUninstallerControlPanelEntry) {
             return false;
-        if (mLicenseButtonType != other.mLicenseButtonType)
-            return false;
-        if (mLicenseData == null) {
-            if (other.mLicenseData != null)
-                return false;
         }
-        else if (!mLicenseData.equals(other.mLicenseData))
+        if (mCreateUninstallerStartMenuShortcut != other.mCreateUninstallerStartMenuShortcut) {
             return false;
-        if (mMakePathsRelative != other.mMakePathsRelative)
-            return false;
-        if (mName == null) {
-            if (other.mName != null)
-                return false;
         }
-        else if (!mName.equals(other.mName))
+        if (mDisableStartMenuShortcuts != other.mDisableStartMenuShortcuts) {
             return false;
-        if (mOpenReadmeAfterInstall == null) {
-            if (other.mOpenReadmeAfterInstall != null)
-                return false;
         }
-        else if (!mOpenReadmeAfterInstall.equals(other.mOpenReadmeAfterInstall))
+        if (mEnableLanguageSupport != other.mEnableLanguageSupport) {
             return false;
-        if (mOutFile == null) {
-            if (other.mOutFile != null)
-                return false;
         }
-        else if (!mOutFile.equals(other.mOutFile))
+        if (mFadeInDelay != other.mFadeInDelay) {
             return false;
-        if (mRunProgramAfterInstall == null) {
-            if (other.mRunProgramAfterInstall != null)
-                return false;
         }
-        else if (!mRunProgramAfterInstall.equals(other.mRunProgramAfterInstall))
+        if (mFadeOutDelay != other.mFadeOutDelay) {
             return false;
-        if (mRunProgramAfterInstallParams == null) {
-            if (other.mRunProgramAfterInstallParams != null)
-                return false;
         }
-        else if (!mRunProgramAfterInstallParams.equals(other.mRunProgramAfterInstallParams))
+        if (!Common.objectsAreEqual(mIcon,other.mIcon)) {
             return false;
-        if (mSaveExternal != other.mSaveExternal)
-            return false;
-        if (mSavePath == null) {
-            if (other.mSavePath != null)
-                return false;
         }
-        else if (!mSavePath.equals(other.mSavePath))
+        if (!Common.objectsAreEqual(mInstallDir,other.mInstallDir)) {
             return false;
-        if (mSelectComponents != other.mSelectComponents)
-            return false;
-        if (mSelectLanguage != other.mSelectLanguage)
-            return false;
-        if (mShowBackground != other.mShowBackground)
-            return false;
-        if (mShowInstDetails != other.mShowInstDetails)
-            return false;
-        if (mShowLicense != other.mShowLicense)
-            return false;
-        if (mShowSplash != other.mShowSplash)
-            return false;
-        if (mShowUninstDetails != other.mShowUninstDetails)
-            return false;
-        if (mSilentUninstaller != other.mSilentUninstaller)
-            return false;
-        if (mSolidCompression != other.mSolidCompression)
-            return false;
-        if (mSplashBMP == null) {
-            if (other.mSplashBMP != null)
-                return false;
         }
-        else if (!mSplashBMP.equals(other.mSplashBMP))
+        if (!Common.objectsAreEqual(mInstaller,other.mInstaller)) {
             return false;
-        if (mSplashDelay != other.mSplashDelay)
-            return false;
-        if (mSplashWAV == null) {
-            if (other.mSplashWAV != null)
-                return false;
         }
-        else if (!mSplashWAV.equals(other.mSplashWAV))
+        if (mInstallerType != other.mInstallerType) {
             return false;
-        if (mStartMenuGroup == null) {
-            if (other.mStartMenuGroup != null)
-                return false;
         }
-        else if (!mStartMenuGroup.equals(other.mStartMenuGroup))
+        if (!Common.objectsAreEqual(mLanguages,other.mLanguages)) {
             return false;
-        if (mTestScript != other.mTestScript)
-            return false;
-        if (mUninstallFile == null) {
-            if (other.mUninstallFile != null)
-                return false;
         }
-        else if (!mUninstallFile.equals(other.mUninstallFile))
+        if (mLicenseButtonType != other.mLicenseButtonType) {
             return false;
-        if (mUninstallIcon == null) {
-            if (other.mUninstallIcon != null)
-                return false;
         }
-        else if (!mUninstallIcon.equals(other.mUninstallIcon))
+        if (!Common.objectsAreEqual(mLicenseData,other.mLicenseData)) {
             return false;
-        if (mUrl == null) {
-            if (other.mUrl != null)
-                return false;
         }
-        else if (!mUrl.equals(other.mUrl))
+        if (mMakePathsRelative != other.mMakePathsRelative) {
             return false;
-        if (mVersion == null) {
-            if (other.mVersion != null)
-                return false;
         }
-        else if (!mVersion.equals(other.mVersion))
+        if (!Common.objectsAreEqual(mName,other.mName)) {
             return false;
+        }
+        if (!Common.objectsAreEqual(mOpenReadmeAfterInstall,other.mOpenReadmeAfterInstall)) {
+            return false;
+        }
+        if (!Common.objectsAreEqual(mOutFile,other.mOutFile)) {
+            return false;
+        }
+        if (!Common.objectsAreEqual(mRunProgramAfterInstall,other.mRunProgramAfterInstall)) {
+            return false;
+        }
+        if (!Common.objectsAreEqual(mRunProgramAfterInstallParams,other.mRunProgramAfterInstallParams)) {
+            return false;
+        }
+        if (mSaveExternal != other.mSaveExternal) {
+            return false;
+        }
+        if (!Common.objectsAreEqual(mSavePath,other.mSavePath)) {
+            return false;
+        }
+        if (mSelectComponents != other.mSelectComponents) {
+            return false;
+        }
+        if (mSelectLanguage != other.mSelectLanguage) {
+            return false;
+        }
+        if (mShowBackground != other.mShowBackground) {
+            return false;
+        }
+        if (mShowInstDetails != other.mShowInstDetails) {
+            return false;
+        }
+        if (mShowLicense != other.mShowLicense) {
+            return false;
+        }
+        if (mShowSplash != other.mShowSplash) {
+            return false;
+        }
+        if (mShowUninstDetails != other.mShowUninstDetails) {
+            return false;
+        }
+        if (mSilentUninstaller != other.mSilentUninstaller) {
+            return false;
+        }
+        if (mSolidCompression != other.mSolidCompression) {
+            return false;
+        }
+        if (!Common.objectsAreEqual(mSplashBMP,other.mSplashBMP)) {
+            return false;
+        }
+        if (mSplashDelay != other.mSplashDelay) {
+            return false;
+        }
+        if (!Common.objectsAreEqual(mSplashWAV,other.mSplashWAV)) {
+            return false;
+        }
+        if (!Common.objectsAreEqual(mStartMenuGroup,other.mStartMenuGroup)) {
+            return false;
+        }
+        if (mTestScript != other.mTestScript) {
+            return false;
+        }
+        if (!Common.objectsAreEqual(mUninstallFile,other.mUninstallFile)) {
+            return false;
+        }
+        if (!Common.objectsAreEqual(mUninstallIcon,other.mUninstallIcon)) {
+            return false;
+        }
+        if (!Common.objectsAreEqual(mUrl,other.mUrl)) {
+            return false;
+        }
+        if (!Common.objectsAreEqual(mVersion,other.mVersion)) {
+            return false;
+        }
         return true;
     }
 }

@@ -18,6 +18,7 @@ import net.sf.eclipsensis.installoptions.model.*;
 import net.sf.eclipsensis.installoptions.model.commands.*;
 import net.sf.eclipsensis.installoptions.rulers.InstallOptionsGuide;
 import net.sf.eclipsensis.installoptions.template.CreateFromTemplateCommand;
+import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.draw2d.*;
 import org.eclipse.draw2d.geometry.*;
@@ -150,68 +151,71 @@ public class InstallOptionsXYLayoutEditPolicy extends XYLayoutEditPolicy impleme
                                                   moveDelta,
                                                   sizeDelta);
 
-        Boolean val = (Boolean)child.getViewer().getProperty(RulerProvider.PROPERTY_RULER_VISIBILITY);
-        if (val != null && val.booleanValue()) {
-            val = (Boolean)child.getViewer().getProperty(PROPERTY_SNAP_TO_GUIDES);
-            if (val != null && val.booleanValue()) {
-                val = (Boolean)child.getViewer().getProperty(PROPERTY_GLUE_TO_GUIDES);
-                if (val != null && val.booleanValue()) {
-                    if ((request.getResizeDirection() & PositionConstants.NORTH_SOUTH) != 0) {
-                        Integer guidePos = (Integer)request.getExtendedData().get(
-                                SnapToGuides.KEY_HORIZONTAL_GUIDE);
-                        if (guidePos != null) {
-                            result = chainGuideAttachmentCommand(request, part, result,
-                                    true);
-                        }
-                        else if (part.getHorizontalGuide() != null) {
-                            // SnapToGuides didn't provide a horizontal guide, but this part is attached
-                            // to a horizontal guide. Now we check to see if the part is attached to
-                            // the guide along the edge being resized. If that is the case, we need to
-                            // detach the part from the guide; otherwise, we leave it alone.
-                            int alignment = part.getHorizontalGuide().getAlignment(part);
-                            int edgeBeingResized = 0;
-                            if ((request.getResizeDirection() & PositionConstants.NORTH) != 0) {
-                                edgeBeingResized = -1;
-                            }
-                            else {
-                                edgeBeingResized = 1;
-                            }
-                            if (alignment == edgeBeingResized) {
-                                result = result.chain(new ChangeGuideCommand(part, true));
-                            }
-                        }
-                    }
-
-                    if ((request.getResizeDirection() & PositionConstants.EAST_WEST) != 0) {
-                        Integer guidePos = (Integer)request.getExtendedData().get(
-                                SnapToGuides.KEY_VERTICAL_GUIDE);
-                        if (guidePos != null) {
-                            result = chainGuideAttachmentCommand(request, part, result,
-                                    false);
-                        }
-                        else if (part.getVerticalGuide() != null) {
-                            int alignment = part.getVerticalGuide().getAlignment(part);
-                            int edgeBeingResized = 0;
-                            if ((request.getResizeDirection() & PositionConstants.WEST) != 0) {
-                                edgeBeingResized = -1;
-                            }
-                            else {
-                                edgeBeingResized = 1;
-                            }
-                            if (alignment == edgeBeingResized) {
-                                result = result.chain(new ChangeGuideCommand(part, false));
-                            }
-                        }
-                    }
-
-                    if (request.getType().equals(REQ_MOVE_CHILDREN)
-                            || request.getType().equals(REQ_ALIGN_CHILDREN)) {
-                        result = chainGuideAttachmentCommand(request, part, result, true);
-                        result = chainGuideAttachmentCommand(request, part, result, false);
-                        result = chainGuideDetachmentCommand(request, part, result, true);
-                        result = chainGuideDetachmentCommand(request, part, result, false);
-                    }
+        EditPartViewer viewer = child.getViewer();
+        boolean canGlue = Common.isTrue((Boolean)viewer.getProperty(RulerProvider.PROPERTY_RULER_VISIBILITY)) &&
+                            Common.isTrue((Boolean)viewer.getProperty(PROPERTY_SNAP_TO_GUIDES)) &&
+                            Common.isTrue((Boolean)viewer.getProperty(PROPERTY_GLUE_TO_GUIDES));
+        if ((request.getResizeDirection() & PositionConstants.NORTH_SOUTH) != 0) {
+            Integer guidePos = (canGlue?(Integer)request.getExtendedData().get(SnapToGuides.KEY_HORIZONTAL_GUIDE):null);
+            if (guidePos != null) {
+                result = chainGuideAttachmentCommand(request, part, result,
+                        true);
+            }
+            else if (part.getHorizontalGuide() != null) {
+                // SnapToGuides didn't provide a horizontal guide, but this part is attached
+                // to a horizontal guide. Now we check to see if the part is attached to
+                // the guide along the edge being resized. If that is the case, we need to
+                // detach the part from the guide; otherwise, we leave it alone.
+                int alignment = part.getHorizontalGuide().getAlignment(part);
+                int edgeBeingResized = 0;
+                if ((request.getResizeDirection() & PositionConstants.NORTH) != 0) {
+                    edgeBeingResized = -1;
                 }
+                else {
+                    edgeBeingResized = 1;
+                }
+                if (alignment == edgeBeingResized) {
+                    result = result.chain(new ChangeGuideCommand(part, true));
+                }
+            }
+        }
+
+        if ((request.getResizeDirection() & PositionConstants.EAST_WEST) != 0) {
+            Integer guidePos = (canGlue?(Integer)request.getExtendedData().get(SnapToGuides.KEY_VERTICAL_GUIDE):null);
+            if (guidePos != null) {
+                result = chainGuideAttachmentCommand(request, part, result,
+                        false);
+            }
+            else if (part.getVerticalGuide() != null) {
+                // SnapToGuides didn't provide a vertical guide, but this part is attached
+                // to a vertical guide. Now we check to see if the part is attached to
+                // the guide along the edge being resized. If that is the case, we need to
+                // detach the part from the guide; otherwise, we leave it alone.
+                int alignment = part.getVerticalGuide().getAlignment(part);
+                int edgeBeingResized = 0;
+                if ((request.getResizeDirection() & PositionConstants.WEST) != 0) {
+                    edgeBeingResized = -1;
+                }
+                else {
+                    edgeBeingResized = 1;
+                }
+                if (alignment == edgeBeingResized) {
+                    result = result.chain(new ChangeGuideCommand(part, false));
+                }
+            }
+        }
+
+        if (request.getType().equals(REQ_MOVE_CHILDREN) ||
+            request.getType().equals(REQ_ALIGN_CHILDREN)) {
+            if(canGlue) {
+                result = chainGuideAttachmentCommand(request, part, result, true);
+                result = chainGuideAttachmentCommand(request, part, result, false);
+                result = chainGuideDetachmentCommand(request, part, result, true);
+                result = chainGuideDetachmentCommand(request, part, result, false);
+            }
+            else {
+                result = result.chain(new ChangeGuideCommand(part, true));
+                result = result.chain(new ChangeGuideCommand(part, false));
             }
         }
         return result;

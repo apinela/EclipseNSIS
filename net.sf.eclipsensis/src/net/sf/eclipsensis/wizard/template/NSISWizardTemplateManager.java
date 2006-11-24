@@ -13,8 +13,8 @@ import java.io.*;
 import java.util.List;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.template.AbstractTemplateManager;
-import net.sf.eclipsensis.template.AbstractTemplateReaderWriter;
+import net.sf.eclipsensis.template.*;
+import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.util.IOUtility;
 
 import org.eclipse.core.runtime.*;
@@ -114,5 +114,13 @@ public class NSISWizardTemplateManager extends AbstractTemplateManager
     protected Image getShellImage()
     {
         return EclipseNSISPlugin.getShellImage();
+    }
+
+    protected boolean templatesAreEqual(AbstractTemplate t1, AbstractTemplate t2)
+    {
+        if(super.templatesAreEqual(t1,t2)) {
+            return Common.objectsAreEqual(((NSISWizardTemplate)t1).getSettings(),((NSISWizardTemplate)t2).getSettings());
+        }
+        return false;
     }
 }

@@ -59,11 +59,11 @@ public class InstallOptionsDialogEditPart extends InstallOptionsEditPart impleme
                 }
             }
             else if(property.equals(IInstallOptionsConstants.PROPERTY_SHOW_DIALOG_SIZE)) {
-                Boolean d = (Boolean)event.getNewValue();
-                getInstallOptionsDialog().setShowDialogSize(d.booleanValue());
+                Boolean b = (Boolean)event.getNewValue();
+                getInstallOptionsDialog().setShowDialogSize(b.booleanValue());
                 InstallOptionsDialogLayer fig = (InstallOptionsDialogLayer)getFigure();
                 if(fig != null) {
-                    fig.setShowDialogSize(d.booleanValue());
+                    fig.setShowDialogSize(b.booleanValue());
                 }
             }
         }

@@ -508,36 +508,22 @@ public class INISection extends INILine implements IINIContainer
         return this;
     }
 
-    public int hashCode()
+    public boolean matches(INILine line)
     {
-        final int PRIME = 31;
-        int result = super.hashCode();
-        result = PRIME * result + ((mChildren == null)?0:mChildren.hashCode());
-        result = PRIME * result + ((mName == null)?0:mName.hashCode());
-        return result;
-    }
-
-    public boolean equals(Object obj)
-    {
-        if (this == obj)
+        if (this == line) {
             return true;
-        if (!super.equals(obj))
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        final INISection other = (INISection)obj;
-        if (mChildren == null) {
-            if (other.mChildren != null)
-                return false;
         }
-        else if (!mChildren.equals(other.mChildren))
+        if (!super.matches(line)) {
             return false;
-        if (mName == null) {
-            if (other.mName != null)
-                return false;
         }
-        else if (!mName.equals(other.mName))
+
+        final INISection section = (INISection)line;
+        if(!Common.objectsAreEqual(mChildren,section.mChildren)) {
             return false;
+        }
+        if(!Common.objectsAreEqual(mName,section.mName)) {
+            return false;
+        }
         return true;
     }
 }

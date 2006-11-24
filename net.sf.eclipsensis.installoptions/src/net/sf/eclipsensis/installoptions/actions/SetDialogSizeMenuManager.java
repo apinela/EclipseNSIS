@@ -69,7 +69,9 @@ public class SetDialogSizeMenuManager extends MenuManager implements IPropertyCh
             for (Iterator iter = dialogSizes.iterator(); iter.hasNext();) {
                 DialogSize element = (DialogSize)iter.next();
                 if(!mActionMap.containsKey(element)) {
-                    mActionMap.put(element,new SetDialogSizeAction(element));
+                    SetDialogSizeAction action = new SetDialogSizeAction(element);
+                    action.setEditor(mEditor);
+                    mActionMap.put(element,action);
                 }
             }
 

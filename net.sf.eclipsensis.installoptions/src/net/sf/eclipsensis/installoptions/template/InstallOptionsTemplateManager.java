@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.util.*;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
+import net.sf.eclipsensis.installoptions.ini.INISection;
 import net.sf.eclipsensis.template.*;
 
 import org.eclipse.core.runtime.*;
@@ -186,5 +187,32 @@ public class InstallOptionsTemplateManager extends AbstractTemplateManager
     protected Image getShellImage()
     {
         return InstallOptionsPlugin.getShellImage();
+    }
+
+    protected boolean templatesAreEqual(AbstractTemplate t1, AbstractTemplate t2)
+    {
+        if(super.templatesAreEqual(t1,t2)) {
+            INISection[] sections1 = ((InstallOptionsTemplate)t1).getSections();
+            INISection[] sections2 = ((InstallOptionsTemplate)t2).getSections();
+            if (sections1==sections2) {
+                return true;
+            }
+            if (sections1==null || sections2==null) {
+                return false;
+            }
+
+            int length = sections1.length;
+            if (sections2.length != length) {
+                return false;
+            }
+
+            for (int i=0; i<length; i++) {
+                if (!(sections1[i]==null ? sections2[i]==null : sections1[i].matches(sections2[i]))) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
     }
 }

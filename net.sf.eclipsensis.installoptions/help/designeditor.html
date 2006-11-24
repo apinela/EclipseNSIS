@@ -94,18 +94,18 @@ configured to be collapsed by default.<br>
 </dd></dl>
 <a name="a_controls_drawer"></a><dl id="id_controls_drawer">
         <dt>Control Creation Tools Drawer</dt>
-        <dd>The Controls drawer contains creation tools for all controls supported by the InstallOptions plugin 
-		included in the version of NSIS configured in EclipseNSIS. In order to&nbsp; determine what controls are supported, 
+        <dd>The Controls drawer contains creation tools for all controls supported by the InstallOptions plugin
+		included in the version of NSIS configured in EclipseNSIS. In order to&nbsp; determine what controls are supported,
 		please consult the <a
  href="javascript:redirectNSISContrib('InstallOptions/Readme.html');">InstallOptions Readme</a> file. In addition to these prebuilt controls, the EclipseNSIS InstallOptions editor provides an &quot;Unknown&quot; control type. This can be used to work with custom controls, e.g., in a modified version of InstallOptions. However, for &quot;Unknown&quot; controls, the EclipseNSIS InstallOptions editor only allows editing of the common attributes of all InstallOptions controls as defined in the <a href="javascript:redirectNSISContrib('InstallOptions/Readme.html');">InstallOptions Readme</a> file. </dd>
  </dl><br>
 <a name="a_templates_drawer"></a><dl id="id_templates_drawer">
         <dt>Templated Creation Tools Drawer</dt>
-        <dd>The Templates drawer contains creation tools which use templates. A  template consists of one or more 
-		controls combined together into a reusable group. In order to create a template, simply select the controls to be 
-		grouped on the canvas and either select the <span style="font-style: italic;">Create Template...</span> 
-		icon (<img src="images/newtemplate.gif" width="16" height="16">) on the toolbar or right click with the mouse 
-		and select the <span style="font-style: italic;">Create Template...</span> item on the resulting popup menu. This will 
+        <dd>The Templates drawer contains creation tools which use templates. A  template consists of one or more
+		controls combined together into a reusable group. In order to create a template, simply select the controls to be
+		grouped on the canvas and either select the <span style="font-style: italic;">Create Template...</span>
+		icon (<img src="images/newtemplate.gif" width="16" height="16">) on the toolbar or right click with the mouse
+		and select the <span style="font-style: italic;">Create Template...</span> item on the resulting popup menu. This will
 		display a template creation dialog which can be used to specify a name and description for the template, as well as to indicate whether
 		the template is to be enabled. A template which is not enabled will not be available in the Templates Drawer.<br>
 		<a name="templatedialog"></a><p style="text-align: center;"><img style="border: 0px solid ; width: 336px; height: 234px;" alt="Create Template Dialog" src="images/templatedialog.gif"></p>
@@ -151,7 +151,7 @@ Back</a></dd>
 </dl>
 </div><br>
 <div><strong><a name="templatesettings"></a>Templates Settings</strong>
-<p>The Templates settings page is used to manage templates. A  template consists of one or more 
+<p>The Templates settings page is used to manage templates. A  template consists of one or more
 		controls combined together into a reusable group.
 Template creation is described <a href="#a_templates_drawer">above</a>. There are three types of  templates:</p>
 <ul>
@@ -159,7 +159,7 @@ Template creation is described <a href="#a_templates_drawer">above</a>. There ar
 Templates which
 are prepackaged along with the plugin.</li>
 <li><span style="font-weight: bold;">Custom</span>:
-Built-in 
+Built-in
 templates which have been modified by the user.</li>
 <li><span style="font-weight: bold;">User-defined</span>:
 Templates
@@ -179,12 +179,12 @@ to edit the
 currently selected template. <a href="javascript:history.go(-1)">&larr;
 Back</a></dd></dl>
 <a name="a_remove2"></a><dl id="id_remove2"><dt>Remove</dt>
-<dd>Remove all selected 
+<dd>Remove all selected
 templates. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd>
 </dl>
 <a name="a_restore2"></a><dl id="id_restore2"><dt>Restore
 removed</dt>
-<dd>Restore any built-in or custom 
+<dd>Restore any built-in or custom
 templates that have been removed. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd>
 </dl>
 <a name="a_revert2"></a><dl id="id_revert2"><dt>Revert
@@ -336,7 +336,12 @@ size outline.</li>
   <dd>Provides a dialog box which
 can be used to custom grid, snap &amp; glue settings for the
 InstallOptions script currently being edited. These settings are
-persisted when the file is closed and restored when it is reopened.<br>
+persisted when the file is closed and restored when it is reopened.
+Please note that any changes to Snap &amp; Glue settings will be
+applied to any future operations to controls on the dialog- e.g., if
+the "Glue to Guides" option is unchecked, any controls currently
+glued to guides will stay glued until they are detached or the
+guides are deleted.<br>
     <p style="text-align: center;"><img
  src="images/gridsnapgluedialog.gif"
  style="border: medium none ; width: 256px; height: 321px;"
@@ -447,8 +452,8 @@ to Front</li>
 <dl id="id_lock_controls">
   <dt>Lock/Unlock Controls</dt>
   <dd>Locks/Unlocks the
-selected control(s). A locked control cannot have its position 
-(left, top, right and bottom attributes) modified using the design editor (they can, 
+selected control(s). A locked control cannot have its position
+(left, top, right and bottom attributes) modified using the design editor (they can,
 however, be modified using the source editor). This is useful to prevent accidental
 repositioning of controls. A locked control can be distinguished from an unlocked control
 by the difference in the handles drawn when it is selected:<br>
@@ -513,7 +518,7 @@ with the painting loop.&nbsp;<a href="javascript:history.go(-1)">&#8592;&nbsp;Ba
 <dl id="id_preview">
   <dt>Preview</dt>
   <dd><img style="width: 16px; height: 16px;"
- alt="Preview" src="images/preview.gif"> Preview the current InstallOptions script using either the Standard (Classic) UI or the Modern UI. 
+ alt="Preview" src="images/preview.gif"> Preview the current InstallOptions script using either the Standard (Classic) UI or the Modern UI.
 The preview language may also be selected. &nbsp;<a href="javascript:history.go(-1)">&#8592;&nbsp;Back</a>
   </dd>
 </dl>

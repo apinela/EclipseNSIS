@@ -198,36 +198,24 @@ public class INILine implements Cloneable, Serializable
         }
     }
 
-    public int hashCode()
+    public boolean matches(INILine line)
     {
-        final int PRIME = 31;
-        int result = 1;
-        result = PRIME * result + ((mDelimiter == null)?0:mDelimiter.hashCode());
-        result = PRIME * result + ((mErrors == null)?0:mErrors.hashCode());
-        return result;
-    }
-
-    public boolean equals(Object obj)
-    {
-        if (this == obj)
+        if (this == line) {
             return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        final INILine other = (INILine)obj;
-        if (mDelimiter == null) {
-            if (other.mDelimiter != null)
-                return false;
         }
-        else if (!mDelimiter.equals(other.mDelimiter))
+        if (line == null) {
             return false;
-        if (mErrors == null) {
-            if (other.mErrors != null)
-                return false;
         }
-        else if (!mErrors.equals(other.mErrors))
+        if (getClass() != line.getClass()) {
             return false;
+        }
+
+        if(!Common.objectsAreEqual(mDelimiter,line.mDelimiter)) {
+            return false;
+        }
+        if(!Common.objectsAreEqual(mText,line.mText)) {
+            return false;
+        }
         return true;
     }
 }
