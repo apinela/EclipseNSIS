@@ -343,7 +343,12 @@ public class RegistryValueSelectionDialog extends StatusMessageDialog
                 case WinAPI.REG_SZ:
                 case WinAPI.REG_EXPAND_SZ:
                 case WinAPI.REG_MULTI_SZ:
-                    mData = (Common.isEmptyArray(data)?"":new String(data)); //$NON-NLS-1$
+                    if(Common.isEmptyArray(data)) {
+                        mData = ""; //$NON-NLS-1$
+                    }
+                    else {
+                        mData = new String(data,0,(data[data.length-1]==0?data.length-1:data.length));
+                    }
                     break;
             }
         }

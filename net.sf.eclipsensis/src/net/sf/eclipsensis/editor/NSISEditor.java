@@ -694,6 +694,11 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
         mActions.add(action);
     }
 
+    public void removeAction(NSISAction action)
+    {
+        mActions.remove(action);
+    }
+
     public void nsisHomeChanged(IProgressMonitor monitor, String oldHome, String newHome)
     {
         try {
@@ -746,6 +751,14 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
     protected void performSaveAs(IProgressMonitor progressMonitor)
     {
         super.performSaveAs(progressMonitor);
+        if(equals(getEditorSite().getPage().getActiveEditor())) {
+            NSISAction[] actions = (NSISAction[])mActions.toArray(new NSISAction[mActions.size()]);
+            for (int i = 0; i < actions.length; i++) {
+                if (actions[i] instanceof NSISScriptAction) {
+                    ((NSISScriptAction)actions[i]).updateInput();
+                }
+            }
+        }
         updateTaskTagMarkers(new NSISTaskTagUpdater());
     }
 

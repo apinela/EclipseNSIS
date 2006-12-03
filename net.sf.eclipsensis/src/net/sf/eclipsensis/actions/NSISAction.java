@@ -53,13 +53,27 @@ public abstract class NSISAction extends ActionDelegate implements IEditorAction
     /* (non-Javadoc)
      * @see org.eclipse.ui.IEditorActionDelegate#setActiveEditor(org.eclipse.jface.action.IAction, org.eclipse.ui.IEditorPart)
      */
-    public void setActiveEditor(IAction action, IEditorPart targetEditor)
+    public final void setActiveEditor(IAction action, IEditorPart targetEditor)
     {
+        setActiveEditor(targetEditor);
+    }
+
+    /**
+     * @param targetEditor
+     */
+    public void setActiveEditor(IEditorPart targetEditor)
+    {
+        if(mEditor != null) {
+            mEditor.removeAction(this);
+        }
         if(targetEditor instanceof NSISEditor) {
             mEditor = (NSISEditor)targetEditor;
         }
         else {
             mEditor = null;
+        }
+        if(mEditor != null) {
+            mEditor.addAction(this);
         }
     }
 }

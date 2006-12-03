@@ -1,15 +1,15 @@
 function highlight( s, regex, o ) {
   if( !s ) { return; }
   var d = document;
-  if( !regex ) { 
+  if( !regex ) {
     s = s.replace( /([\\|^$()[\]{}.*+?])/g, '\\$1' );
   }
-  if( /^\s*$/.test(s) ) { 
-    return; 
+  if( /^\s*$/.test(s) ) {
+    return;
   }
   o = [ o || d.documentElement || d.body ];
   var r = new RegExp( "\\b("+s+")\\b", 'gi' ),
-      h = d.createElement('span'), 
+      h = d.createElement('span'),
       i = 0, j, k, l, m, n=0, t;
   h.style.color = 'HighlightText';
   h.style.backgroundColor = 'Highlight';
@@ -32,7 +32,7 @@ function highlight( s, regex, o ) {
         t.appendChild( d.createTextNode( l[1] ) );n++;
         m.parentNode.replaceChild( t, m );
       }
-    } 
+    }
     else {
       j = m.childNodes.length;
       while (j) { o[i++] = m.childNodes.item(--j); }

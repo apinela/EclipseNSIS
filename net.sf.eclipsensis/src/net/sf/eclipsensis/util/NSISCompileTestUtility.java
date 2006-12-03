@@ -117,12 +117,12 @@ public class NSISCompileTestUtility
         }
     }
 
-    public synchronized void compile(IPath script)
+    public synchronized boolean compile(IPath script)
     {
-        compile(script, false);
+        return compile(script, false);
     }
 
-    public void compile(IPath script, boolean test)
+    public boolean compile(IPath script, boolean test)
     {
         if(script != null) {
             IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
@@ -147,14 +147,16 @@ public class NSISCompileTestUtility
                             continue;
                         }
                         if(!saveEditor(editors[k])) {
-                            return;
+                            return false;
                         }
                         break outer;
                     }
                 }
             }
             new Thread(new NSISCompileRunnable(script,test),EclipseNSISPlugin.getResourceString("makensis.thread.name")).start(); //$NON-NLS-1$
+            return true;
         }
+        return false;
     }
 
     private boolean saveEditor(IEditorPart editor)
@@ -277,32 +279,32 @@ public class NSISCompileTestUtility
         return ResourcesPlugin.getWorkspace().getRoot().getFile(path);
     }
 
-    private static final class MRUMap extends LinkedHashMap 
+    private static final class MRUMap extends LinkedHashMap
     {
         private static final long serialVersionUID = -4303663274693162132L;
 
         private final int mMaxSize;
-        
-        public MRUMap(int maxSize) 
+
+        public MRUMap(int maxSize)
         {
             super(15,0.75f,true);
             mMaxSize= maxSize;
         }
-        
-        public MRUMap(int maxSize, Map map) 
+
+        public MRUMap(int maxSize, Map map)
         {
             this(maxSize);
             putAll(map);
         }
-        
-        public Object put(Object key, Object value) 
+
+        public Object put(Object key, Object value)
         {
             Object object= remove(key);
             super.put(key, value);
             return object;
         }
-        
-        protected boolean removeEldestEntry(Map.Entry eldest) 
+
+        protected boolean removeEldestEntry(Map.Entry eldest)
         {
             return (mMaxSize > 0 && size() > mMaxSize);
         }

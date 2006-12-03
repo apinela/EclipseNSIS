@@ -45,12 +45,17 @@ public abstract class NSISScriptAction extends NSISAction implements IMakeNSISRu
         MakeNSISRunner.removeListener(this);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IEditorActionDelegate#setActiveEditor(org.eclipse.jface.action.IAction, org.eclipse.ui.IEditorPart)
-     */
-    public void setActiveEditor(IAction action, IEditorPart targetEditor)
+    public void setActiveEditor(IEditorPart targetEditor)
     {
-        super.setActiveEditor(action, targetEditor);
+        super.setActiveEditor(targetEditor);
+        updateInput();
+    }
+
+    /**
+     *
+     */
+    public void updateInput()
+    {
         mInput = null;
         if(mEditor != null) {
             IEditorInput editorInput = mEditor.getEditorInput();
@@ -63,11 +68,11 @@ public abstract class NSISScriptAction extends NSISAction implements IMakeNSISRu
                 }
             }
         }
-        updateInput();
+        validateExtension();
         updateActionState();
     }
 
-    private void updateInput()
+    private void validateExtension()
     {
         mValidExtension = (mInput != null && mInput.getFileExtension() != null && getExtensionPattern().matcher(mInput.getFileExtension()).matches());
     }
@@ -99,7 +104,7 @@ public abstract class NSISScriptAction extends NSISAction implements IMakeNSISRu
                 mInput = null;
             }
         }
-        updateInput();
+        validateExtension();
         updateActionState();
     }
 

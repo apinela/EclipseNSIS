@@ -25,7 +25,9 @@ public class NSISCompileAction extends NSISScriptAction
 	final public void run(IAction action) {
         if(mPlugin != null && NSISPreferences.INSTANCE.getNSISExe() != null) {
             action.setEnabled(false);
-            NSISCompileTestUtility.INSTANCE.compile(mInput, shouldTest());
+            if(!NSISCompileTestUtility.INSTANCE.compile(mInput, shouldTest())) {
+                mAction.setEnabled(isEnabled());
+            }
         }
 	}
 

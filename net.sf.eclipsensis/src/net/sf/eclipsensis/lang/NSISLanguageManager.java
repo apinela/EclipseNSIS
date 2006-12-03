@@ -255,17 +255,22 @@ public class NSISLanguageManager implements INSISHomeListener, IEclipseNSISServi
             Locale locale = Locale.getDefault();
             lang = (NSISLanguage)mLanguageMap.get(locale.toString());
             if(lang == null) {
-                //Try the user's language
-                lang = (NSISLanguage)mLanguageMap.get(locale.getDisplayLanguage(Locale.US));
-                if(lang == null) {
-                    //See if this is one of the specially mapped locales
-                    lang = (NSISLanguage)mLanguageMap.get(mLocaleLanguageMap.get(locale.toString()));
-                    if(lang == null) {
-                        //Try the default lang id
-                        lang = (NSISLanguage)mLanguageMap.get(mDefaultLanguageId);
-                        if(lang == null && mLanguages.size() > 0) {
-                            //When all else fails, return the first one
-                            lang = (NSISLanguage)mLanguages.get(0);
+                if(!Common.isEmpty(locale.getVariant())) {
+                    lang = (NSISLanguage)mLanguageMap.get(new Locale(locale.getLanguage(),locale.getCountry()).toString());
+                }
+                if (lang == null) {
+                    //Try the user's language
+                    lang = (NSISLanguage)mLanguageMap.get(locale.getDisplayLanguage(Locale.US));
+                    if (lang == null) {
+                        //See if this is one of the specially mapped locales
+                        lang = (NSISLanguage)mLanguageMap.get(mLocaleLanguageMap.get(locale.toString()));
+                        if (lang == null) {
+                            //Try the default lang id
+                            lang = (NSISLanguage)mLanguageMap.get(mDefaultLanguageId);
+                            if (lang == null && mLanguages.size() > 0) {
+                                //When all else fails, return the first one
+                                lang = (NSISLanguage)mLanguages.get(0);
+                            }
                         }
                     }
                 }

@@ -57,6 +57,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
     private static final String IMAGE_LOCATION_FORMAT = EclipseNSISPlugin.getResourceString("help.browser.throbber.icon.format"); //$NON-NLS-1$
     private static final int IMAGE_COUNT = Integer.parseInt(EclipseNSISPlugin.getResourceString("help.browser.throbber.icon.count")); //$NON-NLS-1$
     private static final String HIGHLIGHT_JS_CONTENT;
+    private static final String ENCODING_SCHEME = System.getProperty("file.encoding");
 
     private boolean mShowNav;
     private boolean mSynched;
@@ -788,17 +789,57 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
                                 mHighlightJS = js.toString();
                             }
                         }
+                        final String url = ((NSISHelpSearchResult)((IStructuredSelection)sel).getFirstElement()).getURL();
                         if(mHighlightJS != null ) {
-                            mBrowser.addProgressListener(new ProgressAdapter() {
-
-                                public void completed(ProgressEvent event)
+                            final String urlFile;
+                            String url2;
+                            try {
+                                url2 = URLDecoder.decode(url, ENCODING_SCHEME);
+                            }
+                            catch (UnsupportedEncodingException e) {
+                                url2 = url;
+                            }
+                            int n = url2.lastIndexOf('#');
+                            if(n < 0) {
+                                urlFile = url2;
+                            }
+                            else {
+                                urlFile = url2.substring(0,n);
+                            }
+                            mBrowser.addLocationListener(new LocationAdapter() {
+                                public void changed(LocationEvent event)
                                 {
-                                    mBrowser.removeProgressListener(this);
-                                    mBrowser.execute(mHighlightJS);
+                                    String location = event.location;
+                                    if (!Common.isEmpty(location)) {
+                                        if (!location.regionMatches(true, 0, FILE_URI_SCHEME, 0, FILE_URI_SCHEME.length())) {
+                                            //This is a windows file name
+                                            String temp = IOUtility.getFileURLString(new File(location));
+                                            try {
+                                                location = URLDecoder.decode(temp, ENCODING_SCHEME);
+                                            }
+                                            catch (UnsupportedEncodingException e) {
+                                                location = temp;
+                                            }
+                                        }
+                                        String file;
+                                        int n = location.lastIndexOf('#');
+                                        if (n < 0) {
+                                            file = location;
+                                        }
+                                        else {
+                                            file = location.substring(0, n);
+                                        }
+                                        if(!urlFile.equalsIgnoreCase(file)) {
+                                            mBrowser.removeLocationListener(this);
+                                        }
+                                        else {
+                                            mBrowser.execute(mHighlightJS);
+                                        }
+                                    }
                                 }
                             });
                         }
-                        mBrowser.setUrl(((NSISHelpSearchResult)((IStructuredSelection)sel).getFirstElement()).getURL());
+                        mBrowser.setUrl(url);
                     }
                 }
             }

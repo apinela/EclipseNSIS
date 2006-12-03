@@ -11,6 +11,18 @@
 ###############################################################################
 -->
 <commands>
+  <version name="2.22">
+    <add>
+      <command name="RequestExecutionLevel" category="general.attributes.category">
+        <param type="choice" default="0">
+          <choice value="none"/>
+          <choice value="user"/>
+          <choice value="highest"/>
+          <choice value="admin"/>
+        </param>
+      </command>
+    </add>
+  </version>
   <version name="2.21">
     <add>
       <command name="RequestExecutionLevel" category="general.attributes.category">
