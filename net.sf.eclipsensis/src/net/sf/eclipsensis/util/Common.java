@@ -776,6 +776,18 @@ public class Common
         return pt;
     }
 
+    public static int parseInt(String str, int defaultVal)
+    {
+        int result;
+        try {
+            result = Integer.parseInt(str);
+        }
+        catch(NumberFormatException nfe) {
+            result = defaultVal;
+        }
+        return result;
+    }
+
     public static String padString(String str, int length)
     {
         if(str != null) {
@@ -907,5 +919,69 @@ public class Common
     public static boolean isTrue(Boolean b)
     {
         return b != null && b.booleanValue();
+    }
+
+    public static final String getMyComputerLabel()
+    {
+        String name = null;
+        try {
+            name = WinAPI.RegQueryStrValue(WinAPI.HKEY_CLASSES_ROOT,"CLSID\\{20D04FE0-3AEA-1069-A2D8-08002B30309D}","LocalizedString"); //$NON-NLS-1$ //$NON-NLS-2$
+            if(isEmpty(name)) {
+                name = WinAPI.RegQueryStrValue(WinAPI.HKEY_CLASSES_ROOT,"CLSID\\{20D04FE0-3AEA-1069-A2D8-08002B30309D}",""); //$NON-NLS-1$ //$NON-NLS-2$
+            }
+            if(!isEmpty(name)) {
+                if(name.charAt(0)=='@') {
+                    name = name.substring(1);
+                    String[] pieces = tokenize(name,',');
+                    int lcid = 0;
+                    String defaultName=""; //$NON-NLS-1$
+                    String library;
+                    int id = -1;
+    
+                    switch(pieces.length) {
+                        case 3:
+                            defaultName = pieces[2];
+                        case 2:
+                            String[] ids = tokenize(pieces[1],'@');
+                            switch(ids.length) {
+                                case 2:
+                                    lcid = parseInt(ids[1],0);
+                                case 1:
+                                    id = Math.abs(parseInt(ids[0],-1));
+                                default:
+                                    break;
+                            }
+                        default:
+                            library = pieces[0];
+                            break;
+                    }
+    
+                    if(id >= 0) {
+                        String resourceString;
+                        try {
+                            resourceString = WinAPI.LoadResourceString(library, id,lcid);
+                        }
+                        catch(Exception ex) {
+                            resourceString = null;
+                        }
+                        if(!isEmpty(resourceString)) {
+                            name = resourceString;
+                        }
+                        else if(!isEmpty(defaultName)) {
+                            name = defaultName;
+                        }
+                    }
+                }
+            }
+        }
+        catch(Exception ex) {
+            name = null;
+        }
+        finally {
+            if(isEmpty(name)) {
+                name = EclipseNSISPlugin.getResourceString("my.computer.label"); //$NON-NLS-1$
+            }
+        }
+        return name;
     }
 }

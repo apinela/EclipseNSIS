@@ -57,7 +57,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
     private static final String IMAGE_LOCATION_FORMAT = EclipseNSISPlugin.getResourceString("help.browser.throbber.icon.format"); //$NON-NLS-1$
     private static final int IMAGE_COUNT = Integer.parseInt(EclipseNSISPlugin.getResourceString("help.browser.throbber.icon.count")); //$NON-NLS-1$
     private static final String HIGHLIGHT_JS_CONTENT;
-    private static final String ENCODING_SCHEME = System.getProperty("file.encoding");
+    private static final String ENCODING_SCHEME = System.getProperty("file.encoding"); //$NON-NLS-1$
 
     private boolean mShowNav;
     private boolean mSynched;

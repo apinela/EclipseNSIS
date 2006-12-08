@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -14,10 +14,11 @@ public interface IUpdatePreferenceConstants
     public static final String USE_HTTP_PROXY = "useHttpProxy"; //$NON-NLS-1$
     public static final String HTTP_PROXY_HOST = "httpProxyHost"; //$NON-NLS-1$
     public static final String HTTP_PROXY_PORT = "httpProxyPort"; //$NON-NLS-1$
-    
+
     public static final String NSIS_UPDATE_SITE = "nsisUpdateSite"; //$NON-NLS-1$
+    public static final String AUTOSELECT_SOURCEFORGE_MIRROR = "autoselectSourceforgeMirror"; //$NON-NLS-1$
     public static final String SOURCEFORGE_MIRROR = "sourceforgeMirror"; //$NON-NLS-1$
-    
+
     public static final String IGNORE_PREVIEW = "ignorePreview"; //$NON-NLS-1$
 
     public static final String AUTO_UPDATE = "autoUpdate"; //$NON-NLS-1$

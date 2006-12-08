@@ -668,7 +668,7 @@ public class RegistryKeyBrowser extends Composite
         public RegistryRoot()
         {
             super(null, -1,null);
-            setName(IOUtility.getMyComputerLabel());
+            setName(Common.getMyComputerLabel());
             mChildren = new RegistryKey[ROOT_KEYS.length];
             for (int i = 0; i < mChildren.length; i++) {
                 mChildren[i] = new RegistryKey(this, ROOT_KEYS[i], getRootKeyName(ROOT_KEYS[i]));

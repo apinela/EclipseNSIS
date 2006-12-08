@@ -783,10 +783,21 @@ JNIEXPORT jstring JNICALL Java_net_sf_eclipsensis_util_WinAPI_RegEnumKeyEx(JNIEn
 	return result;
 }
 
-JNIEXPORT jstring JNICALL Java_net_sf_eclipsensis_util_WinAPI_LoadResourceString(JNIEnv *pEnv, jclass jClass, jstring pszFilename, jint id)
+JNIEXPORT jstring JNICALL Java_net_sf_eclipsensis_util_WinAPI_LoadResourceString(JNIEnv *pEnv, jclass jClass, jstring pszFilename, jint id, jint lcid)
 {
 	jstring result = NULL;
     LPCSTR filename = (LPCSTR)pEnv->GetStringUTFChars(pszFilename, 0);
+    LCID locale = (LCID)lcid;
+    LCID oldLocale = (LCID)0;
+
+    if(locale) {
+        oldLocale = GetThreadLocale();
+        if(oldLocale != locale) {
+            if(!SetThreadLocale(locale)) {
+                locale = (LCID)0;
+            }
+        }
+    }
 
 	BOOL shouldFree = FALSE;
 	HMODULE hModule = GetModuleHandle((LPCTSTR)filename);
@@ -807,6 +818,10 @@ JNIEXPORT jstring JNICALL Java_net_sf_eclipsensis_util_WinAPI_LoadResourceString
 	}
 
     pEnv->ReleaseStringUTFChars(pszFilename, filename);
+
+    if(locale && oldLocale) {
+        SetThreadLocale(oldLocale);
+    }
 
     return result;
 }

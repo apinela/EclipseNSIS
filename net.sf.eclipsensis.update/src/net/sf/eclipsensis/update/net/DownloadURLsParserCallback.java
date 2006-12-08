@@ -7,7 +7,7 @@
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
-package net.sf.eclipsensis.update.jobs;
+package net.sf.eclipsensis.update.net;
 
 import java.io.*;
 import java.util.*;
@@ -18,7 +18,7 @@ import javax.swing.text.html.HTML.Tag;
 import javax.swing.text.html.HTMLEditorKit.ParserCallback;
 
 import net.sf.eclipsensis.update.EclipseNSISUpdatePlugin;
-import net.sf.eclipsensis.update.net.NetworkUtil;
+import net.sf.eclipsensis.update.jobs.NSISUpdateURLs;
 import net.sf.eclipsensis.util.IOUtility;
 
 import org.eclipse.core.runtime.IPath;
@@ -26,7 +26,9 @@ import org.eclipse.core.runtime.Path;
 
 class DownloadURLsParserCallback extends ParserCallback
 {
+    private static File cCacheFolder = new File(EclipseNSISUpdatePlugin.getPluginStateLocation(),"resources"); //$NON-NLS-1$
     private static final String PROPERTIES_FILE_NAME = "siteimages.properties"; //$NON-NLS-1$
+    private static File cCacheFile = new File(cCacheFolder, PROPERTIES_FILE_NAME);
     private static final IPath cLocalPropertiesPath = new Path("/resources/"+PROPERTIES_FILE_NAME); //$NON-NLS-1$
 
     private static final String FORM_ACTION = "/project/downloading.php"; //$NON-NLS-1$
@@ -34,9 +36,6 @@ class DownloadURLsParserCallback extends ParserCallback
     private static final String AUTO_SELECT = "Auto-select"; //$NON-NLS-1$
     private static final String TAG_LABEL = "label"; //$NON-NLS-1$
     private static final String INPUT_RADIO = "radio"; //$NON-NLS-1$
-
-    private static long cTimestamp = 0;
-    private static Properties cImageNames = new Properties();
 
     private boolean mDone = false;
     private boolean mInForm = false;
@@ -46,22 +45,20 @@ class DownloadURLsParserCallback extends ParserCallback
 
     private String[] mCurrentSite  = null;
     private List mSites = new ArrayList();
+    private Properties mImageURLs = new Properties();
 
-    private static void loadImageNames()
+    private void loadImageURLs()
     {
         InputStream is = null;
         try {
-            File file = new File(EclipseNSISUpdatePlugin.getPluginStateLocation(),PROPERTIES_FILE_NAME);
+            File file = cCacheFile;
             if(!NetworkUtil.downloadLatest(NSISUpdateURLs.getSiteImagesUpdateURL(),file)) {
-                file = IOUtility.ensureLatest(EclipseNSISUpdatePlugin.getDefault().getBundle(),cLocalPropertiesPath,EclipseNSISUpdatePlugin.getPluginStateLocation());
+                file = IOUtility.ensureLatest(EclipseNSISUpdatePlugin.getDefault().getBundle(),cLocalPropertiesPath,cCacheFolder);
             }
 
-            long timestamp = file.lastModified();
-            if(timestamp > cTimestamp) {
-                cTimestamp = timestamp;
+            if(file != null && file.exists()) {
                 is = new FileInputStream(file);
-                cImageNames.clear();
-                cImageNames.load(is);
+                mImageURLs.load(is);
             }
         }
         catch (IOException e) {
@@ -74,7 +71,7 @@ class DownloadURLsParserCallback extends ParserCallback
 
     public DownloadURLsParserCallback()
     {
-        loadImageNames();
+        loadImageURLs();
     }
 
     public void handleEndTag(Tag t, int pos)
@@ -136,7 +133,7 @@ class DownloadURLsParserCallback extends ParserCallback
                                 if(USE_MIRROR.equalsIgnoreCase((String)a.getAttribute(Attribute.NAME))) {
                                     if(a.isDefined(Attribute.VALUE)) {
                                         mCurrentSite[3] = (String)a.getAttribute(Attribute.VALUE);
-                                        mCurrentSite[0] = cImageNames.getProperty(mCurrentSite[3]);
+                                        mCurrentSite[0] = mImageURLs.getProperty(mCurrentSite[3]);
                                     }
                                 }
                             }

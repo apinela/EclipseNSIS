@@ -65,7 +65,16 @@ public class NSISWizardDialogUtil
 
     public static Label createRequiredFieldsLabel(Composite parent)
     {
-        Label l = NSISWizardDialogUtil.createLabel(parent,"wizard.required.text",true,null,true); //$NON-NLS-1$
+        Composite c = new Composite(parent,SWT.NONE);
+        GridLayout layout = new GridLayout(2,false);
+        layout.marginHeight = layout.marginWidth = layout.horizontalSpacing = 0;
+        c.setLayout(layout);
+        c.setLayoutData(new GridData(SWT.FILL,SWT.FILL,false,false));
+        Label l = new Label(c,SWT.NONE);
+        l.setImage(REQ_FIELD_DECORATION.getImage());
+        l.setLayoutData(new GridData(SWT.FILL,SWT.BEGINNING,false,false));
+        l = NSISWizardDialogUtil.createLabel(c,"wizard.required.text",true,null,false); //$NON-NLS-1$
+        l.setData(LAYOUT_CONTROL,c);
         FontData[] fd = l.getFont().getFontData();
         for (int i = 0; i < fd.length; i++) {
             fd[i].height *= 0.9;

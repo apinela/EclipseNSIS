@@ -17,7 +17,7 @@ import org.osgi.framework.BundleContext;
 /**
  * The main plugin class to be used in the desktop.
  */
-public class EclipseNSISUpdatePlugin extends AbstractUIPlugin 
+public class EclipseNSISUpdatePlugin extends AbstractUIPlugin
 {
     public static final String RESOURCE_BUNDLE = "net.sf.eclipsensis.update.EclipseNSISUpdatePluginResources"; //$NON-NLS-1$
     public static final String PLUGIN_CONTEXT_PREFIX = "net.sf.eclipsensis."; //$NON-NLS-1$
@@ -26,7 +26,7 @@ public class EclipseNSISUpdatePlugin extends AbstractUIPlugin
 	private static EclipseNSISUpdatePlugin cPlugin;
     private static File cStateLocation = null;
     private static Image cShellImage;
-	
+
     //Resource bundle.
     private ResourceBundle mResourceBundle;
     private String mPluginId;
@@ -34,7 +34,7 @@ public class EclipseNSISUpdatePlugin extends AbstractUIPlugin
     /**
 	 * The constructor.
 	 */
-	public EclipseNSISUpdatePlugin() 
+	public EclipseNSISUpdatePlugin()
     {
         cPlugin = this;
         try {
@@ -64,7 +64,7 @@ public class EclipseNSISUpdatePlugin extends AbstractUIPlugin
     /**
 	 * This method is called when the plug-in is stopped
 	 */
-	public void stop(BundleContext context) throws Exception 
+	public void stop(BundleContext context) throws Exception
     {
         Scheduler scheduler = Scheduler.getInstance();
         if(scheduler != null) {
@@ -79,7 +79,7 @@ public class EclipseNSISUpdatePlugin extends AbstractUIPlugin
 	 *
 	 * @return the shared instance.
 	 */
-	public static EclipseNSISUpdatePlugin getDefault() 
+	public static EclipseNSISUpdatePlugin getDefault()
     {
 		return cPlugin;
 	}
@@ -89,12 +89,12 @@ public class EclipseNSISUpdatePlugin extends AbstractUIPlugin
         return MessageFormat.format(getResourceString(key),args);
     }
 
-    public static String getResourceString(String key) 
+    public static String getResourceString(String key)
     {
         return getResourceString(key, key);
     }
 
-    public static String getResourceString(String key, String defaultValue) 
+    public static String getResourceString(String key, String defaultValue)
     {
         ResourceBundle bundle = getDefault().getResourceBundle();
         try {
@@ -107,12 +107,17 @@ public class EclipseNSISUpdatePlugin extends AbstractUIPlugin
     /**
      * Returns the plugin's resource bundle,
      */
-    public ResourceBundle getResourceBundle() 
+    public ResourceBundle getResourceBundle()
     {
         return mResourceBundle;
     }
 
     public void log(Throwable t)
+    {
+        log(IStatus.ERROR,t);
+    }
+
+    public void log(int type, Throwable t)
     {
         ILog log = getLog();
         if(log != null) {
@@ -122,7 +127,7 @@ public class EclipseNSISUpdatePlugin extends AbstractUIPlugin
             }
             else {
                 String message = t.getMessage();
-                status = new Status(IStatus.ERROR,getPluginId(),IStatus.ERROR, message==null?t.getClass().getName():message,t);
+                status = new Status(type,getPluginId(),type, message==null?t.getClass().getName():message,t);
             }
             log.log(status);
         }

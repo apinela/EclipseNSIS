@@ -1,0 +1,103 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!--
+###############################################################################
+# Copyright (c) 2004-2006 Sunil Kamath (IcemanK).
+# All rights reserved.
+# This program is made available under the terms of the Common Public License
+# v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
+#
+# Contributors:
+# Sunil Kamath (IcemanK) - initial API and implementation
+###############################################################################
+-->
+<title>EclipseNSIS - Home</title>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<link rel="stylesheet" href="css/styles.css" charset="ISO-8859-1" type="text/css">
+<link rel="shortcut icon" href="/favicon.ico">
+<script type="text/javascript" src="js/common.js"></script>
+</head>
+<body onload="breakout()"><div id="main">
+<hr><p style="text-align: center;"><a href="index.html">Home</a> | <a href="#features">Features</a>
+| <a href="#screenshots">Screenshots</a> | <a href="#download">Download</a> | <a href="http://sourceforge.net/news/?group_id=116143">News</a> | <a href="help/index.html">User Guides</a> | <a href="revisions.html">Revision History</a> | <a href="#links">Links</a> | <a href="#copyright">Copyright
+&amp; License</a></p><hr>
+<h1 style="text-align: center;">EclipseNSIS</h1>
+<p>EclipseNSIS is a plugin for the Eclipse platform which enables
+editing, compiling and testing Nullsoft Installer (NSIS) scripts. The
+EclipseNSIS InstallOptions Editor plugin is an add-on to EclipseNSIS
+which enables editing of InstallOptions scripts.</p>
+<a name="features"></a><h2>Features</h2><h3>EclipseNSIS</h3>
+<ul><li>Requires <a href="http://download.eclipse.org/eclipse/downloads/drops/R-3.2-200606291905/index.php">Eclipse 3.2</a> or better.</li><li>Requires
+Windows 98, Window ME, Windows NT 4.0, Windows 2000, Windows XP, Windows Server 2003, or
+better.</li><li>Syntax highlighting editor.</li>
+<li>Outline view for quick navigation.</li>
+<li>Integrated compiling and testing support.</li>
+<li>Error and warning marker generation.</li>
+<li>Script wizard with template support.</li>
+<li>Command wizard.</li>
+<li>Code templates.</li>
+<li>Integrated NSIS help.</li>
+<li>NSIS Update Wizard.</li>
+</ul><h3>EclipseNSIS InstallOptions Editor</h3>
+<ul><li>Requires <a href="http://download.eclipse.org/eclipse/downloads/drops/R-3.2-200606291905/index.php">Eclipse 3.2</a> or better, EclipseNSIS and <a href="http://download.eclipse.org/tools/gef/downloads/drops/R-3.2-200606270816/index.php">Eclipse GEF 3.2</a> or better.</li>
+<li>Requires
+Windows 98, Window ME, Windows NT 4.0, Windows 2000, Windows XP, Windows Server 2003, or
+better.</li>
+<li>Design editor with point &amp; click editing and outline
+view.</li><li>Source editor with syntax highlighting, code
+outlining &amp; folding, dynamic error checking and quickfix.</li>
+<li>Templates.</li>
+<li>Integrated help.</li>
+<li>InstallOptions preview.</li>
+<li>Script wizard with template support.</li></ul>
+<a name="screenshots"></a><h2>Screenshots</h2>
+<h3>EclipseNSIS</h3>
+<p style="text-align: center;"><a target="_blank" href="images/screenshot01.gif"><img style="border: 0px solid ; width: 400px; height: 300px;" alt="Screenshot" src="images/t_screenshot01.gif"></a></p>
+<h3>EclipseNSIS InstallOptions Editor</h3>
+<p style="text-align: center;"><a target="_blank" href="images/screenshot02.gif"><img style="border: 0px solid ; width: 400px; height: 300px;" alt="Screenshot" src="images/t_screenshot02.gif"></a></p>
+<p>Check
+out the <a href="help/index.html">User Guides</a>
+for more screenshots.</p>
+<a name="download"></a><h2>Download</h2>
+<p>There are two ways to download EclipseNSIS plugins:</p>
+<ol><li><strong>(Recommended)</strong> Use the
+<a href="http://help.eclipse.org/help31/topic/org.eclipse.platform.doc.user/tasks/tasks-36.htm">Eclipse Update Manager</a> to connect to <a href="http://eclipsensis.sf.net/update">http://eclipsensis.sf.net/update</a>
+and download the desired release. </li>
+<li>Download directly from <a href="http://sourceforge.net/project/showfiles.php?group_id=116143">SourceForge</a>
+and unzip into the Eclipse folder. <strong>However, using this method will NOT ensure that all prerequisites for
+using the plugins have been satisfied.</strong></li>
+</ol><a name="links"></a><h2>Links</h2>
+<ul><li>EclipseNSIS<br>
+</li><ul><li><a href="http://sourceforge.net/projects/eclipsensis/">SourceForge
+Page</a></li>
+<li><a href="http://sourceforge.net/news/?group_id=116143">News</a></li>
+<li><a href="http://sourceforge.net/forum/?group_id=116143">Forums</a></li>
+<li><a href="http://sourceforge.net/tracker/?group_id=116143&amp;atid=673849">Bug
+Tracker</a></li>
+<li><a href="http://sourceforge.net/tracker/?atid=673852&amp;group_id=116143">Feature
+Requests</a></li>
+<li><a href="http://forums.winamp.com/showthread.php?s=&amp;threadid=212922">NSIS Forum Thread</a></li></ul>
+<li>NSIS</li>
+<ul>
+  <li><a href="http://nsis.sourceforge.net">Home Page</a></li>
+  <li><a href="http://nsis.sourceforge.net/FAQ">FAQ</a></li>
+  <li><a href="http://nsis.sourceforge.net/Developer_Center">Developer Center</a></li>
+  <li><a href="http://nsis.sourceforge.net/Community">Community</a></li>
+  <li><a href="http://forums.winamp.com/forumdisplay.php?s=&amp;forumid=65">Forum</a><br>
+</li>
+</ul></ul>
+<a name="copyright"></a><h2>Copyright
+&amp; License</h2>
+<p>Copyright &copy; 2004-2006 Sunil Kamath (IcemanK).<br>
+All rights reserved.</p>
+<p>This program and the accompanying materials are made available
+under the terms of the <a href="http://www.eclipse.org/legal/cpl-v10.html">Common
+Public License v1.0</a>.
+</p><hr><table style="width: 100%;" border="0"><tbody><tr><td style="width: 25%; text-align: left;"><a href="http://sourceforge.net"><img src="http://sourceforge.net/sflogo.php?group_id=1&amp;type=1" alt="SourceForge.net Logo" border="0" height="31" width="88"></a><a href="http://www.opensource.org"><img src="images/osi.gif" alt="OSI certified" border="0" height="42" width="60"></a><a href="http://www.eclipse.org"><img src="images/rea_eclipse.gif" alt="eclipse ready" border="0" height="42" width="72"></a>
+</td><td style="width: 50%; text-align: center;"><strong><small>Copyright
+&copy; 2004-2006 Sunil Kamath (IcemanK).</small></strong></td>
+<td style="width: 25%; text-align: right;">
+<!--#include virtual="counter.shtml" -->
+</td></tr></tbody></table></div></body></html>

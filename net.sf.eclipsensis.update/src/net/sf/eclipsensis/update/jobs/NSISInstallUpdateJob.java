@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -36,10 +36,10 @@ class NSISInstallUpdateJob extends NSISUpdateJob
     public static final int INSTALL_SUCCESS = 0;
     public static final int INSTALL_CANCEL = 1;
     public static final int INSTALL_ABORTED = 2;
-    
+
     private static MessageFormat cNotifyFormat = new MessageFormat(EclipseNSISUpdatePlugin.getResourceString("install.complete.message")); //$NON-NLS-1$
     private static MessageFormat cAutoNotifyFormat = new MessageFormat(EclipseNSISUpdatePlugin.getResourceString("auto.install.complete.message")); //$NON-NLS-1$
-    
+
     private String mVersion;
     private File mSetupExe;
 
@@ -49,12 +49,12 @@ class NSISInstallUpdateJob extends NSISUpdateJob
         mVersion = version;
         mSetupExe = setupExe;
     }
-    
+
     protected boolean shouldReschedule()
     {
         return getSettings().isAutomated();
     }
-    
+
     private boolean isLocked(File file)
     {
         if(IOUtility.isValidFile(file)) {
@@ -85,14 +85,14 @@ class NSISInstallUpdateJob extends NSISUpdateJob
                         }
                     }
                     catch(Exception e) {
-                        e.printStackTrace();
+                        EclipseNSISUpdatePlugin.getDefault().log(IStatus.WARNING,e);
                     }
                     if(lock != null) {
                         try {
                             lock.release();
                         }
                         catch (IOException e) {
-                            e.printStackTrace();
+                            EclipseNSISUpdatePlugin.getDefault().log(IStatus.WARNING,e);
                         }
                     }
                 }
@@ -133,7 +133,7 @@ class NSISInstallUpdateJob extends NSISUpdateJob
                                         {
                                             return super.getTableStyle() | SWT.READ_ONLY;
                                         }
-                                        
+
                                     };
                                     dialog.setHelpAvailable(false);
                                     dialog.setContentProvider(new CollectionContentProvider());
@@ -174,7 +174,7 @@ class NSISInstallUpdateJob extends NSISUpdateJob
                                     displayExec(new Runnable() {
                                         public void run()
                                         {
-                                            Common.openWarning(Display.getCurrent().getActiveShell(), 
+                                            Common.openWarning(Display.getCurrent().getActiveShell(),
                                                     EclipseNSISUpdatePlugin.getResourceString("cancel.not.supported.message"),  //$NON-NLS-1$
                                                     EclipseNSISUpdatePlugin.getShellImage());
                                         }
@@ -211,7 +211,7 @@ class NSISInstallUpdateJob extends NSISUpdateJob
                                         NSISPreferences.INSTANCE.setNSISHome(newNSISHome);
                                         NSISPreferences.INSTANCE.store();
                                     }
-                                });                            
+                                });
                             }
                         }
                         if (install) {

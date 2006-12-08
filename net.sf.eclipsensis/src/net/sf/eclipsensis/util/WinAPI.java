@@ -185,7 +185,7 @@ public class WinAPI
 
     public static final native String RegEnumKeyEx(int hKey, int index, int subKeySize);
 
-    public static final native String LoadResourceString(String pszFilename, int id);
+    public static final native String LoadResourceString(String pszFilename, int id, int lcid);
 
     public static final native int GetRegValuesCount(int hKey);
 

@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -20,14 +20,15 @@ public class UpdatePreferenceInitializer extends AbstractPreferenceInitializer i
     public void initializeDefaultPreferences()
     {
         IEclipsePreferences prefs = new DefaultScope().getNode(EclipseNSISUpdatePlugin.getDefault().getPluginId());
-        
+
         prefs.put(USE_HTTP_PROXY, Boolean.FALSE.toString());
         prefs.put(HTTP_PROXY_HOST, ""); //$NON-NLS-1$
         prefs.put(HTTP_PROXY_PORT, ""); //$NON-NLS-1$
-        
+
         prefs.put(NSIS_UPDATE_SITE, NSISUpdateURLs.getDefaultUpdateSite());
         prefs.put(SOURCEFORGE_MIRROR, NSISUpdateURLs.getDefaultDownloadSite());
-        
+        prefs.putBoolean(AUTOSELECT_SOURCEFORGE_MIRROR, true);
+
         prefs.put(IGNORE_PREVIEW, Boolean.valueOf(SchedulerConstants.DEFAULT_IGNORE_PREVIEW).toString());
 
         prefs.put(AUTO_UPDATE, Boolean.valueOf(SchedulerConstants.DEFAULT_AUTO_UPDATE).toString());

@@ -453,10 +453,10 @@ JNIEXPORT jstring JNICALL Java_net_sf_eclipsensis_util_WinAPI_RegEnumKeyEx
 /*
  * Class:     net_sf_eclipsensis_util_WinAPI
  * Method:    LoadResourceString
- * Signature: (Ljava/lang/String;I)Ljava/lang/String;
+ * Signature: (Ljava/lang/String;II)Ljava/lang/String;
  */
 JNIEXPORT jstring JNICALL Java_net_sf_eclipsensis_util_WinAPI_LoadResourceString
-  (JNIEnv *, jclass, jstring, jint);
+  (JNIEnv *, jclass, jstring, jint, jint);
 
 /*
  * Class:     net_sf_eclipsensis_util_WinAPI

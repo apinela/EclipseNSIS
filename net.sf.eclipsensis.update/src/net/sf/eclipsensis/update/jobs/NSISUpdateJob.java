@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -67,7 +67,7 @@ public abstract class NSISUpdateJob extends Job
     {
         return family == this || family == NSISUpdateJobSettings.JOB_FAMILY;
     }
-    
+
     protected String formatException(Throwable e)
     {
         return e.getMessage();
@@ -84,7 +84,7 @@ public abstract class NSISUpdateJob extends Job
         }
         return status;
     }
-    
+
     protected void displayExec(Runnable op)
     {
         if(getSettings().isAutomated()) {
@@ -94,7 +94,7 @@ public abstract class NSISUpdateJob extends Job
             Display.getDefault().syncExec(op);
         }
     }
-    
+
     protected abstract boolean shouldReschedule();
     protected abstract IStatus doRun(IProgressMonitor monitor);
 }

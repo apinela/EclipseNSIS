@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -11,9 +11,9 @@ package net.sf.eclipsensis.update.jobs;
 
 import java.io.IOException;
 import java.net.*;
-import java.text.MessageFormat;
 
 import net.sf.eclipsensis.update.EclipseNSISUpdatePlugin;
+import net.sf.eclipsensis.update.net.NetworkUtil;
 import net.sf.eclipsensis.update.preferences.IUpdatePreferenceConstants;
 import net.sf.eclipsensis.update.proxy.ProxyAuthenticator;
 import net.sf.eclipsensis.util.NestedProgressMonitor;
@@ -29,10 +29,9 @@ public abstract class NSISHttpUpdateJob extends NSISUpdateJob
     protected static final String HTTP_PROXY_SET = "http.proxySet"; //$NON-NLS-1$
 
     protected static final IPreferenceStore cPreferenceStore = EclipseNSISUpdatePlugin.getDefault().getPreferenceStore();
-    
-    private MessageFormat mConnectionFormat = new MessageFormat(EclipseNSISUpdatePlugin.getResourceString("http.connect.message")); //$NON-NLS-1$
+
     private INSISUpdateJobRunner mJobRunner = null;
-    
+
     protected NSISHttpUpdateJob(String name, NSISUpdateJobSettings settings, INSISUpdateJobRunner jobRunner)
     {
         super(name, settings);
@@ -71,7 +70,7 @@ public abstract class NSISHttpUpdateJob extends NSISUpdateJob
             else if(defaultUrl != null && url.toString().equals(defaultUrl.toString())) {
                 defaultUrl = null;
             }
-            
+
             if (url != null || defaultUrl != null) {
                 String oldProxySet = System.getProperty(HTTP_PROXY_SET);
                 String oldProxyHost = System.getProperty(HTTP_PROXY_HOST);
@@ -154,7 +153,7 @@ public abstract class NSISHttpUpdateJob extends NSISUpdateJob
         }
         finally {
             monitor.done();
-        }        
+        }
     }
 
     /**
@@ -167,39 +166,7 @@ public abstract class NSISHttpUpdateJob extends NSISUpdateJob
      */
     protected HttpURLConnection makeConnection(IProgressMonitor monitor, URL url, URL defaultURL) throws IOException
     {
-        try {
-            monitor.beginTask(mConnectionFormat.format(new String[] {url.getHost()}),100);
-            HttpURLConnection conn = null;
-            int responseCode;
-            try {
-                conn = (HttpURLConnection)url.openConnection();
-                responseCode = conn.getResponseCode();
-            }
-            catch (IOException e) {
-                if(defaultURL != null) {
-                    responseCode = HttpURLConnection.HTTP_BAD_REQUEST;
-                }
-                else {
-                    throw e;
-                }
-            }
-            if(responseCode >= 400) {
-                if(defaultURL != null) {
-                    monitor.worked(50);
-                    url = defaultURL;
-                    monitor.setTaskName(mConnectionFormat.format(new String[] {url.getHost()}));
-                    conn = (HttpURLConnection)url.openConnection();
-                    responseCode = conn.getResponseCode();
-                }
-                if(responseCode >= 400) {
-                    throw new IOException(new MessageFormat(EclipseNSISUpdatePlugin.getResourceString("http.error")).format(new Object[] {new Integer(responseCode)})); //$NON-NLS-1$
-                }
-            }
-            return conn;
-        }
-        finally {
-            monitor.done();
-        }
+        return NetworkUtil.makeConnection(monitor, url, defaultURL);
     }
 
     protected final void setSystemProperty(String name, String value)
@@ -210,7 +177,7 @@ public abstract class NSISHttpUpdateJob extends NSISUpdateJob
             }
             catch (Exception e) {
                 EclipseNSISUpdatePlugin.getDefault().log(e);
-            }        
+            }
         }
         else {
             System.setProperty(name, value);

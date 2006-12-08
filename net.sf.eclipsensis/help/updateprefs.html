@@ -44,13 +44,14 @@
   <a name="a_sites"></a>
   <dl id="id_sites">
     <dt>Sites</dt>
-    <dd>These are the sites to which NSIS Update connects to find and download updates. <span style="color: red">These values should NOT be modified manually unless it is certain that the new values are correct</span>.
+    <dd>These are the sites to which NSIS Update connects to find and download updates. <span style="color: red"><strong>These values should NOT be modified manually unless it is certain that the new values are correct</strong></span>.
       <dl>
   <dt>NSIS Update Site </dt>
   <dd>This is the site which is checked to see if updates are available..</dd>
   <dt>Sourceforge Mirror </dt>
-  <dd>Since the NSIS project is hosted by <a href="http://sourceforge.net">SourceForge</a>, updates can only be downloaded from SourceForge mirrors. This field indicates which SourceForge mirror should be used. If NSIS Update is unable to download from this mirror for any reason, it will prompt the user to choose a different Sourceforge mirror. The new mirror can also be saved as the preferred mirror if desired.</dd>
-<p style="text-align: center;"><img src="images/downloadsites.gif" alt="Choose Download Site" style="border: medium none ; width: 413px; height: 441px;"></p>
+  <dd>Since the NSIS project is hosted by <a href="http://sourceforge.net">SourceForge</a>, updates can only be downloaded from SourceForge mirrors. The recommended setting is to allow SourceForge to auto-select the mirror to use. However, if desired, the user may select the preferred SourceForge mirror to be used. This can be done by either manually entering the SourceForge mirror site or by choosing it by clicking on the browse button. The mirror site may be a host name or an IP address, however it should not include protocol, port or path information. e.g.,<strong> belnet.dl.sourceforge.net</strong> is valid, but <strong>http://belnet.de.sourceforge.net:80/nsis-2.22-setup.exe</strong> is invalid.<br><br>
+    If NSIS Update is unable to download from either the auto-selected or the user-selected mirror for any reason, it will prompt the user to choose a different SourceForge mirror. The new mirror can also be saved as the preferred mirror if desired.</dd>
+  <p style="text-align: center;"><img src="images/downloadsites.gif" alt="Choose Download Site" style="border: medium none ; width: 413px; height: 441px;"></p>
   </dl>
     <a
  href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd>
@@ -71,9 +72,9 @@ to Preferences</a><br>
 &copy; 2004-2006 Sunil Kamath
 (IcemanK).</small></strong></p>
 <MAP NAME="updatepref">
-     <AREA ID="ignorepreview" SHAPE="RECT" HREF="#a_ignorepreview" ALT="Ignore Preview Releases" OnClick="highlightDef('id_ignorepreview');" COORDS="19,276,182,293">
-     <AREA ID="action" SHAPE="RECT" HREF="#a_sites" ALT="Update sites" OnClick="highlightDef('id_sites');" COORDS="18,201,413,248">
-     <AREA ID="proxy" SHAPE="RECT" HREF="#a_proxy" ALT="HTTP Proxy Settings" OnClick="highlightDef('id_proxy');" COORDS="18,89,415,157">
+     <AREA ID="ignorepreview" SHAPE="RECT" HREF="#a_ignorepreview" ALT="Ignore Preview Releases" OnClick="highlightDef('id_ignorepreview');" COORDS="19,314,182,331">
+     <AREA ID="action" SHAPE="RECT" HREF="#a_sites" ALT="Update sites" OnClick="highlightDef('id_sites');" COORDS="17,188,413,286">
+     <AREA ID="proxy" SHAPE="RECT" HREF="#a_proxy" ALT="HTTP Proxy Settings" OnClick="highlightDef('id_proxy');" COORDS="18,76,415,144">
 </MAP>
 </div>
 </body>

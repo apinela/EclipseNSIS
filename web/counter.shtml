@@ -1,0 +1,12 @@
+<!--#if expr="$SERVER_NAME = eclipsensis.sourceforge.net || $SERVER_NAME = eclipsensis.sf.net" -->
+<!-- Start of StatCounter Code -->
+<script type="text/javascript" language="javascript">
+var sc_project=648515;
+var sc_invisible=0;
+var sc_partition=5;
+var sc_security="1b370f76";
+</script>
+
+<script type="text/javascript" language="javascript" src="http://www.statcounter.com/counter/frames.js"></script><noscript><a href="http://www.statcounter.com/" target="_blank"><img  src="http://c6.statcounter.com/counter.php?sc_project=648515&amp;java=0&amp;security=1b370f76&amp;invisible=0" alt="hit tracker" border="0"></a> </noscript>
+<!-- End of StatCounter Code -->
+<!--#endif -->
