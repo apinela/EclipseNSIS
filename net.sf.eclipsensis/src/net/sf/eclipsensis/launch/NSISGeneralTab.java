@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -41,7 +41,7 @@ class NSISGeneralTab extends NSISTab implements INSISSettingsEditorPageListener
     private static final String[] FILTER_NAMES = new String[] {EclipseNSISPlugin.getResourceString("launchconfig.nsis.script.filtername")}; //$NON-NLS-1$
 
     private boolean mBuilder = false;
- 
+
     public NSISGeneralTab()
     {
         this(false);
@@ -51,7 +51,7 @@ class NSISGeneralTab extends NSISTab implements INSISSettingsEditorPageListener
     {
         super();
         mBuilder = builder;
-        if(!mBuilder) {
+        if(mBuilder) {
             mSettings.setRunInstaller(false);
         }
     }
@@ -70,8 +70,8 @@ class NSISGeneralTab extends NSISTab implements INSISSettingsEditorPageListener
             }
         };
     }
-    
-    public Image getImage() 
+
+    public Image getImage()
     {
         return EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("nsis.general.tab.icon")); //$NON-NLS-1$
     }
@@ -94,13 +94,13 @@ class NSISGeneralTab extends NSISTab implements INSISSettingsEditorPageListener
 
     public boolean canSave()
     {
-        return ((LaunchSettingsEditorGeneralPage)mPage).isValid(); 
+        return ((LaunchSettingsEditorGeneralPage)mPage).isValid();
     }
 
     public boolean isValid(ILaunchConfiguration launchConfig)
     {
         if(super.isValid(launchConfig)) {
-            return ((LaunchSettingsEditorGeneralPage)mPage).isValid(); 
+            return ((LaunchSettingsEditorGeneralPage)mPage).isValid();
         }
         return false;
     }
@@ -137,7 +137,7 @@ class NSISGeneralTab extends NSISTab implements INSISSettingsEditorPageListener
         {
             super(settings);
         }
-        
+
         boolean validateScript(String script)
         {
             try {
@@ -148,7 +148,7 @@ class NSISGeneralTab extends NSISTab implements INSISSettingsEditorPageListener
                 return false;
             }
         }
-        
+
         IFile checkWorkspaceFile(String script)
         {
             if(!Common.isEmpty(script)) {
@@ -179,7 +179,7 @@ class NSISGeneralTab extends NSISTab implements INSISSettingsEditorPageListener
         {
             return validateScript(mScript.getText());
         }
-        
+
         public void reset()
         {
             NSISLaunchSettings settings = (NSISLaunchSettings)mSettings;
@@ -219,7 +219,7 @@ class NSISGeneralTab extends NSISTab implements INSISSettingsEditorPageListener
             }
             return true;
         }
-        
+
         public void enableControls(boolean state)
         {
             if (!mBuilder) {
@@ -313,7 +313,7 @@ class NSISGeneralTab extends NSISTab implements INSISSettingsEditorPageListener
                 }
             });
             variablesButton.setLayoutData(new GridData(SWT.FILL,SWT.CENTER,false,false));
-            
+
             if (!mBuilder) {
                 mRunInstaller = createCheckBox(composite, EclipseNSISPlugin.getResourceString("launchconfig.run.installer.label"), "", ((NSISLaunchSettings)mSettings).getRunInstaller()); //$NON-NLS-1$ //$NON-NLS-2$
                 gridData = new GridData(SWT.FILL, SWT.CENTER, false, false);
@@ -358,7 +358,7 @@ class NSISGeneralTab extends NSISTab implements INSISSettingsEditorPageListener
                 dialog.setFileName(file.getName());
                 dialog.setFilterPath(file.getParentFile().getAbsolutePath());
             }
-            
+
             String filename = dialog.open();
             if(filename != null) {
                 mScript.setText(filename);

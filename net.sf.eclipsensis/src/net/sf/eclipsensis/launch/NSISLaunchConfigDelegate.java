@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -28,8 +28,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.VariablesPlugin;
-import org.eclipse.debug.core.ILaunch;
-import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.*;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.text.BadLocationException;
@@ -40,8 +39,10 @@ import org.eclipse.ui.part.FileEditorInput;
 
 public class NSISLaunchConfigDelegate implements ILaunchConfigurationDelegate
 {
+    private static final String BUILDER_LAUNCH_CONFIG_TYPE_ID = EclipseNSISPlugin.getBundleResourceString("%builder.launch.config.type.id"); //$NON-NLS-1$
+
     private static final String VALID_FILENAME_CHARS = ":\\.$-{}!()&^+,=[]"; //$NON-NLS-1$
-    
+
     public void launch(ILaunchConfiguration configuration, String mode, final ILaunch launch, final IProgressMonitor monitor) throws CoreException
     {
         try {
@@ -54,16 +55,17 @@ public class NSISLaunchConfigDelegate implements ILaunchConfigurationDelegate
             boolean append = false;
             boolean runInstaller = false;
             String encoding;
-    
+
+            ILaunchConfigurationType configType = configuration.getType();
             script = configuration.getAttribute(NSISLaunchSettings.SCRIPT, ""); //$NON-NLS-1$
-            runInstaller = configuration.getAttribute(NSISLaunchSettings.RUN_INSTALLER, false);
+            runInstaller = configType.getIdentifier().equals(BUILDER_LAUNCH_CONFIG_TYPE_ID)?false:configuration.getAttribute(NSISLaunchSettings.RUN_INSTALLER, false);
             useConsole = configuration.getAttribute(IDebugUIConstants.ATTR_CAPTURE_IN_CONSOLE, true);
             output = configuration.getAttribute(IDebugUIConstants.ATTR_CAPTURE_IN_FILE, (String)null);
             append = configuration.getAttribute(IDebugUIConstants.ATTR_APPEND_TO_FILE, false);
             encoding = configuration.getAttribute(IDebugUIConstants.ATTR_CONSOLE_ENCODING, (String)null);
-    
+
             monitor.worked(10);
-            
+
             if (Common.isEmpty(script)) {
                 throw new CoreException(new Status(IStatus.ERROR,INSISConstants.PLUGIN_ID,IStatus.ERROR,EclipseNSISPlugin.getResourceString("launch.missing.script.error"),null)); //$NON-NLS-1$
             }
@@ -71,19 +73,19 @@ public class NSISLaunchConfigDelegate implements ILaunchConfigurationDelegate
             IPath path = new Path(stringVariableManager.performStringSubstitution(script));
             IFile ifile = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(path);
             if(ifile != null) {
-                path = ifile.getFullPath(); 
+                path = ifile.getFullPath();
             }
-    
+
             if (output != null) {
                 output = stringVariableManager.performStringSubstitution(output);
             }
-    
+
             monitor.worked(10);
 
             ifile = null;
             if (output != null) {
                 ifile = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(new Path(output));
-    
+
                 try {
                     if (ifile != null) {
                         if (append && ifile.exists()) {
@@ -96,7 +98,7 @@ public class NSISLaunchConfigDelegate implements ILaunchConfigurationDelegate
                             ifile.create(new ByteArrayInputStream(new byte[0]), true, new NullProgressMonitor());
                         }
                     }
-    
+
                     outputFile = new File(output);
                 }
                 catch (CoreException e) {
@@ -105,7 +107,7 @@ public class NSISLaunchConfigDelegate implements ILaunchConfigurationDelegate
             }
 
             monitor.worked(10);
-    
+
             INSISConsole console;
             if (!useConsole) {
                 if (outputFile == null) {
@@ -125,7 +127,7 @@ public class NSISLaunchConfigDelegate implements ILaunchConfigurationDelegate
             }
 
             monitor.worked(10);
-    
+
             String defaultEncoding = WorkbenchEncoding.getWorkbenchDefaultEncoding();
             if(encoding != null && !encoding.equals(defaultEncoding)) {
                 console = new EncodingNSISConsole(console, encoding);
@@ -133,7 +135,7 @@ public class NSISLaunchConfigDelegate implements ILaunchConfigurationDelegate
             NSISSettings settings = new NSISLaunchSettings(NSISPreferences.INSTANCE, configuration);
             final NSISLaunchProcess process = new NSISLaunchProcess(path, launch);
             launch.addProcess(process);
-    
+
             monitor.worked(10);
 
             try {
@@ -165,7 +167,7 @@ public class NSISLaunchConfigDelegate implements ILaunchConfigurationDelegate
                     process.terminate();
                     return;
                 }
-                
+
                 NestedProgressMonitor subMonitor = new NestedProgressMonitor(monitor, taskName, 50);
                 try {
                     subMonitor.beginTask(EclipseNSISPlugin.getResourceString("launch.compiling.message"), IProgressMonitor.UNKNOWN); //$NON-NLS-1$
@@ -232,11 +234,11 @@ public class NSISLaunchConfigDelegate implements ILaunchConfigurationDelegate
                                 public void linkEntered()
                                 {
                                 }
-        
+
                                 public void linkExited()
                                 {
                                 }
-        
+
                                 public void linkActivated()
                                 {
                                     IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
@@ -268,8 +270,8 @@ public class NSISLaunchConfigDelegate implements ILaunchConfigurationDelegate
                             System.out.println(ffilename);
                             nsisConsole.addPatternMatchListener(new IPatternMatchListener() {
                                 String mPattern = escape(ffilename);
-                                
-                                private String escape(String path) 
+
+                                private String escape(String path)
                                 {
                                     StringBuffer buffer = new StringBuffer(""); //$NON-NLS-1$
                                     if(path != null) {
@@ -292,13 +294,13 @@ public class NSISLaunchConfigDelegate implements ILaunchConfigurationDelegate
                                     }
                                     return buffer.toString();
                                 }
-                                
-                                public String getPattern() 
+
+                                public String getPattern()
                                 {
                                     return mPattern;
                                 }
-        
-                                public void matchFound(PatternMatchEvent event) 
+
+                                public void matchFound(PatternMatchEvent event)
                                 {
                                     try {
                                         nsisConsole.addHyperlink(hyperlink, event.getOffset(), event.getLength());
@@ -306,21 +308,21 @@ public class NSISLaunchConfigDelegate implements ILaunchConfigurationDelegate
                                     } catch (BadLocationException e) {
                                     }
                                 }
-        
-                                public int getCompilerFlags() 
+
+                                public int getCompilerFlags()
                                 {
                                     return 0;
                                 }
-        
-                                public String getLineQualifier() 
+
+                                public String getLineQualifier()
                                 {
                                     return null;
                                 }
-        
-                                public void connect(TextConsole console) 
+
+                                public void connect(TextConsole console)
                                 {
                                 }
-        
+
                                 public void disconnect() {
                                 }
                             });
