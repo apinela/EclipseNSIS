@@ -198,7 +198,7 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
                 updateMonitorTask("scriptgen.compile.message",savePath,SET_TASK_NAME); //$NON-NLS-1$
                 shell.getDisplay().syncExec(new Runnable() {
                     public void run() {
-                        NSISCompileTestUtility.INSTANCE.compile(new Path(mSaveFile.toString()),mSettings.isTestScript());
+                        NSISCompileTestUtility.INSTANCE.compile(file==null?new Path(mSaveFile.toString()):file.getFullPath(),mSettings.isTestScript());
                     }
                 });
                 incrementMonitor(1);
