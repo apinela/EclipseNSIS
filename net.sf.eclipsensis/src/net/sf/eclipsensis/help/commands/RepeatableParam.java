@@ -3,17 +3,18 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
 package net.sf.eclipsensis.help.commands;
 
+import java.text.MessageFormat;
 import java.util.*;
 import java.util.List;
 
-import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.CommonImages;
+import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.util.*;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -27,18 +28,23 @@ import org.w3c.dom.NodeList;
 
 public class RepeatableParam extends NSISParam
 {
+    public static final String ATTR_LABEL="label";
     public static final String SETTING_CHILD_SETTINGS = "childSettings"; //$NON-NLS-1$
-    
+    private static MessageFormat cAddFormat = new MessageFormat(EclipseNSISPlugin.getResourceString("add.repeatable.param.format")); //$NON-NLS-1$
+    private static MessageFormat cRemoveFormat = new MessageFormat(EclipseNSISPlugin.getResourceString("remove.repeatable.param.format")); //$NON-NLS-1$
+
+    private String mLabel;
     private NSISParam mChildParam;
-    
+
     public RepeatableParam(Node node)
     {
         super(node);
     }
-    
+
     protected void init(Node node)
     {
         super.init(node);
+        mLabel = EclipseNSISPlugin.getResourceString(XMLUtil.getStringValue(node.getAttributes(), ATTR_LABEL), ""); //$NON-NLS-1$
         mChildParam = loadChildParam(node);
     }
 
@@ -67,7 +73,7 @@ public class RepeatableParam extends NSISParam
         public static final String DATA_PARENT = "PARENT"; //$NON-NLS-1$
         public static final String DATA_BUTTONS = "BUTTONS"; //$NON-NLS-1$
         private List mChildParamEditors = new ArrayList();
-        
+
         public RepeatableParamEditor(INSISParamEditor parentEditor)
         {
             super(parentEditor);
@@ -102,7 +108,7 @@ public class RepeatableParam extends NSISParam
                 editor.dispose();
             }
         }
-        
+
         protected String validateParam()
         {
             String error = null;
@@ -121,7 +127,7 @@ public class RepeatableParam extends NSISParam
                 ((INSISParamEditor)iter.next()).appendText(buf);
             }
         }
-        
+
         public void setSettings(Map settings)
         {
             super.setSettings(settings);
@@ -197,7 +203,7 @@ public class RepeatableParam extends NSISParam
         protected void initParamEditor()
         {
             super.initParamEditor();
-            
+
             if(getSettings() != null) {
                 List childSettingsList = getChildSettingsList();
                 if(childSettingsList.size() == 0) {
@@ -233,7 +239,7 @@ public class RepeatableParam extends NSISParam
             mChildParamEditors.add(index, editor);
             return editor;
         }
-        
+
         protected Control createParamControl(Composite parent)
         {
             Composite container = new Composite(parent,SWT.NONE);
@@ -260,7 +266,7 @@ public class RepeatableParam extends NSISParam
             layout.horizontalSpacing = 2;
             control.setLayout(layout);
             control.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false));
-            
+
             Composite composite = new Composite(control,SWT.NONE);
             layout = new GridLayout();
             layout.marginHeight = layout.marginWidth = 0;
@@ -271,16 +277,19 @@ public class RepeatableParam extends NSISParam
             Control c = editor.createControl(composite);
             if(c != null) {
                 c.setData(DATA_PARENT,control);
-                
+
+                Object[] formatArgs = new Object[] {mLabel==null?Common.ZERO:new Integer(mLabel.length()), mLabel};
                 c.setLayoutData(new GridData(SWT.FILL,(c instanceof Composite?SWT.FILL:SWT.CENTER),true,true));
                 final Button delButton = new Button(control,SWT.PUSH);
                 delButton.setLayoutData(new GridData(SWT.CENTER,SWT.CENTER,false,false));
+                delButton.setToolTipText(cRemoveFormat.format(formatArgs));
                 final Button addButton = new Button(control,SWT.PUSH);
                 addButton.setLayoutData(new GridData(SWT.CENTER,SWT.CENTER,false,false));
-    
+                addButton.setToolTipText(cAddFormat.format(formatArgs));
+
                 delButton.setImage(CommonImages.DELETE_SMALL_ICON);
                 addButton.setImage(CommonImages.ADD_SMALL_ICON);
-    
+
                 delButton.addSelectionListener(new SelectionAdapter() {
                     public void widgetSelected(SelectionEvent e)
                     {
@@ -293,7 +302,7 @@ public class RepeatableParam extends NSISParam
                 addButton.addSelectionListener(new SelectionAdapter() {
                     public void widgetSelected(SelectionEvent e)
                     {
-                        Control c = addEditor(container, 
+                        Control c = addEditor(container,
                                               createChildParamEditor(mChildParamEditors.indexOf(editor)+1,
                                                                     getSettings() != null?new HashMap():null));
                         c.moveBelow(control);
@@ -305,7 +314,7 @@ public class RepeatableParam extends NSISParam
             editor.initEditor();
             return control;
         }
-        
+
         protected void updateState(boolean state)
         {
             updateEditors(state);

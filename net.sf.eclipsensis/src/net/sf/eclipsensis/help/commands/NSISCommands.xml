@@ -198,7 +198,7 @@
         <param type="radio">
           <param type="group">
             <param name="/r" type="static" optional="true"/>
-            <param type="repeatable">
+            <param type="repeatable" label="files.repeatable.label">
               <param type="group">
                 <param name="/x" type="static" optional="true"/>
                 <param name="file|wildcard" acceptVar="false" type="localpath">
@@ -216,7 +216,7 @@
       <command name="ReserveFile" category="basic.instructions.category">
         <param name="/nonfatal" type="static" optional="true"/>
         <param name="/r" type="static" optional="true"/>
-          <param type="repeatable">
+          <param type="repeatable" label="files.repeatable.label">
             <param type="group">
               <param name="/x" type="static" optional="true"/>
               <param name="file" type="localfile" acceptVar="false">
@@ -324,7 +324,7 @@
       </command>
       <command name="!ifdef" category="conditional.compilation.category">
         <param name="gflag" type="string"/>
-        <param type="repeatable" optional="true">
+        <param type="repeatable" optional="true" label="condition.repeatable.label">
           <param type="group">
             <param name="bcheck" type="choice">
               <choice display="or.label" value="|"/>
@@ -336,7 +336,7 @@
       </command>
       <command name="!ifndef" category="conditional.compilation.category">
         <param name="gflag" type="string"/>
-        <param type="repeatable" optional="true">
+        <param type="repeatable" optional="true" label="condition.repeatable.label">
           <param type="group">
             <param name="bcheck" type="choice">
               <choice display="or.label" value="|"/>
@@ -348,7 +348,7 @@
       </command>
       <command name="!ifmacrodef" category="conditional.compilation.category">
         <param name="gflag" type="string"/>
-        <param type="repeatable" optional="true">
+        <param type="repeatable" optional="true" label="macro.repeatable.label">
           <param type="group">
             <param name="bcheck" type="choice">
               <choice display="or.label" value="|"/>
@@ -360,7 +360,7 @@
       </command>
       <command name="!ifmacrondef" category="conditional.compilation.category">
         <param name="gflag" type="string"/>
-        <param type="repeatable" optional="true">
+        <param type="repeatable" optional="true" label="macro.repeatable.label">
           <param type="group">
             <param name="bcheck" type="choice">
               <choice display="or.label" value="|"/>
@@ -378,13 +378,13 @@
       </command>
       <command name="!insertmacro" category="conditional.compilation.category">
         <param name="macro_name" type="string"/>
-        <param type="repeatable" optional="true">
+        <param type="repeatable" optional="true" label="parameter.repeatable.label">
           <param name="parameter" type="string"/>
         </param>
       </command>
       <command name="!macro" category="conditional.compilation.category">
         <param name="macro_name" type="string"/>
-        <param type="repeatable" optional="true">
+        <param type="repeatable" optional="true" label="parameter.repeatable.label">
           <param name="parameter" type="string" allowBlank="true"/>
         </param>
       </command>
@@ -661,7 +661,7 @@
         <param type="radio">
           <param type="group">
             <param name="/r" type="static" optional="true"/>
-            <param type="repeatable">
+            <param type="repeatable" label="files.repeatable.label">
               <param name="file|wildcard" type="localpath" acceptVar="false">
                 <filter name="all.files.filter.name" value="*.*"/>
               </param>
@@ -1142,7 +1142,7 @@
       <command name="ReserveFile" category="basic.instructions.category">
         <param name="/nonfatal" type="static" optional="true"/>
         <param name="/r" type="static" optional="true"/>
-        <param type="repeatable" optional="true">
+        <param type="repeatable" optional="true" label="files.repeatable.label">
           <param name="file" type="localfile" acceptVar="false">
             <filter name="all.files.filter.name" value="*.*"/>
           </param>
@@ -1176,7 +1176,7 @@
         <param name="user_var(output)" type="var"/>
       </command>
       <command name="SectionIn" category="section.commands.category">
-        <param type="repeatable">
+        <param type="repeatable" label="insttype.repeatable.label">
           <param name="insttype_index" type="number" domain="positive" acceptVar="false"/>
         </param>
         <param name="RO" type="static" optional="true"/>
