@@ -41,6 +41,8 @@ public class NSISInstallDirectoryDialog extends AbstractNSISInstallItemDialog
     public NSISInstallDirectoryDialog(NSISWizard wizard, NSISInstallDirectory item)
     {
         super(wizard, item);
+        mStore.setDefault("overwriteMode",OVERWRITE_ON); //$NON-NLS-1$
+        mStore.setDefault("recursive",true); //$NON-NLS-1$
     }
 
     /* (non-Javadoc)

@@ -455,7 +455,6 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
         composite.setLayout(layout);
 
         Group group2 = NSISWizardDialogUtil.createGroup(composite, 3, "splash.delay.label", m, false); //$NON-NLS-1$
-        ((GridLayout)group2.getLayout()).makeColumnsEqualWidth = true;
         ((GridData)group2.getLayoutData()).horizontalSpan = 1;
         String[] labels = {"splash.display.label","splash.fadein.label","splash.fadeout.label"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         int[] values = {settings.getSplashDelay(),settings.getFadeInDelay(),settings.getFadeOutDelay()};
@@ -488,6 +487,11 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
             }
         };
 
+        GC gc = new GC(group2);
+        gc.setFont(group2.getFont());
+        FontMetrics fm = gc.getFontMetrics();
+        gc.dispose();
+        int widthHint = fm.getAverageCharWidth()*5;
         final Text[] t3 = new Text[labels.length];
         for (int i = 0; i < labels.length; i++) {
             Composite composite2 = new Composite(group2, SWT.NONE);
@@ -500,6 +504,8 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
             t3[i].setData(new Integer(i));
             t3[i].addVerifyListener(mNumberVerifyListener);
             t3[i].addModifyListener(ml);
+            ((GridData)t3[i].getLayoutData()).widthHint = widthHint;
+
         }
         mSplashPreviewButton = new Button(composite, SWT.PUSH | SWT.CENTER);
         m.addSlave(mSplashPreviewButton, mse);

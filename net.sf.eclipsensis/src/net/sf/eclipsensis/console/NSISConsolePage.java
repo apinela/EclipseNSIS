@@ -159,7 +159,7 @@ public class NSISConsolePage extends TextConsolePage implements IMakeNSISRunList
     {
         super.createActions();
         ImageManager imageManager = EclipseNSISPlugin.getImageManager();
-        
+
         boolean enabled = ((NSISConsole)getConsole()).getDocument().getLength() > 0;
         if(fClearOutputAction != null) {
             fClearOutputAction.setEnabled(enabled);
@@ -167,7 +167,7 @@ public class NSISConsolePage extends TextConsolePage implements IMakeNSISRunList
             fClearOutputAction.setHoverImageDescriptor(imageManager.getImageDescriptor(EclipseNSISPlugin.getResourceString("clear.action.icon"))); //$NON-NLS-1$
             fClearOutputAction.setDisabledImageDescriptor(imageManager.getImageDescriptor(EclipseNSISPlugin.getResourceString("clear.action.disabled.icon"))); //$NON-NLS-1$
         }
-        
+
         mRemoveAction = new ConsoleRemoveAction();
         mScrollLockAction = new ScrollLockAction();
         IAction action = (IAction)fGlobalActions.get(ActionFactory.SELECT_ALL.getId());
@@ -283,8 +283,8 @@ public class NSISConsolePage extends TextConsolePage implements IMakeNSISRunList
             setHoverImageDescriptor(getImageDescriptor());
             setDisabledImageDescriptor(EclipseNSISPlugin.getImageManager().getImageDescriptor(EclipseNSISPlugin.getResourceString("console.remove.action.disabled.image"))); //$NON-NLS-1$
         }
-        
-        public void run() 
+
+        public void run()
         {
             NSISConsoleFactory.closeConsole();
         }

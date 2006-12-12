@@ -49,6 +49,8 @@ public class NSISInstallShortcutDialog extends AbstractNSISInstallItemDialog imp
     public NSISInstallShortcutDialog(NSISWizard wizard, NSISInstallShortcut item)
     {
         super(wizard, item);
+        mStore.setDefault("createInStartMenuGroup",true); //$NON-NLS-1$
+        mStore.setDefault("shortcutType",SHORTCUT_URL); //$NON-NLS-1$
     }
 
     protected String getHelpContextId()

@@ -72,49 +72,49 @@ class NSISDownloadUpdateJob extends NSISHttpUpdateJob
         catch (IOException ex) {
             final List downloadSites = NetworkUtil.getDownloadSites(new NestedProgressMonitor(monitor,getName(),25),
                     EclipseNSISUpdatePlugin.getResourceString("download.update.retrieve.alternate.message"), getName()); //$NON-NLS-1$
-            String urlString = (url==null?"":url.toString()); //$NON-NLS-1$
-            String defaultURLString = (defaultURL==null?"":defaultURL.toString()); //$NON-NLS-1$
-            for (Iterator iter = downloadSites.iterator(); iter.hasNext();) {
-                DownloadSite site = (DownloadSite)iter.next();
-                String siteURLString = NSISUpdateURLs.getGenericDownloadURL(site.getName(),mVersion).toString();
-                if(siteURLString.equalsIgnoreCase(urlString) || siteURLString.equalsIgnoreCase(defaultURLString)) {
-                    iter.remove();
-                }
-            }
-
-            while(!Common.isEmptyCollection(downloadSites)) {
-                DownloadSite site;
-                if(getSettings().isAutomated()) {
-                    site = (DownloadSite)downloadSites.remove(0);
-                }
-                else {
-                    final DownloadSite[] selectedSite = {null};
-                    final int[] rv = new int[1];
-                    displayExec(new Runnable() {
-                        public void run()
-                        {
-                            DownloadSiteSelectionDialog dialog = new DownloadSiteSelectionDialog(Display.getDefault().getActiveShell(),
-                                                                        NSISDownloadUpdateJob.this.getName(), downloadSites);
-                            rv[0] = dialog.open();
-                            if(rv[0] == Window.OK) {
-                                selectedSite[0] = dialog.getSelectedSite();
-                            }
-                        }
-                    });
-                    if(rv[0] == Window.CANCEL || selectedSite[0] == null) {
-                        monitor.setCanceled(true);
-                        return null;
+            if (!Common.isEmptyCollection(downloadSites)) {
+                String urlString = (url == null?"":url.toString()); //$NON-NLS-1$
+                String defaultURLString = (defaultURL == null?"":defaultURL.toString()); //$NON-NLS-1$
+                for (Iterator iter = downloadSites.iterator(); iter.hasNext();) {
+                    DownloadSite site = (DownloadSite)iter.next();
+                    String siteURLString = NSISUpdateURLs.getGenericDownloadURL(site.getName(), mVersion).toString();
+                    if (siteURLString.equalsIgnoreCase(urlString) || siteURLString.equalsIgnoreCase(defaultURLString)) {
+                        iter.remove();
                     }
-                    site = selectedSite[0];
-                    downloadSites.remove(site);
                 }
-                monitor.worked(1);
-                try {
-                    URL siteURL = NSISUpdateURLs.getGenericDownloadURL(site.getName(),mVersion);
-                    return NetworkUtil.makeConnection(new NestedProgressMonitor(monitor,getName(),1), siteURL, null);
-                }
-                catch(Exception e) {
-                    EclipseNSISUpdatePlugin.getDefault().log(IStatus.WARNING,e);
+                while (!Common.isEmptyCollection(downloadSites)) {
+                    DownloadSite site;
+                    if (getSettings().isAutomated()) {
+                        site = (DownloadSite)downloadSites.remove(0);
+                    }
+                    else {
+                        final DownloadSite[] selectedSite = {null};
+                        final int[] rv = new int[1];
+                        displayExec(new Runnable() {
+                            public void run()
+                            {
+                                DownloadSiteSelectionDialog dialog = new DownloadSiteSelectionDialog(Display.getDefault().getActiveShell(), NSISDownloadUpdateJob.this.getName(), downloadSites);
+                                rv[0] = dialog.open();
+                                if (rv[0] == Window.OK) {
+                                    selectedSite[0] = dialog.getSelectedSite();
+                                }
+                            }
+                        });
+                        if (rv[0] == Window.CANCEL || selectedSite[0] == null) {
+                            monitor.setCanceled(true);
+                            return null;
+                        }
+                        site = selectedSite[0];
+                        downloadSites.remove(site);
+                    }
+                    monitor.worked(1);
+                    try {
+                        URL siteURL = NSISUpdateURLs.getGenericDownloadURL(site.getName(), mVersion);
+                        return NetworkUtil.makeConnection(new NestedProgressMonitor(monitor, getName(), 1), siteURL, null);
+                    }
+                    catch (Exception e) {
+                        EclipseNSISUpdatePlugin.getDefault().log(IStatus.WARNING, e);
+                    }
                 }
             }
             throw ex;

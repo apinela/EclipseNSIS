@@ -256,7 +256,7 @@ public class UpdatePreferencePage extends PreferencePage implements IWorkbenchPr
                     {
                         java.util.List downloadSites = NetworkUtil.getDownloadSites(new NullProgressMonitor(),
                                 EclipseNSISUpdatePlugin.getResourceString("retrieving.sourceforge.mirrors"), null); //$NON-NLS-1$
-                        if(downloadSites.size() > 0) {
+                        if(!Common.isEmptyCollection(downloadSites)) {
                             DownloadSite selectedSite = null;
                             String str = mSourceforgeMirror.getText();
                             if(!Common.isEmpty(str)) {

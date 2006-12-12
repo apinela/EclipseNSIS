@@ -38,6 +38,7 @@ public class NSISInstallRegistryValueDialog extends NSISInstallRegistryKeyDialog
     public NSISInstallRegistryValueDialog(NSISWizard wizard, NSISInstallRegistryValue item)
     {
         super(wizard, item);
+        mStore.setDefault("valueType",REG_SZ); //$NON-NLS-1$
     }
 
     protected void browseRegistry()

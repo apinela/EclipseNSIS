@@ -41,6 +41,7 @@ public class NSISInstallFileDialog extends AbstractNSISInstallItemDialog
     public NSISInstallFileDialog(NSISWizard wizard, NSISInstallFile item)
     {
         super(wizard, item);
+        mStore.setDefault("overwriteMode",OVERWRITE_ON); //$NON-NLS-1$
     }
 
     protected String getHelpContextId()

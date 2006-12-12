@@ -157,9 +157,11 @@ public class FileMonitor
                         EclipseNSISPlugin.getDefault().log(e);
                     }
                     if(!IOUtility.isValidFile(file)) {
-                        /* Yup, it's really gone. Bummer. */
-                        entry.lastModified = -1;
-                        fireChanged(FILE_DELETED, file, entry);
+                        if(entry.lastModified != -1) {
+                            /* Yup, it's really gone. Bummer. */
+                            entry.lastModified = -1;
+                            fireChanged(FILE_DELETED, file, entry);
+                        }
                         continue;
                     }
                 }

@@ -38,6 +38,11 @@ public class NSISInstallRegistryKeyDialog extends AbstractNSISInstallItemDialog
     protected static ArrayList cProperties = new ArrayList();
     protected ShellConstantConverter mShellConstantConverter = new ShellConstantConverter();
 
+    static {
+        cProperties.add("rootKey"); //$NON-NLS-1$
+        cProperties.add("subKey"); //$NON-NLS-1$
+    }
+
     public NSISInstallRegistryKeyDialog(NSISWizard wizard, NSISInstallRegistryKey item)
     {
         this(wizard, (NSISInstallRegistryItem)item);
@@ -46,11 +51,7 @@ public class NSISInstallRegistryKeyDialog extends AbstractNSISInstallItemDialog
     protected NSISInstallRegistryKeyDialog(NSISWizard wizard, NSISInstallRegistryItem item)
     {
         super(wizard, item);
-    }
-
-    static {
-        cProperties.add("rootKey"); //$NON-NLS-1$
-        cProperties.add("subKey"); //$NON-NLS-1$
+        mStore.setDefault("rootKey",HKLM); //$NON-NLS-1$
     }
 
     /* (non-Javadoc)

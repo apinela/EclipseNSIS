@@ -47,6 +47,13 @@ public class NSISInstallLibraryDialog extends AbstractNSISInstallItemDialog
     public NSISInstallLibraryDialog(NSISWizard wizard, NSISInstallLibrary item)
     {
         super(wizard, item);
+        mStore.setDefault("shared",true); //$NON-NLS-1$
+        mStore.setDefault("libType",LIBTYPE_DLL); //$NON-NLS-1$
+        mStore.setDefault("protected",true); //$NON-NLS-1$
+        mStore.setDefault("reboot",true); //$NON-NLS-1$
+        mStore.setDefault("refreshShell",false); //$NON-NLS-1$
+        mStore.setDefault("unloadLibraries",false); //$NON-NLS-1$
+        mStore.setDefault("removeOnUninstall",true); //$NON-NLS-1$
     }
 
     protected String getHelpContextId()

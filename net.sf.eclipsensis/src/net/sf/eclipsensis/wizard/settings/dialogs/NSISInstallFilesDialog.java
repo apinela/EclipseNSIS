@@ -45,6 +45,7 @@ public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
     public NSISInstallFilesDialog(NSISWizard wizard, NSISInstallFiles item)
     {
         super(wizard, item);
+        mStore.setDefault("overwriteMode",OVERWRITE_ON); //$NON-NLS-1$
         setShellStyle(getShellStyle() | SWT.RESIZE);
         mFiles = new LinkedHashSet(Arrays.asList(Common.tokenize(mStore.getString("files"),'\0'))); //$NON-NLS-1$
     }

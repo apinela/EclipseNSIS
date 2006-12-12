@@ -49,21 +49,12 @@ public class NSISConsoleViewer extends TextConsoleViewer
     private Composite mComposite;
     private AnnotationModel mAnnotationModel;
     private Cursor mHitDetectionCursor;
-    private WorkbenchJob mRevealJob = new WorkbenchJob(EclipseNSISPlugin.getResourceString("console.reveal.job.name")){ //$NON-NLS-1$
-        public IStatus runInUIThread(IProgressMonitor monitor) {
-            StyledText textWidget = getTextWidget();
-            if (textWidget != null) {
-                int lineCount = textWidget.getLineCount();
-                setTopIndex(lineCount-1);
-            }
-            return Status.OK_STATUS;
-        }
-    };
+    private WorkbenchJob mRevealJob;
     private IPropertyChangeListener mPropertyChangeListener = new IPropertyChangeListener() {
         public void propertyChange(PropertyChangeEvent event) {
             String property = event.getProperty();
-            if(property.equals(INSISPreferenceConstants.CONSOLE_ERROR_COLOR) || 
-               property.equals(INSISPreferenceConstants.CONSOLE_WARNING_COLOR) || 
+            if(property.equals(INSISPreferenceConstants.CONSOLE_ERROR_COLOR) ||
+               property.equals(INSISPreferenceConstants.CONSOLE_WARNING_COLOR) ||
                property.equals(INSISPreferenceConstants.CONSOLE_INFO_COLOR)) {
                 StyledText textWidget = getTextWidget();
                 if(textWidget != null) {
@@ -88,14 +79,31 @@ public class NSISConsoleViewer extends TextConsoleViewer
         if (text != null) {
             text.setEditable(false);
         }
-        mRevealJob.setSystem(true);
         JFaceResources.getColorRegistry().addListener(mPropertyChangeListener);
         JFaceResources.getFontRegistry().addListener(mPropertyChangeListener);
     }
 
+    private WorkbenchJob getRevealJob()
+    {
+        if(mRevealJob == null) {
+            mRevealJob = new WorkbenchJob(EclipseNSISPlugin.getResourceString("console.reveal.job.name")){ //$NON-NLS-1$
+                public IStatus runInUIThread(IProgressMonitor monitor) {
+                    StyledText textWidget = getTextWidget();
+                    if (textWidget != null) {
+                        int lineCount = textWidget.getLineCount();
+                        setTopIndex(lineCount-1);
+                    }
+                    return Status.OK_STATUS;
+                }
+            };
+            mRevealJob.setSystem(true);
+        }
+        return mRevealJob;
+    }
+
     protected void revealEndOfDocument()
     {
-        mRevealJob.schedule(REVEAL_SCHEDULE_DELAY);
+        getRevealJob().schedule(REVEAL_SCHEDULE_DELAY);
     }
 
     protected void createControl(Composite parent, int styles)
@@ -118,9 +126,9 @@ public class NSISConsoleViewer extends TextConsoleViewer
                     super.doPaint1(gc);
                 }
                 catch (Exception ex) {
-                }                
+                }
             }
-            
+
         };
         rulerColumn.addAnnotationType(NSISConsoleAnnotation.TYPE);
         //rulerColumn
@@ -151,7 +159,7 @@ public class NSISConsoleViewer extends TextConsoleViewer
                 else {
                     mRuler.getControl().setCursor(null);
                 }
-                
+
             }
         });
     }
@@ -179,12 +187,12 @@ public class NSISConsoleViewer extends TextConsoleViewer
         }
         return null;
     }
-    
+
     private boolean hasAnnotation(int y)
     {
         return getAnnotation(y) != null;
     }
-    
+
     public boolean isAutoScroll()
     {
         return mAutoScroll;
@@ -219,6 +227,7 @@ public class NSISConsoleViewer extends TextConsoleViewer
             if(mAnnotationModel != null) {
                 mAnnotationModel.connect(document);
             }
+            revealEndOfDocument();
         }
     }
 
@@ -253,14 +262,14 @@ public class NSISConsoleViewer extends TextConsoleViewer
     }
 
     //Need to replace the following 3 methods because I want my own link colors.
-    public void lineGetStyle(LineStyleEvent event) 
+    public void lineGetStyle(LineStyleEvent event)
     {
         IDocument document = getDocument();
         if (document != null && document.getLength() > 0) {
             ArrayList ranges = new ArrayList();
             int offset = event.lineOffset;
             int length = event.lineText.length();
-            
+
             StyleRange[] partitionerStyles = ((IConsoleDocumentPartitioner) document.getDocumentPartitioner()).getStyleRanges(event.lineOffset, event.lineText.length());
             if (partitionerStyles != null) {
                 for (int i = 0; i < partitionerStyles.length; i++) {
@@ -277,25 +286,25 @@ public class NSISConsoleViewer extends TextConsoleViewer
                         Position position = overlap[i];
                         StyleRange linkRange = new StyleRange(position.offset, position.length, color, null);
                         linkRange.underline = true;
-                        override(ranges, linkRange);                    
+                        override(ranges, linkRange);
                     }
                 }
             } catch (BadPositionCategoryException e) {
             }
-            
+
             if (ranges.size() > 0) {
                 event.styles = (StyleRange[]) ranges.toArray(new StyleRange[ranges.size()]);
             }
         }
     }
 
-    private void override(List ranges, StyleRange newRange) 
+    private void override(List ranges, StyleRange newRange)
     {
         if (ranges.isEmpty()) {
             ranges.add(newRange);
             return;
         }
-        
+
         List newRanges = new ArrayList();
         newRanges.add(newRange);
         for (ListIterator iter=ranges.listIterator(); iter.hasNext(); ) {
@@ -363,7 +372,7 @@ public class NSISConsoleViewer extends TextConsoleViewer
                                 if(end2 < end1) {
                                     StyleRange range2 = (StyleRange)newRange.clone();
                                     range2.start=offset1;
-                                    range2.length=end2-offset1+1; 
+                                    range2.length=end2-offset1+1;
                                     range2.foreground = existingRange.foreground;
                                     iter.add(range2);
                                     existingRange.start=end2+1;
@@ -372,7 +381,7 @@ public class NSISConsoleViewer extends TextConsoleViewer
                                 else {
                                     StyleRange range2 = (StyleRange)newRange.clone();
                                     range2.start=offset1;
-                                    range2.length=end1-offset1+1; 
+                                    range2.length=end1-offset1+1;
                                     range2.foreground = existingRange.foreground;
                                     iter.set(range2);
                                     if(end2 > end1) {
@@ -395,22 +404,22 @@ public class NSISConsoleViewer extends TextConsoleViewer
         ranges.addAll(newRanges);
     }
 
-    private Position[] findPosition(int offset, int length, Position[] positions) 
+    private Position[] findPosition(int offset, int length, Position[] positions)
     {
         if (positions.length == 0) {
             return null;
         }
-            
+
         int rangeEnd = offset + length;
         int left= 0;
         int right= positions.length - 1;
         int mid= 0;
         Position position= null;
-        
+
         while (left < right) {
-            
+
             mid= (left + right) / 2;
-                
+
             position= positions[mid];
             if (rangeEnd < position.getOffset()) {
                 if (left == mid) {
@@ -430,8 +439,8 @@ public class NSISConsoleViewer extends TextConsoleViewer
                 left= right= mid;
             }
         }
-        
-        
+
+
         List list = new ArrayList();
         int index = left - 1;
         if (index >= 0) {
@@ -452,12 +461,12 @@ public class NSISConsoleViewer extends TextConsoleViewer
                 position= positions[index];
             }
         }
-        
+
         if (list.isEmpty()) {
             return null;
         }
         return (Position[])list.toArray(new Position[list.size()]);
-    }    
+    }
 
     protected class RulerLayout extends Layout
     {

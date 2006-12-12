@@ -45,25 +45,25 @@ public class NSISConsole extends TextConsole implements INSISConsole, IPropertyC
 
     private Image mErrorImage;
     private Image mWarningImage;
-    
+
     private int mAutoShowLevel;
 
     private IConsoleManager mConsoleManager;
-    
+
     private NSISConsoleOutputStream mInfoStream;
     private NSISConsoleOutputStream mWarningStream;
     private NSISConsoleOutputStream mErrorStream;
-   
+
     private NSISConsolePartitioner mPartitioner;
     private List mPending = new ArrayList();
     private boolean mVisible = false;
     private boolean mInitialized = false;
     private IPreferenceStore mPreferenceStore;
-    
+
     private AnnotationModel mAnnotationModel;
     private int mOffset;
     private List mPendingAnnotations = new ArrayList();
-    
+
     private IConsoleListener mLifecycleListener = new IConsoleListener() {
         public void consolesAdded(IConsole[] consoles)
         {
@@ -75,7 +75,7 @@ public class NSISConsole extends TextConsole implements INSISConsole, IPropertyC
             }
 
         }
-        public void consolesRemoved(IConsole[] consoles) 
+        public void consolesRemoved(IConsole[] consoles)
         {
             for (int i = 0; i < consoles.length; i++) {
                 IConsole console = consoles[i];
@@ -108,9 +108,9 @@ public class NSISConsole extends TextConsole implements INSISConsole, IPropertyC
         return mAnnotationModel;
     }
 
-    protected void init() 
+    protected void init()
     {
-        super.init();   
+        super.init();
         Display.getDefault().asyncExec(new Runnable() {
             public void run() {
                 JFaceResources.getColorRegistry().addListener(NSISConsole.this);
@@ -153,7 +153,7 @@ public class NSISConsole extends TextConsole implements INSISConsole, IPropertyC
         });
     }
 
-    private void initializeStreams() 
+    private void initializeStreams()
     {
         synchronized(mPending) {
             if (!mInitialized) {
@@ -175,7 +175,7 @@ public class NSISConsole extends TextConsole implements INSISConsole, IPropertyC
         }
     }
 
-    private void dump() 
+    private void dump()
     {
         synchronized(mPending) {
             mVisible = true;
@@ -186,8 +186,8 @@ public class NSISConsole extends TextConsole implements INSISConsole, IPropertyC
             }
         }
     }
-    
-    public void appendLine(NSISConsoleLine line) 
+
+    public void appendLine(NSISConsoleLine line)
     {
         if((mAutoShowLevel & line.getType()) > 0) {
             show();
@@ -216,19 +216,19 @@ public class NSISConsole extends TextConsole implements INSISConsole, IPropertyC
                     mPendingAnnotations.add(annotation);
                 }
                 mOffset += (length + 1); // + 1 for the LF
-            } 
+            }
             else {
                 mPending.add(line);
             }
         }
     }
 
-    protected void dispose() 
+    protected void dispose()
     {
         // Here we can't call super.dispose() because we actually want the partitioner to remain
         // connected, but we won't show lines until the console is added to the console manager
         // again.
-        
+
         // Called when console is removed from the console view
         synchronized (mPending) {
             mVisible = false;
@@ -236,8 +236,8 @@ public class NSISConsole extends TextConsole implements INSISConsole, IPropertyC
             JFaceResources.getFontRegistry().removeListener(this);
         }
     }
-    
-    public void shutdown() 
+
+    public void shutdown()
     {
         super.dispose();
         getDocument().removeDocumentListener(this);
@@ -258,7 +258,7 @@ public class NSISConsole extends TextConsole implements INSISConsole, IPropertyC
         }
     }
 
-    public void propertyChange(PropertyChangeEvent event) 
+    public void propertyChange(PropertyChangeEvent event)
     {
         String property = event.getProperty();
         // colors
@@ -268,19 +268,19 @@ public class NSISConsole extends TextConsole implements INSISConsole, IPropertyC
                 mInfoStream.setColor(newColor);
                 mInfoColor.dispose();
                 mInfoColor = newColor;
-            } 
+            }
             else if (property.equals(CONSOLE_WARNING_COLOR)) {
                 Color newColor = createColor(CONSOLE_WARNING_COLOR);
                 mWarningStream.setColor(newColor);
                 mWarningColor.dispose();
                 mWarningColor = newColor;
-            } 
+            }
             else if (property.equals(CONSOLE_ERROR_COLOR)) {
                 Color newColor = createColor(CONSOLE_ERROR_COLOR);
                 mErrorStream.setColor(newColor);
                 mErrorColor.dispose();
                 mErrorColor = newColor;
-                
+
             } // font
             else if (property.equals(CONSOLE_FONT)) {
                 setFont(((FontRegistry) event.getSource()).get(CONSOLE_FONT));
@@ -291,13 +291,13 @@ public class NSISConsole extends TextConsole implements INSISConsole, IPropertyC
         }
     }
 
-    private Color createColor(String preference) 
+    private Color createColor(String preference)
     {
         RGB rgb = JFaceResources.getColorRegistry().getRGB(preference);
         return new Color(Display.getDefault(), rgb);
     }
 
-    public void show() 
+    public void show()
     {
         if(!mVisible) {
             NSISConsoleFactory.showConsole();
@@ -356,7 +356,7 @@ public class NSISConsole extends TextConsole implements INSISConsole, IPropertyC
     private class ConsoleHyperlink implements IHyperlink
     {
         private NSISConsoleLine mLine;
-        
+
         public ConsoleHyperlink(NSISConsoleLine line)
         {
             mLine = line;

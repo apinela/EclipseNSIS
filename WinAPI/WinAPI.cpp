@@ -111,6 +111,8 @@ JNIEXPORT void JNICALL Java_net_sf_eclipsensis_util_WinAPI_init(JNIEnv *pEnv, jc
         else {
             is2K = TRUE;
         }
+        HANDLE user32 = GetModuleHandle(_T("user32"));
+        SetLayeredWindowAttributesProc = (_tSetLayeredWindowAttributesProc) GetProcAddress((HINSTANCE)user32, "SetLayeredWindowAttributes");
     }
     else if(osvi.dwMajorVersion == 4) {
         if(osvi.dwMinorVersion == 0 && isUnicode) {
@@ -122,12 +124,6 @@ JNIEXPORT void JNICALL Java_net_sf_eclipsensis_util_WinAPI_init(JNIEnv *pEnv, jc
         else {
             is9x = TRUE;
         }
-    }
-    if(isXP) {
-        HANDLE user32 = GetModuleHandle(_T("user32"));
-        SetLayeredWindowAttributesProc = (_tSetLayeredWindowAttributesProc) GetProcAddress((HINSTANCE)user32, "SetLayeredWindowAttributes");
-    }
-    else {
         SetLayeredWindowAttributesProc = NULL;
     }
     isCommCtrl6 = (GetDllVersion(_T("comctl32.dll")) >= PACKVERSION(6,0));

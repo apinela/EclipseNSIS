@@ -792,13 +792,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
                         final String url = ((NSISHelpSearchResult)((IStructuredSelection)sel).getFirstElement()).getURL();
                         if(mHighlightJS != null ) {
                             final String urlFile;
-                            String url2;
-                            try {
-                                url2 = URLDecoder.decode(url, ENCODING_SCHEME);
-                            }
-                            catch (UnsupportedEncodingException e) {
-                                url2 = url;
-                            }
+                            String url2 = decode(url);
                             int n = url2.lastIndexOf('#');
                             if(n < 0) {
                                 urlFile = url2;
@@ -813,13 +807,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
                                     if (!Common.isEmpty(location)) {
                                         if (!location.regionMatches(true, 0, FILE_URI_SCHEME, 0, FILE_URI_SCHEME.length())) {
                                             //This is a windows file name
-                                            String temp = IOUtility.getFileURLString(new File(location));
-                                            try {
-                                                location = URLDecoder.decode(temp, ENCODING_SCHEME);
-                                            }
-                                            catch (UnsupportedEncodingException e) {
-                                                location = temp;
-                                            }
+                                            location = decode(IOUtility.getFileURLString(new File(location)));
                                         }
                                         String file;
                                         int n = location.lastIndexOf('#');
@@ -1373,6 +1361,16 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
         });
     }
 
+    private String decode(String url)
+    {
+        try {
+            return URLDecoder.decode(url, ENCODING_SCHEME);
+        }
+        catch (UnsupportedEncodingException e) {
+            return url;
+        }
+    }
+
     private void openHelp()
     {
         if (isActivated()) {
@@ -1386,7 +1384,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
                 if (mStartPage == null) {
                     mStartPage = "about:blank"; //$NON-NLS-1$
                 }
-                String newUrl = cFirstPage == null?mStartPage:cFirstPage;
+                String newUrl = decode(cFirstPage == null?mStartPage:cFirstPage);
                 String oldUrl = mBrowser.getUrl();
                 if(!Common.isEmpty(oldUrl)) {
                     String newUrl2;

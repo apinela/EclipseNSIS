@@ -41,6 +41,8 @@ public class NSISSectionGroupDialog extends AbstractNSISInstallItemDialog
     public NSISSectionGroupDialog(NSISWizard wizard, NSISSectionGroup item)
     {
         super(wizard, item);
+        mStore.setDefault("bold",false); //$NON-NLS-1$
+        mStore.setDefault("defaultExpanded",false); //$NON-NLS-1$
     }
 
     protected String getHelpContextId()

@@ -14,6 +14,7 @@ import java.util.List;
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.dialogs.StatusMessageDialog;
 import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.wizard.INSISWizardConstants;
 import net.sf.eclipsensis.wizard.NSISWizard;
 import net.sf.eclipsensis.wizard.settings.INSISInstallElement;
 import net.sf.eclipsensis.wizard.settings.NSISInstallElementFactory;
@@ -29,7 +30,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
 
-public abstract class AbstractNSISInstallItemDialog extends StatusMessageDialog
+public abstract class AbstractNSISInstallItemDialog extends StatusMessageDialog implements INSISWizardConstants
 {
     protected INSISInstallElement mItem;
     protected IPreferenceStore mStore;

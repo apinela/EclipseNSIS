@@ -42,6 +42,9 @@ public class NSISSectionDialog extends AbstractNSISInstallItemDialog
     public NSISSectionDialog(NSISWizard wizard, NSISSection item)
     {
         super(wizard, item);
+        mStore.setDefault("bold",false); //$NON-NLS-1$
+        mStore.setDefault("defaultUnselected",false); //$NON-NLS-1$
+        mStore.setDefault("hidden",false); //$NON-NLS-1$
     }
 
     protected String getHelpContextId()
