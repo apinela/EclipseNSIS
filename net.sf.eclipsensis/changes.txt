@@ -1,7 +1,7 @@
 Revision History
 ================
 
-0.9.5 (10/13/2006)
+0.9.5 (12/01/2006)
     * Upgraded to Eclipse 3.2 - no longer compatible with Eclipse 3.1.
     * Added Export as HTML command.
     * Var elements now shown in Outline view.
