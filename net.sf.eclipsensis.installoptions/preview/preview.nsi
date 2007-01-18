@@ -1,3 +1,12 @@
+###############################################################################
+# Copyright (c) 2005-2007 Sunil Kamath (IcemanK).
+# All rights reserved.
+# This program is made available under the terms of the Common Public License
+# v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
+#
+# Contributors:
+#     Sunil Kamath (IcemanK) - initial API and implementation
+###############################################################################
 !ifdef PREVIEW_MUI
 !include "MUI.nsh"
 !endif
@@ -27,9 +36,9 @@ Page custom dummy2 "" ""
 !ifndef PREVIEW_MUI
 !ifndef PREVIEW_BRANDING
 !define PREVIEW_BRANDING "Click any button to close"
-!endif  
+!endif
 BrandingText "${PREVIEW_BRANDING}"
- 
+
 Function .onGUIInit
   GetDlgItem $0 $HWNDPARENT 1028
   EnableWindow $0 1
@@ -45,9 +54,9 @@ Function LeavePreview
   StrCmp $R0 0 done
   Pop $R0
   Abort
-  
+
 done:
-  Pop $R0  
+  Pop $R0
 FunctionEnd
 
 Function Preview
@@ -58,10 +67,10 @@ Function Preview
 !ifdef PREVIEW_MUI
 !ifndef PREVIEW_TITLE
   !define PREVIEW_TITLE "InstallOptions Preview"
-!endif  
+!endif
 !ifndef PREVIEW_SUBTITLE
   !define PREVIEW_SUBTITLE "Click any button to close"
-!endif  
+!endif
   !insertmacro MUI_HEADER_TEXT "${PREVIEW_TITLE}" "${PREVIEW_SUBTITLE}"
   !insertmacro MUI_INSTALLOPTIONS_DISPLAY_RETURN "preview.ini"
 !else

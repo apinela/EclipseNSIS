@@ -1,6 +1,6 @@
 <!--
 //###############################################################################
-//# Copyright (c) 2004-2006 Sunil Kamath (IcemanK).
+//# Copyright (c) 2004-2007 Sunil Kamath (IcemanK).
 //# All rights reserved.
 //# This program is made available under the terms of the Common Public License
 //# v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
@@ -14,12 +14,12 @@ function getPrefix()
     var prefix;
     var parts;
     var path;
-    
+
     path = location.pathname;
     if(path.charAt(0) == '/') {
         path = path.substr(1);
     }
-    
+
     parts = path.split('/');
     if(parts.length >= 2) {
         prefix = '/'+parts[0]+'/'+parts[1];
@@ -27,7 +27,7 @@ function getPrefix()
     else {
         prefix = '/help/topic';
     }
-    return prefix;    
+    return prefix;
 }
 
 function prependSlash(url)
@@ -71,7 +71,7 @@ function redirectNSISSection(section)
 {
     var parts;
     var url;
-    
+
     parts = section.split(".");
     if(parts.length > 1) {
         url = "Section"+parts[0]+"."+parts[1]+".html#"+section;

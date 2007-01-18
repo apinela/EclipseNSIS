@@ -1,4 +1,15 @@
 <?xml version='1.0' encoding='UTF-8'?>
+<!--
+###############################################################################
+# Copyright (c) 2004-2007 Sunil Kamath (IcemanK).
+# All rights reserved.
+# This program is made available under the terms of the Common Public License
+# v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
+#
+# Contributors:
+#     Sunil Kamath (IcemanK) - initial API and implementation
+###############################################################################
+-->
 <!-- Schema file written by PDE -->
 <schema targetNamespace="net.sf.eclipsensis">
 <annotation>
@@ -18,21 +29,21 @@
          <attribute name="point" type="string" use="required">
             <annotation>
                <documentation>
-                  
+
                </documentation>
             </annotation>
          </attribute>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  
+
                </documentation>
             </annotation>
          </attribute>
          <attribute name="name" type="string">
             <annotation>
                <documentation>
-                  
+
                </documentation>
                <appInfo>
                   <meta.attribute translatable="true"/>
@@ -124,20 +135,20 @@
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         Following is an example of NSIS configuration wizard definition: 
+         Following is an example of NSIS configuration wizard definition:
 &lt;p&gt;
 &lt;pre&gt;
 &lt;extension point=&quot;net.sf.eclipsensis.nsisConfigWizard&quot;
-    id=&quot;net.sf.eclipsensis.config.nsisConfigWizards&quot;&gt; 
-  &lt;wizard 
-      id=&quot;net.sf.eclipsensis.config.manual.NSISManualConfigWizard&quot; 
-      name=&quot;NSIS Manual Configuration Wizard&quot; 
-      icon=&quot;icons/manualconfig.gif&quot; 
-      class=&quot;net.sf.eclipsensis.config.manual.NSISManualConfigWizard&quot;&gt; 
+    id=&quot;net.sf.eclipsensis.config.nsisConfigWizards&quot;&gt;
+  &lt;wizard
+      id=&quot;net.sf.eclipsensis.config.manual.NSISManualConfigWizard&quot;
+      name=&quot;NSIS Manual Configuration Wizard&quot;
+      icon=&quot;icons/manualconfig.gif&quot;
+      class=&quot;net.sf.eclipsensis.config.manual.NSISManualConfigWizard&quot;&gt;
       &lt;description&gt;
           Configure NSIS by manually specifying location of MakeNSIS.exe
-      &lt;/description&gt; 
-  &lt;/wizard&gt; 
+      &lt;/description&gt;
+  &lt;/wizard&gt;
 &lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;

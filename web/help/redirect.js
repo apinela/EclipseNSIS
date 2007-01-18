@@ -1,4 +1,14 @@
 <!--
+//###############################################################################
+//# Copyright (c) 2004-2007 Sunil Kamath (IcemanK).
+//# All rights reserved.
+//# This program is made available under the terms of the Common Public License
+//# v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
+//#
+//# Contributors:
+//# Sunil Kamath (IcemanK) - initial API and implementation
+//###############################################################################
+
 var numberRegExp = /^[1-9][0-9]*$/
 var keywordURLs = new Object();
 keywordURLs["!macro"] = "Chapter5.html#5.4.11";
@@ -39,7 +49,7 @@ function redirectNSISSection(section)
 {
     var parts;
     var url;
-    
+
     parts = section.split(".");
     if(numberRegExp.test(parts[0])) {
         url = "Chapter"+parts[0]+".html";

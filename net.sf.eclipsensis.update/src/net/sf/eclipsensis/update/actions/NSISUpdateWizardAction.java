@@ -1,3 +1,12 @@
+/*******************************************************************************
+ * Copyright (c) 2005-2007 Sunil Kamath (IcemanK).
+ * All rights reserved.
+ * This program is made available under the terms of the Common Public License
+ * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
+ *
+ * Contributors:
+ *     Sunil Kamath (IcemanK) - initial API and implementation
+ *******************************************************************************/
 package net.sf.eclipsensis.update.actions;
 
 import net.sf.eclipsensis.update.EclipseNSISUpdatePlugin;
@@ -11,11 +20,11 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
-public class NSISUpdateWizardAction implements IWorkbenchWindowActionDelegate 
+public class NSISUpdateWizardAction implements IWorkbenchWindowActionDelegate
 {
 	private IWorkbenchWindow mWindow;
 
-	public void run(IAction action) 
+	public void run(IAction action)
     {
         final Shell shell = mWindow.getShell();
         final NSISUpdateWizardDialog[] wizardDialog = new NSISUpdateWizardDialog[1];
@@ -32,7 +41,7 @@ public class NSISUpdateWizardAction implements IWorkbenchWindowActionDelegate
                 catch (Exception e) {
                     wizardDialog[0] = null;
                     EclipseNSISUpdatePlugin.getDefault().log(e);
-                }                
+                }
             }
         });
         if(wizardDialog[0] != null) {
@@ -40,15 +49,15 @@ public class NSISUpdateWizardAction implements IWorkbenchWindowActionDelegate
         }
 	}
 
-	public void selectionChanged(IAction action, ISelection selection) 
+	public void selectionChanged(IAction action, ISelection selection)
     {
 	}
 
-	public void dispose() 
+	public void dispose()
     {
 	}
 
-	public void init(IWorkbenchWindow window) 
+	public void init(IWorkbenchWindow window)
     {
 		this.mWindow = window;
 	}

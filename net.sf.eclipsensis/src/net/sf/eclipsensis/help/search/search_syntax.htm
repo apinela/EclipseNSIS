@@ -1,5 +1,16 @@
 <html>
 <head>
+<!--
+###############################################################################
+# Copyright (c) 2006-2007 Sunil Kamath (IcemanK).
+# All rights reserved.
+# This program is made available under the terms of the Common Public License
+# v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
+#
+# Contributors:
+# Sunil Kamath (IcemanK) - initial API and implementation
+###############################################################################
+-->
 <title>Search Syntax</title>
 <style type="text/css">
 
@@ -15,7 +26,7 @@ body, h1, h2, h3, h4, h5, h6, p, table, td, caption, th, ul, ol, dl, li, dd, dt 
 /* end font size declarations */
 
 body	     { background: #FFFFFF}
-h1           { font-size: 18pt; margin-top: 5px; margin-bottom: 1px }	
+h1           { font-size: 18pt; margin-top: 5px; margin-bottom: 1px }
 h2           { font-size: 14pt; margin-top: 25px; margin-bottom: 3px }
 h3           { font-size: 11pt; margin-top: 20px; margin-bottom: 3px }
 h4           { font-size: 10pt; margin-top: 20px; margin-bottom: 3px; font-style: italic }
@@ -41,8 +52,8 @@ pre	         {
 a            { color: #567599; text-decoration: none; }
 a:hover      { background-color: #F4F4F4; color: #303030; text-decoration: underline; }
 ul	     { margin-top: 0; margin-bottom: 10px }
-li	     { margin-top: 0; margin-bottom: 0 } 
-li p	     { margin-top: 0; margin-bottom: 0 } 
+li	     { margin-top: 0; margin-bottom: 0 }
+li p	     { margin-top: 0; margin-bottom: 0 }
 ol	     { margin-top: 0; margin-bottom: 10px }
 dl	     { margin-top: 0; margin-bottom: 0 }
 dt	     { margin-top: 0; margin-bottom: 0; font-weight: bold }
@@ -55,7 +66,7 @@ th	     { font-weight: bold }
 </head>
 <body>
 <h1 style="text-align:center;">NSIS Users Manual Search Syntax</h1>
-<p>NSIS Users Manual search is implemented using the <a href="http://lucene.apache.org/">Lucene</a> search engine. 
+<p>NSIS Users Manual search is implemented using the <a href="http://lucene.apache.org/">Lucene</a> search engine.
 Described below are some of the techniques which can be used for more flexible and powerful searches.</p>
 <h2>Terms</h2>
 <p>A query is broken up into terms and operators. There are two types of terms: Single Terms and Phrases.</p>

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 Sunil Kamath (IcemanK).
+ * Copyright (c) 2006-2007 Sunil Kamath (IcemanK).
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
@@ -54,7 +54,7 @@ public class NSISCommandManager
                 EclipseNSISPlugin.getDefault().log(e1);
             }
         }
-        
+
         InputStream is = null;
         try {
             is = new BufferedInputStream(NSISCommandManager.class.getResourceAsStream("NSISCommands.xml")); //$NON-NLS-1$
@@ -114,7 +114,7 @@ public class NSISCommandManager
             IOUtility.closeIO(is);
         }
     }
-    
+
     public static NSISCommand getCommand(String name)
     {
         Version version = NSISPreferences.INSTANCE.getNSISVersion();
@@ -139,10 +139,10 @@ public class NSISCommandManager
                 continue;
             }
         }
-     
+
         return null;
     }
-    
+
     public static NSISCommand[] getCommands()
     {
         Version version = NSISPreferences.INSTANCE.getNSISVersion();
@@ -181,7 +181,7 @@ public class NSISCommandManager
         }
         return null;
     }
-    
+
     private NSISCommandManager()
     {
     }

@@ -1,3 +1,14 @@
+<!--
+###############################################################################
+# Copyright (c) 2006-2007 Sunil Kamath (IcemanK).
+# All rights reserved.
+# This program is made available under the terms of the Common Public License
+# v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
+#
+# Contributors:
+# Sunil Kamath (IcemanK) - initial API and implementation
+###############################################################################
+-->
 <!--#if expr="$SERVER_NAME = eclipsensis.sourceforge.net || $SERVER_NAME = eclipsensis.sf.net" -->
 <!-- Start of StatCounter Code -->
 <script type="text/javascript" language="javascript">
