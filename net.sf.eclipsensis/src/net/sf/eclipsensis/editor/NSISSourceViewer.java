@@ -775,7 +775,20 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
                         int position= 0;
                         if (i == 0) {
                             IRegion firstLine= doc.getLineInformationOfOffset(textOffset);
-                            position= textOffset - firstLine.getOffset();
+                            position= 0;
+                            int lineOffset = firstLine.getOffset();
+                            if(textOffset > lineOffset) {
+                                int length = textOffset-lineOffset;
+                                String s = doc.get(lineOffset,length);
+                                for(int j=0; j<length; j++) {
+                                    if(s.charAt(j)=='\t') {
+                                        position = tabWidth*((position+1)/tabWidth + 1);
+                                    }
+                                    else {
+                                        position++;
+                                    }
+                                }
+                            }
                         }
 
                         int length= line.length();

@@ -18,6 +18,7 @@ import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.contentassist.*;
 import org.eclipse.jface.text.templates.TemplateContextType;
 import org.eclipse.jface.text.templates.TemplateVariableResolver;
+import org.eclipse.swt.graphics.Point;
 
 public class NSISTemplateVariableProcessor extends NSISCompletionProcessor implements INSISTemplateConstants
 {
@@ -82,13 +83,15 @@ public class NSISTemplateVariableProcessor extends NSISCompletionProcessor imple
             String text= viewer.getDocument().get();
             int start= getStart(text, documentOffset);
             int end= documentOffset;
+            Point selectedRange = viewer.getSelectedRange();
+            int selectionEnd = selectedRange.x+selectedRange.y;
 
             String string= text.substring(start, end);
             String prefix= (string.length() >= 1?string.substring(1):null);
 
             if(mInsertTemplateVariablesMode || (string.length() > 0 && string.charAt(0) == IDENTIFIER_BOUNDARY)) {
                 int offset= start;
-                int length= end - start;
+                int length= selectionEnd - start;
 
                 for (Iterator iterator= mContextType.resolvers(); iterator.hasNext(); ) {
                     TemplateVariableResolver variable= (TemplateVariableResolver) iterator.next();

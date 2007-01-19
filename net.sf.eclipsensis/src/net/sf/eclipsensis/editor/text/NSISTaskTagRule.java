@@ -74,8 +74,13 @@ public class NSISTaskTagRule implements IRule
                     String s = tagNames[k].substring(j,j+1);
                     if(buf.indexOf(s) == -1) {
                         buf.append(s);
-                        if(!caseSensitive && Character.isUpperCase(s.charAt(0))) {
-                            buf.append(s.toLowerCase());
+                        if(!caseSensitive) {
+                            if(Character.isUpperCase(s.charAt(0))) {
+                                buf.append(s.toLowerCase());
+                            }
+                            else {
+                                buf.append(s.toUpperCase());
+                            }
                         }
                     }
                 }
@@ -86,38 +91,64 @@ public class NSISTaskTagRule implements IRule
 
     /* (non-Javadoc)
      * @see org.eclipse.jface.text.rules.IRule#evaluate(org.eclipse.jface.text.rules.ICharacterScanner)
+     * asdf TODO aaa
      */
     public IToken evaluate(ICharacterScanner scanner)
     {
-        int c= scanner.read();
-        if (c != ICharacterScanner.EOF) {
-            int counter = 0;
-            if(mMatchStrings[counter].indexOf(c) != -1) {
-                StringBuffer fBuffer = new StringBuffer(""); //$NON-NLS-1$
-                do {
-                    fBuffer.append((char) c);
-                    counter++;
-                    c= scanner.read();
-                } while (c != ICharacterScanner.EOF && counter < mMatchStrings.length && (mMatchStrings[counter].indexOf(c) != -1));
-                boolean isCandidate = false;
-                if(Character.isWhitespace((char)c) || c == ICharacterScanner.EOF) {
-                    isCandidate = true;
-                }
-                scanner.unread();
-
-                if (isCandidate) {
-                    String tagName = fBuffer.toString();
-                    if(mTaskTags.containsKey(tagName)) {
-                        return (mToken !=null?mToken:new Token(mTaskTags.get(tagName)));
-                    }
-                }
-                unreadBuffer(fBuffer, scanner);
-
-                return Token.UNDEFINED;
-            }
+        if(scanner instanceof INSISBackwardScanner) {
+            return evaluate((INSISBackwardScanner)scanner);
         }
+        return Token.UNDEFINED;
+    }
 
-        scanner.unread();
+    private IToken evaluate(INSISBackwardScanner scanner)
+    {
+        int c = scanner.getPreviousCharacter(0);
+        boolean ok = false;
+        switch(c) {
+            case ICharacterScanner.EOF:
+            case '#':
+            case ';':
+                ok = true;
+                break;
+            case '*':
+                c = scanner.getPreviousCharacter(1);
+                ok = (c == '/');
+                break;
+            default:
+                ok = Character.isWhitespace((char)c);
+        }
+        if(ok) {
+            c = scanner.read();
+            if (c != ICharacterScanner.EOF) {
+                int counter = 0;
+                if(mMatchStrings[counter].indexOf(c) != -1) {
+                    StringBuffer fBuffer = new StringBuffer(""); //$NON-NLS-1$
+                    do {
+                        fBuffer.append((char) c);
+                        counter++;
+                        c= scanner.read();
+                    } while (c != ICharacterScanner.EOF && counter < mMatchStrings.length && (mMatchStrings[counter].indexOf(c) != -1));
+                    boolean isCandidate = false;
+                    if(Character.isWhitespace((char)c) || c == ICharacterScanner.EOF) {
+                        isCandidate = true;
+                    }
+                    scanner.unread();
+
+                    if (isCandidate) {
+                        String tagName = fBuffer.toString();
+                        if(mTaskTags.containsKey(tagName)) {
+                            return (mToken !=null?mToken:new Token(mTaskTags.get(tagName)));
+                        }
+                    }
+                    unreadBuffer(fBuffer, scanner);
+
+                    return Token.UNDEFINED;
+                }
+            }
+
+            scanner.unread();
+        }
         return Token.UNDEFINED;
     }
 

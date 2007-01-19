@@ -17,7 +17,7 @@ import net.sf.eclipsensis.util.Common;
 import org.eclipse.jface.text.*;
 
 
-public class NSISRegionScanner implements NSISScanner
+public class NSISRegionScanner implements NSISScanner, INSISBackwardScanner
 {
     private IDocument mDocument;
     private int mStartOffset;
@@ -52,6 +52,18 @@ public class NSISRegionScanner implements NSISScanner
     {
         this(document);
         setRegion(region);
+    }
+
+    public int getPreviousCharacter(int count)
+    {
+        if(getOffset() >= (count+1)) {
+            try {
+                return mDocument.get(getOffset()-(count+1),1).charAt(0);
+            }
+            catch (BadLocationException e) {
+            }
+        }
+        return -1;
     }
 
     /**

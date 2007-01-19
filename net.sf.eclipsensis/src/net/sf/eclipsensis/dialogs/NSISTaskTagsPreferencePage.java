@@ -322,10 +322,10 @@ public class NSISTaskTagsPreferencePage extends PreferencePage implements IWorkb
                     }
                 }
             }
-            NSISPreferences.INSTANCE.setTaskTags(taskTags);
-            NSISPreferences.INSTANCE.setCaseSensitiveTaskTags(caseSensitive);
-            boolean updateTaskTags = true;
+            boolean updateTaskTags = false;
             if (different) {
+                NSISPreferences.INSTANCE.setTaskTags(taskTags);
+                NSISPreferences.INSTANCE.setCaseSensitiveTaskTags(caseSensitive);
                 MessageDialog dialog = new MessageDialog(getShell(), EclipseNSISPlugin.getResourceString("confirm.title"), //$NON-NLS-1$
                         EclipseNSISPlugin.getShellImage(), EclipseNSISPlugin.getResourceString("task.tags.settings.changed"), MessageDialog.QUESTION, //$NON-NLS-1$
                         new String[]{IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL}, 0);
@@ -338,13 +338,13 @@ public class NSISTaskTagsPreferencePage extends PreferencePage implements IWorkb
                 else {
                     updateTaskTags = (rv == 0);
                 }
+                NSISPreferences.INSTANCE.store();
             }
-            NSISPreferences.INSTANCE.store();
-            NSISEditorUtilities.updatePresentations();
             if (updateTaskTags) {
                 new NSISTaskTagUpdater().updateTaskTags();
+                NSISEditorUtilities.updatePresentations();
                 mOriginalTags.clear();
-                mOriginalTags.add(taskTags);
+                mOriginalTags.addAll(taskTags);
             }
             return true;
         }

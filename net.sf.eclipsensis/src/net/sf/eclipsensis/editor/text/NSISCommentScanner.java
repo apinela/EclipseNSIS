@@ -14,10 +14,11 @@ import java.util.List;
 import net.sf.eclipsensis.settings.INSISPreferenceConstants;
 
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.rules.IRule;
 import org.eclipse.jface.text.rules.IToken;
 
-public class NSISCommentScanner extends NSISRuleBasedScanner
+public class NSISCommentScanner extends NSISRuleBasedScanner implements INSISBackwardScanner
 {
     private NSISTaskTagRule mTaskTagsRule;
     private boolean mCaseSensitive;
@@ -28,6 +29,18 @@ public class NSISCommentScanner extends NSISRuleBasedScanner
     public NSISCommentScanner(IPreferenceStore preferenceStore)
     {
         super(preferenceStore);
+    }
+
+    public int getPreviousCharacter(int count)
+    {
+        if(getOffset() >= (count+1)) {
+            try {
+                return fDocument.get(getOffset()-(count+1),1).charAt(0);
+            }
+            catch (BadLocationException e) {
+            }
+        }
+        return -1;
     }
 
     /**
