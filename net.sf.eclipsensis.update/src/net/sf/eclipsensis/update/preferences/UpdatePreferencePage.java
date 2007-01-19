@@ -247,7 +247,7 @@ public class UpdatePreferencePage extends PreferencePage implements IWorkbenchPr
 
         mSelectSourceforgeMirror = new Button(group,SWT.PUSH);
         mSelectSourceforgeMirror.setText(EclipseNSISPlugin.getResourceString("browse.text")); //$NON-NLS-1$
-        mSelectSourceforgeMirror.setToolTipText(EclipseNSISPlugin.getResourceString("download.sites.dialog.title")); //$NON-NLS-1$
+        mSelectSourceforgeMirror.setToolTipText(EclipseNSISUpdatePlugin.getResourceString("download.sites.dialog.title")); //$NON-NLS-1$
         mSelectSourceforgeMirror.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e)
             {
