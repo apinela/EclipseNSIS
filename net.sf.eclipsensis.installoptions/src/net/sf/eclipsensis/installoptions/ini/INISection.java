@@ -518,10 +518,30 @@ public class INISection extends INILine implements IINIContainer
         }
 
         final INISection section = (INISection)line;
-        if(!Common.objectsAreEqual(mChildren,section.mChildren)) {
+        if(!Common.objectsAreEqual(mName,section.mName)) {
             return false;
         }
-        if(!Common.objectsAreEqual(mName,section.mName)) {
+        if(mChildren != null || section.mChildren != null) {
+            if(mChildren != null && section.mChildren != null) {
+                int n = mChildren.size();
+                if(n == section.mChildren.size()) {
+                    for(int i=0; i<n; i++) {
+                        Object o1 = mChildren.get(i);
+                        Object o2 = section.mChildren.get(i);
+                        if(o1 instanceof INILine && o2 instanceof INILine) {
+                            INILine line1 = (INILine)o1;
+                            INILine line2 = (INILine)o2;
+                            if(!line1.matches(line2)) {
+                                return false;
+                            }
+                        }
+                        else if(o1 != null || o2 != null){
+                            return false;
+                        }
+                    }
+                    return true;
+                }
+            }
             return false;
         }
         return true;

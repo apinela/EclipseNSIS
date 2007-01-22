@@ -73,6 +73,7 @@ public class InstallOptionsTemplate extends AbstractTemplate
         for (int i = 0; i < widgets.length; i++) {
             sections[i] = (INISection)widgets[i].updateSection().trim().clone();
             sections[i].setName(InstallOptionsModel.SECTION_FIELD_FORMAT.format(new Object[]{new Integer(i+1)}));
+            sections[i].setParent(null);
             sections[i].update();
         }
         setSections(sections);

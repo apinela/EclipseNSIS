@@ -360,6 +360,7 @@ public class INIFile implements IDocumentListener, IINIContainer, IINIProblemCon
                         }
                         else {
                             delimiter = STRING_CRLF;
+                            n = br.read();
                         }
                         break;
                     case SWT.LF:
