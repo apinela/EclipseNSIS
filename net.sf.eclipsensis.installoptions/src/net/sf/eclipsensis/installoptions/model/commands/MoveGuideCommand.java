@@ -46,7 +46,7 @@ public class MoveGuideCommand extends Command
             InstallOptionsWidget widget = (InstallOptionsWidget)iter.next();
             Position pos = widget.getPosition();
             mOldPositions.put(widget,pos);
-            pos = pos.getCopy();
+            pos = widget.toGraphical(pos, false);
             int alignment = mGuide.getAlignment(widget);
             if (mGuide.isHorizontal()) {
                 pos.setLocation(pos.left,calculatePosition(guidePos,alignment, pos));
@@ -54,6 +54,7 @@ public class MoveGuideCommand extends Command
             else {
                 pos.setLocation(calculatePosition(guidePos,alignment, pos),pos.top);
             }
+            pos = widget.toModel(pos, false);
             widget.setPosition(pos);
         }
     }
@@ -70,7 +71,7 @@ public class MoveGuideCommand extends Command
         Iterator iter = mGuide.getWidgets().iterator();
         while (iter.hasNext()) {
             InstallOptionsWidget widget = (InstallOptionsWidget)iter.next();
-            Position pos = widget.getPosition();
+            Position pos = widget.toGraphical(widget.getPosition(), false);
             int alignment = mGuide.getAlignment(widget);
             int position = calculatePosition(guidePos, alignment, pos);
             if(position < 0) {
