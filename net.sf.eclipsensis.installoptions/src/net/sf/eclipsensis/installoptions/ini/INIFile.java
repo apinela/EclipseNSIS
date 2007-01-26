@@ -820,16 +820,22 @@ public class INIFile implements IDocumentListener, IINIContainer, IINIProblemCon
 
             final Integer numFields2 = new Integer(numFields);
             for (int i=0; i<indexes.length; i++) {
-                int index = indexes[i];
+                final int index = indexes[i];
                 final int nextIndex = bits.nextClearBit(0)+1;
                 if(numFields >= 0 && index > numFields) {
                     final INISection sec = fieldSections[i];
                     if((fixFlag & INILine.VALIDATE_FIX_ERRORS) > 0) {
                         if(nextIndex > bitsSize) {
+                            if(bits.get(index-1)) {
+                                bits.clear(index-1);
+                            }
                             removeChild(sec);
                         }
                         else {
                             sec.setName(InstallOptionsModel.SECTION_FIELD_FORMAT.format(new Object[] {new Integer(nextIndex)}));
+                            if(bits.get(index-1)) {
+                                bits.clear(index-1);
+                            }
                             bits.set(nextIndex-1);
                             sec.update();
                         }
@@ -857,6 +863,9 @@ public class INIFile implements IDocumentListener, IINIContainer, IINIProblemCon
                                 }
                                 else {
                                     String newName = InstallOptionsModel.SECTION_FIELD_FORMAT.format(new Object[] {new Integer(nextIndex)});
+                                    if(bits.get(index-1)) {
+                                        bits.clear(index-1);
+                                    }
                                     bits.set(nextIndex-1);
                                     return new INIProblemFix[] {new INIProblemFix(sec, sec.buildText(newName)+(sec.getDelimiter()==null?"":sec.getDelimiter()))}; //$NON-NLS-1$
                                 }
@@ -869,6 +878,9 @@ public class INIFile implements IDocumentListener, IINIContainer, IINIProblemCon
                     if((fixFlag & INILine.VALIDATE_FIX_ERRORS) > 0) {
                         INISection sec = fieldSections[i];
                         sec.setName(InstallOptionsModel.SECTION_FIELD_FORMAT.format(new Object[] {new Integer(nextIndex)}));
+                        if(bits.get(index-1)) {
+                            bits.clear(index-1);
+                        }
                         bits.set(nextIndex-1);
                         sec.update();
                     }
@@ -982,9 +994,9 @@ public class INIFile implements IDocumentListener, IINIContainer, IINIProblemCon
         List problems = new ArrayList(mProblems);
         if(recurse) {
             int n=1;
-            for (Iterator iter = mLines.iterator(); iter.hasNext();) {
-                INILine line = (INILine)iter.next();
-                for (Iterator iterator = line.getProblems().iterator(); iterator.hasNext();) {
+            INILine[] lines = (INILine[])mLines.toArray(new INILine[mLines.size()]);
+            for (int i=0; i<lines.length; i++) {
+                for (Iterator iterator = lines[i].getProblems().iterator(); iterator.hasNext();) {
                     INIProblem problem = (INIProblem)iterator.next();
                     problem.setLine(n);
                     problems.add(problem);
