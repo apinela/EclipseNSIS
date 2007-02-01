@@ -143,27 +143,35 @@ public class NSISInstallFile extends AbstractNSISInstallItem implements INSISIns
 
     public boolean equals(Object obj)
     {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         final NSISInstallFile other = (NSISInstallFile)obj;
         if (mDestination == null) {
-            if (other.mDestination != null)
+            if (other.mDestination != null) {
                 return false;
+            }
         }
-        else if (!mDestination.equals(other.mDestination))
+        else if (!mDestination.equals(other.mDestination)) {
             return false;
+        }
         if (mName == null) {
-            if (other.mName != null)
+            if (other.mName != null) {
                 return false;
+            }
         }
-        else if (!mName.equals(other.mName))
+        else if (!mName.equals(other.mName)) {
             return false;
-        if (mOverwriteMode != other.mOverwriteMode)
+        }
+        if (mOverwriteMode != other.mOverwriteMode) {
             return false;
+        }
         return true;
     }
 }

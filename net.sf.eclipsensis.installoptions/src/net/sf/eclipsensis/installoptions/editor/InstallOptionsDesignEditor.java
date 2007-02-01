@@ -29,6 +29,7 @@ import net.sf.eclipsensis.installoptions.properties.tabbed.CustomTabbedPropertyS
 import net.sf.eclipsensis.installoptions.rulers.*;
 import net.sf.eclipsensis.installoptions.template.*;
 import net.sf.eclipsensis.installoptions.util.TypeConverter;
+import net.sf.eclipsensis.startup.FileAssociationChecker;
 import net.sf.eclipsensis.template.AbstractTemplate;
 import net.sf.eclipsensis.template.AbstractTemplateSettings;
 import net.sf.eclipsensis.util.Common;
@@ -245,7 +246,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
     {
         mINIFile = new INIFile();
         mINIFile.setValidateFixMode(INILine.VALIDATE_FIX_ERRORS);
-        InstallOptionsPlugin.checkEditorAssociation();
+        FileAssociationChecker.checkFileAssociation(FILE_ASSOCIATION_ID);
         setEditDomain(new InstallOptionsEditDomain(this));
     }
 

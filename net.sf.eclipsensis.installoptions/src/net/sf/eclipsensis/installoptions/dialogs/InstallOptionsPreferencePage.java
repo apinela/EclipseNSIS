@@ -23,6 +23,7 @@ import net.sf.eclipsensis.installoptions.editor.*;
 import net.sf.eclipsensis.installoptions.model.DialogSize;
 import net.sf.eclipsensis.installoptions.model.DialogSizeManager;
 import net.sf.eclipsensis.installoptions.util.TypeConverter;
+import net.sf.eclipsensis.startup.FileAssociationChecker;
 import net.sf.eclipsensis.util.*;
 import net.sf.eclipsensis.viewer.CollectionContentProvider;
 
@@ -65,6 +66,7 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
     private InstallOptionsSourcePreviewer mPreviewer;
     private Object mData;
     private TabFolder mFolder;
+    private Button mFileAssociationButton;
 
     /**
      *
@@ -180,6 +182,10 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
             getPreferenceStore().setValue(PREFERENCE_SYNTAX_STYLES, NSISTextUtility.flattenSyntaxStylesMap(mSyntaxStylesMap));
             mSyntaxStylesHashCode = hashCode;
         }
+
+        FileAssociationChecker.setFileAssociationChecking(FILE_ASSOCIATION_ID, mFileAssociationButton.getSelection());
+
+        InstallOptionsPlugin.getDefault().savePluginPreferences();
     }
 
     private void savePreference(Map map, String name, TypeConverter converter, Object defaultValue)
@@ -222,16 +228,10 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
         item.setData(InstallOptionsSourceEditor.class);
         activateTab();
 
-        final Button b = new Button(parent,SWT.CHECK);
-        b.setText(InstallOptionsPlugin.getResourceString("check.default.editor.label")); //$NON-NLS-1$
-        b.setSelection(getPreferenceStore().getBoolean(PREFERENCE_CHECK_EDITOR_ASSOCIATION));
-        b.addSelectionListener(new SelectionAdapter(){
-            public void widgetSelected(SelectionEvent e)
-            {
-                getPreferenceStore().setValue(PREFERENCE_CHECK_EDITOR_ASSOCIATION, b.getSelection());
-            }
-        });
-        b.setLayoutData(new GridData(SWT.BEGINNING,SWT.CENTER,false,false));
+        mFileAssociationButton = new Button(parent,SWT.CHECK);
+        mFileAssociationButton.setText(InstallOptionsPlugin.getResourceString("check.default.editor.label")); //$NON-NLS-1$
+        mFileAssociationButton.setSelection(FileAssociationChecker.getFileAssociationChecking(FILE_ASSOCIATION_ID));
+        mFileAssociationButton.setLayoutData(new GridData(SWT.BEGINNING,SWT.CENTER,false,false));
 
         return parent;
     }
@@ -470,8 +470,6 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
         gridData.widthHint = convertWidthInCharsToPixels(60);
         group.setLayoutData(gridData);
         GridLayout layout = new GridLayout(2,false);
-        layout.marginHeight = 0;
-        layout.marginWidth = 0;
         group.setLayout(layout);
         group.setText(InstallOptionsPlugin.getResourceString("dialog.sizes.group.name")); //$NON-NLS-1$
 
@@ -758,11 +756,16 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
         mSyntaxStylesViewer.setSelection(sel);
         mPreviewer.setSyntaxStyles(mSyntaxStylesMap);
 
+        mFileAssociationButton.setSelection(CHECK_FILE_ASSOCIATION_DEFAULT);
+
         super.performDefaults();
     }
 
     public boolean performOk()
     {
+        if(getPreferenceStore().contains(PREFERENCE_CHECK_EDITOR_ASSOCIATION)) {
+            getPreferenceStore().setToDefault(PREFERENCE_CHECK_EDITOR_ASSOCIATION);
+        }
         savePreferences();
         return super.performOk();
     }

@@ -28,7 +28,7 @@ import org.w3c.dom.NodeList;
 
 public class RepeatableParam extends NSISParam
 {
-    public static final String ATTR_LABEL="label";
+    public static final String ATTR_LABEL="label"; //$NON-NLS-1$
     public static final String SETTING_CHILD_SETTINGS = "childSettings"; //$NON-NLS-1$
     private static MessageFormat cAddFormat = new MessageFormat(EclipseNSISPlugin.getResourceString("add.repeatable.param.format")); //$NON-NLS-1$
     private static MessageFormat cRemoveFormat = new MessageFormat(EclipseNSISPlugin.getResourceString("remove.repeatable.param.format")); //$NON-NLS-1$

@@ -195,39 +195,53 @@ public class NSISInstallLibrary extends AbstractNSISInstallItem
 
     public boolean equals(Object obj)
     {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         final NSISInstallLibrary other = (NSISInstallLibrary)obj;
         if (mDestination == null) {
-            if (other.mDestination != null)
+            if (other.mDestination != null) {
                 return false;
+            }
         }
-        else if (!mDestination.equals(other.mDestination))
+        else if (!mDestination.equals(other.mDestination)) {
             return false;
-        if (mLibType != other.mLibType)
+        }
+        if (mLibType != other.mLibType) {
             return false;
+        }
         if (mName == null) {
-            if (other.mName != null)
+            if (other.mName != null) {
                 return false;
+            }
         }
-        else if (!mName.equals(other.mName))
+        else if (!mName.equals(other.mName)) {
             return false;
-        if (mProtected != other.mProtected)
+        }
+        if (mProtected != other.mProtected) {
             return false;
-        if (mReboot != other.mReboot)
+        }
+        if (mReboot != other.mReboot) {
             return false;
-        if (mRefreshShell != other.mRefreshShell)
+        }
+        if (mRefreshShell != other.mRefreshShell) {
             return false;
-        if (mRemoveOnUninstall != other.mRemoveOnUninstall)
+        }
+        if (mRemoveOnUninstall != other.mRemoveOnUninstall) {
             return false;
-        if (mShared != other.mShared)
+        }
+        if (mShared != other.mShared) {
             return false;
-        if (mUnloadLibraries != other.mUnloadLibraries)
+        }
+        if (mUnloadLibraries != other.mUnloadLibraries) {
             return false;
+        }
         return true;
     }
 }

@@ -1145,10 +1145,12 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
         if (!Common.objectsAreEqual(mBackgroundWAV,other.mBackgroundWAV)) {
             return false;
         }
-        if (mChangeInstallDir != other.mChangeInstallDir)
+        if (mChangeInstallDir != other.mChangeInstallDir) {
             return false;
-        if (mChangeStartMenuGroup != other.mChangeStartMenuGroup)
+        }
+        if (mChangeStartMenuGroup != other.mChangeStartMenuGroup) {
             return false;
+        }
         if (!Common.objectsAreEqual(mCompany,other.mCompany)) {
             return false;
         }

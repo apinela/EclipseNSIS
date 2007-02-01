@@ -378,4 +378,18 @@
             class="net.sf.eclipsensis.installoptions.editor.annotation.INIProblemResolutionGenerator"
             markerType="net.sf.eclipsensis.installoptions.InstallOptionsProblem"/>
    </extension>
+   <extension point="net.sf.eclipsensis.startup.fileAssociations">
+      <association id="%file.association.id">
+         <fileTypes name="%installoptions.filetypes.name">
+            <fileType name="*.ini"/>
+         </fileTypes>
+         <editors name="%installoptions.editors.name">
+            <editor id="net.sf.eclipsensis.installoptions.editor.InstallOptionsDesignEditor"/>
+            <editor id="net.sf.eclipsensis.installoptions.editor.InstallOptionsSourceEditor"/>
+         </editors>
+         <enablement
+               defaultValue="true"
+               initPreference="CheckEditorAssociation"/>
+      </association>
+   </extension>
 </plugin>

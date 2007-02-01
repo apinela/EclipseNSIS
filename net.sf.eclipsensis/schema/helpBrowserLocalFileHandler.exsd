@@ -1,15 +1,4 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<!--
-###############################################################################
-# Copyright (c) 2004-2007 Sunil Kamath (IcemanK).
-# All rights reserved.
-# This program is made available under the terms of the Common Public License
-# v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
-#
-# Contributors:
-#     Sunil Kamath (IcemanK) - initial API and implementation
-###############################################################################
--->
 <!-- Schema file written by PDE -->
 <schema targetNamespace="net.sf.eclipsensis">
 <annotation>
@@ -43,7 +32,7 @@
          <attribute name="name" type="string">
             <annotation>
                <documentation>
-                  An optional name of the extension instance.
+                  An optional translatable name of the extension instance.
                </documentation>
                <appInfo>
                   <meta.attribute translatable="true"/>
@@ -137,7 +126,10 @@
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         Copyright (c) 2004-2006 Sunil Kamath (IcemanK). All rights reserved.
+         Copyright (c) 2004-2007 Sunil Kamath (IcemanK).
+All rights reserved.
+This program is made available under the terms of the Common Public License
+v1.0 which is available at &lt;a href=&quot;http://www.eclipse.org/legal/cpl-v10.html&quot;&gt;http://www.eclipse.org/legal/cpl-v10.html&lt;/a&gt;
       </documentation>
    </annotation>
 

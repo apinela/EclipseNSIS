@@ -15,7 +15,6 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 import net.sf.eclipsensis.update.scheduler.Scheduler;
-import net.sf.eclipsensis.util.CompoundResourceBundle;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -30,8 +29,6 @@ import org.osgi.framework.BundleContext;
 public class EclipseNSISUpdatePlugin extends AbstractUIPlugin
 {
     public static final String RESOURCE_BUNDLE = "net.sf.eclipsensis.update.EclipseNSISUpdatePluginResources"; //$NON-NLS-1$
-    public static final String MESSAGE_BUNDLE = "net.sf.eclipsensis.update.EclipseNSISUpdatePluginMessages"; //$NON-NLS-1$
-    public static final String[] BUNDLE_NAMES = new String[]{RESOURCE_BUNDLE,MESSAGE_BUNDLE};
     public static final String PLUGIN_CONTEXT_PREFIX = "net.sf.eclipsensis."; //$NON-NLS-1$
 
     //The shared instance.
@@ -49,7 +46,12 @@ public class EclipseNSISUpdatePlugin extends AbstractUIPlugin
 	public EclipseNSISUpdatePlugin()
     {
         cPlugin = this;
-        mResourceBundle = new CompoundResourceBundle(getClass().getClassLoader(),BUNDLE_NAMES);
+        try {
+            mResourceBundle = ResourceBundle.getBundle(RESOURCE_BUNDLE);
+        }
+        catch(MissingResourceException mre) {
+            mResourceBundle = null;
+        }
 	}
 
     public static synchronized File getPluginStateLocation()

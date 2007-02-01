@@ -18,6 +18,7 @@ import net.sf.eclipsensis.editor.*;
 import net.sf.eclipsensis.editor.text.NSISSyntaxStyle;
 import net.sf.eclipsensis.editor.text.NSISTextUtility;
 import net.sf.eclipsensis.settings.*;
+import net.sf.eclipsensis.startup.FileAssociationChecker;
 import net.sf.eclipsensis.util.IOUtility;
 import net.sf.eclipsensis.wizard.util.MasterSlaveController;
 
@@ -36,7 +37,7 @@ import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.texteditor.ChainedPreferenceStore;
 
-public class NSISEditorPreferencePage extends PreferencePage implements IWorkbenchPreferencePage, INSISPreferenceConstants
+public class NSISEditorPreferencePage extends PreferencePage implements IWorkbenchPreferencePage, INSISConstants, INSISPreferenceConstants
 {
     private static final String[][] cSyntaxStyleListModel = {
             {EclipseNSISPlugin.getResourceString("comments.label"),COMMENTS_STYLE}, //$NON-NLS-1$
@@ -78,6 +79,7 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
     private Button mStyleItalic;
     private Button mStyleUnderline;
     private Button mStyleStrikethrough;
+    private Button mFileAssociationButton;
 
     private ColorEditor mMatchingDelimsColorEditor;
 
@@ -337,15 +339,24 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
         Group group = new Group(parent,SWT.SHADOW_ETCHED_IN);
         group.setText(EclipseNSISPlugin.getResourceString("appearances.group.label")); //$NON-NLS-1$
         group.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-        group.setLayout(new GridLayout(1,false));
+        layout = new GridLayout(1,false);
+        layout.marginWidth = 0;
+        layout.marginHeight = 0;
+        group.setLayout(layout);
         Control c = createAppearanceGroup(group);
         c.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         group = new Group(parent,SWT.SHADOW_ETCHED_IN);
         group.setText(EclipseNSISPlugin.getResourceString("syntax.group.label")); //$NON-NLS-1$
         group.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-        group.setLayout(new GridLayout(1,false));
+        layout = new GridLayout(1,false);
+        layout.marginWidth = 0;
+        layout.marginHeight = 0;
+        group.setLayout(layout);
         c = createSyntaxGroup(group);
         c.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+        mFileAssociationButton = new Button(parent,SWT.CHECK);
+        mFileAssociationButton.setText(EclipseNSISPlugin.getResourceString("check.editor.association.label")); //$NON-NLS-1$
+        mFileAssociationButton.setLayoutData(new GridData(SWT.BEGINNING,SWT.CENTER,false,false));
         initialize();
         Dialog.applyDialogFont(parent);
         return parent;
@@ -354,7 +365,7 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
     private void initialize() {
 
         initializeFields();
-
+        mFileAssociationButton.setSelection(FileAssociationChecker.getFileAssociationChecking(FILE_ASSOCIATION_ID));
         for (int i= 0; i < cSyntaxStyleListModel.length; i++) {
             mSyntaxStyleList.add(cSyntaxStyleListModel[i][0]);
         }
@@ -387,6 +398,7 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
     public boolean performOk() {
         mPreferenceStore.update();
         NSISEditorUtilities.updatePresentations();
+        FileAssociationChecker.setFileAssociationChecking(FILE_ASSOCIATION_ID, mFileAssociationButton.getSelection());
         return super.performOk();
     }
 
@@ -398,7 +410,7 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
         mPreferenceStore.loadDefaults();
 
         initializeFields();
-
+        mFileAssociationButton.setSelection(true);
         handleSyntaxStyleListSelection();
         if(mPreviewer != null && mPreviewer.mustProcessPropertyQueue()) {
             mPreviewer.processPropertyQueue();

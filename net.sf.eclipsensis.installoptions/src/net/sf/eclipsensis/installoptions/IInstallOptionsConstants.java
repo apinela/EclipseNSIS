@@ -43,6 +43,8 @@ public interface IInstallOptionsConstants
     public static final String INSTALLOPTIONS_NATURE_ID = InstallOptionsPlugin.getBundleResourceString("%installoptions.nature.id"); //$NON-NLS-1$
     public static final String INSTALLOPTIONS_BUILDER_ID = InstallOptionsPlugin.getBundleResourceString("%installoptions.builder.id"); //$NON-NLS-1$
 
+    public static final String FILE_ASSOCIATION_ID = InstallOptionsPlugin.getBundleResourceString("%file.association.id"); //$NON-NLS-1$
+
     public static final String GRID_STYLE_LINES="GridStyleLines"; //$NON-NLS-1$
     public static final String GRID_STYLE_DOTS="GridStyleDots"; //$NON-NLS-1$
 
@@ -57,7 +59,7 @@ public interface IInstallOptionsConstants
     public static Dimension GRID_SPACING_DEFAULT = new Dimension(10,10);
     public static Point GRID_ORIGIN_DEFAULT = new Point(0, 0);
     public static String GRID_STYLE_DEFAULT = GRID_STYLE_LINES;
-    public static Boolean CHECK_EDITOR_ASSOCIATION_DEFAULT = Boolean.TRUE;
+    public static boolean CHECK_FILE_ASSOCIATION_DEFAULT = true;
 
     public static final String PREFERENCE_SHOW_GRID = "ShowGrid"; //$NON-NLS-1$
     public static final String PREFERENCE_SHOW_RULERS = "ShowRulers"; //$NON-NLS-1$
@@ -139,7 +141,7 @@ public interface IInstallOptionsConstants
     public static final String ARRANGE_GROUP = "net.sf.eclipsensis.installoptions.arrange"; //$NON-NLS-1$
     public static final String PREVIEW_GROUP = "net.sf.eclipsensis.installoptions.preview"; //$NON-NLS-1$
     public static final String FIX_PROBLEMS_GROUP = "net.sf.eclipsensis.installoptions.fix_problems"; //$NON-NLS-1$
-    
+
     public static final DialogSize DEFAULT_DIALOG_SIZE = new DialogSize(InstallOptionsPlugin.getResourceString("default.dialog.size.name"),true,new Dimension(300,140)); //$NON-NLS-1$
     public static final Position MAX_POSITION = new Position(Integer.MAX_VALUE,Integer.MAX_VALUE);
 

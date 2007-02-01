@@ -1,7 +1,7 @@
 Revision History
 ================
 
-0.9.5 (12/01/2006)
+0.9.5 (2/01/2007)
     * Upgraded to Eclipse 3.2 - no longer compatible with Eclipse 3.1.
     * Added Export as HTML command.
     * Var elements now shown in Outline view.
@@ -14,6 +14,7 @@ Revision History
     * Added registry key and registry value browsers to NSIS Script Wizard.
     * Added command to insert registry value into NSIS script.
     * Added filtering to outline view.
+    * Added startup plugin to check file associations.
     * Bug Fixes
         o 1416349
         o 1443239
@@ -24,6 +25,7 @@ Revision History
         o 1556289
         o 1587717
         o 1591254
+        o 1649681
     * Feature Requests:
         o 1441231
         o 1452422

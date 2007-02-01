@@ -130,8 +130,9 @@ public class QuickFixRulerAction extends AbstractRulerActionDelegate
                     }
 
                     String key= preference.getVerticalRulerPreferenceKey();
-                    if (key == null)
+                    if (key == null) {
                         continue;
+                    }
 
                     if (mStore.getBoolean(key)) {
                         mPosition= position;

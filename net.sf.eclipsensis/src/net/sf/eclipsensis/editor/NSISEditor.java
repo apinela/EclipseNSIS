@@ -24,6 +24,7 @@ import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.help.commands.*;
 import net.sf.eclipsensis.makensis.MakeNSISResults;
 import net.sf.eclipsensis.settings.*;
+import net.sf.eclipsensis.startup.FileAssociationChecker;
 import net.sf.eclipsensis.util.*;
 
 import org.eclipse.core.runtime.CoreException;
@@ -62,6 +63,7 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
     public NSISEditor()
     {
         super();
+        FileAssociationChecker.checkFileAssociation(FILE_ASSOCIATION_ID);
         setHelpContextId(PLUGIN_CONTEXT_PREFIX + "nsis_editor_context"); //$NON-NLS-1$;
     }
 

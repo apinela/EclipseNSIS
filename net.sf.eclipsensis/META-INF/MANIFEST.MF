@@ -20,7 +20,8 @@ Require-Bundle: org.eclipse.core.resources;bundle-version="3.2.0",
  org.eclipse.ui.console;bundle-version="3.1.100",
  org.eclipse.core.variables;bundle-version="3.1.100",
  org.eclipse.core.expressions;bundle-version="3.2.0",
- org.eclipse.ui.externaltools;bundle-version="3.1.100"
+ org.eclipse.ui.externaltools;bundle-version="3.1.100",
+ net.sf.eclipsensis.startup
 Eclipse-LazyStart: true
 Export-Package: net.sf.eclipsensis,
  net.sf.eclipsensis.actions,

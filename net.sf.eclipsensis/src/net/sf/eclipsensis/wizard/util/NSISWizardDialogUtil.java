@@ -110,6 +110,7 @@ public class NSISWizardDialogUtil
         Control layoutControl;
         if(isRequired) {
             DecoratedField field = new DecoratedField(parent,style,CONTROL_CREATOR);
+            field.setUseMaximumDecorationWidth(false);
             l = (Label)field.getControl();
             layoutControl = field.getLayoutControl();
             field.addFieldDecoration(REQ_FIELD_DECORATION,SWT.LEFT|SWT.TOP,false);

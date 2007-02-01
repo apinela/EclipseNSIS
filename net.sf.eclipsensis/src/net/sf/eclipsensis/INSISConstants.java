@@ -24,6 +24,7 @@ public interface INSISConstants
 
     public static final String PLUGIN_CONTEXT_PREFIX = PLUGIN_ID + "."; //$NON-NLS-1$
 
+    public static final String FILE_ASSOCIATION_ID = EclipseNSISPlugin.getBundleResourceString("%file.association.id"); //$NON-NLS-1$
     public static final String EDITOR_ID = EclipseNSISPlugin.getBundleResourceString("%editor.id"); //$NON-NLS-1$
     public static final String PREFERENCE_PAGE_ID = EclipseNSISPlugin.getBundleResourceString("%preference.page.id"); //$NON-NLS-1$
     public static final String EDITOR_PREFERENCE_PAGE_ID = EclipseNSISPlugin.getBundleResourceString("%editor.preference.page.id"); //$NON-NLS-1$

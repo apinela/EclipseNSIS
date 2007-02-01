@@ -178,35 +178,46 @@ public class NSISInstallRegistryValue extends NSISInstallRegistryItem
 
     public boolean equals(Object obj)
     {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         final NSISInstallRegistryValue other = (NSISInstallRegistryValue)obj;
         if (mData == null) {
-            if (other.mData != null)
+            if (other.mData != null) {
                 return false;
+            }
         }
-        else if (!mData.equals(other.mData))
+        else if (!mData.equals(other.mData)) {
             return false;
-        if (mRootKey != other.mRootKey)
+        }
+        if (mRootKey != other.mRootKey) {
             return false;
+        }
         if (mSubKey == null) {
-            if (other.mSubKey != null)
+            if (other.mSubKey != null) {
                 return false;
+            }
         }
-        else if (!mSubKey.equals(other.mSubKey))
+        else if (!mSubKey.equals(other.mSubKey)) {
             return false;
+        }
         if (mValue == null) {
-            if (other.mValue != null)
+            if (other.mValue != null) {
                 return false;
+            }
         }
-        else if (!mValue.equals(other.mValue))
+        else if (!mValue.equals(other.mValue)) {
             return false;
-        if (mValueType != other.mValueType)
+        }
+        if (mValueType != other.mValueType) {
             return false;
+        }
         return true;
     }
 }

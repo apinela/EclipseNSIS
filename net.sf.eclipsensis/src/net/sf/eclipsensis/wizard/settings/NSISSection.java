@@ -212,31 +212,41 @@ public class NSISSection extends AbstractNSISInstallGroup
 
     public boolean equals(Object obj)
     {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (!super.equals(obj))
+        }
+        if (!super.equals(obj)) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         final NSISSection other = (NSISSection)obj;
-        if (mBold != other.mBold)
+        if (mBold != other.mBold) {
             return false;
-        if (mDefaultUnselected != other.mDefaultUnselected)
+        }
+        if (mDefaultUnselected != other.mDefaultUnselected) {
             return false;
+        }
         if (mDescription == null) {
-            if (other.mDescription != null)
+            if (other.mDescription != null) {
                 return false;
+            }
         }
-        else if (!mDescription.equals(other.mDescription))
+        else if (!mDescription.equals(other.mDescription)) {
             return false;
-        if (mHidden != other.mHidden)
+        }
+        if (mHidden != other.mHidden) {
             return false;
+        }
         if (mName == null) {
-            if (other.mName != null)
+            if (other.mName != null) {
                 return false;
+            }
         }
-        else if (!mName.equals(other.mName))
+        else if (!mName.equals(other.mName)) {
             return false;
+        }
         return true;
     }
 }

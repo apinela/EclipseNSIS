@@ -29,7 +29,7 @@ public class ToggleKeyValueValidator extends PositiveNumberKeyValueValidator
                     return true;
                 }
                 if((fixFlag & INILine.VALIDATE_FIX_ERRORS) > 0) {
-                    keyValue.setValue(formatInt(0,radix,prefix)); //$NON-NLS-1$
+                    keyValue.setValue(formatInt(0,radix,prefix)); 
                 }
                 else {
                     INIProblem problem = new INIProblem(INIProblem.TYPE_ERROR,

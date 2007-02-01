@@ -136,7 +136,7 @@ Guides</a> | <a href="revisions.html">Revision History</a> | <a
 <div><img class="trigger" alt="Expand/Collapse" id="trigger_eclipsensis095"
 src="images/closed.gif" onClick="toggle('trigger_eclipsensis095', 'toggle_eclipsensis095'); rollover(this);"
 onmouseover="rollover(this);" onMouseOut="rollover(this);">
-<a href="http://prdownloads.sourceforge.net/eclipsensis/net.sf.eclipsensis_0.9.5.zip?download">0.9.5</a> (12/01/2006)
+<a href="http://prdownloads.sourceforge.net/eclipsensis/net.sf.eclipsensis_0.9.5.zip?download">0.9.5</a> (02/01/2007)
 <div id="toggle_eclipsensis095" class="toggle">
 <ul>
   <li>Upgraded to Eclipse 3.2 - no longer compatible with Eclipse 3.1.</li>
@@ -150,6 +150,7 @@ onmouseover="rollover(this);" onMouseOut="rollover(this);">
   <li>Added registry key and registry value browsers to NSIS Script Wizard.</li>
   <li>Added command to insert registry value into NSIS script.</li>
   <li>Added filtering to outline view.</li>
+  <li>Added startup plugin to check file associations.</li>
   <li>Bug fixes:</li>
   <ul>
     <li><a href="http://sourceforge.net/tracker/index.php?func=detail&aid=1416349&group_id=116143&atid=673849">1416349</a></li>
@@ -161,6 +162,7 @@ onmouseover="rollover(this);" onMouseOut="rollover(this);">
     <li><a href="http://sourceforge.net/tracker/index.php?func=detail&aid=1556289&group_id=116143&atid=673849">1556289</a></li>
     <li><a href="http://sourceforge.net/tracker/index.php?func=detail&aid=1587717&group_id=116143&atid=673849">1587717</a></li>
     <li><a href="http://sourceforge.net/tracker/index.php?func=detail&aid=1591254&group_id=116143&atid=673849">1591254</a></li>
+    <li><a href="http://sourceforge.net/tracker/index.php?func=detail&aid=1649681&group_id=116143&atid=673849">1649681</a></li>
   </ul>
   <li>Feature Requests:</li>
   <ul>
@@ -360,7 +362,7 @@ src="images/closed.gif" onClick="toggle('trigger_installoptions095', 'toggle_ins
 onmouseover="rollover(this);" onMouseOut="rollover(this);">
 <a
  href="http://prdownloads.sourceforge.net/eclipsensis/net.sf.eclipsensis.installoptions_0.9.5.zip?download">0.9.5</a>
-(12/01/2006)
+(02/01/2007)
 <div id="toggle_installoptions095" class="toggle">
 <ul>
   <li>Upgraded to Eclipse 3.2 - no longer compatible with Eclipse 3.1.</li>
@@ -480,7 +482,7 @@ src="images/closed.gif" onClick="toggle('trigger_utilities091', 'toggle_utilitie
 onmouseover="rollover(this);" onMouseOut="rollover(this);">
 <a
  href="http://prdownloads.sourceforge.net/eclipsensis/net.sf.eclipsensis.utilities_0.9.1.zip?download">0.9.1</a>
-(12/01/2006)
+(02/01/2007)
 <div id="toggle_utilities091" class="toggle">
 <ul>
   <li>Upgraded to Eclipse 3.2 - no longer compatible with Eclipse 3.1.</li>
@@ -558,12 +560,13 @@ src="images/closed.gif" onClick="toggle('trigger_sources095', 'toggle_sources095
 onmouseover="rollover(this);" onMouseOut="rollover(this);">
 <a
  href="http://prdownloads.sourceforge.net/eclipsensis/net.sf.eclipsensis.source_0.9.5.zip?download">0.9.5</a>
-(12/01/2006)
+(02/01/2007)
 <div id="toggle_sources095" class="toggle">
 <ul>
   <li>This bundles source code for the following EclipseNSIS plugins into a single plugin:</li>
       <ul>
       <li>EclipseNSIS 0.9.5</li>
+      <li>EclipseNSIS Startup 0.9.5</li>
       <li>EclipseNSIS Update 0.9.5</li>
       <li>EclipseNSIS InstallOptions Editor 0.9.5</li>
       <li>EclipseNSIS Utilities 0.9.1</li>

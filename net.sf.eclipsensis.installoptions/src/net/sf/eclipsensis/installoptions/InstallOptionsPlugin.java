@@ -23,14 +23,10 @@ import net.sf.eclipsensis.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.preferences.*;
 import org.eclipse.gef.ui.palette.PaletteViewerPreferences;
-import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.*;
 import org.eclipse.ui.editors.text.EditorsUI;
-import org.eclipse.ui.internal.registry.EditorRegistry;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.texteditor.ChainedPreferenceStore;
 import org.osgi.framework.Bundle;
@@ -50,7 +46,6 @@ public class InstallOptionsPlugin extends AbstractUIPlugin implements IInstallOp
     public static final String[] BUNDLE_NAMES = new String[]{RESOURCE_BUNDLE,MESSAGE_BUNDLE};
     private ImageManager mImageManager;
     private String mName = null;
-    private static boolean cCheckedEditorAssociation = false;
     private JobScheduler mJobScheduler = new JobScheduler();
     private ChainedPreferenceStore mCombinedPreferenceStore;
 
@@ -171,7 +166,6 @@ public class InstallOptionsPlugin extends AbstractUIPlugin implements IInstallOp
         initializePreference(store,PREFERENCE_GRID_SPACING,TypeConverter.DIMENSION_CONVERTER.asString(GRID_SPACING_DEFAULT));
         initializePreference(store,PREFERENCE_GRID_ORIGIN,TypeConverter.POINT_CONVERTER.asString(GRID_ORIGIN_DEFAULT));
         initializePreference(store,PREFERENCE_GRID_STYLE,GRID_STYLE_DEFAULT);
-        initializePreference(store,PREFERENCE_CHECK_EDITOR_ASSOCIATION,CHECK_EDITOR_ASSOCIATION_DEFAULT.toString());
 
         String preference = store.getString(IInstallOptionsConstants.PREFERENCE_SYNTAX_STYLES);
         Map map;
@@ -289,46 +283,6 @@ public class InstallOptionsPlugin extends AbstractUIPlugin implements IInstallOp
         }
         else {
             t.printStackTrace();
-        }
-    }
-
-    public static synchronized void checkEditorAssociation()
-    {
-        if(!cCheckedEditorAssociation) {
-            cCheckedEditorAssociation = true;
-            final boolean toggleState = getDefault().getPreferenceStore().getBoolean(PREFERENCE_CHECK_EDITOR_ASSOCIATION);
-            if(toggleState) {
-                final IEditorRegistry editorRegistry = PlatformUI.getWorkbench().getEditorRegistry();
-                for(int i=0; i<INI_EXTENSIONS.length; i++) {
-                    IEditorDescriptor descriptor = editorRegistry.getDefaultEditor("*."+INI_EXTENSIONS[i]); //$NON-NLS-1$
-                    if(descriptor == null || (!descriptor.getId().equals(INSTALLOPTIONS_DESIGN_EDITOR_ID) && !descriptor.getId().equals(INSTALLOPTIONS_SOURCE_EDITOR_ID))) {
-                        Display.getDefault().asyncExec(new Runnable(){
-                            public void run()
-                            {
-                                MessageDialogWithToggle dialog = new MessageDialogWithToggle(
-                                        PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
-                                        getDefault().getName(),
-                                        InstallOptionsPlugin.getShellImage(),
-                                        getResourceString("check.default.editor.question"),  //$NON-NLS-1$
-                                        MessageDialog.QUESTION,
-                                        new String[] { IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL }, 0,
-                                        getResourceString("check.default.editor.toggle"), !toggleState); //$NON-NLS-1$
-                                dialog.setPrefStore(getDefault().getPreferenceStore());
-                                dialog.setPrefKey(PREFERENCE_CHECK_EDITOR_ASSOCIATION);
-                                dialog.open();
-                                if(dialog.getReturnCode() == IDialogConstants.YES_ID) {
-                                    for(int i=0; i<INI_EXTENSIONS.length; i++) {
-                                        editorRegistry.setDefaultEditor("*."+INI_EXTENSIONS[i],INSTALLOPTIONS_DESIGN_EDITOR_ID); //$NON-NLS-1$
-                                    }
-                                    //Cast to inner class because otherwise it cannot be saved.
-                                    ((EditorRegistry)editorRegistry).saveAssociations();
-                                }
-                            }
-                        });
-                        break;
-                    }
-                }
-            }
         }
     }
 

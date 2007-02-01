@@ -223,41 +223,54 @@ public class NSISInstallShortcut extends AbstractNSISInstallItem
 
     public boolean equals(Object obj)
     {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         final NSISInstallShortcut other = (NSISInstallShortcut)obj;
-        if (mCreateInStartMenuGroup != other.mCreateInStartMenuGroup)
+        if (mCreateInStartMenuGroup != other.mCreateInStartMenuGroup) {
             return false;
+        }
         if (mLocation == null) {
-            if (other.mLocation != null)
+            if (other.mLocation != null) {
                 return false;
+            }
         }
-        else if (!mLocation.equals(other.mLocation))
+        else if (!mLocation.equals(other.mLocation)) {
             return false;
+        }
         if (mName == null) {
-            if (other.mName != null)
+            if (other.mName != null) {
                 return false;
+            }
         }
-        else if (!mName.equals(other.mName))
+        else if (!mName.equals(other.mName)) {
             return false;
+        }
         if (mPath == null) {
-            if (other.mPath != null)
+            if (other.mPath != null) {
                 return false;
+            }
         }
-        else if (!mPath.equals(other.mPath))
+        else if (!mPath.equals(other.mPath)) {
             return false;
-        if (mShortcutType != other.mShortcutType)
+        }
+        if (mShortcutType != other.mShortcutType) {
             return false;
+        }
         if (mUrl == null) {
-            if (other.mUrl != null)
+            if (other.mUrl != null) {
                 return false;
+            }
         }
-        else if (!mUrl.equals(other.mUrl))
+        else if (!mUrl.equals(other.mUrl)) {
             return false;
+        }
         return true;
     }
 }

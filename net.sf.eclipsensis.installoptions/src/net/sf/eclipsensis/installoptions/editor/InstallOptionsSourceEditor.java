@@ -24,6 +24,7 @@ import net.sf.eclipsensis.installoptions.ini.*;
 import net.sf.eclipsensis.installoptions.model.*;
 import net.sf.eclipsensis.job.IJobStatusRunnable;
 import net.sf.eclipsensis.job.JobScheduler;
+import net.sf.eclipsensis.startup.FileAssociationChecker;
 import net.sf.eclipsensis.util.*;
 import net.sf.eclipsensis.viewer.EmptyContentProvider;
 
@@ -131,7 +132,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
     public InstallOptionsSourceEditor()
     {
         super();
-        InstallOptionsPlugin.checkEditorAssociation();
+        FileAssociationChecker.checkFileAssociation(FILE_ASSOCIATION_ID);
         setRulerContextMenuId("#InstallOptionsSourceRulerContext"); //$NON-NLS-1$
         setPreferenceStore(InstallOptionsPlugin.getDefault().getCombinedPreferenceStore());
         setHelpContextId(PLUGIN_CONTEXT_PREFIX + "installoptions_sourceeditor_context"); //$NON-NLS-1$;

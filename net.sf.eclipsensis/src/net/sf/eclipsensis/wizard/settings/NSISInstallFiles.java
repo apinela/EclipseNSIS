@@ -183,21 +183,27 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
 
     public boolean equals(Object obj)
     {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (!super.equals(obj))
+        }
+        if (!super.equals(obj)) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         final NSISInstallFiles other = (NSISInstallFiles)obj;
         if (mDestination == null) {
-            if (other.mDestination != null)
+            if (other.mDestination != null) {
                 return false;
+            }
         }
-        else if (!mDestination.equals(other.mDestination))
+        else if (!mDestination.equals(other.mDestination)) {
             return false;
-        if (mOverwriteMode != other.mOverwriteMode)
+        }
+        if (mOverwriteMode != other.mOverwriteMode) {
             return false;
+        }
         return true;
     }
 

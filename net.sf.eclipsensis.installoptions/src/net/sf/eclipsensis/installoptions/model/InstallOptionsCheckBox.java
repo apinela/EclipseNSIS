@@ -41,7 +41,7 @@ public class InstallOptionsCheckBox extends InstallOptionsUneditableElement
     protected void init()
     {
         super.init();
-        mState = null; //$NON-NLS-1$
+        mState = null; 
     }
 
     public Object clone()

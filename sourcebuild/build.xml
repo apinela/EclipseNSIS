@@ -17,6 +17,7 @@
 		<tempfile property="build.root" prefix="eclipsensis" suffix=".tmp" destDir="${java.io.tmpdir}"/>
 		<property name="build.src.root" value="${build.root}/src"/>
 		<mkdir dir="${build.src.root}"/>
+		<antcall target="startup.src"/>
 		<antcall target="eclipsensis.src"/>
 		<antcall target="update.src"/>
 		<antcall target="installoptions.src"/>
@@ -110,6 +111,11 @@
 			</fileset>
 		</copy>
 	</target>
+	<target name="startup.src">
+		<property name="plugin.name" value="net.sf.eclipsensis.startup"/>
+		<property name="plugin.dir" value="../net.sf.eclipsensis.startup"/>
+		<antcall target="generic.src"/>
+	</target>
 	<target name="eclipsensis.src">
 		<property name="plugin.name" value="net.sf.eclipsensis"/>
 		<property name="plugin.dir" value="../net.sf.eclipsensis"/>
@@ -156,6 +162,9 @@
 				<include name="MakeNSISRunner/build.bat"/>
 				<include name="MakeNSISRunner/MakeNSISRunner.ds*"/>
 				<include name="MakeNSISRunner/MakeNSISRunner.mak"/>
+				<include name="net.sf.eclipsensis.startup/**/*"/>
+				<exclude name="net.sf.eclipsensis.startup/bin/**/*"/>
+				<exclude name="net.sf.eclipsensis.startup/.settings/**/*"/>
 				<include name="net.sf.eclipsensis/**/*"/>
 				<exclude name="net.sf.eclipsensis/src/net/sf/eclipsensis/parser/**/*"/>
 				<exclude name="net.sf.eclipsensis/bin/**/*"/>

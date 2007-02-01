@@ -1,0 +1,5 @@
+Revision History
+================
+
+0.9.5 (02/01/2007)
+    * First public release of EclipseNSIS Startup plugin.

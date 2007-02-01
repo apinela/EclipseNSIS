@@ -940,10 +940,21 @@
      </wizard>
    </extension>
    <extension
-         point="org.eclipse.ui.externaltools.configurationDuplicationMaps">
-			<configurationMap
-				sourceType="net.sf.eclipsensis.launch.nsisLaunchConfigType"
-				builderType="net.sf.eclipsensis.launch.nsisBuilderLaunchConfigType">
-			</configurationMap>
+      point="org.eclipse.ui.externaltools.configurationDuplicationMaps">
+      <configurationMap
+         sourceType="net.sf.eclipsensis.launch.nsisLaunchConfigType"
+         builderType="net.sf.eclipsensis.launch.nsisBuilderLaunchConfigType">
+      </configurationMap>
+   </extension>
+   <extension point="net.sf.eclipsensis.startup.fileAssociations">
+      <association id="%file.association.id">
+         <fileTypes name="%nsis.filetypes.name">
+            <fileType name="*.nsi"/>
+            <fileType name="*.nsh"/>
+         </fileTypes>
+         <editors name="%nsis.editors.name">
+            <editor id="net.sf.eclipsensis.editor.NSISEditor"/>
+         </editors>
+      </association>
    </extension>
 </plugin>

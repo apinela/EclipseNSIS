@@ -357,19 +357,24 @@ public abstract class AbstractNSISInstallGroup extends AbstractNSISInstallElemen
 
     public boolean equals(Object obj)
     {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         final AbstractNSISInstallGroup other = (AbstractNSISInstallGroup)obj;
         if (mChildren == null) {
-            if (other.mChildren != null)
+            if (other.mChildren != null) {
                 return false;
+            }
         }
-        else if (!mChildren.equals(other.mChildren))
+        else if (!mChildren.equals(other.mChildren)) {
             return false;
+        }
         return true;
     }
 

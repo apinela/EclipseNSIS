@@ -271,7 +271,7 @@ public class RegistryKeyBrowser extends Composite
         RegistryKey oldRegKey = mRegistryKey;
 
         mRegistryKey = (RegistryKey)item.getData();
-        mSelection = null; //$NON-NLS-1$
+        mSelection = null; 
         if(mRegistryKey != null) {
             mSelection = mRegistryKey.toString();
         }
@@ -359,19 +359,25 @@ public class RegistryKeyBrowser extends Composite
     public void setBackground (Color color)
     {
         super.setBackground(color);
-        if (mTree != null) mTree.setBackground(color);
+        if (mTree != null) {
+            mTree.setBackground(color);
+        }
     }
 
     public void setForeground (Color color)
     {
         super.setForeground(color);
-        if (mTree != null) mTree.setForeground(color);
+        if (mTree != null) {
+            mTree.setForeground(color);
+        }
     }
 
     public void setFont (Font font)
     {
         super.setFont(font);
-        if (mTree != null) mTree.setFont(font);
+        if (mTree != null) {
+            mTree.setFont(font);
+        }
         internalLayout (true);
     }
 
@@ -386,7 +392,9 @@ public class RegistryKeyBrowser extends Composite
     public void setEnabled (boolean enabled)
     {
         super.setEnabled(enabled);
-        if (mTree != null) mTree.setVisible (false);
+        if (mTree != null) {
+            mTree.setVisible (false);
+        }
     }
 
     public boolean setFocus ()

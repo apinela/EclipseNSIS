@@ -1,7 +1,7 @@
 Revision History
 ================
 
-0.9.1 (12/01/2006)
+0.9.1 (02/01/2007)
     * Upgraded to Eclipse 3.2 - no longer compatible with Eclipse 3.1.
 
 0.9.0 (01/26/2006)

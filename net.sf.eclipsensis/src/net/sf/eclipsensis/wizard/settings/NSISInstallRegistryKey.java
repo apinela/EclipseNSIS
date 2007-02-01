@@ -87,21 +87,27 @@ public class NSISInstallRegistryKey extends NSISInstallRegistryItem
 
     public boolean equals(Object obj)
     {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        final NSISInstallRegistryKey other = (NSISInstallRegistryKey)obj;
-        if (mRootKey != other.mRootKey)
-            return false;
-        if (mSubKey == null) {
-            if (other.mSubKey != null)
-                return false;
         }
-        else if (!mSubKey.equals(other.mSubKey))
+        if (obj == null) {
             return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final NSISInstallRegistryKey other = (NSISInstallRegistryKey)obj;
+        if (mRootKey != other.mRootKey) {
+            return false;
+        }
+        if (mSubKey == null) {
+            if (other.mSubKey != null) {
+                return false;
+            }
+        }
+        else if (!mSubKey.equals(other.mSubKey)) {
+            return false;
+        }
         return true;
     }
 }

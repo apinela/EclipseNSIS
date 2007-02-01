@@ -99,19 +99,24 @@ public class NSISInstaller extends AbstractNSISInstallGroup
 
     public boolean equals(Object obj)
     {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (!super.equals(obj))
+        }
+        if (!super.equals(obj)) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         final NSISInstaller other = (NSISInstaller)obj;
         if (mFormat == null) {
-            if (other.mFormat != null)
+            if (other.mFormat != null) {
                 return false;
+            }
         }
-        else if (!mFormat.equals(other.mFormat))
+        else if (!mFormat.equals(other.mFormat)) {
             return false;
+        }
         return true;
     }
 }
