@@ -76,8 +76,14 @@ public class NSISContentOutlinePage extends ContentOutlinePage
         expandAllAction = new Action() {
             public void run()
             {
-                getTreeViewer().expandAll();
-                revealSelection();
+                getTreeViewer().getTree().setRedraw(false);
+                try {
+                    getTreeViewer().expandAll();
+                    revealSelection();
+                }
+                finally {
+                    getTreeViewer().getTree().setRedraw(true);
+                }
             }
         };
         expandAllAction.setText(EclipseNSISPlugin.getResourceString("expandall.text")); //$NON-NLS-1$
@@ -89,8 +95,14 @@ public class NSISContentOutlinePage extends ContentOutlinePage
         collapseAllAction = new Action() {
             public void run()
             {
-                getTreeViewer().collapseAll();
-                revealSelection();
+                getTreeViewer().getTree().setRedraw(false);
+                try {
+                    getTreeViewer().collapseAll();
+                    revealSelection();
+                }
+                finally {
+                    getTreeViewer().getTree().setRedraw(true);
+                }
             }
         };
         collapseAllAction.setText(EclipseNSISPlugin.getResourceString("collapseall.text")); //$NON-NLS-1$
@@ -108,8 +120,7 @@ public class NSISContentOutlinePage extends ContentOutlinePage
                 if(dialog.open() == Window.OK) {
                     Collections.sort(newList);
                     if(!Common.objectsAreEqual(oldList, newList)) {
-                        oldList.clear();
-                        oldList.addAll(newList);
+                        mEditor.getOutlineContentProvider().setFilteredTypes(newList);
                         getTreeViewer().refresh();
                     }
                 }

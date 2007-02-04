@@ -67,6 +67,7 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
     private IPositionUpdater mSelectPositionUpdater = new DefaultPositionUpdater(NSIS_OUTLINE_SELECT);
 
     private NSISOutlineElement[] mOutlineElements = null;
+    private NSISOutlineElement[] mFilteredElements = null;
     private NSISOutlineContentResources mResources;
 
     private List mFilteredTypes;
@@ -86,6 +87,14 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
     public List getFilteredTypes()
     {
         return mFilteredTypes;
+    }
+
+    public void setFilteredTypes(List types)
+    {
+        mFilteredTypes.clear();
+        mFilteredTypes.addAll(types);
+        mResources.setFilteredTypes(mFilteredTypes);
+        mFilteredElements = getFilteredElements();
     }
 
     private boolean isFiltered(String type)
@@ -425,7 +434,8 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
                 }
             }
 
-            mOutlineElements = (NSISOutlineElement[])getChildren(rootElement);
+            mOutlineElements = (NSISOutlineElement[])getChildren(rootElement, false);
+            mFilteredElements = getFilteredElements();
         }
     }
 
@@ -452,6 +462,7 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
             }
 
             mOutlineElements = null;
+            mFilteredElements = null;
 
             if (newInput != null) {
                 mAnnotationModel = (IAnnotationModel) mEditor.getAdapter(ProjectionAnnotationModel.class);
@@ -483,7 +494,7 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
     {
         if (mOutlineElements != null) {
             mOutlineElements = null;
-            mResources.setFilteredTypes(mFilteredTypes);
+            mFilteredElements = null;
         }
     }
 
@@ -500,12 +511,20 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
      */
     public Object[] getElements(Object element)
     {
+        return mFilteredElements;
+    }
+
+    /**
+     * @return
+     */
+    private NSISOutlineElement[] getFilteredElements()
+    {
         NSISOutlineElement[] elements = EMPTY_CHILDREN;
         if(!Common.isEmptyArray(mOutlineElements)) {
             List list = new ArrayList();
             for (int i = 0; i < mOutlineElements.length; i++) {
                 if(isFiltered(mOutlineElements[i].getType())) {
-                    addChildren(mOutlineElements[i],list);
+                    addChildren(mOutlineElements[i],list, true);
                 }
                 else {
                     list.add(mOutlineElements[i]);
@@ -559,21 +578,26 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
      */
     public Object[] getChildren(Object element)
     {
+        return getChildren(element, true);
+    }
+
+    private Object[] getChildren(Object element, boolean filtered)
+    {
         NSISOutlineElement[] children = EMPTY_CHILDREN;
         if (element instanceof NSISOutlineElement) {
             List list = new ArrayList();
-            addChildren((NSISOutlineElement)element, list);
+            addChildren((NSISOutlineElement)element, list, filtered);
             children = (NSISOutlineElement[])list.toArray(children);
         }
         return children;
     }
 
-    private void addChildren(NSISOutlineElement element, List list)
+    private void addChildren(NSISOutlineElement element, List list, boolean filtered)
     {
         for (Iterator iter = element.getChildren().iterator(); iter.hasNext();) {
             NSISOutlineElement child = (NSISOutlineElement)iter.next();
-            if(isFiltered(child.getType())) {
-                addChildren(child, list);
+            if(filtered && isFiltered(child.getType())) {
+                addChildren(child, list, filtered);
             }
             else {
                 list.add(child);
@@ -588,7 +612,7 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
 
     public NSISOutlineElement findElement(int offset, int length)
     {
-        return findElement(mOutlineElements, offset, length);
+        return findElement(mFilteredElements, offset, length);
     }
 
     private NSISOutlineElement findElement(Object[] elements, int offset, int length)

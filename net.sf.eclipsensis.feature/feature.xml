@@ -2,7 +2,7 @@
 <feature
       id="net.sf.eclipsensis"
       label="%feature.name"
-      version="0.9.5"
+      version="0.9.5.1"
       provider-name="%provider.name"
       os="win32"
       ws="win32"
@@ -51,7 +51,7 @@
          id="net.sf.eclipsensis"
          download-size="3127"
          install-size="3127"
-         version="0.9.5"
+         version="0.9.5.1"
          unpack="false"/>
 
    <plugin

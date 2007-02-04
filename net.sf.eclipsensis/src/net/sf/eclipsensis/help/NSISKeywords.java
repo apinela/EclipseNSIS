@@ -319,46 +319,44 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
                 }
             }
 
-            String[] temp = Common.EMPTY_STRING_ARRAY;
-            String[] temp2;
+            String[] temp;
 
             Set set = getValidKeywords(registers);
             mAllKeywordsSet.addAll(set);
-            temp = (String[])Common.appendArray(temp, (temp2 = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
-            Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
-            mKeywordGroupsMap.put(REGISTERS,temp2);
+            temp = (String[])set.toArray(Common.EMPTY_STRING_ARRAY);
+            Arrays.sort(temp, String.CASE_INSENSITIVE_ORDER);
+            mKeywordGroupsMap.put(REGISTERS,temp);
 
             set = getValidKeywords(pathVariables);
             mAllKeywordsSet.addAll(set);
-            temp = (String[])Common.appendArray(temp, (temp2 = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
-            Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
-            mKeywordGroupsMap.put(PATH_VARIABLES,temp2);
+            temp = (String[])set.toArray(Common.EMPTY_STRING_ARRAY);
+            Arrays.sort(temp, String.CASE_INSENSITIVE_ORDER);
+            mKeywordGroupsMap.put(PATH_VARIABLES,temp);
 
             set = getValidKeywords(variables);
-            temp = (String[])Common.appendArray(temp, (temp2 = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
-            Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
-            mKeywordGroupsMap.put(VARIABLES,temp2);
+            mAllKeywordsSet.addAll(set);
+            temp = (String[])set.toArray(Common.EMPTY_STRING_ARRAY);
+            Arrays.sort(temp, String.CASE_INSENSITIVE_ORDER);
+            mKeywordGroupsMap.put(VARIABLES,temp);
 
             set = getValidKeywords(shellConstants);
             mAllKeywordsSet.addAll(set);
-            temp2 = (String[])set.toArray(Common.EMPTY_STRING_ARRAY);
-            Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
-            mKeywordGroupsMap.put(SHELL_CONSTANTS,temp2);
+            temp = (String[])set.toArray(Common.EMPTY_STRING_ARRAY);
+            Arrays.sort(temp, String.CASE_INSENSITIVE_ORDER);
+            mKeywordGroupsMap.put(SHELL_CONSTANTS,temp);
 
             set = getValidKeywords(pathConstants);
             mAllKeywordsSet.addAll(set);
-            temp = (String[])Common.appendArray(temp,
-                    (temp2 = (String[])Common.joinArrays(
-                                        new Object[] {(String[])mKeywordGroupsMap.get(SHELL_CONSTANTS),
-                                                      (String[])set.toArray(Common.EMPTY_STRING_ARRAY)})));
-            Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
-            mKeywordGroupsMap.put(PATH_CONSTANTS,temp2);
+            temp = (String[])Common.joinArrays(new Object[] {(String[])mKeywordGroupsMap.get(SHELL_CONSTANTS),
+                                                      (String[])set.toArray(Common.EMPTY_STRING_ARRAY)});
+            Arrays.sort(temp, String.CASE_INSENSITIVE_ORDER);
+            mKeywordGroupsMap.put(PATH_CONSTANTS,temp);
 
             set = getValidKeywords(stringConstants);
             mAllKeywordsSet.addAll(set);
-            temp = (String[])Common.appendArray(temp, (temp2 = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
-            Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
-            mKeywordGroupsMap.put(STRING_CONSTANTS,temp2);
+            temp = (String[])set.toArray(Common.EMPTY_STRING_ARRAY);
+            Arrays.sort(temp, String.CASE_INSENSITIVE_ORDER);
+            mKeywordGroupsMap.put(STRING_CONSTANTS,temp);
 
             set = new CaseInsensitiveSet();
             if(!Common.isEmpty(NSISPreferences.INSTANCE.getNSISHome())) {
@@ -370,149 +368,149 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
                 }
             }
             mAllKeywordsSet.addAll(set);
-            temp = (String[])Common.appendArray(temp, (temp2 = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
-            Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
-            mKeywordGroupsMap.put(SYMBOLS,temp2);
+            temp = (String[])set.toArray(Common.EMPTY_STRING_ARRAY);
+            Arrays.sort(temp, String.CASE_INSENSITIVE_ORDER);
+            mKeywordGroupsMap.put(SYMBOLS,temp);
 
             set = getValidKeywords(predefines);
             mAllKeywordsSet.addAll(set);
-            temp = (String[])Common.appendArray(temp, (temp2 = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
-            Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
-            mKeywordGroupsMap.put(PREDEFINES,temp2);
+            temp = (String[])set.toArray(Common.EMPTY_STRING_ARRAY);
+            Arrays.sort(temp, String.CASE_INSENSITIVE_ORDER);
+            mKeywordGroupsMap.put(PREDEFINES,temp);
 
-            temp2 = (String[])Common.joinArrays(new Object[]{getKeywordsGroup(PATH_CONSTANTS), getKeywordsGroup(PATH_VARIABLES)});
-            Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
-            mKeywordGroupsMap.put(PATH_CONSTANTS_AND_VARIABLES,temp2);
+            temp = (String[])Common.joinArrays(new Object[]{getKeywordsGroup(PATH_CONSTANTS), getKeywordsGroup(PATH_VARIABLES)});
+            Arrays.sort(temp, String.CASE_INSENSITIVE_ORDER);
+            mKeywordGroupsMap.put(PATH_CONSTANTS_AND_VARIABLES,temp);
 
-            temp2 = (String[])Common.joinArrays(new Object[]{getKeywordsGroup(PATH_CONSTANTS), getKeywordsGroup(STRING_CONSTANTS)});
-            Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
-            mKeywordGroupsMap.put(ALL_CONSTANTS,temp2);
+            temp = (String[])Common.joinArrays(new Object[]{getKeywordsGroup(PATH_CONSTANTS), getKeywordsGroup(STRING_CONSTANTS)});
+            Arrays.sort(temp, String.CASE_INSENSITIVE_ORDER);
+            mKeywordGroupsMap.put(ALL_CONSTANTS,temp);
 
-            temp2 = (String[])Common.joinArrays(new Object[]{getKeywordsGroup(REGISTERS), getKeywordsGroup(PATH_CONSTANTS_AND_VARIABLES),
+            temp = (String[])Common.joinArrays(new Object[]{getKeywordsGroup(REGISTERS), getKeywordsGroup(PATH_CONSTANTS_AND_VARIABLES),
                                                                                       getKeywordsGroup(VARIABLES)});
-            Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
-            mKeywordGroupsMap.put(ALL_VARIABLES,temp2);
+            Arrays.sort(temp, String.CASE_INSENSITIVE_ORDER);
+            mKeywordGroupsMap.put(ALL_VARIABLES,temp);
 
-            temp2 = (String[])Common.joinArrays(new Object[]{getKeywordsGroup(ALL_CONSTANTS), getKeywordsGroup(ALL_VARIABLES)});
-            Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
-            mKeywordGroupsMap.put(ALL_CONSTANTS_AND_VARIABLES,temp2);
+            temp = (String[])Common.joinArrays(new Object[]{getKeywordsGroup(ALL_CONSTANTS), getKeywordsGroup(ALL_VARIABLES)});
+            Arrays.sort(temp, String.CASE_INSENSITIVE_ORDER);
+            mKeywordGroupsMap.put(ALL_CONSTANTS_AND_VARIABLES,temp);
 
-            temp2 = (String[])Common.joinArrays(new Object[]{getKeywordsGroup(ALL_CONSTANTS), getKeywordsGroup(ALL_VARIABLES),
+            temp = (String[])Common.joinArrays(new Object[]{getKeywordsGroup(ALL_CONSTANTS), getKeywordsGroup(ALL_VARIABLES),
                                                              getKeywordsGroup(SYMBOLS), getKeywordsGroup(PREDEFINES)});
-            Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
-            mKeywordGroupsMap.put(ALL_CONSTANTS_VARIABLES_AND_SYMBOLS,temp2);
+            Arrays.sort(temp, String.CASE_INSENSITIVE_ORDER);
+            mKeywordGroupsMap.put(ALL_CONSTANTS_VARIABLES_AND_SYMBOLS,temp);
 
             set = getValidKeywords(singlelineCompiletimeCommands);
             mAllKeywordsSet.addAll(set);
-            temp = (String[])Common.appendArray(temp, (temp2 = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
-            Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
-            mKeywordGroupsMap.put(SINGLELINE_COMPILETIME_COMMANDS,temp2);
+            temp = (String[])set.toArray(Common.EMPTY_STRING_ARRAY);
+            Arrays.sort(temp, String.CASE_INSENSITIVE_ORDER);
+            mKeywordGroupsMap.put(SINGLELINE_COMPILETIME_COMMANDS,temp);
 
             set = getValidKeywords(multilineCompiletimeCommands);
             mAllKeywordsSet.addAll(set);
-            temp = (String[])Common.appendArray(temp, (temp2 = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
-            Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
-            mKeywordGroupsMap.put(MULTILINE_COMPILETIME_COMMANDS, temp2);
+            temp = (String[])set.toArray(Common.EMPTY_STRING_ARRAY);
+            Arrays.sort(temp, String.CASE_INSENSITIVE_ORDER);
+            mKeywordGroupsMap.put(MULTILINE_COMPILETIME_COMMANDS, temp);
 
             set = getValidKeywords(installerAttributes);
             mAllKeywordsSet.addAll(set);
-            temp = (String[])Common.appendArray(temp, (temp2 = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
-            Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
-            mKeywordGroupsMap.put(INSTALLER_ATTRIBUTES,temp2);
+            temp = (String[])set.toArray(Common.EMPTY_STRING_ARRAY);
+            Arrays.sort(temp, String.CASE_INSENSITIVE_ORDER);
+            mKeywordGroupsMap.put(INSTALLER_ATTRIBUTES,temp);
 
             set = getValidKeywords(commands);
             mAllKeywordsSet.addAll(set);
-            temp = (String[])Common.appendArray(temp, (temp2 = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
-            Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
-            mKeywordGroupsMap.put(COMMANDS,temp2);
+            temp = (String[])set.toArray(Common.EMPTY_STRING_ARRAY);
+            Arrays.sort(temp, String.CASE_INSENSITIVE_ORDER);
+            mKeywordGroupsMap.put(COMMANDS,temp);
 
             set = getValidKeywords(instructions);
             mAllKeywordsSet.addAll(set);
-            temp = (String[])Common.appendArray(temp, (temp2 = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
-            Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
-            mKeywordGroupsMap.put(INSTRUCTIONS,temp2);
+            temp = (String[])set.toArray(Common.EMPTY_STRING_ARRAY);
+            Arrays.sort(temp, String.CASE_INSENSITIVE_ORDER);
+            mKeywordGroupsMap.put(INSTRUCTIONS,temp);
 
             set = getValidKeywords(installerPages);
             mAllKeywordsSet.addAll(set);
-            temp = (String[])Common.appendArray(temp, (temp2 = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
-            Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
-            mKeywordGroupsMap.put(INSTALLER_PAGES,temp2);
+            temp = (String[])set.toArray(Common.EMPTY_STRING_ARRAY);
+            Arrays.sort(temp, String.CASE_INSENSITIVE_ORDER);
+            mKeywordGroupsMap.put(INSTALLER_PAGES,temp);
 
             set = getValidKeywords(hkeyLongParameters);
             mAllKeywordsSet.addAll(set);
-            temp2 = (String[])set.toArray(Common.EMPTY_STRING_ARRAY);
-            Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
-            mKeywordGroupsMap.put(HKEY_LONG_PARAMETERS,temp2);
+            temp = (String[])set.toArray(Common.EMPTY_STRING_ARRAY);
+            Arrays.sort(temp, String.CASE_INSENSITIVE_ORDER);
+            mKeywordGroupsMap.put(HKEY_LONG_PARAMETERS,temp);
 
             set = getValidKeywords(hkeyShortParameters);
             mAllKeywordsSet.addAll(set);
-            temp2 = (String[])set.toArray(Common.EMPTY_STRING_ARRAY);
-            Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
-            mKeywordGroupsMap.put(HKEY_SHORT_PARAMETERS,temp2);
+            temp = (String[])set.toArray(Common.EMPTY_STRING_ARRAY);
+            Arrays.sort(temp, String.CASE_INSENSITIVE_ORDER);
+            mKeywordGroupsMap.put(HKEY_SHORT_PARAMETERS,temp);
 
-            temp2 = (String[])Common.appendArray(temp2, getKeywordsGroup(HKEY_LONG_PARAMETERS));
-            Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
-            mKeywordGroupsMap.put(HKEY_PARAMETERS,temp2);
+            temp = (String[])Common.appendArray(temp, getKeywordsGroup(HKEY_LONG_PARAMETERS));
+            Arrays.sort(temp, String.CASE_INSENSITIVE_ORDER);
+            mKeywordGroupsMap.put(HKEY_PARAMETERS,temp);
 
             set = getValidKeywords(messageboxOptionButtonParameters);
             mAllKeywordsSet.addAll(set);
-            temp2 = (String[])set.toArray(Common.EMPTY_STRING_ARRAY);
-            Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
-            mKeywordGroupsMap.put(MESSAGEBOX_OPTION_BUTTON_PARAMETERS,temp2);
+            temp = (String[])set.toArray(Common.EMPTY_STRING_ARRAY);
+            Arrays.sort(temp, String.CASE_INSENSITIVE_ORDER);
+            mKeywordGroupsMap.put(MESSAGEBOX_OPTION_BUTTON_PARAMETERS,temp);
 
             set = getValidKeywords(messageboxOptionIconParameters);
             mAllKeywordsSet.addAll(set);
-            temp2 = (String[])set.toArray(Common.EMPTY_STRING_ARRAY);
-            Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
-            mKeywordGroupsMap.put(MESSAGEBOX_OPTION_ICON_PARAMETERS,temp2);
+            temp = (String[])set.toArray(Common.EMPTY_STRING_ARRAY);
+            Arrays.sort(temp, String.CASE_INSENSITIVE_ORDER);
+            mKeywordGroupsMap.put(MESSAGEBOX_OPTION_ICON_PARAMETERS,temp);
 
             set = getValidKeywords(messageboxOptionDefaultParameters);
             mAllKeywordsSet.addAll(set);
-            temp2 = (String[])set.toArray(Common.EMPTY_STRING_ARRAY);
-            Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
-            mKeywordGroupsMap.put(MESSAGEBOX_OPTION_DEFAULT_PARAMETERS,temp2);
+            temp = (String[])set.toArray(Common.EMPTY_STRING_ARRAY);
+            Arrays.sort(temp, String.CASE_INSENSITIVE_ORDER);
+            mKeywordGroupsMap.put(MESSAGEBOX_OPTION_DEFAULT_PARAMETERS,temp);
 
             set = getValidKeywords(messageboxOptionOtherParameters);
             mAllKeywordsSet.addAll(set);
-            temp2 = (String[])set.toArray(Common.EMPTY_STRING_ARRAY);
-            Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
-            mKeywordGroupsMap.put(MESSAGEBOX_OPTION_OTHER_PARAMETERS,temp2);
+            temp = (String[])set.toArray(Common.EMPTY_STRING_ARRAY);
+            Arrays.sort(temp, String.CASE_INSENSITIVE_ORDER);
+            mKeywordGroupsMap.put(MESSAGEBOX_OPTION_OTHER_PARAMETERS,temp);
 
-            temp2 = (String[])Common.appendArray(temp2, getKeywordsGroup(MESSAGEBOX_OPTION_BUTTON_PARAMETERS));
-            temp2 = (String[])Common.appendArray(temp2, getKeywordsGroup(MESSAGEBOX_OPTION_ICON_PARAMETERS));
-            temp2 = (String[])Common.appendArray(temp2, getKeywordsGroup(MESSAGEBOX_OPTION_DEFAULT_PARAMETERS));
-            Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
-            mKeywordGroupsMap.put(MESSAGEBOX_OPTION_PARAMETERS,temp2);
+            temp = (String[])Common.appendArray(temp, getKeywordsGroup(MESSAGEBOX_OPTION_BUTTON_PARAMETERS));
+            temp = (String[])Common.appendArray(temp, getKeywordsGroup(MESSAGEBOX_OPTION_ICON_PARAMETERS));
+            temp = (String[])Common.appendArray(temp, getKeywordsGroup(MESSAGEBOX_OPTION_DEFAULT_PARAMETERS));
+            Arrays.sort(temp, String.CASE_INSENSITIVE_ORDER);
+            mKeywordGroupsMap.put(MESSAGEBOX_OPTION_PARAMETERS,temp);
 
             set = getValidKeywords(messageboxReturnParameters);
             mAllKeywordsSet.addAll(set);
-            temp2 = (String[])set.toArray(Common.EMPTY_STRING_ARRAY);
-            Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
-            mKeywordGroupsMap.put(MESSAGEBOX_RETURN_PARAMETERS,temp2);
+            temp = (String[])set.toArray(Common.EMPTY_STRING_ARRAY);
+            Arrays.sort(temp, String.CASE_INSENSITIVE_ORDER);
+            mKeywordGroupsMap.put(MESSAGEBOX_RETURN_PARAMETERS,temp);
 
             set = getValidKeywords(instructionParameters);
             mAllKeywordsSet.addAll(set);
-            temp2 = (String[])set.toArray(Common.EMPTY_STRING_ARRAY);
-            temp2 = (String[])Common.appendArray(temp2, getKeywordsGroup(HKEY_PARAMETERS));
-            temp2 = (String[])Common.appendArray(temp2, getKeywordsGroup(MESSAGEBOX_OPTION_PARAMETERS));
-            temp2 = (String[])Common.appendArray(temp2, getKeywordsGroup(MESSAGEBOX_RETURN_PARAMETERS));
-            temp2 = (String[])Common.appendArray(temp2, getKeywordsGroup(INSTALLER_PAGES));
-            Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
-            temp = (String[])Common.appendArray(temp, temp2);
-            mKeywordGroupsMap.put(INSTRUCTION_PARAMETERS,temp2);
+            temp = (String[])set.toArray(Common.EMPTY_STRING_ARRAY);
+            temp = (String[])Common.appendArray(temp, getKeywordsGroup(HKEY_PARAMETERS));
+            temp = (String[])Common.appendArray(temp, getKeywordsGroup(MESSAGEBOX_OPTION_PARAMETERS));
+            temp = (String[])Common.appendArray(temp, getKeywordsGroup(MESSAGEBOX_RETURN_PARAMETERS));
+            temp = (String[])Common.appendArray(temp, getKeywordsGroup(INSTALLER_PAGES));
+            Arrays.sort(temp, String.CASE_INSENSITIVE_ORDER);
+            mKeywordGroupsMap.put(INSTRUCTION_PARAMETERS,temp);
 
             set = getValidKeywords(instructionOptions);
             mAllKeywordsSet.addAll(set);
-            temp = (String[])Common.appendArray(temp, (temp2 = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
-            Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
-            mKeywordGroupsMap.put(INSTRUCTION_OPTIONS,temp2);
+            temp = (String[])set.toArray(Common.EMPTY_STRING_ARRAY);
+            Arrays.sort(temp, String.CASE_INSENSITIVE_ORDER);
+            mKeywordGroupsMap.put(INSTRUCTION_OPTIONS,temp);
 
             set = getValidKeywords(callbacks);
             mAllKeywordsSet.addAll(set);
-            temp = (String[])Common.appendArray(temp, (temp2 = (String[])set.toArray(Common.EMPTY_STRING_ARRAY)));
-            Arrays.sort(temp2, String.CASE_INSENSITIVE_ORDER);
-            mKeywordGroupsMap.put(CALLBACKS,temp2);
+            temp = (String[])set.toArray(Common.EMPTY_STRING_ARRAY);
+            Arrays.sort(temp, String.CASE_INSENSITIVE_ORDER);
+            mKeywordGroupsMap.put(CALLBACKS,temp);
 
+            temp = (String[])mAllKeywordsSet.toArray(new String[mAllKeywordsSet.size()]);
             Arrays.sort(temp, String.CASE_INSENSITIVE_ORDER);
             mKeywordGroupsMap.put(ALL_KEYWORDS,temp);
 
