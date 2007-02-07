@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -29,15 +29,18 @@ import org.eclipse.swt.widgets.*;
 
 public abstract class NSISSettingsEditorGeneralPage extends NSISSettingsEditorPage
 {
+    private static final String LABELS = "LABELS";
+
     protected Button mHdrInfo = null;
     protected Button mLicense = null;
     protected Button mNoConfig = null;
     protected Button mNoCD = null;
     protected Combo mVerbosity = null;
+    protected Combo mProcessPriority = null;
     protected Combo mCompressor = null;
     protected Button mSolidCompression = null;
     protected TableViewer mInstructions = null;
-    
+
     private Group mGroup = null;
 
     public NSISSettingsEditorGeneralPage(NSISSettings settings)
@@ -115,7 +118,7 @@ public abstract class NSISSettingsEditorGeneralPage extends NSISSettingsEditorPa
         composite.setLayout(layout);
 
         mVerbosity = createCombo(composite,EclipseNSISPlugin.getResourceString("verbosity.text"),EclipseNSISPlugin.getResourceString("verbosity.tooltip"), //$NON-NLS-1$ //$NON-NLS-2$
-                                 INSISSettingsConstants.VERBOSITY_ARRAY, mSettings.getVerbosity());
+                                 INSISSettingsConstants.VERBOSITY_ARRAY, mSettings.getVerbosity()+1);
         Label l = new Label(composite,SWT.None);
         l.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
 
@@ -131,7 +134,43 @@ public abstract class NSISSettingsEditorGeneralPage extends NSISSettingsEditorPa
                 setSolidCompressionState();
             }
         });
+
+        mProcessPriority = createCombo(composite,EclipseNSISPlugin.getResourceString("process.priority.text"),EclipseNSISPlugin.getResourceString("process.priority.tooltip"), //$NON-NLS-1$ //$NON-NLS-2$
+                INSISSettingsConstants.PROCESS_PRIORITY_ARRAY, mSettings.getProcessPriority()+1);
+        l = new Label(composite,SWT.None);
+        l.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
+        mProcessPriority.setData(LABELS,new Object[] {mProcessPriority.getData(LABEL),l});
+        internalSetProcessPriorityVisible(NSISPreferences.INSTANCE.isProcessPrioritySupported());
         return group;
+    }
+
+    protected void setProcessPriorityVisible(boolean visible)
+    {
+        if(mProcessPriority != null && !mProcessPriority.isDisposed()) {
+            boolean oldVisible = mProcessPriority.isVisible();
+            if(oldVisible != visible) {
+                internalSetProcessPriorityVisible(visible);
+                mProcessPriority.getShell().layout(new Control[] {mProcessPriority.getParent()});
+            }
+        }
+    }
+
+    /**
+     * @param visible
+     */
+    private void internalSetProcessPriorityVisible(boolean visible)
+    {
+        mProcessPriority.setVisible(visible);
+        ((GridData)mProcessPriority.getLayoutData()).exclude = !visible;
+        Object[] data = (Object[])mProcessPriority.getData(LABELS);
+        if(!Common.isEmptyArray(data)) {
+            for (int i = 0; i < data.length; i++) {
+                if(data[i] instanceof Control && !((Control)data[i]).isDisposed()) {
+                    ((Control)data[i]).setVisible(visible);
+                    ((GridData)((Control)data[i]).getLayoutData()).exclude = !visible;
+                }
+            }
+        }
     }
 
     private void setSolidCompressionState()
@@ -213,35 +252,44 @@ public abstract class NSISSettingsEditorGeneralPage extends NSISSettingsEditorPa
             settings.setLicense(mLicense.getSelection());
             settings.setNoConfig(mNoConfig.getSelection());
             settings.setNoCD(mNoCD.getSelection());
-            settings.setVerbosity(mVerbosity.getSelectionIndex());
+            settings.setVerbosity(mVerbosity.getSelectionIndex()-1);
             settings.setCompressor(mCompressor.getSelectionIndex());
             settings.setSolidCompression(mSolidCompression.getSelection());
+            if (NSISPreferences.INSTANCE.isProcessPrioritySupported()) {
+                settings.setProcessPriority(mProcessPriority.getSelectionIndex()-1);
+            }
             settings.setInstructions((ArrayList)mInstructions.getInput());
         }
         return true;
     }
-    
+
     public void reset()
     {
         mHdrInfo.setSelection(mSettings.getHdrInfo());
         mLicense.setSelection(mSettings.getLicense());
         mNoConfig.setSelection(mSettings.getNoConfig());
         mNoCD.setSelection(mSettings.getNoCD());
-        mVerbosity.select(mSettings.getVerbosity());
+        mVerbosity.select(mSettings.getVerbosity()+1);
         mCompressor.select(mSettings.getCompressor());
         mSolidCompression.setSelection(mSettings.getSolidCompression());
+        if (NSISPreferences.INSTANCE.isProcessPrioritySupported()) {
+            mProcessPriority.select(mSettings.getProcessPriority()+1);
+        }
         mInstructions.setInput(mSettings.getInstructions());
     }
-    
+
     public void setDefaults()
     {
         mHdrInfo.setSelection(mSettings.getDefaultHdrInfo());
         mLicense.setSelection(mSettings.getDefaultLicense());
         mNoConfig.setSelection(mSettings.getDefaultNoConfig());
         mNoCD.setSelection(mSettings.getDefaultNoCD());
-        mVerbosity.select(mSettings.getDefaultVerbosity());
+        mVerbosity.select(mSettings.getDefaultVerbosity()+1);
         mCompressor.select(mSettings.getDefaultCompressor());
         mSolidCompression.setSelection(mSettings.getDefaultSolidCompression());
+        if (NSISPreferences.INSTANCE.isProcessPrioritySupported()) {
+            mProcessPriority.select(mSettings.getDefaultProcessPriority()+1);
+        }
         mInstructions.setInput(mSettings.getDefaultInstructions());
     }
 

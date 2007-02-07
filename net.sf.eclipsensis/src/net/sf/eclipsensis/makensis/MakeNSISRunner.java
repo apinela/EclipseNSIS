@@ -50,6 +50,7 @@ public class MakeNSISRunner implements INSISConstants
     public static final String MAKENSIS_VERSION_OPTION = EclipseNSISPlugin.getResourceString("makensis.version.option"); //$NON-NLS-1$
     public static final String MAKENSIS_HDRINFO_OPTION = EclipseNSISPlugin.getResourceString("makensis.hdrinfo.option"); //$NON-NLS-1$
     public static final String MAKENSIS_VERBOSITY_OPTION = EclipseNSISPlugin.getResourceString("makensis.verbosity.option"); //$NON-NLS-1$
+    public static final String MAKENSIS_PROCESS_PRIORITY_OPTION = EclipseNSISPlugin.getResourceString("makensis.process.priority.option"); //$NON-NLS-1$
     public static final String MAKENSIS_CMDHELP_OPTION = EclipseNSISPlugin.getResourceString("makensis.cmdhelp.option"); //$NON-NLS-1$
 
     private static MakeNSISProcess cCompileProcess = null;
@@ -373,6 +374,9 @@ public class MakeNSISRunner implements INSISConstants
                     ArrayList options = new ArrayList();
                     if (settings.getVerbosity() != settings.getDefaultVerbosity()) {
                         options.add(MAKENSIS_VERBOSITY_OPTION + settings.getVerbosity());
+                    }
+                    if(NSISPreferences.INSTANCE.isProcessPrioritySupported() && settings.getProcessPriority() != settings.getDefaultProcessPriority()) {
+                        options.add(MAKENSIS_PROCESS_PRIORITY_OPTION + settings.getProcessPriority());
                     }
 
                     NSISKeywords keywords = NSISKeywords.getInstance();

@@ -57,7 +57,7 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
 
     private BundleContext mBundleContext = null;
     private String mName = null;
-    private String mVersion = null;
+    private Version mVersion = null;
     private TemplateStore mTemplateStore;
     private ContributionContextTypeRegistry mContextTypeRegistry;
     private Locale mLocale;
@@ -103,7 +103,7 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
         }
         cShellImage = mImageManager.getImage(getResourceString("nsis.icon")); //$NON-NLS-1$
         mName = (String)getBundle().getHeaders().get("Bundle-Name"); //$NON-NLS-1$
-        mVersion = (String)getBundle().getHeaders().get("Bundle-Version"); //$NON-NLS-1$
+        mVersion = new Version((String)getBundle().getHeaders().get("Bundle-Version")); //$NON-NLS-1$
         if(cInvalidException != null) {
             throw new CoreException(new Status(IStatus.ERROR,PLUGIN_ID,IStatus.ERROR,cInvalidException,
                                     new RuntimeException(cInvalidException)));
@@ -618,7 +618,7 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
     /**
      * @return Returns the version.
      */
-    public String getVersion()
+    public Version getVersion()
     {
         return mVersion;
     }

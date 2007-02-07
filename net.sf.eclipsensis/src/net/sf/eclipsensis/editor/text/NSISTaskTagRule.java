@@ -91,7 +91,6 @@ public class NSISTaskTagRule implements IRule
 
     /* (non-Javadoc)
      * @see org.eclipse.jface.text.rules.IRule#evaluate(org.eclipse.jface.text.rules.ICharacterScanner)
-     * asdf TODO aaa
      */
     public IToken evaluate(ICharacterScanner scanner)
     {

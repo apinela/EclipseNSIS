@@ -37,6 +37,7 @@ public class NSISProperties extends NSISSettings implements INSISConstants
         cQualifiedNames.put(USE_PARENT, new QualifiedName(PLUGIN_ID,USE_PARENT));
         cQualifiedNames.put(HDRINFO, new QualifiedName(PLUGIN_ID,HDRINFO));
         cQualifiedNames.put(VERBOSITY, new QualifiedName(PLUGIN_ID,VERBOSITY));
+        cQualifiedNames.put(PROCESS_PRIORITY, new QualifiedName(PLUGIN_ID,PROCESS_PRIORITY));
         cQualifiedNames.put(LICENSE, new QualifiedName(PLUGIN_ID,LICENSE));
         cQualifiedNames.put(NOCONFIG, new QualifiedName(PLUGIN_ID,NOCONFIG));
         cQualifiedNames.put(NOCD, new QualifiedName(PLUGIN_ID,NOCD));
@@ -103,6 +104,7 @@ public class NSISProperties extends NSISSettings implements INSISConstants
             setNoConfig(getDefaultNoConfig());
             setNoCD(getDefaultNoCD());
             setVerbosity(getDefaultVerbosity());
+            setProcessPriority(getDefaultProcessPriority());
             setCompressor(getDefaultCompressor());
             setSolidCompression(getDefaultSolidCompression());
             setSymbols(getDefaultSymbols());
@@ -198,6 +200,16 @@ public class NSISProperties extends NSISSettings implements INSISConstants
         }
         else {
             return super.getVerbosity();
+        }
+    }
+
+    public int getProcessPriority()
+    {
+        if(getUseParent()) {
+            return mParentSettings.getProcessPriority();
+        }
+        else {
+            return super.getProcessPriority();
         }
     }
 

@@ -45,7 +45,7 @@ The EclipseNSIS Preferences page has two tabs:</p>
 <p style="text-align: center;"><img
  alt="EclipseNSIS Preferences General Tab" src="images/preferences1.gif"
  ismap="ismap"
- style="border: medium none ; width: 465px; height: 503px;"
+ style="border: medium none ; width: 466px; height: 517px;"
  usemap="#preferences1"></p>
   <a name="a_nsishome"></a><dl id="id_nsishome"><dt>NSIS
 Home</dt>
@@ -129,9 +129,15 @@ for NSIS scripts. This overrides any
 compressor settings in the script. When the Best compressor option is
 selected, all compressors are tried, and the one with the best
 compression is used for creating the installer. The "Solid" checkbox appears if the
-specified version of MakeNSIS.exe supports the <strong>SetCompressor /SOLID</strong> option. 
+specified version of MakeNSIS.exe supports the <strong>SetCompressor /SOLID</strong> option.
 The Solid checkbox is enabled only if a compressor is selected explicitly. <a
  href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+  <a name="a_priority"></a><dl id="id_priority">
+    <dt>Process Priority</dt>
+    <dd>Sets the  compiler process priority.  Equivalent to the /P compiler option.This setting
+  is only available if the specified version of MakeNSIS.exe supports this option (MakeNSIS 2.24 or better). <a
+ href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd>
+  </dl>
   <a name="a_instructions"></a><dl id="id_instructions"><dt>Instructions</dt>
   <dd>Instructions for the
 MakeNSIS compiler to execute prior to
@@ -174,7 +180,7 @@ compiling the script. Equivalent to the /D compiler option. The
 following buttons allow the manipulation and configuration of symbol
 definitions. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
   <dl>
-    <a name="a_add2"><dl id="id_add2"><dt></a>Add</dt>
+    <a name="a_add2">/a><dl id="id_add2"><dt><Add</dt>
     <dd>Add a new symbol. <a href="javascript:history.go(-1)">&larr;
 Back</a></dd></dl>
     <a name="a_edit2"></a><dl id="id_edit2"><dt>Edit</dt>
@@ -202,55 +208,58 @@ to Preferences</a><br>
 &copy; 2004-2007 Sunil Kamath
 (IcemanK).</small></strong></p>
 <map name="preferences1">
-<area id="down1" onclick="highlightDef('id_down1');" shape="RECT"
- href="#a_down1" alt="Move down" coords="422,424,452,448">
-<area id="up1" onclick="highlightDef('id_up1');" shape="RECT"
- href="#a_up1" alt="Move up" coords="422,393,452,417">
-<area id="delete1" onclick="highlightDef('id_delete1');" shape="RECT"
- href="#a_delete1" alt="Delete" coords="422,362,452,386">
-<area id="edit1" onclick="highlightDef('id_edit1');" shape="RECT"
- href="#a_edit1" alt="Edit" coords="422,330,452,354">
-<area id="add1" onclick="highlightDef('id_add1');" shape="RECT"
- href="#a_add1" alt="Add" coords="422,300,452,324">
-<area id="instructions" onclick="highlightDef('id_instructions');"
+<area id="edit1" onClick="highlightDef('id_edit1');" shape="RECT"
+ href="#a_edit1" alt="Edit" coords="423,357,453,381">
+<area id="add1" onClick="highlightDef('id_add1');" shape="RECT"
+ href="#a_add1" alt="Add" coords="423,326,453,350">
+<area id="delete1" onClick="highlightDef('id_delete1');" shape="RECT"
+ href="#a_delete1" alt="Delete" coords="423,388,453,412">
+<area id="up1" onClick="highlightDef('id_up1');" shape="RECT"
+ href="#a_up1" alt="Move up" coords="423,419,453,443">
+<area id="down1" onClick="highlightDef('id_down1');" shape="RECT"
+ href="#a_down1" alt="Move down" coords="423,450,453,474">
+<area id="instructions" onClick="highlightDef('id_instructions');"
  shape="RECT" href="#a_instructions" alt="Instructions"
- coords="17,275,420,459">
-<area id="compressor" onclick="highlightDef('id_compressor');"
+ coords="20,305,420,474">
+<area id="priority" onClick="highlightDef('id_priority');"
+ shape="RECT" href="#a_priority" alt="Compiler process priority"
+ coords="28,267,297,290">
+<area id="compressor" onClick="highlightDef('id_compressor');"
  shape="RECT" href="#a_compressor" alt="Compressor settings"
- coords="27,241,339,264">
-<area id="verbosity" onclick="highlightDef('id_verbosity');"
+ coords="27,241,343,263">
+<area id="verbosity" onClick="highlightDef('id_verbosity');"
  shape="RECT" href="#a_verbosity" alt="Compiler verbosity"
- coords="26,215,292,238">
-<area id="nocd" onclick="highlightDef('id_nocd');" shape="RECT"
+ coords="28,215,297,238">
+<area id="nocd" onClick="highlightDef('id_nocd');" shape="RECT"
  href="#a_nocd" alt="Don't change directory" coords="210,196,338,210">
-<area id="noconfig" onclick="highlightDef('id_noconfig');" shape="RECT"
+<area id="noconfig" onClick="highlightDef('id_noconfig');" shape="RECT"
  href="#a_noconfig" alt="Exclude NSIS config" coords="28,195,203,209">
-<area id="license" onclick="highlightDef('id_license');" shape="RECT"
+<area id="license" onClick="highlightDef('id_license');" shape="RECT"
  href="#a_license" alt="Print license" coords="211,174,313,188">
-<area id="hdrinfo" onclick="highlightDef('id_hdrinfo');" shape="RECT"
+<area id="hdrinfo" onClick="highlightDef('id_hdrinfo');" shape="RECT"
  href="#a_hdrinfo" alt="Print header info" coords="29,174,154,188">
-<area id="notify" onclick="highlightDef('id_notify');" shape="RECT"
+<area id="notify" onClick="highlightDef('id_notify');" shape="RECT"
  href="#a_notify" alt="Notify when MakeNSIS.exe has changed" coords="20,129,312,145">
-<area id="help" onclick="highlightDef('id_help');" shape="RECT"
- href="#a_help" alt="Use Eclipse Platform Help" coords="20,109,321,124">
-<area id="autoconsole" onclick="highlightDef('id_autoconsole');"
+<area id="help" onClick="highlightDef('id_help');" shape="RECT"
+ href="#a_help" alt="Use Eclipse Platform Help" coords="20,109,322,124">
+<area id="autoconsole" onClick="highlightDef('id_autoconsole');"
  shape="RECT" href="#a_autoconsole" alt="Auto-open Console"
- coords="18,83,452,105">
-<area id="nsishome" onclick="highlightDef('id_nsishome');" shape="RECT"
- href="#a_nsishome" alt="NSIS Home" coords="18,55,450,78">
+ coords="20,83,454,105">
+<area id="nsishome" onClick="highlightDef('id_nsishome');" shape="RECT"
+ href="#a_nsishome" alt="NSIS Home" coords="20,55,452,78">
 </map>
 <map name="preferences2">
-<area id="add2" onclick="highlightDef('id_add2');" shape="RECT"
+<area id="add2" onClick="highlightDef('id_add2');" shape="RECT"
  href="#a_add2" alt="Add" coords="385,68, 410,92">
-<area id="edit2" onclick="highlightDef('id_edit2');" shape="RECT"
+<area id="edit2" onClick="highlightDef('id_edit2');" shape="RECT"
  href="#a_edit2" alt="Edit" coords="385,99, 410,123">
-<area id="delete2" onclick="highlightDef('id_delete2');" shape="RECT"
+<area id="delete2" onClick="highlightDef('id_delete2');" shape="RECT"
  href="#a_delete2" alt="Delete" coords="385,130, 410,154">
-<area id="down2" onclick="highlightDef('id_down2');" shape="RECT"
+<area id="down2" onClick="highlightDef('id_down2');" shape="RECT"
  href="#a_down2" alt="Down" coords="385,192, 410,216">
-<area id="up2" onclick="highlightDef('id_up2');" shape="RECT"
+<area id="up2" onClick="highlightDef('id_up2');" shape="RECT"
  href="#a_up2" alt="Up" coords="385,161, 410,185">
-<area id="symbols" onclick="highlightDef('id_symbols');" shape="RECT"
+<area id="symbols" onClick="highlightDef('id_symbols');" shape="RECT"
  href="#a_symbols" alt="Defined Symbols" coords="16,68, 374,467">
 </map>
 </div>

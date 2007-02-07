@@ -15,16 +15,20 @@ import java.util.LinkedHashMap;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.makensis.MakeNSISRunner;
+import net.sf.eclipsensis.util.Version;
 
 public abstract class NSISSettings implements INSISSettingsConstants
 {
     protected static File cPluginStateLocation = EclipseNSISPlugin.getPluginStateLocation();
-    
+
+    protected static Version cPluginVersion0_9_5_1 = new Version("0.9.5.1");
+
     private boolean mHdrInfo = false;
     private boolean mLicense = false;
     private boolean mNoConfig = false;
     private boolean mNoCD = false;
-    private int mVerbosity = INSISSettingsConstants.VERBOSITY_ALL;
+    private int mVerbosity = INSISSettingsConstants.VERBOSITY_DEFAULT;
+    private int mProcessPriority = INSISSettingsConstants.PROCESS_PRIORITY_DEFAULT;
     private int mCompressor = MakeNSISRunner.COMPRESSOR_DEFAULT;
     private boolean mSolidCompression = false;
     private ArrayList mInstructions = null;
@@ -37,10 +41,24 @@ public abstract class NSISSettings implements INSISSettingsConstants
         setNoConfig(getBoolean(NOCONFIG));
         setNoCD(getBoolean(NOCD));
         setVerbosity(getInt(VERBOSITY));
+        setProcessPriority(getInt(PROCESS_PRIORITY));
         setCompressor(getInt(COMPRESSOR));
         setSolidCompression(getBoolean(SOLID_COMPRESSION));
         setInstructions((ArrayList)loadObject(INSTRUCTIONS));
         setSymbols((LinkedHashMap)loadObject(SYMBOLS));
+        migrate();
+    }
+
+    protected void migrate()
+    {
+        Version settingsVersion = new Version(getString(PLUGIN_VERSION));
+        if(EclipseNSISPlugin.getDefault().getVersion().compareTo(settingsVersion) > 0) {
+            if(cPluginVersion0_9_5_1.compareTo(settingsVersion) > 0) {
+                if(getVerbosity() == INSISSettingsConstants.VERBOSITY_ALL) {
+                    setVerbosity(getDefaultVerbosity());
+                }
+            }
+        }
     }
 
     public void store()
@@ -50,12 +68,14 @@ public abstract class NSISSettings implements INSISSettingsConstants
         setValue(NOCONFIG, mNoConfig);
         setValue(NOCD, mNoCD);
         setValue(VERBOSITY,mVerbosity);
+        setValue(PROCESS_PRIORITY,mProcessPriority);
         setValue(COMPRESSOR, mCompressor);
         setValue(SOLID_COMPRESSION, mSolidCompression);
+        setValue(PLUGIN_VERSION,EclipseNSISPlugin.getDefault().getVersion().toString());
         storeObject(SYMBOLS, mSymbols);
         storeObject(INSTRUCTIONS, mInstructions);
     }
-    
+
     public boolean showStatistics()
     {
         return true;
@@ -207,7 +227,7 @@ public abstract class NSISSettings implements INSISSettingsConstants
      */
     public int getDefaultVerbosity()
     {
-        return VERBOSITY_ALL;
+        return VERBOSITY_DEFAULT;
     }
 
     /**
@@ -216,6 +236,30 @@ public abstract class NSISSettings implements INSISSettingsConstants
     public void setVerbosity(int verbosity)
     {
         mVerbosity = verbosity;
+    }
+
+    /**
+     * @return Returns the processPriority.
+     */
+    public int getProcessPriority()
+    {
+        return mProcessPriority;
+    }
+
+    /**
+     * @return Returns the default processPriority.
+     */
+    public int getDefaultProcessPriority()
+    {
+        return PROCESS_PRIORITY_DEFAULT;
+    }
+
+    /**
+     * @param processPriority The processPriority to set.
+     */
+    public void setProcessPriority(int processPriority)
+    {
+        mProcessPriority = processPriority;
     }
 
     /**

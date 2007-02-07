@@ -66,7 +66,7 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
                 resource = "preview.action.mui.label"; //$NON-NLS-1$
                 symbols.put("PREVIEW_MUI",null); //$NON-NLS-1$
         }
-        mSettings.setVerbosity(INSISSettingsConstants.VERBOSITY_ALL);
+        mSettings.setVerbosity(INSISSettingsConstants.VERBOSITY_DEFAULT);
         mSettings.setSymbols(symbols);
         String label = InstallOptionsPlugin.getResourceString(resource);
         setText(label);
@@ -214,7 +214,7 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
                                         {
                                             return NSISConsoleLine.info(text);
                                         }
-   
+
                                         public void reset()
                                         {
                                         }
@@ -276,11 +276,11 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
 
     private File getPreviewScript() throws IOException
     {
-        return IOUtility.ensureLatest(InstallOptionsPlugin.getDefault().getBundle(), 
+        return IOUtility.ensureLatest(InstallOptionsPlugin.getDefault().getBundle(),
                 new Path("/preview/preview.nsi"),  //$NON-NLS-1$
                 new File(InstallOptionsPlugin.getPluginStateLocation(),"preview")); //$NON-NLS-1$
     }
-    
+
     private class PreviewSettings extends NSISSettings
     {
         public boolean showStatistics()

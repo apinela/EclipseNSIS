@@ -56,6 +56,8 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
     public static final Version VERSION_2_07 = new Version("2.07"); //$NON-NLS-1$
     public static final String NSIS_CONFIG_COMPRESSION_SUPPORT="NSIS_CONFIG_COMPRESSION_SUPPORT"; //$NON-NLS-1$
 
+    public static final Version VERSION_2_24 = new Version("2.24"); //$NON-NLS-1$
+
     private IPreferenceStore mPreferenceStore = null;
     private File mNSISExe = null;
     private String mNSISHome = null;
@@ -68,6 +70,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
     private boolean mCaseSensitiveTaskTags = true;
     private List mListeners = new ArrayList();
     private boolean mSolidCompressionSupported = false;
+    private boolean mProcessPrioritySupported = false;
 
     static
     {
@@ -140,6 +143,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
         initializePreference(NOCONFIG,(getDefaultNoConfig()?Boolean.TRUE:Boolean.FALSE));
         initializePreference(NOCD,(getDefaultNoCD()?Boolean.TRUE:Boolean.FALSE));
         initializePreference(VERBOSITY,new Integer(getDefaultVerbosity()));
+        initializePreference(PROCESS_PRIORITY,new Integer(getDefaultProcessPriority()));
         initializePreference(COMPRESSOR,new Integer(getDefaultCompressor()));
         initializePreference(SOLID_COMPRESSION,(getDefaultSolidCompression()?Boolean.TRUE:Boolean.FALSE));
         initializePreference(AUTO_SHOW_CONSOLE,new Integer(AUTO_SHOW_CONSOLE_ALWAYS));
@@ -331,6 +335,12 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
         return mSolidCompressionSupported;
     }
 
+
+    public boolean isProcessPrioritySupported()
+    {
+        return mProcessPrioritySupported;
+    }
+
     /**
      * @param nsisHome The NSISHome to set.
      */
@@ -373,12 +383,14 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
             mNSISDefaultSymbols = NSISValidator.loadNSISDefaultSymbols(mNSISExe);
             FileMonitor.INSTANCE.register(mNSISExe,this);
             mSolidCompressionSupported = (mNSISVersion.compareTo(VERSION_2_07) >=0 && mNSISDefaultSymbols.containsKey(NSIS_CONFIG_COMPRESSION_SUPPORT));
+            mProcessPrioritySupported = mNSISVersion.compareTo(VERSION_2_24) >=0;
         }
         else {
             mNSISHome = ""; //$NON-NLS-1$
             mNSISVersion = Version.EMPTY_VERSION;
             mNSISDefaultSymbols = null;
             mSolidCompressionSupported = false;
+            mProcessPrioritySupported = false;
         }
     }
 

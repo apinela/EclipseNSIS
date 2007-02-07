@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -30,6 +30,7 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 public abstract class NSISSettingsEditorPage implements DisposeListener
 {
+    protected static final String LABEL = "LABEL";
     protected NSISSettings mSettings = null;
     private List mListeners = new ArrayList();
     private Control mControl = null;
@@ -38,7 +39,7 @@ public abstract class NSISSettingsEditorPage implements DisposeListener
     {
         mSettings = settings;
     }
-    
+
     public void addListener(INSISSettingsEditorPageListener listener)
     {
         if (!mListeners.contains(listener)) {
@@ -70,7 +71,7 @@ public abstract class NSISSettingsEditorPage implements DisposeListener
             controls[i].setEnabled(state);
         }
     }
-    
+
     protected Button createCheckBox(Composite parent, String text, String tooltipText, boolean state)
     {
         Button button = new Button(parent, SWT.CHECK | SWT.LEFT);
@@ -123,6 +124,7 @@ public abstract class NSISSettingsEditorPage implements DisposeListener
         });
         data = new GridData(SWT.FILL, SWT.CENTER, true, false);
         combo.setLayoutData(data);
+        combo.setData(LABEL, label);
         return combo;
     }
 
@@ -148,7 +150,7 @@ public abstract class NSISSettingsEditorPage implements DisposeListener
             table.setHeaderVisible(true);
             table.setLinesVisible(true);
             TableColumn[] columns = new TableColumn[columnNames.length];
-            
+
             for(int i=0; i<columnNames.length; i++) {
                 columns[i] = new TableColumn(table,SWT.LEFT,i);
                 columns[i].setText(columnNames[i]);

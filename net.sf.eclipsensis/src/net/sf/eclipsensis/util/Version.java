@@ -34,7 +34,7 @@ public class Version implements Comparable, Serializable
 
     public Version(String version, String separators)
     {
-        mDisplayText = version;
+        mDisplayText = (Common.isEmpty(version)?"0.0":version); //$NON-NLS-1$
         StringTokenizer st = new StringTokenizer(mDisplayText,separators);
         mNumbers = new int[st.countTokens()];
         mQualifiers = new String[mNumbers.length];

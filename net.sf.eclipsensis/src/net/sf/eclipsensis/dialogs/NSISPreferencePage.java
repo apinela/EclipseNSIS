@@ -53,6 +53,7 @@ public class NSISPreferencePage	extends NSISSettingsPage implements INSISPrefere
         }
     };
     private static Map cSolidCompressionMap = new HashMap();
+    private static Map cProcessPriorityMap = new HashMap();
     private static final String[] cAutoShowConsoleText;
 
     static {
@@ -73,7 +74,7 @@ public class NSISPreferencePage	extends NSISSettingsPage implements INSISPrefere
         }
         cInternalNSISHomes = (List)nsisHomes;
         NSIS_HOMES = Collections.unmodifiableList(cInternalNSISHomes);
-        
+
         cAutoShowConsoleText = new String[AUTO_SHOW_CONSOLE_ARRAY.length];
         for (int i = 0; i < AUTO_SHOW_CONSOLE_ARRAY.length; i++) {
             cAutoShowConsoleText[i] = EclipseNSISPlugin.getResourceString("auto.show.console."+AUTO_SHOW_CONSOLE_ARRAY[i]); //$NON-NLS-1$
@@ -163,7 +164,7 @@ public class NSISPreferencePage	extends NSISSettingsPage implements INSISPrefere
             mNSISExe = NSISPreferences.INSTANCE.getNSISExeFile();
             return NSISPreferences.INSTANCE;
         }
-        
+
         private class PreferencesEditorGeneralPage extends NSISSettingsEditorGeneralPage
         {
             private ComboViewer mNSISHome = null;
@@ -205,6 +206,28 @@ public class NSISPreferencePage	extends NSISSettingsPage implements INSISPrefere
                 return false;
             }
 
+            protected boolean isProcessPrioritySupported()
+            {
+                if(mNSISVersion.compareTo(NSISPreferences.VERSION_2_24) >= 0) {
+                    if(IOUtility.isValidFile(mNSISExe)) {
+                        long[] data = (long[])cProcessPriorityMap.get(mNSISExe);
+                        if(data != null) {
+                            if(data[0] == mNSISExe.lastModified() && data[1] == mNSISExe.length()) {
+                                return true;
+                            }
+                        }
+                        else {
+                            data = new long[2];
+                        }
+                        data[0] = mNSISExe.lastModified();
+                        data[1] = mNSISExe.length();
+                        cProcessPriorityMap.put(mNSISExe,data);
+                        return true;
+                    }
+                }
+                return false;
+            }
+
             private boolean handleNSISHomeChange(boolean eraseInvalid)
             {
                 if(mNSISHomeDirty && !mHandlingNSISHomeChange) {
@@ -228,12 +251,14 @@ public class NSISPreferencePage	extends NSISSettingsPage implements INSISPrefere
                                 mNSISVersion = Version.EMPTY_VERSION;
                                 mNSISExe = null;
                                 mSolidCompression.setVisible(false);
+                                setProcessPriorityVisible(false);
                             }
                             else {
                                 state = true;
                                 mNSISExe = new File(nsisHome, MAKENSIS_EXE);
                                 mNSISVersion = NSISValidator.getNSISVersion(mNSISExe);
                                 mSolidCompression.setVisible(isSolidCompressionSupported());
+                                setProcessPriorityVisible(isProcessPrioritySupported());
                                 mNSISHomeDirty = false;
                             }
                         }
@@ -251,7 +276,7 @@ public class NSISPreferencePage	extends NSISSettingsPage implements INSISPrefere
                 }
                 return true;
             }
-            
+
             public void setDefaults()
             {
                 super.setDefaults();
@@ -259,7 +284,7 @@ public class NSISPreferencePage	extends NSISSettingsPage implements INSISPrefere
                 mAutoShowConsole.select(0);
                 mNotifyMakeNSISChanged.setSelection(false);
             }
-            
+
             private int getAutoShowConsoleIndex(int autoShowConsole)
             {
                 for (int i = 0; i < AUTO_SHOW_CONSOLE_ARRAY.length; i++) {
