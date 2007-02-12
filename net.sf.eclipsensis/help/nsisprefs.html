@@ -45,7 +45,7 @@ The EclipseNSIS Preferences page has two tabs:</p>
 <p style="text-align: center;"><img
  alt="EclipseNSIS Preferences General Tab" src="images/preferences1.gif"
  ismap="ismap"
- style="border: medium none ; width: 466px; height: 517px;"
+ style="border: medium none ; width: 466px; height: 539px;"
  usemap="#preferences1"></p>
   <a name="a_nsishome"></a><dl id="id_nsishome"><dt>NSIS
 Home</dt>
@@ -138,6 +138,12 @@ The Solid checkbox is enabled only if a compressor is selected explicitly. <a
   is only available if the specified version of MakeNSIS.exe supports this option (MakeNSIS 2.24 or better). <a
  href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd>
   </dl>
+  <a name="a_warnPriority"></a><dl id="id_warnPriority">
+    <dt>Show warning when High or Realtime process priority is selected</dt>
+    <dd>If the  compiler <a href="#a_priority">process priority</a> is set to High or Realtime, severe performance degradation may occur.  If this setting is selected, then EclipseNSIS will display a warning and confirmation if the process priority is set to High or Realtime, whether it is in the EclipseNSIS preferences, the <a href="properties.html">script properties</a> for a resource or even in the <a href="compiling.html#config_general">launch</a> or <a href="compiling.html#config_general2">project builder</a> configuration settings..This setting
+  is only available if the specified version of MakeNSIS.exe supports setting the compiler process priority (MakeNSIS 2.24 or better). <a
+ href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd>
+  </dl>
   <a name="a_instructions"></a><dl id="id_instructions"><dt>Instructions</dt>
   <dd>Instructions for the
 MakeNSIS compiler to execute prior to
@@ -180,7 +186,7 @@ compiling the script. Equivalent to the /D compiler option. The
 following buttons allow the manipulation and configuration of symbol
 definitions. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
   <dl>
-    <a name="a_add2">/a><dl id="id_add2"><dt><Add</dt>
+    <a name="a_add2"></a><dl id="id_add2"><dt>Add</dt>
     <dd>Add a new symbol. <a href="javascript:history.go(-1)">&larr;
 Back</a></dd></dl>
     <a name="a_edit2"></a><dl id="id_edit2"><dt>Edit</dt>
@@ -208,36 +214,39 @@ to Preferences</a><br>
 &copy; 2004-2007 Sunil Kamath
 (IcemanK).</small></strong></p>
 <map name="preferences1">
-<area id="edit1" onClick="highlightDef('id_edit1');" shape="RECT"
- href="#a_edit1" alt="Edit" coords="423,357,453,381">
 <area id="add1" onClick="highlightDef('id_add1');" shape="RECT"
- href="#a_add1" alt="Add" coords="423,326,453,350">
+ href="#a_add1" alt="Add" coords="423,347,453,371">
+<area id="edit1" onClick="highlightDef('id_edit1');" shape="RECT"
+ href="#a_edit1" alt="Edit" coords="423,378,453,402">
 <area id="delete1" onClick="highlightDef('id_delete1');" shape="RECT"
- href="#a_delete1" alt="Delete" coords="423,388,453,412">
-<area id="up1" onClick="highlightDef('id_up1');" shape="RECT"
- href="#a_up1" alt="Move up" coords="423,419,453,443">
+ href="#a_delete1" alt="Delete" coords="423,409,453,433">
 <area id="down1" onClick="highlightDef('id_down1');" shape="RECT"
- href="#a_down1" alt="Move down" coords="423,450,453,474">
+ href="#a_down1" alt="Move down" coords="423,471,453,495">
+<area id="up1" onClick="highlightDef('id_up1');" shape="RECT"
+ href="#a_up1" alt="Move up" coords="423,440,453,464">
 <area id="instructions" onClick="highlightDef('id_instructions');"
  shape="RECT" href="#a_instructions" alt="Instructions"
- coords="20,305,420,474">
+ coords="20,326,420,495">
 <area id="priority" onClick="highlightDef('id_priority');"
  shape="RECT" href="#a_priority" alt="Compiler process priority"
- coords="28,267,297,290">
-<area id="compressor" onClick="highlightDef('id_compressor');"
- shape="RECT" href="#a_compressor" alt="Compressor settings"
- coords="27,241,343,263">
+ coords="28,267,329,289">
+<area id="warnPriority" onClick="highlightDef('id_warnPriority');"
+ shape="RECT" href="#a_warnPriority" alt="High/Realtime process priority warning"
+ coords="49,295,374,309">
+<area id="noconfig" onClick="highlightDef('id_noconfig');"
+ shape="RECT" href="#a_noconfig" alt="Exclude NSIS config"
+ coords="28,195,203,209">
 <area id="verbosity" onClick="highlightDef('id_verbosity');"
  shape="RECT" href="#a_verbosity" alt="Compiler verbosity"
- coords="28,215,297,238">
+ coords="28,215,329,237">
+<area id="compressor" onClick="highlightDef('id_compressor');" shape="RECT"
+ href="#a_compressor" alt="Compressor settings" coords="28,241,372,263">
+<area id="license" onClick="highlightDef('id_license');" shape="RECT"
+ href="#a_license" alt="Print license" coords="211,175,313,189">
 <area id="nocd" onClick="highlightDef('id_nocd');" shape="RECT"
  href="#a_nocd" alt="Don't change directory" coords="210,196,338,210">
-<area id="noconfig" onClick="highlightDef('id_noconfig');" shape="RECT"
- href="#a_noconfig" alt="Exclude NSIS config" coords="28,195,203,209">
-<area id="license" onClick="highlightDef('id_license');" shape="RECT"
- href="#a_license" alt="Print license" coords="211,174,313,188">
 <area id="hdrinfo" onClick="highlightDef('id_hdrinfo');" shape="RECT"
- href="#a_hdrinfo" alt="Print header info" coords="29,174,154,188">
+ href="#a_hdrinfo" alt="Print header info" coords="29,175,154,189">
 <area id="notify" onClick="highlightDef('id_notify');" shape="RECT"
  href="#a_notify" alt="Notify when MakeNSIS.exe has changed" coords="20,129,312,145">
 <area id="help" onClick="highlightDef('id_help');" shape="RECT"

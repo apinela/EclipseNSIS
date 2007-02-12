@@ -53,14 +53,14 @@ public class NSISPropertyPage extends NSISSettingsPage
     {
         return new PropertiesEditor();
     }
-    
+
     private class PropertiesEditor extends NSISSettingsEditor
     {
         protected NSISSettingsEditorGeneralPage createGeneralPage()
         {
             return new PropertiesEditorGeneralPage(getSettings());
         }
-        
+
         protected NSISSettingsEditorSymbolsPage createSymbolsPage()
         {
             return new PropertiesEditorSymbolsPage(getSettings());
@@ -98,7 +98,7 @@ public class NSISPropertyPage extends NSISSettingsPage
                 }
             }
         }
-        
+
         private class PropertiesEditorGeneralPage extends NSISSettingsEditorGeneralPage
         {
             private Button mUseParent = null;

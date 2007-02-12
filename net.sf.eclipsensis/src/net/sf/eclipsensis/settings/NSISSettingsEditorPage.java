@@ -30,7 +30,7 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 public abstract class NSISSettingsEditorPage implements DisposeListener
 {
-    protected static final String LABEL = "LABEL";
+    protected static final String LABEL = "LABEL"; //$NON-NLS-1$
     protected NSISSettings mSettings = null;
     private List mListeners = new ArrayList();
     private Control mControl = null;

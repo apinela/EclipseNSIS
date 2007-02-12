@@ -173,6 +173,7 @@ public class NSISPreferencePage	extends NSISSettingsPage implements INSISPrefere
             private Button mNotifyMakeNSISChanged = null;
             private boolean mNSISHomeDirty = false;
             private boolean mHandlingNSISHomeChange = false;
+            private Button mWarnProcessPriority = null;
 
             public PreferencesEditorGeneralPage(NSISSettings settings)
             {
@@ -283,6 +284,7 @@ public class NSISPreferencePage	extends NSISSettingsPage implements INSISPrefere
                 mUseEclipseHelp.setSelection(true);
                 mAutoShowConsole.select(0);
                 mNotifyMakeNSISChanged.setSelection(false);
+                mWarnProcessPriority.setSelection(true);
             }
 
             private int getAutoShowConsoleIndex(int autoShowConsole)
@@ -302,6 +304,7 @@ public class NSISPreferencePage	extends NSISSettingsPage implements INSISPrefere
                 mUseEclipseHelp.setSelection(prefs.isUseEclipseHelp());
                 mAutoShowConsole.select(getAutoShowConsoleIndex(prefs.getAutoShowConsole()));
                 mNotifyMakeNSISChanged.setSelection(prefs.getBoolean(NOTIFY_MAKENSIS_CHANGED));
+                mWarnProcessPriority.setSelection(prefs.getPreferenceStore().getBoolean(WARN_PROCESS_PRIORITY));
                 super.reset();
             }
 
@@ -348,6 +351,7 @@ public class NSISPreferencePage	extends NSISSettingsPage implements INSISPrefere
                         preferences.setAutoShowConsole(AUTO_SHOW_CONSOLE_ARRAY[mAutoShowConsole.getSelectionIndex()]);
                         preferences.setUseEclipseHelp(mUseEclipseHelp.getSelection());
                         preferences.setValue(NOTIFY_MAKENSIS_CHANGED, mNotifyMakeNSISChanged.getSelection());
+                        preferences.getPreferenceStore().setValue(WARN_PROCESS_PRIORITY, mWarnProcessPriority.getSelection());
                         return true;
                     }
                 }
@@ -359,12 +363,51 @@ public class NSISPreferencePage	extends NSISSettingsPage implements INSISPrefere
                 mAutoShowConsole.setEnabled(state);
                 mUseEclipseHelp.setEnabled(state);
                 mNotifyMakeNSISChanged.setEnabled(state);
+                mWarnProcessPriority.setEnabled(state);
                 super.enableControls(state);
             }
 
             public boolean canEnableControls()
             {
                 return !Common.isEmpty(mNSISHome.getCombo().getText());
+            }
+
+            protected void createProcessPriorityCombo(Composite parent)
+            {
+                super.createProcessPriorityCombo(parent);
+                mWarnProcessPriority = new Button(parent,SWT.CHECK);
+                mWarnProcessPriority.setText(EclipseNSISPlugin.getResourceString("warn.process.priority.label")); //$NON-NLS-1$
+                mWarnProcessPriority.setSelection(NSISPreferences.INSTANCE.getPreferenceStore().getBoolean(WARN_PROCESS_PRIORITY));
+                GridData data = new GridData(SWT.FILL,SWT.FILL,true,false);
+                data.horizontalIndent=20;
+                data.horizontalSpan = ((GridLayout)parent.getLayout()).numColumns;
+                mWarnProcessPriority.setLayoutData(data);
+            }
+
+            protected void internalSetProcessPriorityVisible(boolean visible)
+            {
+                super.internalSetProcessPriorityVisible(visible);
+                if(mWarnProcessPriority != null && !mWarnProcessPriority.isDisposed()) {
+                    mWarnProcessPriority.setVisible(visible);
+                }
+            }
+
+            protected boolean isWarnProcessPriority()
+            {
+                if(mWarnProcessPriority != null && !mWarnProcessPriority.isDisposed()) {
+                    return mWarnProcessPriority.getSelection();
+                }
+                return super.isWarnProcessPriority();
+            }
+
+            protected void setWarnProcessPriority(boolean warnProcessPriority)
+            {
+                if(mWarnProcessPriority != null && !mWarnProcessPriority.isDisposed()) {
+                    mWarnProcessPriority.setSelection(warnProcessPriority);
+                }
+                else {
+                    super.setWarnProcessPriority(warnProcessPriority);
+                }
             }
 
             protected Composite createMasterControl(Composite parent)

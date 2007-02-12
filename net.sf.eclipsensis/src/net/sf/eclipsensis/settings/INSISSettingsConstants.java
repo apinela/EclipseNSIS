@@ -23,7 +23,7 @@ public interface INSISSettingsConstants
     public static final String SOLID_COMPRESSION = "solidCompression"; //$NON-NLS-1$
     public static final String INSTRUCTIONS = "instructions"; //$NON-NLS-1$
     public static final String SYMBOLS = "symbols"; //$NON-NLS-1$
-    public static final String PLUGIN_VERSION = "pluginVersion";
+    public static final String PLUGIN_VERSION = "pluginVersion"; //$NON-NLS-1$
     public static final int VERBOSITY_DEFAULT = -1;
     public static final int VERBOSITY_NONE = 0;
     public static final int VERBOSITY_ERRORS = 1;

@@ -144,6 +144,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
         initializePreference(NOCD,(getDefaultNoCD()?Boolean.TRUE:Boolean.FALSE));
         initializePreference(VERBOSITY,new Integer(getDefaultVerbosity()));
         initializePreference(PROCESS_PRIORITY,new Integer(getDefaultProcessPriority()));
+        initializePreference(WARN_PROCESS_PRIORITY,Boolean.TRUE);
         initializePreference(COMPRESSOR,new Integer(getDefaultCompressor()));
         initializePreference(SOLID_COMPRESSION,(getDefaultSolidCompression()?Boolean.TRUE:Boolean.FALSE));
         initializePreference(AUTO_SHOW_CONSOLE,new Integer(AUTO_SHOW_CONSOLE_ALWAYS));

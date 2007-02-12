@@ -21,7 +21,7 @@ public abstract class NSISSettings implements INSISSettingsConstants
 {
     protected static File cPluginStateLocation = EclipseNSISPlugin.getPluginStateLocation();
 
-    protected static Version cPluginVersion0_9_5_1 = new Version("0.9.5.1");
+    protected static Version cPluginVersion0_9_5_1 = new Version("0.9.5.1"); //$NON-NLS-1$
 
     private boolean mHdrInfo = false;
     private boolean mLicense = false;

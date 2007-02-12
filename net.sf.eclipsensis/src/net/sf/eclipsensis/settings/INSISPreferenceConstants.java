@@ -43,6 +43,8 @@ public interface INSISPreferenceConstants extends INSISSettingsConstants
     public static final String TASK_TAGS_STYLE = "taskTagsStyle"; //$NON-NLS-1$
     public static final String PLUGINS_STYLE = "pluginsStyle"; //$NON-NLS-1$
 
+    public static final String WARN_PROCESS_PRIORITY = "warnProcessPriority"; //$NON-NLS-1$
+
     public static final String AUTO_SHOW_CONSOLE = "autoShowConsole"; //$NON-NLS-1$
     public static final int AUTO_SHOW_CONSOLE_NEVER = 0;
     public static final int AUTO_SHOW_CONSOLE_ERROR = NSISConsoleLine.TYPE_ERROR;

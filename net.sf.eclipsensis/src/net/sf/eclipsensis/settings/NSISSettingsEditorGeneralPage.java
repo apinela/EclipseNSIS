@@ -18,6 +18,8 @@ import net.sf.eclipsensis.makensis.MakeNSISRunner;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.viewer.*;
 
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
@@ -29,7 +31,7 @@ import org.eclipse.swt.widgets.*;
 
 public abstract class NSISSettingsEditorGeneralPage extends NSISSettingsEditorPage
 {
-    private static final String LABELS = "LABELS";
+    private static final String LABELS = "LABELS"; //$NON-NLS-1$
 
     protected Button mHdrInfo = null;
     protected Button mLicense = null;
@@ -40,6 +42,7 @@ public abstract class NSISSettingsEditorGeneralPage extends NSISSettingsEditorPa
     protected Combo mCompressor = null;
     protected Button mSolidCompression = null;
     protected TableViewer mInstructions = null;
+    private int mProcessPriorityIndex = 0;
 
     private Group mGroup = null;
 
@@ -135,13 +138,50 @@ public abstract class NSISSettingsEditorGeneralPage extends NSISSettingsEditorPa
             }
         });
 
-        mProcessPriority = createCombo(composite,EclipseNSISPlugin.getResourceString("process.priority.text"),EclipseNSISPlugin.getResourceString("process.priority.tooltip"), //$NON-NLS-1$ //$NON-NLS-2$
-                INSISSettingsConstants.PROCESS_PRIORITY_ARRAY, mSettings.getProcessPriority()+1);
-        l = new Label(composite,SWT.None);
-        l.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
-        mProcessPriority.setData(LABELS,new Object[] {mProcessPriority.getData(LABEL),l});
+        createProcessPriorityCombo(composite);
         internalSetProcessPriorityVisible(NSISPreferences.INSTANCE.isProcessPrioritySupported());
         return group;
+    }
+
+    /**
+     * @param parent
+     */
+    protected void createProcessPriorityCombo(Composite parent)
+    {
+        Label l;
+        mProcessPriority = createCombo(parent,EclipseNSISPlugin.getResourceString("process.priority.text"),EclipseNSISPlugin.getResourceString("process.priority.tooltip"), //$NON-NLS-1$ //$NON-NLS-2$
+                INSISSettingsConstants.PROCESS_PRIORITY_ARRAY, mSettings.getProcessPriority()+1);
+        mProcessPriorityIndex = mProcessPriority.getSelectionIndex();
+        l = new Label(parent,SWT.None);
+        l.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
+        mProcessPriority.setData(LABELS,new Object[] {mProcessPriority.getData(LABEL),l});
+        mProcessPriority.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e)
+            {
+                if (isProcessPrioritySupported()) {
+                    if (isWarnProcessPriority()) {
+                        if (mProcessPriority.getSelectionIndex() > INSISPreferenceConstants.PROCESS_PRIORITY_HIGH && mProcessPriorityIndex <= INSISPreferenceConstants.PROCESS_PRIORITY_HIGH) {
+                            MessageDialogWithToggle dialog = new MessageDialogWithToggle(mProcessPriority.getShell(),
+                                    EclipseNSISPlugin.getResourceString("confirm.title"), //$NON-NLS-1$
+                                    EclipseNSISPlugin.getShellImage(),
+                                    EclipseNSISPlugin.getResourceString("process.priority.question"), //$NON-NLS-1$
+                                    MessageDialogWithToggle.WARNING,
+                                    new String[] { IDialogConstants.YES_LABEL,
+                                                   IDialogConstants.NO_LABEL }, 1,
+                                    EclipseNSISPlugin.getResourceString("process.priority.toggle"), //$NON-NLS-1$
+                                    false);
+                            dialog.open();
+                            setWarnProcessPriority(!dialog.getToggleState());
+                            if(dialog.getReturnCode()==IDialogConstants.NO_ID) {
+                                mProcessPriority.select(mProcessPriorityIndex);
+                                return;
+                            }
+                        }
+                    }
+                }
+                mProcessPriorityIndex = mProcessPriority.getSelectionIndex();
+            }
+        });
     }
 
     protected void setProcessPriorityVisible(boolean visible)
@@ -158,7 +198,7 @@ public abstract class NSISSettingsEditorGeneralPage extends NSISSettingsEditorPa
     /**
      * @param visible
      */
-    private void internalSetProcessPriorityVisible(boolean visible)
+    protected void internalSetProcessPriorityVisible(boolean visible)
     {
         mProcessPriority.setVisible(visible);
         ((GridData)mProcessPriority.getLayoutData()).exclude = !visible;
@@ -274,6 +314,7 @@ public abstract class NSISSettingsEditorGeneralPage extends NSISSettingsEditorPa
         mSolidCompression.setSelection(mSettings.getSolidCompression());
         if (NSISPreferences.INSTANCE.isProcessPrioritySupported()) {
             mProcessPriority.select(mSettings.getProcessPriority()+1);
+            mProcessPriorityIndex = mProcessPriority.getSelectionIndex();
         }
         mInstructions.setInput(mSettings.getInstructions());
     }
@@ -289,6 +330,7 @@ public abstract class NSISSettingsEditorGeneralPage extends NSISSettingsEditorPa
         mSolidCompression.setSelection(mSettings.getDefaultSolidCompression());
         if (NSISPreferences.INSTANCE.isProcessPrioritySupported()) {
             mProcessPriority.select(mSettings.getDefaultProcessPriority()+1);
+            mProcessPriorityIndex = mProcessPriority.getSelectionIndex();
         }
         mInstructions.setInput(mSettings.getDefaultInstructions());
     }
@@ -311,6 +353,21 @@ public abstract class NSISSettingsEditorGeneralPage extends NSISSettingsEditorPa
             collection.add(newInstruction);
             mInstructions.refresh(true);
         }
+    }
+
+    protected boolean isProcessPrioritySupported()
+    {
+        return NSISPreferences.INSTANCE.isProcessPrioritySupported();
+    }
+
+    protected boolean isWarnProcessPriority()
+    {
+        return NSISPreferences.INSTANCE.getPreferenceStore().getBoolean(INSISPreferenceConstants.WARN_PROCESS_PRIORITY);
+    }
+
+    protected void setWarnProcessPriority(boolean warnProcessPriority)
+    {
+        NSISPreferences.INSTANCE.getPreferenceStore().setValue(INSISPreferenceConstants.WARN_PROCESS_PRIORITY,warnProcessPriority);
     }
 
     protected abstract Composite createMasterControl(Composite parent);

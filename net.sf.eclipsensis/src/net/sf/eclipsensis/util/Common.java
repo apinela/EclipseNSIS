@@ -877,6 +877,13 @@ public class Common
         dialog.open();
     }
 
+    public static int openMessageDialog(Shell parent, String title, String message, Image icon, int dialogImageType, String[] buttons, int defaultIndex)
+    {
+        MessageDialog dialog = new MessageDialog(parent, title, icon,
+                message, dialogImageType, buttons, defaultIndex);
+        return dialog.open();
+    }
+
     public static String trim(String str)
     {
         if(str != null) {
@@ -937,7 +944,7 @@ public class Common
                     String defaultName=""; //$NON-NLS-1$
                     String library;
                     int id = -1;
-    
+
                     switch(pieces.length) {
                         case 3:
                             defaultName = pieces[2];
@@ -955,7 +962,7 @@ public class Common
                             library = pieces[0];
                             break;
                     }
-    
+
                     if(id >= 0) {
                         String resourceString;
                         try {
