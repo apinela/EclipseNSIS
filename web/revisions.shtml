@@ -35,10 +35,10 @@
   image_closed_over.src = "images/closed_over.gif";
 
   var latest = new Array();
-  latest["eclipsensis"] = "eclipsensis095";
-  latest["installoptions"] = "installoptions095";
+  latest["eclipsensis"] = "eclipsensis0951";
+  latest["installoptions"] = "installoptions0951";
   latest["utilities"] = "utilities091";
-  latest["sources"] = "sources095";
+  latest["sources"] = "sources0951";
 
   function rollover(image)
   {
@@ -133,6 +133,18 @@ Guides</a> | <a href="revisions.html">Revision History</a> | <a
 <li><a href="#sources">EclipseNSIS Sources</a></li>
 </ul>
 <a name="eclipsensis"></a><h3>EclipseNSIS</h3>
+<div><img class="trigger" alt="Expand/Collapse" id="trigger_eclipsensis0951"
+src="images/closed.gif" onClick="toggle('trigger_eclipsensis0951', 'toggle_eclipsensis0951'); rollover(this);"
+onmouseover="rollover(this);" onMouseOut="rollover(this);">
+<a href="http://prdownloads.sourceforge.net/eclipsensis/net.sf.eclipsensis_0.9.5.1.zip?download">0.9.5.1</a> (02/01/2007)
+<div id="toggle_eclipsensis0951" class="toggle">
+<ul>
+  <li>Added support for new predefines.</li>
+  <li>Added support for /P compiler option.</li>
+  <li>Fixed outline view filter.</li>
+</ul>
+</div>
+</div>
 <div><img class="trigger" alt="Expand/Collapse" id="trigger_eclipsensis095"
 src="images/closed.gif" onClick="toggle('trigger_eclipsensis095', 'toggle_eclipsensis095'); rollover(this);"
 onmouseover="rollover(this);" onMouseOut="rollover(this);">
@@ -357,6 +369,18 @@ scripts.</li>
 //-->
 </script>
 <a name="installoptions"></a><h3>EclipseNSIS InstallOptions Editor</h3>
+<div><img class="trigger" alt="Expand/Collapse" id="trigger_installoptions0951"
+src="images/closed.gif" onClick="toggle('trigger_installoptions0951', 'toggle_installoptions0951'); rollover(this);"
+onmouseover="rollover(this);" onMouseOut="rollover(this);">
+<a
+ href="http://prdownloads.sourceforge.net/eclipsensis/net.sf.eclipsensis.installoptions_0.9.5.1.zip?download">0.9.5.1</a>
+(02/01/2007)
+<div id="toggle_installoptions0951" class="toggle">
+<ul>
+  <li>Added support for new FOCUS flag.</li>
+</ul>
+</div>
+</div>
 <div><img class="trigger" alt="Expand/Collapse" id="trigger_installoptions095"
 src="images/closed.gif" onClick="toggle('trigger_installoptions095', 'toggle_installoptions095'); rollover(this);"
 onmouseover="rollover(this);" onMouseOut="rollover(this);">
@@ -555,6 +579,27 @@ Eclipse 3.0</li>
 //-->
 </script>
 <a name="sources"></a><h3>EclipseNSIS Sources</h3>
+<div><img class="trigger" alt="Expand/Collapse" id="trigger_sources0951"
+src="images/closed.gif" onClick="toggle('trigger_sources0951', 'toggle_sources0951'); rollover(this);"
+onmouseover="rollover(this);" onMouseOut="rollover(this);">
+<a
+ href="http://prdownloads.sourceforge.net/eclipsensis/net.sf.eclipsensis.source_0.9.5.1.zip?download">0.9.5.1</a>
+(02/01/2007)
+<div id="toggle_sources095" class="toggle">
+<ul>
+  <li>This bundles source code for the following EclipseNSIS plugins into a single plugin:</li>
+      <ul>
+      <li>EclipseNSIS 0.9.5.1</li>
+      <li>EclipseNSIS Startup 0.9.5</li>
+      <li>EclipseNSIS Update 0.9.5</li>
+      <li>EclipseNSIS InstallOptions Editor 0.9.5.1</li>
+      <li>EclipseNSIS Utilities 0.9.1</li>
+      <li>JAR Signer 0.9.1</li>
+      <li>JNI Generator 0.9.1</li>
+      </ul>
+</ul>
+</div>
+</div>
 <div><img class="trigger" alt="Expand/Collapse" id="trigger_sources095"
 src="images/closed.gif" onClick="toggle('trigger_sources095', 'toggle_sources095'); rollover(this);"
 onmouseover="rollover(this);" onMouseOut="rollover(this);">

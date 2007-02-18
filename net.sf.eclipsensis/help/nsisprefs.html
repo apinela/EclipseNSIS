@@ -20,7 +20,7 @@
   <meta http-equiv="Content-Style-Type" content="text/css">
   <script language="javascript" type="text/javascript" src="help.js"></script>
 </head>
-<body>
+<body onLoad="checkHighlight();">
 <div id="main">
 <a href="preferences.html">Previous</a>
 | <a href="overview.html#contents">Contents
@@ -140,7 +140,7 @@ The Solid checkbox is enabled only if a compressor is selected explicitly. <a
   </dl>
   <a name="a_warnPriority"></a><dl id="id_warnPriority">
     <dt>Show warning when High or Realtime process priority is selected</dt>
-    <dd>If the  compiler <a href="#a_priority">process priority</a> is set to High or Realtime, severe performance degradation may occur.  If this setting is selected, then EclipseNSIS will display a warning and confirmation if the process priority is set to High or Realtime, whether it is in the EclipseNSIS preferences, the <a href="properties.html">script properties</a> for a resource or even in the <a href="compiling.html#config_general">launch</a> or <a href="compiling.html#config_general2">project builder</a> configuration settings..This setting
+    <dd>If the  compiler <a href="#a_priority" onClick="highlightDef('id_priority');">process priority</a> is set to High or Realtime, severe performance degradation may occur.  If this setting is selected, then EclipseNSIS will display a warning and confirmation if the process priority is set to High or Realtime, whether it is in the EclipseNSIS preferences, the <a href="properties.html">script properties</a> for a resource or even in the <a href="compiling.html#config_general">launch</a> or <a href="compiling.html#config_general2">project builder</a> configuration settings..This setting
   is only available if the specified version of MakeNSIS.exe supports setting the compiler process priority (MakeNSIS 2.24 or better). <a
  href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd>
   </dl>

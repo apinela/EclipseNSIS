@@ -23,7 +23,7 @@ Preferences</title>
   <script language="javascript" type="text/javascript" src="nsiscontrib.js"></script>
   <script language="javascript" type="text/javascript" src="redirect.js"></script>
 </head>
-<body>
+<body onLoad="checkHighlight();">
 <div id="main">
 <a href="nsisprefs.html">Previous</a>
 | <a href="overview.html#contents">Contents</a>
@@ -112,8 +112,8 @@ starting with "$".</dd>
 source code using the current
 colors and styles. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
 <a name="a_check_assoc"></a><dl id="id_check_assoc"><dt>On startup, check EclipseNSIS editor NSIS file association</dt>
-<dd>On startup check if NSIS files are associated by default with the EclipseNSIS editor. 
-If it is not, the user is prompted whether to create the association. If the "EclipseNSIS Startup" plugin is activated for startup in 
+<dd>On startup check if NSIS files are associated by default with the EclipseNSIS editor.
+If it is not, the user is prompted whether to create the association. If the "EclipseNSIS Startup" plugin is activated for startup in
 the <a href="javascript:redirectEclipse('/org.eclipse.platform.doc.user/reference/ref-startup.htm');">Startup and Shutdown</a> preferences page, then the check is performed upon workbench startup, otherwise it is performed the first time
 the EclipseNSIS editor is opened.<a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
 <a href="preferences.html">Back

@@ -2,25 +2,25 @@
 <html><head>
 <!--
 ###############################################################################
- # Copyright (c) 2004-2007 Sunil Kamath (IcemanK). 
-# All rights reserved. 
-# This program is made available under the terms of the Common Public License 
-# v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html 
-# 
-# Contributors: 
-# Sunil Kamath (IcemanK) - initial API and implementation 
+ # Copyright (c) 2004-2007 Sunil Kamath (IcemanK).
+# All rights reserved.
+# This program is made available under the terms of the Common Public License
+# v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
+#
+# Contributors:
+# Sunil Kamath (IcemanK) - initial API and implementation
 ###############################################################################
  --><title>EclipseNSIS InstallOptions Editor - Preferences</title>
 
-<link rel="stylesheet" href="book.css" charset="ISO-8859-1" type="text/css"> 
-<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"> 
-<meta http-equiv="Content-Style-Type" content="text/css"> 
+<link rel="stylesheet" href="book.css" charset="ISO-8859-1" type="text/css">
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<meta http-equiv="Content-Style-Type" content="text/css">
 <script type="text/javascript" language="javascript" src="help.js">
 </script>
 <script type="text/javascript" language="javascript" src="redirect.js">
 </script>
 </head>
-<body><div id="main">
+<body onLoad="checkHighlight();"><div id="main">
 <a href="wizard.html">Previous</a>
 | <a href="overview.html#contents">Contents</a>
 | <a href="license.html">Next</a>
@@ -52,10 +52,10 @@ size outline</a></li></ul>
 </dd></dl><a name="a_dialogsize"></a><dl id="id_dialogsize"><dt>Dialog Sizes</dt>
 <dd>This is used to customize the InstallOptions <a href="designeditor.html#a_dialogsize">dialog sizes</a>.
 By default, the EclipseNSIS InstallOptions Editor comes configured with
-the sizes of the dialogs for standard and MUI installers. 
+the sizes of the dialogs for standard and MUI installers.
 It is recommended that the dialog sizes for these defaults not be modified unless they have been changed in the
 associated UI executables using a resource editing tool, e.g., <a href="http://www.angusj.com/resourcehacker/">Resource Hacker</a>.<br>
-However, this preferences area allows creation and editing of new dialog sizes to support any additional 
+However, this preferences area allows creation and editing of new dialog sizes to support any additional
 custom UI executables which may be used for NSIS installer creation.<br>
 The checked entry is the default and will be applied to an InstallOptions script
 the first time it is opened using the design editor. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
@@ -66,8 +66,8 @@ which are enabled by default. <a href="javascript:history.go(-1)">&larr;&nbsp;Ba
 <a name="a_grid"></a><dl id="id_grid"><dt>Grid</dt>
 <dd>Specify the spacing, origin and style of the design editor <a href="designeditor.html#a_grid">grid</a>. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
 <a name="a_check_assoc"></a><dl id="id_check_assoc"><dt>On startup, check InstallOptions editor INI file association</dt>
-<dd>On plugin startup check if INI files are associated by default with an InstallOptions editor. 
-If they are not, the user is prompted whether to create the association. If the "EclipseNSIS Startup" plugin is activated for startup in 
+<dd>On plugin startup check if INI files are associated by default with an InstallOptions editor.
+If they are not, the user is prompted whether to create the association. If the "EclipseNSIS Startup" plugin is activated for startup in
 the <a href="javascript:redirectEclipse('/org.eclipse.platform.doc.user/reference/ref-startup.htm');">Startup and Shutdown</a> preferences page, then the check is performed upon workbench startup, otherwise it is performed the first time
 an InstallOptions editor is opened. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
 <h2><a name="sourceeditor"></a>Source Editor</h2>

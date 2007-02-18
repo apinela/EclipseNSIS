@@ -1,15 +1,15 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <html><head>
-<!-- 
-############################################################################### 
-# Copyright (c) 2004-2007 Sunil Kamath (IcemanK). 
-# All rights reserved. 
-# This program is made available under the terms of the Common Public License 
-# v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html 
-# 
-# Contributors: 
-# Sunil Kamath (IcemanK) - initial API and implementation 
-############################################################################### 
+<!--
+###############################################################################
+# Copyright (c) 2004-2007 Sunil Kamath (IcemanK).
+# All rights reserved.
+# This program is made available under the terms of the Common Public License
+# v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
+#
+# Contributors:
+# Sunil Kamath (IcemanK) - initial API and implementation
+###############################################################################
 -->
   <title>EclipseNSIS - Editing NSIS Scripts</title>
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
@@ -39,7 +39,7 @@ function openPopup()
 }
 //-->
 </script></head>
-<body>
+<body onLoad="checkHighlight();">
 <div id="main">
 <a href="configuration.html">Previous</a> | <a href="overview.html#contents">Contents</a> | <a href="compiling.html">Next</a>
 <hr>
@@ -110,8 +110,8 @@ for more information about code templates. <a href="javascript:history.go(-1)">&
 <dd>Replaces tab characters with spaces in the script. If text is
 selected, then only the selected text is operated on, otherwise all
 text is operated on. To set the width of a tab character in terms of
-spaces see the <a href="editorprefs.html#a_tabwidth">Editor
-Preferences</a> page. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd>
+spaces see the <a href="javascript:redirectEclipse('/org.eclipse.platform.doc.user/reference/ref-texteditorprefs.htm');">Text Editor
+Preference page</a>. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd>
 </dl>
 <a name="a_toggle_comment"></a>
 <dl id="id_toggle_comment">
@@ -163,7 +163,7 @@ script. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a><br>
 <dt>Insert Registration File</dt>
 <dd>Pops up a file selection dialog box to choose a Windows registration (.REG) file. If a registration file is selected, its contents are inserted into the
 current NSIS script in the form of WriteRegXXXX commands. A .REG file can be
-created by using the Export command in <a href="http://www.microsoft.com/technet/prodtechnol/windowsserver2003/library/DepKit/f7daf28e-e0ef-42e5-91e3-d4b152798c70.mspx">Regedit.exe</a>. Windows shell folder names (e.g., $WINDIR, $SYSDIR, etc) are automatically 
+created by using the Export command in <a href="http://www.microsoft.com/technet/prodtechnol/windowsserver2003/library/DepKit/f7daf28e-e0ef-42e5-91e3-d4b152798c70.mspx">Regedit.exe</a>. Windows shell folder names (e.g., $WINDIR, $SYSDIR, etc) are automatically
 substituted in inserted
 entries.<br>
 <span style="font-weight: bold">Note: REG_MULTI_SZ values will not be inserted since they are not supported by NSIS.</span> <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a><br>
@@ -173,7 +173,7 @@ entries.<br>
 <dl id="id_insert_regkey">
 <dt>Insert Registry Key</dt>
 <dd>Pops up a dialog to select a Windows registry key. If a registry key is selected in this dialog, its contents are inserted into the
-current NSIS script in the form of WriteRegXXXX commands. Windows shell folder names (e.g., $WINDIR, $SYSDIR, etc) are automatically 
+current NSIS script in the form of WriteRegXXXX commands. Windows shell folder names (e.g., $WINDIR, $SYSDIR, etc) are automatically
 substituted in inserted
 entries.<br>
 <span style="font-weight: bold">Note: REG_MULTI_SZ values will not be inserted since they are not supported by NSIS.</span> <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a><br>
@@ -183,17 +183,17 @@ entries.<br>
 <dl id="id_insert_regval">
 <dt>Insert Registry Value</dt>
 <dd>Pops up a dialog to select a Windows registry value. If a registry value is selected in this dialog, its contents are inserted into the
-current NSIS script in the form of a WriteRegXXXX command. Windows shell folder names (e.g., $WINDIR, $SYSDIR, etc) are automatically 
+current NSIS script in the form of a WriteRegXXXX command. Windows shell folder names (e.g., $WINDIR, $SYSDIR, etc) are automatically
 substituted in the inserted entry.<br>
 <span style="font-weight: bold">Note: REG_MULTI_SZ values will not be inserted since they are not supported by NSIS.</span> <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a><br>
 <strong>Shortcut:</strong> Shift+F8</dd>
 </dl>
 <a name="dragdrop"></a>
 <h2>Drag and Drop</h2>
-<p>The EclipseNSIS Editor makes it easy to add files and folders to the NSIS script. Files and folders can be simply dragged from 
-Windows Explorer or the Desktop and dropped to the desired location in the script. They will then be added to script using 
+<p>The EclipseNSIS Editor makes it easy to add files and folders to the NSIS script. Files and folders can be simply dragged from
+Windows Explorer or the Desktop and dropped to the desired location in the script. They will then be added to script using
 NSIS <a href="javascript:redirectNSISKeyword('File');">File</a> instructions. Registration files (.REG extension) are processed
-to extract the Registry keys and values, which are then added to the script using the appropriate 
+to extract the Registry keys and values, which are then added to the script using the appropriate
 <a href="javascript:redirectNSISSection('4.9.2');">NSIS registry instructions</a>.</p>
 <a name="rulers"></a>
 <h2>Vertical and Overview Rulers</h2>
@@ -418,21 +418,21 @@ The task tags can be configured using the <a href="tasktagprefs.html">Task Tags 
 <dd>Open the Eclipse Workbench Show View dialog and navigate to the
 <span style="font-weight: normal; font-style: italic;">EclipseNSIS&rarr;NSIS Users Manual </span><span style="font-weight: normal;">view</span>. This will open the NSIS Users Manual browser.
 <p style="text-align: center;"><img src="images/nsishelp.gif" alt="EclipseNSIS NSIS Users Manual" usemap="#nsishelp" style="border: 0px solid; width: 786px; height: 394px;"></p>
-</dd> 
+</dd>
 <a name="a_showhidenav"></a>
 <dl id="id_showhidenav">
 <dt>Show/Hide Navigation Pane </dt>
-<dd>Show/Hide the NSIS Users Manual <a href="#a_navpane">navigation pane</a>..</dd>
+<dd>Show/Hide the NSIS Users Manual <a href="#a_navpane" onClick="highlightDef('id_navpane');">navigation pane</a>..</dd>
 </dl>
 <a name="a_sync"></a>
 <dl id="id_sync">
 <dt>Synchronize Contents </dt>
-<dd>Keep the Contents explorer synchronized with the <a href="#a_browserpane">browser pane</a>.</dd>
+<dd>Keep the Contents explorer synchronized with the <a href="#a_browserpane" onClick="highlightDef('id_browserpane');">browser pane</a>.</dd>
 </dl>
 <a name="a_browserbuttons"></a>
 <dl id="id_browserbuttons">
 <dt>Standard Browser Buttons </dt>
-<dd>Standard browser buttons for navigating the NSIS Users Manual browser. The &quot;Home&quot; button returns the <a href="#a_browserpane">browser pane</a> to the NSIS Users Manual contents page. </dd>
+<dd>Standard browser buttons for navigating the NSIS Users Manual browser. The &quot;Home&quot; button returns the <a href="#a_browserpane" onClick="highlightDef('id_browserpane');">browser pane</a> to the NSIS Users Manual contents page. </dd>
 </dl>
 <a name="a_navpane"></a>
 <dl id="id_navpane">
@@ -450,8 +450,8 @@ The task tags can be configured using the <a href="tasktagprefs.html">Task Tags 
 <li>Clicking on a keyword in the EclipseNSIS editor and pressing the <strong>F2</strong> key, or</li>
 <li>Pressing the <strong>F2</strong> key in either the <a href="#quickhelp">quick</a> or <a href="#detailedhelp">detailed</a> <a href="#hoverhelp">hover help</a> popups.</li>
 </ol>
-<p>The preferred browser for displaying detailed help can be configured in the <a href="nsisprefs.html#a_help">EclipseNSIS preferences page</a>. Once this has been done,
-    pressing the <strong>F2</strong> key or selecting the <a href="#a_htmlhelp">NSIS Help menu or toolbar item</a> will display detailed help in the chosen browser- i.e., either the
+<p>The preferred browser for displaying detailed help can be configured in the <a href="nsisprefs.html?id=id_help#a_help">EclipseNSIS preferences page</a>. Once this has been done,
+    pressing the <strong>F2</strong> key or selecting the <a href="#a_htmlhelp" onClick="highlightDef('id_htmlhelp');">NSIS Help menu or toolbar item</a> will display detailed help in the chosen browser- i.e., either the
     Eclipse Workbench help or the EclipseNSIS integrated browser.</p>
 </dd>
 </dl>

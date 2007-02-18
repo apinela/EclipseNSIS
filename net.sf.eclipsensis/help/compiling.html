@@ -42,12 +42,12 @@ EclipseNSIS persistently remembers script compilation and installer status, i.e.
 <h2><a name="direct_compile"></a>Direct Compile and Test </h2>
 <p>There are two ways to directly compile/or and test an NSIS script in EclipseNSIS:</p>
 <ol>
-<li>Using the <a href="editing.html#a_compile">Compile Script</a> or <a href="editing.html#a_compile_test">Compile Script and Test</a> menu items or buttons in the <a href="editing.html#menu">EclipseNSIS editor menu or toolbar</a>, respectively.</li><li>
+<li>Using the <a href="editing.html?id=id_compile#a_compile">Compile Script</a> or <a href="editing.html?id=id_compile_test#a_compile_test">Compile Script and Test</a> menu items or buttons in the <a href="editing.html#menu">EclipseNSIS editor menu or toolbar</a>, respectively.</li><li>
 Right clicking on an NSIS script in any view that shows a list of Workspace resources (e.g., <a href="javascript:redirectEclipse('/org.eclipse.platform.doc.user/concepts/cnav.htm');">resource navigator</a>,
 <a href="javascript:redirectEclipse('/org.eclipse.jdt.doc.user/reference/ref-view-package-explorer.htm');">JDT package explorer</a>, etc.) and selecting the <span style="font-style: italic;">EclipseNSIS</span> menu.</li></ol>
 <p style="text-align: center;"><img src="images/popupmenu.gif" alt="EclipseNSIS Popup Menu" style="border: 0px solid ; width: 465px; height: 499px;"></p>
 <p>If an NSIS script is successfully compiled in EclipseNSIS, i.e., there are no errors encountered during compilation,
-the installer file generated can be tested using the <a href="editing.html#a_test">Test Installer</a> menu item or toolbar button. This menu item will stay enabled as long as:</p>
+the installer file generated can be tested using the <a href="editing.html?id=id_test#a_test">Test Installer</a> menu item or toolbar button. This menu item will stay enabled as long as:</p>
 <ol style="list-style-type: lower-alpha;">
 <li>The NSIS script is not modified after the installer was generated.</li>
 <li>The installer still exists on the filesystem.</li>
@@ -118,17 +118,17 @@ General tab is identical in behavior to the <a href="nsisprefs.html#general">Ecl
   </dl>
 
 <h2><a name="project_builder"></a>Project Builders </h2>
-<p>Similar to a launch configuration, a project builder configuration is used to store a set of NSIS options for compiling a specific NSIS script. 
-The project builder will be invoked by the Eclipse workbench based upon rules specified in the configuration. Upon execution, a project builder configuration compiles the associated NSIS 
+<p>Similar to a launch configuration, a project builder configuration is used to store a set of NSIS options for compiling a specific NSIS script.
+The project builder will be invoked by the Eclipse workbench based upon rules specified in the configuration. Upon execution, a project builder configuration compiles the associated NSIS
 script. </p>
 <h3>Creating a Project Builder Configuration</h3>
 <p>To create a project builder configuration, perform the following steps:</p>
 <ol>
   <li>Select the desired project.</li>
   <li>From its pop-up menu choose <span style="font-style: italic;">Properties</span>.</li>
-  <li>Click <span style="font-style: italic;">New...</span> to create a new configuration or 
+  <li>Click <span style="font-style: italic;">New...</span> to create a new configuration or
   <span style="font-style: italic;">Import...</span> to import an existing launch configuration as a builder.</li>
-  <li>If creating a new configuration, select <span style="font-weight: bold;">NSIS Script</span> in 
+  <li>If creating a new configuration, select <span style="font-weight: bold;">NSIS Script</span> in
   the resulting dialog. </li>
 </ol>
 <p>An NSIS Script project builder configuration provides three main tabs for customization:</p>
@@ -138,17 +138,17 @@ script. </p>
   <li><a href="#config_build">Build Options</a></li>
 </ol>
 <h4><a name="config_general2"></a>General</h4>
-<p> The General tab is used to specify NSIS options for compiling the associated NSIS script. The major portion of 
+<p> The General tab is used to specify NSIS options for compiling the associated NSIS script. The major portion of
 the General tab is identical in behavior to the <a href="nsisprefs.html#general">EclipseNSIS Preferences Page</a>.</p>
 <p style="text-align: center;"><img src="images/builderconfignsis.gif" alt="General Tab" style="border: 0px solid ; width: 438px; height: 540px;" usemap="#generaltab2" ismap="ismap"></p>
 <a name="a_script2"></a>
 <dl id="id_script2">
   <dt>NSIS Script</dt>
-  <dd>Specify the NSIS script associated with this run configuration. The NSIS script may be specified by browsing 
+  <dd>Specify the NSIS script associated with this run configuration. The NSIS script may be specified by browsing
   the workspace or the filesystem or by specifying a combination of Eclipse variables.</dd>
 </dl>
 <h4><a name="config_symbols2"></a>Defined Symbols</h4>
-<p> The Defined Symbols tab is identical in behavior to the <a href="nsisprefs.html#symbols">EclipseNSIS 
+<p> The Defined Symbols tab is identical in behavior to the <a href="nsisprefs.html#symbols">EclipseNSIS
 Preferences Page</a>.</p>
 <p style="text-align: center;"><img src="images/builderconfigsymbols.gif" alt="Defined Symbols Tab" border="0" usemap="#symbolstab2" style="border: 0px solid ; width: 438px; height: 540px;"> </p>
 <h4><a name="config_build"></a>Build Options</h4>
@@ -160,7 +160,7 @@ Preferences Page</a>.</p>
 </dl>
 <a name="a_runbuilder"></a><dl id="id_runbuilder">
 <dt>Run the Builder</dt>
-<dd>Specify when the project builder is executed. By default, this is set to After a "Clean" and During Manual Builds. 
+<dd>Specify when the project builder is executed. By default, this is set to After a "Clean" and During Manual Builds.
 Running the project builder during auto builds is possible, though not recommended because of performance concerns.
 </dd>
 </dl>
