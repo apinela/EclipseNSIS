@@ -23,6 +23,7 @@ import net.sf.eclipsensis.installoptions.properties.descriptors.CustomComboBoxPr
 import net.sf.eclipsensis.installoptions.properties.validators.NSISStringLengthValidator;
 import net.sf.eclipsensis.installoptions.properties.validators.NumberCellEditorValidator;
 import net.sf.eclipsensis.installoptions.rulers.*;
+import net.sf.eclipsensis.installoptions.util.FontUtility;
 import net.sf.eclipsensis.installoptions.util.TypeConverter;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.util.UpDownMover;
@@ -31,7 +32,6 @@ import org.eclipse.draw2d.PositionConstants;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.views.properties.*;
 
 public class InstallOptionsDialog extends InstallOptionsElement implements IInstallOptionsConstants
@@ -888,7 +888,7 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
     private static boolean loadGuides(InstallOptionsDialog dialog, String guidesMetadata)
     {
         boolean loaded = false;
-        Font f = Display.getDefault().getSystemFont();
+        Font font = FontUtility.getInstallOptionsFont();
         String[] tokens = Common.tokenize(guidesMetadata,'#');
         for (int i = 0; i < tokens.length; i++) {
             String[] tokens2 = Common.tokenize(tokens[i],'|');
@@ -906,10 +906,10 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
                         try {
                             offset = Integer.parseInt(tokens2[1]);
                             if(orientation == PositionConstants.NORTH) {
-                                offset = FigureUtility.dialogUnitsToPixelsX(offset, f);
+                                offset = FigureUtility.dialogUnitsToPixelsX(offset, font);
                             }
                             else {
-                                offset = FigureUtility.dialogUnitsToPixelsY(offset, f);
+                                offset = FigureUtility.dialogUnitsToPixelsY(offset, font);
                             }
                         }
                         catch(Exception ex) {
@@ -1124,7 +1124,7 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
                 }
                 buf.append(text.substring(0,n)).append(METADATA_PREFIX).append(" ").append(GUIDES_PREFIX); //$NON-NLS-1$
             }
-            Font f = Display.getDefault().getSystemFont();
+            Font f = FontUtility.getInstallOptionsFont();
             int count = 0;
             for (Iterator iter = horizontalGuides.iterator(); iter.hasNext();) {
                 InstallOptionsGuide guide = (InstallOptionsGuide)iter.next();

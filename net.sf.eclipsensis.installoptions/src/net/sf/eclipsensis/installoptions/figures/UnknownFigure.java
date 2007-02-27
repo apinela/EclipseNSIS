@@ -12,10 +12,12 @@ package net.sf.eclipsensis.installoptions.figures;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
 import net.sf.eclipsensis.installoptions.edit.unknown.InstallOptionsUnknownEditPart.IUnknownFigure;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsWidget;
 import net.sf.eclipsensis.installoptions.properties.PropertySourceWrapper;
+import net.sf.eclipsensis.installoptions.util.FontUtility;
 import net.sf.eclipsensis.util.WinAPI;
 
 import org.eclipse.draw2d.*;
@@ -86,6 +88,7 @@ public class UnknownFigure extends AbstractInstallOptionsFigure implements IUnkn
                 return control;
             }
         };
+        mInnerLabelFigure.setFont(FontUtility.getInstallOptionsFont());
         add(mInnerLabelFigure);
         setType((String)propertySource.getPropertyValue(InstallOptionsModel.PROPERTY_TYPE));
     }
@@ -97,7 +100,7 @@ public class UnknownFigure extends AbstractInstallOptionsFigure implements IUnkn
 
     private Rectangle[] calculateBounds(Rectangle rect, boolean hScroll, boolean vScroll)
     {
-        Rectangle copy = new Rectangle(new Point(0,0),rect.getSize());
+        Rectangle copy = new Rectangle(IInstallOptionsConstants.EMPTY_POINT,rect.getSize());
         Rectangle[] childBounds = {copy, copy.getCopy(),null};
         if(hScroll) {
             childBounds[1].height -= WinAPI.GetSystemMetrics(WinAPI.SM_CYHSCROLL);
@@ -106,7 +109,7 @@ public class UnknownFigure extends AbstractInstallOptionsFigure implements IUnkn
             childBounds[1].width -= WinAPI.GetSystemMetrics(WinAPI.SM_CXVSCROLL);
         }
         childBounds[2] = childBounds[1].getCopy().shrink(1,1);
-        int height = Display.getDefault().getSystemFont().getFontData()[0].height+6;
+        int height = FontUtility.getInstallOptionsFont().getFontData()[0].height+6;
         childBounds[2].y += (childBounds[2].height-height)/2;
         childBounds[2].height = height;
         return childBounds;

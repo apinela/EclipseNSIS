@@ -12,10 +12,9 @@ package net.sf.eclipsensis.installoptions.model.commands;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.figures.FigureUtility;
 import net.sf.eclipsensis.installoptions.model.*;
+import net.sf.eclipsensis.installoptions.util.FontUtility;
 
 import org.eclipse.draw2d.geometry.Rectangle;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.widgets.Display;
 
 public class CreateCommand extends org.eclipse.gef.commands.Command
 {
@@ -71,8 +70,7 @@ public class CreateCommand extends org.eclipse.gef.commands.Command
 
     public void setLocation(Rectangle r)
     {
-        Font f = Display.getDefault().getSystemFont();
-        mRect = FigureUtility.pixelsToDialogUnits(r,f);
+        mRect = FigureUtility.pixelsToDialogUnits(r,FontUtility.getInstallOptionsFont());
     }
 
     public void setParent(InstallOptionsDialog newParent)

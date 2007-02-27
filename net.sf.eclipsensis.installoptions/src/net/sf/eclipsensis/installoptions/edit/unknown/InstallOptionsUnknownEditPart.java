@@ -14,10 +14,10 @@ import java.beans.PropertyChangeEvent;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.edit.InstallOptionsWidgetEditPart;
 import net.sf.eclipsensis.installoptions.figures.*;
-import net.sf.eclipsensis.installoptions.figures.FigureUtility.NTFigure;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsUnknown;
 import net.sf.eclipsensis.installoptions.model.commands.InstallOptionsDirectEditCommand;
+import net.sf.eclipsensis.installoptions.util.FontUtility;
 import net.sf.eclipsensis.util.*;
 
 import org.eclipse.draw2d.*;
@@ -156,6 +156,7 @@ public class InstallOptionsUnknownEditPart extends InstallOptionsWidgetEditPart
                     if (isDisabled()) {
                         graphics.translate(1, 1);
                         graphics.setForegroundColor(ColorManager.getSystemColor(WinAPI.COLOR_3DHILIGHT));
+                        graphics.setFont(FontUtility.getInstallOptionsFont());
                         graphics.drawText(text, x, y);
                         graphics.translate(-1, -1);
                         graphics.setForegroundColor(ColorManager.getSystemColor(WinAPI.COLOR_GRAYTEXT));

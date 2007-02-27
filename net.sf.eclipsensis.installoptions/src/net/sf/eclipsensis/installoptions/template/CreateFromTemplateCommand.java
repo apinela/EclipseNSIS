@@ -12,10 +12,10 @@ package net.sf.eclipsensis.installoptions.template;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.figures.FigureUtility;
 import net.sf.eclipsensis.installoptions.model.*;
+import net.sf.eclipsensis.installoptions.util.FontUtility;
 
 import org.eclipse.draw2d.geometry.*;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.widgets.Display;
 
 public class CreateFromTemplateCommand extends org.eclipse.gef.commands.Command
 {
@@ -108,7 +108,7 @@ public class CreateFromTemplateCommand extends org.eclipse.gef.commands.Command
 
     public void setLocation(Rectangle r)
     {
-        Font f = Display.getDefault().getSystemFont();
+        Font f = FontUtility.getInstallOptionsFont();
         mRect = FigureUtility.pixelsToDialogUnits(r,f);
     }
 

@@ -12,6 +12,7 @@ package net.sf.eclipsensis.installoptions.actions;
 import net.sf.eclipsensis.installoptions.edit.InstallOptionsRootEditPart;
 import net.sf.eclipsensis.installoptions.editor.InstallOptionsDesignEditor;
 import net.sf.eclipsensis.installoptions.figures.FigureUtility;
+import net.sf.eclipsensis.installoptions.util.FontUtility;
 
 import org.eclipse.draw2d.*;
 import org.eclipse.draw2d.geometry.Point;
@@ -95,7 +96,7 @@ public class InstallOptionsXYStatusContribution extends StatusLineContributionIt
             if(figure == null) {
                 //This is a possible marquee- check for panning
                 if(mKey != 0x20) {
-                    mOrigin = FigureUtility.pixelsToDialogUnits(new Point(x,y), mFigureCanvas.getDisplay().getSystemFont());
+                    mOrigin = FigureUtility.pixelsToDialogUnits(new Point(x,y), FontUtility.getInstallOptionsFont());
                 }
             }
         }
@@ -113,7 +114,7 @@ public class InstallOptionsXYStatusContribution extends StatusLineContributionIt
             if(mMouseDown && mOrigin != null) {
                 buf.append("(x:").append(mOrigin.x).append(",y:").append(mOrigin.y).append(")->"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             }
-            Font f = mFigureCanvas.getDisplay().getSystemFont();
+            Font f = FontUtility.getInstallOptionsFont();
             int x = FigureUtility.pixelsToDialogUnitsX(r.x+e.x, f);
             int y = FigureUtility.pixelsToDialogUnitsY(r.y+e.y, f);
             buf.append("(x:").append(x).append(",y:").append(y).append(")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$

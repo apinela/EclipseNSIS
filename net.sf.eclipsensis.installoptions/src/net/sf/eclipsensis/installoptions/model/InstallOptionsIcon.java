@@ -12,11 +12,12 @@ package net.sf.eclipsensis.installoptions.model;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.ini.INISection;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 
 public class InstallOptionsIcon extends InstallOptionsPicture
 {
-    private static final Image ICON_IMAGE = InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("icon.image")); //$NON-NLS-1$
+    public static final Image ICON_IMAGE = InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("icon.image")); //$NON-NLS-1$
 
     protected InstallOptionsIcon(INISection section)
     {
@@ -34,5 +35,15 @@ public class InstallOptionsIcon extends InstallOptionsPicture
     public Image getImage()
     {
         return ICON_IMAGE;
+    }
+
+    public String getFileExtension()
+    {
+        return ".ico";
+    }
+
+    public int getSWTImageType()
+    {
+        return SWT.IMAGE_ICO;
     }
 }

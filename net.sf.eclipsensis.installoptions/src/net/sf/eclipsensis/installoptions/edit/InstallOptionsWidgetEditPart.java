@@ -14,11 +14,13 @@ import java.util.*;
 
 import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
-import net.sf.eclipsensis.installoptions.figures.IInstallOptionsFigure;
+import net.sf.eclipsensis.installoptions.figures.*;
 import net.sf.eclipsensis.installoptions.model.*;
 import net.sf.eclipsensis.installoptions.requests.ExtendedEditRequest;
 import net.sf.eclipsensis.installoptions.requests.ReorderPartRequest;
+import net.sf.eclipsensis.installoptions.util.FontUtility;
 import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.WinAPI;
 
 import org.eclipse.draw2d.*;
 import org.eclipse.draw2d.geometry.Dimension;
@@ -29,7 +31,7 @@ import org.eclipse.gef.tools.*;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.swt.accessibility.AccessibleControlEvent;
 import org.eclipse.swt.accessibility.AccessibleEvent;
-import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.views.properties.IPropertySource;
 
 public abstract class InstallOptionsWidgetEditPart extends InstallOptionsEditPart implements IDirectEditLabelProvider, IExtendedEditLabelProvider
 {
@@ -56,7 +58,7 @@ public abstract class InstallOptionsWidgetEditPart extends InstallOptionsEditPar
             mToolTip.setText(getTypeName());
             mToolTip.setBackgroundColor(ColorConstants.tooltipBackground);
             mToolTip.setForegroundColor(ColorConstants.tooltipForeground);
-            Dimension dim = FigureUtilities.getStringExtents(mToolTip.getText(),Display.getDefault().getSystemFont());
+            Dimension dim = FigureUtilities.getStringExtents(mToolTip.getText(),FontUtility.getInstallOptionsFont());
             dim.expand(8,6);
             mToolTip.setSize(dim);
         }
@@ -334,6 +336,135 @@ public abstract class InstallOptionsWidgetEditPart extends InstallOptionsEditPar
             }
             return super.handleDragStarted();
         }
+    }
+
+    //This is a hack because Windows NT Labels don't seem to respond to the
+    //WM_PRINT message (see SWTControl.getImage(Control)
+    //XXX Remove once the cause (and fix) is known.
+    public static abstract class NTFigure extends ScrollBarsFigure
+    {
+        private boolean mDisabled = false;
+        private boolean mHScroll = false;
+        private boolean mVScroll = false;
+        private ScrollBar mHScrollBar;
+        private ScrollBar mVScrollBar;
+        private Label mGlassPanel;
+
+        private Rectangle mChildBounds = new Rectangle(0,0,0,0);
+
+        public NTFigure(IPropertySource propertySource)
+        {
+            super();
+            setOpaque(true);
+            setLayoutManager(new XYLayout());
+            mHScrollBar = new ScrollBar();
+            mHScrollBar.setHorizontal(true);
+            mHScrollBar.setVisible(false);
+            add(mHScrollBar);
+            mVScrollBar = new ScrollBar();
+            mVScrollBar.setHorizontal(false);
+            add(mVScrollBar);
+            mGlassPanel = new Label();
+            mGlassPanel.setOpaque(false);
+            add(mGlassPanel);
+            createChildFigures();
+            init(propertySource);
+        }
+
+        protected void init(IPropertySource propertySource)
+        {
+            List flags = (List)propertySource.getPropertyValue(InstallOptionsModel.PROPERTY_FLAGS);
+            setDisabled(flags != null && flags.contains(InstallOptionsModel.FLAGS_DISABLED));
+            setHScroll(flags != null && flags.contains(InstallOptionsModel.FLAGS_HSCROLL));
+            setVScroll(flags != null && flags.contains(InstallOptionsModel.FLAGS_VSCROLL));
+            setBounds((Rectangle)propertySource.getPropertyValue(InstallOptionsWidget.PROPERTY_BOUNDS));
+        }
+
+        public void setDisabled(boolean disabled)
+        {
+            if(mDisabled != disabled) {
+                mDisabled = disabled;
+                refresh();
+            }
+        }
+
+        public boolean isDisabled()
+        {
+            return mDisabled;
+        }
+
+        public void setHScroll(boolean hScroll)
+        {
+            if(mHScroll != hScroll) {
+                mHScroll = hScroll;
+                refresh();
+            }
+        }
+
+        public void setVScroll(boolean vScroll)
+        {
+            if(mVScroll != vScroll) {
+                mVScroll = vScroll;
+                refresh();
+            }
+        }
+
+        public boolean isHScroll()
+        {
+            return mHScroll;
+        }
+
+        public boolean isVScroll()
+        {
+            return mVScroll;
+        }
+
+        public void refresh()
+        {
+            updateBounds(bounds);
+            layout();
+            revalidate();
+        }
+
+        private void updateBounds(Rectangle newBounds)
+        {
+            Rectangle childBounds = new Rectangle(0,0,newBounds.width,newBounds.height);
+            setConstraint(mGlassPanel, childBounds.getCopy());
+            int hbarHeight = WinAPI.GetSystemMetrics (WinAPI.SM_CYHSCROLL);
+            int vbarWidth = WinAPI.GetSystemMetrics (WinAPI.SM_CXVSCROLL);
+            mHScrollBar.setVisible(mHScroll);
+            if(mHScroll) {
+                setConstraint(mHScrollBar, new Rectangle(0,newBounds.height-hbarHeight,
+                                                        newBounds.width-(mVScroll?vbarWidth:0), hbarHeight));
+                childBounds.height -= hbarHeight;
+            }
+            mVScrollBar.setVisible(mVScroll);
+            if(mVScroll) {
+                setConstraint(mVScrollBar, new Rectangle(newBounds.width-vbarWidth,0,
+                                                         vbarWidth, newBounds.height-(mHScroll?hbarHeight:0)));
+                childBounds.width -= vbarWidth;
+            }
+            if(!mChildBounds.equals(childBounds)) {
+                setChildConstraints(childBounds);
+                mChildBounds = childBounds;
+            }
+        }
+
+        public void setBounds(Rectangle newBounds)
+        {
+            if(!bounds.getSize().equals(newBounds.getSize())) {
+                updateBounds(newBounds);
+            }
+            super.setBounds(newBounds);
+        }
+
+        protected boolean supportsScrollBars()
+        {
+            return true;
+        }
+
+        protected abstract void setChildConstraints(Rectangle bounds);
+        protected abstract void createChildFigures();
     }
 
     protected abstract DirectEditManager creatDirectEditManager(InstallOptionsWidgetEditPart part, Class clasz, CellEditorLocator locator);

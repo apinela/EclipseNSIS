@@ -18,13 +18,13 @@ import net.sf.eclipsensis.installoptions.model.InstallOptionsWidget;
 import net.sf.eclipsensis.installoptions.model.Position;
 
 import org.eclipse.draw2d.*;
-import org.eclipse.draw2d.geometry.Dimension;
-import org.eclipse.draw2d.geometry.Rectangle;
+import org.eclipse.draw2d.geometry.*;
 import org.eclipse.gef.*;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.commands.UnexecutableCommand;
 import org.eclipse.gef.editpolicies.ResizableEditPolicy;
-import org.eclipse.swt.graphics.Color;
+import org.eclipse.gef.requests.ChangeBoundsRequest;
+import org.eclipse.swt.graphics.Font;
 
 /**
  *
@@ -182,6 +182,18 @@ public class InstallOptionsResizableEditPolicy extends ResizableEditPolicy imple
         return list;
     }
 
+    protected void showChangeBoundsFeedback(ChangeBoundsRequest request)
+    {
+        IFigure f = getDragSourceFeedbackFigure();
+        if(f instanceof ResizeFeedbackFigure) {
+            ResizeFeedbackFigure figure = (ResizeFeedbackFigure)f;
+            figure.setMoveDelta(request.getMoveDelta());
+            figure.setSizeDelta(request.getSizeDelta());
+            figure.setResizeDirection(request.getResizeDirection());
+        }
+        super.showChangeBoundsFeedback(request);
+    }
+
     /**
      * Creates the figure used for feedback.
      *
@@ -222,6 +234,16 @@ public class InstallOptionsResizableEditPolicy extends ResizableEditPolicy imple
     }
 
     /**
+     * Returns the layer used for displaying feedback.
+     *
+     * @return the feedback layer
+     */
+    protected IFigure getResizeFeedbackLayer()
+    {
+        return getLayer(InstallOptionsRootEditPart.RESIZE_FEEDBACK_LAYER);
+    }
+
+    /**
      * @see org.eclipse.gef.editpolicies.NonResizableEditPolicy#initialFeedbackRectangle()
      */
     protected Rectangle getInitialFeedbackBounds()
@@ -234,48 +256,219 @@ public class InstallOptionsResizableEditPolicy extends ResizableEditPolicy imple
         private boolean mInit = false;
         private String mText = null;
         private InstallOptionsWidget mModel;
+        private RectangleFigure mSizeFigure = null;
+        private Point mMoveDelta = IInstallOptionsConstants.EMPTY_POINT;
+        private Dimension mSizeDelta = IInstallOptionsConstants.EMPTY_DIMENSION;
+        private Viewport mViewport = null;
+        private int mResizeDirection = 0;
 
         public ResizeFeedbackFigure(Rectangle bounds)
         {
             mModel = (InstallOptionsWidget)getHost().getModel();
             setXOR(true);
             setFill(true);
+            setOpaque(true);
             setBackgroundColor(IInstallOptionsConstants.GHOST_FILL_COLOR);
             setForegroundColor(ColorConstants.white);
             setBounds(bounds);
             mInit = true;
         }
 
+        public void setResizeDirection(int resizeDirection)
+        {
+            mResizeDirection = resizeDirection;
+        }
+
+        public Point getMoveDelta()
+        {
+            return mMoveDelta;
+        }
+
+        public void setMoveDelta(Point moveDelta)
+        {
+            mMoveDelta = moveDelta;
+        }
+
+        public Dimension getSizeDelta()
+        {
+            return mSizeDelta;
+        }
+
+        public void setSizeDelta(Dimension sizeDelta)
+        {
+            mSizeDelta = sizeDelta;
+        }
 
         public void setBounds(Rectangle rect)
         {
             if(mInit) {
-                if(rect.width != bounds.width || rect.height != bounds.height) {
+                if(mResizeDirection == 0) {
+                    if (mSizeFigure != null) {
+                        mSizeFigure.setVisible(false);
+                    }
+                }
+                else {
                     Position pos = mModel.toGraphical(mModel.toModel(new Position(rect)),false);
                     Dimension d = pos.getSize();
                     mText = new StringBuffer().append(d.width).append("x").append(d.height).toString(); //$NON-NLS-1$
+                    Font f = getFont();
+                    if (f != null) {
+                        if(mViewport == null) {
+                            FigureCanvas canvas = (FigureCanvas)getHost().getRoot().getViewer().getControl();
+                            mViewport = canvas.getViewport();
+                        }
+                        Rectangle clientArea = mViewport.getClientArea();
+                        Rectangle r = clientArea.getCopy().intersect(bounds);
+                        Dimension dim = FigureUtilities.getTextExtents(mText, f);
+                        dim.expand(4, 4);
+                        IFigure sizeFigure = getSizeFigure();
+                        int delX = (r.width - dim.width)/2;
+                        int delY = (r.height - dim.height)/2;
+                        if (delX >= 2 && delY >= 2) {
+                            sizeFigure.setVisible(true);
+                            sizeFigure.setBounds(new Rectangle(r.x + delX, r.y + delY, dim.width, dim.height));
+                        }
+                        else {
+                            int x = -1;
+                            int y = -1;
+                            switch(mResizeDirection) {
+                                case PositionConstants.NORTH_WEST:
+                                {
+                                    x = r.x - dim.width - 2;
+                                    y = (r.y + delY);
+
+                                    if(x < clientArea.x) {
+                                        x = r.x + delX;
+                                        y = r.y - dim.height - 2;
+                                    }
+                                    if(y < clientArea.y) {
+                                        y = r.y + r.height + 2;
+                                    }
+                                    break;
+                                }
+                                case PositionConstants.NORTH:
+                                {
+                                    x = r.x + delX;
+                                    y = r.y - dim.height - 8;
+                                    if(y < clientArea.y) {
+                                        y = r.y + r.height+2;
+                                    }
+                                    break;
+                                }
+                                case PositionConstants.NORTH_EAST:
+                                {
+                                    x = r.x + r.width + 2;
+                                    y = (r.y + delY);
+
+                                    if(x+dim.width > clientArea.x+clientArea.width) {
+                                        x = r.x + delX;
+                                        y = r.y - dim.height - 2;
+                                    }
+                                    if(y < clientArea.y) {
+                                        y = r.y + r.height + 2;
+                                    }
+                                    break;
+                                }
+                                case PositionConstants.EAST:
+                                {
+                                    x = r.x + r.width + 8;
+                                    y = (r.y + delY);
+
+                                    if(x+dim.width > clientArea.x+clientArea.width) {
+                                        x = r.x - dim.width - 2;
+                                    }
+                                    break;
+                                }
+                                case PositionConstants.SOUTH_EAST:
+                                {
+                                    x = r.x + r.width + 2;
+                                    y = (r.y + delY);
+
+                                    if(x+dim.width > clientArea.x+clientArea.width) {
+                                        x = r.x + delX;
+                                        y = r.y + r.height + 2;
+                                    }
+                                    if(y+dim.height > clientArea.y+clientArea.height) {
+                                        y = r.y - dim.height - 2;
+                                    }
+                                    break;
+                                }
+                                case PositionConstants.SOUTH:
+                                {
+                                    x = r.x + delX;
+                                    y = r.y + r.height + 8;
+                                    if(y+dim.height > clientArea.y+clientArea.height) {
+                                        y = r.y - dim.height - 2;
+                                    }
+                                    break;
+                                }
+                                case PositionConstants.SOUTH_WEST:
+                                {
+                                    x = r.x - dim.width - 2;
+                                    y = (r.y + delY);
+
+                                    if(x < clientArea.x) {
+                                        x = r.x + delX;
+                                        y = r.y + r.height + 2;
+                                    }
+                                    if(y+dim.height > clientArea.y+clientArea.height) {
+                                        y = r.y - dim.height - 2;
+                                    }
+                                    break;
+                                }
+                                case PositionConstants.WEST:
+                                {
+                                    x = r.x - dim.width - 8;
+                                    y = (r.y + delY);
+
+                                    if(x < clientArea.x) {
+                                        x = r.x + r.width + 2;
+                                    }
+                                    break;
+                                }
+                            }
+                            if(x < 0 || y < 0 || (x+dim.width) > (clientArea.x+clientArea.width) || (y+dim.height) >= (clientArea.y+clientArea.height)) {
+                                sizeFigure.setVisible(false);
+                            }
+                            else {
+                                sizeFigure.setVisible(true);
+                                sizeFigure.setBounds(new Rectangle(x, y, dim.width, dim.height));
+                            }
+                        }
+                    }
                 }
             }
             super.setBounds(rect);
         }
 
-        public void paintClientArea(Graphics graphics)
+        private IFigure getSizeFigure()
         {
-            super.paintClientArea(graphics);
-            if(mText != null) {
-                Dimension dim = FigureUtilities.getTextExtents(mText,getFont());
-                int delX = bounds.width-dim.width;
-                int delY = bounds.height-dim.height;
-                if(delX > 0 && delY > 0) {
-                    Color fgColor = getForegroundColor();
-                    graphics.pushState();
-                    graphics.setForegroundColor(ColorConstants.listForeground);
-                    graphics.drawText(mText,bounds.x+delX/2,bounds.y+delY/2);
-                    graphics.setForegroundColor(fgColor);
-                    graphics.popState();
-                    graphics.restoreState();
-                }
+            if (mSizeFigure == null) {
+                mSizeFigure = new RectangleFigure() {
+                    public void paintClientArea(Graphics graphics)
+                    {
+                        super.paintClientArea(graphics);
+                        if (mText != null) {
+                            graphics.drawText(mText, getBounds().x+2, getBounds().y+2);
+                        }
+                    }
+                };
+                mSizeFigure.setForegroundColor(ColorConstants.tooltipForeground);
+                mSizeFigure.setBackgroundColor(ColorConstants.tooltipBackground);
+                mSizeFigure.setOutline(true);
+                mSizeFigure.setFill(true);
+                getResizeFeedbackLayer().add(mSizeFigure);
             }
+            return mSizeFigure;
+        }
+
+        public void removeNotify()
+        {
+            if(mSizeFigure != null) {
+                getResizeFeedbackLayer().remove(mSizeFigure);
+                mSizeFigure = null;
+            }
+            super.removeNotify();
         }
     }
 }

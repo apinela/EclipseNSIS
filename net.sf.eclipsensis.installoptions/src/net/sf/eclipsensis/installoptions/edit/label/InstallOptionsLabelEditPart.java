@@ -14,8 +14,8 @@ import net.sf.eclipsensis.installoptions.edit.InstallOptionsWidgetEditPart;
 import net.sf.eclipsensis.installoptions.edit.uneditable.InstallOptionsUneditableElementEditPart;
 import net.sf.eclipsensis.installoptions.edit.uneditable.UneditableElementDirectEditPolicy;
 import net.sf.eclipsensis.installoptions.figures.*;
-import net.sf.eclipsensis.installoptions.figures.FigureUtility.NTFigure;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
+import net.sf.eclipsensis.installoptions.util.FontUtility;
 import net.sf.eclipsensis.installoptions.util.TypeConverter;
 import net.sf.eclipsensis.util.*;
 
@@ -92,6 +92,7 @@ public class InstallOptionsLabelEditPart extends InstallOptionsUneditableElement
         public boolean isMultiLine();
     }
 
+
     //This is a hack because Windows NT Labels don't seem to respond to the
     //WM_PRINT message (see SWTControl.getImage(Control)
     //XXX Remove once the cause (and fix) is known.
@@ -116,12 +117,14 @@ public class InstallOptionsLabelEditPart extends InstallOptionsUneditableElement
         protected void createChildFigures()
         {
             mShadowTextFlow = new TextFlow(""); //$NON-NLS-1$
+            mShadowTextFlow.setFont(FontUtility.getInstallOptionsFont());
             mShadowFlowPage = new FlowPage();
             mShadowFlowPage.setVisible(false);
             mShadowFlowPage.add(mShadowTextFlow);
             add(mShadowFlowPage);
 
             mTextFlow = new TextFlow(""); //$NON-NLS-1$
+            mTextFlow.setFont(FontUtility.getInstallOptionsFont());
             mFlowPage = new FlowPage();
             mFlowPage.add(mTextFlow);
             add(mFlowPage);

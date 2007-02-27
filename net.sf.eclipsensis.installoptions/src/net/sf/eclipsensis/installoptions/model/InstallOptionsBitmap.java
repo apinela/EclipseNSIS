@@ -12,11 +12,12 @@ package net.sf.eclipsensis.installoptions.model;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.ini.INISection;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 
 public class InstallOptionsBitmap extends InstallOptionsPicture
 {
-    private static final Image BITMAP_IMAGE = InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("bitmap.image")); //$NON-NLS-1$
+    public static final Image BITMAP_IMAGE = InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("bitmap.image")); //$NON-NLS-1$
 
     protected InstallOptionsBitmap(INISection section)
     {
@@ -34,5 +35,15 @@ public class InstallOptionsBitmap extends InstallOptionsPicture
     public Image getImage()
     {
         return BITMAP_IMAGE;
+    }
+
+    public String getFileExtension()
+    {
+        return ".bmp";
+    }
+
+    public int getSWTImageType()
+    {
+        return SWT.IMAGE_BMP;
     }
 }

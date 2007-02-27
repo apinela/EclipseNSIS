@@ -9,13 +9,13 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.actions;
 
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IRewriteTarget;
-
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.editor.InstallOptionsSourceEditor;
 import net.sf.eclipsensis.installoptions.ini.INIFile;
 import net.sf.eclipsensis.installoptions.ini.INILine;
+
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRewriteTarget;
 
 public class INIFileFixProblemsAction extends INIFileAction
 {

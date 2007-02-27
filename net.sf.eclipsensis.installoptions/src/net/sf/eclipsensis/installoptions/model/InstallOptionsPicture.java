@@ -56,5 +56,7 @@ public abstract class InstallOptionsPicture extends InstallOptionsUneditableElem
         return new PicturePropertySectionCreator(this);
     }
 
+    public abstract int getSWTImageType();
+    public abstract String getFileExtension();
     public abstract Image getImage();
 }

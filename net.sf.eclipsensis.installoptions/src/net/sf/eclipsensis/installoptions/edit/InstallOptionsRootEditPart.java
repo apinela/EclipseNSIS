@@ -15,12 +15,13 @@ import java.beans.PropertyChangeListener;
 import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
 import net.sf.eclipsensis.installoptions.actions.ToggleGuideVisibilityAction;
 
-import org.eclipse.draw2d.IFigure;
-import org.eclipse.gef.editparts.GridLayer;
-import org.eclipse.gef.editparts.ScalableFreeformRootEditPart;
+import org.eclipse.draw2d.*;
+import org.eclipse.gef.editparts.*;
 
 public class InstallOptionsRootEditPart extends ScalableFreeformRootEditPart implements IInstallOptionsConstants
 {
+    public static final String RESIZE_FEEDBACK_LAYER = "a";
+
     private PropertyChangeListener mGridListener = new PropertyChangeListener() {
         public void propertyChange(PropertyChangeEvent evt) {
             String property = evt.getPropertyName();
@@ -81,5 +82,19 @@ public class InstallOptionsRootEditPart extends ScalableFreeformRootEditPart imp
     protected GridLayer createGridLayer()
     {
         return new InstallOptionsGridLayer();
+    }
+
+    protected void createLayers(LayeredPane layeredPane)
+    {
+        super.createLayers(layeredPane);
+        layeredPane.add(new ResizeFeedbackLayer(), RESIZE_FEEDBACK_LAYER);
+    }
+
+    private class ResizeFeedbackLayer extends FreeformLayer
+    {
+        ResizeFeedbackLayer()
+        {
+            setEnabled(false);
+        }
     }
 }

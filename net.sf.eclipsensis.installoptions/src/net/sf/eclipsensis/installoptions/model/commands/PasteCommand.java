@@ -15,10 +15,10 @@ import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.actions.Clipboard;
 import net.sf.eclipsensis.installoptions.figures.FigureUtility;
 import net.sf.eclipsensis.installoptions.model.*;
+import net.sf.eclipsensis.installoptions.util.FontUtility;
 
 import org.eclipse.draw2d.geometry.*;
 import org.eclipse.gef.commands.Command;
-import org.eclipse.swt.widgets.Display;
 
 public class PasteCommand extends Command
 {
@@ -45,7 +45,7 @@ public class PasteCommand extends Command
 
     public void setClientArea(org.eclipse.swt.graphics.Rectangle clientArea)
     {
-        mClientArea = FigureUtility.pixelsToDialogUnits(new Rectangle(clientArea.x,clientArea.y,clientArea.width,clientArea.height),Display.getDefault().getSystemFont());
+        mClientArea = FigureUtility.pixelsToDialogUnits(new Rectangle(clientArea.x,clientArea.y,clientArea.width,clientArea.height),FontUtility.getInstallOptionsFont());
     }
 
     public void execute()

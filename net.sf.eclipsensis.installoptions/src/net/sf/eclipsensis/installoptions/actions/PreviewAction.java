@@ -19,11 +19,15 @@ import net.sf.eclipsensis.console.*;
 import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.editor.IInstallOptionsEditor;
+import net.sf.eclipsensis.installoptions.figures.DashedLineBorder;
 import net.sf.eclipsensis.installoptions.ini.*;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
+import net.sf.eclipsensis.installoptions.model.*;
+import net.sf.eclipsensis.installoptions.util.DummyNSISSettings;
+import net.sf.eclipsensis.installoptions.util.FontUtility;
 import net.sf.eclipsensis.lang.NSISLanguage;
 import net.sf.eclipsensis.lang.NSISLanguageManager;
 import net.sf.eclipsensis.makensis.*;
+import net.sf.eclipsensis.script.NSISScriptProblem;
 import net.sf.eclipsensis.settings.INSISSettingsConstants;
 import net.sf.eclipsensis.settings.NSISSettings;
 import net.sf.eclipsensis.util.Common;
@@ -31,13 +35,17 @@ import net.sf.eclipsensis.util.IOUtility;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.draw2d.SWTGraphics;
+import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.gef.Disposable;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.operation.ModalContext;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.*;
 
@@ -45,10 +53,16 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
 {
     public static final String PREVIEW_CLASSIC_ID = "net.sf.eclipsensis.installoptions.preview_classic"; //$NON-NLS-1$
     public static final String PREVIEW_MUI_ID = "net.sf.eclipsensis.installoptions.preview_mui"; //$NON-NLS-1$
+
+    private static final String cMUIDialogSizeName = InstallOptionsPlugin.getResourceString("mui.dialog.size.name"); //$NON-NLS-1$
+    private static final String cClassicDialogSizeName = InstallOptionsPlugin.getResourceString("classic.dialog.size.name"); //$NON-NLS-1$
     private static INSISConsole cDummyConsole = new NullNSISConsole();
+    private static HashMap cPreviewCache = new HashMap();
+    private static HashMap cBitmapCache = new HashMap();
+    private static HashMap cIconCache = new HashMap();
 
     private IInstallOptionsEditor mEditor;
-    private PreviewSettings mSettings = new PreviewSettings();
+    private NSISSettings mSettings = new DummyNSISSettings();
 
     public PreviewAction(int type, IInstallOptionsEditor editor)
     {
@@ -139,7 +153,7 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
                     if(file.exists()) {
                         IPath location = file.getLocation();
                         if(location != null) {
-                            doPreview(location.toFile());
+                            doPreview(iniFile, location.toFile());
                         }
                         else {
                             Common.openError(shell,EclipseNSISPlugin.getResourceString("local.filesystem.error"),  //$NON-NLS-1$
@@ -148,13 +162,13 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
                     }
                 }
                 else if(editorInput instanceof IPathEditorInput) {
-                    doPreview(new File(((IPathEditorInput)editorInput).getPath().toOSString()));
+                    doPreview(iniFile, new File(((IPathEditorInput)editorInput).getPath().toOSString()));
                 }
             }
         }
     }
 
-    private void doPreview(final File file)
+    private void doPreview(final INIFile iniFile, final File file)
     {
         final Shell shell = mEditor.getSite().getShell();
         BusyIndicator.showWhile(shell.getDisplay(), new Runnable() {
@@ -176,12 +190,107 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
                 pmd.open();
                 try {
                     ModalContext.run(new IRunnableWithProgress() {
+                        private File createPreviewFile(File previewFile, INIFile inifile, final NSISLanguage lang) throws IOException
+                        {
+                            if(previewFile == null) {
+                                previewFile = File.createTempFile("preview",".ini");
+                                previewFile.deleteOnExit();
+                            }
+                            inifile = inifile.copy();
+                            InstallOptionsDialog dialog = InstallOptionsDialog.loadINIFile(inifile);
+                            DialogSize dialogSize;
+                            if(getId().equals(PREVIEW_MUI_ID)) {
+                                dialogSize = DialogSizeManager.getDialogSize(cMUIDialogSizeName);
+                            }
+                            else {
+                                dialogSize = DialogSizeManager.getDialogSize(cClassicDialogSizeName);
+                            }
+                            if(dialogSize == null) {
+                                dialogSize = DialogSizeManager.getDefaultDialogSize();
+                            }
+                            dialog.setDialogSize(dialogSize);
+                            Font font = FontUtility.getInstallOptionsFont();
+                            final DashedLineBorder border = new DashedLineBorder();
+                            for(Iterator iter=dialog.getChildren().iterator(); iter.hasNext(); ) {
+                                InstallOptionsWidget widget = (InstallOptionsWidget)iter.next();
+                                if(widget instanceof InstallOptionsPicture) {
+                                    final InstallOptionsPicture picture = (InstallOptionsPicture)widget;
+                                    final Dimension dim = widget.toGraphical(widget.getPosition(), font).getSize();
+                                    final HashMap cache;
+                                    switch(picture.getSWTImageType()) {
+                                        case SWT.IMAGE_BMP:
+                                            cache = cBitmapCache;
+                                            break;
+                                        case SWT.IMAGE_ICO:
+                                            cache = cIconCache;
+                                            break;
+                                        default:
+                                            continue;
+                                    }
+                                    final File[] imageFile = new File[] {(File)cache.get(dim)};
+                                    if(!IOUtility.isValidFile(imageFile[0])) {
+                                        shell.getDisplay().syncExec(new Runnable() {
+                                            public void run()
+                                            {
+                                                Image bitmap = new Image(shell.getDisplay(), dim.width, dim.height);
+                                                GC gc = new GC(bitmap);
+                                                gc.setBackground(shell.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
+                                                gc.setForeground(shell.getDisplay().getSystemColor(SWT.COLOR_BLACK));
+                                                gc.fillRectangle(0, 0, dim.width, dim.height);
+                                                border.paint(new SWTGraphics(gc),new org.eclipse.draw2d.geometry.Rectangle(0, 0, dim.width, dim.height));
+//                                                gc.setLineDash(DashedLineBorder.DASHES);
+//                                                gc.drawRectangle(0, 0, dim.width-1, dim.height-1);
+                                                Image widgetImage = picture.getImage();
+                                                Rectangle rect = widgetImage.getBounds();
+                                                int x, y, width, height;
+                                                if (rect.width > dim.width) {
+                                                    x = 0;
+                                                    width = dim.width;
+                                                }
+                                                else {
+                                                    x = (dim.width - rect.width) / 2;
+                                                    width = rect.width;
+                                                }
+                                                if (rect.height > dim.height) {
+                                                    y = 0;
+                                                    height = dim.height;
+                                                }
+                                                else {
+                                                    y = (dim.height - rect.height) / 2;
+                                                    height = rect.height;
+                                                }
+                                                gc.drawImage(widgetImage, 0, 0, rect.width, rect.height, x, y, width, height);
+                                                gc.dispose();
+                                                ImageLoader loader = new ImageLoader();
+                                                loader.data = new ImageData[]{bitmap.getImageData()};
+                                                try {
+                                                    imageFile[0] = File.createTempFile("preview", picture.getFileExtension());
+                                                    imageFile[0].deleteOnExit();
+                                                    loader.save(imageFile[0].getAbsolutePath(), picture.getSWTImageType());
+                                                    cache.put(dim, imageFile[0]);
+                                                }
+                                                catch (IOException e) {
+                                                    imageFile[0] = null;
+                                                    InstallOptionsPlugin.getDefault().log(e);
+                                                    cache.remove(dim);
+                                                }
+                                            }
+                                        });
+                                    }
+                                    if(imageFile[0] != null) {
+                                        picture.setPropertyValue(InstallOptionsModel.PROPERTY_TEXT, imageFile[0].getAbsolutePath());
+                                    }
+                                }
+                            }
+                            inifile = dialog.updateINIFile();
+                            IOUtility.writeContentToFile(previewFile,inifile.toString().getBytes());
+                            return previewFile;
+                        }
+
                         public void run(IProgressMonitor monitor)
                         {
                             try {
                                 monitor.beginTask(InstallOptionsPlugin.getResourceString("previewing.script.task.name"),IProgressMonitor.UNKNOWN); //$NON-NLS-1$
-                                LinkedHashMap symbols = mSettings.getSymbols();
-                                symbols.put("PREVIEW_INI",file.getAbsolutePath()); //$NON-NLS-1$
                                 String pref = InstallOptionsPlugin.getDefault().getPreferenceStore().getString(IInstallOptionsConstants.PREFERENCE_PREVIEW_LANG);
                                 NSISLanguage lang;
                                 if(pref.equals("")) { //$NON-NLS-1$
@@ -194,6 +303,16 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
                                         InstallOptionsPlugin.getDefault().getPreferenceStore().setValue(IInstallOptionsConstants.PREFERENCE_PREVIEW_LANG, ""); //$NON-NLS-1$
                                     }
                                 }
+                                PreviewCacheKey key = new PreviewCacheKey(file,lang);
+                                File previewFile = (File)cPreviewCache.get(key);
+                                if(previewFile == null || file.lastModified() > previewFile.lastModified()) {
+                                    previewFile = createPreviewFile(previewFile, iniFile, lang);
+                                    cPreviewCache.put(key,previewFile);
+                                }
+
+                                LinkedHashMap symbols = mSettings.getSymbols();
+
+                                symbols.put("PREVIEW_INI",previewFile.getAbsolutePath()); //$NON-NLS-1$
                                 symbols.put("PREVIEW_LANG",lang.getName()); //$NON-NLS-1$
                                 Locale locale = NSISLanguageManager.getInstance().getLocaleForLangId(lang.getLangId());
                                 if(getId().equals(PREVIEW_MUI_ID)) {
@@ -205,34 +324,34 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
                                 }
                                 symbols.put("PREVIEW_NAME",InstallOptionsPlugin.getResourceString(locale,"preview.setup.name")); //$NON-NLS-1$ //$NON-NLS-2$
 
-                                    mSettings.setSymbols(symbols);
-                                    final File previewScript = getPreviewScript();
-                                    long timestamp = System.currentTimeMillis();
-                                    MakeNSISResults results = null;
-                                    results = MakeNSISRunner.compile(previewScript, mSettings, cDummyConsole, new INSISConsoleLineProcessor() {
-                                        public NSISConsoleLine processText(String text)
-                                        {
-                                            return NSISConsoleLine.info(text);
-                                        }
+                                mSettings.setSymbols(symbols);
+                                final File previewScript = getPreviewScript();
+                                long timestamp = System.currentTimeMillis();
+                                MakeNSISResults results = null;
+                                results = MakeNSISRunner.compile(previewScript, mSettings, cDummyConsole, new INSISConsoleLineProcessor() {
+                                    public NSISConsoleLine processText(String text)
+                                    {
+                                        return NSISConsoleLine.info(text);
+                                    }
 
-                                        public void reset()
-                                        {
-                                        }
-                                    });
-                                    if(results != null) {
-                                        if (results.getReturnCode() != 0) {
-                                            List errors = results.getProblems();
-                                            final String error;
-                                            if (!Common.isEmptyCollection(errors)) {
-                                                Iterator iter = errors.iterator();
-                                                StringBuffer buf = new StringBuffer(((NSISConsoleLine)iter.next()).toString());
-                                                while (iter.hasNext()) {
-                                                    buf.append(INSISConstants.LINE_SEPARATOR).append(((NSISConsoleLine)iter.next()).toString());
-                                                }
-                                                error = buf.toString();
+                                    public void reset()
+                                    {
+                                    }
+                                });
+                                if(results != null) {
+                                    if (results.getReturnCode() != 0) {
+                                        List errors = results.getProblems();
+                                        final String error;
+                                        if (!Common.isEmptyCollection(errors)) {
+                                            Iterator iter = errors.iterator();
+                                            StringBuffer buf = new StringBuffer(((NSISScriptProblem)iter.next()).getText());
+                                            while (iter.hasNext()) {
+                                                buf.append(INSISConstants.LINE_SEPARATOR).append(((NSISScriptProblem)iter.next()).getText());
                                             }
-                                            else {
-                                                error = InstallOptionsPlugin.getResourceString("preview.compile.error"); //$NON-NLS-1$
+                                            error = buf.toString();
+                                        }
+                                        else {
+                                            error = InstallOptionsPlugin.getResourceString("preview.compile.error"); //$NON-NLS-1$
                                         }
                                         shell.getDisplay().asyncExec(new Runnable() {
                                             public void run()
@@ -281,68 +400,34 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
                 new File(InstallOptionsPlugin.getPluginStateLocation(),"preview")); //$NON-NLS-1$
     }
 
-    private class PreviewSettings extends NSISSettings
+    private class PreviewCacheKey
     {
-        public boolean showStatistics()
+        private File mFile;
+        private NSISLanguage mLanguage;
+
+        public PreviewCacheKey(File file, NSISLanguage language)
         {
-            return false;
+            mFile = file;
+            mLanguage = language;
         }
 
-        public boolean getBoolean(String name)
+        public int hashCode()
         {
-            return false;
+            int result = 31 + ((mFile == null)?0:mFile.hashCode());
+            result = 31 * result + ((mLanguage == null)?0:mLanguage.hashCode());
+            return result;
         }
 
-        public int getInt(String name)
+        public boolean equals(Object obj)
         {
-            return 0;
-        }
-
-        public String getString(String name)
-        {
-            return ""; //$NON-NLS-1$
-        }
-
-        public Object loadObject(String name)
-        {
-            return null;
-        }
-
-        public void removeBoolean(String name)
-        {
-        }
-
-        public void removeInt(String name)
-        {
-        }
-
-        public void removeString(String name)
-        {
-        }
-
-        public void removeObject(String name)
-        {
-        }
-
-        public void setValue(String name, boolean value)
-        {
-        }
-
-        public void setValue(String name, int value)
-        {
-        }
-
-        public void setValue(String name, String value)
-        {
-        }
-
-        public void storeObject(String name, Object object)
-        {
-        }
-
-        public String getName()
-        {
-            return null;
+            if(obj != this) {
+                if(obj instanceof PreviewCacheKey) {
+                    return Common.objectsAreEqual(mFile,((PreviewCacheKey)obj).mFile) &&
+                        Common.objectsAreEqual(mLanguage,((PreviewCacheKey)obj).mLanguage);
+                }
+                return false;
+            }
+            return true;
         }
     }
 }

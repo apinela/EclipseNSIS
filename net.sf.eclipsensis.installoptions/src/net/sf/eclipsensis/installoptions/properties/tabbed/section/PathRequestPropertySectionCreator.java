@@ -13,7 +13,8 @@ import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsPathRequest;
 import net.sf.eclipsensis.installoptions.model.commands.InstallOptionsCommandHelper;
 
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetWidgetFactory;
 
 public class PathRequestPropertySectionCreator extends EditableElementPropertySectionCreator

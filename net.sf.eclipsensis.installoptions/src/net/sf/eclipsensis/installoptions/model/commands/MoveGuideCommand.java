@@ -16,10 +16,10 @@ import net.sf.eclipsensis.installoptions.figures.FigureUtility;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsWidget;
 import net.sf.eclipsensis.installoptions.model.Position;
 import net.sf.eclipsensis.installoptions.rulers.InstallOptionsGuide;
+import net.sf.eclipsensis.installoptions.util.FontUtility;
 
 import org.eclipse.gef.commands.Command;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.widgets.Display;
 
 public class MoveGuideCommand extends Command
 {
@@ -38,7 +38,7 @@ public class MoveGuideCommand extends Command
     {
         boolean isHorizontal = mGuide.isHorizontal();
         int guidePos = mGuide.getPosition() + mPositionDelta;
-        Font f = Display.getDefault().getSystemFont();
+        Font f = FontUtility.getInstallOptionsFont();
         guidePos = (isHorizontal?FigureUtility.pixelsToDialogUnitsY(guidePos,f):FigureUtility.pixelsToDialogUnitsX(guidePos,f));
         mGuide.setPosition((isHorizontal?FigureUtility.dialogUnitsToPixelsY(guidePos,f):FigureUtility.dialogUnitsToPixelsX(guidePos,f)));
         Iterator iter = mGuide.getWidgets().iterator();
@@ -62,7 +62,7 @@ public class MoveGuideCommand extends Command
     public boolean canExecute()
     {
         boolean isHorizontal = mGuide.isHorizontal();
-        Font f = Display.getDefault().getSystemFont();
+        Font f = FontUtility.getInstallOptionsFont();
         int guidePos = mGuide.getPosition() + mPositionDelta;
         guidePos = (isHorizontal?FigureUtility.pixelsToDialogUnitsY(guidePos,f):FigureUtility.pixelsToDialogUnitsX(guidePos,f));
         if(guidePos < 0) {

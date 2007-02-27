@@ -11,9 +11,11 @@ package net.sf.eclipsensis.installoptions.figures;
 
 import java.util.List;
 
+import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsWidget;
+import net.sf.eclipsensis.installoptions.util.FontUtility;
 import net.sf.eclipsensis.util.WinAPI;
 
 import org.eclipse.draw2d.*;
@@ -176,10 +178,11 @@ public abstract class SWTControlFigure extends ScrollBarsFigure
                     style |= SWT.V_SCROLL;
                 }
                 Control control = createSWTControl(mParent, style);
+                control.setFont(FontUtility.getInstallOptionsFont());
                 control.setVisible(true);
                 control.setEnabled(!mDisabled);
                 ControlSubclasser.subclassControl(control, this);
-                Point p1 = new Point(0, 0);
+                Point p1 = IInstallOptionsConstants.EMPTY_POINT.getCopy();
                 translateToAbsolute(p1);
                 Border b = getBorder();
                 Insets insets;

@@ -11,13 +11,13 @@ package net.sf.eclipsensis.installoptions.edit;
 
 import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
 import net.sf.eclipsensis.installoptions.figures.FigureUtility;
+import net.sf.eclipsensis.installoptions.util.FontUtility;
 
 import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.Graphics;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.editparts.GridLayer;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.widgets.Display;
 
 public class InstallOptionsGridLayer extends GridLayer implements IInstallOptionsConstants
 {
@@ -29,7 +29,7 @@ public class InstallOptionsGridLayer extends GridLayer implements IInstallOption
     public InstallOptionsGridLayer()
     {
         super();
-        Font f = Display.getDefault().getSystemFont();
+        Font f = FontUtility.getInstallOptionsFont();
         mDpuX = ((double)FigureUtility.dialogUnitsToPixelsX(1000,f))/1000;
         mDpuY = ((double)FigureUtility.dialogUnitsToPixelsY(1000,f))/1000;
     }
@@ -73,13 +73,14 @@ public class InstallOptionsGridLayer extends GridLayer implements IInstallOption
                 }
             }
 
+            Font f = FontUtility.getInstallOptionsFont();
             if (GRID_STYLE_DOTS.equals(mStyle)) {
                 g.setForegroundColor(ColorConstants.black);
                 if (distanceY > 0 && distanceY > 0) {
                     for (double i = originY; i < clipY + clipHeight; i += distanceY) {
                         for (double j = originX; j < clipX + clipWidth; j += distanceX) {
-                            int x = FigureUtility.dialogUnitsToPixelsX((int)j,Display.getDefault().getSystemFont());//(int)(i * mDpuY);
-                            int y = FigureUtility.dialogUnitsToPixelsY((int)i,Display.getDefault().getSystemFont());//(int)(i * mDpuY);
+                            int x = FigureUtility.dialogUnitsToPixelsX((int)j,f);//(int)(i * mDpuY);
+                            int y = FigureUtility.dialogUnitsToPixelsY((int)i,f);//(int)(i * mDpuY);
                             g.drawPoint(x,y);
                         }
                     }
@@ -89,13 +90,13 @@ public class InstallOptionsGridLayer extends GridLayer implements IInstallOption
                 g.setForegroundColor(ColorConstants.lightGray);
                 if (distanceX > 0) {
                     for (double i = originY; i < clipY + clipHeight; i += distanceY) {
-                        int y = FigureUtility.dialogUnitsToPixelsY((int)i,Display.getDefault().getSystemFont());//(int)(i * mDpuY);
+                        int y = FigureUtility.dialogUnitsToPixelsY((int)i,f);//(int)(i * mDpuY);
                         g.drawLine(clip.x, y, clip.x + clip.width, y);
                     }
                 }
                 if (distanceY > 0) {
                     for (double i = originX; i < clipX + clipWidth; i += distanceX) {
-                        int x = FigureUtility.dialogUnitsToPixelsX((int)i,Display.getDefault().getSystemFont());//(int)(i * mDpuY);
+                        int x = FigureUtility.dialogUnitsToPixelsX((int)i,f);//(int)(i * mDpuY);
                         g.drawLine(x, clip.y, x, clip.y + clip.height);
                     }
                 }

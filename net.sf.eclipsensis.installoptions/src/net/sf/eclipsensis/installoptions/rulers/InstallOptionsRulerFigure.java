@@ -10,6 +10,7 @@
 package net.sf.eclipsensis.installoptions.rulers;
 
 import net.sf.eclipsensis.installoptions.figures.FigureUtility;
+import net.sf.eclipsensis.installoptions.util.FontUtility;
 
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.gef.EditPart;
@@ -65,7 +66,7 @@ public class InstallOptionsRulerFigure extends RulerFigure
                 mDPU = 1.0;
             }
             else if(getUnit() == InstallOptionsRulerProvider.UNIT_DLU) {
-                Font font = Display.getDefault().getSystemFont();//mEditPart.getViewer().getControl().getFont();
+                Font font = FontUtility.getInstallOptionsFont();//mEditPart.getViewer().getControl().getFont();
                 if(isHorizontal()) {
                     mDPU = (FigureUtility.dialogUnitsToPixelsX(1000,font)/1000.0);
                 }

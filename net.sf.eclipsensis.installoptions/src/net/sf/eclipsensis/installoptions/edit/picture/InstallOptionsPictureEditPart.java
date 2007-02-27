@@ -13,7 +13,6 @@ import net.sf.eclipsensis.installoptions.edit.InstallOptionsWidgetEditPart;
 import net.sf.eclipsensis.installoptions.edit.label.InstallOptionsLabelEditPart;
 import net.sf.eclipsensis.installoptions.edit.uneditable.UneditableElementDirectEditPolicy;
 import net.sf.eclipsensis.installoptions.figures.*;
-import net.sf.eclipsensis.installoptions.figures.FigureUtility.NTFigure;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsPicture;
 
 import org.eclipse.draw2d.ImageFigure;

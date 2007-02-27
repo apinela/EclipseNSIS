@@ -20,6 +20,9 @@ import org.eclipse.swt.graphics.Color;
 
 public interface IInstallOptionsConstants
 {
+    public static final Point EMPTY_POINT = new Point(0,0);
+    public static final Dimension EMPTY_DIMENSION = new Dimension(0,0);
+
     public static final String PLUGIN_ID = InstallOptionsPlugin.getDefault().getBundle().getSymbolicName();
     public static final String PLUGIN_CONTEXT_PREFIX = PLUGIN_ID + "."; //$NON-NLS-1$
 
@@ -48,18 +51,18 @@ public interface IInstallOptionsConstants
     public static final String GRID_STYLE_LINES="GridStyleLines"; //$NON-NLS-1$
     public static final String GRID_STYLE_DOTS="GridStyleDots"; //$NON-NLS-1$
 
-    public static Boolean SHOW_GRID_DEFAULT = Boolean.FALSE;
-    public static Boolean SHOW_RULERS_DEFAULT = Boolean.FALSE;
-    public static Boolean SHOW_GUIDES_DEFAULT = Boolean.TRUE;
-    public static Boolean SHOW_DIALOG_SIZE_DEFAULT = Boolean.TRUE;
-    public static Boolean SNAP_TO_GRID_DEFAULT = Boolean.TRUE;
-    public static Boolean SNAP_TO_GEOMETRY_DEFAULT = Boolean.TRUE;
-    public static Boolean SNAP_TO_GUIDES_DEFAULT = Boolean.TRUE;
-    public static Boolean GLUE_TO_GUIDES_DEFAULT = Boolean.TRUE;
-    public static Dimension GRID_SPACING_DEFAULT = new Dimension(10,10);
-    public static Point GRID_ORIGIN_DEFAULT = new Point(0, 0);
-    public static String GRID_STYLE_DEFAULT = GRID_STYLE_LINES;
-    public static boolean CHECK_FILE_ASSOCIATION_DEFAULT = true;
+    public static final Boolean SHOW_GRID_DEFAULT = Boolean.FALSE;
+    public static final Boolean SHOW_RULERS_DEFAULT = Boolean.FALSE;
+    public static final Boolean SHOW_GUIDES_DEFAULT = Boolean.TRUE;
+    public static final Boolean SHOW_DIALOG_SIZE_DEFAULT = Boolean.TRUE;
+    public static final Boolean SNAP_TO_GRID_DEFAULT = Boolean.TRUE;
+    public static final Boolean SNAP_TO_GEOMETRY_DEFAULT = Boolean.TRUE;
+    public static final Boolean SNAP_TO_GUIDES_DEFAULT = Boolean.TRUE;
+    public static final Boolean GLUE_TO_GUIDES_DEFAULT = Boolean.TRUE;
+    public static final Dimension GRID_SPACING_DEFAULT = new Dimension(10,10);
+    public static final Point GRID_ORIGIN_DEFAULT = EMPTY_POINT;
+    public static final String GRID_STYLE_DEFAULT = GRID_STYLE_LINES;
+    public static final boolean CHECK_FILE_ASSOCIATION_DEFAULT = true;
 
     public static final String PREFERENCE_SHOW_GRID = "ShowGrid"; //$NON-NLS-1$
     public static final String PREFERENCE_SHOW_RULERS = "ShowRulers"; //$NON-NLS-1$

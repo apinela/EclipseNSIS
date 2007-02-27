@@ -87,7 +87,7 @@ public class DialogSizeManager
     {
         synchronized(DialogSizeManager.class) {
             loadDialogSizes();
-    
+
             return new ArrayList(cDialogSizes.values());
         }
     }
@@ -141,7 +141,7 @@ public class DialogSizeManager
                 DialogSize dialogSize = (DialogSize)cDialogSizes.get(((DialogSize)dialogSizes.get(0)).getName());
                 dialogSize.setDefault(true);
             }
-            
+
             if(oldList.size() != dialogSizes.size() || !oldList.containsAll(dialogSizes)) {
                 mListeners.firePropertyChange(PROPERTY_DIALOGSIZES, oldList, dialogSizes);
             }

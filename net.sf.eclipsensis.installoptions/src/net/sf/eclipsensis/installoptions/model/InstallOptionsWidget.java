@@ -25,6 +25,7 @@ import net.sf.eclipsensis.installoptions.properties.labelproviders.ListLabelProv
 import net.sf.eclipsensis.installoptions.properties.tabbed.section.IPropertySectionCreator;
 import net.sf.eclipsensis.installoptions.properties.validators.NSISStringLengthValidator;
 import net.sf.eclipsensis.installoptions.rulers.InstallOptionsGuide;
+import net.sf.eclipsensis.installoptions.util.FontUtility;
 import net.sf.eclipsensis.installoptions.util.TypeConverter;
 import net.sf.eclipsensis.util.CaseInsensitiveSet;
 import net.sf.eclipsensis.util.Common;
@@ -35,6 +36,7 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -374,6 +376,7 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
         }
         return false;
     }
+
     public void setFlags(List flags)
     {
         List oldFlags = retainSupportedFlags(getFlags());
@@ -417,6 +420,22 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
 
     public Position toGraphical(Position p, Dimension size, boolean toPixels)
     {
+        return toGraphical(p, size, toPixels, (toPixels?FontUtility.getInstallOptionsFont():null));
+    }
+
+    public Position toGraphical(Position p, Font font)
+    {
+        InstallOptionsDialog dialog = getParent();
+        return toGraphical(p, (dialog==null?null:dialog.getDialogSize().getSize()), font);
+    }
+
+    public Position toGraphical(Position p, Dimension size, Font font)
+    {
+        return toGraphical(p, size, true, font);
+    }
+
+    private Position toGraphical(Position p, Dimension size, boolean toPixels, Font font)
+    {
         p = p.getCopy();
         if(size == null) {
             p.set(0,0,0,0);
@@ -428,7 +447,7 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
             p.bottom = toGraphical(p.bottom,size.height);
         }
         if(toPixels) {
-            p = FigureUtility.dialogUnitsToPixels(p,Display.getDefault().getSystemFont());
+            p = FigureUtility.dialogUnitsToPixels(p,font);
         }
         return p;
     }
@@ -452,15 +471,31 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
         return toModel(p, (dialog==null?null:dialog.getDialogSize().getSize()), fromPixels);
     }
 
+    public Position toModel(Position p, Font font)
+    {
+        InstallOptionsDialog dialog = getParent();
+        return toModel(p, (dialog==null?null:dialog.getDialogSize().getSize()), font);
+    }
+
     public Position toModel(Position p, Dimension size)
     {
         return toModel(p, size, true);
     }
 
+    public Position toModel(Position p, Dimension size, Font font)
+    {
+        return toModel(p, size, true, font);
+    }
+
     public Position toModel(Position p, Dimension size, boolean fromPixels)
     {
+        return toModel(p, size, fromPixels, (fromPixels?FontUtility.getInstallOptionsFont():null));
+    }
+
+    private Position toModel(Position p, Dimension size, boolean fromPixels, Font font)
+    {
         if(fromPixels) {
-            p = FigureUtility.pixelsToDialogUnits(p,Display.getDefault().getSystemFont());
+            p = FigureUtility.pixelsToDialogUnits(p,font);
         }
         if(size == null) {
             p.set(0,0,0,0);

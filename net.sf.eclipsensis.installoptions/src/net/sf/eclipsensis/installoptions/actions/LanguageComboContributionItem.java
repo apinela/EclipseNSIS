@@ -120,30 +120,41 @@ public class LanguageComboContributionItem extends ContributionItem implements P
 
     private void loadLanguages()
     {
-        if(mComboViewer == null) {
-            return;
-        }
-        Combo combo = mComboViewer.getCombo();
-        if(combo == null || combo.isDisposed()) {
-            return;
-        }
-        String pref = mPreferenceStore.getString(IInstallOptionsConstants.PREFERENCE_PREVIEW_LANG);
-        Object sel;
-        List languages = new ArrayList(NSISLanguageManager.getInstance().getLanguages());
-        Collections.sort(languages, cLanguageComparator);
-        languages.add(0,DEFAULT);
-        mComboViewer.setInput(languages);
-        if(pref.equals("")) { //$NON-NLS-1$
-            sel = DEFAULT;
+        Runnable r = new Runnable() {
+            public void run()
+            {
+                if (mComboViewer == null) {
+                    return;
+                }
+                Combo combo = mComboViewer.getCombo();
+                if (combo == null || combo.isDisposed()) {
+                    return;
+                }
+                String pref = mPreferenceStore.getString(IInstallOptionsConstants.PREFERENCE_PREVIEW_LANG);
+                Object sel;
+                List languages = new ArrayList(NSISLanguageManager.getInstance().getLanguages());
+                Collections.sort(languages, cLanguageComparator);
+                languages.add(0, DEFAULT);
+                mComboViewer.setInput(languages);
+                if (pref.equals("")) { //$NON-NLS-1$
+                    sel = DEFAULT;
+                }
+                else {
+                    sel = NSISLanguageManager.getInstance().getLanguage(pref);
+                }
+                if (!languages.contains(sel)) {
+                    mPreferenceStore.setValue(IInstallOptionsConstants.PREFERENCE_PREVIEW_LANG, ""); //$NON-NLS-1$
+                }
+                else {
+                    mComboViewer.setSelection(new StructuredSelection(sel));
+                }
+            }
+        };
+        if(Display.getCurrent() != null) {
+            r.run();
         }
         else {
-            sel = NSISLanguageManager.getInstance().getLanguage(pref);
-        }
-        if(!languages.contains(sel)) {
-            mPreferenceStore.setValue(IInstallOptionsConstants.PREFERENCE_PREVIEW_LANG,""); //$NON-NLS-1$
-        }
-        else {
-            mComboViewer.setSelection(new StructuredSelection(sel));
+            Display.getDefault().syncExec(r);
         }
     }
 
@@ -166,7 +177,7 @@ public class LanguageComboContributionItem extends ContributionItem implements P
             {
                 Object firstElement = ((IStructuredSelection)event.getSelection()).getFirstElement();
                 String pref;
-                if(firstElement.equals(DEFAULT)) {
+                if(firstElement == null || firstElement.equals(DEFAULT)) {
                     pref = ""; //$NON-NLS-1$
                 }
                 else {

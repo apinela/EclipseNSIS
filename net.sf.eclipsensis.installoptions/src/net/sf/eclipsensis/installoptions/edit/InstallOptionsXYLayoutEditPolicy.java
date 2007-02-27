@@ -30,7 +30,6 @@ import org.eclipse.gef.rulers.RulerProvider;
 
 public class InstallOptionsXYLayoutEditPolicy extends XYLayoutEditPolicy implements IInstallOptionsConstants
 {
-    private static final Point EMPTY_POINT = new Point(0,0);
     private static final Command DUMMY_COMMAND = new Command() {
     };
 
@@ -135,8 +134,8 @@ public class InstallOptionsXYLayoutEditPolicy extends XYLayoutEditPolicy impleme
             Position newPos = (Position)constraint;
             Dimension diff = oldPos.getLocation().getDifference(newPos.getLocation());
             moveDelta = new Point(diff.width,diff.height);
-            sizeDelta = new Dimension(0,0);
-            if(moveDelta.equals(EMPTY_POINT) && sizeDelta.isEmpty()) {
+            sizeDelta = IInstallOptionsConstants.EMPTY_DIMENSION;
+            if(moveDelta.equals(IInstallOptionsConstants.EMPTY_POINT) && sizeDelta.isEmpty()) {
                 return DUMMY_COMMAND;
             }
         }

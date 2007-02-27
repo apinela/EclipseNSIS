@@ -15,12 +15,12 @@ import java.util.List;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsWidget;
 import net.sf.eclipsensis.installoptions.properties.PropertySourceWrapper;
+import net.sf.eclipsensis.installoptions.util.FontUtility;
 
 import org.eclipse.draw2d.XYLayout;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.views.properties.IPropertySource;
 
 public class PathRequestFigure extends AbstractInstallOptionsFigure implements IEditableElementFigure
@@ -33,7 +33,7 @@ public class PathRequestFigure extends AbstractInstallOptionsFigure implements I
     private ButtonFigure mButtonFigure;
 
     static {
-        Font f = Display.getDefault().getSystemFont();
+        Font f = FontUtility.getInstallOptionsFont();
         BROWSE_BUTTON_WIDTH = FigureUtility.dialogUnitsToPixelsX(15,f);
         SPACING = FigureUtility.dialogUnitsToPixelsX(3,f);
     }

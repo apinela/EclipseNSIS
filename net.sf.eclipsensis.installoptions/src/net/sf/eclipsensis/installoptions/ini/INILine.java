@@ -9,7 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.ini;
 
-import java.io.*;
+import java.io.Serializable;
 import java.util.*;
 
 import net.sf.eclipsensis.INSISConstants;

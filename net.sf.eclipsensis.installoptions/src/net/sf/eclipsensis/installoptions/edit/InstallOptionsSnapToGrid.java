@@ -10,11 +10,11 @@
 package net.sf.eclipsensis.installoptions.edit;
 
 import net.sf.eclipsensis.installoptions.figures.FigureUtility;
+import net.sf.eclipsensis.installoptions.util.FontUtility;
 
 import org.eclipse.draw2d.geometry.PrecisionRectangle;
 import org.eclipse.gef.*;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.widgets.Display;
 
 public class InstallOptionsSnapToGrid extends SnapToGrid
 {
@@ -27,7 +27,7 @@ public class InstallOptionsSnapToGrid extends SnapToGrid
     public InstallOptionsSnapToGrid(GraphicalEditPart container)
     {
         super(container);
-        Font f = Display.getDefault().getSystemFont();
+        Font f = FontUtility.getInstallOptionsFont();
         mDpuX = ((double)FigureUtility.dialogUnitsToPixelsX(1000,f))/1000;
         mDpuY = ((double)FigureUtility.dialogUnitsToPixelsY(1000,f))/1000;
     }

@@ -15,11 +15,11 @@ import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.figures.FigureUtility;
 import net.sf.eclipsensis.installoptions.model.*;
 import net.sf.eclipsensis.installoptions.rulers.InstallOptionsGuide;
+import net.sf.eclipsensis.installoptions.util.FontUtility;
 
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.widgets.Display;
 
 public class CloneCommand extends Command
 {
@@ -42,7 +42,7 @@ public class CloneCommand extends Command
     {
         super(InstallOptionsPlugin.getResourceString("clone.command.name")); //$NON-NLS-1$
         mWidgets = new LinkedList();
-        mFont = Display.getDefault().getSystemFont();
+        mFont = FontUtility.getInstallOptionsFont();
     }
 
     public void addWidget(InstallOptionsWidget widget, Rectangle newBounds)

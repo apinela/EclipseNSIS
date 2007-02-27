@@ -13,6 +13,8 @@ import net.sf.eclipsensis.util.ColorManager;
 
 import org.eclipse.draw2d.*;
 import org.eclipse.draw2d.geometry.Insets;
+import org.eclipse.draw2d.geometry.Rectangle;
+import org.eclipse.swt.graphics.Color;
 
 public class DashedLineBorder extends LineBorder
 {
@@ -29,18 +31,36 @@ public class DashedLineBorder extends LineBorder
         //XXX Remove when it is fixed.
         graphics.pushState();
         tempRect.setBounds(getPaintRectangle(figure, insets));
+        Rectangle rect = tempRect;
+
+        paint(graphics, rect);
+        graphics.popState();
+    }
+
+    /**
+     * @param graphics
+     * @param rect
+     */
+    public void paint(Graphics graphics, Rectangle rect)
+    {
+        int oldWidth = graphics.getLineWidth();
         graphics.setLineWidth(getWidth());
+        Color oldColor = null;
         if (getColor() != null) {
+            oldColor = graphics.getForegroundColor();
             graphics.setForegroundColor(getColor());
         }
 
         int[] dashInfo = {0, DASHES[0]};
-        drawLine(graphics, tempRect.x, tempRect.y, tempRect.x+tempRect.width-1, tempRect.y, dashInfo);
-        drawLine(graphics, tempRect.x+tempRect.width-1, tempRect.y, tempRect.x+tempRect.width-1, tempRect.y+tempRect.height-1, dashInfo);
-        drawLine(graphics, tempRect.x+tempRect.width-1, tempRect.y+tempRect.height-1, tempRect.x, tempRect.y+tempRect.height-1, dashInfo);
-        drawLine(graphics, tempRect.x, tempRect.y+tempRect.height-1, tempRect.x, tempRect.y, dashInfo);
+        drawLine(graphics, rect.x, rect.y, rect.x+rect.width-1, rect.y, dashInfo);
+        drawLine(graphics, rect.x+rect.width-1, rect.y, rect.x+rect.width-1, rect.y+rect.height-1, dashInfo);
+        drawLine(graphics, rect.x+rect.width-1, rect.y+rect.height-1, rect.x, rect.y+rect.height-1, dashInfo);
+        drawLine(graphics, rect.x, rect.y+rect.height-1, rect.x, rect.y, dashInfo);
 
-        graphics.popState();
+        if(oldColor != null) {
+            graphics.setForegroundColor(oldColor);
+        }
+        graphics.setLineWidth(oldWidth);
     }
 
     private void drawLine(Graphics graphics, int x1, int y1, int x2, int y2, int[] dashInfo)

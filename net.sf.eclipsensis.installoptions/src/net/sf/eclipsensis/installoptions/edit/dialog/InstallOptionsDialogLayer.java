@@ -12,13 +12,11 @@ package net.sf.eclipsensis.installoptions.edit.dialog;
 import java.util.*;
 
 import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
-import net.sf.eclipsensis.installoptions.figures.FigureUtility;
-import net.sf.eclipsensis.installoptions.figures.IInstallOptionsFigure;
+import net.sf.eclipsensis.installoptions.figures.*;
+import net.sf.eclipsensis.installoptions.util.FontUtility;
 
 import org.eclipse.draw2d.*;
 import org.eclipse.draw2d.geometry.*;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.widgets.Display;
 
 public class InstallOptionsDialogLayer extends FreeformLayer implements IInstallOptionsConstants
 {
@@ -28,8 +26,7 @@ public class InstallOptionsDialogLayer extends FreeformLayer implements IInstall
 
     private Dimension dialogUnitsToPixels(Dimension d)
     {
-        Font f = Display.getDefault().getSystemFont();
-        return FigureUtility.dialogUnitsToPixels(d,f);
+        return FigureUtility.dialogUnitsToPixels(d,FontUtility.getInstallOptionsFont());
     }
 
     protected void paintFigure(Graphics graphics)
