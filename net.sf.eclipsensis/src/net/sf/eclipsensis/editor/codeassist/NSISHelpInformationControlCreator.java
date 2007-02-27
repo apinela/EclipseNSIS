@@ -9,13 +9,13 @@
  *******************************************************************************/
 package net.sf.eclipsensis.editor.codeassist;
 
+import net.sf.eclipsensis.help.NSISHelpURLProvider;
+
 import org.eclipse.jface.text.TextPresentation;
 import org.eclipse.jface.text.DefaultInformationControl.IInformationPresenter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.widgets.Display;
-
-import net.sf.eclipsensis.help.NSISHelpURLProvider;
 
 public class NSISHelpInformationControlCreator extends NSISInformationControlCreator
 {

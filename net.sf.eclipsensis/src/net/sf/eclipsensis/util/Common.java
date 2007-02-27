@@ -991,4 +991,14 @@ public class Common
         }
         return name;
     }
+
+    public static String toString(Object object, String defaultValue)
+    {
+        if(object == null) {
+            return defaultValue;
+        }
+        else {
+            return object.toString();
+        }
+    }
 }

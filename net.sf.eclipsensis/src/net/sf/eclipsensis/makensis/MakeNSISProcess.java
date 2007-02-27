@@ -33,7 +33,7 @@ public class MakeNSISProcess extends Process
     static
     {
         EclipseNSISPlugin plugin = EclipseNSISPlugin.getDefault();
-        if(!plugin.isNT()) {
+        if(!plugin.isWinNT()) {
             init(FileDescriptor.class, plugin.getJavaVendor(),
                  plugin.getJavaVersion().getNumber(Version.MAJOR),
                  plugin.getJavaVersion().getNumber(Version.MINOR));

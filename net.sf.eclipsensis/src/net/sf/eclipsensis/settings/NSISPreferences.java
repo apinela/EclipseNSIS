@@ -23,7 +23,8 @@ import net.sf.eclipsensis.filemon.IFileChangeListener;
 import net.sf.eclipsensis.util.*;
 
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -150,6 +151,8 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
         initializePreference(AUTO_SHOW_CONSOLE,new Integer(AUTO_SHOW_CONSOLE_ALWAYS));
         initializePreference(INSTRUCTIONS,""); //$NON-NLS-1$
         initializePreference(SYMBOLS,""); //$NON-NLS-1$
+
+        initializePreference(BEFORE_COMPILE_SAVE, new Integer(BEFORE_COMPILE_SAVE_CURRENT_CONFIRM));
 
         String pref = mPreferenceStore.getString(AUTO_SHOW_CONSOLE);
         int autoShowConsole;

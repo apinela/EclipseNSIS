@@ -2,11 +2,11 @@
 package net.sf.eclipsensis.help.search.parser;
 
 import java.io.*;
-import java.util.*;
-
-import org.apache.lucene.analysis.Analyzer;
+import java.util.Collection;
 
 import net.sf.eclipsensis.util.CaseInsensitiveSet;
+
+import org.apache.lucene.analysis.Analyzer;
 
 public class NSISHelpSearchQueryParser implements NSISHelpSearchQueryParserConstants {
     public static final String REGEX_PREFIX = "re:"; //$NON-NLS-1$

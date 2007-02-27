@@ -16,7 +16,7 @@ import net.sf.eclipsensis.util.Common;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 

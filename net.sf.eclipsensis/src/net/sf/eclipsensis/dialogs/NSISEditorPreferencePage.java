@@ -80,6 +80,7 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
     private Button mStyleUnderline;
     private Button mStyleStrikethrough;
     private Button mFileAssociationButton;
+    private Combo mBeforeCompileSave;
 
     private ColorEditor mMatchingDelimsColorEditor;
 
@@ -155,7 +156,7 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
         return style;
     }
 
-    private Control createAppearanceGroup(Composite parent)
+    private Composite createAppearanceGroup(Composite parent)
     {
         Composite appearanceComposite= new Composite(parent, SWT.NONE);
         GridLayout layout= new GridLayout();
@@ -211,7 +212,7 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
         return styleButton;
     }
 
-    private Control createSyntaxGroup(Composite parent)
+    private Composite createSyntaxGroup(Composite parent)
     {
         Composite syntaxComposite= new Composite(parent, SWT.NONE);
         GridLayout layout= new GridLayout(1, false);
@@ -343,7 +344,7 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
         layout.marginWidth = 0;
         layout.marginHeight = 0;
         group.setLayout(layout);
-        Control c = createAppearanceGroup(group);
+        Composite c = createAppearanceGroup(group);
         c.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         group = new Group(parent,SWT.SHADOW_ETCHED_IN);
         group.setText(EclipseNSISPlugin.getResourceString("syntax.group.label")); //$NON-NLS-1$
@@ -357,6 +358,24 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
         mFileAssociationButton = new Button(parent,SWT.CHECK);
         mFileAssociationButton.setText(EclipseNSISPlugin.getResourceString("check.editor.association.label")); //$NON-NLS-1$
         mFileAssociationButton.setLayoutData(new GridData(SWT.BEGINNING,SWT.CENTER,false,false));
+
+        c = new Composite(parent,SWT.NONE);
+        c.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+        layout = new GridLayout(2,false);
+        layout.marginWidth = 0;
+        layout.marginHeight = 0;
+        c.setLayout(layout);
+
+        Label l = new Label(c,SWT.NONE);
+        l.setText(EclipseNSISPlugin.getResourceString("before.compile.save.label")); //$NON-NLS-1$
+        l.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
+
+        mBeforeCompileSave = new Combo(c, SWT.DROP_DOWN|SWT.READ_ONLY);
+        mBeforeCompileSave.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
+        mBeforeCompileSave.add(EclipseNSISPlugin.getResourceString("before.compile.save.option."+BEFORE_COMPILE_SAVE_CURRENT_CONFIRM)); //$NON-NLS-1$
+        mBeforeCompileSave.add(EclipseNSISPlugin.getResourceString("before.compile.save.option."+BEFORE_COMPILE_SAVE_ALL_CONFIRM)); //$NON-NLS-1$
+        mBeforeCompileSave.add(EclipseNSISPlugin.getResourceString("before.compile.save.option."+BEFORE_COMPILE_SAVE_CURRENT_AUTO)); //$NON-NLS-1$
+        mBeforeCompileSave.add(EclipseNSISPlugin.getResourceString("before.compile.save.option."+BEFORE_COMPILE_SAVE_ALL_AUTO)); //$NON-NLS-1$
         initialize();
         Dialog.applyDialogFont(parent);
         return parent;
@@ -365,6 +384,11 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
     private void initialize() {
 
         initializeFields();
+        int beforeCompileSaveOption = getPreferenceStore().getInt(BEFORE_COMPILE_SAVE);
+        if(beforeCompileSaveOption < 0 || beforeCompileSaveOption >= mBeforeCompileSave.getItemCount()) {
+            beforeCompileSaveOption = getPreferenceStore().getDefaultInt(BEFORE_COMPILE_SAVE);
+        }
+        mBeforeCompileSave.select(beforeCompileSaveOption);
         mFileAssociationButton.setSelection(FileAssociationChecker.getFileAssociationChecking(FILE_ASSOCIATION_ID));
         for (int i= 0; i < cSyntaxStyleListModel.length; i++) {
             mSyntaxStyleList.add(cSyntaxStyleListModel[i][0]);
@@ -398,6 +422,7 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
     public boolean performOk() {
         mPreferenceStore.update();
         NSISEditorUtilities.updatePresentations();
+        getPreferenceStore().setValue(BEFORE_COMPILE_SAVE, mBeforeCompileSave.getSelectionIndex());
         FileAssociationChecker.setFileAssociationChecking(FILE_ASSOCIATION_ID, mFileAssociationButton.getSelection());
         return super.performOk();
     }
@@ -408,6 +433,7 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
     protected void performDefaults() {
 
         mPreferenceStore.loadDefaults();
+        mBeforeCompileSave.select(getPreferenceStore().getDefaultInt(BEFORE_COMPILE_SAVE));
 
         initializeFields();
         mFileAssociationButton.setSelection(true);

@@ -11,18 +11,18 @@ package net.sf.eclipsensis.util;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.regex.Pattern;
 
 import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.console.*;
 import net.sf.eclipsensis.makensis.MakeNSISResults;
 import net.sf.eclipsensis.makensis.MakeNSISRunner;
+import net.sf.eclipsensis.settings.INSISPreferenceConstants;
 import net.sf.eclipsensis.settings.NSISPreferences;
 
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
@@ -34,6 +34,7 @@ public class NSISCompileTestUtility
     public static final NSISCompileTestUtility INSTANCE = new NSISCompileTestUtility();
 
     private Map mResultsMap;
+    private Pattern mNSISExtPattern = Pattern.compile(INSISConstants.NSI_WILDCARD_EXTENSION,Pattern.CASE_INSENSITIVE);
 
     private NSISCompileTestUtility()
     {
@@ -125,6 +126,8 @@ public class NSISCompileTestUtility
     public boolean compile(IPath script, boolean test)
     {
         if(script != null) {
+            List editorList = new ArrayList();
+            int beforeCompileSave = NSISPreferences.INSTANCE.getPreferenceStore().getInt(INSISPreferenceConstants.BEFORE_COMPILE_SAVE);
             IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
             outer:
             for (int i = 0; i < windows.length; i++) {
@@ -133,25 +136,45 @@ public class NSISCompileTestUtility
                     IEditorPart[] editors = pages[j].getDirtyEditors();
                     for (int k = 0; k < editors.length; k++) {
                         IEditorInput input = editors[k].getEditorInput();
-                        if(script.getDevice()== null && input != null && input instanceof IFileEditorInput) {
-                            if(!script.equals(((IFileEditorInput)input).getFile().getFullPath())) {
-                                continue;
-                            }
+                        switch(beforeCompileSave) {
+                            case INSISPreferenceConstants.BEFORE_COMPILE_SAVE_CURRENT_CONFIRM:
+                            case INSISPreferenceConstants.BEFORE_COMPILE_SAVE_CURRENT_AUTO:
+                                if(script.getDevice()== null && input != null && input instanceof IFileEditorInput) {
+                                    if(!script.equals(((IFileEditorInput)input).getFile().getFullPath())) {
+                                        continue;
+                                    }
+                                }
+                                else if (script.getDevice() != null && input != null && input instanceof IPathEditorInput) {
+                                    if(!script.equals(((IPathEditorInput)input).getPath())) {
+                                        continue;
+                                    }
+                                }
+                                else {
+                                    continue;
+                                }
+                                editorList.add(editors[k]);
+                                break outer;
+                            case INSISPreferenceConstants.BEFORE_COMPILE_SAVE_ALL_CONFIRM:
+                            case INSISPreferenceConstants.BEFORE_COMPILE_SAVE_ALL_AUTO:
+                                String ext;
+                                if(input instanceof IFileEditorInput) {
+                                    ext = ((IFileEditorInput)input).getFile().getFullPath().getFileExtension();
+                                }
+                                else if (input instanceof IPathEditorInput) {
+                                    ext = ((IPathEditorInput)input).getPath().getFileExtension();
+                                }
+                                else {
+                                    continue;
+                                }
+                                if(mNSISExtPattern.matcher(ext).matches()) {
+                                    editorList.add(editors[k]);
+                                }
                         }
-                        else if (script.getDevice() != null && input != null && input instanceof IPathEditorInput) {
-                            if(!script.equals(((IPathEditorInput)input).getPath())) {
-                                continue;
-                            }
-                        }
-                        else {
-                            continue;
-                        }
-                        if(!saveEditor(editors[k])) {
-                            return false;
-                        }
-                        break outer;
                     }
                 }
+            }
+            if(!saveEditors(editorList, beforeCompileSave)) {
+                return false;
             }
             new Thread(new NSISCompileRunnable(script,test),EclipseNSISPlugin.getResourceString("makensis.thread.name")).start(); //$NON-NLS-1$
             return true;
@@ -159,26 +182,57 @@ public class NSISCompileTestUtility
         return false;
     }
 
-    private boolean saveEditor(IEditorPart editor)
+    private boolean saveEditors(List editors, int beforeCompileSave)
     {
-        Shell shell = editor.getSite().getShell();
-        IPathEditorInput input = (IPathEditorInput)editor.getEditorInput();
-        String name = input.getPath().lastSegment();
-        if(Common.openConfirm(shell,
-                EclipseNSISPlugin.getFormattedString("compile.save.confirmation", //$NON-NLS-1$
-                                     new String[]{name}),
-                EclipseNSISPlugin.getShellImage())) {
-            ProgressMonitorDialog dialog = new ProgressMonitorDialog(shell);
-            dialog.open();
-            IProgressMonitor progressMonitor = dialog.getProgressMonitor();
-            editor.doSave(progressMonitor);
-            dialog.close();
-            if(progressMonitor.isCanceled()) {
-                return false;
+        if (!Common.isEmptyCollection(editors)) {
+            boolean ok = false;
+            String message = null;
+            switch(beforeCompileSave) {
+                case INSISPreferenceConstants.BEFORE_COMPILE_SAVE_CURRENT_CONFIRM:
+                    IEditorPart editor = (IEditorPart)editors.get(0);
+                    if(editors.size() > 1) {
+                        editors = editors.subList(0,1);
+                    }
+                    IPathEditorInput input = (IPathEditorInput)editor.getEditorInput();
+                    String name = input.getPath().lastSegment();
+                    message = EclipseNSISPlugin.getFormattedString("compile.save.current.confirmation", //$NON-NLS-1$
+                                                                   new String[]{name});
+                    break;
+                case INSISPreferenceConstants.BEFORE_COMPILE_SAVE_ALL_CONFIRM:
+                    message = EclipseNSISPlugin.getResourceString("compile.save.all.confirmation"); //$NON-NLS-1$
+                    break;
+                case INSISPreferenceConstants.BEFORE_COMPILE_SAVE_CURRENT_AUTO:
+                case INSISPreferenceConstants.BEFORE_COMPILE_SAVE_ALL_AUTO:
+                    ok = true;
             }
-        }
-        else {
-            return false;
+            Shell shell = Display.getDefault().getActiveShell();
+            if(!ok) {
+                ok = Common.openConfirm(shell, message, EclipseNSISPlugin.getShellImage());
+            }
+            if(ok) {
+                ProgressMonitorDialog dialog = new ProgressMonitorDialog(shell);
+                dialog.open();
+                IProgressMonitor progressMonitor = dialog.getProgressMonitor();
+                if(editors.size() > 1) {
+                    progressMonitor.beginTask("Saving open NSIS files",editors.size());
+                    for (Iterator iter = editors.iterator(); iter.hasNext();) {
+                        IEditorPart editor = (IEditorPart)iter.next();
+                        SubProgressMonitor monitor = new SubProgressMonitor(progressMonitor, 1);
+                        editor.doSave(monitor);
+                        if(monitor.isCanceled()) {
+                            break;
+                        }
+                    }
+                }
+                else {
+                    ((IEditorPart)editors.get(0)).doSave(progressMonitor);
+                }
+                dialog.close();
+                if (progressMonitor.isCanceled()) {
+                    return false;
+                }
+            }
+            return ok;
         }
         return true;
     }

@@ -65,6 +65,7 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
     public static final String[] BUNDLE_NAMES = new String[]{RESOURCE_BUNDLE,MESSAGE_BUNDLE};
     private ImageManager mImageManager;
     private boolean mIsNT = false;
+    private boolean mIs2K = false;
     private String mJavaVendor;
     private Version mJavaVersion;
     private Stack mServices = new Stack();
@@ -360,19 +361,26 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
         });
     }
 
-    public boolean isNT()
+    public boolean isWinNT()
     {
         return mIsNT;
+    }
+
+    public boolean isWin2K()
+    {
+        return mIs2K;
     }
 
     private void validateOS() throws CoreException
     {
         String[] supportedOS = Common.loadArrayProperty(getResourceBundle(),"supported.os"); //$NON-NLS-1$
-        List ntOS = Common.loadListProperty(getResourceBundle(),"nt.os"); //$NON-NLS-1$
+        List winNTOS = Common.loadListProperty(getResourceBundle(),"nt.os"); //$NON-NLS-1$
+        List win2KOS = Common.loadListProperty(getResourceBundle(),"2K.os"); //$NON-NLS-1$
         if(!Common.isEmptyArray(supportedOS)) {
             String osName = System.getProperty("os.name"); //$NON-NLS-1$
             String osVersion = System.getProperty("os.version"); //$NON-NLS-1$
-            mIsNT = ntOS.contains(osName);
+            mIsNT = winNTOS.contains(osName);
+            mIs2K = win2KOS.contains(osName);
             for(int i=0; i<supportedOS.length; i++) {
                 String[] tokens = Common.tokenize(supportedOS[i],'#');
                 String os = tokens[0];

@@ -132,8 +132,10 @@ public class NSISLanguageManager implements INSISHomeListener, IEclipseNSISServi
                             NSISLanguage language = loadLanguage(langFiles[i]);
                             if (language != null) {
                                 Integer langId = new Integer(language.getLangId());
-                                String locale = (String)mLanguageIdLocaleMap.get(langId.toString());
-                                mLanguageMap.put(locale,language);
+                                String locale = Common.toString(mLanguageIdLocaleMap.get(langId.toString()),null);
+                                if (locale != null) {
+                                    mLanguageMap.put(locale, language);
+                                }
                                 mLanguageMap.put(language.getName(), language);
                                 mLanguageMap.put(langId, language);
                                 mLanguages.add(language);
@@ -154,6 +156,22 @@ public class NSISLanguageManager implements INSISHomeListener, IEclipseNSISServi
         }
     }
 
+    private String skipComments(BufferedReader br) throws IOException
+    {
+        String line = br.readLine();
+        while(line != null) {
+            line = line.trim();
+            if(line.length() > 0) {
+                char c=line.charAt(0);
+                if(c != '#' && c != ';') {
+                    break;
+                }
+            }
+            line = br.readLine();
+        }
+        return line;
+    }
+
     private NSISLanguage loadLanguage(File langFile)
     {
         NSISLanguage language = null;
@@ -164,65 +182,72 @@ public class NSISLanguageManager implements INSISHomeListener, IEclipseNSISServi
                 String displayName = name;
                 int langId = 0;
 
-                BufferedReader br = new BufferedReader(new FileReader(langFile));
-                //The second non-comment line is the codepage
-                int n = 0;
-                while(n < 2) {
-                    String line = br.readLine();
-                    if(line != null) {
-                        line = line.trim();
-                        if(line.length() > 0) {
-                            char c=line.charAt(0);
-                            if(c != '#' && c != ';') {
-                                if(n > 0) {
-                                    langId = Integer.parseInt(line);
-                                }
-                                n++;
-                            }
+                BufferedReader br = null;
+                //1st non-comment line = header
+                //2nd non-comment line = lang id
+                int n;
+                String line;
+                try {
+                    br = new BufferedReader(new FileReader(langFile));
+                    n = 0;
+                    line = skipComments(br);
+                    outer: while (line != null) {
+                        n++;
+                        switch (n)
+                        {
+                            case 1: //header
+                                break;
+                            case 2: //lang id
+                                langId = Integer.parseInt(line);
+                                break outer;
                         }
-                    }
-                    else {
-                        break;
+                        line = skipComments(br);
                     }
                 }
-                br.close();
+                finally {
+                    if(br != null) {
+                        br.close();
+                    }
+                }
                 if(IOUtility.isValidDirectory(mMuiLangDir)) {
                     File muiLangFile = new File(mMuiLangDir,name+INSISConstants.MUI_LANGUAGE_FILES_EXTENSION);
                     if(IOUtility.isValidFile(muiLangFile)) {
-                        br = new BufferedReader(new FileReader(muiLangFile));
-                        while(true) {
-                            String line = br.readLine();
-                            if(line != null) {
-                                line = line.trim();
+                        br = null;
+                        try {
+                            br = new BufferedReader(new FileReader(muiLangFile));
+                            line = skipComments(br);
+                            while (line != null) {
                                 int m = line.indexOf(';');
-                                if(m < 0) {
+                                if (m < 0) {
                                     m = line.indexOf('#');
                                 }
-                                if(m >= 0) {
-                                    line = line.substring(0,m);
+                                if (m >= 0) {
+                                    line = line.substring(0, m).trim();
                                 }
-                                if(line.toUpperCase().startsWith(mDefineMUILanguageText)) {
+                                if (line.toUpperCase().startsWith(mDefineMUILanguageText)) {
                                     line = line.substring(mDefineMUILanguageText.length()).trim();
                                     //Check for quotes.
                                     m = line.indexOf('"');
-                                    if(m >= 0) {
-                                        n = line.indexOf('"',m+1);
-                                        if(n >= 0) {
-                                            line = line.substring(m+1,n);
+                                    if (m >= 0) {
+                                        n = line.indexOf('"', m + 1);
+                                        if (n >= 0) {
+                                            line = line.substring(m + 1, n);
                                         }
                                         else {
-                                            line = line.substring(m+1);
+                                            line = line.substring(m + 1);
                                         }
                                     }
                                     displayName = line;
                                     break;
                                 }
-                            }
-                            else {
-                                break;
+                                line = skipComments(br);
                             }
                         }
-                        br.close();
+                        finally {
+                            if(br != null) {
+                                br.close();
+                            }
+                        }
                     }
                 }
                 language = new NSISLanguage(name,displayName,langId);
@@ -245,11 +270,14 @@ public class NSISLanguageManager implements INSISHomeListener, IEclipseNSISServi
         NSISLanguage lang = null;
         //Try the user's lang id
         Version version = NSISPreferences.INSTANCE.getNSISVersion();
+        int langId;
         if(version.compareTo(cVersion213) >= 0) {
-            lang = (NSISLanguage)mLanguageMap.get(new Integer(WinAPI.GetUserDefaultUILanguage()));
+            langId = WinAPI.GetUserDefaultUILanguage();
+            lang = (NSISLanguage)mLanguageMap.get(new Integer(langId));
         }
         if(lang == null) {
-            lang = (NSISLanguage)mLanguageMap.get(new Integer(WinAPI.GetUserDefaultLangID()));
+            langId = WinAPI.GetUserDefaultLangID();
+            lang = (NSISLanguage)mLanguageMap.get(new Integer(langId));
         }
         if(lang == null) {
             Locale locale = Locale.getDefault();

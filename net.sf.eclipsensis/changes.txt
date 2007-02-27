@@ -5,6 +5,7 @@ Revision History
     * Added support for new predefines.
     * Added support for /P compiler option.
     * Fixed outline view filter.
+    * Added preference for saving file(s) before compilation.
 
 0.9.5 (2/01/2007)
     * Upgraded to Eclipse 3.2 - no longer compatible with Eclipse 3.1.

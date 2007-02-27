@@ -62,4 +62,11 @@ public interface INSISPreferenceConstants extends INSISSettingsConstants
     public static final String NSIS_COMMAND_VIEW_FLAT_MODE = "nsisCommandViewFlatMode"; //$NON-NLS-1$
     public static final String NSIS_HELP_VIEW_SHOW_NAV = "nsisHelpViewShowNav"; //$NON-NLS-1$
     public static final String NSIS_HELP_VIEW_SYNCHED = "nsisHelpViewSynched"; //$NON-NLS-1$
+
+    public static final String BEFORE_COMPILE_SAVE = "beforeCompileSave"; //$NON-NLS-1$
+    public static final int BEFORE_COMPILE_SAVE_CURRENT_CONFIRM = 0;
+    public static final int BEFORE_COMPILE_SAVE_ALL_CONFIRM = 1;
+    public static final int BEFORE_COMPILE_SAVE_CURRENT_AUTO = 2;
+    public static final int BEFORE_COMPILE_SAVE_ALL_AUTO = 3;
+    public static final int BEFORE_COMPILE_SAVE_DEFAULT = BEFORE_COMPILE_SAVE_CURRENT_CONFIRM;
 }

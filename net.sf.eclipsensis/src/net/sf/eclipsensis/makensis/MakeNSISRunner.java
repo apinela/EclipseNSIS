@@ -339,12 +339,27 @@ public class MakeNSISRunner implements INSISConstants
         return compile(script.getFullPath(), NSISProperties.getProperties(script), console, outputProcessor);
     }
 
+    public static synchronized MakeNSISResults compile(IFile script, INSISConsole console, INSISConsoleLineProcessor outputProcessor, boolean notifyHwnd)
+    {
+        return compile(script.getFullPath(), NSISProperties.getProperties(script), console, outputProcessor, notifyHwnd);
+    }
+
     public static synchronized MakeNSISResults compile(File script, NSISSettings settings, INSISConsole console, INSISConsoleLineProcessor outputProcessor)
     {
         return compile(new Path(script.getAbsolutePath()), settings, console, outputProcessor);
     }
 
+    public static synchronized MakeNSISResults compile(File script, NSISSettings settings, INSISConsole console, INSISConsoleLineProcessor outputProcessor, boolean notifyHwnd)
+    {
+        return compile(new Path(script.getAbsolutePath()), settings, console, outputProcessor, notifyHwnd);
+    }
+
     public static synchronized MakeNSISResults compile(final IPath script, NSISSettings settings, INSISConsole console, INSISConsoleLineProcessor outputProcessor)
+    {
+        return compile(script, settings, console, outputProcessor, true);
+    }
+
+    public static synchronized MakeNSISResults compile(final IPath script, NSISSettings settings, INSISConsole console, INSISConsoleLineProcessor outputProcessor, boolean notifyHwnd)
     {
         MakeNSISResults results = null;
         if (NSISPreferences.INSTANCE.getNSISExe() != null && script != null) {
@@ -436,17 +451,19 @@ public class MakeNSISRunner implements INSISConstants
 
                     int rv = 0;
                     String[] optionsArray = (String[])options.toArray(Common.EMPTY_STRING_ARRAY);
-                    int cmdArrayLen = optionsArray.length + (compressor != MakeNSISRunner.COMPRESSOR_BEST?3:4);
+                    int cmdArrayLen = optionsArray.length + (compressor != MakeNSISRunner.COMPRESSOR_BEST?3:4)-(notifyHwnd?0:2);
                     String[] cmdArray = new String[cmdArrayLen];
-                    System.arraycopy(optionsArray, 0, cmdArray, cmdArrayLen - optionsArray.length - 3, optionsArray.length);
-                    cmdArray[cmdArrayLen - 3] = MAKENSIS_NOTIFYHWND_OPTION;
-                    cmdArray[cmdArrayLen - 2] = Long.toString(cHwnd);
+                    System.arraycopy(optionsArray, 0, cmdArray, cmdArrayLen - optionsArray.length - (notifyHwnd?3:1), optionsArray.length);
+                    if(notifyHwnd) {
+                        cmdArray[cmdArrayLen - 3] = MAKENSIS_NOTIFYHWND_OPTION;
+                        cmdArray[cmdArrayLen - 2] = Long.toString(cHwnd);
+                    }
                     cmdArray[cmdArrayLen - 1] = fileName;
                     List consoleErrors = new ArrayList();
                     List consoleWarnings = new ArrayList();
                     try {
                         if (compressor != MakeNSISRunner.COMPRESSOR_BEST) {
-                            results = runCompileProcess(script, cmdArray, null, workDir, console, outputProcessor, consoleErrors, consoleWarnings, settings.showStatistics());
+                            results = runCompileProcess(script, cmdArray, null, workDir, console, outputProcessor, consoleErrors, consoleWarnings, settings.showStatistics(), notifyHwnd);
                         }
                         else {
                             long n = System.currentTimeMillis();
@@ -485,7 +502,7 @@ public class MakeNSISRunner implements INSISConstants
                                                                                         new String[]{compressorName}), padding);
                                         MakeNSISResults tempresults = runCompileProcess(script, cmdArray, null, workDir, console,
                                                                             outputProcessor, consoleErrors, consoleWarnings,
-                                                                            settings.showStatistics());
+                                                                            settings.showStatistics(), notifyHwnd);
                                         if (tempresults.getReturnCode() != MakeNSISResults.RETURN_SUCCESS) {
                                             results = tempresults;
                                             if (tempFile != null && tempFile.exists()) {
@@ -522,7 +539,7 @@ public class MakeNSISRunner implements INSISConstants
                             }
                             if (tempFile != null && tempFile.exists()) {
                                 File outputFile = new File(results.getOutputFileName());
-                                if (!outputFile.exists()) {
+                                if (!IOUtility.isValidFile(outputFile)) {
                                     tempFile.renameTo(outputFile);
                                 }
                                 if (settings.showStatistics()) {
@@ -619,7 +636,8 @@ public class MakeNSISRunner implements INSISConstants
 
     private static synchronized MakeNSISResults runCompileProcess(IPath script, String[] cmdArray, String[] env, File workDir,
                                                                   INSISConsole console, INSISConsoleLineProcessor outputProcessor,
-                                                                  List consoleErrors, List consoleWarnings, boolean showStatistics)
+                                                                  List consoleErrors, List consoleWarnings, boolean showStatistics,
+                                                                  boolean notifyHwnd)
     {
         long n = System.currentTimeMillis();
         MakeNSISResults results = new MakeNSISResults(new File(cmdArray[cmdArray.length-1]));
@@ -669,27 +687,28 @@ public class MakeNSISRunner implements INSISConstants
                 rv = MakeNSISResults.RETURN_CANCEL;
             }
             results.setReturnCode(rv);
-            String outputFileName = null;
             if(results.getReturnCode() == MakeNSISResults.RETURN_SUCCESS) {
-                outputFileName = getOutputFileName();
-                if(outputFileName == null) {
-                    int i=0;
-                    while(outputFileName == null && i<10) {
-                        try {
-                            Thread.sleep(100);
+                if (notifyHwnd) {
+                    String outputFileName = getOutputFileName();
+                    if (outputFileName == null) {
+                        int i = 0;
+                        while (outputFileName == null && i < 10) {
+                            try {
+                                Thread.sleep(100);
+                            }
+                            catch (Exception e) {
+                            }
+                            outputFileName = getOutputFileName();
+                            i++;
                         }
-                        catch (Exception e) {
+                        if (outputFileName == null) {
+                            outputFileName = outFileProcessor.getOutputFileName();
                         }
-                        outputFileName = getOutputFileName();
-                        i++;
                     }
-                    if(outputFileName == null) {
-                        outputFileName = outFileProcessor.getOutputFileName();
+                    results.setOutputFileName(outputFileName);
+                    if (EclipseNSISPlugin.getDefault().isDebugging()) {
+                        EclipseNSISPlugin.getDefault().log("Output File Name: " + outputFileName); //$NON-NLS-1$
                     }
-                }
-                results.setOutputFileName(outputFileName);
-                if(EclipseNSISPlugin.getDefault().isDebugging()) {
-                    EclipseNSISPlugin.getDefault().log("Output File Name: "+outputFileName); //$NON-NLS-1$
                 }
             }
             else {
@@ -815,7 +834,7 @@ public class MakeNSISRunner implements INSISConstants
     private static MakeNSISProcess createProcess(String makeNSISExe, String[] cmdArray, String[] env, File workDir) throws IOException
     {
         MakeNSISProcess proc;
-        if(EclipseNSISPlugin.getDefault().isNT()) {
+        if(EclipseNSISPlugin.getDefault().isWinNT()) {
             String[] newCmdArray = new String[1+ (Common.isEmptyArray(cmdArray)?0:cmdArray.length)];
             newCmdArray[0] = makeNSISExe;
             if(!Common.isEmptyArray(cmdArray)) {
