@@ -58,7 +58,7 @@
          id="net.sf.eclipsensis.update"
          download-size="123"
          install-size="123"
-         version="0.9.5"
+         version="0.9.5.1"
          unpack="false"/>
 
    <plugin

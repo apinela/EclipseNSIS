@@ -18,8 +18,7 @@ import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.console.*;
 import net.sf.eclipsensis.makensis.MakeNSISResults;
 import net.sf.eclipsensis.makensis.MakeNSISRunner;
-import net.sf.eclipsensis.settings.INSISPreferenceConstants;
-import net.sf.eclipsensis.settings.NSISPreferences;
+import net.sf.eclipsensis.settings.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -33,6 +32,7 @@ public class NSISCompileTestUtility
 {
     public static final NSISCompileTestUtility INSTANCE = new NSISCompileTestUtility();
 
+    private NSISHeaderAssociationManager mHeaderAssociationManager = NSISHeaderAssociationManager.getInstance();
     private Map mResultsMap;
     private Pattern mNSISExtPattern = Pattern.compile(INSISConstants.NSI_WILDCARD_EXTENSION,Pattern.CASE_INSENSITIVE);
 
@@ -40,7 +40,7 @@ public class NSISCompileTestUtility
     {
         super();
         File stateLocation = EclipseNSISPlugin.getPluginStateLocation();
-        final File cacheFile = new File(stateLocation, getClass().getName() + ".ResultsCache.ser"); //$NON-NLS-1$
+        final File resultsCacheFile = new File(stateLocation, getClass().getName() + ".ResultsCache.ser"); //$NON-NLS-1$
         EclipseNSISPlugin.getDefault().registerService(new IEclipseNSISService() {
             private boolean mStarted = false;
 
@@ -49,13 +49,13 @@ public class NSISCompileTestUtility
                 return mStarted;
             }
 
-            public void start(IProgressMonitor monitor)
+            private Map loadMap(File file)
             {
                 Map map = null;
-                if(IOUtility.isValidFile(cacheFile)) {
+                if(IOUtility.isValidFile(file)) {
                     Object obj = null;
                     try {
-                        obj = IOUtility.readObject(cacheFile);
+                        obj = IOUtility.readObject(file);
                     }
                     catch (Exception e) {
                         obj = null;
@@ -66,30 +66,53 @@ public class NSISCompileTestUtility
                     }
                 }
                 if(map == null) {
-                    mResultsMap = new MRUMap(20);
+                    map = new MRUMap(20);
                 }
                 else {
-                    if(map instanceof MRUMap) {
-                        mResultsMap = map;
-                    }
-                    else {
-                        mResultsMap = new MRUMap(20, map);
+                    if(!(map instanceof MRUMap)) {
+                        map = new MRUMap(20, map);
                     }
                 }
+                return map;
+            }
+
+            private void storeMap(File file, Map map)
+            {
+                if(Common.isEmptyMap(map)) {
+                    file.delete();
+                }
+                else {
+                    try {
+                        IOUtility.writeObject(file, map);
+                    }
+                    catch (IOException e) {
+                        EclipseNSISPlugin.getDefault().log(e);
+                    }
+                }
+            }
+
+            public void start(IProgressMonitor monitor)
+            {
+                mResultsMap = loadMap(resultsCacheFile);
                 mStarted = true;
             }
 
             public void stop(IProgressMonitor monitor)
             {
                 mStarted = false;
-                try {
-                    IOUtility.writeObject(cacheFile, mResultsMap);
-                }
-                catch (IOException e) {
-                    EclipseNSISPlugin.getDefault().log(e);
-                }
+                storeMap(resultsCacheFile, mResultsMap);
             }
         });
+    }
+
+    public void removeAssociatedHeader(IFile script, IFile header)
+    {
+        mHeaderAssociationManager.removeAssociatedHeader(script, header);
+    }
+
+    public void addAssociatedHeader(IFile script, IFile header)
+    {
+        mHeaderAssociationManager.addAssociatedHeader(script, header);
     }
 
     public MakeNSISResults getCachedResults(File script)
@@ -125,7 +148,8 @@ public class NSISCompileTestUtility
 
     public boolean compile(IPath script, boolean test)
     {
-        if(script != null) {
+        IPath nsisScript = getCompileScript(script);
+        if(nsisScript != null && script != null) {
             List editorList = new ArrayList();
             int beforeCompileSave = NSISPreferences.INSTANCE.getPreferenceStore().getInt(INSISPreferenceConstants.BEFORE_COMPILE_SAVE);
             IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
@@ -176,7 +200,7 @@ public class NSISCompileTestUtility
             if(!saveEditors(editorList, beforeCompileSave)) {
                 return false;
             }
-            new Thread(new NSISCompileRunnable(script,test),EclipseNSISPlugin.getResourceString("makensis.thread.name")).start(); //$NON-NLS-1$
+            new Thread(new NSISCompileRunnable(nsisScript,test),EclipseNSISPlugin.getResourceString("makensis.thread.name")).start(); //$NON-NLS-1$
             return true;
         }
         return false;
@@ -214,7 +238,7 @@ public class NSISCompileTestUtility
                 dialog.open();
                 IProgressMonitor progressMonitor = dialog.getProgressMonitor();
                 if(editors.size() > 1) {
-                    progressMonitor.beginTask("Saving open NSIS files",editors.size());
+                    progressMonitor.beginTask(EclipseNSISPlugin.getResourceString("saving.open.files.task.name"),editors.size()); //$NON-NLS-1$
                     for (Iterator iter = editors.iterator(); iter.hasNext();) {
                         IEditorPart editor = (IEditorPart)iter.next();
                         SubProgressMonitor monitor = new SubProgressMonitor(progressMonitor, 1);
@@ -237,6 +261,29 @@ public class NSISCompileTestUtility
         return true;
     }
 
+    public IPath getCompileScript(IPath input)
+    {
+        if(input != null) {
+            String ext = input.getFileExtension();
+            if(Common.stringsAreEqual(INSISConstants.NSI_EXTENSION,ext,true)) {
+                return input;
+            }
+            else if(Common.stringsAreEqual(INSISConstants.NSH_EXTENSION,ext,true) && input.getDevice() == null) {
+                IFile header = getFile(input);
+                IFile script =  mHeaderAssociationManager.getAssociatedScript(header);
+                if(script != null) {
+                    IPath path = script.getFullPath();
+                    if(path != null) {
+                        if(Common.stringsAreEqual(INSISConstants.NSI_EXTENSION,path.getFileExtension(),true)) {
+                            return path;
+                        }
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
     public boolean canTest(IPath script)
     {
         return getExeName(script) != null;
@@ -244,6 +291,7 @@ public class NSISCompileTestUtility
 
     private String getExeName(IPath script)
     {
+        script = getCompileScript(script);
         if(script != null) {
             if(script.getDevice() == null) {
                 return getExeName(getFile(script));
@@ -253,6 +301,21 @@ public class NSISCompileTestUtility
             }
         }
         return null;
+    }
+
+    private boolean validateHeadersTimestamps(long exeTimestamp, Collection headers)
+    {
+        if(!Common.isEmptyCollection(headers)) {
+            for (Iterator iter = headers.iterator(); iter.hasNext();) {
+                IFile header = (IFile)iter.next();
+                if(header != null && header.exists()) {
+                    if(!header.isSynchronized(IResource.DEPTH_ZERO) || header.getLocalTimeStamp() > exeTimestamp) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
     }
 
     private String getExeName(File file)
@@ -289,8 +352,11 @@ public class NSISCompileTestUtility
                                 if(exeFile.exists()) {
                                     temp = file.getPersistentProperty(INSISConstants.NSIS_EXE_TIMESTAMP);
                                     if(temp != null) {
-                                        if(Long.parseLong(temp) == exeFile.lastModified()) {
-                                            return exeFile.getAbsolutePath();
+                                        long exeTimestamp = exeFile.lastModified();
+                                        if(Long.parseLong(temp) == exeTimestamp) {
+                                            if(validateHeadersTimestamps(exeTimestamp, mHeaderAssociationManager.getAssociatedHeaders(file))) {
+                                                return exeFile.getAbsolutePath();
+                                            }
                                         }
                                     }
                                 }
@@ -306,7 +372,7 @@ public class NSISCompileTestUtility
         return null;
     }
 
-    public void test(final IPath script)
+    public void test(IPath script)
     {
         test(getExeName(script), EclipseNSISPlugin.getDefault().getConsole());
     }
@@ -330,7 +396,7 @@ public class NSISCompileTestUtility
 
     private IFile getFile(IPath path)
     {
-        return ResourcesPlugin.getWorkspace().getRoot().getFile(path);
+        return path != null?ResourcesPlugin.getWorkspace().getRoot().getFile(path):null;
     }
 
     private static final class MRUMap extends LinkedHashMap

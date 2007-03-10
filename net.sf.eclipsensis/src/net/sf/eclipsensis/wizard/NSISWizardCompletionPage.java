@@ -35,7 +35,7 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
     public static final String NAME = "nsisWizardCompletion"; //$NON-NLS-1$
 
     private static final String[] FILTER_EXTENSIONS = new String[] {"*."+INSISConstants.NSI_EXTENSION}; //$NON-NLS-1$
-    private static final String[] FILTER_NAMES = new String[] {EclipseNSISPlugin.getResourceString("launchconfig.nsis.script.filtername")}; //$NON-NLS-1$
+    private static final String[] FILTER_NAMES = new String[] {EclipseNSISPlugin.getResourceString("nsis.script.filtername")}; //$NON-NLS-1$
     private static final int PROGRAM_FILE_CHECK=1;
     private static final int README_FILE_CHECK=2;
     private static final int SAVE_PATH_CHECK=4;

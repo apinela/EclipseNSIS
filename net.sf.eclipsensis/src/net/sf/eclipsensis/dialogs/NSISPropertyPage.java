@@ -110,8 +110,7 @@ public class NSISPropertyPage extends NSISSettingsPage
 
             public void reset()
             {
-                NSISProperties props = (NSISProperties)getSettings();
-                mUseParent.setSelection(props.getUseParent());
+                mUseParent.setSelection(((NSISProperties)getSettings()).getUseParent());
                 super.reset();
             }
 
@@ -120,7 +119,7 @@ public class NSISPropertyPage extends NSISSettingsPage
                 if (getControl() != null) {
                     boolean useParent = mUseParent.getSelection();
                     if(useParent || super.performApply(settings)) {
-                        ((NSISProperties)settings).setUseParent(useParent);
+                        ((NSISProperties)getSettings()).setUseParent(useParent);
                         return true;
                     }
                 }

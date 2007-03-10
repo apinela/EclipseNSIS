@@ -14,13 +14,13 @@ import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.editor.NSISEditor;
 
 import org.eclipse.jface.action.IAction;
-import org.eclipse.ui.IEditorActionDelegate;
-import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionDelegate;
 
-public abstract class NSISAction extends ActionDelegate implements IEditorActionDelegate, INSISConstants
+public abstract class NSISAction extends ActionDelegate implements IObjectActionDelegate, IEditorActionDelegate, INSISConstants
 {
     protected EclipseNSISPlugin mPlugin = null;
+    protected IWorkbenchPart mPart = null;
     protected NSISEditor mEditor = null;
     protected IAction mAction = null;
 
@@ -50,6 +50,16 @@ public abstract class NSISAction extends ActionDelegate implements IEditorAction
         mAction = null;
     }
 
+    public void setActivePart(IAction action, IWorkbenchPart targetPart)
+    {
+        if(targetPart instanceof IEditorPart) {
+            setActiveEditor((IEditorPart)targetPart);
+        }
+        else {
+            mPart = targetPart;
+        }
+    }
+
     /* (non-Javadoc)
      * @see org.eclipse.ui.IEditorActionDelegate#setActiveEditor(org.eclipse.jface.action.IAction, org.eclipse.ui.IEditorPart)
      */
@@ -75,5 +85,6 @@ public abstract class NSISAction extends ActionDelegate implements IEditorAction
         if(mEditor != null) {
             mEditor.addAction(this);
         }
+        mPart = mEditor;
     }
 }

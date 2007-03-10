@@ -11,6 +11,38 @@
 ###############################################################################
 -->
 <commands>
+  <version name="2.25">
+    <add>
+      <command name="!define" category="conditional.compilation.category">
+        <param type="radio">
+          <param type="group">
+            <param type="radio" optional="true" depends="2">
+              <param name="/date" type="static"/>
+              <param name="/utcdate" type="static"/>
+            </param>
+            <param name="gflag" type="string"/>
+            <param name="value" type="string" allowBlank="true" optional="true"/>
+          </param>
+          <param type="group">
+            <param name="/math" type="static"/>
+            <param name="gflag" type="string"/>
+            <param name="val1" type="number" acceptVar="false"/>
+            <param name="OP" type="choice">
+              <choice value="+"/>
+              <choice value="-"/>
+              <choice value="*"/>
+              <choice value="&amp;"/>
+              <choice value="|"/>
+              <choice value="^"/>
+              <choice value="/"/>
+              <choice value="%"/>
+            </param>
+            <param name="val2" type="number" acceptVar="false"/>
+          </param>
+        </param>
+      </command>
+    </add>
+  </version>
   <version name="2.22">
     <add>
       <command name="RequestExecutionLevel" category="general.attributes.category">

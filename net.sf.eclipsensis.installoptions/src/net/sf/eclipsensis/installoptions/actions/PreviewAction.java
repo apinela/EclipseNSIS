@@ -40,9 +40,10 @@ import org.eclipse.draw2d.SWTGraphics;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.gef.Disposable;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.operation.ModalContext;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.*;
@@ -63,6 +64,7 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
 
     private IInstallOptionsEditor mEditor;
     private NSISSettings mSettings = new DummyNSISSettings();
+    private IPreferenceStore mPreferenceStore = InstallOptionsPlugin.getDefault().getPreferenceStore();
 
     public PreviewAction(int type, IInstallOptionsEditor editor)
     {
@@ -121,16 +123,29 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
         if(mEditor != null) {
             Shell shell = mEditor.getSite().getShell();
             if(mEditor.isDirty()) {
-                if(!Common.openConfirm(shell,InstallOptionsPlugin.getResourceString("save.before.preview.confirm"), //$NON-NLS-1$
-                                       InstallOptionsPlugin.getShellImage())) {
-                    return;
+                boolean autosaveBeforePreview = mPreferenceStore.getBoolean(IInstallOptionsConstants.PREFERENCE_AUTOSAVE_BEFORE_PREVIEW);
+                boolean shouldSave = autosaveBeforePreview;
+                if(!shouldSave) {
+                    MessageDialogWithToggle dialog = new MessageDialogWithToggle(shell, EclipseNSISPlugin.getResourceString("confirm.title"), //$NON-NLS-1$
+                            InstallOptionsPlugin.getShellImage(), InstallOptionsPlugin.getResourceString("save.before.preview.confirm"), //$NON-NLS-1$
+                            MessageDialog.QUESTION, new String[] { IDialogConstants.OK_LABEL, IDialogConstants.CANCEL_LABEL }, 0,
+                            InstallOptionsPlugin.getResourceString("confirm.toggle.message"),false); //$NON-NLS-1$
+                    shouldSave = (dialog.open()==0);
+                    if(dialog.getToggleState()) {
+                        mPreferenceStore.setValue(IInstallOptionsConstants.PREFERENCE_AUTOSAVE_BEFORE_PREVIEW, true);
+                    }
                 }
-                ProgressMonitorDialog dialog = new ProgressMonitorDialog(shell);
-                dialog.open();
-                IProgressMonitor progressMonitor = dialog.getProgressMonitor();
-                mEditor.doSave(progressMonitor);
-                dialog.close();
-                if(progressMonitor.isCanceled()) {
+                if(shouldSave) {
+                    ProgressMonitorDialog dialog = new ProgressMonitorDialog(shell);
+                    dialog.open();
+                    IProgressMonitor progressMonitor = dialog.getProgressMonitor();
+                    mEditor.doSave(progressMonitor);
+                    dialog.close();
+                    if(progressMonitor.isCanceled()) {
+                        return;
+                    }
+                }
+                else {
                     return;
                 }
             }
@@ -193,7 +208,7 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
                         private File createPreviewFile(File previewFile, INIFile inifile, final NSISLanguage lang) throws IOException
                         {
                             if(previewFile == null) {
-                                previewFile = File.createTempFile("preview",".ini");
+                                previewFile = File.createTempFile("preview",".ini"); //$NON-NLS-1$ //$NON-NLS-2$
                                 previewFile.deleteOnExit();
                             }
                             inifile = inifile.copy();
@@ -264,7 +279,7 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
                                                 ImageLoader loader = new ImageLoader();
                                                 loader.data = new ImageData[]{bitmap.getImageData()};
                                                 try {
-                                                    imageFile[0] = File.createTempFile("preview", picture.getFileExtension());
+                                                    imageFile[0] = File.createTempFile("preview", picture.getFileExtension()); //$NON-NLS-1$
                                                     imageFile[0].deleteOnExit();
                                                     loader.save(imageFile[0].getAbsolutePath(), picture.getSWTImageType());
                                                     cache.put(dim, imageFile[0]);

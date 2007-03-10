@@ -23,6 +23,7 @@ import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.projection.ProjectionAnnotation;
 import org.eclipse.jface.text.source.projection.ProjectionAnnotationModel;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 
@@ -187,8 +188,8 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
             }
         }
         ITypedRegion[][] nsisLines = NSISTextUtility.getNSISLines(document, partitions);
+        NSISOutlineElement rootElement = new NSISOutlineElement(ROOT,null);
         if(!Common.isEmptyArray(nsisLines)) {
-            NSISOutlineElement rootElement = new NSISOutlineElement(ROOT,null);
             NSISOutlineElement current = rootElement;
             for (int i = 0; i < nsisLines.length; i++) {
                 NSISOutlineData nsisToken = null;
@@ -433,30 +434,35 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
                 catch(Exception ex) {
                 }
             }
-
-            mOutlineElements = (NSISOutlineElement[])getChildren(rootElement, false);
-            mFilteredElements = getFilteredElements();
         }
+
+        mOutlineElements = (NSISOutlineElement[])getChildren(rootElement, false);
+        mFilteredElements = getFilteredElements();
     }
 
     public void inputChanged(Object oldInput, Object newInput)
     {
         if(oldInput == null || newInput == null || !oldInput.equals(newInput)) {
             if (oldInput != null) {
-                IDocument document = mEditor.getDocumentProvider().getDocument(oldInput);
-                if (document != null) {
-                    try {
-                        document.removePositionCategory(NSIS_OUTLINE);
+                if (mEditor != null) {
+                    IDocumentProvider documentProvider = mEditor.getDocumentProvider();
+                    if (documentProvider != null) {
+                        IDocument document = documentProvider.getDocument(oldInput);
+                        if (document != null) {
+                            try {
+                                document.removePositionCategory(NSIS_OUTLINE);
+                            }
+                            catch (BadPositionCategoryException x) {
+                            }
+                            document.removePositionUpdater(mPositionUpdater);
+                            try {
+                                document.removePositionCategory(NSIS_OUTLINE_SELECT);
+                            }
+                            catch (BadPositionCategoryException x) {
+                            }
+                            document.removePositionUpdater(mSelectPositionUpdater);
+                        }
                     }
-                    catch (BadPositionCategoryException x) {
-                    }
-                    document.removePositionUpdater(mPositionUpdater);
-                    try {
-                        document.removePositionCategory(NSIS_OUTLINE_SELECT);
-                    }
-                    catch (BadPositionCategoryException x) {
-                    }
-                    document.removePositionUpdater(mSelectPositionUpdater);
                 }
                 mAnnotationModel = null;
             }
@@ -466,14 +472,19 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
 
             if (newInput != null) {
                 mAnnotationModel = (IAnnotationModel) mEditor.getAdapter(ProjectionAnnotationModel.class);
-                IDocument document = mEditor.getDocumentProvider().getDocument(newInput);
-                if (document != null) {
-                    document.addPositionCategory(NSIS_OUTLINE);
-                    document.addPositionUpdater(mPositionUpdater);
-                    document.addPositionCategory(NSIS_OUTLINE_SELECT);
-                    document.addPositionUpdater(mSelectPositionUpdater);
+                if (mEditor != null) {
+                    IDocumentProvider documentProvider = mEditor.getDocumentProvider();
+                    if (documentProvider != null) {
+                        IDocument document = documentProvider.getDocument(newInput);
+                        if (document != null) {
+                            document.addPositionCategory(NSIS_OUTLINE);
+                            document.addPositionUpdater(mPositionUpdater);
+                            document.addPositionCategory(NSIS_OUTLINE_SELECT);
+                            document.addPositionUpdater(mSelectPositionUpdater);
 
-                    parse(document);
+                            parse(document);
+                        }
+                    }
                 }
             }
         }

@@ -5,6 +5,8 @@ Revision History
     * Added support for new FOCUS flag.
     * Added visual indication of bitmap and icon locations in preview.
     * Improved resize feedback.
+    * Added preference to automatically save InstallOptions script before
+      preview.
     * Bug fixes:
         o 1662888
 

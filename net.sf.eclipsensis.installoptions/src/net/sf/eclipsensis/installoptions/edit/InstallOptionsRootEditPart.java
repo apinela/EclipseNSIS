@@ -20,7 +20,7 @@ import org.eclipse.gef.editparts.*;
 
 public class InstallOptionsRootEditPart extends ScalableFreeformRootEditPart implements IInstallOptionsConstants
 {
-    public static final String RESIZE_FEEDBACK_LAYER = "a";
+    public static final String RESIZE_FEEDBACK_LAYER = "ResizeFeedback"; //$NON-NLS-1$
 
     private PropertyChangeListener mGridListener = new PropertyChangeListener() {
         public void propertyChange(PropertyChangeEvent evt) {

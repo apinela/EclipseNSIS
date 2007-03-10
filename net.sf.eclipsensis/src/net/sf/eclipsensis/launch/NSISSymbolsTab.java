@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -18,13 +18,13 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
 
-class NSISSymbolsTab extends NSISTab implements INSISSettingsEditorPageListener
+class NSISSymbolsTab extends NSISTab
 {
     static final String[] FILTER_EXTENSIONS = new String[] {"*."+INSISConstants.NSI_EXTENSION}; //$NON-NLS-1$
-    static final String[] FILTER_NAMES = new String[] {EclipseNSISPlugin.getResourceString("launchconfig.nsis.script.filtername")}; //$NON-NLS-1$
- 
+    static final String[] FILTER_NAMES = new String[] {EclipseNSISPlugin.getResourceString("nsis.script.filtername")}; //$NON-NLS-1$
+
     private boolean mBuilder = false;
-    
+
     public NSISSymbolsTab(boolean builder)
     {
         super();
@@ -45,8 +45,8 @@ class NSISSymbolsTab extends NSISTab implements INSISSettingsEditorPageListener
             }
         };
     }
-    
-    public Image getImage() 
+
+    public Image getImage()
     {
         return EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("nsis.symbols.tab.icon")); //$NON-NLS-1$
     }

@@ -39,7 +39,7 @@ public class NSISTestAction extends NSISScriptAction implements IElementStateLis
      */
     public boolean isEnabled()
     {
-        return (super.isEnabled() && NSISCompileTestUtility.INSTANCE.canTest(mInput));
+        return (super.isEnabled() && (mEditor == null || !mEditor.isDirty()) && NSISCompileTestUtility.INSTANCE.canTest(getInput()));
     }
 
     /* (non-Javadoc)
@@ -47,7 +47,7 @@ public class NSISTestAction extends NSISScriptAction implements IElementStateLis
      */
     public void run(IAction action)
     {
-        NSISCompileTestUtility.INSTANCE.test(mInput);
+        NSISCompileTestUtility.INSTANCE.test(getInput());
     }
 
     public void elementContentAboutToBeReplaced(Object element)

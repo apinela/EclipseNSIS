@@ -80,6 +80,7 @@ public interface IInstallOptionsConstants
     public static final String PREFERENCE_UNLOAD_CREATION_TOOL_WHEN_FINISHED = "UnloadCreationToolWhenFinished"; //$NON-NLS-1$
     public static final String PREFERENCE_PREVIEW_LANG = "PreviewLang"; //$NON-NLS-1$
     public static final String PREFERENCE_DELETE_CONTROL_WARNING = "DeleteControlWarning"; //$NON-NLS-1$
+    public static final String PREFERENCE_AUTOSAVE_BEFORE_PREVIEW = "AutosaveBeforePreview"; //$NON-NLS-1$
 
     public static final String PREFERENCE_SYNTAX_STYLES = "SyntaxStyles"; //$NON-NLS-1$
     public static final String SECTION_STYLE = "SectionStyle"; //$NON-NLS-1$

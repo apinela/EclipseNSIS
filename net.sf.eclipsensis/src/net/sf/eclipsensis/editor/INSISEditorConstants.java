@@ -32,4 +32,5 @@ public interface INSISEditorConstants
     public static final String FOLDING_EXPAND = PREFIX+"folding_expand"; //$NON-NLS-1$
     public static final String FOLDING_COLLAPSE = PREFIX+"folding_collapse"; //$NON-NLS-1$
     public static final String FOLDING_COLLAPSE_ALL = PREFIX+"folding_collapse_all"; //$NON-NLS-1$
+    public static final String OPEN_ASSOCIATED_FILES = PREFIX+"open_associated_files"; //$NON-NLS-1$
 }

@@ -39,7 +39,7 @@ public class InstallOptionsIcon extends InstallOptionsPicture
 
     public String getFileExtension()
     {
-        return ".ico";
+        return ".ico"; //$NON-NLS-1$
     }
 
     public int getSWTImageType()

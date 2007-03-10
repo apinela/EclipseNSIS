@@ -9,10 +9,10 @@
  *******************************************************************************/
 package net.sf.eclipsensis.actions;
 
-import java.util.regex.Pattern;
-
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.makensis.*;
+import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.NSISCompileTestUtility;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
@@ -23,9 +23,12 @@ import org.eclipse.ui.*;
 
 public abstract class NSISScriptAction extends NSISAction implements IMakeNSISRunListener
 {
-    protected IPath mInput = null;
-    private boolean mValidExtension = false;
-    private Pattern mExtensionPattern = null;
+    protected static final int TYPE_UNKNOWN = 0;
+    protected static final int TYPE_SCRIPT = 1;
+    protected static final int TYPE_HEADER = 2;
+
+    private IPath mInput = null;
+    private int mType = TYPE_UNKNOWN;
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
@@ -45,10 +48,25 @@ public abstract class NSISScriptAction extends NSISAction implements IMakeNSISRu
         MakeNSISRunner.removeListener(this);
     }
 
+    public int getType()
+    {
+        return mType;
+    }
+
     public void setActiveEditor(IEditorPart targetEditor)
     {
         super.setActiveEditor(targetEditor);
         updateInput();
+    }
+
+    protected void setInput(IPath input)
+    {
+        mInput = input;
+    }
+
+    protected IPath getInput()
+    {
+        return mInput;
     }
 
     /**
@@ -56,25 +74,37 @@ public abstract class NSISScriptAction extends NSISAction implements IMakeNSISRu
      */
     public void updateInput()
     {
-        mInput = null;
+        IPath input = null;
         if(mEditor != null) {
             IEditorInput editorInput = mEditor.getEditorInput();
             if(editorInput !=null) {
                 if(editorInput instanceof IFileEditorInput) {
-                    mInput = ((IFileEditorInput)editorInput).getFile().getFullPath();
+                    input = ((IFileEditorInput)editorInput).getFile().getFullPath();
                 }
                 else if(editorInput instanceof IPathEditorInput) {
-                    mInput = ((IPathEditorInput)editorInput).getPath();
+                    input = ((IPathEditorInput)editorInput).getPath();
                 }
             }
         }
+        setInput(input);
         validateExtension();
         updateActionState();
     }
 
     private void validateExtension()
     {
-        mValidExtension = (mInput != null && mInput.getFileExtension() != null && getExtensionPattern().matcher(mInput.getFileExtension()).matches());
+        mType = TYPE_UNKNOWN;
+        if(mInput != null) {
+            String ext = mInput.getFileExtension();
+            if(ext != null) {
+                if(Common.stringsAreEqual(ext, NSI_EXTENSION, true)) {
+                    mType = TYPE_SCRIPT;
+                }
+                else if(Common.stringsAreEqual(ext, NSH_EXTENSION, true)) {
+                    mType = TYPE_HEADER;
+                }
+            }
+        }
     }
 
     public void updateActionState()
@@ -89,6 +119,11 @@ public abstract class NSISScriptAction extends NSISAction implements IMakeNSISRu
         }
     }
 
+    protected final IPath getAssociatedScript()
+    {
+        return NSISCompileTestUtility.INSTANCE.getCompileScript(mInput);
+    }
+
     /* (non-Javadoc)
      * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
      */
@@ -98,10 +133,10 @@ public abstract class NSISScriptAction extends NSISAction implements IMakeNSISRu
             //This is for the popup context menu handling
             IStructuredSelection structuredSelection = (IStructuredSelection)selection;
             if(!selection.isEmpty()) {
-                mInput = ((IFile)structuredSelection.getFirstElement()).getFullPath();
+                setInput(((IFile)structuredSelection.getFirstElement()).getFullPath());
             }
             else {
-                mInput = null;
+                setInput(null);
             }
         }
         validateExtension();
@@ -110,7 +145,25 @@ public abstract class NSISScriptAction extends NSISAction implements IMakeNSISRu
 
     public boolean isEnabled()
     {
-        return (mPlugin != null && mPlugin.isConfigured() && mValidExtension);
+        if (mPlugin != null && mPlugin.isConfigured()) {
+            switch(mType) {
+                case TYPE_SCRIPT:
+                    return enableForScript();
+                case TYPE_HEADER:
+                    return enableForHeader();
+            }
+        }
+        return false;
+    }
+
+    protected boolean enableForHeader()
+    {
+        return getAssociatedScript() != null;
+    }
+
+    protected boolean enableForScript()
+    {
+        return true;
     }
 
     public void eventOccurred(MakeNSISRunEvent event)
@@ -123,19 +176,6 @@ public abstract class NSISScriptAction extends NSISAction implements IMakeNSISRu
                 stopped(event.getScript(), (MakeNSISResults)event.getData());
                 break;
         }
-    }
-
-    public Pattern getExtensionPattern()
-    {
-        if(mExtensionPattern == null) {
-            mExtensionPattern = createExtensionPattern();
-        }
-        return mExtensionPattern;
-    }
-
-    protected Pattern createExtensionPattern()
-    {
-        return Pattern.compile(NSI_EXTENSION,Pattern.CASE_INSENSITIVE);
     }
 
     protected abstract void started(IPath script);

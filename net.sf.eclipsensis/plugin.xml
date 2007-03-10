@@ -121,6 +121,15 @@
             id="%file.property.page.id">
       </page>
       <page
+            objectClass="org.eclipse.core.resources.IFile"
+            adaptable="true"
+            icon="icons/nsis.gif"
+            class="net.sf.eclipsensis.dialogs.NSISHeaderPropertyPage"
+            nameFilter="%nsh.extension"
+            name="%property.page.name"
+            id="%header.file.property.page.id">
+      </page>
+      <page
             objectClass="org.eclipse.core.resources.IFolder"
             adaptable="true"
             icon="icons/nsis.gif"
@@ -136,6 +145,15 @@
             name="%property.page.name"
             id="%project.property.page.id">
       </page>
+      <page
+            adaptable="true"
+            category="%file.property.page.id"
+            class="net.sf.eclipsensis.dialogs.NSISAssociatedHeadersPropertyPage"
+            icon="icons/associatedheaders.gif"
+            id="%associated.headers.property.page.id"
+            name="%associated.headers.property.page.name"
+            nameFilter="%nsi.extension"
+            objectClass="org.eclipse.core.resources.IFile"/>
    </extension>
    <extension
          point="org.eclipse.ui.views">
@@ -206,6 +224,26 @@
                menubarPath="net.sf.eclipsensis.Menu/net.sf.eclipsensis.Group3"
                toolbarPath="net.sf.eclipsensis.Group"
                id="%help.action.id">
+         </action>
+         <action
+               class="net.sf.eclipsensis.actions.NSISOpenAssociatedScriptOrHeadersAction"
+               definitionId="%open.associated.headers.command.id"
+               disabledIcon="icons/associatedheaders_d.gif"
+               icon="icons/associatedheaders.gif"
+               id="%open.associated.headers.action.id"
+               label="%open.associated.headers.action.name"
+               menubarPath="net.sf.eclipsensis.Menu/net.sf.eclipsensis.Group2"
+               toolbarPath="net.sf.eclipsensis.Group2">
+         </action>
+         <action
+               class="net.sf.eclipsensis.actions.NSISOpenAssociatedScriptOrHeadersAction"
+               definitionId="%open.associated.script.command.id"
+               disabledIcon="icons/nsis.gif"
+               icon="icons/nsis.gif"
+               id="%open.associated.script.action.id"
+               label="%open.associated.script.action.name"
+               menubarPath="net.sf.eclipsensis.Menu/net.sf.eclipsensis.Group2"
+               toolbarPath="net.sf.eclipsensis.Group2">
          </action>
          <action
                toolbarPath="net.sf.eclipsensis.Group"
@@ -341,11 +379,12 @@
                id="net.sf.eclipsensis.PopupMenu">
             <separator name="net.sf.eclipsensis.PopupGroup"/>
             <separator name="net.sf.eclipsensis.PopupGroup2"/>
+            <separator name="net.sf.eclipsensis.PopupGroup3"/>
          </menu>
       </objectContribution>
       <objectContribution
             objectClass="org.eclipse.core.resources.IFile"
-            nameFilter="%nsi.extension"
+            nameFilter="%nsis.wildcard.extension"
             id="%compile.actions.contribution.id">
          <action
                enablesFor="1"
@@ -391,6 +430,34 @@
                definitionId="%popup.clear.markers.command.id"
                id="%clear.markers.popup.menu.id">
          </action>
+      </objectContribution>
+      <objectContribution
+            id="net.sf.eclipsensis.scriptOpenContribution"
+            nameFilter="%nsh.extension"
+            objectClass="org.eclipse.core.resources.IFile">
+         <action
+               class="net.sf.eclipsensis.actions.NSISOpenAssociatedScriptOrHeadersAction"
+               definitionId="%popup.open.associated.script.command.id"
+               enablesFor="1"
+               icon="icons/associatedscript.gif"
+               id="%open.associated.script.popup.menu.id"
+               label="%open.associated.script.label"
+               menubarPath="net.sf.eclipsensis.PopupMenu/net.sf.eclipsensis.PopupGroup3"
+               tooltip="%open.associated.script.label"/>
+      </objectContribution>
+      <objectContribution
+            id="net.sf.eclipsensis.headerOpenContribution"
+            nameFilter="%nsi.extension"
+            objectClass="org.eclipse.core.resources.IFile">
+         <action
+               class="net.sf.eclipsensis.actions.NSISOpenAssociatedScriptOrHeadersAction"
+               definitionId="%popup.open.associated.headers.command.id"
+               enablesFor="1"
+               icon="icons/associatedheaders.gif"
+               id="%open.associated.headers.popup.menu.id"
+               label="%open.associated.headers.label"
+               menubarPath="net.sf.eclipsensis.PopupMenu/net.sf.eclipsensis.PopupGroup3"
+               tooltip="%open.associated.headers.label"/>
       </objectContribution>
    </extension>
    <extension
@@ -515,6 +582,16 @@
          id="%cancel.command.id"
          categoryId="%category.id"/>
       <command
+         name="%open.associated.script.label"
+         description="%open.associated.script.label"
+         id="%open.associated.script.command.id"
+         categoryId="%category.id"/>
+      <command
+         name="%open.associated.headers.label"
+         description="%open.associated.headers.label"
+         id="%open.associated.headers.command.id"
+         categoryId="%category.id"/>
+      <command
          name="%clear.markers.name"
          description="%clear.markers.description"
          id="%popup.clear.markers.command.id"
@@ -537,6 +614,16 @@
          description="%test.description"
          id="%popup.test.command.id"
          defaultHandler="net.sf.eclipsensis.handlers.NSISTestHandler"
+         categoryId="%category.id"/>
+      <command
+         name="%open.associated.script.label"
+         description="%open.associated.script.label"
+         id="%popup.open.associated.script.command.id"
+         categoryId="%category.id"/>
+      <command
+         name="%open.associated.headers.label"
+         description="%open.associated.headers.label"
+         id="%popup.open.associated.headers.command.id"
          categoryId="%category.id"/>
       <command
             name="%launch.shortcut.command.name"
@@ -634,6 +721,16 @@
           sequence="%clear.markers.keysequence"/>
       <key
           schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+          commandId="%open.associated.script.command.id"
+          contextId="%context.editingNSISSource.id"
+          sequence="%open.associated.script.keysequence"/>
+      <key
+          schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+          commandId="%open.associated.headers.command.id"
+          contextId="%context.editingNSISSource.id"
+          sequence="%open.associated.headers.keysequence"/>
+      <key
+          schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
           commandId="%popup.compile.command.id"
           sequence="%compile.keysequence"/>
       <key
@@ -648,6 +745,14 @@
           schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
           commandId="%popup.clear.markers.command.id"
           sequence="%clear.markers.keysequence"/>
+      <key
+          schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+          commandId="%popup.open.associated.script.command.id"
+          sequence="%open.associated.script.keysequence"/>
+      <key
+          schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+          commandId="%popup.open.associated.headers.command.id"
+          sequence="%open.associated.headers.keysequence"/>
       <key
           schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
           commandId="%cancel.command.id"

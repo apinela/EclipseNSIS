@@ -50,6 +50,8 @@ public interface INSISPreferenceConstants extends INSISSettingsConstants
     public static final int AUTO_SHOW_CONSOLE_ERROR = NSISConsoleLine.TYPE_ERROR;
     public static final int AUTO_SHOW_CONSOLE_WARNING = AUTO_SHOW_CONSOLE_ERROR|NSISConsoleLine.TYPE_WARNING;
     public static final int AUTO_SHOW_CONSOLE_ALWAYS = AUTO_SHOW_CONSOLE_WARNING|NSISConsoleLine.TYPE_INFO;
+    public static final int AUTO_SHOW_CONSOLE_DEFAULT = AUTO_SHOW_CONSOLE_ALWAYS;
+
     public static final int[] AUTO_SHOW_CONSOLE_ARRAY = {AUTO_SHOW_CONSOLE_ALWAYS, AUTO_SHOW_CONSOLE_WARNING,
                                                          AUTO_SHOW_CONSOLE_ERROR,AUTO_SHOW_CONSOLE_NEVER};
     public static final String CONSOLE_FONT = "net.sf.eclipsensis.console.Font"; //$NON-NLS-1$
@@ -69,4 +71,6 @@ public interface INSISPreferenceConstants extends INSISSettingsConstants
     public static final int BEFORE_COMPILE_SAVE_CURRENT_AUTO = 2;
     public static final int BEFORE_COMPILE_SAVE_ALL_AUTO = 3;
     public static final int BEFORE_COMPILE_SAVE_DEFAULT = BEFORE_COMPILE_SAVE_CURRENT_CONFIRM;
+    public static final int[] BEFORE_COMPILE_SAVE_ARRAY = {BEFORE_COMPILE_SAVE_CURRENT_CONFIRM, BEFORE_COMPILE_SAVE_ALL_CONFIRM,
+                                                           BEFORE_COMPILE_SAVE_CURRENT_AUTO,BEFORE_COMPILE_SAVE_ALL_AUTO};
 }

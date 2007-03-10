@@ -20,6 +20,7 @@ public interface INSISConstants
     public static final String MAKENSIS_EXE = "makensis.exe"; //$NON-NLS-1$
     public static final String NSISCONF_NSH = "nsisconf.nsh"; //$NON-NLS-1$
     public static final String NSI_EXTENSION = "nsi"; //$NON-NLS-1$
+    public static final String NSH_EXTENSION = "nsh"; //$NON-NLS-1$
     public static final String NSI_WILDCARD_EXTENSION = "ns[hi]"; //$NON-NLS-1$
 
     public static final String PLUGIN_CONTEXT_PREFIX = PLUGIN_ID + "."; //$NON-NLS-1$
@@ -54,6 +55,8 @@ public interface INSISConstants
     public static final String TOGGLE_COMMENT_COMMAND_ID = EclipseNSISPlugin.getBundleResourceString("%toggle.comment.command.id"); //$NON-NLS-1$
     public static final String ADD_BLOCK_COMMENT_COMMAND_ID = EclipseNSISPlugin.getBundleResourceString("%add.block.comment.command.id"); //$NON-NLS-1$
     public static final String REMOVE_BLOCK_COMMENT_COMMAND_ID = EclipseNSISPlugin.getBundleResourceString("%remove.block.comment.command.id"); //$NON-NLS-1$
+    public static final String OPEN_ASSOCIATED_SCRIPT_ACTION_ID = EclipseNSISPlugin.getBundleResourceString("%open.associated.script.action.id"); //$NON-NLS-1$
+    public static final String OPEN_ASSOCIATED_HEADERS_ACTION_ID = EclipseNSISPlugin.getBundleResourceString("%open.associated.headers.action.id"); //$NON-NLS-1$
 
     public static final String PLUGIN_HELP_LOCATION_PREFIX = "help/"; //$NON-NLS-1$
     public static final String NSISCONTRIB_JS_LOCATION = PLUGIN_HELP_LOCATION_PREFIX + "nsiscontrib.js"; //$NON-NLS-1$

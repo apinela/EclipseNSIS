@@ -37,6 +37,7 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.ide.IGotoMarker;
+import org.eclipse.ui.part.FileEditorInput;
 
 public class NSISEditorUtilities
 {
@@ -381,6 +382,57 @@ public class NSISEditorUtilities
                         }
                     }
                 }
+            }
+        }
+    }
+
+    public static void openAssociatedFiles(final IWorkbenchPage page, final IFile file)
+    {
+        if(file != null) {
+            Runnable r = new Runnable() {
+                public void run()
+                {
+                    IFile[] files = null;
+                    String ext = file.getFileExtension();
+                    if(Common.stringsAreEqual(INSISConstants.NSI_EXTENSION,ext,true)) {
+                        files = (IFile[])NSISHeaderAssociationManager.getInstance().getAssociatedHeaders(file).toArray(new IFile[0]);
+                    }
+                    else if(Common.stringsAreEqual(INSISConstants.NSH_EXTENSION,ext,true)) {
+                        files = new IFile[] {NSISHeaderAssociationManager.getInstance().getAssociatedScript(file)};
+                    }
+
+                    if(!Common.isEmptyArray(files)) {
+                        for (int i = 0; i < files.length; i++) {
+                            if(!files[i].exists()) {
+                                IProject proj = files[i].getProject();
+                                if(!proj.isOpen() && proj.exists()) {
+                                    try {
+                                        proj.open(new NullProgressMonitor());
+                                    }
+                                    catch (CoreException e) {
+                                        EclipseNSISPlugin.getDefault().log(e);
+                                        continue;
+                                    }
+                                }
+                                else {
+                                    continue;
+                                }
+                            }
+                            try {
+                                page.openEditor(new FileEditorInput(files[i]),INSISConstants.EDITOR_ID,false,IWorkbenchPage.MATCH_ID|IWorkbenchPage.MATCH_INPUT);
+                            }
+                            catch (PartInitException e) {
+                                EclipseNSISPlugin.getDefault().log(e);
+                            }
+                        }
+                    }
+                }
+            };
+            if(Display.getCurrent() != null) {
+                r.run();
+            }
+            else {
+                Display.getDefault().asyncExec(r);
             }
         }
     }

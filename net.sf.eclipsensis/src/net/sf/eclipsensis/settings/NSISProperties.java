@@ -24,12 +24,12 @@ public class NSISProperties extends NSISSettings implements INSISConstants
 {
     public static final String USE_PARENT = "useParent"; //$NON-NLS-1$
     public static final String USE_GLOBALS = "useGlobals"; //$NON-NLS-1$
-
     private static Map cPropertiesCache = new HashMap();
     private static Map cQualifiedNames = new HashMap();
 
     private IResource mResource = null;
     private boolean mUseParent = true;
+
     private NSISSettings mParentSettings;
 
     static {
@@ -49,20 +49,23 @@ public class NSISProperties extends NSISSettings implements INSISConstants
 
     public static synchronized NSISProperties getProperties(IResource resource)
     {
-        String fileName = null;
-        IPath location = resource.getLocation();
-        if(location != null) {
-            fileName = location.toString();
-        }
-        if(fileName == null || !cPropertiesCache.containsKey(fileName)) {
-            NSISProperties props = new NSISProperties(resource);
-            props.load();
-            if(fileName != null) {
-                cPropertiesCache.put(fileName,props);
+        if (resource != null) {
+            String fileName = null;
+            IPath location = resource.getLocation();
+            if (location != null) {
+                fileName = location.toString();
             }
-            return props;
+            if (fileName == null || !cPropertiesCache.containsKey(fileName)) {
+                NSISProperties props = new NSISProperties(resource);
+                props.load();
+                if (fileName != null) {
+                    cPropertiesCache.put(fileName, props);
+                }
+                return props;
+            }
+            return (NSISProperties)cPropertiesCache.get(fileName);
         }
-        return (NSISProperties)cPropertiesCache.get(fileName);
+        return null;
     }
 
     protected NSISProperties(IResource resource)
@@ -109,9 +112,9 @@ public class NSISProperties extends NSISSettings implements INSISConstants
             setSolidCompression(getDefaultSolidCompression());
             setSymbols(getDefaultSymbols());
             setInstructions(getDefaultInstructions());
-            }
-            super.store();
         }
+        super.store();
+    }
 
     public int getCompressor()
     {

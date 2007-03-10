@@ -32,7 +32,7 @@ import org.eclipse.swt.widgets.Display;
 
 public class FontUtility
 {
-    private static final String UNKNOWN_FONT = "??";
+    private static final String UNKNOWN_FONT = "??"; //$NON-NLS-1$
     private static final String DEFAULT_DEFAULT_FONT_NAME = "MS Shell Dlg"; //$NON-NLS-1$
     public static final int DEFAULT_DEFAULT_FONT_SIZE = 8;
     public static final String DEFAULT_FONT_NAME;
@@ -132,7 +132,7 @@ public class FontUtility
                 cNSISSettings = new DummyNSISSettings();
             }
             if(cPropertiesFile == null) {
-                cPropertiesFile = File.createTempFile("font",".properties");//$NON-NLS-1$
+                cPropertiesFile = File.createTempFile("font",".properties");//$NON-NLS-1$ //$NON-NLS-2$
                 cPropertiesFile.deleteOnExit();
             }
             if(cNSISConsole == null) {
@@ -161,7 +161,7 @@ public class FontUtility
 
             if(results != null) {
                 if (results.getReturnCode() == 0) {
-                    File outfile = new File(InstallOptionsPlugin.getPluginStateLocation(),"getfont.exe");
+                    File outfile = new File(InstallOptionsPlugin.getPluginStateLocation(),"getfont.exe"); //$NON-NLS-1$
                     if (IOUtility.isValidFile(outfile) && outfile.lastModified() > timestamp) {
                         MakeNSISRunner.testInstaller(outfile.getAbsolutePath(), null, true);
                         if(cPropertiesFile.exists()) {
@@ -170,15 +170,15 @@ public class FontUtility
                             try {
                                 is = new FileInputStream(cPropertiesFile);
                                 props.load(is);
-                                String fontName = props.getProperty("name");
+                                String fontName = props.getProperty("name"); //$NON-NLS-1$
                                 if(fontName == null) {
                                     fontName = DEFAULT_FONT_NAME;
                                 }
                                 else if(fontName.equals(UNKNOWN_FONT)) {
-                                    fontName = InstallOptionsPlugin.getResourceString("unknown.font."+lang.getName().toLowerCase(),DEFAULT_FONT_NAME);
+                                    fontName = InstallOptionsPlugin.getResourceString("unknown.font."+lang.getName().toLowerCase(),DEFAULT_FONT_NAME); //$NON-NLS-1$
                                 }
                                 int fontSize;
-                                String tmpFontSize = props.getProperty("size");
+                                String tmpFontSize = props.getProperty("size"); //$NON-NLS-1$
                                 if(tmpFontSize == null) {
                                     fontSize = DEFAULT_FONT_SIZE;
                                 }

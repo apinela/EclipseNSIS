@@ -39,7 +39,7 @@ public class InstallOptionsBitmap extends InstallOptionsPicture
 
     public String getFileExtension()
     {
-        return ".bmp";
+        return ".bmp"; //$NON-NLS-1$
     }
 
     public int getSWTImageType()

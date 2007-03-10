@@ -110,9 +110,20 @@ public class IOUtility
     public static String getFileExtension(File file)
     {
         String name = file.getName();
-        int n = name.lastIndexOf('.');
-        if(n >= 0) {
-            return name.substring(n+1);
+        return getFileExtension(name);
+    }
+
+    /**
+     * @param filename
+     * @return
+     */
+    public static String getFileExtension(String filename)
+    {
+        if (filename != null) {
+            int n = filename.lastIndexOf('.');
+            if (n >= 0) {
+                return filename.substring(n + 1);
+            }
         }
         return null;
     }
@@ -620,5 +631,22 @@ public class IOUtility
         {
             return mBundle.hashCode() << 16 + mResource.hashCode();
         }
+    }
+
+    public static boolean isValidFile(IFile file)
+    {
+        if (file != null) {
+            if (!file.exists()) {
+                IProject project = file.getProject();
+                if (project.isOpen()) {
+                    return false;
+                }
+                else {
+                    return project.exists();
+                }
+            }
+            return true;
+        }
+        return false;
     }
 }

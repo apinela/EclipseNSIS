@@ -55,6 +55,7 @@ public class NSISPreferencePage	extends NSISSettingsPage implements INSISPrefere
     private static Map cSolidCompressionMap = new HashMap();
     private static Map cProcessPriorityMap = new HashMap();
     private static final String[] cAutoShowConsoleText;
+    private static final String[] cBeforeCompileSaveText;
 
     static {
         Collection nsisHomes;
@@ -78,6 +79,11 @@ public class NSISPreferencePage	extends NSISSettingsPage implements INSISPrefere
         cAutoShowConsoleText = new String[AUTO_SHOW_CONSOLE_ARRAY.length];
         for (int i = 0; i < AUTO_SHOW_CONSOLE_ARRAY.length; i++) {
             cAutoShowConsoleText[i] = EclipseNSISPlugin.getResourceString("auto.show.console."+AUTO_SHOW_CONSOLE_ARRAY[i]); //$NON-NLS-1$
+        }
+
+        cBeforeCompileSaveText = new String[BEFORE_COMPILE_SAVE_ARRAY.length];
+        for (int i = 0; i < BEFORE_COMPILE_SAVE_ARRAY.length; i++) {
+            cBeforeCompileSaveText[i] = EclipseNSISPlugin.getResourceString("before.compile.save."+BEFORE_COMPILE_SAVE_ARRAY[i]); //$NON-NLS-1$
         }
     }
 
@@ -174,6 +180,7 @@ public class NSISPreferencePage	extends NSISSettingsPage implements INSISPrefere
             private boolean mNSISHomeDirty = false;
             private boolean mHandlingNSISHomeChange = false;
             private Button mWarnProcessPriority = null;
+            private Combo mBeforeCompileSave = null;
 
             public PreferencesEditorGeneralPage(NSISSettings settings)
             {
@@ -282,7 +289,8 @@ public class NSISPreferencePage	extends NSISSettingsPage implements INSISPrefere
             {
                 super.setDefaults();
                 mUseEclipseHelp.setSelection(true);
-                mAutoShowConsole.select(0);
+                mAutoShowConsole.select(getAutoShowConsoleIndex(AUTO_SHOW_CONSOLE_DEFAULT));
+                mBeforeCompileSave.select(getBeforeCompileSaveIndex(BEFORE_COMPILE_SAVE_DEFAULT));
                 mNotifyMakeNSISChanged.setSelection(false);
                 mWarnProcessPriority.setSelection(true);
             }
@@ -297,12 +305,23 @@ public class NSISPreferencePage	extends NSISSettingsPage implements INSISPrefere
                 return 0;
             }
 
+            private int getBeforeCompileSaveIndex(int beforeCompileSave)
+            {
+                for (int i = 0; i < BEFORE_COMPILE_SAVE_ARRAY.length; i++) {
+                    if(BEFORE_COMPILE_SAVE_ARRAY[i]==beforeCompileSave) {
+                        return i;
+                    }
+                }
+                return 0;
+            }
+
             public void reset()
             {
                 NSISPreferences prefs = (NSISPreferences)getSettings();
                 mNSISHome.getCombo().setText(prefs.getNSISHome());
                 mUseEclipseHelp.setSelection(prefs.isUseEclipseHelp());
                 mAutoShowConsole.select(getAutoShowConsoleIndex(prefs.getAutoShowConsole()));
+                mBeforeCompileSave.select(getBeforeCompileSaveIndex(prefs.getBeforeCompileSave()));
                 mNotifyMakeNSISChanged.setSelection(prefs.getBoolean(NOTIFY_MAKENSIS_CHANGED));
                 mWarnProcessPriority.setSelection(prefs.getPreferenceStore().getBoolean(WARN_PROCESS_PRIORITY));
                 super.reset();
@@ -349,6 +368,7 @@ public class NSISPreferencePage	extends NSISSettingsPage implements INSISPrefere
                         NSISPreferences preferences = (NSISPreferences)settings;
                         preferences.setNSISHome(home);
                         preferences.setAutoShowConsole(AUTO_SHOW_CONSOLE_ARRAY[mAutoShowConsole.getSelectionIndex()]);
+                        preferences.setBeforeCompileSave(BEFORE_COMPILE_SAVE_ARRAY[mBeforeCompileSave.getSelectionIndex()]);
                         preferences.setUseEclipseHelp(mUseEclipseHelp.getSelection());
                         preferences.setValue(NOTIFY_MAKENSIS_CHANGED, mNotifyMakeNSISChanged.getSelection());
                         preferences.getPreferenceStore().setValue(WARN_PROCESS_PRIORITY, mWarnProcessPriority.getSelection());
@@ -361,6 +381,7 @@ public class NSISPreferencePage	extends NSISSettingsPage implements INSISPrefere
             public void enableControls(boolean state)
             {
                 mAutoShowConsole.setEnabled(state);
+                mBeforeCompileSave.setEnabled(state);
                 mUseEclipseHelp.setEnabled(state);
                 mNotifyMakeNSISChanged.setEnabled(state);
                 mWarnProcessPriority.setEnabled(state);
@@ -504,6 +525,10 @@ public class NSISPreferencePage	extends NSISSettingsPage implements INSISPrefere
                                               EclipseNSISPlugin.getResourceString("notify.makensis.changed.tooltip"), //$NON-NLS-1$
                                               NSISPreferences.INSTANCE.getPreferenceStore().getBoolean(NOTIFY_MAKENSIS_CHANGED));
                 ((GridData)mNotifyMakeNSISChanged.getLayoutData()).horizontalSpan = 3;
+
+                mBeforeCompileSave = createCombo(composite, EclipseNSISPlugin.getResourceString("before.compile.save.text"), //$NON-NLS-1$
+                        EclipseNSISPlugin.getResourceString("before.compile.save.tooltip"), //$NON-NLS-1$
+                        cBeforeCompileSaveText,getBeforeCompileSaveIndex(((NSISPreferences)getSettings()).getBeforeCompileSave()));
                 return composite;
             }
         }

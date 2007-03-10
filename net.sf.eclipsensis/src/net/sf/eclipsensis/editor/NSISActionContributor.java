@@ -14,7 +14,9 @@ import java.util.ResourceBundle;
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.actions.NSISConfigWizardAction;
+import net.sf.eclipsensis.util.Common;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
@@ -191,9 +193,37 @@ public class NSISActionContributor extends TextEditorActionContributor implement
 		super.dispose();
 	}
 
+    private void showHideAction(IMenuManager manager, String id, boolean show)
+    {
+        IContributionItem item = manager.find(id);
+        if(item != null) {
+            item.setVisible(show);
+            item.update();
+        }
+    }
+
     public void menuAboutToShow(IMenuManager manager)
     {
         if(manager != null) {
+            IEditorPart editor = getActiveEditorPart();
+            if(editor instanceof NSISEditor) {
+                IEditorInput input = editor.getEditorInput();
+                boolean openAssociatedScript = false;
+                boolean openAssociatedHeaders = false;
+                if(input instanceof IFileEditorInput) {
+                    IFile file = ((IFileEditorInput)input).getFile();
+                    String ext = file.getFileExtension();
+                    if(Common.stringsAreEqual(INSISConstants.NSH_EXTENSION,ext)) {
+                        openAssociatedScript = true;
+                    }
+                    else if (Common.stringsAreEqual(INSISConstants.NSI_EXTENSION,ext)) {
+                        openAssociatedHeaders = true;
+                    }
+                }
+                showHideAction(manager, INSISConstants.OPEN_ASSOCIATED_SCRIPT_ACTION_ID,openAssociatedScript);
+                showHideAction(manager, INSISConstants.OPEN_ASSOCIATED_HEADERS_ACTION_ID,openAssociatedHeaders);
+                manager.updateAll(true);
+            }
             if(!EclipseNSISPlugin.getDefault().isConfigured()) {
                 if(manager.find(NSISConfigWizardAction.ID)==null) {
                     manager.appendToGroup("net.sf.eclipsensis.Group4", mConfigWizardAction); //$NON-NLS-1$

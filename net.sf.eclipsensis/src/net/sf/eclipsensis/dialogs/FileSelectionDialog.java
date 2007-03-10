@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -34,10 +34,13 @@ public class FileSelectionDialog extends TitleAreaDialog
     private static final Object[] EMPTY_ARRAY = new Object[0];
     private static final int VIEWER_WIDTH = 200;
     private static final int VIEWER_HEIGHT = 300;
-    
+
     private IFilter mFilter = null;
     private IFile mFile = null;
-    
+    private String mDialogTitle;
+    private String mDialogHeader;
+    private String mDialogMessage;
+
     public FileSelectionDialog(Shell parentShell, IFile file, IFilter filter)
     {
         super(parentShell);
@@ -45,17 +48,17 @@ public class FileSelectionDialog extends TitleAreaDialog
         mFile = file;
         mFilter = filter;
     }
-    
+
     public FileSelectionDialog(Shell parentShell, IFile file)
     {
         this(parentShell, file, null);
     }
-    
+
     public FileSelectionDialog(Shell parentShell, IFilter filter)
     {
         this(parentShell, null, filter);
     }
-    
+
     public FileSelectionDialog(Shell parentShell)
     {
         this(parentShell, null, null);
@@ -66,18 +69,48 @@ public class FileSelectionDialog extends TitleAreaDialog
         return mFile;
     }
 
+    public String getDialogHeader()
+    {
+        return mDialogHeader;
+    }
+
+    public void setDialogHeader(String dialogHeader)
+    {
+        mDialogHeader = dialogHeader;
+    }
+
+    public String getDialogMessage()
+    {
+        return mDialogMessage;
+    }
+
+    public void setDialogMessage(String dialogMessage)
+    {
+        mDialogMessage = dialogMessage;
+    }
+
+    public String getDialogTitle()
+    {
+        return mDialogTitle;
+    }
+
+    public void setDialogTitle(String dialogTitle)
+    {
+        mDialogTitle = dialogTitle;
+    }
+
     protected void configureShell(Shell shell) {
         super.configureShell(shell);
-        shell.setText(EclipseNSISPlugin.getResourceString("fileselection.dialog.title")); //$NON-NLS-1$
+        shell.setText(mDialogTitle==null?EclipseNSISPlugin.getResourceString("fileselection.dialog.title"):mDialogTitle); //$NON-NLS-1$
         shell.setImage(EclipseNSISPlugin.getShellImage());
     }
 
     protected Control createContents(Composite parent) {
 
         Control contents = super.createContents(parent);
-        setTitle(EclipseNSISPlugin.getResourceString("fileselection.dialog.header")); //$NON-NLS-1$
+        setTitle(mDialogHeader==null?EclipseNSISPlugin.getResourceString("fileselection.dialog.header"):mDialogHeader); //$NON-NLS-1$
         setTitleImage(EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("file.selection.dialog.icon"))); //$NON-NLS-1$
-        setMessage(EclipseNSISPlugin.getResourceString("fileselection.dialog.message")); //$NON-NLS-1$
+        setMessage(mDialogMessage==null?EclipseNSISPlugin.getResourceString("fileselection.dialog.message"):mDialogMessage); //$NON-NLS-1$
 
         Button button = getButton(IDialogConstants.OK_ID);
         if(button != null) {
@@ -95,17 +128,17 @@ public class FileSelectionDialog extends TitleAreaDialog
 
         SashForm form = new SashForm(composite,SWT.HORIZONTAL);
         form.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true));
-        
+
         layout = new GridLayout(1,true);
         form.setLayout(layout);
-        
+
         composite = new Composite(form,SWT.NONE);
         composite.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true));
         layout = new GridLayout(1,true);
         layout.marginHeight = 0;
         layout.marginWidth = 0;
         composite.setLayout(layout);
-        
+
         Label l = new Label(composite,SWT.NONE);
         l.setText(EclipseNSISPlugin.getResourceString("fileselection.parent.folder.label")); //$NON-NLS-1$
         l.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false));
@@ -119,14 +152,14 @@ public class FileSelectionDialog extends TitleAreaDialog
         tv.setLabelProvider(WorkbenchLabelProvider.getDecoratingWorkbenchLabelProvider());
         tv.setSorter(new ViewerSorter());
 
-        
+
         composite = new Composite(form,SWT.None);
         composite.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true));
         layout = new GridLayout(1,true);
         layout.marginHeight = 0;
         layout.marginWidth = 0;
         composite.setLayout(layout);
-        
+
         l = new Label(composite,SWT.NONE);
         l.setText(EclipseNSISPlugin.getResourceString("fileselection.file.label")); //$NON-NLS-1$
         l.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false));
@@ -148,7 +181,7 @@ public class FileSelectionDialog extends TitleAreaDialog
                 }
             });
         }
-        
+
         tv.addSelectionChangedListener(new ISelectionChangedListener() {
             public void selectionChanged(SelectionChangedEvent event) {
                 IStructuredSelection selection = (IStructuredSelection) event.getSelection();
@@ -156,7 +189,7 @@ public class FileSelectionDialog extends TitleAreaDialog
             }
         });
         tv.addDoubleClickListener(new IDoubleClickListener() {
-            public void doubleClick(DoubleClickEvent event) 
+            public void doubleClick(DoubleClickEvent event)
             {
                 ISelection selection = event.getSelection();
                 if (selection instanceof IStructuredSelection) {
@@ -171,7 +204,7 @@ public class FileSelectionDialog extends TitleAreaDialog
                 }
             }
         });
-        
+
         tv2.addSelectionChangedListener(new ISelectionChangedListener() {
             public void selectionChanged(SelectionChangedEvent event) {
                 IStructuredSelection selection = (IStructuredSelection) event.getSelection();
@@ -188,7 +221,7 @@ public class FileSelectionDialog extends TitleAreaDialog
             }
         });
         tv2.addDoubleClickListener(new IDoubleClickListener() {
-            public void doubleClick(DoubleClickEvent event) 
+            public void doubleClick(DoubleClickEvent event)
             {
                 if(mFile != null) {
                     setReturnCode(Window.OK);
@@ -196,7 +229,7 @@ public class FileSelectionDialog extends TitleAreaDialog
                 }
             }
         });
-        
+
         tv.setInput(ResourcesPlugin.getWorkspace());
         if(mFile != null) {
             tv.setSelection(new StructuredSelection(mFile.getParent()));
@@ -210,11 +243,11 @@ public class FileSelectionDialog extends TitleAreaDialog
 
     private class ContainerContentProvider extends EmptyContentProvider
     {
-        public Object[] getChildren(Object element) 
+        public Object[] getChildren(Object element)
         {
             if (element instanceof IWorkspace) {
                 return ((IWorkspace) element).getRoot().getProjects();
-            } 
+            }
             else if (element instanceof IContainer) {
                 IContainer container = (IContainer) element;
                 if (container.isAccessible()) {
@@ -227,7 +260,7 @@ public class FileSelectionDialog extends TitleAreaDialog
                             }
                         }
                         return children.toArray();
-                    } 
+                    }
                     catch (CoreException e) {
                         EclipseNSISPlugin.getDefault().log(e);
                     }
@@ -236,12 +269,12 @@ public class FileSelectionDialog extends TitleAreaDialog
             return EMPTY_ARRAY;
         }
 
-        public Object[] getElements(Object element) 
+        public Object[] getElements(Object element)
         {
             return getChildren(element);
         }
 
-        public Object getParent(Object element) 
+        public Object getParent(Object element)
         {
             if (element instanceof IResource) {
                 return ((IResource) element).getParent();
@@ -249,16 +282,16 @@ public class FileSelectionDialog extends TitleAreaDialog
             return null;
         }
 
-        public boolean hasChildren(Object element) 
+        public boolean hasChildren(Object element)
         {
             return getChildren(element).length > 0;
         }
     }
-    
+
     private class FilesLabelProvider extends LabelProvider implements ITableLabelProvider
     {
         private ILabelProvider mLabelProvider = WorkbenchLabelProvider.getDecoratingWorkbenchLabelProvider();
-        
+
         public Image getColumnImage(Object element, int columnIndex)
         {
             return mLabelProvider.getImage(element);
@@ -272,7 +305,7 @@ public class FileSelectionDialog extends TitleAreaDialog
 
     private class FilesContentProvider extends EmptyContentProvider
     {
-        public Object[] getElements(Object element) 
+        public Object[] getElements(Object element)
         {
             if (element instanceof IContainer) {
                 IContainer container = (IContainer) element;
@@ -286,7 +319,7 @@ public class FileSelectionDialog extends TitleAreaDialog
                             }
                         }
                         return children.toArray();
-                    } 
+                    }
                     catch (CoreException e) {
                         EclipseNSISPlugin.getDefault().log(e);
                     }

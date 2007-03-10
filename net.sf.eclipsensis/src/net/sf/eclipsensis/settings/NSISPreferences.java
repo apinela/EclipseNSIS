@@ -64,7 +64,8 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
     private String mNSISHome = null;
     private Version mNSISVersion = null;
     private boolean mUseEclipseHelp = false;
-    private int mAutoShowConsole = AUTO_SHOW_CONSOLE_ALWAYS;
+    private int mAutoShowConsole = AUTO_SHOW_CONSOLE_DEFAULT;
+    private int mBeforeCompileSave = BEFORE_COMPILE_SAVE_DEFAULT;
     private Properties mNSISDefaultSymbols = null;
     private Collection mTaskTags = null;
     private Collection mDefaultTaskTags = null;
@@ -148,11 +149,10 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
         initializePreference(WARN_PROCESS_PRIORITY,Boolean.TRUE);
         initializePreference(COMPRESSOR,new Integer(getDefaultCompressor()));
         initializePreference(SOLID_COMPRESSION,(getDefaultSolidCompression()?Boolean.TRUE:Boolean.FALSE));
-        initializePreference(AUTO_SHOW_CONSOLE,new Integer(AUTO_SHOW_CONSOLE_ALWAYS));
+        initializePreference(AUTO_SHOW_CONSOLE,new Integer(AUTO_SHOW_CONSOLE_DEFAULT));
+        initializePreference(BEFORE_COMPILE_SAVE,new Integer(BEFORE_COMPILE_SAVE_DEFAULT));
         initializePreference(INSTRUCTIONS,""); //$NON-NLS-1$
         initializePreference(SYMBOLS,""); //$NON-NLS-1$
-
-        initializePreference(BEFORE_COMPILE_SAVE, new Integer(BEFORE_COMPILE_SAVE_CURRENT_CONFIRM));
 
         String pref = mPreferenceStore.getString(AUTO_SHOW_CONSOLE);
         int autoShowConsole;
@@ -164,6 +164,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
             mPreferenceStore.setValue(AUTO_SHOW_CONSOLE, autoShowConsole);
         }
         setAutoShowConsole(autoShowConsole);
+        setBeforeCompileSave(mPreferenceStore.getInt(BEFORE_COMPILE_SAVE));
         setNSISHome(mPreferenceStore.getString(NSIS_HOME));
         setUseEclipseHelp(mPreferenceStore.getBoolean(USE_ECLIPSE_HELP));
     }
@@ -259,6 +260,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
         setValue(NSIS_HOME,mNSISHome);
         setValue(USE_ECLIPSE_HELP,mUseEclipseHelp);
         setValue(AUTO_SHOW_CONSOLE,mAutoShowConsole);
+        setValue(BEFORE_COMPILE_SAVE,mBeforeCompileSave);
         setValue(CASE_SENSITIVE_TASK_TAGS,mCaseSensitiveTaskTags);
         storeObject(TASK_TAGS,mTaskTags);
         super.store();
@@ -553,6 +555,16 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
     public void setAutoShowConsole(int autoShowConsole)
     {
         mAutoShowConsole = autoShowConsole;
+    }
+
+    public int getBeforeCompileSave()
+    {
+        return mBeforeCompileSave;
+    }
+
+    public void setBeforeCompileSave(int beforeCompileSave)
+    {
+        mBeforeCompileSave = beforeCompileSave;
     }
 
     /* (non-Javadoc)

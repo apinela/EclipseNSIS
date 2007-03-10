@@ -66,7 +66,8 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
     private InstallOptionsSourcePreviewer mPreviewer;
     private Object mData;
     private TabFolder mFolder;
-    private Button mFileAssociationButton;
+    private Button mFileAssociation;
+    private Button mAutosaveBeforePreview;
 
     /**
      *
@@ -183,8 +184,8 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
             mSyntaxStylesHashCode = hashCode;
         }
 
-        FileAssociationChecker.setFileAssociationChecking(FILE_ASSOCIATION_ID, mFileAssociationButton.getSelection());
-
+        FileAssociationChecker.setFileAssociationChecking(FILE_ASSOCIATION_ID, mFileAssociation.getSelection());
+        getPreferenceStore().setValue(PREFERENCE_AUTOSAVE_BEFORE_PREVIEW, mAutosaveBeforePreview.getSelection());
         InstallOptionsPlugin.getDefault().savePluginPreferences();
     }
 
@@ -228,10 +229,15 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
         item.setData(InstallOptionsSourceEditor.class);
         activateTab();
 
-        mFileAssociationButton = new Button(parent,SWT.CHECK);
-        mFileAssociationButton.setText(InstallOptionsPlugin.getResourceString("check.default.editor.label")); //$NON-NLS-1$
-        mFileAssociationButton.setSelection(FileAssociationChecker.getFileAssociationChecking(FILE_ASSOCIATION_ID));
-        mFileAssociationButton.setLayoutData(new GridData(SWT.BEGINNING,SWT.CENTER,false,false));
+        mFileAssociation = new Button(parent,SWT.CHECK);
+        mFileAssociation.setText(InstallOptionsPlugin.getResourceString("check.default.editor.label")); //$NON-NLS-1$
+        mFileAssociation.setSelection(FileAssociationChecker.getFileAssociationChecking(FILE_ASSOCIATION_ID));
+        mFileAssociation.setLayoutData(new GridData(SWT.BEGINNING,SWT.CENTER,false,false));
+
+        mAutosaveBeforePreview = new Button(parent,SWT.CHECK);
+        mAutosaveBeforePreview.setText(InstallOptionsPlugin.getResourceString("autosave.before.preview.label")); //$NON-NLS-1$
+        mAutosaveBeforePreview.setSelection(getPreferenceStore().getBoolean(PREFERENCE_AUTOSAVE_BEFORE_PREVIEW));
+        mAutosaveBeforePreview.setLayoutData(new GridData(SWT.BEGINNING,SWT.CENTER,false,false));
 
         return parent;
     }
@@ -756,8 +762,8 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
         mSyntaxStylesViewer.setSelection(sel);
         mPreviewer.setSyntaxStyles(mSyntaxStylesMap);
 
-        mFileAssociationButton.setSelection(CHECK_FILE_ASSOCIATION_DEFAULT);
-
+        mFileAssociation.setSelection(CHECK_FILE_ASSOCIATION_DEFAULT);
+        mAutosaveBeforePreview.setSelection(getPreferenceStore().getDefaultBoolean(PREFERENCE_AUTOSAVE_BEFORE_PREVIEW));
         super.performDefaults();
     }
 
