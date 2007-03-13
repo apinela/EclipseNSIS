@@ -39,7 +39,8 @@ and the <a href="#sourceeditor">Source Editor</a>.</p>
 <a href="designeditor.html">design editor</a>.<br>
 These settings are applied the first time an InstallOptions script is
 opened using the design editor.</p>
-<p style="text-align: center;"><img alt="Design Editor Preferences" src="images/preferences1.gif" ismap="ismap" style="border: medium none ; width: 425px; height: 508px;" usemap="#preferences1"></p><a name="a_display"></a><dl id="id_display"><dt>Display</dt>
+<p style="text-align: center;"><img alt="Design Editor Preferences" src="images/preferences1.gif" ismap="ismap" style="border: medium none ; width: 425px; height: 508px;" usemap="#preferences1"></p>
+<a name="a_display"></a><dl id="id_display"><dt>Display</dt>
 <dd>These settings are can be used to control whether design
 editor drawing tools are shown or hidden by default.
 The drawing tools currently supported for show/hide are:<br><br>
@@ -70,6 +71,8 @@ which are enabled by default. <a href="javascript:history.go(-1)">&larr;&nbsp;Ba
 If they are not, the user is prompted whether to create the association. If the "EclipseNSIS Startup" plugin is activated for startup in
 the <a href="javascript:redirectEclipse('/org.eclipse.platform.doc.user/reference/ref-startup.htm');">Startup and Shutdown</a> preferences page, then the check is performed upon workbench startup, otherwise it is performed the first time
 an InstallOptions editor is opened. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="a_autosave"></a><dl id="id_autosave"><dt>Automatically save InstallOptions script before preview</dt>
+<dd>If this option is selected, modified InstallOptions scripts are automatically saved before being previewed. Otherwise the user is prompted before saving. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
 <h2><a name="sourceeditor"></a>Source Editor</h2>
 <p>These preferences are used to customize the look and feel of
 the
@@ -77,7 +80,8 @@ the
 <strong>Please note that the source editor inherits preferences
 from the <a href="javascript:redirectEclipse('/org.eclipse.platform.doc.user/reference/ref-texteditorprefs.htm');">Text
 Editor</a>.</strong></p>
-<p style="text-align: center;"><img alt="Source Editor Preferences" src="images/preferences2.gif" ismap="ismap" style="border: 0px solid ; width: 425px; height: 508px;" usemap="#preferences2"></p><a name="a_syntaxstyles"></a>
+<p style="text-align: center;"><img alt="Source Editor Preferences" src="images/preferences2.gif" ismap="ismap" style="border: 0px solid ; width: 425px; height: 508px;" usemap="#preferences2"></p>
+<a name="a_syntaxstyles"></a>
 <dl id="id_syntaxstyles"><dt>Syntax
 style options</dt>
 <dd>Syntax styles specify how InstallOptions source code is
@@ -106,15 +110,17 @@ colors and styles. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd>
 (IcemanK).</small></strong></p>
 </div>
 <MAP NAME="preferences1">
-     <AREA ID="check_assoc" SHAPE="RECT" HREF="#a_check_assoc" ALT="Check INI file association" OnClick="highlightDef('id_check_assoc');" COORDS="10,458, 379,474">
-     <AREA ID="grid" SHAPE="RECT" HREF="#a_grid" ALT="Grid" OnClick="highlightDef('id_grid');" COORDS="140,276, 413,447">
-     <AREA ID="snapglue" SHAPE="RECT" HREF="#a_snapglue" ALT="Snap & Glue" OnClick="highlightDef('id_snapglue');" COORDS="21,276, 137,447">
-     <AREA ID="dialogsize" SHAPE="RECT" HREF="#a_dialogsize" ALT="Dialog Sizes" OnClick="highlightDef('id_dialogsize');" COORDS="140,80, 413,271">
-     <AREA ID="display" SHAPE="RECT" HREF="#a_display" ALT="Display" OnClick="highlightDef('id_display');" COORDS="21,80, 137,271">
+     <AREA ID="check_assoc" SHAPE="RECT" HREF="#a_check_assoc" ALT="Check INI file association" OnClick="highlightDef('id_check_assoc');" COORDS="12,439,382,452">
+     <AREA ID="grid" SHAPE="RECT" HREF="#a_grid" ALT="Grid" OnClick="highlightDef('id_grid');" COORDS="140,266,413,428">
+     <AREA ID="snapglue" SHAPE="RECT" HREF="#a_snapglue" ALT="Snap & Glue" OnClick="highlightDef('id_snapglue');" COORDS="18,266,135,427">
+     <AREA ID="dialogsize" SHAPE="RECT" HREF="#a_dialogsize" ALT="Dialog Sizes" OnClick="highlightDef('id_dialogsize');" COORDS="139,80,414,259">
+     <AREA ID="display" SHAPE="RECT" HREF="#a_display" ALT="Display" OnClick="highlightDef('id_display');" COORDS="18,80,137,259">
+	 <area ID="autosave" shape="rect" href="#a_autosave" ALT="Autosave before preview" OnClick="highlightDef('id_autosave');" coords="12,460,295,473">
 </MAP>
 <MAP NAME="preferences2">
-     <AREA ID="check_assoc2" SHAPE="RECT" HREF="#a_check_assoc" ALT="Check INI file association" OnClick="highlightDef('id_check_assoc');" COORDS="10,458, 379,474">
-     <AREA ID="syntaxpreview" SHAPE="RECT" HREF="#a_syntaxpreview" ALT="Preview" OnClick="highlightDef('id_syntaxpreview');" COORDS="17,227, 412,447">
-     <AREA ID="syntaxstyles" SHAPE="RECT" HREF="#a_syntaxstyles" ALT="Syntax style options" OnClick="highlightDef('id_syntaxstyles');" COORDS="18,80, 344,221">
+	 <area ID="autosave2" shape="rect" href="#a_autosave" ALT="Autosave before preview" OnClick="highlightDef('id_autosave');" coords="12,460,295,473">
+     <AREA ID="check_assoc2" SHAPE="RECT" HREF="#a_check_assoc" ALT="Check INI file association" OnClick="highlightDef('id_check_assoc');" COORDS="12,439,381,452">
+     <AREA ID="syntaxpreview" SHAPE="RECT" HREF="#a_syntaxpreview" ALT="Preview" OnClick="highlightDef('id_syntaxpreview');" COORDS="19,226,412,424">
+     <AREA ID="syntaxstyles" SHAPE="RECT" HREF="#a_syntaxstyles" ALT="Syntax style options" OnClick="highlightDef('id_syntaxstyles');" COORDS="20,80,346,221">
 </MAP>
 </body></html>

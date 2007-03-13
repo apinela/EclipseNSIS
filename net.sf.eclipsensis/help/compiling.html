@@ -53,8 +53,10 @@ the installer file generated can be tested using the <a href="editing.html?id=id
 <li>The installer still exists on the filesystem.</li>
 <li>The installer is not altered manually after successful script compilation.</li>
 </ol>
+<p>These menu items/toolbar buttons are normally disabled when editing an NSIS header file (*.nsh) unless it is <a href="scriptproperties.html#assochdrs">associated</a> with a valid NSIS script,
+in which case the associated NSIS script will be used for compiling and/or testing.</p>
 <h2><a name="launch_config"></a>Launch Configurations </h2>
-<p>A launch configuration is used to store a set of NSIS  options for compiling a specific NSIS script. These options override any options set in the EclipseNSIS <a href="nsisprefs.html">preferences</a> or <a href="properties.html">properties</a> dialogs. Thus, multiple NSIS option sets can be stored for a script in the form of run configurations. Running a launch configuration compiles the associated NSIS script and optionally executes the generated installer. EclipseNSIS launch configurations reside with the External Tools launch group. Launch configurations can be run at any time using the <span style="font-style: italic;">Run&rarr;External Tools</span> menu or the External Tools toolbar button.</p>
+<p>A launch configuration is used to store a set of NSIS  options for compiling a specific NSIS script. These options override any options set in the EclipseNSIS <a href="nsisprefs.html">preferences</a> or <a href="properties.html">properties</a> dialogs. Thus, multiple NSIS option sets can be stored for a script in the form of run configurations. Running a launch configuration compiles the NSIS script and optionally executes the generated installer. EclipseNSIS launch configurations reside with the External Tools launch group. Launch configurations can be run at any time using the <span style="font-style: italic;">Run&rarr;External Tools</span> menu or the External Tools toolbar button.</p>
 <h3>Creating a Launch Configuration</h3>
 <p>The quick way to create a launch configuration is to right-click either in the <a href="editing.html">EclipseNSIS editor</a> or on an NSIS script file in in any view that shows a list of Workspace resources (e.g., <a href="javascript:redirectEclipse('/org.eclipse.platform.doc.user/concepts/cnav.htm');">resource navigator</a>, <a href="javascript:redirectEclipse('/org.eclipse.jdt.doc.user/reference/ref-view-package-explorer.htm');">JDT package explorer</a>, etc.) and choosing the <span style="font-style: italic;">Run As&rarr;NSIS Script</span> menu item. This automatically creates a launch configuration for the selected NSIS script with default options and then runs it.</p>
 <p>A launch configuration can also be created or updated using the Eclipse Launch Configuration dialog. </p>
@@ -70,12 +72,12 @@ the installer file generated can be tested using the <a href="editing.html?id=id
   <li><a href="#config_common">Common</a></li>
   </ol>
 <h4><a name="config_general"></a>General</h4>
-<p> The General tab is used to specify NSIS options for compiling the associated NSIS script. The major portion of the
+<p> The General tab is used to specify NSIS options for compiling the specified NSIS script. The major portion of the
 General tab is identical in behavior to the <a href="nsisprefs.html#general">EclipseNSIS Preferences Page</a>.</p>
 <p style="text-align: center;"><img src="images/runconfignsis.gif" alt="General Tab" style="border: 0px solid ; width: 438px; height: 548px;" usemap="#generaltab" ismap="ismap"></p>
 <a name="a_script"></a><dl id="id_script">
   <dt>NSIS Script</dt>
-  <dd>Specify the NSIS script associated with this run configuration. The NSIS script may be specified by browsing the workspace or
+  <dd>Specify the NSIS script for this run configuration. The NSIS script may be selected by browsing the workspace or
   the filesystem or by specifying a combination of Eclipse variables.</dd>
   </dl>
 <a name="a_run_installer"></a><dl id="id_run_installer">
@@ -119,7 +121,7 @@ General tab is identical in behavior to the <a href="nsisprefs.html#general">Ecl
 
 <h2><a name="project_builder"></a>Project Builders </h2>
 <p>Similar to a launch configuration, a project builder configuration is used to store a set of NSIS options for compiling a specific NSIS script.
-The project builder will be invoked by the Eclipse workbench based upon rules specified in the configuration. Upon execution, a project builder configuration compiles the associated NSIS
+The project builder will be invoked by the Eclipse workbench based upon rules specified in the configuration. Upon execution, a project builder configuration compiles the specified NSIS
 script. </p>
 <h3>Creating a Project Builder Configuration</h3>
 <p>To create a project builder configuration, perform the following steps:</p>
@@ -138,13 +140,13 @@ script. </p>
   <li><a href="#config_build">Build Options</a></li>
 </ol>
 <h4><a name="config_general2"></a>General</h4>
-<p> The General tab is used to specify NSIS options for compiling the associated NSIS script. The major portion of
+<p> The General tab is used to specify NSIS options for compiling the specified NSIS script. The major portion of
 the General tab is identical in behavior to the <a href="nsisprefs.html#general">EclipseNSIS Preferences Page</a>.</p>
 <p style="text-align: center;"><img src="images/builderconfignsis.gif" alt="General Tab" style="border: 0px solid ; width: 438px; height: 540px;" usemap="#generaltab2" ismap="ismap"></p>
 <a name="a_script2"></a>
 <dl id="id_script2">
   <dt>NSIS Script</dt>
-  <dd>Specify the NSIS script associated with this run configuration. The NSIS script may be specified by browsing
+  <dd>Specify the NSIS script for this run configuration. The NSIS script may be specified by browsing
   the workspace or the filesystem or by specifying a combination of Eclipse variables.</dd>
 </dl>
 <h4><a name="config_symbols2"></a>Defined Symbols</h4>

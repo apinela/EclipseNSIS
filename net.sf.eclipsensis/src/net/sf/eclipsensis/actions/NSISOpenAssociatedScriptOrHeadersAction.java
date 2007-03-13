@@ -23,6 +23,8 @@ import org.eclipse.jface.action.IAction;
 public class NSISOpenAssociatedScriptOrHeadersAction extends NSISScriptAction
 {
     private IFile mFile = null;
+    private boolean mOpenAssociatedScriptAction = false;
+    private boolean mOpenAssociatedHeadersAction = false;
 
     protected void started(IPath script)
     {
@@ -57,15 +59,32 @@ public class NSISOpenAssociatedScriptOrHeadersAction extends NSISScriptAction
         }
     }
 
+    public void init(IAction action)
+    {
+        super.init(action);
+        if(INSISConstants.OPEN_ASSOCIATED_HEADERS_ACTION_ID.equals(action.getId())) {
+            mOpenAssociatedHeadersAction = true;
+            mOpenAssociatedScriptAction = false;
+        }
+        else if(INSISConstants.OPEN_ASSOCIATED_SCRIPT_ACTION_ID.equals(action.getId())) {
+            mOpenAssociatedHeadersAction = false;
+            mOpenAssociatedScriptAction = true;
+        }
+        else {
+            mOpenAssociatedHeadersAction = false;
+            mOpenAssociatedScriptAction = false;
+        }
+    }
+
     public boolean isEnabled()
     {
         if(super.isEnabled()) {
             if(mFile != null) {
                 String ext = mFile.getFileExtension();
-                if(Common.stringsAreEqual(INSISConstants.NSI_EXTENSION,ext,true)) {
+                if(Common.stringsAreEqual(INSISConstants.NSI_EXTENSION,ext,true) && mOpenAssociatedHeadersAction) {
                     return !Common.isEmptyCollection(NSISHeaderAssociationManager.getInstance().getAssociatedHeaders(mFile));
                 }
-                else if(Common.stringsAreEqual(INSISConstants.NSH_EXTENSION,ext,true)) {
+                else if(Common.stringsAreEqual(INSISConstants.NSH_EXTENSION,ext,true) && mOpenAssociatedScriptAction) {
                     return (NSISHeaderAssociationManager.getInstance().getAssociatedScript(mFile) != null);
                 }
             }

@@ -27,7 +27,7 @@ import org.eclipse.ui.texteditor.*;
 /**
  * Contributes interesting NSIS actions to the desktop's Edit menu and the toolbar.
  */
-public class NSISActionContributor extends TextEditorActionContributor implements INSISConstants, IMenuListener
+public class NSISActionContributor extends TextEditorActionContributor implements IPerspectiveListener2, IPartListener, IPropertyListener, INSISConstants, IMenuListener
 {
     private RetargetTextEditorAction mInsertTemplate;
     private RetargetTextEditorAction mContentAssistProposal;
@@ -42,7 +42,6 @@ public class NSISActionContributor extends TextEditorActionContributor implement
     private RetargetTextEditorAction mInsertRegKey;
     private RetargetTextEditorAction mInsertRegVal;
     private IContributionItem mConfigWizardAction;
-    private IMenuManager mMenuManager = null;
 
 	/**
 	 * Default constructor.
@@ -138,9 +137,15 @@ public class NSISActionContributor extends TextEditorActionContributor implement
 
 	private void doSetActiveEditor(IEditorPart part)
     {
-        if(mMenuManager != null) {
-            mMenuManager.removeMenuListener(this);
-            mMenuManager = null;
+        IEditorPart oldEditor = getActiveEditorPart();
+        if(oldEditor != null) {
+            oldEditor.getSite().getPage().removePartListener(this);
+            oldEditor.getSite().getWorkbenchWindow().removePerspectiveListener(this);
+            oldEditor.removePropertyListener(this);
+            IMenuManager manager = oldEditor.getEditorSite().getActionBars().getMenuManager();
+            if(manager != null) {
+                manager.removeMenuListener(this);
+            }
         }
 		ITextEditor editor= null;
 		if (part instanceof ITextEditor) {
@@ -149,16 +154,19 @@ public class NSISActionContributor extends TextEditorActionContributor implement
 
         if(editor != null) {
             try {
+                updateContributionManagers(editor);
                 IMenuManager manager = editor.getEditorSite().getActionBars().getMenuManager();
                 manager = manager.findMenuUsingPath("net.sf.eclipsensis.Menu"); //$NON-NLS-1$
                 if (manager != null) {
-                    mMenuManager = manager;
-                    mMenuManager.addMenuListener(this);
+                    manager.addMenuListener(this);
                 }
             }
             catch (NullPointerException e) {
                 EclipseNSISPlugin.getDefault().log(e);
             }
+            editor.getSite().getWorkbenchWindow().addPerspectiveListener(this);
+            editor.addPropertyListener(this);
+            editor.getSite().getPage().addPartListener(this);
         }
 
 		mContentAssistProposal.setAction(getAction(editor, INSISEditorConstants.CONTENT_ASSIST_PROPOSAL));
@@ -180,8 +188,8 @@ public class NSISActionContributor extends TextEditorActionContributor implement
 	 */
 	public void setActiveEditor(IEditorPart part)
     {
+        doSetActiveEditor(part);
 		super.setActiveEditor(part);
-		doSetActiveEditor(part);
 	}
 
 	/*
@@ -193,37 +201,9 @@ public class NSISActionContributor extends TextEditorActionContributor implement
 		super.dispose();
 	}
 
-    private void showHideAction(IMenuManager manager, String id, boolean show)
-    {
-        IContributionItem item = manager.find(id);
-        if(item != null) {
-            item.setVisible(show);
-            item.update();
-        }
-    }
-
     public void menuAboutToShow(IMenuManager manager)
     {
         if(manager != null) {
-            IEditorPart editor = getActiveEditorPart();
-            if(editor instanceof NSISEditor) {
-                IEditorInput input = editor.getEditorInput();
-                boolean openAssociatedScript = false;
-                boolean openAssociatedHeaders = false;
-                if(input instanceof IFileEditorInput) {
-                    IFile file = ((IFileEditorInput)input).getFile();
-                    String ext = file.getFileExtension();
-                    if(Common.stringsAreEqual(INSISConstants.NSH_EXTENSION,ext)) {
-                        openAssociatedScript = true;
-                    }
-                    else if (Common.stringsAreEqual(INSISConstants.NSI_EXTENSION,ext)) {
-                        openAssociatedHeaders = true;
-                    }
-                }
-                showHideAction(manager, INSISConstants.OPEN_ASSOCIATED_SCRIPT_ACTION_ID,openAssociatedScript);
-                showHideAction(manager, INSISConstants.OPEN_ASSOCIATED_HEADERS_ACTION_ID,openAssociatedHeaders);
-                manager.updateAll(true);
-            }
             if(!EclipseNSISPlugin.getDefault().isConfigured()) {
                 if(manager.find(NSISConfigWizardAction.ID)==null) {
                     manager.appendToGroup("net.sf.eclipsensis.Group4", mConfigWizardAction); //$NON-NLS-1$
@@ -233,6 +213,125 @@ public class NSISActionContributor extends TextEditorActionContributor implement
                 if(manager.find(NSISConfigWizardAction.ID)!=null) {
                     manager.remove(mConfigWizardAction);
                 }
+            }
+        }
+    }
+
+    private boolean showHideAction(IContributionManager manager, String id, boolean show)
+    {
+        IContributionItem item = manager.find(id);
+        if(item != null) {
+            if(item.isVisible() != show) {
+                item.setVisible(show);
+                item.update();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @param editor
+     * @param manager
+     */
+    private boolean showHideActions(IEditorPart editor, IContributionManager manager)
+    {
+        if(editor instanceof NSISEditor) {
+            IEditorInput input = editor.getEditorInput();
+            boolean openAssociatedScript = false;
+            boolean openAssociatedHeaders = false;
+            if (input instanceof IFileEditorInput) {
+                IFile file = ((IFileEditorInput)input).getFile();
+                String ext = file.getFileExtension();
+                if (Common.stringsAreEqual(INSISConstants.NSH_EXTENSION, ext)) {
+                    openAssociatedScript = true;
+                }
+                else if (Common.stringsAreEqual(INSISConstants.NSI_EXTENSION, ext)) {
+                    openAssociatedHeaders = true;
+                }
+            }
+            boolean b1 = showHideAction(manager, INSISConstants.OPEN_ASSOCIATED_SCRIPT_ACTION_ID, openAssociatedScript);
+            boolean b2 = showHideAction(manager, INSISConstants.OPEN_ASSOCIATED_HEADERS_ACTION_ID, openAssociatedHeaders);
+            return b1 || b2;
+        }
+        return false;
+    }
+
+    public void propertyChanged(Object source, int propId)
+    {
+        if(propId == IEditorPart.PROP_INPUT) {
+            updateContributionManagers(getActiveEditorPart());
+        }
+    }
+
+    /**
+     * @param editor
+     */
+    private void updateContributionManagers(IEditorPart editor)
+    {
+        if(editor instanceof NSISEditor) {
+            IMenuManager manager = editor.getEditorSite().getActionBars().getMenuManager();
+            manager = manager.findMenuUsingPath("net.sf.eclipsensis.Menu"); //$NON-NLS-1$
+            if(manager != null) {
+                if(showHideActions(editor, manager)) {
+                    manager.updateAll(true);
+                }
+            }
+            IToolBarManager tmanager = editor.getEditorSite().getActionBars().getToolBarManager();
+            if(tmanager != null) {
+                if(showHideActions(editor, tmanager)) {
+                    tmanager.update(true);
+                }
+            }
+        }
+    }
+
+    public void partActivated(IWorkbenchPart part)
+    {
+        IEditorPart editor = getActiveEditorPart();
+        if(Common.objectsAreEqual(part, editor)) {
+            updateContributionManagers(editor);
+        }
+    }
+
+    public void partBroughtToTop(IWorkbenchPart part)
+    {
+        if(part instanceof IEditorPart) {
+            updateContributionManagers((IEditorPart)part);
+        }
+    }
+
+    public void partClosed(IWorkbenchPart part)
+    {
+    }
+
+    public void partDeactivated(IWorkbenchPart part)
+    {
+        IEditorPart editor = getActiveEditorPart();
+        if(Common.objectsAreEqual(part, editor)) {
+            updateContributionManagers(editor);
+        }
+    }
+
+    public void partOpened(IWorkbenchPart part)
+    {
+    }
+
+    public void perspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor perspective)
+    {
+    }
+
+    public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, String changeId)
+    {
+    }
+
+    public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, IWorkbenchPartReference partRef, String changeId)
+    {
+        if(IWorkbenchPage.CHANGE_EDITOR_OPEN.equals(changeId)) {
+            IEditorReference editorRef = (IEditorReference)partRef;
+            IEditorPart editor = editorRef.getEditor(false);
+            if(Common.objectsAreEqual(editor,getActiveEditorPart())) {
+                updateContributionManagers(editor);
             }
         }
     }

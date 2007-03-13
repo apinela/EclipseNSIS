@@ -44,6 +44,7 @@ public interface INSISPreferenceConstants extends INSISSettingsConstants
     public static final String PLUGINS_STYLE = "pluginsStyle"; //$NON-NLS-1$
 
     public static final String WARN_PROCESS_PRIORITY = "warnProcessPriority"; //$NON-NLS-1$
+    public static final String WARN_REASSOCIATE_HEADER = "warnReassociateHeader"; //$NON-NLS-1$
 
     public static final String AUTO_SHOW_CONSOLE = "autoShowConsole"; //$NON-NLS-1$
     public static final int AUTO_SHOW_CONSOLE_NEVER = 0;
@@ -66,11 +67,14 @@ public interface INSISPreferenceConstants extends INSISSettingsConstants
     public static final String NSIS_HELP_VIEW_SYNCHED = "nsisHelpViewSynched"; //$NON-NLS-1$
 
     public static final String BEFORE_COMPILE_SAVE = "beforeCompileSave"; //$NON-NLS-1$
-    public static final int BEFORE_COMPILE_SAVE_CURRENT_CONFIRM = 0;
-    public static final int BEFORE_COMPILE_SAVE_ALL_CONFIRM = 1;
-    public static final int BEFORE_COMPILE_SAVE_CURRENT_AUTO = 2;
-    public static final int BEFORE_COMPILE_SAVE_ALL_AUTO = 3;
+    public static final int BEFORE_COMPILE_SAVE_AUTO_FLAG = 0x10;
+    public static final int BEFORE_COMPILE_SAVE_CURRENT_CONFIRM = 0x0;
+    public static final int BEFORE_COMPILE_SAVE_ASSOCIATED_CONFIRM = 0x1;
+    public static final int BEFORE_COMPILE_SAVE_ALL_CONFIRM = 0x2;
+    public static final int BEFORE_COMPILE_SAVE_CURRENT_AUTO = BEFORE_COMPILE_SAVE_AUTO_FLAG | BEFORE_COMPILE_SAVE_CURRENT_CONFIRM;
+    public static final int BEFORE_COMPILE_SAVE_ASSOCIATED_AUTO = BEFORE_COMPILE_SAVE_AUTO_FLAG | BEFORE_COMPILE_SAVE_ASSOCIATED_CONFIRM;
+    public static final int BEFORE_COMPILE_SAVE_ALL_AUTO = BEFORE_COMPILE_SAVE_AUTO_FLAG | BEFORE_COMPILE_SAVE_ALL_CONFIRM;
     public static final int BEFORE_COMPILE_SAVE_DEFAULT = BEFORE_COMPILE_SAVE_CURRENT_CONFIRM;
-    public static final int[] BEFORE_COMPILE_SAVE_ARRAY = {BEFORE_COMPILE_SAVE_CURRENT_CONFIRM, BEFORE_COMPILE_SAVE_ALL_CONFIRM,
-                                                           BEFORE_COMPILE_SAVE_CURRENT_AUTO,BEFORE_COMPILE_SAVE_ALL_AUTO};
+    public static final int[] BEFORE_COMPILE_SAVE_ARRAY = {BEFORE_COMPILE_SAVE_CURRENT_CONFIRM, BEFORE_COMPILE_SAVE_ASSOCIATED_CONFIRM, BEFORE_COMPILE_SAVE_ALL_CONFIRM,
+                                                           BEFORE_COMPILE_SAVE_CURRENT_AUTO, BEFORE_COMPILE_SAVE_ASSOCIATED_AUTO, BEFORE_COMPILE_SAVE_ALL_AUTO};
 }

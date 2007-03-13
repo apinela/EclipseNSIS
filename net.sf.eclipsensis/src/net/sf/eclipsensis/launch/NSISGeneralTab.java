@@ -265,7 +265,7 @@ class NSISGeneralTab extends NSISTab implements INSISSettingsEditorPageListener
             composite.setLayout(layout);
 
             Label label = new Label(composite, SWT.LEFT);
-            label.setText(EclipseNSISPlugin.getResourceString("nsis.script.label")); //$NON-NLS-1$
+            label.setText(EclipseNSISPlugin.getResourceString("launchconfig.nsis.script.label")); //$NON-NLS-1$
             GridData data = new GridData(SWT.FILL, SWT.CENTER, false, false);
             label.setLayoutData(data);
 

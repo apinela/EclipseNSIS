@@ -147,6 +147,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
         initializePreference(VERBOSITY,new Integer(getDefaultVerbosity()));
         initializePreference(PROCESS_PRIORITY,new Integer(getDefaultProcessPriority()));
         initializePreference(WARN_PROCESS_PRIORITY,Boolean.TRUE);
+        initializePreference(WARN_REASSOCIATE_HEADER,Boolean.TRUE);
         initializePreference(COMPRESSOR,new Integer(getDefaultCompressor()));
         initializePreference(SOLID_COMPRESSION,(getDefaultSolidCompression()?Boolean.TRUE:Boolean.FALSE));
         initializePreference(AUTO_SHOW_CONSOLE,new Integer(AUTO_SHOW_CONSOLE_DEFAULT));
@@ -464,9 +465,8 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
                                 MessageDialog.WARNING,
                                 new String[] { IDialogConstants.OK_LABEL }, 0,
                                 EclipseNSISPlugin.getResourceString("notify.makensis.changed.toggle"), silent); //$NON-NLS-1$
-                        dialog.setPrefStore(mPreferenceStore);
-                        dialog.setPrefKey(NOTIFY_MAKENSIS_CHANGED);
                         dialog.open();
+                        mPreferenceStore.setValue(NOTIFY_MAKENSIS_CHANGED,!dialog.getToggleState());
                         BusyIndicator.showWhile(shell.getDisplay(), new Runnable() {
                             public void run()
                             {

@@ -31,13 +31,21 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 public abstract class NSISSettingsEditorPage implements DisposeListener
 {
     protected static final String LABEL = "LABEL"; //$NON-NLS-1$
+
+    private String mName;
     protected NSISSettings mSettings = null;
     private List mListeners = new ArrayList();
     private Control mControl = null;
 
-    public NSISSettingsEditorPage(NSISSettings settings)
+    public NSISSettingsEditorPage(String name, NSISSettings settings)
     {
+        mName = name;
         mSettings = settings;
+    }
+
+    public String getName()
+    {
+        return mName;
     }
 
     public void addListener(INSISSettingsEditorPageListener listener)
@@ -260,6 +268,11 @@ public abstract class NSISSettingsEditorPage implements DisposeListener
         mControl = createControl(parent);
         mControl.addDisposeListener(this);
         return mControl;
+    }
+
+    public boolean supportsEnablement()
+    {
+        return true;
     }
 
     protected abstract Control createControl(Composite parent);

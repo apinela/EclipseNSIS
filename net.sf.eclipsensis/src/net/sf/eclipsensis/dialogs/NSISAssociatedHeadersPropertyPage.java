@@ -13,11 +13,13 @@ import java.util.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
+import net.sf.eclipsensis.settings.*;
 import net.sf.eclipsensis.util.*;
 import net.sf.eclipsensis.viewer.CollectionContentProvider;
 import net.sf.eclipsensis.viewer.CollectionLabelProvider;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
@@ -26,40 +28,40 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.IWorkbenchPropertyPage;
-import org.eclipse.ui.dialogs.PropertyPage;
+import org.eclipse.ui.PlatformUI;
 
-public class NSISAssociatedHeadersPropertyPage extends PropertyPage implements IWorkbenchPropertyPage
+public class NSISAssociatedHeadersPropertyPage extends NSISSettingsEditorPage
 {
     private TableViewer mViewer;
-    private Button mReparentWarning;
+    private Button mReassociateHeaderWarning;
     private Collection mOriginalHeaders;
     private HashSet mHeaders;
     private NSISHeaderAssociationManager mHeaderAssociationManager = NSISHeaderAssociationManager.getInstance();
 
-    public NSISAssociatedHeadersPropertyPage()
+    public NSISAssociatedHeadersPropertyPage(NSISSettings settings)
+    {
+        super("headers", settings);
+    }
+
+    public boolean canEnableControls()
+    {
+        return true;
+    }
+
+    public void enableControls(boolean state)
     {
     }
 
-    public void createControl(Composite parent)
+    public boolean supportsEnablement()
     {
-        //TODO Set description
-//        setDescription(getPageDescription());
-        super.createControl(parent);
-        //TODO Set context help
-//        PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),getContextId());
+        return false;
     }
 
-    protected Control createContents(Composite parent)
+    public Control createControl(final Composite parent)
     {
-        mOriginalHeaders = mHeaderAssociationManager.getAssociatedHeaders((IFile)getElement());
+        mOriginalHeaders = mHeaderAssociationManager.getAssociatedHeaders((IFile)((NSISProperties)mSettings).getResource());
         mHeaders = new HashSet();
-        for (Iterator iter = mOriginalHeaders.iterator(); iter.hasNext();) {
-            IFile header = (IFile)iter.next();
-            if(IOUtility.isValidFile(header)) {
-                mHeaders.add(header);
-            }
-        }
+        initHeaders();
         final IFilter filter = new IFilter() {
             public boolean select(Object toTest)
             {
@@ -75,7 +77,6 @@ public class NSISAssociatedHeadersPropertyPage extends PropertyPage implements I
 
         Composite composite = new Composite(parent,SWT.NONE);
         GridLayout layout = new GridLayout(2,false);
-        layout.marginHeight = layout.marginWidth = 0;
         composite.setLayout(layout);
 
         Label l = new Label(composite,SWT.NONE);
@@ -120,11 +121,30 @@ public class NSISAssociatedHeadersPropertyPage extends PropertyPage implements I
         addButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent arg0)
             {
-                FileSelectionDialog dialog = new FileSelectionDialog(getShell(), null, filter);
+                FileSelectionDialog dialog = new FileSelectionDialog(parent.getShell(), ((NSISProperties)mSettings).getResource().getParent(), filter);
                 dialog.setDialogMessage(EclipseNSISPlugin.getResourceString("nsis.script.prompt")); //$NON-NLS-1$
                 dialog.setHelpAvailable(false);
                 if (dialog.open() == Window.OK) {
                     IFile file = dialog.getFile();
+                    IFile script = mHeaderAssociationManager.getAssociatedScript(file);
+                    if(script != null && !script.equals(((NSISProperties)mSettings).getResource()) &&
+                            mReassociateHeaderWarning.getSelection()) {
+
+                        MessageDialogWithToggle dlg = new MessageDialogWithToggle(parent.getShell(),
+                                EclipseNSISPlugin.getResourceString("confirm.title"), //$NON-NLS-1$
+                                EclipseNSISPlugin.getShellImage(),
+                                EclipseNSISPlugin.getFormattedString("associated.header.warning", //$NON-NLS-1$
+                                        new String[] {file.getFullPath().toString(),script.getFullPath().toString()}),
+                                MessageDialog.QUESTION, new String[] { IDialogConstants.OK_LABEL, IDialogConstants.CANCEL_LABEL }, 0,
+                                EclipseNSISPlugin.getResourceString("associated.header.toggle.message"),false); //$NON-NLS-1$
+                        dlg.open();
+                        if(dialog.getReturnCode() == IDialogConstants.OK_ID) {
+                            mReassociateHeaderWarning.setSelection(!dlg.getToggleState());
+                        }
+                        else {
+                            return;
+                        }
+                    }
                     if(!mHeaders.contains(file)) {
                         mHeaders.add(file);
                         mViewer.refresh(false);
@@ -160,9 +180,9 @@ public class NSISAssociatedHeadersPropertyPage extends PropertyPage implements I
         layout.horizontalSpacing = 3;
         c.setLayout(layout);
 
-        mReparentWarning = new Button(c,SWT.CHECK);
-        mReparentWarning.setLayoutData(new GridData(SWT.FILL,SWT.TOP,false,false));
-
+        mReassociateHeaderWarning = new Button(c,SWT.CHECK);
+        mReassociateHeaderWarning.setLayoutData(new GridData(SWT.FILL,SWT.TOP,false,false));
+        mReassociateHeaderWarning.setSelection(NSISPreferences.INSTANCE.getPreferenceStore().getBoolean(INSISPreferenceConstants.WARN_REASSOCIATE_HEADER));
         l = new Label(c,SWT.WRAP);
         l.setText(EclipseNSISPlugin.getResourceString("show.associated.header.warning.label")); //$NON-NLS-1$
         l.setLayoutData(new GridData(SWT.LEFT,SWT.TOP,true,false));
@@ -175,21 +195,49 @@ public class NSISAssociatedHeadersPropertyPage extends PropertyPage implements I
         });
 
         mViewer.setInput(mHeaders);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(composite,INSISConstants.PLUGIN_CONTEXT_PREFIX + "nsis_assochdrproperties_context");
         return composite;
     }
 
-    protected void performDefaults()
+    /**
+     *
+     */
+    private void initHeaders()
+    {
+        mHeaders.clear();
+        for (Iterator iter = mOriginalHeaders.iterator(); iter.hasNext();) {
+            IFile header = (IFile)iter.next();
+            if(IOUtility.isValidFile(header)) {
+                mHeaders.add(header);
+            }
+        }
+    }
+
+    public void reset()
+    {
+        if(mViewer != null && mHeaders != null) {
+            initHeaders();
+            mViewer.refresh(false);
+        }
+        if(mReassociateHeaderWarning != null) {
+            mReassociateHeaderWarning.setSelection(NSISPreferences.INSTANCE.getPreferenceStore().getBoolean(INSISPreferenceConstants.WARN_REASSOCIATE_HEADER));
+        }
+    }
+
+    public void setDefaults()
     {
         if(mViewer != null && mHeaders != null) {
             mHeaders.clear();
             mViewer.refresh(false);
         }
-        super.performDefaults();
+        if(mReassociateHeaderWarning != null) {
+            mReassociateHeaderWarning.setSelection(true);
+        }
     }
 
-    public boolean performOk()
+    protected boolean performApply(NSISSettings settings)
     {
-        IFile file = (IFile)getElement();
+        IFile file = (IFile)((NSISProperties)mSettings).getResource();
         Set removedHeaders = new HashSet(mOriginalHeaders);
         removedHeaders.removeAll(mHeaders);
         Set addedHeaders = new HashSet(mHeaders);
@@ -200,7 +248,7 @@ public class NSISAssociatedHeadersPropertyPage extends PropertyPage implements I
         for (Iterator iter = addedHeaders.iterator(); iter.hasNext();) {
             mHeaderAssociationManager.associateWithScript((IFile)iter.next(), file);
         }
-        return super.performOk();
+        NSISPreferences.INSTANCE.getPreferenceStore().setValue(INSISPreferenceConstants.WARN_REASSOCIATE_HEADER, mReassociateHeaderWarning.getSelection());
+        return true;
     }
-
 }

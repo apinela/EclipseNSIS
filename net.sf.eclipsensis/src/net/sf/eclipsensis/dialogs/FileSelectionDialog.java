@@ -36,22 +36,30 @@ public class FileSelectionDialog extends TitleAreaDialog
     private static final int VIEWER_HEIGHT = 300;
 
     private IFilter mFilter = null;
+    private IContainer mContainer = null;
     private IFile mFile = null;
     private String mDialogTitle;
     private String mDialogHeader;
     private String mDialogMessage;
 
-    public FileSelectionDialog(Shell parentShell, IFile file, IFilter filter)
+    public FileSelectionDialog(Shell parentShell, IResource resource, IFilter filter)
     {
         super(parentShell);
         setShellStyle(getShellStyle() | SWT.RESIZE);
-        mFile = file;
+        if(resource instanceof IFile) {
+            mFile = (IFile)resource;
+            mContainer = mFile.getParent();
+        }
+        else {
+            mFile = null;
+            mContainer = (IContainer)resource;
+        }
         mFilter = filter;
     }
 
-    public FileSelectionDialog(Shell parentShell, IFile file)
+    public FileSelectionDialog(Shell parentShell, IResource resource)
     {
-        this(parentShell, file, null);
+        this(parentShell, resource, null);
     }
 
     public FileSelectionDialog(Shell parentShell, IFilter filter)
@@ -231,12 +239,14 @@ public class FileSelectionDialog extends TitleAreaDialog
         });
 
         tv.setInput(ResourcesPlugin.getWorkspace());
-        if(mFile != null) {
-            tv.setSelection(new StructuredSelection(mFile.getParent()));
-            tv2.setSelection(new StructuredSelection(mFile));
-        }
-        else {
-            tv2.setSelection(new StructuredSelection());
+        if(mContainer != null) {
+            tv.setSelection(new StructuredSelection(mContainer));
+            if(mFile != null) {
+                tv2.setSelection(new StructuredSelection(mFile));
+            }
+            else {
+                tv2.setSelection(new StructuredSelection());
+            }
         }
         return parent;
     }

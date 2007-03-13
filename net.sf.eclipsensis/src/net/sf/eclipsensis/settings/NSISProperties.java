@@ -82,6 +82,11 @@ public class NSISProperties extends NSISSettings implements INSISConstants
         }
     }
 
+    public IResource getResource()
+    {
+        return mResource;
+    }
+
     public void load()
     {
         String temp = getPersistentProperty(getQualifiedName(USE_PARENT));

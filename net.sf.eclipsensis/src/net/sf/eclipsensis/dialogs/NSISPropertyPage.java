@@ -17,8 +17,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.*;
 
 public class NSISPropertyPage extends NSISSettingsPage
 {
@@ -56,6 +55,14 @@ public class NSISPropertyPage extends NSISSettingsPage
 
     private class PropertiesEditor extends NSISSettingsEditor
     {
+        protected void addPages(TabFolder folder)
+        {
+            super.addPages(folder);
+            if(getElement() instanceof IFile) {
+                addPage(folder, "associated.headers.tab.text","associated.headers.tab.tooltip",new NSISAssociatedHeadersPropertyPage(getSettings()));
+            }
+        }
+
         protected NSISSettingsEditorGeneralPage createGeneralPage()
         {
             return new PropertiesEditorGeneralPage(getSettings());

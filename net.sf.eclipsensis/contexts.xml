@@ -48,8 +48,18 @@
         <topic label="Script Template Editor" href="help/scrtmpltprefs.html#scripttemplateeditor"/>
     </context>
     <context id="nsis_properties_context">
-        <description>The EclipseNSIS properties page is used to set custom NSIS compilation options for a particular script.</description>
-        <topic label="Script Properties" href="help/properties.html"/>
+        <description>The EclipseNSIS Script Properties page is used to set custom NSIS compilation options for a particular script.</description>
+        <topic label="Script Properties" href="help/scriptproperties.html"/>
+    </context>
+    <context id="nsis_assochdrproperties_context">
+        <description>The Associated Headers tab is used to associate NSIS headers (*.nsh) with an NSIS script (*.nsi).</description>
+        <topic label="Associated Headers" href="help/scriptproperties.html#assochdrs"/>
+        <topic label="Header Properties" href="help/headerproperties.html"/>
+    </context>
+    <context id="nsis_hdrproperties_context">
+        <description>The EclipseNSIS Header Properties page is used to associate an NSIS header (*.nsh) with an NSIS script (*.nsi).</description>
+        <topic label="Header Properties" href="help/headerproperties.html"/>
+        <topic label="Associated Headers" href="help/scriptproperties.html#assochdrs"/>
     </context>
     <context id="nsis_wizard_context">
         <description>The NSIS Script Wizard provides a guide through the process of generating an NSIS script.</description>

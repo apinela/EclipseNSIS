@@ -18,11 +18,12 @@ import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.console.*;
 import net.sf.eclipsensis.makensis.MakeNSISResults;
 import net.sf.eclipsensis.makensis.MakeNSISRunner;
-import net.sf.eclipsensis.settings.*;
+import net.sf.eclipsensis.settings.INSISPreferenceConstants;
+import net.sf.eclipsensis.settings.NSISPreferences;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -150,6 +151,9 @@ public class NSISCompileTestUtility
     {
         IPath nsisScript = getCompileScript(script);
         if(nsisScript != null && script != null) {
+            IFile scriptFile = (script.getDevice() == null?ResourcesPlugin.getWorkspace().getRoot().getFile(script):null);
+            IFile nsisScriptFile = (nsisScript.getDevice() == null?ResourcesPlugin.getWorkspace().getRoot().getFile(nsisScript):null);
+            List associatedHeaders = (nsisScriptFile == null?null:NSISHeaderAssociationManager.getInstance().getAssociatedHeaders(nsisScriptFile));
             List editorList = new ArrayList();
             int beforeCompileSave = NSISPreferences.INSTANCE.getPreferenceStore().getInt(INSISPreferenceConstants.BEFORE_COMPILE_SAVE);
             IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
@@ -161,14 +165,27 @@ public class NSISCompileTestUtility
                     for (int k = 0; k < editors.length; k++) {
                         IEditorInput input = editors[k].getEditorInput();
                         switch(beforeCompileSave) {
+                            case INSISPreferenceConstants.BEFORE_COMPILE_SAVE_ASSOCIATED_CONFIRM:
+                            case INSISPreferenceConstants.BEFORE_COMPILE_SAVE_ASSOCIATED_AUTO:
+                                if(!Common.isEmptyCollection(associatedHeaders)) {
+                                    //This will only happen if this is a workspace file.
+                                    //If not, this will drop through to the next case.
+                                    if(input instanceof IFileEditorInput) {
+                                        IFile file = ((IFileEditorInput)input).getFile();
+                                        if(associatedHeaders.contains(file) || nsisScriptFile.equals(file)) {
+                                            editorList.add(editors[k]);
+                                        }
+                                    }
+                                    continue;
+                                }
                             case INSISPreferenceConstants.BEFORE_COMPILE_SAVE_CURRENT_CONFIRM:
                             case INSISPreferenceConstants.BEFORE_COMPILE_SAVE_CURRENT_AUTO:
-                                if(script.getDevice()== null && input != null && input instanceof IFileEditorInput) {
-                                    if(!script.equals(((IFileEditorInput)input).getFile().getFullPath())) {
+                                if(scriptFile != null && input instanceof IFileEditorInput) {
+                                    if(!scriptFile.equals(((IFileEditorInput)input).getFile())) {
                                         continue;
                                     }
                                 }
-                                else if (script.getDevice() != null && input != null && input instanceof IPathEditorInput) {
+                                else if (script.getDevice() != null && input instanceof IPathEditorInput) {
                                     if(!script.equals(((IPathEditorInput)input).getPath())) {
                                         continue;
                                     }
@@ -212,26 +229,48 @@ public class NSISCompileTestUtility
             boolean ok = false;
             String message = null;
             switch(beforeCompileSave) {
+                case INSISPreferenceConstants.BEFORE_COMPILE_SAVE_ASSOCIATED_CONFIRM:
+                    if(editors.size() > 1) {
+                        StringBuffer buf = new StringBuffer();
+                        for (Iterator iter = editors.iterator(); iter.hasNext();) {
+                            IEditorPart editor = (IEditorPart)iter.next();
+                            buf.append(INSISConstants.LINE_SEPARATOR).append(((IFileEditorInput)editor.getEditorInput()).getFile().getFullPath().toString());
+                        }
+                        message = EclipseNSISPlugin.getFormattedString("compile.save.associated.confirmation", //$NON-NLS-1$
+                                new String[]{buf.toString()});
+                        break;
+                    }
                 case INSISPreferenceConstants.BEFORE_COMPILE_SAVE_CURRENT_CONFIRM:
                     IEditorPart editor = (IEditorPart)editors.get(0);
                     if(editors.size() > 1) {
                         editors = editors.subList(0,1);
                     }
-                    IPathEditorInput input = (IPathEditorInput)editor.getEditorInput();
-                    String name = input.getPath().lastSegment();
+                    IEditorInput input = editor.getEditorInput();
+                    IPath path = (input instanceof IFileEditorInput?((IFileEditorInput)input).getFile().getFullPath():((IPathEditorInput)input).getPath());
                     message = EclipseNSISPlugin.getFormattedString("compile.save.current.confirmation", //$NON-NLS-1$
-                                                                   new String[]{name});
+                                                                   new String[]{path.toString()});
                     break;
                 case INSISPreferenceConstants.BEFORE_COMPILE_SAVE_ALL_CONFIRM:
                     message = EclipseNSISPlugin.getResourceString("compile.save.all.confirmation"); //$NON-NLS-1$
                     break;
                 case INSISPreferenceConstants.BEFORE_COMPILE_SAVE_CURRENT_AUTO:
+                case INSISPreferenceConstants.BEFORE_COMPILE_SAVE_ASSOCIATED_AUTO:
                 case INSISPreferenceConstants.BEFORE_COMPILE_SAVE_ALL_AUTO:
                     ok = true;
             }
             Shell shell = Display.getDefault().getActiveShell();
             if(!ok) {
-                ok = Common.openConfirm(shell, message, EclipseNSISPlugin.getShellImage());
+                MessageDialogWithToggle dialog = new MessageDialogWithToggle(shell, EclipseNSISPlugin.getResourceString("confirm.title"), //$NON-NLS-1$
+                        EclipseNSISPlugin.getShellImage(), message,
+                        MessageDialog.QUESTION, new String[] { IDialogConstants.OK_LABEL, IDialogConstants.CANCEL_LABEL }, 0,
+                        EclipseNSISPlugin.getResourceString("compile.save.toggle.message"),false); //$NON-NLS-1$
+                dialog.open();
+                ok = dialog.getReturnCode() == IDialogConstants.OK_ID;
+                if(ok && dialog.getToggleState()) {
+                    beforeCompileSave |= INSISPreferenceConstants.BEFORE_COMPILE_SAVE_AUTO_FLAG;
+                    NSISPreferences.INSTANCE.setBeforeCompileSave(beforeCompileSave);
+                    NSISPreferences.INSTANCE.store();
+                }
             }
             if(ok) {
                 ProgressMonitorDialog dialog = new ProgressMonitorDialog(shell);

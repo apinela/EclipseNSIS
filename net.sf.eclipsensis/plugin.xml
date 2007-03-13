@@ -145,15 +145,6 @@
             name="%property.page.name"
             id="%project.property.page.id">
       </page>
-      <page
-            adaptable="true"
-            category="%file.property.page.id"
-            class="net.sf.eclipsensis.dialogs.NSISAssociatedHeadersPropertyPage"
-            icon="icons/associatedheaders.gif"
-            id="%associated.headers.property.page.id"
-            name="%associated.headers.property.page.name"
-            nameFilter="%nsi.extension"
-            objectClass="org.eclipse.core.resources.IFile"/>
    </extension>
    <extension
          point="org.eclipse.ui.views">
@@ -233,17 +224,17 @@
                id="%open.associated.headers.action.id"
                label="%open.associated.headers.action.name"
                menubarPath="net.sf.eclipsensis.Menu/net.sf.eclipsensis.Group2"
-               toolbarPath="net.sf.eclipsensis.Group2">
+               toolbarPath="net.sf.eclipsensis.Group">
          </action>
          <action
                class="net.sf.eclipsensis.actions.NSISOpenAssociatedScriptOrHeadersAction"
                definitionId="%open.associated.script.command.id"
-               disabledIcon="icons/nsis.gif"
-               icon="icons/nsis.gif"
+               disabledIcon="icons/associatedscript_d.gif"
+               icon="icons/associatedscript.gif"
                id="%open.associated.script.action.id"
                label="%open.associated.script.action.name"
                menubarPath="net.sf.eclipsensis.Menu/net.sf.eclipsensis.Group2"
-               toolbarPath="net.sf.eclipsensis.Group2">
+               toolbarPath="net.sf.eclipsensis.Group">
          </action>
          <action
                toolbarPath="net.sf.eclipsensis.Group"

@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -30,7 +30,7 @@ public class NSISSettingsEditorSymbolsPage extends NSISSettingsEditorPage
 
     public NSISSettingsEditorSymbolsPage(NSISSettings settings)
     {
-        super(settings);
+        super("symbols",settings);
     }
 
     public void enableControls(boolean state)
@@ -117,12 +117,12 @@ public class NSISSettingsEditorSymbolsPage extends NSISSettingsEditorPage
         }
         return true;
     }
-    
+
     public void reset()
     {
         mSymbols.setInput(mSettings.getSymbols());
     }
-    
+
     public void setDefaults()
     {
         mSymbols.setInput(mSettings.getDefaultSymbols());

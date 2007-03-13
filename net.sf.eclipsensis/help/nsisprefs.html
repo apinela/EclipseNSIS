@@ -42,11 +42,11 @@ The EclipseNSIS Preferences page has two tabs:</p>
   <li><a href="#symbols">Defined Symbols</a></li>
 </ul>
 <h3><a name="general"></a>General</h3>
-<p style="text-align: center;"><img
- alt="EclipseNSIS Preferences General Tab" src="images/preferences1.gif"
+<p style="text-align: center;"><img src="images/preferences1.gif"
+ alt="EclipseNSIS Preferences General Tab"
+ usemap="#preferences1"
  ismap="ismap"
- style="border: medium none ; width: 466px; height: 539px;"
- usemap="#preferences1"></p>
+ style="border: medium none ; width: 467px; height: 569px;"></p>
   <a name="a_nsishome"></a><dl id="id_nsishome"><dt>NSIS
 Home</dt>
   <dd>Location of NSIS
@@ -91,6 +91,19 @@ Back</a></dd></dl>
   If this option is checked, EclipseNSIS issues
   visual notifications in the form of a message box alert and a progress dialog, otherwise it is done silently,
   and a notification is only issued if an alternate NSIS home cannot be found. <a href="javascript:history.go(-1)">&larr;Back</a></dd>
+  </dl>
+  <a name="a_beforecompile"></a><dl id="id_beforecompile"><dt>Before compiling save options</dt>
+  <dd>This option specifies the action that EclipseNSIS takes when a compile request is made with modified files open in editors. The
+  options available are:
+  <ul>
+  <li>Confirm before saving current/selected NSIS file</li>
+  <li>Confirm before saving <a href="scriptproperties.html#assochdrs">associated</a> NSIS files</li>
+  <li>Confirm before saving all open NSIS files</li>
+  <li>Automatically save current/selected NSIS file</li>
+  <li>Automatically save <a href="scriptproperties.html#assochdrs">associated</a> NSIS files</li>
+  <li>Automatically save all open NSIS files</li>
+  </ul>
+  <a href="javascript:history.go(-1)">&larr;Back</a></dd>
   </dl>
   <a name="a_hdrinfo"></a><dl id="id_hdrinfo"><dt>Print
 NSIS header info</dt>
@@ -214,39 +227,39 @@ to Preferences</a><br>
 &copy; 2004-2007 Sunil Kamath
 (IcemanK).</small></strong></p>
 <map name="preferences1">
-<area id="add1" onClick="highlightDef('id_add1');" shape="RECT"
- href="#a_add1" alt="Add" coords="423,347,453,371">
 <area id="edit1" onClick="highlightDef('id_edit1');" shape="RECT"
- href="#a_edit1" alt="Edit" coords="423,378,453,402">
+ href="#a_edit1" alt="Edit" coords="423,404,453,428">
+<area id="add1" onClick="highlightDef('id_add1');" shape="RECT"
+ href="#a_add1" alt="Add" coords="423,373,453,397">
 <area id="delete1" onClick="highlightDef('id_delete1');" shape="RECT"
- href="#a_delete1" alt="Delete" coords="423,409,453,433">
-<area id="down1" onClick="highlightDef('id_down1');" shape="RECT"
- href="#a_down1" alt="Move down" coords="423,471,453,495">
+ href="#a_delete1" alt="Delete" coords="423,435,453,459">
 <area id="up1" onClick="highlightDef('id_up1');" shape="RECT"
- href="#a_up1" alt="Move up" coords="423,440,453,464">
+ href="#a_up1" alt="Move up" coords="423,466,453,490">
+<area id="down1" onClick="highlightDef('id_down1');" shape="RECT"
+ href="#a_down1" alt="Move down" coords="423,497,453,521">
 <area id="instructions" onClick="highlightDef('id_instructions');"
  shape="RECT" href="#a_instructions" alt="Instructions"
- coords="20,326,420,495">
+ coords="20,352,420,521">
 <area id="priority" onClick="highlightDef('id_priority');"
  shape="RECT" href="#a_priority" alt="Compiler process priority"
- coords="28,267,329,289">
+ coords="28,293,329,315">
 <area id="warnPriority" onClick="highlightDef('id_warnPriority');"
  shape="RECT" href="#a_warnPriority" alt="High/Realtime process priority warning"
- coords="49,295,374,309">
-<area id="noconfig" onClick="highlightDef('id_noconfig');"
- shape="RECT" href="#a_noconfig" alt="Exclude NSIS config"
- coords="28,195,203,209">
+ coords="49,321,374,335">
+<area id="nocd" onClick="highlightDef('id_nocd');"
+ shape="RECT" href="#a_nocd" alt="Don't change directory"
+ coords="210,222,338,236">
 <area id="verbosity" onClick="highlightDef('id_verbosity');"
  shape="RECT" href="#a_verbosity" alt="Compiler verbosity"
- coords="28,215,329,237">
-<area id="compressor" onClick="highlightDef('id_compressor');" shape="RECT"
- href="#a_compressor" alt="Compressor settings" coords="28,241,372,263">
+ coords="28,241,329,263">
 <area id="license" onClick="highlightDef('id_license');" shape="RECT"
- href="#a_license" alt="Print license" coords="211,175,313,189">
-<area id="nocd" onClick="highlightDef('id_nocd');" shape="RECT"
- href="#a_nocd" alt="Don't change directory" coords="210,196,338,210">
+ href="#a_license" alt="Print license" coords="211,201,313,215">
+<area id="compressor" onClick="highlightDef('id_compressor');" shape="RECT"
+ href="#a_compressor" alt="Compressor settings" coords="28,267,372,289">
+<area id="noconfig" onClick="highlightDef('id_noconfig');" shape="RECT"
+ href="#a_noconfig" alt="Exclude NSIS config" coords="28,221,203,235">
 <area id="hdrinfo" onClick="highlightDef('id_hdrinfo');" shape="RECT"
- href="#a_hdrinfo" alt="Print header info" coords="29,175,154,189">
+ href="#a_hdrinfo" alt="Print header info" coords="29,201,154,215">
 <area id="notify" onClick="highlightDef('id_notify');" shape="RECT"
  href="#a_notify" alt="Notify when MakeNSIS.exe has changed" coords="20,129,312,145">
 <area id="help" onClick="highlightDef('id_help');" shape="RECT"
@@ -256,6 +269,8 @@ to Preferences</a><br>
  coords="20,83,454,105">
 <area id="nsishome" onClick="highlightDef('id_nsishome');" shape="RECT"
  href="#a_nsishome" alt="NSIS Home" coords="20,55,452,78">
+<area id="beforecompile" onClick="highlightDef('id_beforecompile');"
+ shape="rect" href="#a_beforecompile" alt="Before Compiling Save" coords="20,151,423,172">
 </map>
 <map name="preferences2">
 <area id="add2" onClick="highlightDef('id_add2');" shape="RECT"

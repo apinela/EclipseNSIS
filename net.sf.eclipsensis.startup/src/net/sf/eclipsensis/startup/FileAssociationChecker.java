@@ -225,10 +225,11 @@ public class FileAssociationChecker implements IStartup,  IExtensionChangeHandle
                                             case IDialogConstants.YES_ID:
                                             {
                                                 for (int j = 0; j < fileTypes.length; j++) {
-                                                    mEditorRegistry.setDefaultEditor(fileTypes[j], def.getEditorIds()[0]); 
+                                                    mEditorRegistry.setDefaultEditor(fileTypes[j], def.getEditorIds()[0]);
                                                 }
                                                 //Cast to inner class because otherwise it cannot be saved.
                                                 ((EditorRegistry)mEditorRegistry).saveAssociations();
+                                                //Fall through to next case to save the toggle state
                                             }
                                             case IDialogConstants.NO_ID:
                                             {

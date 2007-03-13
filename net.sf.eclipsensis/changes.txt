@@ -6,6 +6,7 @@ Revision History
     * Added support for /P compiler option.
     * Fixed outline view filter.
     * Added preference for saving file(s) before compilation.
+    * Added functionality for associating headers (*.nsh) with a script (*.nsi).
 
 0.9.5 (2/01/2007)
     * Upgraded to Eclipse 3.2 - no longer compatible with Eclipse 3.1.

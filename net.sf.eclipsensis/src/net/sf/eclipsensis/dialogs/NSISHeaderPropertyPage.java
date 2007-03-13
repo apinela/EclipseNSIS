@@ -14,8 +14,7 @@ import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.util.NSISHeaderAssociationManager;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.viewers.IFilter;
@@ -27,6 +26,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IWorkbenchPropertyPage;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PropertyPage;
 
 public class NSISHeaderPropertyPage extends PropertyPage implements IWorkbenchPropertyPage
@@ -61,7 +61,7 @@ public class NSISHeaderPropertyPage extends PropertyPage implements IWorkbenchPr
         composite.setLayout(layout);
 
         mAssociatedScriptLabel = new Label(composite,SWT.NONE);
-        mAssociatedScriptLabel.setText(EclipseNSISPlugin.getResourceString("nsis.script.label")); //$NON-NLS-1$
+        mAssociatedScriptLabel.setText(EclipseNSISPlugin.getResourceString("associated.script.label")); //$NON-NLS-1$
         mAssociatedScriptLabel.setLayoutData(new GridData(SWT.FILL,SWT.CENTER,false,false));
 
         mNSISScriptName = new Text(composite, SWT.BORDER); //$NON-NLS-1$
@@ -86,7 +86,8 @@ public class NSISHeaderPropertyPage extends PropertyPage implements IWorkbenchPr
                     file = null;
                 }
                 while (true) {
-                    FileSelectionDialog dialog = new FileSelectionDialog(getShell(), file, IFILE_FILTER);
+                    FileSelectionDialog dialog = new FileSelectionDialog(getShell(), (file==null?((IResource)getElement()).getParent():null),
+                                                                         IFILE_FILTER);
                     dialog.setDialogMessage(EclipseNSISPlugin.getResourceString("nsis.script.prompt")); //$NON-NLS-1$
                     dialog.setHelpAvailable(false);
                     if (dialog.open() == Window.OK) {
@@ -99,8 +100,8 @@ public class NSISHeaderPropertyPage extends PropertyPage implements IWorkbenchPr
                 }
             }
         });
-        //TODO Add contextual help
-//        PlatformUI.getWorkbench().getHelpSystem().setHelp(control,getContextId());
+
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(composite,INSISConstants.PLUGIN_CONTEXT_PREFIX + "nsis_hdrproperties_context");
         return composite;
     }
 

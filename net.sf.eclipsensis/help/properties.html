@@ -11,7 +11,7 @@
 # Sunil Kamath (IcemanK) - initial API and implementation
 ###############################################################################
 -->
-  <title>EclipseNSIS - Script Properties</title>
+  <title>EclipseNSIS - Properties</title>
 
 
   <link rel="stylesheet" href="book.css" charset="ISO-8859-1" type="text/css">
@@ -26,43 +26,27 @@
 
 <body>
 <div id="main">
-<a href="colorsfontsprefs.html">Previous</a>
-| <a href="overview.html#contents">Contents</a>
-| <a href="license.html">Next</a>
+<a href="colorsfontsprefs.html">Previous</a> | <a href="overview.html#contents">Contents</a> | <a href="scriptproperties.html">Next</a>
 <hr>
-<h1>Script Properties
-</h1>
-<p>The EclipseNSIS script
-Properties page is invoked by selecting the Properties menu for a project, folder or an NSIS script file in any view
+<h1>Properties</h1>
+<ul>
+<li><a href="#intro">Introduction</a></li>
+<li><a href="scriptproperties.html">Script Properties</a></li>
+<li><a href="headerproperties.html">Header Properties</a></li>
+</ul>
+<a name="intro"></a><h2>Introduction</h2>
+<p>The EclipseNSIS 
+Properties page is invoked by selecting the Properties menu for a project, folder or an NSIS  file in any view
 that shows a list of Workspace resources (e.g., <a href="javascript:redirectEclipse('/org.eclipse.platform.doc.user/concepts/cnav.htm');">resource navigator</a>,
 <a href="javascript:redirectEclipse('/org.eclipse.jdt.doc.user/reference/ref-view-package-explorer.htm');">JDT package explorer</a>, etc.)
 and then selecting the EclipseNSIS item. The Properties menu is only available when a single resource is selected.</p>
 <p style="text-align: center;"><img style="border: medium none ; width: 202px; height: 151px;" alt="Navigate to Properties" src="images/navprops.gif"></p>
-<p>The <a href="nsisprefs.html">EclipseNSIS Preferences Page</a>
-is used to set global options while compiling an NSIS script. The Properties page, on the other hand, is used to
-set custom script compilation options at the resource level, i.e., for projects, folders and files. The
-compilation options for any resource can be defaulted to those of its parent resource. The compilation options
-for a project resource can be defaulted to the global compilation options. The major portion of the
-Properties page is identical in behavior to the <a href="nsisprefs.html">EclipseNSIS Preferences Page</a>.<br>
+<p>When a project, folder or NSIS script file (*.nsi) is selected, the <a href="scriptproperties.html">Script Properties</a> 
+page is opened, and if an NSIS header file (*.nsh) is selected, the <a href="headerproperties.html">Header Properties</a> page is opened.<br>
 </p>
-<p style="text-align: center;"><img style="border: 0px solid ; width: 425px; height: 508px;" alt="EclipseNSIS Properties page" src="images/properties.gif" usemap="#properties" ismap="ismap">
-</p>
-<a name="a_global"></a><dl id="id_global">
-  <dt>Use
-parent NSIS options</dt>
-  <dd>Use the appropriate parent options.</dd>
-</dl>
-<hr><a href="colorsfontsprefs.html">Previous</a>
-| <a href="overview.html#contents">Contents</a>
-| <a href="license.html">Next</a>
+<hr><a href="colorsfontsprefs.html">Previous</a> | <a href="overview.html#contents">Contents</a> | <a href="scriptproperties.html">Next</a>
 <br>
 <br>
-<p><strong><small>Copyright
-&copy; 2004-2007 Sunil Kamath (IcemanK).</small></strong></p>
-<map name="properties">
-  <area id="nsispref" shape="RECT" href="nsisprefs.html#general" coords="19,80,412,461">
-  <area id="global" shape="RECT" href="#a_global" alt="Use global NSIS options" onclick="highlightDef('id_global');" coords="18,54,190,69">
-</map>
+<p><strong><small>Copyright &copy; 2004-2007 Sunil Kamath (IcemanK).</small></strong></p>
 </div>
-
 </body></html>

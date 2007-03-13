@@ -130,8 +130,9 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
                             InstallOptionsPlugin.getShellImage(), InstallOptionsPlugin.getResourceString("save.before.preview.confirm"), //$NON-NLS-1$
                             MessageDialog.QUESTION, new String[] { IDialogConstants.OK_LABEL, IDialogConstants.CANCEL_LABEL }, 0,
                             InstallOptionsPlugin.getResourceString("confirm.toggle.message"),false); //$NON-NLS-1$
-                    shouldSave = (dialog.open()==0);
-                    if(dialog.getToggleState()) {
+                    dialog.open();
+                    shouldSave = (dialog.getReturnCode()==IDialogConstants.OK_ID);
+                    if(shouldSave && dialog.getToggleState()) {
                         mPreferenceStore.setValue(IInstallOptionsConstants.PREFERENCE_AUTOSAVE_BEFORE_PREVIEW, true);
                     }
                 }
