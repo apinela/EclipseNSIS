@@ -136,12 +136,14 @@ Guides</a> | <a href="revisions.html">Revision History</a> | <a
 <div><img class="trigger" alt="Expand/Collapse" id="trigger_eclipsensis0951"
 src="images/closed.gif" onClick="toggle('trigger_eclipsensis0951', 'toggle_eclipsensis0951'); rollover(this);"
 onmouseover="rollover(this);" onMouseOut="rollover(this);">
-<a href="http://prdownloads.sourceforge.net/eclipsensis/net.sf.eclipsensis_0.9.5.1.zip?download">0.9.5.1</a> (02/01/2007)
+<a href="http://prdownloads.sourceforge.net/eclipsensis/net.sf.eclipsensis_0.9.5.1.zip?download">0.9.5.1</a> (03/14/2007)
 <div id="toggle_eclipsensis0951" class="toggle">
 <ul>
   <li>Added support for new predefines.</li>
   <li>Added support for /P compiler option.</li>
   <li>Fixed outline view filter.</li>
+  <li>Added preference for saving file(s) before compilation.</li>
+  <li>Added functionality for associating headers (*.nsh) with a script (*.nsi).</li>
 </ul>
 </div>
 </div>
@@ -374,10 +376,17 @@ src="images/closed.gif" onClick="toggle('trigger_installoptions0951', 'toggle_in
 onmouseover="rollover(this);" onMouseOut="rollover(this);">
 <a
  href="http://prdownloads.sourceforge.net/eclipsensis/net.sf.eclipsensis.installoptions_0.9.5.1.zip?download">0.9.5.1</a>
-(02/01/2007)
+(03/14/2007)
 <div id="toggle_installoptions0951" class="toggle">
 <ul>
   <li>Added support for new FOCUS flag.</li>
+  <li>Added visual indication of bitmap and icon locations in preview.</li>
+  <li>Improved resize feedback.</li>
+  <li>Added preference to automatically save InstallOptions script before preview.</li>
+  <li>Bug fixes:</li>
+  <ul>
+    <li><a href="http://sourceforge.net/tracker/index.php?func=detail&aid=1662888&group_id=116143&atid=673849">1662888</a></li>
+  </ul>
 </ul>
 </div>
 </div>
@@ -584,14 +593,14 @@ src="images/closed.gif" onClick="toggle('trigger_sources0951', 'toggle_sources09
 onmouseover="rollover(this);" onMouseOut="rollover(this);">
 <a
  href="http://prdownloads.sourceforge.net/eclipsensis/net.sf.eclipsensis.source_0.9.5.1.zip?download">0.9.5.1</a>
-(02/01/2007)
-<div id="toggle_sources095" class="toggle">
+(03/14/2007)
+<div id="toggle_sources0951" class="toggle">
 <ul>
   <li>This bundles source code for the following EclipseNSIS plugins into a single plugin:</li>
       <ul>
       <li>EclipseNSIS 0.9.5.1</li>
-      <li>EclipseNSIS Startup 0.9.5</li>
-      <li>EclipseNSIS Update 0.9.5</li>
+      <li>EclipseNSIS Startup 0.9.5.1</li>
+      <li>EclipseNSIS Update 0.9.5.1</li>
       <li>EclipseNSIS InstallOptions Editor 0.9.5.1</li>
       <li>EclipseNSIS Utilities 0.9.1</li>
       <li>JAR Signer 0.9.1</li>

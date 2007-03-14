@@ -30,8 +30,8 @@ EclipseNSIS InstallOptions Editor plugin is an add-on to EclipseNSIS
 which enables editing of InstallOptions scripts.</p>
 <a name="features"></a><h2>Features</h2><h3>EclipseNSIS</h3>
 <ul><li>Requires <a href="http://download.eclipse.org/eclipse/downloads/drops/R-3.2-200606291905/index.php">Eclipse 3.2</a> or better.</li><li>Requires
-Windows 98, Window ME, Windows NT 4.0, Windows 2000, Windows XP, Windows Server 2003, or
-better.</li><li>Syntax highlighting editor.</li>
+Windows NT 4.0, Windows 2000, Windows XP, Windows Server 2003, or
+Windows Vista.</li><li>Syntax highlighting editor.</li>
 <li>Outline view for quick navigation.</li>
 <li>Integrated compiling and testing support.</li>
 <li>Error and warning marker generation.</li>
@@ -43,8 +43,8 @@ better.</li><li>Syntax highlighting editor.</li>
 </ul><h3>EclipseNSIS InstallOptions Editor</h3>
 <ul><li>Requires <a href="http://download.eclipse.org/eclipse/downloads/drops/R-3.2-200606291905/index.php">Eclipse 3.2</a> or better, EclipseNSIS and <a href="http://download.eclipse.org/tools/gef/downloads/drops/R-3.2-200606270816/index.php">Eclipse GEF 3.2</a> or better.</li>
 <li>Requires
-Windows 98, Window ME, Windows NT 4.0, Windows 2000, Windows XP, Windows Server 2003, or
-better.</li>
+Windows NT 4.0, Windows 2000, Windows XP, Windows Server 2003, or
+Windows Vista.</li>
 <li>Design editor with point &amp; click editing and outline
 view.</li><li>Source editor with syntax highlighting, code
 outlining &amp; folding, dynamic error checking and quickfix.</li>

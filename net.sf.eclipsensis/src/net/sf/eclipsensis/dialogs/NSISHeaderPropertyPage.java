@@ -101,7 +101,7 @@ public class NSISHeaderPropertyPage extends PropertyPage implements IWorkbenchPr
             }
         });
 
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(composite,INSISConstants.PLUGIN_CONTEXT_PREFIX + "nsis_hdrproperties_context");
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(composite,INSISConstants.PLUGIN_CONTEXT_PREFIX + "nsis_hdrproperties_context"); //$NON-NLS-1$
         return composite;
     }
 

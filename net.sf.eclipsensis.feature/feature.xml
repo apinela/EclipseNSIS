@@ -49,13 +49,17 @@
 
    <plugin
          id="net.sf.eclipsensis"
-         download-size="3127"
-         install-size="3127"
+         os="win32"
+         ws="win32"
+         download-size="3183"
+         install-size="3183"
          version="0.9.5.1"
          unpack="false"/>
 
    <plugin
          id="net.sf.eclipsensis.update"
+         os="win32"
+         ws="win32"
          download-size="123"
          install-size="123"
          version="0.9.5.1"
@@ -63,9 +67,11 @@
 
    <plugin
          id="net.sf.eclipsensis.startup"
+         os="win32"
+         ws="win32"
          download-size="18"
          install-size="18"
-         version="0.9.5"
+         version="0.9.5.1"
          unpack="false"/>
 
 </feature>

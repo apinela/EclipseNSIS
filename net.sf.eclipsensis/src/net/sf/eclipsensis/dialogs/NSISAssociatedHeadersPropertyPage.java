@@ -40,7 +40,7 @@ public class NSISAssociatedHeadersPropertyPage extends NSISSettingsEditorPage
 
     public NSISAssociatedHeadersPropertyPage(NSISSettings settings)
     {
-        super("headers", settings);
+        super("headers", settings); //$NON-NLS-1$
     }
 
     public boolean canEnableControls()
@@ -195,7 +195,7 @@ public class NSISAssociatedHeadersPropertyPage extends NSISSettingsEditorPage
         });
 
         mViewer.setInput(mHeaders);
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(composite,INSISConstants.PLUGIN_CONTEXT_PREFIX + "nsis_assochdrproperties_context");
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(composite,INSISConstants.PLUGIN_CONTEXT_PREFIX + "nsis_assochdrproperties_context"); //$NON-NLS-1$
         return composite;
     }
 

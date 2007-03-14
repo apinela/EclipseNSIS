@@ -30,7 +30,7 @@ public class NSISSettingsEditorSymbolsPage extends NSISSettingsEditorPage
 
     public NSISSettingsEditorSymbolsPage(NSISSettings settings)
     {
-        super("symbols",settings);
+        super("symbols",settings); //$NON-NLS-1$
     }
 
     public void enableControls(boolean state)

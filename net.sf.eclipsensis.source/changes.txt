@@ -1,12 +1,12 @@
 Revision History
 ================
 
-0.9.5.1 (02/01/2007)
+0.9.5.1 (03/13/2007)
     * This bundles source code for the following EclipseNSIS plugins into a
       single plugin:
         o EclipseNSIS 0.9.5.1
-        o EclipseNSIS Update 0.9.5
-        o EclipseNSIS Startup 0.9.5
+        o EclipseNSIS Update 0.9.5.1
+        o EclipseNSIS Startup 0.9.5.1
         o EclipseNSIS InstallOptions Editor 0.9.5.1
         o EclipseNSIS Utilities 0.9.1
         o JAR Signer 0.9.1

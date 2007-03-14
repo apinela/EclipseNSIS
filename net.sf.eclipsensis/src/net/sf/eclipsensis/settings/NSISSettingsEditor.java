@@ -110,8 +110,8 @@ public abstract class NSISSettingsEditor implements INSISSettingsEditorPageListe
      */
     protected void addPages(final TabFolder folder)
     {
-        addPage(folder, "general.tab.text", "general.tab.tooltip", createGeneralPage());
-        addPage(folder, "symbols.tab.text", "symbols.tab.tooltip", createSymbolsPage());
+        addPage(folder, "general.tab.text", "general.tab.tooltip", createGeneralPage()); //$NON-NLS-1$ //$NON-NLS-2$
+        addPage(folder, "symbols.tab.text", "symbols.tab.tooltip", createSymbolsPage()); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     protected NSISSettingsEditorSymbolsPage createSymbolsPage()

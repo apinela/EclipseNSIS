@@ -59,7 +59,7 @@ public class NSISPropertyPage extends NSISSettingsPage
         {
             super.addPages(folder);
             if(getElement() instanceof IFile) {
-                addPage(folder, "associated.headers.tab.text","associated.headers.tab.tooltip",new NSISAssociatedHeadersPropertyPage(getSettings()));
+                addPage(folder, "associated.headers.tab.text","associated.headers.tab.tooltip",new NSISAssociatedHeadersPropertyPage(getSettings())); //$NON-NLS-1$ //$NON-NLS-2$
             }
         }
 

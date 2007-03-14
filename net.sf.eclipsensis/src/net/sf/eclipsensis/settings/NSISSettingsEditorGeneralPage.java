@@ -48,7 +48,7 @@ public abstract class NSISSettingsEditorGeneralPage extends NSISSettingsEditorPa
 
     public NSISSettingsEditorGeneralPage(NSISSettings settings)
     {
-        super("general",settings);
+        super("general",settings); //$NON-NLS-1$
     }
 
     protected Control createControl(Composite parent)
