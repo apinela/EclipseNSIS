@@ -11,12 +11,12 @@ package net.sf.eclipsensis.handlers;
 
 import net.sf.eclipsensis.util.NSISCompileTestUtility;
 
-import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.resources.IFile;
 
 public class NSISCompileHandler extends NSISHandler
 {
-    protected void handleScript(IPath script)
+    protected void handleScript(IFile file)
     {
-        NSISCompileTestUtility.INSTANCE.compile(script);
+        NSISCompileTestUtility.INSTANCE.compile(file.getFullPath());
     }
 }

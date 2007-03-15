@@ -392,6 +392,22 @@ public class NSISEditorUtilities
             Runnable r = new Runnable() {
                 public void run()
                 {
+                    IWorkbenchPage p = null;
+                    if(page == null) {
+                        IWorkbench workbench = PlatformUI.getWorkbench();
+                        if (workbench != null) {
+                            IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
+                            if (window != null) {
+                                p = window.getActivePage();
+                            }
+                        }
+                    }
+                    else {
+                        p = page;
+                    }
+                    if(p == null) {
+                        return;
+                    }
                     IFile[] files = null;
                     String ext = file.getFileExtension();
                     if(Common.stringsAreEqual(INSISConstants.NSI_EXTENSION,ext,true)) {
@@ -419,7 +435,7 @@ public class NSISEditorUtilities
                                 }
                             }
                             try {
-                                page.openEditor(new FileEditorInput(files[i]),INSISConstants.EDITOR_ID,false,IWorkbenchPage.MATCH_ID|IWorkbenchPage.MATCH_INPUT);
+                                p.openEditor(new FileEditorInput(files[i]),INSISConstants.EDITOR_ID,false,IWorkbenchPage.MATCH_ID|IWorkbenchPage.MATCH_INPUT);
                             }
                             catch (PartInitException e) {
                                 EclipseNSISPlugin.getDefault().log(e);

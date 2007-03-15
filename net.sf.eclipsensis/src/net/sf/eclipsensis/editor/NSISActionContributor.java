@@ -289,14 +289,14 @@ public class NSISActionContributor extends TextEditorActionContributor implement
     public void partActivated(IWorkbenchPart part)
     {
         IEditorPart editor = getActiveEditorPart();
-        if(Common.objectsAreEqual(part, editor)) {
+        if(Common.objectsAreEqual(part, editor) && part instanceof NSISEditor) {
             updateContributionManagers(editor);
         }
     }
 
     public void partBroughtToTop(IWorkbenchPart part)
     {
-        if(part instanceof IEditorPart) {
+        if(part instanceof NSISEditor) {
             updateContributionManagers((IEditorPart)part);
         }
     }
@@ -308,7 +308,7 @@ public class NSISActionContributor extends TextEditorActionContributor implement
     public void partDeactivated(IWorkbenchPart part)
     {
         IEditorPart editor = getActiveEditorPart();
-        if(Common.objectsAreEqual(part, editor)) {
+        if(Common.objectsAreEqual(part, editor) && part instanceof NSISEditor) {
             updateContributionManagers(editor);
         }
     }
@@ -330,7 +330,7 @@ public class NSISActionContributor extends TextEditorActionContributor implement
         if(IWorkbenchPage.CHANGE_EDITOR_OPEN.equals(changeId)) {
             IEditorReference editorRef = (IEditorReference)partRef;
             IEditorPart editor = editorRef.getEditor(false);
-            if(Common.objectsAreEqual(editor,getActiveEditorPart())) {
+            if(Common.objectsAreEqual(editor,getActiveEditorPart()) && editor instanceof NSISEditor) {
                 updateContributionManagers(editor);
             }
         }

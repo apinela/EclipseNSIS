@@ -231,7 +231,7 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
                                 dialogSize = DialogSizeManager.getDefaultDialogSize();
                             }
                             dialog.setDialogSize(dialogSize);
-                            Font font = FontUtility.getInstallOptionsFont();
+                            Font font = FontUtility.getFont(lang);
                             final DashedLineBorder border = new DashedLineBorder();
                             for(Iterator iter=dialog.getChildren().iterator(); iter.hasNext(); ) {
                                 InstallOptionsWidget widget = (InstallOptionsWidget)iter.next();

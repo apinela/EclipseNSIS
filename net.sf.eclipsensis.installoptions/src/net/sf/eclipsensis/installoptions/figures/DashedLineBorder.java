@@ -122,7 +122,6 @@ public class DashedLineBorder extends LineBorder
                     else {
                         graphics.drawLine(x,y,x,y+factor*(length-1));
                     }
-                    graphics.drawLine(x,tempRect.y,x+length-1,tempRect.y);
                 }
                 dashRemaining -= length;
                 length = 0;

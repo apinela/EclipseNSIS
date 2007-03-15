@@ -607,15 +607,17 @@
          defaultHandler="net.sf.eclipsensis.handlers.NSISTestHandler"
          categoryId="%category.id"/>
       <command
-         name="%open.associated.script.label"
-         description="%open.associated.script.label"
-         id="%popup.open.associated.script.command.id"
-         categoryId="%category.id"/>
+            categoryId="%category.id"
+            defaultHandler="net.sf.eclipsensis.handlers.NSISOpenAssociatedScriptHandler"
+            description="%open.associated.script.label"
+            id="%popup.open.associated.script.command.id"
+            name="%open.associated.script.label"/>
       <command
-         name="%open.associated.headers.label"
-         description="%open.associated.headers.label"
-         id="%popup.open.associated.headers.command.id"
-         categoryId="%category.id"/>
+            categoryId="%category.id"
+            defaultHandler="net.sf.eclipsensis.handlers.NSISOpenAssociatedHeadersHandler"
+            description="%open.associated.headers.label"
+            id="%popup.open.associated.headers.command.id"
+            name="%open.associated.headers.label"/>
       <command
             name="%launch.shortcut.command.name"
             description="%launch.shortcut.command.description"

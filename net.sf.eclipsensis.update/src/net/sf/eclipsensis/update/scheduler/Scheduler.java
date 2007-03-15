@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -19,6 +19,7 @@ import net.sf.eclipsensis.update.preferences.IUpdatePreferenceConstants;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IStartup;
 
 public class Scheduler implements IStartup, IUpdatePreferenceConstants
@@ -53,7 +54,7 @@ public class Scheduler implements IStartup, IUpdatePreferenceConstants
         mScheduledJob = null;
     }
 
-    public synchronized void scheduleUpdateJob() 
+    public synchronized void scheduleUpdateJob()
     {
         if (INSTANCE == this) {
             long delay = -1;
@@ -93,7 +94,7 @@ public class Scheduler implements IStartup, IUpdatePreferenceConstants
             }
         }
     }
-    
+
     private synchronized void schedule(long delay)
     {
         if(mScheduledJob != null) {
@@ -113,22 +114,37 @@ public class Scheduler implements IStartup, IUpdatePreferenceConstants
             }
         }
     }
-    
+
     /*
      * Loads the update job using reflection to avoid premature startup of the
      * EclipseNSIS plug-in.
      */
-    private Job createUpdateJob(NSISUpdateJobSettings settings) 
+    private Job createUpdateJob(final NSISUpdateJobSettings settings)
     {
-        try {
-            Class theClass = Class.forName("net.sf.eclipsensis.update.jobs.NSISCheckUpdateJob"); //$NON-NLS-1$
-            Constructor constructor = theClass.getConstructor(new Class[] { NSISUpdateJobSettings.class });
-            return (Job) constructor.newInstance(new Object[] { settings });
-        } 
-        catch (Exception e) {
-            EclipseNSISUpdatePlugin.getDefault().log(e);
-            return null;
+        //Create the job in the UI thread so that we don't deadlock the classloader
+        final Job[] job = {null};
+        Runnable r= new Runnable() {
+            public void run()
+            {
+                try {
+                    Class theClass = Class.forName("net.sf.eclipsensis.update.jobs.NSISCheckUpdateJob"); //$NON-NLS-1$
+                    Constructor constructor = theClass.getConstructor(new Class[]{NSISUpdateJobSettings.class});
+                    job[0] = (Job)constructor.newInstance(new Object[]{settings});
+                }
+                catch (Exception e) {
+                    EclipseNSISUpdatePlugin.getDefault().log(e);
+                    job[0] = null;
+                }
+            }
+        };
+        if(Display.getCurrent() != null) {
+            r.run();
         }
+        else {
+            Display.getDefault().asyncExec(r);
+        }
+
+        return job[0];
     }
 
     private long computeDelayForDailySchedule()
@@ -141,17 +157,17 @@ public class Scheduler implements IStartup, IUpdatePreferenceConstants
             int currentMin = cal.get(Calendar.MINUTE);
             int currentSec = cal.get(Calendar.SECOND);
             int currentMilliSec = cal.get(Calendar.MILLISECOND);
-            
+
             if(currentHour == targetHour && currentMin == 0 && currentSec == 0) {
                 return 0;
             }
-            
+
             int hourDiff = targetHour-currentHour + (currentHour >= targetHour?24:0);
             return ((hourDiff * 60 - currentMin) * 60 - currentSec) * 1000 - currentMilliSec;
         }
         return -1;
     }
-    
+
     private long computeDelayForWeeklySchedule()
     {
         int m = mPreferences.getInt(IUpdatePreferenceConstants.DAY_OF_WEEK);
@@ -168,23 +184,23 @@ public class Scheduler implements IStartup, IUpdatePreferenceConstants
             int currentSec = cal.get(Calendar.SECOND);
             int currentMilliSec = cal.get(Calendar.MILLISECOND);
 
-            if(currentDay == targetDay && currentHour == targetHour && 
+            if(currentDay == targetDay && currentHour == targetHour &&
                     currentMin == 0 && currentSec == 0) {
                 return 0;
             }
             int dayDiff = targetDay - currentDay;
-            if (targetDay < currentDay || 
-                    (targetDay == currentDay && 
-                            (targetHour < currentHour || 
+            if (targetDay < currentDay ||
+                    (targetDay == currentDay &&
+                            (targetHour < currentHour ||
                                     (targetHour == currentHour && currentMin > 0)))) {
                 dayDiff += 7;
             }
-            return (((dayDiff*24 + targetHour - currentHour)*60 - currentMin)*60 - 
+            return (((dayDiff*24 + targetHour - currentHour)*60 - currentMin)*60 -
                         currentSec)*1000 - currentMilliSec;
         }
         return -1;
     }
-    
+
     private long computeDelayForMonthlySchedule()
     {
         int m = mPreferences.getInt(IUpdatePreferenceConstants.DAY_OF_MONTH);
@@ -195,7 +211,7 @@ public class Scheduler implements IStartup, IUpdatePreferenceConstants
             int targetHour = SchedulerConstants.TIMES_OF_DAY[n];
 
             Calendar cal = Calendar.getInstance();
-            
+
             int currentYear = cal.get(Calendar.YEAR);
             int currentMonth = cal.get(Calendar.MONTH);
             int currentDay = cal.get(Calendar.DAY_OF_MONTH);
@@ -206,7 +222,7 @@ public class Scheduler implements IStartup, IUpdatePreferenceConstants
 
             long now = cal.getTimeInMillis();
 
-            if(currentDay == (targetDay>maxDay?maxDay:targetDay) && currentHour == targetHour && 
+            if(currentDay == (targetDay>maxDay?maxDay:targetDay) && currentHour == targetHour &&
                     currentMin == 0 && currentSec == 0) {
                 return 0;
             }
@@ -214,10 +230,10 @@ public class Scheduler implements IStartup, IUpdatePreferenceConstants
             cal.set(Calendar.SECOND,0);
             cal.set(Calendar.MILLISECOND,0);
             cal.set(Calendar.HOUR_OF_DAY,targetHour);
-            
+
             cal.set(Calendar.DAY_OF_MONTH, (targetDay>maxDay?maxDay:targetDay));
             long targetTime = cal.getTimeInMillis();
-            
+
             if (targetTime < now) {
                 int targetYear = currentYear;
                 int targetMonth = currentMonth + 1;
@@ -230,7 +246,7 @@ public class Scheduler implements IStartup, IUpdatePreferenceConstants
                 maxDay = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
                 cal.set(Calendar.DAY_OF_MONTH, (targetDay > maxDay?maxDay:targetDay));
                 targetTime = cal.getTimeInMillis();
-            }            
+            }
             if(targetTime >= now) {
                 return targetTime-now;
             }

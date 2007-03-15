@@ -57,6 +57,8 @@ public interface INSISConstants
     public static final String REMOVE_BLOCK_COMMENT_COMMAND_ID = EclipseNSISPlugin.getBundleResourceString("%remove.block.comment.command.id"); //$NON-NLS-1$
     public static final String OPEN_ASSOCIATED_SCRIPT_ACTION_ID = EclipseNSISPlugin.getBundleResourceString("%open.associated.script.action.id"); //$NON-NLS-1$
     public static final String OPEN_ASSOCIATED_HEADERS_ACTION_ID = EclipseNSISPlugin.getBundleResourceString("%open.associated.headers.action.id"); //$NON-NLS-1$
+    public static final String OPEN_ASSOCIATED_SCRIPT_POPUP_MENU_ID = EclipseNSISPlugin.getBundleResourceString("%open.associated.script.popup.menu.id"); //$NON-NLS-1$
+    public static final String OPEN_ASSOCIATED_HEADERS_POPUP_MENU_ID = EclipseNSISPlugin.getBundleResourceString("%open.associated.headers.popup.menu.id"); //$NON-NLS-1$
 
     public static final String PLUGIN_HELP_LOCATION_PREFIX = "help/"; //$NON-NLS-1$
     public static final String NSISCONTRIB_JS_LOCATION = PLUGIN_HELP_LOCATION_PREFIX + "nsiscontrib.js"; //$NON-NLS-1$

@@ -19,6 +19,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.ui.IWorkbenchPage;
 
 public class NSISOpenAssociatedScriptOrHeadersAction extends NSISScriptAction
 {
@@ -36,8 +37,12 @@ public class NSISOpenAssociatedScriptOrHeadersAction extends NSISScriptAction
 
     public void run(IAction action)
     {
-        if(mPart != null && mFile != null) {
-            NSISEditorUtilities.openAssociatedFiles(mPart.getSite().getPage(),mFile);
+        if(mFile != null) {
+            IWorkbenchPage page = null;
+            if(mPart != null) {
+                page = mPart.getSite().getPage();
+            }
+            NSISEditorUtilities.openAssociatedFiles(page,mFile);
         }
     }
 
@@ -62,11 +67,13 @@ public class NSISOpenAssociatedScriptOrHeadersAction extends NSISScriptAction
     public void init(IAction action)
     {
         super.init(action);
-        if(INSISConstants.OPEN_ASSOCIATED_HEADERS_ACTION_ID.equals(action.getId())) {
+        if(INSISConstants.OPEN_ASSOCIATED_HEADERS_ACTION_ID.equals(action.getId())||
+           INSISConstants.OPEN_ASSOCIATED_HEADERS_POPUP_MENU_ID.equals(action.getId())) {
             mOpenAssociatedHeadersAction = true;
             mOpenAssociatedScriptAction = false;
         }
-        else if(INSISConstants.OPEN_ASSOCIATED_SCRIPT_ACTION_ID.equals(action.getId())) {
+        else if(INSISConstants.OPEN_ASSOCIATED_SCRIPT_ACTION_ID.equals(action.getId())||
+                INSISConstants.OPEN_ASSOCIATED_SCRIPT_POPUP_MENU_ID.equals(action.getId())) {
             mOpenAssociatedHeadersAction = false;
             mOpenAssociatedScriptAction = true;
         }

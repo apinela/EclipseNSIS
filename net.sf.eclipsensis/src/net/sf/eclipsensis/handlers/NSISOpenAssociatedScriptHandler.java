@@ -9,14 +9,23 @@
  *******************************************************************************/
 package net.sf.eclipsensis.handlers;
 
-import net.sf.eclipsensis.util.NSISCompileTestUtility;
+import java.util.regex.Pattern;
+
+import net.sf.eclipsensis.INSISConstants;
+import net.sf.eclipsensis.editor.NSISEditorUtilities;
 
 import org.eclipse.core.resources.IFile;
 
-public class NSISTestHandler extends NSISHandler
+public class NSISOpenAssociatedScriptHandler extends NSISHandler
 {
     protected void handleScript(IFile file)
     {
-        NSISCompileTestUtility.INSTANCE.test(file.getFullPath());
+        NSISEditorUtilities.openAssociatedFiles(null,file);
     }
+
+    protected Pattern createExtensionPattern()
+    {
+        return Pattern.compile(INSISConstants.NSH_EXTENSION,Pattern.CASE_INSENSITIVE);
+    }
+
 }

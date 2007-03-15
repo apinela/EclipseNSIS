@@ -79,7 +79,7 @@ public class NSISHeaderPropertyPage extends PropertyPage implements IWorkbenchPr
                 String scriptName = mNSISScriptName.getText();
                 IFile file = null;
                 try {
-                    file = (scriptName != null?ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(scriptName)):null);
+                    file = (!Common.isEmpty(scriptName)?ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(scriptName)):null);
                 }
                 catch (Exception e1) {
                     EclipseNSISPlugin.getDefault().log(e1);

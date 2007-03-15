@@ -16,13 +16,12 @@ import net.sf.eclipsensis.INSISConstants;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.swt.widgets.*;
 
 public abstract class NSISHandler extends AbstractHandler
 {
     private Pattern mExtensionPattern = null;
-    
+
     public Object execute(ExecutionEvent event)
     {
         Widget w = ((Event)event.getTrigger()).widget;
@@ -32,7 +31,7 @@ public abstract class NSISHandler extends AbstractHandler
                 Object object = items[i].getData();
                 if(object instanceof IFile && ((IFile)object).getFileExtension() != null &&
                         getExtensionPattern().matcher(((IFile)object).getFileExtension()).matches()) {
-                    handleScript(((IFile)object).getFullPath());
+                    handleScript((IFile)object);
                 }
             }
         }
@@ -49,8 +48,8 @@ public abstract class NSISHandler extends AbstractHandler
 
     protected Pattern createExtensionPattern()
     {
-        return Pattern.compile(INSISConstants.NSI_EXTENSION,Pattern.CASE_INSENSITIVE);
+        return Pattern.compile(INSISConstants.NSI_WILDCARD_EXTENSION,Pattern.CASE_INSENSITIVE);
     }
 
-    protected abstract void handleScript(IPath path);
+    protected abstract void handleScript(IFile file);
 }
