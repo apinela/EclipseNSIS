@@ -224,7 +224,7 @@
                id="%open.associated.headers.action.id"
                label="%open.associated.headers.action.name"
                menubarPath="net.sf.eclipsensis.Menu/net.sf.eclipsensis.Group2"
-               toolbarPath="net.sf.eclipsensis.Group">
+               >
          </action>
          <action
                class="net.sf.eclipsensis.actions.NSISOpenAssociatedScriptOrHeadersAction"
@@ -234,7 +234,7 @@
                id="%open.associated.script.action.id"
                label="%open.associated.script.action.name"
                menubarPath="net.sf.eclipsensis.Menu/net.sf.eclipsensis.Group2"
-               toolbarPath="net.sf.eclipsensis.Group">
+               >
          </action>
          <action
                toolbarPath="net.sf.eclipsensis.Group"
