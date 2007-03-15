@@ -63,8 +63,8 @@
          os="win32"
          ws="win32"
          arch="x86"
-         download-size="3185"
-         install-size="3185"
+         download-size="3183"
+         install-size="3183"
          version="0.9.5.1"
          unpack="false"/>
 

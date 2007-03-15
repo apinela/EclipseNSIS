@@ -277,7 +277,7 @@ public class NSISCompileTestUtility
                 dialog.open();
                 IProgressMonitor progressMonitor = dialog.getProgressMonitor();
                 if(editors.size() > 1) {
-                    progressMonitor.beginTask(EclipseNSISPlugin.getResourceString("saving.open.files.task.name"),editors.size()); //$NON-NLS-1$
+                    progressMonitor.beginTask(EclipseNSISPlugin.getResourceString("saving.before.compilation.task.name"),editors.size()); //$NON-NLS-1$
                     for (Iterator iter = editors.iterator(); iter.hasNext();) {
                         IEditorPart editor = (IEditorPart)iter.next();
                         SubProgressMonitor monitor = new SubProgressMonitor(progressMonitor, 1);

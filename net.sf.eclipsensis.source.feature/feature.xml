@@ -40,8 +40,8 @@
 
    <plugin
          id="net.sf.eclipsensis.source"
-         download-size="1197"
-         install-size="1347"
+         download-size="1198"
+         install-size="1348"
          version="0.9.5.1"/>
 
 </feature>
