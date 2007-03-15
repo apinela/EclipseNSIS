@@ -273,7 +273,6 @@ public class NSISLanguageManager implements INSISHomeListener, IEclipseNSISServi
         int langId;
         if(version.compareTo(cVersion213) >= 0) {
             langId = WinAPI.GetUserDefaultUILanguage();
-            langId = 1028;
             lang = (NSISLanguage)mLanguageMap.get(new Integer(langId));
         }
         if(lang == null) {
