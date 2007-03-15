@@ -1,7 +1,7 @@
 Revision History
 ================
 
-0.9.5.1 (03/14/2007)
+0.9.5.1 (03/15/2007)
     * Added support for new FOCUS flag.
     * Added visual indication of bitmap and icon locations in preview.
     * Improved resize feedback.

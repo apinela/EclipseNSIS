@@ -136,7 +136,7 @@ Guides</a> | <a href="revisions.html">Revision History</a> | <a
 <div><img class="trigger" alt="Expand/Collapse" id="trigger_eclipsensis0951"
 src="images/closed.gif" onClick="toggle('trigger_eclipsensis0951', 'toggle_eclipsensis0951'); rollover(this);"
 onmouseover="rollover(this);" onMouseOut="rollover(this);">
-<a href="http://prdownloads.sourceforge.net/eclipsensis/net.sf.eclipsensis_0.9.5.1.zip?download">0.9.5.1</a> (03/14/2007)
+<a href="http://prdownloads.sourceforge.net/eclipsensis/net.sf.eclipsensis_0.9.5.1.zip?download">0.9.5.1</a> (03/15/2007)
 <div id="toggle_eclipsensis0951" class="toggle">
 <ul>
   <li>Added support for new predefines.</li>
@@ -376,7 +376,7 @@ src="images/closed.gif" onClick="toggle('trigger_installoptions0951', 'toggle_in
 onmouseover="rollover(this);" onMouseOut="rollover(this);">
 <a
  href="http://prdownloads.sourceforge.net/eclipsensis/net.sf.eclipsensis.installoptions_0.9.5.1.zip?download">0.9.5.1</a>
-(03/14/2007)
+(03/15/2007)
 <div id="toggle_installoptions0951" class="toggle">
 <ul>
   <li>Added support for new FOCUS flag.</li>
@@ -593,7 +593,7 @@ src="images/closed.gif" onClick="toggle('trigger_sources0951', 'toggle_sources09
 onmouseover="rollover(this);" onMouseOut="rollover(this);">
 <a
  href="http://prdownloads.sourceforge.net/eclipsensis/net.sf.eclipsensis.source_0.9.5.1.zip?download">0.9.5.1</a>
-(03/14/2007)
+(03/15/2007)
 <div id="toggle_sources0951" class="toggle">
 <ul>
   <li>This bundles source code for the following EclipseNSIS plugins into a single plugin:</li>
