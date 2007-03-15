@@ -44,6 +44,9 @@
 
    <plugin
          id="net.sf.eclipsensis.installoptions"
+         os="win32"
+         ws="win32"
+         arch="x86"
          download-size="1717"
          install-size="1717"
          version="0.9.5.1"

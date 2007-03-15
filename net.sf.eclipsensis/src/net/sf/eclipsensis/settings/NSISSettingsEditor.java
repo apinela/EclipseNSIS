@@ -110,7 +110,9 @@ public abstract class NSISSettingsEditor implements INSISSettingsEditorPageListe
      */
     protected void addPages(final TabFolder folder)
     {
-        addPage(folder, "general.tab.text", "general.tab.tooltip", createGeneralPage()); //$NON-NLS-1$ //$NON-NLS-2$
+        NSISSettingsEditorGeneralPage page = createGeneralPage();
+        addPage(folder, "general.tab.text", "general.tab.tooltip", page); //$NON-NLS-1$ //$NON-NLS-2$
+        folder.setData(page.getName(),null); //Don't want to disable this tab ever
         addPage(folder, "symbols.tab.text", "symbols.tab.tooltip", createSymbolsPage()); //$NON-NLS-1$ //$NON-NLS-2$
     }
 

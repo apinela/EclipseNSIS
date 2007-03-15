@@ -380,12 +380,24 @@ public class NSISPreferencePage	extends NSISSettingsPage implements INSISPrefere
 
             public void enableControls(boolean state)
             {
-                mAutoShowConsole.setEnabled(state);
-                mBeforeCompileSave.setEnabled(state);
-                mUseEclipseHelp.setEnabled(state);
-                mNotifyMakeNSISChanged.setEnabled(state);
-                mWarnProcessPriority.setEnabled(state);
+                enableControl(mAutoShowConsole, state);
+                enableControl(mBeforeCompileSave, state);
+                enableControl(mUseEclipseHelp, state);
+                enableControl(mNotifyMakeNSISChanged, state);
+                enableControl(mWarnProcessPriority, state);
                 super.enableControls(state);
+            }
+
+            /**
+             * @param state
+             */
+            private void enableControl(Control control, boolean state)
+            {
+                control.setEnabled(state);
+                Object o = control.getData(LABEL);
+                if(o instanceof Control && !((Control)o).isDisposed()) {
+                    ((Control)o).setEnabled(state);
+                }
             }
 
             public boolean canEnableControls()
@@ -410,6 +422,7 @@ public class NSISPreferencePage	extends NSISSettingsPage implements INSISPrefere
                 super.internalSetProcessPriorityVisible(visible);
                 if(mWarnProcessPriority != null && !mWarnProcessPriority.isDisposed()) {
                     mWarnProcessPriority.setVisible(visible);
+                    ((GridData)mWarnProcessPriority.getLayoutData()).exclude = !visible;
                 }
             }
 
@@ -489,16 +502,23 @@ public class NSISPreferencePage	extends NSISSettingsPage implements INSISPrefere
                         String text = mNSISHome.getCombo().getText();
                         dialog.setFilterPath(text);
                         String nsisHome = dialog.open();
-                        if (!Common.isEmpty(nsisHome)) {
+                        if (!Common.isEmpty(nsisHome) && !Common.stringsAreEqual(nsisHome, text)) {
                             if(NSISValidator.validateNSISHome(nsisHome)) {
                                 mNSISHome.getCombo().setText(nsisHome);
-                                enableControls(true);
+                                mNSISHomeDirty = true;
+                                handleNSISHomeChange(false);
                             }
                             else {
                                 Common.openError(getShell(), EclipseNSISPlugin.getResourceString("invalid.nsis.home.message"), EclipseNSISPlugin.getShellImage()); //$NON-NLS-1$
-                                mNSISHome.getCombo().setText(""); //$NON-NLS-1$
+                                if(!Common.isEmpty(text)) {
+                                    mNSISHome.getCombo().setText(""); //$NON-NLS-1$
+                                    mNSISHomeDirty = true;
+                                    handleNSISHomeChange(false);
+                                }
+                                else {
+                                    enableControls(false);
+                                }
                                 mNSISHome.getCombo().setFocus();
-                                enableControls(false);
                             }
                         }
                     }

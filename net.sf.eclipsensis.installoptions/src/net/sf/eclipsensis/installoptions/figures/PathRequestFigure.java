@@ -25,18 +25,14 @@ import org.eclipse.ui.views.properties.IPropertySource;
 
 public class PathRequestFigure extends AbstractInstallOptionsFigure implements IEditableElementFigure
 {
+    private static final int SPACING = 3;
+
+    private static final int BROWSE_BUTTON_WIDTH = 15;
+
     public static final String BROWSE_BUTTON_TEXT = "..."; //$NON-NLS-1$
-    public static final int BROWSE_BUTTON_WIDTH;
-    public static final int SPACING;
 
     private TextFigure mTextFigure;
     private ButtonFigure mButtonFigure;
-
-    static {
-        Font f = FontUtility.getInstallOptionsFont();
-        BROWSE_BUTTON_WIDTH = FigureUtility.dialogUnitsToPixelsX(15,f);
-        SPACING = FigureUtility.dialogUnitsToPixelsX(3,f);
-    }
 
     /**
      *
@@ -115,8 +111,11 @@ public class PathRequestFigure extends AbstractInstallOptionsFigure implements I
 
     private Rectangle[] calculateBounds(Rectangle rect)
     {
-        return new Rectangle[]{new Rectangle(0,0,Math.max(0,rect.width-(BROWSE_BUTTON_WIDTH+SPACING)),rect.height),
-                               new Rectangle(Math.max(0,rect.width-BROWSE_BUTTON_WIDTH),0,Math.min(rect.width,BROWSE_BUTTON_WIDTH),rect.height)};
+        Font f = FontUtility.getInstallOptionsFont();
+        int width = FigureUtility.dialogUnitsToPixelsX(BROWSE_BUTTON_WIDTH,f);
+        int spacing = FigureUtility.dialogUnitsToPixelsX(SPACING,f);
+        return new Rectangle[]{new Rectangle(0,0,Math.max(0,rect.width-(width+spacing)),rect.height),
+                               new Rectangle(Math.max(0,rect.width-width),0,Math.min(rect.width,width),rect.height)};
 
     }
 

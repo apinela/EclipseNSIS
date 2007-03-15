@@ -24,6 +24,7 @@ import org.eclipse.swt.graphics.Font;
 public class MoveGuideCommand extends Command
 {
     private int mPositionDelta;
+    private int mGuideOldPosition;
     private Map mOldPositions = new HashMap();
     private InstallOptionsGuide mGuide;
 
@@ -37,10 +38,12 @@ public class MoveGuideCommand extends Command
     public void execute()
     {
         boolean isHorizontal = mGuide.isHorizontal();
-        int guidePos = mGuide.getPosition() + mPositionDelta;
+        mGuideOldPosition = mGuide.getPosition();
         Font f = FontUtility.getInstallOptionsFont();
+
+        int guidePos = (isHorizontal?FigureUtility.dialogUnitsToPixelsY(mGuideOldPosition,f):FigureUtility.dialogUnitsToPixelsX(mGuideOldPosition,f)) + mPositionDelta;
         guidePos = (isHorizontal?FigureUtility.pixelsToDialogUnitsY(guidePos,f):FigureUtility.pixelsToDialogUnitsX(guidePos,f));
-        mGuide.setPosition((isHorizontal?FigureUtility.dialogUnitsToPixelsY(guidePos,f):FigureUtility.dialogUnitsToPixelsX(guidePos,f)));
+        mGuide.setPosition(guidePos);
         Iterator iter = mGuide.getWidgets().iterator();
         while (iter.hasNext()) {
             InstallOptionsWidget widget = (InstallOptionsWidget)iter.next();
@@ -63,8 +66,7 @@ public class MoveGuideCommand extends Command
     {
         boolean isHorizontal = mGuide.isHorizontal();
         Font f = FontUtility.getInstallOptionsFont();
-        int guidePos = mGuide.getPosition() + mPositionDelta;
-        guidePos = (isHorizontal?FigureUtility.pixelsToDialogUnitsY(guidePos,f):FigureUtility.pixelsToDialogUnitsX(guidePos,f));
+        int guidePos = (isHorizontal?FigureUtility.dialogUnitsToPixelsY(mGuide.getPosition(),f):FigureUtility.dialogUnitsToPixelsX(mGuide.getPosition(),f)) + mPositionDelta;
         if(guidePos < 0) {
             return false;
         }
@@ -83,7 +85,7 @@ public class MoveGuideCommand extends Command
 
     public void undo()
     {
-        mGuide.setPosition(mGuide.getPosition() - mPositionDelta);
+        mGuide.setPosition(mGuideOldPosition);
         Iterator iter = mGuide.getWidgets().iterator();
         while (iter.hasNext()) {
             InstallOptionsWidget widget = (InstallOptionsWidget)iter.next();

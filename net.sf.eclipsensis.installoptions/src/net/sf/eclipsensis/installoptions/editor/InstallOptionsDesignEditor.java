@@ -22,13 +22,19 @@ import net.sf.eclipsensis.installoptions.builder.InstallOptionsNature;
 import net.sf.eclipsensis.installoptions.dialogs.GridSnapGlueSettingsDialog;
 import net.sf.eclipsensis.installoptions.dnd.*;
 import net.sf.eclipsensis.installoptions.edit.*;
+import net.sf.eclipsensis.installoptions.edit.dialog.InstallOptionsDialogEditPart;
 import net.sf.eclipsensis.installoptions.ini.INIFile;
 import net.sf.eclipsensis.installoptions.ini.INILine;
 import net.sf.eclipsensis.installoptions.model.*;
 import net.sf.eclipsensis.installoptions.properties.tabbed.CustomTabbedPropertySheetPage;
 import net.sf.eclipsensis.installoptions.rulers.*;
 import net.sf.eclipsensis.installoptions.template.*;
+import net.sf.eclipsensis.installoptions.util.FontUtility;
 import net.sf.eclipsensis.installoptions.util.TypeConverter;
+import net.sf.eclipsensis.job.IJobStatusRunnable;
+import net.sf.eclipsensis.job.JobScheduler;
+import net.sf.eclipsensis.settings.INSISHomeListener;
+import net.sf.eclipsensis.settings.NSISPreferences;
 import net.sf.eclipsensis.startup.FileAssociationChecker;
 import net.sf.eclipsensis.template.AbstractTemplate;
 import net.sf.eclipsensis.template.AbstractTemplateSettings;
@@ -36,6 +42,7 @@ import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.draw2d.*;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.parts.ScrollableThumbnail;
@@ -67,6 +74,7 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -85,7 +93,7 @@ import org.eclipse.ui.texteditor.IDocumentProviderExtension3;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor;
 
-public class InstallOptionsDesignEditor extends EditorPart implements IInstallOptionsEditor, CommandStackListener, ISelectionListener, ITabbedPropertySheetPageContributor
+public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeListener, IInstallOptionsEditor, CommandStackListener, ISelectionListener, ITabbedPropertySheetPageContributor
 {
     private boolean mDisposed = false;
     private DefaultEditDomain mEditDomain;
@@ -129,6 +137,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
 
     private int mErrorCorrectionOnSave;
     private PaletteRoot mRoot;
+    private Font mInstallOptionsFont;
 
     private OutlinePage mOutlinePage;
     private boolean mEditorSaving = false;
@@ -222,6 +231,42 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
     };
 
     private InstallOptionsDialog mInstallOptionsDialog = null;
+
+    private Object mJobFamily = new Object();
+    private ISchedulingRule mSchedulingRule = new ISchedulingRule() {
+        public boolean contains(ISchedulingRule rule)
+        {
+            return rule == this;
+        }
+
+        public boolean isConflicting(ISchedulingRule rule)
+        {
+            return rule == this;
+        }
+    };
+    private IJobStatusRunnable mJobStatusRunnable = new IJobStatusRunnable() {
+        public IStatus run(IProgressMonitor monitor)
+        {
+            try {
+                GraphicalViewer viewer = getGraphicalViewer();
+                if(viewer != null) {
+                    EditPart editPart = viewer.getContents();
+                    if(editPart instanceof InstallOptionsDialogEditPart) {
+                        viewer.setContents(null);
+                        viewer.setContents(editPart);
+                    }
+                  if(mRulerComposite != null && !mRulerComposite.isDisposed()) {
+                      mRulerComposite.setGraphicalViewer((InstallOptionsGraphicalViewer)viewer);
+                  }
+                }
+                return Status.OK_STATUS;
+            }
+            catch (Exception e) {
+                return new Status(IStatus.ERROR,IInstallOptionsConstants.PLUGIN_ID, IStatus.ERROR,
+                                  e.getMessage(), e);
+            }
+        }
+    };
 
     private boolean mSavePreviouslyNeeded = false;
 
@@ -462,12 +507,24 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
         }
     }
 
+    public void nsisHomeChanged(IProgressMonitor monitor, String oldHome, String newHome)
+    {
+        Font font = FontUtility.getInstallOptionsFont();
+        if(font != null && font != mInstallOptionsFont) {
+            mInstallOptionsFont = FontUtility.getInstallOptionsFont();
+            JobScheduler scheduler = InstallOptionsPlugin.getDefault().getJobScheduler();
+            scheduler.scheduleUIJob(mJobFamily,"Refresh InstallOptions Design Editor",
+                                    mSchedulingRule,mJobStatusRunnable);
+        }
+    }
+
     /**
      * @see GraphicalEditor#createPartControl(Composite)
      */
     public void createPartControl(Composite parent)
     {
         if(!mINIFile.hasErrors()) {
+            mInstallOptionsFont = FontUtility.getInstallOptionsFont();
             mPalette = new FlyoutPaletteComposite(parent, SWT.NONE, getSite().getPage(),
                     getPaletteViewerProvider(), getPalettePreferences());
             createGraphicalViewer(mPalette);
@@ -479,6 +536,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
             InstallOptionsModel.INSTANCE.addModelListener(mModelListener);
             PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,PLUGIN_CONTEXT_PREFIX+"installoptions_designeditor_context"); //$NON-NLS-1$
             mCreatedEmptyPart = false;
+            NSISPreferences.INSTANCE.addListener(this);
         }
     }
 
@@ -587,6 +645,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements IInstallOp
 
     public void dispose()
     {
+        NSISPreferences.INSTANCE.removeListener(this);
         InstallOptionsModel.INSTANCE.removeModelListener(mModelListener);
         boolean hasErrors = mINIFile.hasErrors();
         IInstallOptionsEditorInput input = (IInstallOptionsEditorInput)getEditorInput();

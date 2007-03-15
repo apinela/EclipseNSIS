@@ -18,22 +18,19 @@ import org.eclipse.swt.graphics.Font;
 
 public class InstallOptionsSnapToGrid extends SnapToGrid
 {
-    private double mDpuX;
-    private double mDpuY;
-
     /**
      * @param container
      */
     public InstallOptionsSnapToGrid(GraphicalEditPart container)
     {
         super(container);
-        Font f = FontUtility.getInstallOptionsFont();
-        mDpuX = ((double)FigureUtility.dialogUnitsToPixelsX(1000,f))/1000;
-        mDpuY = ((double)FigureUtility.dialogUnitsToPixelsY(1000,f))/1000;
     }
 
     public int snapRectangle(Request request, int snapLocations, PrecisionRectangle rect, PrecisionRectangle result)
     {
+        Font f = FontUtility.getInstallOptionsFont();
+        double dpuX = ((double)FigureUtility.dialogUnitsToPixelsX(1000,f))/1000;
+        double dpuY = ((double)FigureUtility.dialogUnitsToPixelsY(1000,f))/1000;
         rect = rect.getPreciseCopy();
 
         makeRelative(container.getContentPane(), rect);
@@ -42,13 +39,13 @@ public class InstallOptionsSnapToGrid extends SnapToGrid
 
         if (gridX > 0 && (snapLocations & EAST) != 0) {
             correction.preciseWidth -= Math.IEEEremainder(rect.preciseRight()
-                    - origin.x*mDpuX - 1, gridX*mDpuX);
+                    - origin.x*dpuX - 1, gridX*dpuX);
             snapLocations &= ~EAST;
         }
 
         if ((snapLocations & (WEST | HORIZONTAL)) != 0 && gridX > 0) {
-            double leftCorrection = Math.IEEEremainder(rect.preciseX - origin.x*mDpuX,
-                    gridX*mDpuX);
+            double leftCorrection = Math.IEEEremainder(rect.preciseX - origin.x*dpuX,
+                    gridX*dpuX);
             correction.preciseX -= leftCorrection;
             if ((snapLocations & HORIZONTAL) == 0) {
                 correction.preciseWidth += leftCorrection;
@@ -58,13 +55,13 @@ public class InstallOptionsSnapToGrid extends SnapToGrid
 
         if ((snapLocations & SOUTH) != 0 && gridY > 0) {
             correction.preciseHeight -= Math.IEEEremainder(rect.preciseBottom()
-                    - origin.y*mDpuY - 1, gridY*mDpuY);
+                    - origin.y*dpuY - 1, gridY*dpuY);
             snapLocations &= ~SOUTH;
         }
 
         if ((snapLocations & (NORTH | VERTICAL)) != 0 && gridY > 0) {
             double topCorrection = Math.IEEEremainder(
-                    rect.preciseY - origin.y*mDpuY, gridY*mDpuY);
+                    rect.preciseY - origin.y*dpuY, gridY*dpuY);
             correction.preciseY -= topCorrection;
             if ((snapLocations & VERTICAL) == 0) {
                 correction.preciseHeight += topCorrection;

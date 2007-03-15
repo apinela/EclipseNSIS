@@ -19,9 +19,10 @@ import net.sf.eclipsensis.lang.NSISLanguage;
 import net.sf.eclipsensis.lang.NSISLanguageManager;
 import net.sf.eclipsensis.makensis.MakeNSISResults;
 import net.sf.eclipsensis.makensis.MakeNSISRunner;
-import net.sf.eclipsensis.settings.NSISSettings;
+import net.sf.eclipsensis.settings.*;
 import net.sf.eclipsensis.util.IOUtility;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.resource.DeviceResourceException;
 import org.eclipse.jface.resource.FontDescriptor;
@@ -38,12 +39,26 @@ public class FontUtility
     public static final String DEFAULT_FONT_NAME;
     public static final int DEFAULT_FONT_SIZE;
 
-    private static Font cDefaultDefaultFont;
+    private static Font cDefaultFont;
     private static Font cInstallOptionsFont = null;
     private static HashMap cFontMap = new HashMap();
     private static NSISSettings cNSISSettings = null;
     private static File cPropertiesFile = null;
     private static INSISConsole cNSISConsole = null;
+
+    private static boolean cListening = false;
+
+    private static INSISHomeListener cNSISHomeListener = new INSISHomeListener() {
+        public void nsisHomeChanged(IProgressMonitor monitor, String oldHome, String newHome)
+        {
+            if(EclipseNSISPlugin.getDefault().isConfigured()) {
+                loadInstallOptionsFont();
+                if(cInstallOptionsFont != null) {
+                    NSISPreferences.INSTANCE.removeListener(cNSISHomeListener);
+                }
+            }
+        }
+    };
 
     static {
         String fontNameKey;
@@ -87,13 +102,13 @@ public class FontUtility
         else {
             Display.getDefault().syncExec(r);
         }
-        cDefaultDefaultFont = f[0];
-        cInstallOptionsFont = getFont(NSISLanguageManager.getInstance().getDefaultLanguage());
+        cDefaultFont = f[0];
+        loadInstallOptionsFont();
         Display.getDefault().disposeExec(new Runnable() {
             public void run()
             {
-                if(cDefaultDefaultFont != null && !cDefaultDefaultFont.isDisposed()) {
-                    cDefaultDefaultFont.dispose();
+                if(cDefaultFont != null && !cDefaultFont.isDisposed()) {
+                    cDefaultFont.dispose();
                 }
                 for(Iterator iter = cFontMap.values().iterator(); iter.hasNext(); ) {
                     Font font = (Font)iter.next();
@@ -109,9 +124,38 @@ public class FontUtility
     {
     }
 
+    private static Font loadInstallOptionsFont()
+    {
+        if(cInstallOptionsFont == null) {
+            if (EclipseNSISPlugin.getDefault().isConfigured()) {
+                cInstallOptionsFont = getFont(NSISLanguageManager.getInstance().getDefaultLanguage());
+            }
+            if(cInstallOptionsFont == null || cInstallOptionsFont == cDefaultFont) {
+                if(!cListening) {
+                    NSISPreferences.INSTANCE.addListener(cNSISHomeListener);
+                    Display.getDefault().disposeExec(new Runnable() {
+                        public void run()
+                        {
+                            NSISPreferences.INSTANCE.removeListener(cNSISHomeListener);
+                            cListening = false;
+                        }
+                    });
+                    cListening = true;
+                }
+            }
+            else {
+                if (cListening) {
+                    NSISPreferences.INSTANCE.removeListener(cNSISHomeListener);
+                    cListening = false;
+                }
+            }
+        }
+        return cInstallOptionsFont==null?cDefaultFont:cInstallOptionsFont;
+    }
+
     public static Font getInstallOptionsFont()
     {
-        return cInstallOptionsFont;
+        return (cInstallOptionsFont==null?loadInstallOptionsFont():cInstallOptionsFont);
     }
 
     public static Font getFont(NSISLanguage lang)
@@ -119,7 +163,17 @@ public class FontUtility
         Font font = (Font)cFontMap.get(lang);
         if(font == null) {
             font = createFont(lang);
-            cFontMap.put(lang, font);
+            if(font != null) {
+                cFontMap.put(lang, font);
+            }
+            else {
+                if(lang != null && !lang.equals(NSISLanguageManager.getInstance().getDefaultLanguage())) {
+                    font = getInstallOptionsFont();
+                }
+                else {
+                    font = cDefaultFont;
+                }
+            }
         }
         return font;
     }
@@ -127,93 +181,93 @@ public class FontUtility
     private synchronized static Font createFont(NSISLanguage lang)
     {
         Font font = null;
-        try {
-            if(cNSISSettings == null) {
-                cNSISSettings = new DummyNSISSettings();
-            }
-            if(cPropertiesFile == null) {
-                cPropertiesFile = File.createTempFile("font",".properties");//$NON-NLS-1$ //$NON-NLS-2$
-                cPropertiesFile.deleteOnExit();
-            }
-            if(cNSISConsole == null) {
-                cNSISConsole = new NullNSISConsole();
-            }
-            LinkedHashMap symbols = cNSISSettings.getSymbols();
-
-            symbols.put("LANGUAGE",lang.getName()); //$NON-NLS-1$
-            symbols.put("PROPERTIES_FILE",cPropertiesFile.getAbsolutePath()); //$NON-NLS-1$
-            cNSISSettings.setSymbols(symbols);
-            File fontScript = IOUtility.ensureLatest(InstallOptionsPlugin.getDefault().getBundle(),
-                    new Path("/font/getfont.nsi"),  //$NON-NLS-1$
-                    InstallOptionsPlugin.getPluginStateLocation());
-            long timestamp = System.currentTimeMillis();
-            MakeNSISResults results = MakeNSISRunner.compile(fontScript, cNSISSettings, cNSISConsole, new INSISConsoleLineProcessor() {
-                public NSISConsoleLine processText(String text)
-                {
-                    return NSISConsoleLine.info(text);
+        if(EclipseNSISPlugin.getDefault().isConfigured() && lang != null) {
+            try {
+                if (cNSISSettings == null) {
+                    cNSISSettings = new DummyNSISSettings();
                 }
-
-                public void reset()
-                {
+                if (cPropertiesFile == null) {
+                    cPropertiesFile = File.createTempFile("font", ".properties");//$NON-NLS-1$ //$NON-NLS-2$
+                    cPropertiesFile.deleteOnExit();
                 }
-            },false);
+                if (cNSISConsole == null) {
+                    cNSISConsole = new NullNSISConsole();
+                }
+                LinkedHashMap symbols = cNSISSettings.getSymbols();
 
+                symbols.put("LANGUAGE", lang.getName()); //$NON-NLS-1$
+                symbols.put("PROPERTIES_FILE", cPropertiesFile.getAbsolutePath()); //$NON-NLS-1$
+                cNSISSettings.setSymbols(symbols);
+                File fontScript = IOUtility.ensureLatest(InstallOptionsPlugin.getDefault().getBundle(), new Path("/font/getfont.nsi"), //$NON-NLS-1$
+                        InstallOptionsPlugin.getPluginStateLocation());
+                long timestamp = System.currentTimeMillis();
+                MakeNSISResults results = MakeNSISRunner.compile(fontScript, cNSISSettings, cNSISConsole, new INSISConsoleLineProcessor() {
+                    public NSISConsoleLine processText(String text)
+                    {
+                        return NSISConsoleLine.info(text);
+                    }
 
-            if(results != null) {
-                if (results.getReturnCode() == 0) {
-                    File outfile = new File(InstallOptionsPlugin.getPluginStateLocation(),"getfont.exe"); //$NON-NLS-1$
-                    if (IOUtility.isValidFile(outfile) && outfile.lastModified() > timestamp) {
-                        MakeNSISRunner.testInstaller(outfile.getAbsolutePath(), null, true);
-                        if(cPropertiesFile.exists()) {
-                            Properties props = new Properties();
-                            FileInputStream is = null;
-                            try {
-                                is = new FileInputStream(cPropertiesFile);
-                                props.load(is);
-                                String fontName = props.getProperty("name"); //$NON-NLS-1$
-                                if(fontName == null) {
-                                    fontName = DEFAULT_FONT_NAME;
-                                }
-                                else if(fontName.equals(UNKNOWN_FONT)) {
-                                    fontName = InstallOptionsPlugin.getResourceString("unknown.font."+lang.getName().toLowerCase(),DEFAULT_FONT_NAME); //$NON-NLS-1$
-                                }
-                                int fontSize;
-                                String tmpFontSize = props.getProperty("size"); //$NON-NLS-1$
-                                if(tmpFontSize == null) {
-                                    fontSize = DEFAULT_FONT_SIZE;
-                                }
-                                else {
-                                    try {
-                                        fontSize = Integer.parseInt(tmpFontSize);
+                    public void reset()
+                    {
+                    }
+                }, false);
+
+                if (results != null) {
+                    if (results.getReturnCode() == 0) {
+                        File outfile = new File(InstallOptionsPlugin.getPluginStateLocation(), "getfont.exe"); //$NON-NLS-1$
+                        if (IOUtility.isValidFile(outfile) && outfile.lastModified() > timestamp) {
+                            MakeNSISRunner.testInstaller(outfile.getAbsolutePath(), null, true);
+                            if (cPropertiesFile.exists()) {
+                                Properties props = new Properties();
+                                FileInputStream is = null;
+                                try {
+                                    is = new FileInputStream(cPropertiesFile);
+                                    props.load(is);
+                                    String fontName = props.getProperty("name"); //$NON-NLS-1$
+                                    if (fontName == null) {
+                                        fontName = DEFAULT_FONT_NAME;
                                     }
-                                    catch (NumberFormatException e) {
+                                    else if (fontName.equals(UNKNOWN_FONT)) {
+                                        fontName = InstallOptionsPlugin.getResourceString("unknown.font." + lang.getName().toLowerCase(), DEFAULT_FONT_NAME); //$NON-NLS-1$
+                                    }
+                                    int fontSize;
+                                    String tmpFontSize = props.getProperty("size"); //$NON-NLS-1$
+                                    if (tmpFontSize == null) {
                                         fontSize = DEFAULT_FONT_SIZE;
                                     }
-                                }
-                                final FontData fd = new FontData(fontName, fontSize, SWT.NORMAL);
-                                final Font[] f = {null};
-                                Runnable r = new Runnable() {
-                                    public void run()
-                                    {
-                                        f[0] = new Font(Display.getDefault(),fd);
+                                    else {
+                                        try {
+                                            fontSize = Integer.parseInt(tmpFontSize);
+                                        }
+                                        catch (NumberFormatException e) {
+                                            fontSize = DEFAULT_FONT_SIZE;
+                                        }
                                     }
-                                };
-                                if(Display.getCurrent() != null) {
-                                    r.run();
-                                }
-                                else {
-                                    Display.getDefault().syncExec(r);
-                                }
-                                font = f[0];
-                            }
-                            catch (Exception e) {
-                                InstallOptionsPlugin.getDefault().log(e);
-                                if(is != null) {
-                                    try {
-                                        is.close();
+                                    final FontData fd = new FontData(fontName, fontSize, SWT.NORMAL);
+                                    final Font[] f = {null};
+                                    Runnable r = new Runnable() {
+                                        public void run()
+                                        {
+                                            f[0] = new Font(Display.getDefault(), fd);
+                                        }
+                                    };
+                                    if (Display.getCurrent() != null) {
+                                        r.run();
                                     }
-                                    catch (Exception e1) {
-                                        InstallOptionsPlugin.getDefault().log(e1);
+                                    else {
+                                        Display.getDefault().syncExec(r);
+                                    }
+                                    font = f[0];
+                                }
+                                catch (Exception e) {
+                                    InstallOptionsPlugin.getDefault().log(e);
+                                    if (is != null) {
+                                        try {
+                                            is.close();
+                                        }
+                                        catch (Exception e1) {
+                                            InstallOptionsPlugin.getDefault().log(e1);
+                                        }
                                     }
                                 }
                             }
@@ -221,12 +275,9 @@ public class FontUtility
                     }
                 }
             }
-        }
-        catch (IOException e1) {
-            InstallOptionsPlugin.getDefault().log(e1);
-        }
-        if(font == null) {
-            font = (cInstallOptionsFont==null?cDefaultDefaultFont:cInstallOptionsFont);
+            catch (IOException e1) {
+                InstallOptionsPlugin.getDefault().log(e1);
+            }
         }
         return font;
     }

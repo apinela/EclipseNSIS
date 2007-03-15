@@ -23,26 +23,25 @@ public class InstallOptionsGridLayer extends GridLayer implements IInstallOption
 {
     private String mStyle = GRID_STYLE_LINES;
     public static final String PROPERTY_GRID_STYLE="net.sf.eclipsensis.installoptions.grid_style"; //$NON-NLS-1$
-    private double mDpuX;
-    private double mDpuY;
 
     public InstallOptionsGridLayer()
     {
         super();
-        Font f = FontUtility.getInstallOptionsFont();
-        mDpuX = ((double)FigureUtility.dialogUnitsToPixelsX(1000,f))/1000;
-        mDpuY = ((double)FigureUtility.dialogUnitsToPixelsY(1000,f))/1000;
     }
 
     protected void paintGrid(Graphics g)
     {
+        //FIXME Revalidate here
         try {
+            Font f = FontUtility.getInstallOptionsFont();
+            double dpuX = ((double)FigureUtility.dialogUnitsToPixelsX(1000,f))/1000;
+            double dpuY = ((double)FigureUtility.dialogUnitsToPixelsY(1000,f))/1000;
             g.pushState();
             Rectangle clip = g.getClip(Rectangle.SINGLETON);
-            double clipX = clip.x / mDpuX;
-            double clipWidth = clip.width / mDpuX;
-            double clipY = clip.y / mDpuY;
-            double clipHeight = clip.height / mDpuY;
+            double clipX = clip.x / dpuX;
+            double clipWidth = clip.width / dpuX;
+            double clipY = clip.y / dpuY;
+            double clipHeight = clip.height / dpuY;
             double originX = origin.x;
             double originY = origin.y;
             int distanceX = gridX;
@@ -73,7 +72,6 @@ public class InstallOptionsGridLayer extends GridLayer implements IInstallOption
                 }
             }
 
-            Font f = FontUtility.getInstallOptionsFont();
             if (GRID_STYLE_DOTS.equals(mStyle)) {
                 g.setForegroundColor(ColorConstants.black);
                 if (distanceY > 0 && distanceY > 0) {

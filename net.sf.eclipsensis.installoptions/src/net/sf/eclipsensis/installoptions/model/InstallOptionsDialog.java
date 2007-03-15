@@ -17,20 +17,17 @@ import java.util.regex.Matcher;
 import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
-import net.sf.eclipsensis.installoptions.figures.FigureUtility;
 import net.sf.eclipsensis.installoptions.ini.*;
 import net.sf.eclipsensis.installoptions.properties.descriptors.CustomComboBoxPropertyDescriptor;
 import net.sf.eclipsensis.installoptions.properties.validators.NSISStringLengthValidator;
 import net.sf.eclipsensis.installoptions.properties.validators.NumberCellEditorValidator;
 import net.sf.eclipsensis.installoptions.rulers.*;
-import net.sf.eclipsensis.installoptions.util.FontUtility;
 import net.sf.eclipsensis.installoptions.util.TypeConverter;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.util.UpDownMover;
 
 import org.eclipse.draw2d.PositionConstants;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.views.properties.*;
 
@@ -888,7 +885,6 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
     private static boolean loadGuides(InstallOptionsDialog dialog, String guidesMetadata)
     {
         boolean loaded = false;
-        Font font = FontUtility.getInstallOptionsFont();
         String[] tokens = Common.tokenize(guidesMetadata,'#');
         for (int i = 0; i < tokens.length; i++) {
             String[] tokens2 = Common.tokenize(tokens[i],'|');
@@ -905,19 +901,13 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
                     if(tokens2.length > 1) {
                         try {
                             offset = Integer.parseInt(tokens2[1]);
-                            if(orientation == PositionConstants.NORTH) {
-                                offset = FigureUtility.dialogUnitsToPixelsX(offset, font);
-                            }
-                            else {
-                                offset = FigureUtility.dialogUnitsToPixelsY(offset, font);
-                            }
                         }
                         catch(Exception ex) {
                             offset = 0;
                         }
                     }
                     InstallOptionsRuler ruler = dialog.getRuler(orientation);
-                    InstallOptionsGuide guide = new InstallOptionsGuide(offset == PositionConstants.WEST);
+                    InstallOptionsGuide guide = new InstallOptionsGuide(orientation == PositionConstants.WEST);
                     guide.setPosition(offset);
                     ruler.addGuide(guide);
                     loaded = true;
@@ -964,7 +954,7 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
                                 if(!Common.isEmptyCollection(guides) && guides.size() > index) {
                                     InstallOptionsGuide guide = (InstallOptionsGuide)guides.get(index);
                                     int offset = guide.getPosition();
-                                    Position p = child.toGraphical(child.getPosition());
+                                    Position p = child.toGraphical(child.getPosition(), false);
                                     int offset2 = -1;
                                     switch(alignment) {
                                         case -1:
@@ -1124,14 +1114,13 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
                 }
                 buf.append(text.substring(0,n)).append(METADATA_PREFIX).append(" ").append(GUIDES_PREFIX); //$NON-NLS-1$
             }
-            Font f = FontUtility.getInstallOptionsFont();
             int count = 0;
             for (Iterator iter = horizontalGuides.iterator(); iter.hasNext();) {
                 InstallOptionsGuide guide = (InstallOptionsGuide)iter.next();
                 if(count > 0) {
                     buf.append('#');
                 }
-                buf.append(PositionConstants.WEST).append('|').append(FigureUtility.pixelsToDialogUnitsY(guide.getPosition(),f));
+                buf.append(PositionConstants.WEST).append('|').append(guide.getPosition());
                 count++;
             }
             for (Iterator iter = verticalGuides.iterator(); iter.hasNext();) {
@@ -1139,7 +1128,7 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
                 if(count > 0) {
                     buf.append('#');
                 }
-                buf.append(PositionConstants.NORTH).append('|').append(FigureUtility.pixelsToDialogUnitsX(guide.getPosition(),f));
+                buf.append(PositionConstants.NORTH).append('|').append(guide.getPosition());
                 count++;
             }
             if(comment == null) {

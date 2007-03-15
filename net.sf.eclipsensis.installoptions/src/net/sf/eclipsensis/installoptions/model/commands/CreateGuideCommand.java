@@ -10,10 +10,13 @@
 package net.sf.eclipsensis.installoptions.model.commands;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
+import net.sf.eclipsensis.installoptions.figures.FigureUtility;
 import net.sf.eclipsensis.installoptions.rulers.InstallOptionsGuide;
 import net.sf.eclipsensis.installoptions.rulers.InstallOptionsRuler;
+import net.sf.eclipsensis.installoptions.util.FontUtility;
 
 import org.eclipse.gef.commands.Command;
+import org.eclipse.swt.graphics.Font;
 
 public class CreateGuideCommand extends Command
 {
@@ -40,7 +43,8 @@ public class CreateGuideCommand extends Command
         if (mGuide == null) {
             mGuide = new InstallOptionsGuide(!mParent.isHorizontal());
         }
-        mGuide.setPosition(mPosition);
+        Font f = FontUtility.getInstallOptionsFont();
+        mGuide.setPosition(mGuide.isHorizontal()?FigureUtility.pixelsToDialogUnitsY(mPosition,f):FigureUtility.pixelsToDialogUnitsX(mPosition,f));
         mParent.addGuide(mGuide);
     }
 

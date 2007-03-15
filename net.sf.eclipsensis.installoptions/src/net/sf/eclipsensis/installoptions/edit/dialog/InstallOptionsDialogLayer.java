@@ -24,18 +24,13 @@ public class InstallOptionsDialogLayer extends FreeformLayer implements IInstall
     private Dimension mDialogSize = new Dimension(100,100);
     private boolean mShowDialogSize = false;
 
-    private Dimension dialogUnitsToPixels(Dimension d)
-    {
-        return FigureUtility.dialogUnitsToPixels(d,FontUtility.getInstallOptionsFont());
-    }
-
     protected void paintFigure(Graphics graphics)
     {
         super.paintFigure(graphics);
         if(mShowDialogSize && !mDialogSize.equals(0,0)) {
             graphics.pushState();
             graphics.setForegroundColor(ColorConstants.blue);
-            Dimension d = dialogUnitsToPixels(mDialogSize);
+            Dimension d = FigureUtility.dialogUnitsToPixels(mDialogSize,FontUtility.getInstallOptionsFont());
             graphics.drawRectangle(0,0,d.width,d.height);
             graphics.popState();
             graphics.restoreState();

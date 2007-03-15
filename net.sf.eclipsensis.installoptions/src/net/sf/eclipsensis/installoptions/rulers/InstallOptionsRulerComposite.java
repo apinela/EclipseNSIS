@@ -237,7 +237,12 @@ public class InstallOptionsRulerComposite extends Composite
         // pre-conditions
         Assert.isNotNull(primaryViewer);
         Assert.isNotNull(primaryViewer.getControl());
-        Assert.isTrue(mViewer == null);
+        if(mViewer != null) {
+            disposeRulerViewer(mTop);
+            mTop = null;
+            disposeRulerViewer(mLeft);
+            mLeft = null;
+        }
 
         mViewer = primaryViewer;
         mEditor = (FigureCanvas)mViewer.getControl();

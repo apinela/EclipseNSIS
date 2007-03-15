@@ -14,11 +14,14 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.sf.eclipsensis.installoptions.figures.FigureUtility;
 import net.sf.eclipsensis.installoptions.model.commands.*;
+import net.sf.eclipsensis.installoptions.util.FontUtility;
 
 import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.rulers.RulerChangeListener;
 import org.eclipse.gef.rulers.RulerProvider;
+import org.eclipse.swt.graphics.Font;
 
 public class InstallOptionsRulerProvider extends RulerProvider
 {
@@ -100,12 +103,18 @@ public class InstallOptionsRulerProvider extends RulerProvider
         return new MoveGuideCommand((InstallOptionsGuide)guide, pDelta);
     }
 
+    private int convertGuidePosition(Font f, InstallOptionsGuide guide)
+    {
+        return (guide.isHorizontal()?FigureUtility.dialogUnitsToPixelsY(guide.getPosition(),f):FigureUtility.dialogUnitsToPixelsX(guide.getPosition(),f));
+    }
+
     public int[] getGuidePositions()
     {
         List guides = getGuides();
+        Font f = FontUtility.getInstallOptionsFont();
         int[] result = new int[guides.size()];
         for (int i = 0; i < guides.size(); i++) {
-            result[i] = ((InstallOptionsGuide)guides.get(i)).getPosition();
+            result[i] = convertGuidePosition(f,(InstallOptionsGuide)guides.get(i));
         }
         return result;
     }
@@ -127,7 +136,7 @@ public class InstallOptionsRulerProvider extends RulerProvider
 
     public int getGuidePosition(Object guide)
     {
-        return ((InstallOptionsGuide)guide).getPosition();
+        return convertGuidePosition(FontUtility.getInstallOptionsFont(),(InstallOptionsGuide)guide);
     }
 
     public List getGuides()

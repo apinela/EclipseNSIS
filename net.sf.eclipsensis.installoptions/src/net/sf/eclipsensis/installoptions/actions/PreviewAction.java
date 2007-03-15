@@ -28,14 +28,14 @@ import net.sf.eclipsensis.lang.NSISLanguage;
 import net.sf.eclipsensis.lang.NSISLanguageManager;
 import net.sf.eclipsensis.makensis.*;
 import net.sf.eclipsensis.script.NSISScriptProblem;
-import net.sf.eclipsensis.settings.INSISSettingsConstants;
-import net.sf.eclipsensis.settings.NSISSettings;
+import net.sf.eclipsensis.settings.*;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.util.IOUtility;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.draw2d.SWTGraphics;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.gef.Disposable;
 import org.eclipse.jface.action.Action;
@@ -49,7 +49,7 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.*;
 
-public class PreviewAction extends Action implements Disposable, IMakeNSISRunListener
+public class PreviewAction extends Action implements Disposable, IMakeNSISRunListener, INSISHomeListener
 {
     public static final String PREVIEW_CLASSIC_ID = "net.sf.eclipsensis.installoptions.preview_classic"; //$NON-NLS-1$
     public static final String PREVIEW_MUI_ID = "net.sf.eclipsensis.installoptions.preview_mui"; //$NON-NLS-1$
@@ -86,7 +86,13 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
         String label = InstallOptionsPlugin.getResourceString(resource);
         setText(label);
         setToolTipText(label);
+        NSISPreferences.INSTANCE.addListener(this);
         MakeNSISRunner.addListener(this);
+        updateEnabled();
+    }
+
+    public void nsisHomeChanged(IProgressMonitor monitor, String oldHome, String newHome)
+    {
         updateEnabled();
     }
 
@@ -114,6 +120,7 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
 
     public void dispose()
     {
+        NSISPreferences.INSTANCE.removeListener(this);
         MakeNSISRunner.removeListener(this);
     }
 
@@ -225,6 +232,7 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
                             }
                             dialog.setDialogSize(dialogSize);
                             Font font = FontUtility.getInstallOptionsFont();
+                            final DashedLineBorder border = new DashedLineBorder();
                             for(Iterator iter=dialog.getChildren().iterator(); iter.hasNext(); ) {
                                 InstallOptionsWidget widget = (InstallOptionsWidget)iter.next();
                                 if(widget instanceof InstallOptionsPicture) {
@@ -251,9 +259,7 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
                                                 gc.setBackground(shell.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
                                                 gc.setForeground(shell.getDisplay().getSystemColor(SWT.COLOR_BLACK));
                                                 gc.fillRectangle(0, 0, dim.width, dim.height);
-                                                gc.setLineStyle(SWT.LINE_CUSTOM);
-                                                gc.setLineDash(DashedLineBorder.DASHES);
-                                                gc.drawRectangle(0, 0, dim.width-1, dim.height-1);
+                                                border.paint(new SWTGraphics(gc),new org.eclipse.draw2d.geometry.Rectangle(0, 0, dim.width, dim.height));
                                                 Image widgetImage = picture.getImage();
                                                 Rectangle rect = widgetImage.getBounds();
                                                 int x, y, width, height;
